@@ -92,8 +92,9 @@ containment**; everything else is a field.
 | `extent: { w, h }` (m) | required | opt (def 25×25) | — | — |
 | `slot` | — | — | required | opt (implicitly `name`) |
 | `value` | — | — | required | required (the name) |
+| `points` (reserved²) | opt | opt | — | — |
 | `far` (horizon object) | opt (the-town) | — | — | — |
-| `survey: terrain:<id>` | opt (the-town) | — | — | — |
+| `feature: <skeleton-id>` | opt (the-town) | — | — | — |
 | `pre` / `derived_from` | provenance¹ | provenance¹ | provenance¹ | provenance¹ |
 
 ¹ **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
@@ -104,6 +105,27 @@ A `sited`/`parcel` mark **never** authors a `parent:` — containment is geometr
 A top-level `predicated`/`naming` mark may still name a terrain feature with an
 explicit `parent: terrain:<id>` (ids from `skeleton.json`), but nesting under the
 mark it describes is preferred.
+
+**² `points:` — reserved, coarsely honored.** A mark may carry `points:` — an
+optional polygon (an SVG-polygon-style list of grid-meter vertices, a closed
+ring) — ALONGSIDE `at`/`extent`, to declare its true shape today. **v1 honoring
+is deliberately coarse:** the lint validates containment against the polygon's
+**bounding box only**, and the fold/engine treat the mark as its `at`/`extent`
+(which must equal that bounding box). Fine-grain coverage — marks as grid-cell
+sets, irregular shapes, FOV and fan-up over them — is a **filed PULSE follow-up**,
+not tonight. A mark that carries `points:` today gains fine honoring later with
+**no record change**.
+
+**`feature:` — the two-precision link.** A terrain mark carries
+`feature: <skeleton-feature-id>` so the claim (the coarse mark) and the survey
+(the precise geometry in `skeleton.json`) are joined by a field, not a
+convention. The engine can follow it to the precise geometry later; nothing
+consumes it tonight.
+
+**The river is segmented, not one mark** — each reach the skeleton names is its
+own constitution mark with its own `feature:` link. Finer named-reach enrichment
+(the residents' own words for Blackwater Bend, the Still Reach pool, the harbor
+reach) is part of the filed coverage follow-up, not tonight.
 
 ## The grid
 

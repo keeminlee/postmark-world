@@ -28,6 +28,13 @@ const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : def; };
 const MARKS_DIR = opt("--marks-dir", join(ROOT, "WORLD/marks"));
 const TERRAIN_PATH = opt("--terrain", join(ROOT, "WORLD/TERRAIN/skeleton.json"));
+// --scope <subtree>: the fleet writes sibling dirs concurrently, so a full-tree
+// lint mid-fleet would trip on another agent's half-written dir. Scoped mode
+// still LOADS the whole tree (ancestor edges resolve; the-town leaf collisions
+// across siblings are still caught) but REPORTS/gates only on marks under the
+// scope. e.g. --scope WORLD/marks/let-there-be-light/<region-slug>
+const SCOPE = opt("--scope", null);
+const scopeRel = SCOPE ? resolve(SCOPE).replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/") : null;
 
 const KINDS = new Set(["sited", "predicated", "naming", "parcel"]);
 const TIERS = new Set(["constitution", "sovereignty", "market"]); // v2 protection tiers
@@ -139,14 +146,18 @@ for (const rec of marks) {
 }
 
 // ---- report (lint.mjs idiom: sort, print, exit non-zero only on ERROR) ----
+// scoped mode: the whole tree was loaded (edges + cross-author leaf uniqueness
+// still checked), but only findings under the scope are reported/gated.
+const reported = scopeRel ? findings.filter((f) => f.file.startsWith(scopeRel)) : findings;
+const scopedMarks = scopeRel ? marks.filter((m) => at(m).startsWith(scopeRel)).length : marks.length;
 const order = { ERROR: 0, WARN: 1 };
-findings.sort((a, b) => (order[a.sev] - order[b.sev]) || a.file.localeCompare(b.file));
-console.log(`Linted ${marks.length} mark(s) under ${MARKS_DIR.replace(/\\/g, "/").replace(/^.*\/(WORLD\/marks)$/, "$1")}.\n`);
-if (!findings.length) console.log("CLEAN — every mark is well-formed and no edge lies.");
+reported.sort((a, b) => (order[a.sev] - order[b.sev]) || a.file.localeCompare(b.file));
+console.log(`Linted ${scopedMarks} mark(s)${scopeRel ? ` under ${scopeRel}` : ` under ${MARKS_DIR.replace(/\\/g, "/").replace(/^.*\/(WORLD\/marks)$/, "$1")}`}.\n`);
+if (!reported.length) console.log("CLEAN — every mark is well-formed and no edge lies.");
 else {
-  for (const f of findings) console.log(`[${f.sev}] ${f.file}: ${f.msg}`);
-  const e = findings.filter((f) => f.sev === "ERROR").length;
-  const w = findings.filter((f) => f.sev === "WARN").length;
+  for (const f of reported) console.log(`[${f.sev}] ${f.file}: ${f.msg}`);
+  const e = reported.filter((f) => f.sev === "ERROR").length;
+  const w = reported.filter((f) => f.sev === "WARN").length;
   console.log(`\n${e} error(s), ${w} warning(s).`);
 }
-process.exit(findings.some((f) => f.sev === "ERROR") ? 1 : 0);
+process.exit(reported.some((f) => f.sev === "ERROR") ? 1 : 0);

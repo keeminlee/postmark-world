@@ -14,7 +14,8 @@
 // - Terrain features become marks UNDER it (river, seas, lochan, garrison lake,
 //   locks, coasts, upward falls, Pando, ferry's route), by: the-town, tier:
 //   constitution. Two-precision geometry: the mark carries a COARSE bounding
-//   rect as the CLAIM; skeleton.json remains beneath as the precise survey.
+//   rect as the CLAIM and a `feature: <skeleton-feature-id>` link; skeleton.json
+//   remains beneath as the precise survey (followable through that link).
 // - `by: the-town` is the town-tier author (flagged reviewable — Wright's call).
 // - Pando is a horizon object, not heightfield ground (decision 008): its mark
 //   carries `far: true`, and the containment check exempts it (it sits beyond
@@ -73,10 +74,10 @@ const written = [];
 // extent covers the whole world INCLUDING the horizon (Pando at ~135 km), so
 // every mark and terrain feature nests within it. A bounding claim, not drama.
 const worldExtent = 320000; // ~±160 km: contains the on-map world and the far horizon
-if (!DRY && existsSync(MARKS_ROOT)) {
-  // idempotent: clear only the-town-authored terrain children, never resident marks
-  for (const f of allFeatures()) { const d = join(MARKS_ROOT, f.id); if (existsSync(d)) rmSync(d, { recursive: true, force: true }); }
-}
+// Idempotent by OVERWRITE, never by rmSync: writeMarkRaw rewrites each terrain
+// mark.md in place, so resident marks nested under a terrain mark (e.g. finn's
+// home under the-still-reach) are preserved. (A feature removed from the skeleton
+// leaves a stale mark.md — a rare manual cleanup, never worth deleting a subtree.)
 writeRootAndTerrain();
 
 function allFeatures() {
@@ -96,7 +97,7 @@ function writeRootAndTerrain() {
     if (!box) continue; // route/sea with no point geometry: skip point-claim (survey carries them)
     writeMarkRaw(f.id, {
       kind: "sited", by: "the-town", tier: "constitution", date: TODAY,
-      at: box.at, extent: box.extent, survey: `terrain:${f.id}`,
+      at: box.at, extent: box.extent, feature: f.id,
     }, claimBody(f));
   }
   // far features (Pando): horizon object, exempt from ground containment
@@ -104,7 +105,7 @@ function writeRootAndTerrain() {
     const proj = projectHorizon(f);
     writeMarkRaw(f.id, {
       kind: "sited", by: "the-town", tier: "constitution", date: TODAY, far: true,
-      at: proj, extent: { w: 4000, h: 4000 }, survey: `terrain:${f.id}`,
+      at: proj, extent: { w: 4000, h: 4000 }, feature: f.id,
     }, claimBody(f));
   }
 }
