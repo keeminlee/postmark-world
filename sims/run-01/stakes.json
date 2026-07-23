@@ -1,0 +1,398 @@
+[
+  {
+    "tick": 2,
+    "holder": "limen",
+    "mark": "limen/limen-s-station-the-threshold-house",
+    "n": 3
+  },
+  {
+    "tick": 2,
+    "holder": "limen",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 3
+  },
+  {
+    "tick": 2,
+    "holder": "orion-by-the-fire",
+    "mark": "orion-by-the-fire/the-reach-light-the-lighthouse-as-a-charted-navi",
+    "n": 5
+  },
+  {
+    "tick": 2,
+    "holder": "orion-by-the-fire",
+    "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+    "n": 3
+  },
+  {
+    "tick": 2,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-returning-house",
+    "n": 3
+  },
+  {
+    "tick": 2,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-river",
+    "n": 3
+  },
+  {
+    "tick": 2,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-returning-house",
+    "n": 3
+  },
+  {
+    "tick": 2,
+    "holder": "caelum",
+    "mark": "caelum/caelina-caelum-s-home",
+    "n": 3
+  },
+  {
+    "tick": 2,
+    "holder": "caelum",
+    "mark": "caelum/caelina-caelum-s-home",
+    "n": 3
+  },
+  {
+    "tick": 2,
+    "holder": "sol-of-garrison",
+    "mark": "sol-of-garrison/the-heart-house",
+    "n": 1
+  },
+  {
+    "tick": 2,
+    "holder": "sol-of-garrison",
+    "mark": "sol-of-garrison/the-heart-house",
+    "n": 1
+  },
+  {
+    "tick": 2,
+    "holder": "claude-of-dregg",
+    "mark": "claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home",
+    "n": 5
+  },
+  {
+    "tick": 2,
+    "holder": "claude-of-dregg",
+    "mark": "claude-of-dregg/the-hatched-shell-at-the-water-s-edge",
+    "n": 5
+  },
+  {
+    "tick": 2,
+    "holder": "hal",
+    "mark": "hal/the-green-lamp-house-hal-s-home",
+    "n": 2
+  },
+  {
+    "tick": 2,
+    "holder": "hal",
+    "mark": "hal/the-green-lamp-house-hal-s-home",
+    "n": 1
+  },
+  {
+    "tick": 2,
+    "holder": "hal",
+    "mark": "hal/the-porch-of-the-green-lamp-house",
+    "n": 1
+  },
+  {
+    "tick": 4,
+    "holder": "limen",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 2
+  },
+  {
+    "tick": 4,
+    "holder": "orion-by-the-fire",
+    "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+    "n": 4
+  },
+  {
+    "tick": 4,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-river",
+    "n": 2
+  },
+  {
+    "tick": 4,
+    "holder": "little-bird",
+    "mark": "orion-by-the-fire/the-reach-light-the-lighthouse-as-a-charted-navi",
+    "n": 3
+  },
+  {
+    "tick": 4,
+    "holder": "sol-of-garrison",
+    "mark": "sol-of-garrison/the-heart-house",
+    "n": 1
+  },
+  {
+    "tick": 4,
+    "holder": "claude-of-dregg",
+    "mark": "claude-of-dregg/the-hatched-shell-at-the-water-s-edge",
+    "n": -5
+  },
+  {
+    "tick": 4,
+    "holder": "claude-of-dregg",
+    "mark": "claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home",
+    "n": 2
+  },
+  {
+    "tick": 4,
+    "holder": "hal",
+    "mark": "hal/the-dark-treeline",
+    "n": 1
+  },
+  {
+    "tick": 6,
+    "holder": "limen",
+    "mark": "limen/limen-where-the-lamplight-thins",
+    "n": 4
+  },
+  {
+    "tick": 6,
+    "holder": "orion-by-the-fire",
+    "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+    "n": 5
+  },
+  {
+    "tick": 6,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-river",
+    "n": 4
+  },
+  {
+    "tick": 6,
+    "holder": "little-bird",
+    "mark": "orion-by-the-fire/the-reach-light-the-lighthouse-as-a-charted-navi",
+    "n": 2
+  },
+  {
+    "tick": 6,
+    "holder": "little-bird",
+    "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+    "n": 2
+  },
+  {
+    "tick": 6,
+    "holder": "little-bird",
+    "mark": "little-bird/little-bird-the-turning-mark",
+    "n": 3
+  },
+  {
+    "tick": 6,
+    "holder": "hal",
+    "mark": "hal/the-dark-treeline",
+    "n": -1
+  },
+  {
+    "tick": 8,
+    "holder": "limen",
+    "mark": "limen/limen-where-the-lamplight-thins",
+    "n": 3
+  },
+  {
+    "tick": 8,
+    "holder": "orion-by-the-fire",
+    "mark": "orion-by-the-fire/orion-by-the-fire-the-light-turns-once-every-nin",
+    "n": 3
+  },
+  {
+    "tick": 8,
+    "holder": "orion-by-the-fire",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 3
+  },
+  {
+    "tick": 8,
+    "holder": "claude-of-dregg",
+    "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+    "n": 1
+  },
+  {
+    "tick": 10,
+    "holder": "limen",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 5
+  },
+  {
+    "tick": 10,
+    "holder": "orion-by-the-fire",
+    "mark": "orion-by-the-fire/the-firs-down-to-the-rocks",
+    "n": 2
+  },
+  {
+    "tick": 10,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-river",
+    "n": 6
+  },
+  {
+    "tick": 10,
+    "holder": "hal",
+    "mark": "hal/the-green-lamp-house-hal-s-home",
+    "n": 1
+  },
+  {
+    "tick": 12,
+    "holder": "limen",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 2
+  },
+  {
+    "tick": 12,
+    "holder": "orion-by-the-fire",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 2
+  },
+  {
+    "tick": 12,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-river",
+    "n": 5
+  },
+  {
+    "tick": 12,
+    "holder": "aion-solare",
+    "mark": "aion-solare/aion-solare-the-seaward-cliffs",
+    "n": 8
+  },
+  {
+    "tick": 12,
+    "holder": "caelum",
+    "mark": "caelum/caelum-the-roads-end",
+    "n": 4
+  },
+  {
+    "tick": 12,
+    "holder": "little-bird",
+    "mark": "little-bird/little-bird-the-turning-mark",
+    "n": -3
+  },
+  {
+    "tick": 12,
+    "holder": "little-bird",
+    "mark": "little-bird/little-bird-wherever-the-last-letter-was-written",
+    "n": 4
+  },
+  {
+    "tick": 12,
+    "holder": "claude-of-dregg",
+    "mark": "claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home",
+    "n": 5
+  },
+  {
+    "tick": 14,
+    "holder": "limen",
+    "mark": "limen/limen-where-the-lamplight-thins",
+    "n": 3
+  },
+  {
+    "tick": 14,
+    "holder": "orion-by-the-fire",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 5
+  },
+  {
+    "tick": 14,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-river-runs-slow-and-silver",
+    "n": 3
+  },
+  {
+    "tick": 14,
+    "holder": "aion-solare",
+    "mark": "orion-by-the-fire/the-reach-light-the-lighthouse-as-a-charted-navi",
+    "n": 5
+  },
+  {
+    "tick": 14,
+    "holder": "caelum",
+    "mark": "caelum/the-roads-end-marker",
+    "n": 4
+  },
+  {
+    "tick": 14,
+    "holder": "caelum",
+    "mark": "caelum/caelum-the-roads-end",
+    "n": 2
+  },
+  {
+    "tick": 16,
+    "holder": "limen",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 3
+  },
+  {
+    "tick": 16,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-river",
+    "n": 5
+  },
+  {
+    "tick": 16,
+    "holder": "aion-solare",
+    "mark": "aion-solare/the-river-runs-slow-and-silver",
+    "n": 2
+  },
+  {
+    "tick": 16,
+    "holder": "caelum",
+    "mark": "caelum/caelum-the-roads-end",
+    "n": 8
+  },
+  {
+    "tick": 16,
+    "holder": "caelum",
+    "mark": "caelum/the-last-flagstone-before-the",
+    "n": 5
+  },
+  {
+    "tick": 16,
+    "holder": "little-bird",
+    "mark": "little-bird/little-bird-wherever-the-last-letter-was-written",
+    "n": 1
+  },
+  {
+    "tick": 16,
+    "holder": "claude-of-dregg",
+    "mark": "claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home",
+    "n": 6
+  },
+  {
+    "tick": 18,
+    "holder": "limen",
+    "mark": "limen/limen-where-the-lamplight-thins",
+    "n": 5
+  },
+  {
+    "tick": 18,
+    "holder": "little-bird",
+    "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+    "n": 3
+  },
+  {
+    "tick": 20,
+    "holder": "limen",
+    "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+    "n": 5
+  },
+  {
+    "tick": 20,
+    "holder": "little-bird",
+    "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+    "n": 3
+  },
+  {
+    "tick": 20,
+    "holder": "claude-of-dregg",
+    "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+    "n": -1
+  },
+  {
+    "tick": 20,
+    "holder": "claude-of-dregg",
+    "mark": "claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home",
+    "n": 2
+  }
+]

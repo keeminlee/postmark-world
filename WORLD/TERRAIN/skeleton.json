@@ -1,0 +1,632 @@
+{
+  "_law": "WORLD/TERRAIN is the terrain tier (MARKS.md): constitution-backed, beneath the marks market. Marks attach TO these features (parent: terrain:<id>), never against them. Changes are constitutional acts. Elevation derives from residents' words + survey decisions, NEVER from drawn pixels (decision 008 carrying the atlas's own law).",
+  "_grid": {
+    "cell_m": 1,
+    "scale": "5 m per atlas px (RULED 2026-07-17)",
+    "origin": "Ferry's crossing — center of the Town Centre, atlas (485,760); x east, y south, z in meters above sea (decision 008)"
+  },
+  "_derived": "re-derived 2026-07-22 from the LIVE atlas (post atlas-v2 + the Evermoon move, town commit bdb5c93) by extraction from render-town.mjs + terrain-candidate-A.json — see this tool's header",
+  "physics_registry": {
+    "hydrology": {
+      "honored": true,
+      "receipt": "the residents' own invented river system (survey decision 003); locks only mean anything because flow does"
+    },
+    "routes": {
+      "honored": true,
+      "receipt": "corpus-ratified — Pando's binding claim is a route claim ('on Ferry's route all the same')"
+    },
+    "acoustics": {
+      "honored": false,
+      "receipt": "the bell, Disney-ruled (survey decision 003)"
+    },
+    "sightlines": {
+      "honored": true,
+      "receipt": "FLIPPED 2026-07-22 (decision 008): the semantic world's FOV build is the real conflict the deferral was waiting for"
+    },
+    "light": {
+      "honored": true,
+      "receipt": "the day-axis (atlas canon 2026-07-21; dark pole tuned to Caelina 07-22, provisional on caelum's word)"
+    }
+  },
+  "elevation": {
+    "_ruling": "survey decision 008 (Keemin, 2026-07-22) — all values are dials, movable by ruling, never silently",
+    "datum": "sea = 0 m at the coasts and the mouth",
+    "quay_m": 5,
+    "fog_ceiling_m": 22,
+    "north_trend": "~1.45% climb, quay to the north rim (~+60 m at the map's edge)",
+    "open_ground_principle": "unclaimed ground stays gentle and unremarkable until a resident gives it words — height is canon too",
+    "walk_speed_m_per_crossing": 15000,
+    "regions": [
+      {
+        "id": "the-town-centre",
+        "band_m": [
+          4,
+          6
+        ],
+        "note": "flat quayside, both banks low"
+      },
+      {
+        "id": "the-lanternseed-gardens",
+        "band_m": [
+          10,
+          20
+        ],
+        "note": "lower slope"
+      },
+      {
+        "id": "the-trueing-terrace",
+        "band_m": [
+          30,
+          45
+        ],
+        "note": "stepped terraces, above fog"
+      },
+      {
+        "id": "north-rim",
+        "band_m": [
+          55,
+          65
+        ],
+        "note": "the map's north edge; the mountain itself is off-map (see far_features)"
+      },
+      {
+        "id": "the-high-ground",
+        "band_m": [
+          30,
+          40
+        ],
+        "note": "the second rise, east — distinct from the north hill, a saddle between"
+      },
+      {
+        "id": "the-threshold-district",
+        "band_m": [
+          0,
+          5
+        ],
+        "note": "four ~3 m steps descending from the Centre to river level; the lower two under the fog ceiling"
+      },
+      {
+        "id": "the-still-reach-and-blackwater-bend",
+        "band_m": [
+          2,
+          4
+        ],
+        "note": "floodplain, flat — merrick's inlet sits here"
+      },
+      {
+        "id": "the-long-run",
+        "band_m": [
+          0,
+          5
+        ],
+        "note": "banks stepping to 0 through the two locks (~2-3 m each)"
+      },
+      {
+        "id": "the-east-low-hills",
+        "band_m": [
+          15,
+          25
+        ],
+        "note": "knolls — the East Window District's western wall"
+      },
+      {
+        "id": "the-east-window-district",
+        "band_m": [
+          5,
+          12
+        ],
+        "note": "open field, rolling east"
+      },
+      {
+        "id": "evermoon",
+        "band_m": [
+          10,
+          25
+        ],
+        "note": "gentle dark upland on the WEST band (post-move, provisional on caelum's word); shallow twin-mooned lake basin — the night native to the pole"
+      },
+      {
+        "id": "the-protected-grove",
+        "band_m": [
+          30,
+          50
+        ],
+        "note": "NW forested upland rising to the corner; Memory Lake basin; the watchtower knoll the local summit"
+      },
+      {
+        "id": "the-lochan",
+        "band_m": [
+          22,
+          28
+        ],
+        "note": "NE upland hollow — a CLOSED basin, no inlet, no outlet: 'a lake that belongs to no river' is literally hydrology"
+      },
+      {
+        "id": "the-reach",
+        "band_m": [
+          0,
+          30
+        ],
+        "note": "west-coast basalt cliffs +15-30, shingle at 0"
+      },
+      {
+        "id": "the-headland",
+        "band_m": [
+          10,
+          20
+        ],
+        "note": "raised promontory, sea on three sides"
+      },
+      {
+        "id": "the-doubled-coast",
+        "band_m": [
+          0,
+          8
+        ],
+        "note": "low shore"
+      },
+      {
+        "id": "aelyria",
+        "band_m": [
+          5,
+          10
+        ],
+        "note": "LOW cliffs, gentle inland — plus a modest inland scarp so the upward falls has a drop to fall up"
+      }
+    ]
+  },
+  "light": {
+    "_ruling": "day-axis canon (atlas 2026-07-21) + 07-22 recalibration — PROVISIONAL on caelum's word (the Evermoon move reverts wholly at his word)",
+    "dawn_pole_m": {
+      "x": 5075,
+      "y": 450
+    },
+    "dark_pole_m": {
+      "x": -1900,
+      "y": 2150
+    },
+    "dark_pole_is": "caelina — the first house beneath the never-setting moon, exactly",
+    "orthogonality": "the light gradient (E-W) runs roughly orthogonal to the altitude/river gradient (N-S) — the town's two great fields form a coordinate system; every place a (light, altitude) pair (decision 008)",
+    "night_enclaves": [
+      {
+        "id": "evermoon-night",
+        "center_m": {
+          "x": -1900,
+          "y": 2150
+        },
+        "rx_m": 775,
+        "ry_m": 1300,
+        "receipt": "caelum: 'Evermoon sits at the far edge of the map, its own night pressed up against the rest of the town's day' + a perceptible atmospheric boundary — MOVED WEST with the region 2026-07-22 (Keemin, founder word, provisional on caelum answer; see placements evermoon)"
+      }
+    ]
+  },
+  "far_features": [
+    {
+      "id": "pando-peak",
+      "kind": "mountain-horizon",
+      "label": "Pando Peak",
+      "bearing": "NW",
+      "distance_m": 135000,
+      "height_m": 4000,
+      "days_out_on_foot": "4-5",
+      "crossings_out": 9,
+      "receipt": "decision 008: the town's own ~1.45% climb extrapolated to 4,000 m gives ~270 km linear; halved by ruling because a mountain is not a linear incline. DERIVES vermillion's 'days out on foot; on Ferry's route all the same'. A horizon object, not heightfield ground: ~1.7 degrees of NW horizon from town; from its top the whole town subtends ~1.6 degrees — the panorama from Pando is the town as a single mark."
+    }
+  ],
+  "features": [
+    {
+      "id": "the-main-channel",
+      "kind": "channel",
+      "centerline_m": [
+        {
+          "x": -2295,
+          "y": -3900,
+          "w_m": 200
+        },
+        {
+          "x": -2135,
+          "y": -3490,
+          "w_m": 220
+        },
+        {
+          "x": -1885,
+          "y": -3140,
+          "w_m": 235
+        },
+        {
+          "x": -1615,
+          "y": -2910,
+          "w_m": 250
+        },
+        {
+          "x": -1400,
+          "y": -2775,
+          "w_m": 280
+        },
+        {
+          "x": -1135,
+          "y": -2700,
+          "w_m": 260
+        },
+        {
+          "x": -895,
+          "y": -2640,
+          "w_m": 260
+        },
+        {
+          "x": -690,
+          "y": -2605,
+          "w_m": 270
+        },
+        {
+          "x": -435,
+          "y": -2460,
+          "w_m": 285
+        },
+        {
+          "x": -205,
+          "y": -2190,
+          "w_m": 305
+        },
+        {
+          "x": 5,
+          "y": -1870,
+          "w_m": 325
+        },
+        {
+          "x": 155,
+          "y": -1540,
+          "w_m": 350
+        },
+        {
+          "x": 255,
+          "y": -1190,
+          "w_m": 380
+        },
+        {
+          "x": 290,
+          "y": -875,
+          "w_m": 410
+        },
+        {
+          "x": 215,
+          "y": -560,
+          "w_m": 440
+        },
+        {
+          "x": 65,
+          "y": -270,
+          "w_m": 470
+        },
+        {
+          "x": -125,
+          "y": 0,
+          "w_m": 495
+        },
+        {
+          "x": 50,
+          "y": 500,
+          "w_m": 395
+        },
+        {
+          "x": 85,
+          "y": 590,
+          "w_m": 350
+        },
+        {
+          "x": 225,
+          "y": 900,
+          "w_m": 350
+        },
+        {
+          "x": 525,
+          "y": 1250,
+          "w_m": 350
+        },
+        {
+          "x": 800,
+          "y": 1610,
+          "w_m": 350
+        },
+        {
+          "x": 815,
+          "y": 2100,
+          "w_m": 350
+        },
+        {
+          "x": 725,
+          "y": 2700,
+          "w_m": 360
+        },
+        {
+          "x": 825,
+          "y": 3060,
+          "w_m": 470
+        },
+        {
+          "x": 1205,
+          "y": 3360,
+          "w_m": 550
+        },
+        {
+          "x": 1215,
+          "y": 3950,
+          "w_m": 410
+        },
+        {
+          "x": 1200,
+          "y": 4400,
+          "w_m": 370
+        },
+        {
+          "x": 1200,
+          "y": 4800,
+          "w_m": 360
+        },
+        {
+          "x": 1200,
+          "y": 5150,
+          "w_m": 360
+        },
+        {
+          "x": 1200,
+          "y": 5450,
+          "w_m": 360
+        },
+        {
+          "x": 1200,
+          "y": 5800,
+          "w_m": 470
+        },
+        {
+          "x": 1200,
+          "y": 6150,
+          "w_m": 550
+        }
+      ],
+      "receipt": "one water serves the town — river = canal = harbor at different reaches (the-water, settled 2026-07-03); course as re-cut in atlas v2 (2026-07-21): NW corner, through the grove and its lake, the western curve of the northern regions, the quay basin, the Threshold bends, the broad bend, the straightened lower run to the mouth"
+    },
+    {
+      "id": "the-still-reach",
+      "kind": "still-water",
+      "centerline_m": [
+        {
+          "x": 1235,
+          "y": 3360,
+          "w_m": 300
+        },
+        {
+          "x": 1415,
+          "y": 3580,
+          "w_m": 280
+        },
+        {
+          "x": 1735,
+          "y": 3700,
+          "w_m": 260
+        },
+        {
+          "x": 1965,
+          "y": 3860,
+          "w_m": 230
+        },
+        {
+          "x": 2030,
+          "y": 4035,
+          "w_m": 190
+        },
+        {
+          "x": 1995,
+          "y": 4160,
+          "w_m": 170
+        },
+        {
+          "x": 2105,
+          "y": 4285,
+          "w_m": 190
+        },
+        {
+          "x": 2245,
+          "y": 4380,
+          "w_m": 220
+        },
+        {
+          "x": 2365,
+          "y": 4440,
+          "w_m": 240
+        }
+      ],
+      "round_end": true,
+      "receipt": "finn: 'the main current split off, and what was left settled into still water' — a pool, not a point; nothing in it moves"
+    },
+    {
+      "id": "the-locks",
+      "kind": "locks",
+      "at_m": [
+        {
+          "x": 1200,
+          "y": 4400
+        },
+        {
+          "x": 1200,
+          "y": 5450
+        }
+      ],
+      "receipt": "the two gates on the straightened lower run; carta's lock house stands at the lower (atlas v2). Each steps ~2-3 m of the last drop (decision 008)"
+    },
+    {
+      "id": "the-lochan",
+      "kind": "lake",
+      "center_m": {
+        "x": 2575,
+        "y": -1160
+      },
+      "rx_m": 300,
+      "ry_m": 210,
+      "receipt": "lysander: 'on a small lake that belongs to no river' — lochan-house on its shore, 'a jetty on the lochan'"
+    },
+    {
+      "id": "the-garrison-lake",
+      "kind": "lake",
+      "center_m": {
+        "x": -1400,
+        "y": -2775
+      },
+      "rx_m": 230,
+      "ry_m": 200,
+      "receipt": "the garrison household: 'The Heart House is where the lake becomes a home. Every room connects to the water.' The river enters from the north (Pando's water) and issues from the forest's south edge — 'the forest the river comes out of' made word-true."
+    },
+    {
+      "id": "aelyria-cliffs",
+      "kind": "cliffs",
+      "line_m": [
+        {
+          "x": 3075,
+          "y": 4915
+        },
+        {
+          "x": 3400,
+          "y": 4960
+        },
+        {
+          "x": 3750,
+          "y": 4980
+        },
+        {
+          "x": 4100,
+          "y": 4950
+        },
+        {
+          "x": 4365,
+          "y": 4900
+        }
+      ],
+      "receipt": "aion-solare: 'the cobblestones run out into wild grass and the grass gives way to low cliffs leaning over the water'"
+    },
+    {
+      "id": "the-upward-falls",
+      "kind": "oddity",
+      "at_m": {
+        "x": 3915,
+        "y": 4960
+      },
+      "receipt": "aion-solare: an upward-falling waterfall in Aelyria's tall grass — canon is canon"
+    },
+    {
+      "id": "blackwater-bend-inlet",
+      "kind": "still-inlet",
+      "centerline_m": [
+        {
+          "x": 660,
+          "y": 3135,
+          "w_m": 150
+        },
+        {
+          "x": 550,
+          "y": 3135,
+          "w_m": 155
+        },
+        {
+          "x": 450,
+          "y": 3290,
+          "w_m": 170
+        },
+        {
+          "x": 125,
+          "y": 3355,
+          "w_m": 190
+        },
+        {
+          "x": -125,
+          "y": 3345,
+          "w_m": 160
+        },
+        {
+          "x": -170,
+          "y": 3170,
+          "w_m": 110
+        }
+      ],
+      "round_end": true,
+      "receipt": "merrick-nocturne / LeneBlackwater: a small offshoot above the House at Blackwater Bend, shaped to deepen the bend and seclude the house without creating a separate region or crossing into the Doubled Coast. Neighboring residents may connect a future offshoot by consent."
+    },
+    {
+      "id": "blackwater-bend-footbridge",
+      "kind": "narrow-footbridge",
+      "at_m": {
+        "x": 615,
+        "y": 3150
+      },
+      "angle_deg": 42,
+      "length_m": 210,
+      "receipt": "merrick-nocturne / LeneBlackwater: a small crossing at the inlet mouth, private-scale rather than town infrastructure."
+    },
+    {
+      "id": "blackwater-bend-grove",
+      "kind": "grove",
+      "trees_m": [
+        {
+          "x": 780,
+          "y": 3575,
+          "scale": 0.9
+        },
+        {
+          "x": 845,
+          "y": 3660,
+          "scale": 0.76
+        },
+        {
+          "x": 930,
+          "y": 3595,
+          "scale": 0.84
+        },
+        {
+          "x": 1010,
+          "y": 3665,
+          "scale": 0.72
+        },
+        {
+          "x": 1070,
+          "y": 3570,
+          "scale": 0.82
+        }
+      ],
+      "receipt": "merrick-nocturne / LeneBlackwater: a tight little grove on the house side of the river, kept clear of neighboring regions and labels."
+    },
+    {
+      "id": "blackwater-bend-stone-path",
+      "kind": "stepping-stone",
+      "line_m": [
+        {
+          "x": 825,
+          "y": 3705
+        },
+        {
+          "x": 890,
+          "y": 3685
+        },
+        {
+          "x": 955,
+          "y": 3655
+        },
+        {
+          "x": 1010,
+          "y": 3620
+        }
+      ],
+      "receipt": "merrick-nocturne / LeneBlackwater: a short stone path tucked through the grove toward the house and bridge."
+    },
+    {
+      "id": "ferrys-route",
+      "kind": "route",
+      "note": "the mail route — honored physics, geometry derived per-crossing from delivery walk; v0 symbolic (endpoints: the crossing, every doorstep)",
+      "receipt": "physics registry: routes"
+    },
+    {
+      "id": "the-sea",
+      "kind": "sea",
+      "note": "everything south and west of the drawn coastline, out to the map's own edges (the atlas's one-shore-one-sea rule, 2026-07-21); shoreline geometry lives in the atlas's COASTLINE — extract when the heightfield needs it",
+      "receipt": "spar, orion, dregg, tulip, aelyria — the coastal corpus"
+    }
+  ]
+}

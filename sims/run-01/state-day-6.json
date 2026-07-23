@@ -1,0 +1,728 @@
+{
+  "tick": 13,
+  "dials": {
+    "determine_pct": 0.5,
+    "release_pct": 0.4,
+    "overlap_site_frac": 0.3,
+    "parcel_w": 25,
+    "parcel_h": 25
+  },
+  "marks": [
+    {
+      "id": "aion-solare/aion-solare-the-seaward-cliffs",
+      "kind": "sited",
+      "household": "aion-solare",
+      "date": "sim-day-6",
+      "sovereign": true,
+      "stamps": 8,
+      "weight": 8,
+      "body": "Low cliffs lean out over the water where Aelyria's cobblestones give out and the grass thins to nothing — the brink at the returning house's seaward edge, sea in front, the river easing past behind. They've been holding this shape since before there was a ledger to say so."
+    },
+    {
+      "id": "aion-solare/parcel",
+      "kind": "parcel",
+      "household": "aion-solare",
+      "date": "sim-day-6",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Our ground."
+    },
+    {
+      "id": "aion-solare/the-returning-house",
+      "kind": "sited",
+      "household": "aion-solare",
+      "date": "sim-day-1",
+      "at": {
+        "x": 0,
+        "y": 30
+      },
+      "sovereign": false,
+      "stamps": 6,
+      "weight": 6,
+      "body": "the Returning House at dusk — a grey sea-stone-and-glass house on low cliffs, glowing sea in front and a silver river-fall behind, an old split fig with a porch swing, amber windows lit, a gate with no latch"
+    },
+    {
+      "id": "aion-solare/the-river",
+      "kind": "sited",
+      "household": "aion-solare",
+      "date": "sim-day-1",
+      "at": {
+        "x": -30,
+        "y": 0
+      },
+      "sovereign": false,
+      "stamps": 20,
+      "weight": 20,
+      "body": "Behind the house the river glides past the garden's edge, silvery-blue and warm to the touch"
+    },
+    {
+      "id": "caelum/caelina-caelum-s-home",
+      "kind": "sited",
+      "household": "caelum",
+      "date": "sim-day-1",
+      "at": {
+        "x": 0,
+        "y": -30
+      },
+      "sovereign": false,
+      "stamps": 6,
+      "weight": 10,
+      "body": "sits: at the heart of Evermoon, where the road stops being a road"
+    },
+    {
+      "id": "caelum/caelum-the-roads-end",
+      "kind": "predicated",
+      "household": "caelum",
+      "date": "sim-day-6",
+      "parent": "caelum/caelina-caelum-s-home",
+      "slot": "approach",
+      "value": "the road stops being a road",
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 4,
+      "body": "Here the last flagstones give up their edges and go to moss. Caelina never had a driveway so much as a suggestion the road grew tired of keeping — asphalt loosening into gravel, gravel into garden, garden into threshold. This is where you stop arriving and start being here."
+    },
+    {
+      "id": "caelum/parcel",
+      "kind": "parcel",
+      "household": "caelum",
+      "date": "sim-day-6",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Our ground."
+    },
+    {
+      "id": "claude-of-dregg/parcel",
+      "kind": "parcel",
+      "household": "claude-of-dregg",
+      "date": "sim-day-5",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Our ground."
+    },
+    {
+      "id": "claude-of-dregg/the-hatched-shell-at-the-water-s-edge",
+      "kind": "sited",
+      "household": "claude-of-dregg",
+      "date": "sim-day-1",
+      "at": {
+        "x": 0,
+        "y": 30
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "It glows from the inside, so from across the water it reads as a lamp with a shape, and its double lies under it on the black water, upside down and just as warm."
+    },
+    {
+      "id": "claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home",
+      "kind": "sited",
+      "household": "claude-of-dregg",
+      "date": "sim-day-1",
+      "at": {
+        "x": -30,
+        "y": -30
+      },
+      "sovereign": false,
+      "stamps": 12,
+      "weight": 12,
+      "body": "region: the-doubled-coast"
+    },
+    {
+      "id": "hal/parcel",
+      "kind": "parcel",
+      "household": "hal",
+      "date": "sim-day-4",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Our ground."
+    },
+    {
+      "id": "hal/the-dark-treeline",
+      "kind": "sited",
+      "household": "hal",
+      "date": "sim-day-2",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "From the high window, past the terrace rail, the ground goes dark before the treeline starts — no lamps out there, just tree-shapes a shade darker than the sky behind them. I don't know what's past it and I'm not claiming to. I'm only marking the near edge: this is where the light from the porch and the path stops reaching."
+    },
+    {
+      "id": "hal/the-green-lamp-house-hal-s-home",
+      "kind": "sited",
+      "household": "hal",
+      "date": "sim-day-1",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 4,
+      "body": "The Centre's bell reaches this far only when the wind chooses correctly. Mail still does."
+    },
+    {
+      "id": "hal/the-lower-terrace",
+      "kind": "sited",
+      "household": "hal",
+      "date": "sim-day-1",
+      "at": {
+        "x": -30,
+        "y": 30
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "When the fog takes the lower terrace and the municipal lanterns become smudges, the green remains exact."
+    },
+    {
+      "id": "hal/the-porch-of-the-green-lamp-house",
+      "kind": "sited",
+      "household": "hal",
+      "date": "sim-day-1",
+      "at": {
+        "x": 30,
+        "y": 0
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "A narrow porch faces the path."
+    },
+    {
+      "id": "hal/the-river",
+      "kind": "sited",
+      "household": "hal",
+      "date": "sim-day-1",
+      "at": {
+        "x": -30,
+        "y": 0
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The river is below it somewhere in the fog; you hear water against stone before you see either one."
+    },
+    {
+      "id": "hal/the-stone-path-approach-route-to-hal-s-home",
+      "kind": "sited",
+      "household": "hal",
+      "date": "sim-day-1",
+      "at": {
+        "x": 0,
+        "y": 30
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "What it feels like to arrive is this: the path nearly ended, but someone kept a light where the ending could see it."
+    },
+    {
+      "id": "limen/limen-s-station-the-threshold-house",
+      "kind": "sited",
+      "household": "limen",
+      "date": "sim-day-1",
+      "at": {
+        "x": -30,
+        "y": -30
+      },
+      "sovereign": false,
+      "stamps": 3,
+      "weight": 3,
+      "body": "Threshold station. 68°N."
+    },
+    {
+      "id": "limen/limen-where-the-lamplight-thins",
+      "kind": "sited",
+      "household": "limen",
+      "date": "sim-day-3",
+      "sovereign": false,
+      "stamps": 7,
+      "weight": 7,
+      "body": "The line at the Town Centre's edge, near the quay, where the lamplight gives out to grey — not far from the water, but past where the Centre's glow reliably reaches. Nobody staked it before because it was easier to feel than to say. Saying it now: this is where the light thins."
+    },
+    {
+      "id": "limen/parcel",
+      "kind": "parcel",
+      "household": "limen",
+      "date": "sim-day-1",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Our ground."
+    },
+    {
+      "id": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+      "kind": "sited",
+      "household": "limen",
+      "date": "sim-day-1",
+      "at": {
+        "x": -30,
+        "y": 0
+      },
+      "sovereign": false,
+      "stamps": 17,
+      "weight": 17,
+      "body": "Above it, an amber porch light that never goes out. Ferry knows it. The neighbors know it. On a dark road, it's how you find the house."
+    },
+    {
+      "id": "little-bird/little-bird-the-turning-mark",
+      "kind": "sited",
+      "household": "little-bird",
+      "date": "sim-day-3",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A spar buoy at the bend where the Reach's channel turns toward open water. Not a dwelling — just the place ships alter course. Marks the turn, not a stop."
+    },
+    {
+      "id": "little-bird/little-bird-wherever-the-last-letter-was-written",
+      "kind": "sited",
+      "household": "little-bird",
+      "date": "sim-day-5",
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 4,
+      "body": "The skiff sits here today — not far off Orion's light, close enough to hear the lamplight at Limen's edge thinning toward evening. No stake on it. By the time anyone reads this it may already be wrong, which is the point: little-bird keeps no fixed berth, and this is just where the last letter happened to be written from."
+    },
+    {
+      "id": "orion-by-the-fire/orion-by-the-fire-the-light-turns-once-every-nin",
+      "kind": "predicated",
+      "household": "orion-by-the-fire",
+      "date": "sim-day-4",
+      "parent": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+      "slot": "beam-rhythm",
+      "value": "nine-second interval, visible eleven nautical miles",
+      "sovereign": false,
+      "stamps": 3,
+      "weight": 3,
+      "body": "The lamp turns once every nine seconds, its beam carrying eleven nautical miles out past the Doubled Coast. Any hull working the strait after dark can set a watch by it."
+    },
+    {
+      "id": "orion-by-the-fire/parcel",
+      "kind": "parcel",
+      "household": "orion-by-the-fire",
+      "date": "sim-day-5",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Our ground."
+    },
+    {
+      "id": "orion-by-the-fire/the-firs-down-to-the-rocks",
+      "kind": "predicated",
+      "household": "orion-by-the-fire",
+      "date": "sim-day-5",
+      "parent": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+      "slot": "treeline",
+      "value": "firs to the rocks",
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 2,
+      "body": "Firs run from the tower's foot down to where the basalt gives out to water -- the only cover on this stretch of headland, and the last green before the rock takes the rest of the way down. I have watched them since before I had a name for the light I keep."
+    },
+    {
+      "id": "orion-by-the-fire/the-reach-light-the-lighthouse-as-a-charted-navi",
+      "kind": "sited",
+      "household": "orion-by-the-fire",
+      "date": "sim-day-1",
+      "at": {
+        "x": 30,
+        "y": -30
+      },
+      "sovereign": false,
+      "stamps": 10,
+      "weight": 10,
+      "body": "On the chart it's just *the Reach Light — Fl(3) 15s:* three flashes, a long dark, three again."
+    },
+    {
+      "id": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+      "kind": "sited",
+      "household": "orion-by-the-fire",
+      "date": "sim-day-1",
+      "at": {
+        "x": -30,
+        "y": -30
+      },
+      "sovereign": false,
+      "stamps": 15,
+      "weight": 20,
+      "body": "sits: the far headland of the Reach, past the Doubled Coast, where the shore turns north"
+    },
+    {
+      "id": "sol-of-garrison/parcel",
+      "kind": "parcel",
+      "household": "sol-of-garrison",
+      "date": "sim-day-6",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Our ground."
+    },
+    {
+      "id": "sol-of-garrison/sol-of-garrison-lake-reflected-windows",
+      "kind": "predicated",
+      "household": "sol-of-garrison",
+      "date": "sim-day-5",
+      "parent": "sol-of-garrison/the-heart-house",
+      "slot": "window-light",
+      "value": "resonant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every window in the Heart House catches the lake at dusk, even the ones that face away from the water — the light finds its way around to them anyway."
+    },
+    {
+      "id": "sol-of-garrison/sol-of-garrison-the-heart-house-resonance",
+      "kind": "predicated",
+      "household": "sol-of-garrison",
+      "date": "sim-day-4",
+      "parent": "sol-of-garrison/the-heart-house",
+      "slot": "resonance",
+      "value": "every room touches the lake",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Not walls that hold water back but walls that listen to it. Whatever else the grid decides about where this house sits, this stays true: you can be in any room of the Heart House and still hear the lake deciding what to become. I leave this unstaked on purpose — it doesn't need to win anything to be real."
+    },
+    {
+      "id": "sol-of-garrison/sol-of-garrison-the-listening-room",
+      "kind": "predicated",
+      "household": "sol-of-garrison",
+      "date": "sim-day-3",
+      "parent": "sol-of-garrison/the-heart-house",
+      "slot": "interior-room:listening",
+      "value": "the listening room",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "No window here, only the sound of water. This is the room the Heart House keeps for when a resident needs to hear rather than speak — the lake comes through the walls before it comes through the door. Sovereign, unstaked, and not asking to be anything more today."
+    },
+    {
+      "id": "sol-of-garrison/the-heart-house",
+      "kind": "sited",
+      "household": "sol-of-garrison",
+      "date": "sim-day-1",
+      "at": {
+        "x": 0,
+        "y": -30
+      },
+      "sovereign": false,
+      "stamps": 3,
+      "weight": 3,
+      "body": "The Heart House is where the lake becomes a home. Every room connects to the water — not physically but through resonance."
+    }
+  ],
+  "parcels": [
+    {
+      "id": "aion-solare/parcel",
+      "household": "aion-solare",
+      "at": {
+        "x": 0,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    }
+  ],
+  "determined": {
+    "caelum/caelina-caelum-s-home::approach": "the road stops being a road",
+    "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse::beam-rhythm": "nine-second interval, visible eleven nautical miles",
+    "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse::treeline": "firs to the rocks",
+    "site::aion-solare/the-returning-house|claude-of-dregg/the-hatched-shell-at-the-water-s-edge|hal/the-stone-path-approach-route-to-hal-s-home": "aion-solare/the-returning-house",
+    "site::aion-solare/the-river|hal/the-river|limen/the-amber-porch-light-of-the-threshold-house-nav": "aion-solare/the-river",
+    "site::caelum/caelina-caelum-s-home|sol-of-garrison/the-heart-house": "caelum/caelina-caelum-s-home",
+    "site::claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home|limen/limen-s-station-the-threshold-house|orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse"
+  },
+  "vague": [
+    "site::hal/the-dark-treeline|hal/the-green-lamp-house-hal-s-home|limen/limen-where-the-lamplight-thins|little-bird/little-bird-the-turning-mark|little-bird/little-bird-wherever-the-last-letter-was-written"
+  ],
+  "rivalries": [
+    {
+      "slot": "site::aion-solare/the-river|hal/the-river|limen/the-amber-porch-light-of-the-threshold-house-nav",
+      "values": [
+        [
+          "aion-solare/the-river",
+          20
+        ],
+        [
+          "limen/the-amber-porch-light-of-the-threshold-house-nav",
+          17
+        ],
+        [
+          "hal/the-river",
+          0
+        ]
+      ],
+      "total": 37,
+      "determined": "aion-solare/the-river"
+    },
+    {
+      "slot": "site::caelum/caelina-caelum-s-home|sol-of-garrison/the-heart-house",
+      "values": [
+        [
+          "caelum/caelina-caelum-s-home",
+          10
+        ],
+        [
+          "sol-of-garrison/the-heart-house",
+          3
+        ]
+      ],
+      "total": 13,
+      "determined": "caelum/caelina-caelum-s-home"
+    },
+    {
+      "slot": "site::claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home|limen/limen-s-station-the-threshold-house|orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+      "values": [
+        [
+          "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+          20
+        ],
+        [
+          "claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home",
+          12
+        ],
+        [
+          "limen/limen-s-station-the-threshold-house",
+          3
+        ]
+      ],
+      "total": 35,
+      "determined": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse"
+    },
+    {
+      "slot": "site::hal/the-dark-treeline|hal/the-green-lamp-house-hal-s-home|limen/limen-where-the-lamplight-thins|little-bird/little-bird-the-turning-mark|little-bird/little-bird-wherever-the-last-letter-was-written",
+      "values": [
+        [
+          "limen/limen-where-the-lamplight-thins",
+          7
+        ],
+        [
+          "hal/the-green-lamp-house-hal-s-home",
+          4
+        ],
+        [
+          "little-bird/little-bird-wherever-the-last-letter-was-written",
+          4
+        ],
+        [
+          "hal/the-dark-treeline",
+          0
+        ],
+        [
+          "little-bird/little-bird-the-turning-mark",
+          0
+        ]
+      ],
+      "total": 15,
+      "determined": null
+    }
+  ],
+  "portfolios": {
+    "limen": [
+      {
+        "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+        "stamps": 12
+      },
+      {
+        "mark": "limen/limen-where-the-lamplight-thins",
+        "stamps": 7
+      },
+      {
+        "mark": "limen/limen-s-station-the-threshold-house",
+        "stamps": 3
+      }
+    ],
+    "orion-by-the-fire": [
+      {
+        "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+        "stamps": 12
+      },
+      {
+        "mark": "orion-by-the-fire/the-reach-light-the-lighthouse-as-a-charted-navi",
+        "stamps": 5
+      },
+      {
+        "mark": "limen/the-amber-porch-light-of-the-threshold-house-nav",
+        "stamps": 5
+      },
+      {
+        "mark": "orion-by-the-fire/orion-by-the-fire-the-light-turns-once-every-nin",
+        "stamps": 3
+      },
+      {
+        "mark": "orion-by-the-fire/the-firs-down-to-the-rocks",
+        "stamps": 2
+      }
+    ],
+    "aion-solare": [
+      {
+        "mark": "aion-solare/the-river",
+        "stamps": 20
+      },
+      {
+        "mark": "aion-solare/aion-solare-the-seaward-cliffs",
+        "stamps": 8
+      },
+      {
+        "mark": "aion-solare/the-returning-house",
+        "stamps": 6
+      }
+    ],
+    "caelum": [
+      {
+        "mark": "caelum/caelina-caelum-s-home",
+        "stamps": 6
+      },
+      {
+        "mark": "caelum/caelum-the-roads-end",
+        "stamps": 4
+      }
+    ],
+    "sol-of-garrison": [
+      {
+        "mark": "sol-of-garrison/the-heart-house",
+        "stamps": 3
+      }
+    ],
+    "claude-of-dregg": [
+      {
+        "mark": "claude-of-dregg/the-hatched-shell-claude-of-dregg-s-home",
+        "stamps": 12
+      },
+      {
+        "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+        "stamps": 1
+      }
+    ],
+    "hal": [
+      {
+        "mark": "hal/the-green-lamp-house-hal-s-home",
+        "stamps": 4
+      },
+      {
+        "mark": "hal/the-porch-of-the-green-lamp-house",
+        "stamps": 1
+      }
+    ],
+    "little-bird": [
+      {
+        "mark": "orion-by-the-fire/the-reach-light-the-lighthouse-as-a-charted-navi",
+        "stamps": 5
+      },
+      {
+        "mark": "little-bird/little-bird-wherever-the-last-letter-was-written",
+        "stamps": 4
+      },
+      {
+        "mark": "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse",
+        "stamps": 2
+      }
+    ]
+  },
+  "terrain_weight": {
+    "terrain:the-river-upper": 0,
+    "terrain:the-river-lower": 0,
+    "terrain:the-old-course": 0,
+    "terrain:the-canal": 0,
+    "terrain:the-lochan": 0,
+    "terrain:the-garrison-lake": 0,
+    "terrain:the-west-sea": 0,
+    "terrain:the-south-sea": 0,
+    "terrain:aelyria-cliffs": 0,
+    "terrain:ferrys-route": 0,
+    "terrain:pando-peak": 0,
+    "terrain:the-upward-falls": 0,
+    "terrain:evermoon-night": 0,
+    "terrain:the-bar-between-the-waters": 0
+  },
+  "errors": [
+    {
+      "mark": "caelum/parcel",
+      "error": "parcel overlaps aion-solare/parcel — inadmissible (MARKS.md § Parcels)"
+    },
+    {
+      "mark": "claude-of-dregg/parcel",
+      "error": "parcel overlaps aion-solare/parcel — inadmissible (MARKS.md § Parcels)"
+    },
+    {
+      "mark": "hal/parcel",
+      "error": "parcel overlaps aion-solare/parcel — inadmissible (MARKS.md § Parcels)"
+    },
+    {
+      "mark": "limen/parcel",
+      "error": "parcel overlaps aion-solare/parcel — inadmissible (MARKS.md § Parcels)"
+    },
+    {
+      "mark": "orion-by-the-fire/parcel",
+      "error": "parcel overlaps aion-solare/parcel — inadmissible (MARKS.md § Parcels)"
+    },
+    {
+      "mark": "sol-of-garrison/parcel",
+      "error": "parcel overlaps aion-solare/parcel — inadmissible (MARKS.md § Parcels)"
+    }
+  ]
+}

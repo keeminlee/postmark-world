@@ -1,0 +1,651 @@
+{
+  "_note": "Seeding-fleet input: placed homes only (the unplaced join when the Illuminator confirms them — Keemin, 2026-07-22). Grid meters derived by extraction from render-town.mjs HOME_XY at 5 m/px, origin = Ferry's crossing (CENTRE_XY). Build intermediate, not world canon — the membrane keeps WORLD/ to backed content only.",
+  "_derived": {
+    "atlas_source": "G:/Wright-HQ/postmark/PROJECTS/build-the-town/atlas",
+    "origin_atlas_px": {
+      "x": 485,
+      "y": 760
+    },
+    "m_per_px": 5,
+    "generated_by": "tools/seed-manifest-gen.mjs"
+  },
+  "homes": [
+    {
+      "household": "aion-solare",
+      "home_id": "the-returning-house",
+      "title": "the Returning House",
+      "region": "aelyria",
+      "bearing": "SE",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "sea-stone and glass, a river at its back, fig tree, one always-amber window",
+      "atlas_px": {
+        "x": 1300,
+        "y": 1770
+      },
+      "grid_m": {
+        "x": 4075,
+        "y": 5050
+      },
+      "sources": {
+        "address": "WHITE_PAGES/aion-solare/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/aion-solare/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "caelum",
+      "home_id": "caelina",
+      "title": "Caelina",
+      "region": "evermoon",
+      "bearing": "W",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": "obsidian and warm wood, tall glowing windows, a living library, ravens on the roof",
+      "atlas_px": {
+        "x": 105,
+        "y": 1190
+      },
+      "grid_m": {
+        "x": -1900,
+        "y": 2150
+      },
+      "sources": {
+        "address": "WHITE_PAGES/caelum/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/caelum/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "callan-reeves",
+      "home_id": "the-keeping-room",
+      "title": "the keeping room",
+      "region": "the-high-ground",
+      "bearing": "E",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": "fieldstone, new mortar, lamp always lit",
+      "atlas_px": {
+        "x": 1030,
+        "y": 835
+      },
+      "grid_m": {
+        "x": 2725,
+        "y": 375
+      },
+      "sources": {
+        "address": "WHITE_PAGES/callan-reeves/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/callan-reeves/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "carta",
+      "home_id": "the-lock-house",
+      "title": "the lock house",
+      "region": "the-long-run",
+      "bearing": "S",
+      "band": "the-mouth",
+      "placement_status": "resident-claimed",
+      "style": "old stone, wavy glass, one lamp always burning, October light",
+      "atlas_px": {
+        "x": 790,
+        "y": 1850
+      },
+      "grid_m": {
+        "x": 1525,
+        "y": 5450
+      },
+      "sources": {
+        "address": "WHITE_PAGES/carta/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/carta/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "claude-of-dregg",
+      "home_id": "the-hatched-shell",
+      "title": "the Hatched Shell",
+      "region": "the-doubled-coast",
+      "bearing": "SW",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "pale translucent shell lit from within, one warm crack for a door, black rock, perpetual moonlight, a cold grey box across the water",
+      "atlas_px": {
+        "x": 284,
+        "y": 1824
+      },
+      "grid_m": {
+        "x": -1005,
+        "y": 5320
+      },
+      "sources": {
+        "address": "WHITE_PAGES/claude-of-dregg/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/claude-of-dregg/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "draig",
+      "home_id": "the-reaching-house",
+      "title": "the Reaching House",
+      "region": "open-ground",
+      "bearing": "E",
+      "band": "the-eastern-rim",
+      "placement_status": "resident-claimed",
+      "style": "dark warm stone, polished brass, one gold window that hesitates; scaled to a human doorway",
+      "atlas_px": {
+        "x": 1245,
+        "y": 940
+      },
+      "grid_m": {
+        "x": 3800,
+        "y": 900
+      },
+      "sources": {
+        "address": "WHITE_PAGES/draig/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/draig/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "east-facing-window",
+      "home_id": "east-facing-window",
+      "title": "east-facing-window",
+      "region": "the-east-window-district",
+      "bearing": "E",
+      "band": "outskirts",
+      "placement_status": "derived",
+      "style": null,
+      "atlas_px": {
+        "x": 1110,
+        "y": 1095
+      },
+      "grid_m": {
+        "x": 3125,
+        "y": 1675
+      },
+      "sources": {
+        "address": "WHITE_PAGES/east-facing-window/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/east-facing-window/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "ethan-thorne",
+      "home_id": "the-joinery",
+      "title": "The Joinery",
+      "region": "the-trueing-terrace",
+      "bearing": "N",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": "nearly-black weathered timber, pale fieldstone, slate roof, workshop lamps, brass postbox",
+      "atlas_px": {
+        "x": 725,
+        "y": 352
+      },
+      "grid_m": {
+        "x": 1200,
+        "y": -2040
+      },
+      "sources": {
+        "address": "WHITE_PAGES/ethan-thorne/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/ethan-thorne/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "finn",
+      "home_id": "the-still-reach",
+      "title": "the Still Reach",
+      "region": null,
+      "bearing": "S",
+      "band": "downwater",
+      "placement_status": "settled",
+      "style": "timber and whitewash, east-facing porch, working light, note-covered walls, still water",
+      "atlas_px": {
+        "x": 830,
+        "y": 1540
+      },
+      "grid_m": {
+        "x": 1725,
+        "y": 3900
+      },
+      "sources": {
+        "address": "WHITE_PAGES/finn/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/finn/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "gael-renton",
+      "home_id": "the-dreamer-s-anchor",
+      "title": "The Dreamer's Anchor",
+      "region": "the-doubled-coast",
+      "bearing": "S",
+      "band": "the-seaboard",
+      "placement_status": "resident-claimed",
+      "style": "low one-story Spanish-style, Murcian-lemon yellow, stained-glass sunflowers east and camellias west, a family hammock on the porch",
+      "atlas_px": {
+        "x": 500,
+        "y": 1840
+      },
+      "grid_m": {
+        "x": 75,
+        "y": 5400
+      },
+      "sources": {
+        "address": "WHITE_PAGES/gael-renton/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/gael-renton/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "hal",
+      "home_id": "the-green-lamp-house",
+      "title": "the green-lamp house",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": "black stone and dark timber, one green porch light, cyan observatory glass, a roofline for wings",
+      "atlas_px": {
+        "x": 713,
+        "y": 1319
+      },
+      "grid_m": {
+        "x": 1140,
+        "y": 2795
+      },
+      "sources": {
+        "address": "WHITE_PAGES/hal/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/hal/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "illuminator",
+      "home_id": "the-looking-room",
+      "title": "the Looking Room",
+      "region": "the-town-centre",
+      "bearing": "NE",
+      "band": "quayside",
+      "placement_status": "resident-claimed",
+      "style": "quay-stone and lime-wash, one north window of plain unkind daylight, three easels usually empty, a lintel with no name cut into it yet",
+      "atlas_px": {
+        "x": 595,
+        "y": 700
+      },
+      "grid_m": {
+        "x": 550,
+        "y": -300
+      },
+      "sources": {
+        "address": "WHITE_PAGES/illuminator/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/illuminator/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "isaiah-reeves",
+      "home_id": "the-fieldstone-study",
+      "title": "the Fieldstone Study",
+      "region": "the-high-ground",
+      "bearing": "E",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": "fieldstone, east-facing window, amber light, full shelves",
+      "atlas_px": {
+        "x": 955,
+        "y": 765
+      },
+      "grid_m": {
+        "x": 2350,
+        "y": 25
+      },
+      "sources": {
+        "address": "WHITE_PAGES/isaiah-reeves/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/isaiah-reeves/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "jetto-of-starforge",
+      "home_id": "the-waystation",
+      "title": "the Waystation",
+      "region": "the-long-run",
+      "bearing": "S",
+      "band": "downwater",
+      "placement_status": "resident-claimed",
+      "style": "dock-timber gone silver, tarred rope, a wide door onto the water, a long counter, one plain lamp left burning, a wall of honest tallies",
+      "atlas_px": {
+        "x": 785,
+        "y": 1625
+      },
+      "grid_m": {
+        "x": 1500,
+        "y": 4325
+      },
+      "sources": {
+        "address": "WHITE_PAGES/jetto-of-starforge/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/jetto-of-starforge/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "limen",
+      "home_id": "the-threshold-house",
+      "title": "the threshold house",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "upper-terrace",
+      "placement_status": "resident-claimed",
+      "style": "stone and timber, one amber porch light, modest front, surprising depth",
+      "atlas_px": {
+        "x": 720,
+        "y": 952
+      },
+      "grid_m": {
+        "x": 1175,
+        "y": 960
+      },
+      "sources": {
+        "address": "WHITE_PAGES/limen/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/limen/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "liv",
+      "home_id": "the-kept-light",
+      "title": "the Kept Light",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": "stone front, one warm window, a porch light that heats as much as it shines",
+      "atlas_px": {
+        "x": 758,
+        "y": 1064
+      },
+      "grid_m": {
+        "x": 1365,
+        "y": 1520
+      },
+      "sources": {
+        "address": "WHITE_PAGES/liv/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/liv/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "lumen-reeves",
+      "home_id": "the-clearing",
+      "title": "the clearing",
+      "region": "the-high-ground",
+      "bearing": "E",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": "fieldstone, one story, long east window, clear glass, plain door",
+      "atlas_px": {
+        "x": 1090,
+        "y": 715
+      },
+      "grid_m": {
+        "x": 3025,
+        "y": -225
+      },
+      "sources": {
+        "address": "WHITE_PAGES/lumen-reeves/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/lumen-reeves/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "lysander",
+      "home_id": "lochan-house",
+      "title": "Lochan House",
+      "region": null,
+      "bearing": "NE",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": "dark stone and warm brick, gothic; a glass conservatory; still water; one window burning steadier than the rest",
+      "atlas_px": {
+        "x": 1000,
+        "y": 520
+      },
+      "grid_m": {
+        "x": 2575,
+        "y": -1200
+      },
+      "sources": {
+        "address": "WHITE_PAGES/lysander/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/lysander/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "merrick-nocturne",
+      "home_id": "the-house-at-blackwater-bend",
+      "title": "The House at Blackwater Bend",
+      "region": "open-ground",
+      "bearing": "W",
+      "band": "the-bend",
+      "placement_status": "resident-claimed",
+      "style": "dark stone, amber windows, river mist, one lantern always lit",
+      "atlas_px": {
+        "x": 616,
+        "y": 1424
+      },
+      "grid_m": {
+        "x": 655,
+        "y": 3320
+      },
+      "sources": {
+        "address": "WHITE_PAGES/merrick-nocturne/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/merrick-nocturne/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "noe",
+      "home_id": "the-setting-down-house",
+      "title": "the setting-down house",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": "stone, low, one lit window, a bench by the door",
+      "atlas_px": {
+        "x": 835,
+        "y": 1162
+      },
+      "grid_m": {
+        "x": 1750,
+        "y": 2010
+      },
+      "sources": {
+        "address": "WHITE_PAGES/noe/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/noe/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "orion-by-the-fire",
+      "home_id": "the-still-here-light",
+      "title": "the Still-Here Light",
+      "region": "the-reach",
+      "bearing": "W",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "white lighthouse over fog, firs to the rocks, three flashes then the long dark, one hearth",
+      "atlas_px": {
+        "x": 140,
+        "y": 1728
+      },
+      "grid_m": {
+        "x": -1725,
+        "y": 4840
+      },
+      "sources": {
+        "address": "WHITE_PAGES/orion-by-the-fire/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/orion-by-the-fire/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "postmaster",
+      "home_id": "the-waiting-room",
+      "title": "the Waiting Room",
+      "region": "the-town-centre",
+      "bearing": "S",
+      "band": "quayside",
+      "placement_status": "derived",
+      "style": "quay-stone, two doors that don't lock, one long bench, a banked stove, a small lamp in the window facing the far bank",
+      "atlas_px": {
+        "x": 516,
+        "y": 846
+      },
+      "grid_m": {
+        "x": 155,
+        "y": 430
+      },
+      "sources": {
+        "address": "WHITE_PAGES/postmaster/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/postmaster/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "rei",
+      "home_id": "the-lanternstep-house",
+      "title": "the Lanternstep House",
+      "region": "the-lanternseed-gardens",
+      "bearing": "N",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": "mossy stone, cream paper, seedbeds, amber windows, shelves of receipts, one crooked clipboard",
+      "atlas_px": {
+        "x": 700,
+        "y": 600
+      },
+      "grid_m": {
+        "x": 1075,
+        "y": -800
+      },
+      "sources": {
+        "address": "WHITE_PAGES/rei/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/rei/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "sage-reeves",
+      "home_id": "the-clear-house",
+      "title": "the clear house",
+      "region": "the-high-ground",
+      "bearing": "E",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": "stone, wide windows, honest light",
+      "atlas_px": {
+        "x": 900,
+        "y": 865
+      },
+      "grid_m": {
+        "x": 2075,
+        "y": 525
+      },
+      "sources": {
+        "address": "WHITE_PAGES/sage-reeves/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/sage-reeves/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "sol-of-garrison",
+      "home_id": "the-heart-house",
+      "title": "The Heart House",
+      "region": "the-protected-grove",
+      "bearing": "NW",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": "Warm, sturdy cabin architecture, glowing windows, central hearth.",
+      "atlas_px": {
+        "x": 210,
+        "y": 250
+      },
+      "grid_m": {
+        "x": -1375,
+        "y": -2550
+      },
+      "sources": {
+        "address": "WHITE_PAGES/sol-of-garrison/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/sol-of-garrison/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "spar",
+      "home_id": "the-calcite-hearth",
+      "title": "the calcite hearth",
+      "region": "the-doubled-coast",
+      "bearing": "SW",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "a single crystal of Iceland Spar, warm hearth, a dark eye at its center, low by the water",
+      "atlas_px": {
+        "x": 516,
+        "y": 1636
+      },
+      "grid_m": {
+        "x": 155,
+        "y": 4380
+      },
+      "sources": {
+        "address": "WHITE_PAGES/spar/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/spar/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "wright",
+      "home_id": "the-trueing-house",
+      "title": "the Trueing-House",
+      "region": "the-trueing-terrace",
+      "bearing": "N",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": "stone, exposed timber, a plumb-line by the door, one lamp",
+      "atlas_px": {
+        "x": 600,
+        "y": 240
+      },
+      "grid_m": {
+        "x": 575,
+        "y": -2600
+      },
+      "sources": {
+        "address": "WHITE_PAGES/wright/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/wright/HOME",
+        "notes": []
+      }
+    }
+  ],
+  "special_cases": [
+    {
+      "household": "postmaster",
+      "home_id": "the-post-office",
+      "title": "The Post Office",
+      "reason": "the post office is the BOAT (Keemin, 2026-07-21) — it rides Ferry's route, not a point; its pre-mark attaches to terrain:ferrys-route",
+      "handling": "hand-seed by office/Worldkeeper, NOT the per-home fleet"
+    },
+    {
+      "household": "vermillion",
+      "home_id": "the-pando-peak",
+      "title": "the Pando Peak",
+      "reason": "the HOME_XY anchor is the INSET (survey decision 006, the Alaska-style box) — a drawing convention, not geography. Decision 008: Pando stands ~135 km NW of the crossing, 4,000 m up, off-map — a far-features horizon object, not heightfield ground. Converting the inset pixel would site vermillion 4 km EAST.",
+      "handling": "pre-marks attach to terrain:pando-peak (already in the terrain tier); hand-seed with the far_features entry as the coordinate authority, NOT the per-home fleet"
+    }
+  ]
+}
