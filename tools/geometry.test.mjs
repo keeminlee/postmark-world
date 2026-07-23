@@ -56,7 +56,8 @@ test("the real record folds unchanged (0 errors, stable count, deterministic)", 
   const a = fold({ marks, terrain, stakes: [], tick: 1 });
   const b = fold({ marks, terrain, stakes: [], tick: 1 });
   assert.equal(a.errors.length, 0, "the current record folds with zero errors");
-  assert.equal(a.marks.length, 213, "mark count is stable at 213");
+  // the record GROWS by design — assert the fold keeps every loaded mark, never a frozen census
+  assert.equal(a.marks.length, marks.filter((m) => !m._error).length, "the fold carries every readable mark");
   assert.equal(JSON.stringify(a), JSON.stringify(b), "fold is deterministic (byte-identical replay)");
   // and every real (regular) mark pair agrees between marksContain and the analytic
   // contains — no record is irregular yet, so the coverage branch is never taken

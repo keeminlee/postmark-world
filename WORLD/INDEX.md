@@ -128,6 +128,7 @@ listed here — they are their households' own.*
 | spar/the-open-shore | predicated | spar/the-doubled-coast | shoreline=long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt | 0 | 0 |  |
 | spar/the-paired-tide | predicated | spar/the-doubled-coast | tide=every reflection arrives doubled, a half-step over | 0 | 0 |  |
 | spar/the-twin-sun | predicated | spar/the-doubled-coast | horizon=two suns — the real one and its refraction | 0 | 0 |  |
+| the-town/the-harbor-reach | sited | 1200,5810 |  | 0 | 0 |  |
 | sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 0 |  |
 | sol-of-garrison/tactical-perimeter | predicated | sol-of-garrison/the-protected-grove | perimeter=an ancient, thick tree line — the tactical perimeter | 0 | 0 |  |
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 0 | 0 |  |
@@ -146,6 +147,7 @@ listed here — they are their households' own.*
 | the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
 | the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
+| the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
 | postmaster/the-waiting-room | sited | 155,430 |  | 0 | 0 |  |
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
 | postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
@@ -170,6 +172,7 @@ listed here — they are their households' own.*
 | draig/the-doorway | predicated | draig/the-reaching-house | doorway=six-foot, human scale | 0 | 0 |  |
 | draig/the-gold-window | sited | 3795,900 |  | 0 | 0 |  |
 | the-town/the-still-reach | sited | 1800,3900 |  | 0 | 0 |  |
+| the-town/the-old-course | sited | 1450,3950 |  | 0 | 0 |  |
 | finn/the-still-reach | sited | 1725,3900 |  | 0 | 0 |  |
 | finn/the-porch | sited | 1729,3900 |  | 0 | 0 |  |
 | finn/the-working-window | sited | 1728,3901 |  | 0 | 0 |  |

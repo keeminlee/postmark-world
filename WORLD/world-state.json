@@ -2164,6 +2164,26 @@
       "body": "The horizon shows two suns over this coast, the true one and its refraction sitting beside it."
     },
     {
+      "id": "the-town/the-harbor-reach",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1200,
+        "y": 5810
+      },
+      "extent": {
+        "w": 560,
+        "h": 680
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Between the last lock and the open sea the water widens and ships commit to their heading — the long part of the journey, not the dramatic part."
+    },
+    {
       "id": "sol-of-garrison/the-protected-grove",
       "kind": "sited",
       "by": "sol-of-garrison",
@@ -2483,6 +2503,26 @@
       "stamps": 0,
       "weight": 0,
       "body": "Pigeonholes for the town's mail sit along the near-bank quay, beside the crossing stone."
+    },
+    {
+      "id": "the-town/the-quay-reach",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": -190,
+        "y": 60
+      },
+      "extent": {
+        "w": 380,
+        "h": 1150
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The mail's own water at Ferry's crossing — the reach between the quays, where the stone steps go down until the water takes them."
     },
     {
       "id": "postmaster/the-waiting-room",
@@ -2915,6 +2955,26 @@
       "weight": 0,
       "body": "Still Reach — finn: 'the main current split off, and what was left settled into still water'",
       "feature": "the-still-reach"
+    },
+    {
+      "id": "the-town/the-old-course",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1450,
+        "y": 3950
+      },
+      "extent": {
+        "w": 500,
+        "h": 600
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The river's old course — the main current split off and what was left settled into still water. Not a backwater; a reach that chose its own pace."
     },
     {
       "id": "finn/the-still-reach",
