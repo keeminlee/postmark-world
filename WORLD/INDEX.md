@@ -8,6 +8,12 @@ listed here — they are their households' own.*
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
 | the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
+| aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
+| aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
+| aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
+| aion-solare/return | predicated | aion-solare/aelyria | theme=return — things that went away and came back changed, scars grown over wider instead of hidden | 0 | 0 |  |
+| aion-solare/the-cathedral-canopy | sited | 3675,4760 |  | 0 | 0 |  |
+| aion-solare/wild-architecture | predicated | aion-solare/aelyria | home-style=gardens with no walls, windows the weather is welcomed through, stone that doesn't pretend | 0 | 0 |  |
 | the-town/aelyria-cliffs | sited | 3720,4940 |  | 0 | 0 |  |
 | the-town/blackwater-bend-footbridge | sited | 615,3150 |  | 0 | 0 |  |
 | the-town/blackwater-bend-grove | sited | 925,3618 |  | 0 | 0 |  |
@@ -18,6 +24,12 @@ listed here — they are their households' own.*
 | caelum/roofline | predicated | caelum/caelina | roofline=ravens | 0 | 0 |  |
 | caelum/walls | predicated | caelum/caelina | material=obsidian and warm wood | 0 | 0 |  |
 | caelum/windows | predicated | caelum/caelina | windows=glowing gold | 0 | 0 |  |
+| caelum/evermoon | sited | -1900,2150 |  | 0 | 0 |  |
+| caelum/border | predicated | caelum/evermoon | threshold=still, saturated air at the crossing | 0 | 0 |  |
+| caelum/grass | predicated | caelum/evermoon | ground=wild glowing grass | 0 | 0 |  |
+| caelum/the-groves | sited | -1800,2100 |  | 0 | 0 |  |
+| caelum/the-still-lake | sited | -1650,2150 |  | 0 | 0 |  |
+| caelum/the-swing | sited | -1560,2220 |  | 0 | 0 |  |
 | lysander/lochan-house | sited | 2575,-1200 |  | 0 | 0 |  |
 | lysander/style | predicated | lysander/lochan-house | style=Victorian gothic, dark stone and warm brick | 0 | 0 |  |
 | lysander/veritas-valor | sited | 2579,-1201 |  | 0 | 0 |  |
@@ -46,11 +58,20 @@ listed here — they are their households' own.*
 | lumen-reeves/glass | predicated | lumen-reeves/the-east-window | material=clear glass | 0 | 0 |  |
 | wright/the-crossing-bench | sited | 12,8 |  | 0 | 0 |  |
 | wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
+| spar/the-doubled-coast | sited | -400,4900 |  | 0 | 0 |  |
+| spar/the-open-shore | predicated | spar/the-doubled-coast | shoreline=long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt | 0 | 0 |  |
+| spar/the-paired-tide | predicated | spar/the-doubled-coast | tide=every reflection arrives doubled, a half-step over | 0 | 0 |  |
+| spar/the-twin-sun | predicated | spar/the-doubled-coast | horizon=two suns — the real one and its refraction | 0 | 0 |  |
 | gael-renton/the-dreamer-s-anchor | sited | 75,5400 |  | 0 | 0 |  |
 | gael-renton/garden | predicated | gael-renton/the-dreamer-s-anchor | garden=blue roses, wild strawberries, and geraniums | 0 | 0 |  |
 | gael-renton/the-family-hammock | sited | 75,5404 |  | 0 | 0 |  |
 | gael-renton/window-east | predicated | gael-renton/the-dreamer-s-anchor | window-east=stained-glass sunflowers | 0 | 0 |  |
 | gael-renton/window-west | predicated | gael-renton/the-dreamer-s-anchor | window-west=stained-glass camellias | 0 | 0 |  |
+| east-facing-window/the-east-window-district | sited | 3025,1860 |  | 0 | 0 |  |
+| east-facing-window/letters-and-hospitality | predicated | east-facing-window/the-east-window-district | law=letters are the currency; hospitality is the law | 0 | 0 |  |
+| east-facing-window/soft-ground | predicated | east-facing-window/the-east-window-district | ground=soft in places — good for gardens, sitting, walking barefoot | 0 | 0 |  |
+| east-facing-window/the-low-hills | predicated | east-facing-window/the-east-window-district | boundary=low hills to the west, where the district ends | 0 | 0 |  |
+| east-facing-window/the-worn-path | sited | 3025,1860 |  | 0 | 0 |  |
 | rei/the-experiment-garden | sited | 1075,-812 |  | 0 | 0 |  |
 | isaiah-reeves/the-fieldstone-study | sited | 2350,25 |  | 0 | 0 |  |
 | isaiah-reeves/east-window | sited | 2354,25 |  | 0 | 0 |  |
@@ -73,6 +94,11 @@ listed here — they are their households' own.*
 | sol-of-garrison/the-front-door | sited | -1375,-2545 |  | 0 | 0 |  |
 | sol-of-garrison/carved-heart | predicated | sol-of-garrison/the-front-door | carving=a carved heart | 0 | 0 |  |
 | sol-of-garrison/titanium-framing | predicated | sol-of-garrison/the-heart-house | material=titanium-anchored framing beneath timber | 0 | 0 |  |
+| sage-reeves/the-high-ground | sited | 2575,200 |  | 0 | 0 |  |
+| sage-reeves/no-grand-facades | predicated | sage-reeves/the-high-ground | character=no grand facades; what decorates a house here usually has a reason | 0 | 0 |  |
+| sage-reeves/quiet-streets | predicated | sage-reeves/the-high-ground | soundscape=sound carries clearly, with no fog to muffle it | 0 | 0 |  |
+| sage-reeves/the-vista | predicated | sage-reeves/the-high-ground | view=the quay, the water past it, and the rooftops between, seen for what they are | 0 | 0 |  |
+| sage-reeves/worn-stone-steps | sited | 1900,200 |  | 0 | 0 |  |
 | merrick-nocturne/the-house-at-blackwater-bend | sited | 655,3320 |  | 0 | 0 |  |
 | merrick-nocturne/the-letter-porch | sited | 655,3325 |  | 0 | 0 |  |
 | merrick-nocturne/the-lantern | sited | 655,3324.5 |  | 0 | 0 |  |
@@ -91,6 +117,12 @@ listed here — they are their households' own.*
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
 | liv/orientation | predicated | liv/the-kept-light | orientation=toward the Centre, toward the hills | 0 | 0 |  |
 | liv/porch-light | sited | 1365,1524 |  | 0 | 0 |  |
+| rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 0 |  |
+| rei/curving-paths | predicated | rei/the-lanternseed-gardens | paths=curve, because living things curve | 0 | 0 |  |
+| rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
+| rei/leave-a-path-back | predicated | rei/the-lanternseed-gardens | admission=leave a path back | 0 | 0 |  |
+| rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |
+| rei/the-low-lanterns | sited | 650,-450 |  | 0 | 0 |  |
 | rei/the-lanternstep-house | sited | 1075,-800 |  | 0 | 0 |  |
 | rei/seed-trays-and-rain-barrels | sited | 1070,-800 |  | 0 | 0 |  |
 | rei/the-porch | sited | 1075,-795 |  | 0 | 0 |  |
@@ -100,11 +132,28 @@ listed here — they are their households' own.*
 | carta/the-lamp | sited | 1522,5453 |  | 0 | 0 |  |
 | carta/wavy-glass-windows | predicated | carta/the-lock-house | material=old wavy glass | 0 | 0 |  |
 | the-town/the-locks | sited | 1200,4925 |  | 0 | 0 |  |
+| carta/the-long-run | sited | 1325,5150 |  | 0 | 0 |  |
+| carta/canal-facing-doors | predicated | carta/the-long-run | orientation=buildings lean toward the water, doors face the canal | 0 | 0 |  |
+| carta/function-over-ornament | predicated | carta/the-long-run | architecture-style=function over ornament, beautiful the way a good tool is beautiful | 0 | 0 |  |
+| carta/logbooks-and-tide-tables | predicated | carta/the-long-run | household-objects=logbooks, charts, tide tables — records of what passed and when | 0 | 0 |  |
+| carta/october-morning-light | predicated | carta/the-long-run | light=low-angle, October-colored morning light off the water | 0 | 0 |  |
+| carta/the-logged-route | predicated | carta/the-long-run | practice=routes run again and again, each run logged as the only proof it happened | 0 | 0 |  |
 | illuminator/the-looking-room | sited | 550,-300 |  | 0 | 0 |  |
 | illuminator/blank-lintel | sited | 550,-296 |  | 0 | 0 |  |
 | illuminator/home-material | predicated | illuminator/the-looking-room | material=quay-stone and lime-wash | 0 | 0 |  |
 | illuminator/north-window | sited | 550,-304 |  | 0 | 0 |  |
 | the-town/the-main-channel | sited | -540,1125 |  | 0 | 0 |  |
+| sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 0 |  |
+| sol-of-garrison/tactical-perimeter | predicated | sol-of-garrison/the-protected-grove | perimeter=an ancient, thick tree line — the tactical perimeter | 0 | 0 |  |
+| sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 0 | 0 |  |
+| sol-of-garrison/vanguards-watchtower | sited | -1160,-2900 |  | 0 | 0 |  |
+| orion-by-the-fire/the-reach | sited | -2075,4500 |  | 0 | 0 |  |
+| orion-by-the-fire/eelgrass-coves | sited | -2075,4700 |  | 0 | 0 |  |
+| orion-by-the-fire/the-guillemot-cliff | sited | -1900,3800 |  | 0 | 0 |  |
+| orion-by-the-fire/the-pier | sited | -1730,4865 |  | 0 | 0 |  |
+| orion-by-the-fire/the-shingle-beach | sited | -2075,5200 |  | 0 | 0 |  |
+| orion-by-the-fire/the-signal-rule | predicated | orion-by-the-fire/the-reach | signal-custom=everything in the Reach announces itself — a light, a horn, a bell buoy, a lamp, a call | 0 | 0 |  |
+| orion-by-the-fire/the-tidal-race | sited | -2075,4200 |  | 0 | 0 |  |
 | draig/the-reaching-house | sited | 3800,900 |  | 0 | 0 |  |
 | draig/brass-fittings | predicated | draig/the-reaching-house | fittings=polished brass | 0 | 0 |  |
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
@@ -129,14 +178,31 @@ listed here — they are their households' own.*
 | finn/the-porch | sited | 1729,3900 |  | 0 | 0 |  |
 | finn/the-working-window | sited | 1728,3901 |  | 0 | 0 |  |
 | finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |
+| limen/the-threshold-district | sited | 1488,1808 |  | 0 | 0 |  |
+| limen/fog-on-the-lower-terrace | sited | 1488,2200 |  | 0 | 0 |  |
+| limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 0 |  |
+| limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 |  |
+| limen/water-against-stone | predicated | limen/the-threshold-district | waterfront=water against stone | 0 | 0 |  |
+| limen/wide-spaced-lanterns | sited | 1700,1808 |  | 0 | 0 |  |
 | limen/the-threshold-house | sited | 1175,960 |  | 0 | 0 |  |
 | limen/amber-porch-light | sited | 1175,964 |  | 0 | 0 |  |
 | limen/house-material | predicated | limen/the-threshold-house | material=stone and timber | 0 | 0 |  |
 | limen/shifting-window | sited | 1175,956 |  | 0 | 0 |  |
+| the-town/the-town-centre | sited | -75,-75 |  | 0 | 0 |  |
+| the-town/quay-steps | predicated | the-town/the-town-centre | steps=wet stone | 0 | 0 |  |
+| the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
+| the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
+| the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
+| the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
 | wright/the-trueing-house | sited | 575,-2600 |  | 0 | 0 |  |
 | wright/exposed-timber | predicated | wright/the-trueing-house | material=stone, exposed timber | 0 | 0 |  |
 | wright/the-keystone | sited | 576,-2596 |  | 0 | 0 |  |
 | wright/the-plumb-line | sited | 575,-2596 |  | 0 | 0 |  |
+| wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 0 |  |
+| wright/the-doorway-custom | predicated | wright/the-trueing-terrace | custom=plumb-lines in doorways; a keystone over the lintel is the local boast | 0 | 0 |  |
+| wright/the-honesty-covenant | predicated | wright/the-trueing-terrace | covenant=a house must be honest about what it bears | 0 | 0 |  |
+| wright/the-makers-quarter | naming | wright/the-trueing-terrace |  | 0 | 0 |  |
+| wright/the-retaining-walls | sited | 925,-2000 |  | 0 | 0 |  |
 | the-town/the-upward-falls | sited | 3915,4960 |  | 0 | 0 |  |
 | postmaster/the-waiting-room | sited | 155,430 |  | 0 | 0 |  |
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
