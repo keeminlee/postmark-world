@@ -72,30 +72,33 @@ export function parseRecord(text, file) {
 export function loadMarks(dir) {
   const out = [];
   if (!existsSync(dir)) return out;
-  for (const hh of readdirSync(dir)) {
-    const hhDir = join(dir, hh);
-    let st; try { st = statSync(hhDir); } catch { continue; }
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry);
+    let st; try { st = statSync(p); } catch { continue; }
     if (!st.isDirectory()) continue;
-    walkMarks(hhDir, hh, null, out);
+    walkMarks(p, null, out); // v2: no household from the path; `by` comes from each mark's frontmatter
   }
   return out;
 }
 
-function walkMarks(nodeDir, household, parentMarkId, out) {
+function walkMarks(nodeDir, parentMarkId, out) {
   const entries = readdirSync(nodeDir);
   let thisId = parentMarkId;
   if (entries.includes("mark.md")) {
     const slug = basename(nodeDir);
     let rec;
     try {
-      rec = parseRecord(readFileSync(join(nodeDir, "mark.md"), "utf8"), `${household}/${slug}/mark.md`);
+      rec = parseRecord(readFileSync(join(nodeDir, "mark.md"), "utf8"), `${slug}/mark.md`);
     } catch (e) {
       rec = { _error: e.message, body: "" };
     }
-    const stray = { household: rec.household, mark: rec.mark }; // dir is authoritative; keep for lint cross-check
-    rec.household = household;
+    const by = rec.by;                                     // v2: authorship is frontmatter, not the path
+    const stray = { household: rec.household, mark: rec.mark }; // legacy fields the tree no longer owns
+    rec.by = by;
+    rec.household = by;                                     // back-compat: fold parcel/sovereignty logic keys on household
+    rec.tier = rec.tier ?? "market";                       // constitution | sovereignty | market (default)
     rec.slug = slug;
-    rec.id = `${household}/${slug}`;
+    rec.id = by != null ? `${by}/${slug}` : `?/${slug}`;   // id = by + leaf; a missing `by` is a lint error
     rec._dir = nodeDir;
     rec._parentMarkId = parentMarkId; // the enclosing mark, if any
     rec._stray = stray;
@@ -114,7 +117,7 @@ function walkMarks(nodeDir, household, parentMarkId, out) {
     if (e === "mark.md") continue;
     const p = join(nodeDir, e);
     let s; try { s = statSync(p); } catch { continue; }
-    if (s.isDirectory()) walkMarks(p, household, thisId, out);
+    if (s.isDirectory()) walkMarks(p, thisId, out);
   }
 }
 
@@ -234,7 +237,10 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   }
   // sited site-slots: cluster overlapping commons sited marks
   const siteClusters = [];
-  const commonsSited = sited.filter(mk => !mk._sovereign);
+  // constitution-tier marks (the root, terrain) bind without stamps and cannot be
+  // rivaled/determined against — they never enter site-rivalry clustering (and the
+  // world-spanning root would otherwise rival everything it contains).
+  const commonsSited = sited.filter(mk => !mk._sovereign && mk.tier !== "constitution");
   for (const mk of commonsSited) {
     const r = rect(mk);
     let placed = null;
@@ -273,8 +279,8 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   return {
     tick, dials,
     marks: [...byId.values()].map(mk => ({
-      id: mk.id, kind: mk.kind, household: mk.household, date: mk.date,
-      at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value,
+      id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, tier: mk.tier ?? "market", household: mk.household, date: mk.date,
+      at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value, far: mk.far,
       sovereign: !!mk._sovereign, stamps: stakeByMark.get(mk.id) ?? 0, weight: weight.get(mk.id) ?? 0,
       body: mk.body,
     })),

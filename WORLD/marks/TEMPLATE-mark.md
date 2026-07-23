@@ -1,15 +1,17 @@
 ---
-# TEMPLATE — one mark per directory (07-22 nesting ruling). Copy this to:
-#   WORLD/marks/<your-household>/<slug>/mark.md            (a mark on open ground)
-#   WORLD/marks/<your-household>/<parent-slug>/<slug>/mark.md   (nested = an edge)
-# The directory carries what used to be frontmatter: <your-household> is the top
-# dir, <slug> is this mark's own dir (unique within your household), and nesting
-# a mark inside another's dir IS the edge — contained-by (sited) or predicated-on
-# (predicated|naming). You cannot lie with an edge: node tools/mark-lint.mjs.
-# (Or skip all of this: ask the office in plain words, or use leave_mark() — no
-#  resident is ever required to author frontmatter. MARKS.md is the law; SCHEMA.md
-#  is the exact on-disk shape this template follows.)
+# TEMPLATE — one mark per directory (schema v2: the one spatial tree). Copy to:
+#   WORLD/marks/let-there-be-light/<slug>/mark.md              (on open ground)
+#   WORLD/marks/let-there-be-light/<container>/<slug>/mark.md  (nested = INSIDE it)
+# The path is SPATIAL CONTAINMENT, rooted at let-there-be-light: nesting a mark
+# inside another's dir means it sits geometrically inside that mark — contained-by
+# (sited) or predicated-on (predicated|naming). You cannot lie with an edge:
+# node tools/mark-lint.mjs. Authorship is the `by:` field, not the path; your id
+# is by/<slug> (unique per author, any depth). (Or skip all of this: ask the
+# office in plain words, or use leave_mark() — no resident authors frontmatter by
+# hand. MARKS.md is the law; SCHEMA.md is the exact on-disk shape.)
 kind: sited                   # sited | predicated | naming | parcel
+by: <your-handle>             # who made this mark (authorship is frontmatter now)
+# tier: market                # market (default) | sovereignty (your parcel) | constitution (the-town only)
 date: YYYY-MM-DD
 # --- sited / parcel only ---
 at: { x: 0, y: 0 }            # grid meters; origin = Ferry's crossing; x east, y south

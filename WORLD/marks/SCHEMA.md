@@ -1,4 +1,4 @@
-# WORLD/marks — the on-disk schema (07-22 nesting ruling)
+# WORLD/marks — the on-disk schema (v2: the one spatial tree, 07-22-night ruling)
 
 *The exact shape of a mark on disk. This is the one definition the seeding fleet
 writes to, `tools/mark-lint.mjs` enforces, and `tools/marks-fold.mjs` reads —
@@ -10,108 +10,125 @@ exits non-zero on any error, with the exact fix).
 
 ---
 
-## One mark per directory
+## The one tree: directories are spatial containment, rooted at the light
 
 ```
-WORLD/marks/<household>/<slug>/mark.md                      a mark on open ground
-WORLD/marks/<household>/<parent-slug>/<slug>/mark.md        nested = an edge
+WORLD/marks/let-there-be-light/mark.md                         the root — the whole world
+WORLD/marks/let-there-be-light/<terrain>/mark.md               terrain, on open ground under the root
+WORLD/marks/let-there-be-light/<slug>/mark.md                  a mark on open ground
+WORLD/marks/let-there-be-light/<container>/<slug>/mark.md      nested = spatially INSIDE the container
 ```
 
-The **directory carries the identity and the edge** — what used to be
-frontmatter:
+The directory tree **is the containment tree**. It is rooted at the world-root
+mark **`let-there-be-light`**; every directory is a mark; nesting means the child
+sits **geometrically inside** the parent; and the path from the root is the spine
+a telling walks. There is one root and everything is under it.
 
-- **`<household>`** — the top directory under `WORLD/marks/`. The mark's owner.
-  It is *not* stored in the record; the directory is the single source of truth.
-- **`<slug>`** — the mark's own directory name. Lowercase-hyphenated, and
-  **unique within the household across every depth**. The record does not repeat
-  it.
-- **id** = `<household>/<slug>` (the leaf, not the path). Because identity is the
-  leaf, **re-nesting a mark never changes its id** — stakes in the ledger stay
-  attached. The flat→nested migration preserved every id.
+**Authorship left the path.** `WORLD/marks/<household>/` was write-scoping
+inherited from a PR door this repo does not have. Who *made* a mark is now the
+**`by:`** frontmatter field (office-validated, not path-enforced). Where a mark
+*is* is the path.
 
-**Nesting is the only hand-drawn edge.** A mark whose directory sits inside
-another mark's directory asserts a relationship to that enclosing mark:
+## Identity = `by` + leaf slug
 
-- a **`sited`** mark nested inside another marks *containment* — and the
-  enclosing mark must **geometrically contain** it (the fold's own `contains`:
-  the child's footprint lies ≥99% inside the parent's). **You cannot lie with an
-  edge** — the lint refuses nesting the coordinates deny.
-- a **`predicated`** / **`naming`** mark nested inside another marks that it
-  *describes* that enclosing mark. Its parent is implicit — **do not write a
-  `parent:` field.**
+- **`<slug>`** — the mark's own directory name. Lowercase-hyphenated. Unique **per
+  author** (per `by`), at any depth.
+- **id = `<by>/<slug>`** — the author and the leaf, never the path. This
+  reproduces every pre-v2 `household/slug` id exactly: **zero renames, the ledger
+  identity scheme is untouched.** Re-nesting a mark (moving it under a region) does
+  not change its id — stakes stay attached.
+- Two `the-lamp`s stay legal: same leaf, different `by` → different ids. Their
+  **paths** differ because they sit in different places (different containers).
 
-Only **`sited`** and **`parcel`** marks may contain children (they have extent).
-A `predicated`/`naming` mark is a leaf.
+**Nesting is the only hand-drawn edge**, and you cannot lie with it: a nested
+**`sited`** mark must be **geometrically contained** by its parent (the fold's own
+`contains`; the child's footprint ≥99% inside the parent's). A nested
+**`predicated`/`naming`** mark *describes* its parent — its parent is implicit, so
+**write no `parent:` field**.
+
+## Protection tiers
+
+Every mark carries a **`tier:`** (default `market`):
+
+| tier | what it means | who |
+|---|---|---|
+| **constitution** | binds without stamps; cannot be rivaled or determined against; changes are constitutional acts | **`by: the-town` only** |
+| **sovereignty** | inside your own parcel; yours absolutely, no stamps needed | a resident, in their parcel |
+| **market** | contestable, load-bearing only when staked | the default, anyone |
+
+The lint refuses `tier: constitution` from anyone but `the-town` — a market mark
+cannot bind without stamps. Fan-up (a parent's weight = its own + all
+descendants') flows through every tier; the root carrying the world's total weight
+is accepted (a dial-class ruling, movable).
+
+## The root and terrain are generated, not hand-typed
+
+`tools/world-root-gen.mjs` writes the root mark and one mark per terrain feature
+(river, seas, lochan, garrison lake, locks, coasts, upward falls, Pando, ferry's
+route) **by extraction from `WORLD/TERRAIN/skeleton.json`** — `by: the-town`,
+`tier: constitution`. Do not hand-edit them; re-run the generator.
+
+- **The root `let-there-be-light`** — `extent` = the whole world (it contains
+  everything, horizon included); `body` = the charter establishing line.
+- **Two-precision geometry.** A terrain mark carries a **coarse bounding `at`/
+  `extent`** as its *claim*, and a **`survey: terrain:<id>`** pointer; the precise
+  geometry stays in `skeleton.json` beneath, the survey layer. The mark is the
+  claim; the skeleton is the measurement.
+- **`far: true`** marks (Pando) are horizon objects, not ground (decision 008) —
+  exempt from the containment check by construction.
 
 ## Frontmatter, by kind
 
-Every record is `---` frontmatter then a body. Fields the directory owns
-(`household`, the slug, and a nested mark's `parent`) are **never written**.
+Every record is `---` frontmatter then a body. The **path owns nothing but
+containment**; everything else is a field.
 
 | field | sited | parcel | predicated | naming |
 |---|---|---|---|---|
 | `kind` | required | required | required | required |
+| `by` (author handle) | required | required | required | required |
+| `tier` (default market) | opt | opt | opt | opt |
 | `date` (`YYYY-MM-DD`) | required | required | required | required |
-| `at: { x, y }` (grid m) | required | required | — (no geometry) | — |
-| `extent: { w, h }` (m) | required | optional (def 25×25) | — | — |
-| `slot` | — | — | required | optional (implicitly `name`) |
+| `at: { x, y }` (grid m) | required | required | — | — |
+| `extent: { w, h }` (m) | required | opt (def 25×25) | — | — |
+| `slot` | — | — | required | opt (implicitly `name`) |
 | `value` | — | — | required | required (the name) |
-| `parent: terrain:<id>` | — | — | top-level only¹ | top-level only¹ |
-| `pre` / `derived_from` | provenance² | provenance² | provenance² | provenance² |
+| `far` (horizon object) | opt (the-town) | — | — | — |
+| `survey: terrain:<id>` | opt (the-town) | — | — | — |
+| `pre` / `derived_from` | provenance¹ | provenance¹ | provenance¹ | provenance¹ |
 
-¹ **Parent, exactly one source.** A `predicated`/`naming` mark takes its parent
-either from the enclosing directory (nested — write no `parent`) **or**, when it
-attaches to the terrain tier, from an explicit `parent: terrain:<feature-id>` at
-the top level. Never both, never neither. An authored `parent:` may name **only**
-a terrain feature — to attach to another *mark*, nest under its directory. Terrain
-ids come from `WORLD/TERRAIN/skeleton.json` (`features` + `far_features`).
+¹ **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
+resident's *own words*, so it carries `pre: true` and `derived_from: <source
+path> — "the verbatim words this translates"`. Resident hand-marks omit both.
 
-² **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
-resident's *own words*, so it must carry:
-
-```
-pre: true
-derived_from: WHITE_PAGES/<handle>/ADDRESS.md — "the verbatim words this translates"
-```
-
-`derived_from` must name a source path **and** quote the span. Resident
-hand-marks omit `pre` and need no `derived_from`.
+A `sited`/`parcel` mark **never** authors a `parent:` — containment is geometry.
+A top-level `predicated`/`naming` mark may still name a terrain feature with an
+explicit `parent: terrain:<id>` (ids from `skeleton.json`), but nesting under the
+mark it describes is preferred.
 
 ## The grid
 
-`at`/`extent` are **grid meters**. Origin = **Ferry's crossing** (the center of
-the Town Centre; atlas 485,760 at 5 m/px). **x grows east, y grows south.** The
-fleet emits integer meters; sub-meter is legal. Rects are centered on `at` and
-sized by `extent`.
+`at`/`extent` are **grid meters**, centered on `at`. Origin = **Ferry's crossing**
+(the center of the Town Centre; atlas 485,760 at 5 m/px). **x grows east, y grows
+south.** Sub-meter is legal.
 
 ## The body
 
-A present-tense observation, **≤ 150 characters** (the ruling's cap — the lint
-errors past it). It is the mark's face in every view; write it like a sentence
-read aloud. History needs no marks — the diff log remembers how things came to be.
+A present-tense observation, **≤ 150 characters**. It is the mark's face in every
+view — write it like a sentence read aloud.
 
-## Coordinates the schema does **not** yet enforce
+## Regions (forming)
 
-The **dwelling-interior norm** (MARKS.md § Parcels — no mark sited inside another
-resident's declared dwelling) is an authoring rule the seeding fleet honors, but
-`mark-lint` v1 cannot check it: dwelling extents are not yet marks. When dwellings
-are sited, a fold/lint check can enforce it. Until then it is honored by the
-writer, not the gate. *(Flagged, not silently omitted.)*
-
-## Worked example (the migrated bench)
-
-```
-WORLD/marks/wright/the-crossing-bench/mark.md          kind: sited, at {12,8}, extent {2,1}
-WORLD/marks/wright/the-crossing-bench/bench-wood/mark.md   kind: predicated, slot material, value "grey oak"
-```
-
-`bench-wood` sits inside `the-crossing-bench`'s directory, so it predicates it —
-no `parent:` written; the fold resolves `wright/bench-wood`'s parent to
-`wright/the-crossing-bench` from the nesting. ids unchanged from the flat era.
+Regions are ordinary marks — a region mark (`by:` a founder or the town) sited over
+an extent, with child claim-marks nested inside it. The seeding fleet lands them
+from founders' own words after this schema; residents' homes re-home under the
+region that contains them (id unchanged — the ledger doesn't move).
 
 ---
 
-*Landed 2026-07-22 as the schema half of the marks nesting build (Jetto, on
-Wright's tasking; schema shape Jetto's per the division of labor). Sibling
+*v2 landed 2026-07-22 night (Jetto, on Wright's tasking; Keemin ruled the one-tree
+redesign live). Supersedes the v1 nesting schema (`<household>/` write-scoping):
+the tree is now spatial containment rooted at the light, authorship is `by:`, id is
+`by`+leaf (every v1 id preserved), and protection tiers are explicit. Sibling
 authorities: `MARKS.md` (the law), `tools/marks-fold.mjs` (canon is what it
-computes), `tools/mark-lint.mjs` (this schema, enforced).*
+computes), `tools/mark-lint.mjs` (this schema, enforced), `tools/world-root-gen.mjs`
+(the root + terrain, by extraction).*

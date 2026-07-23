@@ -30,6 +30,8 @@ const MARKS_DIR = opt("--marks-dir", join(ROOT, "WORLD/marks"));
 const TERRAIN_PATH = opt("--terrain", join(ROOT, "WORLD/TERRAIN/skeleton.json"));
 
 const KINDS = new Set(["sited", "predicated", "naming", "parcel"]);
+const TIERS = new Set(["constitution", "sovereignty", "market"]); // v2 protection tiers
+const TOWN = "the-town"; // the town-tier author; only it may claim constitution
 const CONTAINERS = new Set(["sited", "parcel"]); // only extented things contain or carry
 const BODY_MAX = 150; // chars (07-22 ruling)
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -59,18 +61,20 @@ for (const rec of marks) {
   // 0. unreadable frontmatter — nothing else can be trusted
   if (rec._error) { err(rec, `unreadable mark.md: ${rec._error}`); continue; }
 
-  // 1. identity: valid kind, path-safe unique slug, sane date
+  // 1. identity: valid kind, authorship (by), path-safe slug unique per author, tier, date
   if (!KINDS.has(rec.kind)) { err(rec, `kind must be one of ${[...KINDS].join(" | ")} (got ${JSON.stringify(rec.kind)})`); }
-  if (!SLUG_RE.test(rec.slug)) err(rec, `slug "${rec.slug}" must be lowercase-hyphenated (it is the directory name and the id)`);
-  if (byId.has(rec.id)) err(rec, `duplicate id "${rec.id}" — slugs must be unique within a household`);
+  if (rec.by == null) err(rec, `by: <author> is required — in the spatial tree (v2) authorship is frontmatter, not the path`);
+  if (!SLUG_RE.test(rec.slug)) err(rec, `slug "${rec.slug}" must be lowercase-hyphenated (it is the directory name and the leaf of the id)`);
+  if (byId.has(rec.id)) err(rec, `duplicate id "${rec.id}" — a leaf slug must be unique per author (by)`);
   byId.set(rec.id, rec);
-  if (!slugsByHousehold.has(rec.household)) slugsByHousehold.set(rec.household, new Set());
-  slugsByHousehold.get(rec.household).add(rec.slug);
+  // tier: valid, and constitution belongs to the town alone
+  if (!TIERS.has(rec.tier)) err(rec, `tier must be one of ${[...TIERS].join(" | ")} (got ${JSON.stringify(rec.tier)})`);
+  if (rec.tier === "constitution" && rec.by !== TOWN) err(rec, `tier: constitution is the town's — only by: ${TOWN} may claim it (a market mark cannot bind without stamps)`);
   if (!rec.date || !DATE_RE.test(String(rec.date))) warn(rec, `date should be YYYY-MM-DD (got ${JSON.stringify(rec.date)})`);
 
-  // 2. stray fields the directory now owns
-  if (rec._stray?.household != null && rec._stray.household !== rec.household)
-    warn(rec, `frontmatter household "${rec._stray.household}" disagrees with the directory "${rec.household}" (the directory wins — drop the field)`);
+  // 2. stray legacy fields the tree no longer owns (authorship is `by:` now)
+  if (rec._stray?.household != null)
+    warn(rec, `legacy household "${rec._stray.household}" — authorship is the by: field now (drop household)`);
   if (rec._stray?.mark != null && rec._stray.mark !== rec.slug)
     warn(rec, `frontmatter mark "${rec._stray.mark}" disagrees with the directory "${rec.slug}" (the directory is the slug — drop the field)`);
   if (rec.stamps !== undefined) warn(rec, `stamps are ledger-derived, never stored in the record — drop the field`);
@@ -124,6 +128,7 @@ for (const rec of marks) {
 // 6. the nesting edge itself — "you cannot lie with an edge"
 for (const rec of marks) {
   if (rec._error || rec._parentMarkId == null) continue;
+  if (rec.far) continue; // a horizon object (Pando) sits beyond the ground extent by construction (decision 008)
   const parent = byId.get(rec._parentMarkId);
   if (!parent) { err(rec, `nested under "${rec._parentMarkId}", which has no readable mark.md`); continue; }
   if (!CONTAINERS.has(parent.kind)) continue; // already reported on the parent (§5)
