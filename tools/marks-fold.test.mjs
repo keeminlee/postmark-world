@@ -7,7 +7,36 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fold, parseRecord } from "./marks-fold.mjs";
+import { fold, parseRecord, isValidMarkDate, placementParent } from "./marks-fold.mjs";
+
+test("isValidMarkDate accepts day precision AND full ISO 8601 datetime (world-write rung)", () => {
+  for (const ok of ["2026-07-23", "2026-07-23T14:30:00", "2026-07-23T14:30:00Z",
+    "2026-07-23T14:30:00.123Z", "2026-07-23T14:30:00+05:30", "2026-07-23T14:30:00.5-04:00"])
+    assert.equal(isValidMarkDate(ok), true, `should accept ${ok}`);
+  for (const bad of ["2026-7-23", "07-23-2026", "2026-07-23 14:30", "yesterday", "", null, "2026-07-23T14:30"])
+    assert.equal(isValidMarkDate(bad), false, `should reject ${JSON.stringify(bad)}`);
+  // and a mark stamped with an ISO datetime folds clean and carries it through
+  const m = { id: "t/now", by: "t", household: "t", kind: "sited", tier: "market",
+    at: { x: 0, y: 0 }, extent: { w: 4, h: 4 }, date: "2026-07-23T14:30:00Z", body: "b" };
+  const s = fold({ marks: [m], terrain: { features: [] }, stakes: [], tick: 1 });
+  assert.equal(s.marks[0].date, "2026-07-23T14:30:00Z", "the ISO datetime survives the fold");
+});
+
+test("placementParent finds the DEEPEST containing claim (bbox), null when only the root holds it", () => {
+  const root = { id: "the-town/let-there-be-light", kind: "sited", by: "the-town", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 } };
+  const region = { id: "t/region", kind: "sited", by: "t", at: { x: 0, y: 0 }, extent: { w: 4000, h: 4000 } };
+  const yard = { id: "t/yard", kind: "sited", by: "t", at: { x: 100, y: 100 }, extent: { w: 200, h: 200 } };
+  const naming = { id: "t/name", kind: "naming", by: "t", value: "x" }; // not a container, ignored
+  const marks = [root, region, yard, naming];
+  // a small claim inside the yard → the yard (deepest), not the region or root
+  assert.equal(placementParent({ at: { x: 110, y: 110 }, extent: { w: 5, h: 5 } }, marks), "t/yard");
+  // a claim inside the region but outside the yard → the region
+  assert.equal(placementParent({ at: { x: 1500, y: 1500 }, extent: { w: 5, h: 5 } }, marks), "t/region");
+  // a claim out in open ground (only the world-root contains it) → null (→ root)
+  assert.equal(placementParent({ at: { x: 100000, y: 100000 }, extent: { w: 5, h: 5 } }, marks), null);
+  // a claim as big as the yard is NOT a child of the yard (parent must be strictly larger)
+  assert.equal(placementParent({ at: { x: 100, y: 100 }, extent: { w: 200, h: 200 } }, marks), "t/region");
+});
 
 test("parseRecord reads a points ring — bracket-array and SVG-attribute forms", () => {
   const bracket = parseRecord("---\nkind: sited\nby: t\npoints: [[0,0],[60,0],[60,20]]\n---\nbody", "x");

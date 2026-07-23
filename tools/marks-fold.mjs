@@ -36,6 +36,13 @@ const DIALS = {
   ...(opt("--dials", null) ? JSON.parse(readFileSync(opt("--dials"), "utf8")) : {}),
 };
 
+// A mark's date is day-precision (YYYY-MM-DD) OR a full ISO 8601 datetime — the
+// world-write path server-stamps a mark to the second at accept, while the seeded
+// marks stay day-precise. Shared by the lint (format check) and the office (write
+// stamp), so both agree on what a valid mark date is.
+export const MARK_DATE_RE = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?)?$/;
+export const isValidMarkDate = (s) => MARK_DATE_RE.test(String(s ?? ""));
+
 // ---------- tiny frontmatter parser (records are simple; keep it dependency-free) ----------
 export function parseRecord(text, file) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
@@ -151,6 +158,27 @@ function loadStakes() {
 // unchanged. rects are centered on at, sized by extent) ----------
 export { rect, overlapArea, contains, marksContain, polygonOf, ringMatchesClaim } from "./geometry.mjs";
 import { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
+
+// placementParent(claim, marks) — the geometry-decides-the-parent primitive the
+// world-write path (world_leave_mark) calls to preview where a new mark lands: the
+// DEEPEST existing mark whose CLAIM (bounding box — the standing containment
+// ruling, not coverage) contains the new claim. Mirrors the fold's own parent-
+// finding exactly (a container is strictly larger; smallest containing wins), so
+// the preview never disagrees with what the fold will compute. Returns the
+// container's id, or null when only the world-root contains it (null → root).
+// `claim` is any { at, extent }.
+export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
+  const cr = rect(claim), claimArea = cr.w * cr.h;
+  let best = null, bestArea = Infinity;
+  for (const m of marks) {
+    if ((m.kind !== "sited" && m.kind !== "parcel") || !m.at) continue;
+    const mr = rect(m), area = mr.w * mr.h;
+    if (Math.max(mr.w, mr.h) >= worldScaleM) continue; // the world-root is the frame, never a parent → null means root
+    if (area <= claimArea) continue;                    // a parent is strictly larger than its child (the fold's rule)
+    if (contains(mr, cr) && area < bestArea) { best = m; bestArea = area; }
+  }
+  return best ? best.id : null;
+}
 
 // ---------- the fold ----------
 export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS }) {
