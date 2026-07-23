@@ -38,6 +38,19 @@ test("placementParent finds the DEEPEST containing claim (bbox), null when only 
   assert.equal(placementParent({ at: { x: 100, y: 100 }, extent: { w: 200, h: 200 } }, marks), "t/region");
 });
 
+test("placementParent matches the enforcer on a ring container — no notch-bounce (marksContain, not bbox)", () => {
+  // an L-shape container (the notch is inside its bbox, outside its coverage). The
+  // placer must NOT put a notch claim inside it, or the lint gate would bounce it.
+  const root = { id: "the-town/let-there-be-light", kind: "sited", by: "the-town", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 } };
+  const L = { id: "t/l", kind: "sited", by: "t", at: { x: 30, y: 30 }, extent: { w: 60, h: 60 },
+    points: [[0, 0], [60, 0], [60, 20], [20, 20], [20, 60], [0, 60]] };
+  const marks = [root, L];
+  // a claim in the L's ARM → placed inside the L (coverage contains it)
+  assert.equal(placementParent({ at: { x: 10, y: 10 }, extent: { w: 6, h: 6 } }, marks), "t/l");
+  // a claim in the L's NOTCH → NOT the L (bbox would say yes; coverage says no) → root
+  assert.equal(placementParent({ at: { x: 40, y: 40 }, extent: { w: 6, h: 6 } }, marks), null);
+});
+
 test("parseRecord reads a points ring — bracket-array and SVG-attribute forms", () => {
   const bracket = parseRecord("---\nkind: sited\nby: t\npoints: [[0,0],[60,0],[60,20]]\n---\nbody", "x");
   assert.ok(Array.isArray(bracket.points) && bracket.points.length === 3, "bracket form parses to an array");

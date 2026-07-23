@@ -160,22 +160,26 @@ export { rect, overlapArea, contains, marksContain, polygonOf, ringMatchesClaim 
 import { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
 
 // placementParent(claim, marks) — the geometry-decides-the-parent primitive the
-// world-write path (world_leave_mark) calls to preview where a new mark lands: the
-// DEEPEST existing mark whose CLAIM (bounding box — the standing containment
-// ruling, not coverage) contains the new claim. Mirrors the fold's own parent-
-// finding exactly (a container is strictly larger; smallest containing wins), so
-// the preview never disagrees with what the fold will compute. Returns the
-// container's id, or null when only the world-root contains it (null → root).
-// `claim` is any { at, extent }.
+// world-write path (world_leave_mark) calls to DECIDE the directory a new mark
+// lands in: the DEEPEST existing mark that contains the new claim. It tests with
+// the SAME `marksContain` the lint and fold enforce — coverage-honest when a
+// `points:` ring is present (the ring is part of the claim, per the honesty gate),
+// bbox-analytic otherwise (byte-identical on the whole current record: no mark
+// carries a ring today). Placement is not a preview — it IS the asserted
+// containment edge, so the placer and the enforcer must agree, or a ring-notch
+// write would bounce at the lint gate for a writer who did nothing wrong. Bbox
+// area still ranks candidates (strictly larger; smallest containing wins).
+// Returns the container id, or null when only the world-root contains it
+// (null → root). `claim` is any { at, extent, points? }.
 export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
-  const cr = rect(claim), claimArea = cr.w * cr.h;
+  const claimArea = rect(claim).w * rect(claim).h;
   let best = null, bestArea = Infinity;
   for (const m of marks) {
     if ((m.kind !== "sited" && m.kind !== "parcel") || !m.at) continue;
     const mr = rect(m), area = mr.w * mr.h;
     if (Math.max(mr.w, mr.h) >= worldScaleM) continue; // the world-root is the frame, never a parent → null means root
     if (area <= claimArea) continue;                    // a parent is strictly larger than its child (the fold's rule)
-    if (contains(mr, cr) && area < bestArea) { best = m; bestArea = area; }
+    if (marksContain(m, claim) && area < bestArea) { best = m; bestArea = area; }
   }
   return best ? best.id : null;
 }
