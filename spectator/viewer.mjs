@@ -35,6 +35,12 @@ const PRESETS = [
   { x: -1900, y: 2150, label: "Caelina's ground — the dark pole" },
 ];
 
+// step-size notches (Keemin 2026-07-23): a single labeled slider, not buttons.
+// Non-linear notches so a stride runs from a metre to a kilometre; default 100 m.
+const STEP_NOTCHES = [1, 25, 50, 100, 250, 500, 1000];
+const STEP_DEFAULT_I = 3; // → 100 m
+const stepLabel = (m) => (m >= 1000 ? `${(m / 1000).toFixed(m % 1000 ? 1 : 0)} km` : `${m} m`);
+
 // dev-pane dials — the FOV-time leans only (assembly-time idw stays fixed, so a
 // dial change never re-folds or re-assembles: it re-tells). Each is {key,label,
 // min,max,step}. Ranges are generous prototyping room, not law.
@@ -91,6 +97,11 @@ const STYLE = `
 .wv-nav .compass .pos { display:flex; align-items:center; justify-content:center; color:var(--dim); font-size:.72rem; }
 .wv-nav .step { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
 .wv-nav .step button.on { border-color:var(--amber); color:var(--amber); }
+.wv-nav .stepwrap { margin-top:10px; }
+.wv-nav .steplbl { display:flex; justify-content:space-between; align-items:baseline; font-size:.74rem;
+  letter-spacing:.02em; color:var(--dim); text-transform:uppercase; margin-bottom:4px; }
+.wv-nav .steplbl b { color:var(--amber); font-variant-numeric:tabular-nums; text-transform:none; letter-spacing:0; }
+.wv-nav .stepslider { width:100%; accent-color:var(--amber-dark); cursor:pointer; }
 .wv-nav input.txt, .wv-nav input.num { width:100%; background:var(--night); color:var(--paper);
   border:1px solid var(--line); border-radius:4px; font:inherit; padding:4px 7px; }
 .wv-nav input.num { width:80px; }
@@ -127,6 +138,10 @@ const STYLE = `
 .wv-chip.signal { border-color:var(--amber-dark); color:var(--amber); }
 .wv-chip.dim { opacity:.6; }
 .wv-cid { font-size:.7rem; color:var(--dim); opacity:.6; margin-left:auto; font-family:Consolas,Menlo,monospace; }
+.wv-extent { display:inline-flex; align-items:center; gap:4px; opacity:.8; }
+.wv-extent svg { display:block; }
+.wv-extent svg rect { fill:rgba(154,146,128,.18); stroke:var(--dim); stroke-width:1; }
+.wv-extent-t { font-size:.66rem; color:var(--dim); font-variant-numeric:tabular-nums; white-space:nowrap; }
 .wv-cluster { margin-top:7px; font-size:.8rem; font-style:italic; color:var(--amber); opacity:.85; }
 .wv-tallies { margin-top:22px; padding-top:10px; font-size:.82rem; color:var(--dim); border-top:1px solid var(--line); max-width:76ch; }
 /* everything is a mark-cell — tier accents + the encompassing ladder */
@@ -241,9 +256,10 @@ const MARKUP = `
         <button class="ctl" data-dx="-1" data-dy="0">W</button><div class="pos">0,0</div><button class="ctl" data-dx="1" data-dy="0">E</button>
         <button class="ctl" data-dx="-1" data-dy="1">SW</button><button class="ctl" data-dx="0" data-dy="1">S</button><button class="ctl" data-dx="1" data-dy="1">SE</button>
       </div>
-      <div class="step">
-        <button class="ctl" data-m="100">100 m</button><button class="ctl on" data-m="250">250 m</button>
-        <button class="ctl" data-m="500">500 m</button><button class="ctl" data-m="1000">1 km</button>
+      <div class="stepwrap">
+        <label class="steplbl">step size <b class="stepval">100 m</b></label>
+        <input class="stepslider" type="range" min="0" max="${STEP_NOTCHES.length - 1}" step="1" value="3" list="wv-stepticks" aria-label="step size">
+        <datalist id="wv-stepticks">${STEP_NOTCHES.map((_, i) => `<option value="${i}"></option>`).join("")}</datalist>
       </div>
       <h2>Crossing</h2>
       <input class="num crossing" type="number" value="19" min="0"> <span class="wv-quiet" style="font-size:.78rem">fog seeds from it</span>
@@ -287,7 +303,7 @@ export function mountViewer(appEl) {
   const root = shadowHost;
   const state = {
     cam: { x: 0, y: 0 },
-    step: 250,
+    step: STEP_NOTCHES[STEP_DEFAULT_I], // 100 m
     crossing: 19,
     view: "telling",
     handle: "wright",
@@ -312,11 +328,14 @@ export function mountViewer(appEl) {
   }
   async function loadData() {
     if (data) return;
+    // fetch preference (Wright 2026-07-23): the office live fold FIRST (its /api/
+    // path recomputes from the town's clone, so a write shows in seconds), then
+    // same-origin /WORLD (local dev server + the baked site copy), then RAW github.
     const [ws, sk, mf] = await Promise.all([
-      fetchJson(["/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`]),
-      fetchJson(["/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
-      // homes come from the seeding manifest, fetched the same way as the record
-      // (same-origin probe → raw fallback); optional — no manifest just means no green
+      fetchJson(["/api/world/state", "/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`]),
+      fetchJson(["/api/world/skeleton", "/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
+      // homes come from the seeding manifest, fetched the same way (same-origin probe
+      // → raw fallback); optional — no manifest just means no green
       fetchJson(["/seeding/manifest.json", `${RAW}/seeding/manifest.json`]).catch(() => null),
     ]);
     data = { worldState: ws, skeleton: sk };
@@ -369,6 +388,23 @@ export function mountViewer(appEl) {
     if (m.aboveFogTarget) c.push(`<span class="wv-chip">above the fog</span>`);
     return c.join("");
   }
+  // the FOOTPRINT indicator (Keemin 2026-07-23): coordinate dots say nothing about
+  // how big a mark is — the-main-channel is 10^3× a bench. A log-scaled glyph rect
+  // + a "w×h m" read gives each cell its size at a glance. Extent is the mark's
+  // claim; a points: ring's bbox equals it (the honesty gate), so extent suffices.
+  // Law/predicated cells carry no extent → no glyph.
+  function extentTag(m) {
+    const e = (byId.get(m.id) ?? m).extent;
+    if (m.far || !e || !(e.w || e.h)) return "";
+    const w = e.w ?? 0, h = e.h ?? 0, maxD = Math.max(w, h, 1);
+    const box = 6 + Math.min(26, Math.log10(maxD + 1) * 8.5); // ~6px @1m … ~32px @~5km
+    const gw = Math.max(2, box * (w / maxD)), gh = Math.max(2, box * (h / maxD));
+    const fmt = (n) => (n >= 1000 ? `${(n / 1000).toFixed(n % 1000 ? 1 : 0)}k` : Math.round(n));
+    return `<span class="wv-extent" title="footprint ${w}×${h} m">`
+      + `<svg width="${box.toFixed(0)}" height="${box.toFixed(0)}" viewBox="0 0 ${box.toFixed(1)} ${box.toFixed(1)}" aria-hidden="true">`
+      + `<rect x="${((box - gw) / 2).toFixed(1)}" y="${((box - gh) / 2).toFixed(1)}" width="${gw.toFixed(1)}" height="${gh.toFixed(1)}" rx="1"/></svg>`
+      + `<span class="wv-extent-t">${fmt(w)}×${fmt(h)} m</span></span>`;
+  }
   // THE unified mark-cell — everything on the telling is one of these, and every
   // one names its mark id (Keemin 2026-07-23). role styles it (frame/ladder/law/fov);
   // tier colors it; annotation carries a mechanic's live state (fog/light this crossing).
@@ -379,7 +415,7 @@ export function mountViewer(appEl) {
     return `<article class="wv-card ${role}${far ? " far" : ""} t-${tier}" data-id="${esc(m.id)}" role="button" tabindex="0">
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
-      <div class="cmeta">${tierChip(tier)}${radialChips ? chips(m) : ""}<span class="wv-cid">${esc(m.id)}</span></div>
+      <div class="cmeta">${tierChip(tier)}${extentTag(m)}${radialChips ? chips(m) : ""}<span class="wv-cid">${esc(m.id)}</span></div>
       ${cluster}
     </article>`;
   }
@@ -522,6 +558,7 @@ export function mountViewer(appEl) {
       }
       box.innerHTML = `<div class="wv-gridwrap">${nested}
         <div class="wv-gridnote">you stand at the centre; each point is a mark in its true bearing and distance. The nested frames are what you stand <b>within</b> — the outermost is the world itself, the innermost the smallest thing that contains you. Click a point to investigate.</div></div>`;
+      drawOverlay(e.radial); // the painting tracks the camera in grid mode too (the bug: it never did)
     } catch (err) {
       box.innerHTML = `<div class="wv-err">the grid failed: ${esc(err?.message ?? err)}</div>`;
     }
@@ -698,7 +735,6 @@ export function mountViewer(appEl) {
     if (!b) return;
     if (b.dataset.x !== undefined && b.classList.contains("ctl")) { state.cam = { x: +b.dataset.x, y: +b.dataset.y }; renderCurrent(); }
     else if (b.dataset.dx !== undefined) { state.cam.x += (+b.dataset.dx) * state.step; state.cam.y += (+b.dataset.dy) * state.step; renderCurrent(); }
-    else if (b.dataset.m) { state.step = +b.dataset.m; for (const x of root.querySelectorAll(".step button")) x.classList.toggle("on", x === b); }
     else if (b.classList.contains("wv-card") && b.dataset.id) { if (b._stack?.length) { b._stack = []; renderExpansion(b); } else { b._stack = [b.dataset.id]; renderExpansion(b); } }
   });
   function openCardById(id) {
@@ -706,6 +742,7 @@ export function mountViewer(appEl) {
     if (card) { card._stack = [id]; renderExpansion(card); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
   }
   root.addEventListener("input", (e) => {
+    if (e.target.classList.contains("stepslider")) { state.step = STEP_NOTCHES[Number(e.target.value)] ?? state.step; const lbl = root.querySelector(".stepval"); if (lbl) lbl.textContent = stepLabel(state.step); return; }
     if (e.target.classList.contains("crossing")) { state.crossing = Number(e.target.value) || 0; renderCurrent(); return; }
     if (e.target.classList.contains("handle")) { state.handle = e.target.value; state.stakesLocal = null; if (state.view === "marks") renderMarks(); return; }
     const dial = e.target.dataset?.dial;
@@ -716,8 +753,23 @@ export function mountViewer(appEl) {
     }
   });
 
+  // dev-dials auth-gate (Keemin 2026-07-23): the live engine dials are a dev /
+  // principal tool, not a public control. Hidden by default; shown on localhost
+  // (the dev build), or on the public site only for the signed-in principal —
+  // feature-detected via the office's keyless /api/ops/whoami (which arrives with
+  // the write release; until then the public beta simply keeps the dials hidden).
+  // No client flag can spoof it: absence of a server "yes" means hidden.
+  async function gateDevDials() {
+    const toggle = $(root, ".wv-dev-toggle");
+    if (!toggle) return;
+    toggle.hidden = true;
+    if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) { toggle.hidden = false; return; }
+    try { const r = await fetch("/api/ops/whoami"); if (r.ok && (await r.json())?.principal) toggle.hidden = false; } catch { /* no endpoint → stay hidden */ }
+  }
+
   // ───────── boot ─────────
   (async () => {
+    gateDevDials();
     try {
       await loadData();
       renderCurrent();
