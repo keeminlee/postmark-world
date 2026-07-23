@@ -13,7 +13,7 @@ import {
 } from "./world-engine.mjs";
 import { walk, investigate, orient } from "./world-verbs.mjs";
 import { buildWorld } from "./world-poc.mjs";
-import { contains, rect } from "./marks-fold.mjs";
+import { contains, rect } from "./geometry.mjs";
 
 // a tiny flat world helper
 const flatHF = buildHeightfield({ controlPoints: [{ x: 0, y: 0, h: 5 }, { x: 10000, y: 0, h: 5 }, { x: 0, y: 10000, h: 5 }, { x: -10000, y: 0, h: 5 }] });

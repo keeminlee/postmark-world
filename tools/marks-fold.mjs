@@ -135,16 +135,12 @@ function loadStakes() {
   return out;
 }
 
-// ---------- geometry (shared with mark-lint.mjs — one definition of "contains",
-// so the fold's computed edges and the lint's "you cannot lie with an edge" can
-// never disagree; rects are centered on at, sized by extent) ----------
-export const rect = (mk) => ({ x: mk.at?.x ?? 0, y: mk.at?.y ?? 0, w: mk.extent?.w ?? 1, h: mk.extent?.h ?? 1 });
-export function overlapArea(a, b) {
-  const dx = Math.min(a.x + a.w / 2, b.x + b.w / 2) - Math.max(a.x - a.w / 2, b.x - b.w / 2);
-  const dy = Math.min(a.y + a.h / 2, b.y + b.h / 2) - Math.max(a.y - a.h / 2, b.y - b.h / 2);
-  return dx > 0 && dy > 0 ? dx * dy : 0;
-}
-export const contains = (outer, inner) => overlapArea(outer, inner) >= 0.99 * inner.w * inner.h;
+// ---------- geometry (the ONE definition now lives in geometry.mjs — pure and
+// browser-safe. Imported here for the fold's internal use, and RE-EXPORTED so
+// mark-lint.mjs's `import { … rect, contains } from "./marks-fold.mjs"` is
+// unchanged. rects are centered on at, sized by extent) ----------
+export { rect, overlapArea, contains } from "./geometry.mjs";
+import { rect, overlapArea, contains } from "./geometry.mjs";
 
 // ---------- the fold ----------
 export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS }) {

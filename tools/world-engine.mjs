@@ -334,7 +334,7 @@ export function radialSerialize(fov) {
 // 07-22 nesting ruling). The engine consumes already-validated, already-folded
 // marks — it must never grow a second definition of containment or a second
 // mark reader, or the fold's edges and the engine's would be free to drift.
-// Callers that need containment import `contains`/`rect` from marks-fold.mjs.
+// Callers that need containment import `contains`/`rect` from geometry.mjs.
 
 // ───────────────────────── small pure helpers ──────────────────────────────
 function lerp(a, b, t) { return a + (b - a) * Math.max(0, Math.min(1, t)); }

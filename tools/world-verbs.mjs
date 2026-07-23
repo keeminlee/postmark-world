@@ -14,7 +14,7 @@ import {
   fieldOfView, radialSerialize, statusAt, lightLevelAt, fogModel,
   bearingDeg, quantizeBearing, distanceBand, DIALS,
 } from "./world-engine.mjs";
-import { contains, rect } from "./marks-fold.mjs"; // the ONE containment definition
+import { contains, rect } from "./geometry.mjs"; // the ONE containment definition — pure, browser-safe (no node:*)
 
 // ───────────────────────── orient — charter + your state ────────────────────
 // The establishing line of every telling: the let-there-be-light root (light

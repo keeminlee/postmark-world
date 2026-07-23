@@ -1,0 +1,23 @@
+{
+  "name": "postmark-world",
+  "version": "0.1.0",
+  "description": "The told world of Postmark — the semantic-world engine (heightfield, field-of-view, LOD, radial serializer) and its spine verbs (orient / open-your-eyes / investigate / walk). Browser-pure: the site computes FOV client-side from the public world-state.json + skeleton.json, read-only by construction.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./tools/world-engine.mjs",
+    "./world-engine": "./tools/world-engine.mjs",
+    "./world-verbs": "./tools/world-verbs.mjs",
+    "./geometry": "./tools/geometry.mjs",
+    "./tools/world-engine.mjs": "./tools/world-engine.mjs",
+    "./tools/world-verbs.mjs": "./tools/world-verbs.mjs",
+    "./tools/geometry.mjs": "./tools/geometry.mjs"
+  },
+  "scripts": {
+    "test": "node --test tools/world-engine.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/keeminlee/postmark-world.git"
+  }
+}
