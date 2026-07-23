@@ -25,8 +25,12 @@ export function orient(state, world, { crossing = 0 } = {}) {
   const fog = fogModel(crossing);
   const groundH = heightfield.elevationAt(state.x, state.y);
   const self = statusAt({ x: state.x, y: state.y, groundH, eyeH: DIALS.eye_height_m, heightfield, light, fog, fogCeilingM });
+  // the containment spine: root → inward. within[0] is the frame (the root),
+  // whose body is the establishing line — charter out of code, into the record.
+  const within = containmentChain(state, world.marks);
+  const root = within[0];
   return {
-    charter: world.charter ?? CHARTER,
+    charter: { ...(world.charter ?? CHARTER), establishing: root?.body ?? (world.charter ?? CHARTER).light, from_mark: root?.id ?? null },
     you: {
       name: state.name ?? "(unnamed)",
       at: { x: state.x, y: state.y },
@@ -34,6 +38,7 @@ export function orient(state, world, { crossing = 0 } = {}) {
       eyeElevM: +self.eyeElev.toFixed(1),
       standingOn: nearestGround(state, world),
       region: regionOf(state, world),
+      within, // the spine, root → innermost (structural — the site renders it as the leading section)
       light: { level: +self.lightLevel.toFixed(2), inDarkness: self.inDarkness },
       fog: { crossing: fog.crossing, thickness: +fog.thickness.toFixed(2), inFog: self.inFog, aboveFog: self.aboveFog },
     },
@@ -49,8 +54,33 @@ export function orient(state, world, { crossing = 0 } = {}) {
 export function openYourEyes(state, world, { crossing = 0, budget = DIALS.context_budget } = {}) {
   const fov = fieldOfView(state, world, { crossing, budget });
   const radial = radialSerialize(fov);
+  radial.within = containmentChain(state, world.marks); // the spine: root → inward, parents first
+  fov.within = radial.within;
   return { fov, radial, tell: () => renderTelling(state, radial, fov) };
 }
+
+// containmentChain — the telling's spine (Keemin, 2026-07-23): the marks the
+// observer stands WITHIN, from the top parent (the root, whose body is the
+// establishing line) inward to the smallest containing mark. Computed from
+// geometry now that the one-tree data is live — the ancestry walk IS orient's
+// answer. Root-first (largest extent), innermost-last.
+export function containmentChain(pos, marks) {
+  // marks whose rect actually contains the point (a real point-in-rect test —
+  // NOT contains() with a zero-area rect, which is always true)
+  const containing = marks
+    .filter((m) => m.at && (m.kind === "sited" || m.kind === "parcel") && pointInRect(pos, m))
+    .sort((a, b) => extentArea(a) - extentArea(b)); // innermost (smallest) first
+  // build the ANCESTRY nest from the innermost outward: a larger mark joins only
+  // if it truly CONTAINS the current nest tip — so sibling rects that merely
+  // overlap the point (a coarse-rect artifact) are dropped, not listed.
+  const nest = [];
+  for (const m of containing) {
+    if (nest.length === 0 || contains(rect(m), rect(nest[nest.length - 1]))) nest.push(m);
+  }
+  return nest.reverse().map((m) => ({ id: m.id, by: m.by, tier: m.tier, body: m.body, extentM: Math.max(m.extent?.w ?? 0, m.extent?.h ?? 0) }));
+}
+function extentArea(m) { return (m.extent?.w ?? 1) * (m.extent?.h ?? 1); }
+function pointInRect(pos, m) { const r = rect(m); return Math.abs(pos.x - r.x) <= r.w / 2 && Math.abs(pos.y - r.y) <= r.h / 2; }
 
 // ───────────────────────── investigate — descend the tree, capped ────────────
 // Zoom one mark: its body (full prose), the predicated properties attached to
@@ -117,13 +147,22 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
 
 // ───────────────────────── the telling renderer ─────────────────────────────
 // Turns the radial serialization into told prose — the D&D-shaped "what you see."
-// Establishing line from the charter; then bearing by bearing, near to far.
+// The spine is CONTAINMENT, parents-first (Keemin, 2026-07-23): the root's body
+// opens as the establishing line; then you home inward through the marks you are
+// WITHIN (region → any containing mark); THEN the radial FOV listing.
 function renderTelling(state, radial, fov) {
   const o = radial.observer;
+  const within = radial.within ?? [];
   const L = [];
+  // 1. the establishing line — the root's body (the frame; never a card)
+  const root = within[0];
+  if (root?.body) { L.push(root.body); L.push(""); }
   const who = o.name ?? "You";
   const stands = who === "You" ? "stand" : "stands"; // verb agreement: "You stand" vs "an agent stands"
   L.push(`— ${who} ${stands} at (${o.at?.x ?? state.x}, ${o.at?.y ?? state.y}), ${o.groundElevM} m above the sea.`);
+  // 2. the containment spine — home inward through what contains you (skip the root frame)
+  const spine = within.slice(1).filter((m) => m.body);
+  if (spine.length) L.push(`You are within ${spine.map((m) => firstLine(m.body).replace(/[.·\s]+$/, "")).join(" · ")}.`);
   const anySignalCarries = fov.carried.some((m) => m.signal); // don't promise lights that aren't there
   const airline = o.aboveFog ? "You are above the fog; the sightlines run long."
     : o.inFog ? `Fog is in tonight (crossing ${radial.crossing}, thickness ${radial.fog.thickness}); it closes the view to about ${radial.sightReachM} m${anySignalCarries ? ", and only the lights carry further" : ""}.`

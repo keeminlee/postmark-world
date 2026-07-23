@@ -33,9 +33,17 @@ node --test tools/world-engine.test.mjs     # the tests
 
 ## The verbs (thin over the library)
 
-- **`orient`** — the charter (let-there-be-light: light from the NE, dying SW; the
-  world is that mark's extent) + your state: where you stand, your elevation, your
-  region, and the fog / light status effects on you now.
+- **`orient`** — the charter + your state: where you stand, your elevation, your
+  region, the fog / light status effects, and **`you.within`** — the containment
+  spine (the marks you stand inside, root → innermost, computed from geometry). The
+  charter's establishing line is now the **root mark's body** (charter out of code,
+  into the record), exposed as `charter.establishing` / `charter.from_mark`.
+- **the telling's spine is CONTAINMENT, parents-first** (Keemin, 2026-07-23): every
+  telling opens with the root's body (the establishing line; the root is the frame,
+  never a card), then homes inward through what contains you (`You are within
+  <region> · <house>`), THEN the radial FOV listing. `openYourEyes` exposes the same
+  chain as **`radial.within`** / `fov.within` — an array root→innermost of
+  `{ id, by, tier, body, extentM }`, for a site to render as the leading section.
 - **`open-your-eyes`** — the FOV telling. Visible marks in quantized bearings +
   named distance bands, ranked by angular size (extent/distance) modulated by
   stamps, capped at the **context budget**, fog + darkness applied, signal-marks
