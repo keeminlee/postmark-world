@@ -20,7 +20,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMarks, marksContain } from "./marks-fold.mjs";
+import { loadMarks, marksContain, polygonOf, ringMatchesClaim } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -119,6 +119,14 @@ for (const rec of marks) {
     if (rec.kind === "parcel" && rec.at == null) err(rec, `parcel marks need at {x,y} (extent defaults to 25x25)`);
     if (rec.slot !== undefined || rec.value !== undefined) err(rec, `${rec.kind} marks carry no slot/value (those are for predicated/naming)`);
     if (rec._explicitParent) err(rec, `${rec.kind} marks never declare a parent — containment is computed from geometry, not authored`);
+    // 4b. claim-honesty for a points: ring (SCHEMA v2): the ring must be a real
+    // shape, and its bounding box must equal the mark's at/extent claim. This gate
+    // exists before the first record that carries a ring, so the coarse claim can
+    // never lie about the fine shape the FOV silhouette / containment will honor.
+    if (rec.points !== undefined) {
+      if (!polygonOf(rec)) err(rec, `points: must be a ring of ≥3 vertices ([[x,y],…] or "x1,y1 x2,y2 …")`);
+      else if (!ringMatchesClaim(rec)) err(rec, `the points: ring's bounding box must equal the mark's at/extent claim — the claim IS the ring's bbox (SCHEMA v2)`);
+    }
   } else if (rec.kind === "predicated" || rec.kind === "naming") {
     if (rec.at !== undefined || rec.extent !== undefined) err(rec, `${rec.kind} marks carry no at/extent — they take their locus from their parent`);
     if (rec.kind === "predicated" && (rec.slot === undefined || rec.value === undefined)) err(rec, `predicated marks need slot and value`);

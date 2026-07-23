@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 import {
   rect, overlapArea, contains,
   coverage, marksContain, marksOverlapArea, isIrregular, polygonOf, COVERAGE_CELL_M,
+  polygonBBox, ringMatchesClaim,
 } from "./geometry.mjs";
 import { fold, loadMarks } from "./marks-fold.mjs";
 
@@ -143,6 +144,16 @@ test("isIrregular: plain rect is regular; points or a feature line is irregular"
   assert.equal(isIrregular({ points: [[0, 0], [1, 0], [1, 1]] }), true);
   assert.equal(isIrregular({ at: { x: 0, y: 0 } }, { line: [{ x: 0, y: 0 }, { x: 9, y: 0 }] }), true);
   assert.equal(isIrregular({ points: [[0, 0], [1, 0]] }), false, "a 2-vertex 'ring' is not a shape");
+});
+
+test("claim-honesty: a points ring's bbox must equal the mark's at/extent (rung 3 lint rule)", () => {
+  const ring = [[-100, 298], [100, 298], [100, 302], [-100, 302]];
+  assert.deepEqual(polygonBBox(ring), { minx: -100, maxx: 100, miny: 298, maxy: 302 });
+  const honest = { at: { x: 0, y: 300 }, extent: { w: 200, h: 4 }, points: ring };
+  assert.equal(ringMatchesClaim(honest), true, "a claim equal to the ring's bbox passes");
+  const lying = { at: { x: 0, y: 300 }, extent: { w: 50, h: 4 }, points: ring }; // extent narrower than the ring
+  assert.equal(ringMatchesClaim(lying), false, "a claim that isn't the ring's bbox fails (the lint errors)");
+  assert.equal(ringMatchesClaim({ at: { x: 0, y: 0 }, extent: { w: 4, h: 4 } }), true, "no ring → nothing to check");
 });
 
 // helper: the cell key for a world point at a given cell size

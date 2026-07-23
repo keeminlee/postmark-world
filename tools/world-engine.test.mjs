@@ -137,6 +137,34 @@ test("orient returns the charter root and your standing state", () => {
   assert.ok(o.you.groundElevM >= 4 && o.you.groundElevM <= 6, "the quay is ~+5 m");
 });
 
+test("the horizon is told FROM the far:true mark — Pando is a mark-cell, not a terrain feature (rung 3)", () => {
+  const w = buildWorld({ crossing: 19, marksDir: "WORLD/marks" }); // the real nested tree carries the-town/pando-peak
+  const e = openYourEyes({ x: 0, y: 0 }, w, { crossing: 19 });
+  const pando = e.fov.far.find((f) => f.label === "Pando Peak");
+  assert.ok(pando, "Pando is on the horizon");
+  assert.equal(pando.id, "the-town/pando-peak", "its identity is the MARK, not terrain:pando-peak");
+  assert.equal(pando.distM, 135000, "precise distance still comes from the skeleton feature via feature:");
+  assert.equal(pando.heightM, 4000, "precise height too — the mark is the claim, the skeleton the measurement");
+  const e2 = openYourEyes({ x: 0, y: 0 }, w, { crossing: 19 });
+  assert.equal(e.tell(), e2.tell(), "the telling still replays byte-identical");
+});
+
+test("angular size uses the coverage silhouette for a points: mark; a rect is unchanged (rung 3)", () => {
+  // a wide, shallow polygon: 200 m E-W × 4 m N-S, due south of the quay observer
+  const wide = { id: "p/wide", kind: "sited", household: "p", at: { x: 0, y: 300 }, extent: { w: 200, h: 4 }, weight: 0,
+    points: [[-100, 298], [100, 298], [100, 302], [-100, 302]] };
+  const broadside = fieldOfView({ x: 0, y: 0 }, worldOf([wide]), { crossing: 0 }).carried.find((m) => m.id === "p/wide");
+  const endon = fieldOfView({ x: 300, y: 300 }, worldOf([wide]), { crossing: 0 }).carried.find((m) => m.id === "p/wide");
+  assert.ok(broadside && endon, "the mark is visible from both angles");
+  assert.ok(broadside.extentM > endon.extentM * 5, `broadside silhouette (${broadside.extentM}) far exceeds end-on (${endon.extentM}) — span, not max(w,h)`);
+  // a plain rect keeps max(w,h) regardless of bearing (byte-identical to before)
+  const box = { id: "r/box", kind: "sited", household: "r", at: { x: 0, y: 300 }, extent: { w: 200, h: 4 }, weight: 0 };
+  const rb = fieldOfView({ x: 0, y: 0 }, worldOf([box]), { crossing: 0 }).carried.find((m) => m.id === "r/box");
+  const re = fieldOfView({ x: 300, y: 300 }, worldOf([box]), { crossing: 0 }).carried.find((m) => m.id === "r/box");
+  assert.equal(rb.extentM, 200, "a rect uses max(w,h)");
+  assert.equal(re.extentM, 200, "a rect's angular extent is bearing-independent — unchanged");
+});
+
 test("a passed dials override defaulting to DIALS is byte-identical (dev-pane safety)", () => {
   // the dev pane threads an optional `dials` param; passing the module DIALS
   // through must change nothing — determinism/replay is law.

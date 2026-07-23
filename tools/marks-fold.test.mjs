@@ -45,6 +45,18 @@ test("the fold's nesting honors a points: ring — a child in the notch does NOT
   assert.notEqual(w("t/l"), 12, "the bbox rule would have wrongly folded the notch child in");
 });
 
+test("the fold carries a points: ring through to the output mark (the FOV silhouette reads it)", () => {
+  const m = { id: "t/poly", by: "t", household: "t", kind: "sited", tier: "market",
+    at: { x: 0, y: 0 }, extent: { w: 20, h: 20 }, points: [[-10, -10], [10, -10], [10, 10], [-10, 10]], body: "poly" };
+  const state = fold({ marks: [m], terrain: { features: [] }, stakes: [], tick: 1 });
+  const out = state.marks.find((x) => x.id === "t/poly");
+  assert.deepEqual(out.points, [[-10, -10], [10, -10], [10, 10], [-10, 10]], "points survive the fold output projection");
+  // a mark with no ring serializes without a points key — world-state.json stays byte-identical
+  const plain = { id: "t/plain", by: "t", household: "t", kind: "sited", tier: "market", at: { x: 0, y: 0 }, extent: { w: 4, h: 4 }, body: "b" };
+  const s2 = fold({ marks: [plain], terrain: { features: [] }, stakes: [], tick: 1 });
+  assert.equal("points" in JSON.parse(JSON.stringify(s2.marks[0])), false, "no ring → no points key after serialization");
+});
+
 test("with a rectangular container the fold is unchanged (analytic delegation)", () => {
   // same geometry, but the container is a plain rect (no points:) — both children
   // are inside its box, so both fan up: the analytic path, byte-identical to before.

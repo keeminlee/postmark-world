@@ -149,7 +149,7 @@ function loadStakes() {
 // browser-safe. Imported here for the fold's internal use, and RE-EXPORTED so
 // mark-lint.mjs's `import { … rect, contains } from "./marks-fold.mjs"` is
 // unchanged. rects are centered on at, sized by extent) ----------
-export { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
+export { rect, overlapArea, contains, marksContain, polygonOf, ringMatchesClaim } from "./geometry.mjs";
 import { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
 
 // ---------- the fold ----------
@@ -297,8 +297,10 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       body: mk.body,
       // carried through so the engine/assembly can honor them (07-23): mechanic
       // (the machinery that keeps a mark true — physics-registry id), top_m (a
-      // mark's vertical prominence), feature (the two-precision survey link).
-      mechanic: mk.mechanic, top_m: mk.top_m, feature: mk.feature,
+      // mark's vertical prominence), feature (the two-precision survey link),
+      // points (the fine shape ring — the FOV silhouette reads it; undefined for
+      // every current record, so world-state.json stays byte-identical).
+      mechanic: mk.mechanic, top_m: mk.top_m, feature: mk.feature, points: mk.points,
     })),
     parcels: parcels.map(p => ({ id: p.id, household: p.household, at: { x: p._r.x, y: p._r.y }, extent: { w: p._r.w, h: p._r.h } })),
     determined, vague, rivalries,

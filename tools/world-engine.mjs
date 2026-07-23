@@ -230,12 +230,16 @@ export function fieldOfView(observer, world, { crossing = 0, budget = DIALS.cont
   for (const mk of marks) {
     if (!mk.at) continue;                                   // predicated/naming have no site of their own
     if (mk.kind === "parcel") continue;                     // a land-claim boundary is not scenery you see
+    if (mk.far) continue;                                   // a far:true mark is a horizon object (told below), never ground scenery
     if (markExtent(mk) >= dials.world_scale_extent_m) continue; // the world-root is the frame — establishing line, not a list item
     const dx = mk.at.x - observer.x, dy = mk.at.y - observer.y;
     const distM = Math.hypot(dx, dy);
     if (distM > dials.max_sight_m) continue;                // compute cull (bounds cost)
     if (distM < 1e-6) continue;                             // standing on it — orient() covers "here"
-    const extentM = markExtent(mk);
+    // angular size uses the mark's true SILHOUETTE span (its visible width from
+    // here) when it carries a fine shape; a plain rect falls back to max(w,h) —
+    // byte-identical for every current record (none carry a points: ring).
+    const extentM = markSilhouetteSpan(mk, dx, dy) ?? markExtent(mk);
     const targetH = heightfield.elevationAt(mk.at.x, mk.at.y);
     const isSignal = !!mk.signal;
 
@@ -266,15 +270,26 @@ export function fieldOfView(observer, world, { crossing = 0, budget = DIALS.cont
   }
 
   // far-features on the horizon (Pando): a horizon object, not heightfield ground.
-  // Seen on any clear sightline in its bearing (decision 008) — above fog always,
-  // or when this crossing's fog is thin enough.
+  // Rendered FROM the far:true MARKS — every claim in the UI is a mark-cell, so the
+  // card's identity is the mark's id (the-town/pando-peak), and the precise numbers
+  // (bearing, distance, height) come from the skeleton feature its `feature:` link
+  // names — the two-precision split (the mark is the claim; the skeleton is the
+  // measurement). Seen on any clear sightline (decision 008): above fog always, or
+  // when this crossing's fog is thin enough.
   const farSeen = [];
-  for (const ff of terrain?.far_features ?? []) {
-    const clearHorizon = self.aboveFog || fog.thickness < 0.5;
+  const clearHorizon = self.aboveFog || fog.thickness < 0.5;
+  const farFeatureById = new Map((terrain?.far_features ?? []).map((f) => [f.id, f]));
+  for (const mk of marks) {
+    if (!mk.far || !mk.at) continue;
+    const ff = farFeatureById.get(mk.feature) ?? farFeatureById.get(String(mk.id).split("/").pop());
+    const dx = mk.at.x - observer.x, dy = mk.at.y - observer.y;
     farSeen.push({
-      id: `terrain:${ff.id}`, kind: "far-feature", far: true,
-      bearing: ff.bearing, band: "on the horizon",
-      distM: ff.distance_m, heightM: ff.height_m, label: ff.label ?? null, body: ff.receipt,
+      id: mk.id, kind: "far-feature", far: true,
+      bearing: ff?.bearing ?? quantizeBearing(bearingDeg(dx, dy), dials.bearing_points),
+      band: "on the horizon",
+      distM: ff?.distance_m ?? Math.round(Math.hypot(dx, dy)),
+      heightM: ff?.height_m ?? markTop(mk, dials),
+      label: ff?.label ?? null, body: mk.body ?? ff?.receipt,
       visible: clearHorizon,
     });
   }
@@ -348,5 +363,25 @@ function markExtent(mk) {
 function markTop(mk, dials = DIALS) {                   // vertical prominence: declared, else a modest default for sited things
   if (mk.top_m != null) return mk.top_m;
   return mk.kind === "sited" ? dials.default_mark_top_m : 0;
+}
+// The mark's SILHOUETTE span — its visible width from the observer — when it
+// carries a fine shape (a `points:` ring). Projects every ring vertex onto the
+// axis perpendicular to the view bearing; the span (max−min) is what the eye
+// actually subtends, replacing extent-as-width. Null for a plain rect, so the
+// caller keeps analytic max(w,h) — byte-identical for every current record. The
+// engine reads only the mark's own points (no geometry import, no disk).
+function markSilhouetteSpan(mk, dx, dy) {
+  const ring = Array.isArray(mk.points) && mk.points.length >= 3 ? mk.points : null;
+  if (!ring) return null;
+  const len = Math.hypot(dx, dy) || 1;
+  const px = -dy / len, py = dx / len;                  // unit vector perpendicular to the bearing
+  let min = Infinity, max = -Infinity;
+  for (const p of ring) {
+    const vx = Array.isArray(p) ? p[0] : p.x, vy = Array.isArray(p) ? p[1] : p.y;
+    const proj = vx * px + vy * py;
+    if (proj < min) min = proj;
+    if (proj > max) max = proj;
+  }
+  return max - min;
 }
 const DEFAULT_EXTENT = { sited: 4, parcel: 25 };

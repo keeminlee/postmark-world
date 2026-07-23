@@ -57,6 +57,29 @@ export function isIrregular(mark, feature = null) {
   return !!(polygonOf(mark) || hasFeatureLine(feature));
 }
 
+// The bounding box of a points ring (accepts [{x,y}…] or [[x,y]…]).
+export function polygonBBox(ring) {
+  if (!Array.isArray(ring) || !ring.length) return null;
+  let minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
+  for (const p of ring) {
+    const x = Array.isArray(p) ? p[0] : p.x, y = Array.isArray(p) ? p[1] : p.y;
+    if (x < minx) minx = x; if (x > maxx) maxx = x; if (y < miny) miny = y; if (y > maxy) maxy = y;
+  }
+  return { minx, maxx, miny, maxy };
+}
+
+// Claim-honesty (SCHEMA v2: the ring's bbox IS the mark's declared at/extent).
+// True when there is no ring (nothing to check) or its bbox matches at/extent
+// within `tol`. The lint enforces this so the coarse claim never lies about the
+// fine shape — the gate exists BEFORE the first record that carries a ring.
+export function ringMatchesClaim(mark, tol = 0.5) {
+  const ring = polygonOf(mark);
+  if (!ring) return true;
+  const bb = polygonBBox(ring), r = rect(mark);
+  return Math.abs(bb.minx - (r.x - r.w / 2)) <= tol && Math.abs(bb.maxx - (r.x + r.w / 2)) <= tol
+    && Math.abs(bb.miny - (r.y - r.h / 2)) <= tol && Math.abs(bb.maxy - (r.y + r.h / 2)) <= tol;
+}
+
 // coverage(mark, {cell, feature}) → Set<cellKey>. Rasterizer by outward
 // expression: polygon ring · feature polyline+width · rect box. Returns null if
 // the rasterization would exceed MAX_COVERAGE_CELLS (caller falls back analytic).
