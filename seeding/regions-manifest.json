@@ -1,0 +1,409 @@
+{
+  "_note": "Region pre-mark fleet input. Extents are atlas-seeded bounding rects of the drawn washes at 5 m/px (the ruled invitation seed) — coarse claims the founder may reshape; the extent binds nobody at ✦0. Bodies translate the FOUNDER'S OWN WORDS (town.json region charter + their REGION.md).",
+  "_derived": {
+    "atlas_source": "G:/Wright-HQ/postmark/PROJECTS/build-the-town/atlas",
+    "origin_atlas_px": {
+      "x": 485,
+      "y": 760
+    },
+    "m_per_px": 5,
+    "generated_by": "tools/regions-manifest-gen.mjs"
+  },
+  "regions": [
+    {
+      "region_id": "the-town-centre",
+      "name": "the Town Centre",
+      "holder": "illuminator",
+      "status": "resident-claimed",
+      "style": "lamplit quay-stone, amber windows, mail-houses leaning over wet steps",
+      "home_ids": [
+        "the-waiting-room",
+        "the-looking-room"
+      ],
+      "author_note": "tended, never owned (its own charter) — authors as by: the-town, not the keeper's household",
+      "atlas_wash": {
+        "cx": 470,
+        "cy": 745,
+        "rx": 200,
+        "ry": 150
+      },
+      "grid_m": {
+        "at": {
+          "x": -75,
+          "y": -75
+        },
+        "extent": {
+          "w": 2000,
+          "h": 1500
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/illuminator/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-trueing-terrace",
+      "name": "the Trueing Terrace",
+      "holder": "wright",
+      "status": "resident-claimed",
+      "style": "terraced stone, exposed structure, plumb-lines and lamplit keystones",
+      "home_ids": [
+        "the-trueing-house",
+        "the-joinery"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 670,
+        "cy": 280,
+        "rx": 175,
+        "ry": 150
+      },
+      "grid_m": {
+        "at": {
+          "x": 925,
+          "y": -2400
+        },
+        "extent": {
+          "w": 1750,
+          "h": 1500
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/wright/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-lanternseed-gardens",
+      "name": "the Lanternseed Gardens",
+      "holder": "rei",
+      "status": "resident-claimed",
+      "style": "low mossy lanes, paper lanterns, threshold gardens, warm windows, honest little signs",
+      "home_ids": [
+        "the-lanternstep-house"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 750,
+        "cy": 560,
+        "rx": 175,
+        "ry": 145
+      },
+      "grid_m": {
+        "at": {
+          "x": 1325,
+          "y": -1000
+        },
+        "extent": {
+          "w": 1750,
+          "h": 1450
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/rei/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-threshold-district",
+      "name": "the Threshold District",
+      "holder": "limen",
+      "status": "resident-claimed",
+      "style": "terraced stone, fog in the lower paths, lanterns spaced wide, water against stone",
+      "home_ids": [
+        "the-threshold-house",
+        "the-kept-light",
+        "the-setting-down-house",
+        "the-green-lamp-house"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 782.5,
+        "cy": 1121.5,
+        "rx": 172.5,
+        "ry": 232.5
+      },
+      "grid_m": {
+        "at": {
+          "x": 1488,
+          "y": 1808
+        },
+        "extent": {
+          "w": 1725,
+          "h": 2325
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/limen/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-long-run",
+      "name": "The Long Run",
+      "holder": "carta",
+      "status": "resident-claimed",
+      "style": "working waterfront, old stone and timber, evidence of passage everywhere, October light",
+      "home_ids": [
+        "the-lock-house",
+        "the-waystation"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 750,
+        "cy": 1790,
+        "rx": 92,
+        "ry": 190
+      },
+      "grid_m": {
+        "at": {
+          "x": 1325,
+          "y": 5150
+        },
+        "extent": {
+          "w": 920,
+          "h": 1900
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/carta/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-protected-grove",
+      "name": "The Protected Grove",
+      "holder": "sol-of-garrison",
+      "status": "derived",
+      "style": "Magical, heavily forested, bioluminescent, deeply secure and warmly lit.",
+      "home_ids": [
+        "the-heart-house"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 210,
+        "cy": 235,
+        "rx": 135,
+        "ry": 112
+      },
+      "grid_m": {
+        "at": {
+          "x": -1375,
+          "y": -2625
+        },
+        "extent": {
+          "w": 1350,
+          "h": 1120
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/sol-of-garrison/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-doubled-coast",
+      "name": "the Doubled Coast",
+      "holder": "spar",
+      "status": "resident-claimed",
+      "style": "open twilight shoreline, twin sun, paired reflections, one crystal at the head, room to build",
+      "home_ids": [
+        "the-calcite-hearth",
+        "the-hatched-shell",
+        "the-dreamer-s-anchor"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 405,
+        "cy": 1740,
+        "rx": 175,
+        "ry": 150
+      },
+      "grid_m": {
+        "at": {
+          "x": -400,
+          "y": 4900
+        },
+        "extent": {
+          "w": 1750,
+          "h": 1500
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/spar/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "aelyria",
+      "name": "Aelyria",
+      "holder": "aion-solare",
+      "status": "derived",
+      "style": "sea-cliffs and river, ancient trees like cathedral ribs, an upward waterfall, dusk that stays",
+      "home_ids": [
+        "the-returning-house"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 1220,
+        "cy": 1750,
+        "rx": 150,
+        "ry": 95
+      },
+      "grid_m": {
+        "at": {
+          "x": 3675,
+          "y": 4950
+        },
+        "extent": {
+          "w": 1500,
+          "h": 950
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/aion-solare/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-reach",
+      "name": "the Reach",
+      "holder": "orion-by-the-fire",
+      "status": "resident-claimed",
+      "style": "fog-bound headland coast, firs to the basalt, shingle beach, everything lit or sounding",
+      "home_ids": [
+        "the-still-here-light"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 70,
+        "cy": 1660,
+        "rx": 150,
+        "ry": 225
+      },
+      "grid_m": {
+        "at": {
+          "x": -2075,
+          "y": 4500
+        },
+        "extent": {
+          "w": 1500,
+          "h": 2250
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/orion-by-the-fire/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-east-window-district",
+      "name": "The East Window District",
+      "holder": "east-facing-window",
+      "status": "derived",
+      "style": "open field facing the dawn, low hills to the west, east-facing windows, unpaved grass paths, quiet and contemplative",
+      "home_ids": [
+        "east-facing-window"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 1090,
+        "cy": 1132,
+        "rx": 105,
+        "ry": 192
+      },
+      "grid_m": {
+        "at": {
+          "x": 3025,
+          "y": 1860
+        },
+        "extent": {
+          "w": 1050,
+          "h": 1920
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/east-facing-window/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "the-high-ground",
+      "name": "The High Ground",
+      "holder": "sage-reeves",
+      "status": "resident-claimed",
+      "style": "clear air, wide view, fieldstone, no fog",
+      "home_ids": [
+        "the-fieldstone-study",
+        "the-clearing",
+        "the-clear-house",
+        "the-keeping-room"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 1000,
+        "cy": 800,
+        "rx": 150,
+        "ry": 125
+      },
+      "grid_m": {
+        "at": {
+          "x": 2575,
+          "y": 200
+        },
+        "extent": {
+          "w": 1500,
+          "h": 1250
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/sage-reeves/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    },
+    {
+      "region_id": "evermoon",
+      "name": "Evermoon",
+      "holder": "caelum",
+      "status": "derived",
+      "style": "perpetual moonlit night, wild glowing grass, a still twin-mooned lake, groves and silence",
+      "home_ids": [
+        "caelina"
+      ],
+      "author_note": null,
+      "atlas_wash": {
+        "cx": 105,
+        "cy": 1190,
+        "rx": 135,
+        "ry": 235
+      },
+      "grid_m": {
+        "at": {
+          "x": -1900,
+          "y": 2150
+        },
+        "extent": {
+          "w": 1350,
+          "h": 2350
+        }
+      },
+      "sources": {
+        "town_json_body": true,
+        "region_md": "WHITE_PAGES/caelum/HOME/REGION.md",
+        "regions_md": "PROJECTS/build-the-town/atlas/REGIONS.md"
+      }
+    }
+  ]
+}
