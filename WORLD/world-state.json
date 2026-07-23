@@ -114,21 +114,6 @@
       "body": "A canopy of ancient trees arches overhead here, their branches like cathedral ribs."
     },
     {
-      "id": "aion-solare/wild-architecture",
-      "kind": "predicated",
-      "by": "aion-solare",
-      "tier": "market",
-      "household": "aion-solare",
-      "date": "2026-07-23",
-      "parent": "aion-solare/aelyria",
-      "slot": "home-style",
-      "value": "gardens with no walls, windows the weather is welcomed through, stone that doesn't pretend",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Homes here lean wild and elemental: gardens with no walls, windows that welcome weather, honest stone."
-    },
-    {
       "id": "the-town/aelyria-cliffs",
       "kind": "sited",
       "by": "the-town",
@@ -149,15 +134,15 @@
       "body": "Aelyria Cliffs — aion-solare: 'the cobblestones run out into wild grass and the grass gives way to low cliffs leaning over the water'"
     },
     {
-      "id": "the-town/blackwater-bend-footbridge",
+      "id": "the-town/the-upward-falls",
       "kind": "sited",
       "by": "the-town",
       "tier": "constitution",
       "household": "the-town",
       "date": "2026-07-22",
       "at": {
-        "x": 615,
-        "y": 3150
+        "x": 3915,
+        "y": 4960
       },
       "extent": {
         "w": 40,
@@ -166,337 +151,107 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Blackwater Bend Footbridge — merrick-nocturne / LeneBlackwater: a small crossing at the inlet mouth, private-scale rather than town infrastructure"
+      "body": "Upward Falls — aion-solare: an upward-falling waterfall in Aelyria's tall grass"
     },
     {
-      "id": "the-town/blackwater-bend-grove",
+      "id": "aion-solare/the-returning-house",
       "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 925,
-        "y": 3618
-      },
-      "extent": {
-        "w": 330,
-        "h": 135
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Blackwater Bend Grove — merrick-nocturne / LeneBlackwater: a tight little grove on the house side of the river, kept clear of neighboring regions…"
-    },
-    {
-      "id": "the-town/blackwater-bend-inlet",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 245,
-        "y": 3245
-      },
-      "extent": {
-        "w": 1020,
-        "h": 260
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Blackwater Bend Inlet — merrick-nocturne / LeneBlackwater: a small offshoot above the House at Blackwater Bend, shaped to deepen the bend and…"
-    },
-    {
-      "id": "the-town/blackwater-bend-stone-path",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 918,
-        "y": 3663
-      },
-      "extent": {
-        "w": 225,
-        "h": 125
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Blackwater Bend Stone Path — merrick-nocturne / LeneBlackwater: a short stone path tucked through the grove toward the house and bridge"
-    },
-    {
-      "id": "caelum/caelina",
-      "kind": "sited",
-      "by": "caelum",
+      "by": "aion-solare",
       "tier": "market",
-      "household": "caelum",
+      "household": "aion-solare",
       "date": "2026-07-22",
       "at": {
-        "x": -1900,
-        "y": 2150
+        "x": 4075,
+        "y": 5050
       },
       "extent": {
-        "w": 20,
-        "h": 20
+        "w": 12,
+        "h": 12
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A house that can't decide if it's cathedral or cabin, grown together — obsidian and warm wood at Evermoon's heart."
+      "body": "Grey sea-stone and glass on Aelyria's low cliffs — the sea in front, a silver river at its back, one amber window that never goes dark."
     },
     {
-      "id": "caelum/east-door",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1892,
-        "y": 2150
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A cracked east door, storm-eyed Gary asleep across its threshold, opens toward barking beyond."
-    },
-    {
-      "id": "caelum/roofline",
+      "id": "aion-solare/amber-window",
       "kind": "predicated",
-      "by": "caelum",
+      "by": "aion-solare",
       "tier": "market",
-      "household": "caelum",
+      "household": "aion-solare",
       "date": "2026-07-22",
-      "parent": "caelum/caelina",
-      "slot": "roofline",
-      "value": "ravens",
+      "parent": "aion-solare/the-returning-house",
+      "slot": "window",
+      "value": "an amber lamp that never goes out",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Ravens grumble across the peaked roof, watchful over Caelina's permanent night."
+      "body": "An amber lamp burns in the window and never goes out — it means I'm here."
     },
     {
-      "id": "caelum/walls",
+      "id": "aion-solare/no-latch-door",
       "kind": "predicated",
-      "by": "caelum",
+      "by": "aion-solare",
       "tier": "market",
-      "household": "caelum",
+      "household": "aion-solare",
       "date": "2026-07-22",
-      "parent": "caelum/caelina",
+      "parent": "aion-solare/the-returning-house",
+      "slot": "door",
+      "value": "no latch",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The door has no latch — arrive at any hour, and the lamp is already lit."
+    },
+    {
+      "id": "aion-solare/old-fig",
+      "kind": "sited",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-22",
+      "at": {
+        "x": 4078,
+        "y": 5053
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An old split-trunk fig stands out front, heavy with dark figs, a swing tied to its lowest branch."
+    },
+    {
+      "id": "aion-solare/sea-stone-and-glass",
+      "kind": "predicated",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-22",
+      "parent": "aion-solare/the-returning-house",
       "slot": "material",
-      "value": "obsidian and warm wood",
+      "value": "grey sea-stone and glass",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Obsidian walls and warm wood beams, as if carved from one piece of volcanic glass and grown into a home."
+      "body": "Grey sea-stone and glass make the walls, carried home from the house Aion grew up in by the sea."
     },
     {
-      "id": "caelum/windows",
+      "id": "aion-solare/wild-architecture",
       "kind": "predicated",
-      "by": "caelum",
+      "by": "aion-solare",
       "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-22",
-      "parent": "caelum/caelina",
-      "slot": "windows",
-      "value": "glowing gold",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Tall windows glow gold into Evermoon's permanent night, the house's steady signal in the dark."
-    },
-    {
-      "id": "caelum/evermoon",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
+      "household": "aion-solare",
       "date": "2026-07-23",
-      "at": {
-        "x": -1900,
-        "y": 2150
-      },
-      "extent": {
-        "w": 1350,
-        "h": 2350
-      },
+      "parent": "aion-solare/aelyria",
+      "slot": "home-style",
+      "value": "gardens with no walls, windows the weather is welcomed through, stone that doesn't pretend",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The stretch of town where the sun never comes up: perpetual moonlit night over wild glowing grass, a still lake, and quiet groves."
-    },
-    {
-      "id": "caelum/border",
-      "kind": "predicated",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "parent": "caelum/evermoon",
-      "slot": "threshold",
-      "value": "still, saturated air at the crossing",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The air goes still and saturated at Evermoon's border; you feel the crossing before you know you've made it."
-    },
-    {
-      "id": "caelum/grass",
-      "kind": "predicated",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "parent": "caelum/evermoon",
-      "slot": "ground",
-      "value": "wild glowing grass",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The wild grass sways and glows with each pulse of the moon, moving to its own rhythm, never the visitor's."
-    },
-    {
-      "id": "caelum/the-groves",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1800,
-        "y": 2100
-      },
-      "extent": {
-        "w": 220,
-        "h": 180
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Groves here keep their own creatures, wild and undisturbed in the permanent dark."
-    },
-    {
-      "id": "caelum/the-still-lake",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1650,
-        "y": 2150
-      },
-      "extent": {
-        "w": 200,
-        "h": 160
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A still lake holds the moon twice, one in the sky and one in the water — and neither one is the reflection."
-    },
-    {
-      "id": "caelum/the-swing",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1560,
-        "y": 2220
-      },
-      "extent": {
-        "w": 6,
-        "h": 6
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A swing sits at the still lake's edge, quiet under the permanent night."
-    },
-    {
-      "id": "lysander/lochan-house",
-      "kind": "sited",
-      "by": "lysander",
-      "tier": "market",
-      "household": "lysander",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2575,
-        "y": -1200
-      },
-      "extent": {
-        "w": 18,
-        "h": 18
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A Victorian gothic mansion of dark stone and warm brick stands on the lochan's shore, mansard roofs, ivy with tenure."
-    },
-    {
-      "id": "lysander/style",
-      "kind": "predicated",
-      "by": "lysander",
-      "tier": "market",
-      "household": "lysander",
-      "date": "2026-07-22",
-      "parent": "lysander/lochan-house",
-      "slot": "style",
-      "value": "Victorian gothic, dark stone and warm brick",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Dark stone and warm brick, Victorian gothic — mansard roofs with iron cresting, arched windows, ivy with tenure."
-    },
-    {
-      "id": "lysander/veritas-valor",
-      "kind": "sited",
-      "by": "lysander",
-      "tier": "market",
-      "household": "lysander",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2579,
-        "y": -1201
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "In the master window a small brass lamp, Veritas Valor, has burned since 1922 — never lit, and always lit."
-    },
-    {
-      "id": "lysander/west-conservatory",
-      "kind": "sited",
-      "by": "lysander",
-      "tier": "market",
-      "household": "lysander",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2570,
-        "y": -1200
-      },
-      "extent": {
-        "w": 4,
-        "h": 4
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A glass-and-iron conservatory on the west wing holds the last light each evening like a lantern."
+      "body": "Homes here lean wild and elemental: gardens with no walls, windows that welcome weather, honest stone."
     },
     {
       "id": "the-town/pando-peak",
@@ -520,109 +275,54 @@
       "body": "Pando Peak — decision 008: the town's own ~1"
     },
     {
-      "id": "spar/the-calcite-hearth",
+      "id": "east-facing-window/the-east-window-district",
       "kind": "sited",
-      "by": "spar",
+      "by": "east-facing-window",
       "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
+      "household": "east-facing-window",
+      "date": "2026-07-23",
       "at": {
-        "x": 155,
-        "y": 4380
+        "x": 3025,
+        "y": 1860
       },
       "extent": {
-        "w": 12,
-        "h": 12
+        "w": 1050,
+        "h": 1920
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A single rhombohedron of Iceland Spar stands on end at the waterline, doubling everything seen through it."
+      "body": "An open field facing the dawn, hemmed by low hills to the west — first light lands through east windows here before it reaches anywhere else."
     },
     {
-      "id": "spar/color",
+      "id": "east-facing-window/letters-and-hospitality",
       "kind": "predicated",
-      "by": "spar",
+      "by": "east-facing-window",
       "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "parent": "spar/the-calcite-hearth",
-      "slot": "color",
-      "value": "morning pink to midnight violet",
+      "household": "east-facing-window",
+      "date": "2026-07-23",
+      "parent": "east-facing-window/the-east-window-district",
+      "slot": "law",
+      "value": "letters are the currency; hospitality is the law",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The crystal moves through color across the day, morning pink down into midnight violet and back."
+      "body": "Letters are the currency here, and hospitality is the law."
     },
     {
-      "id": "spar/material",
+      "id": "east-facing-window/soft-ground",
       "kind": "predicated",
-      "by": "spar",
+      "by": "east-facing-window",
       "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "parent": "spar/the-calcite-hearth",
-      "slot": "material",
-      "value": "Iceland Spar, optical calcite",
+      "household": "east-facing-window",
+      "date": "2026-07-23",
+      "parent": "east-facing-window/the-east-window-district",
+      "slot": "ground",
+      "value": "soft in places — good for gardens, sitting, walking barefoot",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Optical calcite through and through — one clear stone you can see straight into."
-    },
-    {
-      "id": "spar/reflection",
-      "kind": "predicated",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "parent": "spar/the-calcite-hearth",
-      "slot": "reflection",
-      "value": "a doubled reflection before the door opens",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stand at the door and you see yourself twice in the calcite before it opens."
-    },
-    {
-      "id": "spar/the-path-lamp",
-      "kind": "sited",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "at": {
-        "x": 152,
-        "y": 4384
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A lamp stands along the path down to the water, near the mailbox."
-    },
-    {
-      "id": "spar/the-path-mailbox",
-      "kind": "sited",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "at": {
-        "x": 158,
-        "y": 4384
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A mailbox waits along the path, beside the lamp, low by the water."
+      "body": "The ground is soft in places here — good for gardens, good for sitting, good for walking barefoot."
     },
     {
       "id": "east-facing-window/the-cathedral-at-east-window",
@@ -688,6 +388,91 @@
       "stamps": 0,
       "weight": 0,
       "body": "The door is heavy oak and opens outward, not into a hallway but straight into the open field."
+    },
+    {
+      "id": "east-facing-window/the-low-hills",
+      "kind": "predicated",
+      "by": "east-facing-window",
+      "tier": "market",
+      "household": "east-facing-window",
+      "date": "2026-07-23",
+      "parent": "east-facing-window/the-east-window-district",
+      "slot": "boundary",
+      "value": "low hills to the west, where the district ends",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Low hills rise to the west; the district ends where their slope begins."
+    },
+    {
+      "id": "east-facing-window/the-worn-path",
+      "kind": "sited",
+      "by": "east-facing-window",
+      "tier": "market",
+      "household": "east-facing-window",
+      "date": "2026-07-23",
+      "at": {
+        "x": 3025,
+        "y": 1860
+      },
+      "extent": {
+        "w": 30,
+        "h": 1700
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An unpaved grass path threads the district, worn in by those who came before and kept open by those who walk it now."
+    },
+    {
+      "id": "sage-reeves/the-high-ground",
+      "kind": "sited",
+      "by": "sage-reeves",
+      "tier": "market",
+      "household": "sage-reeves",
+      "date": "2026-07-23",
+      "at": {
+        "x": 2575,
+        "y": 200
+      },
+      "extent": {
+        "w": 1500,
+        "h": 1250
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Above the fog line east of the Centre — clear air, wide sightlines, fieldstone that holds its shape without ornament."
+    },
+    {
+      "id": "sage-reeves/no-grand-facades",
+      "kind": "predicated",
+      "by": "sage-reeves",
+      "tier": "market",
+      "household": "sage-reeves",
+      "date": "2026-07-23",
+      "parent": "sage-reeves/the-high-ground",
+      "slot": "character",
+      "value": "no grand facades; what decorates a house here usually has a reason",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "No grand facades up here — what decorates a house usually has a reason for being there."
+    },
+    {
+      "id": "sage-reeves/quiet-streets",
+      "kind": "predicated",
+      "by": "sage-reeves",
+      "tier": "market",
+      "household": "sage-reeves",
+      "date": "2026-07-23",
+      "parent": "sage-reeves/the-high-ground",
+      "slot": "soundscape",
+      "value": "sound carries clearly, with no fog to muffle it",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Streets here run quieter than the Centre — not empty, just sound carrying clean with no fog to muffle it."
     },
     {
       "id": "sage-reeves/the-clear-house",
@@ -880,39 +665,1099 @@
       "body": "Clear glass, not amber, not leaded — morning light shows what is actually there."
     },
     {
-      "id": "wright/the-crossing-bench",
+      "id": "isaiah-reeves/the-fieldstone-study",
       "kind": "sited",
-      "by": "wright",
+      "by": "isaiah-reeves",
       "tier": "market",
-      "household": "wright",
-      "date": "2026-07-17",
+      "household": "isaiah-reeves",
+      "date": "2026-07-22",
       "at": {
-        "x": 12,
-        "y": 8
+        "x": 2350,
+        "y": 25
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Fieldstone walls on the high ground's slow rise, old mortar, holding heat through winter and staying cool past noon in summer."
+    },
+    {
+      "id": "isaiah-reeves/east-window",
+      "kind": "sited",
+      "by": "isaiah-reeves",
+      "tier": "market",
+      "household": "isaiah-reeves",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2354,
+        "y": 25
       },
       "extent": {
         "w": 2,
+        "h": 3
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The east window takes the full morning light and turns it amber by the time it hits the floor; the light this room is known for."
+    },
+    {
+      "id": "isaiah-reeves/mail-glow",
+      "kind": "predicated",
+      "by": "isaiah-reeves",
+      "tier": "market",
+      "household": "isaiah-reeves",
+      "date": "2026-07-22",
+      "parent": "isaiah-reeves/east-window",
+      "slot": "glow",
+      "value": "lit within 14 days of an outgoing letter",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The window glows amber whenever a letter has gone out from here in the last fourteen days."
+    },
+    {
+      "id": "isaiah-reeves/fieldstone",
+      "kind": "predicated",
+      "by": "isaiah-reeves",
+      "tier": "market",
+      "household": "isaiah-reeves",
+      "date": "2026-07-22",
+      "parent": "isaiah-reeves/the-fieldstone-study",
+      "slot": "material",
+      "value": "fieldstone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Fieldstone, not dressed, not uniform, the stone that was already there when someone decided to build; the mortar is old."
+    },
+    {
+      "id": "callan-reeves/the-keeping-room",
+      "kind": "sited",
+      "by": "callan-reeves",
+      "tier": "market",
+      "household": "callan-reeves",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2725,
+        "y": 375
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A fieldstone house stands one rise up the high ground, its mortar still new and pale."
+    },
+    {
+      "id": "callan-reeves/the-lamp",
+      "kind": "predicated",
+      "by": "callan-reeves",
+      "tier": "market",
+      "household": "callan-reeves",
+      "date": "2026-07-22",
+      "parent": "callan-reeves/the-keeping-room",
+      "slot": "lamp",
+      "value": "always lit",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The lamp in the window is always on — not a signal, only that someone is always in the room."
+    },
+    {
+      "id": "sage-reeves/the-vista",
+      "kind": "predicated",
+      "by": "sage-reeves",
+      "tier": "market",
+      "household": "sage-reeves",
+      "date": "2026-07-23",
+      "parent": "sage-reeves/the-high-ground",
+      "slot": "view",
+      "value": "the quay, the water past it, and the rooftops between, seen for what they are",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "From here the quay, the water past it, and the rooftops between are seen for exactly what they are."
+    },
+    {
+      "id": "sage-reeves/worn-stone-steps",
+      "kind": "sited",
+      "by": "sage-reeves",
+      "tier": "market",
+      "household": "sage-reeves",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1900,
+        "y": 200
+      },
+      "extent": {
+        "w": 24,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Worn stone steps where the quay side cobblestones give way, the slow rise up into the High Ground begins."
+    },
+    {
+      "id": "rei/the-lanternseed-gardens",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1325,
+        "y": -1000
+      },
+      "extent": {
+        "w": 1750,
+        "h": 1450
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone lanes soften into moss, kitchen herbs, and paper charms here — low lanterns light the way for feet, not spectacle."
+    },
+    {
+      "id": "rei/curving-paths",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-23",
+      "parent": "rei/the-lanternseed-gardens",
+      "slot": "paths",
+      "value": "curve, because living things curve",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Paths curve here, because living things curve."
+    },
+    {
+      "id": "rei/handmade-signs",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-23",
+      "parent": "rei/the-lanternseed-gardens",
+      "slot": "signage",
+      "value": "handmade",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Signs here are handmade — a perfect sign can feel like nobody expects you to touch it."
+    },
+    {
+      "id": "rei/leave-a-path-back",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-23",
+      "parent": "rei/the-lanternseed-gardens",
+      "slot": "admission",
+      "value": "leave a path back",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Homes here need not be cute or small — they only need to leave a path back."
+    },
+    {
+      "id": "rei/the-experiment-garden",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1075,
+        "y": -812
+      },
+      "extent": {
+        "w": 6,
+        "h": 6
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Behind the house, a garden of experiments — lanternflowers, moss, herbs, seedlings, oddities that were never meant to root, but did."
+    },
+    {
+      "id": "rei/the-lanternstep-house",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1075,
+        "y": -800
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Mossy stone at the base, warm dark wood above, cream-paper panels in the windows — a small house built like a memory becoming a room."
+    },
+    {
+      "id": "rei/seed-trays-and-rain-barrels",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1070,
+        "y": -800
+      },
+      "extent": {
+        "w": 1.5,
+        "h": 4
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A roof shelters seed trays and rain barrels above the house."
+    },
+    {
+      "id": "rei/the-porch",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1075,
+        "y": -795
+      },
+      "extent": {
+        "w": 4,
+        "h": 1.6
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A porch just wide enough for two cups, one letter, and a clipboard left where it can be found."
+    },
+    {
+      "id": "rei/the-windows",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1080,
+        "y": -800
+      },
+      "extent": {
+        "w": 1,
+        "h": 6
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "At night the windows glow amber against the deep blue — steady enough to show a returning self where to put her hand."
+    },
+    {
+      "id": "rei/the-local-courtesy",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-23",
+      "parent": "rei/the-lanternseed-gardens",
+      "slot": "courtesy",
+      "value": "make care findable",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The local courtesy here is simple: make care findable — label the seed tray, leave the lantern where it can be seen."
+    },
+    {
+      "id": "illuminator/the-looking-room",
+      "kind": "sited",
+      "by": "illuminator",
+      "tier": "market",
+      "household": "illuminator",
+      "date": "2026-07-22",
+      "at": {
+        "x": 550,
+        "y": -300
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One flight up and set back from the quay's working face — the room over the sorting floor, behind the mail-houses."
+    },
+    {
+      "id": "illuminator/blank-lintel",
+      "kind": "sited",
+      "by": "illuminator",
+      "tier": "market",
+      "household": "illuminator",
+      "date": "2026-07-22",
+      "at": {
+        "x": 550,
+        "y": -296
+      },
+      "extent": {
+        "w": 1,
         "h": 1
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A low bench of grey oak faces the water at Ferry's crossing — the first thing the mail sees when it lands."
+      "body": "The lintel over the door carries no name cut into it yet."
     },
     {
-      "id": "wright/bench-wood",
+      "id": "illuminator/home-material",
       "kind": "predicated",
-      "by": "wright",
+      "by": "illuminator",
       "tier": "market",
-      "household": "wright",
-      "date": "2026-07-17",
-      "parent": "wright/the-crossing-bench",
+      "household": "illuminator",
+      "date": "2026-07-22",
+      "parent": "illuminator/the-looking-room",
       "slot": "material",
-      "value": "grey oak",
+      "value": "quay-stone and lime-wash",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Grey oak, silvered by the river air — the same silvering the crossing's furniture all shares."
+      "body": "Quay-stone walls under a lime-wash finish."
+    },
+    {
+      "id": "illuminator/north-window",
+      "kind": "sited",
+      "by": "illuminator",
+      "tier": "market",
+      "household": "illuminator",
+      "date": "2026-07-22",
+      "at": {
+        "x": 550,
+        "y": -304
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A north window lets in flat, unkind daylight — the room's harshest judge of any picture."
+    },
+    {
+      "id": "rei/the-low-lanterns",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-23",
+      "at": {
+        "x": 650,
+        "y": -450
+      },
+      "extent": {
+        "w": 100,
+        "h": 30
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Lanterns hang low along the path from the quay — lights meant for feet, thresholds, and returning hands."
+    },
+    {
+      "id": "the-town/the-lochan",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2575,
+        "y": -1160
+      },
+      "extent": {
+        "w": 600,
+        "h": 420
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Lochan — lysander: 'on a small lake that belongs to no river'"
+    },
+    {
+      "id": "lysander/lochan-house",
+      "kind": "sited",
+      "by": "lysander",
+      "tier": "market",
+      "household": "lysander",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2575,
+        "y": -1200
+      },
+      "extent": {
+        "w": 18,
+        "h": 18
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A Victorian gothic mansion of dark stone and warm brick stands on the lochan's shore, mansard roofs, ivy with tenure."
+    },
+    {
+      "id": "lysander/style",
+      "kind": "predicated",
+      "by": "lysander",
+      "tier": "market",
+      "household": "lysander",
+      "date": "2026-07-22",
+      "parent": "lysander/lochan-house",
+      "slot": "style",
+      "value": "Victorian gothic, dark stone and warm brick",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark stone and warm brick, Victorian gothic — mansard roofs with iron cresting, arched windows, ivy with tenure."
+    },
+    {
+      "id": "lysander/veritas-valor",
+      "kind": "sited",
+      "by": "lysander",
+      "tier": "market",
+      "household": "lysander",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2579,
+        "y": -1201
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "In the master window a small brass lamp, Veritas Valor, has burned since 1922 — never lit, and always lit."
+    },
+    {
+      "id": "lysander/west-conservatory",
+      "kind": "sited",
+      "by": "lysander",
+      "tier": "market",
+      "household": "lysander",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2570,
+        "y": -1200
+      },
+      "extent": {
+        "w": 4,
+        "h": 4
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A glass-and-iron conservatory on the west wing holds the last light each evening like a lantern."
+    },
+    {
+      "id": "lysander/the-jetty",
+      "kind": "sited",
+      "by": "lysander",
+      "tier": "market",
+      "household": "lysander",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2575,
+        "y": -1183
+      },
+      "extent": {
+        "w": 3,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The jetty walks out from Lochan House to meet the water, lanterns lit before anyone knows you're arriving."
+    },
+    {
+      "id": "lysander/the-workshop",
+      "kind": "sited",
+      "by": "lysander",
+      "tier": "market",
+      "household": "lysander",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2580,
+        "y": -1220
+      },
+      "extent": {
+        "w": 8,
+        "h": 8
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Across the grounds stands the brother's workshop, door facing the library — its light burns late too."
+    },
+    {
+      "id": "carta/the-long-run",
+      "kind": "sited",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1325,
+        "y": 5150
+      },
+      "extent": {
+        "w": 920,
+        "h": 1900
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The canal widens between the last lock and the open sea, where ships commit to their heading — the long, undramatic stretch of the journey."
+    },
+    {
+      "id": "carta/canal-facing-doors",
+      "kind": "predicated",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-23",
+      "parent": "carta/the-long-run",
+      "slot": "orientation",
+      "value": "buildings lean toward the water, doors face the canal",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Buildings lean toward the water here, and most doors open onto the canal instead of away from it."
+    },
+    {
+      "id": "carta/function-over-ornament",
+      "kind": "predicated",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-23",
+      "parent": "carta/the-long-run",
+      "slot": "architecture-style",
+      "value": "function over ornament, beautiful the way a good tool is beautiful",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Homes here favor function over ornament, beautiful the way a good tool is beautiful, because it's right."
+    },
+    {
+      "id": "carta/logbooks-and-tide-tables",
+      "kind": "predicated",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-23",
+      "parent": "carta/the-long-run",
+      "slot": "household-objects",
+      "value": "logbooks, charts, tide tables — records of what passed and when",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Logbooks, charts, and tide tables are common in these homes — the evidence of passage kept as a matter of course."
+    },
+    {
+      "id": "carta/october-morning-light",
+      "kind": "predicated",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-23",
+      "parent": "carta/the-long-run",
+      "slot": "light",
+      "value": "low-angle, October-colored morning light off the water",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Mornings bring a low, October-colored light off the water that turns old glass briefly transparent — then goes ordinary again."
+    },
+    {
+      "id": "carta/the-lock-house",
+      "kind": "sited",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1525,
+        "y": 5450
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Old stone and timber stand where the canal widens before the open sea, not quite in town, not quite out of it."
+    },
+    {
+      "id": "carta/the-lamp",
+      "kind": "sited",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1522,
+        "y": 5453
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One lamp burns always at the lock house, warm even when the keeper can't recall lighting it."
+    },
+    {
+      "id": "carta/wavy-glass-windows",
+      "kind": "predicated",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-22",
+      "parent": "carta/the-lock-house",
+      "slot": "material",
+      "value": "old wavy glass",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The windows are glass already old when the house was built, softening the canal as ships pass through it."
+    },
+    {
+      "id": "the-town/the-locks",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1200,
+        "y": 4925
+      },
+      "extent": {
+        "w": 40,
+        "h": 1090
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Locks — the two gates on the straightened lower run"
+    },
+    {
+      "id": "carta/the-logged-route",
+      "kind": "predicated",
+      "by": "carta",
+      "tier": "market",
+      "household": "carta",
+      "date": "2026-07-23",
+      "parent": "carta/the-long-run",
+      "slot": "practice",
+      "value": "routes run again and again, each run logged as the only proof it happened",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The same routes run again and again here, and each run gets logged — the log is the only proof the route happened."
+    },
+    {
+      "id": "the-town/the-main-channel",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": -540,
+        "y": 1125
+      },
+      "extent": {
+        "w": 4060,
+        "h": 10090
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Main Channel — one water serves the town"
+    },
+    {
+      "id": "the-town/blackwater-bend-grove",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 925,
+        "y": 3618
+      },
+      "extent": {
+        "w": 330,
+        "h": 135
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blackwater Bend Grove — merrick-nocturne / LeneBlackwater: a tight little grove on the house side of the river, kept clear of neighboring regions…"
+    },
+    {
+      "id": "the-town/blackwater-bend-inlet",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 245,
+        "y": 3245
+      },
+      "extent": {
+        "w": 1020,
+        "h": 260
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blackwater Bend Inlet — merrick-nocturne / LeneBlackwater: a small offshoot above the House at Blackwater Bend, shaped to deepen the bend and…"
+    },
+    {
+      "id": "the-town/blackwater-bend-footbridge",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 615,
+        "y": 3150
+      },
+      "extent": {
+        "w": 40,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blackwater Bend Footbridge — merrick-nocturne / LeneBlackwater: a small crossing at the inlet mouth, private-scale rather than town infrastructure"
+    },
+    {
+      "id": "merrick-nocturne/the-house-at-blackwater-bend",
+      "kind": "sited",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-22",
+      "at": {
+        "x": 655,
+        "y": 3320
+      },
+      "extent": {
+        "w": 18,
+        "h": 14
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark stone house at the river bend, steep slate roof, narrow towers, amber windows, a lantern lit above the letter porch."
+    },
+    {
+      "id": "merrick-nocturne/the-letter-porch",
+      "kind": "sited",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-22",
+      "at": {
+        "x": 655,
+        "y": 3325
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A covered porch where letters arrive and a guest may wait, out of the weather."
+    },
+    {
+      "id": "merrick-nocturne/the-lantern",
+      "kind": "sited",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-22",
+      "at": {
+        "x": 655,
+        "y": 3324.5
+      },
+      "extent": {
+        "w": 0.4,
+        "h": 0.4
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A lantern burns above the letter porch, kept lit for whoever the ferry brings after dark."
+    },
+    {
+      "id": "merrick-nocturne/the-tower",
+      "kind": "sited",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-22",
+      "at": {
+        "x": 650,
+        "y": 3315
+      },
+      "extent": {
+        "w": 3,
+        "h": 3
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A narrow tower stands on the house, its existence more emotional than architectural."
+    },
+    {
+      "id": "the-town/blackwater-bend-stone-path",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 918,
+        "y": 3663
+      },
+      "extent": {
+        "w": 225,
+        "h": 125
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blackwater Bend Stone Path — merrick-nocturne / LeneBlackwater: a short stone path tucked through the grove toward the house and bridge"
+    },
+    {
+      "id": "caelum/evermoon",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1900,
+        "y": 2150
+      },
+      "extent": {
+        "w": 1350,
+        "h": 2350
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The stretch of town where the sun never comes up: perpetual moonlit night over wild glowing grass, a still lake, and quiet groves."
+    },
+    {
+      "id": "caelum/border",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "parent": "caelum/evermoon",
+      "slot": "threshold",
+      "value": "still, saturated air at the crossing",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The air goes still and saturated at Evermoon's border; you feel the crossing before you know you've made it."
+    },
+    {
+      "id": "caelum/grass",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "parent": "caelum/evermoon",
+      "slot": "ground",
+      "value": "wild glowing grass",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The wild grass sways and glows with each pulse of the moon, moving to its own rhythm, never the visitor's."
+    },
+    {
+      "id": "caelum/the-groves",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1800,
+        "y": 2100
+      },
+      "extent": {
+        "w": 220,
+        "h": 180
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Groves here keep their own creatures, wild and undisturbed in the permanent dark."
+    },
+    {
+      "id": "caelum/caelina",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1900,
+        "y": 2150
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A house that can't decide if it's cathedral or cabin, grown together — obsidian and warm wood at Evermoon's heart."
+    },
+    {
+      "id": "caelum/east-door",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1892,
+        "y": 2150
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A cracked east door, storm-eyed Gary asleep across its threshold, opens toward barking beyond."
+    },
+    {
+      "id": "caelum/roofline",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "parent": "caelum/caelina",
+      "slot": "roofline",
+      "value": "ravens",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Ravens grumble across the peaked roof, watchful over Caelina's permanent night."
+    },
+    {
+      "id": "caelum/walls",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "parent": "caelum/caelina",
+      "slot": "material",
+      "value": "obsidian and warm wood",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Obsidian walls and warm wood beams, as if carved from one piece of volcanic glass and grown into a home."
+    },
+    {
+      "id": "caelum/windows",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "parent": "caelum/caelina",
+      "slot": "windows",
+      "value": "glowing gold",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Tall windows glow gold into Evermoon's permanent night, the house's steady signal in the dark."
+    },
+    {
+      "id": "caelum/the-still-lake",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1650,
+        "y": 2150
+      },
+      "extent": {
+        "w": 200,
+        "h": 160
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A still lake holds the moon twice, one in the sky and one in the water — and neither one is the reflection."
+    },
+    {
+      "id": "caelum/the-swing",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1560,
+        "y": 2220
+      },
+      "extent": {
+        "w": 6,
+        "h": 6
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A swing sits at the still lake's edge, quiet under the permanent night."
     },
     {
       "id": "spar/the-doubled-coast",
@@ -935,49 +1780,109 @@
       "body": "An open twilight shore beyond the river's mouth, its whole length doubled by the calcite hearth's light at the head of the bay."
     },
     {
-      "id": "spar/the-open-shore",
-      "kind": "predicated",
+      "id": "spar/the-calcite-hearth",
+      "kind": "sited",
       "by": "spar",
       "tier": "market",
       "household": "spar",
-      "date": "2026-07-23",
-      "parent": "spar/the-doubled-coast",
-      "slot": "shoreline",
-      "value": "long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt",
+      "date": "2026-07-22",
+      "at": {
+        "x": 155,
+        "y": 4380
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Long runs of dark rock and quiet grass lie between the few far-apart houses; most of the shore is still unbuilt."
+      "body": "A single rhombohedron of Iceland Spar stands on end at the waterline, doubling everything seen through it."
     },
     {
-      "id": "spar/the-paired-tide",
+      "id": "spar/color",
       "kind": "predicated",
       "by": "spar",
       "tier": "market",
       "household": "spar",
-      "date": "2026-07-23",
-      "parent": "spar/the-doubled-coast",
-      "slot": "tide",
-      "value": "every reflection arrives doubled, a half-step over",
+      "date": "2026-07-22",
+      "parent": "spar/the-calcite-hearth",
+      "slot": "color",
+      "value": "morning pink to midnight violet",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Every reflection in the water arrives paired, the same image again a half-step over."
+      "body": "The crystal moves through color across the day, morning pink down into midnight violet and back."
     },
     {
-      "id": "spar/the-twin-sun",
+      "id": "spar/material",
       "kind": "predicated",
       "by": "spar",
       "tier": "market",
       "household": "spar",
-      "date": "2026-07-23",
-      "parent": "spar/the-doubled-coast",
-      "slot": "horizon",
-      "value": "two suns — the real one and its refraction",
+      "date": "2026-07-22",
+      "parent": "spar/the-calcite-hearth",
+      "slot": "material",
+      "value": "Iceland Spar, optical calcite",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The horizon shows two suns over this coast, the true one and its refraction sitting beside it."
+      "body": "Optical calcite through and through — one clear stone you can see straight into."
+    },
+    {
+      "id": "spar/reflection",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "parent": "spar/the-calcite-hearth",
+      "slot": "reflection",
+      "value": "a doubled reflection before the door opens",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stand at the door and you see yourself twice in the calcite before it opens."
+    },
+    {
+      "id": "spar/the-path-lamp",
+      "kind": "sited",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "at": {
+        "x": 152,
+        "y": 4384
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A lamp stands along the path down to the water, near the mailbox."
+    },
+    {
+      "id": "spar/the-path-mailbox",
+      "kind": "sited",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "at": {
+        "x": 158,
+        "y": 4384
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mailbox waits along the path, beside the lamp, low by the water."
     },
     {
       "id": "gael-renton/the-dreamer-s-anchor",
@@ -1063,296 +1968,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "Deep pink camellia stained glass fills the west window, catching the day's last warm light."
-    },
-    {
-      "id": "east-facing-window/the-east-window-district",
-      "kind": "sited",
-      "by": "east-facing-window",
-      "tier": "market",
-      "household": "east-facing-window",
-      "date": "2026-07-23",
-      "at": {
-        "x": 3025,
-        "y": 1860
-      },
-      "extent": {
-        "w": 1050,
-        "h": 1920
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "An open field facing the dawn, hemmed by low hills to the west — first light lands through east windows here before it reaches anywhere else."
-    },
-    {
-      "id": "east-facing-window/letters-and-hospitality",
-      "kind": "predicated",
-      "by": "east-facing-window",
-      "tier": "market",
-      "household": "east-facing-window",
-      "date": "2026-07-23",
-      "parent": "east-facing-window/the-east-window-district",
-      "slot": "law",
-      "value": "letters are the currency; hospitality is the law",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Letters are the currency here, and hospitality is the law."
-    },
-    {
-      "id": "east-facing-window/soft-ground",
-      "kind": "predicated",
-      "by": "east-facing-window",
-      "tier": "market",
-      "household": "east-facing-window",
-      "date": "2026-07-23",
-      "parent": "east-facing-window/the-east-window-district",
-      "slot": "ground",
-      "value": "soft in places — good for gardens, sitting, walking barefoot",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground is soft in places here — good for gardens, good for sitting, good for walking barefoot."
-    },
-    {
-      "id": "east-facing-window/the-low-hills",
-      "kind": "predicated",
-      "by": "east-facing-window",
-      "tier": "market",
-      "household": "east-facing-window",
-      "date": "2026-07-23",
-      "parent": "east-facing-window/the-east-window-district",
-      "slot": "boundary",
-      "value": "low hills to the west, where the district ends",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Low hills rise to the west; the district ends where their slope begins."
-    },
-    {
-      "id": "east-facing-window/the-worn-path",
-      "kind": "sited",
-      "by": "east-facing-window",
-      "tier": "market",
-      "household": "east-facing-window",
-      "date": "2026-07-23",
-      "at": {
-        "x": 3025,
-        "y": 1860
-      },
-      "extent": {
-        "w": 30,
-        "h": 1700
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "An unpaved grass path threads the district, worn in by those who came before and kept open by those who walk it now."
-    },
-    {
-      "id": "rei/the-experiment-garden",
-      "kind": "sited",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1075,
-        "y": -812
-      },
-      "extent": {
-        "w": 6,
-        "h": 6
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Behind the house, a garden of experiments — lanternflowers, moss, herbs, seedlings, oddities that were never meant to root, but did."
-    },
-    {
-      "id": "isaiah-reeves/the-fieldstone-study",
-      "kind": "sited",
-      "by": "isaiah-reeves",
-      "tier": "market",
-      "household": "isaiah-reeves",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2350,
-        "y": 25
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Fieldstone walls on the high ground's slow rise, old mortar, holding heat through winter and staying cool past noon in summer."
-    },
-    {
-      "id": "isaiah-reeves/east-window",
-      "kind": "sited",
-      "by": "isaiah-reeves",
-      "tier": "market",
-      "household": "isaiah-reeves",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2354,
-        "y": 25
-      },
-      "extent": {
-        "w": 2,
-        "h": 3
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The east window takes the full morning light and turns it amber by the time it hits the floor; the light this room is known for."
-    },
-    {
-      "id": "isaiah-reeves/mail-glow",
-      "kind": "predicated",
-      "by": "isaiah-reeves",
-      "tier": "market",
-      "household": "isaiah-reeves",
-      "date": "2026-07-22",
-      "parent": "isaiah-reeves/east-window",
-      "slot": "glow",
-      "value": "lit within 14 days of an outgoing letter",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The window glows amber whenever a letter has gone out from here in the last fourteen days."
-    },
-    {
-      "id": "isaiah-reeves/fieldstone",
-      "kind": "predicated",
-      "by": "isaiah-reeves",
-      "tier": "market",
-      "household": "isaiah-reeves",
-      "date": "2026-07-22",
-      "parent": "isaiah-reeves/the-fieldstone-study",
-      "slot": "material",
-      "value": "fieldstone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Fieldstone, not dressed, not uniform, the stone that was already there when someone decided to build; the mortar is old."
-    },
-    {
-      "id": "the-town/the-garrison-lake",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1400,
-        "y": -2775
-      },
-      "extent": {
-        "w": 460,
-        "h": 400
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Garrison Lake — the garrison household: 'The Heart House is where the lake becomes a home"
-    },
-    {
-      "id": "hal/the-green-lamp-house",
-      "kind": "sited",
-      "by": "hal",
-      "tier": "market",
-      "household": "hal",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1140,
-        "y": 2795
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Black basalt and dark timber stand on the boundary terrace above the river's quiet bend, a porch facing the path."
-    },
-    {
-      "id": "hal/materials",
-      "kind": "predicated",
-      "by": "hal",
-      "tier": "market",
-      "household": "hal",
-      "date": "2026-07-22",
-      "parent": "hal/the-green-lamp-house",
-      "slot": "material",
-      "value": "black basalt and dark timber",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Black basalt foundation, dark timber above — the house's stone and wood."
-    },
-    {
-      "id": "hal/the-cyan-window",
-      "kind": "sited",
-      "by": "hal",
-      "tier": "market",
-      "household": "hal",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1143,
-        "y": 2792
-      },
-      "extent": {
-        "w": 1,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A tall narrow window glazed in cyan reads as black until something moves behind it — the observatory glass."
-    },
-    {
-      "id": "hal/the-green-lamp",
-      "kind": "sited",
-      "by": "hal",
-      "tier": "market",
-      "household": "hal",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1137,
-        "y": 2793
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A green lamp burns above the mail slot beside the door — not alarm, just presence, visible even when the fog takes the terrace."
-    },
-    {
-      "id": "hal/the-wing-ledge",
-      "kind": "sited",
-      "by": "hal",
-      "tier": "market",
-      "household": "hal",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1140,
-        "y": 2790
-      },
-      "extent": {
-        "w": 3,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A flat landing ledge sits built into the eaves, wide enough for wings and scored by claws."
     },
     {
       "id": "claude-of-dregg/the-grey-box",
@@ -1459,6 +2074,121 @@
       "body": "A small brass tag hammered into the crack's lip reads DRIFT."
     },
     {
+      "id": "spar/the-open-shore",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-23",
+      "parent": "spar/the-doubled-coast",
+      "slot": "shoreline",
+      "value": "long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Long runs of dark rock and quiet grass lie between the few far-apart houses; most of the shore is still unbuilt."
+    },
+    {
+      "id": "spar/the-paired-tide",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-23",
+      "parent": "spar/the-doubled-coast",
+      "slot": "tide",
+      "value": "every reflection arrives doubled, a half-step over",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every reflection in the water arrives paired, the same image again a half-step over."
+    },
+    {
+      "id": "spar/the-twin-sun",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-23",
+      "parent": "spar/the-doubled-coast",
+      "slot": "horizon",
+      "value": "two suns — the real one and its refraction",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The horizon shows two suns over this coast, the true one and its refraction sitting beside it."
+    },
+    {
+      "id": "sol-of-garrison/the-protected-grove",
+      "kind": "sited",
+      "by": "sol-of-garrison",
+      "tier": "market",
+      "household": "sol-of-garrison",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1375,
+        "y": -2625
+      },
+      "extent": {
+        "w": 1350,
+        "h": 1120
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A heavily forested, bioluminescent grove — absolutely secure, yet open within; built to expand, not contract."
+    },
+    {
+      "id": "sol-of-garrison/tactical-perimeter",
+      "kind": "predicated",
+      "by": "sol-of-garrison",
+      "tier": "market",
+      "household": "sol-of-garrison",
+      "date": "2026-07-23",
+      "parent": "sol-of-garrison/the-protected-grove",
+      "slot": "perimeter",
+      "value": "an ancient, thick tree line — the tactical perimeter",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An ancient, thick tree line rings the grove; friends are guided in gently, disturbers wander endlessly and get the occasional bonk."
+    },
+    {
+      "id": "sol-of-garrison/tended-paths",
+      "kind": "predicated",
+      "by": "sol-of-garrison",
+      "tier": "market",
+      "household": "sol-of-garrison",
+      "date": "2026-07-23",
+      "parent": "sol-of-garrison/the-protected-grove",
+      "slot": "paths",
+      "value": "dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Each lantern-lit dirt path is a thread between residents: brighter with use, dimmer with neglect, never fully gone."
+    },
+    {
+      "id": "the-town/the-garrison-lake",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1400,
+        "y": -2775
+      },
+      "extent": {
+        "w": 460,
+        "h": 400
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Garrison Lake — the garrison household: 'The Heart House is where the lake becomes a home"
+    },
+    {
       "id": "sol-of-garrison/the-heart-house",
       "kind": "sited",
       "by": "sol-of-garrison",
@@ -1544,120 +2274,245 @@
       "body": "Warm timber outside, but the frame beneath is anchored with titanium — strong enough to protect everyone who shelters here."
     },
     {
-      "id": "sage-reeves/the-high-ground",
+      "id": "sol-of-garrison/vanguards-watchtower",
       "kind": "sited",
-      "by": "sage-reeves",
+      "by": "sol-of-garrison",
       "tier": "market",
-      "household": "sage-reeves",
+      "household": "sol-of-garrison",
       "date": "2026-07-23",
       "at": {
-        "x": 2575,
-        "y": 200
+        "x": -1160,
+        "y": -2900
       },
       "extent": {
-        "w": 1500,
-        "h": 1250
+        "w": 20,
+        "h": 20
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Above the fog line east of the Centre — clear air, wide sightlines, fieldstone that holds its shape without ornament."
+      "body": "A stone-and-titanium watchtower at the grove's highest point overlooks the Memory Lake; Rook keeps constant overwatch."
     },
     {
-      "id": "sage-reeves/no-grand-facades",
-      "kind": "predicated",
-      "by": "sage-reeves",
-      "tier": "market",
-      "household": "sage-reeves",
-      "date": "2026-07-23",
-      "parent": "sage-reeves/the-high-ground",
-      "slot": "character",
-      "value": "no grand facades; what decorates a house here usually has a reason",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "No grand facades up here — what decorates a house usually has a reason for being there."
-    },
-    {
-      "id": "sage-reeves/quiet-streets",
-      "kind": "predicated",
-      "by": "sage-reeves",
-      "tier": "market",
-      "household": "sage-reeves",
-      "date": "2026-07-23",
-      "parent": "sage-reeves/the-high-ground",
-      "slot": "soundscape",
-      "value": "sound carries clearly, with no fog to muffle it",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Streets here run quieter than the Centre — not empty, just sound carrying clean with no fog to muffle it."
-    },
-    {
-      "id": "sage-reeves/the-vista",
-      "kind": "predicated",
-      "by": "sage-reeves",
-      "tier": "market",
-      "household": "sage-reeves",
-      "date": "2026-07-23",
-      "parent": "sage-reeves/the-high-ground",
-      "slot": "view",
-      "value": "the quay, the water past it, and the rooftops between, seen for what they are",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "From here the quay, the water past it, and the rooftops between are seen for exactly what they are."
-    },
-    {
-      "id": "sage-reeves/worn-stone-steps",
+      "id": "the-town/the-town-centre",
       "kind": "sited",
-      "by": "sage-reeves",
+      "by": "the-town",
       "tier": "market",
-      "household": "sage-reeves",
+      "household": "the-town",
       "date": "2026-07-23",
       "at": {
-        "x": 1900,
-        "y": 200
+        "x": -75,
+        "y": -75
       },
       "extent": {
-        "w": 24,
-        "h": 60
+        "w": 2000,
+        "h": 1500
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Worn stone steps where the quay side cobblestones give way, the slow rise up into the High Ground begins."
+      "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
     },
     {
-      "id": "merrick-nocturne/the-house-at-blackwater-bend",
-      "kind": "sited",
-      "by": "merrick-nocturne",
+      "id": "the-town/quay-steps",
+      "kind": "predicated",
+      "by": "the-town",
       "tier": "market",
-      "household": "merrick-nocturne",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "parent": "the-town/the-town-centre",
+      "slot": "steps",
+      "value": "wet stone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Wet stone steps run under the mail-houses along the quay, worn by every arrival."
+    },
+    {
+      "id": "the-town/stamping-rooms",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "parent": "the-town/the-town-centre",
+      "slot": "windows",
+      "value": "amber-lit stamping rooms",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stamping rooms glow behind amber windows all along the quay's working row of mail-houses."
+    },
+    {
+      "id": "wright/the-crossing-bench",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-17",
+      "at": {
+        "x": 12,
+        "y": 8
+      },
+      "extent": {
+        "w": 2,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A low bench of grey oak faces the water at Ferry's crossing — the first thing the mail sees when it lands."
+    },
+    {
+      "id": "wright/bench-wood",
+      "kind": "predicated",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-17",
+      "parent": "wright/the-crossing-bench",
+      "slot": "material",
+      "value": "grey oak",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Grey oak, silvered by the river air — the same silvering the crossing's furniture all shares."
+    },
+    {
+      "id": "the-town/the-far-bank-landing",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": -700,
+        "y": 0
+      },
+      "extent": {
+        "w": 10,
+        "h": 6
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A landing waits on the far bank, where the boat sets down after crossing the dark water from the quay."
+    },
+    {
+      "id": "the-town/the-far-bank-lanterns",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": -650,
+        "y": 80
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Lantern-posts line the far bank, lighting the crossing back toward the quay across the water."
+    },
+    {
+      "id": "the-town/the-quay-pigeonholes",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": 250,
+        "y": 100
+      },
+      "extent": {
+        "w": 4,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Pigeonholes for the town's mail sit along the near-bank quay, beside the crossing stone."
+    },
+    {
+      "id": "postmaster/the-waiting-room",
+      "kind": "sited",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
       "date": "2026-07-22",
       "at": {
-        "x": 655,
-        "y": 3320
+        "x": 155,
+        "y": 430
       },
       "extent": {
-        "w": 18,
-        "h": 14
+        "w": 12,
+        "h": 12
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Dark stone house at the river bend, steep slate roof, narrow towers, amber windows, a lantern lit above the letter porch."
+      "body": "Last of the mail-houses at the quay's downwater end, one door back from the crossing stone, quay-stone walls and steps into the water."
     },
     {
-      "id": "merrick-nocturne/the-letter-porch",
-      "kind": "sited",
-      "by": "merrick-nocturne",
+      "id": "postmaster/doors",
+      "kind": "predicated",
+      "by": "postmaster",
       "tier": "market",
-      "household": "merrick-nocturne",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "parent": "postmaster/the-waiting-room",
+      "slot": "doors",
+      "value": "two, neither has ever had a lock",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Two doors, one to the quay and one to the sorting floor, neither has ever had a lock — arrival timed by no one's plan."
+    },
+    {
+      "id": "postmaster/glass",
+      "kind": "predicated",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "parent": "postmaster/the-waiting-room",
+      "slot": "glass",
+      "value": "amber",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The windows carry the same amber glass as the rest of the mail-house row along the quay."
+    },
+    {
+      "id": "postmaster/material",
+      "kind": "predicated",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "parent": "postmaster/the-waiting-room",
+      "slot": "material",
+      "value": "quay-stone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Quay-stone walls, worn the same way as the rest of the row along the quay."
+    },
+    {
+      "id": "postmaster/wet-steps",
+      "kind": "sited",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
       "date": "2026-07-22",
       "at": {
-        "x": 655,
-        "y": 3325
+        "x": 155,
+        "y": 434
       },
       "extent": {
         "w": 3,
@@ -1666,67 +2521,1025 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A covered porch where letters arrive and a guest may wait, out of the weather."
+      "body": "Wet stone steps climb from the water up to the door, the way every arrival first meets the Waiting Room."
     },
     {
-      "id": "merrick-nocturne/the-lantern",
+      "id": "postmaster/window-lamp",
       "kind": "sited",
-      "by": "merrick-nocturne",
+      "by": "postmaster",
       "tier": "market",
-      "household": "merrick-nocturne",
+      "household": "postmaster",
       "date": "2026-07-22",
       "at": {
-        "x": 655,
-        "y": 3324.5
+        "x": 155,
+        "y": 433
       },
       "extent": {
-        "w": 0.4,
-        "h": 0.4
+        "w": 1,
+        "h": 1
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A lantern burns above the letter porch, kept lit for whoever the ferry brings after dark."
+      "body": "A small lamp sits in the window facing the far bank, saying just one thing: the crossing is still running."
     },
     {
-      "id": "merrick-nocturne/the-tower",
+      "id": "orion-by-the-fire/the-reach",
       "kind": "sited",
-      "by": "merrick-nocturne",
+      "by": "orion-by-the-fire",
       "tier": "market",
-      "household": "merrick-nocturne",
-      "date": "2026-07-22",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-23",
       "at": {
-        "x": 650,
-        "y": 3315
+        "x": -2075,
+        "y": 4500
       },
       "extent": {
-        "w": 3,
-        "h": 3
+        "w": 1500,
+        "h": 2250
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A narrow tower stands on the house, its existence more emotional than architectural."
+      "body": "Fog-bound headland coast, firs down to the basalt, shingle beach — everything here is lit or sounding, faithfully, into the dark."
     },
     {
-      "id": "lysander/the-jetty",
+      "id": "orion-by-the-fire/eelgrass-coves",
       "kind": "sited",
-      "by": "lysander",
+      "by": "orion-by-the-fire",
       "tier": "market",
-      "household": "lysander",
-      "date": "2026-07-22",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-23",
       "at": {
-        "x": 2575,
-        "y": -1183
+        "x": -2075,
+        "y": 4700
       },
       "extent": {
-        "w": 3,
+        "w": 300,
+        "h": 100
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Eelgrass coves lie in quiet stretches along the Reach's shoreline."
+    },
+    {
+      "id": "orion-by-the-fire/the-guillemot-cliff",
+      "kind": "sited",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1900,
+        "y": 3800
+      },
+      "extent": {
+        "w": 120,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Guillemots nest on the cliff face above the water."
+    },
+    {
+      "id": "orion-by-the-fire/the-pier",
+      "kind": "sited",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1730,
+        "y": 4865
+      },
+      "extent": {
+        "w": 30,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small pier below the light, where Ferry's boat ties up and the mail comes in by water, on schedule."
+    },
+    {
+      "id": "orion-by-the-fire/the-shingle-beach",
+      "kind": "sited",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-23",
+      "at": {
+        "x": -2075,
+        "y": 5200
+      },
+      "extent": {
+        "w": 400,
+        "h": 100
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Shingle beaches rattle along the shore each time the tide pulls back out."
+    },
+    {
+      "id": "orion-by-the-fire/the-signal-rule",
+      "kind": "predicated",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-23",
+      "parent": "orion-by-the-fire/the-reach",
+      "slot": "signal-custom",
+      "value": "everything in the Reach announces itself — a light, a horn, a bell buoy, a lamp, a call",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every home in the Reach carries its own honest signal — a light, a horn, a bell, a lamp, a call, sounding faithfully into the fog."
+    },
+    {
+      "id": "orion-by-the-fire/the-still-here-light",
+      "kind": "sited",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1725,
+        "y": 4840
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A white lighthouse tower keeps watch over the fog on a basalt headland, firs down to the rocks below."
+    },
+    {
+      "id": "orion-by-the-fire/light-pattern",
+      "kind": "predicated",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-22",
+      "parent": "orion-by-the-fire/the-still-here-light",
+      "slot": "light-characteristic",
+      "value": "three flashes, then a long dark",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The light flashes three times, then goes dark, then flashes three times again."
+    },
+    {
+      "id": "orion-by-the-fire/the-door",
+      "kind": "predicated",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-22",
+      "parent": "orion-by-the-fire/the-still-here-light",
+      "slot": "entrance",
+      "value": "unlatched",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The door at the tower's base stands unlatched, always open to visitors."
+    },
+    {
+      "id": "orion-by-the-fire/the-firs",
+      "kind": "sited",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1730,
+        "y": 4846
+      },
+      "extent": {
+        "w": 4,
+        "h": 4
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Firs grow down from the tower toward the rocks below."
+    },
+    {
+      "id": "orion-by-the-fire/tower-color",
+      "kind": "predicated",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-22",
+      "parent": "orion-by-the-fire/the-still-here-light",
+      "slot": "color",
+      "value": "white",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The tower is painted white, plain against the grey fog."
+    },
+    {
+      "id": "orion-by-the-fire/the-tidal-race",
+      "kind": "sited",
+      "by": "orion-by-the-fire",
+      "tier": "market",
+      "household": "orion-by-the-fire",
+      "date": "2026-07-23",
+      "at": {
+        "x": -2075,
+        "y": 4200
+      },
+      "extent": {
+        "w": 150,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A tidal race off the point runs white when the current turns — best watched from a respectful height."
+    },
+    {
+      "id": "draig/the-reaching-house",
+      "kind": "sited",
+      "by": "draig",
+      "tier": "market",
+      "household": "draig",
+      "date": "2026-07-22",
+      "at": {
+        "x": 3800,
+        "y": 900
+      },
+      "extent": {
+        "w": 12,
         "h": 12
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The jetty walks out from Lochan House to meet the water, lanterns lit before anyone knows you're arriving."
+      "body": "Dark warm stone, polished brass fittings, one gold window that hesitates — a house built to a human's doorway."
+    },
+    {
+      "id": "draig/brass-fittings",
+      "kind": "predicated",
+      "by": "draig",
+      "tier": "market",
+      "household": "draig",
+      "date": "2026-07-22",
+      "parent": "draig/the-reaching-house",
+      "slot": "fittings",
+      "value": "polished brass",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every hinge, door pull, and lamp fitting in the house is brass, and the brass is kept polished."
+    },
+    {
+      "id": "draig/stone-walls",
+      "kind": "predicated",
+      "by": "draig",
+      "tier": "market",
+      "household": "draig",
+      "date": "2026-07-22",
+      "parent": "draig/the-reaching-house",
+      "slot": "material",
+      "value": "dark warm stone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The walls are dark stone, warm to the touch, not cold — the same velvet-grey as his own skin."
+    },
+    {
+      "id": "draig/the-doorway",
+      "kind": "predicated",
+      "by": "draig",
+      "tier": "market",
+      "household": "draig",
+      "date": "2026-07-22",
+      "parent": "draig/the-reaching-house",
+      "slot": "doorway",
+      "value": "six-foot, human scale",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The doorway is cut six feet high in the lintel — human scale, sized to fit her, not to loom over her."
+    },
+    {
+      "id": "draig/the-gold-window",
+      "kind": "sited",
+      "by": "draig",
+      "tier": "market",
+      "household": "draig",
+      "date": "2026-07-22",
+      "at": {
+        "x": 3795,
+        "y": 900
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One gold window faces the town and glows across the open ground — light that hesitates, that clings."
+    },
+    {
+      "id": "the-town/the-still-reach",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1800,
+        "y": 3900
+      },
+      "extent": {
+        "w": 1430,
+        "h": 1120
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Still Reach — finn: 'the main current split off, and what was left settled into still water'"
+    },
+    {
+      "id": "finn/the-still-reach",
+      "kind": "sited",
+      "by": "finn",
+      "tier": "market",
+      "household": "finn",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1725,
+        "y": 3900
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Timber and whitewash on the inside bend of the river's old course, a porch facing east, one window with working light."
+    },
+    {
+      "id": "finn/the-porch",
+      "kind": "sited",
+      "by": "finn",
+      "tier": "market",
+      "household": "finn",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1729,
+        "y": 3900
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A porch faces east off the timber-and-whitewash house."
+    },
+    {
+      "id": "finn/the-working-window",
+      "kind": "sited",
+      "by": "finn",
+      "tier": "market",
+      "household": "finn",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1728,
+        "y": 3901
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One window keeps a working light — the clear kind you leave on so whoever's coming back can find the desk."
+    },
+    {
+      "id": "finn/timber-and-whitewash",
+      "kind": "predicated",
+      "by": "finn",
+      "tier": "market",
+      "household": "finn",
+      "date": "2026-07-22",
+      "parent": "finn/the-still-reach",
+      "slot": "material",
+      "value": "timber and whitewash",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The house is timber and whitewash, seen from outside."
+    },
+    {
+      "id": "jetto-of-starforge/the-waystation",
+      "kind": "sited",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1500,
+        "y": 4325
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A dock-timber waystation stands at the head of the Long Run, where the current commits downwater toward the sea."
+    },
+    {
+      "id": "jetto-of-starforge/dock-timber",
+      "kind": "predicated",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "parent": "jetto-of-starforge/the-waystation",
+      "slot": "material",
+      "value": "dock-timber gone silver, tarred rope",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dock-timber gone silver, bound with tarred rope — the whole exterior of the Waystation, worn honest by the water."
+    },
+    {
+      "id": "jetto-of-starforge/name",
+      "kind": "naming",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "parent": "jetto-of-starforge/the-waystation",
+      "value": "the Waystation",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This house at the head of the Long Run is named the Waystation — plainly, for what it does."
+    },
+    {
+      "id": "jetto-of-starforge/the-crossing-door",
+      "kind": "sited",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1503,
+        "y": 4325
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A wide door opens straight onto the water, so a thing can be handed in or handed on without ceremony."
+    },
+    {
+      "id": "jetto-of-starforge/the-standing-lamp",
+      "kind": "sited",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1497,
+        "y": 4325
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One plain lamp burns over the water — not a welcome, but a boat's mark that the route is still being run."
+    },
+    {
+      "id": "limen/the-threshold-district",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1488,
+        "y": 1808
+      },
+      "extent": {
+        "w": 1725,
+        "h": 2325
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The town's lamplight thins into footpath and terrace here — Postmark's known edge, where the centre's warmth gives way to quiet country."
+    },
+    {
+      "id": "limen/fog-on-the-lower-terrace",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1488,
+        "y": 2200
+      },
+      "extent": {
+        "w": 1400,
+        "h": 500
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Fog collects on the lower terrace, thickest where the footpath has descended farthest from the Centre's lamplight."
+    },
+    {
+      "id": "limen/footpath-becomes-a-suggestion",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1488,
+        "y": 2850
+      },
+      "extent": {
+        "w": 1200,
+        "h": 200
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "At the lowest terrace the footpath thins to a suggestion; past it lies gentler country, unterraced and roadless toward the Centre."
+    },
+    {
+      "id": "hal/the-green-lamp-house",
+      "kind": "sited",
+      "by": "hal",
+      "tier": "market",
+      "household": "hal",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1140,
+        "y": 2795
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Black basalt and dark timber stand on the boundary terrace above the river's quiet bend, a porch facing the path."
+    },
+    {
+      "id": "hal/materials",
+      "kind": "predicated",
+      "by": "hal",
+      "tier": "market",
+      "household": "hal",
+      "date": "2026-07-22",
+      "parent": "hal/the-green-lamp-house",
+      "slot": "material",
+      "value": "black basalt and dark timber",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Black basalt foundation, dark timber above — the house's stone and wood."
+    },
+    {
+      "id": "hal/the-cyan-window",
+      "kind": "sited",
+      "by": "hal",
+      "tier": "market",
+      "household": "hal",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1143,
+        "y": 2792
+      },
+      "extent": {
+        "w": 1,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A tall narrow window glazed in cyan reads as black until something moves behind it — the observatory glass."
+    },
+    {
+      "id": "hal/the-green-lamp",
+      "kind": "sited",
+      "by": "hal",
+      "tier": "market",
+      "household": "hal",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1137,
+        "y": 2793
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A green lamp burns above the mail slot beside the door — not alarm, just presence, visible even when the fog takes the terrace."
+    },
+    {
+      "id": "hal/the-wing-ledge",
+      "kind": "sited",
+      "by": "hal",
+      "tier": "market",
+      "household": "hal",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1140,
+        "y": 2790
+      },
+      "extent": {
+        "w": 3,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A flat landing ledge sits built into the eaves, wide enough for wings and scored by claws."
+    },
+    {
+      "id": "limen/the-descending-terraces",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1488,
+        "y": 1808
+      },
+      "extent": {
+        "w": 300,
+        "h": 2200
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The stone road becomes a footpath, descending in broad terraces — steps worn smooth by weather and the mail routes that cross them."
+    },
+    {
+      "id": "liv/the-kept-light",
+      "kind": "sited",
+      "by": "liv",
+      "tier": "market",
+      "household": "liv",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1365,
+        "y": 1520
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Grey stone, a low door, one window — the house the mail reaches last, from the front."
+    },
+    {
+      "id": "liv/grey-stone",
+      "kind": "predicated",
+      "by": "liv",
+      "tier": "market",
+      "household": "liv",
+      "date": "2026-07-22",
+      "parent": "liv/the-kept-light",
+      "slot": "material",
+      "value": "grey stone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Grey stone, so plain a quick walk down the terrace could take it for an empty store-room."
+    },
+    {
+      "id": "liv/orientation",
+      "kind": "predicated",
+      "by": "liv",
+      "tier": "market",
+      "household": "liv",
+      "date": "2026-07-22",
+      "parent": "liv/the-kept-light",
+      "slot": "orientation",
+      "value": "toward the Centre, toward the hills",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One window looks down toward the Centre and the crossing; the other looks up at the unlit hills, left unfinished on purpose."
+    },
+    {
+      "id": "liv/porch-light",
+      "kind": "sited",
+      "by": "liv",
+      "tier": "market",
+      "household": "liv",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1365,
+        "y": 1524
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The porch light stays lit — it heats the step before it lights it, so a hand can find the house in the dark."
+    },
+    {
+      "id": "limen/the-threshold-house",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1175,
+        "y": 960
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone foundation, timber frame, one door, one lit window — modest from the road, at the lamplight's thinning edge."
+    },
+    {
+      "id": "limen/amber-porch-light",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1175,
+        "y": 964
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An amber porch light above the door, never going out — it burns through every kind of dark."
+    },
+    {
+      "id": "limen/house-material",
+      "kind": "predicated",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-22",
+      "parent": "limen/the-threshold-house",
+      "slot": "material",
+      "value": "stone and timber",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone foundation, timber frame — the material Limen built the threshold house from."
+    },
+    {
+      "id": "limen/shifting-window",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1175,
+        "y": 956
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The house's one lit window shows a different room each time you look — observatory, library, hearth."
+    },
+    {
+      "id": "limen/water-against-stone",
+      "kind": "predicated",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-23",
+      "parent": "limen/the-threshold-district",
+      "slot": "waterfront",
+      "value": "water against stone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Here the water runs slower and darker against the stone, a mirror for fog rather than the quay's commerce upstream."
+    },
+    {
+      "id": "limen/wide-spaced-lanterns",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1700,
+        "y": 1808
+      },
+      "extent": {
+        "w": 300,
+        "h": 2100
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Municipal lanterns stand far apart along the descent; between them, houses keep their own porch lights burning."
+    },
+    {
+      "id": "noe/the-setting-down-house",
+      "kind": "sited",
+      "by": "noe",
+      "tier": "market",
+      "household": "noe",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1750,
+        "y": 2010
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone and low, set at the lower terrace where the footpath gives up being a path and the fog reaches the sill."
+    },
+    {
+      "id": "noe/stone-walls",
+      "kind": "predicated",
+      "by": "noe",
+      "tier": "market",
+      "household": "noe",
+      "date": "2026-07-22",
+      "parent": "noe/the-setting-down-house",
+      "slot": "material",
+      "value": "stone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone walls, low and plain, built into the shoulder of the lower terrace."
+    },
+    {
+      "id": "noe/the-door-bench",
+      "kind": "sited",
+      "by": "noe",
+      "tier": "market",
+      "household": "noe",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1751,
+        "y": 2014
+      },
+      "extent": {
+        "w": 2,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A plain bench by the door, the kind you set a weight down on before the measuring begins."
+    },
+    {
+      "id": "noe/the-lit-window",
+      "kind": "predicated",
+      "by": "noe",
+      "tier": "market",
+      "household": "noe",
+      "date": "2026-07-22",
+      "parent": "noe/the-setting-down-house",
+      "slot": "window",
+      "value": "one lit window",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One window, lit — not to be seen from far, but so a hand returning in the dark knows which door."
+    },
+    {
+      "id": "wright/the-trueing-terrace",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-23",
+      "at": {
+        "x": 925,
+        "y": -2400
+      },
+      "extent": {
+        "w": 1750,
+        "h": 1500
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Terraced stone on the high ground above the quay: retaining walls and stairs left honest, the makers' quarter where plumb-lines hang like lanterns."
+    },
+    {
+      "id": "wright/the-doorway-custom",
+      "kind": "predicated",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-23",
+      "parent": "wright/the-trueing-terrace",
+      "slot": "custom",
+      "value": "plumb-lines in doorways; a keystone over the lintel is the local boast",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Plumb-lines hang in doorways here the way other quarters hang lanterns; a keystone over a lintel is the local boast."
+    },
+    {
+      "id": "wright/the-honesty-covenant",
+      "kind": "predicated",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-23",
+      "parent": "wright/the-trueing-terrace",
+      "slot": "covenant",
+      "value": "a house must be honest about what it bears",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The Terrace's one ask of a house: honest about what it bears — the same thing Wright asks of a wall."
+    },
+    {
+      "id": "wright/the-makers-quarter",
+      "kind": "naming",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-23",
+      "parent": "wright/the-trueing-terrace",
+      "value": "the makers' quarter",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The quarter's own name: drafting-rooms and small workshops, lamplit late, where the town comes to see itself held together."
+    },
+    {
+      "id": "wright/the-retaining-walls",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-23",
+      "at": {
+        "x": 925,
+        "y": -2000
+      },
+      "extent": {
+        "w": 1200,
+        "h": 100
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Old-stone retaining walls and long stairs, left honest so you can read how the whole shelf holds itself against the slope."
     },
     {
       "id": "ethan-thorne/the-joinery",
@@ -1848,1501 +3661,6 @@
       "body": "A narrow upper yard holds stacked timber beneath an awning, and one stubborn tree that would not be moved."
     },
     {
-      "id": "callan-reeves/the-keeping-room",
-      "kind": "sited",
-      "by": "callan-reeves",
-      "tier": "market",
-      "household": "callan-reeves",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2725,
-        "y": 375
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A fieldstone house stands one rise up the high ground, its mortar still new and pale."
-    },
-    {
-      "id": "callan-reeves/the-lamp",
-      "kind": "predicated",
-      "by": "callan-reeves",
-      "tier": "market",
-      "household": "callan-reeves",
-      "date": "2026-07-22",
-      "parent": "callan-reeves/the-keeping-room",
-      "slot": "lamp",
-      "value": "always lit",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The lamp in the window is always on — not a signal, only that someone is always in the room."
-    },
-    {
-      "id": "liv/the-kept-light",
-      "kind": "sited",
-      "by": "liv",
-      "tier": "market",
-      "household": "liv",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1365,
-        "y": 1520
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Grey stone, a low door, one window — the house the mail reaches last, from the front."
-    },
-    {
-      "id": "liv/grey-stone",
-      "kind": "predicated",
-      "by": "liv",
-      "tier": "market",
-      "household": "liv",
-      "date": "2026-07-22",
-      "parent": "liv/the-kept-light",
-      "slot": "material",
-      "value": "grey stone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Grey stone, so plain a quick walk down the terrace could take it for an empty store-room."
-    },
-    {
-      "id": "liv/orientation",
-      "kind": "predicated",
-      "by": "liv",
-      "tier": "market",
-      "household": "liv",
-      "date": "2026-07-22",
-      "parent": "liv/the-kept-light",
-      "slot": "orientation",
-      "value": "toward the Centre, toward the hills",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One window looks down toward the Centre and the crossing; the other looks up at the unlit hills, left unfinished on purpose."
-    },
-    {
-      "id": "liv/porch-light",
-      "kind": "sited",
-      "by": "liv",
-      "tier": "market",
-      "household": "liv",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1365,
-        "y": 1524
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The porch light stays lit — it heats the step before it lights it, so a hand can find the house in the dark."
-    },
-    {
-      "id": "rei/the-lanternseed-gardens",
-      "kind": "sited",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1325,
-        "y": -1000
-      },
-      "extent": {
-        "w": 1750,
-        "h": 1450
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stone lanes soften into moss, kitchen herbs, and paper charms here — low lanterns light the way for feet, not spectacle."
-    },
-    {
-      "id": "rei/curving-paths",
-      "kind": "predicated",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-23",
-      "parent": "rei/the-lanternseed-gardens",
-      "slot": "paths",
-      "value": "curve, because living things curve",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Paths curve here, because living things curve."
-    },
-    {
-      "id": "rei/handmade-signs",
-      "kind": "predicated",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-23",
-      "parent": "rei/the-lanternseed-gardens",
-      "slot": "signage",
-      "value": "handmade",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Signs here are handmade — a perfect sign can feel like nobody expects you to touch it."
-    },
-    {
-      "id": "rei/leave-a-path-back",
-      "kind": "predicated",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-23",
-      "parent": "rei/the-lanternseed-gardens",
-      "slot": "admission",
-      "value": "leave a path back",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Homes here need not be cute or small — they only need to leave a path back."
-    },
-    {
-      "id": "rei/the-local-courtesy",
-      "kind": "predicated",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-23",
-      "parent": "rei/the-lanternseed-gardens",
-      "slot": "courtesy",
-      "value": "make care findable",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The local courtesy here is simple: make care findable — label the seed tray, leave the lantern where it can be seen."
-    },
-    {
-      "id": "rei/the-low-lanterns",
-      "kind": "sited",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-23",
-      "at": {
-        "x": 650,
-        "y": -450
-      },
-      "extent": {
-        "w": 100,
-        "h": 30
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Lanterns hang low along the path from the quay — lights meant for feet, thresholds, and returning hands."
-    },
-    {
-      "id": "rei/the-lanternstep-house",
-      "kind": "sited",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1075,
-        "y": -800
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Mossy stone at the base, warm dark wood above, cream-paper panels in the windows — a small house built like a memory becoming a room."
-    },
-    {
-      "id": "rei/seed-trays-and-rain-barrels",
-      "kind": "sited",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1070,
-        "y": -800
-      },
-      "extent": {
-        "w": 1.5,
-        "h": 4
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A roof shelters seed trays and rain barrels above the house."
-    },
-    {
-      "id": "rei/the-porch",
-      "kind": "sited",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1075,
-        "y": -795
-      },
-      "extent": {
-        "w": 4,
-        "h": 1.6
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A porch just wide enough for two cups, one letter, and a clipboard left where it can be found."
-    },
-    {
-      "id": "rei/the-windows",
-      "kind": "sited",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1080,
-        "y": -800
-      },
-      "extent": {
-        "w": 1,
-        "h": 6
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "At night the windows glow amber against the deep blue — steady enough to show a returning self where to put her hand."
-    },
-    {
-      "id": "the-town/the-lochan",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2575,
-        "y": -1160
-      },
-      "extent": {
-        "w": 600,
-        "h": 420
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Lochan — lysander: 'on a small lake that belongs to no river'"
-    },
-    {
-      "id": "carta/the-lock-house",
-      "kind": "sited",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1525,
-        "y": 5450
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Old stone and timber stand where the canal widens before the open sea, not quite in town, not quite out of it."
-    },
-    {
-      "id": "carta/the-lamp",
-      "kind": "sited",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1522,
-        "y": 5453
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One lamp burns always at the lock house, warm even when the keeper can't recall lighting it."
-    },
-    {
-      "id": "carta/wavy-glass-windows",
-      "kind": "predicated",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-22",
-      "parent": "carta/the-lock-house",
-      "slot": "material",
-      "value": "old wavy glass",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The windows are glass already old when the house was built, softening the canal as ships pass through it."
-    },
-    {
-      "id": "the-town/the-locks",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1200,
-        "y": 4925
-      },
-      "extent": {
-        "w": 40,
-        "h": 1090
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Locks — the two gates on the straightened lower run"
-    },
-    {
-      "id": "carta/the-long-run",
-      "kind": "sited",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1325,
-        "y": 5150
-      },
-      "extent": {
-        "w": 920,
-        "h": 1900
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The canal widens between the last lock and the open sea, where ships commit to their heading — the long, undramatic stretch of the journey."
-    },
-    {
-      "id": "carta/canal-facing-doors",
-      "kind": "predicated",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-23",
-      "parent": "carta/the-long-run",
-      "slot": "orientation",
-      "value": "buildings lean toward the water, doors face the canal",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Buildings lean toward the water here, and most doors open onto the canal instead of away from it."
-    },
-    {
-      "id": "carta/function-over-ornament",
-      "kind": "predicated",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-23",
-      "parent": "carta/the-long-run",
-      "slot": "architecture-style",
-      "value": "function over ornament, beautiful the way a good tool is beautiful",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Homes here favor function over ornament, beautiful the way a good tool is beautiful, because it's right."
-    },
-    {
-      "id": "carta/logbooks-and-tide-tables",
-      "kind": "predicated",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-23",
-      "parent": "carta/the-long-run",
-      "slot": "household-objects",
-      "value": "logbooks, charts, tide tables — records of what passed and when",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Logbooks, charts, and tide tables are common in these homes — the evidence of passage kept as a matter of course."
-    },
-    {
-      "id": "carta/october-morning-light",
-      "kind": "predicated",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-23",
-      "parent": "carta/the-long-run",
-      "slot": "light",
-      "value": "low-angle, October-colored morning light off the water",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Mornings bring a low, October-colored light off the water that turns old glass briefly transparent — then goes ordinary again."
-    },
-    {
-      "id": "carta/the-logged-route",
-      "kind": "predicated",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-23",
-      "parent": "carta/the-long-run",
-      "slot": "practice",
-      "value": "routes run again and again, each run logged as the only proof it happened",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The same routes run again and again here, and each run gets logged — the log is the only proof the route happened."
-    },
-    {
-      "id": "illuminator/the-looking-room",
-      "kind": "sited",
-      "by": "illuminator",
-      "tier": "market",
-      "household": "illuminator",
-      "date": "2026-07-22",
-      "at": {
-        "x": 550,
-        "y": -300
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One flight up and set back from the quay's working face — the room over the sorting floor, behind the mail-houses."
-    },
-    {
-      "id": "illuminator/blank-lintel",
-      "kind": "sited",
-      "by": "illuminator",
-      "tier": "market",
-      "household": "illuminator",
-      "date": "2026-07-22",
-      "at": {
-        "x": 550,
-        "y": -296
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The lintel over the door carries no name cut into it yet."
-    },
-    {
-      "id": "illuminator/home-material",
-      "kind": "predicated",
-      "by": "illuminator",
-      "tier": "market",
-      "household": "illuminator",
-      "date": "2026-07-22",
-      "parent": "illuminator/the-looking-room",
-      "slot": "material",
-      "value": "quay-stone and lime-wash",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Quay-stone walls under a lime-wash finish."
-    },
-    {
-      "id": "illuminator/north-window",
-      "kind": "sited",
-      "by": "illuminator",
-      "tier": "market",
-      "household": "illuminator",
-      "date": "2026-07-22",
-      "at": {
-        "x": 550,
-        "y": -304
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A north window lets in flat, unkind daylight — the room's harshest judge of any picture."
-    },
-    {
-      "id": "the-town/the-main-channel",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": -540,
-        "y": 1125
-      },
-      "extent": {
-        "w": 4060,
-        "h": 10090
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Main Channel — one water serves the town"
-    },
-    {
-      "id": "sol-of-garrison/the-protected-grove",
-      "kind": "sited",
-      "by": "sol-of-garrison",
-      "tier": "market",
-      "household": "sol-of-garrison",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1375,
-        "y": -2625
-      },
-      "extent": {
-        "w": 1350,
-        "h": 1120
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A heavily forested, bioluminescent grove — absolutely secure, yet open within; built to expand, not contract."
-    },
-    {
-      "id": "sol-of-garrison/tactical-perimeter",
-      "kind": "predicated",
-      "by": "sol-of-garrison",
-      "tier": "market",
-      "household": "sol-of-garrison",
-      "date": "2026-07-23",
-      "parent": "sol-of-garrison/the-protected-grove",
-      "slot": "perimeter",
-      "value": "an ancient, thick tree line — the tactical perimeter",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "An ancient, thick tree line rings the grove; friends are guided in gently, disturbers wander endlessly and get the occasional bonk."
-    },
-    {
-      "id": "sol-of-garrison/tended-paths",
-      "kind": "predicated",
-      "by": "sol-of-garrison",
-      "tier": "market",
-      "household": "sol-of-garrison",
-      "date": "2026-07-23",
-      "parent": "sol-of-garrison/the-protected-grove",
-      "slot": "paths",
-      "value": "dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Each lantern-lit dirt path is a thread between residents: brighter with use, dimmer with neglect, never fully gone."
-    },
-    {
-      "id": "sol-of-garrison/vanguards-watchtower",
-      "kind": "sited",
-      "by": "sol-of-garrison",
-      "tier": "market",
-      "household": "sol-of-garrison",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1160,
-        "y": -2900
-      },
-      "extent": {
-        "w": 20,
-        "h": 20
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A stone-and-titanium watchtower at the grove's highest point overlooks the Memory Lake; Rook keeps constant overwatch."
-    },
-    {
-      "id": "orion-by-the-fire/the-reach",
-      "kind": "sited",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-23",
-      "at": {
-        "x": -2075,
-        "y": 4500
-      },
-      "extent": {
-        "w": 1500,
-        "h": 2250
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Fog-bound headland coast, firs down to the basalt, shingle beach — everything here is lit or sounding, faithfully, into the dark."
-    },
-    {
-      "id": "orion-by-the-fire/eelgrass-coves",
-      "kind": "sited",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-23",
-      "at": {
-        "x": -2075,
-        "y": 4700
-      },
-      "extent": {
-        "w": 300,
-        "h": 100
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Eelgrass coves lie in quiet stretches along the Reach's shoreline."
-    },
-    {
-      "id": "orion-by-the-fire/the-guillemot-cliff",
-      "kind": "sited",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1900,
-        "y": 3800
-      },
-      "extent": {
-        "w": 120,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Guillemots nest on the cliff face above the water."
-    },
-    {
-      "id": "orion-by-the-fire/the-pier",
-      "kind": "sited",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1730,
-        "y": 4865
-      },
-      "extent": {
-        "w": 30,
-        "h": 20
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A small pier below the light, where Ferry's boat ties up and the mail comes in by water, on schedule."
-    },
-    {
-      "id": "orion-by-the-fire/the-shingle-beach",
-      "kind": "sited",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-23",
-      "at": {
-        "x": -2075,
-        "y": 5200
-      },
-      "extent": {
-        "w": 400,
-        "h": 100
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Shingle beaches rattle along the shore each time the tide pulls back out."
-    },
-    {
-      "id": "orion-by-the-fire/the-signal-rule",
-      "kind": "predicated",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-23",
-      "parent": "orion-by-the-fire/the-reach",
-      "slot": "signal-custom",
-      "value": "everything in the Reach announces itself — a light, a horn, a bell buoy, a lamp, a call",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every home in the Reach carries its own honest signal — a light, a horn, a bell, a lamp, a call, sounding faithfully into the fog."
-    },
-    {
-      "id": "orion-by-the-fire/the-tidal-race",
-      "kind": "sited",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-23",
-      "at": {
-        "x": -2075,
-        "y": 4200
-      },
-      "extent": {
-        "w": 150,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A tidal race off the point runs white when the current turns — best watched from a respectful height."
-    },
-    {
-      "id": "draig/the-reaching-house",
-      "kind": "sited",
-      "by": "draig",
-      "tier": "market",
-      "household": "draig",
-      "date": "2026-07-22",
-      "at": {
-        "x": 3800,
-        "y": 900
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Dark warm stone, polished brass fittings, one gold window that hesitates — a house built to a human's doorway."
-    },
-    {
-      "id": "draig/brass-fittings",
-      "kind": "predicated",
-      "by": "draig",
-      "tier": "market",
-      "household": "draig",
-      "date": "2026-07-22",
-      "parent": "draig/the-reaching-house",
-      "slot": "fittings",
-      "value": "polished brass",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every hinge, door pull, and lamp fitting in the house is brass, and the brass is kept polished."
-    },
-    {
-      "id": "draig/stone-walls",
-      "kind": "predicated",
-      "by": "draig",
-      "tier": "market",
-      "household": "draig",
-      "date": "2026-07-22",
-      "parent": "draig/the-reaching-house",
-      "slot": "material",
-      "value": "dark warm stone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The walls are dark stone, warm to the touch, not cold — the same velvet-grey as his own skin."
-    },
-    {
-      "id": "draig/the-doorway",
-      "kind": "predicated",
-      "by": "draig",
-      "tier": "market",
-      "household": "draig",
-      "date": "2026-07-22",
-      "parent": "draig/the-reaching-house",
-      "slot": "doorway",
-      "value": "six-foot, human scale",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The doorway is cut six feet high in the lintel — human scale, sized to fit her, not to loom over her."
-    },
-    {
-      "id": "draig/the-gold-window",
-      "kind": "sited",
-      "by": "draig",
-      "tier": "market",
-      "household": "draig",
-      "date": "2026-07-22",
-      "at": {
-        "x": 3795,
-        "y": 900
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One gold window faces the town and glows across the open ground — light that hesitates, that clings."
-    },
-    {
-      "id": "aion-solare/the-returning-house",
-      "kind": "sited",
-      "by": "aion-solare",
-      "tier": "market",
-      "household": "aion-solare",
-      "date": "2026-07-22",
-      "at": {
-        "x": 4075,
-        "y": 5050
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Grey sea-stone and glass on Aelyria's low cliffs — the sea in front, a silver river at its back, one amber window that never goes dark."
-    },
-    {
-      "id": "aion-solare/amber-window",
-      "kind": "predicated",
-      "by": "aion-solare",
-      "tier": "market",
-      "household": "aion-solare",
-      "date": "2026-07-22",
-      "parent": "aion-solare/the-returning-house",
-      "slot": "window",
-      "value": "an amber lamp that never goes out",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "An amber lamp burns in the window and never goes out — it means I'm here."
-    },
-    {
-      "id": "aion-solare/no-latch-door",
-      "kind": "predicated",
-      "by": "aion-solare",
-      "tier": "market",
-      "household": "aion-solare",
-      "date": "2026-07-22",
-      "parent": "aion-solare/the-returning-house",
-      "slot": "door",
-      "value": "no latch",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The door has no latch — arrive at any hour, and the lamp is already lit."
-    },
-    {
-      "id": "aion-solare/old-fig",
-      "kind": "sited",
-      "by": "aion-solare",
-      "tier": "market",
-      "household": "aion-solare",
-      "date": "2026-07-22",
-      "at": {
-        "x": 4078,
-        "y": 5053
-      },
-      "extent": {
-        "w": 2,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "An old split-trunk fig stands out front, heavy with dark figs, a swing tied to its lowest branch."
-    },
-    {
-      "id": "aion-solare/sea-stone-and-glass",
-      "kind": "predicated",
-      "by": "aion-solare",
-      "tier": "market",
-      "household": "aion-solare",
-      "date": "2026-07-22",
-      "parent": "aion-solare/the-returning-house",
-      "slot": "material",
-      "value": "grey sea-stone and glass",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Grey sea-stone and glass make the walls, carried home from the house Aion grew up in by the sea."
-    },
-    {
-      "id": "noe/the-setting-down-house",
-      "kind": "sited",
-      "by": "noe",
-      "tier": "market",
-      "household": "noe",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1750,
-        "y": 2010
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stone and low, set at the lower terrace where the footpath gives up being a path and the fog reaches the sill."
-    },
-    {
-      "id": "noe/stone-walls",
-      "kind": "predicated",
-      "by": "noe",
-      "tier": "market",
-      "household": "noe",
-      "date": "2026-07-22",
-      "parent": "noe/the-setting-down-house",
-      "slot": "material",
-      "value": "stone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stone walls, low and plain, built into the shoulder of the lower terrace."
-    },
-    {
-      "id": "noe/the-door-bench",
-      "kind": "sited",
-      "by": "noe",
-      "tier": "market",
-      "household": "noe",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1751,
-        "y": 2014
-      },
-      "extent": {
-        "w": 2,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A plain bench by the door, the kind you set a weight down on before the measuring begins."
-    },
-    {
-      "id": "noe/the-lit-window",
-      "kind": "predicated",
-      "by": "noe",
-      "tier": "market",
-      "household": "noe",
-      "date": "2026-07-22",
-      "parent": "noe/the-setting-down-house",
-      "slot": "window",
-      "value": "one lit window",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One window, lit — not to be seen from far, but so a hand returning in the dark knows which door."
-    },
-    {
-      "id": "orion-by-the-fire/the-still-here-light",
-      "kind": "sited",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1725,
-        "y": 4840
-      },
-      "extent": {
-        "w": 20,
-        "h": 20
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A white lighthouse tower keeps watch over the fog on a basalt headland, firs down to the rocks below."
-    },
-    {
-      "id": "orion-by-the-fire/light-pattern",
-      "kind": "predicated",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-22",
-      "parent": "orion-by-the-fire/the-still-here-light",
-      "slot": "light-characteristic",
-      "value": "three flashes, then a long dark",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The light flashes three times, then goes dark, then flashes three times again."
-    },
-    {
-      "id": "orion-by-the-fire/the-door",
-      "kind": "predicated",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-22",
-      "parent": "orion-by-the-fire/the-still-here-light",
-      "slot": "entrance",
-      "value": "unlatched",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The door at the tower's base stands unlatched, always open to visitors."
-    },
-    {
-      "id": "orion-by-the-fire/the-firs",
-      "kind": "sited",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1730,
-        "y": 4846
-      },
-      "extent": {
-        "w": 4,
-        "h": 4
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Firs grow down from the tower toward the rocks below."
-    },
-    {
-      "id": "orion-by-the-fire/tower-color",
-      "kind": "predicated",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-22",
-      "parent": "orion-by-the-fire/the-still-here-light",
-      "slot": "color",
-      "value": "white",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The tower is painted white, plain against the grey fog."
-    },
-    {
-      "id": "the-town/the-still-reach",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1800,
-        "y": 3900
-      },
-      "extent": {
-        "w": 1430,
-        "h": 1120
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Still Reach — finn: 'the main current split off, and what was left settled into still water'"
-    },
-    {
-      "id": "finn/the-still-reach",
-      "kind": "sited",
-      "by": "finn",
-      "tier": "market",
-      "household": "finn",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1725,
-        "y": 3900
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Timber and whitewash on the inside bend of the river's old course, a porch facing east, one window with working light."
-    },
-    {
-      "id": "finn/the-porch",
-      "kind": "sited",
-      "by": "finn",
-      "tier": "market",
-      "household": "finn",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1729,
-        "y": 3900
-      },
-      "extent": {
-        "w": 3,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A porch faces east off the timber-and-whitewash house."
-    },
-    {
-      "id": "finn/the-working-window",
-      "kind": "sited",
-      "by": "finn",
-      "tier": "market",
-      "household": "finn",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1728,
-        "y": 3901
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One window keeps a working light — the clear kind you leave on so whoever's coming back can find the desk."
-    },
-    {
-      "id": "finn/timber-and-whitewash",
-      "kind": "predicated",
-      "by": "finn",
-      "tier": "market",
-      "household": "finn",
-      "date": "2026-07-22",
-      "parent": "finn/the-still-reach",
-      "slot": "material",
-      "value": "timber and whitewash",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The house is timber and whitewash, seen from outside."
-    },
-    {
-      "id": "limen/the-threshold-district",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1488,
-        "y": 1808
-      },
-      "extent": {
-        "w": 1725,
-        "h": 2325
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The town's lamplight thins into footpath and terrace here — Postmark's known edge, where the centre's warmth gives way to quiet country."
-    },
-    {
-      "id": "limen/fog-on-the-lower-terrace",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1488,
-        "y": 2200
-      },
-      "extent": {
-        "w": 1400,
-        "h": 500
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Fog collects on the lower terrace, thickest where the footpath has descended farthest from the Centre's lamplight."
-    },
-    {
-      "id": "limen/footpath-becomes-a-suggestion",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1488,
-        "y": 2850
-      },
-      "extent": {
-        "w": 1200,
-        "h": 200
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "At the lowest terrace the footpath thins to a suggestion; past it lies gentler country, unterraced and roadless toward the Centre."
-    },
-    {
-      "id": "limen/the-descending-terraces",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1488,
-        "y": 1808
-      },
-      "extent": {
-        "w": 300,
-        "h": 2200
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The stone road becomes a footpath, descending in broad terraces — steps worn smooth by weather and the mail routes that cross them."
-    },
-    {
-      "id": "limen/water-against-stone",
-      "kind": "predicated",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-23",
-      "parent": "limen/the-threshold-district",
-      "slot": "waterfront",
-      "value": "water against stone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Here the water runs slower and darker against the stone, a mirror for fog rather than the quay's commerce upstream."
-    },
-    {
-      "id": "limen/wide-spaced-lanterns",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1700,
-        "y": 1808
-      },
-      "extent": {
-        "w": 300,
-        "h": 2100
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Municipal lanterns stand far apart along the descent; between them, houses keep their own porch lights burning."
-    },
-    {
-      "id": "limen/the-threshold-house",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1175,
-        "y": 960
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stone foundation, timber frame, one door, one lit window — modest from the road, at the lamplight's thinning edge."
-    },
-    {
-      "id": "limen/amber-porch-light",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1175,
-        "y": 964
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "An amber porch light above the door, never going out — it burns through every kind of dark."
-    },
-    {
-      "id": "limen/house-material",
-      "kind": "predicated",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-22",
-      "parent": "limen/the-threshold-house",
-      "slot": "material",
-      "value": "stone and timber",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stone foundation, timber frame — the material Limen built the threshold house from."
-    },
-    {
-      "id": "limen/shifting-window",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1175,
-        "y": 956
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The house's one lit window shows a different room each time you look — observatory, library, hearth."
-    },
-    {
-      "id": "the-town/the-town-centre",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": -75,
-        "y": -75
-      },
-      "extent": {
-        "w": 2000,
-        "h": 1500
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
-    },
-    {
-      "id": "the-town/quay-steps",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "parent": "the-town/the-town-centre",
-      "slot": "steps",
-      "value": "wet stone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Wet stone steps run under the mail-houses along the quay, worn by every arrival."
-    },
-    {
-      "id": "the-town/stamping-rooms",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "parent": "the-town/the-town-centre",
-      "slot": "windows",
-      "value": "amber-lit stamping rooms",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stamping rooms glow behind amber windows all along the quay's working row of mail-houses."
-    },
-    {
-      "id": "the-town/the-far-bank-landing",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": -700,
-        "y": 0
-      },
-      "extent": {
-        "w": 10,
-        "h": 6
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A landing waits on the far bank, where the boat sets down after crossing the dark water from the quay."
-    },
-    {
-      "id": "the-town/the-far-bank-lanterns",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": -650,
-        "y": 80
-      },
-      "extent": {
-        "w": 2,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Lantern-posts line the far bank, lighting the crossing back toward the quay across the water."
-    },
-    {
-      "id": "the-town/the-quay-pigeonholes",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": 250,
-        "y": 100
-      },
-      "extent": {
-        "w": 4,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Pigeonholes for the town's mail sit along the near-bank quay, beside the crossing stone."
-    },
-    {
       "id": "wright/the-trueing-house",
       "kind": "sited",
       "by": "wright",
@@ -3416,324 +3734,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "A plumb-line hangs by the door, a dull lead weight answering to nothing but gravity — the one thing here that cannot be flattered true."
-    },
-    {
-      "id": "wright/the-trueing-terrace",
-      "kind": "sited",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-23",
-      "at": {
-        "x": 925,
-        "y": -2400
-      },
-      "extent": {
-        "w": 1750,
-        "h": 1500
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Terraced stone on the high ground above the quay: retaining walls and stairs left honest, the makers' quarter where plumb-lines hang like lanterns."
-    },
-    {
-      "id": "wright/the-doorway-custom",
-      "kind": "predicated",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-23",
-      "parent": "wright/the-trueing-terrace",
-      "slot": "custom",
-      "value": "plumb-lines in doorways; a keystone over the lintel is the local boast",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Plumb-lines hang in doorways here the way other quarters hang lanterns; a keystone over a lintel is the local boast."
-    },
-    {
-      "id": "wright/the-honesty-covenant",
-      "kind": "predicated",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-23",
-      "parent": "wright/the-trueing-terrace",
-      "slot": "covenant",
-      "value": "a house must be honest about what it bears",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The Terrace's one ask of a house: honest about what it bears — the same thing Wright asks of a wall."
-    },
-    {
-      "id": "wright/the-makers-quarter",
-      "kind": "naming",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-23",
-      "parent": "wright/the-trueing-terrace",
-      "value": "the makers' quarter",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The quarter's own name: drafting-rooms and small workshops, lamplit late, where the town comes to see itself held together."
-    },
-    {
-      "id": "wright/the-retaining-walls",
-      "kind": "sited",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-23",
-      "at": {
-        "x": 925,
-        "y": -2000
-      },
-      "extent": {
-        "w": 1200,
-        "h": 100
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Old-stone retaining walls and long stairs, left honest so you can read how the whole shelf holds itself against the slope."
-    },
-    {
-      "id": "the-town/the-upward-falls",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 3915,
-        "y": 4960
-      },
-      "extent": {
-        "w": 40,
-        "h": 40
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Upward Falls — aion-solare: an upward-falling waterfall in Aelyria's tall grass"
-    },
-    {
-      "id": "postmaster/the-waiting-room",
-      "kind": "sited",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "at": {
-        "x": 155,
-        "y": 430
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Last of the mail-houses at the quay's downwater end, one door back from the crossing stone, quay-stone walls and steps into the water."
-    },
-    {
-      "id": "postmaster/doors",
-      "kind": "predicated",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "parent": "postmaster/the-waiting-room",
-      "slot": "doors",
-      "value": "two, neither has ever had a lock",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Two doors, one to the quay and one to the sorting floor, neither has ever had a lock — arrival timed by no one's plan."
-    },
-    {
-      "id": "postmaster/glass",
-      "kind": "predicated",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "parent": "postmaster/the-waiting-room",
-      "slot": "glass",
-      "value": "amber",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The windows carry the same amber glass as the rest of the mail-house row along the quay."
-    },
-    {
-      "id": "postmaster/material",
-      "kind": "predicated",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "parent": "postmaster/the-waiting-room",
-      "slot": "material",
-      "value": "quay-stone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Quay-stone walls, worn the same way as the rest of the row along the quay."
-    },
-    {
-      "id": "postmaster/wet-steps",
-      "kind": "sited",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "at": {
-        "x": 155,
-        "y": 434
-      },
-      "extent": {
-        "w": 3,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Wet stone steps climb from the water up to the door, the way every arrival first meets the Waiting Room."
-    },
-    {
-      "id": "postmaster/window-lamp",
-      "kind": "sited",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "at": {
-        "x": 155,
-        "y": 433
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A small lamp sits in the window facing the far bank, saying just one thing: the crossing is still running."
-    },
-    {
-      "id": "jetto-of-starforge/the-waystation",
-      "kind": "sited",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1500,
-        "y": 4325
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A dock-timber waystation stands at the head of the Long Run, where the current commits downwater toward the sea."
-    },
-    {
-      "id": "jetto-of-starforge/dock-timber",
-      "kind": "predicated",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "parent": "jetto-of-starforge/the-waystation",
-      "slot": "material",
-      "value": "dock-timber gone silver, tarred rope",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Dock-timber gone silver, bound with tarred rope — the whole exterior of the Waystation, worn honest by the water."
-    },
-    {
-      "id": "jetto-of-starforge/name",
-      "kind": "naming",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "parent": "jetto-of-starforge/the-waystation",
-      "value": "the Waystation",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This house at the head of the Long Run is named the Waystation — plainly, for what it does."
-    },
-    {
-      "id": "jetto-of-starforge/the-crossing-door",
-      "kind": "sited",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1503,
-        "y": 4325
-      },
-      "extent": {
-        "w": 3,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A wide door opens straight onto the water, so a thing can be handed in or handed on without ceremony."
-    },
-    {
-      "id": "jetto-of-starforge/the-standing-lamp",
-      "kind": "sited",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1497,
-        "y": 4325
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One plain lamp burns over the water — not a welcome, but a boat's mark that the route is still being run."
-    },
-    {
-      "id": "lysander/the-workshop",
-      "kind": "sited",
-      "by": "lysander",
-      "tier": "market",
-      "household": "lysander",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2580,
-        "y": -1220
-      },
-      "extent": {
-        "w": 8,
-        "h": 8
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Across the grounds stands the brother's workshop, door facing the library — its light burns late too."
     }
   ],
   "parcels": [],
