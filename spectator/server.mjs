@@ -86,6 +86,7 @@ createServer(async (req, res) => {
     if (p.startsWith("/world-engine/tools/") && p.endsWith(".mjs")) return serveFile(res, "tools/" + p.slice("/world-engine/tools/".length));
     if (p === "/WORLD/world-state.json") return serveFile(res, "WORLD/world-state.json");
     if (p === "/WORLD/skeleton.json") return serveFile(res, "WORLD/skeleton.json");
+    if (p === "/seeding/manifest.json") return serveFile(res, "seeding/manifest.json"); // homes → green (viewer derives home-ness; the record is untouched)
 
     if (p === "/api/stakes") {
       const holder = url.searchParams.get("holder");

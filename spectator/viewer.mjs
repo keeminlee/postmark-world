@@ -19,6 +19,7 @@
 import { orient, openYourEyes, investigate, containmentChain } from "../tools/world-verbs.mjs";
 import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS } from "../tools/world-engine.mjs";
+import { contains, rect } from "../tools/geometry.mjs"; // read-only: to color a home + its descendants green
 
 const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
 const $ = (root, s) => root.querySelector(s);
@@ -58,6 +59,8 @@ const DEV_DIALS = [
 const STYLE = `
 .wv { --night:#14171d; --panel:#1c2129; --panel2:#20262f; --line:#2e3542;
   --paper:#e8e0cf; --dim:#9a9280; --amber:#e8c56a; --amber-dark:#b8964a; --err:#d98a7a;
+  /* tier accents (Keemin 2026-07-23): constitution → blue, sovereign/homes → green, market → amber */
+  --blue:#7ba7e0; --blue-dark:#5580b8; --green:#84c98f; --green-dark:#57a068;
   background:var(--night); color:var(--paper); font:16px/1.55 Georgia,"Times New Roman",serif;
   min-height:100vh; }
 .wv * { box-sizing:border-box; }
@@ -126,6 +129,23 @@ const STYLE = `
 .wv-cid { font-size:.7rem; color:var(--dim); opacity:.6; margin-left:auto; font-family:Consolas,Menlo,monospace; }
 .wv-cluster { margin-top:7px; font-size:.8rem; font-style:italic; color:var(--amber); opacity:.85; }
 .wv-tallies { margin-top:22px; padding-top:10px; font-size:.82rem; color:var(--dim); border-top:1px solid var(--line); max-width:76ch; }
+/* everything is a mark-cell — tier accents + the encompassing ladder */
+.wv-section-lbl { font-size:.72rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim);
+  margin:20px 0 9px; opacity:.75; }
+.wv-section-lbl:first-child { margin-top:2px; }
+.wv-card.t-constitution { border-left-color:var(--blue-dark); }
+.wv-card.t-constitution:hover { border-color:var(--blue-dark); }
+.wv-card.t-home { border-left-color:var(--green-dark); }
+.wv-card.t-home:hover { border-color:var(--green-dark); }
+.wv-chip.t-constitution { border-color:var(--blue-dark); color:var(--blue); }
+.wv-chip.t-home { border-color:var(--green-dark); color:var(--green); }
+.wv-card.frame { border-left-width:5px; border-left-color:var(--blue); background:rgba(123,167,224,.05);
+  max-width:76ch; }
+.wv-card.frame .cbody { font-size:1.05rem; }
+.wv-card.ladder { border-left-width:4px; }
+.wv-card.law { border-style:dashed; }
+.wv-cell-state { margin-top:6px; font-size:.9rem; color:var(--paper); opacity:.82; font-style:italic; line-height:1.4; }
+.wv-card.frame .wv-cell-state, .wv-card.law .wv-cell-state { opacity:.95; }
 /* investigate in place */
 .wv-expand { margin-top:10px; padding-top:10px; border-top:1px dashed var(--amber-dark); cursor:default; }
 .wv-crumbs { display:flex; gap:10px; align-items:baseline; margin-bottom:6px; }
@@ -146,6 +166,10 @@ const STYLE = `
 .wv-ladder > .lname { position:absolute; top:5px; left:12px; font-size:.7rem; letter-spacing:.06em;
   text-transform:uppercase; color:var(--amber-dark); }
 .wv-ladder.root { border-color:var(--amber-dark); }
+.wv-ladder.t-constitution { border-color:var(--blue-dark); }
+.wv-ladder.t-constitution > .lname { color:var(--blue); }
+.wv-ladder.t-home { border-color:var(--green-dark); }
+.wv-ladder.t-home > .lname { color:var(--green); }
 .wv-canvas { position:relative; width:100%; aspect-ratio:1/1; background:
   radial-gradient(circle at center, rgba(232,197,106,.05), transparent 70%); border:1px solid var(--line);
   border-radius:4px; overflow:hidden; }
@@ -154,6 +178,8 @@ const STYLE = `
 .wv-you-halo { fill:none; stroke:#ff2418; stroke-width:1.5; opacity:.5; }
 .wv-reach { fill:rgba(232,197,106,.05); stroke:var(--amber); stroke-width:1.5; stroke-dasharray:6 5; opacity:.7; }
 .wv-pip { fill:var(--amber); opacity:.75; cursor:pointer; }
+.wv-pip.t-constitution { fill:var(--blue); }
+.wv-pip.t-home { fill:var(--green); }
 .wv-pip.sig { fill:#fff3cf; }
 .wv-plabel { fill:var(--paper); font:11px Georgia,serif; opacity:.85; pointer-events:none; }
 .wv-axis { fill:var(--dim); font:11px Georgia,serif; opacity:.6; }
@@ -167,6 +193,8 @@ const STYLE = `
 .wv-mrow { border:1px solid var(--line); border-left:3px solid var(--amber-dark); border-radius:5px;
   padding:9px 12px; margin:7px 0; max-width:80ch; }
 .wv-mrow.pred { border-left-color:var(--line); }
+.wv-mrow.t-constitution { border-left-color:var(--blue-dark); }
+.wv-mrow.t-home { border-left-color:var(--green-dark); }
 .wv-mrow .mbody { line-height:1.4; font-size:.94rem; }
 .wv-mrow .mmeta { margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
 .wv-mrow .stand { color:var(--amber); cursor:pointer; font-size:.74rem; border:1px solid var(--amber-dark);
@@ -268,6 +296,8 @@ export function mountViewer(appEl) {
   };
   let data = null;          // { worldState, skeleton }
   let world = null;         // assembled once (crossing-independent)
+  let byId = new Map();     // id → folded mark, for cell lookups
+  let homeSet = new Set();  // ids that render green: homes (+ descendants) and sovereigns
   let mapCtx = null;
   let lastRadial = null;
 
@@ -282,12 +312,51 @@ export function mountViewer(appEl) {
   }
   async function loadData() {
     if (data) return;
-    const [ws, sk] = await Promise.all([
+    const [ws, sk, mf] = await Promise.all([
       fetchJson(["/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`]),
       fetchJson(["/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
+      // homes come from the seeding manifest, fetched the same way as the record
+      // (same-origin probe → raw fallback); optional — no manifest just means no green
+      fetchJson(["/seeding/manifest.json", `${RAW}/seeding/manifest.json`]).catch(() => null),
     ]);
     data = { worldState: ws, skeleton: sk };
     world = assembleWorld({ worldState: ws, skeleton: sk });
+    byId = new Map(world.marks.map((m) => [m.id, m]));
+    homeSet = buildHomeSet(mf, world.marks);
+  }
+  // Home-ness is derived, never on the record: the manifest maps household→home_id,
+  // so the home mark is `<household>/<home_id>`; it and its same-household descendants
+  // (marks its footprint contains) render green. Fold-computed sovereigns too.
+  function buildHomeSet(manifest, marks) {
+    const set = new Set();
+    for (const m of marks) if (m.sovereign) set.add(m.id);
+    const idx = new Map(marks.map((m) => [m.id, m]));
+    for (const h of manifest?.homes ?? []) {
+      const home = idx.get(`${h.household}/${h.home_id}`);
+      if (!home?.at) continue;
+      set.add(home.id);
+      const hr = rect(home);
+      for (const m of marks) {
+        if (m.id === home.id || m.by !== h.household || !m.at) continue;
+        if ((m.kind === "sited" || m.kind === "parcel") && contains(hr, rect(m))) set.add(m.id);
+      }
+    }
+    return set;
+  }
+  // the tier accent for any mark or within-node: green (home/sovereign) → blue
+  // (constitution) → market (amber default). FOV marks lack a tier field, so look
+  // the full mark up by id.
+  function tierOf(m) {
+    if (homeSet.has(m.id)) return "home";
+    const full = byId.get(m.id) ?? m;
+    if (full.sovereign) return "home";
+    if (full.tier === "constitution") return "constitution";
+    return "market";
+  }
+  function tierChip(tier) {
+    if (tier === "constitution") return `<span class="wv-chip t-constitution">constitution</span>`;
+    if (tier === "home") return `<span class="wv-chip t-home">home</span>`;
+    return "";
   }
 
   // ───────── the telling view ─────────
@@ -300,10 +369,31 @@ export function mountViewer(appEl) {
     if (m.aboveFogTarget) c.push(`<span class="wv-chip">above the fog</span>`);
     return c.join("");
   }
-  function spineCrumb(within) {
-    if (!within?.length) return "";
-    const nodes = within.map((w) => `<span class="node" title="${esc(w.id)}">${esc(firstWords(w.body, 5) || w.id)}</span>`);
-    return `<div class="wv-spine">you stand within ${nodes.join('<span class="sep">›</span>')}</div>`;
+  // THE unified mark-cell — everything on the telling is one of these, and every
+  // one names its mark id (Keemin 2026-07-23). role styles it (frame/ladder/law/fov);
+  // tier colors it; annotation carries a mechanic's live state (fog/light this crossing).
+  function markCell(m, { role = "fov", annotation = "", radialChips = false } = {}) {
+    const tier = tierOf(m), far = !!m.far;
+    const cluster = (role === "fov" && m.clusteredCount > 1)
+      ? `<div class="wv-cluster">+${m.clusteredCount - 1} more of ${esc(m.household ?? "this household")}'s — investigate</div>` : "";
+    return `<article class="wv-card ${role}${far ? " far" : ""} t-${tier}" data-id="${esc(m.id)}" role="button" tabindex="0">
+      <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
+      ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
+      <div class="cmeta">${tierChip(tier)}${radialChips ? chips(m) : ""}<span class="wv-cid">${esc(m.id)}</span></div>
+      ${cluster}
+    </article>`;
+  }
+  // the mechanic's live state, reconstructed from the structured observer fields
+  // (the engine's own airline/lightline logic — read, never re-run here).
+  function lightStateLine(obs) {
+    if (obs.inDarkness) return "The dark end of the world — the day is a rumor off to the northeast.";
+    if (obs.lightLevel > 0.7) return "The northeast dawn-light is full on you here.";
+    return "The light is going — the world's glow lives off to the northeast, dying toward the southwest.";
+  }
+  function fogStateLine(radial, obs) {
+    if (obs.aboveFog) return "You are above the fog; the sightlines run long.";
+    if (obs.inFog) return `Fog is in tonight (crossing ${radial.crossing}, thickness ${radial.fog.thickness}) — it closes the view to about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
+    return `The air is clear (crossing ${radial.crossing}) — you can see about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
   }
   function tellingCards(radial) {
     const by = radial?.byBearing ?? {};
@@ -318,13 +408,7 @@ export function mountViewer(appEl) {
       const group = by[b]; if (!group) continue;
       const entries = Object.values(group).flat(); if (!entries.length) continue;
       html += `<div class="wv-bearing"><h3>${BEARING_LONG[b] ?? b} <span class="bshort">${b}</span></h3>`;
-      for (const m of entries) {
-        html += `<article class="wv-card${m.far ? " far" : ""}" data-id="${esc(m.id)}" role="button" tabindex="0">
-          <div class="cbody">${esc(m.far ? (m.label ?? m.id) : m.body ?? "")}</div>
-          <div class="cmeta">${chips(m)}<span class="wv-cid">${esc(m.id)}</span></div>
-          ${m.clusteredCount > 1 ? `<div class="wv-cluster">+${m.clusteredCount - 1} more of ${esc(m.household ?? "this household")}'s — investigate</div>` : ""}
-        </article>`;
-      }
+      for (const m of entries) html += markCell(m, { role: "fov", radialChips: true });
       html += `</div>`;
     }
     return html || `<div class="wv-quiet">nothing tells from here — walk, or wait for clearer air.</div>`;
@@ -343,10 +427,24 @@ export function mountViewer(appEl) {
       const name = state.cam.x === 0 && state.cam.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
       const e = openYourEyes({ x: state.cam.x, y: state.cam.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
       lastRadial = e.radial;
-      const blocks = e.tell().split("\n\n");
-      const opening = [blocks[0], blocks[1]].filter(Boolean).join("\n\n");
-      box.innerHTML = spineCrumb(e.radial.within)
-        + `<div class="wv-open">${esc(opening)}</div>`
+      const within = e.radial.within ?? [];
+      const obs = e.radial.observer ?? {};
+      // 1. the containment ladder as cells, sorted by parent priority — the marks
+      // encompassing where you stand, root (the frame, its light aspect) → innermost.
+      let ladder = "";
+      within.forEach((w, i) => {
+        const m = byId.get(w.id) ?? w;
+        ladder += markCell(m, { role: i === 0 ? "frame" : "ladder", annotation: i === 0 ? lightStateLine(obs) : "" });
+      });
+      // 2. the world-law cells whose mechanic has live state this crossing — the fog
+      // sentence IS the-town/the-fog's cell (body + tonight's reading).
+      const fog = byId.get("the-town/the-fog");
+      if (fog) ladder += markCell(fog, { role: "law", annotation: fogStateLine(e.radial, obs) });
+      // 3. then the visible rest, outward by bearing.
+      box.innerHTML =
+        `<div class="wv-section-lbl">where you stand — the frame inward</div>`
+        + `<div class="wv-ladder-cells">${ladder}</div>`
+        + `<div class="wv-section-lbl">what tells from here</div>`
         + `<div class="wv-cards">${tellingCards(e.radial)}</div>`
         + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`;
       drawOverlay(e.radial);
@@ -409,7 +507,7 @@ export function mountViewer(appEl) {
       for (const m of carried) {
         const p = px(m.at.x, m.at.y);
         const r = m.signal ? 7 : 4 + Math.min(6, Math.log1p(m.weight || 0) * 2.2);
-        svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r.toFixed(1)}" class="wv-pip${m.signal ? " sig" : ""}" data-id="${esc(m.id)}"><title>${esc(m.id)} — ${esc(firstWords(m.body, 12))}</title></circle>`;
+        svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r.toFixed(1)}" class="wv-pip t-${tierOf(m)}${m.signal ? " sig" : ""}" data-id="${esc(m.id)}"><title>${esc(m.id)} — ${esc(firstWords(m.body, 12))}</title></circle>`;
         const lx = p.x + (p.x > C ? -8 : 8), anchor = p.x > C ? "end" : "start";
         svg += `<text x="${lx.toFixed(1)}" y="${(p.y - 8).toFixed(1)}" text-anchor="${anchor}" class="wv-plabel">${esc(shortLabel(m))}</text>`;
       }
@@ -420,7 +518,7 @@ export function mountViewer(appEl) {
       for (let i = within.length - 1; i >= 0; i--) {
         const w = within[i];
         const isRoot = i === 0;
-        nested = `<div class="wv-ladder${isRoot ? " root" : ""}"><div class="lname" title="${esc(w.id)}">${esc(firstWords(w.body, 7) || w.id)}</div>${nested}</div>`;
+        nested = `<div class="wv-ladder t-${tierOf(w)}${isRoot ? " root" : ""}"><div class="lname" title="${esc(w.id)}">${esc(firstWords(w.body, 7) || w.id)}</div>${nested}</div>`;
       }
       box.innerHTML = `<div class="wv-gridwrap">${nested}
         <div class="wv-gridnote">you stand at the centre; each point is a mark in its true bearing and distance. The nested frames are what you stand <b>within</b> — the outermost is the world itself, the innermost the smallest thing that contains you. Click a point to investigate.</div></div>`;
@@ -437,13 +535,13 @@ export function mountViewer(appEl) {
     return state.stakesLocal;
   }
   function markRow(m, standable) {
-    return `<div class="wv-mrow${m.kind === "sited" || m.kind === "parcel" ? "" : " pred"}">
+    const tier = tierOf(m);
+    return `<div class="wv-mrow t-${tier}${m.kind === "sited" || m.kind === "parcel" ? "" : " pred"}">
       <div class="mbody">${esc(m.body ?? "")}</div>
       <div class="mmeta">
         <span class="wv-chip">${esc(m.kind)}</span>
         ${m.weight > 0 ? `<span class="wv-chip stamps">✦${m.weight}</span>` : `<span class="wv-chip">✦0</span>`}
-        ${m.tier === "constitution" ? `<span class="wv-chip">constitution</span>` : ""}
-        ${m.sovereign ? `<span class="wv-chip">sovereign</span>` : ""}
+        ${tierChip(tier)}
         <span class="wv-cid">${esc(m.id)}</span>
         ${standable ? `<span class="stand" data-x="${m.at.x}" data-y="${m.at.y}">stand here ▸</span>` : ""}
       </div></div>`;
