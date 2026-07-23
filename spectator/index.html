@@ -5,155 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Postmark — the told world (spectator)</title>
 <style>
-  :root {
-    --night: #14171d; --panel: #1c2129; --line: #2e3542;
-    --paper: #e8e0cf; --dim: #9a9280; --amber: #e8c56a; --amber-dark: #b8964a;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--night); color: var(--paper);
-    font: 16px/1.55 Georgia, "Times New Roman", serif;
-  }
-  header {
-    padding: 14px 22px; border-bottom: 1px solid var(--line);
-    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
-  }
-  header h1 { font-size: 1.05rem; margin: 0; color: var(--amber); font-weight: 600; letter-spacing: .04em; }
-  header .sub { color: var(--dim); font-style: italic; font-size: .85rem; }
-  main { display: grid; grid-template-columns: 250px 1fr; gap: 0; min-height: calc(100vh - 58px); }
-  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
-  nav {
-    padding: 18px; border-right: 1px solid var(--line); background: var(--panel);
-  }
-  nav h2 { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin: 18px 0 8px; }
-  nav h2:first-child { margin-top: 0; }
-  .presets button, .compass button, .step button {
-    background: transparent; border: 1px solid var(--line); color: var(--paper);
-    font: inherit; font-size: .85rem; border-radius: 4px; padding: 5px 9px; cursor: pointer;
-  }
-  .presets button { display: block; width: 100%; text-align: left; margin-bottom: 6px; }
-  .presets button:hover, .compass button:hover, .step button:hover { border-color: var(--amber-dark); color: var(--amber); }
-  .compass { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 190px; }
-  .compass .pos { display: flex; align-items: center; justify-content: center; color: var(--dim); font-size: .75rem; }
-  .step { display: flex; gap: 5px; flex-wrap: wrap; }
-  .step button.on { border-color: var(--amber); color: var(--amber); }
-  .where { color: var(--dim); font-size: .82rem; margin-top: 14px; }
-  .where b { color: var(--paper); font-weight: 600; }
-  label.crossing { display: flex; gap: 8px; align-items: center; color: var(--dim); font-size: .85rem; }
-  input#crossing {
-    width: 64px; background: var(--night); color: var(--paper); border: 1px solid var(--line);
-    border-radius: 4px; font: inherit; padding: 3px 6px;
-  }
-  section#view { padding: 24px 30px; overflow-x: auto; }
-  #telling {
-    white-space: pre-wrap; max-width: 74ch; font-size: 1.0rem;
-  }
-  #telling .mark-link { color: var(--amber); cursor: pointer; border-bottom: 1px dotted var(--amber-dark); }
-  #radial { max-width: 74ch; margin-top: 10px; }
-  #radial .mk {
-    color: var(--dim); font-size: .8rem; cursor: pointer; padding: 1px 0;
-  }
-  #radial .mk:hover { color: var(--amber); }
-  #inspect {
-    margin-top: 22px; border-top: 1px solid var(--line); padding-top: 14px; max-width: 74ch;
-  }
-  #inspect h3 { color: var(--amber); font-size: .95rem; margin: 0 0 6px; }
-  #inspect .k { color: var(--dim); font-size: .82rem; }
-  #inspect ul { margin: 6px 0; padding-left: 20px; }
-  #inspect li { margin: 3px 0; font-size: .9rem; }
-  #inspect li .id { color: var(--amber-dark); cursor: pointer; font-size: .8rem; }
-  .quiet { color: var(--dim); font-style: italic; }
-  .err { color: #d98a7a; }
+  html, body { margin: 0; background: #14171d; color: #e8e0cf; }
+  #app:empty::before { content: "opening your eyes…"; display: block; padding: 40px;
+    font: 16px Georgia, serif; color: #9a9280; font-style: italic; }
 </style>
 </head>
 <body>
-<header>
-  <h1>POSTMARK — THE TOLD WORLD</h1>
-  <span class="sub">spectator&thinsp;: a camera over the marks tree · read-only · nothing you do here is written</span>
-</header>
-<main>
-  <nav>
-    <h2>Stand at</h2>
-    <div class="presets">
-      <button data-x="0" data-y="0">The quay (Ferry's crossing)</button>
-      <button data-x="575" data-y="-2600">Trueing Terrace — above the fog</button>
-      <button data-x="-1900" data-y="2150">Caelina's ground — the dark pole</button>
-    </div>
-    <h2>Move the camera</h2>
-    <div class="compass">
-      <button data-dx="-1" data-dy="-1">NW</button><button data-dx="0" data-dy="-1">N</button><button data-dx="1" data-dy="-1">NE</button>
-      <button data-dx="-1" data-dy="0">W</button><div class="pos" id="pos">0,0</div><button data-dx="1" data-dy="0">E</button>
-      <button data-dx="-1" data-dy="1">SW</button><button data-dx="0" data-dy="1">S</button><button data-dx="1" data-dy="1">SE</button>
-    </div>
-    <h2>Step</h2>
-    <div class="step">
-      <button data-m="100">100 m</button><button data-m="250" class="on">250 m</button>
-      <button data-m="500">500 m</button><button data-m="1000">1 km</button>
-    </div>
-    <h2>Crossing</h2>
-    <label class="crossing"><input id="crossing" type="number" value="19" min="0"> <span>fog seeds from it</span></label>
-    <div class="where" id="where"></div>
-  </nav>
-  <section id="view">
-    <div id="telling" class="quiet">opening your eyes…</div>
-    <div id="radial"></div>
-    <div id="inspect" hidden></div>
-  </section>
-</main>
-<script>
-  const $ = (s) => document.querySelector(s);
-  let cam = { x: 0, y: 0 };
-  let step = 250;
-
-  async function eyes() {
-    const crossing = Number($("#crossing").value) || 0;
-    $("#pos").textContent = cam.x + "," + cam.y;
-    try {
-      const r = await fetch(`/api/eyes?x=${cam.x}&y=${cam.y}&crossing=${crossing}`);
-      const d = await r.json();
-      if (d.error) throw new Error(d.error);
-      $("#telling").classList.remove("quiet", "err");
-      $("#telling").textContent = d.telling;
-      $("#where").innerHTML = "standing at <b>(" + cam.x + ", " + cam.y + ")</b>";
-      const marks = [];
-      for (const bands of Object.values(d.radial?.byBearing ?? {}))
-        for (const arr of Object.values(bands))
-          for (const m of arr) if (m.id) marks.push(m);
-      $("#radial").innerHTML = marks.length
-        ? "<div class='quiet'>descend (investigate):</div>" + marks.map((m) =>
-            `<div class="mk" data-id="${m.id ?? ""}">· ${m.id ?? "(unnamed)"}</div>`).join("")
-        : "";
-    } catch (e) {
-      $("#telling").classList.add("err");
-      $("#telling").textContent = "the telling failed: " + e.message;
-    }
-  }
-
-  async function inspect(id) {
-    const crossing = Number($("#crossing").value) || 0;
-    const r = await fetch(`/api/investigate?mark=${encodeURIComponent(id)}&crossing=${crossing}`);
-    const d = await r.json();
-    const el = $("#inspect");
-    el.hidden = false;
-    if (d.error) { el.innerHTML = `<h3>investigate</h3><div class="err">${d.error}</div>`; return; }
-    const li = (arr, label) => (arr?.length
-      ? `<div class="k">${label}</div><ul>` + arr.map((p) =>
-          `<li>${p.slot ? `<i>${p.slot}:</i> ${p.value ?? ""} — ` : ""}${p.body ?? ""} <span class="id" data-id="${p.id}">[${p.id}]</span></li>`).join("") + "</ul>"
-      : "");
-    el.innerHTML = `<h3>${d.id}</h3><div>${d.body ?? ""}</div>` +
-      li(d.predicates, "told of it") + li(d.inside, "within it") + li(d.alongside, "alongside");
-  }
-
-  document.addEventListener("click", (e) => {
-    const b = e.target.closest("button, .mk, .id");
-    if (!b) return;
-    if (b.dataset.x !== undefined) { cam = { x: +b.dataset.x, y: +b.dataset.y }; eyes(); }
-    else if (b.dataset.dx !== undefined) { cam.x += +b.dataset.dx * step; cam.y += +b.dataset.dy * step; eyes(); }
-    else if (b.dataset.m) { step = +b.dataset.m; document.querySelectorAll(".step button").forEach((x) => x.classList.toggle("on", x === b)); }
-    else if (b.dataset.id) { inspect(b.dataset.id); }
-  });
-  $("#crossing").addEventListener("change", eyes);
-  eyes();
+<!-- THE told-world viewer — one file, two habitats. All markup, styles, and logic
+     live in viewer.mjs (the single source, shared with the site island). This shell
+     only mounts it. Read-only by construction: the walk/stake verbs are never imported.
+     The ALPHA banner + noindex are added by viewer.mjs and the island's wrapper. -->
+<div id="app"></div>
+<script type="module">
+  import { mountViewer } from "/world-engine/spectator/viewer.mjs";
+  mountViewer(document.getElementById("app"));
 </script>
 </body>
 </html>

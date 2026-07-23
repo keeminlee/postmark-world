@@ -20,11 +20,11 @@ import { contains, rect } from "./geometry.mjs"; // the ONE containment definiti
 // The establishing line of every telling: the let-there-be-light root (light
 // from the NE, dying to the SW), the world's extent, and WHERE/HOW you stand —
 // region, elevation, and the fog/light status effects on you right now.
-export function orient(state, world, { crossing = 0 } = {}) {
+export function orient(state, world, { crossing = 0, dials = DIALS } = {}) {
   const { heightfield, light, fogCeilingM, terrain } = world;
-  const fog = fogModel(crossing);
+  const fog = fogModel(crossing, dials);
   const groundH = heightfield.elevationAt(state.x, state.y);
-  const self = statusAt({ x: state.x, y: state.y, groundH, eyeH: DIALS.eye_height_m, heightfield, light, fog, fogCeilingM });
+  const self = statusAt({ x: state.x, y: state.y, groundH, eyeH: dials.eye_height_m, heightfield, light, fog, fogCeilingM });
   // the containment spine: root → inward. within[0] is the frame (the root),
   // whose body is the establishing line — charter out of code, into the record.
   const within = containmentChain(state, world.marks);
@@ -51,8 +51,8 @@ export function orient(state, world, { crossing = 0 } = {}) {
 // ranked by angular size modulated by stamps, capped at the context budget, fog
 // and darkness applied, signal-marks cutting through. Returns both the raw fov
 // (for callers) and a `tell()` that renders the human/agent-facing prose.
-export function openYourEyes(state, world, { crossing = 0, budget = DIALS.context_budget } = {}) {
-  const fov = fieldOfView(state, world, { crossing, budget });
+export function openYourEyes(state, world, { crossing = 0, budget = DIALS.context_budget, dials = DIALS } = {}) {
+  const fov = fieldOfView(state, world, { crossing, budget, dials });
   const radial = radialSerialize(fov);
   radial.within = containmentChain(state, world.marks); // the spine: root → inward, parents first
   fov.within = radial.within;

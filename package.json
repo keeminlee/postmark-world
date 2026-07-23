@@ -13,7 +13,10 @@
     "./tools/world-engine.mjs": "./tools/world-engine.mjs",
     "./tools/world-verbs.mjs": "./tools/world-verbs.mjs",
     "./tools/world-build.mjs": "./tools/world-build.mjs",
-    "./tools/geometry.mjs": "./tools/geometry.mjs"
+    "./tools/geometry.mjs": "./tools/geometry.mjs",
+    "./spectator/viewer.mjs": "./spectator/viewer.mjs",
+    "./spectator/viewer": "./spectator/viewer.mjs",
+    "./spectator/index.html": "./spectator/index.html"
   },
   "scripts": {
     "test": "node --test tools/world-engine.test.mjs"

@@ -1,84 +1,107 @@
 #!/usr/bin/env node
-// world-spectator server — READ-ONLY local viewer over the semantic world.
+// world-spectator server — READ-ONLY local host for the told-world viewer.
 //
-// A spectator is a CAMERA, not an agent: movement is coordinate re-query, the
-// walk verb is never invoked, no wear is written, nothing staked. Zero writes —
-// the read-only law is structural here (the walk/stake/mark verbs are simply
-// never imported), not behavioral.
+// A spectator is a CAMERA, not an agent: there is no write path here. The viewer
+// computes the field of view CLIENT-SIDE (viewer.mjs imports the same engine a
+// clone runs), so this server only SERVES — it never tells. Its jobs:
+//   • /                         → the shell (spectator/index.html)
+//   • /world-engine/**          → the viewer module + the engine .mjs (so the
+//                                  browser imports the exact library, unbundled)
+//   • /WORLD/*.json             → the world's public record, off THIS clone's disk
+//   • /api/stakes?holder=       → per-holder stakes, parsed from the town's
+//                                  stamp-ledger (LOCAL-ONLY; the island hides the half)
+//   • /atlas/*                  → proxied to postmark.town (the painting + its assets)
 //
-// Local dev only (Keemin's call 2026-07-22: spectator read-only, no deploy;
-// the held dyad-policy question on browser WRITES stays parked). Rides the
-// sandbox engine at ../town-sandbox — the world library consumed read-only
-// through its public exports; nothing here re-implements engine logic.
+// The island (postmark.town/world) has none of this server — it serves the same
+// viewer.mjs statically, fetches the record from raw.githubusercontent, reads the
+// atlas same-origin, and the stakes half feature-detects itself off.
 //
 // Run: node server.mjs   → http://localhost:4877
 import { createServer } from "node:http";
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { readFileSync, existsSync } from "node:fs";
+import { dirname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildWorld } from "../tools/world-poc.mjs";
-import { orient, openYourEyes, investigate } from "../tools/world-verbs.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const MARKS_DIR = join(HERE, "..", "WORLD", "marks");
+const ROOT = join(HERE, "..");
 const PORT = Number(process.env.PORT ?? 4877);
+// the town clone's stamp-ledger — READ-ONLY (brief: read only, never write here).
+// Overridable; defaults to the Wright-HQ town clone the brief names.
+const STAMP_LEDGER = process.env.STAMP_LEDGER ?? "G:/Wright-HQ/postmark/WHITE_PAGES/stamp-ledger.md";
+const ATLAS_ORIGIN = process.env.ATLAS_ORIGIN ?? "https://postmark.town";
 
-// deterministic per crossing (fog seeds from the crossing number), so a world
-// is cached per crossing — same crossing, same world, same telling.
-const worlds = new Map();
-function worldFor(crossing) {
-  if (!worlds.has(crossing)) worlds.set(crossing, buildWorld({ crossing, marksDir: MARKS_DIR }));
-  return worlds.get(crossing);
-}
+const MIME = { ".mjs": "text/javascript; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".html": "text/html; charset=utf-8" };
+const STAKE_RE = /^-\s+(\S+)\s+·\s+(\S+)\s+→\s+(stake|return):mark:(\S+)\s+·\s+(\d+)/;
 
-function json(res, code, obj) {
-  const body = JSON.stringify(obj);
-  res.writeHead(code, { "content-type": "application/json; charset=utf-8" });
+function send(res, code, body, type) {
+  res.writeHead(code, { "content-type": type ?? "text/plain; charset=utf-8", "cache-control": "no-store" });
   res.end(body);
 }
+function json(res, code, obj) { send(res, code, JSON.stringify(obj), MIME[".json"]); }
 
-const num = (v, dflt) => {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : dflt;
-};
+// serve a file from within ROOT only (no traversal outside the clone)
+function serveFile(res, relPath) {
+  const abs = normalize(join(ROOT, relPath));
+  if (!abs.startsWith(normalize(ROOT))) return json(res, 403, { error: "forbidden" });
+  if (!existsSync(abs)) return json(res, 404, { error: `not found: ${relPath}` });
+  const ext = abs.slice(abs.lastIndexOf(".")).toLowerCase();
+  send(res, 200, readFileSync(abs), MIME[ext] ?? "application/octet-stream");
+}
 
-createServer((req, res) => {
+// per-holder stakes from the stamp-ledger (net per mark; return = withdrawal)
+function stakesFor(holder) {
+  if (!existsSync(STAMP_LEDGER)) return { holder, stakes: [], source: null, note: "no stamp-ledger found on this box" };
+  const net = new Map();
+  for (const line of readFileSync(STAMP_LEDGER, "utf8").split(/\r?\n/)) {
+    const m = line.match(STAKE_RE);
+    if (!m || m[2] !== holder) continue;
+    const mark = m[4], n = m[3] === "return" ? -Number(m[5]) : Number(m[5]);
+    net.set(mark, (net.get(mark) ?? 0) + n);
+  }
+  const stakes = [...net].filter(([, n]) => n !== 0).map(([mark, n]) => ({ mark, n }));
+  return { holder, stakes, source: STAMP_LEDGER };
+}
+
+async function proxyAtlas(res, pathname) {
+  // pathname begins with /atlas/ — mirror it to the live town, read-only
+  const url = ATLAS_ORIGIN + pathname;
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    if (!r.ok) return json(res, r.status, { error: `atlas upstream ${r.status}` });
+    const buf = Buffer.from(await r.arrayBuffer());
+    send(res, 200, buf, r.headers.get("content-type") ?? "application/octet-stream");
+  } catch (e) {
+    json(res, 502, { error: `atlas proxy failed (offline?): ${String(e?.message ?? e)}` });
+  }
+}
+
+createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://localhost:${PORT}`);
+    const p = url.pathname;
 
-    if (url.pathname === "/" || url.pathname === "/index.html") {
-      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-      res.end(readFileSync(join(HERE, "index.html"), "utf8"));
-      return;
+    if (p === "/favicon.ico") { res.writeHead(204); return res.end(); }
+    if (p === "/" || p === "/index.html") return serveFile(res, "spectator/index.html");
+    if (p === "/world-engine/spectator/viewer.mjs") return serveFile(res, "spectator/viewer.mjs");
+    if (p.startsWith("/world-engine/tools/") && p.endsWith(".mjs")) return serveFile(res, "tools/" + p.slice("/world-engine/tools/".length));
+    if (p === "/WORLD/world-state.json") return serveFile(res, "WORLD/world-state.json");
+    if (p === "/WORLD/skeleton.json") return serveFile(res, "WORLD/skeleton.json");
+
+    if (p === "/api/stakes") {
+      const holder = url.searchParams.get("holder");
+      if (!holder) return json(res, 400, { error: "holder required" });
+      return json(res, 200, stakesFor(holder));
     }
 
-    if (url.pathname === "/api/eyes") {
-      const x = num(url.searchParams.get("x"), 0);
-      const y = num(url.searchParams.get("y"), 0);
-      const crossing = num(url.searchParams.get("crossing"), 19);
-      const world = worldFor(crossing);
-      const name =
-        x === 0 && y === 0 ? "a spectator on the Town Centre quay" : `a spectator at (${x}, ${y})`;
-      const observer = { x, y, name };
-      const eyes = openYourEyes(observer, world, { crossing });
-      const o = orient(observer, world, { crossing });
-      json(res, 200, { orient: o, telling: eyes.tell(), radial: eyes.radial });
-      return;
-    }
+    if (p.startsWith("/atlas/")) return proxyAtlas(res, p);
 
-    if (url.pathname === "/api/investigate") {
-      const mark = url.searchParams.get("mark");
-      if (!mark) return json(res, 400, { error: "mark required" });
-      const crossing = num(url.searchParams.get("crossing"), 19);
-      json(res, 200, investigate(mark, worldFor(crossing)));
-      return;
-    }
-
-    json(res, 404, { error: "not found — /, /api/eyes?x=&y=&crossing=, /api/investigate?mark=" });
+    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /api/stakes?holder=, /atlas/*" });
   } catch (e) {
     json(res, 500, { error: String(e?.message ?? e) });
   }
 }).listen(PORT, () => {
   console.log(`world-spectator (read-only) → http://localhost:${PORT}`);
-  console.log(`marks: ${MARKS_DIR}`);
+  console.log(`  record : ${join(ROOT, "WORLD")}`);
+  console.log(`  ledger : ${STAMP_LEDGER}${existsSync(STAMP_LEDGER) ? "" : "  (absent — stakes half will show empty)"}`);
+  console.log(`  atlas  : proxied from ${ATLAS_ORIGIN}`);
 });

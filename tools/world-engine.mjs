@@ -172,7 +172,7 @@ export function statusAt({ x, y, groundH, eyeH, heightfield, light, fog, fogCeil
 // Samples the heightfield along the ray; the target is occluded if the ground
 // between rises above the straight eye→target sight line. Flat-earth (curvature
 // negligible at town scale). Returns clearance in metres (>0 clear, <0 blocked).
-export function lineOfSight({ from, to, heightfield, eyeH = DIALS.eye_height_m, targetTopM = 0, step = DIALS.los_step_m }) {
+export function lineOfSight({ from, to, heightfield, eyeH = DIALS.eye_height_m, targetTopM = 0, step = DIALS.los_step_m, clearanceM = DIALS.los_clearance_m }) {
   const gx0 = heightfield.elevationAt(from.x, from.y);
   const gx1 = heightfield.elevationAt(to.x, to.y);
   const eye = gx0 + eyeH;
@@ -190,7 +190,7 @@ export function lineOfSight({ from, to, heightfield, eyeH = DIALS.eye_height_m, 
     const clear = sightLine - ground;            // +ve: ground is below the line
     if (clear < minClear) { minClear = clear; occludeAt = { x: Math.round(sx), y: Math.round(sy), ground: +ground.toFixed(1) }; }
   }
-  const visible = minClear >= DIALS.los_clearance_m;
+  const visible = minClear >= clearanceM;
   return { visible, clearance: +minClear.toFixed(1), occludeAt: visible ? null : occludeAt, dist };
 }
 
@@ -248,8 +248,9 @@ export function fieldOfView(observer, world, { crossing = 0, budget = DIALS.cont
     const dark = tgtLight < 0.25 && !isSignal;
     const dimming = dark ? lerp(1, dials.dark_dim_floor, (0.25 - tgtLight) / 0.25) : 1;
 
-    // terrain occlusion (the FOV over the heightfield)
-    const los = lineOfSight({ from: observer, to: mk.at, heightfield, eyeH: dials.eye_height_m, targetTopM: markTop(mk) });
+    // terrain occlusion (the FOV over the heightfield) — every lean honored from
+    // `dials` so a dev-pane override changes the sightline too, not just the ranking
+    const los = lineOfSight({ from: observer, to: mk.at, heightfield, eyeH: dials.eye_height_m, targetTopM: markTop(mk, dials), step: dials.los_step_m, clearanceM: dials.los_clearance_m });
 
     const score = lodScore({ extentM, distM, weight: mk.weight, dials, dimming });
     const visible = !fogHidden && (los.visible || isSignal); // a signal's light is seen even where its footing is occluded
@@ -344,8 +345,8 @@ function markExtent(mk) {
   if (mk.extent?.w || mk.extent?.h) return Math.max(mk.extent.w ?? 1, mk.extent.h ?? 1);
   return DEFAULT_EXTENT[mk.kind] ?? 2;
 }
-function markTop(mk) {                                  // vertical prominence: declared, else a modest default for sited things
+function markTop(mk, dials = DIALS) {                   // vertical prominence: declared, else a modest default for sited things
   if (mk.top_m != null) return mk.top_m;
-  return mk.kind === "sited" ? DIALS.default_mark_top_m : 0;
+  return mk.kind === "sited" ? dials.default_mark_top_m : 0;
 }
 const DEFAULT_EXTENT = { sited: 4, parcel: 25 };

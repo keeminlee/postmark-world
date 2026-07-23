@@ -11,7 +11,7 @@ import {
   buildHeightfield, fieldOfView, fogModel, lightLevelAt, lodScore,
   bearingDeg, quantizeBearing, distanceBand, DIALS,
 } from "./world-engine.mjs";
-import { walk, investigate, orient } from "./world-verbs.mjs";
+import { walk, investigate, orient, openYourEyes } from "./world-verbs.mjs";
 import { buildWorld } from "./world-poc.mjs";
 import { contains, rect } from "./geometry.mjs";
 
@@ -135,4 +135,35 @@ test("orient returns the charter root and your standing state", () => {
   assert.equal(o.charter.root, "let-there-be-light");
   assert.equal(o.you.region, "the-town-centre");
   assert.ok(o.you.groundElevM >= 4 && o.you.groundElevM <= 6, "the quay is ~+5 m");
+});
+
+test("a passed dials override defaulting to DIALS is byte-identical (dev-pane safety)", () => {
+  // the dev pane threads an optional `dials` param; passing the module DIALS
+  // through must change nothing — determinism/replay is law.
+  const w = buildWorld({ crossing: 20 });
+  const base = fieldOfView({ x: 0, y: 0 }, w, { crossing: 20 });
+  const same = fieldOfView({ x: 0, y: 0 }, w, { crossing: 20, dials: DIALS });
+  assert.equal(JSON.stringify(base), JSON.stringify(same), "dials=DIALS must be a no-op");
+  // and through the verb wrapper the same holds
+  const e0 = openYourEyes({ x: 0, y: 0 }, w, { crossing: 20 });
+  const e1 = openYourEyes({ x: 0, y: 0 }, w, { crossing: 20, dials: DIALS });
+  assert.equal(e0.tell(), e1.tell(), "openYourEyes dials=DIALS renders identically");
+});
+
+test("a dev-pane dial override actually changes the telling (threaded, not mutated)", () => {
+  const w = buildWorld({ crossing: 20 });
+  const wide = fieldOfView({ x: 0, y: 0 }, w, { crossing: 20, budget: 20 });
+  const tight = fieldOfView({ x: 0, y: 0 }, w, { crossing: 20, budget: 3, dials: { ...DIALS, context_budget: 3 } });
+  assert.ok(tight.carried.length <= 3, "a tightened budget carries fewer marks");
+  assert.ok(wide.carried.length > tight.carried.length, "widening the budget carries more");
+  // a raised dark-dim floor lifts a dark-pole mark's visibility without touching module state
+  const darkMark = [{ id: "z/dusk", kind: "sited", household: "z", at: { x: -4800, y: 4800 }, extent: { w: 4, h: 4 }, weight: 0, top_m: 4 }];
+  const dim = fieldOfView({ x: -4700, y: 4700 }, worldOf(darkMark), { crossing: 0 });
+  const lit = fieldOfView({ x: -4700, y: 4700 }, worldOf(darkMark), { crossing: 0, dials: { ...DIALS, dark_dim_floor: 1 } });
+  const dDim = dim.carried.find((m) => m.id === "z/dusk");
+  const dLit = lit.carried.find((m) => m.id === "z/dusk");
+  assert.ok(dDim && dLit, "the dusk mark is in view both ways");
+  assert.ok(dLit.dim > dDim.dim, "raising dark_dim_floor un-dims a dark-pole mark — the override threaded through");
+  // module DIALS is untouched by the override (no mutation)
+  assert.equal(DIALS.dark_dim_floor, 0.15, "module DIALS.dark_dim_floor is unchanged");
 });
