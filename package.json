@@ -8,9 +8,11 @@
     ".": "./tools/world-engine.mjs",
     "./world-engine": "./tools/world-engine.mjs",
     "./world-verbs": "./tools/world-verbs.mjs",
+    "./world-build": "./tools/world-build.mjs",
     "./geometry": "./tools/geometry.mjs",
     "./tools/world-engine.mjs": "./tools/world-engine.mjs",
     "./tools/world-verbs.mjs": "./tools/world-verbs.mjs",
+    "./tools/world-build.mjs": "./tools/world-build.mjs",
     "./tools/geometry.mjs": "./tools/geometry.mjs"
   },
   "scripts": {

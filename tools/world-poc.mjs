@@ -24,7 +24,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { dirname, join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { fold, loadMarks, parseRecord } from "./marks-fold.mjs"; // the ONE loader + frontmatter parser
-import { buildHeightfield } from "./world-engine.mjs";
+import { assembleWorld, REGION_ANCHORS } from "./world-build.mjs"; // the ONE assembly (shared with the browser)
 import { orient, openYourEyes } from "./world-verbs.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -41,54 +41,12 @@ const DEFAULT_CROSSING = Number(arg("--crossing", 19)); // fog is the crossing's
 // edge"). THE ONE non-extracted placement — a dial, flagged loudly.
 const LITTLE_BIRD_DIAL = { x: -1425, y: 4640, _source: "DIAL: nomad, no atlas anchor; placed near orion from little-bird's own words" };
 
-// Signal-marks (Orion's announce-yourself law made mechanics, decision 008): the
-// navigational / self-luminous marks whose light cuts through fog. Derived from
-// the corpus's own words. FORWARD: a `signal:` predicate on the mark is the
-// durable mechanism; this allowlist is the PoC stand-in until the run-01 fixtures
-// carry it. Flagged as a dial.
-const SIGNAL_MARKS = {
-  "orion-by-the-fire/the-reach-light-the-lighthouse-as-a-charted-navi": "a charted navigation light, Fl(3) 15s",
-  "orion-by-the-fire/the-still-here-light-orion-s-home-a-lighthouse": "a lighthouse; the lamp turns once every nine seconds, eleven nautical miles out",
-  "limen/the-amber-porch-light-of-the-threshold-house-nav": "an amber porch light that never goes out — 'Ferry knows it … how you find the house'",
-  "claude-of-dregg/the-hatched-shell-at-the-water-s-edge": "glows from the inside; from across the water it reads as a lamp",
-  "little-bird/little-bird-the-turning-mark": "a spar buoy marking where the channel turns",
-};
-
-// The heightfield's region control points. Each of decision 008's seventeen rows,
-// at a representative grid coordinate, carrying its band-midpoint height. The
-// coordinate is EXTRACTED where possible (a placed home's grid position or a
-// terrain feature), DERIVED only where no home or feature names the spot. Height
-// is the band midpoint from decision 008 — never a drawn pixel. All dials.
-//  src: "home" = placed-home centroid (seeding manifest), "terrain" = skeleton
-//       feature, "derived" = a reasoned lean between known anchors (flagged).
-const REGION_ANCHORS = [
-  { id: "the-town-centre",                  at: { x: 0, y: 0 },      h: 5,    src: "terrain: origin, Ferry's crossing quay (+5, ruled)" },
-  { id: "the-lanternseed-gardens",          at: { x: 1075, y: -800 }, h: 15,  src: "home: rei" },
-  { id: "the-trueing-terrace",              at: { x: 888, y: -2320 }, h: 37,  src: "home: wright, ethan-thorne (centroid)" },
-  { id: "north-rim",                        at: { x: 700, y: -3600 }, h: 60,  src: "derived: N of the trueing terrace toward the map's north edge" },
-  { id: "the-high-ground",                  at: { x: 2544, y: 175 },  h: 35,  src: "home: the reeves household (centroid)" },
-  { id: "the-threshold-district",           at: { x: 1358, y: 1821 }, h: 2.5, src: "home: limen, hal, liv, noe (centroid)" },
-  { id: "the-still-reach-and-blackwater",   at: { x: 1900, y: 3900 }, h: 3,   src: "terrain: the-still-reach centreline" },
-  { id: "the-long-run",                     at: { x: 1513, y: 4888 }, h: 2.5, src: "home: carta, jetto-of-starforge (centroid); the locks" },
-  { id: "the-east-low-hills",               at: { x: 2800, y: 900 },  h: 20,  src: "derived: the East Window District's western wall" },
-  { id: "the-east-window-district",         at: { x: 3125, y: 1675 }, h: 8,   src: "home: east-facing-window" },
-  { id: "evermoon",                         at: { x: -1900, y: 2150 }, h: 17, src: "home: caelum (== the dark pole; Evermoon moved WEST 07-22)" },
-  { id: "the-protected-grove",              at: { x: -1375, y: -2550 }, h: 40, src: "home: sol-of-garrison; the garrison lake" },
-  { id: "the-lochan",                       at: { x: 2575, y: -1160 }, h: 25, src: "terrain: the-lochan closed basin" },
-  { id: "the-reach",                        at: { x: -1725, y: 4840 }, h: 15, src: "home: orion-by-the-fire" },
-  { id: "the-headland",                     at: { x: -2300, y: 4200 }, h: 15, src: "derived: raised promontory seaward of the Reach" },
-  { id: "the-doubled-coast",                at: { x: -258, y: 5033 }, h: 4,   src: "home: claude-of-dregg, gael-renton, spar (centroid)" },
-  { id: "aelyria",                          at: { x: 4075, y: 5050 }, h: 7.5, src: "home: aion-solare; the aelyria cliffs" },
-];
-// Sea datum points: sea = 0 at the coasts and the mouth (decision 008 datum).
-// They pull the naive field down to sea level at the edges. Dials.
-const SEA_DATUM = [
-  { at: { x: 1200, y: 6500 }, h: 0, src: "the mouth (channel exits ~1200,6150)" },
-  { at: { x: -500, y: 6600 }, h: 0, src: "the south sea" },
-  { at: { x: 4200, y: 6000 }, h: 0, src: "the SE sea, seaward of Aelyria" },
-  { at: { x: -2600, y: 1600 }, h: 0, src: "the west sea" },
-  { at: { x: -2600, y: 4200 }, h: 0, src: "the west sea, off the Reach" },
-];
+// The dials that assemble the world (SIGNAL_MARKS, REGION_ANCHORS, SEA_DATUM,
+// waterControlPoints, assembleWorld) now live in world-build.mjs, shared with the
+// browser page — one assembly, no drift. What stays HERE is only what needs disk:
+// reading the marks/manifest and folding. `homeBandControlPoints` reads the
+// manifest and is passed to assembleWorld as the disk override (keeping run-01
+// byte-exact); the browser derives the same densification from the marks instead.
 
 // ───────────────────────── mark loading + placement ─────────────────────────
 // LEGACY-FIXTURE ADAPTER (run-01 only). run-01 predates the 07-22 nesting ruling:
@@ -152,32 +110,13 @@ function homeBandControlPoints() {
   return pts;
 }
 
-// Water-surface control points from the skeleton's channel/still-water/locks.
-// Height follows decision 008's fall: ~+8 m at the upstream (northmost) reach
-// down to 0 at the mouth (southmost). The water is a strong LOW constraint —
-// it keeps the quay basin and river corridor low without sculpting.
-function waterControlPoints(terrain) {
-  const wet = (terrain.features ?? []).filter((f) => ["channel", "still-water", "still-inlet", "locks"].includes(f.kind));
-  const pts = [];
-  for (const f of wet) {
-    const line = f.centerline_m ?? (f.at_m ?? []);
-    for (const p of (Array.isArray(line) ? line : [line])) if (p) pts.push(p);
-  }
-  if (!pts.length) return [];
-  const ys = pts.map((p) => p.y);
-  const yN = Math.min(...ys), yMouth = Math.max(...ys);         // north (upstream) → south (mouth)
-  const H_UP = 8;                                               // dial: upstream water surface
-  return pts.map((p) => {
-    const t = (p.y - yN) / Math.max(1, yMouth - yN);
-    return { x: p.x, y: p.y, h: Math.max(0, H_UP * (1 - t)), id: null };
-  });
-}
-
 // ───────────────────────── build the world ─────────────────────────────────
-// buildWorld — default: the run-01 legacy fixture, placed onto the real grid.
-// nested: point at a nested marks tree (WORLD/marks or the fleet's output) read
-// through the SHARED loadMarks; those marks are already in real coordinates, so
-// no placement or per-household anchor translation is applied.
+// buildWorld — the DISK path. Reads + folds the marks, then hands the folded
+// world-state and the skeleton to the shared assembleWorld (world-build.mjs) —
+// the same function the browser calls. The manifest home densification is passed
+// as the homeControlPoints override, so run-01 stays byte-exact.
+// Default: the run-01 legacy fixture, placed onto the real grid.
+// nested (--marks-dir): a nested tree read through the SHARED loadMarks.
 export function buildWorld({ crossing = DEFAULT_CROSSING, marksDir = null, stakesPath = null } = {}) {
   const terrain = JSON.parse(readFileSync(join(ROOT, "WORLD/TERRAIN/skeleton.json"), "utf8"));
   let placed;
@@ -193,29 +132,10 @@ export function buildWorld({ crossing = DEFAULT_CROSSING, marksDir = null, stake
   // fold at this crossing (stakes take effect the crossing after they land)
   const state = fold({ marks: placed, terrain, stakes, tick: crossing + 1 });
 
-  // attach signal flags + carry the placed `at`/body through to the world marks
-  const bodyById = new Map(placed.map((m) => [m.id, m.body]));
-  const marks = state.marks.map((m) => ({ ...m, body: bodyById.get(m.id) ?? m.body, signal: !!SIGNAL_MARKS[m.id] }));
-
-  // heightfield control points: the seventeen region rows + sea datum + the
-  // WATER SURFACE. The water is genuinely low (it is the drainage) and it carves
-  // the low quay/river corridors that the sparse region anchors miss. Terrain-
-  // derived (the skeleton's own channel geometry), datum-following (h falls N→S
-  // to 0 at the mouth), not invented drama — open ground between stays gentle.
-  const controlPoints = [
-    ...REGION_ANCHORS.map((r) => ({ x: r.at.x, y: r.at.y, h: r.h, id: r.id })),
-    ...homeBandControlPoints(),   // every placed home at its region's band height (densifies the naive field)
-    ...SEA_DATUM.map((s) => ({ x: s.at.x, y: s.at.y, h: s.h, id: null })),
-    ...waterControlPoints(terrain),
-  ];
-  const heightfield = buildHeightfield({ controlPoints });
-
-  return {
-    marks, terrain, heightfield,
-    light: terrain.light,
-    fogCeilingM: terrain.elevation.fog_ceiling_m,
-    foldErrors: state.errors,
-  };
+  // one assembly, disk data source: the manifest densification is the override
+  const world = assembleWorld({ worldState: state, skeleton: terrain, homeControlPoints: homeBandControlPoints() });
+  world.foldErrors = state.errors;
+  return world;
 }
 
 // ───────────────────────── the sample telling ──────────────────────────────
