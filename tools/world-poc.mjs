@@ -118,7 +118,7 @@ function homeBandControlPoints() {
 // Default: the run-01 legacy fixture, placed onto the real grid.
 // nested (--marks-dir): a nested tree read through the SHARED loadMarks.
 export function buildWorld({ crossing = DEFAULT_CROSSING, marksDir = null, stakesPath = null } = {}) {
-  const terrain = JSON.parse(readFileSync(join(ROOT, "WORLD/TERRAIN/skeleton.json"), "utf8"));
+  const terrain = JSON.parse(readFileSync(join(ROOT, "WORLD/skeleton.json"), "utf8"));
   let placed;
   if (marksDir) {
     placed = loadMarks(marksDir);                          // SHARED nested loader; real coords already

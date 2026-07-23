@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // world-root-gen.mjs — generate the root mark + the terrain marks, BY EXTRACTION
-// from WORLD/TERRAIN/skeleton.json (never hand-typed; sibling of
+// from WORLD/skeleton.json (never hand-typed; sibling of
 // world-terrain-gen.mjs). Deterministic and idempotent: re-running rewrites the
 // same records. These are committed as records — the constitution tier of the
 // one spatial tree (schema v2, 07-22-night ruling).
@@ -28,7 +28,7 @@ import { fileURLToPath } from "node:url";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const DRY = process.argv.includes("--dry");
-const SKELETON = join(ROOT, "WORLD/TERRAIN/skeleton.json");
+const SKELETON = join(ROOT, "WORLD/skeleton.json");
 const MARKS_ROOT = join(ROOT, "WORLD/marks/let-there-be-light");
 const TODAY = "2026-07-22"; // the ruling date — deterministic, not wall-clock
 

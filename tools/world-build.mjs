@@ -1,7 +1,7 @@
 // world-build.mjs — assemble the `world` object world-verbs consumes, from
 // ALREADY-PARSED data. Pure and browser-safe: it takes the fold's world-state
 // (marks with weights, as WORLD/world-state.json carries) and the terrain
-// skeleton (as WORLD/TERRAIN/skeleton.json carries), and returns
+// skeleton (as WORLD/skeleton.json carries), and returns
 // { marks, terrain, heightfield, light, fogCeilingM }.
 //
 // WHY IT EXISTS: the site fetches world-state.json + skeleton.json from the

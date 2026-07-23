@@ -27,7 +27,7 @@ const ROOT = join(HERE, "..");
 const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : def; };
 const MARKS_DIR = opt("--marks-dir", join(ROOT, "WORLD/marks"));
-const TERRAIN_PATH = opt("--terrain", join(ROOT, "WORLD/TERRAIN/skeleton.json"));
+const TERRAIN_PATH = opt("--terrain", join(ROOT, "WORLD/skeleton.json"));
 // --scope <subtree>: the fleet writes sibling dirs concurrently, so a full-tree
 // lint mid-fleet would trip on another agent's half-written dir. Scoped mode
 // still LOADS the whole tree (ancestor edges resolve; the-town leaf collisions
@@ -122,7 +122,7 @@ for (const rec of marks) {
       if (!/^terrain:/.test(String(rec._explicitParent))) err(rec, `an authored parent may only be a terrain feature (terrain:<id>); to attach to a mark, nest under its directory`);
       else {
         const tid = String(rec._explicitParent).slice("terrain:".length);
-        if (!TERRAIN_IDS.has(tid)) err(rec, `parent terrain:${tid} names no terrain feature (WORLD/TERRAIN/skeleton.json)`);
+        if (!TERRAIN_IDS.has(tid)) err(rec, `parent terrain:${tid} names no terrain feature (WORLD/skeleton.json)`);
       }
     }
   }

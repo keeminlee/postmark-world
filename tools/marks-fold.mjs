@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // marks-fold.mjs — canon is a fold over the marks register + the stake lines.
-// Pure function: (WORLD/marks/**, TERRAIN/skeleton.json, stakes, prevState?) -> world-state.
+// Pure function: (WORLD/marks/**, WORLD/skeleton.json, stakes, prevState?) -> world-state.
 // Anyone with a clone can recompute the world. See MARKS.md (the law this implements).
 //
 // Usage:
@@ -25,7 +25,7 @@ const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : def; };
 const has = (name) => args.includes(name);
 const MARKS_DIR = opt("--marks-dir", join(ROOT, "WORLD/marks"));
-const TERRAIN_PATH = opt("--terrain", join(ROOT, "WORLD/TERRAIN/skeleton.json"));
+const TERRAIN_PATH = opt("--terrain", join(ROOT, "WORLD/skeleton.json"));
 const STAKES_PATH = opt("--stakes", null);
 const PREV_PATH = opt("--prev", null);
 const TICK = Number(opt("--tick", 0));

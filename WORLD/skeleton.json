@@ -1,5 +1,5 @@
 {
-  "_law": "WORLD/TERRAIN is the terrain tier (MARKS.md): constitution-backed, beneath the marks market. Marks attach TO these features (parent: terrain:<id>), never against them. Changes are constitutional acts. Elevation derives from residents' words + survey decisions, NEVER from drawn pixels (decision 008 carrying the atlas's own law).",
+  "_law": "WORLD/skeleton.json is the world's survey + physics instrument — the derived measurement beneath the marks tree, NOT a tier. Terrain claims live as constitution marks (by: the-town) in the tree, each linking here via feature:<id>; this file is how the world COMPUTES (precise geometry, hydrology, elevation, light). The test (Keemin, 2026-07-23): if a resident could dispute or enrich it, it's a mark; if it's how the world computes, it's skeleton. Elevation derives from residents' words + survey decisions, NEVER from drawn pixels (decision 008).",
   "_grid": {
     "cell_m": 1,
     "scale": "5 m per atlas px (RULED 2026-07-17)",

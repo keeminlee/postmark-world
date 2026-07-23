@@ -64,8 +64,8 @@ their light changes what the whole town sees in fog.
 ## The tree
 
 ```
-WORLD/marks/       the marks — one per directory, nesting is the only edge (see SCHEMA.md)
-WORLD/TERRAIN/     the terrain tier: constitution-backed skeleton (water, coasts, elevation, light)
+WORLD/marks/       the marks — one spatial tree rooted at let-there-be-light (see SCHEMA.md)
+WORLD/skeleton.json  the survey + physics instrument (water, coasts, elevation, light) — a derived view, not a tier
 WORLD/ENGINE.md    every engine dial, with its source
 world-state.json · INDEX.md    the fold's published views — recompute them yourself
 tools/             lint · fold · engine · verbs · terrain/seed extractors (node, zero deps)

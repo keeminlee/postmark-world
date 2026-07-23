@@ -54,7 +54,7 @@ node --test tools/world-engine.test.mjs     # the tests
 600 m, bearing rose 16, distance bands, IDW power 2 / k-nearest 8, eye height
 1.7 m, default mark top 4 m, fog curve, signal fog-reach ×6, dark-dim floor 0.15).
 
-**Terrain dials** — `WORLD/TERRAIN/skeleton.json` (decision 008): quay +5 m, fog
+**Terrain dials** — `WORLD/skeleton.json` (decision 008): quay +5 m, fog
 ceiling +22 m, walk speed 15 km/crossing, the seventeen region bands, the light
 poles (dawn NE → dark pole at Caelina, **provisional on caelum's word**).
 

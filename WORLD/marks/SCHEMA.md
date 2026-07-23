@@ -65,7 +65,7 @@ is accepted (a dial-class ruling, movable).
 
 `tools/world-root-gen.mjs` writes the root mark and one mark per terrain feature
 (river, seas, lochan, garrison lake, locks, coasts, upward falls, Pando, ferry's
-route) **by extraction from `WORLD/TERRAIN/skeleton.json`** — `by: the-town`,
+route) **by extraction from `WORLD/skeleton.json`** — `by: the-town`,
 `tier: constitution`. Do not hand-edit them; re-run the generator.
 
 - **The root `let-there-be-light`** — `extent` = the whole world (it contains

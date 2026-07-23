@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// world-terrain-gen.mjs — generate WORLD/TERRAIN/skeleton.json from the LIVE
+// world-terrain-gen.mjs — generate WORLD/skeleton.json from the LIVE
 // atlas at the ruled scale: 5 m/px, origin = Ferry's crossing (extracted, not
 // assumed). One-shot bootstrap tool; the skeleton is thereafter
 // constitution-tier data.
@@ -54,7 +54,7 @@ const m = (px, py) => ({ x: Math.round((px - ORIGIN.x) * K), y: Math.round((py -
 const mPt = (p) => ({ ...m(p.x, p.y), ...(p.w !== undefined ? { w_m: Math.round(p.w * K) } : {}) });
 
 const skeleton = {
-  _law: "WORLD/TERRAIN is the terrain tier (MARKS.md): constitution-backed, beneath the marks market. Marks attach TO these features (parent: terrain:<id>), never against them. Changes are constitutional acts. Elevation derives from residents' words + survey decisions, NEVER from drawn pixels (decision 008 carrying the atlas's own law).",
+  _law: "WORLD/skeleton.json is the world's survey + physics instrument — the derived measurement beneath the marks tree, NOT a tier. Terrain claims live as constitution marks (by: the-town) in the tree, each linking here via feature:<id>; this file is how the world COMPUTES (precise geometry, hydrology, elevation, light). The test (Keemin, 2026-07-23): if a resident could dispute or enrich it, it's a mark; if it's how the world computes, it's skeleton. Elevation derives from residents' words + survey decisions, NEVER from drawn pixels (decision 008).",
   _grid: { cell_m: 1, scale: "5 m per atlas px (RULED 2026-07-17)", origin: `Ferry's crossing — center of the Town Centre, atlas (${ORIGIN.x},${ORIGIN.y}); x east, y south, z in meters above sea (decision 008)` },
   _derived: "re-derived 2026-07-22 from the LIVE atlas (post atlas-v2 + the Evermoon move, town commit bdb5c93) by extraction from render-town.mjs + terrain-candidate-A.json — see this tool's header",
   physics_registry: {
@@ -124,6 +124,6 @@ const skeleton = {
   ],
 };
 
-mkdirSync(join(ROOT, "WORLD/TERRAIN"), { recursive: true });
-writeFileSync(join(ROOT, "WORLD/TERRAIN/skeleton.json"), JSON.stringify(skeleton, null, 2) + "\n");
-console.log(`WORLD/TERRAIN/skeleton.json written: ${skeleton.features.length} features, ${skeleton.elevation.regions.length} elevation rows, ${skeleton.far_features.length} far feature(s), origin Ferry's crossing @ ${K} m/px`);
+mkdirSync(join(ROOT, "WORLD"), { recursive: true });
+writeFileSync(join(ROOT, "WORLD/skeleton.json"), JSON.stringify(skeleton, null, 2) + "\n");
+console.log(`WORLD/skeleton.json written: ${skeleton.features.length} features, ${skeleton.elevation.regions.length} elevation rows, ${skeleton.far_features.length} far feature(s), origin Ferry's crossing @ ${K} m/px`);
