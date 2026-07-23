@@ -54,7 +54,14 @@ export function parseRecord(text, file) {
         if (p) obj[p[1]] = Number(p[2]);
       }
       val = obj;
+    } else if (val.startsWith("[")) { // a points ring, JSON-ish: [[x,y],…] or [{x,y},…]
+      try { val = JSON.parse(val); } catch { /* leave as string; a non-array points ring is simply not honored */ }
     } else if (/^-?\d+(\.\d+)?$/.test(val)) val = Number(val);
+    else if (key === "points" && /^-?[\d.]+\s*,\s*-?[\d.]+(\s+-?[\d.]+\s*,\s*-?[\d.]+)+/.test(val)) {
+      // SVG points-attribute style ("x1,y1 x2,y2 …") — the way SVGs define polygons
+      const ring = val.trim().split(/\s+/).map((t) => t.split(",").map(Number));
+      if (ring.length >= 3 && ring.every((a) => a.length === 2 && a.every(Number.isFinite))) val = ring;
+    }
     fm[key] = val;
   }
   return { ...fm, body };
@@ -142,8 +149,8 @@ function loadStakes() {
 // browser-safe. Imported here for the fold's internal use, and RE-EXPORTED so
 // mark-lint.mjs's `import { … rect, contains } from "./marks-fold.mjs"` is
 // unchanged. rects are centered on at, sized by extent) ----------
-export { rect, overlapArea, contains } from "./geometry.mjs";
-import { rect, overlapArea, contains } from "./geometry.mjs";
+export { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
+import { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
 
 // ---------- the fold ----------
 export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS }) {
@@ -197,7 +204,12 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   for (const a of sited) for (const b of sited) {
     if (a === b) continue;
     const ra = rect(a), rb = rect(b);
-    if (ra.w * ra.h > rb.w * rb.h && contains(ra, rb)) {
+    // nesting containment honors TRUE SHAPE — a mark's `points:` ring — via
+    // marksContain; feature geometry is NEVER passed, so feature marks stay
+    // claim-based (bbox) per the 07-23 ruling. Bbox area still ranks candidate
+    // parents. Regular-vs-regular delegates to the analytic contains, so the
+    // current record's containment tree is byte-identical (no record has points:).
+    if (ra.w * ra.h > rb.w * rb.h && marksContain(a, b)) {
       // smallest containing wins as parent
       const cur = parentOf.get(b.id);
       if (!cur || rect(byId.get(cur)).w * rect(byId.get(cur)).h > ra.w * ra.h) parentOf.set(b.id, a.id);

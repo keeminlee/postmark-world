@@ -20,7 +20,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMarks, rect, contains } from "./marks-fold.mjs";
+import { loadMarks, marksContain } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -151,7 +151,10 @@ for (const rec of marks) {
   if (!parent) { err(rec, `nested under "${rec._parentMarkId}", which has no readable mark.md`); continue; }
   if (!CONTAINERS.has(parent.kind)) continue; // already reported on the parent (§5)
   if (rec.kind === "sited") {
-    if (!contains(rect(parent), rect(rec)))
+    // containment honors true shape (a `points:` ring); feature geometry is never
+    // passed, so feature marks stay claim-based (bbox). Byte-identical today —
+    // no record carries points: — so the gate is a no-op on the current tree.
+    if (!marksContain(parent, rec))
       err(rec, `the directory nests this inside "${parent.id}", but its footprint is not contained by "${parent.id}" — you cannot lie with an edge (site it inside, or move it out)`);
   }
 }
