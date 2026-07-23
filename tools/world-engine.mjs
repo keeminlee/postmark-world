@@ -66,6 +66,7 @@ export const DIALS = {
   ],
   // LOD (level of detail) — the scaling law
   context_budget: 12,               // max marks carried in one telling
+  world_scale_extent_m: 50000,      // a mark this big is the FRAME (the world-root) — its body is the establishing line, never a list item
   cluster_beyond_m: 600,            // past this, a household's marks collapse to its most-prominent (LOD tree-descent)
   max_sight_m: 20000,               // candidate cull radius (bounds compute; ~town diameter)
   weight_lod_k: 0.6,                // how much a mark's stamps lift its visibility
@@ -229,6 +230,7 @@ export function fieldOfView(observer, world, { crossing = 0, budget = DIALS.cont
   for (const mk of marks) {
     if (!mk.at) continue;                                   // predicated/naming have no site of their own
     if (mk.kind === "parcel") continue;                     // a land-claim boundary is not scenery you see
+    if (markExtent(mk) >= dials.world_scale_extent_m) continue; // the world-root is the frame — establishing line, not a list item
     const dx = mk.at.x - observer.x, dy = mk.at.y - observer.y;
     const distM = Math.hypot(dx, dy);
     if (distM > dials.max_sight_m) continue;                // compute cull (bounds cost)
