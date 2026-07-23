@@ -95,6 +95,7 @@ containment**; everything else is a field.
 | `points` (reserved²) | opt | opt | — | — |
 | `far` (horizon object) | opt (the-town) | — | — | — |
 | `feature: <skeleton-id>` | opt (the-town) | — | — | — |
+| `mechanic: <registry-id>`³ | opt | opt | opt | opt |
 | `pre` / `derived_from` | provenance¹ | provenance¹ | provenance¹ | provenance¹ |
 
 ¹ **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
@@ -121,6 +122,21 @@ not tonight. A mark that carries `points:` today gains fine honoring later with
 (the precise geometry in `skeleton.json`) are joined by a field, not a
 convention. The engine can follow it to the precise geometry later; nothing
 consumes it tonight.
+
+**³ `mechanic:` — diegesis points at its machinery (2026-07-23, Keemin-ruled).**
+EVERYTHING diegetic is a mark in the tree; where a mark's truth is *kept true by
+machinery* (the fog by the crossing-seeded fog model, a declared light by the
+signal path, the land's fall by the heightfield), the mark carries
+`mechanic: <id>` naming that machinery. Ids come from the **physics registry**
+(`skeleton.json § physics_registry` — the roster of mechanics that exist); the
+lint refuses a mechanic that is absent or not honored, so a mark can never point
+at machinery the world doesn't run. This replaces flag-lists in code (the old
+`SIGNAL_MARKS` allowlist): the record declares, the engine reads the record. On
+a `predicated` mark, the mechanic applies to the mark it describes (a
+`mechanic: signal` predicate makes its parent the signal). The world-law
+predicates on the root (`the-fog`, `the-fall-of-the-land`, `the-walking-pace`,
+`the-wear`) are generated from the skeleton's own numbers by
+`world-root-gen.mjs` — extraction, never hand-copy.
 
 **The river is segmented, not one mark** — each reach the skeleton names is its
 own constitution mark with its own `feature:` link. Finer named-reach enrichment

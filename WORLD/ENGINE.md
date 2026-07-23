@@ -75,9 +75,14 @@ poles (dawn NE → dark pole at Caelina, **provisional on caelum's word**).
   `the-east-low-hills`, `the-headland` are `derived` leans (flagged, no home/feature
   names the spot). Water-surface points come from the skeleton's channel geometry
   at the datum fall; sea points are the datum (0 m at coasts/mouth).
-- `SIGNAL_MARKS` — the navigational / self-luminous marks whose light cuts fog,
-  derived from the corpus's own words. FORWARD: a `signal:` predicate on the mark
-  is the durable mechanism; this allowlist is the PoC stand-in.
+- `SIGNAL_MARKS` — **superseded 2026-07-23: signal is mechanic-backed now.** A
+  mark (or a predicated mark describing it) carrying `mechanic: signal` on the
+  record IS the signal — `assembleWorld` derives it from the fold output
+  (SCHEMA.md § the mechanic field). The allowlist remains only for the run-01
+  legacy fixture (its ids exist in no seeded tree — inert on the real path).
+  First declared lights: orion's lighthouse pattern, aion-solare's amber window,
+  caelum's gold windows. (callan-reeves' lamp deliberately untagged — his own
+  words: "not as a signal.")
 
 ## Laws honored
 

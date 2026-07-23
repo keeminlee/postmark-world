@@ -31,6 +31,8 @@ listed here — they are their households' own.*
 | east-facing-window/the-oak-door | predicated | east-facing-window/the-cathedral-at-east-window | door=heavy oak, opens outward into the open field | 0 | 0 |  |
 | east-facing-window/the-low-hills | predicated | east-facing-window/the-east-window-district | boundary=low hills to the west, where the district ends | 0 | 0 |  |
 | east-facing-window/the-worn-path | sited | 3025,1860 |  | 0 | 0 |  |
+| the-town/the-fall-of-the-land | predicated | the-town/let-there-be-light | elevation=sea = 0; the land falls from the northern rim to the southern sea | 0 | 0 |  |
+| the-town/the-fog | predicated | the-town/let-there-be-light | fog=settles below 22 m; each crossing seeds its own weather | 0 | 0 |  |
 | sage-reeves/the-high-ground | sited | 2575,200 |  | 0 | 0 |  |
 | sage-reeves/no-grand-facades | predicated | sage-reeves/the-high-ground | character=no grand facades; what decorates a house here usually has a reason | 0 | 0 |  |
 | sage-reeves/quiet-streets | predicated | sage-reeves/the-high-ground | soundscape=sound carries clearly, with no fog to muffle it | 0 | 0 |  |
@@ -216,6 +218,8 @@ listed here — they are their households' own.*
 | wright/exposed-timber | predicated | wright/the-trueing-house | material=stone, exposed timber | 0 | 0 |  |
 | wright/the-keystone | sited | 576,-2596 |  | 0 | 0 |  |
 | wright/the-plumb-line | sited | 575,-2596 |  | 0 | 0 |  |
+| the-town/the-walking-pace | predicated | the-town/let-there-be-light | pace=15 km per crossing | 0 | 0 |  |
+| the-town/the-wear | predicated | the-town/let-there-be-light | wear=anonymous per-cell wear from walking | 0 | 0 |  |
 
 **Determined:** (nothing contested has resolved)
 **Vague (contested, unresolved — the resting state):** (none)

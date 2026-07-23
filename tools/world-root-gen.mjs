@@ -21,7 +21,7 @@
 //   carries `far: true`, and the containment check exempts it (it sits beyond
 //   the world's ground extent by construction).
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -33,6 +33,34 @@ const MARKS_ROOT = join(ROOT, "WORLD/marks/let-there-be-light");
 const TODAY = "2026-07-22"; // the ruling date — deterministic, not wall-clock
 
 const skeleton = JSON.parse(readFileSync(SKELETON, "utf8"));
+
+// ---- location-aware writes (07-23, post-nesting) -----------------------------
+// The tree ruling nests marks under their geometric containers, so a terrain
+// mark's dir may live anywhere beneath the root (aelyria-cliffs under aelyria's
+// canopy; the-locks under the-long-run). Rewrite each mark WHERE IT LIVES; only
+// a genuinely new mark is created at the root. Never emit a flat duplicate.
+function indexExistingDirs() {
+  // Keyed by slug, but ONLY for the-town-authored records — slugs are unique per
+  // author, and this generator writes nothing else. (finn/the-still-reach nests
+  // inside the-town/the-still-reach with the same leaf name; without the author
+  // check the index would point the town's record at finn's house.)
+  const bySlug = new Map();
+  const walk = (dir, rel) => {
+    for (const e of readdirSync(dir)) {
+      const p = join(dir, e);
+      let st; try { st = statSync(p); } catch { continue; }
+      if (!st.isDirectory()) continue;
+      const r = rel ? `${rel}/${e}` : e;
+      const mp = join(p, "mark.md");
+      if (existsSync(mp) && /^by:\s*the-town\s*$/m.test(readFileSync(mp, "utf8")))
+        bySlug.set(e, r);
+      walk(p, r);
+    }
+  };
+  if (existsSync(MARKS_ROOT)) walk(MARKS_ROOT, "");
+  return bySlug;
+}
+const EXISTING = indexExistingDirs();
 
 // ---- coarse bounding rect from a feature's own geometry (the CLAIM) ----------
 function pointsOf(f) {
@@ -85,11 +113,34 @@ function allFeatures() {
 }
 
 function writeRootAndTerrain() {
-  // root
+  // root — the light itself; its body is the charter, its mechanic the day-axis
   writeMarkRaw("", {
     kind: "sited", by: "the-town", tier: "constitution", date: TODAY,
-    at: { x: 0, y: 0 }, extent: { w: worldExtent, h: worldExtent },
+    at: { x: 0, y: 0 }, extent: { w: worldExtent, h: worldExtent }, mechanic: "light",
   }, "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.");
+
+  // world-law predicates on the root (07-23: EVERYTHING diegetic is a mark; the
+  // mechanic: field points at the machinery that keeps each law true). Values are
+  // EXTRACTED from the skeleton's own numbers — never hand-typed twice.
+  const LAW_DATE = "2026-07-23";
+  const fogM = skeleton.elevation.fog_ceiling_m;
+  const paceKm = Math.round(skeleton.elevation.walk_speed_m_per_crossing / 1000);
+  writeMarkRaw("the-fog", {
+    kind: "predicated", by: "the-town", tier: "constitution", date: LAW_DATE,
+    slot: "fog", value: `settles below ${fogM} m; each crossing seeds its own weather`, mechanic: "fog",
+  }, `The fog settles below the ${fogM}-metre line; every crossing brews its own weather, seeded by the crossing's own number.`);
+  writeMarkRaw("the-fall-of-the-land", {
+    kind: "predicated", by: "the-town", tier: "constitution", date: LAW_DATE,
+    slot: "elevation", value: "sea = 0; the land falls from the northern rim to the southern sea", mechanic: "elevation",
+  }, "All height falls from the northern rim to the southern sea; the sea is the zero every elevation is measured from.");
+  writeMarkRaw("the-walking-pace", {
+    kind: "predicated", by: "the-town", tier: "constitution", date: LAW_DATE,
+    slot: "pace", value: `${paceKm} km per crossing`, mechanic: "pace",
+  }, `A crossing's walking is ${paceKm} kilometres; the world is crossed in days, not clicks.`);
+  writeMarkRaw("the-wear", {
+    kind: "predicated", by: "the-town", tier: "constitution", date: LAW_DATE,
+    slot: "wear", value: "anonymous per-cell wear from walking", mechanic: "wear",
+  }, "Where feet repeat, a path appears. The record keeps the wear, never the walker.");
 
   // terrain marks, one per feature, directly under root
   for (const f of skeleton.features ?? []) {
@@ -120,7 +171,12 @@ function projectHorizon(f) {
 // writeMarkRaw — build the mark.md text with the exact inline-object frontmatter
 // the shared parseRecord reads ({ x: .., y: .. } / { w: .., h: .. }).
 function writeMarkRaw(relDir, fm, body) {
-  const dir = relDir ? join(MARKS_ROOT, relDir) : MARKS_ROOT;
+  // location-aware: if a dir for this slug already exists anywhere in the tree
+  // (the nesting ruling moved terrain marks under their containers), write THERE.
+  const slug = relDir ? relDir.split("/").pop() : "";
+  const found = slug && EXISTING.get(slug);
+  const effRel = found ?? relDir;
+  const dir = effRel ? join(MARKS_ROOT, effRel) : MARKS_ROOT;
   const L = ["---"];
   for (const [k, v] of Object.entries(fm)) {
     if (v == null) continue;
@@ -130,7 +186,7 @@ function writeMarkRaw(relDir, fm, body) {
   }
   L.push("---", "", body, "");
   const text = L.join("\n");
-  written.push({ path: join("let-there-be-light", relDir, "mark.md").replace(/\\/g, "/"), text });
+  written.push({ path: join("let-there-be-light", effRel, "mark.md").replace(/\\/g, "/"), text });
   if (!DRY) { mkdirSync(dir, { recursive: true }); writeFileSync(join(dir, "mark.md"), text); }
 }
 

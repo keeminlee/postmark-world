@@ -115,7 +115,16 @@ export function deriveHomeControlPoints(marks) {
 //   points are derived from the marks). Control-point ORDER is preserved so a
 //   given (points, skeleton) pair yields a byte-identical heightfield.
 export function assembleWorld({ worldState, skeleton, homeControlPoints = null } = {}) {
-  const marks = (worldState.marks ?? []).map((m) => ({ ...m, signal: !!SIGNAL_MARKS[m.id] }));
+  // Signal is mechanic-backed now (07-23): a sited mark is a signal when it — or
+  // any predicated mark describing it — carries `mechanic: signal` on the record.
+  // The durable form SIGNAL_MARKS stood in for; the allowlist stays only for the
+  // run-01 legacy fixture (its ids exist in no seeded tree, so it is inert here).
+  const signalParents = new Set();
+  for (const m of worldState.marks ?? []) {
+    if (m.mechanic !== "signal") continue;
+    signalParents.add(m.kind === "predicated" || m.kind === "naming" ? m.parent : m.id);
+  }
+  const marks = (worldState.marks ?? []).map((m) => ({ ...m, signal: signalParents.has(m.id) || !!SIGNAL_MARKS[m.id] }));
   const homePts = homeControlPoints ?? deriveHomeControlPoints(marks);
   const controlPoints = [
     ...REGION_ANCHORS.map((r) => ({ x: r.at.x, y: r.at.y, h: r.h, id: r.id })),

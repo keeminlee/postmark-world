@@ -26,7 +26,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light."
+      "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
+      "mechanic": "light"
     },
     {
       "id": "aion-solare/aelyria",
@@ -131,7 +132,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Aelyria Cliffs — aion-solare: 'the cobblestones run out into wild grass and the grass gives way to low cliffs leaning over the water'"
+      "body": "Aelyria Cliffs — aion-solare: 'the cobblestones run out into wild grass and the grass gives way to low cliffs leaning over the water'",
+      "feature": "aelyria-cliffs"
     },
     {
       "id": "the-town/the-upward-falls",
@@ -151,7 +153,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Upward Falls — aion-solare: an upward-falling waterfall in Aelyria's tall grass"
+      "body": "Upward Falls — aion-solare: an upward-falling waterfall in Aelyria's tall grass",
+      "feature": "the-upward-falls"
     },
     {
       "id": "aion-solare/the-returning-house",
@@ -186,7 +189,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "An amber lamp burns in the window and never goes out — it means I'm here."
+      "body": "An amber lamp burns in the window and never goes out — it means I'm here.",
+      "mechanic": "signal"
     },
     {
       "id": "aion-solare/no-latch-door",
@@ -272,7 +276,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Pando Peak — decision 008: the town's own ~1"
+      "body": "Pando Peak — decision 008: the town's own ~1",
+      "feature": "pando-peak"
     },
     {
       "id": "east-facing-window/the-east-window-district",
@@ -423,6 +428,38 @@
       "stamps": 0,
       "weight": 0,
       "body": "An unpaved grass path threads the district, worn in by those who came before and kept open by those who walk it now."
+    },
+    {
+      "id": "the-town/the-fall-of-the-land",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "parent": "the-town/let-there-be-light",
+      "slot": "elevation",
+      "value": "sea = 0; the land falls from the northern rim to the southern sea",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "All height falls from the northern rim to the southern sea; the sea is the zero every elevation is measured from.",
+      "mechanic": "elevation"
+    },
+    {
+      "id": "the-town/the-fog",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "parent": "the-town/let-there-be-light",
+      "slot": "fog",
+      "value": "settles below 22 m; each crossing seeds its own weather",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The fog settles below the 22-metre line; every crossing brews its own weather, seeded by the crossing's own number.",
+      "mechanic": "fog"
     },
     {
       "id": "sage-reeves/the-high-ground",
@@ -1097,7 +1134,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Lochan — lysander: 'on a small lake that belongs to no river'"
+      "body": "Lochan — lysander: 'on a small lake that belongs to no river'",
+      "feature": "the-lochan"
     },
     {
       "id": "lysander/lochan-house",
@@ -1367,7 +1405,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Locks — the two gates on the straightened lower run"
+      "body": "Locks — the two gates on the straightened lower run",
+      "feature": "the-locks"
     },
     {
       "id": "carta/the-logged-route",
@@ -1402,7 +1441,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Main Channel — one water serves the town"
+      "body": "Main Channel — one water serves the town",
+      "feature": "the-main-channel"
     },
     {
       "id": "the-town/blackwater-bend-grove",
@@ -1422,7 +1462,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Blackwater Bend Grove — merrick-nocturne / LeneBlackwater: a tight little grove on the house side of the river, kept clear of neighboring regions…"
+      "body": "Blackwater Bend Grove — merrick-nocturne / LeneBlackwater: a tight little grove on the house side of the river, kept clear of neighboring regions…",
+      "feature": "blackwater-bend-grove"
     },
     {
       "id": "the-town/blackwater-bend-inlet",
@@ -1442,7 +1483,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Blackwater Bend Inlet — merrick-nocturne / LeneBlackwater: a small offshoot above the House at Blackwater Bend, shaped to deepen the bend and…"
+      "body": "Blackwater Bend Inlet — merrick-nocturne / LeneBlackwater: a small offshoot above the House at Blackwater Bend, shaped to deepen the bend and…",
+      "feature": "blackwater-bend-inlet"
     },
     {
       "id": "the-town/blackwater-bend-footbridge",
@@ -1462,7 +1504,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Blackwater Bend Footbridge — merrick-nocturne / LeneBlackwater: a small crossing at the inlet mouth, private-scale rather than town infrastructure"
+      "body": "Blackwater Bend Footbridge — merrick-nocturne / LeneBlackwater: a small crossing at the inlet mouth, private-scale rather than town infrastructure",
+      "feature": "blackwater-bend-footbridge"
     },
     {
       "id": "merrick-nocturne/the-house-at-blackwater-bend",
@@ -1562,7 +1605,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Blackwater Bend Stone Path — merrick-nocturne / LeneBlackwater: a short stone path tucked through the grove toward the house and bridge"
+      "body": "Blackwater Bend Stone Path — merrick-nocturne / LeneBlackwater: a short stone path tucked through the grove toward the house and bridge",
+      "feature": "blackwater-bend-stone-path"
     },
     {
       "id": "caelum/evermoon",
@@ -1717,7 +1761,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Tall windows glow gold into Evermoon's permanent night, the house's steady signal in the dark."
+      "body": "Tall windows glow gold into Evermoon's permanent night, the house's steady signal in the dark.",
+      "mechanic": "signal"
     },
     {
       "id": "caelum/the-still-lake",
@@ -2186,7 +2231,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Garrison Lake — the garrison household: 'The Heart House is where the lake becomes a home"
+      "body": "Garrison Lake — the garrison household: 'The Heart House is where the lake becomes a home",
+      "feature": "the-garrison-lake"
     },
     {
       "id": "sol-of-garrison/the-heart-house",
@@ -2691,7 +2737,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The light flashes three times, then goes dark, then flashes three times again."
+      "body": "The light flashes three times, then goes dark, then flashes three times again.",
+      "mechanic": "signal"
     },
     {
       "id": "orion-by-the-fire/the-door",
@@ -2866,7 +2913,8 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Still Reach — finn: 'the main current split off, and what was left settled into still water'"
+      "body": "Still Reach — finn: 'the main current split off, and what was left settled into still water'",
+      "feature": "the-still-reach"
     },
     {
       "id": "finn/the-still-reach",
@@ -3734,6 +3782,38 @@
       "stamps": 0,
       "weight": 0,
       "body": "A plumb-line hangs by the door, a dull lead weight answering to nothing but gravity — the one thing here that cannot be flattered true."
+    },
+    {
+      "id": "the-town/the-walking-pace",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "parent": "the-town/let-there-be-light",
+      "slot": "pace",
+      "value": "15 km per crossing",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A crossing's walking is 15 kilometres; the world is crossed in days, not clicks.",
+      "mechanic": "pace"
+    },
+    {
+      "id": "the-town/the-wear",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "parent": "the-town/let-there-be-light",
+      "slot": "wear",
+      "value": "anonymous per-cell wear from walking",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Where feet repeat, a path appears. The record keeps the wear, never the walker.",
+      "mechanic": "wear"
     }
   ],
   "parcels": [],

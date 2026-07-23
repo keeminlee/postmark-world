@@ -283,6 +283,10 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value, far: mk.far,
       sovereign: !!mk._sovereign, stamps: stakeByMark.get(mk.id) ?? 0, weight: weight.get(mk.id) ?? 0,
       body: mk.body,
+      // carried through so the engine/assembly can honor them (07-23): mechanic
+      // (the machinery that keeps a mark true — physics-registry id), top_m (a
+      // mark's vertical prominence), feature (the two-precision survey link).
+      mechanic: mk.mechanic, top_m: mk.top_m, feature: mk.feature,
     })),
     parcels: parcels.map(p => ({ id: p.id, household: p.household, at: { x: p._r.x, y: p._r.y }, extent: { w: p._r.w, h: p._r.h } })),
     determined, vague, rivalries,

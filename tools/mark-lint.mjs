@@ -52,6 +52,8 @@ const warn = (rec, msg) => findings.push({ sev: "WARN", file: at(rec), msg });
 // terrain ids the tier exposes for `parent: terrain:<id>` attachment
 const terrain = existsSync(TERRAIN_PATH) ? JSON.parse(readFileSync(TERRAIN_PATH, "utf8")) : { features: [], far_features: [] };
 const TERRAIN_IDS = new Set([...(terrain.features ?? []), ...(terrain.far_features ?? [])].map((f) => f.id));
+// the mechanics roster a mark's `mechanic:` may point at (07-23 field)
+const REGISTRY = terrain.physics_registry ?? {};
 
 const num = (v) => typeof v === "number" && Number.isFinite(v);
 const hasGeom = (rec) => rec.at && num(rec.at.x) && num(rec.at.y) && rec.extent && num(rec.extent.w) && num(rec.extent.h);
@@ -100,6 +102,15 @@ for (const rec of marks) {
     else if (!/[/.]/.test(df) || !/["“”]|—/.test(df)) warn(rec, `derived_from should name a source path AND a verbatim quote (got: ${df.slice(0, 60)})`);
   } else if (rec.derived_from !== undefined) {
     warn(rec, `derived_from is set but pre is not true — set pre: true or drop derived_from`);
+  }
+
+  // 3c. mechanic: diegesis may point at machinery, but only machinery that exists
+  // and is honored (the physics registry is the roster; a mark pointing at absent
+  // or refused machinery is a lie about the world's workings).
+  if (rec.mechanic !== undefined) {
+    const entry = REGISTRY[rec.mechanic];
+    if (!entry) err(rec, `mechanic: "${rec.mechanic}" is not in the physics registry (skeleton.json physics_registry) — a mark may only point at machinery that exists`);
+    else if (!entry.honored) err(rec, `mechanic: "${rec.mechanic}" is registered but NOT honored (${entry.receipt}) — diegesis cannot point at refused machinery`);
   }
 
   // 4. kind-specific shape

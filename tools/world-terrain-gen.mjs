@@ -63,6 +63,14 @@ const skeleton = {
     acoustics: { honored: false, receipt: "the bell, Disney-ruled (survey decision 003)" },
     sightlines: { honored: true, receipt: "FLIPPED 2026-07-22 (decision 008): the semantic world's FOV build is the real conflict the deferral was waiting for" },
     light: { honored: true, receipt: "the day-axis (atlas canon 2026-07-21; dark pole tuned to Caelina 07-22, provisional on caelum's word)" },
+    // 07-23: the registry doubles as the mechanics roster a mark's `mechanic:`
+    // field may point at (lint-enforced) — every diegetic mechanic is a mark in
+    // the tree, and the mark points back at the machinery that keeps it true.
+    fog: { honored: true, receipt: "decision 008 — the +22 m fog ceiling; each crossing's weather seeds deterministically from the crossing number (ENGINE.md fogModel)" },
+    elevation: { honored: true, receipt: "decision 008 — the seventeen ruled bands; the naive heightfield interpolates them, never drawn pixels" },
+    pace: { honored: true, receipt: "decision 008 — 15 km per crossing; walk() spends crossings at this dial" },
+    wear: { honored: true, receipt: "the walk-ledger — anonymous per-cell wear; where you wander is more intimate than who you wrote (ENGINE.md)" },
+    signal: { honored: true, receipt: "Orion's announce-yourself law made mechanics (decision 008); a light declared on the record cuts fog for the whole town" },
   },
   elevation: {
     _ruling: "survey decision 008 (Keemin, 2026-07-22) — all values are dials, movable by ruling, never silently",

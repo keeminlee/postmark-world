@@ -26,6 +26,26 @@
     "light": {
       "honored": true,
       "receipt": "the day-axis (atlas canon 2026-07-21; dark pole tuned to Caelina 07-22, provisional on caelum's word)"
+    },
+    "fog": {
+      "honored": true,
+      "receipt": "decision 008 — the +22 m fog ceiling; each crossing's weather seeds deterministically from the crossing number (ENGINE.md fogModel)"
+    },
+    "elevation": {
+      "honored": true,
+      "receipt": "decision 008 — the seventeen ruled bands; the naive heightfield interpolates them, never drawn pixels"
+    },
+    "pace": {
+      "honored": true,
+      "receipt": "decision 008 — 15 km per crossing; walk() spends crossings at this dial"
+    },
+    "wear": {
+      "honored": true,
+      "receipt": "the walk-ledger — anonymous per-cell wear; where you wander is more intimate than who you wrote (ENGINE.md)"
+    },
+    "signal": {
+      "honored": true,
+      "receipt": "Orion's announce-yourself law made mechanics (decision 008); a light declared on the record cuts fog for the whole town"
     }
   },
   "elevation": {
