@@ -244,6 +244,18 @@ const STYLE = `
 .wv-hl-glow { fill:#7ba7e0; opacity:.30; }
 .wv-hl-core { fill:none; stroke:#9cc0f0; stroke-width:4; opacity:.9; }
 
+.wv-nav .wv-identity { margin:10px 0 2px; font-size:.8rem; }
+.wv-nav .wv-signin { color:var(--amber-dark); cursor:pointer; }
+.wv-nav .wv-signin:hover { color:var(--amber); }
+.wv-nav .wv-keyfield { display:flex; gap:5px; margin-top:6px; }
+.wv-nav .wv-keyfield input.keyinput { flex:1; }
+.wv-nav .wv-keyfield .keyuse { white-space:nowrap; }
+.wv-nav .wv-id-in { color:var(--dim); }
+.wv-nav .wv-id-in b { color:var(--green); }
+.wv-nav .wv-signout { color:var(--amber-dark); cursor:pointer; margin-left:4px; }
+.wv-nav .wv-signout:hover { color:var(--amber); }
+.wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
+.wv-nav .handleopt.on { border-color:var(--green-dark); color:var(--green); }
 .wv-nav .crossnow { font-size:.86rem; color:var(--paper); }
 .wv-nav .crossnow b { color:var(--amber); font-variant-numeric:tabular-nums; }
 .wv-nav .crosslive-tag { color:var(--green); font-size:.78rem; }
@@ -273,6 +285,7 @@ const MARKUP = `
       <button class="tab" data-view="grid">Grid-true</button>
       <button class="tab" data-view="marks">My marks</button>
     </div>
+    <div class="wv-identity"></div>
     <div class="wv-standctl">
       <h2>Stand at</h2>
       <div class="presets">${PRESETS.map((p) => `<button class="ctl" data-x="${p.x}" data-y="${p.y}">${esc(p.label)}</button>`).join("")}</div>
@@ -831,6 +844,12 @@ export function mountViewer(appEl) {
   root.addEventListener("click", (e) => {
     const tab = e.target.closest(".wv-tabs .tab");
     if (tab) { switchView(tab.dataset.view); return; }
+    // identity: sign in with a key / use it / sign out; pick which of your handles
+    if (e.target.closest(".wv-signin")) { const f = $(root, ".wv-keyfield"); if (f) { f.hidden = !f.hidden; f.querySelector(".keyinput")?.focus(); } return; }
+    if (e.target.closest(".keyuse")) { const v = root.querySelector(".keyinput")?.value.trim(); if (v) { setKey(v); resolveIdentity(); } return; }
+    if (e.target.closest(".wv-signout")) { setKey(null); state.whoami = null; resolveIdentity(); return; }
+    const hopt = e.target.closest(".handleopt");
+    if (hopt) { state.handle = hopt.dataset.handle; state.stakesLocal = null; for (const b of root.querySelectorAll(".handleopt")) b.classList.toggle("on", b === hopt); renderMarks(); return; }
     // investigate: back-crumb / tree node / card
     const back = e.target.closest(".wv-back");
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
@@ -883,11 +902,49 @@ export function mountViewer(appEl) {
   //   • stand-at filter — a signed-in resident's "Stand at" lists only THEIR
   //     household's homes (filtered client-side from the manifest the viewer already
   //     has); keyless spectators get the default presets, unchanged.
+  // the resident's key — held per-origin in localStorage, presented as a Bearer on
+  // the credentialed reads (whoami). A browser visitor is keyless until they sign
+  // in; an oauth cookie also identifies them (whoami reads either). Clearing the
+  // key returns to keyless spectator. THIS is what was missing live — the viewer
+  // fetched whoami with no credential, so every visitor read as keyless.
+  const pmKey = () => { try { return localStorage.getItem("pm_key") || null; } catch { return null; } };
+  const setKey = (k) => { try { k ? localStorage.setItem("pm_key", k) : localStorage.removeItem("pm_key"); } catch { /* private mode */ } };
+  const authHeaders = () => { const k = pmKey(); return k ? { Authorization: "Bearer " + k } : {}; };
   async function resolveIdentity() {
-    try { const r = await fetch("/api/ops/whoami"); if (r.ok) state.whoami = await r.json(); } catch { /* no endpoint → keyless */ }
+    try { const r = await fetch("/api/ops/whoami", { headers: authHeaders() }); state.whoami = r.ok ? await r.json() : null; } catch { state.whoami = null; }
     const toggle = $(root, ".wv-dev-toggle");
     if (toggle) toggle.hidden = !(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || state.whoami?.principal);
     renderPresets();
+    renderIdentity();
+    renderMarksControl();
+    if (state.view === "marks") renderMarks();
+  }
+  // the sign-in affordance — signed out: a key field (localStorage); signed in: who
+  // you are + sign out. Unobtrusive, top of the nav.
+  function renderIdentity() {
+    const box = $(root, ".wv-identity");
+    if (!box) return;
+    const handles = state.whoami?.handles ?? [];
+    box.innerHTML = handles.length
+      ? `<div class="wv-id-in">signed in — <b>${handles.map(esc).join(", ")}</b> <span class="wv-signout" role="button" tabindex="0">sign out</span></div>`
+      : `<span class="wv-signin" role="button" tabindex="0">◔ sign in with your key</span>
+         <div class="wv-keyfield" hidden><input class="txt keyinput" type="password" placeholder="resident key" spellcheck="false" autocapitalize="off"><button class="ctl keyuse">use</button></div>`;
+  }
+  // My marks holder: signed in → only your own residents (no free-typed handle);
+  // keyless → the free-typed spectator input, unchanged.
+  function renderMarksControl() {
+    const box = $(root, ".wv-marksctl");
+    if (!box) return;
+    const handles = state.whoami?.handles ?? [];
+    if (handles.length) {
+      if (!handles.includes(state.handle)) state.handle = handles[0];
+      box.innerHTML = `<h2>Your marks</h2>`
+        + `<div class="handlepick">${handles.map((h) => `<button class="ctl handleopt${h === state.handle ? " on" : ""}" data-handle="${esc(h)}">${esc(h)}</button>`).join("")}</div>`;
+    } else {
+      box.innerHTML = `<h2>Resident</h2>`
+        + `<input class="txt handle" type="text" value="${esc(state.handle)}" spellcheck="false" autocapitalize="off">`
+        + `<div class="wv-quiet" style="font-size:.78rem; margin-top:6px">whose marks &amp; stakes to show</div>`;
+    }
   }
   function renderPresets() {
     const box = $(root, ".presets");
