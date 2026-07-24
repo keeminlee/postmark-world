@@ -89,6 +89,18 @@ const STYLE = `
 @media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
   .wv-map { grid-column:1 / -1; border-top:1px solid var(--line); } .wv-map .wv-sticky { position:static; } }
 @media (max-width:720px){ .wv-main,.wv-main.no-map { grid-template-columns:1fr; } }
+/* the app frame (Keemin 2026-07-24 eve): at full width the page stops scrolling —
+   each column scrolls itself, and the left side matches the map pane's height */
+@media (min-width:1161px){
+  .wv { height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+  .wv > div { flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; } /* the mount wrapper */
+  .wv-main { flex:1 1 0; min-height:0; overflow:hidden; align-items:stretch; }
+  .wv-nav, .wv-view { overflow-y:auto; min-height:0; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+  .wv-map { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+  .wv-map .wv-sticky { position:static; display:flex; flex-direction:column; min-height:0; flex:1; }
+  .wv-minimap { flex:1; min-height:0; }
+  .wv-minimap svg { width:100%; height:100%; }
+}
 .wv-nav { padding:18px; border-right:1px solid var(--line); background:var(--panel); }
 .wv-nav h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
 .wv-tabs { display:flex; gap:4px; margin-bottom:6px; }
