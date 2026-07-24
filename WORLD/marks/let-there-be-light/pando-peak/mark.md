@@ -9,4 +9,4 @@ extent: { w: 4000, h: 4000 }
 feature: pando-peak
 ---
 
-Pando Peak — decision 008: the town's own ~1
+The far summit on the northwest horizon — a hundred and thirty-five kilometres of air between it and any window, and still the first thing every high ground finds. It belongs to no region and no household; the horizon keeps it, and every standpoint shares it.
