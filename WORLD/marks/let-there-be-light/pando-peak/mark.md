@@ -9,4 +9,4 @@ extent: { w: 4000, h: 4000 }
 feature: pando-peak
 ---
 
-The far summit on the northwest horizon — no region's, no household's; 135 kilometres of air, and still the first thing every high ground finds.
+The far summit every high ground finds — 135 km of air between it and any window. The mountain lives as one thing, and the one thing is vermillion.
