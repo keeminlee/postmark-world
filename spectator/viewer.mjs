@@ -41,6 +41,13 @@ const STEP_NOTCHES = [1, 25, 50, 100, 250, 500, 1000];
 const STEP_DEFAULT_I = 3; // → 100 m
 const stepLabel = (m) => (m >= 1000 ? `${(m / 1000).toFixed(m % 1000 ? 1 : 0)} km` : `${m} m`);
 
+// the ferry's clock — the LIVE crossing, the office's own derivation (12h crossings
+// since the ledger's first delivery day; the "provisional pending a ruling" line is
+// now the viewer's default). fog is the crossing's weather, so an open tab that
+// rolls over a crossing boundary re-tells with fresh weather.
+const CROSSING_EPOCH_UTC = Date.UTC(2026, 5, 12); // 2026-06-12T00:00Z
+const liveCrossing = () => Math.max(0, Math.floor((Date.now() - CROSSING_EPOCH_UTC) / (12 * 3600 * 1000)));
+
 // dev-pane dials — the FOV-time leans only (assembly-time idw stays fixed, so a
 // dial change never re-folds or re-assembles: it re-tells). Each is {key,label,
 // min,max,step}. Ranges are generous prototyping room, not law.
@@ -196,6 +203,12 @@ const STYLE = `
 .wv-pip.t-constitution { fill:var(--blue); }
 .wv-pip.t-home { fill:var(--green); }
 .wv-pip.sig { fill:#fff3cf; }
+/* grid-true footprints — a mark's claim at true scale; market neutral, constitution blue, home green */
+.wv-foot { fill:rgba(154,146,128,.10); stroke:var(--dim); stroke-width:1.4; cursor:pointer; }
+.wv-foot:hover { fill-opacity:.24; }
+.wv-foot.t-constitution { fill:rgba(123,167,224,.12); stroke:var(--blue); }
+.wv-foot.t-home { fill:rgba(132,201,143,.14); stroke:var(--green); }
+.wv-foot.sig { stroke:#fff3cf; }
 .wv-plabel { fill:var(--paper); font:11px Georgia,serif; opacity:.85; pointer-events:none; }
 .wv-axis { fill:var(--dim); font:11px Georgia,serif; opacity:.6; }
 .wv-gridnote { color:var(--dim); font-size:.8rem; margin-top:12px; max-width:70ch; text-align:center; font-style:italic; }
@@ -229,6 +242,17 @@ const STYLE = `
 .ov-dot { fill:#ff2418; stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:#ff2418; stroke-width:3; opacity:.55; }
 
+.wv-nav .crossnow { font-size:.86rem; color:var(--paper); }
+.wv-nav .crossnow b { color:var(--amber); font-variant-numeric:tabular-nums; }
+.wv-nav .crosslive-tag { color:var(--green); font-size:.78rem; }
+.wv-dev .cross .crossrow { display:flex; gap:6px; align-items:center; }
+.wv-dev .cross input.crossover { flex:1; }
+.wv-dev .cross .crosslive { white-space:nowrap; font-size:.76rem; padding:3px 7px; }
+.wv-moved { position:sticky; top:6px; z-index:5; display:inline-block; margin-bottom:10px;
+  background:var(--panel2); border:1px solid var(--amber-dark); border-radius:999px; padding:4px 13px;
+  font-size:.8rem; color:var(--amber); opacity:0; transform:translateY(-4px);
+  transition:opacity .3s, transform .3s; pointer-events:none; }
+.wv-moved.show { opacity:.96; transform:translateY(0); }
 .wv-quiet { color:var(--dim); font-style:italic; }
 .wv-err { color:var(--err); }
 `;
@@ -262,7 +286,7 @@ const MARKUP = `
         <datalist id="wv-stepticks">${STEP_NOTCHES.map((_, i) => `<option value="${i}"></option>`).join("")}</datalist>
       </div>
       <h2>Crossing</h2>
-      <input class="num crossing" type="number" value="19" min="0"> <span class="wv-quiet" style="font-size:.78rem">fog seeds from it</span>
+      <div class="crossnow"></div>
       <div class="wv-where"></div>
     </div>
     <div class="wv-marksctl" hidden>
@@ -270,7 +294,7 @@ const MARKUP = `
       <input class="txt handle" type="text" value="wright" spellcheck="false" autocapitalize="off">
       <div class="wv-quiet" style="font-size:.78rem; margin-top:6px">whose marks &amp; stakes to show</div>
     </div>
-    <button class="ctl wv-dev-toggle">⚙ dev dials</button>
+    <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
     <div class="wv-dev" hidden></div>
   </nav>
   <section class="wv-view">
@@ -304,11 +328,15 @@ export function mountViewer(appEl) {
   const state = {
     cam: { x: 0, y: 0 },
     step: STEP_NOTCHES[STEP_DEFAULT_I], // 100 m
-    crossing: 19,
+    crossing: liveCrossing(),           // default to the live crossing
+    crossingOverride: false,            // a dev/principal time-travel override
     view: "telling",
     handle: "wright",
     dials: { ...DIALS },
     stakesLocal: null,      // null=unknown, true/false after probe
+    dataSource: null,       // which world-state URL won (for the auto-update poll)
+    asOf: null,             // X-Postmark-As-Of of the loaded fold (office-live only)
+    whoami: null,           // { principal, household, handles } from /api/ops/whoami
   };
   let data = null;          // { worldState, skeleton }
   let world = null;         // assembled once (crossing-independent)
@@ -326,22 +354,43 @@ export function mountViewer(appEl) {
     }
     throw lastErr ?? new Error("no source");
   }
+  // fetch world-state AND report which url won + its X-Postmark-As-Of (the office
+  // stamps every response; the auto-update poll compares it). Same office-first
+  // preference: office live → same-origin /WORLD → RAW github.
+  const WS_PATHS = ["/api/world/state", "/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`];
+  async function fetchWorldState(paths) {
+    let lastErr;
+    for (const p of paths) {
+      try { const r = await fetch(p); if (r.ok) return { json: await r.json(), url: p, asOf: r.headers.get("x-postmark-as-of") }; lastErr = new Error(`${p} → ${r.status}`); }
+      catch (e) { lastErr = e; }
+    }
+    throw lastErr ?? new Error("no source");
+  }
+  const isOfficeLive = (url) => !!url && url.startsWith("/api/world/");
   async function loadData() {
     if (data) return;
-    // fetch preference (Wright 2026-07-23): the office live fold FIRST (its /api/
-    // path recomputes from the town's clone, so a write shows in seconds), then
-    // same-origin /WORLD (local dev server + the baked site copy), then RAW github.
-    const [ws, sk, mf] = await Promise.all([
-      fetchJson(["/api/world/state", "/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`]),
+    const ws = await fetchWorldState(WS_PATHS);
+    const [sk, mf] = await Promise.all([
       fetchJson(["/api/world/skeleton", "/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
       // homes come from the seeding manifest, fetched the same way (same-origin probe
       // → raw fallback); optional — no manifest just means no green
       fetchJson(["/seeding/manifest.json", `${RAW}/seeding/manifest.json`]).catch(() => null),
     ]);
-    data = { worldState: ws, skeleton: sk };
-    world = assembleWorld({ worldState: ws, skeleton: sk });
+    state.dataSource = ws.url; state.asOf = ws.asOf;
+    data = { worldState: ws.json, skeleton: sk, manifest: mf };
+    world = assembleWorld({ worldState: ws.json, skeleton: sk });
     byId = new Map(world.marks.map((m) => [m.id, m]));
     homeSet = buildHomeSet(mf, world.marks);
+  }
+  // re-pull the fold from the same source and re-assemble (auto-update). Skeleton
+  // and manifest are stable across a write, so only world-state is refetched.
+  async function reloadWorld() {
+    const ws = await fetchWorldState([state.dataSource, ...WS_PATHS]);
+    state.dataSource = ws.url; state.asOf = ws.asOf;
+    data.worldState = ws.json;
+    world = assembleWorld({ worldState: ws.json, skeleton: data.skeleton });
+    byId = new Map(world.marks.map((m) => [m.id, m]));
+    homeSet = buildHomeSet(data.manifest, world.marks);
   }
   // Home-ness is derived, never on the record: the manifest maps household→home_id,
   // so the home mark is `<household>/<home_id>`; it and its same-household descendants
@@ -540,12 +589,33 @@ export function mountViewer(appEl) {
       svg += `<text x="${VB - 10}" y="${C}" text-anchor="end" class="wv-axis">E</text>`;
       // a soft scale hint: the fit radius in metres, bottom-right
       svg += `<text x="${VB - 10}" y="${VB - 12}" text-anchor="end" class="wv-axis">edge ≈ ${Math.round(fit).toLocaleString()} m${reachFits ? "" : " · air sees ~" + Math.round(reach).toLocaleString() + " m"}</text>`;
+      // FOOTPRINTS (Keemin 2026-07-23): in grid-true a mark renders as its CLAIM
+      // at true scale — an at-centred extent rect (or its points: ring polygon),
+      // outlined + translucent so overlaps read, tier-coloured. The main channel
+      // reads as the long band it is; a bench is a speck. Below ~5px it collapses
+      // to a dot. Marks that CONTAIN the viewer are the nested frames already —
+      // skip them here (this is for the non-containing marks in view).
+      const withinIds = new Set(within.map((w) => w.id));
       for (const m of carried) {
-        const p = px(m.at.x, m.at.y);
-        const r = m.signal ? 7 : 4 + Math.min(6, Math.log1p(m.weight || 0) * 2.2);
-        svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r.toFixed(1)}" class="wv-pip t-${tierOf(m)}${m.signal ? " sig" : ""}" data-id="${esc(m.id)}"><title>${esc(m.id)} — ${esc(firstWords(m.body, 12))}</title></circle>`;
-        const lx = p.x + (p.x > C ? -8 : 8), anchor = p.x > C ? "end" : "start";
-        svg += `<text x="${lx.toFixed(1)}" y="${(p.y - 8).toFixed(1)}" text-anchor="${anchor}" class="wv-plabel">${esc(shortLabel(m))}</text>`;
+        if (withinIds.has(m.id)) continue;
+        const full = byId.get(m.id) ?? m;
+        const w = full.extent?.w ?? 0, h = full.extent?.h ?? 0;
+        const cls = `t-${tierOf(m)}${m.signal ? " sig" : ""}`;
+        const title = `<title>${esc(m.id)} — ${esc(firstWords(m.body, 12))}</title>`;
+        const c = px(full.at.x, full.at.y);
+        const ring = Array.isArray(full.points) && full.points.length >= 3 ? full.points : null;
+        if (Math.max(w, h) * sc < 5 && !ring) {                       // too small at this scale → a dot
+          const r = m.signal ? 6 : 3.5 + Math.min(5, Math.log1p(m.weight || 0) * 1.8);
+          svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${r.toFixed(1)}" class="wv-pip ${cls}" data-id="${esc(m.id)}">${title}</circle>`;
+        } else if (ring) {                                            // the authored shape, claim-true
+          const pts = ring.map((v) => { const q = px(Array.isArray(v) ? v[0] : v.x, Array.isArray(v) ? v[1] : v.y); return `${q.x.toFixed(1)},${q.y.toFixed(1)}`; }).join(" ");
+          svg += `<polygon points="${pts}" class="wv-foot ${cls}" data-id="${esc(m.id)}">${title}</polygon>`;
+        } else {                                                      // the extent rect, at true scale
+          const a = px(full.at.x - w / 2, full.at.y - h / 2), b = px(full.at.x + w / 2, full.at.y + h / 2);
+          svg += `<rect x="${Math.min(a.x, b.x).toFixed(1)}" y="${Math.min(a.y, b.y).toFixed(1)}" width="${Math.abs(b.x - a.x).toFixed(1)}" height="${Math.abs(b.y - a.y).toFixed(1)}" rx="1" class="wv-foot ${cls}" data-id="${esc(m.id)}">${title}</rect>`;
+        }
+        const lx = c.x + (c.x > C ? -7 : 7), anchor = c.x > C ? "end" : "start";
+        svg += `<text x="${lx.toFixed(1)}" y="${(c.y - 6).toFixed(1)}" text-anchor="${anchor}" class="wv-plabel">${esc(shortLabel(m))}</text>`;
       }
       svg += `<circle cx="${C}" cy="${C}" r="26" class="wv-you-halo"/><circle cx="${C}" cy="${C}" r="6" class="wv-you"/>`;
       const canvas = `<div class="wv-canvas"><svg viewBox="0 0 ${VB} ${VB}" preserveAspectRatio="xMidYMid meet">${svg}</svg></div>`;
@@ -683,6 +753,8 @@ export function mountViewer(appEl) {
   function buildDevPane() {
     const dev = $(root, ".wv-dev");
     dev.innerHTML = `<div class="devnote">live engine dials — re-tells on change; never mutates the module, never re-folds.</div>`
+      + `<div class="dial cross"><label>crossing (time-travel) <b class="crossovlbl">${state.crossingOverride ? state.crossing : "live · " + state.crossing}</b></label>
+          <div class="crossrow"><input class="num crossover" type="number" min="0" value="${state.crossing}"><button class="ctl crosslive" title="return to the live crossing">⤺ live</button></div></div>`
       + DEV_DIALS.map((d) => {
         const v = state.dials[d.key];
         return `<div class="dial"><label>${esc(d.label)} <b data-out="${d.key}">${fmt(v)}</b></label>
@@ -696,10 +768,30 @@ export function mountViewer(appEl) {
   function renderCurrent() {
     $(root, ".pos").textContent = `${state.cam.x},${state.cam.y}`;
     $(root, ".wv-where").innerHTML = `standing at <b>(${state.cam.x}, ${state.cam.y})</b>`;
+    const cn = $(root, ".crossnow");
+    if (cn) cn.innerHTML = state.crossingOverride
+      ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`
+      : `crossing <b>${state.crossing}</b> <span class="crosslive-tag">· live</span>`;
     if (state.view === "telling") renderTelling();
     else if (state.view === "grid") renderGrid();
     else if (state.view === "marks") renderMarks();
     if (state.view !== "marks" && !mapCtx) loadMinimap();
+  }
+  // a re-render that the world does TO the viewer, not the viewer to itself: it must
+  // preserve where you stand, your step, mode, dials, and scroll (Wright's hard UX
+  // constraint — the world updates around you, you are never yanked). A quiet toast
+  // names what moved.
+  let movedTimer = null;
+  function reRender(note) {
+    const y = window.scrollY;
+    renderCurrent();
+    window.scrollTo(0, y);
+    if (!note) return;
+    let el = $(root, ".wv-moved");
+    if (!el) { el = document.createElement("div"); el.className = "wv-moved"; $(root, ".wv-view").prepend(el); }
+    el.textContent = `the world moved — ${note}`;
+    el.classList.add("show");
+    clearTimeout(movedTimer); movedTimer = setTimeout(() => el.classList.remove("show"), 6000);
   }
   function switchView(v) {
     state.view = v;
@@ -731,6 +823,7 @@ export function mountViewer(appEl) {
     if (stand) { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); return; }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } return; }
     if (e.target.closest(".wv-dev-reset")) { state.dials = { ...DIALS }; buildDevPane(); renderCurrent(); return; }
+    if (e.target.closest(".crosslive")) { state.crossingOverride = false; state.crossing = liveCrossing(); const i = root.querySelector(".crossover"); if (i) i.value = state.crossing; const l = root.querySelector(".crossovlbl"); if (l) l.textContent = "live · " + state.crossing; reRender(); return; }
     const b = e.target.closest("button.ctl, .wv-card");
     if (!b) return;
     if (b.dataset.x !== undefined && b.classList.contains("ctl")) { state.cam = { x: +b.dataset.x, y: +b.dataset.y }; renderCurrent(); }
@@ -743,7 +836,13 @@ export function mountViewer(appEl) {
   }
   root.addEventListener("input", (e) => {
     if (e.target.classList.contains("stepslider")) { state.step = STEP_NOTCHES[Number(e.target.value)] ?? state.step; const lbl = root.querySelector(".stepval"); if (lbl) lbl.textContent = stepLabel(state.step); return; }
-    if (e.target.classList.contains("crossing")) { state.crossing = Number(e.target.value) || 0; renderCurrent(); return; }
+    if (e.target.classList.contains("crossover")) {
+      const v = String(e.target.value).trim();
+      if (v === "") { state.crossingOverride = false; state.crossing = liveCrossing(); }
+      else { state.crossingOverride = true; state.crossing = Math.max(0, Number(v) || 0); }
+      const lbl = root.querySelector(".crossovlbl"); if (lbl) lbl.textContent = state.crossingOverride ? state.crossing : "live · " + state.crossing;
+      reRender(); return;
+    }
     if (e.target.classList.contains("handle")) { state.handle = e.target.value; state.stakesLocal = null; if (state.view === "marks") renderMarks(); return; }
     const dial = e.target.dataset?.dial;
     if (dial) {
@@ -753,32 +852,71 @@ export function mountViewer(appEl) {
     }
   });
 
-  // dev-dials auth-gate (Keemin 2026-07-23): the live engine dials are a dev /
-  // principal tool, not a public control. Hidden by default; shown on localhost
-  // (the dev build), or on the public site only for the signed-in principal —
-  // feature-detected via the office's keyless /api/ops/whoami (which arrives with
-  // the write release; until then the public beta simply keeps the dials hidden).
-  // No client flag can spoof it: absence of a server "yes" means hidden.
-  async function gateDevDials() {
+  // identity (Keemin 2026-07-23): one keyless /api/ops/whoami read powers two
+  // read-side behaviours. It reflects the session (an oauth cookie or a key), so:
+  //   • dev-dials gate — dials shown only on localhost or for the principal;
+  //   • stand-at filter — a signed-in resident's "Stand at" lists only THEIR
+  //     household's homes (filtered client-side from the manifest the viewer already
+  //     has); keyless spectators get the default presets, unchanged.
+  async function resolveIdentity() {
+    try { const r = await fetch("/api/ops/whoami"); if (r.ok) state.whoami = await r.json(); } catch { /* no endpoint → keyless */ }
     const toggle = $(root, ".wv-dev-toggle");
-    if (!toggle) return;
-    toggle.hidden = true;
-    if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) { toggle.hidden = false; return; }
-    try { const r = await fetch("/api/ops/whoami"); if (r.ok && (await r.json())?.principal) toggle.hidden = false; } catch { /* no endpoint → stay hidden */ }
+    if (toggle) toggle.hidden = !(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || state.whoami?.principal);
+    renderPresets();
   }
+  function renderPresets() {
+    const box = $(root, ".presets");
+    if (!box) return;
+    const handles = new Set(state.whoami?.handles ?? []);
+    let list = PRESETS;
+    if (handles.size && data?.manifest?.homes) {
+      const homes = data.manifest.homes
+        .filter((h) => handles.has(h.household) && h.grid_m)
+        .map((h) => ({ x: h.grid_m.x, y: h.grid_m.y, label: h.title ?? `${h.household}/${h.home_id}` }));
+      if (homes.length) list = homes; // your own homes; keyless keeps the defaults
+    }
+    box.innerHTML = list.map((p) => `<button class="ctl" data-x="${p.x}" data-y="${p.y}">${esc(p.label)}</button>`).join("");
+  }
+
+  // ───────── the ambient clock (crossing rollover + auto-update) ─────────
+  // The world updates AROUND the viewer. Every 30 s: roll the live crossing over a
+  // boundary (fog reseeds → the weather visibly changes), and — on the office-live
+  // source only — every other tick (~60 s) compare the fold's X-Postmark-As-Of and
+  // re-tell if the record advanced. On /WORLD or RAW we don't poll (don't hammer a
+  // CDN / GitHub). Every re-tell preserves standpoint / step / mode / dials / scroll.
+  let lastLive = liveCrossing(), tick = 0;
+  const clock = setInterval(async () => {
+    tick++;
+    const nl = liveCrossing();
+    if (nl !== lastLive) { lastLive = nl; if (!state.crossingOverride) { state.crossing = nl; reRender(`crossing ${nl}`); } }
+    if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
+      try {
+        const r = await fetch(state.dataSource);
+        const asOf = r.headers.get("x-postmark-as-of");
+        if (r.ok && asOf && asOf !== state.asOf) {
+          const json = await r.json();
+          state.asOf = asOf; data.worldState = json;
+          world = assembleWorld({ worldState: json, skeleton: data.skeleton });
+          byId = new Map(world.marks.map((m) => [m.id, m]));
+          homeSet = buildHomeSet(data.manifest, world.marks);
+          reRender("the record advanced");
+        }
+      } catch { /* a poll miss is silent — the last good fold stands */ }
+    }
+  }, 30000);
 
   // ───────── boot ─────────
   (async () => {
-    gateDevDials();
     try {
       await loadData();
       renderCurrent();
+      resolveIdentity(); // after data (the presets filter reads the manifest)
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
     }
   })();
 
-  return { rerender: renderCurrent };
+  return { rerender: renderCurrent, stop: () => clearInterval(clock) };
 }
 
 // ───────── tiny helpers (display only) ─────────
