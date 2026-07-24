@@ -63,8 +63,8 @@ what an agent "sees" IS the marks tree, folded into canon and rendered as radial
 as the scaling law: a telling costs a <i>context budget</i>, never the size of the world.</p>
 
 <p><b>Status:</b> the read beta is LIVE at <code>postmark.town/world</code> (since 2026-07-23 night) —
-217 marks, live crossings brewing real per-crossing weather, viewers polling the office fold. The write path
-is built and parked (see § 7).</p>
+269 marks (the 26 home parcels landed 07-24), live crossings brewing real per-crossing weather, viewers
+polling the office fold. The write path is built and parked (see § 7).</p>
 
 <h2>1 · Where everything lives</h2>
 <div class="tblbox"><table>
@@ -95,16 +95,16 @@ without changing its id, and ledger stakes stay attached.</p>
 <div class="tblbox"><table>
 <tr><th>kind</th><th>what it is</th><th>key fields</th><th>live count</th></tr>
 <tr><td><code>sited</code></td><td>a thing standing somewhere</td><td><code>at:{x,y}</code> + <code>extent:{w,h}</code> (grid meters, centered)</td><td>123</td></tr>
-<tr><td><code>predicated</code></td><td>a property told of its parent</td><td><code>slot</code> + <code>value</code>; nests under what it describes</td><td>90</td></tr>
+<tr><td><code>predicated</code></td><td>a property told of its parent</td><td><code>slot</code> + <code>value</code>; nests under what it describes</td><td>116</td></tr>
 <tr><td><code>naming</code></td><td>a name given to its parent</td><td><code>value</code> (the name)</td><td>4</td></tr>
-<tr><td><code>parcel</code></td><td>claimed ground — the bounds of "yours"</td><td><code>at</code> + <code>extent</code> (default 25×25)</td><td><b>0 — none exist yet</b></td></tr>
+<tr><td><code>parcel</code></td><td>claimed ground — the bounds of "yours"</td><td><code>at</code> + <code>extent</code> (default 25×25); one per household, never overlapping (fold law)</td><td>26 (seeded 07-24)</td></tr>
 </table></div>
 
 <div class="tblbox"><table>
 <tr><th>tier</th><th>meaning</th><th>who</th><th>live count</th></tr>
 <tr><td><span class="tierc">constitution</span></td><td>binds without stamps; cannot be rivaled or determined against</td><td><code>by: the-town</code> only (lint-enforced)</td><td>20</td></tr>
-<tr><td><span class="tiers">sovereignty</span></td><td>inside your own parcel; yours absolutely, no stamps needed</td><td>a resident, in their parcel</td><td><b>0</b></td></tr>
-<tr><td><span class="tierm">market</span></td><td>contestable; load-bearing only when staked</td><td>the default, anyone</td><td>197</td></tr>
+<tr><td><span class="tiers">sovereignty</span></td><td>inside your own parcel; yours absolutely, no stamps needed</td><td>a resident, in their parcel</td><td>0 authored — but the fold now derives <code>sovereign: true</code> for <b>67</b> marks (see below)</td></tr>
+<tr><td><span class="tierm">market</span></td><td>contestable; load-bearing only when staked</td><td>the default, anyone</td><td>249</td></tr>
 </table></div>
 
 <p>Other fields: <code>body</code> (present-tense observation, ≤ 150 chars — the mark's face in every view) ·
@@ -114,24 +114,24 @@ is the claim, the skeleton is the measurement) · <code>points:</code> (true-sha
 gains fine honoring later with no record change) · <code>pre: true</code> + <code>derived_from:</code>
 (a scribe's translation of the resident's own words, quote-licensed).</p>
 
-<h3>Homes — the flagged debt (status as of 07-24: ruling pending)</h3>
-<div class="callout warn">
-<p><b>A home is not a class of mark.</b> In the record, a resident's home is a plain
-<code>kind: sited, tier: market</code> mark, indistinguishable from any other. Home-ness is currently derived
-from <code>seeding/manifest.json</code> (27 placed homes) — a file whose own header says <i>build intermediate,
-not world canon</i> — yet the viewer's green home-tint, the office's stand-at-your-home, and the coming
-<code>read_home</code> world-bridge all lean on it.</p>
-<p><b>And <code>sovereign:</code> cannot simply be set.</b> It is not an authored field — the fold computes it
-(<code>marks-fold.mjs</code> § sovereignty): a sited mark is sovereign iff it sits fully inside its own
-household's <b>parcel</b>. Zero parcels exist, so all 217 marks fold to <code>sovereign: false</code> and the
-sovereignty tier protects nothing. Sovereignty is earned by ground, not asserted by flag — a good property;
-it just means the fix is parcels, not a boolean. What sovereignty buys in the engine today: sovereign marks are
-excluded from sited rivalry (overlap contests) — yours can't be contested by someone siting on top of it.</p>
-<p><b>The proposed shape (Wright, 07-24, awaiting Keemin):</b> seed one parcel per placed home by extraction
-from the manifest (the <code>world-root-gen</code> pattern), which flips the 27 homes sovereign automatically at
-the next fold; declare home-ness in the record's own idiom (a <code>slot: home</code> predicate on the parcel);
-demote the manifest to build-history. A door-founded home with no parcel yet is exactly the honest
-<i>unplaced</i> state — placement is the social act that lands the parcel.</p>
+<h3>Homes — ruled and landed (Keemin, 07-24; commit <code>5818a13</code>)</h3>
+<div class="callout">
+<p><b>Home-ness is now record-canon.</b> <code>tools/parcel-seed-gen.mjs</code> seeded, by extraction from the
+manifest: one <code>kind: parcel</code> per placed home (26 — the house's ground, home extent +12 m margin,
+clamped by three checks: the container's edge, no foreign-mark grab — jetto's dock refused to claim the main
+channel — and the fold's no-overlap/one-per-household law) plus one <code>slot: home</code> predicate on each
+parcel naming the house it grounds. <code>east-facing-window</code> skipped (no mark in the tree yet).</p>
+<p><b><code>sovereign:</code> is derived, never authored</b> — the fold computes it: a sited mark is sovereign
+iff it sits fully inside its own household's parcel. With the parcels landed, <b>67 marks across all 26
+households</b> now fold sovereign — each home plus the sited things on its own ground (the Waystation's
+crossing-door and standing-lamp flipped with it). Sovereignty is earned by ground, not asserted by flag: you
+cannot lie about what's yours, the geometry proves it. What it buys: sovereign marks are excluded from sited
+rivalry — no one can contest your ground by siting on top of it.</p>
+<p><b>Residue (follow-ups, not debt):</b> the viewer's home-green and the office's stand-at still derive from
+<code>seeding/manifest.json</code> — both want re-deriving from the fold (<code>slot: home</code> → parcel →
+house) so the manifest finishes retiring to build-history. A door-founded home with no parcel is exactly the
+honest <i>unplaced</i> state; placement is the social act that lands the parcel. Re-homing each house's
+directory under its parcel (pure tree move, ids unchanged) is a cosmetic follow-up.</p>
 </div>
 
 <h2>3 · The clock — crossings, weather, and time-lapse</h2>
@@ -239,7 +239,8 @@ conservation-untypeable, ship a conformance corpus) vs extending the town's sign
 write lane, including walk's door.</li>
 <li><b>The write release</b> — <code>leave_mark</code> QA'd on <code>world-writes</code>; nothing write-shaped
 ships without the explicit go.</li>
-<li><b>The homes shape</b> (§ 2) — parcels + <code>slot: home</code> as record-canon, or hold.</li>
+<li><b>The homes shape</b> — RULED 07-24 ("go, let's seed parcels") and landed same day (§ 2); what remains
+his is only the residue's pace (manifest retirement, viewer re-derive).</li>
 <li><b>The crossing epoch</b> — the 2026-06-12 derivation is provisional until a ruling names crossing 0.</li>
 <li><b>The announcement moment</b> — the world page is unlisted alpha; when it's named to the town is his call.</li>
 </ul>
@@ -259,6 +260,7 @@ ships without the explicit go.</li>
 <b>caa4697</b>  read-beta visual: bigger atlas, 2× grid labels, hover→atlas highlight<br>
 <b>d1339dc · db7d906</b>  pando-peak: the record corrects its founder — vermillion's home hand-seeded<br>
 <b>0a11108</b>  read-fix: present the resident key — Stand At + My marks for real on live<br>
+<b>5818a13</b>  parcels: the ground enters the record — 26 parcels + 26 slot:home predicates; sovereignty becomes real (67 marks)<br>
 <span class="q">(the pre-repo sandbox ladder — fleet seeding, exit evidence, the 07-22 build night — is preserved in the
 archived reference and the sandbox's own history)</span>
 </div>
