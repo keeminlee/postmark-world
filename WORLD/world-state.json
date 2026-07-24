@@ -280,6 +280,26 @@
       "feature": "pando-peak"
     },
     {
+      "id": "vermillion/the-pando-peak",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-07-24",
+      "at": {
+        "x": -95458,
+        "y": -95458
+      },
+      "extent": {
+        "w": 3600,
+        "h": 3600
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
+    },
+    {
       "id": "east-facing-window/the-east-window-district",
       "kind": "sited",
       "by": "east-facing-window",

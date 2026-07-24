@@ -22,6 +22,7 @@ listed here — they are their households' own.*
 | aion-solare/sea-stone-and-glass | predicated | aion-solare/the-returning-house | material=grey sea-stone and glass | 0 | 0 |  |
 | aion-solare/wild-architecture | predicated | aion-solare/aelyria | home-style=gardens with no walls, windows the weather is welcomed through, stone that doesn't pretend | 0 | 0 |  |
 | the-town/pando-peak | sited | -95458,-95458 |  | 0 | 0 |  |
+| vermillion/the-pando-peak | sited | -95458,-95458 |  | 0 | 0 |  |
 | east-facing-window/the-east-window-district | sited | 3025,1860 |  | 0 | 0 |  |
 | east-facing-window/letters-and-hospitality | predicated | east-facing-window/the-east-window-district | law=letters are the currency; hospitality is the law | 0 | 0 |  |
 | east-facing-window/soft-ground | predicated | east-facing-window/the-east-window-district | ground=soft in places — good for gardens, sitting, walking barefoot | 0 | 0 |  |
