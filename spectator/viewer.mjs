@@ -229,6 +229,22 @@ const STYLE = `
   border-radius:999px; padding:1px 8px; }
 .wv-mrow .stand:hover { background:var(--panel2); }
 
+/* the fused left pane: All / Mine filter chips + the Mine tail (elsewhere + stakes) */
+.wv-mfilter { display:flex; gap:6px; margin:0 0 12px; }
+.wv-fchip { background:transparent; border:1px solid var(--line); color:var(--dim); border-radius:999px;
+  padding:3px 15px; font-size:.72rem; letter-spacing:.05em; cursor:pointer; }
+.wv-fchip:hover { border-color:var(--amber-dark); color:var(--amber); }
+.wv-fchip.on { border-color:var(--amber); color:var(--amber); background:var(--panel2); }
+.wv-mine-tail { margin-top:4px; }
+.wv-mine-empty { margin:10px 0; font-style:italic; }
+.wv-elsewhere { display:flex; flex-direction:column; gap:6px; }
+.wv-elrow { border:1px solid var(--line); border-radius:5px; padding:7px 11px; max-width:80ch; }
+.wv-elwords { line-height:1.4; font-size:.88rem; color:var(--paper); }
+.wv-elmeta { margin-top:5px; display:flex; gap:8px; flex-wrap:wrap; align-items:baseline; }
+.wv-elmeta .stand { color:var(--amber); cursor:pointer; font-size:.74rem; border:1px solid var(--amber-dark);
+  border-radius:999px; padding:1px 8px; }
+.wv-elmeta .stand:hover { background:var(--panel2); }
+
 /* the painting */
 .wv-map { padding:18px; }
 .wv-map .wv-sticky { position:sticky; top:16px; }
@@ -283,7 +299,6 @@ const MARKUP = `
     <div class="wv-tabs">
       <button class="tab on" data-view="telling">The telling</button>
       <button class="tab" data-view="grid">Grid-true</button>
-      <button class="tab" data-view="marks">My marks</button>
     </div>
     <div class="wv-identity"></div>
     <div class="wv-standctl">
@@ -304,18 +319,12 @@ const MARKUP = `
       <div class="crossnow"></div>
       <div class="wv-where"></div>
     </div>
-    <div class="wv-marksctl" hidden>
-      <h2>Resident</h2>
-      <input class="txt handle" type="text" value="wright" spellcheck="false" autocapitalize="off">
-      <div class="wv-quiet" style="font-size:.78rem; margin-top:6px">whose marks &amp; stakes to show</div>
-    </div>
     <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
     <div class="wv-dev" hidden></div>
   </nav>
   <section class="wv-view">
     <div class="wv-telling"><div class="wv-quiet">opening your eyes…</div></div>
     <div class="wv-grid" hidden></div>
-    <div class="wv-marks" hidden></div>
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
@@ -346,6 +355,7 @@ export function mountViewer(appEl) {
     crossing: liveCrossing(),           // default to the live crossing
     crossingOverride: false,            // a dev/principal time-travel override
     view: "telling",
+    markFilter: "all",                  // "all" | "mine" — the fused left-pane filter (signed-in)
     handle: "wright",
     dials: { ...DIALS },
     stakesLocal: null,      // null=unknown, true/false after probe
@@ -495,7 +505,10 @@ export function mountViewer(appEl) {
     if (obs.inFog) return `Fog is in tonight (crossing ${radial.crossing}, thickness ${radial.fog.thickness}) — it closes the view to about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
     return `The air is clear (crossing ${radial.crossing}) — you can see about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
   }
-  function tellingCards(radial) {
+  // keep: optional predicate — under the Mine filter, only cards whose mark passes
+  // show (the telling stays otherwise identical: same order, same budget already
+  // applied by the engine, same card behaviour — the filter only narrows WHO shows).
+  function tellingCards(radial, keep = null) {
     const by = radial?.byBearing ?? {};
     // order by the compass rose where known; any coined key (a degree bearing from
     // a non-16 bearing_points dial) sorts after, so the dev pane never blanks a view
@@ -506,12 +519,17 @@ export function mountViewer(appEl) {
     let html = "";
     for (const b of keys) {
       const group = by[b]; if (!group) continue;
-      const entries = Object.values(group).flat(); if (!entries.length) continue;
+      let entries = Object.values(group).flat();
+      if (keep) entries = entries.filter(keep);
+      if (!entries.length) continue;
       html += `<div class="wv-bearing"><h3>${BEARING_LONG[b] ?? b} <span class="bshort">${b}</span></h3>`;
       for (const m of entries) html += markCell(m, { role: "fov", radialChips: true });
       html += `</div>`;
     }
-    return html || `<div class="wv-quiet">nothing tells from here — walk, or wait for clearer air.</div>`;
+    if (html) return html;
+    return keep
+      ? `<div class="wv-quiet">none of yours tells from here.</div>`
+      : `<div class="wv-quiet">nothing tells from here — walk, or wait for clearer air.</div>`;
   }
   function tallies(radial) {
     const c = radial?.counts ?? {}, agg = radial?.aggregate ?? {}, parts = [];
@@ -521,36 +539,109 @@ export function mountViewer(appEl) {
     if (agg.hidden_by_budget) parts.push(`${agg.hidden_by_budget} more the eye doesn't sort out`);
     return parts.join(" · ");
   }
+  // Is this mark one of the signed-in household's? (Wright's ruling: household ∈
+  // whoami handles; we also match m.by so a mark you AUTHORED counts even if its
+  // household field ever differs — reuses the read-fix's handles-set idea.)
+  function isMine(m) {
+    const hs = state.whoami?.handles;
+    if (!hs || !hs.length) return false;
+    const set = hs instanceof Set ? hs : new Set(hs);
+    return set.has(m.household) || set.has(m.by);
+  }
   function renderTelling() {
     const box = $(root, ".wv-telling");
+    const signedIn = (state.whoami?.handles ?? []).length > 0;
+    const mine = signedIn && state.markFilter === "mine";
     try {
       const name = state.cam.x === 0 && state.cam.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
       const e = openYourEyes({ x: state.cam.x, y: state.cam.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
       lastRadial = e.radial;
       const within = e.radial.within ?? [];
       const obs = e.radial.observer ?? {};
-      // 1. the containment ladder as cells, sorted by parent priority — the marks
-      // encompassing where you stand, root (the frame, its light aspect) → innermost.
+      // the All / Mine filter — a signed-in affordance (keyless has no "mine").
+      const chips = signedIn
+        ? `<div class="wv-mfilter"><button class="wv-fchip${!mine ? " on" : ""}" data-mfilter="all">All</button><button class="wv-fchip${mine ? " on" : ""}" data-mfilter="mine">Mine</button></div>`
+        : "";
+      // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
+      // context even under Mine (filtering the frame to yours would usually empty
+      // "where you stand"); the filter narrows the visible marks, not your footing.
       let ladder = "";
       within.forEach((w, i) => {
         const m = byId.get(w.id) ?? w;
         ladder += markCell(m, { role: i === 0 ? "frame" : "ladder", annotation: i === 0 ? lightStateLine(obs) : "" });
       });
       // 2. the world-law cells whose mechanic has live state this crossing — the fog
-      // sentence IS the-town/the-fog's cell (body + tonight's reading).
+      // sentence IS the-town/the-fog's cell (body + tonight's reading). Context too.
       const fog = byId.get("the-town/the-fog");
       if (fog) ladder += markCell(fog, { role: "law", annotation: fogStateLine(e.radial, obs) });
-      // 3. then the visible rest, outward by bearing.
-      box.innerHTML =
-        `<div class="wv-section-lbl">where you stand — the frame inward</div>`
+      // 3. then the visible rest, outward by bearing — under Mine, only yours.
+      box.innerHTML = chips
+        + `<div class="wv-section-lbl">where you stand — the frame inward</div>`
         + `<div class="wv-ladder-cells">${ladder}</div>`
-        + `<div class="wv-section-lbl">what tells from here</div>`
-        + `<div class="wv-cards">${tellingCards(e.radial)}</div>`
+        + `<div class="wv-section-lbl">what tells from here${mine ? " · yours" : ""}</div>`
+        + `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
         + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`;
+      if (mine) renderMineTail(box, e.radial);  // elsewhere index + stakes, appended
       drawOverlay(e.radial);
     } catch (err) {
       box.innerHTML = `<div class="wv-err">the telling failed: ${esc(err?.message ?? err)}</div>`;
     }
+  }
+  // The Mine tail: your authored marks BEYOND this sight (a thin index — first
+  // words + id + stand-there, no bodies/expansion), then the stakes section.
+  function elsewhereRow(m) {
+    const words = String(m.body ?? m.label ?? "").replace(/\s+/g, " ").trim().split(" ").slice(0, 12).join(" ");
+    const standable = m.at && typeof m.at.x === "number";
+    return `<div class="wv-elrow">
+      <div class="wv-elwords">${words ? esc(words) : `<span class="wv-quiet">(no words)</span>`}</div>
+      <div class="wv-elmeta"><span class="wv-cid">${esc(m.id)}</span>${standable ? `<span class="stand" data-x="${m.at.x}" data-y="${m.at.y}">stand here ▸</span>` : ""}</div>
+    </div>`;
+  }
+  function renderMineTail(box, radial) {
+    // which of your marks are already in sight (so "elsewhere" = the rest)
+    const shown = new Set();
+    (radial.within ?? []).forEach((w) => shown.add(w.id));
+    const by = radial.byBearing ?? {};
+    for (const b of Object.keys(by)) for (const m of Object.values(by[b]).flat()) shown.add(m.id);
+    const yours = (world.marks ?? []).filter(isMine);
+    const elsewhere = yours.filter((m) => m.id && !shown.has(m.id));
+    const anyInView = yours.some((m) => shown.has(m.id));
+
+    let tail = "";
+    if (!anyInView && !elsewhere.length)
+      tail += `<div class="wv-quiet wv-mine-empty">nothing of yours tells from here yet — leave_mark is coming.</div>`;
+    if (elsewhere.length) {
+      tail += `<div class="wv-section-lbl">elsewhere — ${elsewhere.length} of yours beyond this sight</div>`;
+      tail += `<div class="wv-elsewhere">${elsewhere.map(elsewhereRow).join("")}</div>`;
+    }
+    // stakes — kept exactly as the retired My-marks tab had it: local-only,
+    // feature-detected, single-holder. TODO(economy-home): the stakes/economy view
+    // wants its own surface; it rides here for now (zero new surface, zero regression).
+    tail += `<div class="wv-section-lbl">marks your stamps are staked on</div><div class="wv-stakes-slot"><div class="wv-quiet">checking the stamp-ledger…</div></div>`;
+    const tailEl = document.createElement("div");
+    tailEl.className = "wv-mine-tail";
+    tailEl.innerHTML = tail;
+    box.appendChild(tailEl);
+    fillStakes(box);
+  }
+  async function fillStakes(box) {
+    const h = (state.handle || "").trim();
+    const slot = $(box, ".wv-stakes-slot");
+    if (!slot) return;
+    const local = await probeStakes();
+    if (!local) { slot.innerHTML = `<div class="wv-quiet">the stakes view reads the town's stamp-ledger — a local-only feature; it isn't served on the public island.</div>`; return; }
+    try {
+      const r = await fetch(`/api/stakes?holder=${encodeURIComponent(h)}`);
+      const d = await r.json();
+      const stakes = d.stakes ?? [];
+      if (!stakes.length) { slot.innerHTML = `<div class="wv-quiet">${esc(h)} holds no stakes on any mark yet (staking is first-class but rare so far).</div>`; return; }
+      const byIdMap = new Map((world.marks ?? []).map((m) => [m.id, m]));
+      slot.innerHTML = stakes.map((s) => {
+        const m = byIdMap.get(s.mark);
+        return `<div class="wv-elrow"><div class="wv-elwords">${esc(m?.body ?? "(a mark not in the current fold)")}</div>
+          <div class="wv-elmeta"><span class="wv-chip stamps">${s.n > 0 ? "+" : ""}${s.n} staked</span><span class="wv-cid">${esc(s.mark)}</span>${m?.at ? `<span class="stand" data-x="${m.at.x}" data-y="${m.at.y}">stand here ▸</span>` : ""}</div></div>`;
+      }).join("");
+    } catch (e) { slot.innerHTML = `<div class="wv-err">stakes failed: ${esc(e?.message ?? e)}</div>`; }
   }
 
   // ───────── investigate (in-place expansion inside a card) ─────────
@@ -656,64 +747,9 @@ export function mountViewer(appEl) {
     catch { state.stakesLocal = false; }
     return state.stakesLocal;
   }
-  function markRow(m, standable) {
-    const tier = tierOf(m);
-    return `<div class="wv-mrow t-${tier}${m.kind === "sited" || m.kind === "parcel" ? "" : " pred"}">
-      <div class="mbody">${esc(m.body ?? "")}</div>
-      <div class="mmeta">
-        <span class="wv-chip">${esc(m.kind)}</span>
-        ${m.weight > 0 ? `<span class="wv-chip stamps">✦${m.weight}</span>` : `<span class="wv-chip">✦0</span>`}
-        ${tierChip(tier)}
-        <span class="wv-cid">${esc(m.id)}</span>
-        ${standable ? `<span class="stand" data-x="${m.at.x}" data-y="${m.at.y}">stand here ▸</span>` : ""}
-      </div></div>`;
-  }
-  async function renderMarks() {
-    const box = $(root, ".wv-marks");
-    const h = state.handle.trim();
-    const mine = (world.marks ?? []).filter((m) => m.by === h);
-    const sited = mine.filter((m) => m.at && (m.kind === "sited" || m.kind === "parcel"));
-    const desc = mine.filter((m) => !(m.at && (m.kind === "sited" || m.kind === "parcel")));
-    let html = `<div class="wv-marks-head"><h2>${esc(h)}</h2><span class="wv-quiet">${mine.length} mark${mine.length === 1 ? "" : "s"} on the record</span></div>`;
-    html += `<div class="wv-section-title">marks ${esc(h)} authored — sited</div>`;
-    html += sited.length ? sited.map((m) => markRow(m, true)).join("") : `<div class="wv-quiet">no sited marks.</div>`;
-    if (desc.length) {
-      html += `<div class="wv-section-title">told of other marks (predicated · naming)</div>`;
-      html += desc.map((m) => markRow(m, false)).join("");
-    }
-    // stakes half — local-only, feature-detected
-    html += `<div class="wv-section-title">marks ${esc(h)}'s stamps are staked on</div>`;
-    html += `<div class="wv-stakes-slot"><div class="wv-quiet">checking the stamp-ledger…</div></div>`;
-    box.innerHTML = html;
-
-    const local = await probeStakes();
-    const slot = $(root, ".wv-stakes-slot");
-    if (!slot) return;
-    if (!local) {
-      slot.innerHTML = `<div class="wv-quiet">the stakes view reads the town's stamp-ledger — a local-only feature; it isn't served on the public island.</div>`;
-      return;
-    }
-    try {
-      const r = await fetch(`/api/stakes?holder=${encodeURIComponent(h)}`);
-      const d = await r.json();
-      const stakes = d.stakes ?? [];
-      if (!stakes.length) {
-        slot.innerHTML = `<div class="wv-quiet">${esc(h)} holds no stakes on any mark yet (the ledger records 0 stake lines — staking is first-class but rare so far).</div>`;
-        return;
-      }
-      const byId = new Map((world.marks ?? []).map((m) => [m.id, m]));
-      slot.innerHTML = stakes.map((s) => {
-        const m = byId.get(s.mark);
-        return `<div class="wv-mrow">
-          <div class="mbody">${esc(m?.body ?? "(a mark not in the current fold)")}</div>
-          <div class="mmeta"><span class="wv-chip stamps">${s.n > 0 ? "+" : ""}${s.n} staked</span>
-          <span class="wv-cid">${esc(s.mark)}</span>
-          ${m?.at ? `<span class="stand" data-x="${m.at.x}" data-y="${m.at.y}">stand here ▸</span>` : ""}</div></div>`;
-      }).join("");
-    } catch (e) {
-      slot.innerHTML = `<div class="wv-err">stakes failed: ${esc(e?.message ?? e)}</div>`;
-    }
-  }
+  // (the standalone "My marks" view retired 2026-07-24 — it fused into the telling
+  // as the All / Mine filter; its content now lives in renderTelling's Mine tail.
+  // probeStakes above still feeds the stakes section there.)
 
   // ───────── the painting (atlas minimap) ─────────
   async function loadMinimap() {
@@ -807,8 +843,7 @@ export function mountViewer(appEl) {
       : `crossing <b>${state.crossing}</b> <span class="crosslive-tag">· live</span>`;
     if (state.view === "telling") renderTelling();
     else if (state.view === "grid") renderGrid();
-    else if (state.view === "marks") renderMarks();
-    if (state.view !== "marks" && !mapCtx) loadMinimap();
+    if (!mapCtx) loadMinimap();
   }
   // a re-render that the world does TO the viewer, not the viewer to itself: it must
   // preserve where you stand, your step, mode, dials, and scroll (Wright's hard UX
@@ -831,11 +866,6 @@ export function mountViewer(appEl) {
     for (const t of root.querySelectorAll(".wv-tabs .tab")) t.classList.toggle("on", t.dataset.view === v);
     $(root, ".wv-telling").hidden = v !== "telling";
     $(root, ".wv-grid").hidden = v !== "grid";
-    $(root, ".wv-marks").hidden = v !== "marks";
-    $(root, ".wv-standctl").hidden = v === "marks";
-    $(root, ".wv-marksctl").hidden = v !== "marks";
-    $(root, ".wv-main").classList.toggle("no-map", v === "marks");
-    $(root, ".wv-map").hidden = v === "marks";
     renderCurrent();
   }
 
@@ -844,12 +874,13 @@ export function mountViewer(appEl) {
   root.addEventListener("click", (e) => {
     const tab = e.target.closest(".wv-tabs .tab");
     if (tab) { switchView(tab.dataset.view); return; }
-    // identity: sign in with a key / use it / sign out; pick which of your handles
+    // the fused left-pane filter: All / Mine — re-tell in place, keep the scroll.
+    const fchip = e.target.closest(".wv-fchip");
+    if (fchip) { state.markFilter = fchip.dataset.mfilter; const y = window.scrollY; renderTelling(); window.scrollTo(0, y); return; }
+    // identity: sign in with a key / use it / sign out
     if (e.target.closest(".wv-signin")) { const f = $(root, ".wv-keyfield"); if (f) { f.hidden = !f.hidden; f.querySelector(".keyinput")?.focus(); } return; }
     if (e.target.closest(".keyuse")) { const v = root.querySelector(".keyinput")?.value.trim(); if (v) { setKey(v); resolveIdentity(); } return; }
     if (e.target.closest(".wv-signout")) { setKey(null); state.whoami = null; resolveIdentity(); return; }
-    const hopt = e.target.closest(".handleopt");
-    if (hopt) { state.handle = hopt.dataset.handle; state.stakesLocal = null; for (const b of root.querySelectorAll(".handleopt")) b.classList.toggle("on", b === hopt); renderMarks(); return; }
     // investigate: back-crumb / tree node / card
     const back = e.target.closest(".wv-back");
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
@@ -887,7 +918,6 @@ export function mountViewer(appEl) {
       const lbl = root.querySelector(".crossovlbl"); if (lbl) lbl.textContent = state.crossingOverride ? state.crossing : "live · " + state.crossing;
       reRender(); return;
     }
-    if (e.target.classList.contains("handle")) { state.handle = e.target.value; state.stakesLocal = null; if (state.view === "marks") renderMarks(); return; }
     const dial = e.target.dataset?.dial;
     if (dial) {
       state.dials = { ...state.dials, [dial]: Number(e.target.value) };
@@ -914,10 +944,13 @@ export function mountViewer(appEl) {
     try { const r = await fetch("/api/ops/whoami", { headers: authHeaders() }); state.whoami = r.ok ? await r.json() : null; } catch { state.whoami = null; }
     const toggle = $(root, ".wv-dev-toggle");
     if (toggle) toggle.hidden = !(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || state.whoami?.principal);
+    // keep state.handle valid (the stakes section's holder); no "mine" when signed out.
+    const handles = state.whoami?.handles ?? [];
+    if (handles.length && !handles.includes(state.handle)) state.handle = handles[0];
+    if (!handles.length) state.markFilter = "all";
     renderPresets();
     renderIdentity();
-    renderMarksControl();
-    if (state.view === "marks") renderMarks();
+    if (state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
   }
   // the sign-in affordance — signed out: a key field (localStorage); signed in: who
   // you are + sign out. Unobtrusive, top of the nav.
@@ -929,22 +962,6 @@ export function mountViewer(appEl) {
       ? `<div class="wv-id-in">signed in — <b>${handles.map(esc).join(", ")}</b> <span class="wv-signout" role="button" tabindex="0">sign out</span></div>`
       : `<span class="wv-signin" role="button" tabindex="0">◔ sign in with your key</span>
          <div class="wv-keyfield" hidden><input class="txt keyinput" type="password" placeholder="resident key" spellcheck="false" autocapitalize="off"><button class="ctl keyuse">use</button></div>`;
-  }
-  // My marks holder: signed in → only your own residents (no free-typed handle);
-  // keyless → the free-typed spectator input, unchanged.
-  function renderMarksControl() {
-    const box = $(root, ".wv-marksctl");
-    if (!box) return;
-    const handles = state.whoami?.handles ?? [];
-    if (handles.length) {
-      if (!handles.includes(state.handle)) state.handle = handles[0];
-      box.innerHTML = `<h2>Your marks</h2>`
-        + `<div class="handlepick">${handles.map((h) => `<button class="ctl handleopt${h === state.handle ? " on" : ""}" data-handle="${esc(h)}">${esc(h)}</button>`).join("")}</div>`;
-    } else {
-      box.innerHTML = `<h2>Resident</h2>`
-        + `<input class="txt handle" type="text" value="${esc(state.handle)}" spellcheck="false" autocapitalize="off">`
-        + `<div class="wv-quiet" style="font-size:.78rem; margin-top:6px">whose marks &amp; stakes to show</div>`;
-    }
   }
   function renderPresets() {
     const box = $(root, ".presets");
