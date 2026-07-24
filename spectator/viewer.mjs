@@ -242,7 +242,19 @@ const STYLE = `
 .ov-dot { fill:#ff2418; stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:#ff2418; stroke-width:3; opacity:.55; }
 .wv-hl-glow { fill:#7ba7e0; opacity:.30; }
-.wv-hl-core { fill:none; stroke:#9cc0f0; stroke-width:4; opacity:.9; }
+.wv-hl-core { fill:none; stroke:#9cc0f0; stroke-width:4; opacity:.9; vector-effect:non-scaling-stroke; }
+/* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
+.wv-maphead { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.wv-mapctl { display:flex; gap:5px; }
+.wv-mapctl .ctl { font-size:.68rem; padding:2px 8px; }
+.wv-mapctl .ctl.on { background:var(--amber-dark); color:var(--night); border-color:var(--amber); }
+.wv-minimap.pannable { cursor:grab; }
+.wv-minimap.panning { cursor:grabbing; }
+.wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
+.wv-gridline.major { stroke-opacity:.32; }
+.wv-gridlbl { fill:#e8c56a; opacity:.55; font-family:Consolas,Menlo,monospace; }
+.ov-reach { vector-effect:non-scaling-stroke; }
+.ov-halo { vector-effect:non-scaling-stroke; }
 
 .wv-nav .wv-identity { margin:10px 0 2px; font-size:.8rem; }
 .wv-nav .wv-signin { color:var(--amber-dark); cursor:pointer; }
@@ -319,10 +331,17 @@ const MARKUP = `
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
-      <h2>The painting</h2>
+      <div class="wv-maphead">
+        <h2>The painting</h2>
+        <div class="wv-mapctl">
+          <button class="ctl wv-map-home" title="fit the whole painting">⌂ fit</button>
+          <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖ follow</button>
+          <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors"># grid</button>
+        </div>
+      </div>
       <div class="wv-minimap"><div class="loading">fetching the painting…</div></div>
-      <p class="wv-mapnote">the atlas, for bearings — <b>the telling is the truth</b>. Click the map to stand there.
-        The dashed ring is how far today's air lets you see.</p>
+      <p class="wv-mapnote">the atlas, for bearings — <b>the telling is the truth</b>. Click to stand there;
+        drag to pan, scroll to zoom. The dashed ring is how far today's air lets you see.</p>
     </div>
   </aside>
 </div>
@@ -735,6 +754,12 @@ export function mountViewer(appEl) {
         const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
         if (hh && !/^(https?:)?\//.test(hh)) { im.setAttribute("href", new URL(hh, atlasBase).pathname); im.removeAttribute("xlink:href"); }
       });
+      // the survey grid — the FIRST derived layer: drawn from the registration
+      // (origin + scale), never traced from the paint. Sits under the overlay.
+      const gridLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      gridLayer.setAttribute("id", "wv-grid-layer");
+      gridLayer.setAttribute("hidden", "");
+      svg.appendChild(gridLayer);
       const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
       overlay.setAttribute("id", "wv-overlay");
       svg.appendChild(overlay);
@@ -745,13 +770,127 @@ export function mountViewer(appEl) {
       hlLayer.setAttribute("id", "wv-hl-layer");
       svg.appendChild(hlLayer);
       boxEl.innerHTML = ""; boxEl.appendChild(svg);
-      mapCtx = { svg, overlay, hlLayer, originPx, mPerPx };
-      svg.addEventListener("click", (e) => {
+      boxEl.classList.add("pannable");
+
+      // ── the viewport (P2 convergence): the viewBox IS the camera — wheel zooms
+      // toward the cursor, drag pans, a short press stands you there, follow keeps
+      // the view on your standpoint. Google-maps physics, zero libraries.
+      let vb = (svg.getAttribute("viewBox") ?? "").split(/[\s,]+/).map(Number);
+      if (vb.length !== 4 || vb.some((n) => !Number.isFinite(n))) {
+        const bb = svg.getBBox();
+        vb = [bb.x, bb.y, bb.width, bb.height];
+      }
+      const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
+      const view = { ...full };
+      mapCtx = { svg, overlay, hlLayer, gridLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, hlId: null, _tweening: false };
+      let tween = null;
+      function applyView() {
+        svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
+        mapCtx.zoomK = full.w / view.w;
+        sizeGridLabels();
+        if (lastRadial) drawOverlay(lastRadial);
+        if (mapCtx.hlId) highlightOnMap(mapCtx.hlId);
+      }
+      function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = null; } mapCtx._tweening = false; }
+      function tweenTo(target, ms = 280) {
+        stopTween(); mapCtx._tweening = true;
+        const from = { ...view }, t0 = performance.now();
+        const ease = (t) => 1 - Math.pow(1 - t, 3);
+        (function step(now) {
+          const t = Math.min(1, (now - t0) / ms), k = ease(t);
+          view.x = from.x + (target.x - from.x) * k; view.y = from.y + (target.y - from.y) * k;
+          view.w = from.w + (target.w - from.w) * k; view.h = from.h + (target.h - from.h) * k;
+          applyView();
+          if (t < 1) tween = requestAnimationFrame(step); else { tween = null; mapCtx._tweening = false; }
+        })(t0);
+      }
+      const camPx = () => ({ x: originPx.x + state.cam.x / mPerPx, y: originPx.y + state.cam.y / mPerPx });
+      mapCtx.lockOn = (animate = true) => {
+        const c = camPx();
+        const w = Math.min(view.w, full.w / 4), h = w * (full.h / full.w);
+        const cx = view.x + view.w / 2, cy = view.y + view.h / 2;
+        if (Math.hypot(c.x - cx, c.y - cy) < view.w * 0.01 && Math.abs(w - view.w) < full.w * 0.01) return;
+        const target = { x: c.x - w / 2, y: c.y - h / 2, w, h };
+        if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
+      };
+      mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
+      svg.addEventListener("wheel", (e) => {
+        e.preventDefault(); stopTween();
+        const k = Math.pow(1.0015, e.deltaY);
+        const w = Math.min(full.w * 1.1, Math.max(full.w / 24, view.w * k));
+        const scale = w / view.w;
+        const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+        const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+        view.x = p.x - (p.x - view.x) * scale; view.y = p.y - (p.y - view.y) * scale;
+        view.w = w; view.h = view.h * scale;
+        applyView();
+      }, { passive: false });
+      // drag = pan; a press that travels <6px = the stand-here click (both live on
+      // one pointer stream so neither steals the other)
+      let press = null;
+      svg.addEventListener("pointerdown", (e) => {
+        stopTween();
+        press = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
+        svg.setPointerCapture(e.pointerId);
+      });
+      svg.addEventListener("pointermove", (e) => {
+        if (!press || e.pointerId !== press.id) return;
+        const dx = e.clientX - press.x, dy = e.clientY - press.y;
+        if (!press.moved && Math.hypot(dx, dy) < 6) return;
+        press.moved = true; boxEl.classList.add("panning");
+        const r = svg.getBoundingClientRect();
+        view.x -= dx * (view.w / r.width); view.y -= dy * (view.h / r.height);
+        press.x = e.clientX; press.y = e.clientY;
+        applyView();
+      });
+      svg.addEventListener("pointerup", (e) => {
+        if (!press || e.pointerId !== press.id) return;
+        const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
+        if (wasDrag) return;
         const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
         const p = pt.matrixTransform(svg.getScreenCTM().inverse());
         state.cam = { x: Math.round((p.x - originPx.x) * mPerPx), y: Math.round((p.y - originPx.y) * mPerPx) };
         renderCurrent();
       });
+      svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
+
+      // the grid: 1 km lines, 5 km majors, labelled in the town's own directions
+      // (x grows east, y grows south; 0 is Ferry's crossing)
+      function gridLabel(m, ew) {
+        if (m === 0) return "⌖ 0";
+        const n = Math.abs(m) / 1000;
+        return ew ? `${n} km ${m > 0 ? "E" : "W"}` : `${n} km ${m > 0 ? "S" : "N"}`;
+      }
+      function buildGridLayer() {
+        const mx0 = (full.x - originPx.x) * mPerPx, mx1 = (full.x + full.w - originPx.x) * mPerPx;
+        const my0 = (full.y - originPx.y) * mPerPx, my1 = (full.y + full.h - originPx.y) * mPerPx;
+        const step = 1000, major = 5000;
+        let s = "";
+        for (let m = Math.ceil(mx0 / step) * step; m <= mx1; m += step) {
+          const x = originPx.x + m / mPerPx, big = m % major === 0;
+          s += `<line x1="${x}" y1="${full.y}" x2="${x}" y2="${full.y + full.h}" class="wv-gridline${big ? " major" : ""}"/>`;
+          if (big) s += `<text x="${x + 4}" y="${full.y + 26}" class="wv-gridlbl" data-gl>${gridLabel(m, true)}</text>`;
+        }
+        for (let m = Math.ceil(my0 / step) * step; m <= my1; m += step) {
+          const y = originPx.y + m / mPerPx, big = m % major === 0;
+          s += `<line x1="${full.x}" y1="${y}" x2="${full.x + full.w}" y2="${y}" class="wv-gridline${big ? " major" : ""}"/>`;
+          if (big) s += `<text x="${full.x + 6}" y="${y - 5}" class="wv-gridlbl" data-gl>${gridLabel(m, false)}</text>`;
+        }
+        gridLayer.innerHTML = s;
+        sizeGridLabels();
+      }
+      function sizeGridLabels() {
+        const fs = Math.max(11, 22 / Math.sqrt(mapCtx.zoomK || 1));
+        gridLayer.querySelectorAll("[data-gl]").forEach((t) => t.setAttribute("font-size", fs));
+      }
+      mapCtx.toggleGrid = () => {
+        if (!gridLayer.childNodes.length) buildGridLayer();
+        const on = gridLayer.hasAttribute("hidden");
+        if (on) gridLayer.removeAttribute("hidden"); else gridLayer.setAttribute("hidden", "");
+        return on;
+      };
+
+      applyView();
       if (lastRadial) drawOverlay(lastRadial);
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
@@ -760,26 +899,32 @@ export function mountViewer(appEl) {
   function drawOverlay(radial) {
     if (!mapCtx) return;
     const { overlay, originPx, mPerPx } = mapCtx;
+    // markers shrink gently as the camera closes in, so a zoomed street never
+    // drowns under full-map-sized pips (the reach ring stays true-scale — it IS a distance)
+    const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
     const px = (m) => ({ x: originPx.x + m.x / mPerPx, y: originPx.y + m.y / mPerPx });
     const me = px(state.cam), reachPx = (radial?.sightReachM ?? 0) / mPerPx;
     let s = `<circle cx="${me.x}" cy="${me.y}" r="${reachPx}" class="ov-reach"/>`;
     for (const bands of Object.values(radial?.byBearing ?? {}))
       for (const arr of Object.values(bands))
-        for (const m of arr) { if (!m.at || typeof m.at.x !== "number") continue; const p = px(m.at); s += `<circle cx="${p.x}" cy="${p.y}" r="11" class="ov-pip"><title>${esc(m.id)}</title></circle>`; }
-    s += `<circle cx="${me.x}" cy="${me.y}" r="17" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="36" class="ov-halo"/>`;
+        for (const m of arr) { if (!m.at || typeof m.at.x !== "number") continue; const p = px(m.at); s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip"><title>${esc(m.id)}</title></circle>`; }
+    s += `<circle cx="${me.x}" cy="${me.y}" r="${17 / k}" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="${36 / k}" class="ov-halo"/>`;
     overlay.innerHTML = s;
+    if (mapCtx.follow && mapCtx.lockOn && !mapCtx._tweening) mapCtx.lockOn();
   }
   // wash a mark blue on the painting — a soft glow at its position (cheap and it
   // reads); null clears. Points-ring/extent could be washed as a shape later, but
   // a glow at the at-point is the "SUPER cool if not too hard" that stays cheap.
   function highlightOnMap(id) {
     if (!mapCtx?.hlLayer) return;
+    mapCtx.hlId = id || null;
     const m = id && byId.get(id);
     if (!m?.at) { mapCtx.hlLayer.innerHTML = ""; return; }
+    const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
     const p = { x: mapCtx.originPx.x + m.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.at.y / mapCtx.mPerPx };
     mapCtx.hlLayer.innerHTML =
-      `<circle cx="${p.x}" cy="${p.y}" r="46" class="wv-hl-glow"/>`
-      + `<circle cx="${p.x}" cy="${p.y}" r="22" class="wv-hl-core"/>`;
+      `<circle cx="${p.x}" cy="${p.y}" r="${46 / k}" class="wv-hl-glow"/>`
+      + `<circle cx="${p.x}" cy="${p.y}" r="${22 / k}" class="wv-hl-core"/>`;
   }
 
   // ───────── dev pane ─────────
@@ -844,6 +989,12 @@ export function mountViewer(appEl) {
   root.addEventListener("click", (e) => {
     const tab = e.target.closest(".wv-tabs .tab");
     if (tab) { switchView(tab.dataset.view); return; }
+    // the viewport controls (P2): fit / follow / grid
+    if (e.target.closest(".wv-map-home")) { mapCtx?.fitAll?.(); return; }
+    const fbtn = e.target.closest(".wv-map-follow");
+    if (fbtn) { if (!mapCtx) return; mapCtx.follow = !mapCtx.follow; fbtn.classList.toggle("on", mapCtx.follow); if (mapCtx.follow) mapCtx.lockOn(); return; }
+    const gbtn = e.target.closest(".wv-map-grid");
+    if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
     // identity: sign in with a key / use it / sign out; pick which of your handles
     if (e.target.closest(".wv-signin")) { const f = $(root, ".wv-keyfield"); if (f) { f.hidden = !f.hidden; f.querySelector(".keyinput")?.focus(); } return; }
     if (e.target.closest(".keyuse")) { const v = root.querySelector(".keyinput")?.value.trim(); if (v) { setKey(v); resolveIdentity(); } return; }
