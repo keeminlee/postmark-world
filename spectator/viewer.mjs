@@ -1126,10 +1126,8 @@ export function mountViewer(appEl) {
     // the fused left-pane filter: All / Mine — re-tell in place, keep the scroll.
     const fchip = e.target.closest(".wv-fchip");
     if (fchip) { state.markFilter = fchip.dataset.mfilter; const y = window.scrollY; renderTelling(); window.scrollTo(0, y); return; }
-    // identity: sign in with a key / use it / sign out
-    if (e.target.closest(".wv-signin")) { const f = $(root, ".wv-keyfield"); if (f) { f.hidden = !f.hidden; f.querySelector(".keyinput")?.focus(); } return; }
-    if (e.target.closest(".keyuse")) { const v = root.querySelector(".keyinput")?.value.trim(); if (v) { setKey(v); resolveIdentity(); } return; }
-    if (e.target.closest(".wv-signout")) { setKey(null); state.whoami = null; resolveIdentity(); return; }
+    // (key sign-in UI removed 2026-07-24 — identity comes from the island's
+    // GitHub pill via the pm_key bridge; the viewer collects no credentials)
     // investigate: back-crumb / tree node / card
     const back = e.target.closest(".wv-back");
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
@@ -1187,7 +1185,6 @@ export function mountViewer(appEl) {
   // key returns to keyless spectator. THIS is what was missing live — the viewer
   // fetched whoami with no credential, so every visitor read as keyless.
   const pmKey = () => { try { return localStorage.getItem("pm_key") || null; } catch { return null; } };
-  const setKey = (k) => { try { k ? localStorage.setItem("pm_key", k) : localStorage.removeItem("pm_key"); } catch { /* private mode */ } };
   const authHeaders = () => { const k = pmKey(); return k ? { Authorization: "Bearer " + k } : {}; };
   async function resolveIdentity() {
     try { const r = await fetch("/api/ops/whoami", { headers: authHeaders() }); state.whoami = r.ok ? await r.json() : null; } catch { state.whoami = null; }
@@ -1204,13 +1201,16 @@ export function mountViewer(appEl) {
   // the sign-in affordance — signed out: a key field (localStorage); signed in: who
   // you are + sign out. Unobtrusive, top of the nav.
   function renderIdentity() {
+    // Key-paste sign-in REMOVED from the UI (Keemin 2026-07-24 eve) — identity
+    // arrives via the island's GitHub sign-in (the bridge fills pm_key) or, in
+    // dev, by setting localStorage directly. The viewer only *displays* who you
+    // are; it no longer collects credentials, and sign-out lives with the pill.
     const box = $(root, ".wv-identity");
     if (!box) return;
     const handles = state.whoami?.handles ?? [];
     box.innerHTML = handles.length
-      ? `<div class="wv-id-in">signed in — <b>${handles.map(esc).join(", ")}</b> <span class="wv-signout" role="button" tabindex="0">sign out</span></div>`
-      : `<span class="wv-signin" role="button" tabindex="0">◔ sign in with your key</span>
-         <div class="wv-keyfield" hidden><input class="txt keyinput" type="password" placeholder="resident key" spellcheck="false" autocapitalize="off"><button class="ctl keyuse">use</button></div>`;
+      ? `<div class="wv-id-in">signed in — <b>${handles.map(esc).join(", ")}</b></div>`
+      : "";
   }
   function renderPresets() {
     const box = $(root, ".presets");
