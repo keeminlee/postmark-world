@@ -84,7 +84,7 @@ const STYLE = `
 .wv-alpha { border:1px solid rgba(216,138,122,.5); border-left-width:4px; border-radius:5px;
   margin:16px 22px 0; padding:9px 14px; font-size:.84rem; line-height:1.5; color:var(--dim); max-width:92ch; }
 .wv-alpha b { color:var(--err); letter-spacing:.08em; }
-.wv-main { display:grid; grid-template-columns:236px minmax(0,1fr) 400px; gap:0; align-items:start; }
+.wv-main { display:grid; grid-template-columns:236px minmax(0,1fr) 600px; gap:0; align-items:start; }
 .wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
 @media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
   .wv-map { grid-column:1 / -1; border-top:1px solid var(--line); } .wv-map .wv-sticky { position:static; } }
@@ -209,7 +209,7 @@ const STYLE = `
 .wv-foot.t-constitution { fill:rgba(123,167,224,.12); stroke:var(--blue); }
 .wv-foot.t-home { fill:rgba(132,201,143,.14); stroke:var(--green); }
 .wv-foot.sig { stroke:#fff3cf; }
-.wv-plabel { fill:var(--paper); font:11px Georgia,serif; opacity:.85; pointer-events:none; }
+.wv-plabel { fill:var(--paper); font:21px Georgia,serif; opacity:.9; pointer-events:none; paint-order:stroke; stroke:var(--night); stroke-width:3; }
 .wv-axis { fill:var(--dim); font:11px Georgia,serif; opacity:.6; }
 .wv-gridnote { color:var(--dim); font-size:.8rem; margin-top:12px; max-width:70ch; text-align:center; font-style:italic; }
 
@@ -241,6 +241,8 @@ const STYLE = `
 .ov-pip { fill:var(--amber); opacity:.65; }
 .ov-dot { fill:#ff2418; stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:#ff2418; stroke-width:3; opacity:.55; }
+.wv-hl-glow { fill:#7ba7e0; opacity:.30; }
+.wv-hl-core { fill:none; stroke:#9cc0f0; stroke-width:4; opacity:.9; }
 
 .wv-nav .crossnow { font-size:.86rem; color:var(--paper); }
 .wv-nav .crossnow b { color:var(--amber); font-variant-numeric:tabular-nums; }
@@ -723,8 +725,14 @@ export function mountViewer(appEl) {
       const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
       overlay.setAttribute("id", "wv-overlay");
       svg.appendChild(overlay);
+      // a dedicated highlight layer, above the overlay — a hovered/clicked mark
+      // washes blue on the painting (viewer↔atlas linkage). Kept separate so the
+      // per-render overlay redraw never wipes it.
+      const hlLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      hlLayer.setAttribute("id", "wv-hl-layer");
+      svg.appendChild(hlLayer);
       boxEl.innerHTML = ""; boxEl.appendChild(svg);
-      mapCtx = { svg, overlay, originPx, mPerPx };
+      mapCtx = { svg, overlay, hlLayer, originPx, mPerPx };
       svg.addEventListener("click", (e) => {
         const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
         const p = pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -747,6 +755,18 @@ export function mountViewer(appEl) {
         for (const m of arr) { if (!m.at || typeof m.at.x !== "number") continue; const p = px(m.at); s += `<circle cx="${p.x}" cy="${p.y}" r="11" class="ov-pip"><title>${esc(m.id)}</title></circle>`; }
     s += `<circle cx="${me.x}" cy="${me.y}" r="17" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="36" class="ov-halo"/>`;
     overlay.innerHTML = s;
+  }
+  // wash a mark blue on the painting — a soft glow at its position (cheap and it
+  // reads); null clears. Points-ring/extent could be washed as a shape later, but
+  // a glow at the at-point is the "SUPER cool if not too hard" that stays cheap.
+  function highlightOnMap(id) {
+    if (!mapCtx?.hlLayer) return;
+    const m = id && byId.get(id);
+    if (!m?.at) { mapCtx.hlLayer.innerHTML = ""; return; }
+    const p = { x: mapCtx.originPx.x + m.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.at.y / mapCtx.mPerPx };
+    mapCtx.hlLayer.innerHTML =
+      `<circle cx="${p.x}" cy="${p.y}" r="46" class="wv-hl-glow"/>`
+      + `<circle cx="${p.x}" cy="${p.y}" r="22" class="wv-hl-core"/>`;
   }
 
   // ───────── dev pane ─────────
@@ -834,6 +854,11 @@ export function mountViewer(appEl) {
     const card = [...root.querySelectorAll(".wv-card")].find((c) => c.dataset.id === id);
     if (card) { card._stack = [id]; renderExpansion(card); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
   }
+  // hover any mark surface (a telling card, a grid footprint/pip) → wash it on the
+  // painting; leaving clears. mouseover fires on every element enter, so the closest
+  // [data-id] is always the right answer without flicker.
+  root.addEventListener("mouseover", (e) => { const el = e.target.closest("[data-id]"); highlightOnMap(el?.dataset.id ?? null); });
+  root.addEventListener("mouseleave", () => highlightOnMap(null));
   root.addEventListener("input", (e) => {
     if (e.target.classList.contains("stepslider")) { state.step = STEP_NOTCHES[Number(e.target.value)] ?? state.step; const lbl = root.querySelector(".stepval"); if (lbl) lbl.textContent = stepLabel(state.step); return; }
     if (e.target.classList.contains("crossover")) {
