@@ -257,8 +257,17 @@ const STYLE = `
 .ov-pip { fill:var(--amber); opacity:.65; }
 .ov-dot { fill:#ff2418; stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:#ff2418; stroke-width:3; opacity:.55; }
-.wv-hl-glow { fill:#7ba7e0; opacity:.30; }
-.wv-hl-core { fill:none; stroke:#9cc0f0; stroke-width:4; opacity:.9; vector-effect:non-scaling-stroke; }
+/* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
+   tier color (Keemin 2026-07-24 eve: one visual language, cells ⇄ map) */
+.wv-hl-box { fill:rgba(255,255,255,.06); stroke-width:3; vector-effect:non-scaling-stroke; }
+.wv-hl-box.t-constitution { stroke:var(--blue); }
+.wv-hl-box.t-home { stroke:var(--green); }
+.wv-hl-box.t-market { stroke:var(--amber); }
+.wv-hl-box.mech { stroke-dasharray:6 5; }
+.wv-hl-dot { stroke:#fff; stroke-width:1.5; vector-effect:non-scaling-stroke; }
+.wv-hl-dot.t-constitution { fill:var(--blue); }
+.wv-hl-dot.t-home { fill:var(--green); }
+.wv-hl-dot.t-market { fill:var(--amber); }
 /* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
 .wv-maphead { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
 .wv-mapctl { display:flex; gap:5px; }
@@ -269,13 +278,15 @@ const STYLE = `
 .wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
 .wv-gridline.major { stroke-opacity:.32; }
 .wv-gridlbl { fill:#e8c56a; opacity:.55; font-family:Consolas,Menlo,monospace; }
-/* footprints — every mark's true extent from the record; tier accents match the cells */
+/* footprints — every mark's true extent from the record. ONE vocabulary with the
+   cells: tier sets the color (tierOf), dashed = the law/mechanic modifier. */
 #wv-fp-layer { pointer-events:none; }
 .wv-fp { fill:none; stroke-width:1.4; vector-effect:non-scaling-stroke; }
-.fp-parcel { stroke:#84c98f; fill:rgba(132,201,143,.10); }
-.fp-sov { stroke:#84c98f; }
-.fp-market { stroke:#b8964a; }
-.fp-const { stroke:#7ba7e0; stroke-dasharray:6 5; opacity:.7; }
+.wv-fp.t-constitution { stroke:var(--blue-dark); }
+.wv-fp.t-home { stroke:var(--green-dark); }
+.wv-fp.t-market { stroke:var(--amber-dark); }
+.wv-fp.mech { stroke-dasharray:6 5; }
+.wv-fp.fp-parcel { fill:rgba(132,201,143,.10); }
 .ov-reach { vector-effect:non-scaling-stroke; }
 .ov-halo { vector-effect:non-scaling-stroke; }
 
@@ -955,7 +966,7 @@ export function mountViewer(appEl) {
           if (m.id === "the-town/let-there-be-light") continue;
           const w = m.extent.w / mPerPx, h = m.extent.h / mPerPx;
           const x = originPx.x + m.at.x / mPerPx - w / 2, y = originPx.y + m.at.y / mPerPx - h / 2;
-          const cls = m.kind === "parcel" ? "fp-parcel" : m.tier === "constitution" ? "fp-const" : m.sovereign ? "fp-sov" : "fp-market";
+          const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
           s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></rect>`;
         }
         fpLayer.innerHTML = s;
@@ -998,10 +1009,17 @@ export function mountViewer(appEl) {
     const m = id && byId.get(id);
     if (!m?.at) { mapCtx.hlLayer.innerHTML = ""; return; }
     const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
+    const t = tierOf(m), mech = m.mechanic ? " mech" : "";
     const p = { x: mapCtx.originPx.x + m.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.at.y / mapCtx.mPerPx };
-    mapCtx.hlLayer.innerHTML =
-      `<circle cx="${p.x}" cy="${p.y}" r="${46 / k}" class="wv-hl-glow"/>`
-      + `<circle cx="${p.x}" cy="${p.y}" r="${22 / k}" class="wv-hl-core"/>`;
+    // the box AND the dot light together, in the mark's own tier color — the same
+    // sentence the cells speak (dashed = machinery-kept truth)
+    let s = "";
+    if (m.extent && !m.far && m.id !== "the-town/let-there-be-light") {
+      const w = m.extent.w / mapCtx.mPerPx, h = m.extent.h / mapCtx.mPerPx;
+      s += `<rect x="${p.x - w / 2}" y="${p.y - h / 2}" width="${w}" height="${h}" class="wv-hl-box t-${t}${mech}"/>`;
+    }
+    s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
+    mapCtx.hlLayer.innerHTML = s;
   }
 
   // ───────── dev pane ─────────
