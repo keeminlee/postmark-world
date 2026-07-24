@@ -8,4 +8,4 @@ extent: { w: 40, h: 1090 }
 feature: the-locks
 ---
 
-The two gates of the straightened lower run, where the water gives up its last height to the sea in steps — ships wait, the water levels, and the long run earns its calm.
+Two gates where the water gives up its last height to the sea in steps — ships wait, the water levels, the long run earns its calm.

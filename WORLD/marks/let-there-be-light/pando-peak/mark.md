@@ -9,4 +9,4 @@ extent: { w: 4000, h: 4000 }
 feature: pando-peak
 ---
 
-The far summit on the northwest horizon — a hundred and thirty-five kilometres of air between it and any window, and still the first thing every high ground finds. It belongs to no region and no household; the horizon keeps it, and every standpoint shares it.
+The far summit on the northwest horizon — no region's, no household's; 135 kilometres of air, and still the first thing every high ground finds.
