@@ -299,6 +299,9 @@ const STYLE = `
 .wv-fp.t-market { stroke:var(--amber-dark); }
 .wv-fp.mech { stroke-dasharray:6 5; }
 .wv-fp.fp-parcel { fill:rgba(132,201,143,.10); }
+/* the marks you stand WITHIN read a tad heavier — the map's echo of the
+   "Where you stand" ladder (Keemin: no nesting ceremony, just weight) */
+.wv-fp.fp-within { stroke-width:2.8; }
 .ov-reach { vector-effect:non-scaling-stroke; }
 .ov-halo { vector-effect:non-scaling-stroke; }
 
@@ -550,6 +553,12 @@ export function mountViewer(appEl) {
     if (obs.lightLevel > 0.7) return "The northeast dawn-light is full on you here.";
     return "The light is going — the world's glow lives off to the northeast, dying toward the southwest.";
   }
+  function elevStateLine(obs) {
+    const g = obs.groundElevM;
+    if (typeof g !== "number") return "";
+    const rel = g >= 22 ? " — above the fog line" : g <= 1 ? " — down at the water" : "";
+    return `The ground holds you at ${g >= 0 ? "+" : ""}${g} m above the sea${rel}; your eyes ride at ${obs.eyeElevM} m.`;
+  }
   function fogStateLine(radial, obs) {
     if (obs.aboveFog) return "You are above the fog; the sightlines run long.";
     if (obs.inFog) return `Fog is in tonight (crossing ${radial.crossing}, thickness ${radial.fog.thickness}) — it closes the view to about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
@@ -620,10 +629,17 @@ export function mountViewer(appEl) {
         const m = byId.get(w.id) ?? w;
         ladder += markCell(m, { role: i === 0 ? "frame" : "ladder", annotation: i === 0 ? lightStateLine(obs) : "" });
       });
-      // 2. the world-law cells whose mechanic has live state this crossing — the fog
-      // sentence IS the-town/the-fog's cell (body + tonight's reading). Context too.
-      const fog = byId.get("the-town/the-fog");
-      if (fog) ladder += markCell(fog, { role: "law", annotation: fogStateLine(e.radial, obs) });
+      // 2. the world-law cells whose mechanic has live state this crossing. The
+      // MARK governs its own telling: any world-law mark carrying a mechanic with
+      // a registered teller speaks its live reading as a cell — fog is no longer
+      // a special case, and giving a mechanic a voice is one line here (Keemin's
+      // modularity, 2026-07-24 eve: the seam residents' own mechanics will use).
+      const TELLERS = {
+        elevation: () => elevStateLine(obs),
+        fog: () => fogStateLine(e.radial, obs),
+      };
+      for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
+        ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
       // 3. then the visible rest, outward by bearing — under Mine, only yours.
       box.innerHTML = chips
         + `<div class="wv-section-lbl">where you stand — the frame inward</div>`
@@ -979,10 +995,18 @@ export function mountViewer(appEl) {
           const w = m.extent.w / mPerPx, h = m.extent.h / mPerPx;
           const x = originPx.x + m.at.x / mPerPx - w / 2, y = originPx.y + m.at.y / mPerPx - h / 2;
           const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
-          s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></rect>`;
+          s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></rect>`;
         }
         fpLayer.innerHTML = s;
+        if (lastRadial) mapCtx.syncWithin(lastRadial);
       }
+      // the standpoint's containment chain reads heavier on the map — kept in sync
+      // with every telling (the boxes are the same boxes, only the weight moves)
+      mapCtx.syncWithin = (radial) => {
+        const ids = new Set((radial?.within ?? []).map((w) => w.id));
+        for (const r of fpLayer.querySelectorAll("rect[data-id]"))
+          r.classList.toggle("fp-within", ids.has(r.dataset.id));
+      };
       mapCtx.toggleFp = () => {
         if (!fpLayer.childNodes.length) buildFpLayer();
         const on = fpLayer.style.display === "none";
@@ -1010,6 +1034,7 @@ export function mountViewer(appEl) {
         for (const m of arr) { if (!m.at || typeof m.at.x !== "number") continue; const p = px(m.at); s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip"><title>${esc(m.id)}</title></circle>`; }
     s += `<circle cx="${me.x}" cy="${me.y}" r="${17 / k}" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="${36 / k}" class="ov-halo"/>`;
     overlay.innerHTML = s;
+    mapCtx.syncWithin?.(radial);
     if (mapCtx.follow && mapCtx.lockOn && !mapCtx._tweening) mapCtx.lockOn();
   }
   // wash a mark blue on the painting — a soft glow at its position (cheap and it
