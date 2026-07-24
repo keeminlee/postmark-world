@@ -269,6 +269,13 @@ const STYLE = `
 .wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
 .wv-gridline.major { stroke-opacity:.32; }
 .wv-gridlbl { fill:#e8c56a; opacity:.55; font-family:Consolas,Menlo,monospace; }
+/* footprints — every mark's true extent from the record; tier accents match the cells */
+#wv-fp-layer { pointer-events:none; }
+.wv-fp { fill:none; stroke-width:1.4; vector-effect:non-scaling-stroke; }
+.fp-parcel { stroke:#84c98f; fill:rgba(132,201,143,.10); }
+.fp-sov { stroke:#84c98f; }
+.fp-market { stroke:#b8964a; }
+.fp-const { stroke:#7ba7e0; stroke-dasharray:6 5; opacity:.7; }
 .ov-reach { vector-effect:non-scaling-stroke; }
 .ov-halo { vector-effect:non-scaling-stroke; }
 
@@ -346,6 +353,7 @@ const MARKUP = `
           <button class="ctl wv-map-home" title="fit the whole painting">⌂ fit</button>
           <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖ follow</button>
           <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors"># grid</button>
+          <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭ marks</button>
         </div>
       </div>
       <div class="wv-minimap"><div class="loading">fetching the painting…</div></div>
@@ -796,6 +804,13 @@ export function mountViewer(appEl) {
       gridLayer.setAttribute("id", "wv-grid-layer");
       gridLayer.style.display = "none"; // NOT the hidden attribute — SVG <g> ignores it
       svg.appendChild(gridLayer);
+      // footprints — the second derived layer: every mark's true extent, from the
+      // record. Sits above the grid, under the pips; pointer-events none so the
+      // stand-click and drag pass straight through it.
+      const fpLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      fpLayer.setAttribute("id", "wv-fp-layer");
+      fpLayer.style.display = "none";
+      svg.appendChild(fpLayer);
       const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
       overlay.setAttribute("id", "wv-overlay");
       svg.appendChild(overlay);
@@ -930,6 +945,28 @@ export function mountViewer(appEl) {
         return on;
       };
 
+      // footprints: rects centered on at, sized by extent — the record's own
+      // geometry landing on the painting (the calibration made visible). The
+      // world-root (the frame) and far/horizon objects are skipped: no ground.
+      function buildFpLayer() {
+        let s = "";
+        for (const m of world.marks ?? []) {
+          if (!m.at || !m.extent || m.far) continue;
+          if (m.id === "the-town/let-there-be-light") continue;
+          const w = m.extent.w / mPerPx, h = m.extent.h / mPerPx;
+          const x = originPx.x + m.at.x / mPerPx - w / 2, y = originPx.y + m.at.y / mPerPx - h / 2;
+          const cls = m.kind === "parcel" ? "fp-parcel" : m.tier === "constitution" ? "fp-const" : m.sovereign ? "fp-sov" : "fp-market";
+          s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></rect>`;
+        }
+        fpLayer.innerHTML = s;
+      }
+      mapCtx.toggleFp = () => {
+        if (!fpLayer.childNodes.length) buildFpLayer();
+        const on = fpLayer.style.display === "none";
+        fpLayer.style.display = on ? "" : "none";
+        return on;
+      };
+
       applyView();
       if (lastRadial) drawOverlay(lastRadial);
     } catch (e) {
@@ -1029,6 +1066,8 @@ export function mountViewer(appEl) {
     if (fbtn) { if (!mapCtx) return; mapCtx.follow = !mapCtx.follow; fbtn.classList.toggle("on", mapCtx.follow); if (mapCtx.follow) mapCtx.lockOn(); return; }
     const gbtn = e.target.closest(".wv-map-grid");
     if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
+    const fpbtn = e.target.closest(".wv-map-fp");
+    if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
     // the fused left-pane filter: All / Mine — re-tell in place, keep the scroll.
     const fchip = e.target.closest(".wv-fchip");
     if (fchip) { state.markFilter = fchip.dataset.mfilter; const y = window.scrollY; renderTelling(); window.scrollTo(0, y); return; }
