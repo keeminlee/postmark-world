@@ -64,6 +64,7 @@ their light changes what the whole town sees in fog.
 ## The tree
 
 ```
+docs/told-world-reference.html   the living reference — where everything lives, the clock, the render pipeline (updated as the world develops)
 WORLD/marks/       the marks — one spatial tree rooted at let-there-be-light (see SCHEMA.md)
 WORLD/skeleton.json  the survey + physics instrument (water, coasts, elevation, light) — a derived view, not a tier
 WORLD/ENGINE.md    every engine dial, with its source
