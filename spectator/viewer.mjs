@@ -758,7 +758,7 @@ export function mountViewer(appEl) {
       // (origin + scale), never traced from the paint. Sits under the overlay.
       const gridLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
       gridLayer.setAttribute("id", "wv-grid-layer");
-      gridLayer.setAttribute("hidden", "");
+      gridLayer.style.display = "none"; // NOT the hidden attribute — SVG <g> ignores it
       svg.appendChild(gridLayer);
       const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
       overlay.setAttribute("id", "wv-overlay");
@@ -814,8 +814,11 @@ export function mountViewer(appEl) {
         if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
       };
       mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
+      // a hand on the camera breaks the follow snap — silently, keeping the view
+      // where the hand put it (fit is the only thing that zooms you back out)
+      const breakFollow = () => { if (mapCtx.follow) { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); } };
       svg.addEventListener("wheel", (e) => {
-        e.preventDefault(); stopTween();
+        e.preventDefault(); stopTween(); breakFollow();
         const k = Math.pow(1.0015, e.deltaY);
         const w = Math.min(full.w * 1.1, Math.max(full.w / 24, view.w * k));
         const scale = w / view.w;
@@ -837,6 +840,7 @@ export function mountViewer(appEl) {
         if (!press || e.pointerId !== press.id) return;
         const dx = e.clientX - press.x, dy = e.clientY - press.y;
         if (!press.moved && Math.hypot(dx, dy) < 6) return;
+        if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
         press.moved = true; boxEl.classList.add("panning");
         const r = svg.getBoundingClientRect();
         view.x -= dx * (view.w / r.width); view.y -= dy * (view.h / r.height);
@@ -885,8 +889,8 @@ export function mountViewer(appEl) {
       }
       mapCtx.toggleGrid = () => {
         if (!gridLayer.childNodes.length) buildGridLayer();
-        const on = gridLayer.hasAttribute("hidden");
-        if (on) gridLayer.removeAttribute("hidden"); else gridLayer.setAttribute("hidden", "");
+        const on = gridLayer.style.display === "none";
+        gridLayer.style.display = on ? "" : "none";
         return on;
       };
 
