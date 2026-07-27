@@ -909,9 +909,22 @@ export function mountViewer(appEl) {
       mapCtx.lockOn = (animate = true) => {
         const c = camPx();
         const w = Math.min(view.w, full.w / 4), h = w * (full.h / full.w);
-        const cx = view.x + view.w / 2, cy = view.y + view.h / 2;
-        if (Math.hypot(c.x - cx, c.y - cy) < view.w * 0.01 && Math.abs(w - view.w) < full.w * 0.01) return;
-        const target = { x: c.x - w / 2, y: c.y - h / 2, w, h };
+        // Centre the dot in the VISIBLE panel, not in the <svg>. The painting
+        // keeps the map's own aspect (tall), the pane is shorter, and
+        // .wv-minimap clips the overflow — so the svg's midpoint sits well
+        // below the middle of what the reader can actually see, by an amount
+        // that changes with the window. That was the "follow doesn't really
+        // centre" defect: the arithmetic was right about the wrong rectangle.
+        // Measured live, so it stays true at any size and needs no constant.
+        const sb = svg.getBoundingClientRect(), cb = boxEl.getBoundingClientRect();
+        const ax = sb.width > 0 ? (cb.x + cb.width / 2 - sb.x) / sb.width : 0.5;
+        const ay = sb.height > 0 ? (cb.y + cb.height / 2 - sb.y) / sb.height : 0.5;
+        const target = { x: c.x - w * ax, y: c.y - h * ay, w, h };
+        // Compare against the target we actually want, not against the viewBox
+        // centre — the old test could return "close enough" while the dot sat
+        // off the visible centre by the clip offset.
+        if (Math.abs(target.x - view.x) < view.w * 0.005 && Math.abs(target.y - view.y) < view.h * 0.005
+            && Math.abs(w - view.w) < full.w * 0.01) return;
         if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
       };
       mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
