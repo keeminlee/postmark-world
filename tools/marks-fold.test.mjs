@@ -110,3 +110,27 @@ test("with a rectangular container the fold is unchanged (analytic delegation)",
   const state = fold({ marks: [box, arm, notch], terrain: { features: [] }, stakes, tick: 1 });
   assert.equal(state.marks.find((m) => m.id === "t/box")?.weight, 12, "a rect container folds up both children");
 });
+
+// P1 re-QA (write-release, 2026-07-27): the branch predates the parcels landing,
+// so the new happy path gets its own proof — a mark on your OWN parcel places
+// INTO it (the placer) and folds sovereign (the fold), and neither a guest's
+// mark on the same ground nor your own mark outside the fence does.
+test("a mark on your own parcel places into it and folds sovereign; a guest's does not", () => {
+  const parcel = { id: "t/homestead", by: "t", household: "t", kind: "parcel",
+    at: { x: 50, y: 50 }, extent: { w: 100, h: 100 }, body: "the parcel" };
+  const own = { id: "t/hearth", by: "t", household: "t", kind: "sited", tier: "market",
+    at: { x: 40, y: 40 }, extent: { w: 10, h: 10 }, body: "own mark, inside" };
+  const guest = { id: "g/lantern", by: "g", household: "g", kind: "sited", tier: "market",
+    at: { x: 60, y: 60 }, extent: { w: 10, h: 10 }, body: "guest mark, same ground" };
+  const outside = { id: "t/gate", by: "t", household: "t", kind: "sited", tier: "market",
+    at: { x: 300, y: 300 }, extent: { w: 10, h: 10 }, body: "own mark, beyond the fence" };
+  // the placer: the parcel is the strictly-larger, smallest containing claim
+  assert.equal(placementParent(own, [parcel, own, guest, outside]), "t/homestead",
+    "placer resolves an own-parcel mark to the parcel (placer matches enforcer)");
+  // the fold: sovereignty keys on household + full containment, nothing else
+  const state = fold({ marks: [parcel, own, guest, outside], terrain: { features: [] }, stakes: [], tick: 1 });
+  const m = (id) => state.marks.find((x) => x.id === id);
+  assert.equal(m("t/hearth").sovereign, true, "own mark inside own parcel folds sovereign");
+  assert.equal(m("g/lantern").sovereign, false, "a guest's mark on the same ground is not sovereign");
+  assert.equal(m("t/gate").sovereign, false, "your own mark outside the fence is not sovereign");
+});
