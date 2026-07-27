@@ -184,21 +184,30 @@ function renderTelling(state, radial, fov) {
   L.push(airline + " " + lightline);
   L.push("");
 
-  const order = orderBearings(Object.keys(radial.byBearing));
-  for (const brg of order) {
-    const bands = radial.byBearing[brg];
+  // Distance orders the telling; bearing is a field on the mark (Keemin,
+  // 2026-07-27). The named bands are the sections, outward, so the whole telling
+  // continues the containment spine's one move — from where you stand, out —
+  // instead of restarting it once per wind, each wind mixing near and far. A
+  // bearing is a property of a mark *relative to you*: you consult it once a mark
+  // has your attention, so it belongs on the mark's line. The rose stays the map
+  // pane's taxonomy, where it is geometry rather than a table of contents.
+  // Regrouped from the band and distM every entry already carries — byBearing is
+  // the wire shape and is read here, never reshaped.
+  const byBand = {};
+  for (const bands of Object.values(radial.byBearing))
+    for (const [bandName, ms] of Object.entries(bands)) (byBand[bandName] ??= []).push(...ms);
+  for (const bandName of orderBands(Object.keys(byBand))) {
     const parts = [];
-    for (const bandName of orderBands(Object.keys(bands))) {
-      for (const m of bands[bandName]) {
-        if (m.far) { parts.push(`  · on the horizon, ${horizonPhrase(m)}`); continue; }
-        const lit = m.signal ? " (its light carries)" : "";
-        const occ = m.occluded && m.signal ? " — its footing is hidden, only the light shows" : "";
-        const dim = m.dim < 0.5 ? " — dim, at the dark edge" : "";
-        const more = m.clusteredCount ? ` (+${m.clusteredCount} more of ${m.household}'s — investigate)` : "";
-        parts.push(`  · ${bandName} (${m.distM} m): ${firstLine(m.body) || m.id}${lit}${occ}${dim}${more}  [${m.id}, ✦${m.weight}]`);
-      }
+    for (const m of byBand[bandName].sort((a, b) => a.distM - b.distM)) {
+      // the band heads the section, so a horizon line no longer restates it
+      if (m.far) { parts.push(`  · ${horizonPhrase(m)}`); continue; }
+      const lit = m.signal ? " (its light carries)" : "";
+      const occ = m.occluded && m.signal ? " — its footing is hidden, only the light shows" : "";
+      const dim = m.dim < 0.5 ? " — dim, at the dark edge" : "";
+      const more = m.clusteredCount ? ` (+${m.clusteredCount} more of ${m.household}'s — investigate)` : "";
+      parts.push(`  · ${m.distM} m ${m.bearing} — ${firstLine(m.body) || m.id}${lit}${occ}${dim}${more}  [${m.id}, ✦${m.weight}]`);
     }
-    if (parts.length) { L.push(`${compassWord(brg)} (${brg}):`); L.push(...parts); }
+    if (parts.length) { L.push(`${bandHeading(bandName)}:`); L.push(...parts); }
   }
   const agg = radial.aggregate;
   if (agg.hidden_by_budget > 0) {
@@ -304,11 +313,9 @@ function regionOf(state, world) {
   }
   return best;
 }
-const ROSE_ORDER = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-function orderBearings(keys) { return keys.slice().sort((a, b) => ROSE_ORDER.indexOf(a) - ROSE_ORDER.indexOf(b)); }
 function orderBands(keys) { const order = DIALS.distance_bands.map((b) => b.name); return keys.slice().sort((a, b) => order.indexOf(a) - order.indexOf(b)); }
-const COMPASS_WORDS = { N: "To the north", NNE: "North-northeast", NE: "To the northeast", ENE: "East-northeast", E: "To the east", ESE: "East-southeast", SE: "To the southeast", SSE: "South-southeast", S: "To the south", SSW: "South-southwest", SW: "To the southwest", WSW: "West-southwest", W: "To the west", WNW: "West-northwest", NW: "To the northwest", NNW: "North-northwest" };
-function compassWord(b) { return COMPASS_WORDS[b] ?? b; }
+// band names are written as prose ("a fair way off"); a section head wants sentence case
+function bandHeading(name) { const s = String(name ?? ""); return s.charAt(0).toUpperCase() + s.slice(1); }
 function horizonPhrase(m) {
   const km = (m.distM / 1000).toFixed(0);
   const name = m.label || ellipsize(bodyProse(m.body), 80); // a short label, not the decision-008 arithmetic

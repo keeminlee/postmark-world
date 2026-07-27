@@ -26,7 +26,6 @@ const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const BEARING_LONG = { N: "north", NNE: "north-northeast", NE: "northeast", ENE: "east-northeast", E: "east", ESE: "east-southeast", SE: "southeast", SSE: "south-southeast", S: "south", SSW: "south-southwest", SW: "southwest", WSW: "west-southwest", W: "west", WNW: "west-northwest", NW: "northwest", NNW: "north-northwest" };
-const BEARING_ORDER = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
 
 // the stand-at presets (the same three the local build and the astro page carried)
 const PRESETS = [
@@ -143,8 +142,8 @@ const STYLE = `
 .wv-spine .sep { opacity:.5; margin:0 5px; }
 .wv-open { white-space:pre-wrap; max-width:76ch; line-height:1.55; border-bottom:1px solid var(--line);
   padding-bottom:14px; margin-bottom:10px; }
-.wv-bearing h3 { font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
-.wv-bearing .bshort { opacity:.5; font-size:.72rem; }
+.wv-band h3 { font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
+.wv .bshort { opacity:.5; font-size:.72rem; }
 .wv-card { border:1px solid var(--line); border-left:3px solid var(--amber-dark); border-radius:5px;
   padding:10px 13px; margin:8px 0; cursor:pointer; max-width:76ch; }
 .wv-card:hover { border-color:var(--amber-dark); }
@@ -536,7 +535,14 @@ export function mountViewer(appEl) {
   // ───────── the telling view ─────────
   function chips(m) {
     const c = [];
-    c.push(`<span class="wv-chip">${esc(m.band ?? "")}${m.distM != null && !m.far ? ` · ${m.distM.toLocaleString()} m` : m.far ? ` · ~${Math.round((m.distM ?? 0) / 1000)} km` : ""}</span>`);
+    // how far, then which way. The band heads the section now, so the cell carries
+    // what the heading no longer does — the mark's own bearing, both the word and
+    // the short code the old heading showed (Keemin, 2026-07-27).
+    const dist = m.far ? `~${Math.round((m.distM ?? 0) / 1000).toLocaleString()} km`
+      : m.distM != null ? `${m.distM.toLocaleString()} m` : "";
+    const brg = m.bearing
+      ? `${esc(BEARING_LONG[m.bearing] ?? m.bearing)} <span class="bshort">${esc(m.bearing)}</span>` : "";
+    c.push(`<span class="wv-chip">${esc(dist)}${dist && brg ? " · " : ""}${brg}</span>`);
     if (m.weight > 0) c.push(`<span class="wv-chip stamps">✦${m.weight}</span>`);
     if (m.signal) c.push(`<span class="wv-chip signal">its light carries</span>`);
     if (m.dim != null && m.dim < 1) c.push(`<span class="wv-chip dim">dim</span>`);
@@ -597,19 +603,23 @@ export function mountViewer(appEl) {
   // applied by the engine, same card behaviour — the filter only narrows WHO shows).
   function tellingCards(radial, keep = null) {
     const by = radial?.byBearing ?? {};
-    // order by the compass rose where known; any coined key (a degree bearing from
-    // a non-16 bearing_points dial) sorts after, so the dev pane never blanks a view
-    const keys = Object.keys(by).sort((a, b) => {
-      const ia = BEARING_ORDER.indexOf(a), ib = BEARING_ORDER.indexOf(b);
-      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b);
-    });
+    // Distance orders the panel; bearing is a field on the cell (Keemin,
+    // 2026-07-27) — the same restructure the prose telling carries, so the two
+    // habitats never disagree about the world's shape. Regrouped from the band
+    // each entry already names; byBearing is the wire shape and stays untouched.
+    // (The map pane keeps the rose: there a bearing is geometry, not a heading.)
+    const byBand = {};
+    for (const group of Object.values(by))
+      for (const [band, ms] of Object.entries(group ?? {})) (byBand[band] ??= []).push(...ms);
+    // outward, in the engine's own band order
+    const bandOrder = DIALS.distance_bands.map((d) => d.name);
+    const keys = Object.keys(byBand).sort((a, b) => bandOrder.indexOf(a) - bandOrder.indexOf(b));
     let html = "";
-    for (const b of keys) {
-      const group = by[b]; if (!group) continue;
-      let entries = Object.values(group).flat();
+    for (const band of keys) {
+      let entries = byBand[band].sort((m, n) => (m.distM ?? 0) - (n.distM ?? 0));
       if (keep) entries = entries.filter(keep);
       if (!entries.length) continue;
-      html += `<div class="wv-bearing"><h3>${BEARING_LONG[b] ?? b} <span class="bshort">${b}</span></h3>`;
+      html += `<div class="wv-band"><h3>${esc(band)}</h3>`;
       for (const m of entries) html += markCell(m, { role: "fov", radialChips: true });
       html += `</div>`;
     }
