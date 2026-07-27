@@ -171,7 +171,6 @@ const STYLE = `
 .wv-open { white-space:pre-wrap; max-width:76ch; line-height:1.55; border-bottom:1px solid var(--line);
   padding-bottom:14px; margin-bottom:10px; }
 .wv-band h3 { font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
-.wv .bshort { opacity:.5; font-size:.72rem; }
 .wv-arrow { width:.95em; height:.95em; vertical-align:-.15em; margin-right:.3em; overflow:visible; }
 .wv-arrow path { fill:currentColor; opacity:.8; }
 .wv-card { border:1px solid var(--line); border-left:3px solid var(--amber-dark); border-radius:5px;
@@ -571,9 +570,13 @@ export function mountViewer(appEl) {
     const dist = m.far ? `~${Math.round((m.distM ?? 0) / 1000).toLocaleString()} km`
       : m.distM != null ? `${m.distM.toLocaleString()} m` : "";
     // the arrow sits with the bearing it depicts, not at the head of the chip —
-    // distance stays the first thing read, since distance is what orders the telling
+    // distance stays the first thing read, since distance is what orders the telling.
+    // The word alone: the direction is spelled out, so the short code said it twice
+    // (Keemin, 2026-07-27). The `?? m.bearing` fallback is load-bearing, not tidiness —
+    // a coined "45°" key from a non-16 rose has no long word, and the raw key is then
+    // the only name that bearing has.
     const brg = m.bearing
-      ? `${bearingArrow(m.bearing)}${esc(BEARING_LONG[m.bearing] ?? m.bearing)} <span class="bshort">${esc(m.bearing)}</span>` : "";
+      ? `${bearingArrow(m.bearing)}${esc(BEARING_LONG[m.bearing] ?? m.bearing)}` : "";
     c.push(`<span class="wv-chip">${esc(dist)}${dist && brg ? " · " : ""}${brg}</span>`);
     if (m.weight > 0) c.push(`<span class="wv-chip stamps">✦${m.weight}</span>`);
     if (m.signal) c.push(`<span class="wv-chip signal">its light carries</span>`);
