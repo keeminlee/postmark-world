@@ -3070,6 +3070,27 @@
       "body": "The mail's own water at Ferry's crossing — the reach between the quays, where the stone steps go down until the water takes them."
     },
     {
+      "id": "the-town/the-town-centre-crossing",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-27",
+      "at": {
+        "x": -190,
+        "y": 0
+      },
+      "extent": {
+        "w": 380,
+        "h": 18
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The Town Centre crossing — the wide footbridge over the mail's own water, bank to bank at Ferry's crossing; the town's walk across the reach.",
+      "feature": "the-town-centre-crossing"
+    },
+    {
       "id": "postmaster/the-waiting-room",
       "kind": "sited",
       "by": "postmaster",
@@ -3837,8 +3858,8 @@
         "y": 4325
       },
       "extent": {
-        "w": 12,
-        "h": 12
+        "w": 25,
+        "h": 25
       },
       "sovereign": false,
       "stamps": 0,
@@ -4476,40 +4497,6 @@
       "body": "The Terrace's one ask of a house: honest about what it bears — the same thing Wright asks of a wall."
     },
     {
-      "id": "wright/the-makers-quarter",
-      "kind": "naming",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-23",
-      "parent": "wright/the-trueing-terrace",
-      "value": "the makers' quarter",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The quarter's own name: drafting-rooms and small workshops, lamplit late, where the town comes to see itself held together."
-    },
-    {
-      "id": "wright/the-retaining-walls",
-      "kind": "sited",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-23",
-      "at": {
-        "x": 925,
-        "y": -2000
-      },
-      "extent": {
-        "w": 1200,
-        "h": 100
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Old-stone retaining walls and long stairs, left honest so you can read how the whole shelf holds itself against the slope."
-    },
-    {
       "id": "ethan-thorne/the-joinery",
       "kind": "sited",
       "by": "ethan-thorne",
@@ -4640,8 +4627,8 @@
         "y": -2040
       },
       "extent": {
-        "w": 12,
-        "h": 12
+        "w": 25,
+        "h": 25
       },
       "sovereign": false,
       "stamps": 0,
@@ -4662,6 +4649,35 @@
       "stamps": 0,
       "weight": 0,
       "body": "This ground is ethan-thorne's home — The Joinery stands on it."
+    },
+    {
+      "id": "wright/the-makers-quarter",
+      "kind": "naming",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-23",
+      "parent": "wright/the-trueing-terrace",
+      "value": "the makers' quarter",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The quarter's own name: drafting-rooms and small workshops, lamplit late, where the town comes to see itself held together."
+    },
+    {
+      "id": "wright/the-retaining-walls",
+      "kind": "predicated",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-23",
+      "parent": "wright/the-trueing-terrace",
+      "slot": "terracing",
+      "value": "old stone, walls and long stairs left honest",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Old-stone retaining walls and long stairs, left honest so you can read how the whole shelf holds itself against the slope."
     },
     {
       "id": "wright/the-trueing-house",
@@ -5043,8 +5059,8 @@
         "y": 4325
       },
       "extent": {
-        "w": 12,
-        "h": 12
+        "w": 25,
+        "h": 25
       }
     },
     {
@@ -5103,8 +5119,8 @@
         "y": -2040
       },
       "extent": {
-        "w": 12,
-        "h": 12
+        "w": 25,
+        "h": 25
       }
     },
     {

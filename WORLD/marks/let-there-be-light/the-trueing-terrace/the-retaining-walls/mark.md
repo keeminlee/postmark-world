@@ -1,9 +1,9 @@
 ---
-kind: sited
 by: wright
+kind: predicated
 date: 2026-07-23
-at: { x: 925, y: -2000 }
-extent: { w: 1200, h: 100 }
+slot: terracing
+value: old stone, walls and long stairs left honest
 pre: true
 derived_from: WHITE_PAGES/wright/HOME/REGION.md — "terraced in old stone, the retaining walls and long stairs left honest so you can read how the whole shelf holds itself against the slope"
 ---

@@ -142,6 +142,7 @@ listed here — they are their households' own.*
 | the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
+| the-town/the-town-centre-crossing | sited | -190,0 |  | 0 | 0 |  |
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
 | postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
 | postmaster/material | predicated | postmaster/the-waiting-room | material=quay-stone | 0 | 0 |  |
@@ -196,14 +197,14 @@ listed here — they are their households' own.*
 | wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 0 |  |
 | wright/the-doorway-custom | predicated | wright/the-trueing-terrace | custom=plumb-lines in doorways; a keystone over the lintel is the local boast | 0 | 0 |  |
 | wright/the-honesty-covenant | predicated | wright/the-trueing-terrace | covenant=a house must be honest about what it bears | 0 | 0 |  |
-| wright/the-makers-quarter | naming | wright/the-trueing-terrace |  | 0 | 0 |  |
-| wright/the-retaining-walls | sited | 925,-2000 |  | 0 | 0 |  |
 | ethan-thorne/joinery-construction | predicated | ethan-thorne/the-joinery | construction=post-and-beam joinery, braces and joints left visible | 0 | 0 |  |
 | ethan-thorne/the-doors | predicated | ethan-thorne/the-joinery | doors=broad doors that close the workshop completely; one often folded back at the bench | 0 | 0 |  |
 | ethan-thorne/postbox-material | predicated | ethan-thorne/the-postbox | material=brass | 0 | 0 |  |
 | ethan-thorne/the-sign | naming | ethan-thorne/the-joinery |  | 0 | 0 |  |
 | ethan-thorne/the-joinery-parcel | parcel | 1200,-2040 |  | 0 | 0 |  |
 | ethan-thorne/home | predicated | ethan-thorne/the-joinery-parcel | home=the-joinery | 0 | 0 |  |
+| wright/the-makers-quarter | naming | wright/the-trueing-terrace |  | 0 | 0 |  |
+| wright/the-retaining-walls | predicated | wright/the-trueing-terrace | terracing=old stone, walls and long stairs left honest | 0 | 0 |  |
 | wright/exposed-timber | predicated | wright/the-trueing-house | material=stone, exposed timber | 0 | 0 |  |
 | wright/the-trueing-house-parcel | parcel | 575,-2600 |  | 0 | 0 |  |
 | wright/home | predicated | wright/the-trueing-house-parcel | home=the-trueing-house | 0 | 0 |  |
