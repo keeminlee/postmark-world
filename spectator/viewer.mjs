@@ -266,7 +266,14 @@ const STYLE = `
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-mapnote { font-size:.78rem; color:var(--dim); line-height:1.45; margin-top:8px; }
 .ov-reach { fill:rgba(232,197,106,.06); stroke:var(--amber); stroke-width:2.5; stroke-dasharray:10 8; opacity:.8; }
+/* the overlay's pips speak the same tier language as everything else on the
+   painting — the highlight box/dot, the footprints, the grid pips. They were
+   uniform amber, which read as "one kind of thing" on a map whose whole point
+   is that the kinds differ (Keemin 2026-07-27: "green homes, blue constitution").
+   Amber stays the market default, so only the two named classes move. */
 .ov-pip { fill:var(--amber); opacity:.65; }
+.ov-pip.t-constitution { fill:var(--blue); }
+.ov-pip.t-home { fill:var(--green); }
 .ov-dot { fill:#ff2418; stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:#ff2418; stroke-width:3; opacity:.55; }
 /* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
@@ -1035,7 +1042,9 @@ export function mountViewer(appEl) {
     let s = `<circle cx="${me.x}" cy="${me.y}" r="${reachPx}" class="ov-reach"/>`;
     for (const bands of Object.values(radial?.byBearing ?? {}))
       for (const arr of Object.values(bands))
-        for (const m of arr) { if (!m.at || typeof m.at.x !== "number") continue; const p = px(m.at); s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip"><title>${esc(m.id)}</title></circle>`; }
+        // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
+        // mark up by id (and catches sovereign/home, which is not a tier value).
+        for (const m of arr) { if (!m.at || typeof m.at.x !== "number") continue; const p = px(m.at); s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip t-${tierOf(m)}"><title>${esc(m.id)}</title></circle>`; }
     s += `<circle cx="${me.x}" cy="${me.y}" r="${17 / k}" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="${36 / k}" class="ov-halo"/>`;
     overlay.innerHTML = s;
     mapCtx.syncWithin?.(radial);
