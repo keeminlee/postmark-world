@@ -27,6 +27,34 @@ const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").
 
 const BEARING_LONG = { N: "north", NNE: "north-northeast", NE: "northeast", ENE: "east-northeast", E: "east", ESE: "east-southeast", SE: "southeast", SSE: "south-southeast", S: "south", SSW: "south-southwest", SW: "southwest", WSW: "west-southwest", W: "west", WNW: "west-northwest", NW: "northwest", NNW: "north-northwest" };
 
+// The chip's arrow points where the mark lies, north UP — the map pane's orientation.
+// It is derived from the QUANTIZED bearing beside it, because that is all a display
+// layer has: an FOV mark carries `bearing` (world-engine's quantizeBearing) and no raw
+// degrees, and reaching for raw degrees would be a serialization change. That the arrow
+// cannot disagree with the word it labels is the happy consequence.
+// Rotation, not a set of unicode arrows: ↑↗→ and friends snap 16 winds onto 8, losing
+// NNE/ENE entirely, and they cannot draw the "45°" keys quantizeBearing emits whenever
+// the bearing_points dial is not 16. A degree rotation renders any rose.
+const ROSE_DEG = { N: 0, NNE: 22.5, NE: 45, ENE: 67.5, E: 90, ESE: 112.5, SE: 135, SSE: 157.5, S: 180, SSW: 202.5, SW: 225, WSW: 247.5, W: 270, WNW: 292.5, NW: 315, NNW: 337.5 };
+const bearingDegOf = (b) => {
+  if (b == null) return null;
+  if (ROSE_DEG[b] != null) return ROSE_DEG[b];
+  const d = /^(-?\d+(?:\.\d+)?)\s*°?$/.exec(String(b));
+  return d ? ((Number(d[1]) % 360) + 360) % 360 : null; // unknown key → no arrow, never a wrong one
+};
+const bearingArrow = (b) => {
+  const deg = bearingDegOf(b);
+  if (deg == null) return "";
+  // A slim NOTCHED arrowhead, chosen by looking at four silhouettes blown up at every
+  // wind. A near-equilateral triangle is the trap: it is rotated correctly and still
+  // reads WRONG, because at three near-equal vertices the eye picks the nearest one
+  // instead of the apex — NE read as left, ENE as down. The notch makes the apex the
+  // only sharp vertex and the elongation breaks the symmetry, so the point is
+  // unambiguous at 45° steps as well as at the cardinals.
+  return `<svg class="wv-arrow" viewBox="-5 -5 10 10" aria-hidden="true">`
+    + `<path d="M0 -5 L2.8 4 L0 2.1 L-2.8 4 Z" transform="rotate(${deg})"/></svg>`;
+};
+
 // the stand-at presets (the same three the local build and the astro page carried)
 const PRESETS = [
   { x: 0, y: 0, label: "The quay — Ferry's crossing" },
@@ -144,6 +172,8 @@ const STYLE = `
   padding-bottom:14px; margin-bottom:10px; }
 .wv-band h3 { font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
 .wv .bshort { opacity:.5; font-size:.72rem; }
+.wv-arrow { width:.95em; height:.95em; vertical-align:-.15em; margin-right:.3em; overflow:visible; }
+.wv-arrow path { fill:currentColor; opacity:.8; }
 .wv-card { border:1px solid var(--line); border-left:3px solid var(--amber-dark); border-radius:5px;
   padding:10px 13px; margin:8px 0; cursor:pointer; max-width:76ch; }
 .wv-card:hover { border-color:var(--amber-dark); }
@@ -540,8 +570,10 @@ export function mountViewer(appEl) {
     // the short code the old heading showed (Keemin, 2026-07-27).
     const dist = m.far ? `~${Math.round((m.distM ?? 0) / 1000).toLocaleString()} km`
       : m.distM != null ? `${m.distM.toLocaleString()} m` : "";
+    // the arrow sits with the bearing it depicts, not at the head of the chip —
+    // distance stays the first thing read, since distance is what orders the telling
     const brg = m.bearing
-      ? `${esc(BEARING_LONG[m.bearing] ?? m.bearing)} <span class="bshort">${esc(m.bearing)}</span>` : "";
+      ? `${bearingArrow(m.bearing)}${esc(BEARING_LONG[m.bearing] ?? m.bearing)} <span class="bshort">${esc(m.bearing)}</span>` : "";
     c.push(`<span class="wv-chip">${esc(dist)}${dist && brg ? " · " : ""}${brg}</span>`);
     if (m.weight > 0) c.push(`<span class="wv-chip stamps">✦${m.weight}</span>`);
     if (m.signal) c.push(`<span class="wv-chip signal">its light carries</span>`);
