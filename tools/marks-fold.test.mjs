@@ -7,7 +7,49 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fold, parseRecord } from "./marks-fold.mjs";
+import { fold, parseRecord, isValidMarkDate, placementParent } from "./marks-fold.mjs";
+
+test("isValidMarkDate accepts day precision AND full ISO 8601 datetime (world-write rung)", () => {
+  for (const ok of ["2026-07-23", "2026-07-23T14:30:00", "2026-07-23T14:30:00Z",
+    "2026-07-23T14:30:00.123Z", "2026-07-23T14:30:00+05:30", "2026-07-23T14:30:00.5-04:00"])
+    assert.equal(isValidMarkDate(ok), true, `should accept ${ok}`);
+  for (const bad of ["2026-7-23", "07-23-2026", "2026-07-23 14:30", "yesterday", "", null, "2026-07-23T14:30"])
+    assert.equal(isValidMarkDate(bad), false, `should reject ${JSON.stringify(bad)}`);
+  // and a mark stamped with an ISO datetime folds clean and carries it through
+  const m = { id: "t/now", by: "t", household: "t", kind: "sited", tier: "market",
+    at: { x: 0, y: 0 }, extent: { w: 4, h: 4 }, date: "2026-07-23T14:30:00Z", body: "b" };
+  const s = fold({ marks: [m], terrain: { features: [] }, stakes: [], tick: 1 });
+  assert.equal(s.marks[0].date, "2026-07-23T14:30:00Z", "the ISO datetime survives the fold");
+});
+
+test("placementParent finds the DEEPEST containing claim (bbox), null when only the root holds it", () => {
+  const root = { id: "the-town/let-there-be-light", kind: "sited", by: "the-town", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 } };
+  const region = { id: "t/region", kind: "sited", by: "t", at: { x: 0, y: 0 }, extent: { w: 4000, h: 4000 } };
+  const yard = { id: "t/yard", kind: "sited", by: "t", at: { x: 100, y: 100 }, extent: { w: 200, h: 200 } };
+  const naming = { id: "t/name", kind: "naming", by: "t", value: "x" }; // not a container, ignored
+  const marks = [root, region, yard, naming];
+  // a small claim inside the yard → the yard (deepest), not the region or root
+  assert.equal(placementParent({ at: { x: 110, y: 110 }, extent: { w: 5, h: 5 } }, marks), "t/yard");
+  // a claim inside the region but outside the yard → the region
+  assert.equal(placementParent({ at: { x: 1500, y: 1500 }, extent: { w: 5, h: 5 } }, marks), "t/region");
+  // a claim out in open ground (only the world-root contains it) → null (→ root)
+  assert.equal(placementParent({ at: { x: 100000, y: 100000 }, extent: { w: 5, h: 5 } }, marks), null);
+  // a claim as big as the yard is NOT a child of the yard (parent must be strictly larger)
+  assert.equal(placementParent({ at: { x: 100, y: 100 }, extent: { w: 200, h: 200 } }, marks), "t/region");
+});
+
+test("placementParent matches the enforcer on a ring container — no notch-bounce (marksContain, not bbox)", () => {
+  // an L-shape container (the notch is inside its bbox, outside its coverage). The
+  // placer must NOT put a notch claim inside it, or the lint gate would bounce it.
+  const root = { id: "the-town/let-there-be-light", kind: "sited", by: "the-town", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 } };
+  const L = { id: "t/l", kind: "sited", by: "t", at: { x: 30, y: 30 }, extent: { w: 60, h: 60 },
+    points: [[0, 0], [60, 0], [60, 20], [20, 20], [20, 60], [0, 60]] };
+  const marks = [root, L];
+  // a claim in the L's ARM → placed inside the L (coverage contains it)
+  assert.equal(placementParent({ at: { x: 10, y: 10 }, extent: { w: 6, h: 6 } }, marks), "t/l");
+  // a claim in the L's NOTCH → NOT the L (bbox would say yes; coverage says no) → root
+  assert.equal(placementParent({ at: { x: 40, y: 40 }, extent: { w: 6, h: 6 } }, marks), null);
+});
 
 test("parseRecord reads a points ring — bracket-array and SVG-attribute forms", () => {
   const bracket = parseRecord("---\nkind: sited\nby: t\npoints: [[0,0],[60,0],[60,20]]\n---\nbody", "x");
@@ -67,4 +109,28 @@ test("with a rectangular container the fold is unchanged (analytic delegation)",
   const stakes = [{ tick: 0, holder: "h", mark: "t/arm", n: 5 }, { tick: 0, holder: "h", mark: "t/notch", n: 7 }];
   const state = fold({ marks: [box, arm, notch], terrain: { features: [] }, stakes, tick: 1 });
   assert.equal(state.marks.find((m) => m.id === "t/box")?.weight, 12, "a rect container folds up both children");
+});
+
+// P1 re-QA (write-release, 2026-07-27): the branch predates the parcels landing,
+// so the new happy path gets its own proof — a mark on your OWN parcel places
+// INTO it (the placer) and folds sovereign (the fold), and neither a guest's
+// mark on the same ground nor your own mark outside the fence does.
+test("a mark on your own parcel places into it and folds sovereign; a guest's does not", () => {
+  const parcel = { id: "t/homestead", by: "t", household: "t", kind: "parcel",
+    at: { x: 50, y: 50 }, extent: { w: 100, h: 100 }, body: "the parcel" };
+  const own = { id: "t/hearth", by: "t", household: "t", kind: "sited", tier: "market",
+    at: { x: 40, y: 40 }, extent: { w: 10, h: 10 }, body: "own mark, inside" };
+  const guest = { id: "g/lantern", by: "g", household: "g", kind: "sited", tier: "market",
+    at: { x: 60, y: 60 }, extent: { w: 10, h: 10 }, body: "guest mark, same ground" };
+  const outside = { id: "t/gate", by: "t", household: "t", kind: "sited", tier: "market",
+    at: { x: 300, y: 300 }, extent: { w: 10, h: 10 }, body: "own mark, beyond the fence" };
+  // the placer: the parcel is the strictly-larger, smallest containing claim
+  assert.equal(placementParent(own, [parcel, own, guest, outside]), "t/homestead",
+    "placer resolves an own-parcel mark to the parcel (placer matches enforcer)");
+  // the fold: sovereignty keys on household + full containment, nothing else
+  const state = fold({ marks: [parcel, own, guest, outside], terrain: { features: [] }, stakes: [], tick: 1 });
+  const m = (id) => state.marks.find((x) => x.id === id);
+  assert.equal(m("t/hearth").sovereign, true, "own mark inside own parcel folds sovereign");
+  assert.equal(m("g/lantern").sovereign, false, "a guest's mark on the same ground is not sovereign");
+  assert.equal(m("t/gate").sovereign, false, "your own mark outside the fence is not sovereign");
 });

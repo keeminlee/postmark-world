@@ -20,7 +20,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMarks, marksContain, polygonOf, ringMatchesClaim } from "./marks-fold.mjs";
+import { loadMarks, marksContain, polygonOf, ringMatchesClaim, isValidMarkDate } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -42,7 +42,6 @@ const TOWN = "the-town"; // the town-tier author; only it may claim constitution
 const CONTAINERS = new Set(["sited", "parcel"]); // only extented things contain or carry
 const BODY_MAX = 150; // chars (07-22 ruling)
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 const findings = [];
 const at = (rec) => (rec._dir ? rec._dir.replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/") : rec.id ?? "?");
@@ -79,7 +78,7 @@ for (const rec of marks) {
   // tier: valid, and constitution belongs to the town alone
   if (!TIERS.has(rec.tier)) err(rec, `tier must be one of ${[...TIERS].join(" | ")} (got ${JSON.stringify(rec.tier)})`);
   if (rec.tier === "constitution" && rec.by !== TOWN) err(rec, `tier: constitution is the town's — only by: ${TOWN} may claim it (a market mark cannot bind without stamps)`);
-  if (!rec.date || !DATE_RE.test(String(rec.date))) warn(rec, `date should be YYYY-MM-DD (got ${JSON.stringify(rec.date)})`);
+  if (!rec.date || !isValidMarkDate(rec.date)) warn(rec, `date should be YYYY-MM-DD or a full ISO 8601 datetime (got ${JSON.stringify(rec.date)})`);
 
   // 2. stray legacy fields the tree no longer owns (authorship is `by:` now)
   if (rec._stray?.household != null)

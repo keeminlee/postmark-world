@@ -87,7 +87,7 @@ containment**; everything else is a field.
 | `kind` | required | required | required | required |
 | `by` (author handle) | required | required | required | required |
 | `tier` (default market) | opt | opt | opt | opt |
-| `date` (`YYYY-MM-DD`) | required | required | required | required |
+| `date` (`YYYY-MM-DD` or ISO 8601⁴) | required | required | required | required |
 | `at: { x, y }` (grid m) | required | required | — | — |
 | `extent: { w, h }` (m) | required | opt (def 25×25) | — | — |
 | `slot` | — | — | required | opt (implicitly `name`) |
@@ -101,6 +101,12 @@ containment**; everything else is a field.
 ¹ **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
 resident's *own words*, so it carries `pre: true` and `derived_from: <source
 path> — "the verbatim words this translates"`. Resident hand-marks omit both.
+
+⁴ **`date` — day precision OR full ISO 8601 datetime.** `YYYY-MM-DD` (the seeded
+marks) and `YYYY-MM-DDTHH:MM:SS[.sss][Z|±HH:MM]` are both valid. The world-write
+path (`world_leave_mark`) server-stamps the datetime to the second at accept; a
+hand-authored mark may stay day-precise. Validated by `marks-fold.mjs`
+`isValidMarkDate` (the one definition the lint and the office share).
 
 A `sited`/`parcel` mark **never** authors a `parent:` — containment is geometry.
 A top-level `predicated`/`naming` mark may still name a terrain feature with an

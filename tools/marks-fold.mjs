@@ -36,6 +36,13 @@ const DIALS = {
   ...(opt("--dials", null) ? JSON.parse(readFileSync(opt("--dials"), "utf8")) : {}),
 };
 
+// A mark's date is day-precision (YYYY-MM-DD) OR a full ISO 8601 datetime — the
+// world-write path server-stamps a mark to the second at accept, while the seeded
+// marks stay day-precise. Shared by the lint (format check) and the office (write
+// stamp), so both agree on what a valid mark date is.
+export const MARK_DATE_RE = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?)?$/;
+export const isValidMarkDate = (s) => MARK_DATE_RE.test(String(s ?? ""));
+
 // ---------- tiny frontmatter parser (records are simple; keep it dependency-free) ----------
 export function parseRecord(text, file) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
@@ -151,6 +158,31 @@ function loadStakes() {
 // unchanged. rects are centered on at, sized by extent) ----------
 export { rect, overlapArea, contains, marksContain, polygonOf, ringMatchesClaim } from "./geometry.mjs";
 import { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
+
+// placementParent(claim, marks) — the geometry-decides-the-parent primitive the
+// world-write path (world_leave_mark) calls to DECIDE the directory a new mark
+// lands in: the DEEPEST existing mark that contains the new claim. It tests with
+// the SAME `marksContain` the lint and fold enforce — coverage-honest when a
+// `points:` ring is present (the ring is part of the claim, per the honesty gate),
+// bbox-analytic otherwise (byte-identical on the whole current record: no mark
+// carries a ring today). Placement is not a preview — it IS the asserted
+// containment edge, so the placer and the enforcer must agree, or a ring-notch
+// write would bounce at the lint gate for a writer who did nothing wrong. Bbox
+// area still ranks candidates (strictly larger; smallest containing wins).
+// Returns the container id, or null when only the world-root contains it
+// (null → root). `claim` is any { at, extent, points? }.
+export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
+  const claimArea = rect(claim).w * rect(claim).h;
+  let best = null, bestArea = Infinity;
+  for (const m of marks) {
+    if ((m.kind !== "sited" && m.kind !== "parcel") || !m.at) continue;
+    const mr = rect(m), area = mr.w * mr.h;
+    if (Math.max(mr.w, mr.h) >= worldScaleM) continue; // the world-root is the frame, never a parent → null means root
+    if (area <= claimArea) continue;                    // a parent is strictly larger than its child (the fold's rule)
+    if (marksContain(m, claim) && area < bestArea) { best = m; bestArea = area; }
+  }
+  return best ? best.id : null;
+}
 
 // ---------- the fold ----------
 export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS }) {
