@@ -99,15 +99,26 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
     .slice(0, budget).map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, stamps: m.weight ?? 0, body: m.body }));
   const inside = childrenByGeometry(target, world).slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, body: firstLine(m.body) }));
+  // within: what the target sits INSIDE, nearest container first. Its own
+  // relation, and the fix for a real mis-sort — a parent is in the household's
+  // near-cluster and is not a child of the target, so before this it fell
+  // through into `alongside` and a child's own house was reported as its
+  // neighbour. Excluding ancestors without naming them would only have hidden
+  // the relation; carrying it makes upward context first-class.
+  const within = ancestorsByGeometry(target, world)
+    .map((m) => ({ id: m.id, kind: m.kind, household: m.household, at: m.at, stamps: m.weight ?? 0, body: firstLine(m.body) }));
   // alongside: the rest of this household's cluster near the target — the marks
   // the FOV collapsed at distance ("+N more of <hh>'s"). Descending opens them.
+  // Neither what it holds nor what holds it: both filters run BEFORE the budget
+  // slice, so excluding an ancestor never costs a true neighbour its seat.
   const insideIds = new Set(inside.map((i) => i.id));
-  const alongside = householdNear(target, world).filter((m) => !insideIds.has(m.id)).slice(0, budget)
+  const withinIds = new Set(within.map((w) => w.id));
+  const alongside = householdNear(target, world).filter((m) => !insideIds.has(m.id) && !withinIds.has(m.id)).slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, signal: !!m.signal, body: firstLine(m.body) }));
   return {
     id: target.id, kind: target.kind, household: target.household, at: target.at, extent: target.extent,
     sovereign: !!target.sovereign, stamps: target.weight ?? target.stamps ?? 0, body: target.body,
-    predicates, inside, alongside,
+    predicates, within, inside, alongside,
     more: { predicates: countPredicates(markId, world) - predicates.length, inside: childrenByGeometry(target, world).length - inside.length },
     reinvoke: depth > 1 ? [...inside, ...alongside].map((c) => c.id) : [],
   };
@@ -244,6 +255,34 @@ function childrenByGeometry(parent, world) {
   if (!parent.at || !parent.extent) return [];
   const pr = rect(parent);                         // the shared rect/contains — never a local copy
   return world.marks.filter((m) => m !== parent && m.at && m.kind === "sited" && contains(pr, rect(m)));
+}
+// The marks that CONTAIN the target, nearest (smallest) first — the exact
+// inverse of childrenByGeometry, under the same rect/contains rule, so `inside`
+// and `within` can never disagree about an edge. The world-root is left out on
+// purpose: it frames everything, so naming it as context is noise — the same
+// test placementParent uses when it refuses the root as a parent.
+function ancestorsByGeometry(target, world) {
+  if (!target.at || !target.extent) return [];
+  const tr = rect(target), ta = tr.w * tr.h;
+  const containing = world.marks
+    .filter((m) => {
+      if (m === target || m.kind !== "sited" || !m.at || !m.extent) return false;
+      const mr = rect(m);
+      if (Math.max(mr.w, mr.h) >= DIALS.world_scale_extent_m) return false;
+      return mr.w * mr.h > ta && contains(mr, tr);   // strictly larger, as the fold requires of a parent
+    })
+    .sort((a, b) => extentArea(a) - extentArea(b));  // innermost first
+  // Build a true NEST outward — a larger mark joins only if it contains the
+  // current tip. Same discipline as containmentChain: without it, a sibling
+  // rect that happens to cover the target (a coarse-rect artifact) would be
+  // reported as one of its containers. Nearest-first, deliberately the reverse
+  // of containmentChain's root-first: that one opens a telling with the frame,
+  // this one answers "what is this in?" and the immediate house is the answer.
+  const nest = [];
+  for (const m of containing) {
+    if (nest.length === 0 || contains(rect(m), rect(nest[nest.length - 1]))) nest.push(m);
+  }
+  return nest;
 }
 function nearestGround(state, world) {
   let best = null, bd = Infinity;
