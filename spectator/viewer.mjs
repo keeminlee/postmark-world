@@ -601,7 +601,11 @@ export function mountViewer(appEl) {
   // Is this mark one of the signed-in household's? (Wright's ruling: household ∈
   // whoami handles; we also match m.by so a mark you AUTHORED counts even if its
   // household field ever differs — reuses the read-fix's handles-set idea.)
+  // Constitution is excluded from "Mine" unconditionally (Keemin, 2026-07-27):
+  // the world's constitutional furniture belongs to the town, not to whichever
+  // household happens to hold the-town's pen — even the founders'.
   function isMine(m) {
+    if (m.tier === "constitution") return false;
     const hs = state.whoami?.handles;
     if (!hs || !hs.length) return false;
     const set = hs instanceof Set ? hs : new Set(hs);
