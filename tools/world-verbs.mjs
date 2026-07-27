@@ -193,12 +193,20 @@ function renderTelling(state, radial, fov) {
   // pane's taxonomy, where it is geometry rather than a table of contents.
   // Regrouped from the band and distM every entry already carries — byBearing is
   // the wire shape and is read here, never reshaped.
+  // The spine is not listed twice (Keemin, 2026-07-27). A mark you stand WITHIN is
+  // already told above — as the establishing line if it is the frame, otherwise in the
+  // "You are within …" clause — so repeating it in a band says the same thing twice.
+  // Only the entries the spine ACTUALLY tells are dropped: the spine renders bodies,
+  // so a within-entry with no body is named nowhere above and keeps its band line
+  // rather than vanishing from the telling altogether.
+  const toldBySpine = new Set(within.filter((w) => w.body).map((w) => w.id));
   const byBand = {};
   for (const bands of Object.values(radial.byBearing))
     for (const [bandName, ms] of Object.entries(bands)) (byBand[bandName] ??= []).push(...ms);
   for (const bandName of orderBands(Object.keys(byBand))) {
     const parts = [];
     for (const m of byBand[bandName].sort((a, b) => a.distM - b.distM)) {
+      if (toldBySpine.has(m.id)) continue;
       // the band heads the section, so a horizon line no longer restates it
       if (m.far) { parts.push(`  · ${horizonPhrase(m)}`); continue; }
       const lit = m.signal ? " (its light carries)" : "";

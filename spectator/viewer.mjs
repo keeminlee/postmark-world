@@ -611,12 +611,18 @@ export function mountViewer(appEl) {
     const byBand = {};
     for (const group of Object.values(by))
       for (const [band, ms] of Object.entries(group ?? {})) (byBand[band] ??= []).push(...ms);
+    // The spine is not listed twice (Keemin, 2026-07-27): the ladder above already
+    // gives every mark you stand WITHIN its own card, so a band repeat tells it twice.
+    // Under Mine a not-yours spine mark is absent from the ladder, but `keep` filters
+    // it from the bands as well, so no mark can fall out of both and vanish.
+    const spineIds = new Set((radial?.within ?? []).map((w) => w.id));
     // outward, in the engine's own band order
     const bandOrder = DIALS.distance_bands.map((d) => d.name);
     const keys = Object.keys(byBand).sort((a, b) => bandOrder.indexOf(a) - bandOrder.indexOf(b));
     let html = "";
     for (const band of keys) {
-      let entries = byBand[band].sort((m, n) => (m.distM ?? 0) - (n.distM ?? 0));
+      let entries = byBand[band].filter((m) => !spineIds.has(m.id))
+        .sort((m, n) => (m.distM ?? 0) - (n.distM ?? 0));
       if (keep) entries = entries.filter(keep);
       if (!entries.length) continue;
       html += `<div class="wv-band"><h3>${esc(band)}</h3>`;
