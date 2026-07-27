@@ -633,7 +633,9 @@ export function mountViewer(appEl) {
   // the world's constitutional furniture belongs to the town, not to whichever
   // household happens to hold the-town's pen — even the founders'.
   function isMine(m) {
-    if (m.tier === "constitution") return false;
+    // tierOf, never m.tier — FOV/radial marks carry no tier field, so the raw
+    // read is silently undefined off the telling path (Jetto's pips lesson).
+    if (tierOf(m) === "constitution") return false;
     const hs = state.whoami?.handles;
     if (!hs || !hs.length) return false;
     const set = hs instanceof Set ? hs : new Set(hs);
@@ -657,7 +659,12 @@ export function mountViewer(appEl) {
       // context even under Mine (filtering the frame to yours would usually empty
       // "where you stand"); the filter narrows the visible marks, not your footing.
       let ladder = "";
-      within.forEach((w, i) => {
+      // Under Mine the frame ladder shows only YOUR cells of the chain (your
+      // parcel/home when standing in them) — the world-root/terrain/region are
+      // constitution and stay out of Mine everywhere (Keemin, 2026-07-27; the
+      // first fix missed this path: these cells rendered unconditionally).
+      const chain = mine ? within.filter((w) => isMine(byId.get(w.id) ?? w)) : within;
+      chain.forEach((w, i) => {
         const m = byId.get(w.id) ?? w;
         ladder += markCell(m, { role: i === 0 ? "frame" : "ladder", annotation: i === 0 ? lightStateLine(obs) : "" });
       });
@@ -670,12 +677,14 @@ export function mountViewer(appEl) {
         elevation: () => elevStateLine(obs),
         fog: () => fogStateLine(e.radial, obs),
       };
-      for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
-        ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
+      // World-law cells are the-town's (constitution) — skipped under Mine.
+      if (!mine)
+        for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
+          ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
       // 3. then the visible rest, outward by bearing — under Mine, only yours.
       box.innerHTML = chips
-        + `<div class="wv-section-lbl">where you stand — the frame inward</div>`
-        + `<div class="wv-ladder-cells">${ladder}</div>`
+        + (ladder ? `<div class="wv-section-lbl">where you stand — the frame inward</div>`
+                  + `<div class="wv-ladder-cells">${ladder}</div>` : "")
         + `<div class="wv-section-lbl">what tells from here${mine ? " · yours" : ""}</div>`
         + `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
         + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`;
