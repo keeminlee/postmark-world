@@ -185,6 +185,18 @@ const STYLE = `
 .wv-crumbs { display:flex; gap:10px; align-items:baseline; margin-bottom:6px; }
 .wv-back { color:var(--amber); cursor:pointer; font-size:.82rem; }
 .wv-back:hover { text-decoration:underline; }
+/* upward context on an investigate card: what this mark sits INSIDE. Its own
+   relation — before this it had none, so a parent fell through into "alongside"
+   and a child's own house was listed as its neighbour. Nearest container first;
+   each name drills, same as a tree node. Labelled "sits inside" and not
+   "within": the children section directly below is already "within it", and two
+   adjacent labels differing by one word while meaning opposite directions is a
+   trap. The engine field stays "within" — this is the label, not the contract.
+   (No backticks anywhere in this block: it is one big template literal.) */
+.wv-within { font-size:.8rem; color:var(--dim); margin:2px 0 8px; line-height:1.55; }
+.wv-within .lbl { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; margin-right:7px; }
+.wv-within .wv-wnode { color:var(--amber); cursor:pointer; border-bottom:1px dotted var(--amber-dark); }
+.wv-within .wv-wnode:hover { color:var(--paper); border-bottom-color:var(--amber); }
 .wv-tree-label { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin:12px 0 4px 10px; }
 .wv-tree { margin-left:20px; border-left:1px solid var(--amber-dark); padding-left:14px; }
 .wv-tree.sib { margin-left:4px; border-left-style:dotted; }
@@ -261,6 +273,15 @@ const STYLE = `
 .wv-map { padding:18px; }
 .wv-map .wv-sticky { position:sticky; top:16px; }
 .wv-map h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:0 0 10px; }
+/* The two map surfaces are things you GRAB, not prose you copy. Dragging used
+   to sweep a text selection across the painting's labels, and a live selection
+   then fights the next drag (the browser keeps extending it). The mousedown
+   handler already preventDefaults; this is the belt to that suspender, because
+   selection can still initiate from a text node in some engines regardless.
+   Scoped to these two containers ON PURPOSE — the telling cards and letter
+   bodies in the left pane must stay selectable, since people copy prose out of
+   them. Nuking selection viewer-wide would trade a papercut for a wound. */
+.wv-minimap, .wv-canvas { -webkit-user-select:none; user-select:none; }
 .wv-minimap { border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
 .wv-minimap svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
@@ -726,6 +747,10 @@ export function mountViewer(appEl) {
       <div class="tbody">${n.slot ? `<span class="wv-tslot">${esc(n.slot)}:</span> <b>${esc(n.value ?? "")}</b> — ` : ""}${esc(n.body ?? "")}</div>
       <div class="cmeta">${n.stamps > 0 ? `<span class="wv-chip stamps">✦${n.stamps}</span>` : ""}<span class="wv-cid">${esc(n.id)}</span></div>
     </div>`;
+  // one container in the upward-context line: its short name, drillable like a
+  // tree node, with the household after it so "whose" is answered in place.
+  const wnode = (w) => `<span class="wv-wnode" data-id="${esc(w.id)}" role="button" tabindex="0">${esc(firstWords(w.body, 6) || w.id)}</span>`
+    + (w.household ? ` <span class="wv-quiet">· ${esc(w.household)}</span>` : "");
   function renderExpansion(card) {
     const stack = card._stack ?? [];
     let box = card.querySelector(".wv-expand");
@@ -739,6 +764,7 @@ export function mountViewer(appEl) {
       ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><span class="wv-cid">${esc(d.id)}</span></div>
       <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>` : ""}
       <div class="cmeta" style="margin-bottom:4px">${d.stamps > 0 ? `<span class="wv-chip stamps">✦${d.stamps}</span>` : `<span class="wv-chip">✦0 — a pre-mark, awaiting its resident</span>`}${d.sovereign ? `<span class="wv-chip">sovereign</span>` : ""}${d.tier === "constitution" ? `<span class="wv-chip">constitution</span>` : ""}</div>
+      ${d.within?.length ? `<div class="wv-within"><span class="lbl">sits inside</span> ${d.within.map(wnode).join(' <span class="wv-quiet">‹</span> ')}</div>` : ""}
       ${d.predicates?.length ? `<div class="wv-tree-label">told of it</div><div class="wv-tree">${d.predicates.map((p) => tnode(p, "prop")).join("")}</div>` : ""}
       ${d.inside?.length ? `<div class="wv-tree-label">within it</div><div class="wv-tree">${d.inside.map((p) => tnode(p, "child")).join("")}</div>` : ""}
       ${d.alongside?.length ? `<div class="wv-tree-label">alongside</div><div class="wv-tree sib">${d.alongside.map((p) => tnode(p, "sib")).join("")}</div>` : ""}
@@ -1157,7 +1183,7 @@ export function mountViewer(appEl) {
     // investigate: back-crumb / tree node / card
     const back = e.target.closest(".wv-back");
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
-    const tn = e.target.closest(".wv-tnode");
+    const tn = e.target.closest(".wv-tnode, .wv-wnode"); // upward-context names drill too
     if (tn) { const card = tn.closest(".wv-card"); if (card && tn.dataset.id) { card._stack.push(tn.dataset.id); renderExpansion(card); } return; }
     // grid pip → investigate in a floating card is overkill; jump to telling+expand
     const pip = e.target.closest(".wv-pip");
