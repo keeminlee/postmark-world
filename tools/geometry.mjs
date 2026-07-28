@@ -134,7 +134,9 @@ function rasterizePolyline(line, width, cell) {
   return set;
 }
 
-function pointInPolygon(px, py, ring) {
+// Exported for the water shape generator, which validates a generated ring against
+// the water oracle point by point. One ray-cast in the repo, not two.
+export function pointInPolygon(px, py, ring) {
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
     const xi = ring[i].x, yi = ring[i].y, xj = ring[j].x, yj = ring[j].y;
@@ -148,7 +150,7 @@ function distToSegment(px, py, ax, ay, bx, by) {
   t = t < 0 ? 0 : t > 1 ? 1 : t;
   return { d: Math.hypot(px - (ax + t * dx), py - (ay + t * dy)), t };
 }
-function pointInRect(px, py, r) { return px >= r.x - r.w / 2 && px <= r.x + r.w / 2 && py >= r.y - r.h / 2 && py <= r.y + r.h / 2; }
+export function pointInRect(px, py, r) { return px >= r.x - r.w / 2 && px <= r.x + r.w / 2 && py >= r.y - r.h / 2 && py <= r.y + r.h / 2; }
 
 // marksContain(outer, inner) — containment that HONORS TRUE SHAPE. Regular vs
 // regular delegates to the analytic `contains` (byte-identical). Otherwise it is
@@ -165,14 +167,34 @@ export function marksContain(outer, inner, { cell = COVERAGE_CELL_M, outerFeatur
   let inOuter;
   if (oIrr) {
     const outerCells = coverage(outer, { cell, feature: outerFeature });
-    if (!outerCells) return contains(rect(outer), rect(inner));
-    inOuter = (k) => outerCells.has(k);
+    if (outerCells) inOuter = (k) => outerCells.has(k);
+    else {
+      // Too big to RASTERIZE is not too big to ANSWER. Falling back to the outer's
+      // bounding rect here silently discards the true shape of exactly the marks
+      // that most need it: the main channel's ring spans 3873 x 10425 m, which is
+      // ~1.6M cells at 5 m, so every containment question about the river was
+      // answered by its rectangle — the very thing giving the water true shape is
+      // meant to end. A ring is exact, so test cell centres against it directly.
+      const ring = polygonOf(outer);
+      if (!ring) return contains(rect(outer), rect(inner)); // a feature-line outer, no ring: unchanged
+      inOuter = (k) => {
+        const [cx, cy] = k.split(",").map(Number);
+        return pointInPolygon(cellCenter(cx, cell), cellCenter(cy, cell), ring);
+      };
+    }
   } else {
     const ro = rect(outer);
     inOuter = (k) => { const [cx, cy] = k.split(",").map(Number); return pointInRect(cellCenter(cx, cell), cellCenter(cy, cell), ro); };
   }
-  let covered = 0;
-  for (const k of innerCells) if (inOuter(k)) covered++;
+  // Bail as soon as the answer is settled. The analytic path above costs a ray-cast
+  // per cell, and placementParent asks this of every candidate parent for every
+  // mark, so a non-contained inner must fail fast rather than ray-cast 120k cells.
+  const allowedMisses = Math.floor(innerCells.size * (1 - frac));
+  let covered = 0, missed = 0;
+  for (const k of innerCells) {
+    if (inOuter(k)) covered++;
+    else if (++missed > allowedMisses) return false;
+  }
   return covered / innerCells.size >= frac;
 }
 

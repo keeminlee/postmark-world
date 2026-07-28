@@ -135,6 +135,12 @@ export function assembleWorld({ worldState, skeleton, homeControlPoints = null }
   const heightfield = buildHeightfield({ controlPoints });
   return {
     marks,
+    // THE PARCEL IS THE HOME (ruling 7). Home is a household's parcel, so the
+    // parcel is a first-class world object and the fold must publish it — every
+    // reader that needs to answer "where does this resident stand?" reads the
+    // same list. Without this, home resolution silently falls back to the quay
+    // for everyone, which reads as ordinary "no ground yet" behaviour and hides.
+    parcels: worldState.parcels ?? [],
     terrain: skeleton,
     heightfield,
     light: skeleton.light,

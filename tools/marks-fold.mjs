@@ -164,7 +164,8 @@ import { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
 // lands in: the DEEPEST existing mark that contains the new claim. It tests with
 // the SAME `marksContain` the lint and fold enforce — coverage-honest when a
 // `points:` ring is present (the ring is part of the claim, per the honesty gate),
-// bbox-analytic otherwise (byte-identical on the whole current record: no mark
+// bbox-analytic otherwise. NO LONGER a no-op: the five inland water marks carry
+// rings, so containment is coverage-based for them (was true of no mark
 // carries a ring today). Placement is not a preview — it IS the asserted
 // containment edge, so the placer and the enforcer must agree, or a ring-notch
 // write would bounce at the lint gate for a writer who did nothing wrong. Bbox
@@ -240,7 +241,8 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     // marksContain; feature geometry is NEVER passed, so feature marks stay
     // claim-based (bbox) per the 07-23 ruling. Bbox area still ranks candidate
     // parents. Regular-vs-regular delegates to the analytic contains, so the
-    // current record's containment tree is byte-identical (no record has points:).
+    // The water marks now carry rings, so this is live: the channel stopped being
+    // the tree parent of eight dry-land marks. See CALLS.md's containment table.
     if (ra.w * ra.h > rb.w * rb.h && marksContain(a, b)) {
       // smallest containing wins as parent
       const cur = parentOf.get(b.id);

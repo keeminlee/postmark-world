@@ -20,7 +20,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMarks, marksContain, polygonOf, ringMatchesClaim, isValidMarkDate } from "./marks-fold.mjs";
+import { loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -40,6 +40,7 @@ const KINDS = new Set(["sited", "predicated", "naming", "parcel"]);
 const TIERS = new Set(["constitution", "sovereignty", "market"]); // v2 protection tiers
 const TOWN = "the-town"; // the town-tier author; only it may claim constitution
 const CONTAINERS = new Set(["sited", "parcel"]); // only extented things contain or carry
+const WORLD_ROOT = "the-town/let-there-be-light"; // placementParent returns null for this frame
 const BODY_MAX = 150; // chars (07-22 ruling)
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -150,20 +151,20 @@ for (const rec of marks) {
     err(rec, `a ${rec.kind} mark cannot contain child marks — only sited/parcel marks do (move the children out)`);
 }
 
-// 6. the nesting edge itself — "you cannot lie with an edge"
+// 6. the nesting edge itself — tree = geometry, exactly.
+//
+// Mere containment is too weak: a house filed under its district passes even
+// when its own parcel is the tightest container. Compare the directory edge to
+// placementParent, the same smallest-container function the write door uses.
+// Parcels are covered too; a parcel directory can lie just as quietly as a
+// sited mark's.
 for (const rec of marks) {
-  if (rec._error || rec._parentMarkId == null) continue;
+  if (rec._error || (rec.kind !== "sited" && rec.kind !== "parcel") || !rec.at) continue;
   if (rec.far) continue; // a horizon object (Pando) sits beyond the ground extent by construction (decision 008)
-  const parent = byId.get(rec._parentMarkId);
-  if (!parent) { err(rec, `nested under "${rec._parentMarkId}", which has no readable mark.md`); continue; }
-  if (!CONTAINERS.has(parent.kind)) continue; // already reported on the parent (§5)
-  if (rec.kind === "sited") {
-    // containment honors true shape (a `points:` ring); feature geometry is never
-    // passed, so feature marks stay claim-based (bbox). Byte-identical today —
-    // no record carries points: — so the gate is a no-op on the current tree.
-    if (!marksContain(parent, rec))
-      err(rec, `the directory nests this inside "${parent.id}", but its footprint is not contained by "${parent.id}" — you cannot lie with an edge (site it inside, or move it out)`);
-  }
+  const actual = rec._parentMarkId === WORLD_ROOT ? null : rec._parentMarkId ?? null;
+  const expected = placementParent(rec, marks);
+  if (actual !== expected)
+    err(rec, `directory parent is "${actual ?? "(root)"}", but placementParent is "${expected ?? "(root)"}" — the edge must name the tightest geometric container (re-home the directory)`);
 }
 
 // ---- report (lint.mjs idiom: sort, print, exit non-zero only on ERROR) ----

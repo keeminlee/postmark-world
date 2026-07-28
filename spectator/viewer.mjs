@@ -334,6 +334,17 @@ const STYLE = `
 .wv-hl-dot.t-constitution { fill:var(--blue); }
 .wv-hl-dot.t-home { fill:var(--green); }
 .wv-hl-dot.t-market { fill:var(--amber); }
+/* walkers (write-release P2): the one thing on this map that moves. A walker is
+   drawn where DERIVATION says they are — the layer keeps no position of its own. */
+.wv-walker { fill:#e0507a; stroke:#fff; stroke-width:2; vector-effect:non-scaling-stroke; }
+.wv-walker.arrived { fill:var(--green); }
+.wv-walker.standing { fill:#8b93a7; }
+.wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
+.wv-walk-dest { fill:none; stroke:#e0507a; stroke-width:2; vector-effect:non-scaling-stroke; }
+.wv-walkpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
+.wv-walkpanel input[type=range] { width:130px; vertical-align:middle; }
+.wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
+#wv-walk-readout { opacity:.75; }
 /* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
 .wv-maphead { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
 .wv-mapctl { display:flex; gap:5px; }
@@ -434,6 +445,7 @@ const MARKUP = `
       <div class="wv-minimap"><div class="loading">fetching the painting…</div></div>
       <p class="wv-mapnote">the atlas, for bearings — <b>the telling is the truth</b>. Click to stand there;
         drag to pan, scroll to zoom. The dashed ring is how far today's air lets you see.</p>
+      <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
   </aside>
 </div>
@@ -954,6 +966,11 @@ export function mountViewer(appEl) {
       const hlLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
       hlLayer.setAttribute("id", "wv-hl-layer");
       svg.appendChild(hlLayer);
+      // walkers ride above the highlight layer: a walk is the one thing on this
+      // map that moves, so it must never be painted under anything.
+      const walkLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      walkLayer.setAttribute("id", "wv-walk-layer");
+      svg.appendChild(walkLayer);
       boxEl.innerHTML = ""; boxEl.appendChild(svg);
       boxEl.classList.add("pannable");
 
@@ -967,7 +984,7 @@ export function mountViewer(appEl) {
       }
       const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
       const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, gridLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, hlId: null, _tweening: false };
+      mapCtx = { svg, overlay, hlLayer, walkLayer, gridLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, hlId: null, _tweening: false };
       let tween = null;
       function applyView() {
         svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
@@ -1150,6 +1167,7 @@ export function mountViewer(appEl) {
     s += `<circle cx="${me.x}" cy="${me.y}" r="${17 / k}" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="${36 / k}" class="ov-halo"/>`;
     overlay.innerHTML = s;
     mapCtx.syncWithin?.(radial);
+    drawWalkers(); // the camera moved; a derived position must stay true to it
     if (mapCtx.follow && mapCtx.lockOn && !mapCtx._tweening) mapCtx.lockOn();
   }
   // wash a mark blue on the painting — a soft glow at its position (cheap and it
@@ -1176,6 +1194,73 @@ export function mountViewer(appEl) {
     }
     s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
     mapCtx.hlLayer.innerHTML = s;
+  }
+
+  // ───────── walkers (write-release P2) ─────────
+  // A walk is a DECLARED DEPARTURE; position is derived from that record and the
+  // clock. So this layer stores nothing and animates nothing — it asks the server
+  // where everyone is at a given crossing and draws that. Scrubbing the clock is
+  // not a simulation: because derivation is pure, a scrubbed frame is exactly
+  // what that instant will really hold.
+  //
+  // Why a scrub exists at all: 15 km per 12-hour crossing is about 0.35 m/s. On a
+  // live clock the dot is visually motionless, so a viewer with no scrub cannot
+  // tell a working walk from a broken one.
+  let walkState = { at: null, offset: 0, walkers: [], timer: null };
+
+  function drawWalkers() {
+    if (!mapCtx?.walkLayer) return;
+    const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
+    const px = (m) => ({ x: mapCtx.originPx.x + m.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.y / mapCtx.mPerPx });
+    let s = "";
+    for (const w of walkState.walkers) {
+      const now = px(w), dest = px(w.toward ?? w);
+      // the remaining leg, then the walker on top of it
+      if (!w.arrived && !w.standing)
+        s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
+             `<circle cx="${dest.x}" cy="${dest.y}" r="${5 / k}" class="wv-walk-dest"/>`;
+      const cls = w.standing ? "wv-walker standing" : w.arrived ? "wv-walker arrived" : "wv-walker";
+      const eta = w.standing ? "standing" : w.arrived ? "arrived" : `${w.remaining_m} m to go, ETA ${w.eta_crossings} crossings`;
+      s += `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}"><title>${esc(w.handle)} — ${esc(eta)}</title></circle>`;
+    }
+    mapCtx.walkLayer.innerHTML = s;
+    const box = document.getElementById("wv-walk-readout");
+    if (box) {
+      const on = walkState.walkers.filter((w) => !w.arrived && !w.standing).length;
+      box.textContent = walkState.at === null ? "no walk records"
+        : `crossing ${walkState.at.toFixed(3)}${walkState.offset ? ` (${walkState.offset > 0 ? "+" : ""}${walkState.offset} scrubbed)` : " (now)"} — ` +
+          `${walkState.walkers.length} on record, ${on} on the road`;
+    }
+  }
+
+  async function pollWalkers() {
+    try {
+      const at = walkState.offset ? `?at=${(walkState.baseAt ?? 0) + walkState.offset}` : "";
+      const r = await fetch(`/api/walks${at}`);
+      if (!r.ok) return;
+      const j = await r.json();
+      walkState.baseAt = j.now;
+      walkState.at = j.at;
+      walkState.walkers = j.walkers ?? [];
+      drawWalkers();
+    } catch { /* the spectator is a read-only toy; a missed poll is not an error */ }
+  }
+
+  function mountWalkers() {
+    const host = document.getElementById("wv-walk-panel");
+    if (!host) return;
+    host.innerHTML =
+      `<label>scrub <input id="wv-walk-scrub" type="range" min="-4" max="24" step="0.25" value="0"></label>` +
+      `<button id="wv-walk-nowbtn" type="button">now</button>` +
+      `<span id="wv-walk-readout">…</span>`;
+    const scrub = document.getElementById("wv-walk-scrub");
+    scrub.addEventListener("input", () => { walkState.offset = Number(scrub.value); pollWalkers(); });
+    document.getElementById("wv-walk-nowbtn").addEventListener("click", () => {
+      scrub.value = "0"; walkState.offset = 0; pollWalkers();
+    });
+    pollWalkers();
+    clearInterval(walkState.timer);
+    walkState.timer = setInterval(() => { if (!walkState.offset) pollWalkers(); }, 15000);
   }
 
   // ───────── dev pane ─────────
@@ -1313,6 +1398,7 @@ export function mountViewer(appEl) {
     if (!handles.length && state.markFilter === "mine") state.markFilter = "all";
     renderPresets();
     renderIdentity();
+    mountWalkers(); // the walkers layer polls /api/walks; harmless if the route is absent
     if (state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
   }
   // the sign-in affordance — signed out: a key field (localStorage); signed in: who
