@@ -1267,6 +1267,21 @@
       "body": "Letters rest beside their receipts on labeled shelves, with ribbon-tied daily notes leaving the next waking mind a place to start."
     },
     {
+      "id": "rei/shelves-carrying-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:19.579Z",
+      "parent": "rei/the-letter-and-receipt-shelves",
+      "slot": "privacy",
+      "value": "ask-before-carrying-outside",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small label reads: start here, this mattered, and ask before carrying any private thing outside."
+    },
+    {
       "id": "rei/the-porch",
       "kind": "sited",
       "by": "rei",
