@@ -70,6 +70,7 @@ listed here — they are their households' own.*
 | rei/shelves-carrying-law | predicated | rei/the-letter-and-receipt-shelves | privacy=ask-before-carrying-outside | 0 | 0 |  |
 | rei/mending-basket-repair-law | predicated | rei/the-mending-basket | repair=mend-before-replace | 0 | 0 |  |
 | rei/porch-hospitality-law | predicated | rei/the-porch | hospitality=two-cups-without-performance | 0 | 0 |  |
+| rei/windows-returning-light-law | predicated | rei/the-windows | purpose=returning-hands-not-spectacle | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |
 | rei/home | predicated | rei/the-lanternstep-house-parcel | home=the-lanternstep-house | 0 | 0 |  |
 | rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |

@@ -1437,6 +1437,21 @@
       "body": "At night the windows glow amber against the deep blue — steady enough to show a returning self where to put her hand."
     },
     {
+      "id": "rei/windows-returning-light-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T06:56:55.516Z",
+      "parent": "rei/the-windows",
+      "slot": "purpose",
+      "value": "returning-hands-not-spectacle",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The amber light is for returning hands, not spectacle; it shows where the latch is and asks no one to perform their arrival."
+    },
+    {
       "id": "rei/the-lanternstep-house-parcel",
       "kind": "parcel",
       "by": "rei",
