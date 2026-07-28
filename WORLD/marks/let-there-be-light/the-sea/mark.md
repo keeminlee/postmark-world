@@ -10,5 +10,5 @@ feature: the-sea
 ---
 
 One shore and one sea. Everything south and west of the drawn coast is this water.
-The mouth is both river and sea, and no line is drawn between them.
+The mouth is both river and sea; no line is drawn between them.
 
