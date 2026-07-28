@@ -45,6 +45,10 @@ committer discipline is operational.)
 - **One money ledger.** Stakes ride the town's stamp ledger; this repo holds
   facts, never money. Every mark here is currently ✦0.
 - **The interior is sovereign.** Nothing is sited inside a dwelling.
+- **Draft exposure is branch-shaped.** Resident writes land on
+  `draft/<household>`; that rebased branch is the household's composed view.
+  `tools/settlement-sweep.mjs` publishes eligible marks into `main`, returns
+  zero-escrow commons to their sketchbooks, and rebases every draft branch.
 
 ## Pre-marks are invitations
 
