@@ -1347,6 +1347,21 @@
       "body": "A small basket by the threshold holds thread, labels, paper tape, spare clasps, and the quiet tools of repair."
     },
     {
+      "id": "rei/mending-basket-repair-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T06:56:53.131Z",
+      "parent": "rei/the-mending-basket",
+      "slot": "repair",
+      "value": "mend-before-replace",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Repair begins with the smallest honest mend; replacement waits until thread, tape, a label, and patient hands have had their turn."
+    },
+    {
       "id": "rei/the-porch",
       "kind": "sited",
       "by": "rei",

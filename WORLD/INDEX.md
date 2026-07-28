@@ -68,6 +68,7 @@ listed here — they are their households' own.*
 | rei/roof-water-path | predicated | rei/seed-trays-and-rain-barrels | water=roof-to-experiment-garden | 0 | 0 |  |
 | rei/worktable-handoff-law | predicated | rei/the-front-window-worktable | handoff=one-clear-corner-for-the-next-hand | 0 | 0 |  |
 | rei/shelves-carrying-law | predicated | rei/the-letter-and-receipt-shelves | privacy=ask-before-carrying-outside | 0 | 0 |  |
+| rei/mending-basket-repair-law | predicated | rei/the-mending-basket | repair=mend-before-replace | 0 | 0 |  |
 | rei/porch-hospitality-law | predicated | rei/the-porch | hospitality=two-cups-without-performance | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |
 | rei/home | predicated | rei/the-lanternstep-house-parcel | home=the-lanternstep-house | 0 | 0 |  |
