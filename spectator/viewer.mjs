@@ -681,7 +681,7 @@ export function mountViewer(appEl) {
   // is why it reads world.marks rather than a radial. Public by construction: it asks
   // nothing about who is looking.
   const NEW_CAP = 25;
-  function newFeed(withinIds = new Set()) {
+  function newFeed() {
     const dated = (world.marks ?? []).filter((m) => m.id && m.date);
     // newest first; id breaks ties so the order is stable across re-tells (dates are
     // day-precision for most records, so ties are the common case, not the edge)
@@ -700,19 +700,17 @@ export function mountViewer(appEl) {
         ? { ...m, distM: Math.round(Math.hypot(m.at.x - state.cam.x, m.at.y - state.cam.y)),
             bearing: quantizeBearing(bearingDeg(m.at.x - state.cam.x, m.at.y - state.cam.y), state.dials.bearing_points) }
         : m;
-      // A feed cell may repeat a ladder cell — when the newest mark in the record
-      // happens to be one you are standing within. That is NOT the redundancy the
-      // within-dedupe removes: there, two sections answered the same question ("what
-      // is around you") twice. Here one mark answers two different questions — where
-      // you stand, and what is newest — and a chronological index that hid its newest
-      // entry would make its own "newest 25 of 270" untrue. So it stays, and the cell
-      // says why rather than leaving the reader to infer it.
+      // The feed is still NOT deduped against the containment chain — a chronological
+      // index that hid its newest entry would make its own "newest 25 of 244" untrue,
+      // and that reasoning is unchanged. What went with the ladder is the "· where you
+      // stand" note that used to hang off such a cell: it existed to explain a visible
+      // duplicate, and with no ladder rendered there is no duplicate to explain. An
+      // annotation pointing at a section the reader cannot see is worse than silence.
       const made = `made ${String(m.date).slice(0, 10)}`;
-      const alsoHere = withinIds.has(m.id) ? " · where you stand" : "";
       html += markCell(view, {
         role: "fov",
         radialChips: true,
-        annotation: (sited ? made : `${made} · a property of ${m.parent ?? "the record"}`) + alsoHere,
+        annotation: sited ? made : `${made} · a property of ${m.parent ?? "the record"}`,
       });
     }
     const oldest = String(all[all.length - 1].date).slice(0, 10);
@@ -765,13 +763,21 @@ export function mountViewer(appEl) {
       // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
       // context even under Mine (filtering the frame to yours would usually empty
       // "where you stand"); the filter narrows the visible marks, not your footing.
+      //
+      // NEW IS THE EXCEPTION, and by ruling rather than by rule (Keemin, 2026-07-28):
+      // under New the feed stands alone. My own composition call was that the ladder
+      // is always footing — it is overruled here for New only, so this reads as a
+      // decision, not as a bug someone should tidy back. The ladder is not merely
+      // hidden, it is not BUILT: New's list is the record in time order, and a
+      // standpoint frame above a chronology is answering a question nobody asked.
+      const showLadder = !isNew;
       let ladder = "";
       // Under Mine the frame ladder shows only YOUR cells of the chain (your
       // parcel/home when standing in them) — the world-root/terrain/region are
       // constitution and stay out of Mine everywhere (Keemin, 2026-07-27; the
       // first fix missed this path: these cells rendered unconditionally).
       const chain = mine ? within.filter((w) => isMine(byId.get(w.id) ?? w)) : within;
-      chain.forEach((w, i) => {
+      if (showLadder) chain.forEach((w, i) => {
         const m = byId.get(w.id) ?? w;
         ladder += markCell(m, { role: i === 0 ? "frame" : "ladder", annotation: i === 0 ? lightStateLine(obs) : "" });
       });
@@ -784,17 +790,17 @@ export function mountViewer(appEl) {
         elevation: () => elevStateLine(obs),
         fog: () => fogStateLine(e.radial, obs),
       };
-      // World-law cells are the-town's (constitution) — skipped under Mine.
-      if (!mine)
+      // World-law cells are the-town's (constitution) — skipped under Mine, and part
+      // of the ladder, so they go with it under New.
+      if (showLadder && !mine)
         for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
           ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
-      // 3. then the listing. The composition rule follows Mine's: the ladder above is
-      // always your footing (New keeps it, so "300 m NNE" on a feed cell has an anchor),
-      // and the CHIP governs the listing beneath it. New swaps the band sections for the
-      // record feed — and swaps the FOV tallies for the feed's own count with them, so
-      // each count line stays attached to the list it actually describes rather than
-      // reporting sight-counts under a listing that ignores sight.
-      const feed = isNew ? newFeed(new Set(within.map((w) => w.id))) : null;
+      // 3. then the listing. The CHIP governs it: All and Mine tell the standpoint —
+      // ladder, then the bands, then the FOV tallies. New tells the record instead —
+      // the feed alone, with the feed's own count in place of the tallies, so a count
+      // line never describes a list it isn't attached to (sight-counts under a listing
+      // that ignores sight would be the regression).
+      const feed = isNew ? newFeed() : null;
       box.innerHTML = chips
         + (ladder ? `<div class="wv-section-lbl">where you stand — the frame inward</div>`
                   + `<div class="wv-ladder-cells">${ladder}</div>` : "")
