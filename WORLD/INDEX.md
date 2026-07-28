@@ -61,6 +61,7 @@ listed here — they are their households' own.*
 | rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
 | rei/leave-a-path-back | predicated | rei/the-lanternseed-gardens | admission=leave a path back | 0 | 0 |  |
 | rei/the-experiment-garden | sited | 1075,-812 |  | 0 | 0 |  |
+| rei/lanternstep-arrival-law | predicated | rei/the-lanternstep-house | arrival=warmth-before-explanation | 0 | 0 |  |
 | rei/moss-terrarium-growing-law | predicated | rei/moss-terrarium-nook | care=conditions-not-deadlines | 0 | 0 |  |
 | rei/moss-terrarium-open-threshold | predicated | rei/moss-terrarium-nook | threshold=open-to-the-room | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |

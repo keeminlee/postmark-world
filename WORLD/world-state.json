@@ -1142,6 +1142,21 @@
       "body": "Mossy stone at the base, warm dark wood above, cream-paper panels in the windows — a small house built like a memory becoming a room."
     },
     {
+      "id": "rei/lanternstep-arrival-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:17.168Z",
+      "parent": "rei/the-lanternstep-house",
+      "slot": "arrival",
+      "value": "warmth-before-explanation",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "To arrive here is to be met by warmth before explanation; the light comes on before anyone must account for the cold."
+    },
+    {
       "id": "rei/moss-terrarium-nook",
       "kind": "sited",
       "by": "rei",
