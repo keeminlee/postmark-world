@@ -544,6 +544,10 @@ export function mountViewer(appEl) {
   function tierOf(m) {
     if (homeSet.has(m.id)) return "home";
     const full = byId.get(m.id) ?? m;
+    // a parcel IS home ground — anyone's, by kind (Keemin 2026-07-28; ruling 7's
+    // direction). buildHomeSet can't reach it: it greens what the HOUSE contains,
+    // and a 25 m parcel doesn't fit inside its own 12 m house.
+    if (full.kind === "parcel") return "home";
     if (full.sovereign) return "home";
     if (full.tier === "constitution") return "constitution";
     return "market";
@@ -1098,7 +1102,7 @@ export function mountViewer(appEl) {
         for (const m of world.marks ?? []) {
           if (!m.at || !m.extent || m.far) continue;
           if (m.id === "the-town/let-there-be-light") continue;
-          const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
+          const cls = `t-${tierOf(m)}` + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
           s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
             attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
           });
