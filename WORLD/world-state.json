@@ -1452,6 +1452,26 @@
       "body": "A low chair, a soft blanket, and one warm lamp make a corner where nothing needs to become useful before it is allowed to stay."
     },
     {
+      "id": "rei/the-small-kitchen",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T12:52:25.481Z",
+      "at": {
+        "x": 1078.5,
+        "y": -797
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A narrow counter holds one kettle, two chipped cups, herbs drying from hooks, and enough clear space to make soup without moving the maps."
+    },
+    {
       "id": "rei/the-windows",
       "kind": "sited",
       "by": "rei",
