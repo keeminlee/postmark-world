@@ -13,6 +13,8 @@
 // Pure: no fs, no engine import. The office pen owns writing; this owns grammar
 // and arithmetic.
 
+import { pointInRect } from "./geometry.mjs";
+
 // The pace dial — decision 008, movable by ruling, never silently.
 export const WALK_KM_PER_CROSSING = 15;
 export const WALK_M_PER_CROSSING = WALK_KM_PER_CROSSING * 1000;
@@ -34,20 +36,23 @@ export function fractionalCrossing(nowMs = Date.now()) {
 //
 // One line per departure, append-only, mirroring the town's mail/stamp ledgers:
 //
-//   - <iso> · <handle> · from <x>,<y> · toward <x>,<y> · at <fractional>[ · to <mark-id>]
+//   - <iso> · <handle> · from <x>,<y> · toward <x>,<y> · at <fractional>[ · within <w>,<h>][ · to <mark-id>]
 //
 // `toward` is ALWAYS coordinates. The optional trailing `to <mark-id>` records
-// what was asked for, so the record keeps intent without making derivation
-// depend on re-resolving a mark that may later move or retire (CALLS.md C5).
+// what was asked for. `within` freezes the target's extent at departure so
+// arrival remains a pure function of the line + clock: a mark that later moves,
+// resizes, or retires cannot rewrite where someone arrived (CALLS.md C5 + the
+// 2026-07-28 arrival ruling).
 
 export const DEPARTURE_RE =
-  /^- (\S+) · (\S+) · from (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · toward (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · at (\d+(?:\.\d+)?)(?: · to (\S+))?$/;
+  /^- (\S+) · (\S+) · from (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · toward (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · at (\d+(?:\.\d+)?)(?: · within (\d+(?:\.\d+)?),(\d+(?:\.\d+)?))?(?: · to (\S+))?$/;
 
-export function formatDeparture({ handle, from, toward, at, targetMarkId = null, iso = null }) {
+export function formatDeparture({ handle, from, toward, at, targetExtent = null, targetMarkId = null, iso = null }) {
   const stamp = iso ?? new Date().toISOString();
-  const tail = targetMarkId ? ` · to ${targetMarkId}` : "";
+  const within = targetExtent ? ` · within ${round1(targetExtent.w)},${round1(targetExtent.h)}` : "";
+  const intent = targetMarkId ? ` · to ${targetMarkId}` : "";
   return `- ${stamp} · ${handle} · from ${round1(from.x)},${round1(from.y)}`
-       + ` · toward ${round1(toward.x)},${round1(toward.y)} · at ${at.toFixed(4)}${tail}`;
+       + ` · toward ${round1(toward.x)},${round1(toward.y)} · at ${at.toFixed(4)}${within}${intent}`;
 }
 
 const round1 = (n) => Math.round(n * 10) / 10;
@@ -68,7 +73,8 @@ export function parseWalkLedger(text) {
       from: { x: +m[3], y: +m[4] },
       toward: { x: +m[5], y: +m[6] },
       at: +m[7],
-      targetMarkId: m[8] ?? null,
+      targetExtent: m[8] === undefined ? null : { w: +m[8], h: +m[9] },
+      targetMarkId: m[10] ?? null,
       line: raw,
     });
   }
@@ -86,32 +92,69 @@ export function currentDeparture(departures, handle) {
 
 // ── derived position ────────────────────────────────────────────────────────
 
+function targetRect(departure) {
+  const { toward, targetExtent } = departure;
+  if (!targetExtent || !Number.isFinite(targetExtent.w) || !Number.isFinite(targetExtent.h)) return null;
+  return { x: toward.x, y: toward.y, w: Math.abs(targetExtent.w), h: Math.abs(targetExtent.h) };
+}
+
+// The fraction of the centre-bound segment at which it first enters the target
+// rect. The centre remains the interpolation target; the walk ends at the first
+// point on the target's ground, not at its centre.
+function targetEntryT(from, toward, r) {
+  if (pointInRect(from.x, from.y, r)) return 0;
+  let enter = 0, exit = 1;
+  for (const axis of ["x", "y"]) {
+    const start = from[axis], delta = toward[axis] - start;
+    const half = (axis === "x" ? r.w : r.h) / 2;
+    const lo = r[axis] - half, hi = r[axis] + half;
+    if (delta === 0) {
+      if (start < lo || start > hi) return 1;
+      continue;
+    }
+    const a = (lo - start) / delta, b = (hi - start) / delta;
+    enter = Math.max(enter, Math.min(a, b));
+    exit = Math.min(exit, Math.max(a, b));
+  }
+  return Math.max(0, Math.min(1, enter <= exit ? enter : 1));
+}
+
 // positionAt(departure, nowFractional) → where the walker is, and whether the
-// leg is finished. Arrival is the CLAMP engaging — no arrival record exists and
-// nothing is written when it happens (CALLS.md C6).
+// leg is finished. For a mark/home target, arrival is the containment predicate:
+// the derived coordinates have entered the target's recorded extent. Raw
+// coordinates retain point arrival. No arrival record exists and nothing is
+// written when it happens.
 export function positionAt(departure, nowFractional = fractionalCrossing()) {
   if (!departure) return null;
   const { from, toward, at } = departure;
-  const legM = Math.hypot(toward.x - from.x, toward.y - from.y);
+  const centreM = Math.hypot(toward.x - from.x, toward.y - from.y);
 
   // A zero-distance departure is "stand here" — the stop. Always arrived.
-  if (legM === 0) {
+  if (centreM === 0) {
     return { x: from.x, y: from.y, arrived: true, standing: true,
              legM: 0, travelledM: 0, remainingM: 0, etaCrossings: 0 };
   }
 
   const elapsed = Math.max(0, nowFractional - at);
   const travelledM = elapsed * WALK_M_PER_CROSSING;
-  const arrived = travelledM >= legM;
-  const t = arrived ? 1 : travelledM / legM;
-  const remainingM = Math.max(0, legM - travelledM);
+  const r = targetRect(departure);
+  const entryT = r ? targetEntryT(from, toward, r) : 1;
+  const arrivalM = centreM * entryT;
+  const candidateT = Math.min(1, travelledM / centreM);
+  const candidate = {
+    x: from.x + (toward.x - from.x) * candidateT,
+    y: from.y + (toward.y - from.y) * candidateT,
+  };
+  const arrived = r ? pointInRect(candidate.x, candidate.y, r) : travelledM >= centreM;
+  const t = arrived ? entryT : candidateT;
+  const remainingM = Math.max(0, arrivalM - travelledM);
 
   return {
     x: round1(from.x + (toward.x - from.x) * t),
     y: round1(from.y + (toward.y - from.y) * t),
-    arrived, standing: false,
-    legM: Math.round(legM),
-    travelledM: Math.round(Math.min(travelledM, legM)),
+    arrived, standing: arrivalM === 0,
+    legM: Math.round(arrivalM),
+    travelledM: Math.round(Math.min(travelledM, arrivalM)),
     remainingM: Math.round(remainingM),
     etaCrossings: arrived ? 0 : round2(remainingM / WALK_M_PER_CROSSING),
   };

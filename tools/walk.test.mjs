@@ -14,7 +14,7 @@ import {
   WALK_M_PER_CROSSING, CROSSING_EPOCH_UTC, CROSSING_MS,
 } from "./walk.mjs";
 
-const D = (o) => ({ iso: "2026-07-27T00:00:00.000Z", targetMarkId: null, ...o });
+const D = (o) => ({ iso: "2026-07-27T00:00:00.000Z", targetExtent: null, targetMarkId: null, ...o });
 
 test("the fractional clock's integer part IS the crossing number", () => {
   // The engine's currentCrossing is floor((now - epoch)/12h); ours must agree,
@@ -46,13 +46,45 @@ test("the pace dial is 15 km per crossing, and interpolation is linear along the
   assert.equal(positionAt(dep, 1).arrived, true);
 });
 
-test("arrival is the clamp engaging — never overshoots, needs no record", () => {
+test("raw-coordinate arrival clamps at the point — never overshoots, needs no record", () => {
   const dep = D({ handle: "h", from: { x: 0, y: 0 }, toward: { x: 1000, y: 0 }, at: 5 });
   const late = positionAt(dep, 500); // absurdly far in the future
   assert.equal(late.x, 1000, "clamped at the destination, not past it");
   assert.equal(late.arrived, true);
   assert.equal(late.remainingM, 0);
   assert.equal(late.etaCrossings, 0);
+});
+
+test("mark arrival is containment — stops at the target extent, not its centre", () => {
+  const dep = D({
+    handle: "h", from: { x: 0, y: 0 }, toward: { x: 1000, y: 0 }, at: 0,
+    targetExtent: { w: 200, h: 100 }, targetMarkId: "h/a-parcel",
+  });
+  const almost = positionAt(dep, 899 / WALK_M_PER_CROSSING);
+  assert.equal(almost.arrived, false);
+  assert.equal(almost.x, 899);
+  assert.equal(almost.remainingM, 1);
+
+  const entered = positionAt(dep, 900 / WALK_M_PER_CROSSING);
+  assert.equal(entered.arrived, true, "the west edge at x=900 is inside the target rect");
+  assert.equal(entered.x, 900, "arrival clamps at the first contained point");
+  assert.equal(entered.legM, 900, "the walked leg ends at the footprint edge");
+  assert.equal(entered.remainingM, 0);
+
+  const late = positionAt(dep, 10);
+  assert.equal(late.x, 900, "the resident does not keep walking toward the centre after arrival");
+});
+
+test("walking to ground you already occupy arrives in place", () => {
+  const dep = D({
+    handle: "h", from: { x: 950, y: 0 }, toward: { x: 1000, y: 0 }, at: 0,
+    targetExtent: { w: 200, h: 100 }, targetMarkId: "h/a-parcel",
+  });
+  const p = positionAt(dep, 0);
+  assert.equal(p.arrived, true);
+  assert.equal(p.standing, true);
+  assert.deepEqual([p.x, p.y], [950, 0], "containment prevents a needless walk to the centre");
+  assert.equal(p.legM, 0);
 });
 
 test("a zero-distance departure is 'stand here' — the stop", () => {
@@ -77,7 +109,8 @@ test("supersede is latest-wins, not mutation", () => {
 
 test("the ledger round-trips: format → parse → identical fields", () => {
   const dep = { handle: "jetto-of-starforge", from: { x: -12.5, y: 3480 }, toward: { x: 615, y: 3150 },
-                at: 91.2345, targetMarkId: "the-town/the-town-centre", iso: "2026-07-27T22:10:00.000Z" };
+                at: 91.2345, targetExtent: { w: 25, h: 30 },
+                targetMarkId: "the-town/the-town-centre", iso: "2026-07-27T22:10:00.000Z" };
   const line = formatDeparture(dep);
   assert.match(line, DEPARTURE_RE, "the line matches its own grammar");
   const { departures, unrecognized } = parseWalkLedger(`# walk ledger\n\n${line}\n`);
@@ -87,12 +120,15 @@ test("the ledger round-trips: format → parse → identical fields", () => {
   assert.deepEqual(p.from, dep.from);
   assert.deepEqual(p.toward, dep.toward);
   assert.equal(p.at, 91.2345);
+  assert.deepEqual(p.targetExtent, { w: 25, h: 30 }, "the arrival rect rides the immutable departure");
   assert.equal(p.targetMarkId, "the-town/the-town-centre", "intent is kept alongside the coords");
 });
 
 test("a departure with no mark target round-trips with targetMarkId null", () => {
   const line = formatDeparture({ handle: "h", from: { x: 1, y: 2 }, toward: { x: 3, y: 4 }, at: 1, iso: "2026-07-27T00:00:00.000Z" });
   assert.ok(!line.includes(" · to "), "no trailing intent clause when there was no mark");
+  assert.ok(!line.includes(" · within "), "raw coordinates carry no arrival rect");
+  assert.equal(parseWalkLedger(line).departures[0].targetExtent, null);
   assert.equal(parseWalkLedger(line).departures[0].targetMarkId, null);
 });
 

@@ -150,7 +150,7 @@ function distToSegment(px, py, ax, ay, bx, by) {
   t = t < 0 ? 0 : t > 1 ? 1 : t;
   return { d: Math.hypot(px - (ax + t * dx), py - (ay + t * dy)), t };
 }
-function pointInRect(px, py, r) { return px >= r.x - r.w / 2 && px <= r.x + r.w / 2 && py >= r.y - r.h / 2 && py <= r.y + r.h / 2; }
+export function pointInRect(px, py, r) { return px >= r.x - r.w / 2 && px <= r.x + r.w / 2 && py >= r.y - r.h / 2 && py <= r.y + r.h / 2; }
 
 // marksContain(outer, inner) — containment that HONORS TRUE SHAPE. Regular vs
 // regular delegates to the analytic `contains` (byte-identical). Otherwise it is
