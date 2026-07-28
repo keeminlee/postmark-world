@@ -20,6 +20,7 @@ import { orient, openYourEyes, investigate, containmentChain } from "../tools/wo
 import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { contains, rect } from "../tools/geometry.mjs"; // read-only: to color a home + its descendants green
+import { markClass } from "../tools/mark-class.mjs"; // the ONE class rule: in a parcel's directory → home
 
 const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
 const $ = (root, s) => root.querySelector(s);
@@ -432,6 +433,12 @@ const MARKUP = `
   <nav class="wv-nav">
     <div class="wv-identity"></div>
     <div class="wv-standctl">
+      <!-- stand/move went DEV-ONLY the day walk shipped (bronze
+           spectator-stand-move-dev-only-before-walk, executed 2026-07-28): a
+           resident's position is walk-derived now; free repositioning is a dev
+           instrument. Map-click-to-stand stays public for the moment — the
+           spyglass question (looking ≠ being) is teed for Keemin, not ruled. -->
+      <div class="wv-standmove" hidden>
       <h2>Stand at</h2>
       <div class="presets">${PRESETS.map((p) => `<button class="ctl" data-x="${p.x}" data-y="${p.y}">${esc(p.label)}</button>`).join("")}</div>
       <h2>Move</h2>
@@ -444,6 +451,7 @@ const MARKUP = `
         <label class="steplbl">step size <b class="stepval">100 m</b></label>
         <input class="stepslider" type="range" min="0" max="${STEP_NOTCHES.length - 1}" step="1" value="3" list="wv-stepticks" aria-label="step size">
         <datalist id="wv-stepticks">${STEP_NOTCHES.map((_, i) => `<option value="${i}"></option>`).join("")}</datalist>
+      </div>
       </div>
       <h2>Crossing</h2>
       <div class="crossnow"></div>
@@ -589,13 +597,10 @@ export function mountViewer(appEl) {
   function tierOf(m) {
     if (homeSet.has(m.id)) return "home";
     const full = byId.get(m.id) ?? m;
-    // a parcel IS home ground — anyone's, by kind (Keemin 2026-07-28; ruling 7's
-    // direction). buildHomeSet can't reach it: it greens what the HOUSE contains,
-    // and a 25 m parcel doesn't fit inside its own 12 m house.
-    if (full.kind === "parcel") return "home";
-    if (full.sovereign) return "home";
-    if (full.tier === "constitution") return "constitution";
-    return "market";
+    // ONE class rule (tools/mark-class.mjs): in a parcel's directory → home,
+    // via the fold's parent chain — reaches predicated laws with no coordinates,
+    // which homeSet and `sovereign` (both geometric) structurally miss.
+    return markClass(full, byId);
   }
   function tierChip(tier) {
     if (tier === "constitution") return `<span class="wv-chip t-constitution">constitution</span>`;
@@ -1445,6 +1450,9 @@ export function mountViewer(appEl) {
     try { const r = await fetch("/api/ops/whoami", options); state.whoami = r.ok ? await r.json() : null; } catch { state.whoami = null; }
     const toggle = $(root, ".wv-dev-toggle");
     if (toggle) toggle.hidden = !(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || state.whoami?.principal);
+    // stand/move rides the same dev gate (dev-only since walk shipped — see the markup note)
+    const standmove = $(root, ".wv-standmove");
+    if (standmove) standmove.hidden = toggle ? toggle.hidden : true;
     // Keep state.handle valid for the legacy local stakes detail. The identity axes
     // are exposed only after both the composed fold and portfolio resolve.
     const handles = state.whoami?.handles ?? [];

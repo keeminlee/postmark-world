@@ -17,6 +17,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
+import { markClass as classifyMark } from "./mark-class.mjs"; // the ONE class rule
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -278,9 +279,11 @@ export function settlementSweep({
       }
       const record = recordAt(repo, branch, delta.path);
       const view = folded.get(record.id);
-      const markClass = record.tier === "constitution" ? "constitution"
-        : view?.sovereign ? "home"
-        : "commons";
+      // ONE class rule (tools/mark-class.mjs): the parent-chain walk reaches
+      // predicated laws with no coordinates, which the fold's geometric
+      // `sovereign` flag structurally misses (Keemin's S1 live-debug catch).
+      const cls = classifyMark(view ?? record, folded);
+      const markClass = cls === "market" ? "commons" : cls;
       const n = escrow.get(record.id) ?? 0;
       const eligible = markClass !== "commons" || n > 0;
       if (!eligible) {
