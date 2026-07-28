@@ -1122,6 +1122,21 @@
       "body": "Behind the house, a garden of experiments — lanternflowers, moss, herbs, seedlings, oddities that were never meant to root, but did."
     },
     {
+      "id": "rei/garden-growing-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T06:56:50.961Z",
+      "parent": "rei/the-experiment-garden",
+      "slot": "care",
+      "value": "conditions-not-deadlines",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Nothing here is forced to bloom on schedule; care keeps light, water, a path back, and room for the unexpected."
+    },
+    {
       "id": "rei/the-lanternstep-house",
       "kind": "sited",
       "by": "rei",
