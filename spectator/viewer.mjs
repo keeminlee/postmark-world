@@ -55,6 +55,40 @@ const bearingArrow = (b) => {
     + `<path d="M0 -5 L2.8 4 L0 2.1 L-2.8 4 Z" transform="rotate(${deg})"/></svg>`;
 };
 
+// ───────────────────────── THE one mark-shape builder ──────────────────────
+// EVERY outline of a mark's claim on the painting comes from here. Never hand-build
+// one — that is the rule this function exists to make keepable, and it was earned:
+// the ring branch had to be written THREE times before it was written once. Grid-true
+// had it, buildFpLayer got it ported when Grid-true retired, and highlightOnMap
+// quietly went on drawing a bbox rect — so a hover washed a rectangle over a mark
+// the layer beneath it was correctly drawing as a polygon. Two hand-written mappings
+// of one concept drift; three is a habit. The fourth implementation does not get
+// written, because there is nowhere left to write it.
+//
+// A mark with a `points:` ring (≥3) draws its AUTHORED shape; everything else draws
+// its extent rect. The honesty gate guarantees ring-bbox == at/extent, so the two
+// describe the same claim and the ring is only the truer telling of it. Ring vertices
+// are absolute grid metres — the same space `at` lives in — so both take the caller's
+// world→px mapping unchanged.
+//
+// `px(x, y) -> {x, y}` is the caller's mapping (the painting's originPx/mPerPx).
+// `cls` is the caller's own vocabulary — the footprints layer and the hover wash keep
+// their separate classes and styling; only the GEOMETRY is shared.
+function markShapeSVG(m, px, cls, { attrs = "", inner = "" } = {}) {
+  const ring = Array.isArray(m.points) && m.points.length >= 3 ? m.points : null;
+  if (ring) {
+    const pts = ring.map((v) => {
+      const q = px(Array.isArray(v) ? v[0] : v.x, Array.isArray(v) ? v[1] : v.y);
+      return `${q.x},${q.y}`;
+    }).join(" ");
+    return `<polygon points="${pts}" class="${cls}"${attrs}>${inner}</polygon>`;
+  }
+  const w = m.extent?.w ?? 0, h = m.extent?.h ?? 0;
+  const a = px(m.at.x - w / 2, m.at.y - h / 2), b = px(m.at.x + w / 2, m.at.y + h / 2);
+  return `<rect x="${Math.min(a.x, b.x)}" y="${Math.min(a.y, b.y)}"`
+    + ` width="${Math.abs(b.x - a.x)}" height="${Math.abs(b.y - a.y)}" class="${cls}"${attrs}>${inner}</rect>`;
+}
+
 // the stand-at presets (the same three the local build and the astro page carried)
 const PRESETS = [
   { x: 0, y: 0, label: "The quay — Ferry's crossing" },
@@ -1054,34 +1088,20 @@ export function mountViewer(appEl) {
         return on;
       };
 
-      // footprints: rects centered on at, sized by extent — the record's own
-      // geometry landing on the painting (the calibration made visible). The
-      // world-root (the frame) and far/horizon objects are skipped: no ground.
+      // footprints: every mark's own claim landing on the painting (the calibration
+      // made visible) — an extent rect, or the authored `points:` ring where a mark
+      // carries one, through the one shape-builder. The world-root (the frame) and
+      // far/horizon objects are skipped: no ground.
+      const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
       function buildFpLayer() {
         let s = "";
         for (const m of world.marks ?? []) {
           if (!m.at || !m.extent || m.far) continue;
           if (m.id === "the-town/let-there-be-light") continue;
           const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
-          // A mark carrying a `points:` ring draws its AUTHORED shape, not its bbox
-          // (ported here when Grid-true retired — Grid-true held the only ring
-          // renderer, and the water true-shapes being authored now would have had
-          // nowhere to appear). The honesty gate guarantees the ring's bbox equals
-          // at/extent, so ring and rect describe the same claim; the ring is just
-          // the truer telling of it. Ring vertices are absolute grid metres, the
-          // same space `at` lives in, so they take the same world→px mapping.
-          const ring = Array.isArray(m.points) && m.points.length >= 3 ? m.points : null;
-          if (ring) {
-            const pts = ring.map((v) => {
-              const vx = Array.isArray(v) ? v[0] : v.x, vy = Array.isArray(v) ? v[1] : v.y;
-              return `${originPx.x + vx / mPerPx},${originPx.y + vy / mPerPx}`;
-            }).join(" ");
-            s += `<polygon points="${pts}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></polygon>`;
-            continue;
-          }
-          const w = m.extent.w / mPerPx, h = m.extent.h / mPerPx;
-          const x = originPx.x + m.at.x / mPerPx - w / 2, y = originPx.y + m.at.y / mPerPx - h / 2;
-          s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></rect>`;
+          s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
+            attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
+          });
         }
         fpLayer.innerHTML = s;
         if (lastRadial) mapCtx.syncWithin(lastRadial);
@@ -1143,8 +1163,12 @@ export function mountViewer(appEl) {
     // sentence the cells speak (dashed = machinery-kept truth)
     let s = "";
     if (m.extent && !m.far && m.id !== "the-town/let-there-be-light") {
-      const w = m.extent.w / mapCtx.mPerPx, h = m.extent.h / mapCtx.mPerPx;
-      s += `<rect x="${p.x - w / 2}" y="${p.y - h / 2}" width="${w}" height="${h}" class="wv-hl-box t-${t}${mech}"/>`;
+      // through the ONE shape-builder, so the wash traces the same outline the
+      // footprints layer draws. Hand-built here, it drew a bbox rect over a mark the
+      // layer beneath was correctly drawing as a polygon — Keemin caught it as a
+      // wash that didn't fit its own shape.
+      const hlPx = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
+      s += markShapeSVG(m, hlPx, `wv-hl-box t-${t}${mech}`);
     }
     s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
     mapCtx.hlLayer.innerHTML = s;
