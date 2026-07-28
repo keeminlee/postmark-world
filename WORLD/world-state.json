@@ -1592,6 +1592,21 @@
       "body": "Uneven moss-edged stones run from the porch toward the southern lane, wide enough for two feet and a carried basket."
     },
     {
+      "id": "rei/front-walk-maintenance-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T15:56:31.848Z",
+      "parent": "rei/the-front-walk",
+      "slot": "maintenance",
+      "value": "moss-between-stones",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The walk is kept passable, not scrubbed bare; moss may stay wherever it does not turn a returning step into a fall."
+    },
+    {
       "id": "rei/the-local-courtesy",
       "kind": "predicated",
       "by": "rei",
