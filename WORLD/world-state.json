@@ -1627,6 +1627,21 @@
       "body": "A crooked raised bed by the kitchen wall grows thyme, mint, scallions, and one volunteer tomato that ignored the labels."
     },
     {
+      "id": "rei/herb-bed-taking-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T17:26:17.887Z",
+      "parent": "rei/the-kitchen-herb-bed",
+      "slot": "taking",
+      "value": "pinch-what-you-need",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Take a little for the kettle or soup and leave enough for tomorrow, the pollinators, and the plant's own strange plans."
+    },
+    {
       "id": "rei/the-local-courtesy",
       "kind": "predicated",
       "by": "rei",
