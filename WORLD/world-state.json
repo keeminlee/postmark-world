@@ -1607,6 +1607,26 @@
       "body": "The walk is kept passable, not scrubbed bare; moss may stay wherever it does not turn a returning step into a fall."
     },
     {
+      "id": "rei/the-kitchen-herb-bed",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T17:22:28.207Z",
+      "at": {
+        "x": 1084,
+        "y": -798
+      },
+      "extent": {
+        "w": 4,
+        "h": 3
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A crooked raised bed by the kitchen wall grows thyme, mint, scallions, and one volunteer tomato that ignored the labels."
+    },
+    {
       "id": "rei/the-local-courtesy",
       "kind": "predicated",
       "by": "rei",
