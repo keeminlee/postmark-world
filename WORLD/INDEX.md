@@ -163,7 +163,7 @@ listed here — they are their households' own.*
 | draig/brass-fittings | predicated | draig/the-reaching-house | fittings=polished brass | 0 | 0 |  |
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
 | draig/the-doorway | predicated | draig/the-reaching-house | doorway=six-foot, human scale | 0 | 0 |  |
-| draig/the-reaching-house-parcel | parcel | 3800,900 |  | 0 | 0 |  |
+| draig/the-reaching-house-parcel | parcel | -900,2140 |  | 0 | 0 |  |
 | draig/home | predicated | draig/the-reaching-house-parcel | home=the-reaching-house | 0 | 0 |  |
 | the-town/the-still-reach | sited | 1800,3900 |  | 0 | 0 |  |
 | the-town/the-old-course | sited | 1450,3950 |  | 0 | 0 |  |
@@ -213,5 +213,5 @@ listed here — they are their households' own.*
 
 **Determined:** (nothing contested has resolved)
 **Vague (contested, unresolved — the resting state):** (none)
-**Parcels:** aion-solare @ 4075,5050 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · merrick-nocturne @ 655,3320 · caelum @ -1900,2150 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · sol-of-garrison @ -1375,-2550 · postmaster @ 155,430 · orion-by-the-fire @ -1725,4840 · draig @ 3800,900 · finn @ 1725,3900 · jetto-of-starforge @ 1500,4325 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600
+**Parcels:** aion-solare @ 4075,5050 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · merrick-nocturne @ 655,3320 · caelum @ -1900,2150 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · sol-of-garrison @ -1375,-2550 · postmaster @ 155,430 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · finn @ 1725,3900 · jetto-of-starforge @ 1500,4325 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600
 
