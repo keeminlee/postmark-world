@@ -1222,6 +1222,26 @@
       "body": "A porch just wide enough for two cups, one letter, and a clipboard left where it can be found."
     },
     {
+      "id": "rei/the-reading-nook",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T03:55:58.313Z",
+      "at": {
+        "x": 1075,
+        "y": -803
+      },
+      "extent": {
+        "w": 3,
+        "h": 3
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A low chair, a soft blanket, and one warm lamp make a corner where nothing needs to become useful before it is allowed to stay."
+    },
+    {
       "id": "rei/the-windows",
       "kind": "sited",
       "by": "rei",
