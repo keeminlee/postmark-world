@@ -3,6 +3,8 @@
 //
 //   node tools/rehome-plan.mjs --against before.json          # print the plan
 //   node tools/rehome-plan.mjs --against before.json --write   # git mv it
+//   node tools/rehome-plan.mjs --directory-tree                # compare filing to placementParent
+//   node tools/rehome-plan.mjs --directory-tree --write        # re-home every mismatch
 //
 // A mark's id is its frontmatter `by` plus its directory LEAF, and its parent is
 // the nearest enclosing directory holding a mark.md. So re-homing is purely a
@@ -23,6 +25,8 @@ import { execFileSync } from "node:child_process";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const MARKS = join(ROOT, "WORLD/marks/let-there-be-light");
 const WRITE = process.argv.includes("--write");
+const DIRECTORY_TREE = process.argv.includes("--directory-tree");
+const WORLD_ROOT = "the-town/let-there-be-light";
 const arg = (f) => { const i = process.argv.indexOf(f); return i === -1 ? null : process.argv[i + 1]; };
 
 // ── the record's own view: id -> directory ────────────────────────────────────
@@ -47,12 +51,25 @@ function walk(dir, out = new Map()) {
 const dirs = walk(MARKS);
 
 const against = arg("--against");
-if (!against) { console.log("pass --against <before.json>"); process.exit(1); }
+if (!against && !DIRECTORY_TREE) {
+  console.log("pass --against <before.json> or --directory-tree");
+  process.exit(1);
+}
 
-const before = JSON.parse(readFileSync(resolve(ROOT, against), "utf8"));
 const world = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
 const marks = world.marks ?? [];
-const { placementParent } = await import("./marks-fold.mjs");
+const { loadMarks, placementParent } = await import("./marks-fold.mjs");
+
+let before;
+if (DIRECTORY_TREE) {
+  before = {};
+  for (const m of loadMarks(MARKS)) {
+    if ((m.kind !== "sited" && m.kind !== "parcel") || !m.at || m.far) continue;
+    before[m.id] = m._parentMarkId === WORLD_ROOT ? null : m._parentMarkId ?? null;
+  }
+} else {
+  before = JSON.parse(readFileSync(resolve(ROOT, against), "utf8"));
+}
 
 const label = (t, id) => (Object.hasOwn(t, id) ? t[id] : undefined);
 const moves = [];
