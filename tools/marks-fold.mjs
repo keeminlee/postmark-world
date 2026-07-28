@@ -8,10 +8,13 @@
 //   node tools/marks-fold.mjs --stakes f.json      # override stakes source (sims/tests)
 //   node tools/marks-fold.mjs --marks-dir d --prev prev.json --tick N --no-write --json
 //
-// Stakes source: a JSON file of open positions — [{ holder, mark, n, tick }],
-// negative n = withdrawal — passed with `--stakes`. There is NO default source and
-// no money parser in this repo (write-release P3): the stamp ledger lives in the
-// TOWN repo, which owns its grammar and derives this file for us —
+// Stakes source: a JSON file of open positions —
+// [{ holder, mark, n, weight, tick }], negative n = withdrawal — passed with
+// `--stakes`. `n` is raw escrow; `weight` is its town-derived read-side
+// contribution (Σ escrow + k·unique-households across a mark). There is NO default
+// source and no money or household-identity parser in this repo (write-release
+// P3): the stamp ledger and identity pins live in the TOWN repo, which owns their
+// grammar and derives this file for us —
 //   (town clone)  node tools/world-stake.mjs --escrow --json > stakes.json
 // so exactly one parser reads the money lines across the two repos. Without the
 // file the world folds with zero escrow, which is honest: no stakes, no weight.
@@ -144,7 +147,13 @@ function walkMarks(nodeDir, parentMarkId, out) {
 function loadStakes() {
   if (STAKES_PATH) {
     const j = JSON.parse(readFileSync(STAKES_PATH, "utf8"));
-    return j.map(s => ({ tick: s.tick ?? 0, holder: s.holder, mark: s.mark, n: s.n }));
+    return j.map(s => ({
+      tick: s.tick ?? 0,
+      holder: s.holder,
+      mark: s.mark,
+      n: s.n,
+      weight: Number.isFinite(s.weight) ? s.weight : s.n,
+    }));
   }
   // No money parser lives here, on purpose (write-release P3).
   //
@@ -224,7 +233,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   }
 
   // stakes -> per-mark balances (escrow; negative = withdrawal), effect-next-crossing: tick strictly < current
-  const stakeByMark = new Map(); const portfolios = new Map();
+  const stakeByMark = new Map(); const weightByMark = new Map(); const portfolios = new Map();
   for (const s of stakes) {
     if (s.tick >= tick && tick > 0) continue; // not yet effective
     // THE RETIREMENT GATE, and it needed no new machinery — only its right name.
@@ -239,6 +248,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       continue;
     }
     stakeByMark.set(s.mark, (stakeByMark.get(s.mark) ?? 0) + s.n);
+    weightByMark.set(s.mark, (weightByMark.get(s.mark) ?? 0) + (s.weight ?? s.n));
     if (!portfolios.has(s.holder)) portfolios.set(s.holder, new Map());
     const pf = portfolios.get(s.holder);
     pf.set(s.mark, (pf.get(s.mark) ?? 0) + s.n);
@@ -283,7 +293,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   const weightOf = (id, seen = new Set()) => {
     if (weight.has(id)) return weight.get(id);
     if (seen.has(id)) return 0; seen.add(id);
-    let w = stakeByMark.get(id) ?? 0;
+    let w = weightByMark.get(id) ?? 0;
     for (const c of children.get(id) ?? []) w += weightOf(c, seen);
     weight.set(id, w); return w;
   };
@@ -299,7 +309,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       const slot = slots.get(key);
       slot.marks.push(mk.id);
       const v = String(mk.value ?? "");
-      slot.values.set(v, (slot.values.get(v) ?? 0) + (stakeByMark.get(mk.id) ?? 0));
+      slot.values.set(v, (slot.values.get(v) ?? 0) + (weightByMark.get(mk.id) ?? 0));
     }
   }
   // sited site-slots: cluster overlapping commons sited marks

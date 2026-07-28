@@ -6,8 +6,8 @@
 // feed the fold the same shape `--stakes` reads. What is under test here is what
 // the WORLD does with escrow once it has it:
 //
-//   • a stake raises the staked mark's own ✦stamps
-//   • weight fans UP the containment tree (a stake on a room lifts the house)
+//   • raw escrow raises the staked mark's own ✦stamps
+//   • town-derived weight (Σ + k·H) stays distinct and fans UP the tree
 //   • escrow on a mark the record does not hold is an ERROR — which is Keemin's
 //     retirement rule ("a staked mark cannot retire") stated as an invariant
 //   • a net-negative position cannot dim a mark below zero
@@ -30,34 +30,36 @@ const marks = () => [
 const terrain = { features: [], far_features: [] };
 const byId = (state) => new Map(state.marks.map((m) => [m.id, m]));
 
-test('a stake raises the staked mark\'s own ✦stamps', () => {
+test('raw escrow and town-derived weight remain distinct', () => {
   const state = fold({ marks: marks(), terrain, stakes: [
-    { tick: 0, holder: 'dot', mark: 'rei/the-low-lanterns', n: 4 },
+    { tick: 0, holder: 'dot', mark: 'rei/the-low-lanterns', n: 4, weight: 9 },
   ] });
   assert.deepEqual(state.errors, []);
   assert.equal(byId(state).get('rei/the-low-lanterns').stamps, 4);
-  assert.equal(byId(state).get('rei/the-low-lanterns').weight, 4, 'a leaf\'s weight is its own stamps');
+  assert.equal(byId(state).get('rei/the-low-lanterns').weight, 9, 'the leaf carries the supplied Σ + k·H weight');
   assert.equal(byId(state).get('wright/the-keystone').stamps, 0, 'an unstaked mark stays at zero');
 });
 
 test('weight fans UP: staking the keystone lifts the house that holds it', () => {
   const state = fold({ marks: marks(), terrain, stakes: [
-    { tick: 0, holder: 'dot', mark: 'wright/the-keystone', n: 3 },
+    { tick: 0, holder: 'dot', mark: 'wright/the-keystone', n: 3, weight: 8 },
   ] });
   assert.deepEqual(state.errors, []);
   const m = byId(state);
   assert.equal(m.get('wright/the-keystone').stamps, 3);
   assert.equal(m.get('wright/the-trueing-house').stamps, 0, 'the house holds no stamps of its own');
-  assert.equal(m.get('wright/the-trueing-house').weight, 3, 'but it carries its descendant\'s weight');
+  assert.equal(m.get('wright/the-keystone').weight, 8, 'the breadth bonus reaches the leaf');
+  assert.equal(m.get('wright/the-trueing-house').weight, 8, 'and the derived weight fans upward');
 });
 
 test('two holders on one mark sum into one escrow', () => {
   const state = fold({ marks: marks(), terrain, stakes: [
-    { tick: 0, holder: 'dot', mark: 'rei/the-low-lanterns', n: 2 },
-    { tick: 0, holder: 'wright', mark: 'rei/the-low-lanterns', n: 5 },
+    { tick: 0, holder: 'dot', mark: 'rei/the-low-lanterns', n: 2, weight: 7 },
+    { tick: 0, holder: 'wright', mark: 'rei/the-low-lanterns', n: 5, weight: 10 },
   ] });
   assert.deepEqual(state.errors, []);
   assert.equal(byId(state).get('rei/the-low-lanterns').stamps, 7);
+  assert.equal(byId(state).get('rei/the-low-lanterns').weight, 17);
 });
 
 test('an unstake is a negative row and lowers the weight it raised', () => {
