@@ -72,6 +72,7 @@ listed here — they are their households' own.*
 | rei/porch-hospitality-law | predicated | rei/the-porch | hospitality=two-cups-without-performance | 0 | 0 |  |
 | rei/front-door-welcome-law | predicated | rei/the-front-door | welcome=invitation-with-a-door-handle | 0 | 0 |  |
 | rei/kitchen-priority-law | predicated | rei/the-small-kitchen | priority=tea-before-triage | 0 | 0 |  |
+| rei/kitchen-scraps-path | predicated | rei/the-small-kitchen | scraps=return-to-experiment-garden | 0 | 0 |  |
 | rei/windows-returning-light-law | predicated | rei/the-windows | purpose=returning-hands-not-spectacle | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |
 | rei/home | predicated | rei/the-lanternstep-house-parcel | home=the-lanternstep-house | 0 | 0 |  |

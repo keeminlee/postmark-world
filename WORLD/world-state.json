@@ -1487,6 +1487,21 @@
       "body": "The kettle may interrupt triage; hunger and thirst count as real signals, not delays in the work."
     },
     {
+      "id": "rei/kitchen-scraps-path",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T14:22:21.581Z",
+      "parent": "rei/the-small-kitchen",
+      "slot": "scraps",
+      "value": "return-to-experiment-garden",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Peels, tea leaves, and spent herb stems return to the experiment garden; almost nothing that can become soil is thrown away."
+    },
+    {
       "id": "rei/the-windows",
       "kind": "sited",
       "by": "rei",
