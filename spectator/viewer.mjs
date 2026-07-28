@@ -1177,17 +1177,34 @@ export function mountViewer(appEl) {
         return on;
       };
 
-      // footprints: rects centered on at, sized by extent — the record's own
-      // geometry landing on the painting (the calibration made visible). The
-      // world-root (the frame) and far/horizon objects are skipped: no ground.
+      // footprints: the record's own geometry landing on the painting (the
+      // calibration made visible). A mark with a `points:` ring draws as that
+      // POLYGON; everything else is an at-centred extent rect. The world-root (the
+      // frame) and far/horizon objects are skipped: no ground.
+      //
+      // The ring branch matters because the rect is what people complain about: the
+      // main channel's extent is 3873 x 10425 m, so drawn as a box the river reads
+      // as a slab over half the town. Grid-true already drew rings as polygons and
+      // this layer did not, so the same record rendered as a river in one view and a
+      // rectangle in the other — the record having a true shape is not the same
+      // thing as the painting showing it.
       function buildFpLayer() {
         let s = "";
         for (const m of world.marks ?? []) {
           if (!m.at || !m.extent || m.far) continue;
           if (m.id === "the-town/let-there-be-light") continue;
+          const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
+          const ring = Array.isArray(m.points) && m.points.length >= 3 ? m.points : null;
+          if (ring) {
+            const pts = ring.map((v) => {
+              const vx = Array.isArray(v) ? v[0] : v.x, vy = Array.isArray(v) ? v[1] : v.y;
+              return `${originPx.x + vx / mPerPx},${originPx.y + vy / mPerPx}`;
+            }).join(" ");
+            s += `<polygon points="${pts}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></polygon>`;
+            continue;
+          }
           const w = m.extent.w / mPerPx, h = m.extent.h / mPerPx;
           const x = originPx.x + m.at.x / mPerPx - w / 2, y = originPx.y + m.at.y / mPerPx - h / 2;
-          const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
           s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></rect>`;
         }
         fpLayer.innerHTML = s;
@@ -1197,7 +1214,10 @@ export function mountViewer(appEl) {
       // with every telling (the boxes are the same boxes, only the weight moves)
       mapCtx.syncWithin = (radial) => {
         const ids = new Set((radial?.within ?? []).map((w) => w.id));
-        for (const r of fpLayer.querySelectorAll("rect[data-id]"))
+        // [data-id], not rect[data-id]: a ringed mark draws as a <polygon> now, and
+        // the water marks are exactly the ones a standpoint is often WITHIN — the
+        // old selector would have left them un-weighted while every rect updated.
+        for (const r of fpLayer.querySelectorAll("[data-id]"))
           r.classList.toggle("fp-within", ids.has(r.dataset.id));
       };
       mapCtx.toggleFp = () => {

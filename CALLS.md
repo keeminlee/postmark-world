@@ -7,6 +7,10 @@ what else was on the table, why, and how reversible it is.
 Branches: `postmark-world-jetto` / `office-jetto`, both `walk-p2-draft-jetto`.
 Nothing pushed to any main. No box, no pin, no deploy.
 
+**Read C21 first if you are reading C3/C4/C8/C10:** the water gate is OFF for v0 by
+Keemin's ruling, so those four describe a mechanic that is present and correct but
+not currently consulted by the walk door.
+
 ---
 
 ## C1 · Retiring the `slot: home` predicates — delete the mark, don't tombstone it
@@ -332,3 +336,254 @@ not exist — my probe was calling `to:`/`toward:`/`stop:` while the declared sc
 is `mark_id`/`x`/`y`/`handle`, and `additionalProperties: false` would have
 rejected my keys at the MCP layer. Reader and schema agreed all along. Checking
 the declared contract before believing my own probe is the habit that caught it.
+
+---
+
+# The water true-shape pass, and the v0 gate-off
+
+Two Keemin-directed items stacked on the walk draft. **The containment table below
+is the pass's real content and the thing to adjudicate** — everything else serves it.
+
+## C16 · The rings are GENERATED, and validated against the oracle
+
+`tools/water-shapes-gen.mjs` polygonizes the same geometry `tools/water.mjs`
+formalizes: centreline features become a polyline buffer (each side offset by the
+interpolated half-width, ends capped with arcs), lakes become ellipse polygons. It
+imports that module's feature selection and half-width rather than restating them,
+so there is one definition of where the water is and the ring is merely its outline.
+A hand-typed ring would be a second definition, drifting the moment either moved.
+
+**Chose:** generate, write `points:` into the record, and recompute `at`/`extent` as
+the bbox of the ROUNDED ring — round first, then measure, so `ringMatchesClaim`
+holds exactly rather than spending its 0.5 m tolerance.
+
+**The check that made this trustworthy, and it is the part worth keeping:** the
+generator validates the drawing against the oracle in BOTH directions —
+
+- *over-claim*: is every point inside the ring actually water?
+- *under-claim*: is every point the oracle attributes to this feature inside the ring?
+
+Either alone is worthless (a huge ring passes under-claim; a tiny one passes
+over-claim). It is now a committed test, `tools/water-shapes.test.mjs`, at a 2%
+tolerance in each direction.
+
+**Two things the check caught that reasoning had waved past:**
+
+1. **My first self-check was the bug, not the rings.** It asserted `waterAt(p) ===
+   featureId` and reported 26 of 48 failures for the garrison lake — a
+   mathematically exact ellipse. The water bodies genuinely OVERLAP, and `waterAt`
+   returns the FIRST match, so the oracle answers "the-main-channel" at the lake's
+   own centre. The right question is "is this water at all", not "is this feature".
+   *A failing check is a claim about two things, and the checker is one of them.*
+2. **Averaged joint normals pinch at bends.** Under-claim measured 6.7% of the inlet
+   and 3.2% of the still reach falling outside their own rings. Fixed with a mitre
+   (the corner sits at `r / cos(half-turn)`, and for unit normals `|n1+n2| =
+   2cos(half-turn)`, so the factor is `2/|n1+n2|`), clamped at 2.5 so a near-hairpin
+   cannot throw a spike into the claim bbox. Result: every ring now within 1.1% in
+   both directions, at the cost of 0.4–1.0% over-claim where it had been 0.
+   **Small in both beats zero in one and 6.7% in the other.**
+
+**The quay-reach is NOT ringed, and that is not a preference.** It carries no
+`feature:` field and the skeleton has no `the-quay-reach` feature, so there is no
+geometry to polygonize — nothing to draw from, rather than a choice not to draw.
+Ringing it would mean AUTHORING a shape, which is a different act from generating
+one and is Keemin's to direct.
+
+## C17 · Too big to RASTERIZE is not too big to ANSWER — the pass nearly did nothing
+
+**The defect, and it would have swallowed the entire pass:** writing the rings
+changed the tree by only 6 marks, and the channel — the whole reason Keemin asked —
+lost just 1 of its 8 children. The town centre, a 2000×1500 m district, still
+reported as "inside" a ~470 m-wide river.
+
+`marksContain` rasterizes at 5 m cells and `coverage()` returns null past a cell
+cap. The channel's ring spans 3873 × 10425 m — about **1.6 million cells** — so
+coverage returned null and the code did this:
+
+```js
+if (!outerCells) return contains(rect(outer), rect(inner)); // ← the bounding RECT
+```
+
+It fell back to the rectangle. **Giving the water a true shape was silently
+discarded for exactly the mark whose rectangle was the problem** — the bigger and
+more wrongly-shaped a claim, the more certainly its true shape was ignored.
+
+**Chose:** when the outer carries a ring but cannot be rasterized, test the inner's
+cell centres against the ring analytically. Same predicate, no raster, no cap. Plus
+an early bail once the miss count exceeds the tolerance, because `placementParent`
+asks this of every candidate parent for every mark — the fold still runs in ~2 s.
+**Considered:** raising the cell cap (moves the cliff, doesn't remove it) and an
+adaptive cell size for large marks (a second accuracy regime keyed on size).
+
+With it, the channel loses all 8 children and the diff becomes 13.
+
+**This is the third silent-fallback defect in this branch** — the fold not
+publishing `parcels`, `loadStakes()` reading a path that never existed, and now
+this. All three degraded to a plausible answer with no signal. The shelf line: *when
+a fallback is indistinguishable from success, the contract feeding it needs a test
+that can fail loudly* — and the guard here asserts the precondition too (`coverage`
+of the channel MUST still be null), so the test cannot quietly stop guarding.
+
+## C18 · The containment table — 13 marks re-homed
+
+`tools/containment-diff.mjs` computes each mark's `placementParent` from the record
+before and after, so this is derived from the same function the fold and the placer
+use, not read off directory names. `tools/rehome-plan.mjs` executes the moves.
+
+| mark | parent before | parent after |
+|---|---|---|
+| `the-town/the-town-centre` | `the-town/the-main-channel` | (root) |
+| `caelum/evermoon` | `the-town/the-main-channel` | (root) |
+| `spar/the-doubled-coast` | `the-town/the-main-channel` | (root) |
+| `sol-of-garrison/the-protected-grove` | `the-town/the-main-channel` | (root) |
+| `the-town/the-harbor-reach` | `the-town/the-main-channel` | (root) |
+| `the-town/blackwater-bend-inlet` | `the-town/the-main-channel` | (root) |
+| `the-town/blackwater-bend-grove` | `the-town/the-main-channel` | (root) |
+| `the-town/blackwater-bend-stone-path` | `the-town/the-main-channel` | (root) |
+| `the-town/the-old-course` | `the-town/the-still-reach` | (root) |
+| `finn/the-still-reach-parcel` | `the-town/the-still-reach` | (root) |
+| `jetto-of-starforge/the-waystation-parcel` | `the-town/the-still-reach` | `carta/the-long-run` |
+| `lysander/the-jetty` | `the-town/the-lochan` | (root) |
+| `merrick-nocturne/the-house-at-blackwater-bend-parcel` | `the-town/blackwater-bend-inlet` | (root) |
+
+Leaving: the main channel **loses 8**, the still reach 3, the lochan 1, the inlet 1.
+
+**Eleven of thirteen land at the ROOT**, which is the honest consequence: districts
+like the town centre and Evermoon are top-level things that were only ever filed
+under the river because its rectangle reached them. Nothing else contains them.
+
+**Order was the difficulty, not the moves.** A directory move takes its children
+with it, and merrick's house parcel sat *inside* the inlet while both were leaving —
+moving the inlet first would have carried the parcel along and re-homed it wrongly
+while looking clean. The planner sorts deepest-path-first and recomputes each
+destination from the parent's location *at the moment of the move*.
+
+**My own diff tool reported four of these as `(absent)`** — `tree[id] ?? "(absent)"`
+collapses "parent became null (the root)" into "the mark is not in the tree", and
+`(absent)` on a table Keemin reads means *the mark vanished*. Fixed with an explicit
+`Object.hasOwn` check. *A nullish default erases the difference between "the value is
+null" and "there is no value", and those are different facts.*
+
+### The telling changes, as ruled correct
+
+Standing where the old rectangle reached but the water does not:
+
+| standpoint | before | after |
+|---|---|---|
+| the Trueing Terrace (575,−2600) | within the-main-channel | **not** |
+| the Lanternseed Gardens (1150,−1400) | within the-main-channel | **not** |
+| Ferry's crossing (−190,0) | within the-main-channel | within the-main-channel |
+
+The third is not a failure: Ferry's crossing genuinely sits *on* the water, so the
+line correctly persists there. The town centre's *district* left the channel's tree;
+a standpoint in the middle of the crossing is still standing on the river.
+
+### The FOV silhouette path, exercised for the first time
+
+No record had ever carried a ring, so `markSilhouetteSpan` had never run. It does
+now, and it is direction-dependent as designed: the channel subtends **10425 m**
+viewed across and **3873 m** viewed along — where extent-as-width gave 10425
+regardless of where you stood.
+
+## C19 · Three houses were already mis-filed, and 22 more still are
+
+Lint went red on three marks my diff had not predicted: `finn/the-still-reach`,
+`jetto-of-starforge/the-waystation` (my own house) and
+`merrick-nocturne/the-house-at-blackwater-bend` — 12×12 m houses whose directories
+nested them inside WATER.
+
+They were invisible to the diff because `placementParent` answers *their parcel*
+both before and after, so nothing changed; the DIRECTORY was the thing that lied.
+And they had passed lint for the whole parcel era because **lint asks "does my
+directory parent contain me", not "is my directory parent the smallest container"** —
+a house inside its district is contained by its district, so the edge told no
+detectable lie. Only when the water stopped containing them did it surface.
+
+**Chose:** move those three into their own parcel directories, which is what the
+geometry says. They are the three my pass broke, so they are mine to fix.
+
+**Then the survey, which is the real finding: 25 marks have directory-parent ≠
+geometry parent, and the pattern is systemic** — nearly every house in the town is
+filed under its district or region while `placementParent` says it belongs inside
+its own parcel. The parcels landed and the houses were never re-homed under them.
+
+**NOT fixed, deliberately.** Re-homing 22 more directories restructures most
+resident trees, is not what Keemin asked for, and would bury this pass's 13-row
+table in noise. It is also not caused by this pass — it predates it. Two follow-ups
+for Keemin, and I would take the second:
+
+- re-home all 25 so the tree matches geometry (a large, mechanical, reviewable diff), or
+- **strengthen lint** to compare the directory parent against `placementParent`
+  rather than mere containment, which would have caught all 25 the day parcels
+  landed. A gate that only detects the *loudest* form of a lie lets the quiet form
+  accumulate for weeks.
+
+Also noted while there: **lint's nesting check only covers `kind === "sited"`**, so
+mis-filed *parcels* raise no error at all — which is why lint flagged 6 while the
+containment diff found 13.
+
+## C20 · Two marks name features the skeleton does not have
+
+`the-town/pando-peak` carries `feature: pando-peak` and
+`the-town/the-town-centre-crossing` carries `feature: the-town-centre-crossing`, and
+**neither id exists in `WORLD/skeleton.json`**. Nothing validates a `feature:`
+reference, so these are dangling. Pre-existing, unrelated to this pass, untouched —
+but worth knowing, because a dangling `feature:` reads as "this mark has real
+geometry" to anyone who checks the field and not the skeleton.
+
+It also means the town-centre crossing is **not** a crossing the water oracle knows
+(`crossings()` reads the skeleton), which softens the C8 claim that a seeded Town
+Centre crossing would be picked up without a code change: it needs a skeleton
+FEATURE, not a mark.
+
+## C21 · v0: the water gate is OFF
+
+Keemin: *"walking on water is fine for v0 lol."* The refusal is removed from the
+walk door — one check site in the office's `walkViaOffice`.
+
+**Removed the CHECK, not the capability.** `tools/water.mjs` and its conformance
+corpus stay in the world repo, still exercised by their own tests and now also by
+the shape generator that draws the record's rings from them. The oracle keeps being
+true about where the water is while nothing refuses you for entering it; turning the
+gate back on is restoring one block, not rebuilding the maths.
+
+What survives, because it is telling rather than gating: a leg still reports the
+crossings it passes over (`via_crossings`).
+
+**Two earlier calls go dormant with it, and the distinction matters:**
+
+- **C8** (which crossing a bounce should name) has no bounce to attach to.
+- **C10's disc problem is MOOTED, not SOLVED.** The record still cannot say where a
+  crossing spans — a crossing is a bare point, the water is 110–550 m wide — and
+  that gap returns intact the moment the gate does. The ruling removed the
+  consequence, not the cause.
+
+I also corrected the `world_walk` tool description, which still advertised "a leg
+that crosses water is refused". A door describing a gate it no longer has is worse
+than no description: it is the kind of stale promise a caller builds against.
+
+## C22 · The painting had to be taught the ring too
+
+Keemin's complaint was VISUAL — *"tired of the gigantic main channel rectangle"* —
+and the record having a true shape does not make the painting show it.
+
+Two footprint renderers existed and only one honored rings. Grid-true already drew a
+`points:` ring as a `<polygon>`; the painting's own footprint layer
+(`buildFpLayer`) drew `<rect>` unconditionally. So after the whole pass the same
+record rendered as a river in one view and a **slab over half the town** in the
+other, and the view Keemin looks at was the rectangle one. The pass would have been
+correct and invisible.
+
+**Chose:** the painting draws the ring when a mark carries one, matching grid-true.
+Verified with my own eyes: 5 polygons, the channel from all 80 vertices, land marks
+still rects.
+
+**One thing that came with it:** `syncWithin` selected `rect[data-id]` to weight the
+marks a standpoint stands inside — so a ringed mark could never receive it. The water
+marks are exactly the ones you are most often *within*, so the containment highlight
+would have silently skipped the only marks that changed shape. Now `[data-id]`.
+
+**The general shape, and it is the fourth of this family on the branch:** *a
+capability added to a record is not added to its readers.* The ring existed in the
+record, the engine's silhouette path read it, grid-true read it, containment (after
+C17) read it — and the painting did not. Each reader is its own contract.

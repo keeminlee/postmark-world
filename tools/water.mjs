@@ -54,6 +54,15 @@ function distToSegment(p, a, b) {
 // How p sits against one water feature: its distance to the water's spine and the
 // water's local half-width there. Crossing reach is derived from these rather
 // than from a magic radius — a bridge spans the water it stands on.
+// EXPORTED so the shape generator draws from this definition rather than a second
+// copy of it: half-width comes from the same `w_m` / `rx_m` the gate reads, so a
+// generated ring and the oracle's answer cannot disagree about how wide water is.
+export function halfWidthAtIndex(feature, i) {
+  const pts = feature.centerline_m ?? feature.line_m ?? [];
+  const w = pts[i]?.w_m ?? feature.width_m ?? 0;
+  return w / 2;
+}
+
 function localWaterMetricsAt(p, feature) {
   if (LAKE_KINDS.has(feature.kind)) {
     const dx = p.x - (feature.center_m?.x ?? 0), dy = p.y - (feature.center_m?.y ?? 0);

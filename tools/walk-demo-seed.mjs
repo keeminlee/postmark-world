@@ -33,9 +33,10 @@ const world = JSON.parse(readFileSync(join(ROOT, "WORLD", "world-state.json"), "
 const skeleton = JSON.parse(readFileSync(join(ROOT, "WORLD", "skeleton.json"), "utf8"));
 const now = fractionalCrossing();
 
-// Pick real parcels as origins, and for each find a destination that is actually
-// walkable — the water gate is the enforcer, so seeded legs must obey it too or
-// the demo shows journeys the door would have refused.
+// Pick real parcels as origins, and for each find a destination on dry land. The
+// water gate is OFF for v0, so this is no longer required for the legs to be
+// accepted — it is kept because dry legs read more clearly on the painting than
+// walkers standing mid-river.
 const parcels = (world.parcels ?? []).slice(0, 24);
 // The demo has to be LOOKED AT, which constrains it twice. Legs must be long —
 // a 3 km leg is over in 0.2 of a crossing, so short legs give a map of walkers

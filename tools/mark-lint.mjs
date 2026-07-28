@@ -160,7 +160,8 @@ for (const rec of marks) {
   if (rec.kind === "sited") {
     // containment honors true shape (a `points:` ring); feature geometry is never
     // passed, so feature marks stay claim-based (bbox). Byte-identical today —
-    // no record carries points: — so the gate is a no-op on the current tree.
+    // The water marks carry rings now, so this gate BITES: it caught three houses
+    // filed under water whose footprints the true shape does not contain.
     if (!marksContain(parent, rec))
       err(rec, `the directory nests this inside "${parent.id}", but its footprint is not contained by "${parent.id}" — you cannot lie with an edge (site it inside, or move it out)`);
   }

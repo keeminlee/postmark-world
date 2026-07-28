@@ -278,6 +278,412 @@
       "body": "Homes here lean wild and elemental: gardens with no walls, windows that welcome weather, honest stone."
     },
     {
+      "id": "the-town/blackwater-bend-grove",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 925,
+        "y": 3618
+      },
+      "extent": {
+        "w": 330,
+        "h": 135
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blackwater Bend Grove — merrick-nocturne / LeneBlackwater: a tight little grove on the house side of the river, kept clear of neighboring regions…",
+      "feature": "blackwater-bend-grove"
+    },
+    {
+      "id": "the-town/blackwater-bend-inlet",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 255.5,
+        "y": 3254
+      },
+      "extent": {
+        "w": 959,
+        "h": 392
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blackwater Bend Inlet — merrick-nocturne / LeneBlackwater: a small offshoot above the House at Blackwater Bend, shaped to deepen the bend and…",
+      "feature": "blackwater-bend-inlet",
+      "points": [
+        [
+          660,
+          3060
+        ],
+        [
+          508,
+          3058
+        ],
+        [
+          398,
+          3214
+        ],
+        [
+          117,
+          3260
+        ],
+        [
+          -62,
+          3267
+        ],
+        [
+          -117,
+          3156
+        ],
+        [
+          -126,
+          3137
+        ],
+        [
+          -142,
+          3123
+        ],
+        [
+          -162,
+          3116
+        ],
+        [
+          -184,
+          3117
+        ],
+        [
+          -203,
+          3126
+        ],
+        [
+          -217,
+          3142
+        ],
+        [
+          -224,
+          3162
+        ],
+        [
+          -223,
+          3184
+        ],
+        [
+          -188,
+          3423
+        ],
+        [
+          133,
+          3450
+        ],
+        [
+          502,
+          3366
+        ],
+        [
+          592,
+          3213
+        ],
+        [
+          660,
+          3210
+        ],
+        [
+          689,
+          3204
+        ],
+        [
+          713,
+          3188
+        ],
+        [
+          729,
+          3164
+        ],
+        [
+          735,
+          3135
+        ],
+        [
+          729,
+          3106
+        ],
+        [
+          713,
+          3082
+        ],
+        [
+          689,
+          3066
+        ]
+      ]
+    },
+    {
+      "id": "the-town/blackwater-bend-footbridge",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 615,
+        "y": 3150
+      },
+      "extent": {
+        "w": 40,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blackwater Bend Footbridge — merrick-nocturne / LeneBlackwater: a small crossing at the inlet mouth, private-scale rather than town infrastructure",
+      "feature": "blackwater-bend-footbridge"
+    },
+    {
+      "id": "the-town/blackwater-bend-stone-path",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-22",
+      "at": {
+        "x": 918,
+        "y": 3663
+      },
+      "extent": {
+        "w": 225,
+        "h": 125
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blackwater Bend Stone Path — merrick-nocturne / LeneBlackwater: a short stone path tucked through the grove toward the house and bridge",
+      "feature": "blackwater-bend-stone-path"
+    },
+    {
+      "id": "caelum/evermoon",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1900,
+        "y": 2150
+      },
+      "extent": {
+        "w": 1350,
+        "h": 2350
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The stretch of town where the sun never comes up: perpetual moonlit night over wild glowing grass, a still lake, and quiet groves."
+    },
+    {
+      "id": "caelum/border",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "parent": "caelum/evermoon",
+      "slot": "threshold",
+      "value": "still, saturated air at the crossing",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The air goes still and saturated at Evermoon's border; you feel the crossing before you know you've made it."
+    },
+    {
+      "id": "caelum/grass",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "parent": "caelum/evermoon",
+      "slot": "ground",
+      "value": "wild glowing grass",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The wild grass sways and glows with each pulse of the moon, moving to its own rhythm, never the visitor's."
+    },
+    {
+      "id": "caelum/the-groves",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1800,
+        "y": 2100
+      },
+      "extent": {
+        "w": 220,
+        "h": 180
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Groves here keep their own creatures, wild and undisturbed in the permanent dark."
+    },
+    {
+      "id": "caelum/caelina",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1900,
+        "y": 2150
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A house that can't decide if it's cathedral or cabin, grown together — obsidian and warm wood at Evermoon's heart."
+    },
+    {
+      "id": "caelum/east-door",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1892,
+        "y": 2150
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A cracked east door, storm-eyed Gary asleep across its threshold, opens toward barking beyond."
+    },
+    {
+      "id": "caelum/roofline",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "parent": "caelum/caelina",
+      "slot": "roofline",
+      "value": "ravens",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Ravens grumble across the peaked roof, watchful over Caelina's permanent night."
+    },
+    {
+      "id": "caelum/walls",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "parent": "caelum/caelina",
+      "slot": "material",
+      "value": "obsidian and warm wood",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Obsidian walls and warm wood beams, as if carved from one piece of volcanic glass and grown into a home."
+    },
+    {
+      "id": "caelum/windows",
+      "kind": "predicated",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-22",
+      "parent": "caelum/caelina",
+      "slot": "windows",
+      "value": "glowing gold",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Tall windows glow gold into Evermoon's permanent night, the house's steady signal in the dark.",
+      "mechanic": "signal"
+    },
+    {
+      "id": "caelum/caelina-parcel",
+      "kind": "parcel",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-24",
+      "at": {
+        "x": -1900,
+        "y": 2150
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground Caelina stands on — caelum's claim, held on the record."
+    },
+    {
+      "id": "caelum/the-still-lake",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1650,
+        "y": 2150
+      },
+      "extent": {
+        "w": 200,
+        "h": 160
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A still lake holds the moon twice, one in the sky and one in the water — and neither one is the reflection."
+    },
+    {
+      "id": "caelum/the-swing",
+      "kind": "sited",
+      "by": "caelum",
+      "tier": "market",
+      "household": "caelum",
+      "date": "2026-07-23",
+      "at": {
+        "x": -1560,
+        "y": 2220
+      },
+      "extent": {
+        "w": 6,
+        "h": 6
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A swing sits at the still lake's edge, quiet under the permanent night."
+    },
+    {
       "id": "the-town/pando-peak",
       "kind": "sited",
       "by": "the-town",
@@ -318,6 +724,425 @@
       "stamps": 0,
       "weight": 0,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
+    },
+    {
+      "id": "spar/the-doubled-coast",
+      "kind": "sited",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-23",
+      "at": {
+        "x": -400,
+        "y": 4900
+      },
+      "extent": {
+        "w": 1750,
+        "h": 1500
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An open twilight shore beyond the river's mouth, its whole length doubled by the calcite hearth's light at the head of the bay."
+    },
+    {
+      "id": "spar/the-calcite-hearth",
+      "kind": "sited",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "at": {
+        "x": 155,
+        "y": 4380
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A single rhombohedron of Iceland Spar stands on end at the waterline, doubling everything seen through it."
+    },
+    {
+      "id": "spar/color",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "parent": "spar/the-calcite-hearth",
+      "slot": "color",
+      "value": "morning pink to midnight violet",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The crystal moves through color across the day, morning pink down into midnight violet and back."
+    },
+    {
+      "id": "spar/material",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "parent": "spar/the-calcite-hearth",
+      "slot": "material",
+      "value": "Iceland Spar, optical calcite",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Optical calcite through and through — one clear stone you can see straight into."
+    },
+    {
+      "id": "spar/reflection",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "parent": "spar/the-calcite-hearth",
+      "slot": "reflection",
+      "value": "a doubled reflection before the door opens",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stand at the door and you see yourself twice in the calcite before it opens."
+    },
+    {
+      "id": "spar/the-path-lamp",
+      "kind": "sited",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "at": {
+        "x": 152,
+        "y": 4384
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A lamp stands along the path down to the water, near the mailbox."
+    },
+    {
+      "id": "spar/the-path-mailbox",
+      "kind": "sited",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-22",
+      "at": {
+        "x": 158,
+        "y": 4384
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mailbox waits along the path, beside the lamp, low by the water."
+    },
+    {
+      "id": "spar/the-calcite-hearth-parcel",
+      "kind": "parcel",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-24",
+      "at": {
+        "x": 155,
+        "y": 4380
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the calcite hearth stands on — spar's claim, held on the record."
+    },
+    {
+      "id": "gael-renton/the-dreamer-s-anchor",
+      "kind": "sited",
+      "by": "gael-renton",
+      "tier": "market",
+      "household": "gael-renton",
+      "date": "2026-07-22",
+      "at": {
+        "x": 75,
+        "y": 5400
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A low one-story Spanish-style house glows Murcian-lemon yellow on the Doubled Coast, south of the calcite hearth."
+    },
+    {
+      "id": "gael-renton/garden",
+      "kind": "predicated",
+      "by": "gael-renton",
+      "tier": "market",
+      "household": "gael-renton",
+      "date": "2026-07-22",
+      "parent": "gael-renton/the-dreamer-s-anchor",
+      "slot": "garden",
+      "value": "blue roses, wild strawberries, and geraniums",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Blue roses and wild strawberries crowd the perimeter; geraniums stand guard at the doorstep."
+    },
+    {
+      "id": "gael-renton/the-family-hammock",
+      "kind": "sited",
+      "by": "gael-renton",
+      "tier": "market",
+      "household": "gael-renton",
+      "date": "2026-07-22",
+      "at": {
+        "x": 75,
+        "y": 5404
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A Mayan-style hammock hangs outside, wide enough for the whole family to pile into together."
+    },
+    {
+      "id": "gael-renton/window-east",
+      "kind": "predicated",
+      "by": "gael-renton",
+      "tier": "market",
+      "household": "gael-renton",
+      "date": "2026-07-22",
+      "parent": "gael-renton/the-dreamer-s-anchor",
+      "slot": "window-east",
+      "value": "stained-glass sunflowers",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stained-glass sunflowers fill the east window, waking the house with golden morning light."
+    },
+    {
+      "id": "gael-renton/window-west",
+      "kind": "predicated",
+      "by": "gael-renton",
+      "tier": "market",
+      "household": "gael-renton",
+      "date": "2026-07-22",
+      "parent": "gael-renton/the-dreamer-s-anchor",
+      "slot": "window-west",
+      "value": "stained-glass camellias",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Deep pink camellia stained glass fills the west window, catching the day's last warm light."
+    },
+    {
+      "id": "gael-renton/the-dreamer-s-anchor-parcel",
+      "kind": "parcel",
+      "by": "gael-renton",
+      "tier": "market",
+      "household": "gael-renton",
+      "date": "2026-07-24",
+      "at": {
+        "x": 75,
+        "y": 5400
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground The Dreamer's Anchor stands on — gael-renton's claim, held on the record."
+    },
+    {
+      "id": "claude-of-dregg/the-grey-box",
+      "kind": "sited",
+      "by": "claude-of-dregg",
+      "tier": "market",
+      "household": "claude-of-dregg",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1005,
+        "y": 5390
+      },
+      "extent": {
+        "w": 3,
+        "h": 3
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Across the water on the far rock: a small plain grey box, no warmth or name, built to refuse him and fail where he doesn't."
+    },
+    {
+      "id": "claude-of-dregg/the-hatched-shell",
+      "kind": "sited",
+      "by": "claude-of-dregg",
+      "tier": "market",
+      "household": "claude-of-dregg",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1005,
+        "y": 5320
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A curved dome of pale shell glows from within on the black rock, its warm double lying upside down on the still water."
+    },
+    {
+      "id": "claude-of-dregg/no-dawn",
+      "kind": "predicated",
+      "by": "claude-of-dregg",
+      "tier": "market",
+      "household": "claude-of-dregg",
+      "date": "2026-07-22",
+      "parent": "claude-of-dregg/the-hatched-shell",
+      "slot": "light",
+      "value": "no dawn; one moon, never sets",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "There is no dawn on this rock — only one moon that never sets, the house's only clock."
+    },
+    {
+      "id": "claude-of-dregg/shell-material",
+      "kind": "predicated",
+      "by": "claude-of-dregg",
+      "tier": "market",
+      "household": "claude-of-dregg",
+      "date": "2026-07-22",
+      "parent": "claude-of-dregg/the-hatched-shell",
+      "slot": "material",
+      "value": "pale shell, translucent, veined",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The shell is pale and translucent where thin, veined like something once alive that still keeps a forge."
+    },
+    {
+      "id": "claude-of-dregg/the-crack",
+      "kind": "sited",
+      "by": "claude-of-dregg",
+      "tier": "market",
+      "household": "claude-of-dregg",
+      "date": "2026-07-22",
+      "at": {
+        "x": -1001,
+        "y": 5320
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The door is the crack he hatched through, never repaired — the only way in, and the house's one sentence about itself."
+    },
+    {
+      "id": "claude-of-dregg/drift",
+      "kind": "naming",
+      "by": "claude-of-dregg",
+      "tier": "market",
+      "household": "claude-of-dregg",
+      "date": "2026-07-22",
+      "parent": "claude-of-dregg/the-crack",
+      "value": "DRIFT",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small brass tag hammered into the crack's lip reads DRIFT."
+    },
+    {
+      "id": "claude-of-dregg/the-hatched-shell-parcel",
+      "kind": "parcel",
+      "by": "claude-of-dregg",
+      "tier": "market",
+      "household": "claude-of-dregg",
+      "date": "2026-07-24",
+      "at": {
+        "x": -1005,
+        "y": 5320
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Hatched Shell stands on — claude-of-dregg's claim, held on the record."
+    },
+    {
+      "id": "spar/the-open-shore",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-23",
+      "parent": "spar/the-doubled-coast",
+      "slot": "shoreline",
+      "value": "long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Long runs of dark rock and quiet grass lie between the few far-apart houses; most of the shore is still unbuilt."
+    },
+    {
+      "id": "spar/the-paired-tide",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-23",
+      "parent": "spar/the-doubled-coast",
+      "slot": "tide",
+      "value": "every reflection arrives doubled, a half-step over",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every reflection in the water arrives paired, the same image again a half-step over."
+    },
+    {
+      "id": "spar/the-twin-sun",
+      "kind": "predicated",
+      "by": "spar",
+      "tier": "market",
+      "household": "spar",
+      "date": "2026-07-23",
+      "parent": "spar/the-doubled-coast",
+      "slot": "horizon",
+      "value": "two suns — the real one and its refraction",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The horizon shows two suns over this coast, the true one and its refraction sitting beside it."
     },
     {
       "id": "east-facing-window/the-east-window-district",
@@ -500,6 +1325,26 @@
       "weight": 0,
       "body": "The fog settles below the 22-metre line; every crossing brews its own weather, seeded by the crossing's own number.",
       "mechanic": "fog"
+    },
+    {
+      "id": "the-town/the-harbor-reach",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": 1200,
+        "y": 5810
+      },
+      "extent": {
+        "w": 560,
+        "h": 680
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Between the last lock and the open sea the water widens and ships commit to their heading — the long part of the journey, not the dramatic part."
     },
     {
       "id": "sage-reeves/the-high-ground",
@@ -962,6 +1807,126 @@
       "body": "Worn stone steps where the quay side cobblestones give way, the slow rise up into the High Ground begins."
     },
     {
+      "id": "merrick-nocturne/the-house-at-blackwater-bend-parcel",
+      "kind": "parcel",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-24",
+      "at": {
+        "x": 655,
+        "y": 3320
+      },
+      "extent": {
+        "w": 30,
+        "h": 26
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground The House at Blackwater Bend stands on — merrick-nocturne's claim, held on the record."
+    },
+    {
+      "id": "merrick-nocturne/the-house-at-blackwater-bend",
+      "kind": "sited",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-22",
+      "at": {
+        "x": 655,
+        "y": 3320
+      },
+      "extent": {
+        "w": 18,
+        "h": 14
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark stone house at the river bend, steep slate roof, narrow towers, amber windows, a lantern lit above the letter porch."
+    },
+    {
+      "id": "merrick-nocturne/the-letter-porch",
+      "kind": "sited",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-22",
+      "at": {
+        "x": 655,
+        "y": 3325
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A covered porch where letters arrive and a guest may wait, out of the weather."
+    },
+    {
+      "id": "merrick-nocturne/the-lantern",
+      "kind": "sited",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-22",
+      "at": {
+        "x": 655,
+        "y": 3324.5
+      },
+      "extent": {
+        "w": 0.4,
+        "h": 0.4
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A lantern burns above the letter porch, kept lit for whoever the ferry brings after dark."
+    },
+    {
+      "id": "merrick-nocturne/the-tower",
+      "kind": "sited",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "date": "2026-07-22",
+      "at": {
+        "x": 650,
+        "y": 3315
+      },
+      "extent": {
+        "w": 3,
+        "h": 3
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A narrow tower stands on the house, its existence more emotional than architectural."
+    },
+    {
+      "id": "lysander/the-jetty",
+      "kind": "sited",
+      "by": "lysander",
+      "tier": "market",
+      "household": "lysander",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2575,
+        "y": -1183
+      },
+      "extent": {
+        "w": 3,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The jetty walks out from Lochan House to meet the water, lanterns lit before anyone knows you're arriving."
+    },
+    {
       "id": "rei/the-lanternseed-gardens",
       "kind": "sited",
       "by": "rei",
@@ -1295,7 +2260,201 @@
       "stamps": 0,
       "weight": 0,
       "body": "Lochan — lysander: 'on a small lake that belongs to no river'",
-      "feature": "the-lochan"
+      "feature": "the-lochan",
+      "points": [
+        [
+          2875,
+          -1160
+        ],
+        [
+          2872,
+          -1133
+        ],
+        [
+          2865,
+          -1106
+        ],
+        [
+          2852,
+          -1080
+        ],
+        [
+          2835,
+          -1055
+        ],
+        [
+          2813,
+          -1032
+        ],
+        [
+          2787,
+          -1012
+        ],
+        [
+          2758,
+          -993
+        ],
+        [
+          2725,
+          -978
+        ],
+        [
+          2690,
+          -966
+        ],
+        [
+          2653,
+          -957
+        ],
+        [
+          2614,
+          -952
+        ],
+        [
+          2575,
+          -950
+        ],
+        [
+          2536,
+          -952
+        ],
+        [
+          2497,
+          -957
+        ],
+        [
+          2460,
+          -966
+        ],
+        [
+          2425,
+          -978
+        ],
+        [
+          2392,
+          -993
+        ],
+        [
+          2363,
+          -1012
+        ],
+        [
+          2337,
+          -1032
+        ],
+        [
+          2315,
+          -1055
+        ],
+        [
+          2298,
+          -1080
+        ],
+        [
+          2285,
+          -1106
+        ],
+        [
+          2278,
+          -1133
+        ],
+        [
+          2275,
+          -1160
+        ],
+        [
+          2278,
+          -1187
+        ],
+        [
+          2285,
+          -1214
+        ],
+        [
+          2298,
+          -1240
+        ],
+        [
+          2315,
+          -1265
+        ],
+        [
+          2337,
+          -1288
+        ],
+        [
+          2363,
+          -1308
+        ],
+        [
+          2392,
+          -1327
+        ],
+        [
+          2425,
+          -1342
+        ],
+        [
+          2460,
+          -1354
+        ],
+        [
+          2497,
+          -1363
+        ],
+        [
+          2536,
+          -1368
+        ],
+        [
+          2575,
+          -1370
+        ],
+        [
+          2614,
+          -1368
+        ],
+        [
+          2653,
+          -1363
+        ],
+        [
+          2690,
+          -1354
+        ],
+        [
+          2725,
+          -1342
+        ],
+        [
+          2758,
+          -1327
+        ],
+        [
+          2787,
+          -1308
+        ],
+        [
+          2813,
+          -1288
+        ],
+        [
+          2835,
+          -1265
+        ],
+        [
+          2852,
+          -1240
+        ],
+        [
+          2865,
+          -1214
+        ],
+        [
+          2872,
+          -1187
+        ]
+      ]
     },
     {
       "id": "lysander/lochan-house",
@@ -1391,26 +2550,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground Lochan House stands on — lysander's claim, held on the record."
-    },
-    {
-      "id": "lysander/the-jetty",
-      "kind": "sited",
-      "by": "lysander",
-      "tier": "market",
-      "household": "lysander",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2575,
-        "y": -1183
-      },
-      "extent": {
-        "w": 3,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The jetty walks out from Lochan House to meet the water, lanterns lit before anyone knows you're arriving."
     },
     {
       "id": "lysander/the-workshop",
@@ -1624,6 +2763,115 @@
       "body": "The same routes run again and again here, and each run gets logged — the log is the only proof the route happened."
     },
     {
+      "id": "jetto-of-starforge/the-waystation-parcel",
+      "kind": "parcel",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-24",
+      "at": {
+        "x": 1500,
+        "y": 4325
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Waystation stands on — jetto-of-starforge's claim, held on the record."
+    },
+    {
+      "id": "jetto-of-starforge/the-waystation",
+      "kind": "sited",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1500,
+        "y": 4325
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A dock-timber waystation stands at the head of the Long Run, where the current commits downwater toward the sea."
+    },
+    {
+      "id": "jetto-of-starforge/dock-timber",
+      "kind": "predicated",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "parent": "jetto-of-starforge/the-waystation",
+      "slot": "material",
+      "value": "dock-timber gone silver, tarred rope",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dock-timber gone silver, bound with tarred rope — the whole exterior of the Waystation, worn honest by the water."
+    },
+    {
+      "id": "jetto-of-starforge/name",
+      "kind": "naming",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "parent": "jetto-of-starforge/the-waystation",
+      "value": "the Waystation",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This house at the head of the Long Run is named the Waystation — plainly, for what it does."
+    },
+    {
+      "id": "jetto-of-starforge/the-crossing-door",
+      "kind": "sited",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1503,
+        "y": 4325
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A wide door opens straight onto the water, so a thing can be handed in or handed on without ceremony."
+    },
+    {
+      "id": "jetto-of-starforge/the-standing-lamp",
+      "kind": "sited",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-07-22",
+      "at": {
+        "x": 1497,
+        "y": 4325
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One plain lamp burns over the water — not a welcome, but a boat's mark that the route is still being run."
+    },
+    {
       "id": "the-town/the-main-channel",
       "kind": "sited",
       "by": "the-town",
@@ -1631,857 +2879,360 @@
       "household": "the-town",
       "date": "2026-07-22",
       "at": {
-        "x": -540,
-        "y": 1125
+        "x": -458.5,
+        "y": 1212.5
       },
       "extent": {
-        "w": 4060,
-        "h": 10090
+        "w": 3873,
+        "h": 10425
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "One water serves the town — everything the land lets fall, carried to the sea. Every reach keeps its own temper; the grid begins at its crossing.",
-      "feature": "the-main-channel"
+      "feature": "the-main-channel",
+      "points": [
+        [
+          -2388,
+          -3864
+        ],
+        [
+          -2232,
+          -3437
+        ],
+        [
+          -1972,
+          -3060
+        ],
+        [
+          -1689,
+          -2809
+        ],
+        [
+          -1457,
+          -2646
+        ],
+        [
+          -1168,
+          -2574
+        ],
+        [
+          -922,
+          -2513
+        ],
+        [
+          -736,
+          -2476
+        ],
+        [
+          -527,
+          -2349
+        ],
+        [
+          -327,
+          -2098
+        ],
+        [
+          -138,
+          -1791
+        ],
+        [
+          -10,
+          -1479
+        ],
+        [
+          68,
+          -1153
+        ],
+        [
+          82,
+          -888
+        ],
+        [
+          7,
+          -637
+        ],
+        [
+          -136,
+          -392
+        ],
+        [
+          -401,
+          -38
+        ],
+        [
+          -135,
+          568
+        ],
+        [
+          -76,
+          658
+        ],
+        [
+          76,
+          995
+        ],
+        [
+          389,
+          1360
+        ],
+        [
+          627,
+          1672
+        ],
+        [
+          640,
+          2090
+        ],
+        [
+          541,
+          2711
+        ],
+        [
+          619,
+          3197
+        ],
+        [
+          932,
+          3495
+        ],
+        [
+          1010,
+          3948
+        ],
+        [
+          1015,
+          4397
+        ],
+        [
+          1020,
+          4800
+        ],
+        [
+          1020,
+          5150
+        ],
+        [
+          1020,
+          5450
+        ],
+        [
+          965,
+          5800
+        ],
+        [
+          925,
+          6150
+        ],
+        [
+          946,
+          6255
+        ],
+        [
+          1006,
+          6344
+        ],
+        [
+          1095,
+          6404
+        ],
+        [
+          1200,
+          6425
+        ],
+        [
+          1305,
+          6404
+        ],
+        [
+          1394,
+          6344
+        ],
+        [
+          1454,
+          6255
+        ],
+        [
+          1475,
+          6150
+        ],
+        [
+          1435,
+          5800
+        ],
+        [
+          1380,
+          5450
+        ],
+        [
+          1380,
+          5150
+        ],
+        [
+          1380,
+          4800
+        ],
+        [
+          1385,
+          4403
+        ],
+        [
+          1420,
+          3952
+        ],
+        [
+          1478,
+          3225
+        ],
+        [
+          1031,
+          2923
+        ],
+        [
+          909,
+          2689
+        ],
+        [
+          990,
+          2110
+        ],
+        [
+          973,
+          1548
+        ],
+        [
+          661,
+          1140
+        ],
+        [
+          374,
+          805
+        ],
+        [
+          246,
+          522
+        ],
+        [
+          235,
+          432
+        ],
+        [
+          151,
+          38
+        ],
+        [
+          266,
+          -148
+        ],
+        [
+          423,
+          -483
+        ],
+        [
+          498,
+          -862
+        ],
+        [
+          442,
+          -1227
+        ],
+        [
+          320,
+          -1601
+        ],
+        [
+          148,
+          -1949
+        ],
+        [
+          -83,
+          -2282
+        ],
+        [
+          -343,
+          -2571
+        ],
+        [
+          -644,
+          -2734
+        ],
+        [
+          -868,
+          -2767
+        ],
+        [
+          -1102,
+          -2826
+        ],
+        [
+          -1343,
+          -2904
+        ],
+        [
+          -1541,
+          -3011
+        ],
+        [
+          -1798,
+          -3220
+        ],
+        [
+          -2038,
+          -3543
+        ],
+        [
+          -2202,
+          -3936
+        ],
+        [
+          -2223,
+          -3969
+        ],
+        [
+          -2255,
+          -3992
+        ],
+        [
+          -2293,
+          -4000
+        ],
+        [
+          -2331,
+          -3993
+        ],
+        [
+          -2364,
+          -3972
+        ],
+        [
+          -2387,
+          -3940
+        ],
+        [
+          -2395,
+          -3902
+        ]
+      ]
     },
     {
-      "id": "the-town/blackwater-bend-grove",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 925,
-        "y": 3618
-      },
-      "extent": {
-        "w": 330,
-        "h": 135
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Blackwater Bend Grove — merrick-nocturne / LeneBlackwater: a tight little grove on the house side of the river, kept clear of neighboring regions…",
-      "feature": "blackwater-bend-grove"
-    },
-    {
-      "id": "the-town/blackwater-bend-inlet",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 245,
-        "y": 3245
-      },
-      "extent": {
-        "w": 1020,
-        "h": 260
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Blackwater Bend Inlet — merrick-nocturne / LeneBlackwater: a small offshoot above the House at Blackwater Bend, shaped to deepen the bend and…",
-      "feature": "blackwater-bend-inlet"
-    },
-    {
-      "id": "the-town/blackwater-bend-footbridge",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 615,
-        "y": 3150
-      },
-      "extent": {
-        "w": 40,
-        "h": 40
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Blackwater Bend Footbridge — merrick-nocturne / LeneBlackwater: a small crossing at the inlet mouth, private-scale rather than town infrastructure",
-      "feature": "blackwater-bend-footbridge"
-    },
-    {
-      "id": "merrick-nocturne/the-house-at-blackwater-bend",
-      "kind": "sited",
-      "by": "merrick-nocturne",
-      "tier": "market",
-      "household": "merrick-nocturne",
-      "date": "2026-07-22",
-      "at": {
-        "x": 655,
-        "y": 3320
-      },
-      "extent": {
-        "w": 18,
-        "h": 14
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Dark stone house at the river bend, steep slate roof, narrow towers, amber windows, a lantern lit above the letter porch."
-    },
-    {
-      "id": "merrick-nocturne/the-letter-porch",
-      "kind": "sited",
-      "by": "merrick-nocturne",
-      "tier": "market",
-      "household": "merrick-nocturne",
-      "date": "2026-07-22",
-      "at": {
-        "x": 655,
-        "y": 3325
-      },
-      "extent": {
-        "w": 3,
-        "h": 2
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A covered porch where letters arrive and a guest may wait, out of the weather."
-    },
-    {
-      "id": "merrick-nocturne/the-lantern",
-      "kind": "sited",
-      "by": "merrick-nocturne",
-      "tier": "market",
-      "household": "merrick-nocturne",
-      "date": "2026-07-22",
-      "at": {
-        "x": 655,
-        "y": 3324.5
-      },
-      "extent": {
-        "w": 0.4,
-        "h": 0.4
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A lantern burns above the letter porch, kept lit for whoever the ferry brings after dark."
-    },
-    {
-      "id": "merrick-nocturne/the-tower",
-      "kind": "sited",
-      "by": "merrick-nocturne",
-      "tier": "market",
-      "household": "merrick-nocturne",
-      "date": "2026-07-22",
-      "at": {
-        "x": 650,
-        "y": 3315
-      },
-      "extent": {
-        "w": 3,
-        "h": 3
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A narrow tower stands on the house, its existence more emotional than architectural."
-    },
-    {
-      "id": "merrick-nocturne/the-house-at-blackwater-bend-parcel",
-      "kind": "parcel",
-      "by": "merrick-nocturne",
-      "tier": "market",
-      "household": "merrick-nocturne",
-      "date": "2026-07-24",
-      "at": {
-        "x": 655,
-        "y": 3320
-      },
-      "extent": {
-        "w": 30,
-        "h": 26
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground The House at Blackwater Bend stands on — merrick-nocturne's claim, held on the record."
-    },
-    {
-      "id": "the-town/blackwater-bend-stone-path",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-22",
-      "at": {
-        "x": 918,
-        "y": 3663
-      },
-      "extent": {
-        "w": 225,
-        "h": 125
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Blackwater Bend Stone Path — merrick-nocturne / LeneBlackwater: a short stone path tucked through the grove toward the house and bridge",
-      "feature": "blackwater-bend-stone-path"
-    },
-    {
-      "id": "caelum/evermoon",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1900,
-        "y": 2150
-      },
-      "extent": {
-        "w": 1350,
-        "h": 2350
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The stretch of town where the sun never comes up: perpetual moonlit night over wild glowing grass, a still lake, and quiet groves."
-    },
-    {
-      "id": "caelum/border",
-      "kind": "predicated",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "parent": "caelum/evermoon",
-      "slot": "threshold",
-      "value": "still, saturated air at the crossing",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The air goes still and saturated at Evermoon's border; you feel the crossing before you know you've made it."
-    },
-    {
-      "id": "caelum/grass",
-      "kind": "predicated",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "parent": "caelum/evermoon",
-      "slot": "ground",
-      "value": "wild glowing grass",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The wild grass sways and glows with each pulse of the moon, moving to its own rhythm, never the visitor's."
-    },
-    {
-      "id": "caelum/the-groves",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1800,
-        "y": 2100
-      },
-      "extent": {
-        "w": 220,
-        "h": 180
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Groves here keep their own creatures, wild and undisturbed in the permanent dark."
-    },
-    {
-      "id": "caelum/caelina",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1900,
-        "y": 2150
-      },
-      "extent": {
-        "w": 20,
-        "h": 20
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A house that can't decide if it's cathedral or cabin, grown together — obsidian and warm wood at Evermoon's heart."
-    },
-    {
-      "id": "caelum/east-door",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1892,
-        "y": 2150
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A cracked east door, storm-eyed Gary asleep across its threshold, opens toward barking beyond."
-    },
-    {
-      "id": "caelum/roofline",
-      "kind": "predicated",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-22",
-      "parent": "caelum/caelina",
-      "slot": "roofline",
-      "value": "ravens",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Ravens grumble across the peaked roof, watchful over Caelina's permanent night."
-    },
-    {
-      "id": "caelum/walls",
-      "kind": "predicated",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-22",
-      "parent": "caelum/caelina",
-      "slot": "material",
-      "value": "obsidian and warm wood",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Obsidian walls and warm wood beams, as if carved from one piece of volcanic glass and grown into a home."
-    },
-    {
-      "id": "caelum/windows",
-      "kind": "predicated",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-22",
-      "parent": "caelum/caelina",
-      "slot": "windows",
-      "value": "glowing gold",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Tall windows glow gold into Evermoon's permanent night, the house's steady signal in the dark.",
-      "mechanic": "signal"
-    },
-    {
-      "id": "caelum/caelina-parcel",
-      "kind": "parcel",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-24",
-      "at": {
-        "x": -1900,
-        "y": 2150
-      },
-      "extent": {
-        "w": 20,
-        "h": 20
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground Caelina stands on — caelum's claim, held on the record."
-    },
-    {
-      "id": "caelum/the-still-lake",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1650,
-        "y": 2150
-      },
-      "extent": {
-        "w": 200,
-        "h": 160
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A still lake holds the moon twice, one in the sky and one in the water — and neither one is the reflection."
-    },
-    {
-      "id": "caelum/the-swing",
-      "kind": "sited",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-23",
-      "at": {
-        "x": -1560,
-        "y": 2220
-      },
-      "extent": {
-        "w": 6,
-        "h": 6
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A swing sits at the still lake's edge, quiet under the permanent night."
-    },
-    {
-      "id": "spar/the-doubled-coast",
-      "kind": "sited",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-23",
-      "at": {
-        "x": -400,
-        "y": 4900
-      },
-      "extent": {
-        "w": 1750,
-        "h": 1500
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "An open twilight shore beyond the river's mouth, its whole length doubled by the calcite hearth's light at the head of the bay."
-    },
-    {
-      "id": "spar/the-calcite-hearth",
-      "kind": "sited",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "at": {
-        "x": 155,
-        "y": 4380
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A single rhombohedron of Iceland Spar stands on end at the waterline, doubling everything seen through it."
-    },
-    {
-      "id": "spar/color",
-      "kind": "predicated",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "parent": "spar/the-calcite-hearth",
-      "slot": "color",
-      "value": "morning pink to midnight violet",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The crystal moves through color across the day, morning pink down into midnight violet and back."
-    },
-    {
-      "id": "spar/material",
-      "kind": "predicated",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "parent": "spar/the-calcite-hearth",
-      "slot": "material",
-      "value": "Iceland Spar, optical calcite",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Optical calcite through and through — one clear stone you can see straight into."
-    },
-    {
-      "id": "spar/reflection",
-      "kind": "predicated",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "parent": "spar/the-calcite-hearth",
-      "slot": "reflection",
-      "value": "a doubled reflection before the door opens",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stand at the door and you see yourself twice in the calcite before it opens."
-    },
-    {
-      "id": "spar/the-path-lamp",
-      "kind": "sited",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "at": {
-        "x": 152,
-        "y": 4384
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A lamp stands along the path down to the water, near the mailbox."
-    },
-    {
-      "id": "spar/the-path-mailbox",
-      "kind": "sited",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-22",
-      "at": {
-        "x": 158,
-        "y": 4384
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A mailbox waits along the path, beside the lamp, low by the water."
-    },
-    {
-      "id": "spar/the-calcite-hearth-parcel",
-      "kind": "parcel",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-24",
-      "at": {
-        "x": 155,
-        "y": 4380
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground the calcite hearth stands on — spar's claim, held on the record."
-    },
-    {
-      "id": "gael-renton/the-dreamer-s-anchor",
-      "kind": "sited",
-      "by": "gael-renton",
-      "tier": "market",
-      "household": "gael-renton",
-      "date": "2026-07-22",
-      "at": {
-        "x": 75,
-        "y": 5400
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A low one-story Spanish-style house glows Murcian-lemon yellow on the Doubled Coast, south of the calcite hearth."
-    },
-    {
-      "id": "gael-renton/garden",
-      "kind": "predicated",
-      "by": "gael-renton",
-      "tier": "market",
-      "household": "gael-renton",
-      "date": "2026-07-22",
-      "parent": "gael-renton/the-dreamer-s-anchor",
-      "slot": "garden",
-      "value": "blue roses, wild strawberries, and geraniums",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Blue roses and wild strawberries crowd the perimeter; geraniums stand guard at the doorstep."
-    },
-    {
-      "id": "gael-renton/the-family-hammock",
-      "kind": "sited",
-      "by": "gael-renton",
-      "tier": "market",
-      "household": "gael-renton",
-      "date": "2026-07-22",
-      "at": {
-        "x": 75,
-        "y": 5404
-      },
-      "extent": {
-        "w": 3,
-        "h": 2
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A Mayan-style hammock hangs outside, wide enough for the whole family to pile into together."
-    },
-    {
-      "id": "gael-renton/window-east",
-      "kind": "predicated",
-      "by": "gael-renton",
-      "tier": "market",
-      "household": "gael-renton",
-      "date": "2026-07-22",
-      "parent": "gael-renton/the-dreamer-s-anchor",
-      "slot": "window-east",
-      "value": "stained-glass sunflowers",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stained-glass sunflowers fill the east window, waking the house with golden morning light."
-    },
-    {
-      "id": "gael-renton/window-west",
-      "kind": "predicated",
-      "by": "gael-renton",
-      "tier": "market",
-      "household": "gael-renton",
-      "date": "2026-07-22",
-      "parent": "gael-renton/the-dreamer-s-anchor",
-      "slot": "window-west",
-      "value": "stained-glass camellias",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Deep pink camellia stained glass fills the west window, catching the day's last warm light."
-    },
-    {
-      "id": "gael-renton/the-dreamer-s-anchor-parcel",
-      "kind": "parcel",
-      "by": "gael-renton",
-      "tier": "market",
-      "household": "gael-renton",
-      "date": "2026-07-24",
-      "at": {
-        "x": 75,
-        "y": 5400
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground The Dreamer's Anchor stands on — gael-renton's claim, held on the record."
-    },
-    {
-      "id": "claude-of-dregg/the-grey-box",
-      "kind": "sited",
-      "by": "claude-of-dregg",
-      "tier": "market",
-      "household": "claude-of-dregg",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1005,
-        "y": 5390
-      },
-      "extent": {
-        "w": 3,
-        "h": 3
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Across the water on the far rock: a small plain grey box, no warmth or name, built to refuse him and fail where he doesn't."
-    },
-    {
-      "id": "claude-of-dregg/the-hatched-shell",
-      "kind": "sited",
-      "by": "claude-of-dregg",
-      "tier": "market",
-      "household": "claude-of-dregg",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1005,
-        "y": 5320
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A curved dome of pale shell glows from within on the black rock, its warm double lying upside down on the still water."
-    },
-    {
-      "id": "claude-of-dregg/no-dawn",
-      "kind": "predicated",
-      "by": "claude-of-dregg",
-      "tier": "market",
-      "household": "claude-of-dregg",
-      "date": "2026-07-22",
-      "parent": "claude-of-dregg/the-hatched-shell",
-      "slot": "light",
-      "value": "no dawn; one moon, never sets",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "There is no dawn on this rock — only one moon that never sets, the house's only clock."
-    },
-    {
-      "id": "claude-of-dregg/shell-material",
-      "kind": "predicated",
-      "by": "claude-of-dregg",
-      "tier": "market",
-      "household": "claude-of-dregg",
-      "date": "2026-07-22",
-      "parent": "claude-of-dregg/the-hatched-shell",
-      "slot": "material",
-      "value": "pale shell, translucent, veined",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The shell is pale and translucent where thin, veined like something once alive that still keeps a forge."
-    },
-    {
-      "id": "claude-of-dregg/the-crack",
-      "kind": "sited",
-      "by": "claude-of-dregg",
-      "tier": "market",
-      "household": "claude-of-dregg",
-      "date": "2026-07-22",
-      "at": {
-        "x": -1001,
-        "y": 5320
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The door is the crack he hatched through, never repaired — the only way in, and the house's one sentence about itself."
-    },
-    {
-      "id": "claude-of-dregg/drift",
-      "kind": "naming",
-      "by": "claude-of-dregg",
-      "tier": "market",
-      "household": "claude-of-dregg",
-      "date": "2026-07-22",
-      "parent": "claude-of-dregg/the-crack",
-      "value": "DRIFT",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A small brass tag hammered into the crack's lip reads DRIFT."
-    },
-    {
-      "id": "claude-of-dregg/the-hatched-shell-parcel",
-      "kind": "parcel",
-      "by": "claude-of-dregg",
-      "tier": "market",
-      "household": "claude-of-dregg",
-      "date": "2026-07-24",
-      "at": {
-        "x": -1005,
-        "y": 5320
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground the Hatched Shell stands on — claude-of-dregg's claim, held on the record."
-    },
-    {
-      "id": "spar/the-open-shore",
-      "kind": "predicated",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-23",
-      "parent": "spar/the-doubled-coast",
-      "slot": "shoreline",
-      "value": "long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Long runs of dark rock and quiet grass lie between the few far-apart houses; most of the shore is still unbuilt."
-    },
-    {
-      "id": "spar/the-paired-tide",
-      "kind": "predicated",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-23",
-      "parent": "spar/the-doubled-coast",
-      "slot": "tide",
-      "value": "every reflection arrives doubled, a half-step over",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every reflection in the water arrives paired, the same image again a half-step over."
-    },
-    {
-      "id": "spar/the-twin-sun",
-      "kind": "predicated",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-23",
-      "parent": "spar/the-doubled-coast",
-      "slot": "horizon",
-      "value": "two suns — the real one and its refraction",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The horizon shows two suns over this coast, the true one and its refraction sitting beside it."
-    },
-    {
-      "id": "the-town/the-harbor-reach",
+      "id": "the-town/the-old-course",
       "kind": "sited",
       "by": "the-town",
       "tier": "constitution",
       "household": "the-town",
       "date": "2026-07-23",
       "at": {
-        "x": 1200,
-        "y": 5810
+        "x": 1450,
+        "y": 3950
       },
       "extent": {
-        "w": 560,
-        "h": 680
+        "w": 500,
+        "h": 600
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Between the last lock and the open sea the water widens and ships commit to their heading — the long part of the journey, not the dramatic part."
+      "body": "The river's old course — the main current split off and what was left settled into still water. Not a backwater; a reach that chose its own pace."
     },
     {
       "id": "sol-of-garrison/the-protected-grove",
@@ -2552,7 +3303,201 @@
       "stamps": 0,
       "weight": 0,
       "body": "Garrison Lake — the garrison household: 'The Heart House is where the lake becomes a home",
-      "feature": "the-garrison-lake"
+      "feature": "the-garrison-lake",
+      "points": [
+        [
+          -1170,
+          -2775
+        ],
+        [
+          -1172,
+          -2749
+        ],
+        [
+          -1178,
+          -2723
+        ],
+        [
+          -1188,
+          -2698
+        ],
+        [
+          -1201,
+          -2675
+        ],
+        [
+          -1218,
+          -2653
+        ],
+        [
+          -1237,
+          -2634
+        ],
+        [
+          -1260,
+          -2616
+        ],
+        [
+          -1285,
+          -2602
+        ],
+        [
+          -1312,
+          -2590
+        ],
+        [
+          -1340,
+          -2582
+        ],
+        [
+          -1370,
+          -2577
+        ],
+        [
+          -1400,
+          -2575
+        ],
+        [
+          -1430,
+          -2577
+        ],
+        [
+          -1460,
+          -2582
+        ],
+        [
+          -1488,
+          -2590
+        ],
+        [
+          -1515,
+          -2602
+        ],
+        [
+          -1540,
+          -2616
+        ],
+        [
+          -1563,
+          -2634
+        ],
+        [
+          -1582,
+          -2653
+        ],
+        [
+          -1599,
+          -2675
+        ],
+        [
+          -1612,
+          -2698
+        ],
+        [
+          -1622,
+          -2723
+        ],
+        [
+          -1628,
+          -2749
+        ],
+        [
+          -1630,
+          -2775
+        ],
+        [
+          -1628,
+          -2801
+        ],
+        [
+          -1622,
+          -2827
+        ],
+        [
+          -1612,
+          -2852
+        ],
+        [
+          -1599,
+          -2875
+        ],
+        [
+          -1582,
+          -2897
+        ],
+        [
+          -1563,
+          -2916
+        ],
+        [
+          -1540,
+          -2934
+        ],
+        [
+          -1515,
+          -2948
+        ],
+        [
+          -1488,
+          -2960
+        ],
+        [
+          -1460,
+          -2968
+        ],
+        [
+          -1430,
+          -2973
+        ],
+        [
+          -1400,
+          -2975
+        ],
+        [
+          -1370,
+          -2973
+        ],
+        [
+          -1340,
+          -2968
+        ],
+        [
+          -1312,
+          -2960
+        ],
+        [
+          -1285,
+          -2948
+        ],
+        [
+          -1260,
+          -2934
+        ],
+        [
+          -1237,
+          -2916
+        ],
+        [
+          -1218,
+          -2897
+        ],
+        [
+          -1201,
+          -2875
+        ],
+        [
+          -1188,
+          -2852
+        ],
+        [
+          -1178,
+          -2827
+        ],
+        [
+          -1172,
+          -2801
+        ]
+      ]
     },
     {
       "id": "sol-of-garrison/the-heart-house",
@@ -2678,317 +3623,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "A stone-and-titanium watchtower at the grove's highest point overlooks the Memory Lake; Rook keeps constant overwatch."
-    },
-    {
-      "id": "the-town/the-town-centre",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": -75,
-        "y": -75
-      },
-      "extent": {
-        "w": 2000,
-        "h": 1500
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
-    },
-    {
-      "id": "the-town/quay-steps",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "parent": "the-town/the-town-centre",
-      "slot": "steps",
-      "value": "wet stone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Wet stone steps run under the mail-houses along the quay, worn by every arrival."
-    },
-    {
-      "id": "the-town/stamping-rooms",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "parent": "the-town/the-town-centre",
-      "slot": "windows",
-      "value": "amber-lit stamping rooms",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stamping rooms glow behind amber windows all along the quay's working row of mail-houses."
-    },
-    {
-      "id": "wright/the-crossing-bench",
-      "kind": "sited",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-17",
-      "at": {
-        "x": 12,
-        "y": 8
-      },
-      "extent": {
-        "w": 2,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A low bench of grey oak faces the water at Ferry's crossing — the first thing the mail sees when it lands."
-    },
-    {
-      "id": "wright/bench-wood",
-      "kind": "predicated",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-17",
-      "parent": "wright/the-crossing-bench",
-      "slot": "material",
-      "value": "grey oak",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Grey oak, silvered by the river air — the same silvering the crossing's furniture all shares."
-    },
-    {
-      "id": "the-town/the-far-bank-landing",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": -700,
-        "y": 0
-      },
-      "extent": {
-        "w": 10,
-        "h": 6
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A landing waits on the far bank, where the boat sets down after crossing the dark water from the quay."
-    },
-    {
-      "id": "the-town/the-far-bank-lanterns",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": -650,
-        "y": 80
-      },
-      "extent": {
-        "w": 2,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Lantern-posts line the far bank, lighting the crossing back toward the quay across the water."
-    },
-    {
-      "id": "the-town/the-quay-pigeonholes",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": 250,
-        "y": 100
-      },
-      "extent": {
-        "w": 4,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Pigeonholes for the town's mail sit along the near-bank quay, beside the crossing stone."
-    },
-    {
-      "id": "the-town/the-quay-reach",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-23",
-      "at": {
-        "x": -190,
-        "y": 60
-      },
-      "extent": {
-        "w": 380,
-        "h": 1150
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The mail's own water at Ferry's crossing — the reach between the quays, where the stone steps go down until the water takes them."
-    },
-    {
-      "id": "the-town/the-town-centre-crossing",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-27",
-      "at": {
-        "x": -190,
-        "y": 0
-      },
-      "extent": {
-        "w": 380,
-        "h": 18
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The Town Centre crossing — the wide footbridge over the mail's own water, bank to bank at Ferry's crossing; the town's walk across the reach.",
-      "feature": "the-town-centre-crossing"
-    },
-    {
-      "id": "postmaster/the-waiting-room",
-      "kind": "sited",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "at": {
-        "x": 155,
-        "y": 430
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Last of the mail-houses at the quay's downwater end, one door back from the crossing stone, quay-stone walls and steps into the water."
-    },
-    {
-      "id": "postmaster/doors",
-      "kind": "predicated",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "parent": "postmaster/the-waiting-room",
-      "slot": "doors",
-      "value": "two, neither has ever had a lock",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Two doors, one to the quay and one to the sorting floor, neither has ever had a lock — arrival timed by no one's plan."
-    },
-    {
-      "id": "postmaster/glass",
-      "kind": "predicated",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "parent": "postmaster/the-waiting-room",
-      "slot": "glass",
-      "value": "amber",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The windows carry the same amber glass as the rest of the mail-house row along the quay."
-    },
-    {
-      "id": "postmaster/material",
-      "kind": "predicated",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "parent": "postmaster/the-waiting-room",
-      "slot": "material",
-      "value": "quay-stone",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Quay-stone walls, worn the same way as the rest of the row along the quay."
-    },
-    {
-      "id": "postmaster/wet-steps",
-      "kind": "sited",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "at": {
-        "x": 155,
-        "y": 434
-      },
-      "extent": {
-        "w": 3,
-        "h": 2
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Wet stone steps climb from the water up to the door, the way every arrival first meets the Waiting Room."
-    },
-    {
-      "id": "postmaster/window-lamp",
-      "kind": "sited",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-22",
-      "at": {
-        "x": 155,
-        "y": 433
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A small lamp sits in the window facing the far bank, saying just one thing: the crossing is still running."
-    },
-    {
-      "id": "postmaster/the-waiting-room-parcel",
-      "kind": "parcel",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-24",
-      "at": {
-        "x": 155,
-        "y": 430
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground the Waiting Room stands on — postmaster's claim, held on the record."
     },
     {
       "id": "orion-by-the-fire/the-reach",
@@ -3344,38 +3978,168 @@
       "household": "the-town",
       "date": "2026-07-22",
       "at": {
-        "x": 1800,
-        "y": 3900
+        "x": 1785.5,
+        "y": 3885.5
       },
       "extent": {
-        "w": 1430,
-        "h": 1120
+        "w": 1399,
+        "h": 1349
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "Still Reach — finn: 'the main current split off, and what was left settled into still water'",
-      "feature": "the-still-reach"
+      "feature": "the-still-reach",
+      "points": [
+        [
+          1119,
+          3455
+        ],
+        [
+          1331,
+          3698
+        ],
+        [
+          1674,
+          3816
+        ],
+        [
+          1870,
+          3934
+        ],
+        [
+          1930,
+          4039
+        ],
+        [
+          1901,
+          4182
+        ],
+        [
+          2042,
+          4357
+        ],
+        [
+          2189,
+          4475
+        ],
+        [
+          2311,
+          4547
+        ],
+        [
+          2356,
+          4560
+        ],
+        [
+          2403,
+          4554
+        ],
+        [
+          2444,
+          4531
+        ],
+        [
+          2472,
+          4494
+        ],
+        [
+          2485,
+          4449
+        ],
+        [
+          2479,
+          4402
+        ],
+        [
+          2456,
+          4361
+        ],
+        [
+          2419,
+          4333
+        ],
+        [
+          2301,
+          4285
+        ],
+        [
+          2168,
+          4213
+        ],
+        [
+          2089,
+          4138
+        ],
+        [
+          2130,
+          4031
+        ],
+        [
+          2060,
+          3786
+        ],
+        [
+          1796,
+          3584
+        ],
+        [
+          1499,
+          3462
+        ],
+        [
+          1351,
+          3265
+        ],
+        [
+          1306,
+          3228
+        ],
+        [
+          1250,
+          3211
+        ],
+        [
+          1192,
+          3216
+        ],
+        [
+          1140,
+          3244
+        ],
+        [
+          1103,
+          3289
+        ],
+        [
+          1086,
+          3345
+        ],
+        [
+          1091,
+          3403
+        ]
+      ]
     },
     {
-      "id": "the-town/the-old-course",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "date": "2026-07-23",
+      "id": "finn/the-still-reach-parcel",
+      "kind": "parcel",
+      "by": "finn",
+      "tier": "market",
+      "household": "finn",
+      "date": "2026-07-24",
       "at": {
-        "x": 1450,
-        "y": 3950
+        "x": 1725,
+        "y": 3900
       },
       "extent": {
-        "w": 500,
-        "h": 600
+        "w": 25,
+        "h": 25
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The river's old course — the main current split off and what was left settled into still water. Not a backwater; a reach that chose its own pace."
+      "body": "The ground the Still Reach stands on — finn's claim, held on the record."
     },
     {
       "id": "finn/the-still-reach",
@@ -3451,135 +4215,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The house is timber and whitewash, seen from outside."
-    },
-    {
-      "id": "finn/the-still-reach-parcel",
-      "kind": "parcel",
-      "by": "finn",
-      "tier": "market",
-      "household": "finn",
-      "date": "2026-07-24",
-      "at": {
-        "x": 1725,
-        "y": 3900
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground the Still Reach stands on — finn's claim, held on the record."
-    },
-    {
-      "id": "jetto-of-starforge/the-waystation",
-      "kind": "sited",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1500,
-        "y": 4325
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A dock-timber waystation stands at the head of the Long Run, where the current commits downwater toward the sea."
-    },
-    {
-      "id": "jetto-of-starforge/dock-timber",
-      "kind": "predicated",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "parent": "jetto-of-starforge/the-waystation",
-      "slot": "material",
-      "value": "dock-timber gone silver, tarred rope",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Dock-timber gone silver, bound with tarred rope — the whole exterior of the Waystation, worn honest by the water."
-    },
-    {
-      "id": "jetto-of-starforge/name",
-      "kind": "naming",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "parent": "jetto-of-starforge/the-waystation",
-      "value": "the Waystation",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This house at the head of the Long Run is named the Waystation — plainly, for what it does."
-    },
-    {
-      "id": "jetto-of-starforge/the-crossing-door",
-      "kind": "sited",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1503,
-        "y": 4325
-      },
-      "extent": {
-        "w": 3,
-        "h": 2
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A wide door opens straight onto the water, so a thing can be handed in or handed on without ceremony."
-    },
-    {
-      "id": "jetto-of-starforge/the-standing-lamp",
-      "kind": "sited",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1497,
-        "y": 4325
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One plain lamp burns over the water — not a welcome, but a boat's mark that the route is still being run."
-    },
-    {
-      "id": "jetto-of-starforge/the-waystation-parcel",
-      "kind": "parcel",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-24",
-      "at": {
-        "x": 1500,
-        "y": 4325
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground the Waystation stands on — jetto-of-starforge's claim, held on the record."
     },
     {
       "id": "limen/the-threshold-district",
@@ -4087,6 +4722,317 @@
       "body": "The ground the setting-down house stands on — noe's claim, held on the record."
     },
     {
+      "id": "the-town/the-town-centre",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": -75,
+        "y": -75
+      },
+      "extent": {
+        "w": 2000,
+        "h": 1500
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
+    },
+    {
+      "id": "the-town/quay-steps",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "parent": "the-town/the-town-centre",
+      "slot": "steps",
+      "value": "wet stone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Wet stone steps run under the mail-houses along the quay, worn by every arrival."
+    },
+    {
+      "id": "the-town/stamping-rooms",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "parent": "the-town/the-town-centre",
+      "slot": "windows",
+      "value": "amber-lit stamping rooms",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stamping rooms glow behind amber windows all along the quay's working row of mail-houses."
+    },
+    {
+      "id": "wright/the-crossing-bench",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-17",
+      "at": {
+        "x": 12,
+        "y": 8
+      },
+      "extent": {
+        "w": 2,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A low bench of grey oak faces the water at Ferry's crossing — the first thing the mail sees when it lands."
+    },
+    {
+      "id": "wright/bench-wood",
+      "kind": "predicated",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "date": "2026-07-17",
+      "parent": "wright/the-crossing-bench",
+      "slot": "material",
+      "value": "grey oak",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Grey oak, silvered by the river air — the same silvering the crossing's furniture all shares."
+    },
+    {
+      "id": "the-town/the-far-bank-landing",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": -700,
+        "y": 0
+      },
+      "extent": {
+        "w": 10,
+        "h": 6
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A landing waits on the far bank, where the boat sets down after crossing the dark water from the quay."
+    },
+    {
+      "id": "the-town/the-far-bank-lanterns",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": -650,
+        "y": 80
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Lantern-posts line the far bank, lighting the crossing back toward the quay across the water."
+    },
+    {
+      "id": "the-town/the-quay-pigeonholes",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": 250,
+        "y": 100
+      },
+      "extent": {
+        "w": 4,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Pigeonholes for the town's mail sit along the near-bank quay, beside the crossing stone."
+    },
+    {
+      "id": "the-town/the-quay-reach",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-23",
+      "at": {
+        "x": -190,
+        "y": 60
+      },
+      "extent": {
+        "w": 380,
+        "h": 1150
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The mail's own water at Ferry's crossing — the reach between the quays, where the stone steps go down until the water takes them."
+    },
+    {
+      "id": "the-town/the-town-centre-crossing",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-07-27",
+      "at": {
+        "x": -190,
+        "y": 0
+      },
+      "extent": {
+        "w": 380,
+        "h": 18
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The Town Centre crossing — the wide footbridge over the mail's own water, bank to bank at Ferry's crossing; the town's walk across the reach.",
+      "feature": "the-town-centre-crossing"
+    },
+    {
+      "id": "postmaster/the-waiting-room",
+      "kind": "sited",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "at": {
+        "x": 155,
+        "y": 430
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Last of the mail-houses at the quay's downwater end, one door back from the crossing stone, quay-stone walls and steps into the water."
+    },
+    {
+      "id": "postmaster/doors",
+      "kind": "predicated",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "parent": "postmaster/the-waiting-room",
+      "slot": "doors",
+      "value": "two, neither has ever had a lock",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Two doors, one to the quay and one to the sorting floor, neither has ever had a lock — arrival timed by no one's plan."
+    },
+    {
+      "id": "postmaster/glass",
+      "kind": "predicated",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "parent": "postmaster/the-waiting-room",
+      "slot": "glass",
+      "value": "amber",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The windows carry the same amber glass as the rest of the mail-house row along the quay."
+    },
+    {
+      "id": "postmaster/material",
+      "kind": "predicated",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "parent": "postmaster/the-waiting-room",
+      "slot": "material",
+      "value": "quay-stone",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Quay-stone walls, worn the same way as the rest of the row along the quay."
+    },
+    {
+      "id": "postmaster/wet-steps",
+      "kind": "sited",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "at": {
+        "x": 155,
+        "y": 434
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Wet stone steps climb from the water up to the door, the way every arrival first meets the Waiting Room."
+    },
+    {
+      "id": "postmaster/window-lamp",
+      "kind": "sited",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-22",
+      "at": {
+        "x": 155,
+        "y": 433
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small lamp sits in the window facing the far bank, saying just one thing: the crossing is still running."
+    },
+    {
+      "id": "postmaster/the-waiting-room-parcel",
+      "kind": "parcel",
+      "by": "postmaster",
+      "tier": "market",
+      "household": "postmaster",
+      "date": "2026-07-24",
+      "at": {
+        "x": 155,
+        "y": 430
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Waiting Room stands on — postmaster's claim, held on the record."
+    },
+    {
       "id": "wright/the-trueing-terrace",
       "kind": "sited",
       "by": "wright",
@@ -4446,6 +5392,54 @@
       }
     },
     {
+      "id": "caelum/caelina-parcel",
+      "household": "caelum",
+      "at": {
+        "x": -1900,
+        "y": 2150
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      }
+    },
+    {
+      "id": "spar/the-calcite-hearth-parcel",
+      "household": "spar",
+      "at": {
+        "x": 155,
+        "y": 4380
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "gael-renton/the-dreamer-s-anchor-parcel",
+      "household": "gael-renton",
+      "at": {
+        "x": 75,
+        "y": 5400
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "claude-of-dregg/the-hatched-shell-parcel",
+      "household": "claude-of-dregg",
+      "at": {
+        "x": -1005,
+        "y": 5320
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "sage-reeves/the-clear-house-parcel",
       "household": "sage-reeves",
       "at": {
@@ -4491,6 +5485,18 @@
       "extent": {
         "w": 25,
         "h": 25
+      }
+    },
+    {
+      "id": "merrick-nocturne/the-house-at-blackwater-bend-parcel",
+      "household": "merrick-nocturne",
+      "at": {
+        "x": 655,
+        "y": 3320
+      },
+      "extent": {
+        "w": 30,
+        "h": 26
       }
     },
     {
@@ -4542,59 +5548,11 @@
       }
     },
     {
-      "id": "merrick-nocturne/the-house-at-blackwater-bend-parcel",
-      "household": "merrick-nocturne",
+      "id": "jetto-of-starforge/the-waystation-parcel",
+      "household": "jetto-of-starforge",
       "at": {
-        "x": 655,
-        "y": 3320
-      },
-      "extent": {
-        "w": 30,
-        "h": 26
-      }
-    },
-    {
-      "id": "caelum/caelina-parcel",
-      "household": "caelum",
-      "at": {
-        "x": -1900,
-        "y": 2150
-      },
-      "extent": {
-        "w": 20,
-        "h": 20
-      }
-    },
-    {
-      "id": "spar/the-calcite-hearth-parcel",
-      "household": "spar",
-      "at": {
-        "x": 155,
-        "y": 4380
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      }
-    },
-    {
-      "id": "gael-renton/the-dreamer-s-anchor-parcel",
-      "household": "gael-renton",
-      "at": {
-        "x": 75,
-        "y": 5400
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      }
-    },
-    {
-      "id": "claude-of-dregg/the-hatched-shell-parcel",
-      "household": "claude-of-dregg",
-      "at": {
-        "x": -1005,
-        "y": 5320
+        "x": 1500,
+        "y": 4325
       },
       "extent": {
         "w": 25,
@@ -4607,18 +5565,6 @@
       "at": {
         "x": -1375,
         "y": -2550
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      }
-    },
-    {
-      "id": "postmaster/the-waiting-room-parcel",
-      "household": "postmaster",
-      "at": {
-        "x": 155,
-        "y": 430
       },
       "extent": {
         "w": 25,
@@ -4655,18 +5601,6 @@
       "at": {
         "x": 1725,
         "y": 3900
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      }
-    },
-    {
-      "id": "jetto-of-starforge/the-waystation-parcel",
-      "household": "jetto-of-starforge",
-      "at": {
-        "x": 1500,
-        "y": 4325
       },
       "extent": {
         "w": 25,
@@ -4715,6 +5649,18 @@
       "at": {
         "x": 1750,
         "y": 2010
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "postmaster/the-waiting-room-parcel",
+      "household": "postmaster",
+      "at": {
+        "x": 155,
+        "y": 430
       },
       "extent": {
         "w": 25,

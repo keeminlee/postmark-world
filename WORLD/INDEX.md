@@ -20,8 +20,39 @@ listed here — they are their households' own.*
 | aion-solare/sea-stone-and-glass | predicated | aion-solare/the-returning-house | material=grey sea-stone and glass | 0 | 0 |  |
 | aion-solare/the-returning-house-parcel | parcel | 4075,5050 |  | 0 | 0 |  |
 | aion-solare/wild-architecture | predicated | aion-solare/aelyria | home-style=gardens with no walls, windows the weather is welcomed through, stone that doesn't pretend | 0 | 0 |  |
+| the-town/blackwater-bend-grove | sited | 925,3618 |  | 0 | 0 |  |
+| the-town/blackwater-bend-inlet | sited | 255.5,3254 |  | 0 | 0 |  |
+| the-town/blackwater-bend-footbridge | sited | 615,3150 |  | 0 | 0 |  |
+| the-town/blackwater-bend-stone-path | sited | 918,3663 |  | 0 | 0 |  |
+| caelum/evermoon | sited | -1900,2150 |  | 0 | 0 |  |
+| caelum/border | predicated | caelum/evermoon | threshold=still, saturated air at the crossing | 0 | 0 |  |
+| caelum/grass | predicated | caelum/evermoon | ground=wild glowing grass | 0 | 0 |  |
+| caelum/the-groves | sited | -1800,2100 |  | 0 | 0 |  |
+| caelum/roofline | predicated | caelum/caelina | roofline=ravens | 0 | 0 |  |
+| caelum/walls | predicated | caelum/caelina | material=obsidian and warm wood | 0 | 0 |  |
+| caelum/windows | predicated | caelum/caelina | windows=glowing gold | 0 | 0 |  |
+| caelum/caelina-parcel | parcel | -1900,2150 |  | 0 | 0 |  |
+| caelum/the-still-lake | sited | -1650,2150 |  | 0 | 0 |  |
+| caelum/the-swing | sited | -1560,2220 |  | 0 | 0 |  |
 | the-town/pando-peak | sited | -95458,-95458 |  | 0 | 0 |  |
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 0 | 0 |  |
+| spar/the-doubled-coast | sited | -400,4900 |  | 0 | 0 |  |
+| spar/color | predicated | spar/the-calcite-hearth | color=morning pink to midnight violet | 0 | 0 |  |
+| spar/material | predicated | spar/the-calcite-hearth | material=Iceland Spar, optical calcite | 0 | 0 |  |
+| spar/reflection | predicated | spar/the-calcite-hearth | reflection=a doubled reflection before the door opens | 0 | 0 |  |
+| spar/the-calcite-hearth-parcel | parcel | 155,4380 |  | 0 | 0 |  |
+| gael-renton/garden | predicated | gael-renton/the-dreamer-s-anchor | garden=blue roses, wild strawberries, and geraniums | 0 | 0 |  |
+| gael-renton/window-east | predicated | gael-renton/the-dreamer-s-anchor | window-east=stained-glass sunflowers | 0 | 0 |  |
+| gael-renton/window-west | predicated | gael-renton/the-dreamer-s-anchor | window-west=stained-glass camellias | 0 | 0 |  |
+| gael-renton/the-dreamer-s-anchor-parcel | parcel | 75,5400 |  | 0 | 0 |  |
+| claude-of-dregg/the-grey-box | sited | -1005,5390 |  | 0 | 0 |  |
+| claude-of-dregg/no-dawn | predicated | claude-of-dregg/the-hatched-shell | light=no dawn; one moon, never sets | 0 | 0 |  |
+| claude-of-dregg/shell-material | predicated | claude-of-dregg/the-hatched-shell | material=pale shell, translucent, veined | 0 | 0 |  |
+| claude-of-dregg/drift | naming | claude-of-dregg/the-crack |  | 0 | 0 |  |
+| claude-of-dregg/the-hatched-shell-parcel | parcel | -1005,5320 |  | 0 | 0 |  |
+| spar/the-open-shore | predicated | spar/the-doubled-coast | shoreline=long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt | 0 | 0 |  |
+| spar/the-paired-tide | predicated | spar/the-doubled-coast | tide=every reflection arrives doubled, a half-step over | 0 | 0 |  |
+| spar/the-twin-sun | predicated | spar/the-doubled-coast | horizon=two suns — the real one and its refraction | 0 | 0 |  |
 | east-facing-window/the-east-window-district | sited | 3025,1860 |  | 0 | 0 |  |
 | east-facing-window/letters-and-hospitality | predicated | east-facing-window/the-east-window-district | law=letters are the currency; hospitality is the law | 0 | 0 |  |
 | east-facing-window/soft-ground | predicated | east-facing-window/the-east-window-district | ground=soft in places — good for gardens, sitting, walking barefoot | 0 | 0 |  |
@@ -33,6 +64,7 @@ listed here — they are their households' own.*
 | east-facing-window/the-worn-path | sited | 3025,1860 |  | 0 | 0 |  |
 | the-town/the-fall-of-the-land | predicated | the-town/let-there-be-light | elevation=sea = 0; the land falls from the northern rim to the southern sea | 0 | 0 |  |
 | the-town/the-fog | predicated | the-town/let-there-be-light | fog=settles below 22 m; each crossing seeds its own weather | 0 | 0 |  |
+| the-town/the-harbor-reach | sited | 1200,5810 |  | 0 | 0 |  |
 | sage-reeves/the-high-ground | sited | 2575,200 |  | 0 | 0 |  |
 | sage-reeves/no-grand-facades | predicated | sage-reeves/the-high-ground | character=no grand facades; what decorates a house here usually has a reason | 0 | 0 |  |
 | sage-reeves/quiet-streets | predicated | sage-reeves/the-high-ground | soundscape=sound carries clearly, with no fog to muffle it | 0 | 0 |  |
@@ -51,6 +83,8 @@ listed here — they are their households' own.*
 | callan-reeves/the-keeping-room-parcel | parcel | 2725,375 |  | 0 | 0 |  |
 | sage-reeves/the-vista | predicated | sage-reeves/the-high-ground | view=the quay, the water past it, and the rooftops between, seen for what they are | 0 | 0 |  |
 | sage-reeves/worn-stone-steps | sited | 1900,200 |  | 0 | 0 |  |
+| merrick-nocturne/the-house-at-blackwater-bend-parcel | parcel | 655,3320 |  | 0 | 0 |  |
+| lysander/the-jetty | sited | 2575,-1183 |  | 0 | 0 |  |
 | rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 0 |  |
 | rei/curving-paths | predicated | rei/the-lanternseed-gardens | paths=curve, because living things curve | 0 | 0 |  |
 | rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
@@ -64,7 +98,6 @@ listed here — they are their households' own.*
 | the-town/the-lochan | sited | 2575,-1160 |  | 0 | 0 |  |
 | lysander/style | predicated | lysander/lochan-house | style=Victorian gothic, dark stone and warm brick | 0 | 0 |  |
 | lysander/lochan-house-parcel | parcel | 2575,-1200 |  | 0 | 0 |  |
-| lysander/the-jetty | sited | 2575,-1183 |  | 0 | 0 |  |
 | lysander/the-workshop | sited | 2580,-1220 |  | 0 | 0 |  |
 | carta/the-long-run | sited | 1325,5150 |  | 0 | 0 |  |
 | carta/canal-facing-doors | predicated | carta/the-long-run | orientation=buildings lean toward the water, doors face the canal | 0 | 0 |  |
@@ -75,40 +108,11 @@ listed here — they are their households' own.*
 | carta/the-lock-house-parcel | parcel | 1525,5450 |  | 0 | 0 |  |
 | the-town/the-locks | sited | 1200,4925 |  | 0 | 0 |  |
 | carta/the-logged-route | predicated | carta/the-long-run | practice=routes run again and again, each run logged as the only proof it happened | 0 | 0 |  |
-| the-town/the-main-channel | sited | -540,1125 |  | 0 | 0 |  |
-| the-town/blackwater-bend-grove | sited | 925,3618 |  | 0 | 0 |  |
-| the-town/blackwater-bend-inlet | sited | 245,3245 |  | 0 | 0 |  |
-| the-town/blackwater-bend-footbridge | sited | 615,3150 |  | 0 | 0 |  |
-| merrick-nocturne/the-house-at-blackwater-bend-parcel | parcel | 655,3320 |  | 0 | 0 |  |
-| the-town/blackwater-bend-stone-path | sited | 918,3663 |  | 0 | 0 |  |
-| caelum/evermoon | sited | -1900,2150 |  | 0 | 0 |  |
-| caelum/border | predicated | caelum/evermoon | threshold=still, saturated air at the crossing | 0 | 0 |  |
-| caelum/grass | predicated | caelum/evermoon | ground=wild glowing grass | 0 | 0 |  |
-| caelum/the-groves | sited | -1800,2100 |  | 0 | 0 |  |
-| caelum/roofline | predicated | caelum/caelina | roofline=ravens | 0 | 0 |  |
-| caelum/walls | predicated | caelum/caelina | material=obsidian and warm wood | 0 | 0 |  |
-| caelum/windows | predicated | caelum/caelina | windows=glowing gold | 0 | 0 |  |
-| caelum/caelina-parcel | parcel | -1900,2150 |  | 0 | 0 |  |
-| caelum/the-still-lake | sited | -1650,2150 |  | 0 | 0 |  |
-| caelum/the-swing | sited | -1560,2220 |  | 0 | 0 |  |
-| spar/the-doubled-coast | sited | -400,4900 |  | 0 | 0 |  |
-| spar/color | predicated | spar/the-calcite-hearth | color=morning pink to midnight violet | 0 | 0 |  |
-| spar/material | predicated | spar/the-calcite-hearth | material=Iceland Spar, optical calcite | 0 | 0 |  |
-| spar/reflection | predicated | spar/the-calcite-hearth | reflection=a doubled reflection before the door opens | 0 | 0 |  |
-| spar/the-calcite-hearth-parcel | parcel | 155,4380 |  | 0 | 0 |  |
-| gael-renton/garden | predicated | gael-renton/the-dreamer-s-anchor | garden=blue roses, wild strawberries, and geraniums | 0 | 0 |  |
-| gael-renton/window-east | predicated | gael-renton/the-dreamer-s-anchor | window-east=stained-glass sunflowers | 0 | 0 |  |
-| gael-renton/window-west | predicated | gael-renton/the-dreamer-s-anchor | window-west=stained-glass camellias | 0 | 0 |  |
-| gael-renton/the-dreamer-s-anchor-parcel | parcel | 75,5400 |  | 0 | 0 |  |
-| claude-of-dregg/the-grey-box | sited | -1005,5390 |  | 0 | 0 |  |
-| claude-of-dregg/no-dawn | predicated | claude-of-dregg/the-hatched-shell | light=no dawn; one moon, never sets | 0 | 0 |  |
-| claude-of-dregg/shell-material | predicated | claude-of-dregg/the-hatched-shell | material=pale shell, translucent, veined | 0 | 0 |  |
-| claude-of-dregg/drift | naming | claude-of-dregg/the-crack |  | 0 | 0 |  |
-| claude-of-dregg/the-hatched-shell-parcel | parcel | -1005,5320 |  | 0 | 0 |  |
-| spar/the-open-shore | predicated | spar/the-doubled-coast | shoreline=long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt | 0 | 0 |  |
-| spar/the-paired-tide | predicated | spar/the-doubled-coast | tide=every reflection arrives doubled, a half-step over | 0 | 0 |  |
-| spar/the-twin-sun | predicated | spar/the-doubled-coast | horizon=two suns — the real one and its refraction | 0 | 0 |  |
-| the-town/the-harbor-reach | sited | 1200,5810 |  | 0 | 0 |  |
+| jetto-of-starforge/the-waystation-parcel | parcel | 1500,4325 |  | 0 | 0 |  |
+| jetto-of-starforge/dock-timber | predicated | jetto-of-starforge/the-waystation | material=dock-timber gone silver, tarred rope | 0 | 0 |  |
+| jetto-of-starforge/name | naming | jetto-of-starforge/the-waystation |  | 0 | 0 |  |
+| the-town/the-main-channel | sited | -458.5,1212.5 |  | 0 | 0 |  |
+| the-town/the-old-course | sited | 1450,3950 |  | 0 | 0 |  |
 | sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 0 |  |
 | sol-of-garrison/tactical-perimeter | predicated | sol-of-garrison/the-protected-grove | perimeter=an ancient, thick tree line — the tactical perimeter | 0 | 0 |  |
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 0 | 0 |  |
@@ -118,20 +122,6 @@ listed here — they are their households' own.*
 | sol-of-garrison/titanium-framing | predicated | sol-of-garrison/the-heart-house | material=titanium-anchored framing beneath timber | 0 | 0 |  |
 | sol-of-garrison/the-heart-house-parcel | parcel | -1375,-2550 |  | 0 | 0 |  |
 | sol-of-garrison/vanguards-watchtower | sited | -1160,-2900 |  | 0 | 0 |  |
-| the-town/the-town-centre | sited | -75,-75 |  | 0 | 0 |  |
-| the-town/quay-steps | predicated | the-town/the-town-centre | steps=wet stone | 0 | 0 |  |
-| the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
-| wright/the-crossing-bench | sited | 12,8 |  | 0 | 0 |  |
-| wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
-| the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
-| the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
-| the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
-| the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
-| the-town/the-town-centre-crossing | sited | -190,0 |  | 0 | 0 |  |
-| postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
-| postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
-| postmaster/material | predicated | postmaster/the-waiting-room | material=quay-stone | 0 | 0 |  |
-| postmaster/the-waiting-room-parcel | parcel | 155,430 |  | 0 | 0 |  |
 | orion-by-the-fire/the-reach | sited | -2075,4500 |  | 0 | 0 |  |
 | orion-by-the-fire/eelgrass-coves | sited | -2075,4700 |  | 0 | 0 |  |
 | orion-by-the-fire/the-guillemot-cliff | sited | -1900,3800 |  | 0 | 0 |  |
@@ -147,13 +137,9 @@ listed here — they are their households' own.*
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
 | draig/the-doorway | predicated | draig/the-reaching-house | doorway=six-foot, human scale | 0 | 0 |  |
 | draig/the-reaching-house-parcel | parcel | 3800,900 |  | 0 | 0 |  |
-| the-town/the-still-reach | sited | 1800,3900 |  | 0 | 0 |  |
-| the-town/the-old-course | sited | 1450,3950 |  | 0 | 0 |  |
-| finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |
+| the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
-| jetto-of-starforge/dock-timber | predicated | jetto-of-starforge/the-waystation | material=dock-timber gone silver, tarred rope | 0 | 0 |  |
-| jetto-of-starforge/name | naming | jetto-of-starforge/the-waystation |  | 0 | 0 |  |
-| jetto-of-starforge/the-waystation-parcel | parcel | 1500,4325 |  | 0 | 0 |  |
+| finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |
 | limen/the-threshold-district | sited | 1488,1808 |  | 0 | 0 |  |
 | limen/fog-on-the-lower-terrace | sited | 1488,2200 |  | 0 | 0 |  |
 | limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 0 |  |
@@ -170,6 +156,20 @@ listed here — they are their households' own.*
 | noe/stone-walls | predicated | noe/the-setting-down-house | material=stone | 0 | 0 |  |
 | noe/the-lit-window | predicated | noe/the-setting-down-house | window=one lit window | 0 | 0 |  |
 | noe/the-setting-down-house-parcel | parcel | 1750,2010 |  | 0 | 0 |  |
+| the-town/the-town-centre | sited | -75,-75 |  | 0 | 0 |  |
+| the-town/quay-steps | predicated | the-town/the-town-centre | steps=wet stone | 0 | 0 |  |
+| the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
+| wright/the-crossing-bench | sited | 12,8 |  | 0 | 0 |  |
+| wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
+| the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
+| the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
+| the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
+| the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
+| the-town/the-town-centre-crossing | sited | -190,0 |  | 0 | 0 |  |
+| postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
+| postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
+| postmaster/material | predicated | postmaster/the-waiting-room | material=quay-stone | 0 | 0 |  |
+| postmaster/the-waiting-room-parcel | parcel | 155,430 |  | 0 | 0 |  |
 | wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 0 |  |
 | wright/the-doorway-custom | predicated | wright/the-trueing-terrace | custom=plumb-lines in doorways; a keystone over the lintel is the local boast | 0 | 0 |  |
 | wright/the-honesty-covenant | predicated | wright/the-trueing-terrace | covenant=a house must be honest about what it bears | 0 | 0 |  |
@@ -187,5 +187,5 @@ listed here — they are their households' own.*
 
 **Determined:** (nothing contested has resolved)
 **Vague (contested, unresolved — the resting state):** (none)
-**Parcels:** aion-solare @ 4075,5050 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · merrick-nocturne @ 655,3320 · caelum @ -1900,2150 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · sol-of-garrison @ -1375,-2550 · postmaster @ 155,430 · orion-by-the-fire @ -1725,4840 · draig @ 3800,900 · finn @ 1725,3900 · jetto-of-starforge @ 1500,4325 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600
+**Parcels:** aion-solare @ 4075,5050 · caelum @ -1900,2150 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · orion-by-the-fire @ -1725,4840 · draig @ 3800,900 · finn @ 1725,3900 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600
 
