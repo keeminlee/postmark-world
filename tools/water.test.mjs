@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 import {
   waterAt, segmentCrossesWater, crossings, nearestCrossing, waterFeatures,
   seaGated, WATER_SAMPLE_STEP_M, crossingAt, crossingReachM, crossingsOnSegment,
+  seaFeature, inSea,
 } from "./water.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -105,13 +106,42 @@ test("the sample step cannot miss the narrowest inland water", () => {
     `narrowest inland water ${narrowest}m must be several samples wide at ${WATER_SAMPLE_STEP_M}m`);
 });
 
-test("the sea is NOT gated, and says so", () => {
-  assert.equal(seaGated(), false);
+test("the sea IS in the oracle now — C3's named exception has closed", () => {
+  // This test used to assert the opposite, and that was correct at the time: the sea
+  // had no edge geometry, so the oracle reported dry water and CALLS.md C3 named the
+  // consequence ("a walker can walk into the sea in this draft"). The coastline is
+  // extracted now, so the assertion inverts. A test that pins a known gap has to be
+  // rewritten when the gap closes — that is the test working, not breaking.
+  assert.equal(seaGated(), true);
   const sea = feat("the-sea");
-  assert.ok(sea && !sea.centerline_m && !sea.center_m, "the sea genuinely has no edge geometry");
-  // Far out where the sea is, the oracle reports dry — the named v1 exception.
-  assert.equal(waterAt({ x: -40000, y: 40000 }, SK), null,
-    "v1 gates inland water only; walking into the sea is possible and named");
+  assert.ok(Array.isArray(sea?.ring_m) && sea.ring_m.length >= 3, "the sea carries a ring");
+  assert.ok(!sea.centerline_m && !sea.center_m, "and it is an AREA, not a capsule chain or an ellipse");
+
+  // a point well out past the southern shore is sea
+  assert.equal(waterAt({ x: 1000, y: 7000 }, SK), "the-sea", "open water south of the coast");
+  // and dry land well north of the coast is still dry
+  assert.equal(waterAt({ x: 3500, y: -2000 }, SK), null, "the northern uplands are not sea");
+});
+
+test("waterFeatures() still means INLAND water — the sea is reached separately", () => {
+  // Three callers depend on that meaning (the shape generator's ring set, the
+  // sample-step proof, the corpus count), so the sea deliberately does not join it.
+  assert.equal(waterFeatures(SK).length, 5, "still the five inland bodies");
+  assert.ok(!waterFeatures(SK).some((f) => f.kind === "sea"), "the sea is not one of them");
+  assert.ok(seaFeature(SK), "but it is reachable on its own");
+  assert.equal(inSea({ x: 1000, y: 7000 }, SK), true);
+  assert.equal(inSea({ x: 3500, y: -2000 }, SK), false);
+});
+
+test("where river and sea overlap, the RIVER answers — the specific claim wins", () => {
+  // Ruling 6: overlap is not conflict. The mouth is both river and sea, and no
+  // boundary is authored between them. waterAt consults the inland bodies first, so
+  // the mouth reports as the channel rather than the sea — the surrounding body does
+  // not swallow the named one.
+  const ch = waterFeatures(SK).find((f) => f.id === "the-main-channel");
+  const mouth = ch.centerline_m.at(-1);
+  assert.equal(inSea(mouth, SK), true, "the mouth is inside the sea's ring (the overlap is real)");
+  assert.equal(waterAt(mouth, SK), "the-main-channel", "and the river is what answers there");
 });
 
 test("crossings are found by kind, and the nearest is named with a distance", () => {

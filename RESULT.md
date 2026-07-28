@@ -1,8 +1,8 @@
-# RESULT — water true-shape pass + v0 gate-off
+# RESULT — water true-shape pass, v0 gate-off, and the sea
 
-Both items done, stacked on `walk-p2-draft-jetto` in both clones. Local branches
-only; nothing pushed, no box, no pin, no deploy. `CALLS.md` carries all 22 calls;
-C16–C22 are this pass.
+Three passes now, stacked on `walk-p2-draft-jetto` in both clones. Local branches
+only; nothing pushed, no box, no pin, no deploy. `CALLS.md` carries all 30 calls —
+C16–C22 the true-shape pass, C23–C30 the sea.
 
 ## State
 
@@ -126,3 +126,77 @@ collapses "parent is null (the root)" into "not in the tree" — on a table you 
 - The mitre join trades 0 over-claim for 0.4–1.0%, in exchange for dropping
   under-claim from 6.7% to ~1%. Small in both directions beats zero in one.
 - `WORLD/walk-ledger.md` remains uncommitted demo data (`--rm` on the seed clears it).
+
+---
+
+# 3 · The sea (extracted from the atlas COASTLINE)
+
+`world-terrain-gen.mjs` now extracts `COASTLINE` beside the water constants it
+already pulled from the atlas, so the skeleton's sea feature carries `ring_m` and the
+new mark `the-town/the-sea` (constitution, by the-town, at root) carries the same ring
+as its `points:`. **One geometry, one source** — a guard asserts mark-ring ===
+skeleton-ring point for point. The closure is the atlas's own: `renderSea()` fills the
+coast closed with `L(MAP_W+5,MAP_H) L(-5,MAP_H) Z`, and the extractor reproduces
+exactly that. 51 coast points + 2 corners = 53, `7550 × 5000 m` at `1325,5700`.
+
+Gates: **lint CLEAN at 245 marks**, **fold 0 errors**, **world suite 80/80**.
+
+## The stop-condition did not fire, and not by luck
+
+Checked before writing: **all 26 parcels are clear** of the ring, orion's house and
+parcel included. Three marks ARE inside it — all orion's, all seaward features
+(`eelgrass-coves`, `the-shingle-beach`, `the-tidal-race`) — and **none of them take
+the sea as a tree parent**, because `placementParent` picks the smallest container and
+they sit inside his own reach, ~12× tighter than the sea.
+
+The property worth keeping: **the sea is the largest claim on the map, so the
+smallest-container rule guarantees it can only ever adopt an orphan.** A very large
+mark is *safe* in a tree that keys on smallest-container — the opposite of the
+intuition. The channel's rectangle was dangerous because it was big AND wrongly
+shaped. Both facts are standing guards now, so a coastline edit that ever does drown
+a parcel fails a test rather than quietly re-filing a home.
+
+Containment diff for this step: one row, `the-town/the-sea` → (root).
+
+## No bay, and the atlas ruled it rather than me
+
+Keemin left the bay to my judgment. The atlas answers it in its own words: the
+one-shore-one-sea design exists *because* an earlier version had "a west_sea blob, a
+rectangular southern sea, **and a bay cut in afterwards**", and it was replaced "so
+the map cannot develop a seam between them". The coastline runs *through* the bay as
+one continuous shore; a bay mark needs a mouth chord across the horns, and the atlas
+never drew that line. Drawing it would be authoring, not extracting. Residents may
+name it — the shape Keemin set for the rest of the coast anyway.
+
+## The mouth: overlap, per ruling 6
+
+The channel's mouth is inside the sea's ring and no boundary is authored. Verified as
+a guard, not asserted: the channel's last centreline point returns `inSea() === true`.
+The one thing overlap forces is an ordering, since `waterAt` returns one id — it
+answers `the-main-channel`, because the inland body is the specific claim and the sea
+the surrounding one. An ordering, not a boundary.
+
+## Visual acceptance
+
+The sea polygon traces the painting's painted coast — read by eye on the spectator
+with footprints on, panned south and zoomed onto the bay's arm. They are not
+identical and should not be: the atlas draws `smoothPath(roughen(COASTLINE, "coast",
+8))`, so the art carries up to **8 atlas px ≈ 40 m** of deliberate hand-drawn jitter
+while the ring is the raw canon. Extracting the roughened path would have baked a
+rendering flourish into the record and made the sea's shape depend on a seeded noise
+function.
+
+## Residue
+
+- **C3's exception has closed:** `seaGated()` is now true and a committed test had to
+  invert. It does NOT mean the door refuses you — the v0 gate is off (C21), so
+  `seaGated()` reports what the oracle knows, not what the door enforces.
+- **`waterFeatures()` still means INLAND water.** The sea is reached via
+  `seaFeature()`/`inSea()` because three callers depend on the old meaning; widening
+  it would have changed all three to fix one.
+- **The atlas clone I read was 55 commits stale** and `render-town.mjs` had changed on
+  origin. I read the current file from the fetched ref and then checked: the COASTLINE
+  hashes identically across both, 51 points either way. The staleness would not have
+  bitten — but only the comparison told me that.
+- I verified the generator reproduces the committed `skeleton.json` content-identically
+  before letting it rewrite the file, so `ring_m` is its only change.

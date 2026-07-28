@@ -45,8 +45,17 @@ const WATER = extract("WATER_WAYPOINTS");
 const STILL_REACH = extract("STILL_REACH");
 const LOCKS = extract("LOCKS");
 const ORIGIN = extractObj("CENTRE_XY"); // Ferry's crossing — the grid origin
+const COASTLINE = extract("COASTLINE");
+// The map's own frame, because the sea is the area BETWEEN the drawn coast and the
+// edge — renderSea() closes the coast path with L(MAP_W+5,MAP_H) L(-5,MAP_H) Z, and
+// this reproduces exactly that closure rather than inventing a second one.
+const MAP_W = Number(/^const MAP_W = (\d+)/m.exec(rtSrc)?.[1]);
+const MAP_H = Number(/^const MAP_H = (\d+)/m.exec(rtSrc)?.[1]);
+if (!Number.isFinite(MAP_W) || !Number.isFinite(MAP_H))
+  throw new Error("extraction failed: MAP_W / MAP_H not found in render-town.mjs — the renderer changed shape; fix the extractor, do not guess");
+if (COASTLINE.length < 20) throw new Error("suspicious extraction: coastline has <20 points");
 if (WATER.length < 10) throw new Error("suspicious extraction: main channel has <10 waypoints");
-console.log(`extracted: ${WATER.length} channel waypoints, ${STILL_REACH.length} still-reach, ${LOCKS.length} locks, origin (${ORIGIN.x},${ORIGIN.y})`);
+console.log(`extracted: ${WATER.length} channel waypoints, ${STILL_REACH.length} still-reach, ${LOCKS.length} locks, ${COASTLINE.length} coastline points, origin (${ORIGIN.x},${ORIGIN.y})`);
 
 const candA = JSON.parse(readFileSync(join(ATLAS, "terrain-candidate-A.json"), "utf8"));
 
@@ -128,7 +137,27 @@ const skeleton = {
     ...(candA.tree_clusters || []).map(t => ({ id: t.id, kind: "grove", trees_m: t.trees.map(tr => ({ ...m(tr.x, tr.y), scale: tr.scale })), receipt: t.receipt })),
     ...(candA.paths || []).map(p => ({ id: p.id, kind: p.kind, line_m: p.pts.map(mPt), receipt: p.receipt })),
     { id: "ferrys-route", kind: "route", note: "the mail route — honored physics, geometry derived per-crossing from delivery walk; v0 symbolic (endpoints: the crossing, every doorstep)", receipt: "physics registry: routes" },
-    { id: "the-sea", kind: "sea", note: "everything south and west of the drawn coastline, out to the map's own edges (the atlas's one-shore-one-sea rule, 2026-07-21); shoreline geometry lives in the atlas's COASTLINE — extract when the heightfield needs it", receipt: "spar, orion, dregg, tulip, aelyria — the coastal corpus" },
+    // THE SEA, with geometry at last. The note used to say "extract when the
+    // heightfield needs it"; the walk mechanic needed it first, so here it is —
+    // the atlas's own COASTLINE closed against the atlas's own frame, exactly the
+    // path renderSea() fills. Extracted, never authored: edit the coast in the
+    // atlas and this ring moves with it, which is the whole reason the shoreline
+    // was left in one place to begin with.
+    //
+    // `ring_m` is a new geometry vocabulary alongside `centerline_m` (channels) and
+    // `center_m`/`rx_m` (lakes): a closed area, because that is what a sea is. The
+    // water oracle reads it point-in-polygon.
+    //
+    // NO BAY IS CARVED OUT of it, and that is the atlas's ruling rather than my
+    // preference: this one-shore-one-sea design explicitly "replaces what used to
+    // be three separate things that had to be kept agreeing with each other by
+    // hand — a west_sea blob, a rectangular southern sea, AND A BAY CUT IN
+    // AFTERWARDS." Seeding the Doubled Coast's bay as its own ring would reintroduce
+    // precisely the seam the rule exists to prevent. Residents may name it.
+    { id: "the-sea", kind: "sea",
+      ring_m: [...COASTLINE, { x: MAP_W + 5, y: MAP_H }, { x: -5, y: MAP_H }].map((p) => m(p.x, p.y)),
+      note: "everything south and west of the drawn coastline, out to the map's own edges (the atlas's one-shore-one-sea rule, 2026-07-21); ring_m is the atlas COASTLINE closed against the map frame, as renderSea() fills it — one shore, one sea, no bay cut in afterwards",
+      receipt: "spar, orion, dregg, tulip, aelyria — the coastal corpus" },
   ],
 };
 

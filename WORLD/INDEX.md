@@ -137,6 +137,7 @@ listed here — they are their households' own.*
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
 | draig/the-doorway | predicated | draig/the-reaching-house | doorway=six-foot, human scale | 0 | 0 |  |
 | draig/the-reaching-house-parcel | parcel | 3800,900 |  | 0 | 0 |  |
+| the-town/the-sea | sited | 1325,5700 |  | 0 | 0 |  |
 | the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
 | finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |

@@ -21,7 +21,8 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { marksContain, polygonOf, coverage, ringMatchesClaim } from "./geometry.mjs";
-import { waterFeatures, waterAt } from "./water.mjs";
+import { placementParent } from "./marks-fold.mjs";
+import { waterFeatures, waterAt, seaFeature } from "./water.mjs";
 import { pointInPolygon } from "./geometry.mjs";
 
 const WORLD = join(dirname(fileURLToPath(import.meta.url)), "..", "WORLD");
@@ -117,4 +118,65 @@ test("the silhouette span reads the ring and depends on the view direction", () 
   assert.notEqual(Math.round(across), Math.round(along),
     "a river seen along its length subtends a different width than seen across it");
   assert.ok(along < across, "the channel runs north-south, so viewing along it is the narrower span");
+});
+
+// ── the sea (extracted from the atlas COASTLINE) ──────────────────────────────
+
+test("the sea is a real mark carrying the atlas coastline", () => {
+  const sea = mark("the-town/the-sea");
+  assert.ok(sea, "the sea exists as a mark at last — nothing could be 'in the sea' before");
+  assert.equal(sea.tier, "constitution");
+  assert.equal(sea.by, "the-town");
+  assert.equal(sea.feature, "the-sea");
+  const ring = polygonOf(sea);
+  assert.ok(ring && ring.length >= 20, "it carries the coastline ring");
+  assert.ok(ringMatchesClaim(sea), "and the ring matches its claim (the honesty gate)");
+});
+
+test("the mark's ring and the skeleton's ring are the SAME geometry", () => {
+  // One source: world-terrain-gen extracts the coast into the skeleton, and the
+  // shape step copies that onto the mark. If these ever diverge, the record and the
+  // oracle disagree about where the sea is — which is the whole failure mode the
+  // "generated, never hand-typed" rule exists to prevent.
+  const sea = mark("the-town/the-sea");
+  const feature = seaFeature(skeleton);
+  assert.ok(feature, "the skeleton's sea carries ring_m");
+  assert.deepEqual(polygonOf(sea).map((p) => [p.x, p.y]), feature.ring_m.map((p) => [p.x, p.y]),
+    "mark ring === skeleton ring, point for point");
+});
+
+test("NOTHING is filed under the sea — the largest claim adopts only orphans", () => {
+  // The brief said to STOP rather than re-home a resident into the water. Nothing
+  // needed re-homing, and the reason is structural rather than lucky:
+  // placementParent takes the SMALLEST containing mark, and the sea is the largest
+  // claim on the map, so it can only ever be chosen for something that nothing else
+  // contains. Orion's seaward marks (a shingle beach, a tidal race, eelgrass coves)
+  // sit inside the sea's ring and stay under his own reach, which is ~12x smaller.
+  const adopted = world.marks.filter((m) => (m.kind === "sited" || m.kind === "parcel") && m.at
+    && placementParent(m, world.marks) === "the-town/the-sea");
+  assert.deepEqual(adopted.map((m) => m.id), [], "no mark takes the sea as its tree parent");
+
+  const sea = mark("the-town/the-sea");
+  for (const id of ["orion-by-the-fire/eelgrass-coves", "orion-by-the-fire/the-shingle-beach"]) {
+    const m = mark(id);
+    if (!m) continue;
+    assert.equal(marksContain(sea, m), true, `${id} IS geometrically inside the sea (overlap is real)`);
+    assert.notEqual(placementParent(m, world.marks), "the-town/the-sea", `${id} still files under its own reach`);
+  }
+});
+
+test("no resident's HOME is inside the sea", () => {
+  // The brief's stop condition, kept as a standing guard: if a future coastline edit
+  // ever puts a parcel in the water, this fails instead of silently drowning someone.
+  const sea = mark("the-town/the-sea");
+  const ring = polygonOf(sea);
+  for (const p of world.marks.filter((m) => m.kind === "parcel")) {
+    assert.equal(pointInPolygon(p.at.x, p.at.y, ring), false, `${p.id} is not in the sea`);
+    assert.equal(marksContain(sea, p), false, `${p.id} is not swallowed by the sea`);
+  }
+});
+
+test("the sea is at the ROOT — it is top-level, not inside anything", () => {
+  const sea = mark("the-town/the-sea");
+  assert.equal(placementParent(sea, world.marks), null);
 });

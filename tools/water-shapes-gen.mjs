@@ -26,10 +26,10 @@
 // it samples the ring's own vertices and interior and reports any disagreement,
 // so the drawing is validated against the formalization rather than trusted.
 
-import { readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { waterFeatures, waterAt, halfWidthAtIndex } from "./water.mjs";
+import { waterFeatures, waterAt, halfWidthAtIndex, seaFeature } from "./water.mjs";
 import { pointInPolygon } from "./geometry.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -249,6 +249,55 @@ for (const f of features) {
   if (WRITE && found.path) {
     const err = applyToRecord(found.path, claim);
     if (err) { console.log(`    !! ${err}`); problems++; } else { console.log(`    written`); wrote++; }
+  }
+  console.log("");
+}
+
+// ── the sea ───────────────────────────────────────────────────────────────────
+// The sea's ring is not generated HERE — world-terrain-gen extracts it from the
+// atlas COASTLINE into the skeleton. This step only copies that ring onto the
+// MARK, so the record and the skeleton carry one geometry from one source. If the
+// mark does not exist yet it is created: the sea had no mark at all, which is why
+// nothing could ever be "in the sea" on the record.
+const sea = seaFeature(skeleton);
+if (!sea) {
+  console.log("the sea carries no ring_m in the skeleton — run world-terrain-gen first");
+  problems++;
+} else {
+  const claim = claimOf(sea.ring_m);
+  const dir = join(ROOT, "WORLD/marks/let-there-be-light/the-sea");
+  const file = join(dir, "mark.md");
+  const exists = existsSync(file);
+  console.log(`  the-sea (${exists ? "existing" : "NEW"} mark)`);
+  console.log(`    record   : WORLD/marks/let-there-be-light/the-sea/mark.md`);
+  console.log(`    claim    : ${claim.extent.w}×${claim.extent.h} at ${claim.at.x},${claim.at.y}`);
+  console.log(`    ring     : ${claim.ring.length} points (from the atlas COASTLINE, closed against the frame)`);
+  if (WRITE) {
+    mkdirSync(dir, { recursive: true });
+    if (exists) {
+      applyToRecord(file, claim);
+    } else {
+      writeFileSync(file, [
+        "---",
+        "kind: sited",
+        "by: the-town",
+        "tier: constitution",
+        "date: 2026-07-27",
+        `at: { x: ${claim.at.x}, y: ${claim.at.y} }`,
+        `extent: { w: ${claim.extent.w}, h: ${claim.extent.h} }`,
+        `points: ${fmt(claim.ring)}`,
+        "feature: the-sea",
+        "---",
+        "",
+        // MARKS.md caps a body at 150 chars, so this says the two things that are
+        // law and nothing more: one shore and one sea, and no boundary at the mouth.
+        "One shore and one sea. Everything south and west of the drawn coast is this water.",
+        "The mouth is both river and sea, and no line is drawn between them.",
+        "",
+      ].join("\n") + "\n", "utf8");
+    }
+    console.log(`    written`);
+    wrote++;
   }
   console.log("");
 }

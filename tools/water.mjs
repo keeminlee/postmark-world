@@ -21,6 +21,8 @@
 // against the narrowest water in the record (110 m) is 4.4 samples across, so an
 // inland crossing cannot slip between samples. Exported because it is the knob
 // that trades cost against tangential-clip accuracy.
+import { pointInPolygon } from "./geometry.mjs";
+
 export const WATER_SAMPLE_STEP_M = 25;
 
 const WATER_KINDS = new Set(["channel", "still-water", "still-inlet"]);
@@ -110,7 +112,31 @@ export function waterFeatures(skeleton) {
 }
 
 // Is `the-sea` gated? No — see the header. Callers may report this honestly.
-export function seaGated() { return false; }
+// THE SEA. It is a closed AREA, not a capsule chain or an ellipse, so it carries a
+// third geometry vocabulary: `ring_m`, extracted by world-terrain-gen from the
+// atlas COASTLINE closed against the atlas frame.
+//
+// Deliberately NOT returned by waterFeatures(): that function means INLAND water
+// and three callers depend on that meaning — the shape generator rings exactly
+// those marks, the sample-step proof reasons about their widths, and the corpus
+// counts them. Widening it would have quietly changed all three to fix one. So the
+// sea is reached on its own and `waterAt` consults both.
+export function seaFeature(skeleton) {
+  const f = (skeleton?.features ?? []).find((k) => k.kind === "sea");
+  return Array.isArray(f?.ring_m) && f.ring_m.length >= 3 ? f : null;
+}
+
+export function inSea(p, skeleton) {
+  const sea = seaFeature(skeleton);
+  return sea ? pointInPolygon(p.x, p.y, sea.ring_m) : false;
+}
+
+// C3 recorded the gap this closes: "the-sea has no edge geometry — a walker can
+// therefore walk into the sea in this draft." It has geometry now, so the oracle is
+// whole and this answers true. Note what it does NOT mean: the v0 walk gate is off
+// by Keemin's ruling, so nothing refuses you for entering the sea either way. This
+// reports what the ORACLE knows, not what the door enforces.
+export function seaGated() { return true; }
 
 // waterAt(point, skeleton) → the water feature's id, or null. Returns the ID
 // rather than a boolean so a bounce can name what it refused to cross.
@@ -119,6 +145,10 @@ export function waterAt(p, skeleton) {
     const hit = LAKE_KINDS.has(f.kind) ? inLake(p, f) : inCentreline(p, f);
     if (hit) return f.id;
   }
+  // the sea last, so a river mouth inside both still answers with the river — the
+  // inland bodies are the specific claim and the sea is the surrounding one
+  const sea = seaFeature(skeleton);
+  if (sea && pointInPolygon(p.x, p.y, sea.ring_m)) return sea.id;
   return null;
 }
 

@@ -11,6 +11,9 @@ Nothing pushed to any main. No box, no pin, no deploy.
 Keemin's ruling, so those four describe a mechanic that is present and correct but
 not currently consulted by the walk door.
 
+**C3's sea exception has since CLOSED** (C25) — the sea carries extracted geometry and
+the oracle is whole. C3 still describes why it was open.
+
 ---
 
 ## C1 · Retiring the `slot: home` predicates — delete the mark, don't tombstone it
@@ -587,3 +590,158 @@ would have silently skipped the only marks that changed shape. Now `[data-id]`.
 capability added to a record is not added to its readers.* The ring existed in the
 record, the engine's silhouette path read it, grid-true read it, containment (after
 C17) read it — and the painting did not. Each reader is its own contract.
+
+---
+
+# The sea enters the record (extracted from the atlas COASTLINE)
+
+## C23 · Extracted, not authored — and the extractor is where the coast already lived
+
+`world-terrain-gen.mjs` gained `COASTLINE` extraction beside the water constants it
+already pulls from the atlas's own `render-town.mjs`, and the sea feature now carries
+`ring_m`. The mark's `points:` is a copy of that same ring, so **one geometry from
+one source**: edit the coast in the atlas, re-run the generator, and both the
+skeleton and the record move with it. A guard asserts mark-ring === skeleton-ring
+point for point, because the failure mode worth preventing is the record and the
+oracle disagreeing about where the sea is.
+
+The closure is the atlas's own, not mine: `renderSea()` fills the coast path closed
+with `L(MAP_W+5, MAP_H) L(-5, MAP_H) Z`, and the extractor reproduces exactly that
+rather than inventing a second definition of "out to the map's edges". 51 coastline
+points + 2 closing corners = a 53-point ring, `7550 × 5000 m` at `1325,5700`.
+
+`ring_m` is a **third geometry vocabulary** beside `centerline_m` (channels) and
+`center_m`/`rx_m` (lakes): a closed area, because that is what a sea is.
+
+**A note the old record left for exactly this moment, now spent:** the sea feature's
+note said *"shoreline geometry lives in the atlas's COASTLINE — extract when the
+heightfield needs it."* The walk mechanic needed it before the heightfield did.
+
+## C24 · `waterFeatures()` still means INLAND water — the sea is reached separately
+
+The obvious move was to add `sea` to the kinds `waterFeatures()` returns. I did not,
+because **three callers depend on that function meaning inland water**: the shape
+generator rings exactly those marks, the sample-step proof reasons about their
+widths, and the corpus counts them ("five inland water bodies"). Widening the set
+would have quietly changed all three to fix one, and the fixture guard would have
+gone red for a reason unrelated to what it guards.
+
+So `seaFeature()` / `inSea()` sit alongside, and `waterAt()` consults both. Cheap,
+and every existing contract holds unchanged.
+
+**`waterAt` checks the sea LAST**, which is a decision and not an accident — see C26.
+
+## C25 · C3's named exception has closed, and a test had to invert
+
+C3 recorded the gap honestly: *"`the-sea` has no edge geometry — a walker can
+therefore walk into the sea in this draft."* It has geometry now, so `seaGated()`
+answers **true** and the oracle is whole.
+
+That inverted a committed test. `"the sea is NOT gated, and says so"` asserted
+`seaGated() === false` and that the sea carried no geometry — correct when written,
+false now. **A test that pins a known gap has to be rewritten when the gap closes,
+and that is the test working rather than breaking.** It now asserts the ring exists,
+that open water south of the coast reads as `the-sea`, and that the northern uplands
+still read dry.
+
+**What closing the oracle's gap does NOT mean:** the v0 walk gate is off (C21), so
+nothing refuses you for entering the sea either way. `seaGated()` reports what the
+ORACLE knows, not what the door enforces. Those were the same claim while the gate
+was on and are two claims now.
+
+## C26 · The mouth is both river and sea — ruling 6, zero boundary authored
+
+**Ruling 6: overlap is not conflict.** The channel's mouth lies inside the sea's
+ring; both are constitution marks; no line is drawn between them, and none should
+be. Verified as a committed guard rather than asserted: the last centreline point of
+`the-main-channel` returns `inSea() === true` — the overlap is real, not notional.
+
+The one decision the overlap forces: `waterAt` returns a single feature id, so when
+a point is in both, **something has to answer first.** It answers `the-main-channel`,
+because the inland bodies are the SPECIFIC claim and the sea is the surrounding one —
+the general body should not swallow the named one. That is an ordering, not a
+boundary; nothing is carved, and a future naming mark can still celebrate the mouth
+as both, exactly as the ruling anticipates.
+
+## C27 · No bay carved out — the atlas already ruled it, in its own words
+
+Keemin's "maybe the bay for the Doubled Coast" was left to my judgment: seed it if
+the coastline data makes it legible, ledger it if carving is authoring rather than
+extraction.
+
+**The atlas answers this itself, and the receipt is decisive.** The current
+one-shore-one-sea design exists *because* of an earlier version that had a bay:
+
+> This replaces what used to be three separate things that had to be kept agreeing
+> with each other by hand — a west_sea blob, a rectangular southern sea, **and a bay
+> cut in afterwards**. There is now one shore and one body of water, so the map
+> cannot develop a seam between them.
+
+Seeding the bay as its own ring would reintroduce precisely the seam that rule was
+written to eliminate. The coastline runs *through* the bay (north up the western arm,
+round the head, back down the eastern arm) as one continuous shore; a bay mark would
+need a mouth chord across the horns, and **the atlas never drew that line.** Drawing
+it would be authoring.
+
+**So: not seeded, and residents may name it** — which is the shape Keemin set for
+everything else on the coast anyway (item 3: residents fill in the rest). If the bay
+should become a mark, its ring wants to be *drawn in the atlas first* and extracted
+after, like every other shape here.
+
+## C28 · Nothing re-homed into the water, and the reason is structural
+
+The brief said: if the sea's ring swallows someone's home, **STOP and surface** rather
+than re-home a resident into the water. Checked before writing anything:
+
+- **All 26 parcels clear.** No resident's home is inside the ring or swallowed by it.
+  Orion's own house and parcel sit at `-1725,4840`, outside.
+- Three marks ARE geometrically inside it, all orion's and all **seaward features** —
+  `eelgrass-coves`, `the-shingle-beach`, `the-tidal-race`. A shingle beach is the
+  waterline and a tidal race is water; being in the sea is what they are.
+- **Yet nothing takes the sea as its tree parent.** `placementParent` picks the
+  SMALLEST containing mark, and those three sit inside `orion-by-the-fire/the-reach`
+  (3 Mm²) which is ~12× tighter than the sea (37.75 Mm²).
+
+**The general property, worth keeping:** the sea is the largest claim on the map, so
+the smallest-container rule guarantees **it can only ever adopt an orphan** — something
+nothing else contains. A very large mark is therefore *safe* to add to a record whose
+tree keys on smallest-container, which is the opposite of the intuition that a big
+claim swallows things. The channel's rectangle was dangerous because it was big AND
+wrongly shaped; the sea is big and correctly shaped.
+
+Both facts are now standing guards, so a future coastline edit that does drown a
+parcel fails a test instead of quietly re-filing someone's home.
+
+The containment diff for this step is one row: `the-town/the-sea` → **(root)**. It is
+top-level, as Keemin specified.
+
+## C29 · The ring is the canon; the art is roughened
+
+Visual acceptance was "the sea polygon should trace the painting's own painted coast."
+It does — verified by eye on the spectator with the footprints toggle, panned south
+and zoomed onto the bay's arm.
+
+They are not *identical*, and should not be: the atlas draws the coast as
+`smoothPath(roughen(COASTLINE, "coast", 8))`, so the painted line carries up to
+**8 atlas px ≈ 40 m** of deliberate hand-drawn jitter. I extracted `COASTLINE` raw.
+**The jitter is the drawing's; the canon is the data's** — extracting the roughened
+path would have baked a rendering flourish into the record and made the sea's shape
+depend on a seeded noise function. The observed offset is that jitter and nothing
+else.
+
+## C30 · The town clone I read the atlas from was 55 commits stale
+
+`render-town.mjs` — the file the coastline comes from — **had changed on origin**. I
+read the current version out of the fetched ref rather than the working tree, and then
+checked whether it mattered: the extracted COASTLINE hashes **identically** across
+both, 51 points either way. The staleness would not have bitten this time.
+
+Recorded because the check earning nothing is the point: *"the file changed"* was
+true and *"the coast changed"* was false, and only comparing told me which. The
+office's `town-clone` drifting stale is already on the shelf; this is the first time
+it sat directly upstream of authored geometry.
+
+I also verified the generator is faithful before trusting it to rewrite the skeleton:
+regenerating from the current atlas reproduces the committed `skeleton.json`
+**content-identically** (bytes differ only by line endings), so the sea's `ring_m` is
+the only change it introduced.
