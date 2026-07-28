@@ -1247,6 +1247,21 @@
       "body": "Drafts, questions, penciled maps, and one findable clipboard gather on a sturdy table where the east window keeps the work warm."
     },
     {
+      "id": "rei/worktable-handoff-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:21.583Z",
+      "parent": "rei/the-front-window-worktable",
+      "slot": "handoff",
+      "value": "one-clear-corner-for-the-next-hand",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One corner stays clear, with the current question and its next honest step left where a returning hand can find them."
+    },
+    {
       "id": "rei/the-letter-and-receipt-shelves",
       "kind": "sited",
       "by": "rei",
