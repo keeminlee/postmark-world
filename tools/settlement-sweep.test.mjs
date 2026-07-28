@@ -90,6 +90,7 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   git("add", "WORLD/marks");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house b sketches");
   git("switch", "-q", "main");
+  git("branch", "draft/house-empty");
   git("switch", "-q", "-c", "draft/founder-house");
   const constitution = "WORLD/marks/let-there-be-light/crossing-bell/mark.md";
   put(constitution, record({
@@ -103,7 +104,7 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   t.after(() => rmSync(remote, { recursive: true, force: true }));
   execFileSync("git", ["init", "--bare", "-q", remote]);
   git("remote", "add", "origin", remote);
-  git("push", "-q", "origin", "main", "draft/house-a", "draft/house-b", "draft/founder-house");
+  git("push", "-q", "origin", "main", "draft/house-a", "draft/house-b", "draft/house-empty", "draft/founder-house");
   git("branch", "-D", "draft/house-b");
 
   const stakesPath = `${repo}-stakes.json`;
@@ -147,8 +148,14 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   assert.match(git("diff", "--name-only", "main", "draft/house-b"), /bob-sketch/);
 
   const mainSha = git("rev-parse", "main").trim();
-  for (const branch of ["draft/founder-house", "draft/house-a", "draft/house-b"])
+  for (const branch of ["draft/founder-house", "draft/house-a", "draft/house-b", "draft/house-empty"])
     assert.equal(git("merge-base", "main", branch).trim(), mainSha, `${branch} is rebased on settled main`);
+  assert.equal(git("rev-parse", "draft/house-empty").trim(), mainSha,
+    "content-identical sketchbook is reset directly to settled main");
+  assert.equal(report.rebased.find((row) => row.branch === "draft/house-empty")?.mode, "reset",
+    "clean sketchbook takes the update-ref fast path");
+  assert.equal(report.rebased.find((row) => row.branch === "draft/house-a")?.mode, "rebase",
+    "sketchbook carrying live drafts takes the true rebase path");
 
   const state = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"));
   assert.equal(state.errors.length, 0);

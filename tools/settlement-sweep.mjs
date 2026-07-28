@@ -181,10 +181,31 @@ function commit(repo, paths, message) {
   return git(repo, ["rev-parse", "HEAD"]).trim();
 }
 
-function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold) {
+function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable) {
   const receipts = [];
   for (const branch of branches) {
     const household = branch.slice("draft/".length);
+    const returned = returnedByHousehold.get(household) ?? [];
+    const mainSha = git(repo, ["rev-parse", mainBranch]).trim();
+
+    // A sketchbook with no tree delta at the start of the crossing carries no
+    // resident commits to replay. Move its ref straight to settled main: the
+    // cost of a crossing then scales with active drafters, not household count.
+    // A branch receiving an unpublished commons mark still needs a checkout so
+    // the return commit has somewhere to be written.
+    if (resettable.has(branch) && returned.length === 0) {
+      git(repo, ["branch", "-f", branch, mainSha]);
+      receipts.push({
+        branch,
+        head: git(repo, ["rev-parse", branch]).trim(),
+        rebased_onto: mainSha,
+        mode: "reset",
+        returned: [],
+        return_commit: null,
+      });
+      continue;
+    }
+
     const wtParent = mkdtempSync(join(tmpdir(), "postmark-draft-rebase-"));
     const wt = join(wtParent, "worktree");
     git(repo, ["worktree", "add", "--quiet", wt, branch]);
@@ -198,19 +219,18 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold) {
         throw new Error(`${branch} did not rebase cleanly: ${String(error.stderr ?? error.message ?? error).slice(0, 240)}`);
       }
 
-      const returned = returnedByHousehold.get(household) ?? [];
       for (const item of returned) writeRepoFile(wt, item.path, item.content);
       const returnCommit = returned.length
         ? commit(wt, returned.map((item) => item.path), `settlement: return ${returned.length} zero-escrow commons to ${branch}`)
         : null;
 
-      const mainSha = git(repo, ["rev-parse", mainBranch]).trim();
       const base = git(repo, ["merge-base", mainBranch, branch]).trim();
       if (base !== mainSha) throw new Error(`${branch} is not rebased on ${mainBranch}`);
       receipts.push({
         branch,
         head: git(repo, ["rev-parse", branch]).trim(),
         rebased_onto: mainSha,
+        mode: "rebase",
         returned: returned.map((item) => item.id),
         return_commit: returnCommit,
       });
@@ -238,6 +258,10 @@ export function settlementSweep({
   const stakes = stakesFrom(stakesPath);
   const escrow = escrowIndex(stakes);
   const branches = draftBranches(repo);
+  const mainTree = git(repo, ["rev-parse", `${mainBranch}^{tree}`]).trim();
+  const resettable = new Set(branches.filter(
+    (branch) => git(repo, ["rev-parse", `${branch}^{tree}`]).trim() === mainTree,
+  ));
   const registry = publicationRegistry(repo, mainBranch);
   const published = [];
   const leftDrafted = [];
@@ -338,7 +362,7 @@ export function settlementSweep({
     }
   }
   branches.sort();
-  const rebased = rebaseDrafts(repo, mainBranch, branches, returnedByHousehold);
+  const rebased = rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable);
 
   return {
     main: mainCommit,
