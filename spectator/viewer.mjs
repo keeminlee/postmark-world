@@ -130,10 +130,6 @@ const STYLE = `
 }
 .wv-nav { padding:18px; border-right:1px solid var(--line); background:var(--panel); }
 .wv-nav h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
-.wv-tabs { display:flex; gap:4px; margin-bottom:6px; }
-.wv-tabs button { flex:1; background:transparent; border:1px solid var(--line); color:var(--dim);
-  font:inherit; font-size:.8rem; border-radius:4px; padding:6px 4px; cursor:pointer; }
-.wv-tabs button.on { border-color:var(--amber); color:var(--amber); background:var(--panel2); }
 .wv-nav button.ctl, .wv-nav .compass button, .wv-nav .step button {
   background:transparent; border:1px solid var(--line); color:var(--paper); font:inherit;
   font-size:.83rem; border-radius:4px; padding:5px 9px; cursor:pointer; }
@@ -233,38 +229,6 @@ const STYLE = `
 .wv-tnode .tbody { font-size:.92rem; line-height:1.4; }
 .wv-tslot { font-style:italic; color:var(--dim); }
 
-/* grid-true */
-.wv-gridwrap { display:flex; flex-direction:column; align-items:center; }
-.wv-ladder { position:relative; border:1px solid var(--line); border-radius:6px; padding:26px 12px 12px;
-  margin:0; width:100%; max-width:720px; }
-.wv-ladder > .lname { position:absolute; top:5px; left:12px; font-size:.7rem; letter-spacing:.06em;
-  text-transform:uppercase; color:var(--amber-dark); }
-.wv-ladder.root { border-color:var(--amber-dark); }
-.wv-ladder.t-constitution { border-color:var(--blue-dark); }
-.wv-ladder.t-constitution > .lname { color:var(--blue); }
-.wv-ladder.t-home { border-color:var(--green-dark); }
-.wv-ladder.t-home > .lname { color:var(--green); }
-.wv-canvas { position:relative; width:100%; aspect-ratio:1/1; background:
-  radial-gradient(circle at center, rgba(232,197,106,.05), transparent 70%); border:1px solid var(--line);
-  border-radius:4px; overflow:hidden; }
-.wv-canvas svg { position:absolute; inset:0; width:100%; height:100%; }
-.wv-you { fill:#ff2418; stroke:#fff; stroke-width:2; }
-.wv-you-halo { fill:none; stroke:#ff2418; stroke-width:1.5; opacity:.5; }
-.wv-reach { fill:rgba(232,197,106,.05); stroke:var(--amber); stroke-width:1.5; stroke-dasharray:6 5; opacity:.7; }
-.wv-pip { fill:var(--amber); opacity:.75; cursor:pointer; }
-.wv-pip.t-constitution { fill:var(--blue); }
-.wv-pip.t-home { fill:var(--green); }
-.wv-pip.sig { fill:#fff3cf; }
-/* grid-true footprints — a mark's claim at true scale; market neutral, constitution blue, home green */
-.wv-foot { fill:rgba(154,146,128,.10); stroke:var(--dim); stroke-width:1.4; cursor:pointer; }
-.wv-foot:hover { fill-opacity:.24; }
-.wv-foot.t-constitution { fill:rgba(123,167,224,.12); stroke:var(--blue); }
-.wv-foot.t-home { fill:rgba(132,201,143,.14); stroke:var(--green); }
-.wv-foot.sig { stroke:#fff3cf; }
-.wv-plabel { fill:var(--paper); font:21px Georgia,serif; opacity:.9; pointer-events:none; paint-order:stroke; stroke:var(--night); stroke-width:3; }
-.wv-axis { fill:var(--dim); font:11px Georgia,serif; opacity:.6; }
-.wv-gridnote { color:var(--dim); font-size:.8rem; margin-top:12px; max-width:70ch; text-align:center; font-style:italic; }
-
 /* my marks */
 .wv-marks-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
 .wv-marks-head h2 { margin:0; color:var(--amber); font-size:1rem; }
@@ -309,7 +273,7 @@ const STYLE = `
    Scoped to these two containers ON PURPOSE — the telling cards and letter
    bodies in the left pane must stay selectable, since people copy prose out of
    them. Nuking selection viewer-wide would trade a papercut for a wound. */
-.wv-minimap, .wv-canvas { -webkit-user-select:none; user-select:none; }
+.wv-minimap { -webkit-user-select:none; user-select:none; }
 .wv-minimap { border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
 .wv-minimap svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
@@ -397,10 +361,6 @@ const MARKUP = `
   part of this page may change shape or break without a word. The record underneath is real; the viewer is a work in progress.</div>
 <div class="wv-main">
   <nav class="wv-nav">
-    <div class="wv-tabs">
-      <button class="tab on" data-view="telling">The telling</button>
-      <button class="tab" data-view="grid">Grid-true</button>
-    </div>
     <div class="wv-identity"></div>
     <div class="wv-standctl">
       <h2>Stand at</h2>
@@ -425,7 +385,6 @@ const MARKUP = `
   </nav>
   <section class="wv-view">
     <div class="wv-telling"><div class="wv-quiet">opening your eyes…</div></div>
-    <div class="wv-grid" hidden></div>
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
@@ -903,77 +862,6 @@ export function mountViewer(appEl) {
       ${(d.more?.inside > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
   }
 
-  // ───────── grid-true view ─────────
-  function renderGrid() {
-    const box = $(root, ".wv-grid");
-    try {
-      const name = state.cam.x === 0 && state.cam.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
-      const e = openYourEyes({ x: state.cam.x, y: state.cam.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
-      lastRadial = e.radial;
-      const within = e.radial.within ?? [];
-      const carried = (e.fov.carried ?? []).filter((m) => m.at && typeof m.at.x === "number");
-      const reach = e.radial.sightReachM ?? 1000;
-      // scale: fit the FARTHEST VISIBLE MARK (not the whole sight radius), so the
-      // marks spread across the canvas instead of bunching at the centre when the
-      // air is clear and the reach dwarfs what's actually in view. Still true —
-      // every point keeps its real bearing and relative distance.
-      const farthest = Math.max(1, ...carried.map((m) => m.distM ?? 0));
-      const fit = Math.max(300, farthest * 1.15); // floor so a near-only view isn't absurdly zoomed
-      const VB = 1000, C = VB / 2, sc = C / fit; // px per metre
-      const px = (mx, my) => ({ x: C + (mx - state.cam.x) * sc, y: C + (my - state.cam.y) * sc });
-      const reachPx = reach * sc, reachFits = reachPx <= C * 1.35;
-      let svg = reachFits ? `<circle cx="${C}" cy="${C}" r="${reachPx.toFixed(1)}" class="wv-reach"/>` : "";
-      // axis ticks (grid: x east→right, y south→down)
-      svg += `<text x="${C}" y="16" text-anchor="middle" class="wv-axis">N</text>`;
-      svg += `<text x="${C}" y="${VB - 6}" text-anchor="middle" class="wv-axis">S</text>`;
-      svg += `<text x="10" y="${C}" class="wv-axis">W</text>`;
-      svg += `<text x="${VB - 10}" y="${C}" text-anchor="end" class="wv-axis">E</text>`;
-      // a soft scale hint: the fit radius in metres, bottom-right
-      svg += `<text x="${VB - 10}" y="${VB - 12}" text-anchor="end" class="wv-axis">edge ≈ ${Math.round(fit).toLocaleString()} m${reachFits ? "" : " · air sees ~" + Math.round(reach).toLocaleString() + " m"}</text>`;
-      // FOOTPRINTS (Keemin 2026-07-23): in grid-true a mark renders as its CLAIM
-      // at true scale — an at-centred extent rect (or its points: ring polygon),
-      // outlined + translucent so overlaps read, tier-coloured. The main channel
-      // reads as the long band it is; a bench is a speck. Below ~5px it collapses
-      // to a dot. Marks that CONTAIN the viewer are the nested frames already —
-      // skip them here (this is for the non-containing marks in view).
-      const withinIds = new Set(within.map((w) => w.id));
-      for (const m of carried) {
-        if (withinIds.has(m.id)) continue;
-        const full = byId.get(m.id) ?? m;
-        const w = full.extent?.w ?? 0, h = full.extent?.h ?? 0;
-        const cls = `t-${tierOf(m)}${m.signal ? " sig" : ""}`;
-        const title = `<title>${esc(m.id)} — ${esc(firstWords(m.body, 12))}</title>`;
-        const c = px(full.at.x, full.at.y);
-        const ring = Array.isArray(full.points) && full.points.length >= 3 ? full.points : null;
-        if (Math.max(w, h) * sc < 5 && !ring) {                       // too small at this scale → a dot
-          const r = m.signal ? 6 : 3.5 + Math.min(5, Math.log1p(m.weight || 0) * 1.8);
-          svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${r.toFixed(1)}" class="wv-pip ${cls}" data-id="${esc(m.id)}">${title}</circle>`;
-        } else if (ring) {                                            // the authored shape, claim-true
-          const pts = ring.map((v) => { const q = px(Array.isArray(v) ? v[0] : v.x, Array.isArray(v) ? v[1] : v.y); return `${q.x.toFixed(1)},${q.y.toFixed(1)}`; }).join(" ");
-          svg += `<polygon points="${pts}" class="wv-foot ${cls}" data-id="${esc(m.id)}">${title}</polygon>`;
-        } else {                                                      // the extent rect, at true scale
-          const a = px(full.at.x - w / 2, full.at.y - h / 2), b = px(full.at.x + w / 2, full.at.y + h / 2);
-          svg += `<rect x="${Math.min(a.x, b.x).toFixed(1)}" y="${Math.min(a.y, b.y).toFixed(1)}" width="${Math.abs(b.x - a.x).toFixed(1)}" height="${Math.abs(b.y - a.y).toFixed(1)}" rx="1" class="wv-foot ${cls}" data-id="${esc(m.id)}">${title}</rect>`;
-        }
-        const lx = c.x + (c.x > C ? -7 : 7), anchor = c.x > C ? "end" : "start";
-        svg += `<text x="${lx.toFixed(1)}" y="${(c.y - 6).toFixed(1)}" text-anchor="${anchor}" class="wv-plabel">${esc(shortLabel(m))}</text>`;
-      }
-      svg += `<circle cx="${C}" cy="${C}" r="26" class="wv-you-halo"/><circle cx="${C}" cy="${C}" r="6" class="wv-you"/>`;
-      const canvas = `<div class="wv-canvas"><svg viewBox="0 0 ${VB} ${VB}" preserveAspectRatio="xMidYMid meet">${svg}</svg></div>`;
-      // nest the canvas inside the containment ladder (root outermost)
-      let nested = canvas;
-      for (let i = within.length - 1; i >= 0; i--) {
-        const w = within[i];
-        const isRoot = i === 0;
-        nested = `<div class="wv-ladder t-${tierOf(w)}${isRoot ? " root" : ""}"><div class="lname" title="${esc(w.id)}">${esc(firstWords(w.body, 7) || w.id)}</div>${nested}</div>`;
-      }
-      box.innerHTML = `<div class="wv-gridwrap">${nested}
-        <div class="wv-gridnote">you stand at the centre; each point is a mark in its true bearing and distance. The nested frames are what you stand <b>within</b> — the outermost is the world itself, the innermost the smallest thing that contains you. Click a point to investigate.</div></div>`;
-      drawOverlay(e.radial); // the painting tracks the camera in grid mode too (the bug: it never did)
-    } catch (err) {
-      box.innerHTML = `<div class="wv-err">the grid failed: ${esc(err?.message ?? err)}</div>`;
-    }
-  }
 
   // ───────── my marks view ─────────
   async function probeStakes() {
@@ -1174,9 +1062,25 @@ export function mountViewer(appEl) {
         for (const m of world.marks ?? []) {
           if (!m.at || !m.extent || m.far) continue;
           if (m.id === "the-town/let-there-be-light") continue;
+          const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
+          // A mark carrying a `points:` ring draws its AUTHORED shape, not its bbox
+          // (ported here when Grid-true retired — Grid-true held the only ring
+          // renderer, and the water true-shapes being authored now would have had
+          // nowhere to appear). The honesty gate guarantees the ring's bbox equals
+          // at/extent, so ring and rect describe the same claim; the ring is just
+          // the truer telling of it. Ring vertices are absolute grid metres, the
+          // same space `at` lives in, so they take the same world→px mapping.
+          const ring = Array.isArray(m.points) && m.points.length >= 3 ? m.points : null;
+          if (ring) {
+            const pts = ring.map((v) => {
+              const vx = Array.isArray(v) ? v[0] : v.x, vy = Array.isArray(v) ? v[1] : v.y;
+              return `${originPx.x + vx / mPerPx},${originPx.y + vy / mPerPx}`;
+            }).join(" ");
+            s += `<polygon points="${pts}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></polygon>`;
+            continue;
+          }
           const w = m.extent.w / mPerPx, h = m.extent.h / mPerPx;
           const x = originPx.x + m.at.x / mPerPx - w / 2, y = originPx.y + m.at.y / mPerPx - h / 2;
-          const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
           s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></rect>`;
         }
         fpLayer.innerHTML = s;
@@ -1186,7 +1090,10 @@ export function mountViewer(appEl) {
       // with every telling (the boxes are the same boxes, only the weight moves)
       mapCtx.syncWithin = (radial) => {
         const ids = new Set((radial?.within ?? []).map((w) => w.id));
-        for (const r of fpLayer.querySelectorAll("rect[data-id]"))
+        // `[data-id]`, not `rect[data-id]`: a ringed mark is a <polygon>, and the
+        // element-name selector would have silently left every true-shape out of the
+        // within highlight — a half-port that looks finished.
+        for (const r of fpLayer.querySelectorAll("[data-id]"))
           r.classList.toggle("fp-within", ids.has(r.dataset.id));
       };
       mapCtx.toggleFp = () => {
@@ -1267,7 +1174,6 @@ export function mountViewer(appEl) {
       ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`
       : `crossing <b>${state.crossing}</b> <span class="crosslive-tag">· live</span>`;
     if (state.view === "telling") renderTelling();
-    else if (state.view === "grid") renderGrid();
     if (!mapCtx) loadMinimap();
   }
   // a re-render that the world does TO the viewer, not the viewer to itself: it must
@@ -1286,19 +1192,18 @@ export function mountViewer(appEl) {
     el.classList.add("show");
     clearTimeout(movedTimer); movedTimer = setTimeout(() => el.classList.remove("show"), 6000);
   }
+  // One view remains, so this no longer switches anything — it is kept because
+  // `.stand` still calls switchView("telling") to come back from a stand-here jump,
+  // and because state.view is the seam a future second view would re-enter through.
   function switchView(v) {
     state.view = v;
-    for (const t of root.querySelectorAll(".wv-tabs .tab")) t.classList.toggle("on", t.dataset.view === v);
     $(root, ".wv-telling").hidden = v !== "telling";
-    $(root, ".wv-grid").hidden = v !== "grid";
     renderCurrent();
   }
 
   // ───────── events ─────────
   let devTimer = null;
   root.addEventListener("click", (e) => {
-    const tab = e.target.closest(".wv-tabs .tab");
-    if (tab) { switchView(tab.dataset.view); return; }
     // the viewport controls (P2): fit / follow / grid
     if (e.target.closest(".wv-map-home")) { mapCtx?.fitAll?.(); return; }
     const fbtn = e.target.closest(".wv-map-follow");
@@ -1317,9 +1222,6 @@ export function mountViewer(appEl) {
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
     const tn = e.target.closest(".wv-tnode, .wv-wnode"); // upward-context names drill too
     if (tn) { const card = tn.closest(".wv-card"); if (card && tn.dataset.id) { card._stack.push(tn.dataset.id); renderExpansion(card); } return; }
-    // grid pip → investigate in a floating card is overkill; jump to telling+expand
-    const pip = e.target.closest(".wv-pip");
-    if (pip && pip.dataset.id) { switchView("telling"); queueMicrotask(() => openCardById(pip.dataset.id)); return; }
     const stand = e.target.closest(".stand");
     if (stand) { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); return; }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } return; }
@@ -1459,9 +1361,4 @@ function firstWords(body, n) {
   const s = String(body ?? "").replace(/^\s*(sits|region|kind|at|date|slot|value|household|mark|parent)\s*:\s*/i, "").trim().replace(/\s+/g, " ");
   const w = s.split(" ").slice(0, n).join(" ");
   return w + (s.split(" ").length > n ? "…" : "");
-}
-function shortLabel(m) {
-  if (m.far) return m.label ?? m.id;
-  const leaf = String(m.id ?? "").split("/").pop() ?? "";
-  return leaf.replace(/-/g, " ").split(" ").slice(0, 4).join(" ");
 }
