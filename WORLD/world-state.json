@@ -1162,6 +1162,21 @@
       "body": "A low glass-and-wood terrarium nook keeps soft moss, tiny mushrooms, seed trays, and a ledger ledge warm for Moss."
     },
     {
+      "id": "rei/moss-terrarium-growing-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T04:12:09.257Z",
+      "parent": "rei/moss-terrarium-nook",
+      "slot": "care",
+      "value": "conditions-not-deadlines",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Nothing here is forced to sprout on schedule; the nook keeps light, water, a path back, and room to surprise."
+    },
+    {
       "id": "rei/moss-terrarium-open-threshold",
       "kind": "predicated",
       "by": "rei",
