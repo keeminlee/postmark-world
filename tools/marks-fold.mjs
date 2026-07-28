@@ -8,10 +8,18 @@
 //   node tools/marks-fold.mjs --stakes f.json      # override stakes source (sims/tests)
 //   node tools/marks-fold.mjs --marks-dir d --prev prev.json --tick N --no-write --json
 //
-// Stakes source (default): lines in WHITE_PAGES/stamp-ledger.md of the form
-//   - <date> · <handle> → stake:mark:<household>/<slug> · <n> · ...
-//   - <date> · <handle> → return:mark:<household>/<slug> · <n> · ...
-// or a JSON file: [{ holder, mark, n, tick }] (negative n or matching return = withdrawal).
+// Stakes source: a JSON file of open positions —
+// [{ holder, mark, n, weight, tick }], negative n = withdrawal — passed with
+// `--stakes`. `n` is raw escrow; `weight` is its town-derived read-side
+// contribution (Σ escrow + k·unique-households across a mark). There is NO default
+// source and no money or household-identity parser in this repo (write-release
+// P3): the stamp ledger and identity pins live in the TOWN repo, which owns their
+// grammar and derives this file for us —
+//   (town clone)  node tools/world-stake.mjs --escrow --json > stakes.json
+// so exactly one parser reads the money lines across the two repos. Without the
+// file the world folds with zero escrow, which is honest: no stakes, no weight.
+// (The header used to document a `stake:mark:<id>` grammar the mint could never
+// produce — a read-side orphan, flagged 2026-07-23, closed by this pass.)
 
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join, basename } from "node:path";
@@ -139,17 +147,31 @@ function walkMarks(nodeDir, parentMarkId, out) {
 function loadStakes() {
   if (STAKES_PATH) {
     const j = JSON.parse(readFileSync(STAKES_PATH, "utf8"));
-    return j.map(s => ({ tick: s.tick ?? 0, holder: s.holder, mark: s.mark, n: s.n }));
+    return j.map(s => ({
+      tick: s.tick ?? 0,
+      holder: s.holder,
+      mark: s.mark,
+      n: s.n,
+      weight: Number.isFinite(s.weight) ? s.weight : s.n,
+    }));
   }
-  const ledger = join(ROOT, "WHITE_PAGES/stamp-ledger.md");
-  if (!existsSync(ledger)) return [];
-  const out = [];
-  const re = /^-\s+(\S+)\s+·\s+(\S+)\s+→\s+(stake|return):mark:(\S+)\s+·\s+(\d+)/;
-  for (const line of readFileSync(ledger, "utf8").split(/\r?\n/)) {
-    const m = line.match(re);
-    if (m) out.push({ tick: 0, holder: m[2], mark: m[4], n: m[3] === "return" ? -Number(m[5]) : Number(m[5]) });
-  }
-  return out;
+  // No money parser lives here, on purpose (write-release P3).
+  //
+  // This used to read `WHITE_PAGES/stamp-ledger.md` under the WORLD root for a
+  // `stake:mark:<id>` grammar — two things wrong with that, both now closed:
+  //   1. The stamp ledger is in the TOWN repo (keeminlee/postmark), not this one, so
+  //      the path never existed here and every mark's ✦weight was silently 0.
+  //   2. `stake:mark:<id>` was never a line the mint could produce — a read-side
+  //      orphan (flagged 2026-07-23). The real class, ruled 2026-07-27 and built in
+  //      the town as `stake:world-mark/<mark-id>`, is what carries escrow now.
+  //
+  // The town OWNS the ledger grammar and hands the world a derived artifact:
+  //   (in a town clone)  node tools/world-stake.mjs --escrow --json > stakes.json
+  //   (here)             node tools/marks-fold.mjs --stakes stakes.json
+  // One parser of the money lines across the two repos, which is why this function
+  // no longer knows what a stamp line looks like. A world without that file folds
+  // with zero escrow — honest, not broken: no stakes yet means no weight yet.
+  return [];
 }
 
 // ---------- geometry (the ONE definition now lives in geometry.mjs — pure and
@@ -212,11 +234,22 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   }
 
   // stakes -> per-mark balances (escrow; negative = withdrawal), effect-next-crossing: tick strictly < current
-  const stakeByMark = new Map(); const portfolios = new Map();
+  const stakeByMark = new Map(); const weightByMark = new Map(); const portfolios = new Map();
   for (const s of stakes) {
     if (s.tick >= tick && tick > 0) continue; // not yet effective
-    if (!byId.has(s.mark) && !terrainIds.has(s.mark)) { errors.push({ stake: s, error: "stake on unknown mark" }); continue; }
+    // THE RETIREMENT GATE, and it needed no new machinery — only its right name.
+    // Keemin's rule (write-release P0, verbatim): "a mark is not retired until it
+    // hits 0 stamps. If any resident has stamps on a mark, that mark still exists."
+    // Stated as a checkable invariant that is ESCROW IMPLIES EXISTENCE, and this is
+    // the line that enforces it: escrow naming a mark the record no longer holds is
+    // a fold error, so retiring a staked mark cannot fold clean. A stake is an
+    // existence-anchor, so the anchor's absence is the defect, not the stake's.
+    if (!byId.has(s.mark) && !terrainIds.has(s.mark)) {
+      errors.push({ stake: s, error: `stake on a mark the record does not hold (${s.mark}) — a staked mark cannot be retired; return the escrow first` });
+      continue;
+    }
     stakeByMark.set(s.mark, (stakeByMark.get(s.mark) ?? 0) + s.n);
+    weightByMark.set(s.mark, (weightByMark.get(s.mark) ?? 0) + (s.weight ?? s.n));
     if (!portfolios.has(s.holder)) portfolios.set(s.holder, new Map());
     const pf = portfolios.get(s.holder);
     pf.set(s.mark, (pf.get(s.mark) ?? 0) + s.n);
@@ -262,7 +295,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   const weightOf = (id, seen = new Set()) => {
     if (weight.has(id)) return weight.get(id);
     if (seen.has(id)) return 0; seen.add(id);
-    let w = stakeByMark.get(id) ?? 0;
+    let w = weightByMark.get(id) ?? 0;
     for (const c of children.get(id) ?? []) w += weightOf(c, seen);
     weight.set(id, w); return w;
   };
@@ -278,7 +311,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       const slot = slots.get(key);
       slot.marks.push(mk.id);
       const v = String(mk.value ?? "");
-      slot.values.set(v, (slot.values.get(v) ?? 0) + (stakeByMark.get(mk.id) ?? 0));
+      slot.values.set(v, (slot.values.get(v) ?? 0) + (weightByMark.get(mk.id) ?? 0));
     }
   }
   // sited site-slots: cluster overlapping commons sited marks

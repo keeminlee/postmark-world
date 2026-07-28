@@ -25,6 +25,27 @@ const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
 const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
+export function viewerAxisState({ identityResolved = false, baseLayer = "true", justMine = false } = {}) {
+  return {
+    controls: identityResolved,
+    base: identityResolved && baseLayer === "mine" ? "My World" : "the True World",
+    relation: identityResolved && justMine ? "just mine" : "everything",
+  };
+}
+
+export function viewerAxisControls(options = {}) {
+  const axis = viewerAxisState(options);
+  if (!axis.controls) return "";
+  const base = (key, label) =>
+    `<button class="wv-fchip${axis.base === label ? " on" : ""}" data-world-base="${key}">${label}</button>`;
+  const relation = (mine, label) =>
+    `<button class="wv-fchip${axis.relation === label ? " on" : ""}" data-mine-filter="${mine ? "mine" : "everything"}">${label}</button>`;
+  return `<div class="wv-axes">`
+    + `<div class="wv-axis"><span>world</span>${base("true", "the True World")}${base("mine", "My World")}</div>`
+    + `<div class="wv-axis"><span>marks</span>${relation(false, "everything")}${relation(true, "just mine")}</div>`
+    + `</div>`;
+}
+
 const BEARING_LONG = { N: "north", NNE: "north-northeast", NE: "northeast", ENE: "east-northeast", E: "east", ESE: "east-southeast", SE: "southeast", SSE: "south-southeast", S: "south", SSW: "south-southwest", SW: "southwest", WSW: "west-southwest", W: "west", WNW: "west-northwest", NW: "northwest", NNW: "north-northwest" };
 
 // The chip's arrow points where the mark lies, north UP — the map pane's orientation.
@@ -279,7 +300,10 @@ const STYLE = `
   border-radius:999px; padding:1px 8px; }
 .wv-mrow .stand:hover { background:var(--panel2); }
 
-/* the fused left pane: All / Mine filter chips + the Mine tail (elsewhere + stakes) */
+/* the fused left pane: world/relation axes + All/New listing mode */
+.wv-axes { display:flex; flex-wrap:wrap; gap:8px 14px; margin:0 0 8px; }
+.wv-axis { display:flex; align-items:center; gap:6px; }
+.wv-axis > span { color:var(--dim); font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; }
 .wv-mfilter { display:flex; gap:6px; margin:0 0 12px; }
 .wv-fchip { background:transparent; border:1px solid var(--line); color:var(--dim); border-radius:999px;
   padding:3px 15px; font-size:.72rem; letter-spacing:.05em; cursor:pointer; }
@@ -469,7 +493,11 @@ export function mountViewer(appEl) {
     crossing: liveCrossing(),           // default to the live crossing
     crossingOverride: false,            // a dev/principal time-travel override
     view: "telling",
-    markFilter: "all",                  // "all" | "mine" | "new" — the left-pane filter ("mine" needs an identity)
+    markFilter: "all",                  // "all" | "new" — listing mode, independent of the two identity axes
+    baseLayer: "true",                  // "true" (main) | "mine" (main + the household draft)
+    justMine: false,                    // owned ∪ backed, from the household portfolio
+    portfolio: null,                    // authenticated world_my_marks response
+    mineIds: new Set(),                 // portfolio ids across drafts/published/backed
     handle: "wright",
     dials: { ...DIALS },
     stakesLocal: null,      // null=unknown, true/false after probe
@@ -477,7 +505,7 @@ export function mountViewer(appEl) {
     asOf: null,             // X-Postmark-As-Of of the loaded fold (office-live only)
     whoami: null,           // { principal, household, handles } from /api/ops/whoami
   };
-  let data = null;          // { worldState, skeleton }
+  let data = null;          // { trueWorld, myWorld, worldState, skeleton, manifest }
   let world = null;         // assembled once (crossing-independent)
   let byId = new Map();     // id → folded mark, for cell lookups
   let homeSet = new Set();  // ids that render green: homes (+ descendants) and sovereigns
@@ -497,18 +525,27 @@ export function mountViewer(appEl) {
   // stamps every response; the auto-update poll compares it). Same office-first
   // preference: office live → same-origin /WORLD → RAW github.
   const WS_PATHS = ["/api/world/state", "/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`];
-  async function fetchWorldState(paths) {
+  async function fetchWorldState(paths, options = {}) {
     let lastErr;
     for (const p of paths) {
-      try { const r = await fetch(p); if (r.ok) return { json: await r.json(), url: p, asOf: r.headers.get("x-postmark-as-of") }; lastErr = new Error(`${p} → ${r.status}`); }
+      try { const r = await fetch(p, options); if (r.ok) return { json: await r.json(), url: p, asOf: r.headers.get("x-postmark-as-of") }; lastErr = new Error(`${p} → ${r.status}`); }
       catch (e) { lastErr = e; }
     }
     throw lastErr ?? new Error("no source");
   }
+  function applyWorldLayer() {
+    const composed = state.baseLayer === "mine" && data?.myWorld;
+    data.worldState = composed || data.trueWorld;
+    world = assembleWorld({ worldState: data.worldState, skeleton: data.skeleton });
+    byId = new Map(world.marks.map((m) => [m.id, m]));
+    homeSet = buildHomeSet(data.manifest, world.marks);
+  }
   const isOfficeLive = (url) => !!url && url.startsWith("/api/world/");
   async function loadData() {
     if (data) return;
-    const ws = await fetchWorldState(WS_PATHS);
+    // The True World is intentionally credentialless. Even a signed-in browser
+    // receives the main fold here; the household-composed fold has its own read.
+    const ws = await fetchWorldState(WS_PATHS, { credentials: "omit" });
     const [sk, mf] = await Promise.all([
       fetchJson(["/api/world/skeleton", "/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
       // homes come from the seeding manifest, fetched the same way (same-origin probe
@@ -516,20 +553,16 @@ export function mountViewer(appEl) {
       fetchJson(["/seeding/manifest.json", `${RAW}/seeding/manifest.json`]).catch(() => null),
     ]);
     state.dataSource = ws.url; state.asOf = ws.asOf;
-    data = { worldState: ws.json, skeleton: sk, manifest: mf };
-    world = assembleWorld({ worldState: ws.json, skeleton: sk });
-    byId = new Map(world.marks.map((m) => [m.id, m]));
-    homeSet = buildHomeSet(mf, world.marks);
+    data = { trueWorld: ws.json, myWorld: null, worldState: ws.json, skeleton: sk, manifest: mf };
+    applyWorldLayer();
   }
   // re-pull the fold from the same source and re-assemble (auto-update). Skeleton
   // and manifest are stable across a write, so only world-state is refetched.
   async function reloadWorld() {
-    const ws = await fetchWorldState([state.dataSource, ...WS_PATHS]);
+    const ws = await fetchWorldState([state.dataSource, ...WS_PATHS], { credentials: "omit" });
     state.dataSource = ws.url; state.asOf = ws.asOf;
-    data.worldState = ws.json;
-    world = assembleWorld({ worldState: ws.json, skeleton: data.skeleton });
-    byId = new Map(world.marks.map((m) => [m.id, m]));
-    homeSet = buildHomeSet(data.manifest, world.marks);
+    data.trueWorld = ws.json;
+    applyWorldLayer();
   }
   // Home-ness is derived, never on the record: the manifest maps household→home_id,
   // so the home mark is `<household>/<home_id>`; it and its same-household descendants
@@ -690,8 +723,8 @@ export function mountViewer(appEl) {
   // is why it reads world.marks rather than a radial. Public by construction: it asks
   // nothing about who is looking.
   const NEW_CAP = 25;
-  function newFeed() {
-    const dated = (world.marks ?? []).filter((m) => m.id && m.date);
+  function newFeed(keep = null) {
+    const dated = (world.marks ?? []).filter((m) => m.id && m.date && (!keep || keep(m)));
     // newest first; id breaks ties so the order is stable across re-tells (dates are
     // day-precision for most records, so ties are the common case, not the edge)
     const all = dated.slice().sort((a, b) =>
@@ -736,25 +769,18 @@ export function mountViewer(appEl) {
     if (agg.hidden_by_budget) parts.push(`${agg.hidden_by_budget} more the eye doesn't sort out`);
     return parts.join(" · ");
   }
-  // Is this mark one of the signed-in household's? (Wright's ruling: household ∈
-  // whoami handles; we also match m.by so a mark you AUTHORED counts even if its
-  // household field ever differs — reuses the read-fix's handles-set idea.)
-  // Constitution is excluded from "Mine" unconditionally (Keemin, 2026-07-27):
-  // the world's constitutional furniture belongs to the town, not to whichever
-  // household happens to hold the-town's pen — even the founders'.
+  // "just mine" means the household portfolio's owned OR backed marks. That set is
+  // server-derived at household grain: it includes private draft deltas, authored
+  // main marks, and every open escrow position. It deliberately does not infer
+  // ownership from a browser-visible author string.
   function isMine(m) {
-    // tierOf, never m.tier — FOV/radial marks carry no tier field, so the raw
-    // read is silently undefined off the telling path (Jetto's pips lesson).
-    if (tierOf(m) === "constitution") return false;
-    const hs = state.whoami?.handles;
-    if (!hs || !hs.length) return false;
-    const set = hs instanceof Set ? hs : new Set(hs);
-    return set.has(m.household) || set.has(m.by);
+    return !!m?.id && state.mineIds.has(m.id);
   }
   function renderTelling() {
     const box = $(root, ".wv-telling");
-    const signedIn = (state.whoami?.handles ?? []).length > 0;
-    const mine = signedIn && state.markFilter === "mine";
+    const identityResolved = (state.whoami?.handles ?? []).length > 0
+      && !!state.portfolio && !!data?.myWorld;
+    const mine = identityResolved && state.justMine;
     try {
       const name = state.cam.x === 0 && state.cam.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
       const e = openYourEyes({ x: state.cam.x, y: state.cam.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
@@ -762,13 +788,13 @@ export function mountViewer(appEl) {
       const within = e.radial.within ?? [];
       const obs = e.radial.observer ?? {};
       const isNew = state.markFilter === "new";
-      // All and New are PUBLIC — "everyone" is the point of New, so the row now
-      // renders signed out too. Mine stays a signed-in affordance: a keyless visitor
-      // has no "mine" to show.
+      // All/New is a listing mode, independent of both identity axes. Anonymous
+      // spectators keep it; the True World/My World and everything/just mine axes
+      // appear only after both identity-scoped reads resolve.
       const fchip = (key, label) =>
         `<button class="wv-fchip${state.markFilter === key ? " on" : ""}" data-mfilter="${key}">${label}</button>`;
-      const chips = `<div class="wv-mfilter">${fchip("all", "All")}`
-        + `${signedIn ? fchip("mine", "Mine") : ""}${fchip("new", "New")}</div>`;
+      const chips = viewerAxisControls({ identityResolved, baseLayer: state.baseLayer, justMine: state.justMine })
+        + `<div class="wv-mfilter">${fchip("all", "All")}${fchip("new", "New")}</div>`;
       // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
       // context even under Mine (filtering the frame to yours would usually empty
       // "where you stand"); the filter narrows the visible marks, not your footing.
@@ -809,7 +835,7 @@ export function mountViewer(appEl) {
       // the feed alone, with the feed's own count in place of the tallies, so a count
       // line never describes a list it isn't attached to (sight-counts under a listing
       // that ignores sight would be the regression).
-      const feed = isNew ? newFeed() : null;
+      const feed = isNew ? newFeed(mine ? isMine : null) : null;
       box.innerHTML = chips
         + (ladder ? `<div class="wv-section-lbl">where you stand — the frame inward</div>`
                   + `<div class="wv-ladder-cells">${ladder}</div>` : "")
@@ -1325,7 +1351,20 @@ export function mountViewer(appEl) {
     if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
     const fpbtn = e.target.closest(".wv-map-fp");
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
-    // the fused left-pane filter: All / Mine — re-tell in place, keep the scroll.
+    const baseChip = e.target.closest("[data-world-base]");
+    if (baseChip) {
+      state.baseLayer = baseChip.dataset.worldBase;
+      applyWorldLayer();
+      const y = window.scrollY; renderTelling(); window.scrollTo(0, y);
+      return;
+    }
+    const mineChip = e.target.closest("[data-mine-filter]");
+    if (mineChip) {
+      state.justMine = mineChip.dataset.mineFilter === "mine";
+      const y = window.scrollY; renderTelling(); window.scrollTo(0, y);
+      return;
+    }
+    // the listing mode is orthogonal to both identity axes.
     const fchip = e.target.closest(".wv-fchip");
     if (fchip) { state.markFilter = fchip.dataset.mfilter; const y = window.scrollY; renderTelling(); window.scrollTo(0, y); return; }
     // (key sign-in UI removed 2026-07-24 — identity comes from the island's
@@ -1385,17 +1424,49 @@ export function mountViewer(appEl) {
   // fetched whoami with no credential, so every visitor read as keyless.
   const pmKey = () => { try { return localStorage.getItem("pm_key") || null; } catch { return null; } };
   const authHeaders = () => { const k = pmKey(); return k ? { Authorization: "Bearer " + k } : {}; };
+  async function loadIdentityWorld() {
+    const options = { headers: authHeaders(), credentials: "same-origin" };
+    const [composed, portfolio] = await Promise.all([
+      fetchWorldState(["/api/world/state"], options),
+      fetch("/api/world/my-marks", options).then(async (r) => {
+        if (!r.ok) throw new Error(`/api/world/my-marks → ${r.status}`);
+        return r.json();
+      }),
+    ]);
+    data.myWorld = composed.json;
+    state.portfolio = portfolio;
+    state.mineIds = new Set(["drafts", "published", "backed"]
+      .flatMap((category) => (portfolio[category] ?? []).map((mark) => mark.id ?? mark.mark))
+      .filter(Boolean));
+    if (state.baseLayer === "mine") applyWorldLayer();
+  }
   async function resolveIdentity() {
-    try { const r = await fetch("/api/ops/whoami", { headers: authHeaders() }); state.whoami = r.ok ? await r.json() : null; } catch { state.whoami = null; }
+    const options = { headers: authHeaders(), credentials: "same-origin" };
+    try { const r = await fetch("/api/ops/whoami", options); state.whoami = r.ok ? await r.json() : null; } catch { state.whoami = null; }
     const toggle = $(root, ".wv-dev-toggle");
     if (toggle) toggle.hidden = !(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || state.whoami?.principal);
-    // keep state.handle valid (the stakes section's holder); no "mine" when signed out.
+    // Keep state.handle valid for the legacy local stakes detail. The identity axes
+    // are exposed only after both the composed fold and portfolio resolve.
     const handles = state.whoami?.handles ?? [];
     if (handles.length && !handles.includes(state.handle)) state.handle = handles[0];
-    // only "mine" needs an identity; a signed-out visitor sitting on "new" keeps it
-    // (this used to reset any filter to "all", which would have snapped New away the
-    // moment whoami resolved keyless — i.e. for every public visitor)
-    if (!handles.length && state.markFilter === "mine") state.markFilter = "all";
+    if (handles.length) {
+      try { await loadIdentityWorld(); }
+      catch {
+        data.myWorld = null;
+        state.portfolio = null;
+        state.mineIds = new Set();
+        state.baseLayer = "true";
+        state.justMine = false;
+        applyWorldLayer();
+      }
+    } else {
+      data.myWorld = null;
+      state.portfolio = null;
+      state.mineIds = new Set();
+      state.baseLayer = "true";
+      state.justMine = false;
+      applyWorldLayer();
+    }
     renderPresets();
     renderIdentity();
     mountWalkers(); // the walkers layer polls /api/walks; harmless if the route is absent
@@ -1442,14 +1513,14 @@ export function mountViewer(appEl) {
     if (nl !== lastLive) { lastLive = nl; if (!state.crossingOverride) { state.crossing = nl; reRender(`crossing ${nl}`); } }
     if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
       try {
-        const r = await fetch(state.dataSource);
+        const r = await fetch(state.dataSource, { credentials: "omit" });
         const asOf = r.headers.get("x-postmark-as-of");
         if (r.ok && asOf && asOf !== state.asOf) {
           const json = await r.json();
-          state.asOf = asOf; data.worldState = json;
-          world = assembleWorld({ worldState: json, skeleton: data.skeleton });
-          byId = new Map(world.marks.map((m) => [m.id, m]));
-          homeSet = buildHomeSet(data.manifest, world.marks);
+          state.asOf = asOf;
+          data.trueWorld = json;
+          if ((state.whoami?.handles ?? []).length) await loadIdentityWorld();
+          applyWorldLayer();
           reRender("the record advanced");
         }
       } catch { /* a poll miss is silent — the last good fold stands */ }
