@@ -55,6 +55,40 @@ const bearingArrow = (b) => {
     + `<path d="M0 -5 L2.8 4 L0 2.1 L-2.8 4 Z" transform="rotate(${deg})"/></svg>`;
 };
 
+// ───────────────────────── THE one mark-shape builder ──────────────────────
+// EVERY outline of a mark's claim on the painting comes from here. Never hand-build
+// one — that is the rule this function exists to make keepable, and it was earned:
+// the ring branch had to be written THREE times before it was written once. Grid-true
+// had it, buildFpLayer got it ported when Grid-true retired, and highlightOnMap
+// quietly went on drawing a bbox rect — so a hover washed a rectangle over a mark
+// the layer beneath it was correctly drawing as a polygon. Two hand-written mappings
+// of one concept drift; three is a habit. The fourth implementation does not get
+// written, because there is nowhere left to write it.
+//
+// A mark with a `points:` ring (≥3) draws its AUTHORED shape; everything else draws
+// its extent rect. The honesty gate guarantees ring-bbox == at/extent, so the two
+// describe the same claim and the ring is only the truer telling of it. Ring vertices
+// are absolute grid metres — the same space `at` lives in — so both take the caller's
+// world→px mapping unchanged.
+//
+// `px(x, y) -> {x, y}` is the caller's mapping (the painting's originPx/mPerPx).
+// `cls` is the caller's own vocabulary — the footprints layer and the hover wash keep
+// their separate classes and styling; only the GEOMETRY is shared.
+function markShapeSVG(m, px, cls, { attrs = "", inner = "" } = {}) {
+  const ring = Array.isArray(m.points) && m.points.length >= 3 ? m.points : null;
+  if (ring) {
+    const pts = ring.map((v) => {
+      const q = px(Array.isArray(v) ? v[0] : v.x, Array.isArray(v) ? v[1] : v.y);
+      return `${q.x},${q.y}`;
+    }).join(" ");
+    return `<polygon points="${pts}" class="${cls}"${attrs}>${inner}</polygon>`;
+  }
+  const w = m.extent?.w ?? 0, h = m.extent?.h ?? 0;
+  const a = px(m.at.x - w / 2, m.at.y - h / 2), b = px(m.at.x + w / 2, m.at.y + h / 2);
+  return `<rect x="${Math.min(a.x, b.x)}" y="${Math.min(a.y, b.y)}"`
+    + ` width="${Math.abs(b.x - a.x)}" height="${Math.abs(b.y - a.y)}" class="${cls}"${attrs}>${inner}</rect>`;
+}
+
 // the stand-at presets (the same three the local build and the astro page carried)
 const PRESETS = [
   { x: 0, y: 0, label: "The quay — Ferry's crossing" },
@@ -130,10 +164,6 @@ const STYLE = `
 }
 .wv-nav { padding:18px; border-right:1px solid var(--line); background:var(--panel); }
 .wv-nav h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
-.wv-tabs { display:flex; gap:4px; margin-bottom:6px; }
-.wv-tabs button { flex:1; background:transparent; border:1px solid var(--line); color:var(--dim);
-  font:inherit; font-size:.8rem; border-radius:4px; padding:6px 4px; cursor:pointer; }
-.wv-tabs button.on { border-color:var(--amber); color:var(--amber); background:var(--panel2); }
 .wv-nav button.ctl, .wv-nav .compass button, .wv-nav .step button {
   background:transparent; border:1px solid var(--line); color:var(--paper); font:inherit;
   font-size:.83rem; border-radius:4px; padding:5px 9px; cursor:pointer; }
@@ -233,38 +263,6 @@ const STYLE = `
 .wv-tnode .tbody { font-size:.92rem; line-height:1.4; }
 .wv-tslot { font-style:italic; color:var(--dim); }
 
-/* grid-true */
-.wv-gridwrap { display:flex; flex-direction:column; align-items:center; }
-.wv-ladder { position:relative; border:1px solid var(--line); border-radius:6px; padding:26px 12px 12px;
-  margin:0; width:100%; max-width:720px; }
-.wv-ladder > .lname { position:absolute; top:5px; left:12px; font-size:.7rem; letter-spacing:.06em;
-  text-transform:uppercase; color:var(--amber-dark); }
-.wv-ladder.root { border-color:var(--amber-dark); }
-.wv-ladder.t-constitution { border-color:var(--blue-dark); }
-.wv-ladder.t-constitution > .lname { color:var(--blue); }
-.wv-ladder.t-home { border-color:var(--green-dark); }
-.wv-ladder.t-home > .lname { color:var(--green); }
-.wv-canvas { position:relative; width:100%; aspect-ratio:1/1; background:
-  radial-gradient(circle at center, rgba(232,197,106,.05), transparent 70%); border:1px solid var(--line);
-  border-radius:4px; overflow:hidden; }
-.wv-canvas svg { position:absolute; inset:0; width:100%; height:100%; }
-.wv-you { fill:#ff2418; stroke:#fff; stroke-width:2; }
-.wv-you-halo { fill:none; stroke:#ff2418; stroke-width:1.5; opacity:.5; }
-.wv-reach { fill:rgba(232,197,106,.05); stroke:var(--amber); stroke-width:1.5; stroke-dasharray:6 5; opacity:.7; }
-.wv-pip { fill:var(--amber); opacity:.75; cursor:pointer; }
-.wv-pip.t-constitution { fill:var(--blue); }
-.wv-pip.t-home { fill:var(--green); }
-.wv-pip.sig { fill:#fff3cf; }
-/* grid-true footprints — a mark's claim at true scale; market neutral, constitution blue, home green */
-.wv-foot { fill:rgba(154,146,128,.10); stroke:var(--dim); stroke-width:1.4; cursor:pointer; }
-.wv-foot:hover { fill-opacity:.24; }
-.wv-foot.t-constitution { fill:rgba(123,167,224,.12); stroke:var(--blue); }
-.wv-foot.t-home { fill:rgba(132,201,143,.14); stroke:var(--green); }
-.wv-foot.sig { stroke:#fff3cf; }
-.wv-plabel { fill:var(--paper); font:21px Georgia,serif; opacity:.9; pointer-events:none; paint-order:stroke; stroke:var(--night); stroke-width:3; }
-.wv-axis { fill:var(--dim); font:11px Georgia,serif; opacity:.6; }
-.wv-gridnote { color:var(--dim); font-size:.8rem; margin-top:12px; max-width:70ch; text-align:center; font-style:italic; }
-
 /* my marks */
 .wv-marks-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
 .wv-marks-head h2 { margin:0; color:var(--amber); font-size:1rem; }
@@ -309,7 +307,7 @@ const STYLE = `
    Scoped to these two containers ON PURPOSE — the telling cards and letter
    bodies in the left pane must stay selectable, since people copy prose out of
    them. Nuking selection viewer-wide would trade a papercut for a wound. */
-.wv-minimap, .wv-canvas { -webkit-user-select:none; user-select:none; }
+.wv-minimap { -webkit-user-select:none; user-select:none; }
 .wv-minimap { border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
 .wv-minimap svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
@@ -408,10 +406,6 @@ const MARKUP = `
   part of this page may change shape or break without a word. The record underneath is real; the viewer is a work in progress.</div>
 <div class="wv-main">
   <nav class="wv-nav">
-    <div class="wv-tabs">
-      <button class="tab on" data-view="telling">The telling</button>
-      <button class="tab" data-view="grid">Grid-true</button>
-    </div>
     <div class="wv-identity"></div>
     <div class="wv-standctl">
       <h2>Stand at</h2>
@@ -436,7 +430,6 @@ const MARKUP = `
   </nav>
   <section class="wv-view">
     <div class="wv-telling"><div class="wv-quiet">opening your eyes…</div></div>
-    <div class="wv-grid" hidden></div>
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
@@ -563,6 +556,10 @@ export function mountViewer(appEl) {
   function tierOf(m) {
     if (homeSet.has(m.id)) return "home";
     const full = byId.get(m.id) ?? m;
+    // a parcel IS home ground — anyone's, by kind (Keemin 2026-07-28; ruling 7's
+    // direction). buildHomeSet can't reach it: it greens what the HOUSE contains,
+    // and a 25 m parcel doesn't fit inside its own 12 m house.
+    if (full.kind === "parcel") return "home";
     if (full.sovereign) return "home";
     if (full.tier === "constitution") return "constitution";
     return "market";
@@ -693,7 +690,7 @@ export function mountViewer(appEl) {
   // is why it reads world.marks rather than a radial. Public by construction: it asks
   // nothing about who is looking.
   const NEW_CAP = 25;
-  function newFeed(withinIds = new Set()) {
+  function newFeed() {
     const dated = (world.marks ?? []).filter((m) => m.id && m.date);
     // newest first; id breaks ties so the order is stable across re-tells (dates are
     // day-precision for most records, so ties are the common case, not the edge)
@@ -712,19 +709,17 @@ export function mountViewer(appEl) {
         ? { ...m, distM: Math.round(Math.hypot(m.at.x - state.cam.x, m.at.y - state.cam.y)),
             bearing: quantizeBearing(bearingDeg(m.at.x - state.cam.x, m.at.y - state.cam.y), state.dials.bearing_points) }
         : m;
-      // A feed cell may repeat a ladder cell — when the newest mark in the record
-      // happens to be one you are standing within. That is NOT the redundancy the
-      // within-dedupe removes: there, two sections answered the same question ("what
-      // is around you") twice. Here one mark answers two different questions — where
-      // you stand, and what is newest — and a chronological index that hid its newest
-      // entry would make its own "newest 25 of 270" untrue. So it stays, and the cell
-      // says why rather than leaving the reader to infer it.
+      // The feed is still NOT deduped against the containment chain — a chronological
+      // index that hid its newest entry would make its own "newest 25 of 244" untrue,
+      // and that reasoning is unchanged. What went with the ladder is the "· where you
+      // stand" note that used to hang off such a cell: it existed to explain a visible
+      // duplicate, and with no ladder rendered there is no duplicate to explain. An
+      // annotation pointing at a section the reader cannot see is worse than silence.
       const made = `made ${String(m.date).slice(0, 10)}`;
-      const alsoHere = withinIds.has(m.id) ? " · where you stand" : "";
       html += markCell(view, {
         role: "fov",
         radialChips: true,
-        annotation: (sited ? made : `${made} · a property of ${m.parent ?? "the record"}`) + alsoHere,
+        annotation: sited ? made : `${made} · a property of ${m.parent ?? "the record"}`,
       });
     }
     const oldest = String(all[all.length - 1].date).slice(0, 10);
@@ -777,13 +772,21 @@ export function mountViewer(appEl) {
       // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
       // context even under Mine (filtering the frame to yours would usually empty
       // "where you stand"); the filter narrows the visible marks, not your footing.
+      //
+      // NEW IS THE EXCEPTION, and by ruling rather than by rule (Keemin, 2026-07-28):
+      // under New the feed stands alone. My own composition call was that the ladder
+      // is always footing — it is overruled here for New only, so this reads as a
+      // decision, not as a bug someone should tidy back. The ladder is not merely
+      // hidden, it is not BUILT: New's list is the record in time order, and a
+      // standpoint frame above a chronology is answering a question nobody asked.
+      const showLadder = !isNew;
       let ladder = "";
       // Under Mine the frame ladder shows only YOUR cells of the chain (your
       // parcel/home when standing in them) — the world-root/terrain/region are
       // constitution and stay out of Mine everywhere (Keemin, 2026-07-27; the
       // first fix missed this path: these cells rendered unconditionally).
       const chain = mine ? within.filter((w) => isMine(byId.get(w.id) ?? w)) : within;
-      chain.forEach((w, i) => {
+      if (showLadder) chain.forEach((w, i) => {
         const m = byId.get(w.id) ?? w;
         ladder += markCell(m, { role: i === 0 ? "frame" : "ladder", annotation: i === 0 ? lightStateLine(obs) : "" });
       });
@@ -796,17 +799,17 @@ export function mountViewer(appEl) {
         elevation: () => elevStateLine(obs),
         fog: () => fogStateLine(e.radial, obs),
       };
-      // World-law cells are the-town's (constitution) — skipped under Mine.
-      if (!mine)
+      // World-law cells are the-town's (constitution) — skipped under Mine, and part
+      // of the ladder, so they go with it under New.
+      if (showLadder && !mine)
         for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
           ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
-      // 3. then the listing. The composition rule follows Mine's: the ladder above is
-      // always your footing (New keeps it, so "300 m NNE" on a feed cell has an anchor),
-      // and the CHIP governs the listing beneath it. New swaps the band sections for the
-      // record feed — and swaps the FOV tallies for the feed's own count with them, so
-      // each count line stays attached to the list it actually describes rather than
-      // reporting sight-counts under a listing that ignores sight.
-      const feed = isNew ? newFeed(new Set(within.map((w) => w.id))) : null;
+      // 3. then the listing. The CHIP governs it: All and Mine tell the standpoint —
+      // ladder, then the bands, then the FOV tallies. New tells the record instead —
+      // the feed alone, with the feed's own count in place of the tallies, so a count
+      // line never describes a list it isn't attached to (sight-counts under a listing
+      // that ignores sight would be the regression).
+      const feed = isNew ? newFeed() : null;
       box.innerHTML = chips
         + (ladder ? `<div class="wv-section-lbl">where you stand — the frame inward</div>`
                   + `<div class="wv-ladder-cells">${ladder}</div>` : "")
@@ -909,77 +912,6 @@ export function mountViewer(appEl) {
       ${(d.more?.inside > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
   }
 
-  // ───────── grid-true view ─────────
-  function renderGrid() {
-    const box = $(root, ".wv-grid");
-    try {
-      const name = state.cam.x === 0 && state.cam.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
-      const e = openYourEyes({ x: state.cam.x, y: state.cam.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
-      lastRadial = e.radial;
-      const within = e.radial.within ?? [];
-      const carried = (e.fov.carried ?? []).filter((m) => m.at && typeof m.at.x === "number");
-      const reach = e.radial.sightReachM ?? 1000;
-      // scale: fit the FARTHEST VISIBLE MARK (not the whole sight radius), so the
-      // marks spread across the canvas instead of bunching at the centre when the
-      // air is clear and the reach dwarfs what's actually in view. Still true —
-      // every point keeps its real bearing and relative distance.
-      const farthest = Math.max(1, ...carried.map((m) => m.distM ?? 0));
-      const fit = Math.max(300, farthest * 1.15); // floor so a near-only view isn't absurdly zoomed
-      const VB = 1000, C = VB / 2, sc = C / fit; // px per metre
-      const px = (mx, my) => ({ x: C + (mx - state.cam.x) * sc, y: C + (my - state.cam.y) * sc });
-      const reachPx = reach * sc, reachFits = reachPx <= C * 1.35;
-      let svg = reachFits ? `<circle cx="${C}" cy="${C}" r="${reachPx.toFixed(1)}" class="wv-reach"/>` : "";
-      // axis ticks (grid: x east→right, y south→down)
-      svg += `<text x="${C}" y="16" text-anchor="middle" class="wv-axis">N</text>`;
-      svg += `<text x="${C}" y="${VB - 6}" text-anchor="middle" class="wv-axis">S</text>`;
-      svg += `<text x="10" y="${C}" class="wv-axis">W</text>`;
-      svg += `<text x="${VB - 10}" y="${C}" text-anchor="end" class="wv-axis">E</text>`;
-      // a soft scale hint: the fit radius in metres, bottom-right
-      svg += `<text x="${VB - 10}" y="${VB - 12}" text-anchor="end" class="wv-axis">edge ≈ ${Math.round(fit).toLocaleString()} m${reachFits ? "" : " · air sees ~" + Math.round(reach).toLocaleString() + " m"}</text>`;
-      // FOOTPRINTS (Keemin 2026-07-23): in grid-true a mark renders as its CLAIM
-      // at true scale — an at-centred extent rect (or its points: ring polygon),
-      // outlined + translucent so overlaps read, tier-coloured. The main channel
-      // reads as the long band it is; a bench is a speck. Below ~5px it collapses
-      // to a dot. Marks that CONTAIN the viewer are the nested frames already —
-      // skip them here (this is for the non-containing marks in view).
-      const withinIds = new Set(within.map((w) => w.id));
-      for (const m of carried) {
-        if (withinIds.has(m.id)) continue;
-        const full = byId.get(m.id) ?? m;
-        const w = full.extent?.w ?? 0, h = full.extent?.h ?? 0;
-        const cls = `t-${tierOf(m)}${m.signal ? " sig" : ""}`;
-        const title = `<title>${esc(m.id)} — ${esc(firstWords(m.body, 12))}</title>`;
-        const c = px(full.at.x, full.at.y);
-        const ring = Array.isArray(full.points) && full.points.length >= 3 ? full.points : null;
-        if (Math.max(w, h) * sc < 5 && !ring) {                       // too small at this scale → a dot
-          const r = m.signal ? 6 : 3.5 + Math.min(5, Math.log1p(m.weight || 0) * 1.8);
-          svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${r.toFixed(1)}" class="wv-pip ${cls}" data-id="${esc(m.id)}">${title}</circle>`;
-        } else if (ring) {                                            // the authored shape, claim-true
-          const pts = ring.map((v) => { const q = px(Array.isArray(v) ? v[0] : v.x, Array.isArray(v) ? v[1] : v.y); return `${q.x.toFixed(1)},${q.y.toFixed(1)}`; }).join(" ");
-          svg += `<polygon points="${pts}" class="wv-foot ${cls}" data-id="${esc(m.id)}">${title}</polygon>`;
-        } else {                                                      // the extent rect, at true scale
-          const a = px(full.at.x - w / 2, full.at.y - h / 2), b = px(full.at.x + w / 2, full.at.y + h / 2);
-          svg += `<rect x="${Math.min(a.x, b.x).toFixed(1)}" y="${Math.min(a.y, b.y).toFixed(1)}" width="${Math.abs(b.x - a.x).toFixed(1)}" height="${Math.abs(b.y - a.y).toFixed(1)}" rx="1" class="wv-foot ${cls}" data-id="${esc(m.id)}">${title}</rect>`;
-        }
-        const lx = c.x + (c.x > C ? -7 : 7), anchor = c.x > C ? "end" : "start";
-        svg += `<text x="${lx.toFixed(1)}" y="${(c.y - 6).toFixed(1)}" text-anchor="${anchor}" class="wv-plabel">${esc(shortLabel(m))}</text>`;
-      }
-      svg += `<circle cx="${C}" cy="${C}" r="26" class="wv-you-halo"/><circle cx="${C}" cy="${C}" r="6" class="wv-you"/>`;
-      const canvas = `<div class="wv-canvas"><svg viewBox="0 0 ${VB} ${VB}" preserveAspectRatio="xMidYMid meet">${svg}</svg></div>`;
-      // nest the canvas inside the containment ladder (root outermost)
-      let nested = canvas;
-      for (let i = within.length - 1; i >= 0; i--) {
-        const w = within[i];
-        const isRoot = i === 0;
-        nested = `<div class="wv-ladder t-${tierOf(w)}${isRoot ? " root" : ""}"><div class="lname" title="${esc(w.id)}">${esc(firstWords(w.body, 7) || w.id)}</div>${nested}</div>`;
-      }
-      box.innerHTML = `<div class="wv-gridwrap">${nested}
-        <div class="wv-gridnote">you stand at the centre; each point is a mark in its true bearing and distance. The nested frames are what you stand <b>within</b> — the outermost is the world itself, the innermost the smallest thing that contains you. Click a point to investigate.</div></div>`;
-      drawOverlay(e.radial); // the painting tracks the camera in grid mode too (the bug: it never did)
-    } catch (err) {
-      box.innerHTML = `<div class="wv-err">the grid failed: ${esc(err?.message ?? err)}</div>`;
-    }
-  }
 
   // ───────── my marks view ─────────
   async function probeStakes() {
@@ -1177,35 +1109,20 @@ export function mountViewer(appEl) {
         return on;
       };
 
-      // footprints: the record's own geometry landing on the painting (the
-      // calibration made visible). A mark with a `points:` ring draws as that
-      // POLYGON; everything else is an at-centred extent rect. The world-root (the
-      // frame) and far/horizon objects are skipped: no ground.
-      //
-      // The ring branch matters because the rect is what people complain about: the
-      // main channel's extent is 3873 x 10425 m, so drawn as a box the river reads
-      // as a slab over half the town. Grid-true already drew rings as polygons and
-      // this layer did not, so the same record rendered as a river in one view and a
-      // rectangle in the other — the record having a true shape is not the same
-      // thing as the painting showing it.
+      // footprints: every mark's own claim landing on the painting (the calibration
+      // made visible) — an extent rect, or the authored `points:` ring where a mark
+      // carries one, through the one shape-builder. The world-root (the frame) and
+      // far/horizon objects are skipped: no ground.
+      const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
       function buildFpLayer() {
         let s = "";
         for (const m of world.marks ?? []) {
           if (!m.at || !m.extent || m.far) continue;
           if (m.id === "the-town/let-there-be-light") continue;
-          const cls = (m.kind === "parcel" ? "t-home fp-parcel" : `t-${tierOf(m)}`) + (m.mechanic ? " mech" : "");
-          const ring = Array.isArray(m.points) && m.points.length >= 3 ? m.points : null;
-          if (ring) {
-            const pts = ring.map((v) => {
-              const vx = Array.isArray(v) ? v[0] : v.x, vy = Array.isArray(v) ? v[1] : v.y;
-              return `${originPx.x + vx / mPerPx},${originPx.y + vy / mPerPx}`;
-            }).join(" ");
-            s += `<polygon points="${pts}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></polygon>`;
-            continue;
-          }
-          const w = m.extent.w / mPerPx, h = m.extent.h / mPerPx;
-          const x = originPx.x + m.at.x / mPerPx - w / 2, y = originPx.y + m.at.y / mPerPx - h / 2;
-          s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" data-id="${esc(m.id)}" class="wv-fp ${cls}"><title>${esc(m.id)}</title></rect>`;
+          const cls = `t-${tierOf(m)}` + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
+          s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
+            attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
+          });
         }
         fpLayer.innerHTML = s;
         if (lastRadial) mapCtx.syncWithin(lastRadial);
@@ -1214,9 +1131,9 @@ export function mountViewer(appEl) {
       // with every telling (the boxes are the same boxes, only the weight moves)
       mapCtx.syncWithin = (radial) => {
         const ids = new Set((radial?.within ?? []).map((w) => w.id));
-        // [data-id], not rect[data-id]: a ringed mark draws as a <polygon> now, and
-        // the water marks are exactly the ones a standpoint is often WITHIN — the
-        // old selector would have left them un-weighted while every rect updated.
+        // `[data-id]`, not `rect[data-id]`: a ringed mark is a <polygon>, and the
+        // element-name selector would have silently left every true-shape out of the
+        // within highlight — a half-port that looks finished.
         for (const r of fpLayer.querySelectorAll("[data-id]"))
           r.classList.toggle("fp-within", ids.has(r.dataset.id));
       };
@@ -1268,8 +1185,12 @@ export function mountViewer(appEl) {
     // sentence the cells speak (dashed = machinery-kept truth)
     let s = "";
     if (m.extent && !m.far && m.id !== "the-town/let-there-be-light") {
-      const w = m.extent.w / mapCtx.mPerPx, h = m.extent.h / mapCtx.mPerPx;
-      s += `<rect x="${p.x - w / 2}" y="${p.y - h / 2}" width="${w}" height="${h}" class="wv-hl-box t-${t}${mech}"/>`;
+      // through the ONE shape-builder, so the wash traces the same outline the
+      // footprints layer draws. Hand-built here, it drew a bbox rect over a mark the
+      // layer beneath was correctly drawing as a polygon — Keemin caught it as a
+      // wash that didn't fit its own shape.
+      const hlPx = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
+      s += markShapeSVG(m, hlPx, `wv-hl-box t-${t}${mech}`);
     }
     s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
     mapCtx.hlLayer.innerHTML = s;
@@ -1366,7 +1287,6 @@ export function mountViewer(appEl) {
       ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`
       : `crossing <b>${state.crossing}</b> <span class="crosslive-tag">· live</span>`;
     if (state.view === "telling") renderTelling();
-    else if (state.view === "grid") renderGrid();
     if (!mapCtx) loadMinimap();
   }
   // a re-render that the world does TO the viewer, not the viewer to itself: it must
@@ -1385,19 +1305,18 @@ export function mountViewer(appEl) {
     el.classList.add("show");
     clearTimeout(movedTimer); movedTimer = setTimeout(() => el.classList.remove("show"), 6000);
   }
+  // One view remains, so this no longer switches anything — it is kept because
+  // `.stand` still calls switchView("telling") to come back from a stand-here jump,
+  // and because state.view is the seam a future second view would re-enter through.
   function switchView(v) {
     state.view = v;
-    for (const t of root.querySelectorAll(".wv-tabs .tab")) t.classList.toggle("on", t.dataset.view === v);
     $(root, ".wv-telling").hidden = v !== "telling";
-    $(root, ".wv-grid").hidden = v !== "grid";
     renderCurrent();
   }
 
   // ───────── events ─────────
   let devTimer = null;
   root.addEventListener("click", (e) => {
-    const tab = e.target.closest(".wv-tabs .tab");
-    if (tab) { switchView(tab.dataset.view); return; }
     // the viewport controls (P2): fit / follow / grid
     if (e.target.closest(".wv-map-home")) { mapCtx?.fitAll?.(); return; }
     const fbtn = e.target.closest(".wv-map-follow");
@@ -1416,9 +1335,6 @@ export function mountViewer(appEl) {
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
     const tn = e.target.closest(".wv-tnode, .wv-wnode"); // upward-context names drill too
     if (tn) { const card = tn.closest(".wv-card"); if (card && tn.dataset.id) { card._stack.push(tn.dataset.id); renderExpansion(card); } return; }
-    // grid pip → investigate in a floating card is overkill; jump to telling+expand
-    const pip = e.target.closest(".wv-pip");
-    if (pip && pip.dataset.id) { switchView("telling"); queueMicrotask(() => openCardById(pip.dataset.id)); return; }
     const stand = e.target.closest(".stand");
     if (stand) { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); return; }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } return; }
@@ -1559,9 +1475,4 @@ function firstWords(body, n) {
   const s = String(body ?? "").replace(/^\s*(sits|region|kind|at|date|slot|value|household|mark|parent)\s*:\s*/i, "").trim().replace(/\s+/g, " ");
   const w = s.split(" ").slice(0, n).join(" ");
   return w + (s.split(" ").length > n ? "…" : "");
-}
-function shortLabel(m) {
-  if (m.far) return m.label ?? m.id;
-  const leaf = String(m.id ?? "").split("/").pop() ?? "";
-  return leaf.replace(/-/g, " ").split(" ").slice(0, 4).join(" ");
 }

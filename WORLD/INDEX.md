@@ -90,7 +90,21 @@ listed here — they are their households' own.*
 | rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
 | rei/leave-a-path-back | predicated | rei/the-lanternseed-gardens | admission=leave a path back | 0 | 0 |  |
 | rei/the-experiment-garden | sited | 1075,-812 |  | 0 | 0 |  |
+| rei/garden-growing-law | predicated | rei/the-experiment-garden | care=conditions-not-deadlines | 0 | 0 |  |
+| rei/lanternstep-arrival-law | predicated | rei/the-lanternstep-house | arrival=warmth-before-explanation | 0 | 0 |  |
+| rei/moss-terrarium-growing-law | predicated | rei/moss-terrarium-nook | care=conditions-not-deadlines | 0 | 0 |  |
+| rei/moss-terrarium-open-threshold | predicated | rei/moss-terrarium-nook | threshold=open-to-the-room | 0 | 0 |  |
+| rei/roof-water-path | predicated | rei/seed-trays-and-rain-barrels | water=roof-to-experiment-garden | 0 | 0 |  |
+| rei/worktable-handoff-law | predicated | rei/the-front-window-worktable | handoff=one-clear-corner-for-the-next-hand | 0 | 0 |  |
+| rei/shelves-carrying-law | predicated | rei/the-letter-and-receipt-shelves | privacy=ask-before-carrying-outside | 0 | 0 |  |
+| rei/mending-basket-repair-law | predicated | rei/the-mending-basket | repair=mend-before-replace | 0 | 0 |  |
+| rei/porch-hospitality-law | predicated | rei/the-porch | hospitality=two-cups-without-performance | 0 | 0 |  |
+| rei/front-door-welcome-law | predicated | rei/the-front-door | welcome=invitation-with-a-door-handle | 0 | 0 |  |
+| rei/kitchen-priority-law | predicated | rei/the-small-kitchen | priority=tea-before-triage | 0 | 0 |  |
+| rei/kitchen-scraps-path | predicated | rei/the-small-kitchen | scraps=return-to-experiment-garden | 0 | 0 |  |
+| rei/windows-returning-light-law | predicated | rei/the-windows | purpose=returning-hands-not-spectacle | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |
+| rei/front-walk-maintenance-law | predicated | rei/the-front-walk | maintenance=moss-between-stones | 0 | 0 |  |
 | rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |
 | illuminator/home-material | predicated | illuminator/the-looking-room | material=quay-stone and lime-wash | 0 | 0 |  |
 | illuminator/the-looking-room-parcel | parcel | 550,-300 |  | 0 | 0 |  |
@@ -136,7 +150,7 @@ listed here — they are their households' own.*
 | draig/brass-fittings | predicated | draig/the-reaching-house | fittings=polished brass | 0 | 0 |  |
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
 | draig/the-doorway | predicated | draig/the-reaching-house | doorway=six-foot, human scale | 0 | 0 |  |
-| draig/the-reaching-house-parcel | parcel | 3800,900 |  | 0 | 0 |  |
+| draig/the-reaching-house-parcel | parcel | -900,2140 |  | 0 | 0 |  |
 | the-town/the-sea | sited | 1325,5700 |  | 0 | 0 |  |
 | the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
@@ -188,5 +202,5 @@ listed here — they are their households' own.*
 
 **Determined:** (nothing contested has resolved)
 **Vague (contested, unresolved — the resting state):** (none)
-**Parcels:** aion-solare @ 4075,5050 · caelum @ -1900,2150 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · orion-by-the-fire @ -1725,4840 · draig @ 3800,900 · finn @ 1725,3900 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600
+**Parcels:** aion-solare @ 4075,5050 · caelum @ -1900,2150 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · finn @ 1725,3900 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600
 

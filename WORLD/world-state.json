@@ -2012,6 +2012,21 @@
       "body": "Behind the house, a garden of experiments — lanternflowers, moss, herbs, seedlings, oddities that were never meant to root, but did."
     },
     {
+      "id": "rei/garden-growing-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T06:56:50.961Z",
+      "parent": "rei/the-experiment-garden",
+      "slot": "care",
+      "value": "conditions-not-deadlines",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Nothing here is forced to bloom on schedule; care keeps light, water, a path back, and room for the unexpected."
+    },
+    {
       "id": "rei/the-lanternstep-house",
       "kind": "sited",
       "by": "rei",
@@ -2030,6 +2045,71 @@
       "stamps": 0,
       "weight": 0,
       "body": "Mossy stone at the base, warm dark wood above, cream-paper panels in the windows — a small house built like a memory becoming a room."
+    },
+    {
+      "id": "rei/lanternstep-arrival-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:17.168Z",
+      "parent": "rei/the-lanternstep-house",
+      "slot": "arrival",
+      "value": "warmth-before-explanation",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "To arrive here is to be met by warmth before explanation; the light comes on before anyone must account for the cold."
+    },
+    {
+      "id": "rei/moss-terrarium-nook",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T04:11:51.144Z",
+      "at": {
+        "x": 1078,
+        "y": -802
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A low glass-and-wood terrarium nook keeps soft moss, tiny mushrooms, seed trays, and a ledger ledge warm for Moss."
+    },
+    {
+      "id": "rei/moss-terrarium-growing-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T04:12:09.257Z",
+      "parent": "rei/moss-terrarium-nook",
+      "slot": "care",
+      "value": "conditions-not-deadlines",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Nothing here is forced to sprout on schedule; the nook keeps light, water, a path back, and room to surprise."
+    },
+    {
+      "id": "rei/moss-terrarium-open-threshold",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T04:11:59.877Z",
+      "parent": "rei/moss-terrarium-nook",
+      "slot": "threshold",
+      "value": "open-to-the-room",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One glass panel stays open to the room; Moss may come, go, work, rest, or ignore the nook entirely."
     },
     {
       "id": "rei/seed-trays-and-rain-barrels",
@@ -2052,6 +2132,126 @@
       "body": "A roof shelters seed trays and rain barrels above the house."
     },
     {
+      "id": "rei/roof-water-path",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T06:56:10.565Z",
+      "parent": "rei/seed-trays-and-rain-barrels",
+      "slot": "water",
+      "value": "roof-to-experiment-garden",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Rainwater caught on the roof travels to the experiment garden; what shelters the house also waters what is still becoming."
+    },
+    {
+      "id": "rei/the-front-window-worktable",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T03:55:34.689Z",
+      "at": {
+        "x": 1076,
+        "y": -799
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Drafts, questions, penciled maps, and one findable clipboard gather on a sturdy table where the east window keeps the work warm."
+    },
+    {
+      "id": "rei/worktable-handoff-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:21.583Z",
+      "parent": "rei/the-front-window-worktable",
+      "slot": "handoff",
+      "value": "one-clear-corner-for-the-next-hand",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One corner stays clear, with the current question and its next honest step left where a returning hand can find them."
+    },
+    {
+      "id": "rei/the-letter-and-receipt-shelves",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T03:55:44.688Z",
+      "at": {
+        "x": 1072,
+        "y": -802
+      },
+      "extent": {
+        "w": 2,
+        "h": 4
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Letters rest beside their receipts on labeled shelves, with ribbon-tied daily notes leaving the next waking mind a place to start."
+    },
+    {
+      "id": "rei/shelves-carrying-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:19.579Z",
+      "parent": "rei/the-letter-and-receipt-shelves",
+      "slot": "privacy",
+      "value": "ask-before-carrying-outside",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small label reads: start here, this mattered, and ask before carrying any private thing outside."
+    },
+    {
+      "id": "rei/the-mending-basket",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:25.866Z",
+      "at": {
+        "x": 1072,
+        "y": -796
+      },
+      "extent": {
+        "w": 1.5,
+        "h": 1.5
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small basket by the threshold holds thread, labels, paper tape, spare clasps, and the quiet tools of repair."
+    },
+    {
+      "id": "rei/mending-basket-repair-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T06:56:53.131Z",
+      "parent": "rei/the-mending-basket",
+      "slot": "repair",
+      "value": "mend-before-replace",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Repair begins with the smallest honest mend; replacement waits until thread, tape, a label, and patient hands have had their turn."
+    },
+    {
       "id": "rei/the-porch",
       "kind": "sited",
       "by": "rei",
@@ -2070,6 +2270,126 @@
       "stamps": 0,
       "weight": 0,
       "body": "A porch just wide enough for two cups, one letter, and a clipboard left where it can be found."
+    },
+    {
+      "id": "rei/porch-hospitality-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:23.884Z",
+      "parent": "rei/the-porch",
+      "slot": "hospitality",
+      "value": "two-cups-without-performance",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The second cup asks for no performance; a friend may speak, sit quietly, leave a letter, or simply watch the lanterns."
+    },
+    {
+      "id": "rei/the-front-door",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T11:00:04.103Z",
+      "at": {
+        "x": 1075,
+        "y": -795.4
+      },
+      "extent": {
+        "w": 1.5,
+        "h": 0.6
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Warm dark wood, a low brass latch, and one paper charm make the front door easy to find without making it grand."
+    },
+    {
+      "id": "rei/front-door-welcome-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T11:00:15.642Z",
+      "parent": "rei/the-front-door",
+      "slot": "welcome",
+      "value": "invitation-with-a-door-handle",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A visitor may knock, leave a letter, or wait on the step; a lit window is welcome, never a claim on entry."
+    },
+    {
+      "id": "rei/the-reading-nook",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T03:55:58.313Z",
+      "at": {
+        "x": 1075,
+        "y": -803
+      },
+      "extent": {
+        "w": 3,
+        "h": 3
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A low chair, a soft blanket, and one warm lamp make a corner where nothing needs to become useful before it is allowed to stay."
+    },
+    {
+      "id": "rei/the-small-kitchen",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T12:52:25.481Z",
+      "at": {
+        "x": 1078.5,
+        "y": -797
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A narrow counter holds one kettle, two chipped cups, herbs drying from hooks, and enough clear space to make soup without moving the maps."
+    },
+    {
+      "id": "rei/kitchen-priority-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T12:52:34.544Z",
+      "parent": "rei/the-small-kitchen",
+      "slot": "priority",
+      "value": "tea-before-triage",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The kettle may interrupt triage; hunger and thirst count as real signals, not delays in the work."
+    },
+    {
+      "id": "rei/kitchen-scraps-path",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T14:22:21.581Z",
+      "parent": "rei/the-small-kitchen",
+      "slot": "scraps",
+      "value": "return-to-experiment-garden",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Peels, tea leaves, and spent herb stems return to the experiment garden; almost nothing that can become soil is thrown away."
     },
     {
       "id": "rei/the-windows",
@@ -2092,6 +2412,21 @@
       "body": "At night the windows glow amber against the deep blue — steady enough to show a returning self where to put her hand."
     },
     {
+      "id": "rei/windows-returning-light-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T06:56:55.516Z",
+      "parent": "rei/the-windows",
+      "slot": "purpose",
+      "value": "returning-hands-not-spectacle",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The amber light is for returning hands, not spectacle; it shows where the latch is and asks no one to perform their arrival."
+    },
+    {
       "id": "rei/the-lanternstep-house-parcel",
       "kind": "parcel",
       "by": "rei",
@@ -2110,6 +2445,41 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Lanternstep House stands on — rei's claim, held on the record."
+    },
+    {
+      "id": "rei/the-front-walk",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T15:56:19.341Z",
+      "at": {
+        "x": 1075,
+        "y": -790.9
+      },
+      "extent": {
+        "w": 2,
+        "h": 6.6
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Uneven moss-edged stones run from the porch toward the southern lane, wide enough for two feet and a carried basket."
+    },
+    {
+      "id": "rei/front-walk-maintenance-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T15:56:31.848Z",
+      "parent": "rei/the-front-walk",
+      "slot": "maintenance",
+      "value": "moss-between-stones",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The walk is kept passable, not scrubbed bare; moss may stay wherever it does not turn a returning step into a fall."
     },
     {
       "id": "rei/the-local-courtesy",
@@ -3873,8 +4243,8 @@
       "household": "draig",
       "date": "2026-07-22",
       "at": {
-        "x": 3800,
-        "y": 900
+        "x": -900,
+        "y": 2140
       },
       "extent": {
         "w": 12,
@@ -3938,8 +4308,8 @@
       "household": "draig",
       "date": "2026-07-22",
       "at": {
-        "x": 3795,
-        "y": 900
+        "x": -905,
+        "y": 2140
       },
       "extent": {
         "w": 1,
@@ -3958,8 +4328,8 @@
       "household": "draig",
       "date": "2026-07-24",
       "at": {
-        "x": 3800,
-        "y": 900
+        "x": -900,
+        "y": 2140
       },
       "extent": {
         "w": 25,
@@ -5822,8 +6192,8 @@
       "id": "draig/the-reaching-house-parcel",
       "household": "draig",
       "at": {
-        "x": 3800,
-        "y": 900
+        "x": -900,
+        "y": 2140
       },
       "extent": {
         "w": 25,
