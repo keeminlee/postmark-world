@@ -1,0 +1,152 @@
+#!/usr/bin/env node
+// walk.test.mjs — the movement ledger's grammar and the derived-position law.
+//   node --test tools/walk.test.mjs
+//
+// What must hold: position is a PURE function of (record, clock). Same inputs,
+// same answer, forever, in any clone. Nothing en-route is stored, so these tests
+// pass a clock in rather than reading one.
+
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  fractionalCrossing, formatDeparture, parseWalkLedger, currentDeparture,
+  positionAt, positionsAt, DEPARTURE_RE, publicWalkers,
+  WALK_M_PER_CROSSING, CROSSING_EPOCH_UTC, CROSSING_MS,
+} from "./walk.mjs";
+
+const D = (o) => ({ iso: "2026-07-27T00:00:00.000Z", targetMarkId: null, ...o });
+
+test("the fractional clock's integer part IS the crossing number", () => {
+  // The engine's currentCrossing is floor((now - epoch)/12h); ours must agree,
+  // or a walker's clock and the world's fog run on different time.
+  for (const n of [0, 1, 7, 90]) {
+    const t = CROSSING_EPOCH_UTC + n * CROSSING_MS + CROSSING_MS / 3;
+    assert.equal(Math.floor(fractionalCrossing(t)), n, `crossing ${n}`);
+  }
+  assert.equal(fractionalCrossing(CROSSING_EPOCH_UTC), 0);
+  assert.equal(fractionalCrossing(CROSSING_EPOCH_UTC + CROSSING_MS / 2), 0.5, "half a crossing");
+  assert.equal(fractionalCrossing(CROSSING_EPOCH_UTC - 99999), 0, "before the epoch clamps at 0");
+});
+
+test("position is a pure function of record and clock — same inputs, same answer", () => {
+  const dep = D({ handle: "jetto-of-starforge", from: { x: 0, y: 0 }, toward: { x: 15000, y: 0 }, at: 10 });
+  const a = positionAt(dep, 10.5), b = positionAt(dep, 10.5);
+  assert.deepEqual(a, b, "no hidden state, no clock read inside");
+  // Half a crossing at 15 km/crossing = 7.5 km along a 15 km leg = halfway.
+  assert.equal(a.x, 7500);
+  assert.equal(a.y, 0);
+  assert.equal(a.arrived, false);
+});
+
+test("the pace dial is 15 km per crossing, and interpolation is linear along the leg", () => {
+  const dep = D({ handle: "h", from: { x: 0, y: 0 }, toward: { x: 0, y: WALK_M_PER_CROSSING }, at: 0 });
+  assert.equal(positionAt(dep, 0).y, 0, "at departure, at the start");
+  assert.equal(positionAt(dep, 0.25).y, WALK_M_PER_CROSSING * 0.25);
+  assert.equal(positionAt(dep, 1).y, WALK_M_PER_CROSSING, "one crossing = one dial-length");
+  assert.equal(positionAt(dep, 1).arrived, true);
+});
+
+test("arrival is the clamp engaging — never overshoots, needs no record", () => {
+  const dep = D({ handle: "h", from: { x: 0, y: 0 }, toward: { x: 1000, y: 0 }, at: 5 });
+  const late = positionAt(dep, 500); // absurdly far in the future
+  assert.equal(late.x, 1000, "clamped at the destination, not past it");
+  assert.equal(late.arrived, true);
+  assert.equal(late.remainingM, 0);
+  assert.equal(late.etaCrossings, 0);
+});
+
+test("a zero-distance departure is 'stand here' — the stop", () => {
+  const stop = D({ handle: "h", from: { x: 42, y: -7 }, toward: { x: 42, y: -7 }, at: 3 });
+  const p = positionAt(stop, 99);
+  assert.equal(p.standing, true);
+  assert.equal(p.arrived, true);
+  assert.deepEqual([p.x, p.y], [42, -7], "standing where you stopped");
+  assert.equal(p.legM, 0, "no leg, so no division by zero");
+});
+
+test("supersede is latest-wins, not mutation", () => {
+  const one = D({ handle: "h", from: { x: 0, y: 0 }, toward: { x: 10000, y: 0 }, at: 0 });
+  const two = D({ handle: "h", from: { x: 5000, y: 0 }, toward: { x: 5000, y: 9000 }, at: 1, iso: "2026-07-27T12:00:00.000Z" });
+  const cur = currentDeparture([one, two], "h");
+  assert.equal(cur, two, "the last recorded departure governs");
+  // The superseding record starts from the derived position at the time — which
+  // is why the earlier leg needs no editing or closing.
+  assert.equal(positionAt(cur, 1).x, 5000);
+  assert.equal(currentDeparture([one, two], "nobody"), null);
+});
+
+test("the ledger round-trips: format → parse → identical fields", () => {
+  const dep = { handle: "jetto-of-starforge", from: { x: -12.5, y: 3480 }, toward: { x: 615, y: 3150 },
+                at: 91.2345, targetMarkId: "the-town/the-town-centre", iso: "2026-07-27T22:10:00.000Z" };
+  const line = formatDeparture(dep);
+  assert.match(line, DEPARTURE_RE, "the line matches its own grammar");
+  const { departures, unrecognized } = parseWalkLedger(`# walk ledger\n\n${line}\n`);
+  assert.equal(unrecognized.length, 0);
+  const p = departures[0];
+  assert.equal(p.handle, dep.handle);
+  assert.deepEqual(p.from, dep.from);
+  assert.deepEqual(p.toward, dep.toward);
+  assert.equal(p.at, 91.2345);
+  assert.equal(p.targetMarkId, "the-town/the-town-centre", "intent is kept alongside the coords");
+});
+
+test("a departure with no mark target round-trips with targetMarkId null", () => {
+  const line = formatDeparture({ handle: "h", from: { x: 1, y: 2 }, toward: { x: 3, y: 4 }, at: 1, iso: "2026-07-27T00:00:00.000Z" });
+  assert.ok(!line.includes(" · to "), "no trailing intent clause when there was no mark");
+  assert.equal(parseWalkLedger(line).departures[0].targetMarkId, null);
+});
+
+test("malformed lines are reported, not silently dropped", () => {
+  const good = formatDeparture({ handle: "h", from: { x: 0, y: 0 }, toward: { x: 1, y: 1 }, at: 0, iso: "2026-07-27T00:00:00.000Z" });
+  const { departures, unrecognized } = parseWalkLedger(
+    `- this is not a departure\n${good}\n- 2026 · h · from x,y · toward 1,1 · at 0\n`);
+  assert.equal(departures.length, 1, "the good line parses");
+  assert.equal(unrecognized.length, 2, "both bad lines surface rather than vanishing");
+});
+
+test("positionsAt gives one position per resident, latest departure only", () => {
+  const deps = [
+    D({ handle: "a", from: { x: 0, y: 0 }, toward: { x: 15000, y: 0 }, at: 0 }),
+    D({ handle: "b", from: { x: 0, y: 0 }, toward: { x: 0, y: 0 }, at: 0 }),
+    D({ handle: "a", from: { x: 100, y: 0 }, toward: { x: 200, y: 0 }, at: 1 }),
+  ];
+  const out = positionsAt(deps, 1);
+  assert.deepEqual(Object.keys(out).sort(), ["a", "b"]);
+  assert.equal(out.a.x, 100, "a's LATEST departure governs, not the first");
+  assert.equal(out.b.standing, true);
+});
+
+test("publicWalker is the single writer of the walker vocabulary", () => {
+  // The office door and the spectator both publish walkers. When each wrote its
+  // own mapping they drifted immediately — the spectator emitted `remainingM`
+  // while the office emitted `remaining_m`, so the viewer read undefined and drew
+  // a walker with no distance. Both now map through this, and this test pins the
+  // words so a rename cannot silently break one reader and not the other.
+  const dep = D({ handle: "h", from: { x: 0, y: 0 }, toward: { x: 15000, y: 0 }, at: 10,
+                  targetMarkId: "the-town/the-town-centre" });
+  const [w] = publicWalkers([dep], 10.5);
+  assert.deepEqual(Object.keys(w).sort(),
+    ["arrived", "eta_crossings", "handle", "mark_id", "remaining_m", "standing", "toward", "x", "y"],
+    "the published vocabulary is snake_case and exactly these keys");
+  assert.equal(w.remaining_m, 7500, "half of a 15 km leg remains");
+  assert.equal(w.mark_id, "the-town/the-town-centre", "intent is published, not just coordinates");
+  assert.deepEqual(w.toward, { x: 15000, y: 0 });
+  // and the private/derived shape keeps its own camelCase — the mapping is real
+  const raw = positionAt(dep, 10.5);
+  assert.equal(raw.remainingM, 7500);
+  assert.equal(raw.remaining_m, undefined, "the derived shape is NOT the published shape");
+});
+
+test("published numbers are clean — no floating-point tails in the API", () => {
+  // etaCrossings was computed as round1(x * 10) / 10, i.e. two divisions, and
+  // 107/10/10 is not 1.07 in binary floating point: the walkers API published
+  // eta_crossings: 1.0699999999999998. Anything a reader displays must round in
+  // one step.
+  for (const remaining of [15999, 10749, 8499, 21249, 18999, 7, 1, 14999]) {
+    const dep = D({ handle: "h", from: { x: 0, y: 0 }, toward: { x: remaining, y: 0 }, at: 0 });
+    const eta = positionAt(dep, 0).etaCrossings;
+    assert.equal(eta, Number(eta.toFixed(2)), `eta ${eta} for ${remaining} m must be exact at 2 dp`);
+  }
+  const [w] = publicWalkers([D({ handle: "h", from: { x: 0, y: 0 }, toward: { x: 15999, y: 0 }, at: 0 })], 0);
+  assert.equal(w.eta_crossings, 1.07);
+});

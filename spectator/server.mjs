@@ -19,6 +19,7 @@
 // Run: node server.mjs   → http://localhost:4877
 import { createServer } from "node:http";
 import { readFileSync, existsSync } from "node:fs";
+import { parseWalkLedger, publicWalkers, fractionalCrossing } from "../tools/walk.mjs";
 import { dirname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -94,9 +95,28 @@ createServer(async (req, res) => {
       return json(res, 200, stakesFor(holder));
     }
 
+    // /api/walks — the movement ledger's derived state, for the walkers layer.
+    // `?at=` scrubs the clock: a walker covers 15 km per 12-hour crossing, about
+    // 0.35 m/s, so a live view of a real walk looks frozen. Passing a fractional
+    // crossing lets a reader watch a journey run. Derivation is pure, so a
+    // scrubbed answer is exactly what that instant will really hold.
+    if (p === "/api/walks") {
+      const raw = url.searchParams.get("at");
+      const at = raw === null ? fractionalCrossing() : Number(raw);
+      if (!Number.isFinite(at) || at < 0) return json(res, 400, { error: "at must be a fractional crossing >= 0" });
+      let text = "";
+      try { text = readFileSync(join(ROOT, "WORLD/walk-ledger.md"), "utf8"); } catch { /* no ledger yet */ }
+      const { departures, unrecognized } = parseWalkLedger(text);
+      return json(res, 200, {
+        at, now: fractionalCrossing(),
+        walkers: publicWalkers(departures, at), // one vocabulary, shared with the office door
+        departures: departures.length, unrecognized: unrecognized.length,
+      });
+    }
+
     if (p.startsWith("/atlas/")) return proxyAtlas(res, p);
 
-    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /api/stakes?holder=, /atlas/*" });
+    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /api/stakes?holder=, /api/walks?at=, /atlas/*" });
   } catch (e) {
     json(res, 500, { error: String(e?.message ?? e) });
   }

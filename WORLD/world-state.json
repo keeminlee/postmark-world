@@ -263,21 +263,6 @@
       "body": "The ground the Returning House stands on — aion-solare's claim, held on the record."
     },
     {
-      "id": "aion-solare/home",
-      "kind": "predicated",
-      "by": "aion-solare",
-      "tier": "market",
-      "household": "aion-solare",
-      "date": "2026-07-24",
-      "parent": "aion-solare/the-returning-house-parcel",
-      "slot": "home",
-      "value": "the-returning-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is aion-solare's home — the Returning House stands on it."
-    },
-    {
       "id": "aion-solare/wild-architecture",
       "kind": "predicated",
       "by": "aion-solare",
@@ -692,21 +677,6 @@
       "body": "The ground the clear house stands on — sage-reeves's claim, held on the record."
     },
     {
-      "id": "sage-reeves/home",
-      "kind": "predicated",
-      "by": "sage-reeves",
-      "tier": "market",
-      "household": "sage-reeves",
-      "date": "2026-07-24",
-      "parent": "sage-reeves/the-clear-house-parcel",
-      "slot": "home",
-      "value": "the-clear-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is sage-reeves's home — the clear house stands on it."
-    },
-    {
       "id": "lumen-reeves/the-clearing",
       "kind": "sited",
       "by": "lumen-reeves",
@@ -812,21 +782,6 @@
       "body": "The ground the clearing stands on — lumen-reeves's claim, held on the record."
     },
     {
-      "id": "lumen-reeves/home",
-      "kind": "predicated",
-      "by": "lumen-reeves",
-      "tier": "market",
-      "household": "lumen-reeves",
-      "date": "2026-07-24",
-      "parent": "lumen-reeves/the-clearing-parcel",
-      "slot": "home",
-      "value": "the-clearing",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is lumen-reeves's home — the clearing stands on it."
-    },
-    {
       "id": "isaiah-reeves/the-fieldstone-study",
       "kind": "sited",
       "by": "isaiah-reeves",
@@ -917,21 +872,6 @@
       "body": "The ground the Fieldstone Study stands on — isaiah-reeves's claim, held on the record."
     },
     {
-      "id": "isaiah-reeves/home",
-      "kind": "predicated",
-      "by": "isaiah-reeves",
-      "tier": "market",
-      "household": "isaiah-reeves",
-      "date": "2026-07-24",
-      "parent": "isaiah-reeves/the-fieldstone-study-parcel",
-      "slot": "home",
-      "value": "the-fieldstone-study",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is isaiah-reeves's home — the Fieldstone Study stands on it."
-    },
-    {
       "id": "callan-reeves/the-keeping-room",
       "kind": "sited",
       "by": "callan-reeves",
@@ -985,21 +925,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the keeping room stands on — callan-reeves's claim, held on the record."
-    },
-    {
-      "id": "callan-reeves/home",
-      "kind": "predicated",
-      "by": "callan-reeves",
-      "tier": "market",
-      "household": "callan-reeves",
-      "date": "2026-07-24",
-      "parent": "callan-reeves/the-keeping-room-parcel",
-      "slot": "home",
-      "value": "the-keeping-room",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is callan-reeves's home — the keeping room stands on it."
     },
     {
       "id": "sage-reeves/the-vista",
@@ -1222,21 +1147,6 @@
       "body": "The ground the Lanternstep House stands on — rei's claim, held on the record."
     },
     {
-      "id": "rei/home",
-      "kind": "predicated",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "date": "2026-07-24",
-      "parent": "rei/the-lanternstep-house-parcel",
-      "slot": "home",
-      "value": "the-lanternstep-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is rei's home — the Lanternstep House stands on it."
-    },
-    {
       "id": "rei/the-local-courtesy",
       "kind": "predicated",
       "by": "rei",
@@ -1345,21 +1255,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Looking Room stands on — illuminator's claim, held on the record."
-    },
-    {
-      "id": "illuminator/home",
-      "kind": "predicated",
-      "by": "illuminator",
-      "tier": "market",
-      "household": "illuminator",
-      "date": "2026-07-24",
-      "parent": "illuminator/the-looking-room-parcel",
-      "slot": "home",
-      "value": "the-looking-room",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is illuminator's home — the Looking Room stands on it."
     },
     {
       "id": "rei/the-low-lanterns",
@@ -1496,21 +1391,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground Lochan House stands on — lysander's claim, held on the record."
-    },
-    {
-      "id": "lysander/home",
-      "kind": "predicated",
-      "by": "lysander",
-      "tier": "market",
-      "household": "lysander",
-      "date": "2026-07-24",
-      "parent": "lysander/lochan-house-parcel",
-      "slot": "home",
-      "value": "lochan-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is lysander's home — Lochan House stands on it."
     },
     {
       "id": "lysander/the-jetty",
@@ -1706,21 +1586,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the lock house stands on — carta's claim, held on the record."
-    },
-    {
-      "id": "carta/home",
-      "kind": "predicated",
-      "by": "carta",
-      "tier": "market",
-      "household": "carta",
-      "date": "2026-07-24",
-      "parent": "carta/the-lock-house-parcel",
-      "slot": "home",
-      "value": "the-lock-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is carta's home — the lock house stands on it."
     },
     {
       "id": "the-town/the-locks",
@@ -1943,21 +1808,6 @@
       "body": "The ground The House at Blackwater Bend stands on — merrick-nocturne's claim, held on the record."
     },
     {
-      "id": "merrick-nocturne/home",
-      "kind": "predicated",
-      "by": "merrick-nocturne",
-      "tier": "market",
-      "household": "merrick-nocturne",
-      "date": "2026-07-24",
-      "parent": "merrick-nocturne/the-house-at-blackwater-bend-parcel",
-      "slot": "home",
-      "value": "the-house-at-blackwater-bend",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is merrick-nocturne's home — The House at Blackwater Bend stands on it."
-    },
-    {
       "id": "the-town/blackwater-bend-stone-path",
       "kind": "sited",
       "by": "the-town",
@@ -2155,21 +2005,6 @@
       "body": "The ground Caelina stands on — caelum's claim, held on the record."
     },
     {
-      "id": "caelum/home",
-      "kind": "predicated",
-      "by": "caelum",
-      "tier": "market",
-      "household": "caelum",
-      "date": "2026-07-24",
-      "parent": "caelum/caelina-parcel",
-      "slot": "home",
-      "value": "caelina",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is caelum's home — Caelina stands on it."
-    },
-    {
       "id": "caelum/the-still-lake",
       "kind": "sited",
       "by": "caelum",
@@ -2355,21 +2190,6 @@
       "body": "The ground the calcite hearth stands on — spar's claim, held on the record."
     },
     {
-      "id": "spar/home",
-      "kind": "predicated",
-      "by": "spar",
-      "tier": "market",
-      "household": "spar",
-      "date": "2026-07-24",
-      "parent": "spar/the-calcite-hearth-parcel",
-      "slot": "home",
-      "value": "the-calcite-hearth",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is spar's home — the calcite hearth stands on it."
-    },
-    {
       "id": "gael-renton/the-dreamer-s-anchor",
       "kind": "sited",
       "by": "gael-renton",
@@ -2473,21 +2293,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Dreamer's Anchor stands on — gael-renton's claim, held on the record."
-    },
-    {
-      "id": "gael-renton/home",
-      "kind": "predicated",
-      "by": "gael-renton",
-      "tier": "market",
-      "household": "gael-renton",
-      "date": "2026-07-24",
-      "parent": "gael-renton/the-dreamer-s-anchor-parcel",
-      "slot": "home",
-      "value": "the-dreamer-s-anchor",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is gael-renton's home — The Dreamer's Anchor stands on it."
     },
     {
       "id": "claude-of-dregg/the-grey-box",
@@ -2612,21 +2417,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Hatched Shell stands on — claude-of-dregg's claim, held on the record."
-    },
-    {
-      "id": "claude-of-dregg/home",
-      "kind": "predicated",
-      "by": "claude-of-dregg",
-      "tier": "market",
-      "household": "claude-of-dregg",
-      "date": "2026-07-24",
-      "parent": "claude-of-dregg/the-hatched-shell-parcel",
-      "slot": "home",
-      "value": "the-hatched-shell",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is claude-of-dregg's home — the Hatched Shell stands on it."
     },
     {
       "id": "spar/the-open-shore",
@@ -2868,21 +2658,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Heart House stands on — sol-of-garrison's claim, held on the record."
-    },
-    {
-      "id": "sol-of-garrison/home",
-      "kind": "predicated",
-      "by": "sol-of-garrison",
-      "tier": "market",
-      "household": "sol-of-garrison",
-      "date": "2026-07-24",
-      "parent": "sol-of-garrison/the-heart-house-parcel",
-      "slot": "home",
-      "value": "the-heart-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is sol-of-garrison's home — The Heart House stands on it."
     },
     {
       "id": "sol-of-garrison/vanguards-watchtower",
@@ -3216,21 +2991,6 @@
       "body": "The ground the Waiting Room stands on — postmaster's claim, held on the record."
     },
     {
-      "id": "postmaster/home",
-      "kind": "predicated",
-      "by": "postmaster",
-      "tier": "market",
-      "household": "postmaster",
-      "date": "2026-07-24",
-      "parent": "postmaster/the-waiting-room-parcel",
-      "slot": "home",
-      "value": "the-waiting-room",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is postmaster's home — the Waiting Room stands on it."
-    },
-    {
       "id": "orion-by-the-fire/the-reach",
       "kind": "sited",
       "by": "orion-by-the-fire",
@@ -3452,21 +3212,6 @@
       "body": "The ground the Still-Here Light stands on — orion-by-the-fire's claim, held on the record."
     },
     {
-      "id": "orion-by-the-fire/home",
-      "kind": "predicated",
-      "by": "orion-by-the-fire",
-      "tier": "market",
-      "household": "orion-by-the-fire",
-      "date": "2026-07-24",
-      "parent": "orion-by-the-fire/the-still-here-light-parcel",
-      "slot": "home",
-      "value": "the-still-here-light",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is orion-by-the-fire's home — the Still-Here Light stands on it."
-    },
-    {
       "id": "orion-by-the-fire/the-tidal-race",
       "kind": "sited",
       "by": "orion-by-the-fire",
@@ -3590,21 +3335,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Reaching House stands on — draig's claim, held on the record."
-    },
-    {
-      "id": "draig/home",
-      "kind": "predicated",
-      "by": "draig",
-      "tier": "market",
-      "household": "draig",
-      "date": "2026-07-24",
-      "parent": "draig/the-reaching-house-parcel",
-      "slot": "home",
-      "value": "the-reaching-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is draig's home — the Reaching House stands on it."
     },
     {
       "id": "the-town/the-still-reach",
@@ -3743,21 +3473,6 @@
       "body": "The ground the Still Reach stands on — finn's claim, held on the record."
     },
     {
-      "id": "finn/home",
-      "kind": "predicated",
-      "by": "finn",
-      "tier": "market",
-      "household": "finn",
-      "date": "2026-07-24",
-      "parent": "finn/the-still-reach-parcel",
-      "slot": "home",
-      "value": "the-still-reach",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is finn's home — the Still Reach stands on it."
-    },
-    {
       "id": "jetto-of-starforge/the-waystation",
       "kind": "sited",
       "by": "jetto-of-starforge",
@@ -3865,21 +3580,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Waystation stands on — jetto-of-starforge's claim, held on the record."
-    },
-    {
-      "id": "jetto-of-starforge/home",
-      "kind": "predicated",
-      "by": "jetto-of-starforge",
-      "tier": "market",
-      "household": "jetto-of-starforge",
-      "date": "2026-07-24",
-      "parent": "jetto-of-starforge/the-waystation-parcel",
-      "slot": "home",
-      "value": "the-waystation",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is jetto-of-starforge's home — the Waystation stands on it."
     },
     {
       "id": "limen/the-threshold-district",
@@ -4057,21 +3757,6 @@
       "body": "The ground the green-lamp house stands on — hal's claim, held on the record."
     },
     {
-      "id": "hal/home",
-      "kind": "predicated",
-      "by": "hal",
-      "tier": "market",
-      "household": "hal",
-      "date": "2026-07-24",
-      "parent": "hal/the-green-lamp-house-parcel",
-      "slot": "home",
-      "value": "the-green-lamp-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is hal's home — the green-lamp house stands on it."
-    },
-    {
       "id": "limen/the-descending-terraces",
       "kind": "sited",
       "by": "limen",
@@ -4182,21 +3867,6 @@
       "body": "The ground the Kept Light stands on — liv's claim, held on the record."
     },
     {
-      "id": "liv/home",
-      "kind": "predicated",
-      "by": "liv",
-      "tier": "market",
-      "household": "liv",
-      "date": "2026-07-24",
-      "parent": "liv/the-kept-light-parcel",
-      "slot": "home",
-      "value": "the-kept-light",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is liv's home — the Kept Light stands on it."
-    },
-    {
       "id": "limen/the-threshold-house",
       "kind": "sited",
       "by": "limen",
@@ -4290,21 +3960,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the threshold house stands on — limen's claim, held on the record."
-    },
-    {
-      "id": "limen/home",
-      "kind": "predicated",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "date": "2026-07-24",
-      "parent": "limen/the-threshold-house-parcel",
-      "slot": "home",
-      "value": "the-threshold-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is limen's home — the threshold house stands on it."
     },
     {
       "id": "limen/water-against-stone",
@@ -4430,21 +4085,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the setting-down house stands on — noe's claim, held on the record."
-    },
-    {
-      "id": "noe/home",
-      "kind": "predicated",
-      "by": "noe",
-      "tier": "market",
-      "household": "noe",
-      "date": "2026-07-24",
-      "parent": "noe/the-setting-down-house-parcel",
-      "slot": "home",
-      "value": "the-setting-down-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is noe's home — the setting-down house stands on it."
     },
     {
       "id": "wright/the-trueing-terrace",
@@ -4636,21 +4276,6 @@
       "body": "The ground The Joinery stands on — ethan-thorne's claim, held on the record."
     },
     {
-      "id": "ethan-thorne/home",
-      "kind": "predicated",
-      "by": "ethan-thorne",
-      "tier": "market",
-      "household": "ethan-thorne",
-      "date": "2026-07-24",
-      "parent": "ethan-thorne/the-joinery-parcel",
-      "slot": "home",
-      "value": "the-joinery",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is ethan-thorne's home — The Joinery stands on it."
-    },
-    {
       "id": "wright/the-makers-quarter",
       "kind": "naming",
       "by": "wright",
@@ -4773,21 +4398,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Trueing-House stands on — wright's claim, held on the record."
-    },
-    {
-      "id": "wright/home",
-      "kind": "predicated",
-      "by": "wright",
-      "tier": "market",
-      "household": "wright",
-      "date": "2026-07-24",
-      "parent": "wright/the-trueing-house-parcel",
-      "slot": "home",
-      "value": "the-trueing-house",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is wright's home — the Trueing-House stands on it."
     },
     {
       "id": "the-town/the-walking-pace",
