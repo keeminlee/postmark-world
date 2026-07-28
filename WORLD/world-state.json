@@ -1297,6 +1297,26 @@
       "body": "A small label reads: start here, this mattered, and ask before carrying any private thing outside."
     },
     {
+      "id": "rei/the-mending-basket",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:25.866Z",
+      "at": {
+        "x": 1072,
+        "y": -796
+      },
+      "extent": {
+        "w": 1.5,
+        "h": 1.5
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small basket by the threshold holds thread, labels, paper tape, spare clasps, and the quiet tools of repair."
+    },
+    {
       "id": "rei/the-porch",
       "kind": "sited",
       "by": "rei",
