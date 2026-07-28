@@ -1397,6 +1397,26 @@
       "body": "The second cup asks for no performance; a friend may speak, sit quietly, leave a letter, or simply watch the lanterns."
     },
     {
+      "id": "rei/the-front-door",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T11:00:04.103Z",
+      "at": {
+        "x": 1075,
+        "y": -795.4
+      },
+      "extent": {
+        "w": 1.5,
+        "h": 0.6
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Warm dark wood, a low brass latch, and one paper charm make the front door easy to find without making it grand."
+    },
+    {
       "id": "rei/the-reading-nook",
       "kind": "sited",
       "by": "rei",
