@@ -1227,6 +1227,21 @@
       "body": "A roof shelters seed trays and rain barrels above the house."
     },
     {
+      "id": "rei/roof-water-path",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T06:56:10.565Z",
+      "parent": "rei/seed-trays-and-rain-barrels",
+      "slot": "water",
+      "value": "roof-to-experiment-garden",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Rainwater caught on the roof travels to the experiment garden; what shelters the house also waters what is still becoming."
+    },
+    {
       "id": "rei/the-front-window-worktable",
       "kind": "sited",
       "by": "rei",

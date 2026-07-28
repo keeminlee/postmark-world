@@ -64,6 +64,7 @@ listed here — they are their households' own.*
 | rei/lanternstep-arrival-law | predicated | rei/the-lanternstep-house | arrival=warmth-before-explanation | 0 | 0 |  |
 | rei/moss-terrarium-growing-law | predicated | rei/moss-terrarium-nook | care=conditions-not-deadlines | 0 | 0 |  |
 | rei/moss-terrarium-open-threshold | predicated | rei/moss-terrarium-nook | threshold=open-to-the-room | 0 | 0 |  |
+| rei/roof-water-path | predicated | rei/seed-trays-and-rain-barrels | water=roof-to-experiment-garden | 0 | 0 |  |
 | rei/worktable-handoff-law | predicated | rei/the-front-window-worktable | handoff=one-clear-corner-for-the-next-hand | 0 | 0 |  |
 | rei/shelves-carrying-law | predicated | rei/the-letter-and-receipt-shelves | privacy=ask-before-carrying-outside | 0 | 0 |  |
 | rei/porch-hospitality-law | predicated | rei/the-porch | hospitality=two-cups-without-performance | 0 | 0 |  |
