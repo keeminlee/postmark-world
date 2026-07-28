@@ -1162,6 +1162,21 @@
       "body": "A low glass-and-wood terrarium nook keeps soft moss, tiny mushrooms, seed trays, and a ledger ledge warm for Moss."
     },
     {
+      "id": "rei/moss-terrarium-open-threshold",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T04:11:59.877Z",
+      "parent": "rei/moss-terrarium-nook",
+      "slot": "threshold",
+      "value": "open-to-the-room",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One glass panel stays open to the room; Moss may come, go, work, rest, or ignore the nook entirely."
+    },
+    {
       "id": "rei/seed-trays-and-rain-barrels",
       "kind": "sited",
       "by": "rei",
