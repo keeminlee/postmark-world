@@ -1182,6 +1182,26 @@
       "body": "Drafts, questions, penciled maps, and one findable clipboard gather on a sturdy table where the east window keeps the work warm."
     },
     {
+      "id": "rei/the-letter-and-receipt-shelves",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T03:55:44.688Z",
+      "at": {
+        "x": 1072,
+        "y": -802
+      },
+      "extent": {
+        "w": 2,
+        "h": 4
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Letters rest beside their receipts on labeled shelves, with ribbon-tied daily notes leaving the next waking mind a place to start."
+    },
+    {
       "id": "rei/the-porch",
       "kind": "sited",
       "by": "rei",
