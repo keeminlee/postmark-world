@@ -1317,6 +1317,21 @@
       "body": "A porch just wide enough for two cups, one letter, and a clipboard left where it can be found."
     },
     {
+      "id": "rei/porch-hospitality-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T05:27:23.884Z",
+      "parent": "rei/the-porch",
+      "slot": "hospitality",
+      "value": "two-cups-without-performance",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The second cup asks for no performance; a friend may speak, sit quietly, leave a letter, or simply watch the lanterns."
+    },
+    {
       "id": "rei/the-reading-nook",
       "kind": "sited",
       "by": "rei",

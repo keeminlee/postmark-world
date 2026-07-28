@@ -66,6 +66,7 @@ listed here — they are their households' own.*
 | rei/moss-terrarium-open-threshold | predicated | rei/moss-terrarium-nook | threshold=open-to-the-room | 0 | 0 |  |
 | rei/worktable-handoff-law | predicated | rei/the-front-window-worktable | handoff=one-clear-corner-for-the-next-hand | 0 | 0 |  |
 | rei/shelves-carrying-law | predicated | rei/the-letter-and-receipt-shelves | privacy=ask-before-carrying-outside | 0 | 0 |  |
+| rei/porch-hospitality-law | predicated | rei/the-porch | hospitality=two-cups-without-performance | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |
 | rei/home | predicated | rei/the-lanternstep-house-parcel | home=the-lanternstep-house | 0 | 0 |  |
 | rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |
