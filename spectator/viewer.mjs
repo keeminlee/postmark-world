@@ -18,7 +18,7 @@
 // the office has explaining to do.
 import { orient, openYourEyes, investigate, containmentChain } from "../tools/world-verbs.mjs";
 import { assembleWorld } from "../tools/world-build.mjs";
-import { DIALS } from "../tools/world-engine.mjs";
+import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { contains, rect } from "../tools/geometry.mjs"; // read-only: to color a home + its descendants green
 
 const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
@@ -464,7 +464,7 @@ export function mountViewer(appEl) {
     crossing: liveCrossing(),           // default to the live crossing
     crossingOverride: false,            // a dev/principal time-travel override
     view: "telling",
-    markFilter: "all",                  // "all" | "mine" — the fused left-pane filter (signed-in)
+    markFilter: "all",                  // "all" | "mine" | "new" — the left-pane filter ("mine" needs an identity)
     handle: "wright",
     dials: { ...DIALS },
     stakesLocal: null,      // null=unknown, true/false after probe
@@ -577,7 +577,11 @@ export function mountViewer(appEl) {
     // the only name that bearing has.
     const brg = m.bearing
       ? `${bearingArrow(m.bearing)}${esc(BEARING_LONG[m.bearing] ?? m.bearing)}` : "";
-    c.push(`<span class="wv-chip">${esc(dist)}${dist && brg ? " · " : ""}${brg}</span>`);
+    // only when there is something to say: the New feed carries marks with no
+    // geometry at all (a predicate has no distance and no bearing), and an empty
+    // pill is worse than no pill.
+    const where = `${esc(dist)}${dist && brg ? " · " : ""}${brg}`;
+    if (where) c.push(`<span class="wv-chip">${where}</span>`);
     if (m.weight > 0) c.push(`<span class="wv-chip stamps">✦${m.weight}</span>`);
     if (m.signal) c.push(`<span class="wv-chip signal">its light carries</span>`);
     if (m.dim != null && m.dim < 1) c.push(`<span class="wv-chip dim">dim</span>`);
@@ -669,6 +673,54 @@ export function mountViewer(appEl) {
       ? `<div class="wv-quiet">none of yours tells from here.</div>`
       : `<div class="wv-quiet">nothing tells from here — walk, or wait for clearer air.</div>`;
   }
+  // ───────── the New feed ─────────
+  // "a 'New' chip … so everyone can see the new marks being made regardless of their
+  // distance or visibility" (Keemin, 2026-07-27). So this reads the WHOLE record,
+  // date-descending, and deliberately bypasses the FOV — no fog, no sight radius, no
+  // budget, no occlusion. The culling is precisely what this chip opts out of, which
+  // is why it reads world.marks rather than a radial. Public by construction: it asks
+  // nothing about who is looking.
+  const NEW_CAP = 25;
+  function newFeed(withinIds = new Set()) {
+    const dated = (world.marks ?? []).filter((m) => m.id && m.date);
+    // newest first; id breaks ties so the order is stable across re-tells (dates are
+    // day-precision for most records, so ties are the common case, not the edge)
+    const all = dated.slice().sort((a, b) =>
+      String(b.date).localeCompare(String(a.date)) || String(a.id).localeCompare(String(b.id)));
+    const shown = all.slice(0, NEW_CAP), rest = all.slice(NEW_CAP);
+    if (!shown.length) return { html: `<div class="wv-quiet">no marks in the record yet.</div>`, count: "" };
+
+    let html = "";
+    for (const m of shown) {
+      // distance and bearing FROM WHERE YOU STAND — the chip answers "what is new AND
+      // where is it from here". Marks with no geometry (predicated/naming) name their
+      // parent instead, since "300 m away" is meaningless for a property of a thing.
+      const sited = m.at && typeof m.at.x === "number";
+      const view = sited
+        ? { ...m, distM: Math.round(Math.hypot(m.at.x - state.cam.x, m.at.y - state.cam.y)),
+            bearing: quantizeBearing(bearingDeg(m.at.x - state.cam.x, m.at.y - state.cam.y), state.dials.bearing_points) }
+        : m;
+      // A feed cell may repeat a ladder cell — when the newest mark in the record
+      // happens to be one you are standing within. That is NOT the redundancy the
+      // within-dedupe removes: there, two sections answered the same question ("what
+      // is around you") twice. Here one mark answers two different questions — where
+      // you stand, and what is newest — and a chronological index that hid its newest
+      // entry would make its own "newest 25 of 270" untrue. So it stays, and the cell
+      // says why rather than leaving the reader to infer it.
+      const made = `made ${String(m.date).slice(0, 10)}`;
+      const alsoHere = withinIds.has(m.id) ? " · where you stand" : "";
+      html += markCell(view, {
+        role: "fov",
+        radialChips: true,
+        annotation: (sited ? made : `${made} · a property of ${m.parent ?? "the record"}`) + alsoHere,
+      });
+    }
+    const oldest = String(all[all.length - 1].date).slice(0, 10);
+    const count = rest.length
+      ? `newest ${shown.length} of ${all.length} marks · ${rest.length} older, back to ${oldest}`
+      : `all ${all.length} marks in the record, newest first (back to ${oldest})`;
+    return { html, count };
+  }
   function tallies(radial) {
     const c = radial?.counts ?? {}, agg = radial?.aggregate ?? {}, parts = [];
     if (c.candidates != null) parts.push(`${c.shown ?? "?"} told of ${c.visible ?? "?"} in view (${c.candidates} in range)`);
@@ -702,10 +754,14 @@ export function mountViewer(appEl) {
       lastRadial = e.radial;
       const within = e.radial.within ?? [];
       const obs = e.radial.observer ?? {};
-      // the All / Mine filter — a signed-in affordance (keyless has no "mine").
-      const chips = signedIn
-        ? `<div class="wv-mfilter"><button class="wv-fchip${!mine ? " on" : ""}" data-mfilter="all">All</button><button class="wv-fchip${mine ? " on" : ""}" data-mfilter="mine">Mine</button></div>`
-        : "";
+      const isNew = state.markFilter === "new";
+      // All and New are PUBLIC — "everyone" is the point of New, so the row now
+      // renders signed out too. Mine stays a signed-in affordance: a keyless visitor
+      // has no "mine" to show.
+      const fchip = (key, label) =>
+        `<button class="wv-fchip${state.markFilter === key ? " on" : ""}" data-mfilter="${key}">${label}</button>`;
+      const chips = `<div class="wv-mfilter">${fchip("all", "All")}`
+        + `${signedIn ? fchip("mine", "Mine") : ""}${fchip("new", "New")}</div>`;
       // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
       // context even under Mine (filtering the frame to yours would usually empty
       // "where you stand"); the filter narrows the visible marks, not your footing.
@@ -732,13 +788,23 @@ export function mountViewer(appEl) {
       if (!mine)
         for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
           ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
-      // 3. then the visible rest, outward by bearing — under Mine, only yours.
+      // 3. then the listing. The composition rule follows Mine's: the ladder above is
+      // always your footing (New keeps it, so "300 m NNE" on a feed cell has an anchor),
+      // and the CHIP governs the listing beneath it. New swaps the band sections for the
+      // record feed — and swaps the FOV tallies for the feed's own count with them, so
+      // each count line stays attached to the list it actually describes rather than
+      // reporting sight-counts under a listing that ignores sight.
+      const feed = isNew ? newFeed(new Set(within.map((w) => w.id))) : null;
       box.innerHTML = chips
         + (ladder ? `<div class="wv-section-lbl">where you stand — the frame inward</div>`
                   + `<div class="wv-ladder-cells">${ladder}</div>` : "")
-        + `<div class="wv-section-lbl">what tells from here${mine ? " · yours" : ""}</div>`
-        + `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
-        + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`;
+        + (isNew
+          ? `<div class="wv-section-lbl">new marks — the whole record, newest first</div>`
+            + `<div class="wv-cards">${feed.html}</div>`
+            + `<div class="wv-tallies">${esc(feed.count)}</div>`
+          : `<div class="wv-section-lbl">what tells from here${mine ? " · yours" : ""}</div>`
+            + `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
+            + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
       if (mine) renderMineTail(box, e.radial);  // elsewhere index + stakes, appended
       drawOverlay(e.radial);
     } catch (err) {
@@ -1305,7 +1371,10 @@ export function mountViewer(appEl) {
     // keep state.handle valid (the stakes section's holder); no "mine" when signed out.
     const handles = state.whoami?.handles ?? [];
     if (handles.length && !handles.includes(state.handle)) state.handle = handles[0];
-    if (!handles.length) state.markFilter = "all";
+    // only "mine" needs an identity; a signed-out visitor sitting on "new" keeps it
+    // (this used to reset any filter to "all", which would have snapped New away the
+    // moment whoami resolved keyless — i.e. for every public visitor)
+    if (!handles.length && state.markFilter === "mine") state.markFilter = "all";
     renderPresets();
     renderIdentity();
     if (state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
