@@ -169,6 +169,15 @@ export function pointWalkDestination(point, marks = []) {
   return { x: Math.round(x), y: Math.round(y), inside };
 }
 
+export function disciplineAtlasImages(root) {
+  const images = [...root.querySelectorAll("img, image")];
+  for (const image of images) {
+    image.setAttribute("loading", "lazy");
+    image.setAttribute("decoding", "async");
+  }
+  return images.length;
+}
+
 export const MARK_SNAP_RADIUS_PX = 18;
 
 export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
@@ -1172,6 +1181,9 @@ export function mountViewer(appEl) {
     try {
       const html = await fetch("/atlas/town.html").then((r) => { if (!r.ok) throw new Error(`atlas HTTP ${r.status}`); return r.text(); });
       const doc = new DOMParser().parseFromString(html, "text/html");
+      // The atlas is a synced artifact, so load discipline belongs here at its
+      // consumption boundary. Mutate the detached parse before any node mounts.
+      disciplineAtlasImages(doc);
       const svg = doc.querySelector("svg");
       if (!svg) throw new Error("no svg in the painting");
       const g = data.skeleton._grid ?? {};

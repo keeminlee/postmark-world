@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   clampStakeAmount,
   createMarkInteractionStore,
+  disciplineAtlasImages,
   formatEtaCrossings,
   MARK_SNAP_RADIUS_PX,
   officeBase,
@@ -15,6 +16,24 @@ import {
   viewerAxisState,
   viewerFilterControls,
 } from "../spectator/viewer.mjs";
+
+test("detached atlas images get lazy loading before mount", () => {
+  const attributes = [{}, {}, {}];
+  const root = {
+    querySelectorAll: (selector) => {
+      assert.equal(selector, "img, image");
+      return attributes.map((record) => ({
+        setAttribute: (name, value) => { record[name] = value; },
+      }));
+    },
+  };
+  assert.equal(disciplineAtlasImages(root), 3);
+  assert.deepEqual(attributes, [
+    { loading: "lazy", decoding: "async" },
+    { loading: "lazy", decoding: "async" },
+    { loading: "lazy", decoding: "async" },
+  ]);
+});
 
 test("the lens and one filter row stay orthogonal", () => {
   const states = [
