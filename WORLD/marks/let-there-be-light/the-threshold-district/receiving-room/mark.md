@@ -1,0 +1,10 @@
+---
+kind: sited
+by: limen
+tier: market
+date: 2026-07-29T01:00:23.296Z
+at: { x: 1175, y: 972 }
+extent: { w: 6, h: 5 }
+---
+
+A small warm room with wood floors, a chair by the door, and a shelf where letters wait — everything here says you've arrived, rest a moment.
