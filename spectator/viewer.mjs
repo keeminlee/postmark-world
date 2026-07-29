@@ -4,14 +4,14 @@
 // one viewer; the site serves this same file as a standalone island). It owns the
 // markup, the styles, and every interaction; the host page is a thin shell that
 // calls `mountViewer(appEl)`. It computes the field of view CLIENT-SIDE from the
-// town's public record — read-only by construction: the walk/stake/mark verbs are
-// never even imported, so nothing here can be written anywhere.
+// town's public record. Signed-in acts still cross the office door: this module
+// previews the exact intent, then sends one credentialed request on confirmation.
 //
 // It runs in two habitats and feature-detects which without a config flag:
-//   • LOCAL (spectator/server.mjs)  — /WORLD/*.json off disk, /api/stakes live,
-//     /atlas/* proxied to postmark.town. The rich dev surface.
+//   • LOCAL (spectator/server.mjs)  — /WORLD/*.json off disk, /api/walks live,
+//     /atlas/* proxied to postmark.town. Signed-in controls feature-detect off.
 //   • ISLAND (postmark.town/world)  — world-state/skeleton from raw.githubusercontent,
-//     /atlas same-origin, the stakes half hidden (no server to ask).
+//     /atlas same-origin, with signed-in acts crossing the same-origin office.
 //
 // One engine, imported the clone's way (relative into the package): the browser
 // runs the exact library anyone can `node`. If this page and a clone disagree,
@@ -21,16 +21,33 @@ import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { contains, rect } from "../tools/geometry.mjs"; // read-only: to color a home + its descendants green
 import { markClass } from "../tools/mark-class.mjs"; // the ONE class rule: in a parcel's directory → home
+import { fractionalCrossing, positionAt } from "../tools/walk.mjs";
+import { crossingsOnSegment } from "../tools/water.mjs";
 
 const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
 const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const OFFICE_DEFAULT = "/api";
+const ACT_AS_KEY = "pm.world.act_as";
 
-export function viewerAxisState({ identityResolved = false, baseLayer = "true", justMine = false } = {}) {
+export function officeBase(storage) {
+  try {
+    const source = storage === undefined && typeof window !== "undefined" ? window.localStorage : storage;
+    return String(source?.getItem("pm.office.base") || OFFICE_DEFAULT).replace(/\/+$/, "");
+  } catch {
+    return OFFICE_DEFAULT;
+  }
+}
+
+const officeUrl = (path) => `${officeBase()}${path.startsWith("/") ? path : `/${path}`}`;
+
+export function viewerAxisState({ identityResolved = false, baseLayer = "true", markFilter = "everything" } = {}) {
   return {
     controls: identityResolved,
-    base: identityResolved && baseLayer === "mine" ? "My World" : "the True World",
-    relation: identityResolved && justMine ? "just mine" : "everything",
+    base: identityResolved && baseLayer === "mine" ? "My World" : "True World",
+    filter: markFilter === "new" ? "new"
+      : identityResolved && markFilter === "mine" ? "just mine"
+      : "everything",
   };
 }
 
@@ -39,12 +56,75 @@ export function viewerAxisControls(options = {}) {
   if (!axis.controls) return "";
   const base = (key, label) =>
     `<button class="wv-fchip${axis.base === label ? " on" : ""}" data-world-base="${key}">${label}</button>`;
-  const relation = (mine, label) =>
-    `<button class="wv-fchip${axis.relation === label ? " on" : ""}" data-mine-filter="${mine ? "mine" : "everything"}">${label}</button>`;
-  return `<div class="wv-axes">`
-    + `<div class="wv-axis"><span>world</span>${base("true", "the True World")}${base("mine", "My World")}</div>`
-    + `<div class="wv-axis"><span>marks</span>${relation(false, "everything")}${relation(true, "just mine")}</div>`
+  return `<div class="wv-lens" aria-label="World lens">`
+    + `<span>world</span>${base("true", "True World")}<span class="wv-lens-swap">⟷</span>${base("mine", "My World")}`
     + `</div>`;
+}
+
+export function viewerFilterControls(options = {}) {
+  const axis = viewerAxisState(options);
+  const chip = (key, label, disabled = false) =>
+    `<button class="wv-fchip${axis.filter === label ? " on" : ""}" data-mark-filter="${key}"${disabled ? ` disabled title="sign in as a resident to see just yours"` : ""}>${label}</button>`;
+  return `<div class="wv-mfilter" aria-label="Marks filter">`
+    + chip("everything", "everything")
+    + chip("mine", "just mine", !axis.controls)
+    + chip("new", "new")
+    + `</div>`;
+}
+
+export function townDate(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const part = (type) => parts.find((entry) => entry.type === type)?.value ?? "";
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+export function previewStakeLedgerLine({ mode = "stake", date = townDate(), handle, mark, stamps } = {}) {
+  const n = Number(stamps);
+  if (!handle || !mark || !Number.isInteger(n) || n < 1) return "";
+  return mode === "unstake"
+    ? `- ${date} · stake:world-mark/${mark} → ${handle} · ${n} · for: unstake · sig: …`
+    : `- ${date} · ${handle} → stake:world-mark/${mark} · ${n} · via: api · sig: …`;
+}
+
+export function worldStakeAnswer(answer = {}, mode = "stake") {
+  if (answer.error === "bounce" || answer.defect) {
+    return {
+      kind: "refusal",
+      text: [answer.defect || "the door refused the line", answer.hint].filter(Boolean).join(" — "),
+    };
+  }
+  const applied = Number(answer.applied ?? 0);
+  if (applied <= 0) {
+    return {
+      kind: "refusal",
+      text: answer.reason || `No stamps were ${mode === "unstake" ? "returned" : "staked"}.`,
+    };
+  }
+  const requested = Number(answer.requested ?? applied);
+  const verb = mode === "unstake" ? "returned" : "staked";
+  const clipped = answer.clipped || applied < requested
+    ? ` The door clipped the request from ${requested} to ${applied}.`
+    : "";
+  return {
+    kind: "success",
+    text: `${applied} stamp${applied === 1 ? "" : "s"} ${verb} on ${answer.mark}.${clipped}`,
+  };
+}
+
+export function previewWalkLeg({ from, toward, targetExtent = null, skeleton = null } = {}) {
+  if (![from?.x, from?.y, toward?.x, toward?.y].every(Number.isFinite)) return null;
+  const at = fractionalCrossing();
+  const position = positionAt({ from, toward, at, targetExtent }, at);
+  return {
+    distanceM: position.legM,
+    etaCrossings: position.etaCrossings,
+    viaCrossings: skeleton ? crossingsOnSegment(from, toward, skeleton) : [],
+  };
 }
 
 const BEARING_LONG = { N: "north", NNE: "north-northeast", NE: "northeast", ENE: "east-northeast", E: "east", ESE: "east-southeast", SE: "southeast", SSE: "south-southeast", S: "south", SSW: "south-southwest", SW: "southwest", WSW: "west-southwest", W: "west", WNW: "west-northwest", NW: "northwest", NNW: "north-northwest" };
@@ -231,6 +311,29 @@ const STYLE = `
 .wv-card.far { border-left-color:var(--line); font-style:italic; }
 .wv-card .cbody { line-height:1.45; }
 .wv-card .cmeta { margin-top:7px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
+.wv-card .wv-cell-actions { display:flex; gap:5px; flex-wrap:wrap; margin-left:auto; }
+.wv-cell-act { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
+  border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
+.wv-cell-act:hover { background:var(--panel2); }
+.wv-cell-act.unstake { border-color:var(--green-dark); color:var(--green); }
+.wv-act-sheet { margin-top:10px; padding:10px; border:1px dashed var(--amber-dark);
+  border-radius:4px; background:rgba(20,23,29,.72); cursor:default; }
+.wv-act-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.wv-act-head b { color:var(--amber); font-size:.86rem; }
+.wv-act-close { border:0; background:transparent; color:var(--dim); cursor:pointer; font:inherit; }
+.wv-act-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:8px; }
+.wv-act-row label { color:var(--dim); font-size:.72rem; }
+.wv-act-row input { width:7rem; background:var(--night); color:var(--paper); border:1px solid var(--line);
+  border-radius:4px; padding:4px 7px; font:inherit; }
+.wv-act-row button { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
+  border-radius:4px; padding:4px 8px; font:inherit; font-size:.72rem; cursor:pointer; }
+.wv-act-row button:disabled { opacity:.45; cursor:not-allowed; }
+.wv-act-preview { margin-top:9px; }
+.wv-act-preview pre { margin:5px 0; padding:8px; white-space:pre-wrap; overflow-wrap:anywhere;
+  background:#0d0f13; border:1px solid var(--line); color:var(--paper); font:12px/1.45 Consolas,Menlo,monospace; }
+.wv-act-note, .wv-act-answer { margin:6px 0 0; color:var(--dim); font-size:.75rem; line-height:1.4; }
+.wv-act-answer.success { color:var(--green); }
+.wv-act-answer.refusal { color:var(--err); }
 .wv-chip { font-size:.7rem; letter-spacing:.04em; border:1px solid var(--line); border-radius:999px;
   padding:1px 8px; color:var(--dim); white-space:nowrap; }
 .wv-chip.stamps { border-color:var(--amber-dark); color:var(--amber); }
@@ -301,15 +404,16 @@ const STYLE = `
   border-radius:999px; padding:1px 8px; }
 .wv-mrow .stand:hover { background:var(--panel2); }
 
-/* the fused left pane: world/relation axes + All/New listing mode */
-.wv-axes { display:flex; flex-wrap:wrap; gap:8px 14px; margin:0 0 8px; }
-.wv-axis { display:flex; align-items:center; gap:6px; }
-.wv-axis > span { color:var(--dim); font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; }
+/* one lens at the view's top, then one marks vocabulary beneath it */
+.wv-lens { display:flex; align-items:center; gap:7px; margin:0 0 9px; }
+.wv-lens > span:first-child { color:var(--dim); font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; }
+.wv-lens-swap { color:var(--dim); font-size:.76rem; }
 .wv-mfilter { display:flex; gap:6px; margin:0 0 12px; }
 .wv-fchip { background:transparent; border:1px solid var(--line); color:var(--dim); border-radius:999px;
   padding:3px 15px; font-size:.72rem; letter-spacing:.05em; cursor:pointer; }
 .wv-fchip:hover { border-color:var(--amber-dark); color:var(--amber); }
 .wv-fchip.on { border-color:var(--amber); color:var(--amber); background:var(--panel2); }
+.wv-fchip:disabled { opacity:.38; cursor:not-allowed; }
 .wv-mine-tail { margin-top:4px; }
 .wv-mine-empty { margin:10px 0; font-style:italic; }
 .wv-elsewhere { display:flex; flex-direction:column; gap:6px; }
@@ -407,6 +511,25 @@ const STYLE = `
 .wv-nav .wv-signout:hover { color:var(--amber); }
 .wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
 .wv-nav .handleopt.on { border-color:var(--green-dark); color:var(--green); }
+.wv-nav .wv-identity h2 { margin-top:0; }
+.wv-nav .wv-act-note { margin-top:7px; }
+.wv-walkdesk { margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
+.wv-walkdesk h2 { margin-top:0; }
+.wv-youhere { color:var(--dim); font-size:.76rem; margin-bottom:8px; }
+.wv-youhere b { color:var(--green); }
+.wv-walkfield { display:block; margin-top:7px; color:var(--dim); font-size:.7rem; }
+.wv-walkfield select, .wv-walkfield input { width:100%; margin-top:3px; background:var(--night);
+  color:var(--paper); border:1px solid var(--line); border-radius:4px; padding:5px 6px; font:inherit; }
+.wv-pointfields { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.wv-walkdesk .wv-walk-preview-btn, .wv-walkdesk .wv-walk-confirm {
+  width:100%; margin-top:8px; background:transparent; border:1px solid var(--amber-dark);
+  color:var(--amber); border-radius:4px; padding:5px 8px; font:inherit; font-size:.76rem; cursor:pointer; }
+.wv-walkdesk .wv-walk-confirm:disabled { opacity:.45; cursor:not-allowed; }
+.wv-walk-preview { margin-top:8px; padding:8px; border:1px dashed var(--amber-dark); border-radius:4px;
+  color:var(--paper); font-size:.75rem; line-height:1.45; }
+.wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
+.wv-walk-answer.success { color:var(--green); }
+.wv-walk-answer.refusal { color:var(--err); }
 .wv-nav .crossnow { font-size:.86rem; color:var(--paper); }
 .wv-nav .crossnow b { color:var(--amber); font-variant-numeric:tabular-nums; }
 .wv-nav .crosslive-tag { color:var(--green); font-size:.78rem; }
@@ -425,13 +548,34 @@ const STYLE = `
 const MARKUP = `
 <header class="wv-head">
   <h1>POSTMARK — THE TOLD WORLD</h1>
-  <span class="wv-sub">a camera over the marks tree · read-only · nothing you do here is written</span>
+  <span class="wv-sub">a camera over the marks tree · signed acts cross the office door</span>
 </header>
 <div class="wv-alpha"><b>ALPHA</b> — the told world days after its first breath. Unlisted, unannounced, and every
   part of this page may change shape or break without a word. The record underneath is real; the viewer is a work in progress.</div>
 <div class="wv-main">
   <nav class="wv-nav">
     <div class="wv-identity"></div>
+    <section class="wv-walkdesk" hidden>
+      <h2>Walk</h2>
+      <div class="wv-youhere">finding your place in the walk ledger…</div>
+      <label class="wv-walkfield">destination
+        <select class="wv-walk-kind">
+          <option value="mark">a mark</option>
+          <option value="point">a point</option>
+        </select>
+      </label>
+      <label class="wv-walkfield wv-walk-mark-field">mark
+        <select class="wv-walk-mark"></select>
+      </label>
+      <div class="wv-pointfields" hidden>
+        <label class="wv-walkfield">east / west (m)<input class="wv-walk-x" type="number" step="1"></label>
+        <label class="wv-walkfield">north / south (m)<input class="wv-walk-y" type="number" step="1"></label>
+      </div>
+      <button type="button" class="wv-walk-preview-btn">preview the leg</button>
+      <div class="wv-walk-preview" hidden></div>
+      <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
+      <p class="wv-walk-answer" hidden></p>
+    </section>
     <div class="wv-standctl">
       <!-- stand/move went DEV-ONLY the day walk shipped (bronze
            spectator-stand-move-dev-only-before-walk, executed 2026-07-28): a
@@ -475,8 +619,8 @@ const MARKUP = `
         </div>
       </div>
       <div class="wv-minimap"><div class="loading">fetching the painting…</div></div>
-      <p class="wv-mapnote">the atlas, for bearings — <b>the telling is the truth</b>. Click to stand there;
-        drag to pan, scroll to zoom. The dashed ring is how far today's air lets you see.</p>
+      <p class="wv-mapnote">the atlas, for bearings — <b>the telling is the truth</b>. Signed in, click to choose
+        a walking point; spectators look from the click. Drag to pan, scroll to zoom.</p>
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
   </aside>
@@ -501,17 +645,16 @@ export function mountViewer(appEl) {
     crossing: liveCrossing(),           // default to the live crossing
     crossingOverride: false,            // a dev/principal time-travel override
     view: "telling",
-    markFilter: "all",                  // "all" | "new" — listing mode, independent of the two identity axes
+    markFilter: "everything",           // "everything" | "mine" | "new" — the one marks vocabulary
     baseLayer: "true",                  // "true" (main) | "mine" (main + the household draft)
-    justMine: false,                    // owned ∪ backed, from the household portfolio
     portfolio: null,                    // authenticated world_my_marks response
     mineIds: new Set(),                 // portfolio ids across drafts/published/backed
-    handle: "wright",
+    handle: "",
+    actorHome: null,                    // office-derived home only when no walk record exists
     dials: { ...DIALS },
-    stakesLocal: null,      // null=unknown, true/false after probe
     dataSource: null,       // which world-state URL won (for the auto-update poll)
     asOf: null,             // X-Postmark-As-Of of the loaded fold (office-live only)
-    whoami: null,           // { principal, household, handles } from /api/ops/whoami
+    whoami: null,           // { principal, household, handles } from office /ops/whoami
   };
   let data = null;          // { trueWorld, myWorld, worldState, skeleton, manifest }
   let world = null;         // assembled once (crossing-independent)
@@ -532,7 +675,7 @@ export function mountViewer(appEl) {
   // fetch world-state AND report which url won + its X-Postmark-As-Of (the office
   // stamps every response; the auto-update poll compares it). Same office-first
   // preference: office live → same-origin /WORLD → RAW github.
-  const WS_PATHS = ["/api/world/state", "/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`];
+  const worldStatePaths = () => [officeUrl("/world/state"), "/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`];
   async function fetchWorldState(paths, options = {}) {
     let lastErr;
     for (const p of paths) {
@@ -548,14 +691,14 @@ export function mountViewer(appEl) {
     byId = new Map(world.marks.map((m) => [m.id, m]));
     homeSet = buildHomeSet(data.manifest, world.marks);
   }
-  const isOfficeLive = (url) => !!url && url.startsWith("/api/world/");
+  const isOfficeLive = (url) => url === officeUrl("/world/state");
   async function loadData() {
     if (data) return;
     // The True World is intentionally credentialless. Even a signed-in browser
     // receives the main fold here; the household-composed fold has its own read.
-    const ws = await fetchWorldState(WS_PATHS, { credentials: "omit" });
+    const ws = await fetchWorldState(worldStatePaths(), { credentials: "omit" });
     const [sk, mf] = await Promise.all([
-      fetchJson(["/api/world/skeleton", "/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
+      fetchJson([officeUrl("/world/skeleton"), "/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
       // homes come from the seeding manifest, fetched the same way (same-origin probe
       // → raw fallback); optional — no manifest just means no green
       fetchJson(["/seeding/manifest.json", `${RAW}/seeding/manifest.json`]).catch(() => null),
@@ -567,7 +710,7 @@ export function mountViewer(appEl) {
   // re-pull the fold from the same source and re-assemble (auto-update). Skeleton
   // and manifest are stable across a write, so only world-state is refetched.
   async function reloadWorld() {
-    const ws = await fetchWorldState([state.dataSource, ...WS_PATHS], { credentials: "omit" });
+    const ws = await fetchWorldState([state.dataSource, ...worldStatePaths()], { credentials: "omit" });
     state.dataSource = ws.url; state.asOf = ws.asOf;
     data.trueWorld = ws.json;
     applyWorldLayer();
@@ -652,6 +795,29 @@ export function mountViewer(appEl) {
       + `<rect x="${((box - gw) / 2).toFixed(1)}" y="${((box - gh) / 2).toFixed(1)}" width="${gw.toFixed(1)}" height="${gh.toFixed(1)}" rx="1"/></svg>`
       + `<span class="wv-extent-t">${fmt(w)}×${fmt(h)} m</span></span>`;
   }
+  function identityResolved() {
+    return !!pmKey() && (state.whoami?.handles ?? []).length > 0
+      && !!state.portfolio && !!data?.myWorld && !!state.handle;
+  }
+  function walkableMark(m) {
+    const full = byId.get(m?.id) ?? m;
+    return full?.kind === "sited" && full?.tier !== "constitution" && !!full.at
+      && Math.max(Number(full.extent?.w ?? 0), Number(full.extent?.h ?? 0)) < 2000;
+  }
+  function backedPosition(markId, handle = state.handle) {
+    return (state.portfolio?.backed ?? []).find((row) =>
+      (row.id ?? row.mark) === markId && row.holder === handle && Number(row.stamps ?? 0) > 0);
+  }
+  function markActions(m) {
+    if (!identityResolved()) return "";
+    const full = byId.get(m.id) ?? m;
+    const position = backedPosition(m.id);
+    return `<span class="wv-cell-actions">`
+      + (walkableMark(full) ? `<button type="button" class="wv-cell-act" data-walk-mark="${esc(m.id)}">walk here</button>` : "")
+      + `<button type="button" class="wv-cell-act" data-stake-open data-mark="${esc(m.id)}">✦ back this</button>`
+      + (position ? `<button type="button" class="wv-cell-act unstake" data-unstake-open data-mark="${esc(m.id)}" data-max="${Number(position.stamps)}">take back ${Number(position.stamps)}</button>` : "")
+      + `</span>`;
+  }
   // THE unified mark-cell — everything on the telling is one of these, and every
   // one names its mark id (Keemin 2026-07-23). role styles it (frame/ladder/law/fov);
   // tier colors it; annotation carries a mechanic's live state (fog/light this crossing).
@@ -662,7 +828,7 @@ export function mountViewer(appEl) {
     return `<article class="wv-card ${role}${far ? " far" : ""} t-${tier}" data-id="${esc(m.id)}" role="button" tabindex="0">
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
-      <div class="cmeta">${tierChip(tier)}${extentTag(m)}${radialChips ? chips(m) : ""}<span class="wv-cid">${esc(m.id)}</span></div>
+      <div class="cmeta">${tierChip(tier)}${extentTag(m)}${radialChips ? chips(m) : ""}<span class="wv-cid">${esc(m.id)}</span>${markActions(m)}</div>
       ${cluster}
     </article>`;
   }
@@ -684,7 +850,7 @@ export function mountViewer(appEl) {
     if (obs.inFog) return `Fog is in tonight (crossing ${radial.crossing}, thickness ${radial.fog.thickness}) — it closes the view to about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
     return `The air is clear (crossing ${radial.crossing}) — you can see about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
   }
-  // keep: optional predicate — under the Mine filter, only cards whose mark passes
+  // keep: optional predicate — under just mine, only cards whose mark passes
   // show (the telling stays otherwise identical: same order, same budget already
   // applied by the engine, same card behaviour — the filter only narrows WHO shows).
   function tellingCards(radial, keep = null) {
@@ -783,9 +949,8 @@ export function mountViewer(appEl) {
   }
   function renderTelling() {
     const box = $(root, ".wv-telling");
-    const identityResolved = (state.whoami?.handles ?? []).length > 0
-      && !!state.portfolio && !!data?.myWorld;
-    const mine = identityResolved && state.justMine;
+    const hasIdentity = identityResolved();
+    const mine = hasIdentity && state.markFilter === "mine";
     try {
       const name = state.cam.x === 0 && state.cam.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
       const e = openYourEyes({ x: state.cam.x, y: state.cam.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
@@ -793,13 +958,10 @@ export function mountViewer(appEl) {
       const within = e.radial.within ?? [];
       const obs = e.radial.observer ?? {};
       const isNew = state.markFilter === "new";
-      // All/New is a listing mode, independent of both identity axes. Anonymous
-      // spectators keep it; the True World/My World and everything/just mine axes
-      // appear only after both identity-scoped reads resolve.
-      const fchip = (key, label) =>
-        `<button class="wv-fchip${state.markFilter === key ? " on" : ""}" data-mfilter="${key}">${label}</button>`;
-      const chips = viewerAxisControls({ identityResolved, baseLayer: state.baseLayer, justMine: state.justMine })
-        + `<div class="wv-mfilter">${fchip("all", "All")}${fchip("new", "New")}</div>`;
+      // The lens owns composition and stands alone. The row below owns the marks
+      // question: everything, just mine, or recency. No fourth vocabulary.
+      const chips = viewerAxisControls({ identityResolved: hasIdentity, baseLayer: state.baseLayer, markFilter: state.markFilter })
+        + viewerFilterControls({ identityResolved: hasIdentity, baseLayer: state.baseLayer, markFilter: state.markFilter });
       // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
       // context even under Mine (filtering the frame to yours would usually empty
       // "where you stand"); the filter narrows the visible marks, not your footing.
@@ -851,21 +1013,16 @@ export function mountViewer(appEl) {
           : `<div class="wv-section-lbl">what tells from here${mine ? " · yours" : ""}</div>`
             + `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
             + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
-      if (mine) renderMineTail(box, e.radial);  // elsewhere index + stakes, appended
+      if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
       drawOverlay(e.radial);
     } catch (err) {
       box.innerHTML = `<div class="wv-err">the telling failed: ${esc(err?.message ?? err)}</div>`;
     }
   }
-  // The Mine tail: your authored marks BEYOND this sight (a thin index — first
-  // words + id + stand-there, no bodies/expansion), then the stakes section.
+  // The just-mine tail: the same filtered list continues beyond this sight with
+  // the same mark cells. Backing is not a second shelf; it stays on the cell.
   function elsewhereRow(m) {
-    const words = String(m.body ?? m.label ?? "").replace(/\s+/g, " ").trim().split(" ").slice(0, 12).join(" ");
-    const standable = m.at && typeof m.at.x === "number";
-    return `<div class="wv-elrow">
-      <div class="wv-elwords">${words ? esc(words) : `<span class="wv-quiet">(no words)</span>`}</div>
-      <div class="wv-elmeta"><span class="wv-cid">${esc(m.id)}</span>${standable ? `<span class="stand" data-x="${m.at.x}" data-y="${m.at.y}">stand here ▸</span>` : ""}</div>
-    </div>`;
+    return markCell(m, { role: "fov" });
   }
   function renderMineTail(box, radial) {
     // which of your marks are already in sight (so "elsewhere" = the rest)
@@ -884,34 +1041,10 @@ export function mountViewer(appEl) {
       tail += `<div class="wv-section-lbl">elsewhere — ${elsewhere.length} of yours beyond this sight</div>`;
       tail += `<div class="wv-elsewhere">${elsewhere.map(elsewhereRow).join("")}</div>`;
     }
-    // stakes — kept exactly as the retired My-marks tab had it: local-only,
-    // feature-detected, single-holder. TODO(economy-home): the stakes/economy view
-    // wants its own surface; it rides here for now (zero new surface, zero regression).
-    tail += `<div class="wv-section-lbl">marks your stamps are staked on</div><div class="wv-stakes-slot"><div class="wv-quiet">checking the stamp-ledger…</div></div>`;
     const tailEl = document.createElement("div");
     tailEl.className = "wv-mine-tail";
     tailEl.innerHTML = tail;
     box.appendChild(tailEl);
-    fillStakes(box);
-  }
-  async function fillStakes(box) {
-    const h = (state.handle || "").trim();
-    const slot = $(box, ".wv-stakes-slot");
-    if (!slot) return;
-    const local = await probeStakes();
-    if (!local) { slot.innerHTML = `<div class="wv-quiet">the stakes view reads the town's stamp-ledger — a local-only feature; it isn't served on the public island.</div>`; return; }
-    try {
-      const r = await fetch(`/api/stakes?holder=${encodeURIComponent(h)}`);
-      const d = await r.json();
-      const stakes = d.stakes ?? [];
-      if (!stakes.length) { slot.innerHTML = `<div class="wv-quiet">${esc(h)} holds no stakes on any mark yet (staking is first-class but rare so far).</div>`; return; }
-      const byIdMap = new Map((world.marks ?? []).map((m) => [m.id, m]));
-      slot.innerHTML = stakes.map((s) => {
-        const m = byIdMap.get(s.mark);
-        return `<div class="wv-elrow"><div class="wv-elwords">${esc(m?.body ?? "(a mark not in the current fold)")}</div>
-          <div class="wv-elmeta"><span class="wv-chip stamps">${s.n > 0 ? "+" : ""}${s.n} staked</span><span class="wv-cid">${esc(s.mark)}</span>${m?.at ? `<span class="stand" data-x="${m.at.x}" data-y="${m.at.y}">stand here ▸</span>` : ""}</div></div>`;
-      }).join("");
-    } catch (e) { slot.innerHTML = `<div class="wv-err">stakes failed: ${esc(e?.message ?? e)}</div>`; }
   }
 
   // ───────── investigate (in-place expansion inside a card) ─────────
@@ -942,19 +1075,6 @@ export function mountViewer(appEl) {
       ${d.alongside?.length ? `<div class="wv-tree-label">alongside</div><div class="wv-tree sib">${d.alongside.map((p) => tnode(p, "sib")).join("")}</div>` : ""}
       ${(d.more?.inside > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
   }
-
-
-  // ───────── my marks view ─────────
-  async function probeStakes() {
-    if (state.stakesLocal !== null) return state.stakesLocal;
-    try { const r = await fetch(`/api/stakes?holder=${encodeURIComponent(state.handle)}`); state.stakesLocal = r.ok; }
-    catch { state.stakesLocal = false; }
-    return state.stakesLocal;
-  }
-  // (the standalone "My marks" view retired 2026-07-24 — it fused into the telling
-  // as the All / Mine filter; its content now lives in renderTelling's Mine tail.
-  // probeStakes above still feeds the stakes section there.)
-
   // ───────── the painting (atlas minimap) ─────────
   async function loadMinimap() {
     const boxEl = $(root, ".wv-minimap");
@@ -1074,8 +1194,8 @@ export function mountViewer(appEl) {
         view.w = w; view.h = view.h * scale;
         applyView();
       }, { passive: false });
-      // drag = pan; a press that travels <6px = the stand-here click (both live on
-      // one pointer stream so neither steals the other)
+      // drag = pan; a press that travels <6px chooses a walking point for a
+      // resident, or moves the read-only spectator camera.
       let press = null;
       svg.addEventListener("pointerdown", (e) => {
         stopTween();
@@ -1099,8 +1219,12 @@ export function mountViewer(appEl) {
         if (wasDrag) return;
         const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
         const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-        state.cam = { x: Math.round((p.x - originPx.x) * mPerPx), y: Math.round((p.y - originPx.y) * mPerPx) };
-        renderCurrent();
+        const point = { x: Math.round((p.x - originPx.x) * mPerPx), y: Math.round((p.y - originPx.y) * mPerPx) };
+        if (identityResolved()) chooseWalkPoint(point.x, point.y);
+        else {
+          state.cam = point;
+          renderCurrent();
+        }
       });
       svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
 
@@ -1230,14 +1354,33 @@ export function mountViewer(appEl) {
   // ───────── walkers (write-release P2) ─────────
   // A walk is a DECLARED DEPARTURE; position is derived from that record and the
   // clock. So this layer stores nothing and animates nothing — it asks the server
-  // where everyone is at a given crossing and draws that. Scrubbing the clock is
-  // not a simulation: because derivation is pure, a scrubbed frame is exactly
-  // what that instant will really hold.
-  //
-  // Why a scrub exists at all: 15 km per 12-hour crossing is about 0.35 m/s. On a
-  // live clock the dot is visually motionless, so a viewer with no scrub cannot
-  // tell a working walk from a broken one.
-  let walkState = { at: null, offset: 0, walkers: [], timer: null };
+  // where everyone is at a given crossing and draws that.
+  let walkState = { at: null, walkers: [], timer: null, pending: null, actorBound: true };
+
+  function actorWalker() {
+    return walkState.walkers.find((walker) => walker.handle === state.handle) ?? null;
+  }
+
+  function actorOrigin() {
+    const walker = actorWalker();
+    if (walker && Number.isFinite(walker.x) && Number.isFinite(walker.y))
+      return { x: Number(walker.x), y: Number(walker.y), source: "walk ledger" };
+    if (state.actorHome && Number.isFinite(state.actorHome.x) && Number.isFinite(state.actorHome.y))
+      return { x: Number(state.actorHome.x), y: Number(state.actorHome.y), source: "home (no walk recorded yet)" };
+    return null;
+  }
+
+  function syncActorPosition({ moveCamera = false } = {}) {
+    const origin = actorOrigin();
+    const here = $(root, ".wv-youhere");
+    if (here) here.innerHTML = origin
+      ? `you are here — <b>(${Math.round(origin.x)}, ${Math.round(origin.y)})</b><br><span>${esc(origin.source)}</span>`
+      : `<span>no walk-ledger or sited-home position was found</span>`;
+    if (moveCamera && origin && walkState.actorBound) {
+      state.cam = { x: origin.x, y: origin.y };
+      renderCurrent();
+    }
+  }
 
   function drawWalkers() {
     if (!mapCtx?.walkLayer) return;
@@ -1255,43 +1398,288 @@ export function mountViewer(appEl) {
       s += `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}"><title>${esc(w.handle)} — ${esc(eta)}</title></circle>`;
     }
     mapCtx.walkLayer.innerHTML = s;
-    const box = document.getElementById("wv-walk-readout");
+    const box = $(root, "#wv-walk-readout");
     if (box) {
       const on = walkState.walkers.filter((w) => !w.arrived && !w.standing).length;
       box.textContent = walkState.at === null ? "no walk records"
-        : `crossing ${walkState.at.toFixed(3)}${walkState.offset ? ` (${walkState.offset > 0 ? "+" : ""}${walkState.offset} scrubbed)` : " (now)"} — ` +
+        : `crossing ${walkState.at.toFixed(3)} — ` +
           `${walkState.walkers.length} on record, ${on} on the road`;
     }
+    syncActorPosition();
   }
 
   async function pollWalkers() {
-    try {
-      const at = walkState.offset ? `?at=${(walkState.baseAt ?? 0) + walkState.offset}` : "";
-      const r = await fetch(`/api/walks${at}`);
-      if (!r.ok) return;
-      const j = await r.json();
-      walkState.baseAt = j.now;
-      walkState.at = j.at;
-      walkState.walkers = j.walkers ?? [];
-      drawWalkers();
-    } catch { /* the spectator is a read-only toy; a missed poll is not an error */ }
+    const paths = pmKey()
+      ? [officeUrl("/world/walkers"), officeUrl("/walks")]
+      : [officeUrl("/walks")];
+    for (const path of paths) {
+      try {
+        const r = await fetch(path, { headers: authHeaders(), credentials: "same-origin" });
+        if (!r.ok) continue;
+        const j = await r.json();
+        walkState.at = Number(j.at);
+        walkState.walkers = j.walkers ?? [];
+        drawWalkers();
+        const origin = actorOrigin();
+        if (identityResolved() && origin && walkState.actorBound) {
+          const moved = state.cam.x !== origin.x || state.cam.y !== origin.y;
+          state.cam = { x: origin.x, y: origin.y };
+          if (moved) renderCurrent();
+        }
+        return true;
+      } catch { /* try the spectator-local shape, then feature-detect off */ }
+    }
+    return false;
   }
 
   function mountWalkers() {
-    const host = document.getElementById("wv-walk-panel");
+    const host = $(root, "#wv-walk-panel");
     if (!host) return;
-    host.innerHTML =
-      `<label>scrub <input id="wv-walk-scrub" type="range" min="-4" max="24" step="0.25" value="0"></label>` +
-      `<button id="wv-walk-nowbtn" type="button">now</button>` +
-      `<span id="wv-walk-readout">…</span>`;
-    const scrub = document.getElementById("wv-walk-scrub");
-    scrub.addEventListener("input", () => { walkState.offset = Number(scrub.value); pollWalkers(); });
-    document.getElementById("wv-walk-nowbtn").addEventListener("click", () => {
-      scrub.value = "0"; walkState.offset = 0; pollWalkers();
-    });
-    pollWalkers();
+    host.innerHTML = `<span id="wv-walk-readout">checking the walk ledger…</span>`;
+    pollWalkers().then((available) => { host.hidden = !available; });
     clearInterval(walkState.timer);
-    walkState.timer = setInterval(() => { if (!walkState.offset) pollWalkers(); }, 15000);
+    walkState.timer = setInterval(pollWalkers, 15000);
+  }
+
+  async function officeCall(path, { method = "GET", body = null } = {}) {
+    const token = pmKey();
+    if (!token) throw new Error("sign in before asking the office to act");
+    const response = await fetch(officeUrl(path), {
+      method,
+      headers: {
+        accept: "application/json",
+        ...authHeaders(),
+        ...(body ? { "content-type": "application/json" } : {}),
+      },
+      credentials: "same-origin",
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+    const payload = await response.json().catch(() => ({
+      error: "bounce",
+      defect: `the door answered ${response.status} without a readable receipt`,
+    }));
+    return { ok: response.ok, status: response.status, body: payload };
+  }
+
+  async function loadActorHome() {
+    state.actorHome = null;
+    if (!state.handle) return;
+    try {
+      const response = await officeCall(`/homes/${encodeURIComponent(state.handle)}`);
+      const place = response.body?.world;
+      if (response.ok && place?.sited && Number.isFinite(place.x) && Number.isFinite(place.y)) {
+        state.actorHome = { x: Number(place.x), y: Number(place.y), markId: place.mark_id ?? null };
+        return;
+      }
+    } catch { /* the manifest fallback below is spectator-safe */ }
+    const home = data?.manifest?.homes?.find((entry) => entry.household === state.handle && entry.grid_m);
+    if (home) state.actorHome = { x: Number(home.grid_m.x), y: Number(home.grid_m.y), markId: `${home.household}/${home.home_id}` };
+  }
+
+  function invalidateWalkPreview() {
+    walkState.pending = null;
+    const preview = $(root, ".wv-walk-preview");
+    const confirm = $(root, ".wv-walk-confirm");
+    const answer = $(root, ".wv-walk-answer");
+    if (preview) { preview.hidden = true; preview.innerHTML = ""; }
+    if (confirm) confirm.disabled = true;
+    if (answer) { answer.hidden = true; answer.textContent = ""; answer.className = "wv-walk-answer"; }
+  }
+
+  function renderWalkDestinations() {
+    const desk = $(root, ".wv-walkdesk");
+    if (!desk) return;
+    desk.hidden = !identityResolved();
+    if (desk.hidden) return;
+    const select = $(desk, ".wv-walk-mark");
+    const selected = select?.value;
+    const marks = (data?.trueWorld?.marks ?? [])
+      .filter(walkableMark)
+      .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    if (select) {
+      select.innerHTML = marks.map((mark) =>
+        `<option value="${esc(mark.id)}">${esc(firstWords(mark.body, 7) || mark.id)} · ${esc(mark.id)}</option>`).join("");
+      if (marks.some((mark) => mark.id === selected)) select.value = selected;
+    }
+    syncActorPosition();
+  }
+
+  function setWalkKind(kind) {
+    const desk = $(root, ".wv-walkdesk");
+    if (!desk) return;
+    const isPoint = kind === "point";
+    $(desk, ".wv-walk-kind").value = isPoint ? "point" : "mark";
+    $(desk, ".wv-walk-mark-field").hidden = isPoint;
+    $(desk, ".wv-pointfields").hidden = !isPoint;
+    invalidateWalkPreview();
+  }
+
+  function chooseWalkMark(id) {
+    if (!identityResolved()) return;
+    setWalkKind("mark");
+    const select = $(root, ".wv-walk-mark");
+    if (select && [...select.options].some((option) => option.value === id)) select.value = id;
+    $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function chooseWalkPoint(x, y) {
+    if (!identityResolved()) return;
+    setWalkKind("point");
+    const xEl = $(root, ".wv-walk-x"), yEl = $(root, ".wv-walk-y");
+    if (xEl) xEl.value = String(Math.round(x));
+    if (yEl) yEl.value = String(Math.round(y));
+    $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function previewSelectedWalk() {
+    const desk = $(root, ".wv-walkdesk");
+    const preview = $(desk, ".wv-walk-preview");
+    const confirm = $(desk, ".wv-walk-confirm");
+    const answer = $(desk, ".wv-walk-answer");
+    invalidateWalkPreview();
+    const from = actorOrigin();
+    if (!from) {
+      answer.hidden = false;
+      answer.classList.add("refusal");
+      answer.textContent = "The office has no walk-ledger or sited-home origin for this resident.";
+      return;
+    }
+    const kind = $(desk, ".wv-walk-kind").value;
+    let toward, targetExtent = null, payload, destination;
+    if (kind === "mark") {
+      const id = $(desk, ".wv-walk-mark").value;
+      const mark = (data?.trueWorld?.marks ?? []).find((entry) => entry.id === id);
+      if (!walkableMark(mark)) {
+        answer.hidden = false;
+        answer.classList.add("refusal");
+        answer.textContent = "Choose a published, sited mark small enough to be a destination.";
+        return;
+      }
+      toward = { x: Number(mark.at.x), y: Number(mark.at.y) };
+      targetExtent = { w: Number(mark.extent?.w ?? 0), h: Number(mark.extent?.h ?? 0) };
+      payload = { mark_id: id, handle: state.handle };
+      destination = id;
+    } else {
+      toward = { x: Number($(desk, ".wv-walk-x").value), y: Number($(desk, ".wv-walk-y").value) };
+      payload = { x: toward.x, y: toward.y, handle: state.handle };
+      destination = `(${toward.x}, ${toward.y})`;
+    }
+    const leg = previewWalkLeg({ from, toward, targetExtent, skeleton: data?.skeleton });
+    if (!leg) {
+      answer.hidden = false;
+      answer.classList.add("refusal");
+      answer.textContent = "Choose a destination with two finite coordinates.";
+      return;
+    }
+    const via = leg.viaCrossings.length ? leg.viaCrossings.join(", ") : "none";
+    preview.innerHTML = `<b>${esc(state.handle)} → ${esc(destination)}</b><br>`
+      + `${leg.distanceM.toLocaleString()} m · ETA ${leg.etaCrossings} crossings<br>`
+      + `named water crossings: ${esc(via)}`;
+    preview.hidden = false;
+    confirm.disabled = false;
+    walkState.pending = { payload, leg };
+  }
+
+  async function confirmSelectedWalk() {
+    const desk = $(root, ".wv-walkdesk");
+    const confirm = $(desk, ".wv-walk-confirm");
+    const answer = $(desk, ".wv-walk-answer");
+    if (!walkState.pending) return;
+    confirm.disabled = true;
+    answer.hidden = false;
+    answer.className = "wv-walk-answer";
+    answer.textContent = "The office is recording the departure…";
+    try {
+      const response = await officeCall("/world/walks", { method: "POST", body: walkState.pending.payload });
+      if (!response.ok || response.body?.error === "bounce") {
+        answer.classList.add("refusal");
+        answer.textContent = [response.body?.defect || `the door answered ${response.status}`, response.body?.hint].filter(Boolean).join(" — ");
+        confirm.disabled = false;
+        return;
+      }
+      answer.classList.add("success");
+      answer.textContent = `${state.handle} departed: ${Number(response.body.leg_m ?? 0).toLocaleString()} m, ETA ${response.body.eta_crossings ?? 0} crossings.`;
+      walkState.pending = null;
+      await pollWalkers();
+    } catch (error) {
+      answer.classList.add("refusal");
+      answer.textContent = `The walk door could not be reached — ${error.message}`;
+      confirm.disabled = false;
+    }
+  }
+
+  function openStakeSheet(card, { mode = "stake", max = "" } = {}) {
+    root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
+    const sheet = document.createElement("div");
+    sheet.className = "wv-act-sheet";
+    sheet.dataset.mode = mode;
+    sheet.dataset.mark = card.dataset.id;
+    if (max !== "") sheet.dataset.max = String(max);
+    sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : "Back this mark"}</b>`
+      + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
+      + `<div class="wv-act-row"><label>stamps <input class="wv-act-amount" type="number" min="1" step="1"${max !== "" ? ` max="${Number(max)}"` : ""}></label>`
+      + `<button type="button" class="wv-act-preview-btn">preview the sealed line</button></div>`
+      + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; ✦weight updates at the next Settlement.</p>`
+      + `<div class="wv-act-row"><button type="button" class="wv-act-confirm" disabled>confirm and send</button></div></div>`
+      + `<p class="wv-act-answer" hidden></p>`;
+    card.appendChild(sheet);
+    $(sheet, ".wv-act-amount").focus();
+  }
+
+  function previewStakeSheet(sheet) {
+    const amount = Number($(sheet, ".wv-act-amount").value);
+    const max = Number(sheet.dataset.max || 0);
+    const line = previewStakeLedgerLine({
+      mode: sheet.dataset.mode,
+      handle: state.handle,
+      mark: sheet.dataset.mark,
+      stamps: amount,
+    });
+    const answer = $(sheet, ".wv-act-answer");
+    if (!line || (max > 0 && amount > max)) {
+      answer.hidden = false;
+      answer.className = "wv-act-answer refusal";
+      answer.textContent = max > 0 && amount > max
+        ? `${state.handle} has ${max} stamps to take back from this mark.`
+        : "Enter a positive whole number of stamps.";
+      return;
+    }
+    $(sheet, ".wv-act-preview pre").textContent = line;
+    $(sheet, ".wv-act-preview").hidden = false;
+    $(sheet, ".wv-act-confirm").disabled = false;
+    answer.hidden = true;
+  }
+
+  async function confirmStakeSheet(sheet) {
+    const mode = sheet.dataset.mode;
+    const confirm = $(sheet, ".wv-act-confirm");
+    const answer = $(sheet, ".wv-act-answer");
+    const payload = {
+      mark: sheet.dataset.mark,
+      stamps: Number($(sheet, ".wv-act-amount").value),
+      handle: state.handle,
+    };
+    confirm.disabled = true;
+    answer.hidden = false;
+    answer.className = "wv-act-answer";
+    answer.textContent = "The office is sealing the line…";
+    try {
+      const response = await officeCall(mode === "unstake" ? "/world/unstake" : "/world/stake", { method: "POST", body: payload });
+      const rendered = worldStakeAnswer(response.body, mode);
+      answer.classList.add(rendered.kind);
+      answer.textContent = rendered.text;
+      if (response.ok && rendered.kind === "success") {
+        await loadIdentityWorld();
+        applyWorldLayer();
+        reRender(rendered.text);
+      } else {
+        confirm.disabled = false;
+      }
+    } catch (error) {
+      answer.classList.add("refusal");
+      answer.textContent = `The stake door could not be reached — ${error.message}`;
+      confirm.disabled = false;
+    }
   }
 
   // ───────── dev pane ─────────
@@ -1348,6 +1736,26 @@ export function mountViewer(appEl) {
   // ───────── events ─────────
   let devTimer = null;
   root.addEventListener("click", (e) => {
+    const actor = e.target.closest("[data-act-as]");
+    if (actor) { selectActor(actor.dataset.actAs); return; }
+    if (e.target.closest(".wv-walk-preview-btn")) { previewSelectedWalk(); return; }
+    if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
+    const walkMark = e.target.closest("[data-walk-mark]");
+    if (walkMark) { chooseWalkMark(walkMark.dataset.walkMark); return; }
+    const stakeOpen = e.target.closest("[data-stake-open]");
+    if (stakeOpen) { openStakeSheet(stakeOpen.closest(".wv-card"), { mode: "stake" }); return; }
+    const unstakeOpen = e.target.closest("[data-unstake-open]");
+    if (unstakeOpen) {
+      openStakeSheet(unstakeOpen.closest(".wv-card"), { mode: "unstake", max: unstakeOpen.dataset.max });
+      return;
+    }
+    const sheet = e.target.closest(".wv-act-sheet");
+    if (sheet) {
+      if (e.target.closest(".wv-act-close")) sheet.remove();
+      else if (e.target.closest(".wv-act-preview-btn")) previewStakeSheet(sheet);
+      else if (e.target.closest(".wv-act-confirm")) confirmStakeSheet(sheet);
+      return;
+    }
     // the viewport controls (P2): fit / follow / grid
     if (e.target.closest(".wv-map-home")) { mapCtx?.fitAll?.(); return; }
     const fbtn = e.target.closest(".wv-map-follow");
@@ -1357,21 +1765,18 @@ export function mountViewer(appEl) {
     const fpbtn = e.target.closest(".wv-map-fp");
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
     const baseChip = e.target.closest("[data-world-base]");
-    if (baseChip) {
+    if (baseChip && identityResolved()) {
       state.baseLayer = baseChip.dataset.worldBase;
       applyWorldLayer();
       const y = window.scrollY; renderTelling(); window.scrollTo(0, y);
       return;
     }
-    const mineChip = e.target.closest("[data-mine-filter]");
-    if (mineChip) {
-      state.justMine = mineChip.dataset.mineFilter === "mine";
+    const filterChip = e.target.closest("[data-mark-filter]");
+    if (filterChip && !filterChip.disabled) {
+      state.markFilter = filterChip.dataset.markFilter;
       const y = window.scrollY; renderTelling(); window.scrollTo(0, y);
       return;
     }
-    // the listing mode is orthogonal to both identity axes.
-    const fchip = e.target.closest(".wv-fchip");
-    if (fchip) { state.markFilter = fchip.dataset.mfilter; const y = window.scrollY; renderTelling(); window.scrollTo(0, y); return; }
     // (key sign-in UI removed 2026-07-24 — identity comes from the island's
     // GitHub pill via the pm_key bridge; the viewer collects no credentials)
     // investigate: back-crumb / tree node / card
@@ -1380,14 +1785,18 @@ export function mountViewer(appEl) {
     const tn = e.target.closest(".wv-tnode, .wv-wnode"); // upward-context names drill too
     if (tn) { const card = tn.closest(".wv-card"); if (card && tn.dataset.id) { card._stack.push(tn.dataset.id); renderExpansion(card); } return; }
     const stand = e.target.closest(".stand");
-    if (stand) { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); return; }
+    if (stand) {
+      if (identityResolved()) chooseWalkPoint(+stand.dataset.x, +stand.dataset.y);
+      else { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); }
+      return;
+    }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } return; }
     if (e.target.closest(".wv-dev-reset")) { state.dials = { ...DIALS }; buildDevPane(); renderCurrent(); return; }
     if (e.target.closest(".crosslive")) { state.crossingOverride = false; state.crossing = liveCrossing(); const i = root.querySelector(".crossover"); if (i) i.value = state.crossing; const l = root.querySelector(".crossovlbl"); if (l) l.textContent = "live · " + state.crossing; reRender(); return; }
     const b = e.target.closest("button.ctl, .wv-card");
     if (!b) return;
-    if (b.dataset.x !== undefined && b.classList.contains("ctl")) { state.cam = { x: +b.dataset.x, y: +b.dataset.y }; renderCurrent(); }
-    else if (b.dataset.dx !== undefined) { state.cam.x += (+b.dataset.dx) * state.step; state.cam.y += (+b.dataset.dy) * state.step; renderCurrent(); }
+    if (b.dataset.x !== undefined && b.classList.contains("ctl")) { walkState.actorBound = false; state.cam = { x: +b.dataset.x, y: +b.dataset.y }; renderCurrent(); }
+    else if (b.dataset.dx !== undefined) { walkState.actorBound = false; state.cam.x += (+b.dataset.dx) * state.step; state.cam.y += (+b.dataset.dy) * state.step; renderCurrent(); }
     else if (b.classList.contains("wv-card") && b.dataset.id) { if (b._stack?.length) { b._stack = []; renderExpansion(b); } else { b._stack = [b.dataset.id]; renderExpansion(b); } }
   });
   function openCardById(id) {
@@ -1400,6 +1809,14 @@ export function mountViewer(appEl) {
   root.addEventListener("mouseover", (e) => { const el = e.target.closest("[data-id]"); highlightOnMap(el?.dataset.id ?? null); });
   root.addEventListener("mouseleave", () => highlightOnMap(null));
   root.addEventListener("input", (e) => {
+    if (e.target.closest(".wv-act-sheet")) {
+      const sheet = e.target.closest(".wv-act-sheet");
+      $(sheet, ".wv-act-preview").hidden = true;
+      $(sheet, ".wv-act-confirm").disabled = true;
+      $(sheet, ".wv-act-answer").hidden = true;
+      return;
+    }
+    if (e.target.matches(".wv-walk-x, .wv-walk-y")) { invalidateWalkPreview(); return; }
     if (e.target.classList.contains("stepslider")) { state.step = STEP_NOTCHES[Number(e.target.value)] ?? state.step; const lbl = root.querySelector(".stepval"); if (lbl) lbl.textContent = stepLabel(state.step); return; }
     if (e.target.classList.contains("crossover")) {
       const v = String(e.target.value).trim();
@@ -1415,26 +1832,22 @@ export function mountViewer(appEl) {
       clearTimeout(devTimer); devTimer = setTimeout(renderCurrent, 70);
     }
   });
+  root.addEventListener("change", (e) => {
+    if (e.target.classList.contains("wv-walk-kind")) { setWalkKind(e.target.value); return; }
+    if (e.target.classList.contains("wv-walk-mark")) { invalidateWalkPreview(); }
+  });
 
-  // identity (Keemin 2026-07-23): one keyless /api/ops/whoami read powers two
-  // read-side behaviours. It reflects the session (an oauth cookie or a key), so:
-  //   • dev-dials gate — dials shown only on localhost or for the principal;
-  //   • stand-at filter — a signed-in resident's "Stand at" lists only THEIR
-  //     household's homes (filtered client-side from the manifest the viewer already
-  //     has); keyless spectators get the default presets, unchanged.
-  // the resident's key — held per-origin in localStorage, presented as a Bearer on
-  // the credentialed reads (whoami). A browser visitor is keyless until they sign
-  // in; an oauth cookie also identifies them (whoami reads either). Clearing the
-  // key returns to keyless spectator. THIS is what was missing live — the viewer
-  // fetched whoami with no credential, so every visitor read as keyless.
+  // Identity is UI memory, not door law. The token is presented on every signed
+  // call and the selected resident is included in every act payload. Only the
+  // selected handle is sticky; the office remains choose-per-call.
   const pmKey = () => { try { return localStorage.getItem("pm_key") || null; } catch { return null; } };
   const authHeaders = () => { const k = pmKey(); return k ? { Authorization: "Bearer " + k } : {}; };
   async function loadIdentityWorld() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
     const [composed, portfolio] = await Promise.all([
-      fetchWorldState(["/api/world/state"], options),
-      fetch("/api/world/my-marks", options).then(async (r) => {
-        if (!r.ok) throw new Error(`/api/world/my-marks → ${r.status}`);
+      fetchWorldState([officeUrl("/world/state")], options),
+      fetch(officeUrl("/world/my-marks"), options).then(async (r) => {
+        if (!r.ok) throw new Error(`${officeUrl("/world/my-marks")} → ${r.status}`);
         return r.json();
       }),
     ]);
@@ -1447,24 +1860,34 @@ export function mountViewer(appEl) {
   }
   async function resolveIdentity() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
-    try { const r = await fetch("/api/ops/whoami", options); state.whoami = r.ok ? await r.json() : null; } catch { state.whoami = null; }
+    if (pmKey()) {
+      try {
+        const r = await fetch(officeUrl("/ops/whoami"), options);
+        state.whoami = r.ok ? await r.json() : null;
+      } catch { state.whoami = null; }
+    } else {
+      state.whoami = null;
+    }
     const toggle = $(root, ".wv-dev-toggle");
     if (toggle) toggle.hidden = !(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || state.whoami?.principal);
     // stand/move rides the same dev gate (dev-only since walk shipped — see the markup note)
     const standmove = $(root, ".wv-standmove");
     if (standmove) standmove.hidden = toggle ? toggle.hidden : true;
-    // Keep state.handle valid for the legacy local stakes detail. The identity axes
-    // are exposed only after both the composed fold and portfolio resolve.
     const handles = state.whoami?.handles ?? [];
-    if (handles.length && !handles.includes(state.handle)) state.handle = handles[0];
+    let remembered = "";
+    try { remembered = localStorage.getItem(ACT_AS_KEY) || ""; } catch {}
+    state.handle = handles.includes(remembered) ? remembered : (handles[0] ?? "");
     if (handles.length) {
-      try { await loadIdentityWorld(); }
+      try {
+        await loadIdentityWorld();
+        await loadActorHome();
+      }
       catch {
         data.myWorld = null;
         state.portfolio = null;
         state.mineIds = new Set();
         state.baseLayer = "true";
-        state.justMine = false;
+        if (state.markFilter === "mine") state.markFilter = "everything";
         applyWorldLayer();
       }
     } else {
@@ -1472,26 +1895,41 @@ export function mountViewer(appEl) {
       state.portfolio = null;
       state.mineIds = new Set();
       state.baseLayer = "true";
-      state.justMine = false;
+      if (state.markFilter === "mine") state.markFilter = "everything";
       applyWorldLayer();
     }
     renderPresets();
     renderIdentity();
-    mountWalkers(); // the walkers layer polls /api/walks; harmless if the route is absent
+    renderWalkDestinations();
+    syncActorPosition({ moveCamera: true });
+    mountWalkers();
     if (state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
   }
-  // the sign-in affordance — signed out: a key field (localStorage); signed in: who
-  // you are + sign out. Unobtrusive, top of the nav.
+
+  async function selectActor(handle) {
+    if (!(state.whoami?.handles ?? []).includes(handle)) return;
+    state.handle = handle;
+    try { localStorage.setItem(ACT_AS_KEY, handle); } catch {}
+    state.actorHome = null;
+    walkState.actorBound = true;
+    invalidateWalkPreview();
+    root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
+    renderIdentity();
+    renderWalkDestinations();
+    renderTelling();
+    await loadActorHome();
+    await pollWalkers();
+    syncActorPosition({ moveCamera: true });
+  }
+
   function renderIdentity() {
-    // Key-paste sign-in REMOVED from the UI (Keemin 2026-07-24 eve) — identity
-    // arrives via the island's GitHub sign-in (the bridge fills pm_key) or, in
-    // dev, by setting localStorage directly. The viewer only *displays* who you
-    // are; it no longer collects credentials, and sign-out lives with the pill.
     const box = $(root, ".wv-identity");
     if (!box) return;
     const handles = state.whoami?.handles ?? [];
     box.innerHTML = handles.length
-      ? `<div class="wv-id-in">signed in — <b>${handles.map(esc).join(", ")}</b></div>`
+      ? `<h2>Act as</h2><div class="handlepick">${handles.map((handle) =>
+          `<button type="button" class="ctl handleopt${handle === state.handle ? " on" : ""}" data-act-as="${esc(handle)}">${esc(handle)}</button>`).join("")}</div>`
+        + `<p class="wv-act-note">This choice is remembered here; every act still names the resident at the office door.</p>`
       : "";
   }
   function renderPresets() {

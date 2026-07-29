@@ -1,30 +1,74 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { viewerAxisControls, viewerAxisState } from "../spectator/viewer.mjs";
+import {
+  officeBase,
+  previewStakeLedgerLine,
+  previewWalkLeg,
+  viewerAxisControls,
+  viewerAxisState,
+  viewerFilterControls,
+} from "../spectator/viewer.mjs";
 
-test("viewer axes keep world composition and portfolio filtering independent", () => {
+test("the lens and one filter row stay orthogonal", () => {
   const states = [
-    [{ identityResolved: false, baseLayer: "mine", justMine: true }, false, "the True World", "everything"],
-    [{ identityResolved: true, baseLayer: "true", justMine: false }, true, "the True World", "everything"],
-    [{ identityResolved: true, baseLayer: "true", justMine: true }, true, "the True World", "just mine"],
-    [{ identityResolved: true, baseLayer: "mine", justMine: false }, true, "My World", "everything"],
-    [{ identityResolved: true, baseLayer: "mine", justMine: true }, true, "My World", "just mine"],
+    [{ identityResolved: false, baseLayer: "mine", markFilter: "mine" }, false, "True World", "everything"],
+    [{ identityResolved: true, baseLayer: "true", markFilter: "everything" }, true, "True World", "everything"],
+    [{ identityResolved: true, baseLayer: "true", markFilter: "mine" }, true, "True World", "just mine"],
+    [{ identityResolved: true, baseLayer: "mine", markFilter: "everything" }, true, "My World", "everything"],
+    [{ identityResolved: true, baseLayer: "mine", markFilter: "new" }, true, "My World", "new"],
   ];
 
-  for (const [input, controls, base, relation] of states)
-    assert.deepEqual(viewerAxisState(input), { controls, base, relation });
+  for (const [input, controls, base, filter] of states)
+    assert.deepEqual(viewerAxisState(input), { controls, base, filter });
 
   assert.equal(viewerAxisControls(states[0][0]), "", "anonymous spectators get no identity axes");
 
   const trueMine = viewerAxisControls(states[2][0]);
-  assert.match(trueMine, />the True World<\/button>/);
+  assert.match(trueMine, />True World<\/button>/);
   assert.match(trueMine, />My World<\/button>/);
-  assert.match(trueMine, />just mine<\/button>/);
-  assert.match(trueMine, /data-world-base="true"[^>]*>the True World/);
-  assert.match(trueMine, /data-mine-filter="mine"[^>]*>just mine/);
+  assert.match(trueMine, /data-world-base="true"[^>]*>True World/);
+  assert.doesNotMatch(trueMine, /just mine|data-mark-filter/, "the lens has no competing filter vocabulary");
 
   const myEverything = viewerAxisControls(states[3][0]);
   assert.match(myEverything, /class="wv-fchip on" data-world-base="mine">My World/);
-  assert.match(myEverything, /class="wv-fchip on" data-mine-filter="everything">everything/);
+
+  const row = viewerFilterControls(states[2][0]);
+  assert.match(row, />everything<\/button>.*>just mine<\/button>.*>new<\/button>/);
+  assert.match(row, /class="wv-fchip on" data-mark-filter="mine">just mine/);
+
+  const anonymous = viewerFilterControls(states[0][0]);
+  assert.match(anonymous, /data-mark-filter="mine" disabled/);
+});
+
+test("signed office calls share the one /api-default base", () => {
+  assert.equal(officeBase({ getItem: () => null }), "/api");
+  assert.equal(officeBase({ getItem: () => "https://door.example/api/" }), "https://door.example/api");
+  assert.equal(officeBase({ getItem: () => { throw new Error("storage denied"); } }), "/api");
+});
+
+test("stake and walk previews use the sealed grammar and pure walk derivation", () => {
+  assert.equal(
+    previewStakeLedgerLine({
+      date: "2026-07-28",
+      handle: "alpha",
+      mark: "beta/bench",
+      stamps: 7,
+    }),
+    "- 2026-07-28 · alpha → stake:world-mark/beta/bench · 7 · via: api · sig: …",
+  );
+  assert.equal(
+    previewStakeLedgerLine({
+      mode: "unstake",
+      date: "2026-07-28",
+      handle: "alpha",
+      mark: "beta/bench",
+      stamps: 2,
+    }),
+    "- 2026-07-28 · stake:world-mark/beta/bench → alpha · 2 · for: unstake · sig: …",
+  );
+  assert.deepEqual(
+    previewWalkLeg({ from: { x: 0, y: 0 }, toward: { x: 30_000, y: 0 } }),
+    { distanceM: 30_000, etaCrossings: 2, viaCrossings: [] },
+  );
 });

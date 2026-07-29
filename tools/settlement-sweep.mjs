@@ -62,7 +62,9 @@ function archiveRef(repo, ref) {
     "WORLD/skeleton.json",
     "WORLD/world-state.json",
   ]);
-  execFileSync("tar", ["-xf", archive, "-C", dir], { stdio: ["ignore", "pipe", "pipe"] });
+  // GNU tar reads a colon in an archive argument as host:path, so an absolute
+  // Windows drive path looks remote. Extract from the temp directory instead.
+  execFileSync("tar", ["-xf", "world.tar"], { cwd: dir, stdio: ["ignore", "pipe", "pipe"] });
   return dir;
 }
 
