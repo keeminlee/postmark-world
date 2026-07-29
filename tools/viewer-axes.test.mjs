@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  clampStakeAmount,
   officeBase,
   previewStakeLedgerLine,
   previewWalkLeg,
@@ -45,6 +46,21 @@ test("signed office calls share the one /api-default base", () => {
   assert.equal(officeBase({ getItem: () => null }), "/api");
   assert.equal(officeBase({ getItem: () => "https://door.example/api/" }), "https://door.example/api");
   assert.equal(officeBase({ getItem: () => { throw new Error("storage denied"); } }), "/api");
+});
+
+test("stake amounts clamp to the acting resident's liquid balance", () => {
+  assert.deepEqual(
+    clampStakeAmount(200, 199),
+    { requested: 200, balance: 199, amount: 199, exceeded: true },
+  );
+  assert.deepEqual(
+    clampStakeAmount("7", 199),
+    { requested: 7, balance: 199, amount: 7, exceeded: false },
+  );
+  assert.deepEqual(
+    clampStakeAmount(1, null),
+    { requested: 1, balance: null, amount: null, exceeded: false },
+  );
 });
 
 test("stake and walk previews use the sealed grammar and pure walk derivation", () => {

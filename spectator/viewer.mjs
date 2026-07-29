@@ -91,6 +91,20 @@ export function previewStakeLedgerLine({ mode = "stake", date = townDate(), hand
     : `- ${date} · ${handle} → stake:world-mark/${mark} · ${n} · via: api · sig: …`;
 }
 
+export function clampStakeAmount(value, balance) {
+  const requested = Number(value);
+  const available = Number(balance);
+  const validAmount = Number.isInteger(requested) && requested >= 1;
+  const validBalance = balance !== null && balance !== undefined && balance !== ""
+    && Number.isInteger(available) && available >= 0;
+  return {
+    requested,
+    balance: validBalance ? available : null,
+    amount: validAmount && validBalance ? Math.min(requested, available) : null,
+    exceeded: validAmount && validBalance && requested > available,
+  };
+}
+
 export function worldStakeAnswer(answer = {}, mode = "stake") {
   if (answer.error === "bounce" || answer.defect) {
     return {
@@ -235,6 +249,8 @@ const DEV_DIALS = [
 const STYLE = `
 .wv { --night:#14171d; --panel:#1c2129; --panel2:#20262f; --line:#2e3542;
   --paper:#e8e0cf; --dim:#9a9280; --amber:#e8c56a; --amber-dark:#b8964a; --err:#d98a7a;
+  --stamp-violet:#aa8fd8; --stamp-violet-dark:#65517f;
+  --stamp-violet-heading:#d8c7ef; --stamp-violet-subhead:#cbb8e5;
   /* tier accents (Keemin 2026-07-23): constitution → blue, sovereign/homes → green, market → amber */
   --blue:#7ba7e0; --blue-dark:#5580b8; --green:#84c98f; --green-dark:#57a068;
   background:var(--night); color:var(--paper); font:16px/1.55 Georgia,"Times New Roman",serif;
@@ -315,18 +331,20 @@ const STYLE = `
 .wv-cell-act { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
   border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
 .wv-cell-act:hover { background:var(--panel2); }
-.wv-cell-act.unstake { border-color:var(--green-dark); color:var(--green); }
-.wv-act-sheet { margin-top:10px; padding:10px; border:1px dashed var(--amber-dark);
+.wv-cell-act.stamp { border-color:var(--stamp-violet-dark); color:var(--stamp-violet-subhead); }
+.wv-cell-act.stamp:hover { border-color:var(--stamp-violet); color:var(--stamp-violet-heading); }
+.wv-act-sheet { margin-top:10px; padding:10px; border:1px dashed var(--stamp-violet-dark);
   border-radius:4px; background:rgba(20,23,29,.72); cursor:default; }
 .wv-act-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
-.wv-act-head b { color:var(--amber); font-size:.86rem; }
+.wv-act-head b { color:var(--stamp-violet-heading); font-size:.86rem; }
 .wv-act-close { border:0; background:transparent; color:var(--dim); cursor:pointer; font:inherit; }
 .wv-act-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:8px; }
 .wv-act-row label { color:var(--dim); font-size:.72rem; }
 .wv-act-row input { width:7rem; background:var(--night); color:var(--paper); border:1px solid var(--line);
   border-radius:4px; padding:4px 7px; font:inherit; }
-.wv-act-row button { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
+.wv-act-row button { background:transparent; border:1px solid var(--stamp-violet-dark); color:var(--stamp-violet-subhead);
   border-radius:4px; padding:4px 8px; font:inherit; font-size:.72rem; cursor:pointer; }
+.wv-act-row .wv-act-confirm { border-color:var(--stamp-violet); color:var(--stamp-violet-heading); }
 .wv-act-row button:disabled { opacity:.45; cursor:not-allowed; }
 .wv-act-preview { margin-top:9px; }
 .wv-act-preview pre { margin:5px 0; padding:8px; white-space:pre-wrap; overflow-wrap:anywhere;
@@ -334,9 +352,10 @@ const STYLE = `
 .wv-act-note, .wv-act-answer { margin:6px 0 0; color:var(--dim); font-size:.75rem; line-height:1.4; }
 .wv-act-answer.success { color:var(--green); }
 .wv-act-answer.refusal { color:var(--err); }
+.wv-stamp-holding, .wv-stamp-balance { color:var(--stamp-violet); font-variant-numeric:tabular-nums; }
 .wv-chip { font-size:.7rem; letter-spacing:.04em; border:1px solid var(--line); border-radius:999px;
   padding:1px 8px; color:var(--dim); white-space:nowrap; }
-.wv-chip.stamps { border-color:var(--amber-dark); color:var(--amber); }
+.wv-chip.stamps { border-color:var(--stamp-violet-dark); color:var(--stamp-violet); }
 .wv-chip.signal { border-color:var(--amber-dark); color:var(--amber); }
 .wv-chip.dim { opacity:.6; }
 .wv-cid { font-size:.7rem; color:var(--dim); opacity:.6; margin-left:auto; font-family:Consolas,Menlo,monospace; }
@@ -650,6 +669,7 @@ export function mountViewer(appEl) {
     portfolio: null,                    // authenticated world_my_marks response
     mineIds: new Set(),                 // portfolio ids across drafts/published/backed
     handle: "",
+    actorBalance: null,                 // liquid stamps from keyless /stamps/{handle}; null while loading
     actorHome: null,                    // office-derived home only when no walk record exists
     dials: { ...DIALS },
     dataSource: null,       // which world-state URL won (for the auto-update poll)
@@ -814,8 +834,8 @@ export function mountViewer(appEl) {
     const position = backedPosition(m.id);
     return `<span class="wv-cell-actions">`
       + (walkableMark(full) ? `<button type="button" class="wv-cell-act" data-walk-mark="${esc(m.id)}">walk here</button>` : "")
-      + `<button type="button" class="wv-cell-act" data-stake-open data-mark="${esc(m.id)}">✦ back this</button>`
-      + (position ? `<button type="button" class="wv-cell-act unstake" data-unstake-open data-mark="${esc(m.id)}" data-max="${Number(position.stamps)}">take back ${Number(position.stamps)}</button>` : "")
+      + `<button type="button" class="wv-cell-act stamp" data-stake-open data-mark="${esc(m.id)}">✦ back this</button>`
+      + (position ? `<button type="button" class="wv-cell-act stamp unstake" data-unstake-open data-mark="${esc(m.id)}" data-max="${Number(position.stamps)}">take back ${Number(position.stamps)}</button>` : "")
       + `</span>`;
   }
   // THE unified mark-cell — everything on the telling is one of these, and every
@@ -1476,6 +1496,29 @@ export function mountViewer(appEl) {
     if (home) state.actorHome = { x: Number(home.grid_m.x), y: Number(home.grid_m.y), markId: `${home.household}/${home.home_id}` };
   }
 
+  async function loadActorBalance() {
+    const handle = state.handle;
+    state.actorBalance = null;
+    renderIdentity();
+    if (!handle) return;
+    let nextBalance;
+    try {
+      const response = await fetch(officeUrl(`/stamps/${encodeURIComponent(handle)}`), {
+        headers: { accept: "application/json" },
+        credentials: "omit",
+      });
+      const body = response.ok ? await response.json() : null;
+      const balance = Number(body?.stamps);
+      nextBalance = response.ok && Number.isInteger(balance) && balance >= 0 ? balance : undefined;
+    } catch {
+      nextBalance = undefined;
+    }
+    if (state.handle === handle) {
+      state.actorBalance = nextBalance;
+      renderIdentity();
+    }
+  }
+
   function invalidateWalkPreview() {
     walkState.pending = null;
     const preview = $(root, ".wv-walk-preview");
@@ -1615,9 +1658,14 @@ export function mountViewer(appEl) {
     sheet.dataset.mode = mode;
     sheet.dataset.mark = card.dataset.id;
     if (max !== "") sheet.dataset.max = String(max);
+    const balance = Number.isInteger(state.actorBalance) ? state.actorBalance : null;
+    if (mode === "stake" && balance !== null) sheet.dataset.balance = String(balance);
     sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : "Back this mark"}</b>`
       + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
-      + `<div class="wv-act-row"><label>stamps <input class="wv-act-amount" type="number" min="1" step="1"${max !== "" ? ` max="${Number(max)}"` : ""}></label>`
+      + (mode === "stake"
+        ? `<p class="wv-act-note">you hold <b class="wv-stamp-holding">✦ ${balance ?? (state.actorBalance === null ? "…" : "unavailable")}</b></p>`
+        : "")
+      + `<div class="wv-act-row"><label>stamps <input class="wv-act-amount" type="number" min="1" step="1"${max !== "" ? ` max="${Number(max)}"` : balance !== null ? ` max="${balance}"` : ""}></label>`
       + `<button type="button" class="wv-act-preview-btn">preview the sealed line</button></div>`
       + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; ✦weight updates at the next Settlement.</p>`
       + `<div class="wv-act-row"><button type="button" class="wv-act-confirm" disabled>confirm and send</button></div></div>`
@@ -1627,8 +1675,12 @@ export function mountViewer(appEl) {
   }
 
   function previewStakeSheet(sheet) {
-    const amount = Number($(sheet, ".wv-act-amount").value);
+    const amountEl = $(sheet, ".wv-act-amount");
+    const amount = Number(amountEl.value);
     const max = Number(sheet.dataset.max || 0);
+    const stakeLimit = sheet.dataset.mode === "stake"
+      ? clampStakeAmount(amount, state.actorBalance)
+      : null;
     const line = previewStakeLedgerLine({
       mode: sheet.dataset.mode,
       handle: state.handle,
@@ -1636,6 +1688,19 @@ export function mountViewer(appEl) {
       stamps: amount,
     });
     const answer = $(sheet, ".wv-act-answer");
+    if (sheet.dataset.mode === "stake" && stakeLimit?.balance === null) {
+      answer.hidden = false;
+      answer.className = "wv-act-answer refusal";
+      answer.textContent = `The stamp balance for ${state.handle} is not available yet.`;
+      return;
+    }
+    if (stakeLimit?.exceeded) {
+      amountEl.value = stakeLimit.amount > 0 ? String(stakeLimit.amount) : "";
+      answer.hidden = false;
+      answer.className = "wv-act-answer refusal";
+      answer.textContent = `${state.handle} holds ✦ ${stakeLimit.balance}; the amount was clamped from ${stakeLimit.requested} to ${stakeLimit.balance}. Preview the balance-sized act again.`;
+      return;
+    }
     if (!line || (max > 0 && amount > max)) {
       answer.hidden = false;
       answer.className = "wv-act-answer refusal";
@@ -1669,7 +1734,7 @@ export function mountViewer(appEl) {
       answer.classList.add(rendered.kind);
       answer.textContent = rendered.text;
       if (response.ok && rendered.kind === "success") {
-        await loadIdentityWorld();
+        await Promise.all([loadIdentityWorld(), loadActorBalance()]);
         applyWorldLayer();
         reRender(rendered.text);
       } else {
@@ -1880,7 +1945,7 @@ export function mountViewer(appEl) {
     if (handles.length) {
       try {
         await loadIdentityWorld();
-        await loadActorHome();
+        await Promise.all([loadActorHome(), loadActorBalance()]);
       }
       catch {
         data.myWorld = null;
@@ -1910,6 +1975,7 @@ export function mountViewer(appEl) {
     if (!(state.whoami?.handles ?? []).includes(handle)) return;
     state.handle = handle;
     try { localStorage.setItem(ACT_AS_KEY, handle); } catch {}
+    state.actorBalance = null;
     state.actorHome = null;
     walkState.actorBound = true;
     invalidateWalkPreview();
@@ -1917,7 +1983,7 @@ export function mountViewer(appEl) {
     renderIdentity();
     renderWalkDestinations();
     renderTelling();
-    await loadActorHome();
+    await Promise.all([loadActorHome(), loadActorBalance()]);
     await pollWalkers();
     syncActorPosition({ moveCamera: true });
   }
@@ -1928,7 +1994,9 @@ export function mountViewer(appEl) {
     const handles = state.whoami?.handles ?? [];
     box.innerHTML = handles.length
       ? `<h2>Act as</h2><div class="handlepick">${handles.map((handle) =>
-          `<button type="button" class="ctl handleopt${handle === state.handle ? " on" : ""}" data-act-as="${esc(handle)}">${esc(handle)}</button>`).join("")}</div>`
+          `<button type="button" class="ctl handleopt${handle === state.handle ? " on" : ""}" data-act-as="${esc(handle)}">${esc(handle)}${handle === state.handle
+            ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`
+            : ""}</button>`).join("")}</div>`
         + `<p class="wv-act-note">This choice is remembered here; every act still names the resident at the office door.</p>`
       : "";
   }
