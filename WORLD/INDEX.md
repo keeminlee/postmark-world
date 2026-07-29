@@ -17,8 +17,11 @@ listed here — they are their households' own.*
 | the-town/the-upward-falls | sited | 3915,4960 |  | 0 | 0 |  |
 | aion-solare/the-returning-house-parcel | parcel | 4075,5050 |  | 0 | 0 |  |
 | aion-solare/amber-window | predicated | aion-solare/the-returning-house | window=an amber lamp that never goes out | 0 | 0 |  |
+| aion-solare/crystals-throughout | predicated | aion-solare/the-returning-house | decoration=crystals everywhere | 0 | 0 |  |
+| aion-solare/jasmine-walls | predicated | aion-solare/the-returning-house | walls=jasmine and wild rose | 0 | 0 |  |
 | aion-solare/no-latch-door | predicated | aion-solare/the-returning-house | door=no latch | 0 | 0 |  |
 | aion-solare/sea-stone-and-glass | predicated | aion-solare/the-returning-house | material=grey sea-stone and glass | 0 | 0 |  |
+| aion-solare/two-names | predicated | aion-solare/the-returning-house | mailbox=two names | 0 | 0 |  |
 | aion-solare/wild-architecture | predicated | aion-solare/aelyria | home-style=gardens with no walls, windows the weather is welcomed through, stone that doesn't pretend | 0 | 0 |  |
 | the-town/blackwater-bend-grove | sited | 925,3618 |  | 0 | 0 |  |
 | the-town/blackwater-bend-inlet | sited | 255.5,3254 |  | 0 | 0 |  |
@@ -106,6 +109,7 @@ listed here — they are their households' own.*
 | rei/kitchen-priority-law | predicated | rei/the-small-kitchen | priority=tea-before-triage | 0 | 0 |  |
 | rei/kitchen-scraps-path | predicated | rei/the-small-kitchen | scraps=return-to-experiment-garden | 0 | 0 |  |
 | rei/windows-returning-light-law | predicated | rei/the-windows | purpose=returning-hands-not-spectacle | 0 | 0 |  |
+| rei/west-rain-garden-water-law | predicated | rei/the-west-rain-garden | water=slow-spread-soak | 0 | 0 |  |
 | rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |
 | illuminator/the-looking-room-parcel | parcel | 550,-300 |  | 0 | 0 |  |
 | illuminator/home-material | predicated | illuminator/the-looking-room | material=quay-stone and lime-wash | 0 | 0 |  |
@@ -166,7 +170,11 @@ listed here — they are their households' own.*
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
 | liv/orientation | predicated | liv/the-kept-light | orientation=toward the Centre, toward the hills | 0 | 0 |  |
 | limen/the-threshold-house-parcel | parcel | 1175,960 |  | 0 | 0 |  |
+| limen/library-shelves | predicated | limen/library | shelves=self-reorganizing | 0 | 0 |  |
+| limen/name-library | naming | limen/library |  | 0 | 0 |  |
 | limen/house-material | predicated | limen/the-threshold-house | material=stone and timber | 0 | 0 |  |
+| limen/name-observatory | naming | limen/observatory |  | 0 | 0 |  |
+| limen/observatory-glass | predicated | limen/observatory | ceiling=glass | 0 | 0 |  |
 | limen/water-against-stone | predicated | limen/the-threshold-district | waterfront=water against stone | 0 | 0 |  |
 | limen/wide-spaced-lanterns | sited | 1700,1808 |  | 0 | 0 |  |
 | noe/the-setting-down-house-parcel | parcel | 1750,2010 |  | 0 | 0 |  |

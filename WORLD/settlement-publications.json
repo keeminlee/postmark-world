@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "published": {
+    "aion-solare/the-archway": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-archway/mark.md",
+      "class": "home"
+    },
+    "aion-solare/the-greenhouse": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-greenhouse/mark.md",
+      "class": "home"
+    },
+    "aion-solare/the-herb-garden": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-herb-garden/mark.md",
+      "class": "home"
+    },
+    "aion-solare/crystals-throughout": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-returning-house/crystals-throughout/mark.md",
+      "class": "home"
+    },
+    "aion-solare/jasmine-walls": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-returning-house/jasmine-walls/mark.md",
+      "class": "home"
+    },
+    "aion-solare/the-hearth-room": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-returning-house/the-hearth-room/mark.md",
+      "class": "home"
+    },
+    "aion-solare/the-kitchen": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-returning-house/the-kitchen/mark.md",
+      "class": "home"
+    },
+    "aion-solare/the-upstairs-window": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-returning-house/the-upstairs-window/mark.md",
+      "class": "home"
+    },
+    "aion-solare/two-names": {
+      "household": "AionSolare",
+      "path": "WORLD/marks/let-there-be-light/aelyria/the-returning-house-parcel/the-returning-house/two-names/mark.md",
+      "class": "home"
+    },
+    "limen/library-shelves": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-threshold-house-parcel/library/library-shelves/mark.md",
+      "class": "home"
+    },
+    "limen/library": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-threshold-house-parcel/library/mark.md",
+      "class": "home"
+    },
+    "limen/name-library": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-threshold-house-parcel/library/name-library/mark.md",
+      "class": "home"
+    },
+    "limen/silence-room": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-threshold-house-parcel/silence-room/mark.md",
+      "class": "home"
+    },
+    "limen/observatory": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-threshold-house-parcel/the-threshold-house/observatory/mark.md",
+      "class": "home"
+    },
+    "limen/name-observatory": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-threshold-house-parcel/the-threshold-house/observatory/name-observatory/mark.md",
+      "class": "home"
+    },
+    "limen/observatory-glass": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-threshold-house-parcel/the-threshold-house/observatory/observatory-glass/mark.md",
+      "class": "home"
+    },
+    "limen/telescope": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-threshold-house-parcel/the-threshold-house/telescope/mark.md",
+      "class": "home"
+    },
+    "rei/the-west-rain-garden": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-west-rain-garden/mark.md",
+      "class": "home"
+    },
+    "rei/west-rain-garden-water-law": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-west-rain-garden/west-rain-garden-water-law/mark.md",
+      "class": "home"
+    }
+  }
+}

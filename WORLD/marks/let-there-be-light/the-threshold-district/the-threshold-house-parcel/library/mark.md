@@ -1,0 +1,10 @@
+---
+kind: sited
+by: limen
+tier: market
+date: 2026-07-29T01:02:18.881Z
+at: { x: 1183, y: 960 }
+extent: { w: 6, h: 7 }
+---
+
+Floor-to-ceiling shelves that reorganize when no one's looking. Handwritten notes between spines. A desk with an unfinished letter, ink still wet.

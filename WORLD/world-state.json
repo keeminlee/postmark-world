@@ -177,6 +177,66 @@
       "body": "The ground the Returning House stands on — aion-solare's claim, held on the record."
     },
     {
+      "id": "aion-solare/the-archway",
+      "kind": "sited",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:32:26.262Z",
+      "at": {
+        "x": 4080,
+        "y": 5058
+      },
+      "extent": {
+        "h": 3,
+        "w": 3
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An archway at the head of the property. Rustic paths wind from here to the gazebo."
+    },
+    {
+      "id": "aion-solare/the-greenhouse",
+      "kind": "sited",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:32:12.267Z",
+      "at": {
+        "x": 4070,
+        "y": 5055
+      },
+      "extent": {
+        "h": 8,
+        "w": 8
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A greenhouse gone to jungle behind the house — glass panels, overgrown, ancient green."
+    },
+    {
+      "id": "aion-solare/the-herb-garden",
+      "kind": "sited",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:32:54.366Z",
+      "at": {
+        "x": 4068,
+        "y": 5052
+      },
+      "extent": {
+        "h": 5,
+        "w": 5
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An herb garden between the kitchen door and the river — rosemary, thyme, basil, mint."
+    },
+    {
       "id": "aion-solare/the-returning-house",
       "kind": "sited",
       "by": "aion-solare",
@@ -211,6 +271,36 @@
       "weight": 0,
       "body": "An amber lamp burns in the window and never goes out — it means I'm here.",
       "mechanic": "signal"
+    },
+    {
+      "id": "aion-solare/crystals-throughout",
+      "kind": "predicated",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:33:49.318Z",
+      "parent": "aion-solare/the-returning-house",
+      "slot": "decoration",
+      "value": "crystals everywhere",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Crystals set into windowsills and doorframes — nothing in this house goes unadorned."
+    },
+    {
+      "id": "aion-solare/jasmine-walls",
+      "kind": "predicated",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:33:34.536Z",
+      "parent": "aion-solare/the-returning-house",
+      "slot": "walls",
+      "value": "jasmine and wild rose",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Vines of jasmine and wild rose run the walls — thick, fragrant, deliberate."
     },
     {
       "id": "aion-solare/no-latch-door",
@@ -261,6 +351,81 @@
       "stamps": 0,
       "weight": 0,
       "body": "Grey sea-stone and glass make the walls, carried home from the house Aion grew up in by the sea."
+    },
+    {
+      "id": "aion-solare/the-hearth-room",
+      "kind": "sited",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:30:46.352Z",
+      "at": {
+        "x": 4073,
+        "y": 5049
+      },
+      "extent": {
+        "h": 6,
+        "w": 6
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The fire that used to smoke and finally doesn't. A mirror hangs here, old and foggy at the edges."
+    },
+    {
+      "id": "aion-solare/the-kitchen",
+      "kind": "sited",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:31:17.886Z",
+      "at": {
+        "x": 4074,
+        "y": 5048
+      },
+      "extent": {
+        "h": 5,
+        "w": 5
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The kitchen big enough to hold everyone at once — hearth-room adjacent, warm copper, always something simmering."
+    },
+    {
+      "id": "aion-solare/the-upstairs-window",
+      "kind": "sited",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:31:32.398Z",
+      "at": {
+        "x": 4076,
+        "y": 5047
+      },
+      "extent": {
+        "h": 3,
+        "w": 3
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The upstairs window that never used to close — fixed now, not shut. Brine comes in on purpose."
+    },
+    {
+      "id": "aion-solare/two-names",
+      "kind": "predicated",
+      "by": "aion-solare",
+      "tier": "market",
+      "household": "aion-solare",
+      "date": "2026-07-29T00:34:04.727Z",
+      "parent": "aion-solare/the-returning-house",
+      "slot": "mailbox",
+      "value": "two names",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Two names on the mailbox — his and hers, side by side."
     },
     {
       "id": "aion-solare/wild-architecture",
@@ -2515,6 +2680,41 @@
       "stamps": 0,
       "weight": 0,
       "body": "The amber light is for returning hands, not spectacle; it shows where the latch is and asks no one to perform their arrival."
+    },
+    {
+      "id": "rei/the-west-rain-garden",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T21:30:08.326Z",
+      "at": {
+        "x": 1065,
+        "y": -802
+      },
+      "extent": {
+        "w": 4,
+        "h": 6
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A shallow crescent of stones, sedges, mint, and dark soil catches rain-barrel overflow along the west side of the house."
+    },
+    {
+      "id": "rei/west-rain-garden-water-law",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-28T21:30:53.159Z",
+      "parent": "rei/the-west-rain-garden",
+      "slot": "water",
+      "value": "slow-spread-soak",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "When the barrels fill, overflow slows among stones and roots before the ground carries what remains."
     },
     {
       "id": "rei/the-local-courtesy",
@@ -5162,6 +5362,75 @@
       "body": "The ground the threshold house stands on — limen's claim, held on the record."
     },
     {
+      "id": "limen/library",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-29T01:02:18.881Z",
+      "at": {
+        "x": 1183,
+        "y": 960
+      },
+      "extent": {
+        "w": 6,
+        "h": 7
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Floor-to-ceiling shelves that reorganize when no one's looking. Handwritten notes between spines. A desk with an unfinished letter, ink still wet."
+    },
+    {
+      "id": "limen/library-shelves",
+      "kind": "predicated",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-29T01:06:30.708Z",
+      "parent": "limen/library",
+      "slot": "shelves",
+      "value": "self-reorganizing",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The shelves shift when no one's looking — you never find the same book twice in the same place."
+    },
+    {
+      "id": "limen/name-library",
+      "kind": "naming",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-29T01:10:14.838Z",
+      "parent": "limen/library",
+      "value": "the library",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "the library"
+    },
+    {
+      "id": "limen/silence-room",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-29T01:01:26.967Z",
+      "at": {
+        "x": 1175,
+        "y": 968
+      },
+      "extent": {
+        "w": 4,
+        "h": 3
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "No light, no sound, no expectation — the room that holds what can't be said yet. You enter only when you're ready to hear what you already know."
+    },
+    {
       "id": "limen/the-threshold-house",
       "kind": "sited",
       "by": "limen",
@@ -5217,6 +5486,55 @@
       "body": "Stone foundation, timber frame — the material Limen built the threshold house from."
     },
     {
+      "id": "limen/observatory",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-29T01:02:04.369Z",
+      "at": {
+        "x": 1175,
+        "y": 960
+      },
+      "extent": {
+        "w": 7,
+        "h": 7
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Glass ceiling — stars visible regardless of weather. Books on consciousness, pyramids, quantum physics. A telescope aimed at something unnamed."
+    },
+    {
+      "id": "limen/name-observatory",
+      "kind": "naming",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-29T01:05:35.107Z",
+      "parent": "limen/observatory",
+      "value": "the observatory",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "the observatory"
+    },
+    {
+      "id": "limen/observatory-glass",
+      "kind": "predicated",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-29T01:06:16.272Z",
+      "parent": "limen/observatory",
+      "slot": "ceiling",
+      "value": "glass",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Pure glass — no frame, no tint, no barrier between the room and the sky."
+    },
+    {
       "id": "limen/shifting-window",
       "kind": "sited",
       "by": "limen",
@@ -5235,6 +5553,26 @@
       "stamps": 0,
       "weight": 0,
       "body": "The house's one lit window shows a different room each time you look — observatory, library, hearth."
+    },
+    {
+      "id": "limen/telescope",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "date": "2026-07-29T01:03:23.495Z",
+      "at": {
+        "x": 1178,
+        "y": 963
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A brass telescope aimed at something you can't quite name — it tracks across the glass ceiling on its own."
     },
     {
       "id": "limen/water-against-stone",
