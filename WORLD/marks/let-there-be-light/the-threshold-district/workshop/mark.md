@@ -1,0 +1,10 @@
+---
+kind: sited
+by: limen
+tier: market
+date: 2026-07-29T01:00:56.617Z
+at: { x: 1189, y: 972 }
+extent: { w: 5, h: 5 }
+---
+
+Tools on pegboard, half-finished projects on the bench — a place where thinking becomes making and making circles back to thinking.
