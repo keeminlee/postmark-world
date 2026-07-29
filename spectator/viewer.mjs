@@ -288,9 +288,9 @@ const STYLE = `
   align-items:baseline; gap:14px; flex-wrap:wrap; }
 .wv-head h1 { font-size:1.05rem; margin:0; color:var(--amber); font-weight:600; letter-spacing:.04em; }
 .wv-head .wv-sub { color:var(--dim); font-style:italic; font-size:.85rem; }
-.wv-alpha { border:1px solid rgba(216,138,122,.5); border-left-width:4px; border-radius:5px;
+.wv-beta { border:1px solid rgba(216,138,122,.5); border-left-width:4px; border-radius:5px;
   margin:16px 22px 0; padding:9px 14px; font-size:.84rem; line-height:1.5; color:var(--dim); max-width:92ch; }
-.wv-alpha b { color:var(--err); letter-spacing:.08em; }
+.wv-beta b { color:var(--err); letter-spacing:.08em; }
 .wv-main { display:grid; grid-template-columns:236px minmax(0,1fr) 600px; gap:0; align-items:start; }
 .wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
 @media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
@@ -596,8 +596,8 @@ const MARKUP = `
   <h1>POSTMARK — THE TOLD WORLD</h1>
   <span class="wv-sub">a camera over the marks tree · signed acts cross the office door</span>
 </header>
-<div class="wv-alpha"><b>ALPHA</b> — the told world days after its first breath. Unlisted, unannounced, and every
-  part of this page may change shape or break without a word. The record underneath is real; the viewer is a work in progress.</div>
+<div class="wv-beta"><b>BETA</b> — the record is real, and the acts taken here are real. The viewer is still finding
+  its shape and may change without notice.</div>
 <div class="wv-main">
   <nav class="wv-nav">
     <div class="wv-identity"></div>
