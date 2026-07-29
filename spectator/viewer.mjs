@@ -2096,8 +2096,7 @@ export function mountViewer(appEl) {
     state.handle = handles.includes(remembered) ? remembered : (handles[0] ?? "");
     if (handles.length) {
       try {
-        await loadIdentityWorld();
-        await Promise.all([loadActorHome(), loadActorBalance()]);
+        await Promise.all([loadIdentityWorld(), loadActorHome(), loadActorBalance()]);
       }
       catch {
         data.myWorld = null;
