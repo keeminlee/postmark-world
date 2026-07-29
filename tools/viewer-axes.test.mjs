@@ -3,11 +3,14 @@ import test from "node:test";
 
 import {
   clampStakeAmount,
+  createMarkInteractionStore,
   formatEtaCrossings,
+  MARK_SNAP_RADIUS_PX,
   officeBase,
   pointWalkDestination,
   previewStakeLedgerLine,
   previewWalkLeg,
+  snappedMarkAtPoint,
   viewerAxisControls,
   viewerAxisState,
   viewerFilterControls,
@@ -109,4 +112,43 @@ test("the walk desk formats crossing ETAs as clock time and labels point contain
     pointWalkDestination({ x: 0, y: 0 }, marks),
     { x: 0, y: 0, inside: "wright/the-trueing-house" },
   );
+});
+
+test("painting mark hit-testing uses the nearest glyph inside an 18 px snap radius", () => {
+  const glyphs = [
+    { id: "wright/near", x: 108, y: 100 },
+    { id: "wright/far", x: 117, y: 100 },
+  ];
+  assert.equal(MARK_SNAP_RADIUS_PX, 18);
+  assert.equal(snappedMarkAtPoint({ x: 100, y: 100 }, glyphs), "wright/near");
+  assert.equal(snappedMarkAtPoint({ x: 135, y: 100 }, glyphs), "wright/far");
+  assert.equal(snappedMarkAtPoint({ x: 136, y: 100 }, glyphs), null);
+  assert.equal(
+    snappedMarkAtPoint({ x: 100, y: 100 }, [
+      { id: "wright/z", x: 101, y: 100 },
+      { id: "wright/a", x: 99, y: 100 },
+    ]),
+    "wright/a",
+    "equidistant glyphs resolve deterministically",
+  );
+});
+
+test("mark selection and hover share one observable interaction store", () => {
+  const store = createMarkInteractionStore();
+  const observed = [];
+  const unsubscribe = store.subscribe((state) => observed.push(state));
+  store.select("wright/bench");
+  store.hover("wright/gate");
+  store.hover("wright/gate");
+  assert.deepEqual(store.getState(), {
+    selectedId: "wright/bench",
+    hoveredId: "wright/gate",
+  });
+  assert.equal(observed.length, 2, "unchanged interaction state does not redraw either surface");
+  store.hover(null);
+  assert.deepEqual(store.getState(), {
+    selectedId: "wright/bench",
+    hoveredId: null,
+  });
+  unsubscribe();
 });

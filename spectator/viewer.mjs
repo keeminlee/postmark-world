@@ -169,6 +169,44 @@ export function pointWalkDestination(point, marks = []) {
   return { x: Math.round(x), y: Math.round(y), inside };
 }
 
+export const MARK_SNAP_RADIUS_PX = 18;
+
+export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
+  const x = Number(point?.x), y = Number(point?.y), radius = Number(radiusPx);
+  if (![x, y, radius].every(Number.isFinite) || radius < 0) return null;
+  return marks
+    .map((mark) => {
+      const mx = Number(mark?.x), my = Number(mark?.y);
+      return {
+        id: mark?.id,
+        distancePx: [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity,
+      };
+    })
+    .filter((mark) => mark.id && mark.distancePx <= radius)
+    .sort((a, b) => a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)))[0]?.id ?? null;
+}
+
+export function createMarkInteractionStore() {
+  let value = Object.freeze({ selectedId: null, hoveredId: null });
+  const listeners = new Set();
+  const update = (key, id) => {
+    const next = id || null;
+    if (value[key] === next) return value;
+    value = Object.freeze({ ...value, [key]: next });
+    for (const listener of listeners) listener(value);
+    return value;
+  };
+  return {
+    getState: () => value,
+    select: (id) => update("selectedId", id),
+    hover: (id) => update("hoveredId", id),
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+}
+
 const BEARING_LONG = { N: "north", NNE: "north-northeast", NE: "northeast", ENE: "east-northeast", E: "east", ESE: "east-southeast", SE: "southeast", SSE: "south-southeast", S: "south", SSW: "south-southwest", SW: "southwest", WSW: "west-southwest", W: "west", WNW: "west-northwest", NW: "northwest", NNW: "north-northwest" };
 
 // The chip's arrow points where the mark lies, north UP — the map pane's orientation.
@@ -203,11 +241,11 @@ const bearingArrow = (b) => {
 // EVERY outline of a mark's claim on the painting comes from here. Never hand-build
 // one — that is the rule this function exists to make keepable, and it was earned:
 // the ring branch had to be written THREE times before it was written once. Grid-true
-// had it, buildFpLayer got it ported when Grid-true retired, and highlightOnMap
+// had it, buildFpLayer got it ported when Grid-true retired, and the old highlight
 // quietly went on drawing a bbox rect — so a hover washed a rectangle over a mark
 // the layer beneath it was correctly drawing as a polygon. Two hand-written mappings
-// of one concept drift; three is a habit. The fourth implementation does not get
-// written, because there is nowhere left to write it.
+// of one concept drift; three is a habit. No fourth mapping gets written, because
+// there is nowhere left to write it.
 //
 // A mark with a `points:` ring (≥3) draws its AUTHORED shape; everything else draws
 // its extent rect. The honesty gate guarantees ring-bbox == at/extent, so the two
@@ -350,8 +388,15 @@ const STYLE = `
 .wv-arrow { width:.95em; height:.95em; vertical-align:-.15em; margin-right:.3em; overflow:visible; }
 .wv-arrow path { fill:currentColor; opacity:.8; }
 .wv-card { border:1px solid var(--line); border-left:3px solid var(--amber-dark); border-radius:5px;
-  padding:10px 13px; margin:8px 0; cursor:pointer; max-width:76ch; }
+  --wv-mark-accent:var(--amber); padding:10px 13px; margin:8px 0; cursor:pointer; max-width:76ch; }
 .wv-card:hover { border-color:var(--amber-dark); }
+.wv-card.t-constitution { --wv-mark-accent:var(--blue); }
+.wv-card.t-home { --wv-mark-accent:var(--green); }
+.wv-card.is-mark-hovered { border-color:var(--wv-mark-accent); }
+.wv-card.is-mark-selected { border-color:var(--wv-mark-accent); outline:1px solid var(--wv-mark-accent);
+  outline-offset:2px; }
+.wv-tnode.is-mark-hovered, .wv-tnode.is-mark-selected,
+.wv-wnode.is-mark-hovered, .wv-wnode.is-mark-selected { color:var(--paper); border-color:var(--amber); }
 .wv-card.far { border-left-color:var(--line); font-style:italic; }
 .wv-card .cbody { line-height:1.45; }
 .wv-card .cmeta { margin-top:7px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
@@ -534,6 +579,7 @@ const STYLE = `
 /* footprints — every mark's true extent from the record. ONE vocabulary with the
    cells: tier sets the color (tierOf), dashed = the law/mechanic modifier. */
 #wv-fp-layer { pointer-events:none; }
+#wv-hl-layer { pointer-events:none; }
 .wv-fp { fill:none; stroke-width:1.4; vector-effect:non-scaling-stroke; }
 .wv-fp.t-constitution { stroke:var(--blue-dark); }
 .wv-fp.t-home { stroke:var(--green-dark); }
@@ -543,6 +589,8 @@ const STYLE = `
 /* the marks you stand WITHIN read a tad heavier — the map's echo of the
    "Where you stand" ladder (Keemin: no nesting ceremony, just weight) */
 .wv-fp.fp-within { stroke-width:2.8; }
+.wv-hl-label rect { fill:rgba(13,15,19,.94); stroke:var(--line); stroke-width:1; }
+.wv-hl-label text { fill:var(--paper); font-family:Consolas,Menlo,monospace; }
 .ov-reach { vector-effect:non-scaling-stroke; }
 .ov-halo { vector-effect:non-scaling-stroke; }
 
@@ -559,7 +607,6 @@ const STYLE = `
 .wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
 .wv-nav .handleopt.on { border-color:var(--green-dark); color:var(--green); }
 .wv-nav .wv-identity h2 { margin-top:0; }
-.wv-nav .wv-act-note { margin-top:7px; }
 .wv-walkdesk { margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
 .wv-walkdesk h2 { margin-top:0; }
 .wv-youhere { color:var(--dim); font-size:.76rem; margin-bottom:8px; }
@@ -567,10 +614,10 @@ const STYLE = `
 .wv-walk-destination { margin-top:7px; padding:7px 8px; border:1px solid var(--line);
   border-radius:4px; color:var(--dim); font-size:.72rem; line-height:1.4; }
 .wv-walk-destination b { color:var(--paper); font-variant-numeric:tabular-nums; }
-.wv-walkdesk .wv-walk-preview-btn, .wv-walkdesk .wv-walk-confirm {
+.wv-walkdesk .wv-walk-confirm {
   width:100%; margin-top:8px; background:transparent; border:1px solid var(--amber-dark);
   color:var(--amber); border-radius:4px; padding:5px 8px; font:inherit; font-size:.76rem; cursor:pointer; }
-.wv-walkdesk .wv-walk-preview-btn:disabled, .wv-walkdesk .wv-walk-confirm:disabled { opacity:.45; cursor:not-allowed; }
+.wv-walkdesk .wv-walk-confirm:disabled { opacity:.45; cursor:not-allowed; }
 .wv-walk-preview { margin-top:8px; padding:8px; border:1px dashed var(--amber-dark); border-radius:4px;
   color:var(--paper); font-size:.75rem; line-height:1.45; }
 .wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
@@ -605,7 +652,6 @@ const MARKUP = `
       <h2>Walk</h2>
       <div class="wv-youhere">finding your place in the walk ledger…</div>
       <div class="wv-walk-destination">click the painting, or choose <i>walk here</i> on a mark cell</div>
-      <button type="button" class="wv-walk-preview-btn" disabled>preview the leg</button>
       <div class="wv-walk-preview" hidden></div>
       <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
       <p class="wv-walk-answer" hidden></p>
@@ -653,8 +699,9 @@ const MARKUP = `
         </div>
       </div>
       <div class="wv-minimap"><div class="loading">fetching the painting…</div></div>
-      <p class="wv-mapnote">the atlas, for bearings — <b>the telling is the truth</b>. Signed in, click to choose
-        a walking point; spectators look from the click. Drag to pan, scroll to zoom.</p>
+      <p class="wv-mapnote">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
+        signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
+        Drag to pan, scroll to zoom.</p>
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
   </aside>
@@ -697,6 +744,7 @@ export function mountViewer(appEl) {
   let homeSet = new Set();  // ids that render green: homes (+ descendants) and sovereigns
   let mapCtx = null;
   let lastRadial = null;
+  const markInteraction = createMarkInteractionStore();
 
   // ───────── data + world (feature-detected source) ─────────
   async function fetchJson(paths) {
@@ -843,6 +891,11 @@ export function mountViewer(appEl) {
   function backedPosition(markId, handle = state.handle) {
     return (state.portfolio?.backed ?? []).find((row) =>
       (row.id ?? row.mark) === markId && row.holder === handle && Number(row.stamps ?? 0) > 0);
+  }
+  function markIdentity(m) {
+    const full = byId.get(m?.id) ?? m;
+    const title = full?.title ?? full?.label ?? firstWords(full?.body, 7);
+    return title && title !== full?.id ? `${full.id} — ${title}` : String(full?.id ?? "");
   }
   function markActions(m) {
     if (!identityResolved()) return "";
@@ -1051,6 +1104,7 @@ export function mountViewer(appEl) {
             + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
       if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
       drawOverlay(e.radial);
+      syncMarkInteractionViews();
     } catch (err) {
       box.innerHTML = `<div class="wv-err">the telling failed: ${esc(err?.message ?? err)}</div>`;
     }
@@ -1110,6 +1164,7 @@ export function mountViewer(appEl) {
       ${d.inside?.length ? `<div class="wv-tree-label">within it</div><div class="wv-tree">${d.inside.map((p) => tnode(p, "child")).join("")}</div>` : ""}
       ${d.alongside?.length ? `<div class="wv-tree-label">alongside</div><div class="wv-tree sib">${d.alongside.map((p) => tnode(p, "sib")).join("")}</div>` : ""}
       ${(d.more?.inside > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
+    syncMarkInteractionViews();
   }
   // ───────── the painting (atlas minimap) ─────────
   async function loadMinimap() {
@@ -1171,14 +1226,14 @@ export function mountViewer(appEl) {
       }
       const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
       const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, walkLayer, gridLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, hlId: null, _tweening: false };
+      mapCtx = { svg, overlay, hlLayer, walkLayer, gridLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
       let tween = null;
       function applyView() {
         svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
         mapCtx.zoomK = full.w / view.w;
         sizeGridLabels();
         if (lastRadial) drawOverlay(lastRadial);
-        if (mapCtx.hlId) highlightOnMap(mapCtx.hlId);
+        renderMarkHighlight();
       }
       function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = null; } mapCtx._tweening = false; }
       function tweenTo(target, ms = 280) {
@@ -1230,19 +1285,42 @@ export function mountViewer(appEl) {
         view.w = w; view.h = view.h * scale;
         applyView();
       }, { passive: false });
-      // drag = pan; a press that travels <6px chooses a walking point for a
-      // resident, or moves the read-only spectator camera.
+      // drag = pan; a press that travels <6px selects a snapped mark first.
+      // Genuinely open ground chooses a walking point for a resident, or moves
+      // the read-only spectator camera.
       let press = null;
+      function screenMarkCandidates() {
+        const matrix = svg.getScreenCTM();
+        if (!matrix) return [];
+        return [...mapCtx.glyphIds].flatMap((id) => {
+          const mark = byId.get(id);
+          if (!mark?.at || ![mark.at.x, mark.at.y].every(Number.isFinite)) return [];
+          const point = svg.createSVGPoint();
+          point.x = originPx.x + mark.at.x / mPerPx;
+          point.y = originPx.y + mark.at.y / mPerPx;
+          const screen = point.matrixTransform(matrix);
+          return [{ id, x: screen.x, y: screen.y }];
+        });
+      }
+      const snappedMarkForEvent = (event) =>
+        snappedMarkAtPoint({ x: event.clientX, y: event.clientY }, screenMarkCandidates());
       svg.addEventListener("pointerdown", (e) => {
         stopTween();
         press = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
         svg.setPointerCapture(e.pointerId);
       });
       svg.addEventListener("pointermove", (e) => {
-        if (!press || e.pointerId !== press.id) return;
+        if (!press || e.pointerId !== press.id) {
+          markInteraction.hover(snappedMarkForEvent(e));
+          return;
+        }
         const dx = e.clientX - press.x, dy = e.clientY - press.y;
-        if (!press.moved && Math.hypot(dx, dy) < 6) return;
+        if (!press.moved && Math.hypot(dx, dy) < 6) {
+          markInteraction.hover(snappedMarkForEvent(e));
+          return;
+        }
         if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
+        markInteraction.hover(null);
         press.moved = true; boxEl.classList.add("panning");
         const r = svg.getBoundingClientRect();
         view.x -= dx * (view.w / r.width); view.y -= dy * (view.h / r.height);
@@ -1253,9 +1331,15 @@ export function mountViewer(appEl) {
         if (!press || e.pointerId !== press.id) return;
         const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
         if (wasDrag) return;
+        const snappedId = snappedMarkForEvent(e);
+        if (snappedId) {
+          selectMark(snappedId, { scrollCell: true });
+          return;
+        }
         const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
         const p = pt.matrixTransform(svg.getScreenCTM().inverse());
         const point = { x: Math.round((p.x - originPx.x) * mPerPx), y: Math.round((p.y - originPx.y) * mPerPx) };
+        markInteraction.select(null);
         if (identityResolved()) chooseWalkPoint(point.x, point.y);
         else {
           state.cam = point;
@@ -1263,6 +1347,7 @@ export function mountViewer(appEl) {
         }
       });
       svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
+      svg.addEventListener("pointerleave", () => { if (!press) markInteraction.hover(null); });
 
       // the grid: 1 km lines, 5 km majors, labelled in the town's own directions
       // (x grows east, y grows south; 0 is Ferry's crossing)
@@ -1350,23 +1435,30 @@ export function mountViewer(appEl) {
     const px = (m) => ({ x: originPx.x + m.x / mPerPx, y: originPx.y + m.y / mPerPx });
     const me = px(state.cam), reachPx = (radial?.sightReachM ?? 0) / mPerPx;
     let s = `<circle cx="${me.x}" cy="${me.y}" r="${reachPx}" class="ov-reach"/>`;
+    const glyphIds = new Set();
     for (const bands of Object.values(radial?.byBearing ?? {}))
       for (const arr of Object.values(bands))
         // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
         // mark up by id (and catches sovereign/home, which is not a tier value).
-        for (const m of arr) { if (!m.at || typeof m.at.x !== "number") continue; const p = px(m.at); s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip t-${tierOf(m)}"><title>${esc(m.id)}</title></circle>`; }
+        for (const m of arr) {
+          if (!m.at || typeof m.at.x !== "number" || !m.id) continue;
+          const p = px(m.at);
+          glyphIds.add(m.id);
+          s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip t-${tierOf(m)}" data-id="${esc(m.id)}">`
+            + `<title>${esc(markIdentity(m))}</title></circle>`;
+        }
     s += `<circle cx="${me.x}" cy="${me.y}" r="${17 / k}" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="${36 / k}" class="ov-halo"/>`;
     overlay.innerHTML = s;
+    mapCtx.glyphIds = glyphIds;
     mapCtx.syncWithin?.(radial);
+    renderMarkHighlight();
     drawWalkers(); // the camera moved; a derived position must stay true to it
     if (mapCtx.follow && mapCtx.lockOn && !mapCtx._tweening) mapCtx.lockOn();
   }
-  // wash a mark blue on the painting — a soft glow at its position (cheap and it
-  // reads); null clears. Points-ring/extent could be washed as a shape later, but
-  // a glow at the at-point is the "SUPER cool if not too hard" that stays cheap.
-  function highlightOnMap(id) {
+  function renderMarkHighlight() {
     if (!mapCtx?.hlLayer) return;
-    mapCtx.hlId = id || null;
+    const interaction = markInteraction.getState();
+    const id = interaction.hoveredId || interaction.selectedId;
     const m = id && byId.get(id);
     if (!m?.at) { mapCtx.hlLayer.innerHTML = ""; return; }
     const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
@@ -1384,8 +1476,34 @@ export function mountViewer(appEl) {
       s += markShapeSVG(m, hlPx, `wv-hl-box t-${t}${mech}`);
     }
     s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
+    const bounds = mapCtx.svg.getBoundingClientRect();
+    const unit = bounds.width > 0 ? mapCtx.view.w / bounds.width : 1;
+    const identity = markIdentity(m);
+    const label = identity.length > 58 ? `${identity.slice(0, 57)}…` : identity;
+    const labelWidth = Math.max(120, Math.min(420, label.length * 7 + 12)) * unit;
+    const labelHeight = 23 * unit;
+    const right = p.x < mapCtx.view.x + mapCtx.view.w * 0.55;
+    const wantedX = right ? p.x + 16 * unit : p.x - labelWidth - 16 * unit;
+    const labelX = Math.max(mapCtx.view.x + 4 * unit,
+      Math.min(mapCtx.view.x + mapCtx.view.w - labelWidth - 4 * unit, wantedX));
+    const labelY = Math.max(mapCtx.view.y + 4 * unit,
+      Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit, p.y - labelHeight - 10 * unit));
+    s += `<g class="wv-hl-label"><rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
+      + `<text x="${labelX + 6 * unit}" y="${labelY + 15.5 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
     mapCtx.hlLayer.innerHTML = s;
   }
+  function syncMarkInteractionViews() {
+    const interaction = markInteraction.getState();
+    const cells = root.querySelectorAll(".wv-card[data-id], .wv-tnode[data-id], .wv-wnode[data-id]");
+    for (const cell of cells) {
+      const selected = cell.dataset.id === interaction.selectedId;
+      cell.classList.toggle("is-mark-selected", selected);
+      cell.classList.toggle("is-mark-hovered", cell.dataset.id === interaction.hoveredId);
+      if (cell.classList.contains("wv-card")) cell.setAttribute("aria-selected", String(selected));
+    }
+    renderMarkHighlight();
+  }
+  markInteraction.subscribe(syncMarkInteractionViews);
 
   // ───────── walkers (write-release P2) ─────────
   // A walk is a DECLARED DEPARTURE; position is derived from that record and the
@@ -1558,29 +1676,40 @@ export function mountViewer(appEl) {
     const desk = $(root, ".wv-walkdesk");
     if (!desk) return;
     const box = $(desk, ".wv-walk-destination");
-    const button = $(desk, ".wv-walk-preview-btn");
     const destination = walkState.destination;
     if (box) box.innerHTML = destination
       ? `destination — <b>(${destination.x}, ${destination.y})</b><br><span>${destination.inside ? `in ${esc(destination.inside)}` : "on open ground"}</span>`
       : `click the painting, or choose <i>walk here</i> on a mark cell`;
-    if (button) button.disabled = !destination;
   }
 
-  function chooseWalkMark(id) {
+  function scrollMarkCellIntoView(id) {
+    const cell = [...root.querySelectorAll(".wv-card[data-id]")].find((entry) => entry.dataset.id === id);
+    cell?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function selectMark(id, { scrollCell = false, scrollDesk = false } = {}) {
+    if (!id || !byId.has(id)) return false;
+    markInteraction.select(id);
+    if (identityResolved()) chooseWalkMark(id, { scrollDesk });
+    if (scrollCell) scrollMarkCellIntoView(id);
+    return true;
+  }
+
+  function chooseWalkMark(id, { scrollDesk = false } = {}) {
     if (!identityResolved()) return;
     const mark = byId.get(id);
     if (!walkableMark(mark)) return;
-    chooseWalkPoint(mark.at.x, mark.at.y, id);
+    chooseWalkPoint(mark.at.x, mark.at.y, id, { scrollDesk });
   }
 
-  function chooseWalkPoint(x, y, namedInside = null) {
+  function chooseWalkPoint(x, y, namedInside = null, { scrollDesk = true } = {}) {
     if (!identityResolved()) return;
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
     walkState.destination = { ...destination, inside: namedInside || destination.inside };
-    invalidateWalkPreview();
     renderWalkDestination();
-    $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    previewSelectedWalk();
+    if (scrollDesk) $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   function previewSelectedWalk() {
@@ -1802,10 +1931,9 @@ export function mountViewer(appEl) {
   root.addEventListener("click", (e) => {
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
-    if (e.target.closest(".wv-walk-preview-btn")) { previewSelectedWalk(); return; }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
     const walkMark = e.target.closest("[data-walk-mark]");
-    if (walkMark) { chooseWalkMark(walkMark.dataset.walkMark); return; }
+    if (walkMark) { selectMark(walkMark.dataset.walkMark, { scrollDesk: true }); return; }
     const stakeOpen = e.target.closest("[data-stake-open]");
     if (stakeOpen) { openStakeSheet(stakeOpen.closest(".wv-card"), { mode: "stake" }); return; }
     const unstakeOpen = e.target.closest("[data-unstake-open]");
@@ -1847,7 +1975,15 @@ export function mountViewer(appEl) {
     const back = e.target.closest(".wv-back");
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
     const tn = e.target.closest(".wv-tnode, .wv-wnode"); // upward-context names drill too
-    if (tn) { const card = tn.closest(".wv-card"); if (card && tn.dataset.id) { card._stack.push(tn.dataset.id); renderExpansion(card); } return; }
+    if (tn) {
+      const card = tn.closest(".wv-card");
+      if (card && tn.dataset.id) {
+        selectMark(tn.dataset.id);
+        card._stack.push(tn.dataset.id);
+        renderExpansion(card);
+      }
+      return;
+    }
     const stand = e.target.closest(".stand");
     if (stand) {
       if (identityResolved()) chooseWalkPoint(+stand.dataset.x, +stand.dataset.y);
@@ -1861,17 +1997,28 @@ export function mountViewer(appEl) {
     if (!b) return;
     if (b.dataset.x !== undefined && b.classList.contains("ctl")) { walkState.actorBound = false; state.cam = { x: +b.dataset.x, y: +b.dataset.y }; renderCurrent(); }
     else if (b.dataset.dx !== undefined) { walkState.actorBound = false; state.cam.x += (+b.dataset.dx) * state.step; state.cam.y += (+b.dataset.dy) * state.step; renderCurrent(); }
-    else if (b.classList.contains("wv-card") && b.dataset.id) { if (b._stack?.length) { b._stack = []; renderExpansion(b); } else { b._stack = [b.dataset.id]; renderExpansion(b); } }
+    else if (b.classList.contains("wv-card") && b.dataset.id) {
+      selectMark(b.dataset.id);
+      if (b._stack?.length) { b._stack = []; renderExpansion(b); } else { b._stack = [b.dataset.id]; renderExpansion(b); }
+    }
   });
   function openCardById(id) {
     const card = [...root.querySelectorAll(".wv-card")].find((c) => c.dataset.id === id);
     if (card) { card._stack = [id]; renderExpansion(card); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
   }
-  // hover any mark surface (a telling card, a grid footprint/pip) → wash it on the
-  // painting; leaving clears. mouseover fires on every element enter, so the closest
-  // [data-id] is always the right answer without flicker.
-  root.addEventListener("mouseover", (e) => { const el = e.target.closest("[data-id]"); highlightOnMap(el?.dataset.id ?? null); });
-  root.addEventListener("mouseleave", () => highlightOnMap(null));
+  const markCellAt = (target) =>
+    target?.closest?.(".wv-card[data-id], .wv-tnode[data-id], .wv-wnode[data-id]") ?? null;
+  root.addEventListener("mouseover", (e) => {
+    const cell = markCellAt(e.target);
+    if (cell) markInteraction.hover(cell.dataset.id);
+  });
+  root.addEventListener("mouseout", (e) => {
+    const from = markCellAt(e.target);
+    if (!from) return;
+    const to = markCellAt(e.relatedTarget);
+    markInteraction.hover(to?.dataset.id ?? null);
+  });
+  root.addEventListener("mouseleave", () => markInteraction.hover(null));
   root.addEventListener("input", (e) => {
     if (e.target.closest(".wv-act-sheet")) {
       const sheet = e.target.closest(".wv-act-sheet");
@@ -1979,6 +2126,7 @@ export function mountViewer(appEl) {
     await Promise.all([loadActorHome(), loadActorBalance()]);
     await pollWalkers();
     syncActorPosition({ moveCamera: true });
+    if (walkState.destination) previewSelectedWalk();
   }
 
   function renderIdentity() {
@@ -1990,7 +2138,6 @@ export function mountViewer(appEl) {
           `<button type="button" class="ctl handleopt${handle === state.handle ? " on" : ""}" data-act-as="${esc(handle)}">${esc(handle)}${handle === state.handle
             ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`
             : ""}</button>`).join("")}</div>`
-        + `<p class="wv-act-note">This choice is remembered here; every act still names the resident at the office door.</p>`
       : "";
   }
   function renderPresets() {
