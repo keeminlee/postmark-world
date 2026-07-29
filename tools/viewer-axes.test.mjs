@@ -3,7 +3,9 @@ import test from "node:test";
 
 import {
   clampStakeAmount,
+  formatEtaCrossings,
   officeBase,
+  pointWalkDestination,
   previewStakeLedgerLine,
   previewWalkLeg,
   viewerAxisControls,
@@ -86,5 +88,25 @@ test("stake and walk previews use the sealed grammar and pure walk derivation", 
   assert.deepEqual(
     previewWalkLeg({ from: { x: 0, y: 0 }, toward: { x: 30_000, y: 0 } }),
     { distanceM: 30_000, etaCrossings: 2, viaCrossings: [] },
+  );
+});
+
+test("the walk desk formats crossing ETAs as clock time and labels point containment", () => {
+  assert.equal(formatEtaCrossings(125 / (12 * 60)), "≈ 2 h 05 m");
+  assert.equal(formatEtaCrossings(2), "≈ 24 h 00 m");
+  assert.equal(formatEtaCrossings(-1), "");
+
+  const marks = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 1000, h: 1000 } },
+    { id: "wright/the-trueing-house-parcel", kind: "parcel", at: { x: 0, y: 0 }, extent: { w: 25, h: 25 } },
+    { id: "wright/the-trueing-house", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 8, h: 8 } },
+  ];
+  assert.deepEqual(
+    pointWalkDestination({ x: 10, y: 0 }, marks),
+    { x: 10, y: 0, inside: "wright/the-trueing-house-parcel" },
+  );
+  assert.deepEqual(
+    pointWalkDestination({ x: 0, y: 0 }, marks),
+    { x: 0, y: 0, inside: "wright/the-trueing-house" },
   );
 });

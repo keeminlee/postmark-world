@@ -19,7 +19,7 @@
 import { orient, openYourEyes, investigate, containmentChain } from "../tools/world-verbs.mjs";
 import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
-import { contains, rect } from "../tools/geometry.mjs"; // read-only: to color a home + its descendants green
+import { contains, pointInRect, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markClass } from "../tools/mark-class.mjs"; // the ONE class rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
@@ -139,6 +139,34 @@ export function previewWalkLeg({ from, toward, targetExtent = null, skeleton = n
     etaCrossings: position.etaCrossings,
     viaCrossings: skeleton ? crossingsOnSegment(from, toward, skeleton) : [],
   };
+}
+
+const HOURS_PER_CROSSING = 12;
+export function formatEtaCrossings(etaCrossings) {
+  const crossings = Number(etaCrossings);
+  if (!Number.isFinite(crossings) || crossings < 0) return "";
+  const totalMinutes = Math.round(crossings * HOURS_PER_CROSSING * 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `≈ ${hours} h ${String(minutes).padStart(2, "0")} m`;
+}
+
+export function pointWalkDestination(point, marks = []) {
+  const x = Number(point?.x), y = Number(point?.y);
+  if (![x, y].every(Number.isFinite)) return null;
+  const inside = marks
+    .filter((mark) => {
+      const w = Number(mark?.extent?.w), h = Number(mark?.extent?.h);
+      return mark?.id && mark.id !== "the-town/let-there-be-light" && !mark.far
+        && Number.isFinite(mark?.at?.x) && Number.isFinite(mark?.at?.y)
+        && w > 0 && h > 0 && pointInRect(x, y, rect(mark));
+    })
+    .sort((a, b) => {
+      const areaA = Number(a.extent.w) * Number(a.extent.h);
+      const areaB = Number(b.extent.w) * Number(b.extent.h);
+      return areaA - areaB || String(a.id).localeCompare(String(b.id));
+    })[0]?.id ?? null;
+  return { x: Math.round(x), y: Math.round(y), inside };
 }
 
 const BEARING_LONG = { N: "north", NNE: "north-northeast", NE: "northeast", ENE: "east-northeast", E: "east", ESE: "east-southeast", SE: "southeast", SSE: "south-southeast", S: "south", SSW: "south-southwest", SW: "southwest", WSW: "west-southwest", W: "west", WNW: "west-northwest", NW: "northwest", NNW: "north-northwest" };
@@ -536,14 +564,13 @@ const STYLE = `
 .wv-walkdesk h2 { margin-top:0; }
 .wv-youhere { color:var(--dim); font-size:.76rem; margin-bottom:8px; }
 .wv-youhere b { color:var(--green); }
-.wv-walkfield { display:block; margin-top:7px; color:var(--dim); font-size:.7rem; }
-.wv-walkfield select, .wv-walkfield input { width:100%; margin-top:3px; background:var(--night);
-  color:var(--paper); border:1px solid var(--line); border-radius:4px; padding:5px 6px; font:inherit; }
-.wv-pointfields { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.wv-walk-destination { margin-top:7px; padding:7px 8px; border:1px solid var(--line);
+  border-radius:4px; color:var(--dim); font-size:.72rem; line-height:1.4; }
+.wv-walk-destination b { color:var(--paper); font-variant-numeric:tabular-nums; }
 .wv-walkdesk .wv-walk-preview-btn, .wv-walkdesk .wv-walk-confirm {
   width:100%; margin-top:8px; background:transparent; border:1px solid var(--amber-dark);
   color:var(--amber); border-radius:4px; padding:5px 8px; font:inherit; font-size:.76rem; cursor:pointer; }
-.wv-walkdesk .wv-walk-confirm:disabled { opacity:.45; cursor:not-allowed; }
+.wv-walkdesk .wv-walk-preview-btn:disabled, .wv-walkdesk .wv-walk-confirm:disabled { opacity:.45; cursor:not-allowed; }
 .wv-walk-preview { margin-top:8px; padding:8px; border:1px dashed var(--amber-dark); border-radius:4px;
   color:var(--paper); font-size:.75rem; line-height:1.45; }
 .wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
@@ -577,20 +604,8 @@ const MARKUP = `
     <section class="wv-walkdesk" hidden>
       <h2>Walk</h2>
       <div class="wv-youhere">finding your place in the walk ledger…</div>
-      <label class="wv-walkfield">destination
-        <select class="wv-walk-kind">
-          <option value="mark">a mark</option>
-          <option value="point">a point</option>
-        </select>
-      </label>
-      <label class="wv-walkfield wv-walk-mark-field">mark
-        <select class="wv-walk-mark"></select>
-      </label>
-      <div class="wv-pointfields" hidden>
-        <label class="wv-walkfield">east / west (m)<input class="wv-walk-x" type="number" step="1"></label>
-        <label class="wv-walkfield">north / south (m)<input class="wv-walk-y" type="number" step="1"></label>
-      </div>
-      <button type="button" class="wv-walk-preview-btn">preview the leg</button>
+      <div class="wv-walk-destination">click the painting, or choose <i>walk here</i> on a mark cell</div>
+      <button type="button" class="wv-walk-preview-btn" disabled>preview the leg</button>
       <div class="wv-walk-preview" hidden></div>
       <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
       <p class="wv-walk-answer" hidden></p>
@@ -599,8 +614,8 @@ const MARKUP = `
       <!-- stand/move went DEV-ONLY the day walk shipped (bronze
            spectator-stand-move-dev-only-before-walk, executed 2026-07-28): a
            resident's position is walk-derived now; free repositioning is a dev
-           instrument. Map-click-to-stand stays public for the moment — the
-           spyglass question (looking ≠ being) is teed for Keemin, not ruled. -->
+           instrument. A signed-in painting click chooses a walking point;
+           a spectator click still moves the read-only camera. -->
       <div class="wv-standmove" hidden>
       <h2>Stand at</h2>
       <div class="presets">${PRESETS.map((p) => `<button class="ctl" data-x="${p.x}" data-y="${p.y}">${esc(p.label)}</button>`).join("")}</div>
@@ -821,7 +836,8 @@ export function mountViewer(appEl) {
   }
   function walkableMark(m) {
     const full = byId.get(m?.id) ?? m;
-    return full?.kind === "sited" && full?.tier !== "constitution" && !!full.at
+    return (full?.kind === "sited" || full?.kind === "parcel")
+      && full?.tier !== "constitution" && !!full.at
       && Math.max(Number(full.extent?.w ?? 0), Number(full.extent?.h ?? 0)) < 2000;
   }
   function backedPosition(markId, handle = state.handle) {
@@ -1375,7 +1391,7 @@ export function mountViewer(appEl) {
   // A walk is a DECLARED DEPARTURE; position is derived from that record and the
   // clock. So this layer stores nothing and animates nothing — it asks the server
   // where everyone is at a given crossing and draws that.
-  let walkState = { at: null, walkers: [], timer: null, pending: null, actorBound: true };
+  let walkState = { at: null, walkers: [], timer: null, pending: null, destination: null, actorBound: true };
 
   function actorWalker() {
     return walkState.walkers.find((walker) => walker.handle === state.handle) ?? null;
@@ -1414,7 +1430,7 @@ export function mountViewer(appEl) {
         s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
              `<circle cx="${dest.x}" cy="${dest.y}" r="${5 / k}" class="wv-walk-dest"/>`;
       const cls = w.standing ? "wv-walker standing" : w.arrived ? "wv-walker arrived" : "wv-walker";
-      const eta = w.standing ? "standing" : w.arrived ? "arrived" : `${w.remaining_m} m to go, ETA ${w.eta_crossings} crossings`;
+      const eta = w.standing ? "standing" : w.arrived ? "arrived" : `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`;
       s += `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}"><title>${esc(w.handle)} — ${esc(eta)}</title></circle>`;
     }
     mapCtx.walkLayer.innerHTML = s;
@@ -1534,43 +1550,36 @@ export function mountViewer(appEl) {
     if (!desk) return;
     desk.hidden = !identityResolved();
     if (desk.hidden) return;
-    const select = $(desk, ".wv-walk-mark");
-    const selected = select?.value;
-    const marks = (data?.trueWorld?.marks ?? [])
-      .filter(walkableMark)
-      .sort((a, b) => String(a.id).localeCompare(String(b.id)));
-    if (select) {
-      select.innerHTML = marks.map((mark) =>
-        `<option value="${esc(mark.id)}">${esc(firstWords(mark.body, 7) || mark.id)} · ${esc(mark.id)}</option>`).join("");
-      if (marks.some((mark) => mark.id === selected)) select.value = selected;
-    }
+    renderWalkDestination();
     syncActorPosition();
   }
 
-  function setWalkKind(kind) {
+  function renderWalkDestination() {
     const desk = $(root, ".wv-walkdesk");
     if (!desk) return;
-    const isPoint = kind === "point";
-    $(desk, ".wv-walk-kind").value = isPoint ? "point" : "mark";
-    $(desk, ".wv-walk-mark-field").hidden = isPoint;
-    $(desk, ".wv-pointfields").hidden = !isPoint;
-    invalidateWalkPreview();
+    const box = $(desk, ".wv-walk-destination");
+    const button = $(desk, ".wv-walk-preview-btn");
+    const destination = walkState.destination;
+    if (box) box.innerHTML = destination
+      ? `destination — <b>(${destination.x}, ${destination.y})</b><br><span>${destination.inside ? `in ${esc(destination.inside)}` : "on open ground"}</span>`
+      : `click the painting, or choose <i>walk here</i> on a mark cell`;
+    if (button) button.disabled = !destination;
   }
 
   function chooseWalkMark(id) {
     if (!identityResolved()) return;
-    setWalkKind("mark");
-    const select = $(root, ".wv-walk-mark");
-    if (select && [...select.options].some((option) => option.value === id)) select.value = id;
-    $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const mark = byId.get(id);
+    if (!walkableMark(mark)) return;
+    chooseWalkPoint(mark.at.x, mark.at.y, id);
   }
 
-  function chooseWalkPoint(x, y) {
+  function chooseWalkPoint(x, y, namedInside = null) {
     if (!identityResolved()) return;
-    setWalkKind("point");
-    const xEl = $(root, ".wv-walk-x"), yEl = $(root, ".wv-walk-y");
-    if (xEl) xEl.value = String(Math.round(x));
-    if (yEl) yEl.value = String(Math.round(y));
+    const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
+    if (!destination) return;
+    walkState.destination = { ...destination, inside: namedInside || destination.inside };
+    invalidateWalkPreview();
+    renderWalkDestination();
     $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
@@ -1587,27 +1596,17 @@ export function mountViewer(appEl) {
       answer.textContent = "The office has no walk-ledger or sited-home origin for this resident.";
       return;
     }
-    const kind = $(desk, ".wv-walk-kind").value;
-    let toward, targetExtent = null, payload, destination;
-    if (kind === "mark") {
-      const id = $(desk, ".wv-walk-mark").value;
-      const mark = (data?.trueWorld?.marks ?? []).find((entry) => entry.id === id);
-      if (!walkableMark(mark)) {
-        answer.hidden = false;
-        answer.classList.add("refusal");
-        answer.textContent = "Choose a published, sited mark small enough to be a destination.";
-        return;
-      }
-      toward = { x: Number(mark.at.x), y: Number(mark.at.y) };
-      targetExtent = { w: Number(mark.extent?.w ?? 0), h: Number(mark.extent?.h ?? 0) };
-      payload = { mark_id: id, handle: state.handle };
-      destination = id;
-    } else {
-      toward = { x: Number($(desk, ".wv-walk-x").value), y: Number($(desk, ".wv-walk-y").value) };
-      payload = { x: toward.x, y: toward.y, handle: state.handle };
-      destination = `(${toward.x}, ${toward.y})`;
+    const selected = walkState.destination;
+    if (!selected) {
+      answer.hidden = false;
+      answer.classList.add("refusal");
+      answer.textContent = "Choose a destination on the painting or from a mark cell.";
+      return;
     }
-    const leg = previewWalkLeg({ from, toward, targetExtent, skeleton: data?.skeleton });
+    const toward = { x: selected.x, y: selected.y };
+    const payload = { x: toward.x, y: toward.y, handle: state.handle };
+    const destination = `(${toward.x}, ${toward.y})${selected.inside ? ` in ${selected.inside}` : ""}`;
+    const leg = previewWalkLeg({ from, toward, skeleton: data?.skeleton });
     if (!leg) {
       answer.hidden = false;
       answer.classList.add("refusal");
@@ -1616,7 +1615,7 @@ export function mountViewer(appEl) {
     }
     const via = leg.viaCrossings.length ? leg.viaCrossings.join(", ") : "none";
     preview.innerHTML = `<b>${esc(state.handle)} → ${esc(destination)}</b><br>`
-      + `${leg.distanceM.toLocaleString()} m · ETA ${leg.etaCrossings} crossings<br>`
+      + `${leg.distanceM.toLocaleString()} m · ETA ${formatEtaCrossings(leg.etaCrossings)}<br>`
       + `named water crossings: ${esc(via)}`;
     preview.hidden = false;
     confirm.disabled = false;
@@ -1641,7 +1640,7 @@ export function mountViewer(appEl) {
         return;
       }
       answer.classList.add("success");
-      answer.textContent = `${state.handle} departed: ${Number(response.body.leg_m ?? 0).toLocaleString()} m, ETA ${response.body.eta_crossings ?? 0} crossings.`;
+      answer.textContent = `${state.handle} departed: ${Number(response.body.leg_m ?? 0).toLocaleString()} m, ETA ${formatEtaCrossings(response.body.eta_crossings ?? 0)}.`;
       walkState.pending = null;
       await pollWalkers();
     } catch (error) {
@@ -1881,7 +1880,6 @@ export function mountViewer(appEl) {
       $(sheet, ".wv-act-answer").hidden = true;
       return;
     }
-    if (e.target.matches(".wv-walk-x, .wv-walk-y")) { invalidateWalkPreview(); return; }
     if (e.target.classList.contains("stepslider")) { state.step = STEP_NOTCHES[Number(e.target.value)] ?? state.step; const lbl = root.querySelector(".stepval"); if (lbl) lbl.textContent = stepLabel(state.step); return; }
     if (e.target.classList.contains("crossover")) {
       const v = String(e.target.value).trim();
@@ -1897,11 +1895,6 @@ export function mountViewer(appEl) {
       clearTimeout(devTimer); devTimer = setTimeout(renderCurrent, 70);
     }
   });
-  root.addEventListener("change", (e) => {
-    if (e.target.classList.contains("wv-walk-kind")) { setWalkKind(e.target.value); return; }
-    if (e.target.classList.contains("wv-walk-mark")) { invalidateWalkPreview(); }
-  });
-
   // Identity is UI memory, not door law. The token is presented on every signed
   // call and the selected resident is included in every act payload. Only the
   // selected handle is sticky; the office remains choose-per-call.
