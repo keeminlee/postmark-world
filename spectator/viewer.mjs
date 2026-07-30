@@ -327,6 +327,19 @@ export function formatCardinalPosition(point) {
   return `${axes.join(" · ")} of TC`;
 }
 
+export function distanceBandLabel(name, bands = DIALS.distance_bands) {
+  const index = (bands ?? []).findIndex((band) => band.name === name);
+  if (index < 0) return String(name ?? "");
+  const band = bands[index];
+  const title = String(name).charAt(0).toUpperCase() + String(name).slice(1);
+  const number = (value) => Math.round(Number(value)).toLocaleString();
+  if (index === 0) return `${title} (within ~${number(band.max)} m)`;
+  const lower = bands[index - 1].max;
+  return Number.isFinite(band.max)
+    ? `${title} (~${number(lower)}–${number(band.max)} m)`
+    : `${title} (~${number(lower)} m+)`;
+}
+
 export function pointWalkDestination(point, marks = []) {
   const x = Number(point?.x), y = Number(point?.y);
   if (![x, y].every(Number.isFinite)) return null;
@@ -596,7 +609,7 @@ const STYLE = `
 .wv-spine .sep { opacity:.5; margin:0 5px; }
 .wv-open { white-space:pre-wrap; max-width:76ch; line-height:1.55; border-bottom:1px solid var(--line);
   padding-bottom:14px; margin-bottom:10px; }
-.wv-band h3 { font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
+.wv-band h3 { font-size:.8rem; letter-spacing:.07em; color:var(--dim); margin:18px 0 8px; }
 .wv-arrow { width:.95em; height:.95em; vertical-align:-.15em; margin-right:.3em; overflow:visible; }
 .wv-arrow path { fill:currentColor; opacity:.8; }
 .wv-card { border:1px solid var(--line); border-left:3px solid var(--amber-dark); border-radius:5px;
@@ -1231,7 +1244,7 @@ export function mountViewer(appEl) {
         .sort((m, n) => (m.distM ?? 0) - (n.distM ?? 0));
       if (keep) entries = entries.filter(keep);
       if (!entries.length) continue;
-      html += `<div class="wv-band"><h3>${esc(band)}</h3>`;
+      html += `<div class="wv-band"><h3>${esc(distanceBandLabel(band, state.dials.distance_bands))}</h3>`;
       for (const m of entries) html += markCell(m, { role: "fov", radialChips: true });
       html += `</div>`;
     }
@@ -1358,14 +1371,13 @@ export function mountViewer(appEl) {
       // that ignores sight would be the regression).
       const feed = isNew ? newFeed(mine ? isMine : null) : null;
       box.innerHTML = chips
-        + (ladder ? `<div class="wv-section-lbl">where you stand — the frame inward</div>`
+        + (ladder ? `<div class="wv-section-lbl">where you stand</div>`
                   + `<div class="wv-ladder-cells">${ladder}</div>` : "")
         + (isNew
           ? `<div class="wv-section-lbl">new marks — the whole record, newest first</div>`
             + `<div class="wv-cards">${feed.html}</div>`
             + `<div class="wv-tallies">${esc(feed.count)}</div>`
-          : `<div class="wv-section-lbl">what tells from here${mine ? " · yours" : ""}</div>`
-            + `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
+          : `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
             + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
       if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
       drawOverlay(e.radial);

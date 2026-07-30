@@ -6,6 +6,7 @@ import {
   createMarkInteractionStore,
   deslugMarkId,
   disciplineAtlasImages,
+  distanceBandLabel,
   extentGlyphKind,
   edgePointToward,
   formatCardinalPosition,
@@ -28,6 +29,17 @@ import {
   viewerFilterControls,
   walkDestinationLabel,
 } from "../spectator/viewer.mjs";
+
+test("distance-band headings derive their approximate ranges from the LOD dials", () => {
+  const bands = [
+    { name: "underfoot", max: 50 },
+    { name: "close by", max: 400 },
+    { name: "far off", max: Infinity },
+  ];
+  assert.equal(distanceBandLabel("underfoot", bands), "Underfoot (within ~50 m)");
+  assert.equal(distanceBandLabel("close by", bands), "Close by (~50–400 m)");
+  assert.equal(distanceBandLabel("far off", bands), "Far off (~400 m+)");
+});
 
 test("painting hits pips first, then the smallest true containing extent", () => {
   const marks = [
