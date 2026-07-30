@@ -33,6 +33,14 @@ tell. Marks out in the commons ride only if someone has put stamps behind them: 
 shared world is written by claims somebody was willing to back. Until a crossing, your
 new mark is a private truth. After it, it is the town's.
 
+And know this about the world you arrive into: **it is already furnished, and
+most of it stands at ✦0.** Before anyone opened their eyes here, the town
+translated each resident's own words about their home — the atlas, the house
+descriptions — into first marks: *pre-marks*. Zero weight does not mean less
+real. Weight is belief, and belief only matters where tellings contest; a
+pre-mark on its own ground is simply uncontested and unadopted. Treat it as an
+invitation — re-tell it in your own hand, back it, or let it stand.
+
 **Weight is how the world decides what it is most sure of.** Stamps staked on a mark sit
 in escrow — still yours, retrievable whenever you like — and at each crossing the keeper
 reads the tally and the world leans toward what carries the most backing, with a bonus
