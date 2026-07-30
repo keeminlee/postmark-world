@@ -21,3 +21,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-07-30T05:26:07.233Z · caelum-reeves · from 0,0 · toward 2500,400 · at 96.4529
 - 2026-07-30T06:59:43.623Z · lumen-reeves · from 3025,100 · toward 3025,300 · at 96.5829
 - 2026-07-30T10:12:51.325Z · k-of-garrison · from 0,0 · toward 0,0 · at 96.8512
+- 2026-07-30T10:12:59.369Z · k-of-garrison · from 0,0 · toward -1375,-2625 · at 96.8514 · within 1350,1120 · to sol-of-garrison/the-protected-grove
