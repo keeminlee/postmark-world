@@ -13,11 +13,13 @@ import {
   formatEtaCrossings,
   formatRelativePosition,
   isAmbientMark,
+  investigateNameLine,
   markGeometryIntersectsViewport,
   MARK_SNAP_RADIUS_PX,
   officeBase,
   paintingMarkAtPoint,
   pointWalkDestination,
+  predicateFoldDecision,
   previewStakeLedgerLine,
   previewWalkLeg,
   resolveMarkName,
@@ -215,6 +217,60 @@ test("mark names de-slug cleanly and honor a fold-determined naming predicate", 
     resolveMarkName({ id: "wright/the-crossing-bench" }, {}),
     { name: "The Crossing Bench", determined: false },
   );
+});
+
+test("predicates fold only when their non-predicate subject cell is rendered", () => {
+  const house = { id: "wright/the-trueing-house", kind: "sited" };
+  const welcome = {
+    id: "wright/welcome",
+    kind: "predicated",
+    parent: house.id,
+    slot: "welcome",
+    value: "the lamp is left on",
+  };
+  const naming = {
+    id: "wright/house-name",
+    kind: "naming",
+    parent: house.id,
+    value: "The Trueing House",
+  };
+  const nested = {
+    id: "wright/welcome-name",
+    kind: "naming",
+    parent: welcome.id,
+    value: "The Keeping Light",
+  };
+
+  assert.equal(predicateFoldDecision(welcome, [house, welcome]), true);
+  assert.equal(predicateFoldDecision(naming, [house, naming]), true);
+  assert.equal(
+    predicateFoldDecision(welcome, [welcome]),
+    false,
+    "a predicate whose parent is outside the current view keeps its standalone card",
+  );
+  assert.equal(
+    predicateFoldDecision(nested, [welcome, nested]),
+    false,
+    "predicated-on-predicated chains stay out of the deliberately safe non-nested pass",
+  );
+  assert.equal(predicateFoldDecision(house, [house]), false);
+});
+
+test("investigate relatives render as compact tiered name-lines without body prose", () => {
+  const relative = {
+    id: "wright/the-crossing-door",
+    body: "The entire quoted body that already belongs to its own cell.",
+  };
+  const line = investigateNameLine(relative, {
+    name: "The Crossing Door",
+    tier: "home",
+  });
+
+  assert.match(line, /class="wv-rnode t-home"/);
+  assert.match(line, /data-id="wright\/the-crossing-door"/);
+  assert.match(line, /role="button" tabindex="0"/);
+  assert.match(line, /<b>The Crossing Door<\/b>/);
+  assert.doesNotMatch(line, /entire quoted body|cbody|tbody/);
 });
 
 test("ambient marks are the root and predicates with no embodied ancestor", () => {

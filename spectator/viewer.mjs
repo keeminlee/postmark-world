@@ -459,6 +459,29 @@ export function createMarkInteractionStore() {
   };
 }
 
+const isPredicateAttribute = (mark) =>
+  mark?.kind === "predicated" || mark?.kind === "naming";
+
+// Cells v1.5 folds only one safe level: a predicate/naming mark may become an
+// attribute of a rendered, non-predicate subject cell. Predicated-on-predicated
+// chains stay as standalone cells; rendering those as a nested tree belongs to
+// the later cells-v2 design.
+export function predicateFoldDecision(mark, renderedMarks = []) {
+  if (!isPredicateAttribute(mark) || !mark.parent) return false;
+  const rendered = markIndex(renderedMarks);
+  const parent = rendered.get(mark.parent);
+  return !!parent && !isPredicateAttribute(parent);
+}
+
+// A relative in an investigate expansion is a navigation line, never a second
+// telling of that relative's prose. Name and tier are supplied by the viewer's
+// resolved fold so this pure renderer is equally testable and clone-safe.
+export function investigateNameLine(mark, { name, tier = "market" } = {}) {
+  const identity = name || deslugMarkId(mark?.id);
+  const accent = tier === "home" || tier === "constitution" ? tier : "market";
+  return `<div class="wv-rnode t-${accent}" data-id="${esc(mark?.id)}" role="button" tabindex="0"><b>${esc(identity)}</b></div>`;
+}
+
 const BEARING_LONG = { N: "north", NNE: "north-northeast", NE: "northeast", ENE: "east-northeast", E: "east", ESE: "east-southeast", SE: "southeast", SSE: "south-southeast", S: "south", SSW: "south-southwest", SW: "southwest", WSW: "west-southwest", W: "west", WNW: "west-northwest", NW: "northwest", NNW: "north-northwest" };
 
 // The chip's arrow points where the mark lies, north UP — the map pane's orientation.
@@ -648,8 +671,8 @@ const STYLE = `
 .wv-card.is-mark-hovered { border-color:var(--wv-mark-accent); }
 .wv-card.is-mark-selected { border-color:var(--wv-mark-accent); outline:1px solid var(--wv-mark-accent);
   outline-offset:2px; }
-.wv-tnode.is-mark-hovered, .wv-tnode.is-mark-selected,
-.wv-wnode.is-mark-hovered, .wv-wnode.is-mark-selected { color:var(--paper); border-color:var(--amber); }
+.wv-rnode.is-mark-hovered, .wv-rnode.is-mark-selected,
+.wv-attribute.is-mark-hovered, .wv-attribute.is-mark-selected { color:var(--paper); border-color:var(--wv-mark-accent); }
 .wv-card.far { border-left-color:var(--line); font-style:italic; }
 .wv-card .cname { display:flex; align-items:center; gap:7px; color:var(--paper); font-size:1.02rem;
   line-height:1.25; font-style:normal; font-weight:700; }
@@ -672,6 +695,8 @@ button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:und
 .wv-cell-act { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
   border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
 .wv-cell-act:hover { background:var(--panel2); }
+.wv-walk-here { display:none; }
+.wv-card.is-mark-selected > .cmeta .wv-walk-here { display:inline-flex; }
 .wv-cell-act.stamp { border-color:var(--stamp-violet-dark); color:var(--stamp-violet-subhead); }
 .wv-cell-act.stamp:hover { border-color:var(--stamp-violet); color:var(--stamp-violet-heading); }
 .wv-act-sheet { margin-top:10px; padding:10px; border:1px dashed var(--stamp-violet-dark);
@@ -732,25 +757,27 @@ button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:und
 .wv-crumbs { display:flex; gap:10px; align-items:baseline; margin-bottom:6px; }
 .wv-back { color:var(--amber); cursor:pointer; font-size:.82rem; }
 .wv-back:hover { text-decoration:underline; }
-/* upward context on an investigate card: what this mark sits INSIDE. Its own
-   relation — before this it had none, so a parent fell through into "alongside"
-   and a child's own house was listed as its neighbour. Nearest container first;
-   each name drills, same as a tree node. Labelled "sits inside" and not
-   "within": the children section directly below is already "within it", and two
-   adjacent labels differing by one word while meaning opposite directions is a
-   trap. The engine field stays "within" — this is the label, not the contract.
-   (No backticks anywhere in this block: it is one big template literal.) */
-.wv-within { font-size:.8rem; color:var(--dim); margin:2px 0 8px; line-height:1.55; }
-.wv-within .lbl { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; margin-right:7px; }
-.wv-within .wv-wnode { color:var(--amber); cursor:pointer; border-bottom:1px dotted var(--amber-dark); }
-.wv-within .wv-wnode:hover { color:var(--paper); border-bottom-color:var(--amber); }
+/* investigate relations are compact name-lines. A relative's body belongs only
+   to its own cell; the tier-colored edge keeps the navigation line legible. */
 .wv-tree-label { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin:12px 0 4px 10px; }
-.wv-tree { margin-left:20px; border-left:1px solid var(--amber-dark); padding-left:14px; }
-.wv-tree.sib { margin-left:4px; border-left-style:dotted; }
-.wv-tnode { padding:7px 10px; margin:5px 0; border:1px solid var(--line); border-radius:4px; cursor:pointer; }
-.wv-tnode:hover { border-color:var(--amber-dark); }
-.wv-tnode .tbody { font-size:.92rem; line-height:1.4; }
-.wv-tslot { font-style:italic; color:var(--dim); }
+.wv-relation-lines { margin-left:10px; }
+.wv-rnode { --wv-mark-accent:var(--amber); padding:4px 9px; margin:3px 0; border-left:3px solid var(--amber-dark);
+  color:var(--paper); font-size:.84rem; line-height:1.35; cursor:pointer; }
+.wv-rnode.t-constitution { --wv-mark-accent:var(--blue); border-left-color:var(--blue-dark); }
+.wv-rnode.t-home { --wv-mark-accent:var(--green); border-left-color:var(--green-dark); }
+.wv-rnode:hover { color:var(--amber); background:rgba(255,255,255,.025); }
+.wv-attributes { margin:7px 0 2px; border-top:1px dotted var(--line); }
+.wv-attribute { --wv-mark-accent:var(--amber); display:flex; align-items:baseline; gap:7px;
+  padding:5px 0 4px 9px; border-left:2px solid var(--amber-dark); color:var(--dim);
+  font-size:.8rem; line-height:1.35; cursor:pointer; }
+.wv-attribute.t-constitution { --wv-mark-accent:var(--blue); border-left-color:var(--blue-dark); }
+.wv-attribute.t-home { --wv-mark-accent:var(--green); border-left-color:var(--green-dark); }
+.wv-attribute-value { min-width:0; flex:1; }
+.wv-attribute-value b { color:var(--paper); }
+.wv-attribute-state { color:var(--paper); opacity:.82; font-style:italic; }
+.wv-attribute .wv-cell-actions { margin-left:auto; }
+.wv-attribute:hover { color:var(--paper); background:rgba(255,255,255,.025); }
+.wv-expansion-attributes { margin:5px 0 8px 10px; }
 
 /* my marks */
 .wv-marks-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
@@ -1196,6 +1223,7 @@ export function mountViewer(appEl) {
     return `<span class="wv-cell-actions">`
       + backingDisplay
       + (position ? `<button type="button" class="wv-cell-act stamp unstake" data-unstake-open data-mark="${esc(m.id)}" data-max="${Number(position.stamps)}">take back ${Number(position.stamps)}</button>` : "")
+      + (walkableMark(full) ? `<button type="button" class="wv-cell-act wv-walk-here" data-walk-here data-mark="${esc(m.id)}">walk here</button>` : "")
       + `</span>`;
   }
   // THE unified mark-cell — everything on the telling is one of these, and every
@@ -1403,6 +1431,7 @@ export function mountViewer(appEl) {
           : `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
             + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
       if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
+      foldRenderedPredicates(box);
       drawOverlay(e.radial);
       syncMarkInteractionViews();
     } catch (err) {
@@ -1437,15 +1466,54 @@ export function mountViewer(appEl) {
     box.appendChild(tailEl);
   }
 
+  function predicateAttributeLine(mark, { annotation = "" } = {}) {
+    const full = byId.get(mark.id) ?? mark;
+    const tier = tierOf(full);
+    const slot = full.kind === "naming" ? "name" : (full.slot || "property");
+    const value = full.value ?? "";
+    return `<div class="wv-attribute t-${tier}" data-id="${esc(full.id)}" role="button" tabindex="0">`
+      + `<span class="wv-attribute-value"><b>${esc(slot)}:</b> ${esc(value)}`
+      + `${annotation ? ` <span class="wv-attribute-state">· ${esc(annotation)}</span>` : ""}</span>`
+      + `${markActions(full)}</div>`;
+  }
+
+  // Fold only predicates that already have their subject cell in this rendered
+  // view. The DOM pass sees the ladder, bands/New feed, and Mine tail together,
+  // so the decision cannot disagree across sections.
+  function foldRenderedPredicates(box) {
+    const cards = [...box.querySelectorAll(".wv-card[data-id]")];
+    const renderedMarks = cards.map((card) => byId.get(card.dataset.id) ?? { id: card.dataset.id });
+    const cardById = new Map();
+    for (const card of cards) if (!cardById.has(card.dataset.id)) cardById.set(card.dataset.id, card);
+
+    const folded = new Map();
+    for (const card of cards) {
+      const mark = byId.get(card.dataset.id);
+      if (!predicateFoldDecision(mark, renderedMarks)) continue;
+      const annotation = card.querySelector(":scope > .wv-cell-state")?.textContent ?? "";
+      (folded.get(mark.parent) ?? folded.set(mark.parent, []).get(mark.parent)).push({ mark, annotation });
+      card.remove();
+    }
+    for (const [parentId, attributes] of folded) {
+      const parent = cardById.get(parentId);
+      if (!parent?.isConnected) continue;
+      const group = document.createElement("div");
+      group.className = "wv-attributes";
+      group.innerHTML = attributes.map(({ mark, annotation }) =>
+        predicateAttributeLine(mark, { annotation })).join("");
+      const meta = parent.querySelector(":scope > .cmeta");
+      if (meta) parent.insertBefore(group, meta);
+      else parent.appendChild(group);
+    }
+    for (const band of box.querySelectorAll(".wv-band"))
+      if (!band.querySelector(".wv-card")) band.remove();
+  }
+
   // ───────── investigate (in-place expansion inside a card) ─────────
-  const tnode = (n, cls) => `<div class="wv-tnode ${cls}" data-id="${esc(n.id)}" role="button" tabindex="0">
-      <div class="tbody">${n.slot ? `<span class="wv-tslot">${esc(n.slot)}:</span> <b>${esc(n.value ?? "")}</b> — ` : ""}${esc(n.body ?? "")}</div>
-      <div class="cmeta">${n.stamps > 0 ? `<span class="wv-chip stamps">✦${n.stamps}</span>` : ""}<span class="wv-cid">${esc(n.id)}</span></div>
-    </div>`;
-  // one container in the upward-context line: its short name, drillable like a
-  // tree node, with the household after it so "whose" is answered in place.
-  const wnode = (w) => `<span class="wv-wnode" data-id="${esc(w.id)}" role="button" tabindex="0">${esc(firstWords(w.body, 6) || w.id)}</span>`
-    + (w.household ? ` <span class="wv-quiet">· ${esc(w.household)}</span>` : "");
+  const relativeNode = (relative) => {
+    const full = byId.get(relative.id) ?? relative;
+    return investigateNameLine(full, { name: markName(full).name, tier: tierOf(full) });
+  };
   function renderExpansion(card) {
     const stack = card._stack ?? [];
     let box = card.querySelector(".wv-expand");
@@ -1455,14 +1523,17 @@ export function mountViewer(appEl) {
     if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
     if (d.error) { box.innerHTML = `<div class="wv-err">${esc(d.error)}</div>`; return; }
     const drilled = stack.length > 1;
+    const alreadyFolded = new Set([...card.querySelectorAll(":scope > .wv-attributes .wv-attribute[data-id]")]
+      .map((attribute) => attribute.dataset.id));
+    const newlyRevealedPredicates = (d.predicates ?? []).filter((predicate) => !alreadyFolded.has(predicate.id));
     box.innerHTML = `
       ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><span class="wv-cid">${esc(d.id)}</span></div>
       <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>` : ""}
       <div class="cmeta" style="margin-bottom:4px">${d.stamps > 0 ? `<span class="wv-chip stamps">✦${d.stamps}</span>` : `<span class="wv-chip">✦0 — a pre-mark, awaiting its resident</span>`}${d.sovereign ? `<span class="wv-chip">sovereign</span>` : ""}${d.tier === "constitution" ? `<span class="wv-chip">constitution</span>` : ""}</div>
-      ${d.within?.length ? `<div class="wv-within"><span class="lbl">sits inside</span> ${d.within.map(wnode).join(' <span class="wv-quiet">‹</span> ')}</div>` : ""}
-      ${d.predicates?.length ? `<div class="wv-tree-label">told of it</div><div class="wv-tree">${d.predicates.map((p) => tnode(p, "prop")).join("")}</div>` : ""}
-      ${d.inside?.length ? `<div class="wv-tree-label">within it</div><div class="wv-tree">${d.inside.map((p) => tnode(p, "child")).join("")}</div>` : ""}
-      ${d.alongside?.length ? `<div class="wv-tree-label">alongside</div><div class="wv-tree sib">${d.alongside.map((p) => tnode(p, "sib")).join("")}</div>` : ""}
+      ${newlyRevealedPredicates.length ? `<div class="wv-expansion-attributes">${newlyRevealedPredicates.map(predicateAttributeLine).join("")}</div>` : ""}
+      ${d.within?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.within.map(relativeNode).join("")}</div>` : ""}
+      ${d.inside?.length ? `<div class="wv-tree-label">within it</div><div class="wv-relation-lines">${d.inside.map(relativeNode).join("")}</div>` : ""}
+      ${d.alongside?.length ? `<div class="wv-tree-label">alongside</div><div class="wv-relation-lines">${d.alongside.map(relativeNode).join("")}</div>` : ""}
       ${(d.more?.inside > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
     syncMarkInteractionViews();
   }
@@ -1827,7 +1898,7 @@ export function mountViewer(appEl) {
   }
   function syncMarkInteractionViews() {
     const interaction = markInteraction.getState();
-    const cells = root.querySelectorAll(".wv-card[data-id], .wv-tnode[data-id], .wv-wnode[data-id]");
+    const cells = root.querySelectorAll(".wv-card[data-id], .wv-rnode[data-id], .wv-attribute[data-id]");
     for (const cell of cells) {
       const selected = cell.dataset.id === interaction.selectedId;
       cell.classList.toggle("is-mark-selected", selected);
@@ -2012,15 +2083,16 @@ export function mountViewer(appEl) {
     const destination = walkState.destination;
     if (box) box.innerHTML = destination
       ? `destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined, actorOrigin()))}</b>`
-      : `click the painting, or select a mark cell`;
+      : `click open ground in the painting, or select a walkable mark and choose walk here`;
   }
 
   function scrollMarkCellIntoView(id) {
-    const cell = [...root.querySelectorAll(".wv-card[data-id]")].find((entry) => entry.dataset.id === id);
+    const cell = [...root.querySelectorAll(".wv-card[data-id], .wv-attribute[data-id]")]
+      .find((entry) => entry.dataset.id === id);
     cell?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
-  function selectMark(id, { scrollCell = false, scrollDesk = false } = {}) {
+  function selectMark(id, { scrollCell = false } = {}) {
     if (!id || !byId.has(id)) return false;
     if (markInteraction.getState().selectedId === id) {
       clearSelectionAndDestination();
@@ -2031,7 +2103,6 @@ export function mountViewer(appEl) {
       walkState.destination = null;
       invalidateWalkPreview();
       renderWalkDestination();
-      chooseWalkMark(id, { scrollDesk });
     }
     if (scrollCell) scrollMarkCellIntoView(id);
     return true;
@@ -2126,12 +2197,12 @@ export function mountViewer(appEl) {
     }
   }
 
-  function openStakeSheet(card, { mode = "stake", max = "" } = {}) {
+  function openStakeSheet(card, { mode = "stake", max = "", markId = null } = {}) {
     root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
     const sheet = document.createElement("div");
     sheet.className = "wv-act-sheet";
     sheet.dataset.mode = mode;
-    sheet.dataset.mark = card.dataset.id;
+    sheet.dataset.mark = markId || card.dataset.id;
     if (max !== "") sheet.dataset.max = String(max);
     const balance = Number.isInteger(state.actorBalance) ? state.actorBalance : null;
     if (mode === "stake" && balance !== null) sheet.dataset.balance = String(balance);
@@ -2304,11 +2375,20 @@ export function mountViewer(appEl) {
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
+    const walkHere = e.target.closest("[data-walk-here]");
+    if (walkHere) { chooseWalkMark(walkHere.dataset.mark, { scrollDesk: true }); return; }
     const stakeOpen = e.target.closest("[data-stake-open]");
-    if (stakeOpen) { openStakeSheet(stakeOpen.closest(".wv-card"), { mode: "stake" }); return; }
+    if (stakeOpen) {
+      openStakeSheet(stakeOpen.closest(".wv-card"), { mode: "stake", markId: stakeOpen.dataset.mark });
+      return;
+    }
     const unstakeOpen = e.target.closest("[data-unstake-open]");
     if (unstakeOpen) {
-      openStakeSheet(unstakeOpen.closest(".wv-card"), { mode: "unstake", max: unstakeOpen.dataset.max });
+      openStakeSheet(unstakeOpen.closest(".wv-card"), {
+        mode: "unstake",
+        max: unstakeOpen.dataset.max,
+        markId: unstakeOpen.dataset.mark,
+      });
       return;
     }
     const sheet = e.target.closest(".wv-act-sheet");
@@ -2344,13 +2424,20 @@ export function mountViewer(appEl) {
     // investigate: back-crumb / tree node / card
     const back = e.target.closest(".wv-back");
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
-    const tn = e.target.closest(".wv-tnode, .wv-wnode"); // upward-context names drill too
+    const attribute = e.target.closest(".wv-attribute");
+    if (attribute?.dataset.id) { selectMark(attribute.dataset.id); return; }
+    const tn = e.target.closest(".wv-rnode");
     if (tn) {
       const card = tn.closest(".wv-card");
       if (card && tn.dataset.id) {
         selectMark(tn.dataset.id);
-        card._stack.push(tn.dataset.id);
-        renderExpansion(card);
+        const targetCard = [...root.querySelectorAll(".wv-card[data-id]")]
+          .find((candidate) => candidate.dataset.id === tn.dataset.id);
+        if (targetCard && targetCard !== card) openCardById(tn.dataset.id);
+        else {
+          card._stack.push(tn.dataset.id);
+          renderExpansion(card);
+        }
       }
       return;
     }
@@ -2387,7 +2474,7 @@ export function mountViewer(appEl) {
     if (card) { card._stack = [id]; renderExpansion(card); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
   }
   const markCellAt = (target) =>
-    target?.closest?.(".wv-card[data-id], .wv-tnode[data-id], .wv-wnode[data-id]") ?? null;
+    target?.closest?.(".wv-card[data-id], .wv-rnode[data-id], .wv-attribute[data-id]") ?? null;
   root.addEventListener("mouseover", (e) => {
     const cell = markCellAt(e.target);
     if (cell) markInteraction.hover(cell.dataset.id);
