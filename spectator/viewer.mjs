@@ -229,6 +229,16 @@ export function formatEtaCrossings(etaCrossings) {
   return `≈ ${hours} h ${String(minutes).padStart(2, "0")} m`;
 }
 
+export function formatCardinalPosition(point) {
+  const x = Math.round(Number(point?.x)), y = Math.round(Number(point?.y));
+  if (![x, y].every(Number.isFinite)) return "";
+  if (x === 0 && y === 0) return "at TC";
+  const axes = [];
+  if (y !== 0) axes.push(`${Math.abs(y).toLocaleString()} m ${y < 0 ? "N" : "S"}`);
+  if (x !== 0) axes.push(`${Math.abs(x).toLocaleString()} m ${x < 0 ? "W" : "E"}`);
+  return `${axes.join(" · ")} of TC`;
+}
+
 export function pointWalkDestination(point, marks = []) {
   const x = Number(point?.x), y = Number(point?.y);
   if (![x, y].every(Number.isFinite)) return null;
@@ -774,7 +784,7 @@ const MARKUP = `
       <h2>Move</h2>
       <div class="compass">
         <button class="ctl" data-dx="-1" data-dy="-1">NW</button><button class="ctl" data-dx="0" data-dy="-1">N</button><button class="ctl" data-dx="1" data-dy="-1">NE</button>
-        <button class="ctl" data-dx="-1" data-dy="0">W</button><div class="pos">0,0</div><button class="ctl" data-dx="1" data-dy="0">E</button>
+        <button class="ctl" data-dx="-1" data-dy="0">W</button><div class="pos">at TC</div><button class="ctl" data-dx="1" data-dy="0">E</button>
         <button class="ctl" data-dx="-1" data-dy="1">SW</button><button class="ctl" data-dx="0" data-dy="1">S</button><button class="ctl" data-dx="1" data-dy="1">SE</button>
       </div>
       <div class="stepwrap">
@@ -1042,6 +1052,8 @@ export function mountViewer(appEl) {
       full.by ? `<span class="wv-detail-author">by ${esc(full.by)}</span>` : "",
       full.date ? `<span class="wv-detail-date">${esc(String(full.date).slice(0, 10))}</span>` : "",
       extentTag(full),
+      isEmbodiedMark(full) && !isAmbientMark(full, byId)
+        ? `<span class="wv-detail-position">${esc(formatCardinalPosition(full.at))}</span>` : "",
       where.detail ? `<span class="wv-detail-where">${esc(where.detail)}</span>` : "",
     ].filter(Boolean).join("");
     const cluster = (role === "fov" && m.clusteredCount > 1)
@@ -1663,7 +1675,7 @@ export function mountViewer(appEl) {
     const origin = actorOrigin();
     const here = $(root, ".wv-youhere");
     if (here) here.innerHTML = origin
-      ? `you are here — <b>(${Math.round(origin.x)}, ${Math.round(origin.y)})</b><br><span>${esc(origin.source)}</span>`
+      ? `you are here — <b>${esc(formatCardinalPosition(origin))}</b><br><span>${esc(origin.source)}</span>`
       : `<span>no walk-ledger or sited-home position was found</span>`;
     if (moveCamera && origin && walkState.actorBound) {
       state.cam = { x: origin.x, y: origin.y };
@@ -1813,7 +1825,7 @@ export function mountViewer(appEl) {
     const box = $(desk, ".wv-walk-destination");
     const destination = walkState.destination;
     if (box) box.innerHTML = destination
-      ? `destination — <b>(${destination.x}, ${destination.y})</b><br><span>${destination.inside ? `in ${esc(destination.inside)}` : "on open ground"}</span>`
+      ? `destination — <b>${esc(formatCardinalPosition(destination))}</b><br><span>${destination.inside ? `in ${esc(destination.inside)}` : "on open ground"}</span>`
       : `click the painting, or choose <i>walk here</i> on a mark cell`;
   }
 
@@ -1869,7 +1881,7 @@ export function mountViewer(appEl) {
     }
     const toward = { x: selected.x, y: selected.y };
     const payload = { x: toward.x, y: toward.y, handle: state.handle };
-    const destination = `(${toward.x}, ${toward.y})${selected.inside ? ` in ${selected.inside}` : ""}`;
+    const destination = `${formatCardinalPosition(toward)}${selected.inside ? ` in ${selected.inside}` : ""}`;
     const leg = previewWalkLeg({ from, toward, skeleton: data?.skeleton });
     if (!leg) {
       answer.hidden = false;
@@ -2052,8 +2064,8 @@ export function mountViewer(appEl) {
 
   // ───────── view switching + shared render ─────────
   function renderCurrent() {
-    $(root, ".pos").textContent = `${state.cam.x},${state.cam.y}`;
-    $(root, ".wv-where").innerHTML = `standing at <b>(${state.cam.x}, ${state.cam.y})</b>`;
+    $(root, ".pos").textContent = formatCardinalPosition(state.cam);
+    $(root, ".wv-where").innerHTML = `standing <b>${esc(formatCardinalPosition(state.cam))}</b>`;
     const cn = $(root, ".crossnow");
     if (cn) cn.innerHTML = state.crossingOverride
       ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`

@@ -7,6 +7,7 @@ import {
   deslugMarkId,
   disciplineAtlasImages,
   extentGlyphKind,
+  formatCardinalPosition,
   formatEtaCrossings,
   isAmbientMark,
   MARK_SNAP_RADIUS_PX,
@@ -21,6 +22,14 @@ import {
   viewerAxisState,
   viewerFilterControls,
 } from "../spectator/viewer.mjs";
+
+test("every viewer position speaks cardinally from Town Centre", () => {
+  assert.equal(formatCardinalPosition({ x: 925, y: -2400 }), "2,400 m N · 925 m E of TC");
+  assert.equal(formatCardinalPosition({ x: -1200, y: 0 }), "1,200 m W of TC");
+  assert.equal(formatCardinalPosition({ x: 0, y: 75 }), "75 m S of TC");
+  assert.equal(formatCardinalPosition({ x: 0, y: 0 }), "at TC");
+  assert.equal(formatCardinalPosition({ x: "nope", y: 0 }), "");
+});
 
 test("backer summaries show the top five and count everyone else", () => {
   const summary = summarizeBackers([
