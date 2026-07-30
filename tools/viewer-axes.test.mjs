@@ -21,6 +21,7 @@ import {
   viewerAxisControls,
   viewerAxisState,
   viewerFilterControls,
+  walkDestinationLabel,
 } from "../spectator/viewer.mjs";
 
 test("every viewer position speaks cardinally from Town Centre", () => {
@@ -214,6 +215,14 @@ test("the walk desk formats crossing ETAs as clock time and labels point contain
     pointWalkDestination({ x: 0, y: 0 }, marks),
     { x: 0, y: 0, inside: "wright/the-trueing-house" },
   );
+  assert.equal(
+    walkDestinationLabel(
+      { x: 0, y: 0, markId: "wright/the-trueing-house" },
+      marks,
+    ),
+    "The Trueing House",
+  );
+  assert.equal(walkDestinationLabel({ x: 925, y: -2400 }, marks), "• 2,400 m N · 925 m E of TC");
 });
 
 test("painting mark hit-testing uses the nearest glyph inside an 18 px snap radius", () => {

@@ -257,6 +257,13 @@ export function pointWalkDestination(point, marks = []) {
   return { x: Math.round(x), y: Math.round(y), inside };
 }
 
+export function walkDestinationLabel(destination, marks = [], determined = {}) {
+  const mark = destination?.markId && markIndex(marks).get(destination.markId);
+  if (mark) return resolveMarkName(mark, determined).name;
+  const cardinal = formatCardinalPosition(destination);
+  return cardinal ? `• ${cardinal}` : "";
+}
+
 export function disciplineAtlasImages(root) {
   const images = [...root.querySelectorAll("img, image")];
   for (const image of images) {
@@ -767,7 +774,7 @@ const MARKUP = `
     <section class="wv-walkdesk" hidden>
       <h2>Walk</h2>
       <div class="wv-youhere">finding your place in the walk ledger…</div>
-      <div class="wv-walk-destination">click the painting, or choose <i>walk here</i> on a mark cell</div>
+      <div class="wv-walk-destination">click the painting, or select a mark cell</div>
       <div class="wv-walk-preview" hidden></div>
       <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
       <p class="wv-walk-answer" hidden></p>
@@ -1034,7 +1041,6 @@ export function mountViewer(appEl) {
     if (!identityResolved()) return `<span class="wv-cell-actions">${backingDisplay}</span>`;
     const position = backedPosition(m.id);
     return `<span class="wv-cell-actions">`
-      + (walkableMark(full) ? `<button type="button" class="wv-cell-act" data-walk-mark="${esc(m.id)}">walk here</button>` : "")
       + backingDisplay
       + (position ? `<button type="button" class="wv-cell-act stamp unstake" data-unstake-open data-mark="${esc(m.id)}" data-max="${Number(position.stamps)}">take back ${Number(position.stamps)}</button>` : "")
       + `</span>`;
@@ -1825,8 +1831,8 @@ export function mountViewer(appEl) {
     const box = $(desk, ".wv-walk-destination");
     const destination = walkState.destination;
     if (box) box.innerHTML = destination
-      ? `destination — <b>${esc(formatCardinalPosition(destination))}</b><br><span>${destination.inside ? `in ${esc(destination.inside)}` : "on open ground"}</span>`
-      : `click the painting, or choose <i>walk here</i> on a mark cell`;
+      ? `destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined))}</b>`
+      : `click the painting, or select a mark cell`;
   }
 
   function scrollMarkCellIntoView(id) {
@@ -1836,10 +1842,26 @@ export function mountViewer(appEl) {
 
   function selectMark(id, { scrollCell = false, scrollDesk = false } = {}) {
     if (!id || !byId.has(id)) return false;
+    if (markInteraction.getState().selectedId === id) {
+      clearSelectionAndDestination();
+      return false;
+    }
     markInteraction.select(id);
-    if (identityResolved()) chooseWalkMark(id, { scrollDesk });
+    if (identityResolved()) {
+      walkState.destination = null;
+      invalidateWalkPreview();
+      renderWalkDestination();
+      chooseWalkMark(id, { scrollDesk });
+    }
     if (scrollCell) scrollMarkCellIntoView(id);
     return true;
+  }
+
+  function clearSelectionAndDestination() {
+    markInteraction.select(null);
+    walkState.destination = null;
+    invalidateWalkPreview();
+    renderWalkDestination();
   }
 
   function chooseWalkMark(id, { scrollDesk = false } = {}) {
@@ -1853,7 +1875,7 @@ export function mountViewer(appEl) {
     if (!identityResolved()) return;
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
-    walkState.destination = { ...destination, inside: namedInside || destination.inside };
+    walkState.destination = { ...destination, inside: namedInside || destination.inside, markId: namedInside || null };
     renderWalkDestination();
     previewSelectedWalk();
     if (scrollDesk) $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -1876,12 +1898,12 @@ export function mountViewer(appEl) {
     if (!selected) {
       answer.hidden = false;
       answer.classList.add("refusal");
-      answer.textContent = "Choose a destination on the painting or from a mark cell.";
+      answer.textContent = "Choose a destination on the painting or select a mark cell.";
       return;
     }
     const toward = { x: selected.x, y: selected.y };
     const payload = { x: toward.x, y: toward.y, handle: state.handle };
-    const destination = `${formatCardinalPosition(toward)}${selected.inside ? ` in ${selected.inside}` : ""}`;
+    const destination = walkDestinationLabel(selected, byId, data?.worldState?.determined);
     const leg = previewWalkLeg({ from, toward, skeleton: data?.skeleton });
     if (!leg) {
       answer.hidden = false;
@@ -1889,10 +1911,8 @@ export function mountViewer(appEl) {
       answer.textContent = "Choose a destination with two finite coordinates.";
       return;
     }
-    const via = leg.viaCrossings.length ? leg.viaCrossings.join(", ") : "none";
-    preview.innerHTML = `<b>${esc(state.handle)} → ${esc(destination)}</b><br>`
-      + `${leg.distanceM.toLocaleString()} m · ETA ${formatEtaCrossings(leg.etaCrossings)}<br>`
-      + `named water crossings: ${esc(via)}`;
+    preview.innerHTML = `<b>${leg.distanceM.toLocaleString()} m · ETA ${formatEtaCrossings(leg.etaCrossings)}</b><br>`
+      + `${esc(destination)}`;
     preview.hidden = false;
     confirm.disabled = false;
     walkState.pending = { payload, leg };
@@ -2104,8 +2124,6 @@ export function mountViewer(appEl) {
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
-    const walkMark = e.target.closest("[data-walk-mark]");
-    if (walkMark) { selectMark(walkMark.dataset.walkMark, { scrollDesk: true }); return; }
     const stakeOpen = e.target.closest("[data-stake-open]");
     if (stakeOpen) { openStakeSheet(stakeOpen.closest(".wv-card"), { mode: "stake" }); return; }
     const unstakeOpen = e.target.closest("[data-unstake-open]");
@@ -2170,10 +2188,20 @@ export function mountViewer(appEl) {
     if (b.dataset.x !== undefined && b.classList.contains("ctl")) { walkState.actorBound = false; state.cam = { x: +b.dataset.x, y: +b.dataset.y }; renderCurrent(); }
     else if (b.dataset.dx !== undefined) { walkState.actorBound = false; state.cam.x += (+b.dataset.dx) * state.step; state.cam.y += (+b.dataset.dy) * state.step; renderCurrent(); }
     else if (b.classList.contains("wv-card") && b.dataset.id) {
-      selectMark(b.dataset.id);
+      if (!selectMark(b.dataset.id)) {
+        b._stack = [];
+        renderExpansion(b);
+        return;
+      }
       if (b._stack?.length) { b._stack = []; renderExpansion(b); } else { b._stack = [b.dataset.id]; renderExpansion(b); }
     }
   });
+  const onViewerKeydown = (event) => {
+    if (event.key !== "Escape") return;
+    if (!markInteraction.getState().selectedId && !walkState.destination) return;
+    clearSelectionAndDestination();
+  };
+  document.addEventListener("keydown", onViewerKeydown);
   function openCardById(id) {
     const card = [...root.querySelectorAll(".wv-card")].find((c) => c.dataset.id === id);
     if (card) { card._stack = [id]; renderExpansion(card); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
@@ -2363,7 +2391,14 @@ export function mountViewer(appEl) {
     }
   })();
 
-  return { rerender: renderCurrent, stop: () => clearInterval(clock) };
+  return {
+    rerender: renderCurrent,
+    stop: () => {
+      clearInterval(clock);
+      clearInterval(walkState.timer);
+      document.removeEventListener("keydown", onViewerKeydown);
+    },
+  };
 }
 
 // ───────── tiny helpers (display only) ─────────
