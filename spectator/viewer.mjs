@@ -356,11 +356,31 @@ export function pointWalkDestination(point, marks = []) {
   return { x: Math.round(x), y: Math.round(y), inside };
 }
 
-export function walkDestinationLabel(destination, marks = [], determined = {}) {
-  const mark = destination?.markId && markIndex(marks).get(destination.markId);
+export function walkDestinationLabel(destination, marks = [], determined = {}, from = null) {
+  const byMarkId = markIndex(marks);
+  const mark = destination?.markId && byMarkId.get(destination.markId);
   if (mark) return resolveMarkName(mark, determined).name;
-  const cardinal = formatCardinalPosition(destination);
-  return cardinal ? `• ${cardinal}` : "";
+  const pieces = ["open ground"];
+  const relative = formatRelativePosition(from, destination);
+  if (relative) pieces.push(relative);
+  const container = destination?.inside && byMarkId.get(destination.inside);
+  if (container) pieces.push(`in ${resolveMarkName(container, determined).name}`);
+  return pieces.join(" · ");
+}
+
+export function formatRelativePosition(from, to, bearingPoints = DIALS.bearing_points) {
+  const dx = Number(to?.x) - Number(from?.x), dy = Number(to?.y) - Number(from?.y);
+  if (![dx, dy].every(Number.isFinite)) return "";
+  const distance = Math.round(Math.hypot(dx, dy));
+  if (distance === 0) return "here";
+  const bearing = quantizeBearing(bearingDeg(dx, dy), bearingPoints);
+  return `${distance.toLocaleString()} m · ${BEARING_LONG[bearing] ?? bearing}`;
+}
+
+export function standingLocationLabel(point, marks = [], determined = {}) {
+  const id = smallestContainingMark(point, marks);
+  const mark = id && markIndex(marks).get(id);
+  return mark ? `standing in ${resolveMarkName(mark, determined).name}` : "on open ground";
 }
 
 export function disciplineAtlasImages(root) {
@@ -407,6 +427,15 @@ export function paintingMarkAtPoint({
 } = {}) {
   return snappedMarkAtPoint(screenPoint, glyphs, radiusPx)
     ?? smallestContainingMark(worldPoint, marks);
+}
+
+export function toldPaintingMarks(radial, marks = []) {
+  const ids = new Set((radial?.within ?? []).map((mark) => mark?.id).filter(Boolean));
+  for (const bands of Object.values(radial?.byBearing ?? {}))
+    for (const entries of Object.values(bands ?? {}))
+      for (const mark of entries ?? [])
+        if (mark?.id) ids.add(mark.id);
+  return (marks ?? []).filter((mark) => ids.has(mark?.id));
 }
 
 export function createMarkInteractionStore() {
@@ -538,6 +567,7 @@ const DEV_DIALS = [
 const STYLE = `
 .wv { --night:#14171d; --panel:#1c2129; --panel2:#20262f; --line:#2e3542;
   --paper:#e8e0cf; --dim:#9a9280; --amber:#e8c56a; --amber-dark:#b8964a; --err:#d98a7a;
+  --you:#ff2418;
   --stamp-violet:#aa8fd8; --stamp-violet-dark:#65517f;
   --stamp-violet-heading:#d8c7ef; --stamp-violet-subhead:#cbb8e5;
   /* tier accents (Keemin 2026-07-23): constitution → blue, sovereign/homes → green, market → amber */
@@ -589,7 +619,7 @@ const STYLE = `
   border:1px solid var(--line); border-radius:4px; font:inherit; padding:4px 7px; }
 .wv-nav input.num { width:80px; }
 .wv-where { color:var(--dim); font-size:.82rem; margin-top:14px; }
-.wv-where b { color:var(--paper); }
+.wv-where b { color:var(--you); }
 .wv-dev-toggle { margin-top:20px; width:100%; }
 .wv-dev { margin-top:12px; border-top:1px solid var(--line); padding-top:12px; }
 .wv-dev .dial { margin-bottom:9px; }
@@ -784,8 +814,8 @@ button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:und
 .ov-pip { fill:var(--amber); opacity:.65; }
 .ov-pip.t-constitution { fill:var(--blue); }
 .ov-pip.t-home { fill:var(--green); }
-.ov-dot { fill:#ff2418; stroke:#fff; stroke-width:3; }
-.ov-halo { fill:none; stroke:#ff2418; stroke-width:3; opacity:.55; }
+.ov-dot { fill:var(--you); stroke:#fff; stroke-width:3; }
+.ov-halo { fill:none; stroke:var(--you); stroke-width:3; opacity:.55; }
 /* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
    tier color (Keemin 2026-07-24 eve: one visual language, cells ⇄ map) */
 .wv-hl-box { fill:rgba(255,255,255,.06); stroke-width:3; vector-effect:non-scaling-stroke; }
@@ -817,7 +847,6 @@ button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:und
 .wv-minimap.panning { cursor:grabbing; }
 .wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
 .wv-gridline.major { stroke-opacity:.32; }
-.wv-gridlbl { fill:#e8c56a; opacity:.55; font-family:Consolas,Menlo,monospace; }
 /* footprints — every mark's true extent from the record. ONE vocabulary with the
    cells: tier sets the color (tierOf), dashed = the law/mechanic modifier. */
 #wv-fp-layer { pointer-events:none; }
@@ -853,12 +882,12 @@ button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:und
 .wv-nav .wv-signout { color:var(--amber-dark); cursor:pointer; margin-left:4px; }
 .wv-nav .wv-signout:hover { color:var(--amber); }
 .wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
-.wv-nav .handleopt.on { border-color:var(--green-dark); color:var(--green); }
+.wv-nav .handleopt.on { border-color:var(--you); color:var(--you); }
 .wv-nav .wv-identity h2 { margin-top:0; }
 .wv-walkdesk { margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
 .wv-walkdesk h2 { margin-top:0; }
 .wv-youhere { color:var(--dim); font-size:.76rem; margin-bottom:8px; }
-.wv-youhere b { color:var(--green); }
+.wv-youhere b { color:var(--you); }
 .wv-walk-destination { margin-top:7px; padding:7px 8px; border:1px solid var(--line);
   border-radius:4px; color:var(--dim); font-size:.72rem; line-height:1.4; }
 .wv-walk-destination b { color:var(--paper); font-variant-numeric:tabular-nums; }
@@ -1181,8 +1210,6 @@ export function mountViewer(appEl) {
       full.by ? `<span class="wv-detail-author">by ${esc(full.by)}</span>` : "",
       full.date ? `<span class="wv-detail-date">${esc(String(full.date).slice(0, 10))}</span>` : "",
       extentTag(full),
-      isEmbodiedMark(full) && !isAmbientMark(full, byId)
-        ? `<span class="wv-detail-position">${esc(formatCardinalPosition(full.at))}</span>` : "",
       where.detail ? `<span class="wv-detail-where">${esc(where.detail)}</span>` : "",
     ].filter(Boolean).join("");
     const cluster = (role === "fov" && m.clusteredCount > 1)
@@ -1507,7 +1534,6 @@ export function mountViewer(appEl) {
       function applyView() {
         svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
         mapCtx.zoomK = full.w / view.w;
-        sizeGridLabels();
         if (lastRadial) drawOverlay(lastRadial);
         renderMarkHighlight();
       }
@@ -1593,7 +1619,7 @@ export function mountViewer(appEl) {
         screenPoint: { x: event.clientX, y: event.clientY },
         worldPoint: worldPointForEvent(event),
         glyphs: screenMarkCandidates(),
-        marks: world?.marks ?? [],
+        marks: toldPaintingMarks(lastRadial, world?.marks ?? []),
       });
       svg.addEventListener("pointerdown", (e) => {
         stopTween();
@@ -1639,13 +1665,7 @@ export function mountViewer(appEl) {
       svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
       svg.addEventListener("pointerleave", () => { if (!press) markInteraction.hover(null); });
 
-      // the grid: 1 km lines, 5 km majors, labelled in the town's own directions
-      // (x grows east, y grows south; 0 is Ferry's crossing)
-      function gridLabel(m, ew) {
-        if (m === 0) return "⌖ 0";
-        const n = Math.abs(m) / 1000;
-        return ew ? `${n} km ${m > 0 ? "E" : "W"}` : `${n} km ${m > 0 ? "S" : "N"}`;
-      }
+      // the grid keeps scale without exposing absolute survey readouts.
       function buildGridLayer() {
         const mx0 = (full.x - originPx.x) * mPerPx, mx1 = (full.x + full.w - originPx.x) * mPerPx;
         const my0 = (full.y - originPx.y) * mPerPx, my1 = (full.y + full.h - originPx.y) * mPerPx;
@@ -1654,19 +1674,12 @@ export function mountViewer(appEl) {
         for (let m = Math.ceil(mx0 / step) * step; m <= mx1; m += step) {
           const x = originPx.x + m / mPerPx, big = m % major === 0;
           s += `<line x1="${x}" y1="${full.y}" x2="${x}" y2="${full.y + full.h}" class="wv-gridline${big ? " major" : ""}"/>`;
-          if (big) s += `<text x="${x + 4}" y="${full.y + 26}" class="wv-gridlbl" data-gl>${gridLabel(m, true)}</text>`;
         }
         for (let m = Math.ceil(my0 / step) * step; m <= my1; m += step) {
           const y = originPx.y + m / mPerPx, big = m % major === 0;
           s += `<line x1="${full.x}" y1="${y}" x2="${full.x + full.w}" y2="${y}" class="wv-gridline${big ? " major" : ""}"/>`;
-          if (big) s += `<text x="${full.x + 6}" y="${y - 5}" class="wv-gridlbl" data-gl>${gridLabel(m, false)}</text>`;
         }
         gridLayer.innerHTML = s;
-        sizeGridLabels();
-      }
-      function sizeGridLabels() {
-        const fs = Math.max(11, 22 / Math.sqrt(mapCtx.zoomK || 1));
-        gridLayer.querySelectorAll("[data-gl]").forEach((t) => t.setAttribute("font-size", fs));
       }
       mapCtx.toggleGrid = () => {
         if (!gridLayer.childNodes.length) buildGridLayer();
@@ -1848,7 +1861,7 @@ export function mountViewer(appEl) {
     const origin = actorOrigin();
     const here = $(root, ".wv-youhere");
     if (here) here.innerHTML = origin
-      ? `you are here — <b>${esc(formatCardinalPosition(origin))}</b><br><span>${esc(origin.source)}</span>`
+      ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined))}</b><br><span>${esc(origin.source)}</span>`
       : `<span>no walk-ledger or sited-home position was found</span>`;
     if (moveCamera && origin && walkState.actorBound) {
       state.cam = { x: origin.x, y: origin.y };
@@ -1998,7 +2011,7 @@ export function mountViewer(appEl) {
     const box = $(desk, ".wv-walk-destination");
     const destination = walkState.destination;
     if (box) box.innerHTML = destination
-      ? `destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined))}</b>`
+      ? `destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined, actorOrigin()))}</b>`
       : `click the painting, or select a mark cell`;
   }
 
@@ -2070,7 +2083,7 @@ export function mountViewer(appEl) {
     }
     const toward = { x: selected.x, y: selected.y };
     const payload = { x: toward.x, y: toward.y, handle: state.handle };
-    const destination = walkDestinationLabel(selected, byId, data?.worldState?.determined);
+    const destination = walkDestinationLabel(selected, byId, data?.worldState?.determined, from);
     const leg = previewWalkLeg({ from, toward, skeleton: data?.skeleton });
     if (!leg) {
       answer.hidden = false;
@@ -2251,8 +2264,8 @@ export function mountViewer(appEl) {
 
   // ───────── view switching + shared render ─────────
   function renderCurrent() {
-    $(root, ".pos").textContent = formatCardinalPosition(state.cam);
-    $(root, ".wv-where").innerHTML = `standing <b>${esc(formatCardinalPosition(state.cam))}</b>`;
+    $(root, ".pos").textContent = `${Math.round(state.cam.x)}, ${Math.round(state.cam.y)}`;
+    $(root, ".wv-where").innerHTML = `<b>${esc(standingLocationLabel(state.cam, world?.marks ?? [], data?.worldState?.determined))}</b>`;
     const cn = $(root, ".crossnow");
     if (cn) cn.innerHTML = state.crossingOverride
       ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`

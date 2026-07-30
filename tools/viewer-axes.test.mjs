@@ -11,6 +11,7 @@ import {
   edgePointToward,
   formatCardinalPosition,
   formatEtaCrossings,
+  formatRelativePosition,
   isAmbientMark,
   markGeometryIntersectsViewport,
   MARK_SNAP_RADIUS_PX,
@@ -23,7 +24,9 @@ import {
   nearestEmbodiedAncestor,
   snappedMarkAtPoint,
   smallestContainingMark,
+  standingLocationLabel,
   summarizeBackers,
+  toldPaintingMarks,
   viewerAxisControls,
   viewerAxisState,
   viewerFilterControls,
@@ -53,6 +56,7 @@ test("painting hits pips first, then the smallest true containing extent", () =>
       extent: { w: 20, h: 20 },
       points: [[20, 20], [40, 20], [40, 25], [25, 25], [25, 40], [20, 40]],
     },
+    { id: "wright/fog-hidden", kind: "sited", at: { x: 600, y: 600 }, extent: { w: 20, h: 20 } },
   ];
   assert.equal(smallestContainingMark({ x: 0, y: 0 }, marks), "wright/bench");
   assert.equal(smallestContainingMark({ x: 34, y: 34 }, marks), "wright/yard",
@@ -69,6 +73,37 @@ test("painting hits pips first, then the smallest true containing extent", () =>
     }),
     "wright/pip",
     "pip snap wins even over a smaller containing extent",
+  );
+
+  const radial = {
+    within: [{ id: "the-town/let-there-be-light" }, { id: "wright/yard" }],
+    byBearing: { E: { "close by": [{ id: "wright/bench" }] } },
+  };
+  const candidates = toldPaintingMarks(radial, marks);
+  assert.deepEqual(
+    candidates.map((mark) => mark.id),
+    ["the-town/let-there-be-light", "wright/yard", "wright/bench"],
+    "extent candidates are exactly the radial telling plus the containment ladder",
+  );
+  assert.equal(
+    paintingMarkAtPoint({
+      screenPoint: { x: 100, y: 100 },
+      worldPoint: { x: 45, y: 45 },
+      glyphs: [],
+      marks: candidates,
+    }),
+    "wright/yard",
+    "a containing ladder mark stays hoverable without a pip",
+  );
+  assert.equal(
+    paintingMarkAtPoint({
+      screenPoint: { x: 100, y: 100 },
+      worldPoint: { x: 600, y: 600 },
+      glyphs: [],
+      marks: candidates,
+    }),
+    null,
+    "untold foggy or occluded extents leave open ground inert",
   );
 });
 
@@ -112,12 +147,24 @@ test("off-screen geometry resolves predicates to places and clips at the viewpor
   );
 });
 
-test("every viewer position speaks cardinally from Town Centre", () => {
+test("the pure cardinal formatter remains available for the door-side sweep", () => {
   assert.equal(formatCardinalPosition({ x: 925, y: -2400 }), "2,400 m N · 925 m E of TC");
   assert.equal(formatCardinalPosition({ x: -1200, y: 0 }), "1,200 m W of TC");
   assert.equal(formatCardinalPosition({ x: 0, y: 75 }), "75 m S of TC");
   assert.equal(formatCardinalPosition({ x: 0, y: 0 }), "at TC");
   assert.equal(formatCardinalPosition({ x: "nope", y: 0 }), "");
+});
+
+test("viewer-facing locations use containment names and relative ground directions", () => {
+  const marks = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 } },
+    { id: "wright/the-trueing-terrace", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 100, h: 100 } },
+    { id: "wright/the-trueing-house", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 8, h: 8 } },
+  ];
+  assert.equal(standingLocationLabel({ x: 0, y: 0 }, marks), "standing in The Trueing House");
+  assert.equal(standingLocationLabel({ x: 40, y: 0 }, marks), "standing in The Trueing Terrace");
+  assert.equal(standingLocationLabel({ x: 500, y: 0 }, marks), "on open ground");
+  assert.equal(formatRelativePosition({ x: 1000, y: 0 }, { x: 170, y: 0 }), "830 m · west");
 });
 
 test("backer summaries show the top five and count everyone else", () => {
@@ -310,7 +357,20 @@ test("the walk desk formats crossing ETAs as clock time and labels point contain
     ),
     "The Trueing House",
   );
-  assert.equal(walkDestinationLabel({ x: 925, y: -2400 }, marks), "• 2,400 m N · 925 m E of TC");
+  assert.equal(
+    walkDestinationLabel(
+      { x: 10, y: 0, inside: "wright/the-trueing-house-parcel" },
+      marks,
+      {},
+      { x: 840, y: 0 },
+    ),
+    "open ground · 830 m · west · in The Trueing House Parcel",
+    "ground stays relative while its record-derived containment label remains",
+  );
+  assert.equal(
+    walkDestinationLabel({ x: 170, y: 0 }, marks, {}, { x: 1000, y: 0 }),
+    "open ground · 830 m · west",
+  );
 });
 
 test("painting mark hit-testing uses the nearest glyph inside an 18 px snap radius", () => {
