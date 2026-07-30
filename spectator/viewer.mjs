@@ -503,20 +503,30 @@ export function backingButton(markId, stamps = 0, { neutralZero = false } = {}) 
   return `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(markId)}" title="read backing and back this mark">${label}</button>`;
 }
 
+export function markByline(mark) {
+  if (!mark?.by || !mark?.date) return "";
+  return `By ${mark.by} ${String(mark.date).slice(0, 10)}`;
+}
+
+export function markCellBylineRow(mark, actions = "") {
+  const byline = markByline(mark);
+  if (!byline && !actions) return "";
+  return `<div class="wv-cell-byline-row">`
+    + (byline ? `<span class="wv-byline">${esc(byline)}</span>` : "")
+    + actions
+    + `</div>`;
+}
+
 // A relative in an investigate expansion is a compact cell identity, never a
 // second telling of that relative's prose. It uses the same resolved Name,
-// backing action, and hover/selection authorship details as its parent cell.
+// backing action, and tier accent as its parent cell. Author/date live only in
+// the owning cell's always-visible byline.
 export function investigateNameLine(mark, { name, determined = false, tier = "market" } = {}) {
   const identity = name || deslugMarkId(mark?.id);
   const accent = tier === "home" || tier === "constitution" ? tier : "market";
-  const details = [
-    mark?.by ? `<span class="wv-detail-author">by ${esc(mark.by)}</span>` : "",
-    mark?.date ? `<span class="wv-detail-date">${esc(String(mark.date).slice(0, 10))}</span>` : "",
-  ].filter(Boolean).join("");
   return `<div class="wv-rnode t-${accent}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
     + `<div class="wv-rnode-head"><b class="cname${determined ? " is-determined" : ""}">${esc(identity)}</b>`
     + `${backingButton(mark?.id, mark?.stamps ?? mark?.weight ?? 0)}</div>`
-    + (details ? `<div class="wv-details">${details}</div>` : "")
     + `</div>`;
 }
 
@@ -549,6 +559,19 @@ const bearingArrow = (b) => {
   return `<svg class="wv-arrow" viewBox="-5 -5 10 10" aria-hidden="true">`
     + `<path d="M0 -5 L2.8 4 L0 2.1 L-2.8 4 Z" transform="rotate(${deg})"/></svg>`;
 };
+
+function tierChip(tier) {
+  if (tier === "constitution") return `<span class="wv-chip t-constitution">constitution</span>`;
+  if (tier === "home") return `<span class="wv-chip t-home">home</span>`;
+  return "";
+}
+
+export function markCellTitle({ name = "", determined = false, bearing = null, tier = "market" } = {}) {
+  const arrow = bearing
+    ? `<span class="wv-name-arrow" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>`
+    : "";
+  return `<div class="cname${determined ? " is-determined" : ""}"><span>${esc(name)}</span>${arrow}${tierChip(tier)}</div>`;
+}
 
 // ───────────────────────── THE one mark-shape builder ──────────────────────
 // EVERY outline of a mark's claim on the painting comes from here. Never hand-build
@@ -717,13 +740,16 @@ const STYLE = `
 .wv-card .cname.is-determined { color:var(--amber); }
 .wv-card .wv-name-arrow { display:inline-flex; align-items:center; color:var(--wv-mark-accent); }
 .wv-card .wv-name-arrow .wv-arrow { width:1.3em; height:1.3em; margin:0; vertical-align:middle; }
+.wv-card .cname > .wv-chip { font-weight:400; }
 .wv-card .cbody { line-height:1.45; }
 .wv-card .cname + .cbody { margin-top:5px; }
 .wv-card .cmeta { margin-top:7px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
+.wv-cell-byline-row { margin-top:7px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-height:1.65rem; }
+.wv-byline { color:var(--dim); font-size:.76rem; font-style:normal; letter-spacing:.01em; }
 .wv-card .wv-details { display:none; flex-basis:100%; align-items:center; gap:7px; flex-wrap:wrap;
   padding-top:6px; border-top:1px dotted var(--line); color:var(--dim); font-size:.7rem; }
 .wv-card:hover .wv-details, .wv-card:focus-within .wv-details, .wv-card.is-mark-selected .wv-details { display:flex; }
-.wv-detail-author, .wv-detail-date, .wv-detail-where { white-space:nowrap; }
+.wv-detail-where { white-space:nowrap; }
 .wv-card .wv-cell-actions { display:flex; gap:5px; flex-wrap:wrap; margin-left:auto; }
 .wv-backing { display:inline-flex; align-items:center; color:var(--stamp-violet-subhead);
   background:rgba(139,124,255,.07); border:1px solid var(--stamp-violet-dark);
@@ -738,7 +764,7 @@ const STYLE = `
   border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
 .wv-cell-act:hover { background:var(--panel2); }
 .wv-walk-here { display:none; }
-.wv-card.is-mark-selected > .cmeta .wv-walk-here { display:inline-flex; }
+.wv-card.is-mark-selected > .wv-cell-byline-row .wv-walk-here { display:inline-flex; }
 .wv-cell-act.stamp { border-color:var(--stamp-violet-dark); color:var(--stamp-violet-subhead); }
 .wv-cell-act.stamp:hover { border-color:var(--stamp-violet); color:var(--stamp-violet-heading); }
 .wv-act-sheet { margin-top:10px; padding:10px; border:1px dashed var(--stamp-violet-dark);
@@ -810,9 +836,6 @@ const STYLE = `
 .wv-rnode .cname { color:var(--paper); font-size:.9rem; line-height:1.25; font-style:normal; }
 .wv-rnode .cname.is-determined { color:var(--amber); }
 .wv-rnode .wv-backing { margin-left:auto; }
-.wv-card .wv-rnode .wv-details { display:none; align-items:center; gap:7px; flex-wrap:wrap; margin-top:5px;
-  padding-top:5px; border-top:1px dotted var(--line); color:var(--dim); font-size:.7rem; }
-.wv-rnode:hover .wv-details, .wv-rnode:focus-within .wv-details, .wv-rnode.is-mark-selected .wv-details { display:flex; }
 .wv-rnode.t-constitution { --wv-mark-accent:var(--blue); border-left-color:var(--blue-dark); }
 .wv-rnode.t-home { --wv-mark-accent:var(--green); border-left-color:var(--green-dark); }
 .wv-rnode:hover { color:var(--amber); background:rgba(255,255,255,.025); }
@@ -1214,12 +1237,6 @@ export function mountViewer(appEl) {
     // which homeSet and `sovereign` (both geometric) structurally miss.
     return markClass(full, byId);
   }
-  function tierChip(tier) {
-    if (tier === "constitution") return `<span class="wv-chip t-constitution">constitution</span>`;
-    if (tier === "home") return `<span class="wv-chip t-home">home</span>`;
-    return "";
-  }
-
   // ───────── the telling view ─────────
   function chips(m) {
     const c = [];
@@ -1315,18 +1332,17 @@ export function mountViewer(appEl) {
     const identity = markName(full);
     const where = radialWhere(m);
     const details = [
-      full.by ? `<span class="wv-detail-author">by ${esc(full.by)}</span>` : "",
-      full.date ? `<span class="wv-detail-date">${esc(String(full.date).slice(0, 10))}</span>` : "",
       extentTag(full),
       where.detail ? `<span class="wv-detail-where">${esc(where.detail)}</span>` : "",
     ].filter(Boolean).join("");
     const cluster = (role === "fov" && m.clusteredCount > 1)
       ? `<div class="wv-cluster">+${m.clusteredCount - 1} more of ${esc(m.household ?? "this household")}'s — investigate</div>` : "";
     return `<article class="wv-card ${role}${far ? " far" : ""} t-${tier}" data-id="${esc(m.id)}" role="button" tabindex="0">
-      <div class="cname${identity.determined ? " is-determined" : ""}"><span>${esc(identity.name)}</span>${where.bearing ? `<span class="wv-name-arrow" title="${esc(BEARING_LONG[where.bearing] ?? where.bearing)}">${bearingArrow(where.bearing)}</span>` : ""}</div>
+      ${markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier })}
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
+      ${markCellBylineRow(full, markActions(m))}
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
-      <div class="cmeta">${tierChip(tier)}${radialChips ? chips(m) : ""}${markActions(m)}<div class="wv-details">${details}</div></div>
+      <div class="cmeta">${radialChips ? chips(m) : ""}<div class="wv-details">${details}</div></div>
       ${cluster}
     </article>`;
   }
@@ -1417,11 +1433,10 @@ export function mountViewer(appEl) {
       // stand" note that used to hang off such a cell: it existed to explain a visible
       // duplicate, and with no ladder rendered there is no duplicate to explain. An
       // annotation pointing at a section the reader cannot see is worse than silence.
-      const made = `made ${String(m.date).slice(0, 10)}`;
       html += markCell(view, {
         role: "fov",
         radialChips: true,
-        annotation: sited ? made : `${made} · a property of ${m.parent ?? "the record"}`,
+        annotation: sited ? "" : `a property of ${m.parent ?? "the record"}`,
       });
     }
     const oldest = String(all[all.length - 1].date).slice(0, 10);
@@ -1614,9 +1629,10 @@ export function mountViewer(appEl) {
     const target = byId.get(d.id) ?? d;
     const targetIdentity = markName(target);
     box.innerHTML = `
-      ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><b class="wv-crumb-name${targetIdentity.determined ? " is-determined" : ""}">${esc(targetIdentity.name)}</b></div>
-      <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>` : ""}
-      <div class="cmeta" style="margin-bottom:4px">${backingButton(d.id, d.stamps, { neutralZero: true })}${d.sovereign ? `<span class="wv-chip">sovereign</span>` : ""}${tierChip(tierOf(target))}</div>
+      ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><b class="wv-crumb-name${targetIdentity.determined ? " is-determined" : ""}">${esc(targetIdentity.name)}</b>${tierChip(tierOf(target))}</div>
+      <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>
+      ${markCellBylineRow(target, backingButton(d.id, d.stamps, { neutralZero: true }))}` : ""}
+      ${d.sovereign ? `<div class="cmeta" style="margin-bottom:4px"><span class="wv-chip">sovereign</span></div>` : ""}
       ${newlyRevealedPredicates.length ? `<div class="wv-expansion-attributes">${newlyRevealedPredicates.map(predicateAttributeLine).join("")}</div>` : ""}
       ${d.within?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.within.map(relativeNode).join("")}</div>` : ""}
       ${d.inside?.length ? `<div class="wv-tree-label">within it</div><div class="wv-relation-lines">${d.inside.map(relativeNode).join("")}</div>` : ""}

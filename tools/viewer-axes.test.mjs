@@ -15,6 +15,9 @@ import {
   formatRelativePosition,
   isAmbientMark,
   investigateNameLine,
+  markByline,
+  markCellBylineRow,
+  markCellTitle,
   markGeometryIntersectsViewport,
   MARK_SNAP_RADIUS_PX,
   officeBase,
@@ -320,7 +323,29 @@ test("predicates fold only when their non-predicate subject cell is rendered", (
   assert.equal(predicateFoldDecision(house, [house]), false);
 });
 
-test("investigate relatives inherit names, backing, and hover details without id prose", () => {
+test("cell identity rows keep tier beside the arrow and backing beside the byline", () => {
+  const mark = {
+    id: "wright/the-crossing-door",
+    by: "wright",
+    date: "2026-07-29T23:10:00Z",
+    stamps: 12,
+  };
+  const title = markCellTitle({
+    name: "The Crossing Door",
+    determined: true,
+    bearing: "NE",
+    tier: "home",
+  });
+  const row = markCellBylineRow(mark, backingButton(mark.id, mark.stamps));
+
+  assert.equal(markByline(mark), "By wright 2026-07-29");
+  assert.match(title, /^<div class="cname is-determined">/);
+  assert.match(title, /<span class="wv-name-arrow"[^>]*>.*<\/span><span class="wv-chip t-home">home<\/span><\/div>$/);
+  assert.match(row, /^<div class="wv-cell-byline-row"><span class="wv-byline">By wright 2026-07-29<\/span><button/);
+  assert.match(row, />✦ 12 · back<\/button><\/div>$/);
+});
+
+test("investigate relatives inherit names and backing without duplicated byline details or id prose", () => {
   const relative = {
     id: "wright/the-crossing-door",
     by: "wright",
@@ -339,7 +364,7 @@ test("investigate relatives inherit names, backing, and hover details without id
   assert.match(line, /role="button" tabindex="0"/);
   assert.match(line, /<b class="cname is-determined">The Crossing Door<\/b>/);
   assert.match(line, /class="wv-backing"[^>]*>✦ 12 · back<\/button>/);
-  assert.match(line, /class="wv-details".*by wright.*2026-07-29/);
+  assert.doesNotMatch(line, /wv-details|wv-detail-author|wv-detail-date|by wright|2026-07-29/i);
   assert.doesNotMatch(line, /entire quoted body|cbody|tbody/);
   assert.doesNotMatch(line.replace(/data-(?:id|mark)="[^"]*"/g, ""), /wright\/the-crossing-door/);
 });
