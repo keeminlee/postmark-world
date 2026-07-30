@@ -6,6 +6,7 @@ import {
   createMarkInteractionStore,
   disciplineAtlasImages,
   formatEtaCrossings,
+  isAmbientMark,
   MARK_SNAP_RADIUS_PX,
   officeBase,
   pointWalkDestination,
@@ -16,6 +17,25 @@ import {
   viewerAxisState,
   viewerFilterControls,
 } from "../spectator/viewer.mjs";
+
+test("ambient marks are the root and predicates with no embodied ancestor", () => {
+  const marks = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 } },
+    { id: "the-town/the-fog", kind: "predicated", parent: "the-town/let-there-be-light" },
+    { id: "the-town/fog-thickness", kind: "predicated", parent: "the-town/the-fog" },
+    { id: "wright/house", kind: "sited", at: { x: 20, y: 30 }, extent: { w: 10, h: 8 } },
+    { id: "wright/welcome", kind: "predicated", parent: "wright/house" },
+    { id: "wright/welcome-name", kind: "naming", parent: "wright/welcome" },
+    { id: "wright/open-ground-note", kind: "predicated", parent: "missing/mark" },
+  ];
+  assert.equal(isAmbientMark(marks[0], marks), true, "the world root is explicitly ambient");
+  assert.equal(isAmbientMark(marks[1], marks), true, "fog reaches only the ambient root");
+  assert.equal(isAmbientMark(marks[2], marks), true, "predicate chains stay ambient without an embodied ancestor");
+  assert.equal(isAmbientMark(marks[4], marks), false, "a predicate on a bounded place is locatable");
+  assert.equal(isAmbientMark(marks[5], marks), false, "naming predicates follow the same ancestry rule");
+  assert.equal(isAmbientMark(marks[6], marks), true, "an unlocatable predicate fails ambient-safe");
+  assert.equal(isAmbientMark(marks[3], marks), false, "an ordinary embodied mark is a place");
+});
 
 test("detached atlas images get lazy loading before mount", () => {
   const attributes = [{}, {}, {}];

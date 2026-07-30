@@ -29,6 +29,36 @@ const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const OFFICE_DEFAULT = "/api";
 const ACT_AS_KEY = "pm.world.act_as";
+const WORLD_ROOT_ID = "the-town/let-there-be-light";
+
+const markIndex = (marks) => marks instanceof Map
+  ? marks
+  : new Map((marks ?? []).filter((mark) => mark?.id).map((mark) => [mark.id, mark]));
+
+export function isEmbodiedMark(mark) {
+  const w = Number(mark?.extent?.w), h = Number(mark?.extent?.h);
+  return (mark?.kind === "sited" || mark?.kind === "parcel")
+    && [mark?.at?.x, mark?.at?.y, w, h].every(Number.isFinite)
+    && w > 0 && h > 0;
+}
+
+export function isAmbientMark(mark, marks = []) {
+  if (!mark) return false;
+  if (mark.id === WORLD_ROOT_ID) return true;
+  if (mark.kind !== "predicated" && mark.kind !== "naming") return false;
+  const byMarkId = markIndex(marks);
+  const seen = new Set([mark.id]);
+  let parentId = mark.parent;
+  while (parentId && !seen.has(parentId)) {
+    if (parentId === WORLD_ROOT_ID) return true;
+    seen.add(parentId);
+    const parent = byMarkId.get(parentId);
+    if (!parent) return true;
+    if (isEmbodiedMark(parent)) return false;
+    parentId = parent.parent;
+  }
+  return true;
+}
 
 export function officeBase(storage) {
   try {
@@ -157,7 +187,7 @@ export function pointWalkDestination(point, marks = []) {
   const inside = marks
     .filter((mark) => {
       const w = Number(mark?.extent?.w), h = Number(mark?.extent?.h);
-      return mark?.id && mark.id !== "the-town/let-there-be-light" && !mark.far
+      return mark?.id && !isAmbientMark(mark, marks) && !mark.far
         && Number.isFinite(mark?.at?.x) && Number.isFinite(mark?.at?.y)
         && w > 0 && h > 0 && pointInRect(x, y, rect(mark));
     })
@@ -876,8 +906,9 @@ export function mountViewer(appEl) {
   // claim; a points: ring's bbox equals it (the honesty gate), so extent suffices.
   // Law/predicated cells carry no extent → no glyph.
   function extentTag(m) {
-    const e = (byId.get(m.id) ?? m).extent;
-    if (m.far || !e || !(e.w || e.h)) return "";
+    const full = byId.get(m.id) ?? m;
+    const e = full.extent;
+    if (isAmbientMark(full, byId) || m.far || !e || !(e.w || e.h)) return "";
     const w = e.w ?? 0, h = e.h ?? 0, maxD = Math.max(w, h, 1);
     const box = 6 + Math.min(26, Math.log10(maxD + 1) * 8.5); // ~6px @1m … ~32px @~5km
     const gw = Math.max(2, box * (w / maxD)), gh = Math.max(2, box * (h / maxD));
@@ -1405,8 +1436,7 @@ export function mountViewer(appEl) {
       function buildFpLayer() {
         let s = "";
         for (const m of world.marks ?? []) {
-          if (!m.at || !m.extent || m.far) continue;
-          if (m.id === "the-town/let-there-be-light") continue;
+          if (!m.at || !m.extent || m.far || isAmbientMark(m, byId)) continue;
           const cls = `t-${tierOf(m)}` + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
           s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
             attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
@@ -1472,14 +1502,14 @@ export function mountViewer(appEl) {
     const interaction = markInteraction.getState();
     const id = interaction.hoveredId || interaction.selectedId;
     const m = id && byId.get(id);
-    if (!m?.at) { mapCtx.hlLayer.innerHTML = ""; return; }
+    if (!m?.at || isAmbientMark(m, byId)) { mapCtx.hlLayer.innerHTML = ""; return; }
     const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
     const t = tierOf(m), mech = m.mechanic ? " mech" : "";
     const p = { x: mapCtx.originPx.x + m.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.at.y / mapCtx.mPerPx };
     // the box AND the dot light together, in the mark's own tier color — the same
     // sentence the cells speak (dashed = machinery-kept truth)
     let s = "";
-    if (m.extent && !m.far && m.id !== "the-town/let-there-be-light") {
+    if (m.extent && !m.far) {
       // through the ONE shape-builder, so the wash traces the same outline the
       // footprints layer draws. Hand-built here, it drew a bbox rect over a mark the
       // layer beneath was correctly drawing as a polygon — Keemin caught it as a
