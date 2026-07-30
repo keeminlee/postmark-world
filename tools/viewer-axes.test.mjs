@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   clampStakeAmount,
   createMarkInteractionStore,
+  deslugMarkId,
   disciplineAtlasImages,
   formatEtaCrossings,
   isAmbientMark,
@@ -12,11 +13,28 @@ import {
   pointWalkDestination,
   previewStakeLedgerLine,
   previewWalkLeg,
+  resolveMarkName,
   snappedMarkAtPoint,
   viewerAxisControls,
   viewerAxisState,
   viewerFilterControls,
 } from "../spectator/viewer.mjs";
+
+test("mark names de-slug cleanly and honor a fold-determined naming predicate", () => {
+  assert.equal(deslugMarkId("wright/the-crossing-bench"), "The Crossing Bench");
+  assert.equal(deslugMarkId("gael-renton/the-dreamer-s-anchor"), "The Dreamer's Anchor");
+  assert.deepEqual(
+    resolveMarkName(
+      { id: "jetto-of-starforge/the-waystation" },
+      { "jetto-of-starforge/the-waystation::name": "the Waystation" },
+    ),
+    { name: "the Waystation", determined: true },
+  );
+  assert.deepEqual(
+    resolveMarkName({ id: "wright/the-crossing-bench" }, {}),
+    { name: "The Crossing Bench", determined: false },
+  );
+});
 
 test("ambient marks are the root and predicates with no embodied ancestor", () => {
   const marks = [

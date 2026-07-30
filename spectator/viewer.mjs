@@ -19,7 +19,7 @@
 import { orient, openYourEyes, investigate, containmentChain } from "../tools/world-verbs.mjs";
 import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
-import { contains, pointInRect, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
+import { contains, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markClass } from "../tools/mark-class.mjs"; // the ONE class rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
@@ -58,6 +58,37 @@ export function isAmbientMark(mark, marks = []) {
     parentId = parent.parent;
   }
   return true;
+}
+
+export function deslugMarkId(id) {
+  const slug = String(id ?? "").split("/").filter(Boolean).pop() ?? "";
+  const words = slug.split("-").filter(Boolean);
+  const readable = [];
+  for (const word of words) {
+    if (word.toLowerCase() === "s" && readable.length) {
+      readable[readable.length - 1] += "'s";
+      continue;
+    }
+    readable.push(word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+  }
+  return readable.join(" ");
+}
+
+export function resolveMarkName(mark, determined = {}) {
+  const key = `${mark?.id ?? ""}::name`;
+  const won = determined instanceof Map ? determined.get(key) : determined?.[key];
+  const name = String(won ?? "").trim();
+  return name
+    ? { name, determined: true }
+    : { name: deslugMarkId(mark?.id), determined: false };
+}
+
+function pointInsideMark(point, mark) {
+  if (!isEmbodiedMark(mark)) return false;
+  const ring = polygonOf(mark);
+  return ring
+    ? pointInPolygon(Number(point?.x), Number(point?.y), ring)
+    : pointInRect(Number(point?.x), Number(point?.y), rect(mark));
 }
 
 export function officeBase(storage) {
@@ -437,8 +468,18 @@ const STYLE = `
 .wv-tnode.is-mark-hovered, .wv-tnode.is-mark-selected,
 .wv-wnode.is-mark-hovered, .wv-wnode.is-mark-selected { color:var(--paper); border-color:var(--amber); }
 .wv-card.far { border-left-color:var(--line); font-style:italic; }
+.wv-card .cname { display:flex; align-items:center; gap:7px; color:var(--paper); font-size:1.02rem;
+  line-height:1.25; font-style:normal; }
+.wv-card .cname.is-determined { color:var(--amber); }
+.wv-card .wv-name-arrow { display:inline-flex; align-items:center; color:var(--wv-mark-accent); }
+.wv-card .wv-name-arrow .wv-arrow { width:1.3em; height:1.3em; margin:0; vertical-align:middle; }
 .wv-card .cbody { line-height:1.45; }
+.wv-card .cname + .cbody { margin-top:5px; }
 .wv-card .cmeta { margin-top:7px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
+.wv-card .wv-details { display:none; flex-basis:100%; align-items:center; gap:7px; flex-wrap:wrap;
+  padding-top:6px; border-top:1px dotted var(--line); color:var(--dim); font-size:.7rem; }
+.wv-card:hover .wv-details, .wv-card:focus-within .wv-details, .wv-card.is-mark-selected .wv-details { display:flex; }
+.wv-detail-author, .wv-detail-date, .wv-detail-where { white-space:nowrap; }
 .wv-card .wv-cell-actions { display:flex; gap:5px; flex-wrap:wrap; margin-left:auto; }
 .wv-cell-act { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
   border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
@@ -876,29 +917,28 @@ export function mountViewer(appEl) {
   // ───────── the telling view ─────────
   function chips(m) {
     const c = [];
-    // how far, then which way. The band heads the section now, so the cell carries
-    // what the heading no longer does — the mark's own bearing, both the word and
-    // the short code the old heading showed (Keemin, 2026-07-27).
-    const dist = m.far ? `~${Math.round((m.distM ?? 0) / 1000).toLocaleString()} km`
-      : m.distM != null ? `${m.distM.toLocaleString()} m` : "";
-    // the arrow sits with the bearing it depicts, not at the head of the chip —
-    // distance stays the first thing read, since distance is what orders the telling.
-    // The word alone: the direction is spelled out, so the short code said it twice
-    // (Keemin, 2026-07-27). The `?? m.bearing` fallback is load-bearing, not tidiness —
-    // a coined "45°" key from a non-16 rose has no long word, and the raw key is then
-    // the only name that bearing has.
-    const brg = m.bearing
-      ? `${bearingArrow(m.bearing)}${esc(BEARING_LONG[m.bearing] ?? m.bearing)}` : "";
-    // only when there is something to say: the New feed carries marks with no
-    // geometry at all (a predicate has no distance and no bearing), and an empty
-    // pill is worse than no pill.
-    const where = `${esc(dist)}${dist && brg ? " · " : ""}${brg}`;
-    if (where) c.push(`<span class="wv-chip">${where}</span>`);
     if (m.weight > 0) c.push(`<span class="wv-chip stamps">✦${m.weight}</span>`);
     if (m.signal) c.push(`<span class="wv-chip signal">its light carries</span>`);
     if (m.dim != null && m.dim < 1) c.push(`<span class="wv-chip dim">dim</span>`);
     if (m.aboveFogTarget) c.push(`<span class="wv-chip">above the fog</span>`);
     return c.join("");
+  }
+  function markName(m) {
+    const full = byId.get(m?.id) ?? m;
+    return resolveMarkName(full, data?.worldState?.determined ?? {});
+  }
+  function radialWhere(m) {
+    const full = byId.get(m?.id) ?? m;
+    if (!isEmbodiedMark(full) || isAmbientMark(full, byId)) return { bearing: null, detail: "" };
+    const dx = Number(full.at.x) - Number(state.cam.x), dy = Number(full.at.y) - Number(state.cam.y);
+    const distance = Number.isFinite(m?.distM) ? Number(m.distM) : Math.round(Math.hypot(dx, dy));
+    const inside = pointInsideMark(state.cam, full);
+    const bearing = inside ? null : (m?.bearing ?? quantizeBearing(bearingDeg(dx, dy), state.dials.bearing_points));
+    const dist = m?.far
+      ? `~${Math.round(distance / 1000).toLocaleString()} km`
+      : `${Math.round(distance).toLocaleString()} m`;
+    const direction = bearing ? BEARING_LONG[bearing] ?? bearing : "inside";
+    return { bearing, detail: `${dist} · ${direction}` };
   }
   // the FOOTPRINT indicator (Keemin 2026-07-23): coordinate dots say nothing about
   // how big a mark is — the-main-channel is 10^3× a bench. A log-scaled glyph rect
@@ -934,8 +974,7 @@ export function mountViewer(appEl) {
   }
   function markIdentity(m) {
     const full = byId.get(m?.id) ?? m;
-    const title = full?.title ?? full?.label ?? firstWords(full?.body, 7);
-    return title && title !== full?.id ? `${full.id} — ${title}` : String(full?.id ?? "");
+    return markName(full).name || String(full?.id ?? "");
   }
   function markActions(m) {
     if (!identityResolved()) return "";
@@ -951,13 +990,24 @@ export function mountViewer(appEl) {
   // one names its mark id (Keemin 2026-07-23). role styles it (frame/ladder/law/fov);
   // tier colors it; annotation carries a mechanic's live state (fog/light this crossing).
   function markCell(m, { role = "fov", annotation = "", radialChips = false } = {}) {
+    const full = byId.get(m.id) ?? m;
     const tier = tierOf(m), far = !!m.far;
+    const identity = markName(full);
+    const where = radialWhere(m);
+    const details = [
+      `<span class="wv-cid">${esc(full.id)}</span>`,
+      full.by ? `<span class="wv-detail-author">by ${esc(full.by)}</span>` : "",
+      full.date ? `<span class="wv-detail-date">${esc(String(full.date).slice(0, 10))}</span>` : "",
+      extentTag(full),
+      where.detail ? `<span class="wv-detail-where">${esc(where.detail)}</span>` : "",
+    ].filter(Boolean).join("");
     const cluster = (role === "fov" && m.clusteredCount > 1)
       ? `<div class="wv-cluster">+${m.clusteredCount - 1} more of ${esc(m.household ?? "this household")}'s — investigate</div>` : "";
     return `<article class="wv-card ${role}${far ? " far" : ""} t-${tier}" data-id="${esc(m.id)}" role="button" tabindex="0">
+      <div class="cname${identity.determined ? " is-determined" : ""}"><span>${esc(identity.name)}</span>${where.bearing ? `<span class="wv-name-arrow" title="${esc(BEARING_LONG[where.bearing] ?? where.bearing)}">${bearingArrow(where.bearing)}</span>` : ""}</div>
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
-      <div class="cmeta">${tierChip(tier)}${extentTag(m)}${radialChips ? chips(m) : ""}<span class="wv-cid">${esc(m.id)}</span>${markActions(m)}</div>
+      <div class="cmeta">${tierChip(tier)}${radialChips ? chips(m) : ""}${markActions(m)}<div class="wv-details">${details}</div></div>
       ${cluster}
     </article>`;
   }
