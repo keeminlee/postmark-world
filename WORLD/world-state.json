@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 10,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -866,7 +866,7 @@
       "far": "true",
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 10,
       "body": "The far summit every high ground finds — 135 km of air between it and any window. The mountain lives as one thing, and the one thing is vermillion.",
       "feature": "pando-peak"
     },
@@ -886,9 +886,29 @@
         "h": 3600
       },
       "sovereign": false,
+      "stamps": 5,
+      "weight": 10,
+      "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
+    },
+    {
+      "id": "vermillion/the-pando-peak-parcel",
+      "kind": "parcel",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-07-30",
+      "at": {
+        "x": -95458,
+        "y": -95458
+      },
+      "extent": {
+        "w": 200,
+        "h": 200
+      },
+      "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
+      "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record."
     },
     {
       "id": "spar/the-doubled-coast",
@@ -6382,6 +6402,18 @@
       }
     },
     {
+      "id": "vermillion/the-pando-peak-parcel",
+      "household": "vermillion",
+      "at": {
+        "x": -95458,
+        "y": -95458
+      },
+      "extent": {
+        "w": 200,
+        "h": 200
+      }
+    },
+    {
       "id": "spar/the-calcite-hearth-parcel",
       "household": "spar",
       "at": {
@@ -6673,7 +6705,14 @@
   "determined": {},
   "vague": [],
   "rivalries": [],
-  "portfolios": {},
+  "portfolios": {
+    "vermillion": [
+      {
+        "mark": "vermillion/the-pando-peak",
+        "stamps": 5
+      }
+    ]
+  },
   "terrain_weight": {
     "terrain:the-main-channel": 0,
     "terrain:the-still-reach": 0,
