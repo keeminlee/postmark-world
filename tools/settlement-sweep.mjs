@@ -58,9 +58,10 @@ function archiveRef(repo, ref) {
     `--output=${archive}`,
     ref,
     "--",
-    "WORLD/marks",
-    "WORLD/skeleton.json",
-    "WORLD/world-state.json",
+    // the whole WORLD/ dir, not named files: a pathspec absent from an older
+    // ref (a sketchbook not yet rebased over households.json) fails the whole
+    // archive, and the sweep must never trip on a branch's age.
+    "WORLD",
   ]);
   // GNU tar reads a colon in an archive argument as host:path, so an absolute
   // Windows drive path looks remote. Extract from the temp directory instead.
@@ -95,12 +96,15 @@ function foldRef(repo, ref, stakes) {
     const terrain = JSON.parse(readFileSync(join(dir, "WORLD", "skeleton.json"), "utf8"));
     const prevPath = join(dir, "WORLD", "world-state.json");
     const prev = existsSync(prevPath) ? JSON.parse(readFileSync(prevPath, "utf8")) : null;
+    const hhPath = join(dir, "WORLD", "households.json");
+    const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
     const state = fold({
       marks,
       terrain,
       stakes: stakes.filter((stake) => markIds.has(stake.mark)),
       prev,
       tick: Math.max(1, Number(prev?.tick ?? 0) + 1),
+      households,
     });
     if (state.errors?.length)
       throw new Error(`${ref} folds with ${state.errors.length} error(s): ${JSON.stringify(state.errors[0])}`);

@@ -208,7 +208,16 @@ export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
 }
 
 // ---------- the fold ----------
-export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS }) {
+// The parcel-claim cap (Keemin's ruling, 2026-07-30): a credential-household may
+// CLAIM at most 3 parcels. Forward law — holdings dated on/before the law date
+// stand as prior estate (the Reeves' four, the founder household's five), they
+// simply cannot claim more. Grain note: `household` on a mark is the by: handle;
+// the CREDENTIAL household groups handles via WORLD/households.json (derived
+// from the town's pins). A handle absent from the registry is its own household.
+export const PARCEL_CLAIM_CAP = 3;
+export const PARCEL_CAP_LAW_DATE = "2026-07-30"; // claims dated strictly after this are gated
+
+export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS, households = null }) {
   const errors = [];
   const terrainIds = new Set((terrain?.features ?? []).map(f => "terrain:" + f.id));
   const byId = new Map();
@@ -218,19 +227,30 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     byId.set(mk.id, mk);
   }
 
-  // admissibility: parcels never overlap (first-in-order wins), one per household;
+  // admissibility: parcels never overlap (first-in-order wins), one per handle,
+  // and — the claim cap, ruled 2026-07-30 — at most PARCEL_CLAIM_CAP claims per
+  // CREDENTIAL household for parcels dated after the law (prior estate stands);
   // predicated/naming must not target terrain with a rival intent (attach-only is fine —
   // rivalry-vs-terrain is refused later since terrain has no slot values to rival).
+  const credHh = (handle) => households?.[handle] ?? `solo:${handle}`;
   const parcels = [];
   const parcelByHh = new Map();
+  const parcelsByCred = new Map();
   for (const mk of byId.values()) {
     if (mk.kind !== "parcel") continue;
     const r = rect(mk); r.w = r.w || dials.parcel_w; r.h = r.h || dials.parcel_h;
     if (parcelByHh.has(mk.household)) { errors.push({ mark: mk.id, error: "household already holds a parcel (relocation = replace, not add)" }); continue; }
+    const cred = credHh(mk.household);
+    const held = parcelsByCred.get(cred) ?? 0;
+    if (String(mk.date ?? "") > PARCEL_CAP_LAW_DATE && held >= PARCEL_CLAIM_CAP) {
+      errors.push({ mark: mk.id, error: `parcel claim capped — this credential household already holds ${held} (cap ${PARCEL_CLAIM_CAP} per household, ruled ${PARCEL_CAP_LAW_DATE}; prior estate stands, new claims wait on the founder's word)` });
+      continue;
+    }
     const clash = parcels.find(p => overlapArea(p._r, r) > 0);
     if (clash) { errors.push({ mark: mk.id, error: `parcel overlaps ${clash.id} — inadmissible (MARKS.md § Parcels)` }); continue; }
     parcels.push({ id: mk.id, household: mk.household, _r: r });
     parcelByHh.set(mk.household, r);
+    parcelsByCred.set(cred, held + 1);
   }
 
   // stakes -> per-mark balances (escrow; negative = withdrawal), effect-next-crossing: tick strictly < current
@@ -408,7 +428,11 @@ if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
   const terrain = existsSync(TERRAIN_PATH) ? JSON.parse(readFileSync(TERRAIN_PATH, "utf8")) : null;
   const stakes = loadStakes();
   const prev = PREV_PATH ? JSON.parse(readFileSync(PREV_PATH, "utf8")) : null;
-  const state = fold({ marks, terrain, stakes, prev, tick: TICK });
+  // the credential-household registry lives beside the marks tree (WORLD/households.json);
+  // absent = every handle is its own household (solo grain), never an error.
+  const hhPath = opt("--households", join(MARKS_DIR, "..", "households.json"));
+  const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
+  const state = fold({ marks, terrain, stakes, prev, tick: TICK, households });
   if (has("--json")) console.log(JSON.stringify(state, null, 2));
   if (!has("--no-write")) {
     mkdirSync(join(ROOT, "WORLD"), { recursive: true });

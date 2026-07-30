@@ -134,3 +134,33 @@ test("a mark on your own parcel places into it and folds sovereign; a guest's do
   assert.equal(m("g/lantern").sovereign, false, "a guest's mark on the same ground is not sovereign");
   assert.equal(m("t/gate").sovereign, false, "your own mark outside the fence is not sovereign");
 });
+
+test("parcel-claim cap (ruled 2026-07-30): 4th claim after the law bounces at credential-household grain; prior estate stands; solo fallback", () => {
+  const P = (id, by, x, date) => ({ id, by, household: by, kind: "parcel", tier: "market",
+    at: { x, y: 0 }, extent: { w: 25, h: 25 }, date, body: "b" });
+  const households = { "a1": "gh:1", "a2": "gh:1", "a3": "gh:1", "a4": "gh:1" };
+  // three claims post-law are fine; the fourth from the same credential household errors
+  const four = [P("a1/p", "a1", 0, "2026-07-31T01:00:00Z"), P("a2/p", "a2", 100, "2026-07-31T02:00:00Z"),
+    P("a3/p", "a3", 200, "2026-07-31T03:00:00Z"), P("a4/p", "a4", 300, "2026-07-31T04:00:00Z")];
+  const s1 = fold({ marks: four, terrain: { features: [] }, stakes: [], tick: 1, households });
+  assert.equal(s1.parcels.length, 3, "three admitted");
+  assert.equal(s1.errors.length, 1, "the fourth errors");
+  assert.match(s1.errors[0].error, /parcel claim capped/);
+  assert.equal(s1.errors[0].mark, "a4/p");
+  // PRIOR ESTATE: five pre-law parcels of one credential household all stand
+  const five = ["b1","b2","b3","b4","b5"].map((h, i) => P(`${h}/p`, h, i * 100, "2026-07-24"));
+  const hh5 = Object.fromEntries(["b1","b2","b3","b4","b5"].map((h) => [h, "gh:2"]));
+  const s2 = fold({ marks: five, terrain: { features: [] }, stakes: [], tick: 1, households: hh5 });
+  assert.equal(s2.parcels.length, 5, "prior estate stands whole");
+  assert.equal(s2.errors.length, 0);
+  // ...but a NEW claim on top of prior estate is capped
+  const s3 = fold({ marks: [...five, P("b6/p", "b6", 900, "2026-07-31T01:00:00Z")],
+    terrain: { features: [] }, stakes: [], tick: 1,
+    households: { ...hh5, b6: "gh:2" } });
+  assert.equal(s3.errors.length, 1, "the sixth, post-law, bounces");
+  assert.match(s3.errors[0].error, /parcel claim capped/);
+  // NO REGISTRY: handles fold solo — three different handles, three parcels, no cap interaction
+  const s4 = fold({ marks: four.slice(0, 3), terrain: { features: [] }, stakes: [], tick: 1 });
+  assert.equal(s4.parcels.length, 3);
+  assert.equal(s4.errors.length, 0, "solo grain: no grouping without the registry");
+});
