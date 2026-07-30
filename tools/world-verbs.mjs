@@ -14,7 +14,9 @@ import {
   fieldOfView, radialSerialize, statusAt, lightLevelAt, fogModel,
   bearingDeg, quantizeBearing, distanceBand, DIALS,
 } from "./world-engine.mjs";
-import { contains, rect } from "./geometry.mjs"; // the ONE containment definition — pure, browser-safe (no node:*)
+import {
+  marksContain, pointInPolygon, pointInRect, polygonOf, rect,
+} from "./geometry.mjs"; // the ONE containment definition — pure, browser-safe (no node:*)
 
 // ───────────────────────── orient — charter + your state ────────────────────
 // The establishing line of every telling: the let-there-be-light root (light
@@ -65,22 +67,27 @@ export function openYourEyes(state, world, { crossing = 0, budget = DIALS.contex
 // geometry now that the one-tree data is live — the ancestry walk IS orient's
 // answer. Root-first (largest extent), innermost-last.
 export function containmentChain(pos, marks) {
-  // marks whose rect actually contains the point (a real point-in-rect test —
-  // NOT contains() with a zero-area rect, which is always true)
+  // Marks whose TRUE footprint contains the point. A points: ring wins over its
+  // at/extent bbox; otherwise a regular mark keeps the byte-identical rect path.
   const containing = marks
-    .filter((m) => m.at && (m.kind === "sited" || m.kind === "parcel") && pointInRect(pos, m))
+    .filter((m) => m.at && (m.kind === "sited" || m.kind === "parcel") && pointWithinMark(pos, m))
     .sort((a, b) => extentArea(a) - extentArea(b)); // innermost (smallest) first
   // build the ANCESTRY nest from the innermost outward: a larger mark joins only
-  // if it truly CONTAINS the current nest tip — so sibling rects that merely
-  // overlap the point (a coarse-rect artifact) are dropped, not listed.
+  // if its true shape CONTAINS the current nest tip — so sibling extents that
+  // merely overlap the point are dropped, not listed.
   const nest = [];
   for (const m of containing) {
-    if (nest.length === 0 || contains(rect(m), rect(nest[nest.length - 1]))) nest.push(m);
+    if (nest.length === 0 || marksContain(m, nest[nest.length - 1])) nest.push(m);
   }
   return nest.reverse().map((m) => ({ id: m.id, by: m.by, tier: m.tier, body: m.body, extentM: Math.max(m.extent?.w ?? 0, m.extent?.h ?? 0) }));
 }
 function extentArea(m) { return (m.extent?.w ?? 1) * (m.extent?.h ?? 1); }
-function pointInRect(pos, m) { const r = rect(m); return Math.abs(pos.x - r.x) <= r.w / 2 && Math.abs(pos.y - r.y) <= r.h / 2; }
+function pointWithinMark(pos, mark) {
+  const ring = polygonOf(mark);
+  return ring
+    ? pointInPolygon(Number(pos?.x), Number(pos?.y), ring)
+    : pointInRect(Number(pos?.x), Number(pos?.y), rect(mark));
+}
 
 // ───────────────────────── investigate — descend the tree, capped ────────────
 // Zoom one mark: its body (full prose), the predicated properties attached to
@@ -270,11 +277,10 @@ function householdNear(target, world, radius = DIALS.cluster_beyond_m) {
 }
 function childrenByGeometry(parent, world) {
   if (!parent.at || !parent.extent) return [];
-  const pr = rect(parent);                         // the shared rect/contains — never a local copy
-  return world.marks.filter((m) => m !== parent && m.at && m.kind === "sited" && contains(pr, rect(m)));
+  return world.marks.filter((m) => m !== parent && m.at && m.kind === "sited" && marksContain(parent, m));
 }
 // The marks that CONTAIN the target, nearest (smallest) first — the exact
-// inverse of childrenByGeometry, under the same rect/contains rule, so `inside`
+// inverse of childrenByGeometry, under the same true-shape rule, so `inside`
 // and `within` can never disagree about an edge. The world-root is left out on
 // purpose: it frames everything, so naming it as context is noise — the same
 // test placementParent uses when it refuses the root as a parent.
@@ -286,7 +292,7 @@ function ancestorsByGeometry(target, world) {
       if (m === target || m.kind !== "sited" || !m.at || !m.extent) return false;
       const mr = rect(m);
       if (Math.max(mr.w, mr.h) >= DIALS.world_scale_extent_m) return false;
-      return mr.w * mr.h > ta && contains(mr, tr);   // strictly larger, as the fold requires of a parent
+      return mr.w * mr.h > ta && marksContain(m, target); // strictly larger, as the fold requires of a parent
     })
     .sort((a, b) => extentArea(a) - extentArea(b));  // innermost first
   // Build a true NEST outward — a larger mark joins only if it contains the
@@ -297,7 +303,7 @@ function ancestorsByGeometry(target, world) {
   // this one answers "what is this in?" and the immediate house is the answer.
   const nest = [];
   for (const m of containing) {
-    if (nest.length === 0 || contains(rect(m), rect(nest[nest.length - 1]))) nest.push(m);
+    if (nest.length === 0 || marksContain(m, nest[nest.length - 1])) nest.push(m);
   }
   return nest;
 }

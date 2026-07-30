@@ -11,9 +11,9 @@ import {
   buildHeightfield, fieldOfView, fogModel, lightLevelAt, lodScore,
   bearingDeg, quantizeBearing, distanceBand, DIALS,
 } from "./world-engine.mjs";
-import { walk, investigate, orient, openYourEyes } from "./world-verbs.mjs";
+import { walk, investigate, orient, openYourEyes, containmentChain } from "./world-verbs.mjs";
 import { buildWorld } from "./world-poc.mjs";
-import { contains, rect } from "./geometry.mjs";
+import { contains, pointInPolygon, pointInRect, polygonOf, rect } from "./geometry.mjs";
 
 // a tiny flat world helper
 const flatHF = buildHeightfield({ controlPoints: [{ x: 0, y: 0, h: 5 }, { x: 10000, y: 0, h: 5 }, { x: 0, y: 10000, h: 5 }, { x: -10000, y: 0, h: 5 }] });
@@ -100,6 +100,25 @@ test("containment uses the ONE shared `contains` (no engine-local geometry)", ()
   const faraway = { at: { x: 900, y: 900 }, extent: { w: 1, h: 1 } };
   assert.equal(contains(rect(house), rect(inside)), true);
   assert.equal(contains(rect(house), rect(faraway)), false);
+});
+
+test("a dry standpoint inside the Sea bbox is absent from the within chain", () => {
+  const w = buildWorld({ crossing: 20, marksDir: "WORLD/marks" });
+  const sea = w.marks.find((mark) => mark.id === "the-town/the-sea");
+  const dry = { x: 4000, y: 4000 };
+  const wet = { x: 4000, y: 6000 };
+  const ring = polygonOf(sea);
+  const idsAt = (point) => containmentChain(point, w.marks).map((mark) => mark.id);
+
+  assert.ok(sea && ring, "the live Sea mark carries its authored coast polygon");
+  assert.equal(pointInRect(dry.x, dry.y, rect(sea)), true,
+    "fixture guard: the coarse extent rectangle does claim this dry standpoint");
+  assert.equal(pointInPolygon(dry.x, dry.y, ring), false,
+    "fixture guard: the authored coast polygon excludes the dry standpoint");
+  assert.ok(!idsAt(dry).includes(sea.id), "dry land beside the Sea is not within the Sea");
+  assert.equal(pointInPolygon(wet.x, wet.y, ring), true,
+    "fixture guard: the wet control is inside the Sea polygon");
+  assert.ok(idsAt(wet).includes(sea.id), "a genuinely wet standpoint remains within the Sea");
 });
 
 test("household cluster collapses at distance and investigate re-opens it", () => {

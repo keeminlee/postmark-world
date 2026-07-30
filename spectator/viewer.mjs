@@ -19,7 +19,7 @@
 import { orient, openYourEyes, investigate, containmentChain } from "../tools/world-verbs.mjs";
 import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
-import { contains, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
+import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markClass } from "../tools/mark-class.mjs"; // the ONE class rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
@@ -345,10 +345,8 @@ export function pointWalkDestination(point, marks = []) {
   if (![x, y].every(Number.isFinite)) return null;
   const inside = marks
     .filter((mark) => {
-      const w = Number(mark?.extent?.w), h = Number(mark?.extent?.h);
       return mark?.id && !isAmbientMark(mark, marks) && !mark.far
-        && Number.isFinite(mark?.at?.x) && Number.isFinite(mark?.at?.y)
-        && w > 0 && h > 0 && pointInRect(x, y, rect(mark));
+        && pointInsideMark({ x, y }, mark);
     })
     .sort((a, b) => {
       const areaA = Number(a.extent.w) * Number(a.extent.h);
@@ -624,7 +622,7 @@ const STYLE = `
 .wv-wnode.is-mark-hovered, .wv-wnode.is-mark-selected { color:var(--paper); border-color:var(--amber); }
 .wv-card.far { border-left-color:var(--line); font-style:italic; }
 .wv-card .cname { display:flex; align-items:center; gap:7px; color:var(--paper); font-size:1.02rem;
-  line-height:1.25; font-style:normal; }
+  line-height:1.25; font-style:normal; font-weight:700; }
 .wv-card .cname.is-determined { color:var(--amber); }
 .wv-card .wv-name-arrow { display:inline-flex; align-items:center; color:var(--wv-mark-accent); }
 .wv-card .wv-name-arrow .wv-arrow { width:1.3em; height:1.3em; margin:0; vertical-align:middle; }
@@ -1059,10 +1057,9 @@ export function mountViewer(appEl) {
       const home = idx.get(`${h.household}/${h.home_id}`);
       if (!home?.at) continue;
       set.add(home.id);
-      const hr = rect(home);
       for (const m of marks) {
         if (m.id === home.id || m.by !== h.household || !m.at) continue;
-        if ((m.kind === "sited" || m.kind === "parcel") && contains(hr, rect(m))) set.add(m.id);
+        if ((m.kind === "sited" || m.kind === "parcel") && marksContain(home, m)) set.add(m.id);
       }
     }
     return set;
@@ -1181,7 +1178,6 @@ export function mountViewer(appEl) {
     const identity = markName(full);
     const where = radialWhere(m);
     const details = [
-      `<span class="wv-cid">${esc(full.id)}</span>`,
       full.by ? `<span class="wv-detail-author">by ${esc(full.by)}</span>` : "",
       full.date ? `<span class="wv-detail-date">${esc(String(full.date).slice(0, 10))}</span>` : "",
       extentTag(full),
@@ -1214,8 +1210,8 @@ export function mountViewer(appEl) {
   }
   function fogStateLine(radial, obs) {
     if (obs.aboveFog) return "You are above the fog; the sightlines run long.";
-    if (obs.inFog) return `Fog is in tonight (crossing ${radial.crossing}, thickness ${radial.fog.thickness}) — it closes the view to about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
-    return `The air is clear (crossing ${radial.crossing}) — you can see about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
+    if (obs.inFog) return `Fog is in tonight (thickness ${radial.fog.thickness}) — it closes the view to about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
+    return `The air is clear — you can see about ${(radial.sightReachM ?? 0).toLocaleString()} m.`;
   }
   // keep: optional predicate — under just mine, only cards whose mark passes
   // show (the telling stays otherwise identical: same order, same budget already

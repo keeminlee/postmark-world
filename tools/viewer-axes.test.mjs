@@ -72,6 +72,26 @@ test("painting hits pips first, then the smallest true containing extent", () =>
   );
 });
 
+test("walk point labels honor polygon extents instead of their bounding boxes", () => {
+  const water = {
+    id: "the-town/test-water",
+    kind: "sited",
+    at: { x: 30, y: 30 },
+    extent: { w: 20, h: 20 },
+    points: [[20, 20], [40, 20], [40, 25], [25, 25], [25, 40], [20, 40]],
+  };
+  assert.deepEqual(
+    pointWalkDestination({ x: 34, y: 34 }, [water]),
+    { x: 34, y: 34, inside: null },
+    "a dry point in the polygon notch is not labelled as inside the water",
+  );
+  assert.deepEqual(
+    pointWalkDestination({ x: 22, y: 35 }, [water]),
+    { x: 22, y: 35, inside: water.id },
+    "a point inside the authored polygon keeps its containment label",
+  );
+});
+
 test("off-screen geometry resolves predicates to places and clips at the viewport edge", () => {
   const marks = [
     { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 } },
