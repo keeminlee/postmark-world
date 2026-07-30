@@ -590,7 +590,7 @@ const DEV_DIALS = [
 const STYLE = `
 .wv { --night:#14171d; --panel:#1c2129; --panel2:#20262f; --line:#2e3542;
   --paper:#e8e0cf; --dim:#9a9280; --amber:#e8c56a; --amber-dark:#b8964a; --err:#d98a7a;
-  --you:#ff2418;
+  --you:#e0654a; /* ember — "this is you", softened from alarm-red (Keemin 2026-07-30) */
   --stamp-violet:#aa8fd8; --stamp-violet-dark:#65517f;
   --stamp-violet-heading:#d8c7ef; --stamp-violet-subhead:#cbb8e5;
   /* tier accents (Keemin 2026-07-23): constitution → blue, sovereign/homes → green, market → amber */
@@ -2592,6 +2592,7 @@ export function mountViewer(appEl) {
     await Promise.all([loadActorHome(), loadActorBalance()]);
     await pollWalkers();
     syncActorPosition({ moveCamera: true });
+    mapCtx?.lockOn?.(); // one-shot: the painting glides to your dot on Act As (no sticky follow)
     if (walkState.destination) previewSelectedWalk();
   }
 
