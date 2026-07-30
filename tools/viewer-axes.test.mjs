@@ -6,6 +6,7 @@ import {
   createMarkInteractionStore,
   deslugMarkId,
   disciplineAtlasImages,
+  extentGlyphKind,
   formatEtaCrossings,
   isAmbientMark,
   MARK_SNAP_RADIUS_PX,
@@ -19,6 +20,18 @@ import {
   viewerAxisState,
   viewerFilterControls,
 } from "../spectator/viewer.mjs";
+
+test("extent glyphs distinguish honest polygon claims from rectangles", () => {
+  assert.equal(extentGlyphKind({ extent: { w: 10, h: 5 } }), "rect");
+  assert.equal(
+    extentGlyphKind({
+      extent: { w: 10, h: 5 },
+      points: [[0, 0], [10, 0], [8, 5], [2, 4]],
+    }),
+    "polygon",
+  );
+  assert.equal(extentGlyphKind({ kind: "predicated" }), null);
+});
 
 test("mark names de-slug cleanly and honor a fold-determined naming predicate", () => {
   assert.equal(deslugMarkId("wright/the-crossing-bench"), "The Crossing Bench");

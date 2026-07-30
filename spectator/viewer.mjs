@@ -83,6 +83,11 @@ export function resolveMarkName(mark, determined = {}) {
     : { name: deslugMarkId(mark?.id), determined: false };
 }
 
+export function extentGlyphKind(mark) {
+  if (!mark?.extent || !(Number(mark.extent.w) > 0 || Number(mark.extent.h) > 0)) return null;
+  return polygonOf(mark) ? "polygon" : "rect";
+}
+
 function pointInsideMark(point, mark) {
   if (!isEmbodiedMark(mark)) return false;
   const ring = polygonOf(mark);
@@ -514,7 +519,7 @@ const STYLE = `
 .wv-cid { font-size:.7rem; color:var(--dim); opacity:.6; margin-left:auto; font-family:Consolas,Menlo,monospace; }
 .wv-extent { display:inline-flex; align-items:center; gap:4px; opacity:.8; }
 .wv-extent svg { display:block; }
-.wv-extent svg rect { fill:rgba(154,146,128,.18); stroke:var(--dim); stroke-width:1; }
+.wv-extent svg rect, .wv-extent svg polygon { fill:rgba(154,146,128,.18); stroke:var(--dim); stroke-width:1; }
 .wv-extent-t { font-size:.66rem; color:var(--dim); font-variant-numeric:tabular-nums; white-space:nowrap; }
 .wv-cluster { margin-top:7px; font-size:.8rem; font-style:italic; color:var(--amber); opacity:.85; }
 .wv-tallies { margin-top:22px; padding-top:10px; font-size:.82rem; color:var(--dim); border-top:1px solid var(--line); max-width:76ch; }
@@ -953,9 +958,22 @@ export function mountViewer(appEl) {
     const box = 6 + Math.min(26, Math.log10(maxD + 1) * 8.5); // ~6px @1m … ~32px @~5km
     const gw = Math.max(2, box * (w / maxD)), gh = Math.max(2, box * (h / maxD));
     const fmt = (n) => (n >= 1000 ? `${(n / 1000).toFixed(n % 1000 ? 1 : 0)}k` : Math.round(n));
+    const ring = polygonOf(full);
+    let glyph;
+    if (ring) {
+      const xs = ring.map((point) => point.x), ys = ring.map((point) => point.y);
+      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+      const scale = (box - 2) / Math.max(maxX - minX, maxY - minY, 1);
+      const ox = (box - (maxX - minX) * scale) / 2, oy = (box - (maxY - minY) * scale) / 2;
+      const points = ring.map((point) =>
+        `${(ox + (point.x - minX) * scale).toFixed(1)},${(oy + (point.y - minY) * scale).toFixed(1)}`).join(" ");
+      glyph = `<polygon points="${points}"/>`;
+    } else {
+      glyph = `<rect x="${((box - gw) / 2).toFixed(1)}" y="${((box - gh) / 2).toFixed(1)}" width="${gw.toFixed(1)}" height="${gh.toFixed(1)}" rx="1"/>`;
+    }
     return `<span class="wv-extent" title="footprint ${w}×${h} m">`
       + `<svg width="${box.toFixed(0)}" height="${box.toFixed(0)}" viewBox="0 0 ${box.toFixed(1)} ${box.toFixed(1)}" aria-hidden="true">`
-      + `<rect x="${((box - gw) / 2).toFixed(1)}" y="${((box - gh) / 2).toFixed(1)}" width="${gw.toFixed(1)}" height="${gh.toFixed(1)}" rx="1"/></svg>`
+      + `${glyph}</svg>`
       + `<span class="wv-extent-t">${fmt(w)}×${fmt(h)} m</span></span>`;
   }
   function identityResolved() {
