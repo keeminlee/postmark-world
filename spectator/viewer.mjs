@@ -1967,9 +1967,10 @@ export function mountViewer(appEl) {
   }
 
   async function pollWalkers() {
-    const paths = pmKey()
-      ? [officeUrl("/world/walkers"), officeUrl("/walks")]
-      : [officeUrl("/walks")];
+    // /world/walkers is a PUBLIC office read — "visible to anyone who asks who
+    // is out today" applies to spectators too. /walks stays the local-spectator
+    // fallback shape.
+    const paths = [officeUrl("/world/walkers"), officeUrl("/walks")];
     for (const path of paths) {
       try {
         const r = await fetch(path, { headers: authHeaders(), credentials: "same-origin" });
