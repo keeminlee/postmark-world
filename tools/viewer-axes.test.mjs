@@ -16,10 +16,33 @@ import {
   previewWalkLeg,
   resolveMarkName,
   snappedMarkAtPoint,
+  summarizeBackers,
   viewerAxisControls,
   viewerAxisState,
   viewerFilterControls,
 } from "../spectator/viewer.mjs";
+
+test("backer summaries show the top five and count everyone else", () => {
+  const summary = summarizeBackers([
+    { handle: "sixth", stamps: 1 },
+    { holder: "third", amount: 7 },
+    { handle: "first", stamps: 12 },
+    { handle: "fifth", stamps: 3 },
+    { handle: "second", stamps: 9 },
+    { handle: "fourth", stamps: 5 },
+    { handle: "seventh", stamps: 0 },
+  ]);
+  assert.deepEqual(summary, {
+    top: [
+      { holder: "first", amount: 12 },
+      { holder: "second", amount: 9 },
+      { holder: "third", amount: 7 },
+      { holder: "fourth", amount: 5 },
+      { holder: "fifth", amount: 3 },
+    ],
+    others: 1,
+  });
+});
 
 test("extent glyphs distinguish honest polygon claims from rectangles", () => {
   assert.equal(extentGlyphKind({ extent: { w: 10, h: 5 } }), "rect");

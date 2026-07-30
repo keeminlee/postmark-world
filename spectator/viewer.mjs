@@ -196,6 +196,18 @@ export function worldStakeAnswer(answer = {}, mode = "stake") {
   };
 }
 
+export function summarizeBackers(rows = [], limit = 5) {
+  const holders = (rows ?? [])
+    .map((row) => ({
+      holder: String(row?.holder ?? row?.handle ?? "").trim(),
+      amount: Number(row?.amount ?? row?.stamps ?? 0),
+    }))
+    .filter((row) => row.holder && Number.isFinite(row.amount) && row.amount > 0)
+    .sort((a, b) => b.amount - a.amount || a.holder.localeCompare(b.holder));
+  const cap = Math.max(0, Math.floor(Number(limit) || 0));
+  return { top: holders.slice(0, cap), others: Math.max(0, holders.length - cap) };
+}
+
 export function previewWalkLeg({ from, toward, targetExtent = null, skeleton = null } = {}) {
   if (![from?.x, from?.y, toward?.x, toward?.y].every(Number.isFinite)) return null;
   const at = fractionalCrossing();
@@ -486,6 +498,11 @@ const STYLE = `
 .wv-card:hover .wv-details, .wv-card:focus-within .wv-details, .wv-card.is-mark-selected .wv-details { display:flex; }
 .wv-detail-author, .wv-detail-date, .wv-detail-where { white-space:nowrap; }
 .wv-card .wv-cell-actions { display:flex; gap:5px; flex-wrap:wrap; margin-left:auto; }
+.wv-backing { color:var(--stamp-violet-subhead); font-variant-numeric:tabular-nums;
+  font:inherit; font-size:.72rem; white-space:nowrap; }
+button.wv-backing { background:transparent; border:0; padding:2px 4px; cursor:pointer; }
+button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:underline; }
+.wv-backing.is-zero { opacity:.65; }
 .wv-cell-act { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
   border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
 .wv-cell-act:hover { background:var(--panel2); }
@@ -508,6 +525,10 @@ const STYLE = `
 .wv-act-preview pre { margin:5px 0; padding:8px; white-space:pre-wrap; overflow-wrap:anywhere;
   background:#0d0f13; border:1px solid var(--line); color:var(--paper); font:12px/1.45 Consolas,Menlo,monospace; }
 .wv-act-note, .wv-act-answer { margin:6px 0 0; color:var(--dim); font-size:.75rem; line-height:1.4; }
+.wv-backers { margin:7px 0 2px; color:var(--dim); font-size:.74rem; line-height:1.45; }
+.wv-backers b { color:var(--stamp-violet-subhead); }
+.wv-backer { display:flex; justify-content:space-between; gap:10px; max-width:24rem; }
+.wv-backer .amount { color:var(--stamp-violet); font-variant-numeric:tabular-nums; }
 .wv-act-answer.success { color:var(--green); }
 .wv-act-answer.refusal { color:var(--err); }
 .wv-stamp-holding, .wv-stamp-balance { color:var(--stamp-violet); font-variant-numeric:tabular-nums; }
@@ -922,7 +943,6 @@ export function mountViewer(appEl) {
   // ───────── the telling view ─────────
   function chips(m) {
     const c = [];
-    if (m.weight > 0) c.push(`<span class="wv-chip stamps">✦${m.weight}</span>`);
     if (m.signal) c.push(`<span class="wv-chip signal">its light carries</span>`);
     if (m.dim != null && m.dim < 1) c.push(`<span class="wv-chip dim">dim</span>`);
     if (m.aboveFogTarget) c.push(`<span class="wv-chip">above the fog</span>`);
@@ -995,12 +1015,17 @@ export function mountViewer(appEl) {
     return markName(full).name || String(full?.id ?? "");
   }
   function markActions(m) {
-    if (!identityResolved()) return "";
     const full = byId.get(m.id) ?? m;
+    const backing = Math.max(0, Number(full.stamps ?? 0));
+    const backingClass = `wv-backing${backing === 0 ? " is-zero" : ""}`;
+    const backingDisplay = identityResolved()
+      ? `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(m.id)}" title="back this mark">✦ ${backing.toLocaleString()}</button>`
+      : `<span class="${backingClass}" title="current backing">✦ ${backing.toLocaleString()}</span>`;
+    if (!identityResolved()) return `<span class="wv-cell-actions">${backingDisplay}</span>`;
     const position = backedPosition(m.id);
     return `<span class="wv-cell-actions">`
       + (walkableMark(full) ? `<button type="button" class="wv-cell-act" data-walk-mark="${esc(m.id)}">walk here</button>` : "")
-      + `<button type="button" class="wv-cell-act stamp" data-stake-open data-mark="${esc(m.id)}">✦ back this</button>`
+      + backingDisplay
       + (position ? `<button type="button" class="wv-cell-act stamp unstake" data-unstake-open data-mark="${esc(m.id)}" data-max="${Number(position.stamps)}">take back ${Number(position.stamps)}</button>` : "")
       + `</span>`;
   }
@@ -1900,6 +1925,7 @@ export function mountViewer(appEl) {
     if (mode === "stake" && balance !== null) sheet.dataset.balance = String(balance);
     sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : "Back this mark"}</b>`
       + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
+      + `<div class="wv-backers"><span>reading who backs this mark…</span></div>`
       + (mode === "stake"
         ? `<p class="wv-act-note">you hold <b class="wv-stamp-holding">✦ ${balance ?? (state.actorBalance === null ? "…" : "unavailable")}</b></p>`
         : "")
@@ -1909,7 +1935,31 @@ export function mountViewer(appEl) {
       + `<div class="wv-act-row"><button type="button" class="wv-act-confirm" disabled>confirm and send</button></div></div>`
       + `<p class="wv-act-answer" hidden></p>`;
     card.appendChild(sheet);
+    loadStakeBackers(sheet);
     $(sheet, ".wv-act-amount").focus();
+  }
+
+  async function loadStakeBackers(sheet) {
+    const host = $(sheet, ".wv-backers");
+    if (!host) return;
+    try {
+      const response = await fetch(officeUrl(`/world/stake?mark=${encodeURIComponent(sheet.dataset.mark)}`), {
+        headers: { accept: "application/json" },
+        credentials: "omit",
+      });
+      const body = await response.json().catch(() => null);
+      if (!response.ok || !body || body.error === "bounce") throw new Error(body?.defect || `the door answered ${response.status}`);
+      if (!sheet.isConnected) return;
+      const summary = summarizeBackers(body.holders, 5);
+      const total = Math.max(0, Number(body.escrow ?? 0));
+      host.innerHTML = `<b>✦ ${total.toLocaleString()} backed by</b>`
+        + (summary.top.length
+          ? summary.top.map((row) => `<div class="wv-backer"><span>${esc(row.holder)}</span><span class="amount">✦ ${row.amount.toLocaleString()}</span></div>`).join("")
+            + (summary.others ? `<div>and ${summary.others} other${summary.others === 1 ? "" : "s"}</div>` : "")
+          : `<div>no one yet</div>`);
+    } catch (error) {
+      if (sheet.isConnected) host.textContent = `backer list unavailable — ${error.message}`;
+    }
   }
 
   function previewStakeSheet(sheet) {
