@@ -383,6 +383,27 @@ export function standingLocationLabel(point, marks = [], determined = {}) {
   return mark ? `standing in ${resolveMarkName(mark, determined).name}` : "on open ground";
 }
 
+export function walkerDestinationName(walker, marks = [], determined = {}) {
+  const byMarkId = markIndex(marks);
+  const namedTarget = walker?.mark_id && byMarkId.get(walker.mark_id);
+  if (namedTarget) return resolveMarkName(namedTarget, determined).name;
+  const containmentId = smallestContainingMark(walker?.toward, marks);
+  const containment = containmentId && byMarkId.get(containmentId);
+  return containment ? resolveMarkName(containment, determined).name : "open ground";
+}
+
+export function viewerJourneyState(walker, marks = [], determined = {}) {
+  if (!walker) return { kind: "ready", destinationName: null };
+  const destinationName = walkerDestinationName(walker, marks, determined);
+  if (walker.arrived) return { kind: "arrived", destinationName };
+  return {
+    kind: "journey",
+    destinationName,
+    remainingM: Math.max(0, Math.round(Number(walker.remaining_m) || 0)),
+    etaCrossings: Math.max(0, Number(walker.eta_crossings) || 0),
+  };
+}
+
 export function disciplineAtlasImages(root) {
   const images = [...root.querySelectorAll("img, image")];
   for (const image of images) {
@@ -687,11 +708,15 @@ const STYLE = `
 .wv-card:hover .wv-details, .wv-card:focus-within .wv-details, .wv-card.is-mark-selected .wv-details { display:flex; }
 .wv-detail-author, .wv-detail-date, .wv-detail-where { white-space:nowrap; }
 .wv-card .wv-cell-actions { display:flex; gap:5px; flex-wrap:wrap; margin-left:auto; }
-.wv-backing { color:var(--stamp-violet-subhead); font-variant-numeric:tabular-nums;
-  font:inherit; font-size:.72rem; white-space:nowrap; }
-button.wv-backing { background:transparent; border:0; padding:2px 4px; cursor:pointer; }
-button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:underline; }
-.wv-backing.is-zero { opacity:.65; }
+.wv-backing { display:inline-flex; align-items:center; color:var(--stamp-violet-subhead);
+  background:rgba(139,124,255,.07); border:1px solid var(--stamp-violet-dark);
+  border-radius:999px; padding:3px 9px; font:inherit; font-size:.78rem;
+  font-variant-numeric:tabular-nums; white-space:nowrap; cursor:pointer;
+  transition:color .15s, border-color .15s, background .15s; }
+.wv-backing:hover, .wv-backing:focus-visible { color:var(--stamp-violet-heading);
+  border-color:var(--stamp-violet); background:rgba(139,124,255,.16); outline:none; }
+.wv-backing.is-zero { opacity:.68; background:transparent; }
+.wv-backing.is-zero:hover, .wv-backing.is-zero:focus-visible { opacity:.9; }
 .wv-cell-act { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
   border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
 .wv-cell-act:hover { background:var(--panel2); }
@@ -831,7 +856,23 @@ button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:und
 .wv-minimap { border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
 .wv-minimap svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
-.wv-mapnote { font-size:.78rem; color:var(--dim); line-height:1.45; margin-top:8px; }
+.wv-map-title { display:flex; align-items:center; gap:6px; }
+.wv-map-title h2 { margin:0; }
+.wv-map-help { position:relative; }
+.wv-map-help-toggle { width:1.45rem; height:1.45rem; display:inline-grid; place-items:center;
+  border:1px solid var(--line); border-radius:999px; color:var(--dim); background:transparent;
+  font:700 .76rem/1 ui-monospace,Consolas,monospace; cursor:pointer; }
+.wv-map-help-toggle:hover, .wv-map-help-toggle:focus-visible,
+.wv-map-help.is-open .wv-map-help-toggle { color:var(--paper); border-color:var(--amber-dark);
+  background:var(--panel2); outline:none; }
+.wv-map-help-bubble { position:absolute; z-index:8; top:calc(100% + 7px); left:0; width:min(30rem,72vw);
+  padding:9px 11px; border:1px solid var(--line); border-radius:5px;
+  background:rgba(13,15,19,.97); color:var(--dim); font-size:.78rem; line-height:1.45;
+  box-shadow:0 8px 24px rgba(0,0,0,.38); opacity:0; visibility:hidden;
+  transform:translateY(-3px); transition:opacity .14s, transform .14s, visibility .14s; }
+.wv-map-help:hover .wv-map-help-bubble, .wv-map-help:focus-within .wv-map-help-bubble,
+.wv-map-help.is-open .wv-map-help-bubble { opacity:1; visibility:visible; transform:translateY(0); }
+.wv-map-help-bubble b { color:var(--paper); }
 .ov-reach { fill:rgba(232,197,106,.06); stroke:var(--amber); stroke-width:2.5; stroke-dasharray:10 8; opacity:.8; }
 /* the overlay's pips speak the same tier language as everything else on the
    painting — the highlight box/dot, the footprints, the grid pips. They were
@@ -915,6 +956,15 @@ button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:und
 .wv-walkdesk h2 { margin-top:0; }
 .wv-youhere { color:var(--dim); font-size:.76rem; margin-bottom:8px; }
 .wv-youhere b { color:var(--you); }
+.wv-walk-status { margin:7px 0 8px; padding:8px 9px; border:1px solid var(--line);
+  border-radius:4px; color:var(--dim); font-size:.74rem; line-height:1.45; }
+.wv-walk-status.journey { border-color:var(--you); background:rgba(224,101,74,.08); color:var(--you); }
+.wv-walk-status.journey b { color:var(--you); }
+.wv-walk-status.arrived b { color:var(--green); }
+.wv-change-course { display:block; margin-top:6px; padding:0; border:0; background:transparent;
+  color:var(--you); font:inherit; font-weight:700; cursor:pointer; text-decoration:underline;
+  text-underline-offset:2px; }
+.wv-change-course:hover, .wv-change-course:focus-visible { color:var(--paper); outline:none; }
 .wv-walk-destination { margin-top:7px; padding:7px 8px; border:1px solid var(--line);
   border-radius:4px; color:var(--dim); font-size:.72rem; line-height:1.4; }
 .wv-walk-destination b { color:var(--paper); font-variant-numeric:tabular-nums; }
@@ -955,10 +1005,13 @@ const MARKUP = `
     <section class="wv-walkdesk" hidden>
       <h2>Walk</h2>
       <div class="wv-youhere">finding your place in the walk ledger…</div>
-      <div class="wv-walk-destination">click the painting, or select a mark cell</div>
-      <div class="wv-walk-preview" hidden></div>
-      <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
-      <p class="wv-walk-answer" hidden></p>
+      <div class="wv-walk-status" hidden></div>
+      <div class="wv-walk-planner">
+        <div class="wv-walk-destination">click the painting, or select a mark cell</div>
+        <div class="wv-walk-preview" hidden></div>
+        <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
+        <p class="wv-walk-answer" hidden></p>
+      </div>
     </section>
     <div class="wv-standctl">
       <!-- stand/move went DEV-ONLY the day walk shipped (bronze
@@ -994,7 +1047,15 @@ const MARKUP = `
   <aside class="wv-map">
     <div class="wv-sticky">
       <div class="wv-maphead">
-        <h2>The painting</h2>
+        <div class="wv-map-title">
+          <h2>The painting</h2>
+          <div class="wv-map-help">
+            <button type="button" class="wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
+            <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
+              signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
+              Drag to pan, scroll to zoom.</div>
+          </div>
+        </div>
         <div class="wv-mapctl">
           <button class="ctl wv-map-home" title="fit the whole painting">⌂ fit</button>
           <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖ follow</button>
@@ -1003,9 +1064,6 @@ const MARKUP = `
         </div>
       </div>
       <div class="wv-minimap"><div class="loading">fetching the painting…</div></div>
-      <p class="wv-mapnote">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
-        signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
-        Drag to pan, scroll to zoom.</p>
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
   </aside>
@@ -1215,9 +1273,7 @@ export function mountViewer(appEl) {
     const full = byId.get(m.id) ?? m;
     const backing = Math.max(0, Number(full.stamps ?? 0));
     const backingClass = `wv-backing${backing === 0 ? " is-zero" : ""}`;
-    const backingDisplay = identityResolved()
-      ? `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(m.id)}" title="back this mark">✦ ${backing.toLocaleString()}</button>`
-      : `<span class="${backingClass}" title="current backing">✦ ${backing.toLocaleString()}</span>`;
+    const backingDisplay = `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(m.id)}" title="read backing and back this mark">✦ ${backing.toLocaleString()} · back</button>`;
     if (!identityResolved()) return `<span class="wv-cell-actions">${backingDisplay}</span>`;
     const position = backedPosition(m.id);
     return `<span class="wv-cell-actions">`
@@ -1913,7 +1969,15 @@ export function mountViewer(appEl) {
   // A walk is a DECLARED DEPARTURE; position is derived from that record and the
   // clock. So this layer stores nothing and animates nothing — it asks the server
   // where everyone is at a given crossing and draws that.
-  let walkState = { at: null, walkers: [], timer: null, pending: null, destination: null, actorBound: true };
+  let walkState = {
+    at: null,
+    walkers: [],
+    timer: null,
+    pending: null,
+    destination: null,
+    actorBound: true,
+    changingCourse: false,
+  };
 
   function actorWalker() {
     return walkState.walkers.find((walker) => walker.handle === state.handle) ?? null;
@@ -1930,10 +1994,17 @@ export function mountViewer(appEl) {
 
   function syncActorPosition({ moveCamera = false } = {}) {
     const origin = actorOrigin();
+    const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
     const here = $(root, ".wv-youhere");
-    if (here) here.innerHTML = origin
-      ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined))}</b><br><span>${esc(origin.source)}</span>`
-      : `<span>no walk-ledger or sited-home position was found</span>`;
+    if (here) {
+      if (journey.kind === "journey") {
+        here.innerHTML = `<b>on the road, ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}</b><br><span>walk ledger</span>`;
+      } else {
+        here.innerHTML = origin
+          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined))}</b><br><span>${esc(origin.source)}</span>`
+          : `<span>no walk-ledger or sited-home position was found</span>`;
+      }
+    }
     if (moveCamera && origin && walkState.actorBound) {
       state.cam = { x: origin.x, y: origin.y };
       renderCurrent();
@@ -1964,6 +2035,7 @@ export function mountViewer(appEl) {
           `${walkState.walkers.length} on record, ${on} on the road`;
     }
     syncActorPosition();
+    renderWalkDestination();
   }
 
   async function pollWalkers() {
@@ -2080,11 +2152,28 @@ export function mountViewer(appEl) {
   function renderWalkDestination() {
     const desk = $(root, ".wv-walkdesk");
     if (!desk) return;
+    const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
+    const status = $(desk, ".wv-walk-status");
+    const planner = $(desk, ".wv-walk-planner");
     const box = $(desk, ".wv-walk-destination");
+    const confirm = $(desk, ".wv-walk-confirm");
     const destination = walkState.destination;
+    if (status) {
+      status.hidden = journey.kind === "ready";
+      status.className = `wv-walk-status${journey.kind === "journey" ? " journey" : journey.kind === "arrived" ? " arrived" : ""}`;
+      status.innerHTML = journey.kind === "journey"
+        ? `<b>on the road — toward ${esc(journey.destinationName)}</b> · ${journey.remainingM.toLocaleString()} m left · arrives ${formatEtaCrossings(journey.etaCrossings)}`
+          + `<button type="button" class="wv-change-course">change course</button>`
+        : journey.kind === "arrived"
+          ? `arrived at <b>${esc(journey.destinationName)}</b>`
+          : "";
+    }
+    if (planner) planner.hidden = journey.kind === "journey"
+      && !walkState.changingCourse && !destination;
     if (box) box.innerHTML = destination
-      ? `destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined, actorOrigin()))}</b>`
-      : `click open ground in the painting, or select a walkable mark and choose walk here`;
+      ? `${journey.kind === "journey" ? "change course — " : ""}destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined, actorOrigin()))}</b>`
+      : `${journey.kind === "journey" ? "change course — " : ""}click open ground in the painting, or select a walkable mark and choose walk here`;
+    if (confirm) confirm.textContent = journey.kind === "journey" ? "change course" : "confirm departure";
   }
 
   function scrollMarkCellIntoView(id) {
@@ -2102,6 +2191,7 @@ export function mountViewer(appEl) {
     markInteraction.select(id);
     if (identityResolved()) {
       walkState.destination = null;
+      if (viewerJourneyState(actorWalker()).kind === "journey") walkState.changingCourse = true;
       invalidateWalkPreview();
       renderWalkDestination();
     }
@@ -2112,6 +2202,7 @@ export function mountViewer(appEl) {
   function clearSelectionAndDestination() {
     markInteraction.select(null);
     walkState.destination = null;
+    walkState.changingCourse = false;
     invalidateWalkPreview();
     renderWalkDestination();
   }
@@ -2128,6 +2219,7 @@ export function mountViewer(appEl) {
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
     walkState.destination = { ...destination, inside: namedInside || destination.inside, markId: namedInside || null };
+    if (viewerJourneyState(actorWalker()).kind === "journey") walkState.changingCourse = true;
     renderWalkDestination();
     previewSelectedWalk();
     if (scrollDesk) $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -2191,6 +2283,11 @@ export function mountViewer(appEl) {
       answer.textContent = `${state.handle} departed: ${Number(response.body.leg_m ?? 0).toLocaleString()} m, ETA ${formatEtaCrossings(response.body.eta_crossings ?? 0)}.`;
       walkState.pending = null;
       await pollWalkers();
+      markInteraction.select(null);
+      walkState.destination = null;
+      walkState.changingCourse = false;
+      invalidateWalkPreview();
+      renderWalkDestination();
     } catch (error) {
       answer.classList.add("refusal");
       answer.textContent = `The walk door could not be reached — ${error.message}`;
@@ -2206,21 +2303,24 @@ export function mountViewer(appEl) {
     sheet.dataset.mark = markId || card.dataset.id;
     if (max !== "") sheet.dataset.max = String(max);
     const balance = Number.isInteger(state.actorBalance) ? state.actorBalance : null;
+    const canAct = identityResolved();
     if (mode === "stake" && balance !== null) sheet.dataset.balance = String(balance);
-    sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : "Back this mark"}</b>`
+    sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : canAct ? "Back this mark" : "Backing"}</b>`
       + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
       + `<div class="wv-backers"><span>reading who backs this mark…</span></div>`
-      + (mode === "stake"
+      + (mode === "stake" && canAct
         ? `<p class="wv-act-note">you hold <b class="wv-stamp-holding">✦ ${balance ?? (state.actorBalance === null ? "…" : "unavailable")}</b></p>`
         : "")
-      + `<div class="wv-act-row"><label>stamps <input class="wv-act-amount" type="number" min="1" step="1"${max !== "" ? ` max="${Number(max)}"` : balance !== null ? ` max="${balance}"` : ""}></label>`
-      + `<button type="button" class="wv-act-preview-btn">preview the sealed line</button></div>`
-      + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; ✦weight updates at the next Settlement.</p>`
-      + `<div class="wv-act-row"><button type="button" class="wv-act-confirm" disabled>confirm and send</button></div></div>`
-      + `<p class="wv-act-answer" hidden></p>`;
+      + (canAct
+        ? `<div class="wv-act-row"><label>stamps <input class="wv-act-amount" type="number" min="1" step="1"${max !== "" ? ` max="${Number(max)}"` : balance !== null ? ` max="${balance}"` : ""}></label>`
+          + `<button type="button" class="wv-act-preview-btn">preview the sealed line</button></div>`
+          + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; ✦weight updates at the next Settlement.</p>`
+          + `<div class="wv-act-row"><button type="button" class="wv-act-confirm" disabled>confirm and send</button></div></div>`
+          + `<p class="wv-act-answer" hidden></p>`
+        : `<p class="wv-act-note">sign in as a resident to back this mark.</p>`);
     card.appendChild(sheet);
     loadStakeBackers(sheet);
-    $(sheet, ".wv-act-amount").focus();
+    $(sheet, ".wv-act-amount")?.focus();
   }
 
   async function loadStakeBackers(sheet) {
@@ -2373,8 +2473,29 @@ export function mountViewer(appEl) {
   // ───────── events ─────────
   let devTimer = null;
   root.addEventListener("click", (e) => {
+    const openHelp = $(root, ".wv-map-help.is-open");
+    const helpToggle = e.target.closest(".wv-map-help-toggle");
+    if (helpToggle) {
+      const help = helpToggle.closest(".wv-map-help");
+      const expanded = !help.classList.contains("is-open");
+      openHelp?.classList.remove("is-open");
+      openHelp?.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
+      help.classList.toggle("is-open", expanded);
+      helpToggle.setAttribute("aria-expanded", String(expanded));
+      return;
+    }
+    if (openHelp && !e.target.closest(".wv-map-help")) {
+      openHelp.classList.remove("is-open");
+      openHelp.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
+    }
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
+    if (e.target.closest(".wv-change-course")) {
+      walkState.changingCourse = true;
+      renderWalkDestination();
+      $(root, ".wv-walk-destination")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
     const walkHere = e.target.closest("[data-walk-here]");
     if (walkHere) { chooseWalkMark(walkHere.dataset.mark, { scrollDesk: true }); return; }
@@ -2466,6 +2587,12 @@ export function mountViewer(appEl) {
   });
   const onViewerKeydown = (event) => {
     if (event.key !== "Escape") return;
+    const help = $(root, ".wv-map-help.is-open");
+    if (help) {
+      help.classList.remove("is-open");
+      help.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
+      return;
+    }
     if (!markInteraction.getState().selectedId && !walkState.destination) return;
     clearSelectionAndDestination();
   };

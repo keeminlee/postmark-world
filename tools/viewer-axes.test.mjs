@@ -32,7 +32,9 @@ import {
   viewerAxisControls,
   viewerAxisState,
   viewerFilterControls,
+  viewerJourneyState,
   walkDestinationLabel,
+  walkerDestinationName,
 } from "../spectator/viewer.mjs";
 
 test("distance-band headings derive their approximate ranges from the LOD dials", () => {
@@ -167,6 +169,67 @@ test("viewer-facing locations use containment names and relative ground directio
   assert.equal(standingLocationLabel({ x: 40, y: 0 }, marks), "standing in The Trueing Terrace");
   assert.equal(standingLocationLabel({ x: 500, y: 0 }, marks), "on open ground");
   assert.equal(formatRelativePosition({ x: 1000, y: 0 }, { x: 170, y: 0 }), "830 m · west");
+});
+
+test("the walk desk selects ready, journey, and arrived from the latest walker derivation", () => {
+  const marks = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 10_000, h: 10_000 } },
+    { id: "wright/the-trueing-house", kind: "sited", at: { x: 600, y: 0 }, extent: { w: 100, h: 100 } },
+  ];
+  const determined = { "wright/the-trueing-house::name": "the Trueing House" };
+  const walking = {
+    arrived: false,
+    standing: false,
+    remaining_m: 415,
+    eta_crossings: 0.03,
+    toward: { x: 600, y: 0 },
+    mark_id: "wright/the-trueing-house",
+  };
+
+  assert.deepEqual(viewerJourneyState(null, marks, determined), {
+    kind: "ready",
+    destinationName: null,
+  });
+  assert.deepEqual(viewerJourneyState(walking, marks, determined), {
+    kind: "journey",
+    destinationName: "the Trueing House",
+    remainingM: 415,
+    etaCrossings: 0.03,
+  });
+  assert.deepEqual(viewerJourneyState({ ...walking, arrived: true, remaining_m: 0 }, marks, determined), {
+    kind: "arrived",
+    destinationName: "the Trueing House",
+  });
+});
+
+test("walker destinations prefer a carried mark Name, then point containment, then open ground", () => {
+  const marks = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 10_000, h: 10_000 } },
+    { id: "wright/the-trueing-terrace", kind: "sited", at: { x: 600, y: 0 }, extent: { w: 300, h: 300 } },
+    { id: "wright/the-crossing-bench", kind: "sited", at: { x: -500, y: 0 }, extent: { w: 20, h: 8 } },
+  ];
+  const determined = {
+    "wright/the-trueing-terrace::name": "the Trueing Terrace",
+    "wright/the-crossing-bench::name": "the Crossing Bench",
+  };
+
+  assert.equal(
+    walkerDestinationName(
+      { mark_id: "wright/the-crossing-bench", toward: { x: 600, y: 0 } },
+      marks,
+      determined,
+    ),
+    "the Crossing Bench",
+    "declared mark intent wins over the destination point's incidental containment",
+  );
+  assert.equal(
+    walkerDestinationName({ mark_id: null, toward: { x: 600, y: 0 } }, marks, determined),
+    "the Trueing Terrace",
+  );
+  assert.equal(
+    walkerDestinationName({ mark_id: null, toward: { x: 20_000, y: 0 } }, marks, determined),
+    "open ground",
+  );
 });
 
 test("backer summaries show the top five and count everyone else", () => {
