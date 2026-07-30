@@ -1751,10 +1751,14 @@ export function mountViewer(appEl) {
   function renderMarkHighlight() {
     if (!mapCtx?.hlLayer) return;
     const interaction = markInteraction.getState();
-    const id = interaction.hoveredId || interaction.selectedId;
+    const ids = [interaction.selectedId, interaction.hoveredId]
+      .filter((id, index, all) => id && all.indexOf(id) === index);
+    mapCtx.hlLayer.innerHTML = ids.map(renderOneMarkHighlight).join("");
+  }
+  function renderOneMarkHighlight(id) {
     const m = id && byId.get(id);
     const target = nearestEmbodiedAncestor(m, byId);
-    if (!m || !target) { mapCtx.hlLayer.innerHTML = ""; return; }
+    if (!m || !target) return "";
     const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
     const t = tierOf(m), mech = m.mechanic ? " mech" : "";
     const p = { x: mapCtx.originPx.x + target.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + target.at.y / mapCtx.mPerPx };
@@ -1769,7 +1773,7 @@ export function mountViewer(appEl) {
     const unit = bounds.width > 0 ? mapCtx.view.w / bounds.width : 1;
     if (!markGeometryIntersectsViewport(target, worldViewport)) {
       const edgeWorld = edgePointToward(worldViewport, target.at, 18 * unit * mapCtx.mPerPx);
-      if (!edgeWorld) { mapCtx.hlLayer.innerHTML = ""; return; }
+      if (!edgeWorld) return "";
       const edge = {
         x: mapCtx.originPx.x + edgeWorld.x / mapCtx.mPerPx,
         y: mapCtx.originPx.y + edgeWorld.y / mapCtx.mPerPx,
@@ -1782,11 +1786,10 @@ export function mountViewer(appEl) {
       const labelY = Math.max(mapCtx.view.y + 4 * unit,
         Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit,
           edge.y < mapCtx.view.y + mapCtx.view.h / 2 ? edge.y + 12 * unit : edge.y - labelHeight - 12 * unit));
-      mapCtx.hlLayer.innerHTML = `<g class="wv-edge-indicator t-${t}">`
+      return `<g class="wv-edge-indicator t-${t}">`
         + `<path d="M0 -5 L2.8 4 L0 2.1 L-2.8 4 Z" transform="translate(${edge.x} ${edge.y}) rotate(${edgeWorld.bearingDeg}) scale(${1.4 * unit})"/>`
         + `<rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
         + `<text x="${labelX + 6 * unit}" y="${labelY + 15.5 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
-      return;
     }
     // the box AND the dot light together, in the mark's own tier color — the same
     // sentence the cells speak (dashed = machinery-kept truth)
@@ -1811,7 +1814,7 @@ export function mountViewer(appEl) {
       Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit, p.y - labelHeight - 10 * unit));
     s += `<g class="wv-hl-label"><rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
       + `<text x="${labelX + 6 * unit}" y="${labelY + 15.5 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
-    mapCtx.hlLayer.innerHTML = s;
+    return s;
   }
   function syncMarkInteractionViews() {
     const interaction = markInteraction.getState();
