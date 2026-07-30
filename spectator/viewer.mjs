@@ -60,6 +60,94 @@ export function isAmbientMark(mark, marks = []) {
   return true;
 }
 
+export function nearestEmbodiedAncestor(mark, marks = []) {
+  if (!mark || isAmbientMark(mark, marks)) return null;
+  if (isEmbodiedMark(mark)) return mark;
+  const byMarkId = markIndex(marks);
+  const seen = new Set([mark.id]);
+  let parentId = mark.parent;
+  while (parentId && !seen.has(parentId)) {
+    seen.add(parentId);
+    const parent = byMarkId.get(parentId);
+    if (!parent || isAmbientMark(parent, byMarkId)) return null;
+    if (isEmbodiedMark(parent)) return parent;
+    parentId = parent.parent;
+  }
+  return null;
+}
+
+const viewportBounds = (viewport) => {
+  const minX = Number(viewport?.minX ?? viewport?.x);
+  const minY = Number(viewport?.minY ?? viewport?.y);
+  const maxX = Number(viewport?.maxX ?? (minX + Number(viewport?.w)));
+  const maxY = Number(viewport?.maxY ?? (minY + Number(viewport?.h)));
+  return { minX, minY, maxX, maxY };
+};
+
+const pointInBounds = (point, bounds) =>
+  point.x >= bounds.minX && point.x <= bounds.maxX
+  && point.y >= bounds.minY && point.y <= bounds.maxY;
+
+const orient2d = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+const segmentsIntersect = (a, b, c, d) => {
+  const abC = orient2d(a, b, c), abD = orient2d(a, b, d);
+  const cdA = orient2d(c, d, a), cdB = orient2d(c, d, b);
+  return (abC === 0 && pointInBounds(c, viewportBounds({
+    minX: Math.min(a.x, b.x), maxX: Math.max(a.x, b.x),
+    minY: Math.min(a.y, b.y), maxY: Math.max(a.y, b.y),
+  })))
+    || (abD === 0 && pointInBounds(d, viewportBounds({
+      minX: Math.min(a.x, b.x), maxX: Math.max(a.x, b.x),
+      minY: Math.min(a.y, b.y), maxY: Math.max(a.y, b.y),
+    })))
+    || (cdA === 0 && pointInBounds(a, viewportBounds({
+      minX: Math.min(c.x, d.x), maxX: Math.max(c.x, d.x),
+      minY: Math.min(c.y, d.y), maxY: Math.max(c.y, d.y),
+    })))
+    || (cdB === 0 && pointInBounds(b, viewportBounds({
+      minX: Math.min(c.x, d.x), maxX: Math.max(c.x, d.x),
+      minY: Math.min(c.y, d.y), maxY: Math.max(c.y, d.y),
+    })))
+    || ((abC > 0) !== (abD > 0) && (cdA > 0) !== (cdB > 0));
+};
+
+export function markGeometryIntersectsViewport(mark, viewport) {
+  if (!isEmbodiedMark(mark)) return false;
+  const bounds = viewportBounds(viewport);
+  if (![bounds.minX, bounds.minY, bounds.maxX, bounds.maxY].every(Number.isFinite)) return false;
+  const ring = polygonOf(mark);
+  if (!ring) {
+    const claim = rect(mark);
+    return claim.x + claim.w / 2 >= bounds.minX && claim.x - claim.w / 2 <= bounds.maxX
+      && claim.y + claim.h / 2 >= bounds.minY && claim.y - claim.h / 2 <= bounds.maxY;
+  }
+  if (ring.some((point) => pointInBounds(point, bounds))) return true;
+  const corners = [
+    { x: bounds.minX, y: bounds.minY }, { x: bounds.maxX, y: bounds.minY },
+    { x: bounds.maxX, y: bounds.maxY }, { x: bounds.minX, y: bounds.maxY },
+  ];
+  if (corners.some((point) => pointInPolygon(point.x, point.y, ring))) return true;
+  const viewportEdges = corners.map((point, index) => [point, corners[(index + 1) % corners.length]]);
+  for (let index = 0; index < ring.length; index++) {
+    const edge = [ring[index], ring[(index + 1) % ring.length]];
+    if (viewportEdges.some(([a, b]) => segmentsIntersect(edge[0], edge[1], a, b))) return true;
+  }
+  return false;
+}
+
+export function edgePointToward(viewport, target, inset = 0) {
+  const bounds = viewportBounds(viewport);
+  const cx = (bounds.minX + bounds.maxX) / 2, cy = (bounds.minY + bounds.maxY) / 2;
+  const dx = Number(target?.x) - cx, dy = Number(target?.y) - cy;
+  if (![cx, cy, dx, dy].every(Number.isFinite) || (dx === 0 && dy === 0)) return null;
+  const halfW = Math.max(0, (bounds.maxX - bounds.minX) / 2 - inset);
+  const halfH = Math.max(0, (bounds.maxY - bounds.minY) / 2 - inset);
+  const tx = dx === 0 ? Infinity : halfW / Math.abs(dx);
+  const ty = dy === 0 ? Infinity : halfH / Math.abs(dy);
+  const scale = Math.min(tx, ty);
+  return { x: cx + dx * scale, y: cy + dy * scale, bearingDeg: bearingDeg(dx, dy) };
+}
+
 export function deslugMarkId(id) {
   const slug = String(id ?? "").split("/").filter(Boolean).pop() ?? "";
   const words = slug.split("-").filter(Boolean);
@@ -714,6 +802,12 @@ button.wv-backing:hover { color:var(--stamp-violet-heading); text-decoration:und
 .wv-fp.fp-within { stroke-width:2.8; }
 .wv-hl-label rect { fill:rgba(13,15,19,.94); stroke:var(--line); stroke-width:1; }
 .wv-hl-label text { fill:var(--paper); font-family:Consolas,Menlo,monospace; }
+.wv-edge-indicator.t-constitution { color:var(--blue); }
+.wv-edge-indicator.t-home { color:var(--green); }
+.wv-edge-indicator.t-market { color:var(--amber); }
+.wv-edge-indicator > path { fill:currentColor; stroke:var(--night); stroke-width:.8; }
+.wv-edge-indicator rect { fill:rgba(13,15,19,.94); stroke:currentColor; stroke-width:1; }
+.wv-edge-indicator text { fill:currentColor; font-family:Georgia,"Times New Roman",serif; }
 .ov-reach { vector-effect:non-scaling-stroke; }
 .ov-halo { vector-effect:non-scaling-stroke; }
 
@@ -1613,25 +1707,53 @@ export function mountViewer(appEl) {
     const interaction = markInteraction.getState();
     const id = interaction.hoveredId || interaction.selectedId;
     const m = id && byId.get(id);
-    if (!m?.at || isAmbientMark(m, byId)) { mapCtx.hlLayer.innerHTML = ""; return; }
+    const target = nearestEmbodiedAncestor(m, byId);
+    if (!m || !target) { mapCtx.hlLayer.innerHTML = ""; return; }
     const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
     const t = tierOf(m), mech = m.mechanic ? " mech" : "";
-    const p = { x: mapCtx.originPx.x + m.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.at.y / mapCtx.mPerPx };
+    const p = { x: mapCtx.originPx.x + target.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + target.at.y / mapCtx.mPerPx };
+    const worldViewport = {
+      minX: (mapCtx.view.x - mapCtx.originPx.x) * mapCtx.mPerPx,
+      minY: (mapCtx.view.y - mapCtx.originPx.y) * mapCtx.mPerPx,
+      maxX: (mapCtx.view.x + mapCtx.view.w - mapCtx.originPx.x) * mapCtx.mPerPx,
+      maxY: (mapCtx.view.y + mapCtx.view.h - mapCtx.originPx.y) * mapCtx.mPerPx,
+    };
+    const identity = markIdentity(m);
+    const bounds = mapCtx.svg.getBoundingClientRect();
+    const unit = bounds.width > 0 ? mapCtx.view.w / bounds.width : 1;
+    if (!markGeometryIntersectsViewport(target, worldViewport)) {
+      const edgeWorld = edgePointToward(worldViewport, target.at, 18 * unit * mapCtx.mPerPx);
+      if (!edgeWorld) { mapCtx.hlLayer.innerHTML = ""; return; }
+      const edge = {
+        x: mapCtx.originPx.x + edgeWorld.x / mapCtx.mPerPx,
+        y: mapCtx.originPx.y + edgeWorld.y / mapCtx.mPerPx,
+      };
+      const label = identity.length > 42 ? `${identity.slice(0, 41)}…` : identity;
+      const labelWidth = Math.max(90, Math.min(300, label.length * 7 + 12)) * unit;
+      const labelHeight = 23 * unit;
+      const labelX = Math.max(mapCtx.view.x + 4 * unit,
+        Math.min(mapCtx.view.x + mapCtx.view.w - labelWidth - 4 * unit, edge.x - labelWidth / 2));
+      const labelY = Math.max(mapCtx.view.y + 4 * unit,
+        Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit,
+          edge.y < mapCtx.view.y + mapCtx.view.h / 2 ? edge.y + 12 * unit : edge.y - labelHeight - 12 * unit));
+      mapCtx.hlLayer.innerHTML = `<g class="wv-edge-indicator t-${t}">`
+        + `<path d="M0 -5 L2.8 4 L0 2.1 L-2.8 4 Z" transform="translate(${edge.x} ${edge.y}) rotate(${edgeWorld.bearingDeg}) scale(${1.4 * unit})"/>`
+        + `<rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
+        + `<text x="${labelX + 6 * unit}" y="${labelY + 15.5 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
+      return;
+    }
     // the box AND the dot light together, in the mark's own tier color — the same
     // sentence the cells speak (dashed = machinery-kept truth)
     let s = "";
-    if (m.extent && !m.far) {
+    if (target.extent && !target.far) {
       // through the ONE shape-builder, so the wash traces the same outline the
       // footprints layer draws. Hand-built here, it drew a bbox rect over a mark the
       // layer beneath was correctly drawing as a polygon — Keemin caught it as a
       // wash that didn't fit its own shape.
       const hlPx = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
-      s += markShapeSVG(m, hlPx, `wv-hl-box t-${t}${mech}`);
+      s += markShapeSVG(target, hlPx, `wv-hl-box t-${t}${mech}`);
     }
     s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
-    const bounds = mapCtx.svg.getBoundingClientRect();
-    const unit = bounds.width > 0 ? mapCtx.view.w / bounds.width : 1;
-    const identity = markIdentity(m);
     const label = identity.length > 58 ? `${identity.slice(0, 57)}…` : identity;
     const labelWidth = Math.max(120, Math.min(420, label.length * 7 + 12)) * unit;
     const labelHeight = 23 * unit;

@@ -7,15 +7,18 @@ import {
   deslugMarkId,
   disciplineAtlasImages,
   extentGlyphKind,
+  edgePointToward,
   formatCardinalPosition,
   formatEtaCrossings,
   isAmbientMark,
+  markGeometryIntersectsViewport,
   MARK_SNAP_RADIUS_PX,
   officeBase,
   pointWalkDestination,
   previewStakeLedgerLine,
   previewWalkLeg,
   resolveMarkName,
+  nearestEmbodiedAncestor,
   snappedMarkAtPoint,
   summarizeBackers,
   viewerAxisControls,
@@ -23,6 +26,26 @@ import {
   viewerFilterControls,
   walkDestinationLabel,
 } from "../spectator/viewer.mjs";
+
+test("off-screen geometry resolves predicates to places and clips at the viewport edge", () => {
+  const marks = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 } },
+    { id: "the-town/the-fog", kind: "predicated", parent: "the-town/let-there-be-light" },
+    { id: "wright/house", kind: "sited", at: { x: 300, y: 0 }, extent: { w: 40, h: 20 } },
+    { id: "wright/welcome", kind: "predicated", parent: "wright/house" },
+  ];
+  assert.equal(nearestEmbodiedAncestor(marks[3], marks), marks[2]);
+  assert.equal(nearestEmbodiedAncestor(marks[1], marks), null, "ambient predicates never acquire a location");
+  assert.equal(markGeometryIntersectsViewport(marks[2], { x: -50, y: -50, w: 100, h: 100 }), false);
+  assert.equal(markGeometryIntersectsViewport(
+    { ...marks[2], at: { x: 60, y: 0 } },
+    { x: -50, y: -50, w: 100, h: 100 },
+  ), true, "a partially visible extent is on-screen");
+  assert.deepEqual(
+    edgePointToward({ x: -50, y: -50, w: 100, h: 100 }, marks[2].at, 10),
+    { x: 40, y: 0, bearingDeg: 90 },
+  );
+});
 
 test("every viewer position speaks cardinally from Town Centre", () => {
   assert.equal(formatCardinalPosition({ x: 925, y: -2400 }), "2,400 m N · 925 m E of TC");
