@@ -494,13 +494,30 @@ export function predicateFoldDecision(mark, renderedMarks = []) {
   return !!parent && !isPredicateAttribute(parent);
 }
 
-// A relative in an investigate expansion is a navigation line, never a second
-// telling of that relative's prose. Name and tier are supplied by the viewer's
-// resolved fold so this pure renderer is equally testable and clone-safe.
-export function investigateNameLine(mark, { name, tier = "market" } = {}) {
+export function backingButton(markId, stamps = 0, { neutralZero = false } = {}) {
+  const backing = Math.max(0, Number(stamps) || 0);
+  const backingClass = `wv-backing${backing === 0 ? " is-zero" : ""}`;
+  const label = backing === 0 && neutralZero
+    ? "✦ 0 — no belief staked yet"
+    : `✦ ${backing.toLocaleString()} · back`;
+  return `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(markId)}" title="read backing and back this mark">${label}</button>`;
+}
+
+// A relative in an investigate expansion is a compact cell identity, never a
+// second telling of that relative's prose. It uses the same resolved Name,
+// backing action, and hover/selection authorship details as its parent cell.
+export function investigateNameLine(mark, { name, determined = false, tier = "market" } = {}) {
   const identity = name || deslugMarkId(mark?.id);
   const accent = tier === "home" || tier === "constitution" ? tier : "market";
-  return `<div class="wv-rnode t-${accent}" data-id="${esc(mark?.id)}" role="button" tabindex="0"><b>${esc(identity)}</b></div>`;
+  const details = [
+    mark?.by ? `<span class="wv-detail-author">by ${esc(mark.by)}</span>` : "",
+    mark?.date ? `<span class="wv-detail-date">${esc(String(mark.date).slice(0, 10))}</span>` : "",
+  ].filter(Boolean).join("");
+  return `<div class="wv-rnode t-${accent}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
+    + `<div class="wv-rnode-head"><b class="cname${determined ? " is-determined" : ""}">${esc(identity)}</b>`
+    + `${backingButton(mark?.id, mark?.stamps ?? mark?.weight ?? 0)}</div>`
+    + (details ? `<div class="wv-details">${details}</div>` : "")
+    + `</div>`;
 }
 
 const BEARING_LONG = { N: "north", NNE: "north-northeast", NE: "northeast", ENE: "east-northeast", E: "east", ESE: "east-southeast", SE: "southeast", SSE: "south-southeast", S: "south", SSW: "south-southwest", SW: "southwest", WSW: "west-southwest", W: "west", WNW: "west-northwest", NW: "northwest", NNW: "north-northwest" };
@@ -753,7 +770,6 @@ const STYLE = `
 .wv-chip.stamps { border-color:var(--stamp-violet-dark); color:var(--stamp-violet); }
 .wv-chip.signal { border-color:var(--amber-dark); color:var(--amber); }
 .wv-chip.dim { opacity:.6; }
-.wv-cid { font-size:.7rem; color:var(--dim); opacity:.6; margin-left:auto; font-family:Consolas,Menlo,monospace; }
 .wv-extent { display:inline-flex; align-items:center; gap:4px; opacity:.8; }
 .wv-extent svg { display:block; }
 .wv-extent svg rect, .wv-extent svg polygon { fill:rgba(154,146,128,.18); stroke:var(--dim); stroke-width:1; }
@@ -782,12 +798,21 @@ const STYLE = `
 .wv-crumbs { display:flex; gap:10px; align-items:baseline; margin-bottom:6px; }
 .wv-back { color:var(--amber); cursor:pointer; font-size:.82rem; }
 .wv-back:hover { text-decoration:underline; }
+.wv-crumb-name { color:var(--paper); font-size:.9rem; }
+.wv-crumb-name.is-determined { color:var(--amber); }
 /* investigate relations are compact name-lines. A relative's body belongs only
    to its own cell; the tier-colored edge keeps the navigation line legible. */
 .wv-tree-label { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin:12px 0 4px 10px; }
 .wv-relation-lines { margin-left:10px; }
 .wv-rnode { --wv-mark-accent:var(--amber); padding:4px 9px; margin:3px 0; border-left:3px solid var(--amber-dark);
   color:var(--paper); font-size:.84rem; line-height:1.35; cursor:pointer; }
+.wv-rnode-head { display:flex; align-items:center; gap:8px; }
+.wv-rnode .cname { color:var(--paper); font-size:.9rem; line-height:1.25; font-style:normal; }
+.wv-rnode .cname.is-determined { color:var(--amber); }
+.wv-rnode .wv-backing { margin-left:auto; }
+.wv-card .wv-rnode .wv-details { display:none; align-items:center; gap:7px; flex-wrap:wrap; margin-top:5px;
+  padding-top:5px; border-top:1px dotted var(--line); color:var(--dim); font-size:.7rem; }
+.wv-rnode:hover .wv-details, .wv-rnode:focus-within .wv-details, .wv-rnode.is-mark-selected .wv-details { display:flex; }
 .wv-rnode.t-constitution { --wv-mark-accent:var(--blue); border-left-color:var(--blue-dark); }
 .wv-rnode.t-home { --wv-mark-accent:var(--green); border-left-color:var(--green-dark); }
 .wv-rnode:hover { color:var(--amber); background:rgba(255,255,255,.025); }
@@ -1272,8 +1297,7 @@ export function mountViewer(appEl) {
   function markActions(m) {
     const full = byId.get(m.id) ?? m;
     const backing = Math.max(0, Number(full.stamps ?? 0));
-    const backingClass = `wv-backing${backing === 0 ? " is-zero" : ""}`;
-    const backingDisplay = `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(m.id)}" title="read backing and back this mark">✦ ${backing.toLocaleString()} · back</button>`;
+    const backingDisplay = backingButton(m.id, backing);
     if (!identityResolved()) return `<span class="wv-cell-actions">${backingDisplay}</span>`;
     const position = backedPosition(m.id);
     return `<span class="wv-cell-actions">`
@@ -1568,7 +1592,12 @@ export function mountViewer(appEl) {
   // ───────── investigate (in-place expansion inside a card) ─────────
   const relativeNode = (relative) => {
     const full = byId.get(relative.id) ?? relative;
-    return investigateNameLine(full, { name: markName(full).name, tier: tierOf(full) });
+    const identity = markName(full);
+    return investigateNameLine(full, {
+      name: identity.name,
+      determined: identity.determined,
+      tier: tierOf(full),
+    });
   };
   function renderExpansion(card) {
     const stack = card._stack ?? [];
@@ -1582,10 +1611,12 @@ export function mountViewer(appEl) {
     const alreadyFolded = new Set([...card.querySelectorAll(":scope > .wv-attributes .wv-attribute[data-id]")]
       .map((attribute) => attribute.dataset.id));
     const newlyRevealedPredicates = (d.predicates ?? []).filter((predicate) => !alreadyFolded.has(predicate.id));
+    const target = byId.get(d.id) ?? d;
+    const targetIdentity = markName(target);
     box.innerHTML = `
-      ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><span class="wv-cid">${esc(d.id)}</span></div>
+      ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><b class="wv-crumb-name${targetIdentity.determined ? " is-determined" : ""}">${esc(targetIdentity.name)}</b></div>
       <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>` : ""}
-      <div class="cmeta" style="margin-bottom:4px">${d.stamps > 0 ? `<span class="wv-chip stamps">✦${d.stamps}</span>` : `<span class="wv-chip">✦0 — a pre-mark, awaiting its resident</span>`}${d.sovereign ? `<span class="wv-chip">sovereign</span>` : ""}${d.tier === "constitution" ? `<span class="wv-chip">constitution</span>` : ""}</div>
+      <div class="cmeta" style="margin-bottom:4px">${backingButton(d.id, d.stamps, { neutralZero: true })}${d.sovereign ? `<span class="wv-chip">sovereign</span>` : ""}${tierChip(tierOf(target))}</div>
       ${newlyRevealedPredicates.length ? `<div class="wv-expansion-attributes">${newlyRevealedPredicates.map(predicateAttributeLine).join("")}</div>` : ""}
       ${d.within?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.within.map(relativeNode).join("")}</div>` : ""}
       ${d.inside?.length ? `<div class="wv-tree-label">within it</div><div class="wv-relation-lines">${d.inside.map(relativeNode).join("")}</div>` : ""}

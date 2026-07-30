@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  backingButton,
   clampStakeAmount,
   createMarkInteractionStore,
   deslugMarkId,
@@ -319,21 +320,40 @@ test("predicates fold only when their non-predicate subject cell is rendered", (
   assert.equal(predicateFoldDecision(house, [house]), false);
 });
 
-test("investigate relatives render as compact tiered name-lines without body prose", () => {
+test("investigate relatives inherit names, backing, and hover details without id prose", () => {
   const relative = {
     id: "wright/the-crossing-door",
+    by: "wright",
+    date: "2026-07-29T23:10:00Z",
+    stamps: 12,
     body: "The entire quoted body that already belongs to its own cell.",
   };
   const line = investigateNameLine(relative, {
     name: "The Crossing Door",
+    determined: true,
     tier: "home",
   });
 
   assert.match(line, /class="wv-rnode t-home"/);
   assert.match(line, /data-id="wright\/the-crossing-door"/);
   assert.match(line, /role="button" tabindex="0"/);
-  assert.match(line, /<b>The Crossing Door<\/b>/);
+  assert.match(line, /<b class="cname is-determined">The Crossing Door<\/b>/);
+  assert.match(line, /class="wv-backing"[^>]*>✦ 12 · back<\/button>/);
+  assert.match(line, /class="wv-details".*by wright.*2026-07-29/);
   assert.doesNotMatch(line, /entire quoted body|cbody|tbody/);
+  assert.doesNotMatch(line.replace(/data-(?:id|mark)="[^"]*"/g, ""), /wright\/the-crossing-door/);
+});
+
+test("investigate identities de-slug by default and zero backing uses neutral-true copy", () => {
+  const line = investigateNameLine({ id: "wright/the-crossing-door", stamps: 0 });
+  assert.match(line, /<b class="cname">The Crossing Door<\/b>/);
+  assert.match(line, />✦ 0 · back<\/button>/);
+  assert.doesNotMatch(line, /pre-mark|awaiting its resident/);
+
+  const zeroDetail = backingButton("wright/the-crossing-door", 0, { neutralZero: true });
+  assert.match(zeroDetail, /class="wv-backing is-zero"/);
+  assert.match(zeroDetail, />✦ 0 — no belief staked yet<\/button>/);
+  assert.doesNotMatch(zeroDetail, /pre-mark|awaiting its resident/);
 });
 
 test("ambient marks are the root and predicates with no embodied ancestor", () => {
