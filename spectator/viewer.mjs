@@ -378,6 +378,26 @@ export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIU
     .sort((a, b) => a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)))[0]?.id ?? null;
 }
 
+export function smallestContainingMark(point, marks = []) {
+  const x = Number(point?.x), y = Number(point?.y);
+  if (![x, y].every(Number.isFinite)) return null;
+  return (marks ?? [])
+    .filter((mark) => !mark?.far && !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
+    .map((mark) => ({ mark, area: Number(mark.extent.w) * Number(mark.extent.h) }))
+    .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)))[0]?.mark?.id ?? null;
+}
+
+export function paintingMarkAtPoint({
+  screenPoint,
+  worldPoint,
+  glyphs = [],
+  marks = [],
+  radiusPx = MARK_SNAP_RADIUS_PX,
+} = {}) {
+  return snappedMarkAtPoint(screenPoint, glyphs, radiusPx)
+    ?? smallestContainingMark(worldPoint, marks);
+}
+
 export function createMarkInteractionStore() {
   let value = Object.freeze({ selectedId: null, hoveredId: null });
   const listeners = new Set();
@@ -1533,9 +1553,10 @@ export function mountViewer(appEl) {
         view.w = w; view.h = view.h * scale;
         applyView();
       }, { passive: false });
-      // drag = pan; a press that travels <6px selects a snapped mark first.
-      // Genuinely open ground chooses a walking point for a resident, or moves
-      // the read-only spectator camera.
+      // drag = pan; a press that travels <6px selects by the painting's one hit
+      // order: pip snap, then smallest containing non-ambient extent. Genuinely
+      // open ground chooses a walking point for a resident, or moves the
+      // read-only spectator camera.
       let press = null;
       function screenMarkCandidates() {
         const matrix = svg.getScreenCTM();
@@ -1550,8 +1571,22 @@ export function mountViewer(appEl) {
           return [{ id, x: screen.x, y: screen.y }];
         });
       }
-      const snappedMarkForEvent = (event) =>
-        snappedMarkAtPoint({ x: event.clientX, y: event.clientY }, screenMarkCandidates());
+      const worldPointForEvent = (event) => {
+        const point = svg.createSVGPoint();
+        point.x = event.clientX;
+        point.y = event.clientY;
+        const painting = point.matrixTransform(svg.getScreenCTM().inverse());
+        return {
+          x: (painting.x - originPx.x) * mPerPx,
+          y: (painting.y - originPx.y) * mPerPx,
+        };
+      };
+      const paintingMarkForEvent = (event) => paintingMarkAtPoint({
+        screenPoint: { x: event.clientX, y: event.clientY },
+        worldPoint: worldPointForEvent(event),
+        glyphs: screenMarkCandidates(),
+        marks: world?.marks ?? [],
+      });
       svg.addEventListener("pointerdown", (e) => {
         stopTween();
         press = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
@@ -1559,12 +1594,12 @@ export function mountViewer(appEl) {
       });
       svg.addEventListener("pointermove", (e) => {
         if (!press || e.pointerId !== press.id) {
-          markInteraction.hover(snappedMarkForEvent(e));
+          markInteraction.hover(paintingMarkForEvent(e));
           return;
         }
         const dx = e.clientX - press.x, dy = e.clientY - press.y;
         if (!press.moved && Math.hypot(dx, dy) < 6) {
-          markInteraction.hover(snappedMarkForEvent(e));
+          markInteraction.hover(paintingMarkForEvent(e));
           return;
         }
         if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
@@ -1579,14 +1614,13 @@ export function mountViewer(appEl) {
         if (!press || e.pointerId !== press.id) return;
         const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
         if (wasDrag) return;
-        const snappedId = snappedMarkForEvent(e);
-        if (snappedId) {
-          selectMark(snappedId, { scrollCell: true });
+        const markId = paintingMarkForEvent(e);
+        if (markId) {
+          selectMark(markId, { scrollCell: true });
           return;
         }
-        const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
-        const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-        const point = { x: Math.round((p.x - originPx.x) * mPerPx), y: Math.round((p.y - originPx.y) * mPerPx) };
+        const worldPoint = worldPointForEvent(e);
+        const point = { x: Math.round(worldPoint.x), y: Math.round(worldPoint.y) };
         markInteraction.select(null);
         if (identityResolved()) chooseWalkPoint(point.x, point.y);
         else {

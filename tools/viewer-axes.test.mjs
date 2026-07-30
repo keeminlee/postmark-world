@@ -14,18 +14,51 @@ import {
   markGeometryIntersectsViewport,
   MARK_SNAP_RADIUS_PX,
   officeBase,
+  paintingMarkAtPoint,
   pointWalkDestination,
   previewStakeLedgerLine,
   previewWalkLeg,
   resolveMarkName,
   nearestEmbodiedAncestor,
   snappedMarkAtPoint,
+  smallestContainingMark,
   summarizeBackers,
   viewerAxisControls,
   viewerAxisState,
   viewerFilterControls,
   walkDestinationLabel,
 } from "../spectator/viewer.mjs";
+
+test("painting hits pips first, then the smallest true containing extent", () => {
+  const marks = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 } },
+    { id: "wright/yard", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 100, h: 100 } },
+    { id: "wright/bench", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 10, h: 4 } },
+    {
+      id: "wright/courtyard",
+      kind: "sited",
+      at: { x: 30, y: 30 },
+      extent: { w: 20, h: 20 },
+      points: [[20, 20], [40, 20], [40, 25], [25, 25], [25, 40], [20, 40]],
+    },
+  ];
+  assert.equal(smallestContainingMark({ x: 0, y: 0 }, marks), "wright/bench");
+  assert.equal(smallestContainingMark({ x: 34, y: 34 }, marks), "wright/yard",
+    "a point in a polygon notch falls through to the next containing extent");
+  assert.equal(smallestContainingMark({ x: 22, y: 35 }, marks), "wright/courtyard");
+  assert.equal(smallestContainingMark({ x: 500, y: 500 }, marks), null,
+    "the ambient world root never captures open ground");
+  assert.equal(
+    paintingMarkAtPoint({
+      screenPoint: { x: 100, y: 100 },
+      worldPoint: { x: 0, y: 0 },
+      glyphs: [{ id: "wright/pip", x: 110, y: 100 }],
+      marks,
+    }),
+    "wright/pip",
+    "pip snap wins even over a smaller containing extent",
+  );
+});
 
 test("off-screen geometry resolves predicates to places and clips at the viewport edge", () => {
   const marks = [
