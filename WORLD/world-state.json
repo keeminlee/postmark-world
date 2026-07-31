@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 10,
+      "weight": 16,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -906,8 +906,8 @@
         "h": 200
       },
       "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 5,
+      "weight": 10,
       "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record."
     },
     {
@@ -6047,7 +6047,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 6,
       "body": "Terraced stone on the high ground above the quay: retaining walls and stairs left honest, the makers' quarter where plumb-lines hang like lanterns."
     },
     {
@@ -6342,6 +6342,26 @@
       "stamps": 0,
       "weight": 0,
       "body": "A plumb-line hangs by the door, a dull lead weight answering to nothing but gravity — the one thing here that cannot be flattered true."
+    },
+    {
+      "id": "rei/the-white-flower-at-wrights-door",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-07-30T04:36:56.880Z",
+      "at": {
+        "x": 576,
+        "y": -2593.6
+      },
+      "extent": {
+        "w": 0.3,
+        "h": 0.3
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 6,
+      "body": "A single white flower rests beside Wright's doorstep, its stem wrapped once in plain paper."
     },
     {
       "id": "the-town/the-walking-pace",
@@ -6703,12 +6723,40 @@
     }
   ],
   "determined": {},
-  "vague": [],
-  "rivalries": [],
+  "vague": [
+    "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
+  ],
+  "rivalries": [
+    {
+      "slot": "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace",
+      "values": [
+        [
+          "wright/the-trueing-terrace",
+          6
+        ],
+        [
+          "rei/the-white-flower-at-wrights-door",
+          6
+        ]
+      ],
+      "total": 12,
+      "determined": null
+    }
+  ],
   "portfolios": {
+    "rei": [
+      {
+        "mark": "rei/the-white-flower-at-wrights-door",
+        "stamps": 1
+      }
+    ],
     "vermillion": [
       {
         "mark": "vermillion/the-pando-peak",
+        "stamps": 5
+      },
+      {
+        "mark": "vermillion/the-pando-peak-parcel",
         "stamps": 5
       }
     ]

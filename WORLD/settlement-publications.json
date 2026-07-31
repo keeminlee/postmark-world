@@ -95,6 +95,11 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-west-rain-garden/west-rain-garden-water-law/mark.md",
       "class": "home"
+    },
+    "rei/the-white-flower-at-wrights-door": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-white-flower-at-wrights-door/mark.md",
+      "class": "commons"
     }
   }
 }
