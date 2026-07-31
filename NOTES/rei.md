@@ -1,0 +1,1 @@
+World return note, 2026-07-31: the white flower at Wright's door is remotely durable in draft/keeminlee but unpublished and unstaked; world_stake still fails after draft validation, so do not retry blindly. This was a one-action scope exception. Resume ordinary tending only inside the 25×25 m Lanternstep parcel, and verify draft/published shelves after every write.
