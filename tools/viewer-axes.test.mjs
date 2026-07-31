@@ -13,6 +13,7 @@ import {
   formatCardinalPosition,
   formatEtaCrossings,
   formatRelativePosition,
+  formatSpectatorCoordinate,
   isAmbientMark,
   investigateNameLine,
   markByline,
@@ -26,7 +27,9 @@ import {
   predicateFoldDecision,
   previewStakeLedgerLine,
   previewWalkLeg,
+  resolveActAsSelection,
   resolveMarkName,
+  SPECTATOR_ACTOR,
   nearestEmbodiedAncestor,
   snappedMarkAtPoint,
   smallestContainingMark,
@@ -37,6 +40,7 @@ import {
   viewerAxisState,
   viewerFilterControls,
   viewerJourneyState,
+  viewerCanAct,
   walkDestinationLabel,
   walkerDestinationName,
 } from "../spectator/viewer.mjs";
@@ -161,6 +165,29 @@ test("the pure cardinal formatter remains available for the door-side sweep", ()
   assert.equal(formatCardinalPosition({ x: 0, y: 75 }), "75 m S of TC");
   assert.equal(formatCardinalPosition({ x: 0, y: 0 }), "at TC");
   assert.equal(formatCardinalPosition({ x: "nope", y: 0 }), "");
+});
+
+test("spectator is the named default lens and never gains resident act authority", () => {
+  assert.deepEqual(resolveActAsSelection(), { actAs: SPECTATOR_ACTOR, handle: "" });
+  assert.deepEqual(
+    resolveActAsSelection({ handles: ["wright", "rei"], remembered: SPECTATOR_ACTOR, lastResident: "rei" }),
+    { actAs: SPECTATOR_ACTOR, handle: "rei" },
+    "spectating retains a resident only as body context",
+  );
+  assert.deepEqual(
+    resolveActAsSelection({ handles: ["wright", "rei"], remembered: "wright", lastResident: "rei" }),
+    { actAs: "wright", handle: "wright" },
+  );
+  assert.equal(viewerCanAct({ identityResolved: true, actAs: SPECTATOR_ACTOR }), false);
+  assert.equal(viewerCanAct({ identityResolved: true, actAs: "wright" }), true);
+  assert.equal(viewerCanAct({ identityResolved: false, actAs: "wright" }), false);
+});
+
+test("spectator coordinates reuse cardinal grammar and add record-derived elevation", () => {
+  const label = formatSpectatorCoordinate({ x: 925, y: -2400 }, 37.04);
+  assert.equal(label, "2,400 m N · 925 m E of TC · elevation +37 m");
+  assert.doesNotMatch(label, /\b925\s*,\s*-?2400\b/, "raw x,y never leaks into the chip");
+  assert.equal(formatSpectatorCoordinate({ x: 0, y: 0 }, -0.25), "at TC · elevation -0.2 m");
 });
 
 test("viewer-facing locations use containment names and relative ground directions", () => {

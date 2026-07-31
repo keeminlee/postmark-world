@@ -29,6 +29,8 @@ const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const OFFICE_DEFAULT = "/api";
 const ACT_AS_KEY = "pm.world.act_as";
+const LAST_RESIDENT_KEY = "pm.world.last_resident";
+export const SPECTATOR_ACTOR = "__spectator__";
 const WORLD_ROOT_ID = "the-town/let-there-be-light";
 
 const markIndex = (marks) => marks instanceof Map
@@ -325,6 +327,30 @@ export function formatCardinalPosition(point) {
   if (y !== 0) axes.push(`${Math.abs(y).toLocaleString()} m ${y < 0 ? "N" : "S"}`);
   if (x !== 0) axes.push(`${Math.abs(x).toLocaleString()} m ${x < 0 ? "W" : "E"}`);
   return `${axes.join(" · ")} of TC`;
+}
+
+export function formatSpectatorCoordinate(point, elevationM) {
+  const position = formatCardinalPosition(point);
+  const elevation = Number(elevationM);
+  if (!position || !Number.isFinite(elevation)) return "";
+  const rounded = Math.round(elevation * 10) / 10;
+  return `${position} · elevation ${rounded >= 0 ? "+" : ""}${rounded.toLocaleString()} m`;
+}
+
+export function resolveActAsSelection({ handles = [], remembered = "", lastResident = "" } = {}) {
+  const residents = [...new Set((handles ?? []).filter((handle) => typeof handle === "string" && handle))];
+  if (!residents.length) return { actAs: SPECTATOR_ACTOR, handle: "" };
+  const handle = residents.includes(remembered)
+    ? remembered
+    : residents.includes(lastResident) ? lastResident : residents[0];
+  return {
+    actAs: remembered === SPECTATOR_ACTOR ? SPECTATOR_ACTOR : handle,
+    handle,
+  };
+}
+
+export function viewerCanAct({ identityResolved = false, actAs = SPECTATOR_ACTOR } = {}) {
+  return !!identityResolved && actAs !== SPECTATOR_ACTOR;
 }
 
 export function distanceBandLabel(name, bands = DIALS.distance_bands) {
@@ -760,6 +786,7 @@ const STYLE = `
   border-color:var(--stamp-violet); background:rgba(139,124,255,.16); outline:none; }
 .wv-backing.is-zero { opacity:.68; background:transparent; }
 .wv-backing.is-zero:hover, .wv-backing.is-zero:focus-visible { opacity:.9; }
+.wv.is-spectating [data-stake-open] { pointer-events:none; cursor:default; opacity:.62; }
 .wv-cell-act { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
   border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
 .wv-cell-act:hover { background:var(--panel2); }
@@ -901,9 +928,13 @@ const STYLE = `
    bodies in the left pane must stay selectable, since people copy prose out of
    them. Nuking selection viewer-wide would trade a papercut for a wound. */
 .wv-minimap { -webkit-user-select:none; user-select:none; }
-.wv-minimap { border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
+.wv-minimap { position:relative; border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
 .wv-minimap svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
+.wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
+  max-width:calc(100% - 20px); padding:5px 10px; border:1px solid var(--amber-dark); border-radius:999px;
+  background:rgba(13,15,19,.92); color:var(--paper); font:700 .72rem/1.2 ui-monospace,Consolas,monospace;
+  white-space:nowrap; pointer-events:none; box-shadow:0 3px 12px rgba(0,0,0,.35); }
 .wv-map-title { display:flex; align-items:center; gap:6px; }
 .wv-map-title h2 { margin:0; }
 .wv-map-help { position:relative; }
@@ -1111,7 +1142,7 @@ const MARKUP = `
           <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭ marks</button>
         </div>
       </div>
-      <div class="wv-minimap"><div class="loading">fetching the painting…</div></div>
+      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div></div>
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
   </aside>
@@ -1141,6 +1172,7 @@ export function mountViewer(appEl) {
     portfolio: null,                    // authenticated world_my_marks response
     mineIds: new Set(),                 // portfolio ids across drafts/published/backed
     handle: "",
+    actAs: SPECTATOR_ACTOR,
     actorBalance: null,                 // liquid stamps from keyless /stamps/{handle}; null while loading
     actorHome: null,                    // office-derived home only when no walk record exists
     dials: { ...DIALS },
@@ -1297,6 +1329,12 @@ export function mountViewer(appEl) {
     return !!pmKey() && (state.whoami?.handles ?? []).length > 0
       && !!state.portfolio && !!data?.myWorld && !!state.handle;
   }
+  function isSpectating() {
+    return state.actAs === SPECTATOR_ACTOR;
+  }
+  function canAct() {
+    return viewerCanAct({ identityResolved: identityResolved(), actAs: state.actAs });
+  }
   function walkableMark(m) {
     const full = byId.get(m?.id) ?? m;
     return (full?.kind === "sited" || full?.kind === "parcel")
@@ -1315,7 +1353,7 @@ export function mountViewer(appEl) {
     const full = byId.get(m.id) ?? m;
     const backing = Math.max(0, Number(full.stamps ?? 0));
     const backingDisplay = backingButton(m.id, backing);
-    if (!identityResolved()) return `<span class="wv-cell-actions">${backingDisplay}</span>`;
+    if (!canAct()) return `<span class="wv-cell-actions">${backingDisplay}</span>`;
     const position = backedPosition(m.id);
     return `<span class="wv-cell-actions">`
       + backingDisplay
@@ -1643,6 +1681,7 @@ export function mountViewer(appEl) {
   // ───────── the painting (atlas minimap) ─────────
   async function loadMinimap() {
     const boxEl = $(root, ".wv-minimap");
+    const coordinateChip = $(boxEl, ".wv-spectator-coordinate");
     try {
       const html = await fetch("/atlas/town.html").then((r) => { if (!r.ok) throw new Error(`atlas HTTP ${r.status}`); return r.text(); });
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -1690,7 +1729,9 @@ export function mountViewer(appEl) {
       const walkLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
       walkLayer.setAttribute("id", "wv-walk-layer");
       svg.appendChild(walkLayer);
-      boxEl.innerHTML = ""; boxEl.appendChild(svg);
+      boxEl.innerHTML = "";
+      boxEl.appendChild(svg);
+      if (coordinateChip) boxEl.appendChild(coordinateChip);
       boxEl.classList.add("pannable");
 
       // ── the viewport (P2 convergence): the viewBox IS the camera — wheel zooms
@@ -1830,7 +1871,7 @@ export function mountViewer(appEl) {
         const worldPoint = worldPointForEvent(e);
         const point = { x: Math.round(worldPoint.x), y: Math.round(worldPoint.y) };
         markInteraction.select(null);
-        if (identityResolved()) chooseWalkPoint(point.x, point.y);
+        if (canAct()) chooseWalkPoint(point.x, point.y);
         else {
           state.cam = point;
           renderCurrent();
@@ -1900,6 +1941,7 @@ export function mountViewer(appEl) {
       if (lastRadial) drawOverlay(lastRadial);
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
+      if (coordinateChip) boxEl.appendChild(coordinateChip);
     }
   }
   function drawOverlay(radial) {
@@ -2099,7 +2141,7 @@ export function mountViewer(appEl) {
         walkState.walkers = j.walkers ?? [];
         drawWalkers();
         const origin = actorOrigin();
-        if (identityResolved() && origin && walkState.actorBound) {
+        if (canAct() && origin && walkState.actorBound) {
           const moved = state.cam.x !== origin.x || state.cam.y !== origin.y;
           state.cam = { x: origin.x, y: origin.y };
           if (moved) renderCurrent();
@@ -2190,7 +2232,7 @@ export function mountViewer(appEl) {
   function renderWalkDestinations() {
     const desk = $(root, ".wv-walkdesk");
     if (!desk) return;
-    desk.hidden = !identityResolved();
+    desk.hidden = !canAct();
     if (desk.hidden) return;
     renderWalkDestination();
     syncActorPosition();
@@ -2236,7 +2278,7 @@ export function mountViewer(appEl) {
       return false;
     }
     markInteraction.select(id);
-    if (identityResolved()) {
+    if (canAct()) {
       walkState.destination = null;
       if (viewerJourneyState(actorWalker()).kind === "journey") walkState.changingCourse = true;
       invalidateWalkPreview();
@@ -2255,14 +2297,14 @@ export function mountViewer(appEl) {
   }
 
   function chooseWalkMark(id, { scrollDesk = false } = {}) {
-    if (!identityResolved()) return;
+    if (!canAct()) return;
     const mark = byId.get(id);
     if (!walkableMark(mark)) return;
     chooseWalkPoint(mark.at.x, mark.at.y, id, { scrollDesk });
   }
 
   function chooseWalkPoint(x, y, namedInside = null, { scrollDesk = true } = {}) {
-    if (!identityResolved()) return;
+    if (!canAct()) return;
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
     walkState.destination = { ...destination, inside: namedInside || destination.inside, markId: namedInside || null };
@@ -2343,6 +2385,7 @@ export function mountViewer(appEl) {
   }
 
   function openStakeSheet(card, { mode = "stake", max = "", markId = null } = {}) {
+    if (!canAct()) return;
     root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
     const sheet = document.createElement("div");
     sheet.className = "wv-act-sheet";
@@ -2482,14 +2525,30 @@ export function mountViewer(appEl) {
   function fmt(v) { return Number.isInteger(v) ? String(v) : (+v).toFixed(2).replace(/\.?0+$/, ""); }
 
   // ───────── view switching + shared render ─────────
+  function renderModeControls() {
+    const standmove = $(root, ".wv-standmove");
+    const devToggle = $(root, ".wv-dev-toggle");
+    root.classList.toggle("is-spectating", isSpectating());
+    if (standmove) standmove.hidden = !(isSpectating() || (devToggle && !devToggle.hidden));
+  }
+  function renderSpectatorCoordinate() {
+    const chip = $(root, ".wv-spectator-coordinate");
+    if (!chip) return;
+    chip.hidden = !isSpectating();
+    if (chip.hidden) return;
+    const elevation = world?.heightfield?.elevationAt?.(state.cam.x, state.cam.y);
+    chip.textContent = formatSpectatorCoordinate(state.cam, elevation);
+  }
   function renderCurrent() {
-    $(root, ".pos").textContent = `${Math.round(state.cam.x)}, ${Math.round(state.cam.y)}`;
+    $(root, ".pos").textContent = formatCardinalPosition(state.cam);
     $(root, ".wv-where").innerHTML = `<b>${esc(standingLocationLabel(state.cam, world?.marks ?? [], data?.worldState?.determined))}</b>`;
     const cn = $(root, ".crossnow");
     if (cn) cn.innerHTML = state.crossingOverride
       ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`
       : `crossing <b>${state.crossing}</b> <span class="crosslive-tag">· live</span>`;
     if (state.view === "telling") renderTelling();
+    renderModeControls();
+    renderSpectatorCoordinate();
     if (!mapCtx) loadMinimap();
   }
   // a re-render that the world does TO the viewer, not the viewer to itself: it must
@@ -2612,7 +2671,7 @@ export function mountViewer(appEl) {
     }
     const stand = e.target.closest(".stand");
     if (stand) {
-      if (identityResolved()) chooseWalkPoint(+stand.dataset.x, +stand.dataset.y);
+      if (canAct()) chooseWalkPoint(+stand.dataset.x, +stand.dataset.y);
       else { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); }
       return;
     }
@@ -2717,13 +2776,16 @@ export function mountViewer(appEl) {
     }
     const toggle = $(root, ".wv-dev-toggle");
     if (toggle) toggle.hidden = !(/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || state.whoami?.principal);
-    // stand/move rides the same dev gate (dev-only since walk shipped — see the markup note)
-    const standmove = $(root, ".wv-standmove");
-    if (standmove) standmove.hidden = toggle ? toggle.hidden : true;
     const handles = state.whoami?.handles ?? [];
-    let remembered = "";
-    try { remembered = localStorage.getItem(ACT_AS_KEY) || ""; } catch {}
-    state.handle = handles.includes(remembered) ? remembered : (handles[0] ?? "");
+    let remembered = "", lastResident = "";
+    try {
+      remembered = localStorage.getItem(ACT_AS_KEY) || "";
+      lastResident = localStorage.getItem(LAST_RESIDENT_KEY) || "";
+    } catch {}
+    const selection = resolveActAsSelection({ handles, remembered, lastResident });
+    state.actAs = selection.actAs;
+    state.handle = selection.handle;
+    walkState.actorBound = selection.actAs !== SPECTATOR_ACTOR;
     if (handles.length) {
       try {
         await Promise.all([loadIdentityWorld(), loadActorHome(), loadActorBalance()]);
@@ -2746,22 +2808,44 @@ export function mountViewer(appEl) {
     }
     renderPresets();
     renderIdentity();
+    renderModeControls();
+    renderSpectatorCoordinate();
     renderWalkDestinations();
     syncActorPosition({ moveCamera: true });
     mountWalkers();
     if (state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
   }
 
-  async function selectActor(handle) {
-    if (!(state.whoami?.handles ?? []).includes(handle)) return;
-    state.handle = handle;
-    try { localStorage.setItem(ACT_AS_KEY, handle); } catch {}
+  async function selectActor(actor) {
+    if (actor === SPECTATOR_ACTOR) {
+      state.actAs = SPECTATOR_ACTOR;
+      walkState.actorBound = false;
+      try { localStorage.setItem(ACT_AS_KEY, SPECTATOR_ACTOR); } catch {}
+      clearSelectionAndDestination();
+      root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
+      renderIdentity();
+      renderModeControls();
+      renderSpectatorCoordinate();
+      renderWalkDestinations();
+      renderTelling();
+      drawWalkers();
+      return;
+    }
+    if (!(state.whoami?.handles ?? []).includes(actor)) return;
+    state.actAs = actor;
+    state.handle = actor;
+    try {
+      localStorage.setItem(ACT_AS_KEY, actor);
+      localStorage.setItem(LAST_RESIDENT_KEY, actor);
+    } catch {}
     state.actorBalance = null;
     state.actorHome = null;
     walkState.actorBound = true;
-    invalidateWalkPreview();
+    clearSelectionAndDestination();
     root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
     renderIdentity();
+    renderModeControls();
+    renderSpectatorCoordinate();
     renderWalkDestinations();
     renderTelling();
     await Promise.all([loadActorHome(), loadActorBalance()]);
@@ -2775,12 +2859,11 @@ export function mountViewer(appEl) {
     const box = $(root, ".wv-identity");
     if (!box) return;
     const handles = state.whoami?.handles ?? [];
-    box.innerHTML = handles.length
-      ? `<h2>Act as</h2><div class="handlepick">${handles.map((handle) =>
-          `<button type="button" class="ctl handleopt${handle === state.handle ? " on" : ""}" data-act-as="${esc(handle)}">${esc(handle)}${handle === state.handle
+    const spectator = `<button type="button" class="ctl handleopt${isSpectating() ? " on" : ""}" data-act-as="${SPECTATOR_ACTOR}" aria-pressed="${isSpectating()}">✦ Spectator</button>`;
+    box.innerHTML = `<h2>Act As</h2><div class="handlepick">${spectator}${handles.map((handle) =>
+          `<button type="button" class="ctl handleopt${state.actAs === handle ? " on" : ""}" data-act-as="${esc(handle)}" aria-pressed="${state.actAs === handle}">${esc(handle)}${state.actAs === handle
             ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`
-            : ""}</button>`).join("")}</div>`
-      : "";
+            : ""}</button>`).join("")}</div>`;
   }
   function renderPresets() {
     const box = $(root, ".presets");
