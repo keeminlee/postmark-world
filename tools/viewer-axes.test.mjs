@@ -8,12 +8,14 @@ import {
   deslugMarkId,
   disciplineAtlasImages,
   distanceBandLabel,
+  deriveWalkPreview,
   extentGlyphKind,
   edgePointToward,
   formatCardinalPosition,
   formatEtaCrossings,
   formatRelativePosition,
   formatSpectatorCoordinate,
+  formatWalkPreviewLabel,
   isAmbientMark,
   investigateNameLine,
   markByline,
@@ -29,6 +31,7 @@ import {
   previewWalkLeg,
   resolveActAsSelection,
   resolveMarkName,
+  sameWalkDestination,
   SPECTATOR_ACTOR,
   nearestEmbodiedAncestor,
   snappedMarkAtPoint,
@@ -517,10 +520,21 @@ test("stake and walk previews use the sealed grammar and pure walk derivation", 
     }),
     "- 2026-07-28 · stake:world-mark/beta/bench → alpha · 2 · for: unstake · sig: …",
   );
+  const leg = previewWalkLeg({ from: { x: 0, y: 0 }, toward: { x: 30_000, y: 0 } });
+  assert.deepEqual(leg, { distanceM: 30_000, etaCrossings: 2, viaCrossings: [] });
+  assert.equal(formatWalkPreviewLabel(leg), "30,000 m · ~24h 00m");
   assert.deepEqual(
-    previewWalkLeg({ from: { x: 0, y: 0 }, toward: { x: 30_000, y: 0 } }),
-    { distanceM: 30_000, etaCrossings: 2, viaCrossings: [] },
+    deriveWalkPreview({ from: { x: 0, y: 0 }, destination: { x: 30_000, y: 0 } }),
+    { from: { x: 0, y: 0 }, toward: { x: 30_000, y: 0 }, leg },
+    "the painting, desk, and confirmation can share one derived preview",
   );
+  assert.equal(
+    deriveWalkPreview({ from: { x: 0, y: 0 }, destination: { x: 30_000, y: 0 }, residentMode: false }),
+    null,
+    "camera movement has no walking ETA",
+  );
+  assert.equal(sameWalkDestination({ x: 4, y: 8, markId: null }, { x: 4, y: 8 }), true);
+  assert.equal(sameWalkDestination({ x: 4, y: 8, markId: "a" }, { x: 4, y: 8, markId: "b" }), false);
 });
 
 test("the walk desk formats crossing ETAs as clock time and labels point containment", () => {

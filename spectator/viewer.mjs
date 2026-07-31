@@ -319,6 +319,33 @@ export function formatEtaCrossings(etaCrossings) {
   return `≈ ${hours} h ${String(minutes).padStart(2, "0")} m`;
 }
 
+export function formatWalkPreviewLabel(leg) {
+  if (!leg || !Number.isFinite(Number(leg.distanceM))) return "";
+  const eta = formatEtaCrossings(leg.etaCrossings)
+    .replace(/^≈\s*/, "~")
+    .replace(/(\d+) h/, "$1h")
+    .replace(/(\d+) m$/, "$1m");
+  return eta ? `${Math.round(Number(leg.distanceM)).toLocaleString()} m · ${eta}` : "";
+}
+
+export function deriveWalkPreview({ from, destination, skeleton = null, residentMode = true } = {}) {
+  if (!residentMode || !destination) return null;
+  const toward = { x: Number(destination.x), y: Number(destination.y) };
+  const leg = previewWalkLeg({ from, toward, skeleton });
+  if (!leg) return null;
+  return {
+    from: { x: Number(from.x), y: Number(from.y) },
+    toward,
+    leg,
+  };
+}
+
+export function sameWalkDestination(a, b) {
+  if (!a || !b) return false;
+  return Number(a.x) === Number(b.x) && Number(a.y) === Number(b.y)
+    && String(a.markId ?? "") === String(b.markId ?? "");
+}
+
 export function formatCardinalPosition(point) {
   const x = Math.round(Number(point?.x)), y = Math.round(Number(point?.y));
   if (![x, y].every(Number.isFinite)) return "";
@@ -981,6 +1008,10 @@ const STYLE = `
 .wv-walker.standing { fill:#8b93a7; }
 .wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
 .wv-walk-dest { fill:none; stroke:#e0507a; stroke-width:2; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-leg { stroke:var(--amber); stroke-width:2.4; stroke-dasharray:10 6; opacity:.95; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-dest { fill:rgba(232,197,106,.18); stroke:var(--amber); stroke-width:2.4; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-label rect { fill:rgba(13,15,19,.94); stroke:var(--amber-dark); stroke-width:1; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-label text { fill:var(--amber); font-family:Consolas,Menlo,monospace; font-weight:700; }
 .wv-walkpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
 .wv-walkpanel input[type=range] { width:130px; vertical-align:middle; }
 .wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
@@ -1047,12 +1078,12 @@ const STYLE = `
 .wv-walk-destination { margin-top:7px; padding:7px 8px; border:1px solid var(--line);
   border-radius:4px; color:var(--dim); font-size:.72rem; line-height:1.4; }
 .wv-walk-destination b { color:var(--paper); font-variant-numeric:tabular-nums; }
+.wv-walk-destination .wv-walk-metrics { display:block; margin-top:5px; color:var(--amber); font-weight:700;
+  font-variant-numeric:tabular-nums; }
 .wv-walkdesk .wv-walk-confirm {
   width:100%; margin-top:8px; background:transparent; border:1px solid var(--amber-dark);
   color:var(--amber); border-radius:4px; padding:5px 8px; font:inherit; font-size:.76rem; cursor:pointer; }
 .wv-walkdesk .wv-walk-confirm:disabled { opacity:.45; cursor:not-allowed; }
-.wv-walk-preview { margin-top:8px; padding:8px; border:1px dashed var(--amber-dark); border-radius:4px;
-  color:var(--paper); font-size:.75rem; line-height:1.45; }
 .wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
 .wv-walk-answer.success { color:var(--green); }
 .wv-walk-answer.refusal { color:var(--err); }
@@ -1087,7 +1118,6 @@ const MARKUP = `
       <div class="wv-walk-status" hidden></div>
       <div class="wv-walk-planner">
         <div class="wv-walk-destination">click the painting, or select a mark cell</div>
-        <div class="wv-walk-preview" hidden></div>
         <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
         <p class="wv-walk-answer" hidden></p>
       </div>
@@ -1724,6 +1754,13 @@ export function mountViewer(appEl) {
       const hlLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
       hlLayer.setAttribute("id", "wv-hl-layer");
       svg.appendChild(hlLayer);
+      // An armed destination is a proposal, not a journey. Its amber layer stays
+      // separate from the pink public walk ledger so the painting cannot imply a
+      // commitment the resident has not confirmed.
+      const walkPreviewLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      walkPreviewLayer.setAttribute("id", "wv-walk-preview-layer");
+      walkPreviewLayer.style.pointerEvents = "none";
+      svg.appendChild(walkPreviewLayer);
       // walkers ride above the highlight layer: a walk is the one thing on this
       // map that moves, so it must never be painted under anything.
       const walkLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -1744,7 +1781,7 @@ export function mountViewer(appEl) {
       }
       const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
       const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, walkLayer, gridLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
       let tween = null;
       function applyView() {
         svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
@@ -2062,7 +2099,6 @@ export function mountViewer(appEl) {
     at: null,
     walkers: [],
     timer: null,
-    pending: null,
     destination: null,
     actorBound: true,
     changingCourse: false,
@@ -2079,6 +2115,15 @@ export function mountViewer(appEl) {
     if (state.actorHome && Number.isFinite(state.actorHome.x) && Number.isFinite(state.actorHome.y))
       return { x: Number(state.actorHome.x), y: Number(state.actorHome.y), source: "home (no walk recorded yet)" };
     return null;
+  }
+
+  function selectedWalkPreview() {
+    return deriveWalkPreview({
+      from: actorOrigin(),
+      destination: walkState.destination,
+      skeleton: data?.skeleton,
+      residentMode: canAct(),
+    });
   }
 
   function syncActorPosition({ moveCamera = false } = {}) {
@@ -2125,6 +2170,35 @@ export function mountViewer(appEl) {
     }
     syncActorPosition();
     renderWalkDestination();
+  }
+
+  function drawWalkPreview() {
+    const layer = mapCtx?.walkPreviewLayer;
+    if (!layer) return;
+    const preview = selectedWalkPreview();
+    if (!preview) {
+      layer.innerHTML = "";
+      return;
+    }
+    const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
+    const unit = 1 / k;
+    const px = (point) => ({
+      x: mapCtx.originPx.x + point.x / mapCtx.mPerPx,
+      y: mapCtx.originPx.y + point.y / mapCtx.mPerPx,
+    });
+    const from = px(preview.from), toward = px(preview.toward);
+    const midpoint = { x: (from.x + toward.x) / 2, y: (from.y + toward.y) / 2 };
+    const label = formatWalkPreviewLabel(preview.leg);
+    const labelWidth = Math.max(152, label.length * 7 + 14) * unit;
+    const labelHeight = 24 * unit;
+    const labelX = Math.max(mapCtx.view.x + 4 * unit,
+      Math.min(mapCtx.view.x + mapCtx.view.w - labelWidth - 4 * unit, midpoint.x - labelWidth / 2));
+    const labelY = Math.max(mapCtx.view.y + 4 * unit,
+      Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit, midpoint.y - labelHeight - 12 * unit));
+    layer.innerHTML = `<line x1="${from.x}" y1="${from.y}" x2="${toward.x}" y2="${toward.y}" class="wv-walk-preview-leg"/>`
+      + `<circle cx="${toward.x}" cy="${toward.y}" r="${6 / k}" class="wv-walk-preview-dest"/>`
+      + `<g class="wv-walk-preview-label"><rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
+      + `<text x="${labelX + 7 * unit}" y="${labelY + 16 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
   }
 
   async function pollWalkers() {
@@ -2219,22 +2293,27 @@ export function mountViewer(appEl) {
     }
   }
 
-  function invalidateWalkPreview() {
-    walkState.pending = null;
-    const preview = $(root, ".wv-walk-preview");
+  function clearWalkFeedback() {
     const confirm = $(root, ".wv-walk-confirm");
     const answer = $(root, ".wv-walk-answer");
-    if (preview) { preview.hidden = true; preview.innerHTML = ""; }
     if (confirm) confirm.disabled = true;
     if (answer) { answer.hidden = true; answer.textContent = ""; answer.className = "wv-walk-answer"; }
+  }
+
+  function showWalkRefusal(message) {
+    const answer = $(root, ".wv-walk-answer");
+    if (!answer) return;
+    answer.hidden = false;
+    answer.className = "wv-walk-answer refusal";
+    answer.textContent = message;
   }
 
   function renderWalkDestinations() {
     const desk = $(root, ".wv-walkdesk");
     if (!desk) return;
     desk.hidden = !canAct();
-    if (desk.hidden) return;
     renderWalkDestination();
+    if (desk.hidden) return;
     syncActorPosition();
   }
 
@@ -2247,6 +2326,7 @@ export function mountViewer(appEl) {
     const box = $(desk, ".wv-walk-destination");
     const confirm = $(desk, ".wv-walk-confirm");
     const destination = walkState.destination;
+    const preview = selectedWalkPreview();
     if (status) {
       status.hidden = journey.kind === "ready";
       status.className = `wv-walk-status${journey.kind === "journey" ? " journey" : journey.kind === "arrived" ? " arrived" : ""}`;
@@ -2261,8 +2341,13 @@ export function mountViewer(appEl) {
       && !walkState.changingCourse && !destination;
     if (box) box.innerHTML = destination
       ? `${journey.kind === "journey" ? "change course — " : ""}destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined, actorOrigin()))}</b>`
+        + (preview ? `<span class="wv-walk-metrics">${esc(formatWalkPreviewLabel(preview.leg))}</span>` : "")
       : `${journey.kind === "journey" ? "change course — " : ""}click open ground in the painting, or select a walkable mark and choose walk here`;
-    if (confirm) confirm.textContent = journey.kind === "journey" ? "change course" : "confirm departure";
+    if (confirm) {
+      confirm.textContent = journey.kind === "journey" ? "change course" : "confirm departure";
+      confirm.disabled = !preview;
+    }
+    drawWalkPreview();
   }
 
   function scrollMarkCellIntoView(id) {
@@ -2281,7 +2366,7 @@ export function mountViewer(appEl) {
     if (canAct()) {
       walkState.destination = null;
       if (viewerJourneyState(actorWalker()).kind === "journey") walkState.changingCourse = true;
-      invalidateWalkPreview();
+      clearWalkFeedback();
       renderWalkDestination();
     }
     if (scrollCell) scrollMarkCellIntoView(id);
@@ -2292,7 +2377,7 @@ export function mountViewer(appEl) {
     markInteraction.select(null);
     walkState.destination = null;
     walkState.changingCourse = false;
-    invalidateWalkPreview();
+    clearWalkFeedback();
     renderWalkDestination();
   }
 
@@ -2307,61 +2392,35 @@ export function mountViewer(appEl) {
     if (!canAct()) return;
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
-    walkState.destination = { ...destination, inside: namedInside || destination.inside, markId: namedInside || null };
+    const next = { ...destination, inside: namedInside || destination.inside, markId: namedInside || null };
+    if (sameWalkDestination(walkState.destination, next)) {
+      clearSelectionAndDestination();
+      return;
+    }
+    walkState.destination = next;
     if (viewerJourneyState(actorWalker()).kind === "journey") walkState.changingCourse = true;
+    clearWalkFeedback();
     renderWalkDestination();
-    previewSelectedWalk();
+    if (!actorOrigin()) showWalkRefusal("The office has no walk-ledger or sited-home origin for this resident.");
+    else if (!selectedWalkPreview()) showWalkRefusal("Choose a destination with two finite coordinates.");
     if (scrollDesk) $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-
-  function previewSelectedWalk() {
-    const desk = $(root, ".wv-walkdesk");
-    const preview = $(desk, ".wv-walk-preview");
-    const confirm = $(desk, ".wv-walk-confirm");
-    const answer = $(desk, ".wv-walk-answer");
-    invalidateWalkPreview();
-    const from = actorOrigin();
-    if (!from) {
-      answer.hidden = false;
-      answer.classList.add("refusal");
-      answer.textContent = "The office has no walk-ledger or sited-home origin for this resident.";
-      return;
-    }
-    const selected = walkState.destination;
-    if (!selected) {
-      answer.hidden = false;
-      answer.classList.add("refusal");
-      answer.textContent = "Choose a destination on the painting or select a mark cell.";
-      return;
-    }
-    const toward = { x: selected.x, y: selected.y };
-    const payload = { x: toward.x, y: toward.y, handle: state.handle };
-    const destination = walkDestinationLabel(selected, byId, data?.worldState?.determined, from);
-    const leg = previewWalkLeg({ from, toward, skeleton: data?.skeleton });
-    if (!leg) {
-      answer.hidden = false;
-      answer.classList.add("refusal");
-      answer.textContent = "Choose a destination with two finite coordinates.";
-      return;
-    }
-    preview.innerHTML = `<b>${leg.distanceM.toLocaleString()} m · ETA ${formatEtaCrossings(leg.etaCrossings)}</b><br>`
-      + `${esc(destination)}`;
-    preview.hidden = false;
-    confirm.disabled = false;
-    walkState.pending = { payload, leg };
   }
 
   async function confirmSelectedWalk() {
     const desk = $(root, ".wv-walkdesk");
     const confirm = $(desk, ".wv-walk-confirm");
     const answer = $(desk, ".wv-walk-answer");
-    if (!walkState.pending) return;
+    const preview = selectedWalkPreview();
+    if (!preview) return;
+    const armedDestination = walkState.destination;
+    const handle = state.handle;
+    const payload = { x: preview.toward.x, y: preview.toward.y, handle };
     confirm.disabled = true;
     answer.hidden = false;
     answer.className = "wv-walk-answer";
     answer.textContent = "The office is recording the departure…";
     try {
-      const response = await officeCall("/world/walks", { method: "POST", body: walkState.pending.payload });
+      const response = await officeCall("/world/walks", { method: "POST", body: payload });
       if (!response.ok || response.body?.error === "bounce") {
         answer.classList.add("refusal");
         answer.textContent = [response.body?.defect || `the door answered ${response.status}`, response.body?.hint].filter(Boolean).join(" — ");
@@ -2369,14 +2428,9 @@ export function mountViewer(appEl) {
         return;
       }
       answer.classList.add("success");
-      answer.textContent = `${state.handle} departed: ${Number(response.body.leg_m ?? 0).toLocaleString()} m, ETA ${formatEtaCrossings(response.body.eta_crossings ?? 0)}.`;
-      walkState.pending = null;
+      answer.textContent = `${handle} departed: ${Number(response.body.leg_m ?? 0).toLocaleString()} m, ETA ${formatEtaCrossings(response.body.eta_crossings ?? 0)}.`;
       await pollWalkers();
-      markInteraction.select(null);
-      walkState.destination = null;
-      walkState.changingCourse = false;
-      invalidateWalkPreview();
-      renderWalkDestination();
+      if (sameWalkDestination(walkState.destination, armedDestination)) clearSelectionAndDestination();
     } catch (error) {
       answer.classList.add("refusal");
       answer.textContent = `The walk door could not be reached — ${error.message}`;
@@ -2852,7 +2906,7 @@ export function mountViewer(appEl) {
     await pollWalkers();
     syncActorPosition({ moveCamera: true });
     mapCtx?.lockOn?.(); // one-shot: the painting glides to your dot on Act As (no sticky follow)
-    if (walkState.destination) previewSelectedWalk();
+    renderWalkDestination();
   }
 
   function renderIdentity() {
