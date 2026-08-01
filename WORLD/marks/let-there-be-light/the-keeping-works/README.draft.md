@@ -18,6 +18,57 @@ Every mark here is `by: the-town`, carries `pre: true`, and cites its source
 with a verbatim `derived_from` quote — same provenance discipline as any other
 pre-mark, applied to code instead of a resident's own words.
 
+## The four blocks
+
+`the-keeping-works` is **one district, four blocks** — one block per Postmark
+repo, not four separate districts:
+
+| block | repo | status |
+|---|---|---|
+| **world** | postmark-world (`tools/` + `spectator/`) | **built, stage 1** — everything below |
+| **town** | the `postmark` repo's tools | **reserved** — empty ground, stage 2 |
+| **site** | postmark-site | **reserved** — empty ground, stage 2 |
+| **office** | postmark-office | **reserved** — empty ground, stage 2 |
+
+Three of the four blocks are reserved **geometry** — empty ground awaiting
+stage-2 seeding — not reserved buildings, and not the three tool-citing
+buildings described below (those are a different, orthogonal kind of
+incompleteness; see "granularity pending"). The stage-1 plan agent assigned
+`at`/`extent` for all four blocks in its own `blocks[]` layout; that geometry
+was not recoverable from inside this seeding pass, so no coordinates are
+guessed here — it is geometry per the stage-1 plan, staked when stage 2
+actually seeds the town/site/office blocks.
+
+## The world block: 9 buildings
+
+Every building below is `kind: sited`, `by: the-town`, cites its source file in
+`derived_from`, and sits inside the world block's ground:
+
+- **lantern-tower** (`world-engine.mjs`) — the engine library (field-of-view)
+  and the verbs library (orient, open-your-eyes, investigate, walk).
+- **departures-hall** (`walk.mjs`) — the ledger grammar: a departure is a
+  declarative record; position is derived, never stored mid-journey.
+- **sounding-house** (`water.mjs`) — the water oracle: still water vs.
+  crossable, named crossings.
+- **spectators-gallery** (`spectator/server.mjs`, functions from
+  `spectator/viewer.mjs`) — the read-only told-world viewer.
+- **surveyors-hall** (`marks-fold.mjs`, `mark-class.mjs`, `geometry.mjs`) — the
+  canon fold, the class rule, the geometry primitives.
+- **settlement-house** (`settlement-sweep.mjs`) — where eligible drafts
+  publish to main and household sketchbooks rebase behind them.
+- **cartographers-workshop** (`world-root-gen.mjs`), **customs-house**
+  (`mark-lint.mjs`), **movers-depot** (`migrate-marks-v2.mjs`) — cited and
+  sited, but **granularity pending**: this pass did not drill their exported
+  functions into nested `predicated` marks. This is not the "reserved" of the
+  four blocks above — the buildings exist, the ground isn't empty — it's just
+  not yet drilled to function grain. No skipped-function list from a
+  seed-writer was visible from inside this task, so this is flagged as
+  pending rather than a guess at what such a list would say.
+
+23 exported functions, across 6 of the 9 buildings, are marked at function
+grain (`kind: predicated`, `slot: fn:<name>`) — the window law's load-bearing
+cut, not the full export surface of every module.
+
 ## Draft conventions
 
 Two fields exist here that are **not** part of the landed schema, and are
@@ -44,40 +95,13 @@ the physics-registry-adjacent lookup the lint validates against, and
 gets checked. Until then, both are draft furniture — real fields to copy from
 when the time comes, not fields the world runs on today.
 
-## The four blocks
-
-The quarter divides into four blocks. One is populated by this registry; three
-are reserved — cited as buildings, but deliberately left undrilled below the
-building level in stage 1 (the window law: exported functions only, and these
-three tools' own exports weren't part of this pass's registry):
-
-1. **The registry block (populated)** — `departures-hall` (the walk ledger:
-   `walk.mjs`), `lantern-tower` (the engine + spine verbs: `world-engine.mjs`,
-   `world-verbs.mjs`), `surveyors-hall` (the marks fold + geometry:
-   `marks-fold.mjs`, `mark-class.mjs`, `geometry.mjs`), `sounding-house` (water
-   and crossings: `water.mjs`), `spectators-gallery` (the viewer:
-   `viewer.mjs`), and `settlement-house` (the settlement sweep:
-   `settlement-sweep.mjs`) — 23 function marks total, every one keyed in
-   `CODE_REGISTRY.draft.json`.
-2. **`cartographers-workshop` (reserved)** — cites `world-root-gen.mjs`
-   ("generate the root mark + the terrain marks, BY EXTRACTION from
-   `WORLD/skeleton.json`"). No function-level marks yet.
-3. **`customs-house` (reserved)** — cites `mark-lint.mjs` ("the pre-flight
-   gate for `WORLD/marks/`"). No function-level marks yet.
-4. **`movers-depot` (reserved)** — cites `migrate-marks-v2.mjs` ("one-shot:
-   re-home the v1 marks into the schema-v2 spatial tree"). No function-level
-   marks yet.
-
-The three reserved blocks are honest placeholders, not omissions: their
-buildings stand and cite real tools, but drilling them to their own exported
-functions is future work, not this stage's.
-
 ## Count
 
-**40 `mark.md` files** under this district (1 district root + 8 building
-roots + 31 nested predicated/naming marks, by directory count — the loose
-figure to check is `find … -name mark.md | wc -l`, which is the number that
-matters).
+**40 `mark.md` files** under this district: 1 district root + 16
+building/module containers (9 building roots + 7 nested module groupings) +
+23 function-grain `predicated` marks. `find … -name mark.md | wc -l` under
+this directory is the number that matters if this README and the tree ever
+disagree.
 
 ## Honesty line
 
