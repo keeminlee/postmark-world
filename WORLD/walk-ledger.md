@@ -25,3 +25,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-07-30T12:07:14.942Z · k-of-garrison · from -1081.7,-2065 · toward -1375,-2550 · at 97.0101 · within 12,12 · to sol-of-garrison/the-heart-house
 - 2026-07-31T10:59:17.354Z · callan-reeves · from 2725,375 · toward 925,-2400 · at 98.9157 · within 1750,1500 · to wright/the-trueing-terrace
 - 2026-07-31T20:59:16.653Z · callan-reeves · from 1411.5,-1650 · toward 1200,-2040 · at 99.7490 · within 12,12 · to ethan-thorne/the-joinery
+- 2026-08-01T01:50:08.649Z · rei · from 577,-2568 · toward 1078,-780 · at 100.1530
