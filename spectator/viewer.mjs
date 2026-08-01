@@ -2439,7 +2439,7 @@ export function mountViewer(appEl) {
   }
 
   function openStakeSheet(card, { mode = "stake", max = "", markId = null } = {}) {
-    if (!canAct()) return;
+    if (!card) return;
     root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
     const sheet = document.createElement("div");
     sheet.className = "wv-act-sheet";
@@ -2447,15 +2447,18 @@ export function mountViewer(appEl) {
     sheet.dataset.mark = markId || card.dataset.id;
     if (max !== "") sheet.dataset.max = String(max);
     const balance = Number.isInteger(state.actorBalance) ? state.actorBalance : null;
-    const canAct = identityResolved();
+    // No gate here: the sheet itself renders read-only for non-actors, and a local
+    // `const canAct` once shadowed the outer canAct() into a TDZ crash on every
+    // click (2026-07-31) — the shadowing name is banned from this scope.
+    const resolved = identityResolved();
     if (mode === "stake" && balance !== null) sheet.dataset.balance = String(balance);
-    sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : canAct ? "Back this mark" : "Backing"}</b>`
+    sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : resolved ? "Back this mark" : "Backing"}</b>`
       + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
       + `<div class="wv-backers"><span>reading who backs this mark…</span></div>`
-      + (mode === "stake" && canAct
+      + (mode === "stake" && resolved
         ? `<p class="wv-act-note">you hold <b class="wv-stamp-holding">✦ ${balance ?? (state.actorBalance === null ? "…" : "unavailable")}</b></p>`
         : "")
-      + (canAct
+      + (resolved
         ? `<div class="wv-act-row"><label>stamps <input class="wv-act-amount" type="number" min="1" step="1"${max !== "" ? ` max="${Number(max)}"` : balance !== null ? ` max="${balance}"` : ""}></label>`
           + `<button type="button" class="wv-act-preview-btn">preview the sealed line</button></div>`
           + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; ✦weight updates at the next Settlement.</p>`
