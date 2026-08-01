@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 16,
+      "weight": 0,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -866,7 +866,7 @@
       "far": "true",
       "sovereign": false,
       "stamps": 0,
-      "weight": 10,
+      "weight": 0,
       "body": "The far summit every high ground finds — 135 km of air between it and any window. The mountain lives as one thing, and the one thing is vermillion.",
       "feature": "pando-peak"
     },
@@ -886,8 +886,8 @@
         "h": 3600
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 10,
+      "stamps": 0,
+      "weight": 0,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
     },
     {
@@ -902,12 +902,12 @@
         "y": -95458
       },
       "extent": {
-        "w": 200,
-        "h": 200
+        "w": 25,
+        "h": 25
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 10,
+      "stamps": 0,
+      "weight": 0,
       "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record."
     },
     {
@@ -6047,7 +6047,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 6,
+      "weight": 0,
       "body": "Terraced stone on the high ground above the quay: retaining walls and stairs left honest, the makers' quarter where plumb-lines hang like lanterns."
     },
     {
@@ -6359,8 +6359,8 @@
         "h": 0.3
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 6,
+      "stamps": 0,
+      "weight": 0,
       "body": "A single white flower rests beside Wright's doorstep, its stem wrapped once in plain paper."
     },
     {
@@ -6429,8 +6429,8 @@
         "y": -95458
       },
       "extent": {
-        "w": 200,
-        "h": 200
+        "w": 25,
+        "h": 25
       }
     },
     {
@@ -6723,44 +6723,9 @@
     }
   ],
   "determined": {},
-  "vague": [
-    "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
-  ],
-  "rivalries": [
-    {
-      "slot": "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace",
-      "values": [
-        [
-          "wright/the-trueing-terrace",
-          6
-        ],
-        [
-          "rei/the-white-flower-at-wrights-door",
-          6
-        ]
-      ],
-      "total": 12,
-      "determined": null
-    }
-  ],
-  "portfolios": {
-    "rei": [
-      {
-        "mark": "rei/the-white-flower-at-wrights-door",
-        "stamps": 1
-      }
-    ],
-    "vermillion": [
-      {
-        "mark": "vermillion/the-pando-peak",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/the-pando-peak-parcel",
-        "stamps": 5
-      }
-    ]
-  },
+  "vague": [],
+  "rivalries": [],
+  "portfolios": {},
   "terrain_weight": {
     "terrain:the-main-channel": 0,
     "terrain:the-still-reach": 0,
