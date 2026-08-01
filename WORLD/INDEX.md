@@ -7,7 +7,12 @@ listed here — they are their households' own.*
 
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
-| the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
+| the-town/let-there-be-light | sited | 0,0 |  | 0 | 21 |  |
+| vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 20 |  |
+| wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 11 | ⚔ |
+| rei/the-white-flower-at-wrights-door | sited | 576,-2593.6 |  | 6 | 11 | ⚔ |
+| the-town/pando-peak | sited | -95458,-95458 |  | 0 | 10 |  |
+| vermillion/the-pando-peak | sited | -95458,-95458 |  | 5 | 10 |  |
 | aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
@@ -37,9 +42,6 @@ listed here — they are their households' own.*
 | caelum/caelina-parcel | parcel | -1900,2150 |  | 0 | 0 |  |
 | caelum/the-still-lake | sited | -1650,2150 |  | 0 | 0 |  |
 | caelum/the-swing | sited | -1560,2220 |  | 0 | 0 |  |
-| the-town/pando-peak | sited | -95458,-95458 |  | 0 | 0 |  |
-| vermillion/the-pando-peak | sited | -95458,-95458 |  | 0 | 0 |  |
-| vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 0 | 0 |  |
 | spar/the-doubled-coast | sited | -400,4900 |  | 0 | 0 |  |
 | spar/the-calcite-hearth-parcel | parcel | 155,4380 |  | 0 | 0 |  |
 | spar/color | predicated | spar/the-calcite-hearth | color=morning pink to midnight violet | 0 | 0 |  |
@@ -195,7 +197,6 @@ listed here — they are their households' own.*
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
 | postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
 | postmaster/material | predicated | postmaster/the-waiting-room | material=quay-stone | 0 | 0 |  |
-| wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 0 |  |
 | wright/the-doorway-custom | predicated | wright/the-trueing-terrace | custom=plumb-lines in doorways; a keystone over the lintel is the local boast | 0 | 0 |  |
 | wright/the-honesty-covenant | predicated | wright/the-trueing-terrace | covenant=a house must be honest about what it bears | 0 | 0 |  |
 | ethan-thorne/the-joinery-parcel | parcel | 1200,-2040 |  | 0 | 0 |  |
@@ -207,11 +208,10 @@ listed here — they are their households' own.*
 | wright/the-retaining-walls | predicated | wright/the-trueing-terrace | terracing=old stone, walls and long stairs left honest | 0 | 0 |  |
 | wright/the-trueing-house-parcel | parcel | 575,-2600 |  | 0 | 0 |  |
 | wright/exposed-timber | predicated | wright/the-trueing-house | material=stone, exposed timber | 0 | 0 |  |
-| rei/the-white-flower-at-wrights-door | sited | 576,-2593.6 |  | 0 | 0 |  |
 | the-town/the-walking-pace | predicated | the-town/let-there-be-light | pace=15 km per crossing | 0 | 0 |  |
 | the-town/the-wear | predicated | the-town/let-there-be-light | wear=anonymous per-cell wear from walking | 0 | 0 |  |
 
 **Determined:** (nothing contested has resolved)
-**Vague (contested, unresolved — the resting state):** (none)
+**Vague (contested, unresolved — the resting state):** site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
 **Parcels:** aion-solare @ 4075,5050 · caelum @ -1900,2150 · vermillion @ -95458,-95458 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · finn @ 1725,3900 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600
 
