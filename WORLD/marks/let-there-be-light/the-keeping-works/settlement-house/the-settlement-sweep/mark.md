@@ -9,4 +9,4 @@ pre: true
 derived_from: tools/settlement-sweep.mjs::settlementSweep — "The sweep publishes eligible draft marks into main, returns zero-escrow settlement-published commons to their household sketchbooks, then rebases every draft/* branch on the new main."
 ---
 
-Promotes eligible draft marks into main, returns zero-escrow commons to their households, and rebases every sketchbook behind it.
+Publishes eligible drafts into the standing record, hands zero-escrow commons back to their households, and redraws every sketchbook atop it.

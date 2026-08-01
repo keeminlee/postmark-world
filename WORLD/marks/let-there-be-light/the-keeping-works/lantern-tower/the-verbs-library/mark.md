@@ -8,4 +8,4 @@ pre: true
 derived_from: tools/world-verbs.mjs — "the spine verbs, thin wrappers over world-engine.mjs."
 ---
 
-The spine verbs — orient, open-your-eyes, investigate, walk — thin wrappers the site and MCP tools both call, touching no network themselves.
+The spine verbs — orient, open-your-eyes, investigate, walk — the one set of motions every door in town speaks, without leaving the building.

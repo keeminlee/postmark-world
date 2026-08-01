@@ -8,4 +8,4 @@ pre: true
 derived_from: tools/geometry.mjs — "the ONE definition of a mark's rect and of containment."
 ---
 
-The one shape and the one containment test every lint, fold, and engine check trusts — pure, with no disk and no node built-ins.
+The one shape and the one containment test every check in town trusts — pure measure, done entirely in the head, touching no shelf and no ledger.
