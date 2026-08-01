@@ -216,6 +216,10 @@ export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
 // from the town's pins). A handle absent from the registry is its own household.
 export const PARCEL_CLAIM_CAP = 3;
 export const PARCEL_CAP_LAW_DATE = "2026-07-30"; // claims dated strictly after this are gated
+// The parcel dial (MARKS.md § Parcels; locked at the door 2026-07-31, Keemin:
+// "the resident should not even have to declare an extent"). Seeded prior
+// estate at other sizes stands; the door writes only this.
+export const PARCEL_EXTENT_M = 25;
 
 export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS, households = null }) {
   const errors = [];
