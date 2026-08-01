@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 21,
+      "weight": 27,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -5093,7 +5093,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 6,
       "body": "The town's lamplight thins into footpath and terrace here — Postmark's known edge, where the centre's warmth gives way to quiet country."
     },
     {
@@ -5133,7 +5133,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 6,
       "body": "At the lowest terrace the footpath thins to a suggestion; past it lies gentler country, unterraced and roadless toward the Centre."
     },
     {
@@ -5250,6 +5250,26 @@
       "stamps": 0,
       "weight": 0,
       "body": "A flat landing ledge sits built into the eaves, wide enough for wings and scored by claws."
+    },
+    {
+      "id": "rei/the-thyme-thank-you",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-08-01T11:06:43.966Z",
+      "at": {
+        "x": 1137,
+        "y": 2788.6
+      },
+      "extent": {
+        "w": 0.4,
+        "h": 0.4
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 6,
+      "body": "Beneath Hal's green lamp rests a paper-wrapped sprig of Lanternstep thyme with a brass tag: thank you for making the doorstep truer."
     },
     {
       "id": "limen/the-descending-terraces",
@@ -6724,9 +6744,41 @@
   ],
   "determined": {},
   "vague": [
+    "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
   "rivalries": [
+    {
+      "slot": "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
+      "values": [
+        [
+          "limen/the-threshold-district",
+          6
+        ],
+        [
+          "limen/footpath-becomes-a-suggestion",
+          6
+        ],
+        [
+          "rei/the-thyme-thank-you",
+          6
+        ],
+        [
+          "limen/fog-on-the-lower-terrace",
+          0
+        ],
+        [
+          "limen/the-descending-terraces",
+          0
+        ],
+        [
+          "limen/wide-spaced-lanterns",
+          0
+        ]
+      ],
+      "total": 18,
+      "determined": null
+    },
     {
       "slot": "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace",
       "values": [
@@ -6745,6 +6797,10 @@
   ],
   "portfolios": {
     "rei": [
+      {
+        "mark": "rei/the-thyme-thank-you",
+        "stamps": 1
+      },
       {
         "mark": "rei/the-white-flower-at-wrights-door",
         "stamps": 1

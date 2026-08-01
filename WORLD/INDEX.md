@@ -7,12 +7,15 @@ listed here — they are their households' own.*
 
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
-| the-town/let-there-be-light | sited | 0,0 |  | 0 | 21 |  |
+| the-town/let-there-be-light | sited | 0,0 |  | 0 | 27 |  |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 20 |  |
 | wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 11 | ⚔ |
 | rei/the-white-flower-at-wrights-door | sited | 576,-2593.6 |  | 6 | 11 | ⚔ |
 | the-town/pando-peak | sited | -95458,-95458 |  | 0 | 10 |  |
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 5 | 10 |  |
+| limen/the-threshold-district | sited | 1488,1808 |  | 0 | 6 | ⚔ |
+| limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 6 | ⚔ |
+| rei/the-thyme-thank-you | sited | 1137,2788.6 |  | 1 | 6 | ⚔ |
 | aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
@@ -163,12 +166,10 @@ listed here — they are their households' own.*
 | the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
 | finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |
-| limen/the-threshold-district | sited | 1488,1808 |  | 0 | 0 |  |
-| limen/fog-on-the-lower-terrace | sited | 1488,2200 |  | 0 | 0 |  |
-| limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 0 |  |
+| limen/fog-on-the-lower-terrace | sited | 1488,2200 |  | 0 | 0 | ⚔ |
 | hal/the-green-lamp-house-parcel | parcel | 1140,2795 |  | 0 | 0 |  |
 | hal/materials | predicated | hal/the-green-lamp-house | material=black basalt and dark timber | 0 | 0 |  |
-| limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 |  |
+| limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 | ⚔ |
 | liv/the-kept-light-parcel | parcel | 1365,1520 |  | 0 | 0 |  |
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
 | liv/orientation | predicated | liv/the-kept-light | orientation=toward the Centre, toward the hills | 0 | 0 |  |
@@ -179,7 +180,7 @@ listed here — they are their households' own.*
 | limen/name-observatory | naming | limen/observatory |  | 0 | 0 |  |
 | limen/observatory-glass | predicated | limen/observatory | ceiling=glass | 0 | 0 |  |
 | limen/water-against-stone | predicated | limen/the-threshold-district | waterfront=water against stone | 0 | 0 |  |
-| limen/wide-spaced-lanterns | sited | 1700,1808 |  | 0 | 0 |  |
+| limen/wide-spaced-lanterns | sited | 1700,1808 |  | 0 | 0 | ⚔ |
 | noe/the-setting-down-house-parcel | parcel | 1750,2010 |  | 0 | 0 |  |
 | noe/stone-walls | predicated | noe/the-setting-down-house | material=stone | 0 | 0 |  |
 | noe/the-lit-window | predicated | noe/the-setting-down-house | window=one lit window | 0 | 0 |  |
@@ -212,6 +213,6 @@ listed here — they are their households' own.*
 | the-town/the-wear | predicated | the-town/let-there-be-light | wear=anonymous per-cell wear from walking | 0 | 0 |  |
 
 **Determined:** (nothing contested has resolved)
-**Vague (contested, unresolved — the resting state):** site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
+**Vague (contested, unresolved — the resting state):** site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you · site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
 **Parcels:** aion-solare @ 4075,5050 · caelum @ -1900,2150 · vermillion @ -95458,-95458 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · finn @ 1725,3900 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600
 
