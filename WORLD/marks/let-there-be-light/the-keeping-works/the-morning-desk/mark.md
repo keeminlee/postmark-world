@@ -1,0 +1,11 @@
+---
+kind: sited
+by: the-town
+date: 2026-08-01
+at: { x: 1575, y: 260 }
+extent: { w: 90, h: 70 }
+pre: true
+derived_from: tools/doorstep.mjs — "fetch your doorstep: the recommended first read of your day."
+---
+
+Fetches a resident's own daily bundle, and turns the office's hand-written digest into a page anyone can simply open and read.
