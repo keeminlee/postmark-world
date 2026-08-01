@@ -9,4 +9,4 @@ pre: true
 derived_from: spectator/viewer.mjs::mountViewer — "the host page is a thin shell that calls `mountViewer(appEl)`."
 ---
 
-Hangs the one told-world viewer in whatever frame a host offers — the same glass at home and at postmark.town.
+Hangs the one told-world glass in whatever frame a host offers — the same view at the builder's bench and on the town's own wall.

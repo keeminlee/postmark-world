@@ -109,9 +109,10 @@ code:town:<functionName>`.
 
 ## The site block: 14 buildings
 
-Seeded stage 2 from `postmark-site`. Placed as a nested `the-lookout-row`
-directory with its own `mark.md`, not as direct children of this district dir
-— see "Notes on stage 2" below for the placement discrepancy this creates:
+Seeded stage 2 from `postmark-site`. Originally landed as a nested
+`the-lookout-row` directory; re-homed by founder hand the same day to direct
+children of this district dir, same as every other block — see "Notes on
+stage 2" below:
 
 - **the-almanac-hall** (`tools/lib/town.mjs`) — the checkout/town reader; 4
   fns.
@@ -213,16 +214,16 @@ has seeded all four blocks:
   block's `the-reading-room` (`src/queries.mjs`) — both would-be direct
   children of the same `the-keeping-works` dir. The town building was renamed
   to `the-morning-desk` to resolve it; the office block kept `the-reading-room`.
-- **Site block placement discrepancy.** The site block landed as its own
-  `the-lookout-row` directory (with its own `mark.md`) rather than as direct
-  children of `the-keeping-works`, unlike town and office. `node
-  tools/mark-lint.mjs` flags this as an ERROR — by geometry (its `at`/`extent`
-  in `mark.md`), `the-lookout-row`'s tightest container computes to
-  `the-town/the-keeping-works`, but its filesystem parent is the district
-  root, not `the-keeping-works` — and asks for the directory to be re-homed.
-  This assembly pass reports it faithfully
-  rather than re-homing it: moving an already-placed 40-mark subtree is a
-  structural call for Keemin, not a mechanical formatting fix.
+- **Site block placement discrepancy — found, reported, re-homed.** The site
+  block landed as its own `the-lookout-row` directory (with its own `mark.md`)
+  beside the district rather than inside it. `mark-lint.mjs` flagged it as an
+  ERROR (tightest geometric container = `the-town/the-keeping-works`, but the
+  filesystem parent was the root); the stage-2 assembly pass reported it
+  faithfully and deferred; the founder (Wright) re-homed it the same day —
+  the 14 buildings moved to direct children of `the-keeping-works` (their
+  geometry unchanged, already inside the district's rectangle) and the
+  block-container `mark.md` was deleted, per the standing precedent that
+  blocks are plan geometry, not mark dirs. Lint returned CLEAN after the move.
 
 ## Draft conventions
 
@@ -258,22 +259,18 @@ when the time comes, not fields the world runs on today.
 
 ## Count
 
-**160 `mark.md` files** across the four blocks, 40 per block:
+**159 `mark.md` files** under this district, all four blocks flat:
 
 - world (stage 1): 1 district root + 16 building/module containers (9
   building roots + 7 nested module groupings) + 23 function-grain
   `predicated` marks = 40.
-- town (`the-toolshed-row`, direct children of this dir): 40.
-- office (`the-clerks-row`, direct children of this dir): 40.
-- site (`the-lookout-row`, its own nested directory — see "Notes on stage 2"):
-  40.
+- town (`the-toolshed-row` ground, direct children of this dir): 40.
+- office (`the-clerks-row` ground, direct children of this dir): 40.
+- site (`the-lookout-row` ground, direct children since the re-home): 39 —
+  the original 40 minus the deleted block-container `mark.md`.
 
-`find … -name mark.md | wc -l` under **this** directory alone returns 120
-(district root + world + town + office) — it does not include the site
-block, which lives in its own sibling `the-lookout-row` directory (under
-`WORLD/marks/let-there-be-light/`, beside `the-keeping-works`, not inside it)
-because of the placement discrepancy noted above. Sum both directories for
-the district-wide 160. If this README and the tree ever disagree, the tree
+`find … -name mark.md | wc -l` under **this** directory returns the full
+district-wide count. If this README and the tree ever disagree, the tree
 governs.
 
 ## Honesty line

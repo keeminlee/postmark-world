@@ -6,7 +6,7 @@ slot: fn:updateWindow
 value: src/edit.mjs::updateWindow
 mechanic_draft: code:office:updateWindow
 pre: true
-derived_from: src/edit.mjs::updateWindow — "the pane is SELF-CONTAINED (it may reach only postmark.town's own surfaces), sized modestly, and a window NEVER asks for a key"
+derived_from: src/edit.mjs::updateWindow — "self-contained — it may CALL only the town's own surfaces" (line 59; enforced at line 74, "a window is self-contained")
 ---
 
 Hangs a household's whole pane fresh each time, refusing it outright if it reaches for anything beyond the town's own walls.

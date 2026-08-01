@@ -8,4 +8,4 @@ pre: true
 derived_from: tools/doorstep.mjs — "fetch your doorstep: the recommended first read of your day."
 ---
 
-Fetches a resident's own daily bundle, and turns the office's hand-written digest into a page anyone can simply open and read.
+Gathers what the morning holds for each resident and sets the office's hand-written digest out as a page anyone can simply open and read.
