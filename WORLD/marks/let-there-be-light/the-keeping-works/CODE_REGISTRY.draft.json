@@ -1,0 +1,140 @@
+{
+  "code:world:fieldOfView": {
+    "src": "tools/world-engine.mjs#fieldOfView",
+    "approx_loc": 118,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:orient": {
+    "src": "tools/world-verbs.mjs#orient",
+    "approx_loc": 25,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:openYourEyes": {
+    "src": "tools/world-verbs.mjs#openYourEyes",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:investigate": {
+    "src": "tools/world-verbs.mjs#investigate",
+    "approx_loc": 37,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:walk": {
+    "src": "tools/world-verbs.mjs#walk",
+    "approx_loc": 26,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:formatDeparture": {
+    "src": "tools/walk.mjs#formatDeparture",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:currentDeparture": {
+    "src": "tools/walk.mjs#currentDeparture",
+    "approx_loc": 5,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:positionAt": {
+    "src": "tools/walk.mjs#positionAt",
+    "approx_loc": 35,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:publicWalker": {
+    "src": "tools/walk.mjs#publicWalker",
+    "approx_loc": 11,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:fold": {
+    "src": "tools/marks-fold.mjs#fold",
+    "approx_loc": 178,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:loadMarks": {
+    "src": "tools/marks-fold.mjs#loadMarks",
+    "approx_loc": 11,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:placementParent": {
+    "src": "tools/marks-fold.mjs#placementParent",
+    "approx_loc": 12,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:markClass": {
+    "src": "tools/mark-class.mjs#markClass",
+    "approx_loc": 12,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:contains": {
+    "src": "tools/geometry.mjs#contains",
+    "approx_loc": 1,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:waterAt": {
+    "src": "tools/water.mjs#waterAt",
+    "approx_loc": 11,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:crossingAt": {
+    "src": "tools/water.mjs#crossingAt",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:segmentCrossesWater": {
+    "src": "tools/water.mjs#segmentCrossesWater",
+    "approx_loc": 14,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:nearestCrossing": {
+    "src": "tools/water.mjs#nearestCrossing",
+    "approx_loc": 8,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:mountViewer": {
+    "src": "spectator/viewer.mjs#mountViewer",
+    "approx_loc": 1810,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:isEmbodiedMark": {
+    "src": "spectator/viewer.mjs#isEmbodiedMark",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:nearestEmbodiedAncestor": {
+    "src": "spectator/viewer.mjs#nearestEmbodiedAncestor",
+    "approx_loc": 51,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:deriveWalkPreview": {
+    "src": "spectator/viewer.mjs#deriveWalkPreview",
+    "approx_loc": 12,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:settlementSweep": {
+    "src": "tools/settlement-sweep.mjs#settlementSweep",
+    "approx_loc": 133,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  }
+}
