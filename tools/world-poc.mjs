@@ -1,18 +1,21 @@
 #!/usr/bin/env node
-// world-poc.mjs — the spine proof-of-concept: open-your-eyes from the Town
-// Centre quay with the run-01 cast. Assembles a `world` for world-verbs.mjs from
-// real, extracted sources, then tells what an agent standing on the quay sees.
+// world-poc.mjs — the spine proof-of-concept: open-your-eyes anywhere in the
+// seeded world, zero deps. Assembles a `world` for world-verbs.mjs from real,
+// extracted sources (WORLD/marks + skeleton + manifest), then tells what a
+// standing agent sees. This is the README's recompute-it-yourself CLI: same
+// loader, same fold, same assembly the office and browser use.
 //
 // SEPARATION OF CONCERNS: world-engine.mjs is a pure library that consumes
-// real-coordinate marks. All the PLACEMENT (turning the run-01 sim's local marks
-// into real grid marks) and the heightfield's region control points live HERE,
+// real-coordinate marks. The heightfield's region control points live HERE,
 // as clearly-labelled dials, so the engine stays general and the leans stay
 // visible and movable.
 //
 // EXTRACTION OVER MIRRORS: household placements are read from seeding/manifest.json
-// (itself extracted from the atlas's HOME_XY). Only little-bird — the canonical
-// nomad, "no fixed berth" — carries a hand dial, matching the manifest's own
-// honest "not placed". A future atlas re-derive flows through mechanically.
+// (itself extracted from the atlas's HOME_XY). A future atlas re-derive flows
+// through mechanically.
+//
+// (The run-01 legacy-fixture adapter that once lived here retired with
+// `_archived/sims/` in the 2026-08-01 solidification pass.)
 //
 // Usage:
 //   node tools/world-poc.mjs                 # tell the quay view (default crossing)
@@ -20,10 +23,10 @@
 //   node tools/world-poc.mjs --json          # dump the structured fov instead of prose
 //   node tools/world-poc.mjs --at 1500,4888  # stand somewhere else (e.g. the Waystation)
 
-import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { dirname, join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
-import { fold, loadMarks, parseRecord } from "./marks-fold.mjs"; // the ONE loader + frontmatter parser
+import { fold, loadMarks } from "./marks-fold.mjs"; // the ONE loader
 import { assembleWorld, REGION_ANCHORS } from "./world-build.mjs"; // the ONE assembly (shared with the browser)
 import { orient, openYourEyes } from "./world-verbs.mjs";
 
@@ -34,62 +37,6 @@ const has = (f) => process.argv.includes(f);
 
 // ───────────────────────── DIALS local to the PoC ──────────────────────────
 const DEFAULT_CROSSING = Number(arg("--crossing", 19)); // fog is the crossing's weather; 19 is foggy — see the report
-
-// little-bird has no atlas anchor (the manifest's honest "not placed": a skiff,
-// "no fixed berth"). Placed for the PoC near Orion's light, from its own words
-// ("not far off Orion's light … close enough to hear the lamplight at Limen's
-// edge"). THE ONE non-extracted placement — a dial, flagged loudly.
-const LITTLE_BIRD_DIAL = { x: -1425, y: 4640, _source: "DIAL: nomad, no atlas anchor; placed near orion from little-bird's own words" };
-
-// The dials that assemble the world (SIGNAL_MARKS, REGION_ANCHORS, SEA_DATUM,
-// waterControlPoints, assembleWorld) now live in world-build.mjs, shared with the
-// browser page — one assembly, no drift. What stays HERE is only what needs disk:
-// reading the marks/manifest and folding. `homeBandControlPoints` reads the
-// manifest and is passed to assembleWorld as the disk override (keeping run-01
-// byte-exact); the browser derives the same densification from the marks instead.
-
-// ───────────────────────── mark loading + placement ─────────────────────────
-// LEGACY-FIXTURE ADAPTER (run-01 only). run-01 predates the 07-22 nesting ruling:
-// its marks are flat `<household>/<slug>.md` and it carries predicated-on-
-// predicated chains the new schema forbids, so it cannot go through the shared
-// nested `loadMarks`. This adapter reads that flat shape ONLY — but it reuses the
-// shared `parseRecord` for the frontmatter, so there is no second frontmatter
-// reader, only a second directory shape. Nested/production reads (WORLD/marks,
-// the seeding fleet, the full-tree check) go through the shared `loadMarks`.
-function loadLegacyFlatMarks(dir) {
-  const out = [];
-  for (const hh of readdirSync(dir)) {
-    const hhDir = join(dir, hh);
-    if (!statSync(hhDir).isDirectory()) continue;
-    for (const f of readdirSync(hhDir)) {
-      if (!f.endsWith(".md")) continue;
-      const rec = parseRecord(readFileSync(join(hhDir, f), "utf8"), `${hh}/${f}`); // SHARED parser
-      rec.household = rec.household ?? hh;
-      rec.slug = rec.mark ?? basename(f, ".md");
-      rec.id = `${rec.household}/${rec.slug}`;
-      out.push(rec);
-    }
-  }
-  return out;
-}
-// Household anchors: extracted from the seeding manifest; little-bird is the dial.
-function loadAnchors() {
-  const M = JSON.parse(readFileSync(join(ROOT, "seeding/manifest.json"), "utf8"));
-  const anchors = {};
-  for (const h of M.homes) anchors[h.household] = { x: h.grid_m.x, y: h.grid_m.y, _source: `manifest: ${h.home_id}` };
-  anchors["little-bird"] = LITTLE_BIRD_DIAL;
-  return anchors;
-}
-// Translate each household's LOCAL sim marks onto the real grid by its anchor.
-// (The run-01 sim authored every parcel at local 0,0; the anchor carries them to
-// their real place, which also separates households that were stacked at origin.)
-function placeMarks(marks, anchors) {
-  return marks.map((mk) => {
-    const a = anchors[mk.household];
-    if (!a || !mk.at || typeof mk.at !== "object") return mk;
-    return { ...mk, at: { x: a.x + (mk.at.x ?? 0), y: a.y + (mk.at.y ?? 0) }, _localAt: mk.at, _anchor: { x: a.x, y: a.y } };
-  });
-}
 
 // Every placed home as a heightfield control point at its REGION's band-midpoint
 // height (decision 008). Real inhabited positions at ruled heights — this
@@ -114,20 +61,12 @@ function homeBandControlPoints() {
 // buildWorld — the DISK path. Reads + folds the marks, then hands the folded
 // world-state and the skeleton to the shared assembleWorld (world-build.mjs) —
 // the same function the browser calls. The manifest home densification is passed
-// as the homeControlPoints override, so run-01 stays byte-exact.
-// Default: the run-01 legacy fixture, placed onto the real grid.
-// nested (--marks-dir): a nested tree read through the SHARED loadMarks.
+// as the homeControlPoints override.
+// Default: the seeded canon tree, WORLD/marks, through the SHARED loadMarks.
 export function buildWorld({ crossing = DEFAULT_CROSSING, marksDir = null, stakesPath = null } = {}) {
   const terrain = JSON.parse(readFileSync(join(ROOT, "WORLD/skeleton.json"), "utf8"));
-  let placed;
-  if (marksDir) {
-    placed = loadMarks(marksDir);                          // SHARED nested loader; real coords already
-  } else {
-    const rawMarks = loadLegacyFlatMarks(join(ROOT, "sims/run-01/world/marks"));
-    placed = placeMarks(rawMarks, loadAnchors());          // run-01 is parcel-local; anchor it
-  }
-  const stakes = stakesPath ? JSON.parse(readFileSync(stakesPath, "utf8"))
-    : marksDir ? [] : JSON.parse(readFileSync(join(ROOT, "sims/run-01/stakes.json"), "utf8"));
+  const placed = loadMarks(marksDir ?? join(ROOT, "WORLD/marks")); // SHARED nested loader; real coords
+  const stakes = stakesPath ? JSON.parse(readFileSync(stakesPath, "utf8")) : [];
 
   // fold at this crossing (stakes take effect the crossing after they land)
   const state = fold({ marks: placed, terrain, stakes, tick: crossing + 1 });

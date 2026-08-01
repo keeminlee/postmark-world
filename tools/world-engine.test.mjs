@@ -122,12 +122,20 @@ test("a dry standpoint inside the Sea bbox is absent from the within chain", () 
 });
 
 test("household cluster collapses at distance and investigate re-opens it", () => {
-  const w = buildWorld({ crossing: 20 });
-  const fov = fieldOfView({ x: 0, y: 0 }, w, { crossing: 20 });
-  const hal = fov.carried.find((m) => m.id.startsWith("hal/"));
-  assert.ok(hal && hal.clusteredCount > 0, "hal's distant marks collapse to one rep with a count");
-  const inv = investigate(hal.id, w, { budget: 12 });
-  assert.ok(inv.alongside.length >= hal.clusteredCount, "investigate re-opens the collapsed cluster");
+  // Self-contained fixture (was run-01's hal cast until `_archived/sims/`,
+  // 2026-08-01): one household's five marks packed together, well past the
+  // cluster_beyond_m dial, seen on the clearest crossing so fog stays out of it.
+  const spots = [];
+  for (let i = 0; i < 5; i++)
+    spots.push({ id: `hh/spot-${i}`, kind: "sited", household: "hh", at: { x: 2000 + i * 6, y: i * 5 }, extent: { w: 4, h: 4 }, weight: 5 - i, top_m: 4 });
+  let clear = 0, least = 1;
+  for (let c = 0; c < 200; c++) { const t = fogModel(c).thickness; if (t < least) { least = t; clear = c; } }
+  const w = worldOf(spots);
+  const fov = fieldOfView({ x: 0, y: 0 }, w, { crossing: clear });
+  const rep = fov.carried.find((m) => m.id.startsWith("hh/"));
+  assert.ok(rep && rep.clusteredCount > 0, "the household's distant marks collapse to one rep with a count");
+  const inv = investigate(rep.id, w, { budget: 12 });
+  assert.ok(inv.alongside.length >= rep.clusteredCount, "investigate re-opens the collapsed cluster");
 });
 
 test("investigate sorts a parent into `within`, never into `alongside`", () => {

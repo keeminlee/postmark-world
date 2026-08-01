@@ -1,3 +1,7 @@
+> **ARCHIVED 2026-08-01** — working log, retired in the solidification pass.
+> Settled calls live in the shipped code + root README; open at archive time:
+> C10, C13, C20 (held for Keemin — see `_archived/README.md`). Do not edit.
+
 # CALLS — walk P2 rough draft
 
 Every judgment the rulings did not cover. **All of it is PROVISIONAL by

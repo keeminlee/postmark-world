@@ -1,3 +1,6 @@
+> **ARCHIVED 2026-08-01** — pass report, retired in the solidification pass;
+> its content merged to main 2026-07-2x. Do not edit.
+
 # RESULT — water true-shape pass, v0 gate-off, and the sea
 
 Three passes now, stacked on `walk-p2-draft-jetto` in both clones. Local branches
