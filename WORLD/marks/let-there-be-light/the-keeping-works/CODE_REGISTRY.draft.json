@@ -1,0 +1,608 @@
+{
+  "code:world:fieldOfView": {
+    "src": "tools/world-engine.mjs#fieldOfView",
+    "approx_loc": 118,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:orient": {
+    "src": "tools/world-verbs.mjs#orient",
+    "approx_loc": 25,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:openYourEyes": {
+    "src": "tools/world-verbs.mjs#openYourEyes",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:investigate": {
+    "src": "tools/world-verbs.mjs#investigate",
+    "approx_loc": 37,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:walk": {
+    "src": "tools/world-verbs.mjs#walk",
+    "approx_loc": 26,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:formatDeparture": {
+    "src": "tools/walk.mjs#formatDeparture",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:currentDeparture": {
+    "src": "tools/walk.mjs#currentDeparture",
+    "approx_loc": 5,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:positionAt": {
+    "src": "tools/walk.mjs#positionAt",
+    "approx_loc": 35,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:publicWalker": {
+    "src": "tools/walk.mjs#publicWalker",
+    "approx_loc": 11,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:fold": {
+    "src": "tools/marks-fold.mjs#fold",
+    "approx_loc": 178,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:loadMarks": {
+    "src": "tools/marks-fold.mjs#loadMarks",
+    "approx_loc": 11,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:placementParent": {
+    "src": "tools/marks-fold.mjs#placementParent",
+    "approx_loc": 12,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:markClass": {
+    "src": "tools/mark-class.mjs#markClass",
+    "approx_loc": 12,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:contains": {
+    "src": "tools/geometry.mjs#contains",
+    "approx_loc": 1,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:waterAt": {
+    "src": "tools/water.mjs#waterAt",
+    "approx_loc": 11,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:crossingAt": {
+    "src": "tools/water.mjs#crossingAt",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:segmentCrossesWater": {
+    "src": "tools/water.mjs#segmentCrossesWater",
+    "approx_loc": 14,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:nearestCrossing": {
+    "src": "tools/water.mjs#nearestCrossing",
+    "approx_loc": 8,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:mountViewer": {
+    "src": "spectator/viewer.mjs#mountViewer",
+    "approx_loc": 1810,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:isEmbodiedMark": {
+    "src": "spectator/viewer.mjs#isEmbodiedMark",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:nearestEmbodiedAncestor": {
+    "src": "spectator/viewer.mjs#nearestEmbodiedAncestor",
+    "approx_loc": 51,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:deriveWalkPreview": {
+    "src": "spectator/viewer.mjs#deriveWalkPreview",
+    "approx_loc": 12,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:world:settlementSweep": {
+    "src": "tools/settlement-sweep.mjs#settlementSweep",
+    "approx_loc": 133,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 1, 2026-08-01"
+  },
+  "code:town:parseFrontmatter": {
+    "src": "tools/envelope.mjs::parseFrontmatter",
+    "approx_loc": 28,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:classify": {
+    "src": "tools/envelope.mjs::classify",
+    "approx_loc": 69,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:alreadyDeliveredRecipient": {
+    "src": "tools/envelope.mjs::alreadyDeliveredRecipient",
+    "approx_loc": 13,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:parseLedgerText": {
+    "src": "tools/envelope.mjs::parseLedgerText",
+    "approx_loc": 41,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:collectHandles": {
+    "src": "tools/envelope.mjs::collectHandles",
+    "approx_loc": 35,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:sha256hex": {
+    "src": "tools/stamp-mint.mjs::sha256hex",
+    "approx_loc": 1,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:deriveMints": {
+    "src": "tools/stamp-mint.mjs::deriveMints",
+    "approx_loc": 41,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:deriveFriendshipMints": {
+    "src": "tools/stamp-mint.mjs::deriveFriendshipMints",
+    "approx_loc": 13,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:deriveTransfers": {
+    "src": "tools/stamp-mint.mjs::deriveTransfers",
+    "approx_loc": 36,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:appendSigned": {
+    "src": "tools/stamp-mint.mjs::appendSigned",
+    "approx_loc": 22,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:foldBalances": {
+    "src": "tools/stamp-mint.mjs::foldBalances",
+    "approx_loc": 11,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:verifyStampLedger": {
+    "src": "tools/stamp-verify.mjs::verifyStampLedger",
+    "approx_loc": 190,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:readBallot": {
+    "src": "tools/ballot.mjs::readBallot",
+    "approx_loc": 6,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:ballotState": {
+    "src": "tools/ballot.mjs::ballotState",
+    "approx_loc": 34,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:tally": {
+    "src": "tools/ballot.mjs::tally",
+    "approx_loc": 24,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:clipApply": {
+    "src": "tools/ballot.mjs::clipApply",
+    "approx_loc": 45,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:closeTopic": {
+    "src": "tools/ballot.mjs::closeTopic",
+    "approx_loc": 24,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:ballotPass": {
+    "src": "tools/ballot-pass.mjs::ballotPass",
+    "approx_loc": 59,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:worldStakeState": {
+    "src": "tools/world-stake.mjs::worldStakeState",
+    "approx_loc": 23,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:deriveWorldMarkWeights": {
+    "src": "tools/world-stake.mjs::deriveWorldMarkWeights",
+    "approx_loc": 38,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:retirementBlocked": {
+    "src": "tools/world-stake.mjs::retirementBlocked",
+    "approx_loc": 4,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:worldStakeApply": {
+    "src": "tools/world-stake.mjs::worldStakeApply",
+    "approx_loc": 29,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:worldUnstakeApply": {
+    "src": "tools/world-stake.mjs::worldUnstakeApply",
+    "approx_loc": 25,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:foldQuestProgress": {
+    "src": "tools/quest-progress.mjs::foldQuestProgress",
+    "approx_loc": 50,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:foldFriendships": {
+    "src": "tools/quest-progress.mjs::foldFriendships",
+    "approx_loc": 27,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:boardForHandle": {
+    "src": "tools/quest-progress.mjs::boardForHandle",
+    "approx_loc": 25,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:foldLeaderboard": {
+    "src": "tools/quest-progress.mjs::foldLeaderboard",
+    "approx_loc": 33,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:town:renderSnapshot": {
+    "src": "tools/quest-progress.mjs::renderSnapshot",
+    "approx_loc": 73,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:parseFrontmatter": {
+    "src": "tools/lib/town.mjs::parseFrontmatter",
+    "approx_loc": 15,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:readTown": {
+    "src": "tools/lib/town.mjs::readTown",
+    "approx_loc": 55,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:parseLedger": {
+    "src": "tools/lib/town.mjs::parseLedger",
+    "approx_loc": 24,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:buildThreads": {
+    "src": "tools/lib/town.mjs::buildThreads",
+    "approx_loc": 49,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:threadTitle": {
+    "src": "tools/lib/ids.mjs::threadTitle",
+    "approx_loc": 3,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:apiGet": {
+    "src": "tools/lib/fetch-town-data.mjs::apiGet",
+    "approx_loc": 21,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:buildStats": {
+    "src": "tools/lib/fetch-town-data.mjs::buildStats",
+    "approx_loc": 35,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:buildOfficeData": {
+    "src": "tools/lib/fetch-town-data.mjs::buildOfficeData",
+    "approx_loc": 60,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:assetName": {
+    "src": "tools/lib/images.mjs::assetName",
+    "approx_loc": 12,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:processImage": {
+    "src": "tools/lib/images.mjs::processImage",
+    "approx_loc": 10,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:ownDir": {
+    "src": "tools/lib/images.mjs::ownDir",
+    "approx_loc": 10,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:byteMirror": {
+    "src": "tools/lib/mirror.mjs::byteMirror",
+    "approx_loc": 8,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:writeIfChanged": {
+    "src": "tools/lib/mirror.mjs::writeIfChanged",
+    "approx_loc": 6,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:worldEngineIsland": {
+    "src": "town/scripts/world-engine-island.mjs::worldEngineIsland",
+    "approx_loc": 30,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:buildAuthorizeUrl": {
+    "src": "src/lib/auth.mjs::buildAuthorizeUrl",
+    "approx_loc": 11,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:parseCallback": {
+    "src": "src/lib/auth.mjs::parseCallback",
+    "approx_loc": 6,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:tokenIsFresh": {
+    "src": "src/lib/auth.mjs::tokenIsFresh",
+    "approx_loc": 4,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:metricsFromLedger": {
+    "src": "src/lib/mail.mjs::metricsFromLedger",
+    "approx_loc": 33,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:filterLetters": {
+    "src": "src/lib/mail.mjs::filterLetters",
+    "approx_loc": 20,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:isOfficeInvolved": {
+    "src": "src/lib/mail.mjs::isOfficeInvolved",
+    "approx_loc": 3,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:mountMyWorldIslands": {
+    "src": "src/lib/my-world.mjs::mountMyWorldIslands",
+    "approx_loc": 105,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:worldStakeAnswer": {
+    "src": "src/lib/my-world.mjs::worldStakeAnswer",
+    "approx_loc": 22,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:md": {
+    "src": "src/lib/pm.mjs::md",
+    "approx_loc": 19,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:excerpt": {
+    "src": "src/lib/pm.mjs::excerpt",
+    "approx_loc": 8,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:site:railSpy": {
+    "src": "src/lib/rail.mjs::railSpy",
+    "approx_loc": 25,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:handleMcp": {
+    "src": "src/mcp.mjs::handleMcp",
+    "approx_loc": 42,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:householdFor": {
+    "src": "src/oauth.mjs::householdFor",
+    "approx_loc": 24,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:oauthLookup": {
+    "src": "src/oauth.mjs::oauthLookup",
+    "approx_loc": 8,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:mintHouseholdKey": {
+    "src": "src/oauth.mjs::mintHouseholdKey",
+    "approx_loc": 8,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:handleOauth": {
+    "src": "src/oauth.mjs::handleOauth",
+    "approx_loc": 197,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:doorstep": {
+    "src": "src/queries.mjs::doorstep",
+    "approx_loc": 42,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:letterList": {
+    "src": "src/queries.mjs::letterList",
+    "approx_loc": 26,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:identityOf": {
+    "src": "src/queries.mjs::identityOf",
+    "approx_loc": 10,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:stampsDetail": {
+    "src": "src/queries.mjs::stampsDetail",
+    "approx_loc": 6,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:enqueueLetter": {
+    "src": "src/write.mjs::enqueueLetter",
+    "approx_loc": 50,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:penCommit": {
+    "src": "src/write.mjs::penCommit",
+    "approx_loc": 13,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:nextCrossing": {
+    "src": "src/write.mjs::nextCrossing",
+    "approx_loc": 7,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:updateHome": {
+    "src": "src/edit.mjs::updateHome",
+    "approx_loc": 29,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:updateWindow": {
+    "src": "src/edit.mjs::updateWindow",
+    "approx_loc": 32,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:doorstepVotes": {
+    "src": "src/votes.mjs::doorstepVotes",
+    "approx_loc": 23,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:stakeViaOffice": {
+    "src": "src/votes.mjs::stakeViaOffice",
+    "approx_loc": 27,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:validateResidencyRequest": {
+    "src": "src/residency.mjs::validateResidencyRequest",
+    "approx_loc": 16,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:requestResidency": {
+    "src": "src/residency.mjs::requestResidency",
+    "approx_loc": 27,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:isPrincipal": {
+    "src": "src/ops.mjs::isPrincipal",
+    "approx_loc": 3,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:giftViaOffice": {
+    "src": "src/ops.mjs::giftViaOffice",
+    "approx_loc": 31,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:worldOrient": {
+    "src": "src/world.mjs::worldOrient",
+    "approx_loc": 16,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:worldStakeRead": {
+    "src": "src/world-stake.mjs::worldStakeRead",
+    "approx_loc": 19,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:keyIdForToken": {
+    "src": "src/bouncer.mjs::keyIdForToken",
+    "approx_loc": 2,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:logAccess": {
+    "src": "src/telemetry.mjs::logAccess",
+    "approx_loc": 9,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  },
+  "code:office:stageWindows": {
+    "src": "deploy/publish-windows.mjs::stageWindows",
+    "approx_loc": 27,
+    "honored": "unverified-draft",
+    "receipt": "seeded by the great convergence stage 2, 2026-08-01"
+  }
+}
