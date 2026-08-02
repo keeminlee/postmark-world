@@ -17,7 +17,7 @@
 // For a nested SITED mark the enclosing mark must GEOMETRICALLY contain it, by
 // the very same `contains` the fold uses. You cannot lie with an edge.
 
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate } from "./marks-fold.mjs";
@@ -146,9 +146,21 @@ for (const rec of marks) {
     }
   }
 
-  // 5. the edge: a mark that carries children must be a container
-  if ((childCount.get(rec.id) ?? 0) > 0 && !CONTAINERS.has(rec.kind))
-    err(rec, `a ${rec.kind} mark cannot contain child marks — only sited/parcel marks do (move the children out)`);
+}
+
+// 5. the edge: children must fit their container — sited/parcel marks contain
+// anything; a predicated mark's children must all be predicated/naming (the
+// continuation law, 2026-08-02: a predicate is its parent continued, so its
+// subtree stays predicates all the way down); naming marks carry none.
+{
+  const kindById = new Map(marks.map((m) => [m.id, m.kind]));
+  for (const rec of marks) {
+    if (rec._error || !rec._parentMarkId) continue;
+    const pk = kindById.get(rec._parentMarkId);
+    if (pk === "naming") err(rec, `a naming mark cannot contain child marks (move this out)`);
+    else if (pk === "predicated" && rec.kind !== "predicated" && rec.kind !== "naming")
+      err(rec, `a ${rec.kind} mark cannot nest under a predicate — a predicate's children must be predicates (the continuation law); geometry needs a geometric parent`);
+  }
 }
 
 // 6. the nesting edge itself — tree = geometry, exactly.
@@ -165,6 +177,21 @@ for (const rec of marks) {
   const expected = placementParent(rec, marks);
   if (actual !== expected)
     err(rec, `directory parent is "${actual ?? "(root)"}", but placementParent is "${expected ?? "(root)"}" — the edge must name the tightest geometric container (re-home the directory)`);
+}
+
+// 7. the one-file law (2026-08-02): the only .md inside the record is a mark's
+// own mark.md (SCHEMA.md at the top level is the grammar's one exception).
+// Anything else must be a full mark in its own directory — everything is a mark.
+{
+  const walk = (dir, depth) => {
+    for (const name of readdirSync(dir)) {
+      const p = join(dir, name);
+      if (statSync(p).isDirectory()) walk(p, depth + 1);
+      else if (/\.md$/i.test(name) && name !== "mark.md" && !(depth === 0 && name === "SCHEMA.md"))
+        findings.push({ sev: "ERROR", file: p.replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/"), msg: `stray .md — the only .md in a mark directory is mark.md; everything else must be its own mark (the one-file law)` });
+    }
+  };
+  walk(MARKS_DIR, 0);
 }
 
 // ---- report (lint.mjs idiom: sort, print, exit non-zero only on ERROR) ----

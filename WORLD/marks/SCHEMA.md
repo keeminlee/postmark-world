@@ -167,6 +167,29 @@ an extent, with child claim-marks nested inside it. The seeding fleet lands them
 from founders' own words after this schema; residents' homes re-home under the
 region that contains them (id unchanged — the ledger doesn't move).
 
+## Amendment — the continuation law (2026-08-02, Keemin-ruled)
+
+- **A predicate is its parent continued.** A predicated mark inherits its
+  parent's extent completely — its locus is the nearest sited/parcel ancestor,
+  whole. Depth adds specificity, never location. (This restores the original
+  definition; the promotion-lifecycle reading — predicates maturing into sited
+  marks by stamp thresholds — is retired. Predicates describe; sited marks
+  place; one never becomes the other.)
+- **Predicates may carry children, and their children must be predicates**
+  (`predicated` or `naming`). A sited/parcel mark never nests under a
+  predicate — geometry needs a geometric parent. Naming marks carry none.
+- **The one-file law.** The only `.md` inside the record is a mark's own
+  `mark.md` (this file, at the top level, is the grammar's one exception).
+  Everything else must be a full mark in its own directory.
+- **`imports:` is reserved, not built** — the ruled design (persisted
+  investigations: marks whose context auto-injects when building on or under
+  the declaring mark) awaits its machinery. Do not author the field yet.
+- **The law lives in the record itself:** `let-there-be-light/the-record` —
+  the conditions of the World as constitution-tier predicates of the root,
+  each clause sized to be quoted whole by the gate that enforces it. This
+  schema remains the enforced spelling; where prose and record disagree, that
+  is a defect to true, not a fork to keep.
+
 ---
 
 *v2 landed 2026-07-22 night (Jetto, on Wright's tasking; Keemin ruled the one-tree
