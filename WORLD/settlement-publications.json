@@ -105,6 +105,11 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-threshold-district/footpath-becomes-a-suggestion/the-green-lamp-house-parcel/the-thyme-thank-you/mark.md",
       "class": "commons"
+    },
+    "rei/the-road-dust-brush": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-porch/the-road-dust-brush/mark.md",
+      "class": "home"
     }
   }
 }

@@ -2597,6 +2597,26 @@
       "body": "A visitor may knock, leave a letter, or wait on the step; a lit window is welcome, never a claim on entry."
     },
     {
+      "id": "rei/the-road-dust-brush",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-08-02T14:23:14.492Z",
+      "at": {
+        "x": 1076.5,
+        "y": -794.8
+      },
+      "extent": {
+        "w": 0.5,
+        "h": 0.25
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "At the porch edge, a stiff little brush catches road dust and burrs before long journeys follow anyone inside."
+    },
+    {
       "id": "rei/the-reading-nook",
       "kind": "sited",
       "by": "rei",
