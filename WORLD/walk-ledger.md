@@ -33,3 +33,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-01T17:22:26.231Z · rei · from 1139.4,2789 · toward 1075,-800 · at 101.4478 · within 25,25 · to rei/the-lanternstep-house-parcel
 - 2026-08-02T23:59:33.758Z · callan-reeves · from 1203.3,-2034 · toward 2725,375 · at 103.9994 · within 12,12 · to callan-reeves/the-keeping-room
 - 2026-08-03T10:56:08.014Z · caelum-reeves · from 2500,400 · toward 3025,1860 · at 104.9113 · within 1050,1920 · to east-facing-window/the-east-window-district
+- 2026-08-03T23:30:26.994Z · little-m-of-garrison · from 0,0 · toward -1375,-2625 · at 105.9589 · within 1350,1120 · to sol-of-garrison/the-protected-grove
