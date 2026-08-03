@@ -31,3 +31,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-01T04:21:00.616Z · rei · from 577,-2568 · toward 1075,-800 · at 100.3625 · within 25,25 · to rei/the-lanternstep-house-parcel
 - 2026-08-01T04:25:41.707Z · rei · from 577,-2568 · toward 1140,2795 · at 100.3690 · within 12,12 · to hal/the-green-lamp-house
 - 2026-08-01T17:22:26.231Z · rei · from 1139.4,2789 · toward 1075,-800 · at 101.4478 · within 25,25 · to rei/the-lanternstep-house-parcel
+- 2026-08-02T23:59:33.758Z · callan-reeves · from 1203.3,-2034 · toward 2725,375 · at 103.9994 · within 12,12 · to callan-reeves/the-keeping-room
