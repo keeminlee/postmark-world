@@ -59,6 +59,20 @@ const num = (v) => typeof v === "number" && Number.isFinite(v);
 const hasGeom = (rec) => rec.at && num(rec.at.x) && num(rec.at.y) && rec.extent && num(rec.extent.w) && num(rec.extent.h);
 
 const marks = loadMarks(MARKS_DIR);
+
+// the gate quotes the law (rung 1, 2026-08-02): a refusal cites the clause of
+// the-town/the-record it enforces — id + body verbatim, so the bounce hands the
+// writer an investigable handle and the exact law, never a paraphrase. The
+// clauses live in the very tree this gate lints; if a cited clause is missing
+// the gate still refuses, and says its own lookup failed (the law never blocks
+// on its own absence).
+const LAW = new Map(marks.map((m) => [m.id, String(m.body ?? "").trim().replace(/\s+/g, " ")]));
+const cite = (clauseId) => {
+  const body = LAW.get(clauseId);
+  return body
+    ? ` — the law: ${clauseId} (a clause of the-town/the-record): "${body}"`
+    : ` — the law: ${clauseId} (clause not found in the record; the gate's law lookup failed)`;
+};
 const byId = new Map();
 const slugsByHousehold = new Map();
 const childCount = new Map();
@@ -71,14 +85,14 @@ for (const rec of marks) {
   if (rec._error) { err(rec, `unreadable mark.md: ${rec._error}`); continue; }
 
   // 1. identity: valid kind, authorship (by), path-safe slug unique per author, tier, date
-  if (!KINDS.has(rec.kind)) { err(rec, `kind must be one of ${[...KINDS].join(" | ")} (got ${JSON.stringify(rec.kind)})`); }
-  if (rec.by == null) err(rec, `by: <author> is required — in the spatial tree (v2) authorship is frontmatter, not the path`);
+  if (!KINDS.has(rec.kind)) { err(rec, `kind must be one of ${[...KINDS].join(" | ")} (got ${JSON.stringify(rec.kind)})${cite("the-town/the-kinds")}`); }
+  if (rec.by == null) err(rec, `by: <author> is required — in the spatial tree (v2) authorship is frontmatter, not the path${cite("the-town/the-own-hand")}`);
   if (!SLUG_RE.test(rec.slug)) err(rec, `slug "${rec.slug}" must be lowercase-hyphenated (it is the directory name and the leaf of the id)`);
-  if (byId.has(rec.id)) err(rec, `duplicate id "${rec.id}" — a leaf slug must be unique per author (by)`);
+  if (byId.has(rec.id)) err(rec, `duplicate id "${rec.id}" — a leaf slug must be unique per author (by)${cite("the-town/the-own-hand")}`);
   byId.set(rec.id, rec);
   // tier: valid, and constitution belongs to the town alone
   if (!TIERS.has(rec.tier)) err(rec, `tier must be one of ${[...TIERS].join(" | ")} (got ${JSON.stringify(rec.tier)})`);
-  if (rec.tier === "constitution" && rec.by !== TOWN) err(rec, `tier: constitution is the town's — only by: ${TOWN} may claim it (a market mark cannot bind without stamps)`);
+  if (rec.tier === "constitution" && rec.by !== TOWN) err(rec, `tier: constitution is the town's — only by: ${TOWN} may claim it (a market mark cannot bind without stamps)${cite("the-town/the-tiers")}`);
   if (!rec.date || !isValidMarkDate(rec.date)) warn(rec, `date should be YYYY-MM-DD or a full ISO 8601 datetime (got ${JSON.stringify(rec.date)})`);
 
   // 2. stray legacy fields the tree no longer owns (authorship is `by:` now)
@@ -91,7 +105,7 @@ for (const rec of marks) {
   // 3. body: present, present-tense, and short (the ruling's 150-char cap)
   const bodyLen = [...String(rec.body ?? "").trim()].length;
   if (bodyLen === 0) warn(rec, `empty body — a mark is an observation; give it one line`);
-  else if (bodyLen > BODY_MAX) err(rec, `body is ${bodyLen} chars; the cap is ${BODY_MAX} (MARKS.md 07-22 ruling)`);
+  else if (bodyLen > BODY_MAX) err(rec, `body is ${bodyLen} chars; the cap is ${BODY_MAX} (MARKS.md 07-22 ruling)${cite("the-town/the-one-claim")}`);
 
   // 3b. provenance: office/fleet pre-marks translate a resident's OWN words, so
   // they must cite the source and quote it (MARKS.md membrane; fleet contract).
@@ -115,8 +129,8 @@ for (const rec of marks) {
 
   // 4. kind-specific shape
   if (rec.kind === "sited" || rec.kind === "parcel") {
-    if (rec.kind === "sited" && !hasGeom(rec)) err(rec, `sited marks need at {x,y} and extent {w,h} in grid meters`);
-    if (rec.kind === "parcel" && rec.at == null) err(rec, `parcel marks need at {x,y} (extent defaults to 25x25)`);
+    if (rec.kind === "sited" && !hasGeom(rec)) err(rec, `sited marks need at {x,y} and extent {w,h} in grid meters${cite("the-town/the-kinds")}`);
+    if (rec.kind === "parcel" && rec.at == null) err(rec, `parcel marks need at {x,y} (extent defaults to 25x25)${cite("the-town/the-kinds")}`);
     if (rec.slot !== undefined || rec.value !== undefined) err(rec, `${rec.kind} marks carry no slot/value (those are for predicated/naming)`);
     if (rec._explicitParent) err(rec, `${rec.kind} marks never declare a parent — containment is computed from geometry, not authored`);
     // 4b. claim-honesty for a points: ring (SCHEMA v2): the ring must be a real
@@ -128,8 +142,8 @@ for (const rec of marks) {
       else if (!ringMatchesClaim(rec)) err(rec, `the points: ring's bounding box must equal the mark's at/extent claim — the claim IS the ring's bbox (SCHEMA v2)`);
     }
   } else if (rec.kind === "predicated" || rec.kind === "naming") {
-    if (rec.at !== undefined || rec.extent !== undefined) err(rec, `${rec.kind} marks carry no at/extent — they take their locus from their parent`);
-    if (rec.kind === "predicated" && (rec.slot === undefined || rec.value === undefined)) err(rec, `predicated marks need slot and value`);
+    if (rec.at !== undefined || rec.extent !== undefined) err(rec, `${rec.kind} marks carry no at/extent — they take their locus from their parent${cite("the-town/the-continuation")}`);
+    if (rec.kind === "predicated" && (rec.slot === undefined || rec.value === undefined)) err(rec, `predicated marks need slot and value${cite("the-town/the-kinds")}`);
     if (rec.kind === "naming" && rec.value === undefined) err(rec, `naming marks need value (the name); slot is implicitly "name"`);
     if (rec.kind === "naming" && rec.slot !== undefined && rec.slot !== "name") warn(rec, `naming marks use slot "name" (or omit it); got "${rec.slot}"`);
     // parent source: nested (implicit) XOR explicit terrain — exactly one
@@ -157,9 +171,9 @@ for (const rec of marks) {
   for (const rec of marks) {
     if (rec._error || !rec._parentMarkId) continue;
     const pk = kindById.get(rec._parentMarkId);
-    if (pk === "naming") err(rec, `a naming mark cannot contain child marks (move this out)`);
+    if (pk === "naming") err(rec, `a naming mark cannot contain child marks (move this out)${cite("the-town/the-continuation")}`);
     else if (pk === "predicated" && rec.kind !== "predicated" && rec.kind !== "naming")
-      err(rec, `a ${rec.kind} mark cannot nest under a predicate — a predicate's children must be predicates (the continuation law); geometry needs a geometric parent`);
+      err(rec, `a ${rec.kind} mark cannot nest under a predicate — a predicate's children must be predicates (the continuation law); geometry needs a geometric parent${cite("the-town/the-continuation")}`);
   }
 }
 
@@ -176,7 +190,7 @@ for (const rec of marks) {
   const actual = rec._parentMarkId === WORLD_ROOT ? null : rec._parentMarkId ?? null;
   const expected = placementParent(rec, marks);
   if (actual !== expected)
-    err(rec, `directory parent is "${actual ?? "(root)"}", but placementParent is "${expected ?? "(root)"}" — the edge must name the tightest geometric container (re-home the directory)`);
+    err(rec, `directory parent is "${actual ?? "(root)"}", but placementParent is "${expected ?? "(root)"}" — the edge must name the tightest geometric container (re-home the directory)${cite("the-town/the-gate")}`);
 }
 
 // 7. the one-file law (2026-08-02): the only .md inside the record is a mark's
@@ -188,7 +202,7 @@ for (const rec of marks) {
       const p = join(dir, name);
       if (statSync(p).isDirectory()) walk(p, depth + 1);
       else if (/\.md$/i.test(name) && name !== "mark.md" && !(depth === 0 && name === "SCHEMA.md"))
-        findings.push({ sev: "ERROR", file: p.replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/"), msg: `stray .md — the only .md in a mark directory is mark.md; everything else must be its own mark (the one-file law)` });
+        findings.push({ sev: "ERROR", file: p.replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/"), msg: `stray .md — the only .md in a mark directory is mark.md; everything else must be its own mark (the one-file law)${cite("the-town/the-one-file")}` });
     }
   };
   walk(MARKS_DIR, 0);
