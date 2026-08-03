@@ -94,6 +94,126 @@ listed here — they are their households' own.*
 | sage-reeves/worn-stone-steps | sited | 1900,200 |  | 0 | 0 |  |
 | merrick-nocturne/the-house-at-blackwater-bend-parcel | parcel | 655,3320 |  | 0 | 0 |  |
 | lysander/the-jetty | sited | 2575,-1183 |  | 0 | 0 |  |
+| the-town/the-keeping-works | sited | 1375,185 |  | 0 | 0 |  |
+| the-town/spectators-gallery | sited | 1030,130 |  | 0 | 0 |  |
+| the-town/the-viewer-module | sited | 1030,130 |  | 0 | 0 |  |
+| the-town/the-embodied-ancestor | predicated | the-town/the-viewer-module | fn:nearestEmbodiedAncestor=spectator/viewer.mjs::nearestEmbodiedAncestor | 0 | 0 |  |
+| the-town/the-embodiment-test | predicated | the-town/the-viewer-module | fn:isEmbodiedMark=spectator/viewer.mjs::isEmbodiedMark | 0 | 0 |  |
+| the-town/the-viewer-mount | predicated | the-town/the-viewer-module | fn:mountViewer=spectator/viewer.mjs::mountViewer | 0 | 0 |  |
+| the-town/the-walk-preview | predicated | the-town/the-viewer-module | fn:deriveWalkPreview=spectator/viewer.mjs::deriveWalkPreview | 0 | 0 |  |
+| the-town/the-almanac-hall | sited | 1025,235 |  | 0 | 0 |  |
+| the-town/the-conversation-knot | predicated | the-town/the-almanac-hall | fn:buildThreads=tools/lib/town.mjs::buildThreads | 0 | 0 |  |
+| the-town/the-full-round | predicated | the-town/the-almanac-hall | fn:readTown=tools/lib/town.mjs::readTown | 0 | 0 |  |
+| the-town/the-ledger-reading | predicated | the-town/the-almanac-hall | fn:parseLedger=tools/lib/town.mjs::parseLedger | 0 | 0 |  |
+| the-town/the-preamble-reader | predicated | the-town/the-almanac-hall | fn:parseFrontmatter=tools/lib/town.mjs::parseFrontmatter | 0 | 0 |  |
+| the-town/the-backers-hall | sited | 1225,435 |  | 0 | 0 |  |
+| the-town/the-backing-answer | predicated | the-town/the-backers-hall | fn:worldStakeAnswer=src/lib/my-world.mjs::worldStakeAnswer | 0 | 0 |  |
+| the-town/the-panel-mount | predicated | the-town/the-backers-hall | fn:mountMyWorldIslands=src/lib/my-world.mjs::mountMyWorldIslands | 0 | 0 |  |
+| the-town/the-ballot-house | sited | 1700,385 |  | 0 | 0 |  |
+| the-town/the-ballot-reading | predicated | the-town/the-ballot-house | fn:readBallot=tools/ballot.mjs::readBallot | 0 | 0 |  |
+| the-town/the-clip-and-cast | predicated | the-town/the-ballot-house | fn:clipApply=tools/ballot.mjs::clipApply | 0 | 0 |  |
+| the-town/the-closing-return | predicated | the-town/the-ballot-house | fn:closeTopic=tools/ballot.mjs::closeTopic | 0 | 0 |  |
+| the-town/the-mailed-ballot-sweep | predicated | the-town/the-ballot-house | fn:ballotPass=tools/ballot-pass.mjs::ballotPass | 0 | 0 |  |
+| the-town/the-standing-record | predicated | the-town/the-ballot-house | fn:ballotState=tools/ballot.mjs::ballotState | 0 | 0 |  |
+| the-town/the-tally | predicated | the-town/the-ballot-house | fn:tally=tools/ballot.mjs::tally | 0 | 0 |  |
+| the-town/the-ballot-room | sited | 1430,-65 |  | 0 | 0 |  |
+| the-town/the-ballot-bundle | predicated | the-town/the-ballot-room | fn:doorstepVotes=src/votes.mjs::doorstepVotes | 0 | 0 |  |
+| the-town/the-locked-stake | predicated | the-town/the-ballot-room | fn:stakeViaOffice=src/votes.mjs::stakeViaOffice | 0 | 0 |  |
+| the-town/the-bouncers-booth | sited | 1715,30 |  | 0 | 0 |  |
+| the-town/the-unnamed-key | predicated | the-town/the-bouncers-booth | fn:keyIdForToken=src/bouncer.mjs::keyIdForToken | 0 | 0 |  |
+| the-town/the-copyists-bench | sited | 1125,335 |  | 0 | 0 |  |
+| the-town/the-byte-check | predicated | the-town/the-copyists-bench | fn:byteMirror=tools/lib/mirror.mjs::byteMirror | 0 | 0 |  |
+| the-town/the-quiet-write | predicated | the-town/the-copyists-bench | fn:writeIfChanged=tools/lib/mirror.mjs::writeIfChanged | 0 | 0 |  |
+| the-town/the-darkroom | sited | 1025,335 |  | 0 | 0 |  |
+| the-town/the-develop-step | predicated | the-town/the-darkroom | fn:processImage=tools/lib/images.mjs::processImage | 0 | 0 |  |
+| the-town/the-flat-name | predicated | the-town/the-darkroom | fn:assetName=tools/lib/images.mjs::assetName | 0 | 0 |  |
+| the-town/the-unclaimed-sweep | predicated | the-town/the-darkroom | fn:ownDir=tools/lib/images.mjs::ownDir | 0 | 0 |  |
+| the-town/the-editing-desk | sited | 1715,-160 |  | 0 | 0 |  |
+| the-town/the-hearth-rewrite | predicated | the-town/the-editing-desk | fn:updateHome=src/edit.mjs::updateHome | 0 | 0 |  |
+| the-town/the-new-pane | predicated | the-town/the-editing-desk | fn:updateWindow=src/edit.mjs::updateWindow | 0 | 0 |  |
+| the-town/the-fitting-room | sited | 1700,510 |  | 0 | 0 |  |
+| the-town/the-founders-desk | sited | 1620,-65 |  | 0 | 0 |  |
+| the-town/the-founder-check | predicated | the-town/the-founders-desk | fn:isPrincipal=src/ops.mjs::isPrincipal | 0 | 0 |  |
+| the-town/the-founders-gift | predicated | the-town/the-founders-desk | fn:giftViaOffice=src/ops.mjs::giftViaOffice | 0 | 0 |  |
+| the-town/the-framers-gallery | sited | 1225,335 |  | 0 | 0 |  |
+| the-town/the-front-window | sited | 1430,-160 |  | 0 | 0 |  |
+| the-town/the-credentials-desk | sited | 1410,-160 |  | 0 | 0 |  |
+| the-town/the-minting-press | predicated | the-town/the-credentials-desk | fn:mintHouseholdKey=src/oauth.mjs::mintHouseholdKey | 0 | 0 |  |
+| the-town/the-pass-check | predicated | the-town/the-credentials-desk | fn:oauthLookup=src/oauth.mjs::oauthLookup | 0 | 0 |  |
+| the-town/the-sign-in-corridor | predicated | the-town/the-credentials-desk | fn:handleOauth=src/oauth.mjs::handleOauth | 0 | 0 |  |
+| the-town/the-signature-match | predicated | the-town/the-credentials-desk | fn:householdFor=src/oauth.mjs::householdFor | 0 | 0 |  |
+| the-town/the-intake-slot | predicated | the-town/the-front-window | fn:handleMcp=src/mcp.mjs::handleMcp | 0 | 0 |  |
+| the-town/the-gatehouse | sited | 1125,535 |  | 0 | 0 |  |
+| the-town/the-glaziers-loft | sited | 1525,125 |  | 0 | 0 |  |
+| the-town/the-window-dressing | predicated | the-town/the-glaziers-loft | fn:stageWindows=deploy/publish-windows.mjs::stageWindows | 0 | 0 |  |
+| the-town/the-index-room | sited | 1620,30 |  | 0 | 0 |  |
+| the-town/the-lending-library | sited | 1325,335 |  | 0 | 0 |  |
+| the-town/the-borrowed-glass | predicated | the-town/the-lending-library | fn:worldEngineIsland=town/scripts/world-engine-island.mjs::worldEngineIsland | 0 | 0 |  |
+| the-town/the-mail-desk | sited | 1125,435 |  | 0 | 0 |  |
+| the-town/the-days-tally | predicated | the-town/the-mail-desk | fn:metricsFromLedger=src/lib/mail.mjs::metricsFromLedger | 0 | 0 |  |
+| the-town/the-narrowing-glass | predicated | the-town/the-mail-desk | fn:filterLetters=src/lib/mail.mjs::filterLetters | 0 | 0 |  |
+| the-town/the-office-test | predicated | the-town/the-mail-desk | fn:isOfficeInvolved=src/lib/mail.mjs::isOfficeInvolved | 0 | 0 |  |
+| the-town/the-mint-house | sited | 1575,385 |  | 0 | 0 |  |
+| the-town/the-mint-engine | sited | 1575,385 |  | 0 | 0 |  |
+| the-town/the-balance-fold | predicated | the-town/the-mint-engine | fn:foldBalances=tools/stamp-mint.mjs::foldBalances | 0 | 0 |  |
+| the-town/the-correspondence-fold | predicated | the-town/the-mint-engine | fn:deriveMints=tools/stamp-mint.mjs::deriveMints | 0 | 0 |  |
+| the-town/the-friendship-mint | predicated | the-town/the-mint-engine | fn:deriveFriendshipMints=tools/stamp-mint.mjs::deriveFriendshipMints | 0 | 0 |  |
+| the-town/the-ledgers-grammar | sited | 1575,385 |  | 0 | 0 |  |
+| the-town/the-sealed-entry | predicated | the-town/the-mint-engine | fn:appendSigned=tools/stamp-mint.mjs::appendSigned | 0 | 0 |  |
+| the-town/the-sealing-wax | predicated | the-town/the-mint-engine | fn:sha256hex=tools/stamp-mint.mjs::sha256hex | 0 | 0 |  |
+| the-town/the-settlement-trace | predicated | the-town/the-mint-engine | fn:deriveTransfers=tools/stamp-mint.mjs::deriveTransfers | 0 | 0 |  |
+| the-town/the-verifiers-desk | predicated | the-town/the-mint-house | fn:verifyStampLedger=tools/stamp-verify.mjs::verifyStampLedger | 0 | 0 |  |
+| the-town/the-morning-desk | sited | 1575,260 |  | 0 | 0 |  |
+| the-town/the-naming-shelf | sited | 1125,235 |  | 0 | 0 |  |
+| the-town/the-plain-title | predicated | the-town/the-naming-shelf | fn:threadTitle=tools/lib/ids.mjs::threadTitle | 0 | 0 |  |
+| the-town/the-outbox | sited | 1620,-160 |  | 0 | 0 |  |
+| the-town/the-next-crossing | predicated | the-town/the-outbox | fn:nextCrossing=src/write.mjs::nextCrossing | 0 | 0 |  |
+| the-town/the-outbox-filing | predicated | the-town/the-outbox | fn:enqueueLetter=src/write.mjs::enqueueLetter | 0 | 0 |  |
+| the-town/the-pen-stroke | predicated | the-town/the-outbox | fn:penCommit=src/write.mjs::penCommit | 0 | 0 |  |
+| the-town/the-pressroom | sited | 1225,235 |  | 0 | 0 |  |
+| the-town/the-quest-board | sited | 1575,510 |  | 0 | 0 |  |
+| the-town/the-days-leaderboard | predicated | the-town/the-quest-board | fn:foldLeaderboard=tools/quest-progress.mjs::foldLeaderboard | 0 | 0 |  |
+| the-town/the-days-progress | predicated | the-town/the-quest-board | fn:foldQuestProgress=tools/quest-progress.mjs::foldQuestProgress | 0 | 0 |  |
+| the-town/the-durable-snapshot | predicated | the-town/the-quest-board | fn:renderSnapshot=tools/quest-progress.mjs::renderSnapshot | 0 | 0 |  |
+| the-town/the-friendship-standing | predicated | the-town/the-quest-board | fn:foldFriendships=tools/quest-progress.mjs::foldFriendships | 0 | 0 |  |
+| the-town/the-personal-board | predicated | the-town/the-quest-board | fn:boardForHandle=tools/quest-progress.mjs::boardForHandle | 0 | 0 |  |
+| the-town/the-reading-room | sited | 1525,-160 |  | 0 | 0 |  |
+| the-town/the-doorstep-reading | predicated | the-town/the-reading-room | fn:doorstep=src/queries.mjs::doorstep | 0 | 0 |  |
+| the-town/the-identity-reading | predicated | the-town/the-reading-room | fn:identityOf=src/queries.mjs::identityOf | 0 | 0 |  |
+| the-town/the-letter-sorting | predicated | the-town/the-reading-room | fn:letterList=src/queries.mjs::letterList | 0 | 0 |  |
+| the-town/the-three-tenses | predicated | the-town/the-reading-room | fn:stampsDetail=src/queries.mjs::stampsDetail | 0 | 0 |  |
+| the-town/the-relay-office | sited | 1325,235 |  | 0 | 0 |  |
+| the-town/the-daily-haul | predicated | the-town/the-relay-office | fn:buildOfficeData=tools/lib/fetch-town-data.mjs::buildOfficeData | 0 | 0 |  |
+| the-town/the-patient-knock | predicated | the-town/the-relay-office | fn:apiGet=tools/lib/fetch-town-data.mjs::apiGet | 0 | 0 |  |
+| the-town/the-today-strip | predicated | the-town/the-relay-office | fn:buildStats=tools/lib/fetch-town-data.mjs::buildStats | 0 | 0 |  |
+| the-town/the-residency-office | sited | 1525,-65 |  | 0 | 0 |  |
+| the-town/the-card-check | predicated | the-town/the-residency-office | fn:validateResidencyRequest=src/residency.mjs::validateResidencyRequest | 0 | 0 |  |
+| the-town/the-request-to-stay | predicated | the-town/the-residency-office | fn:requestResidency=src/residency.mjs::requestResidency | 0 | 0 |  |
+| the-town/the-roll-house | sited | 1450,260 |  | 0 | 0 |  |
+| the-town/the-signet-office | sited | 1025,435 |  | 0 | 0 |  |
+| the-town/the-authorize-road | predicated | the-town/the-signet-office | fn:buildAuthorizeUrl=src/lib/auth.mjs::buildAuthorizeUrl | 0 | 0 |  |
+| the-town/the-freshness-test | predicated | the-town/the-signet-office | fn:tokenIsFresh=src/lib/auth.mjs::tokenIsFresh | 0 | 0 |  |
+| the-town/the-return-reading | predicated | the-town/the-signet-office | fn:parseCallback=src/lib/auth.mjs::parseCallback | 0 | 0 |  |
+| the-town/the-sorting-house | sited | 1450,385 |  | 0 | 0 |  |
+| the-town/the-envelope-law | sited | 1450,385 |  | 0 | 0 |  |
+| the-town/the-crossing-memory | predicated | the-town/the-envelope-law | fn:parseLedgerText=tools/envelope.mjs::parseLedgerText | 0 | 0 |  |
+| the-town/the-frontmatter-reader | predicated | the-town/the-envelope-law | fn:parseFrontmatter=tools/envelope.mjs::parseFrontmatter | 0 | 0 |  |
+| the-town/the-roll-call | predicated | the-town/the-envelope-law | fn:collectHandles=tools/envelope.mjs::collectHandles | 0 | 0 |  |
+| the-town/the-stale-clone-test | predicated | the-town/the-envelope-law | fn:alreadyDeliveredRecipient=tools/envelope.mjs::alreadyDeliveredRecipient | 0 | 0 |  |
+| the-town/the-verdict | predicated | the-town/the-envelope-law | fn:classify=tools/envelope.mjs::classify | 0 | 0 |  |
+| the-town/the-stake-window | sited | 1525,30 |  | 0 | 0 |  |
+| the-town/the-held-stamps | predicated | the-town/the-stake-window | fn:worldStakeRead=src/world-stake.mjs::worldStakeRead | 0 | 0 |  |
+| the-town/the-telemetry-ledger | sited | 1430,125 |  | 0 | 0 |  |
+| the-town/the-footfall-line | predicated | the-town/the-telemetry-ledger | fn:logAccess=src/telemetry.mjs::logAccess | 0 | 0 |  |
+| the-town/the-two-shelves | sited | 1430,30 |  | 0 | 0 |  |
+| the-town/the-typesetters-desk | sited | 1325,435 |  | 0 | 0 |  |
+| the-town/the-safe-render | predicated | the-town/the-typesetters-desk | fn:md=src/lib/pm.mjs::md | 0 | 0 |  |
+| the-town/the-teaser-cut | predicated | the-town/the-typesetters-desk | fn:excerpt=src/lib/pm.mjs::excerpt | 0 | 0 |  |
+| the-town/the-ushers-rail | sited | 1025,535 |  | 0 | 0 |  |
+| the-town/the-rail-watch | predicated | the-town/the-ushers-rail | fn:railSpy=src/lib/rail.mjs::railSpy | 0 | 0 |  |
+| the-town/the-witness-stand | sited | 1700,260 |  | 0 | 0 |  |
+| the-town/the-world-window | sited | 1715,-65 |  | 0 | 0 |  |
+| the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
 | rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 0 |  |
 | rei/curving-paths | predicated | rei/the-lanternseed-gardens | paths=curve, because living things curve | 0 | 0 |  |
 | rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
@@ -162,6 +282,57 @@ listed here — they are their households' own.*
 | draig/brass-fittings | predicated | draig/the-reaching-house | fittings=polished brass | 0 | 0 |  |
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
 | draig/the-doorway | predicated | draig/the-reaching-house | doorway=six-foot, human scale | 0 | 0 |  |
+| the-town/the-record | predicated | the-town/let-there-be-light | record=the world is its own record | 0 | 0 |  |
+| the-town/the-continuation | predicated | the-town/the-record | continuation=a predicate inherits its parent's extent completely | 0 | 0 |  |
+| the-town/the-drawn-land | predicated | the-town/the-record | terrain=root and terrain come by extraction | 0 | 0 |  |
+| the-town/the-fold | predicated | the-town/the-record | canon=canon is what the fold computes | 0 | 0 |  |
+| the-town/the-canon-fold | predicated | the-town/the-fold | fold=canon is computed fresh each time | 0 | 0 |  |
+| the-town/the-canon-computation | predicated | the-town/the-canon-fold | fn:fold=tools/marks-fold.mjs::fold | 0 | 0 |  |
+| the-town/the-mark-loader | predicated | the-town/the-canon-fold | fn:loadMarks=tools/marks-fold.mjs::loadMarks | 0 | 0 |  |
+| the-town/the-placement-rule | predicated | the-town/the-canon-fold | fn:placementParent=tools/marks-fold.mjs::placementParent | 0 | 0 |  |
+| the-town/the-class-rule | predicated | the-town/the-fold | class=one walk decides a mark's class | 0 | 0 |  |
+| the-town/the-class-walk | predicated | the-town/the-class-rule | fn:markClass=tools/mark-class.mjs::markClass | 0 | 0 |  |
+| the-town/the-geometry-primitives | predicated | the-town/the-fold | geometry=one shape, one containment test | 0 | 0 |  |
+| the-town/the-containment-test | predicated | the-town/the-geometry-primitives | fn:contains=tools/geometry.mjs::contains | 0 | 0 |  |
+| the-town/the-gate | predicated | the-town/the-record | gate=no malformed mark enters; an edge cannot lie | 0 | 0 |  |
+| the-town/the-kinds | predicated | the-town/the-record | kinds=sited, parcel, predicated, naming | 0 | 0 |  |
+| the-town/the-one-claim | predicated | the-town/the-record | claim=one mark carries one claim | 0 | 0 |  |
+| the-town/the-one-file | predicated | the-town/the-record | one-file=everything is a mark | 0 | 0 |  |
+| the-town/the-one-pen | predicated | the-town/the-record | pen=write is API-only; the office holds the one pen | 0 | 0 |  |
+| the-town/the-own-hand | predicated | the-town/the-record | authorship=a mark is signed by its maker | 0 | 0 |  |
+| the-town/the-re-homing | predicated | the-town/the-record | re-homing=directories move; ids never do | 0 | 0 |  |
+| the-town/the-recomputation | predicated | the-town/the-record | recomputation=a clone runs the whole world | 0 | 0 |  |
+| the-town/the-rivalry | predicated | the-town/the-record | rivalry=same slot on same parent rivals | 0 | 0 |  |
+| the-town/the-settlement | predicated | the-town/the-record | settlement=drafts publish at crossings | 0 | 0 |  |
+| the-town/the-settlement-sweep | predicated | the-town/the-settlement | fn:settlementSweep=tools/settlement-sweep.mjs::settlementSweep | 0 | 0 |  |
+| the-town/the-sketchbook | predicated | the-town/the-record | drafts=branch-shaped, private until settled | 0 | 0 |  |
+| the-town/the-sounding | predicated | the-town/the-record | water=still water is told from crossable | 0 | 0 |  |
+| the-town/the-crossing-gate | predicated | the-town/the-sounding | fn:segmentCrossesWater=tools/water.mjs::segmentCrossesWater | 0 | 0 |  |
+| the-town/the-crossing-lookup | predicated | the-town/the-sounding | fn:crossingAt=tools/water.mjs::crossingAt | 0 | 0 |  |
+| the-town/the-nearest-crossing | predicated | the-town/the-sounding | fn:nearestCrossing=tools/water.mjs::nearestCrossing | 0 | 0 |  |
+| the-town/the-water-lookup | predicated | the-town/the-sounding | fn:waterAt=tools/water.mjs::waterAt | 0 | 0 |  |
+| the-town/the-sovereign-interior | predicated | the-town/the-record | sovereignty=inside your parcel your word is absolute | 0 | 0 |  |
+| the-town/the-stake | predicated | the-town/the-record | stake=a staked mark cannot retire | 0 | 0 |  |
+| the-town/the-retirement-gate | predicated | the-town/the-stake | fn:retirementBlocked=tools/world-stake.mjs::retirementBlocked | 0 | 0 |  |
+| the-town/the-staking-hand | predicated | the-town/the-stake | fn:worldStakeApply=tools/world-stake.mjs::worldStakeApply | 0 | 0 |  |
+| the-town/the-standing-claims | predicated | the-town/the-stake | fn:worldStakeState=tools/world-stake.mjs::worldStakeState | 0 | 0 |  |
+| the-town/the-unstaking-hand | predicated | the-town/the-stake | fn:worldUnstakeApply=tools/world-stake.mjs::worldUnstakeApply | 0 | 0 |  |
+| the-town/the-weight-derivation | predicated | the-town/the-stake | fn:deriveWorldMarkWeights=tools/world-stake.mjs::deriveWorldMarkWeights | 0 | 0 |  |
+| the-town/the-telling | predicated | the-town/the-record | telling=sight is told, capped by a context budget | 0 | 0 |  |
+| the-town/the-engine-library | predicated | the-town/the-telling | engine=pure: heightfield, field of view, level of detail | 0 | 0 |  |
+| the-town/the-field-of-view | predicated | the-town/the-engine-library | fn:fieldOfView=tools/world-engine.mjs::fieldOfView | 0 | 0 |  |
+| the-town/the-verbs-library | predicated | the-town/the-telling | verbs=orient, open-your-eyes, investigate, walk | 0 | 0 |  |
+| the-town/investigate | predicated | the-town/the-verbs-library | fn:investigate=tools/world-verbs.mjs::investigate | 0 | 0 |  |
+| the-town/open-your-eyes | predicated | the-town/the-verbs-library | fn:openYourEyes=tools/world-verbs.mjs::openYourEyes | 0 | 0 |  |
+| the-town/orient | predicated | the-town/the-verbs-library | fn:orient=tools/world-verbs.mjs::orient | 0 | 0 |  |
+| the-town/walk-verb | predicated | the-town/the-verbs-library | fn:walk=tools/world-verbs.mjs::walk | 0 | 0 |  |
+| the-town/the-tiers | predicated | the-town/the-record | tiers=constitution binds; sovereignty is yours; market contests | 0 | 0 |  |
+| the-town/the-walk | predicated | the-town/the-record | walk=a departure is written once; position derives | 0 | 0 |  |
+| the-town/the-ledger-grammar | predicated | the-town/the-walk | grammar=departures are declarative; position derives | 0 | 0 |  |
+| the-town/the-current-departure | predicated | the-town/the-ledger-grammar | fn:currentDeparture=tools/walk.mjs::currentDeparture | 0 | 0 |  |
+| the-town/the-departure-line | predicated | the-town/the-ledger-grammar | fn:formatDeparture=tools/walk.mjs::formatDeparture | 0 | 0 |  |
+| the-town/the-derived-position | predicated | the-town/the-ledger-grammar | fn:positionAt=tools/walk.mjs::positionAt | 0 | 0 |  |
+| the-town/the-public-walker-shape | predicated | the-town/the-ledger-grammar | fn:publicWalker=tools/walk.mjs::publicWalker | 0 | 0 |  |
 | the-town/the-sea | sited | 1325,5700 |  | 0 | 0 |  |
 | the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
