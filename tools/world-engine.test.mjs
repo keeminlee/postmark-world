@@ -138,7 +138,7 @@ test("household cluster collapses at distance and investigate re-opens it", () =
   assert.ok(inv.alongside.length >= rep.clusteredCount, "investigate re-opens the collapsed cluster");
 });
 
-test("investigate sorts a parent into `within`, never into `alongside`", () => {
+test("investigate sorts a parent into `parents`, never into `alongside`", () => {
   // The mis-sort this guards: a parent is in its household's near-cluster and is
   // not a child of the target, so a classifier that excludes only descendants
   // let a child's own house be reported as its neighbour.
@@ -150,20 +150,20 @@ test("investigate sorts a parent into `within`, never into `alongside`", () => {
 
   const inv = investigate("hh/the-room", w, { budget: 12 });
   const ids = (a) => a.map((m) => m.id);
-  assert.deepEqual(ids(inv.within), ["hh/the-house"], "the container is `within`");
+  assert.deepEqual(ids(inv.parents), ["hh/the-house"], "the container is in `parents`");
   assert.ok(!ids(inv.alongside).includes("hh/the-house"), "and is NOT alongside");
   assert.deepEqual(ids(inv.alongside), ["hh/next-door"], "a true neighbour keeps its seat");
-  assert.deepEqual(ids(inv.inside), ["hh/the-shelf"], "children are unaffected");
+  assert.deepEqual(ids(inv.children), ["hh/the-shelf"], "children are unaffected");
 
   // the WHOLE chain leaves alongside, not just the direct parent
   const deep = investigate("hh/the-shelf", w, { budget: 12 });
-  assert.deepEqual(ids(deep.within), ["hh/the-room", "hh/the-house"], "nearest container first, grandparent too");
+  assert.deepEqual(ids(deep.parents), ["hh/the-room", "hh/the-house"], "nearest container first, grandparent too");
   for (const a of ids(deep.alongside)) assert.ok(a !== "hh/the-room" && a !== "hh/the-house", "no ancestor is alongside");
 
   // the world-root frames everything, so it is never named as context
   const root = { id: "hh/the-frame", kind: "sited", household: "hh", at: { x: 0, y: 0 }, extent: { w: DIALS.world_scale_extent_m, h: DIALS.world_scale_extent_m }, body: "the frame" };
   const wr = worldOf([root, house, room, shelf, nextdoor]);
-  assert.ok(!ids(investigate("hh/the-room", wr, { budget: 12 }).within).includes("hh/the-frame"), "the world-root is not `within`");
+  assert.ok(!ids(investigate("hh/the-room", wr, { budget: 12 }).parents).includes("hh/the-frame"), "the world-root is never a parent");
 });
 
 test("ancestor exclusion happens before the budget slice, so it costs no alongside seat", () => {

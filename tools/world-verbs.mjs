@@ -104,30 +104,34 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
   }
   const predicates = world.marks.filter((m) => (m.kind === "predicated" || m.kind === "naming") && m.parent === markId)
     .slice(0, budget).map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, stamps: m.weight ?? 0, body: m.body }));
-  const inside = childrenByGeometry(target, world).slice(0, budget)
+  const children = childrenByGeometry(target, world).slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, body: firstLine(m.body) }));
-  // within: what the target sits INSIDE, nearest container first. Its own
-  // relation, and the fix for a real mis-sort — a parent is in the household's
-  // near-cluster and is not a child of the target, so before this it fell
-  // through into `alongside` and a child's own house was reported as its
-  // neighbour. Excluding ancestors without naming them would only have hidden
-  // the relation; carrying it makes upward context first-class.
-  const within = ancestorsByGeometry(target, world)
+  // parents: what the target sits inside, nearest container first (renamed from
+  // `within` 2026-08-02 — within/children read as near-synonyms and the pair was
+  // a reader trap; parents[0] is the direct container). Its own relation, and
+  // the fix for a real mis-sort — a parent is in the household's near-cluster
+  // and is not a child of the target, so before this it fell through into
+  // `alongside` and a child's own house was reported as its neighbour.
+  // Excluding ancestors without naming them would only have hidden the
+  // relation; carrying it makes upward context first-class.
+  const parents = ancestorsByGeometry(target, world)
     .map((m) => ({ id: m.id, kind: m.kind, household: m.household, at: m.at, stamps: m.weight ?? 0, body: firstLine(m.body) }));
   // alongside: the rest of this household's cluster near the target — the marks
   // the FOV collapsed at distance ("+N more of <hh>'s"). Descending opens them.
-  // Neither what it holds nor what holds it: both filters run BEFORE the budget
-  // slice, so excluding an ancestor never costs a true neighbour its seat.
-  const insideIds = new Set(inside.map((i) => i.id));
-  const withinIds = new Set(within.map((w) => w.id));
-  const alongside = householdNear(target, world).filter((m) => !insideIds.has(m.id) && !withinIds.has(m.id)).slice(0, budget)
+  // Deliberately NOT named siblings: this is the household's geometric
+  // neighbourhood, not the tree relation. Neither children nor parents: both
+  // filters run BEFORE the budget slice, so excluding an ancestor never costs
+  // a true neighbour its seat.
+  const childIds = new Set(children.map((i) => i.id));
+  const parentIds = new Set(parents.map((w) => w.id));
+  const alongside = householdNear(target, world).filter((m) => !childIds.has(m.id) && !parentIds.has(m.id)).slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, signal: !!m.signal, body: firstLine(m.body) }));
   return {
     id: target.id, kind: target.kind, household: target.household, at: target.at, extent: target.extent,
     sovereign: !!target.sovereign, stamps: target.weight ?? target.stamps ?? 0, body: target.body,
-    predicates, within, inside, alongside,
-    more: { predicates: countPredicates(markId, world) - predicates.length, inside: childrenByGeometry(target, world).length - inside.length },
-    reinvoke: depth > 1 ? [...inside, ...alongside].map((c) => c.id) : [],
+    predicates, parents, children, alongside,
+    more: { predicates: countPredicates(markId, world) - predicates.length, children: childrenByGeometry(target, world).length - children.length },
+    reinvoke: depth > 1 ? [...children, ...alongside].map((c) => c.id) : [],
   };
 }
 
