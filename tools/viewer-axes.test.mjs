@@ -52,6 +52,12 @@ import {
   walkerDestinationName,
   walkerHandleFromHoverId,
   walkerHoverId,
+  bubbleAnchorWorld,
+  paintingMarkIds,
+  placeBubble,
+  readPaintingOnly,
+  writePaintingOnly,
+  PAINTING_ONLY_KEY,
 } from "../spectator/viewer.mjs";
 
 test("distance-band headings derive their approximate ranges from the LOD dials", () => {
@@ -718,4 +724,115 @@ test("a long identity is elided rather than allowed to overrun its box", () => {
   const text = box.match(/font-size="[-0-9.]+">([^<]*)</)[1];
   assert.ok(text.length <= 58, "the label is cut to the box it is drawn in");
   assert.ok(text.endsWith("…"), "and says that it was cut");
+});
+
+// ── painting-only: the bubbles ───────────────────────────────────────────────
+
+test("a bubble takes the side of its anchor that has room, and says when neither does", () => {
+  const box = { w: 400, h: 300 }, size = { w: 120, h: 60 };
+  const right = placeBubble({ anchor: { x: 40, y: 150 }, size, box });
+  assert.equal(right.side, "right");
+  assert.ok(right.x > 40, "it sits to the right of what it describes");
+
+  // hard against the right edge there is no room on that side, so it flips
+  const left = placeBubble({ anchor: { x: 380, y: 150 }, size, box });
+  assert.equal(left.side, "left");
+  assert.ok(left.x + size.w < 380, "and clears the anchor going the other way");
+
+  // a bubble wider than either shoulder covers its own anchor, and admits it
+  const over = placeBubble({ anchor: { x: 200, y: 150 }, size: { w: 380, h: 60 }, box });
+  assert.equal(over.side, "over");
+  assert.ok(over.x >= 8 && over.x + 380 <= box.w - 8, "clamped inside the painting even so");
+});
+
+test("a bubble is clamped into the painting rather than allowed to hang off it", () => {
+  const box = { w: 400, h: 300 }, size = { w: 120, h: 60 };
+  const high = placeBubble({ anchor: { x: 200, y: 0 }, size, box });
+  assert.ok(high.y >= 8, "an anchor at the top edge does not push the box off the top");
+  const low = placeBubble({ anchor: { x: 200, y: 300 }, size, box });
+  assert.ok(low.y + size.h <= box.h - 8, "nor off the bottom");
+
+  // a bubble taller than the painting cannot be clamped into it; it pins to the
+  // top rather than resolving to a negative offset (max wins over min)
+  const tall = placeBubble({ anchor: { x: 200, y: 150 }, size: { w: 120, h: 900 }, box });
+  assert.equal(tall.y, 8, "an over-tall bubble starts at the top edge, never above it");
+
+  for (const bad of [
+    { anchor: { x: NaN, y: 1 }, size, box },
+    { anchor: { x: 1, y: 1 }, size: { w: "x", h: 1 }, box },
+    {},
+  ]) assert.equal(placeBubble(bad), null, "nonsense places nothing");
+});
+
+test("the marks filter reaches the pips, and brings the marks the panel would list", () => {
+  const args = { radialIds: ["a", "b"], mineIds: ["b", "far-away"], newIds: ["fresh", "a"] };
+
+  assert.deepEqual([...paintingMarkIds({ ...args, markFilter: "everything" })], ["a", "b"],
+    "unfiltered, the painting is the field of view");
+
+  const mine = paintingMarkIds({ ...args, markFilter: "mine" });
+  assert.ok(mine.has("far-away"), "a mark of yours beyond this sight is reachable on the painting");
+  assert.ok(!mine.has("a"), "and someone else's in-sight mark is not drawn under 'mine'");
+
+  const fresh = paintingMarkIds({ ...args, markFilter: "new" });
+  assert.ok(fresh.has("fresh"), "a new mark out of sight still lands on the painting");
+  assert.ok(!fresh.has("b"), "and an old in-sight mark is not part of the newest");
+
+  assert.deepEqual([...paintingMarkIds({ markFilter: "mine" })], [], "no marks is a clean empty answer");
+});
+
+test("the you-bubble rides the travel-line when there is one, and the marker when there is not", () => {
+  const at = { x: 100, y: 200 };
+  assert.deepEqual(bubbleAnchorWorld({ at }), at, "standing still, it hangs off you");
+  assert.deepEqual(
+    bubbleAnchorWorld({ at, leg: { from: { x: 0, y: 0 }, to: { x: 40, y: 80 } } }),
+    { x: 20, y: 40 },
+    "walking, it sits on the middle of the line it describes");
+  assert.deepEqual(
+    bubbleAnchorWorld({ at, leg: { from: { x: 0, y: 0 }, to: { x: 40 } } }), at,
+    "a half-formed leg is not a leg — fall back to the marker rather than to NaN");
+  assert.equal(bubbleAnchorWorld({}), null, "no position at all anchors nothing");
+});
+
+test("how you read the world is remembered, and a storage that refuses is not fatal", () => {
+  const store = new Map();
+  const fake = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, v) };
+  assert.equal(readPaintingOnly(fake), false, "the panel is there until you fold it away");
+  writePaintingOnly(fake, true);
+  assert.equal(store.get(PAINTING_ONLY_KEY), "1");
+  assert.equal(readPaintingOnly(fake), true);
+  writePaintingOnly(fake, false);
+  assert.equal(readPaintingOnly(fake), false);
+
+  const hostile = { getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); } };
+  assert.equal(readPaintingOnly(hostile), false, "a private-mode browser reads as the default");
+  assert.doesNotThrow(() => writePaintingOnly(hostile, true), "and refusing to remember is not an error");
+  assert.equal(readPaintingOnly(null), false);
+});
+
+test("a bubble steps around the one it must not cover, and gives up gracefully", () => {
+  const box = { w: 600, h: 400 }, size = { w: 150, h: 80 };
+  // the pinned bubble is sitting on the right; the glance takes the free side
+  const avoid = { x: 220, y: 0, w: 300, h: 400 };
+  const stepped = placeBubble({ anchor: { x: 200, y: 200 }, size, box, avoid });
+  assert.equal(stepped.side, "left", "it goes the other way rather than under");
+  assert.ok(stepped.x + size.w <= avoid.x, "and clears the obstacle entirely");
+
+  // both sides blocked horizontally: step above or below instead
+  const band = { x: 0, y: 150, w: 600, h: 100 };
+  const dodged = placeBubble({ anchor: { x: 300, y: 200 }, size, box, avoid: band });
+  const clears = dodged.y + size.h <= band.y || dodged.y >= band.y + band.h;
+  assert.ok(clears, `stepped clear of the band vertically (y=${dodged.y})`);
+
+  // an obstacle covering the whole pane cannot be dodged; place it anyway rather
+  // than refuse to draw — a bubble somewhere beats no bubble at all
+  const everywhere = { x: 0, y: 0, w: 600, h: 400 };
+  const placed = placeBubble({ anchor: { x: 300, y: 200 }, size, box, avoid: everywhere });
+  assert.ok(placed && Number.isFinite(placed.x) && Number.isFinite(placed.y));
+  assert.ok(placed.y >= 8 && placed.y + size.h <= box.h - 8, "and still inside the pane");
+
+  // no obstacle behaves exactly as before
+  assert.deepEqual(
+    placeBubble({ anchor: { x: 100, y: 200 }, size, box }),
+    placeBubble({ anchor: { x: 100, y: 200 }, size, box, avoid: null }));
 });

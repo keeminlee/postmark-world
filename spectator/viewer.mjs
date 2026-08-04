@@ -555,6 +555,93 @@ export function hoverLabelSVG({ text, at, unit, view, maxChars = 58, className =
     + `<text x="${x + 6 * u}" y="${y + 15.5 * u}" font-size="${12 * u}">${esc(label)}</text></g>`;
 }
 
+// ── painting-only mode ───────────────────────────────────────────────────────
+// The cell panel can be folded away so the painting fills the page. When it is,
+// the painting has to carry everything the panel carried, so the reading moves
+// into BUBBLES anchored on the map: one that follows the pointer, one that stays
+// where you clicked, and one for you — your standpoint and your walk.
+//
+// The mode is remembered, because it is a way of reading rather than a momentary
+// action; coming back to a page that forgot how you read it is its own papercut.
+export const PAINTING_ONLY_KEY = "pm_world_painting_only";
+export function readPaintingOnly(storage) {
+  try { return storage?.getItem?.(PAINTING_ONLY_KEY) === "1"; } catch { return false; }
+}
+export function writePaintingOnly(storage, on) {
+  try { storage?.setItem?.(PAINTING_ONLY_KEY, on ? "1" : "0"); } catch { /* private mode */ }
+}
+
+// Place a bubble beside an anchor without letting it leave the painting.
+//
+// Sized and positioned in the PANEL's own pixels, not the painting's units: a
+// bubble is prose, and prose does not zoom. (The SVG hover label is the opposite
+// choice — it is drawn in view units so it scales with the map — which is why
+// the two must never both be showing. In this mode the label stands down.)
+//
+// Preference is right-of-anchor, then left, then "over": if the bubble fits on
+// neither side it is clamped into the box and reported as covering its own
+// anchor, so the caller can dim it rather than pretend it points at something.
+//
+// `avoid` is a rectangle this bubble should not sit on top of — the bubbles share
+// one small pane and their anchors can be metres apart, so without it the "you"
+// bubble ends up buried under the mark you just opened. It picks the side that
+// clears the obstacle and, failing that, steps above or below it.
+export function placeBubble({ anchor, size, box, gap = 14, edge = 8, avoid = null } = {}) {
+  const ax = Number(anchor?.x), ay = Number(anchor?.y);
+  const w = Number(size?.w), h = Number(size?.h);
+  const bw = Number(box?.w), bh = Number(box?.h);
+  if (![ax, ay, w, h, bw, bh].every(Number.isFinite)) return null;
+  const clampX = (want) => Math.max(edge, Math.min(bw - w - edge, want));
+  const clampY = (want) => Math.max(edge, Math.min(bh - h - edge, want));
+  const overlap = (x, y) => {
+    if (!avoid) return 0;
+    const ox = Math.max(0, Math.min(x + w, avoid.x + avoid.w) - Math.max(x, avoid.x));
+    const oy = Math.max(0, Math.min(y + h, avoid.y + avoid.h) - Math.max(y, avoid.y));
+    return ox * oy;
+  };
+  const y = clampY(ay - h / 2);
+  const fitting = [
+    { side: "right", x: ax + gap, fits: ax + gap + w <= bw - edge },
+    { side: "left", x: ax - gap - w, fits: ax - gap - w >= edge },
+  ].filter((candidate) => candidate.fits);
+  let chosen = fitting.length
+    ? fitting.map((c) => ({ ...c, y, cost: overlap(c.x, y) })).sort((a, b) => a.cost - b.cost)[0]
+    : { side: "over", x: clampX(ax - w / 2), y };
+  if (avoid && overlap(chosen.x, chosen.y) > 0) {
+    for (const want of [avoid.y - h - gap, avoid.y + avoid.h + gap]) {
+      const stepped = clampY(want);
+      if (overlap(chosen.x, stepped) === 0) { chosen = { ...chosen, y: stepped }; break; }
+    }
+  }
+  return { x: chosen.x, y: chosen.y, side: chosen.side };
+}
+
+// Which marks the painting draws, given the one marks filter the chips speak.
+//
+// In the three-column page the chips narrow the PANEL and the map keeps showing
+// everything, which is survivable because the panel is right there. With the
+// panel folded away that would make two of the three chips do nothing visible,
+// so here the filter reaches the pips — and "mine" and "new" bring their own
+// marks with them. Both listings deliberately step outside the field of view
+// (your marks elsewhere; the newest of the whole record), and a mark the panel
+// would list but the painting cannot draw is a mark this mode has lost.
+export function paintingMarkIds({ markFilter = "everything", radialIds = [], mineIds = [], newIds = [] } = {}) {
+  if (markFilter === "mine") return new Set(mineIds);
+  if (markFilter === "new") return new Set(newIds);
+  return new Set(radialIds);
+}
+
+// Where the "you" bubble hangs. A journey or an armed departure gives it the
+// midpoint of the line, so the bubble sits ON the travel-line it describes;
+// standing still, it hangs off your own marker.
+export function bubbleAnchorWorld({ at = null, leg = null } = {}) {
+  const fx = Number(leg?.from?.x), fy = Number(leg?.from?.y);
+  const tx = Number(leg?.to?.x), ty = Number(leg?.to?.y);
+  if ([fx, fy, tx, ty].every(Number.isFinite)) return { x: (fx + tx) / 2, y: (fy + ty) / 2 };
+  const x = Number(at?.x), y = Number(at?.y);
+  return [x, y].every(Number.isFinite) ? { x, y } : null;
+}
+
 // Walkers ride the mark hover store rather than growing a second one — one
 // hover mechanism for the painting. A namespaced key keeps them from colliding
 // with real mark ids, and everything that matches on mark ids simply misses.
@@ -831,7 +918,7 @@ const STYLE = `
   .wv-map { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
   .wv-map .wv-sticky { position:static; display:flex; flex-direction:column; min-height:0; flex:1; }
   .wv-minimap { flex:1; min-height:0; }
-  .wv-minimap svg { width:100%; height:100%; }
+  .wv-minimap > svg { width:100%; height:100%; }
 }
 .wv-nav { padding:18px; border-right:1px solid var(--line); background:var(--panel); }
 .wv-nav h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
@@ -1051,7 +1138,7 @@ const STYLE = `
    them. Nuking selection viewer-wide would trade a papercut for a wound. */
 .wv-minimap { -webkit-user-select:none; user-select:none; }
 .wv-minimap { position:relative; border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
-.wv-minimap svg { display:block; width:100%; height:auto; }
+.wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
   max-width:calc(100% - 20px); padding:5px 10px; border:1px solid var(--amber-dark); border-radius:999px;
@@ -1204,6 +1291,98 @@ const STYLE = `
 .wv-moved.show { opacity:.96; transform:translateY(0); }
 .wv-quiet { color:var(--dim); font-style:italic; }
 .wv-err { color:var(--err); }
+
+/* ── painting-only ────────────────────────────────────────────────────────────
+   The cell panel folds away and the painting takes the page. The app frame the
+   wide breakpoint already builds (each column scrolls itself, nothing scrolls
+   the page) is what this mode wants at EVERY width, so it is lifted out of the
+   media query and re-stated for the mode. */
+.wv.is-painting-only { height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+.wv.is-painting-only > div { flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+.wv.is-painting-only .wv-beta { margin:8px 22px 0; padding:6px 12px; font-size:.78rem; }
+.wv-main.is-painting-only { grid-template-columns:236px minmax(0,1fr); flex:1 1 0; min-height:0;
+  overflow:hidden; align-items:stretch; }
+.wv-main.is-painting-only > .wv-view { display:none; }
+.wv-main.is-painting-only .wv-nav { overflow-y:auto; min-height:0; }
+.wv-main.is-painting-only .wv-map { grid-column:auto; border-top:0; padding:0; display:flex;
+  flex-direction:column; min-height:0; overflow:hidden; }
+.wv-main.is-painting-only .wv-map .wv-sticky { position:static; display:flex; flex-direction:column;
+  min-height:0; flex:1; }
+.wv-main.is-painting-only .wv-maphead { padding:10px 14px 8px; }
+.wv-main.is-painting-only .wv-minimap { flex:1; min-height:0; border-radius:0; border-width:1px 0 0; }
+.wv-main.is-painting-only .wv-minimap > svg { width:100%; height:100%; }
+/* On one column the 100vh frame turns against the mode: the sidebar is tall, so
+   the painting inherits whatever is left — measured at 260 px on a 700 px page,
+   which is not a painting filling anything. Below the fold the page scrolls
+   again, the painting takes the top of it, and the sidebar sits underneath. */
+@media (max-width:720px){
+  .wv.is-painting-only, .wv.is-painting-only > div,
+  .wv-main.is-painting-only, .wv-main.is-painting-only .wv-map { height:auto; overflow:visible; }
+  .wv-main.is-painting-only { grid-template-columns:1fr; }
+  .wv-main.is-painting-only .wv-map { order:-1; }
+  .wv-main.is-painting-only .wv-nav { border-right:0; border-top:1px solid var(--line); }
+  .wv-main.is-painting-only .wv-minimap { min-height:72vh; }
+}
+/* the controls the panel used to carry: the lens, the marks filter. They are the
+   SAME builders the telling renders — one vocabulary, two places to reach it. */
+.wv-paint-controls { display:none; }
+.wv-main.is-painting-only .wv-paint-controls { display:flex; align-items:center; gap:14px;
+  flex-wrap:wrap; padding:0 14px 9px; border-bottom:1px solid var(--line); }
+.wv-paint-controls .wv-lens, .wv-paint-controls .wv-mfilter { margin:0; }
+.wv-paint-tallies { position:absolute; z-index:6; left:9px; bottom:8px; max-width:min(34rem,52%);
+  padding:4px 10px; border:1px solid var(--line); border-radius:999px; background:rgba(13,15,19,.9);
+  color:var(--dim); font-size:.7rem; line-height:1.4; pointer-events:none; }
+.wv-paint-tallies:empty, .wv-paint-tallies[hidden] { display:none; }
+
+/* ── the bubbles ──────────────────────────────────────────────────────────────
+   Prose over a map. Positioned in the PANEL's pixels and never in the painting's
+   units, because a sentence should not grow when you zoom — the SVG hover label
+   makes the opposite choice, which is exactly why it stands down in this mode. */
+.wv-bubbles { position:absolute; inset:0; z-index:7; pointer-events:none; overflow:hidden; }
+.wv-bubble { position:absolute; top:0; left:0; width:max-content; max-width:min(31rem,72%);
+  --wv-mark-accent:var(--amber);
+  border:1px solid var(--line); border-left:3px solid var(--wv-mark-accent); border-radius:6px;
+  background:rgba(13,15,19,.97); box-shadow:0 10px 30px rgba(0,0,0,.55);
+  will-change:transform; }
+.wv-bubble[hidden] { display:none; }
+.wv-bubble.t-constitution { --wv-mark-accent:var(--blue); }
+.wv-bubble.t-home { --wv-mark-accent:var(--green); }
+.wv-bubble.t-market { --wv-mark-accent:var(--amber); }
+/* a bubble that fits on neither side of its anchor is covering the thing it
+   describes; say so with weight rather than pretending it still points at it */
+.wv-bubble.side-over { opacity:.93; }
+/* who is in front when they cannot help but overlap: the mark you opened, then
+   the glance, then the standing bubble you did not ask for */
+.wv-bubble.is-hover { z-index:2; pointer-events:none; max-width:min(26rem,64%); }
+.wv-bubble.is-pinned { z-index:3; pointer-events:auto; max-height:min(64%,32rem); overflow-y:auto;
+  scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+.wv-bubble.is-you { z-index:1; pointer-events:auto; max-width:min(24rem,66%); border-left-color:var(--you); }
+.wv-bubble-close { position:sticky; float:right; top:5px; right:5px; z-index:3; border:0;
+  background:transparent; color:var(--dim); font:inherit; font-size:.95rem; line-height:1;
+  padding:4px 7px; margin:1px 1px 0 0; cursor:pointer; border-radius:4px; }
+.wv-bubble-close:hover, .wv-bubble-close:focus-visible { color:var(--paper); background:var(--panel2); outline:none; }
+/* the cell inside a bubble is the SAME cell the panel builds — the bubble only
+   takes away the frame it no longer needs (its own border, its width cap) */
+.wv-bubble .wv-card { border:0; border-radius:0; margin:0; max-width:none; padding:10px 13px; cursor:pointer; }
+.wv-bubble .wv-card:hover { border-color:transparent; }
+.wv-bubble .wv-card.is-mark-selected { outline:none; }
+.wv-bubble.is-hover .wv-card { cursor:default; }
+.wv-bubble.is-hover .cbody { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+  overflow:hidden; font-size:.92rem; }
+.wv-bubble-hint { padding:0 13px 9px; margin:0; color:var(--dim); font-size:.68rem;
+  letter-spacing:.05em; text-transform:uppercase; opacity:.75; }
+.wv-bubble-standpoint { padding:10px 13px 4px; font-size:.78rem; line-height:1.5; color:var(--dim); }
+.wv-bubble-standpoint .wv-standing { color:var(--you); font-weight:700; font-style:normal; }
+.wv-bubble-standpoint p { margin:5px 0 0; }
+.wv-standpoint-more { margin-top:5px; }
+.wv-standpoint-more summary { cursor:pointer; color:var(--dim); font-size:.7rem; letter-spacing:.05em;
+  text-transform:uppercase; opacity:.8; list-style:none; }
+.wv-standpoint-more summary::-webkit-details-marker { display:none; }
+.wv-standpoint-more summary::before { content:"▸ "; }
+.wv-standpoint-more[open] summary::before { content:"▾ "; }
+.wv-standpoint-more summary:hover { color:var(--amber); }
+.wv-bubble.is-you .wv-walkdesk { margin:0; padding:2px 13px 11px; border-top:0; }
+.wv-bubble.is-you .wv-walkdesk h2 { margin:9px 0 6px; }
 `;
 
 const MARKUP = `
@@ -1274,9 +1453,13 @@ const MARKUP = `
           <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖ follow</button>
           <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors"># grid</button>
           <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭ marks</button>
+          <button class="ctl wv-map-panel" title="fold the cell panel away and let the painting fill the page" aria-pressed="false">⛶ painting only</button>
         </div>
       </div>
-      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div></div>
+      <!-- the lens + marks filter, for when the panel that used to hold them is
+           folded away. Same builders, rendered into both places. -->
+      <div class="wv-paint-controls"></div>
+      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div></div>
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
   </aside>
@@ -1301,6 +1484,7 @@ export function mountViewer(appEl) {
     crossing: liveCrossing(),           // default to the live crossing
     crossingOverride: false,            // a dev/principal time-travel override
     view: "telling",
+    paintingOnly: readPaintingOnly(typeof localStorage === "undefined" ? null : localStorage),
     markFilter: "everything",           // "everything" | "mine" | "new" — the one marks vocabulary
     baseLayer: "true",                  // "true" (main) | "mine" (main + the household draft)
     portfolio: null,                    // authenticated world_my_marks response
@@ -1349,6 +1533,7 @@ export function mountViewer(appEl) {
     world = assembleWorld({ worldState: data.worldState, skeleton: data.skeleton });
     byId = new Map(world.marks.map((m) => [m.id, m]));
     homeSet = buildHomeSet(data.manifest, world.marks);
+    pinnedBuiltId = null; // the record moved: an open bubble is now stale prose
   }
   const isOfficeLive = (url) => url === officeUrl("/world/state");
   async function loadData() {
@@ -1582,12 +1767,17 @@ export function mountViewer(appEl) {
   // is why it reads world.marks rather than a radial. Public by construction: it asks
   // nothing about who is looking.
   const NEW_CAP = 25;
-  function newFeed(keep = null) {
-    const dated = (world.marks ?? []).filter((m) => m.id && m.date && (!keep || keep(m)));
+  // the feed's ORDER, without its markup — the painting needs the same list the
+  // panel lists, and deriving it twice is how the two would come to disagree
+  function newFeedMarks(keep = null) {
+    const dated = (world?.marks ?? []).filter((m) => m.id && m.date && (!keep || keep(m)));
     // newest first; id breaks ties so the order is stable across re-tells (dates are
     // day-precision for most records, so ties are the common case, not the edge)
-    const all = dated.slice().sort((a, b) =>
+    return dated.slice().sort((a, b) =>
       String(b.date).localeCompare(String(a.date)) || String(a.id).localeCompare(String(b.id)));
+  }
+  function newFeed(keep = null) {
+    const all = newFeedMarks(keep);
     const shown = all.slice(0, NEW_CAP), rest = all.slice(NEW_CAP);
     if (!shown.length) return { html: `<div class="wv-quiet">no marks in the record yet.</div>`, count: "" };
 
@@ -1701,6 +1891,14 @@ export function mountViewer(appEl) {
             + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
       if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
       foldRenderedPredicates(box);
+      // the panel may be folded away, but its two controls and its count line are
+      // readings, not decoration — they get a home on the painting either way
+      renderPaintControls();
+      const talliesChip = $(root, ".wv-paint-tallies");
+      if (talliesChip) {
+        talliesChip.hidden = !state.paintingOnly;
+        talliesChip.textContent = isNew ? feed.count : tallies(e.radial);
+      }
       drawOverlay(e.radial);
       syncMarkInteractionViews();
     } catch (err) {
@@ -1817,7 +2015,12 @@ export function mountViewer(appEl) {
   // ───────── the painting (atlas minimap) ─────────
   async function loadMinimap() {
     const boxEl = $(root, ".wv-minimap");
-    const coordinateChip = $(boxEl, ".wv-spectator-coordinate");
+    // The chrome that rides ON the painting is held across the wipe below rather
+    // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
+    // the walk desk itself) that must not be rebuilt when the atlas loads.
+    const overlays = [".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles"]
+      .map((selector) => $(boxEl, selector)).filter(Boolean);
+    const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
       const html = await fetch("/atlas/town.html").then((r) => { if (!r.ok) throw new Error(`atlas HTTP ${r.status}`); return r.text(); });
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -1874,7 +2077,7 @@ export function mountViewer(appEl) {
       svg.appendChild(walkLayer);
       boxEl.innerHTML = "";
       boxEl.appendChild(svg);
-      if (coordinateChip) boxEl.appendChild(coordinateChip);
+      reattachOverlays();
       boxEl.classList.add("pannable");
 
       // ── the viewport (P2 convergence): the viewBox IS the camera — wheel zooms
@@ -1894,6 +2097,7 @@ export function mountViewer(appEl) {
         mapCtx.zoomK = full.w / view.w;
         if (lastRadial) drawOverlay(lastRadial);
         renderMarkHighlight();
+        positionBubbles(); // the anchors are on the painting, so they move with it
       }
       function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = null; } mapCtx._tweening = false; }
       function tweenTo(target, ms = 280) {
@@ -1931,6 +2135,19 @@ export function mountViewer(appEl) {
         if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
       };
       mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
+      // Fill the pane with painting instead of letterboxing it. The atlas is tall
+      // and the folded-open pane is wide, so the default "meet" fit leaves half
+      // the page as empty bars — which is not what "the painting fills the page"
+      // means. This takes the view whose aspect matches the PANE: full width, a
+      // centred band of height. ⌂ fit still tweens to the whole painting, so the
+      // honest see-everything view is one press away and keeps meaning what it says.
+      mapCtx.fillPane = (animate = true) => {
+        const pane = boxEl.getBoundingClientRect();
+        if (!pane.width || !pane.height) return;
+        const h = full.w * (pane.height / pane.width);
+        const target = { x: full.x, y: full.y + (full.h - h) / 2, w: full.w, h };
+        if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
+      };
       // a hand on the camera breaks the follow snap — silently, keeping the view
       // where the hand put it (fit is the only thing that zooms you back out)
       const breakFollow = () => { if (mapCtx.follow) { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); } };
@@ -1973,11 +2190,17 @@ export function mountViewer(appEl) {
           y: (painting.y - originPx.y) * mPerPx,
         };
       };
+      // the extent fallback answers to the same filter the pips do, or a "mine"
+      // reader would still select their neighbour's parcel by clicking inside it
+      const hittableMarks = () =>
+        state.paintingOnly && state.markFilter !== "everything"
+          ? (world?.marks ?? []).filter((m) => mapCtx.glyphIds.has(m.id))
+          : toldPaintingMarks(lastRadial, world?.marks ?? []);
       const paintingMarkForEvent = (event) => paintingMarkAtPoint({
         screenPoint: { x: event.clientX, y: event.clientY },
         worldPoint: worldPointForEvent(event),
         glyphs: screenMarkCandidates(),
-        marks: toldPaintingMarks(lastRadial, world?.marks ?? []),
+        marks: hittableMarks(),
       });
       // walkers, in the same screen-space shape the mark snap already eats
       function screenWalkerCandidates() {
@@ -2004,16 +2227,16 @@ export function mountViewer(appEl) {
       });
       svg.addEventListener("pointermove", (e) => {
         if (!press || e.pointerId !== press.id) {
-          markInteraction.hover(hoverTargetForEvent(e));
+          hoverMark(hoverTargetForEvent(e));
           return;
         }
         const dx = e.clientX - press.x, dy = e.clientY - press.y;
         if (!press.moved && Math.hypot(dx, dy) < 6) {
-          markInteraction.hover(hoverTargetForEvent(e));
+          hoverMark(hoverTargetForEvent(e));
           return;
         }
         if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
-        markInteraction.hover(null);
+        hoverMark(null);
         press.moved = true; boxEl.classList.add("panning");
         const r = svg.getBoundingClientRect();
         view.x -= dx * (view.w / r.width); view.y -= dy * (view.h / r.height);
@@ -2039,7 +2262,7 @@ export function mountViewer(appEl) {
         }
       });
       svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
-      svg.addEventListener("pointerleave", () => { if (!press) markInteraction.hover(null); });
+      svg.addEventListener("pointerleave", () => { if (!press) hoverMark(null); });
 
       // the grid keeps scale without exposing absolute survey readouts.
       function buildGridLayer() {
@@ -2107,11 +2330,48 @@ export function mountViewer(appEl) {
       };
 
       applyView();
+      // the mode is remembered, so the painting can boot straight into filling
+      // the pane — no animation, because there is no previous view to move from
+      if (state.paintingOnly) mapCtx.fillPane(false);
       if (lastRadial) drawOverlay(lastRadial);
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
-      if (coordinateChip) boxEl.appendChild(coordinateChip);
+      reattachOverlays();
     }
+  }
+  // Which marks the painting draws. In the three-column page this is the field of
+  // view and the chips narrow only the panel — survivable, because the panel is
+  // right there beside it. With the panel folded away that would leave two of the
+  // three chips doing nothing you can see, so here the filter reaches the pips and
+  // brings its own marks: "mine" includes yours beyond this sight, "new" is the
+  // record's newest regardless of sight. Both listings step outside the field of
+  // view on purpose, and a mark the panel would list but the painting cannot draw
+  // is a mark this mode has quietly lost.
+  function overlayMarks(radial) {
+    const seen = new Set(), fromRadial = [];
+    for (const bands of Object.values(radial?.byBearing ?? {}))
+      for (const arr of Object.values(bands ?? {}))
+        for (const m of arr ?? []) {
+          if (!m?.id || !m.at || typeof m.at.x !== "number" || seen.has(m.id)) continue;
+          seen.add(m.id); fromRadial.push(m);
+        }
+    if (!state.paintingOnly || state.markFilter === "everything") return fromRadial;
+    const ids = paintingMarkIds({
+      markFilter: state.markFilter,
+      radialIds: [...seen],
+      mineIds: [...state.mineIds],
+      newIds: newFeedMarks().slice(0, NEW_CAP).map((m) => m.id),
+    });
+    // keep the radial's own entries where they qualify — they carry distM and
+    // bearing, which the bare record mark does not — then add what is missing
+    const out = fromRadial.filter((m) => ids.has(m.id));
+    const have = new Set(out.map((m) => m.id));
+    for (const id of ids) {
+      if (have.has(id)) continue;
+      const m = byId.get(id);
+      if (m?.at && typeof m.at.x === "number") out.push(m);
+    }
+    return out;
   }
   function drawOverlay(radial) {
     if (!mapCtx) return;
@@ -2123,17 +2383,16 @@ export function mountViewer(appEl) {
     const me = px(state.cam), reachPx = (radial?.sightReachM ?? 0) / mPerPx;
     let s = `<circle cx="${me.x}" cy="${me.y}" r="${reachPx}" class="ov-reach"/>`;
     const glyphIds = new Set();
-    for (const bands of Object.values(radial?.byBearing ?? {}))
-      for (const arr of Object.values(bands))
-        // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
-        // mark up by id (and catches sovereign/home, which is not a tier value).
-        for (const m of arr) {
-          if (!m.at || typeof m.at.x !== "number" || !m.id) continue;
-          const p = px(m.at);
-          glyphIds.add(m.id);
-          s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip t-${tierOf(m)}" data-id="${esc(m.id)}">`
-            + `<title>${esc(markIdentity(m))}</title></circle>`;
-        }
+    // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
+    // mark up by id (and catches sovereign/home, which is not a tier value).
+    for (const m of overlayMarks(radial)) {
+      const p = px(m.at);
+      glyphIds.add(m.id);
+      s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip t-${tierOf(m)}" data-id="${esc(m.id)}">`
+        // the OS tooltip stands down in painting-only for the same reason the SVG
+        // label does: the bubble is already saying this word, sooner and better
+        + (state.paintingOnly ? "" : `<title>${esc(markIdentity(m))}</title>`) + `</circle>`;
+    }
     s += `<circle cx="${me.x}" cy="${me.y}" r="${17 / k}" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="${36 / k}" class="ov-halo"/>`;
     overlay.innerHTML = s;
     mapCtx.glyphIds = glyphIds;
@@ -2199,7 +2458,10 @@ export function mountViewer(appEl) {
       s += markShapeSVG(target, hlPx, `wv-hl-box t-${t}${mech}`);
     }
     s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
-    s += hoverLabelSVG({ text: identity, at: p, unit, view: mapCtx.view });
+    // In painting-only the bubble carries the name, so the SVG label stands down
+    // — two boxes saying the same word over the same dot is one box too many.
+    // The geometry (the wash, the dot, the edge arrow) is not a label and stays.
+    if (!state.paintingOnly) s += hoverLabelSVG({ text: identity, at: p, unit, view: mapCtx.view });
     return s;
   }
   // A standing resident gets the SAME box a mark gets — one hover language on
@@ -2217,7 +2479,7 @@ export function mountViewer(appEl) {
       ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
       : (w.mark_id ? `at ${w.mark_id}` : "at rest");
     return `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot wv-hl-walker${moving ? " moving" : ""}"/>`
-      + hoverLabelSVG({ text: `${w.handle} — ${where}`, at: p, unit, view: mapCtx.view });
+      + (state.paintingOnly ? "" : hoverLabelSVG({ text: `${w.handle} — ${where}`, at: p, unit, view: mapCtx.view }));
   }
   function syncMarkInteractionViews() {
     const interaction = markInteraction.getState();
@@ -2229,6 +2491,7 @@ export function mountViewer(appEl) {
       if (cell.classList.contains("wv-card")) cell.setAttribute("aria-selected", String(selected));
     }
     renderMarkHighlight();
+    renderBubbles();
   }
   markInteraction.subscribe(syncMarkInteractionViews);
 
@@ -2361,8 +2624,11 @@ export function mountViewer(appEl) {
       Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit, midpoint.y - labelHeight - 12 * unit));
     layer.innerHTML = `<line x1="${from.x}" y1="${from.y}" x2="${toward.x}" y2="${toward.y}" class="wv-walk-preview-leg"/>`
       + `<circle cx="${toward.x}" cy="${toward.y}" r="${6 / k}" class="wv-walk-preview-dest"/>`
-      + `<g class="wv-walk-preview-label"><rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
-      + `<text x="${labelX + 7 * unit}" y="${labelY + 16 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
+      // the you-bubble hangs on this leg's midpoint in painting-only and already
+      // reads the distance and the ETA; the drawn label would sit under it
+      + (state.paintingOnly ? ""
+        : `<g class="wv-walk-preview-label"><rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
+          + `<text x="${labelX + 7 * unit}" y="${labelY + 16 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`);
   }
 
   async function pollWalkers() {
@@ -2519,6 +2785,9 @@ export function mountViewer(appEl) {
       confirm.disabled = !preview;
     }
     drawWalkPreview();
+    // the desk's words just changed, and in painting-only the desk IS the bubble
+    renderYouBubble();
+    positionBubbles();
   }
 
   function scrollMarkCellIntoView(id) {
@@ -2788,6 +3057,285 @@ export function mountViewer(appEl) {
     }
   }
 
+  // ───────── painting-only: the bubbles ─────────
+  // With the cell panel folded away the painting has to carry the reading, so it
+  // grows three bubbles and no fourth vocabulary:
+  //
+  //   • HOVER — a glance that follows the pointer and can never be clicked.
+  //   • PINNED — the selected mark. It is the panel's OWN cell, built by the same
+  //     markCell and folded by the same foldRenderedPredicates, so backing,
+  //     taking back, investigating and drilling all work without a line of new
+  //     handler code. A second bubble-shaped cell builder is precisely how the
+  //     two readings would drift apart.
+  //   • YOU — your standpoint, hosting the walk desk ITSELF, relocated rather
+  //     than copied. renderWalkDestination keeps its one owner and one desk; the
+  //     desk just lives somewhere else while this mode is on.
+  // every hover goes through here, so the bubbles always know whether the pointer
+  // is on the painting or inside a bubble reading it
+  function hoverMark(id, fromBubble = false) {
+    hoverFromBubble = !!id && fromBubble;
+    markInteraction.hover(id);
+  }
+  const bubbleHost = () => $(root, ".wv-bubbles");
+  const bubbleEls = { hover: null, pinned: null, you: null };
+  let bubbleResize = null;
+  let youHeadHTML = "";
+  let pinnedBuiltId = null;   // which mark the pinned bubble currently holds
+  let hoverFromBubble = false; // the pointer is reading a bubble, not the painting
+  const localStore = (() => { try { return window.localStorage; } catch { return null; } })();
+
+  function bubbleEl(kind) {
+    if (bubbleEls[kind]?.isConnected) return bubbleEls[kind];
+    const host = bubbleHost();
+    if (!host) return null;
+    const el = document.createElement("div");
+    el.className = `wv-bubble is-${kind}`;
+    el.hidden = true;
+    host.appendChild(el);
+    bubbleEls[kind] = el;
+    // ONE observer for every bubble. A stake sheet opening, an expansion
+    // unfolding, the walk desk gaining a refusal line — each changes the box's
+    // height, and a bubble that grows without re-placing itself is a bubble
+    // hanging off the bottom of the painting. Height is not something the
+    // callers know, so it is not something the callers should have to report.
+    if (!bubbleResize && typeof ResizeObserver === "function")
+      bubbleResize = new ResizeObserver(() => positionBubbles());
+    bubbleResize?.observe(el);
+    return el;
+  }
+
+  // world metres → pixels inside the bubble layer's own box
+  function paintingPointToBox(point) {
+    const host = bubbleHost();
+    const matrix = mapCtx?.svg?.getScreenCTM?.();
+    const box = host?.getBoundingClientRect();
+    if (!matrix || !box?.width) return null;
+    const p = mapCtx.svg.createSVGPoint();
+    p.x = mapCtx.originPx.x + Number(point?.x) / mapCtx.mPerPx;
+    p.y = mapCtx.originPx.y + Number(point?.y) / mapCtx.mPerPx;
+    if (![p.x, p.y].every(Number.isFinite)) return null;
+    const screen = p.matrixTransform(matrix);
+    return { x: screen.x - box.x, y: screen.y - box.y, box: { w: box.width, h: box.height } };
+  }
+  function viewCentreWorld() {
+    if (!mapCtx) return null;
+    return {
+      x: (mapCtx.view.x + mapCtx.view.w / 2 - mapCtx.originPx.x) * mapCtx.mPerPx,
+      y: (mapCtx.view.y + mapCtx.view.h / 2 - mapCtx.originPx.y) * mapCtx.mPerPx,
+    };
+  }
+  function placeBubbleAt(el, worldPoint, avoid = null) {
+    if (!el || el.hidden) return;
+    const at = worldPoint ? paintingPointToBox(worldPoint) : null;
+    if (!at) { el.hidden = true; return; }
+    const spot = placeBubble({ anchor: at, size: { w: el.offsetWidth, h: el.offsetHeight }, box: at.box, avoid });
+    if (!spot) return;
+    el.style.transform = `translate3d(${Math.round(spot.x)}px, ${Math.round(spot.y)}px, 0)`;
+    el.classList.toggle("side-over", spot.side === "over");
+  }
+  function bubbleRect(el) {
+    const host = bubbleHost();
+    if (!el || el.hidden || !host) return null;
+    const r = el.getBoundingClientRect(), b = host.getBoundingClientRect();
+    return { x: r.x - b.x, y: r.y - b.y, w: r.width, h: r.height };
+  }
+  // A predicate has no ground of its own, so it hangs off the nearest thing that
+  // does; a mark with no embodied ancestor at all (the root, an ambient law) has
+  // no place on the painting and takes the middle of the view rather than
+  // vanishing — losing the bubble would lose the only way to read it in this mode.
+  function markAnchorPoint(id) {
+    const handle = walkerHandleFromHoverId(id);
+    if (handle) {
+      const w = (walkState.walkers ?? []).find((entry) => entry?.handle === handle);
+      return w && [w.x, w.y].every(Number.isFinite) ? { x: Number(w.x), y: Number(w.y) } : null;
+    }
+    return nearestEmbodiedAncestor(byId.get(id), byId)?.at ?? null;
+  }
+  function youAnchorPoint() {
+    const preview = selectedWalkPreview();
+    const walker = actorWalker();
+    const moving = walker && (walker.moving ?? (!walker.arrived && !walker.standing));
+    const journeyLeg = moving && [walker.x, walker.y, walker.toward?.x, walker.toward?.y].every(Number.isFinite)
+      ? { from: { x: walker.x, y: walker.y }, to: { x: walker.toward.x, y: walker.toward.y } }
+      : null;
+    const leg = preview ? { from: preview.from, to: preview.toward } : journeyLeg;
+    return bubbleAnchorWorld({ at: actorOrigin() ?? state.cam, leg });
+  }
+
+  function walkerBubbleHTML(handle) {
+    const w = (walkState.walkers ?? []).find((entry) => entry?.handle === handle);
+    if (!w) return "";
+    const moving = w.moving ?? (!w.arrived && !w.standing);
+    const where = moving
+      ? `${Number(w.remaining_m ?? 0).toLocaleString()} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
+      : (w.mark_id ? `at ${w.mark_id}` : "at rest");
+    return `<div class="wv-bubble-standpoint"><span class="wv-standing">${esc(w.handle)}</span><p>${esc(where)}</p></div>`;
+  }
+  // The glance. Deliberately NOT a live cell: it carries no data-id and no
+  // pressable action, because the layer it sits in takes no pointer events and a
+  // button you cannot press is worse than no button. Backing reads as the chip
+  // it is everywhere else; pressing it is what the pinned bubble is for.
+  function markPreviewHTML(id) {
+    const full = byId.get(id);
+    if (!full) return "";
+    const tier = tierOf(full), identity = markName(full), where = radialWhere(full);
+    const backing = Math.max(0, Number(full.stamps ?? 0));
+    return `<article class="wv-card fov t-${tier}">`
+      + markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier })
+      + `<div class="cbody">${esc(full.body ?? full.id)}</div>`
+      + markCellBylineRow(full, `<span class="wv-cell-actions"><span class="wv-chip stamps">✦ ${backing.toLocaleString()}</span></span>`)
+      + (where.detail ? `<div class="cmeta"><div class="wv-details" style="display:flex">${extentTag(full)}<span class="wv-detail-where">${esc(where.detail)}</span></div></div>` : "")
+      + `</article><p class="wv-bubble-hint">click to open</p>`;
+  }
+  function renderHoverBubble(id) {
+    const el = bubbleEl("hover");
+    if (!el) return;
+    const handle = id && walkerHandleFromHoverId(id);
+    const html = !id ? "" : (handle ? walkerBubbleHTML(handle) : markPreviewHTML(id));
+    if (!html) { el.hidden = true; return; }
+    el.className = `wv-bubble is-hover${handle ? "" : ` t-${tierOf(byId.get(id))}`}`;
+    el.innerHTML = html;
+    el.hidden = false;
+  }
+  // BUILT ONCE PER SELECTION, and that is the whole point. Pointing at anything
+  // inside this bubble raises a hover, a hover re-renders the bubbles, and a
+  // rebuild here would replace the button under the cursor with a fresh copy —
+  // so an open backing sheet, a half-typed amount, a scroll position and the
+  // click you were making all died the moment the pointer arrived. A rebuild is
+  // owed to a change of MARK or a change of RECORD, and to nothing else.
+  function renderPinnedBubble(id) {
+    const el = bubbleEl("pinned");
+    if (!el) return;
+    const mark = id && !walkerHandleFromHoverId(id) ? byId.get(id) : null;
+    if (!mark) { el.hidden = true; el.innerHTML = ""; pinnedBuiltId = null; return; }
+    if (pinnedBuiltId === mark.id && el.firstChild) { el.hidden = false; return; }
+    pinnedBuiltId = mark.id;
+    // the cell, plus this mark's own predicates as cells, then the SAME fold the
+    // telling runs — so an attribute reads identically in both places
+    const predicates = (world?.marks ?? []).filter((p) => p.parent === mark.id && isPredicateAttribute(p));
+    el.className = `wv-bubble is-pinned t-${tierOf(mark)}`;
+    el.innerHTML = `<button type="button" class="wv-bubble-close" aria-label="close this mark">✕</button>`
+      + markCell(mark, { role: "fov" })
+      + predicates.map((p) => markCell(p, { role: "fov" })).join("");
+    el.hidden = false;
+    foldRenderedPredicates(el);
+    const card = $(el, `.wv-card[data-id="${CSS.escape(mark.id)}"]`);
+    if (card) { card._stack = [mark.id]; renderExpansion(card); }
+  }
+  function standpointHTML() {
+    const obs = lastRadial?.observer ?? {};
+    const where = standingLocationLabel(state.cam, world?.marks ?? [], data?.worldState?.determined);
+    const lines = [lightStateLine(obs), elevStateLine(obs), lastRadial ? fogStateLine(lastRadial, obs) : ""]
+      .filter(Boolean).map((line) => `<p>${esc(line)}</p>`).join("");
+    // the mechanics fold away by default: three sentences of weather hanging over
+    // the map permanently is the panel's habit, not a map's
+    return `<span class="wv-standing">${esc(where)}</span>`
+      + (lines ? `<details class="wv-standpoint-more"><summary>the light, the ground, the air</summary>${lines}</details>` : "");
+  }
+  function renderYouBubble() {
+    const el = bubbleEl("you");
+    if (!el) return;
+    if (!state.paintingOnly) { el.hidden = true; return; }
+    el.hidden = false;
+    let head = $(el, ".wv-bubble-standpoint");
+    if (!head) { head = document.createElement("div"); head.className = "wv-bubble-standpoint"; el.prepend(head); }
+    // rebuilt only when the words change: this runs inside the pan/zoom frame, and
+    // re-writing the markup every frame would slam the <details> shut under the
+    // reader's own cursor
+    const html = standpointHTML();
+    if (html !== youHeadHTML) { head.innerHTML = html; youHeadHTML = html; }
+    mountWalkDesk();
+  }
+  // One desk, two homes. Moving the node keeps renderWalkDestination's selectors,
+  // its single owner, and every handler already written for it.
+  function mountWalkDesk() {
+    const desk = $(root, ".wv-walkdesk");
+    if (!desk) return;
+    const host = state.paintingOnly ? bubbleEl("you") : $(root, ".wv-nav");
+    if (!host || desk.parentElement === host) return;
+    if (host.classList.contains("wv-nav")) host.insertBefore(desk, $(root, ".wv-standctl"));
+    else host.appendChild(desk);
+  }
+  // NOT re-entrant, and the guard is load-bearing rather than defensive: building
+  // the pinned bubble runs renderExpansion, whose last act is to sync the
+  // interaction classes over the tree it just built — and that sync is what calls
+  // this. Without the latch, selecting a mark rebuilt the bubble that was
+  // rebuilding it until the renderer died. The inner sync still does its own job
+  // (the class toggles); it is only the bubble rebuild that must not nest.
+  let renderingBubbles = false;
+  function renderBubbles() {
+    if (renderingBubbles) return;
+    if (!state.paintingOnly) {
+      for (const el of Object.values(bubbleEls)) if (el) el.hidden = true;
+      return;
+    }
+    renderingBubbles = true;
+    try {
+      const { hoveredId, selectedId } = markInteraction.getState();
+      renderPinnedBubble(selectedId);
+      // the glance stands down for the mark it is already showing in full, and
+      // for a pointer that is reading a bubble rather than pointing at the
+      // painting — running a finger down a relations list should light each one
+      // on the map, not pop a second bubble over the list you are reading
+      const glance = hoveredId && hoveredId !== selectedId && !hoverFromBubble ? hoveredId : null;
+      renderHoverBubble(glance);
+      renderYouBubble();
+    } finally {
+      renderingBubbles = false;
+    }
+    positionBubbles();
+  }
+  // Placed in order of who yields to whom: the pinned bubble is the thing you
+  // asked for and sits where it likes; the glance steps around it; the you-bubble
+  // is always present and yields to both, since it is the one you did not ask for.
+  function positionBubbles() {
+    if (!state.paintingOnly) return;
+    const { hoveredId, selectedId } = markInteraction.getState();
+    placeBubbleAt(bubbleEls.pinned, selectedId ? (markAnchorPoint(selectedId) ?? viewCentreWorld()) : null);
+    const pinned = bubbleRect(bubbleEls.pinned);
+    placeBubbleAt(bubbleEls.hover, hoveredId ? markAnchorPoint(hoveredId) : null, pinned);
+    placeBubbleAt(bubbleEls.you, youAnchorPoint(), pinned);
+  }
+  // the lens and the marks filter, rendered by the SAME builders the telling uses
+  function renderPaintControls() {
+    const strip = $(root, ".wv-paint-controls");
+    if (!strip) return;
+    const options = {
+      identityResolved: identityResolved(),
+      baseLayer: state.baseLayer,
+      markFilter: state.markFilter,
+    };
+    strip.innerHTML = viewerAxisControls(options) + viewerFilterControls(options);
+  }
+  function applyPaintingOnly() {
+    const on = state.paintingOnly;
+    root.classList.toggle("is-painting-only", on);
+    $(root, ".wv-main")?.classList.toggle("is-painting-only", on);
+    const button = $(root, ".wv-map-panel");
+    if (button) {
+      button.classList.toggle("on", on);
+      button.setAttribute("aria-pressed", String(on));
+      button.textContent = on ? "▤ show panel" : "⛶ painting only";
+      button.title = on ? "bring the cell panel back" : "fold the cell panel away and let the painting fill the page";
+    }
+    mountWalkDesk();
+    renderPaintControls();
+    // the count line's WORDS come from the telling; only its presence is the
+    // mode's business, and the mode can change without a re-tell
+    const talliesChip = $(root, ".wv-paint-tallies");
+    if (talliesChip) talliesChip.hidden = !on;
+    renderBubbles();
+    // the painting's pixel size just changed under it — re-measure once the
+    // browser has actually laid the new grid out, not before
+    requestAnimationFrame(() => {
+      if (on) mapCtx?.fillPane?.();
+      if (lastRadial) drawOverlay(lastRadial);
+      positionBubbles();
+    });
+  }
+  const onViewerResize = () => positionBubbles();
+  window.addEventListener("resize", onViewerResize);
+
   // ───────── dev pane ─────────
   function buildDevPane() {
     const dev = $(root, ".wv-dev");
@@ -2840,8 +3388,12 @@ export function mountViewer(appEl) {
     renderCurrent();
     window.scrollTo(0, y);
     if (!note) return;
+    // the toast belongs wherever the reader is looking; with the panel folded
+    // away, .wv-view is display:none and a notice nobody can see is not a notice
+    const toastHost = state.paintingOnly ? $(root, ".wv-map .wv-sticky") : $(root, ".wv-view");
     let el = $(root, ".wv-moved");
-    if (!el) { el = document.createElement("div"); el.className = "wv-moved"; $(root, ".wv-view").prepend(el); }
+    if (el && el.parentElement !== toastHost) { el.remove(); el = null; }
+    if (!el) { el = document.createElement("div"); el.className = "wv-moved"; toastHost?.prepend(el); }
     el.textContent = `the world moved — ${note}`;
     el.classList.add("show");
     clearTimeout(movedTimer); movedTimer = setTimeout(() => el.classList.remove("show"), 6000);
@@ -2911,6 +3463,15 @@ export function mountViewer(appEl) {
     if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
     const fpbtn = e.target.closest(".wv-map-fp");
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
+    if (e.target.closest(".wv-map-panel")) {
+      state.paintingOnly = !state.paintingOnly;
+      writePaintingOnly(localStore, state.paintingOnly);
+      applyPaintingOnly();
+      return;
+    }
+    // the ✕ closes the pinned bubble, which is the same act as deselecting —
+    // there is one selection, and the bubble is what it looks like here
+    if (e.target.closest(".wv-bubble-close")) { clearSelectionAndDestination(); return; }
     const baseChip = e.target.closest("[data-world-base]");
     if (baseChip && identityResolved()) {
       state.baseLayer = baseChip.dataset.worldBase;
@@ -2935,6 +3496,11 @@ export function mountViewer(appEl) {
     if (tn) {
       const card = tn.closest(".wv-card");
       if (card && tn.dataset.id) {
+        // In a bubble a relative is a PLACE, so following one moves the bubble to
+        // it rather than drilling a breadcrumb inside the old one — on a map, the
+        // map is the breadcrumb. selectMark rebuilds the pinned bubble, so `card`
+        // is detached by the next statement; nothing may touch it after this.
+        if (state.paintingOnly && tn.closest(".wv-bubble")) { selectMark(tn.dataset.id); return; }
         selectMark(tn.dataset.id);
         const targetCard = [...root.querySelectorAll(".wv-card[data-id]")]
           .find((candidate) => candidate.dataset.id === tn.dataset.id);
@@ -2960,6 +3526,14 @@ export function mountViewer(appEl) {
     if (b.dataset.x !== undefined && b.classList.contains("ctl")) { walkState.actorBound = false; state.cam = { x: +b.dataset.x, y: +b.dataset.y }; renderCurrent(); }
     else if (b.dataset.dx !== undefined) { walkState.actorBound = false; state.cam.x += (+b.dataset.dx) * state.step; state.cam.y += (+b.dataset.dy) * state.step; renderCurrent(); }
     else if (b.classList.contains("wv-card") && b.dataset.id) {
+      // Inside a bubble the card IS the selection made visible, so clicking it
+      // must not un-make it — the ✕ and Escape do that. What is left of a card
+      // click is its other half: fold the investigate expansion open or shut.
+      if (b.closest(".wv-bubble")) {
+        b._stack = b._stack?.length ? [] : [b.dataset.id];
+        renderExpansion(b);
+        return;
+      }
       if (!selectMark(b.dataset.id)) {
         b._stack = [];
         renderExpansion(b);
@@ -2988,15 +3562,15 @@ export function mountViewer(appEl) {
     target?.closest?.(".wv-card[data-id], .wv-rnode[data-id], .wv-attribute[data-id]") ?? null;
   root.addEventListener("mouseover", (e) => {
     const cell = markCellAt(e.target);
-    if (cell) markInteraction.hover(cell.dataset.id);
+    if (cell) hoverMark(cell.dataset.id, !!cell.closest(".wv-bubble"));
   });
   root.addEventListener("mouseout", (e) => {
     const from = markCellAt(e.target);
     if (!from) return;
     const to = markCellAt(e.relatedTarget);
-    markInteraction.hover(to?.dataset.id ?? null);
+    hoverMark(to?.dataset.id ?? null, !!to?.closest(".wv-bubble"));
   });
-  root.addEventListener("mouseleave", () => markInteraction.hover(null));
+  root.addEventListener("mouseleave", () => hoverMark(null));
   root.addEventListener("input", (e) => {
     if (e.target.closest(".wv-act-sheet")) {
       const sheet = e.target.closest(".wv-act-sheet");
@@ -3185,6 +3759,8 @@ export function mountViewer(appEl) {
 
   // ───────── boot ─────────
   (async () => {
+    // the mode is remembered, so lay the page out in it before the first paint
+    applyPaintingOnly();
     try {
       await loadData();
       renderCurrent();
@@ -3200,6 +3776,8 @@ export function mountViewer(appEl) {
       clearInterval(clock);
       clearInterval(walkState.timer);
       document.removeEventListener("keydown", onViewerKeydown);
+      window.removeEventListener("resize", onViewerResize);
+      bubbleResize?.disconnect();
     },
   };
 }
