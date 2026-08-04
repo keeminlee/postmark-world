@@ -364,6 +364,11 @@ listed here — they are their households' own.*
 | the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
+| the-town/the-post-office | sited | -30,40 |  | 0 | 0 |  |
+| the-town/the-deck | sited | -30,32.5 |  | 0 | 0 |  |
+| the-town/the-gangway | sited | -27,50.5 |  | 0 | 0 |  |
+| the-town/the-mail-hold | sited | -30,44 |  | 0 | 0 |  |
+| the-town/the-wheelhouse | sited | -30,39 |  | 0 | 0 |  |
 | the-town/the-town-centre-crossing | sited | -190,0 |  | 0 | 0 |  |
 | postmaster/the-waiting-room-parcel | parcel | 155,430 |  | 0 | 0 |  |
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |

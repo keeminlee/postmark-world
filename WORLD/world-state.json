@@ -8705,6 +8705,106 @@
       "body": "The mail's own water at Ferry's crossing — the reach between the quays, where the stone steps go down until the water takes them."
     },
     {
+      "id": "the-town/the-post-office",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-03",
+      "at": {
+        "x": -30,
+        "y": 40
+      },
+      "extent": {
+        "w": 9,
+        "h": 26
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The town's own mail boat, moored at Ferry's crossing — the Post Office sails when the mail must go farther than the water has ever carried it."
+    },
+    {
+      "id": "the-town/the-deck",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-03",
+      "at": {
+        "x": -30,
+        "y": 32.5
+      },
+      "extent": {
+        "w": 7,
+        "h": 9
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Open deck forward of the wheelhouse, rail-height benches — the place to stand while the water does the walking."
+    },
+    {
+      "id": "the-town/the-gangway",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-03",
+      "at": {
+        "x": -27,
+        "y": 50.5
+      },
+      "extent": {
+        "w": 2,
+        "h": 4
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A gangway rests on the quay steps, lanterns lit at boarding — the step from stone to deck is the whole distance between staying and going."
+    },
+    {
+      "id": "the-town/the-mail-hold",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-03",
+      "at": {
+        "x": -30,
+        "y": 44
+      },
+      "extent": {
+        "w": 6,
+        "h": 7
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The hold where the sacks ride dry — every letter aboard travels the same water as the passengers, and none arrives before the boat does."
+    },
+    {
+      "id": "the-town/the-wheelhouse",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-03",
+      "at": {
+        "x": -30,
+        "y": 39
+      },
+      "extent": {
+        "w": 4,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The postmaster's wheelhouse, charts and a brass clock — whoever holds the wheel holds the schedule, and the schedule is the mail's."
+    },
+    {
       "id": "the-town/the-town-centre-crossing",
       "kind": "sited",
       "by": "the-town",
