@@ -84,7 +84,16 @@ for (const h of manifest.homes) {
   if (!home) {
     const own = sitedByHousehold.get(h.household) ?? [];
     if (own.length === 1) home = own[0];
-    else if (own.length > 1) { skipped.push(`${id} — id join missed and household holds ${own.length} sited marks; picking one is a judgment, not arithmetic`); continue; }
+    else if (own.length > 1) {
+      // Still arithmetic, not judgment: the manifest's confirmed coordinate
+      // identifies the home among many sited marks — the atlas anchor IS the
+      // house (east-facing-window: home_id drifted from the dir leaf, but her
+      // cathedral sits exactly at the manifest grid_m). Exactly one match or
+      // we refuse.
+      const atSpot = own.filter((m) => m.at && m.at.x === h.grid_m.x && m.at.y === h.grid_m.y);
+      if (atSpot.length === 1) home = atSpot[0];
+      else { skipped.push(`${id} — id join missed; household holds ${own.length} sited marks and ${atSpot.length} sit at the manifest coordinate; picking one is a judgment, not arithmetic`); continue; }
+    }
   }
   if (!home) { skipped.push(`${id} — no mark in the tree`); continue; }
   if (home.far) { skipped.push(`${id} — far: horizon object, no ground to claim`); continue; }
