@@ -2157,10 +2157,6 @@ export function mountViewer(appEl) {
     let s = "";
     for (const w of walkState.walkers) {
       const now = px(w), dest = px(w.toward ?? w);
-      // the remaining leg, then the walker on top of it
-      if (moving)
-        s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
-             `<circle cx="${dest.x}" cy="${dest.y}" r="${5 / k}" class="wv-walk-dest"/>`;
       // TWO states, not three. "arrived" and "standing" were never different
       // things — both are a person at rest at a place; what differed was only
       // how we learned the position (a walk record vs their parcel). Painting
@@ -2171,6 +2167,10 @@ export function mountViewer(appEl) {
       const eta = moving
         ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
         : (w.mark_id ? `at ${w.mark_id}` : "at rest");
+      // the remaining leg, then the walker on top of it — movers only
+      if (moving)
+        s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
+             `<circle cx="${dest.x}" cy="${dest.y}" r="${5 / k}" class="wv-walk-dest"/>`;
       // A HIT HALO, invisible, three times the dot. The visible walker renders
       // at about 7 CSS pixels — a ~3px radius target, and standing residents now
       // crowd close enough that one dot's centre can sit under its neighbour. So
