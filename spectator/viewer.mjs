@@ -448,7 +448,22 @@ export function walkerDestinationName(walker, marks = [], determined = {}) {
 export function viewerJourneyState(walker, marks = [], determined = {}) {
   if (!walker) return { kind: "ready", destinationName: null };
   const destinationName = walkerDestinationName(walker, marks, determined);
-  if (walker.arrived) return { kind: "arrived", destinationName };
+  // ONE vocabulary: `moving`. The old shape asked `arrived`, and a still
+  // resident in the new shape carries no `arrived` at all — so reading the
+  // MISSING field as false put every standing resident "on the road, 0 m from"
+  // their own doorstep, with a live "change course" button. A boolean that is
+  // absent is not a boolean that is false. `?? !walker.arrived` keeps any
+  // surface still speaking the old shape working.
+  const moving = walker.moving ?? !walker.arrived;
+
+  // A resident who has NEVER walked has no journey to report. This desk used to
+  // get that free — they had no row in the walkers list at all — and it broke the
+  // moment the list became complete. "arrived at your own parcel" is a claim
+  // about a journey that never happened, so they read as `ready`: nothing to
+  // report, planner open. Provenance decides the WORDS here, never the render —
+  // which is the whole reason `source` survived the collapse.
+  if (!moving && walker.source === "parcel") return { kind: "ready", destinationName: null };
+  if (!moving) return { kind: "arrived", destinationName };
   return {
     kind: "journey",
     destinationName,

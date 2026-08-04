@@ -234,6 +234,27 @@ test("the walk desk selects ready, journey, and arrived from the latest walker d
     kind: "arrived",
     destinationName: "the Trueing House",
   });
+
+  // REGRESSION 2026-08-04. The resident shape moved from `arrived` to `moving`,
+  // and this function still asked for `arrived` — which a still resident no
+  // longer carries at all. A MISSING boolean read as false, so every standing
+  // resident was reported "on the road, 0 m from" their own doorstep, with a
+  // live "change course" button. Absent is not false.
+  const stillFromWalk = { handle: "wright", x: 600, y: 0, source: "walk", moving: false,
+    toward: null, remaining_m: 0, eta_crossings: 0, mark_id: "wright/the-trueing-house" };
+  assert.deepEqual(viewerJourneyState(stillFromWalk, marks, determined), {
+    kind: "arrived",
+    destinationName: "the Trueing House",
+  }, "someone who walked and stopped has arrived — not a 0 m journey");
+
+  // And someone who NEVER walked has no journey to report at all. "Arrived at
+  // your own parcel" is a claim about a trip that never happened.
+  const neverWalked = { handle: "vermillion", x: 600, y: 0, source: "parcel", moving: false,
+    toward: null, remaining_m: 0, eta_crossings: 0, mark_id: "wright/the-trueing-house" };
+  assert.deepEqual(viewerJourneyState(neverWalked, marks, determined), {
+    kind: "ready",
+    destinationName: null,
+  }, "never walked = nothing to report, planner open");
 });
 
 test("walker destinations prefer a carried mark Name, then point containment, then open ground", () => {
