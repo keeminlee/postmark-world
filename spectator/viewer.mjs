@@ -483,6 +483,88 @@ export function disciplineAtlasImages(root) {
 
 export const MARK_SNAP_RADIUS_PX = 18;
 
+// ── marker size on screen ────────────────────────────────────────────────────
+// Markers are authored in painting units but have to read at a stable size on
+// SCREEN, so every radius is divided by a camera-compensation factor. That
+// factor used to be Math.sqrt(zoomK) alone — a square-root compensation against
+// a camera that scales LINEARLY — so the on-screen radius still grew as
+// √zoomK: ~5× at the old zoom floor, and it would be ~11× at the new one. The
+// third term is the ceiling. Once a marker has grown MARKER_MAX_GROWTH times
+// its zoom-1 size the divisor tracks the camera exactly and the on-screen size
+// stops moving.
+//
+// Deliberately independent of the radius it will divide: every marker caps at
+// the same MULTIPLE of its own size, so the size relationships the layers
+// designed on purpose survive the cap (the walker hit halo stays 3× its dot at
+// every zoom). A single shared pixel ceiling would have flattened a 27-unit hit
+// halo and a 9-unit dot into the same circle and broken the hit target.
+export const MARKER_MAX_GROWTH = 2.5;
+
+export function markerScale(zoomK) {
+  const k = Number.isFinite(zoomK) && zoomK > 0 ? zoomK : 1;
+  return Math.max(1, Math.sqrt(k), k / MARKER_MAX_GROWTH);
+}
+
+// The zoom-IN floor: the viewport may never get narrower than full.w / this.
+// The painting is 1500 atlas units wide at 5 m per unit (WORLD/skeleton.json),
+// i.e. 7.5 km, so this divisor reads straight off as a viewport width: the old
+// 24 gave 312 m, this gives 125 m. A 25 m parcel is a fifth of the view — a
+// reading — and a house footprint frames whole.
+//
+// It is NOT set by resolution. The atlas carries no basemap raster at all, and
+// its vector art never pixelates. What binds is the painting's DESIGN SCALE: it
+// is symbolic, not a survey drawing — a house is one glyph about 60 atlas units
+// (300 m) wide, and place-names are set in painting units, so both grow with the
+// camera. Measured on the tallest label in frame, in an 899 px panel:
+//     zoomK   6 → 1250 m →  41 px   reads as a map
+//     zoomK  24 →  313 m → 164 px   (the old floor) labels already dominate
+//     zoomK  60 →  125 m → 409 px   inside a single house glyph
+//     zoomK 120 →   63 m →  flat    atlas art is colour, nothing more
+// So past roughly zoomK 10–15 the atlas has stopped helping no matter what this
+// number says, and deep zoom means reading the RECORD — pips, footprints,
+// walkers, hover boxes — against an abstract backdrop. That layer is this
+// viewer's own and stays crisp and correctly sized at any depth (see
+// markerScale), so the mode is sound; 60 is chosen because it frames a 25 m
+// parcel at a fifth of the view while a house is still recognisably a house.
+// Going deeper is available and costs nothing but backdrop. The real unlock is
+// counter-scaling the atlas's own labels, which lives in the atlas.
+export const MAX_ZOOM_IN = 60;
+
+// ── the hover label ──────────────────────────────────────────────────────────
+// ONE box, spoken by everything hoverable on the painting. Marks already had
+// it; a standing resident had a <title> instead — the browser's own hint,
+// delayed, unstyled and drawn by the OS outside the map. Same reading, so the
+// same box. Sized in screen units and clamped inside the viewport, so it stays
+// legible at any zoom and never sails off an edge.
+export function hoverLabelSVG({ text, at, unit, view, maxChars = 58, className = "wv-hl-label" } = {}) {
+  const anchorX = Number(at?.x), anchorY = Number(at?.y), u = Number(unit);
+  if (![anchorX, anchorY, u].every(Number.isFinite) || u <= 0) return "";
+  const vx = Number(view?.x), vy = Number(view?.y), vw = Number(view?.w), vh = Number(view?.h);
+  if (![vx, vy, vw, vh].every(Number.isFinite)) return "";
+  const raw = String(text ?? "").trim();
+  if (!raw) return "";
+  const label = raw.length > maxChars ? `${raw.slice(0, maxChars - 1)}…` : raw;
+  const width = Math.max(120, Math.min(420, label.length * 7 + 12)) * u;
+  const height = 23 * u;
+  // the box takes whichever side has room, so it never covers what you point at
+  const right = anchorX < vx + vw * 0.55;
+  const wantedX = right ? anchorX + 16 * u : anchorX - width - 16 * u;
+  const x = Math.max(vx + 4 * u, Math.min(vx + vw - width - 4 * u, wantedX));
+  const y = Math.max(vy + 4 * u, Math.min(vy + vh - height - 4 * u, anchorY - height - 10 * u));
+  return `<g class="${className}"><rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${3 * u}"/>`
+    + `<text x="${x + 6 * u}" y="${y + 15.5 * u}" font-size="${12 * u}">${esc(label)}</text></g>`;
+}
+
+// Walkers ride the mark hover store rather than growing a second one — one
+// hover mechanism for the painting. A namespaced key keeps them from colliding
+// with real mark ids, and everything that matches on mark ids simply misses.
+export const WALKER_HOVER_PREFIX = "walker:";
+export const walkerHoverId = (handle) => `${WALKER_HOVER_PREFIX}${handle}`;
+export const walkerHandleFromHoverId = (id) =>
+  typeof id === "string" && id.startsWith(WALKER_HOVER_PREFIX)
+    ? id.slice(WALKER_HOVER_PREFIX.length) || null
+    : null;
+
 export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
   const x = Number(point?.x), y = Number(point?.y), radius = Number(radiusPx);
   if (![x, y, radius].every(Number.isFinite) || radius < 0) return null;
@@ -832,8 +914,6 @@ const STYLE = `
 .wv-cell-act { background:transparent; border:1px solid var(--amber-dark); color:var(--amber);
   border-radius:999px; padding:2px 8px; font:inherit; font-size:.7rem; cursor:pointer; }
 .wv-cell-act:hover { background:var(--panel2); }
-.wv-walk-here { display:none; }
-.wv-card.is-mark-selected > .wv-cell-byline-row .wv-walk-here { display:inline-flex; }
 .wv-cell-act.stamp { border-color:var(--stamp-violet-dark); color:var(--stamp-violet-subhead); }
 .wv-cell-act.stamp:hover { border-color:var(--stamp-violet); color:var(--stamp-violet-heading); }
 .wv-act-sheet { margin-top:10px; padding:10px; border:1px dashed var(--stamp-violet-dark);
@@ -1016,6 +1096,10 @@ const STYLE = `
 .wv-hl-dot.t-constitution { fill:var(--blue); }
 .wv-hl-dot.t-home { fill:var(--green); }
 .wv-hl-dot.t-market { fill:var(--amber); }
+/* a hovered resident lights in the walker's own two-state colour, not a tier —
+   a person is not a tier of mark, but they speak the same box */
+.wv-hl-dot.wv-hl-walker { fill:var(--green); }
+.wv-hl-dot.wv-hl-walker.moving { fill:#e0507a; }
 /* walkers (write-release P2): the one thing on this map that moves. A walker is
    drawn where DERIVATION says they are — the layer keeps no position of its own. */
 /* ONE resident, two states. Still is the common case and reads calm; moving is
@@ -1408,7 +1492,9 @@ export function mountViewer(appEl) {
     return `<span class="wv-cell-actions">`
       + backingDisplay
       + (position ? `<button type="button" class="wv-cell-act stamp unstake" data-unstake-open data-mark="${esc(m.id)}" data-max="${Number(position.stamps)}">take back ${Number(position.stamps)}</button>` : "")
-      + (walkableMark(full) ? `<button type="button" class="wv-cell-act wv-walk-here" data-walk-here data-mark="${esc(m.id)}">walk here</button>` : "")
+      // no "walk here" chip: selecting the mark IS the intent, and the preview
+      // follows from the selection (Keemin 2026-08-04). Confirming is still its
+      // own deliberate step, on the walk desk.
       + `</span>`;
   }
   // THE unified mark-cell — everything on the telling is one of these, and every
@@ -1851,7 +1937,7 @@ export function mountViewer(appEl) {
       svg.addEventListener("wheel", (e) => {
         e.preventDefault(); stopTween(); breakFollow();
         const k = Math.pow(1.0015, e.deltaY);
-        const w = Math.min(full.w * 1.1, Math.max(full.w / 24, view.w * k));
+        const w = Math.min(full.w * 1.1, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
         const scale = w / view.w;
         const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
         const p = pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -1893,6 +1979,24 @@ export function mountViewer(appEl) {
         glyphs: screenMarkCandidates(),
         marks: toldPaintingMarks(lastRadial, world?.marks ?? []),
       });
+      // walkers, in the same screen-space shape the mark snap already eats
+      function screenWalkerCandidates() {
+        const matrix = svg.getScreenCTM();
+        if (!matrix) return [];
+        return (walkState.walkers ?? []).flatMap((w) => {
+          if (!w?.handle || ![w.x, w.y].every(Number.isFinite)) return [];
+          const point = svg.createSVGPoint();
+          point.x = originPx.x + w.x / mPerPx;
+          point.y = originPx.y + w.y / mPerPx;
+          const screen = point.matrixTransform(matrix);
+          return [{ id: walkerHoverId(w.handle), x: screen.x, y: screen.y }];
+        });
+      }
+      // A standing resident wins the hover over the ground they stand on — the
+      // person is what you were pointing at. Same snap helper, same radius.
+      const hoverTargetForEvent = (event) =>
+        snappedMarkAtPoint({ x: event.clientX, y: event.clientY }, screenWalkerCandidates())
+        ?? paintingMarkForEvent(event);
       svg.addEventListener("pointerdown", (e) => {
         stopTween();
         press = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
@@ -1900,12 +2004,12 @@ export function mountViewer(appEl) {
       });
       svg.addEventListener("pointermove", (e) => {
         if (!press || e.pointerId !== press.id) {
-          markInteraction.hover(paintingMarkForEvent(e));
+          markInteraction.hover(hoverTargetForEvent(e));
           return;
         }
         const dx = e.clientX - press.x, dy = e.clientY - press.y;
         if (!press.moved && Math.hypot(dx, dy) < 6) {
-          markInteraction.hover(paintingMarkForEvent(e));
+          markInteraction.hover(hoverTargetForEvent(e));
           return;
         }
         if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
@@ -2014,7 +2118,7 @@ export function mountViewer(appEl) {
     const { overlay, originPx, mPerPx } = mapCtx;
     // markers shrink gently as the camera closes in, so a zoomed street never
     // drowns under full-map-sized pips (the reach ring stays true-scale — it IS a distance)
-    const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
+    const k = markerScale(mapCtx.zoomK);
     const px = (m) => ({ x: originPx.x + m.x / mPerPx, y: originPx.y + m.y / mPerPx });
     const me = px(state.cam), reachPx = (radial?.sightReachM ?? 0) / mPerPx;
     let s = `<circle cx="${me.x}" cy="${me.y}" r="${reachPx}" class="ov-reach"/>`;
@@ -2046,10 +2150,12 @@ export function mountViewer(appEl) {
     mapCtx.hlLayer.innerHTML = ids.map(renderOneMarkHighlight).join("");
   }
   function renderOneMarkHighlight(id) {
+    const walkerHandle = walkerHandleFromHoverId(id);
+    if (walkerHandle) return renderWalkerHighlight(walkerHandle);
     const m = id && byId.get(id);
     const target = nearestEmbodiedAncestor(m, byId);
     if (!m || !target) return "";
-    const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
+    const k = markerScale(mapCtx.zoomK);
     const t = tierOf(m), mech = m.mechanic ? " mech" : "";
     const p = { x: mapCtx.originPx.x + target.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + target.at.y / mapCtx.mPerPx };
     const worldViewport = {
@@ -2093,18 +2199,25 @@ export function mountViewer(appEl) {
       s += markShapeSVG(target, hlPx, `wv-hl-box t-${t}${mech}`);
     }
     s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
-    const label = identity.length > 58 ? `${identity.slice(0, 57)}…` : identity;
-    const labelWidth = Math.max(120, Math.min(420, label.length * 7 + 12)) * unit;
-    const labelHeight = 23 * unit;
-    const right = p.x < mapCtx.view.x + mapCtx.view.w * 0.55;
-    const wantedX = right ? p.x + 16 * unit : p.x - labelWidth - 16 * unit;
-    const labelX = Math.max(mapCtx.view.x + 4 * unit,
-      Math.min(mapCtx.view.x + mapCtx.view.w - labelWidth - 4 * unit, wantedX));
-    const labelY = Math.max(mapCtx.view.y + 4 * unit,
-      Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit, p.y - labelHeight - 10 * unit));
-    s += `<g class="wv-hl-label"><rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
-      + `<text x="${labelX + 6 * unit}" y="${labelY + 15.5 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
+    s += hoverLabelSVG({ text: identity, at: p, unit, view: mapCtx.view });
     return s;
+  }
+  // A standing resident gets the SAME box a mark gets — one hover language on
+  // the painting, instead of the OS tooltip a <title> used to raise.
+  function renderWalkerHighlight(handle) {
+    if (!mapCtx) return "";
+    const w = (walkState.walkers ?? []).find((x) => x?.handle === handle);
+    if (!w || ![w.x, w.y].every(Number.isFinite)) return "";
+    const k = markerScale(mapCtx.zoomK);
+    const p = { x: mapCtx.originPx.x + w.x / mapCtx.mPerPx, y: mapCtx.originPx.y + w.y / mapCtx.mPerPx };
+    const bounds = mapCtx.svg.getBoundingClientRect();
+    const unit = bounds.width > 0 ? mapCtx.view.w / bounds.width : 1;
+    const moving = w.moving ?? (!w.arrived && !w.standing);
+    const where = moving
+      ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
+      : (w.mark_id ? `at ${w.mark_id}` : "at rest");
+    return `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot wv-hl-walker${moving ? " moving" : ""}"/>`
+      + hoverLabelSVG({ text: `${w.handle} — ${where}`, at: p, unit, view: mapCtx.view });
   }
   function syncMarkInteractionViews() {
     const interaction = markInteraction.getState();
@@ -2175,7 +2288,7 @@ export function mountViewer(appEl) {
 
   function drawWalkers() {
     if (!mapCtx?.walkLayer) return;
-    const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
+    const k = markerScale(mapCtx.zoomK);
     const px = (m) => ({ x: mapCtx.originPx.x + m.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.y / mapCtx.mPerPx });
     let s = "";
     for (const w of walkState.walkers) {
@@ -2198,12 +2311,17 @@ export function mountViewer(appEl) {
       // at about 7 CSS pixels — a ~3px radius target, and standing residents now
       // crowd close enough that one dot's centre can sit under its neighbour. So
       // the mark you can SEE stays exactly the size it was, and the thing you
-      // have to HIT is comfortable. The halo carries the title (and is emitted
-      // first, so the visible dot still paints on top); the dot keeps its own
-      // copy for anyone who lands dead centre.
-      const label = `<title>${esc(w.handle)} — ${esc(eta)}</title>`;
-      s += `<circle cx="${now.x}" cy="${now.y}" r="${27 / k}" class="wv-walker-hit">${label}</circle>`
-         + `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}">${label}</circle>`;
+      // have to HIT is comfortable. The halo is emitted first, so the visible
+      // dot still paints on top.
+      //
+      // No <title> on either circle any more: hovering now raises the town's own
+      // label box (the same one a mark raises), and a <title> would race it with
+      // a delayed, unstyled OS tooltip saying the same thing. The accessible
+      // name moves onto the visible dot, which is the element that means
+      // something; the halo is a hit target and says nothing.
+      const identity = `${w.handle} — ${eta}`;
+      s += `<circle cx="${now.x}" cy="${now.y}" r="${27 / k}" class="wv-walker-hit"/>`
+         + `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}" role="img" aria-label="${esc(identity)}"/>`;
     }
     mapCtx.walkLayer.innerHTML = s;
     const box = $(root, "#wv-walk-readout");
@@ -2226,7 +2344,7 @@ export function mountViewer(appEl) {
       layer.innerHTML = "";
       return;
     }
-    const k = Math.max(1, Math.sqrt(mapCtx.zoomK || 1));
+    const k = markerScale(mapCtx.zoomK);
     const unit = 1 / k;
     const px = (point) => ({
       x: mapCtx.originPx.x + point.x / mapCtx.mPerPx,
@@ -2395,7 +2513,7 @@ export function mountViewer(appEl) {
     if (box) box.innerHTML = destination
       ? `${journey.kind === "journey" ? "change course — " : ""}destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined, actorOrigin()))}</b>`
         + (preview ? `<span class="wv-walk-metrics">${esc(formatWalkPreviewLabel(preview.leg))}</span>` : "")
-      : `${journey.kind === "journey" ? "change course — " : ""}click open ground in the painting, or select a walkable mark and choose walk here`;
+      : `${journey.kind === "journey" ? "change course — " : ""}click open ground in the painting, or select a walkable mark`;
     if (confirm) {
       confirm.textContent = journey.kind === "journey" ? "change course" : "confirm departure";
       confirm.disabled = !preview;
@@ -2409,6 +2527,25 @@ export function mountViewer(appEl) {
     cell?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
+  // A mark you could actually set out for: walkable, and not the ground you are
+  // already standing on. The zero-length case matters now that selection drives
+  // the preview — before, you had to go out of your way to arm a 0 m departure,
+  // and it would still have let you confirm it. Derived through the real
+  // preview, so "zero" means whatever previewWalkLeg says it means.
+  function previewableWalkTarget(id) {
+    const mark = byId.get(id);
+    if (!walkableMark(mark)) return false;
+    const from = actorOrigin();
+    if (!from) return true; // no origin is its own refusal — chooseWalkPoint says so
+    const preview = deriveWalkPreview({
+      from,
+      destination: { x: mark.at.x, y: mark.at.y },
+      skeleton: data?.skeleton,
+      residentMode: canAct(),
+    });
+    return !!preview && Number(preview.leg?.distanceM) > 0;
+  }
+
   function selectMark(id, { scrollCell = false } = {}) {
     if (!id || !byId.has(id)) return false;
     if (markInteraction.getState().selectedId === id) {
@@ -2416,11 +2553,18 @@ export function mountViewer(appEl) {
       return false;
     }
     markInteraction.select(id);
+    // Selecting IS the intent, so the walk preview follows from it — that is why
+    // the per-cell "walk here" chip is gone (Keemin 2026-08-04). Three things
+    // this must not break, and does not: a spectator still selects freely (the
+    // whole block is behind canAct, so they simply preview nothing); an
+    // unwalkable mark still selects, just without a preview; and CONFIRMING is
+    // untouched — it remains its own deliberate press on the walk desk.
     if (canAct()) {
       walkState.destination = null;
       if (viewerJourneyState(actorWalker()).kind === "journey") walkState.changingCourse = true;
       clearWalkFeedback();
-      renderWalkDestination();
+      if (previewableWalkTarget(id)) chooseWalkMark(id);
+      else renderWalkDestination();
     }
     if (scrollCell) scrollMarkCellIntoView(id);
     return true;
@@ -2713,8 +2857,6 @@ export function mountViewer(appEl) {
       return;
     }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
-    const walkHere = e.target.closest("[data-walk-here]");
-    if (walkHere) { chooseWalkMark(walkHere.dataset.mark, { scrollDesk: true }); return; }
     const stakeOpen = e.target.closest("[data-stake-open]");
     if (stakeOpen) {
       openStakeSheet(stakeOpen.closest(".wv-card"), { mode: "stake", markId: stakeOpen.dataset.mark });

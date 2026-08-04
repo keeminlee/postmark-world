@@ -16,13 +16,17 @@ import {
   formatRelativePosition,
   formatSpectatorCoordinate,
   formatWalkPreviewLabel,
+  hoverLabelSVG,
   isAmbientMark,
   investigateNameLine,
   markByline,
   markCellBylineRow,
   markCellTitle,
   markGeometryIntersectsViewport,
+  MARKER_MAX_GROWTH,
+  markerScale,
   MARK_SNAP_RADIUS_PX,
+  MAX_ZOOM_IN,
   officeBase,
   paintingMarkAtPoint,
   pointWalkDestination,
@@ -46,6 +50,8 @@ import {
   viewerCanAct,
   walkDestinationLabel,
   walkerDestinationName,
+  walkerHandleFromHoverId,
+  walkerHoverId,
 } from "../spectator/viewer.mjs";
 
 test("distance-band headings derive their approximate ranges from the LOD dials", () => {
@@ -636,4 +642,80 @@ test("mark selection and hover share one observable interaction store", () => {
     hoveredId: null,
   });
   unsubscribe();
+});
+
+test("marker compensation puts a CEILING on on-screen size, not just a square root", () => {
+  // on-screen radius is proportional to base / markerScale(zoomK) * zoomK
+  const onScreen = (base, zoomK) => (base / markerScale(zoomK)) * zoomK;
+  assert.equal(markerScale(1), 1, "at rest a marker is drawn at its authored size");
+  // the old behaviour, kept as the thing we are fixing: sqrt compensation alone
+  // let the on-screen size grow without bound as the camera closed in
+  assert.ok(Math.sqrt(120) > 10, "the deepest zoom would have been >10x under sqrt alone");
+  // the ceiling: past MARKER_MAX_GROWTH the on-screen size stops moving
+  const capped = onScreen(11, MARKER_MAX_GROWTH ** 2);
+  for (const zoomK of [MARKER_MAX_GROWTH ** 2, 20, 60, MAX_ZOOM_IN]) {
+    assert.ok(onScreen(11, zoomK) <= capped + 1e-9, `zoomK ${zoomK} stays under the ceiling`);
+  }
+  assert.ok(Math.abs(onScreen(11, MAX_ZOOM_IN) - 11 * MARKER_MAX_GROWTH) < 1e-9,
+    "at the floor a marker sits at exactly MARKER_MAX_GROWTH times its authored size");
+});
+
+test("the marker ceiling is a MULTIPLE, so designed size relationships survive it", () => {
+  // the walker hit halo is authored at 3x its dot precisely so the target is
+  // comfortable; a shared absolute ceiling would have flattened them together
+  const onScreen = (base, zoomK) => (base / markerScale(zoomK)) * zoomK;
+  for (const zoomK of [1, 4, 25, MAX_ZOOM_IN]) {
+    assert.ok(Math.abs(onScreen(27, zoomK) / onScreen(9, zoomK) - 3) < 1e-9,
+      `hit halo stays 3x the dot at zoomK ${zoomK}`);
+  }
+});
+
+test("markerScale refuses nonsense zoom rather than collapsing a marker", () => {
+  for (const bad of [0, -4, NaN, undefined, null, "deep"]) {
+    assert.equal(markerScale(bad), 1, `${String(bad)} falls back to the authored size`);
+  }
+});
+
+test("the zoom floor frames a parcel: MAX_ZOOM_IN reads as a viewport width", () => {
+  const ATLAS_UNITS_WIDE = 1500, M_PER_UNIT = 5; // WORLD/skeleton.json
+  const viewportM = (ATLAS_UNITS_WIDE / MAX_ZOOM_IN) * M_PER_UNIT;
+  assert.ok(viewportM <= 125, "a 25 m parcel is at least a fifth of the tightest view");
+  assert.ok(viewportM > 25, "the tightest view still holds a whole parcel, with ground around it");
+  assert.ok(MAX_ZOOM_IN > 24, "and it is deeper than the floor it replaced");
+});
+
+test("a walker hover id round-trips and never collides with a mark id", () => {
+  assert.equal(walkerHoverId("wren"), "walker:wren");
+  assert.equal(walkerHandleFromHoverId(walkerHoverId("wren")), "wren");
+  assert.equal(walkerHandleFromHoverId("wright/the-trueing-house"), null,
+    "a real mark id is not mistaken for a resident");
+  for (const bad of [null, undefined, 42, "walker:", ""]) {
+    assert.equal(walkerHandleFromHoverId(bad), null, `${String(bad)} names no resident`);
+  }
+});
+
+test("the hover label is one box: clamped inside the viewport, sized in screen units", () => {
+  const view = { x: 0, y: 0, w: 100, h: 100 };
+  const box = hoverLabelSVG({ text: "wren — at rest", at: { x: 50, y: 50 }, unit: 0.1, view });
+  assert.match(box, /<g class="wv-hl-label">/);
+  assert.match(box, /wren — at rest/);
+  // a mark hard against the right edge still gets its whole box on screen
+  const edge = hoverLabelSVG({ text: "wren", at: { x: 99.5, y: 1 }, unit: 0.1, view });
+  const x = Number(edge.match(/<rect x="([-0-9.]+)"/)[1]);
+  const w = Number(edge.match(/width="([-0-9.]+)"/)[1]);
+  assert.ok(x >= view.x, "the box never sails off the left edge");
+  assert.ok(x + w <= view.x + view.w, "nor off the right");
+  assert.equal(hoverLabelSVG({ text: "", at: { x: 1, y: 1 }, unit: 1, view }), "",
+    "nothing to say draws no box");
+  assert.equal(hoverLabelSVG({ text: "wren", at: { x: NaN, y: 1 }, unit: 1, view }), "",
+    "a walker with no derivable position draws no box");
+});
+
+test("a long identity is elided rather than allowed to overrun its box", () => {
+  const view = { x: 0, y: 0, w: 1000, h: 1000 };
+  const long = "a".repeat(200);
+  const box = hoverLabelSVG({ text: long, at: { x: 500, y: 500 }, unit: 1, view });
+  const text = box.match(/font-size="[-0-9.]+">([^<]*)</)[1];
+  assert.ok(text.length <= 58, "the label is cut to the box it is drawn in");
+  assert.ok(text.endsWith("…"), "and says that it was cut");
 });
