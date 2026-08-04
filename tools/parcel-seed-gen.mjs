@@ -34,7 +34,12 @@ import { rect, contains, overlapArea } from "./geometry.mjs";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const DRY = process.argv.includes("--dry");
-const DATE = "2026-07-24"; // the ruling day — a seed is an event, not a wall-clock
+// The ruling day — a seed is an event, not a wall-clock. 2026-07-24 was the
+// homes ruling (the original grounding run); pass --date for a later ruling's
+// run (2026-08-04: the confirmation-sweep backfill, "seed all the un-seeded").
+const dateArgAt = process.argv.indexOf("--date");
+const DATE = dateArgAt > -1 ? process.argv[dateArgAt + 1] : "2026-07-24";
+if (!/^\d{4}-\d{2}-\d{2}$/.test(DATE)) throw new Error(`--date wants YYYY-MM-DD, got: ${DATE}`);
 const MARGIN = 12;         // metres of ground beyond the house, each dimension
 const MIN = 25;            // the schema's parcel default
 
@@ -52,9 +57,35 @@ const boxOf = (at, ext) => rect({ at, extent: ext });
 const seeded = [], skipped = [], shrunk = [], planned = [];
 const households = new Set();
 
+// One question, one owner: "does this household hold a parcel" is answered by
+// the RECORD (a kind: parcel mark by that household, wherever it sits in the
+// tree) — never by path arithmetic. The old exists-guard checked a computed
+// sibling path, and the re-homing follow-up (house dirs moved INSIDE their
+// parcels: merrick, aion, …) moved the real parcels out from under it — the
+// tool would have double-minted a nested parcel for every re-homed household
+// (caught 2026-08-04 on the first honest dry run).
+const parcelHolders = new Set(marks.filter((m) => m.kind === "parcel" && m.by).map((m) => m.by));
+
+// Same cure for the lookup: the manifest's home_id and the mark tree's dir
+// leaf can drift (east-facing-window's home mark is the-cathedral-at-east-
+// window). When the id join misses, fall back to the household's SOLE sited
+// mark — sole, because two sited marks make the choice a judgment, and this
+// tool does no judgment.
+const sitedByHousehold = new Map();
+for (const m of sited) {
+  if (!sitedByHousehold.has(m.by)) sitedByHousehold.set(m.by, []);
+  sitedByHousehold.get(m.by).push(m);
+}
+
 for (const h of manifest.homes) {
   const id = `${h.household}/${h.home_id}`;
-  const home = byId.get(id);
+  if (parcelHolders.has(h.household)) { skipped.push(`${id} — household already holds a parcel on the record`); continue; }
+  let home = byId.get(id);
+  if (!home) {
+    const own = sitedByHousehold.get(h.household) ?? [];
+    if (own.length === 1) home = own[0];
+    else if (own.length > 1) { skipped.push(`${id} — id join missed and household holds ${own.length} sited marks; picking one is a judgment, not arithmetic`); continue; }
+  }
   if (!home) { skipped.push(`${id} — no mark in the tree`); continue; }
   if (home.far) { skipped.push(`${id} — far: horizon object, no ground to claim`); continue; }
   if (households.has(h.household)) { skipped.push(`${id} — household already holds a parcel this run`); continue; }
@@ -116,8 +147,11 @@ derived_from: seeding/manifest.json — "household: ${p.household} · home_id: $
 
 ${cap150(`This ground is ${p.household}'s home — ${p.title} stands on it.`, p.id + "/home")}
 `;
+  // The exists-check runs in BOTH modes — a dry run that lists already-standing
+  // parcels as "seeded" is a plan that diverges from the act (caught 2026-08-04:
+  // the dry list claimed 26 when most already stood).
+  if (existsSync(join(p.dir, "mark.md"))) { skipped.push(`${p.id} — already exists, untouched`); continue; }
   if (!DRY) {
-    if (existsSync(join(p.dir, "mark.md"))) { skipped.push(`${p.id} — already exists, untouched`); continue; }
     mkdirSync(join(p.dir, "home"), { recursive: true });
     writeFileSync(join(p.dir, "mark.md"), parcelMd);
     writeFileSync(join(p.dir, "home", "mark.md"), predMd);
