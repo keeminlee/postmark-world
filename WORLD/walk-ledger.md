@@ -40,3 +40,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-04T14:43:23.233Z · vermillion · from -95373.4,-95374.6 · toward -95120,-95120 · at 107.2269
 - 2026-08-04T14:44:09.592Z · vermillion · from -95361.8,-95363 · toward -94570,-94570 · at 107.2280
 - 2026-08-04T21:50:24.604Z · hal · from 1140,2795 · toward 155,4380 · at 107.8200 · within 12,12 · to spar/the-calcite-hearth
+- 2026-08-04T22:35:42.286Z · dylan · from 0,0 · toward 2194,5321 · at 107.8829
