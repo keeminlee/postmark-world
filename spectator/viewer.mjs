@@ -2157,16 +2157,22 @@ export function mountViewer(appEl) {
         s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
              `<circle cx="${dest.x}" cy="${dest.y}" r="${5 / k}" class="wv-walk-dest"/>`;
       const cls = w.standing ? "wv-walker standing" : w.arrived ? "wv-walker arrived" : "wv-walker";
-      const eta = w.standing ? "standing" : w.arrived ? "arrived" : `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`;
+      // The hover says who, and then the honest state. A standing resident is
+      // named by the ground they stand on when the office sent one — "standing"
+      // alone reads as a shrug when the map can say where.
+      const eta = w.standing ? (w.mark_id ? `standing at ${w.mark_id}` : "standing")
+        : w.arrived ? "arrived"
+        : `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`;
       s += `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}"><title>${esc(w.handle)} — ${esc(eta)}</title></circle>`;
     }
     mapCtx.walkLayer.innerHTML = s;
     const box = $(root, "#wv-walk-readout");
     if (box) {
       const on = walkState.walkers.filter((w) => !w.arrived && !w.standing).length;
+      const still = walkState.walkers.filter((w) => w.standing).length;
       box.textContent = walkState.at === null ? "no walk records"
         : `crossing ${walkState.at.toFixed(3)} — ` +
-          `${walkState.walkers.length} on record, ${on} on the road`;
+          `${walkState.walkers.length} on the map, ${on} on the road, ${still} standing`;
     }
     syncActorPosition();
     renderWalkDestination();
@@ -2212,7 +2218,14 @@ export function mountViewer(appEl) {
         if (!r.ok) continue;
         const j = await r.json();
         walkState.at = Number(j.at);
-        walkState.walkers = j.walkers ?? [];
+        // Walkers are the people who have MOVED; `standing` is everyone whose
+        // ground is on the record and who has never declared a walk. The map
+        // drew only the former, so most of the town was simply absent from it —
+        // a resident could stand on his own mountain and appear nowhere. Both
+        // are people; they are drawn together and told apart by `standing`,
+        // which this renderer already understood. The office publishes them
+        // under separate keys so `walkers` keeps meaning what it always meant.
+        walkState.walkers = [...(j.walkers ?? []), ...(j.standing ?? [])];
         drawWalkers();
         const origin = actorOrigin();
         if (canAct() && origin && walkState.actorBound) {
