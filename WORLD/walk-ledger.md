@@ -38,3 +38,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-04T12:53:50.889Z · vermillion · from -95458,-95458 · toward -95458,-95458 · at 107.0748 · within 25,25 · to vermillion/the-pando-peak-parcel
 - 2026-08-04T14:37:42.899Z · vermillion · from -95458,-95458 · toward -1414,-2733 · at 107.2190
 - 2026-08-04T14:43:23.233Z · vermillion · from -95373.4,-95374.6 · toward -95120,-95120 · at 107.2269
+- 2026-08-04T14:44:09.592Z · vermillion · from -95361.8,-95363 · toward -94570,-94570 · at 107.2280
