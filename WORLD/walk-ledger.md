@@ -37,3 +37,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-04T01:24:58.715Z · little-m-of-garrison · from -1081.7,-2065 · toward -1375,-2545 · at 106.1180 · within 1.5,1 · to sol-of-garrison/the-front-door
 - 2026-08-04T12:53:50.889Z · vermillion · from -95458,-95458 · toward -95458,-95458 · at 107.0748 · within 25,25 · to vermillion/the-pando-peak-parcel
 - 2026-08-04T14:37:42.899Z · vermillion · from -95458,-95458 · toward -1414,-2733 · at 107.2190
+- 2026-08-04T14:43:23.233Z · vermillion · from -95373.4,-95374.6 · toward -95120,-95120 · at 107.2269
