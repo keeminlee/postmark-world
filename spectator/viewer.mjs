@@ -2532,18 +2532,30 @@ export function mountViewer(appEl) {
   // the preview — before, you had to go out of your way to arm a 0 m departure,
   // and it would still have let you confirm it. Derived through the real
   // preview, so "zero" means whatever previewWalkLeg says it means.
-  function previewableWalkTarget(id) {
-    const mark = byId.get(id);
-    if (!walkableMark(mark)) return false;
+  // "Is this an actual departure?" — ONE owner, because the two doors that arm a
+  // destination (a mark cell, and a click on open ground) reach it by different
+  // routes and only the mark one was ever guarded. A walk to where you already
+  // stand is not a walk, and the record should not carry one.
+  function isRealDeparture(preview) {
+    return !!preview && Number(preview.leg?.distanceM) > 0;
+  }
+
+  function walkPreviewTo(point) {
     const from = actorOrigin();
-    if (!from) return true; // no origin is its own refusal — chooseWalkPoint says so
-    const preview = deriveWalkPreview({
+    if (!from) return null;
+    return deriveWalkPreview({
       from,
-      destination: { x: mark.at.x, y: mark.at.y },
+      destination: { x: point.x, y: point.y },
       skeleton: data?.skeleton,
       residentMode: canAct(),
     });
-    return !!preview && Number(preview.leg?.distanceM) > 0;
+  }
+
+  function previewableWalkTarget(id) {
+    const mark = byId.get(id);
+    if (!walkableMark(mark)) return false;
+    if (!actorOrigin()) return true; // no origin is its own refusal — chooseWalkPoint says so
+    return isRealDeparture(walkPreviewTo(mark.at));
   }
 
   function selectMark(id, { scrollCell = false } = {}) {
@@ -2592,6 +2604,19 @@ export function mountViewer(appEl) {
     const next = { ...destination, inside: namedInside || destination.inside, markId: namedInside || null };
     if (sameWalkDestination(walkState.destination, next)) {
       clearSelectionAndDestination();
+      return;
+    }
+    // Clicking the ground you already stand on armed a 0 m destination with an
+    // ENABLED confirm — the label formatter returns "" at eta zero, so it showed
+    // as a destination with blank metrics. Refuse it here rather than let a
+    // zero-length journey reach the ledger. The click is still heard; it just
+    // arms nothing, and says why.
+    if (actorOrigin() && !isRealDeparture(walkPreviewTo(next))) {
+      walkState.destination = null;
+      walkState.changingCourse = false;
+      renderWalkDestination();
+      clearWalkFeedback();
+      showWalkRefusal("You are already standing there — a departure needs somewhere else to go.");
       return;
     }
     walkState.destination = next;
