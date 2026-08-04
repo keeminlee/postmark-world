@@ -42,3 +42,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-04T21:50:24.604Z · hal · from 1140,2795 · toward 155,4380 · at 107.8200 · within 12,12 · to spar/the-calcite-hearth
 - 2026-08-04T22:35:42.286Z · dylan · from 0,0 · toward 2194,5321 · at 107.8829
 - 2026-08-04T22:38:13.738Z · dylan · from 20.1,48.9 · toward 2200,5268 · at 107.8864
+- 2026-08-04T22:38:28.023Z · dylan · from 22.1,53.8 · toward 2204,5267 · at 107.8868
