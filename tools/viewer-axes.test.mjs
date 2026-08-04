@@ -477,11 +477,11 @@ test("detached atlas images get lazy loading before mount", () => {
 
 test("the lens and one filter row stay orthogonal", () => {
   const states = [
-    [{ identityResolved: false, baseLayer: "mine", markFilter: "mine" }, false, "True World", "everything"],
-    [{ identityResolved: true, baseLayer: "true", markFilter: "everything" }, true, "True World", "everything"],
-    [{ identityResolved: true, baseLayer: "true", markFilter: "mine" }, true, "True World", "just mine"],
-    [{ identityResolved: true, baseLayer: "mine", markFilter: "everything" }, true, "My World", "everything"],
-    [{ identityResolved: true, baseLayer: "mine", markFilter: "new" }, true, "My World", "new"],
+    [{ identityResolved: false, baseLayer: "mine", markFilter: "mine" }, false, "Public", "everything"],
+    [{ identityResolved: true, baseLayer: "true", markFilter: "everything" }, true, "Public", "everything"],
+    [{ identityResolved: true, baseLayer: "true", markFilter: "mine" }, true, "Public", "just mine"],
+    [{ identityResolved: true, baseLayer: "mine", markFilter: "everything" }, true, "Private Draft", "everything"],
+    [{ identityResolved: true, baseLayer: "mine", markFilter: "new" }, true, "Private Draft", "new"],
   ];
 
   for (const [input, controls, base, filter] of states)
@@ -490,13 +490,13 @@ test("the lens and one filter row stay orthogonal", () => {
   assert.equal(viewerAxisControls(states[0][0]), "", "anonymous spectators get no identity axes");
 
   const trueMine = viewerAxisControls(states[2][0]);
-  assert.match(trueMine, />True World<\/button>/);
-  assert.match(trueMine, />My World<\/button>/);
-  assert.match(trueMine, /data-world-base="true"[^>]*>True World/);
+  assert.match(trueMine, />Public<\/button>/);
+  assert.match(trueMine, />Private Draft<\/button>/);
+  assert.match(trueMine, /data-world-base="true"[^>]*>Public/);
   assert.doesNotMatch(trueMine, /just mine|data-mark-filter/, "the lens has no competing filter vocabulary");
 
   const myEverything = viewerAxisControls(states[3][0]);
-  assert.match(myEverything, /class="wv-fchip on" data-world-base="mine">My World/);
+  assert.match(myEverything, /class="wv-fchip on" data-world-base="mine">Private Draft/);
 
   const row = viewerFilterControls(states[2][0]);
   assert.match(row, />everything<\/button>.*>just mine<\/button>.*>new<\/button>/);

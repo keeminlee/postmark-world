@@ -200,7 +200,11 @@ const officeUrl = (path) => `${officeBase()}${path.startsWith("/") ? path : `/${
 export function viewerAxisState({ identityResolved = false, baseLayer = "true", markFilter = "everything" } = {}) {
   return {
     controls: identityResolved,
-    base: identityResolved && baseLayer === "mine" ? "My World" : "True World",
+    // The lens names what you are looking at, not who owns it: the published
+    // record everyone can see, versus your own unpublished draft overlay.
+    // "True World / My World" described the same two things as a possession.
+    // The keys (true|mine) are the identity and are unchanged — these are labels.
+    base: identityResolved && baseLayer === "mine" ? "Private Draft" : "Public",
     filter: markFilter === "new" ? "new"
       : identityResolved && markFilter === "mine" ? "just mine"
       : "everything",
@@ -212,8 +216,11 @@ export function viewerAxisControls(options = {}) {
   if (!axis.controls) return "";
   const base = (key, label) =>
     `<button class="wv-fchip${axis.base === label ? " on" : ""}" data-world-base="${key}">${label}</button>`;
+  // The "world" prefix went with the rename: it labelled a control that now says
+  // what it is. The aria-label keeps the context for anyone who can't see where
+  // the control sits.
   return `<div class="wv-lens" aria-label="World lens">`
-    + `<span>world</span>${base("true", "True World")}<span class="wv-lens-swap">⟷</span>${base("mine", "My World")}`
+    + `${base("true", "Public")}<span class="wv-lens-swap">⟷</span>${base("mine", "Private Draft")}`
     + `</div>`;
 }
 
@@ -1353,8 +1360,9 @@ export function mountViewer(appEl) {
   const isOfficeLive = (url) => url === officeUrl("/world/state");
   async function loadData() {
     if (data) return;
-    // The True World is intentionally credentialless. Even a signed-in browser
-    // receives the main fold here; the household-composed fold has its own read.
+    // The Public lens is intentionally credentialless. Even a signed-in browser
+    // receives the main fold here; the household-composed fold (Private Draft)
+    // has its own read.
     const ws = await fetchWorldState(worldStatePaths(), { credentials: "omit" });
     const [sk, mf] = await Promise.all([
       fetchJson([officeUrl("/world/skeleton"), "/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
