@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { whereIs, homeOf, parcelFor, householdOf, sourceLabel, NOWHERE } from "./where-is.mjs";
+import { whereIs, homeOf, parcelFor, householdOf, sourceLabel, publicResidents, NOWHERE } from "./where-is.mjs";
 import { parseWalkLedger } from "./walk.mjs";
 
 const world = {
@@ -68,4 +68,33 @@ test("household join: a handle whose marks name a household resolves through it"
 test("sourceLabel never describes a camera as a body", () => {
   assert.match(sourceLabel(homeOf("rei", world)), /their ground/);
   assert.match(sourceLabel({ ...NOWHERE }, "wren-winter"), /no ground on the map yet/);
+});
+
+test("publicResidents: ONE list, and arrived/standing are the same state", () => {
+  const ledger = `- 2026-08-04T00:00:00.000Z · rei · from 1075,-800 · toward 1075,-700 · at 100.0000\n`;
+  const { departures } = parseWalkLedger(ledger);
+  const rows = publicResidents(["rei", "vermillion"], { world, departures, at: 200 });
+  assert.equal(rows.length, 2);
+  const rei = rows.find((r) => r.handle === "rei");
+  const verm = rows.find((r) => r.handle === "vermillion");
+  // rei walked and arrived; vermillion never walked. Same state: not moving.
+  assert.equal(rei.moving, false);
+  assert.equal(verm.moving, false);
+  // the only difference is PROVENANCE, and it lives in data, not in a colour
+  assert.equal(rei.source, "walk");
+  assert.equal(verm.source, "parcel");
+});
+
+test("publicResidents: someone mid-walk is the one genuinely different state", () => {
+  const ledger = `- 2026-08-04T00:00:00.000Z · rei · from 0,0 · toward 900000,0 · at 100.0000\n`;
+  const { departures } = parseWalkLedger(ledger);
+  const [rei] = publicResidents(["rei"], { world, departures, at: 100.5 });
+  assert.equal(rei.moving, true);
+  assert.ok(rei.remaining_m > 0);
+  assert.ok(rei.toward, "a mover has somewhere to be; the still do not");
+});
+
+test("publicResidents: unplaced residents are omitted, and never duplicated", () => {
+  const rows = publicResidents(["stranger", "rei", "rei"], { world, departures: [] });
+  assert.deepEqual(rows.map((r) => r.handle), ["rei"]);
 });

@@ -20,6 +20,7 @@
 import { createServer } from "node:http";
 import { readFileSync, existsSync } from "node:fs";
 import { parseWalkLedger, publicWalkers, fractionalCrossing } from "../tools/walk.mjs";
+import { publicResidents } from "../tools/where-is.mjs";
 import { dirname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -107,9 +108,23 @@ createServer(async (req, res) => {
       let text = "";
       try { text = readFileSync(join(ROOT, "WORLD/walk-ledger.md"), "utf8"); } catch { /* no ledger yet */ }
       const { departures, unrecognized } = parseWalkLedger(text);
+      // the fold, for everyone standing on their own ground; a spectator with no
+      // world-state still gets the walk ledger's answer rather than an error
+      let worldState = null;
+      try { worldState = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8")); } catch { /* ledger only */ }
+      const roster = [
+        ...departures.map((d) => d.handle),
+        ...((worldState?.parcels ?? []).map((pc) => pc.household)),
+      ].filter(Boolean);
       return json(res, 200, {
         at, now: fractionalCrossing(),
-        walkers: publicWalkers(departures, at), // one vocabulary, shared with the office door
+        // one vocabulary, shared with the office door — and it is the ENGINE's,
+        // not each publisher's own. publicResidents folds the walk ledger and the
+        // world's parcels into a single list with two states; assembling that
+        // shape twice is exactly how the door and this server drifted apart.
+        walkers: worldState
+          ? publicResidents(roster, { world: worldState, departures, at })
+          : publicWalkers(departures, at),
         departures: departures.length, unrecognized: unrecognized.length,
       });
     }

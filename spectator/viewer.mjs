@@ -1003,9 +1003,14 @@ const STYLE = `
 .wv-hl-dot.t-market { fill:var(--amber); }
 /* walkers (write-release P2): the one thing on this map that moves. A walker is
    drawn where DERIVATION says they are — the layer keeps no position of its own. */
-.wv-walker { fill:#e0507a; stroke:#fff; stroke-width:2; vector-effect:non-scaling-stroke; }
-.wv-walker.arrived { fill:var(--green); }
-.wv-walker.standing { fill:#8b93a7; }
+/* ONE resident, two states. Still is the common case and reads calm; moving is
+   the exception and reads warm, because motion is the thing worth noticing. How
+   we learned a position (walk record vs parcel) is provenance, not appearance. */
+.wv-walker { fill:var(--green); stroke:#fff; stroke-width:2; vector-effect:non-scaling-stroke; }
+.wv-walker.moving { fill:#e0507a; }
+/* the hit halo — invisible, but hoverable. fill:transparent (NOT fill:none) is
+   the load-bearing part: none lets the pointer fall straight through. */
+.wv-walker-hit { fill:transparent; stroke:none; pointer-events:all; cursor:help; }
 .wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
 .wv-walk-dest { fill:none; stroke:#e0507a; stroke-width:2; vector-effect:non-scaling-stroke; }
 .wv-walk-preview-leg { stroke:var(--amber); stroke-width:2.4; stroke-dasharray:10 6; opacity:.95; vector-effect:non-scaling-stroke; }
@@ -2153,26 +2158,38 @@ export function mountViewer(appEl) {
     for (const w of walkState.walkers) {
       const now = px(w), dest = px(w.toward ?? w);
       // the remaining leg, then the walker on top of it
-      if (!w.arrived && !w.standing)
+      if (moving)
         s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
              `<circle cx="${dest.x}" cy="${dest.y}" r="${5 / k}" class="wv-walk-dest"/>`;
-      const cls = w.standing ? "wv-walker standing" : w.arrived ? "wv-walker arrived" : "wv-walker";
-      // The hover says who, and then the honest state. A standing resident is
-      // named by the ground they stand on when the office sent one — "standing"
-      // alone reads as a shrug when the map can say where.
-      const eta = w.standing ? (w.mark_id ? `standing at ${w.mark_id}` : "standing")
-        : w.arrived ? "arrived"
-        : `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`;
-      s += `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}"><title>${esc(w.handle)} — ${esc(eta)}</title></circle>`;
+      // TWO states, not three. "arrived" and "standing" were never different
+      // things — both are a person at rest at a place; what differed was only
+      // how we learned the position (a walk record vs their parcel). Painting
+      // that difference made a resident who had never walked look like another
+      // species. Provenance still shows in the words; it no longer picks a colour.
+      const moving = w.moving ?? (!w.arrived && !w.standing);
+      const cls = moving ? "wv-walker moving" : "wv-walker";
+      const eta = moving
+        ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
+        : (w.mark_id ? `at ${w.mark_id}` : "at rest");
+      // A HIT HALO, invisible, three times the dot. The visible walker renders
+      // at about 7 CSS pixels — a ~3px radius target, and standing residents now
+      // crowd close enough that one dot's centre can sit under its neighbour. So
+      // the mark you can SEE stays exactly the size it was, and the thing you
+      // have to HIT is comfortable. The halo carries the title (and is emitted
+      // first, so the visible dot still paints on top); the dot keeps its own
+      // copy for anyone who lands dead centre.
+      const label = `<title>${esc(w.handle)} — ${esc(eta)}</title>`;
+      s += `<circle cx="${now.x}" cy="${now.y}" r="${27 / k}" class="wv-walker-hit">${label}</circle>`
+         + `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}">${label}</circle>`;
     }
     mapCtx.walkLayer.innerHTML = s;
     const box = $(root, "#wv-walk-readout");
     if (box) {
-      const on = walkState.walkers.filter((w) => !w.arrived && !w.standing).length;
-      const still = walkState.walkers.filter((w) => w.standing).length;
+      const on = walkState.walkers.filter((w) => w.moving ?? (!w.arrived && !w.standing)).length;
+      const still = walkState.walkers.length - on;
       box.textContent = walkState.at === null ? "no walk records"
         : `crossing ${walkState.at.toFixed(3)} — ` +
-          `${walkState.walkers.length} on the map, ${on} on the road, ${still} standing`;
+          `${walkState.walkers.length} on the map, ${on} on the road, ${still} at rest`;
     }
     syncActorPosition();
     renderWalkDestination();

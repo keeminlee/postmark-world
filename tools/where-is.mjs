@@ -80,6 +80,48 @@ export function whereIs(handle, { world = null, departures = [], at = fractional
   return homeOf(handle, world);
 }
 
+// EVERY placed resident, in ONE list, in one vocabulary.
+//
+// There are not three kinds of resident. For a while the town published two
+// lists and painted three colours — walking (pink), arrived (green), standing
+// (grey) — and that was a category error worth naming, because "arrived" and
+// "standing" are THE SAME STATE. Both are a person at rest at a place. What
+// differed was only PROVENANCE: whether we learned the position from a walk
+// record or from their parcel. We were rendering how-we-know as if it were
+// what-they-are, so a resident who had never walked looked like a different
+// species from one who had.
+//
+// So: one list, and exactly two states — `moving` or still. Provenance survives
+// as `source` ("walk" | "parcel") because it is honest and belongs in a tooltip;
+// it just never decides what someone looks like.
+//
+// `handles` is who to consider. Callers pass the roster they know (parcel
+// households plus anyone with a walk record); this owns the shape, so the office
+// door and the local spectator cannot drift apart the way they just did.
+export function publicResidents(handles, { world = null, departures = [], at = fractionalCrossing() } = {}) {
+  const seen = new Set();
+  const out = [];
+  for (const handle of handles ?? []) {
+    if (!handle || seen.has(handle)) continue;
+    seen.add(handle);
+    const here = whereIs(handle, { world, departures, at });
+    if (!here.placed) continue;
+    const p = here.position ?? null;
+    const moving = Boolean(p && p.arrived === false);
+    out.push({
+      handle,
+      x: here.x, y: here.y,
+      source: here.source,          // how we know — never how it renders
+      moving,
+      toward: moving ? (here.departure?.toward ?? null) : null,
+      remaining_m: moving ? p.remainingM : 0,
+      eta_crossings: moving ? p.etaCrossings : 0,
+      mark_id: here.mark_id ?? null,
+    });
+  }
+  return out;
+}
+
 // One sentence naming where an answer came from, so no surface has to invent
 // wording that might describe the camera in the grammar of a body.
 export function sourceLabel(where, handle = "this resident") {
