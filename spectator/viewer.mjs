@@ -398,7 +398,7 @@ export function pointWalkDestination(point, marks = []) {
   if (![x, y].every(Number.isFinite)) return null;
   const inside = marks
     .filter((mark) => {
-      return mark?.id && !isAmbientMark(mark, marks) && !mark.far
+      return mark?.id && !isAmbientMark(mark, marks)
         && pointInsideMark({ x, y }, mark);
     })
     .sort((a, b) => {
@@ -502,7 +502,7 @@ export function smallestContainingMark(point, marks = []) {
   const x = Number(point?.x), y = Number(point?.y);
   if (![x, y].every(Number.isFinite)) return null;
   return (marks ?? [])
-    .filter((mark) => !mark?.far && !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
+    .filter((mark) => !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
     .map((mark) => ({ mark, area: Number(mark.extent.w) * Number(mark.extent.h) }))
     .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)))[0]?.mark?.id ?? null;
 }
@@ -1352,7 +1352,7 @@ export function mountViewer(appEl) {
   function extentTag(m) {
     const full = byId.get(m.id) ?? m;
     const e = full.extent;
-    if (isAmbientMark(full, byId) || m.far || !e || !(e.w || e.h)) return "";
+    if (isAmbientMark(full, byId) || !e || !(e.w || e.h)) return "";
     const w = e.w ?? 0, h = e.h ?? 0, maxD = Math.max(w, h, 1);
     const box = 6 + Math.min(26, Math.log10(maxD + 1) * 8.5); // ~6px @1m … ~32px @~5km
     const gw = Math.max(2, box * (w / maxD)), gh = Math.max(2, box * (h / maxD));
@@ -1962,13 +1962,21 @@ export function mountViewer(appEl) {
 
       // footprints: every mark's own claim landing on the painting (the calibration
       // made visible) — an extent rect, or the authored `points:` ring where a mark
-      // carries one, through the one shape-builder. The world-root (the frame) and
-      // far/horizon objects are skipped: no ground.
+      // carries one, through the one shape-builder.
+      //
+      // ONLY the world-root and ambient marks are skipped, and the reason is about
+      // the mark, not the viewer: the root IS the frame (320 km square — a box
+      // around everything says nothing), and an ambient mark is a property of the
+      // whole world rather than a place in it. `far` used to be skipped here too,
+      // justified as "no ground" — but that is a FIRST-PERSON claim (you cannot
+      // walk up to a horizon) leaking into a top-down map, which has no horizon.
+      // Pando has an extent, at real coordinates, exactly as real as any parcel;
+      // vermillion's own 3,600 m mountain at the same centre has always drawn.
       const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
       function buildFpLayer() {
         let s = "";
         for (const m of world.marks ?? []) {
-          if (!m.at || !m.extent || m.far || isAmbientMark(m, byId)) continue;
+          if (!m.at || !m.extent || isAmbientMark(m, byId)) continue;
           const cls = `t-${tierOf(m)}` + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
           s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
             attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
@@ -2076,7 +2084,7 @@ export function mountViewer(appEl) {
     // the box AND the dot light together, in the mark's own tier color — the same
     // sentence the cells speak (dashed = machinery-kept truth)
     let s = "";
-    if (target.extent && !target.far) {
+    if (target.extent) {
       // through the ONE shape-builder, so the wash traces the same outline the
       // footprints layer draws. Hand-built here, it drew a bbox rect over a mark the
       // layer beneath was correctly drawing as a polygon — Keemin caught it as a
