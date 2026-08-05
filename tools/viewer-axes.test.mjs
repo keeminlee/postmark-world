@@ -55,6 +55,8 @@ import {
   walkerHoverId,
   bubbleTrailStep,
   paintingMarkIds,
+  isWalkableTarget,
+  WALK_TARGET_MAX_EXTENT_M,
   placeBubble,
   readPaintingOnly,
   writePaintingOnly,
@@ -794,23 +796,21 @@ test("a bubble is clamped into the painting rather than allowed to hang off it",
   ]) assert.equal(placeBubble(bad), null, "nonsense places nothing");
 });
 
-test("the marks filter reaches the pips, and brings the marks the panel would list", () => {
-  const args = { radialIds: ["a", "b"], mineIds: ["b", "far-away"], newIds: ["fresh", "a"] };
+test("the painting shows what tells from here PLUS all of yours, and asks no filter", () => {
+  const ids = paintingMarkIds({ radialIds: ["a", "b"], mineIds: ["b", "far-away", "staked-elsewhere"] });
+  assert.ok(ids.has("a"), "what the eye tells is on the painting");
+  assert.ok(ids.has("far-away"), "and so is a mark of yours beyond this sight");
+  assert.ok(ids.has("staked-elsewhere"), "owned or staked, mine is mine");
+  assert.equal(ids.size, 4, "the union, with the overlap counted once");
 
-  assert.deepEqual([...paintingMarkIds({ ...args, markFilter: "everything" })], ["a", "b"],
-    "unfiltered, the painting is the field of view");
+  // the chips are the Telling's question — nothing here reads them
+  assert.deepEqual(
+    [...paintingMarkIds({ radialIds: ["a"], mineIds: ["m"], markFilter: "new" })].sort(),
+    ["a", "m"], "a filter argument is ignored rather than obeyed");
 
-  const mine = paintingMarkIds({ ...args, markFilter: "mine" });
-  assert.ok(mine.has("far-away"), "a mark of yours beyond this sight is reachable on the painting");
-  assert.ok(!mine.has("a"), "and someone else's in-sight mark is not drawn under 'mine'");
-
-  const fresh = paintingMarkIds({ ...args, markFilter: "new" });
-  assert.ok(fresh.has("fresh"), "a new mark out of sight still lands on the painting");
-  assert.ok(!fresh.has("b"), "and an old in-sight mark is not part of the newest");
-
-  assert.deepEqual([...paintingMarkIds({ markFilter: "mine" })], [], "no marks is a clean empty answer");
+  assert.deepEqual([...paintingMarkIds({ radialIds: ["a"] })], ["a"], "a spectator has no marks of their own");
+  assert.equal(paintingMarkIds().size, 0);
 });
-
 test("how you read the world is remembered, and a storage that refuses is not fatal", () => {
   const store = new Map();
   const fake = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, v) };
@@ -904,4 +904,41 @@ test("the bubble remembers how you got there, so every child can go back", () =>
   assert.deepEqual(bubbleTrailStep(["a", null, "b"], "back"), ["a"]);
   assert.deepEqual(bubbleTrailStep(["a"], "follow", null), ["a"], "following nowhere goes nowhere");
   assert.deepEqual(bubbleTrailStep(["a"], "sideways"), ["a"]);
+});
+
+test("a mark you cannot set out for does not own the ground under it", () => {
+  // the shape that started this: a district 2,325 m across, and everything the
+  // town put inside it. Clicking anywhere in that quarter used to select the
+  // district — no walking to the ground, no reaching a mark the eye had not told.
+  const district = { id: "limen/the-district", kind: "sited", tier: "market", at: { x: 0, y: 0 }, extent: { w: 1725, h: 2325 } };
+  const water    = { id: "the-town/the-channel", kind: "sited", tier: "market", at: { x: 0, y: 0 }, extent: { w: 4000, h: 4000 } };
+  const crossing = { id: "the-town/the-crossing", kind: "sited", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 380, h: 18 } };
+  const house    = { id: "limen/the-house", kind: "sited", tier: "market", at: { x: 40, y: 40 }, extent: { w: 60, h: 60 } };
+  const parcel   = { id: "limen/a-parcel", kind: "parcel", tier: "market", at: { x: 400, y: 400 }, extent: { w: 25, h: 25 } };
+
+  assert.equal(isWalkableTarget(house), true);
+  assert.equal(isWalkableTarget(parcel), true, "a parcel is ground you can stand on");
+  assert.equal(isWalkableTarget(district), false, `${2325} m across is a region, not a destination`);
+  assert.equal(isWalkableTarget(water), false);
+  assert.equal(isWalkableTarget(crossing), false, "the town's own furniture is not a destination");
+  assert.equal(isWalkableTarget({ ...house, at: null }), false, "an unplaced mark is nowhere to go");
+  assert.equal(isWalkableTarget({ ...house, kind: "predicated" }), false, "a property of a thing has no ground");
+  assert.equal(isWalkableTarget({ ...house, extent: { w: WALK_TARGET_MAX_EXTENT_M, h: 1 } }), false, "the cap is exclusive");
+  assert.equal(isWalkableTarget(), false);
+
+  // and the composition the painting actually runs: the hit test is offered only
+  // the marks that pass, so the region falls through to whatever is really there
+  const told = [district, water, crossing, house, parcel];
+  const hittable = told.filter(isWalkableTarget);
+  const hit = (x, y) => paintingMarkAtPoint({ screenPoint: { x: 0, y: 0 }, worldPoint: { x, y }, glyphs: [], marks: hittable });
+  assert.equal(hit(50, 50), "limen/the-house", "a mark inside the region is reachable again");
+  assert.equal(hit(700, 700), null, "and open ground inside the region is open ground");
+  assert.equal(hit(402, 402), "limen/a-parcel");
+
+  // the pip is how a region is still selected — it is offered separately, and
+  // wins over containment, so nothing became unreachable
+  assert.equal(
+    paintingMarkAtPoint({ screenPoint: { x: 100, y: 100 }, worldPoint: { x: 700, y: 700 },
+      glyphs: [{ id: "limen/the-district", x: 104, y: 100 }], marks: hittable }),
+    "limen/the-district", "its own pip still names it");
 });

@@ -638,19 +638,35 @@ export function placeBubble({ anchor, size, box, gap = 14, edge = 8, avoid = nul
   return { x: chosen.x, y: chosen.y, side: chosen.side };
 }
 
-// Which marks the painting draws, given the one marks filter the chips speak.
+// Which marks the painting draws — and it does NOT ask the filter chips (Keemin,
+// 2026-08-04: everything / just mine / new are the Telling's question; the
+// Painting is always on everything).
 //
-// In the three-column page the chips narrow the PANEL and the map keeps showing
-// everything, which is survivable because the panel is right there. With the
-// panel folded away that would make two of the three chips do nothing visible,
-// so here the filter reaches the pips — and "mine" and "new" bring their own
-// marks with them. Both listings deliberately step outside the field of view
-// (your marks elsewhere; the newest of the whole record), and a mark the panel
-// would list but the painting cannot draw is a mark this mode has lost.
-export function paintingMarkIds({ markFilter = "everything", radialIds = [], mineIds = [], newIds = [] } = {}) {
-  if (markFilter === "mine") return new Set(mineIds);
-  if (markFilter === "new") return new Set(newIds);
-  return new Set(radialIds);
+// So: what tells from here, plus ALL of yours, always — owned, drafted, and
+// staked alike, in sight or out of it. Your own marks are the ones you came to
+// find, and having to remember which lens shows them is the work this removes.
+// Everyone else's stay subject to the field of view, which is what the field of
+// view is for.
+export function paintingMarkIds({ radialIds = [], mineIds = [] } = {}) {
+  return new Set([...radialIds, ...mineIds]);
+}
+
+// "Somewhere you could set out for" — the ONE owner of that question on this side
+// of the door, and now a name rather than four conditions inlined at a call site.
+//
+// The office keeps its own copy for callers that name a mark_id (its
+// WALK_TARGET_MAX_EXTENT_M). The two agree on the cap and on excluding the town's
+// constitution furniture, and disagree about parcels — recorded here rather than
+// resolved, because the viewer posts COORDINATES and the door's copy therefore
+// never sees these marks. Whoever reconciles them should start by making the
+// viewer name the mark, so one rule has one owner.
+export const WALK_TARGET_MAX_EXTENT_M = 2000;
+export function isWalkableTarget(mark) {
+  if (!mark?.at) return false;
+  if (mark.kind !== "sited" && mark.kind !== "parcel") return false;
+  if (mark.tier === "constitution") return false;
+  const span = Math.max(Number(mark.extent?.w ?? 0), Number(mark.extent?.h ?? 0));
+  return span < WALK_TARGET_MAX_EXTENT_M;
 }
 
 // The pinned bubble's way back.
@@ -937,8 +953,8 @@ const STYLE = `
 .wv * { box-sizing:border-box; }
 /* The strip the site's fixed back-link and auth pill land in. It holds only the
    beta chip and the room those two need; the viewer's own title rail is gone. */
-.wv-topbar { display:flex; align-items:center; gap:10px; height:40px; padding:0 16px;
-  border-bottom:1px solid var(--line); flex:none; }
+/* the head of the rail: the beta chip, and the slot the site's own pills adopt */
+.wv-nav-top { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin:0 0 14px; }
 .wv-beta-chip { border-color:rgba(216,138,122,.55); color:var(--err); letter-spacing:.12em;
   font-family:var(--mono); font-size:.62rem; padding:2px 10px; cursor:help; }
 /* The painting takes the slack now (Keemin 2026-08-04: maximise its screen). The
@@ -1405,11 +1421,6 @@ const STYLE = `
   .wv-main.is-painting-only .wv-nav { border-right:0; border-top:1px solid var(--line); }
   .wv-main.is-painting-only .wv-minimap { min-height:72vh; }
 }
-/* the marks filter, for when the panel that usually holds it is collapsed */
-.wv-paint-controls { display:none; }
-.wv-main.is-painting-only .wv-paint-controls { display:flex; align-items:center; gap:14px;
-  flex-wrap:wrap; padding:0 14px 9px; border-bottom:1px solid var(--line); }
-.wv-paint-controls .wv-mfilter { margin:0; }
 .wv-paint-tallies { position:absolute; z-index:6; left:9px; bottom:8px; max-width:min(34rem,52%);
   padding:4px 10px; border:1px solid var(--line); border-radius:999px; background:rgba(13,15,19,.9);
   color:var(--dim); font-size:.7rem; line-height:1.4; pointer-events:none; }
@@ -1492,17 +1503,15 @@ const STYLE = `
 `;
 
 const MARKUP = `
-<!-- The top strip is the SITE's, not the viewer's: a back link and the auth pill,
-     both position:fixed from WorldSignIn. All this bar does is reserve the room
-     they land in and carry the beta chip, so nothing floats over the painting's
-     own controls. The old title rail is gone — a page that IS the world does not
-     need to be captioned (Keemin 2026-08-04: maximise screen space for the
-     painting). -->
-<div class="wv-topbar">
-  <span class="wv-chip wv-beta-chip" title="the record is real, and so are the acts taken here — the viewer is still finding its shape">BETA</span>
-</div>
 <div class="wv-main">
   <nav class="wv-nav">
+    <!-- The head of the rail is where ALL the page's chrome lives now (Keemin
+         2026-08-04): the beta chip, and the SLOT the site's back-link and auth
+         pill move themselves into. Nothing floats over the painting any more,
+         and no strip spends a row of the page naming things. -->
+    <div class="wv-nav-top">
+      <span class="wv-chip wv-beta-chip" title="the record is real, and so are the acts taken here — the viewer is still finding its shape">BETA</span>
+    </div>
     <div class="wv-identity"></div>
     <section class="wv-walkdesk" hidden>
       <h2>Walk</h2>
@@ -1578,8 +1587,6 @@ const MARKUP = `
           <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭<span>marks</span></button>
         </div>
       </div>
-      <!-- the marks filter, for when the panel that usually holds it is collapsed -->
-      <div class="wv-paint-controls"></div>
       <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div></div>
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
@@ -1782,12 +1789,8 @@ export function mountViewer(appEl) {
   function canAct() {
     return viewerCanAct({ identityResolved: identityResolved(), actAs: state.actAs });
   }
-  function walkableMark(m) {
-    const full = byId.get(m?.id) ?? m;
-    return (full?.kind === "sited" || full?.kind === "parcel")
-      && full?.tier !== "constitution" && !!full.at
-      && Math.max(Number(full.extent?.w ?? 0), Number(full.extent?.h ?? 0)) < 2000;
-  }
+  // an FOV entry carries no tier or extent, so the rule is asked of the FOLDED mark
+  const walkableMark = (m) => isWalkableTarget(byId.get(m?.id) ?? m);
   function backedPosition(markId, handle = state.handle) {
     return (state.portfolio?.backed ?? []).find((row) =>
       (row.id ?? row.mark) === markId && row.holder === handle && Number(row.stamps ?? 0) > 0);
@@ -2021,12 +2024,11 @@ export function mountViewer(appEl) {
       foldRenderedPredicates(box);
       // the panel may be folded away, but its two controls and its count line are
       // readings, not decoration — they get a home on the painting either way
-      renderPaintControls();
       renderStandpoint();
       const talliesChip = $(root, ".wv-paint-tallies");
       if (talliesChip) {
         talliesChip.hidden = !state.paintingOnly;
-        talliesChip.textContent = isNew ? feed.count : tallies(e.radial);
+        talliesChip.textContent = tallies(e.radial);
       }
       drawOverlay(e.radial);
       syncMarkInteractionViews();
@@ -2320,12 +2322,19 @@ export function mountViewer(appEl) {
           y: (painting.y - originPx.y) * mPerPx,
         };
       };
-      // the extent fallback answers to the same filter the pips do, or a "mine"
-      // reader would still select their neighbour's parcel by clicking inside it
+      // THE PIP IS THE MARK; THE FOOTPRINT IS GROUND (Keemin, 2026-08-04: an
+      // unwalkable mark must not block the ground — or the mark — behind it).
+      //
+      // The containment fallback used to hand a click to the smallest mark whose
+      // extent covered it, walkable or not. The threshold district is 2,325 m
+      // across, so every click inside a whole quarter of the town selected the
+      // district: no walking to that ground, and no reaching a mark inside it
+      // that the eye had not told. Only a mark you could actually set out for
+      // claims its own footprint now. Everything else — regions, the town's
+      // constitution furniture — is still selected by its PIP, which is exactly
+      // the size of the thing it names.
       const hittableMarks = () =>
-        state.paintingOnly && state.markFilter !== "everything"
-          ? (world?.marks ?? []).filter((m) => mapCtx.glyphIds.has(m.id))
-          : toldPaintingMarks(lastRadial, world?.marks ?? []);
+        toldPaintingMarks(lastRadial, world?.marks ?? []).filter(walkableMark);
       const paintingMarkForEvent = (event) => paintingMarkAtPoint({
         screenPoint: { x: event.clientX, y: event.clientY },
         worldPoint: worldPointForEvent(event),
@@ -2469,37 +2478,24 @@ export function mountViewer(appEl) {
       reattachOverlays();
     }
   }
-  // Which marks the painting draws. In the three-column page this is the field of
-  // view and the chips narrow only the panel — survivable, because the panel is
-  // right there beside it. With the panel folded away that would leave two of the
-  // three chips doing nothing you can see, so here the filter reaches the pips and
-  // brings its own marks: "mine" includes yours beyond this sight, "new" is the
-  // record's newest regardless of sight. Both listings step outside the field of
-  // view on purpose, and a mark the panel would list but the painting cannot draw
-  // is a mark this mode has quietly lost.
+  // What the painting draws: the field of view, plus all of yours whether it holds
+  // them or not. The filter chips are the Telling's business and this asks them
+  // nothing (Keemin, 2026-08-04) — a map that changed under you when you narrowed
+  // a list was two answers to one question.
   function overlayMarks(radial) {
-    const seen = new Set(), fromRadial = [];
+    const seen = new Set(), out = [];
     for (const bands of Object.values(radial?.byBearing ?? {}))
       for (const arr of Object.values(bands ?? {}))
         for (const m of arr ?? []) {
           if (!m?.id || !m.at || typeof m.at.x !== "number" || seen.has(m.id)) continue;
-          seen.add(m.id); fromRadial.push(m);
+          seen.add(m.id); out.push(m);
         }
-    if (!state.paintingOnly || state.markFilter === "everything") return fromRadial;
-    const ids = paintingMarkIds({
-      markFilter: state.markFilter,
-      radialIds: [...seen],
-      mineIds: [...state.mineIds],
-      newIds: newFeedMarks().slice(0, NEW_CAP).map((m) => m.id),
-    });
-    // keep the radial's own entries where they qualify — they carry distM and
-    // bearing, which the bare record mark does not — then add what is missing
-    const out = fromRadial.filter((m) => ids.has(m.id));
-    const have = new Set(out.map((m) => m.id));
-    for (const id of ids) {
-      if (have.has(id)) continue;
+    // the radial's own entries come first and are KEPT: they carry distM and
+    // bearing, which the bare record mark does not
+    for (const id of paintingMarkIds({ radialIds: [...seen], mineIds: [...state.mineIds] })) {
+      if (seen.has(id)) continue;
       const m = byId.get(id);
-      if (m?.at && typeof m.at.x === "number") out.push(m);
+      if (m?.at && typeof m.at.x === "number") { seen.add(id); out.push(m); }
     }
     return out;
   }
@@ -3417,15 +3413,6 @@ export function mountViewer(appEl) {
     const pinned = bubbleRect(bubbleEls.pinned);
     placeBubbleAt(bubbleEls.hover, hoveredId ? markAnchorPoint(hoveredId) : null, pinned);
   }
-  // the lens and the marks filter, rendered by the SAME builders the telling uses
-  function renderPaintControls() {
-    const strip = $(root, ".wv-paint-controls");
-    if (!strip) return;
-    strip.innerHTML = viewerFilterControls({
-      identityResolved: identityResolved(),
-      markFilter: state.markFilter,
-    });
-  }
   function applyPaintingOnly() {
     const on = state.paintingOnly;
     root.classList.toggle("is-painting-only", on);
@@ -3437,7 +3424,6 @@ export function mountViewer(appEl) {
       button.title = on ? "open the telling" : "collapse the telling and give the painting the page";
     }
     $(root, ".wv-main")?.classList.toggle("is-telling-collapsed", on);
-    renderPaintControls();
     // the count line's WORDS come from the telling; only its presence is the
     // mode's business, and the mode can change without a re-tell
     const talliesChip = $(root, ".wv-paint-tallies");
