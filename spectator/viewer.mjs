@@ -4431,6 +4431,17 @@ export function mountViewer(appEl) {
       await loadData();
       renderCurrent();
       resolveIdentity(); // after data (the presets filter reads the manifest)
+      // A FIRST VISIT OPENS THE TOUR (Keemin, 2026-08-05). One flag, deliberately
+      // naive: openTour writes it before the card is interactive, so this fires
+      // exactly once and every later visit is quiet. After the world has loaded,
+      // not before — the deck's third slide points at a pip, and a tour that
+      // opens over an empty pane is teaching the wrong page.
+      //
+      // The one place it misbehaves is a browser that refuses localStorage: the
+      // flag cannot be kept, so the tour greets every load. Skippable, and the
+      // honest cost of not asking a reader to hold state we are not allowed to
+      // write.
+      if (!readTourSeen(localStore)) openTour(0);
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
     }
