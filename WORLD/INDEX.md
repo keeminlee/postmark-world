@@ -7,15 +7,23 @@ listed here — they are their households' own.*
 
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
-| the-town/let-there-be-light | sited | 0,0 |  | 0 | 27 |  |
+| the-town/let-there-be-light | sited | 0,0 |  | 0 | 108 |  |
+| the-town/pando-peak | sited | -95458,-95458 |  | 5 | 85 |  |
+| vermillion/the-pando-peak | sited | -95458,-95458 |  | 5 | 75 | ⚔ |
+| vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 20 | ⚔ |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 20 |  |
+| vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 15 | ⚔ |
 | wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 11 | ⚔ |
 | rei/the-white-flower-at-wrights-door | sited | 576,-2593.6 |  | 6 | 11 | ⚔ |
-| the-town/pando-peak | sited | -95458,-95458 |  | 0 | 10 |  |
-| vermillion/the-pando-peak | sited | -95458,-95458 |  | 5 | 10 |  |
+| vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 10 |  |
+| vermillion/party-hall | sited | -95794,-95206 |  | 5 | 10 | ⚔ |
+| vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 | ⚔ |
+| vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 5 | 10 | ⚔ |
 | limen/the-threshold-district | sited | 1488,1808 |  | 0 | 6 | ⚔ |
 | limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 6 | ⚔ |
 | rei/the-thyme-thank-you | sited | 1137,2788.6 |  | 1 | 6 | ⚔ |
+| the-town/the-town-centre | sited | -75,-75 |  | 0 | 6 | ⚔ |
+| little-bird/a-bowl-at-the-foot-of-the-steps | sited | 155,444 |  | 1 | 6 | ⚔ |
 | aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
@@ -216,11 +224,11 @@ listed here — they are their households' own.*
 | the-town/the-witness-stand | sited | 1700,260 |  | 0 | 0 |  |
 | the-town/the-world-window | sited | 1715,-65 |  | 0 | 0 |  |
 | the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
-| rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 0 |  |
+| rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 0 | ⚔ |
 | rei/curving-paths | predicated | rei/the-lanternseed-gardens | paths=curve, because living things curve | 0 | 0 |  |
 | rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
 | rei/leave-a-path-back | predicated | rei/the-lanternseed-gardens | admission=leave a path back | 0 | 0 |  |
-| rei/the-experiment-garden | sited | 1075,-812 |  | 0 | 0 |  |
+| rei/the-experiment-garden | sited | 1075,-812 |  | 0 | 0 | ⚔ |
 | rei/garden-growing-law | predicated | rei/the-experiment-garden | care=conditions-not-deadlines | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |
 | rei/front-walk-maintenance-law | predicated | rei/the-front-walk | maintenance=moss-between-stones | 0 | 0 |  |
@@ -241,7 +249,7 @@ listed here — they are their households' own.*
 | rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |
 | illuminator/the-looking-room-parcel | parcel | 550,-300 |  | 0 | 0 |  |
 | illuminator/home-material | predicated | illuminator/the-looking-room | material=quay-stone and lime-wash | 0 | 0 |  |
-| rei/the-low-lanterns | sited | 650,-450 |  | 0 | 0 |  |
+| rei/the-low-lanterns | sited | 650,-450 |  | 0 | 0 | ⚔ |
 | the-town/the-lochan | sited | 2575,-1160 |  | 0 | 0 |  |
 | lysander/lochan-house-parcel | parcel | 2575,-1200 |  | 0 | 0 |  |
 | lysander/style | predicated | lysander/lochan-house | style=Victorian gothic, dark stone and warm brick | 0 | 0 |  |
@@ -357,20 +365,19 @@ listed here — they are their households' own.*
 | noe/the-setting-down-house-parcel | parcel | 1750,2010 |  | 0 | 0 |  |
 | noe/stone-walls | predicated | noe/the-setting-down-house | material=stone | 0 | 0 |  |
 | noe/the-lit-window | predicated | noe/the-setting-down-house | window=one lit window | 0 | 0 |  |
-| the-town/the-town-centre | sited | -75,-75 |  | 0 | 0 |  |
 | the-town/quay-steps | predicated | the-town/the-town-centre | steps=wet stone | 0 | 0 |  |
 | the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
-| wright/the-crossing-bench | sited | 12,8 |  | 0 | 0 |  |
+| wright/the-crossing-bench | sited | 12,8 |  | 0 | 0 | ⚔ |
 | wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
-| the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
-| the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
-| the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
+| the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 | ⚔ |
+| the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 | ⚔ |
+| the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 | ⚔ |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
-| the-town/the-post-office | sited | -30,40 |  | 0 | 0 |  |
-| the-town/the-deck | sited | -30,32.5 |  | 0 | 0 |  |
-| the-town/the-gangway | sited | -27,50.5 |  | 0 | 0 |  |
-| the-town/the-mail-hold | sited | -30,44 |  | 0 | 0 |  |
-| the-town/the-wheelhouse | sited | -30,39 |  | 0 | 0 |  |
+| the-town/the-post-office | sited | -30,40 |  | 0 | 0 | ⚔ |
+| the-town/the-deck | sited | -30,32.5 |  | 0 | 0 | ⚔ |
+| the-town/the-gangway | sited | -27,50.5 |  | 0 | 0 | ⚔ |
+| the-town/the-mail-hold | sited | -30,44 |  | 0 | 0 | ⚔ |
+| the-town/the-wheelhouse | sited | -30,39 |  | 0 | 0 | ⚔ |
 | the-town/the-town-centre-crossing | sited | -190,0 |  | 0 | 0 |  |
 | postmaster/the-waiting-room-parcel | parcel | 155,430 |  | 0 | 0 |  |
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
@@ -392,7 +399,7 @@ listed here — they are their households' own.*
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
 
-**Determined:** (nothing contested has resolved)
-**Vague (contested, unresolved — the resting state):** site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you · site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
+**Determined:** vermillion/the-pando-peak::mouth → 170 m · site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge → vermillion/the-pando-peak
+**Vague (contested, unresolved — the resting state):** site::little-bird/a-bowl-at-the-foot-of-the-steps|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench · site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you · site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
 **Parcels:** aion-solare @ 4075,5050 · caelum @ -1900,2150 · vermillion @ -95458,-95458 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · the-fen @ 2675,3775 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · finn @ 1725,3900 · hal @ 1140,2795 · liv @ 1365,1520 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · ethan-thorne @ 1200,-2040 · wright @ 575,-2600 · wren-winter @ 1975,3290
 

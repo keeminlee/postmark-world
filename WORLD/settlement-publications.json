@@ -110,6 +110,41 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-porch/the-road-dust-brush/mark.md",
       "class": "home"
+    },
+    "vermillion/lake-caves": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/lake-caves/mark.md",
+      "class": "commons"
+    },
+    "vermillion/mouth-one-seventy": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/mouth-one-seventy/mark.md",
+      "class": "commons"
+    },
+    "vermillion/party-hall": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/party-hall/mark.md",
+      "class": "commons"
+    },
+    "vermillion/porch-hill": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/porch-hill/mark.md",
+      "class": "commons"
+    },
+    "vermillion/welcome-lounge": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/porch-hill/welcome-lounge/mark.md",
+      "class": "commons"
+    },
+    "vermillion/vermillion-view-peak": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-view-peak/mark.md",
+      "class": "commons"
+    },
+    "little-bird/a-bowl-at-the-foot-of-the-steps": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/a-bowl-at-the-foot-of-the-steps/mark.md",
+      "class": "commons"
     }
   }
 }

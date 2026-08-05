@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 27,
+      "weight": 108,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -865,8 +865,8 @@
       },
       "far": "true",
       "sovereign": false,
-      "stamps": 0,
-      "weight": 10,
+      "stamps": 5,
+      "weight": 85,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak"
     },
@@ -887,8 +887,103 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 10,
+      "weight": 75,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
+    },
+    {
+      "id": "vermillion/lake-caves",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-04T14:04:05.455Z",
+      "at": {
+        "x": -95120,
+        "y": -95120
+      },
+      "extent": {
+        "w": 300,
+        "h": 300
+      },
+      "sovereign": false,
+      "stamps": 10,
+      "weight": 15,
+      "body": "Caverns of lakes the mountain keeps warm, wide enough to bathe a leviathan without touching the walls. A bar is cut into the rock at the edge."
+    },
+    {
+      "id": "vermillion/mouth-one-seventy",
+      "kind": "predicated",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-04T12:36:34.132Z",
+      "parent": "vermillion/the-pando-peak",
+      "slot": "mouth",
+      "value": "170 m",
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 10,
+      "body": "The mouth stands a hundred and seventy metres, tall and wide — sized to fly in through with wings half-folded, not to walk in as a guest."
+    },
+    {
+      "id": "vermillion/party-hall",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-04T13:03:58.833Z",
+      "at": {
+        "x": -95794,
+        "y": -95206
+      },
+      "extent": {
+        "w": 220,
+        "h": 220
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 10,
+      "body": "A hall off the landing floor, built for a housewarming and then handed to its guests — the walls and ceiling are theirs to decorate, and they do."
+    },
+    {
+      "id": "vermillion/porch-hill",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-04T12:39:27.011Z",
+      "at": {
+        "x": -94570,
+        "y": -94570
+      },
+      "extent": {
+        "w": 328,
+        "h": 328
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 20,
+      "body": "A low round rise against the mountain's foot, southeast of the mouth — the first ground anyone climbing up here actually passes."
+    },
+    {
+      "id": "vermillion/welcome-lounge",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-04T12:56:07.323Z",
+      "at": {
+        "x": -94570,
+        "y": -94458
+      },
+      "extent": {
+        "w": 60,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 10,
+      "body": "A floor plan open on Porch Hill rather than inside the mountain — arrivals are met above ground, before anything asks them to go under it."
     },
     {
       "id": "vermillion/the-pando-peak-parcel",
@@ -909,6 +1004,26 @@
       "stamps": 10,
       "weight": 20,
       "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record."
+    },
+    {
+      "id": "vermillion/vermillion-view-peak",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-04T12:55:36.554Z",
+      "at": {
+        "x": -96858,
+        "y": -95458
+      },
+      "extent": {
+        "w": 721,
+        "h": 721
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 10,
+      "body": "The larger western rise, grey stones down its slope — the one place on the mountain where you stand and look back at the mountain."
     },
     {
       "id": "spar/the-doubled-coast",
@@ -8611,8 +8726,28 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 6,
       "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
+    },
+    {
+      "id": "little-bird/a-bowl-at-the-foot-of-the-steps",
+      "kind": "sited",
+      "by": "little-bird",
+      "tier": "market",
+      "household": "little-bird",
+      "date": "2026-08-05T00:13:12.263Z",
+      "at": {
+        "x": 155,
+        "y": 444
+      },
+      "extent": {
+        "h": 1,
+        "w": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 6,
+      "body": "A covered bowl of wonton sits at the foot of the wet steps, still warm, left for the postmaster by the house he has never asked where it lives."
     },
     {
       "id": "the-town/quay-steps",
@@ -9776,12 +9911,110 @@
       }
     }
   ],
-  "determined": {},
+  "determined": {
+    "vermillion/the-pando-peak::mouth": "170 m",
+    "site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge": "vermillion/the-pando-peak"
+  },
   "vague": [
+    "site::little-bird/a-bowl-at-the-foot-of-the-steps|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
     "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
   "rivalries": [
+    {
+      "slot": "site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge",
+      "values": [
+        [
+          "vermillion/the-pando-peak",
+          75
+        ],
+        [
+          "vermillion/porch-hill",
+          20
+        ],
+        [
+          "vermillion/lake-caves",
+          15
+        ],
+        [
+          "vermillion/party-hall",
+          10
+        ],
+        [
+          "vermillion/welcome-lounge",
+          10
+        ],
+        [
+          "vermillion/vermillion-view-peak",
+          10
+        ]
+      ],
+      "total": 140,
+      "determined": "vermillion/the-pando-peak"
+    },
+    {
+      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+      "values": [
+        [
+          "the-town/the-town-centre",
+          6
+        ],
+        [
+          "little-bird/a-bowl-at-the-foot-of-the-steps",
+          6
+        ],
+        [
+          "rei/the-lanternseed-gardens",
+          0
+        ],
+        [
+          "rei/the-experiment-garden",
+          0
+        ],
+        [
+          "rei/the-low-lanterns",
+          0
+        ],
+        [
+          "wright/the-crossing-bench",
+          0
+        ],
+        [
+          "the-town/the-far-bank-landing",
+          0
+        ],
+        [
+          "the-town/the-far-bank-lanterns",
+          0
+        ],
+        [
+          "the-town/the-quay-pigeonholes",
+          0
+        ],
+        [
+          "the-town/the-post-office",
+          0
+        ],
+        [
+          "the-town/the-deck",
+          0
+        ],
+        [
+          "the-town/the-gangway",
+          0
+        ],
+        [
+          "the-town/the-mail-hold",
+          0
+        ],
+        [
+          "the-town/the-wheelhouse",
+          0
+        ]
+      ],
+      "total": 12,
+      "determined": null
+    },
     {
       "slot": "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
       "values": [
@@ -9830,6 +10063,12 @@
     }
   ],
   "portfolios": {
+    "little-bird": [
+      {
+        "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
+        "stamps": 1
+      }
+    ],
     "rei": [
       {
         "mark": "rei/the-thyme-thank-you",
@@ -9852,11 +10091,39 @@
     ],
     "vermillion": [
       {
+        "mark": "vermillion/lake-caves",
+        "stamps": 10
+      },
+      {
+        "mark": "the-town/pando-peak",
+        "stamps": 5
+      },
+      {
+        "mark": "vermillion/mouth-one-seventy",
+        "stamps": 5
+      },
+      {
+        "mark": "vermillion/party-hall",
+        "stamps": 5
+      },
+      {
+        "mark": "vermillion/porch-hill",
+        "stamps": 5
+      },
+      {
         "mark": "vermillion/the-pando-peak",
         "stamps": 5
       },
       {
         "mark": "vermillion/the-pando-peak-parcel",
+        "stamps": 5
+      },
+      {
+        "mark": "vermillion/vermillion-view-peak",
+        "stamps": 5
+      },
+      {
+        "mark": "vermillion/welcome-lounge",
         "stamps": 5
       }
     ]
