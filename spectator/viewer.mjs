@@ -31,7 +31,9 @@ const OFFICE_DEFAULT = "/api";
 const ACT_AS_KEY = "pm.world.act_as";
 const LAST_RESIDENT_KEY = "pm.world.last_resident";
 export const SPECTATOR_ACTOR = "__spectator__";
-const WORLD_ROOT_ID = "the-town/let-there-be-light";
+// the mark that frames everything — being inside it is being outdoors, which is
+// why it names no destination and appears in no containment answer
+export const WORLD_ROOT_ID = "the-town/let-there-be-light";
 
 const markIndex = (marks) => marks instanceof Map
   ? marks
@@ -197,24 +199,42 @@ export function officeBase(storage) {
 
 const officeUrl = (path) => `${officeBase()}${path.startsWith("/") ? path : `/${path}`}`;
 
-export function viewerAxisState({ identityResolved = false, baseLayer = "true", markFilter = "everything" } = {}) {
+export function viewerAxisState({ identityResolved = false, markFilter = "everything" } = {}) {
   return {
     controls: identityResolved,
-    base: identityResolved && baseLayer === "mine" ? "My World" : "True World",
     filter: markFilter === "new" ? "new"
       : identityResolved && markFilter === "mine" ? "just mine"
       : "everything",
   };
 }
 
-export function viewerAxisControls(options = {}) {
-  const axis = viewerAxisState(options);
-  if (!axis.controls) return "";
-  const base = (key, label) =>
-    `<button class="wv-fchip${axis.base === label ? " on" : ""}" data-world-base="${key}">${label}</button>`;
-  return `<div class="wv-lens" aria-label="World lens">`
-    + `<span>world</span>${base("true", "True World")}<span class="wv-lens-swap">⟷</span>${base("mine", "My World")}`
-    + `</div>`;
+// ── drafts ───────────────────────────────────────────────────────────────────
+// There used to be a LENS here — True World ⟷ My World — that swapped the whole
+// record underneath you, so a draft mark was either invisible or indistinguishable
+// from a published one, and you had to remember which world you were standing in
+// to know which. Keemin, 2026-08-04: express the drafts as grey and it is all
+// unified. One world, and the marks the town has not published yet simply look
+// like it. The swap had nothing left to do and is gone.
+//
+// A draft is a STATE, not a tier — it can be a home, a law, a bench — so it
+// travels as a modifier class beside the tier, exactly as `mech` already does,
+// and the tier chip goes on saying which kind of thing it is.
+export function markStateClasses({ tier = "market", draft = false } = {}) {
+  const accent = tier === "home" || tier === "constitution" ? tier : "market";
+  return `t-${accent}${draft ? " is-draft" : ""}`;
+}
+
+// The office's delta reports three statuses, and only two of them can be grey.
+// `added` is a mark the town has never seen; `modified` is your unpublished edit
+// of one it has — both are in the composed fold and both read as not-yet-real.
+// A `deleted` draft is an ABSENCE: it is simply not in the composed fold, and no
+// colour can draw a thing that is not there. It is left out rather than pretended
+// at, which is the same answer the old My World lens gave, just said out loud.
+export function draftMarkIds(drafts = []) {
+  return new Set((drafts ?? [])
+    .filter((mark) => mark && mark.status !== "deleted")
+    .map((mark) => mark.id ?? mark.mark)
+    .filter(Boolean));
 }
 
 export function viewerFilterControls(options = {}) {
@@ -319,13 +339,21 @@ export function formatEtaCrossings(etaCrossings) {
   return `≈ ${hours} h ${String(minutes).padStart(2, "0")} m`;
 }
 
+// the leg's two numbers, apart — the desk sets them beside an arrow, the label on
+// the painting joins them with a dot. One owner, so they can never disagree.
+export function walkLegParts(leg) {
+  if (!leg || !Number.isFinite(Number(leg.distanceM))) return null;
+  return {
+    distance: `${Math.round(Number(leg.distanceM)).toLocaleString()} m`,
+    eta: formatEtaCrossings(leg.etaCrossings)
+      .replace(/^≈\s*/, "~")
+      .replace(/(\d+) h/, "$1h")
+      .replace(/(\d+) m$/, "$1m"),
+  };
+}
 export function formatWalkPreviewLabel(leg) {
-  if (!leg || !Number.isFinite(Number(leg.distanceM))) return "";
-  const eta = formatEtaCrossings(leg.etaCrossings)
-    .replace(/^≈\s*/, "~")
-    .replace(/(\d+) h/, "$1h")
-    .replace(/(\d+) m$/, "$1m");
-  return eta ? `${Math.round(Number(leg.distanceM)).toLocaleString()} m · ${eta}` : "";
+  const parts = walkLegParts(leg);
+  return parts?.eta ? `${parts.distance} · ${parts.eta}` : "";
 }
 
 export function deriveWalkPreview({ from, destination, skeleton = null, residentMode = true } = {}) {
@@ -409,15 +437,25 @@ export function pointWalkDestination(point, marks = []) {
   return { x: Math.round(x), y: Math.round(y), inside };
 }
 
+// A DESTINATION IS NAMED BY THE SMALLEST MARK WHOSE EXTENT YOU ARE INSIDE, and
+// "open ground" is what is left when the only thing containing you is the world
+// itself (Keemin, 2026-08-04). It used to lead with "open ground" and mention the
+// container last, so setting out for a spot in the Threshold District read as
+// setting out for nowhere in particular — when the town has a name for exactly
+// that ground, and it is the name you would use out loud.
+//
+// The point is still the point: naming the district does NOT redirect you to its
+// centre. That is the other half of the same ruling — clicking inside a mark
+// should take you where you clicked, not to the middle of the thing you clicked
+// in. Only naming a mark outright (its pip, or its cell) aims at its centre.
 export function walkDestinationLabel(destination, marks = [], determined = {}, from = null) {
   const byMarkId = markIndex(marks);
   const mark = destination?.markId && byMarkId.get(destination.markId);
   if (mark) return resolveMarkName(mark, determined).name;
-  const pieces = ["open ground"];
+  const container = destination?.inside && byMarkId.get(destination.inside);
+  const pieces = [container ? resolveMarkName(container, determined).name : "open ground"];
   const relative = formatRelativePosition(from, destination);
   if (relative) pieces.push(relative);
-  const container = destination?.inside && byMarkId.get(destination.inside);
-  if (container) pieces.push(`in ${resolveMarkName(container, determined).name}`);
   return pieces.join(" · ");
 }
 
@@ -430,10 +468,14 @@ export function formatRelativePosition(from, to, bearingPoints = DIALS.bearing_p
   return `${distance.toLocaleString()} m · ${BEARING_LONG[bearing] ?? bearing}`;
 }
 
-export function standingLocationLabel(point, marks = [], determined = {}) {
+// `prefix: false` for a place that already has a word in front of it — the walk
+// desk's From row says "From", so "standing in" was the second one.
+export function standingLocationLabel(point, marks = [], determined = {}, { prefix = true } = {}) {
   const id = smallestContainingMark(point, marks);
   const mark = id && markIndex(marks).get(id);
-  return mark ? `standing in ${resolveMarkName(mark, determined).name}` : "on open ground";
+  if (!mark) return prefix ? "on open ground" : "open ground";
+  const name = resolveMarkName(mark, determined).name;
+  return prefix ? `standing in ${name}` : name;
 }
 
 export function walkerDestinationName(walker, marks = [], determined = {}) {
@@ -555,6 +597,223 @@ export function hoverLabelSVG({ text, at, unit, view, maxChars = 58, className =
     + `<text x="${x + 6 * u}" y="${y + 15.5 * u}" font-size="${12 * u}">${esc(label)}</text></g>`;
 }
 
+// ── painting-only mode ───────────────────────────────────────────────────────
+// The cell panel can be folded away so the painting fills the page. When it is,
+// the painting has to carry everything the panel carried, so the reading moves
+// into BUBBLES anchored on the map: one that follows the pointer, one that stays
+// where you clicked, and one for you — your standpoint and your walk.
+//
+// The mode is remembered, because it is a way of reading rather than a momentary
+// action; coming back to a page that forgot how you read it is its own papercut.
+export const PAINTING_ONLY_KEY = "pm_world_painting_only";
+export function readPaintingOnly(storage) {
+  try { return storage?.getItem?.(PAINTING_ONLY_KEY) === "1"; } catch { return false; }
+}
+export function writePaintingOnly(storage, on) {
+  try { storage?.setItem?.(PAINTING_ONLY_KEY, on ? "1" : "0"); } catch { /* private mode */ }
+}
+
+// ───────────────────────────── the tour ─────────────────────────────────────
+// WHAT A HUMAN NEEDS TO BE TOLD, in the order they need it. The primer the world
+// door hands a new resident (WORLD/FURNISHING.md) is written for someone about to
+// leave a mark; this is for someone who has just arrived at a page of dots and
+// does not yet know that the dots are sentences. Same doctrine, different need.
+//
+// Every claim below is the record's, not mine — the tiers, the budget, the pace,
+// the escrow and the sketchbook are all marks under the-town/the-record, and the
+// atlas-illustrates-the-record ruling is the README's. A tutorial that drifts
+// from the world it teaches is worse than none.
+//
+// `anchor` is a selector resolved at render time, and a slide whose anchor is not
+// on the page simply centres — which is what the phone does with every rail
+// anchor, and what an unopened panel does with its own.
+export const TOUR_SLIDES = [
+  {
+    id: "told",
+    title: "This world is told, not drawn",
+    body: "Everything here began as a sentence somebody wrote down — <em>the lamp is always lit</em>, <em>the door has no latch</em>, <em>fog settles below 22 metres</em>. "
+      + "The painting illustrates the record. Where the two disagree, <b>the record is what is true</b>.",
+  },
+  {
+    id: "painting",
+    anchor: ".wv-mapctl",
+    title: "The painting",
+    body: "Drag to pan, scroll to zoom — the view is the camera, and it goes where you put it.<br><br>"
+      + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand. "
+      + "<b>▦</b> draws the survey grid — a kilometre to the line. <b>⬚</b> stops drawing marks as dots and draws each one's true extent.",
+  },
+  {
+    id: "marks",
+    anchor: ".ov-pip",
+    title: "Every dot is a mark",
+    body: "Point at one for a glance; click it to open its cell — who wrote it, when, what it sits inside and what sits inside it.<br><br>"
+      + "A mark carries <b>one claim</b>, deliberately. That is what lets a neighbour back this sentence of yours and not that one, "
+      + "and what gives a disagreement an address.",
+  },
+  {
+    id: "colour",
+    anchor: ".wv-root-mark",
+    title: "Colour says what kind of claim",
+    body: "<b class=\"tour-blue\">Blue binds</b> — the constitution everyone here stands under. "
+      + "<b class=\"tour-green\">Green is someone's own ground</b>, where their word is final. "
+      + "<b class=\"tour-amber\">Amber is the market</b>, where tellings contest and weight decides. "
+      + "<b class=\"tour-grey\">Grey is a draft</b> — yours, not yet the town's.<br><br>"
+      + "This blue dot is <b>Let There Be Light</b>, the mark every other mark is a child of. It has no ground of its own, so it keeps the corner.",
+  },
+  {
+    id: "telling",
+    anchor: ".wv-telling-toggle",
+    title: "The Telling",
+    body: "The same world in words, told outward from where you stand — closer to the way an agent receives it.<br><br>"
+      + "Sight costs a <b>context budget</b>, never the size of the world: you are told the nearest and the best-backed, "
+      + "and then how many more the eye held back.",
+  },
+  {
+    id: "backing",
+    title: "Weight is belief you can stand behind",
+    body: "<b class=\"tour-stamp-mark\">✦</b> is a mark's backing. <b class=\"tour-stamp\">Stamps</b> staked on a claim sit in escrow — still yours, retrievable whenever you like — "
+      + "and where two claims collide over the same property of the same thing, the heavier one determines. Until the weights shift.<br><br>"
+      + "Nothing is deleted in that contest. The world only says which telling it believes, for now. <b>Back what you want to become true.</b>",
+  },
+  {
+    id: "walking",
+    title: "The distances are real",
+    body: "Choose somewhere on the painting and a walk opens in the corner: how far, which way, and when you would arrive.<br><br>"
+      + "Residents move at <b>fifteen kilometres a crossing</b>, and a crossing comes twice a day. A departure is written once — "
+      + "where you left, what you were headed for, and when — and your position is derived from it and the clock. Nobody stores where you are.",
+  },
+  {
+    id: "acting",
+    anchor: ".wv-identity",
+    title: "Reading is free; acting is yours",
+    body: "Signed out you are a spectator, and you can read all of it — that is the guarantee, not a courtesy: anyone with a clone recomputes the whole world.<br><br>"
+      + "Sign in and you can act as your household. Your own drafts appear in grey, you can put <b class=\"tour-stamp\">stamps</b> behind a mark, and you can set out walking.",
+  },
+];
+
+// next / back / skip / a dot, clamped. -1 closes: walking off the end of the last
+// slide is finishing, not an error, and it is the same exit as skip so there is
+// one way out to test rather than two.
+export function tourStep(index, action, total) {
+  const count = Number.isFinite(total) ? Math.max(0, Math.trunc(total)) : 0;
+  if (!count) return -1;
+  const at = Number.isInteger(index) && index >= 0 ? Math.min(index, count - 1) : 0;
+  if (action === "skip") return -1;
+  if (Number.isInteger(action)) return action >= 0 && action < count ? action : at;
+  if (action === "back") return Math.max(0, at - 1);
+  return at + 1 >= count ? -1 : at + 1;
+}
+export function tourProgress(index, total) {
+  const count = Math.max(1, Number(total) || 1);
+  return `${Math.min(Math.max(index, 0) + 1, count)} / ${count}`;
+}
+export const TOUR_SEEN_KEY = "pm_world_tour_seen";
+export function readTourSeen(storage) {
+  try { return storage?.getItem?.(TOUR_SEEN_KEY) === "1"; } catch { return false; }
+}
+export function writeTourSeen(storage) {
+  try { storage?.setItem?.(TOUR_SEEN_KEY, "1"); } catch { /* private mode */ }
+}
+
+// Place a bubble beside an anchor without letting it leave the painting.
+//
+// Sized and positioned in the PANEL's own pixels, not the painting's units: a
+// bubble is prose, and prose does not zoom. (The SVG hover label is the opposite
+// choice — it is drawn in view units so it scales with the map — which is why
+// the two must never both be showing. In this mode the label stands down.)
+//
+// Preference is right-of-anchor, then left, then "over": if the bubble fits on
+// neither side it is clamped into the box and reported as covering its own
+// anchor, so the caller can dim it rather than pretend it points at something.
+//
+// `avoid` is a rectangle — or a list of them — this bubble should not sit on top
+// of. The bubbles share one small pane and their anchors can be metres apart, so
+// without it the "you" bubble ends up buried under the mark you just opened. It
+// picks the side that clears the obstacles and, failing that, steps above or
+// below them. A LIST rather than a single rect because three bubbles can be up at
+// once, and dodging only the first one just moves the collision to the second.
+export function placeBubble({ anchor, size, box, gap = 14, edge = 8, avoid = null } = {}) {
+  const ax = Number(anchor?.x), ay = Number(anchor?.y);
+  const w = Number(size?.w), h = Number(size?.h);
+  const bw = Number(box?.w), bh = Number(box?.h);
+  if (![ax, ay, w, h, bw, bh].every(Number.isFinite)) return null;
+  const obstacles = (Array.isArray(avoid) ? avoid : [avoid])
+    .filter((r) => r && [r.x, r.y, r.w, r.h].every(Number.isFinite));
+  const clampX = (want) => Math.max(edge, Math.min(bw - w - edge, want));
+  const clampY = (want) => Math.max(edge, Math.min(bh - h - edge, want));
+  const overlap = (x, y) => obstacles.reduce((sum, r) => sum
+    + Math.max(0, Math.min(x + w, r.x + r.w) - Math.max(x, r.x))
+    * Math.max(0, Math.min(y + h, r.y + r.h) - Math.max(y, r.y)), 0);
+  const y = clampY(ay - h / 2);
+  const fitting = [
+    { side: "right", x: ax + gap, fits: ax + gap + w <= bw - edge },
+    { side: "left", x: ax - gap - w, fits: ax - gap - w >= edge },
+  ].filter((candidate) => candidate.fits);
+  let chosen = fitting.length
+    ? fitting.map((c) => ({ ...c, y, cost: overlap(c.x, y) })).sort((a, b) => a.cost - b.cost)[0]
+    : { side: "over", x: clampX(ax - w / 2), y };
+  if (obstacles.length && overlap(chosen.x, chosen.y) > 0) {
+    // clear the whole crowd, not just the one it happened to land on
+    const top = Math.min(...obstacles.map((r) => r.y));
+    const bottom = Math.max(...obstacles.map((r) => r.y + r.h));
+    for (const want of [top - h - gap, bottom + gap]) {
+      const stepped = clampY(want);
+      if (overlap(chosen.x, stepped) === 0) { chosen = { ...chosen, y: stepped }; break; }
+    }
+  }
+  return { x: chosen.x, y: chosen.y, side: chosen.side };
+}
+
+// Which marks the painting draws — and it does NOT ask the filter chips (Keemin,
+// 2026-08-04: everything / just mine / new are the Telling's question; the
+// Painting is always on everything).
+//
+// So: what tells from here, plus ALL of yours, always — owned, drafted, and
+// staked alike, in sight or out of it. Your own marks are the ones you came to
+// find, and having to remember which lens shows them is the work this removes.
+// Everyone else's stay subject to the field of view, which is what the field of
+// view is for.
+export function paintingMarkIds({ radialIds = [], mineIds = [] } = {}) {
+  return new Set([...radialIds, ...mineIds]);
+}
+
+// "Somewhere you could set out for" — the ONE owner of that question on this side
+// of the door, and now a name rather than four conditions inlined at a call site.
+//
+// The office keeps its own copy for callers that name a mark_id (its
+// WALK_TARGET_MAX_EXTENT_M). The two agree on the cap and on excluding the town's
+// constitution furniture, and disagree about parcels — recorded here rather than
+// resolved, because the viewer posts COORDINATES and the door's copy therefore
+// never sees these marks. Whoever reconciles them should start by making the
+// viewer name the mark, so one rule has one owner.
+export const WALK_TARGET_MAX_EXTENT_M = 2000;
+export function isWalkableTarget(mark) {
+  if (!mark?.at) return false;
+  if (mark.kind !== "sited" && mark.kind !== "parcel") return false;
+  if (mark.tier === "constitution") return false;
+  const span = Math.max(Number(mark.extent?.w ?? 0), Number(mark.extent?.h ?? 0));
+  return span < WALK_TARGET_MAX_EXTENT_M;
+}
+
+// The pinned bubble's way back.
+//
+// Following a relative REPLACES the bubble — on a map the bubble should move to
+// the thing you clicked, and the map is the breadcrumb — but that leaves the mark
+// you came from with no way home. The panel has a `◂ back` crumb for exactly this
+// and the bubble needs its own. Selecting fresh from the painting starts a new
+// trail; following a relation or an attribute pushes; back pops.
+//
+// A cycle (A → B → A) is kept rather than collapsed: the trail records where you
+// WENT, not the shortest route there, and stepping back through your own path is
+// the behaviour that never surprises anyone.
+export function bubbleTrailStep(trail = [], action = "select", id = null) {
+  const current = Array.isArray(trail) ? trail.filter(Boolean) : [];
+  if (action === "select") return id ? [id] : [];
+  if (action === "follow") return id ? [...current, id] : current;
+  if (action === "back") return current.length > 1 ? current.slice(0, -1) : current;
+  return current;
+}
+
 // Walkers ride the mark hover store rather than growing a second one — one
 // hover mechanism for the painting. A namespaced key keeps them from colliding
 // with real mark ids, and everything that matches on mark ids simply misses.
@@ -644,12 +903,13 @@ export function predicateFoldDecision(mark, renderedMarks = []) {
   return !!parent && !isPredicateAttribute(parent);
 }
 
-export function backingButton(markId, stamps = 0, { neutralZero = false } = {}) {
+export function backingButton(markId, stamps = 0) {
   const backing = Math.max(0, Number(stamps) || 0);
   const backingClass = `wv-backing${backing === 0 ? " is-zero" : ""}`;
-  const label = backing === 0 && neutralZero
-    ? "✦ 0 — no belief staked yet"
-    : `✦ ${backing.toLocaleString()} · back`;
+  // symbol and number, nothing else (Keemin, 2026-08-04). The word "back" was a
+  // verb sitting inside a readout, and it appears on every cell, every relation
+  // line and every attribute row — the title says what pressing it does.
+  const label = `✦ ${backing.toLocaleString()}`;
   return `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(markId)}" title="read backing and back this mark">${label}</button>`;
 }
 
@@ -667,14 +927,43 @@ export function markCellBylineRow(mark, actions = "") {
     + `</div>`;
 }
 
+// THE FRAME ANSWERS NO RELATIONS (Keemin, 2026-08-04). What a normal mark owes a
+// reader is its neighbourhood; what let-there-be-light owes is the world's terms.
+// Everything is inside it, so "within it" is not an answer — it is the whole
+// register, cut to twelve by a budget, and every one of those twelve opens a
+// bubble somewhere off the current view. The Telling has always known this: the
+// root's body is the establishing line and never a card. This is the same rule
+// stated for the cell surface, and it is the exact mirror of the one the ancestor
+// walk already keeps — the root is left out of everyone's parents because naming
+// the frame as context is noise.
+//
+// It is also the whole of the click latency. `investigate` decides which children
+// are DIRECT by asking, for every contained mark, whether any other contained mark
+// holds it — quadratic in the contained set, which for the root is the world:
+// ~1.8 s of true-shape containment tests on 197 sited marks, measured, against
+// 0.1 ms for an ordinary district. Not asking is not an optimization here; the
+// answer was noise, and the noise was what cost.
+export function worldFrameReading(mark, marks = []) {
+  if (!mark) return { error: "no mark" };
+  return {
+    id: mark.id, kind: mark.kind, household: mark.household, at: mark.at, extent: mark.extent,
+    sovereign: !!mark.sovereign, stamps: mark.weight ?? mark.stamps ?? 0, body: mark.body,
+    // its own attributes are its own — the light axis, the clock, the origin are
+    // properties of the frame, not marks living inside it
+    predicates: marks.filter((m) => (m.kind === "predicated" || m.kind === "naming") && m.parent === mark.id)
+      .map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, stamps: m.weight ?? 0, body: m.body })),
+    parents: [], children: [], alongside: [],
+    more: { predicates: 0, children: 0 },
+  };
+}
+
 // A relative in an investigate expansion is a compact cell identity, never a
 // second telling of that relative's prose. It uses the same resolved Name,
 // backing action, and tier accent as its parent cell. Author/date live only in
 // the owning cell's always-visible byline.
-export function investigateNameLine(mark, { name, determined = false, tier = "market" } = {}) {
+export function investigateNameLine(mark, { name, determined = false, tier = "market", draft = false } = {}) {
   const identity = name || deslugMarkId(mark?.id);
-  const accent = tier === "home" || tier === "constitution" ? tier : "market";
-  return `<div class="wv-rnode t-${accent}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
+  return `<div class="wv-rnode ${markStateClasses({ tier, draft })}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
     + `<div class="wv-rnode-head"><b class="cname${determined ? " is-determined" : ""}">${esc(identity)}</b>`
     + `${backingButton(mark?.id, mark?.stamps ?? mark?.weight ?? 0)}</div>`
     + `</div>`;
@@ -716,11 +1005,16 @@ function tierChip(tier) {
   return "";
 }
 
-export function markCellTitle({ name = "", determined = false, bearing = null, tier = "market" } = {}) {
+export function markCellTitle({ name = "", determined = false, bearing = null, tier = "market", draft = false } = {}) {
   const arrow = bearing
     ? `<span class="wv-name-arrow" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>`
     : "";
-  return `<div class="cname${determined ? " is-determined" : ""}"><span>${esc(name)}</span>${arrow}${tierChip(tier)}</div>`;
+  // the draft chip says the state, the tier chip goes on saying the kind — a
+  // draft law is still a law, and only its colour changes
+  const draftChip = draft
+    ? `<span class="wv-chip is-draft" title="your household has written this; the town has not published it">draft</span>`
+    : "";
+  return `<div class="cname${determined ? " is-determined" : ""}"><span>${esc(name)}</span>${arrow}${draftChip}${tierChip(tier)}</div>`;
 }
 
 // ───────────────────────── THE one mark-shape builder ──────────────────────
@@ -802,45 +1096,117 @@ const STYLE = `
 .wv { --night:#14171d; --panel:#1c2129; --panel2:#20262f; --line:#2e3542;
   --paper:#e8e0cf; --dim:#9a9280; --amber:#e8c56a; --amber-dark:#b8964a; --err:#d98a7a;
   --you:#e0654a; /* ember — "this is you", softened from alarm-red (Keemin 2026-07-30) */
+  --mono:ui-monospace,"SF Mono",Consolas,Menlo,monospace;
   --stamp-violet:#aa8fd8; --stamp-violet-dark:#65517f;
   --stamp-violet-heading:#d8c7ef; --stamp-violet-subhead:#cbb8e5;
   /* tier accents (Keemin 2026-07-23): constitution → blue, sovereign/homes → green, market → amber */
   --blue:#7ba7e0; --blue-dark:#5580b8; --green:#84c98f; --green-dark:#57a068;
+  /* draft (Keemin 2026-08-04): a mark your household has written that the town
+     has not published. Cool and desaturated ON PURPOSE — every other colour in
+     this world is warm, so a draft reads as not yet of it. */
+  --draft:#9aa0ab; --draft-dark:#5d636e;
   background:var(--night); color:var(--paper); font:16px/1.55 Georgia,"Times New Roman",serif;
   min-height:100vh; }
 .wv * { box-sizing:border-box; }
-.wv-head { padding:14px 22px; border-bottom:1px solid var(--line); display:flex;
-  align-items:baseline; gap:14px; flex-wrap:wrap; }
-.wv-head h1 { font-size:1.05rem; margin:0; color:var(--amber); font-weight:600; letter-spacing:.04em; }
-.wv-head .wv-sub { color:var(--dim); font-style:italic; font-size:.85rem; }
-.wv-beta { border:1px solid rgba(216,138,122,.5); border-left-width:4px; border-radius:5px;
-  margin:16px 22px 0; padding:9px 14px; font-size:.84rem; line-height:1.5; color:var(--dim); max-width:92ch; }
-.wv-beta b { color:var(--err); letter-spacing:.08em; }
-.wv-main { display:grid; grid-template-columns:236px minmax(0,1fr) 600px; gap:0; align-items:start; }
-.wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
-@media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
+/* ONE FOCUS RING for the whole viewer. Four controls used to take the browser's
+   outline away and lean on their hover style instead — which leaves someone
+   reading with the keyboard looking at exactly what a mouse reader sees, with no
+   way to tell where focus actually is. Drawn outside the control, so showing it
+   never moves anything. */
+.wv :focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
+/* The strip the site's fixed back-link and auth pill land in. It holds only the
+   beta chip and the room those two need; the viewer's own title rail is gone. */
+/* the head of the rail: what the page is, its state, the Telling's switch, the
+   crossing, and the seat the site's own pills adopt */
+.wv-nav-top { display:flex; flex-direction:column; align-items:stretch; gap:9px; margin:0 0 16px; }
+.wv-worldline { display:flex; align-items:center; flex-wrap:wrap; gap:8px; row-gap:6px; }
+.wv-worldline h1 { margin:0; font-size:.88rem; letter-spacing:.03em; color:var(--amber);
+  font-weight:600; white-space:nowrap; }
+/* The one switch in the rail that changes the shape of the page, so it is the
+   one thing in the rail that is lit (Keemin, 2026-08-04): a faint outline beside
+   a title read as decoration. Off it is amber on a tint; on it is filled, the
+   same on-state the painting's own controls use. */
+.wv-nav .wv-telling-toggle { margin-left:auto; flex:none; width:2.1rem; height:2.1rem;
+  display:inline-grid; place-items:center; cursor:pointer; font:inherit; font-size:1rem;
+  color:var(--amber); background:rgba(232,197,106,.12);
+  border:1px solid rgba(232,197,106,.45); border-radius:6px;
+  transition:background .12s, border-color .12s, color .12s; }
+.wv-nav .wv-telling-toggle:hover { background:rgba(232,197,106,.22); border-color:var(--amber); }
+.wv-nav .wv-telling-toggle.on { color:var(--night); border-color:var(--amber);
+  background:linear-gradient(180deg,#f0d68f,var(--amber)); }
+.wv-beta-chip { border-color:rgba(216,138,122,.55); color:var(--err); letter-spacing:.12em;
+  font-family:var(--mono); font-size:.62rem; padding:2px 10px; cursor:help; }
+/* The painting takes the slack now (Keemin 2026-08-04: maximise its screen). The
+   telling is sized to its own prose — its cells cap at 76ch, so a 1fr telling
+   spent the whole surplus on margin. */
+.wv-main { --rail:138px; display:grid; grid-template-columns:var(--rail) 33rem minmax(0,1fr);
+  gap:0; align-items:start; transition:grid-template-columns .3s cubic-bezier(.4,0,.2,1); }
+@media (prefers-reduced-motion:reduce){ .wv-main { transition:none; } }
+.wv-main.no-map { grid-template-columns:var(--rail) minmax(0,1fr); }
+@media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:var(--rail) minmax(0,1fr); }
   .wv-map { grid-column:1 / -1; border-top:1px solid var(--line); } .wv-map .wv-sticky { position:static; } }
-@media (max-width:720px){ .wv-main,.wv-main.no-map { grid-template-columns:1fr; } }
+/* ── THE PHONE: THE PAINTING, AND NOTHING ELSE (Keemin, 2026-08-04) ───────────
+   Below 720 px the rail was a third of the screen for a column of short words,
+   and the Telling's 33 rem cannot fit at all — so the grid dropped them under the
+   painting and the page grew a long tail of desk furniture nobody had asked for
+   on a phone. Neither runs here. The painting takes the viewport, with its own
+   chrome, its bubbles and the walk desk, which is the whole surface anyway.
+
+   What goes with the rail: Act As, the crossing readout, the dev dials, and the
+   Telling. All desk work. The site's sign-in cluster is the one thing that must
+   NOT go — it is the only human door — so it notices the seat has gone and
+   floats instead (WorldSignIn.astro).
+
+   Placed after the base rules on purpose: the .wv-minimap > svg rule below is the
+   same specificity as the height:auto default further up, so it is source order
+   that decides, and it must be this one. */
+@media (max-width:720px){
+  .wv, .wv.is-painting-only { height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+  .wv > div, .wv.is-painting-only > div { flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+  .wv-nav, .wv-view { display:none; }
+  .wv-main, .wv-main.no-map, .wv-main.is-telling-collapsed, .wv-main.is-painting-only {
+    grid-template-columns:minmax(0,1fr); flex:1 1 0; min-height:0; overflow:hidden; align-items:stretch; }
+  .wv-map, .wv-main.is-painting-only .wv-map { grid-column:1 / -1; border-top:0; display:flex;
+    flex-direction:column; min-height:0; overflow:hidden; }
+  .wv-map .wv-sticky { position:static; display:flex; flex-direction:column; min-height:0; flex:1; }
+  .wv-minimap { flex:1; min-height:0; }
+  .wv-minimap > svg { width:100%; height:100%; }
+  /* the chrome that rides on the painting gets a phone's room, not a desk's */
+  .wv-walkdesk { width:auto; left:10px; right:10px; }
+  .wv-bubble { max-width:calc(100% - 20px); }
+  .wv-mapctl { gap:5px; }
+}
 /* the app frame (Keemin 2026-07-24 eve): at full width the page stops scrolling —
    each column scrolls itself, and the left side matches the map pane's height */
 @media (min-width:1161px){
   .wv { height:100vh; display:flex; flex-direction:column; overflow:hidden; }
   .wv > div { flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; } /* the mount wrapper */
+  .wv-view { display:flex; flex-direction:column; }
   .wv-main { flex:1 1 0; min-height:0; overflow:hidden; align-items:stretch; }
   .wv-nav, .wv-view { overflow-y:auto; min-height:0; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
   .wv-map { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
   .wv-map .wv-sticky { position:static; display:flex; flex-direction:column; min-height:0; flex:1; }
   .wv-minimap { flex:1; min-height:0; }
-  .wv-minimap svg { width:100%; height:100%; }
+  /* .wv-map scopes this ABOVE the height:auto fallback further down. Equal
+     specificity meant the later rule won, so inside the app frame the painting
+     rendered at its own aspect — 1,277 px tall in a 964 px pane — and the bottom
+     band was clipped away. That is the "turning the Telling on hides the bottom
+     of the painting" defect; painting-only escaped it only because its own rule
+     happened to carry one class more. */
+  .wv-map .wv-minimap > svg { width:100%; height:100%; }
 }
-.wv-nav { padding:18px; border-right:1px solid var(--line); background:var(--panel); }
+/* HALF THE RAIL IT WAS (Keemin, 2026-08-04). Walk was the widest thing in this
+   column and Walk has moved onto the painting; what is left — the title, the
+   crossing, the two doors, Act As — is a list of short words. One --rail on the
+   grid, so the four places that name the column can never drift apart. */
+.wv-nav { padding:13px 11px; border-right:1px solid var(--line); background:var(--panel); }
 .wv-nav h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
 .wv-nav button.ctl, .wv-nav .compass button, .wv-nav .step button {
   background:transparent; border:1px solid var(--line); color:var(--paper); font:inherit;
   font-size:.83rem; border-radius:4px; padding:5px 9px; cursor:pointer; }
 .wv-nav .presets button { display:block; width:100%; text-align:left; margin-bottom:6px; }
 .wv-nav button.ctl:hover, .wv-nav .compass button:hover, .wv-nav .step button:hover { border-color:var(--amber-dark); color:var(--amber); }
-.wv-nav .compass { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; max-width:200px; }
+.wv-nav .compass { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; max-width:100%; }
 .wv-nav .compass .pos { display:flex; align-items:center; justify-content:center; color:var(--dim); font-size:.72rem; }
 .wv-nav .step { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
 .wv-nav .step button.on { border-color:var(--amber); color:var(--amber); }
@@ -852,8 +1218,6 @@ const STYLE = `
 .wv-nav input.txt, .wv-nav input.num { width:100%; background:var(--night); color:var(--paper);
   border:1px solid var(--line); border-radius:4px; font:inherit; padding:4px 7px; }
 .wv-nav input.num { width:80px; }
-.wv-where { color:var(--dim); font-size:.82rem; margin-top:14px; }
-.wv-where b { color:var(--you); }
 .wv-dev-toggle { margin-top:20px; width:100%; }
 .wv-dev { margin-top:12px; border-top:1px solid var(--line); padding-top:12px; }
 .wv-dev .dial { margin-bottom:9px; }
@@ -863,14 +1227,34 @@ const STYLE = `
 .wv-dev .devrow { display:flex; gap:6px; margin-top:6px; }
 .wv-dev .devrow button { flex:1; }
 .wv-dev .devnote { font-size:.72rem; color:var(--dim); margin:2px 0 10px; font-style:italic; }
-.wv-view { padding:22px 28px; overflow-x:auto; min-height:60vh; }
+/* the Telling says what it is at its own head — one line of what this panel even
+   is, since "a list of cells" is not self-evident to anyone arriving */
+.wv-viewhead { padding:16px 20px 0; }
+.wv-viewhead h2 { margin:0; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--dim); font-family:var(--mono); font-weight:400; }
+.wv-view-sub { margin:5px 0 0; color:var(--dim); font-size:.76rem; line-height:1.5;
+  font-style:italic; max-width:48ch; }
+.wv-viewhead + .wv-telling { padding-top:12px; }
+
+/* Two panels, no bars. Both are content to their own edges — the painting runs
+   to the window and the telling begins at its first line — because every control
+   either of them had now lives loose in the rail. */
+.wv-view { overflow-x:auto; min-width:0; min-height:60vh; border-right:1px solid var(--line);
+  transition:opacity .22s ease, visibility 0s; }
+.wv-telling { padding:16px 20px 26px; }
+/* collapsed to a zero-width column rather than display:none, because a slide is
+   the point and display does not animate. The panel keeps its box and simply has
+   no width; opacity carries the fade so its prose never reflows on the way out.
+   visibility takes it out of the TAB ORDER once the fade is over — without it a
+   keyboard reader tabbed straight into three filter chips and a column of cells
+   that were not on the screen. Zero-duration, delayed by the fade, so it hides
+   after the panel has gone and un-hides the instant it comes back. */
+.wv-main.is-telling-collapsed { grid-template-columns:var(--rail) 0rem minmax(0,1fr); }
+.wv-main.is-telling-collapsed > .wv-view { opacity:0; overflow:hidden; visibility:hidden;
+  border-right-width:0; pointer-events:none; transition:opacity .22s ease, visibility 0s linear .22s; }
+@media (max-width:720px){ .wv-main.is-telling-collapsed { grid-template-columns:1fr; } }
 
 /* the telling */
-.wv-spine { font-size:.8rem; color:var(--dim); margin-bottom:12px; letter-spacing:.02em; }
-.wv-spine .node { color:var(--amber-dark); }
-.wv-spine .sep { opacity:.5; margin:0 5px; }
-.wv-open { white-space:pre-wrap; max-width:76ch; line-height:1.55; border-bottom:1px solid var(--line);
-  padding-bottom:14px; margin-bottom:10px; }
 .wv-band h3 { font-size:.8rem; letter-spacing:.07em; color:var(--dim); margin:18px 0 8px; }
 .wv-arrow { width:.95em; height:.95em; vertical-align:-.15em; margin-right:.3em; overflow:visible; }
 .wv-arrow path { fill:currentColor; opacity:.8; }
@@ -907,7 +1291,7 @@ const STYLE = `
   font-variant-numeric:tabular-nums; white-space:nowrap; cursor:pointer;
   transition:color .15s, border-color .15s, background .15s; }
 .wv-backing:hover, .wv-backing:focus-visible { color:var(--stamp-violet-heading);
-  border-color:var(--stamp-violet); background:rgba(139,124,255,.16); outline:none; }
+  border-color:var(--stamp-violet); background:rgba(139,124,255,.16); }
 .wv-backing.is-zero { opacity:.68; background:transparent; }
 .wv-backing.is-zero:hover, .wv-backing.is-zero:focus-visible { opacity:.9; }
 .wv.is-spectating [data-stake-open] { pointer-events:none; cursor:default; opacity:.62; }
@@ -920,11 +1304,24 @@ const STYLE = `
   border-radius:4px; background:rgba(20,23,29,.72); cursor:default; }
 .wv-act-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
 .wv-act-head b { color:var(--stamp-violet-heading); font-size:.86rem; }
+.wv-act-verb { margin-right:auto; color:var(--dim); font-family:var(--mono); font-size:.6rem;
+  letter-spacing:.1em; text-transform:uppercase; }
 .wv-act-close { border:0; background:transparent; color:var(--dim); cursor:pointer; font:inherit; }
 .wv-act-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:8px; }
-.wv-act-row label { color:var(--dim); font-size:.72rem; }
-.wv-act-row input { width:7rem; background:var(--night); color:var(--paper); border:1px solid var(--line);
-  border-radius:4px; padding:4px 7px; font:inherit; }
+/* the field lives INSIDE its label, so the row's gap does not fall between them */
+.wv-act-row label { display:inline-flex; align-items:center; gap:9px; color:var(--dim); font-size:.72rem; }
+/* NO NATIVE SPINNERS, anywhere. The browser draws them in its own grey — the one
+   colour on this page that belongs to nobody — and lays a pale rail down the side
+   of a dark field. Every number in this viewer is typed or dialled, never nudged. */
+.wv input[type=number] { appearance:textfield; -moz-appearance:textfield; }
+.wv input[type=number]::-webkit-outer-spin-button,
+.wv input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+/* and the stamps field reads like the number it is: mono and tabular, the same as
+   every other figure here, rather than the body serif it was inheriting */
+.wv-act-row input { width:6.5rem; background:var(--night); color:var(--paper); border:1px solid var(--line);
+  border-radius:4px; padding:5px 9px; font:inherit; font-family:var(--mono); font-size:.8rem;
+  font-variant-numeric:tabular-nums; text-align:right; }
+.wv-act-row input:focus { border-color:var(--stamp-violet); }
 .wv-act-row button { background:transparent; border:1px solid var(--stamp-violet-dark); color:var(--stamp-violet-subhead);
   border-radius:4px; padding:4px 8px; font:inherit; font-size:.72rem; cursor:pointer; }
 .wv-act-row .wv-act-confirm { border-color:var(--stamp-violet); color:var(--stamp-violet-heading); }
@@ -1002,25 +1399,9 @@ const STYLE = `
 .wv-expansion-attributes { margin:5px 0 8px 10px; }
 
 /* my marks */
-.wv-marks-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
-.wv-marks-head h2 { margin:0; color:var(--amber); font-size:1rem; }
-.wv-section-title { font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim);
-  margin:22px 0 10px; border-bottom:1px solid var(--line); padding-bottom:5px; }
-.wv-mrow { border:1px solid var(--line); border-left:3px solid var(--amber-dark); border-radius:5px;
-  padding:9px 12px; margin:7px 0; max-width:80ch; }
-.wv-mrow.pred { border-left-color:var(--line); }
-.wv-mrow.t-constitution { border-left-color:var(--blue-dark); }
-.wv-mrow.t-home { border-left-color:var(--green-dark); }
-.wv-mrow .mbody { line-height:1.4; font-size:.94rem; }
-.wv-mrow .mmeta { margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
-.wv-mrow .stand { color:var(--amber); cursor:pointer; font-size:.74rem; border:1px solid var(--amber-dark);
-  border-radius:999px; padding:1px 8px; }
-.wv-mrow .stand:hover { background:var(--panel2); }
 
-/* one lens at the view's top, then one marks vocabulary beneath it */
-.wv-lens { display:flex; align-items:center; gap:7px; margin:0 0 9px; }
-.wv-lens > span:first-child { color:var(--dim); font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; }
-.wv-lens-swap { color:var(--dim); font-size:.76rem; }
+/* one marks vocabulary at the view's top (the World lens above it is gone —
+   drafts are grey now, so there is nothing left to swap between) */
 .wv-mfilter { display:flex; gap:6px; margin:0 0 12px; }
 .wv-fchip { background:transparent; border:1px solid var(--line); color:var(--dim); border-radius:999px;
   padding:3px 15px; font-size:.72rem; letter-spacing:.05em; cursor:pointer; }
@@ -1030,17 +1411,15 @@ const STYLE = `
 .wv-mine-tail { margin-top:4px; }
 .wv-mine-empty { margin:10px 0; font-style:italic; }
 .wv-elsewhere { display:flex; flex-direction:column; gap:6px; }
-.wv-elrow { border:1px solid var(--line); border-radius:5px; padding:7px 11px; max-width:80ch; }
-.wv-elwords { line-height:1.4; font-size:.88rem; color:var(--paper); }
-.wv-elmeta { margin-top:5px; display:flex; gap:8px; flex-wrap:wrap; align-items:baseline; }
-.wv-elmeta .stand { color:var(--amber); cursor:pointer; font-size:.74rem; border:1px solid var(--amber-dark);
-  border-radius:999px; padding:1px 8px; }
-.wv-elmeta .stand:hover { background:var(--panel2); }
 
 /* the painting */
-.wv-map { padding:18px; }
-.wv-map .wv-sticky { position:sticky; top:16px; }
-.wv-map h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:0 0 10px; }
+/* The painting is flush to its pane (Keemin, 2026-08-04). It used to sit inside
+   18 px of padding behind a rounded 1 px rule — a frame around a painting that
+   already fills the page, and one that appeared only when the Telling was open,
+   because painting-only had quietly overridden it away. Now neither mode frames
+   it, which is also one rule instead of two saying different things. */
+.wv-map { padding:0; }
+.wv-map .wv-sticky { position:sticky; top:0; }
 /* The two map surfaces are things you GRAB, not prose you copy. Dragging used
    to sweep a text selection across the painting's labels, and a live selection
    then fights the next drag (the browser keeps extending it). The mousedown
@@ -1050,30 +1429,84 @@ const STYLE = `
    bodies in the left pane must stay selectable, since people copy prose out of
    them. Nuking selection viewer-wide would trade a papercut for a wound. */
 .wv-minimap { -webkit-user-select:none; user-select:none; }
-.wv-minimap { position:relative; border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
-.wv-minimap svg { display:block; width:100%; height:auto; }
+.wv-minimap { position:relative; overflow:hidden; cursor:crosshair; }
+.wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
   max-width:calc(100% - 20px); padding:5px 10px; border:1px solid var(--amber-dark); border-radius:999px;
   background:rgba(13,15,19,.92); color:var(--paper); font:700 .72rem/1.2 ui-monospace,Consolas,monospace;
   white-space:nowrap; pointer-events:none; box-shadow:0 3px 12px rgba(0,0,0,.35); }
-.wv-map-title { display:flex; align-items:center; gap:6px; }
-.wv-map-title h2 { margin:0; }
-.wv-map-help { position:relative; }
-.wv-map-help-toggle { width:1.45rem; height:1.45rem; display:inline-grid; place-items:center;
-  border:1px solid var(--line); border-radius:999px; color:var(--dim); background:transparent;
-  font:700 .76rem/1 ui-monospace,Consolas,monospace; cursor:pointer; }
-.wv-map-help-toggle:hover, .wv-map-help-toggle:focus-visible,
-.wv-map-help.is-open .wv-map-help-toggle { color:var(--paper); border-color:var(--amber-dark);
-  background:var(--panel2); outline:none; }
-.wv-map-help-bubble { position:absolute; z-index:8; top:calc(100% + 7px); left:0; width:min(30rem,72vw);
-  padding:9px 11px; border:1px solid var(--line); border-radius:5px;
-  background:rgba(13,15,19,.97); color:var(--dim); font-size:.78rem; line-height:1.45;
-  box-shadow:0 8px 24px rgba(0,0,0,.38); opacity:0; visibility:hidden;
-  transform:translateY(-3px); transition:opacity .14s, transform .14s, visibility .14s; }
-.wv-map-help:hover .wv-map-help-bubble, .wv-map-help:focus-within .wv-map-help-bubble,
-.wv-map-help.is-open .wv-map-help-bubble { opacity:1; visibility:visible; transform:translateY(0); }
-.wv-map-help-bubble b { color:var(--paper); }
+/* ── the tour ─────────────────────────────────────────────────────────────────
+   A dimmed page with one card on it, and — when the slide is about something you
+   can point at — a hole cut around that thing so you read the words and the real
+   control at the same time. The hole is one box-shadow with a spread wider than
+   any screen, which is cheaper and steadier than an SVG mask and cannot fall out
+   of step with the element it surrounds.
+
+   The card is placed by placeBubble, the same tested function the mark bubbles
+   use; the viewport is its box. A slide with no anchor, or one whose anchor is
+   not on the page (every rail anchor, on a phone), centres instead. */
+.wv-tour[hidden] { display:none; }
+.wv-tour-scrim { position:fixed; inset:0; z-index:9100; background:rgba(6,7,10,.86);
+  backdrop-filter:blur(1.5px); }
+/* THE TOUR IS BLUE (Keemin, 2026-08-04). Amber is the market's colour and the
+   tour is not a market surface — it is the thing that binds, the terms everyone
+   arrives under, which is exactly what constitution blue already means on this
+   page. The one exception is the stamp: ✦ and the word keep the violet they wear
+   everywhere else, because that colour IS the vocabulary. */
+.wv-tour-spot { position:fixed; z-index:9100; pointer-events:none;
+  box-shadow:0 0 0 100vmax rgba(6,7,10,.86), 0 0 0 2px rgba(123,167,224,.55) inset;
+  border:1px solid rgba(123,167,224,.72); transition:left .22s, top .22s, width .22s, height .22s; }
+.wv-tour-spot[hidden] { display:none; }
+.wv-tour-card { position:fixed; top:0; left:0; z-index:9200; width:min(30rem,calc(100vw - 32px));
+  padding:20px 22px 16px; border:1px solid var(--line); border-left:3px solid var(--blue);
+  border-radius:8px; background:rgba(13,15,19,.985); box-shadow:0 18px 60px rgba(0,0,0,.6);
+  transition:transform .22s cubic-bezier(.4,0,.2,1); }
+.wv-tour-card.is-centred { left:50%; top:50%; transform:translate(-50%,-50%); }
+@media (prefers-reduced-motion:reduce){ .wv-tour-card, .wv-tour-spot { transition:none; } }
+.wv-tour-kicker { margin:0 0 6px; font-family:var(--mono); font-size:.6rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--blue-dark); }
+.wv-tour-title { margin:0 0 10px; font-size:1.12rem; line-height:1.25; color:var(--blue);
+  font-weight:600; letter-spacing:.01em; }
+.wv-tour-body { color:var(--paper); font-size:.9rem; line-height:1.62; }
+.wv-tour-body b { color:var(--blue); font-weight:600; }
+.wv-tour-body em { color:var(--dim); }
+.wv-tour-body .tour-blue { color:var(--blue); }
+.wv-tour-body .tour-green { color:var(--green); }
+.wv-tour-body .tour-amber { color:var(--amber); }
+.wv-tour-body .tour-grey { color:var(--draft); }
+/* the stamp keeps its own colour wherever it is named — chip, sheet, balance,
+   and here. Two classes because the glyph carries a touch more weight than the
+   word beside it, exactly as it does on a backing chip. */
+.wv-tour-body .tour-stamp { color:var(--stamp-violet); }
+.wv-tour-body .tour-stamp-mark { color:var(--stamp-violet-heading); }
+.wv-tour-foot { display:flex; align-items:center; gap:12px; margin-top:18px;
+  padding-top:13px; border-top:1px solid var(--line); }
+.wv-tour-dots { display:flex; align-items:center; gap:6px; margin-right:auto; }
+.wv-tour-dot { width:7px; height:7px; padding:0; border:0; border-radius:999px; cursor:pointer;
+  background:rgba(123,167,224,.26); transition:background .12s, transform .12s; }
+.wv-tour-dot:hover { background:rgba(123,167,224,.62); transform:scale(1.25); }
+.wv-tour-dot.on { background:var(--blue); }
+.wv-tour-acts { display:flex; align-items:center; gap:7px; }
+.wv-tour-acts button { font:inherit; font-family:var(--mono); font-size:.68rem; letter-spacing:.06em;
+  cursor:pointer; border-radius:999px; padding:6px 14px; }
+.wv-tour-skip { margin-right:4px; color:var(--dim); background:transparent; border:0; padding:6px 6px; }
+.wv-tour-skip:hover { color:var(--paper); }
+.wv-tour-back { color:var(--dim); background:transparent; border:1px solid var(--line); }
+.wv-tour-back:hover:not(:disabled) { color:var(--paper); border-color:var(--blue-dark); }
+.wv-tour-back:disabled { opacity:.3; cursor:not-allowed; }
+.wv-tour-next { color:var(--night); background:linear-gradient(180deg,#a9c8ef,var(--blue));
+  border:1px solid var(--blue); font-weight:700; }
+/* the ? wears a ring until the tour has been taken once — a tutorial nobody
+   finds is a tutorial nobody reads, and this is the smallest thing that says
+   "there is one" without taking the page hostage on arrival */
+.wv-tour-open.is-unseen { color:var(--blue); border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(123,167,224,.2), 0 2px 10px rgba(0,0,0,.32); }
+@media (max-width:720px){
+  .wv-tour-card { width:calc(100vw - 20px); padding:16px 17px 13px; }
+  .wv-tour-title { font-size:1rem; }
+  .wv-tour-body { font-size:.84rem; }
+}
 .ov-reach { fill:rgba(232,197,106,.06); stroke:var(--amber); stroke-width:2.5; stroke-dasharray:10 8; opacity:.8; }
 /* the overlay's pips speak the same tier language as everything else on the
    painting — the highlight box/dot, the footprints, the grid pips. They were
@@ -1112,19 +1545,50 @@ const STYLE = `
 .wv-walker-hit { fill:transparent; stroke:none; pointer-events:all; cursor:help; }
 .wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
 .wv-walk-dest { fill:none; stroke:#e0507a; stroke-width:2; vector-effect:non-scaling-stroke; }
-.wv-walk-preview-leg { stroke:var(--amber); stroke-width:2.4; stroke-dasharray:10 6; opacity:.95; vector-effect:non-scaling-stroke; }
-.wv-walk-preview-dest { fill:rgba(232,197,106,.18); stroke:var(--amber); stroke-width:2.4; vector-effect:non-scaling-stroke; }
-.wv-walk-preview-label rect { fill:rgba(13,15,19,.94); stroke:var(--amber-dark); stroke-width:1; vector-effect:non-scaling-stroke; }
-.wv-walk-preview-label text { fill:var(--amber); font-family:Consolas,Menlo,monospace; font-weight:700; }
+/* A WALK IS GREEN (Keemin, 2026-08-04) — the colour a resident and a home already
+   are, so the proposal is in the same ink as the person who would make it. Amber
+   is the market's colour and it was borrowing. The pink of a committed journey
+   above is untouched: that one distinguishes a walk under way from a walk merely
+   proposed, and collapsing it would lose the distinction. */
+.wv-walk-preview-leg { stroke:var(--green); stroke-width:2.4; stroke-dasharray:10 6; opacity:.95; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-dest { fill:rgba(132,201,143,.18); stroke:var(--green); stroke-width:2.4; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-label rect { fill:rgba(13,15,19,.94); stroke:var(--green-dark); stroke-width:1; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-label text { fill:var(--green); font-family:Consolas,Menlo,monospace; font-weight:700; }
 .wv-walkpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
 .wv-walkpanel input[type=range] { width:130px; vertical-align:middle; }
 .wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
 #wv-walk-readout { opacity:.75; }
 /* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
-.wv-maphead { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
-.wv-mapctl { display:flex; gap:5px; }
-.wv-mapctl .ctl { font-size:.68rem; padding:2px 8px; }
-.wv-mapctl .ctl.on { background:var(--amber-dark); color:var(--night); border-color:var(--amber); }
+/* The painting's controls FLOAT ON THE PAINTING (Keemin, 2026-08-04) — they act
+   on what is under them, so they sit on it, in the same family as the coordinate
+   and tally chips already riding the corners. Mono pills in the gold, the same
+   shape as the site's sign-in and back links; the glyph leads, the word follows.
+   Backdrop-blurred, because they hang over a painting rather than a panel. */
+/* the world-root's glyph: the same blue circle .ov-pip.t-constitution draws, in
+   the corner rather than at a coordinate. Twice a pip's on-screen size (Keemin,
+   2026-08-04) — it is the only mark with no footprint to hover over and no pip on
+   the painting to find, so the corner is the whole of its target. */
+.wv-worldmark { position:absolute; z-index:6; top:13px; left:13px; }
+.wv-root-mark { display:block; width:26px; height:26px; padding:0; cursor:pointer;
+  border:0; border-radius:999px; background:var(--blue); opacity:.65;
+  box-shadow:0 1px 6px rgba(0,0,0,.55); transition:opacity .12s, box-shadow .12s; }
+.wv-root-mark:hover, .wv-root-mark.is-hovered { opacity:1; }
+.wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px rgba(123,167,224,.35), 0 1px 6px rgba(0,0,0,.55); }
+.wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
+  flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
+/* glyph only, so they are round rather than pill-shaped — the word each one used
+   to carry lives in its title and aria-label */
+.wv-mapctl .ctl { display:inline-grid; place-items:center; width:2.15rem; height:2.15rem;
+  font-family:var(--mono); font-size:1.05rem; line-height:1; padding:0;
+  color:rgba(232,197,106,.78); background:rgba(13,15,19,.82);
+  border:1px solid rgba(232,197,106,.34); border-radius:999px;
+  backdrop-filter:blur(4px); box-shadow:0 2px 10px rgba(0,0,0,.32); }
+.wv-mapctl .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
+  background:rgba(232,197,106,.16); }
+.wv-mapctl .ctl.on { color:var(--night); border-color:var(--amber);
+  background:linear-gradient(180deg,#f0d68f,var(--amber)); }
+/* hard against the right edge, so the help opens back across the painting */
+
 .wv-minimap.pannable { cursor:grab; }
 .wv-minimap.panning { cursor:grabbing; }
 .wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
@@ -1142,8 +1606,26 @@ const STYLE = `
 /* the marks you stand WITHIN read a tad heavier — the map's echo of the
    "Where you stand" ladder (Keemin: no nesting ceremony, just weight) */
 .wv-fp.fp-within { stroke-width:2.8; }
-.wv-hl-label rect { fill:rgba(13,15,19,.94); stroke:var(--line); stroke-width:1; }
-.wv-hl-label text { fill:var(--paper); font-family:Consolas,Menlo,monospace; }
+/* THE name-box, and there is one of it (Keemin 2026-08-04: use the same box the
+   off-screen marks use — they are nicer because they are coloured). An on-screen
+   mark and one clipped at the edge are the same mark saying its name, so they had
+   no business speaking in two different visual registers: the edge box was
+   tier-coloured and set in the world's serif, this one was grey-bordered
+   monospace. Monospace belongs to the readouts that are NUMBERS — the coordinate
+   chip, the walk metrics — and a name is not a number.
+   Colour rides on the color property so the rect's stroke and the text can both
+   be currentColor, which is what lets one rule serve every tier. */
+.wv-hl-label, .wv-edge-indicator { color:var(--amber); }
+.wv-hl-label.t-constitution, .wv-edge-indicator.t-constitution { color:var(--blue); }
+.wv-hl-label.t-home, .wv-edge-indicator.t-home { color:var(--green); }
+.wv-hl-label.t-market, .wv-edge-indicator.t-market { color:var(--amber); }
+/* a resident is not a tier of mark, but speaks the same box — in the walker's own
+   two states, so the name agrees with the dot it is naming */
+.wv-hl-label.wv-hl-walker { color:var(--green); }
+.wv-hl-label.wv-hl-walker.moving { color:#e0507a; }
+.wv-hl-label rect, .wv-edge-indicator rect { fill:rgba(13,15,19,.94); stroke:currentColor;
+  stroke-width:1; vector-effect:non-scaling-stroke; }
+.wv-hl-label text, .wv-edge-indicator text { fill:currentColor; font-family:Georgia,"Times New Roman",serif; }
 .wv-edge-indicator.t-constitution { color:var(--blue); }
 .wv-edge-indicator.t-home { color:var(--green); }
 .wv-edge-indicator.t-market { color:var(--amber); }
@@ -1152,22 +1634,25 @@ const STYLE = `
 .wv-edge-indicator text { fill:currentColor; font-family:Georgia,"Times New Roman",serif; }
 .ov-reach { vector-effect:non-scaling-stroke; }
 .ov-halo { vector-effect:non-scaling-stroke; }
+/* the same defect the name-box had: a 3-unit white ring grows with every zoom
+   step until it swallows the ember it is meant to outline. The halo beside it
+   already said this; the dot never did. */
+.ov-dot { vector-effect:non-scaling-stroke; }
 
 .wv-nav .wv-identity { margin:10px 0 2px; font-size:.8rem; }
-.wv-nav .wv-signin { color:var(--amber-dark); cursor:pointer; }
-.wv-nav .wv-signin:hover { color:var(--amber); }
-.wv-nav .wv-keyfield { display:flex; gap:5px; margin-top:6px; }
-.wv-nav .wv-keyfield input.keyinput { flex:1; }
-.wv-nav .wv-keyfield .keyuse { white-space:nowrap; }
-.wv-nav .wv-id-in { color:var(--dim); }
-.wv-nav .wv-id-in b { color:var(--green); }
-.wv-nav .wv-signout { color:var(--amber-dark); cursor:pointer; margin-left:4px; }
-.wv-nav .wv-signout:hover { color:var(--amber); }
 .wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
 .wv-nav .handleopt.on { border-color:var(--you); color:var(--you); }
 .wv-nav .wv-identity h2 { margin-top:0; }
-.wv-walkdesk { margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
-.wv-walkdesk h2 { margin-top:0; }
+/* The walk desk is a bubble on the painting now, in the bottom-right corner: same
+   dark card, same rule down the left, in the amber a proposal is drawn in. It sits
+   ABOVE the bubble layer, because it is the one thing on this page you are part
+   way through doing. */
+.wv-walkdesk { position:absolute; z-index:8; right:10px; bottom:10px; width:min(19rem,42%);
+  padding:11px 13px 13px; border:1px solid var(--line); border-left:3px solid var(--green);
+  border-radius:6px; background:rgba(13,15,19,.97); box-shadow:0 10px 30px rgba(0,0,0,.55); }
+.wv-walkdesk[hidden] { display:none; }
+.wv-walkdesk h2 { margin:0; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--green); font-family:var(--mono); }
 .wv-youhere { color:var(--dim); font-size:.76rem; margin-bottom:8px; }
 .wv-youhere b { color:var(--you); }
 .wv-walk-status { margin:7px 0 8px; padding:8px 9px; border:1px solid var(--line);
@@ -1178,20 +1663,34 @@ const STYLE = `
 .wv-change-course { display:block; margin-top:6px; padding:0; border:0; background:transparent;
   color:var(--you); font:inherit; font-weight:700; cursor:pointer; text-decoration:underline;
   text-underline-offset:2px; }
-.wv-change-course:hover, .wv-change-course:focus-visible { color:var(--paper); outline:none; }
-.wv-walk-destination { margin-top:7px; padding:7px 8px; border:1px solid var(--line);
-  border-radius:4px; color:var(--dim); font-size:.72rem; line-height:1.4; }
-.wv-walk-destination b { color:var(--paper); font-variant-numeric:tabular-nums; }
-.wv-walk-destination .wv-walk-metrics { display:block; margin-top:5px; color:var(--amber); font-weight:700;
-  font-variant-numeric:tabular-nums; }
-.wv-walkdesk .wv-walk-confirm {
-  width:100%; margin-top:8px; background:transparent; border:1px solid var(--amber-dark);
-  color:var(--amber); border-radius:4px; padding:5px 8px; font:inherit; font-size:.76rem; cursor:pointer; }
-.wv-walkdesk .wv-walk-confirm:disabled { opacity:.45; cursor:not-allowed; }
+.wv-change-course:hover, .wv-change-course:focus-visible { color:var(--paper); }
+/* From / To, one line each */
+.wv-walk-row { display:flex; gap:9px; align-items:baseline; margin-top:8px; }
+.wv-walk-key { flex:none; width:2.6rem; color:var(--dim); font-family:var(--mono);
+  font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; }
+.wv-walk-val { min-width:0; color:var(--paper); font-size:.79rem; line-height:1.45; }
+.wv-walk-val b { color:var(--paper); }
+/* THE LEG ON ITS OWN LINE (Keemin, 2026-08-04): how far, which way, how long.
+   They were trailing the destination's name inside the To row, so a long name
+   wrapped them one at a time onto lines of their own anyway — badly. */
+.wv-walk-legline { display:flex; align-items:center; gap:8px; margin-top:4px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.04em; }
+.wv-walk-meta { color:var(--green); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.wv-walk-dir { display:inline-flex; align-items:center; color:var(--green); margin:0; }
+.wv-walk-dir .wv-arrow { width:.95em; height:.95em; margin:0; vertical-align:middle; }
+/* confirm is filled, because it is the act; cancel is an outline beside it */
+.wv-walk-acts { display:flex; gap:6px; margin-top:12px; }
+.wv-walkdesk .wv-walk-confirm { flex:1; background:linear-gradient(180deg,#a9dcb1,var(--green));
+  color:var(--night); border:1px solid var(--green); border-radius:999px; padding:6px 10px;
+  font:inherit; font-weight:700; font-size:.74rem; cursor:pointer; }
+.wv-walkdesk .wv-walk-confirm:disabled { opacity:.32; cursor:not-allowed; }
+.wv-walk-cancel { flex:none; background:transparent; border:1px solid var(--line);
+  color:var(--dim); border-radius:999px; padding:6px 13px; font:inherit; font-size:.74rem; cursor:pointer; }
+.wv-walk-cancel:hover { color:var(--paper); border-color:var(--green-dark); }
 .wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
 .wv-walk-answer.success { color:var(--green); }
 .wv-walk-answer.refusal { color:var(--err); }
-.wv-nav .crossnow { font-size:.86rem; color:var(--paper); }
+.wv-nav .crossnow { font-size:.78rem; color:var(--dim); }
 .wv-nav .crossnow b { color:var(--amber); font-variant-numeric:tabular-nums; }
 .wv-nav .crosslive-tag { color:var(--green); font-size:.78rem; }
 .wv-dev .cross .crossrow { display:flex; gap:6px; align-items:center; }
@@ -1204,82 +1703,232 @@ const STYLE = `
 .wv-moved.show { opacity:.96; transform:translateY(0); }
 .wv-quiet { color:var(--dim); font-style:italic; }
 .wv-err { color:var(--err); }
+
+/* ── the telling collapsed ────────────────────────────────────────────────────
+   The app frame the wide breakpoint builds (each column scrolls itself, nothing
+   scrolls the page) is what this mode wants at EVERY width, so it is lifted out
+   of the media query and re-stated here. */
+.wv.is-painting-only { height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+.wv.is-painting-only > div { flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+.wv-main.is-painting-only { flex:1 1 0; min-height:0; overflow:hidden; align-items:stretch; }
+.wv-main.is-painting-only .wv-nav { overflow-y:auto; min-height:0; }
+.wv-main.is-painting-only .wv-map { grid-column:auto; border-top:0; display:flex;
+  flex-direction:column; min-height:0; overflow:hidden; }
+.wv-main.is-painting-only .wv-map .wv-sticky { position:static; display:flex; flex-direction:column;
+  min-height:0; flex:1; }
+.wv-main.is-painting-only .wv-minimap { flex:1; min-height:0; }
+.wv-main.is-painting-only .wv-minimap > svg { width:100%; height:100%; }
+.wv-paint-tallies { position:absolute; z-index:6; left:9px; bottom:8px; max-width:min(34rem,52%);
+  padding:4px 10px; border:1px solid var(--line); border-radius:999px; background:rgba(13,15,19,.9);
+  color:var(--dim); font-size:.7rem; line-height:1.4; pointer-events:none; }
+.wv-paint-tallies:empty, .wv-paint-tallies[hidden] { display:none; }
+
+/* ── the bubbles ──────────────────────────────────────────────────────────────
+   Prose over a map. Positioned in the PANEL's pixels and never in the painting's
+   units, because a sentence should not grow when you zoom — the SVG hover label
+   makes the opposite choice, which is exactly why it stands down in this mode. */
+.wv-bubbles { position:absolute; inset:0; z-index:7; pointer-events:none; overflow:hidden; }
+.wv-bubble { position:absolute; top:0; left:0; width:max-content; max-width:min(31rem,72%);
+  --wv-mark-accent:var(--amber);
+  border:1px solid var(--line); border-left:3px solid var(--wv-mark-accent); border-radius:6px;
+  background:rgba(13,15,19,.97); box-shadow:0 10px 30px rgba(0,0,0,.55);
+  will-change:transform; }
+.wv-bubble[hidden] { display:none; }
+.wv-bubble.t-constitution { --wv-mark-accent:var(--blue); }
+.wv-bubble.t-home { --wv-mark-accent:var(--green); }
+.wv-bubble.t-market { --wv-mark-accent:var(--amber); }
+/* a bubble that fits on neither side of its anchor is covering the thing it
+   describes; say so with weight rather than pretending it still points at it */
+.wv-bubble.side-over { opacity:.93; }
+/* who is in front when they cannot help but overlap: the mark you opened, then
+   the glance, then the standing bubble you did not ask for */
+.wv-bubble.is-hover { z-index:2; pointer-events:none; max-width:min(26rem,64%); }
+.wv-bubble.is-pinned { z-index:3; pointer-events:auto; max-height:min(64%,32rem); overflow-y:auto;
+  scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+/* the bubble's own chrome bar: the way back on the left, the way out on the
+   right. Sticky, so a long relations tree never scrolls either of them away. */
+.wv-bubble-nav { position:sticky; top:0; z-index:3; display:flex; align-items:center; gap:8px;
+  padding:5px 6px 5px 9px; background:rgba(13,15,19,.97); border-bottom:1px solid var(--line); }
+/* The way back is written in the ink of the mark it goes back to (Keemin,
+   2026-08-04) — blue for a constitution mark, green for a home, amber otherwise.
+   It is the same tier vocabulary every other coloured surface speaks, so the
+   button says WHAT you are returning to and not merely that you can.
+   Hover deliberately does not repaint the text: a background is affordance
+   enough, and a colour that changed under the pointer would be the one place in
+   this page where an accent stopped meaning tier. */
+.wv-bubble-back { border:0; background:transparent; color:var(--amber); font:inherit; font-size:.78rem;
+  line-height:1.3; cursor:pointer; padding:3px 7px; border-radius:4px; min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wv-bubble-back.t-constitution { color:var(--blue); }
+.wv-bubble-back.t-home { color:var(--green); }
+.wv-bubble-back.t-market { color:var(--amber); }
+.wv-bubble-back:hover, .wv-bubble-back:focus-visible { background:var(--panel2); }
+.wv-bubble-close { margin-left:auto; flex:none; border:0; background:transparent; color:var(--dim);
+  font:inherit; font-size:.95rem; line-height:1; padding:4px 7px; cursor:pointer; border-radius:4px; }
+.wv-bubble-close:hover, .wv-bubble-close:focus-visible { color:var(--paper); background:var(--panel2); }
+/* the cell inside a bubble is the SAME cell the panel builds — the bubble only
+   takes away the frame it no longer needs (its own border, its width cap) */
+.wv-bubble .wv-card { border:0; border-radius:0; margin:0; max-width:none; padding:10px 13px; cursor:pointer; }
+.wv-bubble .wv-card:hover { border-color:transparent; }
+.wv-bubble .wv-card.is-mark-selected { outline:none; }
+.wv-bubble.is-hover .wv-card { cursor:default; }
+.wv-bubble.is-hover .cbody { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+  overflow:hidden; font-size:.92rem; }
+.wv-bubble-hint { padding:0 13px 9px; margin:0; color:var(--dim); font-size:.68rem;
+  letter-spacing:.05em; text-transform:uppercase; opacity:.75; }
+.wv-bubble-walker { padding:10px 13px; font-size:.8rem; line-height:1.5; color:var(--dim); }
+.wv-bubble-walker .wv-standing { color:var(--paper); font-weight:700; font-style:normal; }
+.wv-bubble-walker p { margin:5px 0 0; }
+
+/* ── drafts, everywhere at once ────────────────────────────────────────────────
+   There is no My World lens any more; a draft is simply grey. Every rule below
+   overrides a tier rule of the SAME specificity and is stated after it, so the
+   state wins the colour and the tier chip goes on saying which kind of thing it
+   is. If a surface speaks tier and is missing here, it will keep painting a
+   draft as though the town had published it — the two lists must stay level. */
+.wv-card.is-draft, .wv-rnode.is-draft, .wv-attribute.is-draft {
+  --wv-mark-accent:var(--draft); border-left-color:var(--draft-dark); }
+.wv-card.is-draft:hover, .wv-rnode.is-draft:hover, .wv-attribute.is-draft:hover { border-color:var(--draft-dark); }
+.wv-card.is-draft .cname, .wv-card.is-draft .cname.is-determined,
+.wv-rnode.is-draft .cname, .wv-rnode.is-draft .cname.is-determined { color:var(--draft); }
+.wv-card.is-draft .cbody { color:var(--draft); }
+.wv-chip.is-draft { border-color:var(--draft-dark); color:var(--draft); letter-spacing:.07em; }
+.ov-pip.is-draft { fill:var(--draft); }
+.wv-fp.is-draft { stroke:var(--draft-dark); }
+.wv-fp.is-draft.fp-parcel { fill:rgba(154,160,171,.08); }
+.wv-hl-box.is-draft { stroke:var(--draft); }
+.wv-hl-dot.is-draft { fill:var(--draft); }
+.wv-edge-indicator.is-draft, .wv-hl-label.is-draft { color:var(--draft); }
+.wv-bubble.is-draft { --wv-mark-accent:var(--draft); }
+.wv-bubble-back.is-draft { color:var(--draft); }
 `;
 
 const MARKUP = `
-<header class="wv-head">
-  <h1>POSTMARK — THE TOLD WORLD</h1>
-  <span class="wv-sub">a camera over the marks tree · signed acts cross the office door</span>
-</header>
-<div class="wv-beta"><b>BETA</b> — the record is real, and the acts taken here are real. The viewer is still finding
-  its shape and may change without notice.</div>
 <div class="wv-main">
   <nav class="wv-nav">
-    <div class="wv-identity"></div>
-    <section class="wv-walkdesk" hidden>
-      <h2>Walk</h2>
-      <div class="wv-youhere">finding your place in the walk ledger…</div>
-      <div class="wv-walk-status" hidden></div>
-      <div class="wv-walk-planner">
-        <div class="wv-walk-destination">click the painting, or select a mark cell</div>
-        <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
-        <p class="wv-walk-answer" hidden></p>
+    <!-- The head of the rail: what this page IS, what state it is in, the switch
+         for the Telling, the crossing, and the SEAT the site's back-link and auth
+         pill move themselves into. The Telling's switch is an icon here and its
+         NAME lives on its own panel (Keemin, 2026-08-04) — the panel says what it
+         is; the rail only has to offer the switch. -->
+    <div class="wv-nav-top">
+      <div class="wv-worldline">
+        <h1>The World</h1>
+        <span class="wv-chip wv-beta-chip" title="the record is real, and so are the acts taken here — the viewer is still finding its shape">BETA</span>
+        <button type="button" class="wv-telling-toggle" aria-expanded="true"
+          aria-label="The Telling" title="show or hide the Telling">▤</button>
       </div>
-    </section>
-    <div class="wv-standctl">
-      <!-- stand/move went DEV-ONLY the day walk shipped (bronze
-           spectator-stand-move-dev-only-before-walk, executed 2026-07-28): a
-           resident's position is walk-derived now; free repositioning is a dev
-           instrument. A signed-in painting click chooses a walking point;
-           a spectator click still moves the read-only camera. -->
-      <div class="wv-standmove" hidden>
-      <h2>Stand at</h2>
-      <div class="presets">${PRESETS.map((p) => `<button class="ctl" data-x="${p.x}" data-y="${p.y}">${esc(p.label)}</button>`).join("")}</div>
-      <h2>Move</h2>
-      <div class="compass">
-        <button class="ctl" data-dx="-1" data-dy="-1">NW</button><button class="ctl" data-dx="0" data-dy="-1">N</button><button class="ctl" data-dx="1" data-dy="-1">NE</button>
-        <button class="ctl" data-dx="-1" data-dy="0">W</button><div class="pos">at TC</div><button class="ctl" data-dx="1" data-dy="0">E</button>
-        <button class="ctl" data-dx="-1" data-dy="1">SW</button><button class="ctl" data-dx="0" data-dy="1">S</button><button class="ctl" data-dx="1" data-dy="1">SE</button>
-      </div>
-      <div class="stepwrap">
-        <label class="steplbl">step size <b class="stepval">100 m</b></label>
-        <input class="stepslider" type="range" min="0" max="${STEP_NOTCHES.length - 1}" step="1" value="3" list="wv-stepticks" aria-label="step size">
-        <datalist id="wv-stepticks">${STEP_NOTCHES.map((_, i) => `<option value="${i}"></option>`).join("")}</datalist>
-      </div>
-      </div>
-      <h2>Crossing</h2>
       <div class="crossnow"></div>
-      <div class="wv-where"></div>
     </div>
+    <div class="wv-identity"></div>
     <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
-    <div class="wv-dev" hidden></div>
+    <div class="wv-dev" hidden>
+      <!-- Stand at / Move / step size are DEV INSTRUMENTS (Keemin 2026-08-04, and
+           the bronze spectator-stand-move-dev-only-before-walk before it): a
+           resident's position is walk-derived, and a spectator repositions by
+           clicking open ground on the painting. They live under the dials now
+           rather than beside them. -->
+      <div class="wv-standmove">
+        <h2>Stand at</h2>
+        <div class="presets">${PRESETS.map((p) => `<button class="ctl" data-x="${p.x}" data-y="${p.y}">${esc(p.label)}</button>`).join("")}</div>
+        <h2>Move</h2>
+        <div class="compass">
+          <button class="ctl" data-dx="-1" data-dy="-1">NW</button><button class="ctl" data-dx="0" data-dy="-1">N</button><button class="ctl" data-dx="1" data-dy="-1">NE</button>
+          <button class="ctl" data-dx="-1" data-dy="0">W</button><div class="pos">at TC</div><button class="ctl" data-dx="1" data-dy="0">E</button>
+          <button class="ctl" data-dx="-1" data-dy="1">SW</button><button class="ctl" data-dx="0" data-dy="1">S</button><button class="ctl" data-dx="1" data-dy="1">SE</button>
+        </div>
+        <div class="stepwrap">
+          <label class="steplbl">step size <b class="stepval">100 m</b></label>
+          <input class="stepslider" type="range" min="0" max="${STEP_NOTCHES.length - 1}" step="1" value="3" list="wv-stepticks" aria-label="step size">
+          <datalist id="wv-stepticks">${STEP_NOTCHES.map((_, i) => `<option value="${i}"></option>`).join("")}</datalist>
+        </div>
+      </div>
+      <!-- the walk ledger's own tally: a diagnostic, not a thing the town needs to
+           read at the bottom of its map -->
+      <p class="wv-walkpanel" id="wv-walk-panel"></p>
+      <div class="wv-dev-dials"></div>
+    </div>
   </nav>
+  <!-- TWO PANELS OF ONE RANK (Keemin 2026-08-04). The cells were an unnamed middle
+       column and the painting had a title; they are peers, so they read as peers.
+       The Telling collapses to a rail that still says its own name. -->
   <section class="wv-view">
+    <div class="wv-viewhead">
+      <h2>The Telling</h2>
+      <p class="wv-view-sub">closer to how your agent sees the world — the record told in words from where you stand, never drawn</p>
+    </div>
     <div class="wv-telling"><div class="wv-quiet">opening your eyes…</div></div>
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
-      <div class="wv-maphead">
-        <div class="wv-map-title">
-          <h2>The painting</h2>
-          <div class="wv-map-help">
-            <button type="button" class="wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
-            <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
-              signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
-              Drag to pan, scroll to zoom.</div>
+      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-worldmark">
+          <!-- The mark that frames everything, drawn as what it IS: a constitution
+               pip, the same blue dot as any other. It has no footprint to stand on
+               and no place of its own, so it takes the one corner of the painting
+               it can honestly occupy — and the bubble hangs off THAT, rather than
+               floating in the middle of the page for want of a coordinate. -->
+          <!-- NO title attribute (Keemin, 2026-08-04). It is a mark, and a mark answers the
+               pointer with its own bubble; the browser's native tooltip arrived on
+               top of that bubble and covered the thing it was labelling. The
+               aria-label still names it for anyone not reading with their eyes. -->
+          <button type="button" class="wv-root-mark" data-root-mark
+            aria-label="Let There Be Light"></button>
+        </div><div class="wv-mapctl">
+          <!-- GLYPH ONLY (Keemin, 2026-08-04). These hang over a painting, and the
+               words were four pills' worth of chrome across the top of it. The name
+               keeps its seat in title and aria-label — dropping the word from
+               the button must not drop it from the page. -->
+          <button class="ctl wv-map-home" aria-label="fit" title="fit the whole painting">⛶</button>
+          <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">◎</button>
+          <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">▦</button>
+          <button class="ctl wv-map-fp" aria-label="marks" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">⬚</button>
+          <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
+            title="a short tour of the world">?</button>
+        </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
+       THE WALK DESK RIDES ON THE PAINTING (Keemin, 2026-08-04) — bottom right,
+       and only once a destination is armed. It answers a click you made on the
+       painting, so it belongs to the painting; in the rail it was a permanent
+       column of chrome for a thing that is true a few seconds at a time.
+       Deliberately still ONE node with one renderer, moved rather than copied:
+       renderWalkDestination did not change, and a second desk is exactly how the
+       two would come to disagree about what you had armed. -->
+     <section class="wv-walkdesk" hidden>
+          <h2>Walk</h2>
+          <!-- From and To, and nothing else (Keemin, 2026-08-04). It had said where
+               you stand, then how it knew, then that you had arrived where you stand —
+               three lines for one fact. -->
+          <div class="wv-walk-status" hidden></div>
+          <div class="wv-walk-planner">
+            <div class="wv-walk-row"><span class="wv-walk-key">From</span><span class="wv-walk-val wv-youhere">…</span></div>
+            <div class="wv-walk-row"><span class="wv-walk-key">To</span><span class="wv-walk-val wv-walk-destination"></span></div>
+            <div class="wv-walk-acts">
+              <button type="button" class="wv-walk-confirm" disabled>confirm</button>
+              <button type="button" class="wv-walk-cancel" hidden>cancel</button>
+            </div>
+            <p class="wv-walk-answer" hidden></p>
           </div>
-        </div>
-        <div class="wv-mapctl">
-          <button class="ctl wv-map-home" title="fit the whole painting">⌂ fit</button>
-          <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖ follow</button>
-          <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors"># grid</button>
-          <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭ marks</button>
-        </div>
-      </div>
-      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div></div>
-      <p class="wv-walkpanel" id="wv-walk-panel"></p>
+        </section></div>
     </div>
   </aside>
+</div>
+<!-- Fixed, and outside the app grid on purpose: it covers the whole page, and a
+     fixed child takes itself out of the flex column above without disturbing it. -->
+<div class="wv-tour" hidden>
+  <div class="wv-tour-scrim"></div>
+  <div class="wv-tour-spot" hidden></div>
+  <section class="wv-tour-card" role="dialog" aria-modal="true" aria-labelledby="wv-tour-title">
+    <p class="wv-tour-kicker">The World</p>
+    <h2 class="wv-tour-title" id="wv-tour-title"></h2>
+    <div class="wv-tour-body"></div>
+    <div class="wv-tour-foot">
+      <div class="wv-tour-dots"></div>
+      <div class="wv-tour-acts">
+        <button type="button" class="wv-tour-skip">skip</button>
+        <button type="button" class="wv-tour-back">back</button>
+        <button type="button" class="wv-tour-next">next</button>
+      </div>
+    </div>
+  </section>
 </div>
 `;
 
@@ -1301,8 +1950,9 @@ export function mountViewer(appEl) {
     crossing: liveCrossing(),           // default to the live crossing
     crossingOverride: false,            // a dev/principal time-travel override
     view: "telling",
+    paintingOnly: readPaintingOnly(typeof localStorage === "undefined" ? null : localStorage),
     markFilter: "everything",           // "everything" | "mine" | "new" — the one marks vocabulary
-    baseLayer: "true",                  // "true" (main) | "mine" (main + the household draft)
+    draftIds: new Set(),                // household marks the town has not published — grey
     portfolio: null,                    // authenticated world_my_marks response
     mineIds: new Set(),                 // portfolio ids across drafts/published/backed
     handle: "",
@@ -1343,12 +1993,14 @@ export function mountViewer(appEl) {
     }
     throw lastErr ?? new Error("no source");
   }
+  // ONE world. When a signed-in household has a composed fold it IS the world,
+  // and its unpublished marks are told apart by colour rather than by a swap.
   function applyWorldLayer() {
-    const composed = state.baseLayer === "mine" && data?.myWorld;
-    data.worldState = composed || data.trueWorld;
+    data.worldState = data?.myWorld || data.trueWorld;
     world = assembleWorld({ worldState: data.worldState, skeleton: data.skeleton });
     byId = new Map(world.marks.map((m) => [m.id, m]));
     homeSet = buildHomeSet(data.manifest, world.marks);
+    pinnedBuiltId = null; // the record moved: an open bubble is now stale prose
   }
   const isOfficeLive = (url) => url === officeUrl("/world/state");
   async function loadData() {
@@ -1403,6 +2055,12 @@ export function mountViewer(appEl) {
     // which homeSet and `sovereign` (both geometric) structurally miss.
     return markClass(full, byId);
   }
+  // Grey is a fact about the RECORD, not about the reader's lens: this mark sits
+  // in your household's draft branch and not in the town's published main.
+  const isDraft = (m) => !!m?.id && state.draftIds.has(m.id);
+  // the ONE class string every coloured surface speaks — cells, relation lines,
+  // attribute rows, pips, footprints, hover boxes, edge arrows, bubbles
+  const markClasses = (m) => markStateClasses({ tier: tierOf(m), draft: isDraft(m) });
   // ───────── the telling view ─────────
   function chips(m) {
     const c = [];
@@ -1469,12 +2127,8 @@ export function mountViewer(appEl) {
   function canAct() {
     return viewerCanAct({ identityResolved: identityResolved(), actAs: state.actAs });
   }
-  function walkableMark(m) {
-    const full = byId.get(m?.id) ?? m;
-    return (full?.kind === "sited" || full?.kind === "parcel")
-      && full?.tier !== "constitution" && !!full.at
-      && Math.max(Number(full.extent?.w ?? 0), Number(full.extent?.h ?? 0)) < 2000;
-  }
+  // an FOV entry carries no tier or extent, so the rule is asked of the FOLDED mark
+  const walkableMark = (m) => isWalkableTarget(byId.get(m?.id) ?? m);
   function backedPosition(markId, handle = state.handle) {
     return (state.portfolio?.backed ?? []).find((row) =>
       (row.id ?? row.mark) === markId && row.holder === handle && Number(row.stamps ?? 0) > 0);
@@ -1502,7 +2156,7 @@ export function mountViewer(appEl) {
   // tier colors it; annotation carries a mechanic's live state (fog/light this crossing).
   function markCell(m, { role = "fov", annotation = "", radialChips = false } = {}) {
     const full = byId.get(m.id) ?? m;
-    const tier = tierOf(m), far = !!m.far;
+    const tier = tierOf(m), far = !!m.far, draft = isDraft(full);
     const identity = markName(full);
     const where = radialWhere(m);
     const details = [
@@ -1511,8 +2165,8 @@ export function mountViewer(appEl) {
     ].filter(Boolean).join("");
     const cluster = (role === "fov" && m.clusteredCount > 1)
       ? `<div class="wv-cluster">+${m.clusteredCount - 1} more of ${esc(m.household ?? "this household")}'s — investigate</div>` : "";
-    return `<article class="wv-card ${role}${far ? " far" : ""} t-${tier}" data-id="${esc(m.id)}" role="button" tabindex="0">
-      ${markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier })}
+    return `<article class="wv-card ${role}${far ? " far" : ""} ${markClasses(m)}" data-id="${esc(m.id)}" role="button" tabindex="0">
+      ${markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier, draft })}
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
       ${markCellBylineRow(full, markActions(m))}
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
@@ -1582,12 +2236,17 @@ export function mountViewer(appEl) {
   // is why it reads world.marks rather than a radial. Public by construction: it asks
   // nothing about who is looking.
   const NEW_CAP = 25;
-  function newFeed(keep = null) {
-    const dated = (world.marks ?? []).filter((m) => m.id && m.date && (!keep || keep(m)));
+  // the feed's ORDER, without its markup — the painting needs the same list the
+  // panel lists, and deriving it twice is how the two would come to disagree
+  function newFeedMarks(keep = null) {
+    const dated = (world?.marks ?? []).filter((m) => m.id && m.date && (!keep || keep(m)));
     // newest first; id breaks ties so the order is stable across re-tells (dates are
     // day-precision for most records, so ties are the common case, not the edge)
-    const all = dated.slice().sort((a, b) =>
+    return dated.slice().sort((a, b) =>
       String(b.date).localeCompare(String(a.date)) || String(a.id).localeCompare(String(b.id)));
+  }
+  function newFeed(keep = null) {
+    const all = newFeedMarks(keep);
     const shown = all.slice(0, NEW_CAP), rest = all.slice(NEW_CAP);
     if (!shown.length) return { html: `<div class="wv-quiet">no marks in the record yet.</div>`, count: "" };
 
@@ -1645,10 +2304,10 @@ export function mountViewer(appEl) {
       const within = e.radial.within ?? [];
       const obs = e.radial.observer ?? {};
       const isNew = state.markFilter === "new";
-      // The lens owns composition and stands alone. The row below owns the marks
-      // question: everything, just mine, or recency. No fourth vocabulary.
-      const chips = viewerAxisControls({ identityResolved: hasIdentity, baseLayer: state.baseLayer, markFilter: state.markFilter })
-        + viewerFilterControls({ identityResolved: hasIdentity, baseLayer: state.baseLayer, markFilter: state.markFilter });
+      // One row, one question: everything, just mine, or recency. The World lens
+      // that used to sit above it is gone — composition is not a question the
+      // reader has to answer any more, because a draft says so in its own colour.
+      const chips = viewerFilterControls({ identityResolved: hasIdentity, markFilter: state.markFilter });
       // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
       // context even under Mine (filtering the frame to yours would usually empty
       // "where you stand"); the filter narrows the visible marks, not your footing.
@@ -1701,6 +2360,11 @@ export function mountViewer(appEl) {
             + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
       if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
       foldRenderedPredicates(box);
+      // the panel may be folded away, but its two controls and its count line are
+      // readings, not decoration — they get a home on the painting either way
+      const talliesChip = $(root, ".wv-paint-tallies");
+      if (talliesChip) talliesChip.textContent = tallies(e.radial);
+      syncDevReadouts();
       drawOverlay(e.radial);
       syncMarkInteractionViews();
     } catch (err) {
@@ -1740,7 +2404,7 @@ export function mountViewer(appEl) {
     const tier = tierOf(full);
     const slot = full.kind === "naming" ? "name" : (full.slot || "property");
     const value = full.value ?? "";
-    return `<div class="wv-attribute t-${tier}" data-id="${esc(full.id)}" role="button" tabindex="0">`
+    return `<div class="wv-attribute ${markClasses(full)}" data-id="${esc(full.id)}" role="button" tabindex="0">`
       + `<span class="wv-attribute-value"><b>${esc(slot)}:</b> ${esc(value)}`
       + `${annotation ? ` <span class="wv-attribute-state">· ${esc(annotation)}</span>` : ""}</span>`
       + `${markActions(full)}</div>`;
@@ -1786,38 +2450,65 @@ export function mountViewer(appEl) {
       name: identity.name,
       determined: identity.determined,
       tier: tierOf(full),
+      draft: isDraft(full),
     });
   };
   function renderExpansion(card) {
     const stack = card._stack ?? [];
     let box = card.querySelector(".wv-expand");
     if (!stack.length) { box?.remove(); return; }
+    // ONE OPEN CELL PER SURFACE (Keemin, 2026-08-04). Expansions used to stack up
+    // as you read down the column, so the Telling grew a tail of trees nobody had
+    // closed. Scoped to the surface the card lives on, so opening something in the
+    // Telling does not shut the bubble you opened it from.
+    for (const other of (card.closest(".wv-telling, .wv-bubble") ?? root).querySelectorAll(".wv-card")) {
+      if (other === card || !other._stack?.length) continue;
+      other._stack = [];
+      other.querySelector(".wv-expand")?.remove();
+    }
     const id = stack[stack.length - 1];
-    const d = investigate(id, world);
-    if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
-    if (d.error) { box.innerHTML = `<div class="wv-err">${esc(d.error)}</div>`; return; }
+    // one branch, both surfaces: renderExpansion is what the Telling's cells and
+    // the painting's bubble each fold open, so the frame reads the same in both
+    const d = id === WORLD_ROOT_ID ? worldFrameReading(byId.get(id), world?.marks ?? []) : investigate(id, world);
+    if (d.error) {
+      if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
+      box.innerHTML = `<div class="wv-err">${esc(d.error)}</div>`;
+      return;
+    }
     const drilled = stack.length > 1;
     const alreadyFolded = new Set([...card.querySelectorAll(":scope > .wv-attributes .wv-attribute[data-id]")]
       .map((attribute) => attribute.dataset.id));
     const newlyRevealedPredicates = (d.predicates ?? []).filter((predicate) => !alreadyFolded.has(predicate.id));
     const target = byId.get(d.id) ?? d;
     const targetIdentity = markName(target);
-    box.innerHTML = `
+    const html = `
       ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><b class="wv-crumb-name${targetIdentity.determined ? " is-determined" : ""}">${esc(targetIdentity.name)}</b>${tierChip(tierOf(target))}</div>
       <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>
-      ${markCellBylineRow(target, backingButton(d.id, d.stamps, { neutralZero: true }))}` : ""}
+      ${markCellBylineRow(target, backingButton(d.id, d.stamps))}` : ""}
       ${d.sovereign ? `<div class="cmeta" style="margin-bottom:4px"><span class="wv-chip">sovereign</span></div>` : ""}
       ${newlyRevealedPredicates.length ? `<div class="wv-expansion-attributes">${newlyRevealedPredicates.map(predicateAttributeLine).join("")}</div>` : ""}
-      ${d.within?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.within.map(relativeNode).join("")}</div>` : ""}
-      ${d.inside?.length ? `<div class="wv-tree-label">within it</div><div class="wv-relation-lines">${d.inside.map(relativeNode).join("")}</div>` : ""}
+      ${d.parents?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.parents.map(relativeNode).join("")}</div>` : ""}
+      ${d.children?.length ? `<div class="wv-tree-label">within it</div><div class="wv-relation-lines">${d.children.map(relativeNode).join("")}</div>` : ""}
       ${d.alongside?.length ? `<div class="wv-tree-label">alongside</div><div class="wv-relation-lines">${d.alongside.map(relativeNode).join("")}</div>` : ""}
-      ${(d.more?.inside > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
+      ${(d.more?.children > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
+    // AN EXPANSION WITH NOTHING IN IT IS NOT AN EXPANSION. The box carries its own
+    // rule and padding, so a reading with no relations and no unrevealed attributes
+    // — which is now every reading of the frame — left a dashed line under the cell
+    // and a hand's width of empty dark below it.
+    if (!html.trim()) { box?.remove(); syncMarkInteractionViews(); return; }
+    if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
+    box.innerHTML = html;
     syncMarkInteractionViews();
   }
   // ───────── the painting (atlas minimap) ─────────
   async function loadMinimap() {
     const boxEl = $(root, ".wv-minimap");
-    const coordinateChip = $(boxEl, ".wv-spectator-coordinate");
+    // The chrome that rides ON the painting is held across the wipe below rather
+    // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
+    // the walk desk itself) that must not be rebuilt when the atlas loads.
+    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk"]
+      .map((selector) => $(boxEl, selector)).filter(Boolean);
+    const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
       const html = await fetch("/atlas/town.html").then((r) => { if (!r.ok) throw new Error(`atlas HTTP ${r.status}`); return r.text(); });
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -1874,7 +2565,7 @@ export function mountViewer(appEl) {
       svg.appendChild(walkLayer);
       boxEl.innerHTML = "";
       boxEl.appendChild(svg);
-      if (coordinateChip) boxEl.appendChild(coordinateChip);
+      reattachOverlays();
       boxEl.classList.add("pannable");
 
       // ── the viewport (P2 convergence): the viewBox IS the camera — wheel zooms
@@ -1894,6 +2585,7 @@ export function mountViewer(appEl) {
         mapCtx.zoomK = full.w / view.w;
         if (lastRadial) drawOverlay(lastRadial);
         renderMarkHighlight();
+        positionBubbles(); // the anchors are on the painting, so they move with it
       }
       function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = null; } mapCtx._tweening = false; }
       function tweenTo(target, ms = 280) {
@@ -1931,6 +2623,29 @@ export function mountViewer(appEl) {
         if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
       };
       mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
+      // Fill the pane with painting instead of letterboxing it. The atlas is tall
+      // and the folded-open pane is wide, so the default "meet" fit leaves half
+      // the page as empty bars — which is not what "the painting fills the page"
+      // means. This takes the view whose aspect matches the PANE: full width, a
+      // centred band of height. ⌂ fit still tweens to the whole painting, so the
+      // honest see-everything view is one press away and keeps meaning what it says.
+      // The pane changed shape under a view that did not. Keep the horizontal
+      // framing and the zoom (so no marker resizes), and take the height from the
+      // new aspect: the same pane always yields the same view, which is what makes
+      // hiding and showing the Telling land you back where you started.
+      //
+      // It also settles the paint. Toggling used to leave the viewBox describing
+      // the OLD pane, and the bottom band of the painting simply did not draw
+      // until something called applyView — which is why ⌂ fit or ⌖ follow
+      // "fixed" it. This is that call, made on purpose rather than by accident.
+      mapCtx.refit = () => {
+        const pane = boxEl.getBoundingClientRect();
+        if (!pane.width || !pane.height) return;
+        const cy = view.y + view.h / 2;
+        const h = view.w * (pane.height / pane.width);
+        Object.assign(view, { y: cy - h / 2, h });
+        applyView();
+      };
       // a hand on the camera breaks the follow snap — silently, keeping the view
       // where the hand put it (fit is the only thing that zooms you back out)
       const breakFollow = () => { if (mapCtx.follow) { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); } };
@@ -1973,12 +2688,30 @@ export function mountViewer(appEl) {
           y: (painting.y - originPx.y) * mPerPx,
         };
       };
-      const paintingMarkForEvent = (event) => paintingMarkAtPoint({
+      // TWO QUESTIONS, TWO ANSWERS (Keemin, 2026-08-04: keep the hover visibility
+      // as it was, and treat clicks the new way).
+      //
+      // Pointing asks WHAT IS HERE, and everything the eye tells answers —
+      // including the region you are standing inside, because seeing what
+      // contains you is the entire reason to point at it.
+      //
+      // Clicking asks ACT HERE, and there a mark you could not set out for does
+      // not own the ground under it. The containment half used to hand the click
+      // to the smallest extent covering it, walkable or not: the threshold
+      // district is 2,325 m across, so every click in a whole quarter of the town
+      // selected the district — no walking to that ground, and no reaching a mark
+      // inside it the eye had not told. Only the marks you could go to are
+      // offered to that half now. The PIP half is identical in both, so a region
+      // is still selected by the dot that is exactly the size of the thing it
+      // names — and it still lights under the pointer on the way there.
+      const markAt = (event, marks) => paintingMarkAtPoint({
         screenPoint: { x: event.clientX, y: event.clientY },
         worldPoint: worldPointForEvent(event),
         glyphs: screenMarkCandidates(),
-        marks: toldPaintingMarks(lastRadial, world?.marks ?? []),
+        marks,
       });
+      const toldHere = () => toldPaintingMarks(lastRadial, world?.marks ?? []);
+      const paintingMarkForEvent = (event) => markAt(event, toldHere());
       // walkers, in the same screen-space shape the mark snap already eats
       function screenWalkerCandidates() {
         const matrix = svg.getScreenCTM();
@@ -2004,16 +2737,16 @@ export function mountViewer(appEl) {
       });
       svg.addEventListener("pointermove", (e) => {
         if (!press || e.pointerId !== press.id) {
-          markInteraction.hover(hoverTargetForEvent(e));
+          hoverMark(hoverTargetForEvent(e));
           return;
         }
         const dx = e.clientX - press.x, dy = e.clientY - press.y;
         if (!press.moved && Math.hypot(dx, dy) < 6) {
-          markInteraction.hover(hoverTargetForEvent(e));
+          hoverMark(hoverTargetForEvent(e));
           return;
         }
         if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
-        markInteraction.hover(null);
+        hoverMark(null);
         press.moved = true; boxEl.classList.add("panning");
         const r = svg.getBoundingClientRect();
         view.x -= dx * (view.w / r.width); view.y -= dy * (view.h / r.height);
@@ -2024,7 +2757,12 @@ export function mountViewer(appEl) {
         if (!press || e.pointerId !== press.id) return;
         const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
         if (wasDrag) return;
-        const markId = paintingMarkForEvent(e);
+        // ONLY A PIP NAMES A MARK. Containment is how the destination gets its
+        // NAME, not how the click picks its target — so clicking inside the East
+        // Window District sets out for the spot you clicked, in that district,
+        // rather than marching you to its centre; and a region too big to be a
+        // destination stops swallowing clicks without needing a rule of its own.
+        const markId = snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
         if (markId) {
           selectMark(markId, { scrollCell: true });
           return;
@@ -2039,7 +2777,7 @@ export function mountViewer(appEl) {
         }
       });
       svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
-      svg.addEventListener("pointerleave", () => { if (!press) markInteraction.hover(null); });
+      svg.addEventListener("pointerleave", () => { if (!press) hoverMark(null); });
 
       // the grid keeps scale without exposing absolute survey readouts.
       function buildGridLayer() {
@@ -2081,7 +2819,7 @@ export function mountViewer(appEl) {
         let s = "";
         for (const m of world.marks ?? []) {
           if (!m.at || !m.extent || isAmbientMark(m, byId)) continue;
-          const cls = `t-${tierOf(m)}` + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
+          const cls = markClasses(m) + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
           s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
             attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
           });
@@ -2107,11 +2845,35 @@ export function mountViewer(appEl) {
       };
 
       applyView();
+      // shape the opening view to the pane the way every later change does, so the
+      // first toggle is not also the first correction
+      mapCtx.refit();
       if (lastRadial) drawOverlay(lastRadial);
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
-      if (coordinateChip) boxEl.appendChild(coordinateChip);
+      reattachOverlays();
     }
+  }
+  // What the painting draws: the field of view, plus all of yours whether it holds
+  // them or not. The filter chips are the Telling's business and this asks them
+  // nothing (Keemin, 2026-08-04) — a map that changed under you when you narrowed
+  // a list was two answers to one question.
+  function overlayMarks(radial) {
+    const seen = new Set(), out = [];
+    for (const bands of Object.values(radial?.byBearing ?? {}))
+      for (const arr of Object.values(bands ?? {}))
+        for (const m of arr ?? []) {
+          if (!m?.id || !m.at || typeof m.at.x !== "number" || seen.has(m.id)) continue;
+          seen.add(m.id); out.push(m);
+        }
+    // the radial's own entries come first and are KEPT: they carry distM and
+    // bearing, which the bare record mark does not
+    for (const id of paintingMarkIds({ radialIds: [...seen], mineIds: [...state.mineIds] })) {
+      if (seen.has(id)) continue;
+      const m = byId.get(id);
+      if (m?.at && typeof m.at.x === "number") { seen.add(id); out.push(m); }
+    }
+    return out;
   }
   function drawOverlay(radial) {
     if (!mapCtx) return;
@@ -2123,17 +2885,16 @@ export function mountViewer(appEl) {
     const me = px(state.cam), reachPx = (radial?.sightReachM ?? 0) / mPerPx;
     let s = `<circle cx="${me.x}" cy="${me.y}" r="${reachPx}" class="ov-reach"/>`;
     const glyphIds = new Set();
-    for (const bands of Object.values(radial?.byBearing ?? {}))
-      for (const arr of Object.values(bands))
-        // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
-        // mark up by id (and catches sovereign/home, which is not a tier value).
-        for (const m of arr) {
-          if (!m.at || typeof m.at.x !== "number" || !m.id) continue;
-          const p = px(m.at);
-          glyphIds.add(m.id);
-          s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip t-${tierOf(m)}" data-id="${esc(m.id)}">`
-            + `<title>${esc(markIdentity(m))}</title></circle>`;
-        }
+    // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
+    // mark up by id (and catches sovereign/home, which is not a tier value).
+    for (const m of overlayMarks(radial)) {
+      const p = px(m.at);
+      glyphIds.add(m.id);
+      s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip ${markClasses(m)}" data-id="${esc(m.id)}">`
+        // the OS tooltip stands down in painting-only for the same reason the SVG
+        // label does: the bubble is already saying this word, sooner and better
+        + (state.paintingOnly ? "" : `<title>${esc(markIdentity(m))}</title>`) + `</circle>`;
+    }
     s += `<circle cx="${me.x}" cy="${me.y}" r="${17 / k}" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="${36 / k}" class="ov-halo"/>`;
     overlay.innerHTML = s;
     mapCtx.glyphIds = glyphIds;
@@ -2156,7 +2917,7 @@ export function mountViewer(appEl) {
     const target = nearestEmbodiedAncestor(m, byId);
     if (!m || !target) return "";
     const k = markerScale(mapCtx.zoomK);
-    const t = tierOf(m), mech = m.mechanic ? " mech" : "";
+    const t = markClasses(m), mech = m.mechanic ? " mech" : "";
     const p = { x: mapCtx.originPx.x + target.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + target.at.y / mapCtx.mPerPx };
     const worldViewport = {
       minX: (mapCtx.view.x - mapCtx.originPx.x) * mapCtx.mPerPx,
@@ -2182,7 +2943,7 @@ export function mountViewer(appEl) {
       const labelY = Math.max(mapCtx.view.y + 4 * unit,
         Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit,
           edge.y < mapCtx.view.y + mapCtx.view.h / 2 ? edge.y + 12 * unit : edge.y - labelHeight - 12 * unit));
-      return `<g class="wv-edge-indicator t-${t}">`
+      return `<g class="wv-edge-indicator ${t}">`
         + `<path d="M0 -5 L2.8 4 L0 2.1 L-2.8 4 Z" transform="translate(${edge.x} ${edge.y}) rotate(${edgeWorld.bearingDeg}) scale(${1.4 * unit})"/>`
         + `<rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
         + `<text x="${labelX + 6 * unit}" y="${labelY + 15.5 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
@@ -2196,10 +2957,15 @@ export function mountViewer(appEl) {
       // layer beneath was correctly drawing as a polygon — Keemin caught it as a
       // wash that didn't fit its own shape.
       const hlPx = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
-      s += markShapeSVG(target, hlPx, `wv-hl-box t-${t}${mech}`);
+      s += markShapeSVG(target, hlPx, `wv-hl-box ${t}${mech}`);
     }
-    s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
-    s += hoverLabelSVG({ text: identity, at: p, unit, view: mapCtx.view });
+    s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot ${t}"/>`;
+    // In painting-only the bubble carries the name, so the SVG label stands down
+    // — two boxes saying the same word over the same dot is one box too many.
+    // The geometry (the wash, the dot, the edge arrow) is not a label and stays.
+    // the same box an off-screen mark gets, in this mark's own colour
+    if (!state.paintingOnly)
+      s += hoverLabelSVG({ text: identity, at: p, unit, view: mapCtx.view, className: `wv-hl-label ${t}` });
     return s;
   }
   // A standing resident gets the SAME box a mark gets — one hover language on
@@ -2217,7 +2983,10 @@ export function mountViewer(appEl) {
       ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
       : (w.mark_id ? `at ${w.mark_id}` : "at rest");
     return `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot wv-hl-walker${moving ? " moving" : ""}"/>`
-      + hoverLabelSVG({ text: `${w.handle} — ${where}`, at: p, unit, view: mapCtx.view });
+      + (state.paintingOnly ? "" : hoverLabelSVG({
+        text: `${w.handle} — ${where}`, at: p, unit, view: mapCtx.view,
+        className: `wv-hl-label wv-hl-walker${moving ? " moving" : ""}`,
+      }));
   }
   function syncMarkInteractionViews() {
     const interaction = markInteraction.getState();
@@ -2229,6 +2998,12 @@ export function mountViewer(appEl) {
       if (cell.classList.contains("wv-card")) cell.setAttribute("aria-selected", String(selected));
     }
     renderMarkHighlight();
+    const rootGlyph = $(root, ".wv-root-mark");
+    if (rootGlyph) {
+      rootGlyph.classList.toggle("on", interaction.selectedId === WORLD_ROOT_ID);
+      rootGlyph.classList.toggle("is-hovered", interaction.hoveredId === WORLD_ROOT_ID);
+    }
+    renderBubbles();
   }
   markInteraction.subscribe(syncMarkInteractionViews);
 
@@ -2272,13 +3047,13 @@ export function mountViewer(appEl) {
     const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
     const here = $(root, ".wv-youhere");
     if (here) {
-      if (journey.kind === "journey") {
-        here.innerHTML = `<b>on the road, ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}</b><br><span>walk ledger</span>`;
-      } else {
-        here.innerHTML = origin
-          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined))}</b><br><span>${esc(origin.source)}</span>`
-          : `<span>no walk-ledger or sited-home position was found</span>`;
-      }
+      // how the office learned your position is provenance, not a thing to read
+      // every time you glance at the column
+      here.innerHTML = journey.kind === "journey"
+        ? `<b>on the road</b> · ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}`
+        : origin
+          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined, { prefix: false }))}</b>`
+          : `<span class="wv-quiet">the office has no position for you yet</span>`;
     }
     if (moveCamera && origin && walkState.actorBound) {
       state.cam = { x: origin.x, y: origin.y };
@@ -2480,11 +3255,8 @@ export function mountViewer(appEl) {
   }
 
   function renderWalkDestinations() {
-    const desk = $(root, ".wv-walkdesk");
-    if (!desk) return;
-    desk.hidden = !canAct();
+    if (!$(root, ".wv-walkdesk")) return;
     renderWalkDestination();
-    if (desk.hidden) return;
     syncActorPosition();
   }
 
@@ -2492,6 +3264,16 @@ export function mountViewer(appEl) {
     const desk = $(root, ".wv-walkdesk");
     if (!desk) return;
     const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
+    // The desk is for a walk, so it appears when there IS one (Keemin,
+    // 2026-08-04): a destination you have armed, or a journey already under way.
+    // Standing still it said only where you stand, which the painting's own dot
+    // and the coordinate chip already say.
+    const wasShowing = !desk.hidden;
+    desk.hidden = !canAct() || (!walkState.destination && journey.kind !== "journey");
+    // the desk is an obstacle on the painting now, so its coming and going is the
+    // bubbles' business
+    if (wasShowing !== !desk.hidden) requestAnimationFrame(positionBubbles);
+    if (desk.hidden) { drawWalkPreview(); return; }
     const status = $(desk, ".wv-walk-status");
     const planner = $(desk, ".wv-walk-planner");
     const box = $(desk, ".wv-walk-destination");
@@ -2499,7 +3281,8 @@ export function mountViewer(appEl) {
     const destination = walkState.destination;
     const preview = selectedWalkPreview();
     if (status) {
-      status.hidden = journey.kind === "ready";
+      // "arrived at X" said again what From has just said
+      status.hidden = journey.kind !== "journey";
       status.className = `wv-walk-status${journey.kind === "journey" ? " journey" : journey.kind === "arrived" ? " arrived" : ""}`;
       status.innerHTML = journey.kind === "journey"
         ? `<b>on the road — toward ${esc(journey.destinationName)}</b> · ${journey.remainingM.toLocaleString()} m left · arrives ${formatEtaCrossings(journey.etaCrossings)}`
@@ -2510,15 +3293,37 @@ export function mountViewer(appEl) {
     }
     if (planner) planner.hidden = journey.kind === "journey"
       && !walkState.changingCourse && !destination;
-    if (box) box.innerHTML = destination
-      ? `${journey.kind === "journey" ? "change course — " : ""}destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined, actorOrigin()))}</b>`
-        + (preview ? `<span class="wv-walk-metrics">${esc(formatWalkPreviewLabel(preview.leg))}</span>` : "")
-      : `${journey.kind === "journey" ? "change course — " : ""}click open ground in the painting, or select a walkable mark`;
+    if (box) box.innerHTML = destination ? walkToRow(destination, preview)
+      : `<span class="wv-quiet">click the painting, or select a mark</span>`;
     if (confirm) {
-      confirm.textContent = journey.kind === "journey" ? "change course" : "confirm departure";
+      confirm.textContent = journey.kind === "journey" ? "change course" : "confirm";
       confirm.disabled = !preview;
     }
+    const cancel = $(desk, ".wv-walk-cancel");
+    if (cancel) cancel.hidden = !destination;
     drawWalkPreview();
+  }
+
+  // the To line: the name, how far, WHICH WAY as an arrow rather than a compass
+  // word, and when you would arrive.
+  function walkToRow(destination, preview) {
+    const from = actorOrigin();
+    const name = walkDestinationLabel(destination, byId, data?.worldState?.determined, null);
+    const parts = preview && walkLegParts(preview.leg);
+    let arrow = "";
+    if (from) {
+      const bearing = quantizeBearing(
+        bearingDeg(Number(destination.x) - from.x, Number(destination.y) - from.y),
+        state.dials.bearing_points);
+      if (bearing) arrow = `<span class="wv-walk-dir" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>`;
+    }
+    const leg = [
+      parts ? `<span class="wv-walk-meta">${esc(parts.distance)}</span>` : "",
+      arrow,
+      parts?.eta ? `<span class="wv-walk-meta">${esc(parts.eta)}</span>` : "",
+    ].filter(Boolean);
+    return `<b>${esc(name)}</b>`
+      + (leg.length ? `<div class="wv-walk-legline">${leg.join("")}</div>` : "");
   }
 
   function scrollMarkCellIntoView(id) {
@@ -2558,12 +3363,15 @@ export function mountViewer(appEl) {
     return isRealDeparture(walkPreviewTo(mark.at));
   }
 
-  function selectMark(id, { scrollCell = false } = {}) {
+  function selectMark(id, { scrollCell = false, trail = null } = {}) {
     if (!id || !byId.has(id)) return false;
     if (markInteraction.getState().selectedId === id) {
       clearSelectionAndDestination();
       return false;
     }
+    // set BEFORE the store fires: selecting re-renders the bubble, and the bubble
+    // reads the trail to decide whether it owes you a way back
+    bubbleTrail = trail ?? bubbleTrailStep(bubbleTrail, "select", id);
     markInteraction.select(id);
     // Selecting IS the intent, so the walk preview follows from it — that is why
     // the per-cell "walk here" chip is gone (Keemin 2026-08-04). Three things
@@ -2583,6 +3391,7 @@ export function mountViewer(appEl) {
   }
 
   function clearSelectionAndDestination() {
+    bubbleTrail = [];
     markInteraction.select(null);
     walkState.destination = null;
     walkState.changingCourse = false;
@@ -2590,14 +3399,17 @@ export function mountViewer(appEl) {
     renderWalkDestination();
   }
 
-  function chooseWalkMark(id, { scrollDesk = false } = {}) {
+  function chooseWalkMark(id) {
     if (!canAct()) return;
     const mark = byId.get(id);
     if (!walkableMark(mark)) return;
-    chooseWalkPoint(mark.at.x, mark.at.y, id, { scrollDesk });
+    chooseWalkPoint(mark.at.x, mark.at.y, id);
   }
 
-  function chooseWalkPoint(x, y, namedInside = null, { scrollDesk = true } = {}) {
+  // `scrollDesk` is gone with the rail (Keemin, 2026-08-04): the desk was down a
+  // scrolling column and had to be scrolled to, which is precisely the problem
+  // moving it to the painting's corner solves — it now opens where you are looking.
+  function chooseWalkPoint(x, y, namedInside = null) {
     if (!canAct()) return;
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
@@ -2625,7 +3437,6 @@ export function mountViewer(appEl) {
     renderWalkDestination();
     if (!actorOrigin()) showWalkRefusal("The office has no walk-ledger or sited-home origin for this resident.");
     else if (!selectedWalkPreview()) showWalkRefusal("Choose a destination with two finite coordinates.");
-    if (scrollDesk) $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   async function confirmSelectedWalk() {
@@ -2660,6 +3471,18 @@ export function mountViewer(appEl) {
     }
   }
 
+  // Where the sheet hangs: the mark's own cell, preferring the pinned bubble when
+  // one is up — selecting rebuilds that bubble, so the chip the click began on is
+  // already gone by the time we get here, and the Telling's copy of the cell may
+  // be behind a collapsed panel where the sheet would open invisibly.
+  function stakeHostFor(markId) {
+    if (!markId) return null;
+    const pinned = $(root, `.wv-bubble.is-pinned .wv-card[data-id="${CSS.escape(markId)}"]`);
+    if (pinned) return pinned;
+    if (state.paintingOnly) return null;
+    return [...root.querySelectorAll(".wv-telling .wv-card[data-id]")]
+      .find((card) => card.dataset.id === markId) ?? null;
+  }
   function openStakeSheet(card, { mode = "stake", max = "", markId = null } = {}) {
     if (!card) return;
     root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
@@ -2674,7 +3497,12 @@ export function mountViewer(appEl) {
     // click (2026-07-31) — the shadowing name is banned from this scope.
     const resolved = identityResolved();
     if (mode === "stake" && balance !== null) sheet.dataset.balance = String(balance);
-    sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : resolved ? "Back this mark" : "Backing"}</b>`
+    // NAME THE MARK (Keemin, 2026-08-04). "Back this mark" is only unambiguous
+    // when there is one mark on screen; these sheets open from relation lines and
+    // attribute rows too, where "this" was anybody's guess.
+    const subject = markIdentity({ id: sheet.dataset.mark });
+    const verb = mode === "unstake" ? "take stamps back" : resolved ? "back this mark" : "backing";
+    sheet.innerHTML = `<div class="wv-act-head"><b>${esc(subject)}</b><span class="wv-act-verb">${verb}</span>`
       + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
       + `<div class="wv-backers"><span>reading who backs this mark…</span></div>`
       + (mode === "stake" && resolved
@@ -2683,7 +3511,7 @@ export function mountViewer(appEl) {
       + (resolved
         ? `<div class="wv-act-row"><label>stamps <input class="wv-act-amount" type="number" min="1" step="1"${max !== "" ? ` max="${Number(max)}"` : balance !== null ? ` max="${balance}"` : ""}></label>`
           + `<button type="button" class="wv-act-preview-btn">preview the sealed line</button></div>`
-          + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; ✦weight updates at the next Settlement.</p>`
+          + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; <b class="wv-stamp-holding">✦</b> weight updates at the next Settlement.</p>`
           + `<div class="wv-act-row"><button type="button" class="wv-act-confirm" disabled>confirm and send</button></div></div>`
           + `<p class="wv-act-answer" hidden></p>`
         : `<p class="wv-act-note">sign in as a resident to back this mark.</p>`);
@@ -2788,9 +3616,369 @@ export function mountViewer(appEl) {
     }
   }
 
+  // ───────── painting-only: the bubbles ─────────
+  // With the cell panel folded away the painting has to carry the reading, so it
+  // grows three bubbles and no fourth vocabulary:
+  //
+  //   • HOVER — a glance that follows the pointer and can never be clicked.
+  //   • PINNED — the selected mark. It is the panel's OWN cell, built by the same
+  //     markCell and folded by the same foldRenderedPredicates, so backing,
+  //     taking back, investigating and drilling all work without a line of new
+  //     handler code. A second bubble-shaped cell builder is precisely how the
+  //     two readings would drift apart.
+  //   • YOU — your standpoint, hosting the walk desk ITSELF, relocated rather
+  //     than copied. renderWalkDestination keeps its one owner and one desk; the
+  //     desk just lives somewhere else while this mode is on.
+  // every hover goes through here, so the bubbles always know whether the pointer
+  // is on the painting or inside a bubble reading it
+  function hoverMark(id, fromBubble = false) {
+    hoverFromBubble = !!id && fromBubble;
+    markInteraction.hover(id);
+  }
+  const bubbleHost = () => $(root, ".wv-bubbles");
+  const bubbleEls = { hover: null, pinned: null };
+  let bubbleResize = null;
+  let pinnedBuiltId = null;   // which mark the pinned bubble currently holds
+  let hoverFromBubble = false; // the pointer is reading a bubble, not the painting
+  let bubbleTrail = [];       // how you got to the mark the bubble is showing
+
+  // follow a relation or an attribute from inside the bubble: the bubble moves to
+  // that mark and remembers the one it left
+  function followInBubble(id) {
+    return selectMark(id, { trail: bubbleTrailStep(bubbleTrail, "follow", id) });
+  }
+  function bubbleBack() {
+    if (bubbleTrail.length < 2) return;
+    const stepped = bubbleTrailStep(bubbleTrail, "back");
+    selectMark(stepped[stepped.length - 1], { trail: stepped });
+  }
+  const localStore = (() => { try { return window.localStorage; } catch { return null; } })();
+
+  function bubbleEl(kind) {
+    if (bubbleEls[kind]?.isConnected) return bubbleEls[kind];
+    const host = bubbleHost();
+    if (!host) return null;
+    const el = document.createElement("div");
+    el.className = `wv-bubble is-${kind}`;
+    el.hidden = true;
+    host.appendChild(el);
+    bubbleEls[kind] = el;
+    // ONE observer for every bubble. A stake sheet opening, an expansion
+    // unfolding, the walk desk gaining a refusal line — each changes the box's
+    // height, and a bubble that grows without re-placing itself is a bubble
+    // hanging off the bottom of the painting. Height is not something the
+    // callers know, so it is not something the callers should have to report.
+    if (!bubbleResize && typeof ResizeObserver === "function")
+      bubbleResize = new ResizeObserver(() => positionBubbles());
+    bubbleResize?.observe(el);
+    return el;
+  }
+
+  // world metres → pixels inside the bubble layer's own box
+  function paintingPointToBox(point) {
+    const host = bubbleHost();
+    const matrix = mapCtx?.svg?.getScreenCTM?.();
+    const box = host?.getBoundingClientRect();
+    if (!matrix || !box?.width) return null;
+    const p = mapCtx.svg.createSVGPoint();
+    p.x = mapCtx.originPx.x + Number(point?.x) / mapCtx.mPerPx;
+    p.y = mapCtx.originPx.y + Number(point?.y) / mapCtx.mPerPx;
+    if (![p.x, p.y].every(Number.isFinite)) return null;
+    const screen = p.matrixTransform(matrix);
+    return { x: screen.x - box.x, y: screen.y - box.y, box: { w: box.width, h: box.height } };
+  }
+  // an element's centre, in the bubble layer's own pixels
+  function elementBoxPoint(el) {
+    const host = bubbleHost();
+    if (!el || !host) return null;
+    const r = el.getBoundingClientRect(), b = host.getBoundingClientRect();
+    if (!b.width) return null;
+    return { x: r.x + r.width / 2 - b.x, y: r.y + r.height / 2 - b.y, box: { w: b.width, h: b.height } };
+  }
+  // WHERE A BUBBLE HANGS, resolved to box pixels rather than to a world
+  // coordinate — because some marks have no coordinate and never will.
+  //
+  // A mark with ground hangs off its ground. A mark WITHOUT ground hangs off the
+  // frame's glyph, because the frame is where the placeless live: the world-root
+  // itself, and every ambient law beneath it — the fall of the land, the fog, the
+  // record, the walking pace, the wear. Those are the root's children in the
+  // record, and following one used to drop its bubble at the centre of whatever
+  // the view happened to be showing — a place, just not one that meant anything.
+  // (That fallback, viewCentreWorld, was this function's only caller and is gone.)
+  //
+  // The root is no longer a special case here; it is the first instance of the
+  // general one. nearestEmbodiedAncestor already returns null for it.
+  function anchorBoxFor(id) {
+    if (!id) return null;
+    const world = markAnchorPoint(id);
+    if (world) return paintingPointToBox(world);
+    return elementBoxPoint($(root, ".wv-root-mark"));
+  }
+  function placeBubbleAt(el, at, avoid = null) {
+    if (!el || el.hidden) return;
+    if (!at) { el.hidden = true; return; }
+    const spot = placeBubble({ anchor: at, size: { w: el.offsetWidth, h: el.offsetHeight }, box: at.box, avoid });
+    if (!spot) return;
+    el.style.transform = `translate3d(${Math.round(spot.x)}px, ${Math.round(spot.y)}px, 0)`;
+    el.classList.toggle("side-over", spot.side === "over");
+  }
+  function bubbleRect(el) {
+    const host = bubbleHost();
+    if (!el || el.hidden || !host) return null;
+    const r = el.getBoundingClientRect(), b = host.getBoundingClientRect();
+    return { x: r.x - b.x, y: r.y - b.y, w: r.width, h: r.height };
+  }
+  // A predicate has no ground of its own, so it hangs off the nearest thing that
+  // does; a mark with no embodied ancestor at all (the root, an ambient law) has
+  // no place on the painting and takes the middle of the view rather than
+  // vanishing — losing the bubble would lose the only way to read it in this mode.
+  function markAnchorPoint(id) {
+    const handle = walkerHandleFromHoverId(id);
+    if (handle) {
+      const w = (walkState.walkers ?? []).find((entry) => entry?.handle === handle);
+      return w && [w.x, w.y].every(Number.isFinite) ? { x: Number(w.x), y: Number(w.y) } : null;
+    }
+    return nearestEmbodiedAncestor(byId.get(id), byId)?.at ?? null;
+  }
+  function walkerBubbleHTML(handle) {
+    const w = (walkState.walkers ?? []).find((entry) => entry?.handle === handle);
+    if (!w) return "";
+    const moving = w.moving ?? (!w.arrived && !w.standing);
+    const where = moving
+      ? `${Number(w.remaining_m ?? 0).toLocaleString()} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
+      : (w.mark_id ? `at ${w.mark_id}` : "at rest");
+    return `<div class="wv-bubble-walker"><span class="wv-standing">${esc(w.handle)}</span><p>${esc(where)}</p></div>`;
+  }
+  // The glance. Deliberately NOT a live cell: it carries no data-id and no
+  // pressable action, because the layer it sits in takes no pointer events and a
+  // button you cannot press is worse than no button. Backing reads as the chip
+  // it is everywhere else; pressing it is what the pinned bubble is for.
+  function markPreviewHTML(id) {
+    const full = byId.get(id);
+    if (!full) return "";
+    const tier = tierOf(full), identity = markName(full), where = radialWhere(full);
+    const draft = isDraft(full);
+    const backing = Math.max(0, Number(full.stamps ?? 0));
+    return `<article class="wv-card fov ${markClasses(full)}">`
+      + markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier, draft })
+      + `<div class="cbody">${esc(full.body ?? full.id)}</div>`
+      + markCellBylineRow(full, `<span class="wv-cell-actions"><span class="wv-chip stamps">✦ ${backing.toLocaleString()}</span></span>`)
+      + (where.detail ? `<div class="cmeta"><div class="wv-details" style="display:flex">${extentTag(full)}<span class="wv-detail-where">${esc(where.detail)}</span></div></div>` : "")
+      + `</article><p class="wv-bubble-hint">click to open</p>`;
+  }
+  function renderHoverBubble(id) {
+    const el = bubbleEl("hover");
+    if (!el) return;
+    const handle = id && walkerHandleFromHoverId(id);
+    const html = !id ? "" : (handle ? walkerBubbleHTML(handle) : markPreviewHTML(id));
+    if (!html) { el.hidden = true; return; }
+    el.className = `wv-bubble is-hover${handle ? "" : ` ${markClasses(byId.get(id))}`}`;
+    el.innerHTML = html;
+    el.hidden = false;
+  }
+  // BUILT ONCE PER SELECTION, and that is the whole point. Pointing at anything
+  // inside this bubble raises a hover, a hover re-renders the bubbles, and a
+  // rebuild here would replace the button under the cursor with a fresh copy —
+  // so an open backing sheet, a half-typed amount, a scroll position and the
+  // click you were making all died the moment the pointer arrived. A rebuild is
+  // owed to a change of MARK or a change of RECORD, and to nothing else.
+  function renderPinnedBubble(id) {
+    const el = bubbleEl("pinned");
+    if (!el) return;
+    const mark = id && !walkerHandleFromHoverId(id) ? byId.get(id) : null;
+    if (!mark) { el.hidden = true; el.innerHTML = ""; pinnedBuiltId = null; return; }
+    if (pinnedBuiltId === mark.id && el.firstChild) { el.hidden = false; return; }
+    pinnedBuiltId = mark.id;
+    // the cell, plus this mark's own predicates as cells, then the SAME fold the
+    // telling runs — so an attribute reads identically in both places
+    const predicates = (world?.marks ?? []).filter((p) => p.parent === mark.id && isPredicateAttribute(p));
+    // the way back, NAMED — "◂ back" makes you remember what you left, and the
+    // one thing a bubble on a map should never ask you to do is hold the route
+    // in your head
+    const cameFrom = bubbleTrail.length > 1 ? byId.get(bubbleTrail[bubbleTrail.length - 2]) : null;
+    const back = cameFrom
+      ? `<button type="button" class="wv-bubble-back ${markClasses(cameFrom)}" title="back to ${esc(markIdentity(cameFrom))}">◂ ${esc(markIdentity(cameFrom))}</button>`
+      : "";
+    el.className = `wv-bubble is-pinned ${markClasses(mark)}`;
+    el.innerHTML = `<div class="wv-bubble-nav">${back}`
+      + `<button type="button" class="wv-bubble-close" aria-label="close this mark">✕</button></div>`
+      + markCell(mark, { role: "fov" })
+      + predicates.map((p) => markCell(p, { role: "fov" })).join("");
+    el.hidden = false;
+    foldRenderedPredicates(el);
+    const card = $(el, `.wv-card[data-id="${CSS.escape(mark.id)}"]`);
+    if (card) { card._stack = [mark.id]; renderExpansion(card); }
+  }
+  // NOT re-entrant, and the guard is load-bearing rather than defensive: building
+  // the pinned bubble runs renderExpansion, whose last act is to sync the
+  // interaction classes over the tree it just built — and that sync is what calls
+  // this. Without the latch, selecting a mark rebuilt the bubble that was
+  // rebuilding it until the renderer died. The inner sync still does its own job
+  // (the class toggles); it is only the bubble rebuild that must not nest.
+  let renderingBubbles = false;
+  function renderBubbles() {
+    if (renderingBubbles) return;
+    if (!state.paintingOnly) {
+      for (const el of Object.values(bubbleEls)) if (el) el.hidden = true;
+      return;
+    }
+    renderingBubbles = true;
+    try {
+      const { hoveredId, selectedId } = markInteraction.getState();
+      renderPinnedBubble(selectedId);
+      // the glance stands down for the mark it is already showing in full, and
+      // for a pointer that is reading a bubble rather than pointing at the
+      // painting — running a finger down a relations list should light each one
+      // on the map, not pop a second bubble over the list you are reading
+      const glance = hoveredId && hoveredId !== selectedId && !hoverFromBubble ? hoveredId : null;
+      renderHoverBubble(glance);
+    } finally {
+      renderingBubbles = false;
+    }
+    positionBubbles();
+  }
+  // Placed in order of who yields to whom: the pinned bubble is the thing you
+  // asked for and sits where it likes; the glance steps around it; the you-bubble
+  // is always present and yields to both, since it is the one you did not ask for.
+  function positionBubbles() {
+    if (!state.paintingOnly) return;
+    const { hoveredId, selectedId } = markInteraction.getState();
+    // the walk desk holds its corner — it is a thing you are part way through, so
+    // the bubbles step around it rather than the other way about
+    const desk = bubbleRect($(root, ".wv-walkdesk"));
+    placeBubbleAt(bubbleEls.pinned, anchorBoxFor(selectedId), desk);
+    const pinned = bubbleRect(bubbleEls.pinned);
+    placeBubbleAt(bubbleEls.hover, anchorBoxFor(hoveredId), [pinned, desk]);
+  }
+  // ───────── the tour ─────────
+  // Opened by the ? on the painting, never on arrival: a page that seizes the
+  // screen before you have looked at it teaches nothing (Postmark ships quiet).
+  // The ring on the ? is the whole of the invitation.
+  let tourAt = -1; // -1 is closed
+  const tourEl = () => $(root, ".wv-tour");
+  // an anchor must be RENDERED, not merely present — every rail selector here is
+  // display:none on a phone, and a slide about a control you cannot see should
+  // read as prose in the middle of the screen rather than point at nothing
+  function tourAnchor(slide) {
+    if (!slide?.anchor) return null;
+    const el = $(root, slide.anchor);
+    return el && el.getClientRects().length ? el : null;
+  }
+  function openTour(at = 0) {
+    tourAt = at;
+    writeTourSeen(localStore);
+    $(root, ".wv-tour-open")?.classList.remove("is-unseen");
+    renderTour();
+  }
+  function closeTour() {
+    tourAt = -1;
+    const el = tourEl();
+    if (el) el.hidden = true;
+    $(root, ".wv-tour-open")?.focus?.();
+  }
+  function stepTour(action) {
+    const next = tourStep(tourAt, action, TOUR_SLIDES.length);
+    if (next < 0) { closeTour(); return; }
+    tourAt = next;
+    renderTour();
+  }
+  function renderTour() {
+    const el = tourEl();
+    const slide = TOUR_SLIDES[tourAt];
+    if (!el || !slide) { closeTour(); return; }
+    el.hidden = false;
+    // authored copy, not record text: TOUR_SLIDES is this module's own constant
+    // and carries the only markup allowed through here
+    $(el, ".wv-tour-title").textContent = slide.title;
+    $(el, ".wv-tour-body").innerHTML = slide.body;
+    $(el, ".wv-tour-kicker").textContent = `The World · ${tourProgress(tourAt, TOUR_SLIDES.length)}`;
+    $(el, ".wv-tour-dots").innerHTML = TOUR_SLIDES.map((entry, i) =>
+      `<button type="button" class="wv-tour-dot${i === tourAt ? " on" : ""}" data-tour-to="${i}"`
+      + ` aria-label="${esc(entry.title)}"${i === tourAt ? ' aria-current="step"' : ""}></button>`).join("");
+    $(el, ".wv-tour-back").disabled = tourAt === 0;
+    $(el, ".wv-tour-next").textContent = tourAt === TOUR_SLIDES.length - 1 ? "done" : "next";
+    placeTour();
+    $(el, ".wv-tour-next").focus();
+  }
+  function placeTour() {
+    const el = tourEl();
+    if (!el || el.hidden) return;
+    const card = $(el, ".wv-tour-card");
+    const spot = $(el, ".wv-tour-spot");
+    const scrim = $(el, ".wv-tour-scrim");
+    const target = tourAnchor(TOUR_SLIDES[tourAt]);
+    if (!target) {
+      spot.hidden = true;
+      scrim.hidden = false;
+      card.classList.add("is-centred");
+      card.style.transform = "";
+      return;
+    }
+    // the spot IS the dim when there is one — its box-shadow spreads past any
+    // screen — so the scrim stands down rather than darkening the page twice
+    const r = target.getBoundingClientRect();
+    const pad = slidePad(TOUR_SLIDES[tourAt]);
+    const hole = { x: r.x - pad, y: r.y - pad, w: r.width + pad * 2, h: r.height + pad * 2 };
+    scrim.hidden = true;
+    spot.hidden = false;
+    Object.assign(spot.style, {
+      left: `${hole.x}px`, top: `${hole.y}px`, width: `${hole.w}px`, height: `${hole.h}px`,
+      borderRadius: `${Math.min(hole.w, hole.h) / 2 <= 22 ? Math.min(hole.w, hole.h) / 2 : 10}px`,
+    });
+    card.classList.remove("is-centred");
+    const spot_ = placeBubble({
+      anchor: { x: r.x + r.width / 2, y: r.y + r.height / 2 },
+      size: { w: card.offsetWidth, h: card.offsetHeight },
+      box: { w: window.innerWidth, h: window.innerHeight },
+      gap: pad + 16, edge: 14, avoid: hole,
+    });
+    if (spot_) card.style.transform = `translate3d(${Math.round(spot_.x)}px, ${Math.round(spot_.y)}px, 0)`;
+  }
+  const slidePad = (slide) => Number.isFinite(slide?.pad) ? slide.pad : 9;
+
+  function applyPaintingOnly() {
+    const on = state.paintingOnly;
+    root.classList.toggle("is-painting-only", on);
+    $(root, ".wv-main")?.classList.toggle("is-painting-only", on);
+    // a toggle chip beside grid and marks, so it reads as one of them: lit means
+    // the telling is up. Its label is markup, so only the state moves.
+    const button = $(root, ".wv-telling-toggle");
+    if (button) {
+      button.classList.toggle("on", !on);
+      button.setAttribute("aria-expanded", String(!on));
+      button.title = on ? "show the telling" : "hide the telling and give the painting the page";
+    }
+    $(root, ".wv-main")?.classList.toggle("is-telling-collapsed", on);
+    renderBubbles();
+    // The pane is mid-slide. Re-measure when the slide ENDS, not on the next
+    // frame — a single rAF lands in the middle of a 300 ms transition, which is
+    // how the old code managed to compute a viewport for a width the pane was
+    // still travelling through. Belt and braces: transitionend, plus a timer in
+    // case the transition is suppressed (reduced motion, or a hidden tab).
+    const settle = () => {
+      mapCtx?.refit?.();
+      if (lastRadial) drawOverlay(lastRadial);
+      positionBubbles();
+    };
+    const main = $(root, ".wv-main");
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(settle, 340);
+    main?.addEventListener("transitionend", function once(event) {
+      if (event.propertyName !== "grid-template-columns" || event.target !== main) return;
+      main.removeEventListener("transitionend", once);
+      clearTimeout(settleTimer);
+      settle();
+    });
+    requestAnimationFrame(positionBubbles); // the bubbles ride along mid-slide
+  }
+  let settleTimer = null;
+  // a window resize is the same event as a toggle, only slower
+  const onViewerResize = () => { mapCtx?.refit?.(); positionBubbles(); placeTour(); };
+  window.addEventListener("resize", onViewerResize);
+
   // ───────── dev pane ─────────
   function buildDevPane() {
-    const dev = $(root, ".wv-dev");
+    const dev = $(root, ".wv-dev-dials");
     dev.innerHTML = `<div class="devnote">live engine dials — re-tells on change; never mutates the module, never re-folds.</div>`
       + `<div class="dial cross"><label>crossing (time-travel) <b class="crossovlbl">${state.crossingOverride ? state.crossing : "live · " + state.crossing}</b></label>
           <div class="crossrow"><input class="num crossover" type="number" min="0" value="${state.crossing}"><button class="ctl crosslive" title="return to the live crossing">⤺ live</button></div></div>`
@@ -2805,10 +3993,16 @@ export function mountViewer(appEl) {
 
   // ───────── view switching + shared render ─────────
   function renderModeControls() {
-    const standmove = $(root, ".wv-standmove");
-    const devToggle = $(root, ".wv-dev-toggle");
     root.classList.toggle("is-spectating", isSpectating());
-    if (standmove) standmove.hidden = !(isSpectating() || (devToggle && !devToggle.hidden));
+  }
+  // "12 told of 117 in view (194 in range) · 77 behind the ground" is a sentence
+  // about the ENGINE, not about the town — it answers how the field of view
+  // culled, which is a question you only have while you are tuning the dials it
+  // culled by. It rides with them (Keemin, 2026-08-04).
+  function syncDevReadouts() {
+    const open = !$(root, ".wv-dev")?.hidden;
+    const tallies = $(root, ".wv-paint-tallies");
+    if (tallies) tallies.hidden = !open;
   }
   function renderSpectatorCoordinate() {
     const chip = $(root, ".wv-spectator-coordinate");
@@ -2820,7 +4014,6 @@ export function mountViewer(appEl) {
   }
   function renderCurrent() {
     $(root, ".pos").textContent = formatCardinalPosition(state.cam);
-    $(root, ".wv-where").innerHTML = `<b>${esc(standingLocationLabel(state.cam, world?.marks ?? [], data?.worldState?.determined))}</b>`;
     const cn = $(root, ".crossnow");
     if (cn) cn.innerHTML = state.crossingOverride
       ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`
@@ -2840,8 +4033,12 @@ export function mountViewer(appEl) {
     renderCurrent();
     window.scrollTo(0, y);
     if (!note) return;
+    // the toast belongs wherever the reader is looking; with the panel folded
+    // away, .wv-view is display:none and a notice nobody can see is not a notice
+    const toastHost = state.paintingOnly ? $(root, ".wv-map .wv-sticky") : $(root, ".wv-view");
     let el = $(root, ".wv-moved");
-    if (!el) { el = document.createElement("div"); el.className = "wv-moved"; $(root, ".wv-view").prepend(el); }
+    if (el && el.parentElement !== toastHost) { el.remove(); el = null; }
+    if (!el) { el = document.createElement("div"); el.className = "wv-moved"; toastHost?.prepend(el); }
     el.textContent = `the world moved — ${note}`;
     el.classList.add("show");
     clearTimeout(movedTimer); movedTimer = setTimeout(() => el.classList.remove("show"), 6000);
@@ -2858,21 +4055,16 @@ export function mountViewer(appEl) {
   // ───────── events ─────────
   let devTimer = null;
   root.addEventListener("click", (e) => {
-    const openHelp = $(root, ".wv-map-help.is-open");
-    const helpToggle = e.target.closest(".wv-map-help-toggle");
-    if (helpToggle) {
-      const help = helpToggle.closest(".wv-map-help");
-      const expanded = !help.classList.contains("is-open");
-      openHelp?.classList.remove("is-open");
-      openHelp?.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
-      help.classList.toggle("is-open", expanded);
-      helpToggle.setAttribute("aria-expanded", String(expanded));
-      return;
-    }
-    if (openHelp && !e.target.closest(".wv-map-help")) {
-      openHelp.classList.remove("is-open");
-      openHelp.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
-    }
+    // the tour first, and every branch returns: while it is up it owns the page,
+    // and a click that fell through to the painting underneath would select a
+    // mark the reader cannot see
+    if (e.target.closest(".wv-tour-open")) { openTour(0); return; }
+    const dot = e.target.closest("[data-tour-to]");
+    if (dot) { stepTour(Number(dot.dataset.tourTo)); return; }
+    if (e.target.closest(".wv-tour-next")) { stepTour("next"); return; }
+    if (e.target.closest(".wv-tour-back")) { stepTour("back"); return; }
+    if (e.target.closest(".wv-tour-skip")) { stepTour("skip"); return; }
+    if (tourAt >= 0 && e.target.closest(".wv-tour")) return; // the scrim eats the rest
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
     if (e.target.closest(".wv-change-course")) {
@@ -2882,17 +4074,22 @@ export function mountViewer(appEl) {
       return;
     }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
-    const stakeOpen = e.target.closest("[data-stake-open]");
+    const stakeOpen = e.target.closest("[data-stake-open], [data-unstake-open]");
     if (stakeOpen) {
-      openStakeSheet(stakeOpen.closest(".wv-card"), { mode: "stake", markId: stakeOpen.dataset.mark });
-      return;
-    }
-    const unstakeOpen = e.target.closest("[data-unstake-open]");
-    if (unstakeOpen) {
-      openStakeSheet(unstakeOpen.closest(".wv-card"), {
-        mode: "unstake",
-        max: unstakeOpen.dataset.max,
-        markId: unstakeOpen.dataset.mark,
+      const unstake = stakeOpen.hasAttribute("data-unstake-open");
+      const markId = stakeOpen.dataset.mark;
+      // BACKING A MARK SELECTS IT. These chips sit on relation lines and attribute
+      // rows as well as on cells, so it was possible to open a sheet for one mark
+      // while another was lit on the painting — and the sheet is the one place you
+      // are about to spend stamps.
+      const inBubble = !!stakeOpen.closest(".wv-bubble");
+      if (markId && markInteraction.getState().selectedId !== markId && byId.has(markId)) {
+        if (inBubble) followInBubble(markId); else selectMark(markId);
+      }
+      openStakeSheet(stakeHostFor(markId) ?? stakeOpen.closest(".wv-card"), {
+        mode: unstake ? "unstake" : "stake",
+        max: unstake ? stakeOpen.dataset.max : "",
+        markId,
       });
       return;
     }
@@ -2911,13 +4108,18 @@ export function mountViewer(appEl) {
     if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
     const fpbtn = e.target.closest(".wv-map-fp");
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
-    const baseChip = e.target.closest("[data-world-base]");
-    if (baseChip && identityResolved()) {
-      state.baseLayer = baseChip.dataset.worldBase;
-      applyWorldLayer();
-      const y = window.scrollY; renderTelling(); window.scrollTo(0, y);
+    if (e.target.closest("[data-root-mark]")) { selectMark(WORLD_ROOT_ID, { scrollCell: true }); return; }
+    if (e.target.closest(".wv-walk-cancel")) { clearSelectionAndDestination(); return; }
+    if (e.target.closest(".wv-telling-toggle")) {
+      state.paintingOnly = !state.paintingOnly;
+      writePaintingOnly(localStore, state.paintingOnly);
+      applyPaintingOnly();
       return;
     }
+    // the ✕ closes the pinned bubble, which is the same act as deselecting —
+    // there is one selection, and the bubble is what it looks like here
+    if (e.target.closest(".wv-bubble-close")) { clearSelectionAndDestination(); return; }
+    if (e.target.closest(".wv-bubble-back")) { bubbleBack(); return; }
     const filterChip = e.target.closest("[data-mark-filter]");
     if (filterChip && !filterChip.disabled) {
       state.markFilter = filterChip.dataset.markFilter;
@@ -2930,11 +4132,23 @@ export function mountViewer(appEl) {
     const back = e.target.closest(".wv-back");
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
     const attribute = e.target.closest(".wv-attribute");
-    if (attribute?.dataset.id) { selectMark(attribute.dataset.id); return; }
+    if (attribute?.dataset.id) {
+      // an attribute reached from inside the bubble is a step deeper, so it owes
+      // you the same way back a relation does
+      if (attribute.closest(".wv-bubble")) followInBubble(attribute.dataset.id);
+      else selectMark(attribute.dataset.id);
+      return;
+    }
     const tn = e.target.closest(".wv-rnode");
     if (tn) {
       const card = tn.closest(".wv-card");
       if (card && tn.dataset.id) {
+        // In a bubble a relative is a PLACE, so following one moves the bubble to
+        // it rather than drilling a breadcrumb inside the old one — on a map, the
+        // map is the breadcrumb, and the trail carries the way back. followInBubble
+        // rebuilds the pinned bubble, so `card` is detached by the next statement;
+        // nothing may touch it after this.
+        if (tn.closest(".wv-bubble")) { followInBubble(tn.dataset.id); return; }
         selectMark(tn.dataset.id);
         const targetCard = [...root.querySelectorAll(".wv-card[data-id]")]
           .find((candidate) => candidate.dataset.id === tn.dataset.id);
@@ -2952,7 +4166,7 @@ export function mountViewer(appEl) {
       else { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); }
       return;
     }
-    if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } return; }
+    if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } syncDevReadouts(); return; }
     if (e.target.closest(".wv-dev-reset")) { state.dials = { ...DIALS }; buildDevPane(); renderCurrent(); return; }
     if (e.target.closest(".crosslive")) { state.crossingOverride = false; state.crossing = liveCrossing(); const i = root.querySelector(".crossover"); if (i) i.value = state.crossing; const l = root.querySelector(".crossovlbl"); if (l) l.textContent = "live · " + state.crossing; reRender(); return; }
     const b = e.target.closest("button.ctl, .wv-card");
@@ -2960,6 +4174,14 @@ export function mountViewer(appEl) {
     if (b.dataset.x !== undefined && b.classList.contains("ctl")) { walkState.actorBound = false; state.cam = { x: +b.dataset.x, y: +b.dataset.y }; renderCurrent(); }
     else if (b.dataset.dx !== undefined) { walkState.actorBound = false; state.cam.x += (+b.dataset.dx) * state.step; state.cam.y += (+b.dataset.dy) * state.step; renderCurrent(); }
     else if (b.classList.contains("wv-card") && b.dataset.id) {
+      // Inside a bubble the card IS the selection made visible, so clicking it
+      // must not un-make it — the ✕ and Escape do that. What is left of a card
+      // click is its other half: fold the investigate expansion open or shut.
+      if (b.closest(".wv-bubble")) {
+        b._stack = b._stack?.length ? [] : [b.dataset.id];
+        renderExpansion(b);
+        return;
+      }
       if (!selectMark(b.dataset.id)) {
         b._stack = [];
         renderExpansion(b);
@@ -2969,13 +4191,25 @@ export function mountViewer(appEl) {
     }
   });
   const onViewerKeydown = (event) => {
-    if (event.key !== "Escape") return;
-    const help = $(root, ".wv-map-help.is-open");
-    if (help) {
-      help.classList.remove("is-open");
-      help.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
+    // a slide deck is read with the arrow keys, and Escape leaves it
+    if (tourAt >= 0) {
+      if (event.key === "Escape") { event.preventDefault(); stepTour("skip"); return; }
+      if (event.key === "ArrowRight") { event.preventDefault(); stepTour("next"); return; }
+      if (event.key === "ArrowLeft") { event.preventDefault(); stepTour("back"); return; }
+      // It says aria-modal, so it has to behave like one: Tab must not walk out
+      // of the card and start pressing buttons on a page the reader cannot see.
+      if (event.key === "Tab") {
+        const stops = [...$(root, ".wv-tour-card").querySelectorAll("button:not(:disabled)")];
+        if (!stops.length) return;
+        const edge = event.shiftKey ? stops[0] : stops[stops.length - 1];
+        if (document.activeElement === edge || !$(root, ".wv-tour-card").contains(document.activeElement)) {
+          event.preventDefault();
+          (event.shiftKey ? stops[stops.length - 1] : stops[0]).focus();
+        }
+      }
       return;
     }
+    if (event.key !== "Escape") return;
     if (!markInteraction.getState().selectedId && !walkState.destination) return;
     clearSelectionAndDestination();
   };
@@ -2987,16 +4221,19 @@ export function mountViewer(appEl) {
   const markCellAt = (target) =>
     target?.closest?.(".wv-card[data-id], .wv-rnode[data-id], .wv-attribute[data-id]") ?? null;
   root.addEventListener("mouseover", (e) => {
+    // the root's glyph is a mark to the pointer as much as to the click
+    if (e.target.closest("[data-root-mark]")) { hoverMark(WORLD_ROOT_ID); return; }
     const cell = markCellAt(e.target);
-    if (cell) markInteraction.hover(cell.dataset.id);
+    if (cell) hoverMark(cell.dataset.id, !!cell.closest(".wv-bubble"));
   });
   root.addEventListener("mouseout", (e) => {
+    if (e.target.closest("[data-root-mark]")) { hoverMark(null); return; }
     const from = markCellAt(e.target);
     if (!from) return;
     const to = markCellAt(e.relatedTarget);
-    markInteraction.hover(to?.dataset.id ?? null);
+    hoverMark(to?.dataset.id ?? null, !!to?.closest(".wv-bubble"));
   });
-  root.addEventListener("mouseleave", () => markInteraction.hover(null));
+  root.addEventListener("mouseleave", () => hoverMark(null));
   root.addEventListener("input", (e) => {
     if (e.target.closest(".wv-act-sheet")) {
       const sheet = e.target.closest(".wv-act-sheet");
@@ -3039,7 +4276,8 @@ export function mountViewer(appEl) {
     state.mineIds = new Set(["drafts", "published", "backed"]
       .flatMap((category) => (portfolio[category] ?? []).map((mark) => mark.id ?? mark.mark))
       .filter(Boolean));
-    if (state.baseLayer === "mine") applyWorldLayer();
+    state.draftIds = draftMarkIds(portfolio.drafts);
+    applyWorldLayer();
   }
   async function resolveIdentity() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
@@ -3071,7 +4309,7 @@ export function mountViewer(appEl) {
         data.myWorld = null;
         state.portfolio = null;
         state.mineIds = new Set();
-        state.baseLayer = "true";
+        state.draftIds = new Set();
         if (state.markFilter === "mine") state.markFilter = "everything";
         applyWorldLayer();
       }
@@ -3079,7 +4317,7 @@ export function mountViewer(appEl) {
       data.myWorld = null;
       state.portfolio = null;
       state.mineIds = new Set();
-      state.baseLayer = "true";
+      state.draftIds = new Set();
       if (state.markFilter === "mine") state.markFilter = "everything";
       applyWorldLayer();
     }
@@ -3136,7 +4374,7 @@ export function mountViewer(appEl) {
     const box = $(root, ".wv-identity");
     if (!box) return;
     const handles = state.whoami?.handles ?? [];
-    const spectator = `<button type="button" class="ctl handleopt${isSpectating() ? " on" : ""}" data-act-as="${SPECTATOR_ACTOR}" aria-pressed="${isSpectating()}">✦ Spectator</button>`;
+    const spectator = `<button type="button" class="ctl handleopt${isSpectating() ? " on" : ""}" data-act-as="${SPECTATOR_ACTOR}" aria-pressed="${isSpectating()}">◉ Spectator</button>`;
     box.innerHTML = `<h2>Act As</h2><div class="handlepick">${spectator}${handles.map((handle) =>
           `<button type="button" class="ctl handleopt${state.actAs === handle ? " on" : ""}" data-act-as="${esc(handle)}" aria-pressed="${state.actAs === handle}">${esc(handle)}${state.actAs === handle
             ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`
@@ -3185,10 +4423,25 @@ export function mountViewer(appEl) {
 
   // ───────── boot ─────────
   (async () => {
+    // the mode is remembered, so lay the page out in it before the first paint
+    applyPaintingOnly();
+    // and the ? wears its ring until somebody has taken the tour once
+    if (!readTourSeen(localStore)) $(root, ".wv-tour-open")?.classList.add("is-unseen");
     try {
       await loadData();
       renderCurrent();
       resolveIdentity(); // after data (the presets filter reads the manifest)
+      // A FIRST VISIT OPENS THE TOUR (Keemin, 2026-08-05). One flag, deliberately
+      // naive: openTour writes it before the card is interactive, so this fires
+      // exactly once and every later visit is quiet. After the world has loaded,
+      // not before — the deck's third slide points at a pip, and a tour that
+      // opens over an empty pane is teaching the wrong page.
+      //
+      // The one place it misbehaves is a browser that refuses localStorage: the
+      // flag cannot be kept, so the tour greets every load. Skippable, and the
+      // honest cost of not asking a reader to hold state we are not allowed to
+      // write.
+      if (!readTourSeen(localStore)) openTour(0);
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
     }
@@ -3200,6 +4453,8 @@ export function mountViewer(appEl) {
       clearInterval(clock);
       clearInterval(walkState.timer);
       document.removeEventListener("keydown", onViewerKeydown);
+      window.removeEventListener("resize", onViewerResize);
+      bubbleResize?.disconnect();
     },
   };
 }

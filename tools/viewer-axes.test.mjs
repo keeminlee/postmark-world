@@ -43,15 +43,32 @@ import {
   standingLocationLabel,
   summarizeBackers,
   toldPaintingMarks,
-  viewerAxisControls,
+  markStateClasses,
+  draftMarkIds,
   viewerAxisState,
   viewerFilterControls,
   viewerJourneyState,
   viewerCanAct,
   walkDestinationLabel,
+  worldFrameReading,
+  TOUR_SLIDES,
+  tourStep,
+  tourProgress,
+  readTourSeen,
+  writeTourSeen,
+  TOUR_SEEN_KEY,
+  WORLD_ROOT_ID,
   walkerDestinationName,
   walkerHandleFromHoverId,
   walkerHoverId,
+  bubbleTrailStep,
+  paintingMarkIds,
+  isWalkableTarget,
+  WALK_TARGET_MAX_EXTENT_M,
+  placeBubble,
+  readPaintingOnly,
+  writePaintingOnly,
+  PAINTING_ONLY_KEY,
 } from "../spectator/viewer.mjs";
 
 test("distance-band headings derive their approximate ranges from the LOD dials", () => {
@@ -399,7 +416,7 @@ test("cell identity rows keep tier beside the arrow and backing beside the bylin
   assert.match(title, /^<div class="cname is-determined">/);
   assert.match(title, /<span class="wv-name-arrow"[^>]*>.*<\/span><span class="wv-chip t-home">home<\/span><\/div>$/);
   assert.match(row, /^<div class="wv-cell-byline-row"><span class="wv-byline">By wright 2026-07-29<\/span><button/);
-  assert.match(row, />✦ 12 · back<\/button><\/div>$/);
+  assert.match(row, />✦ 12<\/button><\/div>$/);
 });
 
 test("investigate relatives inherit names and backing without duplicated byline details or id prose", () => {
@@ -420,22 +437,26 @@ test("investigate relatives inherit names and backing without duplicated byline 
   assert.match(line, /data-id="wright\/the-crossing-door"/);
   assert.match(line, /role="button" tabindex="0"/);
   assert.match(line, /<b class="cname is-determined">The Crossing Door<\/b>/);
-  assert.match(line, /class="wv-backing"[^>]*>✦ 12 · back<\/button>/);
+  assert.match(line, /class="wv-backing"[^>]*>✦ 12<\/button>/);
   assert.doesNotMatch(line, /wv-details|wv-detail-author|wv-detail-date|by wright|2026-07-29/i);
   assert.doesNotMatch(line, /entire quoted body|cbody|tbody/);
   assert.doesNotMatch(line.replace(/data-(?:id|mark)="[^"]*"/g, ""), /wright\/the-crossing-door/);
 });
 
-test("investigate identities de-slug by default and zero backing uses neutral-true copy", () => {
+test("a stamp chip is a symbol and a number, and zero says zero", () => {
   const line = investigateNameLine({ id: "wright/the-crossing-door", stamps: 0 });
   assert.match(line, /<b class="cname">The Crossing Door<\/b>/);
-  assert.match(line, />✦ 0 · back<\/button>/);
+  assert.match(line, />✦ 0<\/button>/);
   assert.doesNotMatch(line, /pre-mark|awaiting its resident/);
 
-  const zeroDetail = backingButton("wright/the-crossing-door", 0, { neutralZero: true });
-  assert.match(zeroDetail, /class="wv-backing is-zero"/);
-  assert.match(zeroDetail, />✦ 0 — no belief staked yet<\/button>/);
-  assert.doesNotMatch(zeroDetail, /pre-mark|awaiting its resident/);
+  // no verb inside the readout: the chip states the backing and its title says
+  // what pressing it does. One shape everywhere, zero included.
+  const zero = backingButton("wright/the-crossing-door", 0);
+  assert.match(zero, /class="wv-backing is-zero"/, "zero still reads as the quiet case");
+  assert.match(zero, />✦ 0<\/button>/);
+  assert.match(zero, /title="read backing and back this mark"/, "the verb lives in the title");
+  assert.doesNotMatch(zero, /back<\/button>|no belief staked/);
+  assert.match(backingButton("x/y", 1234), />✦ 1,234<\/button>/, "and it still groups");
 });
 
 test("ambient marks are the root and predicates with no embodied ancestor", () => {
@@ -475,35 +496,64 @@ test("detached atlas images get lazy loading before mount", () => {
   ]);
 });
 
-test("the lens and one filter row stay orthogonal", () => {
+test("one marks row is the whole vocabulary — the World lens is gone", () => {
   const states = [
-    [{ identityResolved: false, baseLayer: "mine", markFilter: "mine" }, false, "True World", "everything"],
-    [{ identityResolved: true, baseLayer: "true", markFilter: "everything" }, true, "True World", "everything"],
-    [{ identityResolved: true, baseLayer: "true", markFilter: "mine" }, true, "True World", "just mine"],
-    [{ identityResolved: true, baseLayer: "mine", markFilter: "everything" }, true, "My World", "everything"],
-    [{ identityResolved: true, baseLayer: "mine", markFilter: "new" }, true, "My World", "new"],
+    [{ identityResolved: false, markFilter: "mine" }, false, "everything"],
+    [{ identityResolved: true, markFilter: "everything" }, true, "everything"],
+    [{ identityResolved: true, markFilter: "mine" }, true, "just mine"],
+    [{ identityResolved: true, markFilter: "new" }, true, "new"],
   ];
 
-  for (const [input, controls, base, filter] of states)
-    assert.deepEqual(viewerAxisState(input), { controls, base, filter });
-
-  assert.equal(viewerAxisControls(states[0][0]), "", "anonymous spectators get no identity axes");
-
-  const trueMine = viewerAxisControls(states[2][0]);
-  assert.match(trueMine, />True World<\/button>/);
-  assert.match(trueMine, />My World<\/button>/);
-  assert.match(trueMine, /data-world-base="true"[^>]*>True World/);
-  assert.doesNotMatch(trueMine, /just mine|data-mark-filter/, "the lens has no competing filter vocabulary");
-
-  const myEverything = viewerAxisControls(states[3][0]);
-  assert.match(myEverything, /class="wv-fchip on" data-world-base="mine">My World/);
+  for (const [input, controls, filter] of states)
+    assert.deepEqual(viewerAxisState(input), { controls, filter },
+      "the axis state carries no composition question any more");
 
   const row = viewerFilterControls(states[2][0]);
   assert.match(row, />everything<\/button>.*>just mine<\/button>.*>new<\/button>/);
   assert.match(row, /class="wv-fchip on" data-mark-filter="mine">just mine/);
+  assert.doesNotMatch(row, /data-world-base|True World|My World/,
+    "no lens survives anywhere in the control row");
 
   const anonymous = viewerFilterControls(states[0][0]);
   assert.match(anonymous, /data-mark-filter="mine" disabled/);
+});
+
+test("a draft is a state beside the tier, not a tier of its own", () => {
+  assert.equal(markStateClasses({ tier: "home" }), "t-home");
+  assert.equal(markStateClasses({ tier: "home", draft: true }), "t-home is-draft",
+    "a drafted home is still a home; only its colour changes");
+  assert.equal(markStateClasses({ tier: "constitution", draft: true }), "t-constitution is-draft");
+  assert.equal(markStateClasses(), "t-market");
+  assert.equal(markStateClasses({ tier: "nonsense", draft: true }), "t-market is-draft",
+    "an unknown tier falls back to market rather than emitting a class nothing styles");
+
+  // the cell title says the state AND keeps saying the kind
+  const drafted = markCellTitle({ name: "The Low Door", tier: "constitution", draft: true });
+  assert.match(drafted, /class="wv-chip is-draft"/);
+  assert.match(drafted, /class="wv-chip t-constitution">constitution/,
+    "the tier chip survives the draft chip");
+  assert.doesNotMatch(markCellTitle({ name: "The Low Door", tier: "constitution" }), /is-draft/);
+
+  // and a relation line in an investigate tree speaks the same two words
+  const line = investigateNameLine({ id: "limen/the-low-door" }, { name: "The Low Door", tier: "home", draft: true });
+  assert.match(line, /class="wv-rnode t-home is-draft"/);
+});
+
+test("only the drafts a colour can actually draw become grey", () => {
+  const ids = draftMarkIds([
+    { id: "limen/new-bench", status: "added" },
+    { id: "limen/the-low-door", status: "modified" },
+    { id: "limen/old-lantern", status: "deleted" },
+  ]);
+  assert.ok(ids.has("limen/new-bench"), "a mark the town has never seen reads as a draft");
+  assert.ok(ids.has("limen/the-low-door"), "so does your unpublished edit of one it has");
+  assert.ok(!ids.has("limen/old-lantern"),
+    "a deleted draft is an absence — it is not in the composed fold, so nothing can be painted grey");
+
+  assert.equal(draftMarkIds().size, 0);
+  assert.equal(draftMarkIds([null, {}, { status: "added" }]).size, 0, "an entry with no id names nothing");
+  assert.ok(draftMarkIds([{ mark: "limen/legacy-shape", status: "added" }]).has("limen/legacy-shape"),
+    "the portfolio's other id spelling is read too, the same way mineIds reads it");
 });
 
 test("signed office calls share the one /api-default base", () => {
@@ -596,13 +646,31 @@ test("the walk desk formats crossing ETAs as clock time and labels point contain
       {},
       { x: 840, y: 0 },
     ),
-    "open ground · 830 m · west · in The Trueing House Parcel",
-    "ground stays relative while its record-derived containment label remains",
+    "The Trueing House Parcel · 830 m · west",
+    "a destination inside a mark is NAMED by it — the town has a name for that ground",
   );
   assert.equal(
     walkDestinationLabel({ x: 170, y: 0 }, marks, {}, { x: 1000, y: 0 }),
     "open ground · 830 m · west",
+    "and open ground is what is left when nothing but the world contains you",
   );
+
+  // the two halves of the ruling, on one point: naming a mark aims at its CENTRE,
+  // while a point inside it stays the point and only borrows the name
+  const inTheParcel = pointWalkDestination({ x: 10, y: 0 }, marks);
+  assert.deepEqual(
+    { x: inTheParcel.x, y: inTheParcel.y }, { x: 10, y: 0 },
+    "clicking inside a mark does not march you to the middle of it");
+  assert.match(
+    walkDestinationLabel(inTheParcel, marks, {}, { x: 840, y: 0 }),
+    /^The Trueing House Parcel/, "but it does read as that mark");
+
+  // the world root contains everything, so it names nothing
+  const roomy = [{ id: WORLD_ROOT_ID, kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 } }];
+  assert.equal(pointWalkDestination({ x: 900, y: 900 }, roomy).inside, null,
+    "let-there-be-light frames everything, so being inside it is being outdoors");
+  assert.equal(walkDestinationLabel(pointWalkDestination({ x: 900, y: 900 }, roomy), roomy, {}, { x: 0, y: 0 }),
+    "open ground · 1,273 m · southeast");
 });
 
 test("painting mark hit-testing uses the nearest glyph inside an 18 px snap radius", () => {
@@ -718,4 +786,342 @@ test("a long identity is elided rather than allowed to overrun its box", () => {
   const text = box.match(/font-size="[-0-9.]+">([^<]*)</)[1];
   assert.ok(text.length <= 58, "the label is cut to the box it is drawn in");
   assert.ok(text.endsWith("…"), "and says that it was cut");
+});
+
+// ── painting-only: the bubbles ───────────────────────────────────────────────
+
+test("a bubble takes the side of its anchor that has room, and says when neither does", () => {
+  const box = { w: 400, h: 300 }, size = { w: 120, h: 60 };
+  const right = placeBubble({ anchor: { x: 40, y: 150 }, size, box });
+  assert.equal(right.side, "right");
+  assert.ok(right.x > 40, "it sits to the right of what it describes");
+
+  // hard against the right edge there is no room on that side, so it flips
+  const left = placeBubble({ anchor: { x: 380, y: 150 }, size, box });
+  assert.equal(left.side, "left");
+  assert.ok(left.x + size.w < 380, "and clears the anchor going the other way");
+
+  // a bubble wider than either shoulder covers its own anchor, and admits it
+  const over = placeBubble({ anchor: { x: 200, y: 150 }, size: { w: 380, h: 60 }, box });
+  assert.equal(over.side, "over");
+  assert.ok(over.x >= 8 && over.x + 380 <= box.w - 8, "clamped inside the painting even so");
+});
+
+test("a bubble is clamped into the painting rather than allowed to hang off it", () => {
+  const box = { w: 400, h: 300 }, size = { w: 120, h: 60 };
+  const high = placeBubble({ anchor: { x: 200, y: 0 }, size, box });
+  assert.ok(high.y >= 8, "an anchor at the top edge does not push the box off the top");
+  const low = placeBubble({ anchor: { x: 200, y: 300 }, size, box });
+  assert.ok(low.y + size.h <= box.h - 8, "nor off the bottom");
+
+  // a bubble taller than the painting cannot be clamped into it; it pins to the
+  // top rather than resolving to a negative offset (max wins over min)
+  const tall = placeBubble({ anchor: { x: 200, y: 150 }, size: { w: 120, h: 900 }, box });
+  assert.equal(tall.y, 8, "an over-tall bubble starts at the top edge, never above it");
+
+  for (const bad of [
+    { anchor: { x: NaN, y: 1 }, size, box },
+    { anchor: { x: 1, y: 1 }, size: { w: "x", h: 1 }, box },
+    {},
+  ]) assert.equal(placeBubble(bad), null, "nonsense places nothing");
+});
+
+test("the painting shows what tells from here PLUS all of yours, and asks no filter", () => {
+  const ids = paintingMarkIds({ radialIds: ["a", "b"], mineIds: ["b", "far-away", "staked-elsewhere"] });
+  assert.ok(ids.has("a"), "what the eye tells is on the painting");
+  assert.ok(ids.has("far-away"), "and so is a mark of yours beyond this sight");
+  assert.ok(ids.has("staked-elsewhere"), "owned or staked, mine is mine");
+  assert.equal(ids.size, 4, "the union, with the overlap counted once");
+
+  // the chips are the Telling's question — nothing here reads them
+  assert.deepEqual(
+    [...paintingMarkIds({ radialIds: ["a"], mineIds: ["m"], markFilter: "new" })].sort(),
+    ["a", "m"], "a filter argument is ignored rather than obeyed");
+
+  assert.deepEqual([...paintingMarkIds({ radialIds: ["a"] })], ["a"], "a spectator has no marks of their own");
+  assert.equal(paintingMarkIds().size, 0);
+});
+test("how you read the world is remembered, and a storage that refuses is not fatal", () => {
+  const store = new Map();
+  const fake = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, v) };
+  assert.equal(readPaintingOnly(fake), false, "the panel is there until you fold it away");
+  writePaintingOnly(fake, true);
+  assert.equal(store.get(PAINTING_ONLY_KEY), "1");
+  assert.equal(readPaintingOnly(fake), true);
+  writePaintingOnly(fake, false);
+  assert.equal(readPaintingOnly(fake), false);
+
+  const hostile = { getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); } };
+  assert.equal(readPaintingOnly(hostile), false, "a private-mode browser reads as the default");
+  assert.doesNotThrow(() => writePaintingOnly(hostile, true), "and refusing to remember is not an error");
+  assert.equal(readPaintingOnly(null), false);
+});
+
+test("a bubble steps around the one it must not cover, and gives up gracefully", () => {
+  const box = { w: 600, h: 400 }, size = { w: 150, h: 80 };
+  // the pinned bubble is sitting on the right; the glance takes the free side
+  const avoid = { x: 220, y: 0, w: 300, h: 400 };
+  const stepped = placeBubble({ anchor: { x: 200, y: 200 }, size, box, avoid });
+  assert.equal(stepped.side, "left", "it goes the other way rather than under");
+  assert.ok(stepped.x + size.w <= avoid.x, "and clears the obstacle entirely");
+
+  // both sides blocked horizontally: step above or below instead
+  const band = { x: 0, y: 150, w: 600, h: 100 };
+  const dodged = placeBubble({ anchor: { x: 300, y: 200 }, size, box, avoid: band });
+  const clears = dodged.y + size.h <= band.y || dodged.y >= band.y + band.h;
+  assert.ok(clears, `stepped clear of the band vertically (y=${dodged.y})`);
+
+  // an obstacle covering the whole pane cannot be dodged; place it anyway rather
+  // than refuse to draw — a bubble somewhere beats no bubble at all
+  const everywhere = { x: 0, y: 0, w: 600, h: 400 };
+  const placed = placeBubble({ anchor: { x: 300, y: 200 }, size, box, avoid: everywhere });
+  assert.ok(placed && Number.isFinite(placed.x) && Number.isFinite(placed.y));
+  assert.ok(placed.y >= 8 && placed.y + size.h <= box.h - 8, "and still inside the pane");
+
+  // no obstacle behaves exactly as before
+  assert.deepEqual(
+    placeBubble({ anchor: { x: 100, y: 200 }, size, box }),
+    placeBubble({ anchor: { x: 100, y: 200 }, size, box, avoid: null }));
+});
+
+test("a bubble dodges the whole crowd, not just the first one it lands on", () => {
+  const box = { w: 700, h: 500 }, size = { w: 160, h: 90 };
+  // two obstacles stacked down the right-hand side: dodging one must not park it
+  // on the other, which is what a single-rect `avoid` did with three bubbles up
+  const crowd = [{ x: 200, y: 40, w: 300, h: 120 }, { x: 200, y: 170, w: 300, h: 120 }];
+  const placed = placeBubble({ anchor: { x: 180, y: 150 }, size, box, avoid: crowd });
+  const hits = crowd.filter((r) =>
+    placed.x < r.x + r.w && placed.x + size.w > r.x && placed.y < r.y + r.h && placed.y + size.h > r.y);
+  assert.deepEqual(hits, [], `clear of both (got ${JSON.stringify(placed)})`);
+
+  // a single rect still works, and means the same as a one-item list
+  const one = { x: 200, y: 40, w: 300, h: 120 };
+  assert.deepEqual(
+    placeBubble({ anchor: { x: 180, y: 90 }, size, box, avoid: one }),
+    placeBubble({ anchor: { x: 180, y: 90 }, size, box, avoid: [one] }));
+
+  // junk in the list is ignored rather than poisoning the arithmetic with NaN
+  const withJunk = placeBubble({ anchor: { x: 180, y: 150 }, size, box, avoid: [null, { x: "x" }, ...crowd] });
+  assert.ok(Number.isFinite(withJunk.x) && Number.isFinite(withJunk.y));
+  assert.deepEqual(withJunk, placed);
+});
+
+test("the bubble remembers how you got there, so every child can go back", () => {
+  // a fresh selection off the painting starts a new trail, whatever came before
+  assert.deepEqual(bubbleTrailStep(["a", "b", "c"], "select", "z"), ["z"]);
+  assert.deepEqual(bubbleTrailStep([], "select", "a"), ["a"]);
+  assert.deepEqual(bubbleTrailStep(["a"], "select", null), [], "selecting nothing is closing");
+
+  // following pushes; back pops to exactly where you came from
+  const down = bubbleTrailStep(bubbleTrailStep(["a"], "follow", "b"), "follow", "c");
+  assert.deepEqual(down, ["a", "b", "c"]);
+  assert.deepEqual(bubbleTrailStep(down, "back"), ["a", "b"]);
+  assert.deepEqual(bubbleTrailStep(bubbleTrailStep(down, "back"), "back"), ["a"]);
+
+  // the first mark has nowhere to go back to, and back is a no-op rather than
+  // an empty trail — closing is the ✕'s job, not the back button's
+  assert.deepEqual(bubbleTrailStep(["a"], "back"), ["a"]);
+  assert.deepEqual(bubbleTrailStep([], "back"), []);
+
+  // a cycle is kept as walked, not collapsed: stepping back retraces your route
+  const cycle = bubbleTrailStep(bubbleTrailStep(["a"], "follow", "b"), "follow", "a");
+  assert.deepEqual(cycle, ["a", "b", "a"]);
+  assert.deepEqual(bubbleTrailStep(cycle, "back"), ["a", "b"],
+    "back from a revisit lands on b, which is where you actually came from");
+
+  // junk in, sane out
+  assert.deepEqual(bubbleTrailStep(null, "follow", "a"), ["a"]);
+  assert.deepEqual(bubbleTrailStep(["a", null, "b"], "back"), ["a"]);
+  assert.deepEqual(bubbleTrailStep(["a"], "follow", null), ["a"], "following nowhere goes nowhere");
+  assert.deepEqual(bubbleTrailStep(["a"], "sideways"), ["a"]);
+});
+
+test("a mark you cannot set out for is still not a destination", () => {
+  const district = { id: "limen/the-district", kind: "sited", tier: "market", at: { x: 0, y: 0 }, extent: { w: 1725, h: 2325 } };
+  const crossing = { id: "the-town/the-crossing", kind: "sited", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 380, h: 18 } };
+  const house    = { id: "limen/the-house", kind: "sited", tier: "market", at: { x: 40, y: 40 }, extent: { w: 60, h: 60 } };
+  const parcel   = { id: "limen/a-parcel", kind: "parcel", tier: "market", at: { x: 400, y: 400 }, extent: { w: 25, h: 25 } };
+
+  assert.equal(isWalkableTarget(house), true);
+  assert.equal(isWalkableTarget(parcel), true, "a parcel is ground you can stand on");
+  assert.equal(isWalkableTarget(district), false, "2,325 m across is a region, not a destination");
+  assert.equal(isWalkableTarget(crossing), false, "the town's own furniture is not a destination");
+  assert.equal(isWalkableTarget({ ...house, at: null }), false, "an unplaced mark is nowhere to go");
+  assert.equal(isWalkableTarget({ ...house, kind: "predicated" }), false, "a property of a thing has no ground");
+  assert.equal(isWalkableTarget({ ...house, extent: { w: WALK_TARGET_MAX_EXTENT_M, h: 1 } }), false, "the cap is exclusive");
+  assert.equal(isWalkableTarget(), false);
+});
+
+test("only a pip names a mark; containment only names the ground", () => {
+  // The click rule, entire. Containment does not choose the target — it chooses
+  // the WORDS — so a region can neither swallow a click nor march you to its
+  // centre, and this path needs no walkable/unwalkable rule of its own.
+  const district = { id: "limen/the-district", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 1725, h: 2325 } };
+  const house    = { id: "limen/the-house", kind: "sited", at: { x: 40, y: 40 }, extent: { w: 60, h: 60 } };
+  const told = [district, house];
+
+  assert.equal(snappedMarkAtPoint({ x: 100, y: 100 }, []), null,
+    "deep inside a region with no pip nearby, a click names no mark");
+  assert.equal(snappedMarkAtPoint({ x: 100, y: 100 }, [{ id: "limen/the-district", x: 104, y: 100 }]),
+    "limen/the-district", "its own pip still names it, which is how a region is selected");
+
+  // and the point keeps its coordinates while borrowing the smallest name over it
+  const deep = pointWalkDestination({ x: 700, y: 700 }, told);
+  assert.deepEqual({ x: deep.x, y: deep.y }, { x: 700, y: 700 }, "the spot you clicked is the spot");
+  assert.equal(deep.inside, "limen/the-district");
+  assert.match(walkDestinationLabel(deep, told, {}, { x: 0, y: 0 }), /^The District/);
+
+  const inner = pointWalkDestination({ x: 45, y: 45 }, told);
+  assert.equal(inner.inside, "limen/the-house", "the SMALLEST container wins, not the outermost");
+  assert.notDeepEqual(
+    [deep.x, deep.y, deep.inside], [inner.x, inner.y, inner.inside],
+    "two spots in one region are two destinations, not one centre twice");
+});
+
+test("a place that already has a word in front of it does not bring its own", () => {
+  const marks = [
+    { id: "wright/the-trueing-house", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 8, h: 8 } },
+  ];
+  assert.equal(standingLocationLabel({ x: 0, y: 0 }, marks), "standing in The Trueing House");
+  assert.equal(standingLocationLabel({ x: 0, y: 0 }, marks, {}, { prefix: false }), "The Trueing House",
+    "the walk desk's From row supplies the verb, so the label must not repeat it");
+  assert.equal(standingLocationLabel({ x: 900, y: 0 }, marks), "on open ground");
+  assert.equal(standingLocationLabel({ x: 900, y: 0 }, marks, {}, { prefix: false }), "open ground");
+});
+
+test("the frame answers no relations, and never walks the world to say so", async () => {
+  // Everything is inside let-there-be-light, so "within it" is the whole register
+  // rather than an answer — and answering it is what made the click slow. The
+  // fixture is built so `investigate` WOULD have plenty to say: three districts
+  // sitting squarely inside the root, one of them nesting a house.
+  const root = { id: WORLD_ROOT_ID, kind: "sited", household: "the-town",
+    at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 }, body: "The light comes from the northeast." };
+  const districts = [
+    { id: "limen/the-threshold-district", kind: "sited", at: { x: 1488, y: 1808 }, extent: { w: 1725, h: 2325 } },
+    { id: "wright/the-trueing-terrace", kind: "sited", at: { x: 925, y: -2400 }, extent: { w: 1750, h: 1500 } },
+    { id: "rei/the-lanternseed-gardens", kind: "sited", at: { x: 1325, y: -1000 }, extent: { w: 1750, h: 1450 } },
+  ];
+  const house = { id: "limen/the-wide-spaced-lanterns", kind: "sited", at: { x: 1500, y: 1800 }, extent: { w: 60, h: 60 } };
+  const axis = { id: "the-town/the-day-axis", kind: "predicated", parent: WORLD_ROOT_ID, slot: "light", value: "northeast", weight: 4 };
+  const marks = [root, ...districts, house, axis];
+
+  // the control: the general verb does answer, so an empty answer below is the
+  // special case doing its work and not a fixture that had nothing in it
+  const { investigate } = await import("./world-verbs.mjs");
+  assert.ok(investigate(WORLD_ROOT_ID, { marks }).children.length >= 3,
+    "investigate would name the districts — that is the answer we are declining");
+
+  const d = worldFrameReading(root, marks);
+  assert.deepEqual(d.children, [], "the frame names nothing as within it");
+  assert.deepEqual(d.parents, [], "and sits inside nothing");
+  assert.deepEqual(d.alongside, [], "and stands beside nothing");
+  assert.deepEqual(d.more, { predicates: 0, children: 0 },
+    "no held-back count either — there is no cut here, so there is nothing withheld");
+
+  // its own terms are its own: the light axis is a property of the frame, not a
+  // mark living inside it, so it keeps its seat
+  assert.deepEqual(d.predicates.map((p) => p.id), ["the-town/the-day-axis"]);
+  assert.equal(d.body, root.body, "the establishing line still reads");
+  assert.equal(d.id, WORLD_ROOT_ID);
+
+  assert.deepEqual(worldFrameReading(null), { error: "no mark" });
+});
+
+test("no stray backtick hides inside the viewer's STYLE or MARKUP templates", async () => {
+  // Both are one long template literal, so a backtick written inside a comment —
+  // quoting a class name, say — ends the template early and the CSS after it is
+  // parsed as JavaScript. What you get is a ReferenceError naming some fragment
+  // of a selector ("minimap is not defined") from a line nowhere near the cause,
+  // which is a genuinely bad half-hour. Three of them in one sitting on
+  // 2026-08-04 bought this test.
+  //
+  // Importing the module already fails when this happens; the point here is to
+  // fail with the line number of the backtick instead of the line number of the
+  // wreckage.
+  const { readFile } = await import("node:fs/promises");
+  const here = new URL("../spectator/viewer.mjs", import.meta.url);
+  const lines = (await readFile(here, "utf8")).split(/\r?\n/);
+
+  const open = (needle) => lines.findIndex((line) => line.startsWith(needle));
+  const spans = [
+    { name: "STYLE", from: open("const STYLE = ") },
+    { name: "MARKUP", from: open("const MARKUP = ") },
+  ];
+  assert.ok(spans.every((s) => s.from >= 0), "both templates must still be found by their opening line");
+
+  for (const span of spans) {
+    // the template ends at the first line that is exactly the closing backtick
+    const end = lines.findIndex((line, i) => i > span.from && line.trim() === "`;");
+    assert.ok(end > span.from, `${span.name} has no closing backtick`);
+    for (let i = span.from + 1; i < end; i++) {
+      // interpolation inside MARKUP is legitimate and uses backticks for its own
+      // nested templates; a backtick is only a problem inside a comment or prose
+      const line = lines[i];
+      if (!line.includes("`") || line.includes("${")) continue;
+      assert.fail(`${span.name}: stray backtick at ${span.name === "STYLE" ? "" : ""}line ${i + 1} — ${line.trim()}`);
+    }
+  }
+});
+
+test("the tour walks forward, back, and off the end", () => {
+  const n = TOUR_SLIDES.length;
+  assert.equal(tourStep(0, "next", n), 1);
+  assert.equal(tourStep(1, "back", n), 0);
+  assert.equal(tourStep(0, "back", n), 0, "back from the first slide stays put");
+  assert.equal(tourStep(n - 1, "next", n), -1, "walking off the last slide is finishing");
+  assert.equal(tourStep(3, "skip", n), -1);
+  assert.equal(tourStep(0, 5, n), 5, "a dot jumps");
+  assert.equal(tourStep(2, 99, n), 2, "a dot out of range changes nothing");
+  assert.equal(tourStep(2, -1, n), 2);
+  // a caller that lost count must not fall off the end of the deck
+  assert.equal(tourStep(999, "next", n), -1);
+  assert.equal(tourStep(undefined, "next", n), 1);
+  assert.equal(tourStep(0, "next", 0), -1, "an empty deck is already over");
+
+  assert.equal(tourProgress(0, 8), "1 / 8");
+  assert.equal(tourProgress(7, 8), "8 / 8");
+  assert.equal(tourProgress(99, 8), "8 / 8");
+});
+
+test("every slide is complete, and its anchor is a class the viewer really writes", async () => {
+  assert.ok(TOUR_SLIDES.length >= 6 && TOUR_SLIDES.length <= 10,
+    "a tour nobody finishes teaches nothing; keep the deck short");
+  const ids = new Set();
+  const anchors = [];
+  for (const slide of TOUR_SLIDES) {
+    assert.match(slide.id, /^[a-z-]+$/, `slide id ${slide.id}`);
+    assert.equal(ids.has(slide.id), false, `duplicate slide id ${slide.id}`);
+    ids.add(slide.id);
+    assert.ok(slide.title?.length > 8, `${slide.id} needs a title`);
+    assert.ok(slide.body?.length > 80, `${slide.id} needs a body worth a slide`);
+    if (slide.anchor === undefined) continue;
+    assert.match(slide.anchor, /^\.[a-z-]+$/, `${slide.id} anchor must be one class selector`);
+    anchors.push(slide.anchor.slice(1));
+  }
+  assert.ok(anchors.length >= 3, "a tour that points at nothing may as well be a page of prose");
+
+  // The copy is prose and stays true on its own; an anchor is a PROMISE ABOUT
+  // MARKUP, and it is the one part of a slide a refactor can quietly break. A
+  // renamed class does not throw — the slide just centres, and the tour stops
+  // pointing at anything, which is the failure nobody would ever notice.
+  const { readFile } = await import("node:fs/promises");
+  const source = await readFile(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
+  for (const cls of anchors)
+    assert.ok(source.includes(`class="${cls}`) || source.includes(`ctl ${cls}`) || source.includes(`"${cls} `)
+      || source.includes(`${cls}"`),
+      `no element in the viewer carries the class ${cls}, which a tour slide points at`);
+});
+
+test("the tour is remembered as seen, so the ? stops asking", () => {
+  const store = new Map();
+  const storage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)) };
+  assert.equal(TOUR_SEEN_KEY, "pm_world_tour_seen");
+  assert.equal(readTourSeen(storage), false);
+  writeTourSeen(storage);
+  assert.equal(readTourSeen(storage), true);
+  // private mode throws on both, and a viewer that cannot remember must still run
+  const sealed = { getItem() { throw new Error("denied"); }, setItem() { throw new Error("denied"); } };
+  assert.equal(readTourSeen(sealed), false);
+  assert.doesNotThrow(() => writeTourSeen(sealed));
+  assert.equal(readTourSeen(undefined), false);
 });

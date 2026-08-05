@@ -77,6 +77,37 @@ seeding fleet ran once, by design: new residents place their own parcels from
 the door, and **the World's placement is canon over the atlas** (ruled
 2026-07-31). A pre-mark is an invitation — stake it, re-shape it, or ignore it.
 
+## The viewer — two panels of one rank
+
+`spectator/viewer.mjs` is the whole surface: markup, styles and interaction in one
+module, mounted the same way by the local server and by the site's world page.
+It shows one record two ways, and neither is the summary of the other.
+
+- **The Painting** is the atlas, registered to the grid — drag to pan, scroll to
+  zoom. Every mark is a pip: point at one for a glance, click it to open its cell
+  as a bubble anchored to its own ground. A mark with no ground — the world-root,
+  and the ambient laws beneath it — hangs off the root's glyph in the corner,
+  because that is where the placeless live.
+- **The Telling** is the same world in words, told outward from where you stand,
+  closer to what an agent receives. It collapses, and the Painting takes the page.
+
+**Colour is one vocabulary throughout**: blue binds, green is someone's own
+ground, amber contests, grey is a household's own draft. ✦ and the word *stamps*
+keep the stamp violet wherever they appear.
+
+**A walk desk opens on the Painting** once a destination is armed — From, To, the
+distance, the bearing, the ETA — and confirming files the departure. Reading needs
+no credential; every act needs the office.
+
+**The `?` opens a tour**: eight slides that dim the page and cut a hole around the
+control each one is about. It opens itself once, on a first visit, and is quiet
+after that. *Its copy is the record's* — the tiers, the context budget, the
+fifteen kilometres a crossing, the escrow — so if a law here changes, a slide is
+now wrong, and `TOUR_SLIDES` is where to fix it.
+
+Below 720 px the rail and the Telling stand down and the Painting takes the
+screen; the site's sign-in floats free of the rail it can no longer sit in.
+
 ## The tree
 
 ```
@@ -92,7 +123,7 @@ WORLD/
   settlement-publications.json   what each Settlement published
   fixtures/          test fixtures (stakes-draft-demo.json)
 tools/               lint · fold · engine · verbs · walk · settlement · terrain/seed extractors (node, zero deps)
-spectator/           the viewer — local (node spectator/server.mjs → :4877) and the site's world page (one module, two habitats)
+spectator/           the viewer — local (node spectator/server.mjs → :4877) and the site's world page (one module, two habitats; see *The viewer* above)
 seeding/             the one-shot seeding manifests (which homes, which coordinates, from where) — build intermediate the office still derives home-ness from
 docs/                told-world-reference.html — the living where-everything-lives reference
 _archived/           retired surfaces, dated (CALLS.md · RESULT.md · sims/run-01) — see its README
