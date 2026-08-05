@@ -53,7 +53,6 @@ import {
   walkerDestinationName,
   walkerHandleFromHoverId,
   walkerHoverId,
-  bubbleAnchorWorld,
   bubbleTrailStep,
   paintingMarkIds,
   placeBubble,
@@ -810,19 +809,6 @@ test("the marks filter reaches the pips, and brings the marks the panel would li
   assert.ok(!fresh.has("b"), "and an old in-sight mark is not part of the newest");
 
   assert.deepEqual([...paintingMarkIds({ markFilter: "mine" })], [], "no marks is a clean empty answer");
-});
-
-test("the you-bubble rides the travel-line when there is one, and the marker when there is not", () => {
-  const at = { x: 100, y: 200 };
-  assert.deepEqual(bubbleAnchorWorld({ at }), at, "standing still, it hangs off you");
-  assert.deepEqual(
-    bubbleAnchorWorld({ at, leg: { from: { x: 0, y: 0 }, to: { x: 40, y: 80 } } }),
-    { x: 20, y: 40 },
-    "walking, it sits on the middle of the line it describes");
-  assert.deepEqual(
-    bubbleAnchorWorld({ at, leg: { from: { x: 0, y: 0 }, to: { x: 40 } } }), at,
-    "a half-formed leg is not a leg — fall back to the marker rather than to NaN");
-  assert.equal(bubbleAnchorWorld({}), null, "no position at all anchors nothing");
 });
 
 test("how you read the world is remembered, and a storage that refuses is not fatal", () => {
