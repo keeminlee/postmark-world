@@ -705,7 +705,11 @@ export const TOUR_SLIDES = [
     body: "Drag to pan, scroll to zoom — the view is the camera, and it goes where you put it. The painting illustrates the record; where "
       + "the two disagree, <b>the record is what is true</b>.<br><br>"
       + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand. <b>▦</b> draws the survey grid — a "
-      + "kilometre to the line. <b>⬚</b> stops drawing marks as dots and draws each one's true extent.",
+      + "kilometre to the line. <b>⬚</b> stops drawing marks as dots and draws each one's true extent.<br><br>"
+      // The ? is inside the cluster this slide is pointing at, and it was the one
+      // button in it the slide did not name — which left the tour ending without
+      // ever saying how to get it back.
+      + "And <b>?</b> — the one you are about to be left alone with — opens this tour again, whenever you want it.",
   },
 ];
 
