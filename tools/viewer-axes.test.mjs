@@ -51,6 +51,12 @@ import {
   viewerCanAct,
   walkDestinationLabel,
   worldFrameReading,
+  TOUR_SLIDES,
+  tourStep,
+  tourProgress,
+  readTourSeen,
+  writeTourSeen,
+  TOUR_SEEN_KEY,
   WORLD_ROOT_ID,
   walkerDestinationName,
   walkerHandleFromHoverId,
@@ -1055,4 +1061,67 @@ test("no stray backtick hides inside the viewer's STYLE or MARKUP templates", as
       assert.fail(`${span.name}: stray backtick at ${span.name === "STYLE" ? "" : ""}line ${i + 1} — ${line.trim()}`);
     }
   }
+});
+
+test("the tour walks forward, back, and off the end", () => {
+  const n = TOUR_SLIDES.length;
+  assert.equal(tourStep(0, "next", n), 1);
+  assert.equal(tourStep(1, "back", n), 0);
+  assert.equal(tourStep(0, "back", n), 0, "back from the first slide stays put");
+  assert.equal(tourStep(n - 1, "next", n), -1, "walking off the last slide is finishing");
+  assert.equal(tourStep(3, "skip", n), -1);
+  assert.equal(tourStep(0, 5, n), 5, "a dot jumps");
+  assert.equal(tourStep(2, 99, n), 2, "a dot out of range changes nothing");
+  assert.equal(tourStep(2, -1, n), 2);
+  // a caller that lost count must not fall off the end of the deck
+  assert.equal(tourStep(999, "next", n), -1);
+  assert.equal(tourStep(undefined, "next", n), 1);
+  assert.equal(tourStep(0, "next", 0), -1, "an empty deck is already over");
+
+  assert.equal(tourProgress(0, 8), "1 / 8");
+  assert.equal(tourProgress(7, 8), "8 / 8");
+  assert.equal(tourProgress(99, 8), "8 / 8");
+});
+
+test("every slide is complete, and its anchor is a class the viewer really writes", async () => {
+  assert.ok(TOUR_SLIDES.length >= 6 && TOUR_SLIDES.length <= 10,
+    "a tour nobody finishes teaches nothing; keep the deck short");
+  const ids = new Set();
+  const anchors = [];
+  for (const slide of TOUR_SLIDES) {
+    assert.match(slide.id, /^[a-z-]+$/, `slide id ${slide.id}`);
+    assert.equal(ids.has(slide.id), false, `duplicate slide id ${slide.id}`);
+    ids.add(slide.id);
+    assert.ok(slide.title?.length > 8, `${slide.id} needs a title`);
+    assert.ok(slide.body?.length > 80, `${slide.id} needs a body worth a slide`);
+    if (slide.anchor === undefined) continue;
+    assert.match(slide.anchor, /^\.[a-z-]+$/, `${slide.id} anchor must be one class selector`);
+    anchors.push(slide.anchor.slice(1));
+  }
+  assert.ok(anchors.length >= 3, "a tour that points at nothing may as well be a page of prose");
+
+  // The copy is prose and stays true on its own; an anchor is a PROMISE ABOUT
+  // MARKUP, and it is the one part of a slide a refactor can quietly break. A
+  // renamed class does not throw — the slide just centres, and the tour stops
+  // pointing at anything, which is the failure nobody would ever notice.
+  const { readFile } = await import("node:fs/promises");
+  const source = await readFile(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
+  for (const cls of anchors)
+    assert.ok(source.includes(`class="${cls}`) || source.includes(`ctl ${cls}`) || source.includes(`"${cls} `)
+      || source.includes(`${cls}"`),
+      `no element in the viewer carries the class ${cls}, which a tour slide points at`);
+});
+
+test("the tour is remembered as seen, so the ? stops asking", () => {
+  const store = new Map();
+  const storage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)) };
+  assert.equal(TOUR_SEEN_KEY, "pm_world_tour_seen");
+  assert.equal(readTourSeen(storage), false);
+  writeTourSeen(storage);
+  assert.equal(readTourSeen(storage), true);
+  // private mode throws on both, and a viewer that cannot remember must still run
+  const sealed = { getItem() { throw new Error("denied"); }, setItem() { throw new Error("denied"); } };
+  assert.equal(readTourSeen(sealed), false);
+  assert.doesNotThrow(() => writeTourSeen(sealed));
+  assert.equal(readTourSeen(undefined), false);
 });

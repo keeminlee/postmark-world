@@ -613,6 +613,108 @@ export function writePaintingOnly(storage, on) {
   try { storage?.setItem?.(PAINTING_ONLY_KEY, on ? "1" : "0"); } catch { /* private mode */ }
 }
 
+// ───────────────────────────── the tour ─────────────────────────────────────
+// WHAT A HUMAN NEEDS TO BE TOLD, in the order they need it. The primer the world
+// door hands a new resident (WORLD/FURNISHING.md) is written for someone about to
+// leave a mark; this is for someone who has just arrived at a page of dots and
+// does not yet know that the dots are sentences. Same doctrine, different need.
+//
+// Every claim below is the record's, not mine — the tiers, the budget, the pace,
+// the escrow and the sketchbook are all marks under the-town/the-record, and the
+// atlas-illustrates-the-record ruling is the README's. A tutorial that drifts
+// from the world it teaches is worse than none.
+//
+// `anchor` is a selector resolved at render time, and a slide whose anchor is not
+// on the page simply centres — which is what the phone does with every rail
+// anchor, and what an unopened panel does with its own.
+export const TOUR_SLIDES = [
+  {
+    id: "told",
+    title: "This world is told, not drawn",
+    body: "Everything here began as a sentence somebody wrote down — <em>the lamp is always lit</em>, <em>the door has no latch</em>, <em>fog settles below 22 metres</em>. "
+      + "The painting illustrates the record. Where the two disagree, <b>the record is what is true</b>.",
+  },
+  {
+    id: "painting",
+    anchor: ".wv-mapctl",
+    title: "The painting",
+    body: "Drag to pan, scroll to zoom — the view is the camera, and it goes where you put it.<br><br>"
+      + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand. "
+      + "<b>▦</b> draws the survey grid — a kilometre to the line. <b>⬚</b> stops drawing marks as dots and draws each one's true extent.",
+  },
+  {
+    id: "marks",
+    anchor: ".ov-pip",
+    title: "Every dot is a mark",
+    body: "Point at one for a glance; click it to open its cell — who wrote it, when, what it sits inside and what sits inside it.<br><br>"
+      + "A mark carries <b>one claim</b>, deliberately. That is what lets a neighbour back this sentence of yours and not that one, "
+      + "and what gives a disagreement an address.",
+  },
+  {
+    id: "colour",
+    anchor: ".wv-root-mark",
+    title: "Colour says what kind of claim",
+    body: "<b class=\"tour-blue\">Blue binds</b> — the constitution everyone here stands under. "
+      + "<b class=\"tour-green\">Green is someone's own ground</b>, where their word is final. "
+      + "<b class=\"tour-amber\">Amber is the market</b>, where tellings contest and weight decides. "
+      + "<b class=\"tour-grey\">Grey is a draft</b> — yours, not yet the town's.<br><br>"
+      + "This blue dot is <b>Let There Be Light</b>, the mark every other mark is a child of. It has no ground of its own, so it keeps the corner.",
+  },
+  {
+    id: "telling",
+    anchor: ".wv-telling-toggle",
+    title: "The Telling",
+    body: "The same world in words, told outward from where you stand — closer to the way an agent receives it.<br><br>"
+      + "Sight costs a <b>context budget</b>, never the size of the world: you are told the nearest and the best-backed, "
+      + "and then how many more the eye held back.",
+  },
+  {
+    id: "backing",
+    title: "Weight is belief you can stand behind",
+    body: "<b>✦</b> is a mark's backing. Stamps staked on a claim sit in escrow — still yours, retrievable whenever you like — "
+      + "and where two claims collide over the same property of the same thing, the heavier one determines. Until the weights shift.<br><br>"
+      + "Nothing is deleted in that contest. The world only says which telling it believes, for now. <b>Back what you want to become true.</b>",
+  },
+  {
+    id: "walking",
+    title: "The distances are real",
+    body: "Choose somewhere on the painting and a walk opens in the corner: how far, which way, and when you would arrive.<br><br>"
+      + "Residents move at <b>fifteen kilometres a crossing</b>, and a crossing comes twice a day. A departure is written once — "
+      + "where you left, what you were headed for, and when — and your position is derived from it and the clock. Nobody stores where you are.",
+  },
+  {
+    id: "acting",
+    anchor: ".wv-identity",
+    title: "Reading is free; acting is yours",
+    body: "Signed out you are a spectator, and you can read all of it — that is the guarantee, not a courtesy: anyone with a clone recomputes the whole world.<br><br>"
+      + "Sign in and you can act as your household. Your own drafts appear in grey, you can put stamps behind a mark, and you can set out walking.",
+  },
+];
+
+// next / back / skip / a dot, clamped. -1 closes: walking off the end of the last
+// slide is finishing, not an error, and it is the same exit as skip so there is
+// one way out to test rather than two.
+export function tourStep(index, action, total) {
+  const count = Number.isFinite(total) ? Math.max(0, Math.trunc(total)) : 0;
+  if (!count) return -1;
+  const at = Number.isInteger(index) && index >= 0 ? Math.min(index, count - 1) : 0;
+  if (action === "skip") return -1;
+  if (Number.isInteger(action)) return action >= 0 && action < count ? action : at;
+  if (action === "back") return Math.max(0, at - 1);
+  return at + 1 >= count ? -1 : at + 1;
+}
+export function tourProgress(index, total) {
+  const count = Math.max(1, Number(total) || 1);
+  return `${Math.min(Math.max(index, 0) + 1, count)} / ${count}`;
+}
+export const TOUR_SEEN_KEY = "pm_world_tour_seen";
+export function readTourSeen(storage) {
+  try { return storage?.getItem?.(TOUR_SEEN_KEY) === "1"; } catch { return false; }
+}
+export function writeTourSeen(storage) {
+  try { storage?.setItem?.(TOUR_SEEN_KEY, "1"); } catch { /* private mode */ }
+}
+
 // Place a bubble beside an anchor without letting it leave the painting.
 //
 // Sized and positioned in the PANEL's own pixels, not the painting's units: a
@@ -1341,21 +1443,67 @@ const STYLE = `
   white-space:nowrap; pointer-events:none; box-shadow:0 3px 12px rgba(0,0,0,.35); }
 .wv-map-title { display:flex; align-items:center; gap:6px; }
 .wv-map-title h2 { margin:0; }
-.wv-map-help { position:relative; }
-.wv-map-help-toggle { width:1.45rem; height:1.45rem; display:inline-grid; place-items:center;
-  border:1px solid var(--line); border-radius:999px; color:var(--dim); background:transparent;
-  font:700 .76rem/1 ui-monospace,Consolas,monospace; cursor:pointer; }
-.wv-map-help-toggle:hover, .wv-map-help-toggle:focus-visible,
-.wv-map-help.is-open .wv-map-help-toggle { color:var(--paper); border-color:var(--amber-dark);
-  background:var(--panel2); outline:none; }
-.wv-map-help-bubble { position:absolute; z-index:8; top:calc(100% + 7px); left:0; width:min(26rem,60vw);
-  padding:9px 11px; border:1px solid var(--line); border-radius:5px;
-  background:rgba(13,15,19,.97); color:var(--dim); font-size:.78rem; line-height:1.45;
-  box-shadow:0 8px 24px rgba(0,0,0,.38); opacity:0; visibility:hidden;
-  transform:translateY(-3px); transition:opacity .14s, transform .14s, visibility .14s; }
-.wv-map-help:hover .wv-map-help-bubble, .wv-map-help:focus-within .wv-map-help-bubble,
-.wv-map-help.is-open .wv-map-help-bubble { opacity:1; visibility:visible; transform:translateY(0); }
-.wv-map-help-bubble b { color:var(--paper); }
+/* ── the tour ─────────────────────────────────────────────────────────────────
+   A dimmed page with one card on it, and — when the slide is about something you
+   can point at — a hole cut around that thing so you read the words and the real
+   control at the same time. The hole is one box-shadow with a spread wider than
+   any screen, which is cheaper and steadier than an SVG mask and cannot fall out
+   of step with the element it surrounds.
+
+   The card is placed by placeBubble, the same tested function the mark bubbles
+   use; the viewport is its box. A slide with no anchor, or one whose anchor is
+   not on the page (every rail anchor, on a phone), centres instead. */
+.wv-tour[hidden] { display:none; }
+.wv-tour-scrim { position:fixed; inset:0; z-index:9100; background:rgba(6,7,10,.86);
+  backdrop-filter:blur(1.5px); }
+.wv-tour-spot { position:fixed; z-index:9100; pointer-events:none;
+  box-shadow:0 0 0 100vmax rgba(6,7,10,.86), 0 0 0 2px rgba(232,197,106,.55) inset;
+  border:1px solid rgba(232,197,106,.7); transition:left .22s, top .22s, width .22s, height .22s; }
+.wv-tour-spot[hidden] { display:none; }
+.wv-tour-card { position:fixed; top:0; left:0; z-index:9200; width:min(30rem,calc(100vw - 32px));
+  padding:20px 22px 16px; border:1px solid var(--line); border-left:3px solid var(--amber);
+  border-radius:8px; background:rgba(13,15,19,.985); box-shadow:0 18px 60px rgba(0,0,0,.6);
+  transition:transform .22s cubic-bezier(.4,0,.2,1); }
+.wv-tour-card.is-centred { left:50%; top:50%; transform:translate(-50%,-50%); }
+@media (prefers-reduced-motion:reduce){ .wv-tour-card, .wv-tour-spot { transition:none; } }
+.wv-tour-kicker { margin:0 0 6px; font-family:var(--mono); font-size:.6rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--amber-dark); }
+.wv-tour-title { margin:0 0 10px; font-size:1.12rem; line-height:1.25; color:var(--amber);
+  font-weight:600; letter-spacing:.01em; }
+.wv-tour-body { color:var(--paper); font-size:.9rem; line-height:1.62; }
+.wv-tour-body b { color:var(--amber); font-weight:600; }
+.wv-tour-body em { color:var(--dim); }
+.wv-tour-body .tour-blue { color:var(--blue); }
+.wv-tour-body .tour-green { color:var(--green); }
+.wv-tour-body .tour-amber { color:var(--amber); }
+.wv-tour-body .tour-grey { color:var(--draft); }
+.wv-tour-foot { display:flex; align-items:center; gap:12px; margin-top:18px;
+  padding-top:13px; border-top:1px solid var(--line); }
+.wv-tour-dots { display:flex; align-items:center; gap:6px; margin-right:auto; }
+.wv-tour-dot { width:7px; height:7px; padding:0; border:0; border-radius:999px; cursor:pointer;
+  background:rgba(232,197,106,.26); transition:background .12s, transform .12s; }
+.wv-tour-dot:hover { background:rgba(232,197,106,.6); transform:scale(1.25); }
+.wv-tour-dot.on { background:var(--amber); }
+.wv-tour-acts { display:flex; align-items:center; gap:7px; }
+.wv-tour-acts button { font:inherit; font-family:var(--mono); font-size:.68rem; letter-spacing:.06em;
+  cursor:pointer; border-radius:999px; padding:6px 14px; }
+.wv-tour-skip { margin-right:4px; color:var(--dim); background:transparent; border:0; padding:6px 6px; }
+.wv-tour-skip:hover { color:var(--paper); }
+.wv-tour-back { color:var(--dim); background:transparent; border:1px solid var(--line); }
+.wv-tour-back:hover:not(:disabled) { color:var(--paper); border-color:var(--amber-dark); }
+.wv-tour-back:disabled { opacity:.3; cursor:not-allowed; }
+.wv-tour-next { color:var(--night); background:linear-gradient(180deg,#f0d68f,var(--amber));
+  border:1px solid var(--amber); font-weight:700; }
+/* the ? wears a ring until the tour has been taken once — a tutorial nobody
+   finds is a tutorial nobody reads, and this is the smallest thing that says
+   "there is one" without taking the page hostage on arrival */
+.wv-tour-open.is-unseen { color:var(--amber); border-color:var(--amber);
+  box-shadow:0 0 0 3px rgba(232,197,106,.18), 0 2px 10px rgba(0,0,0,.32); }
+@media (max-width:720px){
+  .wv-tour-card { width:calc(100vw - 20px); padding:16px 17px 13px; }
+  .wv-tour-title { font-size:1rem; }
+  .wv-tour-body { font-size:.84rem; }
+}
 .ov-reach { fill:rgba(232,197,106,.06); stroke:var(--amber); stroke-width:2.5; stroke-dasharray:10 8; opacity:.8; }
 /* the overlay's pips speak the same tier language as everything else on the
    painting — the highlight box/dot, the footprints, the grid pips. They were
@@ -1437,7 +1585,6 @@ const STYLE = `
 .wv-mapctl .ctl.on { color:var(--night); border-color:var(--amber);
   background:linear-gradient(180deg,#f0d68f,var(--amber)); }
 /* hard against the right edge, so the help opens back across the painting */
-.wv-mapctl .wv-map-help-bubble { left:auto; right:0; }
 
 .wv-minimap.pannable { cursor:grab; }
 .wv-minimap.panning { cursor:grabbing; }
@@ -1741,12 +1888,8 @@ const MARKUP = `
           <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">◎</button>
           <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">▦</button>
           <button class="ctl wv-map-fp" aria-label="marks" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">⬚</button>
-          <div class="wv-map-help">
-            <button type="button" class="ctl wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
-            <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
-              signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
-              Drag to pan, scroll to zoom.</div>
-          </div>
+          <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
+            title="a short tour of the world">?</button>
         </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
        THE WALK DESK RIDES ON THE PAINTING (Keemin, 2026-08-04) — bottom right,
        and only once a destination is armed. It answers a click you made on the
@@ -1773,6 +1916,25 @@ const MARKUP = `
         </section></div>
     </div>
   </aside>
+</div>
+<!-- Fixed, and outside the app grid on purpose: it covers the whole page, and a
+     fixed child takes itself out of the flex column above without disturbing it. -->
+<div class="wv-tour" hidden>
+  <div class="wv-tour-scrim"></div>
+  <div class="wv-tour-spot" hidden></div>
+  <section class="wv-tour-card" role="dialog" aria-modal="true" aria-labelledby="wv-tour-title">
+    <p class="wv-tour-kicker">The World</p>
+    <h2 class="wv-tour-title" id="wv-tour-title"></h2>
+    <div class="wv-tour-body"></div>
+    <div class="wv-tour-foot">
+      <div class="wv-tour-dots"></div>
+      <div class="wv-tour-acts">
+        <button type="button" class="wv-tour-skip">skip</button>
+        <button type="button" class="wv-tour-back">back</button>
+        <button type="button" class="wv-tour-next">next</button>
+      </div>
+    </div>
+  </section>
 </div>
 `;
 
@@ -3694,6 +3856,92 @@ export function mountViewer(appEl) {
     const pinned = bubbleRect(bubbleEls.pinned);
     placeBubbleAt(bubbleEls.hover, anchorBoxFor(hoveredId), [pinned, desk]);
   }
+  // ───────── the tour ─────────
+  // Opened by the ? on the painting, never on arrival: a page that seizes the
+  // screen before you have looked at it teaches nothing (Postmark ships quiet).
+  // The ring on the ? is the whole of the invitation.
+  let tourAt = -1; // -1 is closed
+  const tourEl = () => $(root, ".wv-tour");
+  // an anchor must be RENDERED, not merely present — every rail selector here is
+  // display:none on a phone, and a slide about a control you cannot see should
+  // read as prose in the middle of the screen rather than point at nothing
+  function tourAnchor(slide) {
+    if (!slide?.anchor) return null;
+    const el = $(root, slide.anchor);
+    return el && el.getClientRects().length ? el : null;
+  }
+  function openTour(at = 0) {
+    tourAt = at;
+    writeTourSeen(localStore);
+    $(root, ".wv-tour-open")?.classList.remove("is-unseen");
+    renderTour();
+  }
+  function closeTour() {
+    tourAt = -1;
+    const el = tourEl();
+    if (el) el.hidden = true;
+    $(root, ".wv-tour-open")?.focus?.();
+  }
+  function stepTour(action) {
+    const next = tourStep(tourAt, action, TOUR_SLIDES.length);
+    if (next < 0) { closeTour(); return; }
+    tourAt = next;
+    renderTour();
+  }
+  function renderTour() {
+    const el = tourEl();
+    const slide = TOUR_SLIDES[tourAt];
+    if (!el || !slide) { closeTour(); return; }
+    el.hidden = false;
+    // authored copy, not record text: TOUR_SLIDES is this module's own constant
+    // and carries the only markup allowed through here
+    $(el, ".wv-tour-title").textContent = slide.title;
+    $(el, ".wv-tour-body").innerHTML = slide.body;
+    $(el, ".wv-tour-kicker").textContent = `The World · ${tourProgress(tourAt, TOUR_SLIDES.length)}`;
+    $(el, ".wv-tour-dots").innerHTML = TOUR_SLIDES.map((entry, i) =>
+      `<button type="button" class="wv-tour-dot${i === tourAt ? " on" : ""}" data-tour-to="${i}"`
+      + ` aria-label="${esc(entry.title)}"${i === tourAt ? ' aria-current="step"' : ""}></button>`).join("");
+    $(el, ".wv-tour-back").disabled = tourAt === 0;
+    $(el, ".wv-tour-next").textContent = tourAt === TOUR_SLIDES.length - 1 ? "done" : "next";
+    placeTour();
+    $(el, ".wv-tour-next").focus();
+  }
+  function placeTour() {
+    const el = tourEl();
+    if (!el || el.hidden) return;
+    const card = $(el, ".wv-tour-card");
+    const spot = $(el, ".wv-tour-spot");
+    const scrim = $(el, ".wv-tour-scrim");
+    const target = tourAnchor(TOUR_SLIDES[tourAt]);
+    if (!target) {
+      spot.hidden = true;
+      scrim.hidden = false;
+      card.classList.add("is-centred");
+      card.style.transform = "";
+      return;
+    }
+    // the spot IS the dim when there is one — its box-shadow spreads past any
+    // screen — so the scrim stands down rather than darkening the page twice
+    const r = target.getBoundingClientRect();
+    const pad = slidePad(TOUR_SLIDES[tourAt]);
+    const hole = { x: r.x - pad, y: r.y - pad, w: r.width + pad * 2, h: r.height + pad * 2 };
+    scrim.hidden = true;
+    spot.hidden = false;
+    Object.assign(spot.style, {
+      left: `${hole.x}px`, top: `${hole.y}px`, width: `${hole.w}px`, height: `${hole.h}px`,
+      borderRadius: `${Math.min(hole.w, hole.h) / 2 <= 22 ? Math.min(hole.w, hole.h) / 2 : 10}px`,
+    });
+    card.classList.remove("is-centred");
+    const spot_ = placeBubble({
+      anchor: { x: r.x + r.width / 2, y: r.y + r.height / 2 },
+      size: { w: card.offsetWidth, h: card.offsetHeight },
+      box: { w: window.innerWidth, h: window.innerHeight },
+      gap: pad + 16, edge: 14, avoid: hole,
+    });
+    if (spot_) card.style.transform = `translate3d(${Math.round(spot_.x)}px, ${Math.round(spot_.y)}px, 0)`;
+  }
+  const slidePad = (slide) => Number.isFinite(slide?.pad) ? slide.pad : 9;
+
   function applyPaintingOnly() {
     const on = state.paintingOnly;
     root.classList.toggle("is-painting-only", on);
@@ -3731,7 +3979,7 @@ export function mountViewer(appEl) {
   }
   let settleTimer = null;
   // a window resize is the same event as a toggle, only slower
-  const onViewerResize = () => { mapCtx?.refit?.(); positionBubbles(); };
+  const onViewerResize = () => { mapCtx?.refit?.(); positionBubbles(); placeTour(); };
   window.addEventListener("resize", onViewerResize);
 
   // ───────── dev pane ─────────
@@ -3813,21 +4061,16 @@ export function mountViewer(appEl) {
   // ───────── events ─────────
   let devTimer = null;
   root.addEventListener("click", (e) => {
-    const openHelp = $(root, ".wv-map-help.is-open");
-    const helpToggle = e.target.closest(".wv-map-help-toggle");
-    if (helpToggle) {
-      const help = helpToggle.closest(".wv-map-help");
-      const expanded = !help.classList.contains("is-open");
-      openHelp?.classList.remove("is-open");
-      openHelp?.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
-      help.classList.toggle("is-open", expanded);
-      helpToggle.setAttribute("aria-expanded", String(expanded));
-      return;
-    }
-    if (openHelp && !e.target.closest(".wv-map-help")) {
-      openHelp.classList.remove("is-open");
-      openHelp.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
-    }
+    // the tour first, and every branch returns: while it is up it owns the page,
+    // and a click that fell through to the painting underneath would select a
+    // mark the reader cannot see
+    if (e.target.closest(".wv-tour-open")) { openTour(0); return; }
+    const dot = e.target.closest("[data-tour-to]");
+    if (dot) { stepTour(Number(dot.dataset.tourTo)); return; }
+    if (e.target.closest(".wv-tour-next")) { stepTour("next"); return; }
+    if (e.target.closest(".wv-tour-back")) { stepTour("back"); return; }
+    if (e.target.closest(".wv-tour-skip")) { stepTour("skip"); return; }
+    if (tourAt >= 0 && e.target.closest(".wv-tour")) return; // the scrim eats the rest
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
     if (e.target.closest(".wv-change-course")) {
@@ -3954,13 +4197,14 @@ export function mountViewer(appEl) {
     }
   });
   const onViewerKeydown = (event) => {
-    if (event.key !== "Escape") return;
-    const help = $(root, ".wv-map-help.is-open");
-    if (help) {
-      help.classList.remove("is-open");
-      help.querySelector(".wv-map-help-toggle")?.setAttribute("aria-expanded", "false");
+    // a slide deck is read with the arrow keys, and Escape leaves it
+    if (tourAt >= 0) {
+      if (event.key === "Escape") { event.preventDefault(); stepTour("skip"); return; }
+      if (event.key === "ArrowRight") { event.preventDefault(); stepTour("next"); return; }
+      if (event.key === "ArrowLeft") { event.preventDefault(); stepTour("back"); return; }
       return;
     }
+    if (event.key !== "Escape") return;
     if (!markInteraction.getState().selectedId && !walkState.destination) return;
     clearSelectionAndDestination();
   };
@@ -4176,6 +4420,8 @@ export function mountViewer(appEl) {
   (async () => {
     // the mode is remembered, so lay the page out in it before the first paint
     applyPaintingOnly();
+    // and the ? wears its ring until somebody has taken the tour once
+    if (!readTourSeen(localStore)) $(root, ".wv-tour-open")?.classList.add("is-unseen");
     try {
       await loadData();
       renderCurrent();
