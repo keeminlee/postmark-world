@@ -54,6 +54,7 @@ import {
   walkerHandleFromHoverId,
   walkerHoverId,
   bubbleAnchorWorld,
+  bubbleTrailStep,
   paintingMarkIds,
   placeBubble,
   readPaintingOnly,
@@ -887,4 +888,34 @@ test("a bubble dodges the whole crowd, not just the first one it lands on", () =
   const withJunk = placeBubble({ anchor: { x: 180, y: 150 }, size, box, avoid: [null, { x: "x" }, ...crowd] });
   assert.ok(Number.isFinite(withJunk.x) && Number.isFinite(withJunk.y));
   assert.deepEqual(withJunk, placed);
+});
+
+test("the bubble remembers how you got there, so every child can go back", () => {
+  // a fresh selection off the painting starts a new trail, whatever came before
+  assert.deepEqual(bubbleTrailStep(["a", "b", "c"], "select", "z"), ["z"]);
+  assert.deepEqual(bubbleTrailStep([], "select", "a"), ["a"]);
+  assert.deepEqual(bubbleTrailStep(["a"], "select", null), [], "selecting nothing is closing");
+
+  // following pushes; back pops to exactly where you came from
+  const down = bubbleTrailStep(bubbleTrailStep(["a"], "follow", "b"), "follow", "c");
+  assert.deepEqual(down, ["a", "b", "c"]);
+  assert.deepEqual(bubbleTrailStep(down, "back"), ["a", "b"]);
+  assert.deepEqual(bubbleTrailStep(bubbleTrailStep(down, "back"), "back"), ["a"]);
+
+  // the first mark has nowhere to go back to, and back is a no-op rather than
+  // an empty trail — closing is the ✕'s job, not the back button's
+  assert.deepEqual(bubbleTrailStep(["a"], "back"), ["a"]);
+  assert.deepEqual(bubbleTrailStep([], "back"), []);
+
+  // a cycle is kept as walked, not collapsed: stepping back retraces your route
+  const cycle = bubbleTrailStep(bubbleTrailStep(["a"], "follow", "b"), "follow", "a");
+  assert.deepEqual(cycle, ["a", "b", "a"]);
+  assert.deepEqual(bubbleTrailStep(cycle, "back"), ["a", "b"],
+    "back from a revisit lands on b, which is where you actually came from");
+
+  // junk in, sane out
+  assert.deepEqual(bubbleTrailStep(null, "follow", "a"), ["a"]);
+  assert.deepEqual(bubbleTrailStep(["a", null, "b"], "back"), ["a"]);
+  assert.deepEqual(bubbleTrailStep(["a"], "follow", null), ["a"], "following nowhere goes nowhere");
+  assert.deepEqual(bubbleTrailStep(["a"], "sideways"), ["a"]);
 });

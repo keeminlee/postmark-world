@@ -653,6 +653,25 @@ export function paintingMarkIds({ markFilter = "everything", radialIds = [], min
   return new Set(radialIds);
 }
 
+// The pinned bubble's way back.
+//
+// Following a relative REPLACES the bubble — on a map the bubble should move to
+// the thing you clicked, and the map is the breadcrumb — but that leaves the mark
+// you came from with no way home. The panel has a `◂ back` crumb for exactly this
+// and the bubble needs its own. Selecting fresh from the painting starts a new
+// trail; following a relation or an attribute pushes; back pops.
+//
+// A cycle (A → B → A) is kept rather than collapsed: the trail records where you
+// WENT, not the shortest route there, and stepping back through your own path is
+// the behaviour that never surprises anyone.
+export function bubbleTrailStep(trail = [], action = "select", id = null) {
+  const current = Array.isArray(trail) ? trail.filter(Boolean) : [];
+  if (action === "select") return id ? [id] : [];
+  if (action === "follow") return id ? [...current, id] : current;
+  if (action === "back") return current.length > 1 ? current.slice(0, -1) : current;
+  return current;
+}
+
 // Where the "you" bubble hangs. A journey or an armed departure gives it the
 // midpoint of the line, so the bubble sits ON the travel-line it describes;
 // standing still, it hangs off your own marker.
@@ -1385,9 +1404,16 @@ const STYLE = `
 .wv-bubble.is-pinned { z-index:3; pointer-events:auto; max-height:min(64%,32rem); overflow-y:auto;
   scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
 .wv-bubble.is-you { z-index:1; pointer-events:auto; max-width:min(24rem,66%); border-left-color:var(--you); }
-.wv-bubble-close { position:sticky; float:right; top:5px; right:5px; z-index:3; border:0;
-  background:transparent; color:var(--dim); font:inherit; font-size:.95rem; line-height:1;
-  padding:4px 7px; margin:1px 1px 0 0; cursor:pointer; border-radius:4px; }
+/* the bubble's own chrome bar: the way back on the left, the way out on the
+   right. Sticky, so a long relations tree never scrolls either of them away. */
+.wv-bubble-nav { position:sticky; top:0; z-index:3; display:flex; align-items:center; gap:8px;
+  padding:5px 6px 5px 9px; background:rgba(13,15,19,.97); border-bottom:1px solid var(--line); }
+.wv-bubble-back { border:0; background:transparent; color:var(--amber); font:inherit; font-size:.78rem;
+  line-height:1.3; cursor:pointer; padding:3px 7px; border-radius:4px; min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wv-bubble-back:hover, .wv-bubble-back:focus-visible { background:var(--panel2); color:var(--paper); outline:none; }
+.wv-bubble-close { margin-left:auto; flex:none; border:0; background:transparent; color:var(--dim);
+  font:inherit; font-size:.95rem; line-height:1; padding:4px 7px; cursor:pointer; border-radius:4px; }
 .wv-bubble-close:hover, .wv-bubble-close:focus-visible { color:var(--paper); background:var(--panel2); outline:none; }
 /* the cell inside a bubble is the SAME cell the panel builds — the bubble only
    takes away the frame it no longer needs (its own border, its width cap) */
@@ -2884,12 +2910,15 @@ export function mountViewer(appEl) {
     return isRealDeparture(walkPreviewTo(mark.at));
   }
 
-  function selectMark(id, { scrollCell = false } = {}) {
+  function selectMark(id, { scrollCell = false, trail = null } = {}) {
     if (!id || !byId.has(id)) return false;
     if (markInteraction.getState().selectedId === id) {
       clearSelectionAndDestination();
       return false;
     }
+    // set BEFORE the store fires: selecting re-renders the bubble, and the bubble
+    // reads the trail to decide whether it owes you a way back
+    bubbleTrail = trail ?? bubbleTrailStep(bubbleTrail, "select", id);
     markInteraction.select(id);
     // Selecting IS the intent, so the walk preview follows from it — that is why
     // the per-cell "walk here" chip is gone (Keemin 2026-08-04). Three things
@@ -2909,6 +2938,7 @@ export function mountViewer(appEl) {
   }
 
   function clearSelectionAndDestination() {
+    bubbleTrail = [];
     markInteraction.select(null);
     walkState.destination = null;
     walkState.changingCourse = false;
@@ -3139,6 +3169,18 @@ export function mountViewer(appEl) {
   let youHeadHTML = "";
   let pinnedBuiltId = null;   // which mark the pinned bubble currently holds
   let hoverFromBubble = false; // the pointer is reading a bubble, not the painting
+  let bubbleTrail = [];       // how you got to the mark the bubble is showing
+
+  // follow a relation or an attribute from inside the bubble: the bubble moves to
+  // that mark and remembers the one it left
+  function followInBubble(id) {
+    return selectMark(id, { trail: bubbleTrailStep(bubbleTrail, "follow", id) });
+  }
+  function bubbleBack() {
+    if (bubbleTrail.length < 2) return;
+    const stepped = bubbleTrailStep(bubbleTrail, "back");
+    selectMark(stepped[stepped.length - 1], { trail: stepped });
+  }
   const localStore = (() => { try { return window.localStorage; } catch { return null; } })();
 
   function bubbleEl(kind) {
@@ -3275,8 +3317,16 @@ export function mountViewer(appEl) {
     // the cell, plus this mark's own predicates as cells, then the SAME fold the
     // telling runs — so an attribute reads identically in both places
     const predicates = (world?.marks ?? []).filter((p) => p.parent === mark.id && isPredicateAttribute(p));
+    // the way back, NAMED — "◂ back" makes you remember what you left, and the
+    // one thing a bubble on a map should never ask you to do is hold the route
+    // in your head
+    const cameFrom = bubbleTrail.length > 1 ? byId.get(bubbleTrail[bubbleTrail.length - 2]) : null;
+    const back = cameFrom
+      ? `<button type="button" class="wv-bubble-back" title="back to ${esc(markIdentity(cameFrom))}">◂ ${esc(markIdentity(cameFrom))}</button>`
+      : "";
     el.className = `wv-bubble is-pinned ${markClasses(mark)}`;
-    el.innerHTML = `<button type="button" class="wv-bubble-close" aria-label="close this mark">✕</button>`
+    el.innerHTML = `<div class="wv-bubble-nav">${back}`
+      + `<button type="button" class="wv-bubble-close" aria-label="close this mark">✕</button></div>`
       + markCell(mark, { role: "fov" })
       + predicates.map((p) => markCell(p, { role: "fov" })).join("");
     el.hidden = false;
@@ -3532,6 +3582,7 @@ export function mountViewer(appEl) {
     // the ✕ closes the pinned bubble, which is the same act as deselecting —
     // there is one selection, and the bubble is what it looks like here
     if (e.target.closest(".wv-bubble-close")) { clearSelectionAndDestination(); return; }
+    if (e.target.closest(".wv-bubble-back")) { bubbleBack(); return; }
     const filterChip = e.target.closest("[data-mark-filter]");
     if (filterChip && !filterChip.disabled) {
       state.markFilter = filterChip.dataset.markFilter;
@@ -3544,16 +3595,23 @@ export function mountViewer(appEl) {
     const back = e.target.closest(".wv-back");
     if (back) { const card = back.closest(".wv-card"); card._stack.pop(); renderExpansion(card); return; }
     const attribute = e.target.closest(".wv-attribute");
-    if (attribute?.dataset.id) { selectMark(attribute.dataset.id); return; }
+    if (attribute?.dataset.id) {
+      // an attribute reached from inside the bubble is a step deeper, so it owes
+      // you the same way back a relation does
+      if (attribute.closest(".wv-bubble")) followInBubble(attribute.dataset.id);
+      else selectMark(attribute.dataset.id);
+      return;
+    }
     const tn = e.target.closest(".wv-rnode");
     if (tn) {
       const card = tn.closest(".wv-card");
       if (card && tn.dataset.id) {
         // In a bubble a relative is a PLACE, so following one moves the bubble to
         // it rather than drilling a breadcrumb inside the old one — on a map, the
-        // map is the breadcrumb. selectMark rebuilds the pinned bubble, so `card`
-        // is detached by the next statement; nothing may touch it after this.
-        if (state.paintingOnly && tn.closest(".wv-bubble")) { selectMark(tn.dataset.id); return; }
+        // map is the breadcrumb, and the trail carries the way back. followInBubble
+        // rebuilds the pinned bubble, so `card` is detached by the next statement;
+        // nothing may touch it after this.
+        if (tn.closest(".wv-bubble")) { followInBubble(tn.dataset.id); return; }
         selectMark(tn.dataset.id);
         const targetCard = [...root.querySelectorAll(".wv-card[data-id]")]
           .find((candidate) => candidate.dataset.id === tn.dataset.id);
