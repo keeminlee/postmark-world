@@ -1,0 +1,147 @@
+# lane.yml — the PR lane's gate and door (WRITES.md is the doctrine; this is the
+# machinery). Judges a pull request into a household's own draft/<login>
+# sketchbook by the World's OWN law, and merges it when green.
+#
+# ── security model, stated where it can be audited ───────────────────────────
+# This runs on pull_request_target: the BASE repo's workflow, with a token that
+# can push and merge. Two invariants keep that safe against a hostile fork:
+#   1. TOOLS FROM BASE. Every executed file (lane-wall, mark-lint, marks-fold)
+#      comes from the base checkout. Nothing from the PR head is ever executed.
+#   2. CONTENT AS DATA. The head contributes only WORLD/marks/** and NOTES/*
+#      files, applied as a diff — and only after the path law has refused
+#      everything else. Mark records are parsed, never imported or evaluated.
+# No npm install. No scripts from the PR. Node + git + gh only.
+#
+# ── what it does ─────────────────────────────────────────────────────────────
+# PR into draft/<login>  → wall (authorship + placement) → lint → fold →
+#                          squash-merge on green; violations commented on red.
+# PR into main, lane paths only, author registered, no sketchbook yet
+#                        → create draft/<login> at main, retarget the PR to it
+#                          (the bootstrap: a first-time author needs no branch
+#                          to exist before they knock).
+# PR into main touching anything else → not this lane; ordinary human review.
+
+name: lane
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+
+concurrency:
+  group: lane-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  gate:
+    if: github.repository == 'keeminlee/postmark-world'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      BASE_REF: ${{ github.event.pull_request.base.ref }}
+      AUTHOR_ID: ${{ github.event.pull_request.user.id }}
+      AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
+    steps:
+      - name: base checkout (the trusted side — every tool runs from here)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: fetch the head as data
+        run: git fetch --no-tags origin "pull/${PR}/head:pr-head"
+
+      - name: path law (before anything from the head is even copied)
+        id: paths
+        run: |
+          BASE_SHA=$(git merge-base "origin/${BASE_REF}" pr-head)
+          git diff --name-only "$BASE_SHA" pr-head > /tmp/changed
+          echo "changed files:"; cat /tmp/changed
+          if [ ! -s /tmp/changed ]; then echo "empty diff — nothing to judge" && echo "lane=none" >> "$GITHUB_OUTPUT" && exit 0; fi
+          if grep -qvE '^(WORLD/marks/.+/mark\.md|NOTES/[a-z0-9-]+\.md)$' /tmp/changed; then
+            echo "lane=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "lane=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "not the lane: a main-targeted PR with non-lane paths is ordinary review"
+        if: steps.paths.outputs.lane != 'yes' && env.BASE_REF == 'main'
+        run: echo "not lane traffic — a human reads this one. nothing enforced here."
+
+      - name: "refuse: a sketchbook PR must carry only lane paths"
+        if: steps.paths.outputs.lane == 'no' && startsWith(env.BASE_REF, 'draft/')
+        run: |
+          gh pr comment "$PR" --body "refused: this lane carries mark records (\`WORLD/marks/**/mark.md\`) and your own notes (\`NOTES/<handle>.md\`) only. Anything else — tools, canon, others' files — goes to an ordinary PR against \`main\` for human review. (\`WRITES.md\` is the map.)"
+          exit 1
+
+      - name: "bootstrap: first knock — create the sketchbook and retarget"
+        if: steps.paths.outputs.lane == 'yes' && env.BASE_REF == 'main'
+        run: |
+          # the registry is the base's; bind the author to a household before making ground
+          BOUND=$(node -e '
+            const r = JSON.parse(require("fs").readFileSync("WORLD/households.json", "utf8"));
+            const keys = new Set([`gh:${process.env.AUTHOR_ID}`, `login:${process.env.AUTHOR_LOGIN.toLowerCase()}`]);
+            console.log(Object.values(r.households ?? {}).some((k) => keys.has(k)) ? "yes" : "no");
+          ')
+          if [ "$BOUND" != "yes" ]; then
+            gh pr comment "$PR" --body "refused: no resident handle is registered to your GitHub account yet (\`WORLD/households.json\`, refreshed from the town pins). Join the town first — \`JOINING.md\` in the postmark repo — or use the office door meanwhile."
+            exit 1
+          fi
+          BRANCH="draft/${AUTHOR_LOGIN}"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            echo "sketchbook exists — retargeting only"
+          else
+            git push origin "origin/main:refs/heads/${BRANCH}"
+            echo "created ${BRANCH} at main"
+          fi
+          gh pr edit "$PR" --base "$BRANCH"
+          gh pr comment "$PR" --body "your sketchbook is \`${BRANCH}\` — this PR now targets it. The gate runs on the retargeted PR; green merges on its own. (\`WRITES.md\` § the lane.)"
+
+      - name: compose (base tree + the head's lane diff, as a patch — never a checkout)
+        if: steps.paths.outputs.lane == 'yes' && startsWith(env.BASE_REF, 'draft/')
+        run: |
+          BASE_SHA=$(git merge-base "origin/${BASE_REF}" pr-head)
+          git checkout -q "origin/${BASE_REF}" -- . || true
+          if ! git diff "$BASE_SHA" pr-head -- 'WORLD/marks' 'NOTES' | git apply --index; then
+            gh pr comment "$PR" --body "refused: this PR no longer applies to the current sketchbook — a Settlement crossing has rebased it under you (twice daily, 06:00Z and 18:00Z). Rebase and push again: \`git fetch origin && git rebase origin/${BASE_REF}\`. Additive marks in your own namespace rarely conflict; straddling a crossing is the one case that does. (\`WRITES.md\` § the crossings.)"
+            exit 1
+          fi
+
+      - name: the wall, the lint, the fold — the World's own law, from the base's tools
+        if: steps.paths.outputs.lane == 'yes' && startsWith(env.BASE_REF, 'draft/')
+        run: |
+          set +e
+          node tools/lane-wall.mjs \
+            --author-id "$AUTHOR_ID" --author-login "$AUTHOR_LOGIN" \
+            --base "origin/${BASE_REF}" --head pr-head \
+            --base-branch "$BASE_REF" 2> /tmp/wall.err
+          WALL=$?
+          node tools/mark-lint.mjs > /tmp/lint.out 2>&1; LINT=$?
+          node tools/marks-fold.mjs --no-write --json > /tmp/fold.json 2> /tmp/fold.err; FOLD=$?
+          set -e
+          if [ $FOLD -eq 0 ]; then
+            FOLD=$(node -e 'const s = JSON.parse(require("fs").readFileSync("/tmp/fold.json","utf8")); const n = s.errors?.length ?? 0; if (n) console.error(JSON.stringify(s.errors[0])); process.exit(n ? 1 : 0);' 2>> /tmp/fold.err; echo $?)
+          fi
+          if [ $WALL -ne 0 ] || [ $LINT -ne 0 ] || [ "$FOLD" != "0" ]; then
+            { echo "the gate refused this one — each line names its fix:"; echo '```'
+              [ $WALL -ne 0 ] && cat /tmp/wall.err
+              [ $LINT -ne 0 ] && grep -a "ERROR" /tmp/lint.out || true
+              [ "$FOLD" != "0" ] && cat /tmp/fold.err
+              echo '```'
+              echo "pre-flight locally and the gate has nothing to say: \`node tools/place-mark.mjs\` for the path, \`node tools/mark-lint.mjs\` for the record, \`node tools/lane-wall.mjs\` for authorship. (\`WRITES.md\`.)"
+            } > /tmp/comment.md
+            gh pr comment "$PR" --body-file /tmp/comment.md
+            exit 1
+          fi
+          echo "wall + lint + fold: green"
+
+      - name: green merges on its own (the registrar precedent — the law is the gate)
+        if: steps.paths.outputs.lane == 'yes' && startsWith(env.BASE_REF, 'draft/')
+        run: gh pr merge "$PR" --squash

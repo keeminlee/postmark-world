@@ -163,3 +163,77 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   assert.equal(state.marks.some((mark) => mark.id === "alice/old-commons"), false);
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
+
+test("the authorship wall: a registered author never publishes from another household's sketchbook", (t) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-wall-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  const put = (path, text) => {
+    const full = join(repo, path);
+    mkdirSync(dirname(full), { recursive: true });
+    writeFileSync(full, text);
+  };
+  const has = (ref, path) => {
+    try { git("cat-file", "-e", `${ref}:${path}`); return true; } catch { return false; }
+  };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of ["geometry.mjs", "marks-fold.mjs", "mark-lint.mjs"])
+    cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+  // the wall's whole input: main's registry binds handles AND branch logins
+  put("WORLD/households.json", JSON.stringify({
+    households: { alice: "gh:1", mallory: "gh:3" },
+    logins: { "house-a": "gh:1", "house-m": "gh:3" },
+  }, null, 2) + "\n");
+
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
+
+  // mallory's sketchbook: one forged mark (alice's registered name), one honest
+  // mark, one unverifiable stranger (carol is not in the registry)
+  git("switch", "-q", "-c", "draft/house-m");
+  const forged = "WORLD/marks/let-there-be-light/forged-market/mark.md";
+  const honest = "WORLD/marks/let-there-be-light/own-market/mark.md";
+  const stray = "WORLD/marks/let-there-be-light/stray-market/mark.md";
+  put(forged, record({ by: "alice", at: { x: 500, y: 500 }, extent: { w: 10, h: 10 }, body: "signed with a borrowed pen" }));
+  put(honest, record({ by: "mallory", at: { x: 700, y: 700 }, extent: { w: 10, h: 10 }, body: "mallory's own claim" }));
+  put(stray, record({ by: "carol", at: { x: 900, y: 900 }, extent: { w: 10, h: 10 }, body: "an unregistered hand — status quo" }));
+  git("add", "WORLD/marks");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house m sketches");
+  git("switch", "-q", "main");
+
+  const remote = mkdtempSync(join(tmpdir(), "postmark-settlement-wall-remote-"));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  execFileSync("git", ["init", "--bare", "-q", remote]);
+  git("remote", "add", "origin", remote);
+  git("push", "-q", "origin", "main", "draft/house-m");
+
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([
+    { holder: "s1", mark: "alice/forged-market", n: 5, weight: 10 },
+    { holder: "s2", mark: "mallory/own-market", n: 5, weight: 10 },
+    { holder: "s3", mark: "carol/stray-market", n: 5, weight: 10 },
+  ]));
+  const report = settlementSweep({ repo, stakesPath });
+
+  const publishedIds = report.published.map((row) => row.id).sort();
+  assert.deepEqual(publishedIds, ["carol/stray-market", "mallory/own-market"],
+    "the honest mark and the unverifiable one publish; the forged one never does");
+  const walled = report.left_drafted.find((row) => row.id === "alice/forged-market");
+  assert.ok(walled, "the forged mark is reported, not silently dropped");
+  assert.match(walled.reason, /authorship/, "the reason names the wall");
+  assert.match(walled.reason, /gh:1/, "the reason names whose resident the pen belongs to");
+  assert.equal(has("main", forged), false, "the borrowed pen never reaches published main");
+  assert.equal(has("draft/house-m", forged), true, "the record stays in the sketchbook for its author-of-record to contest");
+  assert.equal(has("main", honest), true);
+  assert.equal(has("main", stray), true);
+});

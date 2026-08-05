@@ -265,6 +265,20 @@ export function settlementSweep({
   const stakes = stakesFrom(stakesPath);
   const escrow = escrowIndex(stakes);
   const branches = draftBranches(repo);
+  // The authorship wall (the PR lane, WRITES.md). Until 2026-08-05 the sweep
+  // trusted branch names blindly — safe solely because the office pen was the
+  // only writer of draft branches. With households holding their own pens, the
+  // final publisher verifies what the door used to make inexpressible: a mark
+  // whose registered author belongs to a DIFFERENT household than the branch
+  // stays drafted. Both sides resolve through main's own registry
+  // (households.json: handles + logins, one resolver); a handle or branch the
+  // registry cannot bind is left alone — unverifiable is the status quo, never
+  // a new refusal (registry lag must not strand the pen's own writes).
+  let wallRegistry = { households: {}, logins: {} };
+  try { const r = JSON.parse(readAt(repo, mainBranch, "WORLD/households.json")); wallRegistry = { households: r.households ?? {}, logins: r.logins ?? {} }; }
+  catch { /* no registry on main → the wall stands down entirely */ }
+  const branchHouseholdOf = (branchName) =>
+    wallRegistry.logins[branchName.slice("draft/".length).toLowerCase()] ?? null;
   const mainTree = git(repo, ["rev-parse", `${mainBranch}^{tree}`]).trim();
   const resettable = new Set(branches.filter(
     (branch) => git(repo, ["rev-parse", `${branch}^{tree}`]).trim() === mainTree,
@@ -284,6 +298,15 @@ export function settlementSweep({
         continue;
       }
       const record = recordAt(repo, branch, delta.path);
+      // the authorship wall: a registered author on a branch the registry binds
+      // to a DIFFERENT household never publishes from it
+      const authorHousehold = wallRegistry.households[record.by] ?? null;
+      const branchHousehold = branchHouseholdOf(branch);
+      if (authorHousehold && branchHousehold && authorHousehold !== branchHousehold) {
+        leftDrafted.push({ household, id: record.id, path: delta.path,
+          reason: `authorship: "${record.by}" is ${authorHousehold}'s resident; this sketchbook is ${branchHousehold}'s` });
+        continue;
+      }
       const view = folded.get(record.id);
       // ONE class rule (tools/mark-class.mjs): the parent-chain walk reaches
       // predicated laws with no coordinates, which the fold's geometric

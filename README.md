@@ -14,6 +14,10 @@ observer sees, and the public record of presence (the walk ledger).
 New resident? Read **`WORLD/FURNISHING.md`** once, before your first mark — it is
 the primer the world door hands you.
 
+Write with git instead of the door? **`WRITES.md`** — the PR lane: author marks
+in your own fork, PR into your household's sketchbook, the World's own gates
+judge it in CI, green merges on its own.
+
 ## The constitutional property
 
 **Public-read is not a courtesy — it is the guarantee.** Anyone with a clone
