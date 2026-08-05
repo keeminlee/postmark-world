@@ -166,6 +166,39 @@ test("investigate sorts a parent into `parents`, never into `alongside`", () => 
   assert.ok(!ids(investigate("hh/the-room", wr, { budget: 12 }).parents).includes("hh/the-frame"), "the world-root is never a parent");
 });
 
+test("a child the budget drops is still not a neighbour, and the near ones keep their seats", () => {
+  // TWO faults, one fixture (Keemin caught the symptom: "why are the Wide Spaced
+  // Lanterns alongside the threshold district and not inside it?"). The engine had
+  // it as a child; 20 children were sliced to 12, and then childIds was built from
+  // the SLICED list, so a dropped child passed the "not a child" filter and was
+  // told as a neighbour of its own container. Its seat had gone to siblings four
+  // times further away, because the order was whatever the fold listed.
+  const district = { id: "hh/the-district", kind: "sited", household: "hh", at: { x: 0, y: 0 }, extent: { w: 800, h: 800 }, body: "the district" };
+  // declared FAR-FIRST on purpose: fold order alone would seat these two and cut
+  // the nearest child, which is precisely the arbitrary cut that started this
+  const far  = { id: "hh/child-far",  kind: "sited", household: "hh", at: { x: 300, y: 0 }, extent: { w: 5, h: 5 }, body: "far" };
+  const mid  = { id: "hh/child-mid",  kind: "sited", household: "hh", at: { x: 200, y: 0 }, extent: { w: 5, h: 5 }, body: "mid" };
+  const near = { id: "hh/child-near", kind: "sited", household: "hh", at: { x: 100, y: 0 }, extent: { w: 5, h: 5 }, body: "near" };
+  // outside the district, but inside the household cluster radius — a TRUE neighbour
+  const nextdoor = { id: "hh/next-door", kind: "sited", household: "hh", at: { x: 500, y: 0 }, extent: { w: 5, h: 5 }, body: "next door" };
+  const w = worldOf([district, far, mid, near, nextdoor]);
+  const ids = (a) => a.map((m) => m.id);
+
+  const inv = investigate("hh/the-district", w, { budget: 2 });
+  assert.deepEqual(ids(inv.children), ["hh/child-near", "hh/child-mid"],
+    "nearest first, so the budget cuts by distance and not by fold order");
+  assert.equal(inv.more.children, 1, "the child it could not say is counted, not lost");
+  assert.ok(!ids(inv.alongside).includes("hh/child-far"),
+    "a child the budget dropped is still a child — it is never promoted to neighbour");
+  assert.deepEqual(ids(inv.alongside), ["hh/next-door"], "and a true neighbour keeps its seat");
+
+  // with room for everyone the answer is the same, only longer
+  const roomy = investigate("hh/the-district", w, { budget: 12 });
+  assert.deepEqual(ids(roomy.children), ["hh/child-near", "hh/child-mid", "hh/child-far"]);
+  assert.equal(roomy.more.children, 0);
+  assert.deepEqual(ids(roomy.alongside), ["hh/next-door"]);
+});
+
 test("ancestor exclusion happens before the budget slice, so it costs no alongside seat", () => {
   const house = { id: "hh/the-house", kind: "sited", household: "hh", at: { x: 0, y: 0 }, extent: { w: 400, h: 400 }, body: "the house" };
   const room  = { id: "hh/the-room",  kind: "sited", household: "hh", at: { x: 0, y: 0 }, extent: { w: 100, h: 100 }, body: "the room" };

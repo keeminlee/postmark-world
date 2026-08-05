@@ -104,7 +104,15 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
   }
   const predicates = world.marks.filter((m) => (m.kind === "predicated" || m.kind === "naming") && m.parent === markId)
     .slice(0, budget).map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, stamps: m.weight ?? 0, body: m.body }));
-  const children = childrenByGeometry(target, world).slice(0, budget)
+  // NEAREST FIRST, so the budget cuts the far ones rather than whichever the fold
+  // happened to list last. Under fold order a child 212 m from the threshold
+  // district lost its seat to five siblings 900 m out — and an arbitrary cut does
+  // not read as arbitrary to whoever is looking at it, it reads as a judgement.
+  const allChildren = childrenByGeometry(target, world)
+    .map((m) => ({ m, away: Math.hypot(m.at.x - target.at.x, m.at.y - target.at.y) }))
+    .sort((a, b) => a.away - b.away || String(a.m.id).localeCompare(String(b.m.id)))
+    .map((entry) => entry.m);
+  const children = allChildren.slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, body: firstLine(m.body) }));
   // parents: what the target sits inside, nearest container first (renamed from
   // `within` 2026-08-02 — within/children read as near-synonyms and the pair was
@@ -119,10 +127,16 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
   // alongside: the rest of this household's cluster near the target — the marks
   // the FOV collapsed at distance ("+N more of <hh>'s"). Descending opens them.
   // Deliberately NOT named siblings: this is the household's geometric
-  // neighbourhood, not the tree relation. Neither children nor parents: both
-  // filters run BEFORE the budget slice, so excluding an ancestor never costs
-  // a true neighbour its seat.
-  const childIds = new Set(children.map((i) => i.id));
+  // neighbourhood, not the tree relation.
+  //
+  // EXCLUDED AGAINST THE FULL LISTS, NOT THE BUDGETED ONES. This comment used to
+  // claim both filters ran before the slice; `parents` is never sliced, but
+  // `children` was sliced on the line that built it, so childIds only ever held
+  // the twelve that fit. A true child the budget dropped then passed the "not a
+  // child" test and was told to the reader as a NEIGHBOUR of its own container —
+  // which is the exact failure this exclusion exists to prevent, one relation
+  // over. A budget decides how much gets said; it must not decide what is true.
+  const childIds = new Set(allChildren.map((m) => m.id));
   const parentIds = new Set(parents.map((w) => w.id));
   const alongside = householdNear(target, world).filter((m) => !childIds.has(m.id) && !parentIds.has(m.id)).slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, signal: !!m.signal, body: firstLine(m.body) }));
@@ -130,7 +144,7 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
     id: target.id, kind: target.kind, household: target.household, at: target.at, extent: target.extent,
     sovereign: !!target.sovereign, stamps: target.weight ?? target.stamps ?? 0, body: target.body,
     predicates, parents, children, alongside,
-    more: { predicates: countPredicates(markId, world) - predicates.length, children: childrenByGeometry(target, world).length - children.length },
+    more: { predicates: countPredicates(markId, world) - predicates.length, children: allChildren.length - children.length },
     reinvoke: depth > 1 ? [...children, ...alongside].map((c) => c.id) : [],
   };
 }

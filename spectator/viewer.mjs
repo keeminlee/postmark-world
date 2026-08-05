@@ -2106,10 +2106,10 @@ export function mountViewer(appEl) {
       ${markCellBylineRow(target, backingButton(d.id, d.stamps, { neutralZero: true }))}` : ""}
       ${d.sovereign ? `<div class="cmeta" style="margin-bottom:4px"><span class="wv-chip">sovereign</span></div>` : ""}
       ${newlyRevealedPredicates.length ? `<div class="wv-expansion-attributes">${newlyRevealedPredicates.map(predicateAttributeLine).join("")}</div>` : ""}
-      ${d.within?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.within.map(relativeNode).join("")}</div>` : ""}
-      ${d.inside?.length ? `<div class="wv-tree-label">within it</div><div class="wv-relation-lines">${d.inside.map(relativeNode).join("")}</div>` : ""}
+      ${d.parents?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.parents.map(relativeNode).join("")}</div>` : ""}
+      ${d.children?.length ? `<div class="wv-tree-label">within it</div><div class="wv-relation-lines">${d.children.map(relativeNode).join("")}</div>` : ""}
       ${d.alongside?.length ? `<div class="wv-tree-label">alongside</div><div class="wv-relation-lines">${d.alongside.map(relativeNode).join("")}</div>` : ""}
-      ${(d.more?.inside > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
+      ${(d.more?.children > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
     syncMarkInteractionViews();
   }
   // ───────── the painting (atlas minimap) ─────────
