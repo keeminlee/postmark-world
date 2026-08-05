@@ -671,7 +671,7 @@ export const TOUR_SLIDES = [
   {
     id: "backing",
     title: "Weight is belief you can stand behind",
-    body: "<b>✦</b> is a mark's backing. Stamps staked on a claim sit in escrow — still yours, retrievable whenever you like — "
+    body: "<b class=\"tour-stamp-mark\">✦</b> is a mark's backing. <b class=\"tour-stamp\">Stamps</b> staked on a claim sit in escrow — still yours, retrievable whenever you like — "
       + "and where two claims collide over the same property of the same thing, the heavier one determines. Until the weights shift.<br><br>"
       + "Nothing is deleted in that contest. The world only says which telling it believes, for now. <b>Back what you want to become true.</b>",
   },
@@ -687,7 +687,7 @@ export const TOUR_SLIDES = [
     anchor: ".wv-identity",
     title: "Reading is free; acting is yours",
     body: "Signed out you are a spectator, and you can read all of it — that is the guarantee, not a courtesy: anyone with a clone recomputes the whole world.<br><br>"
-      + "Sign in and you can act as your household. Your own drafts appear in grey, you can put stamps behind a mark, and you can set out walking.",
+      + "Sign in and you can act as your household. Your own drafts appear in grey, you can put <b class=\"tour-stamp\">stamps</b> behind a mark, and you can set out walking.",
   },
 ];
 
@@ -1108,6 +1108,12 @@ const STYLE = `
   background:var(--night); color:var(--paper); font:16px/1.55 Georgia,"Times New Roman",serif;
   min-height:100vh; }
 .wv * { box-sizing:border-box; }
+/* ONE FOCUS RING for the whole viewer. Four controls used to take the browser's
+   outline away and lean on their hover style instead — which leaves someone
+   reading with the keyboard looking at exactly what a mouse reader sees, with no
+   way to tell where focus actually is. Drawn outside the control, so showing it
+   never moves anything. */
+.wv :focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
 /* The strip the site's fixed back-link and auth pill land in. It holds only the
    beta chip and the room those two need; the viewer's own title rail is gone. */
 /* the head of the rail: what the page is, its state, the Telling's switch, the
@@ -1234,22 +1240,21 @@ const STYLE = `
    to the window and the telling begins at its first line — because every control
    either of them had now lives loose in the rail. */
 .wv-view { overflow-x:auto; min-width:0; min-height:60vh; border-right:1px solid var(--line);
-  transition:opacity .22s ease; }
+  transition:opacity .22s ease, visibility 0s; }
 .wv-telling { padding:16px 20px 26px; }
 /* collapsed to a zero-width column rather than display:none, because a slide is
    the point and display does not animate. The panel keeps its box and simply has
-   no width; opacity carries the fade so its prose never reflows on the way out. */
+   no width; opacity carries the fade so its prose never reflows on the way out.
+   visibility takes it out of the TAB ORDER once the fade is over — without it a
+   keyboard reader tabbed straight into three filter chips and a column of cells
+   that were not on the screen. Zero-duration, delayed by the fade, so it hides
+   after the panel has gone and un-hides the instant it comes back. */
 .wv-main.is-telling-collapsed { grid-template-columns:var(--rail) 0rem minmax(0,1fr); }
-.wv-main.is-telling-collapsed > .wv-view { opacity:0; overflow:hidden;
-  border-right-width:0; pointer-events:none; }
+.wv-main.is-telling-collapsed > .wv-view { opacity:0; overflow:hidden; visibility:hidden;
+  border-right-width:0; pointer-events:none; transition:opacity .22s ease, visibility 0s linear .22s; }
 @media (max-width:720px){ .wv-main.is-telling-collapsed { grid-template-columns:1fr; } }
 
 /* the telling */
-.wv-spine { font-size:.8rem; color:var(--dim); margin-bottom:12px; letter-spacing:.02em; }
-.wv-spine .node { color:var(--amber-dark); }
-.wv-spine .sep { opacity:.5; margin:0 5px; }
-.wv-open { white-space:pre-wrap; max-width:76ch; line-height:1.55; border-bottom:1px solid var(--line);
-  padding-bottom:14px; margin-bottom:10px; }
 .wv-band h3 { font-size:.8rem; letter-spacing:.07em; color:var(--dim); margin:18px 0 8px; }
 .wv-arrow { width:.95em; height:.95em; vertical-align:-.15em; margin-right:.3em; overflow:visible; }
 .wv-arrow path { fill:currentColor; opacity:.8; }
@@ -1286,7 +1291,7 @@ const STYLE = `
   font-variant-numeric:tabular-nums; white-space:nowrap; cursor:pointer;
   transition:color .15s, border-color .15s, background .15s; }
 .wv-backing:hover, .wv-backing:focus-visible { color:var(--stamp-violet-heading);
-  border-color:var(--stamp-violet); background:rgba(139,124,255,.16); outline:none; }
+  border-color:var(--stamp-violet); background:rgba(139,124,255,.16); }
 .wv-backing.is-zero { opacity:.68; background:transparent; }
 .wv-backing.is-zero:hover, .wv-backing.is-zero:focus-visible { opacity:.9; }
 .wv.is-spectating [data-stake-open] { pointer-events:none; cursor:default; opacity:.62; }
@@ -1303,9 +1308,20 @@ const STYLE = `
   letter-spacing:.1em; text-transform:uppercase; }
 .wv-act-close { border:0; background:transparent; color:var(--dim); cursor:pointer; font:inherit; }
 .wv-act-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:8px; }
-.wv-act-row label { color:var(--dim); font-size:.72rem; }
-.wv-act-row input { width:7rem; background:var(--night); color:var(--paper); border:1px solid var(--line);
-  border-radius:4px; padding:4px 7px; font:inherit; }
+/* the field lives INSIDE its label, so the row's gap does not fall between them */
+.wv-act-row label { display:inline-flex; align-items:center; gap:9px; color:var(--dim); font-size:.72rem; }
+/* NO NATIVE SPINNERS, anywhere. The browser draws them in its own grey — the one
+   colour on this page that belongs to nobody — and lays a pale rail down the side
+   of a dark field. Every number in this viewer is typed or dialled, never nudged. */
+.wv input[type=number] { appearance:textfield; -moz-appearance:textfield; }
+.wv input[type=number]::-webkit-outer-spin-button,
+.wv input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+/* and the stamps field reads like the number it is: mono and tabular, the same as
+   every other figure here, rather than the body serif it was inheriting */
+.wv-act-row input { width:6.5rem; background:var(--night); color:var(--paper); border:1px solid var(--line);
+  border-radius:4px; padding:5px 9px; font:inherit; font-family:var(--mono); font-size:.8rem;
+  font-variant-numeric:tabular-nums; text-align:right; }
+.wv-act-row input:focus { border-color:var(--stamp-violet); }
 .wv-act-row button { background:transparent; border:1px solid var(--stamp-violet-dark); color:var(--stamp-violet-subhead);
   border-radius:4px; padding:4px 8px; font:inherit; font-size:.72rem; cursor:pointer; }
 .wv-act-row .wv-act-confirm { border-color:var(--stamp-violet); color:var(--stamp-violet-heading); }
@@ -1383,20 +1399,6 @@ const STYLE = `
 .wv-expansion-attributes { margin:5px 0 8px 10px; }
 
 /* my marks */
-.wv-marks-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
-.wv-marks-head h2 { margin:0; color:var(--amber); font-size:1rem; }
-.wv-section-title { font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim);
-  margin:22px 0 10px; border-bottom:1px solid var(--line); padding-bottom:5px; }
-.wv-mrow { border:1px solid var(--line); border-left:3px solid var(--amber-dark); border-radius:5px;
-  padding:9px 12px; margin:7px 0; max-width:80ch; }
-.wv-mrow.pred { border-left-color:var(--line); }
-.wv-mrow.t-constitution { border-left-color:var(--blue-dark); }
-.wv-mrow.t-home { border-left-color:var(--green-dark); }
-.wv-mrow .mbody { line-height:1.4; font-size:.94rem; }
-.wv-mrow .mmeta { margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
-.wv-mrow .stand { color:var(--amber); cursor:pointer; font-size:.74rem; border:1px solid var(--amber-dark);
-  border-radius:999px; padding:1px 8px; }
-.wv-mrow .stand:hover { background:var(--panel2); }
 
 /* one marks vocabulary at the view's top (the World lens above it is gone —
    drafts are grey now, so there is nothing left to swap between) */
@@ -1409,12 +1411,6 @@ const STYLE = `
 .wv-mine-tail { margin-top:4px; }
 .wv-mine-empty { margin:10px 0; font-style:italic; }
 .wv-elsewhere { display:flex; flex-direction:column; gap:6px; }
-.wv-elrow { border:1px solid var(--line); border-radius:5px; padding:7px 11px; max-width:80ch; }
-.wv-elwords { line-height:1.4; font-size:.88rem; color:var(--paper); }
-.wv-elmeta { margin-top:5px; display:flex; gap:8px; flex-wrap:wrap; align-items:baseline; }
-.wv-elmeta .stand { color:var(--amber); cursor:pointer; font-size:.74rem; border:1px solid var(--amber-dark);
-  border-radius:999px; padding:1px 8px; }
-.wv-elmeta .stand:hover { background:var(--panel2); }
 
 /* the painting */
 /* The painting is flush to its pane (Keemin, 2026-08-04). It used to sit inside
@@ -1424,7 +1420,6 @@ const STYLE = `
    it, which is also one rule instead of two saying different things. */
 .wv-map { padding:0; }
 .wv-map .wv-sticky { position:sticky; top:0; }
-.wv-map h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:0 0 10px; }
 /* The two map surfaces are things you GRAB, not prose you copy. Dragging used
    to sweep a text selection across the painting's labels, and a live selection
    then fights the next drag (the browser keeps extending it). The mousedown
@@ -1441,8 +1436,6 @@ const STYLE = `
   max-width:calc(100% - 20px); padding:5px 10px; border:1px solid var(--amber-dark); border-radius:999px;
   background:rgba(13,15,19,.92); color:var(--paper); font:700 .72rem/1.2 ui-monospace,Consolas,monospace;
   white-space:nowrap; pointer-events:none; box-shadow:0 3px 12px rgba(0,0,0,.35); }
-.wv-map-title { display:flex; align-items:center; gap:6px; }
-.wv-map-title h2 { margin:0; }
 /* ── the tour ─────────────────────────────────────────────────────────────────
    A dimmed page with one card on it, and — when the slide is about something you
    can point at — a hole cut around that thing so you read the words and the real
@@ -1456,49 +1449,59 @@ const STYLE = `
 .wv-tour[hidden] { display:none; }
 .wv-tour-scrim { position:fixed; inset:0; z-index:9100; background:rgba(6,7,10,.86);
   backdrop-filter:blur(1.5px); }
+/* THE TOUR IS BLUE (Keemin, 2026-08-04). Amber is the market's colour and the
+   tour is not a market surface — it is the thing that binds, the terms everyone
+   arrives under, which is exactly what constitution blue already means on this
+   page. The one exception is the stamp: ✦ and the word keep the violet they wear
+   everywhere else, because that colour IS the vocabulary. */
 .wv-tour-spot { position:fixed; z-index:9100; pointer-events:none;
-  box-shadow:0 0 0 100vmax rgba(6,7,10,.86), 0 0 0 2px rgba(232,197,106,.55) inset;
-  border:1px solid rgba(232,197,106,.7); transition:left .22s, top .22s, width .22s, height .22s; }
+  box-shadow:0 0 0 100vmax rgba(6,7,10,.86), 0 0 0 2px rgba(123,167,224,.55) inset;
+  border:1px solid rgba(123,167,224,.72); transition:left .22s, top .22s, width .22s, height .22s; }
 .wv-tour-spot[hidden] { display:none; }
 .wv-tour-card { position:fixed; top:0; left:0; z-index:9200; width:min(30rem,calc(100vw - 32px));
-  padding:20px 22px 16px; border:1px solid var(--line); border-left:3px solid var(--amber);
+  padding:20px 22px 16px; border:1px solid var(--line); border-left:3px solid var(--blue);
   border-radius:8px; background:rgba(13,15,19,.985); box-shadow:0 18px 60px rgba(0,0,0,.6);
   transition:transform .22s cubic-bezier(.4,0,.2,1); }
 .wv-tour-card.is-centred { left:50%; top:50%; transform:translate(-50%,-50%); }
 @media (prefers-reduced-motion:reduce){ .wv-tour-card, .wv-tour-spot { transition:none; } }
 .wv-tour-kicker { margin:0 0 6px; font-family:var(--mono); font-size:.6rem; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--amber-dark); }
-.wv-tour-title { margin:0 0 10px; font-size:1.12rem; line-height:1.25; color:var(--amber);
+  text-transform:uppercase; color:var(--blue-dark); }
+.wv-tour-title { margin:0 0 10px; font-size:1.12rem; line-height:1.25; color:var(--blue);
   font-weight:600; letter-spacing:.01em; }
 .wv-tour-body { color:var(--paper); font-size:.9rem; line-height:1.62; }
-.wv-tour-body b { color:var(--amber); font-weight:600; }
+.wv-tour-body b { color:var(--blue); font-weight:600; }
 .wv-tour-body em { color:var(--dim); }
 .wv-tour-body .tour-blue { color:var(--blue); }
 .wv-tour-body .tour-green { color:var(--green); }
 .wv-tour-body .tour-amber { color:var(--amber); }
 .wv-tour-body .tour-grey { color:var(--draft); }
+/* the stamp keeps its own colour wherever it is named — chip, sheet, balance,
+   and here. Two classes because the glyph carries a touch more weight than the
+   word beside it, exactly as it does on a backing chip. */
+.wv-tour-body .tour-stamp { color:var(--stamp-violet); }
+.wv-tour-body .tour-stamp-mark { color:var(--stamp-violet-heading); }
 .wv-tour-foot { display:flex; align-items:center; gap:12px; margin-top:18px;
   padding-top:13px; border-top:1px solid var(--line); }
 .wv-tour-dots { display:flex; align-items:center; gap:6px; margin-right:auto; }
 .wv-tour-dot { width:7px; height:7px; padding:0; border:0; border-radius:999px; cursor:pointer;
-  background:rgba(232,197,106,.26); transition:background .12s, transform .12s; }
-.wv-tour-dot:hover { background:rgba(232,197,106,.6); transform:scale(1.25); }
-.wv-tour-dot.on { background:var(--amber); }
+  background:rgba(123,167,224,.26); transition:background .12s, transform .12s; }
+.wv-tour-dot:hover { background:rgba(123,167,224,.62); transform:scale(1.25); }
+.wv-tour-dot.on { background:var(--blue); }
 .wv-tour-acts { display:flex; align-items:center; gap:7px; }
 .wv-tour-acts button { font:inherit; font-family:var(--mono); font-size:.68rem; letter-spacing:.06em;
   cursor:pointer; border-radius:999px; padding:6px 14px; }
 .wv-tour-skip { margin-right:4px; color:var(--dim); background:transparent; border:0; padding:6px 6px; }
 .wv-tour-skip:hover { color:var(--paper); }
 .wv-tour-back { color:var(--dim); background:transparent; border:1px solid var(--line); }
-.wv-tour-back:hover:not(:disabled) { color:var(--paper); border-color:var(--amber-dark); }
+.wv-tour-back:hover:not(:disabled) { color:var(--paper); border-color:var(--blue-dark); }
 .wv-tour-back:disabled { opacity:.3; cursor:not-allowed; }
-.wv-tour-next { color:var(--night); background:linear-gradient(180deg,#f0d68f,var(--amber));
-  border:1px solid var(--amber); font-weight:700; }
+.wv-tour-next { color:var(--night); background:linear-gradient(180deg,#a9c8ef,var(--blue));
+  border:1px solid var(--blue); font-weight:700; }
 /* the ? wears a ring until the tour has been taken once — a tutorial nobody
    finds is a tutorial nobody reads, and this is the smallest thing that says
    "there is one" without taking the page hostage on arrival */
-.wv-tour-open.is-unseen { color:var(--amber); border-color:var(--amber);
-  box-shadow:0 0 0 3px rgba(232,197,106,.18), 0 2px 10px rgba(0,0,0,.32); }
+.wv-tour-open.is-unseen { color:var(--blue); border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(123,167,224,.2), 0 2px 10px rgba(0,0,0,.32); }
 @media (max-width:720px){
   .wv-tour-card { width:calc(100vw - 20px); padding:16px 17px 13px; }
   .wv-tour-title { font-size:1rem; }
@@ -1637,15 +1640,6 @@ const STYLE = `
 .ov-dot { vector-effect:non-scaling-stroke; }
 
 .wv-nav .wv-identity { margin:10px 0 2px; font-size:.8rem; }
-.wv-nav .wv-signin { color:var(--amber-dark); cursor:pointer; }
-.wv-nav .wv-signin:hover { color:var(--amber); }
-.wv-nav .wv-keyfield { display:flex; gap:5px; margin-top:6px; }
-.wv-nav .wv-keyfield input.keyinput { flex:1; }
-.wv-nav .wv-keyfield .keyuse { white-space:nowrap; }
-.wv-nav .wv-id-in { color:var(--dim); }
-.wv-nav .wv-id-in b { color:var(--green); }
-.wv-nav .wv-signout { color:var(--amber-dark); cursor:pointer; margin-left:4px; }
-.wv-nav .wv-signout:hover { color:var(--amber); }
 .wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
 .wv-nav .handleopt.on { border-color:var(--you); color:var(--you); }
 .wv-nav .wv-identity h2 { margin-top:0; }
@@ -1669,7 +1663,7 @@ const STYLE = `
 .wv-change-course { display:block; margin-top:6px; padding:0; border:0; background:transparent;
   color:var(--you); font:inherit; font-weight:700; cursor:pointer; text-decoration:underline;
   text-underline-offset:2px; }
-.wv-change-course:hover, .wv-change-course:focus-visible { color:var(--paper); outline:none; }
+.wv-change-course:hover, .wv-change-course:focus-visible { color:var(--paper); }
 /* From / To, one line each */
 .wv-walk-row { display:flex; gap:9px; align-items:baseline; margin-top:8px; }
 .wv-walk-key { flex:none; width:2.6rem; color:var(--dim); font-family:var(--mono);
@@ -1768,10 +1762,10 @@ const STYLE = `
 .wv-bubble-back.t-constitution { color:var(--blue); }
 .wv-bubble-back.t-home { color:var(--green); }
 .wv-bubble-back.t-market { color:var(--amber); }
-.wv-bubble-back:hover, .wv-bubble-back:focus-visible { background:var(--panel2); outline:none; }
+.wv-bubble-back:hover, .wv-bubble-back:focus-visible { background:var(--panel2); }
 .wv-bubble-close { margin-left:auto; flex:none; border:0; background:transparent; color:var(--dim);
   font:inherit; font-size:.95rem; line-height:1; padding:4px 7px; cursor:pointer; border-radius:4px; }
-.wv-bubble-close:hover, .wv-bubble-close:focus-visible { color:var(--paper); background:var(--panel2); outline:none; }
+.wv-bubble-close:hover, .wv-bubble-close:focus-visible { color:var(--paper); background:var(--panel2); }
 /* the cell inside a bubble is the SAME cell the panel builds — the bubble only
    takes away the frame it no longer needs (its own border, its width cap) */
 .wv-bubble .wv-card { border:0; border-radius:0; margin:0; max-width:none; padding:10px 13px; cursor:pointer; }
@@ -1792,7 +1786,7 @@ const STYLE = `
    state wins the colour and the tier chip goes on saying which kind of thing it
    is. If a surface speaks tier and is missing here, it will keep painting a
    draft as though the town had published it — the two lists must stay level. */
-.wv-card.is-draft, .wv-rnode.is-draft, .wv-attribute.is-draft, .wv-mrow.is-draft {
+.wv-card.is-draft, .wv-rnode.is-draft, .wv-attribute.is-draft {
   --wv-mark-accent:var(--draft); border-left-color:var(--draft-dark); }
 .wv-card.is-draft:hover, .wv-rnode.is-draft:hover, .wv-attribute.is-draft:hover { border-color:var(--draft-dark); }
 .wv-card.is-draft .cname, .wv-card.is-draft .cname.is-determined,
@@ -3517,7 +3511,7 @@ export function mountViewer(appEl) {
       + (resolved
         ? `<div class="wv-act-row"><label>stamps <input class="wv-act-amount" type="number" min="1" step="1"${max !== "" ? ` max="${Number(max)}"` : balance !== null ? ` max="${balance}"` : ""}></label>`
           + `<button type="button" class="wv-act-preview-btn">preview the sealed line</button></div>`
-          + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; ✦weight updates at the next Settlement.</p>`
+          + `<div class="wv-act-preview" hidden><pre></pre><p class="wv-act-note">The office fills the signature. Escrow moves now; <b class="wv-stamp-holding">✦</b> weight updates at the next Settlement.</p>`
           + `<div class="wv-act-row"><button type="button" class="wv-act-confirm" disabled>confirm and send</button></div></div>`
           + `<p class="wv-act-answer" hidden></p>`
         : `<p class="wv-act-note">sign in as a resident to back this mark.</p>`);
@@ -4202,6 +4196,17 @@ export function mountViewer(appEl) {
       if (event.key === "Escape") { event.preventDefault(); stepTour("skip"); return; }
       if (event.key === "ArrowRight") { event.preventDefault(); stepTour("next"); return; }
       if (event.key === "ArrowLeft") { event.preventDefault(); stepTour("back"); return; }
+      // It says aria-modal, so it has to behave like one: Tab must not walk out
+      // of the card and start pressing buttons on a page the reader cannot see.
+      if (event.key === "Tab") {
+        const stops = [...$(root, ".wv-tour-card").querySelectorAll("button:not(:disabled)")];
+        if (!stops.length) return;
+        const edge = event.shiftKey ? stops[0] : stops[stops.length - 1];
+        if (document.activeElement === edge || !$(root, ".wv-tour-card").contains(document.activeElement)) {
+          event.preventDefault();
+          (event.shiftKey ? stops[stops.length - 1] : stops[0]).focus();
+        }
+      }
       return;
     }
     if (event.key !== "Escape") return;
