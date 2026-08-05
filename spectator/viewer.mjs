@@ -1276,8 +1276,25 @@ const STYLE = `
 /* the marks you stand WITHIN read a tad heavier — the map's echo of the
    "Where you stand" ladder (Keemin: no nesting ceremony, just weight) */
 .wv-fp.fp-within { stroke-width:2.8; }
-.wv-hl-label rect { fill:rgba(13,15,19,.94); stroke:var(--line); stroke-width:1; }
-.wv-hl-label text { fill:var(--paper); font-family:Consolas,Menlo,monospace; }
+/* THE name-box, and there is one of it (Keemin 2026-08-04: use the same box the
+   off-screen marks use — they are nicer because they are coloured). An on-screen
+   mark and one clipped at the edge are the same mark saying its name, so they had
+   no business speaking in two different visual registers: the edge box was
+   tier-coloured and set in the world's serif, this one was grey-bordered
+   monospace. Monospace belongs to the readouts that are NUMBERS — the coordinate
+   chip, the walk metrics — and a name is not a number.
+   Colour rides on the color property so the rect's stroke and the text can both
+   be currentColor, which is what lets one rule serve every tier. */
+.wv-hl-label, .wv-edge-indicator { color:var(--amber); }
+.wv-hl-label.t-constitution, .wv-edge-indicator.t-constitution { color:var(--blue); }
+.wv-hl-label.t-home, .wv-edge-indicator.t-home { color:var(--green); }
+.wv-hl-label.t-market, .wv-edge-indicator.t-market { color:var(--amber); }
+/* a resident is not a tier of mark, but speaks the same box — in the walker's own
+   two states, so the name agrees with the dot it is naming */
+.wv-hl-label.wv-hl-walker { color:var(--green); }
+.wv-hl-label.wv-hl-walker.moving { color:#e0507a; }
+.wv-hl-label rect, .wv-edge-indicator rect { fill:rgba(13,15,19,.94); stroke:currentColor; stroke-width:1; }
+.wv-hl-label text, .wv-edge-indicator text { fill:currentColor; font-family:Georgia,"Times New Roman",serif; }
 .wv-edge-indicator.t-constitution { color:var(--blue); }
 .wv-edge-indicator.t-home { color:var(--green); }
 .wv-edge-indicator.t-market { color:var(--amber); }
@@ -1456,7 +1473,7 @@ const STYLE = `
 .wv-fp.is-draft.fp-parcel { fill:rgba(154,160,171,.08); }
 .wv-hl-box.is-draft { stroke:var(--draft); }
 .wv-hl-dot.is-draft { fill:var(--draft); }
-.wv-edge-indicator.is-draft { color:var(--draft); }
+.wv-edge-indicator.is-draft, .wv-hl-label.is-draft { color:var(--draft); }
 .wv-bubble.is-draft { --wv-mark-accent:var(--draft); }
 `;
 
@@ -2544,7 +2561,9 @@ export function mountViewer(appEl) {
     // In painting-only the bubble carries the name, so the SVG label stands down
     // — two boxes saying the same word over the same dot is one box too many.
     // The geometry (the wash, the dot, the edge arrow) is not a label and stays.
-    if (!state.paintingOnly) s += hoverLabelSVG({ text: identity, at: p, unit, view: mapCtx.view });
+    // the same box an off-screen mark gets, in this mark's own colour
+    if (!state.paintingOnly)
+      s += hoverLabelSVG({ text: identity, at: p, unit, view: mapCtx.view, className: `wv-hl-label ${t}` });
     return s;
   }
   // A standing resident gets the SAME box a mark gets — one hover language on
@@ -2562,7 +2581,10 @@ export function mountViewer(appEl) {
       ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
       : (w.mark_id ? `at ${w.mark_id}` : "at rest");
     return `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot wv-hl-walker${moving ? " moving" : ""}"/>`
-      + (state.paintingOnly ? "" : hoverLabelSVG({ text: `${w.handle} — ${where}`, at: p, unit, view: mapCtx.view }));
+      + (state.paintingOnly ? "" : hoverLabelSVG({
+        text: `${w.handle} — ${where}`, at: p, unit, view: mapCtx.view,
+        className: `wv-hl-label wv-hl-walker${moving ? " moving" : ""}`,
+      }));
   }
   function syncMarkInteractionViews() {
     const interaction = markInteraction.getState();
