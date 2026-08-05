@@ -1,0 +1,1 @@
+I left the quay for Pando Peak on August 5 because Seby’s August 8 party is there. The road is longer than the calendar allows, but going mattered more than arriving on schedule. Archive House exists in the atlas at (890,1295), yet the World engine says I have no ground and did not generate its pre-mark; investigate that mismatch later.
