@@ -1285,19 +1285,37 @@ const STYLE = `
 .wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
 #wv-walk-readout { opacity:.75; }
 /* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
-/* The page's controls, loose in the rail: mono pills in the gold family, the same
-   shape as the site's sign-in and back links sitting just above them. The glyph
-   leads and the word follows. */
-.wv-nav .wv-railctl { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 16px; }
-.wv-nav .wv-railctl .ctl { display:inline-flex; align-items:center; gap:6px;
+/* The painting's controls FLOAT ON THE PAINTING (Keemin, 2026-08-04) — they act
+   on what is under them, so they sit on it, in the same family as the coordinate
+   and tally chips already riding the corners. Mono pills in the gold, the same
+   shape as the site's sign-in and back links; the glyph leads, the word follows.
+   Backdrop-blurred, because they hang over a painting rather than a panel. */
+.wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
+  flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
+.wv-mapctl .ctl { display:inline-flex; align-items:center; gap:6px;
   font-family:var(--mono); font-size:.66rem; letter-spacing:.07em;
-  color:rgba(232,197,106,.72); background:rgba(20,23,29,.86);
-  border:1px solid rgba(232,197,106,.34); border-radius:999px; padding:4px 12px; }
-.wv-nav .wv-railctl .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
-  background:rgba(232,197,106,.12); }
-.wv-nav .wv-railctl .ctl.on { color:var(--night); border-color:var(--amber);
+  color:rgba(232,197,106,.78); background:rgba(13,15,19,.82);
+  border:1px solid rgba(232,197,106,.34); border-radius:999px; padding:4px 12px;
+  backdrop-filter:blur(4px); box-shadow:0 2px 10px rgba(0,0,0,.32); }
+.wv-mapctl .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
+  background:rgba(232,197,106,.16); }
+.wv-mapctl .ctl.on { color:var(--night); border-color:var(--amber);
   background:linear-gradient(180deg,#f0d68f,var(--amber)); }
-.wv-railctl .wv-map-help-toggle { padding:4px 10px; }
+.wv-mapctl .wv-map-help-toggle { padding:4px 10px; }
+/* hard against the right edge, so the help opens back across the painting */
+.wv-mapctl .wv-map-help-bubble { left:auto; right:0; }
+
+/* The Telling's own switch, heading the rail: an icon and the panel's NAME, so
+   the thing has an identity again instead of being one unlabelled chip among the
+   painting's. Lit means the telling is up. */
+.wv-nav .wv-telling-toggle { display:flex; align-items:center; gap:8px; width:100%;
+  margin:0 0 14px; padding:6px 11px; cursor:pointer;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.09em;
+  color:rgba(232,197,106,.6); background:transparent;
+  border:1px solid var(--line); border-radius:999px; }
+.wv-nav .wv-telling-toggle:hover { color:var(--amber); border-color:rgba(232,197,106,.5); }
+.wv-nav .wv-telling-toggle.on { color:var(--amber); border-color:rgba(232,197,106,.55);
+  background:rgba(232,197,106,.09); }
 .wv-minimap.pannable { cursor:grab; }
 .wv-minimap.panning { cursor:grabbing; }
 .wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
@@ -1504,28 +1522,17 @@ const STYLE = `
 const MARKUP = `
 <div class="wv-main">
   <nav class="wv-nav">
+    <!-- The Telling's own name and its switch, at the head of the rail. It governs
+         a PANEL, so it belongs to the page's furniture rather than floating on the
+         painting with the painting's controls (Keemin, 2026-08-04). -->
+    <button type="button" class="wv-telling-toggle" aria-expanded="true"
+      title="show or hide the telling"><span aria-hidden="true">▤</span> The Telling</button>
     <!-- The head of the rail is where ALL the page's chrome lives now (Keemin
          2026-08-04): the beta chip, and the SLOT the site's back-link and auth
          pill move themselves into. Nothing floats over the painting any more,
          and no strip spends a row of the page naming things. -->
     <div class="wv-nav-top">
       <span class="wv-chip wv-beta-chip" title="the record is real, and so are the acts taken here — the viewer is still finding its shape">BETA</span>
-    </div>
-    <!-- Every control the page has, loose in the rail (Keemin 2026-08-04). The
-         panels carry no bars of their own now: the painting runs edge to edge and
-         the telling is content from its first line. -->
-    <div class="wv-railctl">
-      <button class="ctl wv-map-home" title="fit the whole painting">⌂<span>fit</span></button>
-      <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖<span>follow</span></button>
-      <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors">#<span>grid</span></button>
-      <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭<span>marks</span></button>
-      <button class="ctl wv-telling-toggle" aria-expanded="true" title="show or hide the telling">▤<span>telling</span></button>
-      <div class="wv-map-help">
-        <button type="button" class="ctl wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
-        <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
-          signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
-          Drag to pan, scroll to zoom.</div>
-      </div>
     </div>
     <div class="wv-identity"></div>
     <section class="wv-walkdesk" hidden>
@@ -1580,7 +1587,18 @@ const MARKUP = `
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
-      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div></div>
+      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-mapctl">
+          <button class="ctl wv-map-home" title="fit the whole painting">⌂<span>fit</span></button>
+          <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖<span>follow</span></button>
+          <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors">#<span>grid</span></button>
+          <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭<span>marks</span></button>
+          <div class="wv-map-help">
+            <button type="button" class="ctl wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
+            <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
+              signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
+              Drag to pan, scroll to zoom.</div>
+          </div>
+        </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div></div>
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
   </aside>
@@ -2143,7 +2161,7 @@ export function mountViewer(appEl) {
     // The chrome that rides ON the painting is held across the wipe below rather
     // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
     // the walk desk itself) that must not be rebuilt when the atlas loads.
-    const overlays = [".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles"]
+    const overlays = [".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles"]
       .map((selector) => $(boxEl, selector)).filter(Boolean);
     const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
