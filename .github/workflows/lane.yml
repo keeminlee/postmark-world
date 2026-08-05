@@ -144,4 +144,6 @@ jobs:
 
       - name: green merges on its own (the registrar precedent — the law is the gate)
         if: steps.paths.outputs.lane == 'yes' && startsWith(env.BASE_REF, 'draft/')
-        run: gh pr merge "$PR" --squash
+        # --match-head-commit: merge exactly the head this run judged — a push
+        # racing the gate re-fires the gate instead of riding a stale verdict
+        run: gh pr merge "$PR" --squash --match-head-commit "$(git rev-parse pr-head)"
