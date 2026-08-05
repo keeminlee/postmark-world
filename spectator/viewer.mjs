@@ -468,10 +468,14 @@ export function formatRelativePosition(from, to, bearingPoints = DIALS.bearing_p
   return `${distance.toLocaleString()} m · ${BEARING_LONG[bearing] ?? bearing}`;
 }
 
-export function standingLocationLabel(point, marks = [], determined = {}) {
+// `prefix: false` for a place that already has a word in front of it — the walk
+// desk's From row says "From", so "standing in" was the second one.
+export function standingLocationLabel(point, marks = [], determined = {}, { prefix = true } = {}) {
   const id = smallestContainingMark(point, marks);
   const mark = id && markIndex(marks).get(id);
-  return mark ? `standing in ${resolveMarkName(mark, determined).name}` : "on open ground";
+  if (!mark) return prefix ? "on open ground" : "open ground";
+  const name = resolveMarkName(mark, determined).name;
+  return prefix ? `standing in ${name}` : name;
 }
 
 export function walkerDestinationName(walker, marks = [], determined = {}) {
@@ -1330,16 +1334,14 @@ const STYLE = `
    and tally chips already riding the corners. Mono pills in the gold, the same
    shape as the site's sign-in and back links; the glyph leads, the word follows.
    Backdrop-blurred, because they hang over a painting rather than a panel. */
-.wv-worldmark { position:absolute; z-index:6; top:10px; left:10px; }
-.wv-worldmark .ctl { display:inline-flex; align-items:center; gap:6px;
-  font-family:var(--mono); font-size:.66rem; letter-spacing:.07em;
-  color:rgba(232,197,106,.78); background:rgba(13,15,19,.82);
-  border:1px solid rgba(232,197,106,.34); border-radius:999px; padding:4px 12px;
-  backdrop-filter:blur(4px); box-shadow:0 2px 10px rgba(0,0,0,.32); cursor:pointer; }
-.wv-worldmark .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
-  background:rgba(232,197,106,.16); }
-.wv-worldmark .ctl.on { color:var(--night); border-color:var(--amber);
-  background:linear-gradient(180deg,#f0d68f,var(--amber)); }
+/* the world-root's glyph: the same blue circle .ov-pip.t-constitution draws, at
+   the size a pip renders on screen, in the corner rather than at a coordinate */
+.wv-worldmark { position:absolute; z-index:6; top:13px; left:13px; }
+.wv-root-mark { display:block; width:13px; height:13px; padding:0; cursor:pointer;
+  border:0; border-radius:999px; background:var(--blue); opacity:.65;
+  box-shadow:0 1px 6px rgba(0,0,0,.55); transition:opacity .12s, box-shadow .12s; }
+.wv-root-mark:hover, .wv-root-mark.is-hovered { opacity:1; }
+.wv-root-mark.on { opacity:1; box-shadow:0 0 0 3px rgba(123,167,224,.35), 0 1px 6px rgba(0,0,0,.55); }
 .wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
   flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
 .wv-mapctl .ctl { display:inline-flex; align-items:center; gap:6px;
@@ -1640,12 +1642,14 @@ const MARKUP = `
   <aside class="wv-map">
     <div class="wv-sticky">
       <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-worldmark">
-          <!-- the mark that frames everything, as a MARK: it has no footprint you
-               could point at and no pip of its own, so the only way to open it was
-               a paraphrase in the rail. Now it opens its own cell like anything
-               else, and the paraphrase is gone (Keemin, 2026-08-04). -->
-          <button type="button" class="ctl wv-root-mark" data-root-mark
-            title="the mark every other mark is a child of">✧<span>let there be light</span></button>
+          <!-- The mark that frames everything, drawn as what it IS: a constitution
+               pip, the same blue dot as any other. It has no footprint to stand on
+               and no place of its own, so it takes the one corner of the painting
+               it can honestly occupy — and the bubble hangs off THAT, rather than
+               floating in the middle of the page for want of a coordinate. -->
+          <button type="button" class="wv-root-mark" data-root-mark
+            aria-label="Let There Be Light"
+            title="Let There Be Light — the mark every other mark is a child of"></button>
         </div><div class="wv-mapctl">
           <button class="ctl wv-map-home" title="fit the whole painting">⌂<span>fit</span></button>
           <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖<span>follow</span></button>
@@ -2188,6 +2192,15 @@ export function mountViewer(appEl) {
     const stack = card._stack ?? [];
     let box = card.querySelector(".wv-expand");
     if (!stack.length) { box?.remove(); return; }
+    // ONE OPEN CELL PER SURFACE (Keemin, 2026-08-04). Expansions used to stack up
+    // as you read down the column, so the Telling grew a tail of trees nobody had
+    // closed. Scoped to the surface the card lives on, so opening something in the
+    // Telling does not shut the bubble you opened it from.
+    for (const other of (card.closest(".wv-telling, .wv-bubble") ?? root).querySelectorAll(".wv-card")) {
+      if (other === card || !other._stack?.length) continue;
+      other._stack = [];
+      other.querySelector(".wv-expand")?.remove();
+    }
     const id = stack[stack.length - 1];
     const d = investigate(id, world);
     if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
@@ -2708,7 +2721,11 @@ export function mountViewer(appEl) {
       if (cell.classList.contains("wv-card")) cell.setAttribute("aria-selected", String(selected));
     }
     renderMarkHighlight();
-    $(root, ".wv-root-mark")?.classList.toggle("on", interaction.selectedId === WORLD_ROOT_ID);
+    const rootGlyph = $(root, ".wv-root-mark");
+    if (rootGlyph) {
+      rootGlyph.classList.toggle("on", interaction.selectedId === WORLD_ROOT_ID);
+      rootGlyph.classList.toggle("is-hovered", interaction.hoveredId === WORLD_ROOT_ID);
+    }
     renderBubbles();
   }
   markInteraction.subscribe(syncMarkInteractionViews);
@@ -2758,7 +2775,7 @@ export function mountViewer(appEl) {
       here.innerHTML = journey.kind === "journey"
         ? `<b>on the road</b> · ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}`
         : origin
-          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined))}</b>`
+          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined, { prefix: false }))}</b>`
           : `<span class="wv-quiet">the office has no position for you yet</span>`;
     }
     if (moveCamera && origin && walkState.actorBound) {
@@ -3390,9 +3407,25 @@ export function mountViewer(appEl) {
       y: (mapCtx.view.y + mapCtx.view.h / 2 - mapCtx.originPx.y) * mapCtx.mPerPx,
     };
   }
-  function placeBubbleAt(el, worldPoint, avoid = null) {
+  // an element's centre, in the bubble layer's own pixels
+  function elementBoxPoint(el) {
+    const host = bubbleHost();
+    if (!el || !host) return null;
+    const r = el.getBoundingClientRect(), b = host.getBoundingClientRect();
+    if (!b.width) return null;
+    return { x: r.x + r.width / 2 - b.x, y: r.y + r.height / 2 - b.y, box: { w: b.width, h: b.height } };
+  }
+  // WHERE A BUBBLE HANGS, resolved to box pixels here rather than to a world
+  // coordinate — because the world-root has no coordinate and never will. It has
+  // a glyph, though, and a glyph has a place.
+  function anchorBoxFor(id) {
+    if (!id) return null;
+    if (id === WORLD_ROOT_ID) return elementBoxPoint($(root, ".wv-root-mark"));
+    const world = markAnchorPoint(id) ?? viewCentreWorld();
+    return world ? paintingPointToBox(world) : null;
+  }
+  function placeBubbleAt(el, at, avoid = null) {
     if (!el || el.hidden) return;
-    const at = worldPoint ? paintingPointToBox(worldPoint) : null;
     if (!at) { el.hidden = true; return; }
     const spot = placeBubble({ anchor: at, size: { w: el.offsetWidth, h: el.offsetHeight }, box: at.box, avoid });
     if (!spot) return;
@@ -3520,9 +3553,9 @@ export function mountViewer(appEl) {
   function positionBubbles() {
     if (!state.paintingOnly) return;
     const { hoveredId, selectedId } = markInteraction.getState();
-    placeBubbleAt(bubbleEls.pinned, selectedId ? (markAnchorPoint(selectedId) ?? viewCentreWorld()) : null);
+    placeBubbleAt(bubbleEls.pinned, anchorBoxFor(selectedId));
     const pinned = bubbleRect(bubbleEls.pinned);
-    placeBubbleAt(bubbleEls.hover, hoveredId ? markAnchorPoint(hoveredId) : null, pinned);
+    placeBubbleAt(bubbleEls.hover, anchorBoxFor(hoveredId), pinned);
   }
   function applyPaintingOnly() {
     const on = state.paintingOnly;
@@ -3802,10 +3835,13 @@ export function mountViewer(appEl) {
   const markCellAt = (target) =>
     target?.closest?.(".wv-card[data-id], .wv-rnode[data-id], .wv-attribute[data-id]") ?? null;
   root.addEventListener("mouseover", (e) => {
+    // the root's glyph is a mark to the pointer as much as to the click
+    if (e.target.closest("[data-root-mark]")) { hoverMark(WORLD_ROOT_ID); return; }
     const cell = markCellAt(e.target);
     if (cell) hoverMark(cell.dataset.id, !!cell.closest(".wv-bubble"));
   });
   root.addEventListener("mouseout", (e) => {
+    if (e.target.closest("[data-root-mark]")) { hoverMark(null); return; }
     const from = markCellAt(e.target);
     if (!from) return;
     const to = markCellAt(e.relatedTarget);
@@ -3952,7 +3988,7 @@ export function mountViewer(appEl) {
     const box = $(root, ".wv-identity");
     if (!box) return;
     const handles = state.whoami?.handles ?? [];
-    const spectator = `<button type="button" class="ctl handleopt${isSpectating() ? " on" : ""}" data-act-as="${SPECTATOR_ACTOR}" aria-pressed="${isSpectating()}">✦ Spectator</button>`;
+    const spectator = `<button type="button" class="ctl handleopt${isSpectating() ? " on" : ""}" data-act-as="${SPECTATOR_ACTOR}" aria-pressed="${isSpectating()}">◉ Spectator</button>`;
     box.innerHTML = `<h2>Act As</h2><div class="handlepick">${spectator}${handles.map((handle) =>
           `<button type="button" class="ctl handleopt${state.actAs === handle ? " on" : ""}" data-act-as="${esc(handle)}" aria-pressed="${state.actAs === handle}">${esc(handle)}${state.actAs === handle
             ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`

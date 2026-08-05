@@ -970,3 +970,14 @@ test("only a pip names a mark; containment only names the ground", () => {
     [deep.x, deep.y, deep.inside], [inner.x, inner.y, inner.inside],
     "two spots in one region are two destinations, not one centre twice");
 });
+
+test("a place that already has a word in front of it does not bring its own", () => {
+  const marks = [
+    { id: "wright/the-trueing-house", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 8, h: 8 } },
+  ];
+  assert.equal(standingLocationLabel({ x: 0, y: 0 }, marks), "standing in The Trueing House");
+  assert.equal(standingLocationLabel({ x: 0, y: 0 }, marks, {}, { prefix: false }), "The Trueing House",
+    "the walk desk's From row supplies the verb, so the label must not repeat it");
+  assert.equal(standingLocationLabel({ x: 900, y: 0 }, marks), "on open ground");
+  assert.equal(standingLocationLabel({ x: 900, y: 0 }, marks, {}, { prefix: false }), "open ground");
+});
