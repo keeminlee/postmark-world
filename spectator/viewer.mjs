@@ -1037,7 +1037,37 @@ const STYLE = `
 .wv-main.no-map { grid-template-columns:var(--rail) minmax(0,1fr); }
 @media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:var(--rail) minmax(0,1fr); }
   .wv-map { grid-column:1 / -1; border-top:1px solid var(--line); } .wv-map .wv-sticky { position:static; } }
-@media (max-width:720px){ .wv-main,.wv-main.no-map { grid-template-columns:1fr; } }
+/* ── THE PHONE: THE PAINTING, AND NOTHING ELSE (Keemin, 2026-08-04) ───────────
+   Below 720 px the rail was a third of the screen for a column of short words,
+   and the Telling's 33 rem cannot fit at all — so the grid dropped them under the
+   painting and the page grew a long tail of desk furniture nobody had asked for
+   on a phone. Neither runs here. The painting takes the viewport, with its own
+   chrome, its bubbles and the walk desk, which is the whole surface anyway.
+
+   What goes with the rail: Act As, the crossing readout, the dev dials, and the
+   Telling. All desk work. The site's sign-in cluster is the one thing that must
+   NOT go — it is the only human door — so it notices the seat has gone and
+   floats instead (WorldSignIn.astro).
+
+   Placed after the base rules on purpose: the .wv-minimap > svg rule below is the
+   same specificity as the height:auto default further up, so it is source order
+   that decides, and it must be this one. */
+@media (max-width:720px){
+  .wv, .wv.is-painting-only { height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+  .wv > div, .wv.is-painting-only > div { flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+  .wv-nav, .wv-view { display:none; }
+  .wv-main, .wv-main.no-map, .wv-main.is-telling-collapsed, .wv-main.is-painting-only {
+    grid-template-columns:minmax(0,1fr); flex:1 1 0; min-height:0; overflow:hidden; align-items:stretch; }
+  .wv-map, .wv-main.is-painting-only .wv-map { grid-column:1 / -1; border-top:0; display:flex;
+    flex-direction:column; min-height:0; overflow:hidden; }
+  .wv-map .wv-sticky { position:static; display:flex; flex-direction:column; min-height:0; flex:1; }
+  .wv-minimap { flex:1; min-height:0; }
+  .wv-minimap > svg { width:100%; height:100%; }
+  /* the chrome that rides on the painting gets a phone's room, not a desk's */
+  .wv-walkdesk { width:auto; left:10px; right:10px; }
+  .wv-bubble { max-width:calc(100% - 20px); }
+  .wv-mapctl { gap:5px; }
+}
 /* the app frame (Keemin 2026-07-24 eve): at full width the page stops scrolling —
    each column scrolls itself, and the left side matches the map pane's height */
 @media (min-width:1161px){
@@ -1547,17 +1577,6 @@ const STYLE = `
   min-height:0; flex:1; }
 .wv-main.is-painting-only .wv-minimap { flex:1; min-height:0; }
 .wv-main.is-painting-only .wv-minimap > svg { width:100%; height:100%; }
-/* On one column the 100vh frame turns against the mode: the sidebar is tall, so
-   the painting inherits whatever is left — measured at 260 px on a 700 px page,
-   which is not a painting filling anything. Below the fold the page scrolls
-   again, the painting takes the top of it, and the sidebar sits underneath. */
-@media (max-width:720px){
-  .wv.is-painting-only, .wv.is-painting-only > div,
-  .wv-main.is-painting-only, .wv-main.is-painting-only .wv-map { height:auto; overflow:visible; }
-  .wv-main.is-painting-only .wv-map { order:-1; }
-  .wv-main.is-painting-only .wv-nav { border-right:0; border-top:1px solid var(--line); }
-  .wv-main.is-painting-only .wv-minimap { min-height:72vh; }
-}
 .wv-paint-tallies { position:absolute; z-index:6; left:9px; bottom:8px; max-width:min(34rem,52%);
   padding:4px 10px; border:1px solid var(--line); border-radius:999px; background:rgba(13,15,19,.9);
   color:var(--dim); font-size:.7rem; line-height:1.4; pointer-events:none; }
@@ -1589,10 +1608,20 @@ const STYLE = `
    right. Sticky, so a long relations tree never scrolls either of them away. */
 .wv-bubble-nav { position:sticky; top:0; z-index:3; display:flex; align-items:center; gap:8px;
   padding:5px 6px 5px 9px; background:rgba(13,15,19,.97); border-bottom:1px solid var(--line); }
+/* The way back is written in the ink of the mark it goes back to (Keemin,
+   2026-08-04) — blue for a constitution mark, green for a home, amber otherwise.
+   It is the same tier vocabulary every other coloured surface speaks, so the
+   button says WHAT you are returning to and not merely that you can.
+   Hover deliberately does not repaint the text: a background is affordance
+   enough, and a colour that changed under the pointer would be the one place in
+   this page where an accent stopped meaning tier. */
 .wv-bubble-back { border:0; background:transparent; color:var(--amber); font:inherit; font-size:.78rem;
   line-height:1.3; cursor:pointer; padding:3px 7px; border-radius:4px; min-width:0;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.wv-bubble-back:hover, .wv-bubble-back:focus-visible { background:var(--panel2); color:var(--paper); outline:none; }
+.wv-bubble-back.t-constitution { color:var(--blue); }
+.wv-bubble-back.t-home { color:var(--green); }
+.wv-bubble-back.t-market { color:var(--amber); }
+.wv-bubble-back:hover, .wv-bubble-back:focus-visible { background:var(--panel2); outline:none; }
 .wv-bubble-close { margin-left:auto; flex:none; border:0; background:transparent; color:var(--dim);
   font:inherit; font-size:.95rem; line-height:1; padding:4px 7px; cursor:pointer; border-radius:4px; }
 .wv-bubble-close:hover, .wv-bubble-close:focus-visible { color:var(--paper); background:var(--panel2); outline:none; }
@@ -1630,6 +1659,7 @@ const STYLE = `
 .wv-hl-dot.is-draft { fill:var(--draft); }
 .wv-edge-indicator.is-draft, .wv-hl-label.is-draft { color:var(--draft); }
 .wv-bubble.is-draft { --wv-mark-accent:var(--draft); }
+.wv-bubble-back.is-draft { color:var(--draft); }
 `;
 
 const MARKUP = `
@@ -3501,13 +3531,6 @@ export function mountViewer(appEl) {
     const screen = p.matrixTransform(matrix);
     return { x: screen.x - box.x, y: screen.y - box.y, box: { w: box.width, h: box.height } };
   }
-  function viewCentreWorld() {
-    if (!mapCtx) return null;
-    return {
-      x: (mapCtx.view.x + mapCtx.view.w / 2 - mapCtx.originPx.x) * mapCtx.mPerPx,
-      y: (mapCtx.view.y + mapCtx.view.h / 2 - mapCtx.originPx.y) * mapCtx.mPerPx,
-    };
-  }
   // an element's centre, in the bubble layer's own pixels
   function elementBoxPoint(el) {
     const host = bubbleHost();
@@ -3516,14 +3539,24 @@ export function mountViewer(appEl) {
     if (!b.width) return null;
     return { x: r.x + r.width / 2 - b.x, y: r.y + r.height / 2 - b.y, box: { w: b.width, h: b.height } };
   }
-  // WHERE A BUBBLE HANGS, resolved to box pixels here rather than to a world
-  // coordinate — because the world-root has no coordinate and never will. It has
-  // a glyph, though, and a glyph has a place.
+  // WHERE A BUBBLE HANGS, resolved to box pixels rather than to a world
+  // coordinate — because some marks have no coordinate and never will.
+  //
+  // A mark with ground hangs off its ground. A mark WITHOUT ground hangs off the
+  // frame's glyph, because the frame is where the placeless live: the world-root
+  // itself, and every ambient law beneath it — the fall of the land, the fog, the
+  // record, the walking pace, the wear. Those are the root's children in the
+  // record, and following one used to drop its bubble at the centre of whatever
+  // the view happened to be showing — a place, just not one that meant anything.
+  // (That fallback, viewCentreWorld, was this function's only caller and is gone.)
+  //
+  // The root is no longer a special case here; it is the first instance of the
+  // general one. nearestEmbodiedAncestor already returns null for it.
   function anchorBoxFor(id) {
     if (!id) return null;
-    if (id === WORLD_ROOT_ID) return elementBoxPoint($(root, ".wv-root-mark"));
-    const world = markAnchorPoint(id) ?? viewCentreWorld();
-    return world ? paintingPointToBox(world) : null;
+    const world = markAnchorPoint(id);
+    if (world) return paintingPointToBox(world);
+    return elementBoxPoint($(root, ".wv-root-mark"));
   }
   function placeBubbleAt(el, at, avoid = null) {
     if (!el || el.hidden) return;
@@ -3608,7 +3641,7 @@ export function mountViewer(appEl) {
     // in your head
     const cameFrom = bubbleTrail.length > 1 ? byId.get(bubbleTrail[bubbleTrail.length - 2]) : null;
     const back = cameFrom
-      ? `<button type="button" class="wv-bubble-back" title="back to ${esc(markIdentity(cameFrom))}">◂ ${esc(markIdentity(cameFrom))}</button>`
+      ? `<button type="button" class="wv-bubble-back ${markClasses(cameFrom)}" title="back to ${esc(markIdentity(cameFrom))}">◂ ${esc(markIdentity(cameFrom))}</button>`
       : "";
     el.className = `wv-bubble is-pinned ${markClasses(mark)}`;
     el.innerHTML = `<div class="wv-bubble-nav">${back}`

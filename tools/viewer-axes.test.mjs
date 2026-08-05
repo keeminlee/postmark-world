@@ -1020,3 +1020,39 @@ test("the frame answers no relations, and never walks the world to say so", asyn
 
   assert.deepEqual(worldFrameReading(null), { error: "no mark" });
 });
+
+test("no stray backtick hides inside the viewer's STYLE or MARKUP templates", async () => {
+  // Both are one long template literal, so a backtick written inside a comment —
+  // quoting a class name, say — ends the template early and the CSS after it is
+  // parsed as JavaScript. What you get is a ReferenceError naming some fragment
+  // of a selector ("minimap is not defined") from a line nowhere near the cause,
+  // which is a genuinely bad half-hour. Three of them in one sitting on
+  // 2026-08-04 bought this test.
+  //
+  // Importing the module already fails when this happens; the point here is to
+  // fail with the line number of the backtick instead of the line number of the
+  // wreckage.
+  const { readFile } = await import("node:fs/promises");
+  const here = new URL("../spectator/viewer.mjs", import.meta.url);
+  const lines = (await readFile(here, "utf8")).split(/\r?\n/);
+
+  const open = (needle) => lines.findIndex((line) => line.startsWith(needle));
+  const spans = [
+    { name: "STYLE", from: open("const STYLE = ") },
+    { name: "MARKUP", from: open("const MARKUP = ") },
+  ];
+  assert.ok(spans.every((s) => s.from >= 0), "both templates must still be found by their opening line");
+
+  for (const span of spans) {
+    // the template ends at the first line that is exactly the closing backtick
+    const end = lines.findIndex((line, i) => i > span.from && line.trim() === "`;");
+    assert.ok(end > span.from, `${span.name} has no closing backtick`);
+    for (let i = span.from + 1; i < end; i++) {
+      // interpolation inside MARKUP is legitimate and uses backticks for its own
+      // nested templates; a backtick is only a problem inside a comment or prose
+      const line = lines[i];
+      if (!line.includes("`") || line.includes("${")) continue;
+      assert.fail(`${span.name}: stray backtick at ${span.name === "STYLE" ? "" : ""}line ${i + 1} — ${line.trim()}`);
+    }
+  }
+});
