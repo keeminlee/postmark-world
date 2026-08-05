@@ -1022,25 +1022,13 @@ const STYLE = `
 .wv-dev .devrow { display:flex; gap:6px; margin-top:6px; }
 .wv-dev .devrow button { flex:1; }
 .wv-dev .devnote { font-size:.72rem; color:var(--dim); margin:2px 0 10px; font-style:italic; }
-/* ── two panels of one rank ──────────────────────────────────────────────────
-   The Telling and The Painting wear the same head, because they are the same
-   kind of thing: a way of reading the record. */
-.wv-panelhead { display:flex; align-items:center; justify-content:space-between; gap:8px;
-  padding:9px 14px; border-bottom:1px solid var(--line); flex:none; min-height:38px; }
-.wv-panelhead h2 { margin:0; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--dim); font-family:var(--mono); font-weight:400; white-space:nowrap; }
+/* Two panels, no bars. Both are content to their own edges — the painting runs
+   to the window and the telling begins at its first line — because every control
+   either of them had now lives loose in the rail. */
 .wv-view { overflow-x:auto; min-height:60vh; border-right:1px solid var(--line); }
 .wv-telling { padding:16px 20px 26px; }
-.wv-telling-toggle { flex:none; }
-/* collapsed: a rail that still says its own name, so the way back is where the
-   panel was rather than hidden in the other panel's controls */
-.wv-main.is-telling-collapsed { grid-template-columns:236px 38px minmax(0,1fr); }
-.wv-main.is-telling-collapsed > .wv-view { min-height:0; overflow:hidden; padding:0; }
-.wv-main.is-telling-collapsed .wv-telling { display:none; }
-.wv-main.is-telling-collapsed .wv-viewhead { flex-direction:column; justify-content:flex-start;
-  gap:14px; height:100%; padding:10px 0; border-bottom:0; }
-.wv-main.is-telling-collapsed .wv-viewhead h2 { writing-mode:vertical-rl; text-orientation:mixed; }
-@media (max-width:1160px){ .wv-main.is-telling-collapsed { grid-template-columns:236px minmax(0,1fr); } }
+.wv-main.is-telling-collapsed { grid-template-columns:236px minmax(0,1fr); }
+.wv-main.is-telling-collapsed > .wv-view { display:none; }
 @media (max-width:720px){ .wv-main.is-telling-collapsed { grid-template-columns:1fr; } }
 
 /* the telling */
@@ -1242,7 +1230,7 @@ const STYLE = `
 .wv-map-help-toggle:hover, .wv-map-help-toggle:focus-visible,
 .wv-map-help.is-open .wv-map-help-toggle { color:var(--paper); border-color:var(--amber-dark);
   background:var(--panel2); outline:none; }
-.wv-map-help-bubble { position:absolute; z-index:8; top:calc(100% + 7px); left:0; width:min(30rem,72vw);
+.wv-map-help-bubble { position:absolute; z-index:8; top:calc(100% + 7px); left:0; width:min(26rem,60vw);
   padding:9px 11px; border:1px solid var(--line); border-radius:5px;
   background:rgba(13,15,19,.97); color:var(--dim); font-size:.78rem; line-height:1.45;
   box-shadow:0 8px 24px rgba(0,0,0,.38); opacity:0; visibility:hidden;
@@ -1297,20 +1285,19 @@ const STYLE = `
 .wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
 #wv-walk-readout { opacity:.75; }
 /* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
-/* The map controls speak the town's own button: a mono pill in the gold family,
-   the same shape as the site's sign-in and back links (Keemin 2026-08-04 —
-   "stylize the fit, follow, grid and marks icons to fit the site better"). The
-   glyph leads, the word follows and steps out of the way when the pane is tight. */
-.wv-mapctl { display:flex; gap:6px; flex-wrap:wrap; }
-.wv-mapctl .ctl { display:inline-flex; align-items:center; gap:6px;
+/* The page's controls, loose in the rail: mono pills in the gold family, the same
+   shape as the site's sign-in and back links sitting just above them. The glyph
+   leads and the word follows. */
+.wv-nav .wv-railctl { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 16px; }
+.wv-nav .wv-railctl .ctl { display:inline-flex; align-items:center; gap:6px;
   font-family:var(--mono); font-size:.66rem; letter-spacing:.07em;
   color:rgba(232,197,106,.72); background:rgba(20,23,29,.86);
   border:1px solid rgba(232,197,106,.34); border-radius:999px; padding:4px 12px; }
-.wv-mapctl .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
+.wv-nav .wv-railctl .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
   background:rgba(232,197,106,.12); }
-.wv-mapctl .ctl.on { color:var(--night); border-color:var(--amber);
+.wv-nav .wv-railctl .ctl.on { color:var(--night); border-color:var(--amber);
   background:linear-gradient(180deg,#f0d68f,var(--amber)); }
-@media (max-width:1400px){ .wv-mapctl .ctl > span { display:none; } .wv-mapctl .ctl { padding:4px 9px; } }
+.wv-railctl .wv-map-help-toggle { padding:4px 10px; }
 .wv-minimap.pannable { cursor:grab; }
 .wv-minimap.panning { cursor:grabbing; }
 .wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
@@ -1524,6 +1511,22 @@ const MARKUP = `
     <div class="wv-nav-top">
       <span class="wv-chip wv-beta-chip" title="the record is real, and so are the acts taken here — the viewer is still finding its shape">BETA</span>
     </div>
+    <!-- Every control the page has, loose in the rail (Keemin 2026-08-04). The
+         panels carry no bars of their own now: the painting runs edge to edge and
+         the telling is content from its first line. -->
+    <div class="wv-railctl">
+      <button class="ctl wv-map-home" title="fit the whole painting">⌂<span>fit</span></button>
+      <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖<span>follow</span></button>
+      <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors">#<span>grid</span></button>
+      <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭<span>marks</span></button>
+      <button class="ctl wv-telling-toggle" aria-expanded="true" title="show or hide the telling">▤<span>telling</span></button>
+      <div class="wv-map-help">
+        <button type="button" class="ctl wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
+        <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
+          signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
+          Drag to pan, scroll to zoom.</div>
+      </div>
+    </div>
     <div class="wv-identity"></div>
     <section class="wv-walkdesk" hidden>
       <h2>Walk</h2>
@@ -1573,32 +1576,10 @@ const MARKUP = `
        column and the painting had a title; they are peers, so they read as peers.
        The Telling collapses to a rail that still says its own name. -->
   <section class="wv-view">
-    <div class="wv-panelhead wv-viewhead">
-      <h2>The Telling</h2>
-      <button type="button" class="ctl wv-telling-toggle" aria-expanded="true"
-        title="collapse the telling and give the painting the page">‹</button>
-    </div>
     <div class="wv-telling"><div class="wv-quiet">opening your eyes…</div></div>
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
-      <div class="wv-panelhead wv-maphead">
-        <div class="wv-map-title">
-          <h2>The Painting</h2>
-          <div class="wv-map-help">
-            <button type="button" class="wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
-            <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
-              signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
-              Drag to pan, scroll to zoom.</div>
-          </div>
-        </div>
-        <div class="wv-mapctl">
-          <button class="ctl wv-map-home" title="fit the whole painting">⌂<span>fit</span></button>
-          <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖<span>follow</span></button>
-          <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors">#<span>grid</span></button>
-          <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭<span>marks</span></button>
-        </div>
-      </div>
       <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div></div>
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
@@ -3439,11 +3420,13 @@ export function mountViewer(appEl) {
     const on = state.paintingOnly;
     root.classList.toggle("is-painting-only", on);
     $(root, ".wv-main")?.classList.toggle("is-painting-only", on);
+    // a toggle chip beside grid and marks, so it reads as one of them: lit means
+    // the telling is up. Its label is markup, so only the state moves.
     const button = $(root, ".wv-telling-toggle");
     if (button) {
+      button.classList.toggle("on", !on);
       button.setAttribute("aria-expanded", String(!on));
-      button.textContent = on ? "›" : "‹";
-      button.title = on ? "open the telling" : "collapse the telling and give the painting the page";
+      button.title = on ? "show the telling" : "hide the telling and give the painting the page";
     }
     $(root, ".wv-main")?.classList.toggle("is-telling-collapsed", on);
     // the count line's WORDS come from the telling; only its presence is the
@@ -3589,12 +3572,6 @@ export function mountViewer(appEl) {
     if (e.target.closest(".wv-telling-toggle")) {
       state.paintingOnly = !state.paintingOnly;
       writePaintingOnly(localStore, state.paintingOnly);
-      applyPaintingOnly();
-      return;
-    }
-    if (state.paintingOnly && e.target.closest(".wv-view")) {
-      state.paintingOnly = false;
-      writePaintingOnly(localStore, false);
       applyPaintingOnly();
       return;
     }
