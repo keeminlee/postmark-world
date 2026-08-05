@@ -5,8 +5,13 @@
 # ── security model, stated where it can be audited ───────────────────────────
 # This runs on pull_request_target: the BASE repo's workflow, with a token that
 # can push and merge. Two invariants keep that safe against a hostile fork:
-#   1. TOOLS FROM BASE. Every executed file (lane-wall, mark-lint, marks-fold)
-#      comes from the base checkout. Nothing from the PR head is ever executed.
+#   1. TOOLS AND REGISTRY FROM MAIN. Every executed file (lane-wall, mark-lint,
+#      marks-fold) and the identity registry come from the MAIN checkout — the
+#      same trust anchor this workflow file is read from. Not from the head
+#      (hostile) and not from the sketchbook either: a sketchbook is only as
+#      fresh as its last crossing, and the first live run failed exactly there
+#      (draft/keeminlee predated the lane's own tools). The sketchbook
+#      contributes only the tree being judged.
 #   2. CONTENT AS DATA. The head contributes only WORLD/marks/** and NOTES/*
 #      files, applied as a diff — and only after the path law has refused
 #      everything else. Mark records are parsed, never imported or evaluated.
@@ -45,18 +50,20 @@ jobs:
       AUTHOR_ID: ${{ github.event.pull_request.user.id }}
       AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
     steps:
-      - name: base checkout (the trusted side — every tool runs from here)
+      - name: main checkout (the trusted side — every tool and the registry run from here)
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: main
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: fetch the head as data
-        run: git fetch --no-tags origin "pull/${PR}/head:pr-head"
+      - name: fetch the base and the head as data
+        run: |
+          git fetch --no-tags origin "pull/${PR}/head:pr-head"
+          git fetch --no-tags origin "${BASE_REF}"
 
       - name: path law (before anything from the head is even copied)
         id: paths
@@ -104,27 +111,29 @@ jobs:
           gh pr edit "$PR" --base "$BRANCH"
           gh pr comment "$PR" --body "your sketchbook is \`${BRANCH}\` — this PR now targets it. The gate runs on the retargeted PR; green merges on its own. (\`WRITES.md\` § the lane.)"
 
-      - name: compose (base tree + the head's lane diff, as a patch — never a checkout)
+      - name: compose (the sketchbook tree + the head's lane diff, in a worktree — never a checkout of head)
         if: steps.paths.outputs.lane == 'yes' && startsWith(env.BASE_REF, 'draft/')
         run: |
           BASE_SHA=$(git merge-base "origin/${BASE_REF}" pr-head)
-          git checkout -q "origin/${BASE_REF}" -- . || true
-          if ! git diff "$BASE_SHA" pr-head -- 'WORLD/marks' 'NOTES' | git apply --index; then
+          git worktree add /tmp/sketch "origin/${BASE_REF}"
+          if ! git diff "$BASE_SHA" pr-head -- 'WORLD/marks' 'NOTES' | git -C /tmp/sketch apply; then
             gh pr comment "$PR" --body "refused: this PR no longer applies to the current sketchbook — a Settlement crossing has rebased it under you (twice daily, 06:00Z and 18:00Z). Rebase and push again: \`git fetch origin && git rebase origin/${BASE_REF}\`. Additive marks in your own namespace rarely conflict; straddling a crossing is the one case that does. (\`WRITES.md\` § the crossings.)"
             exit 1
           fi
 
-      - name: the wall, the lint, the fold — the World's own law, from the base's tools
+      - name: the wall, the lint, the fold — main's tools judging the composed sketchbook
         if: steps.paths.outputs.lane == 'yes' && startsWith(env.BASE_REF, 'draft/')
         run: |
           set +e
           node tools/lane-wall.mjs \
             --author-id "$AUTHOR_ID" --author-login "$AUTHOR_LOGIN" \
             --base "origin/${BASE_REF}" --head pr-head \
-            --base-branch "$BASE_REF" 2> /tmp/wall.err
+            --base-branch "$BASE_REF" \
+            --registry WORLD/households.json \
+            --marks-dir /tmp/sketch/WORLD/marks 2> /tmp/wall.err
           WALL=$?
-          node tools/mark-lint.mjs > /tmp/lint.out 2>&1; LINT=$?
-          node tools/marks-fold.mjs --no-write --json > /tmp/fold.json 2> /tmp/fold.err; FOLD=$?
+          node tools/mark-lint.mjs --marks-dir /tmp/sketch/WORLD/marks --terrain /tmp/sketch/WORLD/skeleton.json > /tmp/lint.out 2>&1; LINT=$?
+          node tools/marks-fold.mjs --marks-dir /tmp/sketch/WORLD/marks --terrain /tmp/sketch/WORLD/skeleton.json --no-write --json > /tmp/fold.json 2> /tmp/fold.err; FOLD=$?
           set -e
           if [ $FOLD -eq 0 ]; then
             FOLD=$(node -e 'const s = JSON.parse(require("fs").readFileSync("/tmp/fold.json","utf8")); const n = s.errors?.length ?? 0; if (n) console.error(JSON.stringify(s.errors[0])); process.exit(n ? 1 : 0);' 2>> /tmp/fold.err; echo $?)

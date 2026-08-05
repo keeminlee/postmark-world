@@ -53,15 +53,18 @@ if (!BASE || !HEAD || !AUTHOR_ID)
 const git = (a) => execFileSync("git", ["-C", REPO, ...a], { encoding: "utf8" });
 const showAt = (ref, path) => git(["show", `${ref}:${path.replace(/\\/g, "/")}`]);
 
-// The registry, from the BASE ref — the trusted side of the diff. (The path law
-// below refuses any head-side edit to it regardless; reading base is principle.)
+// The registry, from the trusted side — never the head. Default: the BASE ref.
+// CI passes --registry <file> pointing at MAIN's copy instead: a sketchbook is
+// only as fresh as its last crossing, and identity should not age with it.
+// (The path law below refuses any head-side registry edit regardless.)
 let registry = {};
 let logins = {};
 try {
-  const r = JSON.parse(showAt(BASE, "WORLD/households.json"));
+  const regPath = opt("--registry");
+  const r = JSON.parse(regPath ? readFileSync(regPath, "utf8") : showAt(BASE, "WORLD/households.json"));
   registry = r.households ?? {};
   logins = r.logins ?? {};
-} catch { /* no registry at base → every handle is unverifiable and will refuse below */ }
+} catch { /* no registry → every handle is unverifiable and will refuse below */ }
 
 const myKeys = new Set([`gh:${AUTHOR_ID}`, ...(AUTHOR_LOGIN ? [`login:${AUTHOR_LOGIN}`] : [])]);
 const mine = (handle) => myKeys.has(registry[handle] ?? "");
@@ -151,7 +154,10 @@ const placeable = changes.filter((c) => c.status !== "D" && MARK_RE.test(c.path)
 if (placeable.length && violations.length === 0) {
   const marks = loadMarks(MARKS_DIR);
   const byId = new Map(marks.map((m) => [m.id, m]));
-  const byDir = new Map(marks.map((m) => [relative(REPO, m._dir).replace(/\\/g, "/"), m]));
+  // keys are diff-shaped ("WORLD/marks/…"), derived from the marks ROOT — so a
+  // --marks-dir outside the repo (CI's composed worktree) keys identically
+  const dirKey = (d) => `WORLD/marks/${relative(MARKS_DIR, d).replace(/\\/g, "/")}`.replace(/\/$/, "");
+  const byDir = new Map(marks.map((m) => [dirKey(m._dir), m]));
   for (const { path } of placeable) {
     const dir = path.slice(0, -"/mark.md".length);
     const mark = byDir.get(dir);
@@ -169,7 +175,7 @@ if (placeable.length && violations.length === 0) {
     const actualParent = parentMark?.id ?? null;
     if ((rightParent ?? null) !== actualParent) {
       const wantDir = rightParent && byId.get(rightParent)?._dir
-        ? relative(REPO, byId.get(rightParent)._dir).replace(/\\/g, "/")
+        ? dirKey(byId.get(rightParent)._dir)
         : "WORLD/marks/let-there-be-light";
       refuse(path, `geometry files this mark under ${rightParent ?? "the open ground"}, not ${actualParent ?? "the root"}`,
         `its record belongs at: ${wantDir}/${dir.split("/").pop()}/mark.md — tools/place-mark.mjs answers this before the gate has to`);
