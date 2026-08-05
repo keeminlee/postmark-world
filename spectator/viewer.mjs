@@ -825,6 +825,36 @@ export function markCellBylineRow(mark, actions = "") {
     + `</div>`;
 }
 
+// THE FRAME ANSWERS NO RELATIONS (Keemin, 2026-08-04). What a normal mark owes a
+// reader is its neighbourhood; what let-there-be-light owes is the world's terms.
+// Everything is inside it, so "within it" is not an answer — it is the whole
+// register, cut to twelve by a budget, and every one of those twelve opens a
+// bubble somewhere off the current view. The Telling has always known this: the
+// root's body is the establishing line and never a card. This is the same rule
+// stated for the cell surface, and it is the exact mirror of the one the ancestor
+// walk already keeps — the root is left out of everyone's parents because naming
+// the frame as context is noise.
+//
+// It is also the whole of the click latency. `investigate` decides which children
+// are DIRECT by asking, for every contained mark, whether any other contained mark
+// holds it — quadratic in the contained set, which for the root is the world:
+// ~1.8 s of true-shape containment tests on 197 sited marks, measured, against
+// 0.1 ms for an ordinary district. Not asking is not an optimization here; the
+// answer was noise, and the noise was what cost.
+export function worldFrameReading(mark, marks = []) {
+  if (!mark) return { error: "no mark" };
+  return {
+    id: mark.id, kind: mark.kind, household: mark.household, at: mark.at, extent: mark.extent,
+    sovereign: !!mark.sovereign, stamps: mark.weight ?? mark.stamps ?? 0, body: mark.body,
+    // its own attributes are its own — the light axis, the clock, the origin are
+    // properties of the frame, not marks living inside it
+    predicates: marks.filter((m) => (m.kind === "predicated" || m.kind === "naming") && m.parent === mark.id)
+      .map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, stamps: m.weight ?? 0, body: m.body })),
+    parents: [], children: [], alongside: [],
+    more: { predicates: 0, children: 0 },
+  };
+}
+
 // A relative in an investigate expansion is a compact cell identity, never a
 // second telling of that relative's prose. It uses the same resolved Name,
 // backing action, and tier accent as its parent cell. Author/date live only in
@@ -1334,14 +1364,16 @@ const STYLE = `
    and tally chips already riding the corners. Mono pills in the gold, the same
    shape as the site's sign-in and back links; the glyph leads, the word follows.
    Backdrop-blurred, because they hang over a painting rather than a panel. */
-/* the world-root's glyph: the same blue circle .ov-pip.t-constitution draws, at
-   the size a pip renders on screen, in the corner rather than at a coordinate */
+/* the world-root's glyph: the same blue circle .ov-pip.t-constitution draws, in
+   the corner rather than at a coordinate. Twice a pip's on-screen size (Keemin,
+   2026-08-04) — it is the only mark with no footprint to hover over and no pip on
+   the painting to find, so the corner is the whole of its target. */
 .wv-worldmark { position:absolute; z-index:6; top:13px; left:13px; }
-.wv-root-mark { display:block; width:13px; height:13px; padding:0; cursor:pointer;
+.wv-root-mark { display:block; width:26px; height:26px; padding:0; cursor:pointer;
   border:0; border-radius:999px; background:var(--blue); opacity:.65;
   box-shadow:0 1px 6px rgba(0,0,0,.55); transition:opacity .12s, box-shadow .12s; }
 .wv-root-mark:hover, .wv-root-mark.is-hovered { opacity:1; }
-.wv-root-mark.on { opacity:1; box-shadow:0 0 0 3px rgba(123,167,224,.35), 0 1px 6px rgba(0,0,0,.55); }
+.wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px rgba(123,167,224,.35), 0 1px 6px rgba(0,0,0,.55); }
 .wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
   flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
 .wv-mapctl .ctl { display:inline-flex; align-items:center; gap:6px;
@@ -2202,16 +2234,21 @@ export function mountViewer(appEl) {
       other.querySelector(".wv-expand")?.remove();
     }
     const id = stack[stack.length - 1];
-    const d = investigate(id, world);
-    if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
-    if (d.error) { box.innerHTML = `<div class="wv-err">${esc(d.error)}</div>`; return; }
+    // one branch, both surfaces: renderExpansion is what the Telling's cells and
+    // the painting's bubble each fold open, so the frame reads the same in both
+    const d = id === WORLD_ROOT_ID ? worldFrameReading(byId.get(id), world?.marks ?? []) : investigate(id, world);
+    if (d.error) {
+      if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
+      box.innerHTML = `<div class="wv-err">${esc(d.error)}</div>`;
+      return;
+    }
     const drilled = stack.length > 1;
     const alreadyFolded = new Set([...card.querySelectorAll(":scope > .wv-attributes .wv-attribute[data-id]")]
       .map((attribute) => attribute.dataset.id));
     const newlyRevealedPredicates = (d.predicates ?? []).filter((predicate) => !alreadyFolded.has(predicate.id));
     const target = byId.get(d.id) ?? d;
     const targetIdentity = markName(target);
-    box.innerHTML = `
+    const html = `
       ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><b class="wv-crumb-name${targetIdentity.determined ? " is-determined" : ""}">${esc(targetIdentity.name)}</b>${tierChip(tierOf(target))}</div>
       <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>
       ${markCellBylineRow(target, backingButton(d.id, d.stamps))}` : ""}
@@ -2221,6 +2258,13 @@ export function mountViewer(appEl) {
       ${d.children?.length ? `<div class="wv-tree-label">within it</div><div class="wv-relation-lines">${d.children.map(relativeNode).join("")}</div>` : ""}
       ${d.alongside?.length ? `<div class="wv-tree-label">alongside</div><div class="wv-relation-lines">${d.alongside.map(relativeNode).join("")}</div>` : ""}
       ${(d.more?.children > 0 || d.more?.predicates > 0) ? `<div class="wv-quiet" style="margin:8px 0 0 10px; font-size:.8rem">…and more the eye holds back — investigate deeper.</div>` : ""}`;
+    // AN EXPANSION WITH NOTHING IN IT IS NOT AN EXPANSION. The box carries its own
+    // rule and padding, so a reading with no relations and no unrevealed attributes
+    // — which is now every reading of the frame — left a dashed line under the cell
+    // and a hand's width of empty dark below it.
+    if (!html.trim()) { box?.remove(); syncMarkInteractionViews(); return; }
+    if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
+    box.innerHTML = html;
     syncMarkInteractionViews();
   }
   // ───────── the painting (atlas minimap) ─────────

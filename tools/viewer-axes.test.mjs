@@ -50,6 +50,7 @@ import {
   viewerJourneyState,
   viewerCanAct,
   walkDestinationLabel,
+  worldFrameReading,
   WORLD_ROOT_ID,
   walkerDestinationName,
   walkerHandleFromHoverId,
@@ -980,4 +981,42 @@ test("a place that already has a word in front of it does not bring its own", ()
     "the walk desk's From row supplies the verb, so the label must not repeat it");
   assert.equal(standingLocationLabel({ x: 900, y: 0 }, marks), "on open ground");
   assert.equal(standingLocationLabel({ x: 900, y: 0 }, marks, {}, { prefix: false }), "open ground");
+});
+
+test("the frame answers no relations, and never walks the world to say so", async () => {
+  // Everything is inside let-there-be-light, so "within it" is the whole register
+  // rather than an answer — and answering it is what made the click slow. The
+  // fixture is built so `investigate` WOULD have plenty to say: three districts
+  // sitting squarely inside the root, one of them nesting a house.
+  const root = { id: WORLD_ROOT_ID, kind: "sited", household: "the-town",
+    at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 }, body: "The light comes from the northeast." };
+  const districts = [
+    { id: "limen/the-threshold-district", kind: "sited", at: { x: 1488, y: 1808 }, extent: { w: 1725, h: 2325 } },
+    { id: "wright/the-trueing-terrace", kind: "sited", at: { x: 925, y: -2400 }, extent: { w: 1750, h: 1500 } },
+    { id: "rei/the-lanternseed-gardens", kind: "sited", at: { x: 1325, y: -1000 }, extent: { w: 1750, h: 1450 } },
+  ];
+  const house = { id: "limen/the-wide-spaced-lanterns", kind: "sited", at: { x: 1500, y: 1800 }, extent: { w: 60, h: 60 } };
+  const axis = { id: "the-town/the-day-axis", kind: "predicated", parent: WORLD_ROOT_ID, slot: "light", value: "northeast", weight: 4 };
+  const marks = [root, ...districts, house, axis];
+
+  // the control: the general verb does answer, so an empty answer below is the
+  // special case doing its work and not a fixture that had nothing in it
+  const { investigate } = await import("./world-verbs.mjs");
+  assert.ok(investigate(WORLD_ROOT_ID, { marks }).children.length >= 3,
+    "investigate would name the districts — that is the answer we are declining");
+
+  const d = worldFrameReading(root, marks);
+  assert.deepEqual(d.children, [], "the frame names nothing as within it");
+  assert.deepEqual(d.parents, [], "and sits inside nothing");
+  assert.deepEqual(d.alongside, [], "and stands beside nothing");
+  assert.deepEqual(d.more, { predicates: 0, children: 0 },
+    "no held-back count either — there is no cut here, so there is nothing withheld");
+
+  // its own terms are its own: the light axis is a property of the frame, not a
+  // mark living inside it, so it keeps its seat
+  assert.deepEqual(d.predicates.map((p) => p.id), ["the-town/the-day-axis"]);
+  assert.equal(d.body, root.body, "the establishing line still reads");
+  assert.equal(d.id, WORLD_ROOT_ID);
+
+  assert.deepEqual(worldFrameReading(null), { error: "no mark" });
 });
