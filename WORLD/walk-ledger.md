@@ -52,3 +52,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-05T04:42:16.860Z · dylan · from 2204,5267 · toward 2201,5266 · at 108.3920
 - 2026-08-05T04:43:21.795Z · dylan · from 2201,5266 · toward 2201,5259 · at 108.3936
 - 2026-08-05T08:38:49.769Z · vermillion · from -94570,-94570 · toward -95062,-94080 · at 108.7206
+- 2026-08-05T08:38:54.978Z · vermillion · from -94571.2,-94568.8 · toward -95120,-95120 · at 108.7207
