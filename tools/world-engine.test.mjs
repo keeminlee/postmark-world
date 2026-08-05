@@ -155,10 +155,20 @@ test("investigate sorts a parent into `parents`, never into `alongside`", () => 
   assert.deepEqual(ids(inv.alongside), ["hh/next-door"], "a true neighbour keeps its seat");
   assert.deepEqual(ids(inv.children), ["hh/the-shelf"], "children are unaffected");
 
-  // the WHOLE chain leaves alongside, not just the direct parent
+  // ONE STEP EACH WAY is what gets REPORTED (Keemin, 2026-08-04) — but the whole
+  // chain is still walked, because every ancestor must stay out of `alongside`.
+  // Reporting less must never mean classifying wrong: that distinction is the
+  // entire point of keeping the nest and slicing only at the end.
   const deep = investigate("hh/the-shelf", w, { budget: 12 });
-  assert.deepEqual(ids(deep.parents), ["hh/the-room", "hh/the-house"], "nearest container first, grandparent too");
-  for (const a of ids(deep.alongside)) assert.ok(a !== "hh/the-room" && a !== "hh/the-house", "no ancestor is alongside");
+  assert.deepEqual(ids(deep.parents), ["hh/the-room"], "the direct container, and not its container");
+  for (const a of ids(deep.alongside)) assert.ok(a !== "hh/the-room" && a !== "hh/the-house",
+    "the GRANDparent is still no one's neighbour, even though it is no longer named");
+
+  // and downward: the shelf is inside the room, so the house does not list it
+  assert.deepEqual(ids(investigate("hh/the-house", w, { budget: 12 }).children), ["hh/the-room"],
+    "a grandchild belongs to its own parent, not to the house above it");
+  assert.ok(!ids(investigate("hh/the-house", w, { budget: 12 }).alongside).includes("hh/the-shelf"),
+    "and it is not demoted to a neighbour on the way out");
 
   // the world-root frames everything, so it is never named as context
   const root = { id: "hh/the-frame", kind: "sited", household: "hh", at: { x: 0, y: 0 }, extent: { w: DIALS.world_scale_extent_m, h: DIALS.world_scale_extent_m }, body: "the frame" };

@@ -108,7 +108,10 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
   // happened to list last. Under fold order a child 212 m from the threshold
   // district lost its seat to five siblings 900 m out — and an arbitrary cut does
   // not read as arbitrary to whoever is looking at it, it reads as a judgement.
-  const allChildren = childrenByGeometry(target, world)
+  // the FULL set is kept for the alongside exclusion below — a grandchild is not
+  // this mark's child, but it is certainly not its neighbour either
+  const contained = childrenByGeometry(target, world);
+  const allChildren = directChildren(contained)
     .map((m) => ({ m, away: Math.hypot(m.at.x - target.at.x, m.at.y - target.at.y) }))
     .sort((a, b) => a.away - b.away || String(a.m.id).localeCompare(String(b.m.id)))
     .map((entry) => entry.m);
@@ -122,7 +125,12 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
   // `alongside` and a child's own house was reported as its neighbour.
   // Excluding ancestors without naming them would only have hidden the
   // relation; carrying it makes upward context first-class.
-  const parents = ancestorsByGeometry(target, world)
+  // ONE STEP UP ONLY, for the same reason as one step down: "sits inside" should
+  // answer with the house, not the house and the district and the world. The full
+  // nest is still WALKED, because every ancestor must stay out of `alongside` —
+  // a grandparent is not a neighbour just because it is not the direct container.
+  const ancestry = ancestorsByGeometry(target, world);
+  const parents = ancestry.slice(0, 1)
     .map((m) => ({ id: m.id, kind: m.kind, household: m.household, at: m.at, stamps: m.weight ?? 0, body: firstLine(m.body) }));
   // alongside: the rest of this household's cluster near the target — the marks
   // the FOV collapsed at distance ("+N more of <hh>'s"). Descending opens them.
@@ -136,8 +144,10 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
   // child" test and was told to the reader as a NEIGHBOUR of its own container —
   // which is the exact failure this exclusion exists to prevent, one relation
   // over. A budget decides how much gets said; it must not decide what is true.
-  const childIds = new Set(allChildren.map((m) => m.id));
-  const parentIds = new Set(parents.map((w) => w.id));
+  // both sets are the FULL relations, never the reported slice: what a mark is
+  // related to does not shrink because we chose to say less of it
+  const childIds = new Set(contained.map((m) => m.id));
+  const parentIds = new Set(ancestry.map((m) => m.id));
   const alongside = householdNear(target, world).filter((m) => !childIds.has(m.id) && !parentIds.has(m.id)).slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, signal: !!m.signal, body: firstLine(m.body) }));
   return {
@@ -296,6 +306,18 @@ function householdNear(target, world, radius = DIALS.cluster_beyond_m) {
 function childrenByGeometry(parent, world) {
   if (!parent.at || !parent.extent) return [];
   return world.marks.filter((m) => m !== parent && m.at && m.kind === "sited" && marksContain(parent, m));
+}
+// ONE STEP DOWN ONLY (Keemin, 2026-08-04: parents and children should show their
+// direct relations, no grandchildren and no grandparents).
+//
+// Geometric containment is transitive, so "what is inside this" answered with a
+// whole subtree: the threshold district listed a house AND that house's window,
+// lamp and ledge as if all four were its own. A child is DIRECT when nothing else
+// inside the parent contains it. Strictly-larger, the same tiebreak the ancestor
+// walk uses, so two marks with one footprint cannot delete each other.
+function directChildren(contained) {
+  return contained.filter((m) =>
+    !contained.some((n) => n !== m && extentArea(n) > extentArea(m) && marksContain(n, m)));
 }
 // The marks that CONTAIN the target, nearest (smallest) first — the exact
 // inverse of childrenByGeometry, under the same true-shape rule, so `inside`
