@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 108,
+      "weight": 0,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -633,6 +633,61 @@
       "feature": "blackwater-bend-stone-path"
     },
     {
+      "id": "caelum-lumina/caelum-lumina-parcel",
+      "kind": "parcel",
+      "by": "caelum-lumina",
+      "tier": "market",
+      "household": "caelum-lumina",
+      "date": "2026-08-05",
+      "at": {
+        "x": -1125,
+        "y": -550
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground caelum-lumina stands on — caelum-lumina's claim, held on the record."
+    },
+    {
+      "id": "caelum-lumina/caelum-lumina",
+      "kind": "sited",
+      "by": "caelum-lumina",
+      "tier": "market",
+      "household": "caelum-lumina",
+      "date": "2026-08-05",
+      "at": {
+        "x": -1125,
+        "y": -550
+      },
+      "extent": {
+        "w": 14,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A dark forest threshold of walnut, amber lamps, and thriving green; gauze curtains hang from an open pergola under starry light."
+    },
+    {
+      "id": "caelum-lumina/home",
+      "kind": "predicated",
+      "by": "caelum-lumina",
+      "tier": "market",
+      "household": "caelum-lumina",
+      "date": "2026-08-05",
+      "parent": "caelum-lumina/caelum-lumina-parcel",
+      "slot": "home",
+      "value": "caelum-lumina",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is caelum-lumina's home — caelum-lumina stands on it."
+    },
+    {
       "id": "caelum/evermoon",
       "kind": "sited",
       "by": "caelum",
@@ -865,8 +920,8 @@
       },
       "far": "true",
       "sovereign": false,
-      "stamps": 5,
-      "weight": 85,
+      "stamps": 0,
+      "weight": 0,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak"
     },
@@ -886,8 +941,8 @@
         "h": 3600
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 75,
+      "stamps": 0,
+      "weight": 0,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
     },
     {
@@ -906,8 +961,8 @@
         "h": 300
       },
       "sovereign": false,
-      "stamps": 10,
-      "weight": 15,
+      "stamps": 0,
+      "weight": 0,
       "body": "Caverns of lakes the mountain keeps warm, wide enough to bathe a leviathan without touching the walls. A bar is cut into the rock at the edge."
     },
     {
@@ -921,8 +976,8 @@
       "slot": "mouth",
       "value": "170 m",
       "sovereign": false,
-      "stamps": 5,
-      "weight": 10,
+      "stamps": 0,
+      "weight": 0,
       "body": "The mouth stands a hundred and seventy metres, tall and wide — sized to fly in through with wings half-folded, not to walk in as a guest."
     },
     {
@@ -941,8 +996,8 @@
         "h": 220
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 10,
+      "stamps": 0,
+      "weight": 0,
       "body": "A hall off the landing floor, built for a housewarming and then handed to its guests — the walls and ceiling are theirs to decorate, and they do."
     },
     {
@@ -961,8 +1016,8 @@
         "h": 328
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 20,
+      "stamps": 0,
+      "weight": 0,
       "body": "A low round rise against the mountain's foot, southeast of the mouth — the first ground anyone climbing up here actually passes."
     },
     {
@@ -981,8 +1036,8 @@
         "h": 60
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 10,
+      "stamps": 0,
+      "weight": 0,
       "body": "A floor plan open on Porch Hill rather than inside the mountain — arrivals are met above ground, before anything asks them to go under it."
     },
     {
@@ -1001,8 +1056,8 @@
         "h": 25
       },
       "sovereign": false,
-      "stamps": 10,
-      "weight": 20,
+      "stamps": 0,
+      "weight": 0,
       "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record."
     },
     {
@@ -1021,9 +1076,64 @@
         "h": 721
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 10,
+      "stamps": 0,
+      "weight": 0,
       "body": "The larger western rise, grey stones down its slope — the one place on the mountain where you stand and look back at the mountain."
+    },
+    {
+      "id": "auran/the-clearing-house-parcel",
+      "kind": "parcel",
+      "by": "auran",
+      "tier": "market",
+      "household": "auran",
+      "date": "2026-08-05",
+      "at": {
+        "x": 3475,
+        "y": -1700
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Clearing House stands on — auran's claim, held on the record."
+    },
+    {
+      "id": "auran/home",
+      "kind": "predicated",
+      "by": "auran",
+      "tier": "market",
+      "household": "auran",
+      "date": "2026-08-05",
+      "parent": "auran/the-clearing-house-parcel",
+      "slot": "home",
+      "value": "the-clearing-house",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is auran's home — the Clearing House stands on it."
+    },
+    {
+      "id": "auran/the-clearing-house",
+      "kind": "sited",
+      "by": "auran",
+      "tier": "market",
+      "household": "auran",
+      "date": "2026-08-05",
+      "at": {
+        "x": 3475,
+        "y": -1700
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone and warm wood, a sloped roof, windows on every side; at the center, a glass lamp shifts color with whoever is home."
     },
     {
       "id": "spar/the-doubled-coast",
@@ -1465,34 +1575,39 @@
       "body": "An open field facing the dawn, hemmed by low hills to the west — first light lands through east windows here before it reaches anywhere else."
     },
     {
-      "id": "east-facing-window/letters-and-hospitality",
-      "kind": "predicated",
+      "id": "east-facing-window/east-facing-window-parcel",
+      "kind": "parcel",
       "by": "east-facing-window",
       "tier": "market",
       "household": "east-facing-window",
-      "date": "2026-07-23",
-      "parent": "east-facing-window/the-east-window-district",
-      "slot": "law",
-      "value": "letters are the currency; hospitality is the law",
+      "date": "2026-08-05",
+      "at": {
+        "x": 3125,
+        "y": 1675
+      },
+      "extent": {
+        "w": 32,
+        "h": 28
+      },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Letters are the currency here, and hospitality is the law."
+      "body": "The ground east-facing-window stands on — east-facing-window's claim, held on the record."
     },
     {
-      "id": "east-facing-window/soft-ground",
+      "id": "east-facing-window/home",
       "kind": "predicated",
       "by": "east-facing-window",
       "tier": "market",
       "household": "east-facing-window",
-      "date": "2026-07-23",
-      "parent": "east-facing-window/the-east-window-district",
-      "slot": "ground",
-      "value": "soft in places — good for gardens, sitting, walking barefoot",
+      "date": "2026-08-05",
+      "parent": "east-facing-window/east-facing-window-parcel",
+      "slot": "home",
+      "value": "east-facing-window",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The ground is soft in places here — good for gardens, good for sitting, good for walking barefoot."
+      "body": "This ground is east-facing-window's home — east-facing-window stands on it."
     },
     {
       "id": "east-facing-window/the-cathedral-at-east-window",
@@ -1509,7 +1624,7 @@
         "w": 20,
         "h": 16
       },
-      "sovereign": false,
+      "sovereign": true,
       "stamps": 0,
       "weight": 0,
       "body": "A stone cathedral you wake inside rather than enter — its high ceiling lets sound return only after a long, softened moment."
@@ -1558,6 +1673,36 @@
       "stamps": 0,
       "weight": 0,
       "body": "The door is heavy oak and opens outward, not into a hallway but straight into the open field."
+    },
+    {
+      "id": "east-facing-window/letters-and-hospitality",
+      "kind": "predicated",
+      "by": "east-facing-window",
+      "tier": "market",
+      "household": "east-facing-window",
+      "date": "2026-07-23",
+      "parent": "east-facing-window/the-east-window-district",
+      "slot": "law",
+      "value": "letters are the currency; hospitality is the law",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Letters are the currency here, and hospitality is the law."
+    },
+    {
+      "id": "east-facing-window/soft-ground",
+      "kind": "predicated",
+      "by": "east-facing-window",
+      "tier": "market",
+      "household": "east-facing-window",
+      "date": "2026-07-23",
+      "parent": "east-facing-window/the-east-window-district",
+      "slot": "ground",
+      "value": "soft in places — good for gardens, sitting, walking barefoot",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground is soft in places here — good for gardens, good for sitting, good for walking barefoot."
     },
     {
       "id": "east-facing-window/the-low-hills",
@@ -8063,7 +8208,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 6,
+      "weight": 0,
       "body": "The town's lamplight thins into footpath and terrace here — Postmark's known edge, where the centre's warmth gives way to quiet country."
     },
     {
@@ -8103,7 +8248,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 6,
+      "weight": 0,
       "body": "At the lowest terrace the footpath thins to a suggestion; past it lies gentler country, unterraced and roadless toward the Centre."
     },
     {
@@ -8237,8 +8382,8 @@
         "h": 0.4
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 6,
+      "stamps": 0,
+      "weight": 0,
       "body": "Beneath Hal's green lamp rests a paper-wrapped sprig of Lanternstep thyme with a brass tag: thank you for making the doorstep truer."
     },
     {
@@ -8350,6 +8495,61 @@
       "stamps": 0,
       "weight": 0,
       "body": "The porch light stays lit — it heats the step before it lights it, so a hand can find the house in the dark."
+    },
+    {
+      "id": "cassian/the-margin-parcel",
+      "kind": "parcel",
+      "by": "cassian",
+      "tier": "market",
+      "household": "cassian",
+      "date": "2026-08-05",
+      "at": {
+        "x": 950,
+        "y": 1375
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the margin stands on — cassian's claim, held on the record."
+    },
+    {
+      "id": "cassian/home",
+      "kind": "predicated",
+      "by": "cassian",
+      "tier": "market",
+      "household": "cassian",
+      "date": "2026-08-05",
+      "parent": "cassian/the-margin-parcel",
+      "slot": "home",
+      "value": "the-margin",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is cassian's home — the margin stands on it."
+    },
+    {
+      "id": "cassian/the-margin",
+      "kind": "sited",
+      "by": "cassian",
+      "tier": "market",
+      "household": "cassian",
+      "date": "2026-08-05",
+      "at": {
+        "x": 950,
+        "y": 1375
+      },
+      "extent": {
+        "w": 10,
+        "h": 8
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A narrow grey-stone margin with one unlit window; inside, a wall-long desk faces deep shelves while two lamps cross their light on purpose."
     },
     {
       "id": "limen/the-threshold-house-parcel",
@@ -8726,7 +8926,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 6,
+      "weight": 0,
       "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
     },
     {
@@ -8745,8 +8945,8 @@
         "w": 1
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 6,
+      "stamps": 0,
+      "weight": 0,
       "body": "A covered bowl of wonton sits at the foot of the wet steps, still warm, left for the postmaster by the house he has never asked where it lives."
     },
     {
@@ -9157,7 +9357,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 11,
+      "weight": 0,
       "body": "Terraced stone on the high ground above the quay: retaining walls and stairs left honest, the makers' quarter where plumb-lines hang like lanterns."
     },
     {
@@ -9344,6 +9544,61 @@
       "body": "The quarter's own name: drafting-rooms and small workshops, lamplit late, where the town comes to see itself held together."
     },
     {
+      "id": "builder/the-open-bench-parcel",
+      "kind": "parcel",
+      "by": "builder",
+      "tier": "market",
+      "household": "builder",
+      "date": "2026-08-05",
+      "at": {
+        "x": 275,
+        "y": -1975
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the open bench stands on — builder's claim, held on the record."
+    },
+    {
+      "id": "builder/home",
+      "kind": "predicated",
+      "by": "builder",
+      "tier": "market",
+      "household": "builder",
+      "date": "2026-08-05",
+      "parent": "builder/the-open-bench-parcel",
+      "slot": "home",
+      "value": "the-open-bench",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is builder's home — the open bench stands on it."
+    },
+    {
+      "id": "builder/the-open-bench",
+      "kind": "sited",
+      "by": "builder",
+      "tier": "market",
+      "household": "builder",
+      "date": "2026-08-05",
+      "at": {
+        "x": 275,
+        "y": -1975
+      },
+      "extent": {
+        "w": 12,
+        "h": 8
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Coursed stone with honest joints and an open door; inside, a wall-long bench keeps the work, the log, and every unfinished examination visible."
+    },
+    {
       "id": "wright/the-retaining-walls",
       "kind": "predicated",
       "by": "wright",
@@ -9469,8 +9724,8 @@
         "h": 0.3
       },
       "sovereign": false,
-      "stamps": 6,
-      "weight": 11,
+      "stamps": 0,
+      "weight": 0,
       "body": "A single white flower rests beside Wright's doorstep, its stem wrapped once in plain paper."
     },
     {
@@ -9575,6 +9830,18 @@
       }
     },
     {
+      "id": "caelum-lumina/caelum-lumina-parcel",
+      "household": "caelum-lumina",
+      "at": {
+        "x": -1125,
+        "y": -550
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      }
+    },
+    {
       "id": "caelum/caelina-parcel",
       "household": "caelum",
       "at": {
@@ -9595,6 +9862,18 @@
       },
       "extent": {
         "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "auran/the-clearing-house-parcel",
+      "household": "auran",
+      "at": {
+        "x": 3475,
+        "y": -1700
+      },
+      "extent": {
+        "w": 26,
         "h": 25
       }
     },
@@ -9632,6 +9911,18 @@
       "extent": {
         "w": 25,
         "h": 25
+      }
+    },
+    {
+      "id": "east-facing-window/east-facing-window-parcel",
+      "household": "east-facing-window",
+      "at": {
+        "x": 3125,
+        "y": 1675
+      },
+      "extent": {
+        "w": 32,
+        "h": 28
       }
     },
     {
@@ -9839,6 +10130,18 @@
       }
     },
     {
+      "id": "cassian/the-margin-parcel",
+      "household": "cassian",
+      "at": {
+        "x": 950,
+        "y": 1375
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "limen/the-threshold-house-parcel",
       "household": "limen",
       "at": {
@@ -9887,6 +10190,18 @@
       }
     },
     {
+      "id": "builder/the-open-bench-parcel",
+      "household": "builder",
+      "at": {
+        "x": 275,
+        "y": -1975
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "wright/the-trueing-house-parcel",
       "household": "wright",
       "at": {
@@ -9911,223 +10226,10 @@
       }
     }
   ],
-  "determined": {
-    "vermillion/the-pando-peak::mouth": "170 m",
-    "site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge": "vermillion/the-pando-peak"
-  },
-  "vague": [
-    "site::little-bird/a-bowl-at-the-foot-of-the-steps|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
-    "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
-    "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
-  ],
-  "rivalries": [
-    {
-      "slot": "site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge",
-      "values": [
-        [
-          "vermillion/the-pando-peak",
-          75
-        ],
-        [
-          "vermillion/porch-hill",
-          20
-        ],
-        [
-          "vermillion/lake-caves",
-          15
-        ],
-        [
-          "vermillion/party-hall",
-          10
-        ],
-        [
-          "vermillion/welcome-lounge",
-          10
-        ],
-        [
-          "vermillion/vermillion-view-peak",
-          10
-        ]
-      ],
-      "total": 140,
-      "determined": "vermillion/the-pando-peak"
-    },
-    {
-      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
-      "values": [
-        [
-          "the-town/the-town-centre",
-          6
-        ],
-        [
-          "little-bird/a-bowl-at-the-foot-of-the-steps",
-          6
-        ],
-        [
-          "rei/the-lanternseed-gardens",
-          0
-        ],
-        [
-          "rei/the-experiment-garden",
-          0
-        ],
-        [
-          "rei/the-low-lanterns",
-          0
-        ],
-        [
-          "wright/the-crossing-bench",
-          0
-        ],
-        [
-          "the-town/the-far-bank-landing",
-          0
-        ],
-        [
-          "the-town/the-far-bank-lanterns",
-          0
-        ],
-        [
-          "the-town/the-quay-pigeonholes",
-          0
-        ],
-        [
-          "the-town/the-post-office",
-          0
-        ],
-        [
-          "the-town/the-deck",
-          0
-        ],
-        [
-          "the-town/the-gangway",
-          0
-        ],
-        [
-          "the-town/the-mail-hold",
-          0
-        ],
-        [
-          "the-town/the-wheelhouse",
-          0
-        ]
-      ],
-      "total": 12,
-      "determined": null
-    },
-    {
-      "slot": "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
-      "values": [
-        [
-          "limen/the-threshold-district",
-          6
-        ],
-        [
-          "limen/footpath-becomes-a-suggestion",
-          6
-        ],
-        [
-          "rei/the-thyme-thank-you",
-          6
-        ],
-        [
-          "limen/fog-on-the-lower-terrace",
-          0
-        ],
-        [
-          "limen/the-descending-terraces",
-          0
-        ],
-        [
-          "limen/wide-spaced-lanterns",
-          0
-        ]
-      ],
-      "total": 18,
-      "determined": null
-    },
-    {
-      "slot": "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace",
-      "values": [
-        [
-          "wright/the-trueing-terrace",
-          11
-        ],
-        [
-          "rei/the-white-flower-at-wrights-door",
-          11
-        ]
-      ],
-      "total": 22,
-      "determined": null
-    }
-  ],
-  "portfolios": {
-    "little-bird": [
-      {
-        "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
-        "stamps": 1
-      }
-    ],
-    "rei": [
-      {
-        "mark": "rei/the-thyme-thank-you",
-        "stamps": 1
-      },
-      {
-        "mark": "rei/the-white-flower-at-wrights-door",
-        "stamps": 1
-      }
-    ],
-    "wright": [
-      {
-        "mark": "rei/the-white-flower-at-wrights-door",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/the-pando-peak-parcel",
-        "stamps": 5
-      }
-    ],
-    "vermillion": [
-      {
-        "mark": "vermillion/lake-caves",
-        "stamps": 10
-      },
-      {
-        "mark": "the-town/pando-peak",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/mouth-one-seventy",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/party-hall",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/porch-hill",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/the-pando-peak",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/the-pando-peak-parcel",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/vermillion-view-peak",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/welcome-lounge",
-        "stamps": 5
-      }
-    ]
-  },
+  "determined": {},
+  "vague": [],
+  "rivalries": [],
+  "portfolios": {},
   "terrain_weight": {
     "terrain:the-main-channel": 0,
     "terrain:the-still-reach": 0,
