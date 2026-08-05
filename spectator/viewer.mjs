@@ -31,7 +31,9 @@ const OFFICE_DEFAULT = "/api";
 const ACT_AS_KEY = "pm.world.act_as";
 const LAST_RESIDENT_KEY = "pm.world.last_resident";
 export const SPECTATOR_ACTOR = "__spectator__";
-const WORLD_ROOT_ID = "the-town/let-there-be-light";
+// the mark that frames everything — being inside it is being outdoors, which is
+// why it names no destination and appears in no containment answer
+export const WORLD_ROOT_ID = "the-town/let-there-be-light";
 
 const markIndex = (marks) => marks instanceof Map
   ? marks
@@ -427,15 +429,25 @@ export function pointWalkDestination(point, marks = []) {
   return { x: Math.round(x), y: Math.round(y), inside };
 }
 
+// A DESTINATION IS NAMED BY THE SMALLEST MARK WHOSE EXTENT YOU ARE INSIDE, and
+// "open ground" is what is left when the only thing containing you is the world
+// itself (Keemin, 2026-08-04). It used to lead with "open ground" and mention the
+// container last, so setting out for a spot in the Threshold District read as
+// setting out for nowhere in particular — when the town has a name for exactly
+// that ground, and it is the name you would use out loud.
+//
+// The point is still the point: naming the district does NOT redirect you to its
+// centre. That is the other half of the same ruling — clicking inside a mark
+// should take you where you clicked, not to the middle of the thing you clicked
+// in. Only naming a mark outright (its pip, or its cell) aims at its centre.
 export function walkDestinationLabel(destination, marks = [], determined = {}, from = null) {
   const byMarkId = markIndex(marks);
   const mark = destination?.markId && byMarkId.get(destination.markId);
   if (mark) return resolveMarkName(mark, determined).name;
-  const pieces = ["open ground"];
+  const container = destination?.inside && byMarkId.get(destination.inside);
+  const pieces = [container ? resolveMarkName(container, determined).name : "open ground"];
   const relative = formatRelativePosition(from, destination);
   if (relative) pieces.push(relative);
-  const container = destination?.inside && byMarkId.get(destination.inside);
-  if (container) pieces.push(`in ${resolveMarkName(container, determined).name}`);
   return pieces.join(" · ");
 }
 
@@ -2346,7 +2358,6 @@ export function mountViewer(appEl) {
       });
       const toldHere = () => toldPaintingMarks(lastRadial, world?.marks ?? []);
       const paintingMarkForEvent = (event) => markAt(event, toldHere());
-      const clickTargetForEvent = (event) => markAt(event, toldHere().filter(walkableMark));
       // walkers, in the same screen-space shape the mark snap already eats
       function screenWalkerCandidates() {
         const matrix = svg.getScreenCTM();
@@ -2392,9 +2403,12 @@ export function mountViewer(appEl) {
         if (!press || e.pointerId !== press.id) return;
         const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
         if (wasDrag) return;
-        // the click's own answer, not the pointer's — a region lights when you
-        // point at it and still lets you act on the ground it covers
-        const markId = clickTargetForEvent(e);
+        // ONLY A PIP NAMES A MARK. Containment is how the destination gets its
+        // NAME, not how the click picks its target — so clicking inside the East
+        // Window District sets out for the spot you clicked, in that district,
+        // rather than marching you to its centre; and a region too big to be a
+        // destination stops swallowing clicks without needing a rule of its own.
+        const markId = snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
         if (markId) {
           selectMark(markId, { scrollCell: true });
           return;

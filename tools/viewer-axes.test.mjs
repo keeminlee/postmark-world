@@ -50,6 +50,7 @@ import {
   viewerJourneyState,
   viewerCanAct,
   walkDestinationLabel,
+  WORLD_ROOT_ID,
   walkerDestinationName,
   walkerHandleFromHoverId,
   walkerHoverId,
@@ -634,13 +635,31 @@ test("the walk desk formats crossing ETAs as clock time and labels point contain
       {},
       { x: 840, y: 0 },
     ),
-    "open ground · 830 m · west · in The Trueing House Parcel",
-    "ground stays relative while its record-derived containment label remains",
+    "The Trueing House Parcel · 830 m · west",
+    "a destination inside a mark is NAMED by it — the town has a name for that ground",
   );
   assert.equal(
     walkDestinationLabel({ x: 170, y: 0 }, marks, {}, { x: 1000, y: 0 }),
     "open ground · 830 m · west",
+    "and open ground is what is left when nothing but the world contains you",
   );
+
+  // the two halves of the ruling, on one point: naming a mark aims at its CENTRE,
+  // while a point inside it stays the point and only borrows the name
+  const inTheParcel = pointWalkDestination({ x: 10, y: 0 }, marks);
+  assert.deepEqual(
+    { x: inTheParcel.x, y: inTheParcel.y }, { x: 10, y: 0 },
+    "clicking inside a mark does not march you to the middle of it");
+  assert.match(
+    walkDestinationLabel(inTheParcel, marks, {}, { x: 840, y: 0 }),
+    /^The Trueing House Parcel/, "but it does read as that mark");
+
+  // the world root contains everything, so it names nothing
+  const roomy = [{ id: WORLD_ROOT_ID, kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 } }];
+  assert.equal(pointWalkDestination({ x: 900, y: 900 }, roomy).inside, null,
+    "let-there-be-light frames everything, so being inside it is being outdoors");
+  assert.equal(walkDestinationLabel(pointWalkDestination({ x: 900, y: 900 }, roomy), roomy, {}, { x: 0, y: 0 }),
+    "open ground · 1,273 m · southeast");
 });
 
 test("painting mark hit-testing uses the nearest glyph inside an 18 px snap radius", () => {
@@ -906,51 +925,44 @@ test("the bubble remembers how you got there, so every child can go back", () =>
   assert.deepEqual(bubbleTrailStep(["a"], "sideways"), ["a"]);
 });
 
-test("a mark you cannot set out for does not own the ground under it", () => {
-  // the shape that started this: a district 2,325 m across, and everything the
-  // town put inside it. Clicking anywhere in that quarter used to select the
-  // district — no walking to the ground, no reaching a mark the eye had not told.
+test("a mark you cannot set out for is still not a destination", () => {
   const district = { id: "limen/the-district", kind: "sited", tier: "market", at: { x: 0, y: 0 }, extent: { w: 1725, h: 2325 } };
-  const water    = { id: "the-town/the-channel", kind: "sited", tier: "market", at: { x: 0, y: 0 }, extent: { w: 4000, h: 4000 } };
   const crossing = { id: "the-town/the-crossing", kind: "sited", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 380, h: 18 } };
   const house    = { id: "limen/the-house", kind: "sited", tier: "market", at: { x: 40, y: 40 }, extent: { w: 60, h: 60 } };
   const parcel   = { id: "limen/a-parcel", kind: "parcel", tier: "market", at: { x: 400, y: 400 }, extent: { w: 25, h: 25 } };
 
   assert.equal(isWalkableTarget(house), true);
   assert.equal(isWalkableTarget(parcel), true, "a parcel is ground you can stand on");
-  assert.equal(isWalkableTarget(district), false, `${2325} m across is a region, not a destination`);
-  assert.equal(isWalkableTarget(water), false);
+  assert.equal(isWalkableTarget(district), false, "2,325 m across is a region, not a destination");
   assert.equal(isWalkableTarget(crossing), false, "the town's own furniture is not a destination");
   assert.equal(isWalkableTarget({ ...house, at: null }), false, "an unplaced mark is nowhere to go");
   assert.equal(isWalkableTarget({ ...house, kind: "predicated" }), false, "a property of a thing has no ground");
   assert.equal(isWalkableTarget({ ...house, extent: { w: WALK_TARGET_MAX_EXTENT_M, h: 1 } }), false, "the cap is exclusive");
   assert.equal(isWalkableTarget(), false);
+});
 
-  // and the composition the painting actually runs: the hit test is offered only
-  // the marks that pass, so the region falls through to whatever is really there
-  const told = [district, water, crossing, house, parcel];
-  const point = (marks) => (x, y) =>
-    paintingMarkAtPoint({ screenPoint: { x: 0, y: 0 }, worldPoint: { x, y }, glyphs: [], marks });
-  const hovering = point(told);                          // what is here
-  const clicking = point(told.filter(isWalkableTarget)); // act here
+test("only a pip names a mark; containment only names the ground", () => {
+  // The click rule, entire. Containment does not choose the target — it chooses
+  // the WORDS — so a region can neither swallow a click nor march you to its
+  // centre, and this path needs no walkable/unwalkable rule of its own.
+  const district = { id: "limen/the-district", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 1725, h: 2325 } };
+  const house    = { id: "limen/the-house", kind: "sited", at: { x: 40, y: 40 }, extent: { w: 60, h: 60 } };
+  const told = [district, house];
 
-  assert.equal(clicking(50, 50), "limen/the-house", "a mark inside the region is reachable again");
-  assert.equal(clicking(700, 700), null, "and open ground inside the region is open ground");
-  assert.equal(clicking(402, 402), "limen/a-parcel");
+  assert.equal(snappedMarkAtPoint({ x: 100, y: 100 }, []), null,
+    "deep inside a region with no pip nearby, a click names no mark");
+  assert.equal(snappedMarkAtPoint({ x: 100, y: 100 }, [{ id: "limen/the-district", x: 104, y: 100 }]),
+    "limen/the-district", "its own pip still names it, which is how a region is selected");
 
-  // POINTING IS UNCHANGED: the region still answers, so it still lights under the
-  // cursor and still says its name. Only the click falls through.
-  assert.equal(hovering(700, 700), "limen/the-district",
-    "pointing at ground inside a region still tells you which region");
-  assert.equal(hovering(0, 5), "the-town/the-crossing",
-    "and the town's furniture is still identifiable by pointing at it");
-  assert.notEqual(hovering(700, 700), clicking(700, 700),
-    "the two answers are allowed to differ — that is the whole design");
+  // and the point keeps its coordinates while borrowing the smallest name over it
+  const deep = pointWalkDestination({ x: 700, y: 700 }, told);
+  assert.deepEqual({ x: deep.x, y: deep.y }, { x: 700, y: 700 }, "the spot you clicked is the spot");
+  assert.equal(deep.inside, "limen/the-district");
+  assert.match(walkDestinationLabel(deep, told, {}, { x: 0, y: 0 }), /^The District/);
 
-  // the pip is how a region is still selected — it is offered separately, and
-  // wins over containment, so nothing became unreachable
-  assert.equal(
-    paintingMarkAtPoint({ screenPoint: { x: 100, y: 100 }, worldPoint: { x: 700, y: 700 },
-      glyphs: [{ id: "limen/the-district", x: 104, y: 100 }], marks: told.filter(isWalkableTarget) }),
-    "limen/the-district", "its own pip still names it");
+  const inner = pointWalkDestination({ x: 45, y: 45 }, told);
+  assert.equal(inner.inside, "limen/the-house", "the SMALLEST container wins, not the outermost");
+  assert.notDeepEqual(
+    [deep.x, deep.y, deep.inside], [inner.x, inner.y, inner.inside],
+    "two spots in one region are two destinations, not one centre twice");
 });
