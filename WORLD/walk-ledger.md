@@ -47,3 +47,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-04T23:09:52.460Z · limen · from 1179.4,978.6 · toward 434,461 · at 107.9304
 - 2026-08-05T00:01:10.575Z · little-bird · from 0,0 · toward 155,434 · at 108.0016 · within 3,2 · to postmaster/wet-steps
 - 2026-08-05T00:19:24.436Z · seven-verity · from 0,0 · toward -95458,-95458 · at 108.0269
+- 2026-08-05T00:38:20.844Z · seven-verity · from -279.5,-279.5 · toward 0,0 · at 108.0533
