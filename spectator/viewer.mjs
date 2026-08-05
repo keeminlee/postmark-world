@@ -197,24 +197,42 @@ export function officeBase(storage) {
 
 const officeUrl = (path) => `${officeBase()}${path.startsWith("/") ? path : `/${path}`}`;
 
-export function viewerAxisState({ identityResolved = false, baseLayer = "true", markFilter = "everything" } = {}) {
+export function viewerAxisState({ identityResolved = false, markFilter = "everything" } = {}) {
   return {
     controls: identityResolved,
-    base: identityResolved && baseLayer === "mine" ? "My World" : "True World",
     filter: markFilter === "new" ? "new"
       : identityResolved && markFilter === "mine" ? "just mine"
       : "everything",
   };
 }
 
-export function viewerAxisControls(options = {}) {
-  const axis = viewerAxisState(options);
-  if (!axis.controls) return "";
-  const base = (key, label) =>
-    `<button class="wv-fchip${axis.base === label ? " on" : ""}" data-world-base="${key}">${label}</button>`;
-  return `<div class="wv-lens" aria-label="World lens">`
-    + `<span>world</span>${base("true", "True World")}<span class="wv-lens-swap">⟷</span>${base("mine", "My World")}`
-    + `</div>`;
+// ── drafts ───────────────────────────────────────────────────────────────────
+// There used to be a LENS here — True World ⟷ My World — that swapped the whole
+// record underneath you, so a draft mark was either invisible or indistinguishable
+// from a published one, and you had to remember which world you were standing in
+// to know which. Keemin, 2026-08-04: express the drafts as grey and it is all
+// unified. One world, and the marks the town has not published yet simply look
+// like it. The swap had nothing left to do and is gone.
+//
+// A draft is a STATE, not a tier — it can be a home, a law, a bench — so it
+// travels as a modifier class beside the tier, exactly as `mech` already does,
+// and the tier chip goes on saying which kind of thing it is.
+export function markStateClasses({ tier = "market", draft = false } = {}) {
+  const accent = tier === "home" || tier === "constitution" ? tier : "market";
+  return `t-${accent}${draft ? " is-draft" : ""}`;
+}
+
+// The office's delta reports three statuses, and only two of them can be grey.
+// `added` is a mark the town has never seen; `modified` is your unpublished edit
+// of one it has — both are in the composed fold and both read as not-yet-real.
+// A `deleted` draft is an ABSENCE: it is simply not in the composed fold, and no
+// colour can draw a thing that is not there. It is left out rather than pretended
+// at, which is the same answer the old My World lens gave, just said out loud.
+export function draftMarkIds(drafts = []) {
+  return new Set((drafts ?? [])
+    .filter((mark) => mark && mark.status !== "deleted")
+    .map((mark) => mark.id ?? mark.mark)
+    .filter(Boolean));
 }
 
 export function viewerFilterControls(options = {}) {
@@ -582,23 +600,24 @@ export function writePaintingOnly(storage, on) {
 // neither side it is clamped into the box and reported as covering its own
 // anchor, so the caller can dim it rather than pretend it points at something.
 //
-// `avoid` is a rectangle this bubble should not sit on top of — the bubbles share
-// one small pane and their anchors can be metres apart, so without it the "you"
-// bubble ends up buried under the mark you just opened. It picks the side that
-// clears the obstacle and, failing that, steps above or below it.
+// `avoid` is a rectangle — or a list of them — this bubble should not sit on top
+// of. The bubbles share one small pane and their anchors can be metres apart, so
+// without it the "you" bubble ends up buried under the mark you just opened. It
+// picks the side that clears the obstacles and, failing that, steps above or
+// below them. A LIST rather than a single rect because three bubbles can be up at
+// once, and dodging only the first one just moves the collision to the second.
 export function placeBubble({ anchor, size, box, gap = 14, edge = 8, avoid = null } = {}) {
   const ax = Number(anchor?.x), ay = Number(anchor?.y);
   const w = Number(size?.w), h = Number(size?.h);
   const bw = Number(box?.w), bh = Number(box?.h);
   if (![ax, ay, w, h, bw, bh].every(Number.isFinite)) return null;
+  const obstacles = (Array.isArray(avoid) ? avoid : [avoid])
+    .filter((r) => r && [r.x, r.y, r.w, r.h].every(Number.isFinite));
   const clampX = (want) => Math.max(edge, Math.min(bw - w - edge, want));
   const clampY = (want) => Math.max(edge, Math.min(bh - h - edge, want));
-  const overlap = (x, y) => {
-    if (!avoid) return 0;
-    const ox = Math.max(0, Math.min(x + w, avoid.x + avoid.w) - Math.max(x, avoid.x));
-    const oy = Math.max(0, Math.min(y + h, avoid.y + avoid.h) - Math.max(y, avoid.y));
-    return ox * oy;
-  };
+  const overlap = (x, y) => obstacles.reduce((sum, r) => sum
+    + Math.max(0, Math.min(x + w, r.x + r.w) - Math.max(x, r.x))
+    * Math.max(0, Math.min(y + h, r.y + r.h) - Math.max(y, r.y)), 0);
   const y = clampY(ay - h / 2);
   const fitting = [
     { side: "right", x: ax + gap, fits: ax + gap + w <= bw - edge },
@@ -607,8 +626,11 @@ export function placeBubble({ anchor, size, box, gap = 14, edge = 8, avoid = nul
   let chosen = fitting.length
     ? fitting.map((c) => ({ ...c, y, cost: overlap(c.x, y) })).sort((a, b) => a.cost - b.cost)[0]
     : { side: "over", x: clampX(ax - w / 2), y };
-  if (avoid && overlap(chosen.x, chosen.y) > 0) {
-    for (const want of [avoid.y - h - gap, avoid.y + avoid.h + gap]) {
+  if (obstacles.length && overlap(chosen.x, chosen.y) > 0) {
+    // clear the whole crowd, not just the one it happened to land on
+    const top = Math.min(...obstacles.map((r) => r.y));
+    const bottom = Math.max(...obstacles.map((r) => r.y + r.h));
+    for (const want of [top - h - gap, bottom + gap]) {
       const stepped = clampY(want);
       if (overlap(chosen.x, stepped) === 0) { chosen = { ...chosen, y: stepped }; break; }
     }
@@ -758,10 +780,9 @@ export function markCellBylineRow(mark, actions = "") {
 // second telling of that relative's prose. It uses the same resolved Name,
 // backing action, and tier accent as its parent cell. Author/date live only in
 // the owning cell's always-visible byline.
-export function investigateNameLine(mark, { name, determined = false, tier = "market" } = {}) {
+export function investigateNameLine(mark, { name, determined = false, tier = "market", draft = false } = {}) {
   const identity = name || deslugMarkId(mark?.id);
-  const accent = tier === "home" || tier === "constitution" ? tier : "market";
-  return `<div class="wv-rnode t-${accent}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
+  return `<div class="wv-rnode ${markStateClasses({ tier, draft })}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
     + `<div class="wv-rnode-head"><b class="cname${determined ? " is-determined" : ""}">${esc(identity)}</b>`
     + `${backingButton(mark?.id, mark?.stamps ?? mark?.weight ?? 0)}</div>`
     + `</div>`;
@@ -803,11 +824,16 @@ function tierChip(tier) {
   return "";
 }
 
-export function markCellTitle({ name = "", determined = false, bearing = null, tier = "market" } = {}) {
+export function markCellTitle({ name = "", determined = false, bearing = null, tier = "market", draft = false } = {}) {
   const arrow = bearing
     ? `<span class="wv-name-arrow" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>`
     : "";
-  return `<div class="cname${determined ? " is-determined" : ""}"><span>${esc(name)}</span>${arrow}${tierChip(tier)}</div>`;
+  // the draft chip says the state, the tier chip goes on saying the kind — a
+  // draft law is still a law, and only its colour changes
+  const draftChip = draft
+    ? `<span class="wv-chip is-draft" title="your household has written this; the town has not published it">draft</span>`
+    : "";
+  return `<div class="cname${determined ? " is-determined" : ""}"><span>${esc(name)}</span>${arrow}${draftChip}${tierChip(tier)}</div>`;
 }
 
 // ───────────────────────── THE one mark-shape builder ──────────────────────
@@ -893,6 +919,10 @@ const STYLE = `
   --stamp-violet-heading:#d8c7ef; --stamp-violet-subhead:#cbb8e5;
   /* tier accents (Keemin 2026-07-23): constitution → blue, sovereign/homes → green, market → amber */
   --blue:#7ba7e0; --blue-dark:#5580b8; --green:#84c98f; --green-dark:#57a068;
+  /* draft (Keemin 2026-08-04): a mark your household has written that the town
+     has not published. Cool and desaturated ON PURPOSE — every other colour in
+     this world is warm, so a draft reads as not yet of it. */
+  --draft:#9aa0ab; --draft-dark:#5d636e;
   background:var(--night); color:var(--paper); font:16px/1.55 Georgia,"Times New Roman",serif;
   min-height:100vh; }
 .wv * { box-sizing:border-box; }
@@ -1104,10 +1134,8 @@ const STYLE = `
   border-radius:999px; padding:1px 8px; }
 .wv-mrow .stand:hover { background:var(--panel2); }
 
-/* one lens at the view's top, then one marks vocabulary beneath it */
-.wv-lens { display:flex; align-items:center; gap:7px; margin:0 0 9px; }
-.wv-lens > span:first-child { color:var(--dim); font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; }
-.wv-lens-swap { color:var(--dim); font-size:.76rem; }
+/* one marks vocabulary at the view's top (the World lens above it is gone —
+   drafts are grey now, so there is nothing left to swap between) */
 .wv-mfilter { display:flex; gap:6px; margin:0 0 12px; }
 .wv-fchip { background:transparent; border:1px solid var(--line); color:var(--dim); border-radius:999px;
   padding:3px 15px; font-size:.72rem; letter-spacing:.05em; cursor:pointer; }
@@ -1328,7 +1356,7 @@ const STYLE = `
 .wv-paint-controls { display:none; }
 .wv-main.is-painting-only .wv-paint-controls { display:flex; align-items:center; gap:14px;
   flex-wrap:wrap; padding:0 14px 9px; border-bottom:1px solid var(--line); }
-.wv-paint-controls .wv-lens, .wv-paint-controls .wv-mfilter { margin:0; }
+.wv-paint-controls .wv-mfilter { margin:0; }
 .wv-paint-tallies { position:absolute; z-index:6; left:9px; bottom:8px; max-width:min(34rem,52%);
   padding:4px 10px; border:1px solid var(--line); border-radius:999px; background:rgba(13,15,19,.9);
   color:var(--dim); font-size:.7rem; line-height:1.4; pointer-events:none; }
@@ -1383,6 +1411,27 @@ const STYLE = `
 .wv-standpoint-more summary:hover { color:var(--amber); }
 .wv-bubble.is-you .wv-walkdesk { margin:0; padding:2px 13px 11px; border-top:0; }
 .wv-bubble.is-you .wv-walkdesk h2 { margin:9px 0 6px; }
+
+/* ── drafts, everywhere at once ────────────────────────────────────────────────
+   There is no My World lens any more; a draft is simply grey. Every rule below
+   overrides a tier rule of the SAME specificity and is stated after it, so the
+   state wins the colour and the tier chip goes on saying which kind of thing it
+   is. If a surface speaks tier and is missing here, it will keep painting a
+   draft as though the town had published it — the two lists must stay level. */
+.wv-card.is-draft, .wv-rnode.is-draft, .wv-attribute.is-draft, .wv-mrow.is-draft {
+  --wv-mark-accent:var(--draft); border-left-color:var(--draft-dark); }
+.wv-card.is-draft:hover, .wv-rnode.is-draft:hover, .wv-attribute.is-draft:hover { border-color:var(--draft-dark); }
+.wv-card.is-draft .cname, .wv-card.is-draft .cname.is-determined,
+.wv-rnode.is-draft .cname, .wv-rnode.is-draft .cname.is-determined { color:var(--draft); }
+.wv-card.is-draft .cbody { color:var(--draft); }
+.wv-chip.is-draft { border-color:var(--draft-dark); color:var(--draft); letter-spacing:.07em; }
+.ov-pip.is-draft { fill:var(--draft); }
+.wv-fp.is-draft { stroke:var(--draft-dark); }
+.wv-fp.is-draft.fp-parcel { fill:rgba(154,160,171,.08); }
+.wv-hl-box.is-draft { stroke:var(--draft); }
+.wv-hl-dot.is-draft { fill:var(--draft); }
+.wv-edge-indicator.is-draft { color:var(--draft); }
+.wv-bubble.is-draft { --wv-mark-accent:var(--draft); }
 `;
 
 const MARKUP = `
@@ -1486,7 +1535,7 @@ export function mountViewer(appEl) {
     view: "telling",
     paintingOnly: readPaintingOnly(typeof localStorage === "undefined" ? null : localStorage),
     markFilter: "everything",           // "everything" | "mine" | "new" — the one marks vocabulary
-    baseLayer: "true",                  // "true" (main) | "mine" (main + the household draft)
+    draftIds: new Set(),                // household marks the town has not published — grey
     portfolio: null,                    // authenticated world_my_marks response
     mineIds: new Set(),                 // portfolio ids across drafts/published/backed
     handle: "",
@@ -1527,9 +1576,10 @@ export function mountViewer(appEl) {
     }
     throw lastErr ?? new Error("no source");
   }
+  // ONE world. When a signed-in household has a composed fold it IS the world,
+  // and its unpublished marks are told apart by colour rather than by a swap.
   function applyWorldLayer() {
-    const composed = state.baseLayer === "mine" && data?.myWorld;
-    data.worldState = composed || data.trueWorld;
+    data.worldState = data?.myWorld || data.trueWorld;
     world = assembleWorld({ worldState: data.worldState, skeleton: data.skeleton });
     byId = new Map(world.marks.map((m) => [m.id, m]));
     homeSet = buildHomeSet(data.manifest, world.marks);
@@ -1588,6 +1638,12 @@ export function mountViewer(appEl) {
     // which homeSet and `sovereign` (both geometric) structurally miss.
     return markClass(full, byId);
   }
+  // Grey is a fact about the RECORD, not about the reader's lens: this mark sits
+  // in your household's draft branch and not in the town's published main.
+  const isDraft = (m) => !!m?.id && state.draftIds.has(m.id);
+  // the ONE class string every coloured surface speaks — cells, relation lines,
+  // attribute rows, pips, footprints, hover boxes, edge arrows, bubbles
+  const markClasses = (m) => markStateClasses({ tier: tierOf(m), draft: isDraft(m) });
   // ───────── the telling view ─────────
   function chips(m) {
     const c = [];
@@ -1687,7 +1743,7 @@ export function mountViewer(appEl) {
   // tier colors it; annotation carries a mechanic's live state (fog/light this crossing).
   function markCell(m, { role = "fov", annotation = "", radialChips = false } = {}) {
     const full = byId.get(m.id) ?? m;
-    const tier = tierOf(m), far = !!m.far;
+    const tier = tierOf(m), far = !!m.far, draft = isDraft(full);
     const identity = markName(full);
     const where = radialWhere(m);
     const details = [
@@ -1696,8 +1752,8 @@ export function mountViewer(appEl) {
     ].filter(Boolean).join("");
     const cluster = (role === "fov" && m.clusteredCount > 1)
       ? `<div class="wv-cluster">+${m.clusteredCount - 1} more of ${esc(m.household ?? "this household")}'s — investigate</div>` : "";
-    return `<article class="wv-card ${role}${far ? " far" : ""} t-${tier}" data-id="${esc(m.id)}" role="button" tabindex="0">
-      ${markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier })}
+    return `<article class="wv-card ${role}${far ? " far" : ""} ${markClasses(m)}" data-id="${esc(m.id)}" role="button" tabindex="0">
+      ${markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier, draft })}
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
       ${markCellBylineRow(full, markActions(m))}
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
@@ -1835,10 +1891,10 @@ export function mountViewer(appEl) {
       const within = e.radial.within ?? [];
       const obs = e.radial.observer ?? {};
       const isNew = state.markFilter === "new";
-      // The lens owns composition and stands alone. The row below owns the marks
-      // question: everything, just mine, or recency. No fourth vocabulary.
-      const chips = viewerAxisControls({ identityResolved: hasIdentity, baseLayer: state.baseLayer, markFilter: state.markFilter })
-        + viewerFilterControls({ identityResolved: hasIdentity, baseLayer: state.baseLayer, markFilter: state.markFilter });
+      // One row, one question: everything, just mine, or recency. The World lens
+      // that used to sit above it is gone — composition is not a question the
+      // reader has to answer any more, because a draft says so in its own colour.
+      const chips = viewerFilterControls({ identityResolved: hasIdentity, markFilter: state.markFilter });
       // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
       // context even under Mine (filtering the frame to yours would usually empty
       // "where you stand"); the filter narrows the visible marks, not your footing.
@@ -1938,7 +1994,7 @@ export function mountViewer(appEl) {
     const tier = tierOf(full);
     const slot = full.kind === "naming" ? "name" : (full.slot || "property");
     const value = full.value ?? "";
-    return `<div class="wv-attribute t-${tier}" data-id="${esc(full.id)}" role="button" tabindex="0">`
+    return `<div class="wv-attribute ${markClasses(full)}" data-id="${esc(full.id)}" role="button" tabindex="0">`
       + `<span class="wv-attribute-value"><b>${esc(slot)}:</b> ${esc(value)}`
       + `${annotation ? ` <span class="wv-attribute-state">· ${esc(annotation)}</span>` : ""}</span>`
       + `${markActions(full)}</div>`;
@@ -1984,6 +2040,7 @@ export function mountViewer(appEl) {
       name: identity.name,
       determined: identity.determined,
       tier: tierOf(full),
+      draft: isDraft(full),
     });
   };
   function renderExpansion(card) {
@@ -2304,7 +2361,7 @@ export function mountViewer(appEl) {
         let s = "";
         for (const m of world.marks ?? []) {
           if (!m.at || !m.extent || isAmbientMark(m, byId)) continue;
-          const cls = `t-${tierOf(m)}` + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
+          const cls = markClasses(m) + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
           s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
             attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
           });
@@ -2388,7 +2445,7 @@ export function mountViewer(appEl) {
     for (const m of overlayMarks(radial)) {
       const p = px(m.at);
       glyphIds.add(m.id);
-      s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip t-${tierOf(m)}" data-id="${esc(m.id)}">`
+      s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip ${markClasses(m)}" data-id="${esc(m.id)}">`
         // the OS tooltip stands down in painting-only for the same reason the SVG
         // label does: the bubble is already saying this word, sooner and better
         + (state.paintingOnly ? "" : `<title>${esc(markIdentity(m))}</title>`) + `</circle>`;
@@ -2415,7 +2472,7 @@ export function mountViewer(appEl) {
     const target = nearestEmbodiedAncestor(m, byId);
     if (!m || !target) return "";
     const k = markerScale(mapCtx.zoomK);
-    const t = tierOf(m), mech = m.mechanic ? " mech" : "";
+    const t = markClasses(m), mech = m.mechanic ? " mech" : "";
     const p = { x: mapCtx.originPx.x + target.at.x / mapCtx.mPerPx, y: mapCtx.originPx.y + target.at.y / mapCtx.mPerPx };
     const worldViewport = {
       minX: (mapCtx.view.x - mapCtx.originPx.x) * mapCtx.mPerPx,
@@ -2441,7 +2498,7 @@ export function mountViewer(appEl) {
       const labelY = Math.max(mapCtx.view.y + 4 * unit,
         Math.min(mapCtx.view.y + mapCtx.view.h - labelHeight - 4 * unit,
           edge.y < mapCtx.view.y + mapCtx.view.h / 2 ? edge.y + 12 * unit : edge.y - labelHeight - 12 * unit));
-      return `<g class="wv-edge-indicator t-${t}">`
+      return `<g class="wv-edge-indicator ${t}">`
         + `<path d="M0 -5 L2.8 4 L0 2.1 L-2.8 4 Z" transform="translate(${edge.x} ${edge.y}) rotate(${edgeWorld.bearingDeg}) scale(${1.4 * unit})"/>`
         + `<rect x="${labelX}" y="${labelY}" width="${labelWidth}" height="${labelHeight}" rx="${3 * unit}"/>`
         + `<text x="${labelX + 6 * unit}" y="${labelY + 15.5 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
@@ -2455,9 +2512,9 @@ export function mountViewer(appEl) {
       // layer beneath was correctly drawing as a polygon — Keemin caught it as a
       // wash that didn't fit its own shape.
       const hlPx = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
-      s += markShapeSVG(target, hlPx, `wv-hl-box t-${t}${mech}`);
+      s += markShapeSVG(target, hlPx, `wv-hl-box ${t}${mech}`);
     }
-    s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot t-${t}"/>`;
+    s += `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot ${t}"/>`;
     // In painting-only the bubble carries the name, so the SVG label stands down
     // — two boxes saying the same word over the same dot is one box too many.
     // The geometry (the wash, the dot, the edge arrow) is not a label and stays.
@@ -3179,9 +3236,10 @@ export function mountViewer(appEl) {
     const full = byId.get(id);
     if (!full) return "";
     const tier = tierOf(full), identity = markName(full), where = radialWhere(full);
+    const draft = isDraft(full);
     const backing = Math.max(0, Number(full.stamps ?? 0));
-    return `<article class="wv-card fov t-${tier}">`
-      + markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier })
+    return `<article class="wv-card fov ${markClasses(full)}">`
+      + markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier, draft })
       + `<div class="cbody">${esc(full.body ?? full.id)}</div>`
       + markCellBylineRow(full, `<span class="wv-cell-actions"><span class="wv-chip stamps">✦ ${backing.toLocaleString()}</span></span>`)
       + (where.detail ? `<div class="cmeta"><div class="wv-details" style="display:flex">${extentTag(full)}<span class="wv-detail-where">${esc(where.detail)}</span></div></div>` : "")
@@ -3191,9 +3249,13 @@ export function mountViewer(appEl) {
     const el = bubbleEl("hover");
     if (!el) return;
     const handle = id && walkerHandleFromHoverId(id);
+    // your own marker already has a bubble, and it is the one with the walk desk
+    // in it. A second box repeating your handle over the same dot is two bubbles
+    // fighting for one anchor.
+    if (handle && handle === state.handle) { el.hidden = true; return; }
     const html = !id ? "" : (handle ? walkerBubbleHTML(handle) : markPreviewHTML(id));
     if (!html) { el.hidden = true; return; }
-    el.className = `wv-bubble is-hover${handle ? "" : ` t-${tierOf(byId.get(id))}`}`;
+    el.className = `wv-bubble is-hover${handle ? "" : ` ${markClasses(byId.get(id))}`}`;
     el.innerHTML = html;
     el.hidden = false;
   }
@@ -3213,7 +3275,7 @@ export function mountViewer(appEl) {
     // the cell, plus this mark's own predicates as cells, then the SAME fold the
     // telling runs — so an attribute reads identically in both places
     const predicates = (world?.marks ?? []).filter((p) => p.parent === mark.id && isPredicateAttribute(p));
-    el.className = `wv-bubble is-pinned t-${tierOf(mark)}`;
+    el.className = `wv-bubble is-pinned ${markClasses(mark)}`;
     el.innerHTML = `<button type="button" class="wv-bubble-close" aria-label="close this mark">✕</button>`
       + markCell(mark, { role: "fov" })
       + predicates.map((p) => markCell(p, { role: "fov" })).join("");
@@ -3294,18 +3356,16 @@ export function mountViewer(appEl) {
     placeBubbleAt(bubbleEls.pinned, selectedId ? (markAnchorPoint(selectedId) ?? viewCentreWorld()) : null);
     const pinned = bubbleRect(bubbleEls.pinned);
     placeBubbleAt(bubbleEls.hover, hoveredId ? markAnchorPoint(hoveredId) : null, pinned);
-    placeBubbleAt(bubbleEls.you, youAnchorPoint(), pinned);
+    placeBubbleAt(bubbleEls.you, youAnchorPoint(), [pinned, bubbleRect(bubbleEls.hover)]);
   }
   // the lens and the marks filter, rendered by the SAME builders the telling uses
   function renderPaintControls() {
     const strip = $(root, ".wv-paint-controls");
     if (!strip) return;
-    const options = {
+    strip.innerHTML = viewerFilterControls({
       identityResolved: identityResolved(),
-      baseLayer: state.baseLayer,
       markFilter: state.markFilter,
-    };
-    strip.innerHTML = viewerAxisControls(options) + viewerFilterControls(options);
+    });
   }
   function applyPaintingOnly() {
     const on = state.paintingOnly;
@@ -3472,13 +3532,6 @@ export function mountViewer(appEl) {
     // the ✕ closes the pinned bubble, which is the same act as deselecting —
     // there is one selection, and the bubble is what it looks like here
     if (e.target.closest(".wv-bubble-close")) { clearSelectionAndDestination(); return; }
-    const baseChip = e.target.closest("[data-world-base]");
-    if (baseChip && identityResolved()) {
-      state.baseLayer = baseChip.dataset.worldBase;
-      applyWorldLayer();
-      const y = window.scrollY; renderTelling(); window.scrollTo(0, y);
-      return;
-    }
     const filterChip = e.target.closest("[data-mark-filter]");
     if (filterChip && !filterChip.disabled) {
       state.markFilter = filterChip.dataset.markFilter;
@@ -3613,7 +3666,8 @@ export function mountViewer(appEl) {
     state.mineIds = new Set(["drafts", "published", "backed"]
       .flatMap((category) => (portfolio[category] ?? []).map((mark) => mark.id ?? mark.mark))
       .filter(Boolean));
-    if (state.baseLayer === "mine") applyWorldLayer();
+    state.draftIds = draftMarkIds(portfolio.drafts);
+    applyWorldLayer();
   }
   async function resolveIdentity() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
@@ -3645,7 +3699,7 @@ export function mountViewer(appEl) {
         data.myWorld = null;
         state.portfolio = null;
         state.mineIds = new Set();
-        state.baseLayer = "true";
+        state.draftIds = new Set();
         if (state.markFilter === "mine") state.markFilter = "everything";
         applyWorldLayer();
       }
@@ -3653,7 +3707,7 @@ export function mountViewer(appEl) {
       data.myWorld = null;
       state.portfolio = null;
       state.mineIds = new Set();
-      state.baseLayer = "true";
+      state.draftIds = new Set();
       if (state.markFilter === "mine") state.markFilter = "everything";
       applyWorldLayer();
     }

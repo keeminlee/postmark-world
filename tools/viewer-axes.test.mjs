@@ -43,7 +43,8 @@ import {
   standingLocationLabel,
   summarizeBackers,
   toldPaintingMarks,
-  viewerAxisControls,
+  markStateClasses,
+  draftMarkIds,
   viewerAxisState,
   viewerFilterControls,
   viewerJourneyState,
@@ -481,35 +482,64 @@ test("detached atlas images get lazy loading before mount", () => {
   ]);
 });
 
-test("the lens and one filter row stay orthogonal", () => {
+test("one marks row is the whole vocabulary — the World lens is gone", () => {
   const states = [
-    [{ identityResolved: false, baseLayer: "mine", markFilter: "mine" }, false, "True World", "everything"],
-    [{ identityResolved: true, baseLayer: "true", markFilter: "everything" }, true, "True World", "everything"],
-    [{ identityResolved: true, baseLayer: "true", markFilter: "mine" }, true, "True World", "just mine"],
-    [{ identityResolved: true, baseLayer: "mine", markFilter: "everything" }, true, "My World", "everything"],
-    [{ identityResolved: true, baseLayer: "mine", markFilter: "new" }, true, "My World", "new"],
+    [{ identityResolved: false, markFilter: "mine" }, false, "everything"],
+    [{ identityResolved: true, markFilter: "everything" }, true, "everything"],
+    [{ identityResolved: true, markFilter: "mine" }, true, "just mine"],
+    [{ identityResolved: true, markFilter: "new" }, true, "new"],
   ];
 
-  for (const [input, controls, base, filter] of states)
-    assert.deepEqual(viewerAxisState(input), { controls, base, filter });
-
-  assert.equal(viewerAxisControls(states[0][0]), "", "anonymous spectators get no identity axes");
-
-  const trueMine = viewerAxisControls(states[2][0]);
-  assert.match(trueMine, />True World<\/button>/);
-  assert.match(trueMine, />My World<\/button>/);
-  assert.match(trueMine, /data-world-base="true"[^>]*>True World/);
-  assert.doesNotMatch(trueMine, /just mine|data-mark-filter/, "the lens has no competing filter vocabulary");
-
-  const myEverything = viewerAxisControls(states[3][0]);
-  assert.match(myEverything, /class="wv-fchip on" data-world-base="mine">My World/);
+  for (const [input, controls, filter] of states)
+    assert.deepEqual(viewerAxisState(input), { controls, filter },
+      "the axis state carries no composition question any more");
 
   const row = viewerFilterControls(states[2][0]);
   assert.match(row, />everything<\/button>.*>just mine<\/button>.*>new<\/button>/);
   assert.match(row, /class="wv-fchip on" data-mark-filter="mine">just mine/);
+  assert.doesNotMatch(row, /data-world-base|True World|My World/,
+    "no lens survives anywhere in the control row");
 
   const anonymous = viewerFilterControls(states[0][0]);
   assert.match(anonymous, /data-mark-filter="mine" disabled/);
+});
+
+test("a draft is a state beside the tier, not a tier of its own", () => {
+  assert.equal(markStateClasses({ tier: "home" }), "t-home");
+  assert.equal(markStateClasses({ tier: "home", draft: true }), "t-home is-draft",
+    "a drafted home is still a home; only its colour changes");
+  assert.equal(markStateClasses({ tier: "constitution", draft: true }), "t-constitution is-draft");
+  assert.equal(markStateClasses(), "t-market");
+  assert.equal(markStateClasses({ tier: "nonsense", draft: true }), "t-market is-draft",
+    "an unknown tier falls back to market rather than emitting a class nothing styles");
+
+  // the cell title says the state AND keeps saying the kind
+  const drafted = markCellTitle({ name: "The Low Door", tier: "constitution", draft: true });
+  assert.match(drafted, /class="wv-chip is-draft"/);
+  assert.match(drafted, /class="wv-chip t-constitution">constitution/,
+    "the tier chip survives the draft chip");
+  assert.doesNotMatch(markCellTitle({ name: "The Low Door", tier: "constitution" }), /is-draft/);
+
+  // and a relation line in an investigate tree speaks the same two words
+  const line = investigateNameLine({ id: "limen/the-low-door" }, { name: "The Low Door", tier: "home", draft: true });
+  assert.match(line, /class="wv-rnode t-home is-draft"/);
+});
+
+test("only the drafts a colour can actually draw become grey", () => {
+  const ids = draftMarkIds([
+    { id: "limen/new-bench", status: "added" },
+    { id: "limen/the-low-door", status: "modified" },
+    { id: "limen/old-lantern", status: "deleted" },
+  ]);
+  assert.ok(ids.has("limen/new-bench"), "a mark the town has never seen reads as a draft");
+  assert.ok(ids.has("limen/the-low-door"), "so does your unpublished edit of one it has");
+  assert.ok(!ids.has("limen/old-lantern"),
+    "a deleted draft is an absence — it is not in the composed fold, so nothing can be painted grey");
+
+  assert.equal(draftMarkIds().size, 0);
+  assert.equal(draftMarkIds([null, {}, { status: "added" }]).size, 0, "an entry with no id names nothing");
+  assert.ok(draftMarkIds([{ mark: "limen/legacy-shape", status: "added" }]).has("limen/legacy-shape"),
+    "the portfolio's other id spelling is read too, the same way mineIds reads it");
 });
 
 test("signed office calls share the one /api-default base", () => {
@@ -835,4 +865,26 @@ test("a bubble steps around the one it must not cover, and gives up gracefully",
   assert.deepEqual(
     placeBubble({ anchor: { x: 100, y: 200 }, size, box }),
     placeBubble({ anchor: { x: 100, y: 200 }, size, box, avoid: null }));
+});
+
+test("a bubble dodges the whole crowd, not just the first one it lands on", () => {
+  const box = { w: 700, h: 500 }, size = { w: 160, h: 90 };
+  // two obstacles stacked down the right-hand side: dodging one must not park it
+  // on the other, which is what a single-rect `avoid` did with three bubbles up
+  const crowd = [{ x: 200, y: 40, w: 300, h: 120 }, { x: 200, y: 170, w: 300, h: 120 }];
+  const placed = placeBubble({ anchor: { x: 180, y: 150 }, size, box, avoid: crowd });
+  const hits = crowd.filter((r) =>
+    placed.x < r.x + r.w && placed.x + size.w > r.x && placed.y < r.y + r.h && placed.y + size.h > r.y);
+  assert.deepEqual(hits, [], `clear of both (got ${JSON.stringify(placed)})`);
+
+  // a single rect still works, and means the same as a one-item list
+  const one = { x: 200, y: 40, w: 300, h: 120 };
+  assert.deepEqual(
+    placeBubble({ anchor: { x: 180, y: 90 }, size, box, avoid: one }),
+    placeBubble({ anchor: { x: 180, y: 90 }, size, box, avoid: [one] }));
+
+  // junk in the list is ignored rather than poisoning the arithmetic with NaN
+  const withJunk = placeBubble({ anchor: { x: 180, y: 150 }, size, box, avoid: [null, { x: "x" }, ...crowd] });
+  assert.ok(Number.isFinite(withJunk.x) && Number.isFinite(withJunk.y));
+  assert.deepEqual(withJunk, placed);
 });
