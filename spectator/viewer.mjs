@@ -1011,8 +1011,8 @@ const STYLE = `
 /* the head of the rail: what the page is, its state, the Telling's switch, the
    crossing, and the seat the site's own pills adopt */
 .wv-nav-top { display:flex; flex-direction:column; align-items:stretch; gap:9px; margin:0 0 16px; }
-.wv-worldline { display:flex; align-items:center; gap:8px; }
-.wv-worldline h1 { margin:0; font-size:.95rem; letter-spacing:.03em; color:var(--amber);
+.wv-worldline { display:flex; align-items:center; flex-wrap:wrap; gap:8px; row-gap:6px; }
+.wv-worldline h1 { margin:0; font-size:.88rem; letter-spacing:.03em; color:var(--amber);
   font-weight:600; white-space:nowrap; }
 .wv-nav .wv-telling-toggle { margin-left:auto; flex:none; width:1.9rem; height:1.9rem;
   display:inline-grid; place-items:center; cursor:pointer; font:inherit; font-size:.82rem;
@@ -1026,11 +1026,11 @@ const STYLE = `
 /* The painting takes the slack now (Keemin 2026-08-04: maximise its screen). The
    telling is sized to its own prose — its cells cap at 76ch, so a 1fr telling
    spent the whole surplus on margin. */
-.wv-main { display:grid; grid-template-columns:236px 33rem minmax(0,1fr); gap:0; align-items:start;
-  transition:grid-template-columns .3s cubic-bezier(.4,0,.2,1); }
+.wv-main { --rail:138px; display:grid; grid-template-columns:var(--rail) 33rem minmax(0,1fr);
+  gap:0; align-items:start; transition:grid-template-columns .3s cubic-bezier(.4,0,.2,1); }
 @media (prefers-reduced-motion:reduce){ .wv-main { transition:none; } }
-.wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
-@media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
+.wv-main.no-map { grid-template-columns:var(--rail) minmax(0,1fr); }
+@media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:var(--rail) minmax(0,1fr); }
   .wv-map { grid-column:1 / -1; border-top:1px solid var(--line); } .wv-map .wv-sticky { position:static; } }
 @media (max-width:720px){ .wv-main,.wv-main.no-map { grid-template-columns:1fr; } }
 /* the app frame (Keemin 2026-07-24 eve): at full width the page stops scrolling —
@@ -1052,14 +1052,18 @@ const STYLE = `
      happened to carry one class more. */
   .wv-map .wv-minimap > svg { width:100%; height:100%; }
 }
-.wv-nav { padding:18px; border-right:1px solid var(--line); background:var(--panel); }
+/* HALF THE RAIL IT WAS (Keemin, 2026-08-04). Walk was the widest thing in this
+   column and Walk has moved onto the painting; what is left — the title, the
+   crossing, the two doors, Act As — is a list of short words. One --rail on the
+   grid, so the four places that name the column can never drift apart. */
+.wv-nav { padding:13px 11px; border-right:1px solid var(--line); background:var(--panel); }
 .wv-nav h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
 .wv-nav button.ctl, .wv-nav .compass button, .wv-nav .step button {
   background:transparent; border:1px solid var(--line); color:var(--paper); font:inherit;
   font-size:.83rem; border-radius:4px; padding:5px 9px; cursor:pointer; }
 .wv-nav .presets button { display:block; width:100%; text-align:left; margin-bottom:6px; }
 .wv-nav button.ctl:hover, .wv-nav .compass button:hover, .wv-nav .step button:hover { border-color:var(--amber-dark); color:var(--amber); }
-.wv-nav .compass { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; max-width:200px; }
+.wv-nav .compass { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; max-width:100%; }
 .wv-nav .compass .pos { display:flex; align-items:center; justify-content:center; color:var(--dim); font-size:.72rem; }
 .wv-nav .step { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
 .wv-nav .step button.on { border-color:var(--amber); color:var(--amber); }
@@ -1098,7 +1102,7 @@ const STYLE = `
 /* collapsed to a zero-width column rather than display:none, because a slide is
    the point and display does not animate. The panel keeps its box and simply has
    no width; opacity carries the fade so its prose never reflows on the way out. */
-.wv-main.is-telling-collapsed { grid-template-columns:236px 0rem minmax(0,1fr); }
+.wv-main.is-telling-collapsed { grid-template-columns:var(--rail) 0rem minmax(0,1fr); }
 .wv-main.is-telling-collapsed > .wv-view { opacity:0; overflow:hidden;
   border-right-width:0; pointer-events:none; }
 @media (max-width:720px){ .wv-main.is-telling-collapsed { grid-template-columns:1fr; } }
@@ -1376,16 +1380,17 @@ const STYLE = `
 .wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px rgba(123,167,224,.35), 0 1px 6px rgba(0,0,0,.55); }
 .wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
   flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
-.wv-mapctl .ctl { display:inline-flex; align-items:center; gap:6px;
-  font-family:var(--mono); font-size:.66rem; letter-spacing:.07em;
+/* glyph only, so they are round rather than pill-shaped — the word each one used
+   to carry lives in its title and aria-label */
+.wv-mapctl .ctl { display:inline-grid; place-items:center; width:1.85rem; height:1.85rem;
+  font-family:var(--mono); font-size:.86rem; line-height:1; padding:0;
   color:rgba(232,197,106,.78); background:rgba(13,15,19,.82);
-  border:1px solid rgba(232,197,106,.34); border-radius:999px; padding:4px 12px;
+  border:1px solid rgba(232,197,106,.34); border-radius:999px;
   backdrop-filter:blur(4px); box-shadow:0 2px 10px rgba(0,0,0,.32); }
 .wv-mapctl .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
   background:rgba(232,197,106,.16); }
 .wv-mapctl .ctl.on { color:var(--night); border-color:var(--amber);
   background:linear-gradient(180deg,#f0d68f,var(--amber)); }
-.wv-mapctl .wv-map-help-toggle { padding:4px 10px; }
 /* hard against the right edge, so the help opens back across the painting */
 .wv-mapctl .wv-map-help-bubble { left:auto; right:0; }
 
@@ -1452,8 +1457,16 @@ const STYLE = `
 .wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
 .wv-nav .handleopt.on { border-color:var(--you); color:var(--you); }
 .wv-nav .wv-identity h2 { margin-top:0; }
-.wv-walkdesk { margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
-.wv-walkdesk h2 { margin-top:0; }
+/* The walk desk is a bubble on the painting now, in the bottom-right corner: same
+   dark card, same rule down the left, in the amber a proposal is drawn in. It sits
+   ABOVE the bubble layer, because it is the one thing on this page you are part
+   way through doing. */
+.wv-walkdesk { position:absolute; z-index:8; right:10px; bottom:10px; width:min(19rem,42%);
+  padding:11px 13px 13px; border:1px solid var(--line); border-left:3px solid var(--amber);
+  border-radius:6px; background:rgba(13,15,19,.97); box-shadow:0 10px 30px rgba(0,0,0,.55); }
+.wv-walkdesk[hidden] { display:none; }
+.wv-walkdesk h2 { margin:0; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--amber); font-family:var(--mono); }
 .wv-youhere { color:var(--dim); font-size:.76rem; margin-bottom:8px; }
 .wv-youhere b { color:var(--you); }
 .wv-walk-status { margin:7px 0 8px; padding:8px 9px; border:1px solid var(--line);
@@ -1617,22 +1630,6 @@ const MARKUP = `
       <div class="crossnow"></div>
     </div>
     <div class="wv-identity"></div>
-    <section class="wv-walkdesk" hidden>
-      <h2>Walk</h2>
-      <!-- From and To, and nothing else (Keemin, 2026-08-04). It had said where
-           you stand, then how it knew, then that you had arrived where you stand —
-           three lines for one fact. -->
-      <div class="wv-walk-status" hidden></div>
-      <div class="wv-walk-planner">
-        <div class="wv-walk-row"><span class="wv-walk-key">From</span><span class="wv-walk-val wv-youhere">…</span></div>
-        <div class="wv-walk-row"><span class="wv-walk-key">To</span><span class="wv-walk-val wv-walk-destination"></span></div>
-        <div class="wv-walk-acts">
-          <button type="button" class="wv-walk-confirm" disabled>confirm</button>
-          <button type="button" class="wv-walk-cancel" hidden>cancel</button>
-        </div>
-        <p class="wv-walk-answer" hidden></p>
-      </div>
-    </section>
     <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
     <div class="wv-dev" hidden>
       <!-- Stand at / Move / step size are DEV INSTRUMENTS (Keemin 2026-08-04, and
@@ -1679,21 +1676,51 @@ const MARKUP = `
                and no place of its own, so it takes the one corner of the painting
                it can honestly occupy — and the bubble hangs off THAT, rather than
                floating in the middle of the page for want of a coordinate. -->
+          <!-- NO title attribute (Keemin, 2026-08-04). It is a mark, and a mark answers the
+               pointer with its own bubble; the browser's native tooltip arrived on
+               top of that bubble and covered the thing it was labelling. The
+               aria-label still names it for anyone not reading with their eyes. -->
           <button type="button" class="wv-root-mark" data-root-mark
-            aria-label="Let There Be Light"
-            title="Let There Be Light — the mark every other mark is a child of"></button>
+            aria-label="Let There Be Light"></button>
         </div><div class="wv-mapctl">
-          <button class="ctl wv-map-home" title="fit the whole painting">⌂<span>fit</span></button>
-          <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖<span>follow</span></button>
-          <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors">#<span>grid</span></button>
-          <button class="ctl wv-map-fp" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭<span>marks</span></button>
+          <!-- GLYPH ONLY (Keemin, 2026-08-04). These hang over a painting, and the
+               words were four pills' worth of chrome across the top of it. The name
+               keeps its seat in title and aria-label — dropping the word from
+               the button must not drop it from the page. -->
+          <button class="ctl wv-map-home" aria-label="fit" title="fit the whole painting">⌂</button>
+          <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">⌖</button>
+          <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">#</button>
+          <button class="ctl wv-map-fp" aria-label="marks" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭</button>
           <div class="wv-map-help">
             <button type="button" class="ctl wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
             <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
               signed residents can also choose open ground for a walk, while spectators look from open-ground clicks.
               Drag to pan, scroll to zoom.</div>
           </div>
-        </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div></div>
+        </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
+       THE WALK DESK RIDES ON THE PAINTING (Keemin, 2026-08-04) — bottom right,
+       and only once a destination is armed. It answers a click you made on the
+       painting, so it belongs to the painting; in the rail it was a permanent
+       column of chrome for a thing that is true a few seconds at a time.
+       Deliberately still ONE node with one renderer, moved rather than copied:
+       renderWalkDestination did not change, and a second desk is exactly how the
+       two would come to disagree about what you had armed. -->
+     <section class="wv-walkdesk" hidden>
+          <h2>Walk</h2>
+          <!-- From and To, and nothing else (Keemin, 2026-08-04). It had said where
+               you stand, then how it knew, then that you had arrived where you stand —
+               three lines for one fact. -->
+          <div class="wv-walk-status" hidden></div>
+          <div class="wv-walk-planner">
+            <div class="wv-walk-row"><span class="wv-walk-key">From</span><span class="wv-walk-val wv-youhere">…</span></div>
+            <div class="wv-walk-row"><span class="wv-walk-key">To</span><span class="wv-walk-val wv-walk-destination"></span></div>
+            <div class="wv-walk-acts">
+              <button type="button" class="wv-walk-confirm" disabled>confirm</button>
+              <button type="button" class="wv-walk-cancel" hidden>cancel</button>
+            </div>
+            <p class="wv-walk-answer" hidden></p>
+          </div>
+        </section></div>
     </div>
   </aside>
 </div>
@@ -2273,7 +2300,7 @@ export function mountViewer(appEl) {
     // The chrome that rides ON the painting is held across the wipe below rather
     // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
     // the walk desk itself) that must not be rebuilt when the atlas loads.
-    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles"]
+    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk"]
       .map((selector) => $(boxEl, selector)).filter(Boolean);
     const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
@@ -3035,7 +3062,11 @@ export function mountViewer(appEl) {
     // 2026-08-04): a destination you have armed, or a journey already under way.
     // Standing still it said only where you stand, which the painting's own dot
     // and the coordinate chip already say.
+    const wasShowing = !desk.hidden;
     desk.hidden = !canAct() || (!walkState.destination && journey.kind !== "journey");
+    // the desk is an obstacle on the painting now, so its coming and going is the
+    // bubbles' business
+    if (wasShowing !== !desk.hidden) requestAnimationFrame(positionBubbles);
     if (desk.hidden) { drawWalkPreview(); return; }
     const status = $(desk, ".wv-walk-status");
     const planner = $(desk, ".wv-walk-planner");
@@ -3158,14 +3189,17 @@ export function mountViewer(appEl) {
     renderWalkDestination();
   }
 
-  function chooseWalkMark(id, { scrollDesk = false } = {}) {
+  function chooseWalkMark(id) {
     if (!canAct()) return;
     const mark = byId.get(id);
     if (!walkableMark(mark)) return;
-    chooseWalkPoint(mark.at.x, mark.at.y, id, { scrollDesk });
+    chooseWalkPoint(mark.at.x, mark.at.y, id);
   }
 
-  function chooseWalkPoint(x, y, namedInside = null, { scrollDesk = true } = {}) {
+  // `scrollDesk` is gone with the rail (Keemin, 2026-08-04): the desk was down a
+  // scrolling column and had to be scrolled to, which is precisely the problem
+  // moving it to the painting's corner solves — it now opens where you are looking.
+  function chooseWalkPoint(x, y, namedInside = null) {
     if (!canAct()) return;
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
@@ -3193,7 +3227,6 @@ export function mountViewer(appEl) {
     renderWalkDestination();
     if (!actorOrigin()) showWalkRefusal("The office has no walk-ledger or sited-home origin for this resident.");
     else if (!selectedWalkPreview()) showWalkRefusal("Choose a destination with two finite coordinates.");
-    if (scrollDesk) $(root, ".wv-walkdesk")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   async function confirmSelectedWalk() {
@@ -3597,9 +3630,12 @@ export function mountViewer(appEl) {
   function positionBubbles() {
     if (!state.paintingOnly) return;
     const { hoveredId, selectedId } = markInteraction.getState();
-    placeBubbleAt(bubbleEls.pinned, anchorBoxFor(selectedId));
+    // the walk desk holds its corner — it is a thing you are part way through, so
+    // the bubbles step around it rather than the other way about
+    const desk = bubbleRect($(root, ".wv-walkdesk"));
+    placeBubbleAt(bubbleEls.pinned, anchorBoxFor(selectedId), desk);
     const pinned = bubbleRect(bubbleEls.pinned);
-    placeBubbleAt(bubbleEls.hover, anchorBoxFor(hoveredId), pinned);
+    placeBubbleAt(bubbleEls.hover, anchorBoxFor(hoveredId), [pinned, desk]);
   }
   function applyPaintingOnly() {
     const on = state.paintingOnly;
