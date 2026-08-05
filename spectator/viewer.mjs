@@ -1014,13 +1014,18 @@ const STYLE = `
 .wv-worldline { display:flex; align-items:center; flex-wrap:wrap; gap:8px; row-gap:6px; }
 .wv-worldline h1 { margin:0; font-size:.88rem; letter-spacing:.03em; color:var(--amber);
   font-weight:600; white-space:nowrap; }
-.wv-nav .wv-telling-toggle { margin-left:auto; flex:none; width:1.9rem; height:1.9rem;
-  display:inline-grid; place-items:center; cursor:pointer; font:inherit; font-size:.82rem;
-  color:rgba(232,197,106,.6); background:transparent;
-  border:1px solid var(--line); border-radius:6px; }
-.wv-nav .wv-telling-toggle:hover { color:var(--amber); border-color:rgba(232,197,106,.5); }
-.wv-nav .wv-telling-toggle.on { color:var(--amber); border-color:rgba(232,197,106,.55);
-  background:rgba(232,197,106,.09); }
+/* The one switch in the rail that changes the shape of the page, so it is the
+   one thing in the rail that is lit (Keemin, 2026-08-04): a faint outline beside
+   a title read as decoration. Off it is amber on a tint; on it is filled, the
+   same on-state the painting's own controls use. */
+.wv-nav .wv-telling-toggle { margin-left:auto; flex:none; width:2.1rem; height:2.1rem;
+  display:inline-grid; place-items:center; cursor:pointer; font:inherit; font-size:1rem;
+  color:var(--amber); background:rgba(232,197,106,.12);
+  border:1px solid rgba(232,197,106,.45); border-radius:6px;
+  transition:background .12s, border-color .12s, color .12s; }
+.wv-nav .wv-telling-toggle:hover { background:rgba(232,197,106,.22); border-color:var(--amber); }
+.wv-nav .wv-telling-toggle.on { color:var(--night); border-color:var(--amber);
+  background:linear-gradient(180deg,#f0d68f,var(--amber)); }
 .wv-beta-chip { border-color:rgba(216,138,122,.55); color:var(--err); letter-spacing:.12em;
   font-family:var(--mono); font-size:.62rem; padding:2px 10px; cursor:help; }
 /* The painting takes the slack now (Keemin 2026-08-04: maximise its screen). The
@@ -1280,8 +1285,13 @@ const STYLE = `
 .wv-elmeta .stand:hover { background:var(--panel2); }
 
 /* the painting */
-.wv-map { padding:18px; }
-.wv-map .wv-sticky { position:sticky; top:16px; }
+/* The painting is flush to its pane (Keemin, 2026-08-04). It used to sit inside
+   18 px of padding behind a rounded 1 px rule — a frame around a painting that
+   already fills the page, and one that appeared only when the Telling was open,
+   because painting-only had quietly overridden it away. Now neither mode frames
+   it, which is also one rule instead of two saying different things. */
+.wv-map { padding:0; }
+.wv-map .wv-sticky { position:sticky; top:0; }
 .wv-map h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:0 0 10px; }
 /* The two map surfaces are things you GRAB, not prose you copy. Dragging used
    to sweep a text selection across the painting's labels, and a live selection
@@ -1292,7 +1302,7 @@ const STYLE = `
    bodies in the left pane must stay selectable, since people copy prose out of
    them. Nuking selection viewer-wide would trade a papercut for a wound. */
 .wv-minimap { -webkit-user-select:none; user-select:none; }
-.wv-minimap { position:relative; border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:crosshair; }
+.wv-minimap { position:relative; overflow:hidden; cursor:crosshair; }
 .wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
@@ -1354,10 +1364,15 @@ const STYLE = `
 .wv-walker-hit { fill:transparent; stroke:none; pointer-events:all; cursor:help; }
 .wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
 .wv-walk-dest { fill:none; stroke:#e0507a; stroke-width:2; vector-effect:non-scaling-stroke; }
-.wv-walk-preview-leg { stroke:var(--amber); stroke-width:2.4; stroke-dasharray:10 6; opacity:.95; vector-effect:non-scaling-stroke; }
-.wv-walk-preview-dest { fill:rgba(232,197,106,.18); stroke:var(--amber); stroke-width:2.4; vector-effect:non-scaling-stroke; }
-.wv-walk-preview-label rect { fill:rgba(13,15,19,.94); stroke:var(--amber-dark); stroke-width:1; vector-effect:non-scaling-stroke; }
-.wv-walk-preview-label text { fill:var(--amber); font-family:Consolas,Menlo,monospace; font-weight:700; }
+/* A WALK IS GREEN (Keemin, 2026-08-04) — the colour a resident and a home already
+   are, so the proposal is in the same ink as the person who would make it. Amber
+   is the market's colour and it was borrowing. The pink of a committed journey
+   above is untouched: that one distinguishes a walk under way from a walk merely
+   proposed, and collapsing it would lose the distinction. */
+.wv-walk-preview-leg { stroke:var(--green); stroke-width:2.4; stroke-dasharray:10 6; opacity:.95; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-dest { fill:rgba(132,201,143,.18); stroke:var(--green); stroke-width:2.4; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-label rect { fill:rgba(13,15,19,.94); stroke:var(--green-dark); stroke-width:1; vector-effect:non-scaling-stroke; }
+.wv-walk-preview-label text { fill:var(--green); font-family:Consolas,Menlo,monospace; font-weight:700; }
 .wv-walkpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
 .wv-walkpanel input[type=range] { width:130px; vertical-align:middle; }
 .wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
@@ -1382,8 +1397,8 @@ const STYLE = `
   flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
 /* glyph only, so they are round rather than pill-shaped — the word each one used
    to carry lives in its title and aria-label */
-.wv-mapctl .ctl { display:inline-grid; place-items:center; width:1.85rem; height:1.85rem;
-  font-family:var(--mono); font-size:.86rem; line-height:1; padding:0;
+.wv-mapctl .ctl { display:inline-grid; place-items:center; width:2.15rem; height:2.15rem;
+  font-family:var(--mono); font-size:1.05rem; line-height:1; padding:0;
   color:rgba(232,197,106,.78); background:rgba(13,15,19,.82);
   border:1px solid rgba(232,197,106,.34); border-radius:999px;
   backdrop-filter:blur(4px); box-shadow:0 2px 10px rgba(0,0,0,.32); }
@@ -1462,11 +1477,11 @@ const STYLE = `
    ABOVE the bubble layer, because it is the one thing on this page you are part
    way through doing. */
 .wv-walkdesk { position:absolute; z-index:8; right:10px; bottom:10px; width:min(19rem,42%);
-  padding:11px 13px 13px; border:1px solid var(--line); border-left:3px solid var(--amber);
+  padding:11px 13px 13px; border:1px solid var(--line); border-left:3px solid var(--green);
   border-radius:6px; background:rgba(13,15,19,.97); box-shadow:0 10px 30px rgba(0,0,0,.55); }
 .wv-walkdesk[hidden] { display:none; }
 .wv-walkdesk h2 { margin:0; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--amber); font-family:var(--mono); }
+  color:var(--green); font-family:var(--mono); }
 .wv-youhere { color:var(--dim); font-size:.76rem; margin-bottom:8px; }
 .wv-youhere b { color:var(--you); }
 .wv-walk-status { margin:7px 0 8px; padding:8px 9px; border:1px solid var(--line);
@@ -1484,18 +1499,23 @@ const STYLE = `
   font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; }
 .wv-walk-val { min-width:0; color:var(--paper); font-size:.79rem; line-height:1.45; }
 .wv-walk-val b { color:var(--paper); }
-.wv-walk-meta { color:var(--amber); font-variant-numeric:tabular-nums; white-space:nowrap; }
-.wv-walk-dir { display:inline-flex; align-items:center; color:var(--amber); margin:0 .1em; }
-.wv-walk-dir .wv-arrow { width:.85em; height:.85em; margin:0; vertical-align:middle; }
+/* THE LEG ON ITS OWN LINE (Keemin, 2026-08-04): how far, which way, how long.
+   They were trailing the destination's name inside the To row, so a long name
+   wrapped them one at a time onto lines of their own anyway — badly. */
+.wv-walk-legline { display:flex; align-items:center; gap:8px; margin-top:4px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.04em; }
+.wv-walk-meta { color:var(--green); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.wv-walk-dir { display:inline-flex; align-items:center; color:var(--green); margin:0; }
+.wv-walk-dir .wv-arrow { width:.95em; height:.95em; margin:0; vertical-align:middle; }
 /* confirm is filled, because it is the act; cancel is an outline beside it */
 .wv-walk-acts { display:flex; gap:6px; margin-top:12px; }
-.wv-walkdesk .wv-walk-confirm { flex:1; background:linear-gradient(180deg,#f0d68f,var(--amber));
-  color:var(--night); border:1px solid var(--amber); border-radius:999px; padding:6px 10px;
+.wv-walkdesk .wv-walk-confirm { flex:1; background:linear-gradient(180deg,#a9dcb1,var(--green));
+  color:var(--night); border:1px solid var(--green); border-radius:999px; padding:6px 10px;
   font:inherit; font-weight:700; font-size:.74rem; cursor:pointer; }
 .wv-walkdesk .wv-walk-confirm:disabled { opacity:.32; cursor:not-allowed; }
 .wv-walk-cancel { flex:none; background:transparent; border:1px solid var(--line);
   color:var(--dim); border-radius:999px; padding:6px 13px; font:inherit; font-size:.74rem; cursor:pointer; }
-.wv-walk-cancel:hover { color:var(--paper); border-color:var(--amber-dark); }
+.wv-walk-cancel:hover { color:var(--paper); border-color:var(--green-dark); }
 .wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
 .wv-walk-answer.success { color:var(--green); }
 .wv-walk-answer.refusal { color:var(--err); }
@@ -1521,11 +1541,11 @@ const STYLE = `
 .wv.is-painting-only > div { flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
 .wv-main.is-painting-only { flex:1 1 0; min-height:0; overflow:hidden; align-items:stretch; }
 .wv-main.is-painting-only .wv-nav { overflow-y:auto; min-height:0; }
-.wv-main.is-painting-only .wv-map { grid-column:auto; border-top:0; padding:0; display:flex;
+.wv-main.is-painting-only .wv-map { grid-column:auto; border-top:0; display:flex;
   flex-direction:column; min-height:0; overflow:hidden; }
 .wv-main.is-painting-only .wv-map .wv-sticky { position:static; display:flex; flex-direction:column;
   min-height:0; flex:1; }
-.wv-main.is-painting-only .wv-minimap { flex:1; min-height:0; border-radius:0; border-width:1px 0 0; }
+.wv-main.is-painting-only .wv-minimap { flex:1; min-height:0; }
 .wv-main.is-painting-only .wv-minimap > svg { width:100%; height:100%; }
 /* On one column the 100vh frame turns against the mode: the sidebar is tall, so
    the painting inherits whatever is left — measured at 260 px on a 700 px page,
@@ -1687,10 +1707,10 @@ const MARKUP = `
                words were four pills' worth of chrome across the top of it. The name
                keeps its seat in title and aria-label — dropping the word from
                the button must not drop it from the page. -->
-          <button class="ctl wv-map-home" aria-label="fit" title="fit the whole painting">⌂</button>
-          <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">⌖</button>
-          <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">#</button>
-          <button class="ctl wv-map-fp" aria-label="marks" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">▭</button>
+          <button class="ctl wv-map-home" aria-label="fit" title="fit the whole painting">⛶</button>
+          <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">◎</button>
+          <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">▦</button>
+          <button class="ctl wv-map-fp" aria-label="marks" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">⬚</button>
           <div class="wv-map-help">
             <button type="button" class="ctl wv-map-help-toggle" aria-label="How to use the painting" aria-expanded="false">?</button>
             <div class="wv-map-help-bubble" role="tooltip">the atlas, for bearings — <b>the telling is the truth</b>. Click a mark to select it;
@@ -3111,9 +3131,13 @@ export function mountViewer(appEl) {
         state.dials.bearing_points);
       if (bearing) arrow = `<span class="wv-walk-dir" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>`;
     }
+    const leg = [
+      parts ? `<span class="wv-walk-meta">${esc(parts.distance)}</span>` : "",
+      arrow,
+      parts?.eta ? `<span class="wv-walk-meta">${esc(parts.eta)}</span>` : "",
+    ].filter(Boolean);
     return `<b>${esc(name)}</b>`
-      + (parts ? ` <span class="wv-walk-meta">${esc(parts.distance)}</span>${arrow}` : arrow)
-      + (parts?.eta ? ` <span class="wv-walk-meta">${esc(parts.eta)}</span>` : "");
+      + (leg.length ? `<div class="wv-walk-legline">${leg.join("")}</div>` : "");
   }
 
   function scrollMarkCellIntoView(id) {
