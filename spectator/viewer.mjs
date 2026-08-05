@@ -646,7 +646,11 @@ export const TOUR_SLIDES = [
     id: "marks",
     anchor: ".ov-pip",
     title: "Every dot is a mark",
-    body: "Point at one for a glance; click it to open its cell — who wrote it, when, what it sits inside and what sits inside it.<br><br>"
+    // TRUE IN BOTH MODES. This slide used to promise a bubble, and a first-time
+    // visitor lands with the Telling open, where the cell opens in the panel —
+    // so the very first thing anyone tried after the tour contradicted it.
+    body: "Point at one for a glance; click it to open its cell — who wrote it, when, what it sits inside and what sits inside it. "
+      + "With the Telling open that cell opens beside you; fold the Telling away and it opens as a bubble on the mark's own ground.<br><br>"
       + "A mark carries <b>one claim</b>, deliberately. That is what lets a neighbour back this sentence of yours and not that one, "
       + "and what gives a disagreement an address.",
   },
