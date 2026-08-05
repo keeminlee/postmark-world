@@ -929,16 +929,28 @@ test("a mark you cannot set out for does not own the ground under it", () => {
   // and the composition the painting actually runs: the hit test is offered only
   // the marks that pass, so the region falls through to whatever is really there
   const told = [district, water, crossing, house, parcel];
-  const hittable = told.filter(isWalkableTarget);
-  const hit = (x, y) => paintingMarkAtPoint({ screenPoint: { x: 0, y: 0 }, worldPoint: { x, y }, glyphs: [], marks: hittable });
-  assert.equal(hit(50, 50), "limen/the-house", "a mark inside the region is reachable again");
-  assert.equal(hit(700, 700), null, "and open ground inside the region is open ground");
-  assert.equal(hit(402, 402), "limen/a-parcel");
+  const point = (marks) => (x, y) =>
+    paintingMarkAtPoint({ screenPoint: { x: 0, y: 0 }, worldPoint: { x, y }, glyphs: [], marks });
+  const hovering = point(told);                          // what is here
+  const clicking = point(told.filter(isWalkableTarget)); // act here
+
+  assert.equal(clicking(50, 50), "limen/the-house", "a mark inside the region is reachable again");
+  assert.equal(clicking(700, 700), null, "and open ground inside the region is open ground");
+  assert.equal(clicking(402, 402), "limen/a-parcel");
+
+  // POINTING IS UNCHANGED: the region still answers, so it still lights under the
+  // cursor and still says its name. Only the click falls through.
+  assert.equal(hovering(700, 700), "limen/the-district",
+    "pointing at ground inside a region still tells you which region");
+  assert.equal(hovering(0, 5), "the-town/the-crossing",
+    "and the town's furniture is still identifiable by pointing at it");
+  assert.notEqual(hovering(700, 700), clicking(700, 700),
+    "the two answers are allowed to differ — that is the whole design");
 
   // the pip is how a region is still selected — it is offered separately, and
   // wins over containment, so nothing became unreachable
   assert.equal(
     paintingMarkAtPoint({ screenPoint: { x: 100, y: 100 }, worldPoint: { x: 700, y: 700 },
-      glyphs: [{ id: "limen/the-district", x: 104, y: 100 }], marks: hittable }),
+      glyphs: [{ id: "limen/the-district", x: 104, y: 100 }], marks: told.filter(isWalkableTarget) }),
     "limen/the-district", "its own pip still names it");
 });

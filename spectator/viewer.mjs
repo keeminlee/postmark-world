@@ -2322,25 +2322,31 @@ export function mountViewer(appEl) {
           y: (painting.y - originPx.y) * mPerPx,
         };
       };
-      // THE PIP IS THE MARK; THE FOOTPRINT IS GROUND (Keemin, 2026-08-04: an
-      // unwalkable mark must not block the ground — or the mark — behind it).
+      // TWO QUESTIONS, TWO ANSWERS (Keemin, 2026-08-04: keep the hover visibility
+      // as it was, and treat clicks the new way).
       //
-      // The containment fallback used to hand a click to the smallest mark whose
-      // extent covered it, walkable or not. The threshold district is 2,325 m
-      // across, so every click inside a whole quarter of the town selected the
-      // district: no walking to that ground, and no reaching a mark inside it
-      // that the eye had not told. Only a mark you could actually set out for
-      // claims its own footprint now. Everything else — regions, the town's
-      // constitution furniture — is still selected by its PIP, which is exactly
-      // the size of the thing it names.
-      const hittableMarks = () =>
-        toldPaintingMarks(lastRadial, world?.marks ?? []).filter(walkableMark);
-      const paintingMarkForEvent = (event) => paintingMarkAtPoint({
+      // Pointing asks WHAT IS HERE, and everything the eye tells answers —
+      // including the region you are standing inside, because seeing what
+      // contains you is the entire reason to point at it.
+      //
+      // Clicking asks ACT HERE, and there a mark you could not set out for does
+      // not own the ground under it. The containment half used to hand the click
+      // to the smallest extent covering it, walkable or not: the threshold
+      // district is 2,325 m across, so every click in a whole quarter of the town
+      // selected the district — no walking to that ground, and no reaching a mark
+      // inside it the eye had not told. Only the marks you could go to are
+      // offered to that half now. The PIP half is identical in both, so a region
+      // is still selected by the dot that is exactly the size of the thing it
+      // names — and it still lights under the pointer on the way there.
+      const markAt = (event, marks) => paintingMarkAtPoint({
         screenPoint: { x: event.clientX, y: event.clientY },
         worldPoint: worldPointForEvent(event),
         glyphs: screenMarkCandidates(),
-        marks: hittableMarks(),
+        marks,
       });
+      const toldHere = () => toldPaintingMarks(lastRadial, world?.marks ?? []);
+      const paintingMarkForEvent = (event) => markAt(event, toldHere());
+      const clickTargetForEvent = (event) => markAt(event, toldHere().filter(walkableMark));
       // walkers, in the same screen-space shape the mark snap already eats
       function screenWalkerCandidates() {
         const matrix = svg.getScreenCTM();
@@ -2386,7 +2392,9 @@ export function mountViewer(appEl) {
         if (!press || e.pointerId !== press.id) return;
         const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
         if (wasDrag) return;
-        const markId = paintingMarkForEvent(e);
+        // the click's own answer, not the pointer's — a region lights when you
+        // point at it and still lets you act on the ground it covers
+        const markId = clickTargetForEvent(e);
         if (markId) {
           selectMark(markId, { scrollCell: true });
           return;
