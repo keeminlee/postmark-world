@@ -992,7 +992,9 @@ const STYLE = `
 /* The painting takes the slack now (Keemin 2026-08-04: maximise its screen). The
    telling is sized to its own prose — its cells cap at 76ch, so a 1fr telling
    spent the whole surplus on margin. */
-.wv-main { display:grid; grid-template-columns:236px minmax(320px,33rem) minmax(0,1fr); gap:0; align-items:start; }
+.wv-main { display:grid; grid-template-columns:236px 33rem minmax(0,1fr); gap:0; align-items:start;
+  transition:grid-template-columns .3s cubic-bezier(.4,0,.2,1); }
+@media (prefers-reduced-motion:reduce){ .wv-main { transition:none; } }
 .wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
 @media (max-width:1160px){ .wv-main,.wv-main.no-map { grid-template-columns:236px minmax(0,1fr); }
   .wv-map { grid-column:1 / -1; border-top:1px solid var(--line); } .wv-map .wv-sticky { position:static; } }
@@ -1008,7 +1010,13 @@ const STYLE = `
   .wv-map { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
   .wv-map .wv-sticky { position:static; display:flex; flex-direction:column; min-height:0; flex:1; }
   .wv-minimap { flex:1; min-height:0; }
-  .wv-minimap > svg { width:100%; height:100%; }
+  /* .wv-map scopes this ABOVE the height:auto fallback further down. Equal
+     specificity meant the later rule won, so inside the app frame the painting
+     rendered at its own aspect — 1,277 px tall in a 964 px pane — and the bottom
+     band was clipped away. That is the "turning the Telling on hides the bottom
+     of the painting" defect; painting-only escaped it only because its own rule
+     happened to carry one class more. */
+  .wv-map .wv-minimap > svg { width:100%; height:100%; }
 }
 .wv-nav { padding:18px; border-right:1px solid var(--line); background:var(--panel); }
 .wv-nav h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
@@ -1050,10 +1058,15 @@ const STYLE = `
 /* Two panels, no bars. Both are content to their own edges — the painting runs
    to the window and the telling begins at its first line — because every control
    either of them had now lives loose in the rail. */
-.wv-view { overflow-x:auto; min-height:60vh; border-right:1px solid var(--line); }
+.wv-view { overflow-x:auto; min-width:0; min-height:60vh; border-right:1px solid var(--line);
+  transition:opacity .22s ease; }
 .wv-telling { padding:16px 20px 26px; }
-.wv-main.is-telling-collapsed { grid-template-columns:236px minmax(0,1fr); }
-.wv-main.is-telling-collapsed > .wv-view { display:none; }
+/* collapsed to a zero-width column rather than display:none, because a slide is
+   the point and display does not animate. The panel keeps its box and simply has
+   no width; opacity carries the fade so its prose never reflows on the way out. */
+.wv-main.is-telling-collapsed { grid-template-columns:236px 0rem minmax(0,1fr); }
+.wv-main.is-telling-collapsed > .wv-view { opacity:0; overflow:hidden;
+  border-right-width:0; pointer-events:none; }
 @media (max-width:720px){ .wv-main.is-telling-collapsed { grid-template-columns:1fr; } }
 
 /* the telling */
@@ -1111,6 +1124,8 @@ const STYLE = `
   border-radius:4px; background:rgba(20,23,29,.72); cursor:default; }
 .wv-act-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
 .wv-act-head b { color:var(--stamp-violet-heading); font-size:.86rem; }
+.wv-act-verb { margin-right:auto; color:var(--dim); font-family:var(--mono); font-size:.6rem;
+  letter-spacing:.1em; text-transform:uppercase; }
 .wv-act-close { border:0; background:transparent; color:var(--dim); cursor:pointer; font:inherit; }
 .wv-act-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:8px; }
 .wv-act-row label { color:var(--dim); font-size:.72rem; }
@@ -2324,12 +2339,22 @@ export function mountViewer(appEl) {
       // means. This takes the view whose aspect matches the PANE: full width, a
       // centred band of height. ⌂ fit still tweens to the whole painting, so the
       // honest see-everything view is one press away and keeps meaning what it says.
-      mapCtx.fillPane = (animate = true) => {
+      // The pane changed shape under a view that did not. Keep the horizontal
+      // framing and the zoom (so no marker resizes), and take the height from the
+      // new aspect: the same pane always yields the same view, which is what makes
+      // hiding and showing the Telling land you back where you started.
+      //
+      // It also settles the paint. Toggling used to leave the viewBox describing
+      // the OLD pane, and the bottom band of the painting simply did not draw
+      // until something called applyView — which is why ⌂ fit or ⌖ follow
+      // "fixed" it. This is that call, made on purpose rather than by accident.
+      mapCtx.refit = () => {
         const pane = boxEl.getBoundingClientRect();
         if (!pane.width || !pane.height) return;
-        const h = full.w * (pane.height / pane.width);
-        const target = { x: full.x, y: full.y + (full.h - h) / 2, w: full.w, h };
-        if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
+        const cy = view.y + view.h / 2;
+        const h = view.w * (pane.height / pane.width);
+        Object.assign(view, { y: cy - h / 2, h });
+        applyView();
       };
       // a hand on the camera breaks the follow snap — silently, keeping the view
       // where the hand put it (fit is the only thing that zooms you back out)
@@ -2530,9 +2555,9 @@ export function mountViewer(appEl) {
       };
 
       applyView();
-      // the mode is remembered, so the painting can boot straight into filling
-      // the pane — no animation, because there is no previous view to move from
-      if (state.paintingOnly) mapCtx.fillPane(false);
+      // shape the opening view to the pane the way every later change does, so the
+      // first toggle is not also the first correction
+      mapCtx.refit();
       if (lastRadial) drawOverlay(lastRadial);
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
@@ -2936,11 +2961,8 @@ export function mountViewer(appEl) {
   }
 
   function renderWalkDestinations() {
-    const desk = $(root, ".wv-walkdesk");
-    if (!desk) return;
-    desk.hidden = !canAct();
+    if (!$(root, ".wv-walkdesk")) return;
     renderWalkDestination();
-    if (desk.hidden) return;
     syncActorPosition();
   }
 
@@ -2948,6 +2970,12 @@ export function mountViewer(appEl) {
     const desk = $(root, ".wv-walkdesk");
     if (!desk) return;
     const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
+    // The desk is for a walk, so it appears when there IS one (Keemin,
+    // 2026-08-04): a destination you have armed, or a journey already under way.
+    // Standing still it said only where you stand, which the painting's own dot
+    // and the coordinate chip already say.
+    desk.hidden = !canAct() || (!walkState.destination && journey.kind !== "journey");
+    if (desk.hidden) { drawWalkPreview(); return; }
     const status = $(desk, ".wv-walk-status");
     const planner = $(desk, ".wv-walk-planner");
     const box = $(desk, ".wv-walk-destination");
@@ -3139,6 +3167,18 @@ export function mountViewer(appEl) {
     }
   }
 
+  // Where the sheet hangs: the mark's own cell, preferring the pinned bubble when
+  // one is up — selecting rebuilds that bubble, so the chip the click began on is
+  // already gone by the time we get here, and the Telling's copy of the cell may
+  // be behind a collapsed panel where the sheet would open invisibly.
+  function stakeHostFor(markId) {
+    if (!markId) return null;
+    const pinned = $(root, `.wv-bubble.is-pinned .wv-card[data-id="${CSS.escape(markId)}"]`);
+    if (pinned) return pinned;
+    if (state.paintingOnly) return null;
+    return [...root.querySelectorAll(".wv-telling .wv-card[data-id]")]
+      .find((card) => card.dataset.id === markId) ?? null;
+  }
   function openStakeSheet(card, { mode = "stake", max = "", markId = null } = {}) {
     if (!card) return;
     root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
@@ -3153,7 +3193,12 @@ export function mountViewer(appEl) {
     // click (2026-07-31) — the shadowing name is banned from this scope.
     const resolved = identityResolved();
     if (mode === "stake" && balance !== null) sheet.dataset.balance = String(balance);
-    sheet.innerHTML = `<div class="wv-act-head"><b>${mode === "unstake" ? "Take stamps back" : resolved ? "Back this mark" : "Backing"}</b>`
+    // NAME THE MARK (Keemin, 2026-08-04). "Back this mark" is only unambiguous
+    // when there is one mark on screen; these sheets open from relation lines and
+    // attribute rows too, where "this" was anybody's guess.
+    const subject = markIdentity({ id: sheet.dataset.mark });
+    const verb = mode === "unstake" ? "take stamps back" : resolved ? "back this mark" : "backing";
+    sheet.innerHTML = `<div class="wv-act-head"><b>${esc(subject)}</b><span class="wv-act-verb">${verb}</span>`
       + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
       + `<div class="wv-backers"><span>reading who backs this mark…</span></div>`
       + (mode === "stake" && resolved
@@ -3493,15 +3538,30 @@ export function mountViewer(appEl) {
     }
     $(root, ".wv-main")?.classList.toggle("is-telling-collapsed", on);
     renderBubbles();
-    // the painting's pixel size just changed under it — re-measure once the
-    // browser has actually laid the new grid out, not before
-    requestAnimationFrame(() => {
-      if (on) mapCtx?.fillPane?.();
+    // The pane is mid-slide. Re-measure when the slide ENDS, not on the next
+    // frame — a single rAF lands in the middle of a 300 ms transition, which is
+    // how the old code managed to compute a viewport for a width the pane was
+    // still travelling through. Belt and braces: transitionend, plus a timer in
+    // case the transition is suppressed (reduced motion, or a hidden tab).
+    const settle = () => {
+      mapCtx?.refit?.();
       if (lastRadial) drawOverlay(lastRadial);
       positionBubbles();
+    };
+    const main = $(root, ".wv-main");
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(settle, 340);
+    main?.addEventListener("transitionend", function once(event) {
+      if (event.propertyName !== "grid-template-columns" || event.target !== main) return;
+      main.removeEventListener("transitionend", once);
+      clearTimeout(settleTimer);
+      settle();
     });
+    requestAnimationFrame(positionBubbles); // the bubbles ride along mid-slide
   }
-  const onViewerResize = () => positionBubbles();
+  let settleTimer = null;
+  // a window resize is the same event as a toggle, only slower
+  const onViewerResize = () => { mapCtx?.refit?.(); positionBubbles(); };
   window.addEventListener("resize", onViewerResize);
 
   // ───────── dev pane ─────────
@@ -3607,17 +3667,22 @@ export function mountViewer(appEl) {
       return;
     }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
-    const stakeOpen = e.target.closest("[data-stake-open]");
+    const stakeOpen = e.target.closest("[data-stake-open], [data-unstake-open]");
     if (stakeOpen) {
-      openStakeSheet(stakeOpen.closest(".wv-card"), { mode: "stake", markId: stakeOpen.dataset.mark });
-      return;
-    }
-    const unstakeOpen = e.target.closest("[data-unstake-open]");
-    if (unstakeOpen) {
-      openStakeSheet(unstakeOpen.closest(".wv-card"), {
-        mode: "unstake",
-        max: unstakeOpen.dataset.max,
-        markId: unstakeOpen.dataset.mark,
+      const unstake = stakeOpen.hasAttribute("data-unstake-open");
+      const markId = stakeOpen.dataset.mark;
+      // BACKING A MARK SELECTS IT. These chips sit on relation lines and attribute
+      // rows as well as on cells, so it was possible to open a sheet for one mark
+      // while another was lit on the painting — and the sheet is the one place you
+      // are about to spend stamps.
+      const inBubble = !!stakeOpen.closest(".wv-bubble");
+      if (markId && markInteraction.getState().selectedId !== markId && byId.has(markId)) {
+        if (inBubble) followInBubble(markId); else selectMark(markId);
+      }
+      openStakeSheet(stakeHostFor(markId) ?? stakeOpen.closest(".wv-card"), {
+        mode: unstake ? "unstake" : "stake",
+        max: unstake ? stakeOpen.dataset.max : "",
+        markId,
       });
       return;
     }
