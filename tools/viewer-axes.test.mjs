@@ -56,7 +56,13 @@ import {
   tourProgress,
   readTourSeen,
   writeTourSeen,
+  tourSeenKey,
   TOUR_SEEN_KEY,
+  TOUR_KIND_MARKS,
+  TOUR_WALK_LEG,
+  recentActivity,
+  activityDayLabel,
+  activityDayKey,
   WORLD_ROOT_ID,
   walkerDestinationName,
   walkerHandleFromHoverId,
@@ -844,17 +850,20 @@ test("the painting shows what tells from here PLUS all of yours, and asks no fil
 test("how you read the world is remembered, and a storage that refuses is not fatal", () => {
   const store = new Map();
   const fake = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, v) };
-  assert.equal(readPaintingOnly(fake), false, "the panel is there until you fold it away");
+  // The Painting is the page and the Telling is what you open (Keemin,
+  // 2026-08-05), so nothing remembered means painting-only.
+  assert.equal(readPaintingOnly(fake), true, "an unvisited browser gets the painting");
   writePaintingOnly(fake, true);
   assert.equal(store.get(PAINTING_ONLY_KEY), "1");
   assert.equal(readPaintingOnly(fake), true);
   writePaintingOnly(fake, false);
-  assert.equal(readPaintingOnly(fake), false);
+  assert.equal(store.get(PAINTING_ONLY_KEY), "0");
+  assert.equal(readPaintingOnly(fake), false, "and a reader who opened the Telling keeps it open");
 
   const hostile = { getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); } };
-  assert.equal(readPaintingOnly(hostile), false, "a private-mode browser reads as the default");
+  assert.equal(readPaintingOnly(hostile), true, "a private-mode browser reads as the default");
   assert.doesNotThrow(() => writePaintingOnly(hostile, true), "and refusing to remember is not an error");
-  assert.equal(readPaintingOnly(null), false);
+  assert.equal(readPaintingOnly(null), true);
 });
 
 test("a bubble steps around the one it must not cover, and gives up gracefully", () => {
@@ -1112,16 +1121,90 @@ test("every slide is complete, and its anchor is a class the viewer really write
       `no element in the viewer carries the class ${cls}, which a tour slide points at`);
 });
 
-test("the tour is remembered as seen, so the ? stops asking", () => {
+test("the tour is remembered against the resident, not the browser", () => {
   const store = new Map();
   const storage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)) };
   assert.equal(TOUR_SEEN_KEY, "pm_world_tour_seen");
-  assert.equal(readTourSeen(storage), false);
-  writeTourSeen(storage);
-  assert.equal(readTourSeen(storage), true);
+  assert.equal(tourSeenKey("limen"), "pm_world_tour_seen:limen");
+
+  assert.equal(readTourSeen(storage, "limen"), false, "a resident who has not been greeted");
+  writeTourSeen(storage, "limen");
+  assert.equal(readTourSeen(storage, "limen"), true);
+  // TWO HOUSEHOLDS ON ONE BROWSER ARE TWO ARRIVALS — the whole point of scoping
+  assert.equal(readTourSeen(storage, "wright"), false, "greeting one resident does not greet the next");
+  writeTourSeen(storage, "wright");
+  assert.equal(readTourSeen(storage, "wright"), true);
+  assert.deepEqual([...store.keys()].sort(), ["pm_world_tour_seen:limen", "pm_world_tour_seen:wright"]);
+
+  // A SPECTATOR IS NOBODY: nothing to greet, so nothing is owed and nothing is
+  // written. Reading `true` is what keeps the greeting from ever firing for them.
+  assert.equal(tourSeenKey(""), null);
+  assert.equal(tourSeenKey(undefined), null);
+  assert.equal(readTourSeen(storage, ""), true);
+  writeTourSeen(storage, "");
+  assert.equal(store.size, 2, "a spectator leaves no record behind");
+
   // private mode throws on both, and a viewer that cannot remember must still run
   const sealed = { getItem() { throw new Error("denied"); }, setItem() { throw new Error("denied"); } };
-  assert.equal(readTourSeen(sealed), false);
-  assert.doesNotThrow(() => writeTourSeen(sealed));
-  assert.equal(readTourSeen(undefined), false);
+  assert.equal(readTourSeen(sealed, "limen"), true, "a browser that cannot remember is not nagged every load");
+  assert.doesNotThrow(() => writeTourSeen(sealed, "limen"));
+  assert.equal(readTourSeen(undefined, "limen"), true);
+});
+
+test("the record of acts is newest-first, and admits that it knows two precisions", () => {
+  const departures = [
+    { iso: "2026-08-04T22:30:00.000Z", handle: "wright", toward: { x: 575, y: -2600 }, targetMarkId: "wright/the-trueing-house" },
+    { iso: "2026-08-04T06:05:00.000Z", handle: "rei", toward: { x: 12, y: 8 }, targetMarkId: null },
+    { iso: "2026-07-28T09:00:00.000Z", handle: "limen", toward: { x: 0, y: 0 }, targetMarkId: "the-town/the-town-centre" },
+  ];
+  const marks = [
+    { id: "the-fen/the-fen", date: "2026-08-04", by: "the-fen" },
+    { id: "noe/the-lit-window", date: "2026-08-02", by: "noe" },
+  ];
+  const names = new Map([["wright/the-trueing-house", "The Trueing House"], ["the-fen/the-fen", "The Fen"]]);
+  const rows = recentActivity({ departures, marks, names, now: "2026-08-05T12:00:00Z", limit: 10 });
+
+  assert.deepEqual(rows.map((r) => `${r.kind}:${r.who}`), [
+    "walk:wright", "walk:rei", "mark:the-fen", "mark:noe", "walk:limen",
+  ], "newest day first; within a day the thing that knows its second comes before the thing that knows only its date");
+
+  // A DEPARTURE KNOWS ITS SECOND, A MARK ONLY ITS DAY. Sorting the day as if it
+  // were midnight would push every mark under every walk that shares its date —
+  // which is a claim about order the record does not make.
+  assert.equal(rows[2].day, rows[1].day, "the mark and the later walk are the same day");
+  assert.equal(rows[2].time, "");
+
+  assert.equal(rows[0].name, "The Trueing House");
+  assert.equal(rows[1].subject, null, "a walk to bare ground names no mark");
+  assert.equal(rows[4].name, null, "and a name we were not given stays null rather than guessed");
+
+  assert.equal(activityDayKey("2026-08-04T22:30:00.000Z"), "2026-08-04");
+  assert.equal(activityDayKey("2026-08-04"), "2026-08-04");
+  assert.equal(activityDayKey(null), "");
+
+  assert.equal(activityDayLabel("2026-08-05", "2026-08-05"), "today");
+  assert.equal(activityDayLabel("2026-08-04", "2026-08-05"), "yesterday");
+  assert.equal(activityDayLabel("2026-08-02", "2026-08-05"), "3 days ago");
+  assert.equal(activityDayLabel("2026-07-28", "2026-08-05"), "28 Jul");
+  assert.equal(activityDayLabel("", "2026-08-05"), "");
+
+  assert.deepEqual(recentActivity({}), [], "nothing to report is a clean empty, not a throw");
+  assert.equal(recentActivity({ departures, marks, limit: 2 }).length, 2, "the cap is the cap");
+  assert.deepEqual(recentActivity({ departures: [{ handle: "x" }], marks: [{ id: "y" }] }), [],
+    "an entry with no time cannot be placed in a record ordered by time, so it is not in one");
+
+  // A RESIDENT CORRECTING THEIR COURSE IS STILL ONE JOURNEY. Four departures in an
+  // afternoon said the same thing four times and pushed every mark off the list;
+  // latest-wins is the ledger's own rule, so the record of acts keeps the latest.
+  const fidgety = [
+    { iso: "2026-08-04T09:00:00.000Z", handle: "dylan", toward: { x: 1, y: 1 } },
+    { iso: "2026-08-04T09:05:00.000Z", handle: "dylan", toward: { x: 2, y: 2 } },
+    { iso: "2026-08-04T09:09:00.000Z", handle: "dylan", toward: { x: 3, y: 3 }, targetMarkId: "the-town/the-locks" },
+    { iso: "2026-08-03T09:00:00.000Z", handle: "dylan", toward: { x: 4, y: 4 } },
+  ];
+  const collapsed = recentActivity({ departures: fidgety, marks: [{ id: "a/b", date: "2026-08-04", by: "a" }], now: "2026-08-05T00:00:00Z" });
+  assert.equal(collapsed.filter((r) => r.kind === "walk" && r.day === "2026-08-04").length, 1, "one walk that day");
+  assert.equal(collapsed[0].subject, "the-town/the-locks", "and it is the LAST one, not the first");
+  assert.equal(collapsed.filter((r) => r.kind === "mark").length, 1, "which leaves room for what else happened");
+  assert.equal(collapsed.filter((r) => r.day === "2026-08-03").length, 1, "yesterday is its own day, and keeps its own walk");
 });

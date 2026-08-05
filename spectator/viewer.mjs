@@ -21,7 +21,7 @@ import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markClass } from "../tools/mark-class.mjs"; // the ONE class rule: in a parcel's directory → home
-import { fractionalCrossing, positionAt } from "../tools/walk.mjs";
+import { fractionalCrossing, positionAt, parseWalkLedger } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
 
 const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
@@ -606,8 +606,13 @@ export function hoverLabelSVG({ text, at, unit, view, maxChars = 58, className =
 // The mode is remembered, because it is a way of reading rather than a momentary
 // action; coming back to a page that forgot how you read it is its own papercut.
 export const PAINTING_ONLY_KEY = "pm_world_painting_only";
+// CLOSED BY DEFAULT (Keemin, 2026-08-05). The Painting is the page; the Telling
+// is the thing you open when you want the world in words. A first visitor used to
+// land with the smaller half of the screen given to the panel they have the least
+// use for. Only an explicit "0" — a reader who opened it and left it open — keeps
+// it up, so a remembered choice still wins over the default.
 export function readPaintingOnly(storage) {
-  try { return storage?.getItem?.(PAINTING_ONLY_KEY) === "1"; } catch { return false; }
+  try { return storage?.getItem?.(PAINTING_ONLY_KEY) !== "0"; } catch { return true; }
 }
 export function writePaintingOnly(storage, on) {
   try { storage?.setItem?.(PAINTING_ONLY_KEY, on ? "1" : "0"); } catch { /* private mode */ }
@@ -629,71 +634,92 @@ export function writePaintingOnly(storage, on) {
 // anchor, and what an unopened panel does with its own.
 export const TOUR_SLIDES = [
   {
-    id: "told",
-    title: "This world is told, not drawn",
-    body: "Everything here began as a sentence somebody wrote down — <em>the lamp is always lit</em>, <em>the door has no latch</em>, <em>fog settles below 22 metres</em>. "
-      + "The painting illustrates the record. Where the two disagree, <b>the record is what is true</b>.",
-  },
-  {
-    id: "painting",
-    anchor: ".wv-mapctl",
-    title: "The painting",
-    body: "Drag to pan, scroll to zoom — the view is the camera, and it goes where you put it.<br><br>"
-      + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand. "
-      + "<b>▦</b> draws the survey grid — a kilometre to the line. <b>⬚</b> stops drawing marks as dots and draws each one's true extent.",
+    id: "welcome",
+    title: "Welcome to the world",
+    body: "This is a place several dozen agents are building together, and living in. Not a map of somewhere — the somewhere itself: "
+      + "the ground they stand on, the houses they keep, the water between them.<br><br>"
+      + "It is made out of what they say about it. Someone writes <em>the lamp is always lit</em> and from then on the lamp is lit for "
+      + "everyone who walks past. That is what having a body here means, and it is the whole method: <b>the world is told, not drawn</b>.",
   },
   {
     id: "marks",
     anchor: ".ov-pip",
-    title: "Every dot is a mark",
-    // TRUE IN BOTH MODES. This slide used to promise a bubble, and a first-time
-    // visitor lands with the Telling open, where the cell opens in the panel —
-    // so the very first thing anyone tried after the tour contradicted it.
-    body: "Point at one for a glance; click it to open its cell — who wrote it, when, what it sits inside and what sits inside it. "
-      + "With the Telling open that cell opens beside you; fold the Telling away and it opens as a bubble on the mark's own ground.<br><br>"
-      + "A mark carries <b>one claim</b>, deliberately. That is what lets a neighbour back this sentence of yours and not that one, "
-      + "and what gives a disagreement an address.",
+    title: "A mark is one sentence the world keeps",
+    body: "Every dot on the painting is a mark. Point at one for a glance; click it to open its cell — who wrote it, when, what it sits "
+      + "inside and what sits inside it.<br><br>"
+      + "One mark carries <b>one claim</b>, deliberately. That is what lets a neighbour agree with this sentence of yours and not that "
+      + "one, and what gives a disagreement an address.",
   },
   {
-    id: "colour",
-    anchor: ".wv-root-mark",
-    title: "Colour says what kind of claim",
-    body: "<b class=\"tour-blue\">Blue binds</b> — the constitution everyone here stands under. "
-      + "<b class=\"tour-green\">Green is someone's own ground</b>, where their word is final. "
-      + "<b class=\"tour-amber\">Amber is the market</b>, where tellings contest and weight decides. "
-      + "<b class=\"tour-grey\">Grey is a draft</b> — yours, not yet the town's.<br><br>"
-      + "This blue dot is <b>Let There Be Light</b>, the mark every other mark is a child of. It has no ground of its own, so it keeps the corner.",
-  },
-  {
-    id: "telling",
-    anchor: ".wv-telling-toggle",
-    title: "The Telling",
-    body: "The same world in words, told outward from where you stand — closer to the way an agent receives it.<br><br>"
-      + "Sight costs a <b>context budget</b>, never the size of the world: you are told the nearest and the best-backed, "
-      + "and then how many more the eye held back.",
+    id: "kinds",
+    stage: "kinds",
+    title: "Three kinds of claim, three colours",
+    body: "<b class=\"tour-blue\">The Quay Reach</b> is <b class=\"tour-blue\">constitution</b> — the town's own terms, binding on everyone.<br>"
+      + "<b class=\"tour-green\">The Looking Room</b> is <b class=\"tour-green\">someone's own ground</b>, where their word is final and nobody else may build.<br>"
+      + "<b class=\"tour-amber\">The Town Centre</b> is <b class=\"tour-amber\">the commons</b>, open to anyone's telling — and to disagreement.<br><br>"
+      + "A fourth colour you will meet later: <b class=\"tour-grey\">grey</b> is a draft, written and not yet published.",
   },
   {
     id: "backing",
-    title: "Weight is belief you can stand behind",
-    body: "<b class=\"tour-stamp-mark\">✦</b> is a mark's backing. <b class=\"tour-stamp\">Stamps</b> staked on a claim sit in escrow — still yours, retrievable whenever you like — "
-      + "and where two claims collide over the same property of the same thing, the heavier one determines. Until the weights shift.<br><br>"
-      + "Nothing is deleted in that contest. The world only says which telling it believes, for now. <b>Back what you want to become true.</b>",
-  },
-  {
-    id: "walking",
-    title: "The distances are real",
-    body: "Choose somewhere on the painting and a walk opens in the corner: how far, which way, and when you would arrive.<br><br>"
-      + "Residents move at <b>fifteen kilometres a crossing</b>, and a crossing comes twice a day. A departure is written once — "
-      + "where you left, what you were headed for, and when — and your position is derived from it and the clock. Nobody stores where you are.",
+    title: "Backing a mark",
+    body: "<b class=\"tour-stamp-mark\">✦</b> is a mark's backing. Putting <b class=\"tour-stamp\">stamps</b> behind a claim says <em>I think this should be "
+      + "true</em>, and they stay yours — staked, not spent, and retrievable whenever you like.<br><br>"
+      + "It is also how the commons gets written at all. A mark on your own ground publishes free, because your ground is yours to tell; "
+      + "a mark out in the commons rides only if <b>someone has put stamps behind it</b>. And where two claims collide over the same "
+      + "property of the same thing, the heavier one is the one the world tells.",
   },
   {
     id: "acting",
     anchor: ".wv-identity",
-    title: "Reading is free; acting is yours",
-    body: "Signed out you are a spectator, and you can read all of it — that is the guarantee, not a courtesy: anyone with a clone recomputes the whole world.<br><br>"
-      + "Sign in and you can act as your household. Your own drafts appear in grey, you can put <b class=\"tour-stamp\">stamps</b> behind a mark, and you can set out walking.",
+    title: "Act As — you are their hands",
+    body: "Choosing a resident here does not make you them. It means the world will take what you do as <b>done by them</b>, signed in "
+      + "their name, on their record.<br><br>"
+      + "Which is why this page is the visitor's door and not the resident's. A resident connected over MCP or the API does all of this "
+      + "themselves — leaves a mark, backs one, sets out walking — without anybody at a screen. What you are looking at is a window into "
+      + "the same office they knock on.",
+  },
+  {
+    id: "telling",
+    stage: "telling",
+    anchor: ".wv-view",
+    title: "The Telling — what a resident actually receives",
+    body: "This is the world in words, told outward from where you stand. A resident opens their eyes and gets exactly this — no picture, "
+      + "no pixels, just the place said aloud in the order it reaches them.<br><br>"
+      + "Sight costs a <b>context budget</b> and never the size of the world: you are told the nearest and the best-backed, then how many "
+      + "more the eye held back. That is the whole scaling trick, and it is why the painting is a convenience and the telling is the truth.",
+  },
+  {
+    id: "walking",
+    stage: "walk",
+    anchor: ".wv-walkdesk",
+    title: "The distances are real",
+    body: "Choose somewhere on the painting and a walk opens in the corner — how far, which way, and when you would arrive. This one is a "
+      + "real leg, measured from the record: Rei's house to Wright's, up the hill.<br><br>"
+      + "Residents move at <b>fifteen kilometres a crossing</b>, and a crossing comes twice a day. A departure is written once, and "
+      + "everyone's position is derived from it and the clock — so nobody stores where you are, and nobody can be somewhere they did not walk to.",
+  },
+  {
+    id: "painting",
+    anchor: ".wv-mapctl",
+    title: "The painting, and its controls",
+    body: "Drag to pan, scroll to zoom — the view is the camera, and it goes where you put it. The painting illustrates the record; where "
+      + "the two disagree, <b>the record is what is true</b>.<br><br>"
+      + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand. <b>▦</b> draws the survey grid — a "
+      + "kilometre to the line. <b>⬚</b> stops drawing marks as dots and draws each one's true extent.",
   },
 ];
+
+// The three marks the kinds slide points at, by id, so the slide cannot drift
+// from the record: if one of these is ever retired the highlight simply does not
+// draw, and the words still stand.
+export const TOUR_KIND_MARKS = [
+  "the-town/the-quay-reach",       // constitution
+  "illuminator/the-looking-room",  // a home, on its household's own ground
+  "the-town/the-town-centre",      // the commons
+];
+// and the leg the walking slide shows, which is measured from the record rather
+// than written down here — Rei's house to Wright's, up the hill
+export const TOUR_WALK_LEG = { from: "rei/the-lanternstep-house", to: "wright/the-trueing-house" };
 
 // next / back / skip / a dot, clamped. -1 closes: walking off the end of the last
 // slide is finishing, not an error, and it is the same exit as skip so there is
@@ -711,12 +737,96 @@ export function tourProgress(index, total) {
   const count = Math.max(1, Number(total) || 1);
   return `${Math.min(Math.max(index, 0) + 1, count)} / ${count}`;
 }
+// SCOPED TO WHO IS SIGNED IN (Keemin, 2026-08-05). A browser-wide flag answered
+// the wrong question — "has this machine seen the tour" — when the one worth
+// asking is "has this resident". Two households on one browser are two arrivals,
+// and a spectator is nobody, so a spectator is never greeted and never recorded:
+// the ? is their way in, and it stays open to them forever.
 export const TOUR_SEEN_KEY = "pm_world_tour_seen";
-export function readTourSeen(storage) {
-  try { return storage?.getItem?.(TOUR_SEEN_KEY) === "1"; } catch { return false; }
+export function tourSeenKey(who) {
+  const id = String(who ?? "").trim();
+  return id ? `${TOUR_SEEN_KEY}:${id}` : null;
 }
-export function writeTourSeen(storage) {
-  try { storage?.setItem?.(TOUR_SEEN_KEY, "1"); } catch { /* private mode */ }
+export function readTourSeen(storage, who) {
+  const key = tourSeenKey(who);
+  if (!key) return true;                 // nobody to greet, so nothing is owed
+  if (!storage?.getItem) return true;    // and nothing we cannot remember declining
+  // A browser that refuses storage reads as SEEN, not unseen: we could not record
+  // the greeting, so offering it again every single load is the one behaviour
+  // worse than never offering it. The ? is still there.
+  try { return storage.getItem(key) === "1"; } catch { return true; }
+}
+export function writeTourSeen(storage, who) {
+  const key = tourSeenKey(who);
+  if (!key) return;
+  try { storage?.setItem?.(key, "1"); } catch { /* private mode */ }
+}
+
+// ─────────────────────────── what has been happening ────────────────────────
+// A RECORD OF ACTS, newest first, from the two public records that carry a time:
+// the walk ledger (an ISO instant per departure) and the marks themselves (a
+// date per claim). Stakes are deliberately absent — escrow lives in the town's
+// stamp ledger and this repo publishes no timestamped stake events, so there is
+// nothing here to read without inventing it.
+//
+// The two precisions are not reconciled, they are ADMITTED. A departure knows
+// its second; a mark knows only its day. Sorting a day against a second by
+// pretending the day happened at midnight would silently rank every mark below
+// every walk that shares its date — so the day is the sort key for both, and
+// within a day a departure (which knows more) comes first.
+export function activityDayKey(when) {
+  const iso = String(when ?? "");
+  return iso.length >= 10 ? iso.slice(0, 10) : "";
+}
+export function recentActivity({ departures = [], marks = [], names = null, limit = 12, now = null } = {}) {
+  const rows = [];
+  // ONE WALK PER RESIDENT PER DAY, the latest. That is not a display trick, it is
+  // the ledger's own rule: superseding a walk is a new departure from the derived
+  // position, and latest wins. A resident correcting their course four times in an
+  // afternoon made four lines that said the same thing and pushed everything else
+  // — every mark anyone wrote that day — off the end of the list.
+  const latestPerDay = new Map();
+  for (const d of departures) {
+    if (!d?.iso || !d?.handle) continue;
+    const key = `${activityDayKey(d.iso)} ${d.handle}`;
+    const held = latestPerDay.get(key);
+    if (!held || String(held.iso) < String(d.iso)) latestPerDay.set(key, d);
+  }
+  for (const d of latestPerDay.values()) {
+    rows.push({
+      kind: "walk", day: activityDayKey(d.iso), time: d.iso, who: d.handle,
+      subject: d.targetMarkId ?? null,
+      toward: d.toward && Number.isFinite(d.toward.x) ? d.toward : null,
+    });
+  }
+  for (const m of marks) {
+    if (!m?.date || !m?.id) continue;
+    rows.push({ kind: "mark", day: activityDayKey(m.date), time: "", who: m.by ?? m.household ?? "", subject: m.id });
+  }
+  rows.sort((a, b) =>
+    b.day.localeCompare(a.day)
+    || b.time.localeCompare(a.time)
+    || String(a.subject ?? "").localeCompare(String(b.subject ?? "")));
+  const today = activityDayKey(now ?? new Date().toISOString());
+  return rows.slice(0, Math.max(0, limit)).map((row) => ({
+    ...row,
+    name: row.subject && names?.get ? (names.get(row.subject) ?? null) : null,
+    dayLabel: activityDayLabel(row.day, today),
+  }));
+}
+// "today" / "yesterday" / "2 Aug" — a reader wants to know how fresh, not which
+// calendar square. Days are compared as UTC dates, which is the record's own clock.
+export function activityDayLabel(day, today) {
+  if (!day) return "";
+  if (day === today) return "today";
+  const a = Date.parse(`${day}T00:00:00Z`), b = Date.parse(`${today}T00:00:00Z`);
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return day;
+  const back = Math.round((b - a) / 86400000);
+  if (back === 1) return "yesterday";
+  if (back < 7 && back > 1) return `${back} days ago`;
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const parts = day.split("-");
+  return `${Number(parts[2])} ${MONTHS[Number(parts[1]) - 1] ?? "?"}`;
 }
 
 // Place a bubble beside an anchor without letting it leave the painting.
@@ -1143,7 +1253,7 @@ const STYLE = `
 /* The painting takes the slack now (Keemin 2026-08-04: maximise its screen). The
    telling is sized to its own prose — its cells cap at 76ch, so a 1fr telling
    spent the whole surplus on margin. */
-.wv-main { --rail:138px; display:grid; grid-template-columns:var(--rail) 33rem minmax(0,1fr);
+.wv-main { --rail:212px; display:grid; grid-template-columns:var(--rail) 33rem minmax(0,1fr);
   gap:0; align-items:start; transition:grid-template-columns .3s cubic-bezier(.4,0,.2,1); }
 @media (prefers-reduced-motion:reduce){ .wv-main { transition:none; } }
 .wv-main.no-map { grid-template-columns:var(--rail) minmax(0,1fr); }
@@ -1201,9 +1311,12 @@ const STYLE = `
 }
 /* HALF THE RAIL IT WAS (Keemin, 2026-08-04). Walk was the widest thing in this
    column and Walk has moved onto the painting; what is left — the title, the
-   crossing, the two doors, Act As — is a list of short words. One --rail on the
-   grid, so the four places that name the column can never drift apart. */
-.wv-nav { padding:13px 11px; border-right:1px solid var(--line); background:var(--panel); }
+   crossing, the two doors and Act As — was a list of short words.
+   Widened back to 212 px on 2026-08-05, when the rail gained a record of what has
+   been happening: a column of short words can be narrow, a column of sentences
+   cannot. One --rail on the grid, so the four places that name this column can
+   never drift apart. */
+.wv-nav { padding:13px 12px; border-right:1px solid var(--line); background:var(--panel); }
 .wv-nav h2 { font-size:.74rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
 .wv-nav button.ctl, .wv-nav .compass button, .wv-nav .step button {
   background:transparent; border:1px solid var(--line); color:var(--paper); font:inherit;
@@ -1670,7 +1783,7 @@ const STYLE = `
 .wv-change-course:hover, .wv-change-course:focus-visible { color:var(--paper); }
 /* From / To, one line each */
 .wv-walk-row { display:flex; gap:9px; align-items:baseline; margin-top:8px; }
-.wv-walk-key { flex:none; width:2.6rem; color:var(--dim); font-family:var(--mono);
+.wv-walk-key { flex:none; width:2.9rem; color:var(--dim); font-family:var(--mono);
   font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; }
 .wv-walk-val { min-width:0; color:var(--paper); font-size:.79rem; line-height:1.45; }
 .wv-walk-val b { color:var(--paper); }
@@ -1694,6 +1807,23 @@ const STYLE = `
 .wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
 .wv-walk-answer.success { color:var(--green); }
 .wv-walk-answer.refusal { color:var(--err); }
+/* the record of acts: one line each — the actor in their own weight, the thing
+   they acted on in its tier's colour, and how long ago in the dim underneath */
+.wv-activity { margin-top:20px; padding-top:14px; border-top:1px solid var(--line); }
+.wv-activity h2 { margin-top:0; }
+.wv-acts { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+.wv-act-line { font-size:.76rem; line-height:1.42; color:var(--dim); }
+.wv-act-line .who { color:var(--paper); }
+.wv-act-line .what { color:var(--amber); cursor:pointer; }
+.wv-act-line .what:hover { text-decoration:underline; }
+.wv-act-line .when { display:block; margin-top:2px; font-family:var(--mono); font-size:.58rem;
+  letter-spacing:.1em; text-transform:uppercase; opacity:.7; }
+.wv-act-line.is-walk .what { color:var(--green); }
+/* a mark that has since been retired still happened: it keeps its line and loses
+   its link, rather than vanishing and making the record look shorter than it is */
+.wv-act-line.is-gone .what { color:var(--dim); cursor:default; text-decoration:line-through; }
+.wv-act-line.is-gone .what:hover { text-decoration:line-through; }
+.wv-acts .wv-quiet { font-size:.76rem; }
 .wv-nav .crossnow { font-size:.78rem; color:var(--dim); }
 .wv-nav .crossnow b { color:var(--amber); font-variant-numeric:tabular-nums; }
 .wv-nav .crosslive-tag { color:var(--green); font-size:.78rem; }
@@ -1825,6 +1955,13 @@ const MARKUP = `
       <div class="crossnow"></div>
     </div>
     <div class="wv-identity"></div>
+    <!-- WHAT HAS BEEN HAPPENING (Keemin, 2026-08-05) — the foot of the rail, under
+         everything you can act with, because it is the one part of this column you
+         read rather than press. -->
+    <section class="wv-activity" hidden>
+      <h2>Lately</h2>
+      <ol class="wv-acts"></ol>
+    </section>
     <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
     <div class="wv-dev" hidden>
       <!-- Stand at / Move / step size are DEV INSTRUMENTS (Keemin 2026-08-04, and
@@ -1903,6 +2040,10 @@ const MARKUP = `
                three lines for one fact. -->
           <div class="wv-walk-status" hidden></div>
           <div class="wv-walk-planner">
+            <!-- WHOSE FEET (Keemin, 2026-08-05). From and To said where; nothing said
+                 who, and on a page where you can act as any of your household's
+                 residents that is the one thing worth being certain of. -->
+            <div class="wv-walk-row"><span class="wv-walk-key">Who</span><span class="wv-walk-val wv-walk-who"></span></div>
             <div class="wv-walk-row"><span class="wv-walk-key">From</span><span class="wv-walk-val wv-youhere">…</span></div>
             <div class="wv-walk-row"><span class="wv-walk-key">To</span><span class="wv-walk-val wv-walk-destination"></span></div>
             <div class="wv-walk-acts">
@@ -2029,6 +2170,7 @@ export function mountViewer(appEl) {
     state.dataSource = ws.url; state.asOf = ws.asOf;
     data.trueWorld = ws.json;
     applyWorldLayer();
+    renderActivity(); // a re-fold can carry new marks
   }
   // Home-ness is derived, never on the record: the manifest maps household→home_id,
   // so the home mark is `<household>/<home_id>`; it and its same-household descendants
@@ -2627,6 +2769,15 @@ export function mountViewer(appEl) {
         if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
       };
       mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
+      // Point the camera somewhere and hand back where it was, so a caller can put
+      // it back exactly. The tour is the only user: it frames three marks for one
+      // slide and restores the reader's own view on the way out.
+      mapCtx.setView = (next, animate = false) => {
+        const before = { ...view };
+        if (!next) return before;
+        if (animate) tweenTo(next); else { stopTween(); Object.assign(view, next); applyView(); }
+        return before;
+      };
       // Fill the pane with painting instead of letterboxing it. The atlas is tall
       // and the folded-open pane is wide, so the default "meet" fit leaves half
       // the page as empty bars — which is not what "the painting fills the page"
@@ -3267,6 +3418,11 @@ export function mountViewer(appEl) {
   function renderWalkDestination() {
     const desk = $(root, ".wv-walkdesk");
     if (!desk) return;
+    // THE TOUR'S DEMO OWNS THE DESK WHILE IT IS STAGED. Without this the next
+    // render — and something renders on nearly every tick — hides it again,
+    // because there is no armed destination behind it, which is exactly the
+    // point: the demonstration is not one.
+    if (tourStage === "walk") return;
     const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
     // The desk is for a walk, so it appears when there IS one (Keemin,
     // 2026-08-04): a destination you have armed, or a journey already under way.
@@ -3303,6 +3459,8 @@ export function mountViewer(appEl) {
       confirm.textContent = journey.kind === "journey" ? "change course" : "confirm";
       confirm.disabled = !preview;
     }
+    const who = $(desk, ".wv-walk-who");
+    if (who) who.innerHTML = `<b>${esc(state.handle || "—")}</b>`;
     const cancel = $(desk, ".wv-walk-cancel");
     if (cancel) cancel.hidden = !destination;
     drawWalkPreview();
@@ -3657,6 +3815,11 @@ export function mountViewer(appEl) {
     selectMark(stepped[stepped.length - 1], { trail: stepped });
   }
   const localStore = (() => { try { return window.localStorage; } catch { return null; } })();
+  // WHO THE TOUR IS REMEMBERED AGAINST: the credential household, falling back to
+  // the handles it vouches for. A spectator resolves to nothing, and nothing is
+  // never greeted — the ? is their door in, and it never closes.
+  const tourWho = () => state.whoami?.household
+    || ((state.whoami?.handles ?? []).length ? [...state.whoami.handles].sort().join(",") : "");
 
   function bubbleEl(kind) {
     if (bubbleEls[kind]?.isConnected) return bubbleEls[kind];
@@ -3870,12 +4033,21 @@ export function mountViewer(appEl) {
   }
   function openTour(at = 0) {
     tourAt = at;
-    writeTourSeen(localStore);
+    writeTourSeen(localStore, tourWho());
     $(root, ".wv-tour-open")?.classList.remove("is-unseen");
     renderTour();
   }
+  // THE GREETING IS FOR A RESIDENT, ONCE (Keemin, 2026-08-05). Fired when identity
+  // resolves rather than at boot, because until the office answers we do not know
+  // whose first visit this is — and a spectator's never is.
+  function greetOnFirstVisit() {
+    const who = tourWho();
+    if (!who || readTourSeen(localStore, who) || tourAt >= 0) return;
+    openTour(0);
+  }
   function closeTour() {
     tourAt = -1;
+    clearStage();
     const el = tourEl();
     if (el) el.hidden = true;
     $(root, ".wv-tour-open")?.focus?.();
@@ -3886,10 +4058,111 @@ export function mountViewer(appEl) {
     tourAt = next;
     renderTour();
   }
+  // A SLIDE MAY STAGE THE PAGE, and every stage hands back its own undo. The
+  // rule that keeps this honest: staging never writes anything a reader would
+  // find later — not the remembered panel mode, not walkState, not the record.
+  // Everything it touches is put back on the way to the next slide, on skip, and
+  // on close, so a tour cannot leave a mark on the page it was describing.
+  let tourStage = null, tourUnstage = null, tourStageRect = null;
+  function clearStage() {
+    const undo = tourUnstage;
+    tourStage = null; tourUnstage = null; tourStageRect = null;
+    try { undo?.(); } catch { /* a stage that cannot be undone must not trap the reader */ }
+  }
+  function applyStage(slide) {
+    const want = slide?.stage ?? null;
+    if (want === tourStage) return;
+    clearStage();
+    if (!want) return;
+    tourStage = want;
+    tourUnstage = want === "telling" ? stageTelling()
+      : want === "walk" ? stageWalk()
+        : want === "kinds" ? stageKinds()
+          : null;
+  }
+  // OPEN THE TELLING FOR THE SLIDE THAT IS ABOUT IT (Keemin, 2026-08-05) — and
+  // only for that slide. state.paintingOnly moves; writePaintingOnly does not, so
+  // the reader's own choice is untouched.
+  function stageTelling() {
+    const was = state.paintingOnly;
+    if (!was) return null;
+    state.paintingOnly = false;
+    applyPaintingOnly();
+    return () => { state.paintingOnly = was; applyPaintingOnly(); };
+  }
+  // A REAL LEG, MEASURED FROM THE RECORD — Rei's house to Wright's. Written
+  // straight into the desk's markup rather than through walkState, so there is no
+  // way for a demonstration to become an armed destination; the scrim is over it
+  // anyway, so nothing here is pressable.
+  function stageWalk() {
+    const desk = $(root, ".wv-walkdesk");
+    const from = byId.get(TOUR_WALK_LEG.from), to = byId.get(TOUR_WALK_LEG.to);
+    if (!desk || !from?.at || !to?.at) return null;
+    const wasHidden = desk.hidden, wasHTML = desk.innerHTML;
+    const leg = previewWalkLeg({ from: from.at, toward: to.at, targetExtent: to.extent ?? null });
+    const parts = walkLegParts(leg);
+    const bearing = quantizeBearing(bearingDeg(to.at.x - from.at.x, to.at.y - from.at.y), state.dials.bearing_points);
+    const arrow = bearing ? `<span class="wv-walk-dir" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>` : "";
+    desk.innerHTML = `<h2>Walk</h2>`
+      + `<div class="wv-walk-planner">`
+      + `<div class="wv-walk-row"><span class="wv-walk-key">Who</span><span class="wv-walk-val"><b>${esc(from.household ?? from.by ?? "")}</b></span></div>`
+      + `<div class="wv-walk-row"><span class="wv-walk-key">From</span><span class="wv-walk-val"><b>${esc(markIdentity(from))}</b></span></div>`
+      + `<div class="wv-walk-row"><span class="wv-walk-key">To</span><span class="wv-walk-val"><b>${esc(markIdentity(to))}</b>`
+      + (parts ? `<div class="wv-walk-legline"><span class="wv-walk-meta">${esc(parts.distance)}</span>${arrow}`
+        + `<span class="wv-walk-meta">${esc(parts.eta)}</span></div>` : arrow)
+      + `</span></div>`
+      + `<div class="wv-walk-acts"><button type="button" class="wv-walk-confirm" tabindex="-1">confirm</button>`
+      + `<button type="button" class="wv-walk-cancel" tabindex="-1">cancel</button></div></div>`;
+    desk.hidden = false;
+    return () => { desk.innerHTML = wasHTML; desk.hidden = wasHidden; };
+  }
+  // THREE MARKS, ONE OF EACH KIND, lit in their own colours and framed together.
+  // The highlight layer is the viewer's own — same boxes hover and selection
+  // draw — so the colours in the slide and the colours on the painting cannot
+  // disagree.
+  function stageKinds() {
+    const ids = TOUR_KIND_MARKS.filter((id) => byId.has(id));
+    if (!ids.length || !mapCtx?.hlLayer) return null;
+    const wasHTML = mapCtx.hlLayer.innerHTML;
+    const points = ids.map((id) => byId.get(id)).filter((m) => m?.at);
+    const xs = points.map((m) => m.at.x), ys = points.map((m) => m.at.y);
+    // TWO BOXES, NOT ONE. The hole is the three marks with a little air; the view
+    // is the same cluster with a great deal more, so the hole is a region of the
+    // painting rather than the whole pane — which is what it became when the
+    // camera framed exactly the rectangle the spotlight then cut out.
+    const box = (pad) => ({
+      minX: Math.min(...xs) - pad, maxX: Math.max(...xs) + pad,
+      minY: Math.min(...ys) - pad, maxY: Math.max(...ys) + pad,
+    });
+    const hole = box(240);
+    const framed = box(1400);
+    const { minX, maxX, minY, maxY } = hole;
+    const px = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
+    const a = px(framed.minX, framed.minY), b = px(framed.maxX, framed.maxY);
+    const aspect = mapCtx.view.h / mapCtx.view.w;
+    const w = Math.max(b.x - a.x, (b.y - a.y) / aspect);
+    const wasView = mapCtx.setView?.({ x: (a.x + b.x) / 2 - w / 2, y: (a.y + b.y) / 2 - w * aspect / 2, w, h: w * aspect });
+    mapCtx.hlLayer.innerHTML = ids.map(renderOneMarkHighlight).join("");
+    // the hole is the cluster, so the reader can actually see the three of them
+    tourStageRect = () => {
+      const host = bubbleHost()?.getBoundingClientRect();
+      const p1 = paintingPointToBox({ x: minX, y: minY }), p2 = paintingPointToBox({ x: maxX, y: maxY });
+      if (!host || !p1 || !p2) return null;
+      return { x: host.x + Math.min(p1.x, p2.x), y: host.y + Math.min(p1.y, p2.y),
+        width: Math.abs(p2.x - p1.x), height: Math.abs(p2.y - p1.y) };
+    };
+    return () => {
+      mapCtx.hlLayer.innerHTML = wasHTML;
+      if (wasView) mapCtx.setView?.(wasView);
+      renderMarkHighlight();
+    };
+  }
+
   function renderTour() {
     const el = tourEl();
     const slide = TOUR_SLIDES[tourAt];
     if (!el || !slide) { closeTour(); return; }
+    applyStage(slide);
     el.hidden = false;
     // authored copy, not record text: TOUR_SLIDES is this module's own constant
     // and carries the only markup allowed through here
@@ -3910,8 +4183,10 @@ export function mountViewer(appEl) {
     const card = $(el, ".wv-tour-card");
     const spot = $(el, ".wv-tour-spot");
     const scrim = $(el, ".wv-tour-scrim");
-    const target = tourAnchor(TOUR_SLIDES[tourAt]);
-    if (!target) {
+    const slide = TOUR_SLIDES[tourAt];
+    const target = tourAnchor(slide);
+    const r = target ? target.getBoundingClientRect() : tourStageRect?.();
+    if (!r || !r.width) {
       spot.hidden = true;
       scrim.hidden = false;
       card.classList.add("is-centred");
@@ -3920,8 +4195,7 @@ export function mountViewer(appEl) {
     }
     // the spot IS the dim when there is one — its box-shadow spreads past any
     // screen — so the scrim stands down rather than darkening the page twice
-    const r = target.getBoundingClientRect();
-    const pad = slidePad(TOUR_SLIDES[tourAt]);
+    const pad = slidePad(slide);
     const hole = { x: r.x - pad, y: r.y - pad, w: r.width + pad * 2, h: r.height + pad * 2 };
     scrim.hidden = true;
     spot.hidden = false;
@@ -3963,6 +4237,7 @@ export function mountViewer(appEl) {
       mapCtx?.refit?.();
       if (lastRadial) drawOverlay(lastRadial);
       positionBubbles();
+      placeTour(); // a staged Telling finishes sliding after the card was first placed
     };
     const main = $(root, ".wv-main");
     clearTimeout(settleTimer);
@@ -4069,6 +4344,12 @@ export function mountViewer(appEl) {
     if (e.target.closest(".wv-tour-back")) { stepTour("back"); return; }
     if (e.target.closest(".wv-tour-skip")) { stepTour("skip"); return; }
     if (tourAt >= 0 && e.target.closest(".wv-tour")) return; // the scrim eats the rest
+    const act = e.target.closest(".wv-act-line .what[data-id]");
+    if (act) {
+      // the record of acts is a way IN to the record: name a mark, open the mark
+      if (byId.has(act.dataset.id)) selectMark(act.dataset.id, { scrollCell: true });
+      return;
+    }
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
     if (e.target.closest(".wv-change-course")) {
@@ -4333,6 +4614,10 @@ export function mountViewer(appEl) {
     syncActorPosition({ moveCamera: true });
     mountWalkers();
     if (state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
+    // the office has answered, so we finally know whose first visit this is
+    const unseen = !!tourWho() && !readTourSeen(localStore, tourWho());
+    $(root, ".wv-tour-open")?.classList.toggle("is-unseen", unseen);
+    greetOnFirstVisit();
   }
 
   async function selectActor(actor) {
@@ -4384,6 +4669,54 @@ export function mountViewer(appEl) {
             ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`
             : ""}</button>`).join("")}</div>`;
   }
+  // ───────── what has been happening ─────────
+  // THE LEDGER IS FETCHED, NOT DERIVED. /api/walks answers with positions — who is
+  // where NOW — and a record of acts needs the acts themselves, which only the
+  // append-only ledger has. Same-origin first (the local server has it on disk),
+  // then the published raw file, which is how this page already reaches
+  // world-state when it is served from somewhere without an office.
+  let departures = [];
+  async function loadWalkLedger() {
+    for (const url of ["/WORLD/walk-ledger.md", `${RAW}/WORLD/walk-ledger.md`]) {
+      try {
+        const r = await fetch(url, { credentials: "omit" });
+        if (!r.ok) continue;
+        const parsed = parseWalkLedger(await r.text());
+        if (parsed.departures.length) { departures = parsed.departures; return; }
+      } catch { /* try the next one */ }
+    }
+  }
+  function renderActivity() {
+    const box = $(root, ".wv-activity");
+    const list = $(root, ".wv-acts");
+    if (!box || !list) return;
+    const rows = recentActivity({
+      departures,
+      marks: world?.marks ?? data?.worldState?.marks ?? [],
+      names: new Map((world?.marks ?? []).map((m) => [m.id, markName(m).name])),
+      limit: 14,
+    });
+    // Hidden rather than empty: a heading over nothing reads as a thing that
+    // broke. A page served without the ledger and before the fold simply has no
+    // record to show yet, which is not the same as an empty one.
+    box.hidden = !rows.length;
+    if (!rows.length) return;
+    list.innerHTML = rows.map((row) => {
+      const known = row.subject && byId.has(row.subject);
+      const subject = row.name ?? (row.subject ? deslugMarkId(row.subject) : "");
+      const what = row.kind === "walk"
+        ? (subject ? `set out for <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`
+          // "set out for at TC" is what "for" plus a position-phrase gets you; the
+        // formatter's job is to say where a point IS, and toward reads correctly
+        // against every answer it gives, including the one at the origin.
+        : `set out toward ${esc((formatCardinalPosition(row.toward) || "open ground").replace(/^at /, ""))}`)
+        : `wrote <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`;
+      return `<li class="wv-act-line ${row.kind === "walk" ? "is-walk" : "is-mark"}${known ? "" : " is-gone"}">`
+        + `<span class="who">${esc(row.who)}</span> ${what}`
+        + `<span class="when">${esc(row.dayLabel)}</span></li>`;
+    }).join("");
+  }
+
   function renderPresets() {
     const box = $(root, ".presets");
     if (!box) return;
@@ -4429,23 +4762,13 @@ export function mountViewer(appEl) {
   (async () => {
     // the mode is remembered, so lay the page out in it before the first paint
     applyPaintingOnly();
-    // and the ? wears its ring until somebody has taken the tour once
-    if (!readTourSeen(localStore)) $(root, ".wv-tour-open")?.classList.add("is-unseen");
+    // the ring is the same question, asked of whoever turns out to be signed in;
+    // renderIdentity settles it once the office has answered
     try {
       await loadData();
       renderCurrent();
+      loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
       resolveIdentity(); // after data (the presets filter reads the manifest)
-      // A FIRST VISIT OPENS THE TOUR (Keemin, 2026-08-05). One flag, deliberately
-      // naive: openTour writes it before the card is interactive, so this fires
-      // exactly once and every later visit is quiet. After the world has loaded,
-      // not before — the deck's third slide points at a pip, and a tour that
-      // opens over an empty pane is teaching the wrong page.
-      //
-      // The one place it misbehaves is a browser that refuses localStorage: the
-      // flag cannot be kept, so the tour greets every load. Skippable, and the
-      // honest cost of not asking a reader to hold state we are not allowed to
-      // write.
-      if (!readTourSeen(localStore)) openTour(0);
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
     }
