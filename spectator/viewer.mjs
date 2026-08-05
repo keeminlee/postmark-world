@@ -789,12 +789,13 @@ export function predicateFoldDecision(mark, renderedMarks = []) {
   return !!parent && !isPredicateAttribute(parent);
 }
 
-export function backingButton(markId, stamps = 0, { neutralZero = false } = {}) {
+export function backingButton(markId, stamps = 0) {
   const backing = Math.max(0, Number(stamps) || 0);
   const backingClass = `wv-backing${backing === 0 ? " is-zero" : ""}`;
-  const label = backing === 0 && neutralZero
-    ? "✦ 0 — no belief staked yet"
-    : `✦ ${backing.toLocaleString()} · back`;
+  // symbol and number, nothing else (Keemin, 2026-08-04). The word "back" was a
+  // verb sitting inside a readout, and it appears on every cell, every relation
+  // line and every attribute row — the title says what pressing it does.
+  const label = `✦ ${backing.toLocaleString()}`;
   return `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(markId)}" title="read backing and back this mark">${label}</button>`;
 }
 
@@ -965,8 +966,19 @@ const STYLE = `
 .wv * { box-sizing:border-box; }
 /* The strip the site's fixed back-link and auth pill land in. It holds only the
    beta chip and the room those two need; the viewer's own title rail is gone. */
-/* the head of the rail: the beta chip, and the slot the site's own pills adopt */
-.wv-nav-top { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin:0 0 14px; }
+/* the head of the rail: what the page is, its state, the Telling's switch, the
+   crossing, and the seat the site's own pills adopt */
+.wv-nav-top { display:flex; flex-direction:column; align-items:stretch; gap:9px; margin:0 0 16px; }
+.wv-worldline { display:flex; align-items:center; gap:8px; }
+.wv-worldline h1 { margin:0; font-size:.95rem; letter-spacing:.03em; color:var(--amber);
+  font-weight:600; white-space:nowrap; }
+.wv-nav .wv-telling-toggle { margin-left:auto; flex:none; width:1.9rem; height:1.9rem;
+  display:inline-grid; place-items:center; cursor:pointer; font:inherit; font-size:.82rem;
+  color:rgba(232,197,106,.6); background:transparent;
+  border:1px solid var(--line); border-radius:6px; }
+.wv-nav .wv-telling-toggle:hover { color:var(--amber); border-color:rgba(232,197,106,.5); }
+.wv-nav .wv-telling-toggle.on { color:var(--amber); border-color:rgba(232,197,106,.55);
+  background:rgba(232,197,106,.09); }
 .wv-beta-chip { border-color:rgba(216,138,122,.55); color:var(--err); letter-spacing:.12em;
   font-family:var(--mono); font-size:.62rem; padding:2px 10px; cursor:help; }
 /* The painting takes the slack now (Keemin 2026-08-04: maximise its screen). The
@@ -1011,8 +1023,6 @@ const STYLE = `
 .wv-nav input.num { width:80px; }
 .wv-standpoint { margin-top:8px; }
 .wv-standpoint p { margin:5px 0 0; color:var(--dim); font-size:.76rem; line-height:1.5; }
-.wv-where { color:var(--dim); font-size:.82rem; margin-top:14px; }
-.wv-where b { color:var(--you); }
 .wv-dev-toggle { margin-top:20px; width:100%; }
 .wv-dev { margin-top:12px; border-top:1px solid var(--line); padding-top:12px; }
 .wv-dev .dial { margin-bottom:9px; }
@@ -1022,6 +1032,15 @@ const STYLE = `
 .wv-dev .devrow { display:flex; gap:6px; margin-top:6px; }
 .wv-dev .devrow button { flex:1; }
 .wv-dev .devnote { font-size:.72rem; color:var(--dim); margin:2px 0 10px; font-style:italic; }
+/* the Telling says what it is at its own head — one line of what this panel even
+   is, since "a list of cells" is not self-evident to anyone arriving */
+.wv-viewhead { padding:16px 20px 0; }
+.wv-viewhead h2 { margin:0; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--dim); font-family:var(--mono); font-weight:400; }
+.wv-view-sub { margin:5px 0 0; color:var(--dim); font-size:.76rem; line-height:1.5;
+  font-style:italic; max-width:48ch; }
+.wv-viewhead + .wv-telling { padding-top:12px; }
+
 /* Two panels, no bars. Both are content to their own edges — the painting runs
    to the window and the telling begins at its first line — because every control
    either of them had now lives loose in the rail. */
@@ -1305,17 +1324,6 @@ const STYLE = `
 /* hard against the right edge, so the help opens back across the painting */
 .wv-mapctl .wv-map-help-bubble { left:auto; right:0; }
 
-/* The Telling's own switch, heading the rail: an icon and the panel's NAME, so
-   the thing has an identity again instead of being one unlabelled chip among the
-   painting's. Lit means the telling is up. */
-.wv-nav .wv-telling-toggle { display:flex; align-items:center; gap:8px; width:100%;
-  margin:0 0 14px; padding:6px 11px; cursor:pointer;
-  font-family:var(--mono); font-size:.68rem; letter-spacing:.09em;
-  color:rgba(232,197,106,.6); background:transparent;
-  border:1px solid var(--line); border-radius:999px; }
-.wv-nav .wv-telling-toggle:hover { color:var(--amber); border-color:rgba(232,197,106,.5); }
-.wv-nav .wv-telling-toggle.on { color:var(--amber); border-color:rgba(232,197,106,.55);
-  background:rgba(232,197,106,.09); }
 .wv-minimap.pannable { cursor:grab; }
 .wv-minimap.panning { cursor:grabbing; }
 .wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
@@ -1350,7 +1358,8 @@ const STYLE = `
    two states, so the name agrees with the dot it is naming */
 .wv-hl-label.wv-hl-walker { color:var(--green); }
 .wv-hl-label.wv-hl-walker.moving { color:#e0507a; }
-.wv-hl-label rect, .wv-edge-indicator rect { fill:rgba(13,15,19,.94); stroke:currentColor; stroke-width:1; }
+.wv-hl-label rect, .wv-edge-indicator rect { fill:rgba(13,15,19,.94); stroke:currentColor;
+  stroke-width:1; vector-effect:non-scaling-stroke; }
 .wv-hl-label text, .wv-edge-indicator text { fill:currentColor; font-family:Georgia,"Times New Roman",serif; }
 .wv-edge-indicator.t-constitution { color:var(--blue); }
 .wv-edge-indicator.t-home { color:var(--green); }
@@ -1399,7 +1408,7 @@ const STYLE = `
 .wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
 .wv-walk-answer.success { color:var(--green); }
 .wv-walk-answer.refusal { color:var(--err); }
-.wv-nav .crossnow { font-size:.86rem; color:var(--paper); }
+.wv-nav .crossnow { font-size:.78rem; color:var(--dim); }
 .wv-nav .crossnow b { color:var(--amber); font-variant-numeric:tabular-nums; }
 .wv-nav .crosslive-tag { color:var(--green); font-size:.78rem; }
 .wv-dev .cross .crossrow { display:flex; gap:6px; align-items:center; }
@@ -1522,17 +1531,19 @@ const STYLE = `
 const MARKUP = `
 <div class="wv-main">
   <nav class="wv-nav">
-    <!-- The Telling's own name and its switch, at the head of the rail. It governs
-         a PANEL, so it belongs to the page's furniture rather than floating on the
-         painting with the painting's controls (Keemin, 2026-08-04). -->
-    <button type="button" class="wv-telling-toggle" aria-expanded="true"
-      title="show or hide the telling"><span aria-hidden="true">▤</span> The Telling</button>
-    <!-- The head of the rail is where ALL the page's chrome lives now (Keemin
-         2026-08-04): the beta chip, and the SLOT the site's back-link and auth
-         pill move themselves into. Nothing floats over the painting any more,
-         and no strip spends a row of the page naming things. -->
+    <!-- The head of the rail: what this page IS, what state it is in, the switch
+         for the Telling, the crossing, and the SEAT the site's back-link and auth
+         pill move themselves into. The Telling's switch is an icon here and its
+         NAME lives on its own panel (Keemin, 2026-08-04) — the panel says what it
+         is; the rail only has to offer the switch. -->
     <div class="wv-nav-top">
-      <span class="wv-chip wv-beta-chip" title="the record is real, and so are the acts taken here — the viewer is still finding its shape">BETA</span>
+      <div class="wv-worldline">
+        <h1>The World</h1>
+        <span class="wv-chip wv-beta-chip" title="the record is real, and so are the acts taken here — the viewer is still finding its shape">BETA</span>
+        <button type="button" class="wv-telling-toggle" aria-expanded="true"
+          aria-label="The Telling" title="show or hide the Telling">▤</button>
+      </div>
+      <div class="crossnow"></div>
     </div>
     <div class="wv-identity"></div>
     <section class="wv-walkdesk" hidden>
@@ -1545,13 +1556,12 @@ const MARKUP = `
         <p class="wv-walk-answer" hidden></p>
       </div>
     </section>
+    <!-- The Crossing heading and its "standing in …" line are gone (Keemin,
+         2026-08-04): the crossing moved to the head of the rail, and the standing
+         line was the SECOND copy — the walk desk tells a resident where they are,
+         and the coordinate chip on the painting tells a spectator. What is left is
+         the mechanics of standing here, which nothing else says. -->
     <div class="wv-standctl">
-      <h2>Crossing</h2>
-      <div class="crossnow"></div>
-      <div class="wv-where"></div>
-      <!-- the mechanics of standing here — the light, the ground, the air. It
-           briefly lived in a bubble on the painting; the rail is where you are,
-           and the painting is where the marks are. -->
       <div class="wv-standpoint"></div>
     </div>
     <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
@@ -1576,6 +1586,9 @@ const MARKUP = `
           <datalist id="wv-stepticks">${STEP_NOTCHES.map((_, i) => `<option value="${i}"></option>`).join("")}</datalist>
         </div>
       </div>
+      <!-- the walk ledger's own tally: a diagnostic, not a thing the town needs to
+           read at the bottom of its map -->
+      <p class="wv-walkpanel" id="wv-walk-panel"></p>
       <div class="wv-dev-dials"></div>
     </div>
   </nav>
@@ -1583,6 +1596,10 @@ const MARKUP = `
        column and the painting had a title; they are peers, so they read as peers.
        The Telling collapses to a rail that still says its own name. -->
   <section class="wv-view">
+    <div class="wv-viewhead">
+      <h2>The Telling</h2>
+      <p class="wv-view-sub">closer to how your agent sees the world — the record told in words from where you stand, never drawn</p>
+    </div>
     <div class="wv-telling"><div class="wv-quiet">opening your eyes…</div></div>
   </section>
   <aside class="wv-map">
@@ -1599,7 +1616,6 @@ const MARKUP = `
               Drag to pan, scroll to zoom.</div>
           </div>
         </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div></div>
-      <p class="wv-walkpanel" id="wv-walk-panel"></p>
     </div>
   </aside>
 </div>
@@ -2037,10 +2053,8 @@ export function mountViewer(appEl) {
       // readings, not decoration — they get a home on the painting either way
       renderStandpoint();
       const talliesChip = $(root, ".wv-paint-tallies");
-      if (talliesChip) {
-        talliesChip.hidden = !state.paintingOnly;
-        talliesChip.textContent = tallies(e.radial);
-      }
+      if (talliesChip) talliesChip.textContent = tallies(e.radial);
+      syncDevReadouts();
       drawOverlay(e.radial);
       syncMarkInteractionViews();
     } catch (err) {
@@ -2146,7 +2160,7 @@ export function mountViewer(appEl) {
     box.innerHTML = `
       ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><b class="wv-crumb-name${targetIdentity.determined ? " is-determined" : ""}">${esc(targetIdentity.name)}</b>${tierChip(tierOf(target))}</div>
       <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>
-      ${markCellBylineRow(target, backingButton(d.id, d.stamps, { neutralZero: true }))}` : ""}
+      ${markCellBylineRow(target, backingButton(d.id, d.stamps))}` : ""}
       ${d.sovereign ? `<div class="cmeta" style="margin-bottom:4px"><span class="wv-chip">sovereign</span></div>` : ""}
       ${newlyRevealedPredicates.length ? `<div class="wv-expansion-attributes">${newlyRevealedPredicates.map(predicateAttributeLine).join("")}</div>` : ""}
       ${d.parents?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.parents.map(relativeNode).join("")}</div>` : ""}
@@ -3447,10 +3461,6 @@ export function mountViewer(appEl) {
       button.title = on ? "show the telling" : "hide the telling and give the painting the page";
     }
     $(root, ".wv-main")?.classList.toggle("is-telling-collapsed", on);
-    // the count line's WORDS come from the telling; only its presence is the
-    // mode's business, and the mode can change without a re-tell
-    const talliesChip = $(root, ".wv-paint-tallies");
-    if (talliesChip) talliesChip.hidden = !on;
     renderBubbles();
     // the painting's pixel size just changed under it — re-measure once the
     // browser has actually laid the new grid out, not before
@@ -3482,6 +3492,15 @@ export function mountViewer(appEl) {
   function renderModeControls() {
     root.classList.toggle("is-spectating", isSpectating());
   }
+  // "12 told of 117 in view (194 in range) · 77 behind the ground" is a sentence
+  // about the ENGINE, not about the town — it answers how the field of view
+  // culled, which is a question you only have while you are tuning the dials it
+  // culled by. It rides with them (Keemin, 2026-08-04).
+  function syncDevReadouts() {
+    const open = !$(root, ".wv-dev")?.hidden;
+    const tallies = $(root, ".wv-paint-tallies");
+    if (tallies) tallies.hidden = !open;
+  }
   function renderSpectatorCoordinate() {
     const chip = $(root, ".wv-spectator-coordinate");
     if (!chip) return;
@@ -3492,7 +3511,6 @@ export function mountViewer(appEl) {
   }
   function renderCurrent() {
     $(root, ".pos").textContent = formatCardinalPosition(state.cam);
-    $(root, ".wv-where").innerHTML = `<b>${esc(standingLocationLabel(state.cam, world?.marks ?? [], data?.worldState?.determined))}</b>`;
     const cn = $(root, ".crossnow");
     if (cn) cn.innerHTML = state.crossingOverride
       ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`
@@ -3643,7 +3661,7 @@ export function mountViewer(appEl) {
       else { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); }
       return;
     }
-    if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } return; }
+    if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } syncDevReadouts(); return; }
     if (e.target.closest(".wv-dev-reset")) { state.dials = { ...DIALS }; buildDevPane(); renderCurrent(); return; }
     if (e.target.closest(".crosslive")) { state.crossingOverride = false; state.crossing = liveCrossing(); const i = root.querySelector(".crossover"); if (i) i.value = state.crossing; const l = root.querySelector(".crossovlbl"); if (l) l.textContent = "live · " + state.crossing; reRender(); return; }
     const b = e.target.closest("button.ctl, .wv-card");

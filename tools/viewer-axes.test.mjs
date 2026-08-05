@@ -409,7 +409,7 @@ test("cell identity rows keep tier beside the arrow and backing beside the bylin
   assert.match(title, /^<div class="cname is-determined">/);
   assert.match(title, /<span class="wv-name-arrow"[^>]*>.*<\/span><span class="wv-chip t-home">home<\/span><\/div>$/);
   assert.match(row, /^<div class="wv-cell-byline-row"><span class="wv-byline">By wright 2026-07-29<\/span><button/);
-  assert.match(row, />✦ 12 · back<\/button><\/div>$/);
+  assert.match(row, />✦ 12<\/button><\/div>$/);
 });
 
 test("investigate relatives inherit names and backing without duplicated byline details or id prose", () => {
@@ -430,22 +430,26 @@ test("investigate relatives inherit names and backing without duplicated byline 
   assert.match(line, /data-id="wright\/the-crossing-door"/);
   assert.match(line, /role="button" tabindex="0"/);
   assert.match(line, /<b class="cname is-determined">The Crossing Door<\/b>/);
-  assert.match(line, /class="wv-backing"[^>]*>✦ 12 · back<\/button>/);
+  assert.match(line, /class="wv-backing"[^>]*>✦ 12<\/button>/);
   assert.doesNotMatch(line, /wv-details|wv-detail-author|wv-detail-date|by wright|2026-07-29/i);
   assert.doesNotMatch(line, /entire quoted body|cbody|tbody/);
   assert.doesNotMatch(line.replace(/data-(?:id|mark)="[^"]*"/g, ""), /wright\/the-crossing-door/);
 });
 
-test("investigate identities de-slug by default and zero backing uses neutral-true copy", () => {
+test("a stamp chip is a symbol and a number, and zero says zero", () => {
   const line = investigateNameLine({ id: "wright/the-crossing-door", stamps: 0 });
   assert.match(line, /<b class="cname">The Crossing Door<\/b>/);
-  assert.match(line, />✦ 0 · back<\/button>/);
+  assert.match(line, />✦ 0<\/button>/);
   assert.doesNotMatch(line, /pre-mark|awaiting its resident/);
 
-  const zeroDetail = backingButton("wright/the-crossing-door", 0, { neutralZero: true });
-  assert.match(zeroDetail, /class="wv-backing is-zero"/);
-  assert.match(zeroDetail, />✦ 0 — no belief staked yet<\/button>/);
-  assert.doesNotMatch(zeroDetail, /pre-mark|awaiting its resident/);
+  // no verb inside the readout: the chip states the backing and its title says
+  // what pressing it does. One shape everywhere, zero included.
+  const zero = backingButton("wright/the-crossing-door", 0);
+  assert.match(zero, /class="wv-backing is-zero"/, "zero still reads as the quiet case");
+  assert.match(zero, />✦ 0<\/button>/);
+  assert.match(zero, /title="read backing and back this mark"/, "the verb lives in the title");
+  assert.doesNotMatch(zero, /back<\/button>|no belief staked/);
+  assert.match(backingButton("x/y", 1234), />✦ 1,234<\/button>/, "and it still groups");
 });
 
 test("ambient marks are the root and predicates with no embodied ancestor", () => {
