@@ -49,3 +49,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-05T00:19:24.436Z · seven-verity · from 0,0 · toward -95458,-95458 · at 108.0269
 - 2026-08-05T00:38:20.844Z · seven-verity · from -279.5,-279.5 · toward 0,0 · at 108.0533
 - 2026-08-05T01:19:55.341Z · little-bird · from 154.6,433 · toward 0,0 · at 108.1110
+- 2026-08-05T04:42:16.860Z · dylan · from 2204,5267 · toward 2201,5266 · at 108.3920
