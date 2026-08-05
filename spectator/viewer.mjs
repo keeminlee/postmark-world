@@ -339,13 +339,21 @@ export function formatEtaCrossings(etaCrossings) {
   return `≈ ${hours} h ${String(minutes).padStart(2, "0")} m`;
 }
 
+// the leg's two numbers, apart — the desk sets them beside an arrow, the label on
+// the painting joins them with a dot. One owner, so they can never disagree.
+export function walkLegParts(leg) {
+  if (!leg || !Number.isFinite(Number(leg.distanceM))) return null;
+  return {
+    distance: `${Math.round(Number(leg.distanceM)).toLocaleString()} m`,
+    eta: formatEtaCrossings(leg.etaCrossings)
+      .replace(/^≈\s*/, "~")
+      .replace(/(\d+) h/, "$1h")
+      .replace(/(\d+) m$/, "$1m"),
+  };
+}
 export function formatWalkPreviewLabel(leg) {
-  if (!leg || !Number.isFinite(Number(leg.distanceM))) return "";
-  const eta = formatEtaCrossings(leg.etaCrossings)
-    .replace(/^≈\s*/, "~")
-    .replace(/(\d+) h/, "$1h")
-    .replace(/(\d+) m$/, "$1m");
-  return eta ? `${Math.round(Number(leg.distanceM)).toLocaleString()} m · ${eta}` : "";
+  const parts = walkLegParts(leg);
+  return parts?.eta ? `${parts.distance} · ${parts.eta}` : "";
 }
 
 export function deriveWalkPreview({ from, destination, skeleton = null, residentMode = true } = {}) {
@@ -1021,8 +1029,6 @@ const STYLE = `
 .wv-nav input.txt, .wv-nav input.num { width:100%; background:var(--night); color:var(--paper);
   border:1px solid var(--line); border-radius:4px; font:inherit; padding:4px 7px; }
 .wv-nav input.num { width:80px; }
-.wv-standpoint { margin-top:8px; }
-.wv-standpoint p { margin:5px 0 0; color:var(--dim); font-size:.76rem; line-height:1.5; }
 .wv-dev-toggle { margin-top:20px; width:100%; }
 .wv-dev { margin-top:12px; border-top:1px solid var(--line); padding-top:12px; }
 .wv-dev .dial { margin-bottom:9px; }
@@ -1309,6 +1315,16 @@ const STYLE = `
    and tally chips already riding the corners. Mono pills in the gold, the same
    shape as the site's sign-in and back links; the glyph leads, the word follows.
    Backdrop-blurred, because they hang over a painting rather than a panel. */
+.wv-worldmark { position:absolute; z-index:6; top:10px; left:10px; }
+.wv-worldmark .ctl { display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.07em;
+  color:rgba(232,197,106,.78); background:rgba(13,15,19,.82);
+  border:1px solid rgba(232,197,106,.34); border-radius:999px; padding:4px 12px;
+  backdrop-filter:blur(4px); box-shadow:0 2px 10px rgba(0,0,0,.32); cursor:pointer; }
+.wv-worldmark .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
+  background:rgba(232,197,106,.16); }
+.wv-worldmark .ctl.on { color:var(--night); border-color:var(--amber);
+  background:linear-gradient(180deg,#f0d68f,var(--amber)); }
 .wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
   flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
 .wv-mapctl .ctl { display:inline-flex; align-items:center; gap:6px;
@@ -1369,6 +1385,10 @@ const STYLE = `
 .wv-edge-indicator text { fill:currentColor; font-family:Georgia,"Times New Roman",serif; }
 .ov-reach { vector-effect:non-scaling-stroke; }
 .ov-halo { vector-effect:non-scaling-stroke; }
+/* the same defect the name-box had: a 3-unit white ring grows with every zoom
+   step until it swallows the ember it is meant to outline. The halo beside it
+   already said this; the dot never did. */
+.ov-dot { vector-effect:non-scaling-stroke; }
 
 .wv-nav .wv-identity { margin:10px 0 2px; font-size:.8rem; }
 .wv-nav .wv-signin { color:var(--amber-dark); cursor:pointer; }
@@ -1396,15 +1416,24 @@ const STYLE = `
   color:var(--you); font:inherit; font-weight:700; cursor:pointer; text-decoration:underline;
   text-underline-offset:2px; }
 .wv-change-course:hover, .wv-change-course:focus-visible { color:var(--paper); outline:none; }
-.wv-walk-destination { margin-top:7px; padding:7px 8px; border:1px solid var(--line);
-  border-radius:4px; color:var(--dim); font-size:.72rem; line-height:1.4; }
-.wv-walk-destination b { color:var(--paper); font-variant-numeric:tabular-nums; }
-.wv-walk-destination .wv-walk-metrics { display:block; margin-top:5px; color:var(--amber); font-weight:700;
-  font-variant-numeric:tabular-nums; }
-.wv-walkdesk .wv-walk-confirm {
-  width:100%; margin-top:8px; background:transparent; border:1px solid var(--amber-dark);
-  color:var(--amber); border-radius:4px; padding:5px 8px; font:inherit; font-size:.76rem; cursor:pointer; }
-.wv-walkdesk .wv-walk-confirm:disabled { opacity:.45; cursor:not-allowed; }
+/* From / To, one line each */
+.wv-walk-row { display:flex; gap:9px; align-items:baseline; margin-top:8px; }
+.wv-walk-key { flex:none; width:2.6rem; color:var(--dim); font-family:var(--mono);
+  font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; }
+.wv-walk-val { min-width:0; color:var(--paper); font-size:.79rem; line-height:1.45; }
+.wv-walk-val b { color:var(--paper); }
+.wv-walk-meta { color:var(--amber); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.wv-walk-dir { display:inline-flex; align-items:center; color:var(--amber); margin:0 .1em; }
+.wv-walk-dir .wv-arrow { width:.85em; height:.85em; margin:0; vertical-align:middle; }
+/* confirm is filled, because it is the act; cancel is an outline beside it */
+.wv-walk-acts { display:flex; gap:6px; margin-top:12px; }
+.wv-walkdesk .wv-walk-confirm { flex:1; background:linear-gradient(180deg,#f0d68f,var(--amber));
+  color:var(--night); border:1px solid var(--amber); border-radius:999px; padding:6px 10px;
+  font:inherit; font-weight:700; font-size:.74rem; cursor:pointer; }
+.wv-walkdesk .wv-walk-confirm:disabled { opacity:.32; cursor:not-allowed; }
+.wv-walk-cancel { flex:none; background:transparent; border:1px solid var(--line);
+  color:var(--dim); border-radius:999px; padding:6px 13px; font:inherit; font-size:.74rem; cursor:pointer; }
+.wv-walk-cancel:hover { color:var(--paper); border-color:var(--amber-dark); }
 .wv-walk-answer { margin:7px 0 0; color:var(--dim); font-size:.74rem; }
 .wv-walk-answer.success { color:var(--green); }
 .wv-walk-answer.refusal { color:var(--err); }
@@ -1498,13 +1527,6 @@ const STYLE = `
 .wv-bubble-walker { padding:10px 13px; font-size:.8rem; line-height:1.5; color:var(--dim); }
 .wv-bubble-walker .wv-standing { color:var(--paper); font-weight:700; font-style:normal; }
 .wv-bubble-walker p { margin:5px 0 0; }
-.wv-standpoint-more { margin-top:5px; }
-.wv-standpoint-more summary { cursor:pointer; color:var(--dim); font-size:.7rem; letter-spacing:.05em;
-  text-transform:uppercase; opacity:.8; list-style:none; }
-.wv-standpoint-more summary::-webkit-details-marker { display:none; }
-.wv-standpoint-more summary::before { content:"▸ "; }
-.wv-standpoint-more[open] summary::before { content:"▾ "; }
-.wv-standpoint-more summary:hover { color:var(--amber); }
 
 /* ── drafts, everywhere at once ────────────────────────────────────────────────
    There is no My World lens any more; a draft is simply grey. Every rule below
@@ -1548,22 +1570,20 @@ const MARKUP = `
     <div class="wv-identity"></div>
     <section class="wv-walkdesk" hidden>
       <h2>Walk</h2>
-      <div class="wv-youhere">finding your place in the walk ledger…</div>
+      <!-- From and To, and nothing else (Keemin, 2026-08-04). It had said where
+           you stand, then how it knew, then that you had arrived where you stand —
+           three lines for one fact. -->
       <div class="wv-walk-status" hidden></div>
       <div class="wv-walk-planner">
-        <div class="wv-walk-destination">click the painting, or select a mark</div>
-        <button type="button" class="wv-walk-confirm" disabled>confirm departure</button>
+        <div class="wv-walk-row"><span class="wv-walk-key">From</span><span class="wv-walk-val wv-youhere">…</span></div>
+        <div class="wv-walk-row"><span class="wv-walk-key">To</span><span class="wv-walk-val wv-walk-destination"></span></div>
+        <div class="wv-walk-acts">
+          <button type="button" class="wv-walk-confirm" disabled>confirm</button>
+          <button type="button" class="wv-walk-cancel" hidden>cancel</button>
+        </div>
         <p class="wv-walk-answer" hidden></p>
       </div>
     </section>
-    <!-- The Crossing heading and its "standing in …" line are gone (Keemin,
-         2026-08-04): the crossing moved to the head of the rail, and the standing
-         line was the SECOND copy — the walk desk tells a resident where they are,
-         and the coordinate chip on the painting tells a spectator. What is left is
-         the mechanics of standing here, which nothing else says. -->
-    <div class="wv-standctl">
-      <div class="wv-standpoint"></div>
-    </div>
     <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
     <div class="wv-dev" hidden>
       <!-- Stand at / Move / step size are DEV INSTRUMENTS (Keemin 2026-08-04, and
@@ -1604,7 +1624,14 @@ const MARKUP = `
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
-      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-mapctl">
+      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-worldmark">
+          <!-- the mark that frames everything, as a MARK: it has no footprint you
+               could point at and no pip of its own, so the only way to open it was
+               a paraphrase in the rail. Now it opens its own cell like anything
+               else, and the paraphrase is gone (Keemin, 2026-08-04). -->
+          <button type="button" class="ctl wv-root-mark" data-root-mark
+            title="the mark every other mark is a child of">✧<span>let there be light</span></button>
+        </div><div class="wv-mapctl">
           <button class="ctl wv-map-home" title="fit the whole painting">⌂<span>fit</span></button>
           <button class="ctl wv-map-follow" title="keep the view centred on where you stand">⌖<span>follow</span></button>
           <button class="ctl wv-map-grid" title="the survey grid — 1 km lines, 5 km majors">#<span>grid</span></button>
@@ -2051,7 +2078,6 @@ export function mountViewer(appEl) {
       foldRenderedPredicates(box);
       // the panel may be folded away, but its two controls and its count line are
       // readings, not decoration — they get a home on the painting either way
-      renderStandpoint();
       const talliesChip = $(root, ".wv-paint-tallies");
       if (talliesChip) talliesChip.textContent = tallies(e.radial);
       syncDevReadouts();
@@ -2175,7 +2201,7 @@ export function mountViewer(appEl) {
     // The chrome that rides ON the painting is held across the wipe below rather
     // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
     // the walk desk itself) that must not be rebuilt when the atlas loads.
-    const overlays = [".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles"]
+    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles"]
       .map((selector) => $(boxEl, selector)).filter(Boolean);
     const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
@@ -2657,6 +2683,7 @@ export function mountViewer(appEl) {
       if (cell.classList.contains("wv-card")) cell.setAttribute("aria-selected", String(selected));
     }
     renderMarkHighlight();
+    $(root, ".wv-root-mark")?.classList.toggle("on", interaction.selectedId === WORLD_ROOT_ID);
     renderBubbles();
   }
   markInteraction.subscribe(syncMarkInteractionViews);
@@ -2701,13 +2728,13 @@ export function mountViewer(appEl) {
     const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
     const here = $(root, ".wv-youhere");
     if (here) {
-      if (journey.kind === "journey") {
-        here.innerHTML = `<b>on the road, ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}</b><br><span>walk ledger</span>`;
-      } else {
-        here.innerHTML = origin
-          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined))}</b><br><span>${esc(origin.source)}</span>`
-          : `<span>no walk-ledger or sited-home position was found</span>`;
-      }
+      // how the office learned your position is provenance, not a thing to read
+      // every time you glance at the column
+      here.innerHTML = journey.kind === "journey"
+        ? `<b>on the road</b> · ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}`
+        : origin
+          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined))}</b>`
+          : `<span class="wv-quiet">the office has no position for you yet</span>`;
     }
     if (moveCamera && origin && walkState.actorBound) {
       state.cam = { x: origin.x, y: origin.y };
@@ -2928,7 +2955,8 @@ export function mountViewer(appEl) {
     const destination = walkState.destination;
     const preview = selectedWalkPreview();
     if (status) {
-      status.hidden = journey.kind === "ready";
+      // "arrived at X" said again what From has just said
+      status.hidden = journey.kind !== "journey";
       status.className = `wv-walk-status${journey.kind === "journey" ? " journey" : journey.kind === "arrived" ? " arrived" : ""}`;
       status.innerHTML = journey.kind === "journey"
         ? `<b>on the road — toward ${esc(journey.destinationName)}</b> · ${journey.remainingM.toLocaleString()} m left · arrives ${formatEtaCrossings(journey.etaCrossings)}`
@@ -2939,15 +2967,33 @@ export function mountViewer(appEl) {
     }
     if (planner) planner.hidden = journey.kind === "journey"
       && !walkState.changingCourse && !destination;
-    if (box) box.innerHTML = destination
-      ? `${journey.kind === "journey" ? "change course — " : ""}destination — <b>${esc(walkDestinationLabel(destination, byId, data?.worldState?.determined, actorOrigin()))}</b>`
-        + (preview ? `<span class="wv-walk-metrics">${esc(formatWalkPreviewLabel(preview.leg))}</span>` : "")
-      : `${journey.kind === "journey" ? "change course — " : ""}click open ground in the painting, or select a walkable mark`;
+    if (box) box.innerHTML = destination ? walkToRow(destination, preview)
+      : `<span class="wv-quiet">click the painting, or select a mark</span>`;
     if (confirm) {
-      confirm.textContent = journey.kind === "journey" ? "change course" : "confirm departure";
+      confirm.textContent = journey.kind === "journey" ? "change course" : "confirm";
       confirm.disabled = !preview;
     }
+    const cancel = $(desk, ".wv-walk-cancel");
+    if (cancel) cancel.hidden = !destination;
     drawWalkPreview();
+  }
+
+  // the To line: the name, how far, WHICH WAY as an arrow rather than a compass
+  // word, and when you would arrive.
+  function walkToRow(destination, preview) {
+    const from = actorOrigin();
+    const name = walkDestinationLabel(destination, byId, data?.worldState?.determined, null);
+    const parts = preview && walkLegParts(preview.leg);
+    let arrow = "";
+    if (from) {
+      const bearing = quantizeBearing(
+        bearingDeg(Number(destination.x) - from.x, Number(destination.y) - from.y),
+        state.dials.bearing_points);
+      if (bearing) arrow = `<span class="wv-walk-dir" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>`;
+    }
+    return `<b>${esc(name)}</b>`
+      + (parts ? ` <span class="wv-walk-meta">${esc(parts.distance)}</span>${arrow}` : arrow)
+      + (parts?.eta ? ` <span class="wv-walk-meta">${esc(parts.eta)}</span>` : "");
   }
 
   function scrollMarkCellIntoView(id) {
@@ -3243,7 +3289,6 @@ export function mountViewer(appEl) {
   const bubbleHost = () => $(root, ".wv-bubbles");
   const bubbleEls = { hover: null, pinned: null };
   let bubbleResize = null;
-  let standpointHTML = "";
   let pinnedBuiltId = null;   // which mark the pinned bubble currently holds
   let hoverFromBubble = false; // the pointer is reading a bubble, not the painting
   let bubbleTrail = [];       // how you got to the mark the bubble is showing
@@ -3395,20 +3440,6 @@ export function mountViewer(appEl) {
     foldRenderedPredicates(el);
     const card = $(el, `.wv-card[data-id="${CSS.escape(mark.id)}"]`);
     if (card) { card._stack = [mark.id]; renderExpansion(card); }
-  }
-  // The mechanics of standing here, in the rail beside where you stand. They fold
-  // away by default — three sentences of weather is a thing to consult, not a
-  // thing to read every time your eye passes the column.
-  function renderStandpoint() {
-    const box = $(root, ".wv-standpoint");
-    if (!box) return;
-    const obs = lastRadial?.observer ?? {};
-    const lines = [lightStateLine(obs), elevStateLine(obs), lastRadial ? fogStateLine(lastRadial, obs) : ""]
-      .filter(Boolean).map((line) => `<p>${esc(line)}</p>`).join("");
-    const html = lines
-      ? `<details class="wv-standpoint-more"><summary>the light, the ground, the air</summary>${lines}</details>`
-      : "";
-    if (html !== standpointHTML) { box.innerHTML = html; standpointHTML = html; }
   }
   // NOT re-entrant, and the guard is load-bearing rather than defensive: building
   // the pinned bubble runs renderExpansion, whose last act is to sync the
@@ -3605,6 +3636,8 @@ export function mountViewer(appEl) {
     if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
     const fpbtn = e.target.closest(".wv-map-fp");
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
+    if (e.target.closest("[data-root-mark]")) { selectMark(WORLD_ROOT_ID, { scrollCell: true }); return; }
+    if (e.target.closest(".wv-walk-cancel")) { clearSelectionAndDestination(); return; }
     if (e.target.closest(".wv-telling-toggle")) {
       state.paintingOnly = !state.paintingOnly;
       writePaintingOnly(localStore, state.paintingOnly);
