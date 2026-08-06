@@ -24,10 +24,12 @@ mark **`let-there-be-light`**; every directory is a mark; nesting means the chil
 sits **geometrically inside** the parent; and the path from the root is the spine
 a telling walks. There is one root and everything is under it.
 
-**Authorship left the path.** `WORLD/marks/<household>/` was write-scoping
-inherited from a PR door this repo does not have. Who *made* a mark is now the
-**`by:`** frontmatter field (office-validated, not path-enforced). Where a mark
-*is* is the path.
+**Authorship left the path.** `WORLD/marks/<household>/` was write-scoping in the
+tree. The scoping is real — it just does not live here: the PR door writes into
+per-household `draft/<login>` sketchbooks, and its gate checks every path and
+every `by:` in the diff against the author ([`WRITES.md`](../../WRITES.md)). Who
+*made* a mark is the **`by:`** frontmatter field (validated at both doors, not
+path-enforced). Where a mark *is* is the path.
 
 ## Identity = `by` + leaf slug
 

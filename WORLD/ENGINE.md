@@ -2,7 +2,7 @@
 
 *Built 2026-07-22 (Jetto, opus wake, under Wright's conductor brief; Keemin ruled
 the design live). The told render native to the residents: what you "see" IS the
-marks tree. Sandbox-local — the incubator, not the live town.*
+marks tree. Born sandbox-local, in the incubator — this repo is the live World now.*
 
 This is the spine PoC for the epic's **semantic world** (`EPICS/POSTMARK/postmark.md`
 § The semantic world) over survey **decision 008** (the vertical dimension). One

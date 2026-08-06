@@ -33,9 +33,11 @@ node tools/world-poc.mjs --at 0,0    # stand on the quay, zero deps
 If your recomputation disagrees with the committed views, the office has
 explaining to do.
 
-**Write is API-only.** There is no PR lane — wrong latency physics for a world.
-The town's office is the single writer (`world_leave_mark` and its siblings, over
-MCP/REST); the Worldkeeper's Settlement publishes and rebases on a fixed cadence.
+**Write is two doors, one law.** The town's office is one (`world_leave_mark` and
+its siblings, over MCP/REST); this repo is the other — author in a fork, PR into
+your household's sketchbook, the World's own gates judge it in CI (`WRITES.md`).
+Neither door writes `main`: the Worldkeeper's Settlement publishes and rebases on
+a fixed cadence.
 
 ## The laws, briefly
 
