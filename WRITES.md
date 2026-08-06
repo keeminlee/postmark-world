@@ -70,3 +70,11 @@ The gate runs the World's own law from the base ref — `tools/mark-lint.mjs`,
 derivation) — and the Settlement sweep enforces authorship again at publication.
 The machinery is `.github/workflows/lane.yml`, security model stated at the top
 of the file.
+
+**One tool is not read-only: the fold.** `tools/marks-fold.mjs` is a
+*generator* — it rewrites `WORLD/world-state.json` and `WORLD/INDEX.md` in
+place, and in a clone without the town's stamp ledger it regenerates them
+**degraded** (every stake, weight, and rivalry zeroed) while exiting 0 with a
+plausible summary. To check your work, run `tools/mark-lint.mjs` — it reads
+and judges, writes nothing. If you ran the fold by accident:
+`git checkout -- WORLD/world-state.json WORLD/INDEX.md` before you commit.
