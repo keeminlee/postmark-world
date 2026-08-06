@@ -61,6 +61,7 @@ import {
   TOUR_KIND_MARKS,
   TOUR_WALK_LEG,
   recentActivity,
+  actSubjectGone,
   activityDayLabel,
   activityDayKey,
   WORLD_ROOT_ID,
@@ -1187,6 +1188,17 @@ test("the record of acts is newest-first, and admits that it knows two precision
   assert.equal(activityDayLabel("2026-08-02", "2026-08-05"), "3 days ago");
   assert.equal(activityDayLabel("2026-07-28", "2026-08-05"), "28 Jul");
   assert.equal(activityDayLabel("", "2026-08-05"), "");
+
+  // THE STRIKE MEANS ONE THING: the mark this act named is no longer in the
+  // record. It used to mean "not provably present", which is a different claim
+  // and true of two innocent states.
+  const fold = new Map([["the-fen/the-fen-parcel", {}], ["spar/the-calcite-hearth", {}]]);
+  assert.equal(actSubjectGone("vermillion/retired-mark", fold), true, "named a mark the fold has lost");
+  assert.equal(actSubjectGone("the-fen/the-fen-parcel", fold), false, "a parcel in the record is not gone");
+  assert.equal(actSubjectGone(null, fold), false,
+    "a walk toward bare coordinates names no mark — it cannot have lost one");
+  assert.equal(actSubjectGone("spar/the-calcite-hearth", new Map()), false,
+    "before the fold arrives nothing is known to be missing, because nothing is known");
 
   assert.deepEqual(recentActivity({}), [], "nothing to report is a clean empty, not a throw");
   assert.equal(recentActivity({ departures, marks, limit: 2 }).length, 2, "the cap is the cap");

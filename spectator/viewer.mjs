@@ -818,6 +818,28 @@ export function recentActivity({ departures = [], marks = [], names = null, limi
     dayLabel: activityDayLabel(row.day, today),
   }));
 }
+// A row is GONE when it names a mark the record no longer carries: struck
+// through, because the act happened and its subject did not survive it. Two
+// states are NOT that, and the old test — `subject && byId.has(subject)`, read
+// as "known", anything else struck — called both of them gone:
+//
+//   • a walk toward bare coordinates has no subject to lose. Seven of the
+//     fourteen lines on the live rail wore `is-gone` for this reason. Nothing
+//     showed, because the strike is styled on `.what` and those lines have no
+//     `.what` — a lie held up only by a selector, which is the kind that comes
+//     due the first time someone dims the whole line.
+//   • a rail drawn before the fold arrives knows of no marks at all. The walk
+//     ledger and the world load independently (`loadWalkLedger().then(render)`),
+//     so on a slow record every destination it drew came out struck through and
+//     silently un-struck itself at the re-fold.
+//
+// Nothing is missing when nothing is known yet, and a walk to a coordinate is
+// not a walk to a mark that died.
+export function actSubjectGone(subject, byId) {
+  if (!subject || !byId?.size) return false;
+  return !byId.has(subject);
+}
+
 // "today" / "yesterday" / "2 Aug" — a reader wants to know how fresh, not which
 // calendar square. Days are compared as UTC dates, which is the record's own clock.
 export function activityDayLabel(day, today) {
@@ -4706,7 +4728,7 @@ export function mountViewer(appEl) {
     box.hidden = !rows.length;
     if (!rows.length) return;
     list.innerHTML = rows.map((row) => {
-      const known = row.subject && byId.has(row.subject);
+      const gone = actSubjectGone(row.subject, byId);
       const subject = row.name ?? (row.subject ? deslugMarkId(row.subject) : "");
       const what = row.kind === "walk"
         ? (subject ? `set out for <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`
@@ -4715,7 +4737,7 @@ export function mountViewer(appEl) {
         // against every answer it gives, including the one at the origin.
         : `set out toward ${esc((formatCardinalPosition(row.toward) || "open ground").replace(/^at /, ""))}`)
         : `wrote <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`;
-      return `<li class="wv-act-line ${row.kind === "walk" ? "is-walk" : "is-mark"}${known ? "" : " is-gone"}">`
+      return `<li class="wv-act-line ${row.kind === "walk" ? "is-walk" : "is-mark"}${gone ? " is-gone" : ""}">`
         + `<span class="who">${esc(row.who)}</span> ${what}`
         + `<span class="when">${esc(row.dayLabel)}</span></li>`;
     }).join("");
