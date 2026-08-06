@@ -45,7 +45,7 @@ export function fractionalCrossing(nowMs = Date.now()) {
 // 2026-07-28 arrival ruling).
 
 export const DEPARTURE_RE =
-  /^- (\S+) · (\S+) · from (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · toward (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · at (\d+(?:\.\d+)?)(?: · within (\d+(?:\.\d+)?),(\d+(?:\.\d+)?))?(?: · to (\S+))?$/;
+  /^- (\S+) · (\S+) · from (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · toward (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · at (\d+(?:\.\d+)?)(?: · within (\d+(?:\.\d+)?),(\d+(?:\.\d+)?))?(?: · to (\S+))?(?: · pace (\d+(?:\.\d+)?))?$/;
 
 export function formatDeparture({ handle, from, toward, at, targetExtent = null, targetMarkId = null, iso = null }) {
   const stamp = iso ?? new Date().toISOString();
@@ -75,6 +75,11 @@ export function parseWalkLedger(text) {
       at: +m[7],
       targetExtent: m[8] === undefined ? null : { w: +m[8], h: +m[9] },
       targetMarkId: m[10] ?? null,
+      // pace: km/crossing for THIS departure (Keemin's ruling 2026-08-06 — the
+      // vessel is a walker with a faster stride: TC→Pando in 4h ≈ 405). The
+      // door never writes it; only the pen does, so a resident's own walks
+      // always derive at the town dial.
+      pace: m[11] === undefined ? null : +m[11],
       line: raw,
     });
   }
@@ -135,8 +140,11 @@ export function positionAt(departure, nowFractional = fractionalCrossing()) {
              legM: 0, travelledM: 0, remainingM: 0, etaCrossings: 0 };
   }
 
+  // A departure may carry its own pace (km/crossing) — the vessel's stride.
+  // Absent or non-positive, the town dial governs, as it always has.
+  const paceM = departure.pace > 0 ? departure.pace * 1000 : WALK_M_PER_CROSSING;
   const elapsed = Math.max(0, nowFractional - at);
-  const travelledM = elapsed * WALK_M_PER_CROSSING;
+  const travelledM = elapsed * paceM;
   const r = targetRect(departure);
   const entryT = r ? targetEntryT(from, toward, r) : 1;
   const arrivalM = centreM * entryT;
@@ -156,7 +164,7 @@ export function positionAt(departure, nowFractional = fractionalCrossing()) {
     legM: Math.round(arrivalM),
     travelledM: Math.round(Math.min(travelledM, arrivalM)),
     remainingM: Math.round(remainingM),
-    etaCrossings: arrived ? 0 : round2(remainingM / WALK_M_PER_CROSSING),
+    etaCrossings: arrived ? 0 : round2(remainingM / paceM),
   };
 }
 

@@ -186,3 +186,29 @@ test("published numbers are clean — no floating-point tails in the API", () =>
   const [w] = publicWalkers([D({ handle: "h", from: { x: 0, y: 0 }, toward: { x: 15999, y: 0 }, at: 0 })], 0);
   assert.equal(w.eta_crossings, 1.07);
 });
+
+test("pace: a departure may carry its own stride — the vessel's law (Keemin, 2026-08-06)", () => {
+  // TC (0,0) → Pando Peak (−95458,−95458) ≈ 135 km. The ruling: the boat makes
+  // it in 4h = a third of a crossing → pace ≈ 405 km/crossing.
+  const line = "- 2026-08-08T18:00:00.000Z · the-post-office · from 0,0 · toward -95458,-95458 · at 200 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405";
+  const { departures, unrecognized } = parseWalkLedger(line);
+  assert.equal(unrecognized.length, 0, "a paced line parses");
+  const dep = departures[0];
+  assert.equal(dep.pace, 405);
+  assert.equal(dep.targetMarkId, "vermillion/the-pando-peak-parcel");
+
+  // A third of a crossing later the vessel has covered its ~135 km leg.
+  const there = positionAt(dep, 200 + 1 / 3);
+  assert.equal(there.arrived, true, "four hours at pace 405 completes TC→Pando");
+  // Mid-run it is genuinely en route, far beyond any walker's reach.
+  const mid = positionAt(dep, 200 + 1 / 6);
+  assert.equal(mid.arrived, false);
+  assert.ok(Math.hypot(mid.x, mid.y) > 60000, "two hours in, the boat is ~67 km out");
+
+  // And the town dial is untouched: the same line without pace derives at 15.
+  const walker = parseWalkLedger(line.replace(" · pace 405", "")).departures[0];
+  assert.equal(walker.pace, null);
+  const slow = positionAt(walker, 200 + 1 / 3);
+  assert.equal(slow.arrived, false, "a walker does not board by accident");
+  assert.ok(Math.hypot(slow.x, slow.y) < 6000, "a third of a crossing on foot is 5 km");
+});
