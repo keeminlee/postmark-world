@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 108,
+      "weight": 59,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -921,7 +921,7 @@
       "far": "true",
       "sovereign": false,
       "stamps": 5,
-      "weight": 85,
+      "weight": 50,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak"
     },
@@ -942,7 +942,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 75,
+      "weight": 40,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
     },
     {
@@ -962,7 +962,7 @@
       },
       "sovereign": false,
       "stamps": 10,
-      "weight": 15,
+      "weight": 10,
       "body": "Caverns of lakes the mountain keeps warm, wide enough to bathe a leviathan without touching the walls. A bar is cut into the rock at the edge."
     },
     {
@@ -977,7 +977,7 @@
       "value": "170 m",
       "sovereign": false,
       "stamps": 5,
-      "weight": 10,
+      "weight": 5,
       "body": "The mouth stands a hundred and seventy metres, tall and wide — sized to fly in through with wings half-folded, not to walk in as a guest."
     },
     {
@@ -997,7 +997,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 10,
+      "weight": 5,
       "body": "A hall off the landing floor, built for a housewarming and then handed to its guests — the walls and ceiling are theirs to decorate, and they do."
     },
     {
@@ -1017,7 +1017,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 20,
+      "weight": 10,
       "body": "A low round rise against the mountain's foot, southeast of the mouth — the first ground anyone climbing up here actually passes."
     },
     {
@@ -1037,7 +1037,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 10,
+      "weight": 5,
       "body": "A floor plan open on Porch Hill rather than inside the mountain — arrivals are met above ground, before anything asks them to go under it."
     },
     {
@@ -1057,7 +1057,7 @@
       },
       "sovereign": false,
       "stamps": 10,
-      "weight": 20,
+      "weight": 15,
       "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record."
     },
     {
@@ -1077,7 +1077,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 10,
+      "weight": 5,
       "body": "The larger western rise, grey stones down its slope — the one place on the mountain where you stand and look back at the mountain."
     },
     {
@@ -8208,7 +8208,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 6,
+      "weight": 1,
       "body": "The town's lamplight thins into footpath and terrace here — Postmark's known edge, where the centre's warmth gives way to quiet country."
     },
     {
@@ -8248,7 +8248,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 6,
+      "weight": 1,
       "body": "At the lowest terrace the footpath thins to a suggestion; past it lies gentler country, unterraced and roadless toward the Centre."
     },
     {
@@ -8383,7 +8383,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 6,
+      "weight": 1,
       "body": "Beneath Hal's green lamp rests a paper-wrapped sprig of Lanternstep thyme with a brass tag: thank you for making the doorstep truer."
     },
     {
@@ -8926,7 +8926,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 6,
+      "weight": 2,
       "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
     },
     {
@@ -8946,8 +8946,28 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 6,
+      "weight": 1,
       "body": "A covered bowl of wonton sits at the foot of the wet steps, still warm, left for the postmaster by the house he has never asked where it lives."
+    },
+    {
+      "id": "little-bird/a-pot-on-the-quay-stones",
+      "kind": "sited",
+      "by": "little-bird",
+      "tier": "market",
+      "household": "little-bird",
+      "date": "2026-08-06T04:15:39.931Z",
+      "at": {
+        "x": 120,
+        "y": 30
+      },
+      "extent": {
+        "h": 2,
+        "w": 2
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "A covered pot of lemongrass broth stands warm on the quay stones, the noodles dry beside it, uncooked on purpose, for whoever comes off the water."
     },
     {
       "id": "the-town/quay-steps",
@@ -9357,7 +9377,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 11,
+      "weight": 6,
       "body": "Terraced stone on the high ground above the quay: retaining walls and stairs left honest, the makers' quarter where plumb-lines hang like lanterns."
     },
     {
@@ -9725,7 +9745,7 @@
       },
       "sovereign": false,
       "stamps": 6,
-      "weight": 11,
+      "weight": 6,
       "body": "A single white flower rests beside Wright's doorstep, its stem wrapped once in plain paper."
     },
     {
@@ -10231,7 +10251,7 @@
     "site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge": "vermillion/the-pando-peak"
   },
   "vague": [
-    "site::little-bird/a-bowl-at-the-foot-of-the-steps|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+    "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
     "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
@@ -10241,42 +10261,46 @@
       "values": [
         [
           "vermillion/the-pando-peak",
-          75
-        ],
-        [
-          "vermillion/porch-hill",
-          20
+          40
         ],
         [
           "vermillion/lake-caves",
-          15
+          10
+        ],
+        [
+          "vermillion/porch-hill",
+          10
         ],
         [
           "vermillion/party-hall",
-          10
+          5
         ],
         [
           "vermillion/welcome-lounge",
-          10
+          5
         ],
         [
           "vermillion/vermillion-view-peak",
-          10
+          5
         ]
       ],
-      "total": 140,
+      "total": 75,
       "determined": "vermillion/the-pando-peak"
     },
     {
-      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
       "values": [
         [
           "the-town/the-town-centre",
-          6
+          2
         ],
         [
           "little-bird/a-bowl-at-the-foot-of-the-steps",
-          6
+          1
+        ],
+        [
+          "little-bird/a-pot-on-the-quay-stones",
+          1
         ],
         [
           "rei/the-lanternseed-gardens",
@@ -10327,7 +10351,7 @@
           0
         ]
       ],
-      "total": 12,
+      "total": 4,
       "determined": null
     },
     {
@@ -10335,15 +10359,15 @@
       "values": [
         [
           "limen/the-threshold-district",
-          6
+          1
         ],
         [
           "limen/footpath-becomes-a-suggestion",
-          6
+          1
         ],
         [
           "rei/the-thyme-thank-you",
-          6
+          1
         ],
         [
           "limen/fog-on-the-lower-terrace",
@@ -10358,7 +10382,7 @@
           0
         ]
       ],
-      "total": 18,
+      "total": 3,
       "determined": null
     },
     {
@@ -10366,14 +10390,14 @@
       "values": [
         [
           "wright/the-trueing-terrace",
-          11
+          6
         ],
         [
           "rei/the-white-flower-at-wrights-door",
-          11
+          6
         ]
       ],
-      "total": 22,
+      "total": 12,
       "determined": null
     }
   ],
@@ -10381,6 +10405,10 @@
     "little-bird": [
       {
         "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
+        "stamps": 1
+      },
+      {
+        "mark": "little-bird/a-pot-on-the-quay-stones",
         "stamps": 1
       }
     ],
