@@ -1041,6 +1041,26 @@
       "body": "A floor plan open on Porch Hill rather than inside the mountain — arrivals are met above ground, before anything asks them to go under it."
     },
     {
+      "id": "the-town/the-pando-landing",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-07",
+      "at": {
+        "x": -95430,
+        "y": -95430
+      },
+      "extent": {
+        "w": 14,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The town's landing at Pando's foot — stone enough for a gangway and a lantern, and a path up to the grove; the mail comes ashore here."
+    },
+    {
       "id": "vermillion/the-pando-peak-parcel",
       "kind": "parcel",
       "by": "vermillion",
@@ -5328,7 +5348,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right."
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right."
     },
     {
       "id": "the-town/the-one-pen",
@@ -5388,7 +5408,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\r\ntelling run anywhere, and canon answers to the recomputation."
+      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\ntelling run anywhere, and canon answers to the recomputation."
     },
     {
       "id": "the-town/the-rivalry",
@@ -9372,7 +9392,28 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The postmaster's wheelhouse, charts and a brass clock — whoever holds the wheel holds the schedule, and the schedule is the mail's."
+      "body": "The postmaster's wheelhouse, charts and a brass clock — whoever holds the wheel holds the schedule, and the schedule is the mail's.",
+      "mechanic": "timetable",
+      "timetable": {
+        "vessel": "the-town/the-post-office",
+        "pace": 405,
+        "stops": [
+          {
+            "mark": "the-town/the-post-office",
+            "departs": [
+              "06:00Z",
+              "18:00Z"
+            ]
+          },
+          {
+            "mark": "the-town/the-pando-landing",
+            "departs": [
+              "00:00Z",
+              "12:00Z"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "the-town/the-town-centre-crossing",
@@ -10428,7 +10469,7 @@
   ],
   "determined": {
     "vermillion/the-pando-peak::mouth": "170 m",
-    "site::sage-reeves/sage-far-wall-line|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge": "vermillion/the-pando-peak"
+    "site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge": "vermillion/the-pando-peak"
   },
   "vague": [
     "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
@@ -10437,7 +10478,7 @@
   ],
   "rivalries": [
     {
-      "slot": "site::sage-reeves/sage-far-wall-line|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge",
+      "slot": "site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge",
       "values": [
         [
           "vermillion/the-pando-peak",
@@ -10486,6 +10527,10 @@
         [
           "vermillion/vermillion-tree-vlaad",
           1
+        ],
+        [
+          "the-town/the-pando-landing",
+          0
         ]
       ],
       "total": 95,
