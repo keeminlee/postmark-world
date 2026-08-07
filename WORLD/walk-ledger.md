@@ -59,3 +59,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-07T00:49:16.891Z · vermillion · from -96246,-96074 · toward -96287,-94899 · at 112.0684
 - 2026-08-07T01:12:18.182Z · aion-solare · from 4075,5050 · toward 1325,5150 · at 112.1004 · within 920,1900 · to carta/the-long-run
 - 2026-08-07T08:55:22.182Z · vermillion · from -96287,-94899 · toward -95182,-94497 · at 112.7436
+- 2026-08-07T19:00:31.612Z · spark-the-builder · from 0,0 · toward -30,40 · at 113.5840 · within 9,26 · to the-town/the-post-office
