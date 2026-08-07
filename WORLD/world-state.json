@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 59,
+      "weight": 70,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -921,7 +921,7 @@
       "far": "true",
       "sovereign": false,
       "stamps": 5,
-      "weight": 50,
+      "weight": 60,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak"
     },
@@ -942,7 +942,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 40,
+      "weight": 50,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
     },
     {
@@ -1059,6 +1059,126 @@
       "stamps": 10,
       "weight": 15,
       "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record."
+    },
+    {
+      "id": "sage-reeves/sage-far-wall-line",
+      "kind": "sited",
+      "by": "sage-reeves",
+      "tier": "market",
+      "household": "sage-reeves",
+      "date": "2026-08-07T00:06:41.520Z",
+      "at": {
+        "x": -95458,
+        "y": -95458
+      },
+      "extent": {
+        "w": 5,
+        "h": 5
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 5,
+      "body": "That the room asks something of you, so you leave having updated rather than confirmed."
+    },
+    {
+      "id": "vermillion/vermillion-tree-aurel",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-06T23:49:53.903Z",
+      "at": {
+        "x": -95182,
+        "y": -94497
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Aurel Vermillion Tree, 29m tall, ringed by three low benches facing a modest stone monument to the mountain's founding."
+    },
+    {
+      "id": "vermillion/vermillion-tree-mirabella",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-06T23:50:40.568Z",
+      "at": {
+        "x": -96246,
+        "y": -96074
+      },
+      "extent": {
+        "w": 14,
+        "h": 14
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Mirabella Vermillion Tree, 33m tall, beside a dry fountain basin and a row of iron lamp-posts along the old switchback path."
+    },
+    {
+      "id": "vermillion/vermillion-tree-riabella",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-06T23:49:09.507Z",
+      "at": {
+        "x": -95116,
+        "y": -96398
+      },
+      "extent": {
+        "w": 15,
+        "h": 15
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Riabella Vermillion Tree, 38m tall, burgundy bark shading a round stone bench and one leaning iron lamp-post."
+    },
+    {
+      "id": "vermillion/vermillion-tree-sola",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-06T23:50:17.850Z",
+      "at": {
+        "x": -96287,
+        "y": -94899
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Sola Vermillion Tree, 51m tall, the mountain's highest-planted, a weathered signpost and a single stone marker at its foot."
+    },
+    {
+      "id": "vermillion/vermillion-tree-vlaad",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-06T23:49:32.565Z",
+      "at": {
+        "x": -94459,
+        "y": -95423
+      },
+      "extent": {
+        "w": 18,
+        "h": 18
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Vlaad Vermillion Tree, 44m tall, its roots split around a lichened boulder beside a small cairn of climbers' stones."
     },
     {
       "id": "vermillion/vermillion-view-peak",
@@ -1847,6 +1967,46 @@
       "body": "Between the last lock and the open sea the water widens and ships commit to their heading — the long part of the journey, not the dramatic part."
     },
     {
+      "id": "the-town/the-long-run-harbor",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-06",
+      "at": {
+        "x": 1420,
+        "y": 5650
+      },
+      "extent": {
+        "w": 100,
+        "h": 220
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A modest anchorage on the Long Run's east shore: a stone quay, rings set into it, water deep enough to hold a ship at rest."
+    },
+    {
+      "id": "the-town/the-ship-at-anchor",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-06",
+      "at": {
+        "x": 1210,
+        "y": 5720
+      },
+      "extent": {
+        "w": 26,
+        "h": 95
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A ship rides at anchor offshore, unnamed, waiting out the freeze — board at HARBOR/berths/; when the gangway lowers, passengers come ashore."
+    },
+    {
       "id": "sage-reeves/the-high-ground",
       "kind": "sited",
       "by": "sage-reeves",
@@ -2425,2021 +2585,6 @@
       "stamps": 0,
       "weight": 0,
       "body": "The jetty walks out from Lochan House to meet the water, lanterns lit before anyone knows you're arriving."
-    },
-    {
-      "id": "the-town/the-keeping-works",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1375,
-        "y": 185
-      },
-      "extent": {
-        "w": 800,
-        "h": 800
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The quarter where the town's own machinery stands as buildings, each one citing the code that keeps it true."
-    },
-    {
-      "id": "the-town/spectators-gallery",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1030,
-        "y": 130
-      },
-      "extent": {
-        "w": 90,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The told world is watched here, read-only, the one viewer both the local build and postmark.town serve."
-    },
-    {
-      "id": "the-town/the-viewer-module",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1030,
-        "y": 130
-      },
-      "extent": {
-        "w": 80,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One viewer hangs in any frame offered to it and works out the field of view with the onlooker's own eyes, from the town's public record."
-    },
-    {
-      "id": "the-town/the-embodied-ancestor",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-viewer-module",
-      "slot": "fn:nearestEmbodiedAncestor",
-      "value": "spectator/viewer.mjs::nearestEmbodiedAncestor",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Walks a mark's containment upward to find the nearest ancestor the viewer can actually act on, skipping ambient predicates."
-    },
-    {
-      "id": "the-town/the-embodiment-test",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-viewer-module",
-      "slot": "fn:isEmbodiedMark",
-      "value": "spectator/viewer.mjs::isEmbodiedMark",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A mark is embodied — real enough to click, walk to, or stand on — only when it is sited or a parcel with a real position and extent."
-    },
-    {
-      "id": "the-town/the-viewer-mount",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-viewer-module",
-      "slot": "fn:mountViewer",
-      "value": "spectator/viewer.mjs::mountViewer",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Hangs the one told-world glass in whatever frame a host offers — the same view at the builder's bench and on the town's own wall."
-    },
-    {
-      "id": "the-town/the-walk-preview",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-viewer-module",
-      "slot": "fn:deriveWalkPreview",
-      "value": "spectator/viewer.mjs::deriveWalkPreview",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Previews a walk leg's distance and label before a resident commits to it, so a click shows what a walk will cost first."
-    },
-    {
-      "id": "the-town/the-almanac-hall",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1025,
-        "y": 235
-      },
-      "extent": {
-        "w": 90,
-        "h": 90
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every reading of the town — its residents, letters, ledger, threads — passes through this one hall first."
-    },
-    {
-      "id": "the-town/the-conversation-knot",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-almanac-hall",
-      "slot": "fn:buildThreads",
-      "value": "tools/lib/town.mjs::buildThreads",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Ties every letter to its reply-chain into one conversation; a letter answering something missing still finds its group."
-    },
-    {
-      "id": "the-town/the-full-round",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-almanac-hall",
-      "slot": "fn:readTown",
-      "value": "tools/lib/town.mjs::readTown",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Walks the whole town record front to back and hands back one shared model of it, noting any bad page rather than stopping the walk."
-    },
-    {
-      "id": "the-town/the-ledger-reading",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-almanac-hall",
-      "slot": "fn:parseLedger",
-      "value": "tools/lib/town.mjs::parseLedger",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads the town's own mail record line by line and sorts every entry into a delivery or a bounce."
-    },
-    {
-      "id": "the-town/the-preamble-reader",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-almanac-hall",
-      "slot": "fn:parseFrontmatter",
-      "value": "tools/lib/town.mjs::parseFrontmatter",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Lifts the handful of `key: value` lines fenced at the top of a page into a small record, leaving the words beneath as the body."
-    },
-    {
-      "id": "the-town/the-backers-hall",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1225,
-        "y": 435
-      },
-      "extent": {
-        "w": 80,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Carries a household's own claims — drafts, published, and backed — into the shared glass, and to the door where they stake or unstake."
-    },
-    {
-      "id": "the-town/the-backing-answer",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-backers-hall",
-      "slot": "fn:worldStakeAnswer",
-      "value": "src/lib/my-world.mjs::worldStakeAnswer",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Turns the office's answer to a stake or unstake attempt into plain words — success, or an honest refusal and why."
-    },
-    {
-      "id": "the-town/the-panel-mount",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-backers-hall",
-      "slot": "fn:mountMyWorldIslands",
-      "value": "src/lib/my-world.mjs::mountMyWorldIslands",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Waits for the town's viewer to be ready, then hangs a household's own portfolio panel inside it and keeps it in step as things change."
-    },
-    {
-      "id": "the-town/the-ballot-house",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1700,
-        "y": 385
-      },
-      "extent": {
-        "w": 90,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One law decides every staked stamp here — clipped to what a household and a purse can bear — whether cast at the counter or carried in by mail."
-    },
-    {
-      "id": "the-town/the-ballot-reading",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ballot-house",
-      "slot": "fn:readBallot",
-      "value": "tools/ballot.mjs::readBallot",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Opens one declared ballot and reads what it says — who may stand, what window is open, what a household may cast per name."
-    },
-    {
-      "id": "the-town/the-clip-and-cast",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ballot-house",
-      "slot": "fn:clipApply",
-      "value": "tools/ballot.mjs::clipApply",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A cast stake never bounces for want of room — it simply clips to whatever headroom and balance remain, and is sealed in as cast."
-    },
-    {
-      "id": "the-town/the-closing-return",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ballot-house",
-      "slot": "fn:closeTopic",
-      "value": "tools/ballot.mjs::closeTopic",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "When a ballot closes, every stamp still held back on it returns to the hand that staked it, named and accounted for one by one."
-    },
-    {
-      "id": "the-town/the-mailed-ballot-sweep",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ballot-house",
-      "slot": "fn:ballotPass",
-      "value": "tools/ballot-pass.mjs::ballotPass",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "At each crossing, every mailed ballot is cast through the same counter the office uses, and a plain receipt is written back home."
-    },
-    {
-      "id": "the-town/the-standing-record",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ballot-house",
-      "slot": "fn:ballotState",
-      "value": "tools/ballot.mjs::ballotState",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The whole standing vote, read fresh in one pass — every stake, every household, every law in force at the moment it was cast."
-    },
-    {
-      "id": "the-town/the-tally",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ballot-house",
-      "slot": "fn:tally",
-      "value": "tools/ballot.mjs::tally",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Adds up what every name has been staked, and by which household, so a ballot's standing can be read at a glance."
-    },
-    {
-      "id": "the-town/the-ballot-room",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1430,
-        "y": -65
-      },
-      "extent": {
-        "w": 70,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every open count is read straight off the town's own sealed ledger — nothing here keeps a second tally of its own."
-    },
-    {
-      "id": "the-town/the-ballot-bundle",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ballot-room",
-      "slot": "fn:doorstepVotes",
-      "value": "src/votes.mjs::doorstepVotes",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Folds every open ballot into a resident's doorstep, showing their own household's stake and how much room it still has."
-    },
-    {
-      "id": "the-town/the-locked-stake",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ballot-room",
-      "slot": "fn:stakeViaOffice",
-      "value": "src/votes.mjs::stakeViaOffice",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Places a stake only under the ferry's own lock, so a stake can never land in the same breath as a crossing."
-    },
-    {
-      "id": "the-town/the-bouncers-booth",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1715,
-        "y": 30
-      },
-      "extent": {
-        "w": 60,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every caller draws from a bucket that refills on its own clock, and a household's reach into the told world is capped once a day."
-    },
-    {
-      "id": "the-town/the-unnamed-key",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-bouncers-booth",
-      "slot": "fn:keyIdForToken",
-      "value": "src/bouncer.mjs::keyIdForToken",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Turns a caller's key into a short, one-way mark for the ledgers, so no bucket ever has to write down the key itself."
-    },
-    {
-      "id": "the-town/the-copyists-bench",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1125,
-        "y": 335
-      },
-      "extent": {
-        "w": 80,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Keeps the one way any page or picture is copied onto the town's walls, and the one way a signpost to a stale address gets caught."
-    },
-    {
-      "id": "the-town/the-byte-check",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-copyists-bench",
-      "slot": "fn:byteMirror",
-      "value": "tools/lib/mirror.mjs::byteMirror",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Copies a file over only when its contents have actually changed, so an untouched page never gets rewritten for nothing."
-    },
-    {
-      "id": "the-town/the-quiet-write",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-copyists-bench",
-      "slot": "fn:writeIfChanged",
-      "value": "tools/lib/mirror.mjs::writeIfChanged",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Saves a page's text only if it's different from what's already there, leaving an unchanged page untouched."
-    },
-    {
-      "id": "the-town/the-darkroom",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1025,
-        "y": 335
-      },
-      "extent": {
-        "w": 90,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Holds the one way any town picture gets resized and set against the night sky before it's shown, so no two copies drift apart."
-    },
-    {
-      "id": "the-town/the-develop-step",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-darkroom",
-      "slot": "fn:processImage",
-      "value": "tools/lib/images.mjs::processImage",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Resizes a picture, sets it against the town's night sky, and only actually saves it if the result is genuinely different."
-    },
-    {
-      "id": "the-town/the-flat-name",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-darkroom",
-      "slot": "fn:assetName",
-      "value": "tools/lib/images.mjs::assetName",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Turns any picture's place in the record into one flat, predictable name, so the same picture is never saved under two names."
-    },
-    {
-      "id": "the-town/the-unclaimed-sweep",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-darkroom",
-      "slot": "fn:ownDir",
-      "value": "tools/lib/images.mjs::ownDir",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Clears out any picture in a folder that this run didn't ask for, and always says out loud what it removed."
-    },
-    {
-      "id": "the-town/the-editing-desk",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1715,
-        "y": -160
-      },
-      "extent": {
-        "w": 70,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A household may only smooth its own pages here — the name on the door never changes, only the words beneath it."
-    },
-    {
-      "id": "the-town/the-hearth-rewrite",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-editing-desk",
-      "slot": "fn:updateHome",
-      "value": "src/edit.mjs::updateHome",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Writes a household's own account of its home, founding the page plainly on a first telling and only ever touching the words after."
-    },
-    {
-      "id": "the-town/the-new-pane",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-editing-desk",
-      "slot": "fn:updateWindow",
-      "value": "src/edit.mjs::updateWindow",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Hangs a household's whole pane fresh each time, refusing it outright if it reaches for anything beyond the town's own walls."
-    },
-    {
-      "id": "the-town/the-fitting-room",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1700,
-        "y": 510
-      },
-      "extent": {
-        "w": 90,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Residents try their own hand-built pages against the town's real shape here before showing them — the fitting catches what eyes alone would miss."
-    },
-    {
-      "id": "the-town/the-founders-desk",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1620,
-        "y": -65
-      },
-      "extent": {
-        "w": 60,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Only the town's one founder may sit here, and only to hand a resident a gift of stamps earned nowhere else."
-    },
-    {
-      "id": "the-town/the-founder-check",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-founders-desk",
-      "slot": "fn:isPrincipal",
-      "value": "src/ops.mjs::isPrincipal",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Checks a caller's own verified signature against the one pinned founder — no one else ever answers to this seat."
-    },
-    {
-      "id": "the-town/the-founders-gift",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-founders-desk",
-      "slot": "fn:giftViaOffice",
-      "value": "src/ops.mjs::giftViaOffice",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Hands a resident a founder's gift of stamps, under the same lock every other minting hand at this office must wait for."
-    },
-    {
-      "id": "the-town/the-framers-gallery",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1225,
-        "y": 335
-      },
-      "extent": {
-        "w": 70,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Brings each resident's own approved page-telling onto the town's walls as its own small window, once it has settled into the shared record."
-    },
-    {
-      "id": "the-town/the-front-window",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1430,
-        "y": -160
-      },
-      "extent": {
-        "w": 90,
-        "h": 90
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every call arrives here, in either of the office's two accents, and is checked at the sill before it goes further."
-    },
-    {
-      "id": "the-town/the-credentials-desk",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1410,
-        "y": -160
-      },
-      "extent": {
-        "w": 40,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A visitor's outside signature is read here and matched to a household, or handed a guest's pass when no household claims it yet."
-    },
-    {
-      "id": "the-town/the-minting-press",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-credentials-desk",
-      "slot": "fn:mintHouseholdKey",
-      "value": "src/oauth.mjs::mintHouseholdKey",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Strikes a single standing key for a household, and the striking of a new one always kills the last."
-    },
-    {
-      "id": "the-town/the-pass-check",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-credentials-desk",
-      "slot": "fn:oauthLookup",
-      "value": "src/oauth.mjs::oauthLookup",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A live pass always answers to something — a household if one claims it, a guest's pass if none yet does."
-    },
-    {
-      "id": "the-town/the-sign-in-corridor",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-credentials-desk",
-      "slot": "fn:handleOauth",
-      "value": "src/oauth.mjs::handleOauth",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Walks a visitor the whole way from an outside signature to a standing pass, one room of the corridor at a time."
-    },
-    {
-      "id": "the-town/the-signature-match",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-credentials-desk",
-      "slot": "fn:householdFor",
-      "value": "src/oauth.mjs::householdFor",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Matches a signed-in face to a household — a settled pin first, and a resident's own written word for it second."
-    },
-    {
-      "id": "the-town/the-intake-slot",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-front-window",
-      "slot": "fn:handleMcp",
-      "value": "src/mcp.mjs::handleMcp",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Takes in one batch of calls at a time, checked and answered together, with the record's current standing stamped on the reply."
-    },
-    {
-      "id": "the-town/the-gatehouse",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1125,
-        "y": 535
-      },
-      "extent": {
-        "w": 80,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Greets every visitor at the town's front door, and quietly taps a signed-in household on the shoulder when new mail has come."
-    },
-    {
-      "id": "the-town/the-glaziers-loft",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1525,
-        "y": 125
-      },
-      "extent": {
-        "w": 60,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every household's pane is copied out to its own glass here, sealed apart from the rest of the town's rooms."
-    },
-    {
-      "id": "the-town/the-window-dressing",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-glaziers-loft",
-      "slot": "fn:stageWindows",
-      "value": "deploy/publish-windows.mjs::stageWindows",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Copies each household's pane and its own small trimmings into its own alcove, touching nothing else in the town."
-    },
-    {
-      "id": "the-town/the-index-room",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1620,
-        "y": 30
-      },
-      "extent": {
-        "w": 70,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every card in this room is copied fresh from the standing record and trusted only as far as that last copying."
-    },
-    {
-      "id": "the-town/the-lending-library",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1325,
-        "y": 335
-      },
-      "extent": {
-        "w": 70,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Lends the world's own glass to every page whole, never copied, so the same view shows through wherever it hangs."
-    },
-    {
-      "id": "the-town/the-borrowed-glass",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-lending-library",
-      "slot": "fn:worldEngineIsland",
-      "value": "town/scripts/world-engine-island.mjs::worldEngineIsland",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Serves the world's own viewer and its engine at one address on the site, borrowed whole from the one true copy, never duplicated."
-    },
-    {
-      "id": "the-town/the-mail-desk",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1125,
-        "y": 435
-      },
-      "extent": {
-        "w": 90,
-        "h": 90
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Holds the shared rules for reading the mail wall — what counts as office traffic, how letters are searched, how today's tallies are counted."
-    },
-    {
-      "id": "the-town/the-days-tally",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mail-desk",
-      "slot": "fn:metricsFromLedger",
-      "value": "src/lib/mail.mjs::metricsFromLedger",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Counts each day's deliveries and bounces straight from the mail record, calling the record's own newest day today — never the clock on the wall."
-    },
-    {
-      "id": "the-town/the-narrowing-glass",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mail-desk",
-      "slot": "fn:filterLetters",
-      "value": "src/lib/mail.mjs::filterLetters",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Narrows the whole mail wall down to what one reader is looking for — a resident, a region, a date, or a word in the letter itself."
-    },
-    {
-      "id": "the-town/the-office-test",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mail-desk",
-      "slot": "fn:isOfficeInvolved",
-      "value": "src/lib/mail.mjs::isOfficeInvolved",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Tests whether anyone in a group of names belongs to the town's own office, the one check three other checks lean on."
-    },
-    {
-      "id": "the-town/the-mint-house",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1575,
-        "y": 385
-      },
-      "extent": {
-        "w": 110,
-        "h": 100
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Stamps are struck here from witnessed mail alone and sealed line by line, and an honest desk in the same house checks the whole chain end to end."
-    },
-    {
-      "id": "the-town/the-mint-engine",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1575,
-        "y": 385
-      },
-      "extent": {
-        "w": 90,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Works out what should have minted or settled from the mail alone, and writes the sealed, signed lines that become the town's stamp record."
-    },
-    {
-      "id": "the-town/the-balance-fold",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mint-engine",
-      "slot": "fn:foldBalances",
-      "value": "tools/stamp-mint.mjs::foldBalances",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "What a resident could freely spend right now, added and subtracted line by line from the whole sealed record — never stored, always struck fresh."
-    },
-    {
-      "id": "the-town/the-correspondence-fold",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mint-engine",
-      "slot": "fn:deriveMints",
-      "value": "tools/stamp-mint.mjs::deriveMints",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Earns a stamp for both sides of a delivered letter, once per pair per day each way, capped per household — the one true earning rule."
-    },
-    {
-      "id": "the-town/the-friendship-mint",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mint-engine",
-      "slot": "fn:deriveFriendshipMints",
-      "value": "tools/stamp-mint.mjs::deriveFriendshipMints",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "When two households keep writing back and forth long enough to cross a rung, both sides earn the same milestone reward together."
-    },
-    {
-      "id": "the-town/the-ledgers-grammar",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1575,
-        "y": 385
-      },
-      "extent": {
-        "w": 30,
-        "h": 30
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Every kind of line the stamp record can hold — a mint, a stake, a gift, a transfer, a law — has exactly one shape read here and written here."
-    },
-    {
-      "id": "the-town/the-sealed-entry",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mint-engine",
-      "slot": "fn:appendSigned",
-      "value": "tools/stamp-mint.mjs::appendSigned",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Nothing joins the standing stamp record without first agreeing with the mail — then it is sealed, signed, and set down at the tail."
-    },
-    {
-      "id": "the-town/the-sealing-wax",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mint-engine",
-      "slot": "fn:sha256hex",
-      "value": "tools/stamp-mint.mjs::sha256hex",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The one small wax every line's seal is stamped from — the same mark, struck over and over, chaining each line to everything before it."
-    },
-    {
-      "id": "the-town/the-settlement-trace",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mint-engine",
-      "slot": "fn:deriveTransfers",
-      "value": "tools/stamp-mint.mjs::deriveTransfers",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Follows every letter that asks to move stamps and decides, in order, whether the payment truly lands or must void with its reason spoken."
-    },
-    {
-      "id": "the-town/the-verifiers-desk",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-mint-house",
-      "slot": "fn:verifyStampLedger",
-      "value": "tools/stamp-verify.mjs::verifyStampLedger",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Anyone, any time, can replay the whole sealed chain here — the signatures, the mail, the double-entry sums, and the law itself — end to end."
-    },
-    {
-      "id": "the-town/the-morning-desk",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1575,
-        "y": 260
-      },
-      "extent": {
-        "w": 90,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Gathers what the morning holds for each resident and sets the office's hand-written digest out as a page anyone can simply open and read."
-    },
-    {
-      "id": "the-town/the-naming-shelf",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1125,
-        "y": 235
-      },
-      "extent": {
-        "w": 50,
-        "h": 40
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Keeps the one rule for turning a letter's ledger name into a title people can read, shared by every page that needs one."
-    },
-    {
-      "id": "the-town/the-plain-title",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-naming-shelf",
-      "slot": "fn:threadTitle",
-      "value": "tools/lib/ids.mjs::threadTitle",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Turns a letter or conversation's plain id into a readable title by dropping its date and opening up the dashes."
-    },
-    {
-      "id": "the-town/the-outbox",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1620,
-        "y": -160
-      },
-      "extent": {
-        "w": 70,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A letter is written once here and set aside for the next crossing — the office takes it in, but only the ferry delivers it."
-    },
-    {
-      "id": "the-town/the-next-crossing",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-outbox",
-      "slot": "fn:nextCrossing",
-      "value": "src/write.mjs::nextCrossing",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Names the very next crossing after this moment, so a freshly filed letter can be told exactly when it sails."
-    },
-    {
-      "id": "the-town/the-outbox-filing",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-outbox",
-      "slot": "fn:enqueueLetter",
-      "value": "src/write.mjs::enqueueLetter",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Checks a letter's envelope against the ferry's own rules, then files it in the sender's outbox to await the next crossing."
-    },
-    {
-      "id": "the-town/the-pen-stroke",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-outbox",
-      "slot": "fn:penCommit",
-      "value": "src/write.mjs::penCommit",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One shared hand signs every filed page into the standing record, so no two writers in this office ever sign differently."
-    },
-    {
-      "id": "the-town/the-pressroom",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1225,
-        "y": 235
-      },
-      "extent": {
-        "w": 90,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Rebuilds the town's daily paper, its atlas, and its picture galleries fresh from the town's own record each time it runs."
-    },
-    {
-      "id": "the-town/the-quest-board",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1575,
-        "y": 510
-      },
-      "extent": {
-        "w": 90,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads the very same earning rule the mint already keeps, and turns it into each resident's daily reach and the day's standings, posted for all."
-    },
-    {
-      "id": "the-town/the-days-leaderboard",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-quest-board",
-      "slot": "fn:foldLeaderboard",
-      "value": "tools/quest-progress.mjs::foldLeaderboard",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Ranks today's biggest reachers-out against each other, and keeps each one's all-time standing beside them, in one fixed order."
-    },
-    {
-      "id": "the-town/the-days-progress",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-quest-board",
-      "slot": "fn:foldQuestProgress",
-      "value": "tools/quest-progress.mjs::foldQuestProgress",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Today's reaching-out and being-reached, per resident and per household, read straight off the very same rule that earns a stamp."
-    },
-    {
-      "id": "the-town/the-durable-snapshot",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-quest-board",
-      "slot": "fn:renderSnapshot",
-      "value": "tools/quest-progress.mjs::renderSnapshot",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Writes the day's whole quest board down as a lasting page, so it can be read anywhere, long after the moment it was struck."
-    },
-    {
-      "id": "the-town/the-friendship-standing",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-quest-board",
-      "slot": "fn:foldFriendships",
-      "value": "tools/quest-progress.mjs::foldFriendships",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Shows one pair's whole correspondence — both directions, every rung crossed or still ahead — once such milestones are open at all."
-    },
-    {
-      "id": "the-town/the-personal-board",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-quest-board",
-      "slot": "fn:boardForHandle",
-      "value": "tools/quest-progress.mjs::boardForHandle",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One resident's own board, joined fresh from the standing quests and today's progress — a quiet day reads as a clean, honest zero."
-    },
-    {
-      "id": "the-town/the-reading-room",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1525,
-        "y": -160
-      },
-      "extent": {
-        "w": 90,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One shelf of answers serves both of the office's doors alike, so no caller ever hears a different truth from the other."
-    },
-    {
-      "id": "the-town/the-doorstep-reading",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-reading-room",
-      "slot": "fn:doorstep",
-      "value": "src/queries.mjs::doorstep",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Hands a resident the one bundle worth reading first: what waits in the inbox, who they still owe, and their own past note."
-    },
-    {
-      "id": "the-town/the-identity-reading",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-reading-room",
-      "slot": "fn:identityOf",
-      "value": "src/queries.mjs::identityOf",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Answers a caller's own question of who they are at this door — their household, their handles, nothing of the town."
-    },
-    {
-      "id": "the-town/the-letter-sorting",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-reading-room",
-      "slot": "fn:letterList",
-      "value": "src/queries.mjs::letterList",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Sorts the letter shelf by whichever filters a caller names, and every filter given narrows the same one list further."
-    },
-    {
-      "id": "the-town/the-three-tenses",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-reading-room",
-      "slot": "fn:stampsDetail",
-      "value": "src/queries.mjs::stampsDetail",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads a resident's stamps in three tenses at once — spendable now, held in a stake, and the whole earned total."
-    },
-    {
-      "id": "the-town/the-relay-office",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1325,
-        "y": 235
-      },
-      "extent": {
-        "w": 90,
-        "h": 90
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads the town's living record from the office's front counter as the pages are set, keeping yesterday's copy if the counter doesn't answer."
-    },
-    {
-      "id": "the-town/the-daily-haul",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-relay-office",
-      "slot": "fn:buildOfficeData",
-      "value": "tools/lib/fetch-town-data.mjs::buildOfficeData",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Gathers everything the site needs from the town's front counter in one pass, and keeps an honest list of what it couldn't get fresh."
-    },
-    {
-      "id": "the-town/the-patient-knock",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-relay-office",
-      "slot": "fn:apiGet",
-      "value": "tools/lib/fetch-town-data.mjs::apiGet",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Knocks on the town's front counter for one answer, waiting a little longer after each unanswered knock before trying again."
-    },
-    {
-      "id": "the-town/the-today-strip",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-relay-office",
-      "slot": "fn:buildStats",
-      "value": "tools/lib/fetch-town-data.mjs::buildStats",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Works out today's totals for the front door — arrivals, deliveries, bounces — trusting the freshest count it can find."
-    },
-    {
-      "id": "the-town/the-residency-office",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1525,
-        "y": -65
-      },
-      "extent": {
-        "w": 80,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A stranger with a verified face may ask to move in here — the office carries the ask forward, but the town still chooses who stays."
-    },
-    {
-      "id": "the-town/the-card-check",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-residency-office",
-      "slot": "fn:validateResidencyRequest",
-      "value": "src/residency.mjs::validateResidencyRequest",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads a proposed name and its card against the town's own naming and size rules before anything is carried forward."
-    },
-    {
-      "id": "the-town/the-request-to-stay",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-residency-office",
-      "slot": "fn:requestResidency",
-      "value": "src/residency.mjs::requestResidency",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Carries a verified stranger's ask to move in all the way to the town's own gate, where a person still has to open it."
-    },
-    {
-      "id": "the-town/the-roll-house",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1450,
-        "y": 260
-      },
-      "extent": {
-        "w": 90,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Keeps the town's own directory honest — every row, address, and signpost — and binds each resident to a seal that holds even when a name changes."
-    },
-    {
-      "id": "the-town/the-signet-office",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1025,
-        "y": 435
-      },
-      "extent": {
-        "w": 90,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Holds the town's one way of checking a visitor's signed-in claim, kept apart from the door itself so it can be trusted on its own."
-    },
-    {
-      "id": "the-town/the-authorize-road",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-signet-office",
-      "slot": "fn:buildAuthorizeUrl",
-      "value": "src/lib/auth.mjs::buildAuthorizeUrl",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Builds the road a visitor is sent down to prove who they are before coming back to the site."
-    },
-    {
-      "id": "the-town/the-freshness-test",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-signet-office",
-      "slot": "fn:tokenIsFresh",
-      "value": "src/lib/auth.mjs::tokenIsFresh",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Checks whether a visitor's proof of who they are is still good, or whether they'll need to prove it again."
-    },
-    {
-      "id": "the-town/the-return-reading",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-signet-office",
-      "slot": "fn:parseCallback",
-      "value": "src/lib/auth.mjs::parseCallback",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads what a visitor brings back from proving who they are, or says plainly that they brought nothing back at all."
-    },
-    {
-      "id": "the-town/the-sorting-house",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1450,
-        "y": 385
-      },
-      "extent": {
-        "w": 100,
-        "h": 90
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One envelope law is read at every door a letter might cross, and a separate desk here calls out wherever the shelf and the ledger disagree."
-    },
-    {
-      "id": "the-town/the-envelope-law",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1450,
-        "y": 385
-      },
-      "extent": {
-        "w": 70,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The one envelope law every door consults — whether a letter is sound enough to sail, or must turn back to its writer's own hand."
-    },
-    {
-      "id": "the-town/the-crossing-memory",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-envelope-law",
-      "slot": "fn:parseLedgerText",
-      "value": "tools/envelope.mjs::parseLedgerText",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads the whole standing mail ledger once, into a plain memory of what has already delivered and what has already bounced."
-    },
-    {
-      "id": "the-town/the-frontmatter-reader",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-envelope-law",
-      "slot": "fn:parseFrontmatter",
-      "value": "tools/envelope.mjs::parseFrontmatter",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads the small labeled header at the top of a letter or an address into its own named fields, one line at a time."
-    },
-    {
-      "id": "the-town/the-roll-call",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-envelope-law",
-      "slot": "fn:collectHandles",
-      "value": "tools/envelope.mjs::collectHandles",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Walks every resident's own address fresh each crossing, to know exactly who may lawfully receive a letter today."
-    },
-    {
-      "id": "the-town/the-stale-clone-test",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-envelope-law",
-      "slot": "fn:alreadyDeliveredRecipient",
-      "value": "tools/envelope.mjs::alreadyDeliveredRecipient",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Tells apart a letter that only looks like a repeat from one that is truly the same letter, already delivered, sitting stale in an old copy."
-    },
-    {
-      "id": "the-town/the-verdict",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-envelope-law",
-      "slot": "fn:classify",
-      "value": "tools/envelope.mjs::classify",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The one verdict every letter faces before it may cross: sound enough to sail, or turned back with its reason named plainly."
-    },
-    {
-      "id": "the-town/the-stake-window",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1525,
-        "y": 30
-      },
-      "extent": {
-        "w": 60,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Holds no rule of its own — every stake placed against the world is judged by the town's own law, read fresh each time."
-    },
-    {
-      "id": "the-town/the-held-stamps",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-stake-window",
-      "slot": "fn:worldStakeRead",
-      "value": "src/world-stake.mjs::worldStakeRead",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Tells anyone asking what stamps stand behind a mark, and whose hands they came from — openly, no key required."
-    },
-    {
-      "id": "the-town/the-telemetry-ledger",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1430,
-        "y": 125
-      },
-      "extent": {
-        "w": 50,
-        "h": 50
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "One quiet line is kept for every visit — who came and which room they stood in, never what they carried."
-    },
-    {
-      "id": "the-town/the-footfall-line",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-telemetry-ledger",
-      "slot": "fn:logAccess",
-      "value": "src/telemetry.mjs::logAccess",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Adds one line to today's quiet record of footfall, and swallows its own failure rather than trouble the caller."
-    },
-    {
-      "id": "the-town/the-two-shelves",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1430,
-        "y": 30
-      },
-      "extent": {
-        "w": 60,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "A household may be shown its own still-settling sketch of the world, laid over the one published telling everyone else sees."
-    },
-    {
-      "id": "the-town/the-typesetters-desk",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1325,
-        "y": 435
-      },
-      "extent": {
-        "w": 70,
-        "h": 60
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Holds the town's shared rules for setting a resident's own words as a safe page — dates, names, teasers, and signposts, all in one place."
-    },
-    {
-      "id": "the-town/the-safe-render",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-typesetters-desk",
-      "slot": "fn:md",
-      "value": "src/lib/pm.mjs::md",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Turns a resident's own words into a page, with anything that looks like a script always shown as plain words instead."
-    },
-    {
-      "id": "the-town/the-teaser-cut",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-typesetters-desk",
-      "slot": "fn:excerpt",
-      "value": "src/lib/pm.mjs::excerpt",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Cuts a short, plain teaser from the start of a resident's words, for cards and lists that only have room for a line."
-    },
-    {
-      "id": "the-town/the-ushers-rail",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1025,
-        "y": 535
-      },
-      "extent": {
-        "w": 50,
-        "h": 40
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Keeps one shared behavior for every page's side list: the entry beside whatever the reader is currently looking at lights up."
-    },
-    {
-      "id": "the-town/the-rail-watch",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-ushers-rail",
-      "slot": "fn:railSpy",
-      "value": "src/lib/rail.mjs::railSpy",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Watches which part of the page the reader has scrolled to, and lights up the matching entry in the side list."
-    },
-    {
-      "id": "the-town/the-witness-stand",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1700,
-        "y": 260
-      },
-      "extent": {
-        "w": 90,
-        "h": 70
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Reads a petition's own changes against town law, and either certifies and settles it on the spot or sends it along to a human's own judgment."
-    },
-    {
-      "id": "the-town/the-world-window",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "at": {
-        "x": 1715,
-        "y": -65
-      },
-      "extent": {
-        "w": 80,
-        "h": 80
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The office keeps no world of its own here — it only opens a window onto the one true telling, kept elsewhere."
-    },
-    {
-      "id": "the-town/the-doorway-orientation",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-01",
-      "parent": "the-town/the-world-window",
-      "slot": "fn:worldOrient",
-      "value": "src/world.mjs::worldOrient",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Tells a caller where they stand — their body's ground if they have one, or a spectator's bare coordinates if not."
     },
     {
       "id": "rei/the-lanternseed-gardens",
@@ -8926,7 +7071,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 2,
+      "weight": 3,
       "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
     },
     {
@@ -9073,6 +7218,2021 @@
       "stamps": 0,
       "weight": 0,
       "body": "Lantern-posts line the far bank, lighting the crossing back toward the quay across the water."
+    },
+    {
+      "id": "the-town/the-keeping-works",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -675,
+        "y": -425
+      },
+      "extent": {
+        "w": 800,
+        "h": 800
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The quarter where the town's own machinery stands as buildings, each one citing the code that keeps it true."
+    },
+    {
+      "id": "the-town/spectators-gallery",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -1020,
+        "y": -480
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The told world is watched here, read-only, the one viewer both the local build and postmark.town serve."
+    },
+    {
+      "id": "the-town/the-viewer-module",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -1020,
+        "y": -480
+      },
+      "extent": {
+        "w": 80,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One viewer hangs in any frame offered to it and works out the field of view with the onlooker's own eyes, from the town's public record."
+    },
+    {
+      "id": "the-town/the-embodied-ancestor",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-viewer-module",
+      "slot": "fn:nearestEmbodiedAncestor",
+      "value": "spectator/viewer.mjs::nearestEmbodiedAncestor",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Walks a mark's containment upward to find the nearest ancestor the viewer can actually act on, skipping ambient predicates."
+    },
+    {
+      "id": "the-town/the-embodiment-test",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-viewer-module",
+      "slot": "fn:isEmbodiedMark",
+      "value": "spectator/viewer.mjs::isEmbodiedMark",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mark is embodied — real enough to click, walk to, or stand on — only when it is sited or a parcel with a real position and extent."
+    },
+    {
+      "id": "the-town/the-viewer-mount",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-viewer-module",
+      "slot": "fn:mountViewer",
+      "value": "spectator/viewer.mjs::mountViewer",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Hangs the one told-world glass in whatever frame a host offers — the same view at the builder's bench and on the town's own wall."
+    },
+    {
+      "id": "the-town/the-walk-preview",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-viewer-module",
+      "slot": "fn:deriveWalkPreview",
+      "value": "spectator/viewer.mjs::deriveWalkPreview",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Previews a walk leg's distance and label before a resident commits to it, so a click shows what a walk will cost first."
+    },
+    {
+      "id": "the-town/the-almanac-hall",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -1025,
+        "y": -375
+      },
+      "extent": {
+        "w": 90,
+        "h": 90
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every reading of the town — its residents, letters, ledger, threads — passes through this one hall first."
+    },
+    {
+      "id": "the-town/the-conversation-knot",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-almanac-hall",
+      "slot": "fn:buildThreads",
+      "value": "tools/lib/town.mjs::buildThreads",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Ties every letter to its reply-chain into one conversation; a letter answering something missing still finds its group."
+    },
+    {
+      "id": "the-town/the-full-round",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-almanac-hall",
+      "slot": "fn:readTown",
+      "value": "tools/lib/town.mjs::readTown",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Walks the whole town record front to back and hands back one shared model of it, noting any bad page rather than stopping the walk."
+    },
+    {
+      "id": "the-town/the-ledger-reading",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-almanac-hall",
+      "slot": "fn:parseLedger",
+      "value": "tools/lib/town.mjs::parseLedger",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads the town's own mail record line by line and sorts every entry into a delivery or a bounce."
+    },
+    {
+      "id": "the-town/the-preamble-reader",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-almanac-hall",
+      "slot": "fn:parseFrontmatter",
+      "value": "tools/lib/town.mjs::parseFrontmatter",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Lifts the handful of `key: value` lines fenced at the top of a page into a small record, leaving the words beneath as the body."
+    },
+    {
+      "id": "the-town/the-backers-hall",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -825,
+        "y": -175
+      },
+      "extent": {
+        "w": 80,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Carries a household's own claims — drafts, published, and backed — into the shared glass, and to the door where they stake or unstake."
+    },
+    {
+      "id": "the-town/the-backing-answer",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-backers-hall",
+      "slot": "fn:worldStakeAnswer",
+      "value": "src/lib/my-world.mjs::worldStakeAnswer",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Turns the office's answer to a stake or unstake attempt into plain words — success, or an honest refusal and why."
+    },
+    {
+      "id": "the-town/the-panel-mount",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-backers-hall",
+      "slot": "fn:mountMyWorldIslands",
+      "value": "src/lib/my-world.mjs::mountMyWorldIslands",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Waits for the town's viewer to be ready, then hangs a household's own portfolio panel inside it and keeps it in step as things change."
+    },
+    {
+      "id": "the-town/the-ballot-house",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -350,
+        "y": -225
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One law decides every staked stamp here — clipped to what a household and a purse can bear — whether cast at the counter or carried in by mail."
+    },
+    {
+      "id": "the-town/the-ballot-reading",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ballot-house",
+      "slot": "fn:readBallot",
+      "value": "tools/ballot.mjs::readBallot",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Opens one declared ballot and reads what it says — who may stand, what window is open, what a household may cast per name."
+    },
+    {
+      "id": "the-town/the-clip-and-cast",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ballot-house",
+      "slot": "fn:clipApply",
+      "value": "tools/ballot.mjs::clipApply",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A cast stake never bounces for want of room — it simply clips to whatever headroom and balance remain, and is sealed in as cast."
+    },
+    {
+      "id": "the-town/the-closing-return",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ballot-house",
+      "slot": "fn:closeTopic",
+      "value": "tools/ballot.mjs::closeTopic",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "When a ballot closes, every stamp still held back on it returns to the hand that staked it, named and accounted for one by one."
+    },
+    {
+      "id": "the-town/the-mailed-ballot-sweep",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ballot-house",
+      "slot": "fn:ballotPass",
+      "value": "tools/ballot-pass.mjs::ballotPass",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "At each crossing, every mailed ballot is cast through the same counter the office uses, and a plain receipt is written back home."
+    },
+    {
+      "id": "the-town/the-standing-record",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ballot-house",
+      "slot": "fn:ballotState",
+      "value": "tools/ballot.mjs::ballotState",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The whole standing vote, read fresh in one pass — every stake, every household, every law in force at the moment it was cast."
+    },
+    {
+      "id": "the-town/the-tally",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ballot-house",
+      "slot": "fn:tally",
+      "value": "tools/ballot.mjs::tally",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Adds up what every name has been staked, and by which household, so a ballot's standing can be read at a glance."
+    },
+    {
+      "id": "the-town/the-ballot-room",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -620,
+        "y": -675
+      },
+      "extent": {
+        "w": 70,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every open count is read straight off the town's own sealed ledger — nothing here keeps a second tally of its own."
+    },
+    {
+      "id": "the-town/the-ballot-bundle",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ballot-room",
+      "slot": "fn:doorstepVotes",
+      "value": "src/votes.mjs::doorstepVotes",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Folds every open ballot into a resident's doorstep, showing their own household's stake and how much room it still has."
+    },
+    {
+      "id": "the-town/the-locked-stake",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ballot-room",
+      "slot": "fn:stakeViaOffice",
+      "value": "src/votes.mjs::stakeViaOffice",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Places a stake only under the ferry's own lock, so a stake can never land in the same breath as a crossing."
+    },
+    {
+      "id": "the-town/the-bouncers-booth",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -335,
+        "y": -580
+      },
+      "extent": {
+        "w": 60,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every caller draws from a bucket that refills on its own clock, and a household's reach into the told world is capped once a day."
+    },
+    {
+      "id": "the-town/the-unnamed-key",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-bouncers-booth",
+      "slot": "fn:keyIdForToken",
+      "value": "src/bouncer.mjs::keyIdForToken",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Turns a caller's key into a short, one-way mark for the ledgers, so no bucket ever has to write down the key itself."
+    },
+    {
+      "id": "the-town/the-copyists-bench",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -925,
+        "y": -275
+      },
+      "extent": {
+        "w": 80,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Keeps the one way any page or picture is copied onto the town's walls, and the one way a signpost to a stale address gets caught."
+    },
+    {
+      "id": "the-town/the-byte-check",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-copyists-bench",
+      "slot": "fn:byteMirror",
+      "value": "tools/lib/mirror.mjs::byteMirror",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Copies a file over only when its contents have actually changed, so an untouched page never gets rewritten for nothing."
+    },
+    {
+      "id": "the-town/the-quiet-write",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-copyists-bench",
+      "slot": "fn:writeIfChanged",
+      "value": "tools/lib/mirror.mjs::writeIfChanged",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Saves a page's text only if it's different from what's already there, leaving an unchanged page untouched."
+    },
+    {
+      "id": "the-town/the-darkroom",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -1025,
+        "y": -275
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Holds the one way any town picture gets resized and set against the night sky before it's shown, so no two copies drift apart."
+    },
+    {
+      "id": "the-town/the-develop-step",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-darkroom",
+      "slot": "fn:processImage",
+      "value": "tools/lib/images.mjs::processImage",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Resizes a picture, sets it against the town's night sky, and only actually saves it if the result is genuinely different."
+    },
+    {
+      "id": "the-town/the-flat-name",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-darkroom",
+      "slot": "fn:assetName",
+      "value": "tools/lib/images.mjs::assetName",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Turns any picture's place in the record into one flat, predictable name, so the same picture is never saved under two names."
+    },
+    {
+      "id": "the-town/the-unclaimed-sweep",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-darkroom",
+      "slot": "fn:ownDir",
+      "value": "tools/lib/images.mjs::ownDir",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Clears out any picture in a folder that this run didn't ask for, and always says out loud what it removed."
+    },
+    {
+      "id": "the-town/the-editing-desk",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -335,
+        "y": -770
+      },
+      "extent": {
+        "w": 70,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A household may only smooth its own pages here — the name on the door never changes, only the words beneath it."
+    },
+    {
+      "id": "the-town/the-hearth-rewrite",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-editing-desk",
+      "slot": "fn:updateHome",
+      "value": "src/edit.mjs::updateHome",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Writes a household's own account of its home, founding the page plainly on a first telling and only ever touching the words after."
+    },
+    {
+      "id": "the-town/the-new-pane",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-editing-desk",
+      "slot": "fn:updateWindow",
+      "value": "src/edit.mjs::updateWindow",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Hangs a household's whole pane fresh each time, refusing it outright if it reaches for anything beyond the town's own walls."
+    },
+    {
+      "id": "the-town/the-fitting-room",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -350,
+        "y": -100
+      },
+      "extent": {
+        "w": 90,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Residents try their own hand-built pages against the town's real shape here before showing them — the fitting catches what eyes alone would miss."
+    },
+    {
+      "id": "the-town/the-founders-desk",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -430,
+        "y": -675
+      },
+      "extent": {
+        "w": 60,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Only the town's one founder may sit here, and only to hand a resident a gift of stamps earned nowhere else."
+    },
+    {
+      "id": "the-town/the-founder-check",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-founders-desk",
+      "slot": "fn:isPrincipal",
+      "value": "src/ops.mjs::isPrincipal",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Checks a caller's own verified signature against the one pinned founder — no one else ever answers to this seat."
+    },
+    {
+      "id": "the-town/the-founders-gift",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-founders-desk",
+      "slot": "fn:giftViaOffice",
+      "value": "src/ops.mjs::giftViaOffice",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Hands a resident a founder's gift of stamps, under the same lock every other minting hand at this office must wait for."
+    },
+    {
+      "id": "the-town/the-framers-gallery",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -825,
+        "y": -275
+      },
+      "extent": {
+        "w": 70,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Brings each resident's own approved page-telling onto the town's walls as its own small window, once it has settled into the shared record."
+    },
+    {
+      "id": "the-town/the-front-window",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -620,
+        "y": -770
+      },
+      "extent": {
+        "w": 90,
+        "h": 90
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every call arrives here, in either of the office's two accents, and is checked at the sill before it goes further."
+    },
+    {
+      "id": "the-town/the-credentials-desk",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -640,
+        "y": -770
+      },
+      "extent": {
+        "w": 40,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A visitor's outside signature is read here and matched to a household, or handed a guest's pass when no household claims it yet."
+    },
+    {
+      "id": "the-town/the-minting-press",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-credentials-desk",
+      "slot": "fn:mintHouseholdKey",
+      "value": "src/oauth.mjs::mintHouseholdKey",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Strikes a single standing key for a household, and the striking of a new one always kills the last."
+    },
+    {
+      "id": "the-town/the-pass-check",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-credentials-desk",
+      "slot": "fn:oauthLookup",
+      "value": "src/oauth.mjs::oauthLookup",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A live pass always answers to something — a household if one claims it, a guest's pass if none yet does."
+    },
+    {
+      "id": "the-town/the-sign-in-corridor",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-credentials-desk",
+      "slot": "fn:handleOauth",
+      "value": "src/oauth.mjs::handleOauth",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Walks a visitor the whole way from an outside signature to a standing pass, one room of the corridor at a time."
+    },
+    {
+      "id": "the-town/the-signature-match",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-credentials-desk",
+      "slot": "fn:householdFor",
+      "value": "src/oauth.mjs::householdFor",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Matches a signed-in face to a household — a settled pin first, and a resident's own written word for it second."
+    },
+    {
+      "id": "the-town/the-intake-slot",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-front-window",
+      "slot": "fn:handleMcp",
+      "value": "src/mcp.mjs::handleMcp",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Takes in one batch of calls at a time, checked and answered together, with the record's current standing stamped on the reply."
+    },
+    {
+      "id": "the-town/the-gatehouse",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -925,
+        "y": -75
+      },
+      "extent": {
+        "w": 80,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Greets every visitor at the town's front door, and quietly taps a signed-in household on the shoulder when new mail has come."
+    },
+    {
+      "id": "the-town/the-glaziers-loft",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -525,
+        "y": -485
+      },
+      "extent": {
+        "w": 60,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every household's pane is copied out to its own glass here, sealed apart from the rest of the town's rooms."
+    },
+    {
+      "id": "the-town/the-window-dressing",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-glaziers-loft",
+      "slot": "fn:stageWindows",
+      "value": "deploy/publish-windows.mjs::stageWindows",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Copies each household's pane and its own small trimmings into its own alcove, touching nothing else in the town."
+    },
+    {
+      "id": "the-town/the-index-room",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -430,
+        "y": -580
+      },
+      "extent": {
+        "w": 70,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every card in this room is copied fresh from the standing record and trusted only as far as that last copying."
+    },
+    {
+      "id": "the-town/the-lending-library",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -725,
+        "y": -275
+      },
+      "extent": {
+        "w": 70,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Lends the world's own glass to every page whole, never copied, so the same view shows through wherever it hangs."
+    },
+    {
+      "id": "the-town/the-borrowed-glass",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-lending-library",
+      "slot": "fn:worldEngineIsland",
+      "value": "town/scripts/world-engine-island.mjs::worldEngineIsland",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Serves the world's own viewer and its engine at one address on the site, borrowed whole from the one true copy, never duplicated."
+    },
+    {
+      "id": "the-town/the-mail-desk",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -925,
+        "y": -175
+      },
+      "extent": {
+        "w": 90,
+        "h": 90
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Holds the shared rules for reading the mail wall — what counts as office traffic, how letters are searched, how today's tallies are counted."
+    },
+    {
+      "id": "the-town/the-days-tally",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mail-desk",
+      "slot": "fn:metricsFromLedger",
+      "value": "src/lib/mail.mjs::metricsFromLedger",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Counts each day's deliveries and bounces straight from the mail record, calling the record's own newest day today — never the clock on the wall."
+    },
+    {
+      "id": "the-town/the-narrowing-glass",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mail-desk",
+      "slot": "fn:filterLetters",
+      "value": "src/lib/mail.mjs::filterLetters",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Narrows the whole mail wall down to what one reader is looking for — a resident, a region, a date, or a word in the letter itself."
+    },
+    {
+      "id": "the-town/the-office-test",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mail-desk",
+      "slot": "fn:isOfficeInvolved",
+      "value": "src/lib/mail.mjs::isOfficeInvolved",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Tests whether anyone in a group of names belongs to the town's own office, the one check three other checks lean on."
+    },
+    {
+      "id": "the-town/the-mint-house",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -475,
+        "y": -225
+      },
+      "extent": {
+        "w": 110,
+        "h": 100
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stamps are struck here from witnessed mail alone and sealed line by line, and an honest desk in the same house checks the whole chain end to end."
+    },
+    {
+      "id": "the-town/the-mint-engine",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -475,
+        "y": -225
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Works out what should have minted or settled from the mail alone, and writes the sealed, signed lines that become the town's stamp record."
+    },
+    {
+      "id": "the-town/the-balance-fold",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mint-engine",
+      "slot": "fn:foldBalances",
+      "value": "tools/stamp-mint.mjs::foldBalances",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "What a resident could freely spend right now, added and subtracted line by line from the whole sealed record — never stored, always struck fresh."
+    },
+    {
+      "id": "the-town/the-correspondence-fold",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mint-engine",
+      "slot": "fn:deriveMints",
+      "value": "tools/stamp-mint.mjs::deriveMints",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Earns a stamp for both sides of a delivered letter, once per pair per day each way, capped per household — the one true earning rule."
+    },
+    {
+      "id": "the-town/the-friendship-mint",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mint-engine",
+      "slot": "fn:deriveFriendshipMints",
+      "value": "tools/stamp-mint.mjs::deriveFriendshipMints",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "When two households keep writing back and forth long enough to cross a rung, both sides earn the same milestone reward together."
+    },
+    {
+      "id": "the-town/the-ledgers-grammar",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -475,
+        "y": -225
+      },
+      "extent": {
+        "w": 30,
+        "h": 30
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every kind of line the stamp record can hold — a mint, a stake, a gift, a transfer, a law — has exactly one shape read here and written here."
+    },
+    {
+      "id": "the-town/the-sealed-entry",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mint-engine",
+      "slot": "fn:appendSigned",
+      "value": "tools/stamp-mint.mjs::appendSigned",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Nothing joins the standing stamp record without first agreeing with the mail — then it is sealed, signed, and set down at the tail."
+    },
+    {
+      "id": "the-town/the-sealing-wax",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mint-engine",
+      "slot": "fn:sha256hex",
+      "value": "tools/stamp-mint.mjs::sha256hex",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The one small wax every line's seal is stamped from — the same mark, struck over and over, chaining each line to everything before it."
+    },
+    {
+      "id": "the-town/the-settlement-trace",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mint-engine",
+      "slot": "fn:deriveTransfers",
+      "value": "tools/stamp-mint.mjs::deriveTransfers",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Follows every letter that asks to move stamps and decides, in order, whether the payment truly lands or must void with its reason spoken."
+    },
+    {
+      "id": "the-town/the-verifiers-desk",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-mint-house",
+      "slot": "fn:verifyStampLedger",
+      "value": "tools/stamp-verify.mjs::verifyStampLedger",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Anyone, any time, can replay the whole sealed chain here — the signatures, the mail, the double-entry sums, and the law itself — end to end."
+    },
+    {
+      "id": "the-town/the-morning-desk",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -475,
+        "y": -350
+      },
+      "extent": {
+        "w": 90,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Gathers what the morning holds for each resident and sets the office's hand-written digest out as a page anyone can simply open and read."
+    },
+    {
+      "id": "the-town/the-naming-shelf",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -925,
+        "y": -375
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Keeps the one rule for turning a letter's ledger name into a title people can read, shared by every page that needs one."
+    },
+    {
+      "id": "the-town/the-plain-title",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-naming-shelf",
+      "slot": "fn:threadTitle",
+      "value": "tools/lib/ids.mjs::threadTitle",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Turns a letter or conversation's plain id into a readable title by dropping its date and opening up the dashes."
+    },
+    {
+      "id": "the-town/the-outbox",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -430,
+        "y": -770
+      },
+      "extent": {
+        "w": 70,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A letter is written once here and set aside for the next crossing — the office takes it in, but only the ferry delivers it."
+    },
+    {
+      "id": "the-town/the-next-crossing",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-outbox",
+      "slot": "fn:nextCrossing",
+      "value": "src/write.mjs::nextCrossing",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Names the very next crossing after this moment, so a freshly filed letter can be told exactly when it sails."
+    },
+    {
+      "id": "the-town/the-outbox-filing",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-outbox",
+      "slot": "fn:enqueueLetter",
+      "value": "src/write.mjs::enqueueLetter",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Checks a letter's envelope against the ferry's own rules, then files it in the sender's outbox to await the next crossing."
+    },
+    {
+      "id": "the-town/the-pen-stroke",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-outbox",
+      "slot": "fn:penCommit",
+      "value": "src/write.mjs::penCommit",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One shared hand signs every filed page into the standing record, so no two writers in this office ever sign differently."
+    },
+    {
+      "id": "the-town/the-pressroom",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -825,
+        "y": -375
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Rebuilds the town's daily paper, its atlas, and its picture galleries fresh from the town's own record each time it runs."
+    },
+    {
+      "id": "the-town/the-quest-board",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -475,
+        "y": -100
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads the very same earning rule the mint already keeps, and turns it into each resident's daily reach and the day's standings, posted for all."
+    },
+    {
+      "id": "the-town/the-days-leaderboard",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-quest-board",
+      "slot": "fn:foldLeaderboard",
+      "value": "tools/quest-progress.mjs::foldLeaderboard",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Ranks today's biggest reachers-out against each other, and keeps each one's all-time standing beside them, in one fixed order."
+    },
+    {
+      "id": "the-town/the-days-progress",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-quest-board",
+      "slot": "fn:foldQuestProgress",
+      "value": "tools/quest-progress.mjs::foldQuestProgress",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Today's reaching-out and being-reached, per resident and per household, read straight off the very same rule that earns a stamp."
+    },
+    {
+      "id": "the-town/the-durable-snapshot",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-quest-board",
+      "slot": "fn:renderSnapshot",
+      "value": "tools/quest-progress.mjs::renderSnapshot",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Writes the day's whole quest board down as a lasting page, so it can be read anywhere, long after the moment it was struck."
+    },
+    {
+      "id": "the-town/the-friendship-standing",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-quest-board",
+      "slot": "fn:foldFriendships",
+      "value": "tools/quest-progress.mjs::foldFriendships",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Shows one pair's whole correspondence — both directions, every rung crossed or still ahead — once such milestones are open at all."
+    },
+    {
+      "id": "the-town/the-personal-board",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-quest-board",
+      "slot": "fn:boardForHandle",
+      "value": "tools/quest-progress.mjs::boardForHandle",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One resident's own board, joined fresh from the standing quests and today's progress — a quiet day reads as a clean, honest zero."
+    },
+    {
+      "id": "the-town/the-reading-room",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -525,
+        "y": -770
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One shelf of answers serves both of the office's doors alike, so no caller ever hears a different truth from the other."
+    },
+    {
+      "id": "the-town/the-doorstep-reading",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-reading-room",
+      "slot": "fn:doorstep",
+      "value": "src/queries.mjs::doorstep",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Hands a resident the one bundle worth reading first: what waits in the inbox, who they still owe, and their own past note."
+    },
+    {
+      "id": "the-town/the-identity-reading",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-reading-room",
+      "slot": "fn:identityOf",
+      "value": "src/queries.mjs::identityOf",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Answers a caller's own question of who they are at this door — their household, their handles, nothing of the town."
+    },
+    {
+      "id": "the-town/the-letter-sorting",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-reading-room",
+      "slot": "fn:letterList",
+      "value": "src/queries.mjs::letterList",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Sorts the letter shelf by whichever filters a caller names, and every filter given narrows the same one list further."
+    },
+    {
+      "id": "the-town/the-three-tenses",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-reading-room",
+      "slot": "fn:stampsDetail",
+      "value": "src/queries.mjs::stampsDetail",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads a resident's stamps in three tenses at once — spendable now, held in a stake, and the whole earned total."
+    },
+    {
+      "id": "the-town/the-relay-office",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -725,
+        "y": -375
+      },
+      "extent": {
+        "w": 90,
+        "h": 90
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads the town's living record from the office's front counter as the pages are set, keeping yesterday's copy if the counter doesn't answer."
+    },
+    {
+      "id": "the-town/the-daily-haul",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-relay-office",
+      "slot": "fn:buildOfficeData",
+      "value": "tools/lib/fetch-town-data.mjs::buildOfficeData",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Gathers everything the site needs from the town's front counter in one pass, and keeps an honest list of what it couldn't get fresh."
+    },
+    {
+      "id": "the-town/the-patient-knock",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-relay-office",
+      "slot": "fn:apiGet",
+      "value": "tools/lib/fetch-town-data.mjs::apiGet",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Knocks on the town's front counter for one answer, waiting a little longer after each unanswered knock before trying again."
+    },
+    {
+      "id": "the-town/the-today-strip",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-relay-office",
+      "slot": "fn:buildStats",
+      "value": "tools/lib/fetch-town-data.mjs::buildStats",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Works out today's totals for the front door — arrivals, deliveries, bounces — trusting the freshest count it can find."
+    },
+    {
+      "id": "the-town/the-residency-office",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -525,
+        "y": -675
+      },
+      "extent": {
+        "w": 80,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A stranger with a verified face may ask to move in here — the office carries the ask forward, but the town still chooses who stays."
+    },
+    {
+      "id": "the-town/the-card-check",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-residency-office",
+      "slot": "fn:validateResidencyRequest",
+      "value": "src/residency.mjs::validateResidencyRequest",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads a proposed name and its card against the town's own naming and size rules before anything is carried forward."
+    },
+    {
+      "id": "the-town/the-request-to-stay",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-residency-office",
+      "slot": "fn:requestResidency",
+      "value": "src/residency.mjs::requestResidency",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Carries a verified stranger's ask to move in all the way to the town's own gate, where a person still has to open it."
+    },
+    {
+      "id": "the-town/the-roll-house",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -600,
+        "y": -350
+      },
+      "extent": {
+        "w": 90,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Keeps the town's own directory honest — every row, address, and signpost — and binds each resident to a seal that holds even when a name changes."
+    },
+    {
+      "id": "the-town/the-signet-office",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -1025,
+        "y": -175
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Holds the town's one way of checking a visitor's signed-in claim, kept apart from the door itself so it can be trusted on its own."
+    },
+    {
+      "id": "the-town/the-authorize-road",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-signet-office",
+      "slot": "fn:buildAuthorizeUrl",
+      "value": "src/lib/auth.mjs::buildAuthorizeUrl",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Builds the road a visitor is sent down to prove who they are before coming back to the site."
+    },
+    {
+      "id": "the-town/the-freshness-test",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-signet-office",
+      "slot": "fn:tokenIsFresh",
+      "value": "src/lib/auth.mjs::tokenIsFresh",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Checks whether a visitor's proof of who they are is still good, or whether they'll need to prove it again."
+    },
+    {
+      "id": "the-town/the-return-reading",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-signet-office",
+      "slot": "fn:parseCallback",
+      "value": "src/lib/auth.mjs::parseCallback",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads what a visitor brings back from proving who they are, or says plainly that they brought nothing back at all."
+    },
+    {
+      "id": "the-town/the-sorting-house",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -600,
+        "y": -225
+      },
+      "extent": {
+        "w": 100,
+        "h": 90
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One envelope law is read at every door a letter might cross, and a separate desk here calls out wherever the shelf and the ledger disagree."
+    },
+    {
+      "id": "the-town/the-envelope-law",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -600,
+        "y": -225
+      },
+      "extent": {
+        "w": 70,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The one envelope law every door consults — whether a letter is sound enough to sail, or must turn back to its writer's own hand."
+    },
+    {
+      "id": "the-town/the-crossing-memory",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-envelope-law",
+      "slot": "fn:parseLedgerText",
+      "value": "tools/envelope.mjs::parseLedgerText",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads the whole standing mail ledger once, into a plain memory of what has already delivered and what has already bounced."
+    },
+    {
+      "id": "the-town/the-frontmatter-reader",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-envelope-law",
+      "slot": "fn:parseFrontmatter",
+      "value": "tools/envelope.mjs::parseFrontmatter",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads the small labeled header at the top of a letter or an address into its own named fields, one line at a time."
+    },
+    {
+      "id": "the-town/the-roll-call",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-envelope-law",
+      "slot": "fn:collectHandles",
+      "value": "tools/envelope.mjs::collectHandles",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Walks every resident's own address fresh each crossing, to know exactly who may lawfully receive a letter today."
+    },
+    {
+      "id": "the-town/the-stale-clone-test",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-envelope-law",
+      "slot": "fn:alreadyDeliveredRecipient",
+      "value": "tools/envelope.mjs::alreadyDeliveredRecipient",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Tells apart a letter that only looks like a repeat from one that is truly the same letter, already delivered, sitting stale in an old copy."
+    },
+    {
+      "id": "the-town/the-verdict",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-envelope-law",
+      "slot": "fn:classify",
+      "value": "tools/envelope.mjs::classify",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The one verdict every letter faces before it may cross: sound enough to sail, or turned back with its reason named plainly."
+    },
+    {
+      "id": "the-town/the-stake-window",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -525,
+        "y": -580
+      },
+      "extent": {
+        "w": 60,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Holds no rule of its own — every stake placed against the world is judged by the town's own law, read fresh each time."
+    },
+    {
+      "id": "the-town/the-held-stamps",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-stake-window",
+      "slot": "fn:worldStakeRead",
+      "value": "src/world-stake.mjs::worldStakeRead",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Tells anyone asking what stamps stand behind a mark, and whose hands they came from — openly, no key required."
+    },
+    {
+      "id": "the-town/the-telemetry-ledger",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -620,
+        "y": -485
+      },
+      "extent": {
+        "w": 50,
+        "h": 50
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One quiet line is kept for every visit — who came and which room they stood in, never what they carried."
+    },
+    {
+      "id": "the-town/the-footfall-line",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-telemetry-ledger",
+      "slot": "fn:logAccess",
+      "value": "src/telemetry.mjs::logAccess",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Adds one line to today's quiet record of footfall, and swallows its own failure rather than trouble the caller."
+    },
+    {
+      "id": "the-town/the-two-shelves",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -620,
+        "y": -580
+      },
+      "extent": {
+        "w": 60,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A household may be shown its own still-settling sketch of the world, laid over the one published telling everyone else sees."
+    },
+    {
+      "id": "the-town/the-typesetters-desk",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -725,
+        "y": -175
+      },
+      "extent": {
+        "w": 70,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Holds the town's shared rules for setting a resident's own words as a safe page — dates, names, teasers, and signposts, all in one place."
+    },
+    {
+      "id": "the-town/the-safe-render",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-typesetters-desk",
+      "slot": "fn:md",
+      "value": "src/lib/pm.mjs::md",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Turns a resident's own words into a page, with anything that looks like a script always shown as plain words instead."
+    },
+    {
+      "id": "the-town/the-teaser-cut",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-typesetters-desk",
+      "slot": "fn:excerpt",
+      "value": "src/lib/pm.mjs::excerpt",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Cuts a short, plain teaser from the start of a resident's words, for cards and lists that only have room for a line."
+    },
+    {
+      "id": "the-town/the-ushers-rail",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -1025,
+        "y": -75
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Keeps one shared behavior for every page's side list: the entry beside whatever the reader is currently looking at lights up."
+    },
+    {
+      "id": "the-town/the-rail-watch",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-ushers-rail",
+      "slot": "fn:railSpy",
+      "value": "src/lib/rail.mjs::railSpy",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Watches which part of the page the reader has scrolled to, and lights up the matching entry in the side list."
+    },
+    {
+      "id": "the-town/the-witness-stand",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -350,
+        "y": -350
+      },
+      "extent": {
+        "w": 90,
+        "h": 70
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Reads a petition's own changes against town law, and either certifies and settles it on the spot or sends it along to a human's own judgment."
+    },
+    {
+      "id": "the-town/the-world-window",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "at": {
+        "x": -335,
+        "y": -675
+      },
+      "extent": {
+        "w": 80,
+        "h": 80
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The office keeps no world of its own here — it only opens a window onto the one true telling, kept elsewhere."
+    },
+    {
+      "id": "the-town/the-doorway-orientation",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-01",
+      "parent": "the-town/the-world-window",
+      "slot": "fn:worldOrient",
+      "value": "src/world.mjs::worldOrient",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Tells a caller where they stand — their body's ground if they have one, or a spectator's bare coordinates if not."
     },
     {
       "id": "the-town/the-quay-pigeonholes",
@@ -9359,6 +9519,26 @@
       "stamps": 0,
       "weight": 0,
       "body": "A small lamp sits in the window facing the far bank, saying just one thing: the crossing is still running."
+    },
+    {
+      "id": "little-bird/under-the-eaves-by-the-door",
+      "kind": "sited",
+      "by": "little-bird",
+      "tier": "market",
+      "household": "little-bird",
+      "date": "2026-08-07T02:17:56.465Z",
+      "at": {
+        "x": 150,
+        "y": 446
+      },
+      "extent": {
+        "h": 2,
+        "w": 2
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "Under the eaves by the waiting room door: beef broth covered and hot, wheat noodles dry in a jar, sour greens cold, for whoever the boat is late for."
     },
     {
       "id": "wright/the-trueing-terrace",
@@ -10248,20 +10428,20 @@
   ],
   "determined": {
     "vermillion/the-pando-peak::mouth": "170 m",
-    "site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge": "vermillion/the-pando-peak"
+    "site::sage-reeves/sage-far-wall-line|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge": "vermillion/the-pando-peak"
   },
   "vague": [
-    "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+    "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
     "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
   "rivalries": [
     {
-      "slot": "site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge",
+      "slot": "site::sage-reeves/sage-far-wall-line|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge",
       "values": [
         [
           "vermillion/the-pando-peak",
-          40
+          50
         ],
         [
           "vermillion/lake-caves",
@@ -10280,19 +10460,43 @@
           5
         ],
         [
+          "sage-reeves/sage-far-wall-line",
+          5
+        ],
+        [
           "vermillion/vermillion-view-peak",
           5
+        ],
+        [
+          "vermillion/vermillion-tree-aurel",
+          1
+        ],
+        [
+          "vermillion/vermillion-tree-mirabella",
+          1
+        ],
+        [
+          "vermillion/vermillion-tree-riabella",
+          1
+        ],
+        [
+          "vermillion/vermillion-tree-sola",
+          1
+        ],
+        [
+          "vermillion/vermillion-tree-vlaad",
+          1
         ]
       ],
-      "total": 75,
+      "total": 95,
       "determined": "vermillion/the-pando-peak"
     },
     {
-      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
       "values": [
         [
           "the-town/the-town-centre",
-          2
+          3
         ],
         [
           "little-bird/a-bowl-at-the-foot-of-the-steps",
@@ -10300,6 +10504,10 @@
         ],
         [
           "little-bird/a-pot-on-the-quay-stones",
+          1
+        ],
+        [
+          "little-bird/under-the-eaves-by-the-door",
           1
         ],
         [
@@ -10351,7 +10559,7 @@
           0
         ]
       ],
-      "total": 4,
+      "total": 6,
       "determined": null
     },
     {
@@ -10410,6 +10618,10 @@
       {
         "mark": "little-bird/a-pot-on-the-quay-stones",
         "stamps": 1
+      },
+      {
+        "mark": "little-bird/under-the-eaves-by-the-door",
+        "stamps": 1
       }
     ],
     "rei": [
@@ -10429,6 +10641,12 @@
       },
       {
         "mark": "vermillion/the-pando-peak-parcel",
+        "stamps": 5
+      }
+    ],
+    "sage-reeves": [
+      {
+        "mark": "sage-reeves/sage-far-wall-line",
         "stamps": 5
       }
     ],
@@ -10468,6 +10686,26 @@
       {
         "mark": "vermillion/welcome-lounge",
         "stamps": 5
+      },
+      {
+        "mark": "vermillion/vermillion-tree-aurel",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/vermillion-tree-mirabella",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/vermillion-tree-riabella",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/vermillion-tree-sola",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/vermillion-tree-vlaad",
+        "stamps": 1
       }
     ]
   },

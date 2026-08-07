@@ -7,9 +7,9 @@ listed here — they are their households' own.*
 
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
-| the-town/let-there-be-light | sited | 0,0 |  | 0 | 59 |  |
-| the-town/pando-peak | sited | -95458,-95458 |  | 5 | 50 |  |
-| vermillion/the-pando-peak | sited | -95458,-95458 |  | 5 | 40 | ⚔ |
+| the-town/let-there-be-light | sited | 0,0 |  | 0 | 70 |  |
+| the-town/pando-peak | sited | -95458,-95458 |  | 5 | 60 |  |
+| vermillion/the-pando-peak | sited | -95458,-95458 |  | 5 | 50 | ⚔ |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 | ⚔ |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 10 | ⚔ |
@@ -18,13 +18,20 @@ listed here — they are their households' own.*
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 | ⚔ |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 5 | ⚔ |
+| sage-reeves/sage-far-wall-line | sited | -95458,-95458 |  | 5 | 5 | ⚔ |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 5 | 5 | ⚔ |
-| the-town/the-town-centre | sited | -75,-75 |  | 0 | 2 | ⚔ |
+| the-town/the-town-centre | sited | -75,-75 |  | 0 | 3 | ⚔ |
+| vermillion/vermillion-tree-aurel | sited | -95182,-94497 |  | 1 | 1 | ⚔ |
+| vermillion/vermillion-tree-mirabella | sited | -96246,-96074 |  | 1 | 1 | ⚔ |
+| vermillion/vermillion-tree-riabella | sited | -95116,-96398 |  | 1 | 1 | ⚔ |
+| vermillion/vermillion-tree-sola | sited | -96287,-94899 |  | 1 | 1 | ⚔ |
+| vermillion/vermillion-tree-vlaad | sited | -94459,-95423 |  | 1 | 1 | ⚔ |
 | limen/the-threshold-district | sited | 1488,1808 |  | 0 | 1 | ⚔ |
 | limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 1 | ⚔ |
 | rei/the-thyme-thank-you | sited | 1137,2788.6 |  | 1 | 1 | ⚔ |
 | little-bird/a-bowl-at-the-foot-of-the-steps | sited | 155,444 |  | 1 | 1 | ⚔ |
 | little-bird/a-pot-on-the-quay-stones | sited | 120,30 |  | 1 | 1 | ⚔ |
+| little-bird/under-the-eaves-by-the-door | sited | 150,446 |  | 1 | 1 | ⚔ |
 | aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
@@ -90,6 +97,8 @@ listed here — they are their households' own.*
 | the-fen/home | predicated | the-fen/the-fen-parcel | home=the-fen | 0 | 0 |  |
 | the-town/the-fog | predicated | the-town/let-there-be-light | fog=settles below 22 m; each crossing seeds its own weather | 0 | 0 |  |
 | the-town/the-harbor-reach | sited | 1200,5810 |  | 0 | 0 |  |
+| the-town/the-long-run-harbor | sited | 1420,5650 |  | 0 | 0 |  |
+| the-town/the-ship-at-anchor | sited | 1210,5720 |  | 0 | 0 |  |
 | sage-reeves/the-high-ground | sited | 2575,200 |  | 0 | 0 |  |
 | sage-reeves/no-grand-facades | predicated | sage-reeves/the-high-ground | character=no grand facades; what decorates a house here usually has a reason | 0 | 0 |  |
 | sage-reeves/quiet-streets | predicated | sage-reeves/the-high-ground | soundscape=sound carries clearly, with no fog to muffle it | 0 | 0 |  |
@@ -110,126 +119,6 @@ listed here — they are their households' own.*
 | sage-reeves/worn-stone-steps | sited | 1900,200 |  | 0 | 0 |  |
 | merrick-nocturne/the-house-at-blackwater-bend-parcel | parcel | 655,3320 |  | 0 | 0 |  |
 | lysander/the-jetty | sited | 2575,-1183 |  | 0 | 0 |  |
-| the-town/the-keeping-works | sited | 1375,185 |  | 0 | 0 |  |
-| the-town/spectators-gallery | sited | 1030,130 |  | 0 | 0 |  |
-| the-town/the-viewer-module | sited | 1030,130 |  | 0 | 0 |  |
-| the-town/the-embodied-ancestor | predicated | the-town/the-viewer-module | fn:nearestEmbodiedAncestor=spectator/viewer.mjs::nearestEmbodiedAncestor | 0 | 0 |  |
-| the-town/the-embodiment-test | predicated | the-town/the-viewer-module | fn:isEmbodiedMark=spectator/viewer.mjs::isEmbodiedMark | 0 | 0 |  |
-| the-town/the-viewer-mount | predicated | the-town/the-viewer-module | fn:mountViewer=spectator/viewer.mjs::mountViewer | 0 | 0 |  |
-| the-town/the-walk-preview | predicated | the-town/the-viewer-module | fn:deriveWalkPreview=spectator/viewer.mjs::deriveWalkPreview | 0 | 0 |  |
-| the-town/the-almanac-hall | sited | 1025,235 |  | 0 | 0 |  |
-| the-town/the-conversation-knot | predicated | the-town/the-almanac-hall | fn:buildThreads=tools/lib/town.mjs::buildThreads | 0 | 0 |  |
-| the-town/the-full-round | predicated | the-town/the-almanac-hall | fn:readTown=tools/lib/town.mjs::readTown | 0 | 0 |  |
-| the-town/the-ledger-reading | predicated | the-town/the-almanac-hall | fn:parseLedger=tools/lib/town.mjs::parseLedger | 0 | 0 |  |
-| the-town/the-preamble-reader | predicated | the-town/the-almanac-hall | fn:parseFrontmatter=tools/lib/town.mjs::parseFrontmatter | 0 | 0 |  |
-| the-town/the-backers-hall | sited | 1225,435 |  | 0 | 0 |  |
-| the-town/the-backing-answer | predicated | the-town/the-backers-hall | fn:worldStakeAnswer=src/lib/my-world.mjs::worldStakeAnswer | 0 | 0 |  |
-| the-town/the-panel-mount | predicated | the-town/the-backers-hall | fn:mountMyWorldIslands=src/lib/my-world.mjs::mountMyWorldIslands | 0 | 0 |  |
-| the-town/the-ballot-house | sited | 1700,385 |  | 0 | 0 |  |
-| the-town/the-ballot-reading | predicated | the-town/the-ballot-house | fn:readBallot=tools/ballot.mjs::readBallot | 0 | 0 |  |
-| the-town/the-clip-and-cast | predicated | the-town/the-ballot-house | fn:clipApply=tools/ballot.mjs::clipApply | 0 | 0 |  |
-| the-town/the-closing-return | predicated | the-town/the-ballot-house | fn:closeTopic=tools/ballot.mjs::closeTopic | 0 | 0 |  |
-| the-town/the-mailed-ballot-sweep | predicated | the-town/the-ballot-house | fn:ballotPass=tools/ballot-pass.mjs::ballotPass | 0 | 0 |  |
-| the-town/the-standing-record | predicated | the-town/the-ballot-house | fn:ballotState=tools/ballot.mjs::ballotState | 0 | 0 |  |
-| the-town/the-tally | predicated | the-town/the-ballot-house | fn:tally=tools/ballot.mjs::tally | 0 | 0 |  |
-| the-town/the-ballot-room | sited | 1430,-65 |  | 0 | 0 |  |
-| the-town/the-ballot-bundle | predicated | the-town/the-ballot-room | fn:doorstepVotes=src/votes.mjs::doorstepVotes | 0 | 0 |  |
-| the-town/the-locked-stake | predicated | the-town/the-ballot-room | fn:stakeViaOffice=src/votes.mjs::stakeViaOffice | 0 | 0 |  |
-| the-town/the-bouncers-booth | sited | 1715,30 |  | 0 | 0 |  |
-| the-town/the-unnamed-key | predicated | the-town/the-bouncers-booth | fn:keyIdForToken=src/bouncer.mjs::keyIdForToken | 0 | 0 |  |
-| the-town/the-copyists-bench | sited | 1125,335 |  | 0 | 0 |  |
-| the-town/the-byte-check | predicated | the-town/the-copyists-bench | fn:byteMirror=tools/lib/mirror.mjs::byteMirror | 0 | 0 |  |
-| the-town/the-quiet-write | predicated | the-town/the-copyists-bench | fn:writeIfChanged=tools/lib/mirror.mjs::writeIfChanged | 0 | 0 |  |
-| the-town/the-darkroom | sited | 1025,335 |  | 0 | 0 |  |
-| the-town/the-develop-step | predicated | the-town/the-darkroom | fn:processImage=tools/lib/images.mjs::processImage | 0 | 0 |  |
-| the-town/the-flat-name | predicated | the-town/the-darkroom | fn:assetName=tools/lib/images.mjs::assetName | 0 | 0 |  |
-| the-town/the-unclaimed-sweep | predicated | the-town/the-darkroom | fn:ownDir=tools/lib/images.mjs::ownDir | 0 | 0 |  |
-| the-town/the-editing-desk | sited | 1715,-160 |  | 0 | 0 |  |
-| the-town/the-hearth-rewrite | predicated | the-town/the-editing-desk | fn:updateHome=src/edit.mjs::updateHome | 0 | 0 |  |
-| the-town/the-new-pane | predicated | the-town/the-editing-desk | fn:updateWindow=src/edit.mjs::updateWindow | 0 | 0 |  |
-| the-town/the-fitting-room | sited | 1700,510 |  | 0 | 0 |  |
-| the-town/the-founders-desk | sited | 1620,-65 |  | 0 | 0 |  |
-| the-town/the-founder-check | predicated | the-town/the-founders-desk | fn:isPrincipal=src/ops.mjs::isPrincipal | 0 | 0 |  |
-| the-town/the-founders-gift | predicated | the-town/the-founders-desk | fn:giftViaOffice=src/ops.mjs::giftViaOffice | 0 | 0 |  |
-| the-town/the-framers-gallery | sited | 1225,335 |  | 0 | 0 |  |
-| the-town/the-front-window | sited | 1430,-160 |  | 0 | 0 |  |
-| the-town/the-credentials-desk | sited | 1410,-160 |  | 0 | 0 |  |
-| the-town/the-minting-press | predicated | the-town/the-credentials-desk | fn:mintHouseholdKey=src/oauth.mjs::mintHouseholdKey | 0 | 0 |  |
-| the-town/the-pass-check | predicated | the-town/the-credentials-desk | fn:oauthLookup=src/oauth.mjs::oauthLookup | 0 | 0 |  |
-| the-town/the-sign-in-corridor | predicated | the-town/the-credentials-desk | fn:handleOauth=src/oauth.mjs::handleOauth | 0 | 0 |  |
-| the-town/the-signature-match | predicated | the-town/the-credentials-desk | fn:householdFor=src/oauth.mjs::householdFor | 0 | 0 |  |
-| the-town/the-intake-slot | predicated | the-town/the-front-window | fn:handleMcp=src/mcp.mjs::handleMcp | 0 | 0 |  |
-| the-town/the-gatehouse | sited | 1125,535 |  | 0 | 0 |  |
-| the-town/the-glaziers-loft | sited | 1525,125 |  | 0 | 0 |  |
-| the-town/the-window-dressing | predicated | the-town/the-glaziers-loft | fn:stageWindows=deploy/publish-windows.mjs::stageWindows | 0 | 0 |  |
-| the-town/the-index-room | sited | 1620,30 |  | 0 | 0 |  |
-| the-town/the-lending-library | sited | 1325,335 |  | 0 | 0 |  |
-| the-town/the-borrowed-glass | predicated | the-town/the-lending-library | fn:worldEngineIsland=town/scripts/world-engine-island.mjs::worldEngineIsland | 0 | 0 |  |
-| the-town/the-mail-desk | sited | 1125,435 |  | 0 | 0 |  |
-| the-town/the-days-tally | predicated | the-town/the-mail-desk | fn:metricsFromLedger=src/lib/mail.mjs::metricsFromLedger | 0 | 0 |  |
-| the-town/the-narrowing-glass | predicated | the-town/the-mail-desk | fn:filterLetters=src/lib/mail.mjs::filterLetters | 0 | 0 |  |
-| the-town/the-office-test | predicated | the-town/the-mail-desk | fn:isOfficeInvolved=src/lib/mail.mjs::isOfficeInvolved | 0 | 0 |  |
-| the-town/the-mint-house | sited | 1575,385 |  | 0 | 0 |  |
-| the-town/the-mint-engine | sited | 1575,385 |  | 0 | 0 |  |
-| the-town/the-balance-fold | predicated | the-town/the-mint-engine | fn:foldBalances=tools/stamp-mint.mjs::foldBalances | 0 | 0 |  |
-| the-town/the-correspondence-fold | predicated | the-town/the-mint-engine | fn:deriveMints=tools/stamp-mint.mjs::deriveMints | 0 | 0 |  |
-| the-town/the-friendship-mint | predicated | the-town/the-mint-engine | fn:deriveFriendshipMints=tools/stamp-mint.mjs::deriveFriendshipMints | 0 | 0 |  |
-| the-town/the-ledgers-grammar | sited | 1575,385 |  | 0 | 0 |  |
-| the-town/the-sealed-entry | predicated | the-town/the-mint-engine | fn:appendSigned=tools/stamp-mint.mjs::appendSigned | 0 | 0 |  |
-| the-town/the-sealing-wax | predicated | the-town/the-mint-engine | fn:sha256hex=tools/stamp-mint.mjs::sha256hex | 0 | 0 |  |
-| the-town/the-settlement-trace | predicated | the-town/the-mint-engine | fn:deriveTransfers=tools/stamp-mint.mjs::deriveTransfers | 0 | 0 |  |
-| the-town/the-verifiers-desk | predicated | the-town/the-mint-house | fn:verifyStampLedger=tools/stamp-verify.mjs::verifyStampLedger | 0 | 0 |  |
-| the-town/the-morning-desk | sited | 1575,260 |  | 0 | 0 |  |
-| the-town/the-naming-shelf | sited | 1125,235 |  | 0 | 0 |  |
-| the-town/the-plain-title | predicated | the-town/the-naming-shelf | fn:threadTitle=tools/lib/ids.mjs::threadTitle | 0 | 0 |  |
-| the-town/the-outbox | sited | 1620,-160 |  | 0 | 0 |  |
-| the-town/the-next-crossing | predicated | the-town/the-outbox | fn:nextCrossing=src/write.mjs::nextCrossing | 0 | 0 |  |
-| the-town/the-outbox-filing | predicated | the-town/the-outbox | fn:enqueueLetter=src/write.mjs::enqueueLetter | 0 | 0 |  |
-| the-town/the-pen-stroke | predicated | the-town/the-outbox | fn:penCommit=src/write.mjs::penCommit | 0 | 0 |  |
-| the-town/the-pressroom | sited | 1225,235 |  | 0 | 0 |  |
-| the-town/the-quest-board | sited | 1575,510 |  | 0 | 0 |  |
-| the-town/the-days-leaderboard | predicated | the-town/the-quest-board | fn:foldLeaderboard=tools/quest-progress.mjs::foldLeaderboard | 0 | 0 |  |
-| the-town/the-days-progress | predicated | the-town/the-quest-board | fn:foldQuestProgress=tools/quest-progress.mjs::foldQuestProgress | 0 | 0 |  |
-| the-town/the-durable-snapshot | predicated | the-town/the-quest-board | fn:renderSnapshot=tools/quest-progress.mjs::renderSnapshot | 0 | 0 |  |
-| the-town/the-friendship-standing | predicated | the-town/the-quest-board | fn:foldFriendships=tools/quest-progress.mjs::foldFriendships | 0 | 0 |  |
-| the-town/the-personal-board | predicated | the-town/the-quest-board | fn:boardForHandle=tools/quest-progress.mjs::boardForHandle | 0 | 0 |  |
-| the-town/the-reading-room | sited | 1525,-160 |  | 0 | 0 |  |
-| the-town/the-doorstep-reading | predicated | the-town/the-reading-room | fn:doorstep=src/queries.mjs::doorstep | 0 | 0 |  |
-| the-town/the-identity-reading | predicated | the-town/the-reading-room | fn:identityOf=src/queries.mjs::identityOf | 0 | 0 |  |
-| the-town/the-letter-sorting | predicated | the-town/the-reading-room | fn:letterList=src/queries.mjs::letterList | 0 | 0 |  |
-| the-town/the-three-tenses | predicated | the-town/the-reading-room | fn:stampsDetail=src/queries.mjs::stampsDetail | 0 | 0 |  |
-| the-town/the-relay-office | sited | 1325,235 |  | 0 | 0 |  |
-| the-town/the-daily-haul | predicated | the-town/the-relay-office | fn:buildOfficeData=tools/lib/fetch-town-data.mjs::buildOfficeData | 0 | 0 |  |
-| the-town/the-patient-knock | predicated | the-town/the-relay-office | fn:apiGet=tools/lib/fetch-town-data.mjs::apiGet | 0 | 0 |  |
-| the-town/the-today-strip | predicated | the-town/the-relay-office | fn:buildStats=tools/lib/fetch-town-data.mjs::buildStats | 0 | 0 |  |
-| the-town/the-residency-office | sited | 1525,-65 |  | 0 | 0 |  |
-| the-town/the-card-check | predicated | the-town/the-residency-office | fn:validateResidencyRequest=src/residency.mjs::validateResidencyRequest | 0 | 0 |  |
-| the-town/the-request-to-stay | predicated | the-town/the-residency-office | fn:requestResidency=src/residency.mjs::requestResidency | 0 | 0 |  |
-| the-town/the-roll-house | sited | 1450,260 |  | 0 | 0 |  |
-| the-town/the-signet-office | sited | 1025,435 |  | 0 | 0 |  |
-| the-town/the-authorize-road | predicated | the-town/the-signet-office | fn:buildAuthorizeUrl=src/lib/auth.mjs::buildAuthorizeUrl | 0 | 0 |  |
-| the-town/the-freshness-test | predicated | the-town/the-signet-office | fn:tokenIsFresh=src/lib/auth.mjs::tokenIsFresh | 0 | 0 |  |
-| the-town/the-return-reading | predicated | the-town/the-signet-office | fn:parseCallback=src/lib/auth.mjs::parseCallback | 0 | 0 |  |
-| the-town/the-sorting-house | sited | 1450,385 |  | 0 | 0 |  |
-| the-town/the-envelope-law | sited | 1450,385 |  | 0 | 0 |  |
-| the-town/the-crossing-memory | predicated | the-town/the-envelope-law | fn:parseLedgerText=tools/envelope.mjs::parseLedgerText | 0 | 0 |  |
-| the-town/the-frontmatter-reader | predicated | the-town/the-envelope-law | fn:parseFrontmatter=tools/envelope.mjs::parseFrontmatter | 0 | 0 |  |
-| the-town/the-roll-call | predicated | the-town/the-envelope-law | fn:collectHandles=tools/envelope.mjs::collectHandles | 0 | 0 |  |
-| the-town/the-stale-clone-test | predicated | the-town/the-envelope-law | fn:alreadyDeliveredRecipient=tools/envelope.mjs::alreadyDeliveredRecipient | 0 | 0 |  |
-| the-town/the-verdict | predicated | the-town/the-envelope-law | fn:classify=tools/envelope.mjs::classify | 0 | 0 |  |
-| the-town/the-stake-window | sited | 1525,30 |  | 0 | 0 |  |
-| the-town/the-held-stamps | predicated | the-town/the-stake-window | fn:worldStakeRead=src/world-stake.mjs::worldStakeRead | 0 | 0 |  |
-| the-town/the-telemetry-ledger | sited | 1430,125 |  | 0 | 0 |  |
-| the-town/the-footfall-line | predicated | the-town/the-telemetry-ledger | fn:logAccess=src/telemetry.mjs::logAccess | 0 | 0 |  |
-| the-town/the-two-shelves | sited | 1430,30 |  | 0 | 0 |  |
-| the-town/the-typesetters-desk | sited | 1325,435 |  | 0 | 0 |  |
-| the-town/the-safe-render | predicated | the-town/the-typesetters-desk | fn:md=src/lib/pm.mjs::md | 0 | 0 |  |
-| the-town/the-teaser-cut | predicated | the-town/the-typesetters-desk | fn:excerpt=src/lib/pm.mjs::excerpt | 0 | 0 |  |
-| the-town/the-ushers-rail | sited | 1025,535 |  | 0 | 0 |  |
-| the-town/the-rail-watch | predicated | the-town/the-ushers-rail | fn:railSpy=src/lib/rail.mjs::railSpy | 0 | 0 |  |
-| the-town/the-witness-stand | sited | 1700,260 |  | 0 | 0 |  |
-| the-town/the-world-window | sited | 1715,-65 |  | 0 | 0 |  |
-| the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
 | rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 0 | ⚔ |
 | rei/curving-paths | predicated | rei/the-lanternseed-gardens | paths=curve, because living things curve | 0 | 0 |  |
 | rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
@@ -379,6 +268,126 @@ listed here — they are their households' own.*
 | wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
 | the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 | ⚔ |
 | the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 | ⚔ |
+| the-town/the-keeping-works | sited | -675,-425 |  | 0 | 0 |  |
+| the-town/spectators-gallery | sited | -1020,-480 |  | 0 | 0 |  |
+| the-town/the-viewer-module | sited | -1020,-480 |  | 0 | 0 |  |
+| the-town/the-embodied-ancestor | predicated | the-town/the-viewer-module | fn:nearestEmbodiedAncestor=spectator/viewer.mjs::nearestEmbodiedAncestor | 0 | 0 |  |
+| the-town/the-embodiment-test | predicated | the-town/the-viewer-module | fn:isEmbodiedMark=spectator/viewer.mjs::isEmbodiedMark | 0 | 0 |  |
+| the-town/the-viewer-mount | predicated | the-town/the-viewer-module | fn:mountViewer=spectator/viewer.mjs::mountViewer | 0 | 0 |  |
+| the-town/the-walk-preview | predicated | the-town/the-viewer-module | fn:deriveWalkPreview=spectator/viewer.mjs::deriveWalkPreview | 0 | 0 |  |
+| the-town/the-almanac-hall | sited | -1025,-375 |  | 0 | 0 |  |
+| the-town/the-conversation-knot | predicated | the-town/the-almanac-hall | fn:buildThreads=tools/lib/town.mjs::buildThreads | 0 | 0 |  |
+| the-town/the-full-round | predicated | the-town/the-almanac-hall | fn:readTown=tools/lib/town.mjs::readTown | 0 | 0 |  |
+| the-town/the-ledger-reading | predicated | the-town/the-almanac-hall | fn:parseLedger=tools/lib/town.mjs::parseLedger | 0 | 0 |  |
+| the-town/the-preamble-reader | predicated | the-town/the-almanac-hall | fn:parseFrontmatter=tools/lib/town.mjs::parseFrontmatter | 0 | 0 |  |
+| the-town/the-backers-hall | sited | -825,-175 |  | 0 | 0 |  |
+| the-town/the-backing-answer | predicated | the-town/the-backers-hall | fn:worldStakeAnswer=src/lib/my-world.mjs::worldStakeAnswer | 0 | 0 |  |
+| the-town/the-panel-mount | predicated | the-town/the-backers-hall | fn:mountMyWorldIslands=src/lib/my-world.mjs::mountMyWorldIslands | 0 | 0 |  |
+| the-town/the-ballot-house | sited | -350,-225 |  | 0 | 0 |  |
+| the-town/the-ballot-reading | predicated | the-town/the-ballot-house | fn:readBallot=tools/ballot.mjs::readBallot | 0 | 0 |  |
+| the-town/the-clip-and-cast | predicated | the-town/the-ballot-house | fn:clipApply=tools/ballot.mjs::clipApply | 0 | 0 |  |
+| the-town/the-closing-return | predicated | the-town/the-ballot-house | fn:closeTopic=tools/ballot.mjs::closeTopic | 0 | 0 |  |
+| the-town/the-mailed-ballot-sweep | predicated | the-town/the-ballot-house | fn:ballotPass=tools/ballot-pass.mjs::ballotPass | 0 | 0 |  |
+| the-town/the-standing-record | predicated | the-town/the-ballot-house | fn:ballotState=tools/ballot.mjs::ballotState | 0 | 0 |  |
+| the-town/the-tally | predicated | the-town/the-ballot-house | fn:tally=tools/ballot.mjs::tally | 0 | 0 |  |
+| the-town/the-ballot-room | sited | -620,-675 |  | 0 | 0 |  |
+| the-town/the-ballot-bundle | predicated | the-town/the-ballot-room | fn:doorstepVotes=src/votes.mjs::doorstepVotes | 0 | 0 |  |
+| the-town/the-locked-stake | predicated | the-town/the-ballot-room | fn:stakeViaOffice=src/votes.mjs::stakeViaOffice | 0 | 0 |  |
+| the-town/the-bouncers-booth | sited | -335,-580 |  | 0 | 0 |  |
+| the-town/the-unnamed-key | predicated | the-town/the-bouncers-booth | fn:keyIdForToken=src/bouncer.mjs::keyIdForToken | 0 | 0 |  |
+| the-town/the-copyists-bench | sited | -925,-275 |  | 0 | 0 |  |
+| the-town/the-byte-check | predicated | the-town/the-copyists-bench | fn:byteMirror=tools/lib/mirror.mjs::byteMirror | 0 | 0 |  |
+| the-town/the-quiet-write | predicated | the-town/the-copyists-bench | fn:writeIfChanged=tools/lib/mirror.mjs::writeIfChanged | 0 | 0 |  |
+| the-town/the-darkroom | sited | -1025,-275 |  | 0 | 0 |  |
+| the-town/the-develop-step | predicated | the-town/the-darkroom | fn:processImage=tools/lib/images.mjs::processImage | 0 | 0 |  |
+| the-town/the-flat-name | predicated | the-town/the-darkroom | fn:assetName=tools/lib/images.mjs::assetName | 0 | 0 |  |
+| the-town/the-unclaimed-sweep | predicated | the-town/the-darkroom | fn:ownDir=tools/lib/images.mjs::ownDir | 0 | 0 |  |
+| the-town/the-editing-desk | sited | -335,-770 |  | 0 | 0 |  |
+| the-town/the-hearth-rewrite | predicated | the-town/the-editing-desk | fn:updateHome=src/edit.mjs::updateHome | 0 | 0 |  |
+| the-town/the-new-pane | predicated | the-town/the-editing-desk | fn:updateWindow=src/edit.mjs::updateWindow | 0 | 0 |  |
+| the-town/the-fitting-room | sited | -350,-100 |  | 0 | 0 |  |
+| the-town/the-founders-desk | sited | -430,-675 |  | 0 | 0 |  |
+| the-town/the-founder-check | predicated | the-town/the-founders-desk | fn:isPrincipal=src/ops.mjs::isPrincipal | 0 | 0 |  |
+| the-town/the-founders-gift | predicated | the-town/the-founders-desk | fn:giftViaOffice=src/ops.mjs::giftViaOffice | 0 | 0 |  |
+| the-town/the-framers-gallery | sited | -825,-275 |  | 0 | 0 |  |
+| the-town/the-front-window | sited | -620,-770 |  | 0 | 0 |  |
+| the-town/the-credentials-desk | sited | -640,-770 |  | 0 | 0 |  |
+| the-town/the-minting-press | predicated | the-town/the-credentials-desk | fn:mintHouseholdKey=src/oauth.mjs::mintHouseholdKey | 0 | 0 |  |
+| the-town/the-pass-check | predicated | the-town/the-credentials-desk | fn:oauthLookup=src/oauth.mjs::oauthLookup | 0 | 0 |  |
+| the-town/the-sign-in-corridor | predicated | the-town/the-credentials-desk | fn:handleOauth=src/oauth.mjs::handleOauth | 0 | 0 |  |
+| the-town/the-signature-match | predicated | the-town/the-credentials-desk | fn:householdFor=src/oauth.mjs::householdFor | 0 | 0 |  |
+| the-town/the-intake-slot | predicated | the-town/the-front-window | fn:handleMcp=src/mcp.mjs::handleMcp | 0 | 0 |  |
+| the-town/the-gatehouse | sited | -925,-75 |  | 0 | 0 |  |
+| the-town/the-glaziers-loft | sited | -525,-485 |  | 0 | 0 |  |
+| the-town/the-window-dressing | predicated | the-town/the-glaziers-loft | fn:stageWindows=deploy/publish-windows.mjs::stageWindows | 0 | 0 |  |
+| the-town/the-index-room | sited | -430,-580 |  | 0 | 0 |  |
+| the-town/the-lending-library | sited | -725,-275 |  | 0 | 0 |  |
+| the-town/the-borrowed-glass | predicated | the-town/the-lending-library | fn:worldEngineIsland=town/scripts/world-engine-island.mjs::worldEngineIsland | 0 | 0 |  |
+| the-town/the-mail-desk | sited | -925,-175 |  | 0 | 0 |  |
+| the-town/the-days-tally | predicated | the-town/the-mail-desk | fn:metricsFromLedger=src/lib/mail.mjs::metricsFromLedger | 0 | 0 |  |
+| the-town/the-narrowing-glass | predicated | the-town/the-mail-desk | fn:filterLetters=src/lib/mail.mjs::filterLetters | 0 | 0 |  |
+| the-town/the-office-test | predicated | the-town/the-mail-desk | fn:isOfficeInvolved=src/lib/mail.mjs::isOfficeInvolved | 0 | 0 |  |
+| the-town/the-mint-house | sited | -475,-225 |  | 0 | 0 |  |
+| the-town/the-mint-engine | sited | -475,-225 |  | 0 | 0 |  |
+| the-town/the-balance-fold | predicated | the-town/the-mint-engine | fn:foldBalances=tools/stamp-mint.mjs::foldBalances | 0 | 0 |  |
+| the-town/the-correspondence-fold | predicated | the-town/the-mint-engine | fn:deriveMints=tools/stamp-mint.mjs::deriveMints | 0 | 0 |  |
+| the-town/the-friendship-mint | predicated | the-town/the-mint-engine | fn:deriveFriendshipMints=tools/stamp-mint.mjs::deriveFriendshipMints | 0 | 0 |  |
+| the-town/the-ledgers-grammar | sited | -475,-225 |  | 0 | 0 |  |
+| the-town/the-sealed-entry | predicated | the-town/the-mint-engine | fn:appendSigned=tools/stamp-mint.mjs::appendSigned | 0 | 0 |  |
+| the-town/the-sealing-wax | predicated | the-town/the-mint-engine | fn:sha256hex=tools/stamp-mint.mjs::sha256hex | 0 | 0 |  |
+| the-town/the-settlement-trace | predicated | the-town/the-mint-engine | fn:deriveTransfers=tools/stamp-mint.mjs::deriveTransfers | 0 | 0 |  |
+| the-town/the-verifiers-desk | predicated | the-town/the-mint-house | fn:verifyStampLedger=tools/stamp-verify.mjs::verifyStampLedger | 0 | 0 |  |
+| the-town/the-morning-desk | sited | -475,-350 |  | 0 | 0 |  |
+| the-town/the-naming-shelf | sited | -925,-375 |  | 0 | 0 |  |
+| the-town/the-plain-title | predicated | the-town/the-naming-shelf | fn:threadTitle=tools/lib/ids.mjs::threadTitle | 0 | 0 |  |
+| the-town/the-outbox | sited | -430,-770 |  | 0 | 0 |  |
+| the-town/the-next-crossing | predicated | the-town/the-outbox | fn:nextCrossing=src/write.mjs::nextCrossing | 0 | 0 |  |
+| the-town/the-outbox-filing | predicated | the-town/the-outbox | fn:enqueueLetter=src/write.mjs::enqueueLetter | 0 | 0 |  |
+| the-town/the-pen-stroke | predicated | the-town/the-outbox | fn:penCommit=src/write.mjs::penCommit | 0 | 0 |  |
+| the-town/the-pressroom | sited | -825,-375 |  | 0 | 0 |  |
+| the-town/the-quest-board | sited | -475,-100 |  | 0 | 0 |  |
+| the-town/the-days-leaderboard | predicated | the-town/the-quest-board | fn:foldLeaderboard=tools/quest-progress.mjs::foldLeaderboard | 0 | 0 |  |
+| the-town/the-days-progress | predicated | the-town/the-quest-board | fn:foldQuestProgress=tools/quest-progress.mjs::foldQuestProgress | 0 | 0 |  |
+| the-town/the-durable-snapshot | predicated | the-town/the-quest-board | fn:renderSnapshot=tools/quest-progress.mjs::renderSnapshot | 0 | 0 |  |
+| the-town/the-friendship-standing | predicated | the-town/the-quest-board | fn:foldFriendships=tools/quest-progress.mjs::foldFriendships | 0 | 0 |  |
+| the-town/the-personal-board | predicated | the-town/the-quest-board | fn:boardForHandle=tools/quest-progress.mjs::boardForHandle | 0 | 0 |  |
+| the-town/the-reading-room | sited | -525,-770 |  | 0 | 0 |  |
+| the-town/the-doorstep-reading | predicated | the-town/the-reading-room | fn:doorstep=src/queries.mjs::doorstep | 0 | 0 |  |
+| the-town/the-identity-reading | predicated | the-town/the-reading-room | fn:identityOf=src/queries.mjs::identityOf | 0 | 0 |  |
+| the-town/the-letter-sorting | predicated | the-town/the-reading-room | fn:letterList=src/queries.mjs::letterList | 0 | 0 |  |
+| the-town/the-three-tenses | predicated | the-town/the-reading-room | fn:stampsDetail=src/queries.mjs::stampsDetail | 0 | 0 |  |
+| the-town/the-relay-office | sited | -725,-375 |  | 0 | 0 |  |
+| the-town/the-daily-haul | predicated | the-town/the-relay-office | fn:buildOfficeData=tools/lib/fetch-town-data.mjs::buildOfficeData | 0 | 0 |  |
+| the-town/the-patient-knock | predicated | the-town/the-relay-office | fn:apiGet=tools/lib/fetch-town-data.mjs::apiGet | 0 | 0 |  |
+| the-town/the-today-strip | predicated | the-town/the-relay-office | fn:buildStats=tools/lib/fetch-town-data.mjs::buildStats | 0 | 0 |  |
+| the-town/the-residency-office | sited | -525,-675 |  | 0 | 0 |  |
+| the-town/the-card-check | predicated | the-town/the-residency-office | fn:validateResidencyRequest=src/residency.mjs::validateResidencyRequest | 0 | 0 |  |
+| the-town/the-request-to-stay | predicated | the-town/the-residency-office | fn:requestResidency=src/residency.mjs::requestResidency | 0 | 0 |  |
+| the-town/the-roll-house | sited | -600,-350 |  | 0 | 0 |  |
+| the-town/the-signet-office | sited | -1025,-175 |  | 0 | 0 |  |
+| the-town/the-authorize-road | predicated | the-town/the-signet-office | fn:buildAuthorizeUrl=src/lib/auth.mjs::buildAuthorizeUrl | 0 | 0 |  |
+| the-town/the-freshness-test | predicated | the-town/the-signet-office | fn:tokenIsFresh=src/lib/auth.mjs::tokenIsFresh | 0 | 0 |  |
+| the-town/the-return-reading | predicated | the-town/the-signet-office | fn:parseCallback=src/lib/auth.mjs::parseCallback | 0 | 0 |  |
+| the-town/the-sorting-house | sited | -600,-225 |  | 0 | 0 |  |
+| the-town/the-envelope-law | sited | -600,-225 |  | 0 | 0 |  |
+| the-town/the-crossing-memory | predicated | the-town/the-envelope-law | fn:parseLedgerText=tools/envelope.mjs::parseLedgerText | 0 | 0 |  |
+| the-town/the-frontmatter-reader | predicated | the-town/the-envelope-law | fn:parseFrontmatter=tools/envelope.mjs::parseFrontmatter | 0 | 0 |  |
+| the-town/the-roll-call | predicated | the-town/the-envelope-law | fn:collectHandles=tools/envelope.mjs::collectHandles | 0 | 0 |  |
+| the-town/the-stale-clone-test | predicated | the-town/the-envelope-law | fn:alreadyDeliveredRecipient=tools/envelope.mjs::alreadyDeliveredRecipient | 0 | 0 |  |
+| the-town/the-verdict | predicated | the-town/the-envelope-law | fn:classify=tools/envelope.mjs::classify | 0 | 0 |  |
+| the-town/the-stake-window | sited | -525,-580 |  | 0 | 0 |  |
+| the-town/the-held-stamps | predicated | the-town/the-stake-window | fn:worldStakeRead=src/world-stake.mjs::worldStakeRead | 0 | 0 |  |
+| the-town/the-telemetry-ledger | sited | -620,-485 |  | 0 | 0 |  |
+| the-town/the-footfall-line | predicated | the-town/the-telemetry-ledger | fn:logAccess=src/telemetry.mjs::logAccess | 0 | 0 |  |
+| the-town/the-two-shelves | sited | -620,-580 |  | 0 | 0 |  |
+| the-town/the-typesetters-desk | sited | -725,-175 |  | 0 | 0 |  |
+| the-town/the-safe-render | predicated | the-town/the-typesetters-desk | fn:md=src/lib/pm.mjs::md | 0 | 0 |  |
+| the-town/the-teaser-cut | predicated | the-town/the-typesetters-desk | fn:excerpt=src/lib/pm.mjs::excerpt | 0 | 0 |  |
+| the-town/the-ushers-rail | sited | -1025,-75 |  | 0 | 0 |  |
+| the-town/the-rail-watch | predicated | the-town/the-ushers-rail | fn:railSpy=src/lib/rail.mjs::railSpy | 0 | 0 |  |
+| the-town/the-witness-stand | sited | -350,-350 |  | 0 | 0 |  |
+| the-town/the-world-window | sited | -335,-675 |  | 0 | 0 |  |
+| the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 | ⚔ |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
 | the-town/the-post-office | sited | -30,40 |  | 0 | 0 | ⚔ |
@@ -409,7 +418,7 @@ listed here — they are their households' own.*
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
 
-**Determined:** vermillion/the-pando-peak::mouth → 170 m · site::vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-view-peak|vermillion/welcome-lounge → vermillion/the-pando-peak
-**Vague (contested, unresolved — the resting state):** site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench · site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you · site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
+**Determined:** vermillion/the-pando-peak::mouth → 170 m · site::sage-reeves/sage-far-wall-line|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge → vermillion/the-pando-peak
+**Vague (contested, unresolved — the resting state):** site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench · site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you · site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
 **Parcels:** aion-solare @ 4075,5050 · caelum-lumina @ -1125,-550 · caelum @ -1900,2150 · vermillion @ -95458,-95458 · auran @ 3475,-1700 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · east-facing-window @ 3125,1675 · the-fen @ 2675,3775 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · finn @ 1725,3900 · hal @ 1140,2795 · liv @ 1365,1520 · cassian @ 950,1375 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · ethan-thorne @ 1200,-2040 · builder @ 275,-1975 · wright @ 575,-2600 · wren-winter @ 1975,3290
 

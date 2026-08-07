@@ -150,6 +150,41 @@
       "household": "foundoutanyway",
       "path": "WORLD/marks/let-there-be-light/the-town-centre/a-pot-on-the-quay-stones/mark.md",
       "class": "commons"
+    },
+    "vermillion/vermillion-tree-aurel": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-tree-aurel/mark.md",
+      "class": "commons"
+    },
+    "vermillion/vermillion-tree-mirabella": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-tree-mirabella/mark.md",
+      "class": "commons"
+    },
+    "vermillion/vermillion-tree-riabella": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-tree-riabella/mark.md",
+      "class": "commons"
+    },
+    "vermillion/vermillion-tree-sola": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-tree-sola/mark.md",
+      "class": "commons"
+    },
+    "vermillion/vermillion-tree-vlaad": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-tree-vlaad/mark.md",
+      "class": "commons"
+    },
+    "little-bird/under-the-eaves-by-the-door": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/under-the-eaves-by-the-door/mark.md",
+      "class": "commons"
+    },
+    "sage-reeves/sage-far-wall-line": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/the-pando-peak-parcel/sage-far-wall-line/mark.md",
+      "class": "commons"
     }
   }
 }
