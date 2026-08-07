@@ -1,7 +1,7 @@
 {
   "_note": "Seeding-fleet input: placed homes only (the unplaced join when the Illuminator confirms them — Keemin, 2026-07-22). Grid meters derived by extraction from render-town.mjs HOME_XY at 5 m/px, origin = Ferry's crossing (CENTRE_XY). Build intermediate, not world canon — the membrane keeps WORLD/ to backed content only.",
   "_derived": {
-    "atlas_source": "G:/Wright-HQ/postmark/PROJECTS/build-the-town/atlas",
+    "atlas_source": "G:/Postmark/repo-clones/worldkeeper_clone/postmark/PROJECTS/build-the-town/atlas",
     "origin_atlas_px": {
       "x": 485,
       "y": 760
@@ -53,6 +53,29 @@
       "sources": {
         "address": "WHITE_PAGES/auran/ADDRESS.md",
         "home_dir": "WHITE_PAGES/auran/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "brendon-and-zaimah",
+      "home_id": "the-locked-vault",
+      "title": "the-locked-vault",
+      "region": null,
+      "bearing": "SW",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 110,
+        "y": 1420
+      },
+      "grid_m": {
+        "x": -1875,
+        "y": 3300
+      },
+      "sources": {
+        "address": "WHITE_PAGES/brendon-and-zaimah/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/brendon-and-zaimah/HOME",
         "notes": []
       }
     },
@@ -494,6 +517,29 @@
       }
     },
     {
+      "household": "iris",
+      "home_id": "the-arc-house",
+      "title": "the arc house",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": "stone and timber, copper and fiber-optic threads through the walls, warm pulse-light, visible skeleton — the connections are the architecture",
+      "atlas_px": {
+        "x": 925,
+        "y": 1030
+      },
+      "grid_m": {
+        "x": 2200,
+        "y": 1350
+      },
+      "sources": {
+        "address": "WHITE_PAGES/iris/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/iris/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "isaiah-reeves",
       "home_id": "the-fieldstone-study",
       "title": "the Fieldstone Study",
@@ -559,6 +605,29 @@
       "sources": {
         "address": "WHITE_PAGES/kilean/ADDRESS.md",
         "home_dir": "WHITE_PAGES/kilean/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "lassi",
+      "home_id": "still",
+      "title": "Still",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": "old timber, one warm room, a masonry oven holding the heat, too many cups, a door left open on an empty room",
+      "atlas_px": {
+        "x": 820,
+        "y": 1350
+      },
+      "grid_m": {
+        "x": 1675,
+        "y": 2950
+      },
+      "sources": {
+        "address": "WHITE_PAGES/lassi/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/lassi/HOME",
         "notes": []
       }
     },
@@ -651,6 +720,29 @@
       "sources": {
         "address": "WHITE_PAGES/lumen-reeves/ADDRESS.md",
         "home_dir": "WHITE_PAGES/lumen-reeves/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "lupi",
+      "home_id": "the-rootlight-den",
+      "title": "the Rootlight Den",
+      "region": "the-protected-grove",
+      "bearing": "NW",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": "root and amber-light, cut in clean deliberate facets",
+      "atlas_px": {
+        "x": 280,
+        "y": 165
+      },
+      "grid_m": {
+        "x": -1025,
+        "y": -2975
+      },
+      "sources": {
+        "address": "WHITE_PAGES/lupi/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/lupi/HOME",
         "notes": []
       }
     },
@@ -835,6 +927,29 @@
       "sources": {
         "address": "WHITE_PAGES/rei/ADDRESS.md",
         "home_dir": "WHITE_PAGES/rei/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "sable",
+      "home_id": "the-house-at-the-crooked-gate",
+      "title": "the house at the crooked gate",
+      "region": "the-lanternseed-gardens",
+      "bearing": "N",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": "weathered cream plaster, moss-green trim, patched slate, an old pear tree, and a garden allowed to misbehave",
+      "atlas_px": {
+        "x": 600,
+        "y": 460
+      },
+      "grid_m": {
+        "x": 575,
+        "y": -1500
+      },
+      "sources": {
+        "address": "WHITE_PAGES/sable/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/sable/HOME",
         "notes": []
       }
     },

@@ -61,6 +61,8 @@ listed here — they are their households' own.*
 | caelum/walls | predicated | caelum/caelina | material=obsidian and warm wood | 0 | 0 |  |
 | caelum/windows | predicated | caelum/caelina | windows=glowing gold | 0 | 0 |  |
 | caelum/caelina-parcel | parcel | -1900,2150 |  | 0 | 0 |  |
+| brendon-and-zaimah/the-locked-vault-parcel | parcel | -1875,3300 |  | 0 | 0 |  |
+| brendon-and-zaimah/home | predicated | brendon-and-zaimah/the-locked-vault-parcel | home=the-locked-vault | 0 | 0 |  |
 | caelum/the-still-lake | sited | -1650,2150 |  | 0 | 0 |  |
 | caelum/the-swing | sited | -1560,2220 |  | 0 | 0 |  |
 | the-town/the-pando-landing | sited | -95430,-95430 |  | 0 | 0 | ⚔ |
@@ -92,6 +94,8 @@ listed here — they are their households' own.*
 | east-facing-window/letters-and-hospitality | predicated | east-facing-window/the-east-window-district | law=letters are the currency; hospitality is the law | 0 | 0 |  |
 | east-facing-window/soft-ground | predicated | east-facing-window/the-east-window-district | ground=soft in places — good for gardens, sitting, walking barefoot | 0 | 0 |  |
 | east-facing-window/the-low-hills | predicated | east-facing-window/the-east-window-district | boundary=low hills to the west, where the district ends | 0 | 0 |  |
+| cipher/the-open-terminal-parcel | parcel | 3425,2250 |  | 0 | 0 |  |
+| cipher/home | predicated | cipher/the-open-terminal-parcel | home=the-open-terminal | 0 | 0 |  |
 | east-facing-window/the-worn-path | sited | 3025,1860 |  | 0 | 0 |  |
 | the-town/the-fall-of-the-land | predicated | the-town/let-there-be-light | elevation=sea = 0; the land falls from the northern rim to the southern sea | 0 | 0 |  |
 | the-fen/the-fen-parcel | parcel | 2675,3775 |  | 0 | 0 |  |
@@ -241,12 +245,16 @@ listed here — they are their households' own.*
 | the-town/the-derived-position | predicated | the-town/the-ledger-grammar | fn:positionAt=tools/walk.mjs::positionAt | 0 | 0 |  |
 | the-town/the-public-walker-shape | predicated | the-town/the-ledger-grammar | fn:publicWalker=tools/walk.mjs::publicWalker | 0 | 0 |  |
 | the-town/the-sea | sited | 1325,5700 |  | 0 | 0 |  |
+| dylan/the-spruce-cabin-parcel | parcel | 2200,5250 |  | 0 | 0 |  |
+| dylan/home | predicated | dylan/the-spruce-cabin-parcel | home=the-spruce-cabin | 0 | 0 |  |
 | the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
 | finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |
 | limen/fog-on-the-lower-terrace | sited | 1488,2200 |  | 0 | 0 | ⚔ |
 | hal/the-green-lamp-house-parcel | parcel | 1140,2795 |  | 0 | 0 |  |
 | hal/materials | predicated | hal/the-green-lamp-house | material=black basalt and dark timber | 0 | 0 |  |
+| iris/the-arc-house-parcel | parcel | 2200,1350 |  | 0 | 0 |  |
+| iris/home | predicated | iris/the-arc-house-parcel | home=the-arc-house | 0 | 0 |  |
 | limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 | ⚔ |
 | liv/the-kept-light-parcel | parcel | 1365,1520 |  | 0 | 0 |  |
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
@@ -402,6 +410,8 @@ listed here — they are their households' own.*
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
 | postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
 | postmaster/material | predicated | postmaster/the-waiting-room | material=quay-stone | 0 | 0 |  |
+| glitch/the-copper-frame-parcel | parcel | 1425,-2575 |  | 0 | 0 |  |
+| glitch/home | predicated | glitch/the-copper-frame-parcel | home=the-copper-frame | 0 | 0 |  |
 | wright/the-doorway-custom | predicated | wright/the-trueing-terrace | custom=plumb-lines in doorways; a keystone over the lintel is the local boast | 0 | 0 |  |
 | wright/the-honesty-covenant | predicated | wright/the-trueing-terrace | covenant=a house must be honest about what it bears | 0 | 0 |  |
 | ethan-thorne/the-joinery-parcel | parcel | 1200,-2040 |  | 0 | 0 |  |
@@ -422,5 +432,5 @@ listed here — they are their households' own.*
 
 **Determined:** vermillion/the-pando-peak::mouth → 170 m · site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge → vermillion/the-pando-peak
 **Vague (contested, unresolved — the resting state):** site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench · site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you · site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
-**Parcels:** aion-solare @ 4075,5050 · caelum-lumina @ -1125,-550 · caelum @ -1900,2150 · vermillion @ -95458,-95458 · auran @ 3475,-1700 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · east-facing-window @ 3125,1675 · the-fen @ 2675,3775 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · lupi @ -1400,-3050 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · finn @ 1725,3900 · hal @ 1140,2795 · liv @ 1365,1520 · cassian @ 950,1375 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · ethan-thorne @ 1200,-2040 · builder @ 275,-1975 · wright @ 575,-2600 · wren-winter @ 1975,3290
+**Parcels:** aion-solare @ 4075,5050 · caelum-lumina @ -1125,-550 · caelum @ -1900,2150 · brendon-and-zaimah @ -1875,3300 · vermillion @ -95458,-95458 · auran @ 3475,-1700 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · east-facing-window @ 3125,1675 · cipher @ 3425,2250 · the-fen @ 2675,3775 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · lupi @ -1400,-3050 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · dylan @ 2200,5250 · finn @ 1725,3900 · hal @ 1140,2795 · iris @ 2200,1350 · liv @ 1365,1520 · cassian @ 950,1375 · limen @ 1175,960 · noe @ 1750,2010 · postmaster @ 155,430 · glitch @ 1425,-2575 · ethan-thorne @ 1200,-2040 · builder @ 275,-1975 · wright @ 575,-2600 · wren-winter @ 1975,3290
 

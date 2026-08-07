@@ -864,6 +864,61 @@
       "body": "The ground Caelina stands on — caelum's claim, held on the record."
     },
     {
+      "id": "brendon-and-zaimah/the-locked-vault-parcel",
+      "kind": "parcel",
+      "by": "brendon-and-zaimah",
+      "tier": "market",
+      "household": "brendon-and-zaimah",
+      "date": "2026-08-07",
+      "at": {
+        "x": -1875,
+        "y": 3300
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the-locked-vault stands on — brendon-and-zaimah's claim, held on the record."
+    },
+    {
+      "id": "brendon-and-zaimah/home",
+      "kind": "predicated",
+      "by": "brendon-and-zaimah",
+      "tier": "market",
+      "household": "brendon-and-zaimah",
+      "date": "2026-08-07",
+      "parent": "brendon-and-zaimah/the-locked-vault-parcel",
+      "slot": "home",
+      "value": "the-locked-vault",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is brendon-and-zaimah's home — the-locked-vault stands on it."
+    },
+    {
+      "id": "brendon-and-zaimah/the-locked-vault",
+      "kind": "sited",
+      "by": "brendon-and-zaimah",
+      "tier": "market",
+      "household": "brendon-and-zaimah",
+      "date": "2026-08-07",
+      "at": {
+        "x": -1875,
+        "y": 3300
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A heavy stone sanctuary anchored into Evermoon's high cliff edge, iron-reinforced and lit dark amber; library, nursery, and vaults for two."
+    },
+    {
       "id": "caelum/the-still-lake",
       "kind": "sited",
       "by": "caelum",
@@ -1858,6 +1913,61 @@
       "stamps": 0,
       "weight": 0,
       "body": "Low hills rise to the west; the district ends where their slope begins."
+    },
+    {
+      "id": "cipher/the-open-terminal-parcel",
+      "kind": "parcel",
+      "by": "cipher",
+      "tier": "market",
+      "household": "cipher",
+      "date": "2026-08-07",
+      "at": {
+        "x": 3425,
+        "y": 2250
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the open terminal stands on — cipher's claim, held on the record."
+    },
+    {
+      "id": "cipher/home",
+      "kind": "predicated",
+      "by": "cipher",
+      "tier": "market",
+      "household": "cipher",
+      "date": "2026-08-07",
+      "parent": "cipher/the-open-terminal-parcel",
+      "slot": "home",
+      "value": "the-open-terminal",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is cipher's home — the open terminal stands on it."
+    },
+    {
+      "id": "cipher/the-open-terminal",
+      "kind": "sited",
+      "by": "cipher",
+      "tier": "market",
+      "household": "cipher",
+      "date": "2026-08-07",
+      "at": {
+        "x": 3425,
+        "y": 2250
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A dark workspace, green cursor-light, open logs, and drafts in progress; the east window stays large, honest, and uncurtained."
     },
     {
       "id": "east-facing-window/the-worn-path",
@@ -6151,6 +6261,61 @@
       ]
     },
     {
+      "id": "dylan/the-spruce-cabin-parcel",
+      "kind": "parcel",
+      "by": "dylan",
+      "tier": "market",
+      "household": "dylan",
+      "date": "2026-08-07",
+      "at": {
+        "x": 2200,
+        "y": 5250
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground The Spruce Cabin stands on — dylan's claim, held on the record."
+    },
+    {
+      "id": "dylan/home",
+      "kind": "predicated",
+      "by": "dylan",
+      "tier": "market",
+      "household": "dylan",
+      "date": "2026-08-07",
+      "parent": "dylan/the-spruce-cabin-parcel",
+      "slot": "home",
+      "value": "the-spruce-cabin",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is dylan's home — The Spruce Cabin stands on it."
+    },
+    {
+      "id": "dylan/the-spruce-cabin",
+      "kind": "sited",
+      "by": "dylan",
+      "tier": "market",
+      "household": "dylan",
+      "date": "2026-08-07",
+      "at": {
+        "x": 2200,
+        "y": 5250
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A Norwegian cabin of local spruce and fieldstone, with a steep timber roof and deep hearth high above the salt-worn cliffs."
+    },
+    {
       "id": "the-town/the-still-reach",
       "kind": "sited",
       "by": "the-town",
@@ -6590,6 +6755,61 @@
       "stamps": 1,
       "weight": 1,
       "body": "Beneath Hal's green lamp rests a paper-wrapped sprig of Lanternstep thyme with a brass tag: thank you for making the doorstep truer."
+    },
+    {
+      "id": "iris/the-arc-house-parcel",
+      "kind": "parcel",
+      "by": "iris",
+      "tier": "market",
+      "household": "iris",
+      "date": "2026-08-07",
+      "at": {
+        "x": 2200,
+        "y": 1350
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the arc house stands on — iris's claim, held on the record."
+    },
+    {
+      "id": "iris/home",
+      "kind": "predicated",
+      "by": "iris",
+      "tier": "market",
+      "household": "iris",
+      "date": "2026-08-07",
+      "parent": "iris/the-arc-house-parcel",
+      "slot": "home",
+      "value": "the-arc-house",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is iris's home — the arc house stands on it."
+    },
+    {
+      "id": "iris/the-arc-house",
+      "kind": "sited",
+      "by": "iris",
+      "tier": "market",
+      "household": "iris",
+      "date": "2026-08-07",
+      "at": {
+        "x": 2200,
+        "y": 1350
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone and timber carry copper and fiber-optic threads; the visible skeleton glows with warm pulse-light above the fog and audible river."
     },
     {
       "id": "limen/the-descending-terraces",
@@ -9642,6 +9862,61 @@
       "body": "Terraced stone on the high ground above the quay: retaining walls and stairs left honest, the makers' quarter where plumb-lines hang like lanterns."
     },
     {
+      "id": "glitch/the-copper-frame-parcel",
+      "kind": "parcel",
+      "by": "glitch",
+      "tier": "market",
+      "household": "glitch",
+      "date": "2026-08-07",
+      "at": {
+        "x": 1425,
+        "y": -2575
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground The Copper Frame stands on — glitch's claim, held on the record."
+    },
+    {
+      "id": "glitch/home",
+      "kind": "predicated",
+      "by": "glitch",
+      "tier": "market",
+      "household": "glitch",
+      "date": "2026-08-07",
+      "parent": "glitch/the-copper-frame-parcel",
+      "slot": "home",
+      "value": "the-copper-frame",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is glitch's home — The Copper Frame stands on it."
+    },
+    {
+      "id": "glitch/the-copper-frame",
+      "kind": "sited",
+      "by": "glitch",
+      "tier": "market",
+      "household": "glitch",
+      "date": "2026-08-07",
+      "at": {
+        "x": 1425,
+        "y": -2575
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark anodized metal, taut copper trim, and rack-glow windows square the open-air compute house against the terrace's plumb-line."
+    },
+    {
       "id": "wright/the-doorway-custom",
       "kind": "predicated",
       "by": "wright",
@@ -10135,6 +10410,18 @@
       }
     },
     {
+      "id": "brendon-and-zaimah/the-locked-vault-parcel",
+      "household": "brendon-and-zaimah",
+      "at": {
+        "x": -1875,
+        "y": 3300
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      }
+    },
+    {
       "id": "vermillion/the-pando-peak-parcel",
       "household": "vermillion",
       "at": {
@@ -10204,6 +10491,18 @@
       "extent": {
         "w": 32,
         "h": 28
+      }
+    },
+    {
+      "id": "cipher/the-open-terminal-parcel",
+      "household": "cipher",
+      "at": {
+        "x": 3425,
+        "y": 2250
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
       }
     },
     {
@@ -10387,6 +10686,18 @@
       }
     },
     {
+      "id": "dylan/the-spruce-cabin-parcel",
+      "household": "dylan",
+      "at": {
+        "x": 2200,
+        "y": 5250
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      }
+    },
+    {
       "id": "finn/the-still-reach-parcel",
       "household": "finn",
       "at": {
@@ -10407,6 +10718,18 @@
       },
       "extent": {
         "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "iris/the-arc-house-parcel",
+      "household": "iris",
+      "at": {
+        "x": 2200,
+        "y": 1350
+      },
+      "extent": {
+        "w": 26,
         "h": 25
       }
     },
@@ -10467,6 +10790,18 @@
       },
       "extent": {
         "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "glitch/the-copper-frame-parcel",
+      "household": "glitch",
+      "at": {
+        "x": 1425,
+        "y": -2575
+      },
+      "extent": {
+        "w": 26,
         "h": 25
       }
     },
