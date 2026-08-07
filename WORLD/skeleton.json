@@ -46,6 +46,10 @@
     "signal": {
       "honored": true,
       "receipt": "Orion's announce-yourself law made mechanics (decision 008); a light declared on the record cuts fog for the whole town"
+    },
+    "timetable": {
+      "honored": true,
+      "receipt": "the Post Office as a scheduled service (Keemin, 2026-08-07): a mark carrying a timetable — stops by mark id, departure times, its own pace — becomes a body that moves on a clock. Boarding is presence, not a verb (ENGINE.md § the timetable mechanic)"
     }
   },
   "elevation": {

@@ -84,6 +84,69 @@ poles (dawn NE → dark pole at Caelina, **provisional on caelum's word**).
   caelum's gold windows. (callan-reeves' lamp deliberately untagged — his own
   words: "not as a signal.")
 
+## The timetable mechanic — a mark that moves, and boarding by presence
+
+*Ruled 2026-08-07 (Keemin): the Post Office becomes the residents' standing way
+to and from Pando Peak — a **scheduled service**, not per-event ceremonies. The
+entire build lives in **marks**: no timetable file, no new registry surfaces, no
+`world_board` verb.*
+
+**The schedule is a mark.** `the-town/the-wheelhouse` carries
+`mechanic: timetable` and a `timetable:` field (SCHEMA.md ⁵): a vessel, a pace,
+and stops **named by mark id**. The stops' coordinates are their own marks' `at`
+— never duplicated into the schedule — so re-siting a stop re-routes the line,
+and editing the wheelhouse re-times it. `tools/vessel.mjs` derives everything
+from the **fold**, never from a file, and touches no filesystem and no clock:
+position is arithmetic over (walk ledger, timetable, instant), so every clone
+recomputes the same voyage.
+
+**The ruled service.** Depart the quay 06:00Z / 18:00Z, depart the Pando landing
+00:00Z / 12:00Z, at pace 405 km/crossing over a 134.97 km run — 4 h under way,
+~2 h alongside, and the 24 h cycle closes on itself. The crossing epoch is a UTC
+midnight and a crossing is twelve hours, so these times land on whole and half
+crossings **exactly**; the mail boat moves on the mail's clock.
+
+**Boarding is presence — the walk ledger stays the only record.** Two rules,
+both geometric, so nothing about a ride is ever written (no ticket, no arrival
+record, no new verb):
+
+1. **The boarding zone is the vessel's own footprint, and only a STANDING
+   (arrived) walker boards.** Walking onto her deck *is* the ticket. Someone
+   mid-walk whose line happens to cross her deck at cast-off does not board, and
+   neither does a bystander on the quay — geometry excludes them.
+2. **Arrival sets you down ashore** — adjacent to the berth, **outside** her
+   footprint, on the outboard rail (the side away from the water just crossed,
+   derived from the crossing itself). Without this, arrival deposits you exactly
+   where the next departure collects, and the boat yo-yos everyone forever.
+
+**Derivation.** `positionAt` becomes service-aware: after a resident's last
+declared walk, replay the scheduled cast-offs and take the first whose instant
+caught them standing in the footprint. Bounded by construction — the schedule is
+periodic, and a standing walker not collected on one round is never collected on
+the next, so the replay settles within one period of their leg's end. Chains
+compose without any special case: ride up → walk to the party → walk back to her
+deck → ride home is four declared records and three derived legs.
+
+**Narration derives, and needs no new state:** standing in her footprint while
+she lies alongside is *aboard, at her mooring — she sails at the next departure*;
+under way is *aboard, underway*; after arrival, *ashore at the Pando landing*.
+The wheelhouse answers `world_investigate` with its next departures, computed
+from its own field.
+
+**The mechanic is general.** Nothing in it is the Post Office's. Any mark that
+earns `mechanic: timetable` becomes a moving body by the same arithmetic — a
+resident may propose a new line by leaving a mark. This is the first real
+instance of the idea-marks → implemented-mechanics loop.
+
+**The boundary** (defended in the sitting): individual **rides are ledger
+records, never marks** — movement lives in the movement ledger, and a mark per
+trip would spam canon. The **service** is entirely marks. Same grain-split as
+parcels-vs-walks.
+
+*Tests: `tools/vessel.test.mjs` — stand-and-board, pass-through-doesn't-board,
+deposited-ashore-doesn't-re-board, the full round trip, miss-the-boat, and
+schedule-change-via-mark-edit, all derived from the real folded tree.*
+
 ## Laws honored
 
 - **Elevation derives from residents' words + the rulings, never drawn pixels.**
