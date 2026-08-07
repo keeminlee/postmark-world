@@ -126,6 +126,8 @@ for (const rec of marks) {
     if (!entry) err(rec, `mechanic: "${rec.mechanic}" is not in the physics registry (skeleton.json physics_registry) — a mark may only point at machinery that exists`);
     else if (!entry.honored) err(rec, `mechanic: "${rec.mechanic}" is registered but NOT honored (${entry.receipt}) — diegesis cannot point at refused machinery`);
   }
+  // (the `timetable:` a `mechanic: timetable` mark must carry is checked in §8,
+  // below — every id inside it must resolve against the whole tree.)
 
   // 4. kind-specific shape
   if (rec.kind === "sited" || rec.kind === "parcel") {
@@ -206,6 +208,66 @@ for (const rec of marks) {
     }
   };
   walk(MARKS_DIR, 0);
+}
+
+// 8. timetable: the schedule a `mechanic: timetable` mark carries (2026-08-07 —
+// the Post Office as a scheduled service). Checked here rather than in the main
+// loop because every id inside it must resolve against the WHOLE tree: stops and
+// the vessel are named BY MARK ID and their coordinates are never duplicated
+// into the schedule, so the ids are the only thing holding the service together.
+//
+// Strict by construction. A schedule that names a mark which is not there, or a
+// time that does not parse, is not a small mistake — it is a service that
+// silently never sails, and the residents standing on the quay are the ones who
+// find out.
+{
+  const DEPART_RE = /^([01]\d|2[0-3]):([0-5]\d)Z$/; // UTC times-of-day, on the crossing clock
+  const siteable = (m) => m && m.kind === "sited" && hasGeom(m);
+  for (const rec of marks) {
+    if (rec._error) continue;
+    const declared = rec.timetable !== undefined;
+    const claims = rec.mechanic === "timetable";
+    if (claims && !declared) {
+      err(rec, `mechanic: timetable but no timetable: field — the mechanic is the pointer, the field is the schedule; a service needs both`);
+      continue;
+    }
+    if (!declared) continue;
+    if (!claims) {
+      err(rec, `timetable: is set but mechanic: is ${JSON.stringify(rec.mechanic)} — a schedule no registered machinery runs (add mechanic: timetable)`);
+      continue;
+    }
+    const tt = rec.timetable;
+    if (tt === null || typeof tt !== "object" || Array.isArray(tt)) {
+      err(rec, `timetable: must be a structured record on one line — {"vessel": "<mark id>", "pace": <km/crossing>, "stops": [{"mark": "<mark id>", "departs": ["06:00Z"]}, …]} (got ${JSON.stringify(tt)})`);
+      continue;
+    }
+
+    const vessel = byId.get(tt.vessel);
+    if (!vessel) err(rec, `timetable vessel: "${tt.vessel}" names no mark — the vessel is a mark, by id`);
+    else if (!siteable(vessel)) err(rec, `timetable vessel: ${tt.vessel} must be a sited mark with at/extent — her footprint IS the boarding zone`);
+
+    if (!Array.isArray(tt.stops) || tt.stops.length < 2) {
+      err(rec, `timetable stops: must list at least two stop marks (got ${JSON.stringify(tt.stops)}) — one stop is not a line`);
+    } else {
+      const seen = new Set();
+      tt.stops.forEach((s, i) => {
+        const ref = s?.mark;
+        const stop = byId.get(ref);
+        if (!stop) return err(rec, `timetable stop ${i}: "${ref}" names no mark — stops are marks, and their coordinates are the marks' own`);
+        if (!siteable(stop)) err(rec, `timetable stop ${i}: ${ref} is not sited — a stop with no at/extent has nowhere to berth`);
+        if (seen.has(ref)) err(rec, `timetable stops: ${ref} appears twice — a line visits each stop once per round`);
+        seen.add(ref);
+        const departs = s?.departs;
+        if (!Array.isArray(departs) || departs.length === 0)
+          err(rec, `timetable stop ${ref}: departs must list at least one time — a stop no one leaves is not a stop`);
+        else for (const t of departs)
+          if (!DEPART_RE.test(String(t))) err(rec, `timetable stop ${ref}: "${t}" is not a departure time — HH:MMZ, UTC (the crossing clock's own)`);
+      });
+    }
+
+    if (!(typeof tt.pace === "number" && Number.isFinite(tt.pace) && tt.pace > 0))
+      err(rec, `timetable pace: must be a positive number of km per crossing (got ${JSON.stringify(tt.pace)}) — at any other pace she never arrives`);
+  }
 }
 
 // ---- report (lint.mjs idiom: sort, print, exit non-zero only on ERROR) ----

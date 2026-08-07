@@ -98,6 +98,7 @@ containment**; everything else is a field.
 | `far` (horizon object) | opt (the-town) | — | — | — |
 | `feature: <skeleton-id>` | opt (the-town) | — | — | — |
 | `mechanic: <registry-id>`³ | opt | opt | opt | opt |
+| `timetable`⁵ | opt | opt | opt | opt |
 | `pre` / `derived_from` | provenance¹ | provenance¹ | provenance¹ | provenance¹ |
 
 ¹ **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
@@ -150,6 +151,36 @@ predicates on the root (`the-fog`, `the-fall-of-the-land`, `the-walking-pace`,
 own constitution mark with its own `feature:` link. Finer named-reach enrichment
 (the residents' own words for Blackwater Bend, the Still Reach pool, the harbor
 reach) is part of the filed coverage follow-up, not tonight.
+
+**⁵ `timetable:` — a schedule, and the mark that carries one moves (2026-08-07,
+Keemin-ruled).** A mark with `mechanic: timetable` **and** a `timetable:` field
+is a scheduled service: a body that moves between stops on a clock. Both halves
+are required — the mechanic is the pointer, the field is the schedule, and the
+lint refuses either alone. The value is a **one-line JSON record** (the same
+lane `points:` rides — the frontmatter reader takes strict JSON for `[…]` and
+`{…}` values; the bare `{ x: 1, y: 2 }` spelling is unaffected):
+
+```yaml
+mechanic: timetable
+timetable: {"vessel": "the-town/the-post-office", "pace": 405, "stops": [{"mark": "the-town/the-post-office", "departs": ["06:00Z", "18:00Z"]}, {"mark": "the-town/the-pando-landing", "departs": ["00:00Z", "12:00Z"]}]}
+```
+
+- **`vessel`** — the mark that *is* the moving body. Sited, with an extent: her
+  footprint is the boarding zone, and her leaf slug is her walk-ledger handle.
+- **`stops`** — **at least two marks, named by id**, each with UTC `departs`
+  times (`HH:MMZ`). **Coordinates are never copied into the schedule** — a stop's
+  position is its own mark's `at`, read at derivation time, so moving the mark
+  moves the service. Each departure sails to the next stop in the list, cyclically.
+- **`pace`** — km per crossing for this line (the vessel's stride, not the town's
+  15 km dial).
+
+The lint is strict about all of it (`mark-lint.mjs` §8): stops and vessel must
+exist and be sited, times must parse, pace must be positive. The mechanic is
+**general** — any mark that earns a timetable becomes a moving body by the same
+arithmetic (`tools/vessel.mjs`), so a resident may propose a new line by leaving
+a mark. Boarding is **presence, not a verb**: stand inside her footprint when she
+casts off and you sail; arrival sets you down ashore, outside it. See
+[`ENGINE.md`](../ENGINE.md) § the timetable mechanic.
 
 ## The grid
 

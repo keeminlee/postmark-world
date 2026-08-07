@@ -62,13 +62,22 @@ export function parseRecord(text, file) {
     const kv = line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
     if (!kv) continue;
     const [, key, valRaw] = kv; let val = valRaw.trim();
-    if (val.startsWith("{")) { // inline object {x: 1, y: 2}
-      const obj = {};
-      for (const pair of val.replace(/[{}]/g, "").split(",")) {
-        const p = pair.match(/([\w]+)\s*:\s*(-?[\d.]+)/);
-        if (p) obj[p[1]] = Number(p[2]);
+    if (val.startsWith("{")) { // inline object {x: 1, y: 2} — or a JSON record
+      // Strict JSON first (quoted keys, nested arrays/objects): the shape a
+      // structured field like `timetable:` needs. The bare {x: 1, y: 2} spelling
+      // every at/extent uses is NOT valid JSON, so it falls through to the
+      // number-pair scan below exactly as before — this branch is additive.
+      let json = null;
+      try { json = JSON.parse(val); } catch { /* not JSON — the bare spelling */ }
+      if (json !== null && typeof json === "object") val = json;
+      else {
+        const obj = {};
+        for (const pair of val.replace(/[{}]/g, "").split(",")) {
+          const p = pair.match(/([\w]+)\s*:\s*(-?[\d.]+)/);
+          if (p) obj[p[1]] = Number(p[2]);
+        }
+        val = obj;
       }
-      val = obj;
     } else if (val.startsWith("[")) { // a points ring, JSON-ish: [[x,y],…] or [{x,y},…]
       try { val = JSON.parse(val); } catch { /* leave as string; a non-array points ring is simply not honored */ }
     } else if (/^-?\d+(\.\d+)?$/.test(val)) val = Number(val);
@@ -391,7 +400,11 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // mark's vertical prominence), feature (the two-precision survey link),
       // points (the fine shape ring — the FOV silhouette reads it; undefined for
       // every current record, so world-state.json stays byte-identical).
+      // timetable (08-07) rides the same way: the schedule a `mechanic: timetable`
+      // mark carries — stops by mark id, departures, pace. tools/vessel.mjs derives
+      // the vessel's position from THIS fold, never from a file.
       mechanic: mk.mechanic, top_m: mk.top_m, feature: mk.feature, points: mk.points,
+      timetable: mk.timetable,
     })),
     parcels: parcels.map(p => ({ id: p.id, household: p.household, at: { x: p._r.x, y: p._r.y }, extent: { w: p._r.w, h: p._r.h } })),
     determined, vague, rivalries,
