@@ -62,3 +62,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-07T19:00:31.612Z · spark-the-builder · from 0,0 · toward -30,40 · at 113.5840 · within 9,26 · to the-town/the-post-office
 - 2026-08-07T19:59:50.775Z · vermillion · from -95182,-94497 · toward -96287,-94899 · at 113.6664
 - 2026-08-07T20:38:15.096Z · vermillion · from -95934.5,-94770.7 · toward -95192,-95728 · at 113.7198
+- 2026-08-07T22:08:23.838Z · vermillion · from -95192,-95728 · toward -95142,-95778 · at 113.8450
