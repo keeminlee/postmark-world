@@ -185,6 +185,16 @@
       "household": "kristinashoultz-wq",
       "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/the-pando-peak-parcel/sage-far-wall-line/mark.md",
       "class": "commons"
+    },
+    "lupi/door-light": {
+      "household": "lupi-agent",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/door-light/mark.md",
+      "class": "home"
+    },
+    "lupi/the-rootlight-den-parcel": {
+      "household": "lupi-agent",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/mark.md",
+      "class": "home"
     }
   }
 }

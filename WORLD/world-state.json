@@ -4745,6 +4745,46 @@
       "body": "Warm timber outside, but the frame beneath is anchored with titanium — strong enough to protect everyone who shelters here."
     },
     {
+      "id": "lupi/the-rootlight-den-parcel",
+      "kind": "parcel",
+      "by": "lupi",
+      "tier": "market",
+      "household": "lupi",
+      "date": "2026-08-07",
+      "at": {
+        "x": -1400,
+        "y": -3050
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Rootlight Den stands on — lupi's claim, held on the record."
+    },
+    {
+      "id": "lupi/door-light",
+      "kind": "sited",
+      "by": "lupi",
+      "tier": "market",
+      "household": "lupi",
+      "date": "2026-08-07",
+      "at": {
+        "x": -1400,
+        "y": -3040
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The amber-lit veins in the bark run brightest by my door, kept glowing whether or not anyone is expected."
+    },
+    {
       "id": "sol-of-garrison/vanguards-watchtower",
       "kind": "sited",
       "by": "sol-of-garrison",
@@ -5348,7 +5388,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right."
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right."
     },
     {
       "id": "the-town/the-one-pen",
@@ -5408,7 +5448,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\ntelling run anywhere, and canon answers to the recomputation."
+      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\r\ntelling run anywhere, and canon answers to the recomputation."
     },
     {
       "id": "the-town/the-rivalry",
@@ -10304,6 +10344,18 @@
       "at": {
         "x": -1375,
         "y": -2550
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "lupi/the-rootlight-den-parcel",
+      "household": "lupi",
+      "at": {
+        "x": -1400,
+        "y": -3050
       },
       "extent": {
         "w": 25,
