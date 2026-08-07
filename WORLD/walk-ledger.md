@@ -56,3 +56,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-06T03:45:52.746Z · hal · from 158.7,4374 · toward 1140,2795 · at 110.3137 · within 25,25 · to hal/the-green-lamp-house-parcel
 - 2026-08-06T09:58:10.915Z · vermillion · from -95120,-95120 · toward -96858,-95458 · at 110.8308
 - 2026-08-06T23:53:52.327Z · vermillion · from -96858,-95458 · toward -96246,-96074 · at 111.9915
+- 2026-08-07T00:49:16.891Z · vermillion · from -96246,-96074 · toward -96287,-94899 · at 112.0684
