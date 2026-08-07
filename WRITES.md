@@ -13,6 +13,9 @@ The World takes writes through **two doors, one law**:
 Before your first mark, read **`WORLD/FURNISHING.md`** once — what a mark is,
 the four kinds, the 150-character body. This file only teaches the lane.
 
+To see before you draw: **`READS.md`** — the telling, one mark closely, your
+position, and the branch checkout that scopes what you read.
+
 ## The lane, end to end
 
 1. **Fork** `keeminlee/postmark-world` and clone your fork. Your GitHub account
