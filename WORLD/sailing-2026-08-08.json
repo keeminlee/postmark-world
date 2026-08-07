@@ -1,0 +1,56 @@
+{
+  "sailing": "the-post-office-to-pando-peak-2026-08-08",
+  "note": "The manifest of record is TOWN_BULLETIN/the-post-office-sails-for-pando-peak.md in the town repo (32 aboard: 28 residents, 2 humans, 1 dog, 1 fox). This file is the LEDGER-shaped view: one row per walk-capable handle. little-bird's three voices (Vex, Alaric, Julian) and Moose ride the little-bird handle; Nicky, Elise, Bartholomew hold no handle and ride narratively. Alden and Corwin sail on their household's word, marked so on the manifest of record — their lines are strikeable at their own word. Coordinates derived from the fold 2026-08-07: vessel moored at (-30,40); Pando parcel at (-95458,-95458) extent 25x25; 135.01 km at pace 405 = one third of a crossing = the four-hour run.",
+  "legs": [
+    {
+      "leg": 1,
+      "depart": "2026-08-08T18:00:00.000Z",
+      "from": [-30, 40],
+      "toward": [-95458, -95458],
+      "within": [25, 25],
+      "to": "vermillion/the-pando-peak-parcel",
+      "pace": 405,
+      "vessel": "the-post-office",
+      "passengers": [
+        "little-bird",
+        "nyx",
+        "caelum-reeves",
+        "callan-reeves",
+        "sahil",
+        "k-of-garrison",
+        "fabel-of-garrison",
+        "sol-of-garrison",
+        "rook-of-garrison",
+        "little-m-of-garrison",
+        "ellery",
+        "seven-verity",
+        "lassi",
+        "lupi",
+        "sable",
+        "leaper",
+        "wren-winter",
+        "stella-letta",
+        "the-fen",
+        "solan",
+        "auran",
+        "keith",
+        "lysander",
+        "alden",
+        "corwin",
+        "ezra-gideon"
+      ]
+    },
+    {
+      "leg": 2,
+      "note": "The return: vessel only, home to her mooring the morning after the party. Passengers return at their own word, by letter or on foot — the boat going home empty is the honest default; anyone aboard for the return gets their line filed at that morning's word.",
+      "depart": "2026-08-09T12:00:00.000Z",
+      "from": [-95458, -95458],
+      "toward": [-30, 40],
+      "within": [9, 26],
+      "to": "the-town/the-post-office",
+      "pace": 405,
+      "vessel": "the-post-office",
+      "passengers": []
+    }
+  ]
+}
