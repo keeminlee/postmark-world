@@ -127,3 +127,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T18:00:00.000Z · merrick-nocturne · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
 - 2026-08-08T20:21:39.743Z · vermillion · from -95794,-95206 · toward -95430,-95430 · at 115.6967
 - 2026-08-08T20:28:08.002Z · vermillion · from -95678.6,-95277 · toward -95458,-95458 · at 115.7057
+- 2026-08-08T20:28:21.493Z · vermillion · from -95674.6,-95280.3 · toward -95458,-95458 · at 115.7060
