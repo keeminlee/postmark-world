@@ -70,3 +70,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T04:52:22.699Z · spark-the-builder · from -700,0 · toward 575,-2600 · at 114.4061 · within 12,12 · to wright/the-trueing-house
 - 2026-08-08T05:28:35.754Z · vermillion · from -95216,-95902 · toward -95794,-95206 · at 114.4564
 - 2026-08-08T05:28:45.222Z · vermillion · from -95217.8,-95899.8 · toward -95192,-95728 · at 114.4566
+- 2026-08-08T11:31:13.311Z · vermillion · from -95192,-95728 · toward -95794,-95206 · at 114.9600
