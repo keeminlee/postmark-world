@@ -782,7 +782,7 @@ export function activityDayKey(when) {
   const iso = String(when ?? "");
   return iso.length >= 10 ? iso.slice(0, 10) : "";
 }
-export function recentActivity({ departures = [], marks = [], names = null, limit = 12, now = null } = {}) {
+export function recentActivity({ departures = [], marks = [], stakes = [], blessings = [], names = null, limit = 12, now = null } = {}) {
   const rows = [];
   // ONE WALK PER RESIDENT PER DAY, the latest. That is not a display trick, it is
   // the ledger's own rule: superseding a walk is a new departure from the derived
@@ -806,6 +806,24 @@ export function recentActivity({ departures = [], marks = [], names = null, limi
   for (const m of marks) {
     if (!m?.date || !m?.id) continue;
     rows.push({ kind: "mark", day: activityDayKey(m.date), time: "", who: m.by ?? m.household ?? "", subject: m.id });
+  }
+  // A STAKE is an act with a second, like a walk — the town's own commit log
+  // knows when stamps went behind a mark. `who` is the backer, `subject` the
+  // mark, so a stake row reaches the record the same way a mark row does.
+  for (const s of stakes) {
+    if (!s?.iso || !s?.handle) continue;
+    rows.push({
+      kind: "stake", day: activityDayKey(s.iso), time: s.iso, who: s.handle,
+      subject: s.mark ?? null, amount: Number(s.n) || 0,
+    });
+  }
+  // A BLESSING has no author — the keeper's gate is not a resident — so `who`
+  // is empty and the row says what landed rather than who did it. Settlements
+  // that were REFUSED left no tag and therefore no row, which is the honest
+  // record: nothing happened that day.
+  for (const b of blessings) {
+    if (!b?.date || !Number.isInteger(Number(b.n))) continue;
+    rows.push({ kind: "settlement", day: activityDayKey(b.date), time: b.date, who: "", subject: null, n: Number(b.n) });
   }
   rows.sort((a, b) =>
     b.day.localeCompare(a.day)
@@ -853,6 +871,68 @@ export function activityDayLabel(day, today) {
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const parts = day.split("-");
   return `${Number(parts[2])} ${MONTHS[Number(parts[1]) - 1] ?? "?"}`;
+}
+
+// ───────── the settlement chip ─────────
+//
+// Settlement is ATTEMPTED on the 06:00/18:00Z heartbeat and may be REFUSED —
+// the keeper's gate is a gate. So the chip says "next ATTEMPT", never "next
+// settlement", and the NUMBER beside it is whatever last actually landed (the
+// office reads the world repo's `settlement/S<n>` tags). The two halves are
+// deliberately independent: the countdown is arithmetic anyone can do from a
+// clock, the number is a fact only the record holds, and when a gate refuses
+// the number simply does not move while the countdown starts again.
+
+// A stake is an act the town's own commit log records: the office serves
+// /repo/log, and a stake commit's subject reads
+//   stake: <handle> -> world-mark/<id> · <n>
+// Parsed rather than trusted: a subject that does not match contributes nothing,
+// so an unrelated commit can never become a fake backing on the rail.
+export const STAKE_SUBJECT = /^stake:\s*([a-z0-9][a-z0-9-]*)\s*->\s*world-mark\/(\S+?)\s*·\s*(\d+)\s*$/;
+export function parseStakeCommits(commits) {
+  const out = [];
+  for (const c of commits ?? []) {
+    const m = STAKE_SUBJECT.exec(String(c?.subject ?? c?.message ?? "").trim());
+    if (!m) continue;
+    const iso = String(c?.date ?? c?.iso ?? "").trim();
+    if (!iso) continue;
+    out.push({ iso, handle: m[1], mark: m[2], n: Number(m[3]) });
+  }
+  return out;
+}
+
+export const SETTLEMENT_HOURS_UTC = [6, 18];
+
+// Milliseconds until the next attempt, from any instant. Pure, UTC, and it
+// never returns 0 for "right now" — standing exactly on the boundary means the
+// NEXT one is twelve hours out, not this one over again.
+export function msToNextSettlementAttempt(nowMs = Date.now()) {
+  const now = new Date(nowMs);
+  for (const hour of SETTLEMENT_HOURS_UTC) {
+    const t = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour);
+    if (t > nowMs) return t - nowMs;
+  }
+  // past the last attempt of the day: the first one tomorrow
+  const t = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, SETTLEMENT_HOURS_UTC[0]);
+  return t - nowMs;
+}
+
+// "3h 12m" · "12m" · "under a minute". Hours are dropped when there are none
+// rather than printed as 0h, because a chip is read at a glance.
+export function formatCountdown(ms) {
+  const total = Math.max(0, Math.floor(ms / 60000));
+  const h = Math.floor(total / 60), m = total % 60;
+  if (total <= 0) return "under a minute";
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
+// The chip's whole text, so the words are testable without a DOM. A settlement
+// the office could not name loses its number and keeps its countdown — the
+// honest half still says something true.
+export function settlementChipText(current, nowMs = Date.now()) {
+  const n = Number(current?.n);
+  const when = `next attempt in ${formatCountdown(msToNextSettlementAttempt(nowMs))}`;
+  return Number.isInteger(n) && n >= 0 ? `S${n} · ${when}` : when;
 }
 
 // ───────── the faces on the map ─────────
@@ -1919,6 +1999,14 @@ const STYLE = `
 /* the record of acts: one line each — the actor in their own weight, the thing
    they acted on in its tier's colour, and how long ago in the dim underneath */
 .wv-activity { margin-top:20px; padding-top:14px; border-top:1px solid var(--line); }
+/* the two lanes that joined the rail (2026-08-08): a stake is stamps going
+   behind a mark, a blessing is the keeper's gate opening. The blessing has no
+   author, so its line starts with the thing that happened. */
+.wv-act-n { color:var(--stamp-violet); font-variant-numeric:tabular-nums; }
+.wv-act-line.is-settlement { color:var(--amber); }
+.wv-act-bless { font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+/* the settlement chip, beside the crossing chip it shares a clock with */
+.wv-nav .settlenow { font-size:.72rem; color:var(--dim); font-variant-numeric:tabular-nums; }
 .wv-activity h2 { margin-top:0; }
 .wv-acts { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
 .wv-act-line { font-size:.76rem; line-height:1.42; color:var(--dim); }
@@ -2078,6 +2166,10 @@ const MARKUP = `
           aria-label="The Telling" title="show or hide the Telling">▤</button>
       </div>
       <div class="crossnow"></div>
+      <!-- what the world's own clock is counting down to. Hidden until the
+           office answers: a chip that said "next attempt in —" before it knew
+           anything would be furniture pretending to be information. -->
+      <div class="settlenow" hidden></div>
     </div>
     <div class="wv-identity"></div>
     <!-- WHAT HAS BEEN HAPPENING (Keemin, 2026-08-05) — the foot of the rail, under
@@ -3313,6 +3405,41 @@ export function mountViewer(appEl) {
   // before faces existed. Nothing waits on it and nothing fails without it.
   let residentsMeta = new Map();
   const faceOf = (handle) => residentFace(handle, residentsMeta.get(handle) ?? null);
+
+  // What has actually been blessed. The office reads the world repo's own
+  // settlement tags; the number cannot be derived from the clock because the
+  // gate can refuse. Absent = the chip keeps its countdown and loses its
+  // number, and the feed simply carries no blessing rows.
+  let settleState = { current: null, recent: [] };
+  // stakes, from the town's own commit log through the office door. Capped and
+  // best-effort: this lane is a garnish on the rail, never a dependency.
+  let stakeEvents = [];
+  async function loadStakeEvents() {
+    try {
+      const r = await fetch(officeUrl("/repo/log?limit=120"), { credentials: "omit" });
+      if (!r.ok) return;
+      const body = await r.json();
+      const commits = Array.isArray(body) ? body : (body?.commits ?? body?.log ?? []);
+      stakeEvents = parseStakeCommits(commits).slice(0, 40);
+    } catch { /* a quiet lane contributes nothing, and the rail is unchanged */ }
+  }
+  async function loadSettlements() {
+    try {
+      const r = await fetch(officeUrl("/world/settlements"), { credentials: "omit" });
+      if (!r.ok) return;
+      const body = await r.json();
+      if (body && (body.current || Array.isArray(body.recent))) {
+        settleState = { current: body.current ?? null, recent: Array.isArray(body.recent) ? body.recent : [] };
+      }
+    } catch { /* no number today; the countdown is still true */ }
+  }
+  function renderSettlementChip() {
+    const el = $(root, ".settlenow");
+    if (!el) return;
+    // the countdown is live arithmetic, so this is re-read on the ambient clock
+    el.textContent = settlementChipText(settleState.current);
+    el.hidden = false;
+  }
   async function loadResidentsMeta() {
     try {
       const r = await fetch("/world-engine/residents-meta.json", { credentials: "omit" });
@@ -4927,6 +5054,11 @@ export function mountViewer(appEl) {
     const rows = recentActivity({
       departures,
       marks: world?.marks ?? data?.worldState?.marks ?? [],
+      // Both lanes are optional by construction: a source that never answered
+      // contributes nothing and the feed is exactly what it was before. One
+      // quiet lane must never be able to empty the whole rail.
+      stakes: stakeEvents,
+      blessings: settleState.recent,
       names: new Map((world?.marks ?? []).map((m) => [m.id, markName(m).name])),
       limit: 14,
     });
@@ -4944,9 +5076,22 @@ export function mountViewer(appEl) {
         // formatter's job is to say where a point IS, and toward reads correctly
         // against every answer it gives, including the one at the origin.
         : `set out toward ${esc((formatCardinalPosition(row.toward) || "open ground").replace(/^at /, ""))}`)
+        : row.kind === "stake"
+        ? (subject
+          ? `backed <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`
+            + (row.amount ? ` <span class="wv-act-n">✦${row.amount}</span>` : "")
+          : `backed a mark${row.amount ? ` <span class="wv-act-n">✦${row.amount}</span>` : ""}`)
+        : row.kind === "settlement"
+        // no author: the keeper's gate is not a resident, so the line is about
+        // what landed rather than who did it
+        ? `<span class="wv-act-bless">S${esc(row.n)} blessed</span>`
         : `wrote <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`;
-      return `<li class="wv-act-line ${row.kind === "walk" ? "is-walk" : "is-mark"}${gone ? " is-gone" : ""}">`
-        + `<span class="who">${esc(row.who)}</span> ${what}`
+      const cls = row.kind === "walk" ? "is-walk"
+        : row.kind === "stake" ? "is-stake"
+        : row.kind === "settlement" ? "is-settlement"
+        : "is-mark";
+      return `<li class="wv-act-line ${cls}${gone ? " is-gone" : ""}">`
+        + (row.who ? `<span class="who">${esc(row.who)}</span> ` : "") + what
         + `<span class="when">${esc(row.dayLabel)}</span></li>`;
     }).join("");
   }
@@ -4976,6 +5121,11 @@ export function mountViewer(appEl) {
     tick++;
     const nl = liveCrossing();
     if (nl !== lastLive) { lastLive = nl; if (!state.crossingOverride) { state.crossing = nl; reRender(`crossing ${nl}`); } }
+    // the countdown is arithmetic on the wall clock, so it re-reads every tick;
+    // the NUMBER only moves when a settlement actually lands, so it is refreshed
+    // on the same slower beat the fold uses
+    if (!$(root, ".settlenow")?.hidden) renderSettlementChip();
+    if (tick % 20 === 0) loadSettlements().then(renderSettlementChip);
     if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
       try {
         const r = await fetch(state.dataSource, { credentials: "omit" });
@@ -5006,6 +5156,9 @@ export function mountViewer(appEl) {
       // already painted as monograms by then, and this is what puts the pictures
       // on them. Never awaited: the map is not allowed to wait on a nicety.
       loadResidentsMeta().then(() => drawWalkers());
+      // the settlement number, and the chip it lives in
+      loadSettlements().then(() => { renderSettlementChip(); renderActivity(); });
+      loadStakeEvents().then(renderActivity);
       resolveIdentity(); // after data (the presets filter reads the manifest)
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
