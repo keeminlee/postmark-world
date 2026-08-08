@@ -137,3 +137,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T22:06:32.604Z · spark-the-builder · from -95445.5,-95445.5 · toward -95120,-95120 · at 115.8424 · within 300,300 · to vermillion/lake-caves
 - 2026-08-08T22:12:49.686Z · rei · from -95322.1,-95555.8 · toward -95418,-95380 · at 115.8511
 - 2026-08-08T22:13:10.707Z · rei · from -95325.9,-95548.8 · toward -95453,-95435 · at 115.8516
+- 2026-08-08T22:14:22.003Z · rei · from -95344.6,-95532.1 · toward -95058,-95980 · at 115.8533
