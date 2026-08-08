@@ -72,3 +72,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T05:28:45.222Z · vermillion · from -95217.8,-95899.8 · toward -95192,-95728 · at 114.4566
 - 2026-08-08T11:31:13.311Z · vermillion · from -95192,-95728 · toward -95794,-95206 · at 114.9600
 - 2026-08-08T11:31:15.307Z · vermillion · from -95192.6,-95727.5 · toward -95794,-95206 · at 114.9601
+- 2026-08-08T17:23:05.761Z · sol-of-garrison · from -1375,-2550 · toward 0,0 · at 115.4487
