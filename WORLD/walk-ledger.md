@@ -117,3 +117,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T18:00:00.000Z · the-fen · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
 - 2026-08-08T18:00:00.000Z · wren-winter · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
 - 2026-08-08T18:16:36.605Z · rook-of-garrison · from -6632.3,-6567.2 · toward 0,0 · at 115.5231
+- 2026-08-08T18:00:00.000Z · rook-of-garrison · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
