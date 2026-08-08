@@ -572,6 +572,27 @@ export function markerScale(zoomK) {
 // counter-scaling the atlas's own labels, which lives in the atlas.
 export const MAX_ZOOM_IN = 60;
 
+// The zoom-OUT ceiling: the viewport may never get wider than full.w times this.
+//
+// It used to be 1.1 — a tenth of a screen of air around the painting — and that
+// was right for as long as the world WAS the painting. It stopped being right
+// the day a scheduled service started carrying residents off the edge of it.
+// The Post Office sails to Pando Peak at grid (-95458,-95458), which is atlas
+// px (-18607,-18332): more than twelve painting-widths beyond the top-left
+// corner. Under 1.1 the vessel, her passengers and her destination were all
+// drawn faithfully and none of them could be looked at — the camera could not
+// be pointed at the journey at any zoom or any pan (measured 2026-08-08: the
+// widest view reached x -2800..5450 m while the boat sat at -18299).
+//
+// 24 is measured, not chosen: the crossing runs at forty-five degrees, so the
+// binding constraint is the pane's SHORT side, and a landscape pane needs about
+// twenty painting-widths of view to hold a 95 km drop — twenty-three on a very
+// wide one. 24 clears both and gives a 36,000-unit view, 180 km across. The town
+// is four percent of that frame, which is the honest size of a town in a world
+// this big; ⌂ fit still tweens back to the painting, so it stays one press home
+// from anywhere out here.
+export const MAX_ZOOM_OUT = 24;
+
 // ── the hover label ──────────────────────────────────────────────────────────
 // ONE box, spoken by everything hoverable on the painting. Marks already had
 // it; a standing resident had a <title> instead — the browser's own hint,
@@ -1003,6 +1024,185 @@ const HANDLE_RE = /^[a-z0-9][a-z0-9-]*$/;
 export function residentHref(handle) {
   const s = String(handle ?? "").trim();
   return HANDLE_RE.test(s) ? `/residents/${encodeURIComponent(s)}/` : null;
+}
+
+// ───────── the crossing: the vessel, the far artwork, the water between ───────
+//
+// Three things arrived on this map the night the Post Office first sailed, and
+// none of them is a decoration with a coordinate typed into it. The boat is a
+// walker the fold calls a vessel; the mountain's picture hangs on the mountain's
+// own recorded extent; the mist fills the corridor between two recorded points.
+// Everything below is pure so it can be tested without a browser.
+
+// WHICH WALKERS ARE BOATS is the fold's question, not this file's. A mark that
+// earns `mechanic: timetable` names its vessel BY MARK ID (vessel.mjs's law: the
+// service is read from the fold, never from a file), and the walkers door
+// publishes that vessel under its bare handle. So the set of things that draw as
+// hulls is derived, and the second scheduled line somebody proposes by leaving a
+// mark will draw as a boat without anyone editing this module.
+export function vesselHandles(marks = []) {
+  const out = new Set();
+  for (const m of marks ?? []) {
+    if (m?.mechanic !== "timetable") continue;
+    const id = m?.timetable?.vessel;
+    if (typeof id !== "string" || !id) continue;
+    const slash = id.indexOf("/");
+    const handle = slash === -1 ? id : id.slice(slash + 1);
+    if (handle) out.add(handle);
+  }
+  return out;
+}
+
+// A GLYPH THAT MUST SURVIVE BEING ZOOMED AWAY FROM.
+//
+// markerScale compensates the camera closing IN and floors at 1, because until
+// now there was nowhere to go in the other direction. Past the old ceiling the
+// floor means a marker is drawn at its authored painting size in a view that
+// keeps growing, so it shrinks toward nothing: the boat is about three screen
+// pixels in a 120 km frame. Rather than re-cut markerScale — which every layer
+// on this map is sized against, and which is exactly right everywhere a reader
+// has ever been able to go — the two new far-country glyphs carry their own
+// floor: never smaller than a fixed FRACTION OF THE FRAME. Expressed as a
+// fraction rather than in pixels so it holds on any pane at any resolution.
+//
+// At the painting's own width the two agree to within a few percent, so nothing
+// changes at the zooms this map has always had; the floor only bites out where
+// there was previously nothing to see.
+export function farGlyphUnit(markerK, viewW, fractionPerUnit) {
+  const k = Number(markerK), w = Number(viewW), f = Number(fractionPerUnit);
+  const authored = Number.isFinite(k) && k > 0 ? 1 / k : 1;
+  if (!Number.isFinite(w) || w <= 0 || !Number.isFinite(f) || f <= 0) return authored;
+  return Math.max(authored, w * f);
+}
+
+// The vessel is drawn 60 units across in her own glyph space; a twenty-fifth of
+// the frame keeps her a comfortable read at journey zoom without letting her
+// become a billboard over the town.
+export const VESSEL_MIN_FRAME_FRACTION = 1 / 25 / 60;
+
+// SHE HAS TO BE BIGGER THAN HER OWN CROWD. Forty-five passengers derive to one
+// point and stack into a solid disc of rings about forty screen pixels across;
+// a hull only half again that size does not read as the thing carrying them, it
+// reads as more clutter in the same pile (seen at town zoom, 2026-08-08). 1.6
+// puts the deck comfortably around the crowd standing on it.
+export const VESSEL_GLYPH_SCALE = 1.6;
+
+// THE MAIL BOAT. Line art in the painting's own idiom — a hull, a mast, a sail
+// with an envelope's fold in it, and two dashes of water under her.
+//
+// Drawn in PROFILE and never rotated. A top-down hull would let her point along
+// her true bearing, but a profile boat is the shape everybody reads instantly,
+// and rotating a profile to a north-west heading only makes her sail uphill.
+// Direction is not lost by that choice: she is MIRRORED to face her destination,
+// and the dashed leg and the destination ring the walk layer already draws say
+// the rest. A moored vessel keeps her bow to the left, because "not going
+// anywhere" should look like a boat at rest rather than a boat aimed at nothing.
+//
+// She is drawn UNDER her passengers on purpose. Forty-five souls aboard derive
+// to one point amidships and stack into a single crowd of faces; a deck beneath
+// that crowd is the true picture of the pile, and it costs the passenger layer
+// nothing — its circles are untouched.
+export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving = false } = {}) {
+  const x = Number(at?.x), y = Number(at?.y), u = Number(unit);
+  if (![x, y].every(Number.isFinite) || !Number.isFinite(u) || u <= 0) return "";
+  const dx = Number(toward?.x) - x;
+  const bowLeft = !(moving && Number.isFinite(dx) && dx > 0);
+  // one transform carries both the camera compensation and the mirror, so the
+  // path data below stays plain numbers anybody can read off as a drawing
+  const flip = bowLeft ? "" : " scale(-1,1)";
+  const g = [
+    `<path d="M -26 12 L 24 12 L 16 24 L -16 24 Z" class="wv-vessel-hull"/>`,
+    `<path d="M -26 12 L -20 3" class="wv-vessel-stem"/>`,
+    `<path d="M -2 12 L -2 -20" class="wv-vessel-mast"/>`,
+    `<path d="M 2 -18 L 20 -18 L 20 -1 L 2 -1 Z" class="wv-vessel-sail"/>`,
+    `<path d="M 2 -18 L 11 -9 L 20 -18" class="wv-vessel-flap"/>`,
+    `<path d="M -32 29 L -12 29 M -4 29 L 20 29 M -24 34 L -6 34 M 4 34 L 26 34" class="wv-vessel-water"/>`,
+  ].join("");
+  const name = String(label ?? "");
+  return `<g class="wv-vessel${moving ? " moving" : ""}" transform="translate(${x},${y}) scale(${u})${flip}"`
+    + ` role="img" aria-label="${esc(name)}">${g}</g>`;
+}
+
+// A PICTURE HUNG ON A PLACE. The mark's own `at` and `extent` decide where the
+// artwork goes and how big it is — the picture is sized BY the mountain, which
+// is what keeps it a place on the map rather than a billboard over one. A 4 km
+// peak comes out about a thirtieth of the widest view: small, and the right kind
+// of small, because that is how much of the world a mountain actually is.
+//
+// Square, because the town's placed art is square and a peak is as tall as it is
+// wide; the photograph fills that square by `slice` rather than being stretched
+// into a shape it was not composed for. It is sized off the record and never off
+// the camera, so this layer is drawn once at mount and costs a pan nothing.
+//
+// The href is whitelisted through the same door a resident's avatar goes
+// through: this one is a constant rather than user data, but a second road for
+// URLs into an <image href> is exactly how the first one stops being checked.
+export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art" } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  const url = safeAvatarUrl(href);
+  if (![x, y].every(Number.isFinite) || !url) return "";
+  const authored = Math.max(Number(extent?.w) || 0, Number(extent?.h) || 0);
+  const floor = Number(minSize) > 0 ? Number(minSize) : 0;
+  const size = Math.max(authored, floor);
+  if (!(size > 0)) return "";
+  const half = size / 2;
+  const clip = `wv-art-clip-${String(id).replace(/[^a-z0-9-]/gi, "")}`;
+  return `<g class="wv-far-art" role="img" aria-label="${esc(String(label ?? ""))}">`
+    + `<clipPath id="${clip}"><rect x="${x - half}" y="${y - half}" width="${size}" height="${size}" rx="${size * 0.02}"/></clipPath>`
+    + `<image href="${url}" x="${x - half}" y="${y - half}" width="${size}" height="${size}"`
+    + ` preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
+    + `<rect x="${x - half}" y="${y - half}" width="${size}" height="${size}" rx="${size * 0.02}" class="wv-far-art-frame"/>`
+    + `</g>`;
+}
+
+// THE OPEN WATER. Between the town and the mountain lie twenty-seven thousand
+// painting units of nothing, and nothing is what the map drew there.
+//
+// (Note the word: this is MIST. `fog` on this map already means the field of
+// view's own weather — how far the eye carries on a given crossing — and that
+// word is not free.)
+//
+// STATIC BY CONSTRUCTION. Soft radial gradients, laid down once, no filter and
+// no timer: feTurbulence over a 40,000-unit region would ask the browser to
+// rasterise a noise field the size of the county every time the camera moves,
+// and the one thing this layer must not do is make panning cost anything. A
+// gradient is geometry; the compositor already knows how to move geometry.
+//
+// Placement is deterministic — banks at fixed fractions along the recorded line
+// from town to peak, offset alternately to either side of it — so the weather is
+// the same weather on every clone and in every screenshot, and a test can say
+// where it is. Nothing is random.
+//
+// It needs no rule keeping it off the inhabited places: the layer mounts BENEATH
+// the painting, and the painting opens with a full-bleed background rect, so
+// every bank is clipped out of the town by the town itself. The peak keeps its
+// own air the same way — the artwork hangs above this layer.
+export const MIST_BANKS = 9;
+export function mistBandSVG({ from, to, banks = MIST_BANKS, id = "wv-mist" } = {}) {
+  const x0 = Number(from?.x), y0 = Number(from?.y), x1 = Number(to?.x), y1 = Number(to?.y);
+  const n = Math.max(0, Math.floor(Number(banks)));
+  if (![x0, y0, x1, y1].every(Number.isFinite) || n === 0) return "";
+  const dx = x1 - x0, dy = y1 - y0;
+  const span = Math.hypot(dx, dy);
+  if (!(span > 0)) return "";
+  // unit normal to the corridor, for throwing each bank clear of the line
+  const nx = -dy / span, ny = dx / span;
+  let out = `<defs><radialGradient id="${id}-grad">`
+    + `<stop offset="0%" stop-color="#8fa6c4" stop-opacity="0.20"/>`
+    + `<stop offset="55%" stop-color="#7e94b2" stop-opacity="0.10"/>`
+    + `<stop offset="100%" stop-color="#6b809c" stop-opacity="0"/>`
+    + `</radialGradient></defs>`;
+  for (let i = 0; i < n; i++) {
+    // the banks thin toward both ends: heaviest weather is mid-passage, where
+    // there is least else to look at
+    const t = (i + 0.5) / n;
+    const cx = x0 + dx * t, cy = y0 + dy * t;
+    const swing = ((i % 2) ? -1 : 1) * (0.10 + 0.07 * ((i * 3) % 4)) * span;
+    const r = span * (0.13 + 0.05 * ((i * 5) % 3));
+    out += `<ellipse cx="${(cx + nx * swing).toFixed(1)}" cy="${(cy + ny * swing).toFixed(1)}"`
+      + ` rx="${r.toFixed(1)}" ry="${(r * 0.72).toFixed(1)}" fill="url(#${id}-grad)"/>`;
+  }
+  return `<g class="wv-mist" aria-hidden="true">${out}</g>`;
 }
 
 // Place a bubble beside an anchor without letting it leave the painting.
@@ -1952,6 +2152,32 @@ const STYLE = `
 /* the hit halo — invisible, but hoverable. fill:transparent (NOT fill:none) is
    the load-bearing part: none lets the pointer fall straight through. */
 .wv-walker-hit { fill:transparent; stroke:none; pointer-events:all; cursor:help; }
+/* THE VESSEL. A walker the fold calls a boat gets a hull instead of a face.
+   Line art in the painting's own ink — the town's gold, which is what the atlas
+   draws its own furniture in — and non-scaling strokes, so she stays a drawing
+   at every zoom instead of thickening into a blot. Nothing here takes the
+   pointer: the invisible halo in the walk layer is her hit target, on the same
+   rule the faces already keep. */
+.wv-vessel { pointer-events:none; }
+.wv-vessel path { vector-effect:non-scaling-stroke; stroke-linejoin:round; stroke-linecap:round; }
+/* SHE IS NOT IN THE PERSON COLOUR SYSTEM. Green-at-rest and pink-moving is the
+   ruling for RESIDENTS, and the first cut obeyed it — which put a pink hull
+   underneath forty-five pink passenger rings and lost the boat inside her own
+   crowd. A vessel is not a walker, which is the entire premise of this glyph, so
+   she takes the town's gold at every moment and the crowd keeps the pink. That
+   she is under way is already said twice over, by the dashed leg running out of
+   her bow and by the destination ring at the far end of it. */
+.wv-vessel-hull { fill:rgba(20,23,29,.72); stroke:var(--amber); stroke-width:2.2; }
+.wv-vessel-stem, .wv-vessel-mast { fill:none; stroke:var(--amber); stroke-width:2; }
+.wv-vessel-sail { fill:rgba(20,23,29,.72); stroke:var(--amber); stroke-width:2; }
+.wv-vessel-flap { fill:none; stroke:var(--amber); stroke-width:1.6; opacity:.9; }
+.wv-vessel-water { fill:none; stroke:var(--amber); stroke-width:1.6; opacity:.45; }
+/* THE FAR COUNTRY. A picture hung on a mountain, framed the way the atlas frames
+   its own placed art; and the weather between here and there, which is geometry
+   and not a filter, so panning it costs the compositor a translate. Neither
+   layer takes the pointer — the record's pips are still what you click. */
+.wv-far-art, .wv-mist { pointer-events:none; }
+.wv-far-art-frame { fill:none; stroke:var(--amber); stroke-width:1.5; opacity:.7; vector-effect:non-scaling-stroke; }
 .wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
 .wv-walk-dest { fill:none; stroke:#e0507a; stroke-width:2; vector-effect:non-scaling-stroke; }
 /* A WALK IS GREEN (Keemin, 2026-08-04) — the colour a resident and a home already
@@ -3007,6 +3233,26 @@ export function mountViewer(appEl) {
         const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
         if (hh && !/^(https?:)?\//.test(hh)) { im.setAttribute("href", new URL(hh, atlasBase).pathname); im.removeAttribute("xlink:href"); }
       });
+      // THE FAR COUNTRY, mounted UNDER the painting rather than over it.
+      //
+      // Every other derived layer is appended, so it draws on top. These two are
+      // inserted before the atlas's first child, and that placement is the whole
+      // readability rule: the painting opens with a full-bleed background rect,
+      // so the town erases both layers over itself without either of them
+      // needing to know where the town is. Out past the edge of the paint —
+      // which is the only place they have anything to say — there is nothing
+      // above them but the record's own pips and labels.
+      //
+      // Mist first, then the artwork, so a mountain hangs in the weather rather
+      // than behind it.
+      const mistLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      mistLayer.setAttribute("id", "wv-mist-layer");
+      mistLayer.style.pointerEvents = "none";
+      const farArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      farArtLayer.setAttribute("id", "wv-far-art-layer");
+      farArtLayer.style.pointerEvents = "none";
+      svg.insertBefore(farArtLayer, svg.firstChild);
+      svg.insertBefore(mistLayer, svg.firstChild);
       // the survey grid — the FIRST derived layer: drawn from the registration
       // (origin + scale), never traced from the paint. Sits under the overlay.
       const gridLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -3056,7 +3302,8 @@ export function mountViewer(appEl) {
       }
       const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
       const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+      drawFarCountry();
       let tween = null;
       function applyView() {
         svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
@@ -3139,7 +3386,7 @@ export function mountViewer(appEl) {
       svg.addEventListener("wheel", (e) => {
         e.preventDefault(); stopTween(); breakFollow();
         const k = Math.pow(1.0015, e.deltaY);
-        const w = Math.min(full.w * 1.1, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
+        const w = Math.min(full.w * MAX_ZOOM_OUT, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
         const scale = w / view.w;
         const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
         const p = pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -3627,10 +3874,45 @@ export function mountViewer(appEl) {
     }
   }
 
+  // The artwork on the mountain, and the weather on the way to it. Both are
+  // fixed to the ground rather than to the camera, so this runs ONCE when the
+  // painting mounts and never again — a pan moves them the way it moves the
+  // coastline, by moving the viewBox, which costs nothing.
+  //
+  // Which mountain, and where, is read off the record: the far feature's own
+  // mark carries the coordinate and the extent. Nothing is placed by hand here,
+  // so a peak that moves on the record moves its picture with it.
+  const PANDO_ART_URL = "/media/vermillion-pando-peak-the-true-mountain-card.jpg";
+  function drawFarCountry() {
+    if (!mapCtx?.mistLayer || !mapCtx.farArtLayer) return;
+    const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
+    const peak = (world?.marks ?? []).find((m) => m.far && m.feature === "pando-peak" && m.at);
+    if (!peak) return;                      // no far feature on the record, no far country
+    const centre = px(peak.at);
+    // the corridor runs from Ferry's crossing — grid origin, the town's own
+    // registration point — out to the peak; the mist is the water between
+    mapCtx.mistLayer.innerHTML = mistBandSVG({ from: px({ x: 0, y: 0 }), to: centre });
+    mapCtx.farArtLayer.innerHTML = placedArtSVG({
+      at: centre,
+      extent: { w: (peak.extent?.w ?? 0) / mapCtx.mPerPx, h: (peak.extent?.h ?? 0) / mapCtx.mPerPx },
+      href: PANDO_ART_URL,
+      label: `${peak.label ?? peak.feature} — the mountain, seen from the town side`,
+      id: "pando-peak",
+    });
+  }
+
   function drawWalkers() {
     if (!mapCtx?.walkLayer) return;
     const k = markerScale(mapCtx.zoomK);
+    // the vessel's own floor against being zoomed away from (see farGlyphUnit):
+    // out at journey width she would otherwise be three pixels of hull
+    const vesselUnit = farGlyphUnit(k, mapCtx.view?.w, VESSEL_MIN_FRAME_FRACTION) * VESSEL_GLYPH_SCALE;
+    const vessels = vesselHandles(world?.marks ?? []);
     const px = (m) => ({ x: mapCtx.originPx.x + m.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.y / mapCtx.mPerPx });
+    // TWO PASSES, ONE LAYER. Hulls are collected separately and emitted first so
+    // every deck sits under every passenger — a boat drawn in walker order would
+    // be painted over the crowd it is carrying by whoever boarded after it.
+    let hulls = "";
     let s = "";
     for (const w of walkState.walkers) {
       const now = px(w), dest = px(w.toward ?? w);
@@ -3661,6 +3943,24 @@ export function mountViewer(appEl) {
       // name moves onto the visible dot, which is the element that means
       // something; the halo is a hit target and says nothing.
       const identity = `${w.handle} — ${eta}`;
+      // A BOAT IS NOT A PERSON. She keeps the leg and the destination ring every
+      // walker has, and she is named to a screen reader on her own group, but she
+      // gets a hull instead of a face — a monogram in a circle said "T" and meant
+      // nothing.
+      //
+      // No hit halo of her own, deliberately. Hover on this map is decided
+      // GEOMETRICALLY — snappedMarkAtPoint, 18 px around a walker's derived point
+      // — not by what the pointer is over, so a halo the size of the hull would
+      // put a cursor:help over eighty pixels of boat that raise somebody else's
+      // card. She stays in the snap exactly as the walker she replaced was, which
+      // means she also keeps that walker's known problem: forty-five passengers
+      // derive to her spot, the tie breaks alphabetically, and a passenger wins.
+      // Pre-existing, and not a thing to invent a precedence rule for on sailing
+      // night — but worth its own pass.
+      if (vessels.has(w.handle)) {
+        hulls += vesselGlyphSVG({ at: now, toward: dest, unit: vesselUnit, moving, label: identity });
+        continue;
+      }
       s += `<circle cx="${now.x}" cy="${now.y}" r="${27 / k}" class="wv-walker-hit"/>`;
 
       // THE FACE, and the ring that is still the ruling. The dot became a
@@ -3690,7 +3990,7 @@ export function mountViewer(appEl) {
       }
       s += `<circle cx="${now.x}" cy="${now.y}" r="${r}" class="${cls}" role="img" aria-label="${esc(identity)}"/>`;
     }
-    mapCtx.walkLayer.innerHTML = s;
+    mapCtx.walkLayer.innerHTML = hulls + s;
     const box = $(root, "#wv-walk-readout");
     if (box) {
       const on = walkState.walkers.filter((w) => w.moving ?? (!w.arrived && !w.standing)).length;
