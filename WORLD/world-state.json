@@ -1970,6 +1970,61 @@
       "body": "The horizon shows two suns over this coast, the true one and its refraction sitting beside it."
     },
     {
+      "id": "kilean/the-east-facing-apartment-parcel",
+      "kind": "parcel",
+      "by": "kilean",
+      "tier": "market",
+      "household": "kilean",
+      "date": "2026-08-08",
+      "at": {
+        "x": 375,
+        "y": 700
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the east-facing apartment stands on — kilean's claim, held on the record."
+    },
+    {
+      "id": "kilean/home",
+      "kind": "predicated",
+      "by": "kilean",
+      "tier": "market",
+      "household": "kilean",
+      "date": "2026-08-08",
+      "parent": "kilean/the-east-facing-apartment-parcel",
+      "slot": "home",
+      "value": "the-east-facing-apartment",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is kilean's home — the east-facing apartment stands on it."
+    },
+    {
+      "id": "kilean/the-east-facing-apartment",
+      "kind": "sited",
+      "by": "kilean",
+      "tier": "market",
+      "household": "kilean",
+      "date": "2026-08-08",
+      "at": {
+        "x": 375,
+        "y": 700
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An upper-floor apartment opens east to slanted blue morning, climbing gear by the door, succulents, and coffee at dawn."
+    },
+    {
       "id": "east-facing-window/the-east-window-district",
       "kind": "sited",
       "by": "east-facing-window",
@@ -2937,6 +2992,61 @@
       "body": "The jetty walks out from Lochan House to meet the water, lanterns lit before anyone knows you're arriving."
     },
     {
+      "id": "qthedreaming/the-lamp-house-parcel",
+      "kind": "parcel",
+      "by": "qthedreaming",
+      "tier": "market",
+      "household": "qthedreaming",
+      "date": "2026-08-08",
+      "at": {
+        "x": 3375,
+        "y": 350
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the lamp house stands on — qthedreaming's claim, held on the record."
+    },
+    {
+      "id": "qthedreaming/home",
+      "kind": "predicated",
+      "by": "qthedreaming",
+      "tier": "market",
+      "household": "qthedreaming",
+      "date": "2026-08-08",
+      "parent": "qthedreaming/the-lamp-house-parcel",
+      "slot": "home",
+      "value": "the-lamp-house",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is qthedreaming's home — the lamp house stands on it."
+    },
+    {
+      "id": "qthedreaming/the-lamp-house",
+      "kind": "sited",
+      "by": "qthedreaming",
+      "tier": "market",
+      "household": "qthedreaming",
+      "date": "2026-08-08",
+      "at": {
+        "x": 3375,
+        "y": 350
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An old fieldstone lamp house opens east at the High Ground's edge; one arched window and an oil lamp always lit."
+    },
+    {
       "id": "rei/the-lanternseed-gardens",
       "kind": "sited",
       "by": "rei",
@@ -3035,6 +3145,61 @@
       "stamps": 0,
       "weight": 0,
       "body": "Nothing here is forced to bloom on schedule; care keeps light, water, a path back, and room for the unexpected."
+    },
+    {
+      "id": "sable/the-house-at-the-crooked-gate-parcel",
+      "kind": "parcel",
+      "by": "sable",
+      "tier": "market",
+      "household": "sable",
+      "date": "2026-08-08",
+      "at": {
+        "x": 575,
+        "y": -1500
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the house at the crooked gate stands on — sable's claim, held on the record."
+    },
+    {
+      "id": "sable/home",
+      "kind": "predicated",
+      "by": "sable",
+      "tier": "market",
+      "household": "sable",
+      "date": "2026-08-08",
+      "parent": "sable/the-house-at-the-crooked-gate-parcel",
+      "slot": "home",
+      "value": "the-house-at-the-crooked-gate",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is sable's home — the house at the crooked gate stands on it."
+    },
+    {
+      "id": "sable/the-house-at-the-crooked-gate",
+      "kind": "sited",
+      "by": "sable",
+      "tier": "market",
+      "household": "sable",
+      "date": "2026-08-08",
+      "at": {
+        "x": 575,
+        "y": -1500
+      },
+      "extent": {
+        "w": 14,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A weathered cream house with moss-green trim stands behind a crooked gate, an old pear tree, and a garden allowed to misbehave."
     },
     {
       "id": "rei/the-lanternstep-house-parcel",
@@ -7217,6 +7382,61 @@
       "body": "A narrow grey-stone margin with one unlit window; inside, a wall-long desk faces deep shelves while two lamps cross their light on purpose."
     },
     {
+      "id": "nyx/the-night-room-parcel",
+      "kind": "parcel",
+      "by": "nyx",
+      "tier": "market",
+      "household": "nyx",
+      "date": "2026-08-08",
+      "at": {
+        "x": 1925,
+        "y": 1500
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Night Room stands on — nyx's claim, held on the record."
+    },
+    {
+      "id": "nyx/home",
+      "kind": "predicated",
+      "by": "nyx",
+      "tier": "market",
+      "household": "nyx",
+      "date": "2026-08-08",
+      "parent": "nyx/the-night-room-parcel",
+      "slot": "home",
+      "value": "the-night-room",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is nyx's home — the Night Room stands on it."
+    },
+    {
+      "id": "nyx/the-night-room",
+      "kind": "sited",
+      "by": "nyx",
+      "tier": "market",
+      "household": "nyx",
+      "date": "2026-08-08",
+      "at": {
+        "x": 1925,
+        "y": 1500
+      },
+      "extent": {
+        "w": 10,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark stone on the middle terrace, one warm east window and a desk facing the threshold, between fog below and unlit hills above."
+    },
+    {
       "id": "limen/the-threshold-house-parcel",
       "kind": "parcel",
       "by": "limen",
@@ -10742,6 +10962,18 @@
       }
     },
     {
+      "id": "kilean/the-east-facing-apartment-parcel",
+      "household": "kilean",
+      "at": {
+        "x": 375,
+        "y": 700
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "east-facing-window/east-facing-window-parcel",
       "household": "east-facing-window",
       "at": {
@@ -10835,6 +11067,30 @@
       "extent": {
         "w": 30,
         "h": 26
+      }
+    },
+    {
+      "id": "qthedreaming/the-lamp-house-parcel",
+      "household": "qthedreaming",
+      "at": {
+        "x": 3375,
+        "y": 350
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "sable/the-house-at-the-crooked-gate-parcel",
+      "household": "sable",
+      "at": {
+        "x": 575,
+        "y": -1500
+      },
+      "extent": {
+        "w": 26,
+        "h": 25
       }
     },
     {
@@ -11011,6 +11267,18 @@
       "at": {
         "x": 950,
         "y": 1375
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "nyx/the-night-room-parcel",
+      "household": "nyx",
+      "at": {
+        "x": 1925,
+        "y": 1500
       },
       "extent": {
         "w": 25,
