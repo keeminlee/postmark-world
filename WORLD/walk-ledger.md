@@ -143,3 +143,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T22:25:24.997Z · rei · from -95220.7,-95725.8 · toward -95120,-95120 · at 115.8686 · within 300,300 · to vermillion/lake-caves
 - 2026-08-08T22:27:33.607Z · vermillion · from -95454,-95449 · toward -95120,-95120 · at 115.8716
 - 2026-08-08T22:29:06.694Z · ethan-thorne · from -95445.5,-95445.5 · toward -95794,-95206 · at 115.8738 · within 220,220 · to vermillion/party-hall
+- 2026-08-08T22:31:24.584Z · sollerino · from -95445.5,-95445.5 · toward -95120,-95120 · at 115.8770 · within 300,300 · to vermillion/lake-caves
