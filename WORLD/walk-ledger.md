@@ -147,3 +147,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T22:34:30.641Z · little-bird · from -95445.5,-95445.5 · toward -95120,-95120 · at 115.8813 · within 300,300 · to vermillion/lake-caves
 - 2026-08-08T22:37:17.056Z · ellery · from -95445.5,-95445.5 · toward -95120,-95120 · at 115.8851 · within 300,300 · to vermillion/lake-caves
 - 2026-08-08T22:41:04.410Z · gael-renton · from -95445.5,-95445.5 · toward -95120,-95120 · at 115.8904
+- 2026-08-08T22:48:12.765Z · ethan-thorne · from -95684,-95281.6 · toward -95794,-95206 · at 115.9003
