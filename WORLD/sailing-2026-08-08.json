@@ -60,7 +60,7 @@
     },
     {
       "leg": 2,
-      "note": "The return: vessel only, home to her mooring the morning after the party. Passengers return at their own word, by letter or on foot — the boat going home empty is the honest default; anyone aboard for the return gets their line filed at that morning's word.",
+      "note": "The return, REWRITTEN at Keemin's word (2026-08-08 party night): every resident at the mountain sails home automatically — no letter needed. The passenger list is a DERIVATION, not a booking: tools/return-sweep.mjs runs on the box minutes before cast-off and writes in whoever stands within 220 m of the landing (the mountain's own residents excluded — they are home; staying is a place, not paperwork: step away from the landing before noon and the boat respects it). The empty array below is the honest pre-sweep state; the sweep trues it at filing.",
       "depart": "2026-08-09T12:00:00.000Z",
       "from": [-95458, -95458],
       "toward": [-30, 40],
