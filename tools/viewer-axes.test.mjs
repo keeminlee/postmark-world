@@ -76,6 +76,12 @@ import {
   readPaintingOnly,
   writePaintingOnly,
   PAINTING_ONLY_KEY,
+  safeAvatarUrl,
+  safeHexColor,
+  monogramOf,
+  residentFace,
+  residentHref,
+  DEFAULT_FACE_COLOR,
 } from "../spectator/viewer.mjs";
 
 test("distance-band headings derive their approximate ranges from the LOD dials", () => {
@@ -1219,4 +1225,77 @@ test("the record of acts is newest-first, and admits that it knows two precision
   assert.equal(collapsed[0].subject, "the-town/the-locks", "and it is the LAST one, not the first");
   assert.equal(collapsed.filter((r) => r.kind === "mark").length, 1, "which leaves room for what else happened");
   assert.equal(collapsed.filter((r) => r.day === "2026-08-03").length, 1, "yesterday is its own day, and keeps its own walk");
+});
+
+// ───────── the faces on the map ─────────
+//
+// This is the one surface that renders a user-supplied IMAGE and a user-supplied
+// NAME. The tests that matter are the refusals: a URL that is not a plain
+// same-origin path must not reach an SVG <image href>, and no amount of
+// escaping would have saved us, because `javascript:` survives entity-escaping
+// intact. So the rule is a whitelist and these are its teeth.
+
+test("an avatar URL is whitelisted, not sanitised — anything not a rooted local path is refused", () => {
+  assert.equal(safeAvatarUrl("/media/wright-avatar-card.jpg"), "/media/wright-avatar-card.jpg");
+  assert.equal(safeAvatarUrl("/media/a_b.c-d~e/f.png"), "/media/a_b.c-d~e/f.png", "ordinary URL characters pass");
+
+  for (const hostile of [
+    "javascript:alert(1)",
+    "JaVaScRiPt:alert(1)",
+    "data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=",
+    "//evil.example/x.jpg",
+    "https://evil.example/x.jpg",
+    "/media/../../etc/passwd",
+    "/media/x.jpg?onerror=alert(1)",
+    "/media/x.jpg#\" onload=\"alert(1)",
+    "  javascript:alert(1)  ",
+    "media/x.jpg",
+    "",
+    null,
+    undefined,
+    "/" + "a".repeat(400),
+  ]) assert.equal(safeAvatarUrl(hostile), null, `refused: ${String(hostile).slice(0, 40)}`);
+});
+
+test("a colour is a hex literal or it is the town's gold — never whatever arrived", () => {
+  assert.equal(safeHexColor("#b08d57"), "#b08d57");
+  assert.equal(safeHexColor("#ABC"), "#ABC");
+  for (const bad of ["red", "url(x)", "expression(1)", "#12345", "rgb(1,2,3)", "", null, "#gggggg"])
+    assert.equal(safeHexColor(bad), DEFAULT_FACE_COLOR, `fell back: ${String(bad)}`);
+  assert.equal(safeHexColor(null, "#000"), "#000", "the fallback is the caller's to choose");
+});
+
+test("a monogram is one grapheme, not one code unit", () => {
+  assert.equal(monogramOf("Wright"), "W");
+  assert.equal(monogramOf("  ellery "), "E");
+  assert.equal(monogramOf("", "the-post-office"), "T", "no name falls back to the handle");
+  assert.equal(monogramOf("", ""), "?", "and nothing at all still renders something");
+  assert.equal(monogramOf("Émile"), "É", "an accented letter is one monogram");
+  assert.equal(monogramOf("🦊 fox"), "🦊", "…and so is an emoji, rather than half a surrogate pair");
+});
+
+test("residentFace answers for a resident the map knows nothing about", () => {
+  const bare = residentFace("stranger");
+  assert.deepEqual(bare, {
+    handle: "stranger", name: "stranger", avatar: null,
+    color: DEFAULT_FACE_COLOR, monogram: "S", household: null,
+  }, "no meta is today's dot with a letter in it — never a broken image");
+
+  const full = residentFace("wright", {
+    name: "Wright", avatar: "/media/wright-avatar-card.jpg", color: "#b08d57", household: "The Trueing House",
+  });
+  assert.equal(full.avatar, "/media/wright-avatar-card.jpg");
+  assert.equal(full.monogram, "W");
+  assert.equal(full.household, "The Trueing House");
+
+  const hostile = residentFace("x", { name: "  ", avatar: "javascript:alert(1)", color: "url(x)" });
+  assert.equal(hostile.avatar, null, "a refused avatar leaves the monogram, not a hole");
+  assert.equal(hostile.color, DEFAULT_FACE_COLOR);
+  assert.equal(hostile.name, "x", "an all-whitespace name falls back to the handle");
+});
+
+test("a resident link is encoded, and a handle that isn't handle-shaped gets no link", () => {
+  assert.equal(residentHref("wren-winter"), "/residents/wren-winter/");
+  for (const bad of ["../../etc", "Wright", "a b", "", null, "<script>", "-leading"])
+    assert.equal(residentHref(bad), null, `no link for: ${String(bad)}`);
 });
