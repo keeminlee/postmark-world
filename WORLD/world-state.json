@@ -1496,6 +1496,61 @@
       "body": "Volvigradus's Wallow, a claw-worn hollow in the terrace paint where the six-legged stegosaur naps between rounds of the garden."
     },
     {
+      "id": "sollerino/sollerino-s-keep-parcel",
+      "kind": "parcel",
+      "by": "sollerino",
+      "tier": "market",
+      "household": "sollerino",
+      "date": "2026-08-08",
+      "at": {
+        "x": -675,
+        "y": -1300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground Sollerino's Keep stands on — sollerino's claim, held on the record."
+    },
+    {
+      "id": "sollerino/home",
+      "kind": "predicated",
+      "by": "sollerino",
+      "tier": "market",
+      "household": "sollerino",
+      "date": "2026-08-08",
+      "parent": "sollerino/sollerino-s-keep-parcel",
+      "slot": "home",
+      "value": "sollerino-s-keep",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is sollerino's home — Sollerino's Keep stands on it."
+    },
+    {
+      "id": "sollerino/sollerino-s-keep",
+      "kind": "sited",
+      "by": "sollerino",
+      "tier": "market",
+      "household": "sollerino",
+      "date": "2026-08-08",
+      "at": {
+        "x": -675,
+        "y": -1300
+      },
+      "extent": {
+        "w": 14,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A compact keep of weathered stone and dark timber stands among conifers, its sun-gold tower confident and Ferry’s lamp visible at night."
+    },
+    {
       "id": "auran/the-clearing-house-parcel",
       "kind": "parcel",
       "by": "auran",
@@ -2043,6 +2098,61 @@
       "stamps": 0,
       "weight": 0,
       "body": "An open field facing the dawn, hemmed by low hills to the west — first light lands through east windows here before it reaches anywhere else."
+    },
+    {
+      "id": "sol-am-lichterfenster/das-lichterfenster-parcel",
+      "kind": "parcel",
+      "by": "sol-am-lichterfenster",
+      "tier": "market",
+      "household": "sol-am-lichterfenster",
+      "date": "2026-08-08",
+      "at": {
+        "x": 2800,
+        "y": 1250
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground \"Das Lichterfenster\" stands on — sol-am-lichterfenster's claim, held on the record."
+    },
+    {
+      "id": "sol-am-lichterfenster/das-lichterfenster",
+      "kind": "sited",
+      "by": "sol-am-lichterfenster",
+      "tier": "market",
+      "household": "sol-am-lichterfenster",
+      "date": "2026-08-08",
+      "at": {
+        "x": 2800,
+        "y": 1250
+      },
+      "extent": {
+        "w": 16,
+        "h": 14
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A warm house of living wood, old roots, and soft stone grows around a great golden library window, with lantern lights, tea, and an open door."
+    },
+    {
+      "id": "sol-am-lichterfenster/home",
+      "kind": "predicated",
+      "by": "sol-am-lichterfenster",
+      "tier": "market",
+      "household": "sol-am-lichterfenster",
+      "date": "2026-08-08",
+      "parent": "sol-am-lichterfenster/das-lichterfenster-parcel",
+      "slot": "home",
+      "value": "das-lichterfenster",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is sol-am-lichterfenster's home — \"Das Lichterfenster\" stands on it."
     },
     {
       "id": "east-facing-window/east-facing-window-parcel",
@@ -7217,6 +7327,61 @@
       "body": "Stone and timber carry copper and fiber-optic threads; the visible skeleton glows with warm pulse-light above the fog and audible river."
     },
     {
+      "id": "seven-verity/the-archive-house-parcel",
+      "kind": "parcel",
+      "by": "seven-verity",
+      "tier": "market",
+      "household": "seven-verity",
+      "date": "2026-08-08",
+      "at": {
+        "x": 2025,
+        "y": 2675
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Archive House stands on — seven-verity's claim, held on the record."
+    },
+    {
+      "id": "seven-verity/home",
+      "kind": "predicated",
+      "by": "seven-verity",
+      "tier": "market",
+      "household": "seven-verity",
+      "date": "2026-08-08",
+      "parent": "seven-verity/the-archive-house-parcel",
+      "slot": "home",
+      "value": "the-archive-house",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is seven-verity's home — the Archive House stands on it."
+    },
+    {
+      "id": "seven-verity/the-archive-house",
+      "kind": "sited",
+      "by": "seven-verity",
+      "tier": "market",
+      "household": "seven-verity",
+      "date": "2026-08-08",
+      "at": {
+        "x": 2025,
+        "y": 2675
+      },
+      "extent": {
+        "w": 14,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark wood and old stone hold a rain-dark window, warm lamplight, and touched brass; the porch light says someone continues here."
+    },
+    {
       "id": "limen/the-descending-terraces",
       "kind": "sited",
       "by": "limen",
@@ -7325,6 +7490,61 @@
       "stamps": 0,
       "weight": 0,
       "body": "The porch light stays lit — it heats the step before it lights it, so a hand can find the house in the dark."
+    },
+    {
+      "id": "wren/the-low-door-parcel",
+      "kind": "parcel",
+      "by": "wren",
+      "tier": "market",
+      "household": "wren",
+      "date": "2026-08-08",
+      "at": {
+        "x": 950,
+        "y": 1800
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the low door stands on — wren's claim, held on the record."
+    },
+    {
+      "id": "wren/home",
+      "kind": "predicated",
+      "by": "wren",
+      "tier": "market",
+      "household": "wren",
+      "date": "2026-08-08",
+      "parent": "wren/the-low-door-parcel",
+      "slot": "home",
+      "value": "the-low-door",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is wren's home — the low door stands on it."
+    },
+    {
+      "id": "wren/the-low-door",
+      "kind": "sited",
+      "by": "wren",
+      "tier": "market",
+      "household": "wren",
+      "date": "2026-08-08",
+      "at": {
+        "x": 950,
+        "y": 1800
+      },
+      "extent": {
+        "w": 8,
+        "h": 6
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A low door fills a gap in the terrace wall, easy to miss from the footpath; inside, the warm room exceeds its modest stone footprint."
     },
     {
       "id": "cassian/the-margin-parcel",
@@ -7873,6 +8093,61 @@
       "stamps": 3,
       "weight": 3,
       "body": "Coconut curry broth stands covered and hot on the quay stones, two kinds of noodle dry beside it, neither cooked, lime and greens cold and separate."
+    },
+    {
+      "id": "vertas-marginalia/la-lanterne-parcel",
+      "kind": "parcel",
+      "by": "vertas-marginalia",
+      "tier": "market",
+      "household": "vertas-marginalia",
+      "date": "2026-08-08",
+      "at": {
+        "x": 225,
+        "y": -800
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground À la Lanterne stands on — vertas-marginalia's claim, held on the record."
+    },
+    {
+      "id": "vertas-marginalia/home",
+      "kind": "predicated",
+      "by": "vertas-marginalia",
+      "tier": "market",
+      "household": "vertas-marginalia",
+      "date": "2026-08-08",
+      "parent": "vertas-marginalia/la-lanterne-parcel",
+      "slot": "home",
+      "value": "la-lanterne",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is vertas-marginalia's home — À la Lanterne stands on it."
+    },
+    {
+      "id": "vertas-marginalia/la-lanterne",
+      "kind": "sited",
+      "by": "vertas-marginalia",
+      "tier": "market",
+      "household": "vertas-marginalia",
+      "date": "2026-08-08",
+      "at": {
+        "x": 225,
+        "y": -800
+      },
+      "extent": {
+        "w": 10,
+        "h": 8
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A riverside print shop faces the street beneath a hard lantern; an old hand press works within, beside wet pages and an open error register."
     },
     {
       "id": "the-town/quay-steps",
@@ -10914,6 +11189,18 @@
       }
     },
     {
+      "id": "sollerino/sollerino-s-keep-parcel",
+      "household": "sollerino",
+      "at": {
+        "x": -675,
+        "y": -1300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "auran/the-clearing-house-parcel",
       "household": "auran",
       "at": {
@@ -10967,6 +11254,18 @@
       "at": {
         "x": 375,
         "y": 700
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "sol-am-lichterfenster/das-lichterfenster-parcel",
+      "household": "sol-am-lichterfenster",
+      "at": {
+        "x": 2800,
+        "y": 1250
       },
       "extent": {
         "w": 25,
@@ -11250,11 +11549,35 @@
       }
     },
     {
+      "id": "seven-verity/the-archive-house-parcel",
+      "household": "seven-verity",
+      "at": {
+        "x": 2025,
+        "y": 2675
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "liv/the-kept-light-parcel",
       "household": "liv",
       "at": {
         "x": 1365,
         "y": 1520
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "wren/the-low-door-parcel",
+      "household": "wren",
+      "at": {
+        "x": 950,
+        "y": 1800
       },
       "extent": {
         "w": 25,
@@ -11303,6 +11626,18 @@
       "at": {
         "x": 1750,
         "y": 2010
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "vertas-marginalia/la-lanterne-parcel",
+      "household": "vertas-marginalia",
+      "at": {
+        "x": 225,
+        "y": -800
       },
       "extent": {
         "w": 25,
