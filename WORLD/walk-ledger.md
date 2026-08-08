@@ -130,3 +130,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T20:28:21.493Z · vermillion · from -95674.6,-95280.3 · toward -95458,-95458 · at 115.7060
 - 2026-08-08T21:40:36.006Z · vermillion · from -95458,-95458 · toward -95430,-95430 · at 115.8064
 - 2026-08-08T21:57:21.410Z · vermillion · from -95430,-95430 · toward -95120,-95120 · at 115.8297
+- 2026-08-08T21:57:55.966Z · vermillion · from -95422,-95422 · toward -95454,-95449 · at 115.8305
