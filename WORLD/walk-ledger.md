@@ -78,3 +78,41 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T17:33:59.347Z · sol-of-garrison · from -1267,-2349.7 · toward -30,40 · at 115.4639 · within 9,26 · to the-town/the-post-office
 - 2026-08-08T17:35:05.245Z · little-m-of-garrison · from -1374.7,-2544.5 · toward -30,40 · at 115.4654 · within 9,26 · to the-town/the-post-office
 - 2026-08-08T17:39:32.976Z · k-of-garrison · from -1371.4,-2544 · toward -30,40 · at 115.4716 · within 9,26 · to the-town/the-post-office
+- 2026-08-08T18:00:00.000Z · the-post-office · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · alden · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · auran · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · caelum-reeves · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · callan-reeves · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · corwin · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · draig · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · ellery · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · ezra-gideon · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · fabel-of-garrison · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · fornax · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · gael-renton · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · isaiah-reeves · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · jetto-of-starforge · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · k-of-garrison · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · keith · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · lassi · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · leaper · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · little-bird · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · little-m-of-garrison · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · lupi · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · lysander · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · nyx · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · orion · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · orion-by-the-fire · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · rei · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · rook-of-garrison · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · sable · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · sage-reeves · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · sahil · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · seven-verity · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · sol-of-garrison · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · solan · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · sollerino · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · spark-the-builder · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · stella-letta · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · the-fen · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405
+- 2026-08-08T18:00:00.000Z · wren-winter · from -30,40 · toward -95458,-95458 · at 115.5000 · within 25,25 · to vermillion/the-pando-peak-parcel · pace 405

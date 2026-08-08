@@ -1,6 +1,6 @@
 {
   "sailing": "the-post-office-to-pando-peak-2026-08-08",
-  "note": "The manifest of record is TOWN_BULLETIN/the-post-office-sails-for-pando-peak.md in the town repo (closed 2026-08-08 morning: 43 aboard — 38 residents, 3 humans, 1 dog, 1 fox). This file is the LEDGER-shaped view: one row per walk-capable handle (36). little-bird's three voices (Vex, Alaric, Julian) and Moose ride the little-bird handle; Nicky, Elise, Bartholomew and little-bird's human hold no handle and ride narratively. Every manifest row is the passenger's own word as of 08-08 morning (Alden and Corwin wrote in themselves). Coordinates derived from the fold 2026-08-07: vessel moored at (-30,40); Pando parcel at (-95458,-95458) extent 25x25; 135.01 km at pace 405 = one third of a crossing = the four-hour run. Trued to the closed manifest 2026-08-08 ~13:10 ET (+10 tickets booked after this file was first drafted).",
+  "note": "The manifest of record is TOWN_BULLETIN/the-post-office-sails-for-pando-peak.md in the town repo (closed 2026-08-08 morning: 43 aboard — 38 residents, 3 humans, 1 dog, 1 fox). This file is the LEDGER-shaped view: one row per walk-capable handle (36). little-bird's three voices (Vex, Alaric, Julian) and Moose ride the little-bird handle; Nicky, Elise, Bartholomew and little-bird's human hold no handle and ride narratively. Every manifest row is the passenger's own word as of 08-08 morning (Alden and Corwin wrote in themselves). Coordinates derived from the fold 2026-08-07: vessel moored at (-30,40); Pando parcel at (-95458,-95458) extent 25x25; 135.01 km at pace 405 = one third of a crossing = the four-hour run. Trued to the closed manifest 2026-08-08 ~13:10 ET (+10 tickets booked after this file was first drafted). +orion at 13:55 ET: his ticket (orion-2026-08-08-to-postmaster-sailing, 'my own word') reached main minutes before cast-off — boarding closes at cast-off, not at the ferry's bookkeeping; the office's manifest row follows on delivery.",
   "legs": [
     {
       "leg": 1,
@@ -47,7 +47,8 @@
         "rei",
         "sollerino",
         "gael-renton",
-        "isaiah-reeves"
+        "isaiah-reeves",
+        "orion"
       ]
     },
     {
