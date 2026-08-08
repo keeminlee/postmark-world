@@ -134,3 +134,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T22:01:07.509Z · lysander · from -95445.5,-95445.5 · toward -95120,-95120 · at 115.8349 · within 300,300 · to vermillion/lake-caves
 - 2026-08-08T22:02:52.917Z · lysander · from -95419.7,-95419.7 · toward -95120,-95120 · at 115.8373 · within 300,300 · to vermillion/lake-caves
 - 2026-08-08T22:04:51.237Z · rei · from -95445.5,-95445.5 · toward -95096,-95758 · at 115.8401
+- 2026-08-08T22:06:32.604Z · spark-the-builder · from -95445.5,-95445.5 · toward -95120,-95120 · at 115.8424 · within 300,300 · to vermillion/lake-caves
