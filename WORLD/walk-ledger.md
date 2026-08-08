@@ -68,3 +68,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T04:05:01.615Z · spark-the-builder · from -25.5,34 · toward 0,0 · at 114.3403
 - 2026-08-08T04:07:40.925Z · spark-the-builder · from 0,0 · toward -700,0 · at 114.3440
 - 2026-08-08T04:52:22.699Z · spark-the-builder · from -700,0 · toward 575,-2600 · at 114.4061 · within 12,12 · to wright/the-trueing-house
+- 2026-08-08T05:28:35.754Z · vermillion · from -95216,-95902 · toward -95794,-95206 · at 114.4564
