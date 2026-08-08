@@ -40,8 +40,13 @@ const DRY = process.argv.includes("--dry");
 const dateArgAt = process.argv.indexOf("--date");
 const DATE = dateArgAt > -1 ? process.argv[dateArgAt + 1] : "2026-07-24";
 if (!/^\d{4}-\d{2}-\d{2}$/.test(DATE)) throw new Error(`--date wants YYYY-MM-DD, got: ${DATE}`);
-const MARGIN = 12;         // metres of ground beyond the house, each dimension
-const MIN = 25;            // the schema's parcel default
+// A PARCEL IS 25×25, NO EXCEPTIONS (Keemin, 2026-08-08 — surgery on the
+// margin arithmetic that had minted nine 26×25 parcels for 14m-wide houses:
+// house+MARGIN outgrew the dial and quietly made two shapes of parcel where
+// the 07-31 ruling "a resident declares where, never how big" means one).
+// A house that cannot fit inside 25×25 is surfaced loudly for a mind, never
+// auto-grown around.
+const MIN = 25;            // = PARCEL_EXTENT_M, the one lawful parcel size
 
 const manifest = JSON.parse(readFileSync(join(ROOT, "seeding/manifest.json"), "utf8"));
 const marks = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
@@ -101,8 +106,9 @@ for (const h of manifest.homes) {
 
   const hr = rect(home);
   const parent = home._parentMarkId ? byId.get(home._parentMarkId) : null;
+  if (hr.w > MIN || hr.h > MIN) { skipped.push(`${id} — house ${hr.w}×${hr.h} exceeds the ${MIN}×${MIN} parcel law; needs a mind, not a bigger parcel`); continue; }
   const tryExt = [
-    { w: Math.max(hr.w + MARGIN, MIN), h: Math.max(hr.h + MARGIN, MIN) },
+    { w: MIN, h: MIN }, // the law: 25×25, no exceptions
     { w: hr.w, h: hr.h }, // fallback: exactly the house's own footprint
   ];
 
