@@ -10,7 +10,9 @@
 //   • /WORLD/*.json             → the world's public record, off THIS clone's disk
 //   • /api/stakes?holder=       → per-holder stakes, parsed from the town's
 //                                  stamp-ledger (LOCAL-ONLY; the island hides the half)
-//   • /atlas/*                  → proxied to postmark.town (the painting + its assets)
+//   • /atlas/*, /media/*        → proxied to postmark.town (the painting and its
+//                                  assets; the processed images the map hangs
+//                                  placed artwork from)
 //
 // The island (postmark.town/world) has none of this server — it serves the same
 // viewer.mjs statically, fetches the record from raw.githubusercontent, reads the
@@ -64,8 +66,12 @@ function stakesFor(holder) {
   return { holder, stakes, source: STAMP_LEDGER };
 }
 
-async function proxyAtlas(res, pathname) {
-  // pathname begins with /atlas/ — mirror it to the live town, read-only
+// The town's own static surfaces, mirrored read-only: /atlas/* is the painting
+// and its assets, /media/* is the processed image pipeline the map hangs placed
+// artwork from. Both are served same-origin on postmark.town, so proxying them
+// here is what makes the local spectator show the same map the island does
+// rather than a page of broken images.
+async function proxyTown(res, pathname) {
   const url = ATLAS_ORIGIN + pathname;
   try {
     const r = await fetch(url, { signal: AbortSignal.timeout(15000) });
@@ -129,9 +135,9 @@ createServer(async (req, res) => {
       });
     }
 
-    if (p.startsWith("/atlas/")) return proxyAtlas(res, p);
+    if (p.startsWith("/atlas/") || p.startsWith("/media/")) return proxyTown(res, p);
 
-    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /api/stakes?holder=, /api/walks?at=, /atlas/*" });
+    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
   } catch (e) {
     json(res, 500, { error: String(e?.message ?? e) });
   }

@@ -27,6 +27,15 @@ import {
   markerScale,
   MARK_SNAP_RADIUS_PX,
   MAX_ZOOM_IN,
+  MAX_ZOOM_OUT,
+  MIST_BANKS,
+  mistBandSVG,
+  farGlyphUnit,
+  placedArtSVG,
+  vesselGlyphSVG,
+  vesselHandles,
+  VESSEL_GLYPH_SCALE,
+  VESSEL_MIN_FRAME_FRACTION,
   officeBase,
   paintingMarkAtPoint,
   pointWalkDestination,
@@ -1473,4 +1482,157 @@ test("co-location is same-anchor or within a metre \u2014 the pile, not the neig
   assert.equal(stacked.has("d"), false, "a mark alone at its spot is not fanned");
   assert.equal(stacked.has("e"), false, "an unplaced mark has no spot to share");
   assert.equal(coLocatedMarkIds([]).size, 0);
+});
+
+// ── the crossing: the vessel, the far artwork, the water between ─────────────
+
+test("a boat is whatever the FOLD calls a vessel, not a handle typed in here", () => {
+  const marks = [
+    { id: "the-town/the-wheelhouse", mechanic: "timetable",
+      timetable: { vessel: "the-town/the-post-office", stops: [] } },
+    { id: "the-town/the-post-office" },                       // the vessel's own mark
+    { id: "someone/a-second-line", mechanic: "timetable",
+      timetable: { vessel: "someone/the-night-packet", stops: [] } },
+    { id: "the-town/the-quay" },
+  ];
+  const handles = vesselHandles(marks);
+  assert.deepEqual([...handles].sort(), ["the-night-packet", "the-post-office"],
+    "every timetable's vessel draws as a hull — a second line needs no code here");
+  // the door publishes walkers under BARE handles; the timetable names mark ids
+  assert.equal(handles.has("the-town/the-post-office"), false, "the household prefix is dropped");
+
+  assert.equal(vesselHandles([]).size, 0);
+  assert.equal(vesselHandles().size, 0);
+  assert.equal(vesselHandles([{ mechanic: "timetable" }]).size, 0, "a timetable naming no vessel is not a boat");
+  assert.equal(vesselHandles([{ timetable: { vessel: "a/b" } }]).size, 0, "and neither is a vessel with no mechanic");
+  assert.equal(vesselHandles([null, undefined, 3]).size, 0, "junk in the fold does not throw");
+});
+
+test("the vessel is drawn, mirrored toward her destination, and never rotated", () => {
+  const west = vesselGlyphSVG({
+    at: { x: 100, y: 50 }, toward: { x: -900, y: -900 }, unit: 2, moving: true,
+    label: "the-post-office — 109142 m to go",
+  });
+  assert.match(west, /^<g class="wv-vessel moving"/);
+  assert.match(west, /translate\(100,50\) scale\(2\)/);
+  assert.equal(/scale\(-1,1\)/.test(west), false, "sailing west, the bow already faces left");
+  assert.equal(/rotate\(/.test(west), false, "a profile boat is never rotated — she would sail uphill");
+  for (const part of ["wv-vessel-hull", "wv-vessel-mast", "wv-vessel-sail", "wv-vessel-flap", "wv-vessel-water"])
+    assert.ok(west.includes(part), "the glyph carries its " + part);
+  assert.ok(west.includes('aria-label="the-post-office — 109142 m to go"'), "she is named to a screen reader");
+
+  const east = vesselGlyphSVG({ at: { x: 0, y: 0 }, toward: { x: 500, y: 0 }, unit: 1, moving: true });
+  assert.match(east, /scale\(-1,1\)/, "sailing east she is mirrored to face her destination");
+
+  const moored = vesselGlyphSVG({ at: { x: 0, y: 0 }, toward: { x: 500, y: 0 }, unit: 1, moving: false });
+  assert.equal(/scale\(-1,1\)/.test(moored), false, "at rest she keeps her bow left rather than aiming at nothing");
+  assert.ok(moored.includes('class="wv-vessel"'), "and drops the moving class with it");
+
+  // nothing here may throw or emit half a glyph on bad input
+  assert.equal(vesselGlyphSVG(), "");
+  assert.equal(vesselGlyphSVG({ at: { x: NaN, y: 0 }, unit: 1 }), "");
+  assert.equal(vesselGlyphSVG({ at: { x: 0, y: 0 }, unit: 0 }), "");
+  assert.equal(
+    vesselGlyphSVG({ at: { x: 0, y: 0 }, unit: 1, toward: null, moving: true }),
+    vesselGlyphSVG({ at: { x: 0, y: 0 }, unit: 1, moving: true }),
+    "a mover with no destination still draws");
+});
+
+test("a far glyph is floored at a fraction of the FRAME, so zooming out cannot erase it", () => {
+  // at the painting's own width the floor and the authored size agree closely,
+  // which is what keeps every zoom this map has always had unchanged
+  const atPainting = farGlyphUnit(1, 1500, VESSEL_MIN_FRAME_FRACTION);
+  assert.ok(Math.abs(atPainting - 1) < 0.4, `at full width the floor barely moves (${atPainting})`);
+  // out at journey width the authored size would be three pixels of hull; the
+  // floor takes over and the glyph holds a constant share of the frame
+  const journey = farGlyphUnit(1, 24000, VESSEL_MIN_FRAME_FRACTION);
+  assert.ok(journey > 9, `at 24000 the floor carries the glyph (${journey})`);
+  assert.ok(Math.abs((journey * 60) / 24000 - 1 / 25) < 1e-9, "she is exactly a twenty-fifth of the frame");
+  // and she is drawn larger than the crowd she carries — a hull the size of the
+  // passenger pile is not a boat, it is more pile
+  const walkerDiameter = 22;                       // the walker ring is r = 11
+  assert.ok(60 * VESSEL_GLYPH_SCALE > walkerDiameter * 3, "the deck reads around its crowd");
+  // zoomed IN, markerScale still owns the size — the floor must not interfere
+  assert.equal(farGlyphUnit(24, 25, VESSEL_MIN_FRAME_FRACTION), 1 / 24);
+  // and nonsense never collapses a glyph to nothing
+  assert.equal(farGlyphUnit(0, 0, 0), 1);
+  assert.equal(farGlyphUnit(NaN, NaN, NaN), 1);
+  assert.equal(farGlyphUnit(2, NaN, 0.5), 0.5, "a bad frame falls back to the authored size");
+});
+
+test("placed artwork is sized by the mark it hangs on, and refuses an unvouched URL", () => {
+  const art = placedArtSVG({
+    at: { x: -18607, y: -18332 }, extent: { w: 800, h: 800 },
+    href: "/media/vermillion-pando-peak-the-true-mountain-card.jpg",
+    label: "Pando Peak", id: "pando-peak",
+  });
+  assert.ok(art.includes('x="-19007"') && art.includes('y="-18732"'), "centred on the mark's own at");
+  assert.ok(art.includes('width="800"'), "and sized by the mark's own extent");
+  assert.match(art, /preserveAspectRatio="xMidYMid slice"/, "filled, not stretched");
+  assert.match(art, /clip-path="url\(#wv-art-clip-pando-peak\)"/);
+  assert.ok(art.includes("wv-far-art-frame"), "framed like the atlas's own placed art");
+  assert.ok(art.includes('aria-label="Pando Peak"'));
+
+  // the floor exists but is not the normal road — the record's extent wins
+  const floored = placedArtSVG({ at: { x: 0, y: 0 }, extent: { w: 10, h: 10 }, minSize: 400, href: "/media/a.jpg" });
+  assert.ok(floored.includes('width="400"'));
+
+  // THE WHITELIST IS THE POINT: one road for URLs into an <image href>
+  const refused = ["javascript:alert(1)", "https://elsewhere.example/x.jpg", "//host/x.jpg",
+    "/media/../../etc/passwd", "/media/x.jpg?q=1", "", null, undefined];
+  for (const bad of refused)
+    assert.equal(placedArtSVG({ at: { x: 0, y: 0 }, extent: { w: 9, h: 9 }, href: bad }), "",
+      `refused: ${String(bad)}`);
+  assert.equal(placedArtSVG({ at: { x: NaN, y: 0 }, href: "/media/a.jpg" }), "");
+  assert.equal(placedArtSVG({ at: { x: 0, y: 0 }, extent: { w: 0, h: 0 }, href: "/media/a.jpg" }), "",
+    "a mark with no extent hangs no picture");
+});
+
+test("the mist is deterministic weather laid along the recorded corridor", () => {
+  const from = { x: 485, y: 760 }, to = { x: -18607, y: -18332 };
+  const a = mistBandSVG({ from, to });
+  assert.equal(a, mistBandSVG({ from, to }), "the same crossing gets the same weather, on every clone");
+  assert.equal([...a.matchAll(/<ellipse /g)].length, MIST_BANKS, "every bank is drawn");
+  assert.match(a, /<radialGradient id="wv-mist-grad">/);
+  assert.ok(a.includes('class="wv-mist"') && a.includes('aria-hidden="true"'),
+    "weather is not something a screen reader should have to hear about");
+
+  // STATIC BY CONSTRUCTION — the one promise this layer makes to a panning reader
+  for (const moving of ["<animate", "animateTransform", "filter=", "feTurbulence", "dur="])
+    assert.equal(a.includes(moving), false, `the mist carries no ${moving}`);
+
+  // the banks lie along the passage rather than scattered over the whole world
+  const span = Math.hypot(to.x - from.x, to.y - from.y);
+  for (const m of a.matchAll(/<ellipse cx="(-?[\d.]+)" cy="(-?[\d.]+)"/g)) {
+    const cx = Number(m[1]), cy = Number(m[2]);
+    const t = ((cx - from.x) * (to.x - from.x) + (cy - from.y) * (to.y - from.y)) / (span * span);
+    assert.ok(t > -0.25 && t < 1.25, `a bank at ${cx},${cy} sits along the passage (t=${t.toFixed(2)})`);
+  }
+
+  assert.equal(mistBandSVG(), "");
+  assert.equal(mistBandSVG({ from, to, banks: 0 }), "");
+  assert.equal(mistBandSVG({ from, to: from }), "", "a crossing of no distance has no water to fill");
+  assert.equal(mistBandSVG({ from: { x: NaN, y: 0 }, to }), "");
+});
+
+test("the camera can be pointed at the crossing it is drawing", () => {
+  // the atlas is 1500 units wide at 5 m per unit, registered at (485,760)
+  const widest = 1500 * MAX_ZOOM_OUT;
+  const M_PER_PX = 5;
+  // THE SHORT SIDE IS WHAT BINDS. The crossing runs at forty-five degrees, so a
+  // landscape pane runs out of height long before it runs out of width — sizing
+  // the ceiling against view.w alone is how you get a frame that holds the boat
+  // and drops the mountain off the top edge (seen, 2026-08-08).
+  const peakDropM = Math.abs(-95458 - 0);
+  for (const [pane, ratio] of [["16:10 landscape", 0.72], ["very wide", 0.62], ["phone", 1.4]]) {
+    const heightM = widest * ratio * M_PER_PX;
+    assert.ok(heightM > peakDropM * 1.05,
+      `${pane}: the widest frame is ${Math.round(heightM / 1000)} km tall, and the peak is ${peakDropM / 1000} km down`);
+  }
+  // the OLD ceiling is the thing being fixed: it could not hold either of them
+  const oldWest = (485 - 1500 * 1.1) * M_PER_PX;
+  assert.ok(oldWest > -18299, "under 1.1 the boat could not be looked at, at any pan");
+  assert.ok(oldWest > -95458, "and the peak was further out still");
+  // and the zoom-IN floor is untouched by any of this
+  assert.equal(MAX_ZOOM_IN, 60);
 });
