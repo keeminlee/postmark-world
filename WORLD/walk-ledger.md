@@ -139,3 +139,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T22:13:10.707Z · rei · from -95325.9,-95548.8 · toward -95453,-95435 · at 115.8516
 - 2026-08-08T22:14:22.003Z · rei · from -95344.6,-95532.1 · toward -95058,-95980 · at 115.8533
 - 2026-08-08T22:23:02.336Z · little-m-of-garrison · from -95445.5,-95445.5 · toward -95120,-95120 · at 115.8653 · within 300,300 · to vermillion/lake-caves
+- 2026-08-08T22:24:17.811Z · the-post-office · from -95445.5,-95445.5 · toward -94570,-94570 · at 115.8671 · within 328,328 · to vermillion/porch-hill · pace 405

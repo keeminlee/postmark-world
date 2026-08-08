@@ -45,7 +45,7 @@ const VESSEL = leg.vessel;
 // centre. 220 m covers the parcel and a party's worth of wandering around it;
 // beyond that is a chosen road, not a lingered evening.
 const CENTRE = { x: leg.from[0], y: leg.from[1] };
-const RING_M = 220;
+const RING_M = 250;
 
 // whose home is the mountain — they are excluded: the boat doesn't take the
 // mountain's own residents "home". The home ring is WIDER than the landing
@@ -64,14 +64,24 @@ const { departures } = parseWalkLedger(readFileSync(LEDGER, "utf8"));
 const lastByHandle = new Map();
 for (const d of departures) lastByHandle.set(d.handle, d); // file order: last filed governs
 
+// the crossing's own instant — a passenger whose LAST line is still the leg-1
+// ceremony line has never walked since the boat set them down. THE MERCY RULE
+// (2026-08-08, the Porch Hill move): they ride home wherever the landing is.
+// Fourteen aboard cannot walk at all; a landing they cannot reach must not be
+// able to strand them. Wanderers chose their legs; the walkless never chose.
+const leg1 = (manifest.legs ?? []).find((l) => String(l.leg) === "1");
+const CROSSING_ISO = leg1 ? new Date(Date.parse(leg1.depart)).toISOString() : null;
+
 const riding = [], staying = [];
 for (const [handle, d] of lastByHandle) {
   if (handle === VESSEL) continue;
+  if (homedHere.has(handle)) { staying.push(`${handle} — home is the mountain; they are home`); continue; }
+  const neverWalkedSinceCrossing = CROSSING_ISO && d.iso === CROSSING_ISO;
   const p = positionAt(d, at);
   const dist = Math.hypot(p.x - CENTRE.x, p.y - CENTRE.y);
-  if (dist > RING_M) { staying.push(`${handle} — ${Math.round(dist)} m from the landing (their road is their own)`); continue; }
-  if (homedHere.has(handle)) { staying.push(`${handle} — home is the mountain; they are home`); continue; }
-  riding.push(handle);
+  if (dist <= RING_M) { riding.push(handle); continue; }
+  if (neverWalkedSinceCrossing && dist < 5000) { riding.push(handle); continue; } // still on the mountain, never moved: carried
+  staying.push(`${handle} — ${Math.round(dist)} m from the landing${neverWalkedSinceCrossing ? "" : " (their road is their own)"}`);
 }
 riding.sort();
 
