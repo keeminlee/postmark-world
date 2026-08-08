@@ -1,0 +1,5 @@
+# viewer.mjs carries one deliberate NUL (a Map-key delimiter, ~line 795), which
+# makes git sniff it BINARY and switch off the autocrlf safety net — a Windows
+# text-mode write then flips 5,000 line endings and git stores them verbatim
+# (bitten 2026-08-08). Declaring it text/LF restores the net; the NUL survives.
+spectator/viewer.mjs text eol=lf
