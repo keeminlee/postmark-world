@@ -1107,6 +1107,16 @@ export function bubbleTrailStep(trail = [], action = "select", id = null) {
 // Walkers ride the mark hover store rather than growing a second one — one
 // hover mechanism for the painting. A namespaced key keeps them from colliding
 // with real mark ids, and everything that matches on mark ids simply misses.
+// The chooser rides the SELECTION as a sentinel id, the same trick the walker
+// card uses, so it inherits the bubble's anchoring, placement, Escape and
+// click-elsewhere dismissal without a second lifecycle to keep in step.
+export const CHOOSER_PREFIX = "choose:";
+export const chooserId = (ids) => `${CHOOSER_PREFIX}${ids.join(" ")}`;
+export const chooserIdsFrom = (id) =>
+  typeof id === "string" && id.startsWith(CHOOSER_PREFIX)
+    ? id.slice(CHOOSER_PREFIX.length).split(" ").filter(Boolean)
+    : null;
+
 export const WALKER_HOVER_PREFIX = "walker:";
 export const walkerHoverId = (handle) => `${WALKER_HOVER_PREFIX}${handle}`;
 export const walkerHandleFromHoverId = (id) =>
@@ -1127,6 +1137,99 @@ export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIU
     })
     .filter((mark) => mark.id && mark.distancePx <= radius)
     .sort((a, b) => a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)))[0]?.id ?? null;
+}
+
+// ───────── the contested click ─────────
+//
+// Every seating mints a parcel, a building and a predicate at very nearly one
+// spot, so the pips pile up and the one you want becomes unclickable: the snap
+// above picks the nearest and the other three are unreachable at any zoom.
+//
+// The rule is DON'T GUESS. One pip in radius is exactly today's behaviour; more
+// than one and the reader chooses. That is the whole design — the chooser is the
+// guarantee, and the fan below is only a courtesy that makes the pile legible
+// before you click it.
+
+// Everything within the snap radius, nearest first — the same distance metric
+// and the same tie-break as snappedMarkAtPoint, so the head of this list IS
+// what that function would have returned. They can never disagree.
+export function contestedMarksAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
+  const x = Number(point?.x), y = Number(point?.y), radius = Number(radiusPx);
+  if (![x, y, radius].every(Number.isFinite) || radius < 0) return [];
+  return marks
+    .map((mark) => {
+      const mx = Number(mark?.x), my = Number(mark?.y);
+      return {
+        id: mark?.id,
+        distancePx: [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity,
+      };
+    })
+    .filter((mark) => mark.id && mark.distancePx <= radius)
+    .sort((a, b) => a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)))
+    .map((mark) => mark.id);
+}
+
+// INNERMOST FIRST: the smallest extent leads, because the thing you are standing
+// on top of is the thing you meant. A parcel contains its building contains its
+// predicate, so ordering by area puts the most specific claim under your cursor
+// at the top of the list rather than the district you happen to be inside.
+// A mark with no extent (a predicate takes its locus from its parent) sorts as
+// the smallest thing there is — it is the innermost claim by definition.
+export function orderInnermostFirst(ids, byId) {
+  const area = (id) => {
+    const m = byId?.get?.(id);
+    const w = Number(m?.extent?.w), h = Number(m?.extent?.h);
+    return Number.isFinite(w) && Number.isFinite(h) ? w * h : -1;
+  };
+  return [...(ids ?? [])].sort((a, b) => area(a) - area(b) || String(a).localeCompare(String(b)));
+}
+
+// ───────── the fan ─────────
+//
+// Co-located pips get a few pixels of separation so a hover can tell them apart
+// before anyone clicks. The angle comes from the MARK ID's own hash and nothing
+// else — not from its index in the group — because an index-derived angle makes
+// every pip in a pile jump the moment one of them appears, disappears, or is
+// filtered out. Hash-derived, a mark's offset is the same on every render, in
+// every clone, forever.
+export const FAN_RADIUS_PX = 5;
+// Only once the map is zoomed in enough that a few pixels means anything. Below
+// this the pips genuinely overlap and separating them would be a lie about how
+// far apart the marks are.
+export const FAN_MIN_ZOOM = 4;
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5)); // ≈137.5°, the phyllotaxis angle
+
+// FNV-1a, 32-bit: small, stable, and dependency-free. Any stable hash would do;
+// what matters is that it is a pure function of the id.
+export function markIdHash(id) {
+  let h = 0x811c9dc5;
+  for (const ch of String(id ?? "")) {
+    h ^= ch.codePointAt(0);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h >>> 0;
+}
+
+export function fanOffsetPx(markId, radiusPx = FAN_RADIUS_PX) {
+  const angle = (markIdHash(markId) % 3600) / 3600 * Math.PI * 2 + GOLDEN_ANGLE;
+  return { dx: Math.cos(angle) * radiusPx, dy: Math.sin(angle) * radiusPx };
+}
+
+// Which pips are stacked closely enough to be worth fanning: same anchor, or
+// within a metre of it. Returns the set of ids that share a spot with anyone.
+export const FAN_SAME_SPOT_M = 1;
+export function coLocatedMarkIds(marks, withinM = FAN_SAME_SPOT_M) {
+  const placed = (marks ?? []).filter((m) => m?.id && Number.isFinite(m?.at?.x) && Number.isFinite(m?.at?.y));
+  const stacked = new Set();
+  for (let i = 0; i < placed.length; i++) {
+    for (let j = i + 1; j < placed.length; j++) {
+      if (Math.hypot(placed[i].at.x - placed[j].at.x, placed[i].at.y - placed[j].at.y) <= withinM) {
+        stacked.add(placed[i].id);
+        stacked.add(placed[j].id);
+      }
+    }
+  }
+  return stacked;
 }
 
 export function smallestContainingMark(point, marks = []) {
@@ -2107,6 +2210,18 @@ const STYLE = `
   overflow:hidden; font-size:.92rem; }
 .wv-bubble-hint { padding:0 13px 9px; margin:0; color:var(--dim); font-size:.68rem;
   letter-spacing:.05em; text-transform:uppercase; opacity:.75; }
+/* the contested-click chooser: a compact stack list in the bubble's own chrome,
+   innermost first. Rows are the page's ordinary cell title, so a row looks like
+   the thing it opens. */
+.wv-chooser { padding:9px 10px; display:flex; flex-direction:column; gap:5px; }
+.wv-choose-lead { margin:0 0 3px; font-size:.72rem; color:var(--dim); }
+.wv-choose-row {
+  display:block; width:100%; text-align:left; cursor:pointer;
+  padding:6px 8px; border-radius:7px; color:inherit; font:inherit;
+  background:rgba(13,20,38,.55); border:1px solid var(--line);
+}
+.wv-choose-row:hover { border-color:var(--amber); background:rgba(28,44,79,.6); }
+.wv-choose-row:focus-visible { outline:2px solid var(--amber); outline-offset:1px; }
 .wv-bubble-walker { padding:10px 13px; font-size:.8rem; line-height:1.5; color:var(--dim); }
 .wv-bubble-walker .wv-standing { color:var(--paper); font-weight:700; font-style:normal; }
 .wv-bubble-walker p { margin:5px 0 0; }
@@ -3141,7 +3256,15 @@ export function mountViewer(appEl) {
         // feature. Same snap helper, same radius, same precedence as pointing.
         const walkerId = snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
         if (walkerId) { selectMark(walkerId); return; }
-        const markId = snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
+        // THE CONTESTED CLICK. Every seating mints a parcel, a building and a
+        // predicate at nearly one spot, so the pips pile up and the snap can
+        // only ever reach the nearest — the other three become unclickable at
+        // any zoom. When more than one is under the cursor we do not guess: the
+        // reader is shown the stack and picks. Exactly one in radius is the
+        // behaviour this map has always had, down to the scrollCell.
+        const contested = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
+        if (contested.length > 1) { openChooser(contested); return; }
+        const markId = contested[0] ?? null;
         if (markId) {
           selectMark(markId, { scrollCell: true });
           return;
@@ -3266,8 +3389,21 @@ export function mountViewer(appEl) {
     const glyphIds = new Set();
     // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
     // mark up by id (and catches sovereign/home, which is not a tier value).
-    for (const m of overlayMarks(radial)) {
+    // THE FAN, high zoom only. Pips sharing a spot get a few pixels of
+    // separation so a hover can tell them apart before anyone has to click.
+    // At low zoom they merge again on purpose — the pile is honest about being
+    // a pile, and the chooser is the guarantee that you can still reach into it.
+    const drawn = overlayMarks(radial);
+    const fanned = mapCtx?.zoomK >= FAN_MIN_ZOOM ? coLocatedMarkIds(drawn) : new Set();
+    for (const m of drawn) {
       const p = px(m.at);
+      if (fanned.has(m.id)) {
+        // in PANEL pixels, so the fan stays a constant few pixels rather than
+        // growing with the map the way the marks themselves do
+        const off = fanOffsetPx(m.id);
+        p.x += off.dx / k;
+        p.y += off.dy / k;
+      }
       glyphIds.add(m.id);
       s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip ${markClasses(m)}" data-id="${esc(m.id)}">`
         // the OS tooltip stands down in painting-only for the same reason the SVG
@@ -3827,6 +3963,14 @@ export function mountViewer(appEl) {
   }
 
   function selectMark(id, { scrollCell = false, trail = null } = {}) {
+    // THE CHOOSER, like the walker card, takes none of the mark machinery
+    // below: it names no single mark yet, so there is no trail step to record
+    // and no destination to preview. Choosing a row is what selects a mark.
+    if (chooserIdsFrom(id)) {
+      bubbleTrail = [];
+      markInteraction.select(id);
+      return true;
+    }
     // A WALKER IS SELECTABLE, and takes none of the machinery below. No trail
     // (a resident is not a step in a route through the record), no walk preview
     // (selecting a person is not choosing a destination — the ground under them
@@ -4211,7 +4355,38 @@ export function mountViewer(appEl) {
   // does; a mark with no embodied ancestor at all (the root, an ambient law) has
   // no place on the painting and takes the middle of the view rather than
   // vanishing — losing the bubble would lose the only way to read it in this mode.
+  // Open the stack. Ordered innermost-first here, once, so the list the reader
+  // sees and the list the rows are built from are the same order.
+  function openChooser(ids) {
+    selectMark(chooserId(orderInnermostFirst(ids, byId)));
+  }
+
+  // One row per contested mark, in the page's own cell vocabulary — the same
+  // kind/name/tier words markCellTitle renders everywhere else, so a row reads
+  // as the thing it will open. Names are resident-authored, so they go through
+  // esc as text and the row carries the id in a data attribute, never in prose.
+  function chooserHTML(id) {
+    const ids = chooserIdsFrom(id) ?? [];
+    const rows = ids.map((markId) => {
+      const full = byId.get(markId);
+      if (!full) return "";
+      const identity = markName(full), where = radialWhere(full);
+      return `<button type="button" class="wv-choose-row ${markClasses(full)}" data-choose="${esc(markId)}">`
+        + markCellTitle({ name: identity.name, determined: identity.determined,
+                          bearing: where.bearing, tier: tierOf(full), draft: isDraft(full) })
+        + `</button>`;
+    }).filter(Boolean).join("");
+    if (!rows) return "";
+    return `<div class="wv-chooser">`
+      + `<p class="wv-choose-lead">${ids.length} marks are stacked here — which one?</p>`
+      + rows
+      + `</div>`;
+  }
+
   function markAnchorPoint(id) {
+    // the stack hangs off the innermost of the marks it is offering
+    const choosing = chooserIdsFrom(id);
+    if (choosing) return nearestEmbodiedAncestor(byId.get(choosing[0]), byId)?.at ?? null;
     const handle = walkerHandleFromHoverId(id);
     if (handle) {
       const w = (walkState.walkers ?? []).find((entry) => entry?.handle === handle);
@@ -4302,6 +4477,17 @@ export function mountViewer(appEl) {
     // link only works in this layer (the hover layer takes no pointer events).
     // It is also the only way onto a resident's page from the map on a touch
     // screen, where hover never happens: pinning is what hovering is for fingers.
+    const choosing = id && chooserIdsFrom(id);
+    if (choosing) {
+      const html = chooserHTML(id);
+      if (!html) { el.hidden = true; el.innerHTML = ""; pinnedBuiltId = null; return; }
+      if (pinnedBuiltId === id && el.firstChild) { el.hidden = false; return; }
+      pinnedBuiltId = id;
+      el.className = "wv-bubble is-pinned is-chooser";
+      el.innerHTML = html;
+      el.hidden = false;
+      return;
+    }
     const walkerHandle = id && walkerHandleFromHoverId(id);
     if (walkerHandle) {
       const html = walkerBubbleHTML(walkerHandle, { pressable: true });
@@ -4358,7 +4544,12 @@ export function mountViewer(appEl) {
       // for a pointer that is reading a bubble rather than pointing at the
       // painting — running a finger down a relations list should light each one
       // on the map, not pop a second bubble over the list you are reading
-      const glance = hoveredId && hoveredId !== selectedId && !hoverFromBubble ? hoveredId : null;
+      // …and the same reasoning while the CHOOSER is open: it is asking a
+      // question about the pile under the cursor, so a preview of one of its
+      // own rows would sit under it saying "click to open" — which is now the
+      // wrong instruction, since a click there reopens the stack.
+      const glance = hoveredId && hoveredId !== selectedId && !hoverFromBubble && !chooserIdsFrom(selectedId)
+        ? hoveredId : null;
       renderHoverBubble(glance);
     } finally {
       renderingBubbles = false;
@@ -4711,6 +4902,10 @@ export function mountViewer(appEl) {
       if (byId.has(act.dataset.id)) selectMark(act.dataset.id, { scrollCell: true });
       return;
     }
+    // picking one out of the stack: from here it is an ordinary selection, and
+    // the mark opens in exactly the bubble it would have opened in alone
+    const chosen = e.target.closest("[data-choose]");
+    if (chosen) { selectMark(chosen.dataset.choose, { scrollCell: true }); return; }
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
     if (e.target.closest(".wv-change-course")) {

@@ -76,6 +76,12 @@ import {
   readPaintingOnly,
   writePaintingOnly,
   PAINTING_ONLY_KEY,
+  contestedMarksAtPoint,
+  orderInnermostFirst,
+  fanOffsetPx,
+  markIdHash,
+  coLocatedMarkIds,
+  FAN_RADIUS_PX,
   parseStakeCommits,
   msToNextSettlementAttempt,
   formatCountdown,
@@ -1388,4 +1394,83 @@ test("a quiet lane contributes nothing and cannot empty the rail", () => {
   const withEmpties = recentActivity({ ...base, stakes: [], blessings: [], departures: [] });
   assert.deepEqual(withEmpties, withNothing, "empty lanes are the same as absent ones");
   assert.equal(withNothing.length, 1, "and the rail still carries what it had");
+});
+
+// ───── the contested click ─────
+//
+// The rule under test is DON'T GUESS: one pip in radius behaves exactly as it
+// always did, more than one and the reader chooses. The head of the contested
+// list must always be what the old snap would have returned, or the two
+// disagree and a chooser could open on a mark the click never touched.
+
+const PIP = (id, x, y) => ({ id, x, y });
+
+test("one pip in radius is not contested \u2014 today's behaviour, unchanged", () => {
+  const pips = [PIP("a/one", 100, 100), PIP("b/far", 400, 400)];
+  assert.deepEqual(contestedMarksAtPoint({ x: 102, y: 101 }, pips), ["a/one"]);
+  assert.equal(snappedMarkAtPoint({ x: 102, y: 101 }, pips), "a/one", "the snap agrees");
+});
+
+test("several pips in radius all come back, nearest first", () => {
+  const pips = [PIP("a/parcel", 100, 100), PIP("b/house", 101, 100), PIP("c/pred", 100, 102), PIP("z/far", 900, 900)];
+  const got = contestedMarksAtPoint({ x: 100, y: 100 }, pips);
+  assert.deepEqual(got, ["a/parcel", "b/house", "c/pred"], "the far one is not in the pile");
+  assert.equal(got[0], snappedMarkAtPoint({ x: 100, y: 100 }, pips),
+    "the head of the list IS what the old snap picks \u2014 they can never disagree");
+});
+
+test("nothing in radius is an empty list, and bad input is not a throw", () => {
+  assert.deepEqual(contestedMarksAtPoint({ x: 0, y: 0 }, [PIP("a", 999, 999)]), []);
+  assert.deepEqual(contestedMarksAtPoint({ x: NaN, y: 0 }, [PIP("a", 0, 0)]), []);
+  assert.deepEqual(contestedMarksAtPoint({ x: 0, y: 0 }, []), []);
+  assert.deepEqual(contestedMarksAtPoint({ x: 0, y: 0 }, [{ x: 0, y: 0 }]), [], "a pip with no id is not a choice");
+});
+
+test("the chooser lists INNERMOST first \u2014 the thing you are standing on top of", () => {
+  const byId = new Map([
+    ["t/district", { id: "t/district", extent: { w: 2000, h: 2000 } }],
+    ["t/parcel", { id: "t/parcel", extent: { w: 25, h: 25 } }],
+    ["t/house", { id: "t/house", extent: { w: 9, h: 12 } }],
+    ["t/pred", { id: "t/pred" }],  // a predicate takes its parent's locus: no extent
+  ]);
+  assert.deepEqual(
+    orderInnermostFirst(["t/district", "t/house", "t/pred", "t/parcel"], byId),
+    ["t/pred", "t/house", "t/parcel", "t/district"],
+    "predicate, building, parcel, district \u2014 most specific claim at the top");
+  // stable and total: equal areas fall back to the id, so the list never shuffles
+  const tie = new Map([["a/x", { extent: { w: 5, h: 5 } }], ["b/x", { extent: { w: 5, h: 5 } }]]);
+  assert.deepEqual(orderInnermostFirst(["b/x", "a/x"], tie), ["a/x", "b/x"]);
+  assert.deepEqual(orderInnermostFirst(["ghost"], new Map()), ["ghost"], "an unknown id still gets a row");
+  assert.deepEqual(orderInnermostFirst(null, new Map()), []);
+});
+
+test("the fan is deterministic, small, and never dances when its neighbours change", () => {
+  const a = fanOffsetPx("the-town/the-jetty");
+  assert.deepEqual(a, fanOffsetPx("the-town/the-jetty"), "same id, same offset, every render");
+  assert.ok(Math.abs(Math.hypot(a.dx, a.dy) - FAN_RADIUS_PX) < 1e-9, "the offset is exactly the fan radius");
+  assert.ok(Math.hypot(a.dx, a.dy) <= 6, "and it is a few pixels, not a scatter");
+  // different marks land in different directions
+  const b = fanOffsetPx("the-town/the-quay-reach");
+  assert.ok(Math.hypot(a.dx - b.dx, a.dy - b.dy) > 1e-6, "two marks do not sit on top of each other");
+  // the angle comes from the ID alone, so a mark's offset is independent of who
+  // else happens to be in its pile \u2014 this is what stops the jump when one
+  // appears, disappears, or is filtered out
+  assert.deepEqual(fanOffsetPx("t/one"), fanOffsetPx("t/one"));
+  assert.equal(markIdHash("t/one"), markIdHash("t/one"));
+  assert.notEqual(markIdHash("t/one"), markIdHash("t/two"));
+});
+
+test("co-location is same-anchor or within a metre \u2014 the pile, not the neighbourhood", () => {
+  const marks = [
+    { id: "a", at: { x: 10, y: 10 } },
+    { id: "b", at: { x: 10, y: 10 } },        // exactly stacked
+    { id: "c", at: { x: 10.5, y: 10 } },      // half a metre off
+    { id: "d", at: { x: 40, y: 10 } },        // its own spot
+    { id: "e" },                              // unplaced
+  ];
+  const stacked = coLocatedMarkIds(marks);
+  assert.deepEqual([...stacked].sort(), ["a", "b", "c"]);
+  assert.equal(stacked.has("d"), false, "a mark alone at its spot is not fanned");
+  assert.equal(stacked.has("e"), false, "an unplaced mark has no spot to share");
+  assert.equal(coLocatedMarkIds([]).size, 0);
 });
