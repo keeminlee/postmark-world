@@ -152,3 +152,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T22:51:32.820Z · vermillion · from -95120,-95120 · toward -95248,-95265 · at 115.9049
 - 2026-08-08T22:52:49.822Z · gael-renton · from -95272.6,-95272.6 · toward -95270,-95264 · at 115.9067
 - 2026-08-08T22:52:54.237Z · vermillion · from -95138.9,-95141.4 · toward -95254,-95266 · at 115.9068
+- 2026-08-08T22:53:03.583Z · vermillion · from -95141.1,-95143.8 · toward -95262,-95267 · at 115.9070
