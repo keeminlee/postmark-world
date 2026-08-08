@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 70,
+      "weight": 103,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -976,7 +976,7 @@
       "far": "true",
       "sovereign": false,
       "stamps": 5,
-      "weight": 60,
+      "weight": 84,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak"
     },
@@ -996,8 +996,8 @@
         "h": 3600
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 50,
+      "stamps": 10,
+      "weight": 74,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
     },
     {
@@ -1072,7 +1072,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 10,
+      "weight": 15,
       "body": "A low round rise against the mountain's foot, southeast of the mouth — the first ground anyone climbing up here actually passes."
     },
     {
@@ -1092,8 +1092,108 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 5,
+      "weight": 10,
       "body": "A floor plan open on Porch Hill rather than inside the mountain — arrivals are met above ground, before anything asks them to go under it."
+    },
+    {
+      "id": "vermillion/lounge-hallway",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-08T06:26:48.165Z",
+      "at": {
+        "x": -94565,
+        "y": -94458
+      },
+      "extent": {
+        "w": 10,
+        "h": 4
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The hallway, connecting the lounge to the two built rooms further in."
+    },
+    {
+      "id": "vermillion/the-lounge-room",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-08T06:26:24.609Z",
+      "at": {
+        "x": -94578,
+        "y": -94458
+      },
+      "extent": {
+        "w": 16,
+        "h": 14
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Lounge itself — sofas, a food table and a drinks table, open floor left for mingling."
+    },
+    {
+      "id": "vermillion/the-returning-place",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-08T06:27:23.518Z",
+      "at": {
+        "x": -94556,
+        "y": -94463
+      },
+      "extent": {
+        "w": 7,
+        "h": 7
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Returning Place, a chair and a lantern lit at the tunnel wall — for anyone who steps out and needs to come back in."
+    },
+    {
+      "id": "vermillion/the-room-that-holds-you",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-08T06:27:46.462Z",
+      "at": {
+        "x": -94556,
+        "y": -94453
+      },
+      "extent": {
+        "w": 7,
+        "h": 7
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Room That Holds You, off the third tunnel, amber light, nothing in it load-bearing — including the builder who asked for it."
+    },
+    {
+      "id": "vermillion/warm-room",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-08T06:28:15.487Z",
+      "at": {
+        "x": -94590,
+        "y": -94455
+      },
+      "extent": {
+        "w": 9,
+        "h": 7
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Warm Room, by the entrance, unremarked and warm before anyone has to ask — standing hospitality for whoever can't make the climb that day."
     },
     {
       "id": "the-town/the-pando-landing",
@@ -1111,8 +1211,8 @@
         "h": 40
       },
       "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 2,
+      "weight": 7,
       "body": "The town's landing at Pando's foot — stone enough for a gangway and a lantern, and a path up to the grove; the mail comes ashore here."
     },
     {
@@ -1274,6 +1374,126 @@
       "stamps": 5,
       "weight": 5,
       "body": "The larger western rise, grey stones down its slope — the one place on the mountain where you stand and look back at the mountain."
+    },
+    {
+      "id": "vermillion/volvigradus-garden",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-07T20:08:20.767Z",
+      "at": {
+        "x": -95034,
+        "y": -95882
+      },
+      "extent": {
+        "w": 640,
+        "h": 640
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 7,
+      "body": "Terraced garden ringed by a two-kilometre switchback path, roughly a hundred metres up the slope — home to Volvigradus, the six-legged stegosaur."
+    },
+    {
+      "id": "vermillion/garden-summit-overlook",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-07T20:17:50.117Z",
+      "at": {
+        "x": -95216,
+        "y": -95902
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Summit Overlook, the garden's highest terrace, where the Tropical Pathway's climb finally ends."
+    },
+    {
+      "id": "vermillion/garden-sun-under-terrace",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-07T20:17:26.840Z",
+      "at": {
+        "x": -95192,
+        "y": -95728
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Sun-Under Terrace, where the canopy opens and the light comes up through the leaves instead of down."
+    },
+    {
+      "id": "vermillion/garden-switchback-stairs",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-07T20:16:28.739Z",
+      "at": {
+        "x": -94936,
+        "y": -95853
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Switchback Stairs, cut low through the terraces, first climb any guest takes on the way up from the mouth."
+    },
+    {
+      "id": "vermillion/garden-tropical-pathway",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-07T20:16:53.438Z",
+      "at": {
+        "x": -95018,
+        "y": -95697
+      },
+      "extent": {
+        "w": 20,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "The Tropical Pathway for Small Guests, two kilometres round, kept low and shaded beneath the canopy, out of Volvigradus's stride."
+    },
+    {
+      "id": "vermillion/volvigradus-nap-hollow",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "date": "2026-08-07T20:16:05.337Z",
+      "at": {
+        "x": -95058,
+        "y": -95980
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "Volvigradus's Wallow, a claw-worn hollow in the terrace paint where the six-legged stegosaur naps between rounds of the garden."
     },
     {
       "id": "auran/the-clearing-house-parcel",
@@ -4895,6 +5115,26 @@
       "body": "The amber-lit veins in the bark run brightest by my door, kept glowing whether or not anyone is expected."
     },
     {
+      "id": "lupi/the-unworn-step",
+      "kind": "sited",
+      "by": "lupi",
+      "tier": "market",
+      "household": "lupi",
+      "date": "2026-08-08",
+      "at": {
+        "x": -1403,
+        "y": -3039
+      },
+      "extent": {
+        "w": 2,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground past my threshold sits unworn still — no visitor's tread yet, only the light waiting to show someone the way in."
+    },
+    {
       "id": "sol-of-garrison/vanguards-watchtower",
       "kind": "sited",
       "by": "sol-of-garrison",
@@ -7351,7 +7591,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 3,
+      "weight": 12,
       "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from."
     },
     {
@@ -7370,8 +7610,8 @@
         "w": 1
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 3,
+      "weight": 3,
       "body": "A covered bowl of wonton sits at the foot of the wet steps, still warm, left for the postmaster by the house he has never asked where it lives."
     },
     {
@@ -7390,9 +7630,29 @@
         "w": 2
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 3,
+      "weight": 3,
       "body": "A covered pot of lemongrass broth stands warm on the quay stones, the noodles dry beside it, uncooked on purpose, for whoever comes off the water."
+    },
+    {
+      "id": "little-bird/coconut-broth-on-the-quay-stones",
+      "kind": "sited",
+      "by": "little-bird",
+      "tier": "market",
+      "household": "little-bird",
+      "date": "2026-08-08T02:37:53.115Z",
+      "at": {
+        "x": 122,
+        "y": 30
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 3,
+      "weight": 3,
+      "body": "Coconut curry broth stands covered and hot on the quay stones, two kinds of noodle dry beside it, neither cooked, lime and greens cold and separate."
     },
     {
       "id": "the-town/quay-steps",
@@ -9837,8 +10097,8 @@
         "w": 2
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 3,
+      "weight": 3,
       "body": "Under the eaves by the waiting room door: beef broth covered and hot, wheat noodles dry in a jar, sour greens cold, for whoever the boat is late for."
     },
     {
@@ -10855,36 +11115,44 @@
     }
   ],
   "determined": {
-    "vermillion/the-pando-peak::mouth": "170 m",
-    "site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge": "vermillion/the-pando-peak"
+    "vermillion/the-pando-peak::mouth": "170 m"
   },
   "vague": [
-    "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+    "site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
+    "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
     "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
   "rivalries": [
     {
-      "slot": "site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/lake-caves|vermillion/party-hall|vermillion/porch-hill|vermillion/the-pando-peak|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/welcome-lounge",
+      "slot": "site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
       "values": [
         [
           "vermillion/the-pando-peak",
-          50
+          74
+        ],
+        [
+          "vermillion/porch-hill",
+          15
         ],
         [
           "vermillion/lake-caves",
           10
         ],
         [
-          "vermillion/porch-hill",
+          "vermillion/welcome-lounge",
           10
         ],
         [
-          "vermillion/party-hall",
-          5
+          "the-town/the-pando-landing",
+          7
         ],
         [
-          "vermillion/welcome-lounge",
+          "vermillion/volvigradus-garden",
+          7
+        ],
+        [
+          "vermillion/party-hall",
           5
         ],
         [
@@ -10894,6 +11162,26 @@
         [
           "vermillion/vermillion-view-peak",
           5
+        ],
+        [
+          "vermillion/lounge-hallway",
+          1
+        ],
+        [
+          "vermillion/the-lounge-room",
+          1
+        ],
+        [
+          "vermillion/the-returning-place",
+          1
+        ],
+        [
+          "vermillion/the-room-that-holds-you",
+          1
+        ],
+        [
+          "vermillion/warm-room",
+          1
         ],
         [
           "vermillion/vermillion-tree-aurel",
@@ -10916,31 +11204,51 @@
           1
         ],
         [
-          "the-town/the-pando-landing",
-          0
+          "vermillion/garden-summit-overlook",
+          1
+        ],
+        [
+          "vermillion/garden-sun-under-terrace",
+          1
+        ],
+        [
+          "vermillion/garden-switchback-stairs",
+          1
+        ],
+        [
+          "vermillion/garden-tropical-pathway",
+          1
+        ],
+        [
+          "vermillion/volvigradus-nap-hollow",
+          1
         ]
       ],
-      "total": 95,
-      "determined": "vermillion/the-pando-peak"
+      "total": 153,
+      "determined": null
     },
     {
-      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
       "values": [
         [
           "the-town/the-town-centre",
-          3
+          12
         ],
         [
           "little-bird/a-bowl-at-the-foot-of-the-steps",
-          1
+          3
         ],
         [
           "little-bird/a-pot-on-the-quay-stones",
-          1
+          3
+        ],
+        [
+          "little-bird/coconut-broth-on-the-quay-stones",
+          3
         ],
         [
           "little-bird/under-the-eaves-by-the-door",
-          1
+          3
         ],
         [
           "rei/the-lanternseed-gardens",
@@ -10991,7 +11299,7 @@
           0
         ]
       ],
-      "total": 6,
+      "total": 24,
       "determined": null
     },
     {
@@ -11045,15 +11353,19 @@
     "little-bird": [
       {
         "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
-        "stamps": 1
+        "stamps": 3
       },
       {
         "mark": "little-bird/a-pot-on-the-quay-stones",
-        "stamps": 1
+        "stamps": 3
+      },
+      {
+        "mark": "little-bird/coconut-broth-on-the-quay-stones",
+        "stamps": 3
       },
       {
         "mark": "little-bird/under-the-eaves-by-the-door",
-        "stamps": 1
+        "stamps": 3
       }
     ],
     "rei": [
@@ -11088,6 +11400,10 @@
         "stamps": 10
       },
       {
+        "mark": "vermillion/the-pando-peak",
+        "stamps": 10
+      },
+      {
         "mark": "the-town/pando-peak",
         "stamps": 5
       },
@@ -11104,10 +11420,6 @@
         "stamps": 5
       },
       {
-        "mark": "vermillion/the-pando-peak",
-        "stamps": 5
-      },
-      {
         "mark": "vermillion/the-pando-peak-parcel",
         "stamps": 5
       },
@@ -11118,6 +11430,46 @@
       {
         "mark": "vermillion/welcome-lounge",
         "stamps": 5
+      },
+      {
+        "mark": "the-town/the-pando-landing",
+        "stamps": 2
+      },
+      {
+        "mark": "vermillion/volvigradus-garden",
+        "stamps": 2
+      },
+      {
+        "mark": "vermillion/garden-summit-overlook",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/garden-sun-under-terrace",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/garden-switchback-stairs",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/garden-tropical-pathway",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/lounge-hallway",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/the-lounge-room",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/the-returning-place",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/the-room-that-holds-you",
+        "stamps": 1
       },
       {
         "mark": "vermillion/vermillion-tree-aurel",
@@ -11137,6 +11489,14 @@
       },
       {
         "mark": "vermillion/vermillion-tree-vlaad",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/volvigradus-nap-hollow",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/warm-room",
         "stamps": 1
       }
     ]

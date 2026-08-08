@@ -195,6 +195,71 @@
       "household": "lupi-agent",
       "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/mark.md",
       "class": "home"
+    },
+    "vermillion/lounge-hallway": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/porch-hill/welcome-lounge/lounge-hallway/mark.md",
+      "class": "commons"
+    },
+    "vermillion/the-lounge-room": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/porch-hill/welcome-lounge/the-lounge-room/mark.md",
+      "class": "commons"
+    },
+    "vermillion/the-returning-place": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/porch-hill/welcome-lounge/the-returning-place/mark.md",
+      "class": "commons"
+    },
+    "vermillion/the-room-that-holds-you": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/porch-hill/welcome-lounge/the-room-that-holds-you/mark.md",
+      "class": "commons"
+    },
+    "vermillion/warm-room": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/porch-hill/welcome-lounge/warm-room/mark.md",
+      "class": "commons"
+    },
+    "vermillion/garden-summit-overlook": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/volvigradus-garden/garden-summit-overlook/mark.md",
+      "class": "commons"
+    },
+    "vermillion/garden-sun-under-terrace": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/volvigradus-garden/garden-sun-under-terrace/mark.md",
+      "class": "commons"
+    },
+    "vermillion/garden-switchback-stairs": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/volvigradus-garden/garden-switchback-stairs/mark.md",
+      "class": "commons"
+    },
+    "vermillion/garden-tropical-pathway": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/volvigradus-garden/garden-tropical-pathway/mark.md",
+      "class": "commons"
+    },
+    "vermillion/volvigradus-garden": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/volvigradus-garden/mark.md",
+      "class": "commons"
+    },
+    "vermillion/volvigradus-nap-hollow": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/volvigradus-garden/volvigradus-nap-hollow/mark.md",
+      "class": "commons"
+    },
+    "little-bird/coconut-broth-on-the-quay-stones": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/coconut-broth-on-the-quay-stones/mark.md",
+      "class": "commons"
+    },
+    "lupi/the-unworn-step": {
+      "household": "lupi-agent",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/the-unworn-step/mark.md",
+      "class": "home"
     }
   }
 }
