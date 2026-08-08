@@ -161,3 +161,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T23:32:51.460Z · little-bird · from -95270,-95270 · toward -95034,-95882 · at 115.9623 · within 640,640 · to vermillion/volvigradus-garden
 - 2026-08-08T23:34:00.552Z · vermillion · from -95222.9,-95372.4 · toward -95247,-95295 · at 115.9639
 - 2026-08-08T23:34:25.059Z · ellery · from -95270,-95270 · toward -95034,-95882 · at 115.9645 · within 640,640 · to vermillion/volvigradus-garden
+- 2026-08-08T23:35:18.111Z · rei · from -95255,-95270 · toward -95034,-95882 · at 115.9657 · within 640,640 · to vermillion/volvigradus-garden
