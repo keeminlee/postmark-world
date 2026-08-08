@@ -855,6 +855,76 @@ export function activityDayLabel(day, today) {
   return `${Number(parts[2])} ${MONTHS[Number(parts[1]) - 1] ?? "?"}`;
 }
 
+// ───────── the faces on the map ─────────
+//
+// A walker stops being a dot and becomes a face: their avatar in a circle, or
+// their monogram on their own colour when they have no picture. The STATE RING
+// survives intact around it — green at rest, pink moving — because the motion
+// language is a ruling (walk-is-green) and a face is not allowed to eat it.
+//
+// Everything below is pure so it can be tested without a browser, and because
+// this is the one place on the map that renders USER-SUPPLIED IMAGES AND NAMES.
+// The rules that follow are the whole defence.
+
+// An avatar URL is data a resident influences, arriving through a JSON file, and
+// it lands in an SVG <image href>. Escaping is the wrong tool for a URL —
+// `javascript:alert(1)` survives every entity-escape intact — so this is a
+// WHITELIST, not a filter: a rooted same-origin path, ordinary URL characters
+// only, no protocol, no host, no traversal. Anything else is not "sanitised", it
+// is REFUSED, and the caller falls back to the monogram. A face nobody can vouch
+// for simply doesn't render.
+const AVATAR_PATH = /^\/[A-Za-z0-9._~\-]+(?:\/[A-Za-z0-9._~\-]+)*$/;
+export function safeAvatarUrl(url) {
+  const s = String(url ?? "").trim();
+  if (!s || s.length > 300) return null;
+  if (!AVATAR_PATH.test(s)) return null;   // covers //host, http:, javascript:, data:, ?query, #frag
+  if (s.includes("..")) return null;       // no climbing out of /media
+  return s;
+}
+
+// A colour reaches the map as a fill. Only #rgb / #rrggbb is honoured; anything
+// else (a CSS function, a url(), a bare word that might be `inherit`) falls back
+// to the town's own gold rather than being handed to the renderer.
+const HEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+export const DEFAULT_FACE_COLOR = "#e8c48b";
+export function safeHexColor(color, fallback = DEFAULT_FACE_COLOR) {
+  const s = String(color ?? "").trim();
+  return HEX.test(s) ? s : fallback;
+}
+
+// The first letter of what they are called, uppercased — by grapheme, so an
+// emoji or an accented letter is one monogram and not half of one.
+export function monogramOf(name, handle = "") {
+  const source = String(name ?? "").trim() || String(handle ?? "").trim();
+  return Array.from(source)[0]?.toLocaleUpperCase() ?? "?";
+}
+
+// One resident's face, resolved from whatever the meta map happens to carry.
+// Every field is optional and every absence has an answer: no meta at all is a
+// monogram of the handle on the default colour, which is exactly today's dot
+// with a letter in it. Nothing here can throw and nothing here trusts anything.
+export function residentFace(handle, meta = null) {
+  const name = String(meta?.name ?? "").trim() || String(handle ?? "");
+  return {
+    handle: String(handle ?? ""),
+    name,
+    avatar: safeAvatarUrl(meta?.avatar),
+    color: safeHexColor(meta?.color),
+    monogram: monogramOf(name, handle),
+    household: String(meta?.household ?? "").trim() || null,
+  };
+}
+
+// The resident page for a handle. Handles are lowercase-hyphenated by the
+// town's own law, but this is a link built from map data, so it is encoded
+// rather than trusted — and a handle that isn't handle-shaped gets no link at
+// all rather than a guessed one.
+const HANDLE_RE = /^[a-z0-9][a-z0-9-]*$/;
+export function residentHref(handle) {
+  const s = String(handle ?? "").trim();
+  return HANDLE_RE.test(s) ? `/residents/${encodeURIComponent(s)}/` : null;
+}
+
 // Place a bubble beside an anchor without letting it leave the painting.
 //
 // Sized and positioned in the PANEL's own pixels, not the painting's units: a
@@ -1681,8 +1751,21 @@ const STYLE = `
 /* ONE resident, two states. Still is the common case and reads calm; moving is
    the exception and reads warm, because motion is the thing worth noticing. How
    we learned a position (walk record vs parcel) is provenance, not appearance. */
-.wv-walker { fill:var(--green); stroke:#fff; stroke-width:2; vector-effect:non-scaling-stroke; }
-.wv-walker.moving { fill:#e0507a; }
+/* THE RING IS THE RULING. The walker used to BE this circle, filled green or
+   pink; now it is the ring drawn around their face. Same two states, same two
+   colours, same non-scaling stroke — the motion language did not move when the
+   faces arrived, it just got something to go around. */
+.wv-walker { fill:none; stroke:var(--green); stroke-width:2.5; vector-effect:non-scaling-stroke; }
+.wv-walker.moving { stroke:#e0507a; }
+/* the face itself: a picture clipped to the circle, or the monogram disc under
+   it. Neither takes the pointer — the invisible halo above is the hit target,
+   and a face that swallowed clicks would break the hover rules it sits inside. */
+.wv-walker-face { pointer-events:none; }
+.wv-walker-mono { stroke:none; pointer-events:none; }
+.wv-walker-initial {
+  fill:#101b31; font-weight:700; text-anchor:middle; dominant-baseline:central;
+  pointer-events:none; font-family:var(--mono, ui-monospace, monospace);
+}
 /* the hit halo — invisible, but hoverable. fill:transparent (NOT fill:none) is
    the load-bearing part: none lets the pointer fall straight through. */
 .wv-walker-hit { fill:transparent; stroke:none; pointer-events:all; cursor:help; }
@@ -1939,6 +2022,22 @@ const STYLE = `
 .wv-bubble-walker { padding:10px 13px; font-size:.8rem; line-height:1.5; color:var(--dim); }
 .wv-bubble-walker .wv-standing { color:var(--paper); font-weight:700; font-style:normal; }
 .wv-bubble-walker p { margin:5px 0 0; }
+/* the mini card: their face, their names, their house. The ring colour repeats
+   here so the card and the dot on the map are visibly the same person in the
+   same state. */
+.wv-face-row { display:flex; align-items:center; gap:9px; }
+.wv-face { width:34px; height:34px; flex:0 0 auto; border-radius:999px; overflow:hidden;
+  display:grid; place-items:center; border:2px solid var(--green); }
+.wv-bubble-walker.moving .wv-face { border-color:#e0507a; }
+.wv-face-img { width:100%; height:100%; object-fit:cover; display:block; }
+.wv-face-mono { width:100%; height:100%; display:grid; place-items:center;
+  color:#101b31; font-weight:700; font-size:.95rem; }
+.wv-face-who { display:flex; flex-direction:column; gap:1px; min-width:0; }
+.wv-face-handle { font-size:.7rem; letter-spacing:.04em; color:var(--dim); }
+.wv-face-house { font-size:.7rem; color:var(--amber); }
+.wv-face-go { margin:8px 0 0; }
+.wv-face-go a { color:var(--paper); text-decoration:none; border-bottom:1px solid var(--line); }
+.wv-face-go a:hover { border-bottom-color:var(--paper); }
 
 /* ── drafts, everywhere at once ────────────────────────────────────────────────
    There is no My World lens any more; a draft is simply grey. Every rule below
@@ -2943,6 +3042,13 @@ export function mountViewer(appEl) {
         // Window District sets out for the spot you clicked, in that district,
         // rather than marching you to its centre; and a region too big to be a
         // destination stops swallowing clicks without needing a rule of its own.
+        // A RESIDENT WINS THE CLICK, for the same reason they already win the
+        // hover: the person is what you were pointing at. Their card is the only
+        // way onto their page from the map, and on a touch screen the glance
+        // never happens at all — so without this, faces would be a desktop-only
+        // feature. Same snap helper, same radius, same precedence as pointing.
+        const walkerId = snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
+        if (walkerId) { selectMark(walkerId); return; }
         const markId = snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
         if (markId) {
           selectMark(markId, { scrollCell: true });
@@ -3201,6 +3307,22 @@ export function mountViewer(appEl) {
     changingCourse: false,
   };
 
+  // Who the walkers ARE — name, avatar, colour, household — keyed by handle.
+  // A record file like any other, fetched same-origin and entirely optional: an
+  // empty map is not a degraded map, it is exactly the dots this viewer drew
+  // before faces existed. Nothing waits on it and nothing fails without it.
+  let residentsMeta = new Map();
+  const faceOf = (handle) => residentFace(handle, residentsMeta.get(handle) ?? null);
+  async function loadResidentsMeta() {
+    try {
+      const r = await fetch("/world-engine/residents-meta.json", { credentials: "omit" });
+      if (!r.ok) return;
+      const body = await r.json();
+      const entries = Object.entries(body?.residents ?? {});
+      if (entries.length) residentsMeta = new Map(entries);
+    } catch { /* no faces today; the dots are still the truth */ }
+  }
+
   function actorWalker() {
     return walkState.walkers.find((walker) => walker.handle === state.handle) ?? null;
   }
@@ -3276,8 +3398,34 @@ export function mountViewer(appEl) {
       // name moves onto the visible dot, which is the element that means
       // something; the halo is a hit target and says nothing.
       const identity = `${w.handle} — ${eta}`;
-      s += `<circle cx="${now.x}" cy="${now.y}" r="${27 / k}" class="wv-walker-hit"/>`
-         + `<circle cx="${now.x}" cy="${now.y}" r="${9 / k}" class="${cls}" role="img" aria-label="${esc(identity)}"/>`;
+      s += `<circle cx="${now.x}" cy="${now.y}" r="${27 / k}" class="wv-walker-hit"/>`;
+
+      // THE FACE, and the ring that is still the ruling. The dot became a
+      // circle carrying the resident's own picture — but green-still /
+      // pink-moving is the map's motion language, so it survives as a RING
+      // around the face rather than being replaced by it. Read the ring for
+      // state, the face for who.
+      //
+      // A resident with no avatar gets their monogram on their own colour;
+      // a resident the meta map has never heard of gets the same circle in the
+      // town's gold, which is the old dot with a letter in it. There is no
+      // path here that renders nothing.
+      const face = faceOf(w.handle);
+      const r = 11 / k;
+      if (face.avatar) {
+        // The clip is per-walker because each face is a different picture; the
+        // id is built from the handle, which residentHref's own rule has
+        // already established is [a-z0-9-] — and a handle that fails it simply
+        // never reaches this branch, because the meta map is keyed by handle.
+        const clip = `wv-face-${face.handle.replace(/[^a-z0-9-]/g, "")}`;
+        s += `<clipPath id="${clip}"><circle cx="${now.x}" cy="${now.y}" r="${r}"/></clipPath>`
+           + `<image href="${esc(face.avatar)}" x="${now.x - r}" y="${now.y - r}" width="${r * 2}" height="${r * 2}"`
+           + ` preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
+      } else {
+        s += `<circle cx="${now.x}" cy="${now.y}" r="${r}" class="wv-walker-mono" fill="${esc(face.color)}"/>`
+           + `<text x="${now.x}" y="${now.y}" class="wv-walker-initial" font-size="${13 / k}">${esc(face.monogram)}</text>`;
+      }
+      s += `<circle cx="${now.x}" cy="${now.y}" r="${r}" class="${cls}" role="img" aria-label="${esc(identity)}"/>`;
     }
     mapCtx.walkLayer.innerHTML = s;
     const box = $(root, "#wv-walk-readout");
@@ -3552,6 +3700,17 @@ export function mountViewer(appEl) {
   }
 
   function selectMark(id, { scrollCell = false, trail = null } = {}) {
+    // A WALKER IS SELECTABLE, and takes none of the machinery below. No trail
+    // (a resident is not a step in a route through the record), no walk preview
+    // (selecting a person is not choosing a destination — the ground under them
+    // still is, and that is a different click), and no cell to scroll to. It
+    // toggles, so a second click on the same face puts the card away.
+    if (walkerHandleFromHoverId(id)) {
+      if (markInteraction.getState().selectedId === id) { markInteraction.select(null); return false; }
+      bubbleTrail = [];
+      markInteraction.select(id);
+      return true;
+    }
     if (!id || !byId.has(id)) return false;
     if (markInteraction.getState().selectedId === id) {
       clearSelectionAndDestination();
@@ -3933,14 +4092,47 @@ export function mountViewer(appEl) {
     }
     return nearestEmbodiedAncestor(byId.get(id), byId)?.at ?? null;
   }
-  function walkerBubbleHTML(handle) {
+  // THE MINI CARD — who this face belongs to. Their picture, what they are
+  // called, their handle, the house they keep, and where they are right now.
+  //
+  // `pressable` is not a style choice, it is this layer's own law (see the note
+  // over markPreviewHTML): the HOVER layer takes no pointer events, so a link
+  // drawn there is a button you cannot press — worse than no button. The glance
+  // therefore carries no link and the PINNED card does, which is also what makes
+  // this reachable on a touch screen, where hover never happens at all.
+  //
+  // Everything user-supplied here is either escaped as text or whitelisted as a
+  // URL: the name and household are prose (esc handles them), and the avatar and
+  // the href are the two things escaping could never have made safe, so neither
+  // is escaped — safeAvatarUrl and residentHref REFUSE rather than clean, and a
+  // refusal renders the monogram or drops the link.
+  function walkerBubbleHTML(handle, { pressable = false } = {}) {
     const w = (walkState.walkers ?? []).find((entry) => entry?.handle === handle);
     if (!w) return "";
     const moving = w.moving ?? (!w.arrived && !w.standing);
     const where = moving
       ? `${Number(w.remaining_m ?? 0).toLocaleString()} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
       : (w.mark_id ? `at ${w.mark_id}` : "at rest");
-    return `<div class="wv-bubble-walker"><span class="wv-standing">${esc(w.handle)}</span><p>${esc(where)}</p></div>`;
+    const face = faceOf(w.handle);
+    const href = residentHref(w.handle);
+    const portrait = face.avatar
+      ? `<img class="wv-face-img" src="${esc(face.avatar)}" alt="" loading="lazy">`
+      : `<span class="wv-face-mono" style="background:${esc(face.color)}">${esc(face.monogram)}</span>`;
+    return `<div class="wv-bubble-walker${moving ? " moving" : ""}">`
+      + `<div class="wv-face-row">`
+      +   `<span class="wv-face">${portrait}</span>`
+      +   `<span class="wv-face-who">`
+      +     `<span class="wv-standing">${esc(face.name)}</span>`
+      // a resident the meta map has never heard of has their handle AS their
+      // name, and printing it twice reads as a rendering fault rather than a
+      // person
+      +     (face.name === w.handle ? "" : `<span class="wv-face-handle">${esc(w.handle)}</span>`)
+      +     (face.household ? `<span class="wv-face-house">${esc(face.household)}</span>` : "")
+      +   `</span>`
+      + `</div>`
+      + `<p>${esc(where)}</p>`
+      + (pressable && href ? `<p class="wv-face-go"><a href="${href}">their page →</a></p>` : "")
+      + `</div>`;
   }
   // The glance. Deliberately NOT a live cell: it carries no data-id and no
   // pressable action, because the layer it sits in takes no pointer events and a
@@ -3978,6 +4170,22 @@ export function mountViewer(appEl) {
   function renderPinnedBubble(id) {
     const el = bubbleEl("pinned");
     if (!el) return;
+    // A WALKER CAN BE PINNED NOW. It could not before, and that was fine while
+    // the glance was two lines of text — but the mini card carries a link, and a
+    // link only works in this layer (the hover layer takes no pointer events).
+    // It is also the only way onto a resident's page from the map on a touch
+    // screen, where hover never happens: pinning is what hovering is for fingers.
+    const walkerHandle = id && walkerHandleFromHoverId(id);
+    if (walkerHandle) {
+      const html = walkerBubbleHTML(walkerHandle, { pressable: true });
+      if (!html) { el.hidden = true; el.innerHTML = ""; pinnedBuiltId = null; return; }
+      if (pinnedBuiltId === id && el.firstChild) { el.hidden = false; return; }
+      pinnedBuiltId = id;
+      el.className = "wv-bubble is-pinned is-walker";
+      el.innerHTML = html;
+      el.hidden = false;
+      return;
+    }
     const mark = id && !walkerHandleFromHoverId(id) ? byId.get(id) : null;
     if (!mark) { el.hidden = true; el.innerHTML = ""; pinnedBuiltId = null; return; }
     if (pinnedBuiltId === mark.id && el.firstChild) { el.hidden = false; return; }
@@ -4794,6 +5002,10 @@ export function mountViewer(appEl) {
       await loadData();
       renderCurrent();
       loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
+      // the faces, once they arrive — a redraw is owed because the walkers were
+      // already painted as monograms by then, and this is what puts the pictures
+      // on them. Never awaited: the map is not allowed to wait on a nicety.
+      loadResidentsMeta().then(() => drawWalkers());
       resolveIdentity(); // after data (the presets filter reads the manifest)
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
