@@ -76,6 +76,10 @@ import {
   readPaintingOnly,
   writePaintingOnly,
   PAINTING_ONLY_KEY,
+  parseStakeCommits,
+  msToNextSettlementAttempt,
+  formatCountdown,
+  settlementChipText,
   safeAvatarUrl,
   safeHexColor,
   monogramOf,
@@ -1298,4 +1302,90 @@ test("a resident link is encoded, and a handle that isn't handle-shaped gets no 
   assert.equal(residentHref("wren-winter"), "/residents/wren-winter/");
   for (const bad of ["../../etc", "Wright", "a b", "", null, "<script>", "-leading"])
     assert.equal(residentHref(bad), null, `no link for: ${String(bad)}`);
+});
+
+// ───────── the settlement chip ─────────
+//
+// The chip must never promise a blessing. Settlement is ATTEMPTED on the beat
+// and the gate can refuse — so the countdown is to an attempt, and the number
+// is whatever last landed, and neither is derived from the other.
+
+test("the countdown runs to the next 06:00/18:00Z attempt, in UTC", () => {
+  const at = (iso) => msToNextSettlementAttempt(Date.parse(iso));
+  assert.equal(at("2026-08-08T00:00:00Z"), 6 * 3600e3, "midnight → six hours to the morning attempt");
+  assert.equal(at("2026-08-08T05:59:00Z"), 60e3, "a minute before is a minute");
+  assert.equal(at("2026-08-08T06:00:00Z"), 12 * 3600e3, "standing ON the boundary means the NEXT one, not this one again");
+  assert.equal(at("2026-08-08T12:00:00Z"), 6 * 3600e3, "noon → the evening attempt");
+  assert.equal(at("2026-08-08T18:00:01Z"), 12 * 3600e3 - 1e3, "just past the evening rolls to tomorrow morning");
+  assert.equal(at("2026-08-08T23:59:00Z"), 6 * 3600e3 + 60e3, "late night crosses the date line correctly");
+  // month and year boundaries are the case a naive +1 day gets wrong
+  assert.equal(at("2026-08-31T20:00:00Z"), 10 * 3600e3, "the last night of a month rolls into the next");
+  assert.equal(at("2026-12-31T20:00:00Z"), 10 * 3600e3, "…and the last night of a year rolls into the next");
+});
+
+test("the countdown reads at a glance — no 0h, and never a negative", () => {
+  assert.equal(formatCountdown(3 * 3600e3 + 12 * 60e3), "3h 12m");
+  assert.equal(formatCountdown(12 * 60e3), "12m", "no hours means no 0h");
+  assert.equal(formatCountdown(59e3), "under a minute");
+  assert.equal(formatCountdown(0), "under a minute");
+  assert.equal(formatCountdown(-5000), "under a minute", "a clock that slipped backwards still reads sanely");
+});
+
+test("the chip says ATTEMPT, carries the last number that LANDED, and survives having none", () => {
+  const now = Date.parse("2026-08-08T14:48:00Z");
+  assert.equal(settlementChipText({ n: 22 }, now), "S22 · next attempt in 3h 12m");
+  // the refusal case: the number does not move, the countdown starts again, and
+  // the chip needs no special wording for it
+  assert.equal(settlementChipText({ n: 22 }, Date.parse("2026-08-08T18:00:01Z")), "S22 · next attempt in 11h 59m");
+  // an office that cannot name a settlement loses the number, keeps the truth
+  for (const none of [null, undefined, {}, { n: "x" }, { n: -1 }])
+    assert.equal(settlementChipText(none, now), "next attempt in 3h 12m", `no number for ${JSON.stringify(none)}`);
+  assert.equal(settlementChipText({ n: 0 }, now), "S0 · next attempt in 3h 12m", "S0 is a number, not an absence");
+  assert.doesNotMatch(settlementChipText({ n: 22 }, now), /next settlement/,
+    "the chip must never promise a blessing the gate can refuse");
+});
+
+test("a stake row is PARSED out of the town's log, never assumed", () => {
+  const rows = parseStakeCommits([
+    { subject: "stake: wren-winter -> world-mark/the-town/the-jetty · 12", date: "2026-08-08T10:00:00Z" },
+    { subject: "stake: rei -> world-mark/wright/the-trueing-terrace · 1", date: "2026-08-08T09:00:00Z" },
+    { subject: "walk: somebody went somewhere", date: "2026-08-08T08:00:00Z" },
+    { subject: "stake: NOTAHANDLE -> world-mark/x · 3", date: "2026-08-08T07:00:00Z" },
+    { subject: "stake: rei -> something-else/x · 3", date: "2026-08-08T07:00:00Z" },
+    { subject: "stake: rei -> world-mark/x · many", date: "2026-08-08T07:00:00Z" },
+    { subject: "stake: rei -> world-mark/x · 3" },                     // no date
+  ]);
+  assert.deepEqual(rows.map((r) => [r.handle, r.mark, r.n]), [
+    ["wren-winter", "the-town/the-jetty", 12],
+    ["rei", "wright/the-trueing-terrace", 1],
+  ], "only well-formed stake subjects with a date become rows");
+  assert.deepEqual(parseStakeCommits(null), [], "no log is not a throw");
+});
+
+test("the feed interleaves all four kinds on one chronological stream", () => {
+  const rows = recentActivity({
+    departures: [{ iso: "2026-08-08T12:00:00Z", handle: "rei", toward: { x: 1, y: 2 } }],
+    marks: [{ id: "wright/a-mark", date: "2026-08-08", by: "wright" }],
+    stakes: [{ iso: "2026-08-08T13:00:00Z", handle: "wren-winter", mark: "the-town/the-jetty", n: 12 }],
+    blessings: [{ n: 22, date: "2026-08-08T14:54:00Z" }, { n: 21, date: "2026-08-07T18:07:00Z" }],
+    now: "2026-08-08T15:00:00Z",
+    limit: 20,
+  });
+  const kinds = rows.map((r) => r.kind);
+  for (const k of ["walk", "mark", "stake", "settlement"]) assert.ok(kinds.includes(k), `${k} is on the stream`);
+  // within a day the ones that know their second sort newest-first
+  const today = rows.filter((r) => r.day === "2026-08-08");
+  assert.equal(today[0].kind, "settlement", "14:54 blessing leads the day");
+  assert.equal(today[1].kind, "stake", "then the 13:00 stake");
+  assert.equal(rows.find((r) => r.kind === "settlement").n, 22);
+  // a blessing has no author — the keeper's gate is not a resident
+  assert.equal(rows.find((r) => r.kind === "settlement").who, "");
+});
+
+test("a quiet lane contributes nothing and cannot empty the rail", () => {
+  const base = { marks: [{ id: "wright/a-mark", date: "2026-08-08", by: "wright" }], now: "2026-08-08T15:00:00Z" };
+  const withNothing = recentActivity(base);
+  const withEmpties = recentActivity({ ...base, stakes: [], blessings: [], departures: [] });
+  assert.deepEqual(withEmpties, withNothing, "empty lanes are the same as absent ones");
+  assert.equal(withNothing.length, 1, "and the rail still carries what it had");
 });
