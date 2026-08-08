@@ -105,8 +105,10 @@ function targetRect(departure) {
 
 // The fraction of the centre-bound segment at which it first enters the target
 // rect. The centre remains the interpolation target; the walk ends at the first
-// point on the target's ground, not at its centre.
-function targetEntryT(from, toward, r) {
+// point on the target's ground, not at its centre. Exported since 2026-08-09:
+// the viewer clips the drawn leg with THIS math, so the dotted line and the
+// derivation stop at the same point — one arrival truth, never a second.
+export function targetEntryT(from, toward, r) {
   if (pointInRect(from.x, from.y, r)) return 0;
   let enter = 0, exit = 1;
   for (const axis of ["x", "y"]) {

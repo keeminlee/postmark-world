@@ -21,7 +21,7 @@ import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markClass } from "../tools/mark-class.mjs"; // the ONE class rule: in a parcel's directory → home
-import { fractionalCrossing, positionAt, parseWalkLedger } from "../tools/walk.mjs";
+import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
 
 const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
@@ -3919,7 +3919,23 @@ export function mountViewer(appEl) {
     let hulls = "";
     let s = "";
     for (const w of walkState.walkers) {
-      const now = px(w), dest = px(w.toward ?? w);
+      // The drawn leg ends where the WALK ends — the first point on the
+      // target's ground, not its centre (Keemin, party night: the dotted line
+      // overshot into the mark while the derivation stopped at the edge).
+      // Clipped with the engine's own entry math. One honest approximation:
+      // the ledger's frozen `within` doesn't ride the walkers payload, so the
+      // target's CURRENT extent stands in — identical unless a mark resized
+      // mid-walk.
+      let towardM = w.toward ?? w;
+      if (w.moving && w.toward && w.mark_id) {
+        const tm = (world?.marks ?? []).find((m) => m.id === w.mark_id);
+        if (tm?.at && tm?.extent) {
+          const t = targetEntryT({ x: w.x, y: w.y }, w.toward,
+            { x: w.toward.x, y: w.toward.y, w: tm.extent.w, h: tm.extent.h });
+          if (t < 1) towardM = { x: w.x + (w.toward.x - w.x) * t, y: w.y + (w.toward.y - w.y) * t };
+        }
+      }
+      const now = px(w), dest = px(towardM);
       // TWO states, not three. "arrived" and "standing" were never different
       // things — both are a person at rest at a place; what differed was only
       // how we learned the position (a walk record vs their parcel). Painting
