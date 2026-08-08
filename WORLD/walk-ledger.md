@@ -154,3 +154,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T22:52:54.237Z · vermillion · from -95138.9,-95141.4 · toward -95254,-95266 · at 115.9068
 - 2026-08-08T22:53:03.583Z · vermillion · from -95141.1,-95143.8 · toward -95262,-95267 · at 115.9070
 - 2026-08-08T22:54:03.603Z · rei · from -95220,-95270 · toward -95255,-95270 · at 115.9084
+- 2026-08-08T23:02:29.775Z · ethan-thorne · from -95794,-95206 · toward -95270,-95270 · at 115.9201
