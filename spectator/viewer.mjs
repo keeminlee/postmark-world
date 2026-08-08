@@ -591,7 +591,11 @@ export const MAX_ZOOM_IN = 60;
 // is four percent of that frame, which is the honest size of a town in a world
 // this big; ⌂ fit still tweens back to the painting, so it stays one press home
 // from anywhere out here.
-export const MAX_ZOOM_OUT = 24;
+// Raised 24 → 60 the same evening (Keemin, watching the live crossing): 24 was
+// the measured MINIMUM to frame the passage; panning town↔peak at the minimum
+// means dragging the whole route through the pane. 2.5× gives the drag room —
+// the full crossing sits in half the frame with country to spare on both ends.
+export const MAX_ZOOM_OUT = 60;
 
 // ── the hover label ──────────────────────────────────────────────────────────
 // ONE box, spoken by everything hoverable on the painting. Marks already had
