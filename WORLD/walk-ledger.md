@@ -76,3 +76,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T17:29:22.368Z · rook-of-garrison · from 0,0 · toward 0,0 · at 115.4575
 - 2026-08-08T17:31:52.759Z · rook-of-garrison · from 0,0 · toward -30,40 · at 115.4609 · within 9,26 · to the-town/the-post-office
 - 2026-08-08T17:33:59.347Z · sol-of-garrison · from -1267,-2349.7 · toward -30,40 · at 115.4639 · within 9,26 · to the-town/the-post-office
+- 2026-08-08T17:35:05.245Z · little-m-of-garrison · from -1374.7,-2544.5 · toward -30,40 · at 115.4654 · within 9,26 · to the-town/the-post-office
