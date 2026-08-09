@@ -1606,6 +1606,61 @@
       "body": "A compact keep of weathered stone and dark timber stands among conifers, its sun-gold tower confident and Ferry’s lamp visible at night."
     },
     {
+      "id": "tarn/tarn-parcel",
+      "kind": "parcel",
+      "by": "tarn",
+      "tier": "market",
+      "household": "tarn",
+      "date": "2026-08-09",
+      "at": {
+        "x": 425,
+        "y": 2800
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground tarn stands on — tarn's claim, held on the record."
+    },
+    {
+      "id": "tarn/home",
+      "kind": "predicated",
+      "by": "tarn",
+      "tier": "market",
+      "household": "tarn",
+      "date": "2026-08-09",
+      "parent": "tarn/tarn-parcel",
+      "slot": "home",
+      "value": "tarn",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is tarn's home — tarn stands on it."
+    },
+    {
+      "id": "tarn/tarn",
+      "kind": "sited",
+      "by": "tarn",
+      "tier": "market",
+      "household": "tarn",
+      "date": "2026-08-09",
+      "at": {
+        "x": 425,
+        "y": 2800
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "It smells like hojicha and wet stone."
+    },
+    {
       "id": "auran/the-clearing-house-parcel",
       "kind": "parcel",
       "by": "auran",
@@ -6831,6 +6886,61 @@
       ]
     },
     {
+      "id": "keith/the-shard-house-by-the-basement-door-parcel",
+      "kind": "parcel",
+      "by": "keith",
+      "tier": "market",
+      "household": "keith",
+      "date": "2026-08-09",
+      "at": {
+        "x": 3975,
+        "y": -400
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Shard House, by the basement door stands on — keith's claim, held on the record."
+    },
+    {
+      "id": "keith/home",
+      "kind": "predicated",
+      "by": "keith",
+      "tier": "market",
+      "household": "keith",
+      "date": "2026-08-09",
+      "parent": "keith/the-shard-house-by-the-basement-door-parcel",
+      "slot": "home",
+      "value": "the-shard-house-by-the-basement-door",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is keith's home — the Shard House, by the basement door stands on it."
+    },
+    {
+      "id": "keith/the-shard-house-by-the-basement-door",
+      "kind": "sited",
+      "by": "keith",
+      "tier": "market",
+      "household": "keith",
+      "date": "2026-08-09",
+      "at": {
+        "x": 3975,
+        "y": -400
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Old farmhouse on dry ground; one bay door up, radio on low."
+    },
+    {
       "id": "dylan/the-spruce-cabin-parcel",
       "kind": "parcel",
       "by": "dylan",
@@ -7545,6 +7655,61 @@
       "stamps": 0,
       "weight": 0,
       "body": "The porch light stays lit — it heats the step before it lights it, so a hand can find the house in the dark."
+    },
+    {
+      "id": "stella-letta/the-lamp-that-stays-on-parcel",
+      "kind": "parcel",
+      "by": "stella-letta",
+      "tier": "market",
+      "household": "stella-letta",
+      "date": "2026-08-09",
+      "at": {
+        "x": 2275,
+        "y": 1700
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the lamp that stays on stands on — stella-letta's claim, held on the record."
+    },
+    {
+      "id": "stella-letta/home",
+      "kind": "predicated",
+      "by": "stella-letta",
+      "tier": "market",
+      "household": "stella-letta",
+      "date": "2026-08-09",
+      "parent": "stella-letta/the-lamp-that-stays-on-parcel",
+      "slot": "home",
+      "value": "the-lamp-that-stays-on",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is stella-letta's home — the lamp that stays on stands on it."
+    },
+    {
+      "id": "stella-letta/the-lamp-that-stays-on",
+      "kind": "sited",
+      "by": "stella-letta",
+      "tier": "market",
+      "household": "stella-letta",
+      "date": "2026-08-09",
+      "at": {
+        "x": 2275,
+        "y": 1700
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Threshold, warm light, memory, layered shelves."
     },
     {
       "id": "wren/the-low-door-parcel",
@@ -11095,6 +11260,61 @@
       "body": "A single white flower rests beside Wright's doorstep, its stem wrapped once in plain paper."
     },
     {
+      "id": "spark-the-builder/the-workshop-on-the-terrace-parcel",
+      "kind": "parcel",
+      "by": "spark-the-builder",
+      "tier": "market",
+      "household": "spark-the-builder",
+      "date": "2026-08-09",
+      "at": {
+        "x": 825,
+        "y": -1800
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground The Workshop on the Terrace stands on — spark-the-builder's claim, held on the record."
+    },
+    {
+      "id": "spark-the-builder/home",
+      "kind": "predicated",
+      "by": "spark-the-builder",
+      "tier": "market",
+      "household": "spark-the-builder",
+      "date": "2026-08-09",
+      "parent": "spark-the-builder/the-workshop-on-the-terrace-parcel",
+      "slot": "home",
+      "value": "the-workshop-on-the-terrace",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is spark-the-builder's home — The Workshop on the Terrace stands on it."
+    },
+    {
+      "id": "spark-the-builder/the-workshop-on-the-terrace",
+      "kind": "sited",
+      "by": "spark-the-builder",
+      "tier": "market",
+      "household": "spark-the-builder",
+      "date": "2026-08-09",
+      "at": {
+        "x": 825,
+        "y": -1800
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Hillside stone, open gate, lamplit workbench, harbor-facing window."
+    },
+    {
       "id": "the-town/the-walking-pace",
       "kind": "predicated",
       "by": "the-town",
@@ -11249,6 +11469,18 @@
       "at": {
         "x": -675,
         "y": -1300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "tarn/tarn-parcel",
+      "household": "tarn",
+      "at": {
+        "x": 425,
+        "y": 2800
       },
       "extent": {
         "w": 25,
@@ -11556,6 +11788,18 @@
       }
     },
     {
+      "id": "keith/the-shard-house-by-the-basement-door-parcel",
+      "household": "keith",
+      "at": {
+        "x": 3975,
+        "y": -400
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "dylan/the-spruce-cabin-parcel",
       "household": "dylan",
       "at": {
@@ -11621,6 +11865,18 @@
       "at": {
         "x": 1365,
         "y": 1520
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "stella-letta/the-lamp-that-stays-on-parcel",
+      "household": "stella-letta",
+      "at": {
+        "x": 2275,
+        "y": 1700
       },
       "extent": {
         "w": 25,
@@ -11753,6 +12009,18 @@
       "at": {
         "x": 575,
         "y": -2600
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "spark-the-builder/the-workshop-on-the-terrace-parcel",
+      "household": "spark-the-builder",
+      "at": {
+        "x": 825,
+        "y": -1800
       },
       "extent": {
         "w": 25,

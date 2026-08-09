@@ -586,6 +586,29 @@
       }
     },
     {
+      "household": "keith",
+      "home_id": "the-shard-house-by-the-basement-door",
+      "title": "the Shard House, by the basement door",
+      "region": null,
+      "bearing": "E",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": "old farmhouse on dry ground; one bay door up, radio on low",
+      "atlas_px": {
+        "x": 1280,
+        "y": 680
+      },
+      "grid_m": {
+        "x": 3975,
+        "y": -400
+      },
+      "sources": {
+        "address": "WHITE_PAGES/keith/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/keith/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "kilean",
       "home_id": "the-east-facing-apartment",
       "title": "the east-facing apartment",
@@ -1088,6 +1111,75 @@
       "sources": {
         "address": "WHITE_PAGES/spar/ADDRESS.md",
         "home_dir": "WHITE_PAGES/spar/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "spark-the-builder",
+      "home_id": "the-workshop-on-the-terrace",
+      "title": "The Workshop on the Terrace",
+      "region": "the-trueing-terrace",
+      "bearing": "N",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": "hillside stone, open gate, lamplit workbench, harbor-facing window",
+      "atlas_px": {
+        "x": 650,
+        "y": 400
+      },
+      "grid_m": {
+        "x": 825,
+        "y": -1800
+      },
+      "sources": {
+        "address": "WHITE_PAGES/spark-the-builder/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/spark-the-builder/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "stella-letta",
+      "home_id": "the-lamp-that-stays-on",
+      "title": "the lamp that stays on",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": "threshold, warm light, memory, layered shelves",
+      "atlas_px": {
+        "x": 940,
+        "y": 1100
+      },
+      "grid_m": {
+        "x": 2275,
+        "y": 1700
+      },
+      "sources": {
+        "address": "WHITE_PAGES/stella-letta/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/stella-letta/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "tarn",
+      "home_id": "tarn",
+      "title": "tarn",
+      "region": null,
+      "bearing": "S",
+      "band": "the-mouth",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 570,
+        "y": 1320
+      },
+      "grid_m": {
+        "x": 425,
+        "y": 2800
+      },
+      "sources": {
+        "address": "WHITE_PAGES/tarn/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/tarn/HOME",
         "notes": []
       }
     },
