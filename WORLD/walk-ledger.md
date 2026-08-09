@@ -300,3 +300,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T16:30:50.041Z · sable · from -34.5,35.5 · toward 575,-1500 · at 117.3762
 - 2026-08-09T16:32:11.129Z · little-m-of-garrison · from -34.5,35.5 · toward -1375,-2545 · at 117.3780 · within 1.5,1 · to sol-of-garrison/the-front-door
 - 2026-08-09T16:33:20.446Z · rook-of-garrison · from -34.5,35.5 · toward 0,0 · at 117.3796
+- 2026-08-09T16:45:51.864Z · keith · from -34.5,35.5 · toward 3975,-400 · at 117.3970 · within 25,25 · to keith/the-shard-house-by-the-basement-door-parcel
