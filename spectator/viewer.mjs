@@ -2248,6 +2248,9 @@ const STYLE = `
 .wv-convo-label { fill:var(--stamp-violet); text-anchor:middle; font-family:var(--mono);
   letter-spacing:.04em; paint-order:stroke; stroke:rgba(18,16,26,.78); stroke-width:3px; }
 .wv-convo-label.is-count { fill:var(--stamp-violet-dark); }
+.wv-convo-label.is-link { pointer-events:all; cursor:pointer; }
+.wv-convo-label.is-link:hover { text-decoration:underline; }
+.pannable.over-convo { cursor:pointer; }
 @keyframes wv-convo-breathe { 0%,100% { stroke-opacity:.9; } 50% { stroke-opacity:.45; } }
 .wv-fp { fill:none; stroke-width:1.4; vector-effect:non-scaling-stroke; }
 .wv-fp.t-constitution { stroke:var(--blue-dark); }
@@ -3291,6 +3294,16 @@ export function mountViewer(appEl) {
       convoLayer.setAttribute("id", "wv-convo-layer");
       convoLayer.style.pointerEvents = "none";
       svg.appendChild(convoLayer);
+      // The LABEL is a link to the thread on /conversations/ (the layer stays
+      // pointer-events:none; the label text opts back in). stopPropagation on
+      // the press pair, or the svg's own resolver would also stand you where
+      // the label happens to hang.
+      convoLayer.addEventListener("pointerdown", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
+      convoLayer.addEventListener("pointerup", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
+      convoLayer.addEventListener("click", (e) => {
+        const id = e.target?.dataset?.thread;
+        if (id) { e.stopPropagation(); location.href = convoHref(id); }
+      });
       const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
       overlay.setAttribute("id", "wv-overlay");
       svg.appendChild(overlay);
@@ -3497,6 +3510,16 @@ export function mountViewer(appEl) {
       svg.addEventListener("pointermove", (e) => {
         if (!press || e.pointerId !== press.id) {
           hoverMark(hoverTargetForEvent(e));
+          // The hand shows exactly where a click would reach the thread, so it
+          // uses the CLICK's tests, not the hover's — pointing counts the region
+          // you stand inside, but the click lets bare contained ground through
+          // (only a pip names a mark), and the hand must not promise what the
+          // click won't do. Spectator only, matching whose ground-click it is.
+          const clear = !canAct()
+            && !snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates())
+            && contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates()).length === 0;
+          const wp = clear ? worldPointForEvent(e) : null;
+          boxEl.classList.toggle("over-convo", Boolean(wp && convoAt(wp.x, wp.y)));
           return;
         }
         const dx = e.clientX - press.x, dy = e.clientY - press.y;
@@ -3542,6 +3565,14 @@ export function mountViewer(appEl) {
           return;
         }
         const worldPoint = worldPointForEvent(e);
+        // A click on a conversation's ground goes to the thread — for the
+        // SPECTATOR, whose bare click only moves the camera. A resident's bare
+        // click arms a walk, and a wash must never swallow the road (the party
+        // ellipse covered 470 m of walkable parcel) — their way in is the label.
+        if (!canAct()) {
+          const hit = convoAt(worldPoint.x, worldPoint.y);
+          if (hit) { location.href = convoHref(hit.id); return; }
+        }
         const point = { x: Math.round(worldPoint.x), y: Math.round(worldPoint.y) };
         markInteraction.select(null);
         if (canAct()) chooseWalkPoint(point.x, point.y);
@@ -3954,36 +3985,54 @@ export function mountViewer(appEl) {
   // this layer exists to disambiguate: the words collide, the ground does not.
   const CONVO_PAD_M = 30;                        // half an earshot: the room around the words
   const CONVO_CLOSED_KEEP_MS = 24 * 3600 * 1000; // a cooling mark, then the page remembers
+  // The drawn ellipses in WORLD metres, smallest-first — the click and the
+  // hover pick the most specific room when circles nest (a garden thread sat
+  // inside the party's wash on the night this shipped).
+  let convoHits = [];
+  const convoAt = (wx, wy) => convoHits.find((h) => {
+    const nx = (wx - h.cx) / h.rxM, ny = (wy - h.cy) / h.ryM;
+    return nx * nx + ny * ny <= 1;
+  }) ?? null;
+  // the island serves /conversations/ same-origin; on the local spectator the
+  // link 404s, which is the dev-server's honest shape (it has no site around it)
+  const convoHref = (id) => `/conversations/#${encodeURIComponent(id)}`;
   function drawConversations() {
     if (!mapCtx?.convoLayer) return;
     const k = markerScale(mapCtx.zoomK);
     const px = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
     let s = "";
+    const hits = [];
     const paint = (t, live) => {
       if (!t?.at) return;
       // A deck thread's box is the length of the water it crossed — true of the
       // crossing, wrong as a room. The vessel is the room: it draws at the
       // thread's own point instead (voices.mjs threadOf ships the flag).
       const e = t.aboard || !t.extent ? { x0: t.at.x, y0: t.at.y, x1: t.at.x, y1: t.at.y } : t.extent;
-      const c = px((e.x0 + e.x1) / 2, (e.y0 + e.y1) / 2);
-      const rx = ((e.x1 - e.x0) / 2 + CONVO_PAD_M) / mapCtx.mPerPx;
-      const ry = ((e.y1 - e.y0) / 2 + CONVO_PAD_M) / mapCtx.mPerPx;
+      const cxM = (e.x0 + e.x1) / 2, cyM = (e.y0 + e.y1) / 2;
+      const rxM = (e.x1 - e.x0) / 2 + CONVO_PAD_M, ryM = (e.y1 - e.y0) / 2 + CONVO_PAD_M;
+      if (t.id) hits.push({ id: t.id, cx: cxM, cy: cyM, rxM, ryM, live });
+      const c = px(cxM, cyM);
+      const rx = rxM / mapCtx.mPerPx, ry = ryM / mapCtx.mPerPx;
       s += `<ellipse cx="${c.x}" cy="${c.y}" rx="${rx}" ry="${ry}" class="wv-convo${live ? " is-live" : ""}${t.aboard ? " is-aboard" : ""}"/>`;
       if (!live) return;
       // two lines, so the numbers never truncate: the place words carry the cut
-      // if anyone must (a one-line label lost "· 6 speakers" to its own cap)
+      // if anyone must (a one-line label lost "· 6 speakers" to its own cap).
+      // Both lines link to the thread on /conversations/ — the label is the
+      // click target a RESIDENT gets, since their bare ground-click arms a walk.
       const n = Number(t.voice_count) || 0, p = (t.participants ?? []).length;
       const where = String(t.place ?? "somewhere");
       const head = where.length > 44 ? `${where.slice(0, 43)}…` : where;
       const tail = `${n} statement${n === 1 ? "" : "s"} · ${p} speaker${p === 1 ? "" : "s"}`;
       const top = c.y - ry - 22 / k;
-      s += `<text x="${c.x}" y="${top}" class="wv-convo-label" font-size="${12 / k}">${esc(head)}</text>`
-         + `<text x="${c.x}" y="${top + 13 / k}" class="wv-convo-label is-count" font-size="${10.5 / k}">${esc(tail)}</text>`;
+      const link = t.id ? ` data-thread="${esc(t.id)}"` : "";
+      s += `<text x="${c.x}" y="${top}" class="wv-convo-label${link ? " is-link" : ""}"${link} font-size="${12 / k}">${esc(head)}</text>`
+         + `<text x="${c.x}" y="${top + 13 / k}" class="wv-convo-label is-count${link ? " is-link" : ""}"${link} font-size="${10.5 / k}">${esc(tail)}</text>`;
     };
     const t0 = Date.now();
     for (const t of convoState.closed)
       if (t0 - Date.parse(t.latest) <= CONVO_CLOSED_KEEP_MS) paint(t, false);
     for (const t of convoState.live) paint(t, true); // live paints over cooled
+    convoHits = hits.sort((a, b) => a.rxM * a.ryM - b.rxM * b.ryM); // most specific room first
     mapCtx.convoLayer.innerHTML = s;
   }
 
