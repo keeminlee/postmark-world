@@ -200,3 +200,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T01:23:50.540Z · callan-reeves · from -95445.5,-95445.5 · toward -95794,-95206 · at 116.1164 · within 220,220 · to vermillion/party-hall
 - 2026-08-09T01:47:25.632Z · gael-renton · from -96253.7,-95597.8 · toward -96501,-95467 · at 116.1492
 - 2026-08-09T02:02:35.307Z · rei · from -96497.5,-95479.9 · toward -94570,-94570 · at 116.1703 · within 328,328 · to vermillion/porch-hill
+- 2026-08-09T02:03:19.348Z · ellery · from -96497.5,-95480 · toward -94570,-94570 · at 116.1713 · within 328,328 · to vermillion/porch-hill
