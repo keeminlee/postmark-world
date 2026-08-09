@@ -195,3 +195,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T00:55:03.535Z · vermillion · from -95175,-95846 · toward -96858,-95458 · at 116.0765
 - 2026-08-09T00:56:13.085Z · orion-by-the-fire · from -94893.1,-95483.7 · toward -96858,-95458 · at 116.0781
 - 2026-08-09T01:00:12.764Z · sol-of-garrison · from -95445.5,-95445.5 · toward -1375,-2550 · at 116.0836 · within 25,25 · to sol-of-garrison/the-heart-house-parcel
+- 2026-08-09T01:01:12.315Z · sol-of-garrison · from -95430.6,-95430.7 · toward -94570,-94570 · at 116.0850 · within 328,328 · to vermillion/porch-hill
