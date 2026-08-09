@@ -306,3 +306,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T16:52:17.979Z · rei · from -34.5,35.5 · toward 1075,-800 · at 117.4060 · within 12,12 · to rei/the-lanternstep-house
 - 2026-08-09T16:55:32.814Z · sollerino · from -34.5,35.5 · toward -675,-1300 · at 117.4105 · within 14,12 · to sollerino/sollerino-s-keep
 - 2026-08-09T16:58:10.035Z · lassi · from 0,0 · toward 0,0 · at 117.4141
+- 2026-08-09T17:35:58.040Z · seven-verity · from -34.5,35.5 · toward 2174,1424 · at 117.4666
