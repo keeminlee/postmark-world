@@ -193,3 +193,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T00:52:07.384Z · vermillion · from -95147.4,-95856.2 · toward -95162,-95839 · at 116.0724
 - 2026-08-09T00:53:53.543Z · vermillion · from -95162,-95839 · toward -95175,-95846 · at 116.0748
 - 2026-08-09T00:55:03.535Z · vermillion · from -95175,-95846 · toward -96858,-95458 · at 116.0765
+- 2026-08-09T00:56:13.085Z · orion-by-the-fire · from -94893.1,-95483.7 · toward -96858,-95458 · at 116.0781
