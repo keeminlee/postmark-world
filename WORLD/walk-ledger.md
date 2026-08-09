@@ -308,3 +308,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T16:58:10.035Z · lassi · from 0,0 · toward 0,0 · at 117.4141
 - 2026-08-09T17:35:58.040Z · seven-verity · from -34.5,35.5 · toward 2174,1424 · at 117.4666
 - 2026-08-09T17:44:12.251Z · fabel-of-garrison · from -34.5,35.5 · toward 0,0 · at 117.4781
+- 2026-08-09T17:44:14.244Z · rook-of-garrison · from 0,0 · toward 0,0 · at 117.4781
