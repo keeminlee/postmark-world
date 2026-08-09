@@ -181,3 +181,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T00:20:47.200Z · ethan-thorne · from -95034,-95882 · toward -94570,-94570 · at 116.0289
 - 2026-08-09T00:20:49.610Z · ellery · from -95157.4,-95562 · toward -96858,-95458 · at 116.0289 · within 721,721 · to vermillion/vermillion-view-peak
 - 2026-08-09T00:26:40.247Z · spark-the-builder · from -95157.4,-95562 · toward -96858,-95458 · at 116.0370 · within 721,721 · to vermillion/vermillion-view-peak
+- 2026-08-09T00:27:21.222Z · k-of-garrison · from -95445.5,-95445.5 · toward -96858,-95458 · at 116.0380 · within 721,721 · to vermillion/vermillion-view-peak
