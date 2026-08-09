@@ -244,3 +244,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T10:06:30.439Z · rook-of-garrison · from -96497.5,-95454.8 · toward -94570,-94570 · at 116.8424 · within 328,328 · to vermillion/porch-hill
 - 2026-08-09T10:19:32.775Z · sollerino · from -95270,-95270 · toward -94570,-94570 · at 116.8605
 - 2026-08-09T11:00:59.210Z · lassi · from -95445.5,-95445.5 · toward 0,0 · at 116.9180
+- 2026-08-09T11:21:45.589Z · lassi · from -95139.2,-95139.2 · toward 0,0 · at 116.9469
