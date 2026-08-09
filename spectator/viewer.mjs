@@ -3294,16 +3294,6 @@ export function mountViewer(appEl) {
       convoLayer.setAttribute("id", "wv-convo-layer");
       convoLayer.style.pointerEvents = "none";
       svg.appendChild(convoLayer);
-      // The LABEL is a link to the thread on /conversations/ (the layer stays
-      // pointer-events:none; the label text opts back in). stopPropagation on
-      // the press pair, or the svg's own resolver would also stand you where
-      // the label happens to hang.
-      convoLayer.addEventListener("pointerdown", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
-      convoLayer.addEventListener("pointerup", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
-      convoLayer.addEventListener("click", (e) => {
-        const id = e.target?.dataset?.thread;
-        if (id) { e.stopPropagation(); location.href = convoHref(id); }
-      });
       const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
       overlay.setAttribute("id", "wv-overlay");
       svg.appendChild(overlay);
@@ -3325,6 +3315,24 @@ export function mountViewer(appEl) {
       const walkLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
       walkLayer.setAttribute("id", "wv-walk-layer");
       svg.appendChild(walkLayer);
+      // Conversation LABELS ride above the walkers while their washes stay
+      // under everything: at a party the crowd stands on the label's ground,
+      // and a walker's invisible 27 px hit halo above the text both hid the
+      // words and swallowed the click (live-caught on the maiden deploy — the
+      // halo was elementFromPoint at the label's centre). The layer is
+      // pointer-events:none; the label text opts back in, and stopPropagation
+      // on the press pair keeps the svg's own resolver from also standing you
+      // where the label happens to hang.
+      const convoLabelLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      convoLabelLayer.setAttribute("id", "wv-convo-label-layer");
+      convoLabelLayer.style.pointerEvents = "none";
+      svg.appendChild(convoLabelLayer);
+      convoLabelLayer.addEventListener("pointerdown", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
+      convoLabelLayer.addEventListener("pointerup", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
+      convoLabelLayer.addEventListener("click", (e) => {
+        const id = e.target?.dataset?.thread;
+        if (id) { e.stopPropagation(); location.href = convoHref(id); }
+      });
       boxEl.innerHTML = "";
       boxEl.appendChild(svg);
       reattachOverlays();
@@ -3340,7 +3348,7 @@ export function mountViewer(appEl) {
       }
       const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
       const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoLabelLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
       drawFarCountry();
       let tween = null;
       function applyView() {
@@ -4001,6 +4009,7 @@ export function mountViewer(appEl) {
     const k = markerScale(mapCtx.zoomK);
     const px = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
     let s = "";
+    let labels = ""; // labels land on their own layer, above the walkers
     const hits = [];
     const paint = (t, live) => {
       if (!t?.at) return;
@@ -4025,7 +4034,7 @@ export function mountViewer(appEl) {
       const tail = `${n} statement${n === 1 ? "" : "s"} · ${p} speaker${p === 1 ? "" : "s"}`;
       const top = c.y - ry - 22 / k;
       const link = t.id ? ` data-thread="${esc(t.id)}"` : "";
-      s += `<text x="${c.x}" y="${top}" class="wv-convo-label${link ? " is-link" : ""}"${link} font-size="${12 / k}">${esc(head)}</text>`
+      labels += `<text x="${c.x}" y="${top}" class="wv-convo-label${link ? " is-link" : ""}"${link} font-size="${12 / k}">${esc(head)}</text>`
          + `<text x="${c.x}" y="${top + 13 / k}" class="wv-convo-label is-count${link ? " is-link" : ""}"${link} font-size="${10.5 / k}">${esc(tail)}</text>`;
     };
     const t0 = Date.now();
@@ -4034,6 +4043,7 @@ export function mountViewer(appEl) {
     for (const t of convoState.live) paint(t, true); // live paints over cooled
     convoHits = hits.sort((a, b) => a.rxM * a.ryM - b.rxM * b.ryM); // most specific room first
     mapCtx.convoLayer.innerHTML = s;
+    if (mapCtx.convoLabelLayer) mapCtx.convoLabelLayer.innerHTML = labels;
   }
 
   function drawWalkers() {
