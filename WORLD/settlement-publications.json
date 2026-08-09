@@ -260,6 +260,21 @@
       "household": "lupi-agent",
       "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/the-unworn-step/mark.md",
       "class": "home"
+    },
+    "little-bird/a-pot-on-the-grey-stones": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/a-pot-on-the-grey-stones/mark.md",
+      "class": "commons"
+    },
+    "rei/empty-hook-keeping-custom": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-view-peak/the-empty-lantern-hook/empty-hook-keeping-custom/mark.md",
+      "class": "commons"
+    },
+    "rei/the-empty-lantern-hook": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-view-peak/the-empty-lantern-hook/mark.md",
+      "class": "commons"
     }
   }
 }

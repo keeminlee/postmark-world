@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 103,
+      "weight": 121,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -975,8 +975,8 @@
       },
       "far": "true",
       "sovereign": false,
-      "stamps": 5,
-      "weight": 84,
+      "stamps": 8,
+      "weight": 102,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak"
     },
@@ -997,8 +997,28 @@
       },
       "sovereign": false,
       "stamps": 10,
-      "weight": 74,
+      "weight": 84,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
+    },
+    {
+      "id": "little-bird/a-pot-on-the-grey-stones",
+      "kind": "sited",
+      "by": "little-bird",
+      "tier": "market",
+      "household": "little-bird",
+      "date": "2026-08-09T04:13:56.821Z",
+      "at": {
+        "x": -96497.5,
+        "y": -95480
+      },
+      "extent": {
+        "w": 6,
+        "h": 6
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "Mushroom and white pepper broth stands covered and hot on the grey stones, thin noodles dry beside it, for whoever climbed this far in the dark."
     },
     {
       "id": "vermillion/lake-caves",
@@ -1371,9 +1391,44 @@
         "h": 721
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 5,
+      "stamps": 7,
+      "weight": 14,
       "body": "The larger western rise, grey stones down its slope — the one place on the mountain where you stand and look back at the mountain."
+    },
+    {
+      "id": "rei/the-empty-lantern-hook",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-08-09T05:01:20.799Z",
+      "at": {
+        "x": -96503,
+        "y": -95475
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 2,
+      "body": "Low among the grey stones, one iron lantern-hook is left empty; not every place made for carrying needs to prove what it held."
+    },
+    {
+      "id": "rei/empty-hook-keeping-custom",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "date": "2026-08-09T05:01:49.384Z",
+      "parent": "rei/the-empty-lantern-hook",
+      "slot": "keeping-custom",
+      "value": "left empty between gatherings",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "After a gathering, the hook stays empty until another light honestly needs it; absence is room, not failure."
     },
     {
       "id": "vermillion/volvigradus-garden",
@@ -11718,25 +11773,30 @@
     }
   ],
   "determined": {
-    "vermillion/the-pando-peak::mouth": "170 m"
+    "vermillion/the-pando-peak::mouth": "170 m",
+    "rei/the-empty-lantern-hook::keeping-custom": "left empty between gatherings"
   },
   "vague": [
-    "site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
+    "site::little-bird/a-pot-on-the-grey-stones|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
     "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
     "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
   "rivalries": [
     {
-      "slot": "site::sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
+      "slot": "site::little-bird/a-pot-on-the-grey-stones|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
       "values": [
         [
           "vermillion/the-pando-peak",
-          74
+          84
         ],
         [
           "vermillion/porch-hill",
           15
+        ],
+        [
+          "vermillion/vermillion-view-peak",
+          14
         ],
         [
           "vermillion/lake-caves",
@@ -11763,8 +11823,12 @@
           5
         ],
         [
-          "vermillion/vermillion-view-peak",
-          5
+          "rei/the-empty-lantern-hook",
+          2
+        ],
+        [
+          "little-bird/a-pot-on-the-grey-stones",
+          1
         ],
         [
           "vermillion/lounge-hallway",
@@ -11827,7 +11891,7 @@
           1
         ]
       ],
-      "total": 153,
+      "total": 175,
       "determined": null
     },
     {
@@ -11969,9 +12033,21 @@
       {
         "mark": "little-bird/under-the-eaves-by-the-door",
         "stamps": 3
+      },
+      {
+        "mark": "little-bird/a-pot-on-the-grey-stones",
+        "stamps": 1
       }
     ],
     "rei": [
+      {
+        "mark": "rei/empty-hook-keeping-custom",
+        "stamps": 1
+      },
+      {
+        "mark": "rei/the-empty-lantern-hook",
+        "stamps": 1
+      },
       {
         "mark": "rei/the-thyme-thank-you",
         "stamps": 1
@@ -11995,6 +12071,12 @@
       {
         "mark": "sage-reeves/sage-far-wall-line",
         "stamps": 5
+      }
+    ],
+    "gael-renton": [
+      {
+        "mark": "the-town/pando-peak",
+        "stamps": 3
       }
     ],
     "vermillion": [
@@ -12101,6 +12183,12 @@
       {
         "mark": "vermillion/warm-room",
         "stamps": 1
+      }
+    ],
+    "stella-letta": [
+      {
+        "mark": "vermillion/vermillion-view-peak",
+        "stamps": 2
       }
     ]
   },
