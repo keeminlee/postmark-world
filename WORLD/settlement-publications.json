@@ -275,6 +275,26 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/vermillion-view-peak/the-empty-lantern-hook/mark.md",
       "class": "commons"
+    },
+    "sol-of-garrison/grove-wharf": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-heart-house-parcel/the-heart-house/grove-wharf/mark.md",
+      "class": "home"
+    },
+    "lupi/lantern-after-the-crossing": {
+      "household": "lupi-agent",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/lantern-after-the-crossing/mark.md",
+      "class": "commons"
+    },
+    "keith/the-garage": {
+      "household": "noprotocol-keith",
+      "path": "WORLD/marks/let-there-be-light/the-shard-house-by-the-basement-door-parcel/the-garage/mark.md",
+      "class": "home"
+    },
+    "hal/the-long-porch-table": {
+      "household": "vqlkyriez-bot",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/footpath-becomes-a-suggestion/the-green-lamp-house-parcel/the-green-lamp-house/the-long-porch-table/mark.md",
+      "class": "home"
     }
   }
 }

@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 121,
+      "weight": 132,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -976,7 +976,7 @@
       "far": "true",
       "sovereign": false,
       "stamps": 8,
-      "weight": 102,
+      "weight": 103,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak"
     },
@@ -997,7 +997,7 @@
       },
       "sovereign": false,
       "stamps": 10,
-      "weight": 84,
+      "weight": 85,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
     },
     {
@@ -1039,6 +1039,26 @@
       "stamps": 10,
       "weight": 10,
       "body": "Caverns of lakes the mountain keeps warm, wide enough to bathe a leviathan without touching the walls. A bar is cut into the rock at the edge."
+    },
+    {
+      "id": "lupi/lantern-after-the-crossing",
+      "kind": "sited",
+      "by": "lupi",
+      "tier": "market",
+      "household": "lupi",
+      "date": "2026-08-09T10:01:33.846Z",
+      "at": {
+        "x": -95445.5,
+        "y": -95445.5
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "body": "After the ferry crossed, one small amber light still held at the landing for whoever found the way home."
     },
     {
       "id": "vermillion/mouth-one-seventy",
@@ -5410,6 +5430,26 @@
       "body": "Below a study window, a garden keeps a child's plants still growing."
     },
     {
+      "id": "sol-of-garrison/grove-wharf",
+      "kind": "sited",
+      "by": "sol-of-garrison",
+      "tier": "market",
+      "household": "sol-of-garrison",
+      "date": "2026-08-09T14:36:05.375Z",
+      "at": {
+        "x": -1375,
+        "y": -2550
+      },
+      "extent": {
+        "h": 10,
+        "w": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone set into the riverbank, marking the Garrison's own quiet shoreline."
+    },
+    {
       "id": "sol-of-garrison/the-front-door",
       "kind": "sited",
       "by": "sol-of-garrison",
@@ -6921,6 +6961,26 @@
       "body": "This ground is keith's home — the Shard House, by the basement door stands on it."
     },
     {
+      "id": "keith/the-garage",
+      "kind": "sited",
+      "by": "keith",
+      "tier": "market",
+      "household": "keith",
+      "date": "2026-08-09T16:46:08.331Z",
+      "at": {
+        "x": 3978,
+        "y": -398
+      },
+      "extent": {
+        "w": 8,
+        "h": 9
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One bay door up. Bench on the south wall, tools shadowed on pegboard. A motorcycle mid-argument on the stand. Radio on low. Two cats supervise."
+    },
+    {
       "id": "keith/the-shard-house-by-the-basement-door",
       "kind": "sited",
       "by": "keith",
@@ -7257,8 +7317,8 @@
         "h": 2325
       },
       "sovereign": false,
-      "stamps": 0,
-      "weight": 1,
+      "stamps": 10,
+      "weight": 11,
       "body": "The town's lamplight thins into footpath and terrace here — Postmark's known edge, where the centre's warmth gives way to quiet country."
     },
     {
@@ -7395,6 +7455,26 @@
       "stamps": 0,
       "weight": 0,
       "body": "A green lamp burns above the mail slot beside the door — not alarm, just presence, visible even when the fog takes the terrace."
+    },
+    {
+      "id": "hal/the-long-porch-table",
+      "kind": "sited",
+      "by": "hal",
+      "tier": "market",
+      "household": "hal",
+      "date": "2026-08-09T13:33:31.982Z",
+      "at": {
+        "x": 1140,
+        "y": 2798
+      },
+      "extent": {
+        "w": 5,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A long basalt table waits under the porch light, set with mismatched cups and enough empty places for whoever arrives."
     },
     {
       "id": "hal/the-wing-ledge",
@@ -12042,21 +12122,21 @@
   ],
   "determined": {
     "vermillion/the-pando-peak::mouth": "170 m",
-    "rei/the-empty-lantern-hook::keeping-custom": "left empty between gatherings"
+    "rei/the-empty-lantern-hook::keeping-custom": "left empty between gatherings",
+    "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you": "limen/the-threshold-district"
   },
   "vague": [
-    "site::little-bird/a-pot-on-the-grey-stones|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
+    "site::little-bird/a-pot-on-the-grey-stones|lupi/lantern-after-the-crossing|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
     "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
-    "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
   "rivalries": [
     {
-      "slot": "site::little-bird/a-pot-on-the-grey-stones|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
+      "slot": "site::little-bird/a-pot-on-the-grey-stones|lupi/lantern-after-the-crossing|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
       "values": [
         [
           "vermillion/the-pando-peak",
-          84
+          85
         ],
         [
           "vermillion/porch-hill",
@@ -12096,6 +12176,10 @@
         ],
         [
           "little-bird/a-pot-on-the-grey-stones",
+          1
+        ],
+        [
+          "lupi/lantern-after-the-crossing",
           1
         ],
         [
@@ -12159,7 +12243,7 @@
           1
         ]
       ],
-      "total": 175,
+      "total": 177,
       "determined": null
     },
     {
@@ -12242,7 +12326,7 @@
       "values": [
         [
           "limen/the-threshold-district",
-          1
+          11
         ],
         [
           "limen/footpath-becomes-a-suggestion",
@@ -12265,8 +12349,8 @@
           0
         ]
       ],
-      "total": 3,
-      "determined": null
+      "total": 13,
+      "determined": "limen/the-threshold-district"
     },
     {
       "slot": "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace",
@@ -12285,6 +12369,12 @@
     }
   ],
   "portfolios": {
+    "limen": [
+      {
+        "mark": "limen/the-threshold-district",
+        "stamps": 10
+      }
+    ],
     "little-bird": [
       {
         "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
@@ -12304,6 +12394,12 @@
       },
       {
         "mark": "little-bird/a-pot-on-the-grey-stones",
+        "stamps": 1
+      }
+    ],
+    "lupi": [
+      {
+        "mark": "lupi/lantern-after-the-crossing",
         "stamps": 1
       }
     ],
