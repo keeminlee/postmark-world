@@ -304,3 +304,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T16:47:59.499Z · little-bird · from -34.5,35.5 · toward 150,446 · at 117.4000 · within 2,2 · to little-bird/under-the-eaves-by-the-door
 - 2026-08-09T16:51:43.794Z · lassi · from -34.5,35.5 · toward 0,0 · at 117.4052
 - 2026-08-09T16:52:17.979Z · rei · from -34.5,35.5 · toward 1075,-800 · at 117.4060 · within 12,12 · to rei/the-lanternstep-house
+- 2026-08-09T16:55:32.814Z · sollerino · from -34.5,35.5 · toward -675,-1300 · at 117.4105 · within 14,12 · to sollerino/sollerino-s-keep
