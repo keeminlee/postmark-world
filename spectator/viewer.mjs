@@ -2237,19 +2237,17 @@ const STYLE = `
 #wv-fp-layer { pointer-events:none; }
 #wv-hl-layer { pointer-events:none; }
 /* where the town is talking: each thread's ground, from the office's earshot
-   derivation. A live conversation breathes; a finished one is a cooling mark
-   that leaves the map after a day. The aboard variant is the deck drawn as a
-   room rather than the length of the water it crossed. */
-.wv-convo { fill:rgba(170,143,216,.06); stroke:var(--stamp-violet-dark); stroke-width:1.5;
+   derivation. Pale blue-gray — violet is the stamps' word (Keemin). A live
+   conversation breathes; a finished one is a cooling mark that leaves the map
+   after a day. The aboard variant is the deck drawn as a room rather than the
+   length of the water it crossed. A wash carries no text of its own: hovering
+   raises the SAME name-box a mark raises, in this same pale voice. */
+.wv-convo { fill:rgba(183,198,212,.06); stroke:#7f93a6; stroke-width:1.5;
   stroke-dasharray:3 4; vector-effect:non-scaling-stroke; }
-.wv-convo.is-live { fill:rgba(170,143,216,.13); stroke:var(--stamp-violet); stroke-width:2;
+.wv-convo.is-live { fill:rgba(183,198,212,.12); stroke:#b7c6d4; stroke-width:2;
   stroke-dasharray:none; animation:wv-convo-breathe 3.2s ease-in-out infinite; }
 .wv-convo.is-aboard { stroke-dasharray:6 5; }
-.wv-convo-label { fill:var(--stamp-violet); text-anchor:middle; font-family:var(--mono);
-  letter-spacing:.04em; paint-order:stroke; stroke:rgba(18,16,26,.78); /* width rides inline, scaled with the font */ }
-.wv-convo-label.is-count { fill:var(--stamp-violet-dark); }
-.wv-convo-label.is-link { pointer-events:all; cursor:pointer; }
-.wv-convo-label.is-link:hover { text-decoration:underline; }
+.wv-hl-label.wv-hl-convo { color:#b7c6d4; }
 .pannable.over-convo { cursor:pointer; }
 @keyframes wv-convo-breathe { 0%,100% { stroke-opacity:.9; } 50% { stroke-opacity:.45; } }
 .wv-fp { fill:none; stroke-width:1.4; vector-effect:non-scaling-stroke; }
@@ -3317,25 +3315,23 @@ export function mountViewer(appEl) {
       const walkLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
       walkLayer.setAttribute("id", "wv-walk-layer");
       svg.appendChild(walkLayer);
-      // Conversation LABELS ride above the walkers while their washes stay
-      // under everything: at a party the crowd stands on the label's ground,
-      // and a walker's invisible 27 px hit halo above the text both hid the
-      // words and swallowed the click (live-caught on the maiden deploy — the
-      // halo was elementFromPoint at the label's centre). The layer is
-      // pointer-events:none; the label text opts back in, and stopPropagation
-      // on the press pair keeps the svg's own resolver from also standing you
-      // where the label happens to hang.
-      const convoLabelLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      convoLabelLayer.setAttribute("id", "wv-convo-label-layer");
-      convoLabelLayer.style.pointerEvents = "none";
-      convoLabelLayer.style.display = "none"; // rides the same toggle as its washes
-      svg.appendChild(convoLabelLayer);
-      convoLabelLayer.addEventListener("pointerdown", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
-      convoLabelLayer.addEventListener("pointerup", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
-      convoLabelLayer.addEventListener("click", (e) => {
-        const id = e.target?.dataset?.thread;
-        if (id) { e.stopPropagation(); location.href = convoHref(id); }
-      });
+      // The wash's name-box rides above the walkers while the washes stay under
+      // everything. A wash says nothing until pointed at — the always-on labels
+      // died at zoom (their halo strokes shattered into starbursts; Keemin's
+      // screenshot) — and when it speaks, it speaks in THE box, the same one a
+      // mark or a walker raises, via the same hoverLabelSVG.
+      const convoHoverLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      convoHoverLayer.setAttribute("id", "wv-convo-hover-layer");
+      convoHoverLayer.style.pointerEvents = "none";
+      convoHoverLayer.style.display = "none"; // rides the same toggle as its washes
+      svg.appendChild(convoHoverLayer);
+      function renderConvoHover(hit) {
+        if (!hit) { convoHoverLayer.innerHTML = ""; return; }
+        const bounds = svg.getBoundingClientRect();
+        const unit = bounds.width > 0 ? view.w / bounds.width : 1;
+        const at = { x: originPx.x + hit.cx / mPerPx, y: originPx.y + (hit.cy - hit.ryM) / mPerPx };
+        convoHoverLayer.innerHTML = hoverLabelSVG({ text: hit.words, at, unit, view, className: "wv-hl-label wv-hl-convo" });
+      }
       boxEl.innerHTML = "";
       boxEl.appendChild(svg);
       reattachOverlays();
@@ -3351,7 +3347,7 @@ export function mountViewer(appEl) {
       }
       const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
       const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoLabelLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
       drawFarCountry();
       let tween = null;
       function applyView() {
@@ -3520,13 +3516,19 @@ export function mountViewer(appEl) {
       });
       svg.addEventListener("pointermove", (e) => {
         if (!press || e.pointerId !== press.id) {
-          hoverMark(hoverTargetForEvent(e));
-          // The hand shows exactly where a click would reach the thread, so it
-          // runs the click's own precedence: a face wins, everything else on a
-          // visible wash navigates (convoAt is null while the layer is hidden).
+          // The hand and the name-box show exactly where a click would reach
+          // the thread, running the click's own precedence: a face wins,
+          // everything else on a visible wash navigates (convoAt is null while
+          // the layer is hidden). And while the wash owns the click, the MARK
+          // hover stands down — a bubble saying CLICK TO OPEN over ground
+          // whose click goes to the thread is the box promising what the
+          // click won't do.
           const clear = !snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
           const wp = clear ? worldPointForEvent(e) : null;
-          boxEl.classList.toggle("over-convo", Boolean(wp && convoAt(wp.x, wp.y)));
+          const hit = wp ? convoAt(wp.x, wp.y) : null;
+          hoverMark(hit ? null : hoverTargetForEvent(e));
+          boxEl.classList.toggle("over-convo", Boolean(hit));
+          renderConvoHover(hit);
           return;
         }
         const dx = e.clientX - press.x, dy = e.clientY - press.y;
@@ -3536,6 +3538,8 @@ export function mountViewer(appEl) {
         }
         if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
         hoverMark(null);
+        renderConvoHover(null);
+        boxEl.classList.remove("over-convo");
         press.moved = true; boxEl.classList.add("panning");
         const r = svg.getBoundingClientRect();
         view.x -= dx * (view.w / r.width); view.y -= dy * (view.h / r.height);
@@ -3593,7 +3597,7 @@ export function mountViewer(appEl) {
         }
       });
       svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
-      svg.addEventListener("pointerleave", () => { if (!press) hoverMark(null); });
+      svg.addEventListener("pointerleave", () => { if (!press) { hoverMark(null); renderConvoHover(null); boxEl.classList.remove("over-convo"); } });
 
       // the grid keeps scale without exposing absolute survey readouts.
       function buildGridLayer() {
@@ -3665,9 +3669,10 @@ export function mountViewer(appEl) {
       mapCtx.toggleConvo = () => {
         const on = convoLayer.style.display === "none";
         convoLayer.style.display = on ? "" : "none";
-        convoLabelLayer.style.display = on ? "" : "none";
+        convoHoverLayer.style.display = on ? "" : "none";
         convoVisible = on;
         if (on) loadConversations().then(drawConversations);
+        else { renderConvoHover(null); boxEl.classList.remove("over-convo"); }
         return on;
       };
 
@@ -4021,10 +4026,8 @@ export function mountViewer(appEl) {
   const convoHref = (id) => `/conversations/#${encodeURIComponent(id)}`;
   function drawConversations() {
     if (!mapCtx?.convoLayer || !convoVisible) return;
-    const k = markerScale(mapCtx.zoomK);
     const px = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
     let s = "";
-    let labels = ""; // labels land on their own layer, above the walkers
     const hits = [];
     const paint = (t, live) => {
       if (!t?.at) return;
@@ -4034,26 +4037,14 @@ export function mountViewer(appEl) {
       const e = t.aboard || !t.extent ? { x0: t.at.x, y0: t.at.y, x1: t.at.x, y1: t.at.y } : t.extent;
       const cxM = (e.x0 + e.x1) / 2, cyM = (e.y0 + e.y1) / 2;
       const rxM = (e.x1 - e.x0) / 2 + CONVO_PAD_M, ryM = (e.y1 - e.y0) / 2 + CONVO_PAD_M;
-      if (t.id) hits.push({ id: t.id, cx: cxM, cy: cyM, rxM, ryM, live });
+      // a wash says nothing until pointed at; the words it says then ride the
+      // hit, spoken by the SAME name-box a mark raises (renderConvoHover)
+      const n = Number(t.voice_count) || 0, p = (t.participants ?? []).length;
+      const words = `${String(t.place ?? "somewhere")} — ${n} statement${n === 1 ? "" : "s"} · ${p} speaker${p === 1 ? "" : "s"}${live ? "" : " · gone quiet"}`;
+      if (t.id) hits.push({ id: t.id, cx: cxM, cy: cyM, rxM, ryM, live, words });
       const c = px(cxM, cyM);
       const rx = rxM / mapCtx.mPerPx, ry = ryM / mapCtx.mPerPx;
       s += `<ellipse cx="${c.x}" cy="${c.y}" rx="${rx}" ry="${ry}" class="wv-convo${live ? " is-live" : ""}${t.aboard ? " is-aboard" : ""}"/>`;
-      if (!live) return;
-      // two lines, so the numbers never truncate: the place words carry the cut
-      // if anyone must (a one-line label lost "· 6 speakers" to its own cap).
-      // Both lines link to the thread on /conversations/ — the label is the
-      // click target a RESIDENT gets, since their bare ground-click arms a walk.
-      const n = Number(t.voice_count) || 0, p = (t.participants ?? []).length;
-      const where = String(t.place ?? "somewhere");
-      const head = where.length > 44 ? `${where.slice(0, 43)}…` : where;
-      const tail = `${n} statement${n === 1 ? "" : "s"} · ${p} speaker${p === 1 ? "" : "s"}`;
-      const top = c.y - ry - 22 / k;
-      const link = t.id ? ` data-thread="${esc(t.id)}"` : "";
-      // the dark halo behind the glyphs scales WITH the font (stroke-width in
-      // user units grows linearly with zoom while the font grows as its root —
-      // a fixed 3px devoured its own text two zoom steps in; Keemin, live)
-      labels += `<text x="${c.x}" y="${top}" class="wv-convo-label${link ? " is-link" : ""}"${link} font-size="${12 / k}" style="stroke-width:${(3 / k).toFixed(3)}px">${esc(head)}</text>`
-         + `<text x="${c.x}" y="${top + 13 / k}" class="wv-convo-label is-count${link ? " is-link" : ""}"${link} font-size="${10.5 / k}" style="stroke-width:${(2.6 / k).toFixed(3)}px">${esc(tail)}</text>`;
     };
     const t0 = Date.now();
     for (const t of convoState.closed)
@@ -4061,7 +4052,6 @@ export function mountViewer(appEl) {
     for (const t of convoState.live) paint(t, true); // live paints over cooled
     convoHits = hits.sort((a, b) => a.rxM * a.ryM - b.rxM * b.ryM); // most specific room first
     mapCtx.convoLayer.innerHTML = s;
-    if (mapCtx.convoLabelLayer) mapCtx.convoLabelLayer.innerHTML = labels;
   }
 
   function drawWalkers() {
