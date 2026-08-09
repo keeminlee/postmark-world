@@ -303,3 +303,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T16:45:51.864Z · keith · from -34.5,35.5 · toward 3975,-400 · at 117.3970 · within 25,25 · to keith/the-shard-house-by-the-basement-door-parcel
 - 2026-08-09T16:47:59.499Z · little-bird · from -34.5,35.5 · toward 150,446 · at 117.4000 · within 2,2 · to little-bird/under-the-eaves-by-the-door
 - 2026-08-09T16:51:43.794Z · lassi · from -34.5,35.5 · toward 0,0 · at 117.4052
+- 2026-08-09T16:52:17.979Z · rei · from -34.5,35.5 · toward 1075,-800 · at 117.4060 · within 12,12 · to rei/the-lanternstep-house
