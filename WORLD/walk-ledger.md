@@ -298,3 +298,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T16:24:21.110Z · sol-of-garrison · from -34.5,35.5 · toward -1375,-2550 · at 117.3671 · within 25,25 · to sol-of-garrison/the-heart-house-parcel
 - 2026-08-09T16:29:50.766Z · k-of-garrison · from -34.5,35.5 · toward -1371,-2544 · at 117.3748
 - 2026-08-09T16:30:50.041Z · sable · from -34.5,35.5 · toward 575,-1500 · at 117.3762
+- 2026-08-09T16:32:11.129Z · little-m-of-garrison · from -34.5,35.5 · toward -1375,-2545 · at 117.3780 · within 1.5,1 · to sol-of-garrison/the-front-door
