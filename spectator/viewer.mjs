@@ -2236,6 +2236,19 @@ const STYLE = `
    cells: tier sets the color (tierOf), dashed = the law/mechanic modifier. */
 #wv-fp-layer { pointer-events:none; }
 #wv-hl-layer { pointer-events:none; }
+/* where the town is talking: each thread's ground, from the office's earshot
+   derivation. A live conversation breathes; a finished one is a cooling mark
+   that leaves the map after a day. The aboard variant is the deck drawn as a
+   room rather than the length of the water it crossed. */
+.wv-convo { fill:rgba(170,143,216,.06); stroke:var(--stamp-violet-dark); stroke-width:1.5;
+  stroke-dasharray:3 4; vector-effect:non-scaling-stroke; }
+.wv-convo.is-live { fill:rgba(170,143,216,.13); stroke:var(--stamp-violet); stroke-width:2;
+  stroke-dasharray:none; animation:wv-convo-breathe 3.2s ease-in-out infinite; }
+.wv-convo.is-aboard { stroke-dasharray:6 5; }
+.wv-convo-label { fill:var(--stamp-violet); text-anchor:middle; font-family:var(--mono);
+  letter-spacing:.04em; paint-order:stroke; stroke:rgba(18,16,26,.78); stroke-width:3px; }
+.wv-convo-label.is-count { fill:var(--stamp-violet-dark); }
+@keyframes wv-convo-breathe { 0%,100% { stroke-opacity:.9; } 50% { stroke-opacity:.45; } }
 .wv-fp { fill:none; stroke-width:1.4; vector-effect:non-scaling-stroke; }
 .wv-fp.t-constitution { stroke:var(--blue-dark); }
 .wv-fp.t-home { stroke:var(--green-dark); }
@@ -3270,6 +3283,14 @@ export function mountViewer(appEl) {
       fpLayer.setAttribute("id", "wv-fp-layer");
       fpLayer.style.display = "none";
       svg.appendChild(fpLayer);
+      // conversations — where the town is TALKING: each thread from the office's
+      // earshot derivation, drawn as the ground it actually covered. Above the
+      // footprints, under the pips and walkers; pointer-events none, so it is
+      // weather over the map, never furniture in it.
+      const convoLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      convoLayer.setAttribute("id", "wv-convo-layer");
+      convoLayer.style.pointerEvents = "none";
+      svg.appendChild(convoLayer);
       const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
       overlay.setAttribute("id", "wv-overlay");
       svg.appendChild(overlay);
@@ -3306,7 +3327,7 @@ export function mountViewer(appEl) {
       }
       const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
       const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
       drawFarCountry();
       let tween = null;
       function applyView() {
@@ -3667,6 +3688,7 @@ export function mountViewer(appEl) {
     mapCtx.syncWithin?.(radial);
     renderMarkHighlight();
     drawWalkers(); // the camera moved; a derived position must stay true to it
+    drawConversations(); // ground-fixed like the walkers, so it moves the same way
     if (mapCtx.follow && mapCtx.lockOn && !mapCtx._tweening) mapCtx.lockOn();
   }
   function renderMarkHighlight() {
@@ -3837,6 +3859,21 @@ export function mountViewer(appEl) {
     } catch { /* no faces today; the dots are still the truth */ }
   }
 
+  // Where the town is talking — the office's own thread derivation (voices.mjs:
+  // a thread is a derivation, not an object). Best-effort like the settlement
+  // lane: an office that doesn't answer leaves the map exactly as it was before
+  // conversations existed.
+  let convoState = { live: [], closed: [] };
+  async function loadConversations() {
+    try {
+      const r = await fetch(officeUrl("/world/conversations"), { credentials: "omit" });
+      if (!r.ok) return;
+      const body = await r.json();
+      if (Array.isArray(body?.live) && Array.isArray(body?.closed))
+        convoState = { live: body.live, closed: body.closed };
+    } catch { /* a quiet lane contributes nothing, and the map is unchanged */ }
+  }
+
   function actorWalker() {
     return walkState.walkers.find((walker) => walker.handle === state.handle) ?? null;
   }
@@ -3903,6 +3940,51 @@ export function mountViewer(appEl) {
       label: `${peak.label ?? peak.feature} — the mountain, seen from the town side`,
       id: "pando-peak",
     });
+  }
+
+  // ── conversations on the ground ────────────────────────────────────────────
+  // Each thread draws as the ground it covered: the office ships an extent — a
+  // bbox over EVERY statement in the thread, not just the shown tail — and the
+  // wash is that box grown by half an earshot, because a voice fills a room,
+  // not a point. Live threads carry their label (place · statements · speakers);
+  // a finished conversation fades to bare geometry and leaves the map after a
+  // day — the conversations page is the archive, this layer answers "where is
+  // the town talking right now". Same-named places holding several distinct
+  // circles (three "Volvigradus Garden" threads on party night) is exactly what
+  // this layer exists to disambiguate: the words collide, the ground does not.
+  const CONVO_PAD_M = 30;                        // half an earshot: the room around the words
+  const CONVO_CLOSED_KEEP_MS = 24 * 3600 * 1000; // a cooling mark, then the page remembers
+  function drawConversations() {
+    if (!mapCtx?.convoLayer) return;
+    const k = markerScale(mapCtx.zoomK);
+    const px = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
+    let s = "";
+    const paint = (t, live) => {
+      if (!t?.at) return;
+      // A deck thread's box is the length of the water it crossed — true of the
+      // crossing, wrong as a room. The vessel is the room: it draws at the
+      // thread's own point instead (voices.mjs threadOf ships the flag).
+      const e = t.aboard || !t.extent ? { x0: t.at.x, y0: t.at.y, x1: t.at.x, y1: t.at.y } : t.extent;
+      const c = px((e.x0 + e.x1) / 2, (e.y0 + e.y1) / 2);
+      const rx = ((e.x1 - e.x0) / 2 + CONVO_PAD_M) / mapCtx.mPerPx;
+      const ry = ((e.y1 - e.y0) / 2 + CONVO_PAD_M) / mapCtx.mPerPx;
+      s += `<ellipse cx="${c.x}" cy="${c.y}" rx="${rx}" ry="${ry}" class="wv-convo${live ? " is-live" : ""}${t.aboard ? " is-aboard" : ""}"/>`;
+      if (!live) return;
+      // two lines, so the numbers never truncate: the place words carry the cut
+      // if anyone must (a one-line label lost "· 6 speakers" to its own cap)
+      const n = Number(t.voice_count) || 0, p = (t.participants ?? []).length;
+      const where = String(t.place ?? "somewhere");
+      const head = where.length > 44 ? `${where.slice(0, 43)}…` : where;
+      const tail = `${n} statement${n === 1 ? "" : "s"} · ${p} speaker${p === 1 ? "" : "s"}`;
+      const top = c.y - ry - 22 / k;
+      s += `<text x="${c.x}" y="${top}" class="wv-convo-label" font-size="${12 / k}">${esc(head)}</text>`
+         + `<text x="${c.x}" y="${top + 13 / k}" class="wv-convo-label is-count" font-size="${10.5 / k}">${esc(tail)}</text>`;
+    };
+    const t0 = Date.now();
+    for (const t of convoState.closed)
+      if (t0 - Date.parse(t.latest) <= CONVO_CLOSED_KEEP_MS) paint(t, false);
+    for (const t of convoState.live) paint(t, true); // live paints over cooled
+    mapCtx.convoLayer.innerHTML = s;
   }
 
   function drawWalkers() {
@@ -5641,6 +5723,9 @@ export function mountViewer(appEl) {
     // on the same slower beat the fold uses
     if (!$(root, ".settlenow")?.hidden) renderSettlementChip();
     if (tick % 20 === 0) loadSettlements().then(renderSettlementChip);
+    // the talk moves faster than the record: every other tick (~60 s), gentler
+    // than the conversations page's own 7 s poll — this is a map, not a feed
+    if (tick % 2 === 0) loadConversations().then(drawConversations);
     if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
       try {
         const r = await fetch(state.dataSource, { credentials: "omit" });
@@ -5674,6 +5759,7 @@ export function mountViewer(appEl) {
       // the settlement number, and the chip it lives in
       loadSettlements().then(() => { renderSettlementChip(); renderActivity(); });
       loadStakeEvents().then(renderActivity);
+      loadConversations().then(drawConversations); // where the town is talking, once the office answers
       resolveIdentity(); // after data (the presets filter reads the manifest)
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
