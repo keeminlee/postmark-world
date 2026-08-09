@@ -101,8 +101,10 @@ position is arithmetic over (walk ledger, timetable, instant), so every clone
 recomputes the same voyage.
 
 **The ruled service.** Depart the quay 06:00Z / 18:00Z, depart the Pando landing
-00:00Z / 12:00Z, at pace 405 km/crossing over a 134.97 km run — 4 h under way,
-~2 h alongside, and the 24 h cycle closes on itself. The crossing epoch is a UTC
+00:00Z / 12:00Z, at pace 405 km/crossing over a ~133.7 km run — ~4 h under way,
+~2 h alongside, and the 24 h cycle closes on itself. (The run's length is derived
+from the two stop marks' own positions — re-siting a stop re-times the service;
+this prose is a reading of the record, never its source.) The crossing epoch is a UTC
 midnight and a crossing is twelve hours, so these times land on whole and half
 crossings **exactly**; the mail boat moves on the mail's clock.
 
