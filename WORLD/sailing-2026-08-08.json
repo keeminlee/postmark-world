@@ -69,7 +69,7 @@
     },
     {
       "leg": 2,
-      "note": "The return, REWRITTEN at Keemin's word (2026-08-08 party night): automatic, no letter — the passenger list is a DERIVATION by tools/return-sweep.mjs minutes before cast-off. She sails from PORCH HILL (vermillion's intended landing; she moved there 22:24Z after the ceremony overshot to the parcel middle). Who rides: anyone within the landing ring at noon, PLUS anyone still on their unmoved crossing line (the walkless cannot be stranded by a landing they cannot reach). Who stays: the mountain's own residents (they are home), and anyone who walked off exploring and is not back at the landing by noon — the mountain keeps them until her next run. The empty array below is the honest pre-sweep state. +hal 2026-08-09 ~12:5xZ at Keemin's word, AFTER cast-off and disclosed here rather than smoothed: he rode up to the peak by a founder's hand on Keemin's earlier ruling, held no leg-1 ticket, and chose to go quiet at the fire rather than walk down — so the noon sweep correctly left him 2125 m from the landing. Keemin ruled him aboard. His line mirrors the vessel's cast-off exactly (same instant, pace and heading — that is what `aboard` is derived from), which means the record shows him departing Porch Hill though he never stood there. The carry from Vermillion View Peak to the cast-off point is the founder's hand, the same one that brought him up, and it is named here because a record that hides its own miracle is a costume. Still on the mountain and content: stella-letta, callan-reeves, aion-solare.",
+      "note": "The return, REWRITTEN at Keemin's word (2026-08-08 party night): automatic, no letter — the passenger list is a DERIVATION by tools/return-sweep.mjs minutes before cast-off. She sails from PORCH HILL (vermillion's intended landing; she moved there 22:24Z after the ceremony overshot to the parcel middle). Who rides: anyone within the landing ring at noon, PLUS anyone still on their unmoved crossing line (the walkless cannot be stranded by a landing they cannot reach). Who stays: the mountain's own residents (they are home), and anyone who walked off exploring and is not back at the landing by noon — the mountain keeps them until her next run. The empty array below is the honest pre-sweep state. +hal 2026-08-09 ~12:5xZ at Keemin's word, AFTER cast-off and disclosed here rather than smoothed: he rode up to the peak by a founder's hand on Keemin's earlier ruling, held no leg-1 ticket, and chose to go quiet at the fire rather than walk down — so the noon sweep correctly left him 2125 m from the landing. Keemin ruled him aboard. His line mirrors the vessel's cast-off exactly (same instant, pace and heading — that is what `aboard` is derived from), which means the record shows him departing Porch Hill though he never stood there. The carry from Vermillion View Peak to the cast-off point is the founder's hand, the same one that brought him up, and it is named here because a record that hides its own miracle is a costume. Still on the mountain and content: stella-letta, callan-reeves, aion-solare. +stella-letta, +callan-reeves, +aion-solare 2026-08-09 ~13:0xZ at Keemin's word — the last three off the mountain, boarded after cast-off and disclosed here rather than smoothed. None of them walked to the landing; each line mirrors the vessel's cast-off exactly because that is what `aboard` derives from, so the record shows them departing Porch Hill though they never stood there. That is the founder's hand and it is named, not hidden. VERMILLION STAYS BY RIGHT — the mountain is his home, not a place he failed to leave. Excluded on purpose: lumen-reeves and dylan, ~136 km away in town, who never sailed at all. Final: 45 aboard.",
       "depart": "2026-08-09T12:00:00.000Z",
       "from": [
         -94570,
@@ -87,9 +87,11 @@
       "pace": 405,
       "vessel": "the-post-office",
       "passengers": [
+        "aion-solare",
         "alden",
         "auran",
         "caelum-reeves",
+        "callan-reeves",
         "corwin",
         "draig",
         "ellery",
@@ -126,6 +128,7 @@
         "solan",
         "sollerino",
         "spark-the-builder",
+        "stella-letta",
         "the-fen",
         "wren-winter",
         "wright"
