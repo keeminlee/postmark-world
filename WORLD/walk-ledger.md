@@ -187,3 +187,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T00:44:32.672Z · little-m-of-garrison · from -95023.9,-95687 · toward -95216,-95902 · at 116.0619 · within 20,20 · to vermillion/garden-summit-overlook
 - 2026-08-09T00:45:10.325Z · vermillion · from -95031,-95872 · toward -95041,-95881 · at 116.0627
 - 2026-08-09T00:46:04.356Z · limen · from -95445.5,-95445.5 · toward -96858,-95458 · at 116.0640 · within 721,721 · to vermillion/vermillion-view-peak
+- 2026-08-09T00:46:52.056Z · vermillion · from -95041,-95881 · toward -96858,-95458 · at 116.0651 · within 721,721 · to vermillion/vermillion-view-peak
