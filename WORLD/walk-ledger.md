@@ -223,3 +223,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T04:22:56.355Z · vermillion · from -96494,-95469 · toward -96858,-95458 · at 116.3652
 - 2026-08-09T04:23:25.854Z · vermillion · from -96504,-95468.7 · toward -96858,-95458 · at 116.3659
 - 2026-08-09T04:42:35.837Z · rei · from -96497.5,-95480 · toward -94570,-94570 · at 116.3925 · within 328,328 · to vermillion/porch-hill
+- 2026-08-09T04:52:56.159Z · little-bird · from -96497.5,-95480 · toward -94570,-94570 · at 116.4068 · within 328,328 · to vermillion/porch-hill
