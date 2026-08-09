@@ -17,7 +17,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
-import { markClass as classifyMark } from "./mark-class.mjs"; // the ONE class rule
+import { markStanding as classifyMark } from "./mark-standing.mjs"; // the ONE standing rule
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -308,22 +308,25 @@ export function settlementSweep({
         continue;
       }
       const view = folded.get(record.id);
-      // ONE class rule (tools/mark-class.mjs): the parent-chain walk reaches
+      // ONE standing rule (tools/mark-standing.mjs): the parent-chain walk reaches
       // predicated laws with no coordinates, which the fold's geometric
       // `sovereign` flag structurally misses (Keemin's S1 live-debug catch).
+      // The registry's own word for the verdict stays `class` — it is written on
+      // disk in every published row, and renaming a field is a migration, not a
+      // rename (RECONCILIATION § 9 Q2 ruled the vocabulary, not the ledger).
       const cls = classifyMark(view ?? record, folded);
-      const markClass = cls === "market" ? "commons" : cls;
+      const rowClass = cls === "market" ? "commons" : cls;
       const n = escrow.get(record.id) ?? 0;
-      const eligible = markClass !== "commons" || n > 0;
+      const eligible = rowClass !== "commons" || n > 0;
       if (!eligible) {
-        leftDrafted.push({ household, id: record.id, path: delta.path, class: markClass, escrow: n, reason: "commons needs escrow > 0" });
+        leftDrafted.push({ household, id: record.id, path: delta.path, class: rowClass, escrow: n, reason: "commons needs escrow > 0" });
         continue;
       }
       published.push({
         household,
         id: record.id,
         path: delta.path,
-        class: markClass,
+        class: rowClass,
         escrow: n,
         content: readAt(repo, branch, delta.path),
       });

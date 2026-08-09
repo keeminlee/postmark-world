@@ -1,4 +1,9 @@
-// mark-class.mjs — the ONE definition of a mark's class: home / constitution / market(commons).
+// mark-standing.mjs — the ONE definition of a mark's standing: home / constitution / market(commons).
+//
+// Called markClass until 2026-08-09, when RECONCILIATION.md § 9 Q2 gave "class"
+// to type/token — the spine of the new grammar — and kept "standing" for this
+// verdict, which is what it always was: where one mark stands, and whose ground
+// it stands on. Same walk, truer word.
 //
 // Keemin's rule (2026-07-28, live debug of S1): "is this in a parcel's directory →
 // it's home (green)" — refined 2026-07-30 (Keemin's ruling: sovereign and home align
@@ -13,7 +18,7 @@
 // One definition, two consumers (the viewer's tier accent, the sweep's eligibility)
 // — a second copy of this walk is a future drift; import it.
 
-export function markClass(mark, byId) {
+export function markStanding(mark, byId) {
   if (!mark) return "market";
   const author = mark.by ?? mark.household;
   let m = mark;

@@ -20,7 +20,7 @@ import { orient, openYourEyes, investigate, containmentChain } from "../tools/wo
 import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
-import { markClass } from "../tools/mark-class.mjs"; // the ONE class rule: in a parcel's directory → home
+import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
 
@@ -2773,10 +2773,10 @@ export function mountViewer(appEl) {
   function tierOf(m) {
     if (homeSet.has(m.id)) return "home";
     const full = byId.get(m.id) ?? m;
-    // ONE class rule (tools/mark-class.mjs): in a parcel's directory → home,
+    // ONE standing rule (tools/mark-standing.mjs): in a parcel's directory → home,
     // via the fold's parent chain — reaches predicated laws with no coordinates,
     // which homeSet and `sovereign` (both geometric) structurally miss.
-    return markClass(full, byId);
+    return markStanding(full, byId);
   }
   // Grey is a fact about the RECORD, not about the reader's lens: this mark sits
   // in your household's draft branch and not in the town's published main.

@@ -71,8 +71,8 @@
     "honored": "unverified-draft",
     "receipt": "seeded by the great convergence stage 1, 2026-08-01"
   },
-  "code:world:markClass": {
-    "src": "tools/mark-class.mjs#markClass",
+  "code:world:markStanding": {
+    "src": "tools/mark-standing.mjs#markStanding",
     "approx_loc": 12,
     "honored": "unverified-draft",
     "receipt": "seeded by the great convergence stage 1, 2026-08-01"

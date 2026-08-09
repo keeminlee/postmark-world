@@ -894,7 +894,11 @@ commit. Nothing in this file is law; § 7 is a proposal.*
   Clause amended (slot: standing); the code rename
   (tools/mark-class.mjs::markClass → markStanding) is queued as a mechanical
   follow-up, and derived_from stays truthfully pointed at the current symbol
-  until it lands.
+  until it lands. [LANDED 2026-08-09, same day: `tools/mark-standing.mjs`,
+  `markStanding`, both callers, the test suite, `the-class-walk`'s slot/value
+  and both `derived_from` lines. The sweep's on-disk `class:` field is
+  untouched — that is a ledger migration, not a rename. The `the-class-rule`
+  directory keeps its name; re-homing a mark is its own act, and ids are by+leaf.]
 - **Q3 · sketchbook vs gray — both survive; they are different instruments.**
   The sketchbook keeps its constitutional privacy exactly as ruled; gray is an
   ADDITION (public, openly weightless, on main). Nothing migrates
