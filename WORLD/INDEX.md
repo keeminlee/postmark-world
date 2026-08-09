@@ -10,14 +10,14 @@ listed here — they are their households' own.*
 | the-town/let-there-be-light | sited | 0,0 |  | 0 | 132 |  |
 | the-town/pando-peak | sited | -95458,-95458 |  | 8 | 103 |  |
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 10 | 85 | ⚔ |
-| vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 15 | ⚔ |
+| vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 22 | ⚔ |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 14 | ⚔ |
 | the-town/the-town-centre | sited | -75,-75 |  | 0 | 12 | ⚔ |
 | limen/the-threshold-district | sited | 1488,1808 |  | 10 | 11 | ⚔ |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 | ⚔ |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 | ⚔ |
-| the-town/the-pando-landing | sited | -95430,-95430 |  | 2 | 7 | ⚔ |
+| the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 | ⚔ |
 | vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 | ⚔ |
 | wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 6 | ⚔ |
 | rei/the-white-flower-at-wrights-door | sited | 576,-2593.6 |  | 6 | 6 | ⚔ |
@@ -224,24 +224,30 @@ listed here — they are their households' own.*
 | the-town/the-record | predicated | the-town/let-there-be-light | record=the world is its own record | 0 | 0 |  |
 | the-town/the-continuation | predicated | the-town/the-record | continuation=a predicate inherits its parent's extent completely | 0 | 0 |  |
 | the-town/the-drawn-land | predicated | the-town/the-record | terrain=root and terrain come by extraction | 0 | 0 |  |
+| the-town/the-edit-law | predicated | the-town/the-record | editing=consent is stamped when the edge is made | 0 | 0 |  |
+| the-town/the-standing-children | predicated | the-town/the-edit-law | deletion=deletion never cascades | 0 | 0 |  |
 | the-town/the-fold | predicated | the-town/the-record | canon=canon is what the fold computes | 0 | 0 |  |
 | the-town/the-canon-fold | predicated | the-town/the-fold | fold=canon is computed fresh each time | 0 | 0 |  |
 | the-town/the-canon-computation | predicated | the-town/the-canon-fold | fn:fold=tools/marks-fold.mjs::fold | 0 | 0 |  |
 | the-town/the-mark-loader | predicated | the-town/the-canon-fold | fn:loadMarks=tools/marks-fold.mjs::loadMarks | 0 | 0 |  |
 | the-town/the-placement-rule | predicated | the-town/the-canon-fold | fn:placementParent=tools/marks-fold.mjs::placementParent | 0 | 0 |  |
-| the-town/the-class-rule | predicated | the-town/the-fold | class=one walk decides a mark's class | 0 | 0 |  |
-| the-town/the-class-walk | predicated | the-town/the-class-rule | fn:markClass=tools/mark-class.mjs::markClass | 0 | 0 |  |
+| the-town/the-class-rule | predicated | the-town/the-fold | standing=one walk decides a mark's standing | 0 | 0 |  |
+| the-town/the-class-walk | predicated | the-town/the-class-rule | fn:markStanding=tools/mark-standing.mjs::markStanding | 0 | 0 |  |
 | the-town/the-geometry-primitives | predicated | the-town/the-fold | geometry=one shape, one containment test | 0 | 0 |  |
 | the-town/the-containment-test | predicated | the-town/the-geometry-primitives | fn:contains=tools/geometry.mjs::contains | 0 | 0 |  |
 | the-town/the-gate | predicated | the-town/the-record | gate=no malformed mark enters; an edge cannot lie | 0 | 0 |  |
+| the-town/the-fidelity | predicated | the-town/the-gate | fidelity=a rendering may say less, never other | 0 | 0 |  |
 | the-town/the-kinds | predicated | the-town/the-record | kinds=sited, parcel, predicated, naming | 0 | 0 |  |
 | the-town/the-one-claim | predicated | the-town/the-record | claim=one mark carries one claim | 0 | 0 |  |
 | the-town/the-one-file | predicated | the-town/the-record | one-file=everything is a mark | 0 | 0 |  |
-| the-town/the-one-pen | predicated | the-town/the-record | pen=write is API-only; the office holds the one pen | 0 | 0 |  |
+| the-town/the-one-pen | predicated | the-town/the-record | pen=two doors, one law; the gates never disagree | 0 | 0 |  |
 | the-town/the-own-hand | predicated | the-town/the-record | authorship=a mark is signed by its maker | 0 | 0 |  |
+| the-town/the-human-lane | predicated | the-town/the-own-hand | human=a human speaks through the resident they stand with | 0 | 0 |  |
 | the-town/the-re-homing | predicated | the-town/the-record | re-homing=directories move; ids never do | 0 | 0 |  |
 | the-town/the-recomputation | predicated | the-town/the-record | recomputation=a clone runs the whole world | 0 | 0 |  |
 | the-town/the-rivalry | predicated | the-town/the-record | rivalry=same slot on same parent rivals | 0 | 0 |  |
+| the-town/the-conflict-rows | predicated | the-town/the-rivalry | conflict=geometry detects; the class-pair rules | 0 | 0 |  |
+| the-town/the-unruled-pair | predicated | the-town/the-conflict-rows | unruled=an unruled pair bounces loud | 0 | 0 |  |
 | the-town/the-settlement | predicated | the-town/the-record | settlement=drafts publish at crossings | 0 | 0 |  |
 | the-town/the-settlement-sweep | predicated | the-town/the-settlement | fn:settlementSweep=tools/settlement-sweep.mjs::settlementSweep | 0 | 0 |  |
 | the-town/the-sketchbook | predicated | the-town/the-record | drafts=branch-shaped, private until settled | 0 | 0 |  |
@@ -265,7 +271,13 @@ listed here — they are their households' own.*
 | the-town/open-your-eyes | predicated | the-town/the-verbs-library | fn:openYourEyes=tools/world-verbs.mjs::openYourEyes | 0 | 0 |  |
 | the-town/orient | predicated | the-town/the-verbs-library | fn:orient=tools/world-verbs.mjs::orient | 0 | 0 |  |
 | the-town/walk-verb | predicated | the-town/the-verbs-library | fn:walk=tools/world-verbs.mjs::walk | 0 | 0 |  |
-| the-town/the-tiers | predicated | the-town/the-record | tiers=constitution binds; sovereignty is yours; market contests | 0 | 0 |  |
+| the-town/the-tense | predicated | the-town/the-record | tense=an event is judged by the geometry of its own instant | 0 | 0 |  |
+| the-town/the-two-clocks | predicated | the-town/the-tense | clocks=every read names its clock | 0 | 0 |  |
+| the-town/the-three-kinds | predicated | the-town/the-record | things=marks stand, entities live, emissions happen | 0 | 0 |  |
+| the-town/the-fading | predicated | the-town/the-three-kinds | fade=presence fades; occurrence is history | 0 | 0 |  |
+| the-town/the-standing-question | predicated | the-town/the-three-kinds | within=an entity's place is a question, never an edge | 0 | 0 |  |
+| the-town/the-three-layers | predicated | the-town/the-record | layers=the word, the world, the living | 0 | 0 |  |
+| the-town/the-tiers | predicated | the-town/the-record | tiers=four tiers — constitution, sovereignty, market, draft; blue, green, yellow, gray | 0 | 0 |  |
 | the-town/the-walk | predicated | the-town/the-record | walk=a departure is written once; position derives | 0 | 0 |  |
 | the-town/the-ledger-grammar | predicated | the-town/the-walk | grammar=departures are declarative; position derives | 0 | 0 |  |
 | the-town/the-current-departure | predicated | the-town/the-ledger-grammar | fn:currentDeparture=tools/walk.mjs::currentDeparture | 0 | 0 |  |

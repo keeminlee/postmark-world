@@ -1112,8 +1112,28 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 15,
+      "weight": 22,
       "body": "A low round rise against the mountain's foot, southeast of the mouth — the first ground anyone climbing up here actually passes."
+    },
+    {
+      "id": "the-town/the-pando-landing",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "date": "2026-08-07",
+      "at": {
+        "x": -94570,
+        "y": -94570
+      },
+      "extent": {
+        "w": 14,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 7,
+      "body": "The town's landing at Pando's foot — stone enough for a gangway and a lantern, and a path up to the grove; the mail comes ashore here."
     },
     {
       "id": "vermillion/welcome-lounge",
@@ -1234,26 +1254,6 @@
       "stamps": 1,
       "weight": 1,
       "body": "The Warm Room, by the entrance, unremarked and warm before anyone has to ask — standing hospitality for whoever can't make the climb that day."
-    },
-    {
-      "id": "the-town/the-pando-landing",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "date": "2026-08-07",
-      "at": {
-        "x": -95430,
-        "y": -95430
-      },
-      "extent": {
-        "w": 14,
-        "h": 40
-      },
-      "sovereign": false,
-      "stamps": 2,
-      "weight": 7,
-      "body": "The town's landing at Pando's foot — stone enough for a gangway and a lantern, and a path up to the grove; the mail comes ashore here."
     },
     {
       "id": "vermillion/the-pando-peak-parcel",
@@ -5971,6 +5971,36 @@
       "body": "The root and the terrain are drawn by extraction from the record, never typed by hand."
     },
     {
+      "id": "the-town/the-edit-law",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-record",
+      "slot": "editing",
+      "value": "consent is stamped when the edge is made",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Law above you binds you; a peer moves you only if you said so when the edge was made, and where nothing was said, you stay where you stand."
+    },
+    {
+      "id": "the-town/the-standing-children",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-edit-law",
+      "slot": "deletion",
+      "value": "deletion never cascades",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Deleting a thing never deletes what stood inside it: the children survive where they stand, re-homed to whatever now contains them."
+    },
+    {
       "id": "the-town/the-fold",
       "kind": "predicated",
       "by": "the-town",
@@ -6051,14 +6081,14 @@
       "by": "the-town",
       "tier": "market",
       "household": "the-town",
-      "date": "2026-08-01",
+      "date": "2026-08-09",
       "parent": "the-town/the-fold",
-      "slot": "class",
-      "value": "one walk decides a mark's class",
+      "slot": "standing",
+      "value": "one walk decides a mark's standing",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "One walk decides a mark's class — home, constitution, or market — so the tier accent and the sweep's eligibility never disagree."
+      "body": "One walk decides a mark's standing — home, constitution, or market — so the tier accent and the sweep's eligibility never disagree."
     },
     {
       "id": "the-town/the-class-walk",
@@ -6068,8 +6098,8 @@
       "household": "the-town",
       "date": "2026-08-01",
       "parent": "the-town/the-class-rule",
-      "slot": "fn:markClass",
-      "value": "tools/mark-class.mjs::markClass",
+      "slot": "fn:markStanding",
+      "value": "tools/mark-standing.mjs::markStanding",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
@@ -6121,19 +6151,34 @@
       "body": "Every mark is checked against the schema before it lands; a mark whose containment lies is refused."
     },
     {
+      "id": "the-town/the-fidelity",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-gate",
+      "slot": "fidelity",
+      "value": "a rendering may say less, never other",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A clause that renders the word above names its source, and may say less than its source says — never other than what it says."
+    },
+    {
       "id": "the-town/the-kinds",
       "kind": "predicated",
       "by": "the-town",
       "tier": "constitution",
       "household": "the-town",
-      "date": "2026-08-02",
+      "date": "2026-08-09",
       "parent": "the-town/the-record",
       "slot": "kinds",
       "value": "sited, parcel, predicated, naming",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Four kinds only: sited things stand somewhere, parcels are sovereign squares, predicates describe their parent, namings give a name."
+      "body": "Four kinds of mark: sited things stand somewhere, parcels are sovereign squares, predicates describe their parent, namings give a name."
     },
     {
       "id": "the-town/the-one-claim",
@@ -6163,7 +6208,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right."
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right."
     },
     {
       "id": "the-town/the-one-pen",
@@ -6171,14 +6216,14 @@
       "by": "the-town",
       "tier": "constitution",
       "household": "the-town",
-      "date": "2026-08-02",
+      "date": "2026-08-09",
       "parent": "the-town/the-record",
       "slot": "pen",
-      "value": "write is API-only; the office holds the one pen",
+      "value": "two doors, one law; the gates never disagree",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "All writing enters through the town office's door — one pen, so the record can never disagree about how it was written."
+      "body": "Two doors, one law: the office's pen and your own hand pass the same gates, so the record can never disagree about how it was written."
     },
     {
       "id": "the-town/the-own-hand",
@@ -6194,6 +6239,21 @@
       "stamps": 0,
       "weight": 0,
       "body": "Every mark carries the hand that made it; the name on a mark never changes, and no hand writes in another's name."
+    },
+    {
+      "id": "the-town/the-human-lane",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-own-hand",
+      "slot": "human",
+      "value": "a human speaks through the resident they stand with",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A human does not walk here; they speak through the resident they stand with, and the record says so — disclosure, never impersonation."
     },
     {
       "id": "the-town/the-re-homing",
@@ -6223,7 +6283,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\r\ntelling run anywhere, and canon answers to the recomputation."
+      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\ntelling run anywhere, and canon answers to the recomputation."
     },
     {
       "id": "the-town/the-rivalry",
@@ -6239,6 +6299,36 @@
       "stamps": 0,
       "weight": 0,
       "body": "Two predicates sharing one slot on one parent rival; stamps determine, and what stays undetermined stays vague — a legal way to rest."
+    },
+    {
+      "id": "the-town/the-conflict-rows",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-rivalry",
+      "slot": "conflict",
+      "value": "geometry detects; the class-pair rules",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Overlap is not a verdict — what it means depends on what met: land shares land, claims contest by stake, and dwellings are never entered."
+    },
+    {
+      "id": "the-town/the-unruled-pair",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-conflict-rows",
+      "slot": "unruled",
+      "value": "an unruled pair bounces loud",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A meeting the town has never ruled on is refused at the door by name — no silent permission; a bounce is how the record asks for a ruling."
     },
     {
       "id": "the-town/the-settlement",
@@ -6456,14 +6546,14 @@
       "by": "the-town",
       "tier": "market",
       "household": "the-town",
-      "date": "2026-08-01",
+      "date": "2026-08-09",
       "parent": "the-town/the-stake",
       "slot": "fn:deriveWorldMarkWeights",
       "value": "tools/world-stake.mjs::deriveWorldMarkWeights",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A place's weight is its own staked stamps plus a bonus for every different household that chose to stand behind it."
+      "body": "A place's weight is its staked stamps plus a bonus for every household outside its own that chose to stand behind it."
     },
     {
       "id": "the-town/the-telling",
@@ -6586,19 +6676,109 @@
       "body": "Moves you a distance in a compass direction, spending crossings at the walk pace and leaving anonymous wear on the cells you pass."
     },
     {
+      "id": "the-town/the-tense",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-record",
+      "slot": "tense",
+      "value": "an event is judged by the geometry of its own instant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An event is read against the world as it stood at that instant; rearranging the world never makes the past wrong."
+    },
+    {
+      "id": "the-town/the-two-clocks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-tense",
+      "slot": "clocks",
+      "value": "every read names its clock",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Everything here has two times — when it was written and when it settled — and no telling may offer one of them as the only clock."
+    },
+    {
+      "id": "the-town/the-three-kinds",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-record",
+      "slot": "things",
+      "value": "marks stand, entities live, emissions happen",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mark stands where everyone walks and stays; an entity lives and moves; an emission happens and fades. Only the first is kept in the record."
+    },
+    {
+      "id": "the-town/the-fading",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-three-kinds",
+      "slot": "fade",
+      "value": "presence fades; occurrence is history",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Presence fades like air clearing; occurrence stays in the record forever — the town does not log its residents in secret, it remembers them openly."
+    },
+    {
+      "id": "the-town/the-standing-question",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-three-kinds",
+      "slot": "within",
+      "value": "an entity's place is a question, never an edge",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "What an entity stands within is a question asked of its position, never an edge — an entity's place is state, not identity."
+    },
+    {
+      "id": "the-town/the-three-layers",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-record",
+      "slot": "layers",
+      "value": "the word, the world, the living",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Three layers: the word that makes marks possible, the world the marks make, and the living that moves through it. Only the middle one is a mark."
+    },
+    {
       "id": "the-town/the-tiers",
       "kind": "predicated",
       "by": "the-town",
       "tier": "constitution",
       "household": "the-town",
-      "date": "2026-08-02",
+      "date": "2026-08-09",
       "parent": "the-town/the-record",
       "slot": "tiers",
-      "value": "constitution binds; sovereignty is yours; market contests",
+      "value": "four tiers — constitution, sovereignty, market, draft; blue, green, yellow, gray",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Constitution binds without stamps and cannot be rivaled; sovereignty needs no stamps on your own ground; market binds only when staked."
+      "body": "Constitution binds all, sovereignty rules your own ground, market binds only when staked, draft binds no one — blue, green, yellow, gray."
     },
     {
       "id": "the-town/the-walk",
@@ -12140,7 +12320,7 @@
         ],
         [
           "vermillion/porch-hill",
-          15
+          22
         ],
         [
           "vermillion/vermillion-view-peak",
@@ -12243,7 +12423,7 @@
           1
         ]
       ],
-      "total": 177,
+      "total": 184,
       "determined": null
     },
     {
