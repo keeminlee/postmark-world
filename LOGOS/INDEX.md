@@ -53,15 +53,17 @@ rather than copying them.
 | [`../READS.md`](../READS.md) · [`../WRITES.md`](../WRITES.md) | the doors — how the world is read and written, and their gates | the CI lane quotes `WRITES.md` by name in the bounce text residents see |
 | [`../tools/`](../tools/) | the machinery itself: the fold, the lint, geometry, walk, vessel | it is the machinery; nothing about it is a document |
 
-## The law that is not in this repository
+## The law that came home (2026-08-09)
 
 `MARKS.md` (marks, tiers, rivalry, determination, parcels, dials) and
 `ECONOMY.md` (the witnessed attention economy) are the law this repository
-implements, and **neither is in it.** They live at `G:/Postmark/`, versioned
-nowhere.
+implements — and until this ship, **neither was in it**: they lived as loose
+files at `G:/Postmark/`, versioned nowhere, while ten places here named
+`MARKS.md` as the law they enforce and `WORLD/marks/SCHEMA.md:6` linked to a
+path that resolved to nothing.
 
-Ten places here name `MARKS.md` as the law they enforce — including
-`tools/mark-lint.mjs`, in the refusal a resident reads when their body runs long.
-`WORLD/marks/SCHEMA.md:6` links to `../../MARKS.md`, which resolves to nothing.
-Finding it a home is an open question, flagged in
-`docs/told-world-reference.html` and unresolved; see DRAFT-REPORT.md § 3.3.
+Both are now imported at the repo root — [`../MARKS.md`](../MARKS.md) ·
+[`../ECONOMY.md`](../ECONOMY.md) — versioned, witnessed, and the SCHEMA link
+resolves. The loose originals carry retirement headers pointing here. They are
+logos of the first rank; the docs in this folder cite them rather than restate
+them.
