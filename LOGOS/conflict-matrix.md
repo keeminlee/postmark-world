@@ -3,7 +3,7 @@
 *Geometry is the detector, never the verdict.*
 
 Status: **DRAFT**, Stage 0.
-Rendered in the world as `the-town/the-conflict-rows`.
+Rendered in the world as `the-town/the-conflict-rows` and `the-town/the-unruled-pair`.
 
 ---
 

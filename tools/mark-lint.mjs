@@ -26,8 +26,12 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : def; };
-const MARKS_DIR = opt("--marks-dir", join(ROOT, "WORLD/marks"));
-const TERRAIN_PATH = opt("--terrain", join(ROOT, "WORLD/skeleton.json"));
+// --repo <dir>: the repository a `source:` path is resolved against (§9). Defaults
+// to this tool's own repo, which is what every caller wants: the lane runs MAIN's
+// tools, so the documents a rendering is checked against are main's too.
+const REPO = resolve(opt("--repo", ROOT));
+const MARKS_DIR = opt("--marks-dir", join(REPO, "WORLD/marks"));
+const TERRAIN_PATH = opt("--terrain", join(REPO, "WORLD/skeleton.json"));
 // --scope <subtree>: the fleet writes sibling dirs concurrently, so a full-tree
 // lint mid-fleet would trip on another agent's half-written dir. Scoped mode
 // still LOADS the whole tree (ancestor edges resolve; the-town leaf collisions
@@ -267,6 +271,109 @@ for (const rec of marks) {
 
     if (!(typeof tt.pace === "number" && Number.isFinite(tt.pace) && tt.pace > 0))
       err(rec, `timetable pace: must be a positive number of km per crossing (got ${JSON.stringify(tt.pace)}) — at any other pace she never arrives`);
+  }
+}
+
+// 9. the two-way channel: a rendering and the word it renders name each other.
+//
+// A charter article carries `source:` — "this clause renders that document."
+// Until now the field parsed and nothing read it, so the fidelity promise (a
+// rendering may be incomplete, never untrue) had no machinery under it at all.
+// Two lints give it one:
+//
+//   L-source-1  every `source:` names a file that is actually there.
+//   L-source-2  the channel runs BOTH WAYS. The clause names the document, and
+//               the document names the clause back — by mark id, on its own
+//               "Rendered in the world as `<id>`" line. One-way is how drift
+//               starts: the document gets rewritten by someone who has no way
+//               of knowing a clause downstairs is quoting it.
+//
+// A document with nothing in the world yet says so in the same grammar —
+// "Rendered in the world: not yet" — and both directions leave it alone.
+//
+// What is NOT here: whether the clause still SAYS what the source says. That one
+// wants a reader, not a parser. These two are what make it reviewable by one —
+// they guarantee the pair is findable, mutual, and named.
+{
+  const FIDELITY = "the-town/the-fidelity";
+  // a Rendered line: the phrase at the start of a line, running to the end of its
+  // sentence (docs wrap). Mid-sentence mentions — a report QUOTING the grammar —
+  // are prose about the channel, not a declaration in it.
+  const RENDERED = /^Rendered in the world\b/;
+  const ID_SHAPE = /^[a-z0-9]+(?:-[a-z0-9]+)*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  const docs = new Map();
+  const readDoc = (rel) => {
+    if (docs.has(rel)) return docs.get(rel);
+    let text = null;
+    try { text = readFileSync(join(REPO, rel), "utf8"); } catch { /* missing/unreadable — L-source-1 says so */ }
+    let out;
+    if (text == null) out = { missing: true };
+    else {
+      const lines = text.split(/\r?\n/);
+      const spans = [];
+      for (let i = 0; i < lines.length; i++) {
+        if (!RENDERED.test(lines[i])) continue;
+        let span = lines[i], j = i + 1;
+        while (!/\.\s*$/.test(span) && j < lines.length && lines[j].trim() !== "") span += " " + lines[j++];
+        spans.push(span);
+      }
+      const ids = new Set();
+      let notYet = false;
+      for (const s of spans) {
+        if (/\bnot yet\b/i.test(s)) { notYet = true; continue; }
+        for (const m of s.matchAll(/`([^`]+)`/g)) if (ID_SHAPE.test(m[1])) ids.add(m[1]);
+      }
+      out = { missing: false, declared: spans.length > 0, notYet, ids };
+    }
+    docs.set(rel, out);
+    return out;
+  };
+
+  // ── clause → document ──
+  const cited = new Set();
+  for (const rec of marks) {
+    if (rec._error || rec.source === undefined) continue;
+    const rel = String(rec.source).trim().replace(/\\/g, "/");
+    if (!rel || /^([a-z]:)?\//i.test(rel) || rel.split("/").includes("..") || rel.includes("\0")) {
+      err(rec, `source: ${JSON.stringify(rec.source)} must be a path inside this repository, written from its root (e.g. LOGOS/kinds.md) — a word that stands outside the repo is a word nobody here can check${cite(FIDELITY)}`);
+      continue;
+    }
+    const doc = readDoc(rel);
+    if (doc.missing) {
+      err(rec, `source: ${rel} names no readable file — a rendering points at the document it renders, and that document has to be there${cite(FIDELITY)}`);
+      continue;
+    }
+    cited.add(rel);
+    if (!doc.declared)
+      err(rec, `source: ${rel} never names this rendering — add a line "Rendered in the world as \`${rec.id}\`." to ${rel}, so the word knows it is being rendered and cannot be rewritten out from under this clause${cite(FIDELITY)}`);
+    else if (doc.notYet)
+      err(rec, `source: ${rel} says "Rendered in the world: not yet" — either this clause is early or that line is stale; one of the two must move${cite(FIDELITY)}`);
+    else if (!doc.ids.has(rec.id))
+      err(rec, `source: ${rel} renders ${[...doc.ids].map((i) => `"${i}"`).join(", ") || "(no id)"} — not "${rec.id}"; name this clause on the document's Rendered line, or point the clause at the document that does render it${cite(FIDELITY)}`);
+  }
+
+  // ── document → clause ──
+  //
+  // Only when the tree being linted IS this repository's own. The lane judges a
+  // COMPOSED sketchbook with main's tools: main's documents, a tree that may be a
+  // crossing behind them. A clause that has not reached the sketchbook yet is not
+  // a lying document, and no resident should ever be bounced for one.
+  const ownTree = !SCOPE && resolve(MARKS_DIR) === resolve(join(REPO, "WORLD/marks"));
+  if (ownTree) {
+    const logosDir = join(REPO, "LOGOS");
+    const logos = existsSync(logosDir) ? readdirSync(logosDir).filter((n) => /\.md$/i.test(n)).map((n) => `LOGOS/${n}`) : [];
+    for (const rel of [...new Set([...logos, ...cited])].sort()) {
+      const doc = readDoc(rel);
+      if (doc.missing || !doc.declared || doc.notYet) continue;
+      for (const id of doc.ids) {
+        const mark = byId.get(id);
+        const docErr = (msg) => findings.push({ sev: "ERROR", file: rel, msg });
+        if (!mark)
+          docErr(`Rendered line names "${id}", which is no mark in the tree — either the clause never landed, or it landed under another id; a document may not claim a rendering that is not there${cite(FIDELITY)}`);
+        else if (String(mark.source ?? "").trim().replace(/\\/g, "/") !== rel)
+          docErr(`Rendered line names "${id}", but that mark's source: is ${mark.source === undefined ? "absent" : JSON.stringify(mark.source)} — the channel runs both ways or it is not a channel${cite(FIDELITY)}`);
+      }
+    }
   }
 }
 

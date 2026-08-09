@@ -3,7 +3,7 @@
 *The word, the world, the living.*
 
 Status: **DRAFT**, Stage 0. Ruled by Keemin, 2026-08-09 evening sitting.
-Rendered in the world as `the-town/the-three-layers`.
+Rendered in the world as `the-town/the-three-layers` and `the-town/the-fidelity`.
 
 ---
 
@@ -143,7 +143,22 @@ Where a building **stands** is spine truth. What it **implements** is an edge.
   § *The three layers*, § *The two binding channels*
 - `WORLD/ENGINE.md` § the timetable mechanic — the world-operative precedent
 
-[RED-PEN: the fidelity lint that compares an article to its `source:` document
-does not exist yet. It is named here as the thing that makes "cannot lie" true;
-until it ships, an article can drift and nothing catches it. Stage 0 authors the
-articles; the lint is unscheduled.]
+[RESOLVED 2026-08-09 — the red-pen here said the fidelity lint did not exist and
+an article could drift with nothing to catch it. Two lints now ship in
+`tools/mark-lint.mjs` § 9, and the clause they enforce stands in the world as
+`the-town/the-fidelity`:
+
+- **L-source-1** — every `source:` names a file that is actually in the repo.
+- **L-source-2** — the citation runs both ways: the clause names the document,
+  and the document names the clause back by id, on a "Rendered in the world as
+  `<id>`" line. A document with nothing in the world yet declares that in the
+  same grammar — "Rendered in the world: not yet" — and both directions leave it
+  alone.
+
+What is checked is that the pair is real, mutual, and findable. Whether the
+clause still *says* what the source says is read by a person, at settlement —
+and these two lints are what make that read possible, because the document can
+no longer be rewritten by someone with no way of knowing a clause is quoting it.
+The stronger claim this document made — that the physics book *cannot* drift —
+is true of the citation, and true of the sentence only as far as the pen that
+settles it.]

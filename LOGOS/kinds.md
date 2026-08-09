@@ -3,7 +3,8 @@
 *Marks stand. Entities live. Emissions happen.*
 
 Status: **DRAFT**, Stage 0.
-Rendered in the world as `the-town/the-three-kinds`.
+Rendered in the world as `the-town/the-three-kinds`, `the-town/the-standing-question`,
+`the-town/the-fading`, and `the-town/the-human-lane`.
 
 ---
 

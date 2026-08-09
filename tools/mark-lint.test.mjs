@@ -6,7 +6,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync, cpSync, copyFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, cpSync, copyFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
@@ -118,6 +118,104 @@ test("the mechanic and the schedule travel together — neither half is a servic
   const noMechanic = runLint(timetableTree(`timetable: ${GOOD}\n`, { mechanic: "" }));
   assert.match(noMechanic, /\[ERROR\].*timetable: is set but mechanic: is undefined/,
     "a schedule no registered machinery runs");
+});
+
+// ── the two-way channel (2026-08-09: L-source-1, L-source-2) ──────────────────
+//
+// `source:` was parsed and read by nothing, so a charter article could point at
+// a document that had been deleted, renamed, or rewritten out from under it, and
+// the gate had no opinion. These tests hold both directions: the clause names the
+// document, and the document names the clause back.
+//
+// The fixture is a small REPOSITORY, not just a tree — LOGOS/ and the two other
+// cited documents travel with the-record, because the channel is a fact about a
+// repo read whole. The lint is pointed at it with --repo.
+
+function fidelityRepo() {
+  const repo = mkdtempSync(join(tmpdir(), "fidelity-"));
+  const REPO_SRC = join(HERE, "..");
+  mkdirSync(join(repo, "WORLD", "marks", "let-there-be-light"), { recursive: true });
+  cpSync(join(REPO_SRC, "LOGOS"), join(repo, "LOGOS"), { recursive: true });
+  copyFileSync(join(REPO_SRC, "WRITES.md"), join(repo, "WRITES.md"));
+  copyFileSync(join(REPO_SRC, "WORLD", "skeleton.json"), join(repo, "WORLD", "skeleton.json"));
+  copyFileSync(join(REPO_SRC, "WORLD", "marks", "SCHEMA.md"), join(repo, "WORLD", "marks", "SCHEMA.md"));
+  copyFileSync(join(REAL, "mark.md"), join(repo, "WORLD", "marks", "let-there-be-light", "mark.md"));
+  cpSync(join(REAL, "the-record"), join(repo, "WORLD", "marks", "let-there-be-light", "the-record"), { recursive: true });
+  return repo;
+}
+
+const runRepoLint = (repo) => {
+  try { return execFileSync("node", [LINT, "--repo", repo], { encoding: "utf8" }); }
+  catch (e) { return String(e.stdout ?? "") + String(e.stderr ?? ""); }
+};
+const editFile = (repo, rel, from, to) => {
+  const p = join(repo, rel);
+  const before = readFileSync(p, "utf8");
+  assert.ok(before.includes(from), `fixture edit found nothing to replace in ${rel}: ${from}`);
+  writeFileSync(p, before.replace(from, to));
+};
+
+test("the channel is clean as it stands — every rendering and its source name each other", () => {
+  const out = runRepoLint(fidelityRepo());
+  assert.match(out, /CLEAN/, `the standing pairs must pass, got:\n${out}`);
+});
+
+test("L-source-1: a source: pointing at no file bounces, citing the fidelity clause", () => {
+  const repo = fidelityRepo();
+  editFile(repo, "WORLD/marks/let-there-be-light/the-record/the-three-layers/mark.md",
+    "source: LOGOS/three-layers.md", "source: LOGOS/the-vanished-doc.md");
+  const out = runRepoLint(repo);
+  assert.match(out, /\[ERROR\].*source: LOGOS\/the-vanished-doc\.md names no readable file/, "the dangling citation is named");
+  assert.match(out, /the-town\/the-fidelity/, "the clause id is cited");
+  assert.match(out, /may say less than its source says — never other/, "the clause body is quoted verbatim");
+});
+
+test("L-source-1: a source: climbing out of the repo bounces before it is ever read", () => {
+  const repo = fidelityRepo();
+  editFile(repo, "WORLD/marks/let-there-be-light/the-record/the-tense/mark.md",
+    "source: LOGOS/state-and-time.md", "source: ../../elsewhere/state-and-time.md");
+  assert.match(runRepoLint(repo), /\[ERROR\].*must be a path inside this repository/, "a word outside the repo is a word nobody here can check");
+});
+
+test("L-source-2: a document that stops naming its rendering goes red in BOTH directions", () => {
+  const repo = fidelityRepo();
+  editFile(repo, "LOGOS/tiers.md", "`the-town/the-tiers`", "`the-town/some-other-clause`");
+  const out = runRepoLint(repo);
+  assert.match(out, /\[ERROR\] LOGOS\/tiers\.md: Rendered line names "the-town\/some-other-clause", which is no mark in the tree/,
+    "document → clause: a rendering claimed by nobody");
+  assert.match(out, /\[ERROR\].*the-record\/the-tiers: source: LOGOS\/tiers\.md renders .* — not "the-town\/the-tiers"/,
+    "clause → document: the citation is no longer returned");
+});
+
+test("L-source-2: a document naming a mark that does not cite it back is half a channel", () => {
+  const repo = fidelityRepo();
+  // the-one-claim is a real clause carrying no source: at all
+  editFile(repo, "LOGOS/edit-law.md", "`the-town/the-standing-children`", "`the-town/the-one-claim`");
+  const out = runRepoLint(repo);
+  assert.match(out, /\[ERROR\] LOGOS\/edit-law\.md: Rendered line names "the-town\/the-one-claim", but that mark's source: is absent/,
+    "a document may not conscript a clause that never cited it");
+});
+
+test('"Rendered in the world: not yet" is an honest declaration — tolerated, until a clause claims it', () => {
+  const clean = fidelityRepo();
+  assert.match(runRepoLint(clean), /CLEAN/, "reads-and-affordances.md declares not-yet and passes untouched");
+  const repo = fidelityRepo();
+  editFile(repo, "WORLD/marks/let-there-be-light/the-record/the-three-layers/mark.md",
+    "source: LOGOS/three-layers.md", "source: LOGOS/reads-and-affordances.md");
+  assert.match(runRepoLint(repo), /\[ERROR\].*says "Rendered in the world: not yet" — either this clause is early or that line is stale/,
+    "a clause rendering a document that says it has no rendering yet");
+});
+
+test("the doc → clause direction stays silent on a borrowed tree — the lane must never bounce a stale sketchbook", () => {
+  // main's documents, judging a tree that is a crossing behind them: here, a
+  // sketchbook so stale that none of the-record has reached it yet. Every
+  // Rendered line in LOGOS/ names a clause this tree does not have.
+  const dir = mkdtempSync(join(tmpdir(), "marklint-stale-"));
+  const root = join(dir, "let-there-be-light");
+  mkdirSync(root, { recursive: true });
+  copyFileSync(join(REAL, "mark.md"), join(root, "mark.md"));
+  const out = runLint(dir); // --marks-dir only: not this repo's own tree
+  assert.doesNotMatch(out, /Rendered line names/, "no resident is bounced for a clause that has not reached their branch");
 });
 
 test("the gate never blocks on its own law's absence — missing clause degrades to an honest lookup-failed", () => {

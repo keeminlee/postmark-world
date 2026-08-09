@@ -4,7 +4,7 @@
 opt-in happened when the edge was made.*
 
 Status: **DRAFT**, Stage 0.
-Rendered in the world as `the-town/the-edit-law`.
+Rendered in the world as `the-town/the-edit-law` and `the-town/the-standing-children`.
 
 ---
 

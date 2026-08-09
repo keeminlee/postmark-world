@@ -4,9 +4,9 @@
 
 Status: **DRAFT**, Stage 0. Ruled by Keemin, 2026-08-09 evening sitting; the
 save grammar was built and tamper-tested in the Phase-A spike before this doc
-was written. The STATE layer itself lands at Stage 2. Rendered in the world,
-eventually, as an article beside `the-record/the-walk`; the reconciliation pass
-proposes where.
+was written. The STATE layer itself lands at Stage 2.
+Rendered in the world as `the-town/the-tense` and `the-town/the-two-clocks` —
+the tense law only; the save grammar lands with `STATE/`.
 
 ---
 

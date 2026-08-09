@@ -8,6 +8,8 @@ they cannot drift, because the lint and the fold share one loader and one
 Pre-flight anything before it lands: **`node tools/mark-lint.mjs`** (a gate — it
 exits non-zero on any error, with the exact fix).
 
+Rendered in the world as `the-town/the-kinds`.
+
 ---
 
 ## The one tree: directories are spatial containment, rooted at the light

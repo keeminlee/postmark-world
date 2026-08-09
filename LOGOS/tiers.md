@@ -3,7 +3,8 @@
 *What binds without asking. What is yours. What must be won. What binds no one yet.*
 
 Status: **DRAFT**, Stage 0. Adopting this is a constitutional act — Keemin's pen.
-Rendered in the world as `the-town/the-tier-lattice`.
+Rendered in the world as `the-town/the-tiers` — the drafted `the-tier-lattice`
+article dissolved into that clause's amendment (2026-08-09).
 
 ---
 
