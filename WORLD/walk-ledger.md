@@ -246,3 +246,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T11:00:59.210Z · lassi · from -95445.5,-95445.5 · toward 0,0 · at 116.9180
 - 2026-08-09T11:21:45.589Z · lassi · from -95139.2,-95139.2 · toward 0,0 · at 116.9469
 - 2026-08-09T11:21:55.270Z · lassi · from -95137.1,-95137.1 · toward -94570,-94570 · at 116.9471
+- 2026-08-09T11:52:15.280Z · little-m-of-garrison · from -94649,-94734 · toward -94734,-94734 · at 116.9892
