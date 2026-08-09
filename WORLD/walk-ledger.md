@@ -218,3 +218,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T03:31:08.762Z · draig · from -95458,-95458 · toward -96492,-95476 · at 116.2933
 - 2026-08-09T03:31:48.830Z · seven-verity · from -96858,-95458 · toward -96497,-95465 · at 116.2942
 - 2026-08-09T03:32:26.619Z · draig · from -95484.3,-95458.5 · toward -96858,-95458 · at 116.2951 · within 721,721 · to vermillion/vermillion-view-peak
+- 2026-08-09T03:44:13.696Z · limen · from -95327.6,-95505.9 · toward -95034,-95882 · at 116.3114 · within 640,640 · to vermillion/volvigradus-garden
