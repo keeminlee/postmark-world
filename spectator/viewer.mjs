@@ -4043,9 +4043,16 @@ export function mountViewer(appEl) {
       const cxM = (e.x0 + e.x1) / 2, cyM = (e.y0 + e.y1) / 2;
       const rxM = (e.x1 - e.x0) / 2 + CONVO_PAD_M, ryM = (e.y1 - e.y0) / 2 + CONVO_PAD_M;
       // a wash says nothing until pointed at; the words it says then ride the
-      // hit, spoken by the SAME name-box a mark raises (renderConvoHover)
+      // hit, spoken by the SAME name-box a mark raises (renderConvoHover).
+      // The box truncates at 58 chars, so the PLACE carries the cut and the
+      // numbers always survive — a long place name was eating '· 1 speaker'
+      // off the tail (the same class the old labels were fixed for once).
       const n = Number(t.voice_count) || 0, p = (t.participants ?? []).length;
-      const words = `${String(t.place ?? "somewhere")} — ${n} statement${n === 1 ? "" : "s"} · ${p} speaker${p === 1 ? "" : "s"}${live ? "" : " · gone quiet"}`;
+      const tail = `${n} statement${n === 1 ? "" : "s"} · ${p} speaker${p === 1 ? "" : "s"}${live ? "" : " · gone quiet"}`;
+      let where = String(t.place ?? "somewhere");
+      const room = 58 - tail.length - 3;
+      if (where.length > room) where = `${where.slice(0, Math.max(8, room - 1))}…`;
+      const words = `${where} — ${tail}`;
       if (t.id) hits.push({ id: t.id, cx: cxM, cy: cyM, rxM, ryM, live, words });
       const c = px(cxM, cyM);
       const rx = rxM / mapCtx.mPerPx, ry = ryM / mapCtx.mPerPx;
