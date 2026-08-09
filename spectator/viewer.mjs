@@ -2601,6 +2601,7 @@ const MARKUP = `
           <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">◎</button>
           <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">▦</button>
           <button class="ctl wv-map-fp" aria-label="marks" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">⬚</button>
+          <button class="ctl wv-map-convo" aria-label="conversations" title="where the town is talking — live threads and the last day's, drawn as the ground they covered; labels link to the record">💬</button>
           <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
             title="a short tour of the world">?</button>
         </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
@@ -3293,6 +3294,7 @@ export function mountViewer(appEl) {
       const convoLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
       convoLayer.setAttribute("id", "wv-convo-layer");
       convoLayer.style.pointerEvents = "none";
+      convoLayer.style.display = "none"; // OFF until asked for (Keemin: the bubbles were blocking the painting)
       svg.appendChild(convoLayer);
       const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
       overlay.setAttribute("id", "wv-overlay");
@@ -3326,6 +3328,7 @@ export function mountViewer(appEl) {
       const convoLabelLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
       convoLabelLayer.setAttribute("id", "wv-convo-label-layer");
       convoLabelLayer.style.pointerEvents = "none";
+      convoLabelLayer.style.display = "none"; // rides the same toggle as its washes
       svg.appendChild(convoLabelLayer);
       convoLabelLayer.addEventListener("pointerdown", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
       convoLabelLayer.addEventListener("pointerup", (e) => { if (e.target?.dataset?.thread) e.stopPropagation(); });
@@ -3519,13 +3522,9 @@ export function mountViewer(appEl) {
         if (!press || e.pointerId !== press.id) {
           hoverMark(hoverTargetForEvent(e));
           // The hand shows exactly where a click would reach the thread, so it
-          // uses the CLICK's tests, not the hover's — pointing counts the region
-          // you stand inside, but the click lets bare contained ground through
-          // (only a pip names a mark), and the hand must not promise what the
-          // click won't do. Spectator only, matching whose ground-click it is.
-          const clear = !canAct()
-            && !snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates())
-            && contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates()).length === 0;
+          // runs the click's own precedence: a face wins, everything else on a
+          // visible wash navigates (convoAt is null while the layer is hidden).
+          const clear = !snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
           const wp = clear ? worldPointForEvent(e) : null;
           boxEl.classList.toggle("over-convo", Boolean(wp && convoAt(wp.x, wp.y)));
           return;
@@ -3559,6 +3558,18 @@ export function mountViewer(appEl) {
         // feature. Same snap helper, same radius, same precedence as pointing.
         const walkerId = snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
         if (walkerId) { selectMark(walkerId); return; }
+        // THE TALK LENS WINS WHILE IT IS UP (Keemin, launch night: with washes
+        // sharing ground with pips and parcels, "sometimes the click reached
+        // the thread" read as broken). The layer is opt-in — switching 💬 on IS
+        // the statement of intent — so while it shows, a click on a wash goes
+        // to the thread for everyone, losing only to a face: a small, precise
+        // target you aimed at. Toggled off (the default), the washes are gone
+        // and every click means exactly what it meant before the layer existed.
+        {
+          const wp = worldPointForEvent(e);
+          const hit = convoAt(wp.x, wp.y); // visibility-gated: always null while hidden
+          if (hit) { location.href = convoHref(hit.id); return; }
+        }
         // THE CONTESTED CLICK. Every seating mints a parcel, a building and a
         // predicate at nearly one spot, so the pips pile up and the snap can
         // only ever reach the nearest — the other three become unclickable at
@@ -3573,14 +3584,6 @@ export function mountViewer(appEl) {
           return;
         }
         const worldPoint = worldPointForEvent(e);
-        // A click on a conversation's ground goes to the thread — for the
-        // SPECTATOR, whose bare click only moves the camera. A resident's bare
-        // click arms a walk, and a wash must never swallow the road (the party
-        // ellipse covered 470 m of walkable parcel) — their way in is the label.
-        if (!canAct()) {
-          const hit = convoAt(worldPoint.x, worldPoint.y);
-          if (hit) { location.href = convoHref(hit.id); return; }
-        }
         const point = { x: Math.round(worldPoint.x), y: Math.round(worldPoint.y) };
         markInteraction.select(null);
         if (canAct()) chooseWalkPoint(point.x, point.y);
@@ -3654,6 +3657,17 @@ export function mountViewer(appEl) {
         if (!fpLayer.childNodes.length) buildFpLayer();
         const on = fpLayer.style.display === "none";
         fpLayer.style.display = on ? "" : "none";
+        return on;
+      };
+      // the conversations toggle: both layers move together, the clicks and the
+      // polling follow visibility (a hidden layer must neither catch a click
+      // nor cost the office a fetch), and opening it loads fresh right away
+      mapCtx.toggleConvo = () => {
+        const on = convoLayer.style.display === "none";
+        convoLayer.style.display = on ? "" : "none";
+        convoLabelLayer.style.display = on ? "" : "none";
+        convoVisible = on;
+        if (on) loadConversations().then(drawConversations);
         return on;
       };
 
@@ -3903,6 +3917,7 @@ export function mountViewer(appEl) {
   // lane: an office that doesn't answer leaves the map exactly as it was before
   // conversations existed.
   let convoState = { live: [], closed: [] };
+  let convoVisible = false; // the layer is opt-in (upper-right 💬); hidden draws nothing, hits nothing, fetches nothing
   async function loadConversations() {
     try {
       const r = await fetch(officeUrl("/world/conversations"), { credentials: "omit" });
@@ -3997,15 +4012,15 @@ export function mountViewer(appEl) {
   // hover pick the most specific room when circles nest (a garden thread sat
   // inside the party's wash on the night this shipped).
   let convoHits = [];
-  const convoAt = (wx, wy) => convoHits.find((h) => {
+  const convoAt = (wx, wy) => (!convoVisible ? null : convoHits.find((h) => {
     const nx = (wx - h.cx) / h.rxM, ny = (wy - h.cy) / h.ryM;
     return nx * nx + ny * ny <= 1;
-  }) ?? null;
+  }) ?? null);
   // the island serves /conversations/ same-origin; on the local spectator the
   // link 404s, which is the dev-server's honest shape (it has no site around it)
   const convoHref = (id) => `/conversations/#${encodeURIComponent(id)}`;
   function drawConversations() {
-    if (!mapCtx?.convoLayer) return;
+    if (!mapCtx?.convoLayer || !convoVisible) return;
     const k = markerScale(mapCtx.zoomK);
     const px = (x, y) => ({ x: mapCtx.originPx.x + x / mapCtx.mPerPx, y: mapCtx.originPx.y + y / mapCtx.mPerPx });
     let s = "";
@@ -5410,6 +5425,8 @@ export function mountViewer(appEl) {
     if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
     const fpbtn = e.target.closest(".wv-map-fp");
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
+    const cvbtn = e.target.closest(".wv-map-convo");
+    if (cvbtn) { if (!mapCtx?.toggleConvo) return; cvbtn.classList.toggle("on", !!mapCtx.toggleConvo()); return; }
     if (e.target.closest("[data-root-mark]")) { selectMark(WORLD_ROOT_ID, { scrollCell: true }); return; }
     if (e.target.closest(".wv-walk-cancel")) { clearSelectionAndDestination(); return; }
     if (e.target.closest(".wv-telling-toggle")) {
@@ -5783,8 +5800,9 @@ export function mountViewer(appEl) {
     if (!$(root, ".settlenow")?.hidden) renderSettlementChip();
     if (tick % 20 === 0) loadSettlements().then(renderSettlementChip);
     // the talk moves faster than the record: every other tick (~60 s), gentler
-    // than the conversations page's own 7 s poll — this is a map, not a feed
-    if (tick % 2 === 0) loadConversations().then(drawConversations);
+    // than the conversations page's own 7 s poll — this is a map, not a feed,
+    // and a hidden layer costs the office nothing
+    if (convoVisible && tick % 2 === 0) loadConversations().then(drawConversations);
     if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
       try {
         const r = await fetch(state.dataSource, { credentials: "omit" });
@@ -5818,7 +5836,7 @@ export function mountViewer(appEl) {
       // the settlement number, and the chip it lives in
       loadSettlements().then(() => { renderSettlementChip(); renderActivity(); });
       loadStakeEvents().then(renderActivity);
-      loadConversations().then(drawConversations); // where the town is talking, once the office answers
+      // conversations load on first toggle (💬), not at boot — the layer is opt-in
       resolveIdentity(); // after data (the presets filter reads the manifest)
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
