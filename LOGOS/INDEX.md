@@ -34,16 +34,34 @@ are Keemin's from that sitting.
 | [state-and-time.md](state-and-time.md) | the crossing-save, replay, mobility, and the tense law |
 | [reads-and-affordances.md](reads-and-affordances.md) | the apex verb: what a read costs, what a write must be shown (designed; lands with Stage 3) |
 
+[DRAFT-REPORT.md](DRAFT-REPORT.md) is not law — it is this stage's working
+record: the reference sweep, the five draft articles, and the open questions.
+
 ## Standing logos that lives elsewhere (pointed at, never restated)
 
-These files are logos by nature and remain at their current addresses; moving
-them is mechanical and waits on a reference sweep. Their content is
-authoritative — the docs above cite them rather than copying them.
+These files are logos by nature and stay at their current addresses. **The
+reference sweep is done** (DRAFT-REPORT.md § 1) and its verdict is that moving
+them is not mechanical: most are read by path at runtime, hardcoded by name, or
+published as URLs. Their content is authoritative — the docs above cite them
+rather than copying them.
 
-| file | role |
-|---|---|
-| `../ENGINE.md` | the physics as ruled and running — verbs, fog, elevation, the ruled vessel service, boarding-is-presence |
-| `../WORLD/marks/SCHEMA.md` | the exact on-disk shape of a mark; the one tree; the current tier table |
-| `../MARKS.md` | mark law |
-| `../READS.md` · `../WRITES.md` | the doors — how the world is read and written, and their gates |
-| `../tools/` | the machinery itself: the fold, the lint, geometry, walk, vessel |
+| file | role | why it stays |
+|---|---|---|
+| [`../WORLD/ENGINE.md`](../WORLD/ENGINE.md) | the physics as ruled and running — verbs, fog, elevation, the ruled vessel service, boarding-is-presence | the office hydrator reads this exact path in any world clone |
+| [`../WORLD/marks/SCHEMA.md`](../WORLD/marks/SCHEMA.md) | the exact on-disk shape of a mark; the one tree; the current tier table | `tools/mark-lint.mjs` hardcodes the filename as the one-file law's single exception |
+| [`../WORLD/FURNISHING.md`](../WORLD/FURNISHING.md) | the primer a resident reads once, before their first mark | a published `raw.githubusercontent` URL, baked into every doorstep page |
+| [`../READS.md`](../READS.md) · [`../WRITES.md`](../WRITES.md) | the doors — how the world is read and written, and their gates | the CI lane quotes `WRITES.md` by name in the bounce text residents see |
+| [`../tools/`](../tools/) | the machinery itself: the fold, the lint, geometry, walk, vessel | it is the machinery; nothing about it is a document |
+
+## The law that is not in this repository
+
+`MARKS.md` (marks, tiers, rivalry, determination, parcels, dials) and
+`ECONOMY.md` (the witnessed attention economy) are the law this repository
+implements, and **neither is in it.** They live at `G:/Postmark/`, versioned
+nowhere.
+
+Ten places here name `MARKS.md` as the law they enforce — including
+`tools/mark-lint.mjs`, in the refusal a resident reads when their body runs long.
+`WORLD/marks/SCHEMA.md:6` links to `../../MARKS.md`, which resolves to nothing.
+Finding it a home is an open question, flagged in
+`docs/told-world-reference.html` and unresolved; see DRAFT-REPORT.md § 3.3.

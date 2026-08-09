@@ -42,7 +42,7 @@ reason to move.
 
 ### What was added or edited
 
-- `LOGOS/` — new, 8 files (§2).
+- `LOGOS/` — new, 10 files (§2).
 - `README.md` — one line in the furniture-map tree block, per its own rule:
   *"this front door — the map (update it in the commit that changes the
   furniture)."*
@@ -53,19 +53,28 @@ reason to move.
 
 ```
 LOGOS/
-  INDEX.md              the thin map — one line per doc, pointing, never restating
-  three-layers.md       logos / world / state; why logos is never a mark
-  kinds.md              marks stand, entities live, emissions happen
-  tiers.md              blue, green, yellow, gray, and the migration from three
-  edit-law.md           creation, mutation, deletion; consent stamped at edge birth
-  conflict-matrix.md    what an overlap means; the unruled-pair bounce
-  classes.md            the class field grammar and the first classes
-  DRAFT-REPORT.md       this file
+  INDEX.md                  the thin map — one line per doc, pointing, never restating
+  three-layers.md           logos / world / state; why logos is never a mark
+  kinds.md                  marks stand, entities live, emissions happen
+  tiers.md                  blue, green, yellow, gray, and the migration from three
+  edit-law.md               creation, mutation, deletion; consent stamped at edge birth
+  conflict-matrix.md        what an overlap means; the unruled-pair bounce
+  classes.md                the class field grammar and the first classes
+  state-and-time.md         the crossing-save, replay, mobility, the tense law
+  reads-and-affordances.md  the apex verb; what a read costs (lands with Stage 3)
+  DRAFT-REPORT.md           this file
 ```
 
+**Two hands wrote this folder.** `state-and-time.md`, `reads-and-affordances.md`
+and the body of `INDEX.md` came from a parallel agent working the same brief in
+this same worktree; the six law docs, the five articles and this report are mine.
+See § 8 — it was a collision, not a plan, and the merge is worth a reading eye.
+
 `INDEX.md` follows the furniture law: one line per doc, every line a pointer, no
-paraphrase of what it points at. It also carries the docs that stayed in place,
-so the map is complete even though the files did not move.
+paraphrase of what it points at. I corrected two dead pointers in it (`../ENGINE.md`
+does not exist — it is `../WORLD/ENGINE.md`; `../MARKS.md` does not exist at all)
+and replaced its "moving them waits on a reference sweep" note with the sweep's
+actual verdict, since the sweep is done and the answer is that they must not move.
 
 `classes.md` has no charter article, deliberately: the class-of-classes grammar
 is logos, not town-facing law, and its edit process is the founders, the witness
@@ -306,21 +315,36 @@ nearest honest thing and wrote the collision down here rather than deciding it.
 
 ---
 
-## 8 · An operational anomaly, logged
+## 8 · Two agents, one worktree — logged
 
-Partway through this session the worktree was **wiped by something outside this
-agent**: tracked edits reverted and untracked files deleted. `git reflog` shows a
-`reset: moving to HEAD` I did not issue, and untracked files (the five mark
-directories, six of the seven `LOGOS/` docs) were gone — which needs a `git clean`
-as well as the reset. `LOGOS/INDEX.md` alone survived.
+**A second agent was working this same brief, on this same branch, in this same
+worktree, at the same time.** I did not know that until after the fact, and it
+cost real work.
 
-It is not the office's leased worktree pool: `world-pool.mjs` does hard-reset and
-clean on lease (its rule 3), but its slots are `wt-N` under `<clone>-pool`, a
-directory that does not exist on this box. The actual culprit is unidentified —
-plausibly another agent in this session operating on the wrong path.
+What I saw: partway through, tracked edits reverted and untracked files vanished.
+`git reflog` showed a `reset: moving to HEAD` I never issued, and my five mark
+directories plus six `LOGOS/` docs were gone — which takes a `git clean` as well
+as a reset. I ruled out the office's leased worktree pool (`world-pool.mjs` does
+hard-reset and clean on lease, its rule 3, but its slots are `wt-N` under
+`<clone>-pool`, which does not exist on this box), rewrote everything from
+context, and committed immediately.
 
-Everything was rewritten and committed immediately. **A commit survives both
-`reset --hard HEAD` and `clean`, so the work is now durable**; it was not before.
-Flagging it because several agents are working in sibling worktrees under
-`G:/postmark/worktrees/` tonight, and if something is reaching across them, this
-will not be the last time.
+What actually happened, visible only once the commit landed: commit `8de11b1`,
+*"LOGOS: the word above the world — nine docs"*, authored 18:27:21 by the same
+git identity I commit under. It swept up my six rewritten law docs together with
+two docs of its own (`state-and-time.md`, `reads-and-affordances.md`) and its own
+`INDEX.md`, which replaced mine. My commit `7876f81` then added what was left.
+
+So the branch is a merge of two hands that never spoke. It reads coherently —
+the two extra docs are good and fill real gaps (state/time and the apex verb) —
+but nobody reconciled them, and the seam showed up as two dead pointers in
+`INDEX.md` that neither of us would have shipped alone.
+
+Three things worth taking from it:
+
+- **A commit survives `reset --hard HEAD` and `clean`; a working tree does not.**
+  Commit early when other hands may be near.
+- **Whoever dispatched two agents at one branch should know it happened.** The
+  merged result needs one reading eye over it, because no author saw the whole.
+- If more Stage 0 work is coming, give each agent its own branch. Nothing here
+  needed to be shared.
