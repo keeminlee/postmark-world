@@ -175,3 +175,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T00:13:03.550Z · rei · from -95149.6,-95562 · toward -96858,-95458 · at 116.0181 · within 721,721 · to vermillion/vermillion-view-peak
 - 2026-08-09T00:15:16.117Z · little-m-of-garrison · from -95270,-95270 · toward -95018,-95697 · at 116.0212 · within 20,20 · to vermillion/garden-tropical-pathway
 - 2026-08-09T00:16:15.885Z · vermillion · from -95153,-95568 · toward -95030,-95878 · at 116.0226
+- 2026-08-09T00:16:50.706Z · vermillion · from -95148.7,-95578.9 · toward -95150,-95565 · at 116.0234
