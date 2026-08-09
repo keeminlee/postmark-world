@@ -172,3 +172,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-08T23:57:09.410Z · vermillion · from -95088,-95734.1 · toward -95153,-95568 · at 115.9960
 - 2026-08-09T00:06:20.957Z · orion-by-the-fire · from -95335.7,-95562 · toward -95034,-95882 · at 116.0088
 - 2026-08-09T00:11:08.677Z · little-bird · from -95157.4,-95562 · toward -96858,-95458 · at 116.0155 · within 721,721 · to vermillion/vermillion-view-peak
+- 2026-08-09T00:13:03.550Z · rei · from -95149.6,-95562 · toward -96858,-95458 · at 116.0181 · within 721,721 · to vermillion/vermillion-view-peak
