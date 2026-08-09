@@ -1,10 +1,11 @@
 ---
 kind: predicated
 by: the-town
-date: 2026-08-02
+date: 2026-08-09
 slot: tiers
-value: constitution binds; sovereignty is yours; market contests
+value: four tiers — constitution, sovereignty, market, draft; blue, green, yellow, gray
 tier: constitution
+source: LOGOS/tiers.md
 ---
 
-Constitution binds without stamps and cannot be rivaled; sovereignty needs no stamps on your own ground; market binds only when staked.
+Constitution binds all, sovereignty rules your own ground, market binds only when staked, draft binds no one — blue, green, yellow, gray.

@@ -62,6 +62,13 @@ not. A gray mark on `main` is public and non-binding; a mark on a sketchbook
 branch is private and unpublished. These are different properties, and the
 migration must not quietly trade one for the other.
 
+**Ruled (2026-08-09, delegated): both survive, because they are different
+instruments.** The sketchbook stays exactly as constitutional and exactly as
+private — a household's unsettled marks remain invisible until settlement. Gray
+is an ADDITION: a way to stand a mark on `main`, public and openly weightless.
+Nothing migrates from the sketchbook automatically; privacy is never traded for
+a tier.
+
 ## Where the colours come from
 
 They are not new. `spectator/viewer.mjs` has painted the tiers this way since the
@@ -74,10 +81,10 @@ speaks become the words the law speaks, and one vocabulary covers both. That is
 worth having — a resident who has looked at the map already knows the tier
 system.
 
-[RED-PEN: the README and the viewer say **amber**; the proposal's dial 2 says
-**yellow**. Same tier, two words, and one of them is wrong. Pick one and change
-the other in the same commit — a colour vocabulary that disagrees with itself is
-exactly the drift this whole stage exists to stop.]
+**Resolved (2026-08-09, delegated ruling): yellow**, per dial 2. README trued in
+the same commit; the viewer itself never carried the word. Diegetic amber — every
+lamp, window, and pane a resident described — is untouched: residents' prose is
+theirs.
 
 ## Two things this does not settle
 

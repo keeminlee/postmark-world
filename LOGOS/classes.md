@@ -134,6 +134,15 @@ carried lantern **is** a torch and needs no torch class.
 
 Dials arrive when the first lantern does, and they arrive as receipts.
 
+**The root's daylight is not this class (Q4, ruled 2026-08-09, delegated).** The
+world-light on `let-there-be-light` — fixed direction, world extent, part of the
+charter's establishing line — is ambient physics, not an emission: it has no TTL,
+rides no source, and belongs in every snapshot's idea of the world. The
+`mechanic:` → `class:` migration therefore does NOT map the root's
+`mechanic: light` here; when touched, the root's light migrates to its own
+ambient class (working name `daylight`), beside elevation and pace. This class
+governs light BORNE BY A SOURCE only.
+
 ### fog — *emission* · stands in the Keeping Works
 
 Crossing-seeded ⚙ — each crossing brews its own weather, deterministically from

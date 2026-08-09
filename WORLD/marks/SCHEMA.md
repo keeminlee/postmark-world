@@ -57,10 +57,11 @@ Every mark carries a **`tier:`** (default `market`):
 | **constitution** | binds without stamps; cannot be rivaled or determined against; changes are constitutional acts | **`by: the-town` only** |
 | **sovereignty** | inside your own parcel; yours absolutely, no stamps needed | a resident, in their parcel |
 | **market** | contestable, load-bearing only when staked | the default, anyone |
+| **draft** | openly provisional; binds no one and says so (gray) | anyone |
 
 The lint refuses `tier: constitution` from anyone but `the-town` — a market mark
 cannot bind without stamps. Fan-up (a parent's weight = its own + all
-descendants') flows through every tier; the root carrying the world's total weight
+descendants') flows through every tier of SITED marks — a parcel is a fence, not a scale: it never parents and never accumulates (the fold's own rule) — and the root carrying the world's total weight
 is accepted (a dial-class ruling, movable).
 
 ## The root and terrain are generated, not hand-typed

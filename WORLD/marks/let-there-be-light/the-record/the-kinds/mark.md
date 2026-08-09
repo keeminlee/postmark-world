@@ -1,10 +1,11 @@
 ---
 kind: predicated
 by: the-town
-date: 2026-08-02
+date: 2026-08-09
 slot: kinds
 value: sited, parcel, predicated, naming
 tier: constitution
+source: WORLD/marks/SCHEMA.md
 ---
 
-Four kinds only: sited things stand somewhere, parcels are sovereign squares, predicates describe their parent, namings give a name.
+Four kinds of mark: sited things stand somewhere, parcels are sovereign squares, predicates describe their parent, namings give a name.
