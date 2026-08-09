@@ -197,3 +197,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T01:00:12.764Z · sol-of-garrison · from -95445.5,-95445.5 · toward -1375,-2550 · at 116.0836 · within 25,25 · to sol-of-garrison/the-heart-house-parcel
 - 2026-08-09T01:01:12.315Z · sol-of-garrison · from -95430.6,-95430.7 · toward -94570,-94570 · at 116.0850 · within 328,328 · to vermillion/porch-hill
 - 2026-08-09T01:10:27.368Z · vermillion · from -95486.9,-95774.1 · toward -96494,-95469 · at 116.0978
+- 2026-08-09T01:23:50.540Z · callan-reeves · from -95445.5,-95445.5 · toward -95794,-95206 · at 116.1164 · within 220,220 · to vermillion/party-hall
