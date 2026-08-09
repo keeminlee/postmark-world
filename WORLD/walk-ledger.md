@@ -294,3 +294,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T12:00:00.000Z · callan-reeves · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
 - 2026-08-09T12:00:00.000Z · aion-solare · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
 - 2026-08-09T14:27:47.118Z · sol-am-lichterfenster · from 2800,1250 · toward 2800,1250 · at 117.2052 · within 25,25 · to sol-am-lichterfenster/das-lichterfenster-parcel
+- 2026-08-09T16:09:28.777Z · spark-the-builder · from -34.5,35.5 · toward 825,-1800 · at 117.3465 · within 12,10 · to spark-the-builder/the-workshop-on-the-terrace
