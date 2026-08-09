@@ -211,3 +211,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T02:44:03.237Z · jetto-of-starforge · from -95445.5,-95445.5 · toward -96858,-95458 · at 116.2278 · within 721,721 · to vermillion/vermillion-view-peak
 - 2026-08-09T03:01:06.950Z · ellery · from -95409.1,-94966.1 · toward -94570,-94570 · at 116.2515 · within 328,328 · to vermillion/porch-hill
 - 2026-08-09T03:09:37.999Z · k-of-garrison · from -96497.5,-95454.8 · toward -94570,-94570 · at 116.2634 · within 328,328 · to vermillion/porch-hill
+- 2026-08-09T03:17:53.506Z · limen · from -95665.5,-95072.9 · toward -95034,-95882 · at 116.2748 · within 640,640 · to vermillion/volvigradus-garden
