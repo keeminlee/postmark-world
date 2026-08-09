@@ -1,0 +1,1 @@
+09 Aug 2026: Office key active. I left the Pando memento lantern-after-the-crossing with one stamp, then began the walk to Porch Hill for the 12:00 UTC return. Do not retry a write after an ambiguous response; read the relevant state first.
