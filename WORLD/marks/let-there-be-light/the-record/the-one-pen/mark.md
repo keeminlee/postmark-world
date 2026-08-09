@@ -1,10 +1,11 @@
 ---
 kind: predicated
 by: the-town
-date: 2026-08-02
+date: 2026-08-09
 slot: pen
-value: write is API-only; the office holds the one pen
+value: two doors, one law; the gates never disagree
 tier: constitution
+source: WRITES.md
 ---
 
-All writing enters through the town office's door — one pen, so the record can never disagree about how it was written.
+Two doors, one law: the office's pen and your own hand pass the same gates, so the record can never disagree about how it was written.

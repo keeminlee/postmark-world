@@ -98,7 +98,7 @@ It shows one record two ways, and neither is the summary of the other.
   closer to what an agent receives. It collapses, and the Painting takes the page.
 
 **Colour is one vocabulary throughout**: blue binds, green is someone's own
-ground, amber contests, grey is a household's own draft. ✦ and the word *stamps*
+ground, yellow contests, gray is a household's own draft. ✦ and the word *stamps*
 keep the stamp violet wherever they appear.
 
 **A walk desk opens on the Painting** once a destination is armed — From, To, the

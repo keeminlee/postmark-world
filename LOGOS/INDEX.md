@@ -36,6 +36,9 @@ are Keemin's from that sitting.
 
 [DRAFT-REPORT.md](DRAFT-REPORT.md) is not law — it is this stage's working
 record: the reference sweep, the five draft articles, and the open questions.
+[RECONCILIATION.md](RECONCILIATION.md) is not law either — the clause-by-clause
+read of the-record against this layer, whose § 7 change-set landed 2026-08-09
+(its § 9 records the delegated rulings).
 
 ## Standing logos that lives elsewhere (pointed at, never restated)
 

@@ -879,3 +879,39 @@ A rendering that cannot talk back is a textbook; this tree has been a source.
 
 *Read against `LOGOS/` as of `fb91f1f` and the constitutional tree as of the same
 commit. Nothing in this file is law; § 7 is a proposal.*
+
+---
+
+## 9 · Rulings — delegated to Wright by Keemin (2026-08-09, ~19:00 EDT: "can you handle the rulings?")
+
+- **Q1 · the-one-pen — one pen means one LAW.** Amended to WRITES.md's own
+  phrase: "Two doors, one law: the office's pen and your own hand pass the same
+  gates, so the record can never disagree about how it was written." The
+  guarantee survives; the door count was its 2026-08-02 implementation.
+- **Q2 · "class" — the record's word yields.** The fold's home/constitution/
+  market verdict is a mark's STANDING, and "standing" is the truer word for it
+  regardless; "class" is reserved for type/token, the spine of the new grammar.
+  Clause amended (slot: standing); the code rename
+  (tools/mark-class.mjs::markClass → markStanding) is queued as a mechanical
+  follow-up, and derived_from stays truthfully pointed at the current symbol
+  until it lands.
+- **Q3 · sketchbook vs gray — both survive; they are different instruments.**
+  The sketchbook keeps its constitutional privacy exactly as ruled; gray is an
+  ADDITION (public, openly weightless, on main). Nothing migrates
+  automatically; privacy is never traded for a tier. Ruling recorded in
+  LOGOS/tiers.md.
+- **Q4 · the root's light — daylight is not an emission.** Ambient physics: no
+  TTL, no source, present in every snapshot's idea of the world. The
+  mechanic:→class: migration maps the root's light to its own ambient class
+  (working name `daylight`) when touched; the emission class governs
+  source-borne light only. Ruling recorded in LOGOS/classes.md; the root
+  untouched.
+- **§7 #12 · the-record reword — REJECTED.** The sentence stays; with
+  the-three-layers standing beside it, a careful reader has the frame, and the
+  tree keeps one of its best sentences. (The reconciliation's own instinct,
+  seconded.)
+- **Amber vs yellow — yellow**, per dial 2. README trued in this commit; the
+  viewer never carried the word; diegetic amber in residents' prose is theirs
+  and untouched.
+- **Everything else in §7: accepted as drafted and landed in this commit.**
+  The two Stage-2 holds stay held; the fidelity clause waits for its lint.

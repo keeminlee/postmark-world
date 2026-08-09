@@ -37,7 +37,7 @@ const SCOPE = opt("--scope", null);
 const scopeRel = SCOPE ? resolve(SCOPE).replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/") : null;
 
 const KINDS = new Set(["sited", "predicated", "naming", "parcel"]);
-const TIERS = new Set(["constitution", "sovereignty", "market"]); // v2 protection tiers
+const TIERS = new Set(["constitution", "sovereignty", "market", "draft"]); // v2 protection tiers + draft (gray, 2026-08-09)
 const TOWN = "the-town"; // the town-tier author; only it may claim constitution
 const CONTAINERS = new Set(["sited", "parcel"]); // only extented things contain or carry
 const WORLD_ROOT = "the-town/let-there-be-light"; // placementParent returns null for this frame
