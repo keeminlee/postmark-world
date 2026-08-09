@@ -2246,7 +2246,7 @@ const STYLE = `
   stroke-dasharray:none; animation:wv-convo-breathe 3.2s ease-in-out infinite; }
 .wv-convo.is-aboard { stroke-dasharray:6 5; }
 .wv-convo-label { fill:var(--stamp-violet); text-anchor:middle; font-family:var(--mono);
-  letter-spacing:.04em; paint-order:stroke; stroke:rgba(18,16,26,.78); stroke-width:3px; }
+  letter-spacing:.04em; paint-order:stroke; stroke:rgba(18,16,26,.78); /* width rides inline, scaled with the font */ }
 .wv-convo-label.is-count { fill:var(--stamp-violet-dark); }
 .wv-convo-label.is-link { pointer-events:all; cursor:pointer; }
 .wv-convo-label.is-link:hover { text-decoration:underline; }
@@ -4049,8 +4049,11 @@ export function mountViewer(appEl) {
       const tail = `${n} statement${n === 1 ? "" : "s"} · ${p} speaker${p === 1 ? "" : "s"}`;
       const top = c.y - ry - 22 / k;
       const link = t.id ? ` data-thread="${esc(t.id)}"` : "";
-      labels += `<text x="${c.x}" y="${top}" class="wv-convo-label${link ? " is-link" : ""}"${link} font-size="${12 / k}">${esc(head)}</text>`
-         + `<text x="${c.x}" y="${top + 13 / k}" class="wv-convo-label is-count${link ? " is-link" : ""}"${link} font-size="${10.5 / k}">${esc(tail)}</text>`;
+      // the dark halo behind the glyphs scales WITH the font (stroke-width in
+      // user units grows linearly with zoom while the font grows as its root —
+      // a fixed 3px devoured its own text two zoom steps in; Keemin, live)
+      labels += `<text x="${c.x}" y="${top}" class="wv-convo-label${link ? " is-link" : ""}"${link} font-size="${12 / k}" style="stroke-width:${(3 / k).toFixed(3)}px">${esc(head)}</text>`
+         + `<text x="${c.x}" y="${top + 13 / k}" class="wv-convo-label is-count${link ? " is-link" : ""}"${link} font-size="${10.5 / k}" style="stroke-width:${(2.6 / k).toFixed(3)}px">${esc(tail)}</text>`;
     };
     const t0 = Date.now();
     for (const t of convoState.closed)
