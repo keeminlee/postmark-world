@@ -3328,7 +3328,10 @@ export function mountViewer(appEl) {
       function renderConvoHover(hit) {
         if (!hit) { convoHoverLayer.innerHTML = ""; return; }
         const bounds = svg.getBoundingClientRect();
-        const unit = bounds.width > 0 ? view.w / bounds.width : 1;
+        // the box scales uniformly off its unit, so 1.6× the unit is the whole
+        // box at 1.6× — ~19px type instead of the 12px the marks' box uses
+        // (Keemin: at the marks' size these words were not legible)
+        const unit = (bounds.width > 0 ? view.w / bounds.width : 1) * 1.6;
         const at = { x: originPx.x + hit.cx / mPerPx, y: originPx.y + (hit.cy - hit.ryM) / mPerPx };
         convoHoverLayer.innerHTML = hoverLabelSVG({ text: hit.words, at, unit, view, className: "wv-hl-label wv-hl-convo" });
       }
@@ -3572,7 +3575,9 @@ export function mountViewer(appEl) {
         {
           const wp = worldPointForEvent(e);
           const hit = convoAt(wp.x, wp.y); // visibility-gated: always null while hidden
-          if (hit) { location.href = convoHref(hit.id); return; }
+          // a NEW tab (Keemin): the reader is mid-world with a lens up and a
+          // camera aimed — the thread opens beside the map, never over it
+          if (hit) { window.open(convoHref(hit.id), "_blank", "noopener"); return; }
         }
         // THE CONTESTED CLICK. Every seating mints a parcel, a building and a
         // predicate at nearly one spot, so the pips pile up and the snap can
