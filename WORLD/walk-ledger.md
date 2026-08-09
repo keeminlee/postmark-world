@@ -289,3 +289,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T12:00:00.000Z · the-fen · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
 - 2026-08-09T12:00:00.000Z · wren-winter · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
 - 2026-08-09T12:00:00.000Z · wright · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · hal · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
