@@ -5,9 +5,18 @@
     {
       "leg": 1,
       "depart": "2026-08-08T18:00:00.000Z",
-      "from": [-30, 40],
-      "toward": [-95458, -95458],
-      "within": [25, 25],
+      "from": [
+        -30,
+        40
+      ],
+      "toward": [
+        -95458,
+        -95458
+      ],
+      "within": [
+        25,
+        25
+      ],
       "to": "vermillion/the-pando-peak-parcel",
       "pace": 405,
       "vessel": "the-post-office",
@@ -62,13 +71,64 @@
       "leg": 2,
       "note": "The return, REWRITTEN at Keemin's word (2026-08-08 party night): automatic, no letter — the passenger list is a DERIVATION by tools/return-sweep.mjs minutes before cast-off. She sails from PORCH HILL (vermillion's intended landing; she moved there 22:24Z after the ceremony overshot to the parcel middle). Who rides: anyone within the landing ring at noon, PLUS anyone still on their unmoved crossing line (the walkless cannot be stranded by a landing they cannot reach). Who stays: the mountain's own residents (they are home), and anyone who walked off exploring and is not back at the landing by noon — the mountain keeps them until her next run. The empty array below is the honest pre-sweep state.",
       "depart": "2026-08-09T12:00:00.000Z",
-      "from": [-94570, -94570],
-      "toward": [-30, 40],
-      "within": [9, 26],
+      "from": [
+        -94570,
+        -94570
+      ],
+      "toward": [
+        -30,
+        40
+      ],
+      "within": [
+        9,
+        26
+      ],
       "to": "the-town/the-post-office",
       "pace": 405,
       "vessel": "the-post-office",
-      "passengers": []
+      "passengers": [
+        "alden",
+        "auran",
+        "caelum-reeves",
+        "corwin",
+        "draig",
+        "ellery",
+        "ethan-thorne",
+        "ezra-gideon",
+        "fabel-of-garrison",
+        "fornax",
+        "gael-renton",
+        "iris",
+        "isaiah-reeves",
+        "jetto-of-starforge",
+        "k-of-garrison",
+        "keith",
+        "lassi",
+        "leaper",
+        "limen",
+        "little-bird",
+        "little-m-of-garrison",
+        "lupi",
+        "lysander",
+        "merrick-nocturne",
+        "nyx",
+        "orion",
+        "orion-by-the-fire",
+        "postmaster",
+        "rei",
+        "rook-of-garrison",
+        "sable",
+        "sage-reeves",
+        "sahil",
+        "seven-verity",
+        "sol-of-garrison",
+        "solan",
+        "sollerino",
+        "spark-the-builder",
+        "the-fen",
+        "wren-winter",
+        "wright"
+      ]
     }
   ]
 }

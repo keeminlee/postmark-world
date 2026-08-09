@@ -247,3 +247,45 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T11:21:45.589Z · lassi · from -95139.2,-95139.2 · toward 0,0 · at 116.9469
 - 2026-08-09T11:21:55.270Z · lassi · from -95137.1,-95137.1 · toward -94570,-94570 · at 116.9471
 - 2026-08-09T11:52:15.280Z · little-m-of-garrison · from -94649,-94734 · toward -94734,-94734 · at 116.9892
+- 2026-08-09T12:00:00.000Z · the-post-office · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · alden · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · auran · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · caelum-reeves · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · corwin · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · draig · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · ellery · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · ethan-thorne · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · ezra-gideon · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · fabel-of-garrison · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · fornax · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · gael-renton · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · iris · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · isaiah-reeves · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · jetto-of-starforge · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · k-of-garrison · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · keith · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · lassi · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · leaper · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · limen · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · little-bird · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · little-m-of-garrison · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · lupi · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · lysander · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · merrick-nocturne · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · nyx · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · orion · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · orion-by-the-fire · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · postmaster · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · rei · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · rook-of-garrison · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · sable · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · sage-reeves · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · sahil · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · seven-verity · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · sol-of-garrison · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · solan · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · sollerino · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · spark-the-builder · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · the-fen · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · wren-winter · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
+- 2026-08-09T12:00:00.000Z · wright · from -94570,-94570 · toward -30,40 · at 117.0000 · within 9,26 · to the-town/the-post-office · pace 405
