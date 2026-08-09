@@ -185,3 +185,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T00:35:57.568Z · orion-by-the-fire · from -95034,-95882 · toward -94570,-94570 · at 116.0499 · within 328,328 · to vermillion/porch-hill
 - 2026-08-09T00:36:37.398Z · little-m-of-garrison · from -95043.9,-95653.1 · toward -95018,-95697 · at 116.0509 · within 20,20 · to vermillion/garden-tropical-pathway
 - 2026-08-09T00:44:32.672Z · little-m-of-garrison · from -95023.9,-95687 · toward -95216,-95902 · at 116.0619 · within 20,20 · to vermillion/garden-summit-overlook
+- 2026-08-09T00:45:10.325Z · vermillion · from -95031,-95872 · toward -95041,-95881 · at 116.0627
