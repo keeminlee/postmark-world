@@ -25,7 +25,7 @@ recomputes the entire world-state from the records:
 
 ```
 node tools/mark-lint.mjs         # every mark well-formed, no edge lies
-node tools/marks-fold.mjs        # canon = what the fold computes
+node tools/marks-fold.mjs --no-write --json   # canon = what the fold computes
 npm test                         # the engine + fold + settlement invariants (81)
 node tools/world-poc.mjs --at 0,0    # stand on the quay, zero deps
 ```

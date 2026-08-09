@@ -82,10 +82,13 @@ real stakes; where it is not, it serves what the committed record holds.
 **1 · Reads never fold.**
 `tools/mark-lint.mjs` reads and judges — run it as often as you like.
 `tools/marks-fold.mjs` is a **generator**: it rewrites `WORLD/world-state.json`
-and `WORLD/INDEX.md` in place, and **a clone with no stamp ledger regenerates
-them degraded** — every stake, weight and rivalry zeroed, exit code 0, summary
-line plausible (`WRITES.md § The walls` carries the same warning and the
-one-line undo). So:
+and `WORLD/INDEX.md` in place, and **a clone with no stamp ledger folds them
+degraded** — every stake, weight and rivalry zeroed. That used to be published
+silently, exit code 0 and summary line plausible; since 2026-08-09 the *write*
+refuses when it would strip a file that carries stamps, naming how many
+(`--stakes <export>` folds with the escrow; `--allow-stampless` means it out
+loud and says what it drops). The fold still overwrites both files whenever it
+is allowed to, so `WRITES.md § The walls` still carries the one-line undo. So:
 
 - to **check** a tree, run `mark-lint`;
 - to **know a weight**, read the committed `WORLD/world-state.json` or its

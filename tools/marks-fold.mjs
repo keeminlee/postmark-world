@@ -6,6 +6,7 @@
 // Usage:
 //   node tools/marks-fold.mjs                      # fold the repo, write WORLD/world-state.json + WORLD/INDEX.md
 //   node tools/marks-fold.mjs --stakes f.json      # override stakes source (sims/tests)
+//   node tools/marks-fold.mjs --allow-stampless    # write a zero-escrow world on purpose, saying what it drops
 //   node tools/marks-fold.mjs --marks-dir d --prev prev.json --tick N --no-write --json
 //
 // Stakes source: a JSON file of open positions —
@@ -17,7 +18,9 @@
 // grammar and derives this file for us —
 //   (town clone)  node tools/world-stake.mjs --escrow --json > stakes.json
 // so exactly one parser reads the money lines across the two repos. Without the
-// file the world folds with zero escrow, which is honest: no stakes, no weight.
+// file the world folds with zero escrow, which is honest for a world that holds
+// none — and a silent deletion for one that does, so the WRITE refuses rather
+// than the fold (see § the stamp gate).
 // (The header used to document a `stake:mark:<id>` grammar the mint could never
 // produce — a read-side orphan, flagged 2026-07-23, closed by this pass.)
 
@@ -179,7 +182,9 @@ function loadStakes() {
   //   (here)             node tools/marks-fold.mjs --stakes stakes.json
   // One parser of the money lines across the two repos, which is why this function
   // no longer knows what a stamp line looks like. A world without that file folds
-  // with zero escrow — honest, not broken: no stakes yet means no weight yet.
+  // with zero escrow — honest, not broken: no stakes yet means no weight yet. What
+  // is NOT honest is publishing that fold over a world-state.json that already
+  // carries stamps, so the stamp gate below stands between this and the write.
   return [];
 }
 
@@ -438,6 +443,29 @@ ${state.errors.length ? `\n**⚠ fold errors:** ${state.errors.length} (see worl
 `;
 }
 
+// ---------- the stamp gate ----------
+// Escrow enters this fold through exactly one door — `--stakes <export>`, derived
+// in a town clone — so a run without it folds every mark at zero. That is honest
+// for a world that holds none and a silent deletion for one that does: the site
+// FETCHES world-state.json and does not re-fold (tools/world-build.mjs), so a
+// routine "re-fold after editing a mark" from a checkout without the export
+// republishes the world with every stamp stripped. Found by doing it:
+// spike/TIMETABLE-REPORT.md § 6c, 80 records gone in a run that printed success.
+// So the write refuses when it would zero a file that carries stamps. A fresh
+// build has nothing to drop and needs no ceremony.
+function standingStamps(path) {
+  if (!existsSync(path)) return null;                                             // a fresh build drops nothing
+  let prev;
+  try { prev = JSON.parse(readFileSync(path, "utf8")); } catch { return null; }   // unreadable: the write IS the repair
+  const marks = (prev?.marks ?? []).filter(mk => Number(mk.stamps) > 0);
+  if (!marks.length) return null;
+  return {
+    marks: marks.length,
+    stamps: marks.reduce((n, mk) => n + Number(mk.stamps), 0),
+    holders: Object.keys(prev?.portfolios ?? {}).length,
+  };
+}
+
 // ---------- main ----------
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1].replace(/\\/g, "/").replace(/^([a-z]):/i, (s) => s.toUpperCase());
 if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
@@ -452,8 +480,34 @@ if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
   const state = fold({ marks, terrain, stakes, prev, tick: TICK, households });
   if (has("--json")) console.log(JSON.stringify(state, null, 2));
   if (!has("--no-write")) {
+    const outPath = join(ROOT, "WORLD/world-state.json");
+    const dropping = state.marks.some(mk => mk.stamps > 0) ? null : standingStamps(outPath);
+    if (dropping) {
+      const held = `${dropping.marks} mark(s) carrying ${dropping.stamps} stamp(s), across ${dropping.holders} portfolio(s)`;
+      if (!has("--allow-stampless")) {
+        console.error(`REFUSING TO WRITE ${outPath} — it would strip every stamp the world holds.
+
+  on disk:    ${held}
+  this fold:  no stakes were loaded, so every mark folds at zero escrow
+
+The site fetches this file and does not re-fold, so writing it now would publish
+the world with its escrow deleted and print success while doing it.
+
+Escrow has one source — the town owns the ledger grammar and derives it for us:
+  (town clone)  node tools/world-stake.mjs --escrow --json > stakes.json
+  (here)        node tools/marks-fold.mjs --stakes stakes.json
+
+If a world with no escrow is genuinely what you mean, say so and it will name
+what it drops:
+  node tools/marks-fold.mjs --allow-stampless
+
+To read the fold without writing it at all: --no-write --json`);
+        process.exit(1);
+      }
+      console.error(`--allow-stampless: dropping ${held} from ${outPath} — republishing the world with zero escrow.`);
+    }
     mkdirSync(join(ROOT, "WORLD"), { recursive: true });
-    writeFileSync(join(ROOT, "WORLD/world-state.json"), JSON.stringify(state, null, 2) + "\n");
+    writeFileSync(outPath, JSON.stringify(state, null, 2) + "\n");
     writeFileSync(join(ROOT, "WORLD/INDEX.md"), renderIndex(state));
     console.log(`fold: ${state.marks.length} marks · ${state.parcels.length} parcels · ${Object.keys(state.determined).length} determined · ${state.vague.length} vague · ${state.rivalries.length} rivalries · ${state.errors.length} errors`);
   }

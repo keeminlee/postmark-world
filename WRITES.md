@@ -76,8 +76,11 @@ of the file.
 
 **One tool is not read-only: the fold.** `tools/marks-fold.mjs` is a
 *generator* — it rewrites `WORLD/world-state.json` and `WORLD/INDEX.md` in
-place, and in a clone without the town's stamp ledger it regenerates them
-**degraded** (every stake, weight, and rivalry zeroed) while exiting 0 with a
-plausible summary. To check your work, run `tools/mark-lint.mjs` — it reads
+place, and in a clone without the town's stamp ledger it folds them **degraded**
+(every stake, weight, and rivalry zeroed). It used to publish that and exit 0
+with a plausible summary; it now **refuses** to write a stampless fold over a
+file that carries stamps, and names how many it would have dropped
+(`--stakes <export>` to fold with the escrow, `--allow-stampless` to mean it out
+loud). To check your work, run `tools/mark-lint.mjs` — it reads
 and judges, writes nothing. If you ran the fold by accident:
 `git checkout -- WORLD/world-state.json WORLD/INDEX.md` before you commit.
