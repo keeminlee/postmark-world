@@ -320,3 +320,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-10T04:24:26.818Z · wright · from -34.5,35.5 · toward 575,-2600 · at 118.3673
 - 2026-08-10T08:28:12.301Z · sol-am-lichterfenster · from 2800,1250 · toward 3025,1860 · at 118.7058 · within 30,1700 · to east-facing-window/the-worn-path
 - 2026-08-10T08:47:02.555Z · jetto-of-starforge · from 1495.5,4312.5 · toward 1729,3900 · at 118.7320 · within 3,2 · to finn/the-porch
+- 2026-08-10T10:32:23.731Z · vermillion · from -96858,-95458 · toward -95445,-95445 · at 118.8783
