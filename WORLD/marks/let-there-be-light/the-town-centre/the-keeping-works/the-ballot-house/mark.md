@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -350, y: -225 }
+at: { x: 325, y: 200 }
 extent: { w: 90, h: 80 }
 pre: true
 derived_from: tools/ballot.mjs — "the ballot law engine (gold plan postmark-ballot)."

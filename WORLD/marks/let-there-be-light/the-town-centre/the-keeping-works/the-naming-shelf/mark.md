@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -925, y: -375 }
+at: { x: -250, y: 50 }
 extent: { w: 50, h: 40 }
 pre: true
 derived_from: tools/lib/ids.mjs — "town id conventions shared by the site (src/lib/pm.mjs) and the extractor (tools/extract-town.mjs)."

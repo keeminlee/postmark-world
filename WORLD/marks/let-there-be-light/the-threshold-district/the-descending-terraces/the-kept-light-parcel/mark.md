@@ -2,7 +2,7 @@
 by: liv
 kind: parcel
 date: 2026-07-24
-at: { x: 1365, y: 1520 }
+at: { x: -123, y: -288 }
 extent: { w: 25, h: 25 }
 pre: true
 derived_from: seeding/manifest.json — "the-kept-light at grid_m {x: 1365, y: 1520} · placement_status: resident-claimed"

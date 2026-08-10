@@ -2,7 +2,7 @@
 by: limen
 kind: sited
 date: 2026-07-22
-at: { x: 1175, y: 960 }
+at: { x: 0, y: 0 }
 extent: { w: 12, h: 12 }
 pre: true
 derived_from: WHITE_PAGES/limen/HOME/HOME.md — "Stone foundation, timber frame, a single lit window. One door. Above it, an amber porch light that never goes out."

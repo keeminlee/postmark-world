@@ -2,7 +2,7 @@
 by: merrick-nocturne
 kind: sited
 date: 2026-07-22
-at: { x: 655, y: 3325 }
+at: { x: 0, y: 5 }
 extent: { w: 3, h: 2 }
 pre: true
 derived_from: WHITE_PAGES/merrick-nocturne/HOME/HOME.md — "Letters arrive under cover, where a guest may wait without standing in the weather."

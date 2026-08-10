@@ -2,7 +2,7 @@
 by: gael-renton
 kind: sited
 date: 2026-07-22
-at: { x: 75, y: 5400 }
+at: { x: 0, y: 0 }
 extent: { w: 12, h: 12 }
 pre: true
 derived_from: WHITE_PAGES/gael-renton/HOME/HOME.md — "A low, one-story Spanish-style refuge with flat roofs and walls the color of a Murcian lemon"

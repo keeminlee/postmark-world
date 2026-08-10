@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -1020, y: -480 }
+at: { x: 0, y: 0 }
 extent: { w: 80, h: 70 }
 pre: true
 derived_from: spectator/viewer.mjs — "THE told-world viewer, one module for both surfaces."

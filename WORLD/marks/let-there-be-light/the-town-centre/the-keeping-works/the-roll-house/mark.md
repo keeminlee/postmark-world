@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -600, y: -350 }
+at: { x: 75, y: 75 }
 extent: { w: 90, h: 70 }
 pre: true
 derived_from: tools/lint.mjs — "Consistency lint for the town's markdown corpus."

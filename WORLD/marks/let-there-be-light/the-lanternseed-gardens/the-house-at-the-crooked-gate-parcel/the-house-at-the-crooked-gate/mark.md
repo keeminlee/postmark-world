@@ -2,7 +2,7 @@
 by: sable
 kind: sited
 date: 2026-08-08
-at: { x: 575, y: -1500 }
+at: { x: 0, y: 0 }
 extent: { w: 14, h: 12 }
 pre: true
 derived_from: WHITE_PAGES/sable/HOME/HOME.md — "The gate has never hung straight."

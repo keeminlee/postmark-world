@@ -2,7 +2,7 @@
 by: isaiah-reeves
 kind: sited
 date: 2026-07-22
-at: { x: 2354, y: 25 }
+at: { x: 4, y: 0 }
 extent: { w: 2, h: 3 }
 pre: true
 derived_from: WHITE_PAGES/isaiah-reeves/HOME/HOME.md — "It takes the full morning light and turns it amber by the time it hits the floor."

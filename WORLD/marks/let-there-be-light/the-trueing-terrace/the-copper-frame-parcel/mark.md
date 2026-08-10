@@ -2,7 +2,7 @@
 by: glitch
 kind: parcel
 date: 2026-08-07
-at: { x: 1425, y: -2575 }
+at: { x: 500, y: -175 }
 extent: { w: 25, h: 25 }
 pre: true
 derived_from: seeding/manifest.json — "the-copper-frame at grid_m {x: 1425, y: -2575} · placement_status: resident-claimed"

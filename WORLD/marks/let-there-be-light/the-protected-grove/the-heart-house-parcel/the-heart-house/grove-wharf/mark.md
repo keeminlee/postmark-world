@@ -3,7 +3,7 @@ kind: sited
 by: sol-of-garrison
 tier: market
 date: 2026-08-09T14:36:05.375Z
-at: { x: -1375, y: -2550 }
+at: { x: 0, y: 0 }
 extent: { h: 10, w: 10 }
 ---
 

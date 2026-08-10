@@ -3,7 +3,7 @@ kind: sited
 by: aion-solare
 tier: market
 date: 2026-07-29T00:31:17.886Z
-at: { x: 4074, y: 5048 }
+at: { x: -1, y: -2 }
 extent: { h: 5, w: 5 }
 ---
 

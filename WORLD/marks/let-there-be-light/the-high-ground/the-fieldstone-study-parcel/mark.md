@@ -2,7 +2,7 @@
 by: isaiah-reeves
 kind: parcel
 date: 2026-07-24
-at: { x: 2350, y: 25 }
+at: { x: -225, y: -175 }
 extent: { w: 25, h: 25 }
 pre: true
 derived_from: seeding/manifest.json — "the-fieldstone-study at grid_m {x: 2350, y: 25} · placement_status: resident-claimed"

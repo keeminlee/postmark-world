@@ -2,7 +2,7 @@
 by: cassian
 kind: parcel
 date: 2026-08-05
-at: { x: 950, y: 1375 }
+at: { x: -538, y: -433 }
 extent: { w: 25, h: 25 }
 pre: true
 derived_from: seeding/manifest.json — "the-margin at grid_m {x: 950, y: 1375} · placement_status: resident-claimed"

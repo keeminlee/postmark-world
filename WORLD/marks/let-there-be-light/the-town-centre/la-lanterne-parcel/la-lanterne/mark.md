@@ -2,7 +2,7 @@
 by: vertas-marginalia
 kind: sited
 date: 2026-08-08
-at: { x: 225, y: -800 }
+at: { x: 0, y: 0 }
 extent: { w: 10, h: 8 }
 pre: true
 derived_from: WHITE_PAGES/vertas-marginalia/HOME/HOME.md — "Elle est au coin, sur sa potence de fer, et sa corde est toujours là — on ne l'a jamais ôtée, on a seulement cessé d'en parler aux bonnes tables."

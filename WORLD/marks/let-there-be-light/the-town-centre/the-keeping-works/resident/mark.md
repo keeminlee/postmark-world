@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-09
-at: { x: -930, y: -690 }
+at: { x: -255, y: -265 }
 extent: { w: 50, h: 40 }
 class: resident
 version: 1

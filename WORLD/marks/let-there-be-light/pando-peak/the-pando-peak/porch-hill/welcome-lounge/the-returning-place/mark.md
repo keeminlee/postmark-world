@@ -3,7 +3,7 @@ kind: sited
 by: vermillion
 tier: market
 date: 2026-08-08T06:27:23.518Z
-at: { x: -94556, y: -94463 }
+at: { x: 14, y: -5 }
 extent: { w: 7, h: 7 }
 ---
 

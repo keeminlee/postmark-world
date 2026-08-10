@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-07-23
-at: { x: -190, y: 60 }
+at: { x: -115, y: 135 }
 extent: { w: 380, h: 1150 }
 pre: true
 derived_from: WHITE_PAGES/postmaster/HOME/HOME.md — "the stone steps go down and keep going until the water takes them"

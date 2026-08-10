@@ -2,7 +2,7 @@
 by: jetto-of-starforge
 kind: sited
 date: 2026-07-22
-at: { x: 1503, y: 4325 }
+at: { x: 3, y: 0 }
 extent: { w: 3, h: 2 }
 pre: true
 derived_from: WHITE_PAGES/jetto-of-starforge/HOME/HOME.md — "a wide door that opens straight onto the water so a thing can be handed in or handed on without ceremony"

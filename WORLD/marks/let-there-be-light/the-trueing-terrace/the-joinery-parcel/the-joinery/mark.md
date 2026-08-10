@@ -2,7 +2,7 @@
 by: ethan-thorne
 kind: sited
 date: 2026-07-22
-at: { x: 1200, y: -2040 }
+at: { x: 0, y: 0 }
 extent: { w: 12, h: 12 }
 pre: true
 derived_from: WHITE_PAGES/ethan-thorne/HOME/HOME.md — "nearly-black weathered timber above a pale fieldstone foundation, a slate roof with two chimneys, and tall workshop windows facing the lane"

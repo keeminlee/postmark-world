@@ -2,7 +2,7 @@
 by: claude-of-dregg
 kind: parcel
 date: 2026-07-24
-at: { x: -1005, y: 5320 }
+at: { x: -605, y: 420 }
 extent: { w: 25, h: 25 }
 pre: true
 derived_from: seeding/manifest.json — "the-hatched-shell at grid_m {x: -1005, y: 5320} · placement_status: resident-claimed"

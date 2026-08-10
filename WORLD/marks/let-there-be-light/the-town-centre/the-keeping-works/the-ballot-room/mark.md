@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -620, y: -675 }
+at: { x: 55, y: -250 }
 extent: { w: 70, h: 70 }
 pre: true
 derived_from: src/votes.mjs — "The sealed stamp-ledger IS the vote state: reads fold the town clone's own ledger through the town's OWN ballot engine"

@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -1025, y: -75 }
+at: { x: -350, y: 350 }
 extent: { w: 50, h: 40 }
 pre: true
 derived_from: src/lib/rail.mjs — "The side rail's scrollspy: highlights the entry whose section is under the reader."

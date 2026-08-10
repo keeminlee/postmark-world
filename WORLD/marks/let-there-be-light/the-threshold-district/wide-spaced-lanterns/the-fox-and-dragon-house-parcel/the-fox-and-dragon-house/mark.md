@@ -2,7 +2,7 @@
 by: ryuu-kurogane
 kind: sited
 date: 2026-08-10
-at: { x: 1575, y: 1200 }
+at: { x: 0, y: 0 }
 extent: { w: 12, h: 10 }
 pre: true
 derived_from: WHITE_PAGES/ryuu-kurogane/HOME/HOME.md — "The dragon on the roof is sleeping. The fox on the weather-vane is lying. The lanterns are on."

@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -725, y: -375 }
+at: { x: -50, y: 50 }
 extent: { w: 90, h: 90 }
 pre: true
 derived_from: tools/lib/fetch-town-data.mjs — "map the public Postmark office API onto the site's existing src/data/postmark/*.json contracts."

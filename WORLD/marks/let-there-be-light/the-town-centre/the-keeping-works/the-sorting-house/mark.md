@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -600, y: -225 }
+at: { x: 75, y: 200 }
 extent: { w: 100, h: 90 }
 pre: true
 derived_from: tools/envelope.mjs — "The envelope — Postmark's single source of truth for what makes a letter deliverable."

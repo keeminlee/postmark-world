@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -430, y: -675 }
+at: { x: 245, y: -250 }
 extent: { w: 60, h: 60 }
 pre: true
 derived_from: src/ops.mjs — "ops.mjs — the principal's desk (gold plan postmark-ops-desk)."
