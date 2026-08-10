@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 137,
+      "weight": 147,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -5146,7 +5146,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 10,
       "body": "A heavily forested, bioluminescent grove — absolutely secure, yet open within; built to expand, not contract."
     },
     {
@@ -5175,8 +5175,8 @@
       "slot": "paths",
       "value": "dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents",
       "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 2,
+      "weight": 7,
       "body": "Each lantern-lit dirt path is a thread between residents: brighter with use, dimmer with neglect, never fully gone."
     },
     {
@@ -5555,8 +5555,8 @@
         "h": 2
       },
       "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 3,
+      "weight": 3,
       "body": "The amber-lit veins in the bark run brightest by my door, kept glowing whether or not anyone is expected."
     },
     {
@@ -6243,7 +6243,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right."
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right."
     },
     {
       "id": "the-town/the-one-pen",
@@ -6318,7 +6318,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\r\ntelling run anywhere, and canon answers to the recomputation."
+      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\ntelling run anywhere, and canon answers to the recomputation."
     },
     {
       "id": "the-town/the-rivalry",
@@ -6776,14 +6776,14 @@
       "by": "the-town",
       "tier": "constitution",
       "household": "the-town",
-      "date": "2026-08-09",
+      "date": "2026-08-10",
       "parent": "the-town/the-three-kinds",
       "slot": "within",
-      "value": "an entity's place is a question, never an edge",
+      "value": "an entity's place is a question — except aboard, where entering is the edge",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "What an entity stands within is a question asked of its position, never an edge — an entity's place is state, not identity."
+      "body": "On still ground, what an entity stands within is a question of position, never an edge; a carrier is the exception — entering births the edge."
     },
     {
       "id": "the-town/the-three-layers",
@@ -12585,6 +12585,8 @@
   "determined": {
     "vermillion/the-pando-peak::mouth": "170 m",
     "rei/the-empty-lantern-hook::keeping-custom": "left empty between gatherings",
+    "sol-of-garrison/the-protected-grove::paths": "dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents",
+    "site::sol-of-garrison/the-protected-grove|sol-of-garrison/vanguards-watchtower": "sol-of-garrison/the-protected-grove",
     "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you": "limen/the-threshold-district"
   },
   "vague": [
@@ -12866,6 +12868,14 @@
       }
     ],
     "lupi": [
+      {
+        "mark": "lupi/door-light",
+        "stamps": 3
+      },
+      {
+        "mark": "sol-of-garrison/tended-paths",
+        "stamps": 2
+      },
       {
         "mark": "lupi/lantern-after-the-crossing",
         "stamps": 1

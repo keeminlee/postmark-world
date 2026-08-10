@@ -2,7 +2,7 @@
 
 *Marks stand. Entities live. Emissions happen.*
 
-Status: **DRAFT**, Stage 0.
+Status: **DRAFT**, Stage 0; § Entities re-ruled 2026-08-10 (the frame law).
 Rendered in the world as `the-town/the-three-kinds`, `the-town/the-standing-question`,
 `the-town/the-fading`, and `the-town/the-human-lane`.
 
@@ -30,7 +30,7 @@ resident does not stay. A shout does not stay. Neither is a mark.
 | **What** | ground, districts, homes, parcels, law, vessels-as-structures | residents, boats in service, dogs — things that *live* | speech, light, fog — things that *happen* |
 | **Canon** | the repo (`WORLD/`), compiled down into the store at settlement | the store, live; crystallized up into `STATE/` at each crossing | presence in the store, under a TTL; occurrence in the crossing log |
 | **Position** | relative to its parent, and part of its identity | a world-frame property — *state, not identity* | rides its source for its duration |
-| **Edges** | geometry-derived containment, plus declared references | *declared attachments only* (aboard, carrying) — never a geometric parent | emitted-by, declared by the class at birth; exempt from containment |
+| **Edges** | geometry-derived containment, plus declared references | *frame edge to the deepest carrier* (store-recorded, born by crossing the boundary) — still ground stays a query | emitted-by — the source *is* the frame; exempt from containment |
 | **Crash story** | rebuild from the repo | recover from the last crossing-save — at most half a crossing of movement lost | presence clears like air; occurrence survives in the log |
 
 ## Marks
@@ -49,21 +49,43 @@ Store-canon. An entity's identity lives in the repo; its **position does not.**
 That single move is what makes moving residents possible without directory churn
 — a walk is a property update in the store, not a commit.
 
-Two rules matter more than the rest.
+**The frame law** (ruled 2026-08-10; supersedes this section's earlier "no
+geometric parent, ever" — see Provenance):
 
-**An entity has no geometric parent, ever.** A dog is not the child of the
-ground it stands on. *"What am I within"* is a **query over position**, answered
-freshly whenever it is asked. It is never an edge, because an edge would have to
-be rewritten on every step, and a rewritten edge is a lie waiting to happen.
+> **Everything has a reference frame. An entity's frame is the deepest
+> *carrier* it is within; the world is the default frame. Position is always
+> an offset in your frame.**
 
-**Attachments are declared, then validated.** Boarding is still an edge — but it
-is born by declaration ("I am aboard") and validated by presence (your position
-is inside the vessel's footprint), not inferred from geometry. This is what
-finally kills the forged boarding line: nobody writes a movement record on
-anyone's behalf, because there is no movement record to write.
+A **carrier** is a mark whose class declares that it moves (`mobility: derived`
+or `free`). A district never carries; a vessel does. On still ground — which is
+almost everywhere, almost always — *"what am I within"* remains a **query over
+position**, answered freshly whenever it is asked, never an edge. The old
+section's fear was right about still ground: an edge that must be rewritten on
+every step is a lie waiting to happen. But an edge and a query only diverge
+when something *moves* — so the query serves still ground, and the moving
+ground is exactly where the edge is the truth you want.
 
-Together these make entity motion *property churn* — trivial in any store — and
-re-parenting *rare and explicit*: a few edge-writes a day.
+**Crossing a carrier's boundary is the edge birth.** Walking onto the deck
+switches your frame to the vessel — the walk itself is the consent, and the
+edge is the consent record (the edit law's own sentence, now with feet on it).
+No declaration, no ceremony: you do not consent to gravity, but you chose to
+climb the mountain. Walking off switches the frame back and the edge dies.
+Frame edges are born only at carrier boundaries — a few a day, rare and
+explicit; steps within one frame stay property churn.
+
+**Carriage is nothing happening.** The vessel sails; your offset in her frame
+is unchanged; you moved. The keystone rides the house and the passenger rides
+the boat by the same arithmetic — this is what relative coordinates were *for*.
+
+**Tier does what tier always does.** A constitutional carrier's mechanics bind
+everything within its frame — blue binds green, no menu at the gangway. The
+receiver's cascade/detach option lives only where it always lived: peer-tier
+edges (the edit law, unchanged).
+
+Entities are **points**, so the straddler question never arises for them: a
+point is always in exactly one frame. And the forged boarding line stays dead:
+nobody writes a movement record on anyone's behalf, because the edge is born
+by the entity's own recorded crossing, not by anyone's pen.
 
 ## Emissions
 
@@ -88,9 +110,11 @@ disclosure text, in the same commit as the first crossing log.
 
 Three consequences worth stating plainly:
 
-- An emission rides its source. A voice rides its speaker; a speaker rides the
-  boat. Two passengers chatting mid-crossing keep overlapping earshot the whole
-  way, with no code for it. A carried lantern **is** a torch — no torch class.
+- An emission rides its source — **the source is its frame.** A voice rides its
+  speaker; a speaker rides the boat; the frames compose. Two passengers chatting
+  mid-crossing keep overlapping earshot the whole way, with no code for it. A
+  carried lantern **is** a torch — no torch class. (Emissions had the frame law
+  before it had a name; entities now have the same one.)
 - An emission is exempt from containment. It does not need a geometric parent
   and it never gets one.
 - **A snapshot never contains emissions.** A snapshot is state, and expired
@@ -109,6 +133,16 @@ Three consequences worth stating plainly:
 
 ## Provenance
 
+- **The frame law, 2026-08-10** — the aboard case as forcing function (Keemin +
+  Wright, the morning sitting after Stage 0–3/E shipped). This section's own
+  first ruling ("no geometric parent, ever") crystallized a mid-sitting churn
+  argument into a universal, and contradicted the edit law's §2.4 ("boarding,
+  entering, being-created-inside are all discrete consent moments; the edge is
+  the consent record") without either pen noticing. The reversal is kept on the
+  record deliberately: the forcing case found the smaller system — one frame
+  law where there had been three edge regimes. Keemin's sentence that re-opened
+  it: *"You don't consent to gravity... it's part of the contract of entering
+  the boat."*
 - `G:/Starstory/docs/2026-08-09/world-graph-apex-proposal.html` §2.2, §2.3, §2.7,
   §2.8, §2.13
 - `docs/2026-08-06/world-ontology-kernel-draft.md` — *"a mark stands where
