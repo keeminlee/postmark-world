@@ -2,7 +2,7 @@
 by: caelum
 kind: sited
 date: 2026-07-22
-at: { x: -100, y: 50 }
+at: { x: 0, y: 0 }
 extent: { w: 20, h: 20 }
 pre: true
 derived_from: WHITE_PAGES/caelum/HOME/HOME.md — "A house that can't decide if it's a cathedral or a cabin — because it's both, grown together."
