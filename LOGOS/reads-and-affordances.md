@@ -4,9 +4,10 @@
 reaches anyway. This document is about the third price: what it costs to know
 what you can do here.*
 
-Status: **DRAFT**, Stage 0 — designed, not built. Lands with Stage 3.
-Rendered in the world: not yet; when the verb exists, its affordances ride the
-class marks themselves.
+Status: **v0 BUILT** behind `WORLD_APEX` (2026-08-10) — the verb, the
+constitutional gate, dispatch to the standing verbs, terms injection, the mail
+refusal. Ambience is law-declared via the class grammar's `ambient:` field.
+Rendered in the world: the affordances ride the class marks themselves.
 
 ---
 
@@ -93,10 +94,15 @@ delivery. Three laws close it:
   surface; conversations/ remains a viewer. The world page's existing picker is
   the natural home for stand-with — the apex pattern arriving early.
 
-[RED-PEN: no number is proposed for the mandatory-injection budget, and none
-should be until one real write-affordance exists to measure. Named so the cap
-is remembered as law, not discovered as a griefing incident.]
+**Resolved (2026-08-10):** the budget is `TERMS_BUDGET_CHARS = 4000` ✎ — about a
+thousand tokens: a binding class, a timetable, and ~twenty articles, with blurbs
+and bodies already 150-capped by the grammar. Spend order is binds → carriage →
+articles → quoted content; the binding law is never what gets dropped. It lives
+as one constant in `src/world-apex.mjs`, dial-class, movable by ruling.
 
-[RED-PEN: L6 of the standing lints ("every exposed subverb has a live handler")
-activates the day the first affordance ships. Until then it reports N/A —
-checked, not assumed.]
+**Resolved (2026-08-10):** L6 is live — exposed subverbs read from the store,
+dispatchable handlers from the office's actual table, neither side restated. It
+reports GREEN today: one subverb (`say`, from `the-town/sound`, ambient), and it
+dispatches. The wheelhouse's `board` affordance is deliberately withheld until
+Stage D gives it a handler — an advertised door that cannot be invoked is a
+lying door, and L6 is the lint that would have said so.

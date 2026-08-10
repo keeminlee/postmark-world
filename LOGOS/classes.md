@@ -54,6 +54,7 @@ extends: <class id>          # inheritance, written — never an address
 mobility: settled|derived|free|fade
 anchor: source|ground        # emissions only
 exempt: [containment]        # emissions only — the generalisation of `far: true`
+ambient: true                # class-declared reach: its affordances gather everywhere, not only on the spine — jurisdiction travels the law, not the address (sound's `say`)
 propagation: { default: detach }   # the edit law's default; cascade-from-above is law, not a field
 affordances:                 # reserved for the apex verb (Stage 3) — authored now, served later
   - { subverb: <name>, blurb: <=150 chars, fields: { ... } }

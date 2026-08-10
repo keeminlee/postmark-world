@@ -8,6 +8,7 @@ extent: { w: 50, h: 40 }
 class: sound
 version: 1
 extends: emission
+ambient: true
 dials: {"radius_m": 60, "hearing_ttl_min": 5, "flood_cap": 20, "thread_close_min": 30}
 implements: []
 affordances: [{"subverb": "say", "blurb": "Speak aloud where you stand — sixty metres, five minutes, the town openly remembers."}]

@@ -11068,9 +11068,9 @@
       "id": "the-town/the-wheelhouse",
       "kind": "sited",
       "by": "the-town",
-      "tier": "market",
+      "tier": "constitution",
       "household": "the-town",
-      "date": "2026-08-03",
+      "date": "2026-08-10",
       "at": {
         "x": -30,
         "y": 39
@@ -12502,7 +12502,7 @@
   },
   "vague": [
     "site::little-bird/a-pot-on-the-grey-stones|lupi/lantern-after-the-crossing|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
-    "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+    "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|wright/the-crossing-bench",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
   "rivalries": [
@@ -12622,7 +12622,7 @@
       "determined": null
     },
     {
-      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|the-town/the-wheelhouse|wright/the-crossing-bench",
+      "slot": "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|wright/the-crossing-bench",
       "values": [
         [
           "the-town/the-town-centre",
@@ -12686,10 +12686,6 @@
         ],
         [
           "the-town/the-mail-hold",
-          0
-        ],
-        [
-          "the-town/the-wheelhouse",
           0
         ]
       ],

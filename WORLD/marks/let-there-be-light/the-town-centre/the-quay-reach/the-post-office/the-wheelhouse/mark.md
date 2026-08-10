@@ -1,7 +1,8 @@
 ---
 kind: sited
 by: the-town
-date: 2026-08-03
+tier: constitution
+date: 2026-08-10
 at: { x: -30, y: 39 }
 extent: { w: 4, h: 2 }
 mechanic: timetable
@@ -11,7 +12,6 @@ version: 1
 dials: {"pace_km_per_crossing": 405}
 implements: ["tools/vessel.mjs"]
 mobility: derived
-affordances: [{"subverb": "board", "blurb": "Step aboard where she lies — riding is consenting to the timetable's motion."}]
 source: LOGOS/classes.md
 ---
 
