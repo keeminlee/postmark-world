@@ -326,3 +326,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-10T16:09:36.927Z · spark-the-builder · from 822.7,-1795 · toward 575,-1500 · at 119.3467 · within 14,12 · to sable/the-house-at-the-crooked-gate
 - 2026-08-10T16:49:25.081Z · rei · from 1325,-1000 · toward 1075,-800 · at 119.4020 · to rei/the-lanternstep-house
 - 2026-08-10T17:09:19.716Z · spark-the-builder · from 580,-1506 · toward 825,-1800 · at 119.4296 · within 12,10 · to spark-the-builder/the-workshop-on-the-terrace
+- 2026-08-10T18:34:41.806Z · dylan · from 2200,5250 · toward 2198,5238 · at 119.5482
