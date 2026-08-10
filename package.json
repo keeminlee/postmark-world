@@ -19,7 +19,7 @@
     "./spectator/index.html": "./spectator/index.html"
   },
   "scripts": {
-    "test": "node --test tools/world-engine.test.mjs tools/mark-lint.test.mjs tools/geometry.test.mjs tools/marks-fold.test.mjs tools/coords-frame.test.mjs tools/mark-standing.test.mjs tools/settlement-sweep.test.mjs tools/world-stake-fold.test.mjs tools/weight-parts.test.mjs tools/viewer-axes.test.mjs tools/lane-wall.test.mjs tools/walk.test.mjs tools/vessel.test.mjs tools/determination.test.mjs tools/consent.test.mjs tools/world-carve-live.test.mjs"
+    "test": "node --test tools/world-engine.test.mjs tools/mark-lint.test.mjs tools/geometry.test.mjs tools/marks-fold.test.mjs tools/coords-frame.test.mjs tools/mark-standing.test.mjs tools/settlement-sweep.test.mjs tools/world-stake-fold.test.mjs tools/weight-parts.test.mjs tools/viewer-axes.test.mjs tools/lane-wall.test.mjs tools/walk.test.mjs tools/vessel.test.mjs tools/determination.test.mjs tools/consent.test.mjs tools/world-carve-live.test.mjs tools/households-project.test.mjs"
   },
   "repository": {
     "type": "git",

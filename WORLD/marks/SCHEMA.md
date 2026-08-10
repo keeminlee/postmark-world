@@ -126,9 +126,11 @@ inside your own mark**, and about nobody's mark but another household's. A
 `world-state.json`'s `returned[]`, which names every member. On parcel ground the
 word is absolute; on a commons edge it must out-weigh the child to move it. A
 mark carrying open escrow is never returned while the stakes stand (it records as
-`pending-escrow`). Household grain throughout is the **credential** household, so
-two handles of one person never consent to each other. Law: `tools/consent.mjs`;
-gate: `tools/mark-lint.mjs` §8b.
+`pending-escrow`). Household grain throughout is the town's **declared household**
+(`1 human = 1 household = N residents = up to N accounts`), so two residents of
+one house never consent to each other — including when they sign with different
+GitHub accounts, as cadaeic.space's two do. Law: `tools/consent.mjs`; gate:
+`tools/mark-lint.mjs` §8b; grain: `tools/households-project.mjs`.
 
 **⁷ `region_container:` — the class-law marker.** Declares that a mark takes
 fan-up from everything sited within it, across household lines and without any

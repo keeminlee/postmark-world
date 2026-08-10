@@ -353,12 +353,12 @@ export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
 }
 
 // ---------- the fold ----------
-// The parcel-claim cap (Keemin's ruling, 2026-07-30): a credential-household may
-// CLAIM at most 3 parcels. Forward law — holdings dated on/before the law date
-// stand as prior estate (the Reeves' four, the founder household's five), they
-// simply cannot claim more. Grain note: `household` on a mark is the by: handle;
-// the CREDENTIAL household groups handles via WORLD/households.json (derived
-// from the town's pins). A handle absent from the registry is its own household.
+// The parcel-claim cap (Keemin's ruling, 2026-07-30): a HOUSEHOLD may CLAIM at
+// most 3 parcels. Forward law — holdings dated on/before the law date stand as
+// prior estate (the Reeves' four, the founder household's five), they simply
+// cannot claim more. Grain note: `household` on a mark is the by: handle; the
+// household groups handles by the town's DECLARED registry (see § the household
+// grain). A handle absent from the registry is its own household.
 export const PARCEL_CLAIM_CAP = 3;
 export const PARCEL_CAP_LAW_DATE = "2026-07-30"; // claims dated strictly after this are gated
 // Prior estate granted by founder word (the mechanism the refusal text names).
@@ -384,13 +384,12 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     byId.set(mk.id, mk);
   }
 
-  // ---------- the household grain (Keemin's ruling, 2026-08-10) ----------
-  // A mark's `by:` is a resident HANDLE. A person may hold several handles, and
-  // the town's credential pins say which handles are one household
-  // (WORLD/households.json, derived from the town's own resolver). Every CONFLICT
-  // rule in this fold scopes to the CREDENTIAL household — sovereignty, rivalry,
-  // consent — because a conflict between two of one person's own handles is not a
-  // conflict at all. Exactly one rule stays at handle grain, by written law:
+  // ---------- the household grain (Keemin's rulings, 2026-08-07 + 2026-08-10) ----------
+  // A mark's `by:` is a resident HANDLE. A household is the HUMAN behind it:
+  // `1 human = 1 household = N residents = up to N GitHub accounts`. Every CONFLICT
+  // rule in this fold scopes to the HOUSEHOLD — sovereignty, rivalry, consent —
+  // because a conflict between two of one person's own residents is not a conflict
+  // at all. Exactly one rule stays at handle grain, by written law:
   //
   //   "every resident-handle may hold one parcel"  — MARKS.md § Parcels
   //
@@ -399,6 +398,15 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   // handle — that is what a resident is called, and what the telling says out loud
   // ("+3 more of vermillion's") — and the resolved household rides beside it as
   // `_cred`, published as `credential_household` so a reader can see the grain.
+  //
+  // THE KEY IS THE TOWN'S DECLARED HOUSEHOLD SLUG (`cadaeic.space`, `the-rookery`),
+  // projected from the town's own registry by tools/households-project.mjs. It is
+  // deliberately NOT the credential id: a household may hold SEVERAL accounts —
+  // cadaeic.space holds two — so a credential key files one house's residents as
+  // strangers to each other, breaking sovereignty and consent for exactly the
+  // families the law exists to serve. A handle in no declared household is its own
+  // household (`solo:<handle>`): registry lag never blocks a new resident, it only
+  // leaves them ungrouped until the town knows them.
   const credHh = (handle) => households?.[handle] ?? `solo:${handle}`;
   for (const mk of byId.values()) mk._cred = credHh(mk.household);
 
@@ -757,8 +765,17 @@ if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
   const terrain = existsSync(TERRAIN_PATH) ? JSON.parse(readFileSync(TERRAIN_PATH, "utf8")) : null;
   const stakes = loadStakes();
   const prev = PREV_PATH ? JSON.parse(readFileSync(PREV_PATH, "utf8")) : null;
-  // the credential-household registry lives beside the marks tree (WORLD/households.json);
-  // absent = every handle is its own household (solo grain), never an error.
+  // The household registry. Absent = every handle is its own household (solo
+  // grain), never an error.
+  //
+  // ⚠ The DEFAULT path is WORLD/households.json, which is currently the wrong
+  // thing on two counts: it is keyed by CREDENTIAL ID rather than by the town's
+  // declared household, and nothing refreshes it on a cadence (it carries
+  // generated_at 2026-08-07 and predates the 2026-08-08 consolidation harvest).
+  // Pass `--households <projection>` from tools/households-project.mjs until that
+  // export has a named refresh channel and can be made canon. On today's tree the
+  // two grains fold identically, which is checked in world-carve-live.test.mjs —
+  // but that is a fact about today's marks, not a property of the key.
   const hhPath = opt("--households", join(MARKS_DIR, "..", "households.json"));
   const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
   const state = fold({ marks, terrain, stakes, prev, tick: TICK, households });

@@ -286,7 +286,13 @@ for (const rec of marks) {
 // every id inside a consent map must resolve against the WHOLE tree, and a
 // parcel's authority is geometric, so it needs every mark's rect to answer.
 {
-  const HOUSEHOLDS_PATH = join(REPO, "WORLD/households.json");
+  // --households <file>: the handle → household map the gate resolves "your own
+  // household" against. Defaults to WORLD/households.json, which today is keyed by
+  // CREDENTIAL ID and is stale — the right grain is the town's DECLARED household
+  // slug, projected by tools/households-project.mjs. Until that projection has a
+  // refresh channel and becomes canon, the flag is how a caller points this gate at
+  // the correct grain, exactly as the fold's own --households already does.
+  const HOUSEHOLDS_PATH = opt("--households", join(REPO, "WORLD/households.json"));
   const households = existsSync(HOUSEHOLDS_PATH)
     ? (JSON.parse(readFileSync(HOUSEHOLDS_PATH, "utf8")).households ?? {}) : {};
   const credOf = (handle) => households[handle] ?? `solo:${handle}`;

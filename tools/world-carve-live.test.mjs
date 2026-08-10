@@ -8,9 +8,16 @@
 //
 // Escrow comes from WORLD/fixtures/stakes-2026-08-10.json — the town's own
 // derived export (`node tools/world-stake.mjs --escrow --json` in a town clone at
-// keeminlee/postmark 8a31403), pinned here so this file can fail. Folded with zero
-// escrow every weight is zero, every assertion below is vacuous, and the test
-// would pass while proving nothing.
+// keeminlee/postmark 8a31403, re-derived byte-identical at 0ca018d), pinned here
+// so this file can fail. Folded with zero escrow every weight is zero, every
+// assertion below is vacuous, and the test would pass while proving nothing.
+//
+// The household grain comes from WORLD/fixtures/households-declared-2026-08-10.json
+// — handle → DECLARED HOUSEHOLD SLUG, projected by tools/households-project.mjs
+// from the town's own tools/households.json. NOT from WORLD/households.json, which
+// is stale (2026-08-07) and keyed by credential id, a grain that files one
+// household's two accounts as strangers. Both facts are asserted below rather than
+// trusted.
 //
 // Run: node --test tools/world-carve-live.test.mjs
 
@@ -25,7 +32,8 @@ import { isRegionContainer } from "./consent.mjs";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const marks = loadMarks(join(ROOT, "WORLD/marks"));
 const terrain = JSON.parse(readFileSync(join(ROOT, "WORLD/skeleton.json"), "utf8"));
-const households = JSON.parse(readFileSync(join(ROOT, "WORLD/households.json"), "utf8")).households;
+const households = JSON.parse(readFileSync(join(ROOT, "WORLD/fixtures/households-declared-2026-08-10.json"), "utf8")).households;
+const staleCanon = JSON.parse(readFileSync(join(ROOT, "WORLD/households.json"), "utf8"));
 const stakes = JSON.parse(readFileSync(join(ROOT, "WORLD/fixtures/stakes-2026-08-10.json"), "utf8"));
 const state = fold({ marks, terrain, stakes, households, tick: 1 });
 const w = (id) => state.marks.find((m) => m.id === id)?.weight;
@@ -45,7 +53,7 @@ test("SOVEREIGNTY FLIP: rei's white flower stands inside wright's parcel, and on
   // gh:67605380 — one person, two handles — so the flower standing in the trueing
   // house's parcel was a stranger on its own household's ground: folded as a
   // commons mark, listed in the public index, exposed to rivalry.
-  assert.equal(households["rei"], households["wright"], "the premise: one credential household");
+  assert.equal(households["rei"], households["wright"], "the premise: one declared household (starforge)");
   assert.notEqual("rei", "wright", "…reached by two different handles");
 
   const flower = state.marks.find((m) => m.id === "rei/the-white-flower-at-wrights-door");
@@ -63,11 +71,63 @@ test("SOVEREIGNTY FLIP: rei's white flower stands inside wright's parcel, and on
   assert.equal(named.has("rei/the-white-flower-at-wrights-door"), false, "it is nobody's rival now");
 });
 
+test("THE CADAEIC CASE: one declared household holding TWO accounts resolves as ONE — the case a credential key cannot express", () => {
+  // cadaeic.space is declared with two accounts (vertas-marginalia gh:306985727 and
+  // cadaeix-bot gh:314099683) and two residents. This is the proof case for keying
+  // household law on the DECLARED SLUG rather than the credential id.
+  assert.equal(households["vertas-marginalia"], "cadaeic.space");
+  assert.equal(households["arky"], "cadaeic.space", "one house, whichever account the resident signs with");
+
+  // and the defect, stated against the file that still carries it: the shipped
+  // WORLD/households.json splits this household in two.
+  assert.notEqual(staleCanon.households["vertas-marginalia"], staleCanon.households["arky"],
+    "the credential-keyed export files two residents of one house as strangers");
+
+  // …with the consequence that matters. arky has left no mark yet, so this is the
+  // real registry and vertas's REAL parcel with the one mark that does not exist
+  // yet — the day arky sets something down inside their own household's ground, it
+  // is sovereign, and under the credential key it would not have been.
+  const fence = state.parcels.find((p) => p.id === "vertas-marginalia/la-lanterne-parcel");
+  assert.ok(fence, "vertas holds a real parcel");
+  const arkysMark = {
+    id: "arky/a-lantern-of-my-own", slug: "a-lantern-of-my-own", by: "arky", household: "arky",
+    kind: "sited", tier: "market", at: { x: fence.at.x, y: fence.at.y }, extent: { w: 4, h: 4 },
+    date: "2026-08-10", body: "a lantern of my own",
+  };
+  const withArky = fold({ marks: [...marks, arkysMark], terrain, stakes, households, tick: 1 });
+  assert.equal(withArky.marks.find((m) => m.id === "arky/a-lantern-of-my-own").sovereign, true,
+    "sovereign on their own household's ground");
+
+  const underCredentialKey = fold({ marks: [...marks, arkysMark], terrain, stakes, households: staleCanon.households, tick: 1 });
+  assert.equal(underCredentialKey.marks.find((m) => m.id === "arky/a-lantern-of-my-own").sovereign, false,
+    "and a stranger there under the credential key — this is the whole difference");
+});
+
+test("the declared grain is INERT on today's world — it corrects the key without moving the world", () => {
+  // Every credential-id group of more than one handle in the stale export is
+  // covered exactly by one declared household, so no family SPLITS under the new
+  // grain; the only join it makes is cadaeic.space, whose second resident has left
+  // no mark. A regrain that quietly moved weights would be a migration, not a fix.
+  const byCred = new Map();
+  for (const [h, k] of Object.entries(staleCanon.households)) byCred.set(k, [...(byCred.get(k) ?? []), h]);
+  for (const [k, hs] of byCred) {
+    if (hs.length < 2) continue;
+    const slugs = new Set(hs.map((h) => households[h] ?? `solo:${h}`));
+    assert.equal(slugs.size, 1, `${k} [${hs.join(", ")}] must stay one household, not split into ${[...slugs].join(" | ")}`);
+    assert.ok(!String([...slugs][0]).startsWith("solo:"), `${k} must be a DECLARED household, not an undeclared remainder`);
+  }
+  const underCredentialKey = fold({ marks, terrain, stakes, households: staleCanon.households, tick: 1 });
+  const before = new Map(underCredentialKey.marks.map((m) => [m.id, `${m.weight}|${m.sovereign}`]));
+  for (const m of state.marks) assert.equal(before.get(m.id), `${m.weight}|${m.sovereign}`, `${m.id} must not move on the regrain`);
+});
+
 test("one-parcel-per stays at HANDLE grain — the Reeves legally hold four", () => {
   // MARKS.md § Parcels: "every resident-handle may hold one parcel". The grain
-  // ruling moved every CONFLICT rule to the credential household and left this one
-  // where the written law puts it, so gh:276169629's four parcels all stand.
-  const reeves = state.parcels.filter((p) => households[p.household] === "gh:276169629");
+  // ruling moved every CONFLICT rule to the household and left this one where the
+  // written law puts it, so the reeves household's four parcels all stand. (The
+  // Reeves are single-account, so they pass under either grain — which is exactly
+  // why cadaeic, above, is the falsifier that can only pass under the declared one.)
+  const reeves = state.parcels.filter((p) => households[p.household] === "reeves");
   assert.equal(reeves.length, 4, "four parcels, four handles, one household");
   assert.equal(new Set(reeves.map((p) => p.household)).size, 4, "one apiece");
   assert.equal(state.errors.filter((e) => /already holds a parcel|claim capped/.test(e.error ?? "")).length, 0);
