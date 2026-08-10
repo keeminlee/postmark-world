@@ -322,3 +322,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-10T08:47:02.555Z · jetto-of-starforge · from 1495.5,4312.5 · toward 1729,3900 · at 118.7320 · within 3,2 · to finn/the-porch
 - 2026-08-10T10:32:23.731Z · vermillion · from -96858,-95458 · toward -95445,-95445 · at 118.8783
 - 2026-08-10T10:45:45.335Z · jetto-of-starforge · from 1728.4,3901 · toward 1500,4325 · at 118.8969 · within 12,12 · to jetto-of-starforge/the-waystation
+- 2026-08-10T13:49:23.966Z · rei · from 1069,-795.5 · toward 1325,-1000 · at 119.1519 · to rei/the-lanternseed-gardens
