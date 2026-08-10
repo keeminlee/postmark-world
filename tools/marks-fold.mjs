@@ -508,6 +508,17 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   //
   // Shaped so a later term slots in as one more component beside `breadth`
   // (a fan-DOWN share, say) without disturbing the two that exist.
+  //
+  // EMITTED ONLY WHERE IT EXPLAINS SOMETHING (founder's ruling, 2026-08-10).
+  // ABSENT MEANS ALL-ZERO — never "unknown". 566 of the 612 marks carry no
+  // escrow and nothing inside them, and a uniform-shape skeleton on those cost
+  // 104.5 KB of the 117.4 KB this field added to a world-state.json the browser
+  // fetches: 89% of the payload spent saying nothing. A reader wanting the
+  // uniform shape reads `mk.weight_parts ?? ZERO_PARTS`; a reader wanting the
+  // arithmetic can skip the ones that have none.
+  //
+  // The gate is `!== 0`, not `> 0`, deliberately: an over-withdrawal folds to a
+  // NEGATIVE weight, and that is the case most in need of a receipt.
   const partsOf = (id) => {
     const breadth = breadthByMark.get(id) ?? { bonus: 0, rates: [] };
     const households = breadth.rates.length;
@@ -516,8 +527,10 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     // Mixed rates on one mark would mean the artifact disagrees with itself;
     // say null rather than average them into a number nobody declared.
     const uniform = households > 0 && breadth.rates.every((r) => r === breadth.rates[0]);
+    const own = rawByMark.get(id) ?? 0;
+    if ((weight.get(id) ?? 0) === 0 && own === 0) return null;
     return {
-      own_escrow: rawByMark.get(id) ?? 0,
+      own_escrow: own,
       breadth: { k: uniform ? breadth.rates[0] : null, external_households: households, bonus: breadth.bonus },
       // Direct children only, and only the ones that actually carry something:
       // a childless-looking list of forty ✦0 entries buries the one child the
@@ -528,6 +541,10 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
         .sort((a, b) => b.weight - a.weight || a.id.localeCompare(b.id)),
     };
   };
+  // Spread at the emit site so an omitted breakdown leaves no key at all, rather
+  // than a `weight_parts: null` that every reader would then have to distinguish
+  // from a real absence.
+  const partsField = (id) => { const p = partsOf(id); return p ? { weight_parts: p } : {}; };
 
   // slots: predicated/naming rivalry = same (parent, slot); sited rivalry = overlapping non-sovereign extents
   const slots = new Map(); // key -> { values: Map(value -> stamps), marks: [] }
@@ -590,8 +607,10 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value, far: mk.far,
       sovereign: !!mk._sovereign, stamps: stakeByMark.get(mk.id) ?? 0, weight: weight.get(mk.id) ?? 0,
       // the ✦ number's receipt — own escrow, the breadth bonus, and each child
-      // it fans up from. Sums to `weight` exactly; see partsOf above.
-      weight_parts: partsOf(mk.id),
+      // it fans up from. Sums to `weight` exactly. ABSENT = all zero, which is
+      // the ordinary case; see partsOf above for why it is omitted rather than
+      // spelled out.
+      ...partsField(mk.id),
       body: mk.body,
       // carried through so the engine/assembly can honor them (07-23): mechanic
       // (the machinery that keeps a mark true — physics-registry id), top_m (a

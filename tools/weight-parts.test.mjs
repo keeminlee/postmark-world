@@ -26,7 +26,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fold } from './marks-fold.mjs';
 import { investigate } from './world-verbs.mjs';
-import { effectiveWeight, investigateNameLine } from '../spectator/viewer.mjs';
+import { backingButton, effectiveWeight, investigateNameLine, stakeBackersHTML } from '../spectator/viewer.mjs';
 
 // A house containing a room containing a shelf, plus a far-off bench: enough
 // depth that fan-up has something to fan through, and enough distance that the
@@ -47,11 +47,21 @@ const partsSum = (p) => p.own_escrow + p.breadth.bonus + p.fanned.reduce((n, f) 
 
 // THE falsifier, run over whatever fold it is handed. Every other test in this
 // file is a named instance of it; the real-world run applies it to all 612.
+//
+// TWO OBLIGATIONS, because the breakdown is now emitted only where it explains
+// something. Present: it must re-add to weight exactly. Absent: the mark must
+// genuinely have nothing — weight 0 AND no escrow of its own. An omission that
+// is merely convenient rather than true would hide exactly the marks a reader
+// most wants explained, so absence is checked against the derive, not trusted.
 function assertPartsReconstructWeight(state) {
   for (const mk of state.marks) {
-    assert.ok(mk.weight_parts, `${mk.id} has no weight_parts`);
-    assert.equal(partsSum(mk.weight_parts), mk.weight,
-      `${mk.id}: parts sum ${partsSum(mk.weight_parts)} ≠ weight ${mk.weight}`);
+    if (mk.weight_parts) {
+      assert.equal(partsSum(mk.weight_parts), mk.weight,
+        `${mk.id}: parts sum ${partsSum(mk.weight_parts)} ≠ weight ${mk.weight}`);
+      continue;
+    }
+    assert.equal(mk.weight, 0, `${mk.id}: weight ${mk.weight} but no weight_parts to explain it`);
+    assert.equal(mk.stamps, 0, `${mk.id}: holds ${mk.stamps} escrow but no weight_parts`);
   }
 }
 
@@ -64,10 +74,30 @@ test('every mark carries weight_parts that re-adds to its weight', () => {
   assertPartsReconstructWeight(state);
 });
 
-test('an unstaked, childless mark decomposes to all zeroes — not to nothing', () => {
+test('a mark with nothing to explain carries NO weight_parts, and that reads as zero', () => {
+  // The founder's trim: 566 of 612 marks were carrying an all-zero skeleton that
+  // cost 104.5 KB of a browser-fetched file to say nothing. Absent is the
+  // ordinary case and means all-zero — it must never come to mean "unknown".
   const state = fold({ marks: marks(), terrain, stakes: [] });
-  const parts = byId(state).get('rei/the-low-lanterns').weight_parts;
-  assert.deepEqual(parts, { own_escrow: 0, breadth: { k: null, external_households: 0, bonus: 0 }, fanned: [] });
+  for (const mk of state.marks) {
+    assert.equal(mk.weight_parts, undefined, `${mk.id} should carry no breakdown`);
+    assert.equal(mk.weight, 0);
+  }
+  assert.ok(!('weight_parts' in byId(state).get('rei/the-low-lanterns')),
+    'omitted entirely — not present-and-null, which a reader would have to tell apart from absence');
+});
+
+test('a mark that carries something KEEPS its breakdown while its neighbours drop theirs', () => {
+  const state = fold({ marks: marks(), terrain, stakes: [
+    { tick: 0, holder: 'dot', mark: 'wright/the-keystone', n: 3, weight: 8 },
+  ] });
+  const m = byId(state);
+  // the staked leaf and every ancestor it fans through keep theirs
+  for (const id of ['wright/the-keystone', 'wright/the-room', 'wright/the-trueing-house'])
+    assert.ok(m.get(id).weight_parts, `${id} carries weight and must explain it`);
+  // the far-off bench, touched by none of it, drops its
+  assert.equal(m.get('rei/the-low-lanterns').weight_parts, undefined);
+  assertPartsReconstructWeight(state);
 });
 
 test('own escrow and the breadth bonus separate, and k is read back from the artifact', () => {
@@ -130,11 +160,16 @@ test('a mark with BOTH its own escrow and children reports both lanes', () => {
 test('a child contributing nothing is left out of fanned, and the sum still closes', () => {
   // Silence is not a component. Listing 40 children at ✦0 would bury the one
   // that matters, and dropping them cannot break the invariant precisely
-  // because they add zero.
-  const state = fold({ marks: marks(), terrain, stakes: [] });
-  const parts = byId(state).get('wright/the-trueing-house').weight_parts;
-  assert.deepEqual(parts.fanned, []);
-  assert.equal(partsSum(parts), byId(state).get('wright/the-trueing-house').weight);
+  // because they add zero. Here the house has one staked descendant and one
+  // silent sibling branch: only the loud one is named.
+  const state = fold({ marks: marks(), terrain, stakes: [
+    { tick: 0, holder: 'dot', mark: 'wright/the-room', n: 2, weight: 2 },
+  ] });
+  const house = byId(state).get('wright/the-trueing-house');
+  assert.deepEqual(house.weight_parts.fanned, [{ id: 'wright/the-room', weight: 2 }]);
+  assert.equal(byId(state).get('wright/the-keystone').weight_parts, undefined,
+    'the unstaked keystone inside the room contributes nothing and says nothing');
+  assert.equal(partsSum(house.weight_parts), house.weight);
 });
 
 // ── the vocabulary, and the readers that depend on it ────────────────────────
@@ -178,6 +213,71 @@ test('the viewer shows the EFFECTIVE figure, not raw escrow', () => {
   assert.equal(effectiveWeight({ weight: -2 }), 0, 'never renders a negative backing');
   assert.match(investigateNameLine({ id: 'wright/the-trueing-house', stamps: 0, weight: 8 }), />✦ 8</,
     'a relation line prints what the mark actually carries');
+});
+
+// ── the chip and the popover are one number ──────────────────────────────────
+// THE PROBE THAT WOULD HAVE CAUGHT THE MISS. The stranded reader was
+// loadStakeBackers: it headlined the door's raw `escrow` while the chip that
+// opens it showed raw too, so they agreed by accident. Making the chip
+// effective broke that accident on 16 live marks. The sweep that missed it
+// searched for the field NAME that changed (`.stamps`); this reader displays the
+// same CONCEPT under a different name (`.escrow`). So the probe is written
+// against the concept: whatever these two surfaces show, they show the same.
+
+const chipLabel = (html) => html.match(/✦ [\d,]+/)?.[0] ?? null;
+
+test('the backing chip and the popover it opens never disagree', () => {
+  // pando-peak's real shape: 8 staked on it, 10 breadth, 90 fanning up = ✦108.
+  // Before the fix the chip read ✦108 and this popover read ✦8.
+  const mark = {
+    id: 'the-town/pando-peak', weight: 108, stamps: 8,
+    weight_parts: {
+      own_escrow: 8, breadth: { k: 5, external_households: 2, bonus: 10 },
+      fanned: [{ id: 'vermillion/the-pando-peak', weight: 90 }],
+    },
+  };
+  const chip = chipLabel(backingButton(mark.id, effectiveWeight(mark)));
+  const popover = chipLabel(stakeBackersHTML({
+    weight: effectiveWeight(mark), weightParts: mark.weight_parts,
+    holders: [{ holder: 'vermillion', amount: 5 }, { holder: 'gael-renton', amount: 3 }],
+    liveEscrow: 8,
+  }));
+  assert.equal(chip, '✦ 108');
+  assert.equal(popover, chip, 'the headline must be the number on the chip that opened it');
+});
+
+test('the popover shows every lane that built the number, and the holders under the escrow', () => {
+  const html = stakeBackersHTML({
+    weight: 108,
+    weightParts: {
+      own_escrow: 8, breadth: { k: 5, external_households: 2, bonus: 10 },
+      fanned: [{ id: 'vermillion/the-pando-peak', weight: 90 }],
+    },
+    holders: [{ holder: 'vermillion', amount: 5 }, { holder: 'gael-renton', amount: 3 }],
+    liveEscrow: 8,
+  });
+  assert.match(html, /staked on it<\/span><span class="amount">✦ 8</);
+  assert.match(html, /2 other households backing it<\/span><span class="amount">✦ 10</);
+  assert.match(html, /1 mark inside it<\/span><span class="amount">✦ 90</);
+  assert.match(html, /vermillion/);
+  assert.doesNotMatch(html, /Settlement/, 'nothing is pending when live escrow already matches the settled figure');
+});
+
+test('a mark with no breakdown still headlines its own number, and says no one yet', () => {
+  const html = stakeBackersHTML({ weight: 0, weightParts: null, holders: [], liveEscrow: 0 });
+  assert.equal(chipLabel(html), '✦ 0');
+  assert.match(html, /no one yet/);
+  assert.match(html, /staked on it<\/span><span class="amount">✦ 0</, 'absent parts read as zero, not as unknown');
+});
+
+test('escrow laid since the last Settlement is named as pending, not silently reconciled', () => {
+  // A resident who staked this morning must not read a stale ✦ as a refusal.
+  const html = stakeBackersHTML({
+    weight: 5, weightParts: { own_escrow: 5, breadth: { k: null, external_households: 0, bonus: 0 }, fanned: [] },
+    holders: [{ holder: 'dot', amount: 9 }], liveEscrow: 9,
+  });
+  assert.equal(chipLabel(html), '✦ 5', 'the headline still agrees with the chip, which is settled');
+  assert.match(html, /✦ 9 is staked on it now — the difference lands at the next Settlement\./);
 });
 
 export { assertPartsReconstructWeight, partsSum };
