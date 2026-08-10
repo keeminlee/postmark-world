@@ -5941,6 +5941,21 @@
       "body": "The World is a record that computes itself: these are the conditions under which anything here exists, and they bind everywhere at once."
     },
     {
+      "id": "the-town/the-binding-channels",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "parent": "the-town/the-record",
+      "slot": "binding",
+      "value": "place-law rides the spine; kind-law rides the instance edge",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The law of a place binds whoever stands within it; the law of a kind binds its instances wherever they stand — one rides the spine, one the edge."
+    },
+    {
       "id": "the-town/the-continuation",
       "kind": "predicated",
       "by": "the-town",
@@ -8753,6 +8768,186 @@
       "stamps": 0,
       "weight": 0,
       "body": "The quarter where the town's own machinery stands as buildings, each one citing the code that keeps it true."
+    },
+    {
+      "id": "the-town/attachment",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -930,
+        "y": -600
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An attachment is born saying what becomes of it if what it holds to moves — carried along, or set down — and it is good only where you truly stand."
+    },
+    {
+      "id": "the-town/departure",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -1020,
+        "y": -600
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A departure is one line written when you set out — from here, to there, at this hour — and where you are between is read off it, never stored."
+    },
+    {
+      "id": "the-town/emission",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -1020,
+        "y": -780
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An emission happens, rides its source for the little while it lasts, then clears — it stands inside nothing and is never edited once made."
+    },
+    {
+      "id": "the-town/entity",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -1020,
+        "y": -690
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An entity stands inside nothing; what it is within is a question asked of where it is, what it holds to it declared, and every crossing saves it."
+    },
+    {
+      "id": "the-town/fog",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -750,
+        "y": -780
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every crossing brews its own weather from its own number, so any clone gets the same day — fog sits on the ground and rides no speaker."
+    },
+    {
+      "id": "the-town/light",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -840,
+        "y": -780
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Light is continuous while its source burns and rides wherever the source goes — a carried lantern is already a torch, and needs no dial to be one."
+    },
+    {
+      "id": "the-town/parcel",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -840,
+        "y": -690
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Twenty-five metres square, set by the door you claimed from — a parcel is a fence, not a scale: nothing is staked against it and it holds no weight."
+    },
+    {
+      "id": "the-town/resident",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -930,
+        "y": -690
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One resident to an address, sovereign on their own ground and carrying the walk — no human is ever one; they speak through the one they stand with."
+    },
+    {
+      "id": "the-town/sound",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "date": "2026-08-09",
+      "at": {
+        "x": -930,
+        "y": -780
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A voice carries sixty metres and is heard for five minutes; a human's voice is carried by the resident they stand with, and the record says so."
     },
     {
       "id": "the-town/spectators-gallery",

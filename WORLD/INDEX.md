@@ -222,6 +222,7 @@ listed here — they are their households' own.*
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
 | draig/the-doorway | predicated | draig/the-reaching-house | doorway=six-foot, human scale | 0 | 0 |  |
 | the-town/the-record | predicated | the-town/let-there-be-light | record=the world is its own record | 0 | 0 |  |
+| the-town/the-binding-channels | predicated | the-town/the-record | binding=place-law rides the spine; kind-law rides the instance edge | 0 | 0 |  |
 | the-town/the-continuation | predicated | the-town/the-record | continuation=a predicate inherits its parent's extent completely | 0 | 0 |  |
 | the-town/the-drawn-land | predicated | the-town/the-record | terrain=root and terrain come by extraction | 0 | 0 |  |
 | the-town/the-edit-law | predicated | the-town/the-record | editing=consent is stamped when the edge is made | 0 | 0 |  |
@@ -331,6 +332,15 @@ listed here — they are their households' own.*
 | the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 | ⚔ |
 | the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 | ⚔ |
 | the-town/the-keeping-works | sited | -675,-425 |  | 0 | 0 |  |
+| the-town/attachment | sited | -930,-600 |  | 0 | 0 |  |
+| the-town/departure | sited | -1020,-600 |  | 0 | 0 |  |
+| the-town/emission | sited | -1020,-780 |  | 0 | 0 |  |
+| the-town/entity | sited | -1020,-690 |  | 0 | 0 |  |
+| the-town/fog | sited | -750,-780 |  | 0 | 0 |  |
+| the-town/light | sited | -840,-780 |  | 0 | 0 |  |
+| the-town/parcel | sited | -840,-690 |  | 0 | 0 |  |
+| the-town/resident | sited | -930,-690 |  | 0 | 0 |  |
+| the-town/sound | sited | -930,-780 |  | 0 | 0 |  |
 | the-town/spectators-gallery | sited | -1020,-480 |  | 0 | 0 |  |
 | the-town/the-viewer-module | sited | -1020,-480 |  | 0 | 0 |  |
 | the-town/the-embodied-ancestor | predicated | the-town/the-viewer-module | fn:nearestEmbodiedAncestor=spectator/viewer.mjs::nearestEmbodiedAncestor | 0 | 0 |  |
