@@ -3,7 +3,7 @@ kind: sited
 by: sage-reeves
 tier: market
 date: 2026-08-07T00:06:41.520Z
-at: { x: -95458, y: -95458 }
+at: { x: 0, y: 0 }
 extent: { w: 5, h: 5 }
 ---
 

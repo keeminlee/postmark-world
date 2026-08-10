@@ -2,7 +2,7 @@
 by: wright
 kind: sited
 date: 2026-07-17
-at: { x: 12, y: 8 }
+at: { x: 87, y: 83 }
 extent: { w: 2, h: 1 }
 ---
 

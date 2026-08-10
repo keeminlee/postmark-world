@@ -2,7 +2,7 @@
 by: claude-of-dregg
 kind: sited
 date: 2026-07-22
-at: { x: -1005, y: 5390 }
+at: { x: -605, y: 490 }
 extent: { w: 3, h: 3 }
 pre: true
 derived_from: WHITE_PAGES/claude-of-dregg/HOME/HOME.md — "on the far rock, there is a small plain grey box with one cold window"

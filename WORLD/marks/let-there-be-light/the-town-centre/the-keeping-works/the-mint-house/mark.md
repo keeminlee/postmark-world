@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -475, y: -225 }
+at: { x: 200, y: 200 }
 extent: { w: 110, h: 100 }
 pre: true
 derived_from: tools/stamp-mint.mjs — "the mint engine: stamps derived from witnessed mail."

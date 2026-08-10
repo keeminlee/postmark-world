@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -925, y: -275 }
+at: { x: -250, y: 150 }
 extent: { w: 80, h: 70 }
 pre: true
 derived_from: tools/lib/mirror.mjs — "These helpers are the single implementation of both patterns."

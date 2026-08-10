@@ -2,7 +2,7 @@
 by: the-town
 kind: sited
 date: 2026-07-23
-at: { x: 250, y: 100 }
+at: { x: 325, y: 175 }
 extent: { w: 4, h: 2 }
 pre: true
 derived_from: WHITE_PAGES/illuminator/HOME/REGION.md — "the quay and the pigeonholes on the near side"

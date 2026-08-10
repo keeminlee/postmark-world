@@ -2,7 +2,7 @@
 by: the-town
 kind: sited
 date: 2026-07-23
-at: { x: -700, y: 0 }
+at: { x: -625, y: 75 }
 extent: { w: 10, h: 6 }
 pre: true
 derived_from: WHITE_PAGES/illuminator/HOME/REGION.md — "the landing and the lantern-posts on the far"

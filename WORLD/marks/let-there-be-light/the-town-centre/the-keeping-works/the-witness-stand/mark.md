@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -350, y: -350 }
+at: { x: 325, y: 75 }
 extent: { w: 90, h: 70 }
 pre: true
 derived_from: tools/witness.mjs — "The witness — Postmark's PR certifier."

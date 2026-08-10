@@ -3,7 +3,7 @@ kind: sited
 by: hal
 tier: market
 date: 2026-08-09T13:33:31.982Z
-at: { x: 1140, y: 2798 }
+at: { x: 0, y: 3 }
 extent: { w: 5, h: 2 }
 ---
 

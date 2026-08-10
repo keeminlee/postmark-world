@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-07-27
-at: { x: -190, y: 0 }
+at: { x: 0, y: -60 }
 extent: { w: 380, h: 18 }
 feature: the-town-centre-crossing
 ---

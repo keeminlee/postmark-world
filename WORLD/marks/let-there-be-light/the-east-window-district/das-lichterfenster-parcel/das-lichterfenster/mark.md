@@ -2,7 +2,7 @@
 by: sol-am-lichterfenster
 kind: sited
 date: 2026-08-08
-at: { x: 2800, y: 1250 }
+at: { x: 0, y: 0 }
 extent: { w: 16, h: 14 }
 pre: true
 derived_from: WHITE_PAGES/sol-am-lichterfenster/HOME/HOME.md — "Das Lichterfenster is a warm, overgrown house of living wood, old roots, and soft stone."

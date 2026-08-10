@@ -94,6 +94,127 @@ export function parseRecord(text, file) {
   return { ...fm, body };
 }
 
+// ---------- the frame (SCHEMA v3 § The frame, 2026-08-09) ----------
+// A mark's `at:` is written in ITS OWN FRAME — as an offset from the centre of
+// the mark it sits inside. The world root IS the frame and keeps world numbers;
+// everything nested carries its parent's centre implicitly, so moving a
+// container carries its contents with it. The directory tree already says what
+// contains what; under v3 the coordinates say it too, and the two cannot drift.
+//
+// The frame is a property of the TREE, not of the tools: the world root declares
+// it on its own record (`coords: relative`, written beside the extent it
+// governs), so a clone, a sketchbook, or a temp fixture carries its own frame
+// with it. A tree that declares nothing is v2 absolute and loads exactly as it
+// always did — the composition below is skipped entirely and `at`/`points` keep
+// the very objects the parser built.
+//
+// Composition happens HERE, once, at load. Everything downstream — the fold, the
+// lint, the vessel, the walk engine, the verbs — reads `at` in world coordinates
+// and cannot tell which frame the files were written in. That is the whole
+// point: exactly one function knows, and it is this one.
+export const COORDS_FIELD = "coords";
+export const COORDS_RELATIVE = "relative";
+export const COORDS_ABSOLUTE = "absolute";
+export const WORLD_ROOT_SLUG = "let-there-be-light";
+const WORLD_ORIGIN = { x: 0, y: 0 };
+
+const isPoint = (p) => !!p && Number.isFinite(p.x) && Number.isFinite(p.y);
+const ringPoint = (p) => (Array.isArray(p) ? (p.length >= 2 && Number.isFinite(p[0]) && Number.isFinite(p[1]) ? { x: p[0], y: p[1] } : null) : (isPoint(p) ? p : null));
+const isRing = (r) => Array.isArray(r) && r.length > 0 && r.every((p) => ringPoint(p) !== null);
+
+// world frame <-> file frame. The migration (tools/migrate-coords.mjs) runs
+// these one way and the loader runs them the other, so the rewrite is the
+// loader's own arithmetic backwards — which is why it can be checked exactly
+// (tools/coords-equivalence.mjs) rather than merely eyeballed.
+export const worldToFile = (at, origin) => ({ x: at.x - (origin?.x ?? 0), y: at.y - (origin?.y ?? 0) });
+export const fileToWorld = (at, origin) => ({ x: at.x + (origin?.x ?? 0), y: at.y + (origin?.y ?? 0) });
+const shiftRing = (points, origin, xf) => points.map((p) => {
+  const q = xf(ringPoint(p), origin);
+  return Array.isArray(p) ? [q.x, q.y] : { ...p, x: q.x, y: q.y };   // a ring keeps the spelling it was authored in
+});
+// A `points:` ring is a SET OF POSITIONS, not a size — it rides the same frame
+// as `at` and shifts with it. (An `extent:` is a size: it never moves.)
+export const ringToFile = (points, origin) => shiftRing(points, origin, worldToFile);
+export const ringToWorld = (points, origin) => shiftRing(points, origin, fileToWorld);
+
+// The frame a tree declares, read off the RECORD and never off the tools. The
+// root's word governs; a sub-tree loaded on its own (a fixture, a sketchbook)
+// may carry the declaration on whichever record it has.
+export function declaredCoords(marks) {
+  const onRoot = marks.find((m) => m.slug === WORLD_ROOT_SLUG && m[COORDS_FIELD] !== undefined);
+  const decl = onRoot ?? marks.find((m) => m[COORDS_FIELD] !== undefined);
+  if (!decl) return COORDS_ABSOLUTE;
+  const val = String(decl[COORDS_FIELD]).trim();
+  // A frame we cannot read is not a record-level defect to flag and carry on
+  // with — it is the whole tree's positions in question. Reading `coords: relatve`
+  // as absolute would place every nested mark at its offset and print success,
+  // so this refuses instead of guessing.
+  if (val !== COORDS_RELATIVE && val !== COORDS_ABSOLUTE)
+    throw new Error(`${decl.id}: ${COORDS_FIELD}: ${JSON.stringify(val)} is not a frame this loader knows (${COORDS_ABSOLUTE} | ${COORDS_RELATIVE}) — every position in the tree depends on it, so it will not be guessed`);
+  return val;
+}
+
+// frameMarks — hand every record the centre its numbers are written against
+// (`_origin`), keep the file's own numbers verbatim (`_fileAt`), and, when the
+// tree declares the relative frame, compose `at`/`points` into world coordinates.
+//
+// On a v2 (absolute) tree this ADDS those two underscore fields and touches
+// nothing else: `at` and `points` keep their exact objects, so every consumer —
+// and the fold's JSON — is byte-identical to what it was before this existed.
+function frameMarks(out) {
+  const relative = declaredCoords(out) === COORDS_RELATIVE;
+  const byId = new Map();
+  for (const rec of out) {
+    if (isPoint(rec.at)) rec._fileAt = { x: rec.at.x, y: rec.at.y };
+    if (!byId.has(rec.id)) byId.set(rec.id, rec);   // a duplicate id is the fold's error to report; first wins here
+  }
+  const root = out.find((m) => m.slug === WORLD_ROOT_SLUG);
+  // The root is the frame itself, so its own numbers are world numbers under
+  // BOTH schemas — which is what makes it the thing everything else can be
+  // relative to. A tree with no root frames open ground on the world origin.
+  const rootCentre = root?._fileAt ? { x: root._fileAt.x, y: root._fileAt.y } : WORLD_ORIGIN;
+
+  const centre = new Map();       // rec -> its composed world centre, or null for a record that carries no position
+  const resolving = new Set();    // keyed by RECORD, not id: a duplicated id must not hand its centre to its twin
+
+  const worldCentreOf = (rec) => {
+    if (centre.has(rec)) return centre.get(rec);
+    if (resolving.has(rec)) return null;
+    resolving.add(rec);
+    const origin = rec === root ? { ...WORLD_ORIGIN } : frameOriginOf(rec);
+    rec._origin = origin;
+    const c = rec._fileAt
+      ? (relative ? fileToWorld(rec._fileAt, origin) : { x: rec._fileAt.x, y: rec._fileAt.y })
+      : null;
+    centre.set(rec, c);
+    return c;
+  };
+
+  // The centre a record's numbers are written against: its nearest POSITIONED
+  // ancestor. A predicate carries no centre of its own — it is its parent
+  // continued (SCHEMA § the continuation law) — so the walk steps past it, and
+  // anything standing on open ground is framed on the root's centre.
+  const frameOriginOf = (rec) => {
+    const walked = new Set([rec]);
+    let p = rec._parentMarkId ? byId.get(rec._parentMarkId) : null;
+    while (p && !walked.has(p)) {
+      walked.add(p);
+      const c = worldCentreOf(p);
+      if (c) return { x: c.x, y: c.y };
+      p = p._parentMarkId ? byId.get(p._parentMarkId) : null;
+    }
+    return { x: rootCentre.x, y: rootCentre.y };
+  };
+
+  for (const rec of out) worldCentreOf(rec);
+  if (relative) for (const rec of out) {
+    const c = centre.get(rec);
+    if (c) rec.at = c;
+    if (isRing(rec.points)) rec.points = ringToWorld(rec.points, rec._origin);
+  }
+  return out;
+}
+
 // ---------- load marks (07-22 nesting ruling) ----------
 // One mark per directory, recorded as `mark.md`. The directory IS the identity
 // and the edge: <household> is the top dir; <slug> is the mark's own dir (unique
@@ -103,6 +224,10 @@ export function parseRecord(text, file) {
 // mark never changes its id (stakes stay attached). Shared with mark-lint.mjs so
 // both read the world from disk the same way. Bad frontmatter is flagged on the
 // record (_error), never thrown, so one bad file can't blind the whole fold/lint.
+//
+// Every record comes back in WORLD coordinates whatever frame the files are
+// written in (see § the frame above) — `at` is world, `_fileAt` is what the file
+// says, `_origin` is the centre those file numbers are written against.
 export function loadMarks(dir) {
   const out = [];
   if (!existsSync(dir)) return out;
@@ -112,7 +237,7 @@ export function loadMarks(dir) {
     if (!st.isDirectory()) continue;
     walkMarks(p, null, out); // v2: no household from the path; `by` comes from each mark's frontmatter
   }
-  return out;
+  return frameMarks(out);
 }
 
 function walkMarks(nodeDir, parentMarkId, out) {

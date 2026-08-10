@@ -24,6 +24,7 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { COORDS_FIELD, COORDS_RELATIVE } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -33,6 +34,30 @@ const MARKS_ROOT = join(ROOT, "WORLD/marks/let-there-be-light");
 const TODAY = "2026-07-22"; // the ruling date — deterministic, not wall-clock
 
 const skeleton = JSON.parse(readFileSync(SKELETON, "utf8"));
+
+// ---- the frame gate (SCHEMA § The frame) -------------------------------------
+// This generator rewrites the root's record wholesale from the field list in
+// writeRootAndTerrain(), and writes each terrain mark WHERE IT LIVES — which
+// under the relative frame means writing a nested mark's `at:` in its parent's
+// frame, not the world's. It knows neither thing yet, so against a v3 tree it
+// would (1) drop the root's `coords:` line, silently re-reading every nested
+// mark's offset as a world position, and (2) plant relocated terrain at world
+// numbers inside a parent's frame. Both would print success. So it stops here
+// instead, and says what it would take to let it run.
+const ROOT_RECORD = join(MARKS_ROOT, "mark.md");
+if (existsSync(ROOT_RECORD)
+  && new RegExp(`^${COORDS_FIELD}:\\s*${COORDS_RELATIVE}\\s*$`, "m").test(readFileSync(ROOT_RECORD, "utf8"))) {
+  console.error(`world-root-gen: REFUSING — this tree declares ${COORDS_FIELD}: ${COORDS_RELATIVE} and this generator still writes world coordinates.
+
+  Re-running it would rewrite ${ROOT_RECORD.replace(/\\/g, "/").replace(/^.*\/(WORLD\/)/, "$1")}
+  without its ${COORDS_FIELD}: line — un-declaring the frame for the whole tree — and
+  write every relocated terrain mark's at: in the world's frame inside a parent's.
+
+  To regenerate the root and terrain under the relative frame this tool must
+  first learn the transform: load the tree, take each write target's _origin,
+  and emit worldToFile(at, _origin). Both live in tools/marks-fold.mjs.`);
+  process.exit(1);
+}
 
 // ---- location-aware writes (07-23, post-nesting) -----------------------------
 // The tree ruling nests marks under their geometric containers, so a terrain

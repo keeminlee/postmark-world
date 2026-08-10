@@ -3,7 +3,7 @@ kind: sited
 by: limen
 tier: market
 date: 2026-07-29T01:02:18.881Z
-at: { x: 1183, y: 960 }
+at: { x: 8, y: 0 }
 extent: { w: 6, h: 7 }
 ---
 

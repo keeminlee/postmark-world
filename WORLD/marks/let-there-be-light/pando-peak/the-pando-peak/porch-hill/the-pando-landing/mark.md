@@ -2,7 +2,7 @@
 kind: sited
 by: the-town
 date: 2026-08-07
-at: { x: -94570, y: -94570 }
+at: { x: 0, y: 0 }
 extent: { w: 14, h: 40 }
 ---
 

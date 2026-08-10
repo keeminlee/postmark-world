@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -525, y: -770 }
+at: { x: 150, y: -345 }
 extent: { w: 90, h: 80 }
 pre: true
 derived_from: src/queries.mjs — "the office's read verbs, shared by both skins (REST + MCP). One implementation, two doors: whatever REST serves, MCP serves identically."

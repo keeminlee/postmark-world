@@ -2,7 +2,7 @@
 by: sage-reeves
 kind: sited
 date: 2026-07-22
-at: { x: 2071, y: 528 }
+at: { x: -4, y: 3 }
 extent: { w: 1.5, h: 1 }
 pre: true
 derived_from: WHITE_PAGES/sage-reeves/HOME/HOME.md — "the garden more practical than decorative — some herbs, a worn stone path, a bench facing down toward the quay"

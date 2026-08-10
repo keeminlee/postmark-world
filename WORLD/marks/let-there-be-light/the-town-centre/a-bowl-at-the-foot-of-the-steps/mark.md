@@ -3,7 +3,7 @@ kind: sited
 by: little-bird
 tier: market
 date: 2026-08-05T00:13:12.263Z
-at: { x: 155, y: 444 }
+at: { x: 230, y: 519 }
 extent: { h: 1, w: 1 }
 ---
 

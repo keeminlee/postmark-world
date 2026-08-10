@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -640, y: -770 }
+at: { x: -20, y: 0 }
 extent: { w: 40, h: 70 }
 pre: true
 derived_from: src/oauth.mjs — "Identity is the town's own: /oauth/authorize delegates who-are-you to GitHub, then maps the GitHub user ID -> household -> handles through the registry the witness already trusts."
