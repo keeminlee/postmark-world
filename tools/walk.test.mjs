@@ -12,6 +12,7 @@ import {
   fractionalCrossing, formatDeparture, parseWalkLedger, currentDeparture,
   positionAt, positionsAt, DEPARTURE_RE, publicWalkers,
   WALK_M_PER_CROSSING, CROSSING_EPOCH_UTC, CROSSING_MS,
+  WALK_ARRIVALS, WALK_ARRIVAL_DEFAULT, isWalkArrival, extentForArrival,
 } from "./walk.mjs";
 
 const D = (o) => ({ iso: "2026-07-27T00:00:00.000Z", targetExtent: null, targetMarkId: null, ...o });
@@ -211,4 +212,128 @@ test("pace: a departure may carry its own stride — the vessel's law (Keemin, 2
   const slow = positionAt(walker, 200 + 1 / 3);
   assert.equal(slow.arrived, false, "a walker does not board by accident");
   assert.ok(Math.hypot(slow.x, slow.y) < 6000, "a third of a crossing on foot is 5 km");
+});
+
+// ── to: centre (issue #5 §1) ────────────────────────────────────────────────
+// The seam's own arithmetic is the fixture. vermillion/vermillion-view-peak is
+// centred (−96858, −95458) with extent 721, so its east edge falls at
+// −96858 + 721/2 = −96497.5 — the metre jetto-of-starforge actually landed on,
+// twice, and the metre from which any 6 m claim straddles the line.
+const VIEW_PEAK = { at: { x: -96858, y: -95458 }, extent: { w: 721, h: 721 } };
+const VIEW_PEAK_EAST_EDGE = -96497.5;
+
+test("arrival-on-entry is the default, and it is what puts you on the fence", () => {
+  // Not a bug — the documented law, pinned so the centre variant cannot be
+  // mistaken for a change to it. Walking in from the east stops at the boundary.
+  const dep = D({
+    handle: "jetto-of-starforge", from: { x: -90000, y: -95458 }, toward: VIEW_PEAK.at, at: 0,
+    targetExtent: VIEW_PEAK.extent, targetMarkId: "vermillion/vermillion-view-peak",
+  });
+  const there = positionAt(dep, 99);
+  assert.equal(there.arrived, true);
+  assert.equal(there.x, VIEW_PEAK_EAST_EDGE, "entry arrival lands exactly on the east edge");
+  assert.equal(WALK_ARRIVAL_DEFAULT, "entry", "and entry is what a walk gets when nobody asks");
+});
+
+test("to: centre arrives at the target's centre, not its fence (issue #5 §1)", () => {
+  // The SAME leg, recorded the centre way: no `within`, so the interpolation
+  // runs all the way to `toward` — which is the mark's centre.
+  const dep = D({
+    handle: "jetto-of-starforge", from: { x: -90000, y: -95458 }, toward: VIEW_PEAK.at, at: 0,
+    targetExtent: extentForArrival("centre", VIEW_PEAK.extent),
+    targetMarkId: "vermillion/vermillion-view-peak",
+  });
+  const there = positionAt(dep, 99);
+  assert.equal(there.arrived, true);
+  assert.equal(there.x, VIEW_PEAK.at.x, "centre arrival lands on the centre");
+  assert.equal(there.y, VIEW_PEAK.at.y);
+  assert.notEqual(there.x, VIEW_PEAK_EAST_EDGE, "and specifically NOT on the fence");
+  // Intent survives the omission: the line still says what was walked to.
+  assert.equal(dep.targetMarkId, "vermillion/vermillion-view-peak");
+});
+
+test("to: centre lets a resident standing on the fence walk IN — the seam's cost, paid", () => {
+  // This is the case entry arrival cannot serve: you are already inside the
+  // target's extent, so containment says "arrived" and you never move — which
+  // is exactly why a claim left where you stand overhangs the boundary.
+  const stuck = D({
+    handle: "h", from: { x: VIEW_PEAK_EAST_EDGE, y: -95458 }, toward: VIEW_PEAK.at, at: 0,
+    targetExtent: VIEW_PEAK.extent, targetMarkId: "vermillion/vermillion-view-peak",
+  });
+  const nowhere = positionAt(stuck, 99);
+  assert.equal(nowhere.x, VIEW_PEAK_EAST_EDGE, "entry arrival re-arrives you where you already stand");
+  assert.equal(nowhere.legM, 0);
+
+  const walkIn = D({
+    handle: "h", from: { x: VIEW_PEAK_EAST_EDGE, y: -95458 }, toward: VIEW_PEAK.at, at: 0,
+    targetExtent: extentForArrival("centre", VIEW_PEAK.extent), targetMarkId: "vermillion/vermillion-view-peak",
+  });
+  const arrived = positionAt(walkIn, 99);
+  assert.equal(arrived.x, VIEW_PEAK.at.x, "centre walks you off the fence and into the mark");
+  assert.equal(arrived.legM, 361, "360.5 m from the east edge to the centre, rounded");
+});
+
+test("extentForArrival is the one place that knows what an arrival means", () => {
+  assert.deepEqual(extentForArrival("entry", VIEW_PEAK.extent), VIEW_PEAK.extent, "entry freezes the extent");
+  assert.equal(extentForArrival("centre", VIEW_PEAK.extent), null, "centre records no within");
+  assert.deepEqual(extentForArrival(undefined, VIEW_PEAK.extent), VIEW_PEAK.extent, "absent means entry");
+  assert.equal(extentForArrival("entry", undefined), null, "no mark extent, nothing to freeze");
+  assert.deepEqual(WALK_ARRIVALS, ["entry", "centre"]);
+  assert.ok(isWalkArrival("entry") && isWalkArrival("centre"));
+  assert.ok(!isWalkArrival("middle"), "an unknown arrival is not silently accepted");
+});
+
+test("to: centre changes the ledger's within, never its grammar", () => {
+  const common = { handle: "h", from: { x: -90000, y: -95458 }, toward: VIEW_PEAK.at,
+                   at: 12.5, targetMarkId: "vermillion/vermillion-view-peak", iso: "2026-08-09T12:00:00.000Z" };
+  const entry = formatDeparture({ ...common, targetExtent: extentForArrival("entry", VIEW_PEAK.extent) });
+  const centre = formatDeparture({ ...common, targetExtent: extentForArrival("centre", VIEW_PEAK.extent) });
+  for (const line of [entry, centre]) assert.match(line, DEPARTURE_RE, "both arrivals are the SAME grammar");
+  assert.ok(entry.includes(" · within 721,721"), "an entry walk freezes the target's extent");
+  assert.ok(!centre.includes(" · within "), "a centre walk records none — that IS the variant");
+  assert.ok(centre.includes(" · to vermillion/vermillion-view-peak"),
+    "the departure line's `to` still carries the target either way");
+  // And both round-trip to a derivation that agrees with the line.
+  assert.equal(positionAt(parseWalkLedger(entry).departures[0], 99).x, VIEW_PEAK_EAST_EDGE);
+  assert.equal(positionAt(parseWalkLedger(centre).departures[0], 99).x, VIEW_PEAK.at.x);
+});
+
+// ── the invariants worth protecting (issue #5, "not defects") ────────────────
+// Named so a later fix cannot quietly cost them. These are jetto-of-starforge's
+// list, made falsifiable.
+
+test("INVARIANT position-derives-from-ledger-and-clock: a resumed session is unaffected", () => {
+  // "My session was context-compacted mid-walk and it made no difference; I
+  // resumed 993 m further along." Nothing en route is stored, so forgetting
+  // everything but the ledger text and the clock must reproduce the walk exactly.
+  const line = formatDeparture({
+    handle: "jetto-of-starforge", from: { x: 0, y: 0 }, toward: { x: 15000, y: 0 },
+    at: 100, targetMarkId: null, iso: "2026-08-09T00:00:00.000Z",
+  });
+  const before = positionAt(parseWalkLedger(line).departures[0], 100.4);
+  // …the session dies here. A brand-new reader, holding only the text and a clock:
+  const t993 = 100.4 + 993 / WALK_M_PER_CROSSING;
+  const after = positionAt(parseWalkLedger(line).departures[0], t993);
+  assert.equal(Math.round(after.x - before.x), 993, "the walker advanced exactly what the clock bought");
+  assert.equal(after.travelledM - before.travelledM, 993);
+  // and re-deriving the ORIGINAL instant still gives the original answer
+  assert.deepEqual(positionAt(parseWalkLedger(line).departures[0], 100.4), before,
+    "the past is not rewritten by having been read again");
+});
+
+test("INVARIANT within-frozen-at-departure: a mark that later resizes cannot rewrite an arrival", () => {
+  // "a mark that later moves, resizes, or retires cannot rewrite where someone
+  // arrived" (walk.mjs:42-44). The proof that the freeze is real: the SAME
+  // toward with a different recorded `within` arrives somewhere else, so arrival
+  // is governed by the line's own extent and never by a live lookup.
+  const asItWas = D({ handle: "h", from: { x: -90000, y: -95458 }, toward: VIEW_PEAK.at, at: 0,
+                      targetExtent: { w: 721, h: 721 }, targetMarkId: "vermillion/vermillion-view-peak" });
+  const asItWouldBe = D({ handle: "h", from: { x: -90000, y: -95458 }, toward: VIEW_PEAK.at, at: 0,
+                          targetExtent: { w: 100, h: 100 }, targetMarkId: "vermillion/vermillion-view-peak" });
+  assert.equal(positionAt(asItWas, 99).x, VIEW_PEAK_EAST_EDGE, "the extent recorded at departure governs");
+  assert.equal(positionAt(asItWouldBe, 99).x, -96808, "a different frozen extent is a different arrival");
+  // The departure carries its own answer: no marks are in scope in this file at
+  // all, and the derivation still resolves. That is the freeze, structurally.
+  assert.equal(parseWalkLedger(formatDeparture({ ...asItWas, iso: "2026-08-09T00:00:00.000Z" }))
+    .departures[0].targetExtent.w, 721, "the extent rides the line, not a lookup");
 });
