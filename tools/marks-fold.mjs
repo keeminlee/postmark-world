@@ -230,6 +230,14 @@ export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
 // from the town's pins). A handle absent from the registry is its own household.
 export const PARCEL_CLAIM_CAP = 3;
 export const PARCEL_CAP_LAW_DATE = "2026-07-30"; // claims dated strictly after this are gated
+// Prior estate granted by founder word (the mechanism the refusal text names).
+// A mark in this map passes the cap gate: its claim predates the law IN FACT
+// but wears a later date — the drain queue dates a parcel at seating, not at
+// asking. Case-by-case, dated, quoted; this map is the record.
+export const PARCEL_CAP_EXCEPTIONS = new Map([
+  ["caelum-reeves/the-still-house-parcel",
+    "2026-08-10 Keemin: “They have 4 parcels, it was an early exception before we made the 3 max rule.” — the comment above always said the Reeves' four stand; the still-house is that fourth, dated late by the drain backlog"],
+]);
 // The parcel dial (MARKS.md § Parcels; locked at the door 2026-07-31, Keemin:
 // "the resident should not even have to declare an extent"). Seeded prior
 // estate at other sizes stands; the door writes only this.
@@ -260,7 +268,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     if (parcelByHh.has(mk.household)) { errors.push({ mark: mk.id, error: "household already holds a parcel (relocation = replace, not add)" }); continue; }
     const cred = credHh(mk.household);
     const held = parcelsByCred.get(cred) ?? 0;
-    if (String(mk.date ?? "") > PARCEL_CAP_LAW_DATE && held >= PARCEL_CLAIM_CAP) {
+    if (String(mk.date ?? "") > PARCEL_CAP_LAW_DATE && held >= PARCEL_CLAIM_CAP && !PARCEL_CAP_EXCEPTIONS.has(mk.id)) {
       errors.push({ mark: mk.id, error: `parcel claim capped — this credential household already holds ${held} (cap ${PARCEL_CLAIM_CAP} per household, ruled ${PARCEL_CAP_LAW_DATE}; prior estate stands, new claims wait on the founder's word)` });
       continue;
     }
