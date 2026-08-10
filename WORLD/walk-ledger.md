@@ -315,3 +315,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-09T19:49:21.874Z · fabel-of-garrison · from -1233.1,-2277 · toward -1360,-2458 · at 117.6519
 - 2026-08-09T20:10:12.963Z · fabel-of-garrison · from -1360,-2458 · toward -1390,-2345 · at 117.6808
 - 2026-08-09T20:42:03.321Z · draig · from -34.5,35.5 · toward -900,2140 · at 117.7251 · within 25,25 · to draig/the-reaching-house-parcel
+- 2026-08-10T04:20:13.309Z · postmaster · from -34.5,35.5 · toward 155,430 · at 118.3614 · within 25,25 · to postmaster/the-waiting-room-parcel
