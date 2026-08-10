@@ -93,6 +93,19 @@ function pointWithinMark(pos, mark) {
 // Zoom one mark: its body (full prose), the predicated properties attached to
 // it, and the sited things inside it — capped by `budget`, re-callable to go
 // deeper. This is the LOD "descend with attention" path.
+//
+// THE TWO NUMBERS, and they are not the same number (trued 2026-08-10). Every
+// relation line below used to emit a field NAMED `stamps` that carried
+// `m.weight` — the effective, fanned-up figure under the raw figure's name. The
+// vocabulary is now the fold's own, everywhere:
+//
+//   stamps — RAW own escrow. What residents actually put on this mark.
+//   weight — EFFECTIVE. own escrow + breadth bonus + everything fanning up.
+//            This is the ✦ number a telling prints, and the default to show.
+//
+// The target additionally carries `weight_parts`, which is that ✦ number's
+// receipt (marks-fold.mjs § partsOf) — because a reader shown one figure built
+// out of three sources cannot otherwise tell which of them they are looking at.
 export function investigate(markId, world, { depth = 1, budget = DIALS.context_budget } = {}) {
   const byId = new Map(world.marks.map((m) => [m.id, m]));
   const target = byId.get(markId) ?? byId.get(markId.replace(/^terrain:/, "")) ?? null;
@@ -103,7 +116,7 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
     return { id: markId, kind: "terrain", body: asTerrain.receipt, attaches: attachedTo(markId, world, budget) };
   }
   const predicates = world.marks.filter((m) => (m.kind === "predicated" || m.kind === "naming") && m.parent === markId)
-    .slice(0, budget).map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, stamps: m.weight ?? 0, body: m.body }));
+    .slice(0, budget).map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, weight: m.weight ?? 0, stamps: m.stamps ?? 0, body: m.body }));
   // NEAREST FIRST, so the budget cuts the far ones rather than whichever the fold
   // happened to list last. Under fold order a child 212 m from the threshold
   // district lost its seat to five siblings 900 m out — and an arbitrary cut does
@@ -116,7 +129,7 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
     .sort((a, b) => a.away - b.away || String(a.m.id).localeCompare(String(b.m.id)))
     .map((entry) => entry.m);
   const children = allChildren.slice(0, budget)
-    .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, body: firstLine(m.body) }));
+    .map((m) => ({ id: m.id, kind: m.kind, at: m.at, weight: m.weight ?? 0, stamps: m.stamps ?? 0, body: firstLine(m.body) }));
   // parents: what the target sits inside, nearest container first (renamed from
   // `within` 2026-08-02 — within/children read as near-synonyms and the pair was
   // a reader trap; parents[0] is the direct container). Its own relation, and
@@ -131,7 +144,7 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
   // a grandparent is not a neighbour just because it is not the direct container.
   const ancestry = ancestorsByGeometry(target, world);
   const parents = ancestry.slice(0, 1)
-    .map((m) => ({ id: m.id, kind: m.kind, household: m.household, at: m.at, stamps: m.weight ?? 0, body: firstLine(m.body) }));
+    .map((m) => ({ id: m.id, kind: m.kind, household: m.household, at: m.at, weight: m.weight ?? 0, stamps: m.stamps ?? 0, body: firstLine(m.body) }));
   // alongside: the rest of this household's cluster near the target — the marks
   // the FOV collapsed at distance ("+N more of <hh>'s"). Descending opens them.
   // Deliberately NOT named siblings: this is the household's geometric
@@ -149,10 +162,16 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
   const childIds = new Set(contained.map((m) => m.id));
   const parentIds = new Set(ancestry.map((m) => m.id));
   const alongside = householdNear(target, world).filter((m) => !childIds.has(m.id) && !parentIds.has(m.id)).slice(0, budget)
-    .map((m) => ({ id: m.id, kind: m.kind, at: m.at, stamps: m.weight ?? 0, signal: !!m.signal, body: firstLine(m.body) }));
+    .map((m) => ({ id: m.id, kind: m.kind, at: m.at, weight: m.weight ?? 0, stamps: m.stamps ?? 0, signal: !!m.signal, body: firstLine(m.body) }));
   return {
     id: target.id, kind: target.kind, household: target.household, at: target.at, extent: target.extent,
-    sovereign: !!target.sovereign, stamps: target.weight ?? target.stamps ?? 0, body: target.body,
+    sovereign: !!target.sovereign,
+    weight: target.weight ?? 0, stamps: target.stamps ?? 0,
+    // the ✦ number's receipt, carried on the target only: a reader descending
+    // into one mark is asking about THAT mark, and putting a breakdown on every
+    // relation line would bury the one they opened.
+    weight_parts: target.weight_parts ?? null,
+    body: target.body,
     predicates, parents, children, alongside,
     more: { predicates: countPredicates(markId, world) - predicates.length, children: allChildren.length - children.length },
     reinvoke: depth > 1 ? [...children, ...alongside].map((c) => c.id) : [],

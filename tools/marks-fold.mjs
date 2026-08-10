@@ -406,6 +406,15 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
 
   // stakes -> per-mark balances (escrow; negative = withdrawal), effect-next-crossing: tick strictly < current
   const stakeByMark = new Map(); const weightByMark = new Map(); const portfolios = new Map();
+  // THE BREADTH SPLIT, for weight_parts. The town bakes the unique-household
+  // bonus into the FIRST row of each external household (world-stake.mjs §
+  // deriveWorldMarkWeights), so `weight - n` on a row is either 0 or exactly k.
+  // Reading breadth back out by difference keeps the stake law with exactly one
+  // implementation — the town's — and leaves this repo still knowing nothing
+  // about money or household identity. `rawByMark` is the unclamped escrow that
+  // actually feeds weight; it is deliberately NOT stakeByMark, which the
+  // over-withdrawal guard below clamps to 0 while weight keeps the negative.
+  const rawByMark = new Map(); const breadthByMark = new Map();
   for (const s of stakes) {
     if (s.tick >= tick && tick > 0) continue; // not yet effective
     // THE RETIREMENT GATE, and it needed no new machinery — only its right name.
@@ -421,6 +430,15 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     }
     stakeByMark.set(s.mark, (stakeByMark.get(s.mark) ?? 0) + s.n);
     weightByMark.set(s.mark, (weightByMark.get(s.mark) ?? 0) + (s.weight ?? s.n));
+    rawByMark.set(s.mark, (rawByMark.get(s.mark) ?? 0) + s.n);
+    const bonus = (s.weight ?? s.n) - s.n;
+    if (!breadthByMark.has(s.mark)) breadthByMark.set(s.mark, { bonus: 0, rates: [] });
+    const breadth = breadthByMark.get(s.mark);
+    breadth.bonus += bonus;
+    // One bonus-bearing row IS one external household. Only positive rates count
+    // toward the household tally — the count answers "how many others backed
+    // this", and a withdrawal is not a negative crowd.
+    if (bonus > 0) breadth.rates.push(bonus);
     if (!portfolios.has(s.holder)) portfolios.set(s.holder, new Map());
     const pf = portfolios.get(s.holder);
     pf.set(s.mark, (pf.get(s.mark) ?? 0) + s.n);
@@ -471,6 +489,45 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     weight.set(id, w); return w;
   };
   for (const id of [...byId.keys(), ...terrainIds]) weightOf(id);
+
+  // ── weight_parts: the receipt for the ✦ number ────────────────────────────
+  // Every telling prints one figure and it is three things added together. A
+  // reader who sees ✦17 cannot tell whether seventeen people backed this mark,
+  // or one did and its parent is carrying a famous child. This says which.
+  //
+  // THE INVARIANT, and the whole reason it can be trusted as a display change:
+  //     own_escrow + breadth.bonus + Σ fanned[].weight === weight
+  // exactly. It holds by construction — own_escrow + bonus is precisely what
+  // the stake loop put in weightByMark, and fanned re-reads the same memoized
+  // child totals weightOf already summed — and tools/weight-parts.test.mjs
+  // re-checks it over the whole real fold rather than trusting the argument.
+  //
+  // Read AFTER the loop above, never during it: `weight` is only complete for
+  // every id once every weightOf has returned, and a decomposition built
+  // mid-traversal would quietly report a partial subtree.
+  //
+  // Shaped so a later term slots in as one more component beside `breadth`
+  // (a fan-DOWN share, say) without disturbing the two that exist.
+  const partsOf = (id) => {
+    const breadth = breadthByMark.get(id) ?? { bonus: 0, rates: [] };
+    const households = breadth.rates.length;
+    // k is that mark's OWN rate, reported only when there is a bonus to have a
+    // rate for — so `bonus === k × external_households` wherever k is non-null.
+    // Mixed rates on one mark would mean the artifact disagrees with itself;
+    // say null rather than average them into a number nobody declared.
+    const uniform = households > 0 && breadth.rates.every((r) => r === breadth.rates[0]);
+    return {
+      own_escrow: rawByMark.get(id) ?? 0,
+      breadth: { k: uniform ? breadth.rates[0] : null, external_households: households, bonus: breadth.bonus },
+      // Direct children only, and only the ones that actually carry something:
+      // a childless-looking list of forty ✦0 entries buries the one child the
+      // reader is looking for, and dropping zeroes cannot break the sum.
+      fanned: (children.get(id) ?? [])
+        .map((c) => ({ id: c, weight: weight.get(c) ?? 0 }))
+        .filter((f) => f.weight !== 0)
+        .sort((a, b) => b.weight - a.weight || a.id.localeCompare(b.id)),
+    };
+  };
 
   // slots: predicated/naming rivalry = same (parent, slot); sited rivalry = overlapping non-sovereign extents
   const slots = new Map(); // key -> { values: Map(value -> stamps), marks: [] }
@@ -532,6 +589,9 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, tier: mk.tier ?? "market", household: mk.household, date: mk.date,
       at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value, far: mk.far,
       sovereign: !!mk._sovereign, stamps: stakeByMark.get(mk.id) ?? 0, weight: weight.get(mk.id) ?? 0,
+      // the ✦ number's receipt — own escrow, the breadth bonus, and each child
+      // it fans up from. Sums to `weight` exactly; see partsOf above.
+      weight_parts: partsOf(mk.id),
       body: mk.body,
       // carried through so the engine/assembly can honor them (07-23): mechanic
       // (the machinery that keeps a mark true — physics-registry id), top_m (a
