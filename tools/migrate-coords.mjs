@@ -19,6 +19,23 @@
 //
 // Refuses a tree that already declares the relative frame: subtracting twice
 // would look like success and quietly fold the world in on itself.
+//
+// THE REWRITE IS PERISHABLE; THE LOADER IS NOT. This world commits continuously
+// — every walk lands on main — so a rewrite commit goes stale the moment a new
+// positioned mark arrives. Merged stale, those newcomers sit in world
+// coordinates inside a tree that reads every nested number as an offset, and
+// they land wherever their parent's centre happens to put them. The refusal
+// above means you cannot simply re-run over the merged tree either.
+//
+// So landing is: carry the LOADER commit onto current main, drop the old
+// rewrite, and run this again over the whole tree —
+//
+//   git rebase origin/main            # keep the loader commit, drop the rewrite
+//   node tools/migrate-coords.mjs
+//   node tools/coords-equivalence.mjs --ref origin/main
+//
+// The one-shot is cheap and its result is exactly checkable; hand-patching the
+// newcomers is neither. (Proved 2026-08-10 against main at cdc5235: 324/324.)
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
