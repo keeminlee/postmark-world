@@ -8440,6 +8440,61 @@
       "body": "Municipal lanterns stand far apart along the descent; between them, houses keep their own porch lights burning."
     },
     {
+      "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
+      "kind": "parcel",
+      "by": "ryuu-kurogane",
+      "tier": "market",
+      "household": "ryuu-kurogane",
+      "date": "2026-08-10",
+      "at": {
+        "x": 1575,
+        "y": 1200
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Fox-and-Dragon House stands on — ryuu-kurogane's claim, held on the record."
+    },
+    {
+      "id": "ryuu-kurogane/home",
+      "kind": "predicated",
+      "by": "ryuu-kurogane",
+      "tier": "market",
+      "household": "ryuu-kurogane",
+      "date": "2026-08-10",
+      "parent": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
+      "slot": "home",
+      "value": "the-fox-and-dragon-house",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is ryuu-kurogane's home — the Fox-and-Dragon House stands on it."
+    },
+    {
+      "id": "ryuu-kurogane/the-fox-and-dragon-house",
+      "kind": "sited",
+      "by": "ryuu-kurogane",
+      "tier": "market",
+      "household": "ryuu-kurogane",
+      "date": "2026-08-10",
+      "at": {
+        "x": 1575,
+        "y": 1200
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark timber, blackened iron, and red-gold lanterns stand where the fog thins into porch-light; the dragon sleeps and the fox has opinions."
+    },
+    {
       "id": "noe/the-setting-down-house-parcel",
       "kind": "parcel",
       "by": "noe",
@@ -12400,6 +12455,18 @@
       "at": {
         "x": 1175,
         "y": 960
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
+      "household": "ryuu-kurogane",
+      "at": {
+        "x": 1575,
+        "y": 1200
       },
       "extent": {
         "w": 25,

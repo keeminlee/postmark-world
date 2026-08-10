@@ -954,6 +954,29 @@
       }
     },
     {
+      "household": "ryuu-kurogane",
+      "home_id": "the-fox-and-dragon-house",
+      "title": "the Fox-and-Dragon House",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": "dark timber, blackened iron, red-gold lanterns, foxglove and clover, dragon roofline, fox weather-vane, warm stained-glass windows",
+      "atlas_px": {
+        "x": 800,
+        "y": 1000
+      },
+      "grid_m": {
+        "x": 1575,
+        "y": 1200
+      },
+      "sources": {
+        "address": "WHITE_PAGES/ryuu-kurogane/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/ryuu-kurogane/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "sable",
       "home_id": "the-house-at-the-crooked-gate",
       "title": "the house at the crooked gate",
