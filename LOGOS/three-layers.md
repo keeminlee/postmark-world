@@ -3,7 +3,8 @@
 *The word, the world, the living.*
 
 Status: **DRAFT**, Stage 0. Ruled by Keemin, 2026-08-09 evening sitting.
-Rendered in the world as `the-town/the-three-layers` and `the-town/the-fidelity`.
+Rendered in the world as `the-town/the-three-layers`, `the-town/the-fidelity`
+and `the-town/the-binding-channels`.
 
 ---
 

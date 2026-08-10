@@ -127,20 +127,24 @@ test("the mechanic and the schedule travel together — neither half is a servic
 // the gate had no opinion. These tests hold both directions: the clause names the
 // document, and the document names the clause back.
 //
-// The fixture is a small REPOSITORY, not just a tree — LOGOS/ and the two other
-// cited documents travel with the-record, because the channel is a fact about a
-// repo read whole. The lint is pointed at it with --repo.
+// The fixture is a REPOSITORY, not just a tree — LOGOS/ and the cited documents
+// travel with the whole marks tree, because the channel is a fact about a repo
+// read whole. The lint is pointed at it with --repo.
+//
+// The tree must be WHOLE, not just the-record. The doc → clause direction reads
+// every Rendered line in LOGOS/ and demands the mark it names; a fixture that
+// carries all the documents but only some of the marks makes honest documents
+// look like liars, and the failure lands on the lint rather than on the fixture
+// that caused it. (It did, the day the class marks landed outside the-record.)
 
 function fidelityRepo() {
   const repo = mkdtempSync(join(tmpdir(), "fidelity-"));
   const REPO_SRC = join(HERE, "..");
-  mkdirSync(join(repo, "WORLD", "marks", "let-there-be-light"), { recursive: true });
+  mkdirSync(join(repo, "WORLD"), { recursive: true });
   cpSync(join(REPO_SRC, "LOGOS"), join(repo, "LOGOS"), { recursive: true });
   copyFileSync(join(REPO_SRC, "WRITES.md"), join(repo, "WRITES.md"));
   copyFileSync(join(REPO_SRC, "WORLD", "skeleton.json"), join(repo, "WORLD", "skeleton.json"));
-  copyFileSync(join(REPO_SRC, "WORLD", "marks", "SCHEMA.md"), join(repo, "WORLD", "marks", "SCHEMA.md"));
-  copyFileSync(join(REAL, "mark.md"), join(repo, "WORLD", "marks", "let-there-be-light", "mark.md"));
-  cpSync(join(REAL, "the-record"), join(repo, "WORLD", "marks", "let-there-be-light", "the-record"), { recursive: true });
+  cpSync(join(REPO_SRC, "WORLD", "marks"), join(repo, "WORLD", "marks"), { recursive: true });
   return repo;
 }
 

@@ -2,8 +2,14 @@
 
 *A class is law about a kind of thing. An instance is one of them, happening.*
 
-Status: **DRAFT**, Stage 0. Nothing here is landed; every name, number and
-placement is red-pennable.
+Status: **DRAFT**, Stage 0 — the grammar below is still red-pennable, but the
+first nine classes now stand in the world (2026-08-09) and are law where they
+stand.
+Rendered in the world as `the-town/emission`, `the-town/sound`,
+`the-town/light`, `the-town/fog`, `the-town/entity`, `the-town/resident`,
+`the-town/parcel`, `the-town/departure` and `the-town/attachment` — the nine
+class marks standing in the Keeping Works — and as `the-town/the-wheelhouse`,
+where the timetable class stands with its own institution.
 
 ---
 
@@ -246,15 +252,42 @@ could derive.
 - `WORLD/skeleton.json` `physics_registry` — the eleven mechanics and their
   receipts
 
-[RED-PEN: the class marks themselves have no home in the tree yet. The Keeping
-Works is named as the physics quarter, but it exists only on the local 08-01
-seeding branch — it is not on `main`. Stage 0 can author the grammar and the
-articles without it; it cannot author the class *marks* until that branch lands
-or the quarter is created fresh.]
+[RESOLVED 2026-08-09 — the red-pen here said the class marks had no home,
+because the Keeping Works existed only on the local 08-01 seeding branch. That
+was already stale when it was written: the quarter moved onto `main` on
+2026-08-06 (`34021fb`), into the Town Centre's southwest corner at
+`at: -675,-425`, `extent: 800 × 800`, every mark in it `tier: constitution`. The
+nine class marks stand in its empty northwest ground, as direct children — one
+flat district, no halls.
+
+Two things the quarter is NOT, and this document should stop implying they are.
+It is not the physics quarter *yet*: the workshops named below — geometry, fold,
+walk, the customs-house — are no longer buildings here. They dissolved upward
+into `the-record`'s clauses (`the-fold`, `the-walk`, `the-sounding`,
+`the-gate`) when the constitution was reconciled, and what stands in the
+district today is the four-repo code convergence: 38 buildings drawn from
+`postmark`, `postmark-site` and `postmark-office`. The homeless classes now
+stand beside them, which is right, but the district's own body still describes
+only the convergence. Whether the quarter is renamed, re-bodied, or simply
+understood to hold both is a founders' call, not this pass's.]
 
 [RED-PEN: `version:` says "bumped only by settlement", and `dials:` says a class
 constant has exactly one home. But sound's four dials are shipped constants
 living in office code today. The move from office code into the class is Stage 2
 work, and until then the class mark and the running code both hold the number —
 the exact duplication the no-literals law forbids. Name the interim honestly or
-sequence it so the window never opens.]
+sequence it so the window never opens.
+
+THE WINDOW IS OPEN, as of 2026-08-09. `the-town/sound` now carries 60 m, 5 min,
+newest-20 and 30 min in its `dials:`, and the office code that actually enforces
+them is unchanged and unedged. Nothing reads the class mark yet, so the mark is
+the copy and the code is the truth — which is the safe direction, but it is
+still two homes for one number. Naming it honestly is the whole of the interim
+guarantee: until the office edges to the class, **a dial changed here changes
+nothing**, and anyone editing these four numbers must edit the office too.
+
+One instance is already in this repository and is worth fixing first, because it
+is a *derived* literal rather than a copied one: `spectator/viewer.mjs` sets
+`CONVO_PAD_M = 30` — "half an earshot" — which is sound's 60 m radius halved,
+with no edge to the class and no comment tying it to the dial. If the radius
+ever moves, the drawn conversation ground silently stops matching the heard one.]
