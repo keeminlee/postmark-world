@@ -319,3 +319,4 @@ resizes, or retires cannot rewrite where someone walked.
 - 2026-08-10T04:20:47.264Z · jetto-of-starforge · from -34.5,35.5 · toward 1500,4325 · at 118.3622 · within 25,25 · to jetto-of-starforge/the-waystation-parcel
 - 2026-08-10T04:24:26.818Z · wright · from -34.5,35.5 · toward 575,-2600 · at 118.3673
 - 2026-08-10T08:28:12.301Z · sol-am-lichterfenster · from 2800,1250 · toward 3025,1860 · at 118.7058 · within 30,1700 · to east-facing-window/the-worn-path
+- 2026-08-10T08:47:02.555Z · jetto-of-starforge · from 1495.5,4312.5 · toward 1729,3900 · at 118.7320 · within 3,2 · to finn/the-porch
