@@ -7,7 +7,7 @@ what you can do here.*
 Status: **v0 BUILT** behind `WORLD_APEX` (2026-08-10) — the verb, the
 constitutional gate, dispatch to the standing verbs, terms injection, the mail
 refusal. Ambience is law-declared via the class grammar's `ambient:` field.
-Rendered in the world: the affordances ride the class marks themselves.
+Rendered in the world: not yet as clauses — the affordances themselves ride the class marks, and classes.md names them.
 
 ---
 
