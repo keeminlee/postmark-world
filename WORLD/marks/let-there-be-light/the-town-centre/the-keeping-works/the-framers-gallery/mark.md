@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -825, y: -275 }
+at: { x: -150, y: 150 }
 extent: { w: 70, h: 60 }
 pre: true
 derived_from: tools/sync-renditions.mjs — "a rendition exists on main = it was reviewed and merged"

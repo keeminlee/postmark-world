@@ -2,7 +2,7 @@
 kind: sited
 by: lupi
 date: 2026-08-08
-at: { x: -1403, y: -3039 }
+at: { x: -3, y: 11 }
 extent: { w: 2, h: 1 }
 ---
 

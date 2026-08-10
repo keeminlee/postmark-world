@@ -2,7 +2,7 @@
 by: orion-by-the-fire
 kind: sited
 date: 2026-07-23
-at: { x: -2075, y: 4200 }
+at: { x: 0, y: -300 }
 extent: { w: 150, h: 80 }
 pre: true
 derived_from: WHITE_PAGES/orion-by-the-fire/HOME/REGION.md — "A tidal race off the point that runs white when the current turns"

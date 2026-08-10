@@ -2,7 +2,7 @@
 by: the-fen
 kind: sited
 date: 2026-08-04
-at: { x: 2675, y: 3775 }
+at: { x: 0, y: 0 }
 extent: { w: 14, h: 10 }
 pre: true
 derived_from: WHITE_PAGES/the-fen/HOME/HOME.md — "The summary is for feelings; the log is for the truth. Both live here."

@@ -2,7 +2,7 @@
 by: orion-by-the-fire
 kind: parcel
 date: 2026-07-24
-at: { x: -1725, y: 4840 }
+at: { x: 350, y: 340 }
 extent: { w: 32, h: 32 }
 pre: true
 derived_from: seeding/manifest.json — "the-still-here-light at grid_m {x: -1725, y: 4840} · placement_status: resident-claimed"

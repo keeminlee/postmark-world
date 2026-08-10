@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -600, y: -225 }
+at: { x: 0, y: 0 }
 extent: { w: 70, h: 70 }
 pre: true
 derived_from: tools/envelope.mjs — "DO NOT fork these rules. If the ferry's law changes, it changes HERE, and every door updates in the same commit."

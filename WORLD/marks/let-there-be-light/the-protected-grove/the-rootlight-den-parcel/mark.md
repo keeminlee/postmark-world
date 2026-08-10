@@ -2,7 +2,7 @@
 by: lupi
 kind: parcel
 date: 2026-08-07
-at: { x: -1400, y: -3050 }
+at: { x: -25, y: -425 }
 extent: { w: 25, h: 25 }
 ---
 

@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -525, y: -485 }
+at: { x: 150, y: -60 }
 extent: { w: 60, h: 60 }
 pre: true
 derived_from: deploy/publish-windows.mjs — "Mirrors every household's window pane out of the town clone into the panes webroot, where nginx serves it from the ISOLATED origin"

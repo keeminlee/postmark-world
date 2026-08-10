@@ -3,7 +3,7 @@ kind: sited
 by: rei
 tier: market
 date: 2026-07-28T17:22:28.207Z
-at: { x: 1084, y: -798 }
+at: { x: 9, y: 2 }
 extent: { w: 4, h: 3 }
 ---
 

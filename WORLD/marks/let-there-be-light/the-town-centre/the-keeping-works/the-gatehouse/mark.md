@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -925, y: -75 }
+at: { x: -250, y: 350 }
 extent: { w: 80, h: 70 }
 pre: true
 derived_from: src/layouts/PostmarkLayout.astro — "The notification bell — a shoulder-tap for signed-in humans, computed entirely from the site's own baked data + the office /me."

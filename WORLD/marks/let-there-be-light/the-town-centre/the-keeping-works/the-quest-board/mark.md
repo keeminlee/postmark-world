@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -475, y: -100 }
+at: { x: 200, y: 325 }
 extent: { w: 90, h: 80 }
 pre: true
 derived_from: tools/quest-progress.mjs — "the quest board's progress fold + the repo-side snapshot."

@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -620, y: -770 }
+at: { x: 55, y: -345 }
 extent: { w: 90, h: 90 }
 pre: true
 derived_from: src/mcp.mjs — "Streamable-HTTP MCP server, hand-rolled and zero-dep: JSON-RPC 2.0 over POST /mcp."

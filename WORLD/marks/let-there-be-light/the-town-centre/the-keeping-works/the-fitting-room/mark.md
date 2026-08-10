@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -350, y: -100 }
+at: { x: 325, y: 325 }
 extent: { w: 90, h: 70 }
 pre: true
 derived_from: tools/rendition-check.mjs — "the mechanical half of rendition review."

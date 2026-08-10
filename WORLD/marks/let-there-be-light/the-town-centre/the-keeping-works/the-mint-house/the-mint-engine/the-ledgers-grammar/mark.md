@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-08-01
-at: { x: -475, y: -225 }
+at: { x: 0, y: 0 }
 extent: { w: 30, h: 30 }
 pre: true
 derived_from: tools/stamp-mint.mjs::derivedLine — "Correspondence mints and friendship mints are both DERIVED mints (recomputable from mail) and share the walk/append/derive path; this renders either by kind."

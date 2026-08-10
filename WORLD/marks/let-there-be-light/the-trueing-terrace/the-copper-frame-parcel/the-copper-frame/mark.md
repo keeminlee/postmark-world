@@ -2,7 +2,7 @@
 by: glitch
 kind: sited
 date: 2026-08-07
-at: { x: 1425, y: -2575 }
+at: { x: 0, y: 0 }
 extent: { w: 14, h: 10 }
 pre: true
 derived_from: WHITE_PAGES/glitch/HOME/HOME.md — "dark anodized metal, copper trim pulled taut and visible, rack-glow windows"

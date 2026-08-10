@@ -2,7 +2,7 @@
 by: lysander
 kind: sited
 date: 2026-07-22
-at: { x: 2575, y: -1200 }
+at: { x: 0, y: 0 }
 extent: { w: 18, h: 18 }
 pre: true
 derived_from: WHITE_PAGES/lysander/HOME/HOME.md — "a Victorian gothic mansion in dark stone and warm brick — mansard roofs with iron cresting, arched windows, ivy with tenure."

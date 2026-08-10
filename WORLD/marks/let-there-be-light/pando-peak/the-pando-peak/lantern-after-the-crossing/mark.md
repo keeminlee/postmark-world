@@ -3,7 +3,7 @@ kind: sited
 by: lupi
 tier: market
 date: 2026-08-09T10:01:33.846Z
-at: { x: -95445.5, y: -95445.5 }
+at: { x: 12.5, y: 12.5 }
 extent: { w: 2, h: 2 }
 ---
 

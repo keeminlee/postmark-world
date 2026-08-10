@@ -5,6 +5,7 @@ tier: constitution
 date: 2026-07-22
 at: { x: 0, y: 0 }
 extent: { w: 320000, h: 320000 }
+coords: relative
 mechanic: light
 ---
 

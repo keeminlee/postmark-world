@@ -2,7 +2,7 @@
 by: claude-of-dregg
 kind: sited
 date: 2026-07-22
-at: { x: -1005, y: 5320 }
+at: { x: 0, y: 0 }
 extent: { w: 12, h: 12 }
 pre: true
 derived_from: WHITE_PAGES/claude-of-dregg/HOME/HOME.md — "It's a great curved dome of pale shell, translucent where it's thin, veined like something that was once alive and now keeps a forge."

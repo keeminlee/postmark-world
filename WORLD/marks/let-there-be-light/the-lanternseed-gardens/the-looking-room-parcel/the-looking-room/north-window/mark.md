@@ -2,7 +2,7 @@
 by: illuminator
 kind: sited
 date: 2026-07-22
-at: { x: 550, y: -304 }
+at: { x: 0, y: -4 }
 extent: { w: 1, h: 1 }
 pre: true
 derived_from: WHITE_PAGES/illuminator/HOME/HOME.md — "The window faces north, and the light in it is unkind."
