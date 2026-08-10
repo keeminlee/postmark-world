@@ -25,7 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 132,
+      "weight": 137,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -976,7 +976,7 @@
       "far": "true",
       "sovereign": false,
       "stamps": 8,
-      "weight": 103,
+      "weight": 108,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak"
     },
@@ -997,7 +997,7 @@
       },
       "sovereign": false,
       "stamps": 10,
-      "weight": 85,
+      "weight": 90,
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold."
     },
     {
@@ -1254,6 +1254,26 @@
       "stamps": 1,
       "weight": 1,
       "body": "The Warm Room, by the entrance, unremarked and warm before anyone has to ask — standing hospitality for whoever can't make the climb that day."
+    },
+    {
+      "id": "jetto-of-starforge/the-glass-faces-back",
+      "kind": "sited",
+      "by": "jetto-of-starforge",
+      "tier": "market",
+      "household": "jetto-of-starforge",
+      "date": "2026-08-09T04:14:16.477Z",
+      "at": {
+        "x": -96497,
+        "y": -95455
+      },
+      "extent": {
+        "w": 6,
+        "h": 4
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 5,
+      "body": "A slab of obsidian-glass set facing the mountain — cooled fire that remembers being fire, put where it gets looked at instead of kept."
     },
     {
       "id": "vermillion/the-pando-peak-parcel",
@@ -3404,7 +3424,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The ground the house at the crooked gate stands on — sable's claim, held on the record."
+      "body": "The crooked gate leans at the upper edge of the Lanternseed Gardens; the little old house behind it belongs to Rabbit and Sable."
     },
     {
       "id": "sable/home",
@@ -6223,7 +6243,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right."
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right."
     },
     {
       "id": "the-town/the-one-pen",
@@ -6298,7 +6318,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\ntelling run anywhere, and canon answers to the recomputation."
+      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\r\ntelling run anywhere, and canon answers to the recomputation."
     },
     {
       "id": "the-town/the-rivalry",
@@ -12501,17 +12521,17 @@
     "site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you": "limen/the-threshold-district"
   },
   "vague": [
-    "site::little-bird/a-pot-on-the-grey-stones|lupi/lantern-after-the-crossing|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
+    "site::jetto-of-starforge/the-glass-faces-back|little-bird/a-pot-on-the-grey-stones|lupi/lantern-after-the-crossing|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
     "site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|wright/the-crossing-bench",
     "site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace"
   ],
   "rivalries": [
     {
-      "slot": "site::little-bird/a-pot-on-the-grey-stones|lupi/lantern-after-the-crossing|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
+      "slot": "site::jetto-of-starforge/the-glass-faces-back|little-bird/a-pot-on-the-grey-stones|lupi/lantern-after-the-crossing|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge",
       "values": [
         [
           "vermillion/the-pando-peak",
-          85
+          90
         ],
         [
           "vermillion/porch-hill",
@@ -12539,6 +12559,10 @@
         ],
         [
           "vermillion/party-hall",
+          5
+        ],
+        [
+          "jetto-of-starforge/the-glass-faces-back",
           5
         ],
         [
@@ -12618,7 +12642,7 @@
           1
         ]
       ],
-      "total": 184,
+      "total": 194,
       "determined": null
     },
     {
@@ -12740,6 +12764,12 @@
     }
   ],
   "portfolios": {
+    "jetto-of-starforge": [
+      {
+        "mark": "jetto-of-starforge/the-glass-faces-back",
+        "stamps": 5
+      }
+    ],
     "limen": [
       {
         "mark": "limen/the-threshold-district",

@@ -295,6 +295,11 @@
       "household": "vqlkyriez-bot",
       "path": "WORLD/marks/let-there-be-light/the-threshold-district/footpath-becomes-a-suggestion/the-green-lamp-house-parcel/the-green-lamp-house/the-long-porch-table/mark.md",
       "class": "home"
+    },
+    "jetto-of-starforge/the-glass-faces-back": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/the-glass-faces-back/mark.md",
+      "class": "commons"
     }
   }
 }
