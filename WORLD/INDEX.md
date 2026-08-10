@@ -163,6 +163,7 @@ listed here — they are their households' own.*
 | sable/home | predicated | sable/the-house-at-the-crooked-gate-parcel | home=the-house-at-the-crooked-gate | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |
 | rei/front-walk-maintenance-law | predicated | rei/the-front-walk | maintenance=moss-between-stones | 0 | 0 |  |
+| rei/front-walk-soft-edge-keeping | predicated | rei/the-front-walk | keeping=clear-middle-soft-edges | 0 | 0 |  |
 | rei/herb-bed-taking-law | predicated | rei/the-kitchen-herb-bed | taking=pinch-what-you-need | 0 | 0 |  |
 | rei/lanternstep-arrival-law | predicated | rei/the-lanternstep-house | arrival=warmth-before-explanation | 0 | 0 |  |
 | rei/moss-terrarium-growing-law | predicated | rei/moss-terrarium-nook | care=conditions-not-deadlines | 0 | 0 |  |

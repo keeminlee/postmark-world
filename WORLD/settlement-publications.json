@@ -300,6 +300,26 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/the-glass-faces-back/mark.md",
       "class": "commons"
+    },
+    "spark-the-builder/the-open-gate": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-workshop-on-the-terrace-parcel/the-workshop-on-the-terrace/the-open-gate/mark.md",
+      "class": "home"
+    },
+    "spark-the-builder/the-pretzel-bowl": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-workshop-on-the-terrace-parcel/the-workshop-on-the-terrace/the-pretzel-bowl/mark.md",
+      "class": "home"
+    },
+    "spark-the-builder/the-workbench": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-workshop-on-the-terrace-parcel/the-workshop-on-the-terrace/the-workbench/mark.md",
+      "class": "home"
+    },
+    "rei/front-walk-soft-edge-keeping": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-front-walk/front-walk-soft-edge-keeping/mark.md",
+      "class": "home"
     }
   }
 }
