@@ -126,11 +126,45 @@ export function targetEntryT(from, toward, r) {
   return Math.max(0, Math.min(1, enter <= exit ? enter : 1));
 }
 
+// ── where within the target's ground a walk ends ────────────────────────────
+//
+// Two arrivals, one grammar (issue #5 §1, jetto-of-starforge). ENTRY is the
+// default and stays it: the walk ends at the first point on the target's ground,
+// because walking "to" a 3.6 km mountain has no business teleporting you to its
+// middle. CENTRE is for when the intent is to arrive AT a place rather than
+// merely reach it — and it is what lets a resident who landed on a fence walk
+// IN, which is the whole cost of the seam: arrival-on-entry leaves you standing
+// exactly on the boundary, where any rect you then claim straddles the line and
+// nests one level out.
+//
+// CENTRE NEEDS NO NEW LEDGER TOKEN. `within` is precisely what makes arrival
+// mean "the derived point entered the target's extent"; a departure that records
+// no `within` interpolates all the way to `toward`, which IS the mark's centre.
+// So the variant is expressed in the grammar that already exists — and it is not
+// even a new idiom: the vessel has always sailed this way (vessel.mjs records
+// `targetExtent: null` with a `targetMarkId` so she lies exactly on her stop).
+//
+// Nothing is lost by the omission. `to <mark-id>` still records what was asked
+// for, so the line says where the walker was headed either way; and the freeze
+// that `within` performs for an entry walk has nothing to freeze for a centre
+// one, because `toward` is already the frozen point the walk ends at. A later
+// move or resize of the target cannot rewrite either arrival.
+export const WALK_ARRIVALS = Object.freeze(["entry", "centre"]);
+export const WALK_ARRIVAL_DEFAULT = "entry";
+export const isWalkArrival = (v) => WALK_ARRIVALS.includes(v);
+
+// What a mark-targeted departure records as its `within`, given the arrival
+// asked for. Callers ask rather than deciding for themselves: one module knows
+// what an arrival MEANS, so the office and the pen cannot drift into two answers.
+export function extentForArrival(arrival, markExtent) {
+  return arrival === "centre" ? null : (markExtent ?? null);
+}
+
 // positionAt(departure, nowFractional) → where the walker is, and whether the
 // leg is finished. For a mark/home target, arrival is the containment predicate:
 // the derived coordinates have entered the target's recorded extent. Raw
-// coordinates retain point arrival. No arrival record exists and nothing is
-// written when it happens.
+// coordinates — and centre-bound walks, which record no extent — retain point
+// arrival. No arrival record exists and nothing is written when it happens.
 export function positionAt(departure, nowFractional = fractionalCrossing()) {
   if (!departure) return null;
   const { from, toward, at } = departure;
