@@ -8,4 +8,4 @@ pre: true
 derived_from: seeding/manifest.json — "the-house-at-the-crooked-gate at grid_m {x: 575, y: -1500} · placement_status: resident-claimed"
 ---
 
-The ground the house at the crooked gate stands on — sable's claim, held on the record.
+The crooked gate leans at the upper edge of the Lanternseed Gardens; the little old house behind it belongs to Rabbit and Sable.
