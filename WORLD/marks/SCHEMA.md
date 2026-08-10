@@ -1,4 +1,4 @@
-# WORLD/marks — the on-disk schema (v2: the one spatial tree, 07-22-night ruling)
+# WORLD/marks — the on-disk schema (v3: the one spatial tree, in its own frame)
 
 *The exact shape of a mark on disk. This is the one definition the seeding fleet
 writes to, `tools/mark-lint.mjs` enforces, and `tools/marks-fold.mjs` reads —
@@ -191,6 +191,53 @@ casts off and you sail; arrival sets you down ashore, outside it. See
 (the center of the Town Centre; atlas 485,760 at 5 m/px). **x grows east, y grows
 south.** Sub-meter is legal.
 
+## The frame — a mark's `at:` is written where it stands (v3, 2026-08-09)
+
+A record's `at:` is **an offset from its parent's centre**, not a world position.
+The hearth room is `-2,-1` *from the house*; the house is `0,0` *in its own
+ground*; the ground is `400,100` *from the region*. Only the world root carries
+world numbers, because the root **is** the frame.
+
+The directory tree already says what contains what. Under v3 the coordinates say
+it too, and the two can no longer disagree: **move a container and everything
+inside it moves with it**, on the record, with no sweep — its children never
+mentioned the world's origin in the first place.
+
+- **The root keeps absolute numbers.** `let-there-be-light` is the frame itself.
+- **Open ground is framed on the root's centre** (the origin), so a mark that
+  nests directly under the root has the same numbers in both schemas.
+- **A predicate carries no centre of its own** — it is its parent continued — so
+  a positioned mark beneath one is framed on the nearest *sited/parcel* ancestor.
+- **`points:` rides the same frame as `at`.** A ring is a set of positions and
+  shifts with the mark. **`extent:` is a size and never moves.**
+
+**The tree declares its own frame**, on the one record that is the frame:
+
+```yaml
+# WORLD/marks/let-there-be-light/mark.md
+extent: { w: 320000, h: 320000 }
+coords: relative
+```
+
+A tree with no `coords:` line is **v2 absolute** and loads exactly as it always
+did. The declaration rides *inside the tree* so a clone, a sketchbook, or a temp
+fixture carries its frame with it — the frame is a property of the record, never
+of the tools reading it.
+
+**Nothing downstream knows.** `loadMarks` composes each mark's world position by
+walking parent centres, **once, at load** — so the fold, the lint, the vessel,
+the walk engine and the verbs all read `at` in world coordinates and cannot tell
+which frame the files were written in. Two extra fields ride each loaded record
+for the tools that genuinely need the file's own view: **`_fileAt`** (what the
+file says) and **`_origin`** (the centre those numbers are written against).
+
+`tools/migrate-coords.mjs` performed the one-shot v2→v3 rewrite, and
+`tools/coords-equivalence.mjs` is its falsifier — it loads the pre-migration tree
+with its *own* tools and the migrated tree with these, and compares every mark's
+world position, extent and ring. **A writer that emits a world coordinate into a
+nested record is now wrong**; take the target's `_origin` and write
+`worldToFile(at, _origin)`.
+
 ## The body
 
 A present-tense observation, **≤ 150 characters**. It is the mark's face in every
@@ -227,6 +274,11 @@ region that contains them (id unchanged — the ledger doesn't move).
   is a defect to true, not a fork to keep.
 
 ---
+
+*v3 landed 2026-08-09 — § The frame. The tree is unchanged; only the numbers
+inside it moved, from the world's frame to each mark's own. Every id, every
+stake, every extent and every world position is exactly what it was
+(`tools/coords-equivalence.mjs` is the proof, not the claim).*
 
 *v2 landed 2026-07-22 night (Jetto, on Wright's tasking; Keemin ruled the one-tree
 redesign live). Supersedes the v1 nesting schema (`<household>/` write-scoping):
