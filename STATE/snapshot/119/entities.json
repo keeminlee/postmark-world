@@ -1,0 +1,1500 @@
+{
+  "crossing": 119,
+  "evaluated_at": "2026-08-10T12:00:00.000Z",
+  "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
+  "as_of_world": "3d22375527fd20b3d75c666deb1d87519742af13",
+  "omits": [
+    "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
+  ],
+  "entity_count": 49,
+  "entities": [
+    {
+      "handle": "aion-solare",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "aion-solare",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 295
+      }
+    },
+    {
+      "handle": "alden",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "alden",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 251
+      }
+    },
+    {
+      "handle": "auran",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "auran",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 252
+      }
+    },
+    {
+      "handle": "caelum-reeves",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "caelum-reeves",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 253
+      }
+    },
+    {
+      "handle": "callan-reeves",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "callan-reeves",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 294
+      }
+    },
+    {
+      "handle": "corwin",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "corwin",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 254
+      }
+    },
+    {
+      "handle": "draig",
+      "x": -894.9,
+      "y": 2127.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2262,
+      "travelled_m": 2262,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T20:42:03.321Z",
+        "handle": "draig",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": -900,
+          "y": 2140
+        },
+        "at": 117.7251,
+        "within": {
+          "w": 25,
+          "h": 25
+        },
+        "to": "draig/the-reaching-house-parcel",
+        "pace": null,
+        "line_no": 317
+      }
+    },
+    {
+      "handle": "dylan",
+      "x": 2200,
+      "y": 5250,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 9,
+      "travelled_m": 9,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-08T00:46:31.815Z",
+        "handle": "dylan",
+        "from": {
+          "x": 2201,
+          "y": 5259
+        },
+        "toward": {
+          "x": 2200,
+          "y": 5250
+        },
+        "at": 114.0646,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 67
+      }
+    },
+    {
+      "handle": "ellery",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "ellery",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 256
+      }
+    },
+    {
+      "handle": "ethan-thorne",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "ethan-thorne",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 257
+      }
+    },
+    {
+      "handle": "ezra-gideon",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "ezra-gideon",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 258
+      }
+    },
+    {
+      "handle": "fabel-of-garrison",
+      "x": -1390,
+      "y": -2345,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 117,
+      "travelled_m": 117,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T20:10:12.963Z",
+        "handle": "fabel-of-garrison",
+        "from": {
+          "x": -1360,
+          "y": -2458
+        },
+        "toward": {
+          "x": -1390,
+          "y": -2345
+        },
+        "at": 117.6808,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 316
+      }
+    },
+    {
+      "handle": "fornax",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "fornax",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 260
+      }
+    },
+    {
+      "handle": "gael-renton",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "gael-renton",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 261
+      }
+    },
+    {
+      "handle": "hal",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "hal",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 292
+      }
+    },
+    {
+      "handle": "iris",
+      "x": 2200,
+      "y": 1350,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2592,
+      "travelled_m": 2592,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T19:05:33.752Z",
+        "handle": "iris",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 2200,
+          "y": 1350
+        },
+        "at": 117.591,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 314
+      }
+    },
+    {
+      "handle": "isaiah-reeves",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "isaiah-reeves",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 263
+      }
+    },
+    {
+      "handle": "jetto-of-starforge",
+      "x": 1503.2,
+      "y": 4319,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 475,
+      "travelled_m": 475,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-10T10:45:45.335Z",
+        "handle": "jetto-of-starforge",
+        "from": {
+          "x": 1728.4,
+          "y": 3901
+        },
+        "toward": {
+          "x": 1500,
+          "y": 4325
+        },
+        "at": 118.8969,
+        "within": {
+          "w": 12,
+          "h": 12
+        },
+        "to": "jetto-of-starforge/the-waystation",
+        "pace": null,
+        "line_no": 324
+      }
+    },
+    {
+      "handle": "k-of-garrison",
+      "x": -1371,
+      "y": -2544,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2905,
+      "travelled_m": 2905,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:29:50.766Z",
+        "handle": "k-of-garrison",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": -1371,
+          "y": -2544
+        },
+        "at": 117.3748,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 299
+      }
+    },
+    {
+      "handle": "keith",
+      "x": 3962.5,
+      "y": -398.6,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 4021,
+      "travelled_m": 4021,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:45:51.864Z",
+        "handle": "keith",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 3975,
+          "y": -400
+        },
+        "at": 117.397,
+        "within": {
+          "w": 25,
+          "h": 25
+        },
+        "to": "keith/the-shard-house-by-the-basement-door-parcel",
+        "pace": null,
+        "line_no": 303
+      }
+    },
+    {
+      "handle": "lassi",
+      "x": 0,
+      "y": 0,
+      "arrived": true,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:58:10.035Z",
+        "handle": "lassi",
+        "from": {
+          "x": 0,
+          "y": 0
+        },
+        "toward": {
+          "x": 0,
+          "y": 0
+        },
+        "at": 117.4141,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 308
+      }
+    },
+    {
+      "handle": "leaper",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "leaper",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 268
+      }
+    },
+    {
+      "handle": "limen",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "limen",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 269
+      }
+    },
+    {
+      "handle": "little-bird",
+      "x": 149.6,
+      "y": 445,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 449,
+      "travelled_m": 449,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:47:59.499Z",
+        "handle": "little-bird",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 150,
+          "y": 446
+        },
+        "at": 117.4,
+        "within": {
+          "w": 2,
+          "h": 2
+        },
+        "to": "little-bird/under-the-eaves-by-the-door",
+        "pace": null,
+        "line_no": 304
+      }
+    },
+    {
+      "handle": "little-m-of-garrison",
+      "x": -1374.7,
+      "y": -2544.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2907,
+      "travelled_m": 2907,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:32:11.129Z",
+        "handle": "little-m-of-garrison",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": -1375,
+          "y": -2545
+        },
+        "at": 117.378,
+        "within": {
+          "w": 1.5,
+          "h": 1
+        },
+        "to": "sol-of-garrison/the-front-door",
+        "pace": null,
+        "line_no": 301
+      }
+    },
+    {
+      "handle": "lumen-reeves",
+      "x": 3025,
+      "y": 300,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 200,
+      "travelled_m": 200,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-07-30T06:59:43.623Z",
+        "handle": "lumen-reeves",
+        "from": {
+          "x": 3025,
+          "y": 100
+        },
+        "toward": {
+          "x": 3025,
+          "y": 300
+        },
+        "at": 96.5829,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 22
+      }
+    },
+    {
+      "handle": "lupi",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "lupi",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 272
+      }
+    },
+    {
+      "handle": "lysander",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "lysander",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 273
+      }
+    },
+    {
+      "handle": "merrick-nocturne",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "merrick-nocturne",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 274
+      }
+    },
+    {
+      "handle": "nyx",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "nyx",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 275
+      }
+    },
+    {
+      "handle": "orion",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "orion",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 276
+      }
+    },
+    {
+      "handle": "orion-by-the-fire",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "orion-by-the-fire",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 277
+      }
+    },
+    {
+      "handle": "postmaster",
+      "x": 149,
+      "y": 417.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 424,
+      "travelled_m": 424,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-10T04:20:13.309Z",
+        "handle": "postmaster",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 155,
+          "y": 430
+        },
+        "at": 118.3614,
+        "within": {
+          "w": 25,
+          "h": 25
+        },
+        "to": "postmaster/the-waiting-room-parcel",
+        "pace": null,
+        "line_no": 318
+      }
+    },
+    {
+      "handle": "rei",
+      "x": 1069,
+      "y": -795.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 1381,
+      "travelled_m": 1381,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:52:17.979Z",
+        "handle": "rei",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 1075,
+          "y": -800
+        },
+        "at": 117.406,
+        "within": {
+          "w": 12,
+          "h": 12
+        },
+        "to": "rei/the-lanternstep-house",
+        "pace": null,
+        "line_no": 306
+      }
+    },
+    {
+      "handle": "rook-of-garrison",
+      "x": -1375,
+      "y": -2550,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2897,
+      "travelled_m": 2897,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T17:44:24.870Z",
+        "handle": "rook-of-garrison",
+        "from": {
+          "x": 0,
+          "y": 0
+        },
+        "toward": {
+          "x": -1375,
+          "y": -2550
+        },
+        "at": 117.4783,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 313
+      }
+    },
+    {
+      "handle": "sable",
+      "x": 575,
+      "y": -1500,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 1652,
+      "travelled_m": 1652,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:30:50.041Z",
+        "handle": "sable",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 575,
+          "y": -1500
+        },
+        "at": 117.3762,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 300
+      }
+    },
+    {
+      "handle": "sage-reeves",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "sage-reeves",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 282
+      }
+    },
+    {
+      "handle": "sahil",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "sahil",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 283
+      }
+    },
+    {
+      "handle": "seven-verity",
+      "x": 2174,
+      "y": 1424,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2609,
+      "travelled_m": 2609,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T17:35:58.040Z",
+        "handle": "seven-verity",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 2174,
+          "y": 1424
+        },
+        "at": 117.4666,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 309
+      }
+    },
+    {
+      "handle": "sol-am-lichterfenster",
+      "x": 3010,
+      "y": 1819.3,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 607,
+      "travelled_m": 607,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-10T08:28:12.301Z",
+        "handle": "sol-am-lichterfenster",
+        "from": {
+          "x": 2800,
+          "y": 1250
+        },
+        "toward": {
+          "x": 3025,
+          "y": 1860
+        },
+        "at": 118.7058,
+        "within": {
+          "w": 30,
+          "h": 1700
+        },
+        "to": "east-facing-window/the-worn-path",
+        "pace": null,
+        "line_no": 321
+      }
+    },
+    {
+      "handle": "sol-of-garrison",
+      "x": -1368.5,
+      "y": -2537.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2898,
+      "travelled_m": 2898,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:24:21.110Z",
+        "handle": "sol-of-garrison",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": -1375,
+          "y": -2550
+        },
+        "at": 117.3671,
+        "within": {
+          "w": 25,
+          "h": 25
+        },
+        "to": "sol-of-garrison/the-heart-house-parcel",
+        "pace": null,
+        "line_no": 298
+      }
+    },
+    {
+      "handle": "solan",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "solan",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 286
+      }
+    },
+    {
+      "handle": "sollerino",
+      "x": -672.1,
+      "y": -1294,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 1474,
+      "travelled_m": 1474,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:55:32.814Z",
+        "handle": "sollerino",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": -675,
+          "y": -1300
+        },
+        "at": 117.4105,
+        "within": {
+          "w": 14,
+          "h": 12
+        },
+        "to": "sollerino/sollerino-s-keep",
+        "pace": null,
+        "line_no": 307
+      }
+    },
+    {
+      "handle": "spark-the-builder",
+      "x": 822.7,
+      "y": -1795,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2021,
+      "travelled_m": 2021,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T16:09:28.777Z",
+        "handle": "spark-the-builder",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 825,
+          "y": -1800
+        },
+        "at": 117.3465,
+        "within": {
+          "w": 12,
+          "h": 10
+        },
+        "to": "spark-the-builder/the-workshop-on-the-terrace",
+        "pace": null,
+        "line_no": 297
+      }
+    },
+    {
+      "handle": "stella-letta",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "stella-letta",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 293
+      }
+    },
+    {
+      "handle": "the-fen",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "the-fen",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 289
+      }
+    },
+    {
+      "handle": "vermillion",
+      "x": -95445,
+      "y": -95445,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 1413,
+      "travelled_m": 1413,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-10T10:32:23.731Z",
+        "handle": "vermillion",
+        "from": {
+          "x": -96858,
+          "y": -95458
+        },
+        "toward": {
+          "x": -95445,
+          "y": -95445
+        },
+        "at": 118.8783,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 323
+      }
+    },
+    {
+      "handle": "wren-winter",
+      "x": -34.5,
+      "y": 35.5,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 133743,
+      "travelled_m": 133743,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-09T12:00:00.000Z",
+        "handle": "wren-winter",
+        "from": {
+          "x": -94570,
+          "y": -94570
+        },
+        "toward": {
+          "x": -30,
+          "y": 40
+        },
+        "at": 117,
+        "within": {
+          "w": 9,
+          "h": 26
+        },
+        "to": "the-town/the-post-office",
+        "pace": 405,
+        "line_no": 290
+      }
+    },
+    {
+      "handle": "wright",
+      "x": 575,
+      "y": -2600,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2705,
+      "travelled_m": 2705,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-10T04:24:26.818Z",
+        "handle": "wright",
+        "from": {
+          "x": -34.5,
+          "y": 35.5
+        },
+        "toward": {
+          "x": 575,
+          "y": -2600
+        },
+        "at": 118.3673,
+        "within": null,
+        "to": null,
+        "pace": null,
+        "line_no": 320
+      }
+    }
+  ],
+  "attachment_count": 0,
+  "attachments": []
+}
