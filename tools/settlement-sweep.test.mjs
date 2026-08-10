@@ -39,7 +39,7 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   };
 
   mkdirSync(join(repo, "tools"), { recursive: true });
-  for (const file of ["geometry.mjs", "marks-fold.mjs", "mark-lint.mjs"])
+  for (const file of ["geometry.mjs", "marks-fold.mjs", "mark-lint.mjs", "determination.mjs", "consent.mjs"])
     cpSync(join(HERE, file), join(repo, "tools", file));
   put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
   put("WORLD/marks/let-there-be-light/mark.md", record({
@@ -180,7 +180,7 @@ test("the authorship wall: a registered author never publishes from another hous
   };
 
   mkdirSync(join(repo, "tools"), { recursive: true });
-  for (const file of ["geometry.mjs", "marks-fold.mjs", "mark-lint.mjs"])
+  for (const file of ["geometry.mjs", "marks-fold.mjs", "mark-lint.mjs", "determination.mjs", "consent.mjs"])
     cpSync(join(HERE, file), join(repo, "tools", file));
   put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
   put("WORLD/marks/let-there-be-light/mark.md", record({

@@ -31,7 +31,7 @@ function fixture(t) {
     writeFileSync(full, text);
   };
   mkdirSync(join(repo, "tools"), { recursive: true });
-  for (const file of ["geometry.mjs", "marks-fold.mjs", "lane-wall.mjs"])
+  for (const file of ["geometry.mjs", "marks-fold.mjs", "lane-wall.mjs", "determination.mjs", "consent.mjs"])
     cpSync(join(HERE, file), join(repo, "tools", file));
   put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
   put("WORLD/marks/let-there-be-light/mark.md", record({
