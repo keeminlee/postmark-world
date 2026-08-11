@@ -470,6 +470,18 @@ test("RIDING with no destination: she carries you round the whole day's ring and
   // And he ends the day where she does, having declared nothing since.
   const aDayOn = outbound.departFc + DAY_CROSSINGS;
   assert.deepEqual(at(positionAt(rider, aDayOn, service, ticket)), at(vesselPositionAt(service, aDayOn)));
+
+  // A FORTNIGHT ON, still riding — and the answer does not depend on how long
+  // ago the agreement was made. The replay stops at the cast-off that proved she
+  // took him, because nothing later in a passage with no ending can end it; a
+  // derivation that re-walked every sailing since would cost more every day it
+  // stood, on every read, for every rider.
+  for (const days of [7, 14]) {
+    const later = outbound.departFc + days * DAY_CROSSINGS + 0.3;
+    const p = positionAt(rider, later, service, ticket);
+    assert.equal(p.aboard, "the-post-office", `${days} days on and she still has him`);
+    assert.deepEqual(at(p), at(vesselPositionAt(service, later)), "wherever she is, that is where he is");
+  }
 });
 
 test("A WALK DECLARED ABOARD IS THE CHOICE TO GO ASHORE: deposited at her next arrival, and the leg starts there", () => {

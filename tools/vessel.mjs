@@ -420,12 +420,20 @@ function rideFrom(departure, service, held, fractional) {
   // BEFORE it is how they got to the quay, and says nothing about leaving.
   const goingAshore = departure.at > held.born;
 
+  // A passage with no ending in it cannot be ended by replaying more of it, so
+  // the replay stops at the first cast-off that proves she took them. Without
+  // this a `riding` agreement re-walks every sailing since it was made on every
+  // single read — six a day, forever, per walker — to reach an answer that was
+  // already settled by the first one.
+  const endless = !bound && !goingAshore;
+
   let carrying = false;
   for (const sailing of sailingsBetween(service, held.born - 1e-9, fractional)) {
     if (sailing.departFc < held.born) continue;                       // she left before they agreed
     if (held.severed !== null && held.severed <= sailing.departFc) break; // withdrawn before this cast-off
     carrying = true;
     if (sailing.arriveFc > fractional) return {};                     // still at sea on this leg
+    if (endless) break;                                               // nothing later can end it
     // ASHORE AT THE FIRST ARRIVAL THAT ENDS IT: the stop the agreement named,
     // or — for a walker who declared a walk while aboard — the next one she
     // makes after they said so.
