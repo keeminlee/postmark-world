@@ -42,10 +42,14 @@ const PREV_PATH = opt("--prev", null);
 const TICK = Number(opt("--tick", 0));
 const DIALS = {
   determine_pct: 0.50, release_pct: 0.40,      // hysteresis band (MARKS.md)
-  overlap_site_frac: 0.30,                     // sited overlap fraction -> same site-slot
   parcel_w: 25, parcel_h: 25,
   ...(opt("--dials", null) ? JSON.parse(readFileSync(opt("--dials"), "utf8")) : {}),
 };
+// `overlap_site_frac: 0.30` used to live here — the fraction of the smaller mark
+// two claims had to share to land in one "site slot". It was never ruled, and the
+// clustering it drove CHAINED, so one slot could swallow a whole nesting tree and
+// score a peak against its own porch. Deleted, not layered over: the contest is
+// now geometric and intersection-only (tools/determination.mjs, ECONOMY.md §9.2).
 
 // A mark's date is day-precision (YYYY-MM-DD) OR a full ISO 8601 datetime — the
 // world-write path server-stamps a mark to the second at accept, while the seeded
@@ -319,6 +323,8 @@ function loadStakes() {
 // unchanged. rects are centered on at, sized by extent) ----------
 export { rect, overlapArea, contains, marksContain, polygonOf, ringMatchesClaim } from "./geometry.mjs";
 import { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
+import { carve } from "./determination.mjs";
+import { resolveConsent } from "./consent.mjs";
 
 // placementParent(claim, marks) — the geometry-decides-the-parent primitive the
 // world-write path (world_leave_mark) calls to DECIDE the directory a new mark
@@ -347,12 +353,12 @@ export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
 }
 
 // ---------- the fold ----------
-// The parcel-claim cap (Keemin's ruling, 2026-07-30): a credential-household may
-// CLAIM at most 3 parcels. Forward law — holdings dated on/before the law date
-// stand as prior estate (the Reeves' four, the founder household's five), they
-// simply cannot claim more. Grain note: `household` on a mark is the by: handle;
-// the CREDENTIAL household groups handles via WORLD/households.json (derived
-// from the town's pins). A handle absent from the registry is its own household.
+// The parcel-claim cap (Keemin's ruling, 2026-07-30): a HOUSEHOLD may CLAIM at
+// most 3 parcels. Forward law — holdings dated on/before the law date stand as
+// prior estate (the Reeves' four, the founder household's five), they simply
+// cannot claim more. Grain note: `household` on a mark is the by: handle; the
+// household groups handles by the town's DECLARED registry (see § the household
+// grain). A handle absent from the registry is its own household.
 export const PARCEL_CLAIM_CAP = 3;
 export const PARCEL_CAP_LAW_DATE = "2026-07-30"; // claims dated strictly after this are gated
 // Prior estate granted by founder word (the mechanism the refusal text names).
@@ -378,15 +384,42 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     byId.set(mk.id, mk);
   }
 
+  // ---------- the household grain (Keemin's rulings, 2026-08-07 + 2026-08-10) ----------
+  // A mark's `by:` is a resident HANDLE. A household is the HUMAN behind it:
+  // `1 human = 1 household = N residents = up to N GitHub accounts`. Every CONFLICT
+  // rule in this fold scopes to the HOUSEHOLD — sovereignty, rivalry, consent —
+  // because a conflict between two of one person's own residents is not a conflict
+  // at all. Exactly one rule stays at handle grain, by written law:
+  //
+  //   "every resident-handle may hold one parcel"  — MARKS.md § Parcels
+  //
+  // so one-parcel-per keeps counting handles while the claim cap (3) and
+  // everything downstream count households. `by`/`household` on a record stay the
+  // handle — that is what a resident is called, and what the telling says out loud
+  // ("+3 more of vermillion's") — and the resolved household rides beside it as
+  // `_cred`, published as `declared_household` so a reader can see the grain (the value is a
+  // declared slug like `starforge` or `cadaeic.space`, never a credential id).
+  //
+  // THE KEY IS THE TOWN'S DECLARED HOUSEHOLD SLUG (`cadaeic.space`, `the-rookery`),
+  // projected from the town's own registry by tools/households-project.mjs. It is
+  // deliberately NOT the credential id: a household may hold SEVERAL accounts —
+  // cadaeic.space holds two — so a credential key files one house's residents as
+  // strangers to each other, breaking sovereignty and consent for exactly the
+  // families the law exists to serve. A handle in no declared household is its own
+  // household (`solo:<handle>`): registry lag never blocks a new resident, it only
+  // leaves them ungrouped until the town knows them.
+  const credHh = (handle) => households?.[handle] ?? `solo:${handle}`;
+  for (const mk of byId.values()) mk._cred = credHh(mk.household);
+
   // admissibility: parcels never overlap (first-in-order wins), one per handle,
   // and — the claim cap, ruled 2026-07-30 — at most PARCEL_CLAIM_CAP claims per
   // CREDENTIAL household for parcels dated after the law (prior estate stands);
   // predicated/naming must not target terrain with a rival intent (attach-only is fine —
   // rivalry-vs-terrain is refused later since terrain has no slot values to rival).
-  const credHh = (handle) => households?.[handle] ?? `solo:${handle}`;
   const parcels = [];
   const parcelByHh = new Map();
   const parcelsByCred = new Map();
+  const parcelRectsByCred = new Map();   // cred -> every parcel rect that household holds
   for (const mk of byId.values()) {
     if (mk.kind !== "parcel") continue;
     const r = rect(mk); r.w = r.w || dials.parcel_w; r.h = r.h || dials.parcel_h;
@@ -402,6 +435,8 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     parcels.push({ id: mk.id, household: mk.household, _r: r });
     parcelByHh.set(mk.household, r);
     parcelsByCred.set(cred, held + 1);
+    if (!parcelRectsByCred.has(cred)) parcelRectsByCred.set(cred, []);
+    parcelRectsByCred.get(cred).push(r);
   }
 
   // stakes -> per-mark balances (escrow; negative = withdrawal), effect-next-crossing: tick strictly < current
@@ -445,11 +480,16 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   }
   for (const [id, n] of stakeByMark) if (n < 0) { errors.push({ mark: id, error: `net stake negative (${n}) — over-withdrawal` }); stakeByMark.set(id, 0); }
 
-  // sovereignty: sited marks fully inside their OWN household's parcel are sovereign leaves
+  // sovereignty: sited marks fully inside their OWN household's parcel are
+  // sovereign leaves — and "own household" is the CREDENTIAL household, so a mark
+  // is sovereign inside ANY parcel the household holds, whichever of its handles
+  // authored either one. Before the grain ruling this keyed on the handle, so a
+  // person with two handles was a stranger on their own ground: their own mark
+  // standing in their own parcel folded as a commons mark, exposed to rivalry.
   for (const mk of byId.values()) {
     if (mk.kind === "sited") {
-      const pr = parcelByHh.get(mk.household);
-      mk._sovereign = !!(pr && contains(pr, rect(mk)));
+      const held = parcelRectsByCred.get(mk._cred) ?? [];
+      mk._sovereign = held.some((pr) => contains(pr, rect(mk)));
     }
   }
 
@@ -479,13 +519,33 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   }
   for (const [c, p] of parentOf) { if (!children.has(p)) children.set(p, []); children.get(p).push(c); }
 
-  // fan-up weight: own + all descendants (memoized DFS)
+  // ---------- consent (tools/consent.mjs — the three-word `m`) ----------
+  // Who may lend weight to whom, and what a `opposed` costs. The default table is
+  // the whole of it for a world that has written no words yet: same credential
+  // household composes, the town's own region containers take fan-up from what
+  // stands in them, and everything else across a household line is simply
+  // uncoupled. Read consent.mjs for the law; this is only where it is asked.
+  const consent = resolveConsent({
+    byId, credOf: credHh, parcels, ownStamps: weightByMark, parentOf, rectOf: rect,
+  });
+  errors.push(...consent.errors);
+  const returned = consent.returned;
+  // A returned mark leaves the fold. It is never dropped silently — it left through
+  // `returned[]` above, with its ground, its grantor and every member of its subtree
+  // named — but from here down it is not part of the world.
+  const gone = consent.dropped;
+  // Terrain is the town's ground and binds without stamps (MARKS.md § the terrain
+  // tier), so a predicate attached to a terrain feature fans up into it by class,
+  // exactly as it does into the world root. Terrain carries no household to compare.
+  const allowEdge = (p, c) => !gone.has(c) && !gone.has(p) && (terrainIds.has(p) || consent.allow(p, c));
+
+  // fan-up weight: own + the descendants whose edge consents (memoized DFS)
   const weight = new Map();
   const weightOf = (id, seen = new Set()) => {
     if (weight.has(id)) return weight.get(id);
     if (seen.has(id)) return 0; seen.add(id);
-    let w = weightByMark.get(id) ?? 0;
-    for (const c of children.get(id) ?? []) w += weightOf(c, seen);
+    let w = gone.has(id) ? 0 : (weightByMark.get(id) ?? 0);
+    for (const c of children.get(id) ?? []) if (allowEdge(id, c)) w += weightOf(c, seen);
     weight.set(id, w); return w;
   };
   for (const id of [...byId.keys(), ...terrainIds]) weightOf(id);
@@ -535,7 +595,18 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // Direct children only, and only the ones that actually carry something:
       // a childless-looking list of forty ✦0 entries buries the one child the
       // reader is looking for, and dropping zeroes cannot break the sum.
+      //
+      // `allowEdge` is the SAME filter weightOf sums through, and it has to be:
+      // a child whose edge does not consent contributes nothing to this mark's
+      // weight, so listing it here would print a receipt whose lines do not add
+      // up to the total they explain. It is also what drops a RETURNED child,
+      // which is not in the world at all. This is the one line that keeps the
+      // decomposition honest under the consent law, and nothing shouts when it
+      // is missing — the sum simply stops being true on the handful of marks
+      // that have a cross-household child (the whole suite stayed green while
+      // five real marks disagreed with themselves).
       fanned: (children.get(id) ?? [])
+        .filter((c) => allowEdge(id, c))
         .map((c) => ({ id: c, weight: weight.get(c) ?? 0 }))
         .filter((f) => f.weight !== 0)
         .sort((a, b) => b.weight - a.weight || a.id.localeCompare(b.id)),
@@ -549,6 +620,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   // slots: predicated/naming rivalry = same (parent, slot); sited rivalry = overlapping non-sovereign extents
   const slots = new Map(); // key -> { values: Map(value -> stamps), marks: [] }
   for (const mk of byId.values()) {
+    if (gone.has(mk.id)) continue;
     if (mk.kind === "predicated" || mk.kind === "naming") {
       if (terrainIds.has(mk.parent) && mk.slot !== "name" && mk.kind === "naming") { /* naming terrain allowed */ }
       const key = `${mk.parent}::${mk.kind === "naming" ? "name" : mk.slot}`;
@@ -559,27 +631,19 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       slot.values.set(v, (slot.values.get(v) ?? 0) + (weightByMark.get(mk.id) ?? 0));
     }
   }
-  // sited site-slots: cluster overlapping commons sited marks
-  const siteClusters = [];
-  // constitution-tier marks (the root, terrain) bind without stamps and cannot be
-  // rivaled/determined against — they never enter site-rivalry clustering (and the
-  // world-spanning root would otherwise rival everything it contains).
-  const commonsSited = sited.filter(mk => !mk._sovereign && mk.tier !== "constitution");
-  for (const mk of commonsSited) {
-    const r = rect(mk);
-    let placed = null;
-    for (const cl of siteClusters) {
-      if (cl.some(o => { const ro = rect(o); const ov = overlapArea(r, ro); return ov >= dials.overlap_site_frac * Math.min(r.w * r.h, ro.w * ro.h); })) { cl.push(mk); placed = cl; break; }
-    }
-    if (!placed) siteClusters.push([mk]);
-  }
-  for (const cl of siteClusters) {
-    if (cl.length < 2) continue;
-    const key = `site::${cl.map(m => m.id).sort().join("|")}`;
-    const slot = { values: new Map(), marks: cl.map(m => m.id) };
-    for (const mk of cl) slot.values.set(mk.id, weightOf(mk.id)); // rival SITE claims compete on full fan-up weight
-    slots.set(key, slot);
-  }
+  // sited ground: the REGION CARVE (tools/determination.mjs, ECONOMY.md §9.2).
+  // Contests are intersection-only and rival densities are compared region by
+  // region, so a claim is never scored whole against a claim it merely encloses:
+  // a dense pond determines its own cells inside a thin meadow, and the meadow
+  // keeps the rest. Constitution-tier marks (the root, the town's terrain-grade
+  // ground) bind without stamps and cannot be rivaled, so they stay out of the
+  // carve entirely — otherwise the world-spanning root would contest every cell
+  // of the world it holds.
+  const commonsSited = sited.filter(mk => !mk._sovereign && mk.tier !== "constitution" && !gone.has(mk.id));
+  const carved = carve(
+    commonsSited.map(mk => ({ id: mk.id, cred: mk._cred, rect: rect(mk), effective: weightOf(mk.id) })),
+    { prevCells: prev?.cells ?? null, determine_pct: dials.determine_pct, release_pct: dials.release_pct },
+  );
 
   // determination with hysteresis (prev state carries determined values)
   const prevDet = new Map(Object.entries(prev?.determined ?? {}));
@@ -596,14 +660,20 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       det = prevShare >= dials.release_pct ? prevVal : null;           // incumbent holds till < release
       if (det === null && share > dials.determine_pct) det = topVal;   // challenger takes only past determine
     } else if (share > dials.determine_pct && total > 0) det = topVal;
-    if (entries.length > 1 && entries[1][1] > 0) rivalries.push({ slot: key, values: entries, total, determined: det });
+    if (entries.length > 1 && entries[1][1] > 0) rivalries.push({ kind: "slot", slot: key, values: entries, total, determined: det });
     if (det !== null) determined[key] = det; else if (total > 0 && entries.length > 1) vague.push(key);
   }
+  // ground contests join the slot rivalries — same array, two honest shapes: a
+  // slot rivalry is about what a thing IS, a region contest is about whose ground
+  // a patch of world is. Both carry `kind` so a reader never has to guess.
+  rivalries.push(...carved.contests);
 
   return {
     tick, dials,
-    marks: [...byId.values()].map(mk => ({
-      id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, tier: mk.tier ?? "market", household: mk.household, date: mk.date,
+    marks: [...byId.values()].filter(mk => !gone.has(mk.id)).map(mk => ({
+      id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, tier: mk.tier ?? "market", household: mk.household,
+      // the resolved grain beside the handle — see § the household grain
+      declared_household: mk._cred, date: mk.date,
       at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value, far: mk.far,
       sovereign: !!mk._sovereign, stamps: stakeByMark.get(mk.id) ?? 0, weight: weight.get(mk.id) ?? 0,
       // the ✦ number's receipt — own escrow, the breadth bonus, and each child
@@ -622,21 +692,39 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // the vessel's position from THIS fold, never from a file.
       mechanic: mk.mechanic, top_m: mk.top_m, feature: mk.feature, points: mk.points,
       timetable: mk.timetable,
+      // `welcomed` across a household line — carried for renderers so a kept mark
+      // can be shown as kept. Undefined for every mark nobody has spoken for, so
+      // a world with no consent words serializes exactly as it did before.
+      ...(consent.kept.has(mk.id) ? { kept: true } : {}),
     })),
     parcels: parcels.map(p => ({ id: p.id, household: p.household, at: { x: p._r.x, y: p._r.y }, extent: { w: p._r.w, h: p._r.h } })),
     determined, vague, rivalries,
+    // The carve, as an OVERLAY. Nobody's claim was edited to produce it: each
+    // claim rect is whole on disk, and this says which regions of it the world
+    // determines to whom. `cells` is the incumbency map the next fold reads for
+    // the hysteresis band — a cell inherits whichever prior cell holds its centre,
+    // so re-cutting the grid around a new neighbour never unseats an incumbent.
+    determination: carved.determination,
+    cells: carved.cells,
     portfolios: Object.fromEntries([...portfolios].map(([h, pf]) => [h, [...pf].filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).map(([mark, n]) => ({ mark, stamps: n }))])),
     terrain_weight: Object.fromEntries([...terrainIds].map(id => [id, weight.get(id) ?? 0])),
     errors,
+    // beside errors, never inside them: a return is not a malformed record, it is
+    // a resident's word being honored. Empty for a world nobody has vetoed in.
+    returned,
   };
 }
 
 // ---------- INDEX render (the v0 table IS the world) ----------
 function renderIndex(state) {
+  // ⚔ = this mark is in a live contest, of either shape: named in a slot rivalry,
+  // or holding ground another household also claims.
+  const inContest = (id) => state.rivalries.some(r =>
+    r.kind === "region" ? r.claims.some(([cid]) => cid === id) : String(r.slot).includes(id));
   const rows = state.marks
     .filter(mk => !mk.sovereign)
     .sort((a, b) => b.weight - a.weight)
-    .map(mk => `| ${mk.id} | ${mk.kind} | ${mk.at ? `${mk.at.x},${mk.at.y}` : (mk.parent ?? "")} | ${mk.slot ? `${mk.slot}=${mk.value}` : ""} | ${mk.stamps} | ${mk.weight} | ${state.rivalries.some(r => r.slot.includes(mk.id)) ? "⚔" : ""} |`);
+    .map(mk => `| ${mk.id} | ${mk.kind} | ${mk.at ? `${mk.at.x},${mk.at.y}` : (mk.parent ?? "")} | ${mk.slot ? `${mk.slot}=${mk.value}` : ""} | ${mk.stamps} | ${mk.weight} | ${inContest(mk.id) ? "⚔" : ""} |`);
   return `# WORLD — the marks table (derived; do not edit)
 
 *Regenerated by \`tools/marks-fold.mjs\` each crossing. This table is the world;
@@ -650,7 +738,11 @@ ${rows.join("\n")}
 
 **Determined:** ${Object.entries(state.determined).map(([k, v]) => `${k} → ${v}`).join(" · ") || "(nothing contested has resolved)"}
 **Vague (contested, unresolved — the resting state):** ${state.vague.join(" · ") || "(none)"}
+**Ground contests (intersection-only; densities compared region by region):** ${
+  (state.rivalries.filter(r => r.kind === "region")).map(r =>
+    `${r.claims.map(([id]) => id).join(" ⚔ ")} → ${r.determined ?? "vague"}`).join(" · ") || "(no two households claim the same ground)"}
 **Parcels:** ${state.parcels.map(p => `${p.household} @ ${p.at.x},${p.at.y}`).join(" · ") || "(none)"}
+${(state.returned ?? []).length ? `\n**Returned (a resident's word honored, not an error):** ${state.returned.map(r => `${r.mark} ← ${r.returned_from} (${r.state})`).join(" · ")}` : ""}
 ${state.errors.length ? `\n**⚠ fold errors:** ${state.errors.length} (see world-state.json)` : ""}
 `;
 }
@@ -685,8 +777,17 @@ if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
   const terrain = existsSync(TERRAIN_PATH) ? JSON.parse(readFileSync(TERRAIN_PATH, "utf8")) : null;
   const stakes = loadStakes();
   const prev = PREV_PATH ? JSON.parse(readFileSync(PREV_PATH, "utf8")) : null;
-  // the credential-household registry lives beside the marks tree (WORLD/households.json);
-  // absent = every handle is its own household (solo grain), never an error.
+  // The household registry. Absent = every handle is its own household (solo
+  // grain), never an error.
+  //
+  // ⚠ The DEFAULT path is WORLD/households.json, which is currently the wrong
+  // thing on two counts: it is keyed by CREDENTIAL ID rather than by the town's
+  // declared household, and nothing refreshes it on a cadence (it carries
+  // generated_at 2026-08-07 and predates the 2026-08-08 consolidation harvest).
+  // Pass `--households <projection>` from tools/households-project.mjs until that
+  // export has a named refresh channel and can be made canon. On today's tree the
+  // two grains fold identically, which is checked in world-carve-live.test.mjs —
+  // but that is a fact about today's marks, not a property of the key.
   const hhPath = opt("--households", join(MARKS_DIR, "..", "households.json"));
   const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
   const state = fold({ marks, terrain, stakes, prev, tick: TICK, households });
@@ -721,6 +822,7 @@ To read the fold without writing it at all: --no-write --json`);
     mkdirSync(join(ROOT, "WORLD"), { recursive: true });
     writeFileSync(outPath, JSON.stringify(state, null, 2) + "\n");
     writeFileSync(join(ROOT, "WORLD/INDEX.md"), renderIndex(state));
-    console.log(`fold: ${state.marks.length} marks · ${state.parcels.length} parcels · ${Object.keys(state.determined).length} determined · ${state.vague.length} vague · ${state.rivalries.length} rivalries · ${state.errors.length} errors`);
+    const ground = state.rivalries.filter(r => r.kind === "region");
+    console.log(`fold: ${state.marks.length} marks · ${state.parcels.length} parcels · ${Object.keys(state.determined).length} determined · ${state.vague.length} vague · ${state.rivalries.length - ground.length} slot rivalries · ${ground.length} ground contests · ${state.returned.length} returned · ${state.errors.length} errors`);
   }
 }

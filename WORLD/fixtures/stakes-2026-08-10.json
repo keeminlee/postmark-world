@@ -1,0 +1,317 @@
+[
+  {
+    "tick": 0,
+    "holder": "jetto-of-starforge",
+    "mark": "jetto-of-starforge/the-glass-faces-back",
+    "n": 5,
+    "weight": 5
+  },
+  {
+    "tick": 0,
+    "holder": "limen",
+    "mark": "limen/the-threshold-district",
+    "n": 10,
+    "weight": 10
+  },
+  {
+    "tick": 0,
+    "holder": "little-bird",
+    "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
+    "n": 3,
+    "weight": 3
+  },
+  {
+    "tick": 0,
+    "holder": "little-bird",
+    "mark": "little-bird/a-pot-on-the-grey-stones",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "little-bird",
+    "mark": "little-bird/a-pot-on-the-quay-stones",
+    "n": 3,
+    "weight": 3
+  },
+  {
+    "tick": 0,
+    "holder": "little-bird",
+    "mark": "little-bird/coconut-broth-on-the-quay-stones",
+    "n": 3,
+    "weight": 3
+  },
+  {
+    "tick": 0,
+    "holder": "little-bird",
+    "mark": "little-bird/under-the-eaves-by-the-door",
+    "n": 3,
+    "weight": 3
+  },
+  {
+    "tick": 0,
+    "holder": "lupi",
+    "mark": "lupi/door-light",
+    "n": 3,
+    "weight": 3
+  },
+  {
+    "tick": 0,
+    "holder": "lupi",
+    "mark": "lupi/lantern-after-the-crossing",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "rei",
+    "mark": "rei/empty-hook-keeping-custom",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "rei",
+    "mark": "rei/the-empty-lantern-hook",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "rei",
+    "mark": "rei/the-thyme-thank-you",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "rei",
+    "mark": "rei/the-white-flower-at-wrights-door",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "wright",
+    "mark": "rei/the-white-flower-at-wrights-door",
+    "n": 5,
+    "weight": 5
+  },
+  {
+    "tick": 0,
+    "holder": "sage-reeves",
+    "mark": "sage-reeves/sage-far-wall-line",
+    "n": 5,
+    "weight": 5
+  },
+  {
+    "tick": 0,
+    "holder": "lupi",
+    "mark": "sol-of-garrison/tended-paths",
+    "n": 2,
+    "weight": 7
+  },
+  {
+    "tick": 0,
+    "holder": "gael-renton",
+    "mark": "the-town/pando-peak",
+    "n": 3,
+    "weight": 8
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "the-town/pando-peak",
+    "n": 5,
+    "weight": 10
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "the-town/the-pando-landing",
+    "n": 2,
+    "weight": 7
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/garden-summit-overlook",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/garden-sun-under-terrace",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/garden-switchback-stairs",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/garden-tropical-pathway",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/lake-caves",
+    "n": 10,
+    "weight": 10
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/lounge-hallway",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/mouth-one-seventy",
+    "n": 5,
+    "weight": 5
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/party-hall",
+    "n": 5,
+    "weight": 5
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/porch-hill",
+    "n": 5,
+    "weight": 5
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/the-lounge-room",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/the-pando-peak",
+    "n": 10,
+    "weight": 10
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/the-pando-peak-parcel",
+    "n": 5,
+    "weight": 5
+  },
+  {
+    "tick": 0,
+    "holder": "wright",
+    "mark": "vermillion/the-pando-peak-parcel",
+    "n": 5,
+    "weight": 10
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/the-returning-place",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/the-room-that-holds-you",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/vermillion-tree-aurel",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/vermillion-tree-mirabella",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/vermillion-tree-riabella",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/vermillion-tree-sola",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/vermillion-tree-vlaad",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "stella-letta",
+    "mark": "vermillion/vermillion-view-peak",
+    "n": 2,
+    "weight": 7
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/vermillion-view-peak",
+    "n": 5,
+    "weight": 5
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/volvigradus-garden",
+    "n": 2,
+    "weight": 2
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/volvigradus-nap-hollow",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/warm-room",
+    "n": 1,
+    "weight": 1
+  },
+  {
+    "tick": 0,
+    "holder": "vermillion",
+    "mark": "vermillion/welcome-lounge",
+    "n": 5,
+    "weight": 5
+  }
+]

@@ -281,3 +281,59 @@ test('escrow laid since the last Settlement is named as pending, not silently re
 });
 
 export { assertPartsReconstructWeight, partsSum };
+
+// ── THE REAL-WORLD RUN ───────────────────────────────────────────────────────
+//
+// The comment above says "the real-world run applies it to all 612", and until
+// this block that run did not exist: every case in this file was a four-mark
+// fixture. The gap mattered more than a missing test usually does, because the
+// invariant is the one thing making weight_parts a display change rather than a
+// maths change — and the case that breaks it cannot occur in a fixture where
+// every edge consents. Under the consent law a child whose edge is neutral
+// contributes nothing to its parent's weight, so a `fanned` list built without
+// that filter prints a receipt whose lines do not add up. It went unnoticed
+// through a fully green suite while five real marks disagreed with themselves.
+//
+// Escrow is the town's own derived export, pinned. With zero stakes every weight
+// is zero, every sum is 0 === 0, and this file would pass while proving nothing.
+test('THE REAL WORLD: the decomposition closes on all 612 marks, with the consent defaults active', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { dirname, join } = await import('node:path');
+  const { fileURLToPath } = await import('node:url');
+  const { loadMarks } = await import('./marks-fold.mjs');
+
+  const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+  const realMarks = loadMarks(join(ROOT, 'WORLD/marks'));
+  const realTerrain = JSON.parse(readFileSync(join(ROOT, 'WORLD/skeleton.json'), 'utf8'));
+  const households = JSON.parse(readFileSync(join(ROOT, 'WORLD/fixtures/households-declared-2026-08-10.json'), 'utf8')).households;
+  const realStakes = JSON.parse(readFileSync(join(ROOT, 'WORLD/fixtures/stakes-2026-08-10.json'), 'utf8'));
+
+  assert.ok(realMarks.length >= 600, `the real tree (${realMarks.length} marks)`);
+  assert.ok(realStakes.some((s) => s.n > 0), 'real escrow, or every sum below is vacuously 0 === 0');
+
+  const state = fold({ marks: realMarks, terrain: realTerrain, stakes: realStakes, households, tick: 1 });
+  assert.deepEqual(state.errors, []);
+  assert.ok(state.marks.some((m) => m.weight > 0), 'and it reached the fold');
+
+  // The marks that discriminate. A child of ANOTHER household may appear in a
+  // receipt ONLY where the law actually opens that edge, which since the founder's
+  // repeal of class law means exactly one thing: the child was `welcomed`. A
+  // NEUTRAL cross-household edge contributes
+  // nothing to the parent's weight, so crediting it in `fanned` is the seam. Stated
+  // as "every crossing has a named reason" rather than by re-deriving allowEdge
+  // here, which would only mirror the bug it is meant to catch.
+  const byMarkId = new Map(state.marks.map((m) => [m.id, m]));
+  const unexplained = [];
+  for (const m of state.marks) {
+    for (const f of m.weight_parts?.fanned ?? []) {
+      const child = byMarkId.get(f.id);
+      if (!child || child.declared_household === m.declared_household) continue;
+      if (child.kept === true) continue;
+      unexplained.push(`${m.id} credits ${f.id} (${child.declared_household}) across a neutral edge`);
+    }
+  }
+  assert.deepEqual(unexplained, [],
+    'no receipt may credit a child whose edge does not consent — that is the seam this run exists to catch');
+
+  assertPartsReconstructWeight(state);
+});

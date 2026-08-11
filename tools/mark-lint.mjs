@@ -20,7 +20,8 @@
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate } from "./marks-fold.mjs";
+import { loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate, rect, overlapArea } from "./marks-fold.mjs";
+import { consentMap, CONSENT_WORDS, CONSENT_FIELD } from "./consent.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -271,6 +272,72 @@ for (const rec of marks) {
 
     if (!(typeof tt.pace === "number" && Number.isFinite(tt.pace) && tt.pace > 0))
       err(rec, `timetable pace: must be a positive number of km per crossing (got ${JSON.stringify(tt.pace)}) — at any other pace she never arrives`);
+  }
+}
+
+// 8b. consent: the three-word `m` (tools/consent.mjs; ECONOMY.md §9.2).
+//
+// A word is only worth anything if the person saying it owns the ground it is
+// about. These lints are all one idea in four shapes: you may speak for your own
+// parcel and for the inside of your own mark, about somebody ELSE's mark, using a
+// word this world knows, about ground that is actually there.
+//
+// Checked here rather than in the main loop for the same reason as the timetable:
+// every id inside a consent map must resolve against the WHOLE tree, and a
+// parcel's authority is geometric, so it needs every mark's rect to answer.
+{
+  // --households <file>: the handle → household map the gate resolves "your own
+  // household" against. Defaults to WORLD/households.json, which today is keyed by
+  // CREDENTIAL ID and is stale — the right grain is the town's DECLARED household
+  // slug, projected by tools/households-project.mjs. Until that projection has a
+  // refresh channel and becomes canon, the flag is how a caller points this gate at
+  // the correct grain, exactly as the fold's own --households already does.
+  const HOUSEHOLDS_PATH = opt("--households", join(REPO, "WORLD/households.json"));
+  const households = existsSync(HOUSEHOLDS_PATH)
+    ? (JSON.parse(readFileSync(HOUSEHOLDS_PATH, "utf8")).households ?? {}) : {};
+  const credOf = (handle) => households[handle] ?? `solo:${handle}`;
+
+  for (const rec of marks) {
+    if (rec._error) continue;
+
+    const map = rec[CONSENT_FIELD];
+    if (map === undefined) continue;
+    if (!consentMap(rec)) {
+      err(rec, `${CONSENT_FIELD}: must be a map from mark id to word on one line — {"<household>/<slug>": "welcomed"} (got ${JSON.stringify(map)})`);
+      continue;
+    }
+    // who may speak at all: a parcel holder (about ground) or a mark's author
+    // (about what stands inside it).
+    const isParcel = rec.kind === "parcel";
+    const speaksFor = new Set(marks.filter((m) => m._parentMarkId === rec.id).map((m) => m.id));
+
+    for (const [target, word] of Object.entries(map)) {
+      if (!CONSENT_WORDS.has(word)) {
+        err(rec, `${CONSENT_FIELD}: "${target}" → ${JSON.stringify(word)} is not a word this world knows — ${[...CONSENT_WORDS].map((w) => `"${w}"`).join(" or ")}. The third position is silence: say nothing and the mark simply stands on its own stamps`);
+        continue;
+      }
+      const t = byId.get(target);
+      if (!t) {
+        warn(rec, `${CONSENT_FIELD}: "${target}" names no mark in the tree — a word about a mark that never landed. Harmless, and it does nothing`);
+        continue;
+      }
+      if (!isParcel && !speaksFor.has(target)) {
+        err(rec, `${CONSENT_FIELD}: "${target}" is not inside this mark and this is not a parcel — you may speak for your own parcel's ground, or for what stands inside your own mark, and for nothing else${cite("the-town/the-own-hand")}`);
+        continue;
+      }
+      if (credOf(t.household) === credOf(rec.household)) {
+        warn(rec, `${CONSENT_FIELD}: "${target}" is your own household's mark — ignored. Ownership already composes; a household never has to ask itself for permission`);
+        continue;
+      }
+      // a word needs ground under it: a parcel's authority runs over whatever
+      // OVERLAPS it (a neighbour straddling the fence answers the same law as one
+      // sitting wholly inside), so "no overlap at all" is the only empty case.
+      if (isParcel) {
+        const pr = rect(rec); pr.w = pr.w || 25; pr.h = pr.h || 25;
+        if (!t.at || overlapArea(pr, rect(t)) <= 0)
+          warn(rec, `${CONSENT_FIELD}: "${target}" does not touch this parcel — a word without ground under it. It does nothing`);
+      }
+    }
   }
 }
 

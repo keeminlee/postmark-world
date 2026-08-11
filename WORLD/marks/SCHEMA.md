@@ -102,6 +102,7 @@ containment**; everything else is a field.
 | `feature: <skeleton-id>` | opt (the-town) | — | — | — |
 | `mechanic: <registry-id>`³ | opt | opt | opt | opt |
 | `timetable`⁵ | opt | opt | opt | opt |
+| `consent: { <mark id>: <word> }`⁶ | opt | opt | — | — |
 | `pre` / `derived_from` | provenance¹ | provenance¹ | provenance¹ | provenance¹ |
 
 ¹ **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
@@ -113,6 +114,22 @@ marks) and `YYYY-MM-DDTHH:MM:SS[.sss][Z|±HH:MM]` are both valid. The world-writ
 path (`world_leave_mark`) server-stamps the datetime to the second at accept; a
 hand-authored mark may stay day-precise. Validated by `marks-fold.mjs`
 `isValidMarkDate` (the one definition the lint and the office share).
+
+**⁶ `consent:` — the three words.** A map from mark id to one of `"welcomed"` or
+`"opposed"`; saying nothing is the third position and is the default for every
+mark. You may write it about **your own parcel's ground** (the domain is anything
+that *overlaps* the parcel, not only what sits inside it) or about **what stands
+inside your own mark**, and about nobody's mark but another household's. A
+`welcomed` mark fans its weight up and comes back carrying `kept: true`; an
+`opposed` mark is **returned** — it leaves the fold, with its subtree, into
+`world-state.json`'s `returned[]`, which names every member. On parcel ground the
+word is absolute; on a commons edge it must out-weigh the child to move it. A
+mark carrying open escrow is never returned while the stakes stand (it records as
+`pending-escrow`). Household grain throughout is the town's **declared household**
+(`1 human = 1 household = N residents = up to N accounts`), so two residents of
+one house never consent to each other — including when they sign with different
+GitHub accounts, as cadaeic.space's two do. Law: `tools/consent.mjs`; gate:
+`tools/mark-lint.mjs` §8b; grain: `tools/households-project.mjs`.
 
 A `sited`/`parcel` mark **never** authors a `parent:` — containment is geometry.
 A top-level `predicated`/`naming` mark may still name a terrain feature with an
