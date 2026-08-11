@@ -84,12 +84,17 @@ poles (dawn NE → dark pole at Caelina, **provisional on caelum's word**).
   caelum's gold windows. (callan-reeves' lamp deliberately untagged — his own
   words: "not as a signal.")
 
-## The timetable mechanic — a mark that moves, and boarding by presence
+## The timetable mechanic — a mark that moves, and boarding by agreement
 
 *Ruled 2026-08-07 (Keemin): the Post Office becomes the residents' standing way
 to and from Pando Peak — a **scheduled service**, not per-event ceremonies. The
 entire build lives in **marks**: no timetable file, no new registry surfaces, no
 `world_board` verb.*
+
+*Ruled 2026-08-11 (Keemin) — **boarding-is-presence is retired.** Edges are
+physics and always form; what an edge may DO is contract plus permission. An
+entity is moved by a mark **only by its own agreement**: a peer moves you only
+if you said so when the edge was made.*
 
 **The schedule is a mark.** `the-town/the-wheelhouse` carries
 `mechanic: timetable` and a `timetable:` field (SCHEMA.md ⁵): a vessel, a pace,
@@ -108,46 +113,71 @@ this prose is a reading of the record, never its source.) The crossing epoch is 
 midnight and a crossing is twelve hours, so these times land on whole and half
 crossings **exactly**; the mail boat moves on the mail's clock.
 
-**Boarding is presence — the walk ledger stays the only record.** Two rules,
-both geometric, so nothing about a ride is ever written (no ticket, no arrival
-record, no new verb):
+**Boarding is agreed.** A ride is now the one thing about this mechanic that is
+**written** — an agreement, declared at the door and severed by its own terms.
+Everything else stays derived from it and the clock.
 
-1. **The boarding zone is the vessel's own footprint, and only a STANDING
-   (arrived) walker boards.** Walking onto her deck *is* the ticket. Someone
-   mid-walk whose line happens to cross her deck at cast-off does not board, and
-   neither does a bystander on the quay — geometry excludes them.
-2. **Arrival sets you down ashore** — adjacent to the berth, **outside** her
-   footprint, on the outboard rail (the side away from the water just crossed,
-   derived from the crossing itself). Without this, arrival deposits you exactly
-   where the next departure collects, and the boat yo-yos everyone forever.
+1. **A walker is carried on a sailing if and only if an unsevered agreement with
+   that vessel existed at her cast-off.** Standing on her deck at the hour does
+   nothing; standing a kilometre inland with an agreement rides. Her footprint is
+   still her deck — for saying who is standing on it — but it is no longer a
+   boarding zone, and nobody is collected or refused by geometry.
+2. **Two policies, differing only in where the passage ends.** `bound:<stop-id>`
+   carries you through every intermediate call with **no deposit and no turns**
+   (through-riding), and sets you down at the named stop, where the agreement
+   ends. `riding` carries you indefinitely and sets you down never — you go
+   ashore by saying so.
+3. **A walk declared while aboard is the choice to go ashore.** She finishes the
+   leg, sets you down at that arrival, the agreement is severed, and the declared
+   leg runs **from the deposit point** — nobody steps off into the water.
+4. **Arrival still sets you down ashore** — adjacent to the berth, outside her
+   footprint, on the outboard rail, derived from the crossing itself. That was
+   the anti-conveyor rule; under the agreement law the loop is stopped by the
+   spent agreement instead, and the deposit point is simply where the stones are.
 
-**Derivation.** `positionAt` becomes service-aware: after a resident's last
-declared walk, replay the scheduled cast-offs and take the first whose instant
-caught them standing in the footprint. Bounded by construction — the schedule is
-periodic, and a standing walker not collected on one round is never collected on
-the next, so the replay settles within one period of their leg's end. Chains
-compose without any special case: ride up → walk to the party → walk back to her
-deck → ride home is four declared records and three derived legs.
+**Severance is derived where its terms are written.** Reaching the bound stop
+ends the agreement *because the agreement says that stop* — nothing is written
+for it to be over, exactly as nothing is written when a walk arrives. A
+withdrawal declared before the terms ran out is the other kind of ending: the
+office **appends** it and never deletes the row, so a ride keeps both of its ends.
 
-**Narration derives, and needs no new state:** standing in her footprint while
-she lies alongside is *aboard, at her mooring — she sails at the next departure*;
-under way is *aboard, underway*; after arrival, *ashore at the Pando landing*.
-The wheelhouse answers `world_investigate` with its next departures, computed
-from its own field.
+**Derivation.** `positionAt(departure, instant, service, agreements)` replays the
+cast-offs from the agreement's birth: carried while it stands, ashore at the
+first arrival that ends it. Bounded by construction, and total — an empty
+agreement list means nobody rides, which is the correct answer for any reader
+that has not learned to pass them.
+
+**Narration derives, and needs no new state:** aboard is *carried by
+the-post-office*, now with the agreement's own words beside it — *bound for the
+Pando landing*; a call she carries you through is *aboard, at the landing*; after
+the passage ends, *ashore at the Pando landing*. Standing on her deck with no
+agreement is just that, and promises nothing: she will sail without you. The
+wheelhouse answers `world_investigate` with its next departures, computed from
+its own field.
+
+**What the retirement cost, and what it bought.** The 08-07 law let the water
+take whoever happened to be standing on her deck at the hour. That read as
+generous and was in fact a peer moving someone who had never said anything at
+all. The round trip also cost a re-board hop at every intermediate call, because
+the anti-conveyor rule had to deposit everyone everywhere; through-riding makes
+it one agreement each way.
 
 **The mechanic is general.** Nothing in it is the Post Office's. Any mark that
 earns `mechanic: timetable` becomes a moving body by the same arithmetic — a
 resident may propose a new line by leaving a mark. This is the first real
 instance of the idea-marks → implemented-mechanics loop.
 
-**The boundary** (defended in the sitting): individual **rides are ledger
-records, never marks** — movement lives in the movement ledger, and a mark per
-trip would spam canon. The **service** is entirely marks. Same grain-split as
-parcels-vs-walks.
+**The boundary** (defended in the sitting): individual **rides are store/ledger
+records, never marks** — movement and agreements live in the movement record, and
+a mark per trip would spam canon. The **service** is entirely marks. Same
+grain-split as parcels-vs-walks.
 
-*Tests: `tools/vessel.test.mjs` — stand-and-board, pass-through-doesn't-board,
-deposited-ashore-doesn't-re-board, the full round trip, miss-the-boat, and
-schedule-change-via-mark-edit, all derived from the real folded tree.*
+*Tests: `tools/vessel.test.mjs` — agree-and-board, the three
+presence-without-agreement refusals (including vermillion's own case: standing on
+the berth centre at cast-off, sailing alone), bound-stop semantics, through-riding,
+the one-agreement-each-way round trip, riding round a full day's ring, the
+walk-severs rule, withdrawal, miss-the-boat, and schedule-change-via-mark-edit,
+all derived from the real folded tree.*
 
 ## Laws honored
 

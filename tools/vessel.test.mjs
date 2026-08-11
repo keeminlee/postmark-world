@@ -1,12 +1,22 @@
 #!/usr/bin/env node
 // vessel.test.mjs — the timetable mechanic: a mark that carries a schedule
-// becomes a body that moves on a clock, and boarding is presence.
+// becomes a body that moves on a clock, and boarding is AGREED.
 //   node --test tools/vessel.test.mjs
 //
-// The law under test (Keemin, 2026-08-07): position = f(walk ledger, timetable,
-// clock). Nothing about a ride is ever written — no ticket, no board verb, no
-// arrival record. Every clone recomputes the same voyage from the same three
-// inputs, so these tests pass a clock in rather than reading one.
+// The law under test (Keemin, 2026-08-11): position = f(walk ledger, timetable,
+// agreements, clock). BOARDING-IS-PRESENCE IS RETIRED — an entity is moved by a
+// mark only by its own agreement, so a ride is a written record and everything
+// else about it stays derived. Every clone recomputes the same voyage from the
+// same four inputs, so these tests pass a clock in rather than reading one.
+//
+// WHAT THE RE-PIN CHANGED, and what it deliberately did not. Every test below
+// that used to prove someone was collected now hands `positionAt` an agreement
+// and proves the same voyage; every test that used to prove someone was NOT
+// collected now proves it for a stronger reason — no agreement — and the
+// geometry those refusals leaned on is asserted to be irrelevant rather than
+// removed, because the whole content of the ruling is that standing somewhere
+// is not consent. The schedule, the run, the deposit point and the wharf grant
+// are untouched: this is a change to who may be moved, not to where she goes.
 //
 // The tree is read ONCE here to build the real folded world; every derivation
 // below is a pure function of that object. That is deliberate: the service that
@@ -38,6 +48,7 @@ import {
   serviceFromFold, servicesFromFold, vesselPositionAt, positionAt,
   sailingsBetween, lastSailingAtOrBefore, nextDepartures, ashoreOf, footprintOf,
   instantOf, DAY_CROSSINGS, ASHORE_STEP_M,
+  agreementAt, boundStopOf, isPassengerPolicy,
 } from "./vessel.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -101,6 +112,20 @@ const midDwellAfter = (s) => (s.arriveFc + nextFrom(s.to.markId, s.arriveFc).dep
 // with a metre's slack for the rounding the ledger does to whole metres.
 const arrivalOf = (d) =>
   d.at + (walkPositionAt(d, d.at).legM + 1) / ((d.pace > 0 ? d.pace : WALK_KM_PER_CROSSING) * 1000);
+
+// ── the agreements ──────────────────────────────────────────────────────────
+//
+// One helper, so no test below hand-writes the row shape and they cannot drift
+// into disagreeing about what an agreement IS. `born` defaults to a hair before
+// the sailing named, which is the ordinary case: you arrange your passage while
+// she is lying alongside.
+const agree = (entity, policy, born, { severed = null, target = TOWN } = {}) =>
+  [{ entity, target, policy, born_at: born, ...(severed === null ? {} : { severed_at: severed }) }];
+const boundTo = (stop) => `bound:${stop}`;
+// The hair. The door writes an agreement at an instant strictly inside the
+// dwell; anchoring on the dwell's own midpoint keeps that true whatever the run
+// becomes, in the same way every other instant in this suite is derived.
+const agreedDuring = (s) => midDwellBefore(s);
 
 // ── the service the marks describe ──────────────────────────────────────────
 
@@ -183,203 +208,409 @@ test("vesselPositionAt: berthed, then under way, then berthed at the other end",
   assert.deepEqual(vesselPositionAt(service, t), vesselPositionAt(service, t));
 });
 
-// ── the boarding rules ──────────────────────────────────────────────────────
+// ── the agreement law ───────────────────────────────────────────────────────
 
-test("stand-and-board: a STANDING walker inside her footprint at cast-off sails with her", () => {
-  // The whole ticket: walk onto her deck and still be there when she goes.
+test("the policy vocabulary: `riding` and `bound:<stop>` are passages; nothing else is", () => {
+  assert.equal(boundStopOf(boundTo(LANDING)), LANDING, "a bound policy names its own stop");
+  assert.equal(boundStopOf("riding"), null);
+  assert.ok(isPassengerPolicy("riding") && isPassengerPolicy(boundTo(WHARF)));
+  // The object policies stay what they were and can never move a resident: an
+  // entity carries its own vocabulary and a keystone's `cascade` is not a ticket.
+  assert.ok(!isPassengerPolicy("cascade") && !isPassengerPolicy("detach") && !isPassengerPolicy(undefined));
+
+  // Latest-wins, the ledger's own rule, so two agreements never argue.
+  const s = nextFrom(TOWN, DAY0);
+  const two = [...agree("r", "riding", agreedDuring(s)), ...agree("r", boundTo(WHARF), agreedDuring(s) + 1e-6)];
+  assert.equal(agreementAt(two, service, s.departFc).policy, boundTo(WHARF), "the newer statement stands");
+  // And a severed one is not held, however recent.
+  const gone = agree("r", "riding", agreedDuring(s), { severed: s.departFc - 1e-6 });
+  assert.equal(agreementAt(gone, service, s.departFc), null);
+});
+
+test("agree-and-board: an agreement made while she lies alongside is the whole ticket", () => {
   const outbound = nextFrom(TOWN, DAY0);
   const rider = D({ handle: "rider", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+  const ticket = agree("rider", boundTo(LANDING), agreedDuring(outbound));
 
-  const waiting = positionAt(rider, (rider.at + outbound.departFc) / 2, service);
-  assert.deepEqual(at(waiting), site(QUAY));
+  const waiting = positionAt(rider, (rider.at + outbound.departFc) / 2, service, ticket);
+  assert.deepEqual(at(waiting), site(QUAY), "still standing where he stood; the agreement moved nothing");
   assert.equal(waiting.aboard, null, "not sailing yet");
-  assert.equal(waiting.atMooring, TOWN, "aboard at her mooring — she sails at the next departure");
+  assert.equal(waiting.boundFor, LANDING, "…but the answer already says where he is bound");
+  assert.equal(waiting.onDeckAt, TOWN, "and that he is on her deck while she lies there");
 
-  const underway = positionAt(rider, midway(outbound), service);
+  const underway = positionAt(rider, midway(outbound), service, ticket);
   assert.equal(underway.aboard, "the-post-office");
+  assert.equal(underway.boundFor, LANDING, "the agreement's own words ride the answer");
   assert.equal(underway.arrived, false, "under way is not arrived");
   assert.deepEqual(at(underway), at(vesselPositionAt(service, midway(outbound))),
     "a passenger's position IS the vessel's while she is under way");
 });
 
-test("pass-through-doesn't-board: geometry excludes anyone merely crossing her deck", () => {
+test("THE WHOLE RULING: an agreement carries you from ANYWHERE — her deck is not the ticket and never was", () => {
+  // The same passage, agreed by someone standing a kilometre inland. Under the
+  // retired law this walker could not have boarded at all; under this one the
+  // geometry is simply not consulted.
+  const outbound = nextFrom(TOWN, DAY0);
+  const inland = { x: QUAY.x, y: QUAY.y + 1000 };
+  assert.ok(!pointInRect(inland.x, inland.y, footprintOf(service, QUAY)),
+    "nowhere near her — the point of the test");
+
+  const rider = D({ handle: "inlander", from: inland, toward: inland, at: midDwellBefore(outbound) });
+  const ticket = agree("inlander", boundTo(LANDING), agreedDuring(outbound));
+  assert.equal(positionAt(rider, midway(outbound), service, ticket).aboard, "the-post-office",
+    "the agreement is the passage; where they were standing when it was made is the DOOR's question, not this one");
+});
+
+test("presence without agreement never carries: a walker standing on her deck at cast-off sails nowhere", () => {
+  const outbound = nextFrom(TOWN, DAY0);
+  const stander = D({ handle: "stander", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+
+  const atCastOff = positionAt(stander, outbound.departFc, service, []);
+  assert.ok(pointInRect(atCastOff.x, atCastOff.y, footprintOf(service, QUAY)),
+    "he really is standing on her deck at the hour — the refusal is not an accident of position");
+  assert.equal(atCastOff.arrived, true, "and standing, which used to be the whole ticket");
+  assert.equal(atCastOff.aboard, null, "…and she goes without him");
+
+  const later = positionAt(stander, midway(outbound), service, []);
+  assert.equal(later.aboard, null);
+  assert.deepEqual(at(later), site(QUAY), "he is exactly where he stood; she is half a run away");
+});
+
+test("presence without agreement never carries: nor does a line that merely crosses her deck", () => {
   // A long walk down the reach whose straight line runs through her footprint at
-  // cast-off. The walker is inside her extent at the instant she goes — and is
-  // NOT standing, so the water takes her and leaves him.
-  // He leaves upstream at exactly the hour that puts him amidships: one reach
-  // length at the town's own dial.
+  // cast-off. It made no difference before (he was not standing) and makes none
+  // now (he has agreed to nothing) — two independent reasons, and only the
+  // second one is law any more.
   const outbound = nextFrom(TOWN, DAY0);
   const REACH_M = 200;
   const crossing = D({ handle: "passer",
                        from: { x: QUAY.x, y: QUAY.y + REACH_M }, toward: { x: QUAY.x, y: QUAY.y - REACH_M },
                        at: outbound.departFc - REACH_M / WALK_M_PER_CROSSING });
-  const atCastOff = positionAt(crossing, outbound.departFc, service);
-  assert.ok(pointInRect(atCastOff.x, atCastOff.y, footprintOf(service, QUAY)),
-    "he really is standing on her deck's ground at cast-off — the exclusion is not an accident of position");
-  assert.equal(atCastOff.arrived, false, "…but still walking");
-  assert.equal(atCastOff.aboard, null, "so he does not board");
+  const atCastOff = positionAt(crossing, outbound.departFc, service, []);
+  assert.ok(pointInRect(atCastOff.x, atCastOff.y, footprintOf(service, QUAY)), "amidships at the hour");
+  assert.equal(atCastOff.aboard, null);
 
-  const later = positionAt(crossing, midway(outbound), service);
+  const later = positionAt(crossing, midway(outbound), service, []);
   assert.equal(later.aboard, null);
-  assert.equal(later.x, QUAY.x, "he walks on down the reach; she is half a run away");
+  assert.equal(later.x, QUAY.x, "he walks on down the reach");
   assert.ok(later.y < QUAY.y);
 });
 
-test("a bystander on the quay never boards — the boarding zone is her footprint, nothing wider", () => {
-  // A metre beyond her rail, which is as close to her as ashore gets.
+test("presence without agreement never carries: a bystander a metre off her rail is exactly as unboarded as one on her deck", () => {
   const outbound = nextFrom(TOWN, DAY0);
   const offRail = { x: QUAY.x - (service.vessel.extent.w / 2 + 1), y: QUAY.y };
   assert.ok(!pointInRect(offRail.x, offRail.y, footprintOf(service, QUAY)), "he stands ashore, by a metre");
 
   const bystander = D({ handle: "watcher", from: offRail, toward: offRail, at: midDwellBefore(outbound) });
-  const alongside = positionAt(bystander, (bystander.at + outbound.departFc) / 2, service);
-  assert.equal(alongside.atMooring, null, "she is lying right there and he is still not aboard of her");
+  const alongside = positionAt(bystander, (bystander.at + outbound.departFc) / 2, service, []);
+  assert.equal(alongside.onDeckAt, null, "off her deck, so the deck field is empty");
+  assert.equal(alongside.boundFor, null, "and he has agreed to nothing");
 
-  const p = positionAt(bystander, midway(outbound), service);
-  assert.equal(p.aboard, null, "a metre off her rail is ashore");
-  assert.equal(p.atMooring, null);
+  const p = positionAt(bystander, midway(outbound), service, []);
+  assert.equal(p.aboard, null);
   assert.deepEqual(at(p), site(offRail), "he is exactly where he stood");
+  // THE METRE NO LONGER DECIDES ANYTHING. Under the retired law this metre was
+  // the difference between a voyage and a morning on the quay; now the walker on
+  // her deck (the test above) gets precisely the same answer he does.
+  const onDeck = D({ handle: "watcher", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+  assert.equal(positionAt(onDeck, midway(outbound), service, []).aboard,
+               p.aboard, "the metre buys nothing either way");
 });
 
-test("deposited-ashore-doesn't-re-board: arrival sets you down OUTSIDE her footprint", () => {
+test("VERMILLION'S CASE: standing on the berth centre when she casts off, with no agreement — she sails alone", () => {
+  // The named case this ruling was written against, and the one the deploy
+  // disclosure names. A resident walks to the landing's own centre — which is
+  // exactly where she lies when she is alongside, so they are standing amidships
+  // at the hour by doing nothing but arriving at a stop. Under the retired law
+  // that collected them and carried them off the mountain they had walked to.
+  const southbound = nextFrom(LANDING, fcAt("2026-08-09T11:00:00Z"));
+  const walked = D({ handle: "vermillion", from: { x: BERTH.x + 600, y: BERTH.y + 600 },
+                     toward: BERTH, at: midDwellBefore(southbound) });
+
+  const standing = positionAt(walked, southbound.departFc, service, []);
+  assert.deepEqual(at(standing), site(BERTH), "standing on the berth's own centre");
+  assert.ok(pointInRect(standing.x, standing.y, footprintOf(service, BERTH)),
+    "which is inside her footprint, because that is where she lies");
+  assert.equal(standing.arrived, true, "arrived, standing — the retired law's whole ticket");
+  assert.equal(standing.aboard, null, "and she casts off without them");
+
+  const after = positionAt(walked, midway(southbound), service, []);
+  assert.equal(after.aboard, null, "she is out on the water and they are not");
+  assert.deepEqual(at(after), site(BERTH), "they are still standing on the landing they walked to");
+});
+
+test("bound-stop semantics: she sets you down at the stop you named, and the agreement ends there", () => {
   const outbound = nextFrom(TOWN, DAY0);
   const homeward = nextFrom(LANDING, outbound.arriveFc);       // the cast-off from this very berth
   const rider = D({ handle: "rider", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+  const ticket = agree("rider", boundTo(LANDING), agreedDuring(outbound));
 
-  const landed = positionAt(rider, midDwellAfter(outbound), service);
-  assert.equal(landed.ashoreAt, LANDING);
+  const landed = positionAt(rider, midDwellAfter(outbound), service, ticket);
+  assert.equal(landed.ashoreAt, LANDING, "ashore at the stop the agreement named");
   assert.equal(landed.arrived, true);
   assert.equal(landed.standing, true);
   assert.equal(landed.aboard, null);
+  assert.equal(landed.boundFor, null, "the agreement ended by its own terms — nothing is written to end it");
 
   assert.ok(!pointInRect(landed.x, landed.y, footprintOf(service, BERTH)),
-    "set down beyond her rail — this is the whole anti-conveyor rule");
-  // …but adjacent: the furthest ashoreOf can put anyone from the berth is her own
-  // half-diagonal plus the single step, whatever heading she came in on.
+    "set down beyond her rail — the deposit point is unchanged by the ruling");
   const reach = Math.hypot(service.vessel.extent.w, service.vessel.extent.h) / 2 + ASHORE_STEP_M + 0.15;
   assert.ok(Math.hypot(landed.x - BERTH.x, landed.y - BERTH.y) < reach,
     "…but adjacent to the berth, not thrown inland");
-  // And on the landing's own stones: the step off her rail lands on town ground.
   const landingMark = byId.get(LANDING);
   assert.ok(pointInRect(landed.x, landed.y, { ...siteOf(LANDING), ...landingMark.extent }),
     "ashore is the landing, not the water");
 
-  // The next cast-off from this very berth passes over him — standing still is
-  // not a ticket. Without this the boat would yo-yo everyone forever.
-  const afterNext = positionAt(rider, midway(homeward), service);
-  assert.equal(afterNext.aboard, null, "she sailed without him");
+  // The agreement is SPENT: the next cast-off from this very berth leaves them
+  // standing. Under the retired law the deposit point had to be outside her
+  // footprint or she would yo-yo everyone forever; now it is the ended agreement
+  // that stops the loop, and the deposit point is merely where the stones are.
+  const afterNext = positionAt(rider, midway(homeward), service, ticket);
+  assert.equal(afterNext.aboard, null, "she sailed without him — his passage was to here");
   assert.deepEqual(at(afterNext), at(landed), "he has not moved, because he declared no walk");
 });
 
-test("full round-trip: ride up · walk to the party · walk back to her deck · ride home", () => {
+test("THROUGH-RIDING: a bound passage carries you past every intermediate call, with no deposit and no turns", () => {
+  // The Garrison call sits between the landing and the quay. A passage bound for
+  // the wharf lies alongside AT the landing and casts off again with them still
+  // aboard — the ride is one agreement, not one per hop.
+  const outbound = nextFrom(TOWN, DAY0);                        // quay → landing
+  const rider = D({ handle: "through", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+  const ticket = agree("through", boundTo(WHARF), agreedDuring(outbound));
+  const homeward = nextFrom(LANDING, outbound.arriveFc);         // landing → wharf
+
+  const call = positionAt(rider, midDwellAfter(outbound), service, ticket);
+  assert.equal(call.aboard, "the-post-office", "she calls at the landing and he stays aboard");
+  assert.equal(call.ashoreAt, null, "NOT deposited — this is the whole of through-riding");
+  assert.equal(call.onDeckAt, LANDING, "on her deck, at the stop she is lying at");
+  assert.equal(call.boundFor, WHARF, "and still bound for the stop he named");
+  assert.deepEqual(at(call), site(BERTH), "his position is hers: she lies on the landing's mark");
+
+  assert.equal(positionAt(rider, midway(homeward), service, ticket).aboard, "the-post-office");
+
+  const arrived = positionAt(rider, midDwellAfter(homeward), service, ticket);
+  assert.equal(arrived.ashoreAt, WHARF, "set down at the stop he named, and only there");
+  assert.equal(arrived.aboard, null);
+});
+
+test("full round-trip: ONE agreement each way — the re-board hop the anti-conveyor rule used to force is gone", () => {
   const h = "traveller";
   const outbound = nextFrom(TOWN, DAY0);
-  // The chain is four declared records; every ride between them is derived.
+  // UP: one walk to say where he is, one agreement to say where he is going.
   const rideUp = D({ handle: h, from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+  const upTicket = agree(h, boundTo(LANDING), agreedDuring(outbound));
   const landedFc = midDwellAfter(outbound);
-  const ashoreAtPando = positionAt(rideUp, landedFc, service);
+  const ashoreAtPando = positionAt(rideUp, landedFc, service, upTicket);
   assert.equal(ashoreAtPando.ashoreAt, LANDING);
 
-  // …walks up to the party hall (an ordinary walk, at the town's own pace). The
-  // hall answers for its own site and extent, like every other mark here…
+  // …walks up to the party hall (an ordinary walk, at the town's own pace, and
+  // no agreement stands, so the schedule cannot touch him)…
   const hall = byId.get("vermillion/party-hall");
   const toParty = D({ handle: h, from: { x: ashoreAtPando.x, y: ashoreAtPando.y },
                       toward: siteOf(hall.id), targetExtent: { ...hall.extent },
                       targetMarkId: hall.id, at: landedFc });
   const atPartyFc = arrivalOf(toParty);
-  const atParty = positionAt(toParty, atPartyFc, service);
+  const atParty = positionAt(toParty, atPartyFc, service, upTicket);
   assert.equal(atParty.arrived, true, "the walk up is a walk, unaffected by any schedule");
   assert.equal(atParty.aboard, null);
 
-  // …then walks back down onto her deck…
+  // …then walks back down to the landing…
   const toBerth = D({ handle: h, from: { x: atParty.x, y: atParty.y }, toward: BERTH, at: atPartyFc });
   const backOnDeckFc = arrivalOf(toBerth);
 
-  // …and rides home on her next cast-off from this landing, whichever one the
-  // schedule and the length of the run make that be. Since the wharf ruling the
-  // southbound return calls at the Garrison first, so the ride home is TWO hops
-  // — the anti-conveyor rule deposits everyone at every stop, and riding on is
-  // a fresh walk onto her deck within the dwell.
+  // …and agrees ONE passage home. The southbound return calls at the Garrison,
+  // and he rides straight through it: under the retired law this leg needed a
+  // deposit at the wharf and a fresh walk back onto her deck inside the dwell.
   const homeward = nextFrom(LANDING, backOnDeckFc);
-  const waiting = positionAt(toBerth, homeward.departFc - 1e-9, service);
-  assert.equal(waiting.arrived, true, "standing on her deck when she casts off");
-  assert.equal(waiting.atMooring, LANDING);
+  const downTicket = agree(h, boundTo(TOWN), agreedDuring(homeward));
 
-  const homebound = positionAt(toBerth, midway(homeward), service);
-  assert.equal(homebound.aboard, "the-post-office");
+  const waiting = positionAt(toBerth, homeward.departFc - 1e-9, service, downTicket);
+  assert.equal(waiting.arrived, true, "standing at the landing when she casts off");
+  assert.equal(waiting.boundFor, TOWN, "with his passage home already arranged");
 
-  const atWharf = positionAt(toBerth, midDwellAfter(homeward), service);
-  assert.equal(atWharf.ashoreAt, WHARF, "set down at the Garrison's wharf — the through-ride home is two hops now");
+  assert.equal(positionAt(toBerth, midway(homeward), service, downTicket).aboard, "the-post-office");
 
-  const reBoard = D({ handle: h, from: { x: atWharf.x, y: atWharf.y }, toward: siteOf(WHARF), at: midDwellAfter(homeward) });
-  const lastLeg = nextFrom(WHARF, arrivalOf(reBoard));
-  const backAboard = positionAt(reBoard, lastLeg.departFc - 1e-9, service);
-  assert.equal(backAboard.arrived, true, "back on her deck inside the wharf dwell");
-  assert.equal(backAboard.atMooring, WHARF);
+  const atWharf = positionAt(toBerth, midDwellAfter(homeward), service, downTicket);
+  assert.equal(atWharf.ashoreAt, null, "the Garrison call does not put him off — he is bound for the quay");
+  assert.equal(atWharf.aboard, "the-post-office");
+  assert.equal(atWharf.onDeckAt, WHARF);
 
-  const home = positionAt(reBoard, midDwellAfter(lastLeg), service);
+  const lastLeg = nextFrom(WHARF, homeward.arriveFc);
+  assert.equal(lastLeg.to.markId, TOWN, "her next cast-off from the wharf is the run home");
+  const home = positionAt(toBerth, midDwellAfter(lastLeg), service, downTicket);
   assert.equal(home.ashoreAt, TOWN, "set down on the quay side of the reach");
   assert.ok(!pointInRect(home.x, home.y, footprintOf(service, QUAY)), "outside her footprint again");
 
-  // The next one sails without him: the chain ends where he stands, not in a loop.
+  // The next one sails without him: the agreement is spent, not standing.
   const after = nextFrom(TOWN, lastLeg.arriveFc);
-  assert.equal(positionAt(reBoard, midway(after), service).aboard, null);
+  assert.equal(positionAt(toBerth, midway(after), service, downTicket).aboard, null);
+});
+
+test("RIDING with no destination: she carries you round the whole day's ring and sets you down never", () => {
+  const outbound = nextFrom(TOWN, DAY0);
+  const rider = D({ handle: "roundabout", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+  const ticket = agree("roundabout", "riding", agreedDuring(outbound));
+
+  // Every sailing of a full day, and every dwell between them: aboard throughout,
+  // never deposited, and never bound anywhere because the agreement names nowhere.
+  const day = sailingsBetween(service, outbound.departFc - 1e-9, outbound.departFc + DAY_CROSSINGS);
+  assert.ok(day.length >= 6, "a full day's ring, so the pass-through is proven at every stop she makes");
+  for (const s of day) {
+    const sea = positionAt(rider, midway(s), service, ticket);
+    assert.equal(sea.aboard, "the-post-office", `still aboard on the ${s.from.markId} → ${s.to.markId} leg`);
+    assert.equal(sea.boundFor, null, "riding names no stop — that is the difference from bound");
+    assert.deepEqual(at(sea), at(vesselPositionAt(service, midway(s))), "his position is hers");
+
+    const alongside = positionAt(rider, midDwellAfter(s), service, ticket);
+    assert.equal(alongside.ashoreAt, null, `not set down at ${s.to.markId} — riding is deposited nowhere`);
+    assert.equal(alongside.aboard, "the-post-office");
+    assert.equal(alongside.onDeckAt, s.to.markId, "on her deck, at whichever stop she is lying at");
+  }
+
+  // And he ends the day where she does, having declared nothing since.
+  const aDayOn = outbound.departFc + DAY_CROSSINGS;
+  assert.deepEqual(at(positionAt(rider, aDayOn, service, ticket)), at(vesselPositionAt(service, aDayOn)));
+});
+
+test("A WALK DECLARED ABOARD IS THE CHOICE TO GO ASHORE: deposited at her next arrival, and the leg starts there", () => {
+  const outbound = nextFrom(TOWN, DAY0);
+  const rider = D({ handle: "leaver", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+  const ticket = agree("leaver", "riding", agreedDuring(outbound));
+  assert.equal(positionAt(rider, midway(outbound), service, ticket).aboard, "the-post-office");
+
+  // Mid-crossing he declares a walk to the party hall. The walk's `at` is after
+  // the agreement's birth and he is aboard, so it means: put me off at the next
+  // stop and I will walk from there.
+  const hall = byId.get("vermillion/party-hall");
+  const declaredFc = midway(outbound);
+  // Where the door would write his `from`: mid-channel, because that is where he
+  // is. The whole point of the rule is that this point is NOT where the leg runs
+  // from — nobody steps off into the water.
+  const midChannel = positionAt(rider, declaredFc, service, ticket);
+  const goingAshore = D({ handle: "leaver", from: { x: midChannel.x, y: midChannel.y },
+                          toward: siteOf(hall.id), targetExtent: { ...hall.extent },
+                          targetMarkId: hall.id, at: declaredFc });
+
+  const stillCarried = positionAt(goingAshore, declaredFc + (outbound.arriveFc - declaredFc) / 2, service, ticket);
+  assert.equal(stillCarried.aboard, "the-post-office", "declaring it does not put him in the water — she finishes the leg");
+
+  // At her arrival: set down, agreement severed by the choice, walk begins.
+  const setDown = positionAt(goingAshore, outbound.arriveFc + 1e-9, service, ticket);
+  assert.equal(setDown.ashoreAt, LANDING, "she sets him down at the stop she reached");
+  assert.equal(setDown.aboard, null, "and the passage is over — the walk was the severance");
+  assert.equal(setDown.arrived, false, "with the declared leg still ahead of him");
+  assert.ok(setDown.remainingM > 0);
+
+  // The leg runs from the DEPOSIT POINT, not from wherever he was standing when
+  // he declared it — which was out on the water.
+  const deposit = ashoreOf(service, outbound);
+  assert.deepEqual(at(setDown), [deposit.x, deposit.y], "the walk starts on the stones she left him on");
+  assert.ok(Math.hypot(midChannel.x - deposit.x, midChannel.y - deposit.y) > 1000,
+    "and those are nowhere near where he declared it — the substitution is doing real work");
+
+  const walkedOn = positionAt(goingAshore, outbound.arriveFc + 0.02, service, ticket);
+  assert.equal(walkedOn.ashoreAt, null, "and once he is off the stones the answer stops calling him ashore there");
+  assert.ok(Math.hypot(walkedOn.x - deposit.x, walkedOn.y - deposit.y) > 0, "he is walking");
+
+  // He reaches the hall on his own feet, and no later sailing touches him.
+  const arrived = positionAt(goingAshore, outbound.arriveFc + 5, service, ticket);
+  assert.equal(arrived.arrived, true, "arrived at the hall");
+  assert.equal(arrived.aboard, null, "and the spent agreement never picks him up again");
 });
 
 // ── the Garrison stop (ruled 2026-08-10, #1596 — case-by-case founder grant) ──
 
-test("the wharf call: southbound she calls at the Garrison's own shore, lies alongside, and a rider from the landing steps off onto their stones", () => {
+test("the wharf call: southbound she calls at the Garrison's own shore, and a passage BOUND FOR the wharf ends on their stones", () => {
   const southbound = nextFrom(LANDING, fcAt("2026-08-09T11:00:00Z")); // the 12:00Z cast-off
   assert.equal(southbound.to.markId, WHARF, "the southbound sailing calls at the wharf");
   assert.ok(southbound.arriveFc < nextFrom(WHARF, southbound.departFc).departFc,
     "she lies alongside before her own next cast-off — the grant fits the day without moving anyone else's hour");
 
   const rider = D({ handle: "garrisoner", from: BERTH, toward: BERTH, at: midDwellBefore(southbound) });
-  assert.equal(positionAt(rider, midway(southbound), service).aboard, "the-post-office");
-  const landed = positionAt(rider, midDwellAfter(southbound), service);
+  const ticket = agree("garrisoner", boundTo(WHARF), agreedDuring(southbound));
+  assert.equal(positionAt(rider, midway(southbound), service, ticket).aboard, "the-post-office");
+  const landed = positionAt(rider, midDwellAfter(southbound), service, ticket);
   assert.equal(landed.ashoreAt, WHARF, "set down on the Garrison's shoreline");
   // The wharf is a small stone (10×10) and the step off her rail can land on
-  // the bank beside it — ashore-adjacent is the deposit law (see the
-  // deposited-ashore test), containment never was.
+  // the bank beside it — ashore-adjacent is the deposit law (see the bound-stop
+  // test), containment never was.
   const wharfSite = siteOf(WHARF);
   const reach = Math.hypot(service.vessel.extent.w, service.vessel.extent.h) / 2 + ASHORE_STEP_M + 0.15;
   assert.ok(Math.hypot(landed.x - wharfSite.x, landed.y - wharfSite.y) < reach,
     "ashore beside the wharf's own stone, not thrown up the bank");
 });
 
-test("miss-the-boat: reach the mooring after she goes and the berth is empty — with the next departure to hand", () => {
-  // A 300 m walk at the town dial (15 km/crossing) takes 0.02 crossings = 14.4
-  // min; he sets out six minutes after she casts off and reaches the mooring
-  // twenty minutes late.
+test("miss-the-boat: agree after she has gone and you ride the NEXT sailing, with the hour to hand", () => {
+  // The spirit is unchanged and the mechanism is simpler: an agreement made at
+  // 18:06 cannot have existed at the 18:00 cast-off, so the sailing it catches is
+  // the following one. Nobody has to walk anywhere to be late any more.
   const evening = nextDepartures(service, fcAt("2026-08-09T12:00:00Z"), 1, { from: TOWN })[0];
-  const APPROACH_M = 300;
-  const walk = D({ handle: "latecomer", from: { x: QUAY.x, y: QUAY.y + APPROACH_M }, toward: QUAY,
-                   at: evening.departFc + (6 / 60) / 12 });
-  assert.equal(positionAt(walk, evening.departFc, service).aboard, null, "he had not even set out");
+  const stander = D({ handle: "latecomer", from: QUAY, toward: QUAY, at: midDwellBefore(evening) });
+  const lateFc = evening.departFc + (6 / 60) / 12;              // six minutes after she cast off
+  const ticket = agree("latecomer", boundTo(LANDING), lateFc);
 
-  const arrivedFc = arrivalOf(walk);
-  const arrived = positionAt(walk, arrivedFc, service);
-  assert.equal(arrived.arrived, true);
-  assert.deepEqual(at(arrived), site(QUAY), "standing on the mooring's own ground");
-  assert.equal(arrived.aboard, null, "she is not here to be boarded");
-  assert.equal(arrived.atMooring, null, "the berth is empty — nothing to be aboard of");
-  assert.notEqual(vesselPositionAt(service, arrivedFc).atStop, TOWN, "she is away from this quay");
+  assert.equal(positionAt(stander, lateFc, service, ticket).aboard, null, "she is already away");
+  assert.deepEqual(at(positionAt(stander, lateFc, service, ticket)), site(QUAY), "standing on the mooring's own ground");
+  assert.equal(positionAt(stander, lateFc, service, ticket).onDeckAt, null, "the berth is empty — nothing to be on the deck of");
+  assert.notEqual(vesselPositionAt(service, lateFc).atStop, TOWN, "she is away from this quay");
+  assert.equal(positionAt(stander, midway(evening), service, ticket).aboard, null,
+    "and the sailing she is on is not his — the agreement did not exist when she went");
 
-  const [next] = nextDepartures(service, arrivedFc, 1, { from: TOWN });
+  const [next] = nextDepartures(service, lateFc, 1, { from: TOWN });
   assert.equal(new Date(instantOf(next.departFc)).toISOString(), "2026-08-10T06:00:00.000Z",
     "the answer the wheelhouse gives: the next one from this quay");
   assert.equal(next.to.markId, LANDING);
 
-  // And standing there through the night, he catches it — presence is the ticket.
-  assert.equal(positionAt(walk, midway(next), service).aboard, "the-post-office");
+  // The agreement stands through the night and she takes him in the morning.
+  assert.equal(positionAt(stander, midway(next), service, ticket).aboard, "the-post-office");
+  assert.equal(positionAt(stander, midDwellAfter(next), service, ticket).ashoreAt, LANDING);
+});
+
+test("a withdrawal before she goes leaves you on the quay, and the row that recorded it still stands", () => {
+  const outbound = nextFrom(TOWN, DAY0);
+  const rider = D({ handle: "changed-mind", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+  const withdrawn = agree("changed-mind", boundTo(LANDING), agreedDuring(outbound),
+                          { severed: outbound.departFc - 1e-6 });
+
+  assert.equal(positionAt(rider, midway(outbound), service, withdrawn).aboard, null, "she sails without him");
+  assert.deepEqual(at(positionAt(rider, midway(outbound), service, withdrawn)), site(QUAY));
+  // The severance is a fact about the agreement, not a deletion of it: the row
+  // is still in the list handed in, and reading it BEFORE the severance still
+  // finds a standing agreement.
+  assert.equal(agreementAt(withdrawn, service, agreedDuring(outbound) + 1e-9)?.policy, boundTo(LANDING),
+    "before the withdrawal it stood, and the record still says so");
+  assert.equal(agreementAt(withdrawn, service, outbound.departFc), null, "after it, it does not");
+});
+
+test("an agreement naming another entity's passage is not yours, and an object policy is not a passage", () => {
+  const outbound = nextFrom(TOWN, DAY0);
+  const rider = D({ handle: "rider", from: QUAY, toward: QUAY, at: midDwellBefore(outbound) });
+
+  // positionAt is handed ONE walker's agreements by its caller, so the guard
+  // that matters here is the POLICY: a `cascade` edge — a keystone riding a
+  // house — can never be read as a ticket, whoever it belongs to.
+  const objectEdge = [{ entity: "rider", target: TOWN, policy: "cascade", born_at: agreedDuring(outbound) }];
+  assert.equal(positionAt(rider, midway(outbound), service, objectEdge).aboard, null);
+
+  // And an agreement with something that is not this service carries nobody on it.
+  const elsewhere = [{ entity: "rider", target: "someone/a-cart", policy: "riding", born_at: agreedDuring(outbound) }];
+  assert.equal(positionAt(rider, midway(outbound), service, elsewhere).aboard, null);
+
+  // The vessel answers to either of her two names, because the world half cannot
+  // know which the office wrote.
+  for (const target of [TOWN, "the-post-office"]) {
+    assert.equal(positionAt(rider, midway(outbound), service, agree("rider", "riding", agreedDuring(outbound), { target })).aboard,
+      "the-post-office", `${target} names her`);
+  }
 });
 
 // ── the schedule is a mark, so editing the mark changes the world ────────────
 
-test("schedule-change-via-mark-edit re-derives cleanly — the same walker, a different voyage", () => {
+test("schedule-change-via-mark-edit re-derives cleanly — the same walker, the same agreement, a different voyage", () => {
   const ruled = nextFrom(TOWN, DAY0);
   const rider = D({ handle: "rider", from: QUAY, toward: QUAY, at: midDwellBefore(ruled) });
-  assert.equal(positionAt(rider, midway(ruled), service).aboard, "the-post-office",
+  const ticket = agree("rider", boundTo(LANDING), agreedDuring(ruled));
+  assert.equal(positionAt(rider, midway(ruled), service, ticket).aboard, "the-post-office",
     "under the ruled schedule, at the middle of her run, he is at sea");
 
   // Someone edits the wheelhouse mark: the quay's sailings move to 09:00Z/21:00Z.
@@ -392,10 +623,12 @@ test("schedule-change-via-mark-edit re-derives cleanly — the same walker, a di
   assert.equal(new Date(instantOf(moved.departFc)).toISOString(), "2026-08-09T09:00:00.000Z",
     "the new hour, straight out of the edited mark");
   const beforeSheGoes = moved.departFc - 1e-9;
-  assert.equal(positionAt(rider, beforeSheGoes, rescheduled).aboard, null, "a moment before nine she has not cast off");
-  assert.equal(positionAt(rider, beforeSheGoes, rescheduled).atMooring, TOWN, "he waits on her deck for the new hour");
-  assert.equal(positionAt(rider, midway(moved), rescheduled).aboard, "the-post-office",
-    "and sails at nine, from the same record, with nothing rewritten");
+  assert.equal(positionAt(rider, beforeSheGoes, rescheduled, ticket).aboard, null, "a moment before nine she has not cast off");
+  assert.equal(positionAt(rider, beforeSheGoes, rescheduled, ticket).onDeckAt, TOWN, "he waits on her deck for the new hour");
+  assert.equal(positionAt(rider, beforeSheGoes, rescheduled, ticket).boundFor, LANDING,
+    "and his agreement stands: an edit to the hours re-times a passage, it does not cancel one");
+  assert.equal(positionAt(rider, midway(moved), rescheduled, ticket).aboard, "the-post-office",
+    "and sails at nine, from the same records, with nothing rewritten");
 
   // A slower boat is the same edit in a different field.
   const slowed = JSON.parse(JSON.stringify(STATE));

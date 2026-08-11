@@ -1,11 +1,11 @@
 // vessel.mjs — the timetable mechanic: a mark that carries a schedule becomes a
-// body that moves on a clock, and boarding is presence.
+// body that moves on a clock, and boarding is AGREED.
 //
 // The design law is walk.mjs's, carried one step further. A walk is a DECLARED
 // record and position is derived from it; a scheduled crossing is a DECLARED
-// MARK and position is derived from that. Nothing about a ride is ever written:
-// no ticket, no board verb, no arrival record. Position is a pure function of
-// (walk ledger, timetable, clock), so every clone recomputes the same voyage.
+// MARK and position is derived from that. Position is a pure function of
+// (walk ledger, timetable, agreements, clock), so every clone recomputes the
+// same voyage.
 //
 // The service is read from the FOLD, never from a file — a timetable is a mark
 // like any other, so the world's own canon is its only source. Any mark that
@@ -18,6 +18,21 @@
 // Ruled 2026-08-07 (Keemin): the Post Office is the residents' standing way to
 // and from Pando Peak — a scheduled service, not per-event ceremonies; the whole
 // build lives in marks; no `world_board` verb.
+//
+// RULED 2026-08-11 (Keemin) — BOARDING-IS-PRESENCE IS RETIRED. Edges are physics
+// and always form; what an edge may DO is contract plus permission. An entity is
+// moved by a mark only BY ITS OWN AGREEMENT — "a peer moves you only if you said
+// so when the edge was made." So a ride is now the one thing about this mechanic
+// that IS written: an agreement, declared at the door, severed by its own terms.
+// Everything else — where she is, where you are, where she sets you down — stays
+// derived from it and the clock, exactly as before.
+//
+// What that costs and what it buys. The 08-07 law let the water take whoever
+// happened to be standing on her deck at the hour, which read as generous and
+// was in fact a peer moving you without your having said anything at all. Under
+// the new law standing on her deck is standing on her deck: she sails, you do
+// not, and the deck was never a promise. Nothing about a ride is INFERRED any
+// more; the whole of it is in the agreement's own words.
 
 import { pointInRect } from "./geometry.mjs";
 import {
@@ -109,7 +124,7 @@ function buildService(mark, byId) {
 
   const vesselMark = sited(tt.vessel, "vessel");
   if (!vesselMark.extent || !(vesselMark.extent.w > 0) || !(vesselMark.extent.h > 0))
-    fail(id, `vessel ${tt.vessel} has no extent — boarding is presence inside her footprint, so she must have one`);
+    fail(id, `vessel ${tt.vessel} has no extent — a body with no footprint has no deck to stand on and no rail to be set down beyond, so she must have one`);
 
   if (!Array.isArray(tt.stops) || tt.stops.length < 2)
     fail(id, `stops must be a list of at least two marks (got ${JSON.stringify(tt.stops)}) — one stop is not a line`);
@@ -141,9 +156,10 @@ function buildService(mark, byId) {
 
 // ── the schedule ────────────────────────────────────────────────────────────
 
-// Her footprint, wherever she is lying: her own extent about a point. This is
-// the boarding zone and nothing wider (Keemin's first boarding rule) — a
-// bystander on the quay is ashore, however close.
+// Her footprint, wherever she is lying: her own extent about a point. Since the
+// agreement law it is a fact about geometry only — her deck, for saying who is
+// standing on it. It is no longer a boarding zone: nobody is collected by being
+// inside it, and nobody is refused for being outside it.
 export function footprintOf(service, centre) {
   return { x: centre.x, y: centre.y, w: service.vessel.extent.w, h: service.vessel.extent.h };
 }
@@ -237,55 +253,197 @@ export function ashoreOf(service, sailing) {
 
 const round1 = (n) => Math.round(n * 10) / 10;
 
+// ── agreements: the one written thing about a ride ──────────────────────────
+//
+// An agreement is a row, not a geometry: `{ entity, target, policy, born_at,
+// severed_at? }`. `target` names the vessel — either her mark id or her ledger
+// handle, because the world half cannot know which naming the office chose and
+// both name one body without ambiguity. `born_at` and `severed_at` may be given
+// as fractional crossings (this module's own clock) or as ISO instants, and are
+// normalized here so no caller has to convert and get the units wrong.
+//
+// TWO POLICIES, and the difference is only WHERE IT ENDS.
+//
+//   bound:<stop-id>   she carries you through every intermediate arrival with
+//                     no deposit and no turns, and sets you down at the named
+//                     stop — where the agreement ends by its own terms.
+//   riding            she carries you and sets you down never. The ring is the
+//                     whole of it; you go ashore by saying so.
+//
+// SEVERANCE IS DERIVED WHERE ITS TERMS ARE WRITTEN. Reaching the bound stop
+// ends the agreement because the agreement SAYS that stop — nothing has to be
+// written for it to be over, in the same way nothing is written when a walk
+// arrives. `severed_at` is for the other kind of ending: a withdrawal declared
+// before the terms ran out. The office appends that as its own event and never
+// deletes the row, so the record of a ride keeps both of its ends.
+
+export const BOUND_PREFIX = "bound:";
+export const RIDING_POLICY = "riding";
+
+/** The stop a `bound:<stop-id>` policy names, or null for any other policy. */
+export const boundStopOf = (policy) =>
+  String(policy ?? "").startsWith(BOUND_PREFIX) ? String(policy).slice(BOUND_PREFIX.length) : null;
+
+/** Is this a PASSENGER policy at all — one that can move an entity by carriage? */
+export const isPassengerPolicy = (policy) =>
+  policy === RIDING_POLICY || Boolean(boundStopOf(policy));
+
+// A number is already this module's clock; a string is an instant to convert.
+const asFc = (v) => (v == null ? null : (typeof v === "number" ? v : fractionalCrossing(Date.parse(v))));
+
+const namesVessel = (service, target) =>
+  target === service.vessel.markId || target === service.vessel.handle;
+
+/**
+ * The agreement governing a ride at an instant: the latest one with this vessel
+ * that had been born and not yet severed. Latest-wins is the ledger's own rule,
+ * so two agreements never argue — the newer statement is the standing one.
+ */
+export function agreementAt(agreements, service, fractional) {
+  let cur = null;
+  for (const a of agreements ?? []) {
+    if (!namesVessel(service, a.target)) continue;
+    if (!isPassengerPolicy(a.policy)) continue;
+    const born = asFc(a.born_at);
+    if (born === null || born > fractional) continue;
+    const severed = asFc(a.severed_at);
+    if (severed !== null && severed <= fractional) continue;
+    if (!cur || born >= cur.born) cur = { born, severed, policy: a.policy, row: a };
+  }
+  return cur;
+}
+
 // ── where a resident is, with the service running ───────────────────────────
 //
-// Boarding is presence and the walk ledger is the only record. After a
-// resident's last declared walk, replay the scheduled cast-offs: any whose
-// instant caught them STANDING inside her footprint carried them. Chains
-// compose — ride up, walk to the party, walk back to her deck, ride home — and
-// every leg between the declared records is derived, never written.
+// NO ONE IS CARRIED BY PRESENCE. A walker is carried on a sailing if and only
+// if an unsevered agreement with this vessel existed at her cast-off. Standing
+// on her deck at the hour does nothing; standing a mile inland with an
+// agreement rides. The geometry that used to decide this now decides nothing,
+// and the door is where the standing is checked, once, when the agreement is
+// made.
+//
+// Chains still compose, and cost less than they did: ride up, walk to the
+// party, walk back, ride home is a walk and an agreement each way — the
+// intermediate calls are carried through, so the round trip that used to need a
+// re-board hop at every stop now needs none.
 
-const RIDE_STATE = (sailing) => ({ kind: "ride", sailing });
-
-export function positionAt(departure, fractional = fractionalCrossing(), service = null) {
+export function positionAt(departure, fractional = fractionalCrossing(), service = null, agreements = []) {
   const own = walkPositionAt(departure, fractional);
-  if (!departure || !service) return own && { ...own, aboard: null, atMooring: null, ashoreAt: null };
+  if (!departure || !service) return own && { ...own, aboard: null, boundFor: null, onDeckAt: null, ashoreAt: null };
 
-  // Their own leg ends once; after that they are stationary until they declare
-  // another walk. So one full schedule period past that end is enough to settle
-  // whether the service ever collects them — the timetable repeats, and a
-  // standing walker who was not taken on this round is never taken on the next.
-  const legEndFc = departure.at + (own.arrived ? own.travelledM : own.legM) /
-    ((departure.pace > 0 ? departure.pace : WALK_M_PER_CROSSING / 1000) * 1000);
-  const horizon = Math.min(fractional, legEndFc + DAY_CROSSINGS);
+  const held = agreementAt(agreements, service, fractional)
+    // An agreement that ENDED before now still governs the voyage it covered —
+    // where she set you down is where you are standing. So the search falls back
+    // to the last one to have existed at all.
+    ?? lastAgreementBefore(agreements, service, fractional);
+  if (!held) return { ...own, aboard: null, boundFor: null, onDeckAt: onDeckOf(service, own, fractional), ashoreAt: null };
 
-  let state = null;
-  for (const sailing of sailingsBetween(service, departure.at, horizon)) {
-    const p = walkPositionAt(departure, sailing.departFc);
-    if (!p.arrived) continue;                                            // still walking — the water leaves you
-    if (!pointInRect(p.x, p.y, footprintOf(service, sailing.from.at))) continue; // not on her deck
-    state = RIDE_STATE(sailing);
-    break;                                                               // aboard; the ride owns them from here
+  const ride = rideFrom(departure, service, held, fractional);
+  // AGREED, AND SHE HAS NOT GONE YET. They are still standing wherever they
+  // stood — but the agreement is made, so the answer says where they are bound.
+  // A resident who has arranged their passage should not have to be at sea
+  // before a read surface will admit it.
+  if (!ride) return {
+    ...own, aboard: null,
+    boundFor: held.severed === null ? boundStopOf(held.policy) : null,
+    onDeckAt: onDeckOf(service, own, fractional), ashoreAt: null,
+  };
+
+  // ASHORE — the agreement ran out at a named stop, or the walker declared a
+  // walk while aboard and chose the next arrival as their way off.
+  if (ride.ashore) {
+    const a = ashoreOf(service, ride.ashore);
+    // A walk declared while aboard resumes FROM THE DEPOSIT POINT: she puts you
+    // down, and the leg you asked for starts there and then. Nothing about it
+    // was written twice — the same declared record, read from where it can
+    // actually begin.
+    if (ride.walkResumesFrom !== null) {
+      const resumed = walkPositionAt(
+        { ...departure, from: a, at: ride.walkResumesFrom }, fractional);
+      // `ashoreAt` names WHERE YOU ARE, not where you once were — so it holds
+      // only while they are still standing on the stones she left them on. A
+      // walker a kilometre inland is not ashore at the landing, and a field that
+      // went on saying so would be the read surface lying about a position.
+      return {
+        ...resumed, aboard: null, boundFor: null, onDeckAt: null,
+        ashoreAt: resumed.travelledM === 0 ? ride.ashore.to.markId : null,
+      };
+    }
+    return {
+      x: a.x, y: a.y, arrived: true, standing: true,
+      legM: 0, travelledM: 0, remainingM: 0, etaCrossings: 0,
+      aboard: null, boundFor: null, onDeckAt: null, ashoreAt: ride.ashore.to.markId,
+    };
   }
-  if (!state) return { ...own, aboard: null, atMooring: mooringOf(service, own, fractional), ashoreAt: null };
 
-  const { sailing } = state;
-  const v = vesselOnSailing(sailing, fractional);
-  if (!v.arrived) return { ...v, aboard: service.vessel.handle, atMooring: null, ashoreAt: null };
-
-  // Set down ashore, standing — and outside her footprint, so the next
-  // departure from this very berth passes over them.
-  const a = ashoreOf(service, sailing);
+  // ABOARD — under way, or lying alongside on a call she carries you through.
+  // `arrived` stays false for the whole passage, including the calls: a
+  // passenger has not arrived anywhere until she sets them down, and a berthed
+  // boat with a through-rider aboard is a pause in one voyage, not the end of
+  // it. `onDeckAt` is the stop she is lying at, when she is lying at one.
+  const v = vesselPositionAt(service, fractional);
   return {
-    x: a.x, y: a.y, arrived: true, standing: true,
+    x: v.x, y: v.y, arrived: false, standing: false,
     legM: 0, travelledM: 0, remainingM: 0, etaCrossings: 0,
-    aboard: null, atMooring: null, ashoreAt: sailing.to.markId,
+    aboard: service.vessel.handle,
+    boundFor: boundStopOf(held.policy),
+    onDeckAt: v.berthed ? v.atStop : null,
+    ashoreAt: null,
   };
 }
 
-// Standing on her deck while she lies alongside — "aboard, at her mooring; she
-// sails at the next departure". Not a ride yet; the narration's own state.
-function mooringOf(service, p, fractional) {
+/** The last agreement with this vessel to have been born at all, severed or not. */
+function lastAgreementBefore(agreements, service, fractional) {
+  let cur = null;
+  for (const a of agreements ?? []) {
+    if (!namesVessel(service, a.target) || !isPassengerPolicy(a.policy)) continue;
+    const born = asFc(a.born_at);
+    if (born === null || born > fractional) continue;
+    if (!cur || born >= cur.born) cur = { born, severed: asFc(a.severed_at), policy: a.policy, row: a };
+  }
+  return cur;
+}
+
+/**
+ * Replay the voyage one agreement bought.
+ *
+ * Returns `{ ashore }` — the sailing whose arrival set them down — or `{}` while
+ * they are still being carried, or null when the agreement has bought nothing
+ * yet (born after the last cast-off, so she has not left with them aboard).
+ *
+ * `walkResumesFrom` is the instant a walk declared WHILE ABOARD begins ashore.
+ */
+function rideFrom(departure, service, held, fractional) {
+  const bound = boundStopOf(held.policy);
+  // A walk declared after the agreement was made, while it still stood, is the
+  // choice to go ashore at her next arrival (the third rule). A walk declared
+  // BEFORE it is how they got to the quay, and says nothing about leaving.
+  const goingAshore = departure.at > held.born;
+
+  let carrying = false;
+  for (const sailing of sailingsBetween(service, held.born - 1e-9, fractional)) {
+    if (sailing.departFc < held.born) continue;                       // she left before they agreed
+    if (held.severed !== null && held.severed <= sailing.departFc) break; // withdrawn before this cast-off
+    carrying = true;
+    if (sailing.arriveFc > fractional) return {};                     // still at sea on this leg
+    // ASHORE AT THE FIRST ARRIVAL THAT ENDS IT: the stop the agreement named,
+    // or — for a walker who declared a walk while aboard — the next one she
+    // makes after they said so.
+    if (bound && sailing.to.markId === bound)
+      return { ashore: sailing, walkResumesFrom: goingAshore ? sailing.arriveFc : null };
+    if (goingAshore && sailing.arriveFc >= departure.at)
+      return { ashore: sailing, walkResumesFrom: sailing.arriveFc };
+    // Otherwise she calls, lies alongside, and casts off again with them still
+    // aboard — through-riding, zero turns.
+  }
+  return carrying ? {} : null;
+}
+
+// Standing on her deck while she lies alongside, with NO agreement — a fact
+// about where someone is standing and nothing more. Under the 08-07 law this
+// meant "she sails at the next departure"; it no longer promises anything,
+// which is why it is no longer called a mooring. She will sail without them.
+function onDeckOf(service, p, fractional) {
   if (!p?.arrived) return null;
   const v = vesselPositionAt(service, fractional);
   if (!v?.berthed) return null;
@@ -293,11 +451,14 @@ function mooringOf(service, p, fractional) {
 }
 
 // Every resident at one instant, the service running — the presence layer's
-// input, mirroring walk.mjs's positionsAt.
-export function positionsAt(departures, fractional = fractionalCrossing(), service = null) {
+// input, mirroring walk.mjs's positionsAt. `agreementsOf(handle)` yields that
+// resident's own agreements; absent, nobody rides, which is the correct answer
+// for a caller that has not learned to read them yet.
+export function positionsAt(departures, fractional = fractionalCrossing(), service = null, agreementsOf = null) {
   const byHandle = new Map();
   for (const d of departures) byHandle.set(d.handle, d);
   const out = {};
-  for (const [handle, d] of byHandle) out[handle] = { ...positionAt(d, fractional, service), departure: d };
+  for (const [handle, d] of byHandle)
+    out[handle] = { ...positionAt(d, fractional, service, agreementsOf ? agreementsOf(handle) ?? [] : []), departure: d };
   return out;
 }
