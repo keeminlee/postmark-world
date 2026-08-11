@@ -318,6 +318,52 @@ export function summarizeBackers(rows = [], limit = 5) {
   return { top: holders.slice(0, cap), others: Math.max(0, holders.length - cap) };
 }
 
+// THE POPOVER AND THE CHIP ARE ONE NUMBER (2026-08-10). This sheet opens by
+// clicking the backing chip, and it used to headline the door's raw `escrow`
+// while the chip showed raw too — they agreed BY ACCIDENT. The moment the chip
+// became effective they contradicted one click apart, on sixteen live marks:
+// let-there-be-light read ✦147 on the chip and ✦0 here.
+//
+// So the headline is taken from the SAME fold record the chip reads. Agreement
+// is now structural rather than something two call sites have to remember, and
+// the parts beneath explain the gap a single figure cannot.
+//
+// SETTLED vs LIVE, deliberately not reconciled: `weight`/`weight_parts` are the
+// last Settlement's figures — what the chip shows — while the door's holders and
+// escrow are the ledger RIGHT NOW. Between crossings they legitimately differ: a
+// stake laid this morning is real money and not yet ✦. That difference is
+// reported as pending, never quietly resolved toward whichever number is larger.
+export function stakeBackersHTML({ weight = 0, weightParts = null, holders = [], liveEscrow = null, limit = 5 } = {}) {
+  const effective = Math.max(0, Number(weight) || 0);
+  const parts = weightParts ?? null;
+  // An absent breakdown means all-zero (marks-fold.mjs only emits weight_parts
+  // where it explains something), so read it as zeroes — never as unknown.
+  const own = Math.max(0, Number(parts?.own_escrow ?? 0) || 0);
+  const bonus = Math.max(0, Number(parts?.breadth?.bonus ?? 0) || 0);
+  const households = Math.max(0, Number(parts?.breadth?.external_households ?? 0) || 0);
+  const fanned = Array.isArray(parts?.fanned) ? parts.fanned : [];
+  const fannedTotal = fanned.reduce((n, f) => n + (Number(f?.weight) || 0), 0);
+  const summary = summarizeBackers(holders, limit);
+  const row = (label, amount) =>
+    `<div class="wv-backer"><span>${esc(label)}</span><span class="amount">✦ ${Number(amount).toLocaleString()}</span></div>`;
+
+  let html = `<b>✦ ${effective.toLocaleString()}</b>`;
+  html += row("staked on it", own);
+  html += summary.top.length
+    ? summary.top.map((r) => `<div class="wv-backer is-holder"><span>${esc(r.holder)}</span><span class="amount">✦ ${r.amount.toLocaleString()}</span></div>`).join("")
+      + (summary.others ? `<div class="wv-backer is-holder"><span>and ${summary.others} other${summary.others === 1 ? "" : "s"}</span><span></span></div>` : "")
+    : `<div class="wv-backer is-holder"><span>no one yet</span><span></span></div>`;
+  if (bonus > 0) html += row(`${households} other household${households === 1 ? "" : "s"} backing it`, bonus);
+  if (fannedTotal > 0) html += row(`${fanned.length} mark${fanned.length === 1 ? "" : "s"} inside it`, fannedTotal);
+
+  // The lag, named only when it is real. Silence here would let a resident read
+  // a stale ✦ as a rejected stake.
+  const live = liveEscrow === null || liveEscrow === undefined ? null : Math.max(0, Number(liveEscrow) || 0);
+  if (live !== null && live !== own)
+    html += `<div class="wv-backer-pending">✦ ${live.toLocaleString()} is staked on it now — the difference lands at the next Settlement.</div>`;
+  return html;
+}
+
 export function previewWalkLeg({ from, toward, targetExtent = null, skeleton = null } = {}) {
   if (![from?.x, from?.y, toward?.x, toward?.y].every(Number.isFinite)) return null;
   const at = fractionalCrossing();
@@ -1500,6 +1546,18 @@ export function predicateFoldDecision(mark, renderedMarks = []) {
   return !!parent && !isPredicateAttribute(parent);
 }
 
+// THE ✦ NUMBER, in one place (2026-08-10). Every surface here used to reach for
+// whichever field was nearest — the cells and the glance read the fold record's
+// `stamps` (RAW escrow), while the drilled crumb read investigate's mislabelled
+// `stamps` (which was really weight). So one mark showed two different ✦ figures
+// depending on where you looked at it, and neither surface said which it meant.
+// Keemin's ruling: the effective figure is the default everywhere, and the
+// breakdown is how it explains itself. Raw escrow is still reachable as `.stamps`
+// for anything that genuinely wants what residents put in.
+export function effectiveWeight(mark) {
+  return Math.max(0, Number(mark?.weight ?? mark?.stamps ?? 0) || 0);
+}
+
 export function backingButton(markId, stamps = 0) {
   const backing = Math.max(0, Number(stamps) || 0);
   const backingClass = `wv-backing${backing === 0 ? " is-zero" : ""}`;
@@ -1544,11 +1602,17 @@ export function worldFrameReading(mark, marks = []) {
   if (!mark) return { error: "no mark" };
   return {
     id: mark.id, kind: mark.kind, household: mark.household, at: mark.at, extent: mark.extent,
-    sovereign: !!mark.sovereign, stamps: mark.weight ?? mark.stamps ?? 0, body: mark.body,
+    sovereign: !!mark.sovereign,
+    // same vocabulary as the engine's investigate (world-verbs.mjs): stamps is
+    // RAW own escrow, weight is the EFFECTIVE ✦ figure. This mirror emitted
+    // weight under the name stamps until 2026-08-10; anything reading it got the
+    // right number by the wrong name, which is how it stayed wrong.
+    weight: mark.weight ?? 0, stamps: mark.stamps ?? 0, weight_parts: mark.weight_parts ?? null,
+    body: mark.body,
     // its own attributes are its own — the light axis, the clock, the origin are
     // properties of the frame, not marks living inside it
     predicates: marks.filter((m) => (m.kind === "predicated" || m.kind === "naming") && m.parent === mark.id)
-      .map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, stamps: m.weight ?? 0, body: m.body })),
+      .map((m) => ({ id: m.id, slot: m.slot ?? (m.kind === "naming" ? "name" : null), value: m.value, weight: m.weight ?? 0, stamps: m.stamps ?? 0, body: m.body })),
     parents: [], children: [], alongside: [],
     more: { predicates: 0, children: 0 },
   };
@@ -1562,7 +1626,7 @@ export function investigateNameLine(mark, { name, determined = false, tier = "ma
   const identity = name || deslugMarkId(mark?.id);
   return `<div class="wv-rnode ${markStateClasses({ tier, draft })}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
     + `<div class="wv-rnode-head"><b class="cname${determined ? " is-determined" : ""}">${esc(identity)}</b>`
-    + `${backingButton(mark?.id, mark?.stamps ?? mark?.weight ?? 0)}</div>`
+    + `${backingButton(mark?.id, mark?.weight ?? mark?.stamps ?? 0)}</div>`
     + `</div>`;
 }
 
@@ -1934,6 +1998,11 @@ const STYLE = `
 .wv-backers b { color:var(--stamp-violet-subhead); }
 .wv-backer { display:flex; justify-content:space-between; gap:10px; max-width:24rem; }
 .wv-backer .amount { color:var(--stamp-violet); font-variant-numeric:tabular-nums; }
+/* the named backers sit UNDER the escrow line they add up to, so the indent is
+   carrying a relation, not decoration: the parts of the ✦ figure are flush, the
+   people inside one of those parts are stepped in. */
+.wv-backer.is-holder { padding-left:12px; opacity:.82; font-size:.95em; }
+.wv-backer-pending { margin-top:5px; color:var(--stamp-violet-subhead); font-size:.95em; }
 .wv-act-answer.success { color:var(--green); }
 .wv-act-answer.refusal { color:var(--err); }
 .wv-stamp-holding, .wv-stamp-balance { color:var(--stamp-violet); font-variant-numeric:tabular-nums; }
@@ -2862,7 +2931,7 @@ export function mountViewer(appEl) {
   }
   function markActions(m) {
     const full = byId.get(m.id) ?? m;
-    const backing = Math.max(0, Number(full.stamps ?? 0));
+    const backing = effectiveWeight(full);
     const backingDisplay = backingButton(m.id, backing);
     if (!canAct()) return `<span class="wv-cell-actions">${backingDisplay}</span>`;
     const position = backedPosition(m.id);
@@ -3207,7 +3276,7 @@ export function mountViewer(appEl) {
     const html = `
       ${drilled ? `<div class="wv-crumbs"><span class="wv-back" role="button" tabindex="0">◂ back</span><b class="wv-crumb-name${targetIdentity.determined ? " is-determined" : ""}">${esc(targetIdentity.name)}</b>${tierChip(tierOf(target))}</div>
       <div class="cbody" style="margin-bottom:6px">${esc(d.body ?? "")}</div>
-      ${markCellBylineRow(target, backingButton(d.id, d.stamps))}` : ""}
+      ${markCellBylineRow(target, backingButton(d.id, d.weight ?? d.stamps))}` : ""}
       ${d.sovereign ? `<div class="cmeta" style="margin-bottom:4px"><span class="wv-chip">sovereign</span></div>` : ""}
       ${newlyRevealedPredicates.length ? `<div class="wv-expansion-attributes">${newlyRevealedPredicates.map(predicateAttributeLine).join("")}</div>` : ""}
       ${d.parents?.length ? `<div class="wv-tree-label">sits inside</div><div class="wv-relation-lines">${d.parents.map(relativeNode).join("")}</div>` : ""}
@@ -4630,13 +4699,16 @@ export function mountViewer(appEl) {
       const body = await response.json().catch(() => null);
       if (!response.ok || !body || body.error === "bounce") throw new Error(body?.defect || `the door answered ${response.status}`);
       if (!sheet.isConnected) return;
-      const summary = summarizeBackers(body.holders, 5);
-      const total = Math.max(0, Number(body.escrow ?? 0));
-      host.innerHTML = `<b>✦ ${total.toLocaleString()} backed by</b>`
-        + (summary.top.length
-          ? summary.top.map((row) => `<div class="wv-backer"><span>${esc(row.holder)}</span><span class="amount">✦ ${row.amount.toLocaleString()}</span></div>`).join("")
-            + (summary.others ? `<div>and ${summary.others} other${summary.others === 1 ? "" : "s"}</div>` : "")
-          : `<div>no one yet</div>`);
+      // The settled figures come from the fold record — the same object the chip
+      // that opened this sheet reads — so the two cannot disagree. The door
+      // supplies who backed it and how much is staked right now.
+      const full = byId.get(sheet.dataset.mark) ?? null;
+      host.innerHTML = stakeBackersHTML({
+        weight: effectiveWeight(full),
+        weightParts: full?.weight_parts ?? null,
+        holders: body.holders,
+        liveEscrow: body.escrow ?? body.stamps ?? null,
+      });
     } catch (error) {
       if (sheet.isConnected) host.textContent = `backer list unavailable — ${error.message}`;
     }
@@ -4926,7 +4998,7 @@ export function mountViewer(appEl) {
     if (!full) return "";
     const tier = tierOf(full), identity = markName(full), where = radialWhere(full);
     const draft = isDraft(full);
-    const backing = Math.max(0, Number(full.stamps ?? 0));
+    const backing = effectiveWeight(full);
     return `<article class="wv-card fov ${markClasses(full)}">`
       + markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier, draft })
       + `<div class="cbody">${esc(full.body ?? full.id)}</div>`
