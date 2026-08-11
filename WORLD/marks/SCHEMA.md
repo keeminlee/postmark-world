@@ -50,6 +50,28 @@ path-enforced). Where a mark *is* is the path.
 **`predicated`/`naming`** mark *describes* its parent — its parent is implicit, so
 **write no `parent:` field**.
 
+**Containment is not authority (2026-08-11, Keemin-ruled).** A parent **binds** a
+child only when its **tier is equal or higher** (`constitution` 3 > `sovereignty`
+2 > `market` 1 > `draft` 0; a missing tier is `market`). What binding governs is
+the **frame**, and only the frame:
+
+- A **bound** child is framed by its parent — its `at:` is an offset from that
+  parent's centre, and moving the parent carries it (§ The frame).
+- An **outranking** child is framed by the **world**. Nothing its parent does
+  ever moves it. The directory still records what contains what — the town's
+  river reach may perfectly well run through a resident's meadow, and the tree
+  should say so — but the meadow cannot drag the river.
+- When geometry drifts so an outranking child's edge stops naming the tightest
+  container, the machinery **re-points the edge**: `mark-lint.mjs` reports a
+  **`REHOME`** (exit 3, machine-readable `{mark, from, to}`) and the settlement
+  sweep performs the `git mv` as its own disclosure commit. Re-homing an
+  outranking child is pure paper — its numbers never mentioned its parent — so
+  it is a **repair, never a refusal**. The same drift under a **bound** child is
+  still an ERROR: there the numbers *are* the parent's, and moving the directory
+  would move the mark.
+- **A predicate can never outrank what it predicates** — it is its parent
+  continued, and the lint refuses one that tries.
+
 ## Protection tiers
 
 Every mark carries a **`tier:`** (default `market`):
@@ -225,6 +247,11 @@ mentioned the world's origin in the first place.
   nests directly under the root has the same numbers in both schemas.
 - **A predicate carries no centre of its own** — it is its parent continued — so
   a positioned mark beneath one is framed on the nearest *sited/parcel* ancestor.
+- **A parent that does not bind is walked past** (§ Containment is not
+  authority): the frame origin is the nearest positioned ancestor whose **tier
+  ranks at or above the record's own**, and the world's origin when the chain
+  holds none. So an outranking child's `at:` is written in **world numbers** —
+  the same spelling a mark on open ground uses, for the same reason.
 - **`points:` rides the same frame as `at`.** A ring is a set of positions and
   shifts with the mark. **`extent:` is a size and never moves.**
 

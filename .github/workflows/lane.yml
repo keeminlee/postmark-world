@@ -133,6 +133,17 @@ jobs:
             --marks-dir /tmp/sketch/WORLD/marks 2> /tmp/wall.err
           WALL=$?
           node tools/mark-lint.mjs --marks-dir /tmp/sketch/WORLD/marks --terrain /tmp/sketch/WORLD/skeleton.json > /tmp/lint.out 2>&1; LINT=$?
+          # exit 3 is REPAIR NEEDED, not refused (mark-lint § three exit codes):
+          # no errors, but some directory edge wants re-pointing because a mark
+          # that OUTRANKS what it is filed under has had geometry drift around
+          # it. The settlement sweep performs that at the crossing, and nothing
+          # moves when it does — so this must not bounce the writer. It is
+          # usually not even their mark: the commonest cause is a lawful new
+          # claim growing around somebody else's. Without this line the lane
+          # refuses on `-ne 0` and prints an EMPTY reason, because the comment
+          # below greps for ERROR lines and a re-home is not one.
+          REHOME=0
+          if [ $LINT -eq 3 ]; then REHOME=1; LINT=0; fi
           node tools/marks-fold.mjs --marks-dir /tmp/sketch/WORLD/marks --terrain /tmp/sketch/WORLD/skeleton.json --no-write --json > /tmp/fold.json 2> /tmp/fold.err; FOLD=$?
           set -e
           if [ $FOLD -eq 0 ]; then
@@ -149,7 +160,12 @@ jobs:
             gh pr comment "$PR" --body-file /tmp/comment.md
             exit 1
           fi
-          echo "wall + lint + fold: green"
+          if [ $REHOME -eq 1 ]; then
+            grep -a "REHOME" /tmp/lint.out || true
+            echo "wall + lint + fold: green — with re-home(s) above, which the crossing re-points; no mark moves"
+          else
+            echo "wall + lint + fold: green"
+          fi
 
       - name: green merges on its own (the registrar precedent — the law is the gate)
         if: steps.paths.outputs.lane == 'yes' && startsWith(env.BASE_REF, 'draft/')

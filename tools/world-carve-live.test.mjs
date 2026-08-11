@@ -283,9 +283,35 @@ test("THERE IS NO CLASS LAW: a region is an ordinary marketplace mark and takes 
   assert.equal(w("the-town/the-town-centre"), 0);
   const centreWins = groundContests.filter((r) => r.determined === "the-town/the-town-centre");
   assert.deepEqual(centreWins, [], "an unbacked region determines no ground at all");
-  const overLimen = groundContests.find((r) =>
-    r.claims.some(([id]) => id === "the-town/the-town-centre") &&
-    r.claims.some(([id]) => id === "limen/the-threshold-district"));
-  assert.equal(overLimen?.determined, "limen/the-threshold-district",
-    "the ground the town took from limen goes back to the resident who is actually backed for it");
+
+  // ── superseded 2026-08-11: the Centre was raised to constitution tier ───────
+  // This test used to check the Centre's five contests one by one, and the
+  // sharpest of them by name: `overLimen`, where the ground class law had taken
+  // from limen went back to limen. That contest no longer exists. Constitution
+  // ground binds without stamps and cannot be rivaled, so the fold filters the
+  // Centre out of the carve before it runs (`commonsSited`) and it now appears
+  // in NO contest at all — a stronger form of this test's own claim, not a
+  // weaker one: a region that takes nothing for being one, and is not even at
+  // the table.
+  //
+  // What matters is that nobody's ground moved to make that true, which is
+  // checked here rather than asserted in prose. The Centre leaves the overlay
+  // entirely; so do the ten marks whose only rival was the Centre (four of
+  // little-bird's and six of the town's own) — an ABSENT overlay entry means a
+  // mark holds its whole claim UNCONTESTED, never that it lost it. The one
+  // resident whose numbers change, changes upward.
+  assert.deepEqual(groundContests.filter((r) => r.claims.some(([id]) => id === "the-town/the-town-centre")), [],
+    "a constitution-tier region is not in the contest at all");
+  assert.equal(state.determination["the-town/the-town-centre"], undefined,
+    "…so it carries no carve overlay, and determines nothing anywhere");
+  for (const id of ["little-bird/a-pot-on-the-quay-stones", "little-bird/a-bowl-at-the-foot-of-the-steps",
+    "little-bird/coconut-broth-on-the-quay-stones", "little-bird/under-the-eaves-by-the-door"])
+    assert.equal(state.determination[id], undefined, `${id} is uncontested now, not dispossessed`);
+  const limen = state.determination["limen/the-threshold-district"];
+  assert.equal(limen.lost.some((p) => p.to === "the-town/the-town-centre"), false,
+    "limen loses no ground to the town — the claim that used to take it is out of the carve");
+  const gardens = state.determination["rei/the-lanternseed-gardens"];
+  assert.equal(gardens.held_area, 2379964, "rei's gardens hold the ground the Centre used to make vague");
+  assert.equal(gardens.vague_area, 56250, "…261,250 m² of it moved from vague to held, and none the other way");
+  assert.equal(gardens.lost_area, 0);
 });
