@@ -246,19 +246,56 @@ test("agree-and-board: an agreement made while she lies alongside is the whole t
     "a passenger's position IS the vessel's while she is under way");
 });
 
-test("THE WHOLE RULING: an agreement carries you from ANYWHERE — her deck is not the ticket and never was", () => {
-  // The same passage, agreed by someone standing a kilometre inland. Under the
-  // retired law this walker could not have boarded at all; under this one the
-  // geometry is simply not consulted.
+test("THE FOURTH QUADRANT — permission without presence rides nothing today, and rides the next cast-off you stand for", () => {
+  // The half the law would be wrong without. An agreement is not a summons: she
+  // does not come and fetch you, and she does not take you off a hillside a
+  // kilometre inland. It waits, standing, until you are on her deck at an hour
+  // she goes.
   const outbound = nextFrom(TOWN, DAY0);
   const inland = { x: QUAY.x, y: QUAY.y + 1000 };
   assert.ok(!pointInRect(inland.x, inland.y, footprintOf(service, QUAY)),
-    "nowhere near her — the point of the test");
+    "a kilometre off her deck — the point of the test");
 
-  const rider = D({ handle: "inlander", from: inland, toward: inland, at: midDwellBefore(outbound) });
+  const waiting = D({ handle: "inlander", from: inland, toward: inland, at: midDwellBefore(outbound) });
   const ticket = agree("inlander", boundTo(LANDING), agreedDuring(outbound));
-  assert.equal(positionAt(rider, midway(outbound), service, ticket).aboard, "the-post-office",
-    "the agreement is the passage; where they were standing when it was made is the DOOR's question, not this one");
+
+  const missed = positionAt(waiting, midway(outbound), service, ticket);
+  assert.equal(missed.aboard, null, "she casts off and leaves them on the hill — permission is not an edge");
+  assert.deepEqual(at(missed), site(inland), "exactly where their own record puts them");
+  assert.equal(missed.boundFor, LANDING, "…and the passage is still theirs, unspent and still saying where");
+
+  // THEN THEY WALK DOWN. The same unspent agreement, and the first cast-off they
+  // are standing for takes them — no re-agreeing, no ceremony.
+  const walkDown = D({ handle: "inlander", from: inland, toward: QUAY, at: outbound.arriveFc });
+  const next = nextFrom(TOWN, arrivalOf(walkDown));
+  assert.equal(positionAt(walkDown, next.departFc - 1e-9, service, ticket).onDeckAt, TOWN,
+    "standing on her deck when she casts off");
+  assert.equal(positionAt(walkDown, midway(next), service, ticket).aboard, "the-post-office",
+    "the next cast-off they stand for is the one that takes them");
+  assert.equal(positionAt(walkDown, midDwellAfter(next), service, ticket).ashoreAt, LANDING,
+    "and it ends where the agreement always said it would");
+});
+
+test("CHANGING YOUR MIND IS WALKING AWAY — there is no cancellation rule because none is needed", () => {
+  // The consequence of edge-AND-permission that a reviewer should be able to
+  // read off the tests: an agreement made and then walked away from carries
+  // nobody, and nothing had to be revoked for that to be true.
+  const outbound = nextFrom(TOWN, DAY0);
+  const ticket = agree("waverer", boundTo(LANDING), agreedDuring(outbound));
+
+  // Agreed on her deck, then walks off it before she goes.
+  const away = { x: QUAY.x, y: QUAY.y + 600 };
+  const leaves = D({ handle: "waverer", from: QUAY, toward: away, at: agreedDuring(outbound) + 1e-6 });
+  assert.ok(walkPositionAt(leaves, outbound.departFc).arrived, "the walk is finished before she casts off");
+
+  const p = positionAt(leaves, midway(outbound), service, ticket);
+  assert.equal(p.aboard, null, "no edge at the hour, so no ride — by feet, with nothing revoked");
+  assert.deepEqual(at(p), site(away));
+
+  // Compare: the identical agreement, standing still. THAT rides. The only
+  // difference between the two is where the feet were.
+  const stays = D({ handle: "waverer", from: QUAY, toward: QUAY, at: agreedDuring(outbound) + 1e-6 });
+  assert.equal(positionAt(stays, midway(outbound), service, ticket).aboard, "the-post-office");
 });
 
 test("presence without agreement never carries: a walker standing on her deck at cast-off sails nowhere", () => {
@@ -276,11 +313,11 @@ test("presence without agreement never carries: a walker standing on her deck at
   assert.deepEqual(at(later), site(QUAY), "he is exactly where he stood; she is half a run away");
 });
 
-test("presence without agreement never carries: nor does a line that merely crosses her deck", () => {
+test("THE EDGE NEEDS STANDING: a line that merely crosses her deck boards nobody, agreement or no agreement", () => {
   // A long walk down the reach whose straight line runs through her footprint at
-  // cast-off. It made no difference before (he was not standing) and makes none
-  // now (he has agreed to nothing) — two independent reasons, and only the
-  // second one is law any more.
+  // cast-off. Under the retired law he was excluded for not STANDING; the edge
+  // half of the new law keeps exactly that, so this is asserted BOTH ways —
+  // without a passage and with one. The permission cannot supply the edge.
   const outbound = nextFrom(TOWN, DAY0);
   const REACH_M = 200;
   const crossing = D({ handle: "passer",
@@ -288,12 +325,37 @@ test("presence without agreement never carries: nor does a line that merely cros
                        at: outbound.departFc - REACH_M / WALK_M_PER_CROSSING });
   const atCastOff = positionAt(crossing, outbound.departFc, service, []);
   assert.ok(pointInRect(atCastOff.x, atCastOff.y, footprintOf(service, QUAY)), "amidships at the hour");
+  assert.equal(atCastOff.arrived, false, "…but mid-stride, which is not standing");
   assert.equal(atCastOff.aboard, null);
 
   const later = positionAt(crossing, midway(outbound), service, []);
   assert.equal(later.aboard, null);
   assert.equal(later.x, QUAY.x, "he walks on down the reach");
   assert.ok(later.y < QUAY.y);
+
+  // And with a passage in hand he is still not carried: the water takes her and
+  // leaves him, and his unspent agreement waits for an hour he stands for.
+  const ticket = agree("passer", boundTo(LANDING), crossing.at - 1e-6);
+  const withTicket = positionAt(crossing, midway(outbound), service, ticket);
+  assert.equal(withTicket.aboard, null, "permission does not make a moving walker present");
+  assert.deepEqual(at(withTicket), at(later), "he is exactly where the walk alone puts him");
+  assert.equal(withTicket.boundFor, LANDING, "…still bound, still unspent");
+});
+
+test("a walk declared while she is ALONGSIDE needs no deposit — you leave on your own feet", () => {
+  // The narrow reach of the going-ashore rule, pinned. Setting someone down is
+  // only ever needed mid-channel, because only there can they not simply walk
+  // off. Declared at a berth, the walk is an ordinary walk and the edge check at
+  // her next cast-off finds them gone — no deposit, no severance ceremony.
+  const outbound = nextFrom(TOWN, DAY0);
+  const ticket = agree("stepper", "riding", agreedDuring(outbound));
+  const away = { x: QUAY.x, y: QUAY.y + 400 };
+  const stepsOff = D({ handle: "stepper", from: QUAY, toward: away, at: agreedDuring(outbound) + 1e-6 });
+
+  const p = positionAt(stepsOff, midway(outbound), service, ticket);
+  assert.equal(p.aboard, null, "she sailed without them");
+  assert.equal(p.ashoreAt, null, "and nobody was set down, because nobody was ever picked up");
+  assert.deepEqual(at(p), site(away), "they walked where they said they were walking");
 });
 
 test("presence without agreement never carries: a bystander a metre off her rail is exactly as unboarded as one on her deck", () => {

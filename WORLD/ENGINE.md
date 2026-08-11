@@ -117,20 +117,31 @@ crossings **exactly**; the mail boat moves on the mail's clock.
 **written** — an agreement, declared at the door and severed by its own terms.
 Everything else stays derived from it and the clock.
 
-1. **A walker is carried on a sailing if and only if an unsevered agreement with
-   that vessel existed at her cast-off.** Standing on her deck at the hour does
-   nothing; standing a kilometre inland with an agreement rides. Her footprint is
-   still her deck — for saying who is standing on it — but it is no longer a
-   boarding zone, and nobody is collected or refused by geometry.
-2. **Two policies, differing only in where the passage ends.** `bound:<stop-id>`
+1. **The carry condition is EDGE *and* PERMISSION.** A walker is carried on a
+   sailing if and only if both hold at her cast-off: they are **standing inside
+   her footprint** (the edge — presence, which is physics and forms whether
+   anyone meant it), *and* an **unsevered agreement** with that vessel stands
+   (the permission — theirs alone to give, and the whole of what changed).
+   Neither half alone moves anyone. Presence without permission is the retired
+   law and she sails without you. Permission without presence rides nothing
+   today, and rides **the next cast-off you stand for** — the agreement keeps
+   standing while you are not on her deck.
+2. **There is therefore no cancellation rule, because none is needed.** Changing
+   your mind is walking away: no edge at the hour, no ride, nothing to revoke.
+   `world_agree withdraw` ends the permission on the record and covers the case
+   where you are already aboard; it was never the way off a quay.
+3. **Two policies, differing only in where the passage ends.** `bound:<stop-id>`
    carries you through every intermediate call with **no deposit and no turns**
    (through-riding), and sets you down at the named stop, where the agreement
-   ends. `riding` carries you indefinitely and sets you down never — you go
-   ashore by saying so.
-3. **A walk declared while aboard is the choice to go ashore.** She finishes the
-   leg, sets you down at that arrival, the agreement is severed, and the declared
-   leg runs **from the deposit point** — nobody steps off into the water.
-4. **Arrival still sets you down ashore** — adjacent to the berth, outside her
+   ends. `riding` carries you indefinitely and sets you down never. Once aboard
+   the edge holds itself — a passenger's position *is* the vessel's, so they are
+   inside her footprint at every later cast-off without doing anything.
+4. **A walk declared from her deck MID-CHANNEL is the choice to go ashore.** She
+   finishes the leg, sets you down at that arrival, and the declared leg runs
+   **from the deposit point** — nobody steps off into the water (the 08-08
+   ruling). Declared while she is **alongside**, no deposit is needed at all:
+   you walk off her deck, and the edge check at her next cast-off finds you gone.
+5. **Arrival still sets you down ashore** — adjacent to the berth, outside her
    footprint, on the outboard rail, derived from the crossing itself. That was
    the anti-conveyor rule; under the agreement law the loop is stopped by the
    spent agreement instead, and the deposit point is simply where the stones are.
@@ -142,10 +153,14 @@ withdrawal declared before the terms ran out is the other kind of ending: the
 office **appends** it and never deletes the row, so a ride keeps both of its ends.
 
 **Derivation.** `positionAt(departure, instant, service, agreements)` replays the
-cast-offs from the agreement's birth: carried while it stands, ashore at the
-first arrival that ends it. Bounded by construction, and total — an empty
-agreement list means nobody rides, which is the correct answer for any reader
-that has not learned to pass them.
+cast-offs from the agreement's birth, checking both halves at each: carried once
+they are standing in her footprint with the permission standing, ashore at the
+first arrival that ends it. Bounded by construction — the schedule is periodic
+and she calls at every stop each round, so a standing walker in no footprint on
+one round is in none on the next, and the question settles within one period of
+the later of (their leg's end, the agreement's birth). Total, too: an empty
+agreement list means nobody rides, the correct answer for any reader that has
+not learned to pass them.
 
 **Narration derives, and needs no new state:** aboard is *carried by
 the-post-office*, now with the agreement's own words beside it — *bound for the
@@ -172,12 +187,19 @@ records, never marks** — movement and agreements live in the movement record, 
 a mark per trip would spam canon. The **service** is entirely marks. Same
 grain-split as parcels-vs-walks.
 
-*Tests: `tools/vessel.test.mjs` — agree-and-board, the three
-presence-without-agreement refusals (including vermillion's own case: standing on
-the berth centre at cast-off, sailing alone), bound-stop semantics, through-riding,
-the one-agreement-each-way round trip, riding round a full day's ring, the
-walk-severs rule, withdrawal, miss-the-boat, and schedule-change-via-mark-edit,
-all derived from the real folded tree.*
+*Tests: `tools/vessel.test.mjs` — **all four quadrants of the carry condition**:
+agree-and-board (both halves), the three presence-without-permission refusals
+(including vermillion's own case: standing on the berth centre at cast-off,
+sailing alone), permission-without-presence (rides nothing today, rides the next
+cast-off you stand for), and the edge's standing requirement (a line crossing her
+deck boards nobody, agreement or no agreement). Plus changing-your-mind-by-feet,
+bound-stop semantics, through-riding, the one-agreement-each-way round trip,
+riding round a full day's ring, the mid-channel walk-severs rule and its
+alongside counterpart, withdrawal, miss-the-boat, and
+schedule-change-via-mark-edit — all derived from the real folded tree. Each half
+of the condition is independently falsifiable: dropping the edge reddens three
+tests, dropping the permission reddens three others, dropping the standing
+requirement reddens one, with no overlap.*
 
 ## Laws honored
 

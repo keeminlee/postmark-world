@@ -4,14 +4,27 @@
 //   node tools/boarding-flip-disclosure.mjs [--at 2026-08-11T22:00:00Z] [--json]
 //
 // Ruled 2026-08-11 (Keemin): an entity is moved by a mark only by its own
-// agreement. Nobody in the record ever made one — the verb did not exist — so at
-// the flip EVERY passage the old law inferred is un-inferred, and anyone it had
-// carried is standing where they last walked to instead.
+// agreement. The carry condition became EDGE **and** PERMISSION — standing in
+// her footprint at cast-off, which the old law already required, AND an
+// unsevered agreement, which is new.
+//
+// SO THE FLIP IS EXACTLY THE SECOND CONJUNCT. The edge half is unchanged, which
+// means nobody moves for a reason the old law would not also have recognised;
+// everyone who moves does so because they were carried on presence alone, and
+// under the new law presence alone carries nobody. Nobody in the record ever
+// held a permission — the verb did not exist — so every inferred passage is
+// un-inferred, and the people it had carried are standing where they last walked
+// to instead.
 //
 // That is a real change to where real residents are, so it is DISCLOSED BY NAME
 // rather than shipped quietly. This prints the list Wright publishes at deploy:
 // every walker whose derived current position differs under the two laws, with
 // both answers and the reason.
+//
+// WORTH SAYING PLAINLY IN THE DISCLOSURE ITSELF: these residents did nothing
+// wrong and broke no rule. They rode a boat the town told them they could ride
+// by standing on it. The law changed under them, and the honest thing is to name
+// them rather than let the flip move them quietly.
 //
 // WHY THE RETIRED LAW LIVES HERE. `tools/vessel.mjs` no longer knows how to
 // carry anyone by presence, and it should not — that is the whole ruling. But a
@@ -34,7 +47,7 @@ import {
 } from "./walk.mjs";
 import {
   serviceFromFold, servicesFromFold, positionAt, sailingsBetween, footprintOf,
-  ashoreOf, DAY_CROSSINGS,
+  ashoreOf, instantOf, DAY_CROSSINGS,
 } from "./vessel.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -59,7 +72,7 @@ const vesselOnSailing = (sailing, fc) => walkPositionAt(
 
 function positionUnderPresenceLaw(departure, fractional, service) {
   const own = walkPositionAt(departure, fractional);
-  if (!departure || !service) return own && { ...own, aboard: null, ashoreAt: null };
+  if (!departure || !service) return own && { ...own, aboard: null, ashoreAt: null, boardedAt: null };
 
   const legEndFc = departure.at + (own.arrived ? own.travelledM : own.legM) /
     ((departure.pace > 0 ? departure.pace : WALK_M_PER_CROSSING / 1000) * 1000);
@@ -73,16 +86,28 @@ function positionUnderPresenceLaw(departure, fractional, service) {
     boarded = sailing;
     break;
   }
-  if (!boarded) return { ...own, aboard: null, ashoreAt: null };
+  if (!boarded) return { ...own, aboard: null, ashoreAt: null, boardedAt: null };
+
+  // THE EDGE THEY SATISFIED, kept so the disclosure can PROVE rather than assert
+  // that each mover was a lawful rider: the stop she cast off from and the hour,
+  // with the standing that earned it.
+  const stood = walkPositionAt(departure, boarded.departFc);
+  const edge = {
+    stop: boarded.from.markId,
+    castOff: new Date(instantOf(boarded.departFc)).toISOString(),
+    stoodAt: { x: stood.x, y: stood.y },
+    insideFootprint: pointInRect(stood.x, stood.y, footprintOf(service, boarded.from.at)),
+    standing: stood.arrived,
+  };
 
   const v = vesselOnSailing(boarded, fractional);
-  if (!v.arrived) return { ...v, aboard: service.vessel.handle, ashoreAt: null };
+  if (!v.arrived) return { ...v, aboard: service.vessel.handle, ashoreAt: null, boardedAt: edge };
 
   const a = ashoreOf(service, boarded);
   return {
     x: a.x, y: a.y, arrived: true, standing: true,
     legM: 0, travelledM: 0, remainingM: 0, etaCrossings: 0,
-    aboard: null, ashoreAt: boarded.to.markId,
+    aboard: null, ashoreAt: boarded.to.markId, boardedAt: edge,
   };
 }
 
@@ -185,6 +210,9 @@ function main() {
         was_state: whyCarried(before),
         now_state: after.aboard ? `carried by ${after.aboard}` : "standing where they last walked to",
         declared: { at: dep.iso, toward: place(dep.toward), to: dep.targetMarkId ?? null, era: dep.era },
+        // Computed, not assumed: the edge this rider actually satisfied.
+        lawful_under_the_old_law: Boolean(before.boardedAt?.insideFootprint && before.boardedAt?.standing),
+        boarded: before.boardedAt,
       });
     }
   }
@@ -219,10 +247,31 @@ function main() {
     console.log(`    was  ${f.was}  — ${f.was_state}`);
     console.log(`    now  ${f.now}  — ${f.now_state}`);
     console.log(`    ${f.moved_m} m apart. Their last declared walk: ${f.declared.at}, toward ${f.declared.toward}${f.declared.to ? ` (${f.declared.to})` : ""}.`);
+    if (f.boarded) {
+      console.log(`    They boarded at ${f.boarded.stop}, ${f.boarded.castOff} — standing on her deck at the hour.`);
+    }
     console.log("");
   }
   console.log("They are not being moved. They are being left where their own record put them:");
   console.log("the passage the old law inferred for them was never anything they said.");
+  console.log("");
+
+  // THE STRONGEST CLAIM IN THIS DISCLOSURE IS THE ONE MOST WORTH CHECKING, so it
+  // is computed rather than written. The new law's EDGE is the old law's whole
+  // test, so every mover should have satisfied it — if one did not, the flip is
+  // doing something beyond adding the permission and the operator must know.
+  const unlawful = findings.filter((f) => !f.lawful_under_the_old_law);
+  if (unlawful.length) {
+    console.log(`  ! ${unlawful.length} of these did NOT satisfy the edge under the old law:`);
+    for (const f of unlawful) console.log(`      ${f.handle} — ${JSON.stringify(f.boarded)}`);
+    console.log("  The flip is doing more than adding the permission. Do not deploy on this reading.");
+    return;
+  }
+  console.log("Every one of them was a LAWFUL rider under the law of the day — checked, not assumed:");
+  console.log("each was STANDING INSIDE her footprint at the cast-off that took them, which is the");
+  console.log("whole of what the old law asked and is still half of what the new one asks. There was");
+  console.log("no verb for agreeing, so not one of them could have agreed. The law changed under");
+  console.log("them; naming them is the least the change owes them.");
 }
 
 main();

@@ -315,17 +315,32 @@ export function agreementAt(agreements, service, fractional) {
 
 // ── where a resident is, with the service running ───────────────────────────
 //
-// NO ONE IS CARRIED BY PRESENCE. A walker is carried on a sailing if and only
-// if an unsevered agreement with this vessel existed at her cast-off. Standing
-// on her deck at the hour does nothing; standing a mile inland with an
-// agreement rides. The geometry that used to decide this now decides nothing,
-// and the door is where the standing is checked, once, when the agreement is
-// made.
+// THE CARRY CONDITION IS EDGE **AND** PERMISSION. A walker is carried on a
+// sailing if and only if BOTH hold at her cast-off:
+//
+//   the EDGE        they are STANDING inside her footprint — presence, which
+//                   is physics and forms whether anyone meant it to
+//   the PERMISSION  an unsevered agreement with this vessel — which is theirs
+//                   alone to give, and is the whole of what changed
+//
+// Neither half alone moves anyone, and the two failures read differently on
+// purpose. Presence without permission is the retired law and she sails without
+// you (vermillion's case). Permission without presence rides nothing today —
+// and rides the next cast-off you stand for, because the agreement keeps
+// standing while you are not on her deck.
+//
+// THAT IS WHY THERE IS NO CANCELLATION RULE. Changing your mind is walking
+// away: no edge at the hour, no ride, nothing to revoke. `world_agree
+// withdraw` exists to end the permission on the record and for the case where
+// you are already aboard — it is not the only way out, and it never was the
+// way out for someone standing on a quay.
 //
 // Chains still compose, and cost less than they did: ride up, walk to the
 // party, walk back, ride home is a walk and an agreement each way — the
 // intermediate calls are carried through, so the round trip that used to need a
-// re-board hop at every stop now needs none.
+// re-board hop at every stop now needs none. Once aboard the edge holds itself:
+// a passenger's position IS the vessel's, so they are inside her footprint at
+// every later cast-off without doing anything.
 
 export function positionAt(departure, fractional = fractionalCrossing(), service = null, agreements = []) {
   const own = walkPositionAt(departure, fractional);
@@ -338,11 +353,12 @@ export function positionAt(departure, fractional = fractionalCrossing(), service
     ?? lastAgreementBefore(agreements, service, fractional);
   if (!held) return { ...own, aboard: null, boundFor: null, onDeckAt: onDeckOf(service, own, fractional), ashoreAt: null };
 
-  const ride = rideFrom(departure, service, held, fractional);
-  // AGREED, AND SHE HAS NOT GONE YET. They are still standing wherever they
-  // stood — but the agreement is made, so the answer says where they are bound.
-  // A resident who has arranged their passage should not have to be at sea
-  // before a read surface will admit it.
+  const ride = rideFrom(departure, service, held, fractional, own);
+  // AGREED, AND SHE HAS NOT TAKEN THEM. Either she has not cast off since, or
+  // she has and they were not standing on her deck for it. Both read the same
+  // from here: they are exactly where their own record puts them, with the
+  // permission still standing and the answer still naming where they are bound.
+  // The next cast-off they stand for is the one that takes them.
   if (!ride) return {
     ...own, aboard: null,
     boundFor: held.severed === null ? boundStopOf(held.policy) : null,
@@ -405,34 +421,76 @@ function lastAgreementBefore(agreements, service, fractional) {
 }
 
 /**
- * Replay the voyage one agreement bought.
+ * Replay the voyage one agreement bought, checking BOTH halves at every
+ * cast-off she makes while it stands.
  *
  * Returns `{ ashore }` — the sailing whose arrival set them down — or `{}` while
- * they are still being carried, or null when the agreement has bought nothing
- * yet (born after the last cast-off, so she has not left with them aboard).
+ * they are still being carried, or null when the agreement has bought nothing:
+ * she has not cast off since it was made, or she has and they were not standing
+ * on her deck for it.
  *
  * `walkResumesFrom` is the instant a walk declared WHILE ABOARD begins ashore.
  */
-function rideFrom(departure, service, held, fractional) {
+function rideFrom(departure, service, held, fractional, own) {
   const bound = boundStopOf(held.policy);
-  // A walk declared after the agreement was made, while it still stood, is the
-  // choice to go ashore at her next arrival (the third rule). A walk declared
-  // BEFORE it is how they got to the quay, and says nothing about leaving.
-  const goingAshore = departure.at > held.born;
+
+  // WHEN THE QUESTION SETTLES. Their own leg ends once; after it they are
+  // stationary until they declare another, so one full schedule period past the
+  // later of (that end, the agreement's birth) is enough to know whether she
+  // ever collects them. The timetable repeats and she calls at every stop each
+  // round, so a standing walker who was in no footprint on one round is in none
+  // on the next. This is the 08-07 law's own bounding argument, and it comes
+  // back with the edge it was always about.
+  const legEndFc = departure.at + (own.arrived ? own.travelledM : own.legM) /
+    ((departure.pace > 0 ? departure.pace : WALK_M_PER_CROSSING / 1000) * 1000);
+  const settleBy = Math.max(legEndFc, held.born) + DAY_CROSSINGS;
+
+  // GOING ASHORE IS A WALK DECLARED FROM HER DECK MID-CHANNEL, and only that.
+  //
+  // Two things are true at once here. First, the evidence: this function is
+  // handed ONE governing record, so the cast-off that collected them is often
+  // older than it, and replaying that cast-off against this record would ask
+  // where a walker was before the walk existed. The record answers for itself
+  // instead — nobody stands on open water, so a `from` that is her position
+  // while she is under way was written by a passenger.
+  //
+  // Second, and this is why the rule needs no wider reach: a walk declared while
+  // she is ALONGSIDE needs no deposit at all. They simply walk off her deck, and
+  // the edge check at her next cast-off finds them gone. Only mid-channel does
+  // anyone need setting down, because only there can you not leave on your own
+  // feet — which was Keemin's 08-08 ruling (nobody jumps off the boat) all along.
+  //
+  // The earlier draft read this as "any walk declared after the agreement", and
+  // that wrongly caught a walk TOWARD her: a resident walking down to the quay to
+  // take the passage they had already arranged was treated as choosing to leave
+  // it, and got deposited at the far end mid-stride.
+  const goingAshore = departure.at > held.born && declaredAtSeaAboard(departure, service);
 
   // A passage with no ending in it cannot be ended by replaying more of it, so
-  // the replay stops at the first cast-off that proves she took them. Without
-  // this a `riding` agreement re-walks every sailing since it was made on every
-  // single read — six a day, forever, per walker — to reach an answer that was
-  // already settled by the first one.
+  // once she has them the replay stops. Without this a `riding` agreement
+  // re-walks every sailing since it was made on every single read.
   const endless = !bound && !goingAshore;
 
-  let carrying = false;
-  for (const sailing of sailingsBetween(service, held.born - 1e-9, fractional)) {
+  const scanFrom = goingAshore ? held.born : Math.max(held.born, departure.at);
+
+  let aboard = goingAshore;
+  for (const sailing of sailingsBetween(service, scanFrom - 1e-9, fractional)) {
     if (sailing.departFc < held.born) continue;                       // she left before they agreed
     if (held.severed !== null && held.severed <= sailing.departFc) break; // withdrawn before this cast-off
-    carrying = true;
-    if (sailing.arriveFc > fractional) return {};                     // still at sea on this leg
+
+    if (!aboard) {
+      // THE EDGE, for a walker not yet aboard: are they STANDING inside her
+      // footprint at this cast-off? Permission alone rides nothing.
+      if (sailing.departFc > settleBy) break;                         // she is never going to collect them
+      const p = walkPositionAt(departure, sailing.departFc);
+      if (!p.arrived) continue;                                       // mid-stride — the water leaves you
+      if (!pointInRect(p.x, p.y, footprintOf(service, sailing.from.at))) continue; // not on her deck
+      aboard = true;                                                  // both halves, so she takes them
+    }
+    // Aboard, the edge holds itself: their position IS hers, so they are inside
+    // her footprint at every later cast-off without doing anything.
+
+    if (sailing.arriveFc > fractional) return { aboard: true };       // still at sea on this leg
     if (endless) break;                                               // nothing later can end it
     // ASHORE AT THE FIRST ARRIVAL THAT ENDS IT: the stop the agreement named,
     // or — for a walker who declared a walk while aboard — the next one she
@@ -444,7 +502,14 @@ function rideFrom(departure, service, held, fractional) {
     // Otherwise she calls, lies alongside, and casts off again with them still
     // aboard — through-riding, zero turns.
   }
-  return carrying ? {} : null;
+  return aboard ? { aboard: true } : null;
+}
+
+/** Was this record written by someone standing on her deck while she was at sea? */
+function declaredAtSeaAboard(departure, service) {
+  const v = vesselPositionAt(service, departure.at);
+  if (!v || v.berthed) return false;
+  return pointInRect(departure.from.x, departure.from.y, footprintOf(service, { x: v.x, y: v.y }));
 }
 
 // Standing on her deck while she lies alongside, with NO agreement — a fact
