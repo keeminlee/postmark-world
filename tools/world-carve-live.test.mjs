@@ -27,7 +27,6 @@ import { readFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { fold, loadMarks } from "./marks-fold.mjs";
-import { isRegionContainer } from "./consent.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const marks = loadMarks(join(ROOT, "WORLD/marks"));
@@ -218,12 +217,21 @@ test("the carve is an OVERLAY on the real world — not one claim on disk was mo
 
 test("NOTHING ELSE MOVES: with no consent word anywhere, exactly the predicted weights change and no mark is returned", () => {
   // The live world carries no `consent:` map yet, so this is the default table
-  // alone. These eight are the whole of what it moves. The numbers were predicted
-  // before the build from the shape of the tree; any ninth line here, or any of
-  // these eight landing elsewhere, means the table is doing something unruled.
+  // alone. These NINE are the whole of what it moves. The numbers were predicted
+  // before the build from the shape of the tree; any tenth line here, or any of
+  // these nine landing elsewhere, means the table is doing something unruled.
+  //
+  // The list was EIGHT while the town's containers carried a class-law +1. Losing
+  // that law moved three of them again and added the-town-centre, which had not
+  // appeared before because its 12 happened to survive the earlier table intact —
+  // a mover a stale expected-set would have let through in silence.
   const expected = {
-    "the-town/let-there-be-light": 122,          // was 147
-    "the-town/pando-peak": 87,                   // was 108
+    // The three the-town containers, which briefly had an automatic +1 from
+    // everything sited within them and now have nothing: a region is an ordinary
+    // marketplace mark, and 18 / 18 / 0 is what each is actually backed for.
+    "the-town/let-there-be-light": 18,           // was 147
+    "the-town/pando-peak": 18,                   // was 108
+    "the-town/the-town-centre": 0,               // was 12  ← the ninth mover
     "vermillion/the-pando-peak": 69,             // was 90
     "vermillion/porch-hill": 15,                 // was 22
     "vermillion/vermillion-view-peak": 12,       // was 14
@@ -247,14 +255,37 @@ test("wright's trueing terrace KEEPS its 6 — the one place the credential grai
   assert.equal(households["rei"], households["wright"]);
 });
 
-test("the town's region containers take fan-up by CLASS, and no resident district does", () => {
-  for (const id of ["the-town/let-there-be-light", "the-town/pando-peak", "the-town/the-town-centre"]) {
-    const m = state.marks.find((x) => x.id === id);
-    assert.ok(m, id);
-    assert.ok(m.weight > 0, `${id} is as real as what stands in it`);
-  }
-  // the marker is the town's alone — no resident-authored mark carries it
-  const claimed = marks.filter(isRegionContainer);
-  assert.deepEqual([...new Set(claimed.map((m) => m.by))], ["the-town"]);
-  assert.equal(claimed.length, 3, "seeded on the obvious three, and nothing else");
+test("THERE IS NO CLASS LAW: a region is an ordinary marketplace mark and takes nothing for being one", () => {
+  // The founder's ruling. An earlier draft of this branch gave the world root and
+  // the town's own containers an automatic +1 from everything sited within them,
+  // on "a region is exactly as real as what stands in it". That is gone: a region
+  // wanting the weight of what stands in it must be BACKED, like anything else, or
+  // be welcomed in by the marks themselves.
+  //
+  // The world root is the sharpest case. It geometrically contains all 612 marks,
+  // so under class law it summed nearly the whole world (147) and read as the most
+  // significant thing in it by construction rather than by anyone's choice. It is
+  // now worth exactly what is staked on it.
+  assert.equal(w("the-town/let-there-be-light"), 18, "the root is worth its own backing, not the world's");
+  assert.equal(w("the-town/pando-peak"), 18);
+  assert.equal(w("the-town/the-town-centre"), 0, "and an unbacked region is worth nothing, plainly");
+
+  // the marker itself is gone from the tree — not merely ignored by the law, which
+  // would leave three records asserting something nothing honours
+  assert.equal(marks.filter((m) => m.region_container !== undefined).length, 0, "no mark still declares it");
+
+  // and the removal is visible in the GROUND, not only in the weights. The town
+  // centre still appears in contests — it still claims that ground — but it now
+  // wins none of them. Under class law its borrowed 12 beat limen's threshold
+  // district (share 0.616) and took the whole 258,250 m² it shared with rei's
+  // lanternseed gardens; a region was carving ground off residents on weight it
+  // had been handed for existing. At its own backing of 0 it determines nothing.
+  assert.equal(w("the-town/the-town-centre"), 0);
+  const centreWins = groundContests.filter((r) => r.determined === "the-town/the-town-centre");
+  assert.deepEqual(centreWins, [], "an unbacked region determines no ground at all");
+  const overLimen = groundContests.find((r) =>
+    r.claims.some(([id]) => id === "the-town/the-town-centre") &&
+    r.claims.some(([id]) => id === "limen/the-threshold-district"));
+  assert.equal(overLimen?.determined, "limen/the-threshold-district",
+    "the ground the town took from limen goes back to the resident who is actually backed for it");
 });

@@ -103,7 +103,6 @@ containment**; everything else is a field.
 | `mechanic: <registry-id>`³ | opt | opt | opt | opt |
 | `timetable`⁵ | opt | opt | opt | opt |
 | `consent: { <mark id>: <word> }`⁶ | opt | opt | — | — |
-| `region_container: true`⁷ | opt (the-town) | — | — | — |
 | `pre` / `derived_from` | provenance¹ | provenance¹ | provenance¹ | provenance¹ |
 
 ¹ **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
@@ -131,15 +130,6 @@ mark carrying open escrow is never returned while the stakes stand (it records a
 one house never consent to each other — including when they sign with different
 GitHub accounts, as cadaeic.space's two do. Law: `tools/consent.mjs`; gate:
 `tools/mark-lint.mjs` §8b; grain: `tools/households-project.mjs`.
-
-**⁷ `region_container:` — the class-law marker.** Declares that a mark takes
-fan-up from everything sited within it, across household lines and without any
-word being written ("a region is exactly as real as what stands in it"). The
-town's alone — `by: the-town`, enforced by the lint — because a resident district
-that could declare it would be granting itself a share of every neighbour who
-ever built inside it. Currently on `let-there-be-light`, `pando-peak`, and
-`the-town-centre`. Resident-authored districts stay neutral pending a formal
-region conversion.
 
 A `sited`/`parcel` mark **never** authors a `parent:` — containment is geometry.
 A top-level `predicated`/`naming` mark may still name a terrain feature with an

@@ -21,7 +21,7 @@ import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate, rect, overlapArea } from "./marks-fold.mjs";
-import { consentMap, CONSENT_WORDS, CONSENT_FIELD, REGION_CONTAINER_FIELD, REGION_CONTAINER_AUTHOR, isRegionContainer } from "./consent.mjs";
+import { consentMap, CONSENT_WORDS, CONSENT_FIELD } from "./consent.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -299,18 +299,6 @@ for (const rec of marks) {
 
   for (const rec of marks) {
     if (rec._error) continue;
-
-    // the class-law marker. The ruling grants it to the world root and the town's
-    // own region containers; a resident district that could set it would be
-    // granting itself fan-up from every neighbour who ever built inside it.
-    if (rec[REGION_CONTAINER_FIELD] !== undefined) {
-      if (!isRegionContainer(rec))
-        err(rec, `${REGION_CONTAINER_FIELD}: must be true or absent (got ${JSON.stringify(rec[REGION_CONTAINER_FIELD])}) — it is a declaration, not a dial`);
-      else if (rec.by !== REGION_CONTAINER_AUTHOR)
-        err(rec, `${REGION_CONTAINER_FIELD} is the town's — only by: ${REGION_CONTAINER_AUTHOR} may claim it. It takes fan-up from everything sited within, so a resident-authored district declaring it would be granting itself a share of every neighbour's work${cite("the-town/the-tiers")}`);
-      else if (rec.kind !== "sited")
-        err(rec, `${REGION_CONTAINER_FIELD} belongs on a sited mark — a region is an extent, and "everything sited within" needs a within`);
-    }
 
     const map = rec[CONSENT_FIELD];
     if (map === undefined) continue;

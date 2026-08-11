@@ -316,23 +316,19 @@ test('THE REAL WORLD: the decomposition closes on all 612 marks, with the consen
   assert.ok(state.marks.some((m) => m.weight > 0), 'and it reached the fold');
 
   // The marks that discriminate. A child of ANOTHER household may appear in a
-  // receipt ONLY where the law actually opens that edge — the town's class law, or
-  // the child having been `welcomed`. A NEUTRAL cross-household edge contributes
+  // receipt ONLY where the law actually opens that edge, which since the founder's
+  // repeal of class law means exactly one thing: the child was `welcomed`. A
+  // NEUTRAL cross-household edge contributes
   // nothing to the parent's weight, so crediting it in `fanned` is the seam. Stated
   // as "every crossing has a named reason" rather than by re-deriving allowEdge
   // here, which would only mirror the bug it is meant to catch.
   const byMarkId = new Map(state.marks.map((m) => [m.id, m]));
-  // read off the RECORDS, not the fold output: the class-law marker is an input to
-  // the law, and asking the output about it would be asking the thing under test.
-  const classLawIds = new Set(realMarks
-    .filter((m) => m.region_container === true || m.region_container === 'true')
-    .map((m) => m.id));
   const unexplained = [];
   for (const m of state.marks) {
     for (const f of m.weight_parts?.fanned ?? []) {
       const child = byMarkId.get(f.id);
       if (!child || child.declared_household === m.declared_household) continue;
-      if (classLawIds.has(m.id) || child.kept === true) continue;
+      if (child.kept === true) continue;
       unexplained.push(`${m.id} credits ${f.id} (${child.declared_household}) across a neutral edge`);
     }
   }

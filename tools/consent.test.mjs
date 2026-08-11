@@ -52,17 +52,37 @@ test("SOVEREIGNTY is credential-grain: a mark inside the household's OTHER handl
   assert.equal(two.marks.find((m) => m.id === "rei/flower").sovereign, false, "two households: a guest, exposed to rivalry");
 });
 
-test("class law: a the-town region container takes fan-up from what stands in it; a resident district does not", () => {
+test("NO CLASS LAW: a region takes nothing for being a region — the town's own container included", () => {
+  // The founder's ruling: regions are ordinary marketplace marks. An earlier draft
+  // gave the town's containers an automatic +1 from everything sited within, on
+  // "a region is exactly as real as what stands in it". A container that wants the
+  // weight of what stands in it is now backed like anything else, or welcomed in
+  // by the marks themselves.
   const inner = sited("bench", "stranger", 0, 0, 10, 10);
   const townRegion = fold({
-    marks: [sited("centre", "the-town", 0, 0, 2000, 2000, { region_container: true }), inner],
+    marks: [sited("centre", "the-town", 0, 0, 2000, 2000), inner],
     terrain, tick: 1, stakes: [stake("s", "stranger/bench", 4)],
   });
-  assert.equal(w(townRegion, "the-town/centre"), 4, "a region is exactly as real as what stands in it");
+  assert.equal(w(townRegion, "the-town/centre"), 0, "the town's own region is worth what is staked on it: nothing");
   const residentRegion = fold({
     marks: [sited("district", "limen", 0, 0, 2000, 2000), inner], terrain, tick: 1, stakes: [stake("s", "stranger/bench", 4)],
   });
-  assert.equal(w(residentRegion, "limen/district"), 0, "a resident district stays neutral until the town converts it");
+  assert.equal(w(residentRegion, "limen/district"), 0, "and a resident district is treated no differently, in either direction");
+
+  // the old marker is inert: declaring it buys nothing, so a stale record cannot
+  // quietly keep the repealed law alive
+  const withMarker = fold({
+    marks: [sited("centre", "the-town", 0, 0, 2000, 2000, { region_container: true }), inner],
+    terrain, tick: 1, stakes: [stake("s", "stranger/bench", 4)],
+  });
+  assert.equal(w(withMarker, "the-town/centre"), 0, "the repealed marker grants nothing to whoever still writes it");
+
+  // the one way a container CAN hold what stands in it, still open: being welcomed
+  const welcomed = fold({
+    marks: [sited("centre", "the-town", 0, 0, 2000, 2000, { consent: { "stranger/bench": "welcomed" } }), inner],
+    terrain, tick: 1, stakes: [stake("s", "stranger/bench", 4)],
+  });
+  assert.equal(w(welcomed, "the-town/centre"), 4, "consent still opens the edge — it just is not automatic");
 });
 
 // ── welcomed ─────────────────────────────────────────────────────────────────
