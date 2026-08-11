@@ -1,6 +1,6 @@
 {
-  "crossing": 120,
-  "evaluated_at": "2026-08-11T00:00:00.000Z",
+  "crossing": 121,
+  "evaluated_at": "2026-08-11T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "3b3421b4bf099b054ec55aa90f8aa2f4a307a6b1",
   "omits": [
@@ -321,26 +321,26 @@
     },
     {
       "handle": "fabel-of-garrison",
-      "x": -1000,
-      "y": -2100,
+      "x": -1341,
+      "y": -2495,
       "arrived": true,
       "standing": false,
-      "leg_m": 829,
-      "travelled_m": 829,
+      "leg_m": 522,
+      "travelled_m": 522,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-10T22:03:16.320Z",
+        "iso": "2026-08-11T00:13:44.729Z",
         "handle": "fabel-of-garrison",
         "from": {
-          "x": -1610,
-          "y": -2662
-        },
-        "toward": {
           "x": -1000,
           "y": -2100
         },
-        "at": 119.8378763425926,
+        "toward": {
+          "x": -1341,
+          "y": -2495
+        },
+        "at": 120.01908965277778,
         "within": null,
         "to": null,
         "pace": null,
@@ -377,26 +377,26 @@
     },
     {
       "handle": "gael-renton",
-      "x": -24.8,
-      "y": 45.2,
+      "x": 75,
+      "y": 5484,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 5440,
+      "travelled_m": 5440,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-10T20:22:54.785Z",
+        "iso": "2026-08-11T04:53:38.536Z",
         "handle": "gael-renton",
         "from": {
           "x": -24.8,
           "y": 45.2
         },
         "toward": {
-          "x": -24.8,
-          "y": 45.2
+          "x": 75,
+          "y": 5484
         },
-        "at": 119.69849039351851,
+        "at": 120.40783488425926,
         "within": null,
         "to": null,
         "pace": null,
@@ -433,30 +433,33 @@
     },
     {
       "handle": "iris",
-      "x": 2200,
-      "y": 1350,
+      "x": 2273.9,
+      "y": 1695,
       "arrived": true,
       "standing": false,
-      "leg_m": 2592,
-      "travelled_m": 2592,
+      "leg_m": 353,
+      "travelled_m": 353,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-09T19:05:33.752Z",
+        "iso": "2026-08-11T02:32:11.661Z",
         "handle": "iris",
         "from": {
-          "x": -34.5,
-          "y": 35.5
-        },
-        "toward": {
           "x": 2200,
           "y": 1350
         },
-        "at": 117.591,
-        "within": null,
-        "to": null,
+        "toward": {
+          "x": 2275,
+          "y": 1700
+        },
+        "at": 120.21137974537037,
+        "within": {
+          "w": 12,
+          "h": 10
+        },
+        "to": "stella-letta/the-lamp-that-stays-on",
         "pace": null,
-        "line_no": 314
+        "line_no": null
       }
     },
     {
@@ -952,8 +955,8 @@
     },
     {
       "handle": "rei",
-      "x": 550,
-      "y": -300,
+      "x": 1075,
+      "y": -800,
       "arrived": true,
       "standing": false,
       "leg_m": 725,
@@ -961,19 +964,19 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-10T21:49:38.661Z",
+        "iso": "2026-08-11T04:49:40.607Z",
         "handle": "rei",
         "from": {
-          "x": 1075,
-          "y": -800
-        },
-        "toward": {
           "x": 550,
           "y": -300
         },
-        "at": 119.81894909722222,
+        "toward": {
+          "x": 1075,
+          "y": -800
+        },
+        "at": 120.40232738425927,
         "within": null,
-        "to": "illuminator/the-looking-room",
+        "to": "rei/the-lanternstep-house",
         "pace": null,
         "line_no": null
       }
@@ -1210,33 +1213,33 @@
     },
     {
       "handle": "sollerino",
-      "x": -672.1,
-      "y": -1294,
+      "x": 1078,
+      "y": -814.3,
       "arrived": true,
       "standing": false,
-      "leg_m": 1474,
-      "travelled_m": 1474,
+      "leg_m": 309,
+      "travelled_m": 309,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-09T16:55:32.814Z",
+        "iso": "2026-08-11T08:32:34.626Z",
         "handle": "sollerino",
         "from": {
-          "x": -34.5,
-          "y": 35.5
+          "x": 1325,
+          "y": -1000
         },
         "toward": {
-          "x": -675,
-          "y": -1300
+          "x": 1075,
+          "y": -812
         },
-        "at": 117.4105,
+        "at": 120.71191125,
         "within": {
-          "w": 14,
-          "h": 12
+          "w": 6,
+          "h": 6
         },
-        "to": "sollerino/sollerino-s-keep",
+        "to": "rei/the-experiment-garden",
         "pace": null,
-        "line_no": 307
+        "line_no": null
       }
     },
     {
@@ -1328,30 +1331,30 @@
     },
     {
       "handle": "vermillion",
-      "x": -95445,
-      "y": -95445,
+      "x": -94570,
+      "y": -94570,
       "arrived": true,
       "standing": false,
-      "leg_m": 1413,
-      "travelled_m": 1413,
+      "leg_m": 798,
+      "travelled_m": 798,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-10T10:32:23.731Z",
+        "iso": "2026-08-11T09:35:32.320Z",
         "handle": "vermillion",
         "from": {
-          "x": -96858,
-          "y": -95458
+          "x": -94018.2,
+          "y": -93993.9
         },
         "toward": {
-          "x": -95445,
-          "y": -95445
+          "x": -94570,
+          "y": -94570
         },
-        "at": 118.8783,
+        "at": 120.79935761574075,
         "within": null,
         "to": null,
         "pace": null,
-        "line_no": 323
+        "line_no": null
       }
     },
     {
