@@ -139,12 +139,17 @@ function fixtureTree() {
   mkdirSync(board, { recursive: true });
   writeFileSync(join(board, "mark.md"),
     "---\nkind: sited\nby: the-town\ntier: constitution\ndate: 2026-08-11\nat: { x: 250, y: -100 }\nextent: { w: 30, h: 20 }\n---\n\nThe Bounty Board, in BETA.\n");
-  // the class TYPE mark — the roster is read from declarations, so the fixture
-  // must declare the one class its notices use, same as the real Keeping Works.
-  const type = join(root, "the-class-of-bounty");
+  // the class TYPE mark, standing where definitions stand — the gate exempts
+  // the definition BY PLACEMENT (the Keeping Works), the same way the reader
+  // knows a notice by placement (review W-1), so the fixture must model both.
+  const works = join(root, "the-keeping-works");
+  mkdirSync(works, { recursive: true });
+  writeFileSync(join(works, "mark.md"),
+    "---\nkind: sited\nby: the-town\ntier: constitution\ndate: 2026-08-11\nat: { x: 400, y: 400 }\nextent: { w: 40, h: 40 }\n---\n\nThe Keeping Works: the class definitions stand here.\n");
+  const type = join(works, "bounty");
   mkdirSync(type, { recursive: true });
   writeFileSync(join(type, "mark.md"),
-    "---\nkind: sited\nby: the-town\ntier: constitution\ndate: 2026-08-11\nat: { x: 400, y: 400 }\nextent: { w: 5, h: 5 }\nclass: bounty\n---\n\nA bounty is one ask, a reward in stamps, a status: open or done.\n");
+    "---\nkind: sited\nby: the-town\ntier: constitution\ndate: 2026-08-11\nat: { x: 0, y: 0 }\nextent: { w: 5, h: 5 }\nclass: bounty\n---\n\nA bounty is one ask, a reward in stamps, a status: open or done.\n");
   return { dir, root, board };
 }
 
@@ -185,4 +190,48 @@ test("the gate names each broken field of a notice", () => {
 test("grammar without a class draws the advisory, never a silent pass", () => {
   const out = lintWithNotice({ class: undefined });
   assert.match(out, /ask\/reward\/status without class: bounty/);
+});
+
+// ── review W-1: the gate scopes by what the mark IS, not what it carried ────
+
+test("W-1a: a BARE class:bounty on the board cannot slip the gate", () => {
+  const out = lintWithNotice({ ask: undefined, reward: undefined, status: undefined });
+  assert.match(out, /a bounty notice needs ask:/);
+  assert.match(out, /reward: must be a whole number/);
+});
+
+test("W-1b: a predicated class:bounty on the board is named a non-notice", () => {
+  const { dir, board } = fixtureTree();
+  const slug = join(board, "a-sneaky-predicate");
+  mkdirSync(slug, { recursive: true });
+  writeFileSync(join(slug, "mark.md"),
+    "---\nkind: predicated\nby: testerhh\ndate: 2026-08-11\nslot: sneak\nvalue: yes\nclass: bounty\n---\n\nA predicate wearing the class.\n");
+  assert.match(runLint(dir), /a bounty notice is a sited mark/);
+});
+
+test("a class:bounty token OFF the board draws the off-board warning", () => {
+  const { dir, root } = fixtureTree();
+  const slug = join(root, "a-stray-notice");
+  mkdirSync(slug, { recursive: true });
+  writeFileSync(join(slug, "mark.md"), notice({ at: "{ x: 600, y: 600 }" }));
+  assert.match(runLint(dir), /class: bounty off the board/);
+});
+
+test("the definition in the Keeping Works stays exempt — no ask demanded of it", () => {
+  const { dir } = fixtureTree();
+  const out = runLint(dir);
+  assert.doesNotMatch(out, /ERROR[^\n]*the-keeping-works\/bounty/);
+});
+
+test("the '#' truncation: the lint catches the face it CAN see (review O-1)", () => {
+  // Honesty about reach: parseRecord strips from the first '#' BEFORE lint
+  // reads the record, so a mid-string hash arrives already truncated and
+  // lint-clean — the DOOR's bounce is the real wall (office pin), and the
+  // PR lane's human eyes are the belt. What lint does catch is the ask that
+  // STARTS with '#': it parses to empty and the needs-ask error fires.
+  const { dir, board } = fixtureTree();
+  const slug = join(board, "a-hash-headed-notice");
+  mkdirSync(slug, { recursive: true });
+  writeFileSync(join(slug, "mark.md"), notice({ ask: "#3 map the quay" }));
+  assert.match(runLint(dir), /a bounty notice needs ask:/);
 });

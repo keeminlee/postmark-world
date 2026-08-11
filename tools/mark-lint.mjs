@@ -152,14 +152,24 @@ for (const rec of marks) {
   // and is a definition, not a notice.
   if (rec.class !== undefined && !CLASS_ROSTER.has(String(rec.class)))
     err(rec, `class: ${JSON.stringify(rec.class)} names no class the law knows (the roster: ${[...CLASS_ROSTER].sort().join(", ")})`);
-  const noticeShaped = rec.class === "bounty" && (rec.ask !== undefined || rec.reward !== undefined || rec.status !== undefined);
-  if (noticeShaped) {
+  // Scope by WHAT THE MARK IS, never by whether it bothered to carry the
+  // fields (review W-1: a bare `class: bounty` on the board slipped the gate
+  // entirely, because the gate looked for the very fields it exists to
+  // require). A bounty TOKEN is any class:bounty mark that is not the class
+  // DEFINITION — and the definition is known by where it stands (the Keeping
+  // Works), exactly how the board reader knows a notice (the board).
+  const isClassDefinition = rec._parentMarkId === "the-town/the-keeping-works";
+  if (rec.class === "bounty" && !isClassDefinition) {
+    if (rec._parentMarkId !== "the-town/the-bounty-board")
+      warn(rec, `class: bounty off the board — the board reads only notices standing on the-town/the-bounty-board; this mark can never render there`);
     if (rec.kind !== "sited") err(rec, `a bounty notice is a sited mark (got kind: ${JSON.stringify(rec.kind)})`);
     const askLen = [...String(rec.ask ?? "").trim()].length;
     if (askLen === 0) err(rec, `a bounty notice needs ask: — one claim, ≤${BODY_MAX} chars`);
     else if (askLen > BODY_MAX) err(rec, `ask is ${askLen} chars; the cap is ${BODY_MAX}${cite("the-town/the-one-claim")}`);
+    if (String(rec.ask ?? "").includes("#"))
+      err(rec, `ask carries '#' — the record grammar reads # as a comment; this ask has already been truncated or will be misread`);
     const rwd = Number(rec.reward);
-    if (rec.reward === undefined || !Number.isInteger(rwd) || rwd < 1)
+    if (rec.reward === undefined || typeof rec.reward === "boolean" || !Number.isInteger(rwd) || rwd < 1)
       err(rec, `reward: must be a whole number of stamps ≥ 1 (got ${JSON.stringify(rec.reward)})`);
     const st = rec.status === undefined ? "open" : String(rec.status).trim();
     if (st !== "open" && st !== "done") err(rec, `status: is open or done (got ${JSON.stringify(rec.status)})`);
