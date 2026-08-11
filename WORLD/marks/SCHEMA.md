@@ -62,9 +62,15 @@ Every mark carries a **`tier:`** (default `market`):
 | **draft** | openly provisional; binds no one and says so (gray) | anyone |
 
 The lint refuses `tier: constitution` from anyone but `the-town` — a market mark
-cannot bind without stamps. Fan-up (a parent's weight = its own + all
-descendants') flows through every tier of SITED marks — a parcel is a fence, not a scale: it never parents and never accumulates (the fold's own rule) — and the root carrying the world's total weight
-is accepted (a dial-class ruling, movable).
+cannot bind without stamps. Fan-up (trued 2026-08-10 to the consent law) flows
+only through **consenting edges**: same-declared-household containment composes
+structurally, a cross-household edge carries weight up only through a
+`welcomed` word in the parent's `consent:` map, and a neutral edge stands
+alone. A parcel is a fence, not a scale: it never parents and never
+accumulates (the fold's own rule). The root no longer carries the world's
+total weight — with the class-law repeal (2026-08-10) it holds only what its
+own stamps and consenting edges give it, which is the honest number (the old
+root-total was geometry masquerading as significance).
 
 ## The root and terrain are generated, not hand-typed
 

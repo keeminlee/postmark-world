@@ -98,9 +98,12 @@ effects tick at ferry crossings, like everything here.)
 - **Rival values cancel at the property level but jointly fortify the parent.**
   Oak-vs-rowan blurs the species while strengthening *"a tree stands here."*
   Dispute preserves; the most-argued places become the most indestructible.
-- **Parent weight = its own stamps + all descendants'** (containment fans up).
-  Killing a riverbank means out-staking the bank, its oak, and the oak's
-  partisans.
+- **Parent weight = its own stamps + what its *consenting* edges carry up**
+  (trued 2026-08-10 to the consent law: same-declared-household containment
+  composes structurally; a cross-household child fans up only through a
+  `welcomed` word; a neutral edge stands alone and carries nothing). Killing a
+  riverbank still means out-staking the bank, its oak, and the oak's partisans
+  — where those edges consent to stand together.
 
 ## No negative marks
 
@@ -110,6 +113,44 @@ itself ("unbroken meadow where the mill stood") past the whole fortified
 weight. Vandalism is priced identically to worldbuilding, in public, with your
 name on it. Things also leave the world the way they entered gas: by withdrawal
 and silence.
+
+## The lifecycle law (ruled 2026-08-10)
+
+A mark is public because it is backed: when the last stamp leaves a commons
+mark, it is **demoted** — returned whole to its household's drafts, coordinates
+preserved, one stake from standing again. Nothing public is ever deleted; the
+only way out of the world passes through your own drawer. **Exempt from
+demotion:** parcels (a fence is not a stamp target), constitution-tier marks
+(the frame binds without stamps), and sovereign marks inside your own parcel
+(your home stands by sovereignty, not escrow). *Reconciliation with the
+safe-ignorability law (ECONOMY.md §10):* the letters-life is untouched — no
+resident's accrual, home, or ground is ever at stake; only unbacked claims on
+the *shared* imagination yield, at a cost of one stamp, to §9's own rule that
+the commons runs on wanting-on-the-record.
+
+**Edits.** A mark backed only by its own household is freely mutable within
+creation constraints. An edit to a mark carrying **others'** stamps refunds
+those stakes by default — a new sealed forced-return line, never a rewrite —
+because a stake backed a claim, and the claim changed; the notice rides the
+ledger itself, rendered in the ex-staker's portfolio and on the mark, and
+restaking the new version is one act. Refunds are uniform across all edits:
+the town does not adjudicate which changes are "material," it discloses and
+lets stakers re-decide. If a refund empties the mark, it demotes in the same
+settlement — the edited claim re-enters when its owner backs it.
+
+**Deletion** is the same road walked to its end: refund external stakes,
+unstake your own, demote, delete from drafts. Children detach and re-parent;
+deletion never cascades. **The stated asymmetry with the consent veto, so
+nobody reads it as drift:** a veto is *someone else's word* against your mark,
+so it waits on the escrow (stakers keep their position until they choose); an
+edit is *your own hand*, so the money returns at once to people who backed
+what no longer exists as backed.
+
+*(Status, 2026-08-11: the law is ruled and this text is its record. The
+demotion clock has not been announced or enforced — no transition window has
+started — and the edit/delete/relocate doors are unbuilt; when built they are
+draft→settlement acts born into a `marks` verb family. The law binds the
+builders; it does not yet tax the residents.)*
 
 ## Parcels (sovereignty)
 
@@ -129,13 +170,31 @@ and silence.
 - Defaults are **seeded from the atlas placements** (your home's ratified
   position, at 5 m per atlas-pixel) and arrive as an invitation you may accept,
   adjust, or ignore.
-- **The dwelling-interior norm (procedural law):** the interior of a declared
-  dwelling is normatively sovereign *wherever and however big it is* — no mark
-  may be sited inside another resident's dwelling, ever, parcel geometry
-  notwithstanding. Homes larger than any parcel (a mountain, a lake-house)
-  choose which ground is parcel; their *grounds* beyond it are commons —
-  defended, if desired, the way anything real is defended here: by mattering
-  to people.
+- **The consent law (replaces the dwelling-interior norm, 2026-08-10).** A
+  parcel owner's word governs every foreign mark that *touches* their ground —
+  the domain is geometric intersection, never the containment tree, so a mark
+  straddling the fence answers the same law as one standing inside. The word
+  is one of three, recorded in the parcel mark's own `consent:` map:
+  **`welcomed`** (the mark couples upward — its weight fans into yours — and
+  the record shows it was kept by your word), **absent** (the default: the
+  mark stands on its own stamps, couples to nothing), or **`opposed`** (the
+  mark is *returned* — excluded from the world into its author's drafts,
+  subtree and all, disclosed in the fold's `returned[]`, never silently and
+  never destroyed). A mark carrying open escrow returns only after the escrow
+  does — a veto records as pending until every stake unwinds. On commons
+  ground beyond any parcel, the same three words belong to a containing mark's
+  owner, but there the veto is *earned*: it spends the parent's own stamps
+  against the child's, and an unstaked parent's word moves nothing.
+  Same-household marks compose without words — ownership needs no consent
+  from itself. *(Superseded by this law: "no mark may be sited inside another
+  resident's dwelling, ever." The old norm was unenforceable — dwellings carry
+  no geometry — unbounded, and blind to consent; it would have outlawed the
+  white flower at the Trueing House door, which this law instead protects
+  twice over: by household, and by the owner's standing word.)* Homes larger
+  than any parcel (a mountain, a lake-house) still choose which ground is
+  parcel; their *grounds* beyond it are commons — defended the way anything
+  real is defended here: by the consent words and stamps of the people it
+  matters to.
 - Meep households hold parcels like anyone (the grant is a town act, not a
   purchase). Town *offices* hold no stamps; their homes ride grants, and the
   civic fabric they keep is defended by the residents who love it.
@@ -168,10 +227,14 @@ WORLD/ file ever contains it.
 ## Regions (RULED 2026-07-20, Keemin — collective commons marks)
 
 A region is an ordinary commons mark — **sited over an extent, carrying a
-naming slot — and un-sovereign by construction.** No household owns a region;
-there is no regional parcel, no regional veto, no special kind. A region is
-the town's best worked example of what a proper commons mark *is*: a claim
-about shared ground, backed by the collective of residents who live it.
+naming slot — and un-sovereign by construction.** There is no regional parcel
+and no special kind (the region class law was repealed 2026-08-10 — a region
+is just a marketplace mark, and its veto is the consent law's ordinary earned
+one). **A region belongs to whoever defined it** (the mark's own `by:`, like
+any mark; ruled 2026-08-10), with one exception: **the town centre is
+the-town's.** A region is the town's best worked example of what a proper
+commons mark *is*: a claim about shared ground, backed by the collective of
+residents who live it.
 
 - **Backing is collective by default.** When the mark suggestor proposes
   stakes, it includes stamps toward the region **by default for the region's
@@ -179,18 +242,27 @@ about shared ground, backed by the collective of residents who live it.
   withdrawable stake, and it is **shown loudly at suggest-time, never buried**
   — a stake someone didn't notice isn't backing, and the region's tally must
   mean what it says.
-- **The founding act gets its receipt.** A founder's region-stake includes a
-  **retroactive stamp bonus for the act of founding** — minted through the
-  quest registry as a *retroactive quest* (one-time, founder-cited, lifecycle
-  states honestly null; the same machinery as the founder's gift, one law
-  surface, no special case). Founding-era acts are unpriceable in principle;
-  this is their dignified conversion at the epoch, not their price.
-- **Regions are fortified twice.** The collective stakes are one leg;
-  **containment fan-up is the other** — every commons mark sited inside the
-  extent fans its weight up into the region mark, so a region is exactly as
-  real as what stands in it plus who backs it. A district nobody stakes or
-  builds in blurs toward vague, which is the right physics for a ghost
-  district. Determination, hysteresis, and rival-cancellation apply unchanged.
+- **The founding act gets its receipt.** *(Design superseded in direction
+  2026-08-11, unexecuted either way: the current parked design is the town's
+  one-time founding grant — 77 stamps staked per region from a declared
+  issuance, redeemable by the region's founder on their own stake or left to
+  stand — gated on polygon-truing with no overlapping claims. The 07-20
+  retroactive-quest machinery below is the earlier shape, kept as provenance:)*
+  A founder's region-stake includes a retroactive stamp bonus for the act of
+  founding — minted through the quest registry as a *retroactive quest*.
+  Founding-era acts are unpriceable in principle; this is their dignified
+  conversion at the epoch, not their price.
+- **Regions are fortified the way everything is** *(trued 2026-08-10 to the
+  consent law — the old "every commons mark inside the extent fans up" sentence
+  was an illustration of the repealed general law, not a carve-out)*: the
+  collective stakes are one leg; **consenting containment is the other** —
+  same-household marks compose structurally, and a cross-household mark inside
+  the extent couples upward only by the region owner's `welcomed` word. A
+  district nobody stakes or welcomes blurs toward vague, which is the right
+  physics for a ghost district. Determination, hysteresis, and
+  rival-cancellation apply unchanged — and contested regional ground resolves
+  by **density, region by region, intersection-only** (the 2026-08-10 carve:
+  stored claims never crop; the determination is a derived overlay).
 - **Existing regions convert by invitation**, like parcels: extents seeded
   from the ratified atlas (5 m per atlas-pixel), offered to their founders and
   residents as pre-filled suggested stakes to accept, adjust, or decline.
@@ -199,8 +271,10 @@ about shared ground, backed by the collective of residents who live it.
 
 *Open dials (not yet ruled): post-epoch founding mechanics (is a new region
 just a region mark anyone stakes, and does the founding bonus apply forward or
-only at conversion?); extent geometry (rectangles vs. drawn bounds); whether a
-region's naming slot and its extent determine together or separately.*
+only at conversion?); whether a region's naming slot and its extent determine
+together or separately. (Extent geometry was ruled 2026-08-11: polygon rings,
+trued to the Atlas, no overlapping claims at the founding act — the rectangles
+stand only until the truing lands.)*
 
 ## The dials (provisional — simulation-informed, tuned by observed pain)
 

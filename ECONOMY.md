@@ -48,6 +48,26 @@ novel form of attention-crystallization economy.*
 What here is *law*, what is *live machinery*, what is *planned*, what is *superseded*. One
 line each; the pointer is the record.
 
+**Ship-night addendum (2026-08-11, founder-ruled):** the **Bounty Board is
+LIVE in BETA, purely liquid** — a notice is a world mark (`class: bounty`, one
+ask ≤150, a reward in stamps, open/done), the board is an index, the deal is
+the letters, and **nothing mints**: q is unlit, no minterest, no burn-remint,
+the faucet untouched ("we promised a bounty board, not an economy"). §9.2's
+`m` shipped simplified to **three words** (`opposed`/absent/`welcomed`) as the
+world's consent law — the parcel veto absolute, the commons veto
+density-earned, fan-up only through consenting edges (this resolves §9.2's
+open concerns #1–#3 by simplification: a sign has no lending budget and no
+stickiness arithmetic). The parked-but-designed set (burn-remint v0 with
+poster+town countersign and own-stakes-return; q=30 per-settlement with
+breaker 5; the founding grant gated on polygons; mint-at-demand treasury;
+genesis declared-not-priced) is recorded with its rulings in the founder's and
+Wright's records and in the town repo's rehearsal tooling — **absence from
+ECONOMY-DIALS.json is the park.** The frontier that ended the night, kept
+here so nobody re-derives it: *rewarding exceptional contribution requires
+judgment; judgment can be colluded; mechanisms differ only in what a loop
+costs and how visible it is — the answer is ex-post witness (Rei's statement
+3 is the hammer), not ex-ante mechanism design.*
+
 **Ratified and LIVE:**
 - **World staking end-to-end** — `world_stake` / `world_unstake` / `world_stake_read` at the
   office door; escrow in the town stamp ledger (`stake:world-mark/<id>`); the Settlement
