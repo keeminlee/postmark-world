@@ -237,3 +237,69 @@ test("the authorship wall: a registered author never publishes from another hous
   assert.equal(has("main", honest), true);
   assert.equal(has("main", stray), true);
 });
+
+test("a drafted mark revised after its add still reseats — the crossing after publication replays add+revise against the published final blob (the FluffUPando edge, 2026-08-11)", (t) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  const put = (path, text) => {
+    const full = join(repo, path);
+    mkdirSync(dirname(full), { recursive: true });
+    writeFileSync(full, text);
+  };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of ["geometry.mjs", "marks-fold.mjs", "mark-lint.mjs", "determination.mjs", "consent.mjs"])
+    cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
+
+  // The drawer history the 2026-08-11 tense sweep created — and any resident
+  // who edits their own draft creates too: the record is ADDED in one commit
+  // and REVISED in a later one. The sweep publishes the FINAL blob to main;
+  // a naive history replay then hits the earlier add against main's published
+  // version (add/add, different content) one commit before the revise that
+  // would have made them identical.
+  const twicePath = "WORLD/marks/let-there-be-light/twice-told-market/mark.md";
+  git("switch", "-q", "-c", "draft/house-a");
+  put(twicePath, record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "first telling" }));
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "mark: alice/twice-told-market — add");
+  const finalText = record({ by: "alice", at: { x: 805, y: 805 }, extent: { w: 10, h: 10 }, body: "second telling — same mark, revised in the drawer" });
+  put(twicePath, finalText);
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "revise: alice/twice-told-market");
+  git("switch", "-q", "main");
+
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([
+    { holder: "supporter-a", mark: "alice/twice-told-market", n: 5, weight: 10 },
+  ]));
+
+  const report = settlementSweep({ repo, stakesPath });
+
+  assert.ok(report.published.find((row) => row.id === "alice/twice-told-market"),
+    "the revised mark publishes");
+  assert.equal(readFileSync(join(repo, twicePath), "utf8"), finalText,
+    "main carries the FINAL telling, not the first");
+  const receipt = report.rebased.find((row) => row.branch === "draft/house-a");
+  assert.ok(receipt, "the sketchbook was reseated at all");
+  assert.notEqual(receipt.mode, undefined);
+  // The reseat is pure transport: the drawer's final word survives it
+  // byte-for-byte, and the published record leaves no delta for the next
+  // crossing to re-stage.
+  const branchBlob = git("show", `draft/house-a:${twicePath}`);
+  assert.equal(branchBlob, finalText, "the drawer's final word is byte-preserved through the reseat");
+  const delta = git("diff", "--name-only", "main", "draft/house-a", "--", twicePath).trim();
+  assert.equal(delta, "", "a published record leaves no residual delta on the reseated sketchbook");
+});

@@ -218,7 +218,21 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
     git(repo, ["worktree", "add", "--quiet", wt, branch]);
     try {
       try {
-        git(wt, ["rebase", mainBranch], {
+        // -X theirs — in a rebase, "theirs" is the commit being REPLAYED: the
+        // sketchbook's own writes. The reseat is pure transport of a drawer
+        // whose only readable truth is its final tree (markDelta and recordAt
+        // both read final state), so a replay conflict is a transport
+        // artifact, not a finding — and it resolves toward the drawer's own
+        // word. The case that forced this (2026-08-11, draft/FluffUPando): a
+        // record ADDED in one commit and REVISED in a later one; the sweep
+        // publishes the FINAL blob to main, then the replay hits the earlier
+        // add against that published version — add/add, different content —
+        // one commit before the revise that makes them identical. Any
+        // resident who edits their own draft before admission creates the
+        // same shape. Main is never written by this step, and a drawer whose
+        // final word genuinely differs from main simply carries that delta to
+        // the next crossing, where the gate judges it as always.
+        git(wt, ["rebase", "-X", "theirs", mainBranch], {
           env: { ...process.env, GIT_EDITOR: "true", GIT_SEQUENCE_EDITOR: "true" },
         });
       } catch (error) {
