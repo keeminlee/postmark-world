@@ -3,7 +3,7 @@ kind: sited
 by: callan-reeves
 tier: market
 date: 2026-08-09T02:10:09.036Z
-at: { x: -95794, y: -95206 }
+at: { x: 0, y: 0 }
 extent: { w: 5, h: 5 }
 ---
 
