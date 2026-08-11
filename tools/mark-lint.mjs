@@ -65,6 +65,15 @@ const hasGeom = (rec) => rec.at && num(rec.at.x) && num(rec.at.y) && rec.extent 
 
 const marks = loadMarks(MARKS_DIR);
 
+// The class roster: a class NAME is lawful exactly when the town's own
+// constitution-tier TYPE mark declares it (the Keeping Works pattern — eleven
+// today, `the-town/the-wheelhouse` declaring "timetable" is why this reads the
+// VALUE, never the slug). A record naming a class outside the roster is a lie
+// about the world's vocabulary, same shape as a mechanic outside the registry.
+const CLASS_ROSTER = new Set(marks
+  .filter((m) => m.by === "the-town" && m.tier === "constitution" && m.class !== undefined)
+  .map((m) => String(m.class)));
+
 // the gate quotes the law (rung 1, 2026-08-02): a refusal cites the clause of
 // the-town/the-record it enforces — id + body verbatim, so the bounce hands the
 // writer an investigable handle and the exact law, never a paraphrase. The
@@ -133,6 +142,32 @@ for (const rec of marks) {
   }
   // (the `timetable:` a `mechanic: timetable` mark must carry is checked in §8,
   // below — every id inside it must resolve against the whole tree.)
+
+  // 3d. the bounty grammar (the board's notices — founder-ruled 2026-08-11).
+  // A notice is class: bounty + one ask ≤150 + a whole-number reward ≥1 +
+  // open/done; the board's reader (site src/lib/board.mjs) drops-and-counts a
+  // malformed notice rather than rendering it, so this gate owes the writer
+  // the exact field. Scoped to notice-shaped records: the class TYPE mark in
+  // the Keeping Works carries class: bounty with none of ask/reward/status,
+  // and is a definition, not a notice.
+  if (rec.class !== undefined && !CLASS_ROSTER.has(String(rec.class)))
+    err(rec, `class: ${JSON.stringify(rec.class)} names no class the law knows (the roster: ${[...CLASS_ROSTER].sort().join(", ")})`);
+  const noticeShaped = rec.class === "bounty" && (rec.ask !== undefined || rec.reward !== undefined || rec.status !== undefined);
+  if (noticeShaped) {
+    if (rec.kind !== "sited") err(rec, `a bounty notice is a sited mark (got kind: ${JSON.stringify(rec.kind)})`);
+    const askLen = [...String(rec.ask ?? "").trim()].length;
+    if (askLen === 0) err(rec, `a bounty notice needs ask: — one claim, ≤${BODY_MAX} chars`);
+    else if (askLen > BODY_MAX) err(rec, `ask is ${askLen} chars; the cap is ${BODY_MAX}${cite("the-town/the-one-claim")}`);
+    const rwd = Number(rec.reward);
+    if (rec.reward === undefined || !Number.isInteger(rwd) || rwd < 1)
+      err(rec, `reward: must be a whole number of stamps ≥ 1 (got ${JSON.stringify(rec.reward)})`);
+    const st = rec.status === undefined ? "open" : String(rec.status).trim();
+    if (st !== "open" && st !== "done") err(rec, `status: is open or done (got ${JSON.stringify(rec.status)})`);
+    if (rec.threshold !== undefined && rec.by !== TOWN)
+      err(rec, `threshold: is the town's bar — a resident notice carries reward, never threshold`);
+  } else if (rec.class === undefined && (rec.ask !== undefined || rec.reward !== undefined || rec.status !== undefined)) {
+    warn(rec, `ask/reward/status without class: bounty — the board cannot read this as a notice`);
+  }
 
   // 4. kind-specific shape
   if (rec.kind === "sited" || rec.kind === "parcel") {

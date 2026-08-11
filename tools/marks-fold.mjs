@@ -616,6 +616,16 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   // than a `weight_parts: null` that every reader would then have to distinguish
   // from a real absence.
   const partsField = (id) => { const p = partsOf(id); return p ? { weight_parts: p } : {}; };
+  // The read-side "backed" number the board's reader (site src/lib/board.mjs)
+  // renders as `backed`: raw escrow + the breadth bonus — the same ledger_weight
+  // world_stake_read serves, WITHOUT fan-up or terrain, because the board shows
+  // what residents put behind a notice, not the world's verdict on it. Same trim
+  // rule as weight_parts: zero = absent, `!== 0` so a negative fold keeps its
+  // receipt.
+  const ledgerWeightField = (id) => {
+    const lw = (rawByMark.get(id) ?? 0) + (breadthByMark.get(id)?.bonus ?? 0);
+    return lw !== 0 ? { ledger_weight: lw } : {};
+  };
 
   // slots: predicated/naming rivalry = same (parent, slot); sited rivalry = overlapping non-sovereign extents
   const slots = new Map(); // key -> { values: Map(value -> stamps), marks: [] }
@@ -692,6 +702,20 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // the vessel's position from THIS fold, never from a file.
       mechanic: mk.mechanic, top_m: mk.top_m, feature: mk.feature, points: mk.points,
       timetable: mk.timetable,
+      // the bounty grammar (the board's notices — founder-ruled 2026-08-11)
+      // rides the same carried-through lane: without these five in the store,
+      // the board page can never see a notice — letter-posted or door-posted
+      // alike, the store is the reader's only source. Undefined on every
+      // unclassed mark, so a world with no notices serializes as before.
+      class: mk.class, ask: mk.ask, reward: mk.reward, status: mk.status, threshold: mk.threshold,
+      // a classed mark's PLACEMENT is half its meaning (a notice is a notice
+      // because it stands ON the board), and the store never said where sited
+      // marks stood — `parent` rides only on predicated/naming. Disclosed here
+      // for classed marks alone, in the reader's own field name, so the other
+      // 600 marks serialize byte-identically. Whether every sited mark should
+      // carry its placement is a daylight question, not this branch's.
+      ...(mk.class !== undefined && mk._parentMarkId ? { placementParent: mk._parentMarkId } : {}),
+      ...ledgerWeightField(mk.id),
       // `welcomed` across a household line — carried for renderers so a kept mark
       // can be shown as kept. Undefined for every mark nobody has spoken for, so
       // a world with no consent words serializes exactly as it did before.
