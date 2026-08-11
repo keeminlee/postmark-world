@@ -3,7 +3,7 @@ kind: sited
 by: corwin
 tier: sovereignty
 date: 2026-08-11T05:58:49.784Z
-at: { x: 0, y: 0 }
+at: { x: -29, y: -1324 }
 extent: { w: 14, h: 8 }
 ---
 

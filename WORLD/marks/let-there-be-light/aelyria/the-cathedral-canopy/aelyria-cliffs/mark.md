@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 tier: constitution
 date: 2026-07-22
-at: { x: 45, y: 180 }
+at: { x: 3720, y: 4940 }
 extent: { w: 1330, h: 120 }
 feature: aelyria-cliffs
 ---

@@ -116,6 +116,31 @@ export function parseRecord(text, file) {
 // lint, the vessel, the walk engine, the verbs — reads `at` in world coordinates
 // and cannot tell which frame the files were written in. That is the whole
 // point: exactly one function knows, and it is this one.
+// ---------- the tier binding (founder ruling, 2026-08-11 evening) ----------
+// A PARENT BINDS A CHILD ONLY IF ITS TIER IS EQUAL OR HIGHER. That one sentence
+// governs the frame, and it is the difference between a world where the town's
+// own river can be dragged by whoever files a meadow around it and one where it
+// cannot.
+//
+// A BOUND child (parent rank >= child rank) is framed by its parent: its `at:`
+// is an offset from that parent's centre, and moving the parent carries it —
+// the v3 frame, unchanged.
+//
+// An OUTRANKING child is framed by the WORLD. Nothing its parent does moves it.
+// The directory still says what contains what — a constitution reach may well
+// sit inside a resident's canopy, and the tree should say so — but containment
+// is no longer authority: the paper says where it stands, not who may move it.
+// When geometry drifts so the edge stops naming the tightest container, the
+// machinery RE-POINTS the edge (mark-lint's REHOME, applied by the settlement
+// sweep). Re-pointing an outranking child is pure paper, because its numbers
+// never mentioned its parent in the first place.
+//
+// A PREDICATE is exempt: it is its parent continued (SCHEMA § the continuation
+// law), so it can never outrank what it predicates — the lint refuses one that
+// tries, rather than framing it somewhere its parent is not.
+export const TIER_RANK = { constitution: 3, sovereignty: 2, market: 1, draft: 0 };
+export const tierRank = (m) => TIER_RANK[m?.tier] ?? TIER_RANK.market;   // a missing tier is market
+
 export const COORDS_FIELD = "coords";
 export const COORDS_RELATIVE = "relative";
 export const COORDS_ABSOLUTE = "absolute";
@@ -195,16 +220,25 @@ function frameMarks(out) {
   };
 
   // The centre a record's numbers are written against: its nearest POSITIONED
-  // ancestor. A predicate carries no centre of its own — it is its parent
-  // continued (SCHEMA § the continuation law) — so the walk steps past it, and
-  // anything standing on open ground is framed on the root's centre.
+  // ancestor THAT BINDS IT (§ the tier binding — rank >= the record's own). A
+  // predicate carries no centre of its own — it is its parent continued (SCHEMA
+  // § the continuation law) — so the walk steps past it, and anything the chain
+  // cannot bind is framed on the root's centre, which is the world's.
+  //
+  // The two conditions are deliberately separate. An UNPOSITIONED ancestor is
+  // stepped past because it has no centre to offer; an OUTRANKED one is stepped
+  // past because it has no authority to offer. Both keep walking; neither is an
+  // error here. What the walk can never do is hand a record a centre from a
+  // mark that does not bind it.
   const frameOriginOf = (rec) => {
+    const continued = rec.kind === "predicated" || rec.kind === "naming";
+    const rank = tierRank(rec);
     const walked = new Set([rec]);
     let p = rec._parentMarkId ? byId.get(rec._parentMarkId) : null;
     while (p && !walked.has(p)) {
       walked.add(p);
       const c = worldCentreOf(p);
-      if (c) return { x: c.x, y: c.y };
+      if (c && (continued || tierRank(p) >= rank)) return { x: c.x, y: c.y };
       p = p._parentMarkId ? byId.get(p._parentMarkId) : null;
     }
     return { x: rootCentre.x, y: rootCentre.y };
