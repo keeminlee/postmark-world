@@ -61,6 +61,7 @@ const at = (p) => [p.x, p.y];
 
 const TOWN = "the-town/the-post-office";
 const LANDING = "the-town/the-pando-landing";
+const WHARF = "sol-of-garrison/grove-wharf"; // the Garrison stop, ruled 2026-08-10 (#1596), granted case-by-case
 
 // ── the record's own numbers ────────────────────────────────────────────────
 //
@@ -108,7 +109,7 @@ test("the wheelhouse's timetable folds into a service — stops resolved BY MARK
   assert.equal(service.vessel.handle, "the-post-office", "the ledger handle is the vessel mark's leaf slug");
   assert.deepEqual(service.vessel.extent, byId.get(TOWN).extent, "her footprint is her own mark's extent");
   assert.equal(service.pace, PACE);
-  assert.deepEqual(service.stops.map((s) => s.markId), [TOWN, LANDING]);
+  assert.deepEqual(service.stops.map((s) => s.markId), [TOWN, LANDING, WHARF]);
 
   // The coordinates are the STOP MARKS' own — the timetable names ids only.
   for (const stop of service.stops) {
@@ -121,25 +122,30 @@ test("the wheelhouse's timetable folds into a service — stops resolved BY MARK
   assert.deepEqual(serviceFromFold(moved, WHEELHOUSE).stops[1].at, ELSEWHERE);
 });
 
-test("the ruled schedule: quay 06:00Z/18:00Z, landing 00:00Z/12:00Z, and the day closes", () => {
+test("the ruled schedule: quay 06:00Z/18:00Z, landing 00:00Z/12:00Z, the wharf 04:15Z/16:15Z, and the day closes", () => {
   const day = sailingsBetween(service, fcAt("2026-08-09T00:00:00Z") - 1e-9, fcAt("2026-08-09T23:59:00Z"));
   assert.deepEqual(
     day.map((s) => [new Date(instantOf(s.departFc)).toISOString(), s.from.markId, s.to.markId]),
     [
-      ["2026-08-09T00:00:00.000Z", LANDING, TOWN],
+      ["2026-08-09T00:00:00.000Z", LANDING, WHARF],
+      ["2026-08-09T04:15:00.000Z", WHARF, TOWN],
       ["2026-08-09T06:00:00.000Z", TOWN, LANDING],
-      ["2026-08-09T12:00:00.000Z", LANDING, TOWN],
+      ["2026-08-09T12:00:00.000Z", LANDING, WHARF],
+      ["2026-08-09T16:15:00.000Z", WHARF, TOWN],
       ["2026-08-09T18:00:00.000Z", TOWN, LANDING],
     ],
-    "four sailings a day, alternating ends — she is always where her next cast-off needs her");
+    "six sailings a day — the wharf call rides the southbound return (ruled 2026-08-10, #1596), so the quay→landing mail run stays one unbroken sailing");
 
   // A crossing lasts the run over the pace, both read back out of the record:
-  // the run is the two stop MARKS' separation and the pace is the schedule's own
-  // dial. The ruling that re-sited the landing re-timed the service by 2 min 13 s
-  // a leg without anyone editing a duration — including this one.
+  // each leg is ITS OWN two stop MARKS' separation and the pace is the
+  // schedule's one dial. The ruling that re-sited the landing re-timed the
+  // service by 2 min 13 s a leg without anyone editing a duration — and the
+  // ruling that added the wharf made the legs unequal without breaking this.
   for (const s of day) {
-    assert.equal(s.legM, RUN_M, "the leg is the two stops' separation, never a stored distance");
-    assert.ok(near(s.arriveFc - s.departFc, RUN_FC, 1e-12),
+    const from = siteOf(s.from.markId), to = siteOf(s.to.markId);
+    const legM = Math.hypot(to.x - from.x, to.y - from.y);
+    assert.equal(s.legM, legM, "the leg is its two stops' separation, never a stored distance");
+    assert.ok(near(s.arriveFc - s.departFc, legM / (PACE * 1000), 1e-12),
       `a crossing runs ${((s.arriveFc - s.departFc) * 12).toFixed(4)} h — the run over the pace, and nothing else`);
   }
 
@@ -290,7 +296,10 @@ test("full round-trip: ride up · walk to the party · walk back to her deck · 
   const backOnDeckFc = arrivalOf(toBerth);
 
   // …and rides home on her next cast-off from this landing, whichever one the
-  // schedule and the length of the run make that be.
+  // schedule and the length of the run make that be. Since the wharf ruling the
+  // southbound return calls at the Garrison first, so the ride home is TWO hops
+  // — the anti-conveyor rule deposits everyone at every stop, and riding on is
+  // a fresh walk onto her deck within the dwell.
   const homeward = nextFrom(LANDING, backOnDeckFc);
   const waiting = positionAt(toBerth, homeward.departFc - 1e-9, service);
   assert.equal(waiting.arrived, true, "standing on her deck when she casts off");
@@ -299,13 +308,43 @@ test("full round-trip: ride up · walk to the party · walk back to her deck · 
   const homebound = positionAt(toBerth, midway(homeward), service);
   assert.equal(homebound.aboard, "the-post-office");
 
-  const home = positionAt(toBerth, midDwellAfter(homeward), service);
+  const atWharf = positionAt(toBerth, midDwellAfter(homeward), service);
+  assert.equal(atWharf.ashoreAt, WHARF, "set down at the Garrison's wharf — the through-ride home is two hops now");
+
+  const reBoard = D({ handle: h, from: { x: atWharf.x, y: atWharf.y }, toward: siteOf(WHARF), at: midDwellAfter(homeward) });
+  const lastLeg = nextFrom(WHARF, arrivalOf(reBoard));
+  const backAboard = positionAt(reBoard, lastLeg.departFc - 1e-9, service);
+  assert.equal(backAboard.arrived, true, "back on her deck inside the wharf dwell");
+  assert.equal(backAboard.atMooring, WHARF);
+
+  const home = positionAt(reBoard, midDwellAfter(lastLeg), service);
   assert.equal(home.ashoreAt, TOWN, "set down on the quay side of the reach");
   assert.ok(!pointInRect(home.x, home.y, footprintOf(service, QUAY)), "outside her footprint again");
 
   // The next one sails without him: the chain ends where he stands, not in a loop.
-  const after = nextFrom(TOWN, homeward.arriveFc);
-  assert.equal(positionAt(toBerth, midway(after), service).aboard, null);
+  const after = nextFrom(TOWN, lastLeg.arriveFc);
+  assert.equal(positionAt(reBoard, midway(after), service).aboard, null);
+});
+
+// ── the Garrison stop (ruled 2026-08-10, #1596 — case-by-case founder grant) ──
+
+test("the wharf call: southbound she calls at the Garrison's own shore, lies alongside, and a rider from the landing steps off onto their stones", () => {
+  const southbound = nextFrom(LANDING, fcAt("2026-08-09T11:00:00Z")); // the 12:00Z cast-off
+  assert.equal(southbound.to.markId, WHARF, "the southbound sailing calls at the wharf");
+  assert.ok(southbound.arriveFc < nextFrom(WHARF, southbound.departFc).departFc,
+    "she lies alongside before her own next cast-off — the grant fits the day without moving anyone else's hour");
+
+  const rider = D({ handle: "garrisoner", from: BERTH, toward: BERTH, at: midDwellBefore(southbound) });
+  assert.equal(positionAt(rider, midway(southbound), service).aboard, "the-post-office");
+  const landed = positionAt(rider, midDwellAfter(southbound), service);
+  assert.equal(landed.ashoreAt, WHARF, "set down on the Garrison's shoreline");
+  // The wharf is a small stone (10×10) and the step off her rail can land on
+  // the bank beside it — ashore-adjacent is the deposit law (see the
+  // deposited-ashore test), containment never was.
+  const wharfSite = siteOf(WHARF);
+  const reach = Math.hypot(service.vessel.extent.w, service.vessel.extent.h) / 2 + ASHORE_STEP_M + 0.15;
+  assert.ok(Math.hypot(landed.x - wharfSite.x, landed.y - wharfSite.y) < reach,
+    "ashore beside the wharf's own stone, not thrown up the bank");
 });
 
 test("miss-the-boat: reach the mooring after she goes and the berth is empty — with the next departure to hand", () => {
