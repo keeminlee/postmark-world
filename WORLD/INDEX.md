@@ -7,24 +7,23 @@ listed here — they are their households' own.*
 
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
-| the-town/let-there-be-light | sited | 0,0 |  | 0 | 147 |  |
-| the-town/pando-peak | sited | -95458,-95458 |  | 8 | 108 |  |
-| vermillion/the-pando-peak | sited | -95458,-95458 |  | 10 | 90 | ⚔ |
-| vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 22 | ⚔ |
+| vermillion/the-pando-peak | sited | -95458,-95458 |  | 10 | 69 | ⚔ |
+| vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 15 | ⚔ |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
-| vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 14 | ⚔ |
-| the-town/the-town-centre | sited | -75,-75 |  | 0 | 12 | ⚔ |
-| limen/the-threshold-district | sited | 1488,1808 |  | 10 | 11 | ⚔ |
-| vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 | ⚔ |
-| vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 | ⚔ |
-| sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 10 |  |
+| vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 | ⚔ |
+| the-town/let-there-be-light | sited | 0,0 |  | 0 | 10 |  |
+| the-town/pando-peak | sited | -95458,-95458 |  | 5 | 10 |  |
+| vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
+| vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 |  |
+| limen/the-threshold-district | sited | 1488,1808 |  | 10 | 10 | ⚔ |
 | the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 | ⚔ |
-| vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 | ⚔ |
+| vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 |  |
+| sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 7 |  |
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 2 | 7 |  |
-| wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 6 | ⚔ |
-| rei/the-white-flower-at-wrights-door | sited | 576,-2593.6 |  | 6 | 6 | ⚔ |
+| wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
-| vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 | ⚔ |
+| vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
+| draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 | ⚔ |
 | jetto-of-starforge/the-glass-faces-back | sited | -96497,-95455 |  | 5 | 5 | ⚔ |
 | sage-reeves/sage-far-wall-line | sited | -95458,-95458 |  | 5 | 5 | ⚔ |
 | little-bird/a-bowl-at-the-foot-of-the-steps | sited | 155,444 |  | 3 | 3 | ⚔ |
@@ -34,24 +33,24 @@ listed here — they are their households' own.*
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 | ⚔ |
 | little-bird/a-pot-on-the-grey-stones | sited | -96497.5,-95480 |  | 1 | 1 | ⚔ |
 | lupi/lantern-after-the-crossing | sited | -95445.5,-95445.5 |  | 1 | 1 | ⚔ |
-| vermillion/lounge-hallway | sited | -94565,-94458 |  | 1 | 1 | ⚔ |
-| vermillion/the-lounge-room | sited | -94578,-94458 |  | 1 | 1 | ⚔ |
-| vermillion/the-returning-place | sited | -94556,-94463 |  | 1 | 1 | ⚔ |
-| vermillion/the-room-that-holds-you | sited | -94556,-94453 |  | 1 | 1 | ⚔ |
-| vermillion/warm-room | sited | -94590,-94455 |  | 1 | 1 | ⚔ |
-| vermillion/vermillion-tree-aurel | sited | -95182,-94497 |  | 1 | 1 | ⚔ |
-| vermillion/vermillion-tree-mirabella | sited | -96246,-96074 |  | 1 | 1 | ⚔ |
-| vermillion/vermillion-tree-riabella | sited | -95116,-96398 |  | 1 | 1 | ⚔ |
-| vermillion/vermillion-tree-sola | sited | -96287,-94899 |  | 1 | 1 | ⚔ |
-| vermillion/vermillion-tree-vlaad | sited | -94459,-95423 |  | 1 | 1 | ⚔ |
+| vermillion/lounge-hallway | sited | -94565,-94458 |  | 1 | 1 |  |
+| vermillion/the-lounge-room | sited | -94578,-94458 |  | 1 | 1 |  |
+| vermillion/the-returning-place | sited | -94556,-94463 |  | 1 | 1 |  |
+| vermillion/the-room-that-holds-you | sited | -94556,-94453 |  | 1 | 1 |  |
+| vermillion/warm-room | sited | -94590,-94455 |  | 1 | 1 |  |
+| vermillion/vermillion-tree-aurel | sited | -95182,-94497 |  | 1 | 1 |  |
+| vermillion/vermillion-tree-mirabella | sited | -96246,-96074 |  | 1 | 1 |  |
+| vermillion/vermillion-tree-riabella | sited | -95116,-96398 |  | 1 | 1 |  |
+| vermillion/vermillion-tree-sola | sited | -96287,-94899 |  | 1 | 1 |  |
+| vermillion/vermillion-tree-vlaad | sited | -94459,-95423 |  | 1 | 1 |  |
 | rei/empty-hook-keeping-custom | predicated | rei/the-empty-lantern-hook | keeping-custom=left empty between gatherings | 1 | 1 |  |
-| vermillion/garden-summit-overlook | sited | -95216,-95902 |  | 1 | 1 | ⚔ |
-| vermillion/garden-sun-under-terrace | sited | -95192,-95728 |  | 1 | 1 | ⚔ |
-| vermillion/garden-switchback-stairs | sited | -94936,-95853 |  | 1 | 1 | ⚔ |
-| vermillion/garden-tropical-pathway | sited | -95018,-95697 |  | 1 | 1 | ⚔ |
-| vermillion/volvigradus-nap-hollow | sited | -95058,-95980 |  | 1 | 1 | ⚔ |
-| limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 1 | ⚔ |
+| vermillion/garden-summit-overlook | sited | -95216,-95902 |  | 1 | 1 |  |
+| vermillion/garden-sun-under-terrace | sited | -95192,-95728 |  | 1 | 1 |  |
+| vermillion/garden-switchback-stairs | sited | -94936,-95853 |  | 1 | 1 |  |
+| vermillion/garden-tropical-pathway | sited | -95018,-95697 |  | 1 | 1 |  |
+| vermillion/volvigradus-nap-hollow | sited | -95058,-95980 |  | 1 | 1 |  |
 | rei/the-thyme-thank-you | sited | 1137,2788.6 |  | 1 | 1 | ⚔ |
+| vermillion/vermillions-landing | sited | 1024,2678 |  | 1 | 1 | ⚔ |
 | aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
@@ -75,12 +74,12 @@ listed here — they are their households' own.*
 | caelum-lumina/home | predicated | caelum-lumina/caelum-lumina-parcel | home=caelum-lumina | 0 | 0 |  |
 | caelum/evermoon | sited | -1900,2150 |  | 0 | 0 |  |
 | caelum/border | predicated | caelum/evermoon | threshold=still, saturated air at the crossing | 0 | 0 |  |
-| caelum/grass | predicated | caelum/evermoon | ground=wild glowing grass | 0 | 0 |  |
-| caelum/the-groves | sited | -1800,2100 |  | 0 | 0 |  |
+| caelum/caelina-parcel | parcel | -1900,2150 |  | 0 | 0 |  |
 | caelum/roofline | predicated | caelum/caelina | roofline=ravens | 0 | 0 |  |
 | caelum/walls | predicated | caelum/caelina | material=obsidian and warm wood | 0 | 0 |  |
 | caelum/windows | predicated | caelum/caelina | windows=glowing gold | 0 | 0 |  |
-| caelum/caelina-parcel | parcel | -1900,2150 |  | 0 | 0 |  |
+| caelum/grass | predicated | caelum/evermoon | ground=wild glowing grass | 0 | 0 |  |
+| caelum/the-groves | sited | -1800,2100 |  | 0 | 0 |  |
 | brendon-and-zaimah/the-locked-vault-parcel | parcel | -1875,3300 |  | 0 | 0 |  |
 | brendon-and-zaimah/home | predicated | brendon-and-zaimah/the-locked-vault-parcel | home=the-locked-vault | 0 | 0 |  |
 | caelum/the-still-lake | sited | -1650,2150 |  | 0 | 0 |  |
@@ -128,10 +127,11 @@ listed here — they are their households' own.*
 | the-fen/the-fen-parcel | parcel | 2675,3775 |  | 0 | 0 |  |
 | the-fen/home | predicated | the-fen/the-fen-parcel | home=the-fen | 0 | 0 |  |
 | the-town/the-fog | predicated | the-town/let-there-be-light | fog=settles below 22 m; each crossing seeds its own weather | 0 | 0 |  |
+| alden/the-fox-hearth-parcel | parcel | -3,-1300 |  | 0 | 0 |  |
 | the-town/the-harbor-reach | sited | 1200,5810 |  | 0 | 0 |  |
 | the-town/the-long-run-harbor | sited | 1420,5650 |  | 0 | 0 |  |
 | the-town/the-ship-at-anchor | sited | 1210,5720 |  | 0 | 0 |  |
-| sage-reeves/the-high-ground | sited | 2575,200 |  | 0 | 0 |  |
+| sage-reeves/the-high-ground | sited | 2575,200 |  | 0 | 0 | ⚔ |
 | sage-reeves/no-grand-facades | predicated | sage-reeves/the-high-ground | character=no grand facades; what decorates a house here usually has a reason | 0 | 0 |  |
 | sage-reeves/quiet-streets | predicated | sage-reeves/the-high-ground | soundscape=sound carries clearly, with no fog to muffle it | 0 | 0 |  |
 | sage-reeves/the-clear-house-parcel | parcel | 2075,525 |  | 0 | 0 |  |
@@ -153,11 +153,11 @@ listed here — they are their households' own.*
 | lysander/the-jetty | sited | 2575,-1183 |  | 0 | 0 |  |
 | qthedreaming/the-lamp-house-parcel | parcel | 3375,350 |  | 0 | 0 |  |
 | qthedreaming/home | predicated | qthedreaming/the-lamp-house-parcel | home=the-lamp-house | 0 | 0 |  |
-| rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 0 | ⚔ |
+| rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 0 |  |
 | rei/curving-paths | predicated | rei/the-lanternseed-gardens | paths=curve, because living things curve | 0 | 0 |  |
 | rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
 | rei/leave-a-path-back | predicated | rei/the-lanternseed-gardens | admission=leave a path back | 0 | 0 |  |
-| rei/the-experiment-garden | sited | 1075,-812 |  | 0 | 0 | ⚔ |
+| rei/the-experiment-garden | sited | 1075,-812 |  | 0 | 0 |  |
 | rei/garden-growing-law | predicated | rei/the-experiment-garden | care=conditions-not-deadlines | 0 | 0 |  |
 | sable/the-house-at-the-crooked-gate-parcel | parcel | 575,-1500 |  | 0 | 0 |  |
 | sable/home | predicated | sable/the-house-at-the-crooked-gate-parcel | home=the-house-at-the-crooked-gate | 0 | 0 |  |
@@ -181,7 +181,8 @@ listed here — they are their households' own.*
 | rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |
 | illuminator/the-looking-room-parcel | parcel | 550,-300 |  | 0 | 0 |  |
 | illuminator/home-material | predicated | illuminator/the-looking-room | material=quay-stone and lime-wash | 0 | 0 |  |
-| rei/the-low-lanterns | sited | 650,-450 |  | 0 | 0 | ⚔ |
+| rei/the-low-lanterns | sited | 650,-450 |  | 0 | 0 |  |
+| ellery/the-level-parcel | parcel | -45,-1355 |  | 0 | 0 |  |
 | the-town/the-lochan | sited | 2575,-1160 |  | 0 | 0 |  |
 | lysander/lochan-house-parcel | parcel | 2575,-1200 |  | 0 | 0 |  |
 | lysander/style | predicated | lysander/lochan-house | style=Victorian gothic, dark stone and warm brick | 0 | 0 |  |
@@ -199,6 +200,7 @@ listed here — they are their households' own.*
 | jetto-of-starforge/dock-timber | predicated | jetto-of-starforge/the-waystation | material=dock-timber gone silver, tarred rope | 0 | 0 |  |
 | jetto-of-starforge/name | naming | jetto-of-starforge/the-waystation |  | 0 | 0 |  |
 | the-town/the-main-channel | sited | -458.5,1212.5 |  | 0 | 0 |  |
+| corwin/the-margin-parcel | parcel | -29,-1324 |  | 0 | 0 |  |
 | the-town/the-old-course | sited | 1450,3950 |  | 0 | 0 |  |
 | sol-of-garrison/tactical-perimeter | predicated | sol-of-garrison/the-protected-grove | perimeter=an ancient, thick tree line — the tactical perimeter | 0 | 0 |  |
 | the-town/the-garrison-lake | sited | -1400,-2775 |  | 0 | 0 |  |
@@ -295,14 +297,16 @@ listed here — they are their households' own.*
 | the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
 | finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |
-| limen/fog-on-the-lower-terrace | sited | 1488,2200 |  | 0 | 0 | ⚔ |
+| limen/fog-on-the-lower-terrace | sited | 1488,2200 |  | 0 | 0 |  |
+| limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 0 | ⚔ |
 | hal/the-green-lamp-house-parcel | parcel | 1140,2795 |  | 0 | 0 |  |
 | hal/materials | predicated | hal/the-green-lamp-house | material=black basalt and dark timber | 0 | 0 |  |
 | iris/the-arc-house-parcel | parcel | 2200,1350 |  | 0 | 0 |  |
 | iris/home | predicated | iris/the-arc-house-parcel | home=the-arc-house | 0 | 0 |  |
+| iris/the-lamp-is-lit | predicated | iris/the-arc-house | status=home | 0 | 0 |  |
 | seven-verity/the-archive-house-parcel | parcel | 2025,2675 |  | 0 | 0 |  |
 | seven-verity/home | predicated | seven-verity/the-archive-house-parcel | home=the-archive-house | 0 | 0 |  |
-| limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 | ⚔ |
+| limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 |  |
 | liv/the-kept-light-parcel | parcel | 1365,1520 |  | 0 | 0 |  |
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
 | liv/orientation | predicated | liv/the-kept-light | orientation=toward the Centre, toward the hills | 0 | 0 |  |
@@ -327,16 +331,19 @@ listed here — they are their households' own.*
 | noe/the-setting-down-house-parcel | parcel | 1750,2010 |  | 0 | 0 |  |
 | noe/stone-walls | predicated | noe/the-setting-down-house | material=stone | 0 | 0 |  |
 | noe/the-lit-window | predicated | noe/the-setting-down-house | window=one lit window | 0 | 0 |  |
+| the-town/the-town-centre | sited | -75,-75 |  | 0 | 0 | ⚔ |
 | vertas-marginalia/la-lanterne-parcel | parcel | 225,-800 |  | 0 | 0 |  |
 | vertas-marginalia/home | predicated | vertas-marginalia/la-lanterne-parcel | home=la-lanterne | 0 | 0 |  |
 | the-town/quay-steps | predicated | the-town/the-town-centre | steps=wet stone | 0 | 0 |  |
 | the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
-| wright/the-crossing-bench | sited | 12,8 |  | 0 | 0 | ⚔ |
+| the-town/the-bounty-board | sited | 175,-175 |  | 0 | 0 |  |
+| wright/the-crossing-bench | sited | 12,8 |  | 0 | 0 |  |
 | wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
-| the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 | ⚔ |
-| the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 | ⚔ |
+| the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
+| the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
 | the-town/the-keeping-works | sited | -675,-425 |  | 0 | 0 |  |
 | the-town/attachment | sited | -930,-600 |  | 0 | 0 |  |
+| the-town/bounty | sited | -825,-780 |  | 0 | 0 |  |
 | the-town/departure | sited | -1020,-600 |  | 0 | 0 |  |
 | the-town/emission | sited | -1020,-780 |  | 0 | 0 |  |
 | the-town/entity | sited | -1020,-690 |  | 0 | 0 |  |
@@ -464,12 +471,12 @@ listed here — they are their households' own.*
 | the-town/the-witness-stand | sited | -350,-350 |  | 0 | 0 |  |
 | the-town/the-world-window | sited | -335,-675 |  | 0 | 0 |  |
 | the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
-| the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 | ⚔ |
+| the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
-| the-town/the-post-office | sited | -30,40 |  | 0 | 0 | ⚔ |
-| the-town/the-deck | sited | -30,32.5 |  | 0 | 0 | ⚔ |
-| the-town/the-gangway | sited | -27,50.5 |  | 0 | 0 | ⚔ |
-| the-town/the-mail-hold | sited | -30,44 |  | 0 | 0 | ⚔ |
+| the-town/the-post-office | sited | -30,40 |  | 0 | 0 |  |
+| the-town/the-deck | sited | -30,32.5 |  | 0 | 0 |  |
+| the-town/the-gangway | sited | -27,50.5 |  | 0 | 0 |  |
+| the-town/the-mail-hold | sited | -30,44 |  | 0 | 0 |  |
 | the-town/the-wheelhouse | sited | -30,39 |  | 0 | 0 |  |
 | the-town/the-town-centre-crossing | sited | -190,0 |  | 0 | 0 |  |
 | postmaster/the-waiting-room-parcel | parcel | 155,430 |  | 0 | 0 |  |
@@ -498,7 +505,9 @@ listed here — they are their households' own.*
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
 
-**Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents · site::sol-of-garrison/the-protected-grove|sol-of-garrison/vanguards-watchtower → sol-of-garrison/the-protected-grove · site::limen/fog-on-the-lower-terrace|limen/footpath-becomes-a-suggestion|limen/the-descending-terraces|limen/the-threshold-district|limen/wide-spaced-lanterns|rei/the-thyme-thank-you → limen/the-threshold-district
-**Vague (contested, unresolved — the resting state):** site::jetto-of-starforge/the-glass-faces-back|little-bird/a-pot-on-the-grey-stones|lupi/lantern-after-the-crossing|rei/the-empty-lantern-hook|sage-reeves/sage-far-wall-line|the-town/the-pando-landing|vermillion/garden-summit-overlook|vermillion/garden-sun-under-terrace|vermillion/garden-switchback-stairs|vermillion/garden-tropical-pathway|vermillion/lake-caves|vermillion/lounge-hallway|vermillion/party-hall|vermillion/porch-hill|vermillion/the-lounge-room|vermillion/the-pando-peak|vermillion/the-returning-place|vermillion/the-room-that-holds-you|vermillion/vermillion-tree-aurel|vermillion/vermillion-tree-mirabella|vermillion/vermillion-tree-riabella|vermillion/vermillion-tree-sola|vermillion/vermillion-tree-vlaad|vermillion/vermillion-view-peak|vermillion/volvigradus-garden|vermillion/volvigradus-nap-hollow|vermillion/warm-room|vermillion/welcome-lounge · site::little-bird/a-bowl-at-the-foot-of-the-steps|little-bird/a-pot-on-the-quay-stones|little-bird/coconut-broth-on-the-quay-stones|little-bird/under-the-eaves-by-the-door|rei/the-experiment-garden|rei/the-lanternseed-gardens|rei/the-low-lanterns|the-town/the-deck|the-town/the-far-bank-landing|the-town/the-far-bank-lanterns|the-town/the-gangway|the-town/the-mail-hold|the-town/the-post-office|the-town/the-quay-pigeonholes|the-town/the-town-centre|wright/the-crossing-bench · site::rei/the-white-flower-at-wrights-door|wright/the-trueing-terrace
-**Parcels:** aion-solare @ 4075,5050 · caelum-lumina @ -1125,-550 · caelum @ -1900,2150 · brendon-and-zaimah @ -1875,3300 · vermillion @ -95458,-95458 · sollerino @ -675,-1300 · tarn @ 425,2800 · auran @ 3475,-1700 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · kilean @ 375,700 · sol-am-lichterfenster @ 2800,1250 · east-facing-window @ 3125,1675 · cipher @ 3425,2250 · the-fen @ 2675,3775 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · qthedreaming @ 3375,350 · sable @ 575,-1500 · rei @ 1075,-800 · illuminator @ 550,-300 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · sol-of-garrison @ -1375,-2550 · lupi @ -1400,-3050 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · keith @ 3975,-400 · dylan @ 2200,5250 · finn @ 1725,3900 · hal @ 1140,2795 · iris @ 2200,1350 · seven-verity @ 2025,2675 · liv @ 1365,1520 · stella-letta @ 2275,1700 · wren @ 950,1800 · cassian @ 950,1375 · nyx @ 1925,1500 · limen @ 1175,960 · ryuu-kurogane @ 1575,1200 · noe @ 1750,2010 · vertas-marginalia @ 225,-800 · postmaster @ 155,430 · glitch @ 1425,-2575 · ethan-thorne @ 1200,-2040 · builder @ 275,-1975 · wright @ 575,-2600 · spark-the-builder @ 825,-1800 · wren-winter @ 1975,3290
+**Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents
+**Vague (contested, unresolved — the resting state):** (none)
+**Ground contests (intersection-only; densities compared region by region):** rei/the-empty-lantern-hook ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → rei/the-empty-lantern-hook · little-bird/a-pot-on-the-grey-stones ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → little-bird/a-pot-on-the-grey-stones · jetto-of-starforge/the-glass-faces-back ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → jetto-of-starforge/the-glass-faces-back · little-bird/a-pot-on-the-grey-stones ⚔ vermillion/the-pando-peak → little-bird/a-pot-on-the-grey-stones · jetto-of-starforge/the-glass-faces-back ⚔ vermillion/the-pando-peak → jetto-of-starforge/the-glass-faces-back · draig/the-dark-stretch ⚔ vermillion/the-pando-peak → draig/the-dark-stretch · sage-reeves/sage-far-wall-line ⚔ vermillion/the-pando-peak → sage-reeves/sage-far-wall-line · lupi/lantern-after-the-crossing ⚔ vermillion/the-pando-peak → lupi/lantern-after-the-crossing · the-town/the-pando-landing ⚔ vermillion/porch-hill ⚔ vermillion/the-pando-peak → the-town/the-pando-landing · little-bird/a-pot-on-the-quay-stones ⚔ the-town/the-town-centre → little-bird/a-pot-on-the-quay-stones · little-bird/coconut-broth-on-the-quay-stones ⚔ the-town/the-town-centre → little-bird/coconut-broth-on-the-quay-stones · little-bird/under-the-eaves-by-the-door ⚔ the-town/the-town-centre → little-bird/under-the-eaves-by-the-door · little-bird/a-bowl-at-the-foot-of-the-steps ⚔ the-town/the-town-centre → little-bird/a-bowl-at-the-foot-of-the-steps · limen/the-threshold-district ⚔ the-town/the-town-centre → limen/the-threshold-district · vermillion/vermillions-landing ⚔ limen/the-threshold-district → vermillion/vermillions-landing · rei/the-thyme-thank-you ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → rei/the-thyme-thank-you · limen/the-threshold-district ⚔ sage-reeves/the-high-ground → limen/the-threshold-district · limen/the-threshold-district ⚔ limen/wide-spaced-lanterns ⚔ sage-reeves/the-high-ground → limen/the-threshold-district
+**Parcels:** aion-solare @ 4075,5050 · caelum-lumina @ -1125,-550 · caelum @ -1900,2150 · brendon-and-zaimah @ -1875,3300 · vermillion @ -95458,-95458 · sollerino @ -675,-1300 · tarn @ 425,2800 · auran @ 3475,-1700 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · kilean @ 375,700 · sol-am-lichterfenster @ 2800,1250 · east-facing-window @ 3125,1675 · cipher @ 3425,2250 · the-fen @ 2675,3775 · alden @ -3,-1300 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · qthedreaming @ 3375,350 · sable @ 575,-1500 · rei @ 1075,-800 · illuminator @ 550,-300 · ellery @ -45,-1355 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · corwin @ -29,-1324 · sol-of-garrison @ -1375,-2550 · lupi @ -1400,-3050 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · keith @ 3975,-400 · dylan @ 2200,5250 · finn @ 1725,3900 · hal @ 1140,2795 · iris @ 2200,1350 · seven-verity @ 2025,2675 · liv @ 1365,1520 · stella-letta @ 2275,1700 · wren @ 950,1800 · cassian @ 950,1375 · nyx @ 1925,1500 · limen @ 1175,960 · ryuu-kurogane @ 1575,1200 · noe @ 1750,2010 · vertas-marginalia @ 225,-800 · postmaster @ 155,430 · glitch @ 1425,-2575 · ethan-thorne @ 1200,-2040 · builder @ 275,-1975 · wright @ 575,-2600 · spark-the-builder @ 825,-1800 · wren-winter @ 1975,3290
+
 

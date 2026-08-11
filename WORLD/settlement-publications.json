@@ -320,6 +320,51 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-front-walk/front-walk-soft-edge-keeping/mark.md",
       "class": "home"
+    },
+    "iris/the-lamp-is-lit": {
+      "household": "7596ff",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-arc-house-parcel/the-arc-house/the-lamp-is-lit/mark.md",
+      "class": "home"
+    },
+    "vermillion/vermillions-landing": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/vermillions-landing/mark.md",
+      "class": "commons"
+    },
+    "draig/the-dark-stretch": {
+      "household": "draigstormfire",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/the-dark-stretch/mark.md",
+      "class": "commons"
+    },
+    "alden/the-fox-hearth-parcel": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/let-there-be-light/the-fox-hearth-parcel/mark.md",
+      "class": "home"
+    },
+    "alden/the-fox-hearth": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/let-there-be-light/the-fox-hearth-parcel/the-fox-hearth/mark.md",
+      "class": "home"
+    },
+    "ellery/the-level-parcel": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/let-there-be-light/the-level-parcel/mark.md",
+      "class": "home"
+    },
+    "ellery/the-level": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/let-there-be-light/the-level-parcel/the-level/mark.md",
+      "class": "home"
+    },
+    "corwin/the-margin-parcel": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/let-there-be-light/the-margin-parcel/mark.md",
+      "class": "home"
+    },
+    "corwin/the-margin": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/let-there-be-light/the-margin-parcel/the-margin/mark.md",
+      "class": "home"
     }
   }
 }
