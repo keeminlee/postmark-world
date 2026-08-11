@@ -20,7 +20,10 @@
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate, rect, overlapArea } from "./marks-fold.mjs";
+import {
+  loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate, rect, overlapArea,
+  tierRank, fileToWorld, declaredCoords, COORDS_RELATIVE, WORLD_ROOT_SLUG,
+} from "./marks-fold.mjs";
 import { consentMap, CONSENT_WORDS, CONSENT_FIELD } from "./consent.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -40,6 +43,11 @@ const TERRAIN_PATH = opt("--terrain", join(REPO, "WORLD/skeleton.json"));
 // scope. e.g. --scope WORLD/marks/let-there-be-light/<region-slug>
 const SCOPE = opt("--scope", null);
 const scopeRel = SCOPE ? resolve(SCOPE).replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/") : null;
+// --json: the whole finding list as one machine-readable record, so a caller
+// that can REPAIR something (the settlement sweep, for the re-home class) can
+// read what to repair instead of scraping the prose. Same findings, same exit
+// code; only the rendering differs.
+const JSON_OUT = args.includes("--json");
 
 const KINDS = new Set(["sited", "predicated", "naming", "parcel"]);
 const TIERS = new Set(["constitution", "sovereignty", "market", "draft"]); // v2 protection tiers + draft (gray, 2026-08-09)
@@ -53,6 +61,13 @@ const findings = [];
 const at = (rec) => (rec._dir ? rec._dir.replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/") : rec.id ?? "?");
 const err = (rec, msg) => findings.push({ sev: "ERROR", file: at(rec), msg });
 const warn = (rec, msg) => findings.push({ sev: "WARN", file: at(rec), msg });
+// REHOME — the third severity, and the only one that names work for the
+// MACHINERY rather than for the writer. An outranking child's numbers are the
+// world's, so re-pointing its directory edge moves paper and nothing else: the
+// settlement sweep performs it (§ the re-home pass) instead of bouncing a
+// resident for geometry that drifted around their mark while they slept.
+// `mark`/`from`/`to` ride beside the prose so the repair needs no parsing.
+const rehome = (rec, from, to, msg) => findings.push({ sev: "REHOME", file: at(rec), msg, mark: rec.id, from, to });
 
 // terrain ids the tier exposes for `parent: terrain:<id>` attachment
 const terrain = existsSync(TERRAIN_PATH) ? JSON.parse(readFileSync(TERRAIN_PATH, "utf8")) : { features: [], far_features: [] };
@@ -226,8 +241,43 @@ for (const rec of marks) {
     if (pk === "naming") err(rec, `a naming mark cannot contain child marks (move this out)${cite("the-town/the-continuation")}`);
     else if (pk === "predicated" && rec.kind !== "predicated" && rec.kind !== "naming")
       err(rec, `a ${rec.kind} mark cannot nest under a predicate — a predicate's children must be predicates (the continuation law); geometry needs a geometric parent${cite("the-town/the-continuation")}`);
+    // A predicate that outranks its parent is the one shape the tier binding
+    // REFUSES rather than repairs. Everywhere else an outranking child simply
+    // stops being framed by its parent and stands on its own world numbers —
+    // but a predicate HAS no numbers of its own to stand on. It is its parent
+    // continued, so a predicate claiming authority over what it predicates is
+    // asking to describe a thing while being immune to it, and there is no
+    // re-pointing that makes that true.
+    const parent = byId.get(rec._parentMarkId);
+    if ((rec.kind === "predicated" || rec.kind === "naming") && parent && tierRank(rec) > tierRank(parent))
+      err(rec, `tier: ${rec.tier} over a ${parent.tier}-tier parent (${parent.id}) — a predicate cannot outrank what it predicates: it is its parent continued${cite("the-town/the-continuation")}`);
   }
 }
+
+// THE FRAME LAW, written out here rather than imported from the loader.
+// §6 needs to know what a re-home would COST, and §6b needs a second opinion on
+// what the loader already did — and a check that asks the loader whether it
+// agrees with itself proves nothing. This walks ALREADY-COMPOSED centres, which
+// is a genuinely different computation from the loader's (that one resolves
+// centres recursively and memoizes, with cycle and duplicate-id guards threaded
+// through), so the two can disagree. See marks-fold.mjs § the tier binding.
+const ROOT_MARK = marks.find((m) => m.slug === WORLD_ROOT_SLUG);
+const WORLD_CENTRE = ROOT_MARK?.at ? { x: ROOT_MARK.at.x, y: ROOT_MARK.at.y } : { x: 0, y: 0 };
+const samePoint = (a, b) => a.x === b.x && a.y === b.y;
+// The centre `rec`'s file numbers would be written against if it were filed
+// directly inside `start` — the nearest positioned ancestor from `start` up
+// (start itself included) whose tier ranks at or above rec's own.
+const frameOriginFrom = (rec, start) => {
+  const continued = rec.kind === "predicated" || rec.kind === "naming";
+  const rank = tierRank(rec);
+  const seen = new Set([rec.id]);
+  for (let p = start; p && !seen.has(p.id); p = p._parentMarkId ? byId.get(p._parentMarkId) : null) {
+    seen.add(p.id);
+    if (p.at && (continued || tierRank(p) >= rank)) return { x: p.at.x, y: p.at.y };
+  }
+  return WORLD_CENTRE;
+};
+const parentOf = (rec) => (rec._parentMarkId ? byId.get(rec._parentMarkId) : null);
 
 // 6. the nesting edge itself — tree = geometry, exactly.
 //
@@ -236,13 +286,57 @@ for (const rec of marks) {
 // placementParent, the same smallest-container function the write door uses.
 // Parcels are covered too; a parcel directory can lie just as quietly as a
 // sited mark's.
+//
+// WHAT A DRIFTED EDGE COSTS depends on whether re-pointing it would change the
+// mark's FRAME (§ the tier binding). Two different facts, not a severity dial:
+//
+//   It would — the numbers are an offset from the parent it is filed under, so
+//   moving the directory re-frames them and MOVES the mark. The machinery may
+//   not choose between the filing and the geometry; the author must. ERROR,
+//   exactly as before.
+//
+//   It would not — the mark outranks what it is filed under, so its numbers are
+//   the world's and mention no parent at all. Re-pointing is paper, so this is
+//   a REPAIR the sweep performs (§ the re-home pass), never a refusal. The
+//   commonest way to reach it is that somebody ELSE's claim grew around a mark
+//   filed correctly the day it was written, which is nobody's mistake.
+//
+// Both doors matter. The tier comparison alone would refuse a TOP-LEVEL mark
+// that a new claim has grown around — its parent is the root, which binds
+// everything, so it reads as "bound" — even though the root's centre IS the
+// world origin and the move would not shift it by a metre. Asking what the
+// frame would actually do catches that; asking only about tiers does not.
 for (const rec of marks) {
   if (rec._error || (rec.kind !== "sited" && rec.kind !== "parcel") || !rec.at) continue;
   if (rec.far) continue; // a horizon object (Pando) sits beyond the ground extent by construction (decision 008)
   const actual = rec._parentMarkId === WORLD_ROOT ? null : rec._parentMarkId ?? null;
   const expected = placementParent(rec, marks);
-  if (actual !== expected)
+  if (actual === expected) continue;
+  const dirParent = parentOf(rec);
+  const outranks = !!dirParent && tierRank(rec) > tierRank(dirParent);
+  const frameKept = samePoint(frameOriginFrom(rec, dirParent), frameOriginFrom(rec, expected === null ? ROOT_MARK : byId.get(expected)));
+  // A record whose parent is unreadable is not in byId at all, so `outranks` is
+  // false and the frame walk starts above it — refusing is the only honest
+  // answer about a tier nobody can read.
+  if (!outranks && !frameKept)
     err(rec, `directory parent is "${actual ?? "(root)"}", but placementParent is "${expected ?? "(root)"}" — the edge must name the tightest geometric container (re-home the directory)${cite("the-town/the-gate")}`);
+  else
+    rehome(rec, actual, expected,
+      `this ${rec.tier}-tier mark is framed by the world, not by "${actual ?? "(root)"}", and the tightest container is now "${expected ?? "(root)"}" — re-point the edge. The mark does not move: its numbers never mentioned "${actual ?? "(root)"}" in the first place${cite("the-town/the-gate")}`);
+}
+
+// 6b. the loader and the law agree — a check on the MACHINERY, not on any
+// resident. Everything above trusts `loadMarks` to have composed each mark's
+// world position correctly; this is the one place that trust is tested. Same
+// walk §6 uses, run over the directory chain each record actually has.
+if (declaredCoords(marks) === COORDS_RELATIVE) {
+  for (const rec of marks) {
+    if (rec._error || !rec._fileAt || rec === ROOT_MARK) continue; // the root IS the frame
+    const o = frameOriginFrom(rec, parentOf(rec));
+    const composed = fileToWorld(rec._fileAt, o);
+    if (composed.x !== rec.at.x || composed.y !== rec.at.y)
+      err(rec, `the loader placed this mark at ${rec.at.x},${rec.at.y}, but the frame law composes ${rec._fileAt.x},${rec._fileAt.y} on origin ${o.x},${o.y} to ${composed.x},${composed.y} — the two disagree. This is a MACHINERY BUG in tools/marks-fold.mjs, not a defect in this record; do not edit the mark to silence it`);
+  }
 }
 
 // 7. the one-file law (2026-08-02): the only .md inside the record is a mark's
@@ -494,14 +588,43 @@ for (const rec of marks) {
 // still checked), but only findings under the scope are reported/gated.
 const reported = scopeRel ? findings.filter((f) => f.file.startsWith(scopeRel)) : findings;
 const scopedMarks = scopeRel ? marks.filter((m) => at(m).startsWith(scopeRel)).length : marks.length;
-const order = { ERROR: 0, WARN: 1 };
+const order = { ERROR: 0, REHOME: 1, WARN: 2 };
 reported.sort((a, b) => (order[a.sev] - order[b.sev]) || a.file.localeCompare(b.file));
+const errors = reported.filter((f) => f.sev === "ERROR");
+const rehomes = reported.filter((f) => f.sev === "REHOME");
+const warns = reported.filter((f) => f.sev === "WARN");
+
+// THREE EXIT CODES, because a caller has three different things to do.
+//   0  nothing to answer for.
+//   1  REFUSED — at least one error. A person has to decide something.
+//   3  REPAIR NEEDED — no errors, but at least one re-home. Nobody did anything
+//      wrong and nothing is in question; some paper has to move. A caller that
+//      can perform it (the settlement sweep) does and re-runs; a caller that
+//      cannot treats 3 as a refusal, which is the safe reading of a code it
+//      does not know. That is the whole reason it is not 1: `!= 0` still fails
+//      closed for every existing caller, while a caller that HAS the repair can
+//      tell "fix this" from "decide this" without parsing prose.
+const code = errors.length ? 1 : (rehomes.length ? 3 : 0);
+
+if (JSON_OUT) {
+  console.log(JSON.stringify({
+    marks: scopedMarks,
+    scope: scopeRel,
+    errors: errors.length,
+    rehomes: rehomes.map((f) => ({ mark: f.mark, from: f.from, to: f.to, file: f.file, msg: f.msg })),
+    warnings: warns.length,
+    findings: reported,
+    exit: code,
+  }, null, 2));
+  process.exit(code);
+}
+
 console.log(`Linted ${scopedMarks} mark(s)${scopeRel ? ` under ${scopeRel}` : ` under ${MARKS_DIR.replace(/\\/g, "/").replace(/^.*\/(WORLD\/marks)$/, "$1")}`}.\n`);
 if (!reported.length) console.log("CLEAN — every mark is well-formed and no edge lies.");
 else {
   for (const f of reported) console.log(`[${f.sev}] ${f.file}: ${f.msg}`);
-  const e = reported.filter((f) => f.sev === "ERROR").length;
-  const w = reported.filter((f) => f.sev === "WARN").length;
-  console.log(`\n${e} error(s), ${w} warning(s).`);
+  console.log(`\n${errors.length} error(s), ${rehomes.length} re-home(s), ${warns.length} warning(s).`);
+  if (rehomes.length && !errors.length)
+    console.log(`\nNothing here is refused — ${rehomes.length} directory edge(s) need re-pointing, and no mark moves when they are. The settlement sweep performs them; by hand it is a git mv of the mark's directory.`);
 }
-process.exit(reported.some((f) => f.sev === "ERROR") ? 1 : 0);
+process.exit(code);
