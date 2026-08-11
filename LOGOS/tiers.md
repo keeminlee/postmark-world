@@ -108,6 +108,22 @@ blue-inside-green was ruled out as a case that would never arise, and
 green-inside-yellow needs nothing special because the default already protects
 the sovereign.
 
+[RESOLVED 2026-08-11 — the case arose. Nine live nestings had a child outranking
+its parent (the town's cliffs, locks and lake inside residents' market marks;
+sovereign houses inside their own market parcels; three blue civic marks inside
+a then-yellow Town Centre), and Keemin ruled the general law: **a parent binds a
+child only if its tier is equal or higher.** A bound child is framed by its
+parent and moves with it; an outranking child is framed by the world, nothing
+its parent does ever moves it, and when geometry drifts its directory edge is
+RE-POINTED to the tightest container — a repair the machinery performs, never a
+refusal. Built the same night: the tier clause in `tools/marks-fold.mjs`
+`frameOriginOf`, the lint's REHOME finding class (exit 3 — repair-needed, not
+refused; the PR lane treats it as green with disclosure), the settlement sweep's
+re-home pass, the Town Centre raised to constitution, and the six frame-changing
+records re-written so that not one moved — falsified over all 623 marks
+(world main `8766f1db`). Tier answers *what binds*; the edit law's consent
+clause answers everything binding cannot.]
+
 ## Provenance
 
 - `G:/Starstory/docs/2026-08-09/world-graph-apex-proposal.html` §6 dial 2, §2.4

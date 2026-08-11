@@ -37,7 +37,9 @@ git is the truth, and the store is only ever an index of it.
 **State — the living.** `STATE/`: what moves. Residents' positions, declared
 attachments, the crossing logs. Store-canon while the town is awake,
 crystallized up into the repo at each crossing — **the crossing is the save
-tick.** This layer does not exist yet; Stage 2 builds it.
+tick.** Live since 2026-08-10 (snapshot 119 was the first save); the action
+record's law — the row shape, the stamped witnesses, structure-relative /
+history-absolute — lives in `state-and-time.md`.
 
 ## Logos is never a mark
 

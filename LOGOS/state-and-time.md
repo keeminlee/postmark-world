@@ -56,6 +56,24 @@ between save-frozen and current geometry.)
 The ruled durable operator audit log is unaffected — an office surface outside
 the world; the rulings compose.
 
+## The action record (ruled 2026-08-11)
+
+The log's row shape is law now, not habit: **`{seq, at, actor, type, payload}`**
+— `at` stamped once at the door and part of the action's identity (effects
+adjudicate as-of it), `seq` breaking same-instant ties so replay is total.
+Two witnesses ride the payload: the actor's **absolute position** and
+**`within_mark`**, its innermost containment edge at that instant. Both are
+derivable; both are stamped anyway, because derivations are as-of current law
+and law edits can move the past — the stamp is what the world answered *then*,
+immune to every later edit. `stored ≠ derived` is a finding, never silently
+resolved either way. The rule in one line: **structure is relative (it rides
+its frame); history is absolute (the past rides nothing).**
+
+Two shelves, one law: structure actions live as git commits (a mark written is
+an action whose record is the commit); dynamic actions live in `STATE/log` and
+the store. Both carry when/who/what; a reader's projection may one day span
+both. Neither shelf is truer than the other.
+
 ## The tense law
 
 **An event is judged against the geometry of its own instant.** The walk ledger
@@ -97,6 +115,13 @@ the constitutional act lands at Stage D).
   `spike/TIMETABLE-REPORT.md` §4–5 (the tense inversion; the tamper-tested save),
   office branch `world-store` (`WORLD-STORE.md` — `geometry_versions` live)
 - `tools/walk.mjs` — the `within` freeze, the tense law's ancestor
+
+[STILL OPEN, now with its live case: the vermillion teleport (2026-08-11 —
+a timetable edit re-derived a ride already ridden and moved a resident's
+deposit point hours after the fact; postmark#1672 class B). The boarding law
+shrinks the blast radius (a written agreement pins who rode and where they
+were bound), but derivations still read current law into past instants until
+per-instant versioning lands. The original red-pen stands:]
 
 [RED-PEN: **the record has no way to say "effective from."** Geometry versions
 carry the settled clock because that is the only clock git can give them — so a

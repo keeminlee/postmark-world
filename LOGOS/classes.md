@@ -60,6 +60,19 @@ affordances:                 # reserved for the apex verb (Stage 3) — authored
   - { subverb: <name>, blurb: <=150 chars, fields: { ... } }
 ```
 
+**The contract reading (2026-08-11).** The sitting that ruled the tier binding
+and the boarding law also named what this grammar has been all along: a class's
+law toward the things on its edges is a **contract** — a closed list of clauses
+(what may travel an edge into or out of an instance; anything unlisted is
+impossible, not forbidden), whose clauses may expose **options** the child
+fills (the carry clause's `destination: <stop> | none`), under **permission**
+from exactly three governors: dials (physics decides, nobody may flip), tier
+(rank decides the default), consent (the child's word decides — revisable
+anytime by the child's own verb). In that vocabulary: `dials:` are clause
+constants, `propagation:` is the carry clause's stance default, `affordances:`
+are options exposed at the point of use, and the apex verb's menu is nothing
+but the contract surface of the edges you currently hold.
+
 A few of these carry more weight than their one line suggests.
 
 **`dials:` is the one home for a constant.** If a number appears anywhere else —

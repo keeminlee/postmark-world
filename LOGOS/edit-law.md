@@ -72,6 +72,13 @@ belong to stakes and contest, not to motion vetoes.
 
 **v1 is cascade/detach, full stop.** Revisit only on a real case.
 
+[RESOLVED 2026-08-11 — the real case arrived (nine live nestings; `tiers.md`
+carries the receipts) and *restrict* stays cut, because the true mechanism was
+never a veto: **an outranking child is framed by the world, so its numbers never
+mentioned its parent in the first place.** Detach-by-construction. The frame,
+not a policy, is what a higher tier holds against a lower parent — the same
+shape as parent-capture below, and it needed no new option in the menu.]
+
 ## 3 · Deletion
 
 **Deletion never cascades, for anyone.** Delete a parent and its children detach
@@ -119,12 +126,24 @@ problem's deliberately narrow first case.
   move, ids never do, which is what makes detach cheap
 - `tools/marks-fold.mjs` `placementParent` — the sibling-promotion this law leans on
 
-[RED-PEN: nothing here says who may *set* a policy other than the default at edge
-birth, or whether a receiver may change it later. "Stamped at edge birth" implies
-never, but the proposal does not say so and the difference matters the first time
-someone wants off a boat's cascade. Unresolved pending receipt.]
+[RESOLVED 2026-08-11 — a receiver may change its word at any time, by its own
+verb (`world_agree`; Keemin: "must be its own verb to edit contracts").
+Declaring the choice on the walk that carries you to the edge is deliberate
+convenience-coupling, not the mechanism. The edge is still the consent record;
+the record is now revisable by exactly one hand — the child's.]
 
-[RED-PEN: the whole edit law is written for marks. Entities have declared
-attachments too — boarding is the worked example — but an entity has no
-geometric parent, so "detach" means something different for a passenger than for
-a stall. Worth one sentence saying which.]
+[RESOLVED 2026-08-11 — for a passenger, detach means: set ashore beside the stop
+at the vessel's next call, the walk proceeding from where you were set down. And
+the entity default is the strongest form of this law: **every effect against an
+entity defaults to detach — boarding exists only as the entity's own declared
+agreement, and carriage requires both the edge (standing in her footprint at
+cast-off — physics) and the permission (an unsevered agreement — your word).**
+Presence alone stopped being a ticket the day it carried someone who never asked
+(vermillion's voyage, 2026-08-11, the forcing case). The vocabulary the sitting
+settled, for every future reading of this law: an **action** (one act, one
+record, stamped with its instant, its absolute place and its innermost
+containment) travels **edges** (physics — formed and dying nonconsensually) and
+has **effects** (the adjudicated outcome at each destination: action × the
+edge's contract × permission). Contracts are closed clause lists a class
+declares; clauses may carry child-fillable options (the carry clause's
+destination); permission has exactly three governors — dials, tier, consent.]

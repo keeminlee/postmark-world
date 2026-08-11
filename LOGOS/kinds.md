@@ -65,6 +65,21 @@ every step is a lie waiting to happen. But an edge and a query only diverge
 when something *moves* — so the query serves still ground, and the moving
 ground is exactly where the edge is the truth you want.
 
+[SUPERSEDED IN PART, 2026-08-11 — the second reversal this section has carried,
+recorded in the same honesty. The frame law's edge stands; **its consent clause
+fell.** "The walk is the consent, the edge is the consent record" could not
+tell a passenger from a bystander from a resident standing on a berth's exact
+centre when she cast off — and on this law's second day it carried one
+(vermillion's voyage). The ruling that replaced it: **edges are physics and
+always form; carriage is a contract whose permission, for every entity, is the
+entity's own declared agreement** (`world_agree`, or declared on the walk as
+deliberate convenience) — the edit-law's peer clause applied to feet. Carriage
+now requires both halves: standing in the carrier's footprint at cast-off (the
+edge) and an unsevered agreement (the permission). One more naming from the
+same sitting: mark, entity and emission are the three kinds of **node** — one
+superclass, three storage backings (file, store, fading) — and mail remains
+outside the superclass by covenant.]
+
 **Crossing a carrier's boundary is the edge birth.** Walking onto the deck
 switches your frame to the vessel — the walk itself is the consent, and the
 edge is the consent record (the edit law's own sentence, now with feet on it).
