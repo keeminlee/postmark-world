@@ -145,6 +145,33 @@ test("on a COMMONS edge the veto is EARNED: a backed parent turns away a weak ch
   const outmatched = fold({ marks: [estate(word), shed], terrain, tick: 1,
     stakes: [stake("s", "a/estate", 100), stake("s", "b/shed", 5)] });
   assert.equal(standing(outmatched, "b/shed"), true, "a child at 5e-4 outweighs the same parent and stands");
+  // …and it was never VETOED in the first place. Standing alone does not say that:
+  // a rule comparing RAW stamps would read 5 against 100, veto the shed, and then
+  // hand it straight back as `pending-escrow` because it carries escrow — the mark
+  // stands either way, and the whole density law could be gone without this line.
+  assert.equal(outmatched.returned.length, 0, "no veto was earned here, so nothing was returned at all");
+});
+
+test("the veto weighs the parent's OWN stamps, never its fan-up — a rich WING does not arm its estate", () => {
+  // The estate has staked nothing itself. Inside it, a wing of its OWN household
+  // carries 500, which fans up, so the estate's WEIGHT is 500 while its own escrow
+  // is 0. It opposes an unstaked foreign shed.
+  //
+  // Own-stamps (correct): the estate's density is 0, the veto is unearned, the shed
+  // stands. Fan-up (the mutant): the estate reads as densely backed by borrowed
+  // weight and evicts a neighbour on the strength of its own child. That is also
+  // circular — under a cross-household edge the fan-up would include the very mark
+  // being judged — and it would quietly make "an unstaked parent's veto moves
+  // nothing" false for every parent with a well-backed child.
+  const estate = sited("estate", "a", 0, 0, 1000, 1000, { consent: { "b/shed": "opposed" } });
+  const wing = sited("wing", "a", 0, 0, 100, 100);          // same household: fans up by structure
+  const shed = sited("shed", "b", 300, 300, 50, 50);        // unstaked, so a real veto would truly return it
+  const state = fold({ marks: [estate, wing, shed], terrain, tick: 1, stakes: [stake("s", "a/wing", 500)] });
+
+  assert.equal(w(state, "a/estate"), 500, "the estate's weight is entirely borrowed from its wing");
+  assert.equal(state.marks.find((m) => m.id === "a/estate").stamps, 0, "and it has staked nothing of its own");
+  assert.equal(standing(state, "b/shed"), true, "so its veto is unearned and the shed stands");
+  assert.equal(state.returned.length, 0);
 });
 
 test("an UNSTAKED parent's veto moves nothing — with nobody backing either side, a word is only a word", () => {

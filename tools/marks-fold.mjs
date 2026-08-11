@@ -397,7 +397,8 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   // everything downstream count households. `by`/`household` on a record stay the
   // handle — that is what a resident is called, and what the telling says out loud
   // ("+3 more of vermillion's") — and the resolved household rides beside it as
-  // `_cred`, published as `credential_household` so a reader can see the grain.
+  // `_cred`, published as `declared_household` so a reader can see the grain (the value is a
+  // declared slug like `starforge` or `cadaeic.space`, never a credential id).
   //
   // THE KEY IS THE TOWN'S DECLARED HOUSEHOLD SLUG (`cadaeic.space`, `the-rookery`),
   // projected from the town's own registry by tools/households-project.mjs. It is
@@ -594,7 +595,18 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // Direct children only, and only the ones that actually carry something:
       // a childless-looking list of forty ✦0 entries buries the one child the
       // reader is looking for, and dropping zeroes cannot break the sum.
+      //
+      // `allowEdge` is the SAME filter weightOf sums through, and it has to be:
+      // a child whose edge does not consent contributes nothing to this mark's
+      // weight, so listing it here would print a receipt whose lines do not add
+      // up to the total they explain. It is also what drops a RETURNED child,
+      // which is not in the world at all. This is the one line that keeps the
+      // decomposition honest under the consent law, and nothing shouts when it
+      // is missing — the sum simply stops being true on the handful of marks
+      // that have a cross-household child (the whole suite stayed green while
+      // five real marks disagreed with themselves).
       fanned: (children.get(id) ?? [])
+        .filter((c) => allowEdge(id, c))
         .map((c) => ({ id: c, weight: weight.get(c) ?? 0 }))
         .filter((f) => f.weight !== 0)
         .sort((a, b) => b.weight - a.weight || a.id.localeCompare(b.id)),
@@ -661,7 +673,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     marks: [...byId.values()].filter(mk => !gone.has(mk.id)).map(mk => ({
       id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, tier: mk.tier ?? "market", household: mk.household,
       // the resolved grain beside the handle — see § the household grain
-      credential_household: mk._cred, date: mk.date,
+      declared_household: mk._cred, date: mk.date,
       at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value, far: mk.far,
       sovereign: !!mk._sovereign, stamps: stakeByMark.get(mk.id) ?? 0, weight: weight.get(mk.id) ?? 0,
       // the ✦ number's receipt — own escrow, the breadth bonus, and each child

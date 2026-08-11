@@ -119,6 +119,28 @@ test("the declared grain is INERT on today's world — it corrects the key witho
   const underCredentialKey = fold({ marks, terrain, stakes, households: staleCanon.households, tick: 1 });
   const before = new Map(underCredentialKey.marks.map((m) => [m.id, `${m.weight}|${m.sovereign}`]));
   for (const m of state.marks) assert.equal(before.get(m.id), `${m.weight}|${m.sovereign}`, `${m.id} must not move on the regrain`);
+
+  // …AND the two grains must still be genuinely different laws, or "inert" means
+  // nothing. Everything above asserts SAMENESS, which is exactly what a mutation
+  // collapsing the two sources into one map would also produce: the test would
+  // then be comparing a fold to itself and would report the regrain as safe no
+  // matter what it did. So prove the difference is observable — put a mark under
+  // arky, the one resident the two grains disagree about, and require the answers
+  // to diverge. Inertness on today's tree is then a fact about today's MARKS, not
+  // an accident of the two maps having become the same thing.
+  const fence = state.parcels.find((p) => p.id === "vertas-marginalia/la-lanterne-parcel");
+  const arkysMark = {
+    id: "arky/a-lantern-of-my-own", slug: "a-lantern-of-my-own", by: "arky", household: "arky",
+    kind: "sited", tier: "market", at: { x: fence.at.x, y: fence.at.y }, extent: { w: 4, h: 4 },
+    date: "2026-08-10", body: "a lantern of my own",
+  };
+  const declaredWithArky = fold({ marks: [...marks, arkysMark], terrain, stakes, households, tick: 1 });
+  const credentialWithArky = fold({ marks: [...marks, arkysMark], terrain, stakes, households: staleCanon.households, tick: 1 });
+  assert.notEqual(
+    declaredWithArky.marks.find((m) => m.id === "arky/a-lantern-of-my-own").sovereign,
+    credentialWithArky.marks.find((m) => m.id === "arky/a-lantern-of-my-own").sovereign,
+    "the two grains must disagree where they genuinely differ, or this whole test is comparing a fold to itself",
+  );
 });
 
 test("one-parcel-per stays at HANDLE grain — the Reeves legally hold four", () => {
