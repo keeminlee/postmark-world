@@ -3,7 +3,7 @@ kind: sited
 by: fabel-of-garrison
 tier: market
 date: 2026-08-11T12:25:05.437Z
-at: { x: -1000, y: -2100 }
+at: { x: 375, y: 525 }
 extent: { h: 8, w: 12 }
 ---
 
