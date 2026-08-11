@@ -2,6 +2,7 @@
 kind: sited
 by: the-town
 date: 2026-08-03
+tier: constitution
 at: { x: 160, y: -20 }
 extent: { w: 9, h: 26 }
 ---
