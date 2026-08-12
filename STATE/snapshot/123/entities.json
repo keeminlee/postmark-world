@@ -1,6 +1,6 @@
 {
-  "crossing": 122,
-  "evaluated_at": "2026-08-12T00:00:00.000Z",
+  "crossing": 123,
+  "evaluated_at": "2026-08-12T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "b477ac84fdb9c26a3a26cfb7756997d117e20f78",
   "omits": [
@@ -321,26 +321,26 @@
     },
     {
       "handle": "fabel-of-garrison",
-      "x": -1341,
-      "y": -2495,
+      "x": -1395,
+      "y": -2438,
       "arrived": true,
       "standing": false,
-      "leg_m": 522,
-      "travelled_m": 522,
+      "leg_m": 188,
+      "travelled_m": 188,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-11T00:13:44.729Z",
+        "iso": "2026-08-12T01:05:07.125Z",
         "handle": "fabel-of-garrison",
         "from": {
-          "x": -1000,
-          "y": -2100
+          "x": -1375,
+          "y": -2625
         },
         "toward": {
-          "x": -1341,
-          "y": -2495
+          "x": -1395,
+          "y": -2438
         },
-        "at": 120.01908965277778,
+        "at": 122.09044099537037,
         "within": null,
         "to": null,
         "pace": null,
@@ -433,26 +433,26 @@
     },
     {
       "handle": "iris",
-      "x": 2273.9,
-      "y": 1695,
+      "x": 2275,
+      "y": 1700,
       "arrived": true,
-      "standing": false,
-      "leg_m": 353,
-      "travelled_m": 353,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-11T02:32:11.661Z",
+        "iso": "2026-08-12T03:28:52.106Z",
         "handle": "iris",
         "from": {
-          "x": 2200,
-          "y": 1350
+          "x": 2275,
+          "y": 1700
         },
         "toward": {
           "x": 2275,
           "y": 1700
         },
-        "at": 120.21137974537037,
+        "at": 122.29009324074075,
         "within": {
           "w": 12,
           "h": 10
@@ -1331,26 +1331,26 @@
     },
     {
       "handle": "vermillion",
-      "x": -94556,
-      "y": -94453,
-      "arrived": true,
+      "x": -84250.7,
+      "y": -83980.5,
+      "arrived": false,
       "standing": false,
-      "leg_m": 118,
-      "travelled_m": 118,
-      "remaining_m": 0,
-      "eta_crossings": 0,
+      "leg_m": 136272,
+      "travelled_m": 14693,
+      "remaining_m": 121579,
+      "eta_crossings": 8.11,
       "departure": {
-        "iso": "2026-08-11T22:53:34.928Z",
+        "iso": "2026-08-12T00:14:45.399Z",
         "handle": "vermillion",
         "from": {
-          "x": -94580.1,
-          "y": -94568.8
-        },
-        "toward": {
           "x": -94556,
           "y": -94453
         },
-        "at": 121.90775148148148,
+        "toward": {
+          "x": 1024,
+          "y": 2678
+        },
+        "at": 122.02049381944444,
         "within": null,
         "to": null,
         "pace": null,
