@@ -9,8 +9,18 @@
 // than refused. A predicate can never outrank what it predicates — the one
 // shape with no repair available, so that one IS refused.
 //
-// Four quadrants, one refusal, and a falsifier. The quadrants say what the rule
-// means; the falsifier says the change that introduced it moved no ground.
+// ── amended by the one-walk tier truth (Keemin, 2026-08-12) ──────────────────
+// The binding rule above is untouched. What changed is WHERE A RANK COMES FROM:
+// the `tier:` line on a record is no longer read as authority, because standing
+// is derived by the one walk (tools/mark-standing.mjs) and a resident does not
+// declare it. So the ladder the frame sees has the town's constitution above,
+// everything standing on resident ground at market, and draft below — and
+// "green in yellow", the quadrant a resident could once reach by writing
+// `tier: sovereignty` on their house, no longer exists. A house on its own
+// parcel BINDS to it, which is what owning your ground means.
+//
+// Three quadrants, two refusals, and a falsifier. The quadrants say what the
+// rule means; the falsifier says the change that introduced it moved no ground.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -19,7 +29,8 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from "node:
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { loadMarks, placementParent, tierRank, TIER_RANK, COORDS_FIELD, COORDS_RELATIVE } from "./marks-fold.mjs";
+import { loadMarks, placementParent, tierRank, standingRank, TIER_RANK, COORDS_FIELD, COORDS_RELATIVE } from "./marks-fold.mjs";
+import { markStanding, standingHouseholdOf } from "./mark-standing.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -69,6 +80,131 @@ test("the ranks are the law's order, and a record with no tier is market", () =>
   assert.equal(tierRank(undefined), TIER_RANK.market);
 });
 
+// ── THE ONE-WALK TRUTH: what the frame actually asks (Keemin, 2026-08-12) ────
+test("a resident's tier: line is INERT — the frame asks the walk, not the record", () => {
+  const town = { by: "the-town", tier: "constitution", kind: "sited" };
+  assert.equal(standingRank(town, new Map()), TIER_RANK.constitution, "the town's own law still ranks above everything");
+
+  // Every one of these is a resident writing a rank on their own record. Under
+  // the old reading two of them worked. Now none of them says anything.
+  for (const claimed of ["constitution", "sovereignty", "market", undefined, "nonsense"]) {
+    const rec = { by: "alden", kind: "sited", ...(claimed === undefined ? {} : { tier: claimed }) };
+    assert.equal(standingRank(rec, new Map()), TIER_RANK.market,
+      `a resident writing tier: ${JSON.stringify(claimed)} ranks at market like everyone else`);
+  }
+  // …including the shape the lint already refuses. The walk does not depend on
+  // the lint having run to be true about who may speak the law.
+  assert.equal(markStanding({ by: "alden", tier: "constitution", kind: "sited" }, new Map()), "market");
+  assert.equal(markStanding({ by: "the-town", tier: "constitution", kind: "sited" }, new Map()), "constitution");
+
+  // draft is the one field still read, and it is not a standing: it says which
+  // BRANCH a record is on, which no walk over the world's ground can know.
+  assert.equal(standingRank({ by: "alden", tier: "draft", kind: "sited" }, new Map()), TIER_RANK.draft);
+
+  // The law layer is answered BEFORE the ancestor walk. A reach of the town's
+  // river filed inside a resident's parcel is not a guest on their fence.
+  const parcel = { id: "alden/p", by: "alden", kind: "parcel" };
+  const reach = { id: "the-town/the-reach", by: "the-town", tier: "constitution", kind: "predicated", parent: "alden/p" };
+  const idx = new Map([[parcel.id, parcel]]);
+  assert.equal(markStanding(reach, idx), "constitution", "the town's law stands on its own ground wherever it is filed");
+  assert.equal(standingRank(reach, idx), TIER_RANK.constitution);
+});
+
+// ── CONFERRED SOVEREIGNTY (Keemin's ruling, 2026-08-12 evening) ──────────────
+// Standing on sovereign ground is a derivable trait. Three cases, all decided in
+// groundVerdict inside the ONE walk, so the fold, lint, sweep and viewer cannot
+// disagree about who is at home.
+test("case 1 — SAME HOUSEHOLD composes: an estate's own wing is part of the estate", () => {
+  // Same handle: the plain case, unchanged since 07-28.
+  withTree([
+    THE_ROOT,
+    { path: `${R}/the-parcel`, fm: { ...mark("market", { x: 200, y: 200 }, { w: 25, h: 25 }), kind: "parcel" } },
+    { path: `${R}/the-parcel/the-shed`, fm: mark("market", { x: 2, y: 2 }, { w: 4, h: 4 }) },
+  ], (dir) => {
+    const m = by(dir);
+    const idx = new Map(Object.entries(m));
+    assert.equal(markStanding(m["t/the-shed"], idx), "home", "the shed stands on its author's own ground");
+    assert.equal(markStanding(m["t/the-parcel"], idx), "home");
+  });
+
+  // ACROSS HANDLES OF ONE HOUSEHOLD — the grain the ruling names. Two of one
+  // person's residents are one household, so their marks compose and neither
+  // asks the other's permission. Only the resolved household differs here.
+  const parcel = { id: "beta/the-parcel", kind: "parcel", by: "beta", household: "beta", _cred: "cadaeic.space" };
+  const wing   = { id: "alpha/the-wing", kind: "sited", by: "alpha", household: "alpha", _cred: "cadaeic.space",
+                   _parentMarkId: "beta/the-parcel" };
+  const idx = new Map([[parcel.id, parcel]]);
+  assert.equal(markStanding(wing, idx), "home", "alpha and beta are one household; the wing is the estate's own");
+  assert.equal(standingHouseholdOf(wing), "cadaeic.space", "the grain is the resolved household, not the handle");
+
+  // …and a stranger with the same SHAPE is not at home, which is what makes the
+  // assertion above about the grain rather than about the nesting.
+  const guest = { ...wing, id: "zed/the-wing", by: "zed", household: "zed", _cred: "solo:zed" };
+  assert.equal(markStanding(guest, idx), "market");
+
+  // the published store's own field name resolves too (the viewer's copy)
+  assert.equal(standingHouseholdOf({ declared_household: "the-rookery", household: "corvid" }), "the-rookery");
+  // and a handle nobody has resolved falls back to itself, never to null
+  assert.equal(standingHouseholdOf({ by: "newcomer" }), "newcomer");
+});
+
+test("case 2 — WELCOMED confers: the holder's word makes a cross-household guest at home", () => {
+  const PARCEL = (consent) => ({
+    path: `${R}/the-parcel`,
+    fm: { ...mark("market", { x: 200, y: 200 }, { w: 25, h: 25 }), kind: "parcel", by: "holder",
+      ...(consent ? { consent: JSON.stringify(consent) } : {}) },
+  });
+  const ROSE = { path: `${R}/the-parcel/the-rose`, fm: mark("market", { x: 2, y: 2 }, { w: 1, h: 1 }, { by: "guest" }) };
+
+  withTree([THE_ROOT, PARCEL({ "guest/the-rose": "welcomed" }), ROSE], (dir) => {
+    const m = by(dir);
+    assert.equal(markStanding(m["guest/the-rose"], new Map(Object.entries(m))), "home",
+      "welcomed by the ground-holder, the rose stands as home under the holder's name");
+  });
+
+  // case 3 — ABSENT is the resting state: a guest at the doorstep is a guest.
+  withTree([THE_ROOT, PARCEL(null), ROSE], (dir) => {
+    const m = by(dir);
+    assert.equal(markStanding(m["guest/the-rose"], new Map(Object.entries(m))), "market",
+      "no word spoken, no conferral — the flower at the doorstep is uncoupled");
+  });
+
+  // opposed is the RETURN law (consent.mjs) and confers nothing here
+  withTree([THE_ROOT, PARCEL({ "guest/the-rose": "opposed" }), ROSE], (dir) => {
+    const m = by(dir);
+    assert.equal(markStanding(m["guest/the-rose"], new Map(Object.entries(m))), "market");
+  });
+
+  // A word names ONE mark. The holder welcoming the rose has not welcomed
+  // everything the guest ever files on their ground.
+  withTree([
+    THE_ROOT,
+    PARCEL({ "guest/the-rose": "welcomed" }),
+    ROSE,
+    { path: `${R}/the-parcel/the-barrow`, fm: mark("market", { x: -2, y: -2 }, { w: 1, h: 1 }, { by: "guest" }) },
+  ], (dir) => {
+    const m = by(dir);
+    const idx = new Map(Object.entries(m));
+    assert.equal(markStanding(m["guest/the-rose"], idx), "home");
+    assert.equal(markStanding(m["guest/the-barrow"], idx), "market", "one word, one mark");
+  });
+});
+
+test("conferral changes STANDING and never RANK — so it cannot move the world", () => {
+  // The structural guarantee behind the falsifier, asserted directly rather
+  // than merely observed: on resident ground home and market are the same rank,
+  // so no verdict this walk can reach — conferred or refused, whatever grain
+  // the caller resolved — is able to re-frame anything.
+  const parcel = { id: "h/p", kind: "parcel", by: "holder", household: "holder", consent: { "g/rose": "welcomed" } };
+  const idx = new Map([[parcel.id, parcel]]);
+  const rose = { id: "g/rose", kind: "sited", by: "guest", household: "guest", _parentMarkId: "h/p" };
+  const barrow = { ...rose, id: "g/barrow" };
+  assert.equal(markStanding(rose, idx), "home");
+  assert.equal(markStanding(barrow, idx), "market");
+  assert.equal(standingRank(rose, idx), standingRank(barrow, idx), "different standing, identical rank");
+  assert.equal(standingRank(rose, idx), TIER_RANK.market);
+});
+
 // ── QUADRANT 1: blue in yellow — a constitution mark inside a market claim ───
 test("blue-in-yellow ANCHORS: the meadow cannot drag the river", () => {
   // A resident's meadow filed around one reach of the town's own river. The
@@ -110,13 +246,17 @@ test("blue-in-yellow ANCHORS: the meadow cannot drag the river", () => {
   });
 });
 
-// ── QUADRANT 2: yellow in green — a market mark inside a sovereignty one ─────
-test("yellow-in-green is BOUND: it rides its parent, and a lying edge is still an ERROR", () => {
+// ── QUADRANT 2: yellow in yellow — resident ground inside resident ground ────
+// This used to be read as "market inside sovereignty binds because sovereignty
+// outranks". Under the one-walk truth the house's `tier: sovereignty` line says
+// nothing at all — both stand at market, and EQUAL RANKS BIND. Same answer, and
+// now for the reason that survives a resident writing anything they like.
+test("yellow-in-yellow is BOUND: it rides its parent, and a lying edge is still an ERROR", () => {
   const HOUSE = { path: `${R}/the-house`, fm: mark("sovereignty", { x: 500, y: 500 }, { w: 100, h: 100 }) };
   const LAMP = { path: `${R}/the-house/the-lamp`, fm: mark("market", { x: 10, y: -5 }, { w: 2, h: 2 }) };
   withTree([THE_ROOT, HOUSE, LAMP], (dir) => {
     const m = by(dir);
-    assert.deepEqual(m["t/the-lamp"]._origin, { x: 500, y: 500 }, "sovereignty outranks market, so the house binds the lamp");
+    assert.deepEqual(m["t/the-lamp"]._origin, { x: 500, y: 500 }, "both stand at market on resident ground, and equal ranks bind");
     assert.deepEqual(m["t/the-lamp"].at, { x: 510, y: 495 }, "and the lamp's numbers are an offset from it");
   });
   withTree([THE_ROOT, { ...HOUSE, fm: { ...HOUSE.fm, at: { x: 800, y: 800 } } }, LAMP], (dir) => {
@@ -164,29 +304,36 @@ test("blue-in-blue is BOUND: the wheelhouse rides the Post Office, and the Centr
   assert.deepEqual(m["the-town/the-wheelhouse"]._fileAt, { x: 0, y: -1 }, "written where it stands, on the boat");
 });
 
-// ── QUADRANT 4: green in yellow — the fox-hearth pattern ─────────────────────
-test("green-in-yellow ANCHORS: a home inside its own market parcel stands on world numbers", () => {
+// ── the fox-hearth pattern, INVERTED by the one-walk truth ───────────────────
+// Three residents wrote `tier: sovereignty` on their houses, and under the old
+// reading that made each house outrank the parcel it stands on: its own fence
+// could not frame it, so it anchored to the world. That was the mis-binding the
+// 08-12 ruling names. A house on its own ground binds to it now, and rides when
+// the ground moves — which is the whole content of "your own parcel is yours".
+test("a home on its own parcel BINDS to it: the fence frames the house and carries it", () => {
   const m = by(join(ROOT, "WORLD/marks"));
   for (const [home, parcel] of [
     ["alden/the-fox-hearth", "alden/the-fox-hearth-parcel"],
     ["ellery/the-level", "ellery/the-level-parcel"],
     ["corwin/the-margin", "corwin/the-margin-parcel"],
   ]) {
-    assert.equal(m[home].tier, "sovereignty");
-    assert.equal(m[parcel].tier, "market", "a parcel is a fence at market tier, not a rank");
     assert.equal(m[home]._parentMarkId, parcel);
-    assert.deepEqual(m[home]._origin, { x: 0, y: 0 }, `${home} is framed by the world, not by its fence`);
-    assert.deepEqual(m[home].at, m[home]._fileAt, "…so its file numbers ARE its world numbers");
+    assert.equal(standingRank(m[home], new Map()), standingRank(m[parcel], new Map()),
+      `${home} and its fence stand at the same rank whatever either record says`);
+    assert.deepEqual(m[home]._origin, { x: m[parcel].at.x, y: m[parcel].at.y }, `${home} is framed on its own parcel`);
+    assert.deepEqual(m[home]._fileAt, { x: 0, y: 0 }, "…and its numbers say where it sits on that ground: the middle");
+    assert.deepEqual(m[home].at, m[parcel].at, "which composes to exactly where it always stood");
   }
   // A parcel relocation is "replace, not add" (the fold's own rule), so the
-  // interesting case is the fixture: move the fence and the home stays put.
+  // interesting case is the fixture: move the fence, and the house comes along.
   const PARCEL = { path: `${R}/the-parcel`, fm: { ...mark("market", { x: 200, y: 200 }, { w: 25, h: 25 }), kind: "parcel" } };
-  const HOME = { path: `${R}/the-parcel/the-hearth`, fm: mark("sovereignty", { x: 200, y: 200 }, { w: 4, h: 4 }) };
+  const HOME = { path: `${R}/the-parcel/the-hearth`, fm: mark("sovereignty", { x: 0, y: 0 }, { w: 4, h: 4 }) };
   withTree([THE_ROOT, PARCEL, HOME], (dir) => {
     assert.deepEqual(by(dir)["t/the-hearth"].at, { x: 200, y: 200 });
   });
   withTree([THE_ROOT, { ...PARCEL, fm: { ...PARCEL.fm, at: { x: 7000, y: 7000 } } }, HOME], (dir) => {
-    assert.deepEqual(by(dir)["t/the-hearth"].at, { x: 200, y: 200 }, "the fence moved; the hearth did not");
+    assert.deepEqual(by(dir)["t/the-hearth"].at, { x: 7000, y: 7000 },
+      "the fence moved and the hearth moved with it — and the `tier: sovereignty` on its record bought it nothing");
   });
 });
 
@@ -272,28 +419,41 @@ test("a predicate is still walked past by a positioned mark beneath it, whatever
 });
 
 test("the walk keeps climbing past a parent that does not bind, to the first ancestor that does", () => {
-  // Two market layers between a sovereignty mark and the constitution root:
+  // Two resident layers between the town's own reach and the constitution root:
   // neither binds it, so it lands on the world and not on the nearer of the two.
+  // The outranking child has to be the TOWN's now — a resident cannot reach this
+  // shape by writing a word on their record, which is the point of the ruling.
   withTree([
     THE_ROOT,
     { path: `${R}/outer`, fm: mark("market", { x: 100, y: 100 }, { w: 400, h: 400 }) },
     { path: `${R}/outer/inner`, fm: mark("market", { x: 120, y: 120 }, { w: 200, h: 200 }) },
-    { path: `${R}/outer/inner/the-home`, fm: mark("sovereignty", { x: 150, y: 150 }, { w: 10, h: 10 }) },
+    { path: `${R}/outer/inner/the-reach`, fm: mark("constitution", { x: 150, y: 150 }, { w: 10, h: 10 }, { by: "the-town" }) },
   ], (dir) => {
-    assert.deepEqual(by(dir)["t/the-home"]._origin, { x: 0, y: 0 });
-    assert.deepEqual(by(dir)["t/the-home"].at, { x: 150, y: 150 });
+    assert.deepEqual(by(dir)["the-town/the-reach"]._origin, { x: 0, y: 0 });
+    assert.deepEqual(by(dir)["the-town/the-reach"].at, { x: 150, y: 150 });
+  });
+  // …and the same two layers do bind a RESIDENT's mark, however it is labelled:
+  // it rides the nearest one, because on resident ground every rank is equal.
+  withTree([
+    THE_ROOT,
+    { path: `${R}/outer`, fm: mark("market", { x: 100, y: 100 }, { w: 400, h: 400 }) },
+    { path: `${R}/outer/inner`, fm: mark("market", { x: 120, y: 120 }, { w: 200, h: 200 }) },
+    { path: `${R}/outer/inner/the-home`, fm: mark("sovereignty", { x: 30, y: 30 }, { w: 10, h: 10 }) },
+  ], (dir) => {
+    assert.deepEqual(by(dir)["t/the-home"]._origin, { x: 220, y: 220 }, "framed on `inner`, the nearest layer");
+    assert.deepEqual(by(dir)["t/the-home"].at, { x: 250, y: 250 });
   });
   // and a binding ancestor ABOVE a non-binding one is found and used
   withTree([
     THE_ROOT,
     { path: `${R}/the-district`, fm: mark("constitution", { x: 100, y: 100 }, { w: 400, h: 400 }, { by: "the-town" }) },
     { path: `${R}/the-district/the-yard`, fm: mark("market", { x: 20, y: 20 }, { w: 200, h: 200 }) },
-    { path: `${R}/the-district/the-yard/the-cairn`, fm: mark("sovereignty", { x: 5, y: 5 }, { w: 4, h: 4 }) },
+    { path: `${R}/the-district/the-yard/the-cairn`, fm: mark("constitution", { x: 5, y: 5 }, { w: 4, h: 4 }, { by: "the-town" }) },
   ], (dir) => {
     const m = by(dir);
     assert.deepEqual(m["t/the-yard"].at, { x: 120, y: 120 }, "the yard is bound by the district");
-    assert.deepEqual(m["t/the-cairn"]._origin, { x: 100, y: 100 }, "the cairn skipped the yard and took the district");
-    assert.deepEqual(m["t/the-cairn"].at, { x: 105, y: 105 }, "…which is NOT the yard's 125,125");
+    assert.deepEqual(m["the-town/the-cairn"]._origin, { x: 100, y: 100 }, "the cairn skipped the yard and took the district");
+    assert.deepEqual(m["the-town/the-cairn"].at, { x: 105, y: 105 }, "…which is NOT the yard's 125,125");
   });
 });
 

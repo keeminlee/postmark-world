@@ -5,6 +5,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync, cpSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
+import { withTool } from "./engine-files.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -31,7 +32,7 @@ function fixture(t) {
     writeFileSync(full, text);
   };
   mkdirSync(join(repo, "tools"), { recursive: true });
-  for (const file of ["geometry.mjs", "marks-fold.mjs", "lane-wall.mjs", "determination.mjs", "consent.mjs"])
+  for (const file of withTool("lane-wall.mjs"))
     cpSync(join(HERE, file), join(repo, "tools", file));
   put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
   put("WORLD/marks/let-there-be-light/mark.md", record({

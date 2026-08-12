@@ -22,7 +22,7 @@ import { tmpdir } from "node:os";
 import { execFileSync, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import {
-  fold, loadMarks, parseRecord, tierRank, worldToFile, ringToFile, ringToWorld, fileToWorld,
+  fold, loadMarks, parseRecord, standingRank, worldToFile, ringToFile, ringToWorld, fileToWorld,
   declaredCoords, COORDS_RELATIVE, WORLD_ROOT_SLUG,
 } from "./marks-fold.mjs";
 
@@ -244,12 +244,12 @@ function applyRehomes(repo, rehomes) {
     // tier ranks at or above this mark's. The chain above the new parent is
     // untouched by the move — a container strictly encloses what it takes in, so
     // it can never be a descendant of the mark entering it.
-    const rank = tierRank(rec);
+    const rank = standingRank(rec, byId);
     let origin = { x: root.at?.x ?? 0, y: root.at?.y ?? 0 };
     const seen = new Set([rec.id]);
     for (let p = parent; p && !seen.has(p.id); p = p._parentMarkId ? byId.get(p._parentMarkId) : null) {
       seen.add(p.id);
-      if (p.at && tierRank(p) >= rank) { origin = { x: p.at.x, y: p.at.y }; break; }
+      if (p.at && standingRank(p, byId) >= rank) { origin = { x: p.at.x, y: p.at.y }; break; }
     }
 
     const srcDir = dirNow.get(rec.id);

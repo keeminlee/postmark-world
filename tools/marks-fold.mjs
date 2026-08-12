@@ -27,6 +27,7 @@
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
+import { markStanding } from "./mark-standing.mjs";   // the ONE standing rule (see § what the rank is READ FROM)
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -138,8 +139,40 @@ export function parseRecord(text, file) {
 // A PREDICATE is exempt: it is its parent continued (SCHEMA § the continuation
 // law), so it can never outrank what it predicates — the lint refuses one that
 // tries, rather than framing it somewhere its parent is not.
+//
+// ---------- what the rank is READ FROM (Keemin's ruling, 2026-08-12) ----------
+// THE ONE WALK, NEVER THE FIELD. The binding rule above is unchanged; what
+// changed is where it gets a mark's rank. It used to read the `tier:` line the
+// record carried, which let a resident DECLARE authority over their own ground
+// — and three of them did, writing `tier: sovereignty` on their houses. Under
+// the rule above that made each house OUTRANK the parcel it stands on, so its
+// own fence could no longer frame it and it anchored to the world instead:
+// exactly the mis-binding this replaces. Standing is derived now
+// (tools/mark-standing.mjs), and a resident's derived standing is never above
+// market, because the point of "your own parcel is yours" is that your house
+// BINDS to your ground and rides when you move it. Ranking above your own fence
+// is not sovereignty; it is escaping it.
+//
+// So the ladder has exactly two live rungs on resident ground — draft below,
+// everything else at market — and the town's constitution above them. That is
+// the whole of the frame's authority question: is this the town's law, or is it
+// not. `tierRank` stays exported (the migration's before-side probe imports it,
+// and the schema's own vocabulary is still four words) but NOTHING in the
+// engine path reads it any more; `standingRank` is the input.
 export const TIER_RANK = { constitution: 3, sovereignty: 2, market: 1, draft: 0 };
 export const tierRank = (m) => TIER_RANK[m?.tier] ?? TIER_RANK.market;   // a missing tier is market
+
+// standingRank — the frame's rank, derived by the ONE walk. `byId` carries the
+// ancestor chain the walk needs; a caller with no map still gets a true answer
+// for everything the walk decides at hop 0 (a parcel, a sovereign structure).
+//
+// `draft` is the one field read left, and it is not a standing: it says which
+// BRANCH a record is on, which no walk over the world's ground can know.
+export function standingRank(rec, byId) {
+  if (!rec) return TIER_RANK.market;
+  if (rec.tier === "draft") return TIER_RANK.draft;
+  return markStanding(rec, byId) === "constitution" ? TIER_RANK.constitution : TIER_RANK.market;
+}
 
 export const COORDS_FIELD = "coords";
 export const COORDS_RELATIVE = "relative";
@@ -232,13 +265,13 @@ function frameMarks(out) {
   // mark that does not bind it.
   const frameOriginOf = (rec) => {
     const continued = rec.kind === "predicated" || rec.kind === "naming";
-    const rank = tierRank(rec);
+    const rank = standingRank(rec, byId);
     const walked = new Set([rec]);
     let p = rec._parentMarkId ? byId.get(rec._parentMarkId) : null;
     while (p && !walked.has(p)) {
       walked.add(p);
       const c = worldCentreOf(p);
-      if (c && (continued || tierRank(p) >= rank)) return { x: c.x, y: c.y };
+      if (c && (continued || standingRank(p, byId) >= rank)) return { x: c.x, y: c.y };
       p = p._parentMarkId ? byId.get(p._parentMarkId) : null;
     }
     return { x: rootCentre.x, y: rootCentre.y };
@@ -683,7 +716,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   // ground) bind without stamps and cannot be rivaled, so they stay out of the
   // carve entirely — otherwise the world-spanning root would contest every cell
   // of the world it holds.
-  const commonsSited = sited.filter(mk => !mk._sovereign && mk.tier !== "constitution" && !gone.has(mk.id));
+  const commonsSited = sited.filter(mk => !mk._sovereign && markStanding(mk, byId) !== "constitution" && !gone.has(mk.id));
   const carved = carve(
     commonsSited.map(mk => ({ id: mk.id, cred: mk._cred, rect: rect(mk), effective: weightOf(mk.id) })),
     { prevCells: prev?.cells ?? null, determine_pct: dials.determine_pct, release_pct: dials.release_pct },
@@ -715,7 +748,13 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   return {
     tick, dials,
     marks: [...byId.values()].filter(mk => !gone.has(mk.id)).map(mk => ({
-      id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, tier: mk.tier ?? "market", household: mk.household,
+      // `tier` here is the DERIVED standing (home | constitution | market), not
+      // the line the record carries — the store is a published VIEW of the
+      // world, and republishing a resident's own claim about their rank was the
+      // drift the 08-12 ruling closed. The field keeps its name because every
+      // reader across three repos speaks it; renaming it is a migration, not a
+      // rename. `sovereign` beside it is still the fold's geometric flag.
+      id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, tier: markStanding(mk, byId), household: mk.household,
       // the resolved grain beside the handle — see § the household grain
       declared_household: mk._cred, date: mk.date,
       at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value, far: mk.far,
@@ -742,13 +781,19 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // alike, the store is the reader's only source. Undefined on every
       // unclassed mark, so a world with no notices serializes as before.
       class: mk.class, ask: mk.ask, reward: mk.reward, status: mk.status, threshold: mk.threshold,
-      // a classed mark's PLACEMENT is half its meaning (a notice is a notice
-      // because it stands ON the board), and the store never said where sited
-      // marks stood — `parent` rides only on predicated/naming. Disclosed here
-      // for classed marks alone, in the reader's own field name, so the other
-      // 600 marks serialize byte-identically. Whether every sited mark should
-      // carry its placement is a daylight question, not this branch's.
-      ...(mk.class !== undefined && mk._parentMarkId ? { placementParent: mk._parentMarkId } : {}),
+      // A mark's PLACEMENT — the mark it stands inside. Disclosed for classed
+      // marks since the bounty grammar (a notice is a notice because it stands
+      // ON the board), and for EVERY mark since the conferred-sovereignty
+      // ruling (2026-08-12), which is what made "whether every sited mark
+      // should carry its placement" stop being a daylight question.
+      //
+      // Standing is now decided by an ancestor walk (tools/mark-standing.mjs),
+      // and the store is the only thing the viewer and the settlement sweep can
+      // see. Without this edge their copy of the walk stops at hop 0 and every
+      // mark inside a parcel comes back market — the one definition, importable
+      // by all four consumers and true for exactly one of them. The edge is the
+      // fact that makes the shared walk shared.
+      ...(mk._parentMarkId ? { placementParent: mk._parentMarkId } : {}),
       ...ledgerWeightField(mk.id),
       // `welcomed` across a household line — carried for renderers so a kept mark
       // can be shown as kept. Undefined for every mark nobody has spoken for, so
