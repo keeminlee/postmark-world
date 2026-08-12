@@ -8,8 +8,10 @@ extent: { w: 50, h: 40 }
 class: resident
 version: 1
 extends: entity
+ambient: true
 dials: {}
 implements: []
+affordances: [{"subverb": "events", "blurb": "What touched you since you last looked — your own ears' history, and your place in it is kept for you."}]
 source: LOGOS/classes.md
 ---
 
