@@ -1,95 +1,67 @@
-# The conflict matrix — what an overlap means
+# Market and canon — claims, rivalry, and the jury
 
-*Geometry is the detector, never the verdict.*
+*Market is the set of claims; canon is the winning claim, mediated by the
+town's law for a given epoch. A rivalry is just a market with more than one
+claim in it.*
 
-Status: **DRAFT**, Stage 0.
 Rendered in the world as `the-town/the-conflict-rows` and `the-town/the-unruled-pair`.
+
+> The 2026-08-09 conflict matrix (geometry detects; the class-pair decides;
+> unruled pairs bounce loud) survives inside this law as the detection layer:
+> geometry still finds the collisions; what decides them is now stated once,
+> below, instead of pair by pair.
 
 ---
 
-## The correction this makes
+## Market and canon
 
-For a while the town ran on a single sentence: **"overlap is not conflict."** It
-came from a real problem — the channel mouth genuinely does sit in the sea, and
-refusing that would be refusing geography — and as a ruling about terrain it was
-right.
+Every declaration is a **claim**. Claims live in their authors' sovereign
+spaces immediately; **canon** is what the fold publishes at each crossing —
+the epoch's mediated state, HEAD. Conflicts are not errors: a slot with two
+claims is a market doing its job, weighed by the stakes behind each claim and
+resolved at canonization.
 
-As a universal law it was already false when it was written, and the system
-contradicted it in the same breath: *"nothing is sited inside another's dwelling,
-ever"* is an absolute overlap-prohibition for one class-pair. Both sentences were
-true. Only one of them was general.
+**Incumbency holds ties.** *(Proposed 2026-08-12, awaiting the founder's
+word.)* For any value the engine must read, canon is HEAD: the standing value
+persists until a challenger strictly outweighs it — a merge conflict never
+empties the file. Null-on-tie remains lawful only where "the world says
+nothing" is a meaningful answer (a contested description). De-classing — "this
+param becomes each instance's own" — is a **first-class claim**, stakeable
+and winnable, never a tie's side effect.
 
-So "overlap is not conflict" is demoted from law to **one row of a matrix**. What
-an overlap *means* is a function of what met — the class-pair and the tier-pair —
-and geometry only tells you that they met at all.
+## Granularity
 
-## The v0 rows
+Fields are predicated out ([kinds.md](kinds.md)), so **every property lives
+in exactly one market — its predicate slot**. Contest one param by rivaling
+one predicate; contest several by staking a bundle, and same-crossing wins
+canonize atomically — a package is a coalition of predicate rivals, not a
+monolith, so no param ever has two masters. A winning predicate is an
+authored amendment with a name on it; the law's history reads as a ledger of
+acts.
 
-Four meanings, and the rows that are defensible today.
+## The jury
 
-| Meaning | Pairs | Governed by |
-|---|---|---|
-| **Benign coexistence** — nothing to resolve | terrain × terrain (the channel mouth in the sea); emission × anything | nothing at all; this is the July ruling's home ground |
-| **Contest** — legitimate rivalry, the system working | market claim × market claim | stakes; the economy's own column |
-| **Rivalry** — never legal | sovereign ground × sovereign ground; anything sited inside another's dwelling | refused at the door |
-| **Ruled** — needs a decision, not a rule | anything × constitution | settlement, a constitutional act |
+A stake is a fractional word: continuous where votes are binary, self-weighted
+where votes are equal, exclusive-per-use because escrow locks it — dedicated
+attention with opportunity cost, which is what makes it a signal. Weight is
+attendance, not agreement (**the stamp ledger is a census of witnesses**),
+and the weights are trained: miscalibrated stakes bleed to calibrated ones
+over epochs. Governance is not a second machine — contesting law IS this
+same jury, aimed at a demoted class-node's predicates
+([classes.md](classes.md)).
 
-Read the rows out loud and they are just the town's existing habits, finally
-written where a machine can find them: land can share land, claims can fight over
-meaning, homes are inviolable, and the constitution is not something you overlap
-with by accident.
+## Trueing
 
-## Unruled pairs bounce
+Canon moves; mechanics lag; **the gap between canon and reality is an
+implicit ask**. The same lint that guards the north star detects the gap, the
+detection is the ask, the detector is the acceptance test, and the reward
+pays on the gate's own green — no judge in the loop. Trueing is the town's
+paid labor and its anti-plutocracy circulation: governance weight flows to
+whoever verifiably keeps the world true.
 
-**Every pair not listed above bounces loud, as an "unruled pair."**
+## Unruled pairs still bounce loud
 
-This is the important half of the design, and it is deliberately the opposite of
-what a matrix usually does. There is no default row, no permissive fallback, no
-"probably benign." A combination nobody has ruled on gets refused at the door
-with a message that names both classes and says plainly that the town has not
-decided this yet.
-
-Two reasons.
-
-**Rulings accrete by need.** This is the town's existing pattern — the parcel
-dial, the fog ceiling, the pace, every one of them was ruled when someone hit it,
-not enumerated in advance. A bounce is how the system asks for a ruling, and the
-resident who hit it is exactly the person whose case should inform it.
-
-**A silent permissive default is how you get a rule nobody chose.** The failure
-class this whole design exists to fix is *"written down but not traversable"* —
-things that were true by accident because nothing checked. A loud bounce cannot
-become an accidental law.
-
-The cost is real and worth naming: early on, residents will hit bounces for
-perfectly reasonable acts. That is the intended trade, and it is only tolerable
-because a ruling is cheap — one row.
-
-## What this buys the write path
-
-"Risk of conflict" stops being a judgement call. A write is conflict-risk **iff**
-it could create a rivalrous overlap or break another's dependency — and both of
-those are computable from the matrix and the graph. The office stops guessing.
-
-## Provenance
-
-- `G:/Starstory/docs/2026-08-09/world-graph-apex-proposal.html` §2.5, §6 dial 1
-- `WORLD/marks/let-there-be-light/the-record/the-sovereign-interior/mark.md` —
-  the dwelling row, already law
-- `WORLD/marks/let-there-be-light/the-record/the-rivalry/mark.md` — same slot on
-  same parent rivals; stamps determine; undetermined rests vague
-- `tools/marks-fold.mjs` — parcel overlap already refused: *"parcel overlaps
-  &lt;id&gt; — inadmissible"*
-
-[RED-PEN: the matrix is indexed by class-pair *and* tier-pair, but the four rows
-above mix the two — "terrain × terrain" is classes, "anything × constitution" is
-tiers. Whether one index dominates, or whether a lookup consults both and the
-stricter wins, is not stated anywhere. It needs to be, before anything implements
-the lookup.]
-
-[RED-PEN: "market claim × market claim → contest by stakes" is the row that
-carries the most weight and has the least written under it. What counts as the
-*same* claim is currently the slot-rivalry rule (same slot on the same parent),
-which is about predicates, not about overlapping ground. Filling this row is
-`ECONOMY.md` work, and `ECONOMY.md` is not in this repository — see
-`INDEX.md` § *The law that lives elsewhere*.]
+Where two claims collide in a shape no law yet covers, the collision is
+refused noisily and named — never resolved by silent default. An unruled
+pair is a finding for the founders' desk, and its ruling lands here, in the
+class contracts, as one more compiled response.
