@@ -43,6 +43,7 @@
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { execFileSync } from "node:child_process";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -285,6 +286,130 @@ function readHouseholds(repo) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// THE WINDOW — the office's projection of this same town, consumed as DATA.
+//
+// The office runs its own graph surface at /ops/graph/ over world.db, with the
+// six standing invariants painted onto the picture. That view is RIGHT; it is
+// simply framed in the pre-LOGOS-v2 vocabulary and lives behind a server. The
+// hub does not reimplement it and does not vendor its renderer — it takes the
+// office's payload as an input and draws it here, so one page holds every graph
+// this town has under one frame.
+//
+// The payload is whatever `worldGraphView()` returns (office src/world-graph.mjs).
+// Two ways in, both GENERATION-TIME ONLY — the output stays a static file that
+// fetches nothing when opened:
+//   --window-json <path>   a payload written to disk
+//   --window-url  <url>    fetched once, here, while generating
+//
+// THE COORDINATE CONTRACT IS THE PAYLOAD'S, NOT OURS. The office ships it in
+// `payload.coordinates` precisely so a viewer cannot get it wrong silently, and
+// world-graph.mjs's header is emphatic about the reason:
+//
+//   "Y IS NOT NEGATED HERE … The world's y runs SOUTH … Cytoscape's y runs DOWN
+//    the screen. South down IS north up, so passing the coordinate through
+//    unchanged draws the map the right way round."
+//
+// This renderer's y also runs down the screen, so y passes through UNCHANGED
+// here too. The flip belongs where the viewer is, and this viewer needs none.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// The office's three honesty rules, carried VERBATIM from src/world-graph.mjs's
+// header. They are the reason its painting can be trusted, and a port that
+// restated them in its own words would be quietly claiming a discipline it had
+// not inherited. Quoted, attributed, unedited.
+const WINDOW_HONESTY_RULES = [
+  ["NOTHING IS INFERRED FROM PROSE.", "Every id painted comes from a structured field the lint itself wrote (`carried_by`, `parcel`, `rule`, `hits[].file`), never from parsing a headline. The lints own their findings; this module only addresses them."],
+  ["AN ID THAT IS NOT IN THE GRAPH IS REPORTED, NOT DROPPED.", "Each lint's `implicates` block carries an `unmatched` list. A finding about something the store has no node for is itself a finding, and silently swallowing it would make the window agree with the graph by construction."],
+  ["A LINT THAT CANNOT BE ADDRESSED SAYS SO.", "L6 is N/A today and names no node; it lands with an empty implication and an explicit `paints: false` rather than being quietly absent from the panel."],
+];
+
+async function readWindow(repo) {
+  const path = opt("--window-json", null);
+  const url = opt("--window-url", null);
+  if (!path && !url) return { present: false, how: null };
+
+  let raw, from;
+  if (path) {
+    from = path;
+    if (!existsSync(path)) return { present: true, from, unreadable: `no such file: ${path}` };
+    try { raw = JSON.parse(readFileSync(path, "utf8")); }
+    catch (e) { return { present: true, from, unreadable: `will not parse: ${e.message}` }; }
+  } else {
+    from = url;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return { present: true, from, unreadable: `HTTP ${res.status}` };
+      raw = await res.json();
+    } catch (e) { return { present: true, from, unreadable: `fetch failed: ${e.message}` }; }
+  }
+
+  // The office reports its own failures inside the payload rather than by
+  // status code; pass its sentence through rather than inventing one.
+  if (raw?.error) return { present: true, from, unreadable: `the office says: ${raw.error}${raw.detail ? ` — ${raw.detail}` : ""}` };
+  const nodes = raw?.elements?.nodes, edges = raw?.elements?.edges;
+  if (!Array.isArray(nodes) || !Array.isArray(edges)) {
+    return { present: true, from, unreadable: "not a worldGraphView payload — no elements.nodes / elements.edges array" };
+  }
+
+  const positioned = nodes.filter((n) => n.position && Number.isFinite(n.position.x) && Number.isFinite(n.position.y));
+  const byId = new Map(nodes.map((n) => [n.data?.id, n]));
+  const drawable = edges.filter((e) => byId.get(e.data?.source)?.position && byId.get(e.data?.target)?.position);
+
+  // Two framings, because this world genuinely has two clusters: the town at
+  // the origin and Pando some 135 km northwest. A single fit renders both as
+  // specks with empty ocean between.
+  //
+  // The second framing is found by DISTANCE FROM THE MEDIAN CENTRE, not by a
+  // percentile of x and y. Percentiles fail here for a reason worth keeping:
+  // Pando holds about 9% of the positioned nodes, so a 2nd-percentile trim
+  // still contains it and the "town" button did nothing. A robust radius —
+  // three times the 75th-percentile distance — separates a far cluster at
+  // whatever size it happens to be, and the count outside is reported so the
+  // framing never quietly hides part of the world.
+  const xs = positioned.map((n) => n.position.x), ys = positioned.map((n) => n.position.y);
+  const q = (a, p) => { const s = [...a].sort((m, n) => m - n); return s.length ? s[Math.min(s.length - 1, Math.floor(s.length * p))] : 0; };
+  const box = (xa, ya, xb, yb) => ({ x: xa, y: ya, w: Math.max(1, xb - xa), h: Math.max(1, yb - ya) });
+  const pad = (b, f = 0.06) => box(b.x - b.w * f, b.y - b.h * f, b.x + b.w * (1 + f), b.y + b.h * (1 + f));
+  const fitTo = (list, f) => list.length
+    ? pad(box(Math.min(...list.map((n) => n.position.x)), Math.min(...list.map((n) => n.position.y)),
+      Math.max(...list.map((n) => n.position.x)), Math.max(...list.map((n) => n.position.y))), f)
+    : box(0, 0, 1, 1);
+
+  const cx = q(xs, 0.5), cy = q(ys, 0.5);
+  const dist = positioned.map((n) => Math.hypot(n.position.x - cx, n.position.y - cy));
+  const radius = Math.max(1, q(dist, 0.75) * 3);
+  const core = positioned.filter((n) => Math.hypot(n.position.x - cx, n.position.y - cy) <= radius);
+
+  return {
+    present: true, from, payload: raw, nodes, edges, positioned, drawable,
+    lints: Array.isArray(raw.lints) ? raw.lints : [],
+    fitAll: fitTo(positioned, 0.06),
+    fitDense: fitTo(core, 0.12),
+    coreCount: core.length,
+  };
+}
+
+// Is the office's store looking at the same world this clone holds? Neither
+// surface can answer alone — the office has no world repo, the world repo has
+// no store — and putting them on one page is what makes the question askable.
+//
+// Resolved against THE REF THE PAYLOAD NAMES (`as_of.world_ref`, normally
+// refs/heads/main), not against HEAD. The hub is generated from a feature
+// branch as often as not, and comparing a hydration of main against whatever
+// branch happens to be checked out would cry stale on every branch in the
+// repo — an alarm that fires constantly is one nobody reads.
+function worldRefSha(repo, ref) {
+  for (const target of [ref, "refs/heads/main", "HEAD"]) {
+    if (!target) continue;
+    try {
+      const sha = execFileSync("git", ["rev-parse", "--verify", "--quiet", target], { cwd: repo, encoding: "utf8" }).trim();
+      if (sha) return { sha, ref: target };
+    } catch { /* try the next one */ }
+  }
+  return { sha: null, ref: null };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // THE METAMODEL — the law's own anatomy as a graph, authored by the founder pen
 // at LOGOS/graph/metamodel.json. This instrument only RENDERS it; it never
 // writes it and never invents a placeholder for it. Law content is the pen's,
@@ -368,11 +493,11 @@ function layoutLayered(nodes, edges) {
       if (frame[1] >= kids.length) { state.set(frame[0], 2); stack.pop(); continue; }
       const next = kids[frame[1]++];
       const s = state.get(next);
-      if (s === 1) back.add(`${frame[0]} ${next}`);
+      if (s === 1) back.add(`${frame[0]}\t${next}`);
       else if (s === 0) { state.set(next, 1); stack.push([next, 0]); }
     }
   }
-  const forward = edges.filter((e) => !back.has(`${e.from} ${e.to}`));
+  const forward = edges.filter((e) => !back.has(`${e.from}\t${e.to}`));
 
   // Longest path over the acyclic remainder. The pass cap is belt-and-braces:
   // with back-edges removed it always settles, and it is bounded anyway.
@@ -420,15 +545,26 @@ function layoutLayered(nodes, edges) {
   // layer count: the two disagree when layers are sparse, and a viewBox smaller
   // than its contents hides nodes silently, which is how the first draft of
   // this function lost seven of eleven concepts.
-  const pos = new Map();
-  const widest = Math.max(1, ...[...byLayer.values()].map((l) => l.length));
-  for (const [L, list] of layersAsc) {
-    const gap = (widest - list.length) * COL / 2;   // centre short rows
-    list.forEach((id, i) => pos.set(id, { x: PAD + gap + i * COL, y: PAD + L * ROW }));
+  // A LAYER IS NOT ALWAYS ONE ROW. The real metamodel puts 20 root concepts on
+  // layer 0 and one node each on layers 7 and 8; laid out flat that is a canvas
+  // 4,600px wide in which the single-node rows are centred so far right they
+  // leave the opening view entirely. So a wide layer WRAPS into several visual
+  // rows, and centring happens against the widest VISUAL row rather than the
+  // widest layer.
+  const PER_ROW = 6;
+  const visual = [];
+  for (const [, list] of layersAsc) {
+    for (let i = 0; i < list.length; i += PER_ROW) visual.push(list.slice(i, i + PER_ROW));
   }
+  const pos = new Map();
+  const widest = Math.max(1, ...visual.map((r) => r.length));
+  visual.forEach((row, r) => {
+    const gap = (widest - row.length) * COL / 2;
+    row.forEach((id, i) => pos.set(id, { x: PAD + gap + i * COL, y: PAD + r * ROW }));
+  });
   let maxX = 0, maxY = 0;
   for (const p of pos.values()) { maxX = Math.max(maxX, p.x + NW); maxY = Math.max(maxY, p.y + NH); }
-  return { pos, width: maxX + PAD, height: maxY + PAD, layers: byLayer.size, backEdges: back.size };
+  return { pos, width: maxX + PAD, height: maxY + PAD, layers: byLayer.size, rows: visual.length, backEdges: back.size };
 }
 
 // WRITE-REGISTRY.md, parsed. The registry is the SOURCE for row names and
@@ -476,7 +612,7 @@ function rowKey(surface) {
 // THE MODEL — one pass over the clone, producing everything all three views
 // need. Computed once so the three tabs cannot disagree with each other.
 // ═══════════════════════════════════════════════════════════════════════════
-function buildModel() {
+async function buildModel() {
   const marks = loadMarks(join(REPO, "WORLD", "marks"));
   const byId = new Map(marks.map((m) => [m.id, m]));
   const raw = rawFrontmatter(marks);
@@ -486,6 +622,8 @@ function buildModel() {
   const households = readHouseholds(REPO);
   const registry = readRegistry(REPO);
   const metamodel = readMetamodel(REPO);
+  const window_ = await readWindow(REPO);
+  const worldRefResolved = worldRefSha(REPO, window_?.payload?.as_of?.world_ref ?? null);
 
   // Standing, from the ONE walk. Never re-derived anywhere else in this file.
   const standing = new Map(marks.map((m) => [m.id, markStanding(m, byId)]));
@@ -575,6 +713,7 @@ function buildModel() {
   return {
     repo: REPO, generatedAt: new Date().toISOString(),
     marks, byId, raw, standing, store, log, ledger, households, registry, metamodel,
+    window: window_, worldRef: worldRefResolved,
     classNodes, registered, citing, unregisteredKinds, census, unmappedKeys, propertyKeys, keysOnDisk,
     tierCarriers, tierRead, tierInert, containment,
     storeSeen, storeTierDisagrees, storePlacement,
@@ -1041,6 +1180,145 @@ ${law.map((x) => `<tr><td class="mlabel" colspan="3">${esc(x.label)}${x.note ? `
 ${sections}`;
 }
 
+// ── the window: the office's projection of this same town ───────────────────
+function renderWindow(model) {
+  const w = model.window;
+  const head = `<h2>The window — the office's projection</h2>`;
+
+  if (!w.present) {
+    return head + `<p class="absent">No office payload was given, so nothing is drawn — this pane never invents a store.
+      Feed it either way, both read once at generation time so the page stays static:</p>
+      <pre class="cmd">node tools/graph-views.mjs --window-json &lt;payload.json&gt;
+node tools/graph-views.mjs --window-url  &lt;url&gt;</pre>
+      <p class="absent">The payload is whatever the office's <code>worldGraphView()</code> returns
+      (<code>office/src/world-graph.mjs</code>). To make one from an office clone that has hydrated a <code>world.db</code>:</p>
+      <pre class="cmd">node -e "import('./src/world-graph.mjs').then(m=&gt;console.log(JSON.stringify(m.worldGraphView({}))))" &gt; world-graph.json</pre>`;
+  }
+  if (w.unreadable) {
+    return head + `<p class="absent warn">The payload at <code>${esc(w.from)}</code> could not be read: ${esc(w.unreadable)}.
+      Nothing is drawn rather than drawn wrongly.</p>`;
+  }
+
+  const p = w.payload;
+  const asOf = p.as_of ?? {};
+  const counts = p.counts ?? {};
+  const painted = new Set();
+  for (const l of w.lints) for (const n of l.implicates?.nodes ?? []) painted.add(n.id);
+  const paintedEdges = new Set();
+  for (const l of w.lints) for (const e of l.implicates?.edges ?? []) paintedEdges.add(e.id);
+
+  // Is the office looking at the world this clone holds? Neither surface can
+  // answer alone; the hub can, and a stale store is the kind of thing that
+  // hides for days behind a picture that still renders.
+  const ref = model.worldRef ?? { sha: null, ref: null };
+  const sameWorld = ref.sha && asOf.world ? (ref.sha === asOf.world) : null;
+  const freshness = sameWorld === null
+    ? `<span class="chip">world sha unknown on one side — no freshness claim</span>`
+    : sameWorld
+      ? `<span class="chip ok">the store is hydrated at this clone's ${esc(ref.ref)}</span>`
+      : `<span class="chip warn">the store is BEHIND this clone's ${esc(ref.ref)} — store <code>${esc(String(asOf.world).slice(0, 10))}</code>, clone <code>${esc(String(ref.sha).slice(0, 10))}</code></span>`;
+
+  // ── the map. y passes through UNCHANGED; see the header. ──────────────────
+  const KIND_CLASS = { mark: "k-mark", class: "k-class", code: "k-code", doctrine: "k-doct", unknown: "k-unk" };
+  const posById = new Map(w.positioned.map((n) => [n.data.id, n.position]));
+  const edgeSvg = w.drawable.map((e) => {
+    const a = posById.get(e.data.source), b = posById.get(e.data.target);
+    const lit = e.data.lints?.length || paintedEdges.has(e.data.id);
+    return `<line class="wg-e${lit ? " lit" : ""}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+  }).join("");
+  const nodeSvg = w.positioned.map((n) => {
+    const d = n.data, lit = d.lints?.length || painted.has(d.id);
+    return `<circle class="wg-n ${KIND_CLASS[d.kind] ?? "k-unk"}${lit ? " lit" : ""}${d.unresolved ? " unres" : ""}"
+      data-id="${esc(d.id)}" cx="${n.position.x}" cy="${n.position.y}" r="1"/>`;
+  }).join("");
+
+  const fit = (b) => `${b.x} ${b.y} ${b.w} ${b.h}`;
+
+  // Nodes the store holds no coordinates for are LISTED, never placed. Giving
+  // them a tidy grid would be inventing positions, and this pane's whole claim
+  // is that every dot on the map is where the store says it is.
+  const unpos = w.nodes.filter((n) => !n.position);
+  const byKind = new Map();
+  for (const n of unpos) {
+    const k = n.data.kind ?? "unknown";
+    if (!byKind.has(k)) byKind.set(k, []);
+    byKind.get(k).push(n);
+  }
+  const unposHtml = [...byKind].sort((a, b) => b[1].length - a[1].length).map(([k, list]) =>
+    `<details><summary><span class="dot ${KIND_CLASS[k] ?? "k-unk"}"></span><b>${esc(k)}</b> <span class="count">${list.length}</span></summary>
+      <div class="wg-chips">${list.slice(0, 400).map((n) => {
+      const lit = n.data.lints?.length || painted.has(n.data.id);
+      return `<span class="wg-chip${lit ? " lit" : ""}" data-id="${esc(n.data.id)}">${esc(n.data.id)}${lit ? ` <i>${esc((n.data.lints ?? []).join(" "))}</i>` : ""}</span>`;
+    }).join("")}${list.length > 400 ? `<span class="wg-chip more">…${list.length - 400} more</span>` : ""}</div></details>`).join("");
+
+  // ── the findings. The office's panel, kept honest to its own three rules. ──
+  const lintHtml = w.lints.map((l) => {
+    const im = l.implicates ?? {};
+    const vclass = l.verdict === "RED" ? "st-viol" : l.verdict === "GREEN" ? "st-ok" : "st-cut";
+    return `<details class="finding"><summary>
+        <span class="st ${vclass}">${esc(l.lint)} · ${esc(l.verdict)}</span>
+        <span class="fhead">${esc(l.headline)}</span></summary>
+      <div class="fbody">
+        ${im.paints === false ? `<p class="warn">paints: false — ${esc(im.note ?? "this finding addresses no node")}</p>` : ""}
+        <p class="dim">implicates <b>${(im.nodes ?? []).length}</b> node(s), <b>${(im.edges ?? []).length}</b> edge(s)${
+      (im.unmatched ?? []).length ? `, and <b class="warn">${im.unmatched.length}</b> id(s) the graph does not hold` : ""} · ${l.rows_total ?? 0} row(s) of evidence, ${l.evidence_total ?? 0} head(s)</p>
+        ${(im.unmatched ?? []).length ? `<p class="warn">unmatched, reported not dropped: ${im.unmatched.map((u) => `<code>${esc(u.id)}</code>`).join(", ")}</p>` : ""}
+        ${l.method ? `<p class="dim"><b>method</b> ${esc(excerpt(l.method, 400))}</p>` : ""}
+        ${l.limits ? `<p class="dim"><b>limits</b> ${esc(excerpt(l.limits, 400))}</p>` : ""}
+        <ul class="ev">${(l.evidence ?? []).map((e) => `<li>${esc(excerpt(typeof e === "string" ? e : JSON.stringify(e), 260))}</li>`).join("")}</ul>
+        ${(im.nodes ?? []).length ? `<div class="wg-chips">${im.nodes.slice(0, 40).map((n) =>
+        `<span class="wg-chip lit" data-id="${esc(n.id)}" title="${esc(n.why ?? "")}">${esc(n.id)}</span>`).join("")}</div>` : ""}
+      </div></details>`;
+  }).join("");
+
+  const coord = p.coordinates ?? {};
+  const conv = Array.isArray(p.convergence_kinds) ? p.convergence_kinds : [];
+
+  const data = JSON.stringify(Object.fromEntries(w.nodes.map((n) => [n.data.id, n.data])));
+
+  return head
+    + `<p class="lede">The office's own read of this town — <code>world.db</code> as one payload, with the standing invariants
+       <b>painted onto the graph</b> rather than listed beside it. Drawn here from data, not re-derived: the office owns these findings.
+       Source <code>${esc(w.from)}</code>.</p>`
+    + `<div class="chips">${freshness}
+        <span class="chip">store hydrated ${esc(asOf.hydrated_at ?? "—")}</span>
+        <span class="chip">status ${esc(asOf.hydration_status ?? "—")}</span>
+        <span class="chip">world <code>${esc(String(asOf.world ?? "—").slice(0, 10))}</code></span>
+        <span class="chip">office <code>${esc(String(asOf.office ?? "—").slice(0, 10))}</code></span></div>`
+    + statRow([["nodes", counts.nodes ?? w.nodes.length], ["edges", counts.edges ?? w.edges.length],
+        ["positioned", w.positioned.length, w.positioned.length === w.nodes.length ? "s-green" : "warn"],
+        ["drawable edges", w.drawable.length, "warn"],
+        ["painted nodes", painted.size, painted.size ? "warn" : "s-green"],
+        ["unresolved", counts.unresolved ?? 0, (counts.unresolved ?? 0) ? "warn" : "s-green"]])
+    + `<p class="note"><b>The coordinate contract, as the payload states it.</b> ${esc(coord.units ?? "—")} · x: ${esc(coord.x ?? "—")} · y: ${esc(coord.y ?? "—")}
+       <br>This renderer's y also runs down the screen, so y passes through <b>unchanged</b> here too — the flip belongs where the viewer is, and this viewer needs none.</p>`
+    + `<p class="note"><b>${w.positioned.length} of ${w.nodes.length} nodes carry a position.</b> The other ${w.nodes.length - w.positioned.length} are
+       listed below the map, not placed — the store has no coordinates for them and this pane invents none. Likewise
+       ${w.edges.length - w.drawable.length} of ${w.edges.length} edges are not drawn, because at least one end has nowhere to be.</p>`
+    + `<div class="toolbar"><button onclick="wgFit(this,'all')">fit all</button><button onclick="wgFit(this,'dense')">the main cluster (${w.coreCount} of ${w.positioned.length})</button>
+        <button onclick="wgConv(this)">highlight law-reaches-code</button>
+        <span class="dim">drag to pan · wheel to zoom · click a node to read it</span><span class="chip" id="wg-span">—</span></div>`
+    + `<div class="mm-wrap"><div class="mm-canvas wg-canvas">
+        <svg id="wg-svg" data-all="${fit(w.fitAll)}" data-dense="${fit(w.fitDense)}" viewBox="${fit(w.fitDense)}"
+             preserveAspectRatio="xMidYMid meet" role="img" aria-label="the office's world graph">
+          <g id="wg-edges">${edgeSvg}</g><g id="wg-nodes">${nodeSvg}</g></svg></div>
+        <aside class="mm-panel" id="wg-panel"><p class="dim">Click a node to read it.</p></aside></div>`
+    + `<div class="legend"><span class="dot k-mark"></span> mark <span class="dot k-class"></span> class
+        <span class="dot k-code"></span> code <span class="dot k-doct"></span> doctrine
+        <span class="dot lit"></span> implicated by a standing invariant
+        &nbsp;·&nbsp; <b>law-reaches-code</b> = ${conv.length ? conv.map((k) => `<code>${esc(k)}</code>`).join(" → ") : "—"};
+        the office calls this traversal "convergence", and in this hub that word is reserved for the registry-counted tab, so it is renamed here.</div>`
+    + `<h3>The standing invariants, painted</h3>${lintHtml}`
+    + `<h3>Held by the store, placed nowhere</h3>
+       <p class="note">Listed, not positioned. A tidy grid here would be invented coordinates.</p>${unposHtml}`
+    + `<h3>The three rules that make this trustworthy</h3>
+       <p class="note">Carried verbatim from <code>office/src/world-graph.mjs</code>, unedited — a port that restated them in its own
+       words would be claiming a discipline it had not inherited.</p>
+       <ol class="rules">${WINDOW_HONESTY_RULES.map(([t, b]) => `<li><b>${esc(t)}</b> ${esc(b)}</li>`).join("")}</ol>`
+    + `<script type="application/json" id="wg-data">${data.replace(/</g, "\\u003c")}</script>`
+    + `<script type="application/json" id="wg-conv">${JSON.stringify(conv)}</script>`;
+}
+
 // ── the fourth view: the law itself ──────────────────────────────────────────
 // The metamodel is the SECOND crystallization: the world graph is the town made
 // of nodes and edges; this is the LAW made of nodes and edges. Rendering it with
@@ -1074,7 +1352,7 @@ function renderMetamodel(model) {
   // other. Count each unordered pair first and fan the labels apart by index.
   const pairSeen = new Map();
   const pairIdx = mm.edges.map((e) => {
-    const k = [e.from, e.to].sort().join(" ");
+    const k = [e.from, e.to].sort().join("\t");
     const i = pairSeen.get(k) ?? 0;
     pairSeen.set(k, i + 1);
     return i;
@@ -1082,7 +1360,7 @@ function renderMetamodel(model) {
 
   const edgeSvg = mm.edges.map((e, i) => {
     const a = P(e.from), b = P(e.to);
-    const fan = (pairIdx[i] - ((pairSeen.get([e.from, e.to].sort().join(" ")) ?? 1) - 1) / 2);
+    const fan = (pairIdx[i] - ((pairSeen.get([e.from, e.to].sort().join("\t")) ?? 1) - 1) / 2);
     let d, lx, ly;
     if (b.y > a.y) {
       // Forward: leave the bottom of the source, arrive at the top of the target.
@@ -1154,6 +1432,7 @@ const CSS = `
 body { margin:0; background:#14171d; color:#e8e0cf; font:15px/1.5 Georgia,"Times New Roman",serif; }
 .wrap { max-width:1180px; margin:0 auto; padding:24px 20px 80px; }
 h1 { font-size:1.05rem; letter-spacing:.03em; color:#e8c56a; margin:0 0 4px; font-weight:normal; }
+.frame { margin:0 0 6px; color:#c8c0af; font-size:.95rem; font-style:italic; }
 h2 { font-size:1.3rem; margin:22px 0 6px; color:#e8e0cf; font-weight:normal; }
 h3 { font-size:.95rem; margin:26px 0 8px; color:#e8c56a; letter-spacing:.02em; font-weight:normal; }
 .sub { color:#9a9280; font-size:.8rem; font-family:ui-monospace,Consolas,Menlo,monospace; margin:0 0 18px; }
@@ -1262,7 +1541,7 @@ td.mcls { color:#7ba7e0; width:11%; } td.mgloss { color:#7e7867; font-style:ital
   padding:14px 18px; color:#9a9280; max-width:82ch; }
 .absent.warn { border-left-color:#d98a7a; }
 .mm-wrap { display:flex; gap:14px; align-items:flex-start; margin:14px 0; }
-.mm-canvas { flex:1 1 auto; overflow:auto; background:#1a1e25; border:1px solid #262c36; border-radius:4px; padding:6px; }
+.mm-canvas { flex:1 1 auto; overflow:auto; max-height:640px; background:#1a1e25; border:1px solid #262c36; border-radius:4px; padding:6px; }
 .mm-canvas svg { display:block; }
 .mm-edge path { fill:none; stroke:#3d4551; stroke-width:1.4; }
 .mm-edge text { fill:#7e8794; font:10px ui-monospace,Consolas,Menlo,monospace; paint-order:stroke;
@@ -1286,6 +1565,38 @@ td.mcls { color:#7ba7e0; width:11%; } td.mgloss { color:#7e7867; font-style:ital
 .mm-panel dd { margin:1px 0 0; color:#9a9280; font-size:.8rem; }
 .mm-panel a { color:#7ba7e0; }
 @media (max-width:900px) { .mm-wrap { flex-direction:column; } .mm-panel { flex:1 1 auto; width:100%; } }
+/* the window pane */
+pre.cmd { background:#12151b; border:1px solid #262c36; border-radius:4px; padding:10px 14px; overflow-x:auto;
+  font:12px/1.6 ui-monospace,Consolas,Menlo,monospace; color:#9a9280; max-width:100%; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+.chip { font-size:.72rem; font-family:ui-monospace,Consolas,Menlo,monospace; padding:3px 9px; border-radius:3px;
+  border:1px solid #2e3542; background:#1a1f27; color:#9a9280; }
+.chip.ok { color:#84c98f; border-color:#3a5a44; } .chip.warn { color:#e8c56a; border-color:#4a3f22; background:#2a2418; }
+.wg-canvas { height:560px; overflow:hidden; cursor:grab; } .wg-canvas.grabbing { cursor:grabbing; }
+.wg-canvas svg { width:100%; height:100%; }
+.wg-e { stroke:#333b47; stroke-width:0.6; vector-effect:non-scaling-stroke; }
+.wg-e.lit { stroke:#d9503f; stroke-width:1.6; vector-effect:non-scaling-stroke; }
+.wg-n { stroke:#14171d; stroke-width:0.5; vector-effect:non-scaling-stroke; cursor:pointer; }
+.k-mark { fill:#7ba7e0; } .k-class { fill:#aa8fd8; } .k-code { fill:#84c98f; } .k-doct { fill:#e8c56a; } .k-unk { fill:#5d636e; }
+.wg-n.lit { fill:#d9503f; } .wg-n.unres { stroke:#d98a7a; stroke-width:1.2; }
+.wg-n.sel { stroke:#e8c56a; stroke-width:2.5; }
+.wg-canvas.conv .wg-n { opacity:.12; } .wg-canvas.conv .wg-n.is-conv { opacity:1; }
+span.dot.k-mark, span.dot.k-class, span.dot.k-code, span.dot.k-doct, span.dot.k-unk { --c:currentColor; }
+span.dot.k-mark { background:#7ba7e0; } span.dot.k-class { background:#aa8fd8; }
+span.dot.k-code { background:#84c98f; } span.dot.k-doct { background:#e8c56a; } span.dot.lit { background:#d9503f; }
+.wg-chips { display:flex; flex-wrap:wrap; gap:4px; padding:6px 0 2px 18px; }
+.wg-chip { font-size:.68rem; font-family:ui-monospace,Consolas,Menlo,monospace; padding:2px 7px; border-radius:3px;
+  border:1px solid #2e3542; background:#1a1f27; color:#9a9280; cursor:pointer; }
+.wg-chip.lit { border-color:#5a3730; background:#241b19; color:#d98a7a; }
+.wg-chip.more { border-style:dashed; cursor:default; } .wg-chip i { font-style:normal; color:#e8c56a; }
+details.finding { border:1px solid #262c36; border-radius:4px; margin:6px 0; background:#1a1e25; padding:8px 12px; }
+details.finding>summary { display:flex; gap:9px; align-items:baseline; flex-wrap:wrap; }
+.fhead { color:#c8c0af; font-size:.86rem; } .fbody { padding:8px 0 2px 4px; }
+.fbody p { margin:4px 0; font-size:.82rem; } .fbody .dim { color:#7e7867; }
+ul.ev { margin:6px 0; padding-left:20px; } ul.ev li { color:#9a9280; font-size:.79rem; margin:3px 0;
+  font-family:ui-monospace,Consolas,Menlo,monospace; }
+ol.rules { max-width:92ch; } ol.rules li { color:#9a9280; font-size:.85rem; margin:8px 0; }
+ol.rules b { color:#c8c0af; }
 `;
 
 const JS = `
@@ -1321,6 +1632,75 @@ function allDetails(btn,open){btn.closest('section').querySelectorAll('details')
     g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g.dataset.id);}});
   });
 })();
+(function(){
+  var el=document.getElementById('wg-data'); if(!el) return;
+  var data=JSON.parse(el.textContent), svg=document.getElementById('wg-svg'),
+      panel=document.getElementById('wg-panel'), canvas=svg.parentNode;
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  var vb=svg.getAttribute('viewBox').split(' ').map(Number);
+  // The viewBox holds real world METRES, so a radius written in user units is a
+  // radius in metres — at town scale that is a third of a screen pixel, which
+  // is how the first draft rendered an empty map. Stroke has vector-effect;
+  // there is no such thing for r, so r is rescaled on every viewBox change to
+  // keep a node the same size on screen at any zoom.
+  var dots=[].slice.call(svg.querySelectorAll('.wg-n'));
+  var span=document.getElementById('wg-span');
+  function apply(){
+    svg.setAttribute('viewBox',vb.join(' '));
+    var r=canvas.getBoundingClientRect(), u=vb[2]/Math.max(1,r.width);
+    for(var i=0;i<dots.length;i++){
+      var base=dots[i].classList.contains('sel')?6:dots[i].classList.contains('lit')?4.4:3;
+      dots[i].setAttribute('r',base*u);
+    }
+    if(span) span.textContent=Math.round(vb[2]).toLocaleString()+' m across';
+  }
+  window.wgFit=function(btn,which){
+    vb=svg.dataset[which==='all'?'all':'dense'].split(' ').map(Number); apply();};
+  window.wgConv=function(btn){
+    var on=canvas.classList.toggle('conv');
+    btn.textContent=(on?'show all kinds':'highlight law-reaches-code');};
+  // pan
+  var drag=null;
+  canvas.addEventListener('pointerdown',function(e){
+    if(e.target.classList.contains('wg-n')) return;
+    drag={x:e.clientX,y:e.clientY,vb:vb.slice()}; canvas.classList.add('grabbing');
+    canvas.setPointerCapture(e.pointerId);});
+  canvas.addEventListener('pointermove',function(e){
+    if(!drag) return;
+    var r=canvas.getBoundingClientRect(), sx=drag.vb[2]/r.width, sy=drag.vb[3]/r.height;
+    vb[0]=drag.vb[0]-(e.clientX-drag.x)*sx; vb[1]=drag.vb[1]-(e.clientY-drag.y)*sy; apply();});
+  function endDrag(){drag=null; canvas.classList.remove('grabbing');}
+  canvas.addEventListener('pointerup',endDrag); canvas.addEventListener('pointercancel',endDrag);
+  // zoom about the cursor
+  canvas.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var r=canvas.getBoundingClientRect(), k=e.deltaY>0?1.15:1/1.15;
+    var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+    var cx=vb[0]+vb[2]*px, cy=vb[1]+vb[3]*py;
+    vb[2]*=k; vb[3]*=k; vb[0]=cx-vb[2]*px; vb[1]=cy-vb[3]*py; apply();},{passive:false});
+  // the convergence set, marked once so the toggle is pure CSS
+  var conv=(JSON.parse(document.getElementById('wg-conv')?.textContent||'[]'));
+  svg.querySelectorAll('.wg-n').forEach(function(n){
+    var d=data[n.dataset.id]; if(d&&conv.indexOf(d.kind)>=0) n.classList.add('is-conv');});
+  function pick(id){
+    var d=data[id]; if(!d) return;
+    svg.querySelectorAll('.wg-n').forEach(function(n){n.classList.toggle('sel',n.dataset.id===id);});
+    apply();
+    var h='<h4>'+esc(id)+'</h4><p class="dim">'+esc(d.kind)+(d.subkind?' · '+esc(d.subkind):'')+'</p><dl>';
+    ['tier','by','path','date','mechanic','class','affordances','deg','indeg','outdeg'].forEach(function(k){
+      if(d[k]===undefined||d[k]===null) return;
+      h+='<dt>'+k+'</dt><dd>'+esc(d[k])+'</dd>';});
+    if(d.unresolved) h+='<dt>unresolved</dt><dd>the store holds no node behind this id</dd>';
+    if(d.lints&&d.lints.length) h+='<dt>implicated by</dt><dd>'+esc(d.lints.join(', '))+'</dd>';
+    panel.innerHTML=h+'</dl>';}
+  svg.addEventListener('click',function(e){
+    if(e.target.classList.contains('wg-n')) pick(e.target.dataset.id);});
+  apply();
+  window.addEventListener('resize',apply);
+  document.querySelectorAll('.wg-chip[data-id]').forEach(function(c){
+    c.addEventListener('click',function(){pick(c.dataset.id);
+      panel.scrollIntoView({block:'nearest'});});});
+})();
 `;
 
 function renderHtml(model, views) {
@@ -1330,8 +1710,10 @@ function renderHtml(model, views) {
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Postmark — graph views</title><style>${CSS}</style></head>
 <body><div class="wrap">
-<h1>POSTMARK · GRAPH VIEWS</h1>
-<p class="sub">a projection — regenerable, stored by nobody · ${esc(model.repo)} · generated ${esc(model.generatedAt)} · ${model.marks.length} nodes</p>
+<h1>POSTMARK · THE GRAPH HUB</h1>
+<p class="frame">One town, read four ways under LOGOS — and the window is the office's projection of it.</p>
+<p class="sub">a projection — regenerable, stored by nobody · ${esc(model.repo)} · generated ${esc(model.generatedAt)} · ${model.marks.length} nodes${
+    model.window?.present && !model.window.unreadable ? ` · window from ${esc(model.window.from)}` : ""}</p>
 <nav>${tabs}</nav>
 <main>${secs}</main>
 <footer>Generated by <code>tools/graph-views.mjs</code>. Standing is derived by <code>tools/mark-standing.mjs</code> — the one walk, imported.
@@ -1340,8 +1722,9 @@ Row names and statuses are parsed from <code>WRITE-REGISTRY.md</code>, which own
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-const model = buildModel();
+const model = await buildModel();
 const ALL = [
+  { key: "window", label: "The window", render: renderWindow },
   { key: "practical", label: "What IS", render: renderPractical },
   { key: "ideal", label: "What LOGOS derives", render: renderIdeal },
   { key: "diff", label: "Convergence", render: renderDiff },
@@ -1349,12 +1732,27 @@ const ALL = [
 ];
 const chosen = VIEW === "all" ? ALL : ALL.filter((v) => v.key === VIEW);
 if (!chosen.length) {
-  console.error(`unknown --view "${VIEW}" — one of: practical, ideal, diff, law (default: all four, tabbed)`);
+  console.error(`unknown --view "${VIEW}" — one of: window, practical, ideal, diff, law (default: all five, tabbed)`);
   process.exit(1);
 }
 writeFileSync(OUT, renderHtml(model, chosen.map((v) => ({ label: v.label, html: v.render(model) }))));
 const kb = Math.round(statSync(OUT).size / 1024);
-console.log(`graph-views: ${model.marks.length} nodes · ${model.containment.length} containment edges · `
+console.log(`graph-hub: ${model.marks.length} nodes · ${model.containment.length} containment edges · `
   + `${model.tierCarriers.length} raw tier fields (${model.tierInert.length} inert) · `
   + `${model.classNodes.length} class-nodes · ${model.log.records.length} log records · ${model.consentWords} consent words`);
+// Each pane says out loud whether its source was there. A pane that renders an
+// honest absence and a pane that renders data must not look the same from the
+// command line, or a missing feed gets shipped as a finished page.
+const say = (name, ok, detail) => console.log(`  ${ok ? "·" : "!"} ${name.padEnd(22)} ${ok ? detail : `ABSENT — ${detail}`}`);
+say("window", !!(model.window.present && !model.window.unreadable),
+  model.window.unreadable ? `${model.window.from}: ${model.window.unreadable}`
+    : model.window.present ? `${model.window.nodes.length} nodes · ${model.window.lints.length} invariants · from ${model.window.from}`
+      : "no --window-json / --window-url given");
+say("law (metamodel)", !!(model.metamodel.present && !model.metamodel.unreadable && model.metamodel.nodes?.length),
+  model.metamodel.unreadable ? `${model.metamodel.path}: ${model.metamodel.unreadable}`
+    : model.metamodel.present ? `${model.metamodel.nodes.length} concepts · ${model.metamodel.edges.length} typed edges`
+      : `${model.metamodel.path} not on disk`);
+say("published store", !!model.store && !model.store._error, model.store?._error ?? `written ${model.store?._mtime}`);
+say("write registry", !model.registry.missing,
+  model.registry.missing ? "WRITE-REGISTRY.md not found" : `${model.registry.sections.reduce((n, s) => n + s.rows.length, 0)} rows`);
 console.log(`wrote ${OUT} (${kb} KB) — open it in a browser; it needs no server.`);
