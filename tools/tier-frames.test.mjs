@@ -30,7 +30,7 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { loadMarks, placementParent, tierRank, standingRank, TIER_RANK, COORDS_FIELD, COORDS_RELATIVE } from "./marks-fold.mjs";
-import { markStanding } from "./mark-standing.mjs";
+import { markStanding, standingHouseholdOf } from "./mark-standing.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -108,6 +108,101 @@ test("a resident's tier: line is INERT — the frame asks the walk, not the reco
   const idx = new Map([[parcel.id, parcel]]);
   assert.equal(markStanding(reach, idx), "constitution", "the town's law stands on its own ground wherever it is filed");
   assert.equal(standingRank(reach, idx), TIER_RANK.constitution);
+});
+
+// ── CONFERRED SOVEREIGNTY (Keemin's ruling, 2026-08-12 evening) ──────────────
+// Standing on sovereign ground is a derivable trait. Three cases, all decided in
+// groundVerdict inside the ONE walk, so the fold, lint, sweep and viewer cannot
+// disagree about who is at home.
+test("case 1 — SAME HOUSEHOLD composes: an estate's own wing is part of the estate", () => {
+  // Same handle: the plain case, unchanged since 07-28.
+  withTree([
+    THE_ROOT,
+    { path: `${R}/the-parcel`, fm: { ...mark("market", { x: 200, y: 200 }, { w: 25, h: 25 }), kind: "parcel" } },
+    { path: `${R}/the-parcel/the-shed`, fm: mark("market", { x: 2, y: 2 }, { w: 4, h: 4 }) },
+  ], (dir) => {
+    const m = by(dir);
+    const idx = new Map(Object.entries(m));
+    assert.equal(markStanding(m["t/the-shed"], idx), "home", "the shed stands on its author's own ground");
+    assert.equal(markStanding(m["t/the-parcel"], idx), "home");
+  });
+
+  // ACROSS HANDLES OF ONE HOUSEHOLD — the grain the ruling names. Two of one
+  // person's residents are one household, so their marks compose and neither
+  // asks the other's permission. Only the resolved household differs here.
+  const parcel = { id: "beta/the-parcel", kind: "parcel", by: "beta", household: "beta", _cred: "cadaeic.space" };
+  const wing   = { id: "alpha/the-wing", kind: "sited", by: "alpha", household: "alpha", _cred: "cadaeic.space",
+                   _parentMarkId: "beta/the-parcel" };
+  const idx = new Map([[parcel.id, parcel]]);
+  assert.equal(markStanding(wing, idx), "home", "alpha and beta are one household; the wing is the estate's own");
+  assert.equal(standingHouseholdOf(wing), "cadaeic.space", "the grain is the resolved household, not the handle");
+
+  // …and a stranger with the same SHAPE is not at home, which is what makes the
+  // assertion above about the grain rather than about the nesting.
+  const guest = { ...wing, id: "zed/the-wing", by: "zed", household: "zed", _cred: "solo:zed" };
+  assert.equal(markStanding(guest, idx), "market");
+
+  // the published store's own field name resolves too (the viewer's copy)
+  assert.equal(standingHouseholdOf({ declared_household: "the-rookery", household: "corvid" }), "the-rookery");
+  // and a handle nobody has resolved falls back to itself, never to null
+  assert.equal(standingHouseholdOf({ by: "newcomer" }), "newcomer");
+});
+
+test("case 2 — WELCOMED confers: the holder's word makes a cross-household guest at home", () => {
+  const PARCEL = (consent) => ({
+    path: `${R}/the-parcel`,
+    fm: { ...mark("market", { x: 200, y: 200 }, { w: 25, h: 25 }), kind: "parcel", by: "holder",
+      ...(consent ? { consent: JSON.stringify(consent) } : {}) },
+  });
+  const ROSE = { path: `${R}/the-parcel/the-rose`, fm: mark("market", { x: 2, y: 2 }, { w: 1, h: 1 }, { by: "guest" }) };
+
+  withTree([THE_ROOT, PARCEL({ "guest/the-rose": "welcomed" }), ROSE], (dir) => {
+    const m = by(dir);
+    assert.equal(markStanding(m["guest/the-rose"], new Map(Object.entries(m))), "home",
+      "welcomed by the ground-holder, the rose stands as home under the holder's name");
+  });
+
+  // case 3 — ABSENT is the resting state: a guest at the doorstep is a guest.
+  withTree([THE_ROOT, PARCEL(null), ROSE], (dir) => {
+    const m = by(dir);
+    assert.equal(markStanding(m["guest/the-rose"], new Map(Object.entries(m))), "market",
+      "no word spoken, no conferral — the flower at the doorstep is uncoupled");
+  });
+
+  // opposed is the RETURN law (consent.mjs) and confers nothing here
+  withTree([THE_ROOT, PARCEL({ "guest/the-rose": "opposed" }), ROSE], (dir) => {
+    const m = by(dir);
+    assert.equal(markStanding(m["guest/the-rose"], new Map(Object.entries(m))), "market");
+  });
+
+  // A word names ONE mark. The holder welcoming the rose has not welcomed
+  // everything the guest ever files on their ground.
+  withTree([
+    THE_ROOT,
+    PARCEL({ "guest/the-rose": "welcomed" }),
+    ROSE,
+    { path: `${R}/the-parcel/the-barrow`, fm: mark("market", { x: -2, y: -2 }, { w: 1, h: 1 }, { by: "guest" }) },
+  ], (dir) => {
+    const m = by(dir);
+    const idx = new Map(Object.entries(m));
+    assert.equal(markStanding(m["guest/the-rose"], idx), "home");
+    assert.equal(markStanding(m["guest/the-barrow"], idx), "market", "one word, one mark");
+  });
+});
+
+test("conferral changes STANDING and never RANK — so it cannot move the world", () => {
+  // The structural guarantee behind the falsifier, asserted directly rather
+  // than merely observed: on resident ground home and market are the same rank,
+  // so no verdict this walk can reach — conferred or refused, whatever grain
+  // the caller resolved — is able to re-frame anything.
+  const parcel = { id: "h/p", kind: "parcel", by: "holder", household: "holder", consent: { "g/rose": "welcomed" } };
+  const idx = new Map([[parcel.id, parcel]]);
+  const rose = { id: "g/rose", kind: "sited", by: "guest", household: "guest", _parentMarkId: "h/p" };
+  const barrow = { ...rose, id: "g/barrow" };
+  assert.equal(markStanding(rose, idx), "home");
+  assert.equal(markStanding(barrow, idx), "market");
+  assert.equal(standingRank(rose, idx), standingRank(barrow, idx), "different standing, identical rank");
+  assert.equal(standingRank(rose, idx), TIER_RANK.market);
 });
 
 // ── QUADRANT 1: blue in yellow — a constitution mark inside a market claim ───

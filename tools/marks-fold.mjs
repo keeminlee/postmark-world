@@ -781,13 +781,19 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // alike, the store is the reader's only source. Undefined on every
       // unclassed mark, so a world with no notices serializes as before.
       class: mk.class, ask: mk.ask, reward: mk.reward, status: mk.status, threshold: mk.threshold,
-      // a classed mark's PLACEMENT is half its meaning (a notice is a notice
-      // because it stands ON the board), and the store never said where sited
-      // marks stood — `parent` rides only on predicated/naming. Disclosed here
-      // for classed marks alone, in the reader's own field name, so the other
-      // 600 marks serialize byte-identically. Whether every sited mark should
-      // carry its placement is a daylight question, not this branch's.
-      ...(mk.class !== undefined && mk._parentMarkId ? { placementParent: mk._parentMarkId } : {}),
+      // A mark's PLACEMENT — the mark it stands inside. Disclosed for classed
+      // marks since the bounty grammar (a notice is a notice because it stands
+      // ON the board), and for EVERY mark since the conferred-sovereignty
+      // ruling (2026-08-12), which is what made "whether every sited mark
+      // should carry its placement" stop being a daylight question.
+      //
+      // Standing is now decided by an ancestor walk (tools/mark-standing.mjs),
+      // and the store is the only thing the viewer and the settlement sweep can
+      // see. Without this edge their copy of the walk stops at hop 0 and every
+      // mark inside a parcel comes back market — the one definition, importable
+      // by all four consumers and true for exactly one of them. The edge is the
+      // fact that makes the shared walk shared.
+      ...(mk._parentMarkId ? { placementParent: mk._parentMarkId } : {}),
       ...ledgerWeightField(mk.id),
       // `welcomed` across a household line — carried for renderers so a kept mark
       // can be shown as kept. Undefined for every mark nobody has spoken for, so
