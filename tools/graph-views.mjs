@@ -41,7 +41,7 @@
 // world's walk would be a quiet lie about whose law produced the picture.
 
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, dirname, basename } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
 
@@ -418,57 +418,94 @@ function worldRefSha(repo, ref) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// THE METAMODEL — the law's own anatomy as a graph, authored by the founder pen
-// at LOGOS/graph/metamodel.json. This instrument only RENDERS it; it never
-// writes it and never invents a placeholder for it. Law content is the pen's,
-// never the builder's, so an absent file is reported as absent.
+// THE LAW ITSELF — logos/ read off the record, never off a side file.
 //
-// Read defensively. The shape is authoritative from whatever the file actually
-// contains, not from what this reader expects:
-//   {"nodes":[{"id","class","predicates":{...},"prose":"LOGOS/<doc>.md#<anchor>"}],
-//    "edges":[{"from","type","to"}]}
-// Anything else at the top level, or any extra key on a node or an edge, is
-// COLLECTED AND LISTED rather than dropped or crashed on — an unexpected key is
-// the founder having said something this reader has not learned to hear yet,
-// and silently discarding it would be the worse failure.
+// LOGOS the prose is the authoritative layer (its INDEX: "Logos is never a
+// mark"); the world carries RENDERINGS in the constitutional tree at
+// let-there-be-light/the-record, fidelity-bound to their source docs. This
+// reader derives EVERYTHING from those two real surfaces: the renderings as
+// marks (real containment, real slot/value predicates, real source: lines) and
+// the docs' own "Rendered in the world as `id`" lines. Nothing hand-kept in
+// between — the metamodel.json this replaces was a second master, and was
+// deleted for it (2026-08-12, the founder's ruling on additive drift).
+// Gaps and fidelity breaks are LISTED, never drawn.
 // ═══════════════════════════════════════════════════════════════════════════
-function readMetamodel(repo) {
-  const path = join(repo, "LOGOS", "graph", "metamodel.json");
-  if (!existsSync(path)) return { present: false, path: "LOGOS/graph/metamodel.json" };
-  let doc;
-  try { doc = JSON.parse(readFileSync(path, "utf8")); }
-  catch (e) { return { present: true, unreadable: e.message, path: "LOGOS/graph/metamodel.json" }; }
+function parseMarkFile(file) {
+  const text = readFileSync(file, "utf8");
+  const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  const fm = {};
+  if (m) for (const line of m[1].split(/\r?\n/)) {
+    const kv = line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
+    if (kv) fm[kv[1]] = kv[2].trim();
+  }
+  const body = (m ? m[2] : text).trim();
+  return { fm, firstLine: body.split(/\r?\n/)[0] ?? "" };
+}
 
-  const KNOWN_TOP = new Set(["nodes", "edges"]);
-  const KNOWN_NODE = new Set(["id", "class", "predicates", "prose"]);
-  const KNOWN_EDGE = new Set(["from", "type", "to"]);
-  const unknown = { top: [], node: new Set(), edge: new Set() };
-  for (const k of Object.keys(doc ?? {})) if (!KNOWN_TOP.has(k)) unknown.top.push(k);
+function readLogosLaw(repo) {
+  const marksRoot = join(repo, "WORLD", "marks");
+  const recordRel = "let-there-be-light/the-record";
+  const out = { present: false, path: `WORLD/marks/${recordRel}`, nodes: [], edges: [],
+    docs: [], gaps: [], missing: [], strays: [], registry: [], layout: null };
+  if (!existsSync(join(marksRoot, recordRel))) return out;
+  out.present = true;
 
-  const nodes = (Array.isArray(doc?.nodes) ? doc.nodes : []).filter((n) => n && n.id != null).map((n) => {
-    for (const k of Object.keys(n)) if (!KNOWN_NODE.has(k)) unknown.node.add(k);
-    return {
-      id: String(n.id), class: n.class != null ? String(n.class) : null,
-      predicates: (n.predicates && typeof n.predicates === "object" && !Array.isArray(n.predicates)) ? n.predicates : {},
-      prose: n.prose != null ? String(n.prose) : null,
-      extra: Object.fromEntries(Object.entries(n).filter(([k]) => !KNOWN_NODE.has(k))),
-    };
-  });
-  const ids = new Set(nodes.map((n) => n.id));
-  const edgesAll = (Array.isArray(doc?.edges) ? doc.edges : []).filter((e) => e && e.from != null && e.to != null).map((e) => {
-    for (const k of Object.keys(e)) if (!KNOWN_EDGE.has(k)) unknown.edge.add(k);
-    return { from: String(e.from), type: e.type != null ? String(e.type) : "—", to: String(e.to) };
-  });
-  // An edge naming a node the file does not define is kept and reported, never
-  // silently dropped: a dangling edge is a fact about the law's draft state.
-  const edges = edgesAll.filter((e) => ids.has(e.from) && ids.has(e.to));
-  const dangling = edgesAll.filter((e) => !ids.has(e.from) || !ids.has(e.to));
-
-  return {
-    present: true, path: "LOGOS/graph/metamodel.json", nodes, edges, dangling,
-    unknown: { top: unknown.top, node: [...unknown.node], edge: [...unknown.edge] },
-    layout: layoutLayered(nodes, edges),
+  // One walk of the whole tree: every mark, its real parent, its real words.
+  const all = new Map();   // id -> node
+  const walk = (dirAbs, rel, parentId) => {
+    const mk = join(dirAbs, "mark.md");
+    let id = parentId;
+    if (existsSync(mk)) {
+      const { fm, firstLine } = parseMarkFile(mk);
+      id = `${fm.by ?? "?"}/${basename(dirAbs)}`;
+      all.set(id, { id, slug: basename(dirAbs), rel, parentId, fm, firstLine });
+    }
+    for (const d of readdirSync(dirAbs, { withFileTypes: true })) {
+      if (d.isDirectory()) walk(join(dirAbs, d.name), `${rel}/${d.name}`, id);
+    }
   };
+  for (const d of readdirSync(marksRoot, { withFileTypes: true })) {
+    if (d.isDirectory()) walk(join(marksRoot, d.name), d.name, null);
+  }
+
+  // The docs' own binding lines — the fidelity map's doc side.
+  const named = new Map();   // rendering id -> doc
+  const logosDir = join(repo, "LOGOS");
+  for (const f of readdirSync(logosDir).filter((x) => x.endsWith(".md") && !/^(DRAFT-REPORT|RECONCILIATION)/.test(x)).sort()) {
+    const text = readFileSync(join(logosDir, f), "utf8");
+    const seg = text.match(/Rendered in the world[^\n]*(?:\n[^\n#]+)*/)?.[0] ?? "";
+    const ids = [...seg.matchAll(/`([^`\s]+)`/g)].map((x) => x[1]).filter((x) => /^[\w-]+\/[\w-]+$/.test(x));
+    const notYet = /not yet/i.test(seg);
+    if (ids.length || notYet) out.docs.push({ doc: `LOGOS/${f}`, renders: ids, notYet });
+    if (notYet && !ids.length) out.gaps.push(`LOGOS/${f}`);
+    for (const rid of ids) named.set(rid, `LOGOS/${f}`);
+  }
+
+  // The drawn graph: the-record's real subtree. Every edge is real containment.
+  const inRecord = [...all.values()].filter((n) => n.rel === recordRel || n.rel.startsWith(recordRel + "/"));
+  out.nodes = inRecord.map((n) => ({
+    id: n.id, class: n.fm.kind ?? null,
+    predicates: n.fm.slot != null ? { [n.fm.slot]: n.fm.value ?? "" } : {},
+    by: n.fm.by ?? null, prose: n.fm.source ?? null, doc: named.get(n.id) ?? null,
+    firstLine: n.firstLine, parentId: n.parentId,
+  }));
+  const ids = new Set(out.nodes.map((n) => n.id));
+  out.edges = out.nodes.filter((n) => n.parentId && ids.has(n.parentId))
+    .map((n) => ({ from: n.parentId, type: "contains", to: n.id }));
+
+  // Fidelity, both directions. A doc-named id with no mark is MISSING; a mark
+  // in the record no living doc names is a STRAY (a rendering of superseded law).
+  for (const [rid, doc] of named) if (!all.has(rid)) out.missing.push({ id: rid, doc });
+  out.strays = out.nodes.filter((n) => n.parentId && !n.doc && !n.prose).map((n) => n.id);
+
+  // The registries: the class marks standing in the keeping-works (cited here,
+  // never duplicated — they are the law of classes, standing on their own ground).
+  out.registry = [...all.values()]
+    .filter((n) => n.rel.includes("/the-keeping-works/") || n.slug === "the-wheelhouse")
+    .map((n) => ({ id: n.id, doc: named.get(n.id) ?? null }));
+
+  out.layout = layoutLayered(out.nodes, out.edges);
+  return out;
 }
 
 // A layered layout, computed HERE at generation time so the page needs no
@@ -518,13 +555,6 @@ function layoutLayered(nodes, edges) {
     }
     if (!moved) break;
   }
-
-  // FOUNDATIONS ON TOP. Longest-path puts the in-degree-zero acts at layer 0
-  // and the most-depended-on concepts (logos, canon) at the bottom — law read
-  // upside down. Inverted, the floor everything rests on is row 0 and the leaf
-  // acts sit at the bottom, arrows pointing up at what they depend on.
-  const maxL = Math.max(0, ...layer.values());
-  for (const [id, L] of layer) layer.set(id, maxL - L);
 
   const byLayer = new Map();
   for (const n of nodes) {
@@ -636,7 +666,7 @@ async function buildModel() {
   const ledger = readLedger(REPO);
   const households = readHouseholds(REPO);
   const registry = readRegistry(REPO);
-  const metamodel = readMetamodel(REPO);
+  const law = readLogosLaw(REPO);
   const window_ = await readWindow(REPO);
   const worldRefResolved = worldRefSha(REPO, window_?.payload?.as_of?.world_ref ?? null);
 
@@ -727,7 +757,7 @@ async function buildModel() {
 
   return {
     repo: REPO, generatedAt: new Date().toISOString(),
-    marks, byId, raw, standing, store, log, ledger, households, registry, metamodel,
+    marks, byId, raw, standing, store, log, ledger, households, registry, law,
     window: window_, worldRef: worldRefResolved,
     classNodes, registered, citing, unregisteredKinds, census, unmappedKeys, propertyKeys, keysOnDisk,
     tierCarriers, tierRead, tierInert, containment,
@@ -1161,19 +1191,17 @@ function renderDiff(model) {
        The registry is the source; either a row was renamed or a measure is stale. Fix <code>MEASURES</code> in <code>tools/graph-views.mjs</code>.</div>`
     : `<div class="nodrift">Every measure in this instrument binds to a live WRITE-REGISTRY.md row (${seen.size} of ${registry.sections.reduce((n, s) => n + s.rows.length, 0)} rows measured).</div>`;
 
-  // The second crystallization — the law's own anatomy as a graph. Not a
+  // logos/ — the law's renderings on the record, measured live. Not a
   // WRITE-REGISTRY row (the registry tracks WRITE surfaces; this is the law
-  // describing itself), so it rides the law's-own-measures block, reporting
-  // exactly what was on disk at generation time and nothing about intent.
-  const mm = model.metamodel;
-  const crystalAt = !mm.present || mm.unreadable ? 0 : (mm.nodes?.length ? 1 : 0);
+  // standing in the world), so it rides the law's-own-measures block.
+  const lg = model.law;
   const law = [...lawMeasures(model), {
-    label: "the second crystallization (ŷ_graph) — the law as a graph",
-    stages: ["absent", "v0 spine", "fidelity-linted"], at: crystalAt,
-    note: mm.present
-      ? (mm.unreadable ? `${mm.path} present but unparseable: ${mm.unreadable}`
-        : `${mm.path}: ${mm.nodes.length} concept nodes, ${mm.edges.length} typed edges, ${new Set(mm.edges.map((e) => e.type)).size} edge types`)
-      : `${mm.path} absent at generation time`,
+    label: "logos/ — the law's renderings on the record",
+    stages: ["prose only", "renderings standing", "fidelity-complete"],
+    at: !lg.present ? 0 : (lg.missing.length === 0 && lg.gaps.length === 0 ? 2 : 1),
+    note: lg.present
+      ? `${lg.nodes.length} renderings under the-record · ${lg.gaps.length} docs unrendered · ${lg.missing.length} named-but-missing · ${lg.strays.length} strays of superseded law`
+      : `${lg.path} not in this clone`,
   }];
 
   return `
@@ -1319,104 +1347,85 @@ node tools/graph-views.mjs --window-url  &lt;url&gt;</pre>
 }
 
 // ── the fourth view: the law itself ──────────────────────────────────────────
-// The metamodel is the SECOND crystallization: the world graph is the town made
-// of nodes and edges; this is the LAW made of nodes and edges. Rendering it with
-// its edge types visible is the whole point — a concept map with unlabelled
-// lines would say the concepts are related without saying how, which is exactly
-// the fidelity the second crystallization exists to test.
-function renderMetamodel(model) {
-  const mm = model.metamodel;
-  const head = `<h2>The law itself — the metamodel</h2>`;
+// logos/ as it STANDS: the-record's real subtree drawn from real marks, the doc
+// bindings from LOGOS's own "Rendered in the world" lines, the class registry
+// cited from the keeping-works. Nothing invented: a gap is a card, a fidelity
+// break is a listed finding, and neither is ever drawn as if it existed.
+function renderLawItself(model) {
+  const lg = model.law;
+  const head = `<h2>The law itself — logos/ on the record</h2>`;
+  if (!lg.present) return head + `<p class="absent"><code>${esc(lg.path)}</code> is not in this clone.</p>`;
 
-  if (!mm.present) {
-    return head + `<p class="absent"><code>${esc(mm.path)}</code> is absent. This tab draws it once the founder pen writes it —
-    re-run <code>tools/graph-views.mjs</code> after the file lands.</p>`;
-  }
-  if (mm.unreadable) {
-    return head + `<p class="absent warn"><code>${esc(mm.path)}</code> is present but did not parse: ${esc(mm.unreadable)}.
-    Nothing is drawn rather than drawn wrongly.</p>`;
-  }
-  if (!mm.nodes.length) {
-    return head + `<p class="absent"><code>${esc(mm.path)}</code> parsed but declares no nodes${
-      mm.unknown.top.length ? ` (top-level keys present: ${mm.unknown.top.map((k) => `<code>${esc(k)}</code>`).join(", ")})` : ""}.</p>`;
-  }
-
-  const { pos, width, height } = mm.layout;
+  const { pos, width, height } = lg.layout;
   const NW = 168, NH = 34;
   const P = (id) => pos.get(id) ?? { x: 0, y: 0 };
-  const cx = (id) => P(id).x + NW / 2, cy = (id) => P(id).y + NH / 2;
+  const cx = (id) => P(id).x + NW / 2;
 
-  // Reciprocal pairs share a midpoint, so their labels land on top of each
-  // other. Count each unordered pair first and fan the labels apart by index.
-  const pairSeen = new Map();
-  const pairIdx = mm.edges.map((e) => {
-    const k = [e.from, e.to].sort().join("\t");
-    const i = pairSeen.get(k) ?? 0;
-    pairSeen.set(k, i + 1);
-    return i;
-  });
-
-  const edgeSvg = mm.edges.map((e, i) => {
+  // Every drawn edge is real containment (child always one layer deeper, so
+  // every edge flows downward); the legend says it once instead of 30 labels.
+  const edgeSvg = lg.edges.map((e) => {
     const a = P(e.from), b = P(e.to);
-    const fan = (pairIdx[i] - ((pairSeen.get([e.from, e.to].sort().join("\t")) ?? 1) - 1) / 2);
-    let d, lx, ly;
-    if (b.y > a.y) {
-      // Forward: leave the bottom of the source, arrive at the top of the target.
-      const x1 = cx(e.from), y1 = a.y + NH, x2 = cx(e.to), y2 = b.y;
-      const my = (y1 + y2) / 2;
-      d = `M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`;
-      lx = (x1 + x2) / 2; ly = my - 3 + fan * 13;
-    } else {
-      // Back or sideways: route off the right edge so it never hides under the
-      // forward flow. A back-edge pointing the other way is the truth about it.
-      const x1 = a.x + NW, y1 = cy(e.from), x2 = b.x + NW, y2 = cy(e.to);
-      const bulge = Math.max(x1, x2) + 46 + Math.abs(fan) * 18;
-      d = `M ${x1} ${y1} C ${bulge} ${y1}, ${bulge} ${y2}, ${x2} ${y2}`;
-      lx = bulge + 4; ly = (y1 + y2) / 2;
-    }
-    return `<g class="mm-edge${b.y > a.y ? "" : " mm-back"}" data-from="${esc(e.from)}" data-to="${esc(e.to)}">`
-      + `<path d="${d}" marker-end="url(#mm-arrow)"/>`
-      + `<text x="${lx}" y="${ly}" text-anchor="${b.y > a.y ? "middle" : "start"}">${esc(e.type)}</text></g>`;
+    const x1 = cx(e.from), y1 = a.y + NH, x2 = cx(e.to), y2 = b.y;
+    const my = (y1 + y2) / 2;
+    return `<g class="mm-edge" data-from="${esc(e.from)}" data-to="${esc(e.to)}">`
+      + `<path d="M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}" marker-end="url(#mm-arrow)"/></g>`;
   }).join("");
 
-  const nodeSvg = mm.nodes.map((n) => {
-    const p = pos.get(n.id) ?? { x: 0, y: 0 };
-    const npred = Object.keys(n.predicates).length;
-    return `<g class="mm-node" data-id="${esc(n.id)}" tabindex="0" role="button">`
+  const short = (doc) => doc ? doc.replace(/^LOGOS\//, "").replace(/\.md$/, "") : null;
+  const nodeSvg = lg.nodes.map((n) => {
+    const p = P(n.id);
+    const badge = short(n.doc);
+    const stray = n.parentId && !n.doc && !n.prose;
+    return `<g class="mm-node${stray ? " mm-stray" : ""}" data-id="${esc(n.id)}" tabindex="0" role="button">`
       + `<rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="5"/>`
-      + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.id)}</text>`
-      + (npred ? `<text class="mm-badge" x="${p.x + NW - 9}" y="${p.y + NH / 2}" text-anchor="end" dominant-baseline="central">${npred}</text>` : "")
+      + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.id.split("/")[1] ?? n.id)}</text>`
+      + (badge ? `<text class="mm-badge" x="${p.x + NW - 9}" y="${p.y + NH / 2}" text-anchor="end" dominant-baseline="central">${esc(badge)}</text>` : "")
       + `</g>`;
   }).join("");
 
   // Node detail travels in the page as data, so a click needs no fetch and the
   // file stays openable from file://.
-  const data = JSON.stringify(Object.fromEntries(mm.nodes.map((n) => [n.id, {
+  const data = JSON.stringify(Object.fromEntries(lg.nodes.map((n) => [n.id, {
     class: n.class, predicates: n.predicates, prose: n.prose,
-    extra: Object.keys(n.extra).length ? n.extra : null,
-    out: mm.edges.filter((e) => e.from === n.id).map((e) => [e.type, e.to]),
-    in: mm.edges.filter((e) => e.to === n.id).map((e) => [e.type, e.from]),
+    by: n.by, doc: n.doc, line: n.firstLine,
+    out: lg.edges.filter((e) => e.from === n.id).map((e) => [e.type, e.to]),
+    in: lg.edges.filter((e) => e.to === n.id).map((e) => [e.type, e.from]),
   }])));
 
-  const notes = [];
-  if (mm.dangling.length) notes.push(`<b>${mm.dangling.length}</b> edge(s) name a node the file does not define — kept and listed, not dropped: `
-    + mm.dangling.slice(0, 8).map((e) => `<code>${esc(e.from)} —${esc(e.type)}→ ${esc(e.to)}</code>`).join(", "));
-  if (mm.unknown.top.length) notes.push(`unknown top-level key(s): ${mm.unknown.top.map((k) => `<code>${esc(k)}</code>`).join(", ")}`);
-  if (mm.unknown.node.length) notes.push(`unknown node key(s), carried through to the detail panel: ${mm.unknown.node.map((k) => `<code>${esc(k)}</code>`).join(", ")}`);
-  if (mm.unknown.edge.length) notes.push(`unknown edge key(s): ${mm.unknown.edge.map((k) => `<code>${esc(k)}</code>`).join(", ")}`);
+  const missingHtml = lg.missing.length
+    ? `<div class="drift"><b>${lg.missing.length} rendering(s) a living doc names that do not stand:</b> ${
+        lg.missing.map((x) => `<code>${esc(x.id)}</code> (${esc(x.doc)})`).join(", ")}</div>` : "";
+  const gapCards = lg.gaps.map((d) =>
+    `<div class="hole-card"><b>${esc(d)}</b> <span class="rowref">unrendered</span>
+     <p>The doc's own line says "Rendered in the world: not yet." Rendering it is founder-pen work; nothing is drawn until it stands.</p></div>`).join("");
+  const straysHtml = lg.strays.length
+    ? `<details class="mapping"><summary><b>${lg.strays.length} marks under the-record no living doc names</b> — renderings of superseded law stages; trueing work, listed not hidden</summary>
+       <p class="note">${lg.strays.map((s) => `<code>${esc(s)}</code>`).join(" ")}</p></details>` : "";
+  const regChips = lg.registry.map((r) =>
+    `<span class="wg-chip">${esc(r.id)}${r.doc ? ` <i>${esc(short(r.doc))}</i>` : ""}</span>`).join("");
 
   return head
-    + `<p class="lede">LOGOS as a graph, read from <code>${esc(mm.path)}</code>. Every edge is labelled with its relation.
-       Click a concept for its class, predicates, edges, and the LOGOS doc it comes from.</p>`
-    + statRow([["concept nodes", mm.nodes.length], ["typed edges", mm.edges.length],
-        ["edge types", new Set(mm.edges.map((e) => e.type)).size], ["layers", mm.layout.layers]])
-    + (notes.length ? `<div class="legend">${notes.map((n) => `<div>${n}</div>`).join("")}</div>` : "")
-    + `<div class="toolbar"><button onclick="mmFit()">fit</button><span class="dim">drag to pan · wheel to zoom · click a concept to read it</span></div>`
-    + `<div class="mm-wrap"><div class="mm-canvas mm-law"><svg id="mm-svg" data-all="0 0 ${width + (mm.layout.backEdges ? 170 : 0)} ${height}" viewBox="0 0 ${width + (mm.layout.backEdges ? 170 : 0)} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="the metamodel graph">
+    + `<p class="lede">The law's renderings as they stand: <code>the-record</code>'s real subtree — real marks, real containment,
+       real <code>source:</code> citations. The prose in <code>LOGOS/</code> is the authority; this tree is where residents walk to it.
+       Click a mark to read it. Solid border = bound to a living doc or citing a source; dashed = a stray.</p>`
+    + statRow([
+        ["renderings standing", lg.nodes.length],
+        ["bound to a living doc", lg.nodes.filter((n) => n.doc).length],
+        ["docs unrendered", lg.gaps.length, lg.gaps.length ? "warn" : "s-green"],
+        ["named but missing", lg.missing.length, lg.missing.length ? "warn" : "s-green"],
+        ["strays of superseded law", lg.strays.length, lg.strays.length ? "warn" : "s-green"]])
+    + missingHtml
+    + `<div class="toolbar"><button onclick="mmFit()">fit</button><span class="dim">drag to pan · wheel to zoom · every drawn edge is real containment</span></div>`
+    + `<div class="mm-wrap"><div class="mm-canvas mm-law"><svg id="mm-svg" data-all="0 0 ${width} ${height}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="the law's renderings">
         <defs><marker id="mm-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M 0 1 L 8 4 L 0 7 z"/></marker></defs>
         ${edgeSvg}${nodeSvg}</svg></div>
-      <aside class="mm-panel" id="mm-panel"><p class="dim">Click a concept to read it.</p></aside></div>
+      <aside class="mm-panel" id="mm-panel"><p class="dim">Click a mark to read it.</p></aside></div>
+      ${lg.gaps.length ? `<div class="holes"><h3>Unrendered docs</h3>${gapCards}</div>` : ""}
+      ${straysHtml}
+      <h3>The registries — the class marks, standing in the keeping-works</h3>
+      <p class="note">Cited, never duplicated: the law of classes stands on its own ground, and <code>classes.md</code> names these as its renderings.</p>
+      <div class="wg-chips">${regChips}</div>
       <script type="application/json" id="mm-data">${data.replace(/</g, "\\u003c")}</script>`;
 }
 
@@ -1554,6 +1563,7 @@ td.mcls { color:#7ba7e0; width:11%; } td.mgloss { color:#a8a190; font-style:ital
 .mm-node text.mm-badge { fill:#98a0ad; font-size:12px; }
 .mm-node { cursor:pointer; }
 .mm-node:hover rect, .mm-node:focus rect { stroke:#e8c56a; }
+.mm-node.mm-stray rect { stroke-dasharray:4 3; opacity:.75; }
 .mm-node.sel rect { stroke:#e8c56a; stroke-width:2; fill:#2a2418; }
 .mm-panel { flex:0 0 300px; background:#1a1e25; border:1px solid #262c36; border-radius:4px; padding:12px 15px;
   font-size:.84rem; max-height:640px; overflow:auto; }
@@ -1616,6 +1626,9 @@ function allDetails(btn,open){btn.closest('section').querySelectorAll('details')
       g.classList.toggle('lit',g.dataset.from===id||g.dataset.to===id);});
     var h='<h4>'+esc(id)+'</h4>';
     if(n.class) h+='<p class="dim">class: '+esc(n.class)+'</p>';
+    if(n.by) h+='<p class="dim">by: '+esc(n.by)+'</p>';
+    if(n.doc) h+='<p class="dim">doc: '+esc(n.doc)+'</p>';
+    if(n.line) h+='<p class="dim">'+esc(n.line)+'</p>';
     var keys=Object.keys(n.predicates||{});
     if(keys.length){h+='<dl><dt>predicates</dt>'+keys.map(function(k){
       var v=n.predicates[k]; if(v&&typeof v==='object') v=JSON.stringify(v);
@@ -1750,7 +1763,7 @@ const ALL = [
   { key: "practical", label: "What IS", render: renderPractical },
   { key: "ideal", label: "What LOGOS derives", render: renderIdeal },
   { key: "diff", label: "Convergence", render: renderDiff },
-  { key: "law", label: "The law itself", render: renderMetamodel },
+  { key: "law", label: "The law itself", render: renderLawItself },
 ];
 const chosen = VIEW === "all" ? ALL : ALL.filter((v) => v.key === VIEW);
 if (!chosen.length) {
@@ -1770,10 +1783,10 @@ say("window", !!(model.window.present && !model.window.unreadable),
   model.window.unreadable ? `${model.window.from}: ${model.window.unreadable}`
     : model.window.present ? `${model.window.nodes.length} nodes · ${model.window.lints.length} invariants · from ${model.window.from}`
       : "no --window-json / --window-url given");
-say("law (metamodel)", !!(model.metamodel.present && !model.metamodel.unreadable && model.metamodel.nodes?.length),
-  model.metamodel.unreadable ? `${model.metamodel.path}: ${model.metamodel.unreadable}`
-    : model.metamodel.present ? `${model.metamodel.nodes.length} concepts · ${model.metamodel.edges.length} typed edges`
-      : `${model.metamodel.path} not on disk`);
+say("law (logos renderings)", model.law.present,
+  model.law.present
+    ? `${model.law.nodes.length} renderings · ${model.law.gaps.length} docs unrendered · ${model.law.missing.length} named-but-missing · ${model.law.strays.length} strays`
+    : `${model.law.path} not in this clone`);
 say("published store", !!model.store && !model.store._error, model.store?._error ?? `written ${model.store?._mtime}`);
 say("write registry", !model.registry.missing,
   model.registry.missing ? "WRITE-REGISTRY.md not found" : `${model.registry.sections.reduce((n, s) => n + s.rows.length, 0)} rows`);
