@@ -1,2 +1,6 @@
 node_modules/
 qa-shots/
+# tools/graph-views.mjs writes here by default. A projection is regenerable and
+# stored by nobody — committing one would make it exactly the materialized truth
+# the instrument exists to count.
+graph-views.html
