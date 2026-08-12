@@ -44,6 +44,6 @@
 
 | surface | Q1 | Q2 | status |
 |---|---|---|---|
-| LOGOS amendments (founder commits) | the amendment act — **exists, unmapped as a class** | structure log (witnessed commits) | **CUTOVER** — the v3 re-homing draws the door on the map (law-doc class, amendment class, the-record → `logos`, keeping-works → `postmark`) |
+| LOGOS amendments (founder commits) | the amendment act — **exists, unmapped as a class** | structure log (witnessed commits) | **CUTOVER** — the v3 re-homing draws the door on the map (law-doc class, amendment class, the-record → `logos`; the keeping-works keeps its name — the extent catch, 08-12: geometry is not jurisdiction, and the town's own node is the root) |
 | the-record renderings | founder pen | fidelity-linted both directions | **ADHERES** — and is revealed to BE the graph LOGOS (the three floors) |
 | the serialization mapping (field → predicate star) | — | trichotomy exists in `LOGOS/kinds.md` prose; machine-readable NOWHERE (Keemin's catch, 08-12: pre-mapping, nothing on disk has a mechanical predicate expression) | **CUTOVER** — first machine form ships with the graph-views instrument; destination = payload schemas on class-nodes |
