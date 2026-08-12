@@ -519,6 +519,13 @@ function layoutLayered(nodes, edges) {
     if (!moved) break;
   }
 
+  // FOUNDATIONS ON TOP. Longest-path puts the in-degree-zero acts at layer 0
+  // and the most-depended-on concepts (logos, canon) at the bottom — law read
+  // upside down. Inverted, the floor everything rests on is row 0 and the leaf
+  // acts sit at the bottom, arrows pointing up at what they depend on.
+  const maxL = Math.max(0, ...layer.values());
+  for (const [id, L] of layer) layer.set(id, maxL - L);
+
   const byLayer = new Map();
   for (const n of nodes) {
     const L = layer.get(n.id) ?? 0;
@@ -1404,7 +1411,8 @@ function renderMetamodel(model) {
     + statRow([["concept nodes", mm.nodes.length], ["typed edges", mm.edges.length],
         ["edge types", new Set(mm.edges.map((e) => e.type)).size], ["layers", mm.layout.layers]])
     + (notes.length ? `<div class="legend">${notes.map((n) => `<div>${n}</div>`).join("")}</div>` : "")
-    + `<div class="mm-wrap"><div class="mm-canvas"><svg viewBox="0 0 ${width + (mm.layout.backEdges ? 170 : 0)} ${height}" width="${width + (mm.layout.backEdges ? 170 : 0)}" height="${height}" role="img" aria-label="the metamodel graph">
+    + `<div class="toolbar"><button onclick="mmFit()">fit</button><span class="dim">drag to pan · wheel to zoom · click a concept to read it</span></div>`
+    + `<div class="mm-wrap"><div class="mm-canvas mm-law"><svg id="mm-svg" data-all="0 0 ${width + (mm.layout.backEdges ? 170 : 0)} ${height}" viewBox="0 0 ${width + (mm.layout.backEdges ? 170 : 0)} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="the metamodel graph">
         <defs><marker id="mm-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M 0 1 L 8 4 L 0 7 z"/></marker></defs>
         ${edgeSvg}${nodeSvg}</svg></div>
@@ -1533,6 +1541,8 @@ td.mcls { color:#7ba7e0; width:11%; } td.mgloss { color:#7e7867; font-style:ital
 .mm-wrap { display:flex; gap:14px; align-items:flex-start; margin:14px 0; }
 .mm-canvas { flex:1 1 auto; overflow:auto; max-height:640px; background:#1a1e25; border:1px solid #262c36; border-radius:4px; padding:6px; }
 .mm-canvas svg { display:block; }
+.mm-law { height:74vh; max-height:none; overflow:hidden; cursor:grab; } .mm-law.grabbing { cursor:grabbing; }
+.mm-law svg { width:100%; height:100%; }
 .mm-edge path { fill:none; stroke:#3d4551; stroke-width:1.4; }
 .mm-edge text { fill:#7e8794; font:10px ui-monospace,Consolas,Menlo,monospace; paint-order:stroke;
   stroke:#1a1e25; stroke-width:3px; stroke-linejoin:round; }
@@ -1621,6 +1631,29 @@ function allDetails(btn,open){btn.closest('section').querySelectorAll('details')
     g.addEventListener('click',function(){pick(g.dataset.id);});
     g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g.dataset.id);}});
   });
+  var svg=document.getElementById('mm-svg');
+  if(svg){
+    var canvas=svg.parentNode, vb=svg.getAttribute('viewBox').split(' ').map(Number);
+    function apply(){svg.setAttribute('viewBox',vb.join(' '));}
+    window.mmFit=function(){vb=svg.dataset.all.split(' ').map(Number);apply();};
+    var drag=null;
+    canvas.addEventListener('pointerdown',function(e){
+      if(e.target.closest('.mm-node')) return;
+      drag={x:e.clientX,y:e.clientY,vb:vb.slice()}; canvas.classList.add('grabbing');
+      canvas.setPointerCapture(e.pointerId);});
+    canvas.addEventListener('pointermove',function(e){
+      if(!drag) return;
+      var r=canvas.getBoundingClientRect(), sx=drag.vb[2]/r.width, sy=drag.vb[3]/r.height;
+      vb[0]=drag.vb[0]-(e.clientX-drag.x)*sx; vb[1]=drag.vb[1]-(e.clientY-drag.y)*sy; apply();});
+    function endDrag(){drag=null; canvas.classList.remove('grabbing');}
+    canvas.addEventListener('pointerup',endDrag); canvas.addEventListener('pointercancel',endDrag);
+    canvas.addEventListener('wheel',function(e){
+      e.preventDefault();
+      var r=canvas.getBoundingClientRect(), k=e.deltaY>0?1.15:1/1.15;
+      var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+      var cx=vb[0]+vb[2]*px, cy=vb[1]+vb[3]*py;
+      vb[2]*=k; vb[3]*=k; vb[0]=cx-vb[2]*px; vb[1]=cy-vb[3]*py; apply();},{passive:false});
+  }
 })();
 (function(){
   var el=document.getElementById('wg-data'); if(!el) return;
