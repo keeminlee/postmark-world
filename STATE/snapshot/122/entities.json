@@ -1,6 +1,6 @@
 {
-  "crossing": 121,
-  "evaluated_at": "2026-08-11T12:00:00.000Z",
+  "crossing": 122,
+  "evaluated_at": "2026-08-12T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "8766f1db632511e9442d1a6b870d45060780ea41",
   "omits": [
@@ -958,23 +958,23 @@
       "x": 1075,
       "y": -800,
       "arrived": true,
-      "standing": false,
-      "leg_m": 725,
-      "travelled_m": 725,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-11T04:49:40.607Z",
+        "iso": "2026-08-11T19:42:43.041Z",
         "handle": "rei",
         "from": {
-          "x": 550,
-          "y": -300
+          "x": 1075,
+          "y": -800
         },
         "toward": {
           "x": 1075,
           "y": -800
         },
-        "at": 120.40232738425927,
+        "at": 121.64266155092592,
         "within": null,
         "to": "rei/the-lanternstep-house",
         "pace": null,
@@ -1331,26 +1331,26 @@
     },
     {
       "handle": "vermillion",
-      "x": -94570,
-      "y": -94570,
+      "x": -94556,
+      "y": -94453,
       "arrived": true,
       "standing": false,
-      "leg_m": 798,
-      "travelled_m": 798,
+      "leg_m": 118,
+      "travelled_m": 118,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-11T09:35:32.320Z",
+        "iso": "2026-08-11T22:53:34.928Z",
         "handle": "vermillion",
         "from": {
-          "x": -94018.2,
-          "y": -93993.9
+          "x": -94580.1,
+          "y": -94568.8
         },
         "toward": {
-          "x": -94570,
-          "y": -94570
+          "x": -94556,
+          "y": -94453
         },
-        "at": 120.79935761574075,
+        "at": 121.90775148148148,
         "within": null,
         "to": null,
         "pace": null,
