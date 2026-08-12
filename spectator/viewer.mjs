@@ -819,6 +819,15 @@ export function tourProgress(index, total) {
 // asking is "has this resident". Two households on one browser are two arrivals,
 // and a spectator is nobody, so a spectator is never greeted and never recorded:
 // the ? is their way in, and it stays open to them forever.
+//
+// OVERRULED 2026-08-12 (Keemin, overruling his 08-05 self: "always for
+// spectators"). The door opened to strangers — postmark.town met its first
+// outside professional today, so a signed-out arrival is a front door and not a
+// passer-by. Spectators are greeted EVERY visit; residents keep greeted-once.
+// The scoping above still stands for residents, and the never-recorded half
+// stands for everyone: there is no key for a nobody, so the always-show needs no
+// storage and writes none. What changed is only what an absent key MEANS —
+// "nothing is owed" became "always unseen".
 export const TOUR_SEEN_KEY = "pm_world_tour_seen";
 export function tourSeenKey(who) {
   const id = String(who ?? "").trim();
@@ -826,8 +835,13 @@ export function tourSeenKey(who) {
 }
 export function readTourSeen(storage, who) {
   const key = tourSeenKey(who);
-  if (!key) return true;                 // nobody to greet, so nothing is owed
-  if (!storage?.getItem) return true;    // and nothing we cannot remember declining
+  // A SPECTATOR IS ALWAYS UNSEEN (2026-08-12). No key exists for a nobody, so
+  // this answer is computed rather than stored and the greeting simply returns
+  // every visit. Checked BEFORE the storage probe below on purpose: a spectator
+  // in a browser that refuses storage is still greeted, because there was never
+  // anything to remember.
+  if (!key) return false;
+  if (!storage?.getItem) return true;    // nothing we cannot remember declining
   // A browser that refuses storage reads as SEEN, not unseen: we could not record
   // the greeting, so offering it again every single load is the one behaviour
   // worse than never offering it. The ? is still there.
@@ -4828,7 +4842,8 @@ export function mountViewer(appEl) {
   const localStore = (() => { try { return window.localStorage; } catch { return null; } })();
   // WHO THE TOUR IS REMEMBERED AGAINST: the credential household, falling back to
   // the handles it vouches for. A spectator resolves to nothing, and nothing is
-  // never greeted — the ? is their door in, and it never closes.
+  // never REMEMBERED — so since 2026-08-12 they are greeted every visit rather
+  // than never, and the ? stays their door back in either way.
   const tourWho = () => state.whoami?.household
     || ((state.whoami?.handles ?? []).length ? [...state.whoami.handles].sort().join(",") : "");
 
@@ -5144,12 +5159,20 @@ export function mountViewer(appEl) {
     $(root, ".wv-tour-open")?.classList.remove("is-unseen");
     renderTour();
   }
-  // THE GREETING IS FOR A RESIDENT, ONCE (Keemin, 2026-08-05). Fired when identity
-  // resolves rather than at boot, because until the office answers we do not know
-  // whose first visit this is — and a spectator's never is.
+  // THE GREETING IS FOR A RESIDENT, ONCE (Keemin, 2026-08-05) — overruled
+  // 2026-08-12: the door opened to strangers, so a spectator is greeted EVERY
+  // visit and a resident still only once. Fired when identity resolves rather
+  // than at boot, because until the office answers we do not know whose visit
+  // this is; resolveIdentity runs for a spectator too, so this reaches them.
+  //
+  // One greeting per page LOAD, not per call: readTourSeen cannot remember a
+  // spectator's dismissal (there is no key to write), so without this flag a
+  // second call in the same load would reopen a tour they just closed.
+  let greetedThisLoad = false;
   function greetOnFirstVisit() {
-    const who = tourWho();
-    if (!who || readTourSeen(localStore, who) || tourAt >= 0) return;
+    if (greetedThisLoad || tourAt >= 0) return;
+    if (readTourSeen(localStore, tourWho())) return;
+    greetedThisLoad = true;
     openTour(0);
   }
   function closeTour() {

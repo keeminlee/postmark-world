@@ -1162,13 +1162,21 @@ test("the tour is remembered against the resident, not the browser", () => {
   assert.equal(readTourSeen(storage, "wright"), true);
   assert.deepEqual([...store.keys()].sort(), ["pm_world_tour_seen:limen", "pm_world_tour_seen:wright"]);
 
-  // A SPECTATOR IS NOBODY: nothing to greet, so nothing is owed and nothing is
-  // written. Reading `true` is what keeps the greeting from ever firing for them.
+  // A SPECTATOR IS ALWAYS UNSEEN (Keemin, 2026-08-12, overruling 08-05's "never
+  // greeted"): the signed-out World page is a front door now, so the greeting
+  // returns every visit. Reading `false` is what makes it fire for them — and
+  // the no-record half is unchanged and now load-bearing, because "every visit"
+  // is precisely what having nothing to write gives you for free.
   assert.equal(tourSeenKey(""), null);
   assert.equal(tourSeenKey(undefined), null);
-  assert.equal(readTourSeen(storage, ""), true);
+  assert.equal(readTourSeen(storage, ""), false, "a spectator is greeted every visit");
+  assert.equal(readTourSeen(storage, undefined), false);
   writeTourSeen(storage, "");
   assert.equal(store.size, 2, "a spectator leaves no record behind");
+  assert.equal(readTourSeen(storage, ""), false, "and is still unseen after the write that did nothing");
+  // even where storage is refused outright, a spectator is greeted: the answer
+  // never depended on storage, so it cannot be broken by losing it
+  assert.equal(readTourSeen(null, ""), false);
 
   // private mode throws on both, and a viewer that cannot remember must still run
   const sealed = { getItem() { throw new Error("denied"); }, setItem() { throw new Error("denied"); } };
