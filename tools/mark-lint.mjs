@@ -22,8 +22,9 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate, rect, overlapArea,
-  tierRank, fileToWorld, declaredCoords, COORDS_RELATIVE, WORLD_ROOT_SLUG,
+  standingRank, fileToWorld, declaredCoords, COORDS_RELATIVE, WORLD_ROOT_SLUG,
 } from "./marks-fold.mjs";
+import { markStanding } from "./mark-standing.mjs";
 import { consentMap, CONSENT_WORDS, CONSENT_FIELD } from "./consent.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -103,6 +104,15 @@ const cite = (clauseId) => {
     : ` — the law: ${clauseId} (clause not found in the record; the gate's law lookup failed)`;
 };
 const byId = new Map();
+// The standing walk needs the WHOLE tree, and `byId` above is filled as the
+// record loop validates — so a rule inside that loop would ask about a chain
+// only half indexed. This map is complete before the first check runs, and is
+// the only one any standing question is asked against. (Duplicate ids are the
+// loop's own error to report; first wins here, as in the loader.)
+const standingIndex = new Map();
+for (const m of marks) if (!standingIndex.has(m.id)) standingIndex.set(m.id, m);
+const rankOf = (m) => standingRank(m, standingIndex);
+const standingOf = (m) => markStanding(m, standingIndex);
 const slugsByHousehold = new Map();
 const childCount = new Map();
 for (const m of marks) {
@@ -249,8 +259,8 @@ for (const rec of marks) {
     // asking to describe a thing while being immune to it, and there is no
     // re-pointing that makes that true.
     const parent = byId.get(rec._parentMarkId);
-    if ((rec.kind === "predicated" || rec.kind === "naming") && parent && tierRank(rec) > tierRank(parent))
-      err(rec, `tier: ${rec.tier} over a ${parent.tier}-tier parent (${parent.id}) — a predicate cannot outrank what it predicates: it is its parent continued${cite("the-town/the-continuation")}`);
+    if ((rec.kind === "predicated" || rec.kind === "naming") && parent && rankOf(rec) > rankOf(parent))
+      err(rec, `${standingOf(rec)} standing over a parent standing as ${standingOf(parent)} (${parent.id}) — a predicate cannot outrank what it predicates: it is its parent continued${cite("the-town/the-continuation")}`);
   }
 }
 
@@ -269,11 +279,11 @@ const samePoint = (a, b) => a.x === b.x && a.y === b.y;
 // (start itself included) whose tier ranks at or above rec's own.
 const frameOriginFrom = (rec, start) => {
   const continued = rec.kind === "predicated" || rec.kind === "naming";
-  const rank = tierRank(rec);
+  const rank = rankOf(rec);
   const seen = new Set([rec.id]);
   for (let p = start; p && !seen.has(p.id); p = p._parentMarkId ? byId.get(p._parentMarkId) : null) {
     seen.add(p.id);
-    if (p.at && (continued || tierRank(p) >= rank)) return { x: p.at.x, y: p.at.y };
+    if (p.at && (continued || rankOf(p) >= rank)) return { x: p.at.x, y: p.at.y };
   }
   return WORLD_CENTRE;
 };
@@ -313,7 +323,7 @@ for (const rec of marks) {
   const expected = placementParent(rec, marks);
   if (actual === expected) continue;
   const dirParent = parentOf(rec);
-  const outranks = !!dirParent && tierRank(rec) > tierRank(dirParent);
+  const outranks = !!dirParent && rankOf(rec) > rankOf(dirParent);
   const frameKept = samePoint(frameOriginFrom(rec, dirParent), frameOriginFrom(rec, expected === null ? ROOT_MARK : byId.get(expected)));
   // A record whose parent is unreadable is not in byId at all, so `outranks` is
   // false and the frame walk starts above it — refusing is the only honest
@@ -322,7 +332,7 @@ for (const rec of marks) {
     err(rec, `directory parent is "${actual ?? "(root)"}", but placementParent is "${expected ?? "(root)"}" — the edge must name the tightest geometric container (re-home the directory)${cite("the-town/the-gate")}`);
   else
     rehome(rec, actual, expected,
-      `this ${rec.tier}-tier mark is framed by the world, not by "${actual ?? "(root)"}", and the tightest container is now "${expected ?? "(root)"}" — re-point the edge. The mark does not move: its numbers never mentioned "${actual ?? "(root)"}" in the first place${cite("the-town/the-gate")}`);
+      `this mark stands as ${standingOf(rec)} and is framed by the world, not by "${actual ?? "(root)"}", and the tightest container is now "${expected ?? "(root)"}" — re-point the edge. The mark does not move: its numbers never mentioned "${actual ?? "(root)"}" in the first place${cite("the-town/the-gate")}`);
 }
 
 // 6b. the loader and the law agree — a check on the MACHINERY, not on any
