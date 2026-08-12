@@ -398,8 +398,16 @@ async function readWindow(repo) {
 // branch as often as not, and comparing a hydration of main against whatever
 // branch happens to be checked out would cry stale on every branch in the
 // repo — an alarm that fires constantly is one nobody reads.
+// Only a REAL ref name is portable. A hydration run without --ref records its
+// world_ref as the literal "HEAD", which names a different commit in every
+// checkout and in every worktree — resolving it here compared the office's
+// store against whatever branch this generator happened to be sitting on and
+// cried stale every time. So anything that is not a `refs/...` path is
+// discarded, and where no portable ref resolves the pane makes NO freshness
+// claim rather than a confident wrong one.
 function worldRefSha(repo, ref) {
-  for (const target of [ref, "refs/heads/main", "HEAD"]) {
+  const candidates = [typeof ref === "string" && ref.startsWith("refs/") ? ref : null, "refs/heads/main"];
+  for (const target of candidates) {
     if (!target) continue;
     try {
       const sha = execFileSync("git", ["rev-parse", "--verify", "--quiet", target], { cwd: repo, encoding: "utf8" }).trim();
