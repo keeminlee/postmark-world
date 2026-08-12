@@ -508,6 +508,42 @@ function readLogosLaw(repo) {
   return out;
 }
 
+// ── logos/ from the prose alone ──────────────────────────────────────────────
+// The TARGET tree, derived from LOGOS's own text and nothing else (Keemin,
+// 2026-08-12: "depth 1 is literally the files as listed in INDEX.md; work your
+// way down from there"). Depth 0 = logos; depth 1 = the docs in the INDEX
+// table's own order; depth 2 = each doc's ## sections; depth 3 = ### where one
+// exists. No mark is read — this is what the prose says logos/ should look
+// like, to be compared against "The law itself" (what stands).
+function readLogosProse(repo) {
+  const dir = join(repo, "LOGOS");
+  const out = { present: existsSync(join(dir, "INDEX.md")), nodes: [], edges: [], docs: 0, sections: 0, layout: null };
+  if (!out.present) return out;
+  const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
+  const idx = readFileSync(join(dir, "INDEX.md"), "utf8");
+  const files = [...idx.matchAll(/^\|\s*\[([a-z-]+\.md)\]/gm)].map((m) => m[1]);
+  out.nodes.push({ id: "logos", label: "logos", prose: "LOGOS/INDEX.md", line: "the law in one breath", parentId: null });
+  for (const f of files) {
+    let text;
+    try { text = readFileSync(join(dir, f), "utf8"); } catch { continue; }
+    out.docs++;
+    const docId = `logos/${f.replace(/\.md$/, "")}`;
+    const one = idx.match(new RegExp(`\\[${f.replace(".", "\\.")}\\]\\([^)]*\\)\\s*\\|\\s*([^|\\n]+)`))?.[1]?.trim() ?? "";
+    out.nodes.push({ id: docId, label: f.replace(/\.md$/, ""), prose: `LOGOS/${f}`, line: one, parentId: "logos" });
+    let h2 = null;
+    for (const line of text.split(/\r?\n/)) {
+      const m3 = line.match(/^###\s+(.*)/);
+      const m2 = m3 ? null : line.match(/^##\s+(.*)/);
+      if (m2) { h2 = `${docId}/${slug(m2[1])}`; out.nodes.push({ id: h2, label: slug(m2[1]), prose: `LOGOS/${f}`, line: m2[1].trim(), parentId: docId }); out.sections++; }
+      else if (m3 && h2) { out.nodes.push({ id: `${h2}/${slug(m3[1])}`, label: slug(m3[1]), prose: `LOGOS/${f}`, line: m3[1].trim(), parentId: h2 }); out.sections++; }
+    }
+  }
+  const ids = new Set(out.nodes.map((n) => n.id));
+  out.edges = out.nodes.filter((n) => n.parentId && ids.has(n.parentId)).map((n) => ({ from: n.parentId, type: "contains", to: n.id }));
+  out.layout = layoutLayered(out.nodes, out.edges);
+  return out;
+}
+
 // A layered layout, computed HERE at generation time so the page needs no
 // runtime physics. Longest-path layering, then barycentre passes to reduce
 // crossings — the small honest version of Sugiyama: enough structure that typed
@@ -667,6 +703,7 @@ async function buildModel() {
   const households = readHouseholds(REPO);
   const registry = readRegistry(REPO);
   const law = readLogosLaw(REPO);
+  const prose = readLogosProse(REPO);
   const window_ = await readWindow(REPO);
   const worldRefResolved = worldRefSha(REPO, window_?.payload?.as_of?.world_ref ?? null);
 
@@ -757,7 +794,7 @@ async function buildModel() {
 
   return {
     repo: REPO, generatedAt: new Date().toISOString(),
-    marks, byId, raw, standing, store, log, ledger, households, registry, law,
+    marks, byId, raw, standing, store, log, ledger, households, registry, law, prose,
     window: window_, worldRef: worldRefResolved,
     classNodes, registered, citing, unregisteredKinds, census, unmappedKeys, propertyKeys, keysOnDisk,
     tierCarriers, tierRead, tierInert, containment,
@@ -1415,7 +1452,7 @@ function renderLawItself(model) {
         ["named but missing", lg.missing.length, lg.missing.length ? "warn" : "s-green"],
         ["strays of superseded law", lg.strays.length, lg.strays.length ? "warn" : "s-green"]])
     + missingHtml
-    + `<div class="toolbar"><button onclick="mmFit()">fit</button><span class="dim">drag to pan · wheel to zoom · every drawn edge is real containment</span></div>`
+    + `<div class="toolbar"><button onclick="mmFit('mm-svg')">fit</button><span class="dim">drag to pan · wheel to zoom · every drawn edge is real containment</span></div>`
     + `<div class="mm-wrap"><div class="mm-canvas mm-law"><svg id="mm-svg" data-all="0 0 ${width} ${height}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="the law's renderings">
         <defs><marker id="mm-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M 0 1 L 8 4 L 0 7 z"/></marker></defs>
@@ -1427,6 +1464,53 @@ function renderLawItself(model) {
       <p class="note">Cited, never duplicated: the law of classes stands on its own ground, and <code>classes.md</code> names these as its renderings.</p>
       <div class="wg-chips">${regChips}</div>
       <script type="application/json" id="mm-data">${data.replace(/</g, "\\u003c")}</script>`;
+}
+
+// ── the fifth view: logos/ from the prose ────────────────────────────────────
+function renderLawFromProse(model) {
+  const pr = model.prose;
+  const head = `<h2>From the prose — logos/ as LOGOS describes it</h2>`;
+  if (!pr.present) return head + `<p class="absent"><code>LOGOS/INDEX.md</code> is not in this clone.</p>`;
+
+  const { pos, width, height } = pr.layout;
+  const NW = 168, NH = 34;
+  const P = (id) => pos.get(id) ?? { x: 0, y: 0 };
+  const cx = (id) => P(id).x + NW / 2;
+
+  const edgeSvg = pr.edges.map((e) => {
+    const a = P(e.from), b = P(e.to);
+    const x1 = cx(e.from), y1 = a.y + NH, x2 = cx(e.to), y2 = b.y;
+    const my = (y1 + y2) / 2;
+    return `<g class="mm-edge" data-from="${esc(e.from)}" data-to="${esc(e.to)}">`
+      + `<path d="M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}" marker-end="url(#mm2-arrow)"/></g>`;
+  }).join("");
+
+  const nodeSvg = pr.nodes.map((n) => {
+    const p = P(n.id);
+    return `<g class="mm-node" data-id="${esc(n.id)}" tabindex="0" role="button">`
+      + `<rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="5"/>`
+      + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.label.slice(0, 22))}</text>`
+      + `</g>`;
+  }).join("");
+
+  const data = JSON.stringify(Object.fromEntries(pr.nodes.map((n) => [n.id, {
+    class: null, predicates: {}, prose: n.prose, line: n.line,
+    out: pr.edges.filter((e) => e.from === n.id).map((e) => [e.type, e.to]),
+    in: pr.edges.filter((e) => e.to === n.id).map((e) => [e.type, e.from]),
+  }])));
+
+  return head
+    + `<p class="lede">The TARGET tree, derived from the prose alone — depth 1 is the ten docs in <code>INDEX.md</code>'s own order,
+       below each doc its own sections. Nothing here reads the-record: compare with <b>The law itself</b> to see standing vs described.
+       Click a node for its heading and its doc.</p>`
+    + statRow([["docs", pr.docs], ["sections", pr.sections], ["nodes", pr.nodes.length]])
+    + `<div class="toolbar"><button onclick="mmFit('mm2-svg')">fit</button><span class="dim">drag to pan · wheel to zoom · every drawn edge is containment in the described tree</span></div>`
+    + `<div class="mm-wrap"><div class="mm-canvas mm-law"><svg id="mm2-svg" data-all="0 0 ${width} ${height}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="logos from the prose">
+        <defs><marker id="mm2-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1 L 8 4 L 0 7 z"/></marker></defs>
+        ${edgeSvg}${nodeSvg}</svg></div>
+      <aside class="mm-panel" id="mm2-panel"><p class="dim">Click a node to read it.</p></aside></div>
+      <script type="application/json" id="mm2-data">${data.replace(/</g, "\\u003c")}</script>`;
 }
 
 function statRow(items) {
@@ -1613,16 +1697,17 @@ const JS = `
 function show(i){document.querySelectorAll('nav button').forEach(function(b,j){b.setAttribute('aria-selected',j===i);});
 document.querySelectorAll('main>section').forEach(function(s,j){s.hidden=j!==i;});}
 function allDetails(btn,open){btn.closest('section').querySelectorAll('details').forEach(function(d){d.open=open;});}
-(function(){
-  var el=document.getElementById('mm-data'); if(!el) return;
-  var data=JSON.parse(el.textContent), panel=document.getElementById('mm-panel');
+function lawTab(dataId,panelId,svgId){
+  var el=document.getElementById(dataId); if(!el) return;
+  var data=JSON.parse(el.textContent), panel=document.getElementById(panelId);
+  var svgEl=document.getElementById(svgId), wrap=svgEl?svgEl.closest('.mm-wrap'):document;
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   function rows(list,arrow){return list.map(function(p){
     return '<dd><code>'+esc(p[0])+'</code> '+arrow+' '+esc(p[1])+'</dd>';}).join('');}
   function pick(id){
     var n=data[id]; if(!n) return;
-    document.querySelectorAll('.mm-node').forEach(function(g){g.classList.toggle('sel',g.dataset.id===id);});
-    document.querySelectorAll('.mm-edge').forEach(function(g){
+    wrap.querySelectorAll('.mm-node').forEach(function(g){g.classList.toggle('sel',g.dataset.id===id);});
+    wrap.querySelectorAll('.mm-edge').forEach(function(g){
       g.classList.toggle('lit',g.dataset.from===id||g.dataset.to===id);});
     var h='<h4>'+esc(id)+'</h4>';
     if(n.class) h+='<p class="dim">class: '+esc(n.class)+'</p>';
@@ -1640,15 +1725,15 @@ function allDetails(btn,open){btn.closest('section').querySelectorAll('details')
     if(n.extra) h+='<dl><dt>keys this reader does not know</dt><dd>'+esc(JSON.stringify(n.extra))+'</dd></dl>';
     panel.innerHTML=h;
   }
-  document.querySelectorAll('.mm-node').forEach(function(g){
+  wrap.querySelectorAll('.mm-node').forEach(function(g){
     g.addEventListener('click',function(){pick(g.dataset.id);});
     g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g.dataset.id);}});
   });
-  var svg=document.getElementById('mm-svg');
+  var svg=svgEl;
   if(svg){
     var canvas=svg.parentNode, vb=svg.getAttribute('viewBox').split(' ').map(Number);
     function apply(){svg.setAttribute('viewBox',vb.join(' '));}
-    window.mmFit=function(){vb=svg.dataset.all.split(' ').map(Number);apply();};
+    svg.__fit=function(){vb=svg.dataset.all.split(' ').map(Number);apply();};
     var drag=null;
     canvas.addEventListener('pointerdown',function(e){
       if(e.target.closest('.mm-node')) return;
@@ -1667,7 +1752,10 @@ function allDetails(btn,open){btn.closest('section').querySelectorAll('details')
       var cx=vb[0]+vb[2]*px, cy=vb[1]+vb[3]*py;
       vb[2]*=k; vb[3]*=k; vb[0]=cx-vb[2]*px; vb[1]=cy-vb[3]*py; apply();},{passive:false});
   }
-})();
+}
+lawTab('mm-data','mm-panel','mm-svg');
+lawTab('mm2-data','mm2-panel','mm2-svg');
+window.mmFit=function(id){var s=document.getElementById(id||'mm-svg'); if(s&&s.__fit)s.__fit();};
 (function(){
   var el=document.getElementById('wg-data'); if(!el) return;
   var data=JSON.parse(el.textContent), svg=document.getElementById('wg-svg'),
@@ -1764,6 +1852,7 @@ const ALL = [
   { key: "ideal", label: "What LOGOS derives", render: renderIdeal },
   { key: "diff", label: "Convergence", render: renderDiff },
   { key: "law", label: "The law itself", render: renderLawItself },
+  { key: "prose", label: "From the prose", render: renderLawFromProse },
 ];
 const chosen = VIEW === "all" ? ALL : ALL.filter((v) => v.key === VIEW);
 if (!chosen.length) {
