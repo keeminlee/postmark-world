@@ -928,13 +928,12 @@ function renderPractical(model) {
   for (const v of model.standing.values()) st[v] = (st[v] ?? 0) + 1;
 
   const storeNote = model.store
-    ? `<p class="note">The published store on disk was written <b>${esc(model.store._mtime)}</b>. Of the ${model.storeSeen} records it shares with the tree, <b class="warn">${model.storeTierDisagrees}</b> carry a <code>tier</code> the one walk no longer agrees with, and <b class="warn">${model.storePlacement}</b> carry the <code>placementParent</code> edge. Nothing here re-folds the world — this is the machinery as it currently holds it, which is the point of this view.</p>`
+    ? `<p class="note">Published store written <b>${esc(model.store._mtime)}</b>. <b class="warn">${model.storeTierDisagrees}</b> of ${model.storeSeen} shared records carry a stale <code>tier</code>; <b class="warn">${model.storePlacement}</b> carry <code>placementParent</code>.</p>`
     : `<p class="note warn">No WORLD/world-state.json in this clone.</p>`;
 
   return `
-<h2>What IS — the machinery's own picture</h2>
-<p class="lede">The tree as <code>loadMarks</code> returns it, coloured by the one walk
-(<code>tools/mark-standing.mjs</code>, imported — never copied), with every violation painted on the node that carries it.</p>
+<h2>What IS — the town on disk today</h2>
+<p class="lede">Every mark, as stored, coloured by standing. Violations are painted on the node that carries them. Expand a node to see its fields.</p>
 ${statRow([
     ["nodes", model.marks.length], ["containment edges", model.containment.length],
     ["constitution", st.constitution ?? 0, "s-blue"], ["home", st.home ?? 0, "s-green"], ["market", st.market ?? 0, "s-amber"],
@@ -942,11 +941,11 @@ ${statRow([
   ])}
 ${storeNote}
 <div class="legend">
-  <span class="f f-tier">tier: … · read</span> the one exception — the town speaking about the town's own ground.
-  <span class="f f-tier f-inert">tier: … · inert</span> the line states nothing: standing is a fact about the ground, not the author's to assert, and no reader has authority to read this field.<br>
-  <span class="f f-stored">stored: …</span> derivables the published row republishes — ${Object.entries(STORED_DERIVABLE).map(([k, v]) => `<code>${k}</code> ${esc(v)}`).join("; ")}.<br>
-  <span class="f f-stale">store says …</span> the published row disagrees with the one walk.
-  <span class="f f-edge">edge · no action</span> the containment edge cites no action: births are git commits, in a different address space from <code>STATE/log</code>.
+  <span class="f f-tier">tier: … · read</span> the one tier field still read — the town's own constitution.
+  <span class="f f-tier f-inert">tier: … · inert</span> a stored tier no reader uses.<br>
+  <span class="f f-stored">stored: …</span> derivables the store republishes — ${Object.entries(STORED_DERIVABLE).map(([k, v]) => `<code>${k}</code> ${esc(v)}`).join("; ")}.<br>
+  <span class="f f-stale">store says …</span> the published row disagrees with the walk.
+  <span class="f f-edge">edge · no action</span> containment edge with no citable action — births are git commits, outside <code>STATE/log</code>.
 </div>
 <div class="toolbar"><button onclick="allDetails(this,true)">expand all</button><button onclick="allDetails(this,false)">collapse all</button></div>
 <ul class="tree">${roots.map((m) => node(m, 0)).join("")}</ul>`;
@@ -994,9 +993,8 @@ function renderMappingTable(model) {
     }));
   }).join("");
 
-  return `<details class="mapping"><summary><b>The serialization map</b> — v${esc(SERIALIZATION_MAP.version)}, ${esc(SERIALIZATION_MAP.authored)} · the one table, open to red pen</summary>
-<p class="note">Per class, what each frontmatter key serializes. <code>${esc(SERIALIZATION_MAP.cites)}</code> as a lookup.
-A key on disk this table does not place is <b>mapping debt</b>, counted on the convergence tab. Destination: ${esc(SERIALIZATION_MAP.destination)}.</p>
+  return `<details class="mapping"><summary><b>The serialization map</b> — v${esc(SERIALIZATION_MAP.version)}, ${esc(SERIALIZATION_MAP.authored)} · what each key serializes</summary>
+<p class="note">Per class, what each frontmatter key serializes. Unplaced keys count as mapping debt on the Convergence tab. Destination: ${esc(SERIALIZATION_MAP.destination)}.</p>
 <table class="diff maptable"><thead><tr><th>class</th><th>key</th><th>row</th><th>edge / slot</th><th>why</th><th>on disk</th></tr></thead>
 <tbody>${body}</tbody></table></details>`;
 }
@@ -1076,36 +1074,31 @@ function renderIdeal(model) {
   // the very disease it is measuring.
   const holes = [
     ["the unified action log", "WRITE-REGISTRY: amend / withdraw / respond",
-      `Every edge above wants to name the action that declared it. ${model.log.records.length} records exist across ${model.log.crossings} crossings, of types ${Object.entries(model.logTypes).map(([k, v]) => `${k} (${v})`).join(", ") || "none"} — none of them a birth or a declaration, and ${model.logWitnessed} of them carrying witnesses. Mark births are git commits in a separate address space, so no containment edge can cite a seq.`],
+      `Edges need an action to cite. The log holds ${model.log.records.length} records over ${model.log.crossings} crossings (${Object.entries(model.logTypes).map(([k, v]) => `${k} ${v}`).join(", ") || "none"}), ${model.logWitnessed} with witnesses. Births are git commits, so containment edges have no seq to cite.`],
     ["the consent words", "WRITE-REGISTRY: identity",
-      `The one conferral the walk honours is a <code>consent:</code> map on the ground-holder's own record. There are <b>${model.consentWords}</b> on disk, so every cross-household mark standing on someone's ground reads as market by absence, not by refusal.`],
+      `The walk honours one conferral: a <code>consent:</code> map on the ground-holder's record. <b>${model.consentWords}</b> exist on disk, so every cross-household mark currently reads as market.`],
     ["the class registry's reach", "LOGOS north star · Q1 — name your class-node",
-      `${model.classNodes.length} class-nodes exist — ${[...model.registered].sort().join(", ")} — and <b>${model.marks.length - model.citing}</b> of ${model.marks.length} nodes name none of them. They carry <code>kind:</code>, the older four-word vocabulary, of which only <code>parcel</code> has a class-node behind it. Closure is a property of addressing, so most of this world is not yet addressable.`],
+      `${model.classNodes.length} class-nodes exist (${[...model.registered].sort().join(", ")}). <b>${model.citing}</b> of ${model.marks.length} nodes name one; the rest carry <code>kind:</code>, and only <code>parcel</code> has a class-node behind its kind-string.`],
     ["the shadow grammars", "WRITE-REGISTRY: movement storage",
-      `Movement lives in <code>WORLD/walk-ledger.md</code> (${model.ledger.lines} bespoke lines), identity in <code>WORLD/households.json</code> (${model.households.count} households, generated ${esc(model.households.generated_at ?? "—")}), money in the town's sealed ledger. None of the three is in the graph; none can be drawn here without inventing it.`],
+      `Movement: <code>walk-ledger.md</code> (${model.ledger.lines} lines). Identity: <code>households.json</code> (${model.households.count} households). Money: the sealed stamp ledger. All three live outside the graph.`],
   ];
 
   return `
-<h2>What LOGOS derives — one node type, identity plus predicate children</h2>
-<p class="tense"><b>Populated by this instrument's serialization map, v${esc(SERIALIZATION_MAP.version)}, authored ${esc(SERIALIZATION_MAP.authored)}.</b>
-Before that map existed this view was <b>empty</b> — nothing on disk had a mechanical predicate expression, because nothing stated
-which field serializes which part of a node. The trichotomy lived in ${esc(SERIALIZATION_MAP.cites)} as prose only. What you see below
-is that prose run as code; every predicate drawn here is drawn <i>by the map</i>, not read off the disk. Its destination is
-${esc(SERIALIZATION_MAP.destination)}, at which point the map is deleted and read from the graph like everything else.</p>
-<p class="lede">The same tree re-read: identity is <b>slug + class</b> and nothing else; authorship and containment are <b>edges</b>;
-genuine properties are <b>predicate children</b>; standing is <b>derived</b> and stored by nobody. No raw tier, no stored derivables —
-and where the substrate for a lawful expression is missing, a named hole rather than invented data.</p>
+<h2>What LOGOS derives — the same town in the target grammar</h2>
+<p class="lede">Every record re-read under the law: identity = <b>slug + class</b>; authorship and containment are <b>edges</b>;
+properties are <b>predicate children</b>; standing is <b>derived</b>. Missing substrate is listed under holes below.</p>
+<p class="tense">Drawn by the serialization map v${esc(SERIALIZATION_MAP.version)} (${esc(SERIALIZATION_MAP.authored)}) — the table below, which states what each field serializes. Destination: ${esc(SERIALIZATION_MAP.destination)}.</p>
 ${statRow(lawMeasures(model).map((x) => [x.label, x.of != null ? `${x.now} / ${x.of}` : x.now, x.now === x.target ? "s-green" : "warn"]))}
 ${renderMappingTable(model)}
-<div class="holes"><h3>The holes — named, not filled</h3>${holes.map(([t, row, txt]) =>
+<div class="holes"><h3>Missing substrate</h3>${holes.map(([t, row, txt]) =>
     `<div class="hole-card"><b>${esc(t)}</b> <span class="rowref">${esc(row)}</span><p>${txt}</p></div>`).join("")}</div>
 <div class="legend">
-  <span class="e"><b>create</b> by → slug</span> <code>by:</code> read as the create-edge.
-  <span class="e"><b>containment</b> parent ⊃ slug</span> the constitutive edge; the directory IS the geometry.
-  <span class="e"><b>provenance</b> …</span> <code>derived_from:</code>, a citation, which is a relation.<br>
-  <span class="p p-ok"><b>slot</b> value</span> already a predicate on disk — the (slot, value) pair is a predicate's own identity payload.
-  <span class="p p-would"><b>field</b> value</span> a frontmatter field today; a predicate child under the law.<br>
-  <i class="hole">⌀</i> on an edge: the relation exists, but the action that declared it is not addressable — no seq to cite.
+  <span class="e"><b>create</b> by → slug</span> <code>by:</code> is the create-edge.
+  <span class="e"><b>containment</b> parent ⊃ slug</span> the directory is the geometry.
+  <span class="e"><b>provenance</b> …</span> <code>derived_from:</code> — a citation.<br>
+  <span class="p p-ok"><b>slot</b> value</span> already a predicate on disk.
+  <span class="p p-would"><b>field</b> value</span> a field today; a predicate child under the law.<br>
+  <i class="hole">⌀</i> the edge exists; there is no action id to cite.
 </div>
 <div class="toolbar"><button onclick="allDetails(this,true)">expand all</button><button onclick="allDetails(this,false)">collapse all</button></div>
 <ul class="tree">${roots.map((m) => node(m, 0)).join("")}</ul>`;
@@ -1173,13 +1166,12 @@ function renderDiff(model) {
     note: mm.present
       ? (mm.unreadable ? `${mm.path} present but unparseable: ${mm.unreadable}`
         : `${mm.path}: ${mm.nodes.length} concept nodes, ${mm.edges.length} typed edges, ${new Set(mm.edges.map((e) => e.type)).size} edge types`)
-      : `${mm.path} absent at generation time — the founder pen is authoring it; this instrument renders, never writes it`,
+      : `${mm.path} absent at generation time`,
   }];
 
   return `
 <h2>Convergence — the registry, counted</h2>
-<p class="lede">Every number is derived from this clone at run time and keyed to a row of <code>WRITE-REGISTRY.md</code>,
-which owns the row names and statuses. Watch the warn column shrink.</p>
+<p class="lede">Each <code>WRITE-REGISTRY.md</code> row, measured live from this clone. Green = at target. Watch the warn column shrink.</p>
 ${drift}
 <h3>The law's own measures</h3>
 <table class="diff"><thead><tr><th colspan="3">measurement</th><th>this clone</th></tr></thead><tbody>
@@ -1194,17 +1186,14 @@ function renderWindow(model) {
   const head = `<h2>The window — the office's projection</h2>`;
 
   if (!w.present) {
-    return head + `<p class="absent">No office payload was given, so nothing is drawn — this pane never invents a store.
-      Feed it either way, both read once at generation time so the page stays static:</p>
+    return head + `<p class="absent">No office payload given. Feed one:</p>
       <pre class="cmd">node tools/graph-views.mjs --window-json &lt;payload.json&gt;
 node tools/graph-views.mjs --window-url  &lt;url&gt;</pre>
-      <p class="absent">The payload is whatever the office's <code>worldGraphView()</code> returns
-      (<code>office/src/world-graph.mjs</code>). To make one from an office clone that has hydrated a <code>world.db</code>:</p>
+      <p class="absent">The payload is <code>worldGraphView()</code>'s output (<code>office/src/world-graph.mjs</code>). To make one:</p>
       <pre class="cmd">node -e "import('./src/world-graph.mjs').then(m=&gt;console.log(JSON.stringify(m.worldGraphView({}))))" &gt; world-graph.json</pre>`;
   }
   if (w.unreadable) {
-    return head + `<p class="absent warn">The payload at <code>${esc(w.from)}</code> could not be read: ${esc(w.unreadable)}.
-      Nothing is drawn rather than drawn wrongly.</p>`;
+    return head + `<p class="absent warn">Unreadable payload at <code>${esc(w.from)}</code>: ${esc(w.unreadable)}.</p>`;
   }
 
   const p = w.payload;
@@ -1285,9 +1274,8 @@ node tools/graph-views.mjs --window-url  &lt;url&gt;</pre>
   const data = JSON.stringify(Object.fromEntries(w.nodes.map((n) => [n.data.id, n.data])));
 
   return head
-    + `<p class="lede">The office's own read of this town — <code>world.db</code> as one payload, with the standing invariants
-       <b>painted onto the graph</b> rather than listed beside it. Drawn here from data, not re-derived: the office owns these findings.
-       Source <code>${esc(w.from)}</code>.</p>`
+    + `<p class="lede">The office's <code>world.db</code> drawn as a map — marks, classes, code, doctrine. Red = implicated by a standing
+       invariant (L1–L6, listed below). Drag to pan, wheel to zoom, click a node to read it. Source <code>${esc(w.from)}</code>.</p>`
     + `<div class="chips">${freshness}
         <span class="chip">store hydrated ${esc(asOf.hydrated_at ?? "—")}</span>
         <span class="chip">status ${esc(asOf.hydration_status ?? "—")}</span>
@@ -1298,11 +1286,9 @@ node tools/graph-views.mjs --window-url  &lt;url&gt;</pre>
         ["drawable edges", w.drawable.length, "warn"],
         ["painted nodes", painted.size, painted.size ? "warn" : "s-green"],
         ["unresolved", counts.unresolved ?? 0, (counts.unresolved ?? 0) ? "warn" : "s-green"]])
-    + `<p class="note"><b>The coordinate contract, as the payload states it.</b> ${esc(coord.units ?? "—")} · x: ${esc(coord.x ?? "—")} · y: ${esc(coord.y ?? "—")}
-       <br>This renderer's y also runs down the screen, so y passes through <b>unchanged</b> here too — the flip belongs where the viewer is, and this viewer needs none.</p>`
-    + `<p class="note"><b>${w.positioned.length} of ${w.nodes.length} nodes carry a position.</b> The other ${w.nodes.length - w.positioned.length} are
-       listed below the map, not placed — the store has no coordinates for them and this pane invents none. Likewise
-       ${w.edges.length - w.drawable.length} of ${w.edges.length} edges are not drawn, because at least one end has nowhere to be.</p>`
+    + `<p class="note">Coordinates: ${esc(coord.units ?? "—")} · x ${esc(coord.x ?? "—")} · y ${esc(coord.y ?? "—")} · y runs down the screen, so south is down.</p>`
+    + `<p class="note"><b>${w.positioned.length} of ${w.nodes.length} nodes carry a position</b> and are drawn; the rest are listed below the map.
+       ${w.drawable.length} of ${w.edges.length} edges have both ends placed and are drawn.</p>`
     + `<div class="toolbar"><button onclick="wgFit(this,'all')">fit all</button><button onclick="wgFit(this,'dense')">the main cluster (${w.coreCount} of ${w.positioned.length})</button>
         <button onclick="wgConv(this)">highlight law-reaches-code</button>
         <span class="dim">drag to pan · wheel to zoom · click a node to read it</span><span class="chip" id="wg-span">—</span></div>`
@@ -1314,14 +1300,12 @@ node tools/graph-views.mjs --window-url  &lt;url&gt;</pre>
     + `<div class="legend"><span class="dot k-mark"></span> mark <span class="dot k-class"></span> class
         <span class="dot k-code"></span> code <span class="dot k-doct"></span> doctrine
         <span class="dot lit"></span> implicated by a standing invariant
-        &nbsp;·&nbsp; <b>law-reaches-code</b> = ${conv.length ? conv.map((k) => `<code>${esc(k)}</code>`).join(" → ") : "—"};
-        the office calls this traversal "convergence", and in this hub that word is reserved for the registry-counted tab, so it is renamed here.</div>`
+        &nbsp;·&nbsp; <b>law-reaches-code</b> = ${conv.length ? conv.map((k) => `<code>${esc(k)}</code>`).join(" → ") : "—"}
+        (the office calls this traversal "convergence"; renamed here).</div>`
     + `<h3>The standing invariants, painted</h3>${lintHtml}`
-    + `<h3>Held by the store, placed nowhere</h3>
-       <p class="note">Listed, not positioned. A tidy grid here would be invented coordinates.</p>${unposHtml}`
-    + `<h3>The three rules that make this trustworthy</h3>
-       <p class="note">Carried verbatim from <code>office/src/world-graph.mjs</code>, unedited — a port that restated them in its own
-       words would be claiming a discipline it had not inherited.</p>
+    + `<h3>In the store, no coordinates</h3>${unposHtml}`
+    + `<h3>The three rules</h3>
+       <p class="note">From <code>office/src/world-graph.mjs</code>, verbatim.</p>
        <ol class="rules">${WINDOW_HONESTY_RULES.map(([t, b]) => `<li><b>${esc(t)}</b> ${esc(b)}</li>`).join("")}</ol>`
     + `<script type="application/json" id="wg-data">${data.replace(/</g, "\\u003c")}</script>`
     + `<script type="application/json" id="wg-conv">${JSON.stringify(conv)}</script>`;
@@ -1338,9 +1322,8 @@ function renderMetamodel(model) {
   const head = `<h2>The law itself — the metamodel</h2>`;
 
   if (!mm.present) {
-    return head + `<p class="absent">The metamodel is being authored — <code>${esc(mm.path)}</code> absent at generation time.
-    This tab renders the law's own anatomy as a graph once the founder pen has written it; this instrument never authors law content,
-    so nothing is drawn here in the meantime. Re-run <code>tools/graph-views.mjs</code> after the file lands.</p>`;
+    return head + `<p class="absent"><code>${esc(mm.path)}</code> is absent. This tab draws it once the founder pen writes it —
+    re-run <code>tools/graph-views.mjs</code> after the file lands.</p>`;
   }
   if (mm.unreadable) {
     return head + `<p class="absent warn"><code>${esc(mm.path)}</code> is present but did not parse: ${esc(mm.unreadable)}.
@@ -1416,9 +1399,8 @@ function renderMetamodel(model) {
   if (mm.unknown.edge.length) notes.push(`unknown edge key(s): ${mm.unknown.edge.map((k) => `<code>${esc(k)}</code>`).join(", ")}`);
 
   return head
-    + `<p class="lede">The law's own anatomy, read from <code>${esc(mm.path)}</code> — the founder pen's file, rendered and never written by this tool.
-       Edge types are drawn on the edges: a concept map with unlabelled lines would say the concepts are related without saying how.
-       Click a node for its predicates and its prose pointer.</p>`
+    + `<p class="lede">LOGOS as a graph, read from <code>${esc(mm.path)}</code>. Every edge is labelled with its relation.
+       Click a concept for its class, predicates, edges, and the LOGOS doc it comes from.</p>`
     + statRow([["concept nodes", mm.nodes.length], ["typed edges", mm.edges.length],
         ["edge types", new Set(mm.edges.map((e) => e.type)).size], ["layers", mm.layout.layers]])
     + (notes.length ? `<div class="legend">${notes.map((n) => `<div>${n}</div>`).join("")}</div>` : "")
@@ -1719,13 +1701,12 @@ function renderHtml(model, views) {
 <title>Postmark — graph views</title><style>${CSS}</style></head>
 <body><div class="wrap">
 <h1>POSTMARK · THE GRAPH HUB</h1>
-<p class="frame">One town, read four ways under LOGOS — and the window is the office's projection of it.</p>
-<p class="sub">a projection — regenerable, stored by nobody · ${esc(model.repo)} · generated ${esc(model.generatedAt)} · ${model.marks.length} nodes${
+<p class="frame">Five views of one town, measured against LOGOS.</p>
+<p class="sub">${esc(model.repo)} · generated ${esc(model.generatedAt)} · ${model.marks.length} nodes${
     model.window?.present && !model.window.unreadable ? ` · window from ${esc(model.window.from)}` : ""}</p>
 <nav>${tabs}</nav>
 <main>${secs}</main>
-<footer>Generated by <code>tools/graph-views.mjs</code>. Standing is derived by <code>tools/mark-standing.mjs</code> — the one walk, imported.
-Row names and statuses are parsed from <code>WRITE-REGISTRY.md</code>, which owns them. This page is a read: it stores nothing and nothing reads it back.</footer>
+<footer>Generated by <code>tools/graph-views.mjs</code> · standing from <code>tools/mark-standing.mjs</code> · rows from <code>WRITE-REGISTRY.md</code>.</footer>
 </div><script>${JS}</script></body></html>`;
 }
 
