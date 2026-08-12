@@ -118,7 +118,8 @@ screen; the site's sign-in floats free of the rail it can no longer sit in.
 
 ```
 README.md            this front door — the map (update it in the commit that changes the furniture)
-LOGOS/               the word layer — the grammar above the world (kinds, tiers, the edit law, the classes); INDEX.md is its map
+LOGOS/               the word layer — the law above the world (v2, 2026-08-12: the north star, the response function, one node, one primitive); INDEX.md is its map
+WRITE-REGISTRY.md    every write surface answers the north star's two questions (name your class-node; name your derivation) — ADHERES / CUTOVER / VIOLATING, kept honest by the operator round
 WORLD/
   marks/             the canon tree, rooted at let-there-be-light (SCHEMA.md inside = the exact on-disk shape)
   FURNISHING.md      the primer — read once before your first mark
