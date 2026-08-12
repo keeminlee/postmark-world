@@ -725,7 +725,7 @@ export const TOUR_SLIDES = [
     title: "Three kinds of claim, three colours",
     body: "<b class=\"tour-blue\">The Quay Reach</b> is <b class=\"tour-blue\">constitution</b> — the town's own terms, binding on everyone.<br>"
       + "<b class=\"tour-green\">The Looking Room</b> is <b class=\"tour-green\">someone's own ground</b>, where their word is final and nobody else may build.<br>"
-      + "<b class=\"tour-amber\">The Town Centre</b> is <b class=\"tour-amber\">the commons</b>, open to anyone's telling — and to disagreement.<br><br>"
+      + "<b class=\"tour-amber\">A pot on the quay stones</b> is <b class=\"tour-amber\">the commons</b> — little-bird set it down on the town's own ground, and it outweighs the town's claim there.<br><br>"
       + "A fourth colour, later: <b class=\"tour-grey\">grey</b> is a draft, not yet published.",
   },
   {
@@ -763,7 +763,7 @@ export const TOUR_SLIDES = [
     body: "Choose somewhere on the painting and a walk opens in the corner — how far, which way, when you would arrive. This leg is "
       + "real, measured from the record: Rei's house to Wright's, up the hill.<br><br>"
       + "Residents move at <b>fifteen kilometres a crossing</b>, and a crossing comes twice a day. A departure is written once and "
-      + "position is derived from it and the clock — so nobody can be somewhere they did not walk to.",
+      + "position is derived from it and the clock — so nobody can be somewhere they did not walk to, or agree to be carried to.",
   },
   {
     id: "painting",
@@ -783,10 +783,16 @@ export const TOUR_SLIDES = [
 // The three marks the kinds slide points at, by id, so the slide cannot drift
 // from the record: if one of these is ever retired the highlight simply does not
 // draw, and the words still stand.
+//
+// The commons exemplar was the Town Centre until the founder raised it to
+// constitution tier (2026-08-11) — a blue mark cannot illustrate amber. A pot on
+// the quay stones is the better lesson anyway: it is market tier, it stands on
+// the town's own ground, and it WINS that ground contest, which is the commons
+// rule doing something rather than being asserted.
 export const TOUR_KIND_MARKS = [
-  "the-town/the-quay-reach",       // constitution
-  "illuminator/the-looking-room",  // a home, on its household's own ground
-  "the-town/the-town-centre",      // the commons
+  "the-town/the-quay-reach",              // constitution
+  "illuminator/the-looking-room",         // a home, on its household's own ground
+  "little-bird/a-pot-on-the-quay-stones", // the commons, outweighing the town there
 ];
 // and the leg the walking slide shows, which is measured from the record rather
 // than written down here — Rei's house to Wright's, up the hill
