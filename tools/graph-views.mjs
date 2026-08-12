@@ -15,7 +15,7 @@
 //      WRITE-REGISTRY.md. Nothing is cached, seeded, or hand-kept in here except
 //      the MEASURES mapping, which is flagged in its own comment.
 //
-//   node tools/graph-views.mjs [--repo <world-clone>] [--view practical|ideal|diff]
+//   node tools/graph-views.mjs [--repo <world-clone>] [--view practical|ideal|diff|law]
 //                              [--out graph-views.html]
 //
 // ---------- why three views ----------
@@ -64,60 +64,146 @@ const { loadMarks, parseRecord } = await import(engine("marks-fold.mjs"));
 const { markStanding } = await import(engine("mark-standing.mjs"));
 
 // ═══════════════════════════════════════════════════════════════════════════
-// THE FIELD PARTITION — the law's own placement discipline, applied to a
-// frontmatter key. LOGOS/the-north-star.md § the placement discipline says
-// where each datum belongs; LOGOS/kinds.md § the node says what is and is not a
-// property. This table is that law read as a lookup, and it is the one piece of
-// judgment in this file — every classification below cites the clause it comes
-// from, so a disagreement is arguable against a text rather than against taste.
+// THE SERIALIZATION MAP — the first machine-readable form of the trichotomy
+// that LOGOS/kinds.md § the node holds only as prose.
 //
-// NEEDS SYNC: a new frontmatter key appears here as `unclassified`, which the
-// views render loudly rather than silently bucketing. That is deliberate — an
-// unrecognised field is exactly the thing a shadow grammar arrives as.
+// This table is a TRACKED ARTIFACT, not incidental parsing logic (founder's
+// ruling, 2026-08-12; WRITE-REGISTRY.md row "the serialization mapping (field →
+// predicate star)"). Before it existed, nothing on disk had a mechanical
+// predicate expression — the ideal view could not be drawn at all, because
+// there was no statement of which field serializes which part of a node. It is
+// written as ONE table so a founder can read it and red-pen it in one sitting.
+//
+// It is a WAY STATION. The destination is `payload schemas on class-nodes`
+// (LOGOS/classes.md names payload schema as a class param), at which point this
+// literal is deleted and the map is read from the graph like everything else. A
+// lookup table in a read-only projection is merely the first form that can be
+// counted.
+//
+// Read it per class: for each node class, what its frontmatter keys serialize.
+//   identity   — an identity atom (kinds.md: "identity is two atoms, a slug and
+//                a class"); the slug is the directory name, so on disk identity
+//                is one key.
+//   relational — NOT a property. Each entry names THE EDGE IT SERIALIZES, as
+//                `[edge-type, what the edge relates]` (kinds.md: "`by:` is the
+//                create-edge, not a field"; position is "the containment edge
+//                plus an offset").
+//   derived    — belongs NOWHERE (the-north-star.md § the placement discipline:
+//                "standing, rank, canon, world position, affordances — derived,
+//                stored by no one"). A key here on disk is TRUE RESIDUE: the
+//                map deliberately maps it to nothing, which is a violation, not
+//                a gap in this table.
+//   log        — belongs to the citing action's record, not to the node.
+//   property   — a genuine authored property, given as `[predicate-slot, gloss]`.
+//                Its lawful form is a predicate child hanging off the node.
+//
+// `*` applies to every class; a class block adds to it. A key on disk that this
+// table does not place is MAPPING DEBT — rendered loudly as this table's own
+// unfinished business, never silently bucketed, because an unrecognised field
+// is exactly the shape a shadow grammar arrives in.
 // ═══════════════════════════════════════════════════════════════════════════
-const FIELD_ROW = {
-  // → IDENTITY. "Identity is two atoms: a slug and a class" (kinds.md § the
-  // node). The slug is the directory name, so on disk identity is one field.
-  kind:      "identity",   // the class atom, in the vocabulary the tree speaks today
-  class:     "identity",   // the registered class name, on the eleven class-nodes
+const SERIALIZATION_MAP = {
+  version: "0.1.0",
+  authored: "2026-08-12",
+  cites: "LOGOS/kinds.md § the node · LOGOS/the-north-star.md § the placement discipline",
+  destination: "payload schemas on class-nodes (LOGOS/classes.md § params)",
 
-  // → EDGES. "relational data — authorship (`by:` is the create-edge, not a
-  // field), position and frame (the containment edge plus an offset)" (kinds.md).
-  by:          "edge",     // the create-edge, stored as a field
-  parent:      "edge",     // the containment edge, authored (predicates only)
-  at:          "edge",     // an offset — meaningful only through the containment edge
-  extent:      "edge",     // the footprint that offset governs
-  points:      "edge",     // a ring of positions; rides the same frame as `at`
-  coords:      "edge",     // which frame the numbers are written in
-  anchor:      "edge",     // where the offset is measured from
-  derived_from:"edge",     // provenance — a citation of a source, which is a relation
-  implements:  "edge",     // class → class
-  extends:     "edge",     // class → class
+  // EVERY CLASS
+  "*": {
+    identity:   { kind: "the class atom, in the four-word vocabulary the tree speaks today" },
+    relational: {
+      by:           ["create", "author → node — the create-edge, stored as a field"],
+      derived_from: ["provenance", "node → the source it was seeded from"],
+    },
+    derived:    {
+      tier:      "standing — decided by the one walk over the ground; not the author's to assert",
+      household: "the grain — resolvable from `by` through households.json",
+    },
+    log:        { date: "the create-action's stamp; a fact about the action, not the node" },
+    property:   {
+      pre:    ["pre", "seeded before the world opened, rather than authored in play"],
+      source: ["source", "the document this record renders"],
+    },
+  },
 
-  // → NOWHERE. "standing, rank, canon, world position, affordances — derived,
-  // stored by no one" (the-north-star.md § the placement discipline).
-  tier:      "derived",    // the one walk decides standing; a record cannot assert it
-  household: "derived",    // the grain, resolvable from `by` through households.json
+  // A SITED MARK — a thing standing somewhere in the world.
+  sited: {
+    identity:   { class: "the registered class name, on a class-node" },
+    relational: {
+      at:      ["containment", "an offset from the container's centre — meaningless without the edge"],
+      extent:  ["containment", "the footprint that offset governs"],
+      points:  ["containment", "a ring of positions; rides the same frame as `at`"],
+      coords:  ["containment", "which frame the numbers are written in"],
+      anchor:  ["containment", "where the offset is measured from"],
+      implements: ["implements", "class → the machinery that honours it"],
+      extends:    ["extends", "class → the class it specialises"],
+    },
+    property: {
+      mechanic:    ["mechanic", "the machinery that keeps this mark true"],
+      feature:     ["feature", "the two-precision survey link"],
+      version:     ["version", "the class's revision"],
+      dials:       ["dials", "the class's response boundaries — destined to BE class params"],
+      affordances: ["affordances", "what the class offers a resident"],
+      mobility:    ["mobility", "whether the mark moves, and how"],
+      far:         ["far", "visible from outside its own reach"],
+      propagation: ["propagation", "what becomes of what is attached when this moves"],
+      exempt:      ["exempt", "held out of a rule, by name"],
+      ambient:     ["ambient", "present without being stood upon"],
+      timetable:   ["timetable", "the schedule a `mechanic: timetable` mark carries"],
+      top_m:       ["top_m", "vertical prominence"],
+      ask:         ["ask", "a bounty's one request"],
+      reward:      ["reward", "a bounty's stamps"],
+      status:      ["status", "a bounty's open/done"],
+      threshold:   ["threshold", "the bar a bounty is met at"],
+      consent:     ["consent", "the ground-holder's welcome word about what stands on them"],
+    },
+  },
 
-  // → THE LOG. "events: {seq, actor, witnesses, class, payload}". A birth date
-  // is a fact about the action that made the node, not about the node.
-  date:      "log",
+  // A PARCEL — the ground a household holds.
+  parcel: {
+    relational: {
+      at:     ["containment", "an offset from the container's centre"],
+      extent: ["containment", "the footprint that offset governs"],
+    },
+    property: { consent: ["consent", "the ground-holder's welcome word"] },
+  },
 
-  // → PREDICATE. The (slot, value) pair IS a predicate's identity payload —
-  // "predicates are the atoms of authorship" (kinds.md § the node). These two
-  // keys are the only ones already in lawful shape on disk.
-  slot:      "predicate",
-  value:     "predicate",
+  // A PREDICATED MARK — already a predicate. Its (slot, value) pair IS its
+  // identity payload: "predicates are the atoms of authorship" (kinds.md). The
+  // only two keys on disk already in lawful shape.
+  predicated: {
+    predicate:  { slot: "the predicate's slot", value: "the predicate's value" },
+    relational: { parent: ["containment", "the node this predicates — its parent continued"] },
+    property:   {
+      mechanic:       ["mechanic", "the machinery that keeps this true"],
+      mechanic_draft: ["mechanic_draft", "a mechanic proposed but not registered"],
+    },
+  },
 
-  // → PROPERTY. Genuine authored properties, every one of which should be a
-  // predicate child hanging off the node rather than a field inside it.
-  source: "property", pre: "property", mechanic: "property", mechanic_draft: "property",
-  feature: "property", version: "property", dials: "property", affordances: "property",
-  mobility: "property", far: "property", propagation: "property", exempt: "property",
-  ambient: "property", timetable: "property", top_m: "property",
-  ask: "property", reward: "property", status: "property", threshold: "property",
-  consent: "property",  // the welcome word — a property of the ground-holder's record
+  // A NAMING — a predicate whose slot is implied by the act of naming.
+  naming: {
+    predicate:  { value: "the name given" },
+    relational: { parent: ["containment", "the node this names"] },
+  },
 };
+
+// Resolve one (class, key) pair through the map. Returns the row it serializes
+// into, the note explaining why, and — for a relation — the edge it becomes.
+// `unmapped` is the honest answer for a key the table does not place, and the
+// views render it as this table's own debt rather than as a property.
+function serializes(kind, key) {
+  for (const scope of [SERIALIZATION_MAP[kind], SERIALIZATION_MAP["*"]]) {
+    if (!scope) continue;
+    for (const row of ["identity", "relational", "derived", "log", "predicate", "property"]) {
+      const hit = scope[row]?.[key];
+      if (hit === undefined) continue;
+      if (row === "relational") return { row: "edge", edge: hit[0], note: hit[1] };
+      if (row === "property") return { row: "property", slot: hit[0], note: hit[1] };
+      return { row, note: hit };
+    }
+  }
+  return { row: "unmapped", note: "this table does not place this key — mapping debt" };
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // READERS — every one of them read-only. This tool opens exactly one file for
@@ -198,6 +284,153 @@ function readHouseholds(repo) {
   } catch { return { count: 0, generated_at: null }; }
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// THE METAMODEL — the law's own anatomy as a graph, authored by the founder pen
+// at LOGOS/graph/metamodel.json. This instrument only RENDERS it; it never
+// writes it and never invents a placeholder for it. Law content is the pen's,
+// never the builder's, so an absent file is reported as absent.
+//
+// Read defensively. The shape is authoritative from whatever the file actually
+// contains, not from what this reader expects:
+//   {"nodes":[{"id","class","predicates":{...},"prose":"LOGOS/<doc>.md#<anchor>"}],
+//    "edges":[{"from","type","to"}]}
+// Anything else at the top level, or any extra key on a node or an edge, is
+// COLLECTED AND LISTED rather than dropped or crashed on — an unexpected key is
+// the founder having said something this reader has not learned to hear yet,
+// and silently discarding it would be the worse failure.
+// ═══════════════════════════════════════════════════════════════════════════
+function readMetamodel(repo) {
+  const path = join(repo, "LOGOS", "graph", "metamodel.json");
+  if (!existsSync(path)) return { present: false, path: "LOGOS/graph/metamodel.json" };
+  let doc;
+  try { doc = JSON.parse(readFileSync(path, "utf8")); }
+  catch (e) { return { present: true, unreadable: e.message, path: "LOGOS/graph/metamodel.json" }; }
+
+  const KNOWN_TOP = new Set(["nodes", "edges"]);
+  const KNOWN_NODE = new Set(["id", "class", "predicates", "prose"]);
+  const KNOWN_EDGE = new Set(["from", "type", "to"]);
+  const unknown = { top: [], node: new Set(), edge: new Set() };
+  for (const k of Object.keys(doc ?? {})) if (!KNOWN_TOP.has(k)) unknown.top.push(k);
+
+  const nodes = (Array.isArray(doc?.nodes) ? doc.nodes : []).filter((n) => n && n.id != null).map((n) => {
+    for (const k of Object.keys(n)) if (!KNOWN_NODE.has(k)) unknown.node.add(k);
+    return {
+      id: String(n.id), class: n.class != null ? String(n.class) : null,
+      predicates: (n.predicates && typeof n.predicates === "object" && !Array.isArray(n.predicates)) ? n.predicates : {},
+      prose: n.prose != null ? String(n.prose) : null,
+      extra: Object.fromEntries(Object.entries(n).filter(([k]) => !KNOWN_NODE.has(k))),
+    };
+  });
+  const ids = new Set(nodes.map((n) => n.id));
+  const edgesAll = (Array.isArray(doc?.edges) ? doc.edges : []).filter((e) => e && e.from != null && e.to != null).map((e) => {
+    for (const k of Object.keys(e)) if (!KNOWN_EDGE.has(k)) unknown.edge.add(k);
+    return { from: String(e.from), type: e.type != null ? String(e.type) : "—", to: String(e.to) };
+  });
+  // An edge naming a node the file does not define is kept and reported, never
+  // silently dropped: a dangling edge is a fact about the law's draft state.
+  const edges = edgesAll.filter((e) => ids.has(e.from) && ids.has(e.to));
+  const dangling = edgesAll.filter((e) => !ids.has(e.from) || !ids.has(e.to));
+
+  return {
+    present: true, path: "LOGOS/graph/metamodel.json", nodes, edges, dangling,
+    unknown: { top: unknown.top, node: [...unknown.node], edge: [...unknown.edge] },
+    layout: layoutLayered(nodes, edges),
+  };
+}
+
+// A layered layout, computed HERE at generation time so the page needs no
+// runtime physics. Longest-path layering, then barycentre passes to reduce
+// crossings — the small honest version of Sugiyama: enough structure that typed
+// edges are readable on a 40-80 node graph, and no simulation loop in the
+// browser.
+//
+// CYCLES ARE EXPECTED. The law's anatomy contains them by nature — `declare`
+// produces an `edge` and an `edge` cites its `declare` — and a naive
+// longest-path walk over a cycle climbs forever. So back-edges are found first
+// by depth-first search and held out of the LAYERING only; every edge is still
+// drawn, a back-edge simply pointing leftward, which is the truth about it.
+function layoutLayered(nodes, edges) {
+  const COL = 230, ROW = 74, PAD = 40, NW = 168, NH = 34;
+  const out = new Map(nodes.map((n) => [n.id, []]));
+  for (const e of edges) out.get(e.from)?.push(e.to);
+
+  // Back-edge detection: a target already on the current DFS stack closes a
+  // cycle. Iterative, so a deep law does not overflow the JS stack.
+  const back = new Set();
+  const state = new Map(nodes.map((n) => [n.id, 0]));   // 0 unseen · 1 on stack · 2 done
+  for (const root of nodes) {
+    if (state.get(root.id) !== 0) continue;
+    const stack = [[root.id, 0]];
+    state.set(root.id, 1);
+    while (stack.length) {
+      const frame = stack[stack.length - 1];
+      const kids = out.get(frame[0]) ?? [];
+      if (frame[1] >= kids.length) { state.set(frame[0], 2); stack.pop(); continue; }
+      const next = kids[frame[1]++];
+      const s = state.get(next);
+      if (s === 1) back.add(`${frame[0]} ${next}`);
+      else if (s === 0) { state.set(next, 1); stack.push([next, 0]); }
+    }
+  }
+  const forward = edges.filter((e) => !back.has(`${e.from} ${e.to}`));
+
+  // Longest path over the acyclic remainder. The pass cap is belt-and-braces:
+  // with back-edges removed it always settles, and it is bounded anyway.
+  const layer = new Map(nodes.map((n) => [n.id, 0]));
+  for (let pass = 0; pass < nodes.length + 1; pass++) {
+    let moved = false;
+    for (const e of forward) {
+      const want = layer.get(e.from) + 1;
+      if (want > layer.get(e.to)) { layer.set(e.to, want); moved = true; }
+    }
+    if (!moved) break;
+  }
+
+  const byLayer = new Map();
+  for (const n of nodes) {
+    const L = layer.get(n.id) ?? 0;
+    if (!byLayer.has(L)) byLayer.set(L, []);
+    byLayer.get(L).push(n.id);
+  }
+  const inn = new Map(nodes.map((n) => [n.id, []]));
+  for (const e of forward) inn.get(e.to)?.push(e.from);
+
+  const order = new Map();
+  const layersAsc = [...byLayer].sort((a, b) => a[0] - b[0]);
+  for (const [, list] of layersAsc) list.forEach((id, i) => order.set(id, i));
+  for (let pass = 0; pass < 3; pass++) {
+    for (const [, list] of layersAsc) {
+      const bary = (id) => {
+        const ups = inn.get(id) ?? [];
+        return ups.length ? ups.reduce((s, u) => s + (order.get(u) ?? 0), 0) / ups.length : (order.get(id) ?? 0);
+      };
+      const keyed = list.map((id) => [id, bary(id)]);
+      keyed.sort((a, b) => a[1] - b[1]);
+      list.splice(0, list.length, ...keyed.map(([id]) => id));
+      list.forEach((id, i) => order.set(id, i));
+    }
+  }
+
+  // Positions. TOP-DOWN: a layer is a ROW, not a column. Left-to-right runs the
+  // graph off the side of the page at any real size — a law of forty concepts
+  // is eight layers deep and would be two thousand pixels wide — whereas
+  // top-down grows in the direction a page already scrolls.
+  //
+  // The canvas is measured from the positions themselves rather than from a
+  // layer count: the two disagree when layers are sparse, and a viewBox smaller
+  // than its contents hides nodes silently, which is how the first draft of
+  // this function lost seven of eleven concepts.
+  const pos = new Map();
+  const widest = Math.max(1, ...[...byLayer.values()].map((l) => l.length));
+  for (const [L, list] of layersAsc) {
+    const gap = (widest - list.length) * COL / 2;   // centre short rows
+    list.forEach((id, i) => pos.set(id, { x: PAD + gap + i * COL, y: PAD + L * ROW }));
+  }
+  let maxX = 0, maxY = 0;
+  for (const p of pos.values()) { maxX = Math.max(maxX, p.x + NW); maxY = Math.max(maxY, p.y + NH); }
+  return { pos, width: maxX + PAD, height: maxY + PAD, layers: byLayer.size, backEdges: back.size };
+}
+
 // WRITE-REGISTRY.md, parsed. The registry is the SOURCE for row names and
 // statuses; this tool only counts against it. Parsing is deliberately shallow —
 // a markdown table row, first cell is the surface, last cell is the status —
@@ -252,6 +485,7 @@ function buildModel() {
   const ledger = readLedger(REPO);
   const households = readHouseholds(REPO);
   const registry = readRegistry(REPO);
+  const metamodel = readMetamodel(REPO);
 
   // Standing, from the ONE walk. Never re-derived anywhere else in this file.
   const standing = new Map(marks.map((m) => [m.id, markStanding(m, byId)]));
@@ -273,16 +507,24 @@ function buildModel() {
   const unregisteredKinds = [...unregKinds].sort((a, b) => b[1] - a[1]);
 
   // The field census, partitioned by the law's placement table.
-  const census = { identity: 0, edge: 0, derived: 0, log: 0, predicate: 0, property: 0, unclassified: 0 };
-  const unclassifiedKeys = new Map();
+  // The field census, run through the serialization map. Three outcomes are
+  // deliberately kept apart, because they are three different kinds of problem
+  // and collapsing them would hide the one that is nobody's fault but ours:
+  //   derived   → TRUE RESIDUE. The map places it nowhere on purpose; the field
+  //               on disk is a violation of the law.
+  //   unmapped  → MAPPING DEBT. The map has not placed it yet; that is a gap in
+  //               SERIALIZATION_MAP, this instrument's own unfinished business.
+  //   the rest  → placed, lawfully or awaiting the cutover that moves them.
+  const census = { identity: 0, edge: 0, derived: 0, log: 0, predicate: 0, property: 0, unmapped: 0, total: 0 };
+  const unmappedKeys = new Map();
   const propertyKeys = new Map();
   const keysOnDisk = new Set();
   for (const m of marks) {
     for (const k of raw.get(m.id)?.keys ?? []) {
       keysOnDisk.add(k);
-      const row = FIELD_ROW[k] ?? "unclassified";
-      census[row]++;
-      if (row === "unclassified") unclassifiedKeys.set(k, (unclassifiedKeys.get(k) ?? 0) + 1);
+      const { row } = serializes(m.kind, k);
+      census[row]++; census.total++;
+      if (row === "unmapped") unmappedKeys.set(`${m.kind}.${k}`, (unmappedKeys.get(`${m.kind}.${k}`) ?? 0) + 1);
       if (row === "property") propertyKeys.set(k, (propertyKeys.get(k) ?? 0) + 1);
     }
   }
@@ -332,8 +574,8 @@ function buildModel() {
 
   return {
     repo: REPO, generatedAt: new Date().toISOString(),
-    marks, byId, raw, standing, store, log, ledger, households, registry,
-    classNodes, registered, citing, unregisteredKinds, census, unclassifiedKeys, propertyKeys, keysOnDisk,
+    marks, byId, raw, standing, store, log, ledger, households, registry, metamodel,
+    classNodes, registered, citing, unregisteredKinds, census, unmappedKeys, propertyKeys, keysOnDisk,
     tierCarriers, tierRead, tierInert, containment,
     storeSeen, storeTierDisagrees, storePlacement,
     logTypes, logWitnessed, logSeq, logClassed, birthsInLog, amendments, consentWords,
@@ -420,18 +662,19 @@ const MEASURES = {
   ],
   // The registry row this instrument was asked to answer (WRITE-REGISTRY.md
   // commit 5579baa4: "first machine form ships with the graph-views
-  // instrument"). FIELD_ROW at the top of this file IS that form — the
-  // trichotomy of LOGOS/kinds.md, written as a lookup a machine can run. It is
-  // a WAY STATION, not the destination: the row's destination is payload
-  // schemas on class-nodes, and a table in a read-only projection is only the
-  // first thing that can be counted.
+  // instrument"). SERIALIZATION_MAP at the top of this file IS that form.
   "the serialization mapping": (m) => [
-    { label: "distinct frontmatter keys mapped by the trichotomy",
-      now: Object.keys(FIELD_ROW).filter((k) => m.keysOnDisk.has(k)).length, of: m.keysOnDisk.size, target: m.keysOnDisk.size,
-      note: "the machine form is FIELD_ROW in tools/graph-views.mjs; the destination is payload schemas on class-nodes" },
-    { label: "field instances whose destination is a predicate child", now: m.census.property, of: null, target: 0, note: "" },
-    { label: "field instances whose destination is an edge", now: m.census.edge, of: null, target: 0, note: "" },
-    { label: "field instances whose destination is nowhere (derived)", now: m.census.derived, of: null, target: 0, note: "" },
+    { label: "the mapping's own stage",
+      stages: ["prose-only", `machine-readable (this instrument, v${SERIALIZATION_MAP.version})`, "on class-nodes (destination)"],
+      at: 1, note: `SERIALIZATION_MAP in tools/graph-views.mjs, authored ${SERIALIZATION_MAP.authored} — a way station; the destination is ${SERIALIZATION_MAP.destination}` },
+    { label: "(class, key) pairs the map places", now: m.census.total - m.census.unmapped, of: m.census.total, target: m.census.total,
+      note: "everything it does not place is mapping debt, counted on its own row below" },
+    { label: "MAPPING DEBT — key instances the map does not place", now: m.census.unmapped, of: null, target: 0,
+      note: m.unmappedKeys.size ? [...m.unmappedKeys.keys()].join(", ") : "none — every key on disk has a stated destination" },
+    { label: "destination: a predicate child", now: m.census.property, of: null, target: 0, note: "" },
+    { label: "destination: an edge", now: m.census.edge, of: null, target: 0, note: "" },
+    { label: "destination: nowhere — TRUE RESIDUE, a violation", now: m.census.derived, of: null, target: 0,
+      note: "the map places these nowhere on purpose; the field on disk is the violation" },
   ],
 };
 
@@ -452,10 +695,10 @@ function lawMeasures(m) {
         + [...m.propertyKeys].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, n]) => `${k} (${n})`).join(", ") },
     { label: "relations expressed as edges", now: 0, of: m.census.edge, target: m.census.edge,
       note: "every relational datum on disk is a field — by:, at:, parent:, derived_from:" },
-    { label: "derivables stored on records", now: m.census.derived, of: null, target: 0,
-      note: "tier and household, both derivable, both written down" },
-    { label: "unclassified frontmatter keys", now: m.census.unclassified, of: null, target: 0,
-      note: m.unclassifiedKeys.size ? [...m.unclassifiedKeys.keys()].join(", ") : "none — every key on disk maps into the law's placement table" },
+    { label: "TRUE RESIDUE — derivables stored on records", now: m.census.derived, of: null, target: 0,
+      note: "tier and household: the map places them nowhere, and they are written down anyway" },
+    { label: "MAPPING DEBT — keys the map does not place", now: m.census.unmapped, of: null, target: 0,
+      note: m.unmappedKeys.size ? [...m.unmappedKeys.keys()].join(", ") : "none — every key on disk has a stated destination" },
   ];
 }
 
@@ -562,6 +805,64 @@ ${storeNote}
 <ul class="tree">${roots.map((m) => node(m, 0)).join("")}</ul>`;
 }
 
+// The serialization map, rendered so the founder can red-pen it without opening
+// the source. Counts come from the live census, so a row that places a key
+// nothing on disk carries shows 0 and is visibly speculative.
+function renderMappingTable(model) {
+  const ROWS = [
+    ["identity", "identity", "an identity atom — slug + class, and nothing else"],
+    ["relational", "edge", "NOT a property; the entry names the edge it serializes"],
+    ["predicate", "predicate", "already lawful on disk — the (slot, value) pair is a predicate's own identity payload"],
+    ["property", "property", "a genuine authored property; lawful form is a predicate child"],
+    ["derived", "derived", "placed NOWHERE on purpose — a key here on disk is true residue"],
+    ["log", "log", "belongs to the citing action's record, not to the node"],
+  ];
+  const classes = ["*", "sited", "parcel", "predicated", "naming"];
+
+  // How many times each (class-scope, key) pair actually occurs on disk — the
+  // scope being whichever block resolved it, so a `*` row counts every class
+  // and a class row counts only its own.
+  const counted = new Map();
+  for (const m of model.marks) {
+    for (const k of model.raw.get(m.id)?.keys ?? []) {
+      const scope = bucketOf(m.kind, k) ? m.kind : "*";
+      counted.set(`${scope}.${k}`, (counted.get(`${scope}.${k}`) ?? 0) + 1);
+    }
+  }
+
+  const body = classes.flatMap((cls) => {
+    const scope = SERIALIZATION_MAP[cls];
+    if (!scope) return [];
+    return ROWS.flatMap(([bucket, row]) => Object.entries(scope[bucket] ?? {}).map(([k, v]) => {
+      const n = counted.get(`${cls}.${k}`) ?? 0;
+      const edgeOrSlot = Array.isArray(v) ? v[0] : null;
+      const gloss = Array.isArray(v) ? v[1] : v;
+      const chip = row === "edge" ? "p-edgey" : row === "derived" ? "p-residue" : row === "property" ? "p-would" : "p-ok";
+      return `<tr><td class="mcls">${cls === "*" ? "<i>every class</i>" : esc(cls)}</td>
+        <td><code>${esc(k)}</code></td>
+        <td><span class="p ${chip}">${esc(row)}</span></td>
+        <td>${edgeOrSlot ? `<code>${esc(edgeOrSlot)}</code>` : `<span class="na">—</span>`}</td>
+        <td class="mgloss">${esc(gloss)}</td>
+        <td class="num ${n ? "" : "na"}">${n || "—"}</td></tr>`;
+    }));
+  }).join("");
+
+  return `<details class="mapping"><summary><b>The serialization map</b> — v${esc(SERIALIZATION_MAP.version)}, ${esc(SERIALIZATION_MAP.authored)} · the one table, open to red pen</summary>
+<p class="note">Per class, what each frontmatter key serializes. <code>${esc(SERIALIZATION_MAP.cites)}</code> as a lookup.
+A key on disk this table does not place is <b>mapping debt</b>, counted on the convergence tab. Destination: ${esc(SERIALIZATION_MAP.destination)}.</p>
+<table class="diff maptable"><thead><tr><th>class</th><th>key</th><th>row</th><th>edge / slot</th><th>why</th><th>on disk</th></tr></thead>
+<tbody>${body}</tbody></table></details>`;
+}
+
+// Which bucket of a class block a key sits in — used only to attribute a count
+// to the right row of the rendered table.
+function bucketOf(kind, key) {
+  for (const b of ["identity", "relational", "derived", "log", "predicate", "property"]) {
+    if (SERIALIZATION_MAP[kind]?.[b]?.[key] !== undefined) return b;
+  }
+  return null;
+}
+
 // ── the ideal view: the same world through the law's glasses ─────────────────
 function renderIdeal(model) {
   const kids = childrenOf(model);
@@ -588,20 +889,33 @@ function renderIdeal(model) {
     if (Array.isArray(m.implements) && m.implements.length) edges.push(["implements", m.implements.join(", "), "class → class"]);
     if (m.extends) edges.push(["extends", String(m.extends), "class → class"]);
 
-    // Predicate children. The (slot, value) pair is already lawful; every other
-    // genuine property is shown as the predicate node it should be, marked so
-    // nobody mistakes the projection for the disk.
-    const preds = [];
+    // Predicate children, and the two things that are NOT predicate children
+    // and must not be drawn as if they were. Every key on disk is put through
+    // the serialization map, and the three outcomes render distinctly:
+    //   predicate/property → the predicate it is or should become
+    //   derived            → TRUE RESIDUE, a violation of the law
+    //   unmapped           → MAPPING DEBT, this instrument's own gap
+    const preds = [], residue = [], debt = [];
     if (m.slot != null) preds.push([esc(m.slot), esc(excerpt(m.value, 60)), true]);
-    for (const k of r.keys) if (FIELD_ROW[k] === "property") preds.push([esc(k), esc(excerpt(typeof m[k] === "object" ? JSON.stringify(m[k]) : m[k], 60)), false]);
+    for (const k of r.keys) {
+      const s = serializes(m.kind, k);
+      const val = esc(excerpt(typeof m[k] === "object" ? JSON.stringify(m[k]) : m[k], 60));
+      if (s.row === "property") preds.push([esc(s.slot), val, false]);
+      else if (s.row === "derived") residue.push([esc(k), val]);
+      else if (s.row === "unmapped") debt.push([esc(k), val]);
+    }
 
-    // The "why" for each edge type and each predicate state is in the legend,
-    // stated once, rather than in a tooltip repeated 623 times.
+    // The "why" for each edge type and each state is in the legend, stated
+    // once, rather than in a tooltip repeated 623 times.
     const detail = `<div class="ideal-detail">`
       + (edges.length ? `<div class="grp"><span class="grp-h">edges</span>${edges.map(([t, v]) =>
         `<span class="e"><b>${t}</b> ${v}<i class="hole">⌀</i></span>`).join("")}</div>` : "")
       + (preds.length ? `<div class="grp"><span class="grp-h">predicates</span>${preds.map(([k, v, lawful]) =>
         `<span class="p${lawful ? " p-ok" : " p-would"}"><b>${k}</b> ${v}</span>`).join("")}</div>` : "")
+      + (residue.length ? `<div class="grp"><span class="grp-h">residue</span>${residue.map(([k, v]) =>
+        `<span class="p p-residue"><b>${k}</b> ${v}</span>`).join("")}</div>` : "")
+      + (debt.length ? `<div class="grp"><span class="grp-h">debt</span>${debt.map(([k, v]) =>
+        `<span class="p p-debt"><b>${k}</b> ${v}</span>`).join("")}</div>` : "")
       + `</div>`;
 
     if (!kid.length) return `<li class="leaf"><details><summary>${head}</summary>${detail}</details></li>`;
@@ -626,10 +940,16 @@ function renderIdeal(model) {
 
   return `
 <h2>What LOGOS derives — one node type, identity plus predicate children</h2>
+<p class="tense"><b>Populated by this instrument's serialization map, v${esc(SERIALIZATION_MAP.version)}, authored ${esc(SERIALIZATION_MAP.authored)}.</b>
+Before that map existed this view was <b>empty</b> — nothing on disk had a mechanical predicate expression, because nothing stated
+which field serializes which part of a node. The trichotomy lived in ${esc(SERIALIZATION_MAP.cites)} as prose only. What you see below
+is that prose run as code; every predicate drawn here is drawn <i>by the map</i>, not read off the disk. Its destination is
+${esc(SERIALIZATION_MAP.destination)}, at which point the map is deleted and read from the graph like everything else.</p>
 <p class="lede">The same tree re-read: identity is <b>slug + class</b> and nothing else; authorship and containment are <b>edges</b>;
 genuine properties are <b>predicate children</b>; standing is <b>derived</b> and stored by nobody. No raw tier, no stored derivables —
 and where the substrate for a lawful expression is missing, a named hole rather than invented data.</p>
 ${statRow(lawMeasures(model).map((x) => [x.label, x.of != null ? `${x.now} / ${x.of}` : x.now, x.now === x.target ? "s-green" : "warn"]))}
+${renderMappingTable(model)}
 <div class="holes"><h3>The holes — named, not filled</h3>${holes.map(([t, row, txt]) =>
     `<div class="hole-card"><b>${esc(t)}</b> <span class="rowref">${esc(row)}</span><p>${txt}</p></div>`).join("")}</div>
 <div class="legend">
@@ -656,6 +976,13 @@ function renderDiff(model) {
     return `<span class="bar"><span style="width:${pct}%"></span></span><span class="pct">${pct}%</span>`;
   };
   const cell = (x) => {
+    // A stage row's measure is a POSITION on a named ladder, not a count. Some
+    // of what the founder is watching converge does not have a numerator.
+    if (Array.isArray(x.stages)) {
+      return `<td class="num"><div class="ladder">` + x.stages.map((s, i) =>
+        `${i ? `<span class="rung-sep">›</span>` : ""}<span class="rung ${i < x.at ? "done" : i === x.at ? "at" : ""}">${esc(s)}</span>`
+      ).join("") + `</div></td>`;
+    }
     if (x.now == null) return `<td class="num na">—</td>`;
     const good = x.target != null && x.now === x.target;
     return `<td class="num ${good ? "ok" : x.target != null ? "warn" : ""}">${x.now}${x.of != null ? ` <span class="of">of ${x.of}</span>` : ""}${x.target != null ? `<span class="tgt">target ${x.target}</span>` : ""}${bar(x.now, x.of)}</td>`;
@@ -687,7 +1014,20 @@ function renderDiff(model) {
        The registry is the source; either a row was renamed or a measure is stale. Fix <code>MEASURES</code> in <code>tools/graph-views.mjs</code>.</div>`
     : `<div class="nodrift">Every measure in this instrument binds to a live WRITE-REGISTRY.md row (${seen.size} of ${registry.sections.reduce((n, s) => n + s.rows.length, 0)} rows measured).</div>`;
 
-  const law = lawMeasures(model);
+  // The second crystallization — the law's own anatomy as a graph. Not a
+  // WRITE-REGISTRY row (the registry tracks WRITE surfaces; this is the law
+  // describing itself), so it rides the law's-own-measures block, reporting
+  // exactly what was on disk at generation time and nothing about intent.
+  const mm = model.metamodel;
+  const crystalAt = !mm.present || mm.unreadable ? 0 : (mm.nodes?.length ? 1 : 0);
+  const law = [...lawMeasures(model), {
+    label: "the second crystallization (ŷ_graph) — the law as a graph",
+    stages: ["absent", "v0 spine", "fidelity-linted"], at: crystalAt,
+    note: mm.present
+      ? (mm.unreadable ? `${mm.path} present but unparseable: ${mm.unreadable}`
+        : `${mm.path}: ${mm.nodes.length} concept nodes, ${mm.edges.length} typed edges, ${new Set(mm.edges.map((e) => e.type)).size} edge types`)
+      : `${mm.path} absent at generation time — the founder pen is authoring it; this instrument renders, never writes it`,
+  }];
 
   return `
 <h2>Convergence — the registry, counted</h2>
@@ -699,6 +1039,109 @@ ${drift}
 ${law.map((x) => `<tr><td class="mlabel" colspan="3">${esc(x.label)}${x.note ? `<i>${esc(x.note)}</i>` : ""}</td>${cell(x)}</tr>`).join("")}
 </tbody></table>
 ${sections}`;
+}
+
+// ── the fourth view: the law itself ──────────────────────────────────────────
+// The metamodel is the SECOND crystallization: the world graph is the town made
+// of nodes and edges; this is the LAW made of nodes and edges. Rendering it with
+// its edge types visible is the whole point — a concept map with unlabelled
+// lines would say the concepts are related without saying how, which is exactly
+// the fidelity the second crystallization exists to test.
+function renderMetamodel(model) {
+  const mm = model.metamodel;
+  const head = `<h2>The law itself — the metamodel</h2>`;
+
+  if (!mm.present) {
+    return head + `<p class="absent">The metamodel is being authored — <code>${esc(mm.path)}</code> absent at generation time.
+    This tab renders the law's own anatomy as a graph once the founder pen has written it; this instrument never authors law content,
+    so nothing is drawn here in the meantime. Re-run <code>tools/graph-views.mjs</code> after the file lands.</p>`;
+  }
+  if (mm.unreadable) {
+    return head + `<p class="absent warn"><code>${esc(mm.path)}</code> is present but did not parse: ${esc(mm.unreadable)}.
+    Nothing is drawn rather than drawn wrongly.</p>`;
+  }
+  if (!mm.nodes.length) {
+    return head + `<p class="absent"><code>${esc(mm.path)}</code> parsed but declares no nodes${
+      mm.unknown.top.length ? ` (top-level keys present: ${mm.unknown.top.map((k) => `<code>${esc(k)}</code>`).join(", ")})` : ""}.</p>`;
+  }
+
+  const { pos, width, height } = mm.layout;
+  const NW = 168, NH = 34;
+  const P = (id) => pos.get(id) ?? { x: 0, y: 0 };
+  const cx = (id) => P(id).x + NW / 2, cy = (id) => P(id).y + NH / 2;
+
+  // Reciprocal pairs share a midpoint, so their labels land on top of each
+  // other. Count each unordered pair first and fan the labels apart by index.
+  const pairSeen = new Map();
+  const pairIdx = mm.edges.map((e) => {
+    const k = [e.from, e.to].sort().join(" ");
+    const i = pairSeen.get(k) ?? 0;
+    pairSeen.set(k, i + 1);
+    return i;
+  });
+
+  const edgeSvg = mm.edges.map((e, i) => {
+    const a = P(e.from), b = P(e.to);
+    const fan = (pairIdx[i] - ((pairSeen.get([e.from, e.to].sort().join(" ")) ?? 1) - 1) / 2);
+    let d, lx, ly;
+    if (b.y > a.y) {
+      // Forward: leave the bottom of the source, arrive at the top of the target.
+      const x1 = cx(e.from), y1 = a.y + NH, x2 = cx(e.to), y2 = b.y;
+      const my = (y1 + y2) / 2;
+      d = `M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`;
+      lx = (x1 + x2) / 2; ly = my - 3 + fan * 13;
+    } else {
+      // Back or sideways: route off the right edge so it never hides under the
+      // forward flow. A back-edge pointing the other way is the truth about it.
+      const x1 = a.x + NW, y1 = cy(e.from), x2 = b.x + NW, y2 = cy(e.to);
+      const bulge = Math.max(x1, x2) + 46 + Math.abs(fan) * 18;
+      d = `M ${x1} ${y1} C ${bulge} ${y1}, ${bulge} ${y2}, ${x2} ${y2}`;
+      lx = bulge + 4; ly = (y1 + y2) / 2;
+    }
+    return `<g class="mm-edge${b.y > a.y ? "" : " mm-back"}" data-from="${esc(e.from)}" data-to="${esc(e.to)}">`
+      + `<path d="${d}" marker-end="url(#mm-arrow)"/>`
+      + `<text x="${lx}" y="${ly}" text-anchor="${b.y > a.y ? "middle" : "start"}">${esc(e.type)}</text></g>`;
+  }).join("");
+
+  const nodeSvg = mm.nodes.map((n) => {
+    const p = pos.get(n.id) ?? { x: 0, y: 0 };
+    const npred = Object.keys(n.predicates).length;
+    return `<g class="mm-node" data-id="${esc(n.id)}" tabindex="0" role="button">`
+      + `<rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="5"/>`
+      + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.id)}</text>`
+      + (npred ? `<text class="mm-badge" x="${p.x + NW - 9}" y="${p.y + NH / 2}" text-anchor="end" dominant-baseline="central">${npred}</text>` : "")
+      + `</g>`;
+  }).join("");
+
+  // Node detail travels in the page as data, so a click needs no fetch and the
+  // file stays openable from file://.
+  const data = JSON.stringify(Object.fromEntries(mm.nodes.map((n) => [n.id, {
+    class: n.class, predicates: n.predicates, prose: n.prose,
+    extra: Object.keys(n.extra).length ? n.extra : null,
+    out: mm.edges.filter((e) => e.from === n.id).map((e) => [e.type, e.to]),
+    in: mm.edges.filter((e) => e.to === n.id).map((e) => [e.type, e.from]),
+  }])));
+
+  const notes = [];
+  if (mm.dangling.length) notes.push(`<b>${mm.dangling.length}</b> edge(s) name a node the file does not define — kept and listed, not dropped: `
+    + mm.dangling.slice(0, 8).map((e) => `<code>${esc(e.from)} —${esc(e.type)}→ ${esc(e.to)}</code>`).join(", "));
+  if (mm.unknown.top.length) notes.push(`unknown top-level key(s): ${mm.unknown.top.map((k) => `<code>${esc(k)}</code>`).join(", ")}`);
+  if (mm.unknown.node.length) notes.push(`unknown node key(s), carried through to the detail panel: ${mm.unknown.node.map((k) => `<code>${esc(k)}</code>`).join(", ")}`);
+  if (mm.unknown.edge.length) notes.push(`unknown edge key(s): ${mm.unknown.edge.map((k) => `<code>${esc(k)}</code>`).join(", ")}`);
+
+  return head
+    + `<p class="lede">The law's own anatomy, read from <code>${esc(mm.path)}</code> — the founder pen's file, rendered and never written by this tool.
+       Edge types are drawn on the edges: a concept map with unlabelled lines would say the concepts are related without saying how.
+       Click a node for its predicates and its prose pointer.</p>`
+    + statRow([["concept nodes", mm.nodes.length], ["typed edges", mm.edges.length],
+        ["edge types", new Set(mm.edges.map((e) => e.type)).size], ["layers", mm.layout.layers]])
+    + (notes.length ? `<div class="legend">${notes.map((n) => `<div>${n}</div>`).join("")}</div>` : "")
+    + `<div class="mm-wrap"><div class="mm-canvas"><svg viewBox="0 0 ${width + (mm.layout.backEdges ? 170 : 0)} ${height}" width="${width + (mm.layout.backEdges ? 170 : 0)}" height="${height}" role="img" aria-label="the metamodel graph">
+        <defs><marker id="mm-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1 L 8 4 L 0 7 z"/></marker></defs>
+        ${edgeSvg}${nodeSvg}</svg></div>
+      <aside class="mm-panel" id="mm-panel"><p class="dim">Click a concept to read it.</p></aside></div>
+      <script type="application/json" id="mm-data">${data.replace(/</g, "\\u003c")}</script>`;
 }
 
 function statRow(items) {
@@ -792,12 +1235,92 @@ td.num.na { color:#5d636e; }
 .drift { background:#33221f; border:1px solid #5a3730; border-radius:4px; padding:10px 14px; color:#d98a7a; font-size:.84rem; margin:12px 0; }
 .nodrift { background:#1e2a21; border:1px solid #3a5a44; border-radius:4px; padding:10px 14px; color:#84c98f; font-size:.84rem; margin:12px 0; }
 footer { margin-top:40px; padding-top:14px; border-top:1px solid #2e3542; color:#5d636e; font-size:.76rem; }
+/* the honest tense of the ideal tab */
+.tense { background:#1a1e25; border:1px solid #262c36; border-left:3px solid #7ba7e0; border-radius:4px;
+  padding:11px 15px; font-size:.85rem; color:#9a9280; max-width:88ch; }
+.tense b { color:#c8c0af; }
+/* the serialization map, open to red pen */
+details.mapping { margin:16px 0; background:#1a1e25; border:1px solid #262c36; border-radius:4px; padding:10px 15px; }
+details.mapping>summary { font-size:.9rem; color:#c8c0af; }
+table.maptable td { font-size:.8rem; }
+td.mcls { color:#7ba7e0; width:11%; } td.mgloss { color:#7e7867; font-style:italic; width:40%; }
+.p-edgey { border-color:#3a4a63; } .p-edgey b { color:#7ba7e0; }
+.p-residue { border-color:#5a3730; background:#241b19; color:#d98a7a; }
+.p-residue b { color:#d98a7a; font-weight:normal; margin-right:5px; }
+.p-debt { border-style:dotted; border-color:#65517f; background:#211c29; color:#aa8fd8; }
+.p-debt b { color:#aa8fd8; font-weight:normal; margin-right:5px; }
+.na { color:#5d636e; }
+/* the stage ladder — a row whose measure is a position, not a count */
+.ladder { display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+.rung { font-size:.68rem; font-family:ui-monospace,Consolas,Menlo,monospace; padding:2px 8px; border-radius:3px;
+  border:1px solid #2e3542; color:#5d636e; background:#1a1f27; white-space:nowrap; }
+.rung.done { color:#84c98f; border-color:#3a5a44; }
+.rung.at { color:#e8c56a; border-color:#4a3f22; background:#2a2418; }
+.rung-sep { color:#3a4048; font-size:.7rem; }
+/* the metamodel tab */
+.absent { background:#1a1e25; border:1px solid #262c36; border-left:3px solid #5d636e; border-radius:4px;
+  padding:14px 18px; color:#9a9280; max-width:82ch; }
+.absent.warn { border-left-color:#d98a7a; }
+.mm-wrap { display:flex; gap:14px; align-items:flex-start; margin:14px 0; }
+.mm-canvas { flex:1 1 auto; overflow:auto; background:#1a1e25; border:1px solid #262c36; border-radius:4px; padding:6px; }
+.mm-canvas svg { display:block; }
+.mm-edge path { fill:none; stroke:#3d4551; stroke-width:1.4; }
+.mm-edge text { fill:#7e8794; font:10px ui-monospace,Consolas,Menlo,monospace; paint-order:stroke;
+  stroke:#1a1e25; stroke-width:3px; stroke-linejoin:round; }
+.mm-edge.lit path { stroke:#e8c56a; stroke-width:2.2; } .mm-edge.lit text { fill:#e8c56a; }
+.mm-back path { stroke-dasharray:4 3; stroke:#4a4150; } .mm-back text { fill:#8a7f96; }
+#mm-arrow path { fill:#3d4551; }
+.mm-node rect { fill:#20262f; stroke:#3a4250; stroke-width:1.2; }
+.mm-node text { fill:#c8c0af; font:12px ui-monospace,Consolas,Menlo,monospace; }
+.mm-node text.mm-badge { fill:#5d636e; font-size:10px; }
+.mm-node { cursor:pointer; }
+.mm-node:hover rect, .mm-node:focus rect { stroke:#e8c56a; }
+.mm-node.sel rect { stroke:#e8c56a; stroke-width:2; fill:#2a2418; }
+.mm-panel { flex:0 0 300px; background:#1a1e25; border:1px solid #262c36; border-radius:4px; padding:12px 15px;
+  font-size:.84rem; max-height:640px; overflow:auto; }
+.mm-panel h4 { margin:0 0 3px; font-size:.95rem; color:#e8c56a; font-weight:normal;
+  font-family:ui-monospace,Consolas,Menlo,monospace; }
+.mm-panel .dim { color:#5d636e; }
+.mm-panel dl { margin:6px 0 0; } .mm-panel dt { color:#84c98f; font-size:.7rem;
+  font-family:ui-monospace,Consolas,Menlo,monospace; margin-top:7px; }
+.mm-panel dd { margin:1px 0 0; color:#9a9280; font-size:.8rem; }
+.mm-panel a { color:#7ba7e0; }
+@media (max-width:900px) { .mm-wrap { flex-direction:column; } .mm-panel { flex:1 1 auto; width:100%; } }
 `;
 
 const JS = `
 function show(i){document.querySelectorAll('nav button').forEach(function(b,j){b.setAttribute('aria-selected',j===i);});
 document.querySelectorAll('main>section').forEach(function(s,j){s.hidden=j!==i;});}
 function allDetails(btn,open){btn.closest('section').querySelectorAll('details').forEach(function(d){d.open=open;});}
+(function(){
+  var el=document.getElementById('mm-data'); if(!el) return;
+  var data=JSON.parse(el.textContent), panel=document.getElementById('mm-panel');
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function rows(list,arrow){return list.map(function(p){
+    return '<dd><code>'+esc(p[0])+'</code> '+arrow+' '+esc(p[1])+'</dd>';}).join('');}
+  function pick(id){
+    var n=data[id]; if(!n) return;
+    document.querySelectorAll('.mm-node').forEach(function(g){g.classList.toggle('sel',g.dataset.id===id);});
+    document.querySelectorAll('.mm-edge').forEach(function(g){
+      g.classList.toggle('lit',g.dataset.from===id||g.dataset.to===id);});
+    var h='<h4>'+esc(id)+'</h4>';
+    if(n.class) h+='<p class="dim">class: '+esc(n.class)+'</p>';
+    var keys=Object.keys(n.predicates||{});
+    if(keys.length){h+='<dl><dt>predicates</dt>'+keys.map(function(k){
+      var v=n.predicates[k]; if(v&&typeof v==='object') v=JSON.stringify(v);
+      return '<dd><b>'+esc(k)+'</b> '+esc(v)+'</dd>';}).join('')+'</dl>';}
+    if(n.out&&n.out.length) h+='<dl><dt>edges out</dt>'+rows(n.out,'&rarr;')+'</dl>';
+    if(n.in&&n.in.length) h+='<dl><dt>edges in</dt>'+rows(n.in,'&larr;')+'</dl>';
+    if(n.prose) h+='<dl><dt>prose</dt><dd><a href="../'+esc(n.prose)+'">'+esc(n.prose)+'</a></dd></dl>';
+    else h+='<p class="dim">no prose pointer on this node.</p>';
+    if(n.extra) h+='<dl><dt>keys this reader does not know</dt><dd>'+esc(JSON.stringify(n.extra))+'</dd></dl>';
+    panel.innerHTML=h;
+  }
+  document.querySelectorAll('.mm-node').forEach(function(g){
+    g.addEventListener('click',function(){pick(g.dataset.id);});
+    g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(g.dataset.id);}});
+  });
+})();
 `;
 
 function renderHtml(model, views) {
@@ -822,10 +1345,11 @@ const ALL = [
   { key: "practical", label: "What IS", render: renderPractical },
   { key: "ideal", label: "What LOGOS derives", render: renderIdeal },
   { key: "diff", label: "Convergence", render: renderDiff },
+  { key: "law", label: "The law itself", render: renderMetamodel },
 ];
 const chosen = VIEW === "all" ? ALL : ALL.filter((v) => v.key === VIEW);
 if (!chosen.length) {
-  console.error(`unknown --view "${VIEW}" — one of: practical, ideal, diff (default: all three, tabbed)`);
+  console.error(`unknown --view "${VIEW}" — one of: practical, ideal, diff, law (default: all four, tabbed)`);
   process.exit(1);
 }
 writeFileSync(OUT, renderHtml(model, chosen.map((v) => ({ label: v.label, html: v.render(model) }))));
