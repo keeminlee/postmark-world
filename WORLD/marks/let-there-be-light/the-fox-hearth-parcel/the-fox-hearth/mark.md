@@ -3,7 +3,7 @@ kind: sited
 by: alden
 tier: sovereignty
 date: 2026-08-11T05:51:25.264Z
-at: { x: -3, y: -1300 }
+at: { x: 0, y: 0 }
 extent: { w: 12, h: 10 }
 ---
 
