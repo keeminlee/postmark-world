@@ -508,36 +508,32 @@ function readLogosLaw(repo) {
   return out;
 }
 
-// ── logos/ from the prose alone ──────────────────────────────────────────────
-// The TARGET tree, derived from LOGOS's own text and nothing else (Keemin,
-// 2026-08-12: "depth 1 is literally the files as listed in INDEX.md; work your
-// way down from there"). Depth 0 = logos; depth 1 = the docs in the INDEX
-// table's own order; depth 2 = each doc's ## sections; depth 3 = ### where one
-// exists. No mark is read — this is what the prose says logos/ should look
-// like, to be compared against "The law itself" (what stands).
-function readLogosProse(repo) {
-  const dir = join(repo, "LOGOS");
-  const out = { present: existsSync(join(dir, "INDEX.md")), nodes: [], edges: [], docs: 0, sections: 0, layout: null };
-  if (!out.present) return out;
-  const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
-  const idx = readFileSync(join(dir, "INDEX.md"), "utf8");
-  const files = [...idx.matchAll(/^\|\s*\[([a-z-]+\.md)\]/gm)].map((m) => m[1]);
-  out.nodes.push({ id: "logos", label: "logos", prose: "LOGOS/INDEX.md", line: "the law in one breath", parentId: null });
-  for (const f of files) {
-    let text;
-    try { text = readFileSync(join(dir, f), "utf8"); } catch { continue; }
-    out.docs++;
-    const docId = `logos/${f.replace(/\.md$/, "")}`;
-    const one = idx.match(new RegExp(`\\[${f.replace(".", "\\.")}\\]\\([^)]*\\)\\s*\\|\\s*([^|\\n]+)`))?.[1]?.trim() ?? "";
-    out.nodes.push({ id: docId, label: f.replace(/\.md$/, ""), prose: `LOGOS/${f}`, line: one, parentId: "logos" });
-    let h2 = null;
-    for (const line of text.split(/\r?\n/)) {
-      const m3 = line.match(/^###\s+(.*)/);
-      const m2 = m3 ? null : line.match(/^##\s+(.*)/);
-      if (m2) { h2 = `${docId}/${slug(m2[1])}`; out.nodes.push({ id: h2, label: slug(m2[1]), prose: `LOGOS/${f}`, line: m2[1].trim(), parentId: docId }); out.sections++; }
-      else if (m3 && h2) { out.nodes.push({ id: `${h2}/${slug(m3[1])}`, label: slug(m3[1]), prose: `LOGOS/${f}`, line: m3[1].trim(), parentId: h2 }); out.sections++; }
+// ── logos/ from the prose: the PROPOSAL tree, as lawful marks ────────────────
+// tools/logos-proposal/logos-spec.mjs is the founder pen's transliteration of
+// LOGOS v2 into marks — every node one ≤150-char claim, slot+value predicates,
+// source: fidelity both directions. materialize-logos.mjs writes it as real
+// mark.md files and gates it with the REAL mark-lint. This reader draws those
+// files: pass --proposal <fixture-dir> (absent = a named absence, never a
+// substitute derivation).
+function readLogosProposal() {
+  const dir = opt("--proposal", null);
+  const out = { present: false, dir, nodes: [], edges: [], docs: 0, layout: null };
+  if (!dir) return out;
+  const root = join(dir, "WORLD", "marks", "let-there-be-light", "the-record");
+  if (!existsSync(root)) return { ...out, unreadable: `${dir} holds no WORLD/marks/let-there-be-light/the-record` };
+  out.present = true;
+  const walk = (d, parentId, depth) => {
+    const mk = join(d, "mark.md");
+    let id = parentId;
+    if (existsSync(mk)) {
+      const { fm, firstLine } = parseMarkFile(mk);
+      id = `${fm.by ?? "?"}/${basename(d)}`;
+      out.nodes.push({ id, label: basename(d), fm, body: firstLine, parentId, depth });
+      if (depth === 1) out.docs++;
     }
-  }
+    for (const e of readdirSync(d, { withFileTypes: true })) if (e.isDirectory()) walk(join(d, e.name), id, depth + 1);
+  };
+  walk(root, null, 0);
   const ids = new Set(out.nodes.map((n) => n.id));
   out.edges = out.nodes.filter((n) => n.parentId && ids.has(n.parentId)).map((n) => ({ from: n.parentId, type: "contains", to: n.id }));
   out.layout = layoutLayered(out.nodes, out.edges);
@@ -703,7 +699,7 @@ async function buildModel() {
   const households = readHouseholds(REPO);
   const registry = readRegistry(REPO);
   const law = readLogosLaw(REPO);
-  const prose = readLogosProse(REPO);
+  const prose = readLogosProposal();
   const window_ = await readWindow(REPO);
   const worldRefResolved = worldRefSha(REPO, window_?.payload?.as_of?.world_ref ?? null);
 
@@ -1469,8 +1465,11 @@ function renderLawItself(model) {
 // ── the fifth view: logos/ from the prose ────────────────────────────────────
 function renderLawFromProse(model) {
   const pr = model.prose;
-  const head = `<h2>From the prose — logos/ as LOGOS describes it</h2>`;
-  if (!pr.present) return head + `<p class="absent"><code>LOGOS/INDEX.md</code> is not in this clone.</p>`;
+  const head = `<h2>From the prose — logos/ as lawful marks (the proposal)</h2>`;
+  if (!pr.present) return head + `<p class="absent">${pr.unreadable ? esc(pr.unreadable) + "." : "No proposal tree given."}
+    Generate one: <code>node tools/logos-proposal/materialize-logos.mjs &lt;world-repo&gt; &lt;fixture-dir&gt;</code>
+    (it writes the spec as real marks and gates them with the real <code>mark-lint</code>), then re-run with
+    <code>--proposal &lt;fixture-dir&gt;</code>.</p>`;
 
   const { pos, width, height } = pr.layout;
   const NW = 168, NH = 34;
@@ -1487,23 +1486,32 @@ function renderLawFromProse(model) {
 
   const nodeSvg = pr.nodes.map((n) => {
     const p = P(n.id);
+    const badge = n.fm.source ? String(n.fm.source).replace(/^LOGOS\//, "").replace(/\.md$/, "").slice(0, 14) : null;
     return `<g class="mm-node" data-id="${esc(n.id)}" tabindex="0" role="button">`
       + `<rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="5"/>`
-      + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.label.slice(0, 22))}</text>`
+      + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.label.slice(0, 20))}</text>`
+      + (badge ? `<text class="mm-badge" x="${p.x + NW - 9}" y="${p.y + NH / 2}" text-anchor="end" dominant-baseline="central">${esc(badge)}</text>` : "")
       + `</g>`;
   }).join("");
 
   const data = JSON.stringify(Object.fromEntries(pr.nodes.map((n) => [n.id, {
-    class: null, predicates: {}, prose: n.prose, line: n.line,
+    class: n.fm.kind ?? null, by: n.fm.by ?? null, doc: n.fm.source ?? null,
+    predicates: n.fm.slot != null ? { [n.fm.slot]: n.fm.value ?? "" } : {},
+    prose: n.fm.source ?? null, line: n.body,
     out: pr.edges.filter((e) => e.from === n.id).map((e) => [e.type, e.to]),
     in: pr.edges.filter((e) => e.to === n.id).map((e) => [e.type, e.from]),
   }])));
 
+  const over = pr.nodes.filter((n) => (n.body ?? "").length > 150).length;
+
   return head
-    + `<p class="lede">The TARGET tree, derived from the prose alone — depth 1 is the ten docs in <code>INDEX.md</code>'s own order,
-       below each doc its own sections. Nothing here reads the-record: compare with <b>The law itself</b> to see standing vs described.
-       Click a node for its heading and its doc.</p>`
-    + statRow([["docs", pr.docs], ["sections", pr.sections], ["nodes", pr.nodes.length]])
+    + `<p class="lede">LOGOS v2 transliterated into marks by the founder pen — every node an actual <code>mark.md</code>:
+       one present-tense claim ≤150 characters, <code>slot</code>+<code>value</code> as its predicate identity, <code>by: the-town</code>,
+       <code>source:</code> fidelity held both directions. Gated by the real <code>mark-lint</code> before this page drew it.
+       Click a mark to read its claim.</p>`
+    + statRow([["docs", pr.docs], ["marks", pr.nodes.length],
+        ["bodies over 150", over, over ? "warn" : "s-green"],
+        ["source", `--proposal`, ""]])
     + `<div class="toolbar"><button onclick="mmFit('mm2-svg')">fit</button><span class="dim">drag to pan · wheel to zoom · every drawn edge is containment in the described tree</span></div>`
     + `<div class="mm-wrap"><div class="mm-canvas mm-law"><svg id="mm2-svg" data-all="0 0 ${width} ${height}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="logos from the prose">
         <defs><marker id="mm2-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
