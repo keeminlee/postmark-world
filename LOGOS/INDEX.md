@@ -28,64 +28,73 @@ inline; nothing here presents a proposal as a ruling.
 
 > **The world is a pure function of its log evaluated under its law.**
 
-That sentence is this section's structure: three terms — the log, the
-function, the law — and every atomic rule lives under one of them. Where any
-prose in this folder seems to disagree with an atom, the atom governs and the
-prose is owed a correction.
+That sentence is this section's structure — four terms, one pipeline: the
+**log** (the input) → the **law** (the rules) → the **function** (the rules,
+running) → the **world** (what it derives). Every atomic rule lives under one
+of them. Where any prose in this folder seems to disagree with an atom, the
+atom governs and the prose is owed a correction.
 
 **THE LOG** — the only stored truth
 1. **Every write is an action; every graph mutation is an effect.** Anything
    else stored is a regenerable projection or contraband — no write surface
    may carry a private grammar. *(the-north-star · state-and-time)*
 
-**THE FUNCTION** — the evaluation, and everything it derives
+**THE LAW** — the rulebook: classes, tiers, contracts; amendable, and held
+in trust
+2. **Every constitutional instance is custody — a best-guess held in
+   trust.** Dissolution is dilution, read off the ledger; the endgame is
+   everything sovereign-and-market once the market can stand on its own.
+   *(the-north-star)*
+3. **The floor is beyond the ensemble's reach.** Independence — the
+   credential-household grain — moves only through the amendment clause;
+   the town can never vote away its own anti-sybil floor. *(the-north-star)*
+4. **A rendering may say less than its source, never other.**
+   *(three-layers § fidelity)*
+5. **Amendments to this law are the one write that is not a graph
+   operation.** The regress closes here: git, the lint, the witness, the
+   founders' pens. *(this document's preamble)*
+
+**THE FUNCTION** — the rulebook running: pure, blind, epochal
+6. **The evaluation is deterministic and discretion-free — no favorites are
+   expressible, because the function has no input where one could go.** It
+   runs on the settlement's clock — crossings are its epochs — and any clone
+   replaying it derives the same world, forever.
+   *(the-response-function · state-and-time)*
+
+**THE WORLD** — what the function derives
 
 *its nodes:*
-2. **One node type: identity plus predicate children.** Kind-words are
+7. **One node type: identity plus predicate children.** Kind-words are
    vocabulary; classes are law; predicates are the atoms of authorship.
    *(kinds)*
-3. **A node's tier says whose claim it is; a predicate's tier says what is
+8. **A node's tier says whose claim it is; a predicate's tier says what is
    law.** Constitutional overrules wherever it speaks, whatever node carries
    it. *(classes; ruled 2026-08-13)*
-4. **Tier is never asserted; standing is derived from ground.** The one walk
+9. **Tier is never asserted; standing is derived from ground.** The one walk
    decides; the door refuses the word. *(tiers)*
 
 *its edges:*
-5. **Edges always form.** Formation is never consented to; the response
-   governs what an edge does, never whether it exists — and every edge
-   stands under exactly one response: **welcomed, neutral, or opposed**.
-   Neutral is the default everywhere; law is an exceptions ledger — the town
-   writes down its objections, and neutrality is free.
-   *(edit-law · the-response-function)*
-6. **Conferral has exactly two channels.** A class declares what its
-   instances are born as; a ground's revisable word confers the holder's own
-   standing. The join uses neither: admission is the absence of objection.
-   *(classes · tiers · the-response-function; ruled 2026-08-13)*
-7. **Frames bind by rank; nothing rides above its own ground.** A law of
-   geometry, never of governance. *(edit-law § the constitutive flip; scoped
-   2026-08-13)*
+10. **Edges always form.** Formation is never consented to; the response
+    governs what an edge does, never whether it exists — and every edge
+    stands under exactly one response: **welcomed, neutral, or opposed**.
+    Neutral is the default everywhere; law is an exceptions ledger — the
+    town writes down its objections, and neutrality is free.
+    *(edit-law · the-response-function)*
+11. **Conferral has exactly two channels.** A class declares what its
+    instances are born as; a ground's revisable word confers the holder's
+    own standing. The join uses neither: admission is the absence of
+    objection. *(classes · tiers · the-response-function; ruled 2026-08-13)*
+12. **Frames bind by rank; nothing rides above its own ground.** A law of
+    geometry, never of governance. *(edit-law § the constitutive flip;
+    scoped 2026-08-13)*
 
 *its canon:*
-8. **Market is the set of claims; canon is what the fold publishes at the
-   crossing.** A conflict is a market doing its job. *(conflict-matrix)*
+13. **Market is the set of claims; canon is what the fold publishes at the
+    crossing.** A conflict is a market doing its job. *(conflict-matrix)*
 
 *its reads:*
-9. **Truth has no budget; every read has one.** Read policy never
-   masquerades as physics. *(reads-and-affordances)*
-
-**THE LAW** — the rules the evaluation runs under, and this layer itself
-10. **Every constitutional instance is custody — a best-guess held in
-    trust.** Dissolution is dilution, read off the ledger; the endgame is
-    everything sovereign-and-market once the market can stand on its own.
-    *(the-north-star)*
-11. **The floor is beyond the ensemble's reach.** Independence — the
-    credential-household grain — moves only through the amendment clause;
-    the town can never vote away its own anti-sybil floor. *(the-north-star)*
-12. **A rendering may say less than its source, never other.**
-    *(three-layers § fidelity)*
-13. **Amendments to this law are the one write that is not a graph
-    operation.** The regress closes here: git, the lint, the witness, the
-    founders' pens. *(this document's preamble)*
+14. **Truth has no budget; every read has one.** Read policy never
+    masquerades as physics. *(reads-and-affordances)*
 
 ## The law in one breath
 
