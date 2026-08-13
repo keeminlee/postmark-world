@@ -1,8 +1,8 @@
 {
-  "crossing": 124,
-  "covers_from": "2026-08-13T00:00:00.000Z",
-  "covers_to": "2026-08-13T12:00:00.000Z",
-  "complete": true,
+  "crossing": 125,
+  "covers_from": "2026-08-13T12:00:00.000Z",
+  "covers_to": "2026-08-13T12:02:36.297Z",
+  "complete": false,
   "as_of_world": "25a4f721d871d82ce2699c22eea28f039c168c25",
   "event_count": 0,
   "counts": {
