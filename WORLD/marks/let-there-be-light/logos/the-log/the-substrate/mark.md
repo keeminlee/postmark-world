@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: carrier
 value: a lawful carrier of the log
 tier: constitution
 ---

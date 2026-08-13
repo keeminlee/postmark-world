@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: carriage
 value: what rides what
 tier: constitution
 ---

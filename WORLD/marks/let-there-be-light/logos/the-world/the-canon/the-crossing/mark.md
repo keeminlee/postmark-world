@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: clock
 value: the function's clock
 tier: constitution
 ---

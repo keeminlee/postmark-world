@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: yield
 value: the log seen through the law
 tier: constitution
 ---

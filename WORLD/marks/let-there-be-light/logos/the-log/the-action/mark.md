@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: entry
 value: one act, one record
 tier: constitution
 ---

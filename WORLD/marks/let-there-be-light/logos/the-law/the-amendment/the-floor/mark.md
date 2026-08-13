@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: limit
 value: beyond the ensemble's reach
 tier: constitution
 ---

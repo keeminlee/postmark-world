@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: transfer
 value: the two channels standing travels
 tier: constitution
 ---

@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: unit
 value: law about a kind of thing
 tier: constitution
 ---

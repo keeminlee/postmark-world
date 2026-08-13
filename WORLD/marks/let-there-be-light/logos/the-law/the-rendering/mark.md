@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: presence
 value: law standing in the world
 tier: constitution
 ---

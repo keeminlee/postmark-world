@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: state
 value: the epoch's resolved state
 tier: constitution
 ---

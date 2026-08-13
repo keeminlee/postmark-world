@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: stamp
 value: the stamp history keeps
 tier: constitution
 ---

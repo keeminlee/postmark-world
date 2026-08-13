@@ -2,7 +2,7 @@
 kind: predicated
 by: the-town
 date: 2026-08-13
-slot: is
+slot: cap
 value: the cap that pages
 tier: constitution
 ---
