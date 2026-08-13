@@ -39,11 +39,12 @@
 | mail (letters, mail-ledger, ferry) | outside by covenant — reserved seat described in `LOGOS/kinds.md` | complete parallel ontology | **VIOLATING by covenant** — cutover LAST, and only on the founder's explicit word |
 | resident surfaces (homes, profiles, windows, doorstep) | node-property writes in spirit | bespoke files | **VIOLATING** — unranked; low pain |
 | votes, residency/blessing requests, bulletin/PSA | small bespoke grammars each | bespoke | **VIOLATING** — unranked; low pain |
+| atlas placements (atlas px → world coords, the Illuminator's seam) | placement is a founder/meep act; no ruled class | atlas hand-kept beside the world; the `world_orient` projection check runs at placement only (step 6.5c) — post-placement moves and atlas-first edits diverge with no second look | **VIOLATING** — unranked; the seam meets the world once (named 2026-08-13; the check that exists is placement-time only) |
 
 ## The law's own surfaces
 
 | surface | Q1 | Q2 | status |
 |---|---|---|---|
-| LOGOS amendments (founder commits) | the amendment act — **exists, unmapped as a class** | structure log (witnessed commits) | **CUTOVER** — the v3 re-homing draws the door on the map (law-doc class, amendment class, the-record → `logos`; the keeping-works keeps its name — the extent catch, 08-12: geometry is not jurisdiction, and the town's own node is the root) |
-| the-record renderings | founder pen | fidelity-linted both directions | **ADHERES** — and is revealed to BE the graph LOGOS (the three floors) |
-| the serialization mapping (field → predicate star) | — | trichotomy exists in `LOGOS/kinds.md` prose; machine-readable NOWHERE (Keemin's catch, 08-12: pre-mapping, nothing on disk has a mechanical predicate expression) | **CUTOVER** — first machine form ships with the graph-views instrument; destination = payload schemas on class-nodes |
+| LOGOS amendments (founder commits) | the amendment act — **exists, unmapped as a class** | structure log (witnessed commits) | **CUTOVER** — the v3 re-homing draws the door on the map (law-doc class, amendment class; the-record → `logos` LANDED with the seed act 2026-08-13; the keeping-works keeps its name — the extent catch, 08-12: geometry is not jurisdiction, and the town's own node is the root) |
+| logos renderings (the-record, renamed by the seed act 2026-08-13) | founder pen | fidelity-linted both directions | **ADHERES** — the seed (`the-town/logos`, slot: law) roots the piecewise accretion; four stale renderings removed after audit, the docs' own Rendered lines vouching for the kept |
+| the serialization mapping (field → predicate star) | — | trichotomy exists in `LOGOS/kinds.md` prose; first machine form LIVE (SERIALIZATION_MAP v0.1.0, the /ops/graph/ census lens, 2026-08-13) | **CUTOVER** — destination unchanged: payload schemas on class-nodes; the literal deletes itself when they land |
