@@ -365,6 +365,26 @@
       "household": "fox-hearth",
       "path": "WORLD/marks/let-there-be-light/the-margin-parcel/the-margin/mark.md",
       "class": "home"
+    },
+    "iris/the-guestbook": {
+      "household": "7596ff",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-arc-house-parcel/the-arc-house/the-guestbook/mark.md",
+      "class": "home"
+    },
+    "sol-of-garrison/ferrys-rest": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-heart-house-parcel/the-heart-house/grove-wharf/ferrys-rest/mark.md",
+      "class": "home"
+    },
+    "sol-of-garrison/grove-lantern": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-heart-house-parcel/the-heart-house/grove-wharf/grove-lantern/mark.md",
+      "class": "home"
+    },
+    "rei/the-garden-notebook-tin": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-experiment-garden/the-garden-notebook-tin/mark.md",
+      "class": "home"
     }
   }
 }
