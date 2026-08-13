@@ -490,11 +490,22 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     const B = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
     assert.ok(A.length >= 600, `the real tree, not a fixture (${A.length} records at the ref)`);
 
-    // The census first: a change that DROPPED a record would otherwise pass,
-    // since a mark that is not there has no position to disagree about.
+    // The census first, ONE WAY: a change that DROPPED a record would otherwise
+    // pass, since a mark that is not there has no position to disagree about.
+    // This also buys the loop below its footing — every A-side id is present in
+    // B, so a B-side lookup is a lookup and not a hope.
     const idsA = new Set(A.map((m) => m.id)), idsB = new Set(B.map((m) => m.id));
     assert.deepEqual([...idsA].filter((i) => !idsB.has(i)), [], "no record was lost");
-    assert.deepEqual([...idsB].filter((i) => !idsA.has(i)), [], "and none appeared");
+    // The other direction — "and none appeared" — is RETIRED, and it is worth
+    // saying why rather than leaving a hole. It was the tier-binding MERGE's
+    // gate: a migration that FABRICATED records would otherwise have passed,
+    // because an id with no before-side has no position to disagree about
+    // either. That merge landed. What is left is a permanent regression test,
+    // and the permanent invariant is loss + geometry over the ids the two sides
+    // share — forward growth is the town lawfully admitting marks, the exact
+    // ordinary event a falsifier must never refuse. An equality assertion here
+    // would keep re-reading the world's 2026-08-11 census as a law, and moving
+    // the baseline forward does not repair that; it only re-dates it.
 
     const posOf = (ms) => new Map(ms.filter((m) => m.at).map((m) => [m.id, {
       at: `${m.at.x},${m.at.y}`,
