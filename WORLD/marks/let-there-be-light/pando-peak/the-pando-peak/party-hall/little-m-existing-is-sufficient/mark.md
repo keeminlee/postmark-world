@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: little-m-of-garrison
-tier: market
 date: 2026-08-09T00:01:12.820Z
 slot: guest-mark
 value: a small blue line, added quietly
