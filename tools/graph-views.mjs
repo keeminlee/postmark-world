@@ -504,7 +504,7 @@ function readLogosLaw(repo) {
     .filter((n) => n.rel.includes("/the-keeping-works/") || n.slug === "the-wheelhouse")
     .map((n) => ({ id: n.id, doc: named.get(n.id) ?? null }));
 
-  out.layout = layoutLayered(out.nodes, out.edges);
+  out.layout = layoutTree(out.nodes, out.edges);
   return out;
 }
 
@@ -534,115 +534,44 @@ function readLogosProposal() {
     for (const e of readdirSync(d, { withFileTypes: true })) if (e.isDirectory()) walk(join(d, e.name), id, depth + 1);
   };
   walk(root, null, 0);
+  // The outline's sibling order is the spec's, carried by the fixture's own
+  // manifest; the tree on disk is unordered and stays that way.
+  try {
+    const order = JSON.parse(readFileSync(join(dir, "proposal-order.json"), "utf8"));
+    const idx = new Map(order.map((id, i) => [id, i]));
+    out.nodes.sort((a, b) => (idx.get(a.id) ?? -1) - (idx.get(b.id) ?? -1));
+  } catch { /* no manifest — alphabetical walk order stands */ }
   const ids = new Set(out.nodes.map((n) => n.id));
   out.edges = out.nodes.filter((n) => n.parentId && ids.has(n.parentId)).map((n) => ({ from: n.parentId, type: "contains", to: n.id }));
-  out.layout = layoutLayered(out.nodes, out.edges);
+  out.layout = layoutTree(out.nodes, out.edges);
   return out;
 }
 
-// A layered layout, computed HERE at generation time so the page needs no
-// runtime physics. Longest-path layering, then barycentre passes to reduce
-// crossings — the small honest version of Sugiyama: enough structure that typed
-// edges are readable on a 40-80 node graph, and no simulation loop in the
-// browser.
-//
-// CYCLES ARE EXPECTED. The law's anatomy contains them by nature — `declare`
-// produces an `edge` and an `edge` cites its `declare` — and a naive
-// longest-path walk over a cycle climbs forever. So back-edges are found first
-// by depth-first search and held out of the LAYERING only; every edge is still
-// drawn, a back-edge simply pointing leftward, which is the truth about it.
-function layoutLayered(nodes, edges) {
-  const COL = 230, ROW = 74, PAD = 40, NW = 168, NH = 34;
-  const out = new Map(nodes.map((n) => [n.id, []]));
-  for (const e of edges) out.get(e.from)?.push(e.to);
-
-  // Back-edge detection: a target already on the current DFS stack closes a
-  // cycle. Iterative, so a deep law does not overflow the JS stack.
-  const back = new Set();
-  const state = new Map(nodes.map((n) => [n.id, 0]));   // 0 unseen · 1 on stack · 2 done
-  for (const root of nodes) {
-    if (state.get(root.id) !== 0) continue;
-    const stack = [[root.id, 0]];
-    state.set(root.id, 1);
-    while (stack.length) {
-      const frame = stack[stack.length - 1];
-      const kids = out.get(frame[0]) ?? [];
-      if (frame[1] >= kids.length) { state.set(frame[0], 2); stack.pop(); continue; }
-      const next = kids[frame[1]++];
-      const s = state.get(next);
-      if (s === 1) back.add(`${frame[0]}\t${next}`);
-      else if (s === 0) { state.set(next, 1); stack.push([next, 0]); }
-    }
-  }
-  const forward = edges.filter((e) => !back.has(`${e.from}\t${e.to}`));
-
-  // Longest path over the acyclic remainder. The pass cap is belt-and-braces:
-  // with back-edges removed it always settles, and it is bounded anyway.
-  const layer = new Map(nodes.map((n) => [n.id, 0]));
-  for (let pass = 0; pass < nodes.length + 1; pass++) {
-    let moved = false;
-    for (const e of forward) {
-      const want = layer.get(e.from) + 1;
-      if (want > layer.get(e.to)) { layer.set(e.to, want); moved = true; }
-    }
-    if (!moved) break;
-  }
-
-  const byLayer = new Map();
-  for (const n of nodes) {
-    const L = layer.get(n.id) ?? 0;
-    if (!byLayer.has(L)) byLayer.set(L, []);
-    byLayer.get(L).push(n.id);
-  }
-  const inn = new Map(nodes.map((n) => [n.id, []]));
-  for (const e of forward) inn.get(e.to)?.push(e.from);
-
-  const order = new Map();
-  const layersAsc = [...byLayer].sort((a, b) => a[0] - b[0]);
-  for (const [, list] of layersAsc) list.forEach((id, i) => order.set(id, i));
-  for (let pass = 0; pass < 3; pass++) {
-    for (const [, list] of layersAsc) {
-      const bary = (id) => {
-        const ups = inn.get(id) ?? [];
-        return ups.length ? ups.reduce((s, u) => s + (order.get(u) ?? 0), 0) / ups.length : (order.get(id) ?? 0);
-      };
-      const keyed = list.map((id) => [id, bary(id)]);
-      keyed.sort((a, b) => a[1] - b[1]);
-      list.splice(0, list.length, ...keyed.map(([id]) => id));
-      list.forEach((id, i) => order.set(id, i));
-    }
-  }
-
-  // Positions. TOP-DOWN: a layer is a ROW, not a column. Left-to-right runs the
-  // graph off the side of the page at any real size — a law of forty concepts
-  // is eight layers deep and would be two thousand pixels wide — whereas
-  // top-down grows in the direction a page already scrolls.
-  //
-  // The canvas is measured from the positions themselves rather than from a
-  // layer count: the two disagree when layers are sparse, and a viewBox smaller
-  // than its contents hides nodes silently, which is how the first draft of
-  // this function lost seven of eleven concepts.
-  // A LAYER IS NOT ALWAYS ONE ROW. The real metamodel puts 20 root concepts on
-  // layer 0 and one node each on layers 7 and 8; laid out flat that is a canvas
-  // 4,600px wide in which the single-node rows are centred so far right they
-  // leave the opening view entirely. So a wide layer WRAPS into several visual
-  // rows, and centring happens against the widest VISUAL row rather than the
-  // widest layer.
-  const PER_ROW = 6;
-  const visual = [];
-  for (const [, list] of layersAsc) {
-    for (let i = 0; i < list.length; i += PER_ROW) visual.push(list.slice(i, i + PER_ROW));
-  }
+// A tidy HORIZONTAL tree for containment: root at the left, depth grows right,
+// siblings stack downward in their given order, a parent sits centred on its
+// children, and every subtree is contiguous — the outline, drawn. Replaces the
+// layered rows for both law tabs: rows-by-depth interleaved unrelated subtrees,
+// which is exactly what an outline must never do.
+function layoutTree(nodes, edges) {
+  const COL = 252, ROW = 40, PAD = 40, NW = 200, NH = 30;
+  const kids = new Map(nodes.map((n) => [n.id, []]));
+  const hasParent = new Set(edges.map((e) => e.to));
+  for (const e of edges) kids.get(e.from)?.push(e.to);
   const pos = new Map();
-  const widest = Math.max(1, ...visual.map((r) => r.length));
-  visual.forEach((row, r) => {
-    const gap = (widest - row.length) * COL / 2;
-    row.forEach((id, i) => pos.set(id, { x: PAD + gap + i * COL, y: PAD + r * ROW }));
-  });
-  let maxX = 0, maxY = 0;
-  for (const p of pos.values()) { maxX = Math.max(maxX, p.x + NW); maxY = Math.max(maxY, p.y + NH); }
-  return { pos, width: maxX + PAD, height: maxY + PAD, layers: byLayer.size, rows: visual.length, backEdges: back.size };
+  let row = 0, maxDepth = 0;
+  const place = (id, depth) => {
+    maxDepth = Math.max(maxDepth, depth);
+    const c = kids.get(id) ?? [];
+    if (!c.length) { const y = PAD + row++ * ROW; pos.set(id, { x: PAD + depth * COL, y }); return y; }
+    const ys = c.map((k) => place(k, depth + 1));
+    const y = (Math.min(...ys) + Math.max(...ys)) / 2;
+    pos.set(id, { x: PAD + depth * COL, y });
+    return y;
+  };
+  for (const n of nodes) if (!hasParent.has(n.id)) place(n.id, 0);
+  return { pos, width: PAD * 2 + (maxDepth + 1) * COL + NW - COL, height: PAD * 2 + Math.max(1, row) * ROW, layers: maxDepth + 1, rows: row };
 }
+
 
 // WRITE-REGISTRY.md, parsed. The registry is the SOURCE for row names and
 // statuses; this tool only counts against it. Parsing is deliberately shallow —
@@ -1390,18 +1319,17 @@ function renderLawItself(model) {
   if (!lg.present) return head + `<p class="absent"><code>${esc(lg.path)}</code> is not in this clone.</p>`;
 
   const { pos, width, height } = lg.layout;
-  const NW = 168, NH = 34;
+  const NW = 200, NH = 30;
   const P = (id) => pos.get(id) ?? { x: 0, y: 0 };
-  const cx = (id) => P(id).x + NW / 2;
 
-  // Every drawn edge is real containment (child always one layer deeper, so
-  // every edge flows downward); the legend says it once instead of 30 labels.
+  // Every drawn edge is real containment; the tree runs left-to-right, so an
+  // edge leaves its parent's right edge and lands on its child's left.
   const edgeSvg = lg.edges.map((e) => {
     const a = P(e.from), b = P(e.to);
-    const x1 = cx(e.from), y1 = a.y + NH, x2 = cx(e.to), y2 = b.y;
-    const my = (y1 + y2) / 2;
+    const x1 = a.x + NW, y1 = a.y + NH / 2, x2 = b.x, y2 = b.y + NH / 2;
+    const mx = (x1 + x2) / 2;
     return `<g class="mm-edge" data-from="${esc(e.from)}" data-to="${esc(e.to)}">`
-      + `<path d="M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}" marker-end="url(#mm-arrow)"/></g>`;
+      + `<path d="M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}" marker-end="url(#mm-arrow)"/></g>`;
   }).join("");
 
   const short = (doc) => doc ? doc.replace(/^LOGOS\//, "").replace(/\.md$/, "") : null;
@@ -1410,6 +1338,7 @@ function renderLawItself(model) {
     const badge = short(n.doc);
     const stray = n.parentId && !n.doc && !n.prose;
     return `<g class="mm-node${stray ? " mm-stray" : ""}" data-id="${esc(n.id)}" tabindex="0" role="button">`
+      + `<title>${esc(n.firstLine ?? "")}</title>`
       + `<rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="5"/>`
       + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.id.split("/")[1] ?? n.id)}</text>`
       + (badge ? `<text class="mm-badge" x="${p.x + NW - 9}" y="${p.y + NH / 2}" text-anchor="end" dominant-baseline="central">${esc(badge)}</text>` : "")
@@ -1472,25 +1401,24 @@ function renderLawFromProse(model) {
     <code>--proposal &lt;fixture-dir&gt;</code>.</p>`;
 
   const { pos, width, height } = pr.layout;
-  const NW = 168, NH = 34;
+  const NW = 200, NH = 30;
   const P = (id) => pos.get(id) ?? { x: 0, y: 0 };
-  const cx = (id) => P(id).x + NW / 2;
 
   const edgeSvg = pr.edges.map((e) => {
     const a = P(e.from), b = P(e.to);
-    const x1 = cx(e.from), y1 = a.y + NH, x2 = cx(e.to), y2 = b.y;
-    const my = (y1 + y2) / 2;
+    const x1 = a.x + NW, y1 = a.y + NH / 2, x2 = b.x, y2 = b.y + NH / 2;
+    const mx = (x1 + x2) / 2;
     return `<g class="mm-edge" data-from="${esc(e.from)}" data-to="${esc(e.to)}">`
-      + `<path d="M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}" marker-end="url(#mm2-arrow)"/></g>`;
+      + `<path d="M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}" marker-end="url(#mm2-arrow)"/></g>`;
   }).join("");
 
   const nodeSvg = pr.nodes.map((n) => {
     const p = P(n.id);
-    const badge = n.fm.source ? String(n.fm.source).replace(/^LOGOS\//, "").replace(/\.md$/, "").slice(0, 14) : null;
+    const badge = n.fm.slot ? String(n.fm.slot).slice(0, 14) : null;
     return `<g class="mm-node" data-id="${esc(n.id)}" tabindex="0" role="button">`
+      + `<title>${esc(n.body ?? "")}</title>`
       + `<rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="5"/>`
-      + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.label.slice(0, 20))}</text>`
-      + (badge ? `<text class="mm-badge" x="${p.x + NW - 9}" y="${p.y + NH / 2}" text-anchor="end" dominant-baseline="central">${esc(badge)}</text>` : "")
+      + `<text x="${p.x + 10}" y="${p.y + NH / 2}" dominant-baseline="central">${esc(n.label.slice(0, 24))}</text>`
       + `</g>`;
   }).join("");
 

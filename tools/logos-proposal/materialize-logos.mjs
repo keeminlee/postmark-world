@@ -84,6 +84,12 @@ for (const f of readdirSync(join(REAL, "LOGOS")).filter((x) => x.endsWith(".md")
   writeFileSync(join(FIX, "LOGOS", f), text);
 }
 
+// Sibling order is real in the prose and absent from a directory listing, so
+// the outline's order ships as a projection beside the tree, never inside it.
+const order = [];
+for (const d of DOCS) { order.push(`${BY}/${d.leaf}`); for (const s of d.sections) { order.push(`${BY}/${s.leaf}`); for (const c of s.claims) order.push(`${BY}/${c.leaf}`); } }
+writeFileSync(join(FIX, "proposal-order.json"), JSON.stringify(order, null, 1) + "\n");
+
 console.log(`materialized ${count} marks under the-record in ${FIX}`);
 
 // ── the gate: the REAL lint, no substitutes ──────────────────────────────────
