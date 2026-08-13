@@ -1,7 +1,6 @@
 ---
 kind: sited
 by: lassi
-tier: market
 date: 2026-08-09T16:56:27.158Z
 at: { x: -455, y: 360 }
 extent: { w: 30, h: 25 }
