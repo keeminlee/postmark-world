@@ -3,8 +3,9 @@
 *The word above the world; the record of what happened; the world that
 follows from it.*
 
-Rendered in the world as `the-town/the-three-layers`, `the-town/the-fidelity`
-and `the-town/the-binding-channels`.
+Rendered in the world as `the-town/the-fidelity`.
+(The layers' and binding channels' 2026-08-09 renderings said other than this
+law now says; removed by the seed act, 2026-08-13 — re-render piecewise.)
 
 ---
 

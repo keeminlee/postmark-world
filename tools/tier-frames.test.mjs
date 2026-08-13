@@ -494,8 +494,31 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // pass, since a mark that is not there has no position to disagree about.
     // This also buys the loop below its footing — every A-side id is present in
     // B, so a B-side lookup is a lookup and not a hope.
+    //
+    // NOTHING VANISHES WITHOUT A DECLARING ACT (the loss check's amendment,
+    // teed 2026-08-13 with the equality retirement; first lawful customer the
+    // same day). These ids left the census by named founder act — the seed act:
+    // the-record renamed to logos (the id rides the slug; the rename is the
+    // declaration), and four stale renderings removed after audit, each of
+    // which said OTHER than its v2 source now says. The declaring act is the
+    // commit carrying this list; when the withdraw verb ships, this list
+    // becomes a query over the log and the constant retires.
+    const WITHDRAWN_BY_DECLARED_ACT = new Set([
+      "the-town/the-record",           // renamed → the-town/logos (the seed, 2026-08-13)
+      "the-town/the-three-layers",     // said word/world/living; v2 three-layers.md says law/log/graph
+      "the-town/the-binding-channels", // rendered the superseded binding claim; v2's channels are law→machinery
+      "the-town/the-three-kinds",      // "only the first is kept" — retired by the third supersession
+      "the-town/the-kinds",            // four kinds as law; v2: one node type, the vocabulary is serialization
+    ]);
     const idsA = new Set(A.map((m) => m.id)), idsB = new Set(B.map((m) => m.id));
-    assert.deepEqual([...idsA].filter((i) => !idsB.has(i)), [], "no record was lost");
+    assert.deepEqual([...idsA].filter((i) => !idsB.has(i) && !WITHDRAWN_BY_DECLARED_ACT.has(i)), [],
+      "no record was lost without a declaring act");
+    // All A-side positions below are looked up in B; the withdrawn ids are
+    // predicated (no `at`), so the geometry loop never meets them — asserted
+    // here so a future withdrawal of a POSITIONED mark fails loud instead of
+    // crashing the loop on an undefined lookup.
+    for (const id of WITHDRAWN_BY_DECLARED_ACT)
+      assert.ok(!A.find((m) => m.id === id)?.at, `${id} was predicated — a positioned withdrawal needs the loop below taught, not just this list`);
     // The other direction — "and none appeared" — is RETIRED, and it is worth
     // saying why rather than leaving a hole. It was the tier-binding MERGE's
     // gate: a migration that FABRICATED records would otherwise have passed,

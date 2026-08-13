@@ -91,7 +91,7 @@ const CLASS_ROSTER = new Set(marks
   .map((m) => String(m.class)));
 
 // the gate quotes the law (rung 1, 2026-08-02): a refusal cites the clause of
-// the-town/the-record it enforces — id + body verbatim, so the bounce hands the
+// the-town/logos it enforces — id + body verbatim, so the bounce hands the
 // writer an investigable handle and the exact law, never a paraphrase. The
 // clauses live in the very tree this gate lints; if a cited clause is missing
 // the gate still refuses, and says its own lookup failed (the law never blocks
@@ -100,7 +100,7 @@ const LAW = new Map(marks.map((m) => [m.id, String(m.body ?? "").trim().replace(
 const cite = (clauseId) => {
   const body = LAW.get(clauseId);
   return body
-    ? ` — the law: ${clauseId} (a clause of the-town/the-record): "${body}"`
+    ? ` — the law: ${clauseId} (a clause of the-town/logos): "${body}"`
     : ` — the law: ${clauseId} (clause not found in the record; the gate's law lookup failed)`;
 };
 const byId = new Map();

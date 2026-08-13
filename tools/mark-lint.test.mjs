@@ -1,7 +1,7 @@
 // mark-lint.test.mjs — rung 1 acceptance: the gate quotes the law.
 // A refusal must cite the clause mark it enforces — id + body verbatim — so a
 // bounced writer holds an investigable handle and the exact law, never a
-// paraphrase. The fixture is a minimal tree carrying the REAL the-record
+// paraphrase. The fixture is a minimal tree carrying the REAL logos
 // clauses (copied from WORLD/marks), plus deliberate violations.
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -20,7 +20,7 @@ function fixtureTree() {
   const root = join(dir, "let-there-be-light");
   mkdirSync(root, { recursive: true });
   copyFileSync(join(REAL, "mark.md"), join(root, "mark.md"));
-  cpSync(join(REAL, "the-record"), join(root, "the-record"), { recursive: true });
+  cpSync(join(REAL, "logos"), join(root, "logos"), { recursive: true });
   return { dir, root };
 }
 
@@ -31,14 +31,14 @@ function runLint(marksDir) {
 
 test("a sited intruder under a predicate bounces citing the-continuation, body verbatim", () => {
   const { dir, root } = fixtureTree();
-  const bad = join(root, "the-record", "the-one-claim", "the-intruder");
+  const bad = join(root, "logos", "the-one-claim", "the-intruder");
   mkdirSync(bad, { recursive: true });
   writeFileSync(join(bad, "mark.md"),
     "---\nkind: sited\nby: testerhh\ndate: 2026-08-02\nat: { x: 5, y: 5 }\nextent: { w: 2, h: 2 }\n---\n\nA shed where no shed can stand.\n");
   const out = runLint(dir);
   assert.match(out, /the-town\/the-continuation/, "the clause id is cited");
   assert.match(out, /its own children may only be predicates in turn/, "the clause body is quoted verbatim");
-  assert.match(out, /a clause of the-town\/the-record/, "the crown is named — the second id of the two-id citation");
+  assert.match(out, /a clause of the-town\/logos/, "the crown is named — the second id of the two-id citation");
 });
 
 test("an over-cap body bounces citing the-one-claim", () => {
@@ -54,7 +54,7 @@ test("an over-cap body bounces citing the-one-claim", () => {
 
 test("a stray .md bounces citing the-one-file", () => {
   const { dir, root } = fixtureTree();
-  writeFileSync(join(root, "the-record", "notes.md"), "# stray notes\n");
+  writeFileSync(join(root, "logos", "notes.md"), "# stray notes\n");
   const out = runLint(dir);
   assert.match(out, /the-town\/the-one-file/, "the clause id is cited");
   assert.match(out, /anything else worth\s+keeping must be a full mark/, "the clause body is quoted");
@@ -131,11 +131,11 @@ test("the mechanic and the schedule travel together — neither half is a servic
 // travel with the whole marks tree, because the channel is a fact about a repo
 // read whole. The lint is pointed at it with --repo.
 //
-// The tree must be WHOLE, not just the-record. The doc → clause direction reads
+// The tree must be WHOLE, not just logos. The doc → clause direction reads
 // every Rendered line in LOGOS/ and demands the mark it names; a fixture that
 // carries all the documents but only some of the marks makes honest documents
 // look like liars, and the failure lands on the lint rather than on the fixture
-// that caused it. (It did, the day the class marks landed outside the-record.)
+// that caused it. (It did, the day the class marks landed outside logos.)
 
 function fidelityRepo() {
   const repo = mkdtempSync(join(tmpdir(), "fidelity-"));
@@ -166,7 +166,7 @@ test("the channel is clean as it stands — every rendering and its source name 
 
 test("L-source-1: a source: pointing at no file bounces, citing the fidelity clause", () => {
   const repo = fidelityRepo();
-  editFile(repo, "WORLD/marks/let-there-be-light/the-record/the-three-layers/mark.md",
+  editFile(repo, "WORLD/marks/let-there-be-light/logos/the-gate/the-fidelity/mark.md",
     "source: LOGOS/three-layers.md", "source: LOGOS/the-vanished-doc.md");
   const out = runRepoLint(repo);
   assert.match(out, /\[ERROR\].*source: LOGOS\/the-vanished-doc\.md names no readable file/, "the dangling citation is named");
@@ -176,7 +176,7 @@ test("L-source-1: a source: pointing at no file bounces, citing the fidelity cla
 
 test("L-source-1: a source: climbing out of the repo bounces before it is ever read", () => {
   const repo = fidelityRepo();
-  editFile(repo, "WORLD/marks/let-there-be-light/the-record/the-tense/mark.md",
+  editFile(repo, "WORLD/marks/let-there-be-light/logos/the-tense/mark.md",
     "source: LOGOS/state-and-time.md", "source: ../../elsewhere/state-and-time.md");
   assert.match(runRepoLint(repo), /\[ERROR\].*must be a path inside this repository/, "a word outside the repo is a word nobody here can check");
 });
@@ -187,7 +187,7 @@ test("L-source-2: a document that stops naming its rendering goes red in BOTH di
   const out = runRepoLint(repo);
   assert.match(out, /\[ERROR\] LOGOS\/tiers\.md: Rendered line names "the-town\/some-other-clause", which is no mark in the tree/,
     "document → clause: a rendering claimed by nobody");
-  assert.match(out, /\[ERROR\].*the-record\/the-tiers: source: LOGOS\/tiers\.md renders .* — not "the-town\/the-tiers"/,
+  assert.match(out, /\[ERROR\].*logos\/the-tiers: source: LOGOS\/tiers\.md renders .* — not "the-town\/the-tiers"/,
     "clause → document: the citation is no longer returned");
 });
 
@@ -204,7 +204,7 @@ test('"Rendered in the world: not yet" is an honest declaration — tolerated, u
   const clean = fidelityRepo();
   assert.match(runRepoLint(clean), /CLEAN/, "reads-and-affordances.md declares not-yet and passes untouched");
   const repo = fidelityRepo();
-  editFile(repo, "WORLD/marks/let-there-be-light/the-record/the-three-layers/mark.md",
+  editFile(repo, "WORLD/marks/let-there-be-light/logos/the-gate/the-fidelity/mark.md",
     "source: LOGOS/three-layers.md", "source: LOGOS/reads-and-affordances.md");
   assert.match(runRepoLint(repo), /\[ERROR\].*says "Rendered in the world: not yet" — either this clause is early or that line is stale/,
     "a clause rendering a document that says it has no rendering yet");
@@ -212,7 +212,7 @@ test('"Rendered in the world: not yet" is an honest declaration — tolerated, u
 
 test("the doc → clause direction stays silent on a borrowed tree — the lane must never bounce a stale sketchbook", () => {
   // main's documents, judging a tree that is a crossing behind them: here, a
-  // sketchbook so stale that none of the-record has reached it yet. Every
+  // sketchbook so stale that none of logos has reached it yet. Every
   // Rendered line in LOGOS/ names a clause this tree does not have.
   const dir = mkdtempSync(join(tmpdir(), "marklint-stale-"));
   const root = join(dir, "let-there-be-light");
@@ -223,7 +223,7 @@ test("the doc → clause direction stays silent on a borrowed tree — the lane 
 });
 
 test("the gate never blocks on its own law's absence — missing clause degrades to an honest lookup-failed", () => {
-  // a tree WITHOUT the-record: violations still refuse, with the lookup named
+  // a tree WITHOUT logos: violations still refuse, with the lookup named
   const dir = mkdtempSync(join(tmpdir(), "marklint-bare-"));
   const root = join(dir, "let-there-be-light");
   mkdirSync(root, { recursive: true });

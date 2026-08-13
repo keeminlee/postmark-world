@@ -8,7 +8,7 @@ they cannot drift, because the lint and the fold share one loader and one
 Pre-flight anything before it lands: **`node tools/mark-lint.mjs`** (a gate — it
 exits non-zero on any error, with the exact fix).
 
-Rendered in the world as `the-town/the-kinds`.
+Rendered in the world: not yet — the-kinds rendering stated the four-kind vocabulary as law and was removed by the seed act (2026-08-13); under the third supersession this file is serialization, and its rendering returns as class-nodes land.
 
 ---
 
@@ -311,7 +311,7 @@ region that contains them (id unchanged — the ledger doesn't move).
 - **`imports:` is reserved, not built** — the ruled design (persisted
   investigations: marks whose context auto-injects when building on or under
   the declaring mark) awaits its machinery. Do not author the field yet.
-- **The law lives in the record itself:** `let-there-be-light/the-record` —
+- **The law lives in the record itself:** `let-there-be-light/logos` —
   the conditions of the World as constitution-tier predicates of the root,
   each clause sized to be quoted whole by the gate that enforces it. This
   schema remains the enforced spelling; where prose and record disagree, that

@@ -3,8 +3,10 @@
 *Marks stand, entities live, emissions happen — and all three are the same
 thing, born the same way, differing in one class param.*
 
-Rendered in the world as `the-town/the-three-kinds`, `the-town/the-standing-question`,
-`the-town/the-fading`, and `the-town/the-human-lane`.
+Rendered in the world as `the-town/the-standing-question`, `the-town/the-fading`,
+and `the-town/the-human-lane`.
+(The three-kinds rendering predated the third supersession and said the retired
+storage binding; removed by the seed act, 2026-08-13 — re-render piecewise.)
 
 > **Third supersession (2026-08-12).** The first grammar made mark / entity /
 > emission a superclass tripartition; the second bound them by storage. Both

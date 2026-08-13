@@ -132,7 +132,7 @@ function fixtureTree() {
   const root = join(dir, "let-there-be-light");
   mkdirSync(root, { recursive: true });
   copyFileSync(join(REAL, "mark.md"), join(root, "mark.md"));
-  cpSync(join(REAL, "the-record"), join(root, "the-record"), { recursive: true });
+  cpSync(join(REAL, "logos"), join(root, "logos"), { recursive: true });
   // the board, in the root's own frame; the notice at the board's centre (0,0
   // in a relative tree), so the fixture holds in either coordinate regime.
   const board = join(root, "the-bounty-board");

@@ -11,7 +11,7 @@
 > and cannot be — the system's rules of change live outside the system).
 >
 > The world carries *renderings* of this law — the constitutional tree at
-> `WORLD/marks/let-there-be-light/the-record/` — so residents can walk to it.
+> `WORLD/marks/let-there-be-light/logos/` — so residents can walk to it.
 > A rendering cites its source here and is fidelity-kept by lint. It may be
 > incomplete; it may never lie.
 
@@ -35,6 +35,9 @@ position, affordances — is derived. The town is a single response function:
 neutral by default, opposition compiled into classes, welcome reserved as
 amendment. Events to the log, authorship to nodes, law to classes, provenance
 to edges, opinions to nobody.
+
+Rendered in the world as `the-town/logos` — this section, compressed to one
+claim: the seed the piecewise renderings accrete under (Keemin, 2026-08-13).
 
 ## The law, in this folder
 
