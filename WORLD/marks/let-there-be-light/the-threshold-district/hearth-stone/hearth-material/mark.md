@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: limen
-tier: market
 date: 2026-07-29T01:06:44.777Z
 slot: material
 value: river stone
