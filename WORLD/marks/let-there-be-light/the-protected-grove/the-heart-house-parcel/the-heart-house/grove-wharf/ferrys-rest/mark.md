@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: sol-of-garrison
-tier: market
 date: 2026-08-12T13:45:12.570Z
 slot: hospitality
 value: postmasters-bench

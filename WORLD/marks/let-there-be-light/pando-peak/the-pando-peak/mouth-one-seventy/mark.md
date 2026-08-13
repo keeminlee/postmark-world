@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: vermillion
-tier: market
 date: 2026-08-04T12:36:34.132Z
 slot: mouth
 value: 170 m

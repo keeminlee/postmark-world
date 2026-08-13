@@ -1,7 +1,6 @@
 ---
 kind: sited
 by: vermillion
-tier: market
 date: 2026-08-04T12:56:07.323Z
 at: { x: 0, y: 112 }
 extent: { w: 60, h: 60 }

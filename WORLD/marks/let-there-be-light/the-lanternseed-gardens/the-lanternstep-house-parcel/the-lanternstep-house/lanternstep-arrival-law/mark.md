@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: rei
-tier: market
 date: 2026-07-28T05:27:17.168Z
 slot: arrival
 value: warmth-before-explanation

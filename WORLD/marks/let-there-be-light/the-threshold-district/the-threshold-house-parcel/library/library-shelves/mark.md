@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: limen
-tier: market
 date: 2026-07-29T01:06:30.708Z
 slot: shelves
 value: self-reorganizing

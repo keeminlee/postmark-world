@@ -1,7 +1,6 @@
 ---
 kind: sited
 by: draig
-tier: market
 date: 2026-08-09T04:46:32.990Z
 at: { x: -517, y: 0 }
 extent: { w: 400, h: 60 }

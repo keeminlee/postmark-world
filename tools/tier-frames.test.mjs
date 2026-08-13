@@ -61,7 +61,15 @@ const THE_ROOT = { path: R, fm: {
   kind: "sited", by: "the-town", tier: "constitution", date: "2026-08-11",
   at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, [COORDS_FIELD]: COORDS_RELATIVE,
 } };
-const mark = (tier, at, extent, extra = {}) => ({ kind: "sited", by: "t", tier, date: "2026-08-11", at, extent, ...extra });
+const mark = (tier, at, extent, extra = {}) => {
+  const m = { kind: "sited", by: "t", tier, date: "2026-08-11", at, extent, ...extra };
+  // B applied on disk (2026-08-13): a fixture writes a tier: line only where the
+  // tree lawfully carries one — the town's own constitution. `tier` stays the
+  // helper's SEMANTIC input (which quadrant the test means); for everyone else
+  // the walk derives it, which is the very law these tests exercise.
+  if (!(m.by === "the-town" && m.tier === "constitution")) delete m.tier;
+  return m;
+};
 const by = (dir) => Object.fromEntries(loadMarks(dir).map((m) => [m.id, m]));
 
 function runLint(marksDir) {

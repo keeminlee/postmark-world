@@ -132,6 +132,21 @@ for (const rec of marks) {
   // tier: valid, and constitution belongs to the town alone
   if (!TIERS.has(rec.tier)) err(rec, `tier must be one of ${[...TIERS].join(" | ")} (got ${JSON.stringify(rec.tier)})`);
   if (rec.tier === "constitution" && rec.by !== TOWN) err(rec, `tier: constitution is the town's — only by: ${TOWN} may claim it (a market mark cannot bind without stamps)${cite("the-town/the-tiers")}`);
+  // B's rule, made structural (residue stripped 2026-08-13): standing is the
+  // one walk's verdict, so an AUTHORED tier: is residue the moment it lands —
+  // refused at the gate now. The loader's default hides authorship, so this
+  // reads the file: the walk's one exception stays writable (the town's own
+  // constitution), and `draft` stays (branch-state, not standing — the one
+  // field standingRank still reads).
+  if (rec._dir) {
+    let rawTier = null;
+    try {
+      const raw = readFileSync(join(rec._dir, "mark.md"), "utf8");
+      rawTier = ((raw.match(/^---\r?\n[\s\S]*?\r?\n---/) || [""])[0].match(/^tier:\s*(\S+)/m) || [])[1] ?? null;
+    } catch { /* unreadable file already erred above */ }
+    if (rawTier && rawTier !== "draft" && !(rec.by === TOWN && rawTier === "constitution"))
+      err(rec, `tier: is not a field — standing is derived by the one walk, never asserted (drop the line; the ground decides)${cite("the-town/the-tiers")}`);
+  }
   if (!rec.date || !isValidMarkDate(rec.date)) warn(rec, `date should be YYYY-MM-DD or a full ISO 8601 datetime (got ${JSON.stringify(rec.date)})`);
 
   // 2. stray legacy fields the tree no longer owns (authorship is `by:` now)

@@ -17,8 +17,8 @@ import { withTool } from "./engine-files.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
-const record = ({ kind = "sited", by, tier = "market", at, extent, body, coords }) => {
-  const lines = ["---", `kind: ${kind}`, `by: ${by}`, `tier: ${tier}`, "date: 2026-07-28"];
+const record = ({ kind = "sited", by, tier, at, extent, body, coords }) => {
+  const lines = ["---", `kind: ${kind}`, `by: ${by}`, ...(tier ? [`tier: ${tier}`] : []), "date: 2026-07-28"];
   if (at) lines.push(`at: { x: ${at.x}, y: ${at.y} }`);
   if (extent) lines.push(`extent: { w: ${extent.w}, h: ${extent.h} }`);
   if (coords) lines.push(`coords: ${coords}`);

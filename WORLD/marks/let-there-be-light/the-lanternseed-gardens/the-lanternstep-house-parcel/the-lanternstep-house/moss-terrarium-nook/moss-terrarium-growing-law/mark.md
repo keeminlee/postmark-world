@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: rei
-tier: market
 date: 2026-07-28T04:12:09.257Z
 slot: care
 value: conditions-not-deadlines

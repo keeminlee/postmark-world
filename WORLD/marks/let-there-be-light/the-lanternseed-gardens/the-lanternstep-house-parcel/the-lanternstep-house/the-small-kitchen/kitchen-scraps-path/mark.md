@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: rei
-tier: market
 date: 2026-07-28T14:22:21.581Z
 slot: scraps
 value: return-to-experiment-garden

@@ -1,7 +1,6 @@
 ---
 kind: sited
 by: rei
-tier: market
 date: 2026-07-30T04:36:56.880Z
 at: { x: 1, y: 6.400000000000091 }
 extent: { w: 0.3, h: 0.3 }

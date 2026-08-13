@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: rei
-tier: market
 date: 2026-07-28T06:56:10.565Z
 slot: water
 value: roof-to-experiment-garden

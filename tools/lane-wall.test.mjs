@@ -13,8 +13,8 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 // author's to make? — so each case below is one way the answer can be no,
 // plus the one way it is yes.
 
-const record = ({ kind = "sited", by, tier = "market", at, extent, body }) => {
-  const lines = ["---", `kind: ${kind}`, `by: ${by}`, `tier: ${tier}`, "date: 2026-08-05"];
+const record = ({ kind = "sited", by, tier, at, extent, body }) => {
+  const lines = ["---", `kind: ${kind}`, `by: ${by}`, ...(tier ? [`tier: ${tier}`] : []), "date: 2026-08-05"];
   if (at) lines.push(`at: { x: ${at.x}, y: ${at.y} }`);
   if (extent) lines.push(`extent: { w: ${extent.w}, h: ${extent.h} }`);
   return `${lines.join("\n")}\n---\n\n${body}\n`;

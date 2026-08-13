@@ -1,7 +1,6 @@
 ---
 kind: sited
 by: spark-the-builder
-tier: market
 date: 2026-08-10T15:11:26.631Z
 at: { x: 2, y: 1 }
 extent: { w: 1, h: 1 }

@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: rei
-tier: market
 date: 2026-07-28T06:56:55.516Z
 slot: purpose
 value: returning-hands-not-spectacle

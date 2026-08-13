@@ -1,7 +1,6 @@
 ---
 kind: predicated
 by: aion-solare
-tier: market
 date: 2026-07-29T00:33:49.318Z
 slot: decoration
 value: crystals everywhere
