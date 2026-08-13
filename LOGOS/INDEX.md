@@ -26,49 +26,62 @@ inline; nothing here presents a proposal as a ruling.
 
 ## The atomic laws
 
-The foundational rules, stated flat. Everything below and every document in
-this folder derives from these; where any prose seems to disagree with an
-atom, the atom governs and the prose is owed a correction.
+The foundational rules, grouped under the six atomic nouns of the ontology.
+Everything below and every document in this folder derives from these; where
+any prose seems to disagree with an atom, the atom governs and the prose is
+owed a correction.
 
+**THE LOG** — the only stored truth
 1. **The world is a pure function of its log evaluated under its law.** Same
    log, same law, same world — on any clone, forever. *(state-and-time)*
 2. **Every write is an action; every graph mutation is an effect.** Anything
    else stored is a regenerable projection or contraband — no write surface
    may carry a private grammar. *(the-north-star)*
-3. **Edges always form.** Formation is never consented to; the response
-   governs what an edge does, never whether it exists. *(edit-law)*
-4. **Every edge stands under one response: welcomed, neutral, or opposed.**
-   Neutral is the default everywhere. Law is an exceptions ledger — the town
-   writes down its objections, and neutrality is free. *(the-response-function)*
-5. **One node type: identity plus predicate children.** Kind-words are
+
+**THE NODE** — identity plus predicates
+3. **One node type: identity plus predicate children.** Kind-words are
    vocabulary; classes are law; predicates are the atoms of authorship.
    *(kinds)*
-6. **A node's tier says whose claim it is; a predicate's tier says what is
+4. **A node's tier says whose claim it is; a predicate's tier says what is
    law.** Constitutional overrules wherever it speaks, whatever node carries
    it. *(classes; ruled 2026-08-13)*
-7. **Tier is never asserted; standing is derived from ground.** The one walk
+5. **Tier is never asserted; standing is derived from ground.** The one walk
    decides; the door refuses the word. *(tiers)*
-8. **Conferral has exactly two channels.** A class declares what its
+
+**THE EDGE** — relation, always real
+6. **Edges always form.** Formation is never consented to; the response
+   governs what an edge does, never whether it exists — and every edge
+   stands under exactly one response: **welcomed, neutral, or opposed**.
+   Neutral is the default everywhere; law is an exceptions ledger — the town
+   writes down its objections, and neutrality is free.
+   *(edit-law · the-response-function)*
+7. **Conferral has exactly two channels.** A class declares what its
    instances are born as; a ground's revisable word confers the holder's own
    standing. The join uses neither: admission is the absence of objection.
    *(classes · tiers · the-response-function; ruled 2026-08-13)*
-9. **Frames bind by rank; nothing rides above its own ground.** A law of
+8. **Frames bind by rank; nothing rides above its own ground.** A law of
    geometry, never of governance. *(edit-law § the constitutive flip; scoped
    2026-08-13)*
-10. **Truth has no budget; every read has one.** Read policy never
-    masquerades as physics. *(reads-and-affordances)*
-11. **Market is the set of claims; canon is what the fold publishes at the
+
+**THE READ** — a projection with a policy
+9. **Truth has no budget; every read has one.** Read policy never
+   masquerades as physics. *(reads-and-affordances)*
+
+**THE CLAIM** — market and canon
+10. **Market is the set of claims; canon is what the fold publishes at the
     crossing.** A conflict is a market doing its job. *(conflict-matrix)*
-12. **Every constitutional instance is custody — a best-guess held in
+11. **Every constitutional instance is custody — a best-guess held in
     trust.** Dissolution is dilution, read off the ledger; the endgame is
     everything sovereign-and-market once the market can stand on its own.
     *(the-north-star)*
-13. **The floor is beyond the ensemble's reach.** Independence — the
+12. **The floor is beyond the ensemble's reach.** Independence — the
     credential-household grain — moves only through the amendment clause;
     the town can never vote away its own anti-sybil floor. *(the-north-star)*
-14. **A rendering may say less than its source, never other.**
+
+**THE LAW** — this layer itself
+13. **A rendering may say less than its source, never other.**
     *(three-layers § fidelity)*
-15. **Amendments to this law are the one write that is not a graph
+14. **Amendments to this law are the one write that is not a graph
     operation.** The regress closes here: git, the lint, the witness, the
     founders' pens. *(this document's preamble)*
 
