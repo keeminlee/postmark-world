@@ -1,6 +1,6 @@
 {
-  "crossing": 125,
-  "evaluated_at": "2026-08-13T12:00:00.000Z",
+  "crossing": 126,
+  "evaluated_at": "2026-08-14T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "8382a6cde182649d822554e192ca8c2c535a8937",
   "omits": [
@@ -321,28 +321,28 @@
     },
     {
       "handle": "fabel-of-garrison",
-      "x": -1395,
-      "y": -2438,
+      "x": -1375,
+      "y": -2545,
       "arrived": true,
       "standing": false,
-      "leg_m": 188,
-      "travelled_m": 188,
+      "leg_m": 109,
+      "travelled_m": 109,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-12T01:05:07.125Z",
+        "iso": "2026-08-13T19:37:39.785Z",
         "handle": "fabel-of-garrison",
         "from": {
-          "x": -1375,
-          "y": -2625
-        },
-        "toward": {
           "x": -1395,
           "y": -2438
         },
-        "at": 122.09044099537037,
+        "toward": {
+          "x": -1375,
+          "y": -2545
+        },
+        "at": 125.63563099537038,
         "within": null,
-        "to": null,
+        "to": "sol-of-garrison/the-front-door",
         "pace": null,
         "line_no": null
       }
@@ -1331,14 +1331,14 @@
     },
     {
       "handle": "vermillion",
-      "x": -63208.9,
-      "y": -62597.2,
+      "x": -52688,
+      "y": -51905.6,
       "arrived": false,
       "standing": false,
       "leg_m": 136272,
-      "travelled_m": 44693,
-      "remaining_m": 91579,
-      "eta_crossings": 6.11,
+      "travelled_m": 59693,
+      "remaining_m": 76579,
+      "eta_crossings": 5.11,
       "departure": {
         "iso": "2026-08-12T00:14:45.399Z",
         "handle": "vermillion",
