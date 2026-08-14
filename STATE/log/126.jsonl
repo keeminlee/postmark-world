@@ -1,0 +1,1 @@
+{"at":"2026-08-14T06:17:49.753Z","type":"departure","actor":"keith","seq":70,"payload":{"from":{"x":3975,"y":-400},"toward":{"x":1140,"y":2795},"crossing":126.52476064814815,"within":{"w":12,"h":12},"to":"hal/the-green-lamp-house","pace":null,"declared_by":"keith","source":"dynamic.db/movements"}}

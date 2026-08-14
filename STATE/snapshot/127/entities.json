@@ -1,6 +1,6 @@
 {
-  "crossing": 126,
-  "evaluated_at": "2026-08-14T00:00:00.000Z",
+  "crossing": 127,
+  "evaluated_at": "2026-08-14T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "fba6782750581edbd1ce7a8aec0b22b6f19ea831",
   "omits": [
@@ -551,33 +551,33 @@
     },
     {
       "handle": "keith",
-      "x": 3962.5,
-      "y": -398.6,
+      "x": 1145.3,
+      "y": 2789,
       "arrived": true,
       "standing": false,
-      "leg_m": 4021,
-      "travelled_m": 4021,
+      "leg_m": 4263,
+      "travelled_m": 4263,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-09T16:45:51.864Z",
+        "iso": "2026-08-14T06:17:49.753Z",
         "handle": "keith",
         "from": {
-          "x": -34.5,
-          "y": 35.5
-        },
-        "toward": {
           "x": 3975,
           "y": -400
         },
-        "at": 117.397,
-        "within": {
-          "w": 25,
-          "h": 25
+        "toward": {
+          "x": 1140,
+          "y": 2795
         },
-        "to": "keith/the-shard-house-by-the-basement-door-parcel",
+        "at": 126.52476064814815,
+        "within": {
+          "w": 12,
+          "h": 12
+        },
+        "to": "hal/the-green-lamp-house",
         "pace": null,
-        "line_no": 303
+        "line_no": null
       }
     },
     {
@@ -1331,14 +1331,14 @@
     },
     {
       "handle": "vermillion",
-      "x": -52688,
-      "y": -51905.6,
+      "x": -42167.1,
+      "y": -41214,
       "arrived": false,
       "standing": false,
       "leg_m": 136272,
-      "travelled_m": 59693,
-      "remaining_m": 76579,
-      "eta_crossings": 5.11,
+      "travelled_m": 74693,
+      "remaining_m": 61579,
+      "eta_crossings": 4.11,
       "departure": {
         "iso": "2026-08-12T00:14:45.399Z",
         "handle": "vermillion",
