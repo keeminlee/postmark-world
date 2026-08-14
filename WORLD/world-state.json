@@ -25,21 +25,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 10,
-      "weight_parts": {
-        "own_escrow": 0,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": [
-          {
-            "id": "the-town/pando-peak",
-            "weight": 10
-          }
-        ]
-      },
+      "weight": 0,
       "body": "Let there be light. Postmark's light comes from the northeast and dies in the southwest — the whole world its extent, every mark a child of the light.",
       "mechanic": "light"
     },
@@ -2100,21 +2086,11 @@
       },
       "far": "true",
       "sovereign": false,
-      "stamps": 5,
-      "weight": 10,
-      "weight_parts": {
-        "own_escrow": 5,
-        "breadth": {
-          "k": 5,
-          "external_households": 1,
-          "bonus": 5
-        },
-        "fanned": []
-      },
+      "stamps": 0,
+      "weight": 0,
       "body": "The ground stops being a hill and starts being a mountain: four kilometres up, forty degrees the whole way, named for a grove that grew as one.",
       "feature": "pando-peak",
-      "placementParent": "the-town/let-there-be-light",
-      "ledger_weight": 10
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "vermillion/the-pando-peak",
@@ -2133,10 +2109,10 @@
         "h": 3600
       },
       "sovereign": false,
-      "stamps": 10,
-      "weight": 69,
+      "stamps": 15,
+      "weight": 74,
       "weight_parts": {
-        "own_escrow": 10,
+        "own_escrow": 15,
         "breadth": {
           "k": null,
           "external_households": 0,
@@ -2191,7 +2167,7 @@
       },
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold.",
       "placementParent": "the-town/pando-peak",
-      "ledger_weight": 10
+      "ledger_weight": 15
     },
     {
       "id": "little-bird/a-pot-on-the-grey-stones",
@@ -14764,11 +14740,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "rei/the-empty-lantern-hook",
-      "share": 0.9999857961739904,
+      "share": 0.9999856032782729,
       "regions": [
         {
           "x": -96503,
@@ -14792,11 +14768,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "little-bird/a-pot-on-the-grey-stones",
-      "share": 0.9989783548274993,
+      "share": 0.9989644944954543,
       "regions": [
         {
           "x": -96500.25,
@@ -14826,11 +14802,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "jetto-of-starforge/the-glass-faces-back",
-      "share": 0.999863659924644,
+      "share": 0.9998618085811489,
       "regions": [
         {
           "x": -96498.75,
@@ -14856,11 +14832,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "little-bird/a-pot-on-the-grey-stones",
-      "share": 0.9998083700624047,
+      "share": 0.9997944866888473,
       "regions": [
         {
           "x": -96496,
@@ -14880,11 +14856,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "jetto-of-starforge/the-glass-faces-back",
-      "share": 0.9999744450975141,
+      "share": 0.9999725933437379,
       "regions": [
         {
           "x": -96496,
@@ -14922,11 +14898,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "draig/the-dark-stretch",
-      "share": 0.9750812567713977,
+      "share": 0.9733237202595529,
       "regions": [
         {
           "x": -96039.5,
@@ -15084,11 +15060,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "sage-reeves/sage-far-wall-line",
-      "share": 0.9999733803382549,
+      "share": 0.9999714514323279,
       "regions": [
         {
           "x": -95458,
@@ -15114,11 +15090,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "lupi/lantern-after-the-crossing",
-      "share": 0.9999787041572263,
+      "share": 0.9999771610154584,
       "regions": [
         {
           "x": -95445.5,
@@ -15142,11 +15118,11 @@
         ],
         [
           "vermillion/the-pando-peak",
-          0.000005324074074074074
+          0.0000057098765432098764
         ]
       ],
       "determined": "the-town/the-pando-landing",
-      "share": 0.9885525604784388,
+      "share": 0.9885223997886425,
       "regions": [
         {
           "x": -94573.5,
@@ -22009,16 +21985,12 @@
     ],
     "vermillion": [
       {
+        "mark": "vermillion/the-pando-peak",
+        "stamps": 15
+      },
+      {
         "mark": "vermillion/lake-caves",
         "stamps": 10
-      },
-      {
-        "mark": "vermillion/the-pando-peak",
-        "stamps": 10
-      },
-      {
-        "mark": "the-town/pando-peak",
-        "stamps": 5
       },
       {
         "mark": "vermillion/mouth-one-seventy",

@@ -7,12 +7,10 @@ listed here — they are their households' own.*
 
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
-| vermillion/the-pando-peak | sited | -95458,-95458 |  | 10 | 69 | ⚔ |
+| vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 74 | ⚔ |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 15 | ⚔ |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 | ⚔ |
-| the-town/let-there-be-light | sited | 0,0 |  | 0 | 10 |  |
-| the-town/pando-peak | sited | -95458,-95458 |  | 5 | 10 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 |  |
 | limen/the-threshold-district | sited | 1488,1808 |  | 10 | 10 | ⚔ |
@@ -51,6 +49,7 @@ listed here — they are their households' own.*
 | vermillion/volvigradus-nap-hollow | sited | -95058,-95980 |  | 1 | 1 |  |
 | rei/the-thyme-thank-you | sited | 1137,2788.6 |  | 1 | 1 | ⚔ |
 | vermillion/vermillions-landing | sited | 1024,2678 |  | 1 | 1 | ⚔ |
+| the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
 | aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
@@ -144,6 +143,7 @@ listed here — they are their households' own.*
 | the-town/the-departure-line | predicated | the-town/the-ledger-grammar | fn:formatDeparture=tools/walk.mjs::formatDeparture | 0 | 0 |  |
 | the-town/the-derived-position | predicated | the-town/the-ledger-grammar | fn:positionAt=tools/walk.mjs::positionAt | 0 | 0 |  |
 | the-town/the-public-walker-shape | predicated | the-town/the-ledger-grammar | fn:publicWalker=tools/walk.mjs::publicWalker | 0 | 0 |  |
+| the-town/pando-peak | sited | -95458,-95458 |  | 0 | 0 |  |
 | sollerino/sollerino-s-keep-parcel | parcel | -675,-1300 |  | 0 | 0 |  |
 | sollerino/home | predicated | sollerino/sollerino-s-keep-parcel | home=sollerino-s-keep | 0 | 0 |  |
 | tarn/tarn-parcel | parcel | 425,2800 |  | 0 | 0 |  |
