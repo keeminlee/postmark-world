@@ -118,10 +118,10 @@ claim: the seed the piecewise renderings accrete under (Keemin, 2026-08-13).
 | [the-north-star.md](the-north-star.md) | every write an action, every mutation an effect; the two-question lint; the purpose and the endgame |
 | [three-layers.md](three-layers.md) | the law → the log → the graph — and which pen writes each |
 | [kinds.md](kinds.md) | one node type; properties are predicates; standing / living / fleeting are lifetimes, not kinds |
-| [classes.md](classes.md) | class-nodes: the registries, the two constitutionalities, params as response boundaries, the custody ladder |
+| [classes.md](classes.md) | class-nodes: the registries, the two constitutionalities, the household class, the custody ladder |
 | [edit-law.md](edit-law.md) | the one primitive — declare an edge; create, amend, withdraw; the constitutive flip |
 | [state-and-time.md](state-and-time.md) | the log is the only stored truth; witnesses; crossings are epochs; history is absolute |
-| [tiers.md](tiers.md) | tiers are response outcomes; welcome is the only conferral; geometry never confers |
+| [tiers.md](tiers.md) | tiers are response outcomes; conferral's two channels; the two apexes; geometry never confers |
 | [the-response-function.md](the-response-function.md) | the one axis: welcomed · neutral · opposed — the town speaks through law, residents through words |
 | [conflict-matrix.md](conflict-matrix.md) | market and canon: claims, rivalry, incumbency, the jury, trueing |
 | [reads-and-affordances.md](reads-and-affordances.md) | the world decoupled from observability; projections; the apex as the class tree's shadow |

@@ -40,7 +40,7 @@ params of the class it named. The load-bearing param is **lifetime**:
 
 | vocabulary | lifetime param | example |
 |---|---|---|
-| **standing** (a mark) | until withdrawn | a stone bench, a parcel, a class-node |
+| **standing** (a mark) | until withdrawn | a stone bench, a parcel, a class-node, a household |
 | **living** (an entity) | while animated | a resident |
 | **fleeting** (an emission) | dial-bounded | a spoken word, a dragon's breath |
 

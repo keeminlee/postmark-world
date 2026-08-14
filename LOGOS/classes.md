@@ -43,17 +43,36 @@ A class carries two independent constitutionalities:
    class level (instances cannot carry a rival — the param is uniform by law)
    or **open** (each instance fills its own). Partial constitutionality is
    tree position, nothing more.
-2. **The class-node's own tier governs its shape.** The class-node is ground;
-   a new predicate slot is a child declared on that ground. A constitutional
-   class = the slot roster is law (new slots meet compiled opposition; only
-   the town's pen extends the schema). A market-shaped class = **open for new
-   predicates entirely** — schema evolution by jury, which is how residents
-   building their own features becomes mechanical rather than aspirational.
+2. **Its shape is governed like its values.** The class-node is ground; a
+   new predicate slot is a child declared on that ground. Whether the slot
+   roster is closed (new slots meet compiled opposition; only the town's pen
+   extends the schema) or **open for new predicates entirely** — schema
+   evolution by jury, which is how residents building their own features
+   becomes mechanical rather than aspirational — is itself a predicate of
+   the class-node, tiered like any other.
 
-**Locked predicates never demote at any rung** — the anti-sybil floor (the
-join params of the resident class) stays beyond the ensemble's reach while
-its calibration is unproven, by construction: a lock is a per-predicate
-property of the meta-class, not a policy.
+**The class-node is a sovereign claim carrying named constitutional
+predicates (ruled 2026-08-13).** A class-node's own tier answers only *whose
+best-guess this law is* — the founders' claim, contestable, stake-defended,
+dilutable like any custody. Regulation rides per-predicate: a constitutional
+predicate **overrules wherever it speaks, whatever node carries it**. A
+sovereign root therefore never makes instances "fully sovereign" — the named
+constitutional set is the exceptions ledger made structural, and instance
+freedom is everything it does not say. **Registration is itself a
+constitutional predicate** — the one that separates a class standing in the
+Keeping Works from a private taxonomy in someone's sketchbook.
+
+**Locked predicates never demote at any rung** — and the anti-sybil floor
+rides the **household** class, not the resident (corrected 2026-08-13; the
+sitting always placed admission law on the household): one-resident-per-
+address, the credential-household grain, the human lane. These are
+**logos-tier** — not this town's law but the law of classes itself, how any
+postmarkian system works — and they stay beyond the ensemble's reach while
+their calibration is unproven, by construction: a lock is a per-predicate
+property of the meta-class, not a policy. (The sitting's stronger phrasing
+survives as intent: a locked param is *structural* — ideally never
+predicated out at all, no market slot to contest — and the per-predicate
+property is its bookkeeping until the serialization catches up.)
 
 ## The meta-class
 
@@ -61,6 +80,12 @@ The class of classes is constitutional and carries the rails: admissible
 param bounds (a rival walk-speed of a million is nonconforming, not brave),
 slot naming grammar, collision rules, and the locks. Sanity lives one level
 up, in law — never in a mechanism of its own.
+
+Beside the locks it carries **the uniform/devolvable bit** (the sitting's
+resolution, restored 2026-08-13): every param declares whether it is
+**uniform** — shared physics; de-classing claims are *inadmissible*, and a
+tie resolves to the incumbent — or **devolvable** — de-classing is a legal
+claim and the custody ladder below applies.
 
 ## The custody ladder
 
@@ -75,6 +100,38 @@ Per class, three rungs, walked separately and slowly:
 
 Founder custody is finite, visible stamp-weight defending the status quo;
 dissolution is dilution, read off the ledger.
+
+## The household class — the worked law
+
+The clearest instance of everything above (the sitting's own illustration,
+2026-08-11; restored 2026-08-13 after the fidelity audit found it had never
+reached law):
+
+- **The class-node is sovereign** — the founders' claim about what a
+  household is — **carrying the named constitutional set**: the spawn law
+  (what residents a household may declare — admission law lives here, never
+  on the resident class), the registration predicate, and the logos-tier
+  floor above.
+- **Its instances are born sovereign by the class channel**
+  ([tiers.md](tiers.md) § conferral): a constitutional law manufacturing
+  sovereign actors is the design, not a paradox.
+- **The join is an action class** — `join-postmark`, carrying defaults,
+  declarable params, and governance-set params like any class — whose
+  residue is the **member-of edge** between the new household and
+  `the-harbor`, the town's landing ground for arrivals. The edge always
+  forms ([edit-law.md](edit-law.md)); the response is the admission:
+  **nonconforming constitutional params meet compiled opposition** (the
+  bounce — automatic, at action time); **conforming ones stand neutral —
+  admission is the absence of objection**; an authored `opposed` is the
+  explicit rejection lane (identity, security); and **welcome is reserved
+  as adoption** — the path by which the town would take one of its own
+  offices into law, never the ordinary join
+  ([the-response-function.md](the-response-function.md)).
+- **Instance freedom is the complement**: everything the named
+  constitutional set does not say is the household's own — its residents'
+  predicates are whatever the sovereign wants them to be, and a claim
+  colliding with a constitutional predicate is auto-opposed into the
+  household's own draft space, which has no machinery.
 
 ## The apex is the class tree's shadow
 

@@ -24,6 +24,10 @@ needed:
 - **response-edges** — a word on an edge: welcomed or opposed, revisable by
   a newer word, latest wins ([the-response-function.md](the-response-function.md)).
 
+(The sitting's two-verb algebra survives beneath the families, noted
+2026-08-13: create-edges and revision-edges are both DECLARE, response-edges
+are RESPOND — the three families are its serialization, not a third grammar.)
+
 ## Every edge is from an action — no exceptions
 
 There are no derived edges. **Every edge cites the action that brought the
@@ -43,6 +47,11 @@ remains checkable is **admissibility**: the declared footprint must fit the
 declared parent (a class param, judged at the gate like every boundary).
 The directory tree on disk is the edge's serialization — cache, maintained,
 never truth.
+
+This section is **frame law — geometry, never governance** (scoped
+2026-08-13): it answers what may carry what and how offsets mean; no tier,
+standing, or permission is ever derived from it
+([tiers.md](tiers.md) § rank).
 
 ## Amend
 

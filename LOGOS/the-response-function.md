@@ -49,7 +49,11 @@ one could go.**
 law — constitutional standing conferred down its subtree. It is not a
 response within the function but an **amendment to it**, which is the
 structural reason it has never fired. It is reserved: the door kept unopened
-for the day a resident builds something the town makes its own.
+for the day a resident builds something the town makes its own. Its one
+named use is **adoption** — the path by which the town would take an office
+of its own into law as it staffs itself
+([classes.md](classes.md) § the household class); the ordinary join never
+needs it, because admission is the absence of objection.
 
 ## Residents: words, at their own pace
 
