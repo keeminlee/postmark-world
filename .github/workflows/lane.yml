@@ -54,7 +54,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          # fetch-depth: 0 stays — the path law and the compose step both take a
+          # merge-base against the head. The filter keeps all of that history
+          # while deferring blobs: only the tree this run actually reads gets
+          # fetched, instead of every byte every commit ever carried.
           fetch-depth: 0
+          filter: blob:none
 
       - uses: actions/setup-node@v4
         with:
