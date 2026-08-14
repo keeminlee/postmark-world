@@ -852,6 +852,13 @@ export function writeTourSeen(storage, who) {
   if (!key) return;
   try { storage?.setItem?.(key, "1"); } catch { /* private mode */ }
 }
+// ONE GREETING PER DOCUMENT. A spectator has no key to write, so "greeted every
+// visit" is enforced by this flag rather than by storage — and it must therefore
+// count the same thing a visit counts. A visit is a page LOAD; this module is
+// evaluated once per load and mounted possibly many times, so the flag belongs
+// here and not inside mountViewer. It was in the closure until 2026-08-14, which
+// is why /replay/ re-greeted a spectator on every scrub step.
+let greetedThisLoad = false;
 
 // ─────────────────────────── what has been happening ────────────────────────
 // A RECORD OF ACTS, newest first, from the two public records that carry a time:
@@ -5168,7 +5175,13 @@ export function mountViewer(appEl) {
   // One greeting per page LOAD, not per call: readTourSeen cannot remember a
   // spectator's dismissal (there is no key to write), so without this flag a
   // second call in the same load would reopen a tour they just closed.
-  let greetedThisLoad = false;
+  //
+  // The flag lives at MODULE scope (2026-08-14), not in this closure, because a
+  // page may mount the viewer more than once in a single load — /replay/ used to
+  // re-mount per crossing — and a mount-scoped flag makes every remount a fresh
+  // "load", so the tour ambushed a spectator again on every scrub step. A load is
+  // a document, not a mount. This does NOT touch the 08-12 ruling above: a real
+  // second visit is a new document and gets its greeting.
   function greetOnFirstVisit() {
     if (greetedThisLoad || tourAt >= 0) return;
     if (readTourSeen(localStore, tourWho())) return;
@@ -5945,8 +5958,25 @@ export function mountViewer(appEl) {
     }
   })();
 
-  return {
+  // THE HANDLE, PUBLISHED (2026-08-14). spectator/index.html mounts and throws
+  // the handle away, so a page that wraps the shell — the site serves it verbatim
+  // — could never reach `reload` no matter what this function returned. One
+  // global closes that, and it is the last mount that wins, which is the only
+  // answer that can be right when a host re-mounts. Inert for the shell itself.
+  const handle = {
     rerender: renderCurrent,
+    // RE-PULL THE RECORD WITHOUT TEARING THE VIEWER DOWN (2026-08-14). A host
+    // that changes what the world's data doors answer — /replay/ swapping to
+    // another crossing's frozen frame — needs the viewer to go and ask again.
+    // Until now its only options were the 60 s auto-update tick or a full
+    // re-mount, and re-mounting costs the camera, the DOM, and a fresh boot.
+    // reloadWorld() has done exactly the right thing since it was written and
+    // was never once called; this is its caller. Walkers come with it because
+    // "the record changed" and "who is standing in it changed" are one event to
+    // every caller that would ask.
+    // The `data` guard is not defensive noise: boot is async, so a host that
+    // scrubs before the first fold lands would otherwise re-pull into nothing.
+    reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); renderCurrent(); return true; },
     stop: () => {
       clearInterval(clock);
       clearInterval(walkState.timer);
@@ -5955,6 +5985,8 @@ export function mountViewer(appEl) {
       bubbleResize?.disconnect();
     },
   };
+  try { window.__pmViewer = handle; } catch { /* no window: the tests import this file */ }
+  return handle;
 }
 
 // ───────── tiny helpers (display only) ─────────
