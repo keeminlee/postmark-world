@@ -3,7 +3,8 @@
 *Everything is response. The town speaks through law; residents speak through
 words; and canon is the ledger of what survived both.*
 
-Rendered in the world: not yet.
+Rendered in the world as `the-town/response-edge` — the response class-mark
+standing in the Keeping Works (the classes sitting, 2026-08-14).
 
 ---
 

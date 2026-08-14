@@ -168,6 +168,16 @@ sets, irregular shapes, FOV and fan-up over them — is a **filed PULSE follow-u
 not tonight. A mark that carries `points:` today gains fine honoring later with
 **no record change**.
 
+**`face` — the reserved predicated slot, universal (2026-08-14, the classes
+sitting).** Any mark may carry one predicated child `slot: face, value: <asset
+path in the author's own space>` — its art. The slot is universal; the value is
+sovereign (your art is yours). The predicate carries **no geometry** — the
+mark's `at`/`extent`/`points` place it; an optional `fit: contain|cover|stretch`
+(default `contain`) says how it fills that box. SVG and raster ride the same
+contract; SVG renders **inert** (an image, never a script — the world expresses
+what stands, not what runs). The face's pen is the mark's `by:`. Byte caps are
+class dials.
+
 **`feature:` — the two-precision link.** A terrain mark carries
 `feature: <skeleton-feature-id>` so the claim (the coarse mark) and the survey
 (the precise geometry in `skeleton.json`) are joined by a field, not a

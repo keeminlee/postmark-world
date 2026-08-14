@@ -7,9 +7,11 @@ Status: the grammar below supersedes the 2026-08-09 draft (derivations in the
 tracker); the nine class marks stand in the world and are law where they stand.
 Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/light`, `the-town/fog`, `the-town/entity`, `the-town/resident`,
-`the-town/parcel`, `the-town/departure` and `the-town/attachment` — the nine
-class marks standing in the Keeping Works — and as `the-town/the-wheelhouse`,
-where the timetable class stands with its own institution.
+`the-town/parcel`, `the-town/departure`, `the-town/attachment`,
+`the-town/household`, `the-town/member-of` and `the-town/window` — the twelve
+class marks standing in the Keeping Works (the last three landed by the classes
+sitting, 2026-08-14) — and as `the-town/the-wheelhouse`, where the timetable
+class stands with its own institution.
 
 ---
 
