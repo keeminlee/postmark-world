@@ -5958,7 +5958,12 @@ export function mountViewer(appEl) {
     }
   })();
 
-  return {
+  // THE HANDLE, PUBLISHED (2026-08-14). spectator/index.html mounts and throws
+  // the handle away, so a page that wraps the shell — the site serves it verbatim
+  // — could never reach `reload` no matter what this function returned. One
+  // global closes that, and it is the last mount that wins, which is the only
+  // answer that can be right when a host re-mounts. Inert for the shell itself.
+  const handle = {
     rerender: renderCurrent,
     // RE-PULL THE RECORD WITHOUT TEARING THE VIEWER DOWN (2026-08-14). A host
     // that changes what the world's data doors answer — /replay/ swapping to
@@ -5980,6 +5985,8 @@ export function mountViewer(appEl) {
       bubbleResize?.disconnect();
     },
   };
+  try { window.__pmViewer = handle; } catch { /* no window: the tests import this file */ }
+  return handle;
 }
 
 // ───────── tiny helpers (display only) ─────────
