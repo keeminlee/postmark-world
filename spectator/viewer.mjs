@@ -1473,22 +1473,90 @@ export function faceBoxM(mark, anchor = "extent") {
   return { x0: x - bw / 2, y0: y - bh / 2, w: bw, h: bh };
 }
 
+// ── THE CARTOGRAPHER'S FLOOR ────────────────────────────────────────────────
+//
+// A town square is 25 m. At full-map zoom that is FOUR PIXELS, and the median
+// structure is two; a third of the sited marks are under a metre. Drawn true,
+// the record is invisible at the only zoom that shows the whole world — so a
+// mark gets a minimum RENDER size and its face draws into the floored box.
+// This is what every atlas does with a city: the dot is not the city's size.
+//
+// IT IS A VIEW DIAL AND NOTHING ELSE. It lives here in renderer config, is never
+// written to the record, never derived back into it, and never reaches the fold,
+// the lint, the telling, or the walk. A floored parcel is 81 m of INK, not 81 m
+// of ground — nothing may read this as physics.
+//
+// Keyed on `kind`, deliberately. The payload carries a `class` field, but today
+// it names only the eleven class-NODES themselves (`parcel`, `resident`, `fog`,
+// `light`, …) rather than classifying ordinary marks, so keying on it would
+// floor eleven marks and nothing else. When class-nodes become a real per-mark
+// classification, the key moves to `class` with `kind` as the fallback, and this
+// table is the one place that changes.
+export const FACE_FLOOR_PX = {
+  parcel: 14,        // generous: a parcel is the town's unit of belonging
+  sited: 8,          // structures and regions — smaller; most are already large
+  predicated: 0,     // a predicate takes its locus from its parent; it has none
+  naming: 0,
+};
+export const FACE_FLOOR_DEFAULT_PX = 0;   // an unknown kind is not floored by guess
+
+// THE CLAMP, and it is earned rather than anticipated. `rei/the-white-flower-at
+// -wrights-door` is 0.3 m; reaching an 8 px floor at full-map zoom would need
+// 155×, drawing a flower as a 46 m square across the parcel it sits on. A floor
+// with no ceiling stops being cartography and becomes a lie about what is there.
+// Past the clamp a mark is simply too small for this zoom, which is honest — it
+// becomes legible by zooming in, the way the rest of the map already works.
+export const FACE_FLOOR_MAX_SCALE = 8;
+
+export function faceFloorPx(mark, floors = FACE_FLOOR_PX) {
+  const px = floors?.[String(mark?.kind ?? "")];
+  return Number.isFinite(px) && px > 0 ? px : FACE_FLOOR_DEFAULT_PX;
+}
+
+// Grow a box to the floor, PER DIMENSION and about its own centre.
+//
+// Per dimension because uniform inflation is wrong for the shapes actually on
+// this record: `east-facing-window/the-worn-path` is 30×1700, and scaling it
+// uniformly to thicken the path would stretch it to 2.6 km long. A cartographer
+// thickens a road and leaves its length alone; so does this.
+//
+// About the centre because a mark may not MOVE to become legible. Its `at` is
+// the one thing the record is certain about.
+export function flooredBoxM(box, floorM, maxScale = FACE_FLOOR_MAX_SCALE) {
+  if (!box) return null;
+  const floor = Number(floorM), cap = Number(maxScale);
+  if (!Number.isFinite(floor) || floor <= 0) return box;
+  const grow = (side) => Math.min(Math.max(side, floor), side * (Number.isFinite(cap) && cap > 0 ? cap : Infinity));
+  const w = grow(box.w), h = grow(box.h);
+  return { x0: box.x0 + (box.w - w) / 2, y0: box.y0 + (box.h - h) / 2, w, h };
+}
+
 // One face, drawn INERT. An <image> in SVG is the <img> of that document: the
 // asset is referenced, decoded, and painted, and a scripted SVG referenced this
 // way cannot run — which is the whole reason the contract says image element and
 // never inline markup. The clip is what makes `cover` honest: a slice fit
 // overflows its box by definition, and a face may not paint outside the claim it
 // is hung on.
-export function markFaceSVG({ mark, face, px } = {}) {
+//
+// `floorM` is the class floor already converted to metres by the caller, which
+// is the only party that knows the camera. Passing it as a number keeps this
+// function pure and keeps the camera out of the geometry — and the TRUE box is
+// stamped into data attributes so the per-view resync can re-floor from the
+// record's own numbers rather than from whatever it drew last time.
+export function markFaceSVG({ mark, face, px, floorM = 0 } = {}) {
   if (!mark?.id || !face?.asset || typeof px !== "function") return "";
-  const box = faceBoxM(mark, face.anchor);
-  if (!box) return "";
+  const trueBox = faceBoxM(mark, face.anchor);
+  if (!trueBox) return "";
+  const box = flooredBoxM(trueBox, floorM);
   const a = px(box.x0, box.y0), b = px(box.x0 + box.w, box.y0 + box.h);
   const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
   const w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y);
   if (!(w > 0) || !(h > 0)) return "";
   const clip = `wv-face-clip-${String(mark.id).replace(/[^a-z0-9]+/gi, "-")}`;
-  return `<g class="wv-face" data-id="${esc(mark.id)}" data-face-source="${esc(face.source ?? "")}" role="img"`
+  const floored = box.w !== trueBox.w || box.h !== trueBox.h;
+  return `<g class="wv-face${floored ? " is-floored" : ""}" data-id="${esc(mark.id)}"`
+    + ` data-face-source="${esc(face.source ?? "")}" data-floor-px="${faceFloorPx(mark)}"`
+    + ` data-true="${trueBox.x0},${trueBox.y0},${trueBox.w},${trueBox.h}" role="img"`
     + ` aria-label="${esc(String(mark.label ?? mark.id))}">`
     + `<clipPath id="${clip}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>`
     + `<image href="${face.asset}" x="${x}" y="${y}" width="${w}" height="${h}"`
@@ -2596,6 +2664,11 @@ const STYLE = `
 #wv-fp-layer { pointer-events:none; }
 /* faces — the pictures marks hang on their own ground, under every instrument */
 #wv-face-layer { pointer-events:none; }
+/* .wv-face.is-floored is set by the cartographer's floor and deliberately
+   carries NO styling yet. It is the hook for a question that is Keemin's, not
+   the renderer's: the far inset says "not to scale" out loud, and a floored
+   parcel drawn at 81 m is the same kind of claim made silently. If that wants a
+   visible tell, it is one rule here and nothing else changes. */
 #wv-hl-layer { pointer-events:none; }
 /* where the town is talking: each thread's ground, from the office's earshot
    derivation. Pale blue-gray — violet is the stamps' word (Keemin). A live
@@ -3648,6 +3721,13 @@ export function mountViewer(appEl) {
       faceLayer.setAttribute("id", "wv-face-layer");
       faceLayer.style.pointerEvents = "none";
       svg.appendChild(faceLayer);
+      // The faces whose class carries a cartographer's floor. A floor is in
+      // SCREEN pixels, so unlike everything else on this layer it is a function
+      // of the camera and has to be re-derived when the camera moves. Collected
+      // once at build so the per-view pass is a walk of the few rather than a
+      // DOM query over all of them; empty until then, which is what makes an
+      // early applyView harmless.
+      let flooredFaces = [];
       // the survey grid — the FIRST derived layer: drawn from the registration
       // (origin + scale), never traced from the paint. Sits under the overlay.
       const gridLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -3734,6 +3814,7 @@ export function mountViewer(appEl) {
         mapCtx.zoomK = full.w / view.w;
         if (lastRadial) drawOverlay(lastRadial);
         renderMarkHighlight();
+        syncFaceFloors();  // a screen-pixel floor is a function of the camera
         positionBubbles(); // the anchors are on the painting, so they move with it
       }
       function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = null; } mapCtx._tweening = false; }
@@ -4046,11 +4127,68 @@ export function mountViewer(appEl) {
       // nothing. The layer is empty today on the live record (zero face
       // predicates so far) and that emptiness is honest — the interim overlay
       // table's only row is the far country, which draws in the inset instead.
+      //
+      // A floor is quoted in SCREEN pixels and the painting is drawn in painting
+      // units, so the conversion needs the true user-units-to-screen scale.
+      //
+      // THAT SCALE IS NOT `view.w / bounds.width`, and assuming it was is how the
+      // first build of this landed a 14 px floor at 6.6 real pixels. The svg
+      // keeps the painting's aspect (`preserveAspectRatio` defaults to meet), and
+      // at the fit view the box is 1500x2400 units inside an 1188x900 pane — so
+      // the picture is HEIGHT-constrained and scaled by 900/2400 = 0.375, while
+      // the width reading says 0.792. Whenever the two disagree the smaller one
+      // is the truth, and `getScreenCTM()` is the browser's own answer for it.
+      // Measured off the rendered <image>, not derived.
+      const unitsPerScreenPx = () => {
+        const ctm = svg.getScreenCTM?.();
+        if (ctm && Number.isFinite(ctm.a) && ctm.a > 0) return 1 / ctm.a;
+        const width = svg.getBoundingClientRect().width;   // last resort only
+        return width > 0 ? view.w / width : 0;
+      };
+      const floorMetres = (floorPx) => floorPx * unitsPerScreenPx() * mPerPx;
       function buildFaceLayer() {
         let s = "";
         for (const { mark, face } of groundFaceMarks(world.marks ?? []))
-          s += markFaceSVG({ mark, face, px: fpPx });
+          s += markFaceSVG({ mark, face, px: fpPx, floorM: floorMetres(faceFloorPx(mark)) });
         faceLayer.innerHTML = s;
+        // Only the floored classes need re-deriving when the camera moves; a
+        // face drawn at its true extent is as camera-independent as the
+        // coastline and must never be touched again.
+        flooredFaces = [...faceLayer.querySelectorAll(".wv-face[data-floor-px]")]
+          .map((g) => ({
+            g,
+            floorPx: Number(g.dataset.floorPx),
+            box: String(g.dataset.true ?? "").split(",").map(Number),
+            image: g.querySelector("image"),
+            clip: g.querySelector("clipPath rect"),
+          }))
+          .filter((f) => f.floorPx > 0 && f.box.length === 4 && f.box.every(Number.isFinite) && f.image && f.clip);
+        syncFaceFloors();
+      }
+      // Re-floor against the current camera. Rewrites four attributes on two
+      // nodes per floored face and NOTHING else — no rebuild, no re-append, no
+      // reordering. That is the whole reason the z-order is safe from this:
+      // document order is stacking order, this pass never touches document
+      // order, and markDrawOrder reads TRUE footprint area off the record. A
+      // mark inflated to stay legible does not climb over its neighbours.
+      function syncFaceFloors() {
+        if (!flooredFaces.length) return;
+        const units = unitsPerScreenPx();
+        if (!(units > 0)) return;
+        const perPx = units * mPerPx;
+        for (const f of flooredFaces) {
+          const [x0, y0, w, h] = f.box;
+          const box = flooredBoxM({ x0, y0, w, h }, f.floorPx * perPx);
+          const a = fpPx(box.x0, box.y0), b = fpPx(box.x0 + box.w, box.y0 + box.h);
+          const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+          const rw = Math.abs(b.x - a.x), rh = Math.abs(b.y - a.y);
+          if (!(rw > 0) || !(rh > 0)) continue;
+          for (const el of [f.image, f.clip]) {
+            el.setAttribute("x", x); el.setAttribute("y", y);
+            el.setAttribute("width", rw); el.setAttribute("height", rh);
+          }
+          f.g.classList.toggle("is-floored", box.w !== w || box.h !== h);
+        }
       }
       buildFaceLayer();
       renderFarInset();

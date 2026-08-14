@@ -116,6 +116,11 @@ import {
   faceOfMark,
   faceBoxM,
   markFaceSVG,
+  FACE_FLOOR_PX,
+  FACE_FLOOR_MAX_SCALE,
+  FACE_FLOOR_DEFAULT_PX,
+  faceFloorPx,
+  flooredBoxM,
   groundFaceMarks,
   farInsetEntries,
 } from "../spectator/viewer.mjs";
@@ -1874,6 +1879,115 @@ test("the ground shows faces in derived z; the far country is not on the ground"
   // scale, and that is true with or without art
   assert.deepEqual(farInsetEntries(marks, {}).map((e) => e.face), [null]);
   assert.deepEqual(farInsetEntries([], overlays), []);
+});
+
+// ── the cartographer's floor ──────────────────────────────────────────────────
+
+test("the floor is keyed per class, and an unknown class is not floored by guess", () => {
+  assert.equal(faceFloorPx({ kind: "parcel" }), FACE_FLOOR_PX.parcel);
+  assert.equal(faceFloorPx({ kind: "sited" }), FACE_FLOOR_PX.sited);
+  assert.ok(FACE_FLOOR_PX.parcel > FACE_FLOOR_PX.sited, "parcels generous, structures smaller");
+  assert.equal(faceFloorPx({ kind: "predicated" }), 0, "a predicate has no locus of its own to floor");
+  assert.equal(faceFloorPx({ kind: "naming" }), 0);
+  assert.equal(faceFloorPx({ kind: "something-new" }), FACE_FLOOR_DEFAULT_PX);
+  assert.equal(faceFloorPx({}), FACE_FLOOR_DEFAULT_PX);
+  assert.equal(faceFloorPx(), FACE_FLOOR_DEFAULT_PX);
+  assert.equal(faceFloorPx({ kind: "parcel" }, { parcel: 40 }), 40, "the table is a dial the caller may swap");
+  assert.equal(faceFloorPx({ kind: "parcel" }, {}), FACE_FLOOR_DEFAULT_PX);
+});
+
+test("the floor grows a box PER DIMENSION about its own centre, and never moves it", () => {
+  // a 25 m parcel under a 60 m floor becomes 60 m of ink, still centred on its at
+  const parcel = { x0: -12.5, y0: -12.5, w: 25, h: 25 };
+  const grown = flooredBoxM(parcel, 60);
+  assert.deepEqual(grown, { x0: -30, y0: -30, w: 60, h: 60 });
+  assert.equal(grown.x0 + grown.w / 2, parcel.x0 + parcel.w / 2, "the centre is exactly where the record put it");
+  assert.equal(grown.y0 + grown.h / 2, parcel.y0 + parcel.h / 2);
+
+  // THE WORN PATH, from the live record: 30x1700. Thicken it; do not stretch it.
+  const path = { x0: 0, y0: 0, w: 30, h: 1700 };
+  const thick = flooredBoxM(path, 60);
+  assert.equal(thick.h, 1700, "a road's LENGTH is not the illegible part and is left alone");
+  assert.equal(thick.w, 60, "only the dimension under the floor grows");
+  assert.equal(thick.x0, -15, "and it grows both ways from the centreline");
+  // uniform inflation — the thing this deliberately is not — would have run it
+  // to 3.4 km long, which is a lie about where the path ends
+  assert.ok(thick.h < path.h * 2);
+
+  // already legible: the floor is a floor, never a resize
+  const region = { x0: 0, y0: 0, w: 900, h: 900 };
+  assert.deepEqual(flooredBoxM(region, 60), region);
+  // no floor at all is the identity
+  assert.deepEqual(flooredBoxM(parcel, 0), parcel);
+  assert.deepEqual(flooredBoxM(parcel, NaN), parcel);
+  assert.equal(flooredBoxM(null, 60), null);
+});
+
+test("THE CLAMP: past it a mark is too small for this zoom, and says so by staying small", () => {
+  // rei/the-white-flower-at-wrights-door is 0.3 m. Reaching an 8 px floor at
+  // full-map zoom needs ~155x — a flower drawn as a 46 m square over the parcel
+  // it sits on. The clamp is what stops the floor becoming a lie.
+  const flower = { x0: -0.15, y0: -0.15, w: 0.3, h: 0.3 };
+  const clamped = flooredBoxM(flower, 46, FACE_FLOOR_MAX_SCALE);
+  assert.equal(clamped.w, 0.3 * FACE_FLOOR_MAX_SCALE, "it grows to the ceiling and stops");
+  assert.ok(clamped.w < 46, "it does not reach the floor, and that is the honest answer");
+  assert.equal(clamped.x0 + clamped.w / 2, 0, "still centred on the doorstep");
+  // the parcel case is comfortably inside the ceiling — the clamp must not bite
+  // the thing the floor exists for
+  const parcel = { x0: 0, y0: 0, w: 25, h: 25 };
+  assert.equal(flooredBoxM(parcel, 81, FACE_FLOOR_MAX_SCALE).w, 81, "3.2x is well under the ceiling");
+  assert.equal(flooredBoxM(parcel, 60, Infinity).w, 60, "an absent ceiling is legal, just unwise");
+});
+
+test("a floored face is drawn into the floored box but REMEMBERS the true one", () => {
+  const px = (x, y) => ({ x, y });
+  const parcel = { id: "a/parcel", kind: "parcel", at: { x: 0, y: 0 }, extent: { w: 25, h: 25 } };
+  const face = { asset: "/media/p.png", fit: "cover", anchor: "extent", source: "predicate" };
+  const floored = markFaceSVG({ mark: parcel, face, px, floorM: 60 });
+  assert.match(floored, /class="wv-face is-floored"/, "the picture says it was floored");
+  assert.ok(floored.includes('width="60"') && floored.includes('x="-30"'), "drawn at floor size");
+  assert.ok(floored.includes('data-true="-12.5,-12.5,25,25"'),
+    "and carries the RECORD's box, so the per-view resync re-floors from truth, never from what it last drew");
+  // unfloored is the old behaviour exactly
+  const plain = markFaceSVG({ mark: parcel, face, px });
+  assert.equal(/is-floored/.test(plain), false);
+  assert.ok(plain.includes('width="25"'));
+  assert.ok(plain.includes('data-true="-12.5,-12.5,25,25"'), "the true box rides along either way");
+  // the clip follows the drawn box, so a cover fit still cannot paint outside it
+  assert.equal((floored.match(/width="60"/g) ?? []).length, 2, "image and clip agree");
+});
+
+test("THE FLOOR IS INK, NOT GROUND: it cannot touch the z-order", () => {
+  // A 25 m parcel floored to 81 m covers 6,561 m2 of ink against a 50 m
+  // structure's true 2,500 m2. Ordered by RENDERED size the parcel would sort
+  // first and be painted BEHIND the structure standing on it — inverted. The
+  // record's true area is the only thing markDrawOrder ever reads.
+  const marks = [
+    { id: "a/parcel", kind: "parcel", placementParent: WORLD_ROOT_ID, at: { x: 0, y: 0 }, extent: { w: 25, h: 25 } },
+    { id: "a/hall", kind: "sited", placementParent: WORLD_ROOT_ID, at: { x: 200, y: 0 }, extent: { w: 50, h: 50 } },
+  ];
+  const before = markDrawOrder(marks).map((m) => m.id);
+  assert.deepEqual(before, ["a/hall", "a/parcel"],
+    "larger true footprint behind, smaller in front — and the floor is not consulted");
+
+  // Now actually draw them floored, which is the operation that could poison the
+  // record if it wrote anywhere, and re-derive: the marks must be untouched and
+  // the order identical. This is the guarantee stated as something that could fail.
+  const px = (x, y) => ({ x, y });
+  const face = { asset: "/media/p.png", fit: "cover", anchor: "extent", source: "predicate" };
+  const drawn = marks.map((m) => markFaceSVG({ mark: m, face, px, floorM: 81 }));
+  assert.ok(drawn[0].includes('width="81"'), "the parcel really was floored — otherwise this proves nothing");
+  assert.ok(drawn[1].includes('width="81"'));
+  assert.deepEqual(marks[0].extent, { w: 25, h: 25 }, "the record's extent is not edited by being rendered");
+  assert.deepEqual(marks[1].extent, { w: 50, h: 50 });
+  assert.deepEqual(markDrawOrder(marks).map((m) => m.id), before, "and the stacking is exactly what it was");
+
+  // flooredBoxM sees one box and a number — it cannot know about a neighbour,
+  // so it has no way to express a reordering even by accident
+  const box = { x0: 0, y0: 0, w: 25, h: 25 };
+  const out = flooredBoxM(box, 81);
+  assert.notEqual(out, box, "a new box comes back");
+  assert.deepEqual(box, { x0: 0, y0: 0, w: 25, h: 25 }, "and the one passed in is unmodified");
 });
 
 test("the interim overlay table is scaffolding, and says so in one place", () => {
