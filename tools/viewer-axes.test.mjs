@@ -101,6 +101,23 @@ import {
   residentFace,
   residentHref,
   DEFAULT_FACE_COLOR,
+  markFootprintAreaM2,
+  markContainmentDepth,
+  markDrawOrder,
+  isFarMark,
+  FAR_INSET_ENABLED,
+  safeFaceAsset,
+  FACE_EXTENSIONS,
+  facePreserveAspectRatio,
+  FACE_FITS,
+  FACE_FIT_DEFAULT,
+  PRESENTATION_OVERLAYS,
+  facePredicateIndex,
+  faceOfMark,
+  faceBoxM,
+  markFaceSVG,
+  groundFaceMarks,
+  farInsetEntries,
 } from "../spectator/viewer.mjs";
 
 test("distance-band headings derive their approximate ranges from the LOD dials", () => {
@@ -1643,4 +1660,231 @@ test("the camera can be pointed at the crossing it is drawing", () => {
   assert.ok(oldWest > -95458, "and the peak was further out still");
   // and the zoom-IN floor is untouched by any of this
   assert.equal(MAX_ZOOM_IN, 60);
+});
+
+// ── the face predicate: derived z, a mark's face, the far inset ───────────────
+
+// A world small enough to reason about and shaped like the real one: the root
+// contains a region, the region a parcel, the parcel a house.
+const FACE_WORLD = () => ([
+  { id: WORLD_ROOT_ID, kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 } },
+  { id: "a/house", kind: "sited", at: { x: 10, y: 10 }, extent: { w: 8, h: 8 }, placementParent: "a/parcel" },
+  { id: "a/region", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 900, h: 900 }, placementParent: WORLD_ROOT_ID },
+  { id: "a/parcel", kind: "parcel", at: { x: 10, y: 10 }, extent: { w: 25, h: 25 }, placementParent: "a/region" },
+  { id: "a/second-region", kind: "sited", at: { x: 400, y: 0 }, extent: { w: 100, h: 100 }, placementParent: WORLD_ROOT_ID },
+]);
+
+test("footprint area reads the AUTHORED ring where a mark has one, the box otherwise", () => {
+  assert.equal(markFootprintAreaM2({ extent: { w: 25, h: 4 } }), 100);
+  // a right triangle inside a 100x100 box is half of it — a bbox would say 10000
+  const ring = { points: [[0, 0], [100, 0], [0, 100]], extent: { w: 100, h: 100 } };
+  assert.equal(markFootprintAreaM2(ring), 5000, "the ring is the footprint, not its envelope");
+  assert.equal(markFootprintAreaM2({ points: [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 10 }, { x: 0, y: 10 }] }), 100,
+    "object vertices read the same as pair vertices");
+  // nothing here may throw or invent an area
+  assert.equal(markFootprintAreaM2({}), 0);
+  assert.equal(markFootprintAreaM2(), 0);
+  assert.equal(markFootprintAreaM2({ extent: { w: 0, h: 5 } }), 0);
+  assert.equal(markFootprintAreaM2({ points: [[0, 0], [1, "x"], [2, 2]] }), 0, "junk vertices are not an area");
+  assert.equal(markFootprintAreaM2({ points: [[0, 0], [1, 1]], extent: { w: 3, h: 3 } }), 9,
+    "two points are not a ring, so the box stands");
+});
+
+test("containment depth is read off placementParent, and a cycle cannot hang the painting", () => {
+  const marks = FACE_WORLD(), byId = new Map(marks.map((m) => [m.id, m]));
+  assert.equal(markContainmentDepth(byId.get(WORLD_ROOT_ID), byId), 0, "the light is everyone's ancestor");
+  assert.equal(markContainmentDepth(byId.get("a/region"), byId), 1);
+  assert.equal(markContainmentDepth(byId.get("a/parcel"), byId), 2);
+  assert.equal(markContainmentDepth(byId.get("a/house"), byId), 3);
+  // a predicate takes its parent from `parent` when it carries no placementParent
+  assert.equal(markContainmentDepth({ id: "a/roof", parent: "a/house" }, byId), 4);
+  // the lint forbids these; a reader still may not assume it
+  const cyclic = new Map([
+    ["x", { id: "x", placementParent: "y" }],
+    ["y", { id: "y", placementParent: "x" }],
+  ]);
+  // x contains y contains x: one step up is real, the step back onto x is the
+  // loop closing, so the walk stops there rather than spinning forever
+  assert.equal(markContainmentDepth(cyclic.get("x"), cyclic), 1, "the seen-set breaks the loop rather than spinning");
+  assert.equal(markContainmentDepth({ id: "orphan", placementParent: "nobody" }, byId), 1,
+    "an unresolvable chain stops where it stops");
+  assert.equal(markContainmentDepth(null, byId), 0);
+});
+
+test("THE Z-LAW: parents draw behind their children, and the smaller sibling in front", () => {
+  const marks = FACE_WORLD();
+  const order = markDrawOrder(marks).map((m) => m.id);
+  // the input is deliberately NOT in this order — record order would fail here
+  assert.notDeepEqual(marks.map((m) => m.id), order, "the order is derived, not the payload's");
+  assert.deepEqual(order, [
+    WORLD_ROOT_ID,       // depth 0 — the ground
+    "a/region",          // depth 1, 810,000 m2
+    "a/second-region",   // depth 1, 10,000 m2 — smaller, so in front of its sibling
+    "a/parcel",          // depth 2
+    "a/house",           // depth 3 — last painted, so on top of everything holding it
+  ]);
+  for (const [behind, front] of [[WORLD_ROOT_ID, "a/region"], ["a/region", "a/parcel"], ["a/parcel", "a/house"]])
+    assert.ok(order.indexOf(behind) < order.indexOf(front), `${behind} is painted before ${front}`);
+
+  // equal depth AND equal area: the id breaks the tie, so two clones and two
+  // screenshots of one record can never disagree about what is on top
+  const twins = [
+    { id: "b/twin", placementParent: WORLD_ROOT_ID, at: { x: 0, y: 0 }, extent: { w: 5, h: 5 } },
+    { id: "a/twin", placementParent: WORLD_ROOT_ID, at: { x: 0, y: 0 }, extent: { w: 5, h: 5 } },
+  ];
+  assert.deepEqual(markDrawOrder(twins).map((m) => m.id), ["a/twin", "b/twin"]);
+  assert.deepEqual(markDrawOrder([...twins].reverse()).map((m) => m.id), ["a/twin", "b/twin"],
+    "and the answer does not depend on how the fold happened to emit them");
+  assert.deepEqual(markDrawOrder([]), []);
+  assert.deepEqual(markDrawOrder([null, { no: "id" }]), [], "junk in the payload draws nothing");
+});
+
+test("far is read as the record WRITES it — the fold ships the string, not the boolean", () => {
+  assert.equal(isFarMark({ far: "true" }), true, "this is the live shape; === true would kill the inset");
+  assert.equal(isFarMark({ far: true }), true);
+  assert.equal(isFarMark({ far: "TRUE" }), true);
+  for (const not of [{ far: "false" }, { far: false }, { far: "" }, {}, null, undefined])
+    assert.equal(isFarMark(not), false, `not far: ${JSON.stringify(not)}`);
+});
+
+test("a face asset goes through the avatar whitelist AND has to look like a picture", () => {
+  assert.equal(safeFaceAsset("/media/vermillion-pando-peak-the-true-mountain-card.jpg"),
+    "/media/vermillion-pando-peak-the-true-mountain-card.jpg");
+  for (const ext of FACE_EXTENSIONS)
+    assert.equal(safeFaceAsset(`/media/a${ext}`), `/media/a${ext}`, `${ext} is a picture`);
+  assert.equal(safeFaceAsset("/media/A.SVG"), "/media/A.SVG", "the extension check is case-blind");
+  // the whitelist the avatars already earned, inherited whole
+  for (const bad of ["javascript:alert(1).svg", "https://elsewhere.example/x.png", "//host/x.png",
+    "/media/../../etc/passwd.png", "/media/x.png?q=1", "/media/x.png#f", "", null, undefined])
+    assert.equal(safeFaceAsset(bad), null, `refused: ${String(bad)}`);
+  // and the new half: same-origin, ordinary characters, still not a picture
+  for (const bad of ["/media/x.html", "/media/x", "/media/x.js", "/media/x.svg.txt"])
+    assert.equal(safeFaceAsset(bad), null, `not a picture: ${bad}`);
+});
+
+test("fit is contain by default; cover fills and crops, stretch distorts", () => {
+  assert.equal(FACE_FIT_DEFAULT, "contain");
+  assert.equal(facePreserveAspectRatio("contain"), "xMidYMid meet");
+  assert.equal(facePreserveAspectRatio("cover"), "xMidYMid slice");
+  assert.equal(facePreserveAspectRatio("stretch"), "none");
+  assert.equal(facePreserveAspectRatio("COVER"), "xMidYMid slice");
+  for (const junk of ["", "squish", null, undefined, 7])
+    assert.equal(facePreserveAspectRatio(junk), "xMidYMid meet", "anything unrecognised is contain");
+});
+
+test("a face comes from the mark's own predicate first, the interim table second", () => {
+  const marks = [
+    ...FACE_WORLD(),
+    { id: "a/house-face", kind: "predicated", parent: "a/house", slot: "face", value: "/media/house.svg", by: "a" },
+    { id: "a/house-roof", kind: "predicated", parent: "a/house", slot: "roofline", value: "steep" },
+  ];
+  assert.deepEqual(faceOfMark("a/house", marks),
+    { asset: "/media/house.svg", fit: "contain", anchor: "extent", source: "predicate", by: "a" });
+  assert.equal(faceOfMark("a/parcel", marks), null, "a mark with no face shows none");
+  assert.equal(faceOfMark("a/house", marks.filter((m) => m.slot !== "face")), null);
+
+  // the predicate carries NO GEOMETRY — only which picture and how it fits
+  const withFit = faceOfMark("a/house", [{ id: "f", parent: "a/house", slot: "face", value: "/media/h.png", fit: "cover",
+    at: { x: 9999, y: 9999 }, extent: { w: 1, h: 1 } }]);
+  assert.equal(withFit.fit, "cover");
+  assert.equal(withFit.anchor, "extent", "a predicate's own at/extent is never the face's box");
+
+  // an unvouched value is refused, not cleaned — and does not shadow the table
+  const overlays = { "a/house": { asset: "/media/fallback.jpg", anchor: "square", fit: "cover" } };
+  const unsafe = [{ id: "f", parent: "a/house", slot: "face", value: "https://elsewhere.example/x.png" }];
+  assert.equal(faceOfMark("a/house", unsafe, overlays).source, "overlay");
+  assert.equal(faceOfMark("a/house", [], overlays).asset, "/media/fallback.jpg");
+  assert.equal(faceOfMark("a/house", [{ id: "f", parent: "a/house", slot: "face", value: "/media/real.png" }], overlays).source,
+    "predicate", "the record always outranks the scaffolding");
+
+  // ONE face per mark: two claims resolve by smallest id, never by payload order
+  const two = [
+    { id: "z/claim", parent: "a/house", slot: "face", value: "/media/z.png" },
+    { id: "b/claim", parent: "a/house", slot: "face", value: "/media/b.png" },
+  ];
+  assert.equal(faceOfMark("a/house", two).asset, "/media/b.png");
+  assert.equal(faceOfMark("a/house", [...two].reverse()).asset, "/media/b.png");
+  assert.equal(facePredicateIndex(two).size, 1);
+  assert.equal(facePredicateIndex([]).size, 0);
+  assert.equal(faceOfMark("", []), null);
+});
+
+test("the face's box is the MARK's — extent by default, a square for the interim table", () => {
+  const wide = { id: "a/wide", at: { x: 100, y: 50 }, extent: { w: 400, h: 100 } };
+  assert.deepEqual(faceBoxM(wide), { x0: -100, y0: 0, w: 400, h: 100 });
+  assert.deepEqual(faceBoxM(wide, "square"), { x0: -100, y0: -150, w: 400, h: 400 },
+    "the square hangs on the longer side, centred on the mark's own at");
+  assert.equal(faceBoxM({ at: { x: 0, y: 0 } }), null, "a mark with no extent hangs no picture");
+  assert.equal(faceBoxM({ extent: { w: 5, h: 5 } }), null);
+  assert.equal(faceBoxM({ at: { x: 0, y: 0 }, extent: { w: 0, h: 5 } }), null);
+  assert.equal(faceBoxM(), null);
+});
+
+test("a face is drawn INERT — an image element referencing the asset, never inlined markup", () => {
+  const px = (x, y) => ({ x, y });                       // identity: metres read straight off
+  const mark = { id: "a/house", at: { x: 100, y: 100 }, extent: { w: 40, h: 20 }, label: "The House" };
+  const svg = markFaceSVG({ mark, px, face: { asset: "/media/house.svg", fit: "contain", anchor: "extent", source: "predicate" } });
+  assert.match(svg, /^<g class="wv-face" data-id="a\/house"/);
+  assert.ok(svg.includes('<image href="/media/house.svg" x="80" y="90" width="40" height="20"'),
+    "positioned and sized by the mark's own at and extent");
+  assert.match(svg, /preserveAspectRatio="xMidYMid meet"/);
+  assert.match(svg, /clip-path="url\(#wv-face-clip-a-house\)"/, "a cover fit may not paint outside the claim");
+  assert.ok(svg.includes('aria-label="The House"'));
+  // THE INERTNESS IS STRUCTURAL: the asset is referenced, never parsed into the
+  // document. No <svg>, no <script>, no <foreignObject> — a scripted SVG cannot
+  // run through an <image href>, which is the whole reason the contract says so.
+  for (const forbidden of ["<svg", "<script", "<foreignObject", "<use"])
+    assert.equal(svg.includes(forbidden), false, `a face never emits ${forbidden}`);
+  // svg and raster are identical at the contract level
+  const raster = markFaceSVG({ mark, px, face: { asset: "/media/house.png", fit: "contain", anchor: "extent", source: "predicate" } });
+  assert.equal(raster.replace("house.png", "house.svg"), svg,
+    "the only difference between a raster face and an svg face is the filename");
+
+  assert.equal(markFaceSVG({ mark, px, face: { asset: "" } }), "");
+  assert.equal(markFaceSVG({ mark, px }), "");
+  assert.equal(markFaceSVG({ mark: { id: "a/x", at: { x: 0, y: 0 } }, px, face: { asset: "/media/a.png" } }), "",
+    "no extent, no face");
+  assert.equal(markFaceSVG(), "");
+});
+
+test("the ground shows faces in derived z; the far country is not on the ground", () => {
+  const marks = [
+    ...FACE_WORLD(),
+    { id: "the-town/pando-peak", kind: "sited", far: "true", at: { x: -95458, y: -95458 },
+      extent: { w: 4000, h: 4000 }, placementParent: WORLD_ROOT_ID },
+    { id: "a/region-face", kind: "predicated", parent: "a/region", slot: "face", value: "/media/region.svg" },
+    { id: "a/house-face", kind: "predicated", parent: "a/house", slot: "face", value: "/media/house.png" },
+    { id: "a/ambient", kind: "predicated", parent: WORLD_ROOT_ID, slot: "face", value: "/media/weather.png" },
+  ];
+  const overlays = { "the-town/pando-peak": { asset: "/media/peak.jpg", anchor: "square", fit: "cover" } };
+  const ground = groundFaceMarks(marks, overlays);
+  assert.deepEqual(ground.map((g) => g.mark.id), ["a/region", "a/house"],
+    "the region is painted before the house that sits in it");
+  assert.equal(ground.every((g) => g.face.asset), true);
+  assert.equal(ground.some((g) => g.mark.id === "the-town/pando-peak"), false,
+    "a hundred and thirty-five kilometres out is not this frame's ground");
+  assert.equal(ground.some((g) => g.mark.id === WORLD_ROOT_ID), false,
+    "an ambient face is a property of the world, not a place in it");
+
+  const inset = farInsetEntries(marks, overlays);
+  assert.equal(inset.length, 1);
+  assert.equal(inset[0].mark.id, "the-town/pando-peak");
+  assert.deepEqual(inset[0].face, { asset: "/media/peak.jpg", fit: "cover", anchor: "square", source: "overlay", by: null });
+  // a far mark with no picture still gets a card — the frame's claim is about
+  // scale, and that is true with or without art
+  assert.deepEqual(farInsetEntries(marks, {}).map((e) => e.face), [null]);
+  assert.deepEqual(farInsetEntries([], overlays), []);
+});
+
+test("the interim overlay table is scaffolding, and says so in one place", () => {
+  // ONE row today: the far country, which the record has no face predicate for.
+  // When this table empties, the scaffolding is done — and the day it grows a
+  // row nobody meant, this assertion is where it shows up.
+  assert.deepEqual(Object.keys(PRESENTATION_OVERLAYS), ["the-town/pando-peak"]);
+  for (const [id, row] of Object.entries(PRESENTATION_OVERLAYS)) {
+    assert.ok(safeFaceAsset(row.asset), `${id}'s asset passes the same whitelist a resident's would`);
+    assert.ok(["extent", "square"].includes(row.anchor), `${id} anchors on the mark's own geometry`);
+    assert.ok(Object.keys(FACE_FITS).includes(row.fit), `${id} names a real fit`);
+  }
+  assert.equal(FAR_INSET_ENABLED, true, "the escape hatch is the one switch, and it is on");
 });

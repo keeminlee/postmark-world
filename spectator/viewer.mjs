@@ -1271,6 +1271,255 @@ export function mistBandSVG({ from, to, banks = MIST_BANKS, id = "wv-mist" } = {
   return `<g class="wv-mist" aria-hidden="true">${out}</g>`;
 }
 
+// ─────────── THE FACE PREDICATE: derived z, a mark's face, the far inset ───────
+//
+// A mark may SHOW something. The record says which picture; the record's own
+// geometry says where it lands and how big it is; and the record's containment
+// says what it covers and what covers it. Nothing here is placed by hand, and
+// nothing here stores a z.
+//
+// The word is FACE, not `render` — `render` belongs to LOGOS, which is the law's
+// own fidelity renderings. A mark shows its face.
+
+// ── the z-law, fully derived ────────────────────────────────────────────────
+//
+// Parents render behind children — containment depth IS the layer stack, and
+// `let-there-be-light` is everyone's ancestor, so the ground is behind the world
+// by construction. Among marks at one depth the larger footprint goes first, so
+// the smaller claim ends up in front of the ground it sits on.
+//
+// Depth is read off `placementParent` — the fold's own answer to "what contains
+// this", polygon-aware and the same edge the lint enforces. Never off the
+// directory path (which this payload does not carry) and never off a bounding
+// box of mine (rule: a bbox is not a shape).
+//
+// Ordering globally by (depth, -area) rather than walking the tree gives the
+// same guarantee more cheaply: a child's depth is always greater than its
+// parent's, so a parent can never sort after its own child. Marks at equal depth
+// in different subtrees do not contain each other, so their order is free; area
+// then id keeps it stable across clones and screenshots.
+export function markFootprintAreaM2(mark) {
+  const ring = Array.isArray(mark?.points) && mark.points.length >= 3 ? mark.points : null;
+  if (ring) {
+    // shoelace, absolute — an authored ring is the truer footprint than its box
+    let twice = 0;
+    for (let i = 0; i < ring.length; i++) {
+      const a = ring[i], b = ring[(i + 1) % ring.length];
+      const ax = Number(Array.isArray(a) ? a[0] : a?.x), ay = Number(Array.isArray(a) ? a[1] : a?.y);
+      const bx = Number(Array.isArray(b) ? b[0] : b?.x), by = Number(Array.isArray(b) ? b[1] : b?.y);
+      if (![ax, ay, bx, by].every(Number.isFinite)) return 0;
+      twice += ax * by - bx * ay;
+    }
+    return Math.abs(twice) / 2;
+  }
+  const w = Number(mark?.extent?.w), h = Number(mark?.extent?.h);
+  return Number.isFinite(w) && Number.isFinite(h) && w > 0 && h > 0 ? w * h : 0;
+}
+
+// How many containers deep. The root is 0; an unresolvable chain stops where it
+// stops rather than throwing, and a cycle (which the lint forbids, but this
+// module is a reader and readers do not get to assume) is broken by the seen-set.
+export function markContainmentDepth(mark, byId) {
+  if (!mark?.id) return 0;
+  const get = (id) => (byId?.get ? byId.get(id) : null);
+  const seen = new Set([mark.id]);
+  let depth = 0, current = mark;
+  while (current && current.id !== WORLD_ROOT_ID) {
+    const parentId = current.placementParent ?? current.parent;
+    if (!parentId || seen.has(parentId)) break;
+    seen.add(parentId);
+    depth += 1;
+    current = get(parentId);
+    if (!current) break;
+  }
+  return depth;
+}
+
+export function markDrawOrder(marks = []) {
+  const byId = markIndex(marks);
+  const keyed = (marks ?? []).filter((m) => m?.id).map((m) => ({
+    mark: m,
+    depth: markContainmentDepth(m, byId),
+    area: markFootprintAreaM2(m),
+  }));
+  keyed.sort((a, b) =>
+    a.depth - b.depth
+    || b.area - a.area
+    || String(a.mark.id).localeCompare(String(b.mark.id)));
+  return keyed.map((k) => k.mark);
+}
+
+// ── far: the atlas's Alaska inset ──────────────────────────────────────────
+//
+// `far: true` says this ground is not in the same frame as the town. A hundred
+// and thirty-five kilometres out, a mountain and the quay cannot share a scale:
+// at town zoom the peak is off the page, and at a zoom that holds both, the town
+// is three pixels.
+// Every printed atlas answers this the same way — Alaska gets a corner box at its
+// own scale — and that is what a far mark gets here.
+//
+// KEEMIN'S ESCAPE HATCH: this is the one switch. False and every far mark goes
+// back to being projected onto the town's ground exactly as it was, artwork and
+// footprint both, with no other line needing to change.
+export const FAR_INSET_ENABLED = true;
+
+// The record writes `far: true`, and the fold ships it as the STRING "true".
+// Reading `=== true` here would have quietly made the whole inset dead code.
+export function isFarMark(mark) {
+  const v = mark?.far;
+  return v === true || String(v ?? "").trim().toLowerCase() === "true";
+}
+
+// ── what a face is allowed to be ───────────────────────────────────────────
+//
+// The value lands in an image element, so it goes through the SAME whitelist a
+// resident's avatar does — a rooted same-origin path, no protocol, no host, no
+// query, no traversal — plus an extension the town can recognise as a picture.
+// Refused, not cleaned: a face nobody can vouch for simply does not render.
+//
+// SVG and raster are identical at this level on purpose, and the safety is
+// structural rather than a matter of which extension arrived: the asset is
+// referenced by an image element and never inlined, so a scripted SVG cannot
+// execute — the same boundary windows keep. The world expresses what stands,
+// never what runs.
+export const FACE_EXTENSIONS = [".svg", ".png", ".jpg", ".jpeg", ".webp", ".avif", ".gif"];
+export function safeFaceAsset(value) {
+  const url = safeAvatarUrl(value);
+  if (!url) return null;
+  const lower = url.toLowerCase();
+  return FACE_EXTENSIONS.some((ext) => lower.endsWith(ext)) ? url : null;
+}
+
+// contain by default: a face is hung on a claim, and the claim's proportions are
+// not the picture's problem. cover fills and crops; stretch distorts and is only
+// ever what a deliberately-authored ground tile wants.
+export const FACE_FITS = { contain: "xMidYMid meet", cover: "xMidYMid slice", stretch: "none" };
+export const FACE_FIT_DEFAULT = "contain";
+export function facePreserveAspectRatio(fit) {
+  return FACE_FITS[String(fit ?? "").trim().toLowerCase()] ?? FACE_FITS[FACE_FIT_DEFAULT];
+}
+
+// ── the interim presentation layer ─────────────────────────────────────────
+//
+// THIS TABLE IS SCAFFOLDING, and naming it as such is the point. Until face
+// predicates land on marks, a handful of pictures are hung on ids from the
+// viewer side — which is presentation, not record. It is a table rather than a
+// special case in a draw function because one hand-rolled underlay is a bug you
+// can't see and a second one is a habit; here every such picture is in one place,
+// visible, countable, and deletable in one edit the day the record carries it.
+//
+// It writes NOTHING. A face resolved from a predicate always wins over a row
+// here, so a mark that grows a real face silently retires its own row.
+//
+//   anchor: "extent" — the mark's own box, the face contract (default)
+//           "square" — a square of the larger side, centred on `at`; what the
+//                      hand-rolled Pando underlay did, kept so the first customer
+//                      moves into the frame looking like itself
+export const PRESENTATION_OVERLAYS = {
+  "the-town/pando-peak": {
+    asset: "/media/vermillion-pando-peak-the-true-mountain-card.jpg",
+    anchor: "square",
+    fit: "cover",
+  },
+};
+
+// Every face predicate on the record, indexed by the mark it predicates. Built
+// once per render rather than scanned per mark — 600 marks scanning 600 marks is
+// the kind of quiet quadratic a painting notices.
+//
+// ONE FACE PER MARK is the contract, so a mark carrying two is a record defect
+// this reader must not resolve by luck: the winner is the predicate with the
+// smallest id, which is the same answer in every clone and every screenshot
+// regardless of what order the fold happened to emit them in.
+export function facePredicateIndex(marks = []) {
+  const claims = new Map();
+  for (const m of marks ?? []) {
+    if (m?.slot !== "face" || !m.id) continue;
+    const parent = m.parent ?? m.placementParent;
+    const asset = safeFaceAsset(m.value);
+    if (!parent || !asset) continue;
+    const held = claims.get(parent);
+    if (held && String(held.id) <= String(m.id)) continue;
+    claims.set(parent, { id: m.id, face: { asset, fit: m.fit ?? FACE_FIT_DEFAULT, anchor: "extent", source: "predicate", by: m.by ?? null } });
+  }
+  return new Map([...claims].map(([parent, held]) => [parent, held.face]));
+}
+
+// A mark's face: its own child predicate first, the interim table second, and
+// nothing at all if neither vouches for a picture. `fit` rides the predicate as
+// an ordinary field; the predicate carries NO geometry, ever.
+export function faceFromIndex(markId, index, overlays = PRESENTATION_OVERLAYS) {
+  const id = String(markId ?? "");
+  if (!id) return null;
+  const fromRecord = index?.get?.(id);
+  if (fromRecord) return fromRecord;
+  const row = overlays?.[id];
+  const asset = row && safeFaceAsset(row.asset);
+  if (!asset) return null;
+  return { asset, fit: row.fit ?? FACE_FIT_DEFAULT, anchor: row.anchor ?? "extent", source: "overlay", by: null };
+}
+
+export function faceOfMark(markId, marks = [], overlays = PRESENTATION_OVERLAYS) {
+  return faceFromIndex(markId, facePredicateIndex(marks), overlays);
+}
+
+// The face's box in WORLD metres, read off the mark and nothing else.
+export function faceBoxM(mark, anchor = "extent") {
+  const x = Number(mark?.at?.x), y = Number(mark?.at?.y);
+  const w = Number(mark?.extent?.w), h = Number(mark?.extent?.h);
+  if (![x, y, w, h].every(Number.isFinite) || !(w > 0) || !(h > 0)) return null;
+  const side = anchor === "square" ? Math.max(w, h) : null;
+  const bw = side ?? w, bh = side ?? h;
+  return { x0: x - bw / 2, y0: y - bh / 2, w: bw, h: bh };
+}
+
+// One face, drawn INERT. An <image> in SVG is the <img> of that document: the
+// asset is referenced, decoded, and painted, and a scripted SVG referenced this
+// way cannot run — which is the whole reason the contract says image element and
+// never inline markup. The clip is what makes `cover` honest: a slice fit
+// overflows its box by definition, and a face may not paint outside the claim it
+// is hung on.
+export function markFaceSVG({ mark, face, px } = {}) {
+  if (!mark?.id || !face?.asset || typeof px !== "function") return "";
+  const box = faceBoxM(mark, face.anchor);
+  if (!box) return "";
+  const a = px(box.x0, box.y0), b = px(box.x0 + box.w, box.y0 + box.h);
+  const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+  const w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y);
+  if (!(w > 0) || !(h > 0)) return "";
+  const clip = `wv-face-clip-${String(mark.id).replace(/[^a-z0-9]+/gi, "-")}`;
+  return `<g class="wv-face" data-id="${esc(mark.id)}" data-face-source="${esc(face.source ?? "")}" role="img"`
+    + ` aria-label="${esc(String(mark.label ?? mark.id))}">`
+    + `<clipPath id="${clip}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>`
+    + `<image href="${face.asset}" x="${x}" y="${y}" width="${w}" height="${h}"`
+    + ` preserveAspectRatio="${facePreserveAspectRatio(face.fit)}" clip-path="url(#${clip})"/>`
+    + `</g>`;
+}
+
+// The marks that draw their face on the town's ground: everything with a face,
+// in derived z-order, minus the far country (which has its own frame) and minus
+// the ambient marks, which are properties of the world rather than places in it.
+export function groundFaceMarks(marks = [], overlays = PRESENTATION_OVERLAYS) {
+  const byId = markIndex(marks), faces = facePredicateIndex(marks);
+  return markDrawOrder(marks)
+    .filter((m) => !(FAR_INSET_ENABLED && isFarMark(m)))
+    .filter((m) => !isAmbientMark(m, byId))
+    .map((mark) => ({ mark, face: faceFromIndex(mark.id, faces, overlays) }))
+    .filter((entry) => entry.face);
+}
+
+// What the inset holds: the far marks, innermost-last, each with whatever face
+// it has. A far mark with no face still gets a card — the frame's job is to say
+// "this ground exists and is not at this scale", and that is true with or
+// without a picture of it.
+export function farInsetEntries(marks = [], overlays = PRESENTATION_OVERLAYS) {
+  if (!FAR_INSET_ENABLED) return [];
+  const faces = facePredicateIndex(marks);
+  return markDrawOrder(marks)
+    .filter((m) => isFarMark(m))
+    .map((mark) => ({ mark, face: faceFromIndex(mark.id, faces, overlays) }));
+}
+
 // Place a bubble beside an anchor without letting it leave the painting.
 //
 // Sized and positioned in the PANEL's own pixels, not the painting's units: a
@@ -2313,6 +2562,31 @@ const STYLE = `
   background:linear-gradient(180deg,#f0d68f,var(--amber)); }
 /* hard against the right edge, so the help opens back across the painting */
 
+/* THE FAR-COUNTRY INSET — an atlas's corner box, in the painting's own idiom:
+   the amber hairline the placed artwork already wears, over the same night glass
+   as the map controls. Bottom-RIGHT is the one corner nothing else claims (the
+   worldmark holds top-left, the controls top-right, the tallies bottom-left) —
+   until a walk is armed, when the desk takes this corner and the inset yields:
+   an armed destination is a live act and outranks a standing frame. */
+.wv-far-inset { position:absolute; z-index:5; right:10px; bottom:10px;
+  display:flex; flex-direction:column; gap:8px; align-items:flex-end;
+  max-width:min(13rem, 42%); pointer-events:none; }
+.wv-far-inset[hidden] { display:none; }
+.wv-minimap:has(.wv-walkdesk:not([hidden])) .wv-far-inset { display:none; }
+.wv-inset-card { margin:0; width:9.5rem; max-width:100%;
+  background:rgba(13,15,19,.82); border:1px solid rgba(232,197,106,.42);
+  border-radius:4px; backdrop-filter:blur(4px); box-shadow:0 2px 10px rgba(0,0,0,.38);
+  overflow:hidden; }
+.wv-inset-art { display:block; width:100%; height:6.4rem; background:rgba(232,197,106,.05); }
+.wv-inset-art.is-blank { background:repeating-linear-gradient(135deg,
+  rgba(232,197,106,.10) 0 6px, rgba(232,197,106,.03) 6px 12px); }
+.wv-inset-card figcaption { display:block; padding:5px 7px 6px;
+  border-top:1px solid rgba(232,197,106,.22); font-size:.72rem; line-height:1.25; }
+.wv-inset-card figcaption b { display:block; color:var(--amber); font-weight:600; }
+/* "not to scale" is the inset's whole honesty — it is never allowed to be the
+   quiet part, so it keeps its own line rather than trailing off the name. */
+.wv-inset-card figcaption span { display:block; color:var(--dim); font-style:italic; }
+
 .wv-minimap.pannable { cursor:grab; }
 .wv-minimap.panning { cursor:grabbing; }
 .wv-gridline { stroke:#e8c56a; stroke-opacity:.14; stroke-width:1; vector-effect:non-scaling-stroke; }
@@ -2320,6 +2594,8 @@ const STYLE = `
 /* footprints — every mark's true extent from the record. ONE vocabulary with the
    cells: tier sets the color (tierOf), dashed = the law/mechanic modifier. */
 #wv-fp-layer { pointer-events:none; }
+/* faces — the pictures marks hang on their own ground, under every instrument */
+#wv-face-layer { pointer-events:none; }
 #wv-hl-layer { pointer-events:none; }
 /* where the town is talking: each thread's ground, from the office's earshot
    derivation. Pale blue-gray — violet is the stamps' word (Keemin). A live
@@ -2687,7 +2963,13 @@ const MARKUP = `
           <button class="ctl wv-map-convo" aria-label="conversations" title="where the town is talking — live threads and the last day's, drawn as the ground they covered; labels link to the record">💬</button>
           <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
             title="a short tour of the world">?</button>
-        </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
+        </div><!-- THE FAR-COUNTRY INSET — the atlas's Alaska box. Ground that is
+             real, recorded, and a hundred and thirty-five kilometres out of
+             frame gets its own corner card at its own scale, rather than a
+             footprint the town's scale cannot hold. Chrome, not geometry: it
+             does not pan with the map, because an inset that pans away is an
+             inset of nothing. -->
+        <aside class="wv-far-inset" hidden></aside><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
        THE WALK DESK RIDES ON THE PAINTING (Keemin, 2026-08-04) — bottom right,
        and only once a destination is armed. It answers a click you made on the
        painting, so it belongs to the painting; in the rail it was a permanent
@@ -3314,7 +3596,7 @@ export function mountViewer(appEl) {
     // The chrome that rides ON the painting is held across the wipe below rather
     // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
     // the walk desk itself) that must not be rebuilt when the atlas loads.
-    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk"]
+    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-far-inset", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk"]
       .map((selector) => $(boxEl, selector)).filter(Boolean);
     const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
@@ -3357,6 +3639,15 @@ export function mountViewer(appEl) {
       farArtLayer.style.pointerEvents = "none";
       svg.insertBefore(farArtLayer, svg.firstChild);
       svg.insertBefore(mistLayer, svg.firstChild);
+      // FACES — the marks' own pictures, and the LOWEST derived layer, mounted
+      // straight onto the painting. They are ground, not instrumentation: the
+      // grid, the footprints, the pips and the walkers all belong above them,
+      // because every one of those exists to be read against what is drawn.
+      // Draw order inside the layer is the derived z (containment, then size).
+      const faceLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      faceLayer.setAttribute("id", "wv-face-layer");
+      faceLayer.style.pointerEvents = "none";
+      svg.appendChild(faceLayer);
       // the survey grid — the FIRST derived layer: drawn from the registration
       // (origin + scale), never traced from the paint. Sits under the overlay.
       const gridLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -3435,7 +3726,7 @@ export function mountViewer(appEl) {
       }
       const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
       const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, faceLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
       drawFarCountry();
       let tween = null;
       function applyView() {
@@ -3719,16 +4010,27 @@ export function mountViewer(appEl) {
       // ONLY the world-root and ambient marks are skipped, and the reason is about
       // the mark, not the viewer: the root IS the frame (320 km square — a box
       // around everything says nothing), and an ambient mark is a property of the
-      // whole world rather than a place in it. `far` used to be skipped here too,
-      // justified as "no ground" — but that is a FIRST-PERSON claim (you cannot
-      // walk up to a horizon) leaking into a top-down map, which has no horizon.
-      // Pando has an extent, at real coordinates, exactly as real as any parcel;
-      // vermillion's own 3,600 m mountain at the same centre has always drawn.
+      // whole world rather than a place in it.
+      //
+      // `far` is skipped too, and the reason changed: it is not "a horizon has no
+      // ground" (a first-person claim, wrong on a top-down map — Pando's extent is
+      // as real as any parcel) but "this ground is not at this scale". Ninety-five
+      // kilometres of nothing cannot share a frame with a 25 m parcel, so the far
+      // country draws in its own corner box, the way every atlas has ever drawn
+      // Alaska. FAR_INSET_ENABLED is the one switch back.
+      //
+      // ORDER IS DERIVED, not record order: containment depth first, so a parent
+      // is painted before the children it contains, then descending footprint so
+      // the smaller claim lands in front of the larger one it sits on. Footprints
+      // are outlines and mostly indifferent to it; the FACES below are not, and
+      // both read their order from the same one function so they can never
+      // disagree about what is on top of what.
       const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
       function buildFpLayer() {
         let s = "";
-        for (const m of world.marks ?? []) {
+        for (const m of markDrawOrder(world.marks ?? [])) {
           if (!m.at || !m.extent || isAmbientMark(m, byId)) continue;
+          if (FAR_INSET_ENABLED && isFarMark(m)) continue;
           const cls = markClasses(m) + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
           s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
             attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
@@ -3737,6 +4039,21 @@ export function mountViewer(appEl) {
         fpLayer.innerHTML = s;
         if (lastRadial) mapCtx.syncWithin(lastRadial);
       }
+
+      // FACES — the pictures marks hang on their own ground. Built once at mount
+      // for the same reason the far artwork is: a face is fixed to the ground,
+      // not to the camera, so a pan moves it by moving the viewBox and costs
+      // nothing. The layer is empty today on the live record (zero face
+      // predicates so far) and that emptiness is honest — the interim overlay
+      // table's only row is the far country, which draws in the inset instead.
+      function buildFaceLayer() {
+        let s = "";
+        for (const { mark, face } of groundFaceMarks(world.marks ?? []))
+          s += markFaceSVG({ mark, face, px: fpPx });
+        faceLayer.innerHTML = s;
+      }
+      buildFaceLayer();
+      renderFarInset();
       // the standpoint's containment chain reads heavier on the map — kept in sync
       // with every telling (the boxes are the same boxes, only the weight moves)
       mapCtx.syncWithin = (radial) => {
@@ -4064,31 +4381,73 @@ export function mountViewer(appEl) {
     }
   }
 
-  // The artwork on the mountain, and the weather on the way to it. Both are
-  // fixed to the ground rather than to the camera, so this runs ONCE when the
-  // painting mounts and never again — a pan moves them the way it moves the
-  // coastline, by moving the viewBox, which costs nothing.
+  // The weather on the way to the far country, and — with the inset switched off
+  // — the artwork out there on its own ground. Both are fixed to the ground
+  // rather than to the camera, so this runs ONCE when the painting mounts and
+  // never again: a pan moves them the way it moves the coastline, by moving the
+  // viewBox, which costs nothing.
   //
   // Which mountain, and where, is read off the record: the far feature's own
-  // mark carries the coordinate and the extent. Nothing is placed by hand here,
-  // so a peak that moves on the record moves its picture with it.
-  const PANDO_ART_URL = "/media/vermillion-pando-peak-the-true-mountain-card.jpg";
+  // mark carries the coordinate and the extent, and its picture now comes from
+  // the same face lookup every other mark uses (a `slot: face` predicate if the
+  // record carries one, the interim overlay table otherwise). Nothing is placed
+  // by hand here, so a peak that moves on the record moves its picture with it.
+  //
+  // THE MIST STAYS ON THE GROUND EVEN WHEN THE PICTURE MOVES INTO THE INSET, and
+  // that is not an oversight: the water between is a real corridor that a real
+  // vessel really sails — a hundred and thirty-five kilometres of it, the peak
+  // being 95 km west and 95 km north of the quay — and the walkers layer draws
+  // boats across it. The inset re-frames the DESTINATION, not the journey.
   function drawFarCountry() {
     if (!mapCtx?.mistLayer || !mapCtx.farArtLayer) return;
     const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
-    const peak = (world?.marks ?? []).find((m) => m.far && m.feature === "pando-peak" && m.at);
+    const peak = (world?.marks ?? []).find((m) => isFarMark(m) && m.at);
     if (!peak) return;                      // no far feature on the record, no far country
     const centre = px(peak.at);
     // the corridor runs from Ferry's crossing — grid origin, the town's own
     // registration point — out to the peak; the mist is the water between
     mapCtx.mistLayer.innerHTML = mistBandSVG({ from: px({ x: 0, y: 0 }), to: centre });
+    if (FAR_INSET_ENABLED) { mapCtx.farArtLayer.innerHTML = ""; return; }
+    const face = faceOfMark(peak.id, world?.marks ?? []);
+    if (!face) return;
     mapCtx.farArtLayer.innerHTML = placedArtSVG({
       at: centre,
       extent: { w: (peak.extent?.w ?? 0) / mapCtx.mPerPx, h: (peak.extent?.h ?? 0) / mapCtx.mPerPx },
-      href: PANDO_ART_URL,
+      href: face.asset,
       label: `${peak.label ?? peak.feature} — the mountain, seen from the town side`,
       id: "pando-peak",
     });
+  }
+
+  // ── THE INSET ─────────────────────────────────────────────────────────────
+  //
+  // A corner card holding the far country at its own scale, framed and labelled,
+  // the way an atlas holds Alaska. It is CHROME, not geometry: it lives in the
+  // pane's own pixels beside the other overlays rather than in the SVG's
+  // viewBox, because an inset that panned away when you dragged the map would be
+  // an inset of nothing. It is built once — its content is the record's, and the
+  // record does not change under a pan either.
+  //
+  // A far mark with no face still gets its card: the frame's claim is "this
+  // ground exists and is not at this scale", which is true with or without a
+  // picture of it.
+  function renderFarInset() {
+    const host = $(root, ".wv-far-inset");
+    if (!host) return;
+    const entries = farInsetEntries(world?.marks ?? []);
+    if (!entries.length) { host.hidden = true; host.innerHTML = ""; return; }
+    host.hidden = false;
+    host.innerHTML = entries.map(({ mark, face }) => {
+      const name = resolveMarkName(mark, data?.worldState?.determined).name;
+      const km = Math.round(Math.hypot(Number(mark.at?.x) || 0, Number(mark.at?.y) || 0) / 1000);
+      const art = face
+        ? `<img class="wv-inset-art" src="${face.asset}" alt="${esc(name)}" loading="lazy" decoding="async"`
+          + ` style="object-fit:${face.fit === "stretch" ? "fill" : face.fit === "cover" ? "cover" : "contain"}">`
+        : `<div class="wv-inset-art is-blank" aria-hidden="true"></div>`;
+      return `<figure class="wv-inset-card" data-id="${esc(mark.id)}">${art}`
+        + `<figcaption><b>${esc(name)}</b><span>${km.toLocaleString()} km away · not to scale</span></figcaption>`
+        + `</figure>`;
+    }).join("");
   }
 
   // ── conversations on the ground ────────────────────────────────────────────
