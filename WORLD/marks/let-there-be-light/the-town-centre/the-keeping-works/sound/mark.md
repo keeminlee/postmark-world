@@ -6,12 +6,11 @@ date: 2026-08-09
 at: { x: -255, y: -355 }
 extent: { w: 50, h: 40 }
 class: sound
-version: 1
+version: 2
 extends: emission
 ambient: true
 dials: {"radius_m": 60, "hearing_ttl_min": 5, "flood_cap": 20, "thread_close_min": 30}
 implements: []
-affordances: [{"subverb": "say", "blurb": "Speak aloud where you stand — sixty metres, five minutes, the town openly remembers."}]
 source: LOGOS/classes.md
 ---
 
