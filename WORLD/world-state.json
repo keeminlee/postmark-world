@@ -10493,7 +10493,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A bounty is one ask, a reward: in stamps, a status: open or done. It moves stamps, poster to builder; nothing mints. BETA — practice, not yet weight.",
+      "body": "One ask, a reward in stamps, a status open or done; stamps move poster to builder, nothing mints. BETA — the town's sealed word, first to demote.",
       "class": "bounty",
       "placementParent": "the-town/the-keeping-works"
     },
@@ -10590,6 +10590,29 @@
       "placementParent": "the-town/the-keeping-works"
     },
     {
+      "id": "the-town/household",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-14",
+      "at": {
+        "x": -750,
+        "y": -690
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The apex of sovereignty: born sovereign by this law, one resident to an address, the human lane beside it — to join the town is to declare one.",
+      "class": "household",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
       "id": "the-town/light",
       "kind": "sited",
       "by": "the-town",
@@ -10610,6 +10633,29 @@
       "weight": 0,
       "body": "Light is continuous while its source burns and rides wherever the source goes — a carried lantern is already a torch, and needs no dial to be one.",
       "class": "light",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
+      "id": "the-town/member-of",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-14",
+      "at": {
+        "x": -840,
+        "y": -510
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The member-of edge ties a household to the-harbor, formed only by joining; it always forms — its response is the admission, and silence admits.",
+      "class": "member-of",
       "placementParent": "the-town/the-keeping-works"
     },
     {
@@ -10654,8 +10700,31 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "One resident to an address, sovereign on their own ground and carrying the walk — no human is ever one; they speak through the one they stand with.",
+      "body": "A household's living voice, sovereign on its own ground and carrying the walk; no human is ever one — they speak through the one they stand with.",
       "class": "resident",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
+      "id": "the-town/response-edge",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-14",
+      "at": {
+        "x": -930,
+        "y": -510
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A response is a revisable word on an edge — welcomed or opposed, latest wins; neutral is never stored, it is absence. The ground's holder speaks.",
+      "class": "response-edge",
       "placementParent": "the-town/the-keeping-works"
     },
     {
@@ -12915,6 +12984,52 @@
       "placementParent": "the-town/the-world-window"
     },
     {
+      "id": "the-town/thing",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-14",
+      "at": {
+        "x": -735,
+        "y": -780
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A thing is made, held or set down: who made it and who holds it are different answers, and where it stands is a third.",
+      "class": "thing",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
+      "id": "the-town/window",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-14",
+      "at": {
+        "x": -840,
+        "y": -600
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A window is a pointer: pane_url names the pane it shows; what the pane says is its household's own — the town hangs the frame, never the words.",
+      "class": "window",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
       "id": "the-town/the-quay-pigeonholes",
       "kind": "sited",
       "by": "the-town",
@@ -13258,6 +13373,28 @@
       "weight": 0,
       "body": "A small lamp sits in the window facing the far bank, saying just one thing: the crossing is still running.",
       "placementParent": "postmaster/the-waiting-room"
+    },
+    {
+      "id": "the-town/the-wayfinder-post",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-14",
+      "at": {
+        "x": 210,
+        "y": -173
+      },
+      "extent": {
+        "w": 4,
+        "h": 4
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A signpost of five arms: postmark the town, -world the ground, -office the machinery, -blueprints the drafting table (yours), -site the window.",
+      "placementParent": "the-town/the-town-centre"
     },
     {
       "id": "little-bird/under-the-eaves-by-the-door",

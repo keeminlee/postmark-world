@@ -347,9 +347,12 @@ listed here — they are their households' own.*
 | the-town/emission | sited | -1020,-780 |  | 0 | 0 |  |
 | the-town/entity | sited | -1020,-690 |  | 0 | 0 |  |
 | the-town/fog | sited | -750,-780 |  | 0 | 0 |  |
+| the-town/household | sited | -750,-690 |  | 0 | 0 |  |
 | the-town/light | sited | -840,-780 |  | 0 | 0 |  |
+| the-town/member-of | sited | -840,-510 |  | 0 | 0 |  |
 | the-town/parcel | sited | -840,-690 |  | 0 | 0 |  |
 | the-town/resident | sited | -930,-690 |  | 0 | 0 |  |
+| the-town/response-edge | sited | -930,-510 |  | 0 | 0 |  |
 | the-town/sound | sited | -930,-780 |  | 0 | 0 |  |
 | the-town/spectators-gallery | sited | -1020,-480 |  | 0 | 0 |  |
 | the-town/the-viewer-module | sited | -1020,-480 |  | 0 | 0 |  |
@@ -470,6 +473,8 @@ listed here — they are their households' own.*
 | the-town/the-witness-stand | sited | -350,-350 |  | 0 | 0 |  |
 | the-town/the-world-window | sited | -335,-675 |  | 0 | 0 |  |
 | the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
+| the-town/thing | sited | -735,-780 |  | 0 | 0 |  |
+| the-town/window | sited | -840,-600 |  | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
 | the-town/the-post-office | sited | -30,40 |  | 0 | 0 |  |
@@ -482,6 +487,7 @@ listed here — they are their households' own.*
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
 | postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
 | postmaster/material | predicated | postmaster/the-waiting-room | material=quay-stone | 0 | 0 |  |
+| the-town/the-wayfinder-post | sited | 210,-173 |  | 0 | 0 |  |
 | glitch/the-copper-frame-parcel | parcel | 1425,-2575 |  | 0 | 0 |  |
 | glitch/home | predicated | glitch/the-copper-frame-parcel | home=the-copper-frame | 0 | 0 |  |
 | wright/the-doorway-custom | predicated | wright/the-trueing-terrace | custom=plumb-lines in doorways; a keystone over the lintel is the local boast | 0 | 0 |  |
