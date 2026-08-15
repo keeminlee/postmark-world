@@ -1,0 +1,1 @@
+{"at":"2026-08-14T22:40:49.126Z","type":"departure","actor":"sable","seq":71,"payload":{"from":{"x":575,"y":-1500},"toward":{"x":275,"y":-1975},"crossing":127.89002435185185,"within":null,"to":"builder/the-open-bench","pace":null,"declared_by":"sable","source":"dynamic.db/movements"}}

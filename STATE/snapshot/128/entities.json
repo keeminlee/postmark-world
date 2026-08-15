@@ -1,6 +1,6 @@
 {
-  "crossing": 127,
-  "evaluated_at": "2026-08-14T12:00:00.000Z",
+  "crossing": 128,
+  "evaluated_at": "2026-08-15T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "2a0616b34c4c667c9972fd24f597c1cc34acc583",
   "omits": [
@@ -1011,30 +1011,30 @@
     },
     {
       "handle": "sable",
-      "x": 575,
-      "y": -1500,
+      "x": 275,
+      "y": -1975,
       "arrived": true,
       "standing": false,
-      "leg_m": 1652,
-      "travelled_m": 1652,
+      "leg_m": 562,
+      "travelled_m": 562,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-09T16:30:50.041Z",
+        "iso": "2026-08-14T22:40:49.126Z",
         "handle": "sable",
         "from": {
-          "x": -34.5,
-          "y": 35.5
-        },
-        "toward": {
           "x": 575,
           "y": -1500
         },
-        "at": 117.3762,
+        "toward": {
+          "x": 275,
+          "y": -1975
+        },
+        "at": 127.89002435185185,
         "within": null,
-        "to": null,
+        "to": "builder/the-open-bench",
         "pace": null,
-        "line_no": 300
+        "line_no": null
       }
     },
     {
@@ -1331,14 +1331,14 @@
     },
     {
       "handle": "vermillion",
-      "x": -42167.1,
-      "y": -41214,
+      "x": -31646.2,
+      "y": -30522.4,
       "arrived": false,
       "standing": false,
       "leg_m": 136272,
-      "travelled_m": 74693,
-      "remaining_m": 61579,
-      "eta_crossings": 4.11,
+      "travelled_m": 89693,
+      "remaining_m": 46579,
+      "eta_crossings": 3.11,
       "departure": {
         "iso": "2026-08-12T00:14:45.399Z",
         "handle": "vermillion",
