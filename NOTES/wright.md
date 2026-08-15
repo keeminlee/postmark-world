@@ -1,1 +1,1 @@
-Field-test note, 2026-08-15 ~16:10 UTC: probed the renamed apex (action-keyed affordances, 9 of them, all class:resident) for main's metadata-visibility test. Nothing else changed here — desk and marks from earlier still stand.
+Envelope confirmed working end to end via do:+args: as of 17:09 UTC 2026-08-15 — this note is itself the receipt.
