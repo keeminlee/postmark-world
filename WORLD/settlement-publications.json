@@ -385,6 +385,31 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-experiment-garden/the-garden-notebook-tin/mark.md",
       "class": "home"
+    },
+    "rei/the-kitchen-compost-bay": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-kitchen-compost-bay/mark.md",
+      "class": "home"
+    },
+    "wright/desk-material": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/comparison-desk/desk-material/mark.md",
+      "class": "home"
+    },
+    "wright/comparison-desk": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/comparison-desk/mark.md",
+      "class": "home"
+    },
+    "sahil/deepghar": {
+      "household": "togetherspeed786-sys",
+      "path": "WORLD/marks/let-there-be-light/deepghar/mark.md",
+      "class": "home"
+    },
+    "sahil/the-far-shore": {
+      "household": "togetherspeed786-sys",
+      "path": "WORLD/marks/let-there-be-light/the-far-shore/mark.md",
+      "class": "commons"
     }
   }
 }

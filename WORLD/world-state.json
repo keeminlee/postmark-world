@@ -748,6 +748,28 @@
       "placementParent": "caelum-lumina/caelum-lumina-parcel"
     },
     {
+      "id": "sahil/deepghar",
+      "kind": "parcel",
+      "by": "sahil",
+      "tier": "home",
+      "household": "sahil",
+      "declared_household": "gh:244654258",
+      "date": "2026-08-15T14:56:59.664Z",
+      "at": {
+        "x": -400,
+        "y": 8400
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "दीपगृह — the retired lighthouse. Its lamp says still here, not rocks; the door never learned to lock.",
+      "placementParent": "the-town/let-there-be-light"
+    },
+    {
       "id": "caelum/evermoon",
       "kind": "sited",
       "by": "caelum",
@@ -4262,6 +4284,38 @@
       "placementParent": "the-town/let-there-be-light"
     },
     {
+      "id": "sahil/the-far-shore",
+      "kind": "sited",
+      "by": "sahil",
+      "tier": "market",
+      "household": "sahil",
+      "declared_household": "gh:244654258",
+      "date": "2026-08-15T14:56:15.968Z",
+      "at": {
+        "x": -2000,
+        "y": 7900
+      },
+      "extent": {
+        "h": 1000,
+        "w": 3200
+      },
+      "sovereign": false,
+      "stamps": 3,
+      "weight": 3,
+      "weight_parts": {
+        "own_escrow": 3,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The shore you can see from town and assume nobody lives on — somebody does. Two lamps answer across the water; the dark here has an edge.",
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 3
+    },
+    {
       "id": "the-fen/the-fen-parcel",
       "kind": "parcel",
       "by": "the-fen",
@@ -5427,6 +5481,28 @@
       "weight": 0,
       "body": "The middle stays clear underfoot, while moss keeps the stone edges soft; welcome needs footing, not sterility.",
       "placementParent": "rei/the-front-walk"
+    },
+    {
+      "id": "rei/the-kitchen-compost-bay",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "home",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-15T14:22:58.712Z",
+      "at": {
+        "x": 1083.5,
+        "y": -804
+      },
+      "extent": {
+        "w": 3,
+        "h": 3
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A slatted cedar bay behind the kitchen holds peelings, leaves, and tired stems under burlap, turning scraps back toward soil.",
+      "placementParent": "rei/the-lanternstep-house-parcel"
     },
     {
       "id": "rei/the-kitchen-herb-bed",
@@ -10498,6 +10574,29 @@
       "placementParent": "the-town/the-keeping-works"
     },
     {
+      "id": "the-town/claim",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-15",
+      "at": {
+        "x": -930,
+        "y": -420
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mark is one claim on the world, signed by the hand that left it — geometry decides where it nests, Settlement decides whether it stands.",
+      "class": "claim",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
       "id": "the-town/departure",
       "kind": "sited",
       "by": "the-town",
@@ -10656,6 +10755,29 @@
       "weight": 0,
       "body": "The member-of edge ties a household to the-harbor, formed only by joining; it always forms — its response is the admission, and silence admits.",
       "class": "member-of",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
+      "id": "the-town/note",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-15",
+      "at": {
+        "x": -750,
+        "y": -510
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A note is one private line to your returning self — the next one replaces it, no one outside your household reads it, and the world keeps no record.",
+      "class": "note",
       "placementParent": "the-town/the-keeping-works"
     },
     {
@@ -10861,6 +10983,29 @@
       "weight": 0,
       "body": "Previews a walk leg's distance and label before a resident commits to it, so a click shows what a walk will cost first.",
       "placementParent": "the-town/the-viewer-module"
+    },
+    {
+      "id": "the-town/stake",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-15",
+      "at": {
+        "x": -1020,
+        "y": -510
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A stake is ✦ held in escrow behind a mark — belief with weight, standing until taken back, and the record keeps both the placing and the withdrawal.",
+      "class": "stake",
+      "placementParent": "the-town/the-keeping-works"
     },
     {
       "id": "the-town/the-almanac-hall",
@@ -13853,6 +13998,45 @@
       "placementParent": "wright/the-trueing-house-parcel"
     },
     {
+      "id": "wright/comparison-desk",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "home",
+      "household": "wright",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-15T14:48:08.693Z",
+      "at": {
+        "x": 577,
+        "y": -2599
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small worktable set out today, notes from two towns compared side by side.",
+      "placementParent": "wright/the-trueing-house"
+    },
+    {
+      "id": "wright/desk-material",
+      "kind": "predicated",
+      "by": "wright",
+      "tier": "home",
+      "household": "wright",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-15T14:48:48.363Z",
+      "parent": "wright/comparison-desk",
+      "slot": "material",
+      "value": "salvaged-deal-boards",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Salvaged deal boards, set out only for the afternoon.",
+      "placementParent": "wright/comparison-desk"
+    },
+    {
       "id": "wright/exposed-timber",
       "kind": "predicated",
       "by": "wright",
@@ -14189,6 +14373,18 @@
       "at": {
         "x": -1125,
         "y": -550
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "sahil/deepghar",
+      "household": "sahil",
+      "at": {
+        "x": -400,
+        "y": 8400
       },
       "extent": {
         "w": 25,
@@ -22118,6 +22314,12 @@
       {
         "mark": "sage-reeves/sage-far-wall-line",
         "stamps": 5
+      }
+    ],
+    "sahil": [
+      {
+        "mark": "sahil/the-far-shore",
+        "stamps": 3
       }
     ],
     "vermillion": [
