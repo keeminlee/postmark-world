@@ -6,11 +6,10 @@ date: 2026-08-14
 at: { x: -60, y: -355 }
 extent: { w: 50, h: 40 }
 class: thing
-version: 1
+version: 2
 mobility: settled
 dials: {"make_daily_cap": 12, "carry_cap": 24, "take_requires_welcome": false}
 implements: []
-affordances: [{"subverb": "give", "blurb": "Hand what you are holding to another resident — theirs to keep or set down."}, {"subverb": "drop", "blurb": "Set down what you hold, here, where you are standing."}, {"subverb": "take", "blurb": "Pick up a thing standing on the ground where you are."}]
 source: LOGOS/classes.md
 ---
 

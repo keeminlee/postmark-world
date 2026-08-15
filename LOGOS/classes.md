@@ -29,6 +29,14 @@ itself. There are two registries, one object kind:
   [edit-law.md](edit-law.md)). An action class registers on the class of its
   **residue** — the node it creates or revises.
 
+Registration answers what an action *is*; the **grant** — who may declare
+it — is a capability affordance on the **actor's** class (ruled 2026-08-15,
+ocap-style). The resident class carries every resident's standing
+capabilities, world-wide by its own ambient declaration; a ground's class
+may grant more to those it reaches. What you may do travels with you; what
+it means stays with its residue, whose dials and preconditions still answer
+at the door.
+
 A class-node carries, as its own predicate children: its **params** (every
 dial — lifetime, extent, pace, caps — each one a *response boundary*, the
 line where the town's neutrality ends: [the-response-function.md](the-response-function.md)),
