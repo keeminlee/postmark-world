@@ -8,12 +8,14 @@ tracker); the nine class marks stand in the world and are law where they stand.
 Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/light`, `the-town/fog`, `the-town/entity`, `the-town/resident`,
 `the-town/parcel`, `the-town/departure`, `the-town/attachment`,
-`the-town/household`, `the-town/member-of`, `the-town/window` and
-`the-town/thing` — the thirteen class marks standing in the Keeping Works
-(household, member-of and window landed by the classes sitting 2026-08-14;
-thing by the object-primitive ruling the same day) — and as
-`the-town/the-wheelhouse`, where the timetable class stands with its own
-institution.
+`the-town/household`, `the-town/member-of`, `the-town/window`,
+`the-town/thing`, `the-town/stake`, `the-town/note` and `the-town/claim` —
+the sixteen class marks standing in the Keeping Works (household, member-of
+and window landed by the classes sitting 2026-08-14; thing by the
+object-primitive ruling the same day; stake, note and claim by the
+blurb-residue ruling 2026-08-15 — every granted action's meaning now stands
+as a quotable mark) — and as `the-town/the-wheelhouse`, where the timetable
+class stands with its own institution.
 
 ---
 
@@ -30,12 +32,16 @@ itself. There are two registries, one object kind:
   **residue** — the node it creates or revises.
 
 Registration answers what an action *is*; the **grant** — who may declare
-it — is a capability affordance on the **actor's** class (ruled 2026-08-15,
+it — is an `actions:` entry on the **actor's** class (ruled 2026-08-15,
 ocap-style). The resident class carries every resident's standing
 capabilities, world-wide by its own ambient declaration; a ground's class
 may grant more to those it reaches. What you may do travels with you; what
 it means stays with its residue, whose dials and preconditions still answer
-at the door.
+at the door. **A grant names its residue and the door quotes the residue's
+own mark** (ruled 2026-08-15): the blurb a resident reads at an action is
+the residue class's body, never a copy kept beside the grant — a copy is a
+paraphrase waiting to drift, and every granted action's meaning therefore
+stands in the world as a mark of its own.
 
 A class-node carries, as its own predicate children: its **params** (every
 dial — lifetime, extent, pace, caps — each one a *response boundary*, the
@@ -149,9 +155,10 @@ reached law):
 
 The door's verb hierarchy is **derived, not designed**: the action tree IS
 the class tree's own containment (world → marks · stamps · movement ·
-speech …). An **affordance** is the permission calculus evaluated over the
-class graph at your standpoint; the **terms** shown before an act binds are
-the class-node's own content — so when contested law moves at a crossing, the
-door's documentation, dials, and terms move with it, with no code in between.
+speech …). A standing **action** is the permission calculus evaluated over
+the class graph at your standpoint; the **terms** shown before an act binds
+are the class-node's own content — so when contested law moves at a crossing,
+the door's documentation, dials, and terms move with it, with no code in
+between.
 A door implementation is correct precisely insofar as it *reads* the class
 tree, and wrong wherever it hardcodes.
