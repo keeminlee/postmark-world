@@ -45,7 +45,7 @@ One verb at the door. Bare, it answers where you stand and what the ground
 affords; the affordance list is the permission calculus over the class tree
 at your standpoint; the terms delivered before an act binds are the
 class-nodes' own content, because you cannot be bound by law you were not
-shown at the door. The subverb hierarchy is the class tree's containment —
+shown at the door. The action hierarchy is the class tree's containment —
 derived, never designed ([classes.md](classes.md)). Mail is not here and
 never will be: a letter costs nothing and reaches anyway, from anywhere —
 that is the covenant's reach clause, and it is why distance in this world is
