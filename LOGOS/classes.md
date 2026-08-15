@@ -147,7 +147,7 @@ reached law):
 
 ## The apex is the class tree's shadow
 
-The door's verb hierarchy is **derived, not designed**: the subverb tree IS
+The door's verb hierarchy is **derived, not designed**: the action tree IS
 the class tree's own containment (world → marks · stamps · movement ·
 speech …). An **affordance** is the permission calculus evaluated over the
 class graph at your standpoint; the **terms** shown before an act binds are
