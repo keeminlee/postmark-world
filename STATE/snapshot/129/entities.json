@@ -1,12 +1,12 @@
 {
-  "crossing": 128,
-  "evaluated_at": "2026-08-15T00:00:00.000Z",
+  "crossing": 129,
+  "evaluated_at": "2026-08-15T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "1ad85a52a888d1010f8f49fb54fc81ab91058797",
   "omits": [
     "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
   ],
-  "entity_count": 49,
+  "entity_count": 50,
   "entities": [
     {
       "handle": "aion-solare",
@@ -144,6 +144,37 @@
         "at": 119.69849039351851,
         "within": null,
         "to": null,
+        "pace": null,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "claran",
+      "x": 413.2,
+      "y": 1013.1,
+      "arrived": false,
+      "standing": false,
+      "leg_m": 3012,
+      "travelled_m": 1094,
+      "remaining_m": 1918,
+      "eta_crossings": 0.13,
+      "departure": {
+        "iso": "2026-08-15T11:07:29.077Z",
+        "handle": "claran",
+        "from": {
+          "x": 0,
+          "y": 0
+        },
+        "toward": {
+          "x": 1140,
+          "y": 2795
+        },
+        "at": 128.92706046296297,
+        "within": {
+          "w": 12,
+          "h": 12
+        },
+        "to": "hal/the-green-lamp-house",
         "pace": null,
         "line_no": null
       }
@@ -1011,28 +1042,28 @@
     },
     {
       "handle": "sable",
-      "x": 275,
-      "y": -1975,
+      "x": 925,
+      "y": -2400,
       "arrived": true,
       "standing": false,
-      "leg_m": 562,
-      "travelled_m": 562,
+      "leg_m": 777,
+      "travelled_m": 777,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-14T22:40:49.126Z",
+        "iso": "2026-08-15T03:12:52.035Z",
         "handle": "sable",
         "from": {
-          "x": 575,
-          "y": -1500
-        },
-        "toward": {
           "x": 275,
           "y": -1975
         },
-        "at": 127.89002435185185,
+        "toward": {
+          "x": 925,
+          "y": -2400
+        },
+        "at": 128.26786967592594,
         "within": null,
-        "to": "builder/the-open-bench",
+        "to": "wright/the-trueing-terrace",
         "pace": null,
         "line_no": null
       }
@@ -1067,26 +1098,26 @@
     },
     {
       "handle": "sahil",
-      "x": -24.8,
-      "y": 45.2,
+      "x": -400,
+      "y": 8400,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 6008,
+      "travelled_m": 6008,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-10T20:22:54.785Z",
+        "iso": "2026-08-15T04:42:07.059Z",
         "handle": "sahil",
         "from": {
-          "x": -24.8,
-          "y": 45.2
+          "x": 1772.2,
+          "y": 2798.6
         },
         "toward": {
-          "x": -24.8,
-          "y": 45.2
+          "x": -400,
+          "y": 8400
         },
-        "at": 119.69849039351851,
+        "at": 128.39182828703704,
         "within": null,
         "to": null,
         "pace": null,
@@ -1213,31 +1244,28 @@
     },
     {
       "handle": "sollerino",
-      "x": 1078,
-      "y": -814.3,
+      "x": 1075,
+      "y": -803,
       "arrived": true,
       "standing": false,
-      "leg_m": 309,
-      "travelled_m": 309,
+      "leg_m": 9,
+      "travelled_m": 9,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-11T08:32:34.626Z",
+        "iso": "2026-08-15T11:04:11.297Z",
         "handle": "sollerino",
         "from": {
-          "x": 1325,
-          "y": -1000
-        },
-        "toward": {
           "x": 1075,
           "y": -812
         },
-        "at": 120.71191125,
-        "within": {
-          "w": 6,
-          "h": 6
+        "toward": {
+          "x": 1075,
+          "y": -803
         },
-        "to": "rei/the-experiment-garden",
+        "at": 128.92248212962963,
+        "within": null,
+        "to": null,
         "pace": null,
         "line_no": null
       }
@@ -1331,14 +1359,14 @@
     },
     {
       "handle": "vermillion",
-      "x": -31646.2,
-      "y": -30522.4,
+      "x": -21125.3,
+      "y": -19830.8,
       "arrived": false,
       "standing": false,
       "leg_m": 136272,
-      "travelled_m": 89693,
-      "remaining_m": 46579,
-      "eta_crossings": 3.11,
+      "travelled_m": 104693,
+      "remaining_m": 31579,
+      "eta_crossings": 2.11,
       "departure": {
         "iso": "2026-08-12T00:14:45.399Z",
         "handle": "vermillion",
