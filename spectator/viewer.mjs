@@ -604,6 +604,15 @@ export function markImageURL(mark) {
 // glyph, no empty frame, no gap where a thing used to be. The handler is
 // attached BEFORE the src, because a src that fails from cache can fire before
 // the next statement runs.
+//
+// THE PICTURE IS DISPLAY, NOT A CONTROL (Keemin, 2026-08-16). It mounted inside
+// a link at first, opening the full image in a new tab. Overruled: click is
+// already spoken for in this viewer — clicking a mark opens that mark's own
+// reading — and a second click meaning on something INSIDE that reading fights
+// the one gesture the whole surface is built on. So there is no anchor, no
+// handler and no affordance of any kind here: a click on the picture falls
+// through to the cell underneath and does exactly what a click on the mark's
+// words does. A thumbnail is a thing you look at.
 export function hydrateMarkImages(box, resolve, doc = globalThis.document) {
   let mounted = 0;
   for (const figure of [...box.querySelectorAll(".wv-mark-image[data-image-for]")]) {
@@ -619,18 +628,7 @@ export function hydrateMarkImages(box, resolve, doc = globalThis.document) {
     image.alt = String(mark.body ?? id ?? "");
     image.addEventListener("error", () => figure.remove(), { once: true });
     image.src = url;
-    const link = doc.createElement("a");
-    link.href = url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.title = "open the full picture";
-    // CLICKING A PICTURE MEANS THE PICTURE, AND NOTHING ELSE. The cell is itself
-    // a click target — the delegated handler folds the investigate expansion open
-    // or shut — and it does not preventDefault, so without this the link opened
-    // its tab AND rearranged the card the reader just left behind it.
-    link.addEventListener("click", (event) => event.stopPropagation());
-    link.appendChild(image);
-    figure.appendChild(link);
+    figure.appendChild(image);
     mounted += 1;
   }
   return mounted;
@@ -2039,18 +2037,20 @@ const STYLE = `
    photograph that pushed the byline, the backing and the words below the fold
    would have turned a cell into a gallery. Letterbox bars land on the panel's
    own night, so contain reads as a picture rather than as a mistake. */
-.wv-mark-image { margin:8px 0 0; padding:0; }
+.wv-mark-image { margin:8px 0 0; padding:0; line-height:0; }
 .wv-mark-image:empty { display:none; }
-.wv-mark-image a { display:block; line-height:0; border-radius:3px; }
 /* THE BOX HUGS THE PICTURE. Sizing to the full cell width and letterboxing
    inside it drew the frame around the BOX, so a portrait sat in a lit mat with
    a border tracing empty panel — a frame around nothing. Capped in both axes
    with the box free to follow, the border traces the picture itself, and a
    picture too small to fill the column simply reads at its own size. contain
    stays as the guarantee it always was: nothing here ever crops or stretches. */
+/* No hover lift, no focus ring, no pointer of its own — a thumbnail is display,
+   not a control, and every one of those would have promised a click that does
+   something. The card's own cursor still applies, which is honest: the click
+   DOES do something — the card's thing. */
 .wv-mark-image img { display:block; max-width:100%; max-height:40vh; width:auto; height:auto;
   object-fit:contain; border:1px solid var(--line); border-radius:3px; background:var(--night); }
-.wv-mark-image a:hover img, .wv-mark-image a:focus-visible img { border-color:var(--wv-mark-accent); }
 /* the pinned bubble caps itself at min(64%,32rem) and scrolls, so the same
    two-fifths promise has to be measured against that smaller surface */
 .wv-bubble .wv-mark-image img { max-height:13rem; }

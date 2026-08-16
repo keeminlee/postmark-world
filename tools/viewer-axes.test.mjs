@@ -551,6 +551,8 @@ function markImageFixture(ids) {
   };
   // `log` records the ORDER of the two acts that must not swap: a src assigned
   // before its error handler can fail out of cache with nobody listening.
+  // `made` is every node the mount built, so a test can assert what it did NOT.
+  const made = [];
   const doc = {
     createElement: (tag) => {
       let src;
@@ -563,10 +565,11 @@ function markImageFixture(ids) {
         get: () => src,
         set: (value) => { src = value; node.log.push("src"); },
       });
+      made.push(node);
       return node;
     },
   };
-  return { figures, box, doc };
+  return { figures, box, doc, made };
 }
 
 test("a mark's picture comes from the town's shelf or it does not come", () => {
@@ -596,7 +599,7 @@ test("a mark's picture comes from the town's shelf or it does not come", () => {
 
 test("the picture mounts on nodes — the URL never becomes markup", () => {
   const body = "Three ships on one water, and the light going out of all of them.";
-  const { figures, box, doc } = markImageFixture(["wright/three-ships"]);
+  const { figures, box, doc, made } = markImageFixture(["wright/three-ships"]);
   const store = new Map([["wright/three-ships", { id: "wright/three-ships", body, image: SHELF_URL }]]);
 
   assert.equal(hydrateMarkImages(box, (id) => store.get(id), doc), 1);
@@ -604,19 +607,16 @@ test("the picture mounts on nodes — the URL never becomes markup", () => {
   assert.equal(figure.removed, false);
   assert.equal("imageFor" in figure.dataset, false, "hydrated once — the cue is spent");
 
-  const link = figure.children[0];
-  assert.equal(link.tag, "a");
-  assert.equal(link.href, SHELF_URL, "the href is assigned, never interpolated");
-  assert.equal(link.target, "_blank");
-  assert.equal(link.rel, "noopener noreferrer");
-  assert.equal(typeof link.listeners.click, "function",
-    "the picture's click is the picture's — the cell's own handler must not also fire");
-  let stopped = false;
-  link.listeners.click({ stopPropagation: () => { stopped = true; } });
-  assert.equal(stopped, true);
-
-  const image = link.children[0];
+  // DISPLAY, NOT A CONTROL — the picture hangs straight off the figure. No
+  // anchor, no click handler, nothing that promises a second meaning for the one
+  // gesture that already opens a mark.
+  assert.equal(figure.children.length, 1, "one child, and it is the picture");
+  const image = figure.children[0];
   assert.equal(image.tag, "img");
+  assert.equal(made.filter((node) => node.tag === "a").length, 0,
+    "no anchor is created — a click falls through to the cell underneath");
+  assert.equal(image.listeners.click, undefined,
+    "no click handler on the picture: the cell's own handler is the only one");
   assert.equal(image.src, SHELF_URL);
   assert.equal(image.loading, "lazy");
   assert.equal(image.decoding, "async");
@@ -646,7 +646,7 @@ test("a picture that fails to load takes its whole figure with it", () => {
 
   assert.equal(hydrateMarkImages(box, (id) => store.get(id), doc), 1);
   const [figure] = figures;
-  const image = figure.children[0].children[0];
+  const image = figure.children[0];
   assert.equal(typeof image.listeners.error, "function");
   assert.ok(image.log.indexOf("on:error") < image.log.indexOf("src"),
     "the handler goes on BEFORE the src — a cached failure fires immediately");
