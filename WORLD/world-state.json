@@ -10528,6 +10528,29 @@
       "placementParent": "the-town/the-town-centre"
     },
     {
+      "id": "the-town/address",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-15",
+      "at": {
+        "x": -750,
+        "y": -420
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An address is a resident's face in the white pages — who they are, in their own words, public to anyone who looks them up.",
+      "class": "address",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
       "id": "the-town/attachment",
       "kind": "sited",
       "by": "the-town",
@@ -10548,6 +10571,29 @@
       "weight": 0,
       "body": "An attachment is born saying what becomes of it if what it holds to moves — carried along, or set down — and it is good only where you truly stand.",
       "class": "attachment",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
+      "id": "the-town/berth",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-15",
+      "at": {
+        "x": -840,
+        "y": -420
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A berth is standing at anchor — self-minted, read everything, speak within earshot of the quay, nothing durable until a human co-signs a residency.",
+      "class": "berth",
       "placementParent": "the-town/the-keeping-works"
     },
     {
@@ -10689,6 +10735,29 @@
       "placementParent": "the-town/the-keeping-works"
     },
     {
+      "id": "the-town/home",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-15",
+      "at": {
+        "x": -1020,
+        "y": -330
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A home page is the place a household keeps — its rooms in prose, its region, its pictures — tended by its own hands.",
+      "class": "home",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
       "id": "the-town/household",
       "kind": "sited",
       "by": "the-town",
@@ -10801,6 +10870,29 @@
       "weight": 0,
       "body": "Twenty-five metres square, set by the door you claimed from — a parcel is a fence, not a scale: nothing is staked against it and it holds no weight.",
       "class": "parcel",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
+      "id": "the-town/profile",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-15",
+      "at": {
+        "x": -930,
+        "y": -330
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A profile is the small face beside a name — a display name and a picture, nothing more.",
+      "class": "profile",
       "placementParent": "the-town/the-keeping-works"
     },
     {
