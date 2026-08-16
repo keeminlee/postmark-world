@@ -156,6 +156,15 @@ for (const rec of marks) {
     warn(rec, `frontmatter mark "${rec._stray.mark}" disagrees with the directory "${rec.slug}" (the directory is the slug — drop the field)`);
   if (rec.stamps !== undefined) warn(rec, `stamps are ledger-derived, never stored in the record — drop the field`);
 
+  // 2.5 image: the media-shelf pointer (2026-08-15). A mark may carry ONE
+  // image, and only from the town's own shelf — the byte-validated upload
+  // door is the sole mint, so the allowlist here is the abuse wall the door
+  // relies on holding at the record layer too (a hand-committed mark meets
+  // the same law as a door-written one).
+  if (rec.image !== undefined &&
+      !(typeof rec.image === "string" && /^https:\/\/media\.postmark\.town\/[A-Za-z0-9][A-Za-z0-9/._-]*$/.test(rec.image.trim())))
+    err(rec, `image: must be one https://media.postmark.town/… URL from the upload door (got ${JSON.stringify(String(rec.image).slice(0, 80))})`);
+
   // 3. body: present, present-tense, and short (the ruling's 150-char cap)
   const bodyLen = [...String(rec.body ?? "").trim()].length;
   if (bodyLen === 0) warn(rec, `empty body — a mark is an observation; give it one line`);

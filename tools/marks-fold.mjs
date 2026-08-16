@@ -781,6 +781,10 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // alike, the store is the reader's only source. Undefined on every
       // unclassed mark, so a world with no notices serializes as before.
       class: mk.class, ask: mk.ask, reward: mk.reward, status: mk.status, threshold: mk.threshold,
+      // image (2026-08-15): the media-shelf pointer — one allowlisted URL the
+      // door validated and the lint re-checks; undefined on every imageless
+      // mark, so a world without pictures serializes as before.
+      image: mk.image,
       // A mark's PLACEMENT — the mark it stands inside. Disclosed for classed
       // marks since the bounty grammar (a notice is a notice because it stands
       // ON the board), and for EVERY mark since the conferred-sovereignty

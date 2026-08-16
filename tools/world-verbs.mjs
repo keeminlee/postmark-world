@@ -172,6 +172,10 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
     // relation line would bury the one they opened.
     weight_parts: target.weight_parts ?? null,
     body: target.body,
+    // the media-shelf pointer, target only (2026-08-15): investigate is the
+    // read that opens ONE mark, so the image URL rides here as metadata — a
+    // URL, never bytes; whether to spend eyes on it is the reader's own call.
+    ...(target.image !== undefined ? { image: target.image } : {}),
     predicates, parents, children, alongside,
     more: { predicates: countPredicates(markId, world) - predicates.length, children: allChildren.length - children.length },
     reinvoke: depth > 1 ? [...children, ...alongside].map((c) => c.id) : [],

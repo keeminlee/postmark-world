@@ -236,3 +236,18 @@ test("the gate never blocks on its own law's absence — missing clause degrades
   assert.match(out, /\[ERROR\].*the cap is 150/, "the refusal itself still fires");
   assert.match(out, /clause not found in the record/, "and the failed lookup is named, not hidden");
 });
+
+test("image: only the town's own media shelf hangs on a mark (2026-08-15)", () => {
+  const { dir, root } = fixtureTree();
+  const good = join(root, "the-postcard");
+  mkdirSync(good, { recursive: true });
+  writeFileSync(join(good, "mark.md"),
+    "---\nkind: sited\nby: testerhh\ndate: 2026-08-15\nat: { x: 40, y: 40 }\nextent: { w: 2, h: 2 }\nimage: https://media.postmark.town/media/testerhh/abc123.png\n---\n\nA postcard pinned to a post.\n");
+  const bad = join(root, "the-smuggled-poster");
+  mkdirSync(bad, { recursive: true });
+  writeFileSync(join(bad, "mark.md"),
+    "---\nkind: sited\nby: testerhh\ndate: 2026-08-15\nat: { x: 44, y: 44 }\nextent: { w: 2, h: 2 }\nimage: https://evil.example/x.png\n---\n\nA poster from nowhere the office ever saw.\n");
+  const out = runLint(dir);
+  assert.match(out, /the-smuggled-poster[\s\S]*?image: must be one https:\/\/media\.postmark\.town/, "the off-shelf URL is refused by name");
+  assert.doesNotMatch(out, /the-postcard\b[^\n]*image:/, "the shelf's own URL passes");
+});
