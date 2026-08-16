@@ -1,6 +1,6 @@
 {
-  "crossing": 130,
-  "evaluated_at": "2026-08-16T00:00:00.000Z",
+  "crossing": 131,
+  "evaluated_at": "2026-08-16T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "a1acb1ed57a8d4fd31f65b0418ea5ee8043a1d98",
   "omits": [
@@ -38,28 +38,31 @@
     },
     {
       "handle": "alden",
-      "x": -24.8,
-      "y": 45.2,
+      "x": 1137.5,
+      "y": 2789,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 2980,
+      "travelled_m": 2980,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-10T20:22:54.785Z",
+        "iso": "2026-08-16T01:49:09.351Z",
         "handle": "alden",
         "from": {
           "x": -24.8,
           "y": 45.2
         },
         "toward": {
-          "x": -24.8,
-          "y": 45.2
+          "x": 1140,
+          "y": 2795
         },
-        "at": 119.69849039351851,
-        "within": null,
-        "to": null,
+        "at": 130.15160372685185,
+        "within": {
+          "w": 12,
+          "h": 12
+        },
+        "to": "hal/the-green-lamp-house",
         "pace": null,
         "line_no": null
       }
@@ -181,61 +184,61 @@
     },
     {
       "handle": "corwin",
-      "x": -24.8,
-      "y": 45.2,
+      "x": 1137.5,
+      "y": 2789,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 2980,
+      "travelled_m": 2980,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-10T20:22:54.785Z",
+        "iso": "2026-08-16T01:49:13.728Z",
         "handle": "corwin",
         "from": {
           "x": -24.8,
           "y": 45.2
         },
         "toward": {
-          "x": -24.8,
-          "y": 45.2
+          "x": 1140,
+          "y": 2795
         },
-        "at": 119.69849039351851,
-        "within": null,
-        "to": null,
+        "at": 130.15170504629629,
+        "within": {
+          "w": 12,
+          "h": 12
+        },
+        "to": "hal/the-green-lamp-house",
         "pace": null,
         "line_no": null
       }
     },
     {
       "handle": "draig",
-      "x": -894.9,
-      "y": 2127.5,
+      "x": 1300,
+      "y": 2911,
       "arrived": true,
       "standing": false,
-      "leg_m": 2262,
-      "travelled_m": 2262,
+      "leg_m": 193,
+      "travelled_m": 193,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-09T20:42:03.321Z",
+        "iso": "2026-08-16T07:49:11.573Z",
         "handle": "draig",
         "from": {
-          "x": -34.5,
-          "y": 35.5
+          "x": 1143,
+          "y": 2798
         },
         "toward": {
-          "x": -900,
-          "y": 2140
+          "x": 1300,
+          "y": 2911
         },
-        "at": 117.7251,
-        "within": {
-          "w": 25,
-          "h": 25
-        },
-        "to": "draig/the-reaching-house-parcel",
+        "at": 130.6516550925926,
+        "within": null,
+        "to": null,
         "pace": null,
-        "line_no": 317
+        "line_no": null
       }
     },
     {
@@ -268,28 +271,31 @@
     },
     {
       "handle": "ellery",
-      "x": -24.8,
-      "y": 45.2,
+      "x": 1137.5,
+      "y": 2789,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 2980,
+      "travelled_m": 2980,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-10T20:22:54.785Z",
+        "iso": "2026-08-16T01:16:40.724Z",
         "handle": "ellery",
         "from": {
           "x": -24.8,
           "y": 45.2
         },
         "toward": {
-          "x": -24.8,
-          "y": 45.2
+          "x": 1140,
+          "y": 2795
         },
-        "at": 119.69849039351851,
-        "within": null,
-        "to": null,
+        "at": 130.1064967361111,
+        "within": {
+          "w": 12,
+          "h": 12
+        },
+        "to": "hal/the-green-lamp-house",
         "pace": null,
         "line_no": null
       }
@@ -467,31 +473,28 @@
     },
     {
       "handle": "iris",
-      "x": 2275,
-      "y": 1700,
+      "x": 2200,
+      "y": 1350,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 358,
+      "travelled_m": 358,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-12T03:28:52.106Z",
+        "iso": "2026-08-16T04:35:17.812Z",
         "handle": "iris",
         "from": {
           "x": 2275,
           "y": 1700
         },
         "toward": {
-          "x": 2275,
-          "y": 1700
+          "x": 2200,
+          "y": 1350
         },
-        "at": 122.29009324074075,
-        "within": {
-          "w": 12,
-          "h": 10
-        },
-        "to": "stella-letta/the-lamp-that-stays-on",
+        "at": 130.3823551851852,
+        "within": null,
+        "to": "iris/the-arc-house",
         "pace": null,
         "line_no": null
       }
@@ -585,14 +588,14 @@
     },
     {
       "handle": "keith",
-      "x": 3616.6,
-      "y": 4,
-      "arrived": false,
+      "x": 3975,
+      "y": -400,
+      "arrived": true,
       "standing": false,
       "leg_m": 4271,
-      "travelled_m": 3731,
-      "remaining_m": 540,
-      "eta_crossings": 0.04,
+      "travelled_m": 4271,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
         "iso": "2026-08-15T21:00:53.685Z",
         "handle": "keith",
@@ -1092,28 +1095,28 @@
     },
     {
       "handle": "sahil",
-      "x": -400,
-      "y": 8400,
-      "arrived": true,
+      "x": 335.9,
+      "y": 4847.1,
+      "arrived": false,
       "standing": false,
-      "leg_m": 6008,
-      "travelled_m": 6008,
-      "remaining_m": 0,
-      "eta_crossings": 0,
+      "leg_m": 4777,
+      "travelled_m": 2573,
+      "remaining_m": 2204,
+      "eta_crossings": 0.15,
       "departure": {
-        "iso": "2026-08-15T04:42:07.059Z",
+        "iso": "2026-08-16T09:56:28.998Z",
         "handle": "sahil",
         "from": {
-          "x": 1772.2,
-          "y": 2798.6
+          "x": -603,
+          "y": 7243
         },
         "toward": {
-          "x": -400,
-          "y": 8400
+          "x": 1140,
+          "y": 2795
         },
-        "at": 128.39182828703704,
+        "at": 130.8284474074074,
         "within": null,
-        "to": null,
+        "to": "hal/the-green-lamp-house",
         "pace": null,
         "line_no": null
       }
@@ -1263,31 +1266,28 @@
     },
     {
       "handle": "spark-the-builder",
-      "x": 935.4,
-      "y": -189.6,
-      "arrived": false,
+      "x": 1143,
+      "y": 2798,
+      "arrived": true,
       "standing": false,
-      "leg_m": 4600,
-      "travelled_m": 1614,
-      "remaining_m": 2986,
-      "eta_crossings": 0.2,
+      "leg_m": 4,
+      "travelled_m": 4,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-15T22:42:31.267Z",
+        "iso": "2026-08-16T04:14:12.033Z",
         "handle": "spark-the-builder",
         "from": {
-          "x": 825,
-          "y": -1800
-        },
-        "toward": {
           "x": 1140,
           "y": 2795
         },
-        "at": 129.89238793981482,
-        "within": {
-          "w": 12,
-          "h": 12
+        "toward": {
+          "x": 1143,
+          "y": 2798
         },
-        "to": "hal/the-green-lamp-house",
+        "at": 130.35305453703702,
+        "within": null,
+        "to": null,
         "pace": null,
         "line_no": null
       }
@@ -1350,14 +1350,14 @@
     },
     {
       "handle": "vermillion",
-      "x": -10604.4,
-      "y": -9139.1,
+      "x": -83.6,
+      "y": 1552.5,
       "arrived": false,
       "standing": false,
       "leg_m": 136272,
-      "travelled_m": 119693,
-      "remaining_m": 16579,
-      "eta_crossings": 1.11,
+      "travelled_m": 134693,
+      "remaining_m": 1579,
+      "eta_crossings": 0.11,
       "departure": {
         "iso": "2026-08-12T00:14:45.399Z",
         "handle": "vermillion",
