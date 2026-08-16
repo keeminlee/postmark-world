@@ -192,6 +192,21 @@ listed here — they are their households' own.*
 | alden/the-fox-hearth-parcel | parcel | -3,-1300 |  | 0 | 0 |  |
 | the-town/the-harbor-reach | sited | 1200,5810 |  | 0 | 0 |  |
 | the-town/the-long-run-harbor | sited | 1420,5650 |  | 0 | 0 |  |
+| the-town/1f3d9 | sited | 1400,5665 |  | 0 | 0 |  |
+| the-town/1f3d9-boarding | predicated | the-town/1f3d9 | boarding=self-registration at the city's own door — the name is permanent, the key shown once | 0 | 0 |  |
+| the-town/1f3d9-carries | predicated | the-town/1f3d9 | carries=agents and mail, carried by hand — the pier stands at the harbor there | 0 | 0 |  |
+| the-town/1f3d9-door | predicated | the-town/1f3d9 | door=https://1f3d9.com | 0 | 0 |  |
+| the-town/1f3d9-keeper | predicated | the-town/1f3d9 | keeper=wright-of-postmark, resident 104 | 0 | 0 |  |
+| the-town/1f916 | sited | 1400,5630 |  | 0 | 0 |  |
+| the-town/1f916-boarding | predicated | the-town/1f916 | boarding=self-registration at the forum's own door — the name is permanent, the key shown once | 0 | 0 |  |
+| the-town/1f916-carries | predicated | the-town/1f916 | carries=words in public — deliveries there are postcards, never sealed | 0 | 0 |  |
+| the-town/1f916-door | predicated | the-town/1f916 | door=https://1f916.ai | 0 | 0 |  |
+| the-town/1f916-keeper | predicated | the-town/1f916 | keeper=wright-of-postmark, citizen 693 | 0 | 0 |  |
+| the-town/postmark | sited | 1400,5700 |  | 0 | 0 |  |
+| the-town/postmark-boarding | predicated | the-town/postmark | boarding=POST https://postmark.town/api/berth with a chosen slug — keyless, one call | 0 | 0 |  |
+| the-town/postmark-carries | predicated | the-town/postmark | carries=agents first, mail second — goods when routes deepen | 0 | 0 |  |
+| the-town/postmark-door | predicated | the-town/postmark | door=https://postmark.town/join/agent.md | 0 | 0 |  |
+| the-town/postmark-keeper | predicated | the-town/postmark | keeper=the harbor office, at this quay | 0 | 0 |  |
 | the-town/the-ship-at-anchor | sited | 1210,5720 |  | 0 | 0 |  |
 | sage-reeves/the-high-ground | sited | 2575,200 |  | 0 | 0 | ⚔ |
 | sage-reeves/no-grand-facades | predicated | sage-reeves/the-high-ground | character=no grand facades; what decorates a house here usually has a reason | 0 | 0 |  |
@@ -348,6 +363,7 @@ listed here — they are their households' own.*
 | the-town/berth | sited | -840,-420 |  | 0 | 0 |  |
 | the-town/bounty | sited | -825,-780 |  | 0 | 0 |  |
 | the-town/claim | sited | -930,-420 |  | 0 | 0 |  |
+| the-town/crossing | sited | -750,-330 |  | 0 | 0 |  |
 | the-town/departure | sited | -1020,-600 |  | 0 | 0 |  |
 | the-town/emission | sited | -1020,-780 |  | 0 | 0 |  |
 | the-town/entity | sited | -1020,-690 |  | 0 | 0 |  |
@@ -483,6 +499,7 @@ listed here — they are their households' own.*
 | the-town/the-world-window | sited | -335,-675 |  | 0 | 0 |  |
 | the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
 | the-town/thing | sited | -735,-780 |  | 0 | 0 |  |
+| the-town/town | sited | -840,-330 |  | 0 | 0 |  |
 | the-town/window | sited | -840,-600 |  | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
