@@ -624,6 +624,11 @@ export function hydrateMarkImages(box, resolve, doc = globalThis.document) {
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     link.title = "open the full picture";
+    // CLICKING A PICTURE MEANS THE PICTURE, AND NOTHING ELSE. The cell is itself
+    // a click target — the delegated handler folds the investigate expansion open
+    // or shut — and it does not preventDefault, so without this the link opened
+    // its tab AND rearranged the card the reader just left behind it.
+    link.addEventListener("click", (event) => event.stopPropagation());
     link.appendChild(image);
     figure.appendChild(link);
     mounted += 1;

@@ -609,6 +609,11 @@ test("the picture mounts on nodes — the URL never becomes markup", () => {
   assert.equal(link.href, SHELF_URL, "the href is assigned, never interpolated");
   assert.equal(link.target, "_blank");
   assert.equal(link.rel, "noopener noreferrer");
+  assert.equal(typeof link.listeners.click, "function",
+    "the picture's click is the picture's — the cell's own handler must not also fire");
+  let stopped = false;
+  link.listeners.click({ stopPropagation: () => { stopped = true; } });
+  assert.equal(stopped, true);
 
   const image = link.children[0];
   assert.equal(image.tag, "img");
