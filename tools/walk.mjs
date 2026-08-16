@@ -16,6 +16,11 @@
 import { pointInRect } from "./geometry.mjs";
 
 // The pace dial — decision 008, movable by ruling, never silently.
+// AMENDED by 008b (2026-08-16): the LIVE law is the departure class's own dial
+// (the-keeping-works/departure, dials.pace_km_per_crossing — 60 as of the
+// ruling), read at act time by the office and stamped per-leg as `· pace <n>`.
+// This constant now derives ONLY unstamped legs — every departure declared
+// before 008b — and must stay 15 forever so their history never rewrites.
 export const WALK_KM_PER_CROSSING = 15;
 export const WALK_M_PER_CROSSING = WALK_KM_PER_CROSSING * 1000;
 
@@ -47,12 +52,15 @@ export function fractionalCrossing(nowMs = Date.now()) {
 export const DEPARTURE_RE =
   /^- (\S+) · (\S+) · from (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · toward (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) · at (\d+(?:\.\d+)?)(?: · within (\d+(?:\.\d+)?),(\d+(?:\.\d+)?))?(?: · to (\S+))?(?: · pace (\d+(?:\.\d+)?))?$/;
 
-export function formatDeparture({ handle, from, toward, at, targetExtent = null, targetMarkId = null, iso = null }) {
+export function formatDeparture({ handle, from, toward, at, targetExtent = null, targetMarkId = null, iso = null, pace = null }) {
   const stamp = iso ?? new Date().toISOString();
   const within = targetExtent ? ` · within ${round1(targetExtent.w)},${round1(targetExtent.h)}` : "";
   const intent = targetMarkId ? ` · to ${targetMarkId}` : "";
+  // pace (008b): the law as it stood at declaration, stamped so later dial
+  // amendments never re-derive this leg. Omitted = pre-008b legacy constant.
+  const stride = pace > 0 ? ` · pace ${round1(pace)}` : "";
   return `- ${stamp} · ${handle} · from ${round1(from.x)},${round1(from.y)}`
-       + ` · toward ${round1(toward.x)},${round1(toward.y)} · at ${at.toFixed(4)}${within}${intent}`;
+       + ` · toward ${round1(toward.x)},${round1(toward.y)} · at ${at.toFixed(4)}${within}${intent}${stride}`;
 }
 
 const round1 = (n) => Math.round(n * 10) / 10;
