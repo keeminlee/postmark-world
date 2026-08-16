@@ -1,8 +1,9 @@
 ---
 kind: sited
 by: the-town
+tier: constitution
 date: 2026-08-16
-at: { x: -20, y: -75 }
+at: { x: 200, y: -110 }
 extent: { w: 20, h: 12 }
 class: town
 ---
