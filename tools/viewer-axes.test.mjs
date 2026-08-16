@@ -17,12 +17,14 @@ import {
   formatSpectatorCoordinate,
   formatWalkPreviewLabel,
   hoverLabelSVG,
+  hydrateMarkImages,
   isAmbientMark,
   investigateNameLine,
   markByline,
   markCellBylineRow,
   markCellTitle,
   markGeometryIntersectsViewport,
+  markImageURL,
   MARKER_MAX_GROWTH,
   markerScale,
   MARK_SNAP_RADIUS_PX,
@@ -526,6 +528,131 @@ test("detached atlas images get lazy loading before mount", () => {
     { loading: "lazy", decoding: "async" },
     { loading: "lazy", decoding: "async" },
   ]);
+});
+
+const SHELF_URL = "https://media.postmark.town/media/keeminlee/"
+  + "07b6d505bdd9270f888b20caca44c3e93f6eff39cb00fd13f35171e13bee5f2f.jpg";
+
+// the smallest DOM the picture mount actually touches
+function markImageFixture(ids) {
+  const figures = ids.map((id) => ({
+    dataset: { imageFor: id },
+    children: [],
+    removed: false,
+    removeAttribute(name) { if (name === "data-image-for") delete this.dataset.imageFor; },
+    remove() { this.removed = true; },
+    appendChild(child) { this.children.push(child); },
+  }));
+  const box = {
+    querySelectorAll(selector) {
+      assert.equal(selector, ".wv-mark-image[data-image-for]");
+      return figures.filter((figure) => "imageFor" in figure.dataset);
+    },
+  };
+  // `log` records the ORDER of the two acts that must not swap: a src assigned
+  // before its error handler can fail out of cache with nobody listening.
+  // `made` is every node the mount built, so a test can assert what it did NOT.
+  const made = [];
+  const doc = {
+    createElement: (tag) => {
+      let src;
+      const node = {
+        tag, children: [], listeners: {}, log: [],
+        appendChild(child) { this.children.push(child); },
+        addEventListener(kind, fn) { this.listeners[kind] = fn; this.log.push(`on:${kind}`); },
+      };
+      Object.defineProperty(node, "src", {
+        get: () => src,
+        set: (value) => { src = value; node.log.push("src"); },
+      });
+      made.push(node);
+      return node;
+    },
+  };
+  return { figures, box, doc, made };
+}
+
+test("a mark's picture comes from the town's shelf or it does not come", () => {
+  assert.equal(markImageURL({ image: SHELF_URL }), SHELF_URL, "the shelf the upload door issues");
+  assert.equal(markImageURL({ image: `  ${SHELF_URL}  ` }), SHELF_URL, "surrounding space is not a rejection");
+
+  const refused = [
+    ["http://media.postmark.town/media/a.jpg", "plain http"],
+    ["//media.postmark.town/media/a.jpg", "protocol-relative"],
+    ["https://media.postmark.town.evil.example/media/a.jpg", "the host suffixed"],
+    ["https://evil.example/media/a.jpg", "another host entirely"],
+    ["https://user@media.postmark.town/media/a.jpg", "credentials smuggling the authority"],
+    ["https://media.postmark.town/uploads/a.jpg", "the right host, off the shelf"],
+    ["https://media.postmark.town/media/", "the shelf with nothing on it"],
+    ["https://media.postmark.town/media/a.jpg?x=1", "a query the shelf never issues"],
+    ['https://media.postmark.town/media/a.jpg"><script>x</script>', "markup riding in the URL"],
+    ["javascript:alert(1)", "a script scheme"],
+    ["data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=", "an inline document"],
+  ];
+  for (const [url, why] of refused)
+    assert.equal(markImageURL({ image: url }), null, why);
+
+  for (const image of [undefined, null, 42, {}, [SHELF_URL], true])
+    assert.equal(markImageURL({ image }), null, "only a string can name a picture");
+  assert.equal(markImageURL(undefined), null, "no mark, no picture");
+});
+
+test("the picture mounts on nodes — the URL never becomes markup", () => {
+  const body = "Three ships on one water, and the light going out of all of them.";
+  const { figures, box, doc, made } = markImageFixture(["wright/three-ships"]);
+  const store = new Map([["wright/three-ships", { id: "wright/three-ships", body, image: SHELF_URL }]]);
+
+  assert.equal(hydrateMarkImages(box, (id) => store.get(id), doc), 1);
+  const [figure] = figures;
+  assert.equal(figure.removed, false);
+  assert.equal("imageFor" in figure.dataset, false, "hydrated once — the cue is spent");
+
+  // DISPLAY, NOT A CONTROL — the picture hangs straight off the figure. No
+  // anchor, no click handler, nothing that promises a second meaning for the one
+  // gesture that already opens a mark.
+  assert.equal(figure.children.length, 1, "one child, and it is the picture");
+  const image = figure.children[0];
+  assert.equal(image.tag, "img");
+  assert.equal(made.filter((node) => node.tag === "a").length, 0,
+    "no anchor is created — a click falls through to the cell underneath");
+  assert.equal(image.listeners.click, undefined,
+    "no click handler on the picture: the cell's own handler is the only one");
+  assert.equal(image.src, SHELF_URL);
+  assert.equal(image.loading, "lazy");
+  assert.equal(image.decoding, "async");
+  assert.equal(image.alt, body, "the mark's words are what its picture is of");
+
+  // a second pass over the same box finds nothing left to do
+  assert.equal(hydrateMarkImages(box, (id) => store.get(id), doc), 0);
+});
+
+test("a picture the shelf will not vouch for leaves the cell as it was", () => {
+  const { figures, box, doc } = markImageFixture(["a/off-shelf", "b/none", "c/missing"]);
+  const store = new Map([
+    ["a/off-shelf", { id: "a/off-shelf", body: "x", image: "https://evil.example/a.jpg" }],
+    ["b/none", { id: "b/none", body: "x" }],
+  ]);
+
+  assert.equal(hydrateMarkImages(box, (id) => store.get(id), doc), 0);
+  for (const figure of figures) {
+    assert.equal(figure.removed, true, "no frame is left standing where no picture belongs");
+    assert.equal(figure.children.length, 0);
+  }
+});
+
+test("a picture that fails to load takes its whole figure with it", () => {
+  const { figures, box, doc } = markImageFixture(["wright/gone"]);
+  const store = new Map([["wright/gone", { id: "wright/gone", body: "x", image: SHELF_URL }]]);
+
+  assert.equal(hydrateMarkImages(box, (id) => store.get(id), doc), 1);
+  const [figure] = figures;
+  const image = figure.children[0];
+  assert.equal(typeof image.listeners.error, "function");
+  assert.ok(image.log.indexOf("on:error") < image.log.indexOf("src"),
+    "the handler goes on BEFORE the src — a cached failure fires immediately");
+  assert.equal(figure.removed, false);
+  image.listeners.error();
+  assert.equal(figure.removed, true, "a 404 reads exactly like a mark that never had a picture");
 });
 
 test("one marks row is the whole vocabulary — the World lens is gone", () => {

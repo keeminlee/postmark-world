@@ -569,6 +569,71 @@ export function disciplineAtlasImages(root) {
   return images.length;
 }
 
+// ── a mark's picture (2026-08-16) ────────────────────────────────────────────
+// A mark may carry ONE `image`: a pointer at the town's own media shelf, which
+// the office validated against the uploaded bytes at write time. This gate is
+// the SECOND lock on that same door, and it is not redundant. The viewer
+// renders records it did not write — a fold pulled off raw.githubusercontent, an
+// office answer, a replay file someone handed the page — so "the door already
+// checked it" is a claim about somebody else's process, made about bytes that
+// arrived over the wire. One shelf, https, our host, nothing else: a URL that
+// misses is not a picture this town is showing, and the cell reads as it did
+// before pictures existed.
+//
+// STRICTER THAN THE LINT ON PURPOSE. tools/mark-lint.mjs accepts any path under
+// the media host; this accepts only the /media/ shelf the upload door actually
+// issues. The narrow rule is the one the reader's browser gets asked to fetch.
+const MARK_IMAGE_SHELF = /^https:\/\/media\.postmark\.town\/media\/[A-Za-z0-9][A-Za-z0-9/._-]*$/;
+
+export function markImageURL(mark) {
+  const raw = mark?.image;
+  if (typeof raw !== "string") return null;
+  const url = raw.trim();
+  return MARK_IMAGE_SHELF.test(url) ? url : null;
+}
+
+// THE URL NEVER TOUCHES AN HTML STRING. Every cell in this viewer is built by
+// string concatenation, and a URL interpolated into markup is one escaping bug
+// away from being markup — so the cell emits an EMPTY figure naming only the
+// mark id it belongs to, and the picture is mounted here, on real nodes, by
+// property assignment. `resolve` hands back the folded record, which is where
+// the URL lives; nothing between the store and `img.src` is ever parsed as HTML.
+//
+// A picture that fails to load takes its whole figure with it, so a mark whose
+// shelf entry has gone reads exactly like a mark that never had one — no broken
+// glyph, no empty frame, no gap where a thing used to be. The handler is
+// attached BEFORE the src, because a src that fails from cache can fire before
+// the next statement runs.
+//
+// THE PICTURE IS DISPLAY, NOT A CONTROL (Keemin, 2026-08-16). It mounted inside
+// a link at first, opening the full image in a new tab. Overruled: click is
+// already spoken for in this viewer — clicking a mark opens that mark's own
+// reading — and a second click meaning on something INSIDE that reading fights
+// the one gesture the whole surface is built on. So there is no anchor, no
+// handler and no affordance of any kind here: a click on the picture falls
+// through to the cell underneath and does exactly what a click on the mark's
+// words does. A thumbnail is a thing you look at.
+export function hydrateMarkImages(box, resolve, doc = globalThis.document) {
+  let mounted = 0;
+  for (const figure of [...box.querySelectorAll(".wv-mark-image[data-image-for]")]) {
+    const id = figure.dataset.imageFor;
+    figure.removeAttribute("data-image-for"); // hydrate once, whatever follows
+    const mark = resolve(id);
+    const url = markImageURL(mark);
+    if (!url) { figure.remove(); continue; }
+    const image = doc.createElement("img");
+    image.loading = "lazy";
+    image.decoding = "async";
+    // the body IS the alt text: a mark's words are what its picture is of
+    image.alt = String(mark.body ?? id ?? "");
+    image.addEventListener("error", () => figure.remove(), { once: true });
+    image.src = url;
+    figure.appendChild(image);
+    mounted += 1;
+  }
+  return mounted;
+}
+
 export const MARK_SNAP_RADIUS_PX = 18;
 
 // ── marker size on screen ────────────────────────────────────────────────────
@@ -1964,6 +2029,31 @@ const STYLE = `
 .wv-card .cname > .wv-chip { font-weight:400; }
 .wv-card .cbody { line-height:1.45; }
 .wv-card .cname + .cbody { margin-top:5px; }
+/* A MARK'S PICTURE. The figure mounts EMPTY and is filled on real nodes, and a
+   picture whose shelf entry has gone removes the figure outright — so the
+   figure carries no box of its own, and an unfilled one costs nothing at all.
+   Every frame lives on the image, which is the thing that either arrives or
+   does not. The cap is measured against the SURFACE, not the picture: a tall
+   photograph that pushed the byline, the backing and the words below the fold
+   would have turned a cell into a gallery. Letterbox bars land on the panel's
+   own night, so contain reads as a picture rather than as a mistake. */
+.wv-mark-image { margin:8px 0 0; padding:0; line-height:0; }
+.wv-mark-image:empty { display:none; }
+/* THE BOX HUGS THE PICTURE. Sizing to the full cell width and letterboxing
+   inside it drew the frame around the BOX, so a portrait sat in a lit mat with
+   a border tracing empty panel — a frame around nothing. Capped in both axes
+   with the box free to follow, the border traces the picture itself, and a
+   picture too small to fill the column simply reads at its own size. contain
+   stays as the guarantee it always was: nothing here ever crops or stretches. */
+/* No hover lift, no focus ring, no pointer of its own — a thumbnail is display,
+   not a control, and every one of those would have promised a click that does
+   something. The card's own cursor still applies, which is honest: the click
+   DOES do something — the card's thing. */
+.wv-mark-image img { display:block; max-width:100%; max-height:40vh; width:auto; height:auto;
+  object-fit:contain; border:1px solid var(--line); border-radius:3px; background:var(--night); }
+/* the pinned bubble caps itself at min(64%,32rem) and scrolls, so the same
+   two-fifths promise has to be measured against that smaller surface */
+.wv-bubble .wv-mark-image img { max-height:13rem; }
 .wv-card .cmeta { margin-top:7px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
 .wv-cell-byline-row { margin-top:7px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-height:1.65rem; }
 .wv-byline { color:var(--dim); font-size:.76rem; font-style:normal; letter-spacing:.01em; }
@@ -2983,12 +3073,17 @@ export function mountViewer(appEl) {
     return `<article class="wv-card ${role}${far ? " far" : ""} ${markClasses(m)}" data-id="${esc(m.id)}" role="button" tabindex="0">
       ${markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier, draft })}
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
+      ${!far && markImageURL(full) ? `<figure class="wv-mark-image" data-image-for="${esc(m.id)}"></figure>` : ""}
       ${markCellBylineRow(full, markActions(m))}
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
       <div class="cmeta">${radialChips ? chips(m) : ""}<div class="wv-details">${details}</div></div>
       ${cluster}
     </article>`;
   }
+  // The store is the only place a picture's URL is read from — the cell it came
+  // out of named its mark and nothing else. Run after every innerHTML that
+  // builds cells, and after the predicate fold, which rearranges them.
+  const mountMarkImages = (box) => hydrateMarkImages(box, (id) => byId.get(id));
   // the mechanic's live state, reconstructed from the structured observer fields
   // (the engine's own airline/lightline logic — read, never re-run here).
   function lightStateLine(obs) {
@@ -3175,6 +3270,7 @@ export function mountViewer(appEl) {
             + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
       if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
       foldRenderedPredicates(box);
+      mountMarkImages(box);
       // the panel may be folded away, but its two controls and its count line are
       // readings, not decoration — they get a home on the painting either way
       const talliesChip = $(root, ".wv-paint-tallies");
@@ -5097,6 +5193,7 @@ export function mountViewer(appEl) {
       + predicates.map((p) => markCell(p, { role: "fov" })).join("");
     el.hidden = false;
     foldRenderedPredicates(el);
+    mountMarkImages(el);
     const card = $(el, `.wv-card[data-id="${CSS.escape(mark.id)}"]`);
     if (card) { card._stack = [mark.id]; renderExpansion(card); }
   }
