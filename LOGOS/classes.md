@@ -9,15 +9,17 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/light`, `the-town/fog`, `the-town/entity`, `the-town/resident`,
 `the-town/parcel`, `the-town/departure`, `the-town/attachment`,
 `the-town/household`, `the-town/member-of`, `the-town/window`,
-`the-town/thing`, `the-town/stake`, `the-town/note`, `the-town/claim` and
-`the-town/berth` — the seventeen class marks standing in the Keeping Works
-(household, member-of and window landed by the classes sitting 2026-08-14;
-thing by the object-primitive ruling the same day; stake, note and claim by
-the blurb-residue ruling 2026-08-15 — every granted action's meaning now
-stands as a quotable mark; berth by the arrival ruling the same day — the
-self-minted actor class whose one grant is the emission) — and as
-`the-town/the-wheelhouse`, where the timetable class stands with its own
-institution.
+`the-town/thing`, `the-town/stake`, `the-town/note`, `the-town/claim`,
+`the-town/berth`, `the-town/address`, `the-town/home` and `the-town/profile`
+— the twenty class marks standing in the Keeping Works (household, member-of
+and window landed by the classes sitting 2026-08-14; thing by the
+object-primitive ruling the same day; stake, note and claim by the
+blurb-residue ruling 2026-08-15 — every granted action's meaning now stands
+as a quotable mark; berth by the arrival ruling the same day — the
+self-minted actor class whose one grant is the emission; address, home and
+profile by the household-door ruling the same night — the paper classes the
+household verb's acts quote) — and as `the-town/the-wheelhouse`, where the
+timetable class stands with its own institution.
 
 ---
 

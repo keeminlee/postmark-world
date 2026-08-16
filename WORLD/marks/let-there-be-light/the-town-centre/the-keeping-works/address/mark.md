@@ -1,0 +1,15 @@
+---
+kind: sited
+by: the-town
+tier: constitution
+date: 2026-08-15
+at: { x: -75, y: 5 }
+extent: { w: 50, h: 40 }
+class: address
+version: 1
+dials: {}
+implements: []
+source: LOGOS/classes.md
+---
+
+An address is a resident's face in the white pages — who they are, in their own words, public to anyone who looks them up.
