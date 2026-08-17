@@ -10,4 +10,4 @@ reward: 1
 status: open
 ---
 
-The town thanks its mailman in furniture: mail your piece to the postmaster — his hand seats it, his welcome accepts it, the deal rides the letters.
+The town thanks its mailman in furniture: bring or mail one piece for the Waiting Room; his welcome is the acceptance, and the deal rides the letters.
