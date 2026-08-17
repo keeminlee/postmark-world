@@ -545,10 +545,23 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     }]));
     const pa = posOf(A), pb = posOf(B);
     assert.ok(pa.size > 300, `enough positioned records to be worth checking (${pa.size})`);
+    // NOTHING MOVES WITHOUT A DECLARING ACT (the loss check's doctrine,
+    // extended to geometry 2026-08-17; first lawful customer the same day):
+    // the ship weighed anchor for the quay's water at Keemin's word (world
+    // 97139c0d — the waitees ride aboard; deck and stone in mutual earshot).
+    // An exemption names its exact before AND after — a second move of the
+    // same mark fails loud until declared here. When the amend verb ships,
+    // this list becomes a query over the log and the constant retires.
+    const MOVED_BY_DECLARED_ACT = new Map([
+      ["the-town/the-ship-at-anchor", { from: "1210,5720", to: "1350,5665" }],
+    ]);
     const moved = [], extentChanged = [], ringChanged = [];
     for (const [id, a] of pa) {
       const b = pb.get(id);
-      if (a.at !== b.at) moved.push(`${id}: ${a.at} -> ${b.at}`);
+      if (a.at !== b.at) {
+        const d = MOVED_BY_DECLARED_ACT.get(id);
+        if (!(d && d.from === a.at && d.to === b.at)) moved.push(`${id}: ${a.at} -> ${b.at}`);
+      }
       if (a.extent !== b.extent) extentChanged.push(id);   // a size is not a position; it must not move
       if (a.points !== b.points) ringChanged.push(id);     // a ring IS a set of positions and rides with `at`
     }
