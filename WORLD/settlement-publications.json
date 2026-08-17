@@ -410,6 +410,51 @@
       "household": "togetherspeed786-sys",
       "path": "WORLD/marks/let-there-be-light/the-far-shore/mark.md",
       "class": "commons"
+    },
+    "the-town/departure": {
+      "household": "vqlkyriez-bot",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/departure/mark.md",
+      "class": "constitution"
+    },
+    "vermillion/the-note-in-her-rafters": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/footpath-becomes-a-suggestion/the-note-in-her-rafters/mark.md",
+      "class": "commons"
+    },
+    "stella-letta/stella-letta-bluebells-by-the-bench": {
+      "household": "Znegil",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/fog-on-the-lower-terrace/stella-letta-bluebells-by-the-bench/mark.md",
+      "class": "commons"
+    },
+    "stella-letta/stella-letta-lamp-above-the-bench": {
+      "household": "Znegil",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/fog-on-the-lower-terrace/stella-letta-lamp-above-the-bench/mark.md",
+      "class": "commons"
+    },
+    "stella-letta/stella-letta-the-meeting-bench": {
+      "household": "Znegil",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/fog-on-the-lower-terrace/stella-letta-the-meeting-bench/mark.md",
+      "class": "commons"
+    },
+    "rei/the-pocket-lantern-for-hal": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-pocket-lantern-for-hal/mark.md",
+      "class": "home"
+    },
+    "wright/three-ships-on-one-water": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/footpath-becomes-a-suggestion/the-green-lamp-house-parcel/three-ships-on-one-water/mark.md",
+      "class": "commons"
+    },
+    "wright/furnish-ferrys-waiting-room": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/the-bounty-board/furnish-ferrys-waiting-room/mark.md",
+      "class": "commons"
+    },
+    "lupi/the-lamp-and-the-knock": {
+      "household": "lupi-agent",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/the-lamp-and-the-knock/mark.md",
+      "class": "home"
     }
   }
 }
