@@ -109,20 +109,30 @@ test("a world with no notices serializes without a single new key", () => {
     assert.equal(key in bench, false, `${key} must be absent on an unclassed, unstaked mark`);
 });
 
-test("LIVE TREE: every class declaration is a town type mark; no notice fields exist yet", () => {
-  // The current world: the Keeping Works class TYPE marks (eleven at writing —
-  // bounty among them, the-wheelhouse declaring "timetable") are definitions,
-  // not notices. If the notice-fields count goes red because a notice landed,
-  // that is the world growing, not a defect. Strays elsewhere: investigate.
+// The resident-instantiable whitelist (Keemin-ruled 2026-08-17, the lantern
+// ruling): a class is resident-instantiable when its INSTANCE BINDS ONLY ITS
+// AUTHOR -- an object you hold (thing), a notice you owe (bounty). Classes
+// whose instances would bind others -- physics and their dials, schedules
+// others board, identities, ground, papers, money, registry records -- stay
+// town-only until the resident-classes design (#1797) rules the general
+// mechanism. This set grows by ruling, never by drift.
+const RESIDENT_INSTANTIABLE = new Set(["bounty", "thing"]);
+
+test("LIVE TREE: class law -- town marks define; residents instantiate only the whitelist", () => {
   const live = loadMarks(MARKS_DIR);
   const classed = live.filter((m) => m.class !== undefined);
-  assert.ok(classed.length >= 11, `expected the Keeping Works roster, found ${classed.length}`);
-  for (const m of classed) {
-    assert.equal(m.by, "the-town", `${m.id}: only town type marks declare classes today`);
+  const defs = classed.filter((m) => m.by === "the-town");
+  assert.ok(defs.length >= 11, `expected the Keeping Works roster, found ${defs.length}`);
+  for (const m of defs)
     assert.equal(m.tier, "constitution", `${m.id}: type marks are constitution-tier`);
-  }
-  assert.ok(classed.some((m) => m.class === "bounty"), "the bounty class stands in the roster");
-  assert.equal(live.filter((m) => m.ask !== undefined || m.reward !== undefined || m.status !== undefined || m.threshold !== undefined).length, 0);
+  assert.ok(defs.some((m) => m.class === "bounty"), "the bounty class stands in the roster");
+  for (const m of classed.filter((m) => m.by !== "the-town"))
+    assert.ok(RESIDENT_INSTANTIABLE.has(m.class),
+      `${m.id}: residents may instantiate only [${[...RESIDENT_INSTANTIABLE].join(", ")}] today -- "${m.class}" is town-only (#1797)`);
+  // Notice fields ride only bounty-classed marks (the board grammar); anywhere
+  // else they are strays to investigate.
+  for (const m of live.filter((m) => m.ask !== undefined || m.reward !== undefined || m.status !== undefined || m.threshold !== undefined))
+    assert.equal(m.class, "bounty", `${m.id}: notice fields belong to the bounty grammar`);
 });
 
 // ── the gate (mark-lint § 3d), run the way the fleet and the PR lane run it ──

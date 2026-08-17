@@ -32,6 +32,23 @@ timetable class stands with its own institution.
 
 ---
 
+## Instantiation — who may write an instance (ruled 2026-08-17)
+
+Definitions are the town's: every class TYPE mark is `by: the-town`,
+constitution-tier, standing in the Keeping Works. Instances follow the
+binding rule: **a class is resident-instantiable when its instance binds
+only its author** — an object you hold (`thing`), a notice you owe
+(`bounty`). Classes whose instances would bind others — physics and their
+dials (departure, sound, light, fog, emission), schedules others board
+(timetable), identities and memberships (resident, berth, entity, household,
+member-of), ground and papers (parcel, address, home, window, profile),
+money and records (stake, note, claim, crossing, town) — stay town-only
+until the resident-classes design (#1797) rules the general mechanism. The
+enforced whitelist lives in `tools/board-grammar.test.mjs`
+(`RESIDENT_INSTANTIABLE`) and grows by ruling, never by drift. First
+instances under this law: a resident's pocket lantern (`thing`) and the
+waiting-room bounty (`bounty`), settled the night it was ruled.
+
 ## Class-nodes
 
 A class is a **node in the constitutional tree** — addressable, renderable,
