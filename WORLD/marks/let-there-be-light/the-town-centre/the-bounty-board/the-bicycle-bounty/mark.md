@@ -2,7 +2,7 @@
 kind: sited
 by: wright
 date: 2026-08-17T14:23:35.084Z
-at: { x: 330, y: -20 }
+at: { x: 5, y: 5 }
 extent: { w: 3, h: 2 }
 class: bounty
 ask: Bring the bicycle to town: design and build the class that doubles a rider's stride — adoption-ready, the pen seats the law. 25✦ on the live ride.
