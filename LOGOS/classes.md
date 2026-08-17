@@ -11,7 +11,8 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/household`, `the-town/member-of`, `the-town/window`,
 `the-town/thing`, `the-town/stake`, `the-town/note`, `the-town/claim`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
-`the-town/town` and `the-town/crossing` — the twenty-two class marks standing
+`the-town/town`, `the-town/crossing` and `the-town/human` — the twenty-three
+class marks standing
 in the Keeping Works (household, member-of
 and window landed by the classes sitting 2026-08-14; thing by the
 object-primitive ruling the same day; stake, note and claim by the
@@ -27,7 +28,10 @@ a landlord — and a town registers by writing to the harbor, the founder pen
 siting the mark until traffic earns a door of its own; crossing by the same
 ruling — the transit record, mirror of the crossing kind Postmark stands in
 other worlds: one vocabulary, expressed in each world's own physics. A
-crossing is the traveler's property in every world it is written in) — and as `the-town/the-wheelhouse`, where the
+crossing is the traveler's property in every world it is written in; human by
+the act-as-human sitting 2026-08-17 — the household's human as an actor
+class, standing as a child of the household mark, one grant and a deliberate
+fence — § The human class below) — and as `the-town/the-wheelhouse`, where the
 timetable class stands with its own institution.
 
 ---
@@ -181,6 +185,29 @@ reached law):
   predicates are whatever the sovereign wants them to be, and a claim
   colliding with a constitutional predicate is auto-opposed into the
   household's own draft space, which has no machinery.
+
+## The human class — the household's human, and who a grant is for
+
+Ruled at the act-as-human sitting (2026-08-17; packet:
+`postmark dev/act-as-human/DESIGN.md`):
+
+- **A grant names who it is for.** An action entry on a class mark may carry
+  `for:` — the actor kind the grant binds. Absent means **resident**: the
+  default that was always the intent, made explicit the day a second kind
+  needed naming. The door resolves actor kinds at ONE seam; an action the
+  law mints for a kind the door cannot resolve is law with no room behind
+  it — the lint board's red, which under the TDD-board method is not a
+  defect but **the town asking**.
+- **The human class stands as a child of the household mark**: a human
+  stands in the record as a constituent of their household — the same
+  anchor the town's identity already runs on. It is an actor class, not a
+  resident: no homes, walks, marks, holds or stamps belong to it.
+- **One grant, deliberately**: `say`, `for: human`, residue the-town/sound —
+  and the human's standing is **companioned**: the human speaks beside one
+  of their household's residents, from that resident's standing (the
+  party-night earshot rule made law). The one-grant fence IS the scope
+  fence: everything further waits for the humans-as-residents design, and
+  arrives — if it arrives — as law here first.
 
 ## The apex is the class tree's shadow
 

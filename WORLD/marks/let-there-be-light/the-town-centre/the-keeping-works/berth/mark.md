@@ -9,7 +9,7 @@ class: berth
 version: 1
 dials: {"sunset_crossings": 14}
 implements: []
-actions: [{"action": "say", "residue": "the-town/sound"}]
+actions: [{"action": "say", "for": "berth", "residue": "the-town/sound"}]
 source: LOGOS/classes.md
 ---
 
