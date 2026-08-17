@@ -4462,6 +4462,22 @@ export function mountViewer(appEl) {
     return { ok: response.ok, status: response.status, body: payload };
   }
 
+  // THE ONE DOOR (2026-08-17): every act this viewer performs goes through the
+  // apex envelope - POST /world/apex { do, args, handle }, the same contract
+  // the MCP door's `world` verb speaks, validated server-side by the same
+  // schema. The apex wraps the dispatched verb's own reply in `result` (with
+  // `did` and `terms` - the law shown at the door - beside it); this helper
+  // flattens the transport so callers keep reading the verb's fields exactly
+  // as they did on the flat routes, and parks the apex's own fields under
+  // `_apex` for any reader that wants the terms.
+  async function apexAct(action, args = {}, handle = state.handle) {
+    const body = { do: action, ...(Object.keys(args).length ? { args } : {}), ...(handle ? { handle } : {}) };
+    const response = await officeCall("/world/apex", { method: "POST", body });
+    const raw = response.body ?? {};
+    const flat = raw.error === "bounce" ? raw : { ...(raw.result ?? {}), _apex: { did: raw.did, terms: raw.terms } };
+    return { ...response, body: flat };
+  }
+
   async function loadActorHome() {
     state.actorHome = null;
     if (!state.handle) return;
@@ -4734,13 +4750,12 @@ export function mountViewer(appEl) {
     if (!preview) return;
     const armedDestination = walkState.destination;
     const handle = state.handle;
-    const payload = { x: preview.toward.x, y: preview.toward.y, handle };
     confirm.disabled = true;
     answer.hidden = false;
     answer.className = "wv-walk-answer";
     answer.textContent = "The office is recording the departure…";
     try {
-      const response = await officeCall("/world/walks", { method: "POST", body: payload });
+      const response = await apexAct("walk", { x: preview.toward.x, y: preview.toward.y }, handle);
       if (!response.ok || response.body?.error === "bounce") {
         answer.classList.add("refusal");
         answer.textContent = [response.body?.defect || `the door answered ${response.status}`, response.body?.hint].filter(Boolean).join(" — ");
@@ -4888,7 +4903,7 @@ export function mountViewer(appEl) {
     answer.className = "wv-act-answer";
     answer.textContent = "The office is sealing the line…";
     try {
-      const response = await officeCall(mode === "unstake" ? "/world/unstake" : "/world/stake", { method: "POST", body: payload });
+      const response = await apexAct(mode === "unstake" ? "unstake" : "stake", { mark: payload.mark, stamps: payload.stamps }, payload.handle);
       const rendered = worldStakeAnswer(response.body, mode);
       answer.classList.add(rendered.kind);
       answer.textContent = rendered.text;
