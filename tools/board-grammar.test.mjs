@@ -116,7 +116,11 @@ test("a world with no notices serializes without a single new key", () => {
 // others board, identities, ground, papers, money, registry records -- stay
 // town-only until the resident-classes design (#1797) rules the general
 // mechanism. This set grows by ruling, never by drift.
-const RESIDENT_INSTANTIABLE = new Set(["bounty", "thing"]);
+// note joined same-day (vermillion/the-note-in-her-rafters, the first field
+// case): a note-instance carries no grants, no dials, no machinery claim --
+// the world's note verb reads its own store, never marks -- so the class is
+// a label on paper that binds only its author. Decorative by construction.
+const RESIDENT_INSTANTIABLE = new Set(["bounty", "thing", "note"]);
 
 test("LIVE TREE: class law -- town marks define; residents instantiate only the whitelist", () => {
   const live = loadMarks(MARKS_DIR);

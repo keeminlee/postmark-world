@@ -38,11 +38,12 @@ Definitions are the town's: every class TYPE mark is `by: the-town`,
 constitution-tier, standing in the Keeping Works. Instances follow the
 binding rule: **a class is resident-instantiable when its instance binds
 only its author** — an object you hold (`thing`), a notice you owe
-(`bounty`). Classes whose instances would bind others — physics and their
+(`bounty`), a note left as an object (`note` — decorative by construction:
+the note verb's machinery reads its own store, never marks). Classes whose instances would bind others — physics and their
 dials (departure, sound, light, fog, emission), schedules others board
 (timetable), identities and memberships (resident, berth, entity, household,
 member-of), ground and papers (parcel, address, home, window, profile),
-money and records (stake, note, claim, crossing, town) — stay town-only
+money and records (stake, claim, crossing, town) — stay town-only
 until the resident-classes design (#1797) rules the general mechanism. The
 enforced whitelist lives in `tools/board-grammar.test.mjs`
 (`RESIDENT_INSTANTIABLE`) and grows by ruling, never by drift. First
