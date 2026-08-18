@@ -441,7 +441,7 @@ export const PARCEL_CAP_EXCEPTIONS = new Map([
 // estate at other sizes stands; the door writes only this.
 export const PARCEL_EXTENT_M = 25;
 
-export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS, households = null }) {
+export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS, households = null, fanup = "legacy" }) {
   const errors = [];
   const terrainIds = new Set((terrain?.features ?? []).map(f => "terrain:" + f.id));
   const byId = new Map();
@@ -587,11 +587,15 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   for (const [c, p] of parentOf) { if (!children.has(p)) children.set(p, []); children.get(p).push(c); }
 
   // ---------- consent (tools/consent.mjs — the three-word `m`) ----------
-  // Who may lend weight to whom, and what a `opposed` costs. The default table is
-  // the whole of it for a world that has written no words yet: same credential
-  // household composes, the town's own region containers take fan-up from what
-  // stands in them, and everything else across a household line is simply
-  // uncoupled. Read consent.mjs for the law; this is only where it is asked.
+  // Who may lend weight to whom, and what a `opposed` costs. The default table
+  // is the whole of it for a world that has written no words yet: same
+  // credential household composes, and everything else across a household line
+  // is simply uncoupled. (An earlier draft of THIS comment claimed the town's
+  // region containers take fan-up automatically — that rule was ruled away in
+  // consent.mjs itself and the comment outlived it; trued 2026-08-18, the
+  // step-1 promotion. Under fanup:"flow" the town takes attention by the SKIP
+  // RULE instead: consent implicit in legality, R11.) Read consent.mjs for
+  // the law; this is only where it is asked.
   const consent = resolveConsent({
     byId, credOf: credHh, parcels, ownStamps: weightByMark, parentOf, rectOf: rect,
   });
@@ -616,6 +620,117 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     weight.set(id, w); return w;
   };
   for (const id of [...byId.keys(), ...terrainIds]) weightOf(id);
+
+  // ── fanup: "flow" — SANDBOX (gold plan postmark-world-view-system, R9) ────
+  // The conserved-flow generalization: each mark passes its TOTAL (own escrow
+  // + received inflow) upward, SPLIT across its PRESENT upward channels —
+  // containment/describes (parentOf, consent-gated exactly as legacy) and
+  // instance-of (sandbox rails: a class-carrying mark that is not a
+  // declaration flows to the declaration standing in the Keeping Works).
+  // Present channels only (Keemin's greenlight caveat, 2026-08-17): a mark
+  // holding one upward edge conducts its full unit up that edge — no share is
+  // reserved for channels that do not exist. A refused channel's share stops
+  // (and is receipted), never re-routed: consent refusals already stop flow
+  // in legacy, and re-routing would launder a refusal into a bonus.
+  // With a single channel this is arithmetically identical to legacy —
+  // the entire A/B delta is the instance-of resolution upgrade.
+  let fanupReceipts = null;
+  if (fanup === "flow") {
+    const THE_WORKS = "the-town/the-keeping-works";
+    const inWorks = (id) => {
+      let cur = id, hops = 0;
+      while (cur !== undefined && hops++ < 64) { if (cur === THE_WORKS) return true; cur = parentOf.get(cur); }
+      return false;
+    };
+    // the declaration gate, fold-local for the sandbox (classes.md: declared
+    // "standing in the Keeping Works"); promoted to mark-lint/world-store on
+    // greenlight of the real Stratum A machinery
+    const declByClass = new Map();
+    for (const mk of byId.values())
+      if (mk.class !== undefined && inWorks(mk.id) && !declByClass.has(String(mk.class)))
+        declByClass.set(String(mk.class), mk.id);
+    // THE SKIP RULE (Keemin's spot-fix, 2026-08-17 night, round 2): an
+    // absent-word cross-household containment edge does not STOP flow — it
+    // skips the non-consenting rung. The effective fan-up parent is the first
+    // ancestor that consents: same household / welcomed (allowEdge), or
+    // TOWN-OWNED, where consent is implicit in legality — a mark in the fold
+    // is a legal mark, and the town's consent is always legality (the same
+    // conformance-consent the instance channel runs on; one principle, two
+    // channels). A non-consenting intermediary loses the carry, never the
+    // town. Opposed is untouched: a vetoed mark left the fold before this.
+    const townOwned = (id) => id.startsWith("the-town/") || terrainIds.has(id);
+    const effectiveParent = (id) => {
+      let cur = parentOf.get(id), hops = 0;
+      const skipped = [];
+      while (cur !== undefined && hops++ < 64) {
+        if (allowEdge(cur, id) || (townOwned(cur) && !gone.has(id) && !gone.has(cur))) return { to: cur, skipped };
+        skipped.push(cur);
+        cur = parentOf.get(cur);
+      }
+      return { to: undefined, skipped };
+    };
+    const skips = [];
+    const upEdges = new Map(); // from -> [{to, channel, conducts}]
+    for (const [id, mk] of byId) {
+      const es = [];
+      if (parentOf.has(id)) {
+        const eff = effectiveParent(id);
+        if (eff.to !== undefined) {
+          es.push({ to: eff.to, channel: (mk.kind === "predicated" || mk.kind === "naming") ? "describes" : "contains", conducts: true });
+          if (eff.skipped.length) skips.push({ from: id, skipped: eff.skipped, to: eff.to });
+        } else {
+          // no consenting ancestor anywhere in the chain — flow stops, receipted
+          es.push({ to: parentOf.get(id), channel: (mk.kind === "predicated" || mk.kind === "naming") ? "describes" : "contains", conducts: false });
+        }
+      }
+      if (mk.class !== undefined) {
+        const decl = declByClass.get(String(mk.class));
+        // an instance flows to its class; a declaration is not its own instance
+        if (decl && decl !== id)
+          es.push({ to: decl, channel: "instance-of", conducts: !gone.has(id) && !gone.has(decl) });
+      }
+      if (es.length) upEdges.set(id, es);
+    }
+    const inEdges = new Map(); // to -> [{from, channel, share, conducts}]
+    for (const [from, es] of upEdges) {
+      const share = 1 / es.length;               // unit conductance, split over PRESENT channels
+      for (const e of es) {
+        if (!inEdges.has(e.to)) inEdges.set(e.to, []);
+        inEdges.get(e.to).push({ from, channel: e.channel, share, conducts: e.conducts });
+      }
+    }
+    const total = new Map();
+    const flows = [];
+    const totalOf = (id, seen = new Set()) => {
+      if (total.has(id)) return total.get(id);
+      if (seen.has(id)) return 0; seen.add(id);
+      let w = gone.has(id) ? 0 : (weightByMark.get(id) ?? 0);
+      for (const e of inEdges.get(id) ?? []) {
+        if (!e.conducts) continue;
+        const amt = e.share * totalOf(e.from, seen);
+        if (amt !== 0) flows.push({ from: e.from, to: id, channel: e.channel, amount: +amt.toFixed(4) });
+        w += amt;
+      }
+      total.set(id, w); return w;
+    };
+    for (const id of [...byId.keys(), ...terrainIds]) totalOf(id);
+    weight.clear();
+    for (const [id, w] of total) weight.set(id, w);
+    const refused = [];
+    for (const [from, es] of upEdges) {
+      const share = 1 / es.length;
+      for (const e of es)
+        if (!e.conducts && (total.get(from) ?? 0) !== 0)
+          refused.push({ from, to: e.to, channel: e.channel, amount: +(share * total.get(from)).toFixed(4) });
+    }
+    const sinks = [...byId.keys(), ...terrainIds].filter((id) => !upEdges.has(id));
+    fanupReceipts = {
+      mode: "flow",
+      declarations: Object.fromEntries(declByClass),
+      instance_edges: [...upEdges.values()].flat().filter((e) => e.channel === "instance-of").length,
+      flows, refused, skips, sinks,
+    };
+  }
 
   // ── weight_parts: the receipt for the ✦ number ────────────────────────────
   // Every telling prints one figure and it is three things added together. A
@@ -747,6 +862,9 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
 
   return {
     tick, dials,
+    // sandbox-only receipts, present only under fanup:"flow" — legacy output
+    // stays byte-identical
+    ...(fanupReceipts ? { fanup: fanupReceipts } : {}),
     marks: [...byId.values()].filter(mk => !gone.has(mk.id)).map(mk => ({
       // `tier` here is the DERIVED standing (home | constitution | market), not
       // the line the record carries — the store is a published VIEW of the
@@ -897,7 +1015,32 @@ if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
   // but that is a fact about today's marks, not a property of the key.
   const hhPath = opt("--households", join(MARKS_DIR, "..", "households.json"));
   const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
-  const state = fold({ marks, terrain, stakes, prev, tick: TICK, households });
+  // fanup: legacy is the published default through the SHADOW CYCLE (step-1
+  // promotion, 2026-08-18); pass --fanup flow to publish the conserved flow.
+  // The flip to flow-as-default is the founder's word after the shadow diffs
+  // read clean in the settlement journal.
+  const FANUP = opt("--fanup", "legacy");
+  const state = fold({ marks, terrain, stakes, prev, tick: TICK, households, fanup: FANUP });
+  // THE SHADOW: while legacy publishes, the flow fold runs beside it and says
+  // its redistribution OUT LOUD — the settlement journal is the reader. Loud,
+  // bounded, zero canon writes. (R9 conservation + R11 skip; gold plan
+  // postmark-world-view-system.)
+  if (FANUP === "legacy") {
+    try {
+      const shadow = fold({ marks, terrain, stakes, prev, tick: TICK, households, fanup: "flow" });
+      const wL = new Map(state.marks.map((m) => [m.id, m.weight ?? 0]));
+      const movers = shadow.marks
+        .map((m) => ({ id: m.id, legacy: wL.get(m.id) ?? 0, flow: +(m.weight ?? 0).toFixed(2) }))
+        .filter((m) => Math.abs(m.flow - m.legacy) > 0.005)
+        .sort((a, b) => Math.abs(b.flow - b.legacy) - Math.abs(a.flow - a.legacy));
+      const inst = shadow.fanup?.instance_edges ?? 0;
+      const skips = shadow.fanup?.skips?.length ?? 0;
+      console.error(`[fanup-shadow] flow vs legacy: ${movers.length} mover(s) · ${inst} instance-of edge(s) · ${skips} skip(s) — top: `
+        + movers.slice(0, 6).map((m) => `${m.id} ${m.legacy}→${m.flow}`).join(" · "));
+    } catch (e) {
+      console.error(`[fanup-shadow] FAILED (non-fatal): ${String(e?.message ?? e).slice(0, 160)}`);
+    }
+  }
   if (has("--json")) console.log(JSON.stringify(state, null, 2));
   if (!has("--no-write")) {
     const outPath = join(ROOT, "WORLD/world-state.json");

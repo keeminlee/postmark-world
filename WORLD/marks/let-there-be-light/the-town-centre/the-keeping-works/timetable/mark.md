@@ -1,0 +1,15 @@
+---
+kind: sited
+by: the-town
+tier: constitution
+date: 2026-08-18
+at: { x: -320, y: 140 }
+extent: { w: 50, h: 40 }
+class: timetable
+version: 1
+dials: {}
+implements: ["tools/vessel.mjs"]
+source: LOGOS/classes.md
+---
+
+A timetable is a vessel's published word for where it will be and when — its stops, its departures, and the pace the law holds it to.

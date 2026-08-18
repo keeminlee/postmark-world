@@ -63,17 +63,21 @@ function homeBandControlPoints() {
 // the same function the browser calls. The manifest home densification is passed
 // as the homeControlPoints override.
 // Default: the seeded canon tree, WORLD/marks, through the SHARED loadMarks.
-export function buildWorld({ crossing = DEFAULT_CROSSING, marksDir = null, stakesPath = null } = {}) {
+export function buildWorld({ crossing = DEFAULT_CROSSING, marksDir = null, stakesPath = null, fanup = "legacy" } = {}) {
   const terrain = JSON.parse(readFileSync(join(ROOT, "WORLD/skeleton.json"), "utf8"));
   const placed = loadMarks(marksDir ?? join(ROOT, "WORLD/marks")); // SHARED nested loader; real coords
   const stakes = stakesPath ? JSON.parse(readFileSync(stakesPath, "utf8")) : [];
 
   // fold at this crossing (stakes take effect the crossing after they land)
-  const state = fold({ marks: placed, terrain, stakes, tick: crossing + 1 });
+  const state = fold({ marks: placed, terrain, stakes, tick: crossing + 1, fanup });
 
   // one assembly, disk data source: the manifest densification is the override
   const world = assembleWorld({ worldState: state, skeleton: terrain, homeControlPoints: homeBandControlPoints() });
   world.foldErrors = state.errors;
+  // sandbox receipts ride to the caller (assembleWorld picks fields, so these
+  // must be re-attached; absent under fanup:"legacy" by construction)
+  world.fanup = state.fanup;
+  world.terrain_weight = state.terrain_weight;
   return world;
 }
 

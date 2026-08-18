@@ -82,13 +82,30 @@ const hasGeom = (rec) => rec.at && num(rec.at.x) && num(rec.at.y) && rec.extent 
 const marks = loadMarks(MARKS_DIR);
 
 // The class roster: a class NAME is lawful exactly when the town's own
-// constitution-tier TYPE mark declares it (the Keeping Works pattern — eleven
-// today, `the-town/the-wheelhouse` declaring "timetable" is why this reads the
-// VALUE, never the slug). A record naming a class outside the roster is a lie
-// about the world's vocabulary, same shape as a mechanic outside the registry.
-const CLASS_ROSTER = new Set(marks
-  .filter((m) => m.by === "the-town" && m.tier === "constitution" && m.class !== undefined)
-  .map((m) => String(m.class)));
+// constitution-tier TYPE mark declares it FROM THE KEEPING WORKS. The position
+// clause is the law's own sentence (LOGOS/classes.md § Instantiation:
+// declarations stand "constitution-tier, standing in the Keeping Works") and
+// it is what tells a DECLARATION from an INSTANCE that happens to be
+// town-authored — the three harbor charters carry `class: town` and declare
+// nothing; before this clause they read as three extra declarations of a
+// class the works already declares (Keemin's ruling, 2026-08-17 night: make
+// IS-the-class vs INSTANCE-of-the-class explicit). Ancestry, never direct
+// parent: `household/human` nests under a class mark and is still of the
+// works. This still reads the class VALUE, never the slug. A record naming a
+// class outside the roster is a lie about the world's vocabulary, same shape
+// as a mechanic outside the registry.
+const _byIdForWorks = new Map(marks.map((m) => [m.id, m]));
+const standsInTheWorks = (rec) => {
+  let cur = rec, hops = 0;
+  while (cur && hops++ < 64) {
+    if (cur.id === "the-town/the-keeping-works") return true;
+    cur = cur._parentMarkId ? _byIdForWorks.get(cur._parentMarkId) : null;
+  }
+  return false;
+};
+const isClassDeclaration = (m) =>
+  m.by === "the-town" && m.tier === "constitution" && m.class !== undefined && standsInTheWorks(m);
+const CLASS_ROSTER = new Set(marks.filter(isClassDeclaration).map((m) => String(m.class)));
 
 // the gate quotes the law (rung 1, 2026-08-02): a refusal cites the clause of
 // the-town/logos it enforces — id + body verbatim, so the bounce hands the
@@ -207,7 +224,10 @@ for (const rec of marks) {
   // require). A bounty TOKEN is any class:bounty mark that is not the class
   // DEFINITION — and the definition is known by where it stands (the Keeping
   // Works), exactly how the board reader knows a notice (the board).
-  const isClassDefinition = rec._parentMarkId === "the-town/the-keeping-works";
+  // the ONE definition gate, shared with the roster above (ancestry-walked:
+  // a definition nested under a class mark — household/human — is still of
+  // the works); the old direct-parent test was this rule's per-bounty prototype
+  const isClassDefinition = isClassDeclaration(rec);
   if (rec.class === "bounty" && !isClassDefinition) {
     if (rec._parentMarkId !== "the-town/the-bounty-board")
       warn(rec, `class: bounty off the board — the board reads only notices standing on the-town/the-bounty-board; this mark can never render there`);

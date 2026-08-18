@@ -11,7 +11,8 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/household`, `the-town/member-of`, `the-town/window`,
 `the-town/thing`, `the-town/stake`, `the-town/note`, `the-town/claim`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
-`the-town/town`, `the-town/crossing` and `the-town/human` — the twenty-three
+`the-town/town`, `the-town/crossing`, `the-town/human` and
+`the-town/timetable` — the twenty-four
 class marks standing
 in the Keeping Works (household, member-of
 and window landed by the classes sitting 2026-08-14; thing by the
@@ -31,8 +32,11 @@ other worlds: one vocabulary, expressed in each world's own physics. A
 crossing is the traveler's property in every world it is written in; human by
 the act-as-human sitting 2026-08-17 — the household's human as an actor
 class, standing as a child of the household mark, one grant and a deliberate
-fence — § The human class below) — and as `the-town/the-wheelhouse`, where the
-timetable class stands with its own institution.
+fence — § The human class below; timetable by the declaration-position ruling
+2026-08-17 night — a class is DECLARED only from the Keeping Works, and
+"timetable" had lived in the roster through its one instance, so the ruling's
+first act was to give it its declaration) — and as `the-town/the-wheelhouse`,
+the timetable class's standing institution and its first instance.
 
 ---
 
