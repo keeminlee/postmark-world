@@ -118,15 +118,21 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   const report = settlementSweep({ repo, stakesPath });
 
   assert.deepEqual(report.published.map((row) => [row.household, row.id, row.class]).sort(), [
-    ["founder-house", "the-town/crossing-bell", "constitution"],
     ["house-a", "alice/alice-market", "commons"],
     ["house-a", "alice/home-garden", "home"],
     ["house-b", "bob/bob-market", "commons"],
   ].sort());
   assert.deepEqual(report.left_drafted.map((row) => [row.household, row.id]).sort(), [
+    ["founder-house", "the-town/crossing-bell"],
     ["house-a", "alice/alice-sketch"],
     ["house-b", "bob/bob-sketch"],
   ].sort());
+  // THE TOWN WALL (#1697). The crossing bell used to publish from here, and that
+  // is the road the-town/berth's widened grant travelled. The town's own record
+  // is ruled onto main by a founder's pen — in the act that also moves whatever
+  // guards it — and no sketchbook admits one, a founder's sketchbook included.
+  assert.match(report.left_drafted.find((row) => row.id === "the-town/crossing-bell").reason, /town wall/,
+    "and the refusal names the wall rather than reading as an eligibility miss");
   assert.deepEqual(report.unpublished.map((row) => [row.household, row.id]), [
     ["house-a", "alice/old-commons"],
   ]);
@@ -134,7 +140,8 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   assert.equal(has("main", aHome), true);
   assert.equal(has("main", aBacked), true);
   assert.equal(has("main", bBacked), true);
-  assert.equal(has("main", constitution), true);
+  assert.equal(has("main", constitution), false, "the town's own record never arrives on main by sweep");
+  assert.equal(has("draft/founder-house", constitution), true, "it stays in the drawer that drew it");
   assert.equal(has("main", aPrivate), false);
   assert.equal(has("main", bPrivate), false);
   assert.equal(has("main", oldPath), false);
@@ -496,8 +503,15 @@ test("nested re-homes: a mark re-homed INTO a directory that then moves itself s
     by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 },
     coords: "relative", body: "the frame",
   }));
+  // The meadow is anchored ON THE WORLD ORIGIN, and that is load-bearing rather
+  // than decorative. A resident's mark can never OUTRANK another resident's
+  // (standingRank knows two ranks, constitution and market), so the only door
+  // left open to a resident's re-home is the lint's second one: the frame the
+  // mark would be read in does not change. A container sitting on the origin
+  // keeps it, so the district below moves as paper — the same door the lint's
+  // own comment describes for a top-level mark a new claim grew around.
   put("WORLD/marks/let-there-be-light/the-meadow/mark.md", record({
-    by: "alice", at: { x: 1000, y: 1000 }, extent: { w: 400, h: 400 }, body: "alice's meadow",
+    by: "alice", at: { x: 0, y: 0 }, extent: { w: 4000, h: 4000 }, body: "alice's meadow",
   }));
   put("WORLD/marks/let-there-be-light/the-meadow/the-cairn/mark.md", record({
     by: "the-town", tier: "constitution", at: { x: 1010, y: 1005 }, extent: { w: 4, h: 4 },
@@ -509,12 +523,17 @@ test("nested re-homes: a mark re-homed INTO a directory that then moves itself s
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
 
-  // the district arrives at the TOP level in this crossing; geometry puts it
-  // inside the meadow, and the cairn inside it
-  git("switch", "-q", "-c", "draft/founder-house");
+  // The district arrives at the TOP level in this crossing; geometry puts it
+  // inside the meadow, and the cairn inside it. It is a RESIDENT's district
+  // because of the town wall (#1697): nothing signed `the-town` publishes from a
+  // sketchbook any more, so a town-signed district here would simply never
+  // land and the nested move under test would never happen. The subject is the
+  // bookkeeping of a move that carries another move, which is indifferent to
+  // whose claim it is.
+  git("switch", "-q", "-c", "draft/house-a");
   put("WORLD/marks/let-there-be-light/the-district/mark.md", record({
-    by: "the-town", tier: "constitution", at: { x: 1010, y: 1005 }, extent: { w: 60, h: 60 },
-    body: "the town's own district",
+    by: "alice", at: { x: 1010, y: 1005 }, extent: { w: 60, h: 60 },
+    body: "alice's district",
   }));
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "the district");
@@ -522,19 +541,19 @@ test("nested re-homes: a mark re-homed INTO a directory that then moves itself s
 
   const stakesPath = `${repo}-stakes.json`;
   t.after(() => rmSync(stakesPath, { force: true }));
-  writeFileSync(stakesPath, JSON.stringify([]));
+  writeFileSync(stakesPath, JSON.stringify([{ holder: "s1", mark: "alice/the-district", n: 5, weight: 10 }]));
 
   const report = settlementSweep({ repo, stakesPath });
   const rows = Object.fromEntries(report.rehomed.map((r) => [r.mark, r]));
-  assert.deepEqual(Object.keys(rows).sort(), ["the-town/the-cairn", "the-town/the-district"]);
+  assert.deepEqual(Object.keys(rows).sort(), ["alice/the-district", "the-town/the-cairn"]);
   assert.equal(rows["the-town/the-cairn"].to_path,
     "WORLD/marks/let-there-be-light/the-meadow/the-district/the-cairn",
     "the cairn's recorded path followed the district that carried it");
-  assert.equal(rows["the-town/the-district"].to_path, "WORLD/marks/let-there-be-light/the-meadow/the-district");
+  assert.equal(rows["alice/the-district"].to_path, "WORLD/marks/let-there-be-light/the-meadow/the-district");
 
   const state = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"));
   assert.equal(state.errors.length, 0);
-  for (const id of ["the-town/the-cairn", "the-town/the-district"])
+  for (const id of ["the-town/the-cairn", "alice/the-district"])
     assert.deepEqual(state.marks.find((m) => m.id === id).at, { x: 1010, y: 1005 },
       `${id} composes where it always stood`);
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");

@@ -72,6 +72,20 @@ export function standingHouseholdOf(mark) {
   return mark?._cred ?? mark?.declared_household ?? mark?.household ?? mark?.by ?? null;
 }
 
+// THE TOWN'S OWN HAND. `by: the-town` is not a household's pen — the town keeps
+// no sketchbook, and its record is ruled onto main by a founder's act. So a
+// record signed by the town arriving through a household's drawer is one of two
+// things, and neither publishes: a stale copy of main's own text, or a borrowed
+// name. The settlement sweep's town wall reads this (#1697, after the-town/berth
+// was widened by a resurrected draft copy on 2026-08-18).
+//
+// Deliberately broader than the constitution shortcut in markStanding below: the
+// town also signs terrain, the LOGOS nodes and the quay's furniture with no
+// `tier:` line at all, and none of that is a resident's to publish either.
+export function townOwned(mark) {
+  return (mark?.by ?? mark?.household) === TOWN;
+}
+
 export function markStanding(mark, byId) {
   if (!mark) return "market";
   if ((mark.by ?? mark.household) === TOWN && mark.tier === "constitution") return "constitution";
