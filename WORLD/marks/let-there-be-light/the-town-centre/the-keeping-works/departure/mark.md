@@ -7,7 +7,7 @@ at: { x: -345, y: -175 }
 extent: { w: 50, h: 40 }
 class: departure
 version: 2
-dials: {"pace_km_per_crossing": 15}
+dials: {"pace_km_per_crossing": 60}
 implements: ["tools/walk.mjs"]
 source: LOGOS/classes.md
 ---

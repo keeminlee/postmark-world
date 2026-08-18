@@ -39,6 +39,15 @@ test("the berth's say grant is for: berth (ruled 679e097f; regressed by sweep 91
     "an absent for: reads as RESIDENT under LOGOS — this widening is exactly what the sweep must refuse");
 });
 
+test("the departure's pace dial is 60 (decision 008b; regressed by sweep 652fdb44, caught by Keemin's memory 08-18)", () => {
+  const text = readFileSync(join(here, "..",
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/departure/mark.md"), "utf8");
+  const line = text.split("\n").find((l) => l.startsWith("dials:"));
+  assert.ok(line, "the departure class carries a dials: line");
+  assert.equal(JSON.parse(line.slice("dials:".length).trim()).pace_km_per_crossing, 60,
+    "the resident stride is RULED text (008b: 5 km/h, a person's walk) — a stale copy reverting it is the #1697 class");
+});
+
 test("the human's say grant is for: human (the act-as-human fence, same ruling)", () => {
   const actions = markActions(
     "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/household/human/mark.md");
