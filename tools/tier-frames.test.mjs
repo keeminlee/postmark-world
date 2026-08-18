@@ -555,8 +555,34 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     const MOVED_BY_DECLARED_ACT = new Map([
       ["the-town/the-ship-at-anchor", { from: "1210,5720", to: "1350,5665" }],
     ]);
+    // THE DE-SITING (Keemin's ruling, 2026-08-18 night — the node-ontology
+    // planting): law has no where. Class-nodes leave geometry entirely
+    // (kind: class, no at/extent) — a rule's extent is its jurisdiction,
+    // enumerable, never measurable. A withdrawal FROM GEOMETRY is declared
+    // per id: the B side must still HOLD the record (losing it entirely
+    // still fails the loss check above), just without a position. Only ids
+    // positioned on the A side matter here; listing the whole census keeps
+    // the declaration whole.
+    const DESITED_BY_DECLARED_ACT = new Set([
+      "the-town/address", "the-town/attachment", "the-town/berth",
+      "the-town/bounty", "the-town/crossing",
+      "the-town/departure", "the-town/emission", "the-town/entity",
+      "the-town/fog", "the-town/home", "the-town/household",
+      "the-town/human", "the-town/light", "the-town/member-of",
+      "the-town/note", "the-town/parcel", "the-town/profile",
+      "the-town/resident", "the-town/response-edge", "the-town/sound",
+      "the-town/stake", "the-town/thing", "the-town/timetable",
+      "the-town/town", "the-town/window",
+    ]);
     const moved = [], extentChanged = [], ringChanged = [];
     for (const [id, a] of pa) {
+      if (DESITED_BY_DECLARED_ACT.has(id)) {
+        // withdrawn from geometry by declared act: the record must still
+        // stand on the B side (the loss gate above catches disappearance);
+        // here we hold only that it carries no position anymore
+        assert.ok(!pb.has(id), `${id} was de-sited by declared act, but the B side still positions it at ${pb.get(id)?.at}`);
+        continue;
+      }
       const b = pb.get(id);
       if (a.at !== b.at) {
         const d = MOVED_BY_DECLARED_ACT.get(id);
@@ -575,6 +601,9 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // wrong origin their footprint would have landed in a different
     // container while the composed centre still matched by luck.
     for (const m of A) {
+      // a de-sited record has left geometry: its containment answer is now
+      // class-space's (the extends: lattice), which geometry cannot see
+      if (DESITED_BY_DECLARED_ACT.has(m.id)) continue;
       const before = old.placementParent(m, A);
       const after = placementParent(pb.has(m.id) ? B.find((x) => x.id === m.id) : m, B);
       assert.equal(after, before, `placementParent moved for ${m.id}`);

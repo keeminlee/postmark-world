@@ -1,10 +1,8 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-14
-at: { x: -60, y: -355 }
-extent: { w: 50, h: 40 }
 class: thing
 version: 2
 mobility: settled

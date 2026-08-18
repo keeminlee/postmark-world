@@ -335,7 +335,9 @@ function walkMarks(nodeDir, parentMarkId, out) {
     rec._explicitParent = rec.parent; // as-authored (expected only for terrain refs at top level)
     // predicated/naming take their parent from the enclosing mark dir when nested;
     // at the top level they must name a terrain feature explicitly (terrain:<id>).
-    if (rec.kind === "predicated" || rec.kind === "naming") {
+    // class marks (the de-siting, 2026-08-18: law has no where) bind the same
+    // way — their registry standing IS the enclosing dir, never geometry.
+    if (rec.kind === "predicated" || rec.kind === "naming" || rec.kind === "class") {
       if (parentMarkId) rec.parent = parentMarkId;
     } else {
       delete rec.parent; // sited/parcel never carry an authored parent; containment is geometry
@@ -579,7 +581,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     }
   }
   for (const mk of byId.values()) {
-    if ((mk.kind === "predicated" || mk.kind === "naming") && mk.parent) {
+    if ((mk.kind === "predicated" || mk.kind === "naming" || mk.kind === "class") && mk.parent) {
       if (!byId.has(mk.parent) && !terrainIds.has(mk.parent)) { errors.push({ mark: mk.id, error: `parent '${mk.parent}' not found` }); continue; }
       parentOf.set(mk.id, mk.parent);
     }

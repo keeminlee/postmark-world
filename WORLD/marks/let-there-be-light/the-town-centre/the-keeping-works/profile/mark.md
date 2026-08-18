@@ -1,10 +1,8 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-15
-at: { x: -255, y: 95 }
-extent: { w: 50, h: 40 }
 class: profile
 version: 1
 dials: {}

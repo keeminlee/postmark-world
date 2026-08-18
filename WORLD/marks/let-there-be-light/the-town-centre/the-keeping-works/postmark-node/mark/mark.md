@@ -1,13 +1,12 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-15
-at: { x: -255, y: 5 }
-extent: { w: 50, h: 40 }
-class: claim
-version: 1
-dials: {"body_max_chars": 150}
+class: mark
+version: 2
+extends: postmark-node
+dials: {}
 implements: []
 source: LOGOS/classes.md
 ---

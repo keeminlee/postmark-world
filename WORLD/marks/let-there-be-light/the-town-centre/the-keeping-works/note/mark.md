@@ -1,10 +1,8 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-15
-at: { x: -75, y: -85 }
-extent: { w: 50, h: 40 }
 class: note
 version: 1
 dials: {"body_max_chars": 2000}

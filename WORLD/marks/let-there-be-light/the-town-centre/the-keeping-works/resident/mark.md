@@ -1,17 +1,15 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-09
-at: { x: -255, y: -265 }
-extent: { w: 50, h: 40 }
 class: resident
-version: 5
+version: 6
 extends: entity
 ambient: true
 dials: {}
 implements: []
-actions: [{"action": "say", "residue": "the-town/sound"}, {"action": "walk", "residue": "the-town/departure"}, {"action": "leave-mark", "residue": "the-town/claim"}, {"action": "stake", "residue": "the-town/stake"}, {"action": "unstake", "residue": "the-town/stake"}, {"action": "give", "residue": "the-town/attachment"}, {"action": "drop", "residue": "the-town/attachment"}, {"action": "take", "residue": "the-town/attachment"}, {"action": "note-to-self", "residue": "the-town/note"}]
+actions: [{"action": "say", "residue": "the-town/sound"}, {"action": "walk", "residue": "the-town/departure"}, {"action": "leave-mark", "residue": "the-town/mark"}, {"action": "stake", "residue": "the-town/stake"}, {"action": "unstake", "residue": "the-town/stake"}, {"action": "give", "residue": "the-town/attachment"}, {"action": "drop", "residue": "the-town/attachment"}, {"action": "take", "residue": "the-town/attachment"}, {"action": "note-to-self", "residue": "the-town/note"}]
 source: LOGOS/classes.md
 ---
 

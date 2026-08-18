@@ -50,7 +50,7 @@ const scopeRel = SCOPE ? resolve(SCOPE).replace(/\\/g, "/").replace(/^.*\/WORLD\
 // code; only the rendering differs.
 const JSON_OUT = args.includes("--json");
 
-const KINDS = new Set(["sited", "predicated", "naming", "parcel"]);
+const KINDS = new Set(["sited", "predicated", "naming", "parcel", "class"]);
 const TIERS = new Set(["constitution", "sovereignty", "market", "draft"]); // v2 protection tiers + draft (gray, 2026-08-09)
 const TOWN = "the-town"; // the town-tier author; only it may claim constitution
 const CONTAINERS = new Set(["sited", "parcel"]); // only extented things contain or carry
@@ -279,6 +279,14 @@ for (const rec of marks) {
         if (!TERRAIN_IDS.has(tid)) err(rec, `parent terrain:${tid} names no terrain feature (WORLD/skeleton.json)`);
       }
     }
+  } else if (rec.kind === "class") {
+    // THE DE-SITING (2026-08-18): law has no where. A class-node carries no
+    // geometry — a rule's extent is its jurisdiction, which is enumerable,
+    // never measurable. It stands in a registry by ancestry, not coordinates.
+    if (rec.at !== undefined || rec.extent !== undefined) err(rec, `class marks carry no at/extent — a rule's extent is its jurisdiction, not geometry`);
+    if (rec.slot !== undefined || rec.value !== undefined) err(rec, `class marks carry no slot/value (those are for predicated/naming)`);
+    if (rec.class === undefined) err(rec, `a class mark declares its class: — kind: class with no class: names nothing`);
+    if (rec._explicitParent) err(rec, `class marks never declare a parent — their registry standing is the enclosing directory`);
   }
 
 }
@@ -295,6 +303,8 @@ for (const rec of marks) {
     if (pk === "naming") err(rec, `a naming mark cannot contain child marks (move this out)${cite("the-town/the-continuation")}`);
     else if (pk === "predicated" && rec.kind !== "predicated" && rec.kind !== "naming")
       err(rec, `a ${rec.kind} mark cannot nest under a predicate — a predicate's children must be predicates (the continuation law); geometry needs a geometric parent${cite("the-town/the-continuation")}`);
+    else if (pk === "class" && rec.kind !== "class" && rec.kind !== "predicated" && rec.kind !== "naming")
+      err(rec, `a ${rec.kind} mark cannot nest under a class-node — class-space holds classes and their predicates; geometry needs a geometric parent`);
     // A predicate that outranks its parent is the one shape the tier binding
     // REFUSES rather than repairs. Everywhere else an outranking child simply
     // stops being framed by its parent and stands on its own world numbers —

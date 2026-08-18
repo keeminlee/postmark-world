@@ -1,10 +1,8 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-09
-at: { x: -165, y: -355 }
-extent: { w: 50, h: 40 }
 class: light
 version: 1
 extends: emission

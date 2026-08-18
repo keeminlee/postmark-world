@@ -9,12 +9,22 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/light`, `the-town/fog`, `the-town/entity`, `the-town/resident`,
 `the-town/parcel`, `the-town/departure`, `the-town/attachment`,
 `the-town/household`, `the-town/member-of`, `the-town/window`,
-`the-town/thing`, `the-town/stake`, `the-town/note`, `the-town/claim`,
+`the-town/thing`, `the-town/stake`, `the-town/note`, `the-town/mark`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
-`the-town/town`, `the-town/crossing`, `the-town/human` and
-`the-town/timetable` — the twenty-four
-class marks standing
-in the Keeping Works (household, member-of
+`the-town/town`, `the-town/crossing`, `the-town/human`,
+`the-town/timetable`, `the-town/bounty`,
+`the-town/postmark-node`, `the-town/postmark-edge`, `the-town/postmark-class`,
+`the-town/predicate`, `the-town/portal`, `the-town/position`
+and `the-town/exposure` — thirty-two of the thirty-three class-nodes
+standing in the Keeping Works (the thirty-third, response-edge, is sourced
+to and rendered by [the-response-function.md](the-response-function.md),
+its own page) — and as `the-town/the-wheelhouse`, the timetable class's
+standing institution and its first instance; `the-town/node` and
+`the-town/edge`, the logos primitives the whole ontology roots in; and
+`the-town/character-cap`, the mark class's first predicate-child parameter.
+
+The seatings, on the record (prose about the channel, never the channel
+itself): household, member-of
 and window landed by the classes sitting 2026-08-14; thing by the
 object-primitive ruling the same day; stake, note and claim by the
 blurb-residue ruling 2026-08-15 — every granted action's meaning now stands
@@ -35,8 +45,49 @@ class, standing as a child of the household mark, one grant and a deliberate
 fence — § The human class below; timetable by the declaration-position ruling
 2026-08-17 night — a class is DECLARED only from the Keeping Works, and
 "timetable" had lived in the roster through its one instance, so the ruling's
-first act was to give it its declaration) — and as `the-town/the-wheelhouse`,
-the timetable class's standing institution and its first instance.
+first act was to give it its declaration; **the node-ontology planting,
+2026-08-18** — `node` and `edge` enter the LAW as logos primitives, classless
+and undialed, observations of logic that need no defense; `postmark-node` and
+`postmark-edge` concretize them in the works, `implements:` carrying the
+citation; `mark`, `entity` and `emission` stand as postmark-node's child
+classes and `member-of` and `response-edge` as postmark-edge's — the class
+tree made containment, the L7 ladder's top; **claim renamed to mark, whole**:
+claim-ness is every mark's property under the one-claim law, never a kind
+of mark, so the class the blurb-residue ruling landed as `claim` now answers
+to its true name and the leave-mark grant's residue follows; `predicate` joins mark, entity and
+emission as the FOURTH world family — properties are nodes, every world
+family may carry them, and the family is positionless by taxonomy, which is
+where "optional position" went: the optionality dissolved into the tree.
+`position` and `exposure` stand as predicate's child classes (a position
+node IS a predicate — it describes the node it hangs off); the position
+SLOT is postmark-node's own predicate child, `value: open` — **a slot is a
+predicate child of its class: sealed when the child carries the value
+(`character-cap`, 150), open when it carries `value: open` and each
+instance fills its own** (sealed = class-governed, open =
+instance-governed; § The two constitutionalities is this pair's law, rank
+untangled from governance). `postmark-class` stands beside postmark-node —
+the law's node: every class-node is its instance, itself included, the one
+tame self-loop, which unbraids token from type: a class-node is an
+INSTANCE of postmark-class while what it DECLARES hangs in the `extends:`
+lattice. **THE DE-SITING, same ruling: law has no where.** Every
+class-node now carries `kind: class` and no geometry — a rule's extent is
+its jurisdiction, enumerable, never measurable; the works renders as one
+region, and the shelf coordinates the classes wore were the medium's
+costume, never the law's body. **THE PORTAL:** portal, a child of
+postmark-edge, is the door between the dimensions — the works and the
+logos quarter each carry one standing instance (the-works-portal,
+the-logos-portal, target `the-town/node`): crossing a portal changes what
+you read, never where you stand; instance-space is ruled by geometry,
+class-space by type edges, and class-space has no where. THE LEXICON,
+ruled the same night: **node** = anything that stands in the record;
+**mark** = the world family of positioned claims, what leave-mark leaves;
+**class-node** = an instance of postmark-class; `mark.md` and
+`WORLD/marks/` are the serialization MEDIUM — in the files "mark" is a
+filename, in the law a mark is a positioned claim, and directory nesting
+renders whichever edge type each quarter declares: geometric containment
+in the world, class-parenthood in class-space. Bounty and response-edge
+had stood in the works since their own rulings but drifted out of the
+roster sentence; the planting's census trued it.
 
 ---
 
@@ -51,7 +102,10 @@ the note verb's machinery reads its own store, never marks). Classes whose insta
 dials (departure, sound, light, fog, emission), schedules others board
 (timetable), identities and memberships (resident, berth, entity, household,
 member-of), ground and papers (parcel, address, home, window, profile),
-money and records (stake, claim, crossing, town) — stay town-only
+money and records (stake, mark, crossing, town), and the graph's own
+substrate (postmark-node, postmark-edge, postmark-class, predicate, portal,
+position, exposure — instances of
+the spine arrive by derivation or by act, never by hand) — stay town-only
 until the resident-classes design (#1797) rules the general mechanism. The
 enforced whitelist lives in `tools/board-grammar.test.mjs`
 (`RESIDENT_INSTANTIABLE`) and grows by ruling, never by drift. First
@@ -99,7 +153,13 @@ A class carries two independent constitutionalities:
    residents while a name is each resident's own. A slot may be **sealed** at
    class level (instances cannot carry a rival — the param is uniform by law)
    or **open** (each instance fills its own). Partial constitutionality is
-   tree position, nothing more.
+   tree position, nothing more. *The 2026-08-18 gloss: sealed is
+   CLASS-GOVERNED, open is INSTANCE-GOVERNED — the axis is where the value
+   lives, never rank. A sealed slot is the class speaking a value about
+   every instance; an open slot is the class speaking only the grammar, so
+   there is no rank collision because the class never spoke a value. On
+   disk a slot is a predicate child of its class: sealed carries the value,
+   open carries `value: open`.*
 2. **Its shape is governed like its values.** The class-node is ground; a
    new predicate slot is a child declared on that ground. Whether the slot
    roster is closed (new slots meet compiled opposition; only the town's pen

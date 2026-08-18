@@ -1,12 +1,11 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-09
-at: { x: -345, y: -265 }
-extent: { w: 50, h: 40 }
 class: entity
 version: 1
+extends: postmark-node
 dials: {}
 implements: []
 mobility: free

@@ -1,12 +1,11 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-14
-at: { x: -165, y: -85 }
-extent: { w: 50, h: 40 }
 class: member-of
 version: 1
+extends: postmark-edge
 dials: {}
 implements: []
 affordances: []

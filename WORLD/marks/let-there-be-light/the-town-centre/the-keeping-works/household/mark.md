@@ -1,10 +1,8 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-14
-at: { x: -75, y: -265 }
-extent: { w: 50, h: 40 }
 class: household
 version: 3
 dials: {"birth_tier": "sovereign", "residents_per_address": 1}

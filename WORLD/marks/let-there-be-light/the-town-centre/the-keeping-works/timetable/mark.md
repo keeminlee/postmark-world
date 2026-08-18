@@ -1,10 +1,8 @@
 ---
-kind: sited
+kind: class
 by: the-town
 tier: constitution
 date: 2026-08-18
-at: { x: -320, y: 140 }
-extent: { w: 50, h: 40 }
 class: timetable
 version: 1
 dials: {}
