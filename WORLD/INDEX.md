@@ -378,6 +378,7 @@ listed here — they are their households' own.*
 | the-town/fog | sited | -750,-780 |  | 0 | 0 |  |
 | the-town/home | sited | -1020,-330 |  | 0 | 0 |  |
 | the-town/household | sited | -750,-690 |  | 0 | 0 |  |
+| the-town/human | sited | -740,-685 |  | 0 | 0 |  |
 | the-town/light | sited | -840,-780 |  | 0 | 0 |  |
 | the-town/member-of | sited | -840,-510 |  | 0 | 0 |  |
 | the-town/note | sited | -750,-510 |  | 0 | 0 |  |
@@ -507,6 +508,7 @@ listed here — they are their households' own.*
 | the-town/the-world-window | sited | -335,-675 |  | 0 | 0 |  |
 | the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
 | the-town/thing | sited | -735,-780 |  | 0 | 0 |  |
+| the-town/timetable | sited | -995,-285 |  | 0 | 0 |  |
 | the-town/town | sited | -840,-330 |  | 0 | 0 |  |
 | the-town/window | sited | -840,-600 |  | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |

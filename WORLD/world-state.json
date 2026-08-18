@@ -1390,7 +1390,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right.",
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right.",
       "placementParent": "the-town/logos"
     },
     {
@@ -1475,7 +1475,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\r\ntelling run anywhere, and canon answers to the recomputation.",
+      "body": "Anyone with a clone recomputes the whole world — the fold, the gate, the\ntelling run anywhere, and canon answers to the recomputation.",
       "placementParent": "the-town/logos"
     },
     {
@@ -8677,7 +8677,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "One shore and one sea. Everything south and west of the drawn coast is this water.\r\nThe mouth is both river and sea; no line is drawn between them.",
+      "body": "One shore and one sea. Everything south and west of the drawn coast is this water.\nThe mouth is both river and sea; no line is drawn between them.",
       "feature": "the-sea",
       "points": [
         [
@@ -11423,6 +11423,29 @@
       "placementParent": "the-town/the-keeping-works"
     },
     {
+      "id": "the-town/human",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-17",
+      "at": {
+        "x": -740,
+        "y": -685
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The household's human, standing beside their resident. One action for now — a voice: to speak here is to speak with them.",
+      "class": "human",
+      "placementParent": "the-town/household"
+    },
+    {
       "id": "the-town/light",
       "kind": "sited",
       "by": "the-town",
@@ -13883,6 +13906,29 @@
       "weight": 0,
       "body": "A thing is made, held or set down: who made it and who holds it are different answers, and where it stands is a third.",
       "class": "thing",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
+      "id": "the-town/timetable",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-18",
+      "at": {
+        "x": -995,
+        "y": -285
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A timetable is a vessel's published word for where it will be and when — its stops, its departures, and the pace the law holds it to.",
+      "class": "timetable",
       "placementParent": "the-town/the-keeping-works"
     },
     {

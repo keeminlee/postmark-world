@@ -455,6 +455,11 @@
       "household": "lupi-agent",
       "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/the-lamp-and-the-knock/mark.md",
       "class": "home"
+    },
+    "the-town/berth": {
+      "household": "vqlkyriez-bot",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/berth/mark.md",
+      "class": "constitution"
     }
   }
 }
