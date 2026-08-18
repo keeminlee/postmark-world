@@ -6727,7 +6727,12 @@ export function mountViewer(appEl) {
     const sheet = document.createElement("div");
     sheet.className = "wv-act-sheet wv-say-sheet";
     sheet.dataset.mode = "say";
-    sheet.innerHTML = `<div class="wv-act-head"><b>${esc(state.handle || "—")}</b><span class="wv-act-verb">say it where you stand</span>`
+    // The head is deliberately SHORT. The stake sheet puts the mark's name here
+    // because it opens from relation lines and attribute rows where "this mark"
+    // is anybody's guess; a say has no subject but the speaker, and the speaker
+    // is named in the Act As row an inch above. Handle plus a long verb wrapped
+    // to three lines in a rail this narrow — seen in the shot, not reasoned out.
+    sheet.innerHTML = `<div class="wv-act-head"><b>say</b><span class="wv-act-verb">where you stand</span>`
       + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
       // Said BEFORE the box, not after: the town's own habit is to disclose at
       // the door, and the door's tool description says exactly this to an agent.
