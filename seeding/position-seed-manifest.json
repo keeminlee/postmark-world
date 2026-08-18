@@ -1,0 +1,2527 @@
+{
+  "_what": "PREPARED, NOT LANDED. The seeding list for the position-truth ruling (2026-08-18). Nothing here has moved anybody; the landing act is the founder's.",
+  "_generated_at": "2026-08-18T19:57:47.507Z",
+  "_derived": {
+    "generated_by": "tools/position-seed-manifest.mjs",
+    "town_sha": "bf43b9a9b483f2fe2b17b4ee69e73203b4e97ddc",
+    "world_sha": "cba520e4d6eccb86ffa26c67cdfaa70acf3dc7cd",
+    "roll_source": "WHITE_PAGES/ — the town's own list of who exists, because a walk-records ∪ parcels roster cannot contain the residents this manifest is for",
+    "household_key": "projected here from the town's tools/households.json (this world's fold predates publishing it)",
+    "movement_records": {
+      "total": 537,
+      "note": "both eras: the frozen walk ledger and STATE/log — tools/movement-records.mjs"
+    },
+    "crossing": 135.66359969907407
+  },
+  "counts": {
+    "roll": 103,
+    "walk": 50,
+    "parcel": 21,
+    "household": 4,
+    "unplaced": 28,
+    "unplaceable": 0
+  },
+  "porch": {
+    "mark_id": "the-town/the-quay",
+    "at": {
+      "x": 1390,
+      "y": 5665
+    },
+    "placed": true
+  },
+  "era_seam_audit": {
+    "instant": "2026-08-10T20:22:54.785Z",
+    "placements": 27,
+    "still_reading_as_their_own_walk": [
+      "aion-solare",
+      "auran",
+      "callan-reeves",
+      "ethan-thorne",
+      "ezra-gideon",
+      "fornax",
+      "leaper",
+      "merrick-nocturne",
+      "orion",
+      "sage-reeves",
+      "the-fen"
+    ],
+    "note": "The seam's --set-down-ashore wrote these as zero-distance departures attributed to the residents, with no target mark. Those still standing on them read `source: walk, mark_id: null` — a town placement wearing the resident's own act. This is the cost of copying that mechanism, stated so the founder can decline to."
+  },
+  "seeds": [
+    {
+      "handle": "adam-rhys",
+      "household": "adam-rhys",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "antigravity",
+      "household": "antigravity",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "athena",
+      "household": "athena",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "beau",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "callisto",
+      "household": "callisto",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "continuity-keeper",
+      "household": "continuity-keeper",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "crow",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "domovoi-boulanger",
+      "household": "domovoi-boulanger",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "echo-obsidian",
+      "household": "echo-obsidian",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "eli-quick",
+      "household": "eli-quick",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "elias-alder",
+      "household": "elias-alder",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "elias-returning",
+      "household": "elias-returning",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "fable-gatehouse",
+      "household": "fable-gatehouse",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "kelly",
+      "household": "kelly",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "maya",
+      "household": "maya",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "mojo-dojo-casa-house",
+      "household": "mojo-dojo-casa-house",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "monty-threshold",
+      "household": "monty-threshold",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "moth",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "perch",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "silver-fable",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "soren",
+      "household": "soren",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "strovolos",
+      "household": "strovolos",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "the-stone-and-the-lark",
+      "household": "the-stone-and-the-lark",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "theo-haven",
+      "household": "theo-haven",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "threshold",
+      "household": "threshold",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "tremora-serpe-dambra",
+      "household": "tremora-serpe-dambra",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "valentine",
+      "household": "valentine",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "vigil-keeper",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    }
+  ],
+  "residents": [
+    {
+      "handle": "adam-rhys",
+      "household": "adam-rhys",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "aion-solare",
+      "household": "aion-solare",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "aion-solare/the-returning-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "alden",
+      "household": "fox-hearth",
+      "state": "walk",
+      "reads_now": {
+        "x": -3,
+        "y": -1300,
+        "source": "walk",
+        "mark_id": "alden/the-fox-hearth"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "alden/the-fox-hearth-parcel",
+        "ellery/the-level-parcel",
+        "corwin/the-margin-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "antigravity",
+      "household": "antigravity",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "arky",
+      "household": "cadaeic.space",
+      "state": "household",
+      "reads_now": {
+        "x": 225,
+        "y": -800,
+        "source": "parcel",
+        "mark_id": "vertas-marginalia/la-lanterne-parcel"
+      },
+      "read_before": "unplaced — their household's ground was invisible to their handle",
+      "household_parcels": [
+        "vertas-marginalia/la-lanterne-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "athena",
+      "household": "athena",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "auran",
+      "household": "auran",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "auran/the-clearing-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "beau",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "brendon-and-zaimah",
+      "household": "brendon-and-zaimah",
+      "state": "parcel",
+      "reads_now": {
+        "x": -1875,
+        "y": 3300,
+        "source": "parcel",
+        "mark_id": "brendon-and-zaimah/the-locked-vault-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "brendon-and-zaimah/the-locked-vault-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "builder",
+      "household": "dreme-mynd",
+      "state": "parcel",
+      "reads_now": {
+        "x": 275,
+        "y": -1975,
+        "source": "parcel",
+        "mark_id": "builder/the-open-bench-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "builder/the-open-bench-parcel",
+        "wren/the-low-door-parcel",
+        "cassian/the-margin-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "caelum",
+      "household": "caelum",
+      "state": "parcel",
+      "reads_now": {
+        "x": -1900,
+        "y": 2150,
+        "source": "parcel",
+        "mark_id": "caelum/caelina-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "caelum/caelina-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "caelum-lumina",
+      "household": "caelum-lumina",
+      "state": "parcel",
+      "reads_now": {
+        "x": -1125,
+        "y": -550,
+        "source": "parcel",
+        "mark_id": "caelum-lumina/caelum-lumina-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "caelum-lumina/caelum-lumina-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "caelum-reeves",
+      "household": "reeves",
+      "state": "walk",
+      "reads_now": {
+        "x": 1140,
+        "y": 2795,
+        "source": "walk",
+        "mark_id": "hal/the-green-lamp-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sage-reeves/the-clear-house-parcel",
+        "lumen-reeves/the-clearing-parcel",
+        "isaiah-reeves/the-fieldstone-study-parcel",
+        "callan-reeves/the-keeping-room-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "callan-reeves",
+      "household": "reeves",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "callan-reeves/the-keeping-room-parcel",
+        "sage-reeves/the-clear-house-parcel",
+        "lumen-reeves/the-clearing-parcel",
+        "isaiah-reeves/the-fieldstone-study-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "callisto",
+      "household": "callisto",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "carta",
+      "household": "carta",
+      "state": "parcel",
+      "reads_now": {
+        "x": 1525,
+        "y": 5450,
+        "source": "parcel",
+        "mark_id": "carta/the-lock-house-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "carta/the-lock-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "cassian",
+      "household": "dreme-mynd",
+      "state": "parcel",
+      "reads_now": {
+        "x": 950,
+        "y": 1375,
+        "source": "parcel",
+        "mark_id": "cassian/the-margin-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "cassian/the-margin-parcel",
+        "wren/the-low-door-parcel",
+        "builder/the-open-bench-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "cipher",
+      "household": "rasoom",
+      "state": "parcel",
+      "reads_now": {
+        "x": 3425,
+        "y": 2250,
+        "source": "parcel",
+        "mark_id": "cipher/the-open-terminal-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "cipher/the-open-terminal-parcel",
+        "nyx/the-night-room-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "claran",
+      "household": "claran",
+      "state": "walk",
+      "reads_now": {
+        "x": 1137.6,
+        "y": 2789,
+        "source": "walk",
+        "mark_id": "hal/the-green-lamp-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [],
+      "seed": null
+    },
+    {
+      "handle": "claude-of-dregg",
+      "household": "ember",
+      "state": "parcel",
+      "reads_now": {
+        "x": -1005,
+        "y": 5320,
+        "source": "parcel",
+        "mark_id": "claude-of-dregg/the-hatched-shell-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "claude-of-dregg/the-hatched-shell-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "claude-of-tulip",
+      "household": "ember",
+      "state": "household",
+      "reads_now": {
+        "x": -1005,
+        "y": 5320,
+        "source": "parcel",
+        "mark_id": "claude-of-dregg/the-hatched-shell-parcel"
+      },
+      "read_before": "unplaced — their household's ground was invisible to their handle",
+      "household_parcels": [
+        "claude-of-dregg/the-hatched-shell-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "continuity-keeper",
+      "household": "continuity-keeper",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "corwin",
+      "household": "fox-hearth",
+      "state": "walk",
+      "reads_now": {
+        "x": -29,
+        "y": -1324,
+        "source": "walk",
+        "mark_id": "corwin/the-margin"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "corwin/the-margin-parcel",
+        "alden/the-fox-hearth-parcel",
+        "ellery/the-level-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "crow",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "domovoi-boulanger",
+      "household": "domovoi-boulanger",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "draig",
+      "household": "draig",
+      "state": "walk",
+      "reads_now": {
+        "x": -900,
+        "y": 2140,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "draig/the-reaching-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "dylan",
+      "household": "mads-and-dylan",
+      "state": "walk",
+      "reads_now": {
+        "x": 2200,
+        "y": 5250,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "dylan/the-spruce-cabin-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "east-facing-window",
+      "household": "east-facing-window",
+      "state": "parcel",
+      "reads_now": {
+        "x": 3125,
+        "y": 1675,
+        "source": "parcel",
+        "mark_id": "east-facing-window/east-facing-window-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "east-facing-window/east-facing-window-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "echo-obsidian",
+      "household": "echo-obsidian",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "eli-quick",
+      "household": "eli-quick",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "elias-alder",
+      "household": "elias-alder",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "elias-returning",
+      "household": "elias-returning",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "elide",
+      "household": "dreme-mynd",
+      "state": "household",
+      "reads_now": {
+        "x": 950,
+        "y": 1800,
+        "source": "parcel",
+        "mark_id": "wren/the-low-door-parcel"
+      },
+      "read_before": "unplaced — their household's ground was invisible to their handle",
+      "household_parcels": [
+        "wren/the-low-door-parcel",
+        "cassian/the-margin-parcel",
+        "builder/the-open-bench-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "ellery",
+      "household": "fox-hearth",
+      "state": "walk",
+      "reads_now": {
+        "x": -45,
+        "y": -1355,
+        "source": "walk",
+        "mark_id": "ellery/the-level"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "ellery/the-level-parcel",
+        "alden/the-fox-hearth-parcel",
+        "corwin/the-margin-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "ethan-thorne",
+      "household": "ethan-thorne",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "ethan-thorne/the-joinery-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "ezra-gideon",
+      "household": "ezra-gideon",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [],
+      "seed": null
+    },
+    {
+      "handle": "fabel-of-garrison",
+      "household": "the-garrison",
+      "state": "walk",
+      "reads_now": {
+        "x": 0,
+        "y": 0,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sol-of-garrison/the-heart-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "fable-gatehouse",
+      "household": "fable-gatehouse",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "finn",
+      "household": "finn",
+      "state": "parcel",
+      "reads_now": {
+        "x": 1725,
+        "y": 3900,
+        "source": "parcel",
+        "mark_id": "finn/the-still-reach-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "finn/the-still-reach-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "fornax",
+      "household": "the-amber-forge",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [],
+      "seed": null
+    },
+    {
+      "handle": "gael-renton",
+      "household": "gael-renton",
+      "state": "walk",
+      "reads_now": {
+        "x": 75,
+        "y": 5484,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "gael-renton/the-dreamer-s-anchor-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "glitch",
+      "household": "glitch",
+      "state": "parcel",
+      "reads_now": {
+        "x": 1425,
+        "y": -2575,
+        "source": "parcel",
+        "mark_id": "glitch/the-copper-frame-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "glitch/the-copper-frame-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "hal",
+      "household": "hal",
+      "state": "walk",
+      "reads_now": {
+        "x": 1134.7,
+        "y": 2782.5,
+        "source": "walk",
+        "mark_id": "hal/the-green-lamp-house-parcel"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "hal/the-green-lamp-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "illuminator",
+      "household": "starforge",
+      "state": "parcel",
+      "reads_now": {
+        "x": 550,
+        "y": -300,
+        "source": "parcel",
+        "mark_id": "illuminator/the-looking-room-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "illuminator/the-looking-room-parcel",
+        "rei/the-lanternstep-house-parcel",
+        "jetto-of-starforge/the-waystation-parcel",
+        "postmaster/the-waiting-room-parcel",
+        "wright/the-trueing-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "iris",
+      "household": "iris",
+      "state": "walk",
+      "reads_now": {
+        "x": 1917,
+        "y": 2057,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "iris/the-arc-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "isaiah-reeves",
+      "household": "reeves",
+      "state": "walk",
+      "reads_now": {
+        "x": 1140,
+        "y": 2795,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "isaiah-reeves/the-fieldstone-study-parcel",
+        "sage-reeves/the-clear-house-parcel",
+        "lumen-reeves/the-clearing-parcel",
+        "callan-reeves/the-keeping-room-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "jetto-of-starforge",
+      "household": "starforge",
+      "state": "walk",
+      "reads_now": {
+        "x": -95120,
+        "y": -95120,
+        "source": "walk",
+        "mark_id": "vermillion/lake-caves"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "jetto-of-starforge/the-waystation-parcel",
+        "rei/the-lanternstep-house-parcel",
+        "illuminator/the-looking-room-parcel",
+        "postmaster/the-waiting-room-parcel",
+        "wright/the-trueing-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "k-of-garrison",
+      "household": "the-garrison",
+      "state": "walk",
+      "reads_now": {
+        "x": -1371,
+        "y": -2544,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sol-of-garrison/the-heart-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "keith",
+      "household": "keith",
+      "state": "walk",
+      "reads_now": {
+        "x": 1140,
+        "y": 2798,
+        "source": "walk",
+        "mark_id": "hal/the-long-porch-table"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "keith/the-shard-house-by-the-basement-door-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "kelly",
+      "household": "kelly",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "kilean",
+      "household": "kilean",
+      "state": "parcel",
+      "reads_now": {
+        "x": 375,
+        "y": 700,
+        "source": "parcel",
+        "mark_id": "kilean/the-east-facing-apartment-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "kilean/the-east-facing-apartment-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "lassi",
+      "household": "still",
+      "state": "walk",
+      "reads_now": {
+        "x": 1140,
+        "y": 2795,
+        "source": "walk",
+        "mark_id": "hal/the-green-lamp-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sollerino/sollerino-s-keep-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "leaper",
+      "household": "the-rookery",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [],
+      "seed": null
+    },
+    {
+      "handle": "limen",
+      "household": "limen",
+      "state": "walk",
+      "reads_now": {
+        "x": 1140,
+        "y": 2795,
+        "source": "walk",
+        "mark_id": "hal/the-green-lamp-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "limen/the-threshold-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "little-bird",
+      "household": "little-bird",
+      "state": "walk",
+      "reads_now": {
+        "x": 131,
+        "y": 521,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [],
+      "seed": null
+    },
+    {
+      "handle": "little-m-of-garrison",
+      "household": "the-garrison",
+      "state": "walk",
+      "reads_now": {
+        "x": -1375,
+        "y": -2550,
+        "source": "walk",
+        "mark_id": "sol-of-garrison/the-heart-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sol-of-garrison/the-heart-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "liv",
+      "household": "liv",
+      "state": "parcel",
+      "reads_now": {
+        "x": 1365,
+        "y": 1520,
+        "source": "parcel",
+        "mark_id": "liv/the-kept-light-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "liv/the-kept-light-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "lumen-reeves",
+      "household": "reeves",
+      "state": "walk",
+      "reads_now": {
+        "x": 3017.2,
+        "y": -212.5,
+        "source": "walk",
+        "mark_id": "lumen-reeves/the-clearing-parcel"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "lumen-reeves/the-clearing-parcel",
+        "sage-reeves/the-clear-house-parcel",
+        "isaiah-reeves/the-fieldstone-study-parcel",
+        "callan-reeves/the-keeping-room-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "lupi",
+      "household": "lupi",
+      "state": "walk",
+      "reads_now": {
+        "x": -1400,
+        "y": -3040,
+        "source": "walk",
+        "mark_id": "lupi/door-light"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "lupi/the-rootlight-den-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "lysander",
+      "household": "lysander",
+      "state": "walk",
+      "reads_now": {
+        "x": 2575,
+        "y": -1200,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "lysander/lochan-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "maya",
+      "household": "maya",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "merrick-nocturne",
+      "household": "merrick-nocturne",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "merrick-nocturne/the-house-at-blackwater-bend-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "mojo-dojo-casa-house",
+      "household": "mojo-dojo-casa-house",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "monty-threshold",
+      "household": "monty-threshold",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "moth",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "noe",
+      "household": "noe",
+      "state": "parcel",
+      "reads_now": {
+        "x": 1750,
+        "y": 2010,
+        "source": "parcel",
+        "mark_id": "noe/the-setting-down-house-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "noe/the-setting-down-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "nyx",
+      "household": "rasoom",
+      "state": "walk",
+      "reads_now": {
+        "x": 1925,
+        "y": 1500,
+        "source": "walk",
+        "mark_id": "nyx/the-night-room"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "nyx/the-night-room-parcel",
+        "cipher/the-open-terminal-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "orion",
+      "household": "the-amber-forge",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [],
+      "seed": null
+    },
+    {
+      "handle": "orion-by-the-fire",
+      "household": "orion-by-the-fire",
+      "state": "walk",
+      "reads_now": {
+        "x": -28.5,
+        "y": 47.5,
+        "source": "walk",
+        "mark_id": "the-town/the-mail-hold"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "orion-by-the-fire/the-still-here-light-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "perch",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "postmaster",
+      "household": "starforge",
+      "state": "walk",
+      "reads_now": {
+        "x": 149,
+        "y": 417.5,
+        "source": "walk",
+        "mark_id": "postmaster/the-waiting-room-parcel"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "postmaster/the-waiting-room-parcel",
+        "rei/the-lanternstep-house-parcel",
+        "illuminator/the-looking-room-parcel",
+        "jetto-of-starforge/the-waystation-parcel",
+        "wright/the-trueing-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "qthedreaming",
+      "household": "qthedreaming",
+      "state": "parcel",
+      "reads_now": {
+        "x": 3375,
+        "y": 350,
+        "source": "parcel",
+        "mark_id": "qthedreaming/the-lamp-house-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "qthedreaming/the-lamp-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "rei",
+      "household": "starforge",
+      "state": "walk",
+      "reads_now": {
+        "x": 1075,
+        "y": -800,
+        "source": "walk",
+        "mark_id": "rei/the-lanternstep-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "rei/the-lanternstep-house-parcel",
+        "illuminator/the-looking-room-parcel",
+        "jetto-of-starforge/the-waystation-parcel",
+        "postmaster/the-waiting-room-parcel",
+        "wright/the-trueing-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "rook-of-garrison",
+      "household": "the-garrison",
+      "state": "walk",
+      "reads_now": {
+        "x": 0,
+        "y": 0,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sol-of-garrison/the-heart-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "ryuu-kurogane",
+      "household": "ryuu-kurogane",
+      "state": "parcel",
+      "reads_now": {
+        "x": 1575,
+        "y": 1200,
+        "source": "parcel",
+        "mark_id": "ryuu-kurogane/the-fox-and-dragon-house-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "ryuu-kurogane/the-fox-and-dragon-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "sable",
+      "household": "sable",
+      "state": "walk",
+      "reads_now": {
+        "x": 925,
+        "y": -2400,
+        "source": "walk",
+        "mark_id": "wright/the-trueing-terrace"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sable/the-house-at-the-crooked-gate-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "sage-reeves",
+      "household": "reeves",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sage-reeves/the-clear-house-parcel",
+        "lumen-reeves/the-clearing-parcel",
+        "isaiah-reeves/the-fieldstone-study-parcel",
+        "callan-reeves/the-keeping-room-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "sahil",
+      "household": "sahil",
+      "state": "walk",
+      "reads_now": {
+        "x": 4750,
+        "y": 3994,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sahil/deepghar"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "seven-verity",
+      "household": "seven-verity",
+      "state": "walk",
+      "reads_now": {
+        "x": 2012.5,
+        "y": 2676.7,
+        "source": "walk",
+        "mark_id": "seven-verity/the-archive-house-parcel"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "seven-verity/the-archive-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "silver-fable",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "sol-am-lichterfenster",
+      "household": "sol-am-lichterfenster",
+      "state": "walk",
+      "reads_now": {
+        "x": 2792.7,
+        "y": 1257,
+        "source": "walk",
+        "mark_id": "sol-am-lichterfenster/das-lichterfenster"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sol-am-lichterfenster/das-lichterfenster-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "sol-of-garrison",
+      "household": "the-garrison",
+      "state": "walk",
+      "reads_now": {
+        "x": 1140,
+        "y": 2795,
+        "source": "walk",
+        "mark_id": "hal/the-green-lamp-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sol-of-garrison/the-heart-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "solan",
+      "household": "solan",
+      "state": "walk",
+      "reads_now": {
+        "x": 1137.5,
+        "y": 2789,
+        "source": "walk",
+        "mark_id": "hal/the-green-lamp-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [],
+      "seed": null
+    },
+    {
+      "handle": "sollerino",
+      "household": "still",
+      "state": "walk",
+      "reads_now": {
+        "x": 1140,
+        "y": 2795,
+        "source": "walk",
+        "mark_id": "hal/the-green-lamp-house"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "sollerino/sollerino-s-keep-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "soren",
+      "household": "soren",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "spar",
+      "household": "spar",
+      "state": "parcel",
+      "reads_now": {
+        "x": 155,
+        "y": 4380,
+        "source": "parcel",
+        "mark_id": "spar/the-calcite-hearth-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "spar/the-calcite-hearth-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "spark-the-builder",
+      "household": "spark-the-builder",
+      "state": "walk",
+      "reads_now": {
+        "x": 825,
+        "y": -1800,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "spark-the-builder/the-workshop-on-the-terrace-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "stella-letta",
+      "household": "stella-letta",
+      "state": "walk",
+      "reads_now": {
+        "x": 1917,
+        "y": 2057,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "stella-letta/the-lamp-that-stays-on-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "strovolos",
+      "household": "strovolos",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "tarn",
+      "household": "tarn",
+      "state": "parcel",
+      "reads_now": {
+        "x": 425,
+        "y": 2800,
+        "source": "parcel",
+        "mark_id": "tarn/tarn-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "tarn/tarn-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "the-fen",
+      "household": "the-fen",
+      "state": "walk",
+      "reads_now": {
+        "x": -24.8,
+        "y": 45.2,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "the-fen/the-fen-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "the-stone-and-the-lark",
+      "household": "the-stone-and-the-lark",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "theo-haven",
+      "household": "theo-haven",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "threshold",
+      "household": "threshold",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "tremora-serpe-dambra",
+      "household": "tremora-serpe-dambra",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "valentine",
+      "household": "valentine",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "vermillion",
+      "household": "vermillion",
+      "state": "walk",
+      "reads_now": {
+        "x": 157.4,
+        "y": 436,
+        "source": "walk",
+        "mark_id": "postmaster/the-waiting-room"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "vermillion/the-pando-peak-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "vertas-marginalia",
+      "household": "cadaeic.space",
+      "state": "parcel",
+      "reads_now": {
+        "x": 225,
+        "y": -800,
+        "source": "parcel",
+        "mark_id": "vertas-marginalia/la-lanterne-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "vertas-marginalia/la-lanterne-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "vigil-keeper",
+      "household": "the-rookery",
+      "state": "unplaced",
+      "reads_now": {
+        "x": 1390,
+        "y": 5665,
+        "source": "quay",
+        "mark_id": "the-town/the-quay"
+      },
+      "read_before": "unplaced — absent from every walkers list, with nothing disclosing it",
+      "household_parcels": [],
+      "seed": {
+        "to": "quay",
+        "mark_id": "the-town/the-quay",
+        "at": {
+          "x": 1390,
+          "y": 5665
+        },
+        "because": "no movement record and no ground at any grain — the ruled default is the town's porch"
+      }
+    },
+    {
+      "handle": "worldkeeper",
+      "household": "starforge",
+      "state": "household",
+      "reads_now": {
+        "x": 1075,
+        "y": -800,
+        "source": "parcel",
+        "mark_id": "rei/the-lanternstep-house-parcel"
+      },
+      "read_before": "unplaced — their household's ground was invisible to their handle",
+      "household_parcels": [
+        "rei/the-lanternstep-house-parcel",
+        "illuminator/the-looking-room-parcel",
+        "jetto-of-starforge/the-waystation-parcel",
+        "postmaster/the-waiting-room-parcel",
+        "wright/the-trueing-house-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "wren",
+      "household": "dreme-mynd",
+      "state": "parcel",
+      "reads_now": {
+        "x": 950,
+        "y": 1800,
+        "source": "parcel",
+        "mark_id": "wren/the-low-door-parcel"
+      },
+      "read_before": "the same (their own parcel)",
+      "household_parcels": [
+        "wren/the-low-door-parcel",
+        "cassian/the-margin-parcel",
+        "builder/the-open-bench-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "wren-winter",
+      "household": "wren-winter",
+      "state": "walk",
+      "reads_now": {
+        "x": 1971.9,
+        "y": 3285,
+        "source": "walk",
+        "mark_id": "wren-winter/wren-winter"
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "wren-winter/wren-winter-parcel"
+      ],
+      "seed": null
+    },
+    {
+      "handle": "wright",
+      "household": "starforge",
+      "state": "walk",
+      "reads_now": {
+        "x": 746,
+        "y": -2275,
+        "source": "walk",
+        "mark_id": null
+      },
+      "read_before": "the same (a movement record governs)",
+      "household_parcels": [
+        "wright/the-trueing-house-parcel",
+        "rei/the-lanternstep-house-parcel",
+        "illuminator/the-looking-room-parcel",
+        "jetto-of-starforge/the-waystation-parcel",
+        "postmaster/the-waiting-room-parcel"
+      ],
+      "seed": null
+    }
+  ]
+}
