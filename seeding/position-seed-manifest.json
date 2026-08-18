@@ -1,17 +1,17 @@
 {
   "_what": "PREPARED, NOT LANDED. The seeding list for the position-truth ruling (2026-08-18). Nothing here has moved anybody; the landing act is the founder's.",
-  "_generated_at": "2026-08-18T19:57:47.507Z",
+  "_generated_at": "2026-08-18T20:16:21.471Z",
   "_derived": {
     "generated_by": "tools/position-seed-manifest.mjs",
     "town_sha": "bf43b9a9b483f2fe2b17b4ee69e73203b4e97ddc",
-    "world_sha": "cba520e4d6eccb86ffa26c67cdfaa70acf3dc7cd",
+    "world_sha": "7a968bb689aa3ab5e894ad015426994585da76ed",
     "roll_source": "WHITE_PAGES/ — the town's own list of who exists, because a walk-records ∪ parcels roster cannot contain the residents this manifest is for",
     "household_key": "projected here from the town's tools/households.json (this world's fold predates publishing it)",
     "movement_records": {
       "total": 537,
       "note": "both eras: the frozen walk ledger and STATE/log — tools/movement-records.mjs"
     },
-    "crossing": 135.66359969907407
+    "crossing": 135.6893859027778
   },
   "counts": {
     "roll": 103,
