@@ -5908,16 +5908,29 @@ export function mountViewer(appEl) {
     walkState.actorBound = true;
     clearSelectionAndDestination();
     root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
+    // The switch is a camera move over data already in hand: the walkers poll
+    // keeps everyone's standpoint (walkers AND standing) warm, and the manifest
+    // knows homes without asking. The office is consulted AFTER the swap, and
+    // the camera follows its answer only if the answer differs.
+    const manifestHome = data?.manifest?.homes?.find((entry) => entry.household === actor && entry.grid_m);
+    if (manifestHome) state.actorHome = { x: Number(manifestHome.grid_m.x), y: Number(manifestHome.grid_m.y), markId: `${manifestHome.household}/${manifestHome.home_id}` };
     renderIdentity();
     renderModeControls();
     renderSpectatorCoordinate();
     renderWalkDestinations();
-    renderTelling();
-    await Promise.all([loadActorHome(), loadActorBalance()]);
-    await pollWalkers();
     syncActorPosition({ moveCamera: true });
+    renderTelling();
     mapCtx?.lockOn?.(); // one-shot: the painting glides to your dot on Act As (no sticky follow)
     renderWalkDestination();
+    const preOrigin = actorOrigin();
+    Promise.all([loadActorHome(), loadActorBalance()]).then(() => {
+      if (state.handle !== actor) return; // the reader has moved on
+      const fresh = actorOrigin();
+      const moved = !!fresh && (!preOrigin || fresh.x !== preOrigin.x || fresh.y !== preOrigin.y);
+      syncActorPosition(moved ? { moveCamera: true } : {});
+      if (moved) renderTelling();
+    }).catch(() => {});
+    pollWalkers().catch(() => {}); // its own body re-renders only when someone actually moved
   }
 
   function renderIdentity() {
