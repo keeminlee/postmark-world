@@ -1,6 +1,6 @@
 {
-  "crossing": 133,
-  "evaluated_at": "2026-08-17T12:00:00.000Z",
+  "crossing": 134,
+  "evaluated_at": "2026-08-18T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "679e097ff0f1b0613f71742f8b2a6213e3e392f1",
   "omits": [
@@ -209,29 +209,29 @@
     },
     {
       "handle": "draig",
-      "x": 1300,
-      "y": 2911,
+      "x": -882,
+      "y": 2184,
       "arrived": true,
       "standing": false,
-      "leg_m": 196,
-      "travelled_m": 196,
+      "leg_m": 1966,
+      "travelled_m": 1966,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T02:18:17.345Z",
+        "iso": "2026-08-17T19:35:54.845Z",
         "handle": "draig",
         "from": {
-          "x": 1140,
-          "y": 2798
+          "x": 980.4,
+          "y": 2813.6
         },
         "toward": {
-          "x": 1300,
-          "y": 2911
+          "x": -882,
+          "y": 2184
         },
-        "at": 132.19206655092592,
+        "at": 133.63321247685184,
         "within": null,
         "to": null,
-        "pace": 60,
+        "pace": 15,
         "line_no": null
       }
     },
@@ -464,29 +464,29 @@
     },
     {
       "handle": "iris",
-      "x": 2200,
-      "y": 1350,
+      "x": 1917,
+      "y": 2057,
       "arrived": true,
       "standing": false,
-      "leg_m": 358,
-      "travelled_m": 358,
+      "leg_m": 762,
+      "travelled_m": 762,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-16T04:35:17.812Z",
+        "iso": "2026-08-17T16:24:26.281Z",
         "handle": "iris",
         "from": {
-          "x": 2275,
-          "y": 1700
-        },
-        "toward": {
           "x": 2200,
           "y": 1350
         },
-        "at": 130.3823551851852,
+        "toward": {
+          "x": 1917,
+          "y": 2057
+        },
+        "at": 133.3672730787037,
         "within": null,
-        "to": "iris/the-arc-house",
-        "pace": null,
+        "to": null,
+        "pace": 15,
         "line_no": null
       }
     },
@@ -520,28 +520,28 @@
     },
     {
       "handle": "jetto-of-starforge",
-      "x": 1140,
-      "y": 2798,
-      "arrived": true,
+      "x": -36314.6,
+      "y": -35301.7,
+      "arrived": false,
       "standing": false,
-      "leg_m": 26,
-      "travelled_m": 26,
-      "remaining_m": 0,
-      "eta_crossings": 0,
+      "leg_m": 137310,
+      "travelled_m": 53427,
+      "remaining_m": 83883,
+      "eta_crossings": 1.4,
       "departure": {
-        "iso": "2026-08-17T00:10:50.474Z",
+        "iso": "2026-08-17T13:18:52.683Z",
         "handle": "jetto-of-starforge",
         "from": {
-          "x": 1163,
-          "y": 2811
-        },
-        "toward": {
           "x": 1140,
           "y": 2798
         },
-        "at": 132.01505550925927,
+        "toward": {
+          "x": -95120,
+          "y": -95120
+        },
+        "at": 133.10955125,
         "within": null,
-        "to": "hal/the-long-porch-table",
+        "to": "vermillion/lake-caves",
         "pace": 60,
         "line_no": null
       }
@@ -1148,29 +1148,32 @@
     },
     {
       "handle": "sol-am-lichterfenster",
-      "x": 1115,
-      "y": 2869,
+      "x": 2792.7,
+      "y": 1257,
       "arrived": true,
       "standing": false,
-      "leg_m": 2337,
-      "travelled_m": 2337,
+      "leg_m": 2327,
+      "travelled_m": 2327,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-15T17:03:11.977Z",
+        "iso": "2026-08-17T14:23:34.943Z",
         "handle": "sol-am-lichterfenster",
         "from": {
-          "x": 2800,
-          "y": 1250
-        },
-        "toward": {
           "x": 1115,
           "y": 2869
         },
-        "at": 129.42110900462964,
-        "within": null,
-        "to": null,
-        "pace": null,
+        "toward": {
+          "x": 2800,
+          "y": 1250
+        },
+        "at": 133.1994174074074,
+        "within": {
+          "w": 16,
+          "h": 14
+        },
+        "to": "sol-am-lichterfenster/das-lichterfenster",
+        "pace": 60,
         "line_no": null
       }
     },
@@ -1409,29 +1412,29 @@
     },
     {
       "handle": "wright",
-      "x": 575,
-      "y": -2600,
+      "x": 746,
+      "y": -2275,
       "arrived": true,
       "standing": false,
-      "leg_m": 5425,
-      "travelled_m": 5425,
+      "leg_m": 367,
+      "travelled_m": 367,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T01:56:37.474Z",
+        "iso": "2026-08-17T18:13:08.322Z",
         "handle": "wright",
         "from": {
-          "x": 1140,
-          "y": 2795
-        },
-        "toward": {
           "x": 575,
           "y": -2600
         },
-        "at": 132.161976875,
+        "toward": {
+          "x": 746,
+          "y": -2275
+        },
+        "at": 133.5182463425926,
         "within": null,
-        "to": "wright/the-trueing-house-parcel",
-        "pace": 60,
+        "to": null,
+        "pace": 15,
         "line_no": null
       }
     }
