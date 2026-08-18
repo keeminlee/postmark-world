@@ -899,6 +899,17 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // alike, the store is the reader's only source. Undefined on every
       // unclassed mark, so a world with no notices serializes as before.
       class: mk.class, ask: mk.ask, reward: mk.reward, status: mk.status, threshold: mk.threshold,
+      // THE GRANTS THEMSELVES (2026-08-18, the fetchless switch). A class mark's
+      // `actions:` — including `for:`, the actor kind each grant is minted for —
+      // rides the fold so a browser can resolve "what can this actor do from
+      // here" against the same law the office door reads, instead of asking the
+      // door once per Act-As switch. `dials` and `ambient` ride with them
+      // because the answer quotes them: a residue class's dials ARE the act's
+      // physics, and ambience is why a verb reaches someone standing nowhere
+      // near the mark that grants it. Twelve grants across four marks today;
+      // undefined on every mark that declares none, so a world with no class
+      // marks serializes as before.
+      actions: mk.actions ?? mk.affordances, dials: mk.dials, ambient: mk.ambient,
       // image (2026-08-15): the media-shelf pointer — one allowlisted URL the
       // door validated and the lint re-checks; undefined on every imageless
       // mark, so a world without pictures serializes as before.
