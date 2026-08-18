@@ -93,6 +93,9 @@ import {
   PAINTING_ONLY_KEY,
   contestedMarksAtPoint,
   orderInnermostFirst,
+  chooserLeadLine,
+  chooserId,
+  chooserIdsFrom,
   fanOffsetPx,
   markIdHash,
   coLocatedMarkIds,
@@ -1926,4 +1929,58 @@ test("the idle lane owes every view but the one on screen, and none it cannot pl
   // a household with nothing to warm queues nothing rather than spinning
   assert.deepEqual(staleViewHandles({ handles: [], active: null, signature, entries, originOf }), []);
   assert.deepEqual(staleViewHandles(), []);
+});
+
+// ───────── ride-along #4: the contested-click chooser learns residents ─────────
+
+test("the chooser says which question it is asking — pips, people, or both", () => {
+  const person = (h) => walkerHoverId(h);
+  assert.equal(chooserLeadLine(["a/one", "a/two", "a/three"]), "3 marks are stacked here — which one?");
+  assert.equal(chooserLeadLine([person("rei"), person("wright")]), "2 residents are standing here — which one?");
+  assert.equal(chooserLeadLine([person("rei"), "a/one", "a/two"]), "1 resident and 2 marks are here — which one?");
+  assert.equal(chooserLeadLine([person("rei"), person("wright"), "a/one"]), "2 residents and 1 mark are here — which one?");
+  // a lead line is prose about a count, so it must not go plural at one
+  assert.equal(chooserLeadLine(["a/one"]), "1 mark is stacked here — which one?");
+  assert.equal(chooserLeadLine([person("rei")]), "1 resident is standing here — which one?");
+  assert.equal(chooserLeadLine([]), "0 marks are stacked here — which one?");
+  assert.equal(chooserLeadLine(), "0 marks are stacked here — which one?");
+});
+
+test("a single face in radius still resolves exactly as the snap did — the chooser cannot have moved it", () => {
+  // The click path swapped snappedMarkAtPoint for contestedMarksAtPoint over the
+  // SAME walker candidates and takes the head. That is only safe because the two
+  // share a metric and a tie-break; this is the assertion that keeps it true.
+  const at = { x: 100, y: 100 };
+  const walkers = [
+    { id: walkerHoverId("rei"), x: 104, y: 100 },     // 4 px
+    { id: walkerHoverId("wright"), x: 100, y: 111 },  // 11 px
+    { id: walkerHoverId("loam"), x: 400, y: 400 },    // far outside
+  ];
+  assert.equal(contestedMarksAtPoint(at, walkers)[0], snappedMarkAtPoint(at, walkers));
+  assert.deepEqual(contestedMarksAtPoint(at, walkers), [walkerHoverId("rei"), walkerHoverId("wright")]);
+  // one face alone: the list is a single id and the head is that same id, so
+  // the chooser never opens and the direct selection is unchanged
+  const alone = [walkers[0], walkers[2]];
+  assert.deepEqual(contestedMarksAtPoint(at, alone), [walkerHoverId("rei")]);
+  assert.equal(contestedMarksAtPoint(at, alone)[0], snappedMarkAtPoint(at, alone));
+  // nobody in radius: no rows, and the click falls through to the ground
+  assert.deepEqual(contestedMarksAtPoint(at, [walkers[2]]), []);
+  assert.equal(snappedMarkAtPoint(at, [walkers[2]]), null);
+});
+
+test("a walker id survives the chooser's packing and comes back out as a handle", () => {
+  // the row carries the SAME id the dot carries, which is what makes choosing it
+  // the identical path rather than a second door to the same person
+  const ids = [walkerHoverId("rei"), "the-town/the-quay-reach"];
+  const packed = chooserId(ids);
+  assert.deepEqual(chooserIdsFrom(packed), ids);
+  assert.equal(walkerHandleFromHoverId(chooserIdsFrom(packed)[0]), "rei");
+  assert.equal(walkerHandleFromHoverId(chooserIdsFrom(packed)[1]), null);
+  // marks order by extent; a person has none, so ordering is done on the marks
+  // alone and the people are placed ahead of them by the caller
+  const byId = new Map([
+    ["a/big", { extent: { w: 900, h: 900 } }],
+    ["a/small", { extent: { w: 10, h: 10 } }],
+  ]);
+  assert.deepEqual(orderInnermostFirst(["a/big", "a/small"], byId), ["a/small", "a/big"]);
 });

@@ -1548,6 +1548,19 @@ export function contestedMarksAtPoint(point, marks = [], radiusPx = MARK_SNAP_RA
 // at the top of the list rather than the district you happen to be inside.
 // A mark with no extent (a predicate takes its locus from its parent) sorts as
 // the smallest thing there is — it is the innermost claim by definition.
+// What the stack says it is offering. A pile of pips and a pile that includes
+// people are not the same question, and the lead line is the only place the
+// reader is told which one they are being asked.
+export function chooserLeadLine(ids = []) {
+  const list = ids ?? [];
+  const people = list.filter((id) => walkerHandleFromHoverId(id)).length;
+  const marks = list.length - people;
+  const count = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  if (!people) return `${count(marks, "mark is", "marks are")} stacked here — which one?`;
+  if (!marks) return `${count(people, "resident is", "residents are")} standing here — which one?`;
+  return `${count(people, "resident", "residents")} and ${count(marks, "mark", "marks")} are here — which one?`;
+}
+
 export function orderInnermostFirst(ids, byId) {
   const area = (id) => {
     const m = byId?.get?.(id);
@@ -2779,6 +2792,15 @@ const STYLE = `
 }
 .wv-choose-row:hover { border-color:var(--amber); background:rgba(28,44,79,.6); }
 .wv-choose-row:focus-visible { outline:2px solid var(--amber); outline-offset:1px; }
+/* a person in the stack reads as a person: the walker ring's own green down the
+   edge, their name in the paper weight the face card uses, and where they are in
+   the quiet weight — so a row is never mistaken for the ground beneath them. */
+.wv-choose-row.is-walker { border-left:3px solid var(--green); display:flex; align-items:baseline;
+  gap:7px; flex-wrap:wrap; font-size:.78rem; }
+.wv-choose-row.is-walker.moving { border-left-color:#e0507a; }
+.wv-choose-who { color:var(--paper); font-weight:700; }
+.wv-choose-handle { color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+.wv-choose-where { color:var(--dim); font-style:italic; flex:1 1 100%; }
 .wv-bubble-walker { padding:10px 13px; font-size:.8rem; line-height:1.5; color:var(--dim); }
 .wv-bubble-walker .wv-standing { color:var(--paper); font-weight:700; font-style:normal; }
 .wv-bubble-walker p { margin:5px 0 0; }
@@ -4054,8 +4076,21 @@ export function mountViewer(appEl) {
         // way onto their page from the map, and on a touch screen the glance
         // never happens at all — so without this, faces would be a desktop-only
         // feature. Same snap helper, same radius, same precedence as pointing.
-        const walkerId = snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
-        if (walkerId) { selectMark(walkerId); return; }
+        //
+        // …AND A FACE NO LONGER SWALLOWS THE GROUND IT STANDS ON. Winning the
+        // click was never meant to make the marks under a resident unreachable,
+        // which is the same complaint the pip pile answered: when the spot is
+        // contested — two people, or a person standing over marks — the reader
+        // is shown the stack and picks. One candidate in radius is exactly
+        // today's behaviour, and the head of this list IS what the snap would
+        // have returned, so the single-face case cannot have moved.
+        const peopleHere = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
+        if (peopleHere.length) {
+          const under = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
+          if (peopleHere.length + under.length > 1) { openChooser([...peopleHere, ...under]); return; }
+          selectMark(peopleHere[0]);
+          return;
+        }
         // THE TALK LENS WINS WHILE IT IS UP (Keemin, launch night: with washes
         // sharing ground with pips and parcels, "sometimes the click reached
         // the thread" read as broken). The layer is opt-in — switching 💬 on IS
@@ -5391,8 +5426,37 @@ export function mountViewer(appEl) {
   // vanishing — losing the bubble would lose the only way to read it in this mode.
   // Open the stack. Ordered innermost-first here, once, so the list the reader
   // sees and the list the rows are built from are the same order.
+  // People first, then the marks innermost-first. A face is the most specific
+  // thing a click can have meant — it is why a resident wins the click at all —
+  // so the stack offers them at the top rather than sorting them by an extent
+  // they do not have.
   function openChooser(ids) {
-    selectMark(chooserId(orderInnermostFirst(ids, byId)));
+    const people = ids.filter((id) => walkerHandleFromHoverId(id));
+    const marks = ids.filter((id) => !walkerHandleFromHoverId(id));
+    selectMark(chooserId([...people, ...orderInnermostFirst(marks, byId)]));
+  }
+
+  // A RESIDENT ROW. The chooser is a disambiguator, not an Act-As switch and not
+  // a new door: this row carries the same id the walker dot carries, so choosing
+  // it runs the identical path — including the toggle — for the household's own
+  // handles as for anyone else's. Where they are is said in the page's own words
+  // for a standpoint, the ones the you-are-here line uses.
+  function chooserWalkerRow(id) {
+    const handle = walkerHandleFromHoverId(id);
+    const w = handle ? (walkState.walkers ?? []).find((entry) => entry?.handle === handle) : null;
+    if (!w) return "";
+    const face = faceOf(handle);
+    const moving = w.moving ?? (!w.arrived && !w.standing);
+    const where = moving
+      ? `on the road — ${Number(w.remaining_m ?? 0).toLocaleString()} m to go`
+      : [w.x, w.y].every(Number.isFinite)
+        ? standingLocationLabel({ x: Number(w.x), y: Number(w.y) }, world?.marks ?? [], data?.worldState?.determined, { prefix: false })
+        : "somewhere on the record";
+    return `<button type="button" class="wv-choose-row is-walker${moving ? " moving" : ""}" data-choose="${esc(id)}">`
+      + `<span class="wv-choose-who">${esc(face.name)}</span>`
+      + (face.name === handle ? "" : `<span class="wv-choose-handle">${esc(handle)}</span>`)
+      + `<span class="wv-choose-where">${esc(where)}</span>`
+      + `</button>`;
   }
 
   // One row per contested mark, in the page's own cell vocabulary — the same
@@ -5402,6 +5466,7 @@ export function mountViewer(appEl) {
   function chooserHTML(id) {
     const ids = chooserIdsFrom(id) ?? [];
     const rows = ids.map((markId) => {
+      if (walkerHandleFromHoverId(markId)) return chooserWalkerRow(markId);
       const full = byId.get(markId);
       if (!full) return "";
       const identity = markName(full), where = radialWhere(full);
@@ -5412,15 +5477,16 @@ export function mountViewer(appEl) {
     }).filter(Boolean).join("");
     if (!rows) return "";
     return `<div class="wv-chooser">`
-      + `<p class="wv-choose-lead">${ids.length} marks are stacked here — which one?</p>`
+      + `<p class="wv-choose-lead">${esc(chooserLeadLine(ids))}</p>`
       + rows
       + `</div>`;
   }
 
   function markAnchorPoint(id) {
-    // the stack hangs off the innermost of the marks it is offering
+    // the stack hangs off whatever it offers FIRST — the innermost mark, or the
+    // person, who has coordinates but no extent to find an ancestor from
     const choosing = chooserIdsFrom(id);
-    if (choosing) return nearestEmbodiedAncestor(byId.get(choosing[0]), byId)?.at ?? null;
+    if (choosing) return markAnchorPoint(choosing[0]);
     const handle = walkerHandleFromHoverId(id);
     if (handle) {
       const w = (walkState.walkers ?? []).find((entry) => entry?.handle === handle);
