@@ -17,7 +17,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
-import { markStanding as classifyMark } from "./mark-standing.mjs"; // the ONE standing rule
+import { markStanding as classifyMark, townOwned } from "./mark-standing.mjs"; // the ONE standing rule
 import { tmpdir } from "node:os";
 import { execFileSync, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -134,24 +134,68 @@ function draftBranches(repo) {
   return [...local].sort();
 }
 
-function markDelta(repo, main, branch) {
-  const parts = git(repo, [
-    "diff", "--name-status", "--no-renames", "-z", main, branch, "--", "WORLD/marks",
-  ]).split("\0").filter(Boolean);
-  const out = [];
+function markRows(out) {
+  const parts = out.split("\0").filter(Boolean);
+  const rows = [];
   for (let i = 0; i + 1 < parts.length; i += 2) {
     const status = parts[i];
     const path = parts[i + 1].replace(/\\/g, "/");
     if (!path.startsWith(MARKS_PREFIX) || !path.endsWith("/mark.md")) continue;
-    out.push({ status, path });
+    rows.push({ status, path });
   }
-  return out;
+  return rows;
+}
+
+// ── the three readings one sketchbook needs (§ supersession, #1697) ──────────
+//
+// `main..branch` is the CANDIDATE set: the paths where publishing would actually
+// change main. It was the sweep's ONLY reading until this, and on its own it
+// cannot say WHO moved a path — a mark MAIN amended after the branch was cut
+// reads there exactly like a change the BRANCH is making. That is the whole
+// mechanism of both recorded instances: fox-hearth's resurrected coordinates,
+// and the-town/berth's silently widened grant on 2026-08-18.
+//
+// The other two readings answer it, and both are taken against the branch's own
+// MERGE-BASE: what the sketchbook changed since it was cut, and what main
+// changed since that same instant. A candidate the sketchbook never touched is
+// main's amendment showing through a stale drawer and nothing else — so
+// supersession falls out by construction rather than by policy, and a mark the
+// resident genuinely edited is still their delta and still publishes.
+function markDelta(repo, main, branch) {
+  const diff = (from, to) => markRows(git(repo, [
+    "diff", "--name-status", "--no-renames", "-z", from, to, "--", "WORLD/marks",
+  ]));
+  // A sketchbook sharing NO history with main has no base to read against, and
+  // `merge-base` exits non-zero rather than answering. That must not refuse the
+  // whole crossing over one household's orphan branch, so it is treated as
+  // contested throughout: every candidate takes the both-sides-moved path
+  // below, whose advice — reseat and say it again — is exactly right for a
+  // branch that was never cut from this world.
+  let base = null;
+  try { base = git(repo, ["merge-base", main, branch]).trim(); } catch { /* no common ancestor */ }
+  const rows = diff(main, branch);
+  if (!base) return rows.map((row) => ({ ...row, branchTouched: true, mainTouched: true }));
+  const paths = (rows) => new Set(rows.map((row) => row.path));
+  const byBranch = paths(diff(base, branch));
+  const byMain = paths(diff(base, main));
+  return rows.map((row) => ({
+    ...row,
+    branchTouched: byBranch.has(row.path),
+    mainTouched: byMain.has(row.path),
+  }));
 }
 
 function recordAt(repo, ref, path) {
   const record = parseRecord(readAt(repo, ref, path), path);
   const slug = basename(dirname(path));
   return { ...record, slug, id: `${record.by}/${slug}` };
+}
+
+// A name for a row the crossing is only ever going to REPORT. It must not be
+// able to fail the sweep: an unreadable record on a ref the resident is not
+// publishing from is a journal line missing its id, not a refusal.
+function idAt(repo, ref, path) {
+  try { return recordAt(repo, ref, path).id; } catch { return null; }
 }
 
 function publicationRegistry(repo, mainRef) {
@@ -447,11 +491,37 @@ export function settlementSweep({
     const state = foldRef(repo, branch, stakes);
     const folded = new Map(state.marks.map((mark) => [mark.id, mark]));
     for (const delta of markDelta(repo, mainBranch, branch)) {
+      // SUPERSESSION. The sketchbook has not touched this path since it was cut,
+      // so the difference between them is main's own amendment read through a
+      // stale drawer. Publishing it would revert main to what the drawer
+      // remembers, which is the defect this whole reading exists to make
+      // impossible. The row is reported rather than skipped: the crossing's
+      // journal should say why main's word won.
+      if (!delta.branchTouched) {
+        leftDrafted.push({
+          household,
+          id: idAt(repo, delta.status === "D" ? mainBranch : branch, delta.path),
+          path: delta.path,
+          reason: "supersession: main amended this mark after this sketchbook's base, and the sketchbook carries no change to it",
+        });
+        continue;
+      }
       if (delta.status === "D") {
         leftDrafted.push({ household, id: null, path: delta.path, reason: "resident deletion is not a settlement admission" });
         continue;
       }
       const record = recordAt(repo, branch, delta.path);
+      // THE TOWN WALL. It stands ahead of the authorship wall because the
+      // authorship wall's courtesy — an author the registry cannot bind is left
+      // to the status quo — is exactly what let a sketchbook's copy of the
+      // berth's grant reach main: `the-town` is bound to no household by
+      // construction, so it passed as an unverifiable stranger. Nothing signed
+      // by the town publishes from a sketchbook, whatever the registry knows.
+      if (townOwned(record)) {
+        leftDrafted.push({ household, id: record.id, path: delta.path,
+          reason: `the town wall: "${record.by}" writes the town's own record, which a founder's pen rules onto main and no sketchbook admits` });
+        continue;
+      }
       // the authorship wall: a registered author on a branch the registry binds
       // to a DIFFERENT household never publishes from it
       const authorHousehold = wallRegistry.households[record.by] ?? null;
@@ -459,6 +529,15 @@ export function settlementSweep({
       if (authorHousehold && branchHousehold && authorHousehold !== branchHousehold) {
         leftDrafted.push({ household, id: record.id, path: delta.path,
           reason: `authorship: "${record.by}" is ${authorHousehold}'s resident; this sketchbook is ${branchHousehold}'s` });
+        continue;
+      }
+      // BOTH SIDES MOVED IT. Neither copy is stale and the crossing has no way
+      // to know which is meant, so it picks no winner: the reseat below brings
+      // the sketchbook current, and a resident who still means their edit makes
+      // it again on top of main's and publishes next crossing.
+      if (delta.mainTouched) {
+        leftDrafted.push({ household, id: record.id, path: delta.path,
+          reason: "supersession: main amended this mark since your sketchbook's base — rebase and re-affirm" });
         continue;
       }
       const view = folded.get(record.id);

@@ -118,15 +118,21 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   const report = settlementSweep({ repo, stakesPath });
 
   assert.deepEqual(report.published.map((row) => [row.household, row.id, row.class]).sort(), [
-    ["founder-house", "the-town/crossing-bell", "constitution"],
     ["house-a", "alice/alice-market", "commons"],
     ["house-a", "alice/home-garden", "home"],
     ["house-b", "bob/bob-market", "commons"],
   ].sort());
   assert.deepEqual(report.left_drafted.map((row) => [row.household, row.id]).sort(), [
+    ["founder-house", "the-town/crossing-bell"],
     ["house-a", "alice/alice-sketch"],
     ["house-b", "bob/bob-sketch"],
   ].sort());
+  // THE TOWN WALL (#1697). The crossing bell used to publish from here, and that
+  // is the road the-town/berth's widened grant travelled. The town's own record
+  // is ruled onto main by a founder's pen — in the act that also moves whatever
+  // guards it — and no sketchbook admits one, a founder's sketchbook included.
+  assert.match(report.left_drafted.find((row) => row.id === "the-town/crossing-bell").reason, /town wall/,
+    "and the refusal names the wall rather than reading as an eligibility miss");
   assert.deepEqual(report.unpublished.map((row) => [row.household, row.id]), [
     ["house-a", "alice/old-commons"],
   ]);
@@ -134,7 +140,8 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   assert.equal(has("main", aHome), true);
   assert.equal(has("main", aBacked), true);
   assert.equal(has("main", bBacked), true);
-  assert.equal(has("main", constitution), true);
+  assert.equal(has("main", constitution), false, "the town's own record never arrives on main by sweep");
+  assert.equal(has("draft/founder-house", constitution), true, "it stays in the drawer that drew it");
   assert.equal(has("main", aPrivate), false);
   assert.equal(has("main", bPrivate), false);
   assert.equal(has("main", oldPath), false);
@@ -496,8 +503,15 @@ test("nested re-homes: a mark re-homed INTO a directory that then moves itself s
     by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 },
     coords: "relative", body: "the frame",
   }));
+  // The meadow is anchored ON THE WORLD ORIGIN, and that is load-bearing rather
+  // than decorative. A resident's mark can never OUTRANK another resident's
+  // (standingRank knows two ranks, constitution and market), so the only door
+  // left open to a resident's re-home is the lint's second one: the frame the
+  // mark would be read in does not change. A container sitting on the origin
+  // keeps it, so the district below moves as paper — the same door the lint's
+  // own comment describes for a top-level mark a new claim grew around.
   put("WORLD/marks/let-there-be-light/the-meadow/mark.md", record({
-    by: "alice", at: { x: 1000, y: 1000 }, extent: { w: 400, h: 400 }, body: "alice's meadow",
+    by: "alice", at: { x: 0, y: 0 }, extent: { w: 4000, h: 4000 }, body: "alice's meadow",
   }));
   put("WORLD/marks/let-there-be-light/the-meadow/the-cairn/mark.md", record({
     by: "the-town", tier: "constitution", at: { x: 1010, y: 1005 }, extent: { w: 4, h: 4 },
@@ -509,12 +523,17 @@ test("nested re-homes: a mark re-homed INTO a directory that then moves itself s
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
 
-  // the district arrives at the TOP level in this crossing; geometry puts it
-  // inside the meadow, and the cairn inside it
-  git("switch", "-q", "-c", "draft/founder-house");
+  // The district arrives at the TOP level in this crossing; geometry puts it
+  // inside the meadow, and the cairn inside it. It is a RESIDENT's district
+  // because of the town wall (#1697): nothing signed `the-town` publishes from a
+  // sketchbook any more, so a town-signed district here would simply never
+  // land and the nested move under test would never happen. The subject is the
+  // bookkeeping of a move that carries another move, which is indifferent to
+  // whose claim it is.
+  git("switch", "-q", "-c", "draft/house-a");
   put("WORLD/marks/let-there-be-light/the-district/mark.md", record({
-    by: "the-town", tier: "constitution", at: { x: 1010, y: 1005 }, extent: { w: 60, h: 60 },
-    body: "the town's own district",
+    by: "alice", at: { x: 1010, y: 1005 }, extent: { w: 60, h: 60 },
+    body: "alice's district",
   }));
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "the district");
@@ -522,21 +541,203 @@ test("nested re-homes: a mark re-homed INTO a directory that then moves itself s
 
   const stakesPath = `${repo}-stakes.json`;
   t.after(() => rmSync(stakesPath, { force: true }));
-  writeFileSync(stakesPath, JSON.stringify([]));
+  writeFileSync(stakesPath, JSON.stringify([{ holder: "s1", mark: "alice/the-district", n: 5, weight: 10 }]));
 
   const report = settlementSweep({ repo, stakesPath });
   const rows = Object.fromEntries(report.rehomed.map((r) => [r.mark, r]));
-  assert.deepEqual(Object.keys(rows).sort(), ["the-town/the-cairn", "the-town/the-district"]);
+  assert.deepEqual(Object.keys(rows).sort(), ["alice/the-district", "the-town/the-cairn"]);
   assert.equal(rows["the-town/the-cairn"].to_path,
     "WORLD/marks/let-there-be-light/the-meadow/the-district/the-cairn",
     "the cairn's recorded path followed the district that carried it");
-  assert.equal(rows["the-town/the-district"].to_path, "WORLD/marks/let-there-be-light/the-meadow/the-district");
+  assert.equal(rows["alice/the-district"].to_path, "WORLD/marks/let-there-be-light/the-meadow/the-district");
 
   const state = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"));
   assert.equal(state.errors.length, 0);
-  for (const id of ["the-town/the-cairn", "the-town/the-district"])
+  for (const id of ["the-town/the-cairn", "alice/the-district"])
     assert.deepEqual(state.marks.find((m) => m.id === id).at, { x: 1010, y: 1005 },
       `${id} composes where it always stood`);
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
   assert.match(execFileSync(process.execPath, [join(repo, "tools", "mark-lint.mjs")], { cwd: repo, encoding: "utf8" }), /CLEAN/);
+});
+
+// ── #1697, the supersession class: four falsifiers ──────────────────────────
+//
+// Two instances put this on the record. fox-hearth (S30 era): a draft replay
+// resurrected coordinates main had amended. the-town/berth (2026-08-18): the
+// first box sweep, 914ddc26, resurrected a stale draft copy and silently
+// WIDENED a constitutional grant — `say for: berth` lost its `for:`, and an
+// absent `for:` reads as RESIDENT under LOGOS. The full suite was green
+// throughout both.
+//
+// The mechanism is one line: markDelta diffed the branch against CURRENT main
+// rather than against the branch's own merge-base, so a mark MAIN amended after
+// the branch was cut read as a change the BRANCH was making — and the sweep
+// published the branch's stale copy over the amendment. The second face is the
+// authorship wall standing down for an author the registry cannot bind, and
+// `the-town` is bound to no household by construction.
+//
+// These four are the gate on the fix. They share a fixture shape the older
+// tests build inline; it is factored here rather than copied four more times.
+function crossing(t, name) {
+  const repo = mkdtempSync(join(tmpdir(), `postmark-${name}-`));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  const put = (path, text) => {
+    const full = join(repo, path);
+    mkdirSync(dirname(full), { recursive: true });
+    writeFileSync(full, text);
+  };
+  const blob = (ref, path) => git("show", `${ref}:${path.replace(/\\/g, "/")}`);
+  // Every commit re-folds first, the way a real writer's does: a fixture whose
+  // world-state.json lags its own marks tests a tree no crossing ever sees.
+  const commit = (message) => {
+    execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+    git("add", "-A");
+    git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", message);
+  };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs")) cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+  git("init", "-q", "-b", "main");
+  writeFileSync(stakesPath, JSON.stringify([]));
+
+  return {
+    repo, git, put, blob, commit, stakesPath,
+    stakes: (rows) => writeFileSync(stakesPath, JSON.stringify(rows)),
+    sweep: () => settlementSweep({ repo, stakesPath }),
+    state: () => JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8")),
+  };
+}
+
+test("FALSIFIER 1 (fox-hearth's shape): a sketchbook's stale UNCHANGED copy never overwrites the amendment main made after it was cut", (t) => {
+  const c = crossing(t, "supersession-stale");
+  const hearth = "WORLD/marks/let-there-be-light/the-fox-hearth/mark.md";
+  c.put(hearth, record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "the fox hearth" }));
+  c.commit("published main");
+
+  // The sketchbook is cut here and never touches the hearth again.
+  c.git("branch", "draft/house-a");
+
+  // Main amends the hearth AFTER the cut — a founder's correction, a re-home's
+  // re-framing, a prior crossing: main is the amender either way.
+  const amended = record({ by: "alice", at: { x: 900, y: 900 }, extent: { w: 10, h: 10 }, body: "the fox hearth, moved by the town's own hand" });
+  c.put(hearth, amended);
+  c.commit("main amends the hearth");
+
+  // Escrow, so the ONLY thing that can stop this publishing is supersession.
+  c.stakes([{ holder: "s1", mark: "alice/the-fox-hearth", n: 5, weight: 10 }]);
+  const report = c.sweep();
+
+  assert.equal(report.published.some((row) => row.id === "alice/the-fox-hearth"), false,
+    "the sketchbook proposed nothing about this mark, so the crossing publishes nothing for it");
+  assert.equal(c.blob("main", hearth), amended,
+    "main's amendment survives the sweep BYTE-IDENTICAL — this is the assertion the class exists for");
+  assert.deepEqual(c.state().marks.find((m) => m.id === "alice/the-fox-hearth").at, { x: 900, y: 900 },
+    "and the folded world stands where main put it, not where the drawer remembers");
+  const row = report.left_drafted.find((r) => r.id === "alice/the-fox-hearth" || /fox-hearth/.test(r.path));
+  assert.ok(row, "the crossing reports the superseded copy rather than passing over it in silence");
+  assert.match(row.reason, /supersession/, "and the reason names supersession");
+});
+
+test("FALSIFIER 2 (the berth's shape): a CHANGED copy of a town-owned mark never publishes from a sketchbook, whatever the registry can bind", (t) => {
+  const c = crossing(t, "supersession-townwall");
+  // The live condition exactly: the registry binds the household's login and
+  // its resident, and does NOT bind `the-town` — so the authorship wall reads
+  // an unverifiable author and stands down, which is how the berth's grant got
+  // through. The town wall must not inherit that courtesy.
+  c.put("WORLD/households.json", JSON.stringify({
+    households: { alice: "gh:1" }, logins: { "house-a": "gh:1" },
+  }, null, 2) + "\n");
+  const berth = "WORLD/marks/let-there-be-light/berth/mark.md";
+  // Body text stands in for the grant's `for:` — the widening in the record was
+  // one field on an actions: line; what the crossing has to refuse is the whole
+  // class of a sketchbook re-writing the town's own text.
+  const ruled = record({
+    by: "the-town", tier: "constitution", at: { x: 500, y: 500 }, extent: { w: 50, h: 40 },
+    body: "a berth may say, for: berth",
+  });
+  c.put(berth, ruled);
+  c.commit("published main");
+
+  c.git("switch", "-q", "-c", "draft/house-a");
+  c.put(berth, record({
+    by: "the-town", tier: "constitution", at: { x: 500, y: 500 }, extent: { w: 50, h: 40 },
+    body: "a berth may say",
+  }));
+  c.commit("house a widens the grant in its own drawer");
+  c.git("switch", "-q", "main");
+
+  const report = c.sweep();
+
+  assert.equal(report.published.some((row) => row.id === "the-town/berth"), false,
+    "the town's own record never publishes from a household's sketchbook");
+  const row = report.left_drafted.find((r) => r.id === "the-town/berth");
+  assert.ok(row, "the refusal is reported, not silently dropped");
+  assert.match(row.reason, /town wall/, "and the reason names the wall");
+  assert.equal(c.blob("main", berth), ruled,
+    "main's ruled text survives BYTE-IDENTICAL — the widened copy stays in the drawer");
+  assert.equal(c.git("show", `draft/house-a:${berth}`).includes("for: berth"), false,
+    "the sketchbook keeps its own version for its author-of-record to contest");
+});
+
+test("FALSIFIER 3 (the control): a resident's genuine edit of their own mark publishes exactly as it did before", (t) => {
+  // The non-regression, and it is green on BOTH sides of the fix by design. A
+  // falsifier set with no green control cannot tell a fix from a padlock.
+  const c = crossing(t, "supersession-legit");
+  const stall = "WORLD/marks/let-there-be-light/the-market-stall/mark.md";
+  c.put(stall, record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "first telling" }));
+  c.commit("published main");
+
+  c.git("switch", "-q", "-c", "draft/house-a");
+  const revised = record({ by: "alice", at: { x: 820, y: 820 }, extent: { w: 10, h: 10 }, body: "alice's own second telling" });
+  c.put(stall, revised);
+  c.commit("house a revises its own stall");
+  c.git("switch", "-q", "main");
+
+  c.stakes([{ holder: "s1", mark: "alice/the-market-stall", n: 5, weight: 10 }]);
+  const report = c.sweep();
+
+  assert.deepEqual(report.published.map((row) => row.id), ["alice/the-market-stall"]);
+  assert.equal(c.blob("main", stall), revised, "the resident's word lands on main byte-for-byte");
+  assert.deepEqual(c.state().marks.find((m) => m.id === "alice/the-market-stall").at, { x: 820, y: 820 });
+  assert.equal(c.git("diff", "--name-only", "main", "draft/house-a", "--", stall).trim(), "",
+    "and the published record leaves no delta on the reseated sketchbook");
+});
+
+test("FALSIFIER 4 (the both-edited edge): when main and the sketchbook both moved a mark, the crossing picks NO winner", (t) => {
+  const c = crossing(t, "supersession-both");
+  const well = "WORLD/marks/let-there-be-light/the-well/mark.md";
+  c.put(well, record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "the well" }));
+  c.commit("published main");
+
+  c.git("switch", "-q", "-c", "draft/house-a");
+  c.put(well, record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "the well, as the drawer has it" }));
+  c.commit("house a revises the well");
+  c.git("switch", "-q", "main");
+
+  const amended = record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "the well, as main has it" });
+  c.put(well, amended);
+  c.commit("main amends the well after the sketchbook's base");
+
+  c.stakes([{ holder: "s1", mark: "alice/the-well", n: 5, weight: 10 }]);
+  const report = c.sweep();
+
+  assert.equal(report.published.some((row) => row.id === "alice/the-well"), false,
+    "a contested mark is not a settlement admission");
+  const row = report.left_drafted.find((r) => r.id === "alice/the-well");
+  assert.ok(row, "the contest is reported");
+  assert.match(row.reason, /rebase and re-affirm/,
+    "and the reason tells the resident what to do about it");
+  assert.equal(c.blob("main", well), amended, "nothing of main's was overwritten");
+  assert.equal(c.git("show", `draft/house-a:${well}`).includes("as the drawer has it"), true,
+    "and nothing of the drawer's was destroyed");
 });
