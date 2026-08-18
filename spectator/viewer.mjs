@@ -306,6 +306,46 @@ export function worldStakeAnswer(answer = {}, mode = "stake") {
   };
 }
 
+/**
+ * What the say door answered, read the way a speaker needs it read.
+ *
+ * `spoke` IS THE ANSWER, and it is why this is not just a status check. The
+ * door returns the room on every call — where you stand, who is in earshot,
+ * what has been said — so a listen and a failed post are shaped alike, and a
+ * caller that reads the 200 alone cannot tell a voice that landed from one
+ * that did not. That is not hypothetical: seven-verity's client posted twice,
+ * got 200 twice, said nothing twice, and a human relayed his words by hand for
+ * a night (2026-08-09, the reason `spoke` is always present both ways). So
+ * `spoke` decides the verdict here and the room is only ever garnish on it.
+ */
+export function worldSayAnswer(answer = {}) {
+  if (answer.error === "bounce" || answer.defect) {
+    return {
+      kind: "refusal",
+      text: [answer.defect || "the door refused the voice", answer.hint].filter(Boolean).join(" — "),
+      voices: [], listeners: [], where: null,
+    };
+  }
+  const voices = Array.isArray(answer.voices) ? answer.voices : [];
+  const listeners = Array.isArray(answer.listeners) ? answer.listeners : [];
+  const where = answer.where?.place ? String(answer.where.place) : null;
+  if (answer.spoke !== true) {
+    return {
+      kind: "refusal",
+      text: "the door answered, but it does not say your voice landed — nothing was spoken.",
+      voices, listeners, where,
+    };
+  }
+  const heard = listeners.length
+    ? `${listeners.length} in earshot: ${listeners.join(", ")}`
+    : "nobody else is in earshot right now — it stands on the record either way";
+  return {
+    kind: "success",
+    text: `said${where ? ` at ${where}` : ""} · ${heard}`,
+    voices, listeners, where,
+  };
+}
+
 export function summarizeBackers(rows = [], limit = 5) {
   const holders = (rows ?? [])
     .map((row) => ({
@@ -1731,17 +1771,43 @@ export function actionLabel(action) {
 /**
  * The rail's buttons, from the apex's own `actions` answer.
  *
- * `renderers` is the set of verbs this viewer has a door for; `moment` asks
- * whether THIS instant supports a verb the actor genuinely holds, and answers
- * with a one-line reason when it does not. The three ways a button can be
- * disabled are kept distinct on purpose, because they are three different
- * facts about the town: the law granted it and the OFFICE has no handler (L6's
- * red, said out loud rather than hidden); the office serves it and this VIEWER
- * has no door yet (the site-layer gap the act-as-human packet leaves open); or
- * everything is built and the MOMENT is wrong (nothing selected). Hiding any of
- * them would make the rail a claim about the world instead of a read of it.
+ * A BUTTON IS AN INITIATOR — the law is `the-town/the-initiator`, slot
+ * `availability`: "enabled is the law's answer; what cannot begin is hidden"
+ * (WORLD/marks/let-there-be-light/logos/the-initiator/). Everything below is
+ * the machinery closing the gap to that node, in the sense `the-town/the-gap`
+ * means it; if the two ever disagree, the node is what is true.
+ *
+ * (R17, Keemin 2026-08-18.) Keemin's reading of the
+ * old rail: "action being available seems to mean something other than 'you can
+ * do this right now' — a lot of them are grayed out when they shouldn't, and
+ * they light up when something is already about to be done." He was right, and
+ * the cause was that one gray carried FOUR different facts: law-says-no ·
+ * office-unserved · viewer-doorless · prereqs-not-gathered. A reader cannot
+ * un-mix four facts from one shade, so the gray taught them nothing and lied
+ * about three of them.
+ *
+ * The inversion, and it is the whole of this function:
+ *
+ *   1. ENABLED IS THE LAW'S ANSWER ONLY. Every entry the apex returns is
+ *      already granted at this standpoint (grants × kind × reach) — so every
+ *      button this returns is live. Nothing else grays anything; nothing gray
+ *      is returned at all.
+ *   2. CLICKING BEGINS THE FLOW that gathers what the act needs. "Nothing is
+ *      selected" stopped being a wall the moment the button could open the
+ *      picker, which is why `moment` is gone from this signature rather than
+ *      merely unused: the prerequisite is the flow's business now, and a
+ *      parameter kept for a caller that must not pass it is a trap.
+ *   3. WHAT CANNOT BE INITIATED IS HIDDEN, filtered by MECHANICAL FACT — the
+ *      entry names no handler, or `renderers` holds no door for it. Never a
+ *      hand list. So a door landing here makes its button appear with no edit
+ *      to this function, and law minted tomorrow still arrives on its own.
+ *
+ * What rule 3 costs, said plainly: an office-unserved verb (lint L6's red) now
+ * leaves the resident's rail silently. That debt belongs on the ops board,
+ * which reads the same lint — a resident surface should not wear the office's
+ * unfinished work as a disabled button they can never press.
  */
-export function actionPalette(entries = [], { renderers = [], moment = () => null } = {}) {
+export function actionPalette(entries = [], { renderers = [] } = {}) {
   const doors = new Set(renderers);
   const seen = new Map();
   for (const entry of Array.isArray(entries) ? entries : []) {
@@ -1756,27 +1822,19 @@ export function actionPalette(entries = [], { renderers = [], moment = () => nul
   }
   const ranked = [...seen.values()].sort((a, b) =>
     (a.grant === "yours" ? 0 : 1) - (b.grant === "yours" ? 0 : 1));
-  return ranked.map((entry) => {
-    const action = String(entry.action).trim();
-    const unhandled = !entry.dispatches_to;
-    const undoored = !unhandled && !doors.has(action);
-    const reason = unhandled
-      ? "the town's law grants this; the office has no handler for it yet"
-      : undoored
-      ? `no door in this viewer yet — the apex serves it as ${entry.dispatches_to}`
-      : moment(action, entry) || null;
-    return {
-      action,
-      label: actionLabel(action),
+  return ranked
+    // the two mechanical facts, in the order they become true: the office must
+    // serve the verb at all, and this viewer must have somewhere to send it
+    .filter((entry) => entry.dispatches_to && doors.has(String(entry.action).trim()))
+    .map((entry) => ({
+      action: String(entry.action).trim(),
+      label: actionLabel(String(entry.action).trim()),
       blurb: String(entry.blurb ?? ""),
       from: entry.from ?? null,
       grantedBy: entry.class ?? null,
       via: entry.via ?? null,
       grant: entry.grant ?? null,
-      enabled: !reason,
-      reason,
-    };
-  });
+    }));
 }
 
 export function markByline(mark) {
@@ -2614,14 +2672,31 @@ const STYLE = `
 .wv-nav .wv-actionrow { display:flex; flex-wrap:wrap; gap:5px; }
 .wv-nav .wv-actionrow .wv-actbtn { padding:3px 8px; border:1px solid var(--line); border-radius:4px;
   background:transparent; color:var(--paper); font:inherit; font-size:.76rem; cursor:pointer; }
-.wv-nav .wv-actionrow .wv-actbtn:hover:not(:disabled) { border-color:var(--you); color:var(--you); }
-/* Disabled is DIMMED, never hidden: the actor really does hold the verb, and
-   the title says which of the three walls is in the way. */
-.wv-nav .wv-actionrow .wv-actbtn:disabled { opacity:.4; cursor:not-allowed; }
+.wv-nav .wv-actionrow .wv-actbtn:hover { border-color:var(--you); color:var(--you); }
+/* NO DISABLED STATE (R17). Every button on this rail is the law's yes, and a
+   press begins the act from wherever the reader is standing — so there is
+   nothing left for a gray to mean. A verb that cannot be initiated is not
+   dimmed here, it is absent (see actionPalette). The one visible state a button
+   gains is being part-way begun. */
+.wv-nav .wv-actionrow .wv-actbtn.is-arming { border-color:var(--you); color:var(--you); background:rgba(255,255,255,.06); }
 /* the grant that travels with what you are, marked apart from the ground's */
 .wv-nav .wv-actionrow .wv-actbtn.is-yours { border-left:2px solid var(--you); }
 .wv-nav .wv-actions-note { margin:6px 0 0; color:var(--dim); font-size:.72rem; line-height:1.4; }
 .wv-nav .wv-actions-note[hidden] { display:none; }
+.wv-nav .wv-arm-cancel { border:0; background:transparent; padding:0 0 0 4px; color:var(--dim);
+  font:inherit; font-size:.72rem; text-decoration:underline; cursor:pointer; }
+.wv-nav .wv-arm-cancel:hover { color:var(--paper); }
+/* the say box — the rail's own sheet, so it inherits wv-act-sheet's card */
+.wv-say-sheet .wv-say-text { width:100%; box-sizing:border-box; resize:vertical; font:inherit;
+  font-size:.78rem; padding:6px 7px; border:1px solid var(--line); border-radius:4px;
+  background:transparent; color:var(--paper); }
+.wv-say-sheet .wv-act-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.wv-say-sheet .wv-say-send { border:1px solid var(--line); border-radius:4px; background:transparent;
+  color:var(--paper); font:inherit; font-size:.76rem; padding:3px 10px; cursor:pointer; }
+.wv-say-sheet .wv-say-send:disabled { opacity:.4; cursor:not-allowed; }
+.wv-say-sheet .wv-say-heard { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; }
+.wv-say-sheet .wv-say-heard[hidden] { display:none; }
+.wv-say-sheet .wv-say-voice { margin:0 0 6px; font-size:.74rem; line-height:1.35; }
 /* The walk desk is a bubble on the painting now, in the bottom-right corner: same
    dark card, same rule down the left, in the amber a proposal is drawn in. It sits
    ABOVE the bubble layer, because it is the one thing on this page you are part
@@ -3035,6 +3110,11 @@ export function mountViewer(appEl) {
     // rail's only source. `for` pins it to the actor it was read for, so a
     // switch never renders the previous resident's palette as the new one's.
     palette: { for: null, entries: [], status: "idle", detail: "" },
+    // WHICH ACT IS PART-WAY BEGUN (R17). A button is an initiator, so pressing
+    // one with the prerequisite missing does not refuse — it arms, and the next
+    // click supplies what the act needs. Deliberately one slot: two half-begun
+    // acts waiting on the same click is a question the reader cannot answer.
+    arming: null,
     dials: { ...DIALS },
     dataSource: null,       // which world-state URL won (for the auto-update poll)
     asOf: null,             // X-Postmark-As-Of of the loaded fold (office-live only)
@@ -4385,7 +4465,34 @@ export function mountViewer(appEl) {
   markInteraction.subscribe(syncMarkInteractionViews);
   // stake and unstake read the selection for their moment, so the rail's
   // disabled reasons follow it rather than waiting for the next full render
-  markInteraction.subscribe(() => renderActions());
+  // THE SECOND HALF OF EVERY ARMED ACT. Under R17 pressing Stake with nothing
+  // selected arms rather than refuses, so the selection store is where the act
+  // finishes being begun: the reader's next click is the answer to the question
+  // the button asked. Nothing here decides anything about the act itself — it
+  // only hands the gathered mark to the flow that already existed.
+  markInteraction.subscribe(() => completeArmedAct());
+
+  function completeArmedAct() {
+    const verb = state.arming;
+    const id = selectedMarkId();
+    if ((verb === "stake" || verb === "unstake") && id && byId.has(id)) {
+      if (verb === "stake") {
+        state.arming = null;
+        openStakeSheetForSelection({ mode: "stake" });
+      } else {
+        // A MARK YOU DO NOT BACK IS NOT AN ANSWER to "which one?", so unstake
+        // STAYS armed and its prompt names the mark that cannot serve. Opening
+        // the sheet anyway would send a zero-stamp act to the door to be
+        // refused — the reader would learn the same fact, from further away.
+        const held = backedPosition(id);
+        if (held) {
+          state.arming = null;
+          openStakeSheetForSelection({ mode: "unstake", max: Number(held.stamps ?? 0) });
+        }
+      }
+    }
+    renderActions();
+  }
 
   // ───────── walkers (write-release P2) ─────────
   // A walk is a DECLARED DEPARTURE; position is derived from that record and the
@@ -4927,7 +5034,11 @@ export function mountViewer(appEl) {
     // Standing still it said only where you stand, which the painting's own dot
     // and the coordinate chip already say.
     const wasShowing = !desk.hidden;
-    desk.hidden = !canAct() || (!walkState.destination && journey.kind !== "journey");
+    // R17 adds the third way the desk is owed: the reader has PRESSED WALK and
+    // has not chosen yet. Before, the desk only existed once a destination was
+    // armed, so the Walk button had nothing to open and could only gray itself
+    // — the button arrived after the work it was supposed to start.
+    desk.hidden = !canAct() || (!walkState.destination && state.arming !== "walk" && journey.kind !== "journey");
     // the desk is an obstacle on the painting now, so its coming and going is the
     // bubbles' business
     if (wasShowing !== !desk.hidden) requestAnimationFrame(positionBubbles);
@@ -5074,9 +5185,13 @@ export function mountViewer(appEl) {
     markInteraction.select(null);
     walkState.destination = null;
     walkState.changingCourse = false;
+    // Putting the destination down puts the act down with it (R17). This is
+    // also every Act-As switch's path, which is what keeps a half-begun stake
+    // from waiting on the NEXT resident's click.
+    state.arming = null;
     clearWalkFeedback();
     renderWalkDestination();
-    renderActions(); // walk's moment is the armed destination, which the selection store never sees
+    renderActions(); // the rail carries the armed act, which the selection store never sees
   }
 
   function chooseWalkMark(id) {
@@ -6028,9 +6143,24 @@ export function mountViewer(appEl) {
     if (chosen) { selectMark(chosen.dataset.choose, { scrollCell: true }); return; }
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
-    // The rail's one job: reach the flow that already exists for this verb.
+    // The rail's one job: BEGIN this verb from wherever the reader is standing
+    // — straight through when the act has what it needs, armed when it does
+    // not. `begin` may set state.arming, so the rail is re-read after it runs
+    // rather than by each door remembering to.
     const verb = e.target.closest("[data-action-verb]");
-    if (verb) { ACTION_DOORS[verb.dataset.actionVerb]?.open?.(); return; }
+    if (verb) {
+      const action = verb.dataset.actionVerb;
+      state.arming = null; // pressing any verb replaces whatever was half-begun
+      ACTION_DOORS[action]?.begin?.();
+      renderActions();
+      return;
+    }
+    if (e.target.closest(".wv-arm-cancel")) {
+      state.arming = null;
+      renderWalkDestination(); // the walk desk was only open because of the arming
+      renderActions();
+      return;
+    }
     if (e.target.closest(".wv-change-course")) {
       walkState.changingCourse = true;
       renderWalkDestination();
@@ -6060,6 +6190,7 @@ export function mountViewer(appEl) {
     const sheet = e.target.closest(".wv-act-sheet");
     if (sheet) {
       if (e.target.closest(".wv-act-close")) sheet.remove();
+      else if (e.target.closest(".wv-say-send")) sendSay(sheet);
       else if (e.target.closest(".wv-act-preview-btn")) previewStakeSheet(sheet);
       else if (e.target.closest(".wv-act-confirm")) confirmStakeSheet(sheet);
       return;
@@ -6203,6 +6334,11 @@ export function mountViewer(appEl) {
   root.addEventListener("input", (e) => {
     if (e.target.closest(".wv-act-sheet")) {
       const sheet = e.target.closest(".wv-act-sheet");
+      // TWO SHEETS SHARE THIS CLASS NOW. The stake sheet's nodes are not on the
+      // say sheet, and this handler used to reach them unguarded — a keystroke
+      // in the say box would have thrown on `.wv-act-preview` before the box was
+      // ever sent. Dispatch on the sheet's own declared mode rather than hoping.
+      if (sheet.dataset.mode === "say") { syncSayBox(sheet); return; }
       $(sheet, ".wv-act-preview").hidden = true;
       $(sheet, ".wv-act-confirm").disabled = true;
       $(sheet, ".wv-act-answer").hidden = true;
@@ -6408,41 +6544,83 @@ export function mountViewer(appEl) {
 
   // ───────── the Actions rail ─────────
   //
-  // THE DOORS THIS VIEWER HAS. Each verb the apex serves either has a renderer
-  // here or does not, and the rail says which — it never quietly omits one.
-  // `moment` answers whether this instant supports the act, in the one line a
-  // reader needs to fix it. `open` reaches the flow that ALREADY EXISTS: there
-  // is no second code path to walking or to backing a mark, only a second way
-  // in, which is the whole of what R16 asked for.
+  // THE DOORS THIS VIEWER HAS, and under R17 a door is a BEGINNING rather than
+  // a readiness test. The old shape asked each verb `moment` — is this instant
+  // ready? — and grayed the button when it was not, which meant the rail lit up
+  // only once the reader had already done the gathering by hand. Keemin's
+  // reading of that: the buttons "light up when something is already about to
+  // be done", which is precisely a button arriving after its own usefulness.
+  //
+  // So `begin` REPLACES `moment` + `open`. It runs on every press, and its job
+  // is to get the act moving from wherever the reader actually is: with the
+  // prerequisite in hand it goes straight through to the flow that already
+  // exists; without it, it ARMS — puts the viewer into the state where the next
+  // click supplies what is missing — and `prompt` says so in the rail, in the
+  // reader's own next move. There is still no second code path to walking or to
+  // backing a mark, only a second way in; what is new is that the way in no
+  // longer requires you to have already arrived.
+  //
+  // `prompt` is also where an act tells its EMPTY-STATE truth. Unstake stays on
+  // the rail whenever the law grants it (Wright's standing rec), because
+  // "you hold no stamps on anything yet" is a thing a resident should be able
+  // to find out by pressing the button — not a thing the button should hide by
+  // being absent, and not a gray it should wear silently.
   const ACTION_DOORS = {
     walk: {
-      moment: () => (!actorOrigin()
-        ? "the office has no walk origin for this resident yet"
-        : (!walkState.destination && viewerJourneyState(actorWalker()).kind !== "journey")
-        ? "click the painting to choose where to walk"
-        : null),
-      open: () => {
-        renderWalkDestination();
+      begins: "click to choose where to walk",
+      begin: () => {
+        state.arming = "walk";
+        renderWalkDestination(); // the desk appears in its choose-a-destination state
         const desk = $(root, ".wv-walkdesk");
-        if (!desk || desk.hidden) return;
-        desk.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        $(desk, ".wv-walk-confirm")?.focus();
+        if (desk && !desk.hidden) desk.scrollIntoView({ behavior: "smooth", block: "nearest" });
       },
+      prompt: () => (actorOrigin()
+        ? "choose where to walk — click the painting, or select a mark"
+        // Not a wall any more, just the first true thing about this flow. The
+        // desk is open behind this line; the office simply has nowhere to
+        // start the leg from yet.
+        : "the office has no walk origin for you yet — the desk is open, but a leg needs a place to start"),
     },
     stake: {
-      moment: () => (selectedMarkId() ? null : "select a mark to back it"),
-      open: () => openStakeSheetForSelection({ mode: "stake" }),
+      begins: "click to choose a mark to back",
+      begin: () => {
+        if (selectedMarkId()) { openStakeSheetForSelection({ mode: "stake" }); return; }
+        state.arming = "stake";
+      },
+      prompt: () => "choose a mark to back — click one on the painting or in the telling",
     },
     unstake: {
-      moment: () => {
+      begins: "click to take stamps back",
+      begin: () => {
+        const held = backedPosition(selectedMarkId());
+        if (held) { openStakeSheetForSelection({ mode: "unstake", max: Number(held.stamps ?? 0) }); return; }
+        state.arming = "unstake";
+      },
+      prompt: () => {
+        // THE FLOW TELLS THE EMPTY-STATE TRUTH, and there are two different
+        // empties: you back nothing at all, or you back things but not the one
+        // you just chose. The second used to be unreachable — the gray held the
+        // reader outside it — and it is the one that would otherwise send a
+        // sheet to the door to be refused for zero stamps.
+        const mine = (state.portfolio?.backed ?? []).filter((row) =>
+          row.holder === state.handle && Number(row.stamps ?? 0) > 0);
+        if (!mine.length) return "you hold no stamps on anything yet — back a mark first, and this is how you take them back";
         const id = selectedMarkId();
-        if (!id) return "select a mark to take stamps back from";
-        return backedPosition(id) ? null : `you hold no stamps on ${markIdentity({ id })}`;
+        return id && !backedPosition(id)
+          ? `you hold no stamps on ${markIdentity({ id })} — choose one of the ${mine.length} you do back`
+          : `choose which of the ${mine.length} mark${mine.length === 1 ? "" : "s"} you back to take stamps back from`;
       },
-      open: () => {
-        const position = backedPosition(selectedMarkId());
-        openStakeSheetForSelection({ mode: "unstake", max: Number(position?.stamps ?? 0) });
-      },
+    },
+    // THE PROOF CASE (R17's own): a verb the law has granted all along, that
+    // the office has served all along, and that no reader could reach from here
+    // because the viewer had no box to type in. Under the old rail it was a
+    // permanent gray — "no door in this viewer yet" — which is a true sentence
+    // that does nobody any good. The say lands through the apex like every
+    // other act and shows up in the conversations the map already draws.
+    say: {
+      begins: "click to say something where you stand",
+      begin: () => openSayBox(),
+      prompt: () => null,
     },
   };
 
@@ -6497,31 +6675,129 @@ export function mountViewer(appEl) {
     // A SPECTATOR HAS NO ACTIONS SECTION (R16) — not an empty one. A spectator
     // is a camera; a heading over nothing would offer them a self they do not
     // have here.
-    if (isSpectating() || !canAct()) { box.hidden = true; return; }
+    if (isSpectating() || !canAct()) { box.hidden = true; state.arming = null; return; }
     box.hidden = false;
     const row = $(box, ".wv-actionrow");
     const note = $(box, ".wv-actions-note");
-    const palette = actionPalette(state.palette.entries, {
-      renderers: Object.keys(ACTION_DOORS),
-      moment: (action) => ACTION_DOORS[action]?.moment?.() ?? null,
-    });
+    const palette = actionPalette(state.palette.entries, { renderers: Object.keys(ACTION_DOORS) });
+    // An act cannot stay half-begun after the law stops offering it — walking
+    // off the ground that granted `stake` must not leave the viewer waiting for
+    // a mark to back.
+    if (state.arming && !palette.some((item) => item.action === state.arming)) state.arming = null;
     row.innerHTML = palette.map((item) => {
-      // The title carries the law's own words: what the act is (the blurb the
-      // apex quoted from the residue class), which class granted it, and how it
-      // reached you — plus the reason, when there is a wall.
-      const title = [item.blurb, item.grantedBy ? `granted by ${item.grantedBy}${item.via ? ` · ${item.via}` : ""}` : "", item.reason]
+      // The title carries the law's own words — what the act is (the blurb the
+      // apex quoted from the residue class), which class granted it, how it
+      // reached you — and then what PRESSING IT DOES. Under R17 there is no
+      // reason-for-gray to report, because there is no gray: every button here
+      // is live, and the last clause is an invitation rather than an excuse.
+      const title = [item.blurb, item.grantedBy ? `granted by ${item.grantedBy}${item.via ? ` · ${item.via}` : ""}` : "", ACTION_DOORS[item.action]?.begins]
         .filter(Boolean).join(" — ");
-      return `<button type="button" class="wv-actbtn${item.grant === "yours" ? " is-yours" : ""}"`
-        + ` data-action-verb="${esc(item.action)}"${item.enabled ? "" : " disabled"}`
+      return `<button type="button" class="wv-actbtn${item.grant === "yours" ? " is-yours" : ""}${state.arming === item.action ? " is-arming" : ""}"`
+        + ` data-action-verb="${esc(item.action)}"`
         + ` title="${esc(title)}">${esc(item.label)}</button>`;
     }).join("");
+    const prompt = state.arming ? (ACTION_DOORS[state.arming]?.prompt?.() ?? null) : null;
     const waiting = state.palette.status === "loading" && !palette.length;
-    note.hidden = !(waiting || state.palette.status === "unavailable" || !palette.length);
-    note.textContent = waiting
-      ? "reading what you can do from here…"
-      : state.palette.status === "unavailable"
-      ? `the apex could not be read — ${state.palette.detail}`
-      : palette.length ? "" : "no class mark in reach grants this actor anything here.";
+    // THE NOTE MUST NOT LIE ABOUT WHY THE ROW IS EMPTY, and R17 created a fifth
+    // case that would have made it. "No class mark grants this actor anything"
+    // is false when the law granted plenty and this viewer simply hid all of it
+    // for want of a door — the filtering is the rail's own doing, and it says so
+    // rather than blaming the town's law for its own gap.
+    const filteredOut = !palette.length && (state.palette.entries?.length ?? 0) > 0;
+    note.hidden = !(prompt || waiting || state.palette.status === "unavailable" || !palette.length);
+    note.innerHTML = prompt
+      ? `${esc(prompt)} <button type="button" class="wv-arm-cancel">cancel</button>`
+      : esc(waiting
+        ? "reading what you can do from here…"
+        : state.palette.status === "unavailable"
+        ? `the apex could not be read — ${state.palette.detail}`
+        : palette.length ? ""
+        : filteredOut
+        ? "the law grants you acts here, but none of them has a flow in this viewer yet — they are served at the other doors."
+        : "no class mark in reach grants this actor anything here.");
+  }
+
+  // ───────── the say box (R17's proof case) ─────────
+  //
+  // The verb the law granted all along and no reader could reach: `say` has
+  // been in the apex's answer and in the office's dispatch table the whole
+  // time, and the rail's only honest report was a permanent gray reading "no
+  // door in this viewer yet". This is the door. It writes through `apexAct`
+  // like every other act — no second road to speech — and what lands shows up
+  // in the conversations layer this map already draws and on the town's
+  // conversations page, which is the lane the say has always ridden.
+  function openSayBox() {
+    const host = $(root, ".wv-actions-host");
+    if (!host) return;
+    root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
+    const sheet = document.createElement("div");
+    sheet.className = "wv-act-sheet wv-say-sheet";
+    sheet.dataset.mode = "say";
+    // The head is deliberately SHORT. The stake sheet puts the mark's name here
+    // because it opens from relation lines and attribute rows where "this mark"
+    // is anybody's guess; a say has no subject but the speaker, and the speaker
+    // is named in the Act As row an inch above. Handle plus a long verb wrapped
+    // to three lines in a rail this narrow — seen in the shot, not reasoned out.
+    sheet.innerHTML = `<div class="wv-act-head"><b>say</b><span class="wv-act-verb">where you stand</span>`
+      + `<button type="button" class="wv-act-close" aria-label="Close">×</button></div>`
+      // Said BEFORE the box, not after: the town's own habit is to disclose at
+      // the door, and the door's tool description says exactly this to an agent.
+      // A resident typing into a browser is owed the same sentence.
+      + `<p class="wv-act-note">a voice carries 60 metres and fades from hearing in five minutes. everyone in earshot hears it, nobody else does, and the town keeps its conversations browsable.</p>`
+      + `<div class="wv-act-row"><textarea class="wv-say-text" rows="3" maxlength="500" placeholder="say something where you stand…"></textarea></div>`
+      + `<div class="wv-act-row"><span class="wv-say-count wv-quiet">0 / 500</span>`
+      + `<button type="button" class="wv-say-send" disabled>say it</button></div>`
+      + `<p class="wv-act-answer" hidden></p>`
+      + `<div class="wv-say-heard" hidden></div>`;
+    host.appendChild(sheet);
+    sheet.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    $(sheet, ".wv-say-text")?.focus();
+  }
+
+  function syncSayBox(sheet) {
+    const text = String($(sheet, ".wv-say-text")?.value ?? "");
+    const count = $(sheet, ".wv-say-count");
+    if (count) count.textContent = `${[...text].length} / 500`;
+    const send = $(sheet, ".wv-say-send");
+    if (send) send.disabled = !text.trim();
+  }
+
+  async function sendSay(sheet) {
+    const field = $(sheet, ".wv-say-text");
+    const send = $(sheet, ".wv-say-send");
+    const answer = $(sheet, ".wv-act-answer");
+    const text = String(field?.value ?? "").trim();
+    if (!text) return;
+    send.disabled = true;
+    answer.hidden = false;
+    answer.className = "wv-act-answer";
+    answer.textContent = "carrying it…";
+    let rendered;
+    try {
+      const response = await apexAct("say", { text });
+      rendered = worldSayAnswer(response.body);
+    } catch (error) {
+      rendered = { kind: "refusal", text: `the say door could not be reached — ${error.message}`, voices: [], listeners: [] };
+    }
+    if (!sheet.isConnected) return;
+    answer.className = `wv-act-answer ${rendered.kind}`;
+    answer.textContent = rendered.text;
+    if (rendered.kind === "success") {
+      field.value = "";
+      syncSayBox(sheet);
+      // THE LANE IT LANDED IN, shown rather than asserted. The conversations
+      // layer is the same record the town's page serves; re-reading it is the
+      // cheapest honest proof that the voice is in it.
+      loadConversations().then(drawConversations).catch(() => {});
+    } else {
+      send.disabled = !field.value.trim();
+    }
+    const heard = $(sheet, ".wv-say-heard");
+    if (heard) {
+      heard.hidden = !rendered.voices.length;
+      heard.innerHTML = rendered.voices.slice(-6).map((v) =>
+        `<p class="wv-say-voice"><b>${esc(v.handle ?? "")}</b> <span class="wv-quiet">${esc(v.distance ?? "")} · ${esc(v.ago ?? "")}</span><br>${esc(v.said ?? "")}</p>`).join("");
+    }
   }
   // ───────── what has been happening ─────────
   // THE LEDGER IS FETCHED, NOT DERIVED. /api/walks answers with positions — who is
