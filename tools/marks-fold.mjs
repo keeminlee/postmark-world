@@ -893,6 +893,15 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // the vessel's position from THIS fold, never from a file.
       mechanic: mk.mechanic, top_m: mk.top_m, feature: mk.feature, points: mk.points,
       timetable: mk.timetable,
+      // entry (DEMO SLICE, step 5 — jetto/enter-exit-demo): the mark's standing
+      // ENTRY LAW, the three-key clause the crossing reads at the threshold
+      // (the word it answers with, the counter-edge it forms back, and what
+      // that edge means in plain words). Carried for exactly the reason the
+      // timetable is: the store is the only thing the viewer and the office can
+      // see, so a law that never reaches it is a law nobody can be shown at the
+      // door. Undefined on every mark that has written none, so a world with no
+      // entry laws serializes byte-identically.
+      entry: mk.entry,
       // the bounty grammar (the board's notices — founder-ruled 2026-08-11)
       // rides the same carried-through lane: without these five in the store,
       // the board page can never see a notice — letter-posted or door-posted

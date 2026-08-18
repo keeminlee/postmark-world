@@ -17,6 +17,10 @@ import {
 import {
   marksContain, pointInPolygon, pointInRect, polygonOf, rect,
 } from "./geometry.mjs"; // the ONE containment definition — pure, browser-safe (no node:*)
+import {
+  adjudicate, containsEdges as containsEdgesOf, entityChild, formatCrossing,
+  isMark, occupantsOf, termsAt, withinOf,
+} from "./thresholds.mjs"; // DEMO SLICE — the crossing acts (step 5, jetto/enter-exit-demo)
 
 // ───────────────────────── orient — charter + your state ────────────────────
 // The establishing line of every telling: the let-there-be-light root (light
@@ -44,7 +48,10 @@ export function orient(state, world, { crossing = 0, dials = DIALS } = {}) {
       light: { level: +self.lightLevel.toFixed(2), inDarkness: self.inDarkness },
       fog: { crossing: fog.crossing, thickness: +fog.thickness.toFixed(2), inFog: self.inFog, aboveFog: self.aboveFog },
     },
-    verbs: ["open-your-eyes", "investigate(mark)", "walk(dir, dist)"],
+    // enter/exit are DEMO-SLICE verbs (step 5) — listed so a reader of the
+    // demo sees the pair, and pointedly listed apart from walk, which reaches
+    // coordinates and never an inside.
+    verbs: ["open-your-eyes", "investigate(mark)", "walk(dir, dist)", "enter(mark)", "exit(mark)"],
   };
 }
 
@@ -106,7 +113,11 @@ function pointWithinMark(pos, mark) {
 // The target additionally carries `weight_parts`, which is that ✦ number's
 // receipt (marks-fold.mjs § partsOf) — because a reader shown one figure built
 // out of three sources cannot otherwise tell which of them they are looking at.
-export function investigate(markId, world, { depth = 1, budget = DIALS.context_budget } = {}) {
+// `occupancy` (DEMO SLICE, step 5) is OPTIONAL and defaults to empty, so every
+// existing caller gets a byte-identical answer. Passed, the manifest grows its
+// entity children — who is aboard is a child of the ship, and investigate is
+// the read that opens one mark, so it is where "who's here" belongs.
+export function investigate(markId, world, { depth = 1, budget = DIALS.context_budget, occupancy = null } = {}) {
   const byId = new Map(world.marks.map((m) => [m.id, m]));
   const target = byId.get(markId) ?? byId.get(markId.replace(/^terrain:/, "")) ?? null;
   const asTerrain = (world.terrain?.features ?? []).find((f) => `terrain:${f.id}` === markId || f.id === markId);
@@ -130,6 +141,12 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
     .map((entry) => entry.m);
   const children = allChildren.slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, weight: m.weight ?? 0, stamps: m.stamps ?? 0, body: firstLine(m.body) }));
+  // the entity children — the walkers who have crossed INTO this mark. They are
+  // children of it (R14: one contains taxonomy, no new edge class), so they ride
+  // the manifest; every consumer that means AREA reads `children.filter(isMark)`
+  // instead, which is exactly what the hoisted predicate is for.
+  const occupants = occupancy ? (occupantsOf(occupancy).get(markId) ?? []) : [];
+  const entities = occupants.map((h) => entityChild(h, markId));
   // parents: what the target sits inside, nearest container first (renamed from
   // `within` 2026-08-02 — within/children read as near-synonyms and the pair was
   // a reader trap; parents[0] is the direct container). Its own relation, and
@@ -176,7 +193,10 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
     // read that opens ONE mark, so the image URL rides here as metadata — a
     // URL, never bytes; whether to spend eyes on it is the reader's own call.
     ...(target.image !== undefined ? { image: target.image } : {}),
-    predicates, parents, children, alongside,
+    predicates, parents,
+    children: entities.length ? [...entities, ...children] : children,
+    ...(occupants.length ? { occupants } : {}),
+    alongside,
     more: { predicates: countPredicates(markId, world) - predicates.length, children: allChildren.length - children.length },
     reinvoke: depth > 1 ? [...children, ...alongside].map((c) => c.id) : [],
   };
@@ -213,6 +233,239 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
     wearDelta, newState: { ...state, x: to.x, y: to.y },
   };
 }
+
+// ───────────────────────── enter / exit(mark) — the crossings ───────────────
+//
+// DEMO SLICE (step 5). Walk and entry are fully decoupled axes (R15): the walk
+// above moves you to coordinates and never puts you INSIDE anything —
+// geometrically-inside-legally-outside is a real state, and it is the visitor
+// standing on the deck who never stepped aboard. Entry is the other axis, and
+// the only one with mechanical weight for mark-scoped effects.
+//
+// The plane is free; the tree is mechanical.
+
+/** The chain of crossings between where a walker legally stands and a target.
+ *
+ *  Deep entry is never a teleport: enter(cabin) from the shore is walk +
+ *  enter(ship) + enter(cabin), each link adjudicated on its own law, because
+ *  occupancy of a node implies occupancy of its ancestors — so an
+ *  effect-bearing link (boarding) can never be bypassed by naming a deeper
+ *  target. Links already held drop out; a walker aboard asks only for the door
+ *  he is actually standing at.
+ *
+ *  The walk half needs no consent and so can never be the refused half — which
+ *  is exactly why a refusal leaves you AT the threshold rather than back where
+ *  you started.
+ */
+export function crossingPlan(state, targetId, world, { occupancy = new Map(), handle = null } = {}) {
+  const byId = new Map(world.marks.map((m) => [m.id, m]));
+  const target = byId.get(targetId);
+  if (!target) return { error: `no mark '${targetId}' to enter` };
+  if (!target.at || !target.extent) return { error: `'${targetId}' has no extent — there is no inside to step into` };
+  const nest = ancestorsByGeometry(target, world).slice().reverse(); // outermost → direct container
+  const chain = [...nest.map((m) => m.id), target.id];
+  const held = occupancy.get(handle) ?? [];
+  const links = chain.filter((id) => !held.includes(id));
+  // The bundled walk (the QoL convergence): you cannot cross a threshold you
+  // are not standing at, so entering from outside carries the navigation with
+  // it. Walking to the target's own ground puts you inside every link at once,
+  // since the target sits within all of them.
+  const standing = pointWithinMark(state, target);
+  return {
+    target: targetId,
+    chain, links, held,
+    walk: standing || !links.length ? null : { to: { x: target.at.x, y: target.at.y }, mark: targetId },
+  };
+}
+
+/** enter(mark) — the crossing. Adjudicates each link, stops at the first that
+ *  does not land, and answers with the rows the pen should append.
+ *
+ *  `accepted` is the walker's explicit word: `true` (he accepted the terms he
+ *  was shown), or a set/array of the mark ids he accepted. It is demanded only
+ *  where the door declares a counter-edge; everywhere else the authorship of
+ *  the act is the whole of his consent (R13's decision-fatigue discipline —
+ *  a resident should not be asked to affirm a hallway).
+ */
+export function enter(state, targetId, world, {
+  occupancy = new Map(), handle = null, at = 0, iso = null, accepted = false,
+} = {}) {
+  const plan = crossingPlan(state, targetId, world, { occupancy, handle });
+  if (plan.error) return plan;
+  const byId = new Map(world.marks.map((m) => [m.id, m]));
+  const said = accepted === true ? null : new Set(Array.isArray(accepted) ? accepted : accepted ? [accepted] : []);
+  const within = [...(plan.held ?? [])];
+  const crossings = [];
+  const rows = [];
+  const entered = [];
+  let stranded = null, refused = null, awaiting = null;
+
+  if (!plan.links.length) {
+    return { ...plan, crossings, rows, entered, within, stranded: null, refused: null,
+             already: true, note: `${handle ?? "you"} is already within ${targetId}.` };
+  }
+
+  for (const id of plan.links) {
+    const mark = byId.get(id);
+    const verdict = adjudicate(mark, { accepted: said === null || said.has(id) });
+    crossings.push(verdict);
+    if (verdict.effect === "entered") {
+      rows.push(formatCrossing({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
+      entered.push(id);
+      within.push(id);
+      continue;
+    }
+    // A failed link strands you at THAT threshold — not at the shore, and not
+    // inside. Everything crossed before it stands; nothing after it is tried.
+    stranded = id;
+    if (verdict.effect === "refused") {
+      refused = verdict;
+      // The refusal is a fact about the town and belongs in the record: the act
+      // was authored, the door answered opposed, and the occupancy derivation
+      // reads that word and mints nothing.
+      rows.push(formatCrossing({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
+    } else {
+      awaiting = verdict; // terms shown, the walker has not spoken — nothing recorded
+    }
+    break;
+  }
+  return { ...plan, crossings, rows, entered, within, stranded, refused, awaiting };
+}
+
+/** exit(mark) — the walker nullifying his own side of the edge he authored.
+ *  Leaving a ship leaves her cabins; leaving somewhere you are not within is a
+ *  refusal with a reason, never a silent success. */
+export function exit(targetId, world, { occupancy = new Map(), handle = null, at = 0, iso = null } = {}) {
+  const held = occupancy.get(handle) ?? [];
+  const i = held.indexOf(targetId);
+  if (i < 0) return { error: `${handle ?? "you"} is not within '${targetId}' — there is nothing to step out of`,
+                      within: [...held] };
+  const leaving = held.slice(i);
+  return {
+    target: targetId,
+    rows: [formatCrossing({ handle, act: "exits", mark: targetId, at, iso })],
+    left: leaving,
+    within: held.slice(0, i),
+    into: i > 0 ? held[i - 1] : null, // the enclosing scope the view restores to
+  };
+}
+
+// ── the QoL prompts (R15, both directions) ──────────────────────────────────
+//
+// The two axes being decoupled is the law; being decoupled SILENTLY would be a
+// trap. So the boundary crossings speak: walking into a mark's extent offers
+// entry, and walking out of the extent of a mark you are within offers exit.
+// Offers — the door asks, it never decides.
+
+/** The mark a walker has walked INTO but is not within: the smallest containing
+ *  mark he has not crossed into. Null when the two axes already agree. */
+export function enterPrompt(state, world, { occupancy = new Map(), handle = null } = {}) {
+  const held = occupancy.get(handle) ?? [];
+  const chain = containmentChain(state, world.marks);
+  const byId = new Map(world.marks.map((m) => [m.id, m]));
+  for (let i = chain.length - 1; i >= 0; i--) {
+    const id = chain[i].id;
+    if (held.includes(id)) continue;
+    const mark = byId.get(id);
+    if (!mark?.extent) continue;
+    if (Math.max(mark.extent.w ?? 0, mark.extent.h ?? 0) >= DIALS.world_scale_extent_m) continue; // the frame is not a room
+    return { mark: id, body: mark.body ?? null, terms: termsAt(mark),
+             ask: `You are standing inside ${id} but not within it. Enter?` };
+  }
+  return null;
+}
+
+/** The mark a walker is within but has walked out of the extent of. */
+export function exitPrompt(state, world, { occupancy = new Map(), handle = null } = {}) {
+  const held = occupancy.get(handle) ?? [];
+  const byId = new Map(world.marks.map((m) => [m.id, m]));
+  for (let i = held.length - 1; i >= 0; i--) {
+    const mark = byId.get(held[i]);
+    if (!mark) continue;
+    if (pointWithinMark(state, mark)) continue;
+    return { mark: held[i], ask: `You have walked off ${held[i]}'s ground while still within it. Step out?` };
+  }
+  return null;
+}
+
+// ── the scoped read: the mark you entered becomes the place you are ─────────
+//
+// The convergence this pair was built for (the plan's "ENTERING the-keeping-
+// works with auto default ranking settings upon entry"): a standpoint change
+// triggers the mark-scoped projection. The manifest IS children — the same
+// containment relation the whole world already runs on — so fellow occupants
+// render for free, because they ARE children of the mark now.
+//
+// `isMark` is the guard, and this is the one consumer that deliberately keeps
+// both sides of it: `children` is the manifest and holds entities, `marks` is
+// everything an area/weight/census reader may touch.
+export function enteredScope(markId, world, { occupancy = new Map(), budget = DIALS.context_budget, handle = null } = {}) {
+  const byId = new Map(world.marks.map((m) => [m.id, m]));
+  const mark = byId.get(markId);
+  if (!mark) return { error: `no mark '${markId}'` };
+  const occupants = (occupantsOf(occupancy).get(markId) ?? []);
+  const contained = childrenByGeometry(mark, world);
+  const marks = directChildren(contained)
+    .sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0) || String(a.id).localeCompare(String(b.id)))
+    .slice(0, budget)
+    .map((m) => ({ id: m.id, kind: m.kind, at: m.at, extent: m.extent, weight: m.weight ?? 0, stamps: m.stamps ?? 0, body: m.body }));
+  const entities = occupants.map((h) => entityChild(h, markId));
+  const ancestry = ancestorsByGeometry(mark, world);
+  return {
+    // the chrome the view wears while you are inside
+    within: markId,
+    chrome: `You are in: ${shortName(mark)}`,
+    mark: {
+      id: mark.id, kind: mark.kind, by: mark.by, tier: mark.tier, at: mark.at, extent: mark.extent,
+      weight: mark.weight ?? 0, stamps: mark.stamps ?? 0, body: mark.body,
+      ...(mark.image !== undefined ? { image: mark.image } : {}),
+    },
+    // the mark's own read — what the place says about itself, in full
+    read: mark.body ?? null,
+    terms: termsAt(mark),
+    // THE MANIFEST: children, both kinds. Entities first — who is here is the
+    // question a room answers before what is in it.
+    children: [...entities, ...marks],
+    // the same list an area/weight/census reader is allowed to see
+    marks: marks.filter(isMark),
+    occupants,
+    // what encloses this scope — where exit restores to
+    enclosing: ancestry.length ? { id: ancestry[0].id, body: ancestry[0].body } : null,
+    more: { children: Math.max(0, directChildren(contained).length - marks.length) },
+  };
+}
+
+/** The legal containment chain — the marks a walker has crossed INTO, root
+ *  first. The geometric `containmentChain` above answers where his BODY is;
+ *  this answers where he stands in the tree, and they are allowed to differ. */
+export function withinChain(world, { occupancy = new Map(), handle = null } = {}) {
+  const byId = new Map(world.marks.map((m) => [m.id, m]));
+  return (occupancy.get(handle) ?? []).map((id) => {
+    const m = byId.get(id);
+    return m ? { id, by: m.by, tier: m.tier, body: m.body, extentM: Math.max(m.extent?.w ?? 0, m.extent?.h ?? 0) } : { id };
+  });
+}
+
+/** The one composition: occupancy joins a loaded world WITHOUT joining its
+ *  marks. The boundary is deliberate and it is tee (iii) of the handshake —
+ *  occupancy edges are in the world graph but NOT in the fold's channel set in
+ *  v0, because presence-as-attention is the tabled economy coupling. The fold's
+ *  upward channels stay contains/describes/instance-of until that is ruled.
+ *
+ *  Which is why this returns `marks` UNTOUCHED and hangs the occupancy beside
+ *  it. `tools/fanup-flow.test.mjs` § the conservation falsifier is the probe
+ *  that keeps it honest: fan-up totals must not move when a walker enters. */
+export function attachOccupancy(world, occupancy = new Map()) {
+  return {
+    ...world,
+    marks: world.marks,               // the same array, deliberately: entities are not marks
+    occupancy,
+    occupants: occupantsOf(occupancy),
+    containsEdges: containsEdgesOf(occupancy),
+  };
+}
+
+export { withinOf };
 
 // ───────────────────────── the telling renderer ─────────────────────────────
 // Turns the radial serialization into told prose — the D&D-shaped "what you see."
@@ -319,6 +572,15 @@ function bodyProse(body) {
   return String(body ?? "").trim().replace(/^\s*(sits|region|kind|at|date|slot|value|household|mark|parent)\s*:\s*/i, "").trim();
 }
 function firstLine(body) { return ellipsize(bodyProse(body).split(/\n/)[0].replace(/\s+/g, " "), 148); }
+// A short label for chrome — a name-length phrase, not a telling. Marks carry no
+// name field on this record, so the body's opening clause is the closest thing
+// the world has to what a place is CALLED; the slug is the fallback.
+export function shortName(mark) {
+  const clause = bodyProse(mark?.body).split(/[—.·,;:\n]/)[0].replace(/\s+/g, " ").trim();
+  return (clause.length >= 3 && clause.length <= 56 ? clause : "")
+      || String(mark?.id ?? "").split("/").pop().replace(/-/g, " ")
+      || String(mark?.id ?? "");
+}
 function countPredicates(id, world) { return world.marks.filter((m) => (m.kind === "predicated" || m.kind === "naming") && m.parent === id).length; }
 function attachedTo(id, world, budget) { return world.marks.filter((m) => m.parent === id).slice(0, budget).map((m) => ({ id: m.id, slot: m.slot, value: m.value })); }
 function householdNear(target, world, radius = DIALS.cluster_beyond_m) {

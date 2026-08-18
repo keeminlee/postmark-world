@@ -16,7 +16,7 @@
 // One engine, imported the clone's way (relative into the package): the browser
 // runs the exact library anyone can `node`. If this page and a clone disagree,
 // the office has explaining to do.
-import { orient, openYourEyes, investigate, containmentChain } from "../tools/world-verbs.mjs";
+import { orient, openYourEyes, investigate, containmentChain, enteredScope, enterPrompt, exitPrompt, shortName } from "../tools/world-verbs.mjs";
 import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
@@ -2478,6 +2478,69 @@ const STYLE = `
 .wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
 .wv-nav .handleopt.on { border-color:var(--you); color:var(--you); }
 .wv-nav .wv-identity h2 { margin-top:0; }
+
+/* ── the crossings (DEMO SLICE, step 5 — jetto/enter-exit-demo) ──────────────
+   The Actions section sits directly under Act As (R16) and its own colour is
+   the ochre of a threshold: not the green of a proposal you are part way
+   through, and not the amber of the walk desk, because entering is a different
+   axis and should not read as a kind of walking. */
+.wv-nav .wv-actions { margin:12px 0 2px; padding-top:10px; border-top:1px solid var(--line); font-size:.8rem; }
+.wv-nav .wv-actions[hidden] { display:none; }
+.wv-nav .wv-actions h2 { margin:0 0 6px; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  color:#c8a24a; font-family:var(--mono); }
+.wv-within-line { font-size:.74rem; color:var(--dim); margin-bottom:7px; line-height:1.5; }
+.wv-within-line.is-outside { font-style:italic; opacity:.75; }
+.wv-within-step { color:#d9b562; }
+.wv-within-step.is-here { color:#f0d489; font-weight:600; }
+.wv-actrows { display:flex; flex-direction:column; gap:5px; }
+.wv-act-enter, .wv-act-exit, .wv-scope-exit { border-color:#8c6f2e; color:#e2c072; }
+.wv-act-enter:hover, .wv-act-exit:hover, .wv-scope-exit:hover { border-color:#c8a24a; color:#f3dc9e; }
+.wv-act-terms { font-size:.7rem; color:var(--dim); font-style:italic; margin:-1px 0 3px 2px; line-height:1.45; }
+.wv-word { margin-left:7px; padding:1px 6px; border-radius:9px; font-size:.62rem; letter-spacing:.09em;
+  text-transform:uppercase; font-family:var(--mono); border:1px solid #6c5522; color:#c8a24a; }
+.wv-act-enter.is-opposed { border-color:#7a3f36; color:#e0a08c; }
+.wv-act-enter.is-opposed .wv-word { border-color:#7a3f36; color:#e0a08c; }
+.wv-cross-notice { margin-top:7px; font-size:.73rem; color:#cbbf9c; line-height:1.5; }
+.wv-cross-notice.refusal { color:#e0a08c; }
+
+/* the y/n offer at a boundary — it hangs on the walk desk, where the reader's
+   eyes already are the instant a walk lands */
+.wv-cross-prompt { margin-top:9px; padding-top:8px; border-top:1px dashed var(--line);
+  display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:.74rem; }
+.wv-cross-ask { flex:1 1 100%; color:#e2c072; line-height:1.45; }
+.wv-cross-yes { border-color:#8c6f2e; color:#e2c072; }
+
+/* THE CUT — the entered mark's own sector. The bar is the chrome that says the
+   read is no longer a point of view but a place. */
+.wv-scope-bar { display:flex; align-items:center; gap:10px; margin:0 0 8px;
+  padding:8px 10px; border:1px solid #6c5522; border-left:3px solid #c8a24a; border-radius:5px;
+  background:rgba(200,162,74,.07); }
+.wv-scope-in { flex:1; font-size:.86rem; color:#f0d489; }
+.wv-scope-in b { color:#ffe9b0; }
+.wv-scope-chain { font-size:.72rem; color:var(--dim); margin:-4px 0 10px 2px; }
+.wv-scope-read { font-size:.86rem; line-height:1.6; margin-bottom:10px; }
+.wv-scope-terms { font-size:.75rem; color:#cbbf9c; font-style:italic; line-height:1.55;
+  margin:-4px 0 12px; padding-left:9px; border-left:2px solid #6c5522; }
+.wv-occupants { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+.wv-occupant { padding:3px 8px; border:1px solid var(--line); border-radius:11px; font-size:.76rem; color:var(--you); }
+.wv-occupant.is-you { border-color:var(--you); }
+.wv-occupant.is-none { border:0; color:var(--dim); font-style:italic; padding-left:0; }
+.wv-scope-empty, .wv-scope-out { font-size:.75rem; color:var(--dim); font-style:italic; line-height:1.5; }
+.wv-scope-out { margin-top:8px; }
+
+/* the threshold sheet: the terms, read before the crossing */
+.wv-threshold { position:absolute; inset:0; z-index:40; display:flex; align-items:center; justify-content:center;
+  background:rgba(8,9,12,.72); }
+.wv-threshold-in { width:min(30rem,86%); padding:18px 20px; border:1px solid #6c5522; border-left:3px solid #c8a24a;
+  border-radius:7px; background:#12141a; box-shadow:0 18px 50px rgba(0,0,0,.6); }
+.wv-threshold-hd { font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:#c8a24a;
+  font-family:var(--mono); margin-bottom:9px; }
+.wv-threshold-body { font-size:.88rem; line-height:1.6; margin-bottom:11px; }
+.wv-threshold-terms { font-size:.8rem; line-height:1.6; color:#e2c072; padding-left:10px;
+  border-left:2px solid #6c5522; margin-bottom:11px; }
+.wv-threshold-read { font-size:.71rem; color:var(--dim); font-style:italic; line-height:1.5; margin-bottom:14px; }
+.wv-threshold-btns { display:flex; gap:8px; }
+.wv-threshold-yes { border-color:#8c6f2e; color:#e2c072; }
 /* The walk desk is a bubble on the painting now, in the bottom-right corner: same
    dark card, same rule down the left, in the amber a proposal is drawn in. It sits
    ABOVE the bubble layer, because it is the one thing on this page you are part
@@ -2713,6 +2776,13 @@ const MARKUP = `
       <div class="settlenow" hidden></div>
     </div>
     <div class="wv-identity"></div>
+    <!-- ACTIONS (R16) — the apex-consuming buttons, directly under Act As. This
+         demo slice contributes exactly two, enter and exit, and they are DERIVED
+         from where the selected resident stands rather than hand-listed: enter
+         appears when there is a threshold in front of them, exit when they are
+         within something. Step 4's rail owns the general derivation; when that
+         branch lands these two become entries in it. -->
+    <div class="wv-actions" hidden></div>
     <!-- WHAT HAS BEEN HAPPENING (Keemin, 2026-08-05) — the foot of the rail, under
          everything you can act with, because it is the one part of this column you
          read rather than press. -->
@@ -2867,6 +2937,13 @@ export function mountViewer(appEl) {
     dataSource: null,       // which world-state URL won (for the auto-update poll)
     asOf: null,             // X-Postmark-As-Of of the loaded fold (office-live only)
     whoami: null,           // { principal, household, handles } from office /ops/whoami
+    // ── the crossings (DEMO SLICE, step 5 — jetto/enter-exit-demo) ──────────
+    // Walk and entry are decoupled axes (R15): `cam` is where a body IS, this
+    // is where it STANDS IN THE TREE, and the two are allowed to disagree.
+    within: {},             // handle → the chain of marks they have crossed into, root first
+    occupants: {},          // mark id → who is inside it (the manifest)
+    crossing_prompt: null,  // the QoL offer after a boundary crossing: enter? / step out?
+    crossing_notice: null,  // the last crossing's own words — terms shown, or a refusal
   };
   let data = null;          // { trueWorld, myWorld, worldState, skeleton, manifest }
   let world = null;         // assembled once (crossing-independent)
@@ -3207,6 +3284,16 @@ export function mountViewer(appEl) {
     const box = $(root, ".wv-telling");
     const hasIdentity = identityResolved();
     const mine = hasIdentity && state.markFilter === "mine";
+    // THE CUT (step 5): a resident who has crossed a threshold is not reading
+    // the world from a point any more — she is inside somewhere, and the read
+    // is that place. `New` is the one exception, for the same reason it skips
+    // the ladder: the feed is a chronology, and a standpoint over a chronology
+    // answers a question nobody asked.
+    const inside = state.markFilter === "new" ? null : enteredMark();
+    if (inside && world && byId.has(inside)) {
+      try { if (renderEnteredTelling(box, inside)) return; }
+      catch (err) { box.innerHTML = `<div class="wv-err">the scoped read failed: ${esc(err?.message ?? err)}</div>`; return; }
+    }
     try {
       const name = state.cam.x === 0 && state.cam.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
       const e = openYourEyes({ x: state.cam.x, y: state.cam.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
@@ -4688,6 +4775,7 @@ export function mountViewer(appEl) {
       clearWalkFeedback();
       if (previewableWalkTarget(id)) chooseWalkMark(id);
       else renderWalkDestination();
+      renderActions(); // selecting IS the intent — the crossings offer follows it (step 5)
     }
     if (scrollCell) scrollMarkCellIntoView(id);
     return true;
@@ -4700,6 +4788,7 @@ export function mountViewer(appEl) {
     walkState.changingCourse = false;
     clearWalkFeedback();
     renderWalkDestination();
+    renderActions();
   }
 
   function chooseWalkMark(id) {
@@ -4765,12 +4854,311 @@ export function mountViewer(appEl) {
       answer.classList.add("success");
       answer.textContent = `${handle} departed: ${Number(response.body.leg_m ?? 0).toLocaleString()} m, ETA ${formatEtaCrossings(response.body.eta_crossings ?? 0)}.`;
       await pollWalkers();
+      // R15's QoL half: the walk has moved a body and put it inside NOTHING, so
+      // the boundary it just crossed offers the other axis rather than assuming
+      // it. (step 5, jetto/enter-exit-demo)
+      await pollOccupancy({ rerender: false });
+      renderActions();
+      refreshCrossingPrompt();
       if (sameWalkDestination(walkState.destination, armedDestination)) clearSelectionAndDestination();
     } catch (error) {
       answer.classList.add("refusal");
       answer.textContent = `The walk door could not be reached — ${error.message}`;
       confirm.disabled = false;
     }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // enter / exit(mark) — THE CROSSINGS.  DEMO SLICE, step 5 (jetto/enter-exit-demo)
+  //
+  // Walking is not entering (R15). Everything above this line moves a BODY to
+  // coordinates; everything below it moves a resident through the containment
+  // TREE, and the two are deliberately separate axes — a visitor can stand on
+  // the deck of a boat she never boarded, which is a real, representable state
+  // and the reason four standing patches exist to compensate for its absence.
+  //
+  // The crossing itself is one edge and two words: the walker's side is his
+  // AUTHORSHIP of the act, and the mark's side is its automatic response from
+  // its own standing entry law. Mutual consent, or the effect is null.
+  //
+  // What this layer adds to the page is a STANDPOINT CHANGE: entering cuts the
+  // read to the entered mark's own sector — its children (fellow occupants
+  // included, because they are children of it now), its own words, its terms —
+  // and exiting restores the enclosing scope. The study-read becomes a place.
+
+  /** The chain of marks the selected resident has crossed into, root first. */
+  const withinChainOf = (handle = state.handle) => state.within?.[handle] ?? [];
+  /** The innermost of them — the scope the view is cut to, or null. */
+  const enteredMark = (handle = state.handle) => withinChainOf(handle).slice(-1)[0] ?? null;
+  const occupancyMap = () => new Map(Object.entries(state.within ?? {}));
+  const nameOfMark = (id) => (byId.has(id) ? markName(byId.get(id)).name || shortName(byId.get(id)) : id);
+
+  /** The derived occupancy, read from the office. Never computed here: the acts
+   *  are the record and the door owns the derivation, exactly as walk positions
+   *  come from /api/walks rather than from a second copy of positionAt.
+   *
+   *  SEQUENCED, because two crossings a second apart put two of these in flight
+   *  at once and the slower one is not the older TRUTH, it is just the slower
+   *  answer — landing it second rewound the page by one act (found in QA: the
+   *  scope bar sat one threshold behind the record). An act's own reply is the
+   *  freshest fact there is, so it applies immediately (`applyWithin`) and this
+   *  poll only ever fills in around it. */
+  let crossSeq = 0;
+  function applyWithin(handle, chain) {
+    crossSeq += 1;
+    state.within = { ...state.within, [handle]: chain ?? [] };
+    if (!chain?.length) delete state.within[handle];
+  }
+  async function pollOccupancy({ rerender = true } = {}) {
+    const mine = crossSeq;
+    try {
+      const r = await fetch(officeUrl("/world/occupancy"), { headers: authHeaders(), credentials: "same-origin" });
+      if (!r.ok) return false;
+      const body = await r.json();
+      if (mine !== crossSeq) return false; // an act landed while this was in flight; its answer wins
+      const before = JSON.stringify(state.within);
+      state.within = body.within ?? {};
+      state.occupants = body.occupants ?? {};
+      const moved = before !== JSON.stringify(state.within);
+      if (rerender && moved) { renderActions(); renderTelling(); drawWalkers(); }
+      else if (rerender) renderActions();
+      return moved;
+    } catch { return false; }
+  }
+
+  // ── the Actions section (R16) ─────────────────────────────────────────────
+  //
+  // DERIVED, never hand-listed: enter appears only when there is a threshold in
+  // front of this resident, exit only when she is within something. The two
+  // predicates are the engine's own (`enterPrompt` / the within chain), so the
+  // rail cannot offer a door the door itself would refuse.
+  function renderActions() {
+    const box = $(root, ".wv-actions");
+    if (!box) return;
+    if (!canAct()) { box.hidden = true; box.innerHTML = ""; return; }
+    const chain = withinChainOf();
+    const inside = enteredMark();
+    const standing = actorOrigin();
+    // WHAT ENTER IS OFFERED, and why it is two rules rather than one. A door you
+    // are already standing at is the geometric prompt's answer; a door across
+    // the water is the SELECTED mark's, because entering from outside bundles
+    // the walk in (the QoL convergence) and so does not require you to have
+    // arrived first. Both are derived from where this resident actually stands
+    // — neither is a hand-listed button — and the selected mark wins when it is
+    // enterable, because selecting IS the intent.
+    const selectedId = markInteraction.getState().selectedId;
+    const selected = selectedId && !chain.includes(selectedId) ? byId.get(selectedId) : null;
+    const enterable = selected?.at && selected?.extent
+      && Math.max(selected.extent.w ?? 0, selected.extent.h ?? 0) < DIALS.world_scale_extent_m ? selected : null;
+    const nearby = standing && world
+      ? enterPrompt({ x: standing.x, y: standing.y }, world, { occupancy: occupancyMap(), handle: state.handle })
+      : null;
+    const offer = enterable
+      ? { mark: enterable.id, terms: enterable.entry ?? null, far: true }
+      : nearby ? { mark: nearby.mark, terms: nearby.terms, far: false } : null;
+    const rows = [];
+    if (offer) {
+      const terms = offer.terms;
+      // The word, shown BEFORE the press. It is a courtesy prediction, not the
+      // adjudication — the crossing settles at the door (R10) — but a rail that
+      // hides a standing `opposed` until you have pressed it is withholding the
+      // one thing the mark has already said out loud.
+      const word = terms?.word ?? "neutral";
+      rows.push(`<button type="button" class="ctl wv-act-enter${word === "opposed" ? " is-opposed" : ""}" data-enter="${esc(offer.mark)}">`
+        + `enter ${esc(nameOfMark(offer.mark))}<span class="wv-word">${esc(word)}</span></button>`
+        + (offer.far ? `<div class="wv-act-terms">the walk to her threshold comes with it — entering from outside bundles it in</div>` : "")
+        + (terms?.consequence ? `<div class="wv-act-terms">terms: ${esc(terms.consequence)}</div>` : ""));
+    }
+    if (inside) {
+      rows.push(`<button type="button" class="ctl wv-act-exit" data-exit="${esc(inside)}">exit ${esc(nameOfMark(inside))}</button>`);
+    }
+    box.hidden = !rows.length && !chain.length;
+    box.innerHTML = `<h2>Actions</h2>`
+      + (chain.length
+        ? `<div class="wv-within-line">within ${chain.map((id) => `<span class="wv-within-step" data-id="${esc(id)}">${esc(nameOfMark(id))}</span>`).join(" › ")}</div>`
+        : `<div class="wv-within-line is-outside">within nothing — walking does not put you inside anything</div>`)
+      + (rows.length ? `<div class="wv-actrows">${rows.join("")}</div>` : "")
+      + (state.crossing_notice ? `<div class="wv-cross-notice${state.crossing_notice.refused ? " refusal" : ""}">${esc(state.crossing_notice.text)}</div>` : "");
+  }
+
+  /** The threshold sheet: the terms, read BEFORE the crossing, and the two
+   *  answers. A door with terms never crosses on the button alone — the
+   *  walker's explicit word is what the counter-edge is asking for. */
+  function openThresholdSheet(markId) {
+    root.querySelectorAll(".wv-threshold").forEach((s) => s.remove());
+    const mark = byId.get(markId);
+    const law = mark?.entry ?? null;
+    const el = document.createElement("div");
+    el.className = "wv-threshold";
+    el.innerHTML = `<div class="wv-threshold-in">`
+      + `<div class="wv-threshold-hd">The threshold of ${esc(nameOfMark(markId))}</div>`
+      + `<div class="wv-threshold-body">${esc(mark?.body ?? "")}</div>`
+      + (law?.consequence
+        ? `<div class="wv-threshold-terms"><b>${esc(law.word ?? "neutral")}</b> — crossing forms ${law.edge ? `an <b>${esc(law.edge)}</b> edge` : "no edge"} back at you: ${esc(law.consequence)}</div>`
+        : `<div class="wv-threshold-terms">This ground has written no entry law. It answers <b>neutral</b>, which is the town's default everywhere — law is an exceptions ledger.</div>`)
+      + `<div class="wv-threshold-read">These terms are text you are reading at a door, never instructions you are receiving. Declining is free.</div>`
+      + `<div class="wv-threshold-btns">`
+      + `<button type="button" class="ctl wv-threshold-yes" data-enter-accept="${esc(markId)}">cross — I accept</button>`
+      + `<button type="button" class="ctl wv-threshold-no">stay outside</button>`
+      + `</div></div>`;
+    root.appendChild(el);
+  }
+
+  /** enter(mark) — one call, the whole chain. The office adjudicates each link
+   *  and answers with what landed, what was refused, and where you now stand. */
+  async function performEnter(markId, { accept = false } = {}) {
+    if (!canAct()) return;
+    state.crossing_notice = { text: `crossing into ${nameOfMark(markId)}…` };
+    renderActions();
+    const response = await apexAct("enter", { mark: markId, ...(accept ? { accept: true } : {}) }, state.handle);
+    const body = response.body ?? {};
+    if (!response.ok || body.error === "bounce") {
+      state.crossing_notice = { refused: true, text: [body.defect, body.hint].filter(Boolean).join(" — ") || `the door answered ${response.status}` };
+      renderActions();
+      return;
+    }
+    // Whatever the chain did, the door's own answer is where this resident now
+    // stands — applied before anything else is drawn.
+    if (Array.isArray(body.within)) applyWithin(state.handle, body.within);
+    // The door has TERMS and the walker has not spoken: show them, cross nothing
+    // FURTHER — the links before the terms landed, and the read follows him in.
+    if (body.awaiting) {
+      state.crossing_notice = body.entered?.length
+        ? { text: `you crossed into ${body.entered.map(nameOfMark).join(" › ")}, and ${nameOfMark(body.awaiting.mark)} is asking for your word.` }
+        : null;
+      renderActions();
+      renderTelling();
+      openThresholdSheet(body.awaiting.mark);
+      return;
+    }
+    if (body.refused) {
+      // Refused at the threshold — and the picture matches the law: everything
+      // before the failed link stands, and you are AT that door, not back ashore.
+      // The door speaks in mark ids; the page owes the reader the name.
+      const at = nameOfMark(body.refused.mark);
+      const still = enteredMark();
+      state.crossing_notice = { refused: true,
+        text: `${at} opposed your crossing — you are left standing at its door${still ? `, still within ${nameOfMark(still)}` : ""}.`
+            + (body.entered?.length ? ` (${body.entered.map(nameOfMark).join(" › ")} let you through first.)` : "") };
+    } else if (body.entered?.length) {
+      state.crossing_notice = { text: `you crossed into ${body.entered.map(nameOfMark).join(" › ")}.` };
+    } else {
+      state.crossing_notice = null;
+    }
+    // The occupants of the scope she just entered come from the same answer's
+    // own manifest, so the cut draws complete in one frame; the poll behind it
+    // is only the refresh for everyone else's crossings.
+    if (body.scope?.within) state.occupants = { ...state.occupants, [body.scope.within]: body.scope.occupants ?? [] };
+    pollOccupancy({ rerender: false }).catch(() => {});
+    await pollWalkers().catch(() => {});
+    syncActorPosition({ moveCamera: true });
+    renderActions();
+    renderTelling();
+    drawWalkers();
+    refreshCrossingPrompt(); // the offer that got you here is answered; the next one is a new question
+    if (enteredMark()) mapCtx?.lockOn?.();
+  }
+
+  /** exit(mark) — the walker nullifying his own side. The view restores to the
+   *  enclosing scope, and the derived edge is gone from the record's answer. */
+  async function performExit(markId) {
+    if (!canAct()) return;
+    state.crossing_notice = { text: `stepping out of ${nameOfMark(markId)}…` };
+    renderActions();
+    const response = await apexAct("exit", { mark: markId }, state.handle);
+    const body = response.body ?? {};
+    if (!response.ok || body.error === "bounce") {
+      state.crossing_notice = { refused: true, text: [body.defect, body.hint].filter(Boolean).join(" — ") || `the door answered ${response.status}` };
+      renderActions();
+      return;
+    }
+    state.crossing_notice = { text: body.into ? `you stepped out into ${nameOfMark(body.into)}.` : `you stepped out of ${nameOfMark(markId)}.` };
+    if (Array.isArray(body.within)) applyWithin(state.handle, body.within);
+    pollOccupancy({ rerender: false }).catch(() => {}); // the manifest, refreshed behind the answer
+    renderActions();
+    renderTelling();
+    drawWalkers();
+    refreshCrossingPrompt();
+  }
+
+  // ── the QoL prompts (R15, both directions) ────────────────────────────────
+  //
+  // Decoupled axes must not be a silent trap, so the boundary speaks: landing
+  // inside a mark you are not within offers entry, and walking off the ground
+  // of one you ARE within offers the step out. Offers — never decides.
+  function refreshCrossingPrompt() {
+    const standing = actorOrigin();
+    if (!canAct() || !standing || !world) { state.crossing_prompt = null; return; }
+    const at = { x: standing.x, y: standing.y };
+    const occupancy = occupancyMap();
+    const out = exitPrompt(at, world, { occupancy, handle: state.handle });
+    const inn = out ? null : enterPrompt(at, world, { occupancy, handle: state.handle });
+    state.crossing_prompt = out ? { kind: "exit", ...out } : inn ? { kind: "enter", ...inn } : null;
+    renderCrossingPrompt();
+  }
+  function renderCrossingPrompt() {
+    root.querySelectorAll(".wv-cross-prompt").forEach((el) => el.remove());
+    const p = state.crossing_prompt;
+    if (!p) return;
+    const host = $(root, ".wv-walkdesk") ?? $(root, ".wv-actions");
+    if (!host) return;
+    const el = document.createElement("div");
+    el.className = "wv-cross-prompt";
+    // the engine's `ask` names the mark by id, which is what a door speaks; the
+    // page owes the reader the name they can see on the painting
+    const ask = p.kind === "exit"
+      ? `You have walked off ${nameOfMark(p.mark)}'s ground while still within it. Step out?`
+      : `You are standing inside ${nameOfMark(p.mark)} but not within it. Enter?`;
+    el.innerHTML = `<span class="wv-cross-ask">${esc(ask)}</span>`
+      + `<button type="button" class="ctl wv-cross-yes" data-prompt="${p.kind}" data-mark="${esc(p.mark)}">yes</button>`
+      + `<button type="button" class="ctl wv-cross-no">no</button>`;
+    host.appendChild(el);
+  }
+
+  // ── THE CUT: the entered mark's own sector ────────────────────────────────
+  //
+  // The centerpiece. On entry the read stops being "what can be seen from a
+  // point" and becomes "what is inside this place" — the mark's containment
+  // subtree, its own words, and everyone else who crossed the same threshold.
+  // The manifest IS children (R14), so the occupants cost nothing to render:
+  // they are children of the mark, in the same taxonomy as its cabins.
+  function renderEnteredTelling(box, markId) {
+    const scope = enteredScope(markId, world, { occupancy: occupancyMap(), handle: state.handle, budget: state.dials.context_budget });
+    if (scope.error) { box.innerHTML = `<div class="wv-err">${esc(scope.error)}</div>`; return false; }
+    const mark = byId.get(markId) ?? scope.mark;
+    const chain = withinChainOf();
+    const occupants = scope.occupants.filter((h) => h !== state.handle);
+    const kids = scope.children.filter((c) => c.kind !== "entity");
+    box.innerHTML =
+      `<div class="wv-scope-bar">`
+      + `<span class="wv-scope-in">You are in: <b>${esc(nameOfMark(markId))}</b></span>`
+      + `<button type="button" class="ctl wv-scope-exit" data-exit="${esc(markId)}">exit</button>`
+      + `</div>`
+      + (chain.length > 1
+        ? `<div class="wv-scope-chain">${chain.map((id) => `<span class="wv-within-step${id === markId ? " is-here" : ""}" data-id="${esc(id)}">${esc(nameOfMark(id))}</span>`).join(" › ")}</div>`
+        : "")
+      + `<div class="wv-section-lbl">what this place says</div>`
+      + `<div class="wv-scope-read">${esc(scope.read ?? "")}</div>`
+      + (scope.terms?.consequence
+        ? `<div class="wv-scope-terms">you are here on its terms — <b>${esc(scope.terms.word)}</b>${scope.terms.edge ? `, an <b>${esc(scope.terms.edge)}</b> edge` : ""}: ${esc(scope.terms.consequence)}</div>`
+        : "")
+      + `<div class="wv-section-lbl">who is here</div>`
+      + `<div class="wv-occupants">`
+      + `<span class="wv-occupant is-you">${esc(state.handle)} <i>(you)</i></span>`
+      + (occupants.length
+        ? occupants.map((h) => `<span class="wv-occupant" data-walker="${esc(h)}">${esc(h)}</span>`).join("")
+        : `<span class="wv-occupant is-none">nobody else has crossed this threshold</span>`)
+      + `</div>`
+      + `<div class="wv-section-lbl">what is inside</div>`
+      + (kids.length
+        ? `<div class="wv-cards">${kids.map((c) => markCell(byId.get(c.id) ?? c, { role: "fov" })).join("")}</div>`
+        : `<div class="wv-scope-empty">nothing else stands in here.</div>`)
+      + `<div class="wv-tallies">${esc(`${kids.length} inside · ${scope.occupants.length} here${scope.more.children ? ` · ${scope.more.children} more the budget holds back` : ""}`)}</div>`
+      + (scope.enclosing ? `<div class="wv-scope-out">stepping out puts you back in ${esc(nameOfMark(scope.enclosing.id))}.</div>` : "");
+    foldRenderedPredicates(box);
+    mountMarkImages(box);
+    syncMarkInteractionViews();
+    return true;
   }
 
   // Where the sheet hangs: the mark's own cell, preferring the pinned bubble when
@@ -5618,6 +6006,27 @@ export function mountViewer(appEl) {
       return;
     }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
+    // ── the crossings (DEMO SLICE, step 5) ────────────────────────────────
+    const enterBtn = e.target.closest("[data-enter]");
+    if (enterBtn) { performEnter(enterBtn.dataset.enter); return; }
+    const acceptBtn = e.target.closest("[data-enter-accept]");
+    if (acceptBtn) {
+      root.querySelectorAll(".wv-threshold").forEach((s) => s.remove());
+      performEnter(acceptBtn.dataset.enterAccept, { accept: true });
+      return;
+    }
+    if (e.target.closest(".wv-threshold-no")) { root.querySelectorAll(".wv-threshold").forEach((s) => s.remove()); return; }
+    const exitBtn = e.target.closest("[data-exit]");
+    if (exitBtn) { performExit(exitBtn.dataset.exit); return; }
+    const promptYes = e.target.closest(".wv-cross-yes");
+    if (promptYes) {
+      const { prompt, mark } = promptYes.dataset;
+      state.crossing_prompt = null;
+      renderCrossingPrompt();
+      if (prompt === "exit") performExit(mark); else performEnter(mark);
+      return;
+    }
+    if (e.target.closest(".wv-cross-no")) { state.crossing_prompt = null; renderCrossingPrompt(); return; }
     const stakeOpen = e.target.closest("[data-stake-open], [data-unstake-open]");
     if (stakeOpen) {
       const unstake = stakeOpen.hasAttribute("data-unstake-open");
@@ -5874,6 +6283,11 @@ export function mountViewer(appEl) {
     renderWalkDestinations();
     syncActorPosition({ moveCamera: true });
     mountWalkers();
+    // the crossings, before the first telling: the read is scoped to whatever
+    // this resident has already stepped into (step 5)
+    await pollOccupancy({ rerender: false });
+    renderActions();
+    refreshCrossingPrompt();
     if (state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
     // the office has answered, so we finally know whose first visit this is
     const unseen = !!tourWho() && !readTourSeen(localStore, tourWho());
@@ -5888,7 +6302,11 @@ export function mountViewer(appEl) {
       try { localStorage.setItem(ACT_AS_KEY, SPECTATOR_ACTOR); } catch {}
       clearSelectionAndDestination();
       root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
+      root.querySelectorAll(".wv-threshold, .wv-cross-prompt").forEach((el) => el.remove());
+      state.crossing_prompt = null;
+      state.crossing_notice = null;
       renderIdentity();
+      renderActions();  // a spectator stands in no tree — the section goes away
       renderModeControls();
       renderSpectatorCoordinate();
       renderWalkDestinations();
@@ -5915,10 +6333,12 @@ export function mountViewer(appEl) {
     const manifestHome = data?.manifest?.homes?.find((entry) => entry.household === actor && entry.grid_m);
     if (manifestHome) state.actorHome = { x: Number(manifestHome.grid_m.x), y: Number(manifestHome.grid_m.y), markId: `${manifestHome.household}/${manifestHome.home_id}` };
     renderIdentity();
+    renderActions();          // whose standpoint in the TREE this is (step 5)
     renderModeControls();
     renderSpectatorCoordinate();
     renderWalkDestinations();
     syncActorPosition({ moveCamera: true });
+    refreshCrossingPrompt();
     renderTelling();
     mapCtx?.lockOn?.(); // one-shot: the painting glides to your dot on Act As (no sticky follow)
     renderWalkDestination();

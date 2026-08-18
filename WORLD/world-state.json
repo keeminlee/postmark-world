@@ -11423,6 +11423,29 @@
       "placementParent": "the-town/the-keeping-works"
     },
     {
+      "id": "the-town/human",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-17",
+      "at": {
+        "x": -740,
+        "y": -685
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The household's human, standing beside their resident. One action for now — a voice: to speak here is to speak with them.",
+      "class": "human",
+      "placementParent": "the-town/household"
+    },
+    {
       "id": "the-town/light",
       "kind": "sited",
       "by": "the-town",
@@ -13886,6 +13909,29 @@
       "placementParent": "the-town/the-keeping-works"
     },
     {
+      "id": "the-town/timetable",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-18",
+      "at": {
+        "x": -995,
+        "y": -285
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A timetable is a vessel's published word for where it will be and when — its stops, its departures, and the pace the law holds it to.",
+      "class": "timetable",
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
       "id": "the-town/town",
       "kind": "sited",
       "by": "the-town",
@@ -13995,6 +14041,11 @@
       "stamps": 0,
       "weight": 0,
       "body": "The town's own mail boat, moored at Ferry's crossing — the Post Office sails when the mail must go farther than the water has ever carried it.",
+      "entry": {
+        "word": "welcomed",
+        "edge": "aboard",
+        "consequence": "aboard when she sails — standing in her frame at a departure means riding, and the timetable is public"
+      },
       "placementParent": "the-town/the-quay-reach"
     },
     {
@@ -14110,6 +14161,10 @@
             ]
           }
         ]
+      },
+      "entry": {
+        "word": "opposed",
+        "consequence": "whoever holds the wheel holds the schedule — the wheelhouse is the postmaster's own, and the door does not open to passengers"
       },
       "class": "timetable",
       "placementParent": "the-town/the-post-office"

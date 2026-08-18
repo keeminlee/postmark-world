@@ -84,3 +84,71 @@ test("conservation over the whole fixture: Σ stakes === the apex, with receipts
   assert.ok(instanceFlow && instanceFlow.from === "rider/my-bicycle" && instanceFlow.to === "the-town/bicycle");
   assert.ok(state.fanup.skips.some((s) => s.skipped.includes("stranger/the-district")), "the skip is receipted by name");
 });
+
+// ── the conservation falsifier: presence is NOT attention (R14's priced guard) ─
+//
+// DEMO SLICE (step 5, jetto/enter-exit-demo). R14 makes occupancy a LITERAL
+// `contains` edge with an entity child, which puts a walker into the same
+// taxonomy the fan-up runs on. Tee (iii) of the consent handshake holds the
+// boundary deliberately: `within` edges join the world graph but NOT the fold's
+// channel set in v0 — presence-as-attention is the tabled economy coupling, and
+// the upward channels stay contains/describes/instance-of until that is ruled.
+//
+// So the falsifier is one sentence: FAN-UP TOTALS MUST NOT MOVE WHEN A WALKER
+// ENTERS. It ships with its own positive control, because a conservation test
+// whose comparison cannot detect movement is a test that passes for the wrong
+// reason — and this one is measuring a NON-effect, which is exactly the shape
+// that rots into vacuous green.
+
+import { occupancyAt, parseThresholdLedger, formatCrossing, isMark, containsEdges } from "./thresholds.mjs";
+import { attachOccupancy } from "./world-verbs.mjs";
+
+const totalsOf = (state) => Object.fromEntries(state.marks.map((m) => [m.id, m.weight ?? 0]));
+const crossings = (lines) => parseThresholdLedger(lines.join("\n")).acts;
+
+// a walker boards the shed and a second one boards the stranger's district
+const BOARDED = () => occupancyAt(crossings([
+  formatCrossing({ handle: "rider", act: "enters", mark: "stranger/the-district", at: 1, word: "neutral" }),
+  formatCrossing({ handle: "rider", act: "enters", mark: "rider/my-bicycle", at: 1, word: "welcomed" }),
+  formatCrossing({ handle: "stranger", act: "enters", mark: "stranger/the-district", at: 1, word: "welcomed" }),
+]), 1);
+
+for (const mode of ["legacy", "flow"]) {
+  test(`the conservation falsifier (${mode}): fan-up totals do not move when a walker enters`, () => {
+    const stakes = [stake("a", "rider/my-bicycle", 8), stake("b", "the-town/bicycle", 3)];
+    const empty = { marks: WORLD(), terrain };
+    const before = totalsOf(fold({ marks: empty.marks, terrain, tick: 1, stakes, fanup: mode }));
+
+    const occupancy = BOARDED();
+    assert.ok(occupancy.get("rider")?.length, "the walker really did cross — an unentered world proves nothing");
+    const peopled = attachOccupancy(empty, occupancy);
+    assert.equal(peopled.containsEdges.length, 3, "and the crossings really did derive contains edges");
+    assert.ok(peopled.containsEdges.every((e) => e.childKind === "entity"));
+
+    const after = totalsOf(fold({ marks: peopled.marks, terrain, tick: 1, stakes, fanup: mode }));
+    assert.deepEqual(after, before, "occupancy is in the world graph and out of the fold's channel set");
+  });
+}
+
+test("the falsifier's positive control: the same harness DOES see a mark child arrive", () => {
+  const stakes = [stake("a", "rider/my-bicycle", 8)];
+  const before = totalsOf(fold({ marks: WORLD(), terrain, tick: 1, stakes, fanup: "flow" }));
+  // a MARK child inside the district, staked — the movement the falsifier above
+  // would have to be able to see for its silence to mean anything
+  const withMark = WORLD().concat([sited("a-staked-shed", "stranger", 5000, 5000, 20, 20)]);
+  const after = totalsOf(fold({ marks: withMark, terrain, tick: 1, stakes: [...stakes, stake("c", "stranger/a-staked-shed", 4)], fanup: "flow" }));
+  assert.notDeepEqual(after, before, "if this ever passes, the comparison above has stopped measuring anything");
+  assert.equal(after["the-town/let-there-be-light"], before["the-town/let-there-be-light"] + 4);
+});
+
+test("entity children never reach a consumer that means area", () => {
+  const occupancy = BOARDED();
+  const peopled = attachOccupancy({ marks: WORLD(), terrain }, occupancy);
+  assert.equal(peopled.marks.every(isMark), true, "the fold's input is marks only, by construction");
+  assert.equal(containsEdges(occupancy).some((e) => isMark({ kind: e.childKind })), false,
+    "every derived edge's child fails the predicate the area readers gate on");
+  // and the derived edges are not a channel the fold has ever heard of
+  const state = fold({ marks: peopled.marks, terrain, tick: 1, stakes: [stake("a", "rider/my-bicycle", 8)], fanup: "flow" });
+  const channels = new Set(state.fanup.flows.map((f) => f.channel));
+  assert.deepEqual([...channels].sort(), ["contains", "instance-of"], "no `within` channel appeared in the receipts");
+});
