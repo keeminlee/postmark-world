@@ -540,7 +540,7 @@ export function settlementSweep({
       throw new Error(`${verdict.rehomes.length} re-home(s) survived the re-home pass: ${verdict.rehomes[0].mark} still wants ${verdict.rehomes[0].from ?? "(root)"} -> ${verdict.rehomes[0].to ?? "(root)"}`);
 
     execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs"), "--stakes", stakesPath], {
-      cwd: repo, stdio: ["ignore", "pipe", "pipe"],
+      cwd: repo, stdio: ["ignore", "pipe", "inherit"], // stderr -> the journal: the fanup-shadow lines are FOR the reader (S39-era fix; "pipe" was swallowing them)
     });
     touched.push("WORLD/world-state.json", "WORLD/INDEX.md");
   } catch (error) {
