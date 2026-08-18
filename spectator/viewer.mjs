@@ -454,6 +454,41 @@ export function viewerCanAct({ identityResolved = false, actAs = SPECTATOR_ACTOR
   return !!identityResolved && actAs !== SPECTATOR_ACTOR;
 }
 
+// ───────── per-resident views: the three judgments, out where they can be tested
+//
+// WHOSE READ IS THIS. The engine ranks a field of view for an OBSERVER, and the
+// observer of a resident's read is that resident — not "a spectator" (O13). The
+// spectator keeps the spectator words, and keeps the quay's when standing on it.
+export function observerNameFor(key, standpoint = { x: 0, y: 0 }) {
+  if (key && key !== SPECTATOR_ACTOR) return key;
+  return standpoint?.x === 0 && standpoint?.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
+}
+export function standpointSectionLabel(key) {
+  return key && key !== SPECTATOR_ACTOR ? `where ${key} stands` : "where you stand";
+}
+
+// IS THIS PREBUILT VIEW STILL TRUE. Two ways it stops being: the world it was
+// read from moved (signature), or the resident did (origin). Either one makes it
+// a page about a moment that has passed, so it is rebuilt rather than shown.
+export function viewIsWarm(entry, { signature = "", origin = null } = {}) {
+  if (!entry || !entry.radial || !entry.mounted) return false;
+  if (entry.signature !== signature) return false;
+  if (!entry.origin || !origin) return !entry.origin && !origin;
+  return entry.origin.x === origin.x && entry.origin.y === origin.y;
+}
+
+// WHICH VIEWS THE IDLE LANE OWES. The selected resident is not in the queue —
+// their view is the one on screen — and neither is a resident the record cannot
+// place, because there is no standpoint to read from.
+export function staleViewHandles({ handles = [], active = null, signature = "", entries = new Map(), originOf = () => null } = {}) {
+  return (handles ?? []).filter((handle) => {
+    if (!handle || handle === active) return false;
+    const origin = originOf(handle);
+    if (!origin) return false;
+    return !viewIsWarm(entries.get(handle), { signature, origin });
+  });
+}
+
 export function distanceBandLabel(name, bands = DIALS.distance_bands) {
   const index = (bands ?? []).findIndex((band) => band.name === name);
   if (index < 0) return String(name ?? "");
@@ -2069,6 +2104,10 @@ const STYLE = `
 .wv-view { overflow-x:auto; min-width:0; min-height:60vh; border-right:1px solid var(--line);
   transition:opacity .22s ease, visibility 0s; }
 .wv-telling { padding:16px 20px 26px; }
+/* One pane per resident of the household, built ahead, all but one hidden. The
+   switch is this attribute moving: the markup, the engine read and the cells'
+   handlers are already paid for by the time the reader clicks. */
+.wv-telling-pane[hidden] { display:none; }
 /* collapsed to a zero-width column rather than display:none, because a slide is
    the point and display does not animate. The panel keeps its box and simply has
    no width; opacity carries the fade so its prose never reflows on the way out.
@@ -2985,6 +3024,7 @@ export function mountViewer(appEl) {
   let homeSet = new Set();  // ids that render green: homes (+ descendants) and sovereigns
   let mapCtx = null;
   let lastRadial = null;
+  let worldEpoch = 0;       // bumped by applyWorldLayer; every prebuilt view is stale after
   const markInteraction = createMarkInteractionStore();
 
   // ───────── data + world (feature-detected source) ─────────
@@ -3016,6 +3056,7 @@ export function mountViewer(appEl) {
     byId = new Map(world.marks.map((m) => [m.id, m]));
     homeSet = buildHomeSet(data.manifest, world.marks);
     pinnedBuiltId = null; // the record moved: an open bubble is now stale prose
+    worldEpoch += 1;      // and so is every view built against the old one
   }
   const isOfficeLive = (url) => url === officeUrl("/world/state");
   async function loadData() {
@@ -3313,84 +3354,230 @@ export function mountViewer(appEl) {
   function isMine(m) {
     return !!m?.id && state.mineIds.has(m.id);
   }
+  // ───────── per-resident views, built ahead ─────────
+  //
+  // A household is ONE world seen from N standpoints: the payload
+  // (`data.myWorld`), the portfolio and the mine-set are all household-grain,
+  // so what actually differs per resident is small — a standpoint, the telling
+  // read from it, a camera, and two office answers. Those are built ahead and
+  // kept in the DOM, one hidden pane per handle, so selecting a resident costs
+  // a visibility toggle and a viewBox instead of an engine call and a rebuild.
+  //
+  // A pane goes stale for reasons that are NOT its standpoint: the record
+  // re-folds, the crossing moves, the reader changes the filter or a dial.
+  // `viewSignature()` is exactly those reasons, in one string — a pane built
+  // under a different one is rebuilt rather than shown. There is no second
+  // invalidation concept: whatever refreshes the active view re-warms the rest.
+  const viewCache = new Map(); // handle → { pane, cam, origin, view, radial, home, balance, palette, signature }
+  const viewSignature = () => [
+    worldEpoch, state.crossing, state.markFilter,
+    identityResolved() ? 1 : 0, JSON.stringify(state.dials),
+  ].join("|");
+  const standpointKey = () => (isSpectating() || !state.handle ? SPECTATOR_ACTOR : state.handle);
+  const samePlace = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y;
+
+  function cacheEntry(handle) {
+    let entry = viewCache.get(handle);
+    if (!entry) {
+      entry = { pane: null, cam: null, origin: null, view: null, radial: null, home: null, balance: null, palette: null, signature: null };
+      viewCache.set(handle, entry);
+    }
+    return entry;
+  }
+  // The pane a standpoint's telling is written into. The host's placeholder
+  // ("opening your eyes…") is not a pane, so the first real one replaces it.
+  function tellingPane(key) {
+    const host = $(root, ".wv-telling");
+    if (!host) return null;
+    let pane = $(host, `.wv-telling-pane[data-standpoint="${CSS.escape(key)}"]`);
+    if (pane) return pane;
+    for (const child of [...host.children]) if (!child.classList.contains("wv-telling-pane")) child.remove();
+    pane = document.createElement("div");
+    pane.className = "wv-telling-pane";
+    pane.dataset.standpoint = key;
+    pane.hidden = true;
+    host.appendChild(pane);
+    return pane;
+  }
+  const activeTellingPane = () => $(root, ".wv-telling-pane:not([hidden])") ?? $(root, ".wv-telling");
+
+  // Build (or rebuild) ONE standpoint's pane. It touches nothing shared — no
+  // painting, no readouts, no lastRadial — because this is also how a view is
+  // built for a resident the reader is not looking at.
+  function buildPane(key, standpoint) {
+    const pane = tellingPane(key);
+    if (!pane) return null;
+    const entry = key === SPECTATOR_ACTOR ? null : cacheEntry(key);
+    try {
+      const radial = composeTelling(pane, standpoint, key);
+      if (entry) {
+        const origin = originFor(key);
+        const moved = !samePlace(origin, entry.origin);
+        entry.pane = pane;
+        entry.cam = { x: standpoint.x, y: standpoint.y };
+        entry.origin = origin ? { x: origin.x, y: origin.y } : null;
+        entry.radial = radial;
+        entry.signature = viewSignature();
+        // the frame the glide WOULD have landed on, so a warm switch arrives
+        // there at once; a reader's own panning is kept until they move
+        if (!entry.view || moved) entry.view = mapCtx?.frameOn?.(entry.cam) ?? entry.view;
+      }
+      return radial;
+    } catch (err) {
+      pane.innerHTML = `<div class="wv-err">the telling failed: ${esc(err?.message ?? err)}</div>`;
+      if (entry) { entry.radial = null; entry.signature = null; }
+      return null;
+    }
+  }
+
+  // The cosmetic half of a switch: show one pane, hide the rest, and point the
+  // shared readouts at that pane's own radial. No engine call, no markup built.
+  function activateTellingPane(key, radial) {
+    const host = $(root, ".wv-telling");
+    if (!host) return;
+    for (const pane of host.querySelectorAll(".wv-telling-pane"))
+      pane.hidden = pane.dataset.standpoint !== key;
+    if (!radial) return;
+    lastRadial = radial;
+    // the panel may be folded away, but its two controls and its count line are
+    // readings, not decoration — they get a home on the painting either way
+    const talliesChip = $(root, ".wv-paint-tallies");
+    if (talliesChip) talliesChip.textContent = tallies(radial);
+    syncDevReadouts();
+    drawOverlay(radial);
+    syncMarkInteractionViews();
+  }
+
+  // The other residents' views, built while nothing else wants the thread. One
+  // handle per idle slice: a household of six should not spend one long frame
+  // on five tellings nobody has asked for. The queue is REPLACED rather than
+  // appended to, so a pass never outlives the world it was queued for.
+  let warmQueue = [];
+  let warmTicket = null;
+  const onIdle = (fn) => (typeof requestIdleCallback === "function" ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 32));
+  function warmOtherViews() {
+    if (!identityResolved()) return;
+    warmQueue = staleViewHandles({
+      handles: state.whoami?.handles ?? [],
+      active: isSpectating() ? null : state.handle,
+      signature: viewSignature(),
+      entries: mountedEntries(),
+      originOf: originFor,
+    });
+    if (!warmQueue.length || warmTicket != null) return;
+    warmTicket = onIdle(warmStep);
+  }
+  // `mounted` is the DOM half of warmth, and it is asked HERE rather than inside
+  // the rule, so the rule itself stays a pure comparison of two records.
+  function mountedEntries() {
+    const out = new Map();
+    for (const [handle, entry] of viewCache) out.set(handle, { ...entry, mounted: !!entry.pane?.isConnected });
+    return out;
+  }
+  function warmStep() {
+    warmTicket = null;
+    const handle = warmQueue.shift();
+    if (!handle) return;
+    const origin = originFor(handle);
+    if (origin) buildPane(handle, origin);
+    if (warmQueue.length) warmTicket = onIdle(warmStep);
+  }
+  // sign-out, or a different key: panes for handles this household no longer
+  // has are markup describing nobody
+  function pruneViewCache(handles) {
+    const keep = new Set(handles ?? []);
+    for (const [handle, entry] of [...viewCache]) {
+      if (keep.has(handle)) continue;
+      entry.pane?.remove();
+      viewCache.delete(handle);
+    }
+  }
+
+  // The active view: build the reader's standpoint, show it, then let the idle
+  // lane true the rest. Every path that already refreshed the telling calls
+  // this, which is why the cached views need no invalidation rule of their own.
   function renderTelling() {
-    const box = $(root, ".wv-telling");
+    const key = standpointKey();
+    const radial = buildPane(key, { x: state.cam.x, y: state.cam.y });
+    activateTellingPane(key, radial);
+    warmOtherViews();
+  }
+
+  // The telling read from ONE standpoint, written into ONE pane, returning that
+  // read's radial. Deliberately free of shared state — no lastRadial, no
+  // overlay, no tallies chip — because it also runs for residents the reader is
+  // not looking at, and a background build that repainted the map would be a
+  // view speaking out of turn.
+  function composeTelling(box, standpoint, key) {
     const hasIdentity = identityResolved();
     const mine = hasIdentity && state.markFilter === "mine";
-    try {
-      const name = state.cam.x === 0 && state.cam.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
-      const e = openYourEyes({ x: state.cam.x, y: state.cam.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
-      lastRadial = e.radial;
-      const within = e.radial.within ?? [];
-      const obs = e.radial.observer ?? {};
-      const isNew = state.markFilter === "new";
-      // One row, one question: everything, just mine, or recency. The World lens
-      // that used to sit above it is gone — composition is not a question the
-      // reader has to answer any more, because a draft says so in its own colour.
-      const chips = viewerFilterControls({ identityResolved: hasIdentity, markFilter: state.markFilter });
-      // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
-      // context even under Mine (filtering the frame to yours would usually empty
-      // "where you stand"); the filter narrows the visible marks, not your footing.
-      //
-      // NEW IS THE EXCEPTION, and by ruling rather than by rule (Keemin, 2026-07-28):
-      // under New the feed stands alone. My own composition call was that the ladder
-      // is always footing — it is overruled here for New only, so this reads as a
-      // decision, not as a bug someone should tidy back. The ladder is not merely
-      // hidden, it is not BUILT: New's list is the record in time order, and a
-      // standpoint frame above a chronology is answering a question nobody asked.
-      const showLadder = !isNew;
-      let ladder = "";
-      // Under Mine the frame ladder shows only YOUR cells of the chain (your
-      // parcel/home when standing in them) — the world-root/terrain/region are
-      // constitution and stay out of Mine everywhere (Keemin, 2026-07-27; the
-      // first fix missed this path: these cells rendered unconditionally).
-      const chain = mine ? within.filter((w) => isMine(byId.get(w.id) ?? w)) : within;
-      if (showLadder) chain.forEach((w, i) => {
-        const m = byId.get(w.id) ?? w;
-        ladder += markCell(m, { role: i === 0 ? "frame" : "ladder", annotation: i === 0 ? lightStateLine(obs) : "" });
-      });
-      // 2. the world-law cells whose mechanic has live state this crossing. The
-      // MARK governs its own telling: any world-law mark carrying a mechanic with
-      // a registered teller speaks its live reading as a cell — fog is no longer
-      // a special case, and giving a mechanic a voice is one line here (Keemin's
-      // modularity, 2026-07-24 eve: the seam residents' own mechanics will use).
-      const TELLERS = {
-        elevation: () => elevStateLine(obs),
-        fog: () => fogStateLine(e.radial, obs),
-      };
-      // World-law cells are the-town's (constitution) — skipped under Mine, and part
-      // of the ladder, so they go with it under New.
-      if (showLadder && !mine)
-        for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
-          ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
-      // 3. then the listing. The CHIP governs it: All and Mine tell the standpoint —
-      // ladder, then the bands, then the FOV tallies. New tells the record instead —
-      // the feed alone, with the feed's own count in place of the tallies, so a count
-      // line never describes a list it isn't attached to (sight-counts under a listing
-      // that ignores sight would be the regression).
-      const feed = isNew ? newFeed(mine ? isMine : null) : null;
-      box.innerHTML = chips
-        + (ladder ? `<div class="wv-section-lbl">where you stand</div>`
-                  + `<div class="wv-ladder-cells">${ladder}</div>` : "")
-        + (isNew
-          ? `<div class="wv-section-lbl">new marks — the whole record, newest first</div>`
-            + `<div class="wv-cards">${feed.html}</div>`
-            + `<div class="wv-tallies">${esc(feed.count)}</div>`
-          : `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
-            + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
-      if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
-      foldRenderedPredicates(box);
-      mountMarkImages(box);
-      // the panel may be folded away, but its two controls and its count line are
-      // readings, not decoration — they get a home on the painting either way
-      const talliesChip = $(root, ".wv-paint-tallies");
-      if (talliesChip) talliesChip.textContent = tallies(e.radial);
-      syncDevReadouts();
-      drawOverlay(e.radial);
-      syncMarkInteractionViews();
-    } catch (err) {
-      box.innerHTML = `<div class="wv-err">the telling failed: ${esc(err?.message ?? err)}</div>`;
-    }
+    // WHOSE read this is (O13). A resident's own read is not a spectator's:
+    // the observer the engine ranks for carries the handle, so the telling
+    // and anything downstream of `radial.observer` name the resident. The
+    // spectator keeps the spectator words.
+    const name = observerNameFor(key, standpoint);
+    const e = openYourEyes({ x: standpoint.x, y: standpoint.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
+    const within = e.radial.within ?? [];
+    const obs = e.radial.observer ?? {};
+    const isNew = state.markFilter === "new";
+    // One row, one question: everything, just mine, or recency. The World lens
+    // that used to sit above it is gone — composition is not a question the
+    // reader has to answer any more, because a draft says so in its own colour.
+    const chips = viewerFilterControls({ identityResolved: hasIdentity, markFilter: state.markFilter });
+    // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
+    // context even under Mine (filtering the frame to yours would usually empty
+    // "where you stand"); the filter narrows the visible marks, not your footing.
+    //
+    // NEW IS THE EXCEPTION, and by ruling rather than by rule (Keemin, 2026-07-28):
+    // under New the feed stands alone. My own composition call was that the ladder
+    // is always footing — it is overruled here for New only, so this reads as a
+    // decision, not as a bug someone should tidy back. The ladder is not merely
+    // hidden, it is not BUILT: New's list is the record in time order, and a
+    // standpoint frame above a chronology is answering a question nobody asked.
+    const showLadder = !isNew;
+    let ladder = "";
+    // Under Mine the frame ladder shows only YOUR cells of the chain (your
+    // parcel/home when standing in them) — the world-root/terrain/region are
+    // constitution and stay out of Mine everywhere (Keemin, 2026-07-27; the
+    // first fix missed this path: these cells rendered unconditionally).
+    const chain = mine ? within.filter((w) => isMine(byId.get(w.id) ?? w)) : within;
+    if (showLadder) chain.forEach((w, i) => {
+      const m = byId.get(w.id) ?? w;
+      ladder += markCell(m, { role: i === 0 ? "frame" : "ladder", annotation: i === 0 ? lightStateLine(obs) : "" });
+    });
+    // 2. the world-law cells whose mechanic has live state this crossing. The
+    // MARK governs its own telling: any world-law mark carrying a mechanic with
+    // a registered teller speaks its live reading as a cell — fog is no longer
+    // a special case, and giving a mechanic a voice is one line here (Keemin's
+    // modularity, 2026-07-24 eve: the seam residents' own mechanics will use).
+    const TELLERS = {
+      elevation: () => elevStateLine(obs),
+      fog: () => fogStateLine(e.radial, obs),
+    };
+    // World-law cells are the-town's (constitution) — skipped under Mine, and part
+    // of the ladder, so they go with it under New.
+    if (showLadder && !mine)
+      for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
+        ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
+    // 3. then the listing. The CHIP governs it: All and Mine tell the standpoint —
+    // ladder, then the bands, then the FOV tallies. New tells the record instead —
+    // the feed alone, with the feed's own count in place of the tallies, so a count
+    // line never describes a list it isn't attached to (sight-counts under a listing
+    // that ignores sight would be the regression).
+    const feed = isNew ? newFeed(mine ? isMine : null) : null;
+    box.innerHTML = chips
+      + (ladder ? `<div class="wv-section-lbl">${esc(standpointSectionLabel(key))}</div>`
+                + `<div class="wv-ladder-cells">${ladder}</div>` : "")
+      + (isNew
+        ? `<div class="wv-section-lbl">new marks — the whole record, newest first</div>`
+          + `<div class="wv-cards">${feed.html}</div>`
+          + `<div class="wv-tallies">${esc(feed.count)}</div>`
+        : `<div class="wv-cards">${tellingCards(e.radial, mine ? isMine : null)}</div>`
+          + `<div class="wv-tallies">${esc(tallies(e.radial))}</div>`);
+    if (mine) renderMineTail(box, e.radial);  // the same just-mine list continues beyond this sight
+    foldRenderedPredicates(box);
+    mountMarkImages(box);
+    return e.radial;
   }
   // The just-mine tail: the same filtered list continues beyond this sight with
   // the same mark cells. Backing is not a second shelf; it stays on the cell.
@@ -3482,7 +3669,7 @@ export function mountViewer(appEl) {
     // as you read down the column, so the Telling grew a tail of trees nobody had
     // closed. Scoped to the surface the card lives on, so opening something in the
     // Telling does not shut the bubble you opened it from.
-    for (const other of (card.closest(".wv-telling, .wv-bubble") ?? root).querySelectorAll(".wv-card")) {
+    for (const other of (card.closest(".wv-telling-pane, .wv-bubble") ?? root).querySelectorAll(".wv-card")) {
       if (other === card || !other._stack?.length) continue;
       other._stack = [];
       other.querySelector(".wv-expand")?.remove();
@@ -3671,9 +3858,12 @@ export function mountViewer(appEl) {
           if (t < 1) tween = requestAnimationFrame(step); else { tween = null; mapCtx._tweening = false; }
         })(t0);
       }
-      const camPx = () => ({ x: originPx.x + state.cam.x / mPerPx, y: originPx.y + state.cam.y / mPerPx });
-      mapCtx.lockOn = (animate = true) => {
-        const c = camPx();
+      const camPx = (at) => ({ x: originPx.x + at.x / mPerPx, y: originPx.y + at.y / mPerPx });
+      // WHERE a lock-on would land, without gliding there. A prebuilt view saves
+      // this frame so a warm switch arrives at the same painting the animation
+      // would have reached: the destination without the travel.
+      mapCtx.frameOn = (at = state.cam) => {
+        const c = camPx(at);
         const w = Math.min(view.w, full.w / 4), h = w * (full.h / full.w);
         // Centre the dot in the VISIBLE panel, not in the <svg>. The painting
         // keeps the map's own aspect (tall), the pane is shorter, and
@@ -3685,12 +3875,15 @@ export function mountViewer(appEl) {
         const sb = svg.getBoundingClientRect(), cb = boxEl.getBoundingClientRect();
         const ax = sb.width > 0 ? (cb.x + cb.width / 2 - sb.x) / sb.width : 0.5;
         const ay = sb.height > 0 ? (cb.y + cb.height / 2 - sb.y) / sb.height : 0.5;
-        const target = { x: c.x - w * ax, y: c.y - h * ay, w, h };
+        return { x: c.x - w * ax, y: c.y - h * ay, w, h };
+      };
+      mapCtx.lockOn = (animate = true) => {
+        const target = mapCtx.frameOn();
         // Compare against the target we actually want, not against the viewBox
         // centre — the old test could return "close enough" while the dot sat
         // off the visible centre by the clip offset.
         if (Math.abs(target.x - view.x) < view.w * 0.005 && Math.abs(target.y - view.y) < view.h * 0.005
-            && Math.abs(w - view.w) < full.w * 0.01) return;
+            && Math.abs(target.w - view.w) < full.w * 0.01) return;
         if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
       };
       mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
@@ -4243,13 +4436,30 @@ export function mountViewer(appEl) {
     return walkState.walkers.find((walker) => walker.handle === state.handle) ?? null;
   }
 
-  function actorOrigin() {
-    const walker = actorWalker();
+  // A home for a resident the reader is not currently acting as: the office
+  // answer if this household has already asked for it, the seeding manifest
+  // otherwise. The SELECTED resident keeps reading state.actorHome, so nothing
+  // about the walk desk's "no origin yet" moves.
+  function homeFor(handle) {
+    const cached = viewCache.get(handle)?.home;
+    if (cached && Number.isFinite(cached.x) && Number.isFinite(cached.y)) return cached;
+    const row = data?.manifest?.homes?.find((entry) => entry.household === handle && entry.grid_m);
+    return row ? { x: Number(row.grid_m.x), y: Number(row.grid_m.y), markId: `${row.household}/${row.home_id}` } : null;
+  }
+  // Where a handle stands — the walk ledger first, their home second. One
+  // function for every resident in the household, because a view built ahead
+  // needs the same answer the selected one gets.
+  function originFor(handle) {
+    const walker = handle ? walkState.walkers.find((w) => w.handle === handle) : null;
     if (walker && Number.isFinite(walker.x) && Number.isFinite(walker.y))
       return { x: Number(walker.x), y: Number(walker.y), source: "walk ledger" };
-    if (state.actorHome && Number.isFinite(state.actorHome.x) && Number.isFinite(state.actorHome.y))
-      return { x: Number(state.actorHome.x), y: Number(state.actorHome.y), source: "home (no walk recorded yet)" };
+    const home = handle === state.handle ? state.actorHome : homeFor(handle);
+    if (home && Number.isFinite(home.x) && Number.isFinite(home.y))
+      return { x: Number(home.x), y: Number(home.y), source: "home (no walk recorded yet)" };
     return null;
+  }
+  function actorOrigin() {
+    return originFor(state.handle);
   }
 
   function selectedWalkPreview() {
@@ -4274,10 +4484,14 @@ export function mountViewer(appEl) {
           ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined, { prefix: false }))}</b>`
           : `<span class="wv-quiet">the office has no position for you yet</span>`;
     }
+    // reports whether it re-rendered, so a caller does not build the telling a
+    // second time to cover the case where it didn't
     if (moveCamera && origin && walkState.actorBound) {
       state.cam = { x: origin.x, y: origin.y };
       renderCurrent();
+      return true;
     }
+    return false;
   }
 
   // The artwork on the mountain, and the weather on the way to it. Both are
@@ -4540,6 +4754,10 @@ export function mountViewer(appEl) {
           state.cam = { x: origin.x, y: origin.y };
           if (moved) renderCurrent();
         }
+        // the same tick trues the views the reader is NOT looking at: a resident
+        // who walked while cold is rebuilt at the standpoint this poll just
+        // learned, so the switch onto them is never a stale page
+        warmOtherViews();
         return true;
       } catch { /* try the spectator-local shape, then feature-detect off */ }
     }
@@ -4592,6 +4810,13 @@ export function mountViewer(appEl) {
   }
 
   async function loadActorHome() {
+    const handle = state.handle;
+    await readActorHome();
+    // the office's answer is this handle's, not the moment's: it keeps working
+    // for a view built while somebody else is selected
+    if (handle && state.actorHome && state.handle === handle) cacheEntry(handle).home = state.actorHome;
+  }
+  async function readActorHome() {
     state.actorHome = null;
     if (!state.handle) return;
     try {
@@ -4608,7 +4833,9 @@ export function mountViewer(appEl) {
 
   async function loadActorBalance() {
     const handle = state.handle;
-    state.actorBalance = null;
+    // a known figure is not thrown away to re-learn it: the chip only falls back
+    // to "…" when this resident's balance has never been read
+    if (!Number.isInteger(state.actorBalance)) state.actorBalance = null;
     renderIdentity();
     if (!handle) return;
     let nextBalance;
@@ -4623,6 +4850,7 @@ export function mountViewer(appEl) {
     } catch {
       nextBalance = undefined;
     }
+    cacheEntry(handle).balance = Number.isInteger(nextBalance) ? nextBalance : null;
     if (state.handle === handle) {
       state.actorBalance = nextBalance;
       renderIdentity();
@@ -4897,7 +5125,9 @@ export function mountViewer(appEl) {
     const pinned = $(root, `.wv-bubble.is-pinned .wv-card[data-id="${CSS.escape(markId)}"]`);
     if (pinned) return pinned;
     if (state.paintingOnly) return null;
-    return [...root.querySelectorAll(".wv-telling .wv-card[data-id]")]
+    // the VISIBLE pane only: the cells in a resident's prebuilt view are real
+    // markup, and a sheet hung on one of them would open where nobody is looking
+    return [...activeTellingPane().querySelectorAll(".wv-card[data-id]")]
       .find((card) => card.dataset.id === markId) ?? null;
   }
   function openStakeSheet(card, { mode = "stake", max = "", markId = null } = {}) {
@@ -5662,12 +5892,17 @@ export function mountViewer(appEl) {
     const elevation = world?.heightfield?.elevationAt?.(state.cam.x, state.cam.y);
     chip.textContent = formatSpectatorCoordinate(state.cam, elevation);
   }
-  function renderCurrent() {
+  // the two readouts that follow the camera and the clock and nothing else — a
+  // switch onto a view already built needs them without paying for a telling
+  function renderStandpointReadouts() {
     $(root, ".pos").textContent = formatCardinalPosition(state.cam);
     const cn = $(root, ".crossnow");
     if (cn) cn.innerHTML = state.crossingOverride
       ? `crossing <b>${state.crossing}</b> <span class="wv-quiet">· time-travelling</span>`
       : `crossing <b>${state.crossing}</b> <span class="crosslive-tag">· live</span>`;
+  }
+  function renderCurrent() {
+    renderStandpointReadouts();
     if (state.view === "telling") renderTelling();
     renderModeControls();
     renderSpectatorCoordinate();
@@ -5986,6 +6221,7 @@ export function mountViewer(appEl) {
       if (state.markFilter === "mine") state.markFilter = "everything";
       applyWorldLayer();
     }
+    pruneViewCache(handles); // a pane for a handle this key no longer has describes nobody
     renderPresets();
     renderIdentity();
     renderActions();
@@ -5993,9 +6229,12 @@ export function mountViewer(appEl) {
     renderModeControls();
     renderSpectatorCoordinate();
     renderWalkDestinations();
-    syncActorPosition({ moveCamera: true });
+    // ONE telling per identity resolve: syncActorPosition re-renders when it
+    // moves the camera, so the fallback below covers only the case where it
+    // could not (no origin, or a spectator)
+    const recentred = syncActorPosition({ moveCamera: true });
     mountWalkers();
-    if (state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
+    if (!recentred && state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
     // the office has answered, so we finally know whose first visit this is
     const unseen = !!tourWho() && !readTourSeen(localStore, tourWho());
     $(root, ".wv-tour-open")?.classList.toggle("is-unseen", unseen);
@@ -6004,6 +6243,7 @@ export function mountViewer(appEl) {
 
   async function selectActor(actor) {
     if (actor === SPECTATOR_ACTOR) {
+      stashActiveView(); // the resident being left keeps their painting
       state.actAs = SPECTATOR_ACTOR;
       walkState.actorBound = false;
       try { localStorage.setItem(ACT_AS_KEY, SPECTATOR_ACTOR); } catch {}
@@ -6019,33 +6259,50 @@ export function mountViewer(appEl) {
       return;
     }
     if (!(state.whoami?.handles ?? []).includes(actor)) return;
+    // WHAT THE READER WAS LOOKING AT stays with the resident they are leaving,
+    // so coming back is the same page rather than a fresh one.
+    stashActiveView();
     state.actAs = actor;
     state.handle = actor;
     try {
       localStorage.setItem(ACT_AS_KEY, actor);
       localStorage.setItem(LAST_RESIDENT_KEY, actor);
     } catch {}
-    state.actorBalance = null;
-    state.actorHome = null;
+    // THE SWITCH IS COSMETIC WHEN THE VIEW IS ALREADY BUILT. Everything below
+    // is a restore from this resident's own entry — home, balance, palette,
+    // standpoint — none of it a fetch and none of it a rebuild. The office is
+    // consulted AFTER the swap, and only a difference costs a re-render.
+    const entry = viewCache.get(actor) ?? null;
+    // the home lands BEFORE the standpoint is asked for: originFor falls back to
+    // state.actorHome for the selected handle, and that still held the resident
+    // being left, so asking any earlier answers with the wrong person's ground
+    state.actorHome = entry?.home ?? homeFor(actor);
+    const warm = viewIsWarm(entry && { ...entry, mounted: !!entry.pane?.isConnected }, {
+      signature: viewSignature(),
+      origin: originFor(actor),
+    });
+    state.actorBalance = Number.isInteger(entry?.balance) ? entry.balance : null;
+    state.palette = entry?.palette ?? { for: actor, entries: [], status: "loading", detail: "" };
     walkState.actorBound = true;
     clearSelectionAndDestination();
     root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
-    // The switch is a camera move over data already in hand: the walkers poll
-    // keeps everyone's standpoint (walkers AND standing) warm, and the manifest
-    // knows homes without asking. The office is consulted AFTER the swap, and
-    // the camera follows its answer only if the answer differs.
-    const manifestHome = data?.manifest?.homes?.find((entry) => entry.household === actor && entry.grid_m);
-    if (manifestHome) state.actorHome = { x: Number(manifestHome.grid_m.x), y: Number(manifestHome.grid_m.y), markId: `${manifestHome.household}/${manifestHome.home_id}` };
+    const origin = actorOrigin();
+    if (origin) state.cam = { x: origin.x, y: origin.y };
     renderIdentity();
     renderActions();
     renderModeControls();
     renderSpectatorCoordinate();
     renderWalkDestinations();
-    syncActorPosition({ moveCamera: true });
-    renderTelling();
-    mapCtx?.lockOn?.(); // one-shot: the painting glides to your dot on Act As (no sticky follow)
+    renderStandpointReadouts();
+    syncActorPosition(); // the you-are-here line; the camera is already this actor's
+    if (warm) activateTellingPane(actor, entry.radial);
+    else renderTelling();
+    // the frame a glide would have landed on, taken at once — the destination
+    // without the travel. Only a resident with no saved frame is glided to.
+    if (entry?.view && mapCtx?.setView) mapCtx.setView(entry.view, false);
+    else mapCtx?.lockOn?.();
     renderWalkDestination();
-    const preOrigin = actorOrigin();
+    const preOrigin = origin;
     // The palette is a read of the office, so it rides the background lane with
     // home and balance rather than standing between the click and the swap.
     loadActionPalette().catch(() => {});
@@ -6053,10 +6310,23 @@ export function mountViewer(appEl) {
       if (state.handle !== actor) return; // the reader has moved on
       const fresh = actorOrigin();
       const moved = !!fresh && (!preOrigin || fresh.x !== preOrigin.x || fresh.y !== preOrigin.y);
+      // background revalidation: the shown view is only re-read when the office
+      // says this resident is somewhere the prebuilt one did not know about
       syncActorPosition(moved ? { moveCamera: true } : {});
-      if (moved) renderTelling();
     }).catch(() => {});
     pollWalkers().catch(() => {}); // its own body re-renders only when someone actually moved
+    warmOtherViews();
+  }
+
+  // Saving a view is saving the painting: the camera the telling was built at
+  // is already on the entry, the viewBox is the part a reader can move without
+  // rebuilding anything.
+  function stashActiveView() {
+    if (isSpectating() || !state.handle) return;
+    const entry = viewCache.get(state.handle);
+    if (!entry) return;
+    const view = mapCtx?.setView?.(null);
+    if (view) entry.view = view;
   }
 
   function renderIdentity() {
@@ -6149,6 +6419,7 @@ export function mountViewer(appEl) {
     } catch (error) {
       next = { for: handle, entries: [], status: "unavailable", detail: String(error?.message ?? error) };
     }
+    cacheEntry(handle).palette = next; // the answer belongs to the handle, not to the moment
     if (state.handle !== handle || isSpectating()) return; // the reader has moved on
     state.palette = next;
     renderActions();

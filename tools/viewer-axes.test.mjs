@@ -58,6 +58,10 @@ import {
   draftMarkIds,
   viewerAxisState,
   viewerFilterControls,
+  observerNameFor,
+  standpointSectionLabel,
+  viewIsWarm,
+  staleViewHandles,
   viewerJourneyState,
   viewerCanAct,
   walkDestinationLabel,
@@ -1863,4 +1867,63 @@ test("a verb reads as its own name, hyphens and all", () => {
   assert.equal(actionLabel("leave-mark"), "Leave mark");
   assert.equal(actionLabel("note-to-self"), "Note to self");
   assert.equal(actionLabel(""), "");
+});
+
+// ───────── per-resident views, built ahead (step 6) ─────────
+
+test("a resident's read is observed BY THE RESIDENT; only a spectator is a spectator", () => {
+  // O13: the engine ranks a field of view for an observer, and the telling and
+  // everything downstream of radial.observer take that observer's name. A
+  // resident's own read said "a spectator" regardless of who was acting.
+  assert.equal(observerNameFor("alden", { x: -561, y: -1955 }), "alden");
+  assert.equal(observerNameFor("alden", { x: 0, y: 0 }), "alden", "standing on the quay does not make a resident a spectator");
+  assert.equal(observerNameFor(SPECTATOR_ACTOR, { x: 0, y: 0 }), "a spectator on the Town Centre quay");
+  assert.equal(observerNameFor(SPECTATOR_ACTOR, { x: 400, y: 12 }), "a spectator");
+  assert.equal(observerNameFor("", { x: 0, y: 0 }), "a spectator on the Town Centre quay");
+  // and the section over the containment ladder says whose footing it describes
+  assert.equal(standpointSectionLabel("alden"), "where alden stands");
+  assert.equal(standpointSectionLabel(SPECTATOR_ACTOR), "where you stand");
+  assert.equal(standpointSectionLabel(null), "where you stand");
+});
+
+test("a prebuilt view is warm only while both the world and the resident have held still", () => {
+  const at = { x: 100, y: 200 };
+  const warm = { radial: {}, mounted: true, signature: "sig-1", origin: { x: 100, y: 200 } };
+  assert.equal(viewIsWarm(warm, { signature: "sig-1", origin: at }), true);
+  // the world moved under it — a re-fold, a new crossing, a changed filter or dial
+  assert.equal(viewIsWarm(warm, { signature: "sig-2", origin: at }), false);
+  // the resident moved while nobody was looking: the moved-walker revalidation
+  assert.equal(viewIsWarm(warm, { signature: "sig-1", origin: { x: 100, y: 260 } }), false);
+  // the pane was pruned out of the DOM (sign-out, a different key)
+  assert.equal(viewIsWarm({ ...warm, mounted: false }, { signature: "sig-1", origin: at }), false);
+  // never built, or built and then failed
+  assert.equal(viewIsWarm({ ...warm, radial: null }, { signature: "sig-1", origin: at }), false);
+  assert.equal(viewIsWarm(null, { signature: "sig-1", origin: at }), false);
+  assert.equal(viewIsWarm(undefined, { signature: "sig-1", origin: at }), false);
+});
+
+test("the idle lane owes every view but the one on screen, and none it cannot place", () => {
+  const signature = "sig-1";
+  const standing = { alden: { x: 10, y: 10 }, corwin: { x: 20, y: 20 }, ellery: { x: 30, y: 30 } };
+  const entries = new Map([
+    ["alden", { radial: {}, mounted: true, signature, origin: { x: 10, y: 10 } }],
+    ["corwin", { radial: {}, mounted: true, signature: "sig-0", origin: { x: 20, y: 20 } }],
+  ]);
+  const handles = ["alden", "corwin", "ellery", "nowhere"];
+  const originOf = (h) => standing[h] ?? null;
+  // alden is selected (on screen); corwin is stale; ellery has never been built;
+  // `nowhere` has no standpoint on the record, so there is nothing to read from
+  assert.deepEqual(
+    staleViewHandles({ handles, active: "alden", signature, entries, originOf }),
+    ["corwin", "ellery"]);
+  // deselect and alden joins the queue only if their own view has gone stale
+  assert.deepEqual(
+    staleViewHandles({ handles, active: null, signature, entries, originOf }),
+    ["corwin", "ellery"]);
+  assert.deepEqual(
+    staleViewHandles({ handles, active: null, signature: "sig-9", entries, originOf }),
+    ["alden", "corwin", "ellery"], "a signature change stales every prebuilt view at once");
+  // a household with nothing to warm queues nothing rather than spinning
+  assert.deepEqual(staleViewHandles({ handles: [], active: null, signature, entries, originOf }), []);
+  assert.deepEqual(staleViewHandles(), []);
 });
