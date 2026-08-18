@@ -37,10 +37,19 @@ You are acting as **postmaster**. She lives in the Waiting Room, 450 m from her
 own boat.
 
 **1 · Act As → postmaster.**
-Look at the new **Actions** section, directly under Act As (R16's rail). It
-says: *within nothing — walking does not put you inside anything.* She has lived
-in this town for weeks and she is inside nothing, because until tonight there
-was no act that could put her inside anything. That sentence is the demo.
+Look at the **Actions** section, directly under Act As. It says: *within nothing
+— walking does not put you inside anything.* She has lived in this town for
+weeks and she is inside nothing, because until tonight there was no act that
+could put her inside anything. That sentence is the demo.
+
+*A note on that section:* the Actions rail landed on main while this was
+building, so the two branches were merged and the crossings live **inside** it
+rather than beside it — R16 gives apex-consuming buttons one home. Above them
+the rail says *"no class mark in reach grants this actor anything here."* That
+is true and it is the point: this demo office has no class-mark store, and
+**enter/exit are granted by no class mark, which is exactly why they are still a
+demo.** When the law is planted at the sitting, the crossings block collapses
+into the rail's own derivation and stops existing.
 
 **2 · Find the Post Office.**
 Either click the little boat at Ferry's crossing on the painting, or — easier —
