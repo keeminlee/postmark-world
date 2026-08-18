@@ -1,0 +1,1 @@
+{"at":"2026-08-18T01:02:30.955Z","type":"departure","actor":"draig","seq":207,"payload":{"from":{"x":-882,"y":2184},"toward":{"x":-900,"y":2140},"crossing":134.08682592592592,"within":null,"to":null,"pace":15,"declared_by":"draig","source":"dynamic.db/movements"}}
