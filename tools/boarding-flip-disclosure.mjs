@@ -35,24 +35,23 @@
 //
 // Reads the record and writes nothing. Deploying is a separate act.
 
-import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadMarks, fold } from "./marks-fold.mjs";
 import { pointInRect } from "./geometry.mjs";
 import {
-  parseWalkLedger, positionAt as walkPositionAt, fractionalCrossing,
+  positionAt as walkPositionAt, fractionalCrossing,
   WALK_M_PER_CROSSING,
 } from "./walk.mjs";
+import { ledgerRecords, storeRecords } from "./movement-records.mjs";
 import {
   serviceFromFold, servicesFromFold, positionAt, sailingsBetween, footprintOf,
   ashoreOf, instantOf, DAY_CROSSINGS,
 } from "./vessel.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const LEDGER = join(ROOT, "WORLD", "walk-ledger.md");
-const LOG_DIR = join(ROOT, "STATE", "log");
 const WHEELHOUSE = "the-town/the-wheelhouse";
 
 const argOf = (flag) => { const i = process.argv.indexOf(flag); return i === -1 ? null : process.argv[i + 1]; };
@@ -114,37 +113,11 @@ function positionUnderPresenceLaw(departure, fractional, service) {
 // ── the record, both eras ────────────────────────────────────────────────────
 //
 // The walk ledger is frozen and `STATE/log/<crossing>.jsonl` is the record after
-// it. Latest-wins spans the seam by instant, with the store winning a tie: the
-// ledger cannot gain a line after the freeze, so a log row at the same instant
-// is by construction the later statement (dynamic-entities.mjs's own rule).
-
-function ledgerRecords() {
-  if (!existsSync(LEDGER)) return [];
-  const { departures } = parseWalkLedger(readFileSync(LEDGER, "utf8"));
-  return departures.map((d) => ({ ...d, era: "ledger" }));
-}
-
-function logRecords() {
-  if (!existsSync(LOG_DIR)) return [];
-  const out = [];
-  for (const f of readdirSync(LOG_DIR).filter((n) => n.endsWith(".jsonl")).sort()) {
-    for (const raw of readFileSync(join(LOG_DIR, f), "utf8").split("\n")) {
-      const line = raw.trim();
-      if (!line) continue;
-      let ev;
-      try { ev = JSON.parse(line); } catch { continue; }
-      if (ev.type !== "departure") continue;
-      const p = ev.payload ?? {};
-      out.push({
-        iso: ev.at, handle: ev.actor, era: "store",
-        from: p.from, toward: p.toward, at: p.crossing,
-        targetExtent: p.within ?? null, targetMarkId: p.to ?? null, pace: p.pace ?? null,
-        source: f,
-      });
-    }
-  }
-  return out;
-}
+// it. Both loaders moved to `tools/movement-records.mjs` when the position-seed
+// manifest would have become the third hand-written copy of them; the merge rule
+// and the tie rule live there now, once. What stays here is the DISCLOSURE's own
+// question — which walker governs at an instant — because the answer this tool
+// needs is a map keyed by handle, not a list.
 
 /** The governing departure per walker at an instant — one pass, latest wins. */
 function governingAt(records, atMs) {
@@ -188,7 +161,7 @@ function main() {
   const { services, errors } = servicesFromFold(state);
   const fractional = fractionalCrossing(AT_MS);
 
-  const records = [...ledgerRecords(), ...logRecords()];
+  const records = [...ledgerRecords(ROOT), ...storeRecords(ROOT)];
   const governing = governingAt(records, AT_MS);
 
   const findings = [];
