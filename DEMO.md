@@ -43,13 +43,16 @@ weeks and she is inside nothing, because until tonight there was no act that
 could put her inside anything. That sentence is the demo.
 
 *A note on that section:* the Actions rail landed on main while this was
-building, so the two branches were merged and the crossings live **inside** it
-rather than beside it — R16 gives apex-consuming buttons one home. Above them
-the rail says *"no class mark in reach grants this actor anything here."* That
-is true and it is the point: this demo office has no class-mark store, and
-**enter/exit are granted by no class mark, which is exactly why they are still a
-demo.** When the law is planted at the sitting, the crossings block collapses
-into the rail's own derivation and stops existing.
+building, so the branches were merged and **Enter and Exit are the rail's own
+buttons** — minted by its derivation from what the door granted, not written
+into the viewer. Exit starts dimmed, because she is within nothing; hovering it
+says why. Under the buttons is the part a palette cannot say: which marks she is
+inside, what Enter would cross next, and the word that door has already spoken.
+
+The demo office grants the two verbs **as a stub** — there is no world store
+here, so no class mark is being read. That is the last honest gap between this
+and production, and it is the sitting's to close: plant the grant on a class
+mark and the stub deletes itself with no viewer edit at all.
 
 **2 · Find the Post Office.**
 Either click the little boat at Ferry's crossing on the painting, or — easier —

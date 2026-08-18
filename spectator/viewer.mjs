@@ -2566,14 +2566,15 @@ const STYLE = `
 .wv-within-line.is-outside { font-style:italic; opacity:.75; }
 .wv-within-step { color:#d9b562; }
 .wv-within-step.is-here { color:#f0d489; font-weight:600; }
-.wv-actrows { display:flex; flex-direction:column; gap:5px; }
-.wv-act-enter, .wv-act-exit, .wv-scope-exit { border-color:#8c6f2e; color:#e2c072; }
-.wv-act-enter:hover, .wv-act-exit:hover, .wv-scope-exit:hover { border-color:#c8a24a; color:#f3dc9e; }
+.wv-scope-exit { border-color:#8c6f2e; color:#e2c072; }
+.wv-scope-exit:hover { border-color:#c8a24a; color:#f3dc9e; }
+/* what Enter would cross, and the word that door already spoke */
+.wv-cross-target { margin-top:6px; font-size:.75rem; color:var(--dim); }
+.wv-cross-target b { color:#e2c072; font-weight:600; }
 .wv-act-terms { font-size:.7rem; color:var(--dim); font-style:italic; margin:-1px 0 3px 2px; line-height:1.45; }
 .wv-word { margin-left:7px; padding:1px 6px; border-radius:9px; font-size:.62rem; letter-spacing:.09em;
   text-transform:uppercase; font-family:var(--mono); border:1px solid #6c5522; color:#c8a24a; }
-.wv-act-enter.is-opposed { border-color:#7a3f36; color:#e0a08c; }
-.wv-act-enter.is-opposed .wv-word { border-color:#7a3f36; color:#e0a08c; }
+.wv-word.is-opposed { border-color:#7a3f36; color:#e0a08c; }
 .wv-cross-notice { margin-top:7px; font-size:.73rem; color:#cbbf9c; line-height:1.5; }
 .wv-cross-notice.refusal { color:#e0a08c; }
 
@@ -5048,50 +5049,60 @@ export function mountViewer(appEl) {
   // front of this resident, exit only when she is within something. The two
   // predicates are the engine's own (`enterPrompt` / the within chain), so the
   // rail cannot offer a door the door itself would refuse.
+  /** WHICH mark `enter` would cross into, from where this resident stands.
+   *
+   *  Two rules, not one: a door you are already standing at is the geometric
+   *  prompt's answer; a door across the water is the SELECTED mark's, because
+   *  entering from outside bundles the walk in and so does not require you to
+   *  have arrived first. The selected mark wins when it is enterable, because
+   *  selecting IS the intent.
+   *
+   *  This decides the TARGET. It never decides whether the verb exists — that
+   *  is the apex's answer and the rail's derivation, and this function is
+   *  deliberately not allowed near it. */
+  function enterTarget() {
+    const chain = withinChainOf();
+    const selectedId = markInteraction.getState().selectedId;
+    const selected = selectedId && !chain.includes(selectedId) ? byId.get(selectedId) : null;
+    if (selected?.at && selected?.extent
+      && Math.max(selected.extent.w ?? 0, selected.extent.h ?? 0) < DIALS.world_scale_extent_m) return selected.id;
+    const standing = actorOrigin();
+    const nearby = standing && world
+      ? enterPrompt({ x: standing.x, y: standing.y }, world, { occupancy: occupancyMap(), handle: state.handle })
+      : null;
+    return nearby?.mark ?? null;
+  }
+
+  /** The standpoint the crossings put this resident in — WHERE THEY STAND IN
+   *  THE TREE, plus the last crossing's own words. State, not verbs.
+   *
+   *  There are no buttons in here, and that is the whole point of the block's
+   *  shape: R16 says the palette is derived and never hand-listed, and the
+   *  Actions rail above has a falsifier that feeds its derivation a verb
+   *  nothing in the system has ever heard of to prove it renders anything the
+   *  door grants. Enter and exit therefore arrive the way every other verb
+   *  does — through the apex's `actions`, into that derivation, out through
+   *  ACTION_DOORS. What lives here is the sentence a rail of buttons cannot
+   *  say: which marks you are inside, and what the last door answered. */
   function renderCrossings() {
     const box = $(root, ".wv-crossings");
     if (!box) return;
     if (!canAct()) { box.innerHTML = ""; return; }
     const chain = withinChainOf();
-    const inside = enteredMark();
-    const standing = actorOrigin();
-    // WHAT ENTER IS OFFERED, and why it is two rules rather than one. A door you
-    // are already standing at is the geometric prompt's answer; a door across
-    // the water is the SELECTED mark's, because entering from outside bundles
-    // the walk in (the QoL convergence) and so does not require you to have
-    // arrived first. Both are derived from where this resident actually stands
-    // — neither is a hand-listed button — and the selected mark wins when it is
-    // enterable, because selecting IS the intent.
-    const selectedId = markInteraction.getState().selectedId;
-    const selected = selectedId && !chain.includes(selectedId) ? byId.get(selectedId) : null;
-    const enterable = selected?.at && selected?.extent
-      && Math.max(selected.extent.w ?? 0, selected.extent.h ?? 0) < DIALS.world_scale_extent_m ? selected : null;
-    const nearby = standing && world
-      ? enterPrompt({ x: standing.x, y: standing.y }, world, { occupancy: occupancyMap(), handle: state.handle })
-      : null;
-    const offer = enterable
-      ? { mark: enterable.id, terms: enterable.entry ?? null, far: true }
-      : nearby ? { mark: nearby.mark, terms: nearby.terms, far: false } : null;
-    const rows = [];
-    if (offer) {
-      const terms = offer.terms;
-      // The word, shown BEFORE the press. It is a courtesy prediction, not the
-      // adjudication — the crossing settles at the door (R10) — but a rail that
-      // hides a standing `opposed` until you have pressed it is withholding the
-      // one thing the mark has already said out loud.
-      const word = terms?.word ?? "neutral";
-      rows.push(`<button type="button" class="ctl wv-act-enter${word === "opposed" ? " is-opposed" : ""}" data-enter="${esc(offer.mark)}">`
-        + `enter ${esc(nameOfMark(offer.mark))}<span class="wv-word">${esc(word)}</span></button>`
-        + (offer.far ? `<div class="wv-act-terms">the walk to her threshold comes with it — entering from outside bundles it in</div>` : "")
-        + (terms?.consequence ? `<div class="wv-act-terms">terms: ${esc(terms.consequence)}</div>` : ""));
-    }
-    if (inside) {
-      rows.push(`<button type="button" class="ctl wv-act-exit" data-exit="${esc(inside)}">exit ${esc(nameOfMark(inside))}</button>`);
-    }
+    const target = enterTarget();
+    const terms = target ? byId.get(target)?.entry ?? null : null;
     box.innerHTML = (chain.length
         ? `<div class="wv-within-line">within ${chain.map((id) => `<span class="wv-within-step" data-id="${esc(id)}">${esc(nameOfMark(id))}</span>`).join(" › ")}</div>`
         : `<div class="wv-within-line is-outside">within nothing — walking does not put you inside anything</div>`)
-      + (rows.length ? `<div class="wv-actrows">${rows.join("")}</div>` : "")
+      // What Enter would cross, and the word that door has ALREADY spoken. A
+      // courtesy prediction, never the adjudication — the crossing settles at
+      // the threshold (R10) — but a page that hides a standing `opposed` until
+      // after the press withholds the one thing the mark said out loud.
+      + (target
+        ? `<div class="wv-cross-target">Enter → <b>${esc(nameOfMark(target))}</b>`
+          + `<span class="wv-word${terms?.word === "opposed" ? " is-opposed" : ""}">${esc(terms?.word ?? "neutral")}</span></div>`
+          + (terms?.consequence ? `<div class="wv-act-terms">terms: ${esc(terms.consequence)}</div>` : "")
+        : "")
       + (state.crossing_notice ? `<div class="wv-cross-notice${state.crossing_notice.refused ? " refusal" : ""}">${esc(state.crossing_notice.text)}</div>` : "");
   }
 
@@ -6125,8 +6136,13 @@ export function mountViewer(appEl) {
     }
     if (e.target.closest(".wv-walk-confirm")) { confirmSelectedWalk(); return; }
     // ── the crossings (DEMO SLICE, step 5) ────────────────────────────────
-    const enterBtn = e.target.closest("[data-enter]");
-    if (enterBtn) { performEnter(enterBtn.dataset.enter); return; }
+    //
+    // No `[data-enter]` branch: the Enter button is the Actions rail's, minted
+    // by its derivation and routed by its own delegated `[data-action-verb]`
+    // handler into ACTION_DOORS.enter. What is left here are the three ways in
+    // that are NOT buttons in a palette — accepting terms at a threshold,
+    // stepping out from the scope chrome, and answering a boundary prompt —
+    // and each of them re-enters the same flow rather than forking a second one.
     const acceptBtn = e.target.closest("[data-enter-accept]");
     if (acceptBtn) {
       root.querySelectorAll(".wv-threshold").forEach((s) => s.remove());
@@ -6526,6 +6542,27 @@ export function mountViewer(appEl) {
         const position = backedPosition(selectedMarkId());
         openStakeSheetForSelection({ mode: "unstake", max: Number(position?.stamps ?? 0) });
       },
+    },
+    // ── the crossings (DEMO SLICE, step 5 — jetto/enter-exit-demo) ──────────
+    //
+    // Two more keys on this object, and that is the WHOLE of the viewer's part
+    // in enter/exit. The buttons are not written here: the apex grants the
+    // verbs, actionPalette derives the palette, actionLabel names them, and the
+    // delegated [data-action-verb] handler routes the click. If the door stops
+    // granting them they stop appearing, with no edit here — which is the
+    // property R16 is protecting and the reason there is no verb vocabulary in
+    // this file to add one to.
+    //
+    // `moment` answers about the INSTANT, never about the grant. Enter is
+    // granted wherever a resident stands; whether there is a threshold in front
+    // of them right now is a different question, and this is where it is asked.
+    enter: {
+      moment: () => (enterTarget() ? null : "select a mark to enter, or walk to a threshold"),
+      open: () => { const target = enterTarget(); if (target) performEnter(target); },
+    },
+    exit: {
+      moment: () => (enteredMark() ? null : "you are not within anything — walking somewhere does not put you inside it"),
+      open: () => { const inside = enteredMark(); if (inside) performExit(inside); },
     },
   };
 

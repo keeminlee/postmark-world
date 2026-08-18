@@ -311,23 +311,45 @@ createServer(async (req, res) => {
     }
 
     // ── the acts ────────────────────────────────────────────────────────────
-    // The BARE apex read, which the Actions rail (R16, landed on main
-    // 2026-08-18) polls for its derived palette. This demo office has no world
-    // store, so it has no class-mark gate and grants nothing — and it says so
-    // by answering an EMPTY palette rather than a 404. The rail's own words for
-    // that case are "no class mark in reach grants this actor anything here",
-    // which is exactly true here and is the honest frame for the crossings
-    // block below it: enter/exit are NOT granted by any class mark, which is
-    // precisely why they are still a demo.
+    // The BARE apex read — where the Actions rail (R16) gets its palette.
+    //
+    // THE RAIL IS NEVER HANDED A VERB LIST. That is R16's whole point and the
+    // viewer has a falsifier defending it, so enter/exit reach the buttons the
+    // way every other verb does: this door GRANTS them in `actions`, the rail
+    // derives the palette from what it was granted, and the viewer's registry
+    // only says how to open the flow. Take these two entries away and the
+    // buttons vanish with no viewer edit — which is exactly the property the
+    // demo is meant to show still holds.
+    //
+    // The grant is THIS OFFICE'S assertion, not a class mark's: a demo office
+    // with no world store has no class-mark gate to read one from. That is the
+    // honest gap and it is the last thing standing between this and production
+    // — when the law is planted at the sitting, the grant moves onto a class
+    // mark and this branch of the stub deletes itself.
     if (p === "/api/world/apex" && req.method === "GET") {
       const handle = url.searchParams.get("handle") ?? "";
-      const at = fractionalCrossing();
+      const at = stampAt(fractionalCrossing());
       const here = handle ? standpointOf(handle, at) : { x: 0, y: 0, name: "a spectator" };
       const within = occupancyAt(readCrossings().acts, at).get(handle) ?? [];
+      // A spectator is a camera and is granted nothing — the rail hides itself
+      // for them rather than showing an empty section.
+      const actions = handle ? [
+        { action: "enter", dispatches_to: "world_enter", grant: "yours", class: "resident", via: "within",
+          from: "the-town/resident",
+          blurb: "Cross a mark's threshold. Walking moves you to coordinates and puts you inside nothing; entering is the act with mechanical weight, and the mark answers it with its own word." },
+        { action: "exit", dispatches_to: "world_exit", grant: "yours", class: "resident", via: "within",
+          from: "the-town/resident",
+          blurb: "Step out of a mark you are within — you nullifying your own side of the edge you authored, which needs nobody's answer." },
+      ] : [];
       return json(res, 200, {
         standpoint: { stance: handle ? "embodied" : "spectator", handle: handle || null, x: here.x, y: here.y },
-        within, nearby: [], actions: [], granted: { yours: [], here: [] },
-        law: { source: "none — this demo office has no world store, so no class mark can grant anything", demo_stub: true },
+        within, nearby: [], actions,
+        granted: { yours: actions.map((a) => a.action), here: [] },
+        law: {
+          source: "the demo office itself — there is no world store here, so no class mark is being read",
+          demo_stub: true,
+          note: "enter/exit are granted by this stub, not by the town's law. Planting them on a class mark is the sitting's act, not this branch's.",
+        },
       });
     }
 
