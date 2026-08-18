@@ -19,7 +19,7 @@
     "./spectator/index.html": "./spectator/index.html"
   },
   "scripts": {
-    "test": "node --test tools/"
+    "test": "node --test \"tools/*.test.mjs\""
   },
   "repository": {
     "type": "git",
