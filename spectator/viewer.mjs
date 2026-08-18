@@ -1771,7 +1771,13 @@ export function actionLabel(action) {
 /**
  * The rail's buttons, from the apex's own `actions` answer.
  *
- * A BUTTON IS AN INITIATOR (R17, Keemin 2026-08-18). Keemin's reading of the
+ * A BUTTON IS AN INITIATOR — the law is `the-town/the-initiator`, slot
+ * `availability`: "enabled is the law's answer; what cannot begin is hidden"
+ * (WORLD/marks/let-there-be-light/logos/the-initiator/). Everything below is
+ * the machinery closing the gap to that node, in the sense `the-town/the-gap`
+ * means it; if the two ever disagree, the node is what is true.
+ *
+ * (R17, Keemin 2026-08-18.) Keemin's reading of the
  * old rail: "action being available seems to mean something other than 'you can
  * do this right now' — a lot of them are grayed out when they shouldn't, and
  * they light up when something is already about to be done." He was right, and
