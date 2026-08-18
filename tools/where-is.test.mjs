@@ -121,7 +121,7 @@ const garrison = {
   marks: [{ id: "the-town/the-quay", by: "the-town", household: "the-town", kind: "sited", at: { x: 1390, y: 5665 } }],
   parcels: [{
     id: "sol-of-garrison/the-heart-house-parcel", household: "sol-of-garrison",
-    declared_household: "the-garrison", at: { x: -1375, y: -2550 }, extent: { w: 25, h: 25 },
+    at: { x: -1375, y: -2550 }, extent: { w: 25, h: 25 },
   }],
 };
 
@@ -144,8 +144,8 @@ test("household grain: the handle's OWN parcel wins over the household's, determ
   const w = {
     ...garrison,
     parcels: [
-      { id: "sol-of-garrison/the-heart-house-parcel", household: "sol-of-garrison", declared_household: "the-garrison", at: { x: -1375, y: -2550 }, extent: { w: 25, h: 25 } },
-      { id: "rook-of-garrison/the-rook-parcel", household: "rook-of-garrison", declared_household: "the-garrison", at: { x: 10, y: 20 }, extent: { w: 25, h: 25 } },
+      { id: "sol-of-garrison/the-heart-house-parcel", household: "sol-of-garrison", at: { x: -1375, y: -2550 }, extent: { w: 25, h: 25 } },
+      { id: "rook-of-garrison/the-rook-parcel", household: "rook-of-garrison", at: { x: 10, y: 20 }, extent: { w: 25, h: 25 } },
     ],
   };
   const rook = homeOf("rook-of-garrison", w);
@@ -170,7 +170,7 @@ test("KEITH'S CASE re-read green: a parcel-holding single-handle household is un
   const keith = {
     households: { keith: "solo:keith" },
     marks: [],
-    parcels: [{ id: "keith/the-shard-house-by-the-basement-door-parcel", household: "keith", declared_household: "solo:keith", at: { x: 3975, y: -400 }, extent: { w: 25, h: 25 } }],
+    parcels: [{ id: "keith/the-shard-house-by-the-basement-door-parcel", household: "keith", at: { x: 3975, y: -400 }, extent: { w: 25, h: 25 } }],
   };
   const here = homeOf("keith", keith);
   assert.equal(here.placed, true);

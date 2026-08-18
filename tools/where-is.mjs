@@ -82,11 +82,11 @@ export function householdOf(handle, world) {
   return own?.household ?? handle;
 }
 
-// The key a published parcel row answers to. A row folded by a world that knew
-// the registry says so itself (`declared_household`); an older row carries only
-// the holding handle and is resolved the same way the reader is.
-const parcelKey = (parcel, world) =>
-  parcel?.declared_household ?? householdOf(parcel?.household, world);
+// The key a published parcel row answers to. Resolved the same way the READER
+// is, through the same map, so the two sides of the comparison cannot be at
+// different grains — which is the failure a second copy of the key on the row
+// itself would have made possible.
+const parcelKey = (parcel, world) => householdOf(parcel?.household, world);
 
 // EVERY parcel the resident's household holds, the handle's own first.
 //

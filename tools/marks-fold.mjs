@@ -443,6 +443,22 @@ export const PARCEL_CAP_EXCEPTIONS = new Map([
 // estate at other sizes stands; the door writes only this.
 export const PARCEL_EXTENT_M = 25;
 
+/**
+ * WHICH QUESTION THE HOUSEHOLD MAP ANSWERS, read off the values it carries.
+ * `gh:<digits>` is a credential id — one account, so a human holding two reads
+ * as two households. Anything else is a declared slug, the grain the law means.
+ * Reported rather than corrected: the fold consumes the projection it is handed
+ * and its job here is to say what that was, not to substitute a better one.
+ */
+export function householdKeyGrain(households) {
+  const values = Object.values(households ?? {});
+  if (!values.length) return "empty";
+  const cred = values.filter((v) => /^gh:\d+$/.test(String(v))).length;
+  if (cred === values.length) return "credential-id";
+  if (cred === 0) return "declared-slug";
+  return "mixed";
+}
+
 export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DIALS, households = null, fanup = "legacy" }) {
   const errors = [];
   const terrainIds = new Set((terrain?.features ?? []).map(f => "terrain:" + f.id));
@@ -925,22 +941,25 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       ...(consent.kept.has(mk.id) ? { kept: true } : {}),
     })),
     // `household` stays the HOLDING HANDLE — that is what a resident is called,
-    // and every existing reader means the handle by it. `declared_household` is
-    // the same grain the rest of the fold already counts on (`_cred`), published
-    // ADDITIVELY so a reader resolving ground at household grain — where-is.mjs,
-    // ruled 2026-08-18 — asks this row rather than deriving a second answer.
-    // Omitted entirely when no projection was supplied, so a fold without the
-    // town's registry serializes exactly as it did before.
-    parcels: parcels.map(p => ({
-      id: p.id, household: p.household,
-      ...(households ? { declared_household: credHh(p.household) } : {}),
-      at: { x: p._r.x, y: p._r.y }, extent: { w: p._r.w, h: p._r.h },
-    })),
-    // The projection this fold RAN ON, published so the readers downstream share
-    // one vocabulary instead of each re-deriving the household key. It is the
-    // town's declared registry as tools/households-project.mjs projected it; the
-    // fold does not resolve households, it consumes a resolution.
-    ...(households ? { households } : {}),
+    // and every existing reader means the handle by it. The household grain
+    // rides at the top of the state instead of on every row, deliberately: one
+    // copy cannot disagree with itself, and a per-row key would be a second
+    // place for the same fact to go stale.
+    parcels: parcels.map(p => ({ id: p.id, household: p.household, at: { x: p._r.x, y: p._r.y }, extent: { w: p._r.w, h: p._r.h } })),
+    // THE PROJECTION THIS FOLD RAN ON, published so readers downstream resolve
+    // household grain against the same vocabulary the fold counted with, rather
+    // than each deriving a second answer — the ruling of 2026-08-18, and the
+    // input where-is.mjs needs to read ground at household grain. The fold does
+    // not resolve households; it consumes a resolution and now says which.
+    //
+    // `household_key_grain` is DERIVED FROM THE VALUES, never asserted, because
+    // the two files that can land here answer different questions: the declared
+    // registry projected by tools/households-project.mjs keys by slug
+    // (`cadaeic.space`), while WORLD/households.json — still the CLI default —
+    // keys by credential id (`gh:293432145`), which files one human's two
+    // accounts as strangers. Both group safely; only one groups correctly. A
+    // reader that can see which it was handed can say so instead of guessing.
+    ...(households ? { households, household_key_grain: householdKeyGrain(households) } : {}),
     determined, vague, rivalries,
     // The carve, as an OVERLAY. Nobody's claim was edited to produce it: each
     // claim rect is whole on disk, and this says which regions of it the world
