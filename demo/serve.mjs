@@ -311,6 +311,26 @@ createServer(async (req, res) => {
     }
 
     // ── the acts ────────────────────────────────────────────────────────────
+    // The BARE apex read, which the Actions rail (R16, landed on main
+    // 2026-08-18) polls for its derived palette. This demo office has no world
+    // store, so it has no class-mark gate and grants nothing — and it says so
+    // by answering an EMPTY palette rather than a 404. The rail's own words for
+    // that case are "no class mark in reach grants this actor anything here",
+    // which is exactly true here and is the honest frame for the crossings
+    // block below it: enter/exit are NOT granted by any class mark, which is
+    // precisely why they are still a demo.
+    if (p === "/api/world/apex" && req.method === "GET") {
+      const handle = url.searchParams.get("handle") ?? "";
+      const at = fractionalCrossing();
+      const here = handle ? standpointOf(handle, at) : { x: 0, y: 0, name: "a spectator" };
+      const within = occupancyAt(readCrossings().acts, at).get(handle) ?? [];
+      return json(res, 200, {
+        standpoint: { stance: handle ? "embodied" : "spectator", handle: handle || null, x: here.x, y: here.y },
+        within, nearby: [], actions: [], granted: { yours: [], here: [] },
+        law: { source: "none — this demo office has no world store, so no class mark can grant anything", demo_stub: true },
+      });
+    }
+
     if (p === "/api/world/apex" && req.method === "POST") {
       const answer = await apex(await readBody(req));
       return json(res, answer?.error === "bounce" ? (answer.code ?? 422) : 200, answer);
