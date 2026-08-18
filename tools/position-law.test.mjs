@@ -31,7 +31,9 @@ const WORKS = "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works"
 
 /** A mark's frontmatter, as fields — the record is the source, not a fixture. */
 function markOf(rel) {
-  const text = readFileSync(join(here, "..", rel), "utf8");
+  // normalize first: a Windows checkout (autocrlf) hands this file CRLF, and
+  // the record's meaning is line-ending-agnostic — loadMarks reads \r?\n too
+  const text = readFileSync(join(here, "..", rel), "utf8").replace(/\r\n/g, "\n");
   const m = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   assert.ok(m, `${rel} has frontmatter and a body`);
   const fields = {};
