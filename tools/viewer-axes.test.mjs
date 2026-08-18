@@ -103,6 +103,8 @@ import {
   residentFace,
   residentHref,
   DEFAULT_FACE_COLOR,
+  actionLabel,
+  actionPalette,
 } from "../spectator/viewer.mjs";
 
 test("distance-band headings derive their approximate ranges from the LOD dials", () => {
@@ -1770,4 +1772,95 @@ test("the camera can be pointed at the crossing it is drawing", () => {
   assert.ok(oldWest > -95458, "and the peak was further out still");
   // and the zoom-IN floor is untouched by any of this
   assert.equal(MAX_ZOOM_IN, 60);
+});
+
+// ── the Actions rail's palette (R16) ─────────────────────────────────────────
+// The one property worth a falsifier: the rail must never contain a verb the
+// viewer knows the name of. Everything below feeds it verbs that do not exist
+// and checks that they arrive anyway.
+
+const entry = (action, over = {}) => ({
+  action, blurb: `${action} blurb`, class: "resident", from: "the-town/resident",
+  via: "ambient", grant: "yours", dispatches_to: `world_${action}`, ...over,
+});
+
+test("the palette is DERIVED: a verb minted tomorrow renders without a viewer edit", () => {
+  // "bellow" is not a word this file, the viewer, or the office knows.
+  const palette = actionPalette([entry("bellow")], { renderers: [] });
+  assert.equal(palette.length, 1);
+  assert.equal(palette[0].action, "bellow");
+  assert.equal(palette[0].label, "Bellow");
+  // it renders, and it renders HONESTLY — the office serves it, this viewer has
+  // no door, and the button says exactly that rather than vanishing
+  assert.equal(palette[0].enabled, false);
+  assert.match(palette[0].reason, /no door in this viewer yet/);
+  assert.match(palette[0].reason, /world_bellow/);
+});
+
+test("the three walls stay three different facts", () => {
+  const [unhandled] = actionPalette([entry("board", { dispatches_to: undefined })], { renderers: ["board"] });
+  assert.match(unhandled.reason, /office has no handler/, "law with no room behind it is L6's red, said out loud");
+
+  const [undoored] = actionPalette([entry("give")], { renderers: [] });
+  assert.match(undoored.reason, /no door in this viewer/, "the office serves it; the site-layer gap is ours");
+
+  const [moment] = actionPalette([entry("stake")], {
+    renderers: ["stake"], moment: () => "select a mark to back it",
+  });
+  assert.equal(moment.reason, "select a mark to back it", "everything is built and the instant is wrong");
+
+  const [ready] = actionPalette([entry("walk")], { renderers: ["walk"] });
+  assert.equal(ready.enabled, true);
+  assert.equal(ready.reason, null);
+});
+
+test("one button per verb, and the grant that travels with you wins the entry", () => {
+  const palette = actionPalette([
+    entry("say", { class: "the-quay", grant: "here", via: "within", from: "the-town/the-quay" }),
+    entry("say", { class: "resident", grant: "yours", via: "ambient", from: "the-town/resident" }),
+    entry("walk"),
+  ], { renderers: ["walk"] });
+  assert.deepEqual(palette.map((p) => p.action), ["say", "walk"], "the duplicate say is one button");
+  assert.equal(palette[0].grantedBy, "resident", "the ocap grant beat the ground's");
+  assert.equal(palette[0].from, "the-town/resident");
+});
+
+test("what you ARE is ranked above what the ground offers", () => {
+  const palette = actionPalette([
+    entry("post-notice", { class: "the-board", grant: "here" }),
+    entry("say", { grant: "yours" }),
+  ], { renderers: [] });
+  assert.deepEqual(palette.map((p) => p.action), ["say", "post-notice"]);
+});
+
+test("the kind fence is derived by NOT filtering — the rail renders what the door granted", () => {
+  // The office resolving a `human` actor answers with the human class mark's
+  // single grant. No `human -> ["say"]` line exists anywhere; the fence holds
+  // because the rail adds nothing to the door's answer.
+  const asHuman = actionPalette([
+    entry("say", { class: "human", from: "the-town/household/human", grant: "yours" }),
+  ], { renderers: [] });
+  assert.deepEqual(asHuman.map((p) => p.action), ["say"]);
+  assert.equal(asHuman[0].grantedBy, "human");
+  // and the same function, given a resident's answer, renders the resident's
+  // whole palette — one code path, two kinds, no vocabulary of its own
+  const asResident = actionPalette(
+    ["say", "walk", "leave-mark", "stake", "unstake", "note-to-self"].map((a) => entry(a)),
+    { renderers: ["walk", "stake", "unstake"] });
+  assert.equal(asResident.length, 6);
+  assert.deepEqual(asResident.filter((p) => p.enabled).map((p) => p.action), ["walk", "stake", "unstake"]);
+});
+
+test("an empty or malformed apex answer yields an empty palette, never a guess", () => {
+  assert.deepEqual(actionPalette([]), []);
+  assert.deepEqual(actionPalette(null), []);
+  assert.deepEqual(actionPalette(undefined), []);
+  assert.deepEqual(actionPalette([{ blurb: "no action key" }, { action: "  " }]), []);
+});
+
+test("a verb reads as its own name, hyphens and all", () => {
+  assert.equal(actionLabel("walk"), "Walk");
+  assert.equal(actionLabel("leave-mark"), "Leave mark");
+  assert.equal(actionLabel("note-to-self"), "Note to self");
+  assert.equal(actionLabel(""), "");
 });

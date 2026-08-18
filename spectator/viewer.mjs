@@ -1656,6 +1656,81 @@ export function backingButton(markId, stamps = 0) {
   return `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(markId)}" title="read backing and back this mark">${label}</button>`;
 }
 
+// ───────── the Actions rail (R16, 2026-08-18) ─────────
+//
+// DERIVED, NEVER LISTED. There is no vocabulary of verbs anywhere in this file,
+// and adding one is the defect this section exists to prevent. The apex's bare
+// read already answers the whole question — the class-mark gate × what is on
+// your spine or in your reach × the grants your kind carries — computed office
+// side by the one authority (world-apex.mjs), which is also the authority the
+// MCP door and lint L6 consult. This layer RANKS and DE-DUPLICATES that answer.
+// It never adds a verb and it never drops one for being unfamiliar, so a verb
+// minted on a class mark tomorrow arrives in the rail with no edit here.
+//
+// The actor-kind fence is derived the same way, by not existing: the rail shows
+// exactly what the door granted the selected actor, so it cannot over-show
+// relative to the law. When the office resolves a `human` actor, the human
+// class mark's single grant is what the read will carry, and this renders one
+// button — without a `human → ["say"]` line ever being written down.
+
+// A verb reads as its own name. Deriving the label from the word keeps a verb
+// minted tomorrow legible without a translation table to forget to update.
+export function actionLabel(action) {
+  const words = String(action ?? "").trim().replace(/[-_]+/g, " ");
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : "";
+}
+
+/**
+ * The rail's buttons, from the apex's own `actions` answer.
+ *
+ * `renderers` is the set of verbs this viewer has a door for; `moment` asks
+ * whether THIS instant supports a verb the actor genuinely holds, and answers
+ * with a one-line reason when it does not. The three ways a button can be
+ * disabled are kept distinct on purpose, because they are three different
+ * facts about the town: the law granted it and the OFFICE has no handler (L6's
+ * red, said out loud rather than hidden); the office serves it and this VIEWER
+ * has no door yet (the site-layer gap the act-as-human packet leaves open); or
+ * everything is built and the MOMENT is wrong (nothing selected). Hiding any of
+ * them would make the rail a claim about the world instead of a read of it.
+ */
+export function actionPalette(entries = [], { renderers = [], moment = () => null } = {}) {
+  const doors = new Set(renderers);
+  const seen = new Map();
+  for (const entry of Array.isArray(entries) ? entries : []) {
+    const action = String(entry?.action ?? "").trim();
+    if (!action) continue;
+    // One button per verb. A verb granted by more than one class in reach is
+    // still one act; the grant that travels with what you ARE wins the entry,
+    // because that is the one that follows you off this patch of ground.
+    const held = seen.get(action);
+    if (held && !(held.grant !== "yours" && entry.grant === "yours")) continue;
+    seen.set(action, entry);
+  }
+  const ranked = [...seen.values()].sort((a, b) =>
+    (a.grant === "yours" ? 0 : 1) - (b.grant === "yours" ? 0 : 1));
+  return ranked.map((entry) => {
+    const action = String(entry.action).trim();
+    const unhandled = !entry.dispatches_to;
+    const undoored = !unhandled && !doors.has(action);
+    const reason = unhandled
+      ? "the town's law grants this; the office has no handler for it yet"
+      : undoored
+      ? `no door in this viewer yet — the apex serves it as ${entry.dispatches_to}`
+      : moment(action, entry) || null;
+    return {
+      action,
+      label: actionLabel(action),
+      blurb: String(entry.blurb ?? ""),
+      from: entry.from ?? null,
+      grantedBy: entry.class ?? null,
+      via: entry.via ?? null,
+      grant: entry.grant ?? null,
+      enabled: !reason,
+      reason,
+    };
+  });
+}
+
 export function markByline(mark) {
   if (!mark?.by || !mark?.date) return "";
   return `By ${mark.by} ${String(mark.date).slice(0, 10)}`;
@@ -2478,6 +2553,23 @@ const STYLE = `
 .wv-nav .handlepick { display:flex; flex-wrap:wrap; gap:5px; }
 .wv-nav .handleopt.on { border-color:var(--you); color:var(--you); }
 .wv-nav .wv-identity h2 { margin-top:0; }
+/* The Actions rail sits under Act As and reads as its continuation — same
+   column, same type, no card of its own. The buttons wrap rather than scroll:
+   the palette grows with the law, and a row that scrolls sideways hides the
+   verb that arrived last. */
+.wv-nav .wv-actions { margin:8px 0 2px; font-size:.8rem; }
+.wv-nav .wv-actions[hidden] { display:none; }
+.wv-nav .wv-actionrow { display:flex; flex-wrap:wrap; gap:5px; }
+.wv-nav .wv-actionrow .wv-actbtn { padding:3px 8px; border:1px solid var(--line); border-radius:4px;
+  background:transparent; color:var(--paper); font:inherit; font-size:.76rem; cursor:pointer; }
+.wv-nav .wv-actionrow .wv-actbtn:hover:not(:disabled) { border-color:var(--you); color:var(--you); }
+/* Disabled is DIMMED, never hidden: the actor really does hold the verb, and
+   the title says which of the three walls is in the way. */
+.wv-nav .wv-actionrow .wv-actbtn:disabled { opacity:.4; cursor:not-allowed; }
+/* the grant that travels with what you are, marked apart from the ground's */
+.wv-nav .wv-actionrow .wv-actbtn.is-yours { border-left:2px solid var(--you); }
+.wv-nav .wv-actions-note { margin:6px 0 0; color:var(--dim); font-size:.72rem; line-height:1.4; }
+.wv-nav .wv-actions-note[hidden] { display:none; }
 /* The walk desk is a bubble on the painting now, in the bottom-right corner: same
    dark card, same rule down the left, in the amber a proposal is drawn in. It sits
    ABOVE the bubble layer, because it is the one thing on this page you are part
@@ -2713,6 +2805,21 @@ const MARKUP = `
       <div class="settlenow" hidden></div>
     </div>
     <div class="wv-identity"></div>
+    <!-- ACTIONS (Keemin, 2026-08-18, R16) — every apex-consuming button in one
+         place, directly under the actor they belong to, because what you can do
+         is a fact about WHO YOU ARE STANDING AS and belongs beside the switch
+         that says so. The buttons are derived from the apex's own answer (see
+         actionPalette): nothing here is a list of verbs, and a spectator has no
+         section at all rather than an empty one. -->
+    <section class="wv-actions" hidden>
+      <h2>Actions</h2>
+      <div class="wv-actionrow"></div>
+      <p class="wv-actions-note" hidden></p>
+      <!-- Where a rail-opened sheet hangs when the mark it acts on has no cell
+           on screen — the sheet is one node with one renderer, so it needs a
+           home here rather than a second copy of itself. -->
+      <div class="wv-actions-host"></div>
+    </section>
     <!-- WHAT HAS BEEN HAPPENING (Keemin, 2026-08-05) — the foot of the rail, under
          everything you can act with, because it is the one part of this column you
          read rather than press. -->
@@ -2863,6 +2970,10 @@ export function mountViewer(appEl) {
     actAs: SPECTATOR_ACTOR,
     actorBalance: null,                 // liquid stamps from keyless /stamps/{handle}; null while loading
     actorHome: null,                    // office-derived home only when no walk record exists
+    // The apex's own `actions` answer for whoever is selected — the Actions
+    // rail's only source. `for` pins it to the actor it was read for, so a
+    // switch never renders the previous resident's palette as the new one's.
+    palette: { for: null, entries: [], status: "idle", detail: "" },
     dials: { ...DIALS },
     dataSource: null,       // which world-state URL won (for the auto-update poll)
     asOf: null,             // X-Postmark-As-Of of the loaded fold (office-live only)
@@ -3044,17 +3155,16 @@ export function mountViewer(appEl) {
   }
   function markActions(m) {
     const full = byId.get(m.id) ?? m;
-    const backing = effectiveWeight(full);
-    const backingDisplay = backingButton(m.id, backing);
-    if (!canAct()) return `<span class="wv-cell-actions">${backingDisplay}</span>`;
-    const position = backedPosition(m.id);
-    return `<span class="wv-cell-actions">`
-      + backingDisplay
-      + (position ? `<button type="button" class="wv-cell-act stamp unstake" data-unstake-open data-mark="${esc(m.id)}" data-max="${Number(position.stamps)}">take back ${Number(position.stamps)}</button>` : "")
-      // no "walk here" chip: selecting the mark IS the intent, and the preview
-      // follows from the selection (Keemin 2026-08-04). Confirming is still its
-      // own deliberate step, on the walk desk.
-      + `</span>`;
+    // ONE DOOR PER VERB (R16, 2026-08-18). The "take back N" chip that used to
+    // sit here was a second entry point to unstake; the Actions rail is the
+    // one place an apex-consuming button lives now, and it reads the same
+    // selection this cell would have named. The ✦ readout stays: it is the
+    // mark's backing FIGURE, which the rail does not say and cannot.
+    //
+    // no "walk here" chip either: selecting the mark IS the intent, and the
+    // preview follows from the selection (Keemin 2026-08-04). Confirming is
+    // still its own deliberate step, on the walk desk.
+    return `<span class="wv-cell-actions">${backingButton(m.id, effectiveWeight(full))}</span>`;
   }
   // THE unified mark-cell — everything on the telling is one of these, and every
   // one names its mark id (Keemin 2026-07-23). role styles it (frame/ladder/law/fov);
@@ -4045,6 +4155,9 @@ export function mountViewer(appEl) {
     renderBubbles();
   }
   markInteraction.subscribe(syncMarkInteractionViews);
+  // stake and unstake read the selection for their moment, so the rail's
+  // disabled reasons follow it rather than waiting for the next full render
+  markInteraction.subscribe(() => renderActions());
 
   // ───────── walkers (write-release P2) ─────────
   // A walk is a DECLARED DEPARTURE; position is derived from that record and the
@@ -4700,6 +4813,7 @@ export function mountViewer(appEl) {
     walkState.changingCourse = false;
     clearWalkFeedback();
     renderWalkDestination();
+    renderActions(); // walk's moment is the armed destination, which the selection store never sees
   }
 
   function chooseWalkMark(id) {
@@ -4738,6 +4852,7 @@ export function mountViewer(appEl) {
     if (viewerJourneyState(actorWalker()).kind === "journey") walkState.changingCourse = true;
     clearWalkFeedback();
     renderWalkDestination();
+    renderActions(); // the walk button turns live the moment a destination is armed
     if (!actorOrigin()) showWalkRefusal("The office has no walk-ledger or sited-home origin for this resident.");
     else if (!selectedWalkPreview()) showWalkRefusal("Choose a destination with two finite coordinates.");
   }
@@ -4911,6 +5026,7 @@ export function mountViewer(appEl) {
         await Promise.all([loadIdentityWorld(), loadActorBalance()]);
         applyWorldLayer();
         reRender(rendered.text);
+        renderActions(); // the position just changed, and unstake's reason reads it
       } else {
         confirm.disabled = false;
       }
@@ -5611,6 +5727,9 @@ export function mountViewer(appEl) {
     if (chosen) { selectMark(chosen.dataset.choose, { scrollCell: true }); return; }
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
+    // The rail's one job: reach the flow that already exists for this verb.
+    const verb = e.target.closest("[data-action-verb]");
+    if (verb) { ACTION_DOORS[verb.dataset.actionVerb]?.open?.(); return; }
     if (e.target.closest(".wv-change-course")) {
       walkState.changingCourse = true;
       renderWalkDestination();
@@ -5869,6 +5988,8 @@ export function mountViewer(appEl) {
     }
     renderPresets();
     renderIdentity();
+    renderActions();
+    loadActionPalette().catch(() => {});
     renderModeControls();
     renderSpectatorCoordinate();
     renderWalkDestinations();
@@ -5889,6 +6010,7 @@ export function mountViewer(appEl) {
       clearSelectionAndDestination();
       root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
       renderIdentity();
+      renderActions();
       renderModeControls();
       renderSpectatorCoordinate();
       renderWalkDestinations();
@@ -5915,6 +6037,7 @@ export function mountViewer(appEl) {
     const manifestHome = data?.manifest?.homes?.find((entry) => entry.household === actor && entry.grid_m);
     if (manifestHome) state.actorHome = { x: Number(manifestHome.grid_m.x), y: Number(manifestHome.grid_m.y), markId: `${manifestHome.household}/${manifestHome.home_id}` };
     renderIdentity();
+    renderActions();
     renderModeControls();
     renderSpectatorCoordinate();
     renderWalkDestinations();
@@ -5923,6 +6046,9 @@ export function mountViewer(appEl) {
     mapCtx?.lockOn?.(); // one-shot: the painting glides to your dot on Act As (no sticky follow)
     renderWalkDestination();
     const preOrigin = actorOrigin();
+    // The palette is a read of the office, so it rides the background lane with
+    // home and balance rather than standing between the click and the swap.
+    loadActionPalette().catch(() => {});
     Promise.all([loadActorHome(), loadActorBalance()]).then(() => {
       if (state.handle !== actor) return; // the reader has moved on
       const fresh = actorOrigin();
@@ -5942,6 +6068,123 @@ export function mountViewer(appEl) {
           `<button type="button" class="ctl handleopt${state.actAs === handle ? " on" : ""}" data-act-as="${esc(handle)}" aria-pressed="${state.actAs === handle}">${esc(handle)}${state.actAs === handle
             ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`
             : ""}</button>`).join("")}</div>`;
+  }
+
+  // ───────── the Actions rail ─────────
+  //
+  // THE DOORS THIS VIEWER HAS. Each verb the apex serves either has a renderer
+  // here or does not, and the rail says which — it never quietly omits one.
+  // `moment` answers whether this instant supports the act, in the one line a
+  // reader needs to fix it. `open` reaches the flow that ALREADY EXISTS: there
+  // is no second code path to walking or to backing a mark, only a second way
+  // in, which is the whole of what R16 asked for.
+  const ACTION_DOORS = {
+    walk: {
+      moment: () => (!actorOrigin()
+        ? "the office has no walk origin for this resident yet"
+        : (!walkState.destination && viewerJourneyState(actorWalker()).kind !== "journey")
+        ? "click the painting to choose where to walk"
+        : null),
+      open: () => {
+        renderWalkDestination();
+        const desk = $(root, ".wv-walkdesk");
+        if (!desk || desk.hidden) return;
+        desk.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        $(desk, ".wv-walk-confirm")?.focus();
+      },
+    },
+    stake: {
+      moment: () => (selectedMarkId() ? null : "select a mark to back it"),
+      open: () => openStakeSheetForSelection({ mode: "stake" }),
+    },
+    unstake: {
+      moment: () => {
+        const id = selectedMarkId();
+        if (!id) return "select a mark to take stamps back from";
+        return backedPosition(id) ? null : `you hold no stamps on ${markIdentity({ id })}`;
+      },
+      open: () => {
+        const position = backedPosition(selectedMarkId());
+        openStakeSheetForSelection({ mode: "unstake", max: Number(position?.stamps ?? 0) });
+      },
+    },
+  };
+
+  const selectedMarkId = () => markInteraction.getState().selectedId || null;
+
+  // The rail's own way into the sheet the cells already open. The sheet hangs
+  // on the mark's cell when one is on screen — that is where a reader is
+  // looking — and on the rail's host when the selection is only a dot on the
+  // painting, so the act never opens somewhere invisible.
+  function openStakeSheetForSelection({ mode, max = "" }) {
+    const markId = selectedMarkId();
+    if (!markId) return;
+    const host = stakeHostFor(markId) ?? $(root, ".wv-actions-host");
+    openStakeSheet(host, { mode, max: mode === "unstake" ? max : "", markId });
+  }
+
+  // The palette is READ, not assumed: the apex answers what this actor can do
+  // from where they stand. It is fetched in the background and never gates the
+  // Act-As switch — the swap renders from what is already in hand and this
+  // arrives after, the same rule the switch itself was rebuilt on (0211fefa).
+  async function loadActionPalette() {
+    const handle = state.handle;
+    if (isSpectating() || !handle) {
+      state.palette = { for: null, entries: [], status: "idle", detail: "" };
+      renderActions();
+      return;
+    }
+    state.palette = { for: handle, entries: state.palette.for === handle ? state.palette.entries : [], status: "loading", detail: "" };
+    renderActions();
+    let next;
+    try {
+      const response = await fetch(officeUrl(`/world/apex?handle=${encodeURIComponent(handle)}`), {
+        headers: { accept: "application/json", ...authHeaders() },
+        credentials: "same-origin",
+      });
+      const body = await response.json().catch(() => null);
+      next = response.ok && Array.isArray(body?.actions)
+        ? { for: handle, entries: body.actions, status: "ready", detail: "" }
+        : { for: handle, entries: [], status: "unavailable", detail: body?.defect || `the apex answered ${response.status}` };
+    } catch (error) {
+      next = { for: handle, entries: [], status: "unavailable", detail: String(error?.message ?? error) };
+    }
+    if (state.handle !== handle || isSpectating()) return; // the reader has moved on
+    state.palette = next;
+    renderActions();
+  }
+
+  function renderActions() {
+    const box = $(root, ".wv-actions");
+    if (!box) return;
+    // A SPECTATOR HAS NO ACTIONS SECTION (R16) — not an empty one. A spectator
+    // is a camera; a heading over nothing would offer them a self they do not
+    // have here.
+    if (isSpectating() || !canAct()) { box.hidden = true; return; }
+    box.hidden = false;
+    const row = $(box, ".wv-actionrow");
+    const note = $(box, ".wv-actions-note");
+    const palette = actionPalette(state.palette.entries, {
+      renderers: Object.keys(ACTION_DOORS),
+      moment: (action) => ACTION_DOORS[action]?.moment?.() ?? null,
+    });
+    row.innerHTML = palette.map((item) => {
+      // The title carries the law's own words: what the act is (the blurb the
+      // apex quoted from the residue class), which class granted it, and how it
+      // reached you — plus the reason, when there is a wall.
+      const title = [item.blurb, item.grantedBy ? `granted by ${item.grantedBy}${item.via ? ` · ${item.via}` : ""}` : "", item.reason]
+        .filter(Boolean).join(" — ");
+      return `<button type="button" class="wv-actbtn${item.grant === "yours" ? " is-yours" : ""}"`
+        + ` data-action-verb="${esc(item.action)}"${item.enabled ? "" : " disabled"}`
+        + ` title="${esc(title)}">${esc(item.label)}</button>`;
+    }).join("");
+    const waiting = state.palette.status === "loading" && !palette.length;
+    note.hidden = !(waiting || state.palette.status === "unavailable" || !palette.length);
+    note.textContent = waiting
+      ? "reading what you can do from here…"
+      : state.palette.status === "unavailable"
+      ? `the apex could not be read — ${state.palette.detail}`
+      : palette.length ? "" : "no class mark in reach grants this actor anything here.";
   }
   // ───────── what has been happening ─────────
   // THE LEDGER IS FETCHED, NOT DERIVED. /api/walks answers with positions — who is
