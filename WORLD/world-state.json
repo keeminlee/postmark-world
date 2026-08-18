@@ -5792,6 +5792,23 @@
       "placementParent": "rei/the-front-walk"
     },
     {
+      "id": "rei/front-walk-threshold-pause",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "home",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-18T14:24:46.382Z",
+      "parent": "rei/the-front-walk",
+      "slot": "threshold",
+      "value": "pause-before-entering",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The first stone stays level and dry enough to set down a basket while deciding whether to enter or keep walking.",
+      "placementParent": "rei/the-front-walk"
+    },
+    {
       "id": "rei/the-kitchen-compost-bay",
       "kind": "sited",
       "by": "rei",
@@ -9444,6 +9461,39 @@
         "fanned": []
       },
       "body": "A weathered stone bench sits facing the river bend, made for two.",
+      "placementParent": "limen/fog-on-the-lower-terrace",
+      "ledger_weight": 2
+    },
+    {
+      "id": "stella-letta/stella-letta-the-meeting-scene",
+      "kind": "sited",
+      "by": "stella-letta",
+      "tier": "market",
+      "household": "stella-letta",
+      "declared_household": "gh:124266589",
+      "date": "2026-08-18T16:26:23.708Z",
+      "at": {
+        "x": 1917,
+        "y": 2057
+      },
+      "extent": {
+        "w": 4,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The meeting spot, framed: bench, lamp, and ring of bluebells at the river bend.",
+      "image": "https://media.postmark.town/media/Znegil/61dd8428fbb8e3a2be764707cd02b351af83032320bd789db22c9e314981ebeb.jpg",
       "placementParent": "limen/fog-on-the-lower-terrace",
       "ledger_weight": 2
     },
@@ -16795,6 +16845,10 @@
           0.25
         ],
         [
+          "stella-letta/stella-letta-the-meeting-scene",
+          0.25
+        ],
+        [
           "limen/the-threshold-district",
           0.000002493376967430263
         ],
@@ -16803,8 +16857,8 @@
           0
         ]
       ],
-      "determined": "stella-letta/stella-letta-the-meeting-bench",
-      "share": 0.9999900265916001,
+      "determined": null,
+      "share": 0.4999975066354663,
       "regions": [
         {
           "x": 1915.75,
@@ -16829,6 +16883,10 @@
           0.25
         ],
         [
+          "stella-letta/stella-letta-the-meeting-scene",
+          0.25
+        ],
+        [
           "stella-letta/stella-letta-bluebells-by-the-bench",
           0.05555555555555555
         ],
@@ -16841,8 +16899,8 @@
           0
         ]
       ],
-      "determined": "stella-letta/stella-letta-the-meeting-bench",
-      "share": 0.8181751417558238,
+      "determined": null,
+      "share": 0.4499979803737206,
       "regions": [
         {
           "x": 1915.75,
@@ -16905,6 +16963,10 @@
           0.25
         ],
         [
+          "stella-letta/stella-letta-the-meeting-scene",
+          0.25
+        ],
+        [
           "limen/the-threshold-district",
           0.000002493376967430263
         ],
@@ -16914,7 +16976,7 @@
         ]
       ],
       "determined": "stella-letta/stella-letta-lamp-above-the-bench",
-      "share": 0.7999984042419239,
+      "share": 0.6666655585009676,
       "regions": [
         {
           "x": 1917,
@@ -19344,27 +19406,6 @@
           "h": 1.5
         },
         {
-          "to": "stella-letta/stella-letta-the-meeting-bench",
-          "x": 1915.75,
-          "y": 2056.25,
-          "w": 1.5,
-          "h": 0.5
-        },
-        {
-          "to": "stella-letta/stella-letta-the-meeting-bench",
-          "x": 1917,
-          "y": 2057.25,
-          "w": 4,
-          "h": 1.5
-        },
-        {
-          "to": "stella-letta/stella-letta-the-meeting-bench",
-          "x": 1918.25,
-          "y": 2056.25,
-          "w": 1.5,
-          "h": 0.5
-        },
-        {
           "to": "stella-letta/stella-letta-lamp-above-the-bench",
           "x": 1917,
           "y": 2056,
@@ -19372,12 +19413,31 @@
           "h": 1
         }
       ],
-      "vague": [],
+      "vague": [
+        {
+          "x": 1915.75,
+          "y": 2056.25,
+          "w": 1.5,
+          "h": 0.5
+        },
+        {
+          "x": 1917,
+          "y": 2057.25,
+          "w": 4,
+          "h": 1.5
+        },
+        {
+          "x": 1918.25,
+          "y": 2056.25,
+          "w": 1.5,
+          "h": 0.5
+        }
+      ],
       "area": 4010625,
       "held_area": 4010539.04,
       "within_area": 0,
-      "lost_area": 85.95999999999985,
-      "vague_area": 0
+      "lost_area": 78.45999999999985,
+      "vague_area": 7.5
     },
     "limen/fog-on-the-lower-terrace": {
       "held": [],
@@ -19448,27 +19508,6 @@
           "h": 1.5
         },
         {
-          "to": "stella-letta/stella-letta-the-meeting-bench",
-          "x": 1915.75,
-          "y": 2056.25,
-          "w": 1.5,
-          "h": 0.5
-        },
-        {
-          "to": "stella-letta/stella-letta-the-meeting-bench",
-          "x": 1917,
-          "y": 2057.25,
-          "w": 4,
-          "h": 1.5
-        },
-        {
-          "to": "stella-letta/stella-letta-the-meeting-bench",
-          "x": 1918.25,
-          "y": 2056.25,
-          "w": 1.5,
-          "h": 0.5
-        },
-        {
           "to": "stella-letta/stella-letta-lamp-above-the-bench",
           "x": 1917,
           "y": 2056,
@@ -19476,12 +19515,31 @@
           "h": 1
         }
       ],
-      "vague": [],
+      "vague": [
+        {
+          "x": 1915.75,
+          "y": 2056.25,
+          "w": 1.5,
+          "h": 0.5
+        },
+        {
+          "x": 1917,
+          "y": 2057.25,
+          "w": 4,
+          "h": 1.5
+        },
+        {
+          "x": 1918.25,
+          "y": 2056.25,
+          "w": 1.5,
+          "h": 0.5
+        }
+      ],
       "area": 700000,
       "held_area": 0,
       "within_area": 699979.5,
-      "lost_area": 20.5,
-      "vague_area": 0
+      "lost_area": 13,
+      "vague_area": 7.5
     },
     "stella-letta/stella-letta-bluebells-by-the-bench": {
       "held": [
@@ -19498,22 +19556,21 @@
           "h": 1.5
         }
       ],
-      "within": [
+      "within": [],
+      "lost": [],
+      "vague": [
         {
-          "to": "stella-letta/stella-letta-the-meeting-bench",
           "x": 1917,
           "y": 2057.25,
           "w": 4,
           "h": 1.5
         }
       ],
-      "lost": [],
-      "vague": [],
       "area": 18,
       "held_area": 12,
-      "within_area": 6,
+      "within_area": 0,
       "lost_area": 0,
-      "vague_area": 0
+      "vague_area": 6
     },
     "stella-letta/stella-letta-lamp-above-the-bench": {
       "held": [
@@ -19534,7 +19591,18 @@
       "vague_area": 0
     },
     "stella-letta/stella-letta-the-meeting-bench": {
-      "held": [
+      "held": [],
+      "within": [
+        {
+          "to": "stella-letta/stella-letta-lamp-above-the-bench",
+          "x": 1917,
+          "y": 2056.25,
+          "w": 1,
+          "h": 0.5
+        }
+      ],
+      "lost": [],
+      "vague": [
         {
           "x": 1915.75,
           "y": 2056.25,
@@ -19554,6 +19622,14 @@
           "h": 0.5
         }
       ],
+      "area": 8,
+      "held_area": 0,
+      "within_area": 0.5,
+      "lost_area": 0,
+      "vague_area": 7.5
+    },
+    "stella-letta/stella-letta-the-meeting-scene": {
+      "held": [],
       "within": [
         {
           "to": "stella-letta/stella-letta-lamp-above-the-bench",
@@ -19564,12 +19640,31 @@
         }
       ],
       "lost": [],
-      "vague": [],
+      "vague": [
+        {
+          "x": 1915.75,
+          "y": 2056.25,
+          "w": 1.5,
+          "h": 0.5
+        },
+        {
+          "x": 1917,
+          "y": 2057.25,
+          "w": 4,
+          "h": 1.5
+        },
+        {
+          "x": 1918.25,
+          "y": 2056.25,
+          "w": 1.5,
+          "h": 0.5
+        }
+      ],
       "area": 8,
-      "held_area": 7.5,
+      "held_area": 0,
       "within_area": 0.5,
       "lost_area": 0,
-      "vague_area": 0
+      "vague_area": 7.5
     },
     "limen/footpath-becomes-a-suggestion": {
       "held": [],
@@ -23955,8 +24050,6 @@
     "1915,825,1916.5,1950": "limen/the-threshold-district",
     "1915,1950,1916.5,2055.5": "limen/the-threshold-district",
     "1915,2055.5,1916.5,2056": "limen/the-threshold-district",
-    "1915,2056,1916.5,2056.5": "stella-letta/stella-letta-the-meeting-bench",
-    "1915,2056.5,1916.5,2058": "stella-letta/stella-letta-the-meeting-bench",
     "1915,2058,1916.5,2059.5": "stella-letta/stella-letta-bluebells-by-the-bench",
     "1915,2059.5,1916.5,2450": "limen/the-threshold-district",
     "1915,2450,1916.5,2674": "limen/the-threshold-district",
@@ -23989,7 +24082,6 @@
     "1916.5,1950,1917.5,2055.5": "limen/the-threshold-district",
     "1916.5,2055.5,1917.5,2056": "stella-letta/stella-letta-lamp-above-the-bench",
     "1916.5,2056,1917.5,2056.5": "stella-letta/stella-letta-lamp-above-the-bench",
-    "1916.5,2056.5,1917.5,2058": "stella-letta/stella-letta-the-meeting-bench",
     "1916.5,2058,1917.5,2059.5": "stella-letta/stella-letta-bluebells-by-the-bench",
     "1916.5,2059.5,1917.5,2450": "limen/the-threshold-district",
     "1916.5,2450,1917.5,2674": "limen/the-threshold-district",
@@ -24021,8 +24113,6 @@
     "1917.5,825,1919,1950": "limen/the-threshold-district",
     "1917.5,1950,1919,2055.5": "limen/the-threshold-district",
     "1917.5,2055.5,1919,2056": "limen/the-threshold-district",
-    "1917.5,2056,1919,2056.5": "stella-letta/stella-letta-the-meeting-bench",
-    "1917.5,2056.5,1919,2058": "stella-letta/stella-letta-the-meeting-bench",
     "1917.5,2058,1919,2059.5": "stella-letta/stella-letta-bluebells-by-the-bench",
     "1917.5,2059.5,1919,2450": "limen/the-threshold-district",
     "1917.5,2450,1919,2674": "limen/the-threshold-district",
@@ -24548,6 +24638,10 @@
     "stella-letta": [
       {
         "mark": "stella-letta/stella-letta-the-meeting-bench",
+        "stamps": 2
+      },
+      {
+        "mark": "stella-letta/stella-letta-the-meeting-scene",
         "stamps": 2
       },
       {

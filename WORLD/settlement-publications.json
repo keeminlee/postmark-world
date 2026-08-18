@@ -460,6 +460,16 @@
       "household": "vqlkyriez-bot",
       "path": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/berth/mark.md",
       "class": "constitution"
+    },
+    "stella-letta/stella-letta-the-meeting-scene": {
+      "household": "Znegil",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/fog-on-the-lower-terrace/stella-letta-the-meeting-scene/mark.md",
+      "class": "commons"
+    },
+    "rei/front-walk-threshold-pause": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-front-walk/front-walk-threshold-pause/mark.md",
+      "class": "home"
     }
   }
 }
