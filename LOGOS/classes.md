@@ -12,11 +12,11 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/thing`, `the-town/stake`, `the-town/note`, `the-town/mark`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
 `the-town/town`, `the-town/crossing`, `the-town/human`,
-`the-town/timetable`, `the-town/bounty`,
+`the-town/timetable`, `the-town/bounty`, `the-town/entry`,
 `the-town/postmark-node`, `the-town/postmark-edge`, `the-town/postmark-class`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — thirty-two of the thirty-three class-nodes
-standing in the Keeping Works (the thirty-third, response-edge, is sourced
+and `the-town/exposure` — thirty-three of the thirty-four class-nodes
+standing in the Keeping Works (the thirty-fourth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -60,10 +60,10 @@ family may carry them, and the family is positionless by taxonomy, which is
 where "optional position" went: the optionality dissolved into the tree.
 `position` and `exposure` stand as predicate's child classes (a position
 node IS a predicate — it describes the node it hangs off); the position
-SLOT is postmark-node's own predicate child, `value: open` — **a slot is a
+SLOT is postmark-node own predicate child, `value: unsealed` — **a slot is a
 predicate child of its class: sealed when the child carries the value
-(`character-cap`, 150), open when it carries `value: open` and each
-instance fills its own** (sealed = class-governed, open =
+(`character-cap`, 150), unsealed when it carries `value: unsealed` and each
+instance fills its own** (sealed = class-governed, unsealed =
 instance-governed; § The two constitutionalities is this pair's law, rank
 untangled from governance). `postmark-class` stands beside postmark-node —
 the law's node: every class-node is its instance, itself included, the one
@@ -102,7 +102,7 @@ the note verb's machinery reads its own store, never marks). Classes whose insta
 dials (departure, sound, light, fog, emission), schedules others board
 (timetable), identities and memberships (resident, berth, entity, household,
 member-of), ground and papers (parcel, address, home, window, profile),
-money and records (stake, mark, crossing, town), and the graph's own
+money and records (stake, mark, crossing, entry, town), and the graph's own
 substrate (postmark-node, postmark-edge, postmark-class, predicate, portal,
 position, exposure — instances of
 the spine arrive by derivation or by act, never by hand) — stay town-only
@@ -152,14 +152,17 @@ A class carries two independent constitutionalities:
    predicate node with its own tier: walk-speed may be constitutional for all
    residents while a name is each resident's own. A slot may be **sealed** at
    class level (instances cannot carry a rival — the param is uniform by law)
-   or **open** (each instance fills its own). Partial constitutionality is
+   or **unsealed** (each instance fills its own). Partial constitutionality is
    tree position, nothing more. *The 2026-08-18 gloss: sealed is
-   CLASS-GOVERNED, open is INSTANCE-GOVERNED — the axis is where the value
+   CLASS-GOVERNED, unsealed is INSTANCE-GOVERNED — the axis is where the value
    lives, never rank. A sealed slot is the class speaking a value about
-   every instance; an open slot is the class speaking only the grammar, so
+   every instance; an unsealed slot is the class speaking only the grammar, so
    there is no rank collision because the class never spoke a value. On
    disk a slot is a predicate child of its class: sealed carries the value,
-   open carries `value: open`.*
+   unsealed carries `value: unsealed` — and an unsealed slot also declares
+   its values TIER, the custody axis (no-sovereign-jails, 2026-08-18):
+   entry-law is unsealed + sovereign custody, exit-law is unsealed +
+   constitutional custody — scope and custody compose.*
 2. **Its shape is governed like its values.** The class-node is ground; a
    new predicate slot is a child declared on that ground. Whether the slot
    roster is closed (new slots meet compiled opposition; only the town's pen

@@ -55,3 +55,22 @@ test("the human's say grant is for: human (the act-as-human fence, same ruling)"
   assert.ok(say, "the human class grants say");
   assert.equal(say.for, "human");
 });
+
+test("the resident's enter and exit grants stand, residue the-town/entry (ruled 2026-08-18 — the enter/exit node planting; the door gap is L6's red, not this suite's)", () => {
+  const actions = markActions(
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/resident/mark.md");
+  for (const verb of ["enter", "exit"]) {
+    const g = actions.find((a) => a.action === verb);
+    assert.ok(g, `the resident class grants ${verb}`);
+    assert.equal(g.residue, "the-town/entry",
+      "one residue for both verbs: exit writes the next entry, to the effective parent (the-walk's own grammar)");
+  }
+});
+
+test("the exit-law slot is unsealed in scope and constitutional in custody — no sovereign jails (ruled 2026-08-18)", () => {
+  const slot = readFileSync(join(here, "..",
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-node/exit-law-slot/mark.md"), "utf8");
+  assert.match(slot, /value: unsealed/, "per-mark exit laws may exist (the Post Office underway)");
+  assert.match(slot, /values-tier: constitution/,
+    "only the town's pen bars a leaving — a resident exit law is nothing");
+});

@@ -1,0 +1,13 @@
+---
+kind: class
+by: the-town
+tier: constitution
+date: 2026-08-18
+class: entry
+version: 1
+dials: {}
+implements: []
+source: LOGOS/classes.md
+---
+
+An entry is one crossing written — who crossed, into what, the word at the threshold; exit writes the next entry, to the effective parent.
