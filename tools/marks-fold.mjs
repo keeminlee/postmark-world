@@ -924,7 +924,23 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // a world with no consent words serializes exactly as it did before.
       ...(consent.kept.has(mk.id) ? { kept: true } : {}),
     })),
-    parcels: parcels.map(p => ({ id: p.id, household: p.household, at: { x: p._r.x, y: p._r.y }, extent: { w: p._r.w, h: p._r.h } })),
+    // `household` stays the HOLDING HANDLE — that is what a resident is called,
+    // and every existing reader means the handle by it. `declared_household` is
+    // the same grain the rest of the fold already counts on (`_cred`), published
+    // ADDITIVELY so a reader resolving ground at household grain — where-is.mjs,
+    // ruled 2026-08-18 — asks this row rather than deriving a second answer.
+    // Omitted entirely when no projection was supplied, so a fold without the
+    // town's registry serializes exactly as it did before.
+    parcels: parcels.map(p => ({
+      id: p.id, household: p.household,
+      ...(households ? { declared_household: credHh(p.household) } : {}),
+      at: { x: p._r.x, y: p._r.y }, extent: { w: p._r.w, h: p._r.h },
+    })),
+    // The projection this fold RAN ON, published so the readers downstream share
+    // one vocabulary instead of each re-deriving the household key. It is the
+    // town's declared registry as tools/households-project.mjs projected it; the
+    // fold does not resolve households, it consumes a resolution.
+    ...(households ? { households } : {}),
     determined, vague, rivalries,
     // The carve, as an OVERLAY. Nobody's claim was edited to produce it: each
     // claim rect is whole on disk, and this says which regions of it the world

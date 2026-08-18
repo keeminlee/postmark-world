@@ -19,7 +19,8 @@
 // TWO questions, deliberately distinct — conflating them is its own bug:
 //   homeOf(handle)  — where do you LIVE. Your ground. Ruling 7: the parcel IS
 //                     the home; the house is a sited mark standing on it.
-//   whereIs(handle) — where ARE you. Your walk if you have one, else your home.
+//   whereIs(handle) — where ARE you. Your walk if you have one, else your home,
+//                     else the town's porch (see THE PORCH below).
 //
 // Pure: no fs, no git, no engine import — the caller supplies the folded world
 // and the parsed ledger, exactly as walk.mjs takes a record and a clock. That is
@@ -28,43 +29,116 @@
 
 import { currentDeparture, positionAt, fractionalCrossing } from "./walk.mjs";
 
-// The honest nowhere. A resident with no ground and no walk is not at the origin
-// — they are NOT PLACED, and every caller must be able to tell those apart. The
-// grid origin is Ferry's crossing, a real place; returning it for "unknown" is
-// how a viewer ends up telling a dragon he is standing in the Town Centre.
+// The honest nowhere. A resident the record cannot place is NOT PLACED, and
+// every caller must be able to tell that from a coordinate. The grid origin is
+// Ferry's crossing, a real place; returning it for "unknown" is how a viewer
+// ends up telling a dragon he is standing in the Town Centre.
 export const NOWHERE = Object.freeze({
   x: null, y: null, placed: false, source: null, mark_id: null,
 });
 
-// A handle's household. Marks carry `household`; for the common case where a
-// handle is its own household this still answers correctly.
+// THE PORCH. Ruled 2026-08-18 (Keemin): a resident with no walk and no ground
+// stands at the quay — the town's porch — rather than nowhere at all.
+//
+// This does NOT retire the rule above; it is the reason that rule was written,
+// served better. What the old comment forbids is a place SMUGGLED IN as an
+// answer, and it is right to forbid it: the dragon read the Town Centre because
+// nothing in the answer said "we are guessing". So the porch arrives DECLARED —
+// `source: "quay"` and the quay's own mark id — and any caller that cared about
+// the distinction can still make it, on a field rather than by inference.
+//
+// The alternative it replaces was not honesty, it was silence: the plural answer
+// simply dropped everyone it could not place, so a third of the roll was absent
+// from the town's own map with nothing anywhere saying so. A labelled default is
+// legible; an omission is not.
+//
+// The coordinate is READ FROM THE RECORD, never held here. A world whose fold
+// has no quay has no porch, and answers NOWHERE — refuse or disclose an absent
+// input, never quietly substitute for it.
+export const QUAY_MARK_ID = "the-town/the-quay";
+
+export function porchOf(world) {
+  const quay = (world?.marks ?? []).find((m) => m.id === QUAY_MARK_ID);
+  if (!quay || !Number.isFinite(quay.at?.x) || !Number.isFinite(quay.at?.y)) return { ...NOWHERE };
+  return { x: quay.at.x, y: quay.at.y, placed: true, source: "quay", mark_id: quay.id };
+}
+
+// A handle's household key, at the grain the town DECLARES.
+//
+// Ruled 2026-08-18: ground resolves at HOUSEHOLD grain. The vocabulary is the
+// one the fold already consumes — the registry projection from the town's own
+// resolver (tools/households-project.mjs), published back out as
+// `world.households`. Asking it here rather than deriving a second answer is the
+// whole point: a second resolver is how the four position implementations this
+// module replaced came to disagree in the first place.
+//
+// A handle the registry does not know falls back to what it always did — the
+// household its own marks carry, else the handle. Registry lag must never
+// unplace anyone; it may only leave them ungrouped (households-project's law).
 export function householdOf(handle, world) {
+  const declared = world?.households?.[handle];
+  if (declared) return declared;
   const own = (world?.marks ?? []).find((m) => m.by === handle && m.household);
   return own?.household ?? handle;
 }
 
-// The household's parcel, off the fold's published `parcels` list.
+// The key a published parcel row answers to. A row folded by a world that knew
+// the registry says so itself (`declared_household`); an older row carries only
+// the holding handle and is resolved the same way the reader is.
+const parcelKey = (parcel, world) =>
+  parcel?.declared_household ?? householdOf(parcel?.household, world);
+
+// EVERY parcel the resident's household holds, the handle's own first.
+//
+// Plural because a household may hold several (the claim cap is 3, and the
+// Reeves' four stand by exception) — and because the reading defect this fixes
+// was exactly the assumption that a resident's ground is a resident's own.
+//
+// THE CLAIMING LAW IS UNCHANGED. "Every resident-handle may hold one parcel"
+// stays handle-grain (MARKS.md § Parcels) and the cap stays credential-grain.
+// This changes who can READ ground, never who may hold it.
+export function parcelsFor(handle, world) {
+  if (!handle) return [];
+  const parcels = world?.parcels ?? [];
+  const key = householdOf(handle, world);
+  const own = parcels.filter((p) => p.household === handle);
+  const family = parcels.filter((p) => p.household !== handle && parcelKey(p, world) === key);
+  return [...own, ...family];
+}
+
+// The one parcel a single-parcel caller means. Kept because most callers hold
+// exactly one and should not have to know that plural is possible.
 export function parcelFor(handle, world) {
-  const hh = householdOf(handle, world);
-  if (!hh) return null;
-  return (world?.parcels ?? []).find((p) => p.household === hh) ?? null;
+  return parcelsFor(handle, world)[0] ?? null;
 }
 
 // WHERE DO YOU LIVE. The parcel is an AREA and a standpoint is a POINT, so
 // something must choose: this takes the centre (CALLS.md C2).
+//
+// When a household holds several, the pick is DETERMINISTIC and it SAYS WHICH:
+// the handle's own ground first, else the household's first in fold order. A
+// resident reading a sibling's ground should be able to see that is what
+// happened, so `via` and the full holding are on the answer.
 export function homeOf(handle, world) {
-  const parcel = parcelFor(handle, world);
+  const parcels = parcelsFor(handle, world);
+  const parcel = parcels[0] ?? null;
   if (!parcel || !Number.isFinite(parcel.at?.x) || !Number.isFinite(parcel.at?.y)) return { ...NOWHERE };
   return {
     x: parcel.at.x, y: parcel.at.y, placed: true, source: "parcel",
     mark_id: parcel.id ?? null, parcel,
+    household: householdOf(handle, world),
+    via: parcel.household === handle ? "own" : "household",
+    household_parcels: parcels.map((p) => p.id),
   };
 }
 
 // WHERE ARE YOU. A declared walk wins — it is the resident's own most recent
-// statement about themselves — and home is the standing answer underneath it.
+// statement about themselves — then the ground you live on, then the porch.
 // `departures` is walk.mjs's parsed ledger; pass [] when a surface only cares
 // about ground.
+//
+// THREE TIERS, one derivation, and each says which it is. Before this there were
+// two tiers and a silence; the silence was the bug (see THE PORCH).
 export function whereIs(handle, { world = null, departures = [], at = fractionalCrossing() } = {}) {
   const departure = currentDeparture(departures ?? [], handle);
   if (departure) {
@@ -77,7 +151,9 @@ export function whereIs(handle, { world = null, departures = [], at = fractional
       };
     }
   }
-  return homeOf(handle, world);
+  const home = homeOf(handle, world);
+  if (home.placed) return home;
+  return porchOf(world);
 }
 
 // EVERY placed resident, in ONE list, in one vocabulary.
@@ -92,8 +168,13 @@ export function whereIs(handle, { world = null, departures = [], at = fractional
 // species from one who had.
 //
 // So: one list, and exactly two states — `moving` or still. Provenance survives
-// as `source` ("walk" | "parcel") because it is honest and belongs in a tooltip;
-// it just never decides what someone looks like.
+// as `source` ("walk" | "parcel" | "quay") because it is honest and belongs in a
+// tooltip; it just never decides what someone looks like.
+//
+// `source` IS THE HONESTY, so it must never be broader than what it claims. A
+// resident standing on the porch because the record has nothing else to say
+// about them reads `quay`, not `walk` — a placement is not an act its subject
+// performed, and calling it one misattributes the act to them.
 //
 // `handles` is who to consider. Callers pass the roster they know (parcel
 // households plus anyone with a walk record); this owns the shape, so the office
@@ -131,5 +212,9 @@ export function sourceLabel(where, handle = "this resident") {
       ? `the road — a walk in progress (${Math.round(where.position.remainingM)} m to go)`
       : "where the walk arrived";
   }
+  // The porch says out loud that it is a default, because a reader who cannot
+  // tell a default from a choice is the reader NOWHERE was written to protect.
+  if (where.source === "quay") return `the quay — the town's porch, where the record places anyone it cannot yet place elsewhere`;
+  if (where.via === "household") return `their household's ground (${where.mark_id})`;
   return `their ground (${where.mark_id})`;
 }
