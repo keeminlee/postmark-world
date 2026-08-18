@@ -162,7 +162,16 @@ A class carries two independent constitutionalities:
    unsealed carries `value: unsealed` — and an unsealed slot also declares
    its values TIER, the custody axis (no-sovereign-jails, 2026-08-18):
    entry-law is unsealed + sovereign custody, exit-law is unsealed +
-   constitutional custody — scope and custody compose.*
+   constitutional custody — scope and custody compose. Two further
+   governance words, ruled the same night: **witnessed** (stamped by the
+   act at its own instant, chosen by nobody, never recomputed — the time
+   slot) and **derived** (computed at read against the standpoint, never
+   stored — position, tense, exposure, every effect). The stored record
+   holds only the witnessed and the declared; a thing may stand as a
+   stored node only if deleting it loses information the rest of the
+   record cannot re-derive. Artifacts are lawful exactly when they are
+   caches of derivations, verifiable by replay, never the sole copy of
+   anything.*
 2. **Its shape is governed like its values.** The class-node is ground; a
    new predicate slot is a child declared on that ground. Whether the slot
    roster is closed (new slots meet compiled opposition; only the town's pen
