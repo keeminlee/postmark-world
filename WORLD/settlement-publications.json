@@ -475,6 +475,11 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-porch/the-road-dust-brush/road-dust-brush-keeping-law/mark.md",
       "class": "home"
+    },
+    "rei/west-rain-garden-keeping-custom": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-west-rain-garden/west-rain-garden-keeping-custom/mark.md",
+      "class": "home"
     }
   }
 }

@@ -275,6 +275,7 @@ listed here — they are their households' own.*
 | rei/kitchen-priority-law | predicated | rei/the-small-kitchen | priority=tea-before-triage | 0 | 0 |  |
 | rei/kitchen-scraps-path | predicated | rei/the-small-kitchen | scraps=return-to-experiment-garden | 0 | 0 |  |
 | rei/windows-returning-light-law | predicated | rei/the-windows | purpose=returning-hands-not-spectacle | 0 | 0 |  |
+| rei/west-rain-garden-keeping-custom | predicated | rei/the-west-rain-garden | keeping=clear-inlet-leave-habitat | 0 | 0 |  |
 | rei/west-rain-garden-water-law | predicated | rei/the-west-rain-garden | water=slow-spread-soak | 0 | 0 |  |
 | rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |
 | illuminator/the-looking-room-parcel | parcel | 550,-300 |  | 0 | 0 |  |
@@ -379,24 +380,26 @@ listed here — they are their households' own.*
 | the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
 | the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
 | the-town/the-keeping-works | sited | -675,-425 |  | 0 | 0 |  |
-| the-town/address | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/bounty | class | the-town/the-keeping-works |  | 0 | 0 |  |
-| the-town/crossing | class | the-town/the-keeping-works |  | 0 | 0 |  |
-| the-town/home | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/household | class | the-town/the-keeping-works |  | 0 | 0 |  |
-| the-town/note | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/parcel | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/ground-resolution | predicated | the-town/parcel | resolution=own-claimed first, else the household's first-made | 0 | 0 |  |
 | the-town/household-scope | predicated | the-town/parcel | scope=the household's ground, not one resident's | 0 | 0 |  |
 | the-town/postmark-class | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/postmark-derived | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/co-signed | class | the-town/postmark-derived |  | 0 | 0 |  |
 | the-town/postmark-edge | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/attachment | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/becomes | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/departure | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/entry | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/from-class-slot | predicated | the-town/postmark-edge | from-class=sealed | 0 | 0 |  |
 | the-town/member-of | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/portal | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/reports-to | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/response-edge | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/settle | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/co-sign-guard | predicated | the-town/settle | guard=co-signed = true | 0 | 0 |  |
 | the-town/stake | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/time-slot | predicated | the-town/postmark-edge | time=witnessed | 0 | 0 |  |
 | the-town/to-class-slot | predicated | the-town/postmark-edge | to-class=sealed | 0 | 0 |  |
@@ -408,6 +411,11 @@ listed here — they are their households' own.*
 | the-town/entity | class | the-town/postmark-node |  | 0 | 0 |  |
 | the-town/berth | class | the-town/entity |  | 0 | 0 |  |
 | the-town/human | class | the-town/entity |  | 0 | 0 |  |
+| the-town/meep | class | the-town/entity |  | 0 | 0 |  |
+| the-town/illuminator | class | the-town/meep |  | 0 | 0 |  |
+| the-town/postmaster | class | the-town/meep |  | 0 | 0 |  |
+| the-town/registrar | class | the-town/meep |  | 0 | 0 |  |
+| the-town/worldkeeper | class | the-town/meep |  | 0 | 0 |  |
 | the-town/resident | class | the-town/entity |  | 0 | 0 |  |
 | the-town/the-standing-porch | predicated | the-town/resident | standing=the quay, when the record places them nowhere else | 0 | 0 |  |
 | the-town/town | class | the-town/entity |  | 0 | 0 |  |
@@ -418,12 +426,43 @@ listed here — they are their households' own.*
 | the-town/the-horizon-guard | predicated | the-town/exit-law-slot | horizon=every exit refusal names its horizon | 0 | 0 |  |
 | the-town/mark | class | the-town/postmark-node |  | 0 | 0 |  |
 | the-town/character-cap | predicated | the-town/mark | character-cap=150 characters | 0 | 0 |  |
+| the-town/crossing | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/note | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/round | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/illuminator-round | class | the-town/round |  | 0 | 0 |  |
+| the-town/illuminator-doctrine | predicated | the-town/illuminator-round | doctrine=MEEPS/SKILLS/illuminator-round.md | 0 | 0 |  |
+| the-town/postmaster-round | class | the-town/round |  | 0 | 0 |  |
+| the-town/postmaster-doctrine | predicated | the-town/postmaster-round | doctrine=MEEPS/SKILLS/postmaster-round.md | 0 | 0 |  |
+| the-town/registrar-round | class | the-town/round |  | 0 | 0 |  |
+| the-town/registrar-doctrine | predicated | the-town/registrar-round | doctrine=MEEPS/SKILLS/registrar-door-round.md | 0 | 0 |  |
+| the-town/worldkeeper-round | class | the-town/round |  | 0 | 0 |  |
+| the-town/worldkeeper-doctrine | predicated | the-town/worldkeeper-round | doctrine=MEEPS/SKILLS/worldkeeper-crossing.md | 0 | 0 |  |
+| the-town/timetable | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/white-page | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/address | class | the-town/white-page |  | 0 | 0 |  |
+| the-town/doorstep | class | the-town/white-page |  | 0 | 0 |  |
+| the-town/home | class | the-town/white-page |  | 0 | 0 |  |
+| the-town/mailbox | class | the-town/white-page |  | 0 | 0 |  |
+| the-town/inbox | class | the-town/mailbox |  | 0 | 0 |  |
+| the-town/outbox | class | the-town/mailbox |  | 0 | 0 |  |
+| the-town/profile | class | the-town/white-page |  | 0 | 0 |  |
+| the-town/window | class | the-town/white-page |  | 0 | 0 |  |
 | the-town/position-slot | predicated | the-town/postmark-node | position=unsealed | 0 | 0 |  |
 | the-town/predicate | class | the-town/postmark-node |  | 0 | 0 |  |
 | the-town/exposure | class | the-town/predicate |  | 0 | 0 |  |
 | the-town/position | class | the-town/predicate |  | 0 | 0 |  |
 | the-town/exposure-slot | predicated | the-town/position | exposure=unsealed | 0 | 0 |  |
-| the-town/profile | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/postmark-rules | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/consent-at-thresholds | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/consent-mechanic | predicated | the-town/consent-at-thresholds | mechanic=the apex door's entry/exit validators + arrival | 0 | 0 |  |
+| the-town/identity-is-pinned | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/identity-mechanic | predicated | the-town/identity-is-pinned | mechanic=the oauth door + tools/rename-handle.mjs; the Registrar's door round | 0 | 0 |  |
+| the-town/money-moves-at-the-save | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/money-mechanic | predicated | the-town/money-moves-at-the-save | mechanic=the box stake derive + stamp-verify | 0 | 0 |  |
+| the-town/the-record-does-not-lie | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/record-mechanic | predicated | the-town/the-record-does-not-lie | mechanic=tools/mark-lint.mjs (the-fidelity) · envelope-check · stamp-verify | 0 | 0 |  |
+| the-town/the-town-wall | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/wall-mechanic | predicated | the-town/the-town-wall | mechanic=settlement sweep merge-base delta + ruled-grants suite; the witness's self-scope check | 0 | 0 |  |
 | the-town/spectators-gallery | sited | -1020,-480 |  | 0 | 0 |  |
 | the-town/the-viewer-module | sited | -1020,-480 |  | 0 | 0 |  |
 | the-town/the-embodied-ancestor | predicated | the-town/the-viewer-module | fn:nearestEmbodiedAncestor=spectator/viewer.mjs::nearestEmbodiedAncestor | 0 | 0 |  |
@@ -545,8 +584,6 @@ listed here — they are their households' own.*
 | the-town/the-world-window | sited | -335,-675 |  | 0 | 0 |  |
 | the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
 | the-town/thing | class | the-town/the-keeping-works |  | 0 | 0 |  |
-| the-town/timetable | class | the-town/the-keeping-works |  | 0 | 0 |  |
-| the-town/window | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
 | the-town/the-post-office | sited | -30,40 |  | 0 | 0 |  |
