@@ -5,7 +5,7 @@ tier: constitution
 date: 2026-08-14
 class: window
 version: 2
-extends: paper
+extends: white-page
 dials: {}
 implements: []
 affordances: []

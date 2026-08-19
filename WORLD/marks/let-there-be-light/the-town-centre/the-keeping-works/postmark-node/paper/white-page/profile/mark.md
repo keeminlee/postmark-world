@@ -5,7 +5,7 @@ tier: constitution
 date: 2026-08-15
 class: profile
 version: 2
-extends: paper
+extends: white-page
 dials: {}
 implements: []
 source: LOGOS/classes.md
