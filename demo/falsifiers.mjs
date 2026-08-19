@@ -6,10 +6,11 @@
 // about itself: that its graph is derived rather than kept, that every edge it
 // draws says what kind of edge it is, and that crossing out puts the map back.
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, dirname, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { buildWorksGraph } from "./works-graph.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -18,10 +19,35 @@ const WORKS = join(ROOT, "WORLD", "marks", "let-there-be-light", "the-town-centr
 const PORT = Number(process.env.PORT ?? 4890);
 const PW = process.env.PW ?? "G:/Wright-HQ/node_modules/playwright/index.mjs";
 
-let pass = 0, fail = 0;
+// Which record did this run judge, and which run was it? Two runs can interleave
+// in one worktree — they have — and a line of output that cannot be placed
+// against a commit is archaeology nobody can do afterwards. Both are one glance
+// and neither can be got back later, so say them first.
+const RUN = randomBytes(3).toString("hex");
+function provenance() {
+  try {
+    const head = execFileSync("git", ["rev-parse", "--short", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
+    const dirty = execFileSync("git", ["status", "--porcelain"], { cwd: ROOT, encoding: "utf8" })
+      .split(/\r?\n/).filter(Boolean).length;
+    return `HEAD ${head}${dirty ? ` · ${dirty} uncommitted` : " · clean"}`;
+  } catch {
+    return "HEAD unknown (no git here)";
+  }
+}
+console.log(`falsifiers · ${provenance()} · run ${RUN} · ${new Date().toISOString()}`);
+
+let pass = 0, fail = 0, moved = 0;
 const ok = (name, cond, detail = "") => {
   if (cond) { pass++; console.log(`  PASS  ${name}${detail ? ` — ${detail}` : ""}`); }
   else { fail++; console.log(`  FAIL  ${name}${detail ? ` — ${detail}` : ""}`); }
+};
+// A third verdict, for when the ground moved rather than the claim breaking.
+// Neither PASS (that would tolerate it silently) nor FAIL (the demo did nothing
+// wrong): the run says the tree changed under it, names what changed, and
+// declines to judge the check that the change invalidated.
+const groundMoved = (name, detail) => {
+  moved++;
+  console.log(`  MOVED ${name}${detail ? ` — ${detail}` : ""}`);
 };
 
 // The map-identity check has failed twice and passed on every rerun, which is
@@ -53,7 +79,38 @@ function describeMapDrift(before, after) {
 // the worktree, re-derive, and it must arrive WITH its extends edge; remove it
 // and it must leave. If any node list were hand-maintained this cannot pass.
 console.log("\nF1 — the graph follows the tree");
-const FIXTURE = join(WORKS, "postmark-node", "falsifier-probe");
+// The fixture is unique per RUN. It used to be one fixed path, which meant two
+// interleaved runs in this worktree planted and deleted the SAME leaf into each
+// other's before/during/after reads — one run's rmSync landing between another's
+// plant and its check. The suffix is on the directory (the id is `by` + leaf)
+// AND on the class name, so neither run's `extends:` can resolve against the
+// other's node either.
+const PROBE = `falsifier-probe-${RUN}`;
+const PROBE_ID = `the-town/${PROBE}`;
+const PROBE_HOME = join(WORKS, "postmark-node");
+const FIXTURE = join(PROBE_HOME, PROBE);
+
+// A unique fixture buys us safety from the OTHER run and costs us the old
+// fixed path's one virtue: a crashed run used to be cleaned up by the next one
+// reusing the same leaf. Now an orphan would sit in the tree forever, drawn as
+// a real class-node. So sweep old probes — but only ones too old to belong to a
+// run still in flight (a run takes about six seconds), or the sweep would
+// delete a concurrent run's fixture and re-create the collision it is here to
+// prevent.
+const ORPHAN_AFTER = 10 * 60 * 1000;
+try {
+  for (const name of readdirSync(PROBE_HOME)) {
+    if (!name.startsWith("falsifier-probe")) continue;
+    if (name === PROBE) continue;
+    const dir = join(PROBE_HOME, name);
+    let age = 0;
+    try { age = Date.now() - statSync(dir).mtimeMs; } catch { continue; }
+    if (age < ORPHAN_AFTER) continue;
+    rmSync(dir, { recursive: true, force: true });
+    console.log(`  swept an orphaned probe from a run that died: ${name} (${Math.round(age / 60000)}m old)`);
+  }
+} catch { /* no probe home yet, or unreadable — the checks below will say so */ }
+
 try {
   const before = buildWorksGraph();
   mkdirSync(FIXTURE, { recursive: true });
@@ -62,7 +119,7 @@ kind: class
 by: the-town
 tier: constitution
 date: 2026-08-18
-class: falsifier-probe
+class: ${PROBE}
 version: 1
 extends: postmark-node
 dials: {}
@@ -70,10 +127,10 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-A demo falsifier's fixture node. It exists for one process lifetime and is deleted by the check that made it.
+A demo falsifier's fixture node (run ${RUN}). It exists for one process lifetime and is deleted by the check that made it.
 `);
   const during = buildWorksGraph();
-  const id = "the-town/falsifier-probe";
+  const id = PROBE_ID;
   const present = during.nodes.some((n) => n.id === id);
   const edged = during.edges.some((e) => e.from === id && e.to === "the-town/postmark-node" && e.type === "extends");
   ok("a planted class-node appears", present, `${before.counts.nodes} → ${during.counts.nodes} nodes`);
@@ -82,8 +139,31 @@ A demo falsifier's fixture node. It exists for one process lifetime and is delet
   rmSync(FIXTURE, { recursive: true, force: true });
   const after = buildWorksGraph();
   ok("removing it removes the node", !after.nodes.some((n) => n.id === id), `${during.counts.nodes} → ${after.counts.nodes} nodes`);
-  ok("and the counts return exactly", after.counts.nodes === before.counts.nodes && after.counts.edges === before.counts.edges,
-    `nodes ${before.counts.nodes}=${after.counts.nodes}, edges ${before.counts.edges}=${after.counts.edges}`);
+
+  // "the counts return exactly" only means anything if nothing ELSE arrived or
+  // left while the run was in flight. In a worktree being edited — which this
+  // one is, most of the day — a mark landing between the first read and the last
+  // makes that check fail for a reason the demo is not responsible for, and it
+  // passes on rerun, which is the worst shape a check can have. So: look for
+  // drift explicitly, and when the ground has moved, NAME what moved and decline
+  // to judge, rather than reporting a failure that is really someone's commit.
+  const others = (g) => new Set(g.nodes.map((n) => n.id).filter((x) => x !== id));
+  const wasThere = others(before), isThere = others(after);
+  const arrived = [...isThere].filter((x) => !wasThere.has(x));
+  const departed = [...wasThere].filter((x) => !isThere.has(x));
+  const some = (list) => list.length > 4 ? `${list.slice(0, 4).join(", ")}, +${list.length - 4} more` : list.join(", ");
+
+  if (arrived.length || departed.length) {
+    groundMoved("the tree moved under the run — the counts check cannot be made",
+      [
+        arrived.length ? `${arrived.length} arrived (${some(arrived)})` : null,
+        departed.length ? `${departed.length} left (${some(departed)})` : null,
+        `this run's own fixture was ${id}`,
+      ].filter(Boolean).join("; "));
+  } else {
+    ok("and the counts return exactly", after.counts.nodes === before.counts.nodes && after.counts.edges === before.counts.edges,
+      `nodes ${before.counts.nodes}=${after.counts.nodes}, edges ${before.counts.edges}=${after.counts.edges}`);
+  }
 } finally {
   rmSync(FIXTURE, { recursive: true, force: true });
 }
@@ -165,5 +245,10 @@ try {
 console.log("\nF4 — the world suite (run separately: npm test)");
 console.log("  this file deliberately does not run it; see the notes for the counts");
 
-console.log(`\n${pass} passed, ${fail} failed`);
+// A run whose ground moved is not a failure and must not exit non-zero — but it
+// must not vanish into a green tally either, or the next person to see a
+// one-off failure has no way to know the tree was being edited underneath it.
+console.log(`\n${pass} passed, ${fail} failed`
+  + (moved ? `, ${moved} NOT JUDGED (the tree moved under the run)` : "")
+  + ` · run ${RUN}`);
 process.exitCode = fail ? 1 : 0;
