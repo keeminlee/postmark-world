@@ -240,7 +240,7 @@ test('the backing chip and the popover it opens never disagree', () => {
   const popover = chipLabel(stakeBackersHTML({
     weight: effectiveWeight(mark), weightParts: mark.weight_parts,
     holders: [{ holder: 'vermillion', amount: 5 }, { holder: 'gael-renton', amount: 3 }],
-    liveEscrow: 8,
+    proposed: null,
   }));
   assert.equal(chip, '✦ 108');
   assert.equal(popover, chip, 'the headline must be the number on the chip that opened it');
@@ -254,7 +254,7 @@ test('the popover shows every lane that built the number, and the holders under 
       fanned: [{ id: 'vermillion/the-pando-peak', weight: 90 }],
     },
     holders: [{ holder: 'vermillion', amount: 5 }, { holder: 'gael-renton', amount: 3 }],
-    liveEscrow: 8,
+    proposed: null,
   });
   assert.match(html, /staked on it<\/span><span class="amount">✦ 8</);
   assert.match(html, /2 other households backing it<\/span><span class="amount">✦ 10</);
@@ -264,20 +264,34 @@ test('the popover shows every lane that built the number, and the holders under 
 });
 
 test('a mark with no breakdown still headlines its own number, and says no one yet', () => {
-  const html = stakeBackersHTML({ weight: 0, weightParts: null, holders: [], liveEscrow: 0 });
+  const html = stakeBackersHTML({ weight: 0, weightParts: null, holders: [], proposed: null });
   assert.equal(chipLabel(html), '✦ 0');
   assert.match(html, /no one yet/);
   assert.match(html, /staked on it<\/span><span class="amount">✦ 0</, 'absent parts read as zero, not as unknown');
 });
 
-test('escrow laid since the last Settlement is named as pending, not silently reconciled', () => {
+test('a stake laid since the last Settlement is named as pending, not silently reconciled', () => {
   // A resident who staked this morning must not read a stale ✦ as a refusal.
+  //
+  // AMENDED 2026-08-18, and the intent above is untouched — only the number is.
+  // This used to assert the line printed the door's RAW ESCROW ("✦ 9 is staked on
+  // it now"). Raw escrow is not a ✦weight: dot's 9 stamps arrive at the crossing
+  // as 9 + the breadth bonus + whatever fans up, so the figure this surface
+  // promised was one the save does not land. The line now carries the office's
+  // forecast — the same fold the sweep runs, against the book as it stands — so
+  // the pending number and the settled number are finally the same kind of thing.
+  // tools/proposed-settlement.test.mjs holds the rest of the grammar.
   const html = stakeBackersHTML({
     weight: 5, weightParts: { own_escrow: 5, breadth: { k: null, external_households: 0, bonus: 0 }, fanned: [] },
-    holders: [{ holder: 'dot', amount: 9 }], liveEscrow: 9,
+    holders: [{ holder: 'dot', amount: 9 }],
+    proposed: { weight: 14, at: '2026-08-18T17:45:00.000Z' },
   });
   assert.equal(chipLabel(html), '✦ 5', 'the headline still agrees with the chip, which is settled');
-  assert.match(html, /✦ 9 is staked on it now — the difference lands at the next Settlement\./);
+  assert.match(html, /✦ 14 at the next Settlement/);
+  // Scoped to the pending line. dot's ✦ 9 is legitimately printed on their own
+  // holder row — that row is the money, and the money is not the claim here.
+  const pending = html.match(/<div class="wv-backer-pending[^"]*">[\s\S]*?<\/div>\s*$/)?.[0] ?? '';
+  assert.doesNotMatch(pending, /✦ 9\b/, 'the raw ledger figure is never dressed as a ✦weight');
 });
 
 export { assertPartsReconstructWeight, partsSum };
