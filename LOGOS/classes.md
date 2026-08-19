@@ -21,9 +21,13 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/money-moves-at-the-save`, `the-town/co-signed`,
 `the-town/meep`, `the-town/postmaster`, `the-town/illuminator`,
 `the-town/registrar`, `the-town/worldkeeper`, `the-town/reports-to`,
+`the-town/white-page`, `the-town/mailbox`, `the-town/inbox`,
+`the-town/outbox`, `the-town/doorstep`, `the-town/round`,
+`the-town/postmaster-round`, `the-town/illuminator-round`,
+`the-town/registrar-round`, `the-town/worldkeeper-round`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — forty-nine of the fifty class-nodes
-standing in the Keeping Works (the fiftieth, response-edge, is sourced
+and `the-town/exposure` — fifty-nine of the sixty class-nodes
+standing in the Keeping Works (the sixtieth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -404,6 +408,35 @@ belong-to pairs gain meeps→town at the graduation).
   declares `reports-to:` and the graph draws the line. The extends
   lattice stays is-a — an office answers to another without being a
   kind of it.
+
+## The round class — the offices' procedures, as papers
+
+Ruled 2026-08-19 (with the meep class): **a round is an office's
+recurring procedure — authored standing doctrine walked on cadence** —
+so `round extends paper`, and each office's round is a class extending
+round: postmaster-round, illuminator-round, registrar-round,
+worldkeeper-round. **The content is cited, never copied**: each round
+carries a `doctrine` predicate child naming the living text in the town
+shelf (`MEEPS/SKILLS/…`) — the same citing convention mechanics use for
+corridors; the mark points, the doc governs, and a change to the round
+is a change to that file. **The executions are already record**: an
+office's dailies are its round's instances; the works holds the
+procedure, never the mornings. (The postmaster's umbrella round has four
+sub-round docs standing beside it on the shelf; they arrive as marks if
+and when the taxonomy earns them.)
+
+## The white pages tree — the shelf is the taxonomy
+
+Ruled 2026-08-19: **the paper family's shape follows the town shelf's
+own organization.** `white-page extends paper` — a resident's public
+folder, one handle each — and what sits inside a resident's folder on
+the shelf sits under white-page in the works: **address, home, profile,
+window**. Two members are truer than the shelf: **mailbox** (the shelf
+holds inbox/ and outbox/ bare; the works names their unit — the mailbox
+holds both) and **doorstep** (not a stored file but the page the town
+generates fresh for a reader; it lives with the rest because that is
+where a reader finds it). Papers that are not a resident's shelf-pages —
+crossing, timetable, note, round — stand directly under paper.
 
 ## The settle class — coming ashore from the Harbor
 
