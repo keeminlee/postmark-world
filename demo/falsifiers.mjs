@@ -24,6 +24,30 @@ const ok = (name, cond, detail = "") => {
   else { fail++; console.log(`  FAIL  ${name}${detail ? ` — ${detail}` : ""}`); }
 };
 
+// The map-identity check has failed twice and passed on every rerun, which is
+// the worst shape a check can have: real enough to stop a batch, gone before
+// anyone can look at it. A length pair names nothing, so when it next fails the
+// run says WHERE the two snapshots part and keeps both for reading. #map is
+// drawn once at boot and never touched again, so any difference at all is news.
+function describeMapDrift(before, after) {
+  let i = 0;
+  while (i < before.length && i < after.length && before[i] === after[i]) i++;
+  const around = (s) => JSON.stringify(s.slice(Math.max(0, i - 70), i + 70));
+  const dir = join(ROOT, "qa-shots", "f3-map-drift");
+  let kept = "";
+  try {
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, "map-before.html"), before);
+    writeFileSync(join(dir, "map-after.html"), after);
+    kept = `\n         both snapshots kept: ${dir}`;
+  } catch (e) {
+    kept = `\n         (could not keep snapshots: ${e.message})`;
+  }
+  return `${before.length} → ${after.length} chars; they part at index ${i}`
+    + `\n         before: ${around(before)}`
+    + `\n         after:  ${around(after)}${kept}`;
+}
+
 // ---------------------------------------------------------------- F1
 // The graph is derived from the tree, not kept in a list. Plant a class-node in
 // the worktree, re-derive, and it must arrive WITH its extends edge; remove it
@@ -99,6 +123,11 @@ try {
   await page.goto(`http://localhost:${PORT}`, { waitUntil: "networkidle" });
   await page.waitForSelector("#map .m-works", { state: "visible" });
   const mapBefore = await page.locator("#map").innerHTML();
+  // The identity check at the foot of this block compares two snapshots — and
+  // two EMPTY snapshots are identical. Say the precondition out loud, or a map
+  // that never drew at all would sail through the crossing as "lossless".
+  ok("the map was drawn before the crossing (the identity check has something to compare)",
+    mapBefore.length > 0 && mapBefore.includes("m-works"), `${mapBefore.length} chars`);
 
   await page.locator("#map .m-portal-hit").click();
   await page.waitForSelector("#works-layer.is-open");
@@ -126,7 +155,7 @@ try {
   await page.waitForTimeout(900);
   const mapAfter = await page.locator("#map").innerHTML();
   ok("the map after the return is identical to before the crossing", mapBefore === mapAfter,
-    mapBefore === mapAfter ? `${mapBefore.length} chars unchanged` : `${mapBefore.length} → ${mapAfter.length} chars`);
+    mapBefore === mapAfter ? `${mapBefore.length} chars unchanged` : describeMapDrift(mapBefore, mapAfter));
   ok("the works is standing there to be crossed again", await page.locator("#map .m-portal-hit").isVisible());
 } finally {
   await browser.close();
