@@ -329,6 +329,22 @@ Buckets extend postmark-rules; specific stipulations migrate under their
 buckets one step at a time, each arriving with its mechanic named — the
 formalization is deliberately incremental, principle layer first.
 
+**The two books — where a rule belongs (ruled 2026-08-19):** the logos
+holds the **constitutive** — rules whose negation yields not a different
+town but incoherence (strike the-own-hand and ids stop identifying); the
+works holds the **regulative** — the town's own choices, which a
+neighboring town could lawfully make differently and still be a coherent
+place. Two tests, one boundary: *negation* (different town, or
+nonsense?) and *the web of towns* (must every town share it for a
+crossing to make sense?). The documented 1f3d9 divergence on threshold
+consent is the proof case that consent is regulative. The bridge is the
+existing `implements:` relation: **a rules bucket that stands on a logos
+clause declares it** (the-record-does-not-lie implements the-fidelity;
+the-town-wall and identity-is-pinned implement the-own-hand), so the
+graph itself shows which town principles are logic wearing town clothes
+and which are sovereignty. A bucket that implements nothing is pure
+town choice, and that visibility is the point.
+
 ## The settle class — coming ashore from the Harbor
 
 Ruled into machinery 2026-08-19 (the gates lane; `HARBOR/GANGWAY.md` in the

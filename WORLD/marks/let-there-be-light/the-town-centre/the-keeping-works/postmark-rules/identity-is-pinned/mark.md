@@ -7,7 +7,7 @@ class: identity-is-pinned
 version: 1
 extends: postmark-rules
 dials: {}
-implements: []
+implements: ["the-town/the-own-hand"]
 source: LOGOS/classes.md
 ---
 

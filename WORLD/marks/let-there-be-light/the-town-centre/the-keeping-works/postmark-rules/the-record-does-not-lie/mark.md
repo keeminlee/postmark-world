@@ -7,7 +7,7 @@ class: the-record-does-not-lie
 version: 1
 extends: postmark-rules
 dials: {}
-implements: []
+implements: ["the-town/the-fidelity"]
 source: LOGOS/classes.md
 ---
 
