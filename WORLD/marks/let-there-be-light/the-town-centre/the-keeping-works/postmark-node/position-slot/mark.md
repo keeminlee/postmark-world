@@ -8,4 +8,4 @@ value: unsealed
 values-tier: sovereign
 ---
 
-Every world-family instance may carry one position child — anchor and offset, each instance its own; unsealed: the class never speaks the value.
+A mark, entity or emission may carry one position child — anchor and offset, each instance its own; unsealed: the class never speaks the value.

@@ -14,4 +14,4 @@ affordances: []
 source: LOGOS/classes.md
 ---
 
-The member-of edge ties a household to the-harbor, formed only by joining; it always forms — its response is the admission, and silence admits.
+Join ties a household to the-harbor; the tie always forms — its response is the admission, and silence admits.

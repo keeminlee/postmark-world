@@ -105,7 +105,8 @@ try {
   await page.waitForTimeout(900);
 
   // every drawn edge has a label element with matching type text
-  for (const layout of ["tree", "radial", "nested"]) {
+  // (tree/radial retired 2026-08-19 — nested is THE view; the loop keeps the shape)
+  for (const layout of ["nested"]) {
     await page.click(`[data-layout="${layout}"]`);
     await page.waitForTimeout(320);
     const r = await page.evaluate(() => {

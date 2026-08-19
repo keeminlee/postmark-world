@@ -12,4 +12,4 @@ affordances: []
 source: LOGOS/the-response-function.md
 ---
 
-A response is a revisable word on an edge — welcomed or opposed, latest wins; neutral is never stored, it is absence. The ground's holder speaks.
+A stance is a revisable word on an edge — welcomed or opposed, latest wins; neutral is never stored, it is absence. The ground's holder speaks.
