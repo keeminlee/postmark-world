@@ -4,7 +4,10 @@ by: the-town
 tier: constitution
 date: 2026-08-09
 class: departure
-version: 2
+version: 3
+extends: postmark-edge
+from-class: resident
+to-class: position
 dials: {"pace_km_per_crossing": 60}
 implements: ["tools/walk.mjs"]
 source: LOGOS/classes.md

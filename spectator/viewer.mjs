@@ -368,12 +368,22 @@ export function summarizeBackers(rows = [], limit = 5) {
 // is now structural rather than something two call sites have to remember, and
 // the parts beneath explain the gap a single figure cannot.
 //
-// SETTLED vs LIVE, deliberately not reconciled: `weight`/`weight_parts` are the
-// last Settlement's figures — what the chip shows — while the door's holders and
-// escrow are the ledger RIGHT NOW. Between crossings they legitimately differ: a
+// SETTLED vs PROPOSED, deliberately not reconciled: `weight`/`weight_parts` are
+// the last Settlement's figures — what the chip shows — while `proposed` is what
+// the NEXT one will land, folded by the office through the crossing's own
+// judgment (the-town/the-forecast). Between crossings they legitimately differ: a
 // stake laid this morning is real money and not yet ✦. That difference is
 // reported as pending, never quietly resolved toward whichever number is larger.
-export function stakeBackersHTML({ weight = 0, weightParts = null, holders = [], liveEscrow = null, limit = 5 } = {}) {
+//
+// `proposed` REPLACED `liveEscrow` (2026-08-18). The old line printed the door's
+// raw escrow — "✦ 9 is staked on it now" — and raw escrow is not a ✦weight: the
+// save adds the breadth bonus and everything fanning up, so the number promised
+// here was one the crossing never lands. That is the third-meaning-under-one-glyph
+// trap `ledger_weight` was renamed to stop. What was dropped with it: this surface
+// no longer names the raw pending escrow at all. It is still on the door
+// (`escrow`/`stamps`) for anyone who wants the money rather than the standing, and
+// the holder rows beneath already show who put in what.
+export function stakeBackersHTML({ weight = 0, weightParts = null, holders = [], proposed = null, limit = 5 } = {}) {
   const effective = Math.max(0, Number(weight) || 0);
   const parts = weightParts ?? null;
   // An absent breakdown means all-zero (marks-fold.mjs only emits weight_parts
@@ -396,12 +406,32 @@ export function stakeBackersHTML({ weight = 0, weightParts = null, holders = [],
   if (bonus > 0) html += row(`${households} other household${households === 1 ? "" : "s"} backing it`, bonus);
   if (fannedTotal > 0) html += row(`${fanned.length} mark${fanned.length === 1 ? "" : "s"} inside it`, fannedTotal);
 
-  // The lag, named only when it is real. Silence here would let a resident read
-  // a stale ✦ as a rejected stake.
-  const live = liveEscrow === null || liveEscrow === undefined ? null : Math.max(0, Number(liveEscrow) || 0);
-  if (live !== null && live !== own)
-    html += `<div class="wv-backer-pending">✦ ${live.toLocaleString()} is staked on it now — the difference lands at the next Settlement.</div>`;
+  // The lag, named only when it is real. Silence here would let a resident read a
+  // stale ✦ as a rejected stake — and a sentence here on every mark that has
+  // nothing pending would be noise on the whole world to say nothing. So: one
+  // line, in the drafts grey the viewer already speaks for what the town has not
+  // published yet, carrying one chip with the hour the save lands. Nothing
+  // otherwise, not even an empty state.
+  //
+  // The door decides whether there IS a delta (it holds both figures); this only
+  // renders what it is handed. A refusal is rendered as a refusal, never as
+  // silence — an unreadable engine and a settled stake would otherwise look
+  // identical from here (the-town/the-disclosure).
+  if (proposed?.unavailable)
+    html += `<div class="wv-backer-pending is-draft">the next Settlement cannot be read — ${esc(proposed.unavailable)}</div>`;
+  else if (Number.isFinite(Number(proposed?.weight)) && Number(proposed.weight) !== effective)
+    html += `<div class="wv-backer-pending is-draft">✦ ${Number(proposed.weight).toLocaleString()} at the next Settlement`
+      + `${settlementChip(proposed.at)}</div>`;
   return html;
+}
+
+// The one chip: the hour the forecast lands, in the town's clock (UTC — the sweep
+// runs 05:45/17:45Z). A bare time is enough beside the sentence that names it.
+function settlementChip(at) {
+  const match = String(at ?? "").match(/T(\d{2}:\d{2})/);
+  return match
+    ? `<span class="wv-chip is-draft" title="the settlement sweep folds the next save at ${esc(match[1])} UTC">${esc(match[1])}Z</span>`
+    : "";
 }
 
 export function previewWalkLeg({ from, toward, targetExtent = null, skeleton = null } = {}) {
@@ -2301,6 +2331,8 @@ const STYLE = `
    people inside one of those parts are stepped in. */
 .wv-backer.is-holder { padding-left:12px; opacity:.82; font-size:.95em; }
 .wv-backer-pending { margin-top:5px; color:var(--stamp-violet-subhead); font-size:.95em; }
+/* the forecast speaks in the drafts grey — not yet published, and it looks like it */
+.wv-backer-pending.is-draft { color:var(--draft); display:flex; align-items:center; gap:6px; }
 .wv-act-answer.success { color:var(--green); }
 .wv-act-answer.refusal { color:var(--err); }
 .wv-stamp-holding, .wv-stamp-balance { color:var(--stamp-violet); font-variant-numeric:tabular-nums; }
@@ -5330,13 +5362,15 @@ export function mountViewer(appEl) {
       if (!sheet.isConnected) return;
       // The settled figures come from the fold record — the same object the chip
       // that opened this sheet reads — so the two cannot disagree. The door
-      // supplies who backed it and how much is staked right now.
+      // supplies who backed it, and what the next Settlement will make of the
+      // book as it stands. `proposed` is absent when there is nothing pending;
+      // passing that absence straight through is how the quiet is kept.
       const full = byId.get(sheet.dataset.mark) ?? null;
       host.innerHTML = stakeBackersHTML({
         weight: effectiveWeight(full),
         weightParts: full?.weight_parts ?? null,
         holders: body.holders,
-        liveEscrow: body.escrow ?? body.stamps ?? null,
+        proposed: body.proposed ?? null,
       });
     } catch (error) {
       if (sheet.isConnected) host.textContent = `backer list unavailable — ${error.message}`;

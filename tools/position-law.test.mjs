@@ -68,7 +68,7 @@ test("LAW: the parcel's resolution clause stands — own-claimed first, else the
 });
 
 test("LAW: the resident's standing clause stands — the unplaced stand at the quay", () => {
-  const { fields, body } = markOf(`${WORKS}/resident/the-standing-porch/mark.md`);
+  const { fields, body } = markOf(`${WORKS}/postmark-node/entity/resident/the-standing-porch/mark.md`);
   assert.equal(fields.kind, "predicated");
   assert.equal(fields.slot, "standing");
   assert.match(fields.value, /quay/i);
@@ -127,7 +127,7 @@ test("CODE: the pick follows the resolution clause's own order, and says which i
 });
 
 test("CODE: the unplaced stand where the standing clause says, and the answer says it is a default", () => {
-  const clause = markOf(`${WORKS}/resident/the-standing-porch/mark.md`).fields.value;
+  const clause = markOf(`${WORKS}/postmark-node/entity/resident/the-standing-porch/mark.md`).fields.value;
   assert.match(clause, /quay/i);
   const here_ = whereIs("adam-rhys", { world: garrison, departures: [] });
   assert.equal(here_.placed, true, `the record says "${clause}"`);

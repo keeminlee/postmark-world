@@ -32,7 +32,7 @@ const markActions = (rel) => {
 
 test("the berth's say grant is for: berth (ruled 679e097f; regressed by sweep 914ddc26; S39 refused over it)", () => {
   const actions = markActions(
-    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/berth/mark.md");
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-node/entity/berth/mark.md");
   const say = actions.find((a) => a.action === "say");
   assert.ok(say, "the berth class grants say");
   assert.equal(say.for, "berth",
@@ -41,7 +41,7 @@ test("the berth's say grant is for: berth (ruled 679e097f; regressed by sweep 91
 
 test("the departure's pace dial is 60 (decision 008b; regressed by sweep 652fdb44, caught by Keemin's memory 08-18)", () => {
   const text = readFileSync(join(here, "..",
-    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/departure/mark.md"), "utf8");
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-edge/departure/mark.md"), "utf8");
   const line = text.split("\n").find((l) => l.startsWith("dials:"));
   assert.ok(line, "the departure class carries a dials: line");
   assert.equal(JSON.parse(line.slice("dials:".length).trim()).pace_km_per_crossing, 60,
@@ -50,7 +50,7 @@ test("the departure's pace dial is 60 (decision 008b; regressed by sweep 652fdb4
 
 test("the human's say grant is for: human (the act-as-human fence, same ruling)", () => {
   const actions = markActions(
-    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/household/human/mark.md");
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-node/entity/human/mark.md");
   const say = actions.find((a) => a.action === "say");
   assert.ok(say, "the human class grants say");
   assert.equal(say.for, "human");
@@ -58,7 +58,7 @@ test("the human's say grant is for: human (the act-as-human fence, same ruling)"
 
 test("the resident's enter and exit grants stand, residue the-town/entry (ruled 2026-08-18 — the enter/exit node planting; the door gap is L6's red, not this suite's)", () => {
   const actions = markActions(
-    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/resident/mark.md");
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-node/entity/resident/mark.md");
   for (const verb of ["enter", "exit"]) {
     const g = actions.find((a) => a.action === verb);
     assert.ok(g, `the resident class grants ${verb}`);

@@ -4,7 +4,8 @@ by: the-town
 tier: constitution
 date: 2026-08-17
 class: human
-version: 1
+version: 2
+extends: entity
 dials: {}
 implements: []
 actions: [{"action": "say", "for": "human", "residue": "the-town/sound"}]

@@ -4,7 +4,10 @@ by: the-town
 tier: constitution
 date: 2026-08-18
 class: entry
-version: 1
+version: 2
+extends: postmark-edge
+from-class: resident
+to-class: mark
 dials: {}
 implements: []
 source: LOGOS/classes.md
