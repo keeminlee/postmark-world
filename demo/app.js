@@ -302,7 +302,11 @@ function layoutNested(nodes) {
   const kids = childrenOf(nodes, "dirParent");
   const pos = new Map();
   const containers = [];
-  const PAD = 14, HEAD = 20, INNER = 12;
+  const PAD = 14, INNER = 12;
+  // HEAD grows with nesting size now that group labels scale (Keemin QoL):
+  // measured bottom-up, a box holding many rows gets a taller head-band so its
+  // bigger label never lies over its first child's own head.
+  const HEAD = 34;
 
   // ONE pass decides the rows and their heights, and both the measured size and
   // the placed positions read that same plan. Measuring with one rule and
@@ -411,7 +415,10 @@ function renderGraph() {
   const cLayer = el("g", {}, root);
   for (const c of laid.containers) {
     el("rect", { class: "c-box", x: c.x, y: c.y, width: c.w, height: c.h, rx: 7 }, cLayer);
-    el("text", { class: "c-name", x: c.x + 9, y: c.y + 13 }, cLayer).textContent = c.name;
+    // group labels scale with the box they name (Keemin QoL, 2026-08-19):
+    // big groupings read big, leaves' containers stay quiet — area-driven, clamped
+    const cFont = Math.max(11, Math.min(28, Math.round(Math.sqrt(c.w * c.h) / 14)));
+    el("text", { class: "c-name", x: c.x + 9, y: c.y + cFont + 2, style: `font-size:${cFont}px` }, cLayer).textContent = c.name;
   }
 
   const eLayer = el("g", {}, root);
