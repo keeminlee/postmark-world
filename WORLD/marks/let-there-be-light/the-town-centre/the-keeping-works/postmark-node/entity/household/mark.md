@@ -8,7 +8,7 @@ version: 4
 extends: entity
 dials: {"birth_tier": "sovereign", "residents_per_address": 1}
 implements: []
-actions: [{"action": "join", "residue": "the-town/join"}, {"action": "respond", "residue": "the-town/respond"}]
+actions: [{"action": "join", "residue": "the-town/join"}, {"action": "declare-stance-on", "residue": "the-town/declare-stance-on"}]
 source: LOGOS/classes.md
 ---
 

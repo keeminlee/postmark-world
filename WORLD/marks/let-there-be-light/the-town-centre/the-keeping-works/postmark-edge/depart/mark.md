@@ -6,8 +6,8 @@ date: 2026-08-09
 class: depart
 version: 4
 extends: postmark-edge
-from-class: resident
-to-class: position
+subject: resident
+object: position
 dials: {"pace_km_per_crossing": 60}
 implements: ["tools/walk.mjs"]
 source: LOGOS/classes.md

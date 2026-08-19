@@ -6,8 +6,8 @@ date: 2026-08-14
 class: join
 version: 3
 extends: postmark-edge
-from-class: household
-to-class: town
+subject: household
+object: town
 dials: {}
 implements: []
 affordances: []

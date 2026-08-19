@@ -6,8 +6,8 @@ date: 2026-08-19
 class: belong-to
 version: 3
 extends: postmark-edge
-from-class: ["resident", "human", "mark"]
-to-class: ["household", "resident"]
+subject: ["resident", "human", "mark"]
+object: ["household", "resident"]
 dials: {}
 implements: []
 source: LOGOS/classes.md

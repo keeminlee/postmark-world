@@ -141,7 +141,8 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
     {
       const resolve = (v) => (v == null ? null : (classByName.get(String(v).trim())?.id ?? (inSet.has(String(v).trim()) ? String(v).trim() : null)));
       const listy = (v) => (Array.isArray(v) ? v : v != null ? [v] : []);
-      const froms = listy(r["from-class"]), tos = listy(r["to-class"]);
+      // subject/object (renamed from from-class/to-class, Keemin 2026-08-19)
+      const froms = listy(r.subject ?? r["from-class"]), tos = listy(r.object ?? r["to-class"]);
       for (const fv of froms) {
         const f = resolve(fv);
         if (f) relationEdges.push({ from: f, to: r.id, type: "can", detail: `can ${r.class ?? r.slug}` });

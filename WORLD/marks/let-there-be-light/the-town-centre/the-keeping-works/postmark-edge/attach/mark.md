@@ -6,8 +6,8 @@ date: 2026-08-09
 class: attach
 version: 3
 extends: postmark-edge
-from-class: resident
-to-class: thing
+subject: resident
+object: thing
 dials: {}
 implements: []
 propagation: {"default": "detach"}
