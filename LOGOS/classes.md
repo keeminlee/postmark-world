@@ -20,10 +20,10 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/consent-at-thresholds`, `the-town/identity-is-pinned`,
 `the-town/money-moves-at-the-save`, `the-town/co-signed`,
 `the-town/meep`, `the-town/postmaster`, `the-town/illuminator`,
-`the-town/registrar`, `the-town/worldkeeper`,
+`the-town/registrar`, `the-town/worldkeeper`, `the-town/reports-to`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — forty-eight of the forty-nine class-nodes
-standing in the Keeping Works (the forty-ninth, response-edge, is sourced
+and `the-town/exposure` — forty-nine of the fifty class-nodes
+standing in the Keeping Works (the fiftieth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -394,6 +394,16 @@ belong-to pairs gain meeps→town at the graduation).
   **worldkeeper** (the settlement office — the twice-daily crossing,
   judgment over the box's receipt, holds and refusals narrated, the
   blessing tag the only pen).
+- **The hierarchy (ruled 2026-08-19):** postmaster and illuminator are
+  the two top-level offices. **The registrar reports to the postmaster**
+  — the door office answers to the mail office; her rounds run on the
+  office pen. **The worldkeeper reports to the illuminator** — the
+  settlement office answers to the atlas office; the world blessed is
+  the world drawn. Carried as a first-class **`reports-to` edge**
+  (from-class meep, to-class meep): the reporting office's own mark
+  declares `reports-to:` and the graph draws the line. The extends
+  lattice stays is-a — an office answers to another without being a
+  kind of it.
 
 ## The settle class — coming ashore from the Harbor
 
