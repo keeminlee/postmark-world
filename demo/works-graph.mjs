@@ -36,6 +36,7 @@ export const EDGE_TYPES = {
   "reports-to": { label: "reports-to", note: "the office line (ruled 2026-08-19): this office answers to that one (frontmatter `reports-to:`, resolved by class name)" },
   "belong-to": { label: "belong-to", note: "the keeper line (ruled 2026-08-19): this class's instances belong to that class's — declared on the kept class (frontmatter `belong-to:`, resolved by class name)" },
   rides: { label: "rides", note: "the emission line (ruled 2026-08-19): an emission rides its source for the little while it lasts — declared on the emission (frontmatter `rides:`); fog deliberately rides nothing" },
+  "derives-from": { label: "derives-from", note: "the derivation line (ruled 2026-08-19): a derived declares the classes whose records feed its answer (frontmatter `derives-from:`, an array, resolved by class name)" },
 };
 
 function asArray(v) {
@@ -142,6 +143,13 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       const target = classByName.get(String(r.rides).trim());
       if (target) push(r.id, target.id, "rides", `rides: ${r.rides}`);
       else unresolved.push({ from: r.id, to: String(r.rides), type: "rides", reason: "no class-node declares that class name" });
+    }
+
+    // derives-from — the derivation line, declared on the derived, array-valued
+    for (const src of asArray(r["derives-from"])) {
+      const target = classByName.get(String(src).trim());
+      if (target) push(r.id, target.id, "derives-from", `derives-from: ${src}`);
+      else unresolved.push({ from: r.id, to: String(src), type: "derives-from", reason: "no class-node declares that class name" });
     }
 
     // implements — mark targets become edges; source-file targets are recorded

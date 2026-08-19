@@ -489,6 +489,16 @@ gets the same day. The deliberate non-lines stay ruled: emissions carry
 no belong-to (made is not had), and residue (say→sound) stays verb data,
 never drawn.
 
+**The derivation line (same ruling, Keemin's clarification):** the derived
+clause's "declares its sources" is now drawable — **`derives-from`**, an
+array on the derived's own mark. First drawn pair: **exposure
+derives-from fog and light** — the two emissions feed the standpoint
+answer, exactly as exposure's body has always listed them. Elevation and
+sightline come from the heightfield, which is terrain, not a class —
+noted here so their absence from the drawing reads as fact, not gap.
+Sound deliberately does not feed exposure (hearing is earshot's law, a
+different corridor).
+
 ## The four papers of record — letter, ledger, ballot, project
 
 Ruled 2026-08-19 (the unaccounted survey, demo lane), all extending

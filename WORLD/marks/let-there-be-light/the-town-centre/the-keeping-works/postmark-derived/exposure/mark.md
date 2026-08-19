@@ -6,6 +6,7 @@ date: 2026-08-18
 class: exposure
 version: 1
 extends: postmark-derived
+derives-from: ["fog", "light"]
 dials: {}
 implements: []
 source: LOGOS/classes.md

@@ -176,6 +176,8 @@ body {
 .t-belong-to { stroke: #5a8a5a; stroke-dasharray: 2 3; } .l-belong-to { fill: #5a8a5a; }
 /* the emission line (2026-08-19): what an emission rides — mist blue, faint */
 .t-rides { stroke: #6b8aa8; stroke-dasharray: 1 4; } .l-rides { fill: #6b8aa8; }
+/* the derivation line (2026-08-19): what feeds a derived's answer — violet */
+.t-derives-from { stroke: #8a7ab8; stroke-dasharray: 4 2 1 2; } .l-derives-from { fill: #8a7ab8; }
 .t-portal { stroke: var(--e-portal); stroke-width: 2; } .l-portal { fill: var(--e-portal); }
 
 /* ---------------- panels ---------------- */
