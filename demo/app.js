@@ -425,7 +425,10 @@ function renderGraph() {
     const p = laid.pos.get(n.id);
     if (!p) continue;
     const isPortal = n.id === (g.portal && g.portal.id);
-    const grp = el("g", { class: "node", transform: `translate(${p.x - p.w / 2},${p.y - p.h / 2})` }, nLayer);
+    // beyond-the-works nodes (the logos quarter's, pulled in by reference) wear
+    // their quarter, not the works' dress — inWorks comes from the derivation
+    const quarter = n.inWorks ? null : (n.path.split("/").slice(-2, -1)[0] || "beyond");
+    const grp = el("g", { class: `node${n.inWorks ? "" : " is-out"}`, transform: `translate(${p.x - p.w / 2},${p.y - p.h / 2})` }, nLayer);
     grp.dataset.id = n.id;
     el("rect", {
       class: `n-box ${n.kind === "class" ? "k-class" : "k-pred"}${isPortal ? " is-portal" : ""}`,
@@ -433,6 +436,7 @@ function renderGraph() {
     }, grp);
     el("text", { class: "n-name", x: 9, y: 15 }, grp).textContent = trunc(label(n), 20);
     el("text", { class: "n-kind", x: 9, y: 26 }, grp).textContent =
+      quarter ? `from ${trunc(quarter, 12)} — beyond` :
       n.kind === "class" ? `class · v${n.version ?? "?"}` : (n.slot ? `predicate · ${trunc(n.slot, 16)}` : "predicate");
 
     grp.addEventListener("mouseenter", (ev) => { hoverOn(n, ev); });
@@ -474,7 +478,7 @@ function hoverOn(n, ev) {
   const tip = $("#tip");
   tip.innerHTML =
     `<div class="t-name">${esc(label(n))}</div>` +
-    `<div class="t-kind">${esc(n.kind)}${n.tier ? " · " + esc(n.tier) : ""}</div>` +
+    `<div class="t-kind">${esc(n.kind)}${n.tier ? " · " + esc(n.tier) : ""}${n.inWorks ? "" : " · BEYOND THE WORKS — " + esc(n.path)}</div>` +
     (n.body ? `<div class="t-body">${esc(n.body)}</div>` : "");
   tip.hidden = false;
   moveTip(ev);
@@ -586,6 +590,14 @@ function buildLegend() {
       li.classList.toggle("is-off", state.off.has(type));
       renderGraph();
     });
+    ul.appendChild(li);
+  }
+  // beyond-the-works entry — a node style, not an edge type; not a filter
+  const outN = g.nodes.filter((n) => !n.inWorks).length;
+  if (outN) {
+    const li = document.createElement("li");
+    li.title = "nodes pulled in from beyond the works (the logos quarter) — the portal and implements: reach out to them; they are read here, never governed here";
+    li.innerHTML = `<span class="swatch swatch-out"></span><span>beyond the works</span><span class="count">${outN}</span>`;
     ul.appendChild(li);
   }
   const lone = g.nodes.filter((n) => !n.layoutParent).length;

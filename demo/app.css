@@ -8,6 +8,7 @@
   --ground-2: #1b1e24;
   --line: #2c3038;
   --works: #d9a441;
+  --out: #cfc4a0;
   --sel: #7fc7d9;
 
   --e-extends: #7fc7d9;
@@ -124,6 +125,11 @@ body {
 .n-box.k-class { fill: #232a33; stroke: #414a58; }
 .n-box.k-pred { fill: #1e2229; stroke: #343b46; stroke-dasharray: 3 2; }
 .n-box.is-portal { fill: #33280f; stroke: var(--works); stroke-width: 1.5; }
+/* beyond the works — the logos quarter's nodes, parchment against the town's iron */
+.node.is-out .n-box { fill: #2b2a21; stroke: var(--out); stroke-width: 1.4; }
+.node.is-out .n-name { fill: #e3dcc2; }
+.node.is-out .n-kind { fill: #a9a184; }
+.swatch-out { border-top: 3px solid var(--out) !important; }
 .n-name { fill: var(--ink); font-size: 12.5px; pointer-events: none; }
 .n-kind { fill: var(--ink-faint); font-size: 9.5px; pointer-events: none; letter-spacing: .05em; }
 .node { cursor: pointer; }
