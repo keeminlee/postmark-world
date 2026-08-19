@@ -314,7 +314,13 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   ever folded from them (its engine: the mint's own foldBalances — one
   rule, no second copy). The predicate family keeps what is AUTHORED
   (entry law, character-cap, ground rules); the derived family holds what
-  is ANSWERED. Exposure stands red until its engine is named.
+  is ANSWERED. Exposure's engine was standing all along: the world
+  engine's heightfield (elevation from the ruled bands), fogModel (fog a
+  pure function of the crossing number) and FOV (sightline over the
+  heightfield), served at a standpoint by world_orient — it was briefly
+  painted red by a name-grep that missed an engine speaking its own
+  vocabulary, and the correction is kept here as the red convention's
+  first false positive.
 
 ## The becomes edge — lifecycle
 
