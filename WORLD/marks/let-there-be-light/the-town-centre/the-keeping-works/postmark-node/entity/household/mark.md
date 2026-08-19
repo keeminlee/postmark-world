@@ -4,7 +4,8 @@ by: the-town
 tier: constitution
 date: 2026-08-14
 class: household
-version: 3
+version: 4
+extends: entity
 dials: {"birth_tier": "sovereign", "residents_per_address": 1}
 implements: []
 actions: [{"action": "join", "residue": "the-town/member-of"}]

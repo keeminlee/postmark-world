@@ -4,7 +4,8 @@ by: the-town
 tier: constitution
 date: 2026-08-09
 class: parcel
-version: 1
+version: 2
+extends: mark
 dials: {"extent_m": 25}
 implements: ["tools/marks-fold.mjs"]
 mobility: settled

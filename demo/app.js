@@ -16,7 +16,7 @@ const $ = (sel) => document.querySelector(sel);
 const state = {
   graph: null,
   map: null,
-  layout: "tree",
+  layout: "nested",
   off: new Set(),          // edge types switched off
   showEdgeLabels: true,
   selected: null,
@@ -708,9 +708,7 @@ function wire() {
 
   window.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") { if (state.selected) clearSelection(); else if ($("#works-layer").classList.contains("is-open")) crossOut(); }
-    if (ev.key === "1") document.querySelector('[data-layout="tree"]').click();
-    if (ev.key === "2") document.querySelector('[data-layout="radial"]').click();
-    if (ev.key === "3") document.querySelector('[data-layout="nested"]').click();
+    if (ev.key === "3") document.querySelector('[data-layout="nested"]')?.click();
   });
   window.addEventListener("resize", () => { if ($("#works-layer").classList.contains("is-open")) fitToView(); });
 }
