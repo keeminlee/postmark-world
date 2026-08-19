@@ -586,6 +586,7 @@ function buildLegend() {
   ul.replaceChildren();
   for (const [type, meta] of Object.entries(g.edgeTypes)) {
     const n = g.counts.byEdgeType[type] ?? 0;
+    if (!n) continue; // a type with nothing drawn earns no legend row
     const li = document.createElement("li");
     li.dataset.type = type;
     li.title = meta.note;
