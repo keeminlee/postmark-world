@@ -13,11 +13,15 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
 `the-town/town`, `the-town/crossing`, `the-town/human`,
 `the-town/timetable`, `the-town/bounty`, `the-town/entry`,
-`the-town/settle`,
+`the-town/settle`, `the-town/becomes`,
 `the-town/postmark-node`, `the-town/postmark-edge`, `the-town/postmark-class`,
+`the-town/postmark-derived`, `the-town/postmark-rules`,
+`the-town/the-record-does-not-lie`, `the-town/the-town-wall`,
+`the-town/consent-at-thresholds`, `the-town/identity-is-pinned`,
+`the-town/money-moves-at-the-save`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — thirty-four of the thirty-five class-nodes
-standing in the Keeping Works (the thirty-fifth, response-edge, is sourced
+and `the-town/exposure` — forty-two of the forty-three class-nodes
+standing in the Keeping Works (the forty-third, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -262,6 +266,68 @@ reached law):
   predicates are whatever the sovereign wants them to be, and a claim
   colliding with a constitutional predicate is auto-opposed into the
   household's own draft space, which has no machinery.
+
+## The derived — the record's answers (postmark-derived)
+
+Ruled at the grammar sitting (2026-08-19, the 4-Gs follow-up): the works
+gain a fourth root primitive beside what-happens (postmark-node),
+what-relates (postmark-edge), and what-governs (postmark-class):
+**postmark-derived — what the record answers.**
+
+- **A derived is a value the record implies at a save** — computed at the
+  read, stored never, authored by nobody. Exposure has been its planted
+  proof-of-shape all along ("derived at the read, never authored"); tense
+  is its temporal instance ("tense is read", the temporal ontology).
+- **Guards are deriveds in gate position**: a verb or slot may name a
+  derived and a required value as its precondition — that is the whole
+  condition grammar, and prescribed sequence ("this before that") is a
+  guard on a completion-derived, not a new relation.
+- **A derived class declares its sources and its rule by name**; the
+  engine implements the rule, and the rules taxonomy below names the
+  mechanic that keeps the two honest. The law says WHAT the record
+  answers; the corridor owns HOW.
+
+## The becomes edge — lifecycle
+
+Ruled the same sitting: **becomes is the lifecycle edge — one standing
+continuing as another, its history carried whole.** Succession is one
+atom wearing two faces: a berth that settles *becomes* its household
+(the resident face), and an amended mark's ruled text superseding a
+stale copy is the same relation applied to law (the supersession face —
+the class the sweep now guards). First lawful pair: berth → household,
+written by the settle act.
+
+## The rules — the town's stipulations, bucketed (postmark-rules)
+
+Ruled the same sitting, at the founder's shape: rules are **centralized,
+first-class nodes**, not a predicate stipple across every clause. The
+root primitive **postmark-rules** holds principle buckets; every
+stipulation in the town belongs under exactly one bucket; each bucket
+carries a **mechanic** predicate child naming the corridor — lint, gate,
+sweep, or round — that enforces it (a rule whose mechanic is a round is
+judgment-lane law, honestly labeled; a rule with no mechanic at all is
+ink, and the taxonomy exists to make that visible). The first principle
+layer, five buckets:
+
+- **the-record-does-not-lie** — fidelity and provenance everywhere:
+  mechanic `tools/mark-lint.mjs` (the-fidelity) · `envelope-check` ·
+  `stamp-verify`.
+- **the-town-wall** — authorship and custody: town-signed law never
+  publishes from a household drawer; only your own pages: mechanic the
+  settlement sweep's merge-base delta + `ruled-grants` suite; the
+  witness's self-scope check.
+- **consent-at-thresholds** — entry law, welcome-by-silence,
+  no-sovereign-jails, the horizon guard, the co-sign: mechanic the apex
+  door's entry/exit validators + `arrival`.
+- **identity-is-pinned** — one handle one someone, OAuth-verified ids,
+  whole-registry renames: mechanic the oauth door +
+  `tools/rename-handle.mjs`; the Registrar's door round.
+- **money-moves-at-the-save** — escrow, act-time sealing, mint at the
+  save: mechanic the box stake derive + `stamp-verify`.
+
+Buckets extend postmark-rules; specific stipulations migrate under their
+buckets one step at a time, each arriving with its mechanic named — the
+formalization is deliberately incremental, principle layer first.
 
 ## The settle class — coming ashore from the Harbor
 
