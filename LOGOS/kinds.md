@@ -64,13 +64,16 @@ the disk to shatter into a file per property.
 
 ## Mail
 
-Mail remains **outside the node taxonomy by covenant** — a letter costs
-nothing and reaches anyway, from anywhere; that reach-and-economy law is the
-covenant's substance. The taxonomy holds a reserved seat: if the founder ever
-rules mail in, it joins as an ordinary class whose contract declares
-world-wide reach and a permanent read-policy — the covenant preserved as
-contract content, not as an architectural exception. **Pending the founder's
-word; not annexed here.**
+**Annexed — the founder's word arrived 2026-08-19 (the paper ruling; recorded
+here at the tri-survey's C2).** Mail joined the taxonomy exactly as this
+section's reserved seat foresaw: ordinary classes under the paper family —
+`letter` (the town's atom, read never obeyed), `mailbox` holding
+`inbox`/`outbox` ([classes.md](classes.md) § the four papers of record,
+§ the white pages tree) — with the covenant preserved as contract content,
+never as an architectural exception: a letter costs nothing and reaches
+anyway, from anywhere, world-wide reach and a permanent read-policy. (This
+section formerly read "pending the founder's word; not annexed here" — the
+word came, and this paragraph is its record.)
 
 ## The human lane
 

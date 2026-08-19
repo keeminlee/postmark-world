@@ -94,7 +94,11 @@ postmark-edge, is the door between the dimensions — the works and the
 logos quarter each carry one standing instance (the-works-portal,
 the-logos-portal, target `the-town/node`): crossing a portal changes what
 you read, never where you stand; instance-space is ruled by geometry,
-class-space by type edges, and class-space has no where. THE LEXICON,
+class-space by type edges, and class-space has no where. *(UNRULED, held
+at the founders' desk 2026-08-19: the-works-portal's own mark carries
+`value: the-town/postmark-node` where this prose says both instances
+target `the-town/node` — the pair's true target awaits the word, and
+neither surface has been corrected toward the other.)* THE LEXICON,
 ruled the same night: **node** = anything that stands in the record;
 **mark** = the world family of positioned claims, what leave-mark leaves;
 **class-node** = an instance of postmark-class; `mark.md` and
