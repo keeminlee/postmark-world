@@ -3,8 +3,11 @@
 *Structure is relative; history is absolute. Marks ride their frames; the
 past rides nothing.*
 
-Rendered in the world as `the-town/the-tense` and `the-town/the-two-clocks` —
-the tense law only; the save grammar lands with `STATE/`.
+Rendered in the world as `the-town/the-witnessed-instant` (named `the-tense`
+until the homonym ruling, 2026-08-19 — the word "tense" now belongs solely to
+`the-town/the-tenses`, the read-against-the-standpoint law) and
+`the-town/the-two-clocks`; the save grammar stands as `the-town/the-save`
+(planted 2026-08-18).
 
 ---
 

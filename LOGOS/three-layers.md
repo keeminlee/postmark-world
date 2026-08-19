@@ -46,4 +46,7 @@ the door's terms quote the class-nodes. Nothing binds through prose that no
 machine reads — a rule that lives only in a document nobody's code consults
 is a wish, and this folder tries to contain no wishes: where a clause here is
 not yet consulted by the machinery, it says so, and the gap is a named entry
-on the founders' cleanup list, never a silence.
+on the founders' cleanup list, never a silence. (That list IS the red board —
+the works graph's derivation under [classes.md](classes.md)'s red
+conventions; ruled 2026-08-19 — the mechanic-child convention is this
+clause, mechanized.)

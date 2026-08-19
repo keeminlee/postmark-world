@@ -145,4 +145,6 @@ beast with its own weights. The floor is that the underlying logical model
 agrees fully with this layer; in a perfect world the world is redesigned from
 scratch to mechanically mirror it. Until then, every divergence between the
 running code and this law is a named entry on the rot list — flagged, never
-silent.
+silent. (The rot list IS the red board — the works graph's own derivation
+under the red conventions of [classes.md](classes.md) § the rules; ruled
+2026-08-19, one surface under three historical names.)

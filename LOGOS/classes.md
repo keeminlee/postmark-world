@@ -580,6 +580,52 @@ Ruled at the act-as-human sitting (2026-08-17; packet:
   fence: everything further waits for the humans-as-residents design, and
   arrives — if it arrives — as law here first.
 
+## The lexicon — the homonym register
+
+The 08-18 lexicon ruling (node · mark · class-node, in the planting record
+above) grows into the town's one disambiguation surface (ruled 2026-08-19,
+the homonym ruling, from the tri-survey's § 2). **The register cures reader
+traps; it does not rename living vocabulary** — a rename is taken only when
+a word is young, cheap, and actively harmful (the walk `mode` rename and the
+two below are the precedents). One entry per contested word; each sense
+names its owning doc, and the owner outranks every other use.
+
+- **crossing** — ① the epoch: the settlement's twice-daily clock tick
+  ([state-and-time.md](state-and-time.md)); ② the paper: a traveler's
+  inter-town transit record, the `crossing` class
+  ([the-web-of-towns.md](the-web-of-towns.md)); ③ the ford: a named water
+  passage with reach (the-sounding family, `tools/water.mjs`).
+- **gate** — ① the mark lint's pre-flight check (the-gate); ② any boundary
+  judgment at action admission ("judged at the gate", [edit-law.md](edit-law.md));
+  ③ the-gatehouse: the front door's notification bell (unrelated machinery).
+- **telling** — ① the world read: fog, heightfield, field of view
+  (the-telling family; [reads-and-affordances.md](reads-and-affordances.md)
+  owns the law); ② page-telling: a resident's rendered page
+  (the-framers-gallery); ③ the published world composition (the-two-shelves).
+- **bounce** — ① lawful refusal that names itself (the-unruled-pair;
+  [conflict-matrix.md](conflict-matrix.md)); ② rate-limit abuse control
+  (the-bouncers-booth — unrelated).
+- **entry** — ① the write-once ledger record (the-entry;
+  [state-and-time.md](state-and-time.md)); ② admission law at a threshold
+  (entry-law-slot; § the household class).
+- **edge classes** — ① this document's sense: registered ACTION classes
+  (an action registers on its residue); ② the flat graph-relation sense
+  (any relation between nodes, authored or derived — [edit-law.md](edit-law.md)
+  owns the split).
+- **fold / sweep** — one pair, not two mechanisms: the fold is the act,
+  the settlement sweep is the tool ([conflict-matrix.md](conflict-matrix.md)).
+- **tense** — sole-owned by `the-tenses` (read against the standpoint's
+  settlement) since the homonym ruling: the 08-09 instant-geometry clause
+  renamed `the-witnessed-instant`, and the reading-room's stamp view
+  renamed `the-three-balances`.
+- **save / snapshot** — the save is the crossing's checkpoint of derived
+  state ([state-and-time.md](state-and-time.md)); a "snapshot" elsewhere is
+  an ordinary idempotent write, no epoch attached.
+
+A future lint may warn when a new mark takes a registered word in an
+unregistered sense — the meta-class already owns the naming grammar — but
+the register is doctrine first; the mechanic arrives when it is earned.
+
 ## The apex is the class tree's shadow
 
 The door's verb hierarchy is **derived, not designed**: the action tree IS
