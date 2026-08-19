@@ -372,7 +372,11 @@ machinery lands, and adding the child IS the green commit.** No second
 ledger of planned-vs-implemented exists to go stale: the board derives
 from the marks themselves. A verifier may further check that a named
 path exists and speaks the rule's name; a mechanic naming a round is
-judgment-lane law, green and honestly labeled.
+judgment-lane law, green and honestly labeled. **And version 0 is the
+second red (ruled 2026-08-19 evening): a proposed assignment stands
+where it would live if ratified, on any family, red until the founder's
+word bumps it to version 1 — the word settles the question; the mechanic,
+separately, implements the thing.**
 
 **The two books — where a rule belongs (ruled 2026-08-19):** the logos
 holds the **constitutive** — rules whose negation yields not a different

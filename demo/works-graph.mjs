@@ -253,7 +253,15 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
     if (n.kind !== "class" || PROMISE_ROOTS.has(n.id)) continue;
     if (!PROMISE_ROOTS.has(n.latticeRoot)) continue;
     const slots = slotChildren.get(n.id) ?? new Set();
-    n.red = !(slots.has("mechanic") || slots.has("engine"));
+    if (!(slots.has("mechanic") || slots.has("engine"))) { n.red = true; n.redWhy = "stated, no mechanic/engine yet"; }
+  }
+  // version 0 = proposed, unratified (Keemin, 2026-08-19 evening): the
+  // assignment stands where it would live IF ratified, painted red on any
+  // kind — ratification is the bump to version 1, and only that.
+  for (const n of nodes) {
+    // explicit zero only — a versionless mark is not a proposal (Number(null)
+    // is 0, the coercion that painted forty innocents on first run)
+    if (n.version === 0 || n.version === "0") { n.red = true; n.redWhy = "proposed, unratified (v0)"; }
   }
 
   // ---------------------------------------------------- the layout spine

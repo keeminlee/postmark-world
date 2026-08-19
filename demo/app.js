@@ -513,7 +513,7 @@ function hoverOn(n, ev) {
   const tip = $("#tip");
   tip.innerHTML =
     `<div class="t-name">${esc(label(n))}</div>` +
-    `<div class="t-kind">${esc(n.kind)}${n.tier ? " · " + esc(n.tier) : ""}${n.inWorks ? "" : " · BEYOND THE WORKS — " + esc(n.path)}${n.red ? ` · <span class="t-red">RED — stated, no mechanic/engine yet</span>` : ""}</div>` +
+    `<div class="t-kind">${esc(n.kind)}${n.tier ? " · " + esc(n.tier) : ""}${n.inWorks ? "" : " · BEYOND THE WORKS — " + esc(n.path)}${n.red ? ` · <span class="t-red">RED — ${esc(n.redWhy || "stated, no mechanic/engine yet")}</span>` : ""}</div>` +
     (n.body ? `<div class="t-body">${esc(n.body)}</div>` : "");
   tip.hidden = false;
   moveTip(ev);
