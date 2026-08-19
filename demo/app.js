@@ -435,9 +435,15 @@ function renderGraph() {
       width: p.w, height: p.h, rx: 5,
     }, grp);
     el("text", { class: "n-name", x: 9, y: 15 }, grp).textContent = trunc(label(n), 20);
+    // slot governance, worn on the node: sealed (class-governed value) ·
+    // unsealed + custody (instance-governed, values-tier names whose word
+    // fills it) · witnessed (stamped by the act, chosen by nobody)
+    const gov = n.kind === "class" ? null :
+      n.value === "unsealed" ? `unsealed · ${(n.valuesTier ?? "?").slice(0, 5)}` :
+      n.value === "witnessed" ? "witnessed" : "sealed";
     el("text", { class: "n-kind", x: 9, y: 26 }, grp).textContent =
       quarter ? `from ${trunc(quarter, 12)} — beyond` :
-      n.kind === "class" ? `class · v${n.version ?? "?"}` : (n.slot ? `predicate · ${trunc(n.slot, 16)}` : "predicate");
+      n.kind === "class" ? `class · v${n.version ?? "?"}` : (n.slot ? `${trunc(n.slot, 12)} · ${gov}` : `predicate · ${gov}`);
 
     grp.addEventListener("mouseenter", (ev) => { hoverOn(n, ev); });
     grp.addEventListener("mousemove", moveTip);
