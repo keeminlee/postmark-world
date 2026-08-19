@@ -13,10 +13,11 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
 `the-town/town`, `the-town/crossing`, `the-town/human`,
 `the-town/timetable`, `the-town/bounty`, `the-town/entry`,
+`the-town/settle`,
 `the-town/postmark-node`, `the-town/postmark-edge`, `the-town/postmark-class`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — thirty-three of the thirty-four class-nodes
-standing in the Keeping Works (the thirty-fourth, response-edge, is sourced
+and `the-town/exposure` — thirty-four of the thirty-five class-nodes
+standing in the Keeping Works (the thirty-fifth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -261,6 +262,25 @@ reached law):
   predicates are whatever the sovereign wants them to be, and a claim
   colliding with a constitutional predicate is auto-opposed into the
   household's own draft space, which has no machinery.
+
+## The settle class — coming ashore from the Harbor
+
+Ruled into machinery 2026-08-19 (the gates lane; `HARBOR/GANGWAY.md` in the
+town repo is the governing file this law defers to):
+
+- **Settle is the disembarkation act** — the edge by which a berth's standing
+  at anchor becomes a household ashore. Its from-class is the berth; the act
+  runs only at the gangway's word (`state: open`, a founder commit), oldest
+  boarded first, `batch: N` at a time — the gangway rises behind the batch by
+  default.
+- **The berth's card becomes the household's ADDRESS** — the passenger's own
+  words cross verbatim; the berth row is marked `ashore` and kept, never
+  deleted: the manifest keeps what happened.
+- **The remaining hands are named, not absorbed**: the Registrar pins the
+  verified identity and returns the gangway to frozen in her closing commit;
+  Ferry welcomes. The mechanical half lives in the town repo's
+  `tools/settle.mjs`, which does only what the berth file already carries
+  the truth for, and refuses — naming its horizon — while the gangway is up.
 
 ## The human class — the household's human, and who a grant is for
 
