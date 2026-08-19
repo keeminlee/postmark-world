@@ -33,6 +33,7 @@ export const EDGE_TYPES = {
   implements: { label: "implements", note: "the class names a node it realises (frontmatter `implements:`, when the target resolves to a mark)" },
   slot: { label: "slot", note: "a predicated child standing under the node it describes (the directory nesting of a `kind: predicated` mark)" },
   residue: { label: "residue", note: "an action on this class leaves that class behind (frontmatter `actions[].residue`)" },
+  endpoint: { label: "endpoint", note: "an edge class seals where its instances begin and end (frontmatter `from-class:` / `to-class:` — the endpoint law, 2026-08-19)" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
   portal: { label: "portal", note: "the crossing itself: the works' portal predicate names where the read roots" },
 };
@@ -130,6 +131,16 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       if (!s) continue;
       if (looksLikeMarkId(s) && inSet.has(s)) edges.push({ from: r.id, to: s, type: "implements", detail: `implements: ${s}` });
       else if (looksLikeMarkId(s)) unresolved.push({ from: r.id, to: s, type: "implements", reason: "target is not a mark in class-space" });
+    }
+
+    // endpoint — an edge class declares its ends: from-class / to-class name
+    // either a works class (by name) or a mark id (the portal's far side)
+    for (const [field, lbl] of [["from-class", "from"], ["to-class", "to"]]) {
+      const v = r[field] != null ? String(r[field]).trim() : null;
+      if (!v) continue;
+      const target = classByName.get(v)?.id ?? (inSet.has(v) ? v : null);
+      if (target) edges.push({ from: r.id, to: target, type: "endpoint", detail: `${lbl}: ${v}` });
+      else unresolved.push({ from: r.id, to: v, type: "endpoint", detail: lbl, reason: "endpoint names nothing in class-space" });
     }
 
     // residue — an action's leavings name another class
