@@ -3,8 +3,8 @@ kind: class
 by: the-town
 tier: constitution
 date: 2026-08-14
-class: member-of
-version: 2
+class: join
+version: 3
 extends: postmark-edge
 from-class: household
 to-class: town

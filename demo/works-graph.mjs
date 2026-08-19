@@ -32,8 +32,9 @@ export const EDGE_TYPES = {
   extends: { label: "extends", note: "the lattice edge: this class is a kind of that one (frontmatter `extends:`, resolved by class name)" },
   implements: { label: "implements", note: "the class names a node it realises (frontmatter `implements:`, when the target resolves to a mark)" },
   slot: { label: "slot", note: "a predicated child standing under the node it describes (the directory nesting of a `kind: predicated` mark)" },
-  residue: { label: "residue", note: "an action on this class leaves that class behind (frontmatter `actions[].residue`)" },
-  "postmark-edge": { label: "postmark-edge", note: "the town's own edge classes — each drawn from its from-class to its to-class, labeled by the specific class (holds, belongs-to, member-of, portal…)" },
+  can: { label: "can", note: "noun CAN verb — an actor class granted a verb class (frontmatter `actions[]`, Keemin's grammar 2026-08-19)" },
+  residue: { label: "residue", note: "verb LEAVES noun — a creating verb's leaving (the verb class's own `residue:` field); residue runs postmark-edge → noun, never noun → noun" },
+  "postmark-edge": { label: "postmark-edge", note: "the town's own edge classes — each drawn from its from-class to its to-class, labeled by the specific class (holds, belongs-to, join…)" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
   portal: { label: "portal", note: "the crossing itself: the works' portal predicate names where the read roots" },
 };
@@ -148,13 +149,26 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       }
     }
 
-    // residue — an action's leavings name another class
-    for (const a of asArray(r.actions)) {
-      if (!a || typeof a !== "object") continue;
-      const res = a.residue ? String(a.residue).trim() : null;
-      if (!res) continue;
-      if (inSet.has(res)) edges.push({ from: r.id, to: res, type: "residue", detail: `${a.action} → ${res}` });
-      else unresolved.push({ from: r.id, to: res, type: "residue", detail: a.action, reason: "residue target outside class-space" });
+    // can — noun CAN verb: an actor's actions[] grant verb classes (each
+    // action's residue field names the VERB class it exercises); deduped
+    {
+      const granted = new Set();
+      for (const a of asArray(r.actions)) {
+        if (!a || typeof a !== "object") continue;
+        const verb = a.residue ? String(a.residue).trim() : null;
+        if (!verb || granted.has(verb)) continue;
+        granted.add(verb);
+        if (inSet.has(verb)) edges.push({ from: r.id, to: verb, type: "can", detail: `can ${a.action}` });
+        else unresolved.push({ from: r.id, to: verb, type: "can", detail: a.action, reason: "verb outside class-space" });
+      }
+    }
+
+    // residue — verb LEAVES noun: a creating verb's own `residue:` field
+    // (postmark-edge → noun, never noun → noun; Keemin's grammar)
+    if (r.residue != null) {
+      const res = String(r.residue).trim();
+      if (inSet.has(res)) edges.push({ from: r.id, to: res, type: "residue", detail: `leaves ${res}` });
+      else unresolved.push({ from: r.id, to: res, type: "residue", reason: "residue target outside class-space" });
     }
 
     // slot / registry — both read off the SAME directory nesting; which one it

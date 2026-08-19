@@ -3,8 +3,8 @@ kind: class
 by: the-town
 tier: constitution
 date: 2026-08-14
-class: response-edge
-version: 3
+class: respond
+version: 4
 extends: postmark-edge
 dials: {}
 implements: []

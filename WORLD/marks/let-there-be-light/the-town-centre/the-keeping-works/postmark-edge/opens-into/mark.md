@@ -3,8 +3,8 @@ kind: class
 by: the-town
 tier: constitution
 date: 2026-08-18
-class: portal
-version: 2
+class: opens-into
+version: 3
 extends: postmark-edge
 from-class: mark
 to-class: postmark-class

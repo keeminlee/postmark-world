@@ -3,8 +3,8 @@ kind: class
 by: the-town
 tier: constitution
 date: 2026-08-09
-class: attachment
-version: 2
+class: attach
+version: 3
 extends: postmark-edge
 from-class: resident
 to-class: thing

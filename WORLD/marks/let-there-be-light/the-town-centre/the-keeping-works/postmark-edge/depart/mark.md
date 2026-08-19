@@ -3,8 +3,8 @@ kind: class
 by: the-town
 tier: constitution
 date: 2026-08-09
-class: departure
-version: 3
+class: depart
+version: 4
 extends: postmark-edge
 from-class: resident
 to-class: position

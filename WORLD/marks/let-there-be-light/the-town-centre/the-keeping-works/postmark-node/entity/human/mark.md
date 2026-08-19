@@ -8,7 +8,7 @@ version: 2
 extends: entity
 dials: {}
 implements: []
-actions: [{"action": "say", "for": "human", "residue": "the-town/sound"}]
+actions: [{"action": "say", "for": "human", "residue": "the-town/say"}]
 source: LOGOS/classes.md
 ---
 
