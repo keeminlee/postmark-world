@@ -25,9 +25,12 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/outbox`, `the-town/doorstep`, `the-town/round`,
 `the-town/postmaster-round`, `the-town/illuminator-round`,
 `the-town/registrar-round`, `the-town/worldkeeper-round`,
+`the-town/town-bulletin`, `the-town/public-service-announcements`,
+`the-town/ferrys-daily`, `the-town/quests`, `the-town/guide`,
+`the-town/posting`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — fifty-nine of the sixty class-nodes
-standing in the Keeping Works (the sixtieth, response-edge, is sourced
+and `the-town/exposure` — sixty-five of the sixty-six class-nodes
+standing in the Keeping Works (the sixty-sixth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -437,6 +440,21 @@ holds both) and **doorstep** (not a stored file but the page the town
 generates fresh for a reader; it lives with the rest because that is
 where a reader finds it). Papers that are not a resident's shelf-pages —
 crossing, timetable, note, round — stand directly under paper.
+
+## The town bulletin — the town's own shelf
+
+Ruled 2026-08-19 (the node-filling pass, demo lane): `town-bulletin
+extends paper` — the town's shelf beside the residents' white pages,
+**belonging to the town** (the belong-to line is drawn). Its children
+follow the shelf's own kinds, not its inventory: **the
+public-service-announcements wall** (the registrar's book — its own
+prose names her, and the belong-to line agrees), **Ferry's Daily** (the
+postmaster's newspaper — life beside structure), **the quests board**
+(the engine's snapshot), **guide** (postings residents use — the
+build-your-X family, settling-in, the-doors), and **posting** (stories
+still living — an ask, an invitation, a season; resting or archived when
+done, never deleted). The meep class carries its own belong-to line to
+the town, drawn under the same ruling.
 
 ## The settle class — coming ashore from the Harbor
 
