@@ -33,6 +33,7 @@ export const EDGE_TYPES = {
   implements: { label: "implements", note: "the class names a node it realises (frontmatter `implements:`, when the target resolves to a mark)" },
   slot: { label: "slot", note: "a predicated child standing under the node it describes (the directory nesting of a `kind: predicated` mark)" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
+  "reports-to": { label: "reports-to", note: "the office line (ruled 2026-08-19): this office answers to that one (frontmatter `reports-to:`, resolved by class name)" },
 };
 
 function asArray(v) {
@@ -118,6 +119,13 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       const target = classByName.get(String(r.extends).trim());
       if (target) push(r.id, target.id, "extends", `extends: ${r.extends}`);
       else unresolved.push({ from: r.id, to: String(r.extends), type: "extends", reason: "no class-node declares that class name" });
+    }
+
+    // reports-to — the office line, resolved by class name exactly like extends
+    if (r["reports-to"] != null) {
+      const target = classByName.get(String(r["reports-to"]).trim());
+      if (target) push(r.id, target.id, "reports-to", `reports-to: ${r["reports-to"]}`);
+      else unresolved.push({ from: r.id, to: String(r["reports-to"]), type: "reports-to", reason: "no class-node declares that class name" });
     }
 
     // implements — mark targets become edges; source-file targets are recorded

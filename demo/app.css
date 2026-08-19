@@ -170,6 +170,8 @@ body {
 .t-postmark-edge { stroke: var(--e-postmark-edge); stroke-dasharray: 5 4; } .l-postmark-edge { fill: var(--e-postmark-edge); }
 .t-can { stroke: var(--e-can); } .l-can { fill: var(--e-can); }
 .t-registry { stroke: var(--e-registry); } .l-registry { fill: var(--e-registry); }
+/* the office line (2026-08-19): who answers to whom — command gold, dashed */
+.t-reports-to { stroke: #b8863b; stroke-dasharray: 6 3; } .l-reports-to { fill: #b8863b; }
 .t-portal { stroke: var(--e-portal); stroke-width: 2; } .l-portal { fill: var(--e-portal); }
 
 /* ---------------- panels ---------------- */
