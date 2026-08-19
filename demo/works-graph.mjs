@@ -36,7 +36,6 @@ export const EDGE_TYPES = {
   residue: { label: "residue", note: "verb LEAVES noun — a creating verb's leaving (the verb class's own `residue:` field); residue runs postmark-edge → noun, never noun → noun" },
   "postmark-edge": { label: "postmark-edge", note: "the town's own edge classes — each drawn from its from-class to its to-class, labeled by the specific class (holds, belongs-to, join…)" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
-  portal: { label: "portal", note: "the crossing itself: the works' portal predicate names where the read roots" },
 };
 
 function asArray(v) {
@@ -79,9 +78,11 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
   //      and their defaults), transitively
   const classNodes = all.filter((r) => r.kind === "class" && underWorks(r));
   const inSet = new Map(classNodes.map((r) => [r.id, r]));
-  // the portal predicate itself stands in class-space: it is the near side of
+  // portal REMOVED from the drawing (Keemin, 2026-08-19: one instance to
+  // date, not worth litigating yet) — the map's crossing mechanic still
+  // reads the predicate; the graph just no longer draws it.
+  // Formerly: the portal predicate itself stands in class-space, near side of
   // the crossing. Its own parent (the works, a sited mark) does not.
-  if (portal) inSet.set(portal.id, portal);
 
   const classByName = new Map();
   for (const r of classNodes) if (r.class != null) classByName.set(String(r.class), r);
@@ -112,12 +113,7 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
     edges.push({ from, to, type, detail: detail ?? null });
   };
 
-  // portal — the crossing itself, grouped with the town's edges in the legend
-  // but keeping its own label (Keemin's grouping, 2026-08-19 close)
-  if (portal && portalTarget) {
-    if (inSet.has(portalTarget)) edges.push({ from: portal.id, to: portalTarget, type: "postmark-edge", detail: "tie: portal" });
-    else unresolved.push({ from: portal.id, to: portalTarget, type: "postmark-edge", reason: "target outside class-space" });
-  }
+  // (the crossing edge is not drawn while portal is removed from the graph)
 
   for (const r of inSet.values()) {
     // extends — resolved by class NAME, which is how the record spells it
@@ -136,16 +132,25 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       else if (looksLikeMarkId(s)) unresolved.push({ from: r.id, to: s, type: "implements", reason: "target is not a mark in class-space" });
     }
 
-    // the town's edges (ties-are-extends UNDONE — Keemin, 2026-08-19 close):
-    // an edge class with both ends sealed draws from-class → to-class as
-    // type `postmark-edge` — one legend family, one color — while the line's
-    // LABEL stays the specific class (holds, belongs-to, member-of…).
+    // the town's edges: from-class/to-class may be a single name or a LIST
+    // (belong-to serves many keepers). Every from-class entry earns a `can`
+    // edge — a noun that may USE a verb wears the grant whether or not an
+    // actions[] line repeats it (Keemin's rule). A single×single pair also
+    // draws the tie arrow, labeled by the class; multi-ended verbs carry
+    // their pairs in the body instead of a fan of arrows.
     {
       const resolve = (v) => (v == null ? null : (classByName.get(String(v).trim())?.id ?? (inSet.has(String(v).trim()) ? String(v).trim() : null)));
-      const f = resolve(r["from-class"]), t = resolve(r["to-class"]);
-      if (f && t) relationEdges.push({ from: f, to: t, type: "postmark-edge", detail: `tie: ${r.class ?? r.slug}` });
-      else if (r["from-class"] != null || r["to-class"] != null) {
-        unresolved.push({ from: r.id, to: `${r["from-class"]} → ${r["to-class"]}`, type: "postmark-edge", reason: "an end names nothing in class-space" });
+      const listy = (v) => (Array.isArray(v) ? v : v != null ? [v] : []);
+      const froms = listy(r["from-class"]), tos = listy(r["to-class"]);
+      for (const fv of froms) {
+        const f = resolve(fv);
+        if (f) relationEdges.push({ from: f, to: r.id, type: "can", detail: `can ${r.class ?? r.slug}` });
+        else unresolved.push({ from: String(fv), to: r.id, type: "can", reason: "from-class names nothing in class-space" });
+      }
+      if (froms.length === 1 && tos.length === 1) {
+        const f = resolve(froms[0]), t = resolve(tos[0]);
+        if (f && t) relationEdges.push({ from: f, to: t, type: "postmark-edge", detail: `tie: ${r.class ?? r.slug}` });
+        else unresolved.push({ from: r.id, to: `${froms[0]} → ${tos[0]}`, type: "postmark-edge", reason: "an end names nothing in class-space" });
       }
     }
 
@@ -264,16 +269,7 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
     const child = byNodeId.get(e.to);
     if (child && !child.layoutParent) { child.layoutParent = e.from; child.layoutParentEdge = e.type; }
   }
-  // holder→held ties seat their TARGET when nothing stronger has: household
-  // —holds→ parcel puts parcel under household. ONLY container-shaped ties
-  // seat (a stake must never put mark under resident); the list is judgment,
-  // stated here rather than hidden in a heuristic.
-  const SEATING_TIES = new Set(["tie: holds"]);
-  for (const e of edges) {
-    if (!SEATING_TIES.has(String(e.detail ?? ""))) continue;
-    const child = byNodeId.get(e.to);
-    if (child && !child.layoutParent) { child.layoutParent = e.from; child.layoutParentEdge = "postmark-edge"; }
-  }
+  // (tie-seating retired with holds — parcel seats by its lattice parent now)
   // the portal's own edge points at the root of the read, so the crossing hangs
   // the other way round: `node` sits under the portal in the drawing
   const portalEdge = edges.find((e) => e.type === "portal");
