@@ -10,4 +10,4 @@ dials: {}
 implements: []
 ---
 
-Questions standing at the founder's desk — each child a parked ruling carrying Wright's lean, deliberately red: the word is the mechanic it lacks.
+Questions standing at the founder's desk — each child a parked ruling carrying Wright's lean; mechanics left blank on purpose: red until built.
