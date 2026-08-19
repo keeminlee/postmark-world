@@ -32,7 +32,6 @@ export const EDGE_TYPES = {
   extends: { label: "extends", note: "the lattice edge: this class is a kind of that one (frontmatter `extends:`, resolved by class name)" },
   implements: { label: "implements", note: "the class names a node it realises (frontmatter `implements:`, when the target resolves to a mark)" },
   slot: { label: "slot", note: "a predicated child standing under the node it describes (the directory nesting of a `kind: predicated` mark)" },
-  residue: { label: "residue", note: "verb LEAVES noun — a creating verb's leaving (the verb class's own `residue:` field); residue runs postmark-edge → noun, never noun → noun" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
 };
 
@@ -135,13 +134,9 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
     // frontmatter data on each verb (detail panel), and draw nothing.
     // A bare arrow over-claims; the door and the save do the real judging.
 
-    // residue — verb LEAVES noun: a creating verb's own `residue:` field
-    // (postmark-edge → noun, never noun → noun; Keemin's grammar)
-    if (r.residue != null) {
-      const res = String(r.residue).trim();
-      if (inSet.has(res)) edges.push({ from: r.id, to: res, type: "residue", detail: `leaves ${res}` });
-      else unresolved.push({ from: r.id, to: res, type: "residue", reason: "residue target outside class-space" });
-    }
+    // residue arrows DELETED (Keemin, 2026-08-19 3am theorem): residue is
+    // can-shaped — the verb's creation-typing, conditional law, not a bare
+    // arrow. The `residue:` field stays as verb data (detail panel).
 
     // slot / registry — both read off the SAME directory nesting; which one it
     // is depends on what the child is and whether an `extends:` already says it
