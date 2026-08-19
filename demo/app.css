@@ -172,6 +172,8 @@ body {
 .t-registry { stroke: var(--e-registry); } .l-registry { fill: var(--e-registry); }
 /* the office line (2026-08-19): who answers to whom — command gold, dashed */
 .t-reports-to { stroke: #b8863b; stroke-dasharray: 6 3; } .l-reports-to { fill: #b8863b; }
+/* the keeper line (2026-08-19): whose a thing is — hearth green, dotted */
+.t-belong-to { stroke: #5a8a5a; stroke-dasharray: 2 3; } .l-belong-to { fill: #5a8a5a; }
 .t-portal { stroke: var(--e-portal); stroke-width: 2; } .l-portal { fill: var(--e-portal); }
 
 /* ---------------- panels ---------------- */

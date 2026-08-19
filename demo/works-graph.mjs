@@ -34,6 +34,7 @@ export const EDGE_TYPES = {
   slot: { label: "slot", note: "a predicated child standing under the node it describes (the directory nesting of a `kind: predicated` mark)" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
   "reports-to": { label: "reports-to", note: "the office line (ruled 2026-08-19): this office answers to that one (frontmatter `reports-to:`, resolved by class name)" },
+  "belong-to": { label: "belong-to", note: "the keeper line (ruled 2026-08-19): this class's instances belong to that class's — declared on the kept class (frontmatter `belong-to:`, resolved by class name)" },
 };
 
 function asArray(v) {
@@ -126,6 +127,13 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       const target = classByName.get(String(r["reports-to"]).trim());
       if (target) push(r.id, target.id, "reports-to", `reports-to: ${r["reports-to"]}`);
       else unresolved.push({ from: r.id, to: String(r["reports-to"]), type: "reports-to", reason: "no class-node declares that class name" });
+    }
+
+    // belong-to — the keeper line, declared on the kept class, same resolution
+    if (r["belong-to"] != null) {
+      const target = classByName.get(String(r["belong-to"]).trim());
+      if (target) push(r.id, target.id, "belong-to", `belong-to: ${r["belong-to"]}`);
+      else unresolved.push({ from: r.id, to: String(r["belong-to"]), type: "belong-to", reason: "no class-node declares that class name" });
     }
 
     // implements — mark targets become edges; source-file targets are recorded
