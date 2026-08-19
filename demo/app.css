@@ -19,6 +19,7 @@
   --e-portal: #d9a441;
   --e-endpoint: #6f9bd8;
   --e-relation: #6f9bd8;
+  --e-postmark-edge: #6f9bd8;
 }
 
 * { box-sizing: border-box; }
@@ -160,6 +161,7 @@ body {
 .t-slot { stroke: var(--e-slot); } .l-slot { fill: var(--e-slot); }
 .t-residue { stroke: var(--e-residue); } .l-residue { fill: var(--e-residue); }
 .t-relation { stroke: var(--e-endpoint); stroke-dasharray: 5 4; } .l-relation { fill: var(--e-endpoint); }
+.t-postmark-edge { stroke: var(--e-postmark-edge); stroke-dasharray: 5 4; } .l-postmark-edge { fill: var(--e-postmark-edge); }
 .t-registry { stroke: var(--e-registry); } .l-registry { fill: var(--e-registry); }
 .t-portal { stroke: var(--e-portal); stroke-width: 2; } .l-portal { fill: var(--e-portal); }
 
