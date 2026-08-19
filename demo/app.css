@@ -132,9 +132,11 @@ body {
 .node.is-out .n-name { fill: #e3dcc2; }
 .node.is-out .n-kind { fill: #a9a184; }
 .swatch-out { border-top: 3px solid var(--out) !important; }
-/* the beyond chip is information, not a control — divided off and inert */
-.legend-static { cursor: default; opacity: .75; margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); }
+/* the beyond chip is information, not a control — its own strip, inert */
+.legend-nodes { margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); }
+.legend-static { cursor: default; opacity: .75; }
 .legend-static:hover { background: none; }
+.legend-static .lbl { color: var(--ink-faint); margin-right: 6px; letter-spacing: .05em; }
 .n-name { fill: var(--ink); font-size: 12.5px; pointer-events: none; }
 .n-kind { fill: var(--ink-faint); font-size: 9.5px; pointer-events: none; letter-spacing: .05em; }
 .node { cursor: pointer; }

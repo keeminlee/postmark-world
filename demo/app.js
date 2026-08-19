@@ -599,15 +599,16 @@ function buildLegend() {
     });
     ul.appendChild(li);
   }
-  // beyond-the-works entry — a NODE dress, not an edge type: rendered after a
-  // divider, statically (no role, no toggle), so it cannot read as a filter
+  // node dress lives in its OWN strip (#legend-nodes), never among edge types
+  const nul = $("#legend-nodes");
+  nul.replaceChildren();
   const outN = g.nodes.filter((n) => !n.inWorks).length;
   if (outN) {
     const li = document.createElement("li");
     li.className = "legend-static";
-    li.title = "node dress, not an edge type — nodes pulled in from beyond the works (the logos quarter); the portal and implements: reach out to them; they are read here, never governed here";
-    li.innerHTML = `<span class="swatch swatch-out"></span><span>nodes from beyond</span><span class="count">${outN}</span>`;
-    ul.appendChild(li);
+    li.title = "nodes pulled in from beyond the works (the logos quarter); the portal and implements: reach out to them — read here, never governed here";
+    li.innerHTML = `<span class="lbl">nodes:</span><span class="swatch swatch-out"></span><span>from beyond</span><span class="count">${outN}</span>`;
+    nul.appendChild(li);
   }
   const lone = g.nodes.filter((n) => !n.layoutParent).length;
   $("#spine-note").title =
