@@ -37,6 +37,7 @@ export const EDGE_TYPES = {
   "belong-to": { label: "belong-to", note: "the keeper line (ruled 2026-08-19): this class's instances belong to that class's — declared on the kept class (frontmatter `belong-to:`, resolved by class name)" },
   rides: { label: "rides", note: "the emission line (ruled 2026-08-19): an emission rides its source for the little while it lasts — declared on the emission (frontmatter `rides:`); fog deliberately rides nothing" },
   "derives-from": { label: "derives-from", note: "the derivation line (ruled 2026-08-19): a derived declares the classes whose records feed its answer (frontmatter `derives-from:`, an array, resolved by class name)" },
+  becomes: { label: "becomes", note: "the lifecycle line (ruled 2026-08-19): one standing continues as another, history carried whole — the resident face (berth becomes household) and the supersession face (frozen law names its successor) are one atom (frontmatter `becomes:`, resolved by class name)" },
 };
 
 function asArray(v) {
@@ -143,6 +144,13 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       const target = classByName.get(String(r.rides).trim());
       if (target) push(r.id, target.id, "rides", `rides: ${r.rides}`);
       else unresolved.push({ from: r.id, to: String(r.rides), type: "rides", reason: "no class-node declares that class name" });
+    }
+
+    // becomes — the lifecycle line, declared on the predecessor, same resolution
+    if (r.becomes != null) {
+      const target = classByName.get(String(r.becomes).trim());
+      if (target) push(r.id, target.id, "becomes", `becomes: ${r.becomes}`);
+      else unresolved.push({ from: r.id, to: String(r.becomes), type: "becomes", reason: "no class-node declares that class name" });
     }
 
     // derives-from — the derivation line, declared on the derived, array-valued

@@ -7,7 +7,7 @@ class: human
 version: 2
 extends: entity
 dials: {}
-implements: []
+implements: ["the-town/the-own-hand"]
 actions: [{"action": "say", "for": "human", "residue": "the-town/say"}]
 source: LOGOS/classes.md
 ---
