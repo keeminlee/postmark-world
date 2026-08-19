@@ -6,6 +6,7 @@ date: 2026-08-09
 class: sound
 version: 2
 extends: emission
+rides: resident
 ambient: true
 dials: {"radius_m": 60, "hearing_ttl_min": 5, "flood_cap": 20, "thread_close_min": 30}
 implements: []

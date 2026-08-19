@@ -35,6 +35,7 @@ export const EDGE_TYPES = {
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
   "reports-to": { label: "reports-to", note: "the office line (ruled 2026-08-19): this office answers to that one (frontmatter `reports-to:`, resolved by class name)" },
   "belong-to": { label: "belong-to", note: "the keeper line (ruled 2026-08-19): this class's instances belong to that class's — declared on the kept class (frontmatter `belong-to:`, resolved by class name)" },
+  rides: { label: "rides", note: "the emission line (ruled 2026-08-19): an emission rides its source for the little while it lasts — declared on the emission (frontmatter `rides:`); fog deliberately rides nothing" },
 };
 
 function asArray(v) {
@@ -134,6 +135,13 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       const target = classByName.get(String(r["belong-to"]).trim());
       if (target) push(r.id, target.id, "belong-to", `belong-to: ${r["belong-to"]}`);
       else unresolved.push({ from: r.id, to: String(r["belong-to"]), type: "belong-to", reason: "no class-node declares that class name" });
+    }
+
+    // rides — the emission line, declared on the emission, same resolution
+    if (r.rides != null) {
+      const target = classByName.get(String(r.rides).trim());
+      if (target) push(r.id, target.id, "rides", `rides: ${r.rides}`);
+      else unresolved.push({ from: r.id, to: String(r.rides), type: "rides", reason: "no class-node declares that class name" });
     }
 
     // implements — mark targets become edges; source-file targets are recorded

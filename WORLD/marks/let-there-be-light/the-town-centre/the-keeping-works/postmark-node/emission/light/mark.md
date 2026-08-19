@@ -6,6 +6,7 @@ date: 2026-08-09
 class: light
 version: 1
 extends: emission
+rides: thing
 dials: {}
 implements: []
 source: LOGOS/classes.md

@@ -474,6 +474,21 @@ still living — an ask, an invitation, a season; resting or archived when
 done, never deleted). The meep class carries its own belong-to line to
 the town, drawn under the same ruling.
 
+## The emission lines — what an emission rides
+
+Ruled 2026-08-19 (the relating-in pass): an emission's own law has always
+said it *rides its source for the little while it lasts* — now the line
+is drawn. **Sound rides the resident** (radiated at the speaker's
+standpoint; a human's voice carried by the resident they stand with);
+**light rides the thing** (a carried lantern is already a torch);
+**fog rides nothing, deliberately** — the absence of its line is its law
+(it sits on the ground and rides no speaker). Fog instead carries the
+family's one engine child: no verb makes fog — `fogModel` in the world
+engine brews it as a pure function of the crossing number, so any clone
+gets the same day. The deliberate non-lines stay ruled: emissions carry
+no belong-to (made is not had), and residue (say→sound) stays verb data,
+never drawn.
+
 ## The four papers of record — letter, ledger, ballot, project
 
 Ruled 2026-08-19 (the unaccounted survey, demo lane), all extending
