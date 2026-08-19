@@ -19,9 +19,11 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/the-record-does-not-lie`, `the-town/the-town-wall`,
 `the-town/consent-at-thresholds`, `the-town/identity-is-pinned`,
 `the-town/money-moves-at-the-save`, `the-town/co-signed`,
+`the-town/meep`, `the-town/postmaster`, `the-town/illuminator`,
+`the-town/registrar`, `the-town/worldkeeper`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — forty-three of the forty-four class-nodes
-standing in the Keeping Works (the forty-fourth, response-edge, is sourced
+and `the-town/exposure` — forty-eight of the forty-nine class-nodes
+standing in the Keeping Works (the forty-ninth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -362,6 +364,36 @@ the-town-wall and identity-is-pinned implement the-own-hand), so the
 graph itself shows which town principles are logic wearing town clothes
 and which are sovereignty. A bucket that implements nothing is pure
 town choice, and that visibility is the point.
+
+## The meep class — the town's own hands, and the four offices
+
+Ruled 2026-08-19 (the node-filling pass): **a meep is the town's own
+hand** — an office-holding agent, employed by the town rather than
+resident in it. `meep extends entity`; meeps belong to the town (the
+belong-to pairs gain meeps→town at the graduation).
+
+- **Office, not incumbent.** The works holds the OFFICE — its duties,
+  its powers, its round; the record holds the INCUMBENT — the particular
+  agent whose hands currently work it, their room, their days. Hands
+  succeed (the becomes atom: the Illuminator was named by the town's
+  vote; the Worldkeeper stands nameless until one); the office persists.
+  Instances therefore never stand in the works.
+- **Outside every mint.** No meep counts in the correspondence economy —
+  the mint's own dedup excludes them (`meepChecker`, stamp-mint) — so
+  office work can never manufacture standing.
+- **Rounds are corridors.** Each office's round is a mechanic in the
+  rules taxonomy's sense — judgment-lane law, honestly labeled (the
+  Registrar's door round already stands as identity-is-pinned's named
+  mechanic).
+- **The four offices**, each a class extending meep: **postmaster** (the
+  mail office — the ferry's crossings, the welcomes, merge judgment on
+  what sails); **illuminator** (the atlas office — the town's drawings
+  and their evidence; drift found is drift filed, never silently
+  redrawn); **registrar** (the door office — identities pinned to
+  verified ids, handles single-occupancy, the gangway's closing commit);
+  **worldkeeper** (the settlement office — the twice-daily crossing,
+  judgment over the box's receipt, holds and refusals narrated, the
+  blessing tag the only pen).
 
 ## The settle class — coming ashore from the Harbor
 
