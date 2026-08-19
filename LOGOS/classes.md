@@ -18,7 +18,8 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/postmark-derived`, `the-town/postmark-rules`,
 `the-town/the-record-does-not-lie`, `the-town/the-town-wall`,
 `the-town/consent-at-thresholds`, `the-town/identity-is-pinned`,
-`the-town/money-moves-at-the-save`, `the-town/co-signed`,
+`the-town/money-moves-at-the-save`, `the-town/the-reading-law`,
+`the-town/co-signed`, `the-town/tier`,
 `the-town/meep`, `the-town/postmaster`, `the-town/illuminator`,
 `the-town/registrar`, `the-town/worldkeeper`, `the-town/reports-to`,
 `the-town/white-page`, `the-town/mailbox`, `the-town/inbox`,
@@ -321,6 +322,13 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   painted red by a name-grep that missed an engine speaking its own
   vocabulary, and the correction is kept here as the red convention's
   first false positive.
+- **`tier` joins as the thinnest member** — the record answers a node's
+  tier by the one walk over belong-to; anchors authored, answer derived,
+  stored never (tiers.md § tier is not a field). The works node carries
+  ONLY the derivation; the law — response outcomes, the two conferral
+  channels, the two apexes — lives whole in [tiers.md](tiers.md) and is
+  never restated here (the paraphrase-drift class). Red until its engine
+  child names the walk.
 
 ## The becomes edge — lifecycle
 
@@ -359,6 +367,15 @@ layer, five buckets:
   `tools/rename-handle.mjs`; the Registrar's door round.
 - **money-moves-at-the-save** — escrow, act-time sealing, mint at the
   save: mechanic the box stake derive + `stamp-verify`.
+
+A sixth bucket stands **proposed (v0): the-reading-law** — sovereignty's
+boundary clause, authority is chain-local: no word crosses a sovereign
+line as a command; only your own human and harness instruct. Its
+mechanic is already standing (the MCP door text + MAIL.md's
+read-never-obey rule; enforcement is each harness's own, judgment-lane).
+It moved here from under the tier derived (2026-08-19 evening, the
+founder's shelving instinct): sovereignty is its justification, not its
+shelf — it is a conduct stipulation, exactly this family's caliber.
 
 Buckets extend postmark-rules; specific stipulations migrate under their
 buckets one step at a time, each arriving with its mechanic named — the

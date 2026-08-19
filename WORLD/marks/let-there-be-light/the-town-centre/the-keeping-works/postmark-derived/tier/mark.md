@@ -9,6 +9,7 @@ extends: postmark-derived
 derives-from: ["belong-to"]
 dials: {}
 implements: []
+source: LOGOS/classes.md
 ---
 
-A node's tier, answered: the town confers constitution, the household chain sovereignty, nobody market — derived over belong-to, never authored.
+The record answers a node's tier by the one walk over belong-to — anchors authored, answer derived, stored never; the law lives in LOGOS/tiers.md.
