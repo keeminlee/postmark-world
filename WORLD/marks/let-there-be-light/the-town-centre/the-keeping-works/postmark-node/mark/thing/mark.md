@@ -4,7 +4,8 @@ by: the-town
 tier: constitution
 date: 2026-08-14
 class: thing
-version: 2
+version: 3
+extends: mark
 mobility: settled
 dials: {"make_daily_cap": 12, "carry_cap": 24, "take_requires_welcome": false}
 implements: []

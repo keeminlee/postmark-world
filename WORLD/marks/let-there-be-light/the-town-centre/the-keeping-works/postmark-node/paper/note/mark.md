@@ -4,7 +4,8 @@ by: the-town
 tier: constitution
 date: 2026-08-15
 class: note
-version: 1
+version: 2
+extends: paper
 dials: {"body_max_chars": 2000}
 implements: []
 source: LOGOS/classes.md

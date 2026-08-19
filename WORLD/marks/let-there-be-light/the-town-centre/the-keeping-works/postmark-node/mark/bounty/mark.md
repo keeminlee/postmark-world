@@ -4,7 +4,8 @@ by: the-town
 tier: constitution
 date: 2026-08-11
 class: bounty
-version: 2
+version: 3
+extends: mark
 dials: {"ask_max_chars": 150, "beta": true}
 implements: []
 affordances: []
