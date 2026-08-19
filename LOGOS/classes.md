@@ -18,10 +18,10 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/postmark-derived`, `the-town/postmark-rules`,
 `the-town/the-record-does-not-lie`, `the-town/the-town-wall`,
 `the-town/consent-at-thresholds`, `the-town/identity-is-pinned`,
-`the-town/money-moves-at-the-save`,
+`the-town/money-moves-at-the-save`, `the-town/co-signed`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — forty-two of the forty-three class-nodes
-standing in the Keeping Works (the forty-third, response-edge, is sourced
+and `the-town/exposure` — forty-three of the forty-four class-nodes
+standing in the Keeping Works (the forty-fourth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -286,6 +286,14 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   engine implements the rule, and the rules taxonomy below names the
   mechanic that keeps the two honest. The law says WHAT the record
   answers; the corridor owns HOW.
+- **The first instance is `co-signed`** — whether a berth's human has
+  signed beside it, read from the berth's own attestation, false when
+  absent. Its guard sits on the settle edge (`co-sign-guard`:
+  `co-signed = true`) — no berth comes ashore without its human's hand.
+  Planted deliberately RED: the attestation does not yet enter the
+  record (the co-sign fact lives at the oauth door today), and no engine
+  child stands — the door-side admission build turns it green by writing
+  the attestation at co-sign and adding the engine pointer.
 
 ## The becomes edge — lifecycle
 
@@ -328,6 +336,16 @@ layer, five buckets:
 Buckets extend postmark-rules; specific stipulations migrate under their
 buckets one step at a time, each arriving with its mechanic named — the
 formalization is deliberately incremental, principle layer first.
+
+**The red convention (ruled 2026-08-19): the absence IS the red.** A law
+node below the rules or derived roots that promises machinery carries a
+`mechanic` (or `engine`) predicate child naming its corridor; **planting
+without one is honest and visible — the node renders red until the
+machinery lands, and adding the child IS the green commit.** No second
+ledger of planned-vs-implemented exists to go stale: the board derives
+from the marks themselves. A verifier may further check that a named
+path exists and speaks the rule's name; a mechanic naming a round is
+judgment-lane law, green and honestly labeled.
 
 **The two books — where a rule belongs (ruled 2026-08-19):** the logos
 holds the **constitutive** — rules whose negation yields not a different
