@@ -1,6 +1,6 @@
 {
-  "crossing": 135,
-  "evaluated_at": "2026-08-18T12:00:00.000Z",
+  "crossing": 136,
+  "evaluated_at": "2026-08-19T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "414422867488747f501a49772c667b8f706f2906",
   "omits": [
@@ -352,23 +352,23 @@
       "x": 0,
       "y": 0,
       "arrived": true,
-      "standing": false,
-      "leg_m": 3019,
-      "travelled_m": 3019,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T09:50:10.511Z",
+        "iso": "2026-08-18T17:00:21.231Z",
         "handle": "fabel-of-garrison",
         "from": {
-          "x": 1140,
-          "y": 2795
+          "x": 0,
+          "y": 0
         },
         "toward": {
           "x": 0,
           "y": 0
         },
-        "at": 132.81968576388888,
+        "at": 135.41715393518518,
         "within": null,
         "to": null,
         "pace": 60,
@@ -520,14 +520,14 @@
     },
     {
       "handle": "jetto-of-starforge",
-      "x": -78377.2,
-      "y": -78088.8,
-      "arrived": false,
+      "x": -95120,
+      "y": -95120,
+      "arrived": true,
       "standing": false,
       "leg_m": 137310,
-      "travelled_m": 113427,
-      "remaining_m": 23883,
-      "eta_crossings": 0.4,
+      "travelled_m": 137310,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
         "iso": "2026-08-17T13:18:52.683Z",
         "handle": "jetto-of-starforge",
@@ -576,28 +576,28 @@
     },
     {
       "handle": "keith",
-      "x": 1140,
-      "y": 2798,
+      "x": 3981,
+      "y": -364,
       "arrived": true,
       "standing": false,
-      "leg_m": 3,
-      "travelled_m": 3,
+      "leg_m": 4251,
+      "travelled_m": 4251,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-16T21:42:26.795Z",
+        "iso": "2026-08-18T17:07:58.759Z",
         "handle": "keith",
         "from": {
           "x": 1140,
-          "y": 2795
-        },
-        "toward": {
-          "x": 1140,
           "y": 2798
         },
-        "at": 131.8089517361111,
+        "toward": {
+          "x": 3981,
+          "y": -364
+        },
+        "at": 135.42774555555556,
         "within": null,
-        "to": "hal/the-long-porch-table",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1005,26 +1005,26 @@
     },
     {
       "handle": "rook-of-garrison",
-      "x": 0,
-      "y": 0,
+      "x": -1353,
+      "y": -2451,
       "arrived": true,
       "standing": false,
-      "leg_m": 183,
-      "travelled_m": 183,
+      "leg_m": 2800,
+      "travelled_m": 2800,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T09:51:50.314Z",
+        "iso": "2026-08-18T16:46:25.404Z",
         "handle": "rook-of-garrison",
         "from": {
-          "x": 69.1,
-          "y": 169.4
-        },
-        "toward": {
           "x": 0,
           "y": 0
         },
-        "at": 132.82199613425925,
+        "toward": {
+          "x": -1353,
+          "y": -2451
+        },
+        "at": 135.39780736111112,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1179,28 +1179,31 @@
     },
     {
       "handle": "sol-of-garrison",
-      "x": 1140,
-      "y": 2795,
+      "x": -1369.1,
+      "y": -2537.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 5907,
-      "travelled_m": 5907,
+      "leg_m": 5281,
+      "travelled_m": 5281,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T10:29:51.053Z",
+        "iso": "2026-08-18T16:38:31.589Z",
         "handle": "sol-of-garrison",
         "from": {
+          "x": 879.2,
+          "y": 2240.7
+        },
+        "toward": {
           "x": -1375,
           "y": -2550
         },
-        "toward": {
-          "x": 1140,
-          "y": 2795
+        "at": 135.38684006944445,
+        "within": {
+          "w": 25,
+          "h": 25
         },
-        "at": 132.87479046296295,
-        "within": null,
-        "to": "hal/the-green-lamp-house",
+        "to": "sol-of-garrison/the-heart-house-parcel",
         "pace": 60,
         "line_no": null
       }
@@ -1350,31 +1353,28 @@
     },
     {
       "handle": "vermillion",
-      "x": 157.4,
-      "y": 436,
+      "x": -33,
+      "y": 34,
       "arrived": true,
       "standing": false,
-      "leg_m": 2584,
-      "travelled_m": 2584,
+      "leg_m": 68,
+      "travelled_m": 68,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T01:14:26.183Z",
+        "iso": "2026-08-18T16:58:36.032Z",
         "handle": "vermillion",
         "from": {
-          "x": 1117,
-          "y": 2835
+          "x": -64.1,
+          "y": -26.2
         },
         "toward": {
-          "x": 155,
-          "y": 430
+          "x": -33,
+          "y": 34
         },
-        "at": 132.10338203703705,
-        "within": {
-          "w": 12,
-          "h": 12
-        },
-        "to": "postmaster/the-waiting-room",
+        "at": 135.41472032407407,
+        "within": null,
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1412,29 +1412,29 @@
     },
     {
       "handle": "wright",
-      "x": 746,
-      "y": -2275,
+      "x": -250,
+      "y": 0,
       "arrived": true,
       "standing": false,
-      "leg_m": 367,
-      "travelled_m": 367,
+      "leg_m": 2029,
+      "travelled_m": 2029,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T18:13:08.322Z",
+        "iso": "2026-08-18T14:11:46.290Z",
         "handle": "wright",
         "from": {
-          "x": 575,
-          "y": -2600
+          "x": 479.1,
+          "y": -1893.3
         },
         "toward": {
-          "x": 746,
-          "y": -2275
+          "x": -250,
+          "y": 0
         },
-        "at": 133.5182463425926,
+        "at": 135.18301243055555,
         "within": null,
         "to": null,
-        "pace": 15,
+        "pace": 60,
         "line_no": null
       }
     }
