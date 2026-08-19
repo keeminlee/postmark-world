@@ -4,8 +4,10 @@ by: the-town
 tier: constitution
 date: 2026-08-14
 class: member-of
-version: 1
+version: 2
 extends: postmark-edge
+from-class: household
+to-class: town
 dials: {}
 implements: []
 affordances: []

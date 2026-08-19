@@ -4,7 +4,8 @@ by: the-town
 tier: constitution
 date: 2026-08-15
 class: berth
-version: 1
+version: 2
+extends: entity
 dials: {"sunset_crossings": 14}
 implements: []
 actions: [{"action": "say", "for": "berth", "residue": "the-town/sound"}]

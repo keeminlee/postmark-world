@@ -4,8 +4,10 @@ by: the-town
 tier: constitution
 date: 2026-08-18
 class: portal
-version: 1
+version: 2
 extends: postmark-edge
+from-class: mark
+to-class: the-town/node
 dials: {}
 implements: []
 source: LOGOS/classes.md
