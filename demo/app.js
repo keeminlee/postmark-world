@@ -453,7 +453,7 @@ function renderGraph() {
     const grp = el("g", { class: `node${n.inWorks ? "" : " is-out"}`, transform: `translate(${p.x - p.w / 2},${p.y - p.h / 2})` }, nLayer);
     grp.dataset.id = n.id;
     el("rect", {
-      class: `n-box ${n.kind === "class" ? "k-class" : "k-pred"}${isPortal ? " is-portal" : ""}`,
+      class: `n-box ${n.kind === "class" ? "k-class" : "k-pred"}${isPortal ? " is-portal" : ""}${n.red ? " is-red" : ""}`,
       width: p.w, height: p.h, rx: 5,
     }, grp);
     el("text", { class: "n-name", x: 9, y: 15 }, grp).textContent = trunc(label(n), 20);
@@ -506,7 +506,7 @@ function hoverOn(n, ev) {
   const tip = $("#tip");
   tip.innerHTML =
     `<div class="t-name">${esc(label(n))}</div>` +
-    `<div class="t-kind">${esc(n.kind)}${n.tier ? " · " + esc(n.tier) : ""}${n.inWorks ? "" : " · BEYOND THE WORKS — " + esc(n.path)}</div>` +
+    `<div class="t-kind">${esc(n.kind)}${n.tier ? " · " + esc(n.tier) : ""}${n.inWorks ? "" : " · BEYOND THE WORKS — " + esc(n.path)}${n.red ? ` · <span class="t-red">RED — stated, no mechanic/engine yet</span>` : ""}</div>` +
     (n.body ? `<div class="t-body">${esc(n.body)}</div>` : "");
   tip.hidden = false;
   moveTip(ev);

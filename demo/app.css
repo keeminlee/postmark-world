@@ -129,6 +129,11 @@ body {
 .n-box.k-class { fill: #232a33; stroke: #414a58; }
 .n-box.k-pred { fill: #1e2229; stroke: #343b46; stroke-dasharray: 3 2; }
 .n-box.is-portal { fill: #33280f; stroke: var(--works); stroke-width: 1.5; }
+/* the red convention (2026-08-19): stated law whose machinery hasn't landed —
+   a rules/derived-family class with no mechanic/engine child. Literally red. */
+.n-box.is-red { fill: #3a1a1a; stroke: #c0392b; stroke-width: 1.6; }
+.node:hover .n-box.is-red, .node.is-sel .n-box.is-red { stroke: #e74c3c; }
+.t-red { color: #e07b6f; font-weight: 600; }
 /* beyond the works — the logos quarter's nodes, parchment against the town's iron */
 .node.is-out .n-box { fill: #2b2a21; stroke: var(--out); stroke-width: 1.4; }
 .node.is-out .n-name { fill: #e3dcc2; }

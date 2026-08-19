@@ -203,6 +203,27 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
     if (cyclic) n.cyclic = true;
   }
 
+  // ---------------------------------------------------- the red convention
+  // (ruled 2026-08-19, classes.md § The rules): a law node below the rules or
+  // derived roots that promises machinery carries a `mechanic` (or `engine`)
+  // predicated child; the ABSENCE is the red — stated law whose machinery has
+  // not landed. The roots themselves are taxonomy, not promises, unpainted.
+  const PROMISE_ROOTS = new Set(["the-town/postmark-rules", "the-town/postmark-derived"]);
+  const slotChildren = new Map();
+  for (const e of edges) {
+    if (e.type !== "slot") continue;
+    const child = nodes.find((n) => n.id === e.to);
+    if (!child?.slot) continue;
+    if (!slotChildren.has(e.from)) slotChildren.set(e.from, new Set());
+    slotChildren.get(e.from).add(child.slot);
+  }
+  for (const n of nodes) {
+    if (n.kind !== "class" || PROMISE_ROOTS.has(n.id)) continue;
+    if (!PROMISE_ROOTS.has(n.latticeRoot)) continue;
+    const slots = slotChildren.get(n.id) ?? new Set();
+    n.red = !(slots.has("mechanic") || slots.has("engine"));
+  }
+
   // ---------------------------------------------------- the layout spine
   // The lattice is the spine, but only 13 of the class-nodes carry an
   // `extends:`, so a layout that knows nothing else would draw most of the
