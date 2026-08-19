@@ -32,7 +32,6 @@ export const EDGE_TYPES = {
   extends: { label: "extends", note: "the lattice edge: this class is a kind of that one (frontmatter `extends:`, resolved by class name)" },
   implements: { label: "implements", note: "the class names a node it realises (frontmatter `implements:`, when the target resolves to a mark)" },
   slot: { label: "slot", note: "a predicated child standing under the node it describes (the directory nesting of a `kind: predicated` mark)" },
-  can: { label: "can", note: "noun CAN verb — an actor class granted a verb class (frontmatter `actions[]`, Keemin's grammar 2026-08-19)" },
   residue: { label: "residue", note: "verb LEAVES noun — a creating verb's leaving (the verb class's own `residue:` field); residue runs postmark-edge → noun, never noun → noun" },
   "postmark-edge": { label: "postmark-edge", note: "the town's own edge classes — each drawn from its from-class to its to-class, labeled by the specific class (holds, belongs-to, join…)" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
@@ -132,22 +131,15 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       else if (looksLikeMarkId(s)) unresolved.push({ from: r.id, to: s, type: "implements", reason: "target is not a mark in class-space" });
     }
 
-    // the town's edges: from-class/to-class may be a single name or a LIST
-    // (belong-to serves many keepers). Every from-class entry earns a `can`
-    // edge — a noun that may USE a verb wears the grant whether or not an
-    // actions[] line repeats it (Keemin's rule). A single×single pair also
-    // draws the tie arrow, labeled by the class; multi-ended verbs carry
-    // their pairs in the body instead of a fan of arrows.
+    // the town's edges: subject/object may be a single name or a LIST
+    // (belong-to serves many keepers). A single×single pair draws the tie
+    // arrow, labeled by the class; multi-ended verbs carry their pairs in
+    // the body. (`can` DELETED — Keemin, 2026-08-19 last: grants are
+    // conditional law, not bare arrows; don't pretend.)
     {
       const resolve = (v) => (v == null ? null : (classByName.get(String(v).trim())?.id ?? (inSet.has(String(v).trim()) ? String(v).trim() : null)));
       const listy = (v) => (Array.isArray(v) ? v : v != null ? [v] : []);
-      // subject/object (renamed from from-class/to-class, Keemin 2026-08-19)
       const froms = listy(r.subject ?? r["from-class"]), tos = listy(r.object ?? r["to-class"]);
-      for (const fv of froms) {
-        const f = resolve(fv);
-        if (f) relationEdges.push({ from: f, to: r.id, type: "can", detail: `can ${r.class ?? r.slug}` });
-        else unresolved.push({ from: String(fv), to: r.id, type: "can", reason: "from-class names nothing in class-space" });
-      }
       if (froms.length === 1 && tos.length === 1) {
         const f = resolve(froms[0]), t = resolve(tos[0]);
         if (f && t) relationEdges.push({ from: f, to: t, type: "postmark-edge", detail: `tie: ${r.class ?? r.slug}` });
@@ -155,19 +147,9 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       }
     }
 
-    // can — noun CAN verb: an actor's actions[] grant verb classes (each
-    // action's residue field names the VERB class it exercises); deduped
-    {
-      const granted = new Set();
-      for (const a of asArray(r.actions)) {
-        if (!a || typeof a !== "object") continue;
-        const verb = a.residue ? String(a.residue).trim() : null;
-        if (!verb || granted.has(verb)) continue;
-        granted.add(verb);
-        if (inSet.has(verb)) edges.push({ from: r.id, to: verb, type: "can", detail: `can ${a.action}` });
-        else unresolved.push({ from: r.id, to: verb, type: "can", detail: a.action, reason: "verb outside class-space" });
-      }
-    }
+    // can DELETED (Keemin, 2026-08-19 last: conditionals aren't expressible
+    // as bare edges — don't pretend). Grants live in actions[] on the node's
+    // detail panel and in each verb's subject list; neither draws.
 
     // residue — verb LEAVES noun: a creating verb's own `residue:` field
     // (postmark-edge → noun, never noun → noun; Keemin's grammar)
