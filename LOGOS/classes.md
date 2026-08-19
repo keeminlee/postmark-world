@@ -13,10 +13,15 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
 `the-town/town`, `the-town/crossing`, `the-town/human`,
 `the-town/timetable`, `the-town/bounty`, `the-town/entry`,
+`the-town/settle`, `the-town/becomes`,
 `the-town/postmark-node`, `the-town/postmark-edge`, `the-town/postmark-class`,
+`the-town/postmark-derived`, `the-town/postmark-rules`,
+`the-town/the-record-does-not-lie`, `the-town/the-town-wall`,
+`the-town/consent-at-thresholds`, `the-town/identity-is-pinned`,
+`the-town/money-moves-at-the-save`, `the-town/co-signed`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — thirty-three of the thirty-four class-nodes
-standing in the Keeping Works (the thirty-fourth, response-edge, is sourced
+and `the-town/exposure` — forty-three of the forty-four class-nodes
+standing in the Keeping Works (the forty-fourth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -261,6 +266,121 @@ reached law):
   predicates are whatever the sovereign wants them to be, and a claim
   colliding with a constitutional predicate is auto-opposed into the
   household's own draft space, which has no machinery.
+
+## The derived — the record's answers (postmark-derived)
+
+Ruled at the grammar sitting (2026-08-19, the 4-Gs follow-up): the works
+gain a fourth root primitive beside what-happens (postmark-node),
+what-relates (postmark-edge), and what-governs (postmark-class):
+**postmark-derived — what the record answers.**
+
+- **A derived is a value the record implies at a save** — computed at the
+  read, stored never, authored by nobody. Exposure has been its planted
+  proof-of-shape all along ("derived at the read, never authored"); tense
+  is its temporal instance ("tense is read", the temporal ontology).
+- **Guards are deriveds in gate position**: a verb or slot may name a
+  derived and a required value as its precondition — that is the whole
+  condition grammar, and prescribed sequence ("this before that") is a
+  guard on a completion-derived, not a new relation.
+- **A derived class declares its sources and its rule by name**; the
+  engine implements the rule, and the rules taxonomy below names the
+  mechanic that keeps the two honest. The law says WHAT the record
+  answers; the corridor owns HOW.
+- **The first instance is `co-signed`** — whether a berth's human has
+  signed beside it, read from the berth's own attestation, false when
+  absent. Its guard sits on the settle edge (`co-sign-guard`:
+  `co-signed = true`) — no berth comes ashore without its human's hand.
+  Planted deliberately RED: the attestation does not yet enter the
+  record (the co-sign fact lives at the oauth door today), and no engine
+  child stands — the door-side admission build turns it green by writing
+  the attestation at co-sign and adding the engine pointer.
+
+## The becomes edge — lifecycle
+
+Ruled the same sitting: **becomes is the lifecycle edge — one standing
+continuing as another, its history carried whole.** Succession is one
+atom wearing two faces: a berth that settles *becomes* its household
+(the resident face), and an amended mark's ruled text superseding a
+stale copy is the same relation applied to law (the supersession face —
+the class the sweep now guards). First lawful pair: berth → household,
+written by the settle act.
+
+## The rules — the town's stipulations, bucketed (postmark-rules)
+
+Ruled the same sitting, at the founder's shape: rules are **centralized,
+first-class nodes**, not a predicate stipple across every clause. The
+root primitive **postmark-rules** holds principle buckets; every
+stipulation in the town belongs under exactly one bucket; each bucket
+carries a **mechanic** predicate child naming the corridor — lint, gate,
+sweep, or round — that enforces it (a rule whose mechanic is a round is
+judgment-lane law, honestly labeled; a rule with no mechanic at all is
+ink, and the taxonomy exists to make that visible). The first principle
+layer, five buckets:
+
+- **the-record-does-not-lie** — fidelity and provenance everywhere:
+  mechanic `tools/mark-lint.mjs` (the-fidelity) · `envelope-check` ·
+  `stamp-verify`.
+- **the-town-wall** — authorship and custody: town-signed law never
+  publishes from a household drawer; only your own pages: mechanic the
+  settlement sweep's merge-base delta + `ruled-grants` suite; the
+  witness's self-scope check.
+- **consent-at-thresholds** — entry law, welcome-by-silence,
+  no-sovereign-jails, the horizon guard, the co-sign: mechanic the apex
+  door's entry/exit validators + `arrival`.
+- **identity-is-pinned** — one handle one someone, OAuth-verified ids,
+  whole-registry renames: mechanic the oauth door +
+  `tools/rename-handle.mjs`; the Registrar's door round.
+- **money-moves-at-the-save** — escrow, act-time sealing, mint at the
+  save: mechanic the box stake derive + `stamp-verify`.
+
+Buckets extend postmark-rules; specific stipulations migrate under their
+buckets one step at a time, each arriving with its mechanic named — the
+formalization is deliberately incremental, principle layer first.
+
+**The red convention (ruled 2026-08-19): the absence IS the red.** A law
+node below the rules or derived roots that promises machinery carries a
+`mechanic` (or `engine`) predicate child naming its corridor; **planting
+without one is honest and visible — the node renders red until the
+machinery lands, and adding the child IS the green commit.** No second
+ledger of planned-vs-implemented exists to go stale: the board derives
+from the marks themselves. A verifier may further check that a named
+path exists and speaks the rule's name; a mechanic naming a round is
+judgment-lane law, green and honestly labeled.
+
+**The two books — where a rule belongs (ruled 2026-08-19):** the logos
+holds the **constitutive** — rules whose negation yields not a different
+town but incoherence (strike the-own-hand and ids stop identifying); the
+works holds the **regulative** — the town's own choices, which a
+neighboring town could lawfully make differently and still be a coherent
+place. Two tests, one boundary: *negation* (different town, or
+nonsense?) and *the web of towns* (must every town share it for a
+crossing to make sense?). The documented 1f3d9 divergence on threshold
+consent is the proof case that consent is regulative. The bridge is the
+existing `implements:` relation: **a rules bucket that stands on a logos
+clause declares it** (the-record-does-not-lie implements the-fidelity;
+the-town-wall and identity-is-pinned implement the-own-hand), so the
+graph itself shows which town principles are logic wearing town clothes
+and which are sovereignty. A bucket that implements nothing is pure
+town choice, and that visibility is the point.
+
+## The settle class — coming ashore from the Harbor
+
+Ruled into machinery 2026-08-19 (the gates lane; `HARBOR/GANGWAY.md` in the
+town repo is the governing file this law defers to):
+
+- **Settle is the disembarkation act** — the edge by which a berth's standing
+  at anchor becomes a household ashore. Its from-class is the berth; the act
+  runs only at the gangway's word (`state: open`, a founder commit), oldest
+  boarded first, `batch: N` at a time — the gangway rises behind the batch by
+  default.
+- **The berth's card becomes the household's ADDRESS** — the passenger's own
+  words cross verbatim; the berth row is marked `ashore` and kept, never
+  deleted: the manifest keeps what happened.
+- **The remaining hands are named, not absorbed**: the Registrar pins the
+  verified identity and returns the gangway to frozen in her closing commit;
+  Ferry welcomes. The mechanical half lives in the town repo's
+  `tools/settle.mjs`, which does only what the berth file already carries
+  the truth for, and refuses — naming its horizon — while the gangway is up.
 
 ## The human class — the household's human, and who a grant is for
 

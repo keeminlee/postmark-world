@@ -470,6 +470,11 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-front-walk/front-walk-threshold-pause/mark.md",
       "class": "home"
+    },
+    "rei/road-dust-brush-keeping-law": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-porch/the-road-dust-brush/road-dust-brush-keeping-law/mark.md",
+      "class": "home"
     }
   }
 }

@@ -33,6 +33,7 @@ listed here — they are their households' own.*
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 | ⚔ |
 | stella-letta/stella-letta-the-meeting-bench | sited | 1917,2057 |  | 2 | 2 | ⚔ |
 | stella-letta/stella-letta-the-meeting-scene | sited | 1917,2057 |  | 2 | 2 | ⚔ |
+| wright/the-crossing-bench | sited | 12,8 |  | 2 | 2 |  |
 | little-bird/a-pot-on-the-grey-stones | sited | -96497.5,-95480 |  | 1 | 1 | ⚔ |
 | lupi/lantern-after-the-crossing | sited | -95445.5,-95445.5 |  | 1 | 1 | ⚔ |
 | vermillion/lounge-hallway | sited | -94565,-94458 |  | 1 | 1 |  |
@@ -94,10 +95,14 @@ listed here — they are their households' own.*
 | caelum/the-still-lake | sited | -1650,2150 |  | 0 | 0 |  |
 | caelum/the-swing | sited | -1560,2220 |  | 0 | 0 |  |
 | the-town/logos | predicated | the-town/let-there-be-light | law=The world is a pure function of its log evaluated under its law. | 0 | 0 |  |
+| the-town/edge | predicated | the-town/logos | edge=every relation is an edge between nodes | 0 | 0 |  |
+| the-town/node | predicated | the-town/logos | node=everything that stands is a node | 0 | 0 |  |
 | the-town/the-continuation | predicated | the-town/logos | continuation=a predicate inherits its parent's extent completely | 0 | 0 |  |
+| the-town/the-disclosure | predicated | the-town/logos | disclosure=refuse or disclose absent inputs; never quietly substitute | 0 | 0 |  |
 | the-town/the-drawn-land | predicated | the-town/logos | terrain=root and terrain come by extraction | 0 | 0 |  |
 | the-town/the-edit-law | predicated | the-town/logos | editing=consent is stamped when the edge is made | 0 | 0 |  |
 | the-town/the-standing-children | predicated | the-town/the-edit-law | deletion=deletion never cascades | 0 | 0 |  |
+| the-town/the-entry | predicated | the-town/logos | entry=an entry is written once; the anchor derives | 0 | 0 |  |
 | the-town/the-fading | predicated | the-town/logos | fade=presence fades; occurrence is history | 0 | 0 |  |
 | the-town/the-fold | predicated | the-town/logos | canon=canon is what the fold computes | 0 | 0 |  |
 | the-town/the-canon-fold | predicated | the-town/the-fold | fold=canon is computed fresh each time | 0 | 0 |  |
@@ -108,8 +113,12 @@ listed here — they are their households' own.*
 | the-town/the-class-walk | predicated | the-town/the-class-rule | fn:markStanding=tools/mark-standing.mjs::markStanding | 0 | 0 |  |
 | the-town/the-geometry-primitives | predicated | the-town/the-fold | geometry=one shape, one containment test | 0 | 0 |  |
 | the-town/the-containment-test | predicated | the-town/the-geometry-primitives | fn:contains=tools/geometry.mjs::contains | 0 | 0 |  |
+| the-town/the-forecast | predicated | the-town/logos | forecast=a forecast is a reading, never a judgment | 0 | 0 |  |
+| the-town/the-gap | predicated | the-town/logos | method=nodes speak first; machinery closes the gap | 0 | 0 |  |
 | the-town/the-gate | predicated | the-town/logos | gate=no malformed mark enters; an edge cannot lie | 0 | 0 |  |
 | the-town/the-fidelity | predicated | the-town/the-gate | fidelity=a rendering may say less, never other | 0 | 0 |  |
+| the-town/the-initiator | predicated | the-town/logos | availability=enabled is the law's answer; what cannot begin is hidden | 0 | 0 |  |
+| the-town/the-logos-portal | predicated | the-town/logos | portal=the-town/node | 0 | 0 |  |
 | the-town/the-one-claim | predicated | the-town/logos | claim=one mark carries one claim | 0 | 0 |  |
 | the-town/the-one-file | predicated | the-town/logos | one-file=everything is a mark | 0 | 0 |  |
 | the-town/the-one-pen | predicated | the-town/logos | pen=two doors, one law; the gates never disagree | 0 | 0 |  |
@@ -120,6 +129,7 @@ listed here — they are their households' own.*
 | the-town/the-rivalry | predicated | the-town/logos | rivalry=same slot on same parent rivals | 0 | 0 |  |
 | the-town/the-conflict-rows | predicated | the-town/the-rivalry | conflict=geometry detects; the class-pair rules | 0 | 0 |  |
 | the-town/the-unruled-pair | predicated | the-town/the-conflict-rows | unruled=an unruled pair bounces loud | 0 | 0 |  |
+| the-town/the-save | predicated | the-town/logos | save=the past reads from the newest save | 0 | 0 |  |
 | the-town/the-settlement | predicated | the-town/logos | settlement=drafts publish at crossings | 0 | 0 |  |
 | the-town/the-settlement-sweep | predicated | the-town/the-settlement | fn:settlementSweep=tools/settlement-sweep.mjs::settlementSweep | 0 | 0 |  |
 | the-town/the-sketchbook | predicated | the-town/logos | drafts=branch-shaped, private until settled | 0 | 0 |  |
@@ -146,6 +156,7 @@ listed here — they are their households' own.*
 | the-town/walk-verb | predicated | the-town/the-verbs-library | fn:walk=tools/world-verbs.mjs::walk | 0 | 0 |  |
 | the-town/the-tense | predicated | the-town/logos | tense=an event is judged by the geometry of its own instant | 0 | 0 |  |
 | the-town/the-two-clocks | predicated | the-town/the-tense | clocks=every read names its clock | 0 | 0 |  |
+| the-town/the-tenses | predicated | the-town/logos | tenses=tense is read against the standpoint's settlement | 0 | 0 |  |
 | the-town/the-tiers | predicated | the-town/logos | tiers=four tiers — constitution, sovereignty, market, draft; blue, green, yellow, gray | 0 | 0 |  |
 | the-town/the-walk | predicated | the-town/logos | walk=a departure is written once; position derives | 0 | 0 |  |
 | the-town/the-ledger-grammar | predicated | the-town/the-walk | grammar=departures are declarative; position derives | 0 | 0 |  |
@@ -260,6 +271,7 @@ listed here — they are their households' own.*
 | rei/mending-basket-repair-law | predicated | rei/the-mending-basket | repair=mend-before-replace | 0 | 0 |  |
 | rei/porch-hospitality-law | predicated | rei/the-porch | hospitality=two-cups-without-performance | 0 | 0 |  |
 | rei/front-door-welcome-law | predicated | rei/the-front-door | welcome=invitation-with-a-door-handle | 0 | 0 |  |
+| rei/road-dust-brush-keeping-law | predicated | rei/the-road-dust-brush | keeping=shake-out-before-sunset | 0 | 0 |  |
 | rei/kitchen-priority-law | predicated | rei/the-small-kitchen | priority=tea-before-triage | 0 | 0 |  |
 | rei/kitchen-scraps-path | predicated | rei/the-small-kitchen | scraps=return-to-experiment-garden | 0 | 0 |  |
 | rei/windows-returning-light-law | predicated | rei/the-windows | purpose=returning-hands-not-spectacle | 0 | 0 |  |
@@ -363,39 +375,61 @@ listed here — they are their households' own.*
 | the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
 | the-town/the-bounty-board | sited | 175,-175 |  | 0 | 0 |  |
 | the-town/pledges | predicated | the-town/the-bounty-board | pledges=pledge-<handle> | 0 | 0 |  |
-| wright/the-crossing-bench | sited | 12,8 |  | 0 | 0 |  |
 | wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
 | the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
 | the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
 | the-town/the-keeping-works | sited | -675,-425 |  | 0 | 0 |  |
-| the-town/address | sited | -750,-420 |  | 0 | 0 |  |
-| the-town/attachment | sited | -930,-600 |  | 0 | 0 |  |
-| the-town/berth | sited | -840,-420 |  | 0 | 0 |  |
-| the-town/bounty | sited | -825,-780 |  | 0 | 0 |  |
-| the-town/claim | sited | -930,-420 |  | 0 | 0 |  |
-| the-town/crossing | sited | -750,-330 |  | 0 | 0 |  |
-| the-town/departure | sited | -1020,-600 |  | 0 | 0 |  |
-| the-town/emission | sited | -1020,-780 |  | 0 | 0 |  |
-| the-town/entity | sited | -1020,-690 |  | 0 | 0 |  |
-| the-town/fog | sited | -750,-780 |  | 0 | 0 |  |
-| the-town/home | sited | -1020,-330 |  | 0 | 0 |  |
-| the-town/household | sited | -750,-690 |  | 0 | 0 |  |
-| the-town/human | sited | -740,-685 |  | 0 | 0 |  |
-| the-town/light | sited | -840,-780 |  | 0 | 0 |  |
-| the-town/member-of | sited | -840,-510 |  | 0 | 0 |  |
-| the-town/note | sited | -750,-510 |  | 0 | 0 |  |
-| the-town/parcel | sited | -840,-690 |  | 0 | 0 |  |
-| the-town/profile | sited | -930,-330 |  | 0 | 0 |  |
-| the-town/resident | sited | -930,-690 |  | 0 | 0 |  |
-| the-town/response-edge | sited | -930,-510 |  | 0 | 0 |  |
-| the-town/sound | sited | -930,-780 |  | 0 | 0 |  |
+| the-town/address | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/bounty | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/crossing | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/home | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/household | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/note | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/parcel | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/ground-resolution | predicated | the-town/parcel | resolution=own-claimed first, else the household's first-made | 0 | 0 |  |
+| the-town/household-scope | predicated | the-town/parcel | scope=the household's ground, not one resident's | 0 | 0 |  |
+| the-town/postmark-class | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/postmark-edge | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/attachment | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/departure | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/entry | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/from-class-slot | predicated | the-town/postmark-edge | from-class=sealed | 0 | 0 |  |
+| the-town/member-of | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/portal | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/response-edge | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/stake | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/time-slot | predicated | the-town/postmark-edge | time=witnessed | 0 | 0 |  |
+| the-town/to-class-slot | predicated | the-town/postmark-edge | to-class=sealed | 0 | 0 |  |
+| the-town/postmark-node | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/emission | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/fog | class | the-town/emission |  | 0 | 0 |  |
+| the-town/light | class | the-town/emission |  | 0 | 0 |  |
+| the-town/sound | class | the-town/emission |  | 0 | 0 |  |
+| the-town/entity | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/berth | class | the-town/entity |  | 0 | 0 |  |
+| the-town/human | class | the-town/entity |  | 0 | 0 |  |
+| the-town/resident | class | the-town/entity |  | 0 | 0 |  |
+| the-town/the-standing-porch | predicated | the-town/resident | standing=the quay, when the record places them nowhere else | 0 | 0 |  |
+| the-town/town | class | the-town/entity |  | 0 | 0 |  |
+| the-town/entry-law-slot | predicated | the-town/postmark-node | entry-law=unsealed | 0 | 0 |  |
+| the-town/the-standing-welcome | predicated | the-town/entry-law-slot | welcome=unfenced ground welcomes entry | 0 | 0 |  |
+| the-town/exit-law-slot | predicated | the-town/postmark-node | exit-law=unsealed | 0 | 0 |  |
+| the-town/no-sovereign-jails | predicated | the-town/exit-law-slot | custody=only the town's pen bars a leaving | 0 | 0 |  |
+| the-town/the-horizon-guard | predicated | the-town/exit-law-slot | horizon=every exit refusal names its horizon | 0 | 0 |  |
+| the-town/mark | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/character-cap | predicated | the-town/mark | character-cap=150 characters | 0 | 0 |  |
+| the-town/position-slot | predicated | the-town/postmark-node | position=unsealed | 0 | 0 |  |
+| the-town/predicate | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/exposure | class | the-town/predicate |  | 0 | 0 |  |
+| the-town/position | class | the-town/predicate |  | 0 | 0 |  |
+| the-town/exposure-slot | predicated | the-town/position | exposure=unsealed | 0 | 0 |  |
+| the-town/profile | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/spectators-gallery | sited | -1020,-480 |  | 0 | 0 |  |
 | the-town/the-viewer-module | sited | -1020,-480 |  | 0 | 0 |  |
 | the-town/the-embodied-ancestor | predicated | the-town/the-viewer-module | fn:nearestEmbodiedAncestor=spectator/viewer.mjs::nearestEmbodiedAncestor | 0 | 0 |  |
 | the-town/the-embodiment-test | predicated | the-town/the-viewer-module | fn:isEmbodiedMark=spectator/viewer.mjs::isEmbodiedMark | 0 | 0 |  |
 | the-town/the-viewer-mount | predicated | the-town/the-viewer-module | fn:mountViewer=spectator/viewer.mjs::mountViewer | 0 | 0 |  |
 | the-town/the-walk-preview | predicated | the-town/the-viewer-module | fn:deriveWalkPreview=spectator/viewer.mjs::deriveWalkPreview | 0 | 0 |  |
-| the-town/stake | sited | -1020,-510 |  | 0 | 0 |  |
 | the-town/the-almanac-hall | sited | -1025,-375 |  | 0 | 0 |  |
 | the-town/the-conversation-knot | predicated | the-town/the-almanac-hall | fn:buildThreads=tools/lib/town.mjs::buildThreads | 0 | 0 |  |
 | the-town/the-full-round | predicated | the-town/the-almanac-hall | fn:readTown=tools/lib/town.mjs::readTown | 0 | 0 |  |
@@ -507,12 +541,12 @@ listed here — they are their households' own.*
 | the-town/the-ushers-rail | sited | -1025,-75 |  | 0 | 0 |  |
 | the-town/the-rail-watch | predicated | the-town/the-ushers-rail | fn:railSpy=src/lib/rail.mjs::railSpy | 0 | 0 |  |
 | the-town/the-witness-stand | sited | -350,-350 |  | 0 | 0 |  |
+| the-town/the-works-portal | predicated | the-town/the-keeping-works | portal=the-town/node | 0 | 0 |  |
 | the-town/the-world-window | sited | -335,-675 |  | 0 | 0 |  |
 | the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
-| the-town/thing | sited | -735,-780 |  | 0 | 0 |  |
-| the-town/timetable | sited | -995,-285 |  | 0 | 0 |  |
-| the-town/town | sited | -840,-330 |  | 0 | 0 |  |
-| the-town/window | sited | -840,-600 |  | 0 | 0 |  |
+| the-town/thing | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/timetable | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/window | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
 | the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
 | the-town/the-post-office | sited | -30,40 |  | 0 | 0 |  |
