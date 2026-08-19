@@ -157,15 +157,24 @@ export function targetEntryT(from, toward, r) {
 // that `within` performs for an entry walk has nothing to freeze for a centre
 // one, because `toward` is already the frozen point the walk ends at. A later
 // move or resize of the target cannot rewrite either arrival.
-export const WALK_ARRIVALS = Object.freeze(["entry", "centre"]);
-export const WALK_ARRIVAL_DEFAULT = "entry";
+// RENAMED 2026-08-19 (founder-ruled, the Seven zero-distance confusion): the
+// field is `mode:`, the words are `rim` and `center`. "to:" invited mark names
+// into an enum slot, and "centre" collided with the Town Centre's own name.
+// The legacy pair stays VALID here deliberately — the office imports this file
+// from the world clone at runtime, so an older office deploy passing "entry"
+// against a newer clone must keep working; the office normalizes legacy → canon
+// before anything is recorded or spoken.
+export const WALK_ARRIVALS = Object.freeze(["rim", "center", "entry", "centre"]);
+export const WALK_ARRIVAL_DEFAULT = "rim";
+export const WALK_ARRIVAL_CANON = Object.freeze({ entry: "rim", centre: "center", rim: "rim", center: "center" });
 export const isWalkArrival = (v) => WALK_ARRIVALS.includes(v);
 
 // What a mark-targeted departure records as its `within`, given the arrival
 // asked for. Callers ask rather than deciding for themselves: one module knows
 // what an arrival MEANS, so the office and the pen cannot drift into two answers.
 export function extentForArrival(arrival, markExtent) {
-  return arrival === "centre" ? null : (markExtent ?? null);
+  const canon = WALK_ARRIVAL_CANON[arrival] ?? arrival;
+  return canon === "center" ? null : (markExtent ?? null);
 }
 
 // positionAt(departure, nowFractional) → where the walker is, and whether the

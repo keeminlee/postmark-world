@@ -232,7 +232,7 @@ test("arrival-on-entry is the default, and it is what puts you on the fence", ()
   const there = positionAt(dep, 99);
   assert.equal(there.arrived, true);
   assert.equal(there.x, VIEW_PEAK_EAST_EDGE, "entry arrival lands exactly on the east edge");
-  assert.equal(WALK_ARRIVAL_DEFAULT, "entry", "and entry is what a walk gets when nobody asks");
+  assert.equal(WALK_ARRIVAL_DEFAULT, "rim", "and rim is what a walk gets when nobody asks (renamed from entry, 2026-08-19)");
 });
 
 test("to: centre arrives at the target's centre, not its fence (issue #5 §1)", () => {
@@ -274,12 +274,17 @@ test("to: centre lets a resident standing on the fence walk IN — the seam's co
 });
 
 test("extentForArrival is the one place that knows what an arrival means", () => {
-  assert.deepEqual(extentForArrival("entry", VIEW_PEAK.extent), VIEW_PEAK.extent, "entry freezes the extent");
-  assert.equal(extentForArrival("centre", VIEW_PEAK.extent), null, "centre records no within");
-  assert.deepEqual(extentForArrival(undefined, VIEW_PEAK.extent), VIEW_PEAK.extent, "absent means entry");
-  assert.equal(extentForArrival("entry", undefined), null, "no mark extent, nothing to freeze");
-  assert.deepEqual(WALK_ARRIVALS, ["entry", "centre"]);
-  assert.ok(isWalkArrival("entry") && isWalkArrival("centre"));
+  assert.deepEqual(extentForArrival("rim", VIEW_PEAK.extent), VIEW_PEAK.extent, "rim freezes the extent");
+  assert.equal(extentForArrival("center", VIEW_PEAK.extent), null, "center records no within");
+  assert.deepEqual(extentForArrival(undefined, VIEW_PEAK.extent), VIEW_PEAK.extent, "absent means rim");
+  assert.equal(extentForArrival("rim", undefined), null, "no mark extent, nothing to freeze");
+  // The legacy pair stays VALID — an older office deploy passing "entry"/"centre"
+  // against a newer world clone must not bounce (version-skew guard, 2026-08-19).
+  assert.deepEqual(extentForArrival("entry", VIEW_PEAK.extent), VIEW_PEAK.extent, "legacy entry = rim");
+  assert.equal(extentForArrival("centre", VIEW_PEAK.extent), null, "legacy centre = center");
+  assert.deepEqual(WALK_ARRIVALS, ["rim", "center", "entry", "centre"]);
+  assert.ok(isWalkArrival("rim") && isWalkArrival("center"), "the canon pair");
+  assert.ok(isWalkArrival("entry") && isWalkArrival("centre"), "the legacy pair, still admitted");
   assert.ok(!isWalkArrival("middle"), "an unknown arrival is not silently accepted");
 });
 
