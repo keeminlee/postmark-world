@@ -311,7 +311,11 @@ function layoutNested(nodes) {
   const planOf = new Map();
   const measure = (n) => {
     if (planOf.has(n.id)) return planOf.get(n.id);
-    const c = kids.get(n.id) ?? [];
+    // within each level: predicates ABOVE the classes, each group alphabetical
+    // (Keemin, 2026-08-19 close — the law slots read before the sub-machinery)
+    const c = [...(kids.get(n.id) ?? [])].sort((a, b) =>
+      ((a.kind === "class" ? 1 : 0) - (b.kind === "class" ? 1 : 0)) ||
+      String(a.slug).localeCompare(String(b.slug)));
     if (!c.length) { const p = { w: NW, h: NH, rows: [] }; planOf.set(n.id, p); return p; }
     const sizes = c.map(measure);
     const perRow = Math.max(1, Math.min(3, Math.ceil(Math.sqrt(c.length))));
@@ -344,16 +348,34 @@ function layoutNested(nodes) {
   };
 
   const roots = nodes.filter((n) => !n.dirParent);
-  // biggest first, so the works' own machinery reads before the loose nodes
-  roots.sort((a, b) => measure(b).h * measure(b).w - measure(a).h * measure(a).w);
+  // the crossing's own furniture leads: portal, then the logos primitives
+  // (node, edge) at the top; the rest biggest-first as before
+  const pin = (n) => (n.slot === "portal" ? 0 : !n.inWorks && n.slug === "node" ? 1 : !n.inWorks && n.slug === "edge" ? 2 : 3);
+  roots.sort((a, b) => (pin(a) - pin(b)) || (measure(b).h * measure(b).w - measure(a).h * measure(a).w));
   const GUT = 26;
-  const maxW = Math.max(1400, ...roots.map((r) => measure(r).w));
-  let x = 0, y = 0, rowH = 0;
-  for (const r of roots) {
+  // the crossing furniture (portal, node, edge) rides a top strip; EVERYTHING
+  // else lives inside ONE labeled box: the-keeping-works (Keemin, close)
+  const lead = roots.filter((n) => pin(n) < 3);
+  const rest = roots.filter((n) => pin(n) === 3);
+  let x = 0, rowH = 0;
+  for (const r of lead) {
     const s = measure(r);
-    if (x > 0 && x + s.w > maxW) { x = 0; y += rowH + GUT; rowH = 0; }
-    place(r, x, y);
+    place(r, x, 0);
     x += s.w + GUT; rowH = Math.max(rowH, s.h);
+  }
+  const boxTop = lead.length ? rowH + GUT : 0;
+  const PADB = 18, HEADB = 26;
+  const maxW = Math.max(1400, ...rest.map((r) => measure(r).w));
+  let bx = PADB, by = boxTop + HEADB, brow = 0, bright = 0;
+  for (const r of rest) {
+    const s = measure(r);
+    if (bx > PADB && bx + s.w > maxW) { bx = PADB; by += brow + GUT; brow = 0; }
+    place(r, bx, by);
+    bx += s.w + GUT; brow = Math.max(brow, s.h);
+    bright = Math.max(bright, bx);
+  }
+  if (rest.length) {
+    containers.unshift({ x: 0, y: boxTop, w: Math.max(bright - GUT + PADB, 320), h: (by + brow + PADB) - boxTop, name: "the-keeping-works" });
   }
   return { pos, containers };
 }
