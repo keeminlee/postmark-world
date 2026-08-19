@@ -413,7 +413,7 @@ function renderGraph() {
     const t = el("text", {
       class: `e-label l-${e.type}`, x: mid.x, y: mid.y - 2, "text-anchor": "middle",
     }, lLayer);
-    t.textContent = e.type === "relation" ? (e.detail ?? e.type) : e.type;
+    t.textContent = e.detail?.startsWith("tie: ") ? e.detail.slice(5) : e.type;
     t.dataset.from = e.from; t.dataset.to = e.to;
     if (!state.showEdgeLabels) t.setAttribute("visibility", "hidden");
     drawn.push({ e, path, label: t });

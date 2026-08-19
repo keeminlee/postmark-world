@@ -33,7 +33,6 @@ export const EDGE_TYPES = {
   implements: { label: "implements", note: "the class names a node it realises (frontmatter `implements:`, when the target resolves to a mark)" },
   slot: { label: "slot", note: "a predicated child standing under the node it describes (the directory nesting of a `kind: predicated` mark)" },
   residue: { label: "residue", note: "an action on this class leaves that class behind (frontmatter `actions[].residue`)" },
-  relation: { label: "relation", note: "the tie an edge class declares: drawn from its from-class to its to-class, labeled by the class (the endpoint law, 2026-08-19)" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
   portal: { label: "portal", note: "the crossing itself: the works' portal predicate names where the read roots" },
 };
@@ -104,6 +103,7 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
 
   // ------------------------------------------------------------ the edge set
   const edges = [];
+  const relationEdges = []; // ties (from-class/to-class), appended after the lattice
   const unresolved = [];
   const push = (from, to, type, detail) => {
     if (!inSet.has(from) || !inSet.has(to)) { unresolved.push({ from, to, type, detail, reason: !inSet.has(to) ? "target outside class-space" : "source outside class-space" }); return; }
@@ -133,17 +133,18 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       else if (looksLikeMarkId(s)) unresolved.push({ from: r.id, to: s, type: "implements", reason: "target is not a mark in class-space" });
     }
 
-    // relation — an edge class with both ends sealed IS a tie between two
-    // classes: draw it from-class → to-class, labeled by the class name
-    // (household —holds→ parcel), so the graph shows what ties what rather
-    // than two spokes into the declaring node. Ends name either a works
-    // class (by name) or a mark id (the portal's far side).
+    // relation-as-extends (Keemin, 2026-08-19: "all of your relation edges
+    // can just be extends edges") — an edge class with both ends sealed ties
+    // its from-class to its to-class as a STRUCTURAL edge of the graph, same
+    // type as the lattice, labeled by the class name (household —holds→
+    // parcel). Collected separately and appended AFTER the lattice so the
+    // seating prefers a true subclass parent over a tie.
     {
       const resolve = (v) => (v == null ? null : (classByName.get(String(v).trim())?.id ?? (inSet.has(String(v).trim()) ? String(v).trim() : null)));
       const f = resolve(r["from-class"]), t = resolve(r["to-class"]);
-      if (f && t) edges.push({ from: f, to: t, type: "relation", detail: r.class ?? r.slug });
+      if (f && t) relationEdges.push({ from: f, to: t, type: "extends", detail: `tie: ${r.class ?? r.slug}` });
       else if (r["from-class"] != null || r["to-class"] != null) {
-        unresolved.push({ from: r.id, to: `${r["from-class"]} → ${r["to-class"]}`, type: "relation", reason: "an end names nothing in class-space" });
+        unresolved.push({ from: r.id, to: `${r["from-class"]} → ${r["to-class"]}`, type: "extends", reason: "an end names nothing in class-space" });
       }
     }
 
@@ -167,6 +168,8 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       }
     }
   }
+  // ties ride after the lattice: a true subclass parent wins the seating
+  edges.push(...relationEdges);
 
   // -------------------------------------------------- the node payload
   const nodes = [...inSet.values()].map((r) => ({
@@ -246,6 +249,13 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
     if (e.type !== "registry" && e.type !== "slot") continue;
     const child = byNodeId.get(e.to);
     if (child && !child.layoutParent) { child.layoutParent = e.from; child.layoutParentEdge = e.type; }
+  }
+  // a tie seats its TARGET when nothing stronger has: household —holds→ parcel
+  // puts parcel under household; a true subclass parent always wins first
+  for (const e of edges) {
+    if (!String(e.detail ?? "").startsWith("tie: ")) continue;
+    const child = byNodeId.get(e.to);
+    if (child && !child.layoutParent) { child.layoutParent = e.from; child.layoutParentEdge = "extends"; }
   }
   // the portal's own edge points at the root of the read, so the crossing hangs
   // the other way round: `node` sits under the portal in the drawing
