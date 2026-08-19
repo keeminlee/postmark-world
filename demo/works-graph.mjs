@@ -33,7 +33,6 @@ export const EDGE_TYPES = {
   implements: { label: "implements", note: "the class names a node it realises (frontmatter `implements:`, when the target resolves to a mark)" },
   slot: { label: "slot", note: "a predicated child standing under the node it describes (the directory nesting of a `kind: predicated` mark)" },
   residue: { label: "residue", note: "verb LEAVES noun — a creating verb's leaving (the verb class's own `residue:` field); residue runs postmark-edge → noun, never noun → noun" },
-  "postmark-edge": { label: "postmark-edge", note: "the town's own edge classes — each drawn from its from-class to its to-class, labeled by the specific class (holds, belongs-to, join…)" },
   registry: { label: "registry", note: "one class-node's directory sits inside another's, with no `extends:` between them" },
 };
 
@@ -131,25 +130,10 @@ export function buildWorksGraph({ marksDir = MARKS_DIR } = {}) {
       else if (looksLikeMarkId(s)) unresolved.push({ from: r.id, to: s, type: "implements", reason: "target is not a mark in class-space" });
     }
 
-    // the town's edges: subject/object may be a single name or a LIST
-    // (belong-to serves many keepers). A single×single pair draws the tie
-    // arrow, labeled by the class; multi-ended verbs carry their pairs in
-    // the body. (`can` DELETED — Keemin, 2026-08-19 last: grants are
-    // conditional law, not bare arrows; don't pretend.)
-    {
-      const resolve = (v) => (v == null ? null : (classByName.get(String(v).trim())?.id ?? (inSet.has(String(v).trim()) ? String(v).trim() : null)));
-      const listy = (v) => (Array.isArray(v) ? v : v != null ? [v] : []);
-      const froms = listy(r.subject ?? r["from-class"]), tos = listy(r.object ?? r["to-class"]);
-      if (froms.length === 1 && tos.length === 1) {
-        const f = resolve(froms[0]), t = resolve(tos[0]);
-        if (f && t) relationEdges.push({ from: f, to: t, type: "postmark-edge", detail: `tie: ${r.class ?? r.slug}` });
-        else unresolved.push({ from: r.id, to: `${froms[0]} → ${tos[0]}`, type: "postmark-edge", reason: "an end names nothing in class-space" });
-      }
-    }
-
-    // can DELETED (Keemin, 2026-08-19 last: conditionals aren't expressible
-    // as bare edges — don't pretend). Grants live in actions[] on the node's
-    // detail panel and in each verb's subject list; neither draws.
+    // can + tie arrows BOTH DELETED (Keemin, 2026-08-19 last words): grants
+    // and sentences are conditional, typed law — subject/object stay as
+    // frontmatter data on each verb (detail panel), and draw nothing.
+    // A bare arrow over-claims; the door and the save do the real judging.
 
     // residue — verb LEAVES noun: a creating verb's own `residue:` field
     // (postmark-edge → noun, never noun → noun; Keemin's grammar)
