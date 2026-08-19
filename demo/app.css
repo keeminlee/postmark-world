@@ -18,6 +18,7 @@
   --e-registry: #8d94a3;
   --e-portal: #d9a441;
   --e-endpoint: #6f9bd8;
+  --e-relation: #6f9bd8;
 }
 
 * { box-sizing: border-box; }
@@ -156,7 +157,7 @@ body {
 .t-implements { stroke: var(--e-implements); } .l-implements { fill: var(--e-implements); }
 .t-slot { stroke: var(--e-slot); } .l-slot { fill: var(--e-slot); }
 .t-residue { stroke: var(--e-residue); } .l-residue { fill: var(--e-residue); }
-.t-endpoint { stroke: var(--e-endpoint); stroke-dasharray: 5 4; } .l-endpoint { fill: var(--e-endpoint); }
+.t-relation { stroke: var(--e-endpoint); stroke-dasharray: 5 4; } .l-relation { fill: var(--e-endpoint); }
 .t-registry { stroke: var(--e-registry); } .l-registry { fill: var(--e-registry); }
 .t-portal { stroke: var(--e-portal); stroke-width: 2; } .l-portal { fill: var(--e-portal); }
 
