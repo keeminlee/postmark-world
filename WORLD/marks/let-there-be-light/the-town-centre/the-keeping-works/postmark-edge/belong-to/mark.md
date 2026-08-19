@@ -4,9 +4,9 @@ by: the-town
 tier: constitution
 date: 2026-08-19
 class: belong-to
-version: 4
+version: 5
 extends: postmark-edge
-subject: ["resident", "human", "mark", "white-page", "town-bulletin", "meep"]
+subject: ["resident", "human", "mark", "paper", "meep"]
 object: ["household", "resident", "town", "meep"]
 dials: {}
 implements: []

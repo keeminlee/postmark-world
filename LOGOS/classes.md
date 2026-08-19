@@ -27,10 +27,11 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/registrar-round`, `the-town/worldkeeper-round`,
 `the-town/town-bulletin`, `the-town/public-service-announcements`,
 `the-town/ferrys-daily`, `the-town/quests`, `the-town/guide`,
-`the-town/posting`,
+`the-town/posting`, `the-town/letter`, `the-town/ledger`,
+`the-town/ballot`, `the-town/project`, `the-town/stamp-balance`,
 `the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — sixty-five of the sixty-six class-nodes
-standing in the Keeping Works (the sixty-sixth, response-edge, is sourced
+and `the-town/exposure` — seventy of the seventy-one class-nodes
+standing in the Keeping Works (the seventy-first, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
 standing institution and its first instance; `the-town/node` and
@@ -303,6 +304,17 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   record (the co-sign fact lives at the oauth door today), and no engine
   child stands — the door-side admission build turns it green by writing
   the attestation at co-sign and adding the engine pointer.
+- **The family filled (ruled 2026-08-19, Keemin):** `position` and
+  `exposure` re-root here from the predicate family — position's authored
+  inputs (the position-slot records, walks, entries) are the record, and
+  *where a thing stands now* is folded from them at read (its engine: the
+  walk lane and the settlement fold); exposure's own body said "derived,
+  never authored" from its planting day. **`stamp-balance`** joins them:
+  the stamp-ledger's lines are the record, a resident's balance is only
+  ever folded from them (its engine: the mint's own foldBalances — one
+  rule, no second copy). The predicate family keeps what is AUTHORED
+  (entry law, character-cap, ground rules); the derived family holds what
+  is ANSWERED. Exposure stands red until its engine is named.
 
 ## The becomes edge — lifecycle
 
@@ -455,6 +467,20 @@ build-your-X family, settling-in, the-doors), and **posting** (stories
 still living — an ask, an invitation, a season; resting or archived when
 done, never deleted). The meep class carries its own belong-to line to
 the town, drawn under the same ruling.
+
+## The four papers of record — letter, ledger, ballot, project
+
+Ruled 2026-08-19 (the unaccounted survey, demo lane), all extending
+paper: **letter** — the town's atom, one hand writing to another, read
+never obeyed (its keeper rides "pages to residents"); **ledger** — the
+record's own books, append-only in the town's hand (the mail-ledger of
+every crossing, the stamp-ledger of every mint and move; belong-to the
+town); **ballot** — the town asking itself, votes staked while it
+stands (the Illuminator's name was its first; belong-to the town);
+**project** — workshop ground a resident seeds, open to hands by PR
+(belong-to the resident who seeded it). The stamp ruling rides with
+these: the ledger line is the record; the balance is derived (see the
+derived family above).
 
 ## The settle class — coming ashore from the Harbor
 
