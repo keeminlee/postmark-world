@@ -7,7 +7,7 @@ class: portal
 version: 2
 extends: postmark-edge
 from-class: mark
-to-class: the-town/node
+to-class: postmark-class
 dials: {}
 implements: []
 source: LOGOS/classes.md
