@@ -1,130 +1,649 @@
 {
-  "nodes": [
-    { "id": "logos", "class": "floor", "predicates": { "scope": "the law of classes, town-agnostic" }, "prose": "LOGOS/three-layers.md" },
-    { "id": "the-keeping-works", "class": "floor", "predicates": { "scope": "Postmark's own classes — this town's instance of logos" }, "prose": "LOGOS/three-layers.md" },
-    { "id": "the-ground", "class": "floor", "predicates": { "scope": "the inhabited record — marks, walks, words" }, "prose": "LOGOS/three-layers.md" },
-
-    { "id": "the-north-star", "class": "principle", "predicates": { "statement": "every write an action; every graph mutation an effect" }, "prose": "LOGOS/the-north-star.md" },
-    { "id": "the-two-question-lint", "class": "principle", "predicates": { "q1": "name your class-node", "q2": "name your derivation" }, "prose": "LOGOS/the-north-star.md" },
-    { "id": "the-constitutive-flip", "class": "principle", "predicates": { "statement": "the containment edge determines the child's frame" }, "prose": "LOGOS/edit-law.md" },
-    { "id": "supersession", "class": "principle", "predicates": { "statement": "a revision replaces its predecessor; history keeps both" }, "prose": "LOGOS/edit-law.md" },
-    { "id": "admissibility", "class": "principle", "predicates": { "rule": "footprint within the parent" }, "prose": "LOGOS/edit-law.md" },
-    { "id": "incumbency", "class": "principle", "predicates": { "rule": "canon holds a tie", "status": "awaiting the founder's word" }, "prose": "LOGOS/conflict-matrix.md" },
-
-    { "id": "node", "class": "structure", "predicates": { "identity": "slug + class, nothing else" }, "prose": "LOGOS/kinds.md" },
-    { "id": "slug", "class": "structure", "predicates": {}, "prose": "LOGOS/kinds.md" },
-    { "id": "class-node", "class": "structure", "predicates": {}, "prose": "LOGOS/classes.md" },
-    { "id": "the-meta-class", "class": "structure", "predicates": { "note": "class-ness is a relation, not a type" }, "prose": "LOGOS/classes.md" },
-    { "id": "predicate-child", "class": "structure", "predicates": { "note": "a field, given its own node" }, "prose": "LOGOS/kinds.md" },
-    { "id": "edge", "class": "structure", "predicates": { "note": "no edge without the action that formed it" }, "prose": "LOGOS/edit-law.md" },
-    { "id": "the-log", "class": "structure", "predicates": { "shape": "append-only; self-witnessing" }, "prose": "LOGOS/state-and-time.md" },
-    { "id": "crossing", "class": "structure", "predicates": { "note": "the epoch boundary" }, "prose": "LOGOS/state-and-time.md" },
-    { "id": "class-contract", "class": "structure", "predicates": { "note": "mandatory-edge clauses, checked at admission — the physics" }, "prose": "LOGOS/classes.md" },
-    { "id": "household", "class": "structure", "predicates": { "note": "the credential grain — the anti-sybil unit" }, "prose": "LOGOS/tiers.md" },
-    { "id": "tier", "class": "structure", "predicates": { "note": "standing; derived, never stored" }, "prose": "LOGOS/tiers.md" },
-    { "id": "projection", "class": "structure", "predicates": { "note": "regenerable, or it is contraband" }, "prose": "LOGOS/the-north-star.md" },
-
-    { "id": "mark", "class": "regime", "predicates": { "lifetime": "until withdrawn" }, "prose": "LOGOS/kinds.md" },
-    { "id": "entity", "class": "regime", "predicates": { "lifetime": "animated" }, "prose": "LOGOS/kinds.md" },
-    { "id": "emission", "class": "regime", "predicates": { "lifetime": "dial-bounded" }, "prose": "LOGOS/kinds.md" },
-
-    { "id": "declare", "class": "primitive", "predicates": { "shape": "{seq, actor, witnesses, class, payload}" }, "prose": "LOGOS/edit-law.md" },
-
-    { "id": "welcome", "class": "act", "predicates": { "note": "the one uncompiled act — an amendment to the response function" }, "prose": "LOGOS/tiers.md" },
-    { "id": "amend", "class": "act", "predicates": {}, "prose": "LOGOS/edit-law.md" },
-    { "id": "withdraw", "class": "act", "predicates": {}, "prose": "LOGOS/edit-law.md" },
-    { "id": "respond", "class": "act", "predicates": { "note": "words; revisable; latest wins" }, "prose": "LOGOS/edit-law.md" },
-    { "id": "walk", "class": "act", "predicates": { "note": "a position revision" }, "prose": "LOGOS/edit-law.md" },
-    { "id": "rehome", "class": "act", "predicates": { "note": "cache maintenance, never meaning" }, "prose": "LOGOS/edit-law.md" },
-    { "id": "settlement", "class": "act", "predicates": { "note": "the response function, evaluated on cadence" }, "prose": "LOGOS/state-and-time.md" },
-
-    { "id": "create-edge", "class": "edge-class", "predicates": { "serialization": "by:" }, "prose": "LOGOS/edit-law.md" },
-    { "id": "revision-edge", "class": "edge-class", "predicates": {}, "prose": "LOGOS/edit-law.md" },
-    { "id": "response-edge", "class": "edge-class", "predicates": {}, "prose": "LOGOS/edit-law.md" },
-    { "id": "containment-edge", "class": "edge-class", "predicates": { "note": "the directory IS the geometry" }, "prose": "LOGOS/kinds.md" },
-
-    { "id": "the-response-function", "class": "function", "predicates": { "values": "welcomed · neutral · opposed", "default": "neutral" }, "prose": "LOGOS/the-response-function.md" },
-    { "id": "compiled-law", "class": "function", "predicates": { "note": "the town's law — compiled shorthand; an exceptions ledger" }, "prose": "LOGOS/the-response-function.md" },
-    { "id": "effect", "class": "function", "predicates": { "formula": "contract(class) × response × rank" }, "prose": "LOGOS/the-north-star.md" },
-    { "id": "the-fold", "class": "function", "predicates": { "note": "the canonization function" }, "prose": "LOGOS/conflict-matrix.md" },
-    { "id": "the-one-walk", "class": "function", "predicates": { "note": "one derivation of standing; every consumer imports it" }, "prose": "LOGOS/tiers.md" },
-
-    { "id": "market", "class": "market-organ", "predicates": { "definition": "the set of claims" }, "prose": "LOGOS/conflict-matrix.md" },
-    { "id": "canon", "class": "market-organ", "predicates": { "definition": "HEAD, per epoch" }, "prose": "LOGOS/conflict-matrix.md" },
-    { "id": "claim", "class": "market-organ", "predicates": {}, "prose": "LOGOS/conflict-matrix.md" },
-    { "id": "stake", "class": "market-organ", "predicates": { "note": "the committer bit made continuous" }, "prose": "LOGOS/conflict-matrix.md" },
-    { "id": "trueing", "class": "market-organ", "predicates": { "note": "the paid labor — closing the canon-reality gap" }, "prose": "LOGOS/conflict-matrix.md" }
-  ],
-  "edges": [
-    { "from": "the-keeping-works", "type": "instance-of", "to": "logos" },
-    { "from": "the-ground", "type": "instantiates", "to": "the-keeping-works" },
-    { "from": "node", "type": "stands-on", "to": "the-ground" },
-
-    { "from": "the-two-question-lint", "type": "enforces", "to": "the-north-star" },
-    { "from": "the-north-star", "type": "admits-only", "to": "declare" },
-
-    { "from": "declare", "type": "appends-to", "to": "the-log" },
-    { "from": "declare", "type": "names", "to": "class-node" },
-    { "from": "declare", "type": "forms", "to": "edge" },
-    { "from": "edge", "type": "cites", "to": "declare" },
-
-    { "from": "node", "type": "identified-by", "to": "slug" },
-    { "from": "node", "type": "instance-of", "to": "class-node" },
-    { "from": "class-node", "type": "instance-of", "to": "the-meta-class" },
-    { "from": "predicate-child", "type": "qualifies", "to": "node" },
-
-    { "from": "node", "type": "lives-as", "to": "mark" },
-    { "from": "node", "type": "lives-as", "to": "entity" },
-    { "from": "node", "type": "lives-as", "to": "emission" },
-
-    { "from": "create-edge", "type": "is-a", "to": "edge" },
-    { "from": "revision-edge", "type": "is-a", "to": "edge" },
-    { "from": "response-edge", "type": "is-a", "to": "edge" },
-    { "from": "containment-edge", "type": "is-a", "to": "edge" },
-
-    { "from": "welcome", "type": "is-a", "to": "declare" },
-    { "from": "amend", "type": "is-a", "to": "declare" },
-    { "from": "withdraw", "type": "is-a", "to": "declare" },
-    { "from": "respond", "type": "is-a", "to": "declare" },
-    { "from": "walk", "type": "is-a", "to": "declare" },
-    { "from": "rehome", "type": "is-a", "to": "declare" },
-
-    { "from": "amend", "type": "forms", "to": "revision-edge" },
-    { "from": "withdraw", "type": "forms", "to": "revision-edge" },
-    { "from": "walk", "type": "forms", "to": "revision-edge" },
-    { "from": "respond", "type": "forms", "to": "response-edge" },
-    { "from": "rehome", "type": "maintains", "to": "containment-edge" },
-
-    { "from": "revision-edge", "type": "obeys", "to": "supersession" },
-    { "from": "the-constitutive-flip", "type": "governs", "to": "containment-edge" },
-    { "from": "admissibility", "type": "gates", "to": "containment-edge" },
-
-    { "from": "class-node", "type": "carries", "to": "class-contract" },
-    { "from": "class-contract", "type": "constrains", "to": "node" },
-    { "from": "class-contract", "type": "shapes", "to": "effect" },
-
-    { "from": "declare", "type": "evaluated-by", "to": "the-response-function" },
-    { "from": "compiled-law", "type": "compiles", "to": "the-response-function" },
-    { "from": "welcome", "type": "amends", "to": "the-response-function" },
-    { "from": "welcome", "type": "confers", "to": "tier" },
-    { "from": "the-response-function", "type": "yields", "to": "effect" },
-
-    { "from": "settlement", "type": "runs", "to": "the-response-function" },
-    { "from": "settlement", "type": "publishes", "to": "canon" },
-
-    { "from": "the-fold", "type": "reads", "to": "market" },
-    { "from": "the-fold", "type": "computes", "to": "canon" },
-    { "from": "claim", "type": "lives-in", "to": "market" },
-    { "from": "stake", "type": "backs", "to": "claim" },
-    { "from": "canon", "type": "head-of", "to": "market" },
-    { "from": "crossing", "type": "seals", "to": "canon" },
-    { "from": "the-log", "type": "measured-in", "to": "crossing" },
-    { "from": "incumbency", "type": "holds", "to": "canon" },
-    { "from": "trueing", "type": "repairs", "to": "canon" },
-
-    { "from": "household", "type": "anchors", "to": "tier" },
-    { "from": "the-one-walk", "type": "derives", "to": "tier" },
-    { "from": "the-one-walk", "type": "reads", "to": "containment-edge" },
-    { "from": "projection", "type": "regenerated-from", "to": "the-log" }
-  ]
+ "nodes": [
+  {
+   "id": "logos",
+   "class": "floor",
+   "predicates": {
+    "scope": "the law of classes, town-agnostic"
+   },
+   "prose": "LOGOS/three-layers.md"
+  },
+  {
+   "id": "the-keeping-works",
+   "class": "floor",
+   "predicates": {
+    "scope": "Postmark's own classes — this town's instance of logos"
+   },
+   "prose": "LOGOS/three-layers.md"
+  },
+  {
+   "id": "the-ground",
+   "class": "floor",
+   "predicates": {
+    "scope": "the inhabited record — marks, walks, words"
+   },
+   "prose": "LOGOS/three-layers.md"
+  },
+  {
+   "id": "the-north-star",
+   "class": "principle",
+   "predicates": {
+    "statement": "every write an action; every graph mutation an effect"
+   },
+   "prose": "LOGOS/the-north-star.md"
+  },
+  {
+   "id": "the-two-question-lint",
+   "class": "principle",
+   "predicates": {
+    "q1": "name your class-node",
+    "q2": "name your derivation"
+   },
+   "prose": "LOGOS/the-north-star.md"
+  },
+  {
+   "id": "the-constitutive-flip",
+   "class": "principle",
+   "predicates": {
+    "statement": "the containment edge determines the child's frame"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "supersession",
+   "class": "principle",
+   "predicates": {
+    "statement": "a revision replaces its predecessor; history keeps both"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "admissibility",
+   "class": "principle",
+   "predicates": {
+    "rule": "footprint within the parent"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "incumbency",
+   "class": "principle",
+   "predicates": {
+    "rule": "canon holds a tie",
+    "status": "awaiting the founder's word"
+   },
+   "prose": "LOGOS/conflict-matrix.md"
+  },
+  {
+   "id": "node",
+   "class": "structure",
+   "predicates": {
+    "identity": "slug + class, nothing else"
+   },
+   "prose": "LOGOS/kinds.md",
+   "ontology": "LOGOS/classes.md — the node-ontology planting (2026-08-18); split declared deliberate, ruled 2026-08-19 (C8)"
+  },
+  {
+   "id": "slug",
+   "class": "structure",
+   "predicates": {},
+   "prose": "LOGOS/kinds.md"
+  },
+  {
+   "id": "class-node",
+   "class": "structure",
+   "predicates": {},
+   "prose": "LOGOS/classes.md"
+  },
+  {
+   "id": "the-meta-class",
+   "class": "structure",
+   "predicates": {
+    "note": "class-ness is a relation, not a type"
+   },
+   "prose": "LOGOS/classes.md"
+  },
+  {
+   "id": "predicate-child",
+   "class": "structure",
+   "predicates": {
+    "note": "a field, given its own node"
+   },
+   "prose": "LOGOS/kinds.md"
+  },
+  {
+   "id": "edge",
+   "class": "structure",
+   "predicates": {
+    "note": "no edge without the action that formed it"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "the-log",
+   "class": "structure",
+   "predicates": {
+    "shape": "append-only; self-witnessing"
+   },
+   "prose": "LOGOS/state-and-time.md"
+  },
+  {
+   "id": "crossing",
+   "class": "structure",
+   "predicates": {
+    "note": "the epoch boundary"
+   },
+   "prose": "LOGOS/state-and-time.md"
+  },
+  {
+   "id": "class-contract",
+   "class": "structure",
+   "predicates": {
+    "note": "mandatory-edge clauses, checked at admission — the physics"
+   },
+   "prose": "LOGOS/classes.md"
+  },
+  {
+   "id": "household",
+   "class": "structure",
+   "predicates": {
+    "note": "the credential grain — the anti-sybil unit"
+   },
+   "prose": "LOGOS/tiers.md"
+  },
+  {
+   "id": "tier",
+   "class": "structure",
+   "predicates": {
+    "note": "standing; derived, never stored"
+   },
+   "prose": "LOGOS/tiers.md"
+  },
+  {
+   "id": "projection",
+   "class": "structure",
+   "predicates": {
+    "note": "regenerable, or it is contraband"
+   },
+   "prose": "LOGOS/the-north-star.md"
+  },
+  {
+   "id": "mark",
+   "class": "regime",
+   "predicates": {
+    "lifetime": "until withdrawn"
+   },
+   "prose": "LOGOS/kinds.md"
+  },
+  {
+   "id": "entity",
+   "class": "regime",
+   "predicates": {
+    "lifetime": "animated"
+   },
+   "prose": "LOGOS/kinds.md"
+  },
+  {
+   "id": "emission",
+   "class": "regime",
+   "predicates": {
+    "lifetime": "dial-bounded"
+   },
+   "prose": "LOGOS/kinds.md"
+  },
+  {
+   "id": "declare",
+   "class": "primitive",
+   "predicates": {
+    "shape": "{seq, actor, witnesses, class, payload}"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "welcome",
+   "class": "act",
+   "predicates": {
+    "note": "the one uncompiled act — an amendment to the response function"
+   },
+   "prose": "LOGOS/tiers.md"
+  },
+  {
+   "id": "amend",
+   "class": "act",
+   "predicates": {},
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "withdraw",
+   "class": "act",
+   "predicates": {},
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "respond",
+   "class": "act",
+   "predicates": {
+    "note": "words; revisable; latest wins"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "walk",
+   "class": "act",
+   "predicates": {
+    "note": "a position revision"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "rehome",
+   "class": "act",
+   "predicates": {
+    "note": "cache maintenance, never meaning"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "settlement",
+   "class": "act",
+   "predicates": {
+    "note": "the response function, evaluated on cadence"
+   },
+   "prose": "LOGOS/state-and-time.md"
+  },
+  {
+   "id": "create-edge",
+   "class": "edge-class",
+   "predicates": {
+    "serialization": "by:"
+   },
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "revision-edge",
+   "class": "edge-class",
+   "predicates": {},
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "response-edge",
+   "class": "edge-class",
+   "predicates": {},
+   "prose": "LOGOS/edit-law.md"
+  },
+  {
+   "id": "containment-edge",
+   "class": "edge-class",
+   "predicates": {
+    "note": "the directory IS the geometry"
+   },
+   "prose": "LOGOS/kinds.md"
+  },
+  {
+   "id": "the-response-function",
+   "class": "function",
+   "predicates": {
+    "values": "welcomed · neutral · opposed",
+    "default": "neutral"
+   },
+   "prose": "LOGOS/the-response-function.md"
+  },
+  {
+   "id": "compiled-law",
+   "class": "function",
+   "predicates": {
+    "note": "the town's law — compiled shorthand; an exceptions ledger"
+   },
+   "prose": "LOGOS/the-response-function.md"
+  },
+  {
+   "id": "effect",
+   "class": "function",
+   "predicates": {
+    "formula": "contract(class) × response × rank"
+   },
+   "prose": "LOGOS/the-north-star.md"
+  },
+  {
+   "id": "the-fold",
+   "class": "function",
+   "predicates": {
+    "note": "the canonization function"
+   },
+   "prose": "LOGOS/conflict-matrix.md"
+  },
+  {
+   "id": "the-one-walk",
+   "class": "function",
+   "predicates": {
+    "note": "one derivation of standing; every consumer imports it"
+   },
+   "prose": "LOGOS/tiers.md"
+  },
+  {
+   "id": "market",
+   "class": "market-organ",
+   "predicates": {
+    "definition": "the set of claims"
+   },
+   "prose": "LOGOS/conflict-matrix.md"
+  },
+  {
+   "id": "canon",
+   "class": "market-organ",
+   "predicates": {
+    "definition": "HEAD, per epoch"
+   },
+   "prose": "LOGOS/conflict-matrix.md"
+  },
+  {
+   "id": "claim",
+   "class": "market-organ",
+   "predicates": {},
+   "prose": "LOGOS/conflict-matrix.md"
+  },
+  {
+   "id": "stake",
+   "class": "market-organ",
+   "predicates": {
+    "note": "the committer bit made continuous"
+   },
+   "prose": "LOGOS/conflict-matrix.md"
+  },
+  {
+   "id": "trueing",
+   "class": "market-organ",
+   "predicates": {
+    "note": "the paid labor — closing the canon-reality gap"
+   },
+   "prose": "LOGOS/conflict-matrix.md"
+  }
+ ],
+ "edges": [
+  {
+   "from": "the-keeping-works",
+   "type": "instance-of",
+   "to": "logos"
+  },
+  {
+   "from": "the-ground",
+   "type": "instantiates",
+   "to": "the-keeping-works"
+  },
+  {
+   "from": "node",
+   "type": "stands-on",
+   "to": "the-ground"
+  },
+  {
+   "from": "the-two-question-lint",
+   "type": "enforces",
+   "to": "the-north-star"
+  },
+  {
+   "from": "the-north-star",
+   "type": "admits-only",
+   "to": "declare"
+  },
+  {
+   "from": "declare",
+   "type": "appends-to",
+   "to": "the-log"
+  },
+  {
+   "from": "declare",
+   "type": "names",
+   "to": "class-node"
+  },
+  {
+   "from": "declare",
+   "type": "forms",
+   "to": "edge"
+  },
+  {
+   "from": "edge",
+   "type": "cites",
+   "to": "declare"
+  },
+  {
+   "from": "node",
+   "type": "identified-by",
+   "to": "slug"
+  },
+  {
+   "from": "node",
+   "type": "instance-of",
+   "to": "class-node"
+  },
+  {
+   "from": "class-node",
+   "type": "instance-of",
+   "to": "the-meta-class"
+  },
+  {
+   "from": "predicate-child",
+   "type": "qualifies",
+   "to": "node"
+  },
+  {
+   "from": "node",
+   "type": "lives-as",
+   "to": "mark"
+  },
+  {
+   "from": "node",
+   "type": "lives-as",
+   "to": "entity"
+  },
+  {
+   "from": "node",
+   "type": "lives-as",
+   "to": "emission"
+  },
+  {
+   "from": "create-edge",
+   "type": "is-a",
+   "to": "edge"
+  },
+  {
+   "from": "revision-edge",
+   "type": "is-a",
+   "to": "edge"
+  },
+  {
+   "from": "response-edge",
+   "type": "is-a",
+   "to": "edge"
+  },
+  {
+   "from": "containment-edge",
+   "type": "is-a",
+   "to": "edge"
+  },
+  {
+   "from": "welcome",
+   "type": "is-a",
+   "to": "declare"
+  },
+  {
+   "from": "amend",
+   "type": "is-a",
+   "to": "declare"
+  },
+  {
+   "from": "withdraw",
+   "type": "is-a",
+   "to": "declare"
+  },
+  {
+   "from": "respond",
+   "type": "is-a",
+   "to": "declare"
+  },
+  {
+   "from": "walk",
+   "type": "is-a",
+   "to": "declare"
+  },
+  {
+   "from": "rehome",
+   "type": "is-a",
+   "to": "declare"
+  },
+  {
+   "from": "amend",
+   "type": "forms",
+   "to": "revision-edge"
+  },
+  {
+   "from": "withdraw",
+   "type": "forms",
+   "to": "revision-edge"
+  },
+  {
+   "from": "walk",
+   "type": "forms",
+   "to": "revision-edge"
+  },
+  {
+   "from": "respond",
+   "type": "forms",
+   "to": "response-edge"
+  },
+  {
+   "from": "rehome",
+   "type": "maintains",
+   "to": "containment-edge"
+  },
+  {
+   "from": "revision-edge",
+   "type": "obeys",
+   "to": "supersession"
+  },
+  {
+   "from": "the-constitutive-flip",
+   "type": "governs",
+   "to": "containment-edge"
+  },
+  {
+   "from": "admissibility",
+   "type": "gates",
+   "to": "containment-edge"
+  },
+  {
+   "from": "class-node",
+   "type": "carries",
+   "to": "class-contract"
+  },
+  {
+   "from": "class-contract",
+   "type": "constrains",
+   "to": "node"
+  },
+  {
+   "from": "class-contract",
+   "type": "shapes",
+   "to": "effect"
+  },
+  {
+   "from": "declare",
+   "type": "evaluated-by",
+   "to": "the-response-function"
+  },
+  {
+   "from": "compiled-law",
+   "type": "compiles",
+   "to": "the-response-function"
+  },
+  {
+   "from": "welcome",
+   "type": "amends",
+   "to": "the-response-function"
+  },
+  {
+   "from": "welcome",
+   "type": "confers",
+   "to": "tier"
+  },
+  {
+   "from": "the-response-function",
+   "type": "yields",
+   "to": "effect"
+  },
+  {
+   "from": "settlement",
+   "type": "runs",
+   "to": "the-response-function"
+  },
+  {
+   "from": "settlement",
+   "type": "publishes",
+   "to": "canon"
+  },
+  {
+   "from": "the-fold",
+   "type": "reads",
+   "to": "market"
+  },
+  {
+   "from": "the-fold",
+   "type": "computes",
+   "to": "canon"
+  },
+  {
+   "from": "claim",
+   "type": "lives-in",
+   "to": "market"
+  },
+  {
+   "from": "stake",
+   "type": "backs",
+   "to": "claim"
+  },
+  {
+   "from": "canon",
+   "type": "head-of",
+   "to": "market"
+  },
+  {
+   "from": "crossing",
+   "type": "seals",
+   "to": "canon"
+  },
+  {
+   "from": "the-log",
+   "type": "measured-in",
+   "to": "crossing"
+  },
+  {
+   "from": "incumbency",
+   "type": "holds",
+   "to": "canon"
+  },
+  {
+   "from": "trueing",
+   "type": "repairs",
+   "to": "canon"
+  },
+  {
+   "from": "household",
+   "type": "anchors",
+   "to": "tier"
+  },
+  {
+   "from": "the-one-walk",
+   "type": "derives",
+   "to": "tier"
+  },
+  {
+   "from": "the-one-walk",
+   "type": "reads",
+   "to": "containment-edge"
+  },
+  {
+   "from": "projection",
+   "type": "regenerated-from",
+   "to": "the-log"
+  }
+ ]
 }

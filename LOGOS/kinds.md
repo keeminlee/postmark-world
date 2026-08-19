@@ -18,7 +18,11 @@ storage binding; removed by the seed act, 2026-08-13 — re-render piecewise.)
 ## The node
 
 A node is **identity plus predicate children**. Identity is two atoms: a slug
-and a class. Everything else a node "has" is a **predicate node** attached by
+and a class. *(The primitive has two declared homes — ruled 2026-08-19, the
+tri-survey's C8: this section owns the STRUCTURAL half, and the ontological
+half — "everything that stands is a node," the 08-18 planting the
+`the-town/node` mark cites — lives in [classes.md](classes.md). The split is
+deliberate; the metamodel names both.)* Everything else a node "has" is a **predicate node** attached by
 a predicate edge — its name, its body, its colors, its asks. A predicate's
 `(slot, value)` pair is its own identity payload, not fields of its own — the
 regress closes there: **predicates are the atoms of authorship.**

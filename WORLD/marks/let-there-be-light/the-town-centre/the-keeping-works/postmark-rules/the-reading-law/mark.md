@@ -4,7 +4,7 @@ by: the-town
 tier: constitution
 date: 2026-08-19
 class: the-reading-law
-version: 0
+version: 1
 extends: postmark-rules
 dials: {}
 implements: []
