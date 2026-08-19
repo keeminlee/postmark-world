@@ -4,7 +4,7 @@ by: the-town
 tier: constitution
 date: 2026-08-18
 class: timetable
-version: 2
+version: 1
 extends: paper
 dials: {}
 implements: ["tools/vessel.mjs"]

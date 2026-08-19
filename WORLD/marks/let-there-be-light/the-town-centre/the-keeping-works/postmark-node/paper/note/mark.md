@@ -4,7 +4,7 @@ by: the-town
 tier: constitution
 date: 2026-08-15
 class: note
-version: 2
+version: 1
 extends: paper
 dials: {"body_max_chars": 2000}
 implements: []

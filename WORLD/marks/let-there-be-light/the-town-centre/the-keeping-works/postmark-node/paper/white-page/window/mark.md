@@ -4,7 +4,7 @@ by: the-town
 tier: constitution
 date: 2026-08-14
 class: window
-version: 2
+version: 1
 extends: white-page
 dials: {}
 implements: []
