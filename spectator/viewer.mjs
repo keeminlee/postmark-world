@@ -2951,10 +2951,6 @@ const STYLE = `
 .wv-minimap { position:relative; overflow:hidden; cursor:crosshair; }
 /* inside, the painting is not dimmed or filtered — it is GONE. A ghost of the
    aerial view under a floor would say the roof is missing. */
-/* a mark scene: same engine, same chrome, minus the CAMERA controls — the one
-   rail a camera-less scene has no truthful answer for (fit/follow/zoom would
-   all be no-ops wearing buttons). Everything else stays. */
-.wv-minimap.is-scene-mark > .wv-mapctl { display:none; }
 /* THE WAY OUT, on the pane, bottom left, in every view mode (founder's word) —
    the telling's own exit collapses with the telling in painting-only, which is
    the default, and a room with no visible door out is the founder's original
@@ -4327,7 +4323,7 @@ export function mountViewer(appEl) {
     mountScene({
       boxEl, svg, originPx: ground.originPx, mPerPx: ground.mPerPx,
       reattachOverlays: captureKeep(boxEl),
-      camera: false,            // a room fits its pane; pan/zoom refused (the ruling)
+      zoomOutLimit: 1,          // the room is the outermost state; zoom-in only (revised ruling)
       includeMine: false,       // the roof: your marks elsewhere don't follow you in
       placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
     });
@@ -4773,13 +4769,18 @@ export function mountViewer(appEl) {
   // and `includeMine` gates the portfolio union in the draw-set (a room shows
   // what is IN it; your marks elsewhere in town do not follow you through a
   // door — the roof, refused at the source per the 08-20 spike receipt).
+  // `zoomOutLimit` caps how far OUT the wheel may go, as a multiple of the
+  // full view. The town keeps MAX_ZOOM_OUT; a room passes 1 — the founder's
+  // revised camera ruling (2026-08-20 evening): a room has a camera now, the
+  // whole rail with it, but its outermost state IS the whole room — you can
+  // dive into a corner and come back, never drift into the void past the walls.
   // `placeholderExtents` gives every art-less embodied mark a programmatic
   // stand-in (founder, 2026-08-20, revising his own always-on footprints): its
   // extent filled with a deterministic per-mark colour at LOW SATURATION — full
   // presence, muted hue — so a room reads as a floor plan and nested
   // placeholders read as distinct blocks. Drawn by the ONE overlay, gated by
   // the scene; the town keeps its footprint toggle unchanged.
-  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, camera = true, includeMine = true, placeholderExtents = false }) {
+  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, zoomOutLimit = MAX_ZOOM_OUT, includeMine = true, placeholderExtents = false }) {
     // THE FAR COUNTRY, mounted UNDER the painting rather than over it.
     //
     // Every other derived layer is appended, so it draws on top. These two are
@@ -4878,7 +4879,7 @@ export function mountViewer(appEl) {
     }
     const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
     const view = { ...full };
-    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, camera, includeMine, placeholderExtents };
+    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents };
     drawFarCountry();
     let tween = null;
     // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
@@ -4944,7 +4945,6 @@ export function mountViewer(appEl) {
       return { x: c.x - w * ax, y: c.y - h * ay, w, h };
     };
     mapCtx.lockOn = (animate = true) => {
-      if (!camera) return;              // nothing to lock: the scene IS the frame
       const target = mapCtx.frameOn();
       // Compare against the target we actually want, not against the viewBox
       // centre — the old test could return "close enough" while the dot sat
@@ -4953,7 +4953,7 @@ export function mountViewer(appEl) {
           && Math.abs(target.w - view.w) < full.w * 0.01) return;
       if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
     };
-    mapCtx.fitAll = () => { if (!camera) return; mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
+    mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
     // Point the camera somewhere and hand back where it was, so a caller can put
     // it back exactly. The tour is the only user: it frames three marks for one
     // slide and restores the reader's own view on the way out.
@@ -4981,14 +4981,11 @@ export function mountViewer(appEl) {
     mapCtx.refit = () => {
       const pane = boxEl.getBoundingClientRect();
       if (!pane.width || !pane.height) return;
-      // A CAMERA-LESS SCENE IS SHOWN WHOLE — letterboxed, never band-cropped.
-      // The town's refit keeps width and crops height to the pane, which is
-      // right for a scene with a camera (the hand can fetch the rest) and wrong
-      // for a room (there is no hand; a cropped corner is simply GONE — the
-      // scene-qa run that clicked a pip at y=-183 is the receipt). The view
-      // takes the pane's aspect and CONTAINS the ground, centred; the slack is
-      // honest dark around the paper.
-      if (!camera) {
+      // A CONTAINED SCENE AT REST IS SHOWN WHOLE — letterboxed, never
+      // band-cropped (the scene-qa pip at y=-183 is the receipt). Once the
+      // reader has zoomed in, the hand can fetch what a reshape crops, so the
+      // town's own keep-width refit takes over until fit brings the room back.
+      if (zoomOutLimit <= 1 && mapCtx.zoomK <= 1.02) {
         const pa = pane.width / pane.height, ga = full.w / full.h;
         const w = pa >= ga ? full.h * pa : full.w;
         const h = pa >= ga ? full.h : full.w / pa;
@@ -5005,10 +5002,9 @@ export function mountViewer(appEl) {
     // where the hand put it (fit is the only thing that zooms you back out)
     const breakFollow = () => { if (mapCtx.follow) { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); } };
     svg.addEventListener("wheel", (e) => {
-      if (!camera) { e.preventDefault(); return; }   // a room refuses a camera (ruling)
       e.preventDefault(); stopTween(); breakFollow();
       const k = Math.pow(1.0015, e.deltaY);
-      const w = Math.min(full.w * MAX_ZOOM_OUT, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
+      const w = Math.min(full.w * zoomOutLimit, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
       const scale = w / view.w;
       const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
       const p = pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -5113,9 +5109,6 @@ export function mountViewer(appEl) {
         hoverMark(hoverTargetForEvent(e));
         return;
       }
-      // a camera-less scene never pans: the press stays a press (hover and the
-      // stand-click both still work), the ground simply does not move
-      if (!camera) return;
       if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
       hoverMark(null);
       renderConvoHover(null);
