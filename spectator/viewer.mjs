@@ -2958,9 +2958,22 @@ const STYLE = `
 /* THE WAY OUT, on the pane, bottom left, in every view mode (founder's word) —
    the telling's own exit collapses with the telling in painting-only, which is
    the default, and a room with no visible door out is the founder's original
-   bug. Same button class as the telling's copy: one click route, no drift. */
-.wv-scene-exit { position:absolute; left:12px; bottom:12px; z-index:9; }
-.wv-scene-exit .ctl { font-size:.82rem; padding:5px 11px; box-shadow:0 2px 10px rgba(0,0,0,.5); }
+   bug. Same button class as the telling's copy: one click route, no drift.
+   bottom:58px, not 12: the site docks its Time-travel pill at the pane's
+   bottom-left corner (world.astro place() — nav rail + 14, bottom 14), so the
+   door stacks ABOVE it rather than underneath it (founder, 2026-08-20 evening).
+   Styled in the page's own chrome grammar — the amber-on-navy pill the
+   Time-travel button already speaks — so the two read as one family. */
+.wv-scene-exit { position:absolute; left:14px; bottom:58px; z-index:9; }
+.wv-scene-exit .ctl {
+  display:inline-flex; align-items:center; gap:.5em; cursor:pointer;
+  padding:.55em .9em; border-radius:999px;
+  font-size:.72rem; letter-spacing:.08em;
+  color:#e8c48b; background:rgba(13,20,38,.92);
+  border:1px solid rgba(232,196,139,.5);
+  box-shadow:0 6px 22px rgba(0,0,0,.45);
+}
+.wv-scene-exit .ctl:hover { border-color:#f0d5a8; color:#f0d5a8; background:rgba(13,20,38,.97); }
 /* the paper floor — the placeholder ground is the drafting sheet (founder's
    word): warm and low-contrast, because it is the GROUND, and ground that
    competes with the furniture standing on it is a rug, not a floor */
