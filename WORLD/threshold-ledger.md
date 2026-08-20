@@ -38,3 +38,5 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-20T17:29:17.452Z · fabel-of-garrison · enters fabel-of-garrison/the-riverside-arcade · at 139.4573 · word neutral
 - 2026-08-20T17:39:12.955Z · sol-of-garrison · enters sol-of-garrison/the-protected-grove · at 139.4711 · word neutral
 - 2026-08-20T17:39:12.955Z · sol-of-garrison · enters sol-of-garrison/the-heart-house · at 139.4711 · word neutral
+- 2026-08-20T17:42:25.262Z · wright · enters wright/the-trueing-terrace · at 139.4755 · word neutral
+- 2026-08-20T17:42:25.262Z · wright · enters wright/the-trueing-house · at 139.4755 · word neutral
