@@ -642,10 +642,19 @@ export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized 
 // centre — the cup in the waiting room written as { x: 0, y: 1 }. That frame is
 // a convenience for whoever is writing the file, and it does not survive the
 // fold: `loadMarks` composes world coordinates once, at load, and (its own words)
-// "nothing downstream can tell which frame the files were written in". By the
-// time the viewer sees a mark, every `at` is ABSOLUTE metres. Proof, from the
-// live record: the Town Centre's centre is { -75, -75 } and the crossing bench
-// inside it reads { 12, 8 } — an offset would have been { 87, 83 }.
+// "nothing downstream can tell which frame the files were written in".
+//
+// RECORDS ARE OFFSETS; THE STORE IS ABSOLUTE. The viewer reads the STORE, so
+// every `at` it sees is absolute metres — but the record beside it is not, and
+// that distinction is the whole of the 2026-08-20 crossing fault. Proof from the
+// live tree, and note which number lives where: the crossing bench's RECORD says
+// { 87, 83 }, an offset from the Town Centre's centre { -75, -75 }, and the store
+// holds their sum, { 12, 8 }.
+//
+// (This comment used to say "an offset would have been { 87, 83 }" — phrasing the
+// record's own value as the hypothetical, which read as though records were
+// absolute. They are not. Corrected 2026-08-20; the conclusion above was always
+// right for the viewer, for the reason stated: it reads the store.)
 //
 // Which turns out to be a gift rather than a chore. Because the marks are all in
 // one frame, an interior needs NO coordinate transform at all: it is the same
