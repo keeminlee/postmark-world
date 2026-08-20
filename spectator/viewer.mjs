@@ -398,14 +398,41 @@ export function stakeBackersHTML({ weight = 0, weightParts = null, holders = [],
   const row = (label, amount) =>
     `<div class="wv-backer"><span>${esc(label)}</span><span class="amount">✦ ${Number(amount).toLocaleString()}</span></div>`;
 
+  // TWO SOURCES, AND THEY MUST NOT BE STACKED AS IF THEY WERE ONE.
+  //
+  // The founder read this pane as self-contradictory, and it was:
+  //
+  //     staked on it                   ✦ 0
+  //     no one yet
+  //     1 other household backing it   ✦ 1
+  //
+  // Nobody is backing it, and also one household is. Both lines were true and
+  // neither was wrong — they come from DIFFERENT BOOKS. The holder list is the
+  // town ledger as it stands RIGHT NOW; own/breadth/fanned are `weight_parts`,
+  // the last Settlement's arithmetic. Between crossings those legitimately
+  // disagree, which is the whole reason the pending line beneath exists — but
+  // interleaved in one column they read as the surface contradicting itself.
+  //
+  // So they are two blocks with their tenses said out loud: who is backing it
+  // NOW, then what the ✦ is MADE of. The stake book is public record (the town
+  // stamp-ledger rows are readable by anyone), so naming the backers is not a
+  // disclosure — it is the record, shown.
   let html = `<b>✦ ${effective.toLocaleString()}</b>`;
-  html += row("staked on it", own);
+  html += `<div class="wv-backer-head">backing it now</div>`;
   html += summary.top.length
     ? summary.top.map((r) => `<div class="wv-backer is-holder"><span>${esc(r.holder)}</span><span class="amount">✦ ${r.amount.toLocaleString()}</span></div>`).join("")
       + (summary.others ? `<div class="wv-backer is-holder"><span>and ${summary.others} other${summary.others === 1 ? "" : "s"}</span><span></span></div>` : "")
-    : `<div class="wv-backer is-holder"><span>no one yet</span><span></span></div>`;
-  if (bonus > 0) html += row(`${households} other household${households === 1 ? "" : "s"} backing it`, bonus);
-  if (fannedTotal > 0) html += row(`${fanned.length} mark${fanned.length === 1 ? "" : "s"} inside it`, fannedTotal);
+    : `<div class="wv-backer is-holder"><span class="wv-quiet">nobody has backed it yet</span><span></span></div>`;
+  // The breakdown is only shown where it explains something. A column of zeroes
+  // under a mark nobody has staked is three lines saying the same nothing.
+  const parts_rows = [];
+  if (own > 0) parts_rows.push(row("staked on it", own));
+  if (bonus > 0) parts_rows.push(row(`spread across ${households} household${households === 1 ? "" : "s"}`, bonus));
+  if (fannedTotal > 0) parts_rows.push(row(`${fanned.length} mark${fanned.length === 1 ? "" : "s"} inside it`, fannedTotal));
+  if (parts_rows.length) {
+    html += `<div class="wv-backer-head">what the ✦ is made of<span class="wv-quiet"> · at the last Settlement</span></div>`;
+    html += parts_rows.join("");
+  }
 
   // The lag, named only when it is real. Silence here would let a resident read a
   // stale ✦ as a rejected stake — and a sentence here on every mark that has
@@ -2721,6 +2748,12 @@ const STYLE = `
    carrying a relation, not decoration: the parts of the ✦ figure are flush, the
    people inside one of those parts are stepped in. */
 .wv-backer.is-holder { padding-left:12px; opacity:.82; font-size:.95em; }
+/* the two blocks, each with its tense said out loud — the founder read the old
+   single column as contradicting itself, because a live holder list and the last
+   Settlement's arithmetic were stacked as if they were one book */
+.wv-backer-head { margin-top:9px; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dim); opacity:.8; }
+.wv-backer-head:first-of-type { margin-top:6px; }
 .wv-backer-pending { margin-top:5px; color:var(--stamp-violet-subhead); font-size:.95em; }
 /* the forecast speaks in the drafts grey — not yet published, and it looks like it */
 .wv-backer-pending.is-draft { color:var(--draft); display:flex; align-items:center; gap:6px; }

@@ -257,17 +257,63 @@ test('the popover shows every lane that built the number, and the holders under 
     proposed: null,
   });
   assert.match(html, /staked on it<\/span><span class="amount">✦ 8</);
-  assert.match(html, /2 other households backing it<\/span><span class="amount">✦ 10</);
+  // RENAMED, because the old label counted the same households the holder list
+  // above was already naming, one line apart, and read as a second tally
+  // contradicting the first. The breadth term is a SPREAD over the escrow, not a
+  // headcount of backers — so it says what it is.
+  assert.match(html, /spread across 2 households<\/span><span class="amount">✦ 10</);
+  assert.doesNotMatch(html, /households? backing it/, 'the old double-count label is gone');
   assert.match(html, /1 mark inside it<\/span><span class="amount">✦ 90</);
   assert.match(html, /vermillion/);
-  assert.doesNotMatch(html, /Settlement/, 'nothing is pending when live escrow already matches the settled figure');
+  // the two books are labelled rather than interleaved
+  assert.match(html, /backing it now/);
+  assert.match(html, /at the last Settlement/);
+  assert.ok(html.indexOf('backing it now') < html.indexOf('vermillion'), 'the backers sit under their own heading');
+  // NARROWED, not weakened: the breakdown heading now says 'at the last
+  // Settlement' out loud (that is the point — it names its tense), so a bare
+  // /Settlement/ no longer distinguishes the pending line. The pending line is
+  // what this ever meant, and it has its own class.
+  assert.doesNotMatch(html, /wv-backer-pending/, 'nothing is pending when live escrow already matches the settled figure');
+  assert.doesNotMatch(html, /next Settlement/);
 });
 
-test('a mark with no breakdown still headlines its own number, and says no one yet', () => {
+test('a mark nobody has backed says so once, and does not print a column of zeroes', () => {
   const html = stakeBackersHTML({ weight: 0, weightParts: null, holders: [], proposed: null });
   assert.equal(chipLabel(html), '✦ 0');
-  assert.match(html, /no one yet/);
-  assert.match(html, /staked on it<\/span><span class="amount">✦ 0</, 'absent parts read as zero, not as unknown');
+  assert.match(html, /nobody has backed it yet/);
+  // THE CONTRADICTION THE FOUNDER READ. "staked on it ✦ 0" directly above
+  // "1 other household backing it ✦ 1" said nobody and somebody in two lines.
+  // A breakdown is only shown where it explains something; three zero rows under
+  // an unbacked mark are three lines saying the same nothing.
+  assert.doesNotMatch(html, /staked on it/, 'no zero-valued lane is printed');
+  assert.doesNotMatch(html, /at the last Settlement/, 'and no heading over an empty breakdown');
+});
+
+test('FALSIFIER: the backers shown are the ledger\'s, name for name and stamp for stamp', () => {
+  // the town stamp-ledger is public record, so this pane may name who backed a
+  // mark — but only who actually did. Every row rendered must come from the book.
+  const ledger = [
+    { holder: 'alden', amount: 10 }, { holder: 'ellery', amount: 5 },
+    { holder: 'vermillion', amount: 5 }, { holder: 'corwin', amount: 5 },
+  ];
+  const html = stakeBackersHTML({ weight: 25, weightParts: null, holders: ledger, proposed: null });
+  for (const row of ledger)
+    assert.match(html, new RegExp(`${row.holder}</span><span class="amount">✦ ${row.amount}<`),
+      `${row.holder} is named with the stamps the ledger holds`);
+  // and nobody who is not in the book appears
+  for (const stranger of ['little-bird', 'wright', 'rei'])
+    assert.doesNotMatch(html, new RegExp(stranger), `${stranger} never staked this and must not be listed`);
+  assert.doesNotMatch(html, /nobody has backed it yet/);
+});
+
+test('a backer with nothing staked is not a backer', () => {
+  const html = stakeBackersHTML({
+    weight: 3, weightParts: null,
+    holders: [{ holder: 'kilean', amount: 0 }, { holder: 'little-bird', amount: 3 }],
+    proposed: null,
+  });
+  assert.match(html, /little-bird/);
+  assert.doesNotMatch(html, /kilean/, 'a returned stake leaves no backer behind');
 });
 
 test('a stake laid since the last Settlement is named as pending, not silently reconciled', () => {
