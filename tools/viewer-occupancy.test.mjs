@@ -32,22 +32,32 @@ const LEDGER = readFileSync(join(ROOT, "WORLD/threshold-ledger.md"), "utf8");
 const REAL = parseThresholdLedger(LEDGER);
 const WRIGHT_CROSSING = REAL.acts.find((a) => a.handle === "wright" && a.act === "enters");
 
+// THE STANDING FIXTURE IS SYNTHETIC (state-durable-facts, 2026-08-20): the
+// ledger is a working record — residents cross doors daily, and five of these
+// tests broke the day wright stepped OUT of the room they had pinned him to.
+// The stamp stays fractional and just under the live clock, so the floored-
+// clock trap this file exists for keeps its teeth.
+const SYN_STAMP = (Math.max(fractionalCrossing(), 139) - 0.002).toFixed(4);
+const SYN = parseThresholdLedger(
+  `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at ${SYN_STAMP} · word neutral
+`);
+
 test("the real ledger parses clean — the fixture these tests stand on is the record", () => {
   assert.equal(REAL.unrecognized.length, 0, "the town's own ledger must not read as malformed");
   assert.ok(WRIGHT_CROSSING, "wright's crossing is the standing fixture; without it the rest proves nothing");
   assert.equal(WRIGHT_CROSSING.mark, "the-town/the-town-centre");
 });
 
-test("the viewer derives wright's entered-stack from the real record", () => {
+test("the viewer derives wright's entered-stack from the standing fixture", () => {
   const at = fractionalCrossing();
-  const { entered, insideOf, alongside } = standpointOccupancy({ acts: REAL.acts, at, handle: "wright" });
+  const { entered, insideOf, alongside } = standpointOccupancy({ acts: SYN.acts, at, handle: "wright" });
   assert.deepEqual(entered, ["the-town/the-town-centre"]);
   assert.equal(insideOf, "the-town/the-town-centre");
   assert.deepEqual(alongside, [], "nobody else has crossed in yet, and the readout must not invent company");
 });
 
 test("who is in this room — occupantsOf reaches the viewer as the manifest", () => {
-  const { manifest } = standpointOccupancy({ acts: REAL.acts, at: fractionalCrossing() });
+  const { manifest } = standpointOccupancy({ acts: SYN.acts, at: fractionalCrossing() });
   assert.deepEqual([...manifest.get("the-town/the-town-centre")], ["wright"]);
 });
 
@@ -119,7 +129,7 @@ test("a refused crossing is in the record and not in the occupancy", () => {
 
 test("the spectator is inside nothing but can still read the manifest", () => {
   const at = fractionalCrossing();
-  const spectator = standpointOccupancy({ acts: REAL.acts, at, handle: SPECTATOR_ACTOR });
+  const spectator = standpointOccupancy({ acts: SYN.acts, at, handle: SPECTATOR_ACTOR });
   assert.deepEqual(spectator.entered, [], "a camera has crossed no thresholds");
   assert.equal(spectator.insideOf, null);
   assert.deepEqual([...spectator.manifest.get("the-town/the-town-centre")], ["wright"],
@@ -155,7 +165,7 @@ test("alongside names the others in your innermost room and never yourself", () 
 
 // ── what the reader actually sees ───────────────────────────────────────────
 test("the chip says what was entered, in the mark's own name, and who is in there", () => {
-  const readout = standpointOccupancy({ acts: REAL.acts, at: fractionalCrossing(), handle: "wright" });
+  const readout = standpointOccupancy({ acts: SYN.acts, at: fractionalCrossing(), handle: "wright" });
   const html = occupancyChipHTML({ ...readout, nameOf: () => "The Town Centre" });
   assert.match(html, /class="wv-entered"/);
   assert.match(html, /entered/);
@@ -192,12 +202,10 @@ test("the chip names company when there is any", () => {
 
 test("the dev readout names every room and its occupants, and says so when there are none", () => {
   const at = fractionalCrossing();
-  const { manifest } = standpointOccupancy({ acts: REAL.acts, at });
-  const line = occupancyDevLine({ manifest, acts: REAL.acts.length, unrecognized: REAL.unrecognized.length, at });
+  const { manifest } = standpointOccupancy({ acts: SYN.acts, at });
+  const line = occupancyDevLine({ manifest, acts: SYN.acts.length, unrecognized: SYN.unrecognized.length, at });
   assert.match(line, /threshold ledger/);
-  // the COUNT the ledger actually holds, not a number frozen on the day this was
-  // written — an append-only record grows every time somebody crosses a door
-  const n = REAL.acts.length;
+  const n = SYN.acts.length;
   assert.match(line, new RegExp(`${n} crossing`), `the readout counts the ledger's own ${n} acts`);
   assert.match(line, /wright/, "the resident on the standing fixture is named");
   assert.match(line, /The Town Centre/, "and so is the room he is in");
