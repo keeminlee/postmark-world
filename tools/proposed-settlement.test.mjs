@@ -51,11 +51,23 @@ const settled = {
 
 // Captured from main's own stakeBackersHTML before this branch touched it. The
 // no-delta rendering must not move by one byte.
+// THE GOLDEN, RE-CUT 2026-08-20 for the two-block pane. The old one interleaved
+// a LIVE holder list with the LAST SETTLEMENT's arithmetic in one column, and the
+// founder read the result as the surface contradicting itself — "no one yet"
+// directly above "1 other household backing it". Both were true; they are
+// different books. They are now two blocks with their tenses named.
+//
+// What this constant is FOR is unchanged and is the reason it is spelled out
+// rather than generated: the quiet rule below asserts that a mark with nothing
+// pending renders byte for byte as it did before the forecast existed. That
+// claim needs a literal to be worth anything.
 const MAIN_NO_DELTA =
-  '<b>✦ 108</b><div class="wv-backer"><span>staked on it</span><span class="amount">✦ 8</span></div>'
+  '<b>✦ 108</b><div class="wv-backer-head">backing it now</div>'
   + '<div class="wv-backer is-holder"><span>vermillion</span><span class="amount">✦ 5</span></div>'
   + '<div class="wv-backer is-holder"><span>gael-renton</span><span class="amount">✦ 3</span></div>'
-  + '<div class="wv-backer"><span>2 other households backing it</span><span class="amount">✦ 10</span></div>'
+  + '<div class="wv-backer-head">what the ✦ is made of<span class="wv-quiet"> · at the last Settlement</span></div>'
+  + '<div class="wv-backer"><span>staked on it</span><span class="amount">✦ 8</span></div>'
+  + '<div class="wv-backer"><span>spread across 2 households</span><span class="amount">✦ 10</span></div>'
   + '<div class="wv-backer"><span>1 mark inside it</span><span class="amount">✦ 90</span></div>';
 
 // ── the law is planted, and the code answers to it ──────────────────────────
@@ -103,7 +115,10 @@ test("ZERO NEW PANELS: the forecast adds no container the no-delta render lacks"
 test("NO pending delta renders byte-for-byte as main did — nothing added, not even an empty state", () => {
   assert.equal(stakeBackersHTML(settled), MAIN_NO_DELTA);
   assert.equal(stakeBackersHTML({ ...settled, proposed: null }), MAIN_NO_DELTA);
-  assert.doesNotMatch(stakeBackersHTML(settled), /Settlement|pending|wv-chip/,
+  // NARROWED: the breakdown heading now names its own tense ("at the last
+  // Settlement"), so a bare /Settlement/ no longer distinguishes the pending
+  // line. The pending line is what the quiet rule was ever about.
+  assert.doesNotMatch(stakeBackersHTML(settled), /next Settlement|wv-backer-pending|wv-chip/,
     "silence is the whole feature where there is nothing to say");
 });
 
