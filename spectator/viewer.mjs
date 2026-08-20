@@ -7778,8 +7778,31 @@ export function mountViewer(appEl) {
   // with acts. The walk loader's non-empty guard is right for positions and would
   // be wrong here: it would fall through a true "the room is empty" to the raw
   // file and report a room the local record says has been emptied.
+  // THE CROSSINGS MUST COME FROM A LIVE SOURCE, and until now none of these were.
+  //
+  // The site stages WORLD/threshold-ledger.md as a BUILD ARTIFACT, pinned to the
+  // world sha the site was built from, and the RAW fallback is whatever github
+  // last served. Crossings land continuously, so both are photographs. A resident
+  // could walk through a door, refresh, and be told they were still outside —
+  // which is exactly the last lie standing between the founder's click and his
+  // interior, and it is not a caching bug: those files are simply OLD.
+  //
+  // So the office goes FIRST. It reads the clone it actually has, the same move
+  // /world/state already makes for the marks. The staged file and RAW stay as
+  // fallbacks, because a page served from somewhere with no office (the local
+  // spectator, a bare clone) must still derive occupancy — stale crossings are
+  // worth more than none, and the fallbacks are exactly as good as they ever were.
+  //
+  // WHAT DOES NOT MOVE: occupancy is still derived IN THE READER. The office
+  // hands over the ledger TEXT and this parses it, because who folds the rooms is
+  // a constitutional question and this is only a question of which bytes.
+  const thresholdLedgerSources = () => [
+    { url: officeUrl("/world/threshold-ledger"), json: true },
+    { url: "/WORLD/threshold-ledger.md", json: false },
+    { url: `${RAW}/WORLD/threshold-ledger.md`, json: false },
+  ];
   async function loadThresholdLedger() {
-    for (const url of ["/WORLD/threshold-ledger.md", `${RAW}/WORLD/threshold-ledger.md`]) {
+    for (const { url, json } of thresholdLedgerSources()) {
       try {
         // NO-STORE, and this one is load-bearing rather than tidy. This file is
         // re-read IMMEDIATELY after a crossing is written, so a cached copy is a
@@ -7789,7 +7812,10 @@ export function mountViewer(appEl) {
         // freshness has to be asked for HERE, at the one reader that needs it.
         const r = await fetch(url, { credentials: "omit", cache: "no-store" });
         if (!r.ok) continue;
-        const parsed = parseThresholdLedger(await r.text());
+        // the office answers JSON carrying the ledger text; a file IS the text
+        const text = json ? String((await r.json())?.ledger ?? "") : await r.text();
+        if (json && !text) continue;   // an office that answered with no ledger is not an answer
+        const parsed = parseThresholdLedger(text);
         crossings = { acts: parsed.acts, unrecognized: parsed.unrecognized.length };
         crossingEpoch += 1;   // every pane built before this one is stale
         return;
