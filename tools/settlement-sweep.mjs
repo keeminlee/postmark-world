@@ -91,6 +91,16 @@ function escrowIndex(stakes) {
   return out;
 }
 
+// The offending row, dug out of the fold's own error text so the journal can
+// name it. Best-effort by construction: the message is the fold's to phrase, so
+// a shape this does not recognise yields null and the full detail still rides
+// the report. Never throws — a quarantine must not itself be able to fail.
+function firstStakeRowIn(message) {
+  const m = String(message ?? "").match(/\{"stake":(\{.*?\})/);
+  if (!m) return null;
+  try { return JSON.parse(m[1]); } catch { return null; }
+}
+
 function foldRef(repo, ref, stakes) {
   const dir = archiveRef(repo, ref);
   try {
@@ -484,12 +494,42 @@ export function settlementSweep({
   const published = [];
   const leftDrafted = [];
   const withdrawn = []; // the revision family's terminal half (ruled 2026-08-19)
+  // ONE POISONED DRAWER MUST NOT REFUSE THE WHOLE TOWN (founder, 2026-08-20).
+  // Until now foldRef threw straight out of the loop below, so a single ref that
+  // folded with errors refused the ENTIRE settlement — every other household's
+  // work held hostage by one malformed row. Reopening makes that likely rather
+  // than theoretical: many first settlements is exactly when a malformed row
+  // arrives. A one-drawer quarantine beats a whole-town refusal — but only if it
+  // SHOUTS, which is what this list is for.
+  const quarantined = [];
   const touched = [];
   let rehomed = [];
 
   for (const branch of branches) {
     const household = branch.slice("draft/".length);
-    const state = foldRef(repo, branch, stakes);
+    // THE QUARANTINE, and it is deliberately the FIRST thing in the drawer. A ref
+    // that cannot be folded cannot be reasoned about at all, so nothing from it
+    // is read, nothing is published, nothing is withdrawn, nothing is touched —
+    // the conservative direction is preserved by skipping BEFORE any of that,
+    // rather than by unwinding after. Nothing half-applies because nothing
+    // applies.
+    let state;
+    try {
+      state = foldRef(repo, branch, stakes);
+    } catch (error) {
+      // LOUD. The ref, the reason, and — where the fold named one — the row that
+      // poisoned it, so the crossing's journal says whose drawer was set aside
+      // and what to fix. A silent drop here would be a household's work quietly
+      // vanishing at a settlement, which is worse than the refusal it replaces.
+      const detail = String(error?.message ?? error);
+      quarantined.push({
+        household, ref: branch,
+        reason: "this sketchbook could not be folded, so it was set aside and the rest of the town settled without it",
+        detail: detail.slice(0, 400),
+        row: firstStakeRowIn(detail),
+      });
+      continue;
+    }
     const folded = new Map(state.marks.map((mark) => [mark.id, mark]));
     for (const delta of markDelta(repo, mainBranch, branch)) {
       // SUPERSESSION. The sketchbook has not touched this path since it was cut,
@@ -719,6 +759,9 @@ export function settlementSweep({
     stakes_rows: stakes.length,
     published: published.map(({ content, ...item }) => item),
     left_drafted: leftDrafted,
+    // named in the sweep's own answer, not only in a log — the operator reading
+    // the crossing must see that a drawer was set aside without going looking
+    quarantined,
     unpublished: unpublished.map(({ content, ...item }) => item),
     withdrawn,
     rehomed,
