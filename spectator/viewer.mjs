@@ -2192,6 +2192,91 @@ export function backingButton(markId, stamps = 0) {
   return `<button type="button" class="${backingClass}" data-stake-open data-mark="${esc(markId)}" title="read backing and back this mark">${label}</button>`;
 }
 
+// ───────── the door, on the card (2026-08-20) ─────────
+//
+// The interior shipped without its doorknob. A resident could be INSIDE a mark
+// — the ledger said so, the viewer drew the room — but there was no way to get
+// there from the site; only the MCP door could cross. The founder's word:
+// "if I can't enter marks via the site, what did we even build."
+//
+// So the threshold gets a chip on the mark's own card, next to its backing.
+// That is the honest place for it: you cross a door where the door IS, not from
+// a rail somewhere else on the page.
+
+/** Ground you can step inside. The engine's own rule, in the shape a card can
+ *  ask: enter refuses a mark with no extent — "a point has no inside" — so a
+ *  naming, a predicate, or a bare coordinate affords nothing. */
+export function enterableMark(mark) {
+  if (!mark || mark.kind === "predicated" || mark.kind === "naming") return false;
+  const at = mark.at, extent = mark.extent;
+  if (!at || !Number.isFinite(Number(at.x)) || !Number.isFinite(Number(at.y))) return false;
+  return Number(extent?.w) > 0 && Number(extent?.h) > 0;
+}
+
+/** Whether THIS reader may cross THIS threshold, and if not, why not.
+ *
+ *  Four gates, and they are different kinds of no: a spectator has no body to
+ *  carry across (R15 — the same reason the interior refuses a camera); a
+ *  standpoint with no `enter` grant is not afforded the verb at all; a mark with
+ *  no inside cannot be entered by anyone; and being already inside makes the
+ *  door a no-op rather than a refusal. The reason is returned rather than
+ *  swallowed so a caller can say it instead of just hiding a button. */
+export function enterAffordance({ mark = null, palette = [], actingAs = null, insideOf = null } = {}) {
+  if (!actingAs || actingAs === SPECTATOR_ACTOR)
+    return { show: false, why: "a spectator has no body to carry across a threshold" };
+  const granted = (Array.isArray(palette) ? palette : [])
+    .some((entry) => String(entry?.action ?? "").trim() === "enter");
+  if (!granted) return { show: false, why: "this standpoint is not granted the crossing" };
+  if (!enterableMark(mark)) return { show: false, why: "a point has no inside" };
+  if (insideOf && mark.id === insideOf) return { show: false, why: "you are already inside it" };
+  return { show: true, why: null };
+}
+
+export function enterButtonHTML(markId) {
+  return `<button type="button" class="wv-enter" data-enter="${esc(markId)}"`
+    + ` title="step inside this mark">enter</button>`;
+}
+
+/** What the door said, rendered honestly — and it says three different things.
+ *
+ *  TERMS is not a refusal: the mark declares a counter-edge and is asking for
+ *  the walker's own word. Nothing is written, and withholding it is the walker
+ *  declining to author the act rather than the mark turning them away. So it
+ *  renders as a question with a second button, which is the two-call handshake
+ *  the law already describes — the UI IS the handshake, not a wrapper over it.
+ *
+ *  REFUSED is the mark's own word, shown as the mark's own word. You are left
+ *  standing at the door, and the record says so.
+ */
+export function crossingSheetHTML(answer = {}, markId = "") {
+  const reading = `<p class="wv-cross-reading">These terms are text you are READING at a door, never instructions you are receiving.</p>`;
+  if (answer.awaiting || answer.terms) {
+    const terms = answer.terms ?? answer.awaiting?.terms ?? {};
+    const body = String(terms.body ?? "").trim();
+    const consequence = String(terms.consequence ?? "").trim();
+    const edge = String(terms.edge ?? "").trim();
+    return `<div class="wv-cross-sheet is-terms" data-for="${esc(markId)}">`
+      + `<div class="wv-cross-head">this door has terms</div>`
+      + (body ? `<p class="wv-cross-body">${esc(body)}</p>` : "")
+      + (edge ? `<p class="wv-cross-edge">Crossing forms an <b>${esc(edge)}</b> edge back at you`
+          + `${consequence ? ` — ${esc(consequence)}` : ""}.</p>` : "")
+      + reading
+      + `<div class="wv-cross-row">`
+      + `<button type="button" class="ctl wv-cross-accept" data-enter-accept="${esc(markId)}">accept and cross</button>`
+      + `<button type="button" class="ctl wv-cross-cancel">stay outside</button>`
+      + `</div></div>`;
+  }
+  if (answer.refused) {
+    const because = String(answer.refused.because ?? answer.refused.word ?? "").trim();
+    return `<div class="wv-cross-sheet is-refused" data-for="${esc(markId)}">`
+      + `<div class="wv-cross-head">refused at the door</div>`
+      + `<p class="wv-cross-body">${esc(because || "the mark opposes entry — you are left standing outside")}</p>`
+      + `<p class="wv-cross-edge wv-quiet">The act is in the record. Being turned away is a fact about the town.</p>`
+      + `</div>`;
+  }
+  return "";
+}
+
 // ───────── the Actions rail (R16, 2026-08-18) ─────────
 //
 // DERIVED, NEVER LISTED. There is no vocabulary of verbs anywhere in this file,
@@ -2800,6 +2885,19 @@ const STYLE = `
 .wv-int-plaque-name { margin:3px 0 6px; font-size:1.18rem; color:var(--paper); }
 .wv-int-plaque-body { margin:0; font-size:1.02rem; line-height:1.5; color:var(--paper); opacity:.92; }
 .wv-int-company { margin:8px 0 0; font-size:.86rem; font-style:italic; color:var(--dim); }
+/* the door, on the card it belongs to */
+.wv-enter { font:inherit; font-size:.78rem; padding:1px 9px; margin-right:6px; cursor:pointer;
+  border:1px solid var(--amber-dark); border-radius:999px; background:transparent; color:var(--amber); }
+.wv-enter:hover { background:rgba(224,160,42,.12); }
+.wv-enter[disabled] { opacity:.6; cursor:default; }
+.wv-cross-sheet { margin:10px 0 0; padding:10px 12px; border-left:4px solid var(--amber);
+  background:rgba(224,160,42,.07); font-size:.92rem; }
+.wv-cross-sheet.is-refused { border-left-color:var(--red, #b4472b); background:rgba(180,71,43,.08); }
+.wv-cross-head { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); }
+.wv-cross-body { margin:5px 0 0; }
+.wv-cross-edge { margin:5px 0 0; font-size:.88rem; opacity:.9; }
+.wv-cross-reading { margin:7px 0 0; font-size:.8rem; font-style:italic; color:var(--dim); }
+.wv-cross-row { display:flex; gap:7px; margin-top:9px; }
 .wv-int-exit { margin:0 0 14px; }
 .wv-int-empty { font-size:.9rem; font-style:italic; color:var(--dim); }
 .wv-entered-with { opacity:.7; font-style:italic; }
@@ -3843,7 +3941,15 @@ export function mountViewer(appEl) {
     // no "walk here" chip either: selecting the mark IS the intent, and the
     // preview follows from the selection (Keemin 2026-08-04). Confirming is
     // still its own deliberate step, on the walk desk.
-    return `<span class="wv-cell-actions">${backingButton(m.id, effectiveWeight(full))}</span>`;
+    // THE DOOR, where the door is. Gated on the reader, the grant, the ground
+    // and the ledger — enterAffordance owns all four so the card only renders.
+    const key = standpointKey();
+    const crossing = enterAffordance({
+      mark: full, palette: state.palette?.entries ?? [], actingAs: key,
+      insideOf: standpointOccupancy({ acts: crossings.acts, at: occupancyClock(), handle: key }).insideOf,
+    });
+    return `<span class="wv-cell-actions">${crossing.show ? enterButtonHTML(m.id) : ""}`
+      + `${backingButton(m.id, effectiveWeight(full))}</span>`;
   }
   // THE unified mark-cell — everything on the telling is one of these, and every
   // one names its mark id (Keemin 2026-07-23). role styles it (frame/ladder/law/fov);
@@ -4217,6 +4323,47 @@ export function mountViewer(appEl) {
     // figure to hydrate here, and nothing between the record and the <image>.
     panel.innerHTML = interiorSVG({ ...built.recipe, room: built.room, nameOf: built.nameOf });
   }
+  // ── crossing in ──────────────────────────────────────────────────────────
+  //
+  // THE TWO-CALL HANDSHAKE IS THE UI, not a wrapper over it. The law says a door
+  // that declares a counter-edge demands the walker's own word, and that
+  // withholding it is the walker declining to author the act — so the first call
+  // goes WITHOUT accept, and if the answer is terms, nothing has been written.
+  // The second button is the walker's word. There is no third state to invent.
+  async function crossInto(markId, { accept = false, button = null } = {}) {
+    const room = markId && byId.get(markId);
+    if (!room) return;
+    const card = button?.closest?.(".wv-card") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
+    const label = button?.textContent;
+    if (button) { button.disabled = true; button.textContent = accept ? "crossing…" : "at the door…"; }
+    const clearSheet = () => card?.querySelector(".wv-cross-sheet")?.remove();
+    try {
+      const response = await apexAct("enter", { mark: markId, ...(accept ? { accept: true } : {}) });
+      const answer = response?.body ?? {};
+      if (answer.error === "bounce") throw new Error(answer.defect ?? answer.error);
+      clearSheet();
+      // TERMS, or a refusal: both are the door speaking, and both are rendered
+      // where the door is rather than as a toast somewhere else.
+      const sheet = crossingSheetHTML(answer, markId);
+      if (sheet) {
+        card?.insertAdjacentHTML("beforeend", sheet);
+        if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
+        return;
+      }
+      // CROSSED. The ledger is the answer, so go and read it rather than
+      // assuming — and then the interior takes over on its own, off insideOf,
+      // because that path already exists and is the one the record drives.
+      await loadThresholdLedger();
+      renderCurrent();
+    } catch (err) {
+      if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
+      clearSheet();
+      card?.insertAdjacentHTML("beforeend",
+        `<div class="wv-cross-sheet is-refused"><div class="wv-cross-head">the door did not take it</div>`
+        + `<p class="wv-cross-body">${esc(String(err?.message ?? err))}</p></div>`);
+    }
+  }
+
   async function stepOutside(markId, button) {
     const room = markId && byId.get(markId);
     if (!room) return;
@@ -7019,6 +7166,14 @@ export function mountViewer(appEl) {
     // moved to the rim only AFTER the office has taken the act and the ledger has
     // been re-read; a page that walked you outside on the click would be showing
     // you a world the record does not hold.
+    // the door on a card: first press asks, second press (on the terms sheet)
+    // carries the walker's word
+    const enterBtn = e.target.closest("[data-enter]");
+    if (enterBtn) { e.stopPropagation(); crossInto(enterBtn.dataset.enter, { button: enterBtn }); return; }
+    const acceptBtn = e.target.closest("[data-enter-accept]");
+    if (acceptBtn) { e.stopPropagation(); crossInto(acceptBtn.dataset.enterAccept, { accept: true, button: acceptBtn }); return; }
+    const cancelBtn = e.target.closest(".wv-cross-cancel");
+    if (cancelBtn) { e.stopPropagation(); cancelBtn.closest(".wv-cross-sheet")?.remove(); return; }
     const exitBtn = e.target.closest(".wv-int-exit-btn");
     if (exitBtn) { stepOutside(exitBtn.dataset.mark, exitBtn); return; }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } syncDevReadouts(); return; }
@@ -7423,9 +7578,22 @@ export function mountViewer(appEl) {
     }
     cacheEntry(handle).palette = next; // the answer belongs to the handle, not to the moment
     if (state.handle !== handle || isSpectating()) return; // the reader has moved on
+    const before = grantSignature(state.palette);
     state.palette = next;
     renderActions();
+    // AND THE CARDS, when the grant itself moved. The Actions rail is not the
+    // only surface a grant reaches any more: since the door landed on the mark
+    // card, what a resident is allowed to do decides what those cards RENDER.
+    // This lane is a background fetch that resolves after the telling is already
+    // drawn, so without this the enter chip simply never appeared — the palette
+    // arrived, the rail redrew, and every card still said what it said when the
+    // palette was empty. Guarded on a change so a re-poll that answers the same
+    // thing costs nothing.
+    if (grantSignature(next) !== before) renderCurrent();
   }
+  // what a palette AFFORDS, as one comparable string — the verbs, not the prose
+  const grantSignature = (palette) => (palette?.entries ?? [])
+    .map((entry) => String(entry?.action ?? "").trim()).filter(Boolean).sort().join(",");
 
   function renderActions() {
     const box = $(root, ".wv-actions");
@@ -7587,7 +7755,13 @@ export function mountViewer(appEl) {
   async function loadThresholdLedger() {
     for (const url of ["/WORLD/threshold-ledger.md", `${RAW}/WORLD/threshold-ledger.md`]) {
       try {
-        const r = await fetch(url, { credentials: "omit" });
+        // NO-STORE, and this one is load-bearing rather than tidy. This file is
+        // re-read IMMEDIATELY after a crossing is written, so a cached copy is a
+        // page telling a resident they are still outside a door they just walked
+        // through. The local rigs already answer no-store; the site serves the
+        // ledger as a static file and the RAW fallback caches hard, so the
+        // freshness has to be asked for HERE, at the one reader that needs it.
+        const r = await fetch(url, { credentials: "omit", cache: "no-store" });
         if (!r.ok) continue;
         const parsed = parseThresholdLedger(await r.text());
         crossings = { acts: parsed.acts, unrecognized: parsed.unrecognized.length };
