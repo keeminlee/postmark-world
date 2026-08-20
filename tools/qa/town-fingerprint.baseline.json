@@ -1,4 +1,11 @@
 {
+ "conditions": {
+  "pin": "2026-08-20T12:00:00.000Z",
+  "viewport": {
+   "width": 1600,
+   "height": 1000
+  }
+ },
  "fingerprint": {
   "svgChildren": [
    "wv-mist-layer",
@@ -110,7 +117,7 @@
    "wv-walk-layer",
    "wv-convo-hover-layer"
   ],
-  "viewBox": "0 659.6541786743516 1500 1080.691642651297",
+  "viewBox": "0 327.90697674418595 1500 1744.186046511628",
   "overlayStructure": {
    "outer": "translate(# #)",
    "inner": "ov-s"
@@ -120,87 +127,75 @@
   "pips": [
    {
     "id": "aion-solare/aelyria",
-    "cx": 0,
-    "cy": 0,
+    "place": "translate(1220 1750)",
     "r": 11,
     "cls": "ov-pip t-market"
    },
    {
     "id": "carta/the-long-run",
-    "cx": 0,
-    "cy": 0,
+    "place": "translate(750 1790)",
     "r": 11,
     "cls": "ov-pip t-market"
    },
    {
     "id": "limen/the-threshold-district",
-    "cx": 0,
-    "cy": 0,
+    "place": "translate(782.6 1121.6)",
     "r": 11,
     "cls": "ov-pip t-market"
    },
    {
-    "id": "the-town/the-ballot-house",
-    "cx": 0,
-    "cy": 0,
+    "id": "little-bird/a-cold-cup-on-the-long-bench",
+    "place": "translate(516 846.2)",
     "r": 11,
-    "cls": "ov-pip t-constitution"
+    "cls": "ov-pip t-market"
    },
    {
-    "id": "the-town/the-fitting-room",
-    "cx": 0,
-    "cy": 0,
+    "id": "little-bird/under-the-eaves-by-the-door",
+    "place": "translate(515 849.2)",
     "r": 11,
-    "cls": "ov-pip t-constitution"
+    "cls": "ov-pip t-market"
+   },
+   {
+    "id": "postmaster/the-waiting-room",
+    "place": "translate(516 846)",
+    "r": 11,
+    "cls": "ov-pip t-home"
+   },
+   {
+    "id": "postmaster/wet-steps",
+    "place": "translate(516 846.8)",
+    "r": 11,
+    "cls": "ov-pip t-home"
+   },
+   {
+    "id": "rei/the-low-lanterns",
+    "place": "translate(615 670)",
+    "r": 11,
+    "cls": "ov-pip t-market"
    },
    {
     "id": "the-town/the-main-channel",
-    "cx": 0,
-    "cy": 0,
-    "r": 11,
-    "cls": "ov-pip t-constitution"
-   },
-   {
-    "id": "the-town/the-mint-house",
-    "cx": 0,
-    "cy": 0,
-    "r": 11,
-    "cls": "ov-pip t-constitution"
-   },
-   {
-    "id": "the-town/the-post-office",
-    "cx": 0,
-    "cy": 0,
+    "place": "translate(393.3 1002.5)",
     "r": 11,
     "cls": "ov-pip t-constitution"
    },
    {
     "id": "the-town/the-quay-reach",
-    "cx": 0,
-    "cy": 0,
+    "place": "translate(447 772)",
     "r": 11,
     "cls": "ov-pip t-constitution"
    },
    {
     "id": "the-town/the-town-centre",
-    "cx": 0,
-    "cy": 0,
+    "place": "translate(470 745)",
     "r": 11,
     "cls": "ov-pip t-constitution"
    },
    {
     "id": "the-town/the-town-centre-crossing",
-    "cx": 0,
-    "cy": 0,
+    "place": "translate(447 760)",
     "r": 11,
     "cls": "ov-pip t-constitution"
-   },
-   {
-    "id": "wright/the-crossing-bench",
-    "cx": 0,
-    "cy": 0,
-    "r": 11,
-    "cls": "ov-pip t-market"
    }
   ],
   "dot": {
