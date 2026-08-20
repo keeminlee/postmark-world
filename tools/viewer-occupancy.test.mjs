@@ -159,6 +159,22 @@ test("the chip says what was entered, in the mark's own name, and who is in ther
   assert.doesNotMatch(html, /within/i, "the word `within` is the geometric one and must never appear here");
 });
 
+// This one is here because the chip got it WRONG on its first render and the
+// screenshot is what caught it: joined with the word "in", a two-deep stack read
+// "The Quay Reach in The Post Office" — the containment inverted, in the readout
+// whose entire job is saying what contains what. The order is outermost first,
+// so the separator has to point inward.
+test("a deep chain reads outermost first and the separator points INTO, not backwards", () => {
+  const html = occupancyChipHTML({
+    entered: ["the-town/the-quay-reach", "the-town/the-post-office"],
+    nameOf: (id) => (id.endsWith("quay-reach") ? "The Quay Reach" : "The Post Office"),
+  });
+  assert.ok(html.indexOf("The Quay Reach") < html.indexOf("The Post Office"),
+    "the outer mark is named first — you crossed the reach, and then the office inside it");
+  assert.doesNotMatch(html, />in</, "`X in Y` with X outermost states the containment backwards");
+  assert.match(html, /›/, "the separator points inward");
+});
+
 test("the chip names company when there is any", () => {
   const acts = parseThresholdLedger(
     `- 2026-08-20T01:00:00.000Z · kilean · enters the-town/the-post-office · at 138.0000 · word welcomed\n`

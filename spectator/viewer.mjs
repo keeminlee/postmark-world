@@ -567,12 +567,18 @@ export function standpointOccupancy({ acts = [], at = Infinity, handle = null } 
 // entered anywhere, and "entered: —" under every read would be a claim the
 // record never made. The chain is outermost→innermost because occupancy of a
 // room implies occupancy of what holds it — you are aboard the ship AND in her
-// wheelhouse, and the ladder is the honest shape of that.
+// wheelhouse — and it runs the same direction as the ladder below it.
+//
+// THE SEPARATOR IS DIRECTIONAL, and it is not the word "in". The first draft
+// joined with "in" and rendered "The Quay Reach in The Post Office", which says
+// the reach is inside the office — the containment backwards, in the one readout
+// whose whole job is to say what contains what. `›` reads as "and then into",
+// which is what a chain of crossings is.
 export function occupancyChipHTML({ entered = [], alongside = [], nameOf = deslugMarkId } = {}) {
   if (!entered.length) return "";
   const chain = entered.map((id) =>
     `<span class="wv-entered-mark" data-id="${esc(id)}">${esc(nameOf(id))}</span>`)
-    .join(`<span class="wv-entered-in">in</span>`);
+    .join(`<span class="wv-entered-into" aria-label="and then into">›</span>`);
   const with_ = alongside.length
     ? `<span class="wv-entered-with">with ${esc(alongside.join(", "))}</span>`
     : `<span class="wv-entered-with">alone in here</span>`;
@@ -2409,7 +2415,7 @@ const STYLE = `
   font-size:.78rem; color:var(--dim); }
 .wv-entered-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; opacity:.75; }
 .wv-entered-mark { color:var(--amber); border:1px solid var(--amber-dark); border-radius:999px; padding:1px 8px; }
-.wv-entered-in { opacity:.55; font-style:italic; }
+.wv-entered-into { opacity:.55; }
 .wv-entered-with { opacity:.7; font-style:italic; }
 /* everything is a mark-cell — tier accents + the encompassing ladder */
 .wv-section-lbl { font-size:.72rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim);
