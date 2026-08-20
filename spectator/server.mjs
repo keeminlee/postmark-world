@@ -58,6 +58,17 @@ function serveFile(res, relPath) {
   send(res, 200, readFileSync(abs), MIME[ext] ?? "application/octet-stream");
 }
 
+// The world the page reads. Normally this clone's WORLD/; WORLD_DIR points it at
+// a synthetic one for a perf run, and says so on the console at boot so nobody
+// ever mistakes a fixture reading for a reading of the town.
+const WORLD_DIR = process.env.WORLD_DIR ? normalize(process.env.WORLD_DIR) : null;
+function serveWorld(res, file) {
+  if (!WORLD_DIR) return serveFile(res, "WORLD/" + file);
+  const abs = join(WORLD_DIR, file);
+  if (!existsSync(abs)) return json(res, 404, { error: `not found: ${abs}` });
+  send(res, 200, readFileSync(abs), MIME[".json"]);
+}
+
 // per-holder stakes from the stamp-ledger (net per mark; return = withdrawal)
 function stakesFor(holder) {
   if (!existsSync(STAMP_LEDGER)) return { holder, stakes: [], source: null, note: "no stamp-ledger found on this box" };
@@ -99,8 +110,11 @@ createServer(async (req, res) => {
     if (p === "/" || p === "/index.html") return serveFile(res, "spectator/index.html");
     if (p === "/world-engine/spectator/viewer.mjs") return serveFile(res, "spectator/viewer.mjs");
     if (p.startsWith("/world-engine/tools/") && p.endsWith(".mjs")) return serveFile(res, "tools/" + p.slice("/world-engine/tools/".length));
-    if (p === "/WORLD/world-state.json") return serveFile(res, "WORLD/world-state.json");
-    if (p === "/WORLD/skeleton.json") return serveFile(res, "WORLD/skeleton.json");
+    // WORLD_DIR lets a perf run serve a synthetic world in the record's place
+    // (tools/perf-fixture.mjs). Unset — which is every real run — this is the
+    // record off this clone's disk, byte for byte as before.
+    if (p === "/WORLD/world-state.json") return serveWorld(res, "world-state.json");
+    if (p === "/WORLD/skeleton.json") return serveWorld(res, "skeleton.json");
     // the crossings, as a FILE rather than as a door. Occupancy is derived from
     // the acts client-side (the same shape as position from the walk ledger), so
     // what the page needs is the record, not this server's opinion of it — and
@@ -163,7 +177,7 @@ createServer(async (req, res) => {
   }
 }).listen(PORT, () => {
   console.log(`world-spectator (read-only) → http://localhost:${PORT}`);
-  console.log(`  record : ${join(ROOT, "WORLD")}`);
+  console.log(`  record : ${WORLD_DIR ? `${WORLD_DIR}   ⚠ SYNTHETIC FIXTURE, not the town` : join(ROOT, "WORLD")}`);
   console.log(`  ledger : ${STAMP_LEDGER}${existsSync(STAMP_LEDGER) ? "" : "  (absent — stakes half will show empty)"}`);
   console.log(`  atlas  : proxied from ${ATLAS_ORIGIN}`);
 });

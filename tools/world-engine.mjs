@@ -100,17 +100,45 @@ export function buildHeightfield({ controlPoints, power = DIALS.idw_power, k = D
   if (!controlPoints?.length) throw new Error("heightfield needs control points");
   const cps = controlPoints.map((c) => ({ x: c.x, y: c.y, h: c.h, id: c.id ?? null }));
   const K = Math.min(k, cps.length);
+  // THE K NEAREST, WITHOUT SORTING THE WORLD TO FIND THEM.
+  //
+  // This function is the floor of the whole engine: line-of-sight samples it
+  // along every ray, so opening one pair of eyes calls it tens of thousands of
+  // times. It used to answer by building an object for EVERY control point,
+  // sorting all of them, and keeping the first eight — O(n log n) work and n
+  // allocations to select a constant 8. Profiling put 91% of openYourEyes in
+  // here, and it was quietly superlinear in the size of the town, because the
+  // control points are extracted from the marks: a town with 5× the marks has
+  // 8× the control points, so every sample got dearer at the same time as there
+  // were more samples to take. 743 marks → 1.3 s; 3,830 marks → 4.5 MINUTES.
+  //
+  // A fixed-size insertion beat is the whole fix. K is 8, so the inner shuffle
+  // is a handful of moves and never grows; the scratch is hoisted out of the
+  // call because allocating it per sample was a large share of the cost on its
+  // own (the profiler's GC line). Answers are BIT-IDENTICAL to the sort — same
+  // points, same order, same summation — and a test pins that against the
+  // original implementation rather than against a remembered number.
+  //
+  // Ties keep the earlier control point, which is what the stable sort did: the
+  // comparisons below are strict, so an equal-distance latecomer never displaces
+  // the point that was already holding the seat.
+  const bestD2 = new Float64Array(K);
+  const bestH = new Float64Array(K);
   function elevationAt(x, y) {
-    // k-nearest IDW: only the nearest control points contribute, so hills stay
-    // local and low corridors stay low — distant regions don't bleed in. This is
-    // what keeps the naive field gentle AND faithful (no global averaging pull).
-    const near = cps
-      .map((c) => ({ c, d2: (x - c.x) ** 2 + (y - c.y) ** 2 }))
-      .sort((a, b) => a.d2 - b.d2)
-      .slice(0, K);
-    if (near[0].d2 === 0) return near[0].c.h;   // exactly on a control point
+    let n = 0;
+    for (let i = 0; i < cps.length; i += 1) {
+      const c = cps[i];
+      const dx = x - c.x, dy = y - c.y;
+      const d2 = dx * dx + dy * dy;
+      if (n === K && !(d2 < bestD2[K - 1])) continue;   // cannot beat the worst held
+      let j = n < K ? n : K - 1;
+      while (j > 0 && d2 < bestD2[j - 1]) { bestD2[j] = bestD2[j - 1]; bestH[j] = bestH[j - 1]; j -= 1; }
+      bestD2[j] = d2; bestH[j] = c.h;
+      if (n < K) n += 1;
+    }
+    if (bestD2[0] === 0) return bestH[0];       // exactly on a control point
     let wsum = 0, hsum = 0;
-    for (const { c, d2 } of near) { const w = 1 / Math.pow(d2, power / 2); wsum += w; hsum += w * c.h; }
+    for (let i = 0; i < n; i += 1) { const w = 1 / Math.pow(bestD2[i], power / 2); wsum += w; hsum += w * bestH[i]; }
     return hsum / wsum;
   }
   return { elevationAt, controlPoints: cps };
