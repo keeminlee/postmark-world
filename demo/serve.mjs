@@ -52,7 +52,12 @@ const STAMP_LEDGER = process.env.STAMP_LEDGER ?? "G:/Wright-HQ/postmark/WHITE_PA
 // Three real residents of the real town, because a demo that invents people
 // reads as a mock-up and this one is meant to read as the place. The postmaster
 // lives 450 m from her own boat, which is why she walks first.
-const DEMO_HANDLES = ["postmaster", "illuminator", "kilean"];
+// Overridable for the same reason DEMO_PACE_KM is: a demo dial, stated out loud.
+// QA for the interiors work needs the stub to hand out the handle whose crossing
+// is on the REAL record, and hardcoding that resident into the demo household
+// would put him in a script he never agreed to be in.
+const DEMO_HANDLES = String(process.env.DEMO_HANDLES ?? "postmaster,illuminator,kilean")
+  .split(",").map((h) => h.trim()).filter(Boolean);
 const DEMO_KEY = "demo-key";
 
 // THE ONE DEMO DIAL, and it is loud on purpose. A resident's stride is 60 km per
@@ -140,6 +145,14 @@ async function proxyTown(res, pathname) {
     if (!r.ok) return json(res, r.status, { error: `atlas upstream ${r.status}` });
     send(res, 200, Buffer.from(await r.arrayBuffer()), r.headers.get("content-type") ?? "application/octet-stream");
   } catch (e) { json(res, 502, { error: `atlas proxy failed (offline?): ${String(e?.message ?? e)}` }); }
+}
+const SHELF_ORIGIN = process.env.SHELF_ORIGIN ?? "https://media.postmark.town";
+async function proxyShelf(res, pathname) {
+  try {
+    const r = await fetch(SHELF_ORIGIN + pathname, { signal: AbortSignal.timeout(15000) });
+    if (!r.ok) return json(res, r.status, { error: `shelf upstream ${r.status}` });
+    send(res, 200, Buffer.from(await r.arrayBuffer()), r.headers.get("content-type") ?? "application/octet-stream");
+  } catch (e) { json(res, 502, { error: `shelf proxy failed (offline?): ${String(e?.message ?? e)}` }); }
 }
 
 // ── the shell, with the demo's own bootstrap ────────────────────────────────
@@ -393,6 +406,9 @@ createServer(async (req, res) => {
     }
 
     if (p.startsWith("/atlas/") || p.startsWith("/media/")) return proxyTown(res, p);
+    // the media shelf, at its own host — see spectator/server.mjs for why this
+    // cannot just be /media/
+    if (p.startsWith("/shelf/")) return proxyShelf(res, "/media/" + p.slice("/shelf/".length));
     json(res, 404, { error: `not found: ${p}` });
   } catch (e) {
     json(res, 500, { error: String(e?.message ?? e), stack: String(e?.stack ?? "").split("\n").slice(0, 4) });

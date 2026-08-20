@@ -169,8 +169,11 @@ test("an image-mark hangs as FRAMED ART; a plain mark does not", () => {
   assert.match(art, /<image/, "the picture is hung");
   assert.match(art, /wv-far-art-frame/, "in a frame — the same one the far country uses");
   assert.match(art, /abc123\.jpg/);
-  assert.match(art, /href="\/media\//, "as a same-origin path — an SVG href takes no host");
+  assert.match(art, /href="\/shelf\//, "as a same-origin path — an SVG href takes no host");
   assert.doesNotMatch(art, /https:/, "the absolute shelf url never reaches the markup");
+  // and NOT /media/: that is the SITE's media root, a different shelf holding
+  // different files under identical-looking paths. QA caught this as a 404.
+  assert.doesNotMatch(art, /href="\/media\//, "the shelf is not the site's media root");
 
   const plain = interiorThingSVG({ id: "r/bench", kind: "sited", at: { x: 1, y: 1 }, extent: { w: 2, h: 1 } }, framing);
   assert.doesNotMatch(plain, /<image/, "a bench is not a picture");
@@ -230,6 +233,21 @@ test("the room is the ENTERED mark, never the geometric one you are standing on"
   assert.equal(built.room.id, withinOf(occupancyAt(REAL_ACTS, fractionalCrossing()), "wright"));
   // and with the acts removed there is no room at all, however he is standing
   assert.equal(realInterior({ acts: [] }), null);
+});
+
+// The bug this guards was found by switching residents in a browser, not by
+// reading code: the page kept the previous resident's room under the next
+// resident's name, because a warm standpoint switch reuses its pane and never
+// re-renders. The derivation was never wrong — kilean has crossed nothing and
+// says so — so the probe is that ONE ledger answers per handle independently.
+test("one resident being in a room does not put another resident in it", () => {
+  const acts = parseThresholdLedger(
+    `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at 138.0000 · word neutral\n`).acts;
+  const at = 999;
+  assert.equal(standpointOccupancy({ acts, at, handle: "wright" }).insideOf, "the-town/the-town-centre");
+  assert.equal(standpointOccupancy({ acts, at, handle: "kilean" }).insideOf, null,
+    "kilean has crossed nothing, so kilean is inside nothing");
+  assert.deepEqual(standpointOccupancy({ acts, at, handle: "kilean" }).entered, []);
 });
 
 test("FALSIFIER: an exit appended to the ledger closes the interior", () => {

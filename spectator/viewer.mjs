@@ -735,13 +735,46 @@ export function paperFloorSVG(framing) {
 // same-origin PATH, which is both what that whitelist accepts and what makes the
 // local rig's /media proxy serve it. The shelf test still gates it: a URL that is
 // not on the shelf never becomes a path.
+// AND THE SHELF IS ITS OWN HOST, which is why this is a route and not a pathname.
+// The shelf lives at media.postmark.town/media/… — a DIFFERENT origin from the
+// site, whose own /media/ is a different shelf entirely (the atlas hangs the
+// mountain out of it). Taking the shelf url's pathname would therefore point at
+// the site's media root and ask it for a file that was never there, which is
+// exactly the 404 QA caught. So shelf art gets a prefix that cannot collide with
+// anything, and each habitat routes /shelf/* at the shelf host.
+export const SHELF_ROUTE = "/shelf/";
+const SHELF_PREFIX = "/media/";
 export function markImagePath(mark) {
   const url = markImageURL(mark);
   if (!url) return null;
-  try { return new URL(url).pathname; } catch { return null; }
+  try {
+    const { pathname } = new URL(url);
+    return pathname.startsWith(SHELF_PREFIX)
+      ? SHELF_ROUTE + pathname.slice(SHELF_PREFIX.length)
+      : pathname;
+  } catch { return null; }
 }
 
-export function interiorThingSVG(thing, framing, { nameOf = deslugMarkId } = {}) {
+// WHEN A LABEL GETS TO SPEAK. The first render of a real room piled six names on
+// top of each other around the middle of the floor and none of them was readable
+// — the Town Centre holds two broth pots a metre apart, and a metre apart is the
+// same pixel. So a name is drawn only if its own line is still free, and the
+// order that asks is nearest-to-centre first, which makes the survivors the
+// things closest to where you are standing rather than whichever the fold listed.
+//
+// Suppressed is not hidden: the pip stays, and the pane beside the floor lists
+// every one of them as a full cell. This only decides which names the FLOOR can
+// carry, exactly as the exterior lets a pile of pips read as a pile.
+export function labelPlacer({ dx = 76, dy = 15 } = {}) {
+  const taken = [];
+  return (x, y) => {
+    if (taken.some((t) => Math.abs(t.x - x) < dx && Math.abs(t.y - y) < dy)) return false;
+    taken.push({ x, y });
+    return true;
+  };
+}
+
+export function interiorThingSVG(thing, framing, { nameOf = deslugMarkId, claim = () => true } = {}) {
   const p = interiorPx(framing, thing.at);
   const label = nameOf(thing.id);
   const url = markImagePath(thing);
@@ -749,18 +782,22 @@ export function interiorThingSVG(thing, framing, { nameOf = deslugMarkId } = {})
     const w = Math.max((Number(thing.extent?.w) || 0) / framing.mPerPx, 46);
     const h = Math.max((Number(thing.extent?.h) || 0) / framing.mPerPx, 46);
     const size = Math.max(w, h);
+    const ly = p.y + size / 2 + 13;
     return `<g class="wv-int-art" data-id="${esc(thing.id)}">`
       + placedArtSVG({ at: p, extent: { w: size, h: size }, href: url, label, id: `int-${thing.id}` })
-      + `<text x="${p.x.toFixed(1)}" y="${(p.y + size / 2 + 13).toFixed(1)}" class="wv-int-label">${esc(label)}</text></g>`;
+      + (claim(p.x, ly) ? `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-label">${esc(label)}</text>` : "")
+      + `</g>`;
   }
   const w = (Number(thing.extent?.w) || 0) / framing.mPerPx;
   const h = (Number(thing.extent?.h) || 0) / framing.mPerPx;
   const foot = w >= 3 && h >= 3
     ? `<rect x="${(p.x - w / 2).toFixed(1)}" y="${(p.y - h / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" class="wv-int-foot"/>`
     : "";
+  const ly = p.y - 10;
   return `<g class="wv-int-thing" data-id="${esc(thing.id)}">${foot}`
     + `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5" class="wv-int-pip"/>`
-    + `<text x="${p.x.toFixed(1)}" y="${(p.y - 10).toFixed(1)}" class="wv-int-label">${esc(label)}</text></g>`;
+    + (claim(p.x, ly) ? `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-label">${esc(label)}</text>` : "")
+    + `</g>`;
 }
 
 /** A body in the room. Occupancy-scoped by construction: this only ever draws
@@ -768,7 +805,7 @@ export function interiorThingSVG(thing, framing, { nameOf = deslugMarkId } = {})
  *  cannot appear in it. Placed on the room's centre — the record says who is
  *  inside, never where inside, and inventing a position would be the readout
  *  claiming a fact the ledger does not hold. */
-export function interiorBodySVG(handle, framing, { index = 0, of = 1, you = false } = {}) {
+export function interiorBodySVG(handle, framing, { index = 0, of = 1, you = false, claim = () => true } = {}) {
   const c = { x: framing.W / 2, y: framing.H / 2 };
   const spread = Math.min(framing.floorPx.w, framing.floorPx.h) * 0.12 + 18;
   // Starting due WEST rather than due north, so the commonest case — two people
@@ -777,18 +814,26 @@ export function interiorBodySVG(handle, framing, { index = 0, of = 1, you = fals
   // less like company and more like a rendering fault.
   const angle = of <= 1 ? 0 : Math.PI + (index / of) * Math.PI * 2;
   const p = of <= 1 ? c : { x: c.x + Math.cos(angle) * spread, y: c.y + Math.sin(angle) * spread };
+  const ly = p.y + 23;
+  claim(p.x, ly);   // a body's own name always gets its line; this reserves it
   return `<g class="wv-int-body${you ? " is-you" : ""}" data-handle="${esc(handle)}">`
     + `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="9" class="wv-int-body-dot"/>`
-    + `<text x="${p.x.toFixed(1)}" y="${(p.y + 23).toFixed(1)}" class="wv-int-body-name">${esc(handle)}${you ? " (you)" : ""}</text></g>`;
+    + `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-body-name">${esc(handle)}${you ? " (you)" : ""}</text></g>`;
 }
 
 /** THE WHOLE ROOM, in one string. */
 export function interiorSVG({ room, framing, things = [], bodies = [], you = null, nameOf = deslugMarkId } = {}) {
+  // THE BODIES CLAIM THEIR NAMES FIRST. Who is in the room outranks what is in
+  // it — a person's name losing its line to a broth pot is the wrong trade — so
+  // the placer is walked over the bodies before any thing asks it.
+  const claim = labelPlacer();
+  const drawnBodies = bodies.map((h, i) =>
+    interiorBodySVG(h, framing, { index: i, of: bodies.length, you: h === you, claim }));
   return `<svg xmlns="http://www.w3.org/2000/svg" class="wv-interior" viewBox="0 0 ${framing.W} ${framing.H}"`
     + ` role="img" aria-label="inside ${esc(nameOf(room?.id))}">`
     + paperFloorSVG(framing)
-    + things.map((t) => interiorThingSVG(t, framing, { nameOf })).join("")
-    + bodies.map((h, i) => interiorBodySVG(h, framing, { index: i, of: bodies.length, you: h === you })).join("")
+    + things.map((t) => interiorThingSVG(t, framing, { nameOf, claim })).join("")
+    + drawnBodies.join("")
     + `</svg>`;
 }
 
@@ -3959,6 +4004,14 @@ export function mountViewer(appEl) {
     if (!host) return;
     for (const pane of host.querySelectorAll(".wv-telling-pane"))
       pane.hidden = pane.dataset.standpoint !== key;
+    // WHICH SIDE OF A THRESHOLD THE PAGE IS ON IS DECIDED HERE, because this is
+    // where which standpoint is showing gets decided — including on the warm
+    // switch, which reuses a built pane and never re-renders. Syncing the floor
+    // only from renderCurrent left the previous resident's room on screen under
+    // the next resident's name: QA switched to kilean, who has crossed nothing,
+    // and was shown standing in wright's Town Centre. Before the early return,
+    // because an interior is exactly the case that returns no radial.
+    syncInteriorPanel();
     if (!radial) return;
     lastRadial = radial;
     // the panel may be folded away, but its two controls and its count line are
@@ -4071,8 +4124,19 @@ export function mountViewer(appEl) {
   // somebody else's room cannot reach it.
   function syncInteriorPanel() {
     const boxEl = $(root, ".wv-minimap");
-    const panel = $(root, ".wv-interior-panel");
-    if (!boxEl || !panel) return;
+    if (!boxEl) return;
+    // Re-made rather than merely found. The atlas arrives asynchronously and its
+    // load wipes this box; the overlay list above carries the panel across that,
+    // but a render landing in the same tick as the wipe would still find nothing.
+    // The floor is the whole view when you are indoors, so it does not get to
+    // depend on winning a race.
+    let panel = $(root, ".wv-interior-panel");
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.className = "wv-interior-panel";
+      panel.hidden = true;
+      boxEl.appendChild(panel);
+    }
     const built = interiorByKey.get(standpointKey()) ?? null;
     boxEl.classList.toggle("is-inside", !!built);
     panel.hidden = !built;
@@ -4093,12 +4157,24 @@ export function mountViewer(appEl) {
       // the ledger is the answer, so go and read it rather than assuming the act
       // landed the way this page expected
       await loadThresholdLedger();
-      // where a walk to this mark would have ARRIVED, from wherever the resident
-      // last stood outdoors — the rim, on their own side of it
-      const rim = rimPointOf(room, originFor(state.handle));
-      state.cam = { x: rim.x, y: rim.y };
       renderCurrent();
-      mapCtx?.lockOn?.(false);
+      // AND THE VIEW COMES OUT TO THE RIM — the VIEW, not the resident.
+      //
+      // The brief said stepping out returns you to the mark's rim, and taken
+      // literally that would have to move you. It must not: a crossing never
+      // moves anybody (R15), which is the whole reason walking and entering are
+      // two records. wright is inside the Town Centre on the ledger while his
+      // walk position is 2.6 km away, and both of those are true — so writing a
+      // new position on the way out would be the viewer inventing a walk the
+      // record does not hold, and the next walkers poll would overwrite the lie
+      // anyway.
+      //
+      // What the ruling is actually asking for is the doorway: come out looking
+      // at the place you just left, from the side you would have approached it.
+      // So the CAMERA frames the rim and the resident stands exactly where they
+      // were standing all along.
+      const rim = rimPointOf(room, originFor(state.handle));
+      mapCtx?.setView?.(mapCtx.frameOn(rim), true);
     } catch (err) {
       if (button) { button.disabled = false; button.textContent = label ?? "↤ step outside"; }
       const plaque = $(root, ".wv-int-plaque");
@@ -4343,7 +4419,11 @@ export function mountViewer(appEl) {
     // The chrome that rides ON the painting is held across the wipe below rather
     // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
     // the walk desk itself) that must not be rebuilt when the atlas loads.
-    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk"]
+    // The interior panel rides this list for the same reason the bubbles do: the
+    // atlas landing must not knock the reader out of a room. Without it the wipe
+    // below deletes the floor and leaves `is-inside` on the box — a page that
+    // says you are indoors and shows you nothing.
+    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk", ".wv-interior-panel"]
       .map((selector) => $(boxEl, selector)).filter(Boolean);
     const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
