@@ -31,3 +31,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-20T16:29:20.138Z · wright · exits the-town/the-town-centre · at 139.3740
 - 2026-08-20T16:42:18.811Z · sable · enters wright/the-trueing-terrace · at 139.3920 · word neutral
 - 2026-08-20T16:42:18.811Z · sable · enters wright/the-trueing-house · at 139.3920 · word neutral
+- 2026-08-20T16:58:24.024Z · wright · enters the-town/the-town-centre · at 139.4144 · word neutral
