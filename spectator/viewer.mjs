@@ -661,45 +661,6 @@ export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized 
 // projection the painting uses — originPx + at / mPerPx — with the origin shifted
 // so the room's centre lands in the middle of the floor. One formula, two
 // framings. Nothing computes an offset, so nothing can compute one wrongly.
-export const INTERIOR_VIEWPORT = Object.freeze({ w: 900, h: 700 });
-// THE SCALE FLOOR, and what it actually guards. Fit-to-extent alone is unbounded
-// in the zoomed-IN direction: a half-metre broom cupboard would be magnified
-// until the paper's own grain was bigger than the furniture standing on it. The
-// floor caps magnification rather than raising it — 4 mm per pixel is the point
-// past which a room stops reading as a room.
-export const INTERIOR_MIN_M_PER_PX = 0.004;
-// Air between the walls and the edge of the panel. A room drawn flush to the
-// frame reads as a crop of something larger, which is the one thing an interior
-// must not read as.
-const INTERIOR_PAD = 1.16;
-
-/** How the room is fitted to the panel: metres per pixel, and the origin that
- *  puts the room's own centre in the middle of it. Pure arithmetic — the same
- *  (originPx, mPerPx) contract the painting's camera carries, so every reader
- *  that already knows how to place a mark keeps working unchanged. */
-export function interiorFraming({ room, viewport = INTERIOR_VIEWPORT, minMPerPx = INTERIOR_MIN_M_PER_PX } = {}) {
-  const w = Math.max(Number(room?.extent?.w) || 0, 0.1);
-  const h = Math.max(Number(room?.extent?.h) || 0, 0.1);
-  const W = Math.max(1, Number(viewport?.w) || INTERIOR_VIEWPORT.w);
-  const H = Math.max(1, Number(viewport?.h) || INTERIOR_VIEWPORT.h);
-  const fit = Math.max((w * INTERIOR_PAD) / W, (h * INTERIOR_PAD) / H);
-  const mPerPx = Math.max(fit, Number(minMPerPx) || 0);
-  const at = { x: Number(room?.at?.x) || 0, y: Number(room?.at?.y) || 0 };
-  return {
-    W, H, mPerPx,
-    // the shift: a mark standing at the room's centre lands at the panel's centre
-    originPx: { x: W / 2 - at.x / mPerPx, y: H / 2 - at.y / mPerPx },
-    floorPx: { w: w / mPerPx, h: h / mPerPx },
-  };
-}
-
-/** Project an absolute world point into the interior panel — byte-identical in
- *  shape to the painting's own `px()`, deliberately. */
-export const interiorPx = (framing, at) => ({
-  x: framing.originPx.x + (Number(at?.x) || 0) / framing.mPerPx,
-  y: framing.originPx.y + (Number(at?.y) || 0) / framing.mPerPx,
-});
-
 /** WHAT IS IN THE ROOM. `investigate` already answers this — the sited things a
  *  mark geometrically contains, plus the entity children who have crossed into
  *  it — so the interior reads its furniture off the engine rather than deciding
@@ -732,37 +693,6 @@ export function interiorFurniture({ room, children = [], limit = 40 } = {}) {
 // square rule so distance is still legible, and a ruled border for the walls.
 // Same reason the exterior grid is drawn from the registration rather than
 // traced from the paint — the floor is derived, never depicted.
-const INTERIOR_RULE_M = [0.25, 0.5, 1, 2, 5, 10, 25, 50, 100, 250, 500];
-/** The rule spacing that lands nearest 48 px at this scale — close enough to
- *  read as squared paper at any room size, and always a round number of metres
- *  so the reader can count it. */
-export function interiorRuleM(mPerPx) {
-  const want = 48 * (Number(mPerPx) || 1);
-  return INTERIOR_RULE_M.reduce((best, m) => (Math.abs(m - want) < Math.abs(best - want) ? m : best), INTERIOR_RULE_M[0]);
-}
-
-export function paperFloorSVG(framing) {
-  const { W, H, floorPx, mPerPx } = framing;
-  const x = (W - floorPx.w) / 2, y = (H - floorPx.h) / 2;
-  const rule = interiorRuleM(mPerPx) / mPerPx;
-  const id = "wv-interior-rule";
-  return `<defs><pattern id="${id}" width="${rule.toFixed(3)}" height="${rule.toFixed(3)}" patternUnits="userSpaceOnUse">`
-    + `<path d="M ${rule.toFixed(3)} 0 L 0 0 0 ${rule.toFixed(3)}" class="wv-int-rule"/></pattern></defs>`
-    + `<rect x="0" y="0" width="${W}" height="${H}" class="wv-int-void"/>`
-    + `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${floorPx.w.toFixed(1)}" height="${floorPx.h.toFixed(1)}" class="wv-int-floor"/>`
-    + `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${floorPx.w.toFixed(1)}" height="${floorPx.h.toFixed(1)}" fill="url(#${id})"/>`
-    + `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${floorPx.w.toFixed(1)}" height="${floorPx.h.toFixed(1)}" class="wv-int-wall"/>`;
-}
-
-// ── the things on it ────────────────────────────────────────────────────────
-//
-// An image-mark hangs as FRAMED ART: a picture in a room is a picture ON A WALL,
-// not a texture on the floor, and the exterior already knows how to hang one —
-// placedArtSVG, which the far country uses for the mountain. Same call, so a
-// picture looks like the same kind of object in both views.
-//
-// Everything else is a footprint: its own extent where its extent is known, a
-// small token where it is not. A mark with no width is not a mark with no place.
 // TWO IMAGE CONTRACTS, and the difference is not cosmetic. A mark-cell mounts
 // its picture on a real node by property assignment, so it can carry the shelf's
 // ABSOLUTE url safely. An SVG <image href> is built by string concatenation, and
@@ -791,86 +721,44 @@ export function markImagePath(mark) {
   } catch { return null; }
 }
 
-// WHEN A LABEL GETS TO SPEAK. The first render of a real room piled six names on
-// top of each other around the middle of the floor and none of them was readable
-// — the Town Centre holds two broth pots a metre apart, and a metre apart is the
-// same pixel. So a name is drawn only if its own line is still free, and the
-// order that asks is nearest-to-centre first, which makes the survivors the
-// things closest to where you are standing rather than whichever the fold listed.
+// ── THE ROOM'S GROUND (one engine, one render, different scenes) ────────────
 //
-// Suppressed is not hidden: the pip stays, and the pane beside the floor lists
-// every one of them as a full cell. This only decides which names the FLOOR can
-// carry, exactly as the exterior lets a pile of pips read as a pile.
-export function labelPlacer({ dx = 76, dy = 15 } = {}) {
-  const taken = [];
-  return (x, y) => {
-    if (taken.some((t) => Math.abs(t.x - x) < dx && Math.abs(t.y - y) < dy)) return false;
-    taken.push({ x, y });
-    return true;
+// A scene's ground is an svg document plus a registration (origin/scale turning
+// world metres into that svg's units). The town's ground is the atlas. A room's
+// ground is THIS: a white placeholder, replaced by the mark's own image when it
+// has one, overlaid with an svg art slot — the same three-part structure the
+// atlas has (full-bleed base, raster art, svg above it), so the two scenes are
+// the same shape all the way down and nothing downstream can tell them apart
+// (founder's ruling, 2026-08-20: the background is the ONLY scene-unique
+// element; everything else is the main world's own render).
+//
+// The registration is chosen so the room spans ~ROOM_GROUND_UNITS of its own
+// svg — which keeps the engine in the same numeric regime the town runs in
+// (zoomK ≈ 1, marker scale ≈ 1) instead of the deep-zoom regime past
+// MAX_ZOOM_IN that the one-svg approach forced. Same arithmetic, sane numbers.
+export const ROOM_GROUND_UNITS = 960;
+
+export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image = null } = {}) {
+  const r = rect(room);                                    // centre + extent, metres
+  const padM = Math.max(r.w, r.h) * pad;
+  const spanW = r.w + 2 * padM, spanH = r.h + 2 * padM;
+  const mPerPx = Math.max(spanW, spanH) / units;
+  const w = spanW / mPerPx, h = spanH / mPerPx;
+  const x0 = r.x - r.w / 2 - padM, y0 = r.y - r.h / 2 - padM;
+  const originPx = { x: -x0 / mPerPx, y: -y0 / mPerPx };   // world→ground: origin + m/mPerPx
+  const roomPx = {
+    x: originPx.x + (r.x - r.w / 2) / mPerPx, y: originPx.y + (r.y - r.h / 2) / mPerPx,
+    w: r.w / mPerPx, h: r.h / mPerPx,
   };
-}
-
-export function interiorThingSVG(thing, framing, { nameOf = deslugMarkId, claim = () => true } = {}) {
-  const p = interiorPx(framing, thing.at);
-  const label = nameOf(thing.id);
-  const url = markImagePath(thing);
-  if (url) {
-    const w = Math.max((Number(thing.extent?.w) || 0) / framing.mPerPx, 46);
-    const h = Math.max((Number(thing.extent?.h) || 0) / framing.mPerPx, 46);
-    const size = Math.max(w, h);
-    const ly = p.y + size / 2 + 13;
-    return `<g class="wv-int-art" data-id="${esc(thing.id)}">`
-      + placedArtSVG({ at: p, extent: { w: size, h: size }, href: url, label, id: `int-${thing.id}` })
-      + (claim(p.x, ly) ? `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-label">${esc(label)}</text>` : "")
-      + `</g>`;
-  }
-  const w = (Number(thing.extent?.w) || 0) / framing.mPerPx;
-  const h = (Number(thing.extent?.h) || 0) / framing.mPerPx;
-  const foot = w >= 3 && h >= 3
-    ? `<rect x="${(p.x - w / 2).toFixed(1)}" y="${(p.y - h / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" class="wv-int-foot"/>`
-    : "";
-  const ly = p.y - 10;
-  return `<g class="wv-int-thing" data-id="${esc(thing.id)}">${foot}`
-    + `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5" class="wv-int-pip"/>`
-    + (claim(p.x, ly) ? `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-label">${esc(label)}</text>` : "")
-    + `</g>`;
-}
-
-/** A body in the room. Occupancy-scoped by construction: this only ever draws
- *  the handles the manifest gave for THIS mark, so a resident three rooms away
- *  cannot appear in it. Placed on the room's centre — the record says who is
- *  inside, never where inside, and inventing a position would be the readout
- *  claiming a fact the ledger does not hold. */
-export function interiorBodySVG(handle, framing, { index = 0, of = 1, you = false, claim = () => true } = {}) {
-  const c = { x: framing.W / 2, y: framing.H / 2 };
-  const spread = Math.min(framing.floorPx.w, framing.floorPx.h) * 0.12 + 18;
-  // Starting due WEST rather than due north, so the commonest case — two people
-  // in a room — reads as two people side by side. From north, a pair lands one
-  // directly above the other and shares a column, which in a wide room looks
-  // less like company and more like a rendering fault.
-  const angle = of <= 1 ? 0 : Math.PI + (index / of) * Math.PI * 2;
-  const p = of <= 1 ? c : { x: c.x + Math.cos(angle) * spread, y: c.y + Math.sin(angle) * spread };
-  const ly = p.y + 23;
-  claim(p.x, ly);   // a body's own name always gets its line; this reserves it
-  return `<g class="wv-int-body${you ? " is-you" : ""}" data-handle="${esc(handle)}">`
-    + `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="9" class="wv-int-body-dot"/>`
-    + `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-body-name">${esc(handle)}${you ? " (you)" : ""}</text></g>`;
-}
-
-/** THE WHOLE ROOM, in one string. */
-export function interiorSVG({ room, framing, things = [], bodies = [], you = null, nameOf = deslugMarkId } = {}) {
-  // THE BODIES CLAIM THEIR NAMES FIRST. Who is in the room outranks what is in
-  // it — a person's name losing its line to a broth pot is the wrong trade — so
-  // the placer is walked over the bodies before any thing asks it.
-  const claim = labelPlacer();
-  const drawnBodies = bodies.map((h, i) =>
-    interiorBodySVG(h, framing, { index: i, of: bodies.length, you: h === you, claim }));
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="wv-interior" viewBox="0 0 ${framing.W} ${framing.H}"`
-    + ` role="img" aria-label="inside ${esc(nameOf(room?.id))}">`
-    + paperFloorSVG(framing)
-    + things.map((t) => interiorThingSVG(t, framing, { nameOf, claim })).join("")
-    + drawnBodies.join("")
+  const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}">`
+    + `<rect class="wv-scene-ground" x="0" y="0" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#ffffff"/>`
+    + (image
+      ? `<image href="${esc(image)}" x="${roomPx.x.toFixed(1)}" y="${roomPx.y.toFixed(1)}"`
+        + ` width="${roomPx.w.toFixed(1)}" height="${roomPx.h.toFixed(1)}" preserveAspectRatio="xMidYMid meet"/>`
+      : "")
+    + `<g class="wv-scene-art"></g>`
     + `</svg>`;
+  return { svgText, originPx, mPerPx };
 }
 
 // ── the plaque ──────────────────────────────────────────────────────────────
@@ -919,14 +807,6 @@ export function rimPointOf(room, from = null) {
     return { x: at.x, y: at.y + h / 2 };
   const t = targetEntryT({ x: fx, y: fy }, at, { x: at.x, y: at.y, w, h });
   return { x: fx + (at.x - fx) * t, y: fy + (at.y - fy) * t };
-}
-
-/** The recipe, assembled: everything a pane and a panel need to draw a room, and
- *  nothing about how either draws it. */
-export function interiorRecipe({ room, children = [], you = null, viewport = INTERIOR_VIEWPORT, limit = 40, minMPerPx = INTERIOR_MIN_M_PER_PX } = {}) {
-  const framing = interiorFraming({ room, viewport, minMPerPx });
-  const { things, bodies } = interiorFurniture({ room, children, limit });
-  return { room, framing, things, bodies, you };
 }
 
 // IS THIS PREBUILT VIEW STILL TRUE. Two ways it stops being: the world it was
@@ -2888,21 +2768,6 @@ const STYLE = `
 .wv-entered-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; opacity:.75; }
 .wv-entered-mark { color:var(--amber); border:1px solid var(--amber-dark); border-radius:999px; padding:1px 8px; }
 .wv-entered-into { opacity:.55; }
-/* ── the interior: paper, not paint ──────────────────────────────────────── */
-.wv-interior { display:block; width:100%; height:100%; }
-.wv-int-void { fill:#0d0f13; }
-/* the drafting sheet. Warm and low-contrast: it is the ground, and ground that
-   competes with the furniture standing on it is a rug, not a floor. */
-.wv-int-floor { fill:#e8e0cf; fill-opacity:.94; }
-.wv-int-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
-.wv-int-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
-.wv-int-foot { fill:rgba(58,52,40,.10); stroke:rgba(58,52,40,.45); stroke-width:1; }
-.wv-int-pip { fill:#7a4a1e; }
-.wv-int-label { fill:#3a3428; font:italic 12px Georgia, serif; text-anchor:middle; }
-.wv-int-art .wv-far-art-frame { stroke:#3a3428; stroke-width:2.5; fill:none; }
-.wv-int-body-dot { fill:#b4472b; stroke:#f3ecdc; stroke-width:2; }
-.wv-int-body.is-you .wv-int-body-dot { fill:#e0a02a; stroke:#2b2519; stroke-width:2.5; }
-.wv-int-body-name { fill:#2b2519; font:600 12px Georgia, serif; text-anchor:middle; }
 /* the plaque — the room's own words, on the wall you are standing in */
 .wv-int-plaque { margin:0 0 16px; padding:13px 15px; max-width:76ch;
   border-left:5px solid var(--amber); background:rgba(224,160,42,.07); }
@@ -3011,15 +2876,16 @@ const STYLE = `
 .wv-minimap { position:relative; overflow:hidden; cursor:crosshair; }
 /* inside, the painting is not dimmed or filtered — it is GONE. A ghost of the
    aerial view under a floor would say the roof is missing. */
-.wv-interior-panel { position:absolute; inset:0; z-index:8; background:#0d0f13; }
-.wv-minimap.is-inside { cursor:default; }
-.wv-minimap.is-inside > svg,
-.wv-minimap.is-inside > .wv-mapctl,
-.wv-minimap.is-inside > .wv-spectator-coordinate,
-.wv-minimap.is-inside > .wv-paint-tallies,
-.wv-minimap.is-inside > .wv-bubbles,
-.wv-minimap.is-inside > .wv-walkdesk,
-.wv-minimap.is-inside > .wv-worldmark { display:none; }
+/* a mark scene: same engine, same chrome, minus the CAMERA controls — the one
+   rail a camera-less scene has no truthful answer for (fit/follow/zoom would
+   all be no-ops wearing buttons). Everything else stays. */
+.wv-minimap.is-scene-mark > .wv-mapctl { display:none; }
+/* THE WAY OUT, on the pane, bottom left, in every view mode (founder's word) —
+   the telling's own exit collapses with the telling in painting-only, which is
+   the default, and a room with no visible door out is the founder's original
+   bug. Same button class as the telling's copy: one click route, no drift. */
+.wv-scene-exit { position:absolute; left:12px; bottom:12px; z-index:9; }
+.wv-scene-exit .ctl { font-size:.82rem; padding:5px 11px; box-shadow:0 2px 10px rgba(0,0,0,.5); }
 .wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
@@ -3638,13 +3504,7 @@ const MARKUP = `
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
-      <div class="wv-minimap"><div class="loading">fetching the painting…</div><!-- THE INTERIOR, over the painting rather than instead of it. A room is
-             drawn into this panel and the atlas is hidden beneath it (is-inside),
-             so crossing a threshold costs no atlas re-fetch and coming back out
-             restores the reader's own camera untouched. It also keeps the
-             painting's hot paths — applyView, drawOverlay — out of the interior
-             entirely: inside, there is no radial, so neither one runs. -->
-        <div class="wv-interior-panel" hidden></div><div class="wv-worldmark">
+      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-worldmark">
           <!-- The mark that frames everything, drawn as what it IS: a constitution
                pip, the same blue dot as any other. It has no footprint to stand on
                and no place of its own, so it takes the one corner of the painting
@@ -4219,12 +4079,12 @@ export function mountViewer(appEl) {
       pane.hidden = pane.dataset.standpoint !== key;
     // WHICH SIDE OF A THRESHOLD THE PAGE IS ON IS DECIDED HERE, because this is
     // where which standpoint is showing gets decided — including on the warm
-    // switch, which reuses a built pane and never re-renders. Syncing the floor
+    // switch, which reuses a built pane and never re-renders. Syncing the scene
     // only from renderCurrent left the previous resident's room on screen under
     // the next resident's name: QA switched to kilean, who has crossed nothing,
     // and was shown standing in wright's Town Centre. Before the early return,
-    // because an interior is exactly the case that returns no radial.
-    syncInteriorPanel();
+    // so a spectator switch still remounts the town.
+    syncScene(key);
     if (!radial) return;
     lastRadial = radial;
     // the panel may be folded away, but its two controls and its count line are
@@ -4317,47 +4177,114 @@ export function mountViewer(appEl) {
     // back to the folded mark it names; the shaped entry stands in only when the
     // fold has nothing under that id.
     const children = (found.children ?? []).map((c) => (isEntity(c) ? c : { ...(byId.get(c.id) ?? c) }));
-    const recipe = interiorRecipe({ room, children, you: key, viewport: INTERIOR_VIEWPORT });
+    const { things, bodies } = interiorFurniture({ room, children });
     const nameOf = (id) => markName(byId.get(id) ?? { id }).name;
-    box.innerHTML = interiorPlaqueHTML({ ...recipe, name: nameOf(room.id), nameOf })
+    box.innerHTML = interiorPlaqueHTML({ room, bodies, you: key, name: nameOf(room.id), nameOf })
       + `<div class="wv-int-exit"><button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">↤ step outside</button></div>`
-      + (recipe.things.length
-        ? `<div class="wv-section-lbl">what is in here — ${recipe.things.length}</div>`
-          + `<div class="wv-cards">${recipe.things.map((t) => markCell(byId.get(t.id) ?? t, { role: "fov" })).join("")}</div>`
+      + (things.length
+        ? `<div class="wv-section-lbl">what is in here — ${things.length}</div>`
+          + `<div class="wv-cards">${things.map((t) => markCell(byId.get(t.id) ?? t, { role: "fov" })).join("")}</div>`
         : `<div class="wv-int-empty">Nothing of the record stands in here yet.</div>`);
     foldRenderedPredicates(box);
     mountMarkImages(box);
-    const built = { room, recipe, nameOf };
+    // THE ROOM'S RADIAL — the whole of what makes the room render through the
+    // ONE engine. investigate's answer, dressed in the radial's own grammar, so
+    // drawOverlay, the hover snap, the click precedence and the chooser carry a
+    // room exactly as they carry the town (founder's ruling: one engine, one
+    // render, different scenes). No bearing bands: a room is one band of one
+    // bearing, and overlayMarks only ever flattens them.
+    const radial = {
+      byBearing: { "-": { "-": things.map((t) => byId.get(t.id) ?? t) } },
+      within: [{ id: room.id }],
+      counts: {}, aggregate: {},
+    };
+    const built = { room, radial, nameOf };
     interiorByKey.set(key, built);
     return built;
   }
-  // The panel: paper where the painting was. Called from renderCurrent, so the
-  // two halves of the page can never disagree about which side of a threshold
-  // the reader is on — and read off the ACTIVE standpoint, so a warm build for
-  // somebody else's room cannot reach it.
-  function syncInteriorPanel() {
+  // ── the scene swap (one engine, one render, different scenes) ─────────────
+  //
+  // Entering a mark swaps SCENES, the way a door works in Pokémon: the town's
+  // svg comes out of the box whole (its listeners ride with it, alive), the
+  // room's ground mounts through the SAME mountScene the atlas mounts through,
+  // and every consumer of mapCtx follows the pointer without knowing anything
+  // happened. Exiting reverses it. The town is never refetched for a swap —
+  // its node is held aside and remounted, which is also what makes exit cheap.
+  const SCENE_KEEP = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk"];
+  function captureKeep(boxEl) {
+    const overlays = [...new Set([
+      ...SCENE_KEEP.map((selector) => $(boxEl, selector)),
+      ...boxEl.querySelectorAll("[data-wv-keep]"),
+    ])].filter(Boolean);
+    return () => overlays.forEach((el) => boxEl.appendChild(el));
+  }
+  let sceneRoomId = null;       // the mark whose scene is mounted, or null = the town
+  let townKeep = null;          // { svg, ctx } — the town scene, held aside while inside
+  let pendingTownGround = null; // an atlas load that finished while a room was mounted
+  function mountRoomScene(boxEl, room) {
+    if (!sceneRoomId && mapCtx) townKeep = { svg: mapCtx.svg, ctx: mapCtx };
+    const ground = roomGround(room, { image: markImagePath(room) });
+    const doc = new DOMParser().parseFromString(ground.svgText, "image/svg+xml");
+    const svg = document.importNode(doc.documentElement, true);
+    mountScene({
+      boxEl, svg, originPx: ground.originPx, mPerPx: ground.mPerPx,
+      reattachOverlays: captureKeep(boxEl),
+      camera: false,       // a room fits its pane; pan/zoom refused (the ruling)
+      includeMine: false,  // the roof: your marks elsewhere don't follow you in
+    });
+    sceneRoomId = room.id;
+  }
+  function remountTown(boxEl) {
+    if (!sceneRoomId) return;
+    sceneRoomId = null;
+    const reattach = captureKeep(boxEl);
+    // an atlas that landed while we were indoors mounts NOW — the scene
+    // lifecycle guard: a load may never stomp a mounted room, so it waited here
+    if (pendingTownGround) {
+      const g = pendingTownGround; pendingTownGround = null;
+      townKeep = null;
+      mountScene({ boxEl, ...g, reattachOverlays: reattach });
+      return;
+    }
+    if (!townKeep) { loadMinimap(); return; }  // entered before the town ever loaded
+    boxEl.innerHTML = "";
+    boxEl.appendChild(townKeep.svg);
+    reattach();
+    mapCtx = townKeep.ctx;
+    boxEl.classList.add("pannable");
+    mapCtx.refit();          // the pane may have changed shape while we were inside
+    mapCtx.settleFrame?.();
+  }
+  // Which scene should be showing, decided where which standpoint is showing is
+  // decided — including the warm switch, which reuses a built pane and never
+  // re-renders (the kilean regression: the previous resident's room stayed on
+  // screen under the next resident's name).
+  function syncScene(key) {
     const boxEl = $(root, ".wv-minimap");
     if (!boxEl) return;
-    // Re-made rather than merely found. The atlas arrives asynchronously and its
-    // load wipes this box; the overlay list above carries the panel across that,
-    // but a render landing in the same tick as the wipe would still find nothing.
-    // The floor is the whole view when you are indoors, so it does not get to
-    // depend on winning a race.
-    let panel = $(root, ".wv-interior-panel");
-    if (!panel) {
-      panel = document.createElement("div");
-      panel.className = "wv-interior-panel";
-      panel.hidden = true;
-      boxEl.appendChild(panel);
+    const built = interiorByKey.get(key) ?? null;
+    const room = built?.room ?? null;
+    boxEl.classList.toggle("is-scene-mark", !!room);
+    syncSceneExit(boxEl, room);
+    if ((room?.id ?? null) === sceneRoomId) return;
+    if (room) mountRoomScene(boxEl, room);
+    else remountTown(boxEl);
+  }
+  // THE WAY OUT, ON THE PANE, IN EVERY VIEW MODE (founder, 2026-08-20: bottom
+  // left). The telling's own exit collapses with the telling in painting-only —
+  // the default mode — which is how the founder stood in a room with no way to
+  // leave it. Same class as the telling's button, so the existing click route
+  // carries both and neither can drift.
+  function syncSceneExit(boxEl, room) {
+    let chrome = $(boxEl, ".wv-scene-exit");
+    if (!room) { chrome?.remove(); return; }
+    if (!chrome) {
+      chrome = document.createElement("div");
+      chrome.className = "wv-scene-exit";
+      chrome.setAttribute("data-wv-keep", "");
+      boxEl.appendChild(chrome);
     }
-    const built = interiorByKey.get(standpointKey()) ?? null;
-    boxEl.classList.toggle("is-inside", !!built);
-    panel.hidden = !built;
-    if (!built) { panel.innerHTML = ""; return; }
-    // The picture's URL is written into the SVG by placedArtSVG, which passes it
-    // through safeAvatarUrl first — so unlike a mark-cell there is no empty
-    // figure to hydrate here, and nothing between the record and the <image>.
-    panel.innerHTML = interiorSVG({ ...built.recipe, room: built.room, nameOf: built.nameOf });
+    chrome.innerHTML = `<button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">↤ step outside</button>`;
   }
   // ── crossing in ──────────────────────────────────────────────────────────
   //
@@ -4458,15 +4385,17 @@ export function mountViewer(appEl) {
       acts: crossings.acts, at: occupancyClock(), handle: key,
     });
     // ── the threshold, in the render ────────────────────────────────────────
-    // A room has no horizon, so the field of view is not asked for one. This is
-    // the branch, and it is a REPLACEMENT rather than a decoration: the interior
-    // owns the whole pane, and openYourEyes below never runs for a standpoint
-    // that is indoors. Spectators are excluded by construction — standpointOccupancy
-    // hands a camera an empty stack, because a camera has no body to carry
-    // across a threshold (Keemin's ruling; a doorway-peek is a later call).
+    // A room has no horizon, so the field of view is not asked for one — but the
+    // PAINTING no longer stands down: the room renders through the same engine
+    // as a scene of its own, so this branch returns the ROOM'S radial and the
+    // overlay draws it exactly as it draws the town (one engine, one render,
+    // different scenes). openYourEyes still never runs for an indoor standpoint.
+    // Spectators are excluded by construction — standpointOccupancy hands a
+    // camera an empty stack, because a camera has no body to carry across a
+    // threshold (Keemin's ruling; a doorway-peek is a later call).
     if (insideOf) {
       const interior = composeInterior(box, insideOf, key);
-      if (interior) return null;   // no radial: the painting and the overlay stand down
+      if (interior) return interior.radial;
     }
     // OUTDOORS, and said so rather than merely not said. Whatever this standpoint
     // was in before, it is not in it now — leaving the stale entry behind is how
@@ -4685,12 +4614,7 @@ export function mountViewer(appEl) {
     // survives, without anyone having to find this line. The literal names stay
     // because the elements carrying them are in the template above and renaming
     // them is not this pass's to do — but nothing NEW needs to join them.
-    const KEEP = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk", ".wv-interior-panel"];
-    const overlays = [...new Set([
-      ...KEEP.map((selector) => $(boxEl, selector)),
-      ...boxEl.querySelectorAll("[data-wv-keep]"),
-    ])].filter(Boolean);
-    const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
+    const reattachOverlays = captureKeep(boxEl);
     try {
       const html = await fetch("/atlas/town.html").then((r) => { if (!r.ok) throw new Error(`atlas HTTP ${r.status}`); return r.text(); });
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -4711,7 +4635,11 @@ export function mountViewer(appEl) {
         const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
         if (hh && !/^(https?:)?\//.test(hh)) { im.setAttribute("href", new URL(hh, atlasBase).pathname); im.removeAttribute("xlink:href"); }
       });
-      mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays });
+      // THE SCENE-LIFECYCLE GUARD: an atlas that finishes loading while a ROOM
+      // is mounted may not stomp it — the town's ground waits here and mounts
+      // when the resident steps back outside (remountTown drains it).
+      if (sceneRoomId) pendingTownGround = { svg, originPx, mPerPx };
+      else mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays });
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
       reattachOverlays();
@@ -4740,7 +4668,13 @@ export function mountViewer(appEl) {
   // What the scene needs from its caller is its GROUND and its registration:
   // the <svg> to draw into, and the origin/scale that turn world metres into
   // that svg's units. The town hands it the atlas. A room hands it a floor.
-  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays }) {
+  // Scene options, both defaulted to the town's behaviour so the town call
+  // site does not change: `camera` gates the wheel and the drag-pan (a scene
+  // that fits its pane refuses a camera — the interiors ruling, generalized),
+  // and `includeMine` gates the portfolio union in the draw-set (a room shows
+  // what is IN it; your marks elsewhere in town do not follow you through a
+  // door — the roof, refused at the source per the 08-20 spike receipt).
+  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, camera = true, includeMine = true }) {
     // THE FAR COUNTRY, mounted UNDER the painting rather than over it.
     //
     // Every other derived layer is appended, so it draws on top. These two are
@@ -4839,7 +4773,7 @@ export function mountViewer(appEl) {
     }
     const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
     const view = { ...full };
-    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, camera, includeMine };
     drawFarCountry();
     let tween = null;
     // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
@@ -4905,6 +4839,7 @@ export function mountViewer(appEl) {
       return { x: c.x - w * ax, y: c.y - h * ay, w, h };
     };
     mapCtx.lockOn = (animate = true) => {
+      if (!camera) return;              // nothing to lock: the scene IS the frame
       const target = mapCtx.frameOn();
       // Compare against the target we actually want, not against the viewBox
       // centre — the old test could return "close enough" while the dot sat
@@ -4913,7 +4848,7 @@ export function mountViewer(appEl) {
           && Math.abs(target.w - view.w) < full.w * 0.01) return;
       if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
     };
-    mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
+    mapCtx.fitAll = () => { if (!camera) return; mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
     // Point the camera somewhere and hand back where it was, so a caller can put
     // it back exactly. The tour is the only user: it frames three marks for one
     // slide and restores the reader's own view on the way out.
@@ -4950,6 +4885,7 @@ export function mountViewer(appEl) {
     // where the hand put it (fit is the only thing that zooms you back out)
     const breakFollow = () => { if (mapCtx.follow) { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); } };
     svg.addEventListener("wheel", (e) => {
+      if (!camera) { e.preventDefault(); return; }   // a room refuses a camera (ruling)
       e.preventDefault(); stopTween(); breakFollow();
       const k = Math.pow(1.0015, e.deltaY);
       const w = Math.min(full.w * MAX_ZOOM_OUT, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
@@ -5057,6 +4993,9 @@ export function mountViewer(appEl) {
         hoverMark(hoverTargetForEvent(e));
         return;
       }
+      // a camera-less scene never pans: the press stays a press (hover and the
+      // stand-click both still work), the ground simply does not move
+      if (!camera) return;
       if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
       hoverMark(null);
       renderConvoHover(null);
@@ -5232,7 +5171,15 @@ export function mountViewer(appEl) {
         }
     // the radial's own entries come first and are KEPT: they carry distM and
     // bearing, which the bare record mark does not
-    for (const id of paintingMarkIds({ radialIds: [...seen], mineIds: [...state.mineIds] })) {
+    //
+    // THE ROOF: a scene mounted with includeMine=false shows what is IN it and
+    // nothing else — the acting resident's marks elsewhere in town do not follow
+    // them through a door. Without this, every owned mark everywhere entered the
+    // draw-set and stayed hit-testable from inside a room (the 08-20 spike
+    // receipt: invisible off-frame, still in glyphIds). Refused at the source by
+    // an empty union, not filtered later.
+    const mineIds = mapCtx?.includeMine === false ? [] : [...state.mineIds];
+    for (const id of paintingMarkIds({ radialIds: [...seen], mineIds })) {
       if (seen.has(id)) continue;
       const m = byId.get(id);
       if (m?.at && typeof m.at.x === "number") { seen.add(id); out.push(m); }
@@ -7048,7 +6995,7 @@ export function mountViewer(appEl) {
     renderModeControls();
     renderSpectatorCoordinate();
     renderCrossingPanel();
-    syncInteriorPanel();
+    syncScene(standpointKey());
     if (!mapCtx) loadMinimap();
   }
   // a re-render that the world does TO the viewer, not the viewer to itself: it must
@@ -7484,7 +7431,7 @@ export function mountViewer(appEl) {
     //
     // state.cam is already this actor's ground (set above from actorOrigin), so
     // lockOn frames THEM. A resident who is inside a mark needs no camera at all:
-    // the interior owns the whole panel, and syncInteriorPanel — which runs off
+    // the room scene owns the whole pane, and syncScene — which runs off
     // the standpoint inside activateTellingPane — has already decided that.
     mapCtx?.lockOn?.();
     renderWalkDestination();

@@ -1,18 +1,14 @@
-// viewer-interior.test.mjs — the interior recipe: a room, seen from inside it.
+// viewer-interior.test.mjs — THE ROOM AS A SCENE OF THE ONE ENGINE.
 //
-// Brief 1 proved occupancy reaches the viewer. This proves the viewer can DRAW
-// the room that occupancy names, and that it draws the room the record actually
-// describes rather than a plausible-looking one.
-//
-// The live fixture is the town's own record: wright is inside the-town-centre on
-// main, so the interior these tests build is a real interior. The probes that
-// matter most are the ones guarding rulings that could be broken silently:
-//   · a SPECTATOR never gets an interior (a camera has no body to carry across a
-//     threshold) — and the exterior's geometric `within` must never be the room;
-//   · presence is OCCUPANCY-SCOPED — a resident in another room cannot appear;
-//   · NO PAINTING inside — the atlas must not leak through the floor;
-//   · exit lands on the RIM, never the centre.
-
+// The founder's ruling (2026-08-20): ONE ENGINE, ONE RENDER, DIFFERENT SCENES.
+// A room renders through the same painting machinery as the town — the same
+// pips, the same hover, the same click precedence — and the ONLY scene-unique
+// element is the GROUND: a white placeholder, replaced by the mark's own image
+// when it has one, overlaid with an svg art slot, mirroring the atlas's own
+// base-raster-svg structure. The custom interior renderer this file used to
+// test is gone; what remains under test here is the DATA path (occupancy →
+// room → furniture → radial), the plaque (telling chrome), the ground builder,
+// and the rim. The scene swap itself is exercised at the rig (scene-qa).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -20,10 +16,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  INTERIOR_MIN_M_PER_PX, INTERIOR_VIEWPORT, SPECTATOR_ACTOR,
-  interiorBodySVG, interiorFraming, interiorFurniture, interiorPlaqueHTML,
-  interiorPx, interiorRecipe, interiorRuleM, interiorSVG, interiorThingSVG,
-  paperFloorSVG, rimPointOf, standpointOccupancy,
+  ROOM_GROUND_UNITS, SPECTATOR_ACTOR,
+  interiorFurniture, interiorPlaqueHTML, markImagePath,
+  rimPointOf, roomGround, standpointOccupancy,
 } from "../spectator/viewer.mjs";
 import { assembleWorld } from "./world-build.mjs";
 import { investigate } from "./world-verbs.mjs";
@@ -41,9 +36,8 @@ const byId = new Map(world.marks.map((m) => [m.id, m]));
 const LEDGER = read("WORLD/threshold-ledger.md");
 const REAL_ACTS = parseThresholdLedger(LEDGER).acts;
 
-/** The whole path the viewer walks, in one call: ledger → occupancy → room →
- *  investigate → recipe. Every test below that says "the real record" uses this,
- *  so if the wiring drifts they all fail together rather than one at a time. */
+/** The whole data path the viewer walks, in one call: ledger → occupancy →
+ *  room → investigate → furniture. If the wiring drifts these fail together. */
 function realInterior({ acts = REAL_ACTS, handle = "wright", at = fractionalCrossing() } = {}) {
   const occupancy = occupancyAt(acts, at);
   const roomId = withinOf(occupancy, handle);
@@ -51,7 +45,7 @@ function realInterior({ acts = REAL_ACTS, handle = "wright", at = fractionalCros
   const room = byId.get(roomId);
   const found = investigate(roomId, world, { occupancy, budget: 40 });
   const children = (found.children ?? []).map((c) => (isEntity(c) ? c : { ...(byId.get(c.id) ?? c) }));
-  return { room, recipe: interiorRecipe({ room, children, you: handle }) };
+  return { room, ...interiorFurniture({ room, children }), you: handle };
 }
 
 // ── the real record ─────────────────────────────────────────────────────────
@@ -59,57 +53,74 @@ test("the real record builds a real interior — wright is inside the Town Centr
   const built = realInterior();
   assert.ok(built, "wright's standing crossing is the fixture; without it nothing below proves anything");
   assert.equal(built.room.id, "the-town/the-town-centre");
-  assert.ok(built.recipe.things.length >= 10,
-    `the Town Centre holds real furniture on the record (got ${built.recipe.things.length})`);
-  assert.deepEqual(built.recipe.bodies, ["wright"]);
-  assert.equal(built.recipe.you, "wright");
+  assert.ok(built.things.length >= 10,
+    `the Town Centre holds real furniture on the record (got ${built.things.length})`);
+  assert.deepEqual(built.bodies, ["wright"]);
 });
 
 test("the plaque speaks in the ROOM's own words, not about it", () => {
   const built = realInterior();
-  const html = interiorPlaqueHTML({ ...built.recipe, room: built.room, name: "The Town Centre" });
+  const html = interiorPlaqueHTML({ room: built.room, bodies: built.bodies, you: built.you, name: "The Town Centre" });
   assert.match(html, /you are inside/i);
   assert.match(html, /The Town Centre/);
-  // the mark's own body, off the record — not a caption this file wrote
   assert.ok(built.room.body && built.room.body.length > 20, "the fixture room must have prose to plaque");
   assert.match(html, /lamplit quay/, "the plaque is the mark's body text verbatim");
   assert.match(html, /have it to yourself/, "alone is said plainly rather than left blank");
 });
 
-// ── the framing ─────────────────────────────────────────────────────────────
-test("the room's own centre lands in the middle of the panel", () => {
-  const room = { id: "r", at: { x: -75, y: -75 }, extent: { w: 2000, h: 1500 } };
-  const framing = interiorFraming({ room });
-  const p = interiorPx(framing, room.at);
-  assert.ok(Math.abs(p.x - framing.W / 2) < 0.001, "horizontally centred");
-  assert.ok(Math.abs(p.y - framing.H / 2) < 0.001, "vertically centred");
+// ── the ground (the ONE scene-unique element) ───────────────────────────────
+test("the ground is a white placeholder for an art-less room, with the art slot ready", () => {
+  const g = roomGround({ id: "r", at: { x: 100, y: -50 }, extent: { w: 12, h: 12 } });
+  assert.match(g.svgText, /wv-scene-ground/, "the full-bleed base rect exists");
+  assert.match(g.svgText, /fill="#ffffff"/, "and it is WHITE — the founder's word, twice");
+  assert.doesNotMatch(g.svgText, /<image/, "no image invented for a mark that has none");
+  assert.match(g.svgText, /wv-scene-art/, "the svg overlay slot exists either way — the atlas's own structure");
 });
 
-test("fit-to-extent: the floor fills the panel without touching its edge", () => {
-  const framing = interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 2000, h: 1500 } } });
-  assert.ok(framing.floorPx.w <= framing.W && framing.floorPx.h <= framing.H, "inside the panel");
-  assert.ok(framing.floorPx.w > framing.W * 0.7 || framing.floorPx.h > framing.H * 0.7, "and filling it");
-  assert.ok(framing.floorPx.w < framing.W, "with air at the edge — a flush floor reads as a crop");
+test("a room with shelf art wears it over its own footprint; off-shelf art is refused", () => {
+  const room = { id: "r", at: { x: 0, y: 0 }, extent: { w: 10, h: 10 } };
+  const withArt = roomGround(room, { image: "/media/x/y.png" });
+  assert.match(withArt.svgText, /<image href="\/media\/x\/y\.png"/, "the mark's image replaces the white");
+  assert.match(withArt.svgText, /preserveAspectRatio="xMidYMid meet"/, "shown whole, never cropped");
+  // markImagePath is the gate the caller uses: an off-shelf URL never becomes a path
+  assert.equal(markImagePath({ image: "https://evil.example/x.jpg" }), null, "only the shelf is wearable");
 });
 
-test("THE SCALE FLOOR caps magnification for a tiny room, and leaves a normal one alone", () => {
-  const cupboard = interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 0.4, h: 0.4 } } });
-  assert.equal(cupboard.mPerPx, INTERIOR_MIN_M_PER_PX,
-    "a sub-metre room is held at the floor rather than magnified until the paper grain wins");
-  const hall = interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 2000, h: 1500 } } });
-  assert.ok(hall.mPerPx > INTERIOR_MIN_M_PER_PX, "a real room is fitted, not floored");
+test("the registration round-trips: a world point projected onto the ground comes back itself", () => {
+  const g = roomGround({ id: "r", at: { x: 1075, y: -800 }, extent: { w: 12, h: 12 } });
+  const world = { x: 1077.5, y: -803.25 };
+  const px = { x: g.originPx.x + world.x / g.mPerPx, y: g.originPx.y + world.y / g.mPerPx };
+  const back = { x: (px.x - g.originPx.x) * g.mPerPx, y: (px.y - g.originPx.y) * g.mPerPx };
+  assert.ok(Math.abs(back.x - world.x) < 1e-9 && Math.abs(back.y - world.y) < 1e-9);
 });
 
-test("the rule is a round number of metres and near enough to read as squared paper", () => {
-  for (const mPerPx of [0.004, 0.05, 0.4, 2.58, 40]) {
-    const m = interiorRuleM(mPerPx);
-    assert.ok(m > 0, "a spacing is always chosen");
-    const px = m / mPerPx;
-    assert.ok(px > 8 && px < 260, `${m} m at ${mPerPx} m/px is ${px.toFixed(0)} px — legible`);
+test("the room's centre lands at the ground's centre", () => {
+  const g = roomGround({ id: "r", at: { x: 40, y: 90 }, extent: { w: 20, h: 20 } });
+  const px = { x: g.originPx.x + 40 / g.mPerPx, y: g.originPx.y + 90 / g.mPerPx };
+  const vb = g.svgText.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);
+  assert.ok(vb, "the ground declares its viewBox");
+  assert.ok(Math.abs(px.x - Number(vb[1]) / 2) < 0.6 && Math.abs(px.y - Number(vb[2]) / 2) < 0.6);
+});
+
+test("THE NUMERIC REGIME: a room spans ~ROOM_GROUND_UNITS of its own ground, not a sliver of the town's", () => {
+  // the whole reason a scene carries its own registration: the engine runs at
+  // zoomK ≈ 1 indoors, exactly the regime the town tuned it for — never the
+  // 400–600× deep zoom past MAX_ZOOM_IN that a shared svg forced
+  for (const extent of [{ w: 12, h: 12 }, { w: 0.5, h: 0.5 }, { w: 300, h: 120 }]) {
+    const g = roomGround({ id: "r", at: { x: 0, y: 0 }, extent });
+    const span = Math.max(extent.w, extent.h) / g.mPerPx;
+    assert.ok(span > ROOM_GROUND_UNITS * 0.7 && span <= ROOM_GROUND_UNITS,
+      `a ${extent.w}×${extent.h} room spans ${span.toFixed(0)} ground units`);
   }
 });
 
-// ── what is in the room ─────────────────────────────────────────────────────
+test("markup in a mark's image path cannot escape the ground", () => {
+  const g = roomGround({ id: "r", at: { x: 0, y: 0 }, extent: { w: 10, h: 10 } },
+    { image: '/media/a/"onload="alert(1)' });
+  assert.doesNotMatch(g.svgText, /onload="alert/, "the href is escaped, not interpolated");
+});
+
+// ── the furniture (the radial's source) ─────────────────────────────────────
 test("furniture excludes the room itself and anything with no place", () => {
   const room = { id: "the/room", at: { x: 100, y: 100 }, extent: { w: 20, h: 20 } };
   const { things } = interiorFurniture({
@@ -150,74 +161,7 @@ test("PRESENCE IS OCCUPANCY-SCOPED — someone in another room cannot appear in 
   assert.ok(!bodies.includes("postmaster"), "the one who crossed into another is not");
 });
 
-// ── the drawing ─────────────────────────────────────────────────────────────
-test("NO PAINTING INSIDE — the atlas cannot leak through the floor", () => {
-  const built = realInterior();
-  const svg = interiorSVG({ ...built.recipe, room: built.room });
-  assert.match(svg, /wv-int-floor/, "there is a floor");
-  assert.doesNotMatch(svg, /atlas/i, "and no atlas");
-  assert.doesNotMatch(svg, /town\.html/, "and nothing fetched from the painting");
-  assert.doesNotMatch(svg, /wv-overlay|ov-pip|ov-reach/, "and none of the exterior's overlay furniture");
-});
-
-test("an image-mark hangs as FRAMED ART; a plain mark does not", () => {
-  const framing = interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 20, h: 20 } } });
-  const art = interiorThingSVG(
-    { id: "r/picture", kind: "sited", at: { x: 2, y: 2 }, extent: { w: 2, h: 2 },
-      image: "https://media.postmark.town/media/keeminlee/abc123.jpg" },
-    framing);
-  assert.match(art, /<image/, "the picture is hung");
-  assert.match(art, /wv-far-art-frame/, "in a frame — the same one the far country uses");
-  assert.match(art, /abc123\.jpg/);
-  assert.match(art, /href="\/shelf\//, "as a same-origin path — an SVG href takes no host");
-  assert.doesNotMatch(art, /https:/, "the absolute shelf url never reaches the markup");
-  // and NOT /media/: that is the SITE's media root, a different shelf holding
-  // different files under identical-looking paths. QA caught this as a 404.
-  assert.doesNotMatch(art, /href="\/media\//, "the shelf is not the site's media root");
-
-  const plain = interiorThingSVG({ id: "r/bench", kind: "sited", at: { x: 1, y: 1 }, extent: { w: 2, h: 1 } }, framing);
-  assert.doesNotMatch(plain, /<image/, "a bench is not a picture");
-  assert.match(plain, /wv-int-pip/);
-});
-
-test("an off-shelf image URL is refused rather than hung", () => {
-  const framing = interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 20, h: 20 } } });
-  const svg = interiorThingSVG(
-    { id: "r/bad", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 2, h: 2 }, image: "https://evil.example/x.jpg" },
-    framing);
-  assert.doesNotMatch(svg, /evil\.example/, "only the media shelf is hangable");
-  assert.match(svg, /wv-int-pip/, "and it falls back to being a thing on the floor");
-});
-
-test("you are marked as yourself, and company is drawn apart from you", () => {
-  const framing = interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 20, h: 20 } } });
-  const you = interiorBodySVG("wright", framing, { index: 0, of: 2, you: true });
-  const them = interiorBodySVG("kilean", framing, { index: 1, of: 2, you: false });
-  assert.match(you, /is-you/);
-  assert.match(you, /\(you\)/);
-  assert.doesNotMatch(them, /is-you/);
-  const spot = (svg) => `${svg.match(/cx="([-\d.]+)"/)?.[1]},${svg.match(/cy="([-\d.]+)"/)?.[1]}`;
-  assert.notEqual(spot(you), spot(them), "two bodies in one room do not stand in the same spot");
-  // and a pair reads side by side rather than stacked in one column
-  assert.notEqual(you.match(/cx="([-\d.]+)"/)?.[1], them.match(/cx="([-\d.]+)"/)?.[1],
-    "a pair is spread across the room, not down it");
-});
-
-test("a single occupant stands at the room's centre rather than off on a radius", () => {
-  const framing = interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 20, h: 20 } } });
-  const svg = interiorBodySVG("wright", framing, { index: 0, of: 1, you: true });
-  assert.match(svg, new RegExp(`cx="${(framing.W / 2).toFixed(1)}"`));
-});
-
-test("the floor is paper: a ruled sheet with walls, and no fetched asset", () => {
-  const svg = paperFloorSVG(interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 100, h: 80 } } }));
-  assert.match(svg, /wv-int-floor/);
-  assert.match(svg, /wv-int-wall/);
-  assert.match(svg, /<pattern/, "the square rule");
-  assert.doesNotMatch(svg, /href/, "nothing is loaded to draw a floor");
-});
-
-// ── the rulings that could break quietly ────────────────────────────────────
+// ── who gets a scene ────────────────────────────────────────────────────────
 test("A SPECTATOR NEVER GETS AN INTERIOR — a camera has no body to carry inside", () => {
   const spectator = standpointOccupancy({ acts: REAL_ACTS, at: fractionalCrossing(), handle: SPECTATOR_ACTOR });
   assert.equal(spectator.insideOf, null, "so composeTelling's interior branch cannot fire for it");
@@ -227,19 +171,11 @@ test("A SPECTATOR NEVER GETS AN INTERIOR — a camera has no body to carry insid
 });
 
 test("the room is the ENTERED mark, never the geometric one you are standing on", () => {
-  // wright's crossing is the only thing that puts him inside; his coordinates are
-  // not consulted anywhere in this path, which is the whole of R15 in one probe
   const built = realInterior();
   assert.equal(built.room.id, withinOf(occupancyAt(REAL_ACTS, fractionalCrossing()), "wright"));
-  // and with the acts removed there is no room at all, however he is standing
   assert.equal(realInterior({ acts: [] }), null);
 });
 
-// The bug this guards was found by switching residents in a browser, not by
-// reading code: the page kept the previous resident's room under the next
-// resident's name, because a warm standpoint switch reuses its pane and never
-// re-renders. The derivation was never wrong — kilean has crossed nothing and
-// says so — so the probe is that ONE ledger answers per handle independently.
 test("one resident being in a room does not put another resident in it", () => {
   const acts = parseThresholdLedger(
     `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at 138.0000 · word neutral\n`).acts;
@@ -254,8 +190,6 @@ test("FALSIFIER: an exit appended to the ledger closes the interior", () => {
   const exited = parseThresholdLedger(
     LEDGER + `- 2026-08-20T02:00:00.000Z · wright · exits the-town/the-town-centre · at 138.1300\n`).acts;
   assert.equal(realInterior({ acts: exited }), null, "no room, so nothing to draw");
-  // and before the exit's own clock he is still inside — an exit is an act in
-  // time, not a retraction of one
   assert.ok(realInterior({ acts: exited, at: 138.12 }), "still inside at 138.12");
 });
 
@@ -292,20 +226,11 @@ test("a room with no extent cannot throw — the rim is its own point", () => {
 });
 
 // ── escaping ────────────────────────────────────────────────────────────────
-test("markup in a mark id, a body, or a handle cannot escape the room", () => {
-  const framing = interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 10, h: 10 } } });
-  const thing = interiorThingSVG({ id: '<script>x</script>', kind: "sited", at: { x: 0, y: 0 } }, framing,
-    { nameOf: () => '<script>x</script>' });
-  assert.doesNotMatch(thing, /<script>/);
-  assert.match(interiorBodySVG('<img src=x>', framing), /&lt;img/);
+test("markup in a room's prose, name, or company cannot escape the plaque", () => {
   const plaque = interiorPlaqueHTML({
     room: { id: "r", body: '<b>bold</b> & "quoted"' }, name: "<i>Room</i>", bodies: ["<em>a</em>"],
   });
   assert.doesNotMatch(plaque, /<b>bold<\/b>/);
   assert.doesNotMatch(plaque, /<i>Room<\/i>/);
   assert.match(plaque, /&amp;/);
-});
-
-test("the viewport default is the one the panel is drawn at", () => {
-  assert.equal(interiorFraming({ room: { at: { x: 0, y: 0 }, extent: { w: 10, h: 10 } } }).W, INTERIOR_VIEWPORT.w);
 });
