@@ -8,6 +8,8 @@
 //   • /world-engine/**          → the viewer module + the engine .mjs (so the
 //                                  browser imports the exact library, unbundled)
 //   • /WORLD/*.json             → the world's public record, off THIS clone's disk
+//   • /WORLD/threshold-ledger.md → the crossings; the page derives occupancy from
+//                                  them the way it derives position from walks
 //   • /api/stakes?holder=       → per-holder stakes, parsed from the town's
 //                                  stamp-ledger (LOCAL-ONLY; the island hides the half)
 //   • /atlas/*, /media/*        → proxied to postmark.town (the painting and its
@@ -33,8 +35,12 @@ const PORT = Number(process.env.PORT ?? 4877);
 // Overridable; defaults to the Wright-HQ town clone the brief names.
 const STAMP_LEDGER = process.env.STAMP_LEDGER ?? "G:/Wright-HQ/postmark/WHITE_PAGES/stamp-ledger.md";
 const ATLAS_ORIGIN = process.env.ATLAS_ORIGIN ?? "https://postmark.town";
+// the media shelf — a DIFFERENT host from the town, and deliberately not folded
+// into ATLAS_ORIGIN: /media/ means one thing on the site and another on the shelf
+const SHELF_ORIGIN = process.env.SHELF_ORIGIN ?? "https://media.postmark.town";
+const SHELF_ROUTE = "/shelf/";
 
-const MIME = { ".mjs": "text/javascript; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".html": "text/html; charset=utf-8" };
+const MIME = { ".mjs": "text/javascript; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".html": "text/html; charset=utf-8", ".md": "text/markdown; charset=utf-8" };
 const STAKE_RE = /^-\s+(\S+)\s+·\s+(\S+)\s+→\s+(stake|return):mark:(\S+)\s+·\s+(\d+)/;
 
 function send(res, code, body, type) {
@@ -71,17 +77,18 @@ function stakesFor(holder) {
 // artwork from. Both are served same-origin on postmark.town, so proxying them
 // here is what makes the local spectator show the same map the island does
 // rather than a page of broken images.
-async function proxyTown(res, pathname) {
-  const url = ATLAS_ORIGIN + pathname;
+async function proxyOrigin(res, origin, pathname) {
+  const url = origin + pathname;
   try {
     const r = await fetch(url, { signal: AbortSignal.timeout(15000) });
-    if (!r.ok) return json(res, r.status, { error: `atlas upstream ${r.status}` });
+    if (!r.ok) return json(res, r.status, { error: `upstream ${r.status} for ${url}` });
     const buf = Buffer.from(await r.arrayBuffer());
     send(res, 200, buf, r.headers.get("content-type") ?? "application/octet-stream");
   } catch (e) {
-    json(res, 502, { error: `atlas proxy failed (offline?): ${String(e?.message ?? e)}` });
+    json(res, 502, { error: `proxy failed (offline?): ${String(e?.message ?? e)}` });
   }
 }
+const proxyTown = (res, pathname) => proxyOrigin(res, ATLAS_ORIGIN, pathname);
 
 createServer(async (req, res) => {
   try {
@@ -94,6 +101,12 @@ createServer(async (req, res) => {
     if (p.startsWith("/world-engine/tools/") && p.endsWith(".mjs")) return serveFile(res, "tools/" + p.slice("/world-engine/tools/".length));
     if (p === "/WORLD/world-state.json") return serveFile(res, "WORLD/world-state.json");
     if (p === "/WORLD/skeleton.json") return serveFile(res, "WORLD/skeleton.json");
+    // the crossings, as a FILE rather than as a door. Occupancy is derived from
+    // the acts client-side (the same shape as position from the walk ledger), so
+    // what the page needs is the record, not this server's opinion of it — and
+    // serving it here is what lets a local read stand on THIS clone's disk
+    // instead of falling through to the published raw file.
+    if (p === "/WORLD/threshold-ledger.md") return serveFile(res, "WORLD/threshold-ledger.md");
     if (p === "/seeding/manifest.json") return serveFile(res, "seeding/manifest.json"); // homes → green (viewer derives home-ness; the record is untouched)
 
     if (p === "/api/stakes") {
@@ -136,8 +149,15 @@ createServer(async (req, res) => {
     }
 
     if (p.startsWith("/atlas/") || p.startsWith("/media/")) return proxyTown(res, p);
+    // THE SHELF, which is a different host from the town. An SVG <image href> may
+    // carry no protocol and no host (safeAvatarUrl refuses both — escaping is the
+    // wrong tool for a URL), so a mark's picture reaches the interior floor as a
+    // same-origin /shelf/ path and is proxied at the shelf here. It cannot be
+    // folded into /media/ above: that is the SITE's media root, and the two
+    // shelves hold different files under identical-looking paths.
+    if (p.startsWith(SHELF_ROUTE)) return proxyOrigin(res, SHELF_ORIGIN, "/media/" + p.slice(SHELF_ROUTE.length));
 
-    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
+    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /WORLD/threshold-ledger.md, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
   } catch (e) {
     json(res, 500, { error: String(e?.message ?? e) });
   }

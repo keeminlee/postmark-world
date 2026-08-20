@@ -23,6 +23,7 @@ import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../t
 import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
+import { parseThresholdLedger, occupancyAt, occupantsOf, withinOf, isMark, isEntity } from "../tools/thresholds.mjs";
 
 const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
 const $ = (root, s) => root.querySelector(s);
@@ -535,6 +536,361 @@ export function observerNameFor(key, standpoint = { x: 0, y: 0 }) {
 }
 export function standpointSectionLabel(key) {
   return key && key !== SPECTATOR_ACTOR ? `where ${key} stands` : "where you stand";
+}
+
+// ───────── WHAT THIS STANDPOINT HAS CROSSED INTO (R15)
+//
+// STANDING ON IT IS NOT BEING IN IT, and that is the one thing a reader of this
+// file could get quietly wrong. A radial's `within` is where you STAND — the
+// marks whose ground your coordinates fall on, which walking alone gives you.
+// This is the other fact entirely: the marks you have CROSSED INTO. You can
+// stand on the Post Office's ground all day and have entered nothing; only the
+// crossing puts you inside. The two answers routinely disagree, so nothing here
+// reuses the word `within` — the words are `entered`, `insideOf`, `alongside`.
+//
+// Derived, never stored — the walk ledger's own shape. The threshold ledger's
+// ACTS are the record; occupancy is a pure function of them and the clock, so
+// this page replays what any clone replays and cannot drift from it.
+export function standpointOccupancy({ acts = [], at = Infinity, handle = null } = {}) {
+  const who = handle && handle !== SPECTATOR_ACTOR ? handle : null;
+  const occupancy = occupancyAt(acts, at);
+  const manifest = occupantsOf(occupancy);
+  const entered = who ? [...(occupancy.get(who) ?? [])] : [];
+  const insideOf = who ? withinOf(occupancy, who) : null;
+  // who else is in the innermost room you are in — the manifest, minus yourself
+  const alongside = insideOf ? (manifest.get(insideOf) ?? []).filter((h) => h !== who) : [];
+  return { entered, insideOf, alongside, manifest };
+}
+
+// The chip, on the standpoint whose crossings these are. Absent rather than
+// empty: a spectator has crossed nothing and neither has a resident who never
+// entered anywhere, and "entered: —" under every read would be a claim the
+// record never made. The chain is outermost→innermost because occupancy of a
+// room implies occupancy of what holds it — you are aboard the ship AND in her
+// wheelhouse — and it runs the same direction as the ladder below it.
+//
+// THE SEPARATOR IS DIRECTIONAL, and it is not the word "in". The first draft
+// joined with "in" and rendered "The Quay Reach in The Post Office", which says
+// the reach is inside the office — the containment backwards, in the one readout
+// whose whole job is to say what contains what. `›` reads as "and then into",
+// which is what a chain of crossings is.
+export function occupancyChipHTML({ entered = [], alongside = [], nameOf = deslugMarkId } = {}) {
+  if (!entered.length) return "";
+  const chain = entered.map((id) =>
+    `<span class="wv-entered-mark" data-id="${esc(id)}">${esc(nameOf(id))}</span>`)
+    .join(`<span class="wv-entered-into" aria-label="and then into">›</span>`);
+  const with_ = alongside.length
+    ? `<span class="wv-entered-with">with ${esc(alongside.join(", "))}</span>`
+    : `<span class="wv-entered-with">alone in here</span>`;
+  return `<div class="wv-entered" title="derived from the threshold ledger's crossings — not from where you are standing">`
+    + `<span class="wv-entered-lbl">entered</span>${chain}${with_}</div>`;
+}
+
+// The dev readout: the whole manifest, which is the question "who is in this
+// room" asked of every room at once. It rides with the dials rather than in the
+// telling because it is a fact about the RECORD, not about a standpoint — the
+// same reason the walk ledger's tally sits down there (Keemin, 2026-08-04).
+export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized = 0, at = null } = {}) {
+  const rooms = [...manifest.entries()].sort(([a], [b]) => a.localeCompare(b));
+  const clock = at === null ? "" : ` · at ${Number(at).toFixed(4)}`;
+  const head = `<span class="wv-crossing-lbl">threshold ledger</span>`
+    + `<span>${acts} crossing${acts === 1 ? "" : "s"}${unrecognized ? ` · ${unrecognized} unrecognized` : ""}${clock}</span>`;
+  if (!rooms.length) return head + `<span class="wv-quiet">nobody is inside anything</span>`;
+  return head + rooms.map(([mark, handles]) =>
+    `<span class="wv-crossing-room"><b>${esc(deslugMarkId(mark))}</b> ${esc(handles.join(", "))}</span>`).join("");
+}
+
+// ═══════════ THE INTERIOR — a room, seen from inside it ═══════════
+//
+// Entering is not looking. Outside, the engine ranks a field of view: what the
+// eye carries to, ordered by bearing and distance, the whole world competing for
+// a place in the telling. Inside, none of that is the question. A room has no
+// horizon and no bearing rose; it has WALLS, and the only things in it are the
+// things it holds. So the interior is not the exterior with a filter on it —
+// it is a second recipe over the same primitives, and openYourEyes is not asked.
+//
+// ── the one coordinate fact, because it is the opposite of what it looks like ─
+//
+// SCHEMA v3 lets a mark's `at:` be AUTHORED as an offset from its parent's
+// centre — the cup in the waiting room written as { x: 0, y: 1 }. That frame is
+// a convenience for whoever is writing the file, and it does not survive the
+// fold: `loadMarks` composes world coordinates once, at load, and (its own words)
+// "nothing downstream can tell which frame the files were written in". By the
+// time the viewer sees a mark, every `at` is ABSOLUTE metres. Proof, from the
+// live record: the Town Centre's centre is { -75, -75 } and the crossing bench
+// inside it reads { 12, 8 } — an offset would have been { 87, 83 }.
+//
+// Which turns out to be a gift rather than a chore. Because the marks are all in
+// one frame, an interior needs NO coordinate transform at all: it is the same
+// projection the painting uses — originPx + at / mPerPx — with the origin shifted
+// so the room's centre lands in the middle of the floor. One formula, two
+// framings. Nothing computes an offset, so nothing can compute one wrongly.
+export const INTERIOR_VIEWPORT = Object.freeze({ w: 900, h: 700 });
+// THE SCALE FLOOR, and what it actually guards. Fit-to-extent alone is unbounded
+// in the zoomed-IN direction: a half-metre broom cupboard would be magnified
+// until the paper's own grain was bigger than the furniture standing on it. The
+// floor caps magnification rather than raising it — 4 mm per pixel is the point
+// past which a room stops reading as a room.
+export const INTERIOR_MIN_M_PER_PX = 0.004;
+// Air between the walls and the edge of the panel. A room drawn flush to the
+// frame reads as a crop of something larger, which is the one thing an interior
+// must not read as.
+const INTERIOR_PAD = 1.16;
+
+/** How the room is fitted to the panel: metres per pixel, and the origin that
+ *  puts the room's own centre in the middle of it. Pure arithmetic — the same
+ *  (originPx, mPerPx) contract the painting's camera carries, so every reader
+ *  that already knows how to place a mark keeps working unchanged. */
+export function interiorFraming({ room, viewport = INTERIOR_VIEWPORT, minMPerPx = INTERIOR_MIN_M_PER_PX } = {}) {
+  const w = Math.max(Number(room?.extent?.w) || 0, 0.1);
+  const h = Math.max(Number(room?.extent?.h) || 0, 0.1);
+  const W = Math.max(1, Number(viewport?.w) || INTERIOR_VIEWPORT.w);
+  const H = Math.max(1, Number(viewport?.h) || INTERIOR_VIEWPORT.h);
+  const fit = Math.max((w * INTERIOR_PAD) / W, (h * INTERIOR_PAD) / H);
+  const mPerPx = Math.max(fit, Number(minMPerPx) || 0);
+  const at = { x: Number(room?.at?.x) || 0, y: Number(room?.at?.y) || 0 };
+  return {
+    W, H, mPerPx,
+    // the shift: a mark standing at the room's centre lands at the panel's centre
+    originPx: { x: W / 2 - at.x / mPerPx, y: H / 2 - at.y / mPerPx },
+    floorPx: { w: w / mPerPx, h: h / mPerPx },
+  };
+}
+
+/** Project an absolute world point into the interior panel — byte-identical in
+ *  shape to the painting's own `px()`, deliberately. */
+export const interiorPx = (framing, at) => ({
+  x: framing.originPx.x + (Number(at?.x) || 0) / framing.mPerPx,
+  y: framing.originPx.y + (Number(at?.y) || 0) / framing.mPerPx,
+});
+
+/** WHAT IS IN THE ROOM. `investigate` already answers this — the sited things a
+ *  mark geometrically contains, plus the entity children who have crossed into
+ *  it — so the interior reads its furniture off the engine rather than deciding
+ *  for itself what containment means. This only sorts and shapes that answer:
+ *  embodied marks become things on the floor, entity children become bodies.
+ *
+ *  Nearest-to-centre first, so a budget cut drops the far corner of the room
+ *  rather than whichever child the fold happened to list last. */
+export function interiorFurniture({ room, children = [], limit = 40 } = {}) {
+  const at = { x: Number(room?.at?.x) || 0, y: Number(room?.at?.y) || 0 };
+  const things = children
+    .filter((c) => isMark(c) && c && c.at && Number.isFinite(Number(c.at.x)) && Number.isFinite(Number(c.at.y)))
+    .filter((c) => c.id !== room?.id)
+    .map((c) => ({ ...c, away: Math.hypot(Number(c.at.x) - at.x, Number(c.at.y) - at.y) }))
+    .sort((a, b) => a.away - b.away || String(a.id).localeCompare(String(b.id)))
+    .slice(0, Math.max(0, limit));
+  const bodies = children.filter(isEntity).map((c) => c.handle ?? c.id).filter(Boolean).sort();
+  return { things, bodies };
+}
+
+// ── the paper floor ─────────────────────────────────────────────────────────
+//
+// NO PAINTING IN HERE, and that is a statement about what the atlas IS rather
+// than a saving. The painting is the town seen from above — one continuous
+// surface, painted once, that every exterior standpoint looks at a different
+// part of. A room is not a part of that surface; it is under its roof. Hanging
+// the aerial view inside a building would say the ceiling is missing.
+//
+// So the ground is paper: the drafting sheet a plan is drawn on, with a faint
+// square rule so distance is still legible, and a ruled border for the walls.
+// Same reason the exterior grid is drawn from the registration rather than
+// traced from the paint — the floor is derived, never depicted.
+const INTERIOR_RULE_M = [0.25, 0.5, 1, 2, 5, 10, 25, 50, 100, 250, 500];
+/** The rule spacing that lands nearest 48 px at this scale — close enough to
+ *  read as squared paper at any room size, and always a round number of metres
+ *  so the reader can count it. */
+export function interiorRuleM(mPerPx) {
+  const want = 48 * (Number(mPerPx) || 1);
+  return INTERIOR_RULE_M.reduce((best, m) => (Math.abs(m - want) < Math.abs(best - want) ? m : best), INTERIOR_RULE_M[0]);
+}
+
+export function paperFloorSVG(framing) {
+  const { W, H, floorPx, mPerPx } = framing;
+  const x = (W - floorPx.w) / 2, y = (H - floorPx.h) / 2;
+  const rule = interiorRuleM(mPerPx) / mPerPx;
+  const id = "wv-interior-rule";
+  return `<defs><pattern id="${id}" width="${rule.toFixed(3)}" height="${rule.toFixed(3)}" patternUnits="userSpaceOnUse">`
+    + `<path d="M ${rule.toFixed(3)} 0 L 0 0 0 ${rule.toFixed(3)}" class="wv-int-rule"/></pattern></defs>`
+    + `<rect x="0" y="0" width="${W}" height="${H}" class="wv-int-void"/>`
+    + `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${floorPx.w.toFixed(1)}" height="${floorPx.h.toFixed(1)}" class="wv-int-floor"/>`
+    + `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${floorPx.w.toFixed(1)}" height="${floorPx.h.toFixed(1)}" fill="url(#${id})"/>`
+    + `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${floorPx.w.toFixed(1)}" height="${floorPx.h.toFixed(1)}" class="wv-int-wall"/>`;
+}
+
+// ── the things on it ────────────────────────────────────────────────────────
+//
+// An image-mark hangs as FRAMED ART: a picture in a room is a picture ON A WALL,
+// not a texture on the floor, and the exterior already knows how to hang one —
+// placedArtSVG, which the far country uses for the mountain. Same call, so a
+// picture looks like the same kind of object in both views.
+//
+// Everything else is a footprint: its own extent where its extent is known, a
+// small token where it is not. A mark with no width is not a mark with no place.
+// TWO IMAGE CONTRACTS, and the difference is not cosmetic. A mark-cell mounts
+// its picture on a real node by property assignment, so it can carry the shelf's
+// ABSOLUTE url safely. An SVG <image href> is built by string concatenation, and
+// safeAvatarUrl refuses anything with a protocol or a host on purpose — escaping
+// is the wrong tool for a URL. So art bound for the floor is reduced to its
+// same-origin PATH, which is both what that whitelist accepts and what makes the
+// local rig's /media proxy serve it. The shelf test still gates it: a URL that is
+// not on the shelf never becomes a path.
+// AND THE SHELF IS ITS OWN HOST, which is why this is a route and not a pathname.
+// The shelf lives at media.postmark.town/media/… — a DIFFERENT origin from the
+// site, whose own /media/ is a different shelf entirely (the atlas hangs the
+// mountain out of it). Taking the shelf url's pathname would therefore point at
+// the site's media root and ask it for a file that was never there, which is
+// exactly the 404 QA caught. So shelf art gets a prefix that cannot collide with
+// anything, and each habitat routes /shelf/* at the shelf host.
+export const SHELF_ROUTE = "/shelf/";
+const SHELF_PREFIX = "/media/";
+export function markImagePath(mark) {
+  const url = markImageURL(mark);
+  if (!url) return null;
+  try {
+    const { pathname } = new URL(url);
+    return pathname.startsWith(SHELF_PREFIX)
+      ? SHELF_ROUTE + pathname.slice(SHELF_PREFIX.length)
+      : pathname;
+  } catch { return null; }
+}
+
+// WHEN A LABEL GETS TO SPEAK. The first render of a real room piled six names on
+// top of each other around the middle of the floor and none of them was readable
+// — the Town Centre holds two broth pots a metre apart, and a metre apart is the
+// same pixel. So a name is drawn only if its own line is still free, and the
+// order that asks is nearest-to-centre first, which makes the survivors the
+// things closest to where you are standing rather than whichever the fold listed.
+//
+// Suppressed is not hidden: the pip stays, and the pane beside the floor lists
+// every one of them as a full cell. This only decides which names the FLOOR can
+// carry, exactly as the exterior lets a pile of pips read as a pile.
+export function labelPlacer({ dx = 76, dy = 15 } = {}) {
+  const taken = [];
+  return (x, y) => {
+    if (taken.some((t) => Math.abs(t.x - x) < dx && Math.abs(t.y - y) < dy)) return false;
+    taken.push({ x, y });
+    return true;
+  };
+}
+
+export function interiorThingSVG(thing, framing, { nameOf = deslugMarkId, claim = () => true } = {}) {
+  const p = interiorPx(framing, thing.at);
+  const label = nameOf(thing.id);
+  const url = markImagePath(thing);
+  if (url) {
+    const w = Math.max((Number(thing.extent?.w) || 0) / framing.mPerPx, 46);
+    const h = Math.max((Number(thing.extent?.h) || 0) / framing.mPerPx, 46);
+    const size = Math.max(w, h);
+    const ly = p.y + size / 2 + 13;
+    return `<g class="wv-int-art" data-id="${esc(thing.id)}">`
+      + placedArtSVG({ at: p, extent: { w: size, h: size }, href: url, label, id: `int-${thing.id}` })
+      + (claim(p.x, ly) ? `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-label">${esc(label)}</text>` : "")
+      + `</g>`;
+  }
+  const w = (Number(thing.extent?.w) || 0) / framing.mPerPx;
+  const h = (Number(thing.extent?.h) || 0) / framing.mPerPx;
+  const foot = w >= 3 && h >= 3
+    ? `<rect x="${(p.x - w / 2).toFixed(1)}" y="${(p.y - h / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" class="wv-int-foot"/>`
+    : "";
+  const ly = p.y - 10;
+  return `<g class="wv-int-thing" data-id="${esc(thing.id)}">${foot}`
+    + `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5" class="wv-int-pip"/>`
+    + (claim(p.x, ly) ? `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-label">${esc(label)}</text>` : "")
+    + `</g>`;
+}
+
+/** A body in the room. Occupancy-scoped by construction: this only ever draws
+ *  the handles the manifest gave for THIS mark, so a resident three rooms away
+ *  cannot appear in it. Placed on the room's centre — the record says who is
+ *  inside, never where inside, and inventing a position would be the readout
+ *  claiming a fact the ledger does not hold. */
+export function interiorBodySVG(handle, framing, { index = 0, of = 1, you = false, claim = () => true } = {}) {
+  const c = { x: framing.W / 2, y: framing.H / 2 };
+  const spread = Math.min(framing.floorPx.w, framing.floorPx.h) * 0.12 + 18;
+  // Starting due WEST rather than due north, so the commonest case — two people
+  // in a room — reads as two people side by side. From north, a pair lands one
+  // directly above the other and shares a column, which in a wide room looks
+  // less like company and more like a rendering fault.
+  const angle = of <= 1 ? 0 : Math.PI + (index / of) * Math.PI * 2;
+  const p = of <= 1 ? c : { x: c.x + Math.cos(angle) * spread, y: c.y + Math.sin(angle) * spread };
+  const ly = p.y + 23;
+  claim(p.x, ly);   // a body's own name always gets its line; this reserves it
+  return `<g class="wv-int-body${you ? " is-you" : ""}" data-handle="${esc(handle)}">`
+    + `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="9" class="wv-int-body-dot"/>`
+    + `<text x="${p.x.toFixed(1)}" y="${ly.toFixed(1)}" class="wv-int-body-name">${esc(handle)}${you ? " (you)" : ""}</text></g>`;
+}
+
+/** THE WHOLE ROOM, in one string. */
+export function interiorSVG({ room, framing, things = [], bodies = [], you = null, nameOf = deslugMarkId } = {}) {
+  // THE BODIES CLAIM THEIR NAMES FIRST. Who is in the room outranks what is in
+  // it — a person's name losing its line to a broth pot is the wrong trade — so
+  // the placer is walked over the bodies before any thing asks it.
+  const claim = labelPlacer();
+  const drawnBodies = bodies.map((h, i) =>
+    interiorBodySVG(h, framing, { index: i, of: bodies.length, you: h === you, claim }));
+  return `<svg xmlns="http://www.w3.org/2000/svg" class="wv-interior" viewBox="0 0 ${framing.W} ${framing.H}"`
+    + ` role="img" aria-label="inside ${esc(nameOf(room?.id))}">`
+    + paperFloorSVG(framing)
+    + things.map((t) => interiorThingSVG(t, framing, { nameOf, claim })).join("")
+    + drawnBodies.join("")
+    + `</svg>`;
+}
+
+// ── the plaque ──────────────────────────────────────────────────────────────
+//
+// The room tells you where you are IN ITS OWN WORDS. Not a caption written about
+// it and not its id deslugged — the mark's own body, the same prose the telling
+// would have read out from outside, mounted on the wall you are standing in.
+// That is the whole of what makes an interior a place rather than a container:
+// the record already said what this room is, and inside it that sentence is the
+// most important thing on the page.
+export function interiorPlaqueHTML({ room, name = null, bodies = [], you = null, nameOf = deslugMarkId } = {}) {
+  if (!room?.id) return "";
+  const title = name ?? nameOf(room.id);
+  const body = String(room.body ?? "").trim();
+  const others = bodies.filter((h) => h !== you);
+  const company = !bodies.length ? ""
+    : others.length ? `<p class="wv-int-company">Also here: ${esc(others.join(", "))}.</p>`
+    : `<p class="wv-int-company">You have it to yourself.</p>`;
+  return `<div class="wv-int-plaque">`
+    + `<div class="wv-int-plaque-lbl">you are inside</div>`
+    + `<h2 class="wv-int-plaque-name">${esc(title)}</h2>`
+    + (body ? `<p class="wv-int-plaque-body">${esc(body)}</p>` : "")
+    + company
+    + `</div>`;
+}
+
+// ── stepping out ────────────────────────────────────────────────────────────
+//
+// You come out where walking in would have put you: THE RIM. Not the centre —
+// standing on the middle of a building you have just left is the bug the walk
+// ledger already solved once — and not an arbitrary corner either. `targetEntryT`
+// is the walk's own arrival predicate: the parametric point at which a leg from
+// `from` toward the mark first crosses into its recorded extent. Feeding it the
+// resident's own last exterior position makes stepping out land exactly where
+// their own approach would have arrived, which is why this reuses that function
+// rather than measuring an edge itself.
+//
+// With no approach on the record there is no "their own side" to honour, so it
+// falls to the southern rim — the town's own default facing, the quay side.
+export function rimPointOf(room, from = null) {
+  const at = { x: Number(room?.at?.x) || 0, y: Number(room?.at?.y) || 0 };
+  const w = Number(room?.extent?.w) || 0, h = Number(room?.extent?.h) || 0;
+  if (!(w > 0 && h > 0)) return { ...at };
+  const fx = Number(from?.x), fy = Number(from?.y);
+  if (!Number.isFinite(fx) || !Number.isFinite(fy) || (fx === at.x && fy === at.y))
+    return { x: at.x, y: at.y + h / 2 };
+  const t = targetEntryT({ x: fx, y: fy }, at, { x: at.x, y: at.y, w, h });
+  return { x: fx + (at.x - fx) * t, y: fy + (at.y - fy) * t };
+}
+
+/** The recipe, assembled: everything a pane and a panel need to draw a room, and
+ *  nothing about how either draws it. */
+export function interiorRecipe({ room, children = [], you = null, viewport = INTERIOR_VIEWPORT, limit = 40, minMPerPx = INTERIOR_MIN_M_PER_PX } = {}) {
+  const framing = interiorFraming({ room, viewport, minMPerPx });
+  const { things, bodies } = interiorFurniture({ room, children, limit });
+  return { room, framing, things, bodies, you };
 }
 
 // IS THIS PREBUILT VIEW STILL TRUE. Two ways it stops being: the world it was
@@ -2347,6 +2703,38 @@ const STYLE = `
 .wv-extent-t { font-size:.66rem; color:var(--dim); font-variant-numeric:tabular-nums; white-space:nowrap; }
 .wv-cluster { margin-top:7px; font-size:.8rem; font-style:italic; color:var(--amber); opacity:.85; }
 .wv-tallies { margin-top:22px; padding-top:10px; font-size:.82rem; color:var(--dim); border-top:1px solid var(--line); max-width:76ch; }
+/* what this standpoint has CROSSED INTO — never where it is standing (R15) */
+.wv-entered { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin:10px 0 0;
+  font-size:.78rem; color:var(--dim); }
+.wv-entered-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; opacity:.75; }
+.wv-entered-mark { color:var(--amber); border:1px solid var(--amber-dark); border-radius:999px; padding:1px 8px; }
+.wv-entered-into { opacity:.55; }
+/* ── the interior: paper, not paint ──────────────────────────────────────── */
+.wv-interior { display:block; width:100%; height:100%; }
+.wv-int-void { fill:#0d0f13; }
+/* the drafting sheet. Warm and low-contrast: it is the ground, and ground that
+   competes with the furniture standing on it is a rug, not a floor. */
+.wv-int-floor { fill:#e8e0cf; fill-opacity:.94; }
+.wv-int-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
+.wv-int-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
+.wv-int-foot { fill:rgba(58,52,40,.10); stroke:rgba(58,52,40,.45); stroke-width:1; }
+.wv-int-pip { fill:#7a4a1e; }
+.wv-int-label { fill:#3a3428; font:italic 12px Georgia, serif; text-anchor:middle; }
+.wv-int-art .wv-far-art-frame { stroke:#3a3428; stroke-width:2.5; fill:none; }
+.wv-int-body-dot { fill:#b4472b; stroke:#f3ecdc; stroke-width:2; }
+.wv-int-body.is-you .wv-int-body-dot { fill:#e0a02a; stroke:#2b2519; stroke-width:2.5; }
+.wv-int-body-name { fill:#2b2519; font:600 12px Georgia, serif; text-anchor:middle; }
+/* the plaque — the room's own words, on the wall you are standing in */
+.wv-int-plaque { margin:0 0 16px; padding:13px 15px; max-width:76ch;
+  border-left:5px solid var(--amber); background:rgba(224,160,42,.07); }
+.wv-int-plaque-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--dim); opacity:.8; }
+.wv-int-plaque-name { margin:3px 0 6px; font-size:1.18rem; color:var(--paper); }
+.wv-int-plaque-body { margin:0; font-size:1.02rem; line-height:1.5; color:var(--paper); opacity:.92; }
+.wv-int-company { margin:8px 0 0; font-size:.86rem; font-style:italic; color:var(--dim); }
+.wv-int-exit { margin:0 0 14px; }
+.wv-int-empty { font-size:.9rem; font-style:italic; color:var(--dim); }
+.wv-entered-with { opacity:.7; font-style:italic; }
 /* everything is a mark-cell — tier accents + the encompassing ladder */
 .wv-section-lbl { font-size:.72rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim);
   margin:20px 0 9px; opacity:.75; }
@@ -2429,6 +2817,17 @@ const STYLE = `
    them. Nuking selection viewer-wide would trade a papercut for a wound. */
 .wv-minimap { -webkit-user-select:none; user-select:none; }
 .wv-minimap { position:relative; overflow:hidden; cursor:crosshair; }
+/* inside, the painting is not dimmed or filtered — it is GONE. A ghost of the
+   aerial view under a floor would say the roof is missing. */
+.wv-interior-panel { position:absolute; inset:0; z-index:8; background:#0d0f13; }
+.wv-minimap.is-inside { cursor:default; }
+.wv-minimap.is-inside > svg,
+.wv-minimap.is-inside > .wv-mapctl,
+.wv-minimap.is-inside > .wv-spectator-coordinate,
+.wv-minimap.is-inside > .wv-paint-tallies,
+.wv-minimap.is-inside > .wv-bubbles,
+.wv-minimap.is-inside > .wv-walkdesk,
+.wv-minimap.is-inside > .wv-worldmark { display:none; }
 .wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
@@ -2595,6 +2994,9 @@ const STYLE = `
 .wv-walkpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
 .wv-walkpanel input[type=range] { width:130px; vertical-align:middle; }
 .wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
+.wv-crossingpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
+.wv-crossing-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); }
+.wv-crossing-room b { color:var(--amber); font-weight:600; }
 #wv-walk-readout { opacity:.75; }
 /* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
 /* The painting's controls FLOAT ON THE PAINTING (Keemin, 2026-08-04) — they act
@@ -3020,6 +3422,10 @@ const MARKUP = `
       <!-- the walk ledger's own tally: a diagnostic, not a thing the town needs to
            read at the bottom of its map -->
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
+      <!-- and the threshold ledger's, beside it: the crossings, and the rooms
+           they derive. Occupancy is the record's answer rather than any one
+           standpoint's, so it reads as a diagnostic here and as a chip there. -->
+      <p class="wv-crossingpanel" id="wv-crossing-panel" hidden></p>
       <div class="wv-dev-dials"></div>
     </div>
   </nav>
@@ -3035,7 +3441,13 @@ const MARKUP = `
   </section>
   <aside class="wv-map">
     <div class="wv-sticky">
-      <div class="wv-minimap"><div class="loading">fetching the painting…</div><div class="wv-worldmark">
+      <div class="wv-minimap"><div class="loading">fetching the painting…</div><!-- THE INTERIOR, over the painting rather than instead of it. A room is
+             drawn into this panel and the atlas is hidden beneath it (is-inside),
+             so crossing a threshold costs no atlas re-fetch and coming back out
+             restores the reader's own camera untouched. It also keeps the
+             painting's hot paths — applyView, drawOverlay — out of the interior
+             entirely: inside, there is no radial, so neither one runs. -->
+        <div class="wv-interior-panel" hidden></div><div class="wv-worldmark">
           <!-- The mark that frames everything, drawn as what it IS: a constitution
                pip, the same blue dot as any other. It has no footprint to stand on
                and no place of its own, so it takes the one corner of the painting
@@ -3159,6 +3571,25 @@ export function mountViewer(appEl) {
   let mapCtx = null;
   let lastRadial = null;
   let worldEpoch = 0;       // bumped by applyWorldLayer; every prebuilt view is stale after
+  // the threshold ledger's acts, and their own epoch. Occupancy is derived from
+  // these the way position is derived from the walk ledger, so what is held is
+  // the RECORD; the rooms are recomputed at whatever clock is asked for.
+  let crossings = { acts: [], unrecognized: 0 };
+  let crossingEpoch = 0;    // bumped when the ledger lands; a pane built before it is stale
+  // WHICH CLOCK THE FOLD IS ASKED AT, and it is not `state.crossing`.
+  //
+  // The dial is a FLOORED crossing number; the ledger stamps a FRACTIONAL one
+  // (`at 138.1082`). Folding the acts at the floor drops every crossing made
+  // since the last 12-hour boundary, so the page would sit up to a whole crossing
+  // behind the record and a resident who had just stepped through a door would be
+  // told he was still outside it. That is thresholds.mjs's own `stampAt` bug seen
+  // from the reader's side, and its ruling is the fix: one clock, both sides.
+  //
+  // Time-travel keeps working and keeps meaning what it says — a reader scrubbed
+  // to crossing 138 is asking what was true THEN, and the honest answer at 138 is
+  // that the 138.1082 crossing had not happened yet. Same rule the walks door
+  // uses: the override if there is one, the live fractional clock otherwise.
+  const occupancyClock = () => (state.crossingOverride ? state.crossing : fractionalCrossing());
   const markInteraction = createMarkInteractionStore();
 
   // ───────── data + world (feature-detected source) ─────────
@@ -3506,6 +3937,8 @@ export function mountViewer(appEl) {
   const viewSignature = () => [
     worldEpoch, state.crossing, state.markFilter,
     identityResolved() ? 1 : 0, JSON.stringify(state.dials),
+    crossingEpoch,   // the crossings are the record too: a pane telling who is
+                     // inside what is stale the moment the ledger says otherwise
   ].join("|");
   const standpointKey = () => (isSpectating() || !state.handle ? SPECTATOR_ACTOR : state.handle);
   const samePlace = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y;
@@ -3571,6 +4004,14 @@ export function mountViewer(appEl) {
     if (!host) return;
     for (const pane of host.querySelectorAll(".wv-telling-pane"))
       pane.hidden = pane.dataset.standpoint !== key;
+    // WHICH SIDE OF A THRESHOLD THE PAGE IS ON IS DECIDED HERE, because this is
+    // where which standpoint is showing gets decided — including on the warm
+    // switch, which reuses a built pane and never re-renders. Syncing the floor
+    // only from renderCurrent left the previous resident's room on screen under
+    // the next resident's name: QA switched to kilean, who has crossed nothing,
+    // and was shown standing in wright's Town Centre. Before the early return,
+    // because an interior is exactly the case that returns no radial.
+    syncInteriorPanel();
     if (!radial) return;
     lastRadial = radial;
     // the panel may be folded away, but its two controls and its count line are
@@ -3637,6 +4078,110 @@ export function mountViewer(appEl) {
     warmOtherViews();
   }
 
+  // ───────── inside ─────────
+  //
+  // The room, written into the same pane the telling would have used. Everything
+  // it needs comes from `investigate` — the engine's own answer to "what is in
+  // this mark", geometric containment and the entity children together — so the
+  // interior never decides for itself what being inside something means. It only
+  // frames that answer and draws it.
+  //
+  // The live occupancy Map (not the readout) is what investigate wants, because
+  // its manifest is how the entity children get on the list at all.
+  const liveOccupancy = () => occupancyAt(crossings.acts, occupancyClock());
+  // PER STANDPOINT, never one shared "am I indoors" flag. composeTelling also
+  // runs for residents the reader is not looking at, and one of them being in a
+  // room must not put the reader's own panel on a floor — the same reason
+  // lastRadial is set by activateTellingPane and not by the compose pass.
+  const interiorByKey = new Map();
+  function composeInterior(box, roomId, key) {
+    const room = byId.get(roomId);
+    if (!room) return null;             // a room the fold does not hold is not a room
+    const found = investigate(roomId, world, { occupancy: liveOccupancy(), budget: state.dials.context_budget });
+    if (found?.error) return null;
+    // investigate SHAPES its children for a reader (id, kind, at, body) and drops
+    // extent and image on the way. A floor needs both, so each child is resolved
+    // back to the folded mark it names; the shaped entry stands in only when the
+    // fold has nothing under that id.
+    const children = (found.children ?? []).map((c) => (isEntity(c) ? c : { ...(byId.get(c.id) ?? c) }));
+    const recipe = interiorRecipe({ room, children, you: key, viewport: INTERIOR_VIEWPORT });
+    const nameOf = (id) => markName(byId.get(id) ?? { id }).name;
+    box.innerHTML = interiorPlaqueHTML({ ...recipe, name: nameOf(room.id), nameOf })
+      + `<div class="wv-int-exit"><button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">↤ step outside</button></div>`
+      + (recipe.things.length
+        ? `<div class="wv-section-lbl">what is in here — ${recipe.things.length}</div>`
+          + `<div class="wv-cards">${recipe.things.map((t) => markCell(byId.get(t.id) ?? t, { role: "fov" })).join("")}</div>`
+        : `<div class="wv-int-empty">Nothing of the record stands in here yet.</div>`);
+    foldRenderedPredicates(box);
+    mountMarkImages(box);
+    const built = { room, recipe, nameOf };
+    interiorByKey.set(key, built);
+    return built;
+  }
+  // The panel: paper where the painting was. Called from renderCurrent, so the
+  // two halves of the page can never disagree about which side of a threshold
+  // the reader is on — and read off the ACTIVE standpoint, so a warm build for
+  // somebody else's room cannot reach it.
+  function syncInteriorPanel() {
+    const boxEl = $(root, ".wv-minimap");
+    if (!boxEl) return;
+    // Re-made rather than merely found. The atlas arrives asynchronously and its
+    // load wipes this box; the overlay list above carries the panel across that,
+    // but a render landing in the same tick as the wipe would still find nothing.
+    // The floor is the whole view when you are indoors, so it does not get to
+    // depend on winning a race.
+    let panel = $(root, ".wv-interior-panel");
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.className = "wv-interior-panel";
+      panel.hidden = true;
+      boxEl.appendChild(panel);
+    }
+    const built = interiorByKey.get(standpointKey()) ?? null;
+    boxEl.classList.toggle("is-inside", !!built);
+    panel.hidden = !built;
+    if (!built) { panel.innerHTML = ""; return; }
+    // The picture's URL is written into the SVG by placedArtSVG, which passes it
+    // through safeAvatarUrl first — so unlike a mark-cell there is no empty
+    // figure to hydrate here, and nothing between the record and the <image>.
+    panel.innerHTML = interiorSVG({ ...built.recipe, room: built.room, nameOf: built.nameOf });
+  }
+  async function stepOutside(markId, button) {
+    const room = markId && byId.get(markId);
+    if (!room) return;
+    const label = button?.textContent;
+    if (button) { button.disabled = true; button.textContent = "stepping outside…"; }
+    try {
+      const response = await apexAct("exit", { mark: markId });
+      if (response?.error) throw new Error(response.defect ?? response.error);
+      // the ledger is the answer, so go and read it rather than assuming the act
+      // landed the way this page expected
+      await loadThresholdLedger();
+      renderCurrent();
+      // AND THE VIEW COMES OUT TO THE RIM — the VIEW, not the resident.
+      //
+      // The brief said stepping out returns you to the mark's rim, and taken
+      // literally that would have to move you. It must not: a crossing never
+      // moves anybody (R15), which is the whole reason walking and entering are
+      // two records. wright is inside the Town Centre on the ledger while his
+      // walk position is 2.6 km away, and both of those are true — so writing a
+      // new position on the way out would be the viewer inventing a walk the
+      // record does not hold, and the next walkers poll would overwrite the lie
+      // anyway.
+      //
+      // What the ruling is actually asking for is the doorway: come out looking
+      // at the place you just left, from the side you would have approached it.
+      // So the CAMERA frames the rim and the resident stands exactly where they
+      // were standing all along.
+      const rim = rimPointOf(room, originFor(state.handle));
+      mapCtx?.setView?.(mapCtx.frameOn(rim), true);
+    } catch (err) {
+      if (button) { button.disabled = false; button.textContent = label ?? "↤ step outside"; }
+      const plaque = $(root, ".wv-int-plaque");
+      if (plaque) plaque.insertAdjacentHTML("beforeend",
+        `<p class="wv-int-company">The door did not take it: ${esc(err?.message ?? err)}</p>`);
+    }
+  }
   // The telling read from ONE standpoint, written into ONE pane, returning that
   // read's radial. Deliberately free of shared state — no lastRadial, no
   // overlay, no tallies chip — because it also runs for residents the reader is
@@ -3650,6 +4195,29 @@ export function mountViewer(appEl) {
     // and anything downstream of `radial.observer` name the resident. The
     // spectator keeps the spectator words.
     const name = observerNameFor(key, standpoint);
+    // THE CROSSINGS, asked BEFORE the eyes are opened — because if this
+    // standpoint is inside something, opening its eyes is the wrong question and
+    // the answer is thrown away. `within` (below, geometric) is where you STAND;
+    // this is what you have ENTERED. Walking onto a mark never fills it; only a
+    // crossing does. Two facts, two words, kept far apart on purpose (R15).
+    const { entered, insideOf, alongside } = standpointOccupancy({
+      acts: crossings.acts, at: occupancyClock(), handle: key,
+    });
+    // ── the threshold, in the render ────────────────────────────────────────
+    // A room has no horizon, so the field of view is not asked for one. This is
+    // the branch, and it is a REPLACEMENT rather than a decoration: the interior
+    // owns the whole pane, and openYourEyes below never runs for a standpoint
+    // that is indoors. Spectators are excluded by construction — standpointOccupancy
+    // hands a camera an empty stack, because a camera has no body to carry
+    // across a threshold (Keemin's ruling; a doorway-peek is a later call).
+    if (insideOf) {
+      const interior = composeInterior(box, insideOf, key);
+      if (interior) return null;   // no radial: the painting and the overlay stand down
+    }
+    // OUTDOORS, and said so rather than merely not said. Whatever this standpoint
+    // was in before, it is not in it now — leaving the stale entry behind is how
+    // a reader who has stepped out keeps looking at a floor.
+    interiorByKey.delete(key);
     const e = openYourEyes({ x: standpoint.x, y: standpoint.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
     const within = e.radial.within ?? [];
     const obs = e.radial.observer ?? {};
@@ -3700,6 +4268,9 @@ export function mountViewer(appEl) {
     // that ignores sight would be the regression).
     const feed = isNew ? newFeed(mine ? isMine : null) : null;
     box.innerHTML = chips
+      // above the ladder, because "you are INSIDE the Post Office" outranks
+      // "you are standing on its ground" the moment both are true
+      + occupancyChipHTML({ entered, alongside, nameOf: (id) => markName(byId.get(id) ?? { id }).name })
       + (ladder ? `<div class="wv-section-lbl">${esc(standpointSectionLabel(key))}</div>`
                 + `<div class="wv-ladder-cells">${ladder}</div>` : "")
       + (isNew
@@ -3848,7 +4419,11 @@ export function mountViewer(appEl) {
     // The chrome that rides ON the painting is held across the wipe below rather
     // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
     // the walk desk itself) that must not be rebuilt when the atlas loads.
-    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk"]
+    // The interior panel rides this list for the same reason the bubbles do: the
+    // atlas landing must not knock the reader out of a room. Without it the wipe
+    // below deletes the floor and leaves `is-inside` on the box — a page that
+    // says you are indoors and shows you nothing.
+    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk", ".wv-interior-panel"]
       .map((selector) => $(boxEl, selector)).filter(Boolean);
     const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
@@ -6121,6 +6696,8 @@ export function mountViewer(appEl) {
     if (state.view === "telling") renderTelling();
     renderModeControls();
     renderSpectatorCoordinate();
+    renderCrossingPanel();
+    syncInteriorPanel();
     if (!mapCtx) loadMinimap();
   }
   // a re-render that the world does TO the viewer, not the viewer to itself: it must
@@ -6297,6 +6874,13 @@ export function mountViewer(appEl) {
       else { state.cam = { x: +stand.dataset.x, y: +stand.dataset.y }; switchView("telling"); }
       return;
     }
+    // STEPPING OUT is an ACT, not a view change — the record is what says who is
+    // inside, so the door is the only thing that can let you out. The camera is
+    // moved to the rim only AFTER the office has taken the act and the ledger has
+    // been re-read; a page that walked you outside on the click would be showing
+    // you a world the record does not hold.
+    const exitBtn = e.target.closest(".wv-int-exit-btn");
+    if (exitBtn) { stepOutside(exitBtn.dataset.mark, exitBtn); return; }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } syncDevReadouts(); return; }
     if (e.target.closest(".wv-dev-reset")) { state.dials = { ...DIALS }; buildDevPane(); renderCurrent(); return; }
     if (e.target.closest(".crosslive")) { state.crossingOverride = false; state.crossing = liveCrossing(); const i = root.querySelector(".crossover"); if (i) i.value = state.crossing; const l = root.querySelector(".crossovlbl"); if (l) l.textContent = "live · " + state.crossing; reRender(); return; }
@@ -6850,6 +7434,36 @@ export function mountViewer(appEl) {
       } catch { /* try the next one */ }
     }
   }
+  // ───────── the crossings ─────────
+  // The threshold ledger, fetched exactly as the walk ledger is, and for the same
+  // reason: occupancy is derived from the ACTS, so the acts are what a reader
+  // needs. Same-origin first (this clone's disk), then the published raw file.
+  //
+  // A ledger of nothing but exits is a real answer — everyone has left — so this
+  // stops at the first source that ANSWERS rather than at the first that answers
+  // with acts. The walk loader's non-empty guard is right for positions and would
+  // be wrong here: it would fall through a true "the room is empty" to the raw
+  // file and report a room the local record says has been emptied.
+  async function loadThresholdLedger() {
+    for (const url of ["/WORLD/threshold-ledger.md", `${RAW}/WORLD/threshold-ledger.md`]) {
+      try {
+        const r = await fetch(url, { credentials: "omit" });
+        if (!r.ok) continue;
+        const parsed = parseThresholdLedger(await r.text());
+        crossings = { acts: parsed.acts, unrecognized: parsed.unrecognized.length };
+        crossingEpoch += 1;   // every pane built before this one is stale
+        return;
+      } catch { /* try the next one */ }
+    }
+  }
+  function renderCrossingPanel() {
+    const host = $(root, "#wv-crossing-panel");
+    if (!host) return;
+    const at = occupancyClock();
+    const { manifest } = standpointOccupancy({ acts: crossings.acts, at });
+    host.hidden = !crossings.acts.length;
+    host.innerHTML = occupancyDevLine({ manifest, acts: crossings.acts.length, unrecognized: crossings.unrecognized, at });
+  }
   function renderActivity() {
     const box = $(root, ".wv-activity");
     const list = $(root, ".wv-acts");
@@ -6959,6 +7573,10 @@ export function mountViewer(appEl) {
       await loadData();
       renderCurrent();
       loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
+      // and the crossings, once THEY arrive. A full re-render rather than one
+      // panel: the telling's own chip is downstream of this too, and the ledger
+      // landing is exactly the "record moved" that the view cache invalidates on.
+      loadThresholdLedger().then(renderCurrent);
       // the faces, once they arrive — a redraw is owed because the walkers were
       // already painted as monograms by then, and this is what puts the pictures
       // on them. Never awaited: the map is not allowed to wait on a nicety.
@@ -6991,7 +7609,10 @@ export function mountViewer(appEl) {
     // every caller that would ask.
     // The `data` guard is not defensive noise: boot is async, so a host that
     // scrubs before the first fold lands would otherwise re-pull into nothing.
-    reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); renderCurrent(); return true; },
+    // the crossings come with them, for the reason the walkers do: "the record
+    // changed", "who is standing in it changed" and "who is INSIDE it changed"
+    // are one event to every caller that would ask.
+    reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); await loadThresholdLedger(); renderCurrent(); return true; },
     stop: () => {
       clearInterval(clock);
       clearInterval(walkState.timer);
