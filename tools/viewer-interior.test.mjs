@@ -35,10 +35,18 @@ const world = assembleWorld({
 const byId = new Map(world.marks.map((m) => [m.id, m]));
 const LEDGER = read("WORLD/threshold-ledger.md");
 const REAL_ACTS = parseThresholdLedger(LEDGER).acts;
+// THE FIXTURE IS SYNTHETIC ON PURPOSE (state-durable-facts): the live ledger
+// moves with every crossing, so a test pinned to who happens to be inside
+// TODAY fails the day they step out. The MARKS are the durable half — the
+// Town Centre exists by constitution — so the crossing is synthesized and the
+// room is real.
+const FIXTURE_ACTS = parseThresholdLedger(
+  `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at 138.0000 · word neutral\n`).acts;
+const FIXTURE_AT = 999;
 
 /** The whole data path the viewer walks, in one call: ledger → occupancy →
  *  room → investigate → furniture. If the wiring drifts these fail together. */
-function realInterior({ acts = REAL_ACTS, handle = "wright", at = fractionalCrossing() } = {}) {
+function realInterior({ acts = FIXTURE_ACTS, handle = "wright", at = FIXTURE_AT } = {}) {
   const occupancy = occupancyAt(acts, at);
   const roomId = withinOf(occupancy, handle);
   if (!roomId) return null;
@@ -49,7 +57,7 @@ function realInterior({ acts = REAL_ACTS, handle = "wright", at = fractionalCros
 }
 
 // ── the real record ─────────────────────────────────────────────────────────
-test("the real record builds a real interior — wright is inside the Town Centre", () => {
+test("the real marks build a real interior — the Town Centre, entered", () => {
   const built = realInterior();
   assert.ok(built, "wright's standing crossing is the fixture; without it nothing below proves anything");
   assert.equal(built.room.id, "the-town/the-town-centre");
@@ -172,7 +180,7 @@ test("A SPECTATOR NEVER GETS AN INTERIOR — a camera has no body to carry insid
 
 test("the room is the ENTERED mark, never the geometric one you are standing on", () => {
   const built = realInterior();
-  assert.equal(built.room.id, withinOf(occupancyAt(REAL_ACTS, fractionalCrossing()), "wright"));
+  assert.equal(built.room.id, withinOf(occupancyAt(FIXTURE_ACTS, FIXTURE_AT), "wright"));
   assert.equal(realInterior({ acts: [] }), null);
 });
 
@@ -188,7 +196,8 @@ test("one resident being in a room does not put another resident in it", () => {
 
 test("FALSIFIER: an exit appended to the ledger closes the interior", () => {
   const exited = parseThresholdLedger(
-    LEDGER + `- 2026-08-20T02:00:00.000Z · wright · exits the-town/the-town-centre · at 138.1300\n`).acts;
+    `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at 138.0000 · word neutral\n`
+    + `- 2026-08-20T02:00:00.000Z · wright · exits the-town/the-town-centre · at 138.1300\n`).acts;
   assert.equal(realInterior({ acts: exited }), null, "no room, so nothing to draw");
   assert.ok(realInterior({ acts: exited, at: 138.12 }), "still inside at 138.12");
 });
