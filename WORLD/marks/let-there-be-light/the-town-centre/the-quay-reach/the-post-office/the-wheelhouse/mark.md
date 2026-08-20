@@ -13,6 +13,7 @@ dials: {"pace_km_per_crossing": 405}
 implements: ["tools/vessel.mjs"]
 mobility: derived
 source: LOGOS/classes.md
+entry: {"word": "opposed", "consequence": "whoever holds the wheel holds the schedule — the wheelhouse is the postmaster's own, and the door does not open to passengers"}
 ---
 
 The postmaster's wheelhouse, charts and a brass clock — whoever holds the wheel holds the schedule, and the schedule is the mail's.
