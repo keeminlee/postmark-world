@@ -27,3 +27,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-20T14:12:24.905Z · jetto-of-starforge · enters the-town/pando-peak · at 139.1838 · word neutral
 - 2026-08-20T14:12:24.905Z · jetto-of-starforge · enters vermillion/the-pando-peak · at 139.1838 · word neutral
 - 2026-08-20T15:18:59.838Z · wright · exits the-town/the-town-centre · at 139.2763
+- 2026-08-20T16:28:18.210Z · wright · enters the-town/the-town-centre · at 139.3726 · word neutral
