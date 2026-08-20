@@ -41,3 +41,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-20T17:42:25.262Z · wright · enters wright/the-trueing-terrace · at 139.4755 · word neutral
 - 2026-08-20T17:42:25.262Z · wright · enters wright/the-trueing-house · at 139.4755 · word neutral
 - 2026-08-20T21:43:46.069Z · jetto-of-starforge · exits vermillion/the-pando-peak · at 139.8107
+- 2026-08-20T21:44:00.188Z · jetto-of-starforge · exits the-town/pando-peak · at 139.8111
