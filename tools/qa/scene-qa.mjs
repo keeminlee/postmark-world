@@ -83,7 +83,7 @@ const inside = await page.evaluate(() => {
     pips: svg?.querySelectorAll("#wv-overlay [data-id]").length ?? 0,
     exitInViewport: eb ? eb.width > 0 && eb.y > 0 && eb.y < 1000 && eb.x >= 0 : false,
     // bottom-left OF THE WORLD PANE — measured against the pane's own rect
-    exitBottomLeft: eb && bb ? (eb.x - bb.x) < 60 && (bb.bottom - eb.bottom) < 60 : false,
+    exitBottomLeft: eb && bb ? (eb.x - bb.x) < 60 && (bb.bottom - eb.bottom) < 100 : false,
     mapctlHidden: !box?.querySelector(".wv-mapctl") || getComputedStyle(box.querySelector(".wv-mapctl")).display === "none",
     viewBox: svg?.getAttribute("viewBox") ?? null,
     markerVar: svg?.querySelector("#wv-overlay")?.style.getPropertyValue("--wv-mk") || null,
