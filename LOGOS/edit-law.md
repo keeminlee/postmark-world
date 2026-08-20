@@ -2,7 +2,9 @@
 
 *To act is to declare an edge. Everything else is clothing.*
 
-Rendered in the world as `the-town/the-edit-law` and `the-town/the-standing-children`.
+Rendered in the world as `the-town/the-edit-law` and `the-town/the-standing-children` —
+and, as a v0 backlog marker (the uncategorized section, 2026-08-19),
+`the-town/the-revision-verbs`.
 
 ---
 
