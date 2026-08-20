@@ -3766,6 +3766,16 @@ export function mountViewer(appEl) {
   let byId = new Map();     // id → folded mark, for cell lookups
   let homeSet = new Set();  // ids that render green: homes (+ descendants) and sovereigns
   let mapCtx = null;
+  // THE ATLAS USED TO LOAD FOUR TIMES. Its one caller is guarded by `if (!mapCtx)`,
+  // but mapCtx is not assigned until the scene is built, which is on the far side
+  // of an await — so every render that ran inside that window started another full
+  // load. Measured on a cold page: four fetches of /atlas/town.html at +0, +132,
+  // +330 and +478 ms, four complete scene constructions, each wiping the last.
+  // The town survives it because the wipe makes the final load win, which is
+  // exactly why nobody noticed. A scene SWAP would not survive it: a load still in
+  // flight when a room mounts would land its town in the box on top of the room.
+  // The guard has to cover the in-flight window, not just the finished one.
+  let minimapLoading = false;
   let lastRadial = null;
   let worldEpoch = 0;       // bumped by applyWorldLayer; every prebuilt view is stale after
   // the threshold ledger's acts, and their own epoch. Occupancy is derived from
@@ -4659,6 +4669,8 @@ export function mountViewer(appEl) {
   }
   // ───────── the painting (atlas minimap) ─────────
   async function loadMinimap() {
+    if (minimapLoading) return;
+    minimapLoading = true;
     const boxEl = $(root, ".wv-minimap");
     // The chrome that rides ON the painting is held across the wipe below rather
     // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
@@ -4703,6 +4715,11 @@ export function mountViewer(appEl) {
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
       reattachOverlays();
+    } finally {
+      // cleared either way, so a load that FAILED is still retryable by the next
+      // render — which is the behaviour the `!mapCtx` guard already had, and the
+      // only part of it that was ever right
+      minimapLoading = false;
     }
   }
 
