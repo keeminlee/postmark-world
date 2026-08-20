@@ -483,6 +483,7 @@ export function settlementSweep({
   const registry = publicationRegistry(repo, mainBranch);
   const published = [];
   const leftDrafted = [];
+  const withdrawn = []; // the revision family's terminal half (ruled 2026-08-19)
   const touched = [];
   let rehomed = [];
 
@@ -507,7 +508,43 @@ export function settlementSweep({
         continue;
       }
       if (delta.status === "D") {
-        leftDrafted.push({ household, id: null, path: delta.path, reason: "resident deletion is not a settlement admission" });
+        // WITHDRAWAL (founder-ruled 2026-08-19 — edit-law's revision family):
+        // a branch-touched deletion of a household's own published mark is the
+        // terminal supersession, and the settlement executes it: the record
+        // leaves canon, its whole life stays in the log. The guards mirror
+        // publish — town wall, authorship wall — plus the two a withdrawal
+        // owns: escrow anchors (staked stamps must come back first; the door
+        // checks the ledger too, this is the crossing's own belt) and no
+        // stranded children (main must hold nothing inside the mark's ground —
+        // orphan re-homing is arithmetic this lane does not do yet).
+        const record = recordAt(repo, mainBranch, delta.path);
+        const wid = idAt(repo, mainBranch, delta.path);
+        if (!record || !wid) {
+          leftDrafted.push({ household, id: null, path: delta.path, reason: "deletion of a path main does not hold — nothing to withdraw" });
+          continue;
+        }
+        if (townOwned(record)) {
+          leftDrafted.push({ household, id: wid, path: delta.path, reason: "the town wall: town-signed records never withdraw from a sketchbook" });
+          continue;
+        }
+        const authorHh = wallRegistry.households[record.by] ?? null;
+        const branchHh = branchHouseholdOf(branch);
+        if (authorHh && branchHh && authorHh !== branchHh) {
+          leftDrafted.push({ household, id: wid, path: delta.path, reason: `authorship: "${record.by}" is not this sketchbook's to withdraw` });
+          continue;
+        }
+        if ((escrow.get(wid) ?? 0) > 0) {
+          leftDrafted.push({ household, id: wid, path: delta.path, reason: `escrow anchors the mark (${escrow.get(wid)}✦ staked) — stamps come back before a withdrawal` });
+          continue;
+        }
+        const dirPrefix = delta.path.replace(/\/mark\.md$/, "/");
+        const inside = git(repo, ["ls-tree", "-r", mainBranch, "--name-only", "--", dirPrefix])
+          .split(/\r?\n/).filter((l) => l.trim().endsWith("mark.md") && l.trim() !== delta.path);
+        if (inside.length) {
+          leftDrafted.push({ household, id: wid, path: delta.path, reason: `${inside.length} mark(s) still stand inside it on main — withdraw or move them first` });
+          continue;
+        }
+        withdrawn.push({ household, id: wid, path: delta.path });
         continue;
       }
       const record = recordAt(repo, branch, delta.path);
@@ -597,6 +634,14 @@ export function settlementSweep({
       touched.push(item.path);
       delete registry.published[item.id];
     }
+    for (const item of withdrawn) {
+      // the child guard held, so mark.md is the directory's only record —
+      // remove the whole seat; the id may predate the registry (founding
+      // estate), so the delete is unconditional and harmless when absent.
+      rmSync(join(repo, dirname(item.path)), { recursive: true, force: true });
+      touched.push(item.path);
+      delete registry.published[item.id];
+    }
     writeRepoFile(repo, REGISTRY_REL, `${JSON.stringify(registry, null, 2)}\n`);
     touched.push(REGISTRY_REL);
 
@@ -654,7 +699,7 @@ export function settlementSweep({
     REGISTRY_REL,
     "WORLD/world-state.json",
     "WORLD/INDEX.md",
-  ], `settlement: sweep ${published.length} published, ${unpublished.length} unpublished`);
+  ], `settlement: sweep ${published.length} published, ${unpublished.length} unpublished${withdrawn.length ? `, ${withdrawn.length} withdrawn` : ""}`);
 
   const returnedByHousehold = new Map();
   for (const item of unpublished) {
@@ -675,6 +720,7 @@ export function settlementSweep({
     published: published.map(({ content, ...item }) => item),
     left_drafted: leftDrafted,
     unpublished: unpublished.map(({ content, ...item }) => item),
+    withdrawn,
     rehomed,
     rebased,
   };

@@ -173,6 +173,88 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
 
+test("withdrawal: a branch deletion of your own published mark unpublishes at the crossing — escrow and children refuse by name (the revision family, 2026-08-19)", (t) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-withdraw-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  const put = (path, text) => {
+    const full = join(repo, path);
+    mkdirSync(dirname(full), { recursive: true });
+    writeFileSync(full, text);
+  };
+  const has = (ref, path) => {
+    try { git("cat-file", "-e", `${ref}:${path}`); return true; } catch { return false; }
+  };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs"))
+    cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+  put("WORLD/marks/let-there-be-light/alice-parcel/mark.md", record({
+    kind: "parcel", by: "alice", at: { x: 100, y: 100 }, extent: { w: 100, h: 100 }, body: "alice's parcel",
+  }));
+  const gone = "WORLD/marks/let-there-be-light/alice-parcel/old-shed/mark.md";
+  put(gone, record({ by: "alice", at: { x: 100, y: 100 }, extent: { w: 10, h: 10 }, body: "a shed alice no longer wants" }));
+  const anchored = "WORLD/marks/let-there-be-light/anchored-market/mark.md";
+  put(anchored, record({ by: "alice", at: { x: 900, y: 900 }, extent: { w: 10, h: 10 }, body: "a commons someone still backs" }));
+  const parentPath = "WORLD/marks/let-there-be-light/alice-yard/mark.md";
+  put(parentPath, record({ by: "alice", at: { x: 1500, y: 1500 }, extent: { w: 40, h: 40 }, body: "a yard holding a bench" }));
+  const childPath = "WORLD/marks/let-there-be-light/alice-yard/the-bench/mark.md";
+  put(childPath, record({ by: "alice", at: { x: 1500, y: 1500 }, extent: { w: 2, h: 2 }, body: "a bench inside the yard" }));
+  put("WORLD/settlement-publications.json", JSON.stringify({
+    version: 1,
+    published: {
+      "alice/old-shed": { household: "house-a", path: gone, class: "home" },
+      "alice/anchored-market": { household: "house-a", path: anchored, class: "commons" },
+    },
+  }, null, 2) + "\n");
+
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
+
+  git("switch", "-q", "-c", "draft/house-a");
+  rmSync(join(repo, dirname(gone)), { recursive: true, force: true });
+  rmSync(join(repo, dirname(anchored)), { recursive: true, force: true });
+  rmSync(join(repo, parentPath), { force: true }); // deletes the yard's OWN record; the bench stays
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house a withdraws three ways");
+  git("switch", "-q", "main");
+
+  const remote = mkdtempSync(join(tmpdir(), "postmark-withdraw-remote-"));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  execFileSync("git", ["init", "--bare", "-q", remote]);
+  git("remote", "add", "origin", remote);
+  git("push", "-q", "origin", "main", "draft/house-a");
+
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([
+    { holder: "supporter", mark: "alice/anchored-market", n: 5, weight: 10 },
+  ]));
+  const report = settlementSweep({ repo, stakesPath });
+
+  assert.deepEqual(report.withdrawn, [{ household: "house-a", id: "alice/old-shed", path: gone }],
+    "the free withdrawal executes, and only it");
+  assert.equal(has("main", gone), false, "the shed leaves canon");
+  assert.match(report.left_drafted.find((row) => row.id === "alice/anchored-market").reason, /escrow anchors/,
+    "the staked deletion refuses by the anchor's name");
+  assert.equal(has("main", anchored), true, "and the anchored mark stays published");
+  assert.match(report.left_drafted.find((row) => row.id === "alice/alice-yard").reason, /still stand inside/,
+    "the parent deletion refuses by its children's name");
+  assert.equal(has("main", parentPath), true, "the yard stays");
+  assert.equal(has("main", childPath), true, "and the bench is never stranded");
+  const registry = JSON.parse(readFileSync(join(repo, "WORLD", "settlement-publications.json"), "utf8"));
+  assert.equal(registry.published["alice/old-shed"], undefined, "the registry lets the withdrawn mark go");
+  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
+});
+
 test("the authorship wall: a registered author never publishes from another household's sketchbook", (t) => {
   const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-wall-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));

@@ -9,7 +9,7 @@ extends: entity
 ambient: true
 dials: {}
 implements: []
-actions: [{"action": "say", "residue": "the-town/sound"}, {"action": "walk", "residue": "the-town/departure"}, {"action": "enter", "residue": "the-town/entry"}, {"action": "exit", "residue": "the-town/entry"}, {"action": "leave-mark", "residue": "the-town/mark"}, {"action": "stake", "residue": "the-town/stake"}, {"action": "unstake", "residue": "the-town/stake"}, {"action": "give", "residue": "the-town/attachment"}, {"action": "drop", "residue": "the-town/attachment"}, {"action": "take", "residue": "the-town/attachment"}, {"action": "note-to-self", "residue": "the-town/note"}]
+actions: [{"action": "say", "residue": "the-town/sound"}, {"action": "walk", "residue": "the-town/departure"}, {"action": "enter", "residue": "the-town/entry"}, {"action": "exit", "residue": "the-town/entry"}, {"action": "leave-mark", "residue": "the-town/mark"}, {"action": "withdraw", "residue": "the-town/mark"}, {"action": "stake", "residue": "the-town/stake"}, {"action": "unstake", "residue": "the-town/stake"}, {"action": "give", "residue": "the-town/attachment"}, {"action": "drop", "residue": "the-town/attachment"}, {"action": "take", "residue": "the-town/attachment"}, {"action": "note-to-self", "residue": "the-town/note"}]
 source: LOGOS/classes.md
 ---
 
