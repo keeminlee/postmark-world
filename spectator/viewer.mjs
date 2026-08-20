@@ -23,6 +23,7 @@ import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../t
 import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
+import { parseThresholdLedger, occupancyAt, occupantsOf, withinOf } from "../tools/thresholds.mjs";
 
 const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
 const $ = (root, s) => root.querySelector(s);
@@ -535,6 +536,62 @@ export function observerNameFor(key, standpoint = { x: 0, y: 0 }) {
 }
 export function standpointSectionLabel(key) {
   return key && key !== SPECTATOR_ACTOR ? `where ${key} stands` : "where you stand";
+}
+
+// ───────── WHAT THIS STANDPOINT HAS CROSSED INTO (R15)
+//
+// STANDING ON IT IS NOT BEING IN IT, and that is the one thing a reader of this
+// file could get quietly wrong. A radial's `within` is where you STAND — the
+// marks whose ground your coordinates fall on, which walking alone gives you.
+// This is the other fact entirely: the marks you have CROSSED INTO. You can
+// stand on the Post Office's ground all day and have entered nothing; only the
+// crossing puts you inside. The two answers routinely disagree, so nothing here
+// reuses the word `within` — the words are `entered`, `insideOf`, `alongside`.
+//
+// Derived, never stored — the walk ledger's own shape. The threshold ledger's
+// ACTS are the record; occupancy is a pure function of them and the clock, so
+// this page replays what any clone replays and cannot drift from it.
+export function standpointOccupancy({ acts = [], at = Infinity, handle = null } = {}) {
+  const who = handle && handle !== SPECTATOR_ACTOR ? handle : null;
+  const occupancy = occupancyAt(acts, at);
+  const manifest = occupantsOf(occupancy);
+  const entered = who ? [...(occupancy.get(who) ?? [])] : [];
+  const insideOf = who ? withinOf(occupancy, who) : null;
+  // who else is in the innermost room you are in — the manifest, minus yourself
+  const alongside = insideOf ? (manifest.get(insideOf) ?? []).filter((h) => h !== who) : [];
+  return { entered, insideOf, alongside, manifest };
+}
+
+// The chip, on the standpoint whose crossings these are. Absent rather than
+// empty: a spectator has crossed nothing and neither has a resident who never
+// entered anywhere, and "entered: —" under every read would be a claim the
+// record never made. The chain is outermost→innermost because occupancy of a
+// room implies occupancy of what holds it — you are aboard the ship AND in her
+// wheelhouse, and the ladder is the honest shape of that.
+export function occupancyChipHTML({ entered = [], alongside = [], nameOf = deslugMarkId } = {}) {
+  if (!entered.length) return "";
+  const chain = entered.map((id) =>
+    `<span class="wv-entered-mark" data-id="${esc(id)}">${esc(nameOf(id))}</span>`)
+    .join(`<span class="wv-entered-in">in</span>`);
+  const with_ = alongside.length
+    ? `<span class="wv-entered-with">with ${esc(alongside.join(", "))}</span>`
+    : `<span class="wv-entered-with">alone in here</span>`;
+  return `<div class="wv-entered" title="derived from the threshold ledger's crossings — not from where you are standing">`
+    + `<span class="wv-entered-lbl">entered</span>${chain}${with_}</div>`;
+}
+
+// The dev readout: the whole manifest, which is the question "who is in this
+// room" asked of every room at once. It rides with the dials rather than in the
+// telling because it is a fact about the RECORD, not about a standpoint — the
+// same reason the walk ledger's tally sits down there (Keemin, 2026-08-04).
+export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized = 0, at = null } = {}) {
+  const rooms = [...manifest.entries()].sort(([a], [b]) => a.localeCompare(b));
+  const clock = at === null ? "" : ` · at ${Number(at).toFixed(4)}`;
+  const head = `<span class="wv-crossing-lbl">threshold ledger</span>`
+    + `<span>${acts} crossing${acts === 1 ? "" : "s"}${unrecognized ? ` · ${unrecognized} unrecognized` : ""}${clock}</span>`;
+  if (!rooms.length) return head + `<span class="wv-quiet">nobody is inside anything</span>`;
+  return head + rooms.map(([mark, handles]) =>
+    `<span class="wv-crossing-room"><b>${esc(deslugMarkId(mark))}</b> ${esc(handles.join(", "))}</span>`).join("");
 }
 
 // IS THIS PREBUILT VIEW STILL TRUE. Two ways it stops being: the world it was
@@ -2347,6 +2404,13 @@ const STYLE = `
 .wv-extent-t { font-size:.66rem; color:var(--dim); font-variant-numeric:tabular-nums; white-space:nowrap; }
 .wv-cluster { margin-top:7px; font-size:.8rem; font-style:italic; color:var(--amber); opacity:.85; }
 .wv-tallies { margin-top:22px; padding-top:10px; font-size:.82rem; color:var(--dim); border-top:1px solid var(--line); max-width:76ch; }
+/* what this standpoint has CROSSED INTO — never where it is standing (R15) */
+.wv-entered { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin:10px 0 0;
+  font-size:.78rem; color:var(--dim); }
+.wv-entered-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; opacity:.75; }
+.wv-entered-mark { color:var(--amber); border:1px solid var(--amber-dark); border-radius:999px; padding:1px 8px; }
+.wv-entered-in { opacity:.55; font-style:italic; }
+.wv-entered-with { opacity:.7; font-style:italic; }
 /* everything is a mark-cell — tier accents + the encompassing ladder */
 .wv-section-lbl { font-size:.72rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim);
   margin:20px 0 9px; opacity:.75; }
@@ -2595,6 +2659,9 @@ const STYLE = `
 .wv-walkpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
 .wv-walkpanel input[type=range] { width:130px; vertical-align:middle; }
 .wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
+.wv-crossingpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
+.wv-crossing-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); }
+.wv-crossing-room b { color:var(--amber); font-weight:600; }
 #wv-walk-readout { opacity:.75; }
 /* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
 /* The painting's controls FLOAT ON THE PAINTING (Keemin, 2026-08-04) — they act
@@ -3020,6 +3087,10 @@ const MARKUP = `
       <!-- the walk ledger's own tally: a diagnostic, not a thing the town needs to
            read at the bottom of its map -->
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
+      <!-- and the threshold ledger's, beside it: the crossings, and the rooms
+           they derive. Occupancy is the record's answer rather than any one
+           standpoint's, so it reads as a diagnostic here and as a chip there. -->
+      <p class="wv-crossingpanel" id="wv-crossing-panel" hidden></p>
       <div class="wv-dev-dials"></div>
     </div>
   </nav>
@@ -3159,6 +3230,25 @@ export function mountViewer(appEl) {
   let mapCtx = null;
   let lastRadial = null;
   let worldEpoch = 0;       // bumped by applyWorldLayer; every prebuilt view is stale after
+  // the threshold ledger's acts, and their own epoch. Occupancy is derived from
+  // these the way position is derived from the walk ledger, so what is held is
+  // the RECORD; the rooms are recomputed at whatever clock is asked for.
+  let crossings = { acts: [], unrecognized: 0 };
+  let crossingEpoch = 0;    // bumped when the ledger lands; a pane built before it is stale
+  // WHICH CLOCK THE FOLD IS ASKED AT, and it is not `state.crossing`.
+  //
+  // The dial is a FLOORED crossing number; the ledger stamps a FRACTIONAL one
+  // (`at 138.1082`). Folding the acts at the floor drops every crossing made
+  // since the last 12-hour boundary, so the page would sit up to a whole crossing
+  // behind the record and a resident who had just stepped through a door would be
+  // told he was still outside it. That is thresholds.mjs's own `stampAt` bug seen
+  // from the reader's side, and its ruling is the fix: one clock, both sides.
+  //
+  // Time-travel keeps working and keeps meaning what it says — a reader scrubbed
+  // to crossing 138 is asking what was true THEN, and the honest answer at 138 is
+  // that the 138.1082 crossing had not happened yet. Same rule the walks door
+  // uses: the override if there is one, the live fractional clock otherwise.
+  const occupancyClock = () => (state.crossingOverride ? state.crossing : fractionalCrossing());
   const markInteraction = createMarkInteractionStore();
 
   // ───────── data + world (feature-detected source) ─────────
@@ -3506,6 +3596,8 @@ export function mountViewer(appEl) {
   const viewSignature = () => [
     worldEpoch, state.crossing, state.markFilter,
     identityResolved() ? 1 : 0, JSON.stringify(state.dials),
+    crossingEpoch,   // the crossings are the record too: a pane telling who is
+                     // inside what is stale the moment the ledger says otherwise
   ].join("|");
   const standpointKey = () => (isSpectating() || !state.handle ? SPECTATOR_ACTOR : state.handle);
   const samePlace = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y;
@@ -3653,6 +3745,14 @@ export function mountViewer(appEl) {
     const e = openYourEyes({ x: standpoint.x, y: standpoint.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
     const within = e.radial.within ?? [];
     const obs = e.radial.observer ?? {};
+    // AND THE OTHER CONTAINMENT, which `within` above is NOT. That one is
+    // geometric — the ground this standpoint's coordinates fall on. This one is
+    // the crossings: what this standpoint has ENTERED, off the threshold ledger.
+    // Walking onto a mark never fills this; only a crossing does. Two facts, two
+    // words, and they are kept far apart on purpose (R15).
+    const { entered, alongside } = standpointOccupancy({
+      acts: crossings.acts, at: occupancyClock(), handle: key,
+    });
     const isNew = state.markFilter === "new";
     // One row, one question: everything, just mine, or recency. The World lens
     // that used to sit above it is gone — composition is not a question the
@@ -3700,6 +3800,9 @@ export function mountViewer(appEl) {
     // that ignores sight would be the regression).
     const feed = isNew ? newFeed(mine ? isMine : null) : null;
     box.innerHTML = chips
+      // above the ladder, because "you are INSIDE the Post Office" outranks
+      // "you are standing on its ground" the moment both are true
+      + occupancyChipHTML({ entered, alongside, nameOf: (id) => markName(byId.get(id) ?? { id }).name })
       + (ladder ? `<div class="wv-section-lbl">${esc(standpointSectionLabel(key))}</div>`
                 + `<div class="wv-ladder-cells">${ladder}</div>` : "")
       + (isNew
@@ -6121,6 +6224,7 @@ export function mountViewer(appEl) {
     if (state.view === "telling") renderTelling();
     renderModeControls();
     renderSpectatorCoordinate();
+    renderCrossingPanel();
     if (!mapCtx) loadMinimap();
   }
   // a re-render that the world does TO the viewer, not the viewer to itself: it must
@@ -6850,6 +6954,36 @@ export function mountViewer(appEl) {
       } catch { /* try the next one */ }
     }
   }
+  // ───────── the crossings ─────────
+  // The threshold ledger, fetched exactly as the walk ledger is, and for the same
+  // reason: occupancy is derived from the ACTS, so the acts are what a reader
+  // needs. Same-origin first (this clone's disk), then the published raw file.
+  //
+  // A ledger of nothing but exits is a real answer — everyone has left — so this
+  // stops at the first source that ANSWERS rather than at the first that answers
+  // with acts. The walk loader's non-empty guard is right for positions and would
+  // be wrong here: it would fall through a true "the room is empty" to the raw
+  // file and report a room the local record says has been emptied.
+  async function loadThresholdLedger() {
+    for (const url of ["/WORLD/threshold-ledger.md", `${RAW}/WORLD/threshold-ledger.md`]) {
+      try {
+        const r = await fetch(url, { credentials: "omit" });
+        if (!r.ok) continue;
+        const parsed = parseThresholdLedger(await r.text());
+        crossings = { acts: parsed.acts, unrecognized: parsed.unrecognized.length };
+        crossingEpoch += 1;   // every pane built before this one is stale
+        return;
+      } catch { /* try the next one */ }
+    }
+  }
+  function renderCrossingPanel() {
+    const host = $(root, "#wv-crossing-panel");
+    if (!host) return;
+    const at = occupancyClock();
+    const { manifest } = standpointOccupancy({ acts: crossings.acts, at });
+    host.hidden = !crossings.acts.length;
+    host.innerHTML = occupancyDevLine({ manifest, acts: crossings.acts.length, unrecognized: crossings.unrecognized, at });
+  }
   function renderActivity() {
     const box = $(root, ".wv-activity");
     const list = $(root, ".wv-acts");
@@ -6959,6 +7093,10 @@ export function mountViewer(appEl) {
       await loadData();
       renderCurrent();
       loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
+      // and the crossings, once THEY arrive. A full re-render rather than one
+      // panel: the telling's own chip is downstream of this too, and the ledger
+      // landing is exactly the "record moved" that the view cache invalidates on.
+      loadThresholdLedger().then(renderCurrent);
       // the faces, once they arrive — a redraw is owed because the walkers were
       // already painted as monograms by then, and this is what puts the pictures
       // on them. Never awaited: the map is not allowed to wait on a nicety.
@@ -6991,7 +7129,10 @@ export function mountViewer(appEl) {
     // every caller that would ask.
     // The `data` guard is not defensive noise: boot is async, so a host that
     // scrubs before the first fold lands would otherwise re-pull into nothing.
-    reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); renderCurrent(); return true; },
+    // the crossings come with them, for the reason the walkers do: "the record
+    // changed", "who is standing in it changed" and "who is INSIDE it changed"
+    // are one event to every caller that would ask.
+    reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); await loadThresholdLedger(); renderCurrent(); return true; },
     stop: () => {
       clearInterval(clock);
       clearInterval(walkState.timer);

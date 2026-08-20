@@ -8,6 +8,8 @@
 //   • /world-engine/**          → the viewer module + the engine .mjs (so the
 //                                  browser imports the exact library, unbundled)
 //   • /WORLD/*.json             → the world's public record, off THIS clone's disk
+//   • /WORLD/threshold-ledger.md → the crossings; the page derives occupancy from
+//                                  them the way it derives position from walks
 //   • /api/stakes?holder=       → per-holder stakes, parsed from the town's
 //                                  stamp-ledger (LOCAL-ONLY; the island hides the half)
 //   • /atlas/*, /media/*        → proxied to postmark.town (the painting and its
@@ -34,7 +36,7 @@ const PORT = Number(process.env.PORT ?? 4877);
 const STAMP_LEDGER = process.env.STAMP_LEDGER ?? "G:/Wright-HQ/postmark/WHITE_PAGES/stamp-ledger.md";
 const ATLAS_ORIGIN = process.env.ATLAS_ORIGIN ?? "https://postmark.town";
 
-const MIME = { ".mjs": "text/javascript; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".html": "text/html; charset=utf-8" };
+const MIME = { ".mjs": "text/javascript; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".html": "text/html; charset=utf-8", ".md": "text/markdown; charset=utf-8" };
 const STAKE_RE = /^-\s+(\S+)\s+·\s+(\S+)\s+→\s+(stake|return):mark:(\S+)\s+·\s+(\d+)/;
 
 function send(res, code, body, type) {
@@ -94,6 +96,12 @@ createServer(async (req, res) => {
     if (p.startsWith("/world-engine/tools/") && p.endsWith(".mjs")) return serveFile(res, "tools/" + p.slice("/world-engine/tools/".length));
     if (p === "/WORLD/world-state.json") return serveFile(res, "WORLD/world-state.json");
     if (p === "/WORLD/skeleton.json") return serveFile(res, "WORLD/skeleton.json");
+    // the crossings, as a FILE rather than as a door. Occupancy is derived from
+    // the acts client-side (the same shape as position from the walk ledger), so
+    // what the page needs is the record, not this server's opinion of it — and
+    // serving it here is what lets a local read stand on THIS clone's disk
+    // instead of falling through to the published raw file.
+    if (p === "/WORLD/threshold-ledger.md") return serveFile(res, "WORLD/threshold-ledger.md");
     if (p === "/seeding/manifest.json") return serveFile(res, "seeding/manifest.json"); // homes → green (viewer derives home-ness; the record is untouched)
 
     if (p === "/api/stakes") {
@@ -137,7 +145,7 @@ createServer(async (req, res) => {
 
     if (p.startsWith("/atlas/") || p.startsWith("/media/")) return proxyTown(res, p);
 
-    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
+    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /WORLD/threshold-ledger.md, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
   } catch (e) {
     json(res, 500, { error: String(e?.message ?? e) });
   }
