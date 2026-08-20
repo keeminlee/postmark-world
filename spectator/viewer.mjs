@@ -738,6 +738,48 @@ export function markImagePath(mark) {
 // MAX_ZOOM_IN that the one-svg approach forced. Same arithmetic, sane numbers.
 export const ROOM_GROUND_UNITS = 960;
 
+// ── the placeholder extent (art-less marks stand in as tinted blocks) ───────
+//
+// A mark with no image or svg still HAS a place and a size, and inside a room
+// that size is most of what it means — furniture without its footprint is a dot
+// pretending to be a table. So an art-less embodied mark draws its extent as a
+// block in a colour derived from its OWN id: deterministic (the same mark is
+// the same colour on every load, for every reader), LOW SATURATION by the
+// founder's word (full presence, muted hue — distinctness comes from the hue,
+// never from transparency), and different for parent and child, so nested
+// placeholders read as distinct blocks instead of one smear.
+export function placeholderHue(id) {
+  let h = 0;
+  const s = String(id ?? "");
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h % 360;
+}
+
+export function placeholderExtentSVG(mark, px) {
+  if (!isEmbodiedMark(mark) || markImagePath(mark)) return "";
+  const hue = placeholderHue(mark.id);
+  const fill = `hsl(${hue} 22% 76%)`, edge = `hsl(${hue} 26% 58%)`;
+  const attrs = `class="wv-ph-extent" data-id="${esc(mark.id)}" fill="${fill}" stroke="${edge}"`;
+  const ring = polygonOf(mark);
+  if (ring) {
+    const pts = ring.map((p) => { const q = px(p); return `${q.x.toFixed(1)},${q.y.toFixed(1)}`; }).join(" ");
+    return `<polygon ${attrs} points="${pts}"/>`;
+  }
+  const r = rect(mark);
+  const a = px({ x: r.x - r.w / 2, y: r.y - r.h / 2 });
+  const b = px({ x: r.x + r.w / 2, y: r.y + r.h / 2 });
+  return `<rect ${attrs} x="${a.x.toFixed(1)}" y="${a.y.toFixed(1)}"`
+    + ` width="${(b.x - a.x).toFixed(1)}" height="${(b.y - a.y).toFixed(1)}"/>`;
+}
+
+// the drafting sheet's rule: a round number of metres, near enough to 48 ground
+// units that the squares read as squared paper at any room size
+const SCENE_RULE_M = [0.25, 0.5, 1, 2, 5, 10, 25, 50, 100, 250, 500];
+export function sceneRuleM(mPerPx) {
+  const want = 48 * (Number(mPerPx) || 1);
+  return SCENE_RULE_M.reduce((best, m) => (Math.abs(m - want) < Math.abs(best - want) ? m : best), SCENE_RULE_M[0]);
+}
+
 export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image = null } = {}) {
   const r = rect(room);                                    // centre + extent, metres
   const padM = Math.max(r.w, r.h) * pad;
@@ -750,12 +792,24 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
     x: originPx.x + (r.x - r.w / 2) / mPerPx, y: originPx.y + (r.y - r.h / 2) / mPerPx,
     w: r.w / mPerPx, h: r.h / mPerPx,
   };
-  const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w.toFixed(1)} ${h.toFixed(1)}">`
-    + `<rect class="wv-scene-ground" x="0" y="0" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#ffffff"/>`
+  // THE PAPER FLOOR (founder, 2026-08-20, revising his own white): the
+  // placeholder ground is the drafting sheet — warm paper, squared with a
+  // ruled grid at a round number of metres, the room's own boundary drawn as
+  // the wall. Still the atlas's base-raster-svg structure; still replaced by
+  // the mark's image where it has one; the paper is what "no art yet" looks
+  // like, not a rug competing with the furniture standing on it.
+  const rule = (sceneRuleM(mPerPx) / mPerPx).toFixed(3);
+  const rm = (n) => n.toFixed(1);
+  const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${rm(w)} ${rm(h)}">`
+    + `<defs><pattern id="wv-scene-rule-pat" width="${rule}" height="${rule}" patternUnits="userSpaceOnUse">`
+    + `<path d="M ${rule} 0 L 0 0 0 ${rule}" class="wv-scene-rule"/></pattern></defs>`
+    + `<rect class="wv-scene-ground" x="0" y="0" width="${rm(w)}" height="${rm(h)}"/>`
+    + `<rect x="0" y="0" width="${rm(w)}" height="${rm(h)}" fill="url(#wv-scene-rule-pat)"/>`
     + (image
-      ? `<image href="${esc(image)}" x="${roomPx.x.toFixed(1)}" y="${roomPx.y.toFixed(1)}"`
-        + ` width="${roomPx.w.toFixed(1)}" height="${roomPx.h.toFixed(1)}" preserveAspectRatio="xMidYMid meet"/>`
+      ? `<image href="${esc(image)}" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}"`
+        + ` width="${rm(roomPx.w)}" height="${rm(roomPx.h)}" preserveAspectRatio="xMidYMid meet"/>`
       : "")
+    + `<rect class="wv-scene-wall" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}" width="${rm(roomPx.w)}" height="${rm(roomPx.h)}"/>`
     + `<g class="wv-scene-art"></g>`
     + `</svg>`;
   return { svgText, originPx, mPerPx };
@@ -2886,6 +2940,15 @@ const STYLE = `
    bug. Same button class as the telling's copy: one click route, no drift. */
 .wv-scene-exit { position:absolute; left:12px; bottom:12px; z-index:9; }
 .wv-scene-exit .ctl { font-size:.82rem; padding:5px 11px; box-shadow:0 2px 10px rgba(0,0,0,.5); }
+/* the paper floor — the placeholder ground is the drafting sheet (founder's
+   word): warm and low-contrast, because it is the GROUND, and ground that
+   competes with the furniture standing on it is a rug, not a floor */
+.wv-scene-ground { fill:#e8e0cf; fill-opacity:.94; }
+/* placeholder extents: the block is presence, not glass — colour does the
+   distinguishing (low saturation, per-mark hue), so no transparency games */
+.wv-ph-extent { stroke-width:1.2; pointer-events:none; }
+.wv-scene-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
+.wv-scene-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
 .wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
@@ -4229,8 +4292,9 @@ export function mountViewer(appEl) {
     mountScene({
       boxEl, svg, originPx: ground.originPx, mPerPx: ground.mPerPx,
       reattachOverlays: captureKeep(boxEl),
-      camera: false,       // a room fits its pane; pan/zoom refused (the ruling)
-      includeMine: false,  // the roof: your marks elsewhere don't follow you in
+      camera: false,            // a room fits its pane; pan/zoom refused (the ruling)
+      includeMine: false,       // the roof: your marks elsewhere don't follow you in
+      placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
     });
     sceneRoomId = room.id;
   }
@@ -4674,7 +4738,13 @@ export function mountViewer(appEl) {
   // and `includeMine` gates the portfolio union in the draw-set (a room shows
   // what is IN it; your marks elsewhere in town do not follow you through a
   // door — the roof, refused at the source per the 08-20 spike receipt).
-  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, camera = true, includeMine = true }) {
+  // `placeholderExtents` gives every art-less embodied mark a programmatic
+  // stand-in (founder, 2026-08-20, revising his own always-on footprints): its
+  // extent filled with a deterministic per-mark colour at LOW SATURATION — full
+  // presence, muted hue — so a room reads as a floor plan and nested
+  // placeholders read as distinct blocks. Drawn by the ONE overlay, gated by
+  // the scene; the town keeps its footprint toggle unchanged.
+  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, camera = true, includeMine = true, placeholderExtents = false }) {
     // THE FAR COUNTRY, mounted UNDER the painting rather than over it.
     //
     // Every other derived layer is appended, so it draws on top. These two are
@@ -4773,7 +4843,7 @@ export function mountViewer(appEl) {
     }
     const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
     const view = { ...full };
-    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, camera, includeMine };
+    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, camera, includeMine, placeholderExtents };
     drawFarCountry();
     let tween = null;
     // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
@@ -4876,6 +4946,21 @@ export function mountViewer(appEl) {
     mapCtx.refit = () => {
       const pane = boxEl.getBoundingClientRect();
       if (!pane.width || !pane.height) return;
+      // A CAMERA-LESS SCENE IS SHOWN WHOLE — letterboxed, never band-cropped.
+      // The town's refit keeps width and crops height to the pane, which is
+      // right for a scene with a camera (the hand can fetch the rest) and wrong
+      // for a room (there is no hand; a cropped corner is simply GONE — the
+      // scene-qa run that clicked a pip at y=-183 is the receipt). The view
+      // takes the pane's aspect and CONTAINS the ground, centred; the slack is
+      // honest dark around the paper.
+      if (!camera) {
+        const pa = pane.width / pane.height, ga = full.w / full.h;
+        const w = pa >= ga ? full.h * pa : full.w;
+        const h = pa >= ga ? full.h : full.w / pa;
+        Object.assign(view, { x: full.x + (full.w - w) / 2, y: full.y + (full.h - h) / 2, w, h });
+        applyView();
+        return;
+      }
       const cy = view.y + view.h / 2;
       const h = view.w * (pane.height / pane.width);
       Object.assign(view, { y: cy - h / 2, h });
@@ -5234,6 +5319,16 @@ export function mountViewer(appEl) {
     // At low zoom they merge again on purpose — the pile is honest about being
     // a pile, and the chooser is the guarantee that you can still reach into it.
     const drawn = overlayMarks(radial);
+    // PLACEHOLDER EXTENTS (scene-gated): art-less embodied marks stand in as
+    // low-saturation tinted blocks, drawn UNDER the pips, largest first so a
+    // child's block sits readable on its parent's. Same overlay, same loop —
+    // a rule of the one renderer, switched by the scene, never a second one.
+    if (mapCtx?.placeholderExtents) {
+      const blocks = drawn
+        .filter((m) => isEmbodiedMark(m) && m.extent && !markImagePath(m))
+        .sort((a, b) => ((b.extent?.w ?? 0) * (b.extent?.h ?? 0)) - ((a.extent?.w ?? 0) * (a.extent?.h ?? 0)));
+      for (const m of blocks) s += placeholderExtentSVG(m, px);
+    }
     const fanned = mapCtx?.zoomK >= FAN_MIN_ZOOM ? coLocatedMarkIds(drawn) : new Set();
     for (const m of drawn) {
       const p = px(m.at);

@@ -24,10 +24,12 @@ overlay, walkers, hover, click precedence, choosers, walk desk, bubbles, camera.
 
 - The town's ground is the atlas (`/atlas/town.html`), registration from the
   skeleton's `_grid`.
-- A room's ground is `roomGround(mark)`: a full-bleed **white** rect, the mark's
-  own image over its footprint when it has one, and an (initially empty) svg art
-  slot — the same base-raster-svg structure the atlas has, so the two grounds
-  are the same shape all the way down.
+- A room's ground is `roomGround(mark)`: the **paper floor** — a full-bleed
+  drafting sheet (warm paper, squared with a ruled grid at a round number of
+  metres, the room's own boundary drawn as the wall), the mark's own image over
+  its footprint when it has one, and an (initially empty) svg art slot — the
+  same base-raster-svg structure the atlas has, so the two grounds are the same
+  shape all the way down. (The founder's word, revising his own earlier white.)
 
 Entering swaps scenes the way a door works in Pokémon: the town's svg comes out
 of the box whole (held aside, listeners alive), the room's ground mounts through
@@ -39,7 +41,7 @@ contents, wherever they came from.
 ## The complete difference list
 
 Every code-level difference between the town scene and a mark scene, each with
-its justification. There are **five**.
+its justification. There are **seven**.
 
 | # | Difference | Justification |
 |---|---|---|
@@ -48,6 +50,8 @@ its justification. There are **five**.
 | 3 | **`camera: false`** — wheel and drag-pan inert; `lockOn`/`fitAll` no-ops; `.wv-mapctl` hidden (`.is-scene-mark`) | The interiors ruling: a scene that fits its pane refuses a camera. Locked ≠ absent — framing still exists; the hand on it doesn't. |
 | 4 | **`includeMine: false`** — the portfolio union (`state.mineIds`) stays out of the draw-set | The roof. Without it every mark the acting resident owns anywhere in town enters `glyphIds` and stays hit-testable from inside a room (2026-08-20 spike receipt). Refused at the source, not filtered later. |
 | 5 | **The exit chrome** — `.wv-scene-exit`, bottom-left of the pane, every view mode | The way out must exist where the reader is. The telling's own exit collapses with the telling in painting-only — the DEFAULT mode — which is how the founder stood in a room with no visible door (the b6 diagnosis). Same `.wv-int-exit-btn` class: one click route, no drift. |
+| 6 | **`placeholderExtents: true`** — an art-less embodied mark draws its extent as a block in a deterministic per-mark colour at LOW saturation, under the pips, largest first | The founder's word (2026-08-20, replacing always-on footprints): inside a room, furniture without its footprint is a dot pretending to be a table. Distinctness comes from hue, never transparency; the same mark is the same colour for every reader on every load. Drawn by the ONE overlay, gated by the scene; the town keeps its footprint toggle. |
+| 7 | **Whole-scene refit** — a camera-less scene letterboxes (contains the ground, centred); the town's refit band-crops to the pane | A room has no hand to fetch a cropped corner back — scene-qa clicked a pip at y=−183 after a pane reshape, which is the receipt. Same refit function, one branch on the same `camera` flag as #3. |
 
 Additionally, the **draw-set source** differs by construction, not by branch:
 `drawOverlay` consumes whatever radial the telling hands it. Outdoors that is
