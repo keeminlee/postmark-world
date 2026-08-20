@@ -1114,6 +1114,41 @@ export const MARK_SNAP_RADIUS_PX = 18;
 // halo and a 9-unit dot into the same circle and broken the hit target.
 export const MARKER_MAX_GROWTH = 2.5;
 
+// ── overlay markup: written with the RECORD, sized by the CAMERA ────────────
+//
+// THESE FUNCTIONS TAKE NO CAMERA ARGUMENT, and that is the point rather than an
+// oversight. Marker size used to be baked into every pip's `r` as `11 / k`,
+// which meant the only way to answer "the camera moved" was to rebuild all of
+// the markup — 1,335 DOM nodes over a ninety-frame drag. The radii below are
+// CONSTANTS; the size lives in a CSS variable the camera sets once per frame.
+//
+// If a later change wants the zoom in here again it will have to add a parameter
+// to do it, and the test that pins these radii will fail first and say why.
+export const OVERLAY_PIP_R = 11;
+export const OVERLAY_DOT_R = 17;
+export const OVERLAY_HALO_R = 36;
+
+/** One pip, at its painting coordinates. The fan offset is a `cx`/`cy` INSIDE
+ *  the scaled group, so it stays a constant few panel pixels at any zoom — the
+ *  same thing dividing it by k used to buy. */
+export function overlayPipSVG({ at, id, classes = "", fan = null, title = null } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
+  const dx = Number(fan?.dx) || 0, dy = Number(fan?.dy) || 0;
+  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+    + `<circle cx="${dx}" cy="${dy}" r="${OVERLAY_PIP_R}" class="ov-pip ${classes}" data-id="${esc(id)}">`
+    + (title ? `<title>${esc(title)}</title>` : "")
+    + `</circle></g></g>`;
+}
+
+/** Where the reader is standing: the dot and its halo, counter-scaled together. */
+export function overlayStandpointSVG({ at } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
+  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+    + `<circle r="${OVERLAY_DOT_R}" class="ov-dot"/><circle r="${OVERLAY_HALO_R}" class="ov-halo"/></g></g>`;
+}
+
 export function markerScale(zoomK) {
   const k = Number.isFinite(zoomK) && zoomK > 0 ? zoomK : 1;
   return Math.max(1, Math.sqrt(k), k / MARKER_MAX_GROWTH);
@@ -2911,6 +2946,13 @@ const STYLE = `
    uniform amber, which read as "one kind of thing" on a map whose whole point
    is that the kinds differ (Keemin 2026-07-27: "green homes, blue constitution").
    Amber stays the market default, so only the two named classes move. */
+/* MARKER SIZE IS A CAMERA FACT, so it is one variable and not a redraw. The pip
+   markup is written once with the record; a pan or a zoom sets --wv-mk on the
+   overlay and every marker counter-scales at once, on the compositor, with no
+   DOM touched. transform-origin must be stated: an SVG element's CSS transform
+   box is the viewBox by default, so an unstated origin would scale each pip
+   about the middle of the painting instead of about itself. */
+.ov-s { transform:scale(var(--wv-mk,1)); transform-origin:0 0; }
 .ov-pip { fill:var(--amber); opacity:.65; }
 .ov-pip.t-constitution { fill:var(--blue); }
 .ov-pip.t-home { fill:var(--green); }
@@ -4419,12 +4461,21 @@ export function mountViewer(appEl) {
     // The chrome that rides ON the painting is held across the wipe below rather
     // than re-created: the bubble layer owns live nodes (a pinned card mid-read,
     // the walk desk itself) that must not be rebuilt when the atlas loads.
-    // The interior panel rides this list for the same reason the bubbles do: the
-    // atlas landing must not knock the reader out of a room. Without it the wipe
-    // below deletes the floor and leaves `is-inside` on the box — a page that
-    // says you are indoors and shows you nothing.
-    const overlays = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk", ".wv-interior-panel"]
-      .map((selector) => $(boxEl, selector)).filter(Boolean);
+    // WHAT SURVIVES THE WIPE, and it is now a thing an element can SAY about
+    // itself. The list below is a hidden coupling: anything mounted in this box
+    // that is not on it is silently destroyed when the painting lands, which is
+    // how the interior panel came to be deleted a second after it was drawn —
+    // leaving a page that said you were indoors and showed you nothing.
+    //
+    // `data-wv-keep` is the convention going forward: mark the node and it
+    // survives, without anyone having to find this line. The literal names stay
+    // because the elements carrying them are in the template above and renaming
+    // them is not this pass's to do — but nothing NEW needs to join them.
+    const KEEP = [".wv-worldmark", ".wv-mapctl", ".wv-spectator-coordinate", ".wv-paint-tallies", ".wv-bubbles", ".wv-walkdesk", ".wv-interior-panel"];
+    const overlays = [...new Set([
+      ...KEEP.map((selector) => $(boxEl, selector)),
+      ...boxEl.querySelectorAll("[data-wv-keep]"),
+    ])].filter(Boolean);
     const reattachOverlays = () => overlays.forEach((el) => boxEl.appendChild(el));
     try {
       const html = await fetch("/atlas/town.html").then((r) => { if (!r.ok) throw new Error(`atlas HTTP ${r.status}`); return r.text(); });
@@ -4547,13 +4598,36 @@ export function mountViewer(appEl) {
       mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
       drawFarCountry();
       let tween = null;
-      function applyView() {
-        svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
-        mapCtx.zoomK = full.w / view.w;
-        if (lastRadial) drawOverlay(lastRadial);
+      // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
+      // wait for it. Three separate readers used to run inline on every camera
+      // change — the overlay rebuild, the highlight, and the bubbles — each
+      // measuring and then writing, so a drag interleaved layout reads with DOM
+      // writes over and over. They are collapsed into one rAF: the camera moves
+      // now, the decorations settle on the next frame together, and a burst of
+      // pointermoves inside one frame costs exactly one pass instead of six.
+      let framePending = false;
+      let lastMarkerK = null;
+      function frameWork() {
+        framePending = false;
+        const k = applyCameraScale();
+        // The layers whose glyphs are SIZED off k — walkers, conversations — are
+        // redrawn only when k has actually moved, which a pan never does. This is
+        // the whole reason a drag can be free: nothing about it changes their size
+        // or their ground, so nothing about it needs to touch them.
+        if (k !== lastMarkerK) { lastMarkerK = k; drawWalkers(); drawConversations(); }
         renderMarkHighlight();
         positionBubbles(); // the anchors are on the painting, so they move with it
       }
+      function applyView() {
+        svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
+        mapCtx.zoomK = full.w / view.w;
+        if (framePending) return;
+        framePending = true;
+        requestAnimationFrame(frameWork);
+      }
+      // a caller that must see the decorations settled NOW (a screenshot, a test,
+      // a lock-on that is about to be measured) can ask for the pass inline
+      mapCtx.settleFrame = () => { if (framePending) { framePending = false; } frameWork(); };
       function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = null; } mapCtx._tweening = false; }
       function tweenTo(target, ms = 280) {
         stopTween(); mapCtx._tweening = true;
@@ -4925,12 +4999,37 @@ export function mountViewer(appEl) {
     }
     return out;
   }
+  // ───────── the overlay: built on the RECORD, scaled on the CAMERA ─────────
+  //
+  // These were one function and one of them ran sixty times a second for no
+  // reason. A pip's POSITION is in painting units, so panning already moves it —
+  // the viewBox does that, for free, on the compositor. The only thing a camera
+  // frame actually changes about this layer is how big a marker should be, so
+  // that a zoomed street does not drown under full-map-sized pips.
+  //
+  // Rebuilding every pip's markup to answer that question cost 857 DOM nodes
+  // destroyed and recreated over a sixty-frame drag, and about 58 ms a frame —
+  // roughly fifteen frames a second, on a map whose whole job is to be dragged.
+  //
+  // So the markup carries the marker size as a CSS variable and the camera sets
+  // that ONE property. Each pip is a `translate` group (an attribute, written
+  // once, with the record) wrapping a scale group (a CSS transform, driven by
+  // the variable), which is also what keeps the FAN honest: the offset lives
+  // inside the scaled space, so it stays a constant few panel pixels exactly as
+  // it did when it was divided by k in the string.
+  //
+  // The reach ring stays OUT of that group deliberately — it is a distance, not
+  // a marker, and a distance must be drawn true to the ground.
+  const overlayScale = (k) => String(1 / k);
+  function applyCameraScale() {
+    if (!mapCtx?.overlay) return markerScale(mapCtx?.zoomK ?? 1);
+    const k = markerScale(mapCtx.zoomK);
+    mapCtx.overlay.style.setProperty("--wv-mk", overlayScale(k));
+    return k;
+  }
   function drawOverlay(radial) {
     if (!mapCtx) return;
     const { overlay, originPx, mPerPx } = mapCtx;
-    // markers shrink gently as the camera closes in, so a zoomed street never
-    // drowns under full-map-sized pips (the reach ring stays true-scale — it IS a distance)
-    const k = markerScale(mapCtx.zoomK);
     const px = (m) => ({ x: originPx.x + m.x / mPerPx, y: originPx.y + m.y / mPerPx });
     const me = px(state.cam), reachPx = (radial?.sightReachM ?? 0) / mPerPx;
     let s = `<circle cx="${me.x}" cy="${me.y}" r="${reachPx}" class="ov-reach"/>`;
@@ -4945,26 +5044,32 @@ export function mountViewer(appEl) {
     const fanned = mapCtx?.zoomK >= FAN_MIN_ZOOM ? coLocatedMarkIds(drawn) : new Set();
     for (const m of drawn) {
       const p = px(m.at);
-      if (fanned.has(m.id)) {
-        // in PANEL pixels, so the fan stays a constant few pixels rather than
-        // growing with the map the way the marks themselves do
-        const off = fanOffsetPx(m.id);
-        p.x += off.dx / k;
-        p.y += off.dy / k;
-      }
+      // THE FAN RIDES INSIDE THE SCALED SPACE, which is why it is a `cx`/`cy` on
+      // the circle rather than an addition to the translate: scaled by the same
+      // variable, it stays the constant few panel pixels it was when the string
+      // divided it by k.
       glyphIds.add(m.id);
-      s += `<circle cx="${p.x}" cy="${p.y}" r="${11 / k}" class="ov-pip ${markClasses(m)}" data-id="${esc(m.id)}">`
+      s += overlayPipSVG({
+        at: p, id: m.id, classes: markClasses(m),
+        fan: fanned.has(m.id) ? fanOffsetPx(m.id) : null,
         // the OS tooltip stands down in painting-only for the same reason the SVG
         // label does: the bubble is already saying this word, sooner and better
-        + (state.paintingOnly ? "" : `<title>${esc(markIdentity(m))}</title>`) + `</circle>`;
+        title: state.paintingOnly ? null : markIdentity(m),
+      });
     }
-    s += `<circle cx="${me.x}" cy="${me.y}" r="${17 / k}" class="ov-dot"/><circle cx="${me.x}" cy="${me.y}" r="${36 / k}" class="ov-halo"/>`;
+    s += overlayStandpointSVG({ at: me });
     overlay.innerHTML = s;
+    applyCameraScale();          // the markup is sizeless until the camera says
     mapCtx.glyphIds = glyphIds;
     mapCtx.syncWithin?.(radial);
     renderMarkHighlight();
-    drawWalkers(); // the camera moved; a derived position must stay true to it
-    drawConversations(); // ground-fixed like the walkers, so it moves the same way
+    // THE RECORD MOVED, so these follow. They are NOT on the camera path any
+    // more: a walker's position is in painting units like everything else, so
+    // panning already carries them. Zoom is the one camera change that does
+    // reach them (their glyphs are sized off k), and the frame pass below
+    // redraws them only when k has actually changed — which a drag never does.
+    drawWalkers();
+    drawConversations();
     if (mapCtx.follow && mapCtx.lockOn && !mapCtx._tweening) mapCtx.lockOn();
   }
   function renderMarkHighlight() {
