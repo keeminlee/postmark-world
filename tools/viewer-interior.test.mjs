@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 import {
   ROOM_GROUND_UNITS, SPECTATOR_ACTOR,
   interiorFurniture, interiorPlaqueHTML, markImagePath,
-  placeholderExtentSVG, placeholderHue, rimPointOf, roomGround, sceneRuleM, standpointOccupancy,
+  placeholderExtentSVG, placeholderHue, rimPointOf, sceneArtSVG, roomGround, sceneRuleM, standpointOccupancy,
 } from "../spectator/viewer.mjs";
 import { assembleWorld } from "./world-build.mjs";
 import { investigate } from "./world-verbs.mjs";
@@ -144,6 +144,17 @@ test("PLACEHOLDERS: deterministic per-mark hue, low saturation, art-less only", 
   assert.equal(arty, "", "a mark wearing its art needs no stand-in");
   const dot = placeholderExtentSVG({ id: "r/point", kind: "sited", at: { x: 0, y: 0 } }, px);
   assert.equal(dot, "", "a point has no extent to stand in for");
+});
+
+test("ART HANGS: a shelf-clad mark draws framed art over its extent; off-shelf refuses", () => {
+  const px = (p2) => ({ x: p2.x, y: p2.y });
+  const clad = sceneArtSVG({ id: "r/pic", kind: "sited", at: { x: 10, y: 10 }, extent: { w: 4, h: 2 },
+    image: "https://media.postmark.town/media/a/b.svg" }, px);
+  assert.match(clad, /wv-scene-mark-art/);
+  assert.match(clad, /<image href="\/shelf\/a\/b\.svg"/, "the shelf URL rides as the same-origin route");
+  assert.match(clad, /wv-scene-art-frame/, "framed, as the bulletin promised");
+  assert.equal(sceneArtSVG({ id: "r/bad", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 2, h: 2 },
+    image: "https://evil.example/x.jpg" }, px), "", "off-shelf art never hangs");
 });
 
 test("markup in a mark's image path cannot escape the ground", () => {

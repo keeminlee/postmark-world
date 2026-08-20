@@ -755,6 +755,27 @@ export function placeholderHue(id) {
   return h % 360;
 }
 
+// A MARK WEARING ART HANGS IT — over its own extent, framed, inert (an SVG in
+// an <image> is a picture by spec, never a program). The town needs no such
+// pass because the atlas BAKES mark art at sync time; a room's ground has no
+// baker, so the scene hangs the same information itself. This is the bulletin's
+// own promise ("walk into a mark and its pictures hang as framed art") carried
+// into the one engine — and the shelf gate is the same markImagePath every
+// other art surface uses: off-shelf URLs never became paths, here or anywhere.
+export function sceneArtSVG(mark, px) {
+  if (!isEmbodiedMark(mark)) return "";
+  const href = markImagePath(mark);
+  if (!href || !mark.extent) return "";
+  const r = rect(mark);
+  const a = px({ x: r.x - r.w / 2, y: r.y - r.h / 2 });
+  const b = px({ x: r.x + r.w / 2, y: r.y + r.h / 2 });
+  const w = (b.x - a.x).toFixed(1), h = (b.y - a.y).toFixed(1);
+  return `<g class="wv-scene-mark-art" data-id="${esc(mark.id)}" pointer-events="none">`
+    + `<image href="${esc(href)}" x="${a.x.toFixed(1)}" y="${a.y.toFixed(1)}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    + `<rect x="${a.x.toFixed(1)}" y="${a.y.toFixed(1)}" width="${w}" height="${h}" fill="none" class="wv-scene-art-frame"/>`
+    + `</g>`;
+}
+
 export function placeholderExtentSVG(mark, px) {
   if (!isEmbodiedMark(mark) || markImagePath(mark)) return "";
   const hue = placeholderHue(mark.id);
@@ -2947,6 +2968,7 @@ const STYLE = `
 /* placeholder extents: the block is presence, not glass — colour does the
    distinguishing (low saturation, per-mark hue), so no transparency games */
 .wv-ph-extent { stroke-width:1.2; pointer-events:none; }
+.wv-scene-art-frame { stroke:#3a3428; stroke-width:1.6; }
 .wv-scene-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
 .wv-scene-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
 .wv-minimap > svg { display:block; width:100%; height:auto; }
@@ -5324,10 +5346,10 @@ export function mountViewer(appEl) {
     // child's block sits readable on its parent's. Same overlay, same loop —
     // a rule of the one renderer, switched by the scene, never a second one.
     if (mapCtx?.placeholderExtents) {
-      const blocks = drawn
-        .filter((m) => isEmbodiedMark(m) && m.extent && !markImagePath(m))
+      const furnishable = drawn
+        .filter((m) => isEmbodiedMark(m) && m.extent)
         .sort((a, b) => ((b.extent?.w ?? 0) * (b.extent?.h ?? 0)) - ((a.extent?.w ?? 0) * (a.extent?.h ?? 0)));
-      for (const m of blocks) s += placeholderExtentSVG(m, px);
+      for (const m of furnishable) s += markImagePath(m) ? sceneArtSVG(m, px) : placeholderExtentSVG(m, px);
     }
     const fanned = mapCtx?.zoomK >= FAN_MIN_ZOOM ? coLocatedMarkIds(drawn) : new Set();
     for (const m of drawn) {
