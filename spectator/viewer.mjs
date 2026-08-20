@@ -2973,7 +2973,6 @@ const STYLE = `
   .wv-tour-title { font-size:1rem; }
   .wv-tour-body { font-size:.84rem; }
 }
-.ov-reach { fill:rgba(232,197,106,.06); stroke:var(--amber); stroke-width:2.5; stroke-dasharray:10 8; opacity:.8; }
 /* the overlay's pips speak the same tier language as everything else on the
    painting — the highlight box/dot, the footprints, the grid pips. They were
    uniform amber, which read as "one kind of thing" on a map whose whole point
@@ -3161,7 +3160,6 @@ const STYLE = `
 .wv-edge-indicator > path { fill:currentColor; stroke:var(--night); stroke-width:.8; }
 .wv-edge-indicator rect { fill:rgba(13,15,19,.94); stroke:currentColor; stroke-width:1; }
 .wv-edge-indicator text { fill:currentColor; font-family:Georgia,"Times New Roman",serif; }
-.ov-reach { vector-effect:non-scaling-stroke; }
 .ov-halo { vector-effect:non-scaling-stroke; }
 /* the same defect the name-box had: a 3-unit white ring grows with every zoom
    step until it swallows the ember it is meant to outline. The halo beside it
@@ -4021,7 +4019,7 @@ export function mountViewer(appEl) {
   function cacheEntry(handle) {
     let entry = viewCache.get(handle);
     if (!entry) {
-      entry = { pane: null, cam: null, origin: null, view: null, radial: null, home: null, balance: null, palette: null, signature: null };
+      entry = { pane: null, cam: null, origin: null, radial: null, home: null, balance: null, palette: null, signature: null };
       viewCache.set(handle, entry);
     }
     return entry;
@@ -4060,9 +4058,7 @@ export function mountViewer(appEl) {
         entry.origin = origin ? { x: origin.x, y: origin.y } : null;
         entry.radial = radial;
         entry.signature = viewSignature();
-        // the frame the glide WOULD have landed on, so a warm switch arrives
-        // there at once; a reader's own panning is kept until they move
-        if (!entry.view || moved) entry.view = mapCtx?.frameOn?.(entry.cam) ?? entry.view;
+        // (no frame is stashed: a switch recenters on the resident, never restores)
       }
       return radial;
     } catch (err) {
@@ -5064,8 +5060,14 @@ export function mountViewer(appEl) {
     if (!mapCtx) return;
     const { overlay, originPx, mPerPx } = mapCtx;
     const px = (m) => ({ x: originPx.x + m.x / mPerPx, y: originPx.y + m.y / mPerPx });
-    const me = px(state.cam), reachPx = (radial?.sightReachM ?? 0) / mPerPx;
-    let s = `<circle cx="${me.x}" cy="${me.y}" r="${reachPx}" class="ov-reach"/>`;
+    const me = px(state.cam);
+    // THE SIGHT-REACH RING IS GONE (founder, 2026-08-20: "it doesn't really tell
+    // you much"). A vast dashed circle around the reader answered a question
+    // nobody was asking and dominated the painting to do it. The DATUM is
+    // untouched — `radial.sightReachM` still rides the telling, which says the
+    // same thing in words a reader can act on ("the air is clear — you can see
+    // about 7,560 m"). This was only ever the drawing of it.
+    let s = "";
     const glyphIds = new Set();
     // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
     // mark up by id (and catches sovereign/home, which is not a tier value).
@@ -7201,7 +7203,6 @@ export function mountViewer(appEl) {
 
   async function selectActor(actor) {
     if (actor === SPECTATOR_ACTOR) {
-      stashActiveView(); // the resident being left keeps their painting
       state.actAs = SPECTATOR_ACTOR;
       walkState.actorBound = false;
       try { localStorage.setItem(ACT_AS_KEY, SPECTATOR_ACTOR); } catch {}
@@ -7219,7 +7220,6 @@ export function mountViewer(appEl) {
     if (!(state.whoami?.handles ?? []).includes(actor)) return;
     // WHAT THE READER WAS LOOKING AT stays with the resident they are leaving,
     // so coming back is the same page rather than a fresh one.
-    stashActiveView();
     state.actAs = actor;
     state.handle = actor;
     try {
@@ -7255,10 +7255,19 @@ export function mountViewer(appEl) {
     syncActorPosition(); // the you-are-here line; the camera is already this actor's
     if (warm) activateTellingPane(actor, entry.radial);
     else renderTelling();
-    // the frame a glide would have landed on, taken at once — the destination
-    // without the travel. Only a resident with no saved frame is glided to.
-    if (entry?.view && mapCtx?.setView) mapCtx.setView(entry.view, false);
-    else mapCtx?.lockOn?.();
+    // ALWAYS RECENTER ON WHOEVER YOU JUST BECAME (founder, 2026-08-20: "let's not
+    // save camera state per act-as resident and just recenter on them on click").
+    //
+    // The old behaviour restored each resident's last viewBox, so clicking a
+    // resident could land you on a corner of the map they had panned to earlier
+    // and NOT on the resident — the one thing the click plainly means. Predictable
+    // beats remembered here: the answer to "show me kilean" is kilean.
+    //
+    // state.cam is already this actor's ground (set above from actorOrigin), so
+    // lockOn frames THEM. A resident who is inside a mark needs no camera at all:
+    // the interior owns the whole panel, and syncInteriorPanel — which runs off
+    // the standpoint inside activateTellingPane — has already decided that.
+    mapCtx?.lockOn?.();
     renderWalkDestination();
     const preOrigin = origin;
     // The palette is a read of the office, so it rides the background lane with
@@ -7276,16 +7285,9 @@ export function mountViewer(appEl) {
     warmOtherViews();
   }
 
-  // Saving a view is saving the painting: the camera the telling was built at
-  // is already on the entry, the viewBox is the part a reader can move without
-  // rebuilding anything.
-  function stashActiveView() {
-    if (isSpectating() || !state.handle) return;
-    const entry = viewCache.get(state.handle);
-    if (!entry) return;
-    const view = mapCtx?.setView?.(null);
-    if (view) entry.view = view;
-  }
+  // stashActiveView is GONE, with the per-resident viewBox it existed to save.
+  // Switching resident recenters on them now, so there is nothing to come back to
+  // and nothing to keep. Its cache slot went with it.
 
   function renderIdentity() {
     const box = $(root, ".wv-identity");
