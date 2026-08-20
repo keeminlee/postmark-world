@@ -2286,7 +2286,7 @@ export function crossingSheetHTML(answer = {}, markId = "") {
   // NO SILENT CLICK, EVER AGAIN (founder, 2026-08-20). A door that answered but
   // crossed nothing used to render as nothing at all — the click vanished and the
   // reader had no way to tell a bug from a no-op. The office now says WHY it
-  // crossed nothing (, and  where that is the reason),
+  // crossed nothing (`crossed_nothing`, and `note` where that is the reason),
   // so the only remaining silence is a genuine crossing, which the interior
   // announces on its own.
   //
