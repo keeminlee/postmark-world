@@ -20,6 +20,7 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/consent-at-thresholds`, `the-town/identity-is-pinned`,
 `the-town/money-moves-at-the-save`, `the-town/the-reading-law`,
 `the-town/co-signed`, `the-town/tier`, `the-town/the-custody-ladder`,
+`the-town/amend`, `the-town/withdraw`,
 `the-town/meep`, `the-town/postmaster`, `the-town/illuminator`,
 `the-town/registrar`, `the-town/worldkeeper`, `the-town/reports-to`,
 `the-town/white-page`, `the-town/mailbox`, `the-town/inbox`,
@@ -343,6 +344,20 @@ atom wearing two faces: a berth that settles *becomes* its household
 stale copy is the same relation applied to law (the supersession face —
 the class the sweep now guards). First lawful pair: berth → household,
 written by the settle act.
+
+## The revision verbs — amend and withdraw
+
+Built 2026-08-19 (founder-ruled the same evening the tri-survey named the
+gap; the uncategorized marker graduated into these): edit-law's second
+family finally stands in the works and at the door. **amend** is a newer
+declaration on your own node — `world_leave_mark` with `amend: true`,
+supersede-in-place (one copy, ever — the sketchbook must never hold a mark
+at two paths); in-place always, a move only for a draft-only mark holding
+nothing (a moved published path is #1862's wedge shape, refused by name).
+**withdraw** is the terminal supersession — `world_withdraw_mark` deletes
+from the sketchbook now, and the settlement executes the canon half at the
+crossing: unpublish, registry release, escrow-anchors and stranded-children
+guards refusing by name. Every version of everything stays in the log.
 
 ## The rules — the town's stipulations, bucketed (postmark-rules)
 
