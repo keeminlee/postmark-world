@@ -4699,486 +4699,507 @@ export function mountViewer(appEl) {
         const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
         if (hh && !/^(https?:)?\//.test(hh)) { im.setAttribute("href", new URL(hh, atlasBase).pathname); im.removeAttribute("xlink:href"); }
       });
-      // THE FAR COUNTRY, mounted UNDER the painting rather than over it.
-      //
-      // Every other derived layer is appended, so it draws on top. These two are
-      // inserted before the atlas's first child, and that placement is the whole
-      // readability rule: the painting opens with a full-bleed background rect,
-      // so the town erases both layers over itself without either of them
-      // needing to know where the town is. Out past the edge of the paint —
-      // which is the only place they have anything to say — there is nothing
-      // above them but the record's own pips and labels.
-      //
-      // Mist first, then the artwork, so a mountain hangs in the weather rather
-      // than behind it.
-      const mistLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      mistLayer.setAttribute("id", "wv-mist-layer");
-      mistLayer.style.pointerEvents = "none";
-      const farArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      farArtLayer.setAttribute("id", "wv-far-art-layer");
-      farArtLayer.style.pointerEvents = "none";
-      svg.insertBefore(farArtLayer, svg.firstChild);
-      svg.insertBefore(mistLayer, svg.firstChild);
-      // the survey grid — the FIRST derived layer: drawn from the registration
-      // (origin + scale), never traced from the paint. Sits under the overlay.
-      const gridLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      gridLayer.setAttribute("id", "wv-grid-layer");
-      gridLayer.style.display = "none"; // NOT the hidden attribute — SVG <g> ignores it
-      svg.appendChild(gridLayer);
-      // footprints — the second derived layer: every mark's true extent, from the
-      // record. Sits above the grid, under the pips; pointer-events none so the
-      // stand-click and drag pass straight through it.
-      const fpLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      fpLayer.setAttribute("id", "wv-fp-layer");
-      fpLayer.style.display = "none";
-      svg.appendChild(fpLayer);
-      // conversations — where the town is TALKING: each thread from the office's
-      // earshot derivation, drawn as the ground it actually covered. Above the
-      // footprints, under the pips and walkers; pointer-events none, so it is
-      // weather over the map, never furniture in it.
-      const convoLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      convoLayer.setAttribute("id", "wv-convo-layer");
-      convoLayer.style.pointerEvents = "none";
-      convoLayer.style.display = "none"; // OFF until asked for (Keemin: the bubbles were blocking the painting)
-      svg.appendChild(convoLayer);
-      const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      overlay.setAttribute("id", "wv-overlay");
-      svg.appendChild(overlay);
-      // a dedicated highlight layer, above the overlay — a hovered/clicked mark
-      // washes blue on the painting (viewer↔atlas linkage). Kept separate so the
-      // per-render overlay redraw never wipes it.
-      const hlLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      hlLayer.setAttribute("id", "wv-hl-layer");
-      svg.appendChild(hlLayer);
-      // An armed destination is a proposal, not a journey. Its amber layer stays
-      // separate from the pink public walk ledger so the painting cannot imply a
-      // commitment the resident has not confirmed.
-      const walkPreviewLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      walkPreviewLayer.setAttribute("id", "wv-walk-preview-layer");
-      walkPreviewLayer.style.pointerEvents = "none";
-      svg.appendChild(walkPreviewLayer);
-      // walkers ride above the highlight layer: a walk is the one thing on this
-      // map that moves, so it must never be painted under anything.
-      const walkLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      walkLayer.setAttribute("id", "wv-walk-layer");
-      svg.appendChild(walkLayer);
-      // The wash's name-box rides above the walkers while the washes stay under
-      // everything. A wash says nothing until pointed at — the always-on labels
-      // died at zoom (their halo strokes shattered into starbursts; Keemin's
-      // screenshot) — and when it speaks, it speaks in THE box, the same one a
-      // mark or a walker raises, via the same hoverLabelSVG.
-      const convoHoverLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      convoHoverLayer.setAttribute("id", "wv-convo-hover-layer");
-      convoHoverLayer.style.pointerEvents = "none";
-      convoHoverLayer.style.display = "none"; // rides the same toggle as its washes
-      svg.appendChild(convoHoverLayer);
-      function renderConvoHover(hit) {
-        if (!hit) { convoHoverLayer.innerHTML = ""; return; }
-        const bounds = svg.getBoundingClientRect();
-        // the box scales uniformly off its unit, so 1.6× the unit is the whole
-        // box at 1.6× — ~19px type instead of the 12px the marks' box uses
-        // (Keemin: at the marks' size these words were not legible)
-        const unit = (bounds.width > 0 ? view.w / bounds.width : 1) * 1.6;
-        const at = { x: originPx.x + hit.cx / mPerPx, y: originPx.y + (hit.cy - hit.ryM) / mPerPx };
-        convoHoverLayer.innerHTML = hoverLabelSVG({ text: hit.words, at, unit, view, className: "wv-hl-label wv-hl-convo" });
-      }
-      boxEl.innerHTML = "";
-      boxEl.appendChild(svg);
-      reattachOverlays();
-      boxEl.classList.add("pannable");
-
-      // ── the viewport (P2 convergence): the viewBox IS the camera — wheel zooms
-      // toward the cursor, drag pans, a short press stands you there, follow keeps
-      // the view on your standpoint. Google-maps physics, zero libraries.
-      let vb = (svg.getAttribute("viewBox") ?? "").split(/[\s,]+/).map(Number);
-      if (vb.length !== 4 || vb.some((n) => !Number.isFinite(n))) {
-        const bb = svg.getBBox();
-        vb = [bb.x, bb.y, bb.width, bb.height];
-      }
-      const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
-      const view = { ...full };
-      mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
-      drawFarCountry();
-      let tween = null;
-      // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
-      // wait for it. Three separate readers used to run inline on every camera
-      // change — the overlay rebuild, the highlight, and the bubbles — each
-      // measuring and then writing, so a drag interleaved layout reads with DOM
-      // writes over and over. They are collapsed into one rAF: the camera moves
-      // now, the decorations settle on the next frame together, and a burst of
-      // pointermoves inside one frame costs exactly one pass instead of six.
-      let framePending = false;
-      let lastMarkerK = null;
-      function frameWork() {
-        framePending = false;
-        const k = applyCameraScale();
-        // The layers whose glyphs are SIZED off k — walkers, conversations — are
-        // redrawn only when k has actually moved, which a pan never does. This is
-        // the whole reason a drag can be free: nothing about it changes their size
-        // or their ground, so nothing about it needs to touch them.
-        if (k !== lastMarkerK) { lastMarkerK = k; drawWalkers(); drawConversations(); }
-        renderMarkHighlight();
-        positionBubbles(); // the anchors are on the painting, so they move with it
-      }
-      function applyView() {
-        svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
-        mapCtx.zoomK = full.w / view.w;
-        if (framePending) return;
-        framePending = true;
-        requestAnimationFrame(frameWork);
-      }
-      // a caller that must see the decorations settled NOW (a screenshot, a test,
-      // a lock-on that is about to be measured) can ask for the pass inline
-      mapCtx.settleFrame = () => { if (framePending) { framePending = false; } frameWork(); };
-      function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = null; } mapCtx._tweening = false; }
-      function tweenTo(target, ms = 280) {
-        stopTween(); mapCtx._tweening = true;
-        const from = { ...view }, t0 = performance.now();
-        const ease = (t) => 1 - Math.pow(1 - t, 3);
-        (function step(now) {
-          const t = Math.min(1, (now - t0) / ms), k = ease(t);
-          view.x = from.x + (target.x - from.x) * k; view.y = from.y + (target.y - from.y) * k;
-          view.w = from.w + (target.w - from.w) * k; view.h = from.h + (target.h - from.h) * k;
-          applyView();
-          if (t < 1) tween = requestAnimationFrame(step); else { tween = null; mapCtx._tweening = false; }
-        })(t0);
-      }
-      const camPx = (at) => ({ x: originPx.x + at.x / mPerPx, y: originPx.y + at.y / mPerPx });
-      // WHERE a lock-on would land, without gliding there. A prebuilt view saves
-      // this frame so a warm switch arrives at the same painting the animation
-      // would have reached: the destination without the travel.
-      mapCtx.frameOn = (at = state.cam) => {
-        const c = camPx(at);
-        const w = Math.min(view.w, full.w / 4), h = w * (full.h / full.w);
-        // Centre the dot in the VISIBLE panel, not in the <svg>. The painting
-        // keeps the map's own aspect (tall), the pane is shorter, and
-        // .wv-minimap clips the overflow — so the svg's midpoint sits well
-        // below the middle of what the reader can actually see, by an amount
-        // that changes with the window. That was the "follow doesn't really
-        // centre" defect: the arithmetic was right about the wrong rectangle.
-        // Measured live, so it stays true at any size and needs no constant.
-        const sb = svg.getBoundingClientRect(), cb = boxEl.getBoundingClientRect();
-        const ax = sb.width > 0 ? (cb.x + cb.width / 2 - sb.x) / sb.width : 0.5;
-        const ay = sb.height > 0 ? (cb.y + cb.height / 2 - sb.y) / sb.height : 0.5;
-        return { x: c.x - w * ax, y: c.y - h * ay, w, h };
-      };
-      mapCtx.lockOn = (animate = true) => {
-        const target = mapCtx.frameOn();
-        // Compare against the target we actually want, not against the viewBox
-        // centre — the old test could return "close enough" while the dot sat
-        // off the visible centre by the clip offset.
-        if (Math.abs(target.x - view.x) < view.w * 0.005 && Math.abs(target.y - view.y) < view.h * 0.005
-            && Math.abs(target.w - view.w) < full.w * 0.01) return;
-        if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
-      };
-      mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
-      // Point the camera somewhere and hand back where it was, so a caller can put
-      // it back exactly. The tour is the only user: it frames three marks for one
-      // slide and restores the reader's own view on the way out.
-      mapCtx.setView = (next, animate = false) => {
-        const before = { ...view };
-        if (!next) return before;
-        if (animate) tweenTo(next); else { stopTween(); Object.assign(view, next); applyView(); }
-        return before;
-      };
-      // Fill the pane with painting instead of letterboxing it. The atlas is tall
-      // and the folded-open pane is wide, so the default "meet" fit leaves half
-      // the page as empty bars — which is not what "the painting fills the page"
-      // means. This takes the view whose aspect matches the PANE: full width, a
-      // centred band of height. ⌂ fit still tweens to the whole painting, so the
-      // honest see-everything view is one press away and keeps meaning what it says.
-      // The pane changed shape under a view that did not. Keep the horizontal
-      // framing and the zoom (so no marker resizes), and take the height from the
-      // new aspect: the same pane always yields the same view, which is what makes
-      // hiding and showing the Telling land you back where you started.
-      //
-      // It also settles the paint. Toggling used to leave the viewBox describing
-      // the OLD pane, and the bottom band of the painting simply did not draw
-      // until something called applyView — which is why ⌂ fit or ⌖ follow
-      // "fixed" it. This is that call, made on purpose rather than by accident.
-      mapCtx.refit = () => {
-        const pane = boxEl.getBoundingClientRect();
-        if (!pane.width || !pane.height) return;
-        const cy = view.y + view.h / 2;
-        const h = view.w * (pane.height / pane.width);
-        Object.assign(view, { y: cy - h / 2, h });
-        applyView();
-      };
-      // a hand on the camera breaks the follow snap — silently, keeping the view
-      // where the hand put it (fit is the only thing that zooms you back out)
-      const breakFollow = () => { if (mapCtx.follow) { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); } };
-      svg.addEventListener("wheel", (e) => {
-        e.preventDefault(); stopTween(); breakFollow();
-        const k = Math.pow(1.0015, e.deltaY);
-        const w = Math.min(full.w * MAX_ZOOM_OUT, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
-        const scale = w / view.w;
-        const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
-        const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-        view.x = p.x - (p.x - view.x) * scale; view.y = p.y - (p.y - view.y) * scale;
-        view.w = w; view.h = view.h * scale;
-        applyView();
-      }, { passive: false });
-      // drag = pan; a press that travels <6px selects by the painting's one hit
-      // order: pip snap, then smallest containing non-ambient extent. Genuinely
-      // open ground chooses a walking point for a resident, or moves the
-      // read-only spectator camera.
-      let press = null;
-      function screenMarkCandidates() {
-        const matrix = svg.getScreenCTM();
-        if (!matrix) return [];
-        return [...mapCtx.glyphIds].flatMap((id) => {
-          const mark = byId.get(id);
-          if (!mark?.at || ![mark.at.x, mark.at.y].every(Number.isFinite)) return [];
-          const point = svg.createSVGPoint();
-          point.x = originPx.x + mark.at.x / mPerPx;
-          point.y = originPx.y + mark.at.y / mPerPx;
-          const screen = point.matrixTransform(matrix);
-          return [{ id, x: screen.x, y: screen.y }];
-        });
-      }
-      const worldPointForEvent = (event) => {
-        const point = svg.createSVGPoint();
-        point.x = event.clientX;
-        point.y = event.clientY;
-        const painting = point.matrixTransform(svg.getScreenCTM().inverse());
-        return {
-          x: (painting.x - originPx.x) * mPerPx,
-          y: (painting.y - originPx.y) * mPerPx,
-        };
-      };
-      // TWO QUESTIONS, TWO ANSWERS (Keemin, 2026-08-04: keep the hover visibility
-      // as it was, and treat clicks the new way).
-      //
-      // Pointing asks WHAT IS HERE, and everything the eye tells answers —
-      // including the region you are standing inside, because seeing what
-      // contains you is the entire reason to point at it.
-      //
-      // Clicking asks ACT HERE, and there a mark you could not set out for does
-      // not own the ground under it. The containment half used to hand the click
-      // to the smallest extent covering it, walkable or not: the threshold
-      // district is 2,325 m across, so every click in a whole quarter of the town
-      // selected the district — no walking to that ground, and no reaching a mark
-      // inside it the eye had not told. Only the marks you could go to are
-      // offered to that half now. The PIP half is identical in both, so a region
-      // is still selected by the dot that is exactly the size of the thing it
-      // names — and it still lights under the pointer on the way there.
-      const markAt = (event, marks) => paintingMarkAtPoint({
-        screenPoint: { x: event.clientX, y: event.clientY },
-        worldPoint: worldPointForEvent(event),
-        glyphs: screenMarkCandidates(),
-        marks,
-      });
-      const toldHere = () => toldPaintingMarks(lastRadial, world?.marks ?? []);
-      const paintingMarkForEvent = (event) => markAt(event, toldHere());
-      // walkers, in the same screen-space shape the mark snap already eats
-      function screenWalkerCandidates() {
-        const matrix = svg.getScreenCTM();
-        if (!matrix) return [];
-        return (walkState.walkers ?? []).flatMap((w) => {
-          if (!w?.handle || ![w.x, w.y].every(Number.isFinite)) return [];
-          const point = svg.createSVGPoint();
-          point.x = originPx.x + w.x / mPerPx;
-          point.y = originPx.y + w.y / mPerPx;
-          const screen = point.matrixTransform(matrix);
-          return [{ id: walkerHoverId(w.handle), x: screen.x, y: screen.y }];
-        });
-      }
-      // A standing resident wins the hover over the ground they stand on — the
-      // person is what you were pointing at. Same snap helper, same radius.
-      const hoverTargetForEvent = (event) =>
-        snappedMarkAtPoint({ x: event.clientX, y: event.clientY }, screenWalkerCandidates())
-        ?? paintingMarkForEvent(event);
-      svg.addEventListener("pointerdown", (e) => {
-        stopTween();
-        press = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
-        svg.setPointerCapture(e.pointerId);
-      });
-      svg.addEventListener("pointermove", (e) => {
-        if (!press || e.pointerId !== press.id) {
-          // The hand and the name-box show exactly where a click would reach
-          // the thread, running the click's own precedence: a face wins,
-          // everything else on a visible wash navigates (convoAt is null while
-          // the layer is hidden). And while the wash owns the click, the MARK
-          // hover stands down — a bubble saying CLICK TO OPEN over ground
-          // whose click goes to the thread is the box promising what the
-          // click won't do.
-          const clear = !snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
-          const wp = clear ? worldPointForEvent(e) : null;
-          const hit = wp ? convoAt(wp.x, wp.y) : null;
-          hoverMark(hit ? null : hoverTargetForEvent(e));
-          boxEl.classList.toggle("over-convo", Boolean(hit));
-          renderConvoHover(hit);
-          return;
-        }
-        const dx = e.clientX - press.x, dy = e.clientY - press.y;
-        if (!press.moved && Math.hypot(dx, dy) < 6) {
-          hoverMark(hoverTargetForEvent(e));
-          return;
-        }
-        if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
-        hoverMark(null);
-        renderConvoHover(null);
-        boxEl.classList.remove("over-convo");
-        press.moved = true; boxEl.classList.add("panning");
-        const r = svg.getBoundingClientRect();
-        view.x -= dx * (view.w / r.width); view.y -= dy * (view.h / r.height);
-        press.x = e.clientX; press.y = e.clientY;
-        applyView();
-      });
-      svg.addEventListener("pointerup", (e) => {
-        if (!press || e.pointerId !== press.id) return;
-        const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
-        if (wasDrag) return;
-        // ONLY A PIP NAMES A MARK. Containment is how the destination gets its
-        // NAME, not how the click picks its target — so clicking inside the East
-        // Window District sets out for the spot you clicked, in that district,
-        // rather than marching you to its centre; and a region too big to be a
-        // destination stops swallowing clicks without needing a rule of its own.
-        // A RESIDENT WINS THE CLICK, for the same reason they already win the
-        // hover: the person is what you were pointing at. Their card is the only
-        // way onto their page from the map, and on a touch screen the glance
-        // never happens at all — so without this, faces would be a desktop-only
-        // feature. Same snap helper, same radius, same precedence as pointing.
-        //
-        // …AND A FACE NO LONGER SWALLOWS THE GROUND IT STANDS ON. Winning the
-        // click was never meant to make the marks under a resident unreachable,
-        // which is the same complaint the pip pile answered: when the spot is
-        // contested — two people, or a person standing over marks — the reader
-        // is shown the stack and picks. One candidate in radius is exactly
-        // today's behaviour, and the head of this list IS what the snap would
-        // have returned, so the single-face case cannot have moved.
-        const peopleHere = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
-        if (peopleHere.length) {
-          const under = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
-          if (peopleHere.length + under.length > 1) { openChooser([...peopleHere, ...under]); return; }
-          selectMark(peopleHere[0]);
-          return;
-        }
-        // THE TALK LENS WINS WHILE IT IS UP (Keemin, launch night: with washes
-        // sharing ground with pips and parcels, "sometimes the click reached
-        // the thread" read as broken). The layer is opt-in — switching 💬 on IS
-        // the statement of intent — so while it shows, a click on a wash goes
-        // to the thread for everyone, losing only to a face: a small, precise
-        // target you aimed at. Toggled off (the default), the washes are gone
-        // and every click means exactly what it meant before the layer existed.
-        {
-          const wp = worldPointForEvent(e);
-          const hit = convoAt(wp.x, wp.y); // visibility-gated: always null while hidden
-          // a NEW tab (Keemin): the reader is mid-world with a lens up and a
-          // camera aimed — the thread opens beside the map, never over it
-          if (hit) { window.open(convoHref(hit.id), "_blank", "noopener"); return; }
-        }
-        // THE CONTESTED CLICK. Every seating mints a parcel, a building and a
-        // predicate at nearly one spot, so the pips pile up and the snap can
-        // only ever reach the nearest — the other three become unclickable at
-        // any zoom. When more than one is under the cursor we do not guess: the
-        // reader is shown the stack and picks. Exactly one in radius is the
-        // behaviour this map has always had, down to the scrollCell.
-        const contested = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
-        if (contested.length > 1) { openChooser(contested); return; }
-        const markId = contested[0] ?? null;
-        if (markId) {
-          selectMark(markId, { scrollCell: true });
-          return;
-        }
-        const worldPoint = worldPointForEvent(e);
-        const point = { x: Math.round(worldPoint.x), y: Math.round(worldPoint.y) };
-        markInteraction.select(null);
-        if (canAct()) chooseWalkPoint(point.x, point.y);
-        else {
-          state.cam = point;
-          renderCurrent();
-        }
-      });
-      svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
-      svg.addEventListener("pointerleave", () => { if (!press) { hoverMark(null); renderConvoHover(null); boxEl.classList.remove("over-convo"); } });
-
-      // the grid keeps scale without exposing absolute survey readouts.
-      function buildGridLayer() {
-        const mx0 = (full.x - originPx.x) * mPerPx, mx1 = (full.x + full.w - originPx.x) * mPerPx;
-        const my0 = (full.y - originPx.y) * mPerPx, my1 = (full.y + full.h - originPx.y) * mPerPx;
-        const step = 1000, major = 5000;
-        let s = "";
-        for (let m = Math.ceil(mx0 / step) * step; m <= mx1; m += step) {
-          const x = originPx.x + m / mPerPx, big = m % major === 0;
-          s += `<line x1="${x}" y1="${full.y}" x2="${x}" y2="${full.y + full.h}" class="wv-gridline${big ? " major" : ""}"/>`;
-        }
-        for (let m = Math.ceil(my0 / step) * step; m <= my1; m += step) {
-          const y = originPx.y + m / mPerPx, big = m % major === 0;
-          s += `<line x1="${full.x}" y1="${y}" x2="${full.x + full.w}" y2="${y}" class="wv-gridline${big ? " major" : ""}"/>`;
-        }
-        gridLayer.innerHTML = s;
-      }
-      mapCtx.toggleGrid = () => {
-        if (!gridLayer.childNodes.length) buildGridLayer();
-        const on = gridLayer.style.display === "none";
-        gridLayer.style.display = on ? "" : "none";
-        return on;
-      };
-
-      // footprints: every mark's own claim landing on the painting (the calibration
-      // made visible) — an extent rect, or the authored `points:` ring where a mark
-      // carries one, through the one shape-builder.
-      //
-      // ONLY the world-root and ambient marks are skipped, and the reason is about
-      // the mark, not the viewer: the root IS the frame (320 km square — a box
-      // around everything says nothing), and an ambient mark is a property of the
-      // whole world rather than a place in it. `far` used to be skipped here too,
-      // justified as "no ground" — but that is a FIRST-PERSON claim (you cannot
-      // walk up to a horizon) leaking into a top-down map, which has no horizon.
-      // Pando has an extent, at real coordinates, exactly as real as any parcel;
-      // vermillion's own 3,600 m mountain at the same centre has always drawn.
-      const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
-      function buildFpLayer() {
-        let s = "";
-        for (const m of world.marks ?? []) {
-          if (!m.at || !m.extent || isAmbientMark(m, byId)) continue;
-          const cls = markClasses(m) + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
-          s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
-            attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
-          });
-        }
-        fpLayer.innerHTML = s;
-        if (lastRadial) mapCtx.syncWithin(lastRadial);
-      }
-      // the standpoint's containment chain reads heavier on the map — kept in sync
-      // with every telling (the boxes are the same boxes, only the weight moves)
-      mapCtx.syncWithin = (radial) => {
-        const ids = new Set((radial?.within ?? []).map((w) => w.id));
-        // `[data-id]`, not `rect[data-id]`: a ringed mark is a <polygon>, and the
-        // element-name selector would have silently left every true-shape out of the
-        // within highlight — a half-port that looks finished.
-        for (const r of fpLayer.querySelectorAll("[data-id]"))
-          r.classList.toggle("fp-within", ids.has(r.dataset.id));
-      };
-      mapCtx.toggleFp = () => {
-        if (!fpLayer.childNodes.length) buildFpLayer();
-        const on = fpLayer.style.display === "none";
-        fpLayer.style.display = on ? "" : "none";
-        return on;
-      };
-      // the conversations toggle: both layers move together, the clicks and the
-      // polling follow visibility (a hidden layer must neither catch a click
-      // nor cost the office a fetch), and opening it loads fresh right away
-      mapCtx.toggleConvo = () => {
-        const on = convoLayer.style.display === "none";
-        convoLayer.style.display = on ? "" : "none";
-        convoHoverLayer.style.display = on ? "" : "none";
-        convoVisible = on;
-        if (on) loadConversations().then(drawConversations);
-        else { renderConvoHover(null); boxEl.classList.remove("over-convo"); }
-        return on;
-      };
-
-      applyView();
-      // shape the opening view to the pane the way every later change does, so the
-      // first toggle is not also the first correction
-      mapCtx.refit();
-      if (lastRadial) drawOverlay(lastRadial);
+      mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays });
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
       reattachOverlays();
     }
+  }
+
+  // ── THE PAINTING ENGINE, AS A SCENE ─────────────────────────────────────
+  //
+  // Everything below used to live inside loadMinimap's closure, which meant the
+  // painting could only ever be THE painting: one atlas, one camera, one set of
+  // handlers, all of them unreachable from anywhere else. A room has to be a
+  // second one of these — its own small map, mounted and unmounted whole — so
+  // the body comes out of the closure and takes its ground as an argument.
+  //
+  // This is a MOVE, not a rewrite. The town instance is the same code in the
+  // same order it always ran, including the point where it publishes itself as
+  // the active scene: `mapCtx` is still assigned exactly where it was, because
+  // the layer builders that run during construction read it, and reordering that
+  // would be a behaviour change wearing a refactor's clothes.
+  //
+  // What the scene needs from its caller is its GROUND and its registration:
+  // the <svg> to draw into, and the origin/scale that turn world metres into
+  // that svg's units. The town hands it the atlas. A room hands it a floor.
+  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays }) {
+    // THE FAR COUNTRY, mounted UNDER the painting rather than over it.
+    //
+    // Every other derived layer is appended, so it draws on top. These two are
+    // inserted before the atlas's first child, and that placement is the whole
+    // readability rule: the painting opens with a full-bleed background rect,
+    // so the town erases both layers over itself without either of them
+    // needing to know where the town is. Out past the edge of the paint —
+    // which is the only place they have anything to say — there is nothing
+    // above them but the record's own pips and labels.
+    //
+    // Mist first, then the artwork, so a mountain hangs in the weather rather
+    // than behind it.
+    const mistLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    mistLayer.setAttribute("id", "wv-mist-layer");
+    mistLayer.style.pointerEvents = "none";
+    const farArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    farArtLayer.setAttribute("id", "wv-far-art-layer");
+    farArtLayer.style.pointerEvents = "none";
+    svg.insertBefore(farArtLayer, svg.firstChild);
+    svg.insertBefore(mistLayer, svg.firstChild);
+    // the survey grid — the FIRST derived layer: drawn from the registration
+    // (origin + scale), never traced from the paint. Sits under the overlay.
+    const gridLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    gridLayer.setAttribute("id", "wv-grid-layer");
+    gridLayer.style.display = "none"; // NOT the hidden attribute — SVG <g> ignores it
+    svg.appendChild(gridLayer);
+    // footprints — the second derived layer: every mark's true extent, from the
+    // record. Sits above the grid, under the pips; pointer-events none so the
+    // stand-click and drag pass straight through it.
+    const fpLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    fpLayer.setAttribute("id", "wv-fp-layer");
+    fpLayer.style.display = "none";
+    svg.appendChild(fpLayer);
+    // conversations — where the town is TALKING: each thread from the office's
+    // earshot derivation, drawn as the ground it actually covered. Above the
+    // footprints, under the pips and walkers; pointer-events none, so it is
+    // weather over the map, never furniture in it.
+    const convoLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    convoLayer.setAttribute("id", "wv-convo-layer");
+    convoLayer.style.pointerEvents = "none";
+    convoLayer.style.display = "none"; // OFF until asked for (Keemin: the bubbles were blocking the painting)
+    svg.appendChild(convoLayer);
+    const overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    overlay.setAttribute("id", "wv-overlay");
+    svg.appendChild(overlay);
+    // a dedicated highlight layer, above the overlay — a hovered/clicked mark
+    // washes blue on the painting (viewer↔atlas linkage). Kept separate so the
+    // per-render overlay redraw never wipes it.
+    const hlLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    hlLayer.setAttribute("id", "wv-hl-layer");
+    svg.appendChild(hlLayer);
+    // An armed destination is a proposal, not a journey. Its amber layer stays
+    // separate from the pink public walk ledger so the painting cannot imply a
+    // commitment the resident has not confirmed.
+    const walkPreviewLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    walkPreviewLayer.setAttribute("id", "wv-walk-preview-layer");
+    walkPreviewLayer.style.pointerEvents = "none";
+    svg.appendChild(walkPreviewLayer);
+    // walkers ride above the highlight layer: a walk is the one thing on this
+    // map that moves, so it must never be painted under anything.
+    const walkLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    walkLayer.setAttribute("id", "wv-walk-layer");
+    svg.appendChild(walkLayer);
+    // The wash's name-box rides above the walkers while the washes stay under
+    // everything. A wash says nothing until pointed at — the always-on labels
+    // died at zoom (their halo strokes shattered into starbursts; Keemin's
+    // screenshot) — and when it speaks, it speaks in THE box, the same one a
+    // mark or a walker raises, via the same hoverLabelSVG.
+    const convoHoverLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    convoHoverLayer.setAttribute("id", "wv-convo-hover-layer");
+    convoHoverLayer.style.pointerEvents = "none";
+    convoHoverLayer.style.display = "none"; // rides the same toggle as its washes
+    svg.appendChild(convoHoverLayer);
+    function renderConvoHover(hit) {
+      if (!hit) { convoHoverLayer.innerHTML = ""; return; }
+      const bounds = svg.getBoundingClientRect();
+      // the box scales uniformly off its unit, so 1.6× the unit is the whole
+      // box at 1.6× — ~19px type instead of the 12px the marks' box uses
+      // (Keemin: at the marks' size these words were not legible)
+      const unit = (bounds.width > 0 ? view.w / bounds.width : 1) * 1.6;
+      const at = { x: originPx.x + hit.cx / mPerPx, y: originPx.y + (hit.cy - hit.ryM) / mPerPx };
+      convoHoverLayer.innerHTML = hoverLabelSVG({ text: hit.words, at, unit, view, className: "wv-hl-label wv-hl-convo" });
+    }
+    boxEl.innerHTML = "";
+    boxEl.appendChild(svg);
+    reattachOverlays();
+    boxEl.classList.add("pannable");
+
+    // ── the viewport (P2 convergence): the viewBox IS the camera — wheel zooms
+    // toward the cursor, drag pans, a short press stands you there, follow keeps
+    // the view on your standpoint. Google-maps physics, zero libraries.
+    let vb = (svg.getAttribute("viewBox") ?? "").split(/[\s,]+/).map(Number);
+    if (vb.length !== 4 || vb.some((n) => !Number.isFinite(n))) {
+      const bb = svg.getBBox();
+      vb = [bb.x, bb.y, bb.width, bb.height];
+    }
+    const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
+    const view = { ...full };
+    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false };
+    drawFarCountry();
+    let tween = null;
+    // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
+    // wait for it. Three separate readers used to run inline on every camera
+    // change — the overlay rebuild, the highlight, and the bubbles — each
+    // measuring and then writing, so a drag interleaved layout reads with DOM
+    // writes over and over. They are collapsed into one rAF: the camera moves
+    // now, the decorations settle on the next frame together, and a burst of
+    // pointermoves inside one frame costs exactly one pass instead of six.
+    let framePending = false;
+    let lastMarkerK = null;
+    function frameWork() {
+      framePending = false;
+      const k = applyCameraScale();
+      // The layers whose glyphs are SIZED off k — walkers, conversations — are
+      // redrawn only when k has actually moved, which a pan never does. This is
+      // the whole reason a drag can be free: nothing about it changes their size
+      // or their ground, so nothing about it needs to touch them.
+      if (k !== lastMarkerK) { lastMarkerK = k; drawWalkers(); drawConversations(); }
+      renderMarkHighlight();
+      positionBubbles(); // the anchors are on the painting, so they move with it
+    }
+    function applyView() {
+      svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
+      mapCtx.zoomK = full.w / view.w;
+      if (framePending) return;
+      framePending = true;
+      requestAnimationFrame(frameWork);
+    }
+    // a caller that must see the decorations settled NOW (a screenshot, a test,
+    // a lock-on that is about to be measured) can ask for the pass inline
+    mapCtx.settleFrame = () => { if (framePending) { framePending = false; } frameWork(); };
+    function stopTween() { if (tween) { cancelAnimationFrame(tween); tween = null; } mapCtx._tweening = false; }
+    function tweenTo(target, ms = 280) {
+      stopTween(); mapCtx._tweening = true;
+      const from = { ...view }, t0 = performance.now();
+      const ease = (t) => 1 - Math.pow(1 - t, 3);
+      (function step(now) {
+        const t = Math.min(1, (now - t0) / ms), k = ease(t);
+        view.x = from.x + (target.x - from.x) * k; view.y = from.y + (target.y - from.y) * k;
+        view.w = from.w + (target.w - from.w) * k; view.h = from.h + (target.h - from.h) * k;
+        applyView();
+        if (t < 1) tween = requestAnimationFrame(step); else { tween = null; mapCtx._tweening = false; }
+      })(t0);
+    }
+    const camPx = (at) => ({ x: originPx.x + at.x / mPerPx, y: originPx.y + at.y / mPerPx });
+    // WHERE a lock-on would land, without gliding there. A prebuilt view saves
+    // this frame so a warm switch arrives at the same painting the animation
+    // would have reached: the destination without the travel.
+    mapCtx.frameOn = (at = state.cam) => {
+      const c = camPx(at);
+      const w = Math.min(view.w, full.w / 4), h = w * (full.h / full.w);
+      // Centre the dot in the VISIBLE panel, not in the <svg>. The painting
+      // keeps the map's own aspect (tall), the pane is shorter, and
+      // .wv-minimap clips the overflow — so the svg's midpoint sits well
+      // below the middle of what the reader can actually see, by an amount
+      // that changes with the window. That was the "follow doesn't really
+      // centre" defect: the arithmetic was right about the wrong rectangle.
+      // Measured live, so it stays true at any size and needs no constant.
+      const sb = svg.getBoundingClientRect(), cb = boxEl.getBoundingClientRect();
+      const ax = sb.width > 0 ? (cb.x + cb.width / 2 - sb.x) / sb.width : 0.5;
+      const ay = sb.height > 0 ? (cb.y + cb.height / 2 - sb.y) / sb.height : 0.5;
+      return { x: c.x - w * ax, y: c.y - h * ay, w, h };
+    };
+    mapCtx.lockOn = (animate = true) => {
+      const target = mapCtx.frameOn();
+      // Compare against the target we actually want, not against the viewBox
+      // centre — the old test could return "close enough" while the dot sat
+      // off the visible centre by the clip offset.
+      if (Math.abs(target.x - view.x) < view.w * 0.005 && Math.abs(target.y - view.y) < view.h * 0.005
+          && Math.abs(target.w - view.w) < full.w * 0.01) return;
+      if (animate) tweenTo(target); else { Object.assign(view, target); applyView(); }
+    };
+    mapCtx.fitAll = () => { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); tweenTo({ ...full }); };
+    // Point the camera somewhere and hand back where it was, so a caller can put
+    // it back exactly. The tour is the only user: it frames three marks for one
+    // slide and restores the reader's own view on the way out.
+    mapCtx.setView = (next, animate = false) => {
+      const before = { ...view };
+      if (!next) return before;
+      if (animate) tweenTo(next); else { stopTween(); Object.assign(view, next); applyView(); }
+      return before;
+    };
+    // Fill the pane with painting instead of letterboxing it. The atlas is tall
+    // and the folded-open pane is wide, so the default "meet" fit leaves half
+    // the page as empty bars — which is not what "the painting fills the page"
+    // means. This takes the view whose aspect matches the PANE: full width, a
+    // centred band of height. ⌂ fit still tweens to the whole painting, so the
+    // honest see-everything view is one press away and keeps meaning what it says.
+    // The pane changed shape under a view that did not. Keep the horizontal
+    // framing and the zoom (so no marker resizes), and take the height from the
+    // new aspect: the same pane always yields the same view, which is what makes
+    // hiding and showing the Telling land you back where you started.
+    //
+    // It also settles the paint. Toggling used to leave the viewBox describing
+    // the OLD pane, and the bottom band of the painting simply did not draw
+    // until something called applyView — which is why ⌂ fit or ⌖ follow
+    // "fixed" it. This is that call, made on purpose rather than by accident.
+    mapCtx.refit = () => {
+      const pane = boxEl.getBoundingClientRect();
+      if (!pane.width || !pane.height) return;
+      const cy = view.y + view.h / 2;
+      const h = view.w * (pane.height / pane.width);
+      Object.assign(view, { y: cy - h / 2, h });
+      applyView();
+    };
+    // a hand on the camera breaks the follow snap — silently, keeping the view
+    // where the hand put it (fit is the only thing that zooms you back out)
+    const breakFollow = () => { if (mapCtx.follow) { mapCtx.follow = false; $(root, ".wv-map-follow")?.classList.remove("on"); } };
+    svg.addEventListener("wheel", (e) => {
+      e.preventDefault(); stopTween(); breakFollow();
+      const k = Math.pow(1.0015, e.deltaY);
+      const w = Math.min(full.w * MAX_ZOOM_OUT, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
+      const scale = w / view.w;
+      const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+      const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+      view.x = p.x - (p.x - view.x) * scale; view.y = p.y - (p.y - view.y) * scale;
+      view.w = w; view.h = view.h * scale;
+      applyView();
+    }, { passive: false });
+    // drag = pan; a press that travels <6px selects by the painting's one hit
+    // order: pip snap, then smallest containing non-ambient extent. Genuinely
+    // open ground chooses a walking point for a resident, or moves the
+    // read-only spectator camera.
+    let press = null;
+    function screenMarkCandidates() {
+      const matrix = svg.getScreenCTM();
+      if (!matrix) return [];
+      return [...mapCtx.glyphIds].flatMap((id) => {
+        const mark = byId.get(id);
+        if (!mark?.at || ![mark.at.x, mark.at.y].every(Number.isFinite)) return [];
+        const point = svg.createSVGPoint();
+        point.x = originPx.x + mark.at.x / mPerPx;
+        point.y = originPx.y + mark.at.y / mPerPx;
+        const screen = point.matrixTransform(matrix);
+        return [{ id, x: screen.x, y: screen.y }];
+      });
+    }
+    const worldPointForEvent = (event) => {
+      const point = svg.createSVGPoint();
+      point.x = event.clientX;
+      point.y = event.clientY;
+      const painting = point.matrixTransform(svg.getScreenCTM().inverse());
+      return {
+        x: (painting.x - originPx.x) * mPerPx,
+        y: (painting.y - originPx.y) * mPerPx,
+      };
+    };
+    // TWO QUESTIONS, TWO ANSWERS (Keemin, 2026-08-04: keep the hover visibility
+    // as it was, and treat clicks the new way).
+    //
+    // Pointing asks WHAT IS HERE, and everything the eye tells answers —
+    // including the region you are standing inside, because seeing what
+    // contains you is the entire reason to point at it.
+    //
+    // Clicking asks ACT HERE, and there a mark you could not set out for does
+    // not own the ground under it. The containment half used to hand the click
+    // to the smallest extent covering it, walkable or not: the threshold
+    // district is 2,325 m across, so every click in a whole quarter of the town
+    // selected the district — no walking to that ground, and no reaching a mark
+    // inside it the eye had not told. Only the marks you could go to are
+    // offered to that half now. The PIP half is identical in both, so a region
+    // is still selected by the dot that is exactly the size of the thing it
+    // names — and it still lights under the pointer on the way there.
+    const markAt = (event, marks) => paintingMarkAtPoint({
+      screenPoint: { x: event.clientX, y: event.clientY },
+      worldPoint: worldPointForEvent(event),
+      glyphs: screenMarkCandidates(),
+      marks,
+    });
+    const toldHere = () => toldPaintingMarks(lastRadial, world?.marks ?? []);
+    const paintingMarkForEvent = (event) => markAt(event, toldHere());
+    // walkers, in the same screen-space shape the mark snap already eats
+    function screenWalkerCandidates() {
+      const matrix = svg.getScreenCTM();
+      if (!matrix) return [];
+      return (walkState.walkers ?? []).flatMap((w) => {
+        if (!w?.handle || ![w.x, w.y].every(Number.isFinite)) return [];
+        const point = svg.createSVGPoint();
+        point.x = originPx.x + w.x / mPerPx;
+        point.y = originPx.y + w.y / mPerPx;
+        const screen = point.matrixTransform(matrix);
+        return [{ id: walkerHoverId(w.handle), x: screen.x, y: screen.y }];
+      });
+    }
+    // A standing resident wins the hover over the ground they stand on — the
+    // person is what you were pointing at. Same snap helper, same radius.
+    const hoverTargetForEvent = (event) =>
+      snappedMarkAtPoint({ x: event.clientX, y: event.clientY }, screenWalkerCandidates())
+      ?? paintingMarkForEvent(event);
+    svg.addEventListener("pointerdown", (e) => {
+      stopTween();
+      press = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
+      svg.setPointerCapture(e.pointerId);
+    });
+    svg.addEventListener("pointermove", (e) => {
+      if (!press || e.pointerId !== press.id) {
+        // The hand and the name-box show exactly where a click would reach
+        // the thread, running the click's own precedence: a face wins,
+        // everything else on a visible wash navigates (convoAt is null while
+        // the layer is hidden). And while the wash owns the click, the MARK
+        // hover stands down — a bubble saying CLICK TO OPEN over ground
+        // whose click goes to the thread is the box promising what the
+        // click won't do.
+        const clear = !snappedMarkAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
+        const wp = clear ? worldPointForEvent(e) : null;
+        const hit = wp ? convoAt(wp.x, wp.y) : null;
+        hoverMark(hit ? null : hoverTargetForEvent(e));
+        boxEl.classList.toggle("over-convo", Boolean(hit));
+        renderConvoHover(hit);
+        return;
+      }
+      const dx = e.clientX - press.x, dy = e.clientY - press.y;
+      if (!press.moved && Math.hypot(dx, dy) < 6) {
+        hoverMark(hoverTargetForEvent(e));
+        return;
+      }
+      if (!press.moved) breakFollow(); // a real drag unlocks the snap; a stand-click doesn't
+      hoverMark(null);
+      renderConvoHover(null);
+      boxEl.classList.remove("over-convo");
+      press.moved = true; boxEl.classList.add("panning");
+      const r = svg.getBoundingClientRect();
+      view.x -= dx * (view.w / r.width); view.y -= dy * (view.h / r.height);
+      press.x = e.clientX; press.y = e.clientY;
+      applyView();
+    });
+    svg.addEventListener("pointerup", (e) => {
+      if (!press || e.pointerId !== press.id) return;
+      const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
+      if (wasDrag) return;
+      // ONLY A PIP NAMES A MARK. Containment is how the destination gets its
+      // NAME, not how the click picks its target — so clicking inside the East
+      // Window District sets out for the spot you clicked, in that district,
+      // rather than marching you to its centre; and a region too big to be a
+      // destination stops swallowing clicks without needing a rule of its own.
+      // A RESIDENT WINS THE CLICK, for the same reason they already win the
+      // hover: the person is what you were pointing at. Their card is the only
+      // way onto their page from the map, and on a touch screen the glance
+      // never happens at all — so without this, faces would be a desktop-only
+      // feature. Same snap helper, same radius, same precedence as pointing.
+      //
+      // …AND A FACE NO LONGER SWALLOWS THE GROUND IT STANDS ON. Winning the
+      // click was never meant to make the marks under a resident unreachable,
+      // which is the same complaint the pip pile answered: when the spot is
+      // contested — two people, or a person standing over marks — the reader
+      // is shown the stack and picks. One candidate in radius is exactly
+      // today's behaviour, and the head of this list IS what the snap would
+      // have returned, so the single-face case cannot have moved.
+      const peopleHere = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenWalkerCandidates());
+      if (peopleHere.length) {
+        const under = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
+        if (peopleHere.length + under.length > 1) { openChooser([...peopleHere, ...under]); return; }
+        selectMark(peopleHere[0]);
+        return;
+      }
+      // THE TALK LENS WINS WHILE IT IS UP (Keemin, launch night: with washes
+      // sharing ground with pips and parcels, "sometimes the click reached
+      // the thread" read as broken). The layer is opt-in — switching 💬 on IS
+      // the statement of intent — so while it shows, a click on a wash goes
+      // to the thread for everyone, losing only to a face: a small, precise
+      // target you aimed at. Toggled off (the default), the washes are gone
+      // and every click means exactly what it meant before the layer existed.
+      {
+        const wp = worldPointForEvent(e);
+        const hit = convoAt(wp.x, wp.y); // visibility-gated: always null while hidden
+        // a NEW tab (Keemin): the reader is mid-world with a lens up and a
+        // camera aimed — the thread opens beside the map, never over it
+        if (hit) { window.open(convoHref(hit.id), "_blank", "noopener"); return; }
+      }
+      // THE CONTESTED CLICK. Every seating mints a parcel, a building and a
+      // predicate at nearly one spot, so the pips pile up and the snap can
+      // only ever reach the nearest — the other three become unclickable at
+      // any zoom. When more than one is under the cursor we do not guess: the
+      // reader is shown the stack and picks. Exactly one in radius is the
+      // behaviour this map has always had, down to the scrollCell.
+      const contested = contestedMarksAtPoint({ x: e.clientX, y: e.clientY }, screenMarkCandidates());
+      if (contested.length > 1) { openChooser(contested); return; }
+      const markId = contested[0] ?? null;
+      if (markId) {
+        selectMark(markId, { scrollCell: true });
+        return;
+      }
+      const worldPoint = worldPointForEvent(e);
+      const point = { x: Math.round(worldPoint.x), y: Math.round(worldPoint.y) };
+      markInteraction.select(null);
+      if (canAct()) chooseWalkPoint(point.x, point.y);
+      else {
+        state.cam = point;
+        renderCurrent();
+      }
+    });
+    svg.addEventListener("pointercancel", () => { press = null; boxEl.classList.remove("panning"); });
+    svg.addEventListener("pointerleave", () => { if (!press) { hoverMark(null); renderConvoHover(null); boxEl.classList.remove("over-convo"); } });
+
+    // the grid keeps scale without exposing absolute survey readouts.
+    function buildGridLayer() {
+      const mx0 = (full.x - originPx.x) * mPerPx, mx1 = (full.x + full.w - originPx.x) * mPerPx;
+      const my0 = (full.y - originPx.y) * mPerPx, my1 = (full.y + full.h - originPx.y) * mPerPx;
+      const step = 1000, major = 5000;
+      let s = "";
+      for (let m = Math.ceil(mx0 / step) * step; m <= mx1; m += step) {
+        const x = originPx.x + m / mPerPx, big = m % major === 0;
+        s += `<line x1="${x}" y1="${full.y}" x2="${x}" y2="${full.y + full.h}" class="wv-gridline${big ? " major" : ""}"/>`;
+      }
+      for (let m = Math.ceil(my0 / step) * step; m <= my1; m += step) {
+        const y = originPx.y + m / mPerPx, big = m % major === 0;
+        s += `<line x1="${full.x}" y1="${y}" x2="${full.x + full.w}" y2="${y}" class="wv-gridline${big ? " major" : ""}"/>`;
+      }
+      gridLayer.innerHTML = s;
+    }
+    mapCtx.toggleGrid = () => {
+      if (!gridLayer.childNodes.length) buildGridLayer();
+      const on = gridLayer.style.display === "none";
+      gridLayer.style.display = on ? "" : "none";
+      return on;
+    };
+
+    // footprints: every mark's own claim landing on the painting (the calibration
+    // made visible) — an extent rect, or the authored `points:` ring where a mark
+    // carries one, through the one shape-builder.
+    //
+    // ONLY the world-root and ambient marks are skipped, and the reason is about
+    // the mark, not the viewer: the root IS the frame (320 km square — a box
+    // around everything says nothing), and an ambient mark is a property of the
+    // whole world rather than a place in it. `far` used to be skipped here too,
+    // justified as "no ground" — but that is a FIRST-PERSON claim (you cannot
+    // walk up to a horizon) leaking into a top-down map, which has no horizon.
+    // Pando has an extent, at real coordinates, exactly as real as any parcel;
+    // vermillion's own 3,600 m mountain at the same centre has always drawn.
+    const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
+    function buildFpLayer() {
+      let s = "";
+      for (const m of world.marks ?? []) {
+        if (!m.at || !m.extent || isAmbientMark(m, byId)) continue;
+        const cls = markClasses(m) + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
+        s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
+          attrs: ` data-id="${esc(m.id)}"`, inner: `<title>${esc(m.id)}</title>`,
+        });
+      }
+      fpLayer.innerHTML = s;
+      if (lastRadial) mapCtx.syncWithin(lastRadial);
+    }
+    // the standpoint's containment chain reads heavier on the map — kept in sync
+    // with every telling (the boxes are the same boxes, only the weight moves)
+    mapCtx.syncWithin = (radial) => {
+      const ids = new Set((radial?.within ?? []).map((w) => w.id));
+      // `[data-id]`, not `rect[data-id]`: a ringed mark is a <polygon>, and the
+      // element-name selector would have silently left every true-shape out of the
+      // within highlight — a half-port that looks finished.
+      for (const r of fpLayer.querySelectorAll("[data-id]"))
+        r.classList.toggle("fp-within", ids.has(r.dataset.id));
+    };
+    mapCtx.toggleFp = () => {
+      if (!fpLayer.childNodes.length) buildFpLayer();
+      const on = fpLayer.style.display === "none";
+      fpLayer.style.display = on ? "" : "none";
+      return on;
+    };
+    // the conversations toggle: both layers move together, the clicks and the
+    // polling follow visibility (a hidden layer must neither catch a click
+    // nor cost the office a fetch), and opening it loads fresh right away
+    mapCtx.toggleConvo = () => {
+      const on = convoLayer.style.display === "none";
+      convoLayer.style.display = on ? "" : "none";
+      convoHoverLayer.style.display = on ? "" : "none";
+      convoVisible = on;
+      if (on) loadConversations().then(drawConversations);
+      else { renderConvoHover(null); boxEl.classList.remove("over-convo"); }
+      return on;
+    };
+
+    applyView();
+    // shape the opening view to the pane the way every later change does, so the
+    // first toggle is not also the first correction
+    mapCtx.refit();
+    if (lastRadial) drawOverlay(lastRadial);
   }
   // What the painting draws: the field of view, plus all of yours whether it holds
   // them or not. The filter chips are the Telling's business and this asks them
