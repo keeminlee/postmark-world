@@ -2274,6 +2274,23 @@ export function crossingSheetHTML(answer = {}, markId = "") {
       + `<p class="wv-cross-edge wv-quiet">The act is in the record. Being turned away is a fact about the town.</p>`
       + `</div>`;
   }
+  // NO SILENT CLICK, EVER AGAIN (founder, 2026-08-20). A door that answered but
+  // crossed nothing used to render as nothing at all — the click vanished and the
+  // reader had no way to tell a bug from a no-op. The office now says WHY it
+  // crossed nothing (, and  where that is the reason),
+  // so the only remaining silence is a genuine crossing, which the interior
+  // announces on its own.
+  //
+  // The fallback text is deliberately not reassuring: an answer that entered
+  // nothing while naming neither terms nor a refusal is a FAULT, and a reader
+  // who saw their click do nothing should be told that rather than soothed.
+  if (answer.crossed_nothing || answer.already) {
+    const why = String(answer.crossed_nothing ?? answer.note ?? "").trim();
+    return `<div class="wv-cross-sheet is-refused" data-for="${esc(markId)}">`
+      + `<div class="wv-cross-head">${answer.already ? "you are already inside" : "the door answered, but nothing crossed"}</div>`
+      + `<p class="wv-cross-body">${esc(why || "the door took the act and crossed no threshold — this is a fault in the crossing, not an entry")}</p>`
+      + `</div>`;
+  }
   return "";
 }
 
