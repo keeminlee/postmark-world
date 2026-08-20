@@ -693,6 +693,20 @@ export function interiorFraming({ room, viewport = INTERIOR_VIEWPORT, minMPerPx 
   };
 }
 
+/** Panel pixels back to world metres — the inverse of interiorPx, and the whole
+ *  of what a click on the floor needs to become a place. Same framing, same
+ *  arithmetic read backwards, so a point projected and un-projected is itself.
+ *
+ *  This is what lets the floor use the PAINTING's verbs unchanged: the interior
+ *  is same-frame by construction, so a click here yields ordinary world
+ *  coordinates and `walk` never learns that indoors exists. */
+export function interiorWorldAt(framing, panel) {
+  return {
+    x: ((Number(panel?.x) || 0) - framing.originPx.x) * framing.mPerPx,
+    y: ((Number(panel?.y) || 0) - framing.originPx.y) * framing.mPerPx,
+  };
+}
+
 /** Project an absolute world point into the interior panel — byte-identical in
  *  shape to the painting's own `px()`, deliberately. */
 export const interiorPx = (framing, at) => ({
@@ -841,15 +855,33 @@ export function interiorThingSVG(thing, framing, { nameOf = deslugMarkId, claim 
  *  cannot appear in it. Placed on the room's centre — the record says who is
  *  inside, never where inside, and inventing a position would be the readout
  *  claiming a fact the ledger does not hold. */
-export function interiorBodySVG(handle, framing, { index = 0, of = 1, you = false, claim = () => true } = {}) {
-  const c = { x: framing.W / 2, y: framing.H / 2 };
+// WHERE A BODY STANDS IN THE ROOM.
+//
+// Originally every body sat on the room's centre, and the comment defending it
+// was right at the time: the threshold ledger says who is inside, never where
+// inside, and inventing a spot would have been the readout claiming a fact no
+// record held.
+//
+// The floor answers clicks now, and a click writes a real position through the
+// walk verb — so for anyone the WALK ledger places, the fact exists and the
+// centre would be the lie. `at` is that derived position when there is one.
+// Without one, the centre stands, for exactly the original reason.
+//
+// This is what the founder meant by not being able to move around: he could
+// not, and even once he could, his dot would not have followed him.
+export function interiorBodySVG(handle, framing, { index = 0, of = 1, you = false, claim = () => true, at = null } = {}) {
+  const placed = at && Number.isFinite(Number(at.x)) && Number.isFinite(Number(at.y))
+    ? interiorPx(framing, at) : null;
+  const c = placed ?? { x: framing.W / 2, y: framing.H / 2 };
   const spread = Math.min(framing.floorPx.w, framing.floorPx.h) * 0.12 + 18;
   // Starting due WEST rather than due north, so the commonest case — two people
   // in a room — reads as two people side by side. From north, a pair lands one
   // directly above the other and shares a column, which in a wide room looks
   // less like company and more like a rendering fault.
   const angle = of <= 1 ? 0 : Math.PI + (index / of) * Math.PI * 2;
-  const p = of <= 1 ? c : { x: c.x + Math.cos(angle) * spread, y: c.y + Math.sin(angle) * spread };
+  // a body the ledger PLACES keeps its own spot — the fan is only for bodies
+  // sharing the centre because nothing places them
+  const p = placed ?? (of <= 1 ? c : { x: c.x + Math.cos(angle) * spread, y: c.y + Math.sin(angle) * spread });
   const ly = p.y + 23;
   claim(p.x, ly);   // a body's own name always gets its line; this reserves it
   return `<g class="wv-int-body${you ? " is-you" : ""}" data-handle="${esc(handle)}">`
@@ -858,13 +890,32 @@ export function interiorBodySVG(handle, framing, { index = 0, of = 1, you = fals
 }
 
 /** THE WHOLE ROOM, in one string. */
-export function interiorSVG({ room, framing, things = [], bodies = [], you = null, nameOf = deslugMarkId } = {}) {
+/** THE DOOR OUT, ON THE FLOOR. It also exists in the telling pane, and that is
+ *  not redundancy — it is the fix for the founder's report.
+ *
+ *  Every interactive thing an interior had lived in the telling rail: the
+ *  plaque, the cards, the enter chips, the way out. The viewer's DEFAULT view
+ *  mode is painting-only, which collapses that rail to zero width — so a
+ *  resident who refreshed while inside saw the room and had no way to leave it,
+ *  and nothing to touch. The floor owns the panel in every mode, so the floor
+ *  is where the way out has to be.
+ *
+ *  Same class as the pane's button, deliberately: the existing click route
+ *  already carries `.wv-int-exit-btn` to stepOutside, so this needs no new
+ *  wiring and cannot drift from the other one. */
+export function interiorExitHTML(roomId, name = null) {
+  return `<div class="wv-int-floor-exit">`
+    + `<button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(roomId)}">`
+    + `↤ step outside${name ? ` ${esc(name)}` : ""}</button></div>`;
+}
+
+export function interiorSVG({ room, framing, things = [], bodies = [], you = null, nameOf = deslugMarkId, standing = null } = {}) {
   // THE BODIES CLAIM THEIR NAMES FIRST. Who is in the room outranks what is in
   // it — a person's name losing its line to a broth pot is the wrong trade — so
   // the placer is walked over the bodies before any thing asks it.
   const claim = labelPlacer();
   const drawnBodies = bodies.map((h, i) =>
-    interiorBodySVG(h, framing, { index: i, of: bodies.length, you: h === you, claim }));
+    interiorBodySVG(h, framing, { index: i, of: bodies.length, you: h === you, claim, at: standing?.get?.(h) ?? null }));
   return `<svg xmlns="http://www.w3.org/2000/svg" class="wv-interior" viewBox="0 0 ${framing.W} ${framing.H}"`
     + ` role="img" aria-label="inside ${esc(nameOf(room?.id))}">`
     + paperFloorSVG(framing)
@@ -3011,15 +3062,29 @@ const STYLE = `
 .wv-minimap { position:relative; overflow:hidden; cursor:crosshair; }
 /* inside, the painting is not dimmed or filtered — it is GONE. A ghost of the
    aerial view under a floor would say the roof is missing. */
-.wv-interior-panel { position:absolute; inset:0; z-index:8; background:#0d0f13; }
+/* THE FLOOR SITS WHERE THE PAINTING SAT — UNDERNEATH THE CHROME. At z-index 8 it
+   covered the walk desk (also 8) and the bubbles (7), so a walk could be armed
+   from the floor and never confirmed, and a mark card had nowhere to open. The
+   panel REPLACES the atlas, so it belongs at the atlas's depth: above nothing,
+   below everything a reader acts through. Found by clicking it, not by reading it. */
+.wv-interior-panel { position:absolute; inset:0; z-index:1; background:#0d0f13; }
 .wv-minimap.is-inside { cursor:default; }
+/* THE PAINTING GOES; THE INTERACTION STAYS. This rule used to take the bubbles
+   and the walk desk down with the atlas, which is how the interior became a
+   picture you could not touch — a mark card had nowhere to open and a walk had
+   nowhere to be confirmed. Those two are not the painting: they are how a
+   reader acts on whatever the panel is showing, and the panel is now a floor. */
 .wv-minimap.is-inside > svg,
 .wv-minimap.is-inside > .wv-mapctl,
 .wv-minimap.is-inside > .wv-spectator-coordinate,
 .wv-minimap.is-inside > .wv-paint-tallies,
-.wv-minimap.is-inside > .wv-bubbles,
-.wv-minimap.is-inside > .wv-walkdesk,
 .wv-minimap.is-inside > .wv-worldmark { display:none; }
+/* the way out, over the floor, in every view mode — the telling rail that also
+   carries one is collapsed by the default mode, which is the whole bug */
+.wv-int-floor-exit { position:absolute; top:12px; left:12px; z-index:9; }
+.wv-int-floor-exit .ctl { font-size:.82rem; padding:5px 11px; box-shadow:0 2px 10px rgba(0,0,0,.5); }
+.wv-interior { cursor:crosshair; }
+.wv-interior [data-id] { cursor:pointer; }
 .wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
@@ -4325,6 +4390,46 @@ export function mountViewer(appEl) {
   // two halves of the page can never disagree about which side of a threshold
   // the reader is on — and read off the ACTIVE standpoint, so a warm build for
   // somebody else's room cannot reach it.
+  // ── the floor, as ground you can act on ──────────────────────────────────
+  //
+  // PARITY IS THE SAME VERBS, NOT NEW ONES (founder: agents should be able to do
+  // everything in the entered state that they can in the main world). The
+  // interior is same-frame by construction, so a click here yields ordinary
+  // world coordinates and the acts below are the painting's own, unchanged:
+  //
+  //   a thing on the floor -> selectMark, exactly as a pip
+  //   open floor           -> chooseWalkPoint, exactly as open ground
+  //
+  // R15 HOLDS AND IS THE REASON THIS IS SAFE: walking never crosses. A click on
+  // the floor writes a position through the walk verb and touches occupancy not
+  // at all — you stay inside because the LEDGER says so, not because the view
+  // is holding you there. Which is also why the walk is NOT clamped to the
+  // room's rect: walls would be a law about where a walk may end, and nobody has
+  // ruled one. Flagged rather than invented.
+  function bindInteriorFloor(panel, built) {
+    const svg = panel.querySelector("svg.wv-interior");
+    if (!svg) return;
+    svg.addEventListener("pointerup", (event) => {
+      if (event.button !== 0) return;
+      const thing = event.target.closest?.("[data-id]");
+      if (thing?.dataset?.id) { selectMark(thing.dataset.id); return; }
+      // panel pixels -> the svg's own viewBox units -> world metres
+      const box = svg.getBoundingClientRect();
+      if (!(box.width > 0 && box.height > 0)) return;
+      const { W, H } = built.recipe.framing;
+      // the SVG is fitted with preserveAspectRatio's default (meet), so one axis
+      // is letterboxed; the scale is the SMALLER ratio and the slack is centred
+      const k = Math.min(box.width / W, box.height / H);
+      const panelPoint = {
+        x: (event.clientX - box.left - (box.width - W * k) / 2) / k,
+        y: (event.clientY - box.top - (box.height - H * k) / 2) / k,
+      };
+      const world = interiorWorldAt(built.recipe.framing, panelPoint);
+      const point = { x: Math.round(world.x), y: Math.round(world.y) };
+      markInteraction.select(null);
+      if (canAct()) chooseWalkPoint(point.x, point.y);
+    });
+  }
   function syncInteriorPanel() {
     const boxEl = $(root, ".wv-minimap");
     if (!boxEl) return;
@@ -4347,7 +4452,19 @@ export function mountViewer(appEl) {
     // The picture's URL is written into the SVG by placedArtSVG, which passes it
     // through safeAvatarUrl first — so unlike a mark-cell there is no empty
     // figure to hydrate here, and nothing between the record and the <image>.
-    panel.innerHTML = interiorSVG({ ...built.recipe, room: built.room, nameOf: built.nameOf });
+    // WHERE EACH BODY IS STANDING, off the same walkers the painting draws — one
+    // source for position, so the floor and the map can never disagree about
+    // where somebody is.
+    const standing = new Map();
+    for (const w of walkState.walkers ?? [])
+      if (w?.handle && Number.isFinite(w.x) && Number.isFinite(w.y)) standing.set(w.handle, { x: w.x, y: w.y });
+    panel.innerHTML = interiorSVG({ ...built.recipe, room: built.room, nameOf: built.nameOf, standing })
+      + interiorExitHTML(built.room.id, built.nameOf(built.room.id));
+    // THE FLOOR ANSWERS A CLICK, the way the painting does. Bound here rather
+    // than delegated from the root because the handler needs THIS render's
+    // framing to turn panel pixels into a place — and re-bound each render for
+    // the same reason, since a new room is a new frame.
+    bindInteriorFloor(panel, built);
   }
   // ── crossing in ──────────────────────────────────────────────────────────
   //
