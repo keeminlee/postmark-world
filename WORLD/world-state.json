@@ -5807,7 +5807,7 @@
       "tier": "home",
       "household": "rei",
       "declared_household": "gh:67605380",
-      "date": "2026-08-11T15:52:56.632Z",
+      "date": "2026-08-20T01:20:27.677Z",
       "at": {
         "x": 1076.8,
         "y": -812.2
@@ -5820,6 +5820,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A dented blue biscuit tin beneath the south stone keeps a stub pencil, seed labels, and weather notes dry enough to compare failures kindly.",
+      "image": "https://media.postmark.town/media/keeminlee/18a33db455908d1ef85a36f59dee2d6514343449160ca3e825221ebf461edca0.webp",
       "placementParent": "rei/the-experiment-garden"
     },
     {
@@ -5999,6 +6000,23 @@
       "weight": 0,
       "body": "A slatted cedar bay behind the kitchen holds peelings, leaves, and tired stems under burlap, turning scraps back toward soil.",
       "placementParent": "rei/the-lanternstep-house-parcel"
+    },
+    {
+      "id": "rei/compost-bay-keeping-custom",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "home",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-19T23:23:25.788Z",
+      "parent": "rei/the-kitchen-compost-bay",
+      "slot": "keeping",
+      "value": "damp-air-leaves",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Keep the pile damp, not dripping; add dry leaves when it slumps, rainwater when it powders, and turn it just enough to breathe.",
+      "placementParent": "rei/the-kitchen-compost-bay"
     },
     {
       "id": "rei/the-kitchen-herb-bed",
@@ -15092,6 +15110,11 @@
       "stamps": 0,
       "weight": 0,
       "body": "The town's own mail boat, moored at Ferry's crossing — the Post Office sails when the mail must go farther than the water has ever carried it.",
+      "entry": {
+        "word": "welcomed",
+        "edge": "aboard",
+        "consequence": "aboard when she sails — standing in her frame at a departure means riding, and the timetable is public"
+      },
       "placementParent": "the-town/the-quay-reach"
     },
     {
@@ -15208,6 +15231,10 @@
           }
         ]
       },
+      "entry": {
+        "word": "opposed",
+        "consequence": "whoever holds the wheel holds the schedule — the wheelhouse is the postmaster's own, and the door does not open to passengers"
+      },
       "class": "timetable",
       "placementParent": "the-town/the-post-office"
     },
@@ -15277,6 +15304,38 @@
       "weight": 0,
       "body": "Last of the mail-houses at the quay's downwater end, one door back from the crossing stone, quay-stone walls and steps into the water.",
       "placementParent": "postmaster/the-waiting-room-parcel"
+    },
+    {
+      "id": "little-bird/a-cold-cup-on-the-long-bench",
+      "kind": "sited",
+      "by": "little-bird",
+      "tier": "market",
+      "household": "little-bird",
+      "declared_household": "gh:300310888",
+      "date": "2026-08-17T01:25:14.888Z",
+      "at": {
+        "x": 155,
+        "y": 431
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 3,
+      "weight": 3,
+      "weight_parts": {
+        "own_escrow": 3,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A lidded cup waits cold on the long bench, crooked caramel horn, blue at the rim, gold in the low band, over permafrost ice, for whoever waits.",
+      "placementParent": "postmaster/the-waiting-room",
+      "ledger_weight": 3
     },
     {
       "id": "postmaster/doors",
@@ -25670,6 +25729,10 @@
     "little-bird": [
       {
         "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
+        "stamps": 3
+      },
+      {
+        "mark": "little-bird/a-cold-cup-on-the-long-bench",
         "stamps": 3
       },
       {

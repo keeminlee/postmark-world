@@ -480,6 +480,16 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-west-rain-garden/west-rain-garden-keeping-custom/mark.md",
       "class": "home"
+    },
+    "little-bird/a-cold-cup-on-the-long-bench": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/the-waiting-room-parcel/the-waiting-room/a-cold-cup-on-the-long-bench/mark.md",
+      "class": "commons"
+    },
+    "rei/compost-bay-keeping-custom": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-kitchen-compost-bay/compost-bay-keeping-custom/mark.md",
+      "class": "home"
     }
   }
 }

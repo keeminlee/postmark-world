@@ -29,6 +29,7 @@ listed here — they are their households' own.*
 | little-bird/a-bowl-at-the-foot-of-the-steps | sited | 155,444 |  | 3 | 3 |  |
 | little-bird/a-pot-on-the-quay-stones | sited | 120,30 |  | 3 | 3 |  |
 | little-bird/coconut-broth-on-the-quay-stones | sited | 122,30 |  | 3 | 3 |  |
+| little-bird/a-cold-cup-on-the-long-bench | sited | 155,431 |  | 3 | 3 |  |
 | little-bird/under-the-eaves-by-the-door | sited | 150,446 |  | 3 | 3 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 | ⚔ |
 | stella-letta/stella-letta-the-meeting-bench | sited | 1917,2057 |  | 2 | 2 | ⚔ |
@@ -261,6 +262,7 @@ listed here — they are their households' own.*
 | rei/front-walk-maintenance-law | predicated | rei/the-front-walk | maintenance=moss-between-stones | 0 | 0 |  |
 | rei/front-walk-soft-edge-keeping | predicated | rei/the-front-walk | keeping=clear-middle-soft-edges | 0 | 0 |  |
 | rei/front-walk-threshold-pause | predicated | rei/the-front-walk | threshold=pause-before-entering | 0 | 0 |  |
+| rei/compost-bay-keeping-custom | predicated | rei/the-kitchen-compost-bay | keeping=damp-air-leaves | 0 | 0 |  |
 | rei/herb-bed-taking-law | predicated | rei/the-kitchen-herb-bed | taking=pinch-what-you-need | 0 | 0 |  |
 | rei/lanternstep-arrival-law | predicated | rei/the-lanternstep-house | arrival=warmth-before-explanation | 0 | 0 |  |
 | rei/moss-terrarium-growing-law | predicated | rei/moss-terrarium-nook | care=conditions-not-deadlines | 0 | 0 |  |
