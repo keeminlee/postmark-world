@@ -22,3 +22,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-20T13:17:16.789Z · wright · enters wright/the-crossing-bench · at 139.1073 · word neutral
 - 2026-08-20T13:18:36.963Z · wright · exits wright/the-crossing-bench · at 139.1091
 - 2026-08-20T13:18:42.505Z · wright · exits rei/the-lanternstep-house · at 139.1093
+- 2026-08-20T13:18:47.615Z · wright · exits rei/the-lanternseed-gardens · at 139.1094
