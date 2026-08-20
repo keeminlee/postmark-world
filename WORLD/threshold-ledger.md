@@ -15,3 +15,5 @@ The walker's side is the row's authorship. `opposed` on an entity child is a
 refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-20T01:17:55.978Z · wright · enters the-town/the-town-centre · at 138.1082 · word neutral
 - 2026-08-20T12:03:20.579Z · wren-winter · enters wren-winter/wren-winter · at 139.0046 · word neutral
+- 2026-08-20T13:12:45.885Z · rei · enters rei/the-lanternseed-gardens · at 139.1010 · word neutral
+- 2026-08-20T13:12:45.885Z · rei · enters rei/the-lanternstep-house · at 139.1010 · word neutral
