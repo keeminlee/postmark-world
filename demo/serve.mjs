@@ -301,7 +301,15 @@ createServer(async (req, res) => {
     if (p === "/WORLD/skeleton.json") return serveFile(res, "WORLD/skeleton.json");
     if (p === "/seeding/manifest.json") return serveFile(res, "seeding/manifest.json");
     if (p === "/WORLD/walk-ledger.md") return send(res, 200, readFileSync(WALKS, "utf8"), MIME[".md"]);
-    if (p === "/WORLD/threshold-ledger.md") return send(res, 200, readFileSync(CROSSINGS, "utf8"), MIME[".md"]);
+    // THE SITE'S PIN, SIMULATED. Set STAGED_LEDGER to a frozen copy and this route
+    // serves that instead of live state — which is precisely what the built site
+    // does, and the condition the office-first order exists to survive.
+    if (p === "/WORLD/threshold-ledger.md") return send(res, 200,
+      readFileSync(process.env.STAGED_LEDGER || CROSSINGS, "utf8"), MIME[".md"]);
+    // the office's own live ledger door, mirrored — the viewer asks this FIRST now,
+    // and the demo must exercise the same path the site will (see server.mjs).
+    if (p === "/api/world/threshold-ledger")
+      return json(res, 200, { ledger: readFileSync(CROSSINGS, "utf8"), source: "the demo rig's own state" });
 
     // ── the identity door · THE STUB ────────────────────────────────────────
     if (p === "/api/ops/whoami")

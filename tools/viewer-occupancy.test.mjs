@@ -64,7 +64,13 @@ test("FALSIFIER: an exit appended to the ledger empties the readout", () => {
   const after = standpointOccupancy({ acts, at, handle: "wright" });
   assert.deepEqual(after.entered, [], "after the exit wright is inside nothing");
   assert.equal(after.insideOf, null);
-  assert.equal(after.manifest.size, 0, "and the room is empty — nobody is inside anything");
+  // THE LEDGER IS APPEND-ONLY AND THE TOWN IS ALIVE. This used to assert the
+  // whole manifest emptied, which was only ever true because wright was the one
+  // resident who had ever crossed anything. Other residents are inside their own
+  // marks now, honestly, and a test that breaks when the town lives is a test
+  // pinning the wrong thing. The claim is about WRIGHT's room.
+  assert.ok(!after.manifest.has("the-town/the-town-centre") || !(after.manifest.get("the-town/the-town-centre") ?? []).includes("wright"),
+    "wright is out of the room he exited");
   assert.equal(occupancyChipHTML(after), "", "and the chip is absent rather than empty");
 
   // and the same acts BEFORE the exit's clock still hold him inside: the exit is
@@ -189,8 +195,12 @@ test("the dev readout names every room and its occupants, and says so when there
   const { manifest } = standpointOccupancy({ acts: REAL.acts, at });
   const line = occupancyDevLine({ manifest, acts: REAL.acts.length, unrecognized: REAL.unrecognized.length, at });
   assert.match(line, /threshold ledger/);
-  assert.match(line, /1 crossing/);
-  assert.match(line, /wright/);
+  // the COUNT the ledger actually holds, not a number frozen on the day this was
+  // written — an append-only record grows every time somebody crosses a door
+  const n = REAL.acts.length;
+  assert.match(line, new RegExp(`${n} crossing`), `the readout counts the ledger's own ${n} acts`);
+  assert.match(line, /wright/, "the resident on the standing fixture is named");
+  assert.match(line, /The Town Centre/, "and so is the room he is in");
   assert.doesNotMatch(line, /unrecognized/, "a clean ledger does not report a malformed count");
 
   assert.match(occupancyDevLine({ manifest: new Map(), acts: 0 }), /nobody is inside anything/);

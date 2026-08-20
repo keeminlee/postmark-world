@@ -110,6 +110,30 @@ test("a clean crossing renders NO sheet — the interior is the answer", () => {
   assert.equal(crossingSheetHTML({}, ROOM.id), "");
 });
 
+// ── no silent click (founder, 2026-08-20) ──────────────────────────────────
+//
+// The founder clicked enter and NOTHING happened. The door had answered success
+// with entered: [], no terms, no refusal, no ledger row — an act that vanished.
+// The viewer rendered nothing because there was nothing, which was correct and
+// useless. The office now says WHY it crossed nothing, and these pin that the
+// reader is told.
+test("FALSIFIER: an answer that crossed nothing is never silent", () => {
+  const html = crossingSheetHTML({ entered: [], crossed_nothing: "nothing was crossed at rei/x, and the door named neither terms nor a refusal" }, "rei/x");
+  assert.notEqual(html, "", "the vanished click is the bug — an empty sheet here IS the bug");
+  assert.match(html, /nothing crossed/);
+  assert.match(html, /neither terms nor a refusal/, "the door's own reason is shown, not a paraphrase");
+});
+
+test("already-inside is said as itself, not as a fault", () => {
+  const html = crossingSheetHTML({ already: true, entered: [], crossed_nothing: "you are already within rei/x" }, "rei/x");
+  assert.match(html, /already inside/);
+  assert.doesNotMatch(html, /fault/, "a no-op is not an error and must not read as one");
+});
+
+test("a real crossing is still silent — the room is the announcement", () => {
+  assert.equal(crossingSheetHTML({ entered: ["rei/x"], within: ["rei/x"] }, "rei/x"), "");
+});
+
 test("markup in the door's own words cannot escape the sheet", () => {
   const html = crossingSheetHTML({
     awaiting: { terms: { body: "<script>x</script>", edge: "<b>e</b>", consequence: "<i>c</i>" } },

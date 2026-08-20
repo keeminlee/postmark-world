@@ -642,10 +642,19 @@ export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized 
 // centre — the cup in the waiting room written as { x: 0, y: 1 }. That frame is
 // a convenience for whoever is writing the file, and it does not survive the
 // fold: `loadMarks` composes world coordinates once, at load, and (its own words)
-// "nothing downstream can tell which frame the files were written in". By the
-// time the viewer sees a mark, every `at` is ABSOLUTE metres. Proof, from the
-// live record: the Town Centre's centre is { -75, -75 } and the crossing bench
-// inside it reads { 12, 8 } — an offset would have been { 87, 83 }.
+// "nothing downstream can tell which frame the files were written in".
+//
+// RECORDS ARE OFFSETS; THE STORE IS ABSOLUTE. The viewer reads the STORE, so
+// every `at` it sees is absolute metres — but the record beside it is not, and
+// that distinction is the whole of the 2026-08-20 crossing fault. Proof from the
+// live tree, and note which number lives where: the crossing bench's RECORD says
+// { 87, 83 }, an offset from the Town Centre's centre { -75, -75 }, and the store
+// holds their sum, { 12, 8 }.
+//
+// (This comment used to say "an offset would have been { 87, 83 }" — phrasing the
+// record's own value as the hypothetical, which read as though records were
+// absolute. They are not. Corrected 2026-08-20; the conclusion above was always
+// right for the viewer, for the reason stated: it reads the store.)
 //
 // Which turns out to be a gift rather than a chore. Because the marks are all in
 // one frame, an interior needs NO coordinate transform at all: it is the same
@@ -2272,6 +2281,23 @@ export function crossingSheetHTML(answer = {}, markId = "") {
       + `<div class="wv-cross-head">refused at the door</div>`
       + `<p class="wv-cross-body">${esc(because || "the mark opposes entry — you are left standing outside")}</p>`
       + `<p class="wv-cross-edge wv-quiet">The act is in the record. Being turned away is a fact about the town.</p>`
+      + `</div>`;
+  }
+  // NO SILENT CLICK, EVER AGAIN (founder, 2026-08-20). A door that answered but
+  // crossed nothing used to render as nothing at all — the click vanished and the
+  // reader had no way to tell a bug from a no-op. The office now says WHY it
+  // crossed nothing (, and  where that is the reason),
+  // so the only remaining silence is a genuine crossing, which the interior
+  // announces on its own.
+  //
+  // The fallback text is deliberately not reassuring: an answer that entered
+  // nothing while naming neither terms nor a refusal is a FAULT, and a reader
+  // who saw their click do nothing should be told that rather than soothed.
+  if (answer.crossed_nothing || answer.already) {
+    const why = String(answer.crossed_nothing ?? answer.note ?? "").trim();
+    return `<div class="wv-cross-sheet is-refused" data-for="${esc(markId)}">`
+      + `<div class="wv-cross-head">${answer.already ? "you are already inside" : "the door answered, but nothing crossed"}</div>`
+      + `<p class="wv-cross-body">${esc(why || "the door took the act and crossed no threshold — this is a fault in the crossing, not an entry")}</p>`
       + `</div>`;
   }
   return "";
@@ -7752,8 +7778,31 @@ export function mountViewer(appEl) {
   // with acts. The walk loader's non-empty guard is right for positions and would
   // be wrong here: it would fall through a true "the room is empty" to the raw
   // file and report a room the local record says has been emptied.
+  // THE CROSSINGS MUST COME FROM A LIVE SOURCE, and until now none of these were.
+  //
+  // The site stages WORLD/threshold-ledger.md as a BUILD ARTIFACT, pinned to the
+  // world sha the site was built from, and the RAW fallback is whatever github
+  // last served. Crossings land continuously, so both are photographs. A resident
+  // could walk through a door, refresh, and be told they were still outside —
+  // which is exactly the last lie standing between the founder's click and his
+  // interior, and it is not a caching bug: those files are simply OLD.
+  //
+  // So the office goes FIRST. It reads the clone it actually has, the same move
+  // /world/state already makes for the marks. The staged file and RAW stay as
+  // fallbacks, because a page served from somewhere with no office (the local
+  // spectator, a bare clone) must still derive occupancy — stale crossings are
+  // worth more than none, and the fallbacks are exactly as good as they ever were.
+  //
+  // WHAT DOES NOT MOVE: occupancy is still derived IN THE READER. The office
+  // hands over the ledger TEXT and this parses it, because who folds the rooms is
+  // a constitutional question and this is only a question of which bytes.
+  const thresholdLedgerSources = () => [
+    { url: officeUrl("/world/threshold-ledger"), json: true },
+    { url: "/WORLD/threshold-ledger.md", json: false },
+    { url: `${RAW}/WORLD/threshold-ledger.md`, json: false },
+  ];
   async function loadThresholdLedger() {
-    for (const url of ["/WORLD/threshold-ledger.md", `${RAW}/WORLD/threshold-ledger.md`]) {
+    for (const { url, json } of thresholdLedgerSources()) {
       try {
         // NO-STORE, and this one is load-bearing rather than tidy. This file is
         // re-read IMMEDIATELY after a crossing is written, so a cached copy is a
@@ -7763,7 +7812,10 @@ export function mountViewer(appEl) {
         // freshness has to be asked for HERE, at the one reader that needs it.
         const r = await fetch(url, { credentials: "omit", cache: "no-store" });
         if (!r.ok) continue;
-        const parsed = parseThresholdLedger(await r.text());
+        // the office answers JSON carrying the ledger text; a file IS the text
+        const text = json ? String((await r.json())?.ledger ?? "") : await r.text();
+        if (json && !text) continue;   // an office that answered with no ledger is not an answer
+        const parsed = parseThresholdLedger(text);
         crossings = { acts: parsed.acts, unrecognized: parsed.unrecognized.length };
         crossingEpoch += 1;   // every pane built before this one is stale
         return;
