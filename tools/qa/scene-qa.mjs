@@ -84,7 +84,7 @@ const inside = await page.evaluate(() => {
     exitInViewport: eb ? eb.width > 0 && eb.y > 0 && eb.y < 1000 && eb.x >= 0 : false,
     // bottom-left OF THE WORLD PANE — measured against the pane's own rect
     exitBottomLeft: eb && bb ? (eb.x - bb.x) < 60 && (bb.bottom - eb.bottom) < 100 : false,
-    mapctlHidden: !box?.querySelector(".wv-mapctl") || getComputedStyle(box.querySelector(".wv-mapctl")).display === "none",
+    mapctlVisible: (() => { const m = box?.querySelector(".wv-mapctl"); return !!m && getComputedStyle(m).display !== "none"; })(),
     viewBox: svg?.getAttribute("viewBox") ?? null,
     markerVar: svg?.querySelector("#wv-overlay")?.style.getPropertyValue("--wv-mk") || null,
   };
@@ -101,17 +101,34 @@ check("THE ROOF: no atlas content inside the room's svg", !inside.atlasContent);
 check("the room's things draw as pips through the ONE overlay", inside.pips >= 1, `${inside.pips} pips`);
 check("THE WAY OUT is on the pane in the DEFAULT view mode", inside.exitInViewport);
 check("…at the bottom left (the founder's word)", inside.exitBottomLeft);
-check("camera chrome absent in a mark scene", inside.mapctlHidden);
+check("the FULL RAIL is present in a mark scene (revised ruling)", inside.mapctlVisible);
 check("the numeric regime is the town's own (marker var ≈ 1)",
   inside.markerVar === null || Math.abs(Number(inside.markerVar) - 1) < 0.7, `--wv-mk=${inside.markerVar}`);
 
-// ── the camera is refused: a wheel over the room changes nothing ────────────
-const vbBefore = inside.viewBox;
+// ── the camera is CLAMPED: zoom-in works; zoom-out stops at the whole room ──
+// normalize first: act-as recenter may have lockOn-zoomed the view already
+await page.evaluate(() => document.querySelector(".wv-map-home")?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+await page.waitForTimeout(600);
+const w0 = await page.evaluate(() => Number(document.querySelector(".wv-minimap svg")?.getAttribute("viewBox")?.split(/\s+/)[2]));
 await page.mouse.move(1000, 500);
 await page.mouse.wheel(0, -600);
 await page.waitForTimeout(400);
-const vbAfter = await page.evaluate(() => document.querySelector(".wv-minimap svg")?.getAttribute("viewBox"));
-check("FALSIFIER: the wheel does not zoom a room", vbBefore === vbAfter, `${vbBefore} == ${vbAfter}`);
+const wIn = await page.evaluate(() => Number(document.querySelector(".wv-minimap svg")?.getAttribute("viewBox")?.split(/\s+/)[2]));
+check("the wheel zooms IN to a room (revised ruling)", wIn < w0 * 0.9, `${w0} -> ${wIn}`);
+await page.mouse.wheel(0, 4000);
+await page.waitForTimeout(400);
+const wOut = await page.evaluate(() => Number(document.querySelector(".wv-minimap svg")?.getAttribute("viewBox")?.split(/\s+/)[2]));
+check("FALSIFIER: zoom-out stops at the whole room — never past the walls", Math.abs(wOut - w0) < w0 * 0.02, `${wOut} vs full ${w0}`);
+const rail = await page.evaluate(() => {
+  const box = document.querySelector(".wv-minimap");
+  const fp = box?.querySelector(".wv-map-fp"); const cv = box?.querySelector(".wv-map-convo");
+  fp?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  const fpOn = (() => { const l = box?.querySelector("#wv-fp-layer"); return !!l && l.style.display !== "none" && l.childNodes.length > 0; })();
+  fp?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  return { fpBtn: !!fp, cvBtn: !!cv, fpOn };
+});
+check("the footprint toggle draws extent outlines inside", rail.fpBtn && rail.fpOn);
+check("the conversations toggle is on the rail inside", rail.cvBtn);
 
 // ── hover: the glance rides the same machinery ──────────────────────────────
 const hover = await page.evaluate(() => {
