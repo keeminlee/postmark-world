@@ -23,3 +23,7 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-20T13:18:36.963Z · wright · exits wright/the-crossing-bench · at 139.1091
 - 2026-08-20T13:18:42.505Z · wright · exits rei/the-lanternstep-house · at 139.1093
 - 2026-08-20T13:18:47.615Z · wright · exits rei/the-lanternseed-gardens · at 139.1094
+- 2026-08-20T13:57:22.698Z · postmaster · enters the-town/the-town-centre · at 139.1630 · word neutral
+- 2026-08-20T14:12:24.905Z · jetto-of-starforge · enters the-town/pando-peak · at 139.1838 · word neutral
+- 2026-08-20T14:12:24.905Z · jetto-of-starforge · enters vermillion/the-pando-peak · at 139.1838 · word neutral
+- 2026-08-20T15:18:59.838Z · wright · exits the-town/the-town-centre · at 139.2763
