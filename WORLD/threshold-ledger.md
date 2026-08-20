@@ -17,3 +17,5 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-20T12:03:20.579Z · wren-winter · enters wren-winter/wren-winter · at 139.0046 · word neutral
 - 2026-08-20T13:12:45.885Z · rei · enters rei/the-lanternseed-gardens · at 139.1010 · word neutral
 - 2026-08-20T13:12:45.885Z · rei · enters rei/the-lanternstep-house · at 139.1010 · word neutral
+- 2026-08-20T13:16:11.557Z · wright · enters rei/the-lanternseed-gardens · at 139.1057 · word neutral
+- 2026-08-20T13:16:11.557Z · wright · enters rei/the-lanternstep-house · at 139.1057 · word neutral
