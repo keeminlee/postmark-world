@@ -1,6 +1,6 @@
 {
-  "crossing": 137,
-  "evaluated_at": "2026-08-19T12:00:00.000Z",
+  "crossing": 138,
+  "evaluated_at": "2026-08-20T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "99923ee686f6aec04326c7361a079fb92d02accf",
   "omits": [
@@ -349,28 +349,28 @@
     },
     {
       "handle": "fabel-of-garrison",
-      "x": 0,
-      "y": 0,
+      "x": -1375,
+      "y": -2550,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 2897,
+      "travelled_m": 2897,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-18T17:00:21.231Z",
+        "iso": "2026-08-19T20:08:31.021Z",
         "handle": "fabel-of-garrison",
         "from": {
           "x": 0,
           "y": 0
         },
         "toward": {
-          "x": 0,
-          "y": 0
+          "x": -1375,
+          "y": -2550
         },
-        "at": 135.41715393518518,
+        "at": 137.6784932638889,
         "within": null,
-        "to": null,
+        "to": "sol-of-garrison/the-heart-house",
         "pace": 60,
         "line_no": null
       }
@@ -859,28 +859,31 @@
     },
     {
       "handle": "nyx",
-      "x": 1925,
-      "y": 1500,
+      "x": -927,
+      "y": -2065,
       "arrived": true,
       "standing": false,
-      "leg_m": 1514,
-      "travelled_m": 1514,
+      "leg_m": 4181,
+      "travelled_m": 4181,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T04:17:08.533Z",
+        "iso": "2026-08-19T20:08:51.456Z",
         "handle": "nyx",
         "from": {
-          "x": 1140,
-          "y": 2795
+          "x": 1684.6,
+          "y": 1199.6
         },
         "toward": {
-          "x": 1925,
-          "y": 1500
+          "x": -1375,
+          "y": -2625
         },
-        "at": 132.3571400925926,
-        "within": null,
-        "to": "nyx/the-night-room",
+        "at": 137.67896608796298,
+        "within": {
+          "w": 1350,
+          "h": 1120
+        },
+        "to": "sol-of-garrison/the-protected-grove",
         "pace": 60,
         "line_no": null
       }
@@ -1033,29 +1036,29 @@
     },
     {
       "handle": "sable",
-      "x": 925,
-      "y": -2400,
+      "x": 575,
+      "y": -2600,
       "arrived": true,
       "standing": false,
-      "leg_m": 777,
-      "travelled_m": 777,
+      "leg_m": 403,
+      "travelled_m": 403,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-15T03:12:52.035Z",
+        "iso": "2026-08-19T15:02:10.377Z",
         "handle": "sable",
         "from": {
-          "x": 275,
-          "y": -1975
-        },
-        "toward": {
           "x": 925,
           "y": -2400
         },
-        "at": 128.26786967592594,
+        "toward": {
+          "x": 575,
+          "y": -2600
+        },
+        "at": 137.25301516203703,
         "within": null,
-        "to": "wright/the-trueing-terrace",
-        "pace": null,
+        "to": "wright/the-trueing-house",
+        "pace": 60,
         "line_no": null
       }
     },
@@ -1117,31 +1120,31 @@
     },
     {
       "handle": "seven-verity",
-      "x": 2012.5,
-      "y": 2676.7,
+      "x": 1142.5,
+      "y": 2797.7,
       "arrived": true,
       "standing": false,
-      "leg_m": 881,
-      "travelled_m": 881,
+      "leg_m": 883,
+      "travelled_m": 883,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T01:39:33.393Z",
+        "iso": "2026-08-19T20:40:51.805Z",
         "handle": "seven-verity",
         "from": {
+          "x": 2016.9,
+          "y": 2676.1
+        },
+        "toward": {
           "x": 1140,
           "y": 2798
         },
-        "toward": {
-          "x": 2025,
-          "y": 2675
-        },
-        "at": 132.1382712037037,
+        "at": 137.72341898148147,
         "within": {
-          "w": 25,
-          "h": 25
+          "w": 5,
+          "h": 2
         },
-        "to": "seven-verity/the-archive-house-parcel",
+        "to": "hal/the-long-porch-table",
         "pace": 60,
         "line_no": null
       }
