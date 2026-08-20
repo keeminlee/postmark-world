@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 import {
   ROOM_GROUND_UNITS, SPECTATOR_ACTOR,
   interiorFurniture, interiorPlaqueHTML, markImagePath,
-  rimPointOf, roomGround, standpointOccupancy,
+  placeholderExtentSVG, placeholderHue, rimPointOf, roomGround, sceneRuleM, standpointOccupancy,
 } from "../spectator/viewer.mjs";
 import { assembleWorld } from "./world-build.mjs";
 import { investigate } from "./world-verbs.mjs";
@@ -77,12 +77,21 @@ test("the plaque speaks in the ROOM's own words, not about it", () => {
 });
 
 // ── the ground (the ONE scene-unique element) ───────────────────────────────
-test("the ground is a white placeholder for an art-less room, with the art slot ready", () => {
+test("the ground is the paper floor for an art-less room, with the art slot ready", () => {
   const g = roomGround({ id: "r", at: { x: 100, y: -50 }, extent: { w: 12, h: 12 } });
   assert.match(g.svgText, /wv-scene-ground/, "the full-bleed base rect exists");
-  assert.match(g.svgText, /fill="#ffffff"/, "and it is WHITE — the founder's word, twice");
+  assert.match(g.svgText, /wv-scene-rule-pat/, "squared paper — the drafting sheet's rule (founder's revision of his own white)");
+  assert.match(g.svgText, /wv-scene-wall/, "the room's own boundary is drawn as the wall");
   assert.doesNotMatch(g.svgText, /<image/, "no image invented for a mark that has none");
   assert.match(g.svgText, /wv-scene-art/, "the svg overlay slot exists either way — the atlas's own structure");
+});
+
+test("the paper's rule is a round number of metres at any room size", () => {
+  for (const extent of [{ w: 12, h: 12 }, { w: 0.5, h: 0.5 }, { w: 300, h: 120 }]) {
+    const g = roomGround({ id: "r", at: { x: 0, y: 0 }, extent });
+    const m = sceneRuleM(g.mPerPx);
+    assert.ok([0.25, 0.5, 1, 2, 5, 10, 25, 50, 100, 250, 500].includes(m), `${m} m squares for ${extent.w} m room`);
+  }
 });
 
 test("a room with shelf art wears it over its own footprint; off-shelf art is refused", () => {
@@ -120,6 +129,21 @@ test("THE NUMERIC REGIME: a room spans ~ROOM_GROUND_UNITS of its own ground, not
     assert.ok(span > ROOM_GROUND_UNITS * 0.7 && span <= ROOM_GROUND_UNITS,
       `a ${extent.w}×${extent.h} room spans ${span.toFixed(0)} ground units`);
   }
+});
+
+test("PLACEHOLDERS: deterministic per-mark hue, low saturation, art-less only", () => {
+  const px = (p) => ({ x: p.x, y: p.y });
+  const a = placeholderExtentSVG({ id: "r/shelf", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 4, h: 2 } }, px);
+  const b = placeholderExtentSVG({ id: "r/stove", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 4, h: 2 } }, px);
+  assert.match(a, /hsl\(\d+ 22% 76%\)/, "low saturation by the founder's word — never transparency");
+  assert.notEqual(a.match(/hsl\((\d+)/)[1], b.match(/hsl\((\d+)/)[1], "two marks, two hues — nesting reads");
+  assert.equal(a, placeholderExtentSVG({ id: "r/shelf", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 4, h: 2 } }, px),
+    "the same mark is the same colour on every load for every reader");
+  assert.equal(placeholderHue("r/shelf"), placeholderHue("r/shelf"));
+  const arty = placeholderExtentSVG({ id: "r/pic", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 2, h: 2 }, image: "https://media.postmark.town/media/a/b.png" }, px);
+  assert.equal(arty, "", "a mark wearing its art needs no stand-in");
+  const dot = placeholderExtentSVG({ id: "r/point", kind: "sited", at: { x: 0, y: 0 } }, px);
+  assert.equal(dot, "", "a point has no extent to stand in for");
 });
 
 test("markup in a mark's image path cannot escape the ground", () => {
