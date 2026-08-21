@@ -257,7 +257,16 @@ export function fieldOfView(observer, world, { crossing = 0, budget = DIALS.cont
   const seen = [];
   for (const mk of marks) {
     if (!mk.at) continue;                                   // predicated/naming have no site of their own
-    if (mk.kind === "parcel") continue;                     // a land-claim boundary is not scenery you see
+    // A PARCEL RENDERS IN THE WORLD LIKE ANY OTHER MARK (the home-images
+    // ruling, Keemin 2026-08-21: "make sure parcels render in the World like
+    // any other mark. We removed them but that makes no sense if they get the
+    // home image"). This lane used to skip `kind: parcel` as "a land-claim
+    // boundary is not scenery you see" — true of an empty 25×25 survey square,
+    // and false the moment that square carries a household's own home art. The
+    // gold plan (Starstory PULSE/gold-plans/postmark-home-images) retires the
+    // exclusion rather than gating it on `image:`, because a kind-gated hole in
+    // the DEFAULT mark lane is the thing that made the art invisible in the
+    // first place: parcels are marks, and the telling tells marks.
     if (mk.far) continue;                                   // a far:true mark is a horizon object (told below), never ground scenery
     if (markExtent(mk) >= dials.world_scale_extent_m) continue; // the world-root is the frame — establishing line, not a list item
     const dx = mk.at.x - observer.x, dy = mk.at.y - observer.y;
@@ -388,9 +397,27 @@ function markExtent(mk) {
   if (mk.extent?.w || mk.extent?.h) return Math.max(mk.extent.w ?? 1, mk.extent.h ?? 1);
   return DEFAULT_EXTENT[mk.kind] ?? 2;
 }
-function markTop(mk, dials = DIALS) {                   // vertical prominence: declared, else a modest default for sited things
+// Vertical prominence: declared, else a modest default for a thing standing on
+// the ground.
+//
+// THE SECOND HALF OF THE PARCEL EXCLUSION (home-images ruling, 2026-08-21).
+// This read `mk.kind === "sited"`, and while fieldOfView skipped parcels
+// outright that gate cost nothing. It is not free now, and it is not a
+// different rule: a target with zero prominence has its sightline aimed at its
+// own dirt, so the last sample before it always grazes — `clear` comes out at
+// (eyeH / n), which SHRINKS with distance. A flat mark is therefore reported
+// occluded by the ground it sits on, and more so the further off it is, which
+// is the artifact backwards. Retiring the `continue` alone left 2 of 58 real
+// parcels tellable; the rest were "occluded" by nothing.
+//
+// So a parcel gets the same modest default a house gets. That is not a claim
+// that a land-claim is a building — it is the claim that there is something
+// standing there to see, which is true by construction: a parcel is seeded
+// around a placed home, and the viewer has always drawn its footprint at that
+// spot. Terrain still occludes it exactly as it occludes anything else.
+function markTop(mk, dials = DIALS) {
   if (mk.top_m != null) return mk.top_m;
-  return mk.kind === "sited" ? dials.default_mark_top_m : 0;
+  return (mk.kind === "sited" || mk.kind === "parcel") ? dials.default_mark_top_m : 0;
 }
 // The mark's SILHOUETTE span — its visible width from the observer — when it
 // carries a fine shape (a `points:` ring). Projects every ring vertex onto the
