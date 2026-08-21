@@ -659,6 +659,34 @@ export function settlementSweep({
     });
   }
 
+  // § the ground-closure hold (2026-08-21, the goodie-bag crossing): a mark
+  // publishes only onto ground that is already canon or crossing WITH it. The
+  // eligible set was not ancestor-closed, so one staked child under a drafted
+  // parent crossed alone — its filing orphaned, its frame resolved past the
+  // missing mark into the lake, and every settlement since 08-20 17:45Z
+  // refused at the gate over it. The family crosses together or the child
+  // waits, loudly — the quarantine's own grammar, one level down.
+  for (let held = true; held;) {
+    held = false;
+    const crossing = new Set(published.map((item) => item.path.replace(/\\/g, "/")));
+    for (let i = published.length - 1; i >= 0; i--) {
+      const item = published[i];
+      const parts = item.path.replace(/\\/g, "/").split("/");
+      for (let depth = parts.length - 2; depth > 2; depth--) {
+        const ancestorDir = parts.slice(0, depth).join("/");
+        const ancestor = `${ancestorDir}/mark.md`;
+        if (!ancestor.startsWith(MARKS_PREFIX)) break;
+        if (crossing.has(ancestor)) continue;                       // crossing together
+        if (hasObject(repo, `${mainBranch}:${ancestor}`)) continue; // already canon
+        published.splice(i, 1);
+        leftDrafted.push({ household: item.household, id: item.id, path: item.path, class: item.class, escrow: item.escrow,
+          reason: `held: its ground ${ancestorDir.slice(MARKS_PREFIX.length)} is still drafted — the family crosses together (stake the ground, or the child waits)` });
+        held = true;
+        break;
+      }
+    }
+  }
+
   try {
     for (const item of published) {
       writeRepoFile(repo, item.path, item.content);

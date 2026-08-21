@@ -535,6 +535,7 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   // actually feeds weight; it is deliberately NOT stakeByMark, which the
   // over-withdrawal guard below clamps to 0 while weight keeps the negative.
   const rawByMark = new Map(); const breadthByMark = new Map();
+  const prevHeldIds = new Set((prev?.marks ?? []).map((mk) => mk.id));
   for (const s of stakes) {
     if (s.tick >= tick && tick > 0) continue; // not yet effective
     // THE RETIREMENT GATE, and it needed no new machinery — only its right name.
@@ -545,7 +546,14 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     // a fold error, so retiring a staked mark cannot fold clean. A stake is an
     // existence-anchor, so the anchor's absence is the defect, not the stake's.
     if (!byId.has(s.mark) && !terrainIds.has(s.mark)) {
-      errors.push({ stake: s, error: `stake on a mark the record does not hold (${s.mark}) — a staked mark cannot be retired; return the escrow first` });
+      // Refined 2026-08-21 (the ground-closure hold made this ordinary): the
+      // invariant guards RETIREMENT — a mark the record HELD may not leave
+      // while staked. A mark the record has NEVER held is publish-by-stake's
+      // waiting state — a drafted mark whose stake stands until it crosses.
+      // That escrow is inert this crossing and no defect; prev tells the two
+      // apart, exactly as it does for determination.
+      if (prevHeldIds.has(s.mark))
+        errors.push({ stake: s, error: `stake on a mark the record does not hold (${s.mark}) — a staked mark cannot be retired; return the escrow first` });
       continue;
     }
     stakeByMark.set(s.mark, (stakeByMark.get(s.mark) ?? 0) + s.n);

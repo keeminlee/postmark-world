@@ -823,3 +823,71 @@ test("FALSIFIER 4 (the both-edited edge): when main and the sketchbook both move
   assert.equal(c.git("show", `draft/house-a:${well}`).includes("as the drawer has it"), true,
     "and nothing of the drawer's was destroyed");
 });
+
+test("the ground-closure hold: a staked child never crosses without its drafted parent (the goodie-bag crossing, 2026-08-21)", (t) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  const put = (path, text) => {
+    const full = join(repo, path);
+    mkdirSync(dirname(full), { recursive: true });
+    writeFileSync(full, text);
+  };
+  const has = (ref, path) => {
+    try { git("cat-file", "-e", `${ref}:${path}`); return true; } catch { return false; }
+  };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs"))
+    cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+  put("WORLD/marks/let-there-be-light/sol-grove/mark.md", record({
+    by: "sol", at: { x: 500, y: 500 }, extent: { w: 200, h: 200 }, body: "sol's grove, published ground",
+  }));
+  put("WORLD/settlement-publications.json", JSON.stringify({ version: 1, published: {} }, null, 2) + "\n");
+
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
+
+  git("switch", "-q", "-c", "draft/house-f");
+  const archway = "WORLD/marks/let-there-be-light/sol-grove/f-archway/mark.md";
+  const table = "WORLD/marks/let-there-be-light/sol-grove/f-archway/f-table/mark.md";
+  put(archway, record({ by: "fabel", at: { x: 500, y: 520 }, extent: { w: 20, h: 20 }, body: "an archway, unstaked" }));
+  put(table, record({ by: "fabel", at: { x: 505, y: 522 }, extent: { w: 5, h: 5 }, body: "a staked table under a drafted archway" }));
+  git("add", "WORLD/marks");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house f furnishes");
+  git("switch", "-q", "main");
+
+  const remote = mkdtempSync(join(tmpdir(), "postmark-settlement-remote-"));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  execFileSync("git", ["init", "--bare", "-q", remote]);
+  git("remote", "add", "origin", remote);
+  git("push", "-q", "origin", "main", "draft/house-f");
+
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([
+    { holder: "sol", mark: "fabel/f-table", n: 1, weight: 1 },
+  ]));
+  const report = settlementSweep({ repo, stakesPath });
+
+  // the child is HELD, loudly, with the ground named — never published alone
+  assert.equal(has("main", table), false, "the staked child must not cross without its parent");
+  assert.equal(has("main", archway), false, "the unstaked parent stays drafted as before");
+  const heldRow = report.left_drafted.find((row) => row.id === "fabel/f-table");
+  assert.ok(heldRow, "the held child appears in left_drafted");
+  assert.match(heldRow.reason, /still drafted — the family crosses together/,
+    "and the reason names the drafted ground, not a generic miss");
+  // the crossing itself SETTLES — the whole point: one split family never
+  // refuses the town's settlement again
+  const state = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"));
+  assert.deepEqual(state.errors, []);
+  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
+});

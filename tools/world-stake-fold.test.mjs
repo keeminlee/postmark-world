@@ -74,12 +74,26 @@ test('an unstake is a negative row and lowers the weight it raised', () => {
 test('THE RETIREMENT GATE: escrow naming a mark the record does not hold is an error', () => {
   // This is what retiring a staked mark looks like from the fold's side — the mark
   // file is gone, the escrow is not. Keemin's rule, as an invariant the fold checks.
+  // The gate reads prev to know the mark WAS held: retirement is a leaving, and a
+  // leaving needs a before (refined 2026-08-21 with the ground-closure hold).
   const state = fold({ marks: marks(), terrain, stakes: [
     { tick: 0, holder: 'dot', mark: 'wright/the-retired-porch', n: 2 },
-  ] });
+  ], prev: { marks: [{ id: 'wright/the-retired-porch', stamps: 2 }] } });
   assert.equal(state.errors.length, 1);
   assert.match(state.errors[0].error, /cannot be retired/);
   assert.match(state.errors[0].error, /wright\/the-retired-porch/);
+});
+
+test('a stake on a mark the record has NEVER held is pending, not a defect — publish-by-stake waits', () => {
+  // The ground-closure hold (2026-08-21) makes this ordinary: a staked child held
+  // back with its drafted parent leaves its escrow standing in the ledger while
+  // the mark waits in the drawer. The crossing must settle around it.
+  const state = fold({ marks: marks(), terrain, stakes: [
+    { tick: 0, holder: 'sol', mark: 'fabel/the-drafted-table', n: 1 },
+  ] });
+  assert.deepEqual(state.errors, [], 'a pending stake is inert, never a fold error');
+  assert.equal([...byId(state).values()].some((m) => m.id === 'fabel/the-drafted-table'), false,
+    'and it conjures no mark into the record');
 });
 
 test('the gate does not fire while the mark is still there', () => {
