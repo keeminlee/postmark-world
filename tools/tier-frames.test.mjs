@@ -527,7 +527,24 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       "the-town/departure",            // renamed → the-town/depart (verb-form grammar)
     ]);
     const idsA = new Set(A.map((m) => m.id)), idsB = new Set(B.map((m) => m.id));
-    assert.deepEqual([...idsA].filter((i) => !idsB.has(i) && !WITHDRAWN_BY_DECLARED_ACT.has(i)), [],
+    // THE WITHDRAW VERB SHIPPED (2026-08-19), so the constant's own retirement
+    // clause comes due: for losses after the hand-list's era, the declaring act
+    // is QUERIED off the record's own history — the deleting commit must be a
+    // settlement sweep (the canon half of world_withdraw_mark) or a founder-hand
+    // withdraw. First lawful customer: nyx/the-night-room, whose withdrawal
+    // refused the 2026-08-21 crossing while this was still a hand list.
+    const lostIds = [...idsA].filter((i) => !idsB.has(i) && !WITHDRAWN_BY_DECLARED_ACT.has(i));
+    const marksRootA = join(scratch, "WORLD", "marks").replace(/\\/g, "/");
+    const lawfullyWithdrawn = new Set();
+    for (const id of lostIds) {
+      const dirA = String(A.find((m) => m.id === id)?._dir ?? "").replace(/\\/g, "/");
+      if (!dirA.startsWith(marksRootA)) continue;
+      const rel = `WORLD/marks${dirA.slice(marksRootA.length)}/mark.md`;
+      let subject = "";
+      try { subject = git("log", "-1", "--format=%s", "--diff-filter=D", "HEAD", "--", rel).trim(); } catch { /* no deleting commit — stays a loss */ }
+      if (/^(settlement: |withdraw)/.test(subject)) lawfullyWithdrawn.add(id);
+    }
+    assert.deepEqual(lostIds.filter((i) => !lawfullyWithdrawn.has(i)), [],
       "no record was lost without a declaring act");
     // All A-side positions below are looked up in B; the withdrawn ids are
     // predicated (no `at`), so the geometry loop never meets them — asserted
@@ -590,6 +607,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     ]);
     const moved = [], extentChanged = [], ringChanged = [];
     for (const [id, a] of pa) {
+      if (lawfullyWithdrawn.has(id)) continue; // gone by the log's own declaring act — nothing to compare
       if (DESITED_BY_DECLARED_ACT.has(id)) {
         // withdrawn from geometry by declared act: the record must still
         // stand on the B side (the loss gate above catches disappearance);
@@ -618,6 +636,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // a de-sited record has left geometry: its containment answer is now
       // class-space's (the extends: lattice), which geometry cannot see
       if (DESITED_BY_DECLARED_ACT.has(m.id)) continue;
+      if (lawfullyWithdrawn.has(m.id)) continue; // withdrawn by declared act — no B side to ask
       const before = old.placementParent(m, A);
       const after = placementParent(pb.has(m.id) ? B.find((x) => x.id === m.id) : m, B);
       assert.equal(after, before, `placementParent moved for ${m.id}`);
