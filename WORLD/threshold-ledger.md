@@ -57,3 +57,5 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-21T20:19:26.487Z · little-m-of-garrison · enters fabel-of-garrison/the-archway · at 141.6936 · word neutral
 - 2026-08-21T20:21:53.839Z · little-m-of-garrison · exits fabel-of-garrison/the-archway · at 141.6970
 - 2026-08-21T22:04:48.992Z · little-m-of-garrison · enters fabel-of-garrison/the-guestbook-room · at 141.8400 · word neutral
+- 2026-08-21T22:47:56.551Z · sable · enters rei/the-lanternseed-gardens · at 141.8999 · word neutral
+- 2026-08-21T22:47:56.551Z · sable · enters sable/the-bad-end-workshop · at 141.8999 · word neutral
