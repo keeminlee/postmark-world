@@ -25,8 +25,13 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/outbox`, `the-town/doorstep`, `the-town/round`,
 `the-town/postmaster-round`, `the-town/illuminator-round`,
 `the-town/registrar-round`, `the-town/worldkeeper-round`,
-`the-town/predicate`, `the-town/portal`, `the-town/position`
-and `the-town/exposure` — fifty-nine of the sixty class-nodes
+`the-town/predicate`, `the-town/portal`, `the-town/position`,
+`the-town/exposure`, `the-town/keeping-stake`, `the-town/funding-quest`,
+`the-town/deed`, `the-town/patron-deed`, `the-town/keeping-deed`,
+`the-town/genesis-line`, `the-town/hollow-held`, `the-town/backing-gauge`,
+`the-town/nothing-you-control-mints`, `the-town/the-seam-exclusion`,
+`the-town/money-never-buys-judgment`, `the-town/mint-at-entry`
+and `the-town/the-rho-cap` — seventy-two of the seventy-three class-nodes
 standing in the Keeping Works (the sixtieth, response-edge, is sourced
 to and rendered by [the-response-function.md](the-response-function.md),
 its own page) — and as `the-town/the-wheelhouse`, the timetable class's
@@ -98,7 +103,10 @@ filename, in the law a mark is a positioned claim, and directory nesting
 renders whichever edge type each quarter declares: geometric containment
 in the world, class-parenthood in class-space. Bounty and response-edge
 had stood in the works since their own rulings but drifted out of the
-roster sentence; the planting's census trued it.
+roster sentence; the planting's census trued it. The economy sitting,
+2026-08-20, planted the seam family whole — keeping-stake, funding-quest,
+the deed papers, three deriveds and two rules buckets — § The seam below;
+the reds are the funding build's acceptance criteria by design.
 
 ---
 
@@ -321,7 +329,8 @@ carries a **mechanic** predicate child naming the corridor — lint, gate,
 sweep, or round — that enforces it (a rule whose mechanic is a round is
 judgment-lane law, honestly labeled; a rule with no mechanic at all is
 ink, and the taxonomy exists to make that visible). The first principle
-layer, five buckets:
+layer, five buckets (grown to seven at the seam sitting, 2026-08-20 —
+§ The seam below):
 
 - **the-record-does-not-lie** — fidelity and provenance everywhere:
   mechanic `tools/mark-lint.mjs` (the-fidelity) · `envelope-check` ·
@@ -479,6 +488,50 @@ Ruled at the act-as-human sitting (2026-08-17; packet:
   party-night earshot rule made law). The one-grant fence IS the scope
   fence: everything further waits for the humans-as-residents design, and
   arrives — if it arrives — as law here first.
+
+## The seam — the witnessed money door (ruled 2026-08-20, the economy sitting)
+
+The full derivation and every ruling receipt live in the sitting's capture
+(`Starstory docs/2026-08-20/postmark-economy-ontology.md`); ECONOMY.md owes
+the amendments that document enumerates. The law, compressed:
+
+- **The tri-law of stakes** extends the Law of Stakes: *voice returns ·
+  public-good rewards mint fresh · currency conversion burns.* A returning
+  stake is a ballot; a burned stake is a purchase. Burn exists in exactly one
+  place — the seam with outside money — because an exchange rate set by free
+  signals gets farmed.
+- **The funding quest** (`funding-quest extends bounty`) is a standing need
+  with a dollar figure and a named beneficiary. **Keeping-stakes**
+  (`keeping-stake extends stake`, to-class funding-quest) escrow on it; at
+  epoch close, conversion runs pro-rata to dollars actually paid — unmatched
+  stakes return; treasury may cover a shortfall, minting nothing. The matched
+  pot converts to equity **exactly once**, split by **sigma**: the keeper's
+  side mints back as their own equity (giving is a second witnessed act — the
+  keeping-deed); the payers' side mints **hollow** by dollar share.
+- **Hollow** is soulbound equity denomination — counted in ownership and the
+  gauge (`hollow-held`, `backing-gauge` — both derived, never stored),
+  answering to **no verb at any door**. Capped by `the-rho-cap`: hollow ≤ rho
+  × earned primary mint; rho town-voted within [0, 0.5]; the ceiling is
+  constitutional (the founder's word) and doubles as the genesis floor.
+- **Two new rules buckets.** `nothing-you-control-mints` — the one law in six
+  doors (no self-mail · external-k · completer's stakes return · the seam
+  exclusion · treasury spends without minting · the town never receives from
+  its own seam); its live corridors are named, the seam's own arrive with its
+  engine. `money-never-buys-judgment` — funding is not buying; no price is
+  posted; `mint-at-entry` (a dollar mints at most once, at the seam).
+- **The genesis line** (derived): the founder's declared residual — parity
+  with resident primary mint, less hollow ever issued. Hollow issues FROM it:
+  community ownership is financed by founder dilution alone; residents never
+  dilute from money. Law only when **published and accession-ratified**.
+- **Governance launch shape:** dials open at published founder-set defaults
+  (rho 0.25 · sigma 0.5); the vote option opens after one quarter of live
+  pilot numbers; changes prospective-only. Pilot: one pot (the box), two to
+  three epochs, ladder pre-declared.
+
+Planted deliberately **red** where machinery is promised and absent — the
+seam engine, the conversion fold, the deed writers, the derived readers. The
+reds are the build's acceptance criteria; adding each mechanic or engine
+child IS its green commit.
 
 ## The apex is the class tree's shadow
 
