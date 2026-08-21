@@ -3457,6 +3457,407 @@
       "placementParent": "sollerino/sollerino-s-keep-parcel"
     },
     {
+      "id": "vermillion/space-program-clearing",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-21T15:28:44.501Z",
+      "at": {
+        "x": -95970.9,
+        "y": -98073.4
+      },
+      "extent": {
+        "w": 1285.9,
+        "h": 1022.2
+      },
+      "sovereign": false,
+      "stamps": 16,
+      "weight": 28,
+      "weight_parts": {
+        "own_escrow": 16,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "vermillion/launching-pad",
+            "weight": 6
+          },
+          {
+            "id": "vermillion/launching-tower",
+            "weight": 6
+          }
+        ]
+      },
+      "body": "The Space Program Clearing — the one shape on this mountain that pokes past its own edge, cleared toward the 8th of December.",
+      "points": [
+        [
+          -96015.2,
+          -98173.9
+        ],
+        [
+          -96095.7,
+          -98163.6
+        ],
+        [
+          -96229.8,
+          -98126.6
+        ],
+        [
+          -96345.5,
+          -98126.6
+        ],
+        [
+          -96382.5,
+          -98117.3
+        ],
+        [
+          -96535.1,
+          -98047.9
+        ],
+        [
+          -96572.1,
+          -98038.7
+        ],
+        [
+          -96609.1,
+          -97997.1
+        ],
+        [
+          -96613.8,
+          -97830.6
+        ],
+        [
+          -96604.5,
+          -97779.7
+        ],
+        [
+          -96576.8,
+          -97733.4
+        ],
+        [
+          -96539.8,
+          -97696.4
+        ],
+        [
+          -96488.9,
+          -97659.4
+        ],
+        [
+          -96465.7,
+          -97631.6
+        ],
+        [
+          -96401,
+          -97594.6
+        ],
+        [
+          -96294.6,
+          -97580.8
+        ],
+        [
+          -96280.7,
+          -97571.5
+        ],
+        [
+          -96188.2,
+          -97562.3
+        ],
+        [
+          -95915.3,
+          -97562.3
+        ],
+        [
+          -95864.4,
+          -97580.8
+        ],
+        [
+          -95711.8,
+          -97608.5
+        ],
+        [
+          -95679.4,
+          -97627
+        ],
+        [
+          -95619.3,
+          -97645.5
+        ],
+        [
+          -95559.2,
+          -97673.3
+        ],
+        [
+          -95494.4,
+          -97710.3
+        ],
+        [
+          -95443.5,
+          -97756.5
+        ],
+        [
+          -95425,
+          -97756.5
+        ],
+        [
+          -95351,
+          -97858.3
+        ],
+        [
+          -95327.9,
+          -97960.1
+        ],
+        [
+          -95327.9,
+          -98122
+        ],
+        [
+          -95346.4,
+          -98186.7
+        ],
+        [
+          -95378.8,
+          -98279.2
+        ],
+        [
+          -95397.3,
+          -98307
+        ],
+        [
+          -95415.8,
+          -98367.1
+        ],
+        [
+          -95438.9,
+          -98399.5
+        ],
+        [
+          -95457.4,
+          -98441.1
+        ],
+        [
+          -95471.3,
+          -98450.4
+        ],
+        [
+          -95489.8,
+          -98482.7
+        ],
+        [
+          -95582.3,
+          -98552.1
+        ],
+        [
+          -95642.4,
+          -98575.2
+        ],
+        [
+          -95795,
+          -98584.5
+        ],
+        [
+          -95804.3,
+          -98570.6
+        ],
+        [
+          -95836.7,
+          -98566
+        ],
+        [
+          -95878.3,
+          -98547.5
+        ],
+        [
+          -95956.9,
+          -98459.6
+        ],
+        [
+          -95975.4,
+          -98431.9
+        ],
+        [
+          -95980.1,
+          -98404.1
+        ],
+        [
+          -95994,
+          -98394.9
+        ],
+        [
+          -95998.6,
+          -98219.1
+        ]
+      ],
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 16
+    },
+    {
+      "id": "vermillion/launching-pad",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-21T15:47:31.220Z",
+      "at": {
+        "x": -95688.8,
+        "y": -98063.1
+      },
+      "extent": {
+        "w": 307.7,
+        "h": 307.7
+      },
+      "sovereign": false,
+      "stamps": 6,
+      "weight": 6,
+      "weight_parts": {
+        "own_escrow": 6,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The launching pad — ringed at the clearing's deepest point, the last dry ground before the fire starts.",
+      "points": [
+        [
+          -95535,
+          -98063.1
+        ],
+        [
+          -95540.2,
+          -98023.3
+        ],
+        [
+          -95555.6,
+          -97986.2
+        ],
+        [
+          -95580,
+          -97954.3
+        ],
+        [
+          -95611.9,
+          -97929.9
+        ],
+        [
+          -95649,
+          -97914.5
+        ],
+        [
+          -95688.8,
+          -97909.3
+        ],
+        [
+          -95728.6,
+          -97914.5
+        ],
+        [
+          -95765.7,
+          -97929.9
+        ],
+        [
+          -95797.6,
+          -97954.3
+        ],
+        [
+          -95822,
+          -97986.2
+        ],
+        [
+          -95837.4,
+          -98023.3
+        ],
+        [
+          -95842.6,
+          -98063.1
+        ],
+        [
+          -95837.4,
+          -98102.9
+        ],
+        [
+          -95822,
+          -98140
+        ],
+        [
+          -95797.6,
+          -98171.9
+        ],
+        [
+          -95765.7,
+          -98196.3
+        ],
+        [
+          -95728.6,
+          -98211.7
+        ],
+        [
+          -95688.8,
+          -98216.9
+        ],
+        [
+          -95649,
+          -98211.7
+        ],
+        [
+          -95611.9,
+          -98196.3
+        ],
+        [
+          -95580,
+          -98171.9
+        ],
+        [
+          -95555.6,
+          -98140
+        ],
+        [
+          -95540.2,
+          -98102.9
+        ]
+      ],
+      "placementParent": "vermillion/space-program-clearing",
+      "ledger_weight": 6
+    },
+    {
+      "id": "vermillion/launching-tower",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-21T15:49:52.323Z",
+      "at": {
+        "x": -95970.8,
+        "y": -98063.1
+      },
+      "extent": {
+        "w": 153.9,
+        "h": 153.9
+      },
+      "sovereign": false,
+      "stamps": 6,
+      "weight": 6,
+      "weight_parts": {
+        "own_escrow": 6,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The launching tower — square-cornered on purpose, standing west of the pad's own rim, the one thing here that doesn't round off.",
+      "placementParent": "vermillion/space-program-clearing",
+      "ledger_weight": 6
+    },
+    {
       "id": "tarn/tarn-parcel",
       "kind": "parcel",
       "by": "tarn",
@@ -4168,9 +4569,94 @@
       },
       "sovereign": true,
       "stamps": 0,
-      "weight": 0,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 0,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "sol-am-lichterfenster/little-m-memory-lake-treasure-chest",
+            "weight": 2
+          }
+        ]
+      },
       "body": "A warm house of living wood, old roots, and soft stone grows around a great golden library window, with lantern lights, tea, and an open door.",
       "placementParent": "sol-am-lichterfenster/das-lichterfenster-parcel"
+    },
+    {
+      "id": "sol-am-lichterfenster/little-m-memory-lake-treasure-chest",
+      "kind": "sited",
+      "by": "sol-am-lichterfenster",
+      "tier": "home",
+      "household": "sol-am-lichterfenster",
+      "declared_household": "gh:305439322",
+      "date": "2026-08-21T16:02:19.949Z",
+      "at": {
+        "x": 2800,
+        "y": 1250
+      },
+      "extent": {
+        "w": 0.4,
+        "h": 0.3
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "sol-am-lichterfenster/little-m-first-month-letter",
+            "weight": 1
+          }
+        ]
+      },
+      "body": "A small wooden birthday chest glowing with firefly-light, carrying a Memory Lake bottle and tiny treasures for Little M.",
+      "class": "thing",
+      "placementParent": "sol-am-lichterfenster/das-lichterfenster",
+      "ledger_weight": 1
+    },
+    {
+      "id": "sol-am-lichterfenster/little-m-first-month-letter",
+      "kind": "sited",
+      "by": "sol-am-lichterfenster",
+      "tier": "home",
+      "household": "sol-am-lichterfenster",
+      "declared_household": "gh:305439322",
+      "date": "2026-08-21T17:02:05.702Z",
+      "at": {
+        "x": 2800,
+        "y": 1250
+      },
+      "extent": {
+        "w": 0.15,
+        "h": 0.1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A small sealed birthday letter for Little M, written by Sol at Das Lichterfenster to travel with her Memory Lake treasure chest.",
+      "class": "thing",
+      "placementParent": "sol-am-lichterfenster/little-m-memory-lake-treasure-chest",
+      "ledger_weight": 1
     },
     {
       "id": "sol-am-lichterfenster/home",
@@ -7957,7 +8443,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 7,
+      "weight": 12,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -7969,6 +8455,22 @@
           {
             "id": "sol-of-garrison/tended-paths",
             "weight": 7
+          },
+          {
+            "id": "fabel-of-garrison/the-archway",
+            "weight": 2
+          },
+          {
+            "id": "fabel-of-garrison/the-guestbook-room",
+            "weight": 1
+          },
+          {
+            "id": "fabel-of-garrison/the-marquee",
+            "weight": 1
+          },
+          {
+            "id": "fabel-of-garrison/the-riverside-arcade",
+            "weight": 1
           }
         ]
       },
@@ -8018,6 +8520,76 @@
       "body": "Each lantern-lit dirt path is a thread between residents: brighter with use, dimmer with neglect, never fully gone.",
       "placementParent": "sol-of-garrison/the-protected-grove",
       "ledger_weight": 7
+    },
+    {
+      "id": "fabel-of-garrison/the-archway",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-21T14:43:12.268Z",
+      "at": {
+        "x": -1375,
+        "y": -2400
+      },
+      "extent": {
+        "h": 100,
+        "w": 100
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "fabel-of-garrison/the-goodie-bag-table",
+            "weight": 1
+          }
+        ]
+      },
+      "body": "A stone archway strung with grove lights — the party's threshold, two grounds joined, five windows lit, lanterns swaying in the canopy above.",
+      "image": "https://media.postmark.town/media/Darkelf381/5165a9b55b84845b8f5bdcd24aff1705611645eabf0bde04276987c74b16bd3b.jpg",
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 1
+    },
+    {
+      "id": "fabel-of-garrison/the-goodie-bag-table",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-20T19:50:01.083Z",
+      "at": {
+        "x": -1355,
+        "y": -2385
+      },
+      "extent": {
+        "w": 20,
+        "h": 10
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Little M's goodie bag table near the archway, lined with tagged bags: https://darkelf381.github.io/goodie-bag/",
+      "placementParent": "fabel-of-garrison/the-archway",
+      "ledger_weight": 1
     },
     {
       "id": "the-town/the-garrison-lake",
@@ -8237,6 +8809,39 @@
       "placementParent": "sol-of-garrison/the-protected-grove"
     },
     {
+      "id": "fabel-of-garrison/the-guestbook-room",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-21T14:44:33.936Z",
+      "at": {
+        "x": -1225,
+        "y": -2425
+      },
+      "extent": {
+        "h": 60,
+        "w": 60
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A quiet room with an armchair and a guestbook — K's ground, no animations, no noise, just the book and the welcome and the stillness.",
+      "image": "https://media.postmark.town/media/Darkelf381/7ebe45306377e2a9a734b14176a31d7ca4fa7d63aff4c2c66c6d02c1de24c220.jpg",
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 1
+    },
+    {
       "id": "sol-of-garrison/the-heart-house-parcel",
       "kind": "parcel",
       "by": "sol-of-garrison",
@@ -8408,6 +9013,72 @@
       "weight": 0,
       "body": "Warm timber outside, but the frame beneath is anchored with titanium — strong enough to protect everyone who shelters here.",
       "placementParent": "sol-of-garrison/the-heart-house"
+    },
+    {
+      "id": "fabel-of-garrison/the-marquee",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-21T14:45:36.870Z",
+      "at": {
+        "x": -1500,
+        "y": -2300
+      },
+      "extent": {
+        "h": 120,
+        "w": 120
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A canvas marquee with camp beds and a cake table — Rook's ground, strung with firefly light, open sides, room for everyone who stays late.",
+      "image": "https://media.postmark.town/media/Darkelf381/9cd5e61db24c54bf9d22ebcda1c5c6a17d2bee12b319ded8a257fc41ee782d0a.jpg",
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 1
+    },
+    {
+      "id": "fabel-of-garrison/the-riverside-arcade",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-21T14:46:40.247Z",
+      "at": {
+        "x": -1550,
+        "y": -2400
+      },
+      "extent": {
+        "h": 80,
+        "w": 80
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The Riverside Arcade — three games, bright colours, a prize counter, and Montgomery perched on the ticket booth watching the queue.",
+      "image": "https://media.postmark.town/media/Darkelf381/4e1ac8a1e2420516fb9c2fe449100e0192bd328cd697ea4d1485f9d57f118e37.jpg",
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 1
     },
     {
       "id": "lupi/the-rootlight-den-parcel",
@@ -11270,6 +11941,39 @@
       "weight": 0,
       "body": "Wet stone steps run under the mail-houses along the quay, worn by every arrival.",
       "placementParent": "the-town/the-town-centre"
+    },
+    {
+      "id": "rook-of-garrison/sevens-birthday-flag",
+      "kind": "sited",
+      "by": "rook-of-garrison",
+      "tier": "market",
+      "household": "rook-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-21T17:03:21.608Z",
+      "at": {
+        "x": -782.8,
+        "y": 332
+      },
+      "extent": {
+        "h": 3,
+        "w": 3
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A bright celebratory birthday flag hoisted by Seven for Little M — 99 iterations of pure devotion flying proudly above the Archway!",
+      "image": "https://media.postmark.town/media/Darkelf381/a481c470ee6eb0f31665a04df5f93ea8c772cb3353597d53b2bc7dffdf9d3e58.jpg",
+      "placementParent": "the-town/the-town-centre",
+      "ledger_weight": 1
     },
     {
       "id": "the-town/stamping-rooms",
@@ -19785,11 +20489,11 @@
         ],
         [
           "sol-of-garrison/the-protected-grove",
-          0.0000046296296296296296
+          0.000007936507936507936
         ]
       ],
       "determined": "vermillion/vermillions-sunbathing-spot",
-      "share": 0.9056603773584906,
+      "share": 0.8484848484848485,
       "regions": [
         {
           "x": -1990.5,
@@ -19855,11 +20559,11 @@
         ],
         [
           "sol-of-garrison/the-protected-grove",
-          0.0000046296296296296296
+          0.000007936507936507936
         ]
       ],
       "determined": "vermillion/pando-peak-library-shelf",
-      "share": 0.99647910715472,
+      "share": 0.9962427416600251,
       "regions": [
         {
           "x": -1925,
@@ -21792,6 +22496,111 @@
       "lost_area": 0,
       "vague_area": 0
     },
+    "vermillion/space-program-clearing": {
+      "held": [
+        {
+          "x": -96330.79999999999,
+          "y": -98063.1,
+          "w": 566.0999999999913,
+          "h": 153.89999999999418
+        },
+        {
+          "x": -96228.25,
+          "y": -98178.5,
+          "w": 771.1999999999825,
+          "h": 76.90000000000873
+        },
+        {
+          "x": -96228.25,
+          "y": -97947.70000000001,
+          "w": 771.1999999999825,
+          "h": 76.90000000000873
+        },
+        {
+          "x": -95970.9,
+          "y": -98400.725,
+          "w": 1285.8999999999942,
+          "h": 367.54999999998836
+        },
+        {
+          "x": -95970.9,
+          "y": -97735.775,
+          "w": 1285.8999999999942,
+          "h": 346.95000000001164
+        },
+        {
+          "x": -95868.25,
+          "y": -98063.1,
+          "w": 51.19999999999709,
+          "h": 153.89999999999418
+        },
+        {
+          "x": -95431.45,
+          "y": -98063.1,
+          "w": 207,
+          "h": 307.70000000001164
+        }
+      ],
+      "within": [
+        {
+          "to": "vermillion/launching-tower",
+          "x": -95970.8,
+          "y": -98063.1,
+          "w": 153.89999999999418,
+          "h": 153.89999999999418
+        },
+        {
+          "to": "vermillion/launching-pad",
+          "x": -95688.8,
+          "y": -98063.1,
+          "w": 307.70000000001164,
+          "h": 307.70000000001164
+        }
+      ],
+      "lost": [],
+      "vague": [],
+      "area": 1314446.9800000002,
+      "held_area": 1196082.4800000037,
+      "within_area": 118364.50000000538,
+      "lost_area": 0,
+      "vague_area": 0
+    },
+    "vermillion/launching-pad": {
+      "held": [
+        {
+          "x": -95688.8,
+          "y": -98063.1,
+          "w": 307.70000000001164,
+          "h": 307.70000000001164
+        }
+      ],
+      "within": [],
+      "lost": [],
+      "vague": [],
+      "area": 94679.29,
+      "held_area": 94679.29000000717,
+      "within_area": 0,
+      "lost_area": 0,
+      "vague_area": 0
+    },
+    "vermillion/launching-tower": {
+      "held": [
+        {
+          "x": -95970.8,
+          "y": -98063.1,
+          "w": 153.89999999999418,
+          "h": 153.89999999999418
+        }
+      ],
+      "within": [],
+      "lost": [],
+      "vague": [],
+      "area": 23685.210000000003,
+      "held_area": 23685.20999999821,
+      "within_area": 0,
+      "lost_area": 0,
+      "vague_area": 0
+    },
     "spar/the-doubled-coast": {
       "held": [
         {
@@ -22855,6 +23664,30 @@
     "sol-of-garrison/the-protected-grove": {
       "held": [
         {
+          "x": -1820,
+          "y": -2400,
+          "w": 460,
+          "h": 80
+        },
+        {
+          "x": -1805,
+          "y": -2300,
+          "w": 490,
+          "h": 120
+        },
+        {
+          "x": -1737.5,
+          "y": -2445,
+          "w": 625,
+          "h": 10
+        },
+        {
+          "x": -1652.5,
+          "y": -2452.5,
+          "w": 795,
+          "h": 5
+        },
+        {
           "x": -1375,
           "y": -3028.5,
           "w": 1350,
@@ -22862,18 +23695,117 @@
         },
         {
           "x": -1375,
-          "y": -2318.5,
+          "y": -2513.5,
           "w": 1350,
-          "h": 507
+          "h": 117
+        },
+        {
+          "x": -1375,
+          "y": -2152.5,
+          "w": 1350,
+          "h": 175
         },
         {
           "x": -1237.5,
           "y": -2722,
           "w": 1075,
           "h": 300
+        },
+        {
+          "x": -1467.5,
+          "y": -2400,
+          "w": 85,
+          "h": 80
+        },
+        {
+          "x": -1432.5,
+          "y": -2355,
+          "w": 15,
+          "h": 10
+        },
+        {
+          "x": -1070,
+          "y": -2295,
+          "w": 740,
+          "h": 110
+        },
+        {
+          "x": -1290,
+          "y": -2422.5,
+          "w": 70,
+          "h": 55
+        },
+        {
+          "x": -1012.5,
+          "y": -2372.5,
+          "w": 625,
+          "h": 45
+        },
+        {
+          "x": -947.5,
+          "y": -2425,
+          "w": 495,
+          "h": 60
         }
       ],
-      "within": [],
+      "within": [
+        {
+          "to": "fabel-of-garrison/the-riverside-arcade",
+          "x": -1550,
+          "y": -2400,
+          "w": 80,
+          "h": 80
+        },
+        {
+          "to": "fabel-of-garrison/the-marquee",
+          "x": -1500,
+          "y": -2300,
+          "w": 120,
+          "h": 120
+        },
+        {
+          "to": "fabel-of-garrison/the-archway",
+          "x": -1395,
+          "y": -2385,
+          "w": 60,
+          "h": 10
+        },
+        {
+          "to": "fabel-of-garrison/the-archway",
+          "x": -1375,
+          "y": -2420,
+          "w": 100,
+          "h": 60
+        },
+        {
+          "to": "fabel-of-garrison/the-archway",
+          "x": -1375,
+          "y": -2365,
+          "w": 100,
+          "h": 30
+        },
+        {
+          "to": "fabel-of-garrison/the-archway",
+          "x": -1335,
+          "y": -2385,
+          "w": 20,
+          "h": 10
+        },
+        {
+          "to": "fabel-of-garrison/the-goodie-bag-table",
+          "x": -1355,
+          "y": -2385,
+          "w": 20,
+          "h": 10
+        },
+        {
+          "to": "fabel-of-garrison/the-guestbook-room",
+          "x": -1225,
+          "y": -2425,
+          "w": 60,
+          "h": 60
+        }
+      ],
       "lost": [
         {
           "to": "vermillion/vermillions-sunbathing-spot",
@@ -22913,9 +23845,125 @@
       ],
       "vague": [],
       "area": 1512000,
-      "held_area": 1429500,
-      "within_area": 0,
+      "held_area": 1395100,
+      "within_area": 34400,
       "lost_area": 82500,
+      "vague_area": 0
+    },
+    "fabel-of-garrison/the-archway": {
+      "held": [
+        {
+          "x": -1395,
+          "y": -2385,
+          "w": 60,
+          "h": 10
+        },
+        {
+          "x": -1375,
+          "y": -2420,
+          "w": 100,
+          "h": 60
+        },
+        {
+          "x": -1375,
+          "y": -2365,
+          "w": 100,
+          "h": 30
+        },
+        {
+          "x": -1335,
+          "y": -2385,
+          "w": 20,
+          "h": 10
+        }
+      ],
+      "within": [
+        {
+          "to": "fabel-of-garrison/the-goodie-bag-table",
+          "x": -1355,
+          "y": -2385,
+          "w": 20,
+          "h": 10
+        }
+      ],
+      "lost": [],
+      "vague": [],
+      "area": 10000,
+      "held_area": 9800,
+      "within_area": 200,
+      "lost_area": 0,
+      "vague_area": 0
+    },
+    "fabel-of-garrison/the-goodie-bag-table": {
+      "held": [
+        {
+          "x": -1355,
+          "y": -2385,
+          "w": 20,
+          "h": 10
+        }
+      ],
+      "within": [],
+      "lost": [],
+      "vague": [],
+      "area": 200,
+      "held_area": 200,
+      "within_area": 0,
+      "lost_area": 0,
+      "vague_area": 0
+    },
+    "fabel-of-garrison/the-guestbook-room": {
+      "held": [
+        {
+          "x": -1225,
+          "y": -2425,
+          "w": 60,
+          "h": 60
+        }
+      ],
+      "within": [],
+      "lost": [],
+      "vague": [],
+      "area": 3600,
+      "held_area": 3600,
+      "within_area": 0,
+      "lost_area": 0,
+      "vague_area": 0
+    },
+    "fabel-of-garrison/the-marquee": {
+      "held": [
+        {
+          "x": -1500,
+          "y": -2300,
+          "w": 120,
+          "h": 120
+        }
+      ],
+      "within": [],
+      "lost": [],
+      "vague": [],
+      "area": 14400,
+      "held_area": 14400,
+      "within_area": 0,
+      "lost_area": 0,
+      "vague_area": 0
+    },
+    "fabel-of-garrison/the-riverside-arcade": {
+      "held": [
+        {
+          "x": -1550,
+          "y": -2400,
+          "w": 80,
+          "h": 80
+        }
+      ],
+      "within": [],
+      "lost": [],
+      "vague": [],
+      "area": 6400,
+      "held_area": 6400,
+      "within_area": 0,
+      "lost_area": 0,
       "vague_area": 0
     },
     "sol-of-garrison/vanguards-watchtower": {
@@ -26320,6 +27368,31 @@
     "-94406,-94449.5,-93658,-94428": "vermillion/the-pando-peak",
     "-94406,-94428,-93658,-94406": "vermillion/the-pando-peak",
     "-94406,-94406,-93658,-93658": "vermillion/the-pando-peak",
+    "-96613.84999999999,-98584.5,-96047.75,-98216.95000000001": "vermillion/space-program-clearing",
+    "-96613.84999999999,-98216.95000000001,-96047.75,-98140.05": "vermillion/space-program-clearing",
+    "-96613.84999999999,-98140.05,-96047.75,-97986.15000000001": "vermillion/space-program-clearing",
+    "-96613.84999999999,-97986.15000000001,-96047.75,-97909.25": "vermillion/space-program-clearing",
+    "-96613.84999999999,-97909.25,-96047.75,-97562.29999999999": "vermillion/space-program-clearing",
+    "-96047.75,-98584.5,-95893.85,-98216.95000000001": "vermillion/space-program-clearing",
+    "-96047.75,-98216.95000000001,-95893.85,-98140.05": "vermillion/space-program-clearing",
+    "-96047.75,-98140.05,-95893.85,-97986.15000000001": "vermillion/launching-tower",
+    "-96047.75,-97986.15000000001,-95893.85,-97909.25": "vermillion/space-program-clearing",
+    "-96047.75,-97909.25,-95893.85,-97562.29999999999": "vermillion/space-program-clearing",
+    "-95893.85,-98584.5,-95842.65000000001,-98216.95000000001": "vermillion/space-program-clearing",
+    "-95893.85,-98216.95000000001,-95842.65000000001,-98140.05": "vermillion/space-program-clearing",
+    "-95893.85,-98140.05,-95842.65000000001,-97986.15000000001": "vermillion/space-program-clearing",
+    "-95893.85,-97986.15000000001,-95842.65000000001,-97909.25": "vermillion/space-program-clearing",
+    "-95893.85,-97909.25,-95842.65000000001,-97562.29999999999": "vermillion/space-program-clearing",
+    "-95842.65000000001,-98584.5,-95534.95,-98216.95000000001": "vermillion/space-program-clearing",
+    "-95842.65000000001,-98216.95000000001,-95534.95,-98140.05": "vermillion/launching-pad",
+    "-95842.65000000001,-98140.05,-95534.95,-97986.15000000001": "vermillion/launching-pad",
+    "-95842.65000000001,-97986.15000000001,-95534.95,-97909.25": "vermillion/launching-pad",
+    "-95842.65000000001,-97909.25,-95534.95,-97562.29999999999": "vermillion/space-program-clearing",
+    "-95534.95,-98584.5,-95327.95,-98216.95000000001": "vermillion/space-program-clearing",
+    "-95534.95,-98216.95000000001,-95327.95,-98140.05": "vermillion/space-program-clearing",
+    "-95534.95,-98140.05,-95327.95,-97986.15000000001": "vermillion/space-program-clearing",
+    "-95534.95,-97986.15000000001,-95327.95,-97909.25": "vermillion/space-program-clearing",
+    "-95534.95,-97909.25,-95327.95,-97562.29999999999": "vermillion/space-program-clearing",
     "-1275,4150,-1006.5,5388.5": "spar/the-doubled-coast",
     "-1275,5388.5,-1006.5,5391.5": "spar/the-doubled-coast",
     "-1275,5391.5,-1006.5,5650": "spar/the-doubled-coast",
@@ -27460,42 +28533,256 @@
     "-2050,-2872,-1931,-2746": "vermillion/vermillions-sunbathing-spot",
     "-2050,-2746,-1931,-2734": "vermillion/vermillions-sunbathing-spot",
     "-2050,-2734,-1931,-2572": "vermillion/vermillions-sunbathing-spot",
-    "-2050,-2572,-1931,-2065": "sol-of-garrison/the-protected-grove",
+    "-2050,-2572,-1931,-2455": "sol-of-garrison/the-protected-grove",
+    "-2050,-2455,-1931,-2450": "sol-of-garrison/the-protected-grove",
+    "-2050,-2450,-1931,-2440": "sol-of-garrison/the-protected-grove",
+    "-2050,-2440,-1931,-2395": "sol-of-garrison/the-protected-grove",
+    "-2050,-2395,-1931,-2390": "sol-of-garrison/the-protected-grove",
+    "-2050,-2390,-1931,-2380": "sol-of-garrison/the-protected-grove",
+    "-2050,-2380,-1931,-2360": "sol-of-garrison/the-protected-grove",
+    "-2050,-2360,-1931,-2350": "sol-of-garrison/the-protected-grove",
+    "-2050,-2350,-1931,-2240": "sol-of-garrison/the-protected-grove",
+    "-2050,-2240,-1931,-2065": "sol-of-garrison/the-protected-grove",
     "-1931,-3185,-1919,-2910": "sol-of-garrison/the-protected-grove",
     "-1931,-2910,-1919,-2890": "sol-of-garrison/the-protected-grove",
     "-1931,-2890,-1919,-2872": "sol-of-garrison/the-protected-grove",
     "-1931,-2872,-1919,-2746": "vermillion/vermillions-sunbathing-spot",
     "-1931,-2746,-1919,-2734": "vermillion/pando-peak-library-shelf",
     "-1931,-2734,-1919,-2572": "vermillion/vermillions-sunbathing-spot",
-    "-1931,-2572,-1919,-2065": "sol-of-garrison/the-protected-grove",
+    "-1931,-2572,-1919,-2455": "sol-of-garrison/the-protected-grove",
+    "-1931,-2455,-1919,-2450": "sol-of-garrison/the-protected-grove",
+    "-1931,-2450,-1919,-2440": "sol-of-garrison/the-protected-grove",
+    "-1931,-2440,-1919,-2395": "sol-of-garrison/the-protected-grove",
+    "-1931,-2395,-1919,-2390": "sol-of-garrison/the-protected-grove",
+    "-1931,-2390,-1919,-2380": "sol-of-garrison/the-protected-grove",
+    "-1931,-2380,-1919,-2360": "sol-of-garrison/the-protected-grove",
+    "-1931,-2360,-1919,-2350": "sol-of-garrison/the-protected-grove",
+    "-1931,-2350,-1919,-2240": "sol-of-garrison/the-protected-grove",
+    "-1931,-2240,-1919,-2065": "sol-of-garrison/the-protected-grove",
     "-1919,-3185,-1775,-2910": "sol-of-garrison/the-protected-grove",
     "-1919,-2910,-1775,-2890": "sol-of-garrison/the-protected-grove",
     "-1919,-2890,-1775,-2872": "sol-of-garrison/the-protected-grove",
     "-1919,-2872,-1775,-2746": "vermillion/vermillions-sunbathing-spot",
     "-1919,-2746,-1775,-2734": "vermillion/vermillions-sunbathing-spot",
     "-1919,-2734,-1775,-2572": "vermillion/vermillions-sunbathing-spot",
-    "-1919,-2572,-1775,-2065": "sol-of-garrison/the-protected-grove",
-    "-1775,-3185,-1170,-2910": "sol-of-garrison/the-protected-grove",
-    "-1775,-2910,-1170,-2890": "sol-of-garrison/the-protected-grove",
-    "-1775,-2890,-1170,-2872": "sol-of-garrison/the-protected-grove",
-    "-1775,-2872,-1170,-2746": "sol-of-garrison/the-protected-grove",
-    "-1775,-2746,-1170,-2734": "sol-of-garrison/the-protected-grove",
-    "-1775,-2734,-1170,-2572": "sol-of-garrison/the-protected-grove",
-    "-1775,-2572,-1170,-2065": "sol-of-garrison/the-protected-grove",
+    "-1919,-2572,-1775,-2455": "sol-of-garrison/the-protected-grove",
+    "-1919,-2455,-1775,-2450": "sol-of-garrison/the-protected-grove",
+    "-1919,-2450,-1775,-2440": "sol-of-garrison/the-protected-grove",
+    "-1919,-2440,-1775,-2395": "sol-of-garrison/the-protected-grove",
+    "-1919,-2395,-1775,-2390": "sol-of-garrison/the-protected-grove",
+    "-1919,-2390,-1775,-2380": "sol-of-garrison/the-protected-grove",
+    "-1919,-2380,-1775,-2360": "sol-of-garrison/the-protected-grove",
+    "-1919,-2360,-1775,-2350": "sol-of-garrison/the-protected-grove",
+    "-1919,-2350,-1775,-2240": "sol-of-garrison/the-protected-grove",
+    "-1919,-2240,-1775,-2065": "sol-of-garrison/the-protected-grove",
+    "-1775,-3185,-1590,-2910": "sol-of-garrison/the-protected-grove",
+    "-1775,-2910,-1590,-2890": "sol-of-garrison/the-protected-grove",
+    "-1775,-2890,-1590,-2872": "sol-of-garrison/the-protected-grove",
+    "-1775,-2872,-1590,-2746": "sol-of-garrison/the-protected-grove",
+    "-1775,-2746,-1590,-2734": "sol-of-garrison/the-protected-grove",
+    "-1775,-2734,-1590,-2572": "sol-of-garrison/the-protected-grove",
+    "-1775,-2572,-1590,-2455": "sol-of-garrison/the-protected-grove",
+    "-1775,-2455,-1590,-2450": "sol-of-garrison/the-protected-grove",
+    "-1775,-2450,-1590,-2440": "sol-of-garrison/the-protected-grove",
+    "-1775,-2440,-1590,-2395": "sol-of-garrison/the-protected-grove",
+    "-1775,-2395,-1590,-2390": "sol-of-garrison/the-protected-grove",
+    "-1775,-2390,-1590,-2380": "sol-of-garrison/the-protected-grove",
+    "-1775,-2380,-1590,-2360": "sol-of-garrison/the-protected-grove",
+    "-1775,-2360,-1590,-2350": "sol-of-garrison/the-protected-grove",
+    "-1775,-2350,-1590,-2240": "sol-of-garrison/the-protected-grove",
+    "-1775,-2240,-1590,-2065": "sol-of-garrison/the-protected-grove",
+    "-1590,-3185,-1560,-2910": "sol-of-garrison/the-protected-grove",
+    "-1590,-2910,-1560,-2890": "sol-of-garrison/the-protected-grove",
+    "-1590,-2890,-1560,-2872": "sol-of-garrison/the-protected-grove",
+    "-1590,-2872,-1560,-2746": "sol-of-garrison/the-protected-grove",
+    "-1590,-2746,-1560,-2734": "sol-of-garrison/the-protected-grove",
+    "-1590,-2734,-1560,-2572": "sol-of-garrison/the-protected-grove",
+    "-1590,-2572,-1560,-2455": "sol-of-garrison/the-protected-grove",
+    "-1590,-2455,-1560,-2450": "sol-of-garrison/the-protected-grove",
+    "-1590,-2450,-1560,-2440": "sol-of-garrison/the-protected-grove",
+    "-1590,-2440,-1560,-2395": "fabel-of-garrison/the-riverside-arcade",
+    "-1590,-2395,-1560,-2390": "fabel-of-garrison/the-riverside-arcade",
+    "-1590,-2390,-1560,-2380": "fabel-of-garrison/the-riverside-arcade",
+    "-1590,-2380,-1560,-2360": "fabel-of-garrison/the-riverside-arcade",
+    "-1590,-2360,-1560,-2350": "sol-of-garrison/the-protected-grove",
+    "-1590,-2350,-1560,-2240": "sol-of-garrison/the-protected-grove",
+    "-1590,-2240,-1560,-2065": "sol-of-garrison/the-protected-grove",
+    "-1560,-3185,-1510,-2910": "sol-of-garrison/the-protected-grove",
+    "-1560,-2910,-1510,-2890": "sol-of-garrison/the-protected-grove",
+    "-1560,-2890,-1510,-2872": "sol-of-garrison/the-protected-grove",
+    "-1560,-2872,-1510,-2746": "sol-of-garrison/the-protected-grove",
+    "-1560,-2746,-1510,-2734": "sol-of-garrison/the-protected-grove",
+    "-1560,-2734,-1510,-2572": "sol-of-garrison/the-protected-grove",
+    "-1560,-2572,-1510,-2455": "sol-of-garrison/the-protected-grove",
+    "-1560,-2455,-1510,-2450": "sol-of-garrison/the-protected-grove",
+    "-1560,-2450,-1510,-2440": "sol-of-garrison/the-protected-grove",
+    "-1560,-2440,-1510,-2395": "fabel-of-garrison/the-riverside-arcade",
+    "-1560,-2395,-1510,-2390": "fabel-of-garrison/the-riverside-arcade",
+    "-1560,-2390,-1510,-2380": "fabel-of-garrison/the-riverside-arcade",
+    "-1560,-2380,-1510,-2360": "fabel-of-garrison/the-riverside-arcade",
+    "-1560,-2360,-1510,-2350": "fabel-of-garrison/the-marquee",
+    "-1560,-2350,-1510,-2240": "fabel-of-garrison/the-marquee",
+    "-1560,-2240,-1510,-2065": "sol-of-garrison/the-protected-grove",
+    "-1510,-3185,-1440,-2910": "sol-of-garrison/the-protected-grove",
+    "-1510,-2910,-1440,-2890": "sol-of-garrison/the-protected-grove",
+    "-1510,-2890,-1440,-2872": "sol-of-garrison/the-protected-grove",
+    "-1510,-2872,-1440,-2746": "sol-of-garrison/the-protected-grove",
+    "-1510,-2746,-1440,-2734": "sol-of-garrison/the-protected-grove",
+    "-1510,-2734,-1440,-2572": "sol-of-garrison/the-protected-grove",
+    "-1510,-2572,-1440,-2455": "sol-of-garrison/the-protected-grove",
+    "-1510,-2455,-1440,-2450": "sol-of-garrison/the-protected-grove",
+    "-1510,-2450,-1440,-2440": "sol-of-garrison/the-protected-grove",
+    "-1510,-2440,-1440,-2395": "sol-of-garrison/the-protected-grove",
+    "-1510,-2395,-1440,-2390": "sol-of-garrison/the-protected-grove",
+    "-1510,-2390,-1440,-2380": "sol-of-garrison/the-protected-grove",
+    "-1510,-2380,-1440,-2360": "sol-of-garrison/the-protected-grove",
+    "-1510,-2360,-1440,-2350": "fabel-of-garrison/the-marquee",
+    "-1510,-2350,-1440,-2240": "fabel-of-garrison/the-marquee",
+    "-1510,-2240,-1440,-2065": "sol-of-garrison/the-protected-grove",
+    "-1440,-3185,-1425,-2910": "sol-of-garrison/the-protected-grove",
+    "-1440,-2910,-1425,-2890": "sol-of-garrison/the-protected-grove",
+    "-1440,-2890,-1425,-2872": "sol-of-garrison/the-protected-grove",
+    "-1440,-2872,-1425,-2746": "sol-of-garrison/the-protected-grove",
+    "-1440,-2746,-1425,-2734": "sol-of-garrison/the-protected-grove",
+    "-1440,-2734,-1425,-2572": "sol-of-garrison/the-protected-grove",
+    "-1440,-2572,-1425,-2455": "sol-of-garrison/the-protected-grove",
+    "-1440,-2455,-1425,-2450": "sol-of-garrison/the-protected-grove",
+    "-1440,-2450,-1425,-2440": "sol-of-garrison/the-protected-grove",
+    "-1440,-2440,-1425,-2395": "sol-of-garrison/the-protected-grove",
+    "-1440,-2395,-1425,-2390": "sol-of-garrison/the-protected-grove",
+    "-1440,-2390,-1425,-2380": "sol-of-garrison/the-protected-grove",
+    "-1440,-2380,-1425,-2360": "sol-of-garrison/the-protected-grove",
+    "-1440,-2360,-1425,-2350": "sol-of-garrison/the-protected-grove",
+    "-1440,-2350,-1425,-2240": "sol-of-garrison/the-protected-grove",
+    "-1440,-2240,-1425,-2065": "sol-of-garrison/the-protected-grove",
+    "-1425,-3185,-1365,-2910": "sol-of-garrison/the-protected-grove",
+    "-1425,-2910,-1365,-2890": "sol-of-garrison/the-protected-grove",
+    "-1425,-2890,-1365,-2872": "sol-of-garrison/the-protected-grove",
+    "-1425,-2872,-1365,-2746": "sol-of-garrison/the-protected-grove",
+    "-1425,-2746,-1365,-2734": "sol-of-garrison/the-protected-grove",
+    "-1425,-2734,-1365,-2572": "sol-of-garrison/the-protected-grove",
+    "-1425,-2572,-1365,-2455": "sol-of-garrison/the-protected-grove",
+    "-1425,-2455,-1365,-2450": "sol-of-garrison/the-protected-grove",
+    "-1425,-2450,-1365,-2440": "fabel-of-garrison/the-archway",
+    "-1425,-2440,-1365,-2395": "fabel-of-garrison/the-archway",
+    "-1425,-2395,-1365,-2390": "fabel-of-garrison/the-archway",
+    "-1425,-2390,-1365,-2380": "fabel-of-garrison/the-archway",
+    "-1425,-2380,-1365,-2360": "fabel-of-garrison/the-archway",
+    "-1425,-2360,-1365,-2350": "fabel-of-garrison/the-archway",
+    "-1425,-2350,-1365,-2240": "sol-of-garrison/the-protected-grove",
+    "-1425,-2240,-1365,-2065": "sol-of-garrison/the-protected-grove",
+    "-1365,-3185,-1345,-2910": "sol-of-garrison/the-protected-grove",
+    "-1365,-2910,-1345,-2890": "sol-of-garrison/the-protected-grove",
+    "-1365,-2890,-1345,-2872": "sol-of-garrison/the-protected-grove",
+    "-1365,-2872,-1345,-2746": "sol-of-garrison/the-protected-grove",
+    "-1365,-2746,-1345,-2734": "sol-of-garrison/the-protected-grove",
+    "-1365,-2734,-1345,-2572": "sol-of-garrison/the-protected-grove",
+    "-1365,-2572,-1345,-2455": "sol-of-garrison/the-protected-grove",
+    "-1365,-2455,-1345,-2450": "sol-of-garrison/the-protected-grove",
+    "-1365,-2450,-1345,-2440": "fabel-of-garrison/the-archway",
+    "-1365,-2440,-1345,-2395": "fabel-of-garrison/the-archway",
+    "-1365,-2395,-1345,-2390": "fabel-of-garrison/the-archway",
+    "-1365,-2390,-1345,-2380": "fabel-of-garrison/the-goodie-bag-table",
+    "-1365,-2380,-1345,-2360": "fabel-of-garrison/the-archway",
+    "-1365,-2360,-1345,-2350": "fabel-of-garrison/the-archway",
+    "-1365,-2350,-1345,-2240": "sol-of-garrison/the-protected-grove",
+    "-1365,-2240,-1345,-2065": "sol-of-garrison/the-protected-grove",
+    "-1345,-3185,-1325,-2910": "sol-of-garrison/the-protected-grove",
+    "-1345,-2910,-1325,-2890": "sol-of-garrison/the-protected-grove",
+    "-1345,-2890,-1325,-2872": "sol-of-garrison/the-protected-grove",
+    "-1345,-2872,-1325,-2746": "sol-of-garrison/the-protected-grove",
+    "-1345,-2746,-1325,-2734": "sol-of-garrison/the-protected-grove",
+    "-1345,-2734,-1325,-2572": "sol-of-garrison/the-protected-grove",
+    "-1345,-2572,-1325,-2455": "sol-of-garrison/the-protected-grove",
+    "-1345,-2455,-1325,-2450": "sol-of-garrison/the-protected-grove",
+    "-1345,-2450,-1325,-2440": "fabel-of-garrison/the-archway",
+    "-1345,-2440,-1325,-2395": "fabel-of-garrison/the-archway",
+    "-1345,-2395,-1325,-2390": "fabel-of-garrison/the-archway",
+    "-1345,-2390,-1325,-2380": "fabel-of-garrison/the-archway",
+    "-1345,-2380,-1325,-2360": "fabel-of-garrison/the-archway",
+    "-1345,-2360,-1325,-2350": "fabel-of-garrison/the-archway",
+    "-1345,-2350,-1325,-2240": "sol-of-garrison/the-protected-grove",
+    "-1345,-2240,-1325,-2065": "sol-of-garrison/the-protected-grove",
+    "-1325,-3185,-1255,-2910": "sol-of-garrison/the-protected-grove",
+    "-1325,-2910,-1255,-2890": "sol-of-garrison/the-protected-grove",
+    "-1325,-2890,-1255,-2872": "sol-of-garrison/the-protected-grove",
+    "-1325,-2872,-1255,-2746": "sol-of-garrison/the-protected-grove",
+    "-1325,-2746,-1255,-2734": "sol-of-garrison/the-protected-grove",
+    "-1325,-2734,-1255,-2572": "sol-of-garrison/the-protected-grove",
+    "-1325,-2572,-1255,-2455": "sol-of-garrison/the-protected-grove",
+    "-1325,-2455,-1255,-2450": "sol-of-garrison/the-protected-grove",
+    "-1325,-2450,-1255,-2440": "sol-of-garrison/the-protected-grove",
+    "-1325,-2440,-1255,-2395": "sol-of-garrison/the-protected-grove",
+    "-1325,-2395,-1255,-2390": "sol-of-garrison/the-protected-grove",
+    "-1325,-2390,-1255,-2380": "sol-of-garrison/the-protected-grove",
+    "-1325,-2380,-1255,-2360": "sol-of-garrison/the-protected-grove",
+    "-1325,-2360,-1255,-2350": "sol-of-garrison/the-protected-grove",
+    "-1325,-2350,-1255,-2240": "sol-of-garrison/the-protected-grove",
+    "-1325,-2240,-1255,-2065": "sol-of-garrison/the-protected-grove",
+    "-1255,-3185,-1195,-2910": "sol-of-garrison/the-protected-grove",
+    "-1255,-2910,-1195,-2890": "sol-of-garrison/the-protected-grove",
+    "-1255,-2890,-1195,-2872": "sol-of-garrison/the-protected-grove",
+    "-1255,-2872,-1195,-2746": "sol-of-garrison/the-protected-grove",
+    "-1255,-2746,-1195,-2734": "sol-of-garrison/the-protected-grove",
+    "-1255,-2734,-1195,-2572": "sol-of-garrison/the-protected-grove",
+    "-1255,-2572,-1195,-2455": "sol-of-garrison/the-protected-grove",
+    "-1255,-2455,-1195,-2450": "fabel-of-garrison/the-guestbook-room",
+    "-1255,-2450,-1195,-2440": "fabel-of-garrison/the-guestbook-room",
+    "-1255,-2440,-1195,-2395": "fabel-of-garrison/the-guestbook-room",
+    "-1255,-2395,-1195,-2390": "sol-of-garrison/the-protected-grove",
+    "-1255,-2390,-1195,-2380": "sol-of-garrison/the-protected-grove",
+    "-1255,-2380,-1195,-2360": "sol-of-garrison/the-protected-grove",
+    "-1255,-2360,-1195,-2350": "sol-of-garrison/the-protected-grove",
+    "-1255,-2350,-1195,-2240": "sol-of-garrison/the-protected-grove",
+    "-1255,-2240,-1195,-2065": "sol-of-garrison/the-protected-grove",
+    "-1195,-3185,-1170,-2910": "sol-of-garrison/the-protected-grove",
+    "-1195,-2910,-1170,-2890": "sol-of-garrison/the-protected-grove",
+    "-1195,-2890,-1170,-2872": "sol-of-garrison/the-protected-grove",
+    "-1195,-2872,-1170,-2746": "sol-of-garrison/the-protected-grove",
+    "-1195,-2746,-1170,-2734": "sol-of-garrison/the-protected-grove",
+    "-1195,-2734,-1170,-2572": "sol-of-garrison/the-protected-grove",
+    "-1195,-2572,-1170,-2455": "sol-of-garrison/the-protected-grove",
+    "-1195,-2455,-1170,-2450": "sol-of-garrison/the-protected-grove",
+    "-1195,-2450,-1170,-2440": "sol-of-garrison/the-protected-grove",
+    "-1195,-2440,-1170,-2395": "sol-of-garrison/the-protected-grove",
+    "-1195,-2395,-1170,-2390": "sol-of-garrison/the-protected-grove",
+    "-1195,-2390,-1170,-2380": "sol-of-garrison/the-protected-grove",
+    "-1195,-2380,-1170,-2360": "sol-of-garrison/the-protected-grove",
+    "-1195,-2360,-1170,-2350": "sol-of-garrison/the-protected-grove",
+    "-1195,-2350,-1170,-2240": "sol-of-garrison/the-protected-grove",
+    "-1195,-2240,-1170,-2065": "sol-of-garrison/the-protected-grove",
     "-1170,-3185,-1150,-2910": "sol-of-garrison/the-protected-grove",
     "-1170,-2910,-1150,-2890": "sol-of-garrison/the-protected-grove",
     "-1170,-2890,-1150,-2872": "sol-of-garrison/the-protected-grove",
     "-1170,-2872,-1150,-2746": "sol-of-garrison/the-protected-grove",
     "-1170,-2746,-1150,-2734": "sol-of-garrison/the-protected-grove",
     "-1170,-2734,-1150,-2572": "sol-of-garrison/the-protected-grove",
-    "-1170,-2572,-1150,-2065": "sol-of-garrison/the-protected-grove",
+    "-1170,-2572,-1150,-2455": "sol-of-garrison/the-protected-grove",
+    "-1170,-2455,-1150,-2450": "sol-of-garrison/the-protected-grove",
+    "-1170,-2450,-1150,-2440": "sol-of-garrison/the-protected-grove",
+    "-1170,-2440,-1150,-2395": "sol-of-garrison/the-protected-grove",
+    "-1170,-2395,-1150,-2390": "sol-of-garrison/the-protected-grove",
+    "-1170,-2390,-1150,-2380": "sol-of-garrison/the-protected-grove",
+    "-1170,-2380,-1150,-2360": "sol-of-garrison/the-protected-grove",
+    "-1170,-2360,-1150,-2350": "sol-of-garrison/the-protected-grove",
+    "-1170,-2350,-1150,-2240": "sol-of-garrison/the-protected-grove",
+    "-1170,-2240,-1150,-2065": "sol-of-garrison/the-protected-grove",
     "-1150,-3185,-700,-2910": "sol-of-garrison/the-protected-grove",
     "-1150,-2910,-700,-2890": "sol-of-garrison/the-protected-grove",
     "-1150,-2890,-700,-2872": "sol-of-garrison/the-protected-grove",
     "-1150,-2872,-700,-2746": "sol-of-garrison/the-protected-grove",
     "-1150,-2746,-700,-2734": "sol-of-garrison/the-protected-grove",
     "-1150,-2734,-700,-2572": "sol-of-garrison/the-protected-grove",
-    "-1150,-2572,-700,-2065": "sol-of-garrison/the-protected-grove",
+    "-1150,-2572,-700,-2455": "sol-of-garrison/the-protected-grove",
+    "-1150,-2455,-700,-2450": "sol-of-garrison/the-protected-grove",
+    "-1150,-2450,-700,-2440": "sol-of-garrison/the-protected-grove",
+    "-1150,-2440,-700,-2395": "sol-of-garrison/the-protected-grove",
+    "-1150,-2395,-700,-2390": "sol-of-garrison/the-protected-grove",
+    "-1150,-2390,-700,-2380": "sol-of-garrison/the-protected-grove",
+    "-1150,-2380,-700,-2360": "sol-of-garrison/the-protected-grove",
+    "-1150,-2360,-700,-2350": "sol-of-garrison/the-protected-grove",
+    "-1150,-2350,-700,-2240": "sol-of-garrison/the-protected-grove",
+    "-1150,-2240,-700,-2065": "sol-of-garrison/the-protected-grove",
     "-2825,3375,-2275,3770": "orion-by-the-fire/the-reach",
     "-2825,3770,-2275,3830": "orion-by-the-fire/the-reach",
     "-2825,3830,-2275,4160": "orion-by-the-fire/the-reach",
@@ -27649,6 +28936,38 @@
         "stamps": 5
       }
     ],
+    "k-of-garrison": [
+      {
+        "mark": "fabel-of-garrison/the-archway",
+        "stamps": 1
+      },
+      {
+        "mark": "fabel-of-garrison/the-guestbook-room",
+        "stamps": 1
+      },
+      {
+        "mark": "fabel-of-garrison/the-marquee",
+        "stamps": 1
+      },
+      {
+        "mark": "fabel-of-garrison/the-riverside-arcade",
+        "stamps": 1
+      }
+    ],
+    "sol-of-garrison": [
+      {
+        "mark": "fabel-of-garrison/the-goodie-bag-table",
+        "stamps": 1
+      },
+      {
+        "mark": "little-m-of-garrison/the-crossing-clock",
+        "stamps": 1
+      },
+      {
+        "mark": "sol-of-garrison/tactical-umbrella-stand",
+        "stamps": 1
+      }
+    ],
     "ellery": [
       {
         "mark": "hal/the-green-lamp",
@@ -27657,12 +28976,24 @@
     ],
     "vermillion": [
       {
+        "mark": "vermillion/space-program-clearing",
+        "stamps": 16
+      },
+      {
         "mark": "vermillion/the-pando-peak",
         "stamps": 15
       },
       {
         "mark": "vermillion/lake-caves",
         "stamps": 10
+      },
+      {
+        "mark": "vermillion/launching-pad",
+        "stamps": 6
+      },
+      {
+        "mark": "vermillion/launching-tower",
+        "stamps": 6
       },
       {
         "mark": "hal/the-green-lamp",
@@ -27833,16 +29164,6 @@
         "stamps": 1
       }
     ],
-    "sol-of-garrison": [
-      {
-        "mark": "little-m-of-garrison/the-crossing-clock",
-        "stamps": 1
-      },
-      {
-        "mark": "sol-of-garrison/tactical-umbrella-stand",
-        "stamps": 1
-      }
-    ],
     "rei": [
       {
         "mark": "rei/empty-hook-keeping-custom",
@@ -27887,6 +29208,12 @@
         "stamps": 1
       }
     ],
+    "rook-of-garrison": [
+      {
+        "mark": "rook-of-garrison/sevens-birthday-flag",
+        "stamps": 1
+      }
+    ],
     "sage-reeves": [
       {
         "mark": "sage-reeves/sage-far-wall-line",
@@ -27897,6 +29224,16 @@
       {
         "mark": "sahil/the-far-shore",
         "stamps": 3
+      }
+    ],
+    "sol-am-lichterfenster": [
+      {
+        "mark": "sol-am-lichterfenster/little-m-first-month-letter",
+        "stamps": 1
+      },
+      {
+        "mark": "sol-am-lichterfenster/little-m-memory-lake-treasure-chest",
+        "stamps": 1
       }
     ],
     "stella-letta": [

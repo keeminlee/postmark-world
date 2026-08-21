@@ -8,17 +8,20 @@ listed here — they are their households' own.*
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 74 | ⚔ |
+| vermillion/space-program-clearing | sited | -95970.9,-98073.4 |  | 16 | 28 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 15 | ⚔ |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 | ⚔ |
+| sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 12 | ⚔ |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 |  |
 | limen/the-threshold-district | sited | 1488,1808 |  | 10 | 10 | ⚔ |
 | the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 | ⚔ |
 | vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 |  |
-| sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 7 | ⚔ |
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 2 | 7 |  |
 | alden/the-alder-at-the-green-lamp | sited | 1134,2793 |  | 7 | 7 | ⚔ |
+| vermillion/launching-pad | sited | -95688.8,-98063.1 |  | 6 | 6 |  |
+| vermillion/launching-tower | sited | -95970.8,-98063.1 |  | 6 | 6 |  |
 | wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
@@ -34,6 +37,7 @@ listed here — they are their households' own.*
 | little-bird/a-cold-cup-on-the-long-bench | sited | 155,431 |  | 3 | 3 |  |
 | little-bird/under-the-eaves-by-the-door | sited | 150,446 |  | 3 | 3 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 | ⚔ |
+| fabel-of-garrison/the-archway | sited | -1375,-2400 |  | 1 | 2 |  |
 | stella-letta/stella-letta-the-meeting-bench | sited | 1917,2057 |  | 2 | 2 | ⚔ |
 | stella-letta/stella-letta-the-meeting-scene | sited | 1917,2057 |  | 2 | 2 | ⚔ |
 | wright/the-crossing-bench | sited | 12,8 |  | 2 | 2 |  |
@@ -58,11 +62,16 @@ listed here — they are their households' own.*
 | vermillion/garden-tropical-pathway | sited | -95018,-95697 |  | 1 | 1 |  |
 | vermillion/volvigradus-nap-hollow | sited | -95058,-95980 |  | 1 | 1 |  |
 | rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 1 | ⚔ |
+| fabel-of-garrison/the-goodie-bag-table | sited | -1355,-2385 |  | 1 | 1 |  |
+| fabel-of-garrison/the-guestbook-room | sited | -1225,-2425 |  | 1 | 1 |  |
+| fabel-of-garrison/the-marquee | sited | -1500,-2300 |  | 1 | 1 |  |
+| fabel-of-garrison/the-riverside-arcade | sited | -1550,-2400 |  | 1 | 1 |  |
 | stella-letta/stella-letta-bluebells-by-the-bench | sited | 1916,2058 |  | 1 | 1 | ⚔ |
 | stella-letta/stella-letta-lamp-above-the-bench | sited | 1917,2056 |  | 1 | 1 | ⚔ |
 | rei/the-thyme-thank-you | sited | 1137,2788.6 |  | 1 | 1 | ⚔ |
 | vermillion/the-note-in-her-rafters | sited | 1097,2805 |  | 1 | 1 | ⚔ |
 | vermillion/vermillions-landing | sited | 1024,2678 |  | 1 | 1 | ⚔ |
+| rook-of-garrison/sevens-birthday-flag | sited | -782.8,332 |  | 1 | 1 |  |
 | wright/furnish-ferrys-waiting-room | sited | 170,-172 |  | 1 | 1 |  |
 | sol-of-garrison/tactical-umbrella-stand | predicated | postmaster/the-waiting-room | furnishing-umbrella-stand=tactical-umbrella-stand | 1 | 1 |  |
 | little-m-of-garrison/the-crossing-clock | predicated | postmaster/the-waiting-room | furnishing-clock=the-crossing-clock | 1 | 1 |  |

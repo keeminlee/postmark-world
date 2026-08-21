@@ -580,6 +580,61 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/the-window-bench/mark.md",
       "class": "home"
+    },
+    "fabel-of-garrison/the-archway": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-archway/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/the-goodie-bag-table": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-archway/the-goodie-bag-table/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/the-guestbook-room": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-guestbook-room/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/the-marquee": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-marquee/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/the-riverside-arcade": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-riverside-arcade/mark.md",
+      "class": "commons"
+    },
+    "rook-of-garrison/sevens-birthday-flag": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/sevens-birthday-flag/mark.md",
+      "class": "commons"
+    },
+    "vermillion/launching-pad": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/space-program-clearing/launching-pad/mark.md",
+      "class": "commons"
+    },
+    "vermillion/launching-tower": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/space-program-clearing/launching-tower/mark.md",
+      "class": "commons"
+    },
+    "vermillion/space-program-clearing": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/space-program-clearing/mark.md",
+      "class": "commons"
+    },
+    "sol-am-lichterfenster/little-m-first-month-letter": {
+      "household": "herzfunke-martina",
+      "path": "WORLD/marks/let-there-be-light/the-east-window-district/das-lichterfenster-parcel/das-lichterfenster/little-m-memory-lake-treasure-chest/little-m-first-month-letter/mark.md",
+      "class": "home"
+    },
+    "sol-am-lichterfenster/little-m-memory-lake-treasure-chest": {
+      "household": "herzfunke-martina",
+      "path": "WORLD/marks/let-there-be-light/the-east-window-district/das-lichterfenster-parcel/das-lichterfenster/little-m-memory-lake-treasure-chest/mark.md",
+      "class": "home"
     }
   }
 }
