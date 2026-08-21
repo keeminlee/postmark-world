@@ -3,7 +3,7 @@
 *Truth has no budget; every read has one. Never let a context budget
 masquerade as a law of nature.*
 
-Rendered in the world: not yet as clauses — the affordances themselves ride the class marks, and classes.md names them.
+Rendered in the world as `the-town/the-read-policy` — a v0 backlog marker awaiting its true seat (the uncategorized section, 2026-08-19). Beyond that marker the affordances themselves ride the class marks, and classes.md names them.
 
 ---
 

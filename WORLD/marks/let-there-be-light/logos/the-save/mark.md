@@ -2,6 +2,7 @@
 kind: predicated
 by: the-town
 tier: constitution
+source: LOGOS/state-and-time.md
 date: 2026-08-18
 slot: save
 value: the past reads from the newest save

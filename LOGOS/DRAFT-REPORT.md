@@ -1,5 +1,12 @@
 # Stage 0 — LOGOS/ and the charter articles: draft report
 
+> **HISTORICAL RECORD — stamped 2026-08-19 (the tri-survey's C9, founder-ruled).**
+> The verdicts and citations below are UNSAFE TO CITE AS CURRENT: evidence this
+> audit cites has since been rewritten out of the docs it names, and addresses it
+> proposes shipped under different names (`the-record/` became `logos/`). Kept
+> whole as the 2026-08-09 stage's working record; superseded by the 2026-08-19
+> tri-surface ontology survey in the founder's day docs.
+
 Branch `stage0/logos`, worktree `G:/postmark/worktrees/stage0-logos`.
 Committed locally, never pushed. **Everything here is a draft for the founders'
 red pen; nothing lands on `main` from this hand.**

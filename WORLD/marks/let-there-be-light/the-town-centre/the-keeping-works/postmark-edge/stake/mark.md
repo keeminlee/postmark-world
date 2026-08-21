@@ -6,8 +6,8 @@ date: 2026-08-15
 class: stake
 version: 2
 extends: postmark-edge
-from-class: resident
-to-class: mark
+subject: resident
+object: mark
 dials: {}
 implements: []
 source: LOGOS/classes.md

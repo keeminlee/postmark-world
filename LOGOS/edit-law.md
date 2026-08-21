@@ -3,6 +3,9 @@
 *To act is to declare an edge. Everything else is clothing.*
 
 Rendered in the world as `the-town/the-edit-law` and `the-town/the-standing-children`.
+(The revision family's backlog marker graduated the same day it was planted:
+`the-town/amend` and `the-town/withdraw` now stand in the works, sourced to
+classes.md § the revision verbs, built at the door 2026-08-19.)
 
 ---
 
@@ -28,11 +31,18 @@ needed:
 2026-08-13: create-edges and revision-edges are both DECLARE, response-edges
 are RESPOND — the three families are its serialization, not a third grammar.)
 
-## Every edge is from an action — no exceptions
+## Authored edges are from actions; derived edges are read
 
-There are no derived edges. **Every edge cites the action that brought the
-relation into being** — the breath authors edges to those present; the late
-walker's own *step* authors the edge to the still-standing fire. What was
+**Ruled 2026-08-19 (the tri-survey, C1): derived edges exist.** Two kinds,
+one boundary. An **authored** edge always cites the action that brought the
+relation into being — the breath authors edges to those present; the late
+walker's own *step* authors the edge to the still-standing fire. A
+**derived** edge — containment, instance-of — is a structural reading of the
+record, computed at need and never stored: nothing authors it and no action
+cites it, because it is not an event but an answer. (This section's earlier
+absolute — "there are no derived edges" — spoke only of the authored kind
+and overstated; the edge marks that said otherwise were right, and this
+amendment closes the drift.) What was
 once called "physics" is the set of **mandatory-edge clauses on class
 contracts**, applied at action admission: your walk into earshot forms the
 hearing edge whether you like it or not, because the movement class says so.

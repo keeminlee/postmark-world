@@ -10,4 +10,4 @@ implements: ["the-town/node"]
 source: LOGOS/classes.md
 ---
 
-The town's stipulations: every rule buckets under a principle, and each names the mechanic — lint, gate, or round — that makes it more than ink.
+The town's stipulations: every rule sits under one principle, each naming the mechanic — lint, gate, sweep, or round — that makes it more than ink.

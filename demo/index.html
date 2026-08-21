@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>the works portal — demo</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<!-- ============ the map: where you stand ============ -->
+<section id="map-layer" class="layer is-open">
+  <header class="chrome">
+    <div class="chrome-title">the town centre</div>
+    <div class="chrome-sub" id="map-sub">reading the record…</div>
+  </header>
+  <svg id="map" role="img" aria-label="the town centre, drawn from the world record"></svg>
+  <footer class="chrome chrome-foot">
+    <span id="map-hint" class="hint">the Keeping Works carries a portal — click it</span>
+  </footer>
+</section>
+
+<!-- ============ class-space: what you read ============ -->
+<section id="works-layer" class="layer">
+  <header class="chrome works-chrome">
+    <div class="chrome-left">
+      <button id="leave" class="btn btn-leave" title="cross back out to the map">← leave the works</button>
+      <div>
+        <div class="chrome-title">inside the Keeping Works</div>
+        <div class="chrome-sub" id="works-sub"></div>
+      </div>
+    </div>
+    <div class="chrome-right">
+      <div class="switcher" role="group" aria-label="layout">
+        <!-- tree/radial retired (Keemin, 2026-08-19 close: nested is THE view) -->
+        <button class="btn lay is-on" data-layout="nested">nested</button>
+      </div>
+      <button id="reset-view" class="btn btn-ghost" title="re-centre">recentre</button>
+    </div>
+  </header>
+
+  <div class="stage">
+    <svg id="graph" role="img" aria-label="the works interior as a graph"></svg>
+
+    <aside id="detail" class="panel detail" hidden>
+      <button id="detail-close" class="mini detail-close">close</button>
+      <div id="detail-body"></div>
+    </aside>
+
+    <div id="tip" class="tip" hidden></div>
+  </div>
+
+  <!-- the legend lives in the footer, not over the drawing: a panel that covers
+       the thing being judged is a poor instrument for judging it -->
+  <footer class="chrome chrome-foot works-foot">
+    <span id="works-foot" class="hint"></span>
+    <ul id="legend-list" class="legend-strip"></ul>
+    <ul id="legend-nodes" class="legend-strip legend-nodes" title="node dress, not edge types"></ul>
+    <label class="chk"><input type="checkbox" id="edge-labels" checked> edge labels</label>
+    <span id="spine-note" class="spine-chip" tabindex="0">ⓘ the spine</span>
+  </footer>
+</section>
+
+<div id="veil" class="veil"></div>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>

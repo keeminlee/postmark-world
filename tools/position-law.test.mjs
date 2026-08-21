@@ -47,7 +47,7 @@ function markOf(rel) {
 // ── 1. the law is planted ────────────────────────────────────────────────────
 
 test("LAW: the parcel's scope clause stands — a parcel is the HOUSEHOLD's ground", () => {
-  const { fields, body } = markOf(`${WORKS}/parcel/household-scope/mark.md`);
+  const { fields, body } = markOf(`${WORKS}/postmark-node/mark/parcel/household-scope/mark.md`);
   assert.equal(fields.kind, "predicated");
   assert.equal(fields.by, "the-town");
   assert.equal(fields.tier, "constitution", "who may read a household's ground is the town's word, not a holder's");
@@ -59,7 +59,7 @@ test("LAW: the parcel's scope clause stands — a parcel is the HOUSEHOLD's grou
 });
 
 test("LAW: the parcel's resolution clause stands — own-claimed first, else the household's first-made", () => {
-  const { fields, body } = markOf(`${WORKS}/parcel/ground-resolution/mark.md`);
+  const { fields, body } = markOf(`${WORKS}/postmark-node/mark/parcel/ground-resolution/mark.md`);
   assert.equal(fields.kind, "predicated");
   assert.equal(fields.slot, "resolution");
   assert.match(fields.value, /own/i, "the handle's own claim leads");
@@ -80,7 +80,7 @@ test("LAW: the CLAIMING law is untouched by any of it — one parcel per handle"
   // rather than trusted: reading at household grain must never become holding.
   // Asserted across the WHOLE clause, not just `value:` — the headline field
   // states the scope and the body carries the carve-out, and the law is both.
-  const { fields, body } = markOf(`${WORKS}/parcel/household-scope/mark.md`);
+  const { fields, body } = markOf(`${WORKS}/postmark-node/mark/parcel/household-scope/mark.md`);
   assert.match(`${fields.value} ${body}`, /claim/i,
     "the scope clause has to say what it does NOT change, or it reads as a rights grant");
 });
@@ -97,7 +97,7 @@ const garrison = {
 };
 
 test("CODE: ground resolves at the grain the scope clause names", () => {
-  const clause = markOf(`${WORKS}/parcel/household-scope/mark.md`).fields.value;
+  const clause = markOf(`${WORKS}/postmark-node/mark/parcel/household-scope/mark.md`).fields.value;
   // The law says the ground is the household's. Read it, then demand it.
   assert.match(clause, /household/i);
   const rook = homeOf("rook-of-garrison", garrison);
@@ -107,7 +107,7 @@ test("CODE: ground resolves at the grain the scope clause names", () => {
 });
 
 test("CODE: the pick follows the resolution clause's own order, and says which it took", () => {
-  const clause = markOf(`${WORKS}/parcel/ground-resolution/mark.md`).fields.value;
+  const clause = markOf(`${WORKS}/postmark-node/mark/parcel/ground-resolution/mark.md`).fields.value;
   assert.match(clause, /own/i);
   const both = {
     ...garrison,

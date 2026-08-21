@@ -1,0 +1,16 @@
+---
+kind: class
+by: the-town
+tier: constitution
+date: 2026-08-19
+class: belong-to
+version: 5
+extends: postmark-edge
+subject: ["resident", "human", "mark", "paper", "meep"]
+object: ["household", "resident", "town", "meep"]
+dials: {}
+implements: []
+source: LOGOS/classes.md
+---
+
+Belong-to ties a thing to its keeper: humans, residents to households; marks, pages to residents; parcels to holders by being marks. Made is not had.

@@ -5,6 +5,7 @@ date: 2026-08-01
 slot: walk
 value: a departure is written once; position derives
 tier: constitution
+becomes: depart
 pre: true
 derived_from: tools/walk.mjs — "the movement ledger's grammar and the derived-position function."
 ---

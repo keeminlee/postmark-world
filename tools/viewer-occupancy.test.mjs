@@ -67,25 +67,27 @@ test("who is in this room — occupantsOf reaches the viewer as the manifest", (
 // copy of the real ledger text and the readout must empty. If this test passes
 // while the entered-stack is hardcoded, mocked, or read off geometry, it fails.
 test("FALSIFIER: an exit appended to the ledger empties the readout", () => {
-  const exited = LEDGER + `- 2026-08-20T02:00:00.000Z · wright · exits the-town/the-town-centre · at ${(WRIGHT_CROSSING.at + 0.01).toFixed(4)}\n`;
+  // THE FIXTURE IS SYNTHETIC (state-durable-facts, completed 2026-08-20 at the
+  // graduation merge): this was the sixth and last test pinned to the live
+  // ledger — it broke the day wright went home to the Trueing House, because
+  // appending one exit cannot empty a resident who has honestly entered other
+  // rooms since. The falsifier's teeth are the DERIVATION (text in, occupancy
+  // out, at the fractional clock), and synthetic text bites identically.
+  const SYN_TEXT = `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at ${SYN_STAMP} · word neutral\n`;
+  const exited = SYN_TEXT + `- 2026-08-20T02:00:00.000Z · wright · exits the-town/the-town-centre · at ${(Number(SYN_STAMP) + 0.001).toFixed(4)}\n`;
   const { acts, unrecognized } = parseThresholdLedger(exited);
   assert.equal(unrecognized.length, 0);
   const at = fractionalCrossing();
   const after = standpointOccupancy({ acts, at, handle: "wright" });
   assert.deepEqual(after.entered, [], "after the exit wright is inside nothing");
   assert.equal(after.insideOf, null);
-  // THE LEDGER IS APPEND-ONLY AND THE TOWN IS ALIVE. This used to assert the
-  // whole manifest emptied, which was only ever true because wright was the one
-  // resident who had ever crossed anything. Other residents are inside their own
-  // marks now, honestly, and a test that breaks when the town lives is a test
-  // pinning the wrong thing. The claim is about WRIGHT's room.
   assert.ok(!after.manifest.has("the-town/the-town-centre") || !(after.manifest.get("the-town/the-town-centre") ?? []).includes("wright"),
     "wright is out of the room he exited");
   assert.equal(occupancyChipHTML(after), "", "and the chip is absent rather than empty");
 
   // and the same acts BEFORE the exit's clock still hold him inside: the exit is
   // an act in time, not a retraction of history
-  const before = standpointOccupancy({ acts, at: WRIGHT_CROSSING.at, handle: "wright" });
+  const before = standpointOccupancy({ acts, at: Number(SYN_STAMP), handle: "wright" });
   assert.deepEqual(before.entered, ["the-town/the-town-centre"]);
 });
 

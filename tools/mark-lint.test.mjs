@@ -176,7 +176,7 @@ test("L-source-1: a source: pointing at no file bounces, citing the fidelity cla
 
 test("L-source-1: a source: climbing out of the repo bounces before it is ever read", () => {
   const repo = fidelityRepo();
-  editFile(repo, "WORLD/marks/let-there-be-light/logos/the-tense/mark.md",
+  editFile(repo, "WORLD/marks/let-there-be-light/logos/the-witnessed-instant/mark.md",
     "source: LOGOS/state-and-time.md", "source: ../../elsewhere/state-and-time.md");
   assert.match(runRepoLint(repo), /\[ERROR\].*must be a path inside this repository/, "a word outside the repo is a word nobody here can check");
 });
@@ -202,8 +202,16 @@ test("L-source-2: a document naming a mark that does not cite it back is half a 
 
 test('"Rendered in the world: not yet" is an honest declaration — tolerated, until a clause claims it', () => {
   const clean = fidelityRepo();
-  assert.match(runRepoLint(clean), /CLEAN/, "reads-and-affordances.md declares not-yet and passes untouched");
+  assert.match(runRepoLint(clean), /CLEAN/, "the live tree passes untouched");
+  // the premise is now synthetic (fixture law): reads-and-affordances gained a
+  // real rendering at the uncategorized planting, so the not-yet doc is built,
+  // not borrowed — the scenario must not lean on live state that can move.
   const repo = fidelityRepo();
+  editFile(repo, "LOGOS/reads-and-affordances.md",
+    "Rendered in the world as `the-town/the-read-policy` — a v0 backlog marker awaiting its true seat (the uncategorized section, 2026-08-19). Beyond that marker the affordances themselves ride the class marks, and classes.md names them.",
+    "Rendered in the world: not yet.");
+  editFile(repo, "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-rules/uncategorized/the-read-policy/mark.md",
+    "source: LOGOS/reads-and-affordances.md", "source: LOGOS/conflict-matrix.md");
   editFile(repo, "WORLD/marks/let-there-be-light/logos/the-gate/the-fidelity/mark.md",
     "source: LOGOS/three-layers.md", "source: LOGOS/reads-and-affordances.md");
   assert.match(runRepoLint(repo), /\[ERROR\].*says "Rendered in the world: not yet" — either this clause is early or that line is stale/,

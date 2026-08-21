@@ -10,4 +10,4 @@ implements: ["the-town/node"]
 source: LOGOS/classes.md
 ---
 
-The world's node — what happens: mark, entity, emission and predicate are its families; three fill the position slot, predicates never do.
+The world's node — what happens: mark, entity, emission, paper and predicate are its families; the first three take position, the last two never do.

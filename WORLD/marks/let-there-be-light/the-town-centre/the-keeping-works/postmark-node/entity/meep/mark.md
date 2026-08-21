@@ -6,6 +6,7 @@ date: 2026-08-19
 class: meep
 version: 1
 extends: entity
+belong-to: town
 dials: {}
 implements: []
 source: LOGOS/classes.md

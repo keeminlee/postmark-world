@@ -3,7 +3,9 @@
 *The design philosophy, self-specifying. Converged 2026-08-11/12 (Keemin +
 Wright); this document states it as law.*
 
-Rendered in the world: not yet.
+Rendered in the world as `the-town/the-two-question-lint` and
+`the-town/the-placement-discipline` — v0 backlog markers awaiting their true
+seats (the uncategorized section, 2026-08-19); nothing else yet.
 
 ---
 

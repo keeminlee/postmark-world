@@ -40,10 +40,12 @@ test("the berth's say grant is for: berth (ruled 679e097f; regressed by sweep 91
 });
 
 test("the departure's pace dial is 60 (decision 008b; regressed by sweep 652fdb44, caught by Keemin's memory 08-18)", () => {
+  // departure renamed depart at the graduation merge (verb-form grammar) — the
+  // guard follows the id; the guarded number is the ruling and never moves.
   const text = readFileSync(join(here, "..",
-    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-edge/departure/mark.md"), "utf8");
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-edge/depart/mark.md"), "utf8");
   const line = text.split("\n").find((l) => l.startsWith("dials:"));
-  assert.ok(line, "the departure class carries a dials: line");
+  assert.ok(line, "the depart class carries a dials: line");
   assert.equal(JSON.parse(line.slice("dials:".length).trim()).pace_km_per_crossing, 60,
     "the resident stride is RULED text (008b: 5 km/h, a person's walk) — a stale copy reverting it is the #1697 class");
 });
@@ -62,8 +64,8 @@ test("the resident's enter and exit grants stand, residue the-town/entry (ruled 
   for (const verb of ["enter", "exit"]) {
     const g = actions.find((a) => a.action === verb);
     assert.ok(g, `the resident class grants ${verb}`);
-    assert.equal(g.residue, "the-town/entry",
-      "one residue for both verbs: exit writes the next entry, to the effective parent (the-walk's own grammar)");
+    assert.equal(g.residue, "the-town/enter",
+      "one residue for both verbs: exit writes the next entry, to the effective parent (the-walk's own grammar); entry renamed enter at the graduation merge");
   }
 });
 

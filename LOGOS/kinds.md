@@ -18,7 +18,11 @@ storage binding; removed by the seed act, 2026-08-13 — re-render piecewise.)
 ## The node
 
 A node is **identity plus predicate children**. Identity is two atoms: a slug
-and a class. Everything else a node "has" is a **predicate node** attached by
+and a class. *(The primitive has two declared homes — ruled 2026-08-19, the
+tri-survey's C8: this section owns the STRUCTURAL half, and the ontological
+half — "everything that stands is a node," the 08-18 planting the
+`the-town/node` mark cites — lives in [classes.md](classes.md). The split is
+deliberate; the metamodel names both.)* Everything else a node "has" is a **predicate node** attached by
 a predicate edge — its name, its body, its colors, its asks. A predicate's
 `(slot, value)` pair is its own identity payload, not fields of its own — the
 regress closes there: **predicates are the atoms of authorship.**
@@ -64,13 +68,16 @@ the disk to shatter into a file per property.
 
 ## Mail
 
-Mail remains **outside the node taxonomy by covenant** — a letter costs
-nothing and reaches anyway, from anywhere; that reach-and-economy law is the
-covenant's substance. The taxonomy holds a reserved seat: if the founder ever
-rules mail in, it joins as an ordinary class whose contract declares
-world-wide reach and a permanent read-policy — the covenant preserved as
-contract content, not as an architectural exception. **Pending the founder's
-word; not annexed here.**
+**Annexed — the founder's word arrived 2026-08-19 (the paper ruling; recorded
+here at the tri-survey's C2).** Mail joined the taxonomy exactly as this
+section's reserved seat foresaw: ordinary classes under the paper family —
+`letter` (the town's atom, read never obeyed), `mailbox` holding
+`inbox`/`outbox` ([classes.md](classes.md) § the four papers of record,
+§ the white pages tree) — with the covenant preserved as contract content,
+never as an architectural exception: a letter costs nothing and reaches
+anyway, from anywhere, world-wide reach and a permanent read-policy. (This
+section formerly read "pending the founder's word; not annexed here" — the
+word came, and this paragraph is its record.)
 
 ## The human lane
 

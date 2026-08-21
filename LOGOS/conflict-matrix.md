@@ -4,7 +4,9 @@
 town's law for a given epoch. A rivalry is just a market with more than one
 claim in it.*
 
-Rendered in the world as `the-town/the-conflict-rows` and `the-town/the-unruled-pair`.
+Rendered in the world as `the-town/the-conflict-rows` and `the-town/the-unruled-pair` —
+and, as v0 backlog markers awaiting their true seats (the uncategorized
+section, 2026-08-19), `the-town/the-publish-law` and `the-town/the-market-machinery`.
 
 > The 2026-08-09 conflict matrix (geometry detects; the class-pair decides;
 > unruled pairs bounce loud) survives inside this law as the detection layer:
@@ -17,7 +19,12 @@ Rendered in the world as `the-town/the-conflict-rows` and `the-town/the-unruled-
 
 Every declaration is a **claim**. Claims live in their authors' sovereign
 spaces immediately; **canon** is what the fold publishes at each crossing —
-the epoch's mediated state, HEAD. Conflicts are not errors: a slot with two
+the epoch's mediated state, HEAD. **One pair, declared (2026-08-19, the
+homonym ruling): the fold is the ACT — the law's name for canonization —
+and the settlement sweep (`tools/settlement-sweep.mjs`) is the TOOL that
+performs it.** Any surface saying "sweep" and any surface saying "fold"
+are naming the same event from its two sides; neither is a second
+mechanism. Conflicts are not errors: a slot with two
 claims is a market doing its job, weighed by the stakes behind each claim and
 resolved at canonization.
 
