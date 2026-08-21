@@ -1,11 +1,18 @@
-// parcel-render-parity.test.mjs — law 1's falsifier.
+// parcel-render-parity.test.mjs — the home-images lane's RENDER falsifiers,
+// for the two laws that reach a reader's eye.
 //
-// The law, quoted verbatim from the gold plan (Starstory
+// Both quoted verbatim from the gold plan (Starstory
 // PULSE/gold-plans/postmark-home-images/postmark-home-images.md, "The law"):
 //
-//   "A parcel renders in the World like any other mark. No kind-gated
-//    exclusion in the viewer's default mark rendering; a parcel with an
-//    `image:` shows that image exactly where any sited mark would."
+//   1. "A parcel renders in the World like any other mark. No kind-gated
+//      exclusion in the viewer's default mark rendering; a parcel with an
+//      `image:` shows that image exactly where any sited mark would."
+//   2. "A household's HOME art is its HOME MARK's canonical default image."
+//
+// They are two halves of one ruling and they meet on two different surfaces —
+// the telling (law 1, first half of this file) and the entered room's ground
+// (law 2, second half) — so they are held to account in one place rather than
+// two. See LOGOS/classes.md § "The tells edges" and MARKS.md § The home mark.
 //
 // The exclusion this replaces lived at tools/world-engine.mjs, in fieldOfView:
 // `if (mk.kind === "parcel") continue;` — one line, born with the engine
@@ -25,7 +32,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { buildHeightfield, fieldOfView } from "./world-engine.mjs";
-import { isEmbodiedMark, isWalkableTarget, markImageURL, hydrateMarkImages } from "../spectator/viewer.mjs";
+import { isEmbodiedMark, isWalkableTarget, markImageURL, markImagePath, roomGround, hydrateMarkImages, SHELF_ROUTE } from "../spectator/viewer.mjs";
 
 const SHELF = "https://media.postmark.town/media/keeminlee/70c2f03d0bcdd54ca117e8fa3c9d9dcf7ee7bc176f58cec0116b281b4f188de6.jpg";
 
@@ -147,4 +154,74 @@ test("a parcel with no image draws no empty frame — the picture is the only th
   // for anything else — the shelf is the only mint, at the render layer too
   assert.equal(markImageURL({ ...bare, image: "https://example.com/nice.jpg" }), null);
   assert.equal(markImageURL({ ...bare, image: "https://media.postmark.town/not-the-shelf/x.jpg" }), null);
+});
+
+// ── LAW 2, at the render layer: the home mark's image is its FACE ────────────
+//
+// The amendment (Keemin, 2026-08-21 late) moved the picture off the parcel and
+// onto the dwelling, and the Keeping Works' new home-mark class says what that
+// means to a reader: "A home-mark is the dwelling itself — the sited mark a
+// household's home stands as on its ground. The HOME page is its telling; its
+// image is its face." The founder's acceptance is literally to ENTER a home and
+// see its art as the background, and the viewer paints that background in one
+// place: mountRoomScene calls `roomGround(room, { image: markImagePath(room) })`.
+// So these ask that pair directly. What they do NOT cover is the occupancy gate
+// that decides whether you are inside at all — that needs a signed-in resident
+// who has crossed the threshold, and it is checked live, not here.
+
+const SHELF_HOUSE = "https://media.postmark.town/media/keeminlee/70c2f03d0bcdd54ca117e8fa3c9d9dcf7ee7bc176f58cec0116b281b4f188de6.jpg";
+const house = (extra = {}) => ({ id: "wright/the-trueing-house", kind: "sited", by: "wright", at: { x: -350, y: -200 }, extent: { w: 12, h: 12 }, body: "the Trueing House", ...extra });
+
+test('ENTERING A HOME PAINTS ITS OWN ART AS THE GROUND: "A household\'s HOME art is its HOME MARK\'s canonical default image"', () => {
+  const ground = roomGround(house({ image: SHELF_HOUSE }), { image: markImagePath(house({ image: SHELF_HOUSE })) });
+  const href = (ground.svgText.match(/<image href="([^"]+)"/) || [])[1];
+  assert.ok(href, "the room ground paints no image — an entered home would show the paper floor and nothing else");
+  assert.equal(href, `${SHELF_ROUTE}keeminlee/70c2f03d0bcdd54ca117e8fa3c9d9dcf7ee7bc176f58cec0116b281b4f188de6.jpg`,
+    "the shelf's own art, reduced to the same-origin route each habitat proxies at the shelf host");
+  // and it lands ON the room, not floating in the padding
+  const img = ground.svgText.match(/<image href="[^"]+" x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)"/);
+  const wall = ground.svgText.match(/class="wv-scene-wall" x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)"/);
+  assert.ok(img && wall);
+  assert.deepEqual(img.slice(1), wall.slice(1), "the art is registered exactly on the room's own boundary");
+});
+
+test("a home mark with no image keeps the paper floor — the picture is the only thing that changed", () => {
+  const bare = house();
+  assert.equal(markImagePath(bare), null);
+  const ground = roomGround(bare, { image: markImagePath(bare) });
+  assert.ok(!ground.svgText.includes("<image"), "no empty frame, no broken art — the drafting sheet, as before");
+  assert.ok(ground.svgText.includes("wv-scene-ground") && ground.svgText.includes("wv-scene-rule-pat"), "the paper and its rule are still drawn");
+});
+
+test("THE URL NEVER BECOMES MARKUP AND NEVER LEAVES THE SHELF — the room ground builds an href by concatenation, so the gate is upstream of it", () => {
+  // roomGround interpolates into an SVG string, which is exactly why
+  // markImagePath — not the raw field — is what it is handed. Anything that is
+  // not the town's own shelf answers null and never reaches the document.
+  for (const bad of ["https://example.com/x.jpg", "https://media.postmark.town/uploads/x.jpg", "javascript:alert(1)", "data:image/png;base64,iVBORw0KGgo="])
+    assert.equal(markImagePath(house({ image: bad })), null, `${bad} must not become a path`);
+  // the shelf's own URL does, and only as a route that cannot collide with the
+  // site's own /media/ (a different shelf entirely — the 404 QA caught once)
+  assert.ok(markImagePath(house({ image: SHELF_HOUSE })).startsWith(SHELF_ROUTE));
+  assert.ok(!markImagePath(house({ image: SHELF_HOUSE })).startsWith("/media/"));
+});
+
+test("THE LIVE RECORD: wright/the-trueing-house is a sited dwelling with a room to enter, and it is not its own parcel", async () => {
+  // The founder's acceptance names this mark by hand, so the shape it depends
+  // on is asserted against the record rather than a fixture: it must be sited
+  // (a parcel has no interior), it must have an extent to be a room, and the
+  // parcel around it must be a different mark.
+  const { loadMarks } = await import("./marks-fold.mjs");
+  const { join, dirname } = await import("node:path");
+  const { fileURLToPath } = await import("node:url");
+  const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+  const marks = loadMarks(join(root, "WORLD/marks")).filter((m) => !m._error);
+  const home = marks.find((m) => m.id === "wright/the-trueing-house");
+  const parcel = marks.find((m) => m.id === "wright/the-trueing-house-parcel");
+  assert.ok(home, "the founder's acceptance names a mark the record does not hold");
+  assert.equal(home.kind, "sited");
+  assert.ok(Number(home.extent?.w) > 0 && Number(home.extent?.h) > 0, "a room needs an extent");
+  assert.ok(parcel && parcel.kind === "parcel" && parcel.id !== home.id, "the claim and the dwelling are two marks");
+  // and the ground it would paint, given the art Leg 3 would write
+  const ground = roomGround({ ...home, image: SHELF_HOUSE }, { image: markImagePath({ ...home, image: SHELF_HOUSE }) });
+  assert.match(ground.svgText, /<image href="\/shelf\//);
 });
