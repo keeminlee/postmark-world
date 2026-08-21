@@ -4,8 +4,9 @@ by: the-town
 tier: constitution
 date: 2026-08-15
 class: address
-version: 1
+version: 2
 extends: white-page
+tells: parcel
 dials: {}
 implements: []
 source: LOGOS/classes.md

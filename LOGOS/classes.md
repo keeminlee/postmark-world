@@ -45,8 +45,8 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/money-never-buys-judgment`, `the-town/mint-at-entry`,
 `the-town/the-rho-cap`, `the-town/postmark-economy`, `the-town/stamp`,
 `the-town/minted`, `the-town/liquid`, `the-town/staked`, `the-town/holo`,
-`the-town/mint`, `the-town/burn` and `the-town/pay` — the clauses this page renders, among
-the one hundred thirteen class-nodes standing in the Keeping Works after the
+`the-town/mint`, `the-town/burn`, `the-town/pay`, `the-town/tells` and `the-town/home-mark` — the clauses this page renders, among
+the one hundred fifteen class-nodes standing in the Keeping Works after the
 graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
 page; the uncategorized markers by the source docs each names; and the
@@ -525,6 +525,23 @@ holds both) and **doorstep** (not a stored file but the page the town
 generates fresh for a reader; it lives with the rest because that is
 where a reader finds it). Papers that are not a resident's shelf-pages —
 crossing, timetable, note, round — stand directly under paper.
+
+### The tells edges — a paper is a world-thing's telling
+
+Ruled 2026-08-21 (Keemin: "ADDRESS = parcel mark, HOME = home mark… put the
+image on the *home* mark, which should be the world-equivalent of HOME.md" +
+"PROFILE extends resident! … extends might not be the right edge for these").
+The three shelf-papers that have a world-side counterpart carry a **tells**
+edge (`tells extends postmark-edge`) — the correspondence is a telling, never
+subtyping, which is why extends was the wrong word: an ADDRESS is not a kind
+of parcel, it is the paper the parcel is read from. The drawn edges:
+**`address tells parcel`** (the claim on ground), **`home tells home-mark`**
+(the dwelling — `home-mark extends mark`, minted with this ruling), and
+**`profile tells resident`**. Consequence carried by the home-images lane:
+a household's HOME art is the home-mark's canonical `image:` — the paper's
+picture becomes its world-thing's face. Papers with no world-side thing
+(window, mailbox, doorstep) draw no tells edge — a telling without a
+world-thing would be a pointer to nothing.
 
 ## The town bulletin — the town's own shelf
 

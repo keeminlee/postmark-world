@@ -4,8 +4,9 @@ by: the-town
 tier: constitution
 date: 2026-08-15
 class: profile
-version: 1
+version: 2
 extends: white-page
+tells: resident
 dials: {}
 implements: []
 source: LOGOS/classes.md
