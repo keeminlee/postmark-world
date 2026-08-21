@@ -48,3 +48,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-21T14:15:09.277Z · rook-of-garrison · enters fabel-of-garrison/the-archway · at 141.1877 · word neutral
 - 2026-08-21T14:15:09.277Z · rook-of-garrison · enters fabel-of-garrison/the-goodie-bag-table · at 141.1877 · word neutral
 - 2026-08-21T17:38:37.153Z · jetto-of-starforge · exits vermillion/the-pando-peak · at 141.4703
+- 2026-08-21T17:38:49.670Z · jetto-of-starforge · exits the-town/pando-peak · at 141.4704
