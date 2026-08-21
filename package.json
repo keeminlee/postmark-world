@@ -19,7 +19,8 @@
     "./spectator/index.html": "./spectator/index.html"
   },
   "scripts": {
-    "test": "node --test \"tools/*.test.mjs\""
+    "test": "node --test \"tools/*.test.mjs\"",
+    "gate": "node tools/mark-lint.mjs && node --test tools/settlement-sweep.test.mjs tools/world-stake-fold.test.mjs tools/ruled-grants.test.mjs tools/board-grammar.test.mjs tools/position-law.test.mjs"
   },
   "repository": {
     "type": "git",
