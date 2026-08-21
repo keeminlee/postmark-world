@@ -4,8 +4,9 @@ by: the-town
 tier: constitution
 date: 2026-08-15
 class: home
-version: 1
+version: 2
 extends: white-page
+tells: home-mark
 dials: {}
 implements: []
 source: LOGOS/classes.md
