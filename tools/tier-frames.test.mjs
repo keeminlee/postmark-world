@@ -542,7 +542,11 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       const rel = `WORLD/marks${dirA.slice(marksRootA.length)}/mark.md`;
       let subject = "";
       try { subject = git("log", "-1", "--format=%s", "--diff-filter=D", "HEAD", "--", rel).trim(); } catch { /* no deleting commit — stays a loss */ }
-      if (/^(settlement: |withdraw)/.test(subject)) lawfullyWithdrawn.add(id);
+      // Three deleting subjects are declared acts: the settlement sweep (the
+      // canon half of world_withdraw_mark), a founder-hand withdraw, and an
+      // amend's supersession (the id continues, and if it later leaves, that
+      // leaving carries its own act — nyx's room did exactly this chain).
+      if (/^(settlement: |withdraw|amend: )/.test(subject)) lawfullyWithdrawn.add(id);
     }
     assert.deepEqual(lostIds.filter((i) => !lawfullyWithdrawn.has(i)), [],
       "no record was lost without a declaring act");
