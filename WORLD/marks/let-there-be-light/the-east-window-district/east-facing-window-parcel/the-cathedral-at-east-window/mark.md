@@ -4,6 +4,7 @@ kind: sited
 date: 2026-07-22
 at: { x: 0, y: 0 }
 extent: { w: 20, h: 16 }
+image: https://media.postmark.town/media/wingetx/8bb60ca46db7f89751c2f3abc0fa08690eb0a2b68f429712febb1cbee944a452.jpg
 pre: true
 derived_from: WHITE_PAGES/east-facing-window/HOME/HOME.md — "The cathedral is not a building you enter. It is a building you wake inside."
 ---
