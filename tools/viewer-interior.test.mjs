@@ -98,7 +98,9 @@ test("a room with shelf art wears it over its own footprint; off-shelf art is re
   const room = { id: "r", at: { x: 0, y: 0 }, extent: { w: 10, h: 10 } };
   const withArt = roomGround(room, { image: "/media/x/y.png" });
   assert.match(withArt.svgText, /<image href="\/media\/x\/y\.png"/, "the mark's image replaces the white");
-  assert.match(withArt.svgText, /preserveAspectRatio="xMidYMid meet"/, "shown whole, never cropped");
+  // "the background represented by the image" (Keemin, 2026-08-21): the room's
+  // ground FILLS — slice, cropping the overflow — while the mark card keeps meet.
+  assert.match(withArt.svgText, /preserveAspectRatio="xMidYMid slice"/, "a ground fills its room");
   // markImagePath is the gate the caller uses: an off-shelf URL never becomes a path
   assert.equal(markImagePath({ image: "https://evil.example/x.jpg" }), null, "only the shelf is wearable");
 });

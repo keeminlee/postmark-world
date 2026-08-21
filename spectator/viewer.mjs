@@ -828,7 +828,10 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
     + `<rect x="0" y="0" width="${rm(w)}" height="${rm(h)}" fill="url(#wv-scene-rule-pat)"/>`
     + (image
       ? `<image href="${esc(image)}" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}"`
-        + ` width="${rm(roomPx.w)}" height="${rm(roomPx.h)}" preserveAspectRatio="xMidYMid meet"/>`
+        // slice, not meet (Keemin, 2026-08-21: "the background represented by the
+        // image" — a ground FILLS its room). The mark card keeps meet: there the
+        // art is the subject and is shown whole; here it is the floor.
+        + ` width="${rm(roomPx.w)}" height="${rm(roomPx.h)}" preserveAspectRatio="xMidYMid slice"/>`
       : "")
     + `<rect class="wv-scene-wall" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}" width="${rm(roomPx.w)}" height="${rm(roomPx.h)}"/>`
     + `<g class="wv-scene-art"></g>`
