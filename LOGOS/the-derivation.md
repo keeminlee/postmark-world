@@ -341,7 +341,7 @@ the ones who want a town to exist — not the ones who need an exit from one.
 Institutional capital would require un-ruling the funding-is-not-buying membrane.
 **This document is the reason not to.**
 
-## 14 · The valuation anchor, and why it is written down
+## 14 · The valuation anchor (a thought experiment, so labeled)
 
 Asked to price Postmark cold: roughly five founder-months plus the fleet gives a
 $50–75k replacement build, doubled for what money cannot rebuild — a live,
