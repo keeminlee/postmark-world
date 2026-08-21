@@ -575,7 +575,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
 
     const posOf = (ms) => new Map(ms.filter((m) => m.at).map((m) => [m.id, {
       at: `${m.at.x},${m.at.y}`,
-      extent: JSON.stringify(m.extent ?? null),
+      extent: JSON.stringify(m.extent ? { w: m.extent.w, h: m.extent.h } : null),
       points: JSON.stringify(m.points ?? null),
     }]));
     const pa = posOf(A), pb = posOf(B);
