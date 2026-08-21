@@ -1198,6 +1198,38 @@ export const MAX_ZOOM_IN = 60;
 // the full crossing sits in half the frame with country to spare on both ends.
 export const MAX_ZOOM_OUT = 60;
 
+// ── the camera's two laws, as arithmetic ────────────────────────────────────
+//
+// Both of these live inside a scene's closure in practice, where a test cannot
+// reach them — the camera needs a DOM and a mounted painting. Pulled out here
+// they are what they actually are: two small rules about rectangles, provable
+// on their own, and called from the one place each belongs.
+
+// THE PAN FENCE (founder, 2026-08-21: "we should also lock pan to the edges").
+// A view is kept inside its bounds; a view too big for its bounds is CENTRED in
+// them rather than refused, which is the only coherent answer when what you are
+// looking at is larger than what you are looking for — and is exactly what the
+// room's letterbox refit already did by hand.
+export function clampViewToBounds(view, bounds) {
+  const axis = (v, size, b, bSize) =>
+    size >= bSize ? b + (bSize - size) / 2 : Math.min(Math.max(v, b), b + bSize - size);
+  return {
+    x: axis(view.x, view.w, bounds.x, bounds.w),
+    y: axis(view.y, view.h, bounds.y, bounds.h),
+  };
+}
+
+// HOW WIDE A FRAMED VIEW IS. Lock-on tightens to at most a quarter of the
+// painting, because being shown a thing means being taken to it. Coming back
+// out of a door is the other case: the reader did not ask to be taken anywhere,
+// so the width they already had is the width they keep. Framing without this
+// distinction is what made "step outside" feel like a locked camera — it landed
+// you at a quarter of whatever you stepped into, and when that was another room
+// (a nested dwelling) its own walls capped the way back out.
+export function frameWidthFor({ viewW, fullW, keepZoom = false }) {
+  return keepZoom ? viewW : Math.min(viewW, fullW / 4);
+}
+
 // ── the hover label ──────────────────────────────────────────────────────────
 // ONE box, spoken by everything hoverable on the painting. Marks already had
 // it; a standing resident had a <title> instead — the browser's own hint,
@@ -2964,7 +2996,15 @@ const STYLE = `
    Styled in the page's own chrome grammar — the amber-on-navy pill the
    Time-travel button already speaks — so the two read as one family. */
 .wv-scene-exit { position:absolute; left:14px; bottom:58px; z-index:9; }
-.wv-scene-exit .ctl {
+/* ONE WAY OUT, ONE LOOK. The .ctl class has no base rule in this sheet — every
+   control is dressed by the rail it sits in (.wv-mapctl, .wv-nav, this one) —
+   so the Telling's copy of this exact button, which sits in .wv-int-exit and
+   nothing else, was falling through to the browser's default chrome. Same act,
+   same words, two appearances, and one of them not ours (founder, 2026-08-21:
+   "the 'step outside' button in the Telling still looks jarringly vanilla").
+   Sharing the selector is the fix that cannot drift: there is now no way to
+   restyle one of them and forget the other. */
+.wv-scene-exit .ctl, .wv-int-exit .ctl {
   display:inline-flex; align-items:center; gap:.5em; cursor:pointer;
   padding:.55em .9em; border-radius:999px;
   font-size:.72rem; letter-spacing:.08em;
@@ -2972,7 +3012,15 @@ const STYLE = `
   border:1px solid rgba(232,196,139,.5);
   box-shadow:0 6px 22px rgba(0,0,0,.45);
 }
-.wv-scene-exit .ctl:hover { border-color:#f0d5a8; color:#f0d5a8; background:rgba(13,20,38,.97); }
+.wv-scene-exit .ctl:hover, .wv-int-exit .ctl:hover { border-color:#f0d5a8; color:#f0d5a8; background:rgba(13,20,38,.97); }
+/* the act takes a network write, and the button says so by going quiet rather
+   than by going grey-and-dead: it is still the same pill, just not offering */
+.wv-scene-exit .ctl[disabled], .wv-int-exit .ctl[disabled] {
+  cursor:default; opacity:.55; border-color:rgba(232,196,139,.28); box-shadow:none;
+}
+/* in the panel it sits on a background of its own, so the drop shadow that
+   makes it read over the painting is only noise here */
+.wv-int-exit .ctl { box-shadow:none; }
 /* the paper floor — the placeholder ground is the drafting sheet (founder's
    word): warm and low-contrast, because it is the GROUND, and ground that
    competes with the furniture standing on it is a rug, not a floor */
@@ -3618,6 +3666,7 @@ const MARKUP = `
                words were four pills' worth of chrome across the top of it. The name
                keeps its seat in title and aria-label — dropping the word from
                the button must not drop it from the page. -->
+          <button class="ctl wv-map-world" aria-label="to the World" title="to the World — stand at Let There Be Light and see the whole painting">◍</button>
           <button class="ctl wv-map-home" aria-label="fit" title="fit the whole painting">⛶</button>
           <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">◎</button>
           <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">▦</button>
@@ -4317,9 +4366,37 @@ export function mountViewer(appEl) {
   }
   let sceneRoomId = null;       // the mark whose scene is mounted, or null = the town
   let townKeep = null;          // { svg, ctx } — the town scene, held aside while inside
+
+  // ── WHY STEPPING OUTSIDE TOOK A WHILE (founder, 2026-08-21) ────────────────
+  //
+  // Measured, not guessed. The work the page does on the way out is small: the
+  // engine's fieldOfView over the whole record runs in ~80 ms, assembleWorld in
+  // under a millisecond, and click-to-settled is ~25 ms. What costs the wait is
+  // the PAINTING: the atlas carries ~64 <image> elements, disciplineAtlasImages
+  // marks them `loading="lazy"`, and while a room is mounted the town's svg is
+  // detached from the document — so not one of them has been fetched. The
+  // instant it is re-attached all sixty-four become visible at once and the
+  // browser asks for all sixty-four.
+  //
+  // Nothing about that is the room's fault or the wheel's, and the fix does not
+  // belong in the exit path: it belongs HERE, at the moment the town goes away,
+  // because that is the moment we learn the reader is coming back to it. The
+  // browser cache is the only thing that has to know. Loads are kicked off and
+  // never awaited — a warm cache is a nicety and the room may not wait on it —
+  // and each href is asked for once per page.
+  const warmedArt = new Set();
+  function warmTownArt(svg) {
+    if (!svg) return;
+    for (const im of svg.querySelectorAll("image")) {
+      const href = im.getAttribute("href") ?? im.getAttribute("xlink:href");
+      if (!href || warmedArt.has(href)) continue;
+      warmedArt.add(href);
+      try { const warm = new Image(); warm.decoding = "async"; warm.src = href; } catch { /* a warm cache is never worth an exception */ }
+    }
+  }
   let pendingTownGround = null; // an atlas load that finished while a room was mounted
   function mountRoomScene(boxEl, room) {
-    if (!sceneRoomId && mapCtx) townKeep = { svg: mapCtx.svg, ctx: mapCtx };
+    if (!sceneRoomId && mapCtx) { townKeep = { svg: mapCtx.svg, ctx: mapCtx }; warmTownArt(townKeep.svg); }
     const ground = roomGround(room, { image: markImagePath(room) });
     const doc = new DOMParser().parseFromString(ground.svgText, "image/svg+xml");
     const svg = document.importNode(doc.documentElement, true);
@@ -4452,8 +4529,23 @@ export function mountViewer(appEl) {
       // at the place you just left, from the side you would have approached it.
       // So the CAMERA frames the rim and the resident stands exactly where they
       // were standing all along.
+      // KEEPING THE ZOOM IS THE WHOLE FIX for "step outside locks the min zoom
+      // of your camera to its current state" (founder, 2026-08-21). Nothing was
+      // stale: the town's camera comes back whole, and measured after a full
+      // exit the wheel still reaches the painting × MAX_ZOOM_OUT. What happened
+      // is that this line used to call frameOn WITHOUT keepZoom, so leaving a
+      // room slammed the view to at most a quarter of whatever it landed in —
+      // and when the room was NESTED (wright's house sits inside his terrace,
+      // entered in the same act) the thing it landed in was another room, whose
+      // camera is deliberately capped at its own walls (zoomOutLimit 1). A
+      // quarter-view you cannot widen reads exactly like a locked camera.
+      //
+      // So: come out looking at the door, at the zoom you were already at.
+      // THE HALF THIS DOES NOT DECIDE: whether "step outside" should leave the
+      // whole stack rather than one mark. That is what the record means by a
+      // crossing, and it is the founder's call, not the camera's.
       const rim = rimPointOf(room, originFor(state.handle));
-      mapCtx?.setView?.(mapCtx.frameOn(rim), true);
+      mapCtx?.setView?.(mapCtx.frameOn(rim, { keepZoom: true }), true);
     } catch (err) {
       if (button) { button.disabled = false; button.textContent = label ?? "↤ step outside"; }
       const plaque = $(root, ".wv-int-plaque");
@@ -4736,7 +4828,11 @@ export function mountViewer(appEl) {
       // THE SCENE-LIFECYCLE GUARD: an atlas that finishes loading while a ROOM
       // is mounted may not stomp it — the town's ground waits here and mounts
       // when the resident steps back outside (remountTown drains it).
-      if (sceneRoomId) pendingTownGround = { svg, originPx, mPerPx };
+      // AND THE COMMON CASE IS THIS ONE, not the stash in mountRoomScene: a
+      // reader who arrives already standing in a room enters before the atlas
+      // has landed, so there was never a mounted town to hold aside — the
+      // painting parks HERE and its art is what they wait for on the way out.
+      if (sceneRoomId) { pendingTownGround = { svg, originPx, mPerPx }; warmTownArt(svg); }
       else mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays });
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
@@ -4905,7 +5001,29 @@ export function mountViewer(appEl) {
       renderMarkHighlight();
       positionBubbles(); // the anchors are on the painting, so they move with it
     }
+    // ── THE PAN FENCE (founder, 2026-08-21: "we should also lock pan to the
+    // edges") ────────────────────────────────────────────────────────────────
+    //
+    // The camera had a zoom clamp and no pan clamp, so the wheel could not take
+    // you past the painting's scale but the hand could take you off it
+    // entirely, into ground the record has nothing to say about.
+    //
+    // The fence is the PAINTING'S OWN EXTENT (`full`) — the only edge that
+    // exists in the record. THE OTHER READING, and it is a one-symbol change if
+    // the founder wants it: `full` scaled by `zoomOutLimit`, i.e. the widest
+    // view the wheel can reach (60× the painting for the town, 1× for a room).
+    // That reading fences almost nothing outdoors, which is why this one is
+    // here; both are named so the choice is visible rather than assumed.
+    //
+    // A view LARGER than the fence is centred in it rather than refused. That
+    // is not a special case — it is what the room's own letterbox refit already
+    // does, and it is the only coherent answer when what you are looking at is
+    // bigger than what you are looking for.
+    const clampView = () => Object.assign(view, clampViewToBounds(view, full));
     function applyView() {
+      // every camera write in this scene funnels through here — wheel, drag,
+      // tween, setView, refit — so the fence has exactly one place to stand
+      clampView();
       svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
       mapCtx.zoomK = full.w / view.w;
       if (framePending) return;
@@ -4932,9 +5050,14 @@ export function mountViewer(appEl) {
     // WHERE a lock-on would land, without gliding there. A prebuilt view saves
     // this frame so a warm switch arrives at the same painting the animation
     // would have reached: the destination without the travel.
-    mapCtx.frameOn = (at = state.cam) => {
+    // `keepZoom` frames the point WITHOUT changing how much world is on screen.
+    // The default tightens to at most a quarter of the painting, which is right
+    // for a lock-on — you asked to be shown a thing — and wrong for coming back
+    // out of a door, where the reader did not ask to be zoomed anywhere and the
+    // quarter-cap lands them somewhere much closer in than where they left.
+    mapCtx.frameOn = (at = state.cam, { keepZoom = false } = {}) => {
       const c = camPx(at);
-      const w = Math.min(view.w, full.w / 4), h = w * (full.h / full.w);
+      const w = frameWidthFor({ viewW: view.w, fullW: full.w, keepZoom }), h = w * (full.h / full.w);
       // Centre the dot in the VISIBLE panel, not in the <svg>. The painting
       // keeps the map's own aspect (tall), the pane is shorter, and
       // .wv-minimap clips the overflow — so the svg's midpoint sits well
@@ -7231,6 +7354,26 @@ export function mountViewer(appEl) {
       return;
     }
     // the viewport controls (P2): fit / follow / grid
+    // TO THE WORLD (founder, 2026-08-21: "we should have a 'to the World'
+    // button that puts you in let-there-be-light"). The world-root IS being
+    // outdoors — it frames everything, names no destination, and appears in no
+    // containment answer — so this stands the camera at its centre and shows
+    // the whole painting. ⛶ fit is not the same button: fit shows you all of
+    // whatever scene you are in, and inside a room that is the room.
+    //
+    // THE CAMERA READ, DELIBERATELY. For a spectator the camera IS the
+    // standpoint, so this genuinely puts a newcomer in Let There Be Light and
+    // the telling recomputes from there. For a RESIDENT recorded inside a room
+    // it moves the view and not the record: they are still standing where the
+    // ledger says, and stepping outside is the act that changes that. Moving
+    // the standpoint from a map control would be writing a crossing nobody
+    // asked for, which is the founder's call and not this button's.
+    if (e.target.closest(".wv-map-world")) {
+      state.cam = { x: 0, y: 0 };                 // the-town/let-there-be-light's own centre
+      mapCtx?.fitAll?.();
+      renderCurrent();
+      return;
+    }
     if (e.target.closest(".wv-map-home")) { mapCtx?.fitAll?.(); return; }
     const fbtn = e.target.closest(".wv-map-follow");
     if (fbtn) { if (!mapCtx) return; mapCtx.follow = !mapCtx.follow; fbtn.classList.toggle("on", mapCtx.follow); if (mapCtx.follow) mapCtx.lockOn(); return; }
