@@ -2,13 +2,13 @@
 kind: class
 by: the-town
 tier: constitution
-date: 2026-08-20
+date: 2026-08-21
 class: funding-quest
-version: 1
+version: 2
 extends: bounty
 dials: {}
 implements: []
 source: LOGOS/classes.md
 ---
 
-A standing need with a dollar figure and a named beneficiary; keeping-stakes gather on it, witnessed dollars convert the matched pot at each close.
+A bounty on the one quest board: a dollar figure, a named beneficiary; stake-rankable, rendered a bounty row; the matched pot converts at each close.

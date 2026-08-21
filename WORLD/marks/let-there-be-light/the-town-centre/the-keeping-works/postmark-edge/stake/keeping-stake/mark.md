@@ -4,7 +4,7 @@ by: the-town
 tier: constitution
 date: 2026-08-20
 class: keeping-stake
-version: 1
+version: 2
 extends: stake
 from-class: resident
 to-class: funding-quest
@@ -13,4 +13,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-The third stake, escrowed on a funded need: matched dollars convert it at close — sigma to keeper equity, rest to payers; unmatched, it returns.
+Escrowed on a funded need: matched dollars burn it at close — sigma mints back, source-tagged and coinless; rest to payers; unmatched, it returns.
