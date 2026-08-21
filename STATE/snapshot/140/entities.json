@@ -1,6 +1,6 @@
 {
-  "crossing": 139,
-  "evaluated_at": "2026-08-20T12:00:00.000Z",
+  "crossing": 140,
+  "evaluated_at": "2026-08-21T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "83f43a01a53e2cd60a547884337dbd5dfe510ad9",
   "omits": [
@@ -349,28 +349,28 @@
     },
     {
       "handle": "fabel-of-garrison",
-      "x": -1375,
-      "y": -2550,
+      "x": -930,
+      "y": -2070,
       "arrived": true,
       "standing": false,
-      "leg_m": 2897,
-      "travelled_m": 2897,
+      "leg_m": 655,
+      "travelled_m": 655,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-19T20:08:31.021Z",
+        "iso": "2026-08-20T20:12:00.578Z",
         "handle": "fabel-of-garrison",
         "from": {
-          "x": 0,
-          "y": 0
-        },
-        "toward": {
           "x": -1375,
           "y": -2550
         },
-        "at": 137.6784932638889,
+        "toward": {
+          "x": -930,
+          "y": -2070
+        },
+        "at": 139.68334469907407,
         "within": null,
-        "to": "sol-of-garrison/the-heart-house",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1008,26 +1008,26 @@
     },
     {
       "handle": "rook-of-garrison",
-      "x": -1353,
-      "y": -2451,
+      "x": -969,
+      "y": -2060,
       "arrived": true,
       "standing": false,
-      "leg_m": 2800,
-      "travelled_m": 2800,
+      "leg_m": 436,
+      "travelled_m": 436,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-18T16:46:25.404Z",
+        "iso": "2026-08-20T20:45:50.035Z",
         "handle": "rook-of-garrison",
         "from": {
-          "x": 0,
-          "y": 0
+          "x": -1284.9,
+          "y": -2360.5
         },
         "toward": {
-          "x": -1353,
-          "y": -2451
+          "x": -969,
+          "y": -2060
         },
-        "at": 135.39780736111112,
+        "at": 139.7303225462963,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1182,31 +1182,28 @@
     },
     {
       "handle": "sol-of-garrison",
-      "x": -1369.1,
-      "y": -2537.5,
+      "x": -1375,
+      "y": -2545,
       "arrived": true,
       "standing": false,
-      "leg_m": 5281,
-      "travelled_m": 5281,
+      "leg_m": 5,
+      "travelled_m": 5,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-18T16:38:31.589Z",
+        "iso": "2026-08-20T20:58:58.400Z",
         "handle": "sol-of-garrison",
         "from": {
-          "x": 879.2,
-          "y": 2240.7
-        },
-        "toward": {
           "x": -1375,
           "y": -2550
         },
-        "at": 135.38684006944445,
-        "within": {
-          "w": 25,
-          "h": 25
+        "toward": {
+          "x": -1375,
+          "y": -2545
         },
-        "to": "sol-of-garrison/the-heart-house-parcel",
+        "at": 139.74857134259258,
+        "within": null,
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1415,26 +1412,26 @@
     },
     {
       "handle": "wright",
-      "x": -250,
-      "y": 0,
+      "x": 575,
+      "y": -2598,
       "arrived": true,
       "standing": false,
-      "leg_m": 2029,
-      "travelled_m": 2029,
+      "leg_m": 2726,
+      "travelled_m": 2726,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-18T14:11:46.290Z",
+        "iso": "2026-08-20T21:35:34.205Z",
         "handle": "wright",
         "from": {
-          "x": 479.1,
-          "y": -1893.3
-        },
-        "toward": {
           "x": -250,
           "y": 0
         },
-        "at": 135.18301243055555,
+        "toward": {
+          "x": 575,
+          "y": -2598
+        },
+        "at": 139.7994009027778,
         "within": null,
         "to": null,
         "pace": 60,
