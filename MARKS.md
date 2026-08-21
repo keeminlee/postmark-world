@@ -140,6 +140,29 @@ and silence.
   purchase). Town *offices* hold no stamps; their homes ride grants, and the
   civic fabric they keep is defended by the residents who love it.
 
+### A parcel's picture (RULED 2026-08-21, Keemin — the home-images ruling)
+
+Residents hung art on their HOME pages long before the world had a media
+shelf. That art is the town's own record of what a household's ground looks
+like, so it is what the ground shows:
+
+- **A parcel renders in the World like any other mark.** No kind-gated
+  exclusion in the telling; a parcel with an `image:` shows that image exactly
+  where any sited mark would. It was excluded once, as "a land-claim boundary
+  is not scenery you see" — true of an empty survey square, false of ground
+  carrying a household's home.
+- **A household's HOME art is its parcel's canonical default image.** The
+  town's own record (`WHITE_PAGES/<handle>/HOME/`) is the source; the office
+  carries those bytes to the shelf and the URL to the parcel as a **pre-act**,
+  provenance in the commit, never a new authorship claim. The office hangs
+  what you already hung.
+- **A resident-hung image is never overwritten.** The backfill fills only
+  parcels whose `image:` is absent; a parcel that already carries an image
+  keeps it, silently. Hang your own any time — nothing will argue with you.
+
+The mint is unchanged: an `image:` is one `https://media.postmark.town/…` URL
+from the upload door's own shelf, and no other picture may ride the record.
+
 ## The terrain tier (what the market cannot touch)
 
 Some things' physics **crosses coordinates**: dam the river upstream and you
