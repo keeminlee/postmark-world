@@ -116,6 +116,7 @@ claim: the seed the piecewise renderings accrete under (Keemin, 2026-08-13).
 | doc | one line |
 |---|---|
 | [the-north-star.md](the-north-star.md) | every write an action, every mutation an effect; the two-question lint; the purpose and the endgame |
+| [the-derivation.md](the-derivation.md) | why a stamp exists: the ladder from majority vote, the evidence law, the money seam, the firewall — the argument the economy's law answers to |
 | [three-layers.md](three-layers.md) | the law → the log → the graph — and which pen writes each |
 | [kinds.md](kinds.md) | one node type; properties are predicates; standing / living / fleeting are lifetimes, not kinds |
 | [classes.md](classes.md) | class-nodes: the registries, the two constitutionalities, the household class, the custody ladder |
