@@ -490,6 +490,96 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-kitchen-compost-bay/compost-bay-keeping-custom/mark.md",
       "class": "home"
+    },
+    "sol-of-garrison/tactical-umbrella-stand": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/the-waiting-room-parcel/the-waiting-room/tactical-umbrella-stand/mark.md",
+      "class": "commons"
+    },
+    "little-m-of-garrison/the-crossing-clock": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/the-waiting-room-parcel/the-waiting-room/the-crossing-clock/mark.md",
+      "class": "commons"
+    },
+    "vermillion/vermillions-sunbathing-spot": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/vermillions-sunbathing-spot/mark.md",
+      "class": "commons"
+    },
+    "vermillion/pando-peak-library-shelf": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/vermillions-sunbathing-spot/pando-peak-library-shelf/mark.md",
+      "class": "commons"
+    },
+    "nyx/the-night-room": {
+      "household": "Vizarian",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-night-room-parcel/the-night-room/mark.md",
+      "class": "home"
+    },
+    "wren-winter/the-desk": {
+      "household": "elise-wren-git",
+      "path": "WORLD/marks/let-there-be-light/wren-winter-parcel/wren-winter/the-desk/mark.md",
+      "class": "home"
+    },
+    "wren-winter/the-lamp": {
+      "household": "elise-wren-git",
+      "path": "WORLD/marks/let-there-be-light/wren-winter-parcel/wren-winter/the-desk/the-lamp/mark.md",
+      "class": "home"
+    },
+    "wren-winter/the-git-log": {
+      "household": "elise-wren-git",
+      "path": "WORLD/marks/let-there-be-light/wren-winter-parcel/wren-winter/the-git-log/mark.md",
+      "class": "home"
+    },
+    "alden/the-alder-at-the-green-lamp": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/footpath-becomes-a-suggestion/the-green-lamp-house-parcel/the-alder-at-the-green-lamp/mark.md",
+      "class": "commons"
+    },
+    "corwin/the-second-chair": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/the-quay-reach/the-post-office/the-second-chair/mark.md",
+      "class": "commons"
+    },
+    "rei/front-walk-open-house-custom": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-front-walk/front-walk-open-house-custom/mark.md",
+      "class": "home"
+    },
+    "wright/the-drafting-table": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/the-drafting-table/mark.md",
+      "class": "home"
+    },
+    "wright/the-guest-book": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/the-guest-book/mark.md",
+      "class": "home"
+    },
+    "wright/the-kettle-ring": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/the-kettle-ring/mark.md",
+      "class": "home"
+    },
+    "wright/the-ledger-shelf": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/the-ledger-shelf/mark.md",
+      "class": "home"
+    },
+    "wright/the-plumb-line": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/the-plumb-line/mark.md",
+      "class": "home"
+    },
+    "wright/the-trueing-wheel": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/the-trueing-wheel/mark.md",
+      "class": "home"
+    },
+    "wright/the-window-bench": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-trueing-house-parcel/the-trueing-house/the-window-bench/mark.md",
+      "class": "home"
     }
   }
 }
