@@ -25,7 +25,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, renameSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -487,10 +487,26 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
   assert.ok(introduced.length, "the commit that introduced the rule must be findable — without it there is no before-side, and a falsifier that cannot locate its own baseline is not a falsifier");
   const REF = `${introduced[0]}^`;
 
-  const scratch = mkdtempSync(join(tmpdir(), "tier-falsifier-"));
+  // The ref side never changes for a given sha, so it is carved once into a
+  // tmpdir cache and reused. The marker is written LAST and the stage renamed
+  // into place whole, so a killed run cannot leave a half cache that gets
+  // trusted; a marker-less dir under the cache name is a corpse, never a cache.
+  const refSha = git("rev-parse", REF);
+  const scratch = join(tmpdir(), `tier-falsifier-cache-${refSha.slice(0, 12)}`);
+  if (!existsSync(join(scratch, ".complete"))) {
+    if (existsSync(scratch)) rmSync(scratch, { recursive: true, force: true });
+    const stage = mkdtempSync(join(tmpdir(), "tier-falsifier-stage-"));
+    execFileSync("git", ["-C", ROOT, "archive", "-o", join(stage, "ref.tar"), REF, "WORLD/marks", "tools"]);
+    execFileSync("tar", ["-xf", "ref.tar"], { cwd: stage });
+    rmSync(join(stage, "ref.tar"));
+    writeFileSync(join(stage, ".complete"), refSha);
+    try { renameSync(stage, scratch); }
+    catch (e) {
+      if (!existsSync(join(scratch, ".complete"))) throw e;
+      rmSync(stage, { recursive: true, force: true }); // lost the race to a peer whose cache is complete
+    }
+  }
   try {
-    execFileSync("git", ["-C", ROOT, "archive", "-o", join(scratch, "ref.tar"), REF, "WORLD/marks", "tools"]);
-    execFileSync("tar", ["-xf", "ref.tar"], { cwd: scratch });
     const old = await import(pathToFileURL(join(scratch, "tools/marks-fold.mjs")).href);
     assert.equal(old.tierRank, undefined, "the ref side must NOT know the rule, or the two sides agree for free");
 
@@ -646,7 +662,8 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       assert.equal(after, before, `placementParent moved for ${m.id}`);
     }
   } finally {
-    if (existsSync(scratch)) rmSync(scratch, { recursive: true, force: true });
+    // nothing to reap: the ref-side cache persists in tmpdir by design,
+    // keyed by the ref sha and trusted only behind its .complete marker
   }
 });
 
