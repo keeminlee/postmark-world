@@ -39,13 +39,14 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/keeping-stake`, `the-town/funding-quest`, `the-town/deed`,
 `the-town/patron-deed`, `the-town/keeping-deed`, `the-town/genesis-line`,
 `the-town/holo-held`, `the-town/backing-gauge`, `the-town/patron-ledger`,
+`the-town/ownership`,
 `the-town/nothing-you-control-mints`, `the-town/the-seam-exclusion`,
 `the-town/the-mint-registry`,
 `the-town/money-never-buys-judgment`, `the-town/mint-at-entry`,
 `the-town/the-rho-cap`, `the-town/postmark-economy`, `the-town/stamp`,
 `the-town/minted`, `the-town/liquid`, `the-town/staked`, `the-town/holo`,
 `the-town/mint`, `the-town/burn` and `the-town/pay` — the clauses this page renders, among
-the one hundred twelve class-nodes standing in the Keeping Works after the
+the one hundred thirteen class-nodes standing in the Keeping Works after the
 graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
 page; the uncategorized markers by the source docs each names; and the
@@ -703,7 +704,8 @@ the amendments that document enumerates. The law, compressed:
   the permanent witnessed records of contribution — dollars entered, stamps
   given — rendered, remembered, spending nothing.
 - **Governance launch shape:** dials open at published founder-set defaults
-  (rho 0.25 · sigma 0.5); the vote option opens after one quarter of live
+  (rho 0.5 — at the ceiling, so the first ballot may only lower it · sigma
+  0.5); the vote option opens after one quarter of live
   pilot numbers; changes prospective-only. Pilot: one pot (the box), two to
   three epochs, ladder pre-declared.
 
@@ -725,6 +727,21 @@ instances. And the bounty tie is RULED (the founder's word, 08-21): a
 funding pot is a bounty subtype living on the SAME quest board,
 stake-rankable, rendered as a bounty row — funding-quest's own body carries
 the ruling (version 2).
+
+**The seam alignment (2026-08-21, the afternoon's rulings):** three of the
+day's later rulings postdated the planting above and are folded in here.
+**R12** — the sigma leg of a keeping conversion is not a holding class of its
+own: it is ordinary mint, source-tagged to the pot, carrying no liquid coin
+(the coin was paid when the stake burned), counted in the rho base and
+excluded from the genesis parity formula. `keeping-stake`'s body carries that
+sentence (version 2), and the noun "keeping-equity" is retired everywhere.
+**D1** — **`ownership`** (derived, RED): ownership is a READ, minted plus
+holo, derived beside the tenses and never a tense; there is no fifth tense
+node and nothing is stored for it. **R10** — the `rho` predicate opens at
+**0.5**, at its own constitutional ceiling, so the first ballot may only
+lower it; the number's owner is the town repo's `ECONOMY-DIALS.json §
+law_side.keeping.rho`, and this page restates it only because a predicate
+node is where the world carries a dial at all.
 
 ## The economy primitives — postmark-economy (ruled 2026-08-20, the node review)
 
@@ -750,7 +767,7 @@ scarce, spendable, costly, inhabitation-earned), each linked to its proof:
   funding build); the third, **`pay`**, landed 2026-08-21 — § The seam.
 - **Every dial is a predicate** (the founder's convention word, same review):
   a number the law carries rides a predicate child, never a frontmatter JSON
-  — `rho` (0.25, ballot-owned after the pilot quarter) and `rho-ceiling`
+  — `rho` (0.5 at launch, ballot-owned after the pilot quarter) and `rho-ceiling`
   (0.5, constitutional — and the genesis floor in the same number) stand on
   the-rho-cap; `sigma` (0.5) stands on keeping-stake. The dials:{} field on
   the seam marks is emptied accordingly; the wider migration of older dials
