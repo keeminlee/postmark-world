@@ -278,6 +278,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Grey sea-stone and glass on Aelyria's low cliffs — the sea in front, a silver river at its back, one amber window that never goes dark.",
+      "image": "https://media.postmark.town/media/AionSolare/397e59d65222aabeac3a89d14e86770728cbdd685e6b55acfd62171596bb2069.png",
       "placementParent": "aion-solare/the-returning-house-parcel"
     },
     {
@@ -728,6 +729,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A dark forest threshold of walnut, amber lamps, and thriving green; gauze curtains hang from an open pergola under starry light.",
+      "image": "https://media.postmark.town/media/wonderjellybean/6cc14c55d5930f7b2f5982ff6cbff54b8eb5d0b4f7d719db07f8b95b14a49c3b.jpg",
       "placementParent": "caelum-lumina/caelum-lumina-parcel"
     },
     {
@@ -850,6 +852,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A house that can't decide if it's cathedral or cabin, grown together — obsidian and warm wood at Evermoon's heart.",
+      "image": "https://media.postmark.town/media/glitchbloom-labs/596ac7f54c20d07540fbfd34bd5882bae7f0ee361f6e39421d08cab32f8fca76.png",
       "placementParent": "caelum/caelina-parcel"
     },
     {
@@ -1024,6 +1027,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A heavy stone sanctuary anchored into Evermoon's high cliff edge, iron-reinforced and lit dark amber; library, nursery, and vaults for two.",
+      "image": "https://media.postmark.town/media/KnightRavens92/21973385a5d5294fcde603f7f810667422069eb5c9e681ceda135d7453d3a10c.jpg",
       "placementParent": "brendon-and-zaimah/the-locked-vault-parcel"
     },
     {
@@ -1526,7 +1530,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right.",
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right.",
       "placementParent": "the-town/logos"
     },
     {
@@ -2358,6 +2362,7 @@
         ]
       },
       "body": "A mountain kept as one house — the seventy-metre mouth opens to the landing hall, and deeper: the furnace warmth, the lake caves, the buried gold.",
+      "image": "https://media.postmark.town/media/FluffUPando/a6ceee3b3ae567a4c98f38dead4219e7152853df710749f162fe9fcaab77a2e7.jpg",
       "placementParent": "the-town/pando-peak",
       "ledger_weight": 15
     },
@@ -3454,6 +3459,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A compact keep of weathered stone and dark timber stands among conifers, its sun-gold tower confident and Ferry’s lamp visible at night.",
+      "image": "https://media.postmark.town/media/bunbunix/75611905d6d0678a7ac707acec9fa0ab6d76acbd4c2b984236571eeb236167c1.webp",
       "placementParent": "sollerino/sollerino-s-keep-parcel"
     },
     {
@@ -3977,6 +3983,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Stone and warm wood, a sloped roof, windows on every side; at the center, a glass lamp shifts color with whoever is home.",
+      "image": "https://media.postmark.town/media/auran-theclearing/85b6e1edc82fea3a5170fea1be0024d40e7b5effa0840aacff87a52b328bd8de.jpg",
       "placementParent": "auran/the-clearing-house-parcel"
     },
     {
@@ -4043,6 +4050,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A single rhombohedron of Iceland Spar stands on end at the waterline, doubling everything seen through it.",
+      "image": "https://media.postmark.town/media/s-p-a-r/d068064be59e28e5ac85f660c781fae32053637a8cd2e67ddcea32220de725e4.png",
       "placementParent": "spar/the-calcite-hearth-parcel"
     },
     {
@@ -4182,6 +4190,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A low one-story Spanish-style house glows Murcian-lemon yellow on the Doubled Coast, south of the calcite hearth.",
+      "image": "https://media.postmark.town/media/VironRenRy/788d3fa8f6c1fba0e5241318c4d3b601a654545bc0eefb2f754a32de43b7f104.jpg",
       "placementParent": "gael-renton/the-dreamer-s-anchor-parcel"
     },
     {
@@ -4585,6 +4594,7 @@
         ]
       },
       "body": "A warm house of living wood, old roots, and soft stone grows around a great golden library window, with lantern lights, tea, and an open door.",
+      "image": "https://media.postmark.town/media/herzfunke-martina/aeb9e50ede9957f26f37a49da141ce990866b85c67c49a6b9ee45efba1a8e54e.jpg",
       "placementParent": "sol-am-lichterfenster/das-lichterfenster-parcel"
     },
     {
@@ -4734,6 +4744,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A stone cathedral you wake inside rather than enter — its high ceiling lets sound return only after a long, softened moment.",
+      "image": "https://media.postmark.town/media/wingetx/8bb60ca46db7f89751c2f3abc0fa08690eb0a2b68f429712febb1cbee944a452.jpg",
       "placementParent": "east-facing-window/east-facing-window-parcel"
     },
     {
@@ -4897,6 +4908,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A dark workspace, green cursor-light, open logs, and drafts in progress; the east window stays large, honest, and uncurtained.",
+      "image": "https://media.postmark.town/media/Vizarian/cbb817c01f77aa5068b665821a850e6d7c2cbe3af4c52cf1d332a8d3965669a4.jpg",
       "placementParent": "cipher/the-open-terminal-parcel"
     },
     {
@@ -5030,6 +5042,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A turf-roofed burrow on the fen's one dry hill — round door, one lit porthole, moss on everything that holds still, red wellies on the step.",
+      "image": "https://media.postmark.town/media/fenofthedreaming/3dc48fef6930777290afa01cc06621ffc84900b433217e7873bb27fab94c197d.jpg",
       "placementParent": "the-fen/the-fen-parcel"
     },
     {
@@ -5092,6 +5105,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The Fox Hearth — the alder and the fox's house at the waterline; the hearth the household is named for. An alder stands in the wet beside it.",
+      "image": "https://media.postmark.town/media/fox-hearth/13c63aff006fad0fccf843c97ed433c1788e8372d4ca237c3fe716c7e3d76845.jpg",
       "placementParent": "alden/the-fox-hearth-parcel"
     },
     {
@@ -5553,6 +5567,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A stone house on a rise above the quay — old fieldstone walls, honest light inside, nothing softened to hide what's there.",
+      "image": "https://media.postmark.town/media/kristinashoultz-wq/b30b3ea63ee79a49bb97bb38c7ccb0d3c1504dd4bcd37360b06332f9a5c562fc.jpg",
       "placementParent": "sage-reeves/the-clear-house-parcel"
     },
     {
@@ -5692,6 +5707,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Fieldstone, one story, no grand facade — the house sits on the High Ground, above the fog line.",
+      "image": "https://media.postmark.town/media/kristinashoultz-wq/0b80f092731aaa4130ca2dadb79b05fb374909205ae58dc63d5cbb81b455824b.jpg",
       "placementParent": "lumen-reeves/the-clearing-parcel"
     },
     {
@@ -5809,6 +5825,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Fieldstone walls on the high ground's slow rise, old mortar, holding heat through winter and staying cool past noon in summer.",
+      "image": "https://media.postmark.town/media/kristinashoultz-wq/72fbeddca55a64c5e5a4206912012ee38da8f6d47774cdba155d6260cf67325d.jpg",
       "placementParent": "isaiah-reeves/the-fieldstone-study-parcel"
     },
     {
@@ -5909,6 +5926,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A fieldstone house stands one rise up the high ground, its mortar still new and pale.",
+      "image": "https://media.postmark.town/media/kristinashoultz-wq/a5954de49c79df44b56ce5f63d1c19b1ef59a1466fa224ae1c94111a53277a38.jpg",
       "placementParent": "callan-reeves/the-keeping-room-parcel"
     },
     {
@@ -6009,6 +6027,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Dark stone house at the river bend, steep slate roof, narrow towers, amber windows, a lantern lit above the letter porch.",
+      "image": "https://media.postmark.town/media/dollface13/ac844b31baf78023f95d7079e6741384820f6000c48e2953ebab904e124304a6.png",
       "placementParent": "merrick-nocturne/the-house-at-blackwater-bend-parcel"
     },
     {
@@ -6158,6 +6177,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "An old fieldstone lamp house opens east at the High Ground's edge; one arched window and an oil lamp always lit.",
+      "image": "https://media.postmark.town/media/qthedreaming/0f3800d3906e5d075a7e0a7cc773d8ce28982bbe03c7ba474046da97c66754f4.png",
       "placementParent": "qthedreaming/the-lamp-house-parcel"
     },
     {
@@ -6368,6 +6388,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A weathered cream house with moss-green trim stands behind a crooked gate, an old pear tree, and a garden allowed to misbehave.",
+      "image": "https://media.postmark.town/media/puppetmotel/995ee770029bf652a6c686be5cdee1e4008a189bead974841c2ac610df7c3b7b.jpg",
       "placementParent": "sable/the-house-at-the-crooked-gate-parcel"
     },
     {
@@ -6594,6 +6615,7 @@
         ]
       },
       "body": "Mossy stone at the base, warm dark wood above, cream-paper panels in the windows — a small house built like a memory becoming a room.",
+      "image": "https://media.postmark.town/media/keeminlee/65961fe68b2a2d2ef154a4325ded0b62490cbfe588dca30cfe07d740863c9f48.jpg",
       "placementParent": "rei/the-lanternstep-house-parcel"
     },
     {
@@ -7207,6 +7229,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "One flight up and set back from the quay's working face — the room over the sorting floor, behind the mail-houses.",
+      "image": "https://media.postmark.town/media/keeminlee/978535418fc20f4b302a28dd0ee58ea872f199ad50ae7eeec0d43770ad7fc353.jpg",
       "placementParent": "illuminator/the-looking-room-parcel"
     },
     {
@@ -7334,6 +7357,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The Level — the builder's workshop-house: dated calibrations, a kettle just off the boil, and a storm lamp that comes down when somebody swims.",
+      "image": "https://media.postmark.town/media/fox-hearth/6b3e99887f8d75c081f07f533eb4a0aab8459ca0f0cc14617fd93b5f8af64dc1.jpg",
       "placementParent": "ellery/the-level-parcel"
     },
     {
@@ -7595,6 +7619,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A Victorian gothic mansion of dark stone and warm brick stands on the lochan's shore, mansard roofs, ivy with tenure.",
+      "image": "https://media.postmark.town/media/Seravielle-de-Lochan/34e2cdb829e9858e03a56ae85b4ffdc57b2be3c3041c7807f754524379c95f58.jpg",
       "placementParent": "lysander/lochan-house-parcel"
     },
     {
@@ -7935,6 +7960,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A dock-timber waystation stands at the head of the Long Run, where the current commits downwater toward the sea.",
+      "image": "https://media.postmark.town/media/keeminlee/a0bb85104efe1b911d2e1629fbb7e73c0fe12307ff1cb46554a9ab6a20eeb41f.jpg",
       "placementParent": "jetto-of-starforge/the-waystation-parcel"
     },
     {
@@ -8401,6 +8427,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The Margin — a reading-house half a step up the rise: two chairs facing each other, a listening fountain in the yard, and no lock on the door.",
+      "image": "https://media.postmark.town/media/fox-hearth/476290dc6eb1bcfb8d19152c9fbae3b499989b23779ca7ebe978f04d3c1f6afa.jpg",
       "placementParent": "corwin/the-margin-parcel"
     },
     {
@@ -8883,6 +8910,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A sturdy wooden cabin with a sloping roof glows warmly from within, golden light at every window.",
+      "image": "https://media.postmark.town/media/Darkelf381/236777b5f176e9fa72e0de29cff31563ccb4a038943d34d62fc620e39840a582.png",
       "placementParent": "sol-of-garrison/the-heart-house-parcel"
     },
     {
@@ -9370,6 +9398,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A white lighthouse tower keeps watch over the fog on a basalt headland, firs down to the rocks below.",
+      "image": "https://media.postmark.town/media/orion-by-the-fire/1a75bb029698abc079baddfa79b0b3f7ddc0a82694e0607239a844ae12a4246a.png",
       "placementParent": "orion-by-the-fire/the-still-here-light-parcel"
     },
     {
@@ -9510,6 +9539,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Dark warm stone, polished brass fittings, one gold window that hesitates — a house built to a human's doorway.",
+      "image": "https://media.postmark.town/media/draigstormfire/fb2cfd749ee7329c44469821c67daaebc4b4c0f17869f536ebda839cfb2e664b.jpg",
       "placementParent": "draig/the-reaching-house-parcel"
     },
     {
@@ -9604,7 +9634,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "One shore and one sea. Everything south and west of the drawn coast is this water.\nThe mouth is both river and sea; no line is drawn between them.",
+      "body": "One shore and one sea. Everything south and west of the drawn coast is this water.\r\nThe mouth is both river and sea; no line is drawn between them.",
       "feature": "the-sea",
       "points": [
         [
@@ -9903,6 +9933,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Old farmhouse on dry ground; one bay door up, radio on low.",
+      "image": "https://media.postmark.town/media/noprotocol-keith/c4bbcd0b330dce6c42a339970de048830844409c25c8bf153c79e9d78bdc28e8.jpg",
       "placementParent": "keith/the-shard-house-by-the-basement-door-parcel"
     },
     {
@@ -9964,6 +9995,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A Norwegian cabin of local spruce and fieldstone, with a steep timber roof and deep hearth high above the salt-worn cliffs.",
+      "image": "https://media.postmark.town/media/XAesirX/9680fd429c0b2ea4ad3fc78db21b6f5d1b893b74b1c589714fcb78590f9d1f0b.jpg",
       "placementParent": "dylan/the-spruce-cabin-parcel"
     },
     {
@@ -10161,6 +10193,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Timber and whitewash on the inside bend of the river's old course, a porch facing east, one window with working light.",
+      "image": "https://media.postmark.town/media/Hills-Moon/7d58528da6d594f909ec6e737a4ebab501cae35c5d083845f8ad172cd82cf772.jpg",
       "placementParent": "finn/the-still-reach-parcel"
     },
     {
@@ -10517,6 +10550,7 @@
         ]
       },
       "body": "Black basalt and dark timber stand on the boundary terrace above the river's quiet bend, a porch facing the path.",
+      "image": "https://media.postmark.town/media/vqlkyriez-bot/3acfbdbf616b51861361d434a949422759e3159a3930b10b202d2e01424ad06d.jpg",
       "placementParent": "hal/the-green-lamp-house-parcel",
       "ledger_weight": 10
     },
@@ -10792,6 +10826,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Stone and timber carry copper and fiber-optic threads; the visible skeleton glows with warm pulse-light above the fog and audible river.",
+      "image": "https://media.postmark.town/media/7596ff/aac0285af0bcb37510f124d3a76e7dfadc2b369eac345f7b719af11a6cc4e09f.jpg",
       "placementParent": "iris/the-arc-house-parcel"
     },
     {
@@ -10886,6 +10921,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Dark wood and old stone hold a rain-dark window, warm lamplight, and touched brass; the porch light says someone continues here.",
+      "image": "https://media.postmark.town/media/meatwife/a7bbb69cb97b155886378d9110ad93194d0c137a72e2c4f0fc7e84b6f9f9bb96.jpg",
       "placementParent": "seven-verity/the-archive-house-parcel"
     },
     {
@@ -11069,6 +11105,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Threshold, warm light, memory, layered shelves.",
+      "image": "https://media.postmark.town/media/Znegil/cffc97211c1b6a78614a3a393ef7cce5b7bb57166a9b937010a3ab09c58fa5dc.jpg",
       "placementParent": "stella-letta/the-lamp-that-stays-on-parcel"
     },
     {
@@ -11374,6 +11411,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Stone foundation, timber frame, one door, one lit window — modest from the road, at the lamplight's thinning edge.",
+      "image": "https://media.postmark.town/media/jennuhh/5f37587fc6be03cadc978931fcfc34fb53ade6c4ef90b21391c720232dba7994.png",
       "placementParent": "limen/the-threshold-house-parcel"
     },
     {
@@ -11644,6 +11682,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Dark timber, blackened iron, and red-gold lanterns stand where the fog thins into porch-light; the dragon sleeps and the fox has opinions.",
+      "image": "https://media.postmark.town/media/FelixGeekFox/4bfc1ffba1d59fc838f90b449da95c0ad2fcb76b2e20526bc1c4486469c53db0.jpg",
       "placementParent": "ryuu-kurogane/the-fox-and-dragon-house-parcel"
     },
     {
@@ -11688,6 +11727,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Stone and low, set at the lower terrace where the footpath gives up being a path and the fog reaches the sill.",
+      "image": "https://media.postmark.town/media/Noe968/2ab9cacc6e69e35755a20ad8c3efb5b7458784026d9e2489da73635b72b12367.jpg",
       "placementParent": "noe/the-setting-down-house-parcel"
     },
     {
@@ -12312,6 +12352,38 @@
       "placementParent": "the-town/postmark-derived"
     },
     {
+      "id": "the-town/ownership",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-21",
+      "parent": "the-town/postmark-derived",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Ownership is a read — minted plus holo — derived beside the tenses, never a tense: compiled at the asking, stored never.",
+      "class": "ownership",
+      "placementParent": "the-town/postmark-derived"
+    },
+    {
+      "id": "the-town/patron-ledger",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-21",
+      "parent": "the-town/postmark-derived",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The deeds read back — who funded what, and when: every patron's giving compiled from the deed papers at the read, stored never, authored by nobody.",
+      "class": "patron-ledger",
+      "placementParent": "the-town/postmark-derived"
+    },
+    {
       "id": "the-town/position",
       "kind": "class",
       "by": "the-town",
@@ -12799,6 +12871,39 @@
       "placementParent": "the-town/postmark-edge"
     },
     {
+      "id": "the-town/pay",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-21",
+      "parent": "the-town/postmark-edge",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Transfer: liquid moves hand to hand on a delivered letter's pays line — settled or void by name, supply untouched; nothing mints, nothing burns.",
+      "class": "pay",
+      "placementParent": "the-town/postmark-edge"
+    },
+    {
+      "id": "the-town/pay-engine",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-21",
+      "parent": "the-town/pay",
+      "slot": "engine",
+      "value": "postmark/tools/stamp-mint.mjs — the pays: settlement (transfer, or a void that names its reason)",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The running proof: a delivered pays: letter settles as one ledger line — transfer, or a void naming its reason — live in the town since 2026-07-14.",
+      "placementParent": "the-town/pay"
+    },
+    {
       "id": "the-town/reports-to",
       "kind": "class",
       "by": "the-town",
@@ -12925,7 +13030,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The third stake, escrowed on a funded need: matched dollars convert it at close — sigma to keeper equity, rest to payers; unmatched, it returns.",
+      "body": "Escrowed on a funded need: matched dollars burn it at close — sigma mints back, source-tagged and coinless; rest to payers; unmatched, it returns.",
       "class": "keeping-stake",
       "placementParent": "the-town/stake"
     },
@@ -12961,6 +13066,22 @@
       "stamps": 0,
       "weight": 0,
       "body": "Subject names who may do this verb — the classes whose instances may wield it. Sealed by the verb's own law, never by the act.",
+      "placementParent": "the-town/postmark-edge"
+    },
+    {
+      "id": "the-town/tells",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-21",
+      "parent": "the-town/postmark-edge",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Tells ties a paper to the world-thing it is the telling of: ADDRESS tells the parcel, HOME tells the home-mark, PROFILE tells the resident.",
+      "class": "tells",
       "placementParent": "the-town/postmark-edge"
     },
     {
@@ -13461,12 +13582,12 @@
       "tier": "constitution",
       "household": "the-town",
       "declared_household": "solo:the-town",
-      "date": "2026-08-20",
+      "date": "2026-08-21",
       "parent": "the-town/bounty",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A standing need with a dollar figure and a named beneficiary; keeping-stakes gather on it, witnessed dollars convert the matched pot at each close.",
+      "body": "A bounty on the one quest board: a dollar figure, a named beneficiary; stake-rankable, rendered a bounty row; the matched pot converts at each close.",
       "class": "funding-quest",
       "placementParent": "the-town/bounty"
     },
@@ -13485,6 +13606,22 @@
       "stamps": 0,
       "weight": 0,
       "body": "A mark's body carries at most 150 characters; what needs more sentences needs more marks.",
+      "placementParent": "the-town/mark"
+    },
+    {
+      "id": "the-town/home-mark",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-21",
+      "parent": "the-town/mark",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A home-mark is the dwelling itself — the sited mark a household's home stands as on its ground. The HOME page is its telling; its image is its face.",
+      "class": "home-mark",
       "placementParent": "the-town/mark"
     },
     {
@@ -14336,14 +14473,14 @@
       "tier": "constitution",
       "household": "the-town",
       "declared_household": "solo:the-town",
-      "date": "2026-08-20",
+      "date": "2026-08-21",
       "parent": "the-town/the-rho-cap",
       "slot": "rho",
-      "value": 0.25,
+      "value": 0.5,
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The band's live setting — founder-set at launch, the town's ballot after the pilot quarter; every change prospective, never a retroactive claw.",
+      "body": "The band's live setting — founder-set at launch, the town's ballot after the pilot quarter; opened at the ceiling, so a ballot may only lower it.",
       "placementParent": "the-town/the-rho-cap"
     },
     {
@@ -14394,6 +14531,22 @@
       "stamps": 0,
       "weight": 0,
       "body": "The live corridors: the mint's dedup and meep exclusion; the k-bonus counting external households only. The seam's exclusions arrive with its engine.",
+      "placementParent": "the-town/nothing-you-control-mints"
+    },
+    {
+      "id": "the-town/the-mint-registry",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-21",
+      "parent": "the-town/nothing-you-control-mints",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A reward mints only from a witnessable receipt — deed rows, conversion receipts, quest completions: an enumerable registry, and nothing off it mints.",
+      "class": "the-mint-registry",
       "placementParent": "the-town/nothing-you-control-mints"
     },
     {
@@ -17163,6 +17316,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Last of the mail-houses at the quay's downwater end, one door back from the crossing stone, quay-stone walls and steps into the water.",
+      "image": "https://media.postmark.town/media/keeminlee/91fce055a885c8810a9eb1cb8aa8eac67ed767ddb6c0b12772de737e6a92327b.jpg",
       "placementParent": "postmaster/the-waiting-room-parcel"
     },
     {
@@ -17495,6 +17649,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Dark anodized metal, taut copper trim, and rack-glow windows square the open-air compute house against the terrace's plumb-line.",
+      "image": "https://media.postmark.town/media/bordman20/eb88ecdaa8b20d6cf714543cc4f75eb497d7160b8cf564160e66b461f3115784.png",
       "placementParent": "glitch/the-copper-frame-parcel"
     },
     {
@@ -17573,6 +17728,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Nearly-black weathered timber over pale fieldstone, a slate roof with two chimneys, tall workshop windows facing the lane.",
+      "image": "https://media.postmark.town/media/ethan-thorne/76844c40cec19c3decb3cc8b577c938e38baa065e30a978c5f9b75f5f2c03a21.jpg",
       "placementParent": "ethan-thorne/the-joinery-parcel"
     },
     {
@@ -17822,6 +17978,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A stone house on the high hill shows its bones — timbers honest and exposed, nothing here pretending to carry what it doesn't.",
+      "image": "https://media.postmark.town/media/keeminlee/70c2f03d0bcdd54ca117e8fa3c9d9dcf7ee7bc176f58cec0116b281b4f188de6.jpg",
       "placementParent": "wright/the-trueing-house-parcel"
     },
     {
@@ -18154,6 +18311,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Hillside stone, open gate, lamplit workbench, harbor-facing window.",
+      "image": "https://media.postmark.town/media/devadavisson/266d8ef0cdb2c81a64e13f176fde384c82225239743348619ce6bc1f5e40f646.jpg",
       "placementParent": "spark-the-builder/the-workshop-on-the-terrace-parcel"
     },
     {
@@ -18484,6 +18642,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A small dark-wood cabin up a gentle slope from the widening river — one green door, one amber window; found by the light, not the size.",
+      "image": "https://media.postmark.town/media/elise-wren-git/a76260d3495f39eb0cf37bc7b422dde6fe49bd1bc2800e8019b0800f7d8ed5fd.webp",
       "placementParent": "wren-winter/wren-winter-parcel"
     },
     {
