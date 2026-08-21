@@ -38,14 +38,15 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/attach`, `the-town/depart`,
 `the-town/keeping-stake`, `the-town/funding-quest`, `the-town/deed`,
 `the-town/patron-deed`, `the-town/keeping-deed`, `the-town/genesis-line`,
-`the-town/holo-held`, `the-town/backing-gauge`,
+`the-town/holo-held`, `the-town/backing-gauge`, `the-town/patron-ledger`,
 `the-town/nothing-you-control-mints`, `the-town/the-seam-exclusion`,
+`the-town/the-mint-registry`,
 `the-town/money-never-buys-judgment`, `the-town/mint-at-entry`,
 `the-town/the-rho-cap`, `the-town/postmark-economy`, `the-town/stamp`,
 `the-town/minted`, `the-town/liquid`, `the-town/staked`, `the-town/holo`,
-`the-town/mint` and `the-town/burn` — the clauses this page renders, among
-the one hundred nine class-nodes standing in the Keeping Works after the
-graduation merge and the primitives planting (declare-stance-on — né response-edge, the verb-form rename — is
+`the-town/mint`, `the-town/burn` and `the-town/pay` — the clauses this page renders, among
+the one hundred twelve class-nodes standing in the Keeping Works after the
+graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
 page; the uncategorized markers by the source docs each names; and the
 v0-proposed markers — vehicle, quest-complete, uncategorized and its shelf —
@@ -711,6 +712,20 @@ seam engine, the conversion fold, the deed writers, the derived readers. The
 reds are the funding build's acceptance criteria; adding each mechanic or
 engine child IS its green commit.
 
+**The seam-nodes planting (2026-08-21):** **`pay`** — the third stamp edge,
+the transfer verb (household → household), GREEN from birth: its engine
+child names the town repo's live `pays:` settlement in stamp-mint, running
+since the stamps-spend silver (2026-07-14) — the verb ran a month before
+this node gave it its law. **`patron-ledger`** (derived, RED): the deeds
+read back — who funded what, and when; its reader lands with the town
+ledger lane. **`the-mint-registry`** (a stipulation under
+nothing-you-control-mints, RED): a reward mints only from a witnessable
+receipt — deed rows, conversion receipts, and the later quest mints are its
+instances. And the bounty tie is RULED (the founder's word, 08-21): a
+funding pot is a bounty subtype living on the SAME quest board,
+stake-rankable, rendered as a bounty row — funding-quest's own body carries
+the ruling (version 2).
+
 ## The economy primitives — postmark-economy (ruled 2026-08-20, the node review)
 
 The founder's review of the seam planting named the gap: the higher law stood
@@ -729,9 +744,10 @@ scarce, spendable, costly, inhabitation-earned), each linked to its proof:
   governance and pricing), and **`holo`** (the purchasable tense — né hollow;
   equity from witnessed dollars, rho-capped, no verbs). The tense algebra of
   ECONOMY.md §3 is now containment.
-- **Two stamp edges**: **`mint`** (issuance — GREEN, its engine child names
-  the town repo's live stamp-mint) and **`burn`** (destruction — RED; its one
-  lawful site is the seam's conversion, and the engine is the funding build).
+- **Two stamp edges at the review**: **`mint`** (issuance — GREEN, its engine
+  child names the town repo's live stamp-mint) and **`burn`** (destruction —
+  RED; its one lawful site is the seam's conversion, and the engine is the
+  funding build); the third, **`pay`**, landed 2026-08-21 — § The seam.
 - **Every dial is a predicate** (the founder's convention word, same review):
   a number the law carries rides a predicate child, never a frontmatter JSON
   — `rho` (0.25, ballot-owned after the pilot quarter) and `rho-ceiling`
