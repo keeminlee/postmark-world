@@ -51,3 +51,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-21T17:38:49.670Z · jetto-of-starforge · exits the-town/pando-peak · at 141.4704
 - 2026-08-21T18:54:26.719Z · fabel-of-garrison · exits fabel-of-garrison/the-riverside-arcade · at 141.5756
 - 2026-08-21T18:55:43.815Z · fabel-of-garrison · exits fabel-of-garrison/the-marquee · at 141.5774
+- 2026-08-21T18:56:16.563Z · fabel-of-garrison · exits sol-of-garrison/the-protected-grove · at 141.5781
