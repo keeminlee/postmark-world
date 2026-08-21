@@ -1,6 +1,6 @@
 {
-  "crossing": 140,
-  "evaluated_at": "2026-08-21T00:00:00.000Z",
+  "crossing": 141,
+  "evaluated_at": "2026-08-21T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "7a66f2630871b03b14a0828aaeb2d5f171f5a563",
   "omits": [
