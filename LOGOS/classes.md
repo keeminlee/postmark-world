@@ -38,12 +38,14 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/attach`, `the-town/depart`,
 `the-town/keeping-stake`, `the-town/funding-quest`, `the-town/deed`,
 `the-town/patron-deed`, `the-town/keeping-deed`, `the-town/genesis-line`,
-`the-town/hollow-held`, `the-town/backing-gauge`,
+`the-town/holo-held`, `the-town/backing-gauge`,
 `the-town/nothing-you-control-mints`, `the-town/the-seam-exclusion`,
-`the-town/money-never-buys-judgment`, `the-town/mint-at-entry`
-and `the-town/the-rho-cap` — the clauses this page renders, among the one
-hundred one class-nodes standing in the Keeping Works after the graduation
-merge (declare-stance-on — né response-edge, the verb-form rename — is
+`the-town/money-never-buys-judgment`, `the-town/mint-at-entry`,
+`the-town/the-rho-cap`, `the-town/postmark-economy`, `the-town/stamp`,
+`the-town/minted`, `the-town/liquid`, `the-town/staked`, `the-town/holo`,
+`the-town/mint` and `the-town/burn` — the clauses this page renders, among
+the one hundred nine class-nodes standing in the Keeping Works after the
+graduation merge and the primitives planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
 page; the uncategorized markers by the source docs each names; and the
 v0-proposed markers — vehicle, quest-complete, uncategorized and its shelf —
@@ -682,10 +684,10 @@ the amendments that document enumerates. The law, compressed:
   stakes return; treasury may cover a shortfall, minting nothing. The matched
   pot converts to equity **exactly once**, split by **sigma**: the keeper's
   side mints back as their own equity (giving is a second witnessed act — the
-  keeping-deed); the payers' side mints **hollow** by dollar share.
-- **Hollow** is soulbound equity denomination — counted in ownership and the
-  gauge (`hollow-held`, `backing-gauge` — both derived, never stored),
-  answering to **no verb at any door**. Capped by `the-rho-cap`: hollow ≤ rho
+  keeping-deed); the payers' side mints **holo** by dollar share.
+- **Holo** (né hollow — the holographic stamp) is soulbound equity denomination — counted in ownership and the
+  gauge (`holo-held`, `backing-gauge` — both derived, never stored),
+  answering to **no verb at any door**. Capped by `the-rho-cap`: holo ≤ rho
   × earned primary mint; rho town-voted within [0, 0.5]; the ceiling is
   constitutional (the founder's word) and doubles as the genesis floor.
 - **The two seam buckets** stand in the rules taxonomy above:
@@ -693,7 +695,7 @@ the amendments that document enumerates. The law, compressed:
   `money-never-buys-judgment` (funding is not buying; `mint-at-entry` — a
   dollar mints at most once, at the seam; treasury spending mints nothing).
 - **The genesis line** (derived): the founder's declared residual — parity
-  with resident primary mint, less hollow ever issued. Hollow issues FROM it:
+  with resident primary mint, less holo ever issued. Holo issues FROM it:
   community ownership is financed by founder dilution alone; residents never
   dilute from money. Law only when **published and accession-ratified**.
 - **The deed papers** (`deed extends paper`; `patron-deed`, `keeping-deed`):
@@ -708,6 +710,35 @@ Planted deliberately **red** where machinery is promised and absent — the
 seam engine, the conversion fold, the deed writers, the derived readers. The
 reds are the funding build's acceptance criteria; adding each mechanic or
 engine child IS its green commit.
+
+## The economy primitives — postmark-economy (ruled 2026-08-20, the node review)
+
+The founder's review of the seam planting named the gap: the higher law stood
+on unplanted ground. The primitives arrive by the sitting's own re-derivation
+(capture: the ontology doc's § 2 ladder — majority vote, patched four times:
+scarce, spendable, costly, inhabitation-earned), each linked to its proof:
+
+- **postmark-economy** stands as a root primitive beside what-happens,
+  what-relates, what-governs, what-answers and the stipulations: **what the
+  town runs on** — accountable judgment, the ensemble as estimator.
+- **`stamp`** is its first class: the unit of crystallized attention, a
+  witnessed claim that consideration was paid, mintable only by what its
+  holder cannot fully control (the one-law, restated as the mint's own
+  definition). Its four children are the tenses: **`minted`** (past — equity,
+  governs nothing), **`liquid`** (present — currency), **`staked`** (future —
+  governance and pricing), and **`holo`** (the purchasable tense — né hollow;
+  equity from witnessed dollars, rho-capped, no verbs). The tense algebra of
+  ECONOMY.md §3 is now containment.
+- **Two stamp edges**: **`mint`** (issuance — GREEN, its engine child names
+  the town repo's live stamp-mint) and **`burn`** (destruction — RED; its one
+  lawful site is the seam's conversion, and the engine is the funding build).
+- **Every dial is a predicate** (the founder's convention word, same review):
+  a number the law carries rides a predicate child, never a frontmatter JSON
+  — `rho` (0.25, ballot-owned after the pilot quarter) and `rho-ceiling`
+  (0.5, constitutional — and the genesis floor in the same number) stand on
+  the-rho-cap; `sigma` (0.5) stands on keeping-stake. The dials:{} field on
+  the seam marks is emptied accordingly; the wider migration of older dials
+  is incremental, one class at a time, like the rules formalization.
 
 ## The apex is the class tree's shadow
 

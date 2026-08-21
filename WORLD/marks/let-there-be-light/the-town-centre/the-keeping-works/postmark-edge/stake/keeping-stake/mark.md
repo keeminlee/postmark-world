@@ -8,7 +8,7 @@ version: 1
 extends: stake
 from-class: resident
 to-class: funding-quest
-dials: {"sigma": 0.5}
+dials: {}
 implements: []
 source: LOGOS/classes.md
 ---

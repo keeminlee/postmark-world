@@ -11,4 +11,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-The founder's declared residual, read at every save: parity with resident primary mint, less hollow ever issued — floored by the band's own ceiling.
+The founder's declared residual, read at every save: parity with resident primary mint, less holo ever issued — floored by the band's own ceiling.
