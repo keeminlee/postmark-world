@@ -1250,6 +1250,18 @@ export function frameWidthFor({ viewW, fullW, keepZoom = false }) {
   return keepZoom ? viewW : Math.min(viewW, fullW / 4);
 }
 
+// AND HOW TALL. A framed view is about to be shown in a PANE, so its height
+// comes from the pane's shape — the same rectangle refit derives from. Taking
+// it from the painting instead is what made every place-name shrink on an
+// inside→outside switch: the recentre wrote a painting-shaped height over a
+// pane-shaped one and nothing refit again, so the atlas's text, which is set in
+// painting units, rendered a fifth smaller until the reader resized something.
+// The painting's own aspect is the fallback for a pane that has not laid out
+// yet, which is the only case where there is nothing better to ask.
+export function frameHeightFor({ w, fullW, fullH, paneW, paneH }) {
+  return paneW > 0 && paneH > 0 ? w * (paneH / paneW) : w * (fullH / fullW);
+}
+
 // ── the hover label ──────────────────────────────────────────────────────────
 // ONE box, spoken by everything hoverable on the painting. Marks already had
 // it; a standing resident had a <title> instead — the browser's own hint,
@@ -5080,7 +5092,30 @@ export function mountViewer(appEl) {
     // quarter-cap lands them somewhere much closer in than where they left.
     mapCtx.frameOn = (at = state.cam, { keepZoom = false } = {}) => {
       const c = camPx(at);
-      const w = frameWidthFor({ viewW: view.w, fullW: full.w, keepZoom }), h = w * (full.h / full.w);
+      const w = frameWidthFor({ viewW: view.w, fullW: full.w, keepZoom });
+      // THE HEIGHT COMES FROM THE PANE, not from the painting — and this line is
+      // the whole of the founder's 2026-08-21 label report ("when you switch
+      // from one entered resident to one outside resident, the labels get tiny.
+      // if you close and reopen the Telling the labels are back to normal").
+      //
+      // It read `w * (full.h / full.w)`, the PAINTING's aspect. refit derives
+      // the same height from the PANE's. Switching to an outside resident
+      // recenters on them through here, AFTER remountTown has refit, so a
+      // pane-correct height was overwritten with a painting-correct one and
+      // nothing refit again. Measured, same 760x1000 pane throughout: the
+      // switch left h=600 where the pane wanted 493.4, and every place-name in
+      // the atlas — which is set in painting units and so scales with the view
+      // — rendered at 30 px instead of 37. Closing and reopening the Telling
+      // was never the cure; it was just a refit the reader triggered by hand,
+      // and a window resize does the same.
+      //
+      // SAME ROOT AS THE STEP-OUTSIDE ZOOM (this lane's #3): both are frameOn
+      // handing back a view that was not derived for the rectangle it is about
+      // to be shown in — that one in width, this one in height. The pane is
+      // already measured three lines down for the centring, so this asks the
+      // rectangle that was always the right one to ask.
+      const paneBox = boxEl.getBoundingClientRect();
+      const h = frameHeightFor({ w, fullW: full.w, fullH: full.h, paneW: paneBox.width, paneH: paneBox.height });
       // Centre the dot in the VISIBLE panel, not in the <svg>. The painting
       // keeps the map's own aspect (tall), the pane is shorter, and
       // .wv-minimap clips the overflow — so the svg's midpoint sits well
