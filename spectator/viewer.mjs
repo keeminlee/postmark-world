@@ -21,7 +21,7 @@ import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing rule: in a parcel's directory → home
-import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT } from "../tools/walk.mjs";
+import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT, WALK_KM_PER_CROSSING } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
 import { parseThresholdLedger, occupancyAt, occupantsOf, withinOf, isMark, isEntity } from "../tools/thresholds.mjs";
 
@@ -462,13 +462,38 @@ function settlementChip(at) {
     : "";
 }
 
-export function previewWalkLeg({ from, toward, targetExtent = null, skeleton = null } = {}) {
+// ── the town's LIVE stride, read off the class that governs it ──────────────
+//
+// The pace was ruled from 15 to 60 km per crossing by 008b, and the live law is
+// the depart class's own dial — read at act time by the office and stamped on
+// every leg. tools/walk.mjs's WALK_KM_PER_CROSSING stays 15 forever ON PURPOSE:
+// it derives the unstamped legs written before that ruling, so their history
+// never rewrites. That is exactly right for reading the past and exactly wrong
+// for previewing the future, and previewWalkLeg was doing the second with the
+// first — the founder's "the walk ETA still says the old rate on the site",
+// with the record walking at 60 while the desk promised 15.
+//
+// So the preview asks the record what the stride IS. Null when the class is
+// absent from the store, which is a real state (a fold from before class dials
+// rode the store) and one the desk says out loud rather than papering over.
+export const DEPART_CLASS_ID = "the-town/depart";
+export function departPaceKm(marks) {
+  const byMarkId = markIndex(marks);
+  const pace = Number(byMarkId.get(DEPART_CLASS_ID)?.dials?.pace_km_per_crossing);
+  return Number.isFinite(pace) && pace > 0 ? pace : null;
+}
+
+export function previewWalkLeg({ from, toward, targetExtent = null, skeleton = null, paceKm = null } = {}) {
   if (![from?.x, from?.y, toward?.x, toward?.y].every(Number.isFinite)) return null;
   const at = fractionalCrossing();
-  const position = positionAt({ from, toward, at, targetExtent }, at);
+  // positionAt already speaks pace — a departure may carry its own stride and
+  // the town dial governs when it does not. The preview simply never passed one.
+  const position = positionAt({ from, toward, at, targetExtent, pace: paceKm ?? undefined }, at);
   return {
     distanceM: position.legM,
     etaCrossings: position.etaCrossings,
+    paceKm: paceKm ?? WALK_KM_PER_CROSSING,
+    paceFromRecord: paceKm != null,
     viaCrossings: skeleton ? crossingsOnSegment(from, toward, skeleton) : [],
   };
 }
@@ -493,6 +518,12 @@ export function walkLegParts(leg) {
       .replace(/^≈\s*/, "~")
       .replace(/(\d+) h/, "$1h")
       .replace(/(\d+) m$/, "$1m"),
+    // A PREVIEW THAT GUESSED SAYS SO. When the store carries no depart class,
+    // the ETA is derived from the pre-008b constant and is a promise the town
+    // will not keep — so the desk says which stride it used rather than
+    // quoting a number with no provenance. Empty on the ordinary path, so the
+    // desk reads exactly as it did whenever the record can answer.
+    paceNote: leg.paceFromRecord ? "" : `at the legacy ${leg.paceKm} km stride — the record's own pace is not in this world-state`,
   };
 }
 export function formatWalkPreviewLabel(leg) {
@@ -500,10 +531,10 @@ export function formatWalkPreviewLabel(leg) {
   return parts?.eta ? `${parts.distance} · ${parts.eta}` : "";
 }
 
-export function deriveWalkPreview({ from, destination, skeleton = null, residentMode = true } = {}) {
+export function deriveWalkPreview({ from, destination, skeleton = null, residentMode = true, paceKm = null } = {}) {
   if (!residentMode || !destination) return null;
   const toward = { x: Number(destination.x), y: Number(destination.y) };
-  const leg = previewWalkLeg({ from, toward, skeleton });
+  const leg = previewWalkLeg({ from, toward, skeleton, paceKm });
   if (!leg) return null;
   return {
     from: { x: Number(from.x), y: Number(from.y) },
@@ -5822,6 +5853,7 @@ export function mountViewer(appEl) {
       destination: walkState.destination,
       skeleton: data?.skeleton,
       residentMode: canAct(),
+      paceKm: departPaceKm(byId),
     });
   }
 
@@ -6304,6 +6336,8 @@ export function mountViewer(appEl) {
       parts ? `<span class="wv-walk-meta">${esc(parts.distance)}</span>` : "",
       arrow,
       parts?.eta ? `<span class="wv-walk-meta">${esc(parts.eta)}</span>` : "",
+      // an ETA the record could not price says which stride it guessed with
+      parts?.paceNote ? `<span class="wv-walk-meta is-guess" title="${esc(parts.paceNote)}">?</span>` : "",
     ].filter(Boolean);
     return `<b>${esc(name)}</b>`
       + (leg.length ? `<div class="wv-walk-legline">${leg.join("")}</div>` : "");
@@ -6336,6 +6370,7 @@ export function mountViewer(appEl) {
       destination: { x: point.x, y: point.y },
       skeleton: data?.skeleton,
       residentMode: canAct(),
+      paceKm: departPaceKm(byId),
     });
   }
 
@@ -7095,7 +7130,7 @@ export function mountViewer(appEl) {
     const from = byId.get(TOUR_WALK_LEG.from), to = byId.get(TOUR_WALK_LEG.to);
     if (!desk || !from?.at || !to?.at) return null;
     const wasHidden = desk.hidden, wasHTML = desk.innerHTML;
-    const leg = previewWalkLeg({ from: from.at, toward: to.at, targetExtent: to.extent ?? null });
+    const leg = previewWalkLeg({ from: from.at, toward: to.at, targetExtent: to.extent ?? null, paceKm: departPaceKm(byId) });
     const parts = walkLegParts(leg);
     const bearing = quantizeBearing(bearingDeg(to.at.x - from.at.x, to.at.y - from.at.y), state.dials.bearing_points);
     const arrow = bearing ? `<span class="wv-walk-dir" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>` : "";
