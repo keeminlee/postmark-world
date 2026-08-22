@@ -2054,3 +2054,25 @@ test("a walker id survives the chooser's packing and comes back out as a handle"
   ]);
   assert.deepEqual(orderInnermostFirst(["a/big", "a/small"], byId), ["a/small", "a/big"]);
 });
+
+test("a thing is not ground — a carried object never answers the walk desk's From (Keemin, 2026-08-22)", () => {
+  // The live case: wright's spinning top for little-m, a class:thing at his own
+  // feet inside his house. Before the filter, smallest-area crowned the 1x1 top
+  // his location; the From line read "standing in A Trued Spinning Top". You
+  // stand IN rooms and ON things.
+  const marks = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 } },
+    { id: "wright/the-trueing-house", kind: "sited", at: { x: 575, y: -2600 }, extent: { w: 12, h: 12 } },
+    { id: "wright/a-trued-spinning-top-for-little-m", kind: "sited", class: "thing", at: { x: 574, y: -2601 }, extent: { w: 1, h: 1 } },
+  ];
+  assert.equal(smallestContainingMark({ x: 574, y: -2601 }, marks), "wright/the-trueing-house",
+    "the house answers, not the top standing at your feet");
+  assert.equal(standingLocationLabel({ x: 574, y: -2601 }, marks), "standing in The Trueing House");
+  // and a huge thing is still a thing — class-keyed, never size-keyed
+  const sculpture = [
+    { id: "the-town/let-there-be-light", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 320_000, h: 320_000 } },
+    { id: "vermillion/colossus", kind: "sited", class: "thing", at: { x: 0, y: 0 }, extent: { w: 50, h: 50 } },
+  ];
+  assert.equal(smallestContainingMark({ x: 0, y: 0 }, sculpture), null,
+    "inside a colossal sculpture you are still on open ground, not IN the object");
+});

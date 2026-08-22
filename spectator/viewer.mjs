@@ -2268,8 +2268,15 @@ export function coLocatedMarkIds(marks, withinM = FAN_SAME_SPOT_M) {
 export function smallestContainingMark(point, marks = []) {
   const x = Number(point?.x), y = Number(point?.y);
   if (![x, y].every(Number.isFinite)) return null;
+  // A THING IS NOT GROUND (Keemin, 2026-08-22: carried things were winning the
+  // walk desk's "From"). A class:thing object rides at its holder's own feet —
+  // a 1×1 rect containing your point, so smallest-area crowned it your
+  // location: "standing in A Trued Spinning Top". You stand IN rooms and ON
+  // things: an object never answers "where am I", however small or large.
+  // (Deliberately class-keyed, not size-keyed — a tiny sited mark like a bench
+  // is still ground; a giant sculpture is still a thing.)
   return (marks ?? [])
-    .filter((mark) => !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
+    .filter((mark) => mark?.class !== "thing" && !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
     .map((mark) => ({ mark, area: Number(mark.extent.w) * Number(mark.extent.h) }))
     .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)))[0]?.mark?.id ?? null;
 }
