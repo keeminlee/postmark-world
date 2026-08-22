@@ -280,3 +280,43 @@ test("markup in a room's prose, name, or company cannot escape the plaque", () =
   assert.doesNotMatch(plaque, /<i>Room<\/i>/);
   assert.match(plaque, /&amp;/);
 });
+
+// ── the way out names where it goes (Wright, 2026-08-21) ────────────────────
+//
+// Occupancy is a STACK, not a flag: wright entered the-trueing-terrace and
+// the-trueing-house in a single act, so one press of "step outside" leaves the
+// house and leaves him standing in the terrace — still indoors, and with the
+// terrace's own camera capped at its walls, which is half of why the way out
+// felt like a locked view. The button now says which room it opens onto, so a
+// nested dweller knows before pressing rather than after.
+//
+// THE HALF THIS DOES NOT DECIDE: whether one press should leave the whole
+// stack. That is a record-semantics call and is the founder's.
+
+test("EXIT NAMES ITS DESTINATION: leaving a nested room lands you in the room around it", async () => {
+  const { exitDestination, exitButtonLabel } = await import("../spectator/viewer.mjs");
+  // wright's real shape, outermost -> innermost
+  const stack = ["wright/the-trueing-terrace", "wright/the-trueing-house"];
+  assert.equal(exitDestination(stack), "wright/the-trueing-terrace");
+  assert.equal(
+    exitButtonLabel(stack, (id) => (id === "wright/the-trueing-terrace" ? "the Trueing Terrace" : id)),
+    "↤ step outside → the Trueing Terrace",
+  );
+});
+
+test("and says nothing extra when the next press really does put you outdoors", async () => {
+  const { exitDestination, exitButtonLabel } = await import("../spectator/viewer.mjs");
+  assert.equal(exitDestination(["wright/the-trueing-terrace"]), null, "one room deep: the next step is outside");
+  assert.equal(exitButtonLabel(["wright/the-trueing-terrace"]), "↤ step outside");
+  // and the empty / malformed cases answer the same rather than throwing
+  assert.equal(exitDestination([]), null);
+  assert.equal(exitDestination(null), null);
+  assert.equal(exitDestination([null, undefined]), null, "a stack of nothing is not a destination");
+  assert.equal(exitButtonLabel([]), "↤ step outside");
+});
+
+test("a stack three deep names the room it opens onto, not the one at the bottom", async () => {
+  const { exitDestination } = await import("../spectator/viewer.mjs");
+  assert.equal(exitDestination(["a/outer", "a/middle", "a/inner"]), "a/middle",
+    "the destination is one step out, never all the way out — that is what a crossing means");
+});
