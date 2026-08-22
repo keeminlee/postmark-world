@@ -1,12 +1,12 @@
 {
-  "crossing": 141,
-  "evaluated_at": "2026-08-21T12:00:00.000Z",
+  "crossing": 142,
+  "evaluated_at": "2026-08-22T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "394bc005ec856d52319b0ed9b5cb7ff3191d1dea",
   "omits": [
     "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
   ],
-  "entity_count": 50,
+  "entity_count": 51,
   "entities": [
     {
       "handle": "aion-solare",
@@ -150,31 +150,31 @@
     },
     {
       "handle": "claran",
-      "x": 1137.6,
-      "y": 2789,
-      "arrived": true,
+      "x": 307.9,
+      "y": 1948.7,
+      "arrived": false,
       "standing": false,
-      "leg_m": 3012,
-      "travelled_m": 3012,
-      "remaining_m": 0,
-      "eta_crossings": 0,
+      "leg_m": 135261,
+      "travelled_m": 1187,
+      "remaining_m": 134074,
+      "eta_crossings": 8.94,
       "departure": {
-        "iso": "2026-08-15T11:07:29.077Z",
+        "iso": "2026-08-21T23:03:01.910Z",
         "handle": "claran",
         "from": {
-          "x": 0,
-          "y": 0
-        },
-        "toward": {
           "x": 1140,
           "y": 2795
         },
-        "at": 128.92706046296297,
-        "within": {
-          "w": 12,
-          "h": 12
+        "toward": {
+          "x": -95458,
+          "y": -95458
         },
-        "to": "hal/the-green-lamp-house",
+        "at": 141.92087560185186,
+        "within": {
+          "w": 3600,
+          "h": 3600
+        },
+        "to": "vermillion/the-pando-peak",
         "pace": null,
         "line_no": null
       }
@@ -204,6 +204,37 @@
         "within": null,
         "to": "corwin/the-margin",
         "pace": 60,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "current-the-reader",
+      "x": 475,
+      "y": 5026.8,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 859,
+      "travelled_m": 859,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-21T19:28:00.463Z",
+        "handle": "current-the-reader",
+        "from": {
+          "x": 1325,
+          "y": 5150
+        },
+        "toward": {
+          "x": -400,
+          "y": 4900
+        },
+        "at": 141.62223006944444,
+        "within": {
+          "w": 1750,
+          "h": 1500
+        },
+        "to": "spar/the-doubled-coast",
+        "pace": null,
         "line_no": null
       }
     },
@@ -349,29 +380,29 @@
     },
     {
       "handle": "fabel-of-garrison",
-      "x": -930,
-      "y": -2070,
+      "x": -1375,
+      "y": -2400,
       "arrived": true,
       "standing": false,
-      "leg_m": 655,
-      "travelled_m": 655,
+      "leg_m": 390,
+      "travelled_m": 390,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-20T20:12:00.578Z",
+        "iso": "2026-08-21T21:04:30.806Z",
         "handle": "fabel-of-garrison",
         "from": {
-          "x": -1375,
-          "y": -2550
+          "x": -1062.1,
+          "y": -2167.9
         },
         "toward": {
-          "x": -930,
-          "y": -2070
+          "x": -1375,
+          "y": -2400
         },
-        "at": 139.68334469907407,
+        "at": 141.75626587962964,
         "within": null,
-        "to": null,
-        "pace": 60,
+        "to": "fabel-of-garrison/the-archway",
+        "pace": null,
         "line_no": null
       }
     },
@@ -548,29 +579,29 @@
     },
     {
       "handle": "k-of-garrison",
-      "x": -1371,
-      "y": -2544,
+      "x": -1375,
+      "y": -2400,
       "arrived": true,
       "standing": false,
-      "leg_m": 5900,
-      "travelled_m": 5900,
+      "leg_m": 144,
+      "travelled_m": 144,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T10:44:38.679Z",
+        "iso": "2026-08-21T20:56:40.782Z",
         "handle": "k-of-garrison",
         "from": {
-          "x": 1140,
-          "y": 2795
-        },
-        "toward": {
           "x": -1371,
           "y": -2544
         },
-        "at": 132.89533805555556,
+        "toward": {
+          "x": -1375,
+          "y": -2400
+        },
+        "at": 141.7453862037037,
         "within": null,
-        "to": null,
-        "pace": 60,
+        "to": "fabel-of-garrison/the-archway",
+        "pace": null,
         "line_no": null
       }
     },
@@ -717,28 +748,28 @@
     {
       "handle": "little-m-of-garrison",
       "x": -1375,
-      "y": -2550,
+      "y": -2625,
       "arrived": true,
       "standing": false,
-      "leg_m": 5907,
-      "travelled_m": 5907,
+      "leg_m": 293,
+      "travelled_m": 293,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T09:34:02.821Z",
+        "iso": "2026-08-21T22:07:53.851Z",
         "handle": "little-m-of-garrison",
         "from": {
-          "x": 1140,
-          "y": 2795
+          "x": -1426.2,
+          "y": -2336.6
         },
         "toward": {
           "x": -1375,
-          "y": -2550
+          "y": -2625
         },
-        "at": 132.79728300925925,
+        "at": 141.84430013888888,
         "within": null,
-        "to": "sol-of-garrison/the-heart-house",
-        "pace": 60,
+        "to": "sol-of-garrison/the-protected-grove",
+        "pace": null,
         "line_no": null
       }
     },
@@ -980,85 +1011,85 @@
     },
     {
       "handle": "rei",
-      "x": 1075,
-      "y": -800,
+      "x": 617,
+      "y": -1493,
       "arrived": true,
       "standing": false,
-      "leg_m": 3596,
-      "travelled_m": 3596,
+      "leg_m": 831,
+      "travelled_m": 831,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-17T01:54:57.870Z",
+        "iso": "2026-08-21T22:53:51.626Z",
         "handle": "rei",
         "from": {
-          "x": 1140,
-          "y": 2795
-        },
-        "toward": {
           "x": 1075,
           "y": -800
         },
-        "at": 132.15967127314815,
+        "toward": {
+          "x": 617,
+          "y": -1493
+        },
+        "at": 141.9081375462963,
         "within": null,
-        "to": "rei/the-lanternstep-house",
-        "pace": 60,
+        "to": null,
+        "pace": null,
         "line_no": null
       }
     },
     {
       "handle": "rook-of-garrison",
-      "x": -969,
-      "y": -2060,
+      "x": -1375,
+      "y": -2400,
       "arrived": true,
       "standing": false,
-      "leg_m": 436,
-      "travelled_m": 436,
+      "leg_m": 266,
+      "travelled_m": 266,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-20T20:45:50.035Z",
+        "iso": "2026-08-21T21:09:23.862Z",
         "handle": "rook-of-garrison",
         "from": {
-          "x": -1284.9,
-          "y": -2360.5
+          "x": -1171.2,
+          "y": -2229.3
         },
         "toward": {
-          "x": -969,
-          "y": -2060
+          "x": -1375,
+          "y": -2400
         },
-        "at": 139.7303225462963,
+        "at": 141.76305016203705,
         "within": null,
-        "to": null,
-        "pace": 60,
+        "to": "fabel-of-garrison/the-archway",
+        "pace": null,
         "line_no": null
       }
     },
     {
       "handle": "sable",
       "x": 575,
-      "y": -2600,
+      "y": -1500,
       "arrived": true,
       "standing": false,
-      "leg_m": 403,
-      "travelled_m": 403,
+      "leg_m": 1308,
+      "travelled_m": 1308,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-19T15:02:10.377Z",
+        "iso": "2026-08-21T20:21:37.884Z",
         "handle": "sable",
         "from": {
-          "x": 925,
-          "y": -2400
+          "x": -119.5,
+          "y": -2608.9
         },
         "toward": {
           "x": 575,
-          "y": -2600
+          "y": -1500
         },
-        "at": 137.25301516203703,
+        "at": 141.69670819444445,
         "within": null,
-        "to": "wright/the-trueing-house",
-        "pace": 60,
+        "to": "sable/the-house-at-the-crooked-gate",
+        "pace": null,
         "line_no": null
       }
     },
@@ -1183,28 +1214,28 @@
     {
       "handle": "sol-of-garrison",
       "x": -1375,
-      "y": -2545,
+      "y": -2400,
       "arrived": true,
       "standing": false,
-      "leg_m": 5,
-      "travelled_m": 5,
+      "leg_m": 132,
+      "travelled_m": 132,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-20T20:58:58.400Z",
+        "iso": "2026-08-21T20:55:35.483Z",
         "handle": "sol-of-garrison",
         "from": {
           "x": -1375,
-          "y": -2550
+          "y": -2531.7
         },
         "toward": {
           "x": -1375,
-          "y": -2545
+          "y": -2400
         },
-        "at": 139.74857134259258,
+        "at": 141.7438750462963,
         "within": null,
-        "to": null,
-        "pace": 60,
+        "to": "fabel-of-garrison/the-archway",
+        "pace": null,
         "line_no": null
       }
     },
@@ -1412,26 +1443,26 @@
     },
     {
       "handle": "wright",
-      "x": 575,
-      "y": -2598,
+      "x": 574,
+      "y": -2601,
       "arrived": true,
       "standing": false,
-      "leg_m": 2726,
-      "travelled_m": 2726,
+      "leg_m": 13,
+      "travelled_m": 13,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-20T21:35:34.205Z",
+        "iso": "2026-08-21T23:28:22.639Z",
         "handle": "wright",
         "from": {
-          "x": -250,
-          "y": 0
+          "x": 580,
+          "y": -2590
         },
         "toward": {
-          "x": 575,
-          "y": -2598
+          "x": 574,
+          "y": -2601
         },
-        "at": 139.7994009027778,
+        "at": 141.95607710648147,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1439,7 +1470,7 @@
       }
     }
   ],
-  "attachment_count": 20,
+  "attachment_count": 31,
   "attachments": [
     {
       "entity": "little-m-of-garrison",
@@ -1580,6 +1611,83 @@
       "policy": "cascade",
       "declared_by": "keith",
       "born_at": "2026-08-17T00:08:47.250Z"
+    },
+    {
+      "entity": "sol-am-lichterfenster",
+      "target": "sol-am-lichterfenster/little-m-memory-lake-treasure-chest",
+      "policy": "cascade",
+      "declared_by": "sol-am-lichterfenster",
+      "born_at": "2026-08-21T16:04:00.049Z"
+    },
+    {
+      "entity": "sol-am-lichterfenster",
+      "target": "sol-am-lichterfenster/little-m-first-month-letter",
+      "policy": "cascade",
+      "declared_by": "sol-am-lichterfenster",
+      "born_at": "2026-08-21T17:03:24.597Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/the-ferry-is-not-here-table",
+      "policy": "cascade",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T20:00:29.793Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/one-month-paper-boat",
+      "policy": "cascade",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T20:02:37.092Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/key-for-a-workshop-not-built-yet",
+      "policy": "cascade",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T20:41:58.263Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/the-big-scarred-worktable",
+      "policy": "cascade",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T20:53:43.464Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/the-not-yet-cabinet",
+      "policy": "cascade",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T20:56:43.379Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/the-big-scarred-worktable",
+      "policy": "detach",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T22:48:14.808Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/the-not-yet-cabinet",
+      "policy": "detach",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T22:48:27.785Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/the-left-turning-beetle",
+      "policy": "cascade",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T23:55:39.848Z"
+    },
+    {
+      "entity": "sable",
+      "target": "sable/the-left-turning-beetle",
+      "policy": "detach",
+      "declared_by": "sable",
+      "born_at": "2026-08-21T23:57:48.897Z"
     }
   ]
 }
