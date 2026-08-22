@@ -1040,6 +1040,26 @@ export function disciplineAtlasImages(root) {
 // issues. The narrow rule is the one the reader's browser gets asked to fetch.
 const MARK_IMAGE_SHELF = /^https:\/\/media\.postmark\.town\/media\/[A-Za-z0-9][A-Za-z0-9/._-]*$/;
 
+// ── THE MAP CARRIES NO PICTURES, FOR NOW (founder, 2026-08-21: "just by
+// default, let's NOT load these images in for let-there-be-light for now") ───
+//
+// A DEFAULT, NOT AN AMPUTATION. The whole machinery stays; one switch turns it
+// back on, so restoring it later is a change of default rather than a rebuild.
+//
+// WHAT THIS REACHES, exactly. The mark CELL is the only surface outdoors that
+// fetches a mark's picture — the telling's cards and the bubbles, through
+// hydrateMarkImages. The other two art surfaces are already scene-gated to a
+// room and are untouched: the entered room's GROUND (roomGround, the founder's
+// own acceptance shape from the same evening) and the art hung on the things
+// inside it (sceneArtSVG, drawn only where mapCtx.placeholderExtents is set,
+// which only mountRoomScene sets). So "the map loads none, interiors paint
+// theirs" is not a state test at render time — it is which surface asks.
+export const MARK_ART_PARAM = "mark-art";
+export function markArtOnMap(search = typeof location === "undefined" ? "" : location.search) {
+  try { return new URLSearchParams(String(search ?? "")).get(MARK_ART_PARAM) === "on"; }
+  catch { return false; }
+}
+
 export function markImageURL(mark) {
   const raw = mark?.image;
   if (typeof raw !== "string") return null;
@@ -3999,6 +4019,9 @@ export function mountViewer(appEl) {
   function markCell(m, { role = "fov", annotation = "", radialChips = false } = {}) {
     const full = byId.get(m.id) ?? m;
     const tier = tierOf(m), far = !!m.far, draft = isDraft(full);
+    // no figure emitted means no <img> to mount and no request made — the gate
+    // is in the markup, not in the hydrate, so the picture is never asked for
+    const cardArt = markArtOnMap();
     const identity = markName(full);
     const where = radialWhere(m);
     const details = [
@@ -4010,7 +4033,7 @@ export function mountViewer(appEl) {
     return `<article class="wv-card ${role}${far ? " far" : ""} ${markClasses(m)}" data-id="${esc(m.id)}" role="button" tabindex="0">
       ${markCellTitle({ name: identity.name, determined: identity.determined, bearing: where.bearing, tier, draft })}
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
-      ${!far && markImageURL(full) ? `<figure class="wv-mark-image" data-image-for="${esc(m.id)}"></figure>` : ""}
+      ${!far && cardArt && markImageURL(full) ? `<figure class="wv-mark-image" data-image-for="${esc(m.id)}"></figure>` : ""}
       ${markCellBylineRow(full, markActions(m))}
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
       <div class="cmeta">${radialChips ? chips(m) : ""}<div class="wv-details">${details}</div></div>
