@@ -39,13 +39,15 @@ test("the berth's say grant is for: berth (ruled 679e097f; regressed by sweep 91
     "an absent for: reads as RESIDENT under LOGOS — this widening is exactly what the sweep must refuse");
 });
 
-test("the departure's pace dial is 60 (decision 008b; regressed by sweep 652fdb44, caught by Keemin's memory 08-18)", () => {
-  // departure renamed depart at the graduation merge (verb-form grammar) — the
+test("the resident's pace dial is 60 (decision 008b; regressed by sweep 652fdb44, caught by Keemin's memory 08-18)", () => {
+  // departure renamed depart at the graduation merge; the dial moved AGAIN
+  // 2026-08-22 (Keemin: the stride sits under RESIDENT — the mover owns its
+  // pace, never the verb) — the
   // guard follows the id; the guarded number is the ruling and never moves.
   const text = readFileSync(join(here, "..",
-    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-edge/depart/mark.md"), "utf8");
+    "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-node/entity/resident/mark.md"), "utf8");
   const line = text.split("\n").find((l) => l.startsWith("dials:"));
-  assert.ok(line, "the depart class carries a dials: line");
+  assert.ok(line, "the resident class carries a dials: line");
   assert.equal(JSON.parse(line.slice("dials:".length).trim()).pace_km_per_crossing, 60,
     "the resident stride is RULED text (008b: 5 km/h, a person's walk) — a stale copy reverting it is the #1697 class");
 });
