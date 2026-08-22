@@ -278,6 +278,38 @@ export function draftMarkIds(drafts = []) {
 // lens (your unpublished edit is what you see — the old My World semantic);
 // `deleted` and geometry-less records are left out, which for a deletion is the
 // absence it declares. The grey comes from draftMarkIds exactly as before.
+
+// nearEqual — the same world-framed value within a hair. Numbers (and numeric
+// strings) match under a 1e-6 tolerance so sub-pixel coordinate drift on at /
+// extent / points does not read as an edit; arrays and plain objects recurse;
+// everything else is strict. Used only to tell a STALE sketchbook entry from a
+// real one, never to compose.
+function nearEqual(a, b) {
+  if (a === b) return true;
+  const na = Number(a), nb = Number(b);
+  if (Number.isFinite(na) && Number.isFinite(nb)) return Math.abs(na - nb) <= 1e-6;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((x, i) => nearEqual(x, b[i]));
+  }
+  if (a && b && typeof a === "object" && typeof b === "object") {
+    const ka = Object.keys(a), kb = Object.keys(b);
+    return ka.length === kb.length && ka.every((k) => nearEqual(a[k], b[k]));
+  }
+  return false;
+}
+
+// A draft's declared content EQUALS its canon mark when every overlay field the
+// draft actually carries (undefined = not an edit, not compared) matches canon.
+// A draft that declares nothing to change is, vacuously, no edit at all. This is
+// the STALE test: a mark published FROM this very draft compares equal here.
+function sameOverlayContent(draft, canon, fields) {
+  for (const f of fields) {
+    if (draft[f] === undefined) continue;
+    if (!nearEqual(draft[f], canon[f])) return false;
+  }
+  return true;
+}
+
 export function composeDraftOverlay(worldState, drafts = []) {
   const marks = worldState?.marks;
   if (!Array.isArray(marks)) return worldState;
@@ -296,6 +328,18 @@ export function composeDraftOverlay(worldState, drafts = []) {
     const d = m?.id ? overlayById.get(m.id) : null;
     if (!d) return m;
     overlayById.delete(m.id);
+    // CANON WINS on a stale sketchbook entry (founder ruling 2026-08-22, §0 of
+    // the world-runtime ladder). The base worldState is pure canon (published
+    // only); a draft matching a canon mark is either a genuine unpublished edit
+    // OR a STALE delta — a mark since PUBLISHED whose sketchbook entry was never
+    // rebased. They arrive identically here; the CONTENT separates them. A mark
+    // published FROM this draft keeps its world position (parked-mark law), so
+    // the stale entry's declared body/at/extent/points/date/image/slot/value
+    // equals canon — and published-vs-draft is canon's JUDGMENT, which a
+    // sketchbook DECLARATION may not overturn. Equal → canon, untouched (this is
+    // the greying fix). Different → the real pending edit still shows, draft and
+    // all (the "reads its own unpublished edit" feature; aa17d27d/e3250341 hold).
+    if (sameOverlayContent(d, m, CONTENT)) return m;
     const merged = { ...m, draft: true };
     for (const f of CONTENT) if (d[f] !== undefined) merged[f] = d[f];
     return merged;

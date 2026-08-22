@@ -79,3 +79,34 @@ test("a modified draft replaces CONTENT, never authority — the house keeps its
   assert.equal(cup.status, undefined);
   assert.equal(cup.path, undefined);
 });
+
+// CANON WINS on a stale sketchbook entry (founder ruling 2026-08-22, §0 of the
+// world-runtime ladder): "A mark already published in canon cannot be flipped
+// to draft by a sketchbook entry; the overlay only ADDS marks whose id is not
+// in canon." The base worldState is pure canon (published only). A draft that
+// matches a canon mark is either a genuine unpublished edit or a STALE delta — a
+// mark since PUBLISHED whose sketchbook entry was never rebased. They arrive
+// identically; the CONTENT separates them. A mark published FROM this very draft
+// keeps its world position (parked-mark law), so the un-rebased sketchbook still
+// lists it with content identical to canon. That stale entry may not grey an
+// already-published judgment — published-vs-draft is canon's JUDGMENT and the
+// sketchbook holds DECLARATIONS only. (The differing-content edit still shows;
+// the two falsifiers above hold.)
+test("CANON WINS on a stale sketchbook entry: a draft whose world-framed content equals its published canon mark does NOT grey it", () => {
+  const stale = { id: "rei/the-lanternstep-house", status: "modified",
+    body: "the lanternstep house", at: { x: 100, y: 100 }, extent: { w: 20, h: 20 } };
+  const out = composeDraftOverlay(STATE, [stale]);
+  const house = out.marks.filter((m) => m.id === "rei/the-lanternstep-house");
+  assert.equal(house.length, 1, "the stale entry does not double canon");
+  assert.equal(house[0].body, "the lanternstep house", "canon content is returned unchanged");
+  assert.notEqual(house[0].draft, true, "the published mark is NOT flipped to draft — canon wins");
+  assert.equal(house[0].tier, "home", "canon standing untouched");
+});
+
+test("stale detection tolerates sub-1e-6 coordinate drift — still canon, not draft", () => {
+  const stale = { id: "rei/the-lanternstep-house", status: "modified",
+    body: "the lanternstep house", at: { x: 100.0000004, y: 99.9999997 }, extent: { w: 20, h: 20 } };
+  const house = composeDraftOverlay(STATE, [stale]).marks.find((m) => m.id === "rei/the-lanternstep-house");
+  assert.notEqual(house.draft, true, "drift under tolerance reads as the same placement — stale, canon wins");
+  assert.equal(house.body, "the lanternstep house", "canon content unchanged");
+});
