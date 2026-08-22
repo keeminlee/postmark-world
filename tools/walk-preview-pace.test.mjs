@@ -4,7 +4,7 @@
 // says the old rate on the site."
 //
 // The pace was ruled from 15 to 60 km per crossing by 008b, and the live law is
-// the depart class's own dial. tools/walk.mjs's WALK_KM_PER_CROSSING stays 15
+// the RESIDENT class's own dial — "the stride is the mover's, never this verb's" (Keemin, 2026-08-22). tools/walk.mjs's WALK_KM_PER_CROSSING stays 15
 // forever on purpose — it derives the unstamped legs written before that
 // ruling, so their history never rewrites. Right for reading the past, wrong
 // for previewing the future, and previewWalkLeg was doing the second with the
@@ -22,17 +22,17 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { WALK_KM_PER_CROSSING } from "./walk.mjs";
-import { departPaceKm, DEPART_CLASS_ID, previewWalkLeg, walkLegParts } from "../spectator/viewer.mjs";
+import { departPaceKm, STRIDE_CLASS_ID, previewWalkLeg, walkLegParts } from "../spectator/viewer.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const STORE = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
 
-test("THE LIVE STORE CARRIES THE STRIDE: the depart class is in world-state.json, by that name, with its dial", () => {
-  const depart = STORE.marks.find((m) => m.id === DEPART_CLASS_ID);
-  assert.ok(depart, `${DEPART_CLASS_ID} is not in the published store — a rename would land exactly here`);
-  assert.equal(depart.kind, "class");
-  assert.equal(depart.class, "depart");
-  assert.equal(depart.dials?.pace_km_per_crossing, 60,
+test("THE LIVE STORE CARRIES THE STRIDE: the resident class is in world-state.json, by that name, with its dial", () => {
+  const mover = STORE.marks.find((m) => m.id === STRIDE_CLASS_ID);
+  assert.ok(mover, `${STRIDE_CLASS_ID} is not in the published store — a rename would land exactly here`);
+  assert.equal(mover.kind, "class");
+  assert.equal(mover.class, "resident");
+  assert.equal(mover.dials?.pace_km_per_crossing, 60,
     "the store must carry the dial, not just the class — reading `class` and not `dials` is what left the preview guessing");
   assert.equal(departPaceKm(STORE.marks), 60);
 });
@@ -62,12 +62,12 @@ test("A PREVIEW THAT GUESSED SAYS SO, and one that did not stays quiet", () => {
 
 test("departPaceKm refuses anything that is not a usable stride", () => {
   assert.equal(departPaceKm([]), null, "no class in the store at all");
-  assert.equal(departPaceKm([{ id: DEPART_CLASS_ID, kind: "class" }]), null, "class present, dials absent — the state this fix was written for");
-  assert.equal(departPaceKm([{ id: DEPART_CLASS_ID, dials: {} }]), null);
-  assert.equal(departPaceKm([{ id: DEPART_CLASS_ID, dials: { pace_km_per_crossing: 0 } }]), null, "zero is not a stride");
-  assert.equal(departPaceKm([{ id: DEPART_CLASS_ID, dials: { pace_km_per_crossing: -5 } }]), null);
-  assert.equal(departPaceKm([{ id: DEPART_CLASS_ID, dials: { pace_km_per_crossing: "sixty" } }]), null);
-  assert.equal(departPaceKm([{ id: DEPART_CLASS_ID, dials: { pace_km_per_crossing: 60 } }]), 60);
+  assert.equal(departPaceKm([{ id: STRIDE_CLASS_ID, kind: "class" }]), null, "class present, dials absent — the state this fix was written for");
+  assert.equal(departPaceKm([{ id: STRIDE_CLASS_ID, dials: {} }]), null);
+  assert.equal(departPaceKm([{ id: STRIDE_CLASS_ID, dials: { pace_km_per_crossing: 0 } }]), null, "zero is not a stride");
+  assert.equal(departPaceKm([{ id: STRIDE_CLASS_ID, dials: { pace_km_per_crossing: -5 } }]), null);
+  assert.equal(departPaceKm([{ id: STRIDE_CLASS_ID, dials: { pace_km_per_crossing: "sixty" } }]), null);
+  assert.equal(departPaceKm([{ id: STRIDE_CLASS_ID, dials: { pace_km_per_crossing: 60 } }]), 60);
 });
 
 test("THE FOLD CARRIES A CLASS'S DIALS — without that the viewer's read has nothing to read", () => {

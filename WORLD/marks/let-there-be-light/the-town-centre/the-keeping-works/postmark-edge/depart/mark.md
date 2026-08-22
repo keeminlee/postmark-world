@@ -4,13 +4,13 @@ by: the-town
 tier: constitution
 date: 2026-08-09
 class: depart
-version: 4
+version: 5
 extends: postmark-edge
 subject: resident
 object: position
-dials: {"pace_km_per_crossing": 60}
+dials: {}
 implements: ["tools/walk.mjs"]
 source: LOGOS/classes.md
 ---
 
-A departure is one line written when you set out — from here, to there, at this hour — and where you are between is read off it, never stored.
+A departure is one line written when you set out; where you are between is read off it, never stored. The stride is the mover's, never this verb's.

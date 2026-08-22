@@ -208,7 +208,12 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
 // in a walk-ledger and its wear aggregates per grid cell WITHOUT names — where
 // you wander is more intimate than who you wrote (epic § Paths are wear).
 export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } = {}) {
-  const walkSpeed = world.terrain?.elevation?.walk_speed_m_per_crossing ?? 15000;
+  // the stride is the mover's: the resident class's dial (the node the founder
+  // moved it to, 2026-08-22) is the first word; terrain may override; 15000 is
+  // the pre-dial fossil, kept only for worlds folded before dials rode the store.
+  const residentPaceKm = Number((world.marks ?? []).find((m) => m.id === "the-town/resident")?.dials?.pace_km_per_crossing);
+  const walkSpeed = world.terrain?.elevation?.walk_speed_m_per_crossing
+    ?? (Number.isFinite(residentPaceKm) && residentPaceKm > 0 ? residentPaceKm * 1000 : 15000);
   const unit = DIR_UNIT[dir?.toUpperCase?.()] ?? unitFromDeg(Number(dir));
   if (!unit) return { error: `unknown direction '${dir}' — use a compass point (N, NE, …) or a bearing in degrees` };
   const to = { x: Math.round(state.x + unit.x * distM), y: Math.round(state.y + unit.y * distM) };

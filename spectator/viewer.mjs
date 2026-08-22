@@ -476,10 +476,13 @@ function settlementChip(at) {
 // So the preview asks the record what the stride IS. Null when the class is
 // absent from the store, which is a real state (a fold from before class dials
 // rode the store) and one the desk says out loud rather than papering over.
-export const DEPART_CLASS_ID = "the-town/depart";
+// THE STRIDE RIDES THE MOVER, NOT THE VERB (Keemin, 2026-08-22: "we can use
+// this edge for ANYTHING that departs. it should sit under resident") — the
+// vessel precedent already said so: the post-office sails at its own 405.
+export const STRIDE_CLASS_ID = "the-town/resident";
 export function departPaceKm(marks) {
   const byMarkId = markIndex(marks);
-  const pace = Number(byMarkId.get(DEPART_CLASS_ID)?.dials?.pace_km_per_crossing);
+  const pace = Number(byMarkId.get(STRIDE_CLASS_ID)?.dials?.pace_km_per_crossing);
   return Number.isFinite(pace) && pace > 0 ? pace : null;
 }
 

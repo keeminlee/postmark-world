@@ -17,7 +17,7 @@ import { pointInRect } from "./geometry.mjs";
 
 // The pace dial — decision 008, movable by ruling, never silently.
 // AMENDED by 008b (2026-08-16): the LIVE law is the departure class's own dial
-// (the-keeping-works/postmark-edge/departure, dials.pace_km_per_crossing — 60 as of the
+// (the-keeping-works/postmark-node/entity/resident since the 2026-08-22 move — the stride rides the MOVER, never the verb; dials.pace_km_per_crossing, 60 as of the
 // ruling), read at act time by the office and stamped per-leg as `· pace <n>`.
 // This constant now derives ONLY unstamped legs — every departure declared
 // before 008b — and must stay 15 forever so their history never rewrites.

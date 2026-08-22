@@ -12761,11 +12761,9 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A departure is one line written when you set out — from here, to there, at this hour — and where you are between is read off it, never stored.",
+      "body": "A departure is one line written when you set out; where you are between is read off it, never stored. The stride is the mover's, never this verb's.",
       "class": "depart",
-      "dials": {
-        "pace_km_per_crossing": 60
-      },
+      "dials": {},
       "placementParent": "the-town/postmark-edge"
     },
     {
@@ -13491,7 +13489,9 @@
       "weight": 0,
       "body": "A household's living voice, sovereign on its own ground and carrying the walk; no human is ever one — they speak through the one they stand with.",
       "class": "resident",
-      "dials": {},
+      "dials": {
+        "pace_km_per_crossing": 60
+      },
       "placementParent": "the-town/entity"
     },
     {
