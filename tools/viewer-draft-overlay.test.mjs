@@ -62,3 +62,20 @@ test("deleted and geometry-less drafts stay out; a modified one replaces its pub
   assert.equal(house[0].body, "repainted, unpublished", "the household lens reads its own unpublished edit");
   assert.equal(house[0].draft, true);
 });
+
+test("a modified draft replaces CONTENT, never authority — the house keeps its door (2026-08-22 live find)", () => {
+  const edit = { id: "rei/the-lanternstep-house", status: "modified", tier: "market", path: "x",
+    body: "repainted", at: { x: 100, y: 100 }, extent: { w: 20, h: 20 } };
+  const out = composeDraftOverlay(STATE, [edit]);
+  const house = out.marks.find((m) => m.id === "rei/the-lanternstep-house");
+  assert.equal(house.tier, "home", "the delta's legacy tier line never overwrites canon standing");
+  assert.equal(house.body, "repainted", "the pending edit's content shows");
+  assert.equal(house.draft, true);
+  assert.equal(house.status, undefined, "no transport fields leak into the lens");
+  assert.equal(house.path, undefined);
+  const cup = composeDraftOverlay(STATE, [{ ...CUP, tier: "market", path: "y" }])
+    .marks.find((m) => m.id === "rei/a-small-cup");
+  assert.equal(cup.tier, undefined, "an added draft carries no asserted tier — the walk derives standing");
+  assert.equal(cup.status, undefined);
+  assert.equal(cup.path, undefined);
+});

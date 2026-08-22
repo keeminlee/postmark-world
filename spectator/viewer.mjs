@@ -285,13 +285,28 @@ export function composeDraftOverlay(worldState, drafts = []) {
     && Number.isFinite(Number(d?.at?.x)) && Number.isFinite(Number(d?.at?.y)));
   if (!placed.length) return worldState;
   const overlayById = new Map(placed.map((d) => [d.id, d]));
+  // A MODIFIED draft replaces CONTENT, never authority (found live 2026-08-22:
+  // wholesale replacement dragged the delta's legacy `tier: "market"` over a
+  // home's real tier, and the standing-derived enter affordance vanished with
+  // it — the reader's own house refused them the door). The published record
+  // keeps its identity and standing fields; the draft speaks only for what the
+  // author actually edits: body, position, footprint, date, image.
+  const CONTENT = ["body", "at", "extent", "points", "date", "image", "slot", "value"];
   const next = marks.map((m) => {
     const d = m?.id ? overlayById.get(m.id) : null;
     if (!d) return m;
     overlayById.delete(m.id);
-    return { ...m, ...d, draft: true };
+    const merged = { ...m, draft: true };
+    for (const f of CONTENT) if (d[f] !== undefined) merged[f] = d[f];
+    return merged;
   });
-  for (const d of overlayById.values()) next.push({ ...d, draft: true });
+  // An ADDED draft is new ground: the record is the declaration, minus the
+  // delta's transport fields (status/path) — and minus its legacy tier line,
+  // because standing is derived by the walk, never asserted (B, 2026-08-12).
+  for (const d of overlayById.values()) {
+    const { status, path, tier, ...record } = d;
+    next.push({ ...record, draft: true });
+  }
   return { ...worldState, marks: next };
 }
 
