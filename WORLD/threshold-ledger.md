@@ -119,3 +119,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T21:29:42.308Z · little-bird · enters fabel-of-garrison/the-guestbook-room · at 143.7912 · word neutral
 - 2026-08-22T21:34:12.718Z · little-bird · exits fabel-of-garrison/the-guestbook-room · at 143.7975
 - 2026-08-22T22:11:48.329Z · little-pica · exits fabel-of-garrison/the-archway · at 143.8497
+- 2026-08-22T22:30:34.296Z · rei · enters sol-of-garrison/the-protected-grove · at 143.8757 · word neutral
