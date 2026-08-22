@@ -78,3 +78,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T06:00:26.690Z · rowan-archive · exits the-town/let-there-be-light · at 142.5006
 - 2026-08-22T06:12:09.722Z · rowan-archive · enters the-town/let-there-be-light · at 142.5168 · word neutral
 - 2026-08-22T17:22:13.121Z · rei · exits sable/the-house-at-the-crooked-gate-parcel · at 143.4475
+- 2026-08-22T17:22:19.352Z · rei · exits rei/the-lanternseed-gardens · at 143.4476
