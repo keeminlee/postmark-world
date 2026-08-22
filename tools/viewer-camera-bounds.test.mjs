@@ -18,7 +18,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { clampViewToBounds, frameWidthFor } from "../spectator/viewer.mjs";
+import { clampViewToBounds, frameWidthFor, frameHeightFor } from "../spectator/viewer.mjs";
 
 const SOURCE = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "spectator", "viewer.mjs"), "utf8");
 const PAINTING = { x: 0, y: 0, w: 1500, h: 2400 };   // the town's own viewBox, as it stands
@@ -94,4 +94,45 @@ test("THE EXIT IS THE ONLY CALLER THAT KEEPS ITS ZOOM — lock-on and follow sti
     "warmTownArt: declared once, and called at BOTH places the town is set aside — stashed when a room mounts over it, and parked when the painting lands while a room is already up. Only the second fires for a reader who arrives already indoors, which is the common case.");
   assert.doesNotMatch(SOURCE, /async function stepOutside[\s\S]{0,2500}warmTownArt/,
     "and never from the exit path — by then the reader is already waiting");
+});
+
+// ── #6, the labels that shrank on an inside→outside switch ──────────────────
+//
+// Founder, 2026-08-21: "when you switch from one entered resident to one
+// outside resident, the labels get tiny. if you close and reopen the Telling
+// the labels are back to normal."
+//
+// SAME ROOT AS #3, which is why it lives in this file: both are frameOn handing
+// back a view that was not derived for the rectangle it is about to be shown
+// in. #3 was the width; this is the height.
+
+test('LABELS DO NOT SHRINK ON A RESIDENT SWITCH: a framed view takes its height from the PANE, not the painting', () => {
+  // the measured case, same 760x1000 pane throughout: the switch recentred with
+  // a painting-shaped height of 600 where the pane wanted 493.4, and every
+  // atlas place-name — set in painting units, so it scales with the view —
+  // rendered at 30 px instead of 37
+  const PAINTING = { w: 1500, h: 2400 };   // aspect 1.60
+  const PANE = { w: 760, h: 1000 };        // aspect 1.32
+  const w = 375;
+  assert.equal(frameHeightFor({ w, fullW: PAINTING.w, fullH: PAINTING.h, paneW: PANE.w, paneH: PANE.h }),
+    375 * (1000 / 760), "the pane's shape decides");
+  assert.ok(Math.abs(frameHeightFor({ w, fullW: PAINTING.w, fullH: PAINTING.h, paneW: PANE.w, paneH: PANE.h }) - 493.42) < 0.01);
+  // the old rule, kept only as the fallback for a pane that has not laid out
+  assert.equal(frameHeightFor({ w, fullW: PAINTING.w, fullH: PAINTING.h, paneW: 0, paneH: 0 }), 600,
+    "with no pane to measure, the painting's aspect is the only thing left to ask");
+  assert.equal(frameHeightFor({ w, fullW: PAINTING.w, fullH: PAINTING.h, paneW: NaN, paneH: 1000 }), 600);
+
+  // and the two answers really do differ by the ratio the founder saw
+  const painted = frameHeightFor({ w, fullW: PAINTING.w, fullH: PAINTING.h, paneW: 0, paneH: 0 });
+  const paned = frameHeightFor({ w, fullW: PAINTING.w, fullH: PAINTING.h, paneW: PANE.w, paneH: PANE.h });
+  assert.ok(painted / paned > 1.2, `the stale height was ${(painted / paned).toFixed(2)}x too tall, which is the shrink`);
+});
+
+test("ONE ROOT, ONE OWNER: frameOn asks the pane for its height and the shared rule for its width", () => {
+  assert.match(SOURCE, /const h = frameHeightFor\(\{ w, fullW: full\.w, fullH: full\.h, paneW: paneBox\.width, paneH: paneBox\.height \}\)/,
+    "frameOn derives its height through the shared rule, from the measured pane");
+  assert.doesNotMatch(SOURCE, /h = w \* \(full\.h \/ full\.w\)/,
+    "and nothing still takes a framed height straight off the painting");
+  assert.match(SOURCE, /const w = frameWidthFor\(\{ viewW: view\.w, fullW: full\.w, keepZoom \}\)/,
+    "the width comes through its own shared rule — the two halves of the same defect");
 });
