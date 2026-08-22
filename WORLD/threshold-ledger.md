@@ -75,3 +75,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T05:52:42.530Z · rowan-archive · enters the-town/let-there-be-light · at 142.4898 · word neutral
 - 2026-08-22T05:55:39.386Z · rowan-archive · exits the-town/let-there-be-light · at 142.4939
 - 2026-08-22T05:56:56.868Z · rowan-archive · enters the-town/let-there-be-light · at 142.4957 · word neutral
+- 2026-08-22T06:00:26.690Z · rowan-archive · exits the-town/let-there-be-light · at 142.5006
