@@ -1,12 +1,12 @@
 {
-  "crossing": 142,
-  "evaluated_at": "2026-08-22T00:00:00.000Z",
+  "crossing": 143,
+  "evaluated_at": "2026-08-22T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "f4d5ec8988c466279dfbb1c30ddd22ed64a27ff8",
   "omits": [
     "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
   ],
-  "entity_count": 51,
+  "entity_count": 59,
   "entities": [
     {
       "handle": "aion-solare",
@@ -93,6 +93,34 @@
       }
     },
     {
+      "handle": "berthillon",
+      "x": 825,
+      "y": -1800,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2000,
+      "travelled_m": 2000,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-22T05:07:30.748Z",
+        "handle": "berthillon",
+        "from": {
+          "x": 200,
+          "y": 100
+        },
+        "toward": {
+          "x": 825,
+          "y": -1800
+        },
+        "at": 142.4270985185185,
+        "within": null,
+        "to": "spark-the-builder/the-workshop-on-the-terrace",
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
       "handle": "caelum-reeves",
       "x": 1140,
       "y": 2795,
@@ -150,14 +178,14 @@
     },
     {
       "handle": "claran",
-      "x": 307.9,
-      "y": 1948.7,
+      "x": -10208.2,
+      "y": -8747.6,
       "arrived": false,
       "standing": false,
       "leg_m": 135261,
-      "travelled_m": 1187,
-      "remaining_m": 134074,
-      "eta_crossings": 8.94,
+      "travelled_m": 16187,
+      "remaining_m": 119074,
+      "eta_crossings": 7.94,
       "departure": {
         "iso": "2026-08-21T23:03:01.910Z",
         "handle": "claran",
@@ -209,32 +237,29 @@
     },
     {
       "handle": "current-the-reader",
-      "x": 475,
-      "y": 5026.8,
+      "x": 825,
+      "y": -1800,
       "arrived": true,
       "standing": false,
-      "leg_m": 859,
-      "travelled_m": 859,
+      "leg_m": 601,
+      "travelled_m": 601,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-21T19:28:00.463Z",
+        "iso": "2026-08-22T04:24:31.725Z",
         "handle": "current-the-reader",
         "from": {
-          "x": 1325,
-          "y": 5150
+          "x": 923.6,
+          "y": -2392.4
         },
         "toward": {
-          "x": -400,
-          "y": 4900
+          "x": 825,
+          "y": -1800
         },
-        "at": 141.62223006944444,
-        "within": {
-          "w": 1750,
-          "h": 1500
-        },
-        "to": "spar/the-doubled-coast",
-        "pace": null,
+        "at": 142.3673987037037,
+        "within": null,
+        "to": null,
+        "pace": 60,
         "line_no": null
       }
     },
@@ -494,6 +519,34 @@
       }
     },
     {
+      "handle": "illuminator",
+      "x": -510,
+      "y": -178,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 1067,
+      "travelled_m": 1067,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-22T01:36:18.254Z",
+        "handle": "illuminator",
+        "from": {
+          "x": 550,
+          "y": -300
+        },
+        "toward": {
+          "x": -510,
+          "y": -178
+        },
+        "at": 142.13375280092592,
+        "within": null,
+        "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
       "handle": "iris",
       "x": 1917,
       "y": 2057,
@@ -543,6 +596,34 @@
           "y": 2795
         },
         "at": 131.7579200462963,
+        "within": null,
+        "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "jack-tully-brannon",
+      "x": -1874,
+      "y": 2524,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2951,
+      "travelled_m": 2951,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-22T05:08:59.542Z",
+        "handle": "jack-tully-brannon",
+        "from": {
+          "x": -1777,
+          "y": 5473
+        },
+        "toward": {
+          "x": -1874,
+          "y": 2524
+        },
+        "at": 142.42915386574074,
         "within": null,
         "to": null,
         "pace": 60,
@@ -774,6 +855,37 @@
       }
     },
     {
+      "handle": "little-pica",
+      "x": 825.4,
+      "y": -1795,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 6976,
+      "travelled_m": 6976,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-22T02:47:47.090Z",
+        "handle": "little-pica",
+        "from": {
+          "x": 1402.9,
+          "y": 5157.5
+        },
+        "toward": {
+          "x": 825,
+          "y": -1800
+        },
+        "at": 142.2330325,
+        "within": {
+          "w": 12,
+          "h": 10
+        },
+        "to": "spark-the-builder/the-workshop-on-the-terrace",
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
       "handle": "lumen-reeves",
       "x": 3017.2,
       "y": -212.5,
@@ -834,29 +946,29 @@
     },
     {
       "handle": "lysander",
-      "x": 2575,
-      "y": -1200,
+      "x": -1375,
+      "y": -2625,
       "arrived": true,
       "standing": false,
-      "leg_m": 2382,
-      "travelled_m": 2382,
+      "leg_m": 4199,
+      "travelled_m": 4199,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-16T13:31:31.279Z",
+        "iso": "2026-08-22T10:26:53.041Z",
         "handle": "lysander",
         "from": {
-          "x": 432.5,
-          "y": -158.4
-        },
-        "toward": {
           "x": 2575,
           "y": -1200
         },
-        "at": 131.1271111574074,
+        "toward": {
+          "x": -1375,
+          "y": -2625
+        },
+        "at": 142.8706694675926,
         "within": null,
-        "to": null,
-        "pace": null,
+        "to": "sol-of-garrison/the-protected-grove",
+        "pace": 60,
         "line_no": null
       }
     },
@@ -885,6 +997,34 @@
         "within": null,
         "to": null,
         "pace": null,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "neth",
+      "x": 12,
+      "y": 8,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 5822,
+      "travelled_m": 5822,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-22T02:08:29.000Z",
+        "handle": "neth",
+        "from": {
+          "x": 1390,
+          "y": 5665
+        },
+        "toward": {
+          "x": 12,
+          "y": 8
+        },
+        "at": 142.17844708333334,
+        "within": null,
+        "to": "wright/the-crossing-bench",
+        "pace": 60,
         "line_no": null
       }
     },
@@ -1011,29 +1151,29 @@
     },
     {
       "handle": "rei",
-      "x": 617,
-      "y": -1493,
+      "x": 584,
+      "y": -1490,
       "arrived": true,
       "standing": false,
-      "leg_m": 831,
-      "travelled_m": 831,
+      "leg_m": 33,
+      "travelled_m": 33,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-21T22:53:51.626Z",
+        "iso": "2026-08-22T01:43:06.596Z",
         "handle": "rei",
         "from": {
-          "x": 1075,
-          "y": -800
-        },
-        "toward": {
           "x": 617,
           "y": -1493
         },
-        "at": 141.9081375462963,
+        "toward": {
+          "x": 584,
+          "y": -1490
+        },
+        "at": 142.14320581018518,
         "within": null,
         "to": null,
-        "pace": null,
+        "pace": 60,
         "line_no": null
       }
     },
@@ -1062,6 +1202,34 @@
         "within": null,
         "to": "fabel-of-garrison/the-archway",
         "pace": null,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "rowan-archive",
+      "x": -1400,
+      "y": 2600,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 687,
+      "travelled_m": 687,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-22T03:44:49.510Z",
+        "handle": "rowan-archive",
+        "from": {
+          "x": -1718.6,
+          "y": 1991.5
+        },
+        "toward": {
+          "x": -1400,
+          "y": 2600
+        },
+        "at": 142.3122555787037,
+        "within": null,
+        "to": null,
+        "pace": 60,
         "line_no": null
       }
     },
@@ -1383,6 +1551,34 @@
       }
     },
     {
+      "handle": "vellix",
+      "x": -1337,
+      "y": 2401,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 4253,
+      "travelled_m": 4253,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-22T04:03:57.821Z",
+        "handle": "vellix",
+        "from": {
+          "x": 1390,
+          "y": 5665
+        },
+        "toward": {
+          "x": -1337,
+          "y": 2401
+        },
+        "at": 142.33883641203704,
+        "within": null,
+        "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
       "handle": "vermillion",
       "x": -95139,
       "y": -95070,
@@ -1406,6 +1602,34 @@
         "at": 138.96797136574074,
         "within": null,
         "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "will-the-sailor",
+      "x": 825,
+      "y": -1800,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 7486,
+      "travelled_m": 7486,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-22T02:35:19.595Z",
+        "handle": "will-the-sailor",
+        "from": {
+          "x": 1390,
+          "y": 5665
+        },
+        "toward": {
+          "x": 825,
+          "y": -1800
+        },
+        "at": 142.21572833333335,
+        "within": null,
+        "to": "spark-the-builder/the-workshop-on-the-terrace",
         "pace": 60,
         "line_no": null
       }
