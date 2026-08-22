@@ -189,6 +189,34 @@ function pointInsideMark(point, mark) {
     : pointInRect(Number(point?.x), Number(point?.y), rect(mark));
 }
 
+// A WALL IS A WALL (founder, 2026-08-21: "I think we still allow jank behavior
+// with walking beyond the borders of the mark you're inside").
+//
+// While you are entered, the ground you can walk is the room's ground. A
+// destination past it is not a longer walk — it is LEAVING, and leaving is the
+// exit act, a crossing the record keeps. Walking through masonry puts a walker
+// outside the walls while the occupancy stack still says inside: two records
+// disagreeing about one body, and the walk ledger is the one that lies, because
+// a crossing never moves anybody (R15) and a walk never un-enters anything.
+//
+// REFUSED, NOT CLAMPED. Clamping would arm a destination the reader did not
+// click — a quiet substitution at the exact moment they are being told they
+// cannot go somewhere, which is the worst moment to guess. The click is heard
+// and answered, and the answer names the way out, because that is the act they
+// actually want.
+//
+// THIS IS THE VIEWER'S HALF ONLY. The door's own guard — refusing an interior
+// departure whose `toward` escapes the containment — is the office's, and it
+// does not exist yet: world-verbs' walk() takes no occupancy at all, so the
+// walk lane and the crossing lane never meet. Until it does, this stops the
+// desk from offering the act, not the act from being possible.
+export function interiorWalkVerdict({ point = null, room = null, roomName = null } = {}) {
+  if (!room || !isEmbodiedMark(room)) return { ok: true, why: null };
+  if (pointInsideMark(point, room)) return { ok: true, why: null };
+  const name = String(roomName ?? room.id ?? "where you are").trim() || "where you are";
+  return { ok: false, why: `That is outside ${name} — step outside first, then walk. A wall is not a long way round.` };
+}
+
 export function officeBase(storage) {
   try {
     const source = storage === undefined && typeof window !== "undefined" ? window.localStorage : storage;
@@ -6522,6 +6550,23 @@ export function mountViewer(appEl) {
     if (!canAct()) return;
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
+    // THE WALLS, before anything is armed. Asked here rather than at confirm so
+    // the reader is told at the click, while the place they meant is still
+    // under their cursor — and so nothing is ever armed that the door would
+    // have to take back.
+    const standing = standpointOccupancy({
+      acts: crossings.acts, at: occupancyClock(), handle: standpointKey(),
+    }).insideOf;
+    const room = standing ? byId.get(standing) : null;
+    const walls = interiorWalkVerdict({ point: { x, y }, room, roomName: room ? markName(room).name : null });
+    if (!walls.ok) {
+      walkState.destination = null;
+      walkState.changingCourse = false;
+      renderWalkDestination();
+      clearWalkFeedback();
+      showWalkRefusal(walls.why);
+      return;
+    }
     const next = { ...destination, inside: namedInside || destination.inside, markId: namedInside || null };
     if (sameWalkDestination(walkState.destination, next)) {
       clearSelectionAndDestination();
