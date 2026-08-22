@@ -891,3 +891,71 @@ test("the ground-closure hold: a staked child never crosses without its drafted 
   assert.deepEqual(state.errors, []);
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
+
+test("a ROOT-PARKED draft publishes AND re-homes on its OWN crossing — the cairn case (the-town/the-parked, 2026-08-22)", (t) => {
+  // Tonight's live shape, caught by the shadow rehearsal at 19:03Z: the new
+  // draft door parks every sited draft at the root; a staked one publishes at
+  // the save, and the SAME crossing must file it into its tightest geometric
+  // container. The published file is on disk but not yet in the index when the
+  // re-home pass runs — `git mv` refuses an untracked source as "directory is
+  // empty" — so the pass stages the source first. The law it serves:
+  // "A mark the door parked at the root has no author-chosen filing; the save
+  // re-homes it by geometry, numbers re-framed, so the mark does not move."
+  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-parked-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  const put = (path, text) => {
+    const full = join(repo, path);
+    mkdirSync(dirname(full), { recursive: true });
+    writeFileSync(full, text);
+  };
+  const has = (ref, path) => {
+    try { git("cat-file", "-e", `${ref}:${path}`); return true; } catch { return false; }
+  };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs"))
+    cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 },
+    coords: "relative", body: "the frame",
+  }));
+  // the EXISTING container, published long before this crossing
+  put("WORLD/marks/let-there-be-light/the-district/mark.md", record({
+    by: "bram", at: { x: 1000, y: 1000 }, extent: { w: 400, h: 400 }, body: "bram's district, already canon",
+  }));
+
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
+
+  // the draft: parked at the ROOT by the door, standing on district ground
+  git("switch", "-q", "-c", "draft/house-c");
+  const parkedPath = "WORLD/marks/let-there-be-light/the-cairn/mark.md";
+  put(parkedPath, record({ by: "carys", at: { x: 1010, y: 990 }, extent: { w: 4, h: 4 }, body: "a cairn, left where the author stood" }));
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house c parks a cairn");
+  git("switch", "-q", "main");
+
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([{ holder: "s1", mark: "carys/the-cairn", n: 5, weight: 10 }]));
+
+  const report = settlementSweep({ repo, stakesPath });
+
+  assert.deepEqual(report.published.map((row) => row.id), ["carys/the-cairn"], "the staked parked draft publishes");
+  assert.deepEqual(report.rehomed.map((row) => [row.mark, row.from_parent, row.to_parent]),
+    [["carys/the-cairn", null, "bram/the-district"]],
+    "and the SAME crossing files it into its tightest container");
+  const moved = "WORLD/marks/let-there-be-light/the-district/the-cairn/mark.md";
+  assert.equal(has("main", moved), true, "the cairn sits inside the district on main");
+  assert.equal(has("main", parkedPath), false, "and no longer at the root");
+  const worldAt = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"))
+    .marks.find((m) => m.id === "carys/the-cairn").at;
+  assert.deepEqual(worldAt, { x: 1010, y: 990 }, "the mark did not move — the declared world position to the digit");
+  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
+});

@@ -311,6 +311,14 @@ function applyRehomes(repo, rehomes) {
     const from = relative_(repo, srcDir);
     const to = relative_(repo, destDir);
     if (existsSync(destDir)) throw new Error(`re-home: ${to} already exists — refusing to file ${item.mark} over something`);
+    // A mark PUBLISHED THIS CROSSING is on disk but not yet in the index (the
+    // publish writes files; staging happens in the commit step, after this
+    // pass) — and `git mv` refuses an untracked source as "directory is empty".
+    // Stage it first: a no-op for the long-tracked marks this pass historically
+    // moved, and the difference between moving and refusing for a root-parked
+    // draft being filed on its first crossing (the-town/the-parked; found by
+    // the shadow rehearsal, 2026-08-22 19:03Z — WOULD REFUSE, hours ahead).
+    git(repo, ["add", "--", from]);
     git(repo, ["mv", from, to]);
     relocate(srcDir, destDir);
 
