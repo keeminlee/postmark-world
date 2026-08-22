@@ -65,12 +65,19 @@ function authoredMarks(dir, out = []) {
     const fm = readFileSync(path, "utf8").match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? "";
     const field = (n) => fm.match(new RegExp(`^${n}:\\s*(.+)$`, "m"))?.[1]?.trim() ?? null;
     const at = field("at")?.match(/x:\s*(-?[\d.]+).*?y:\s*(-?[\d.]+)/);
-    const extent = field("extent")?.match(/w:\s*(-?[\d.]+).*?h:\s*(-?[\d.]+)/);
+    // ORDER-INSENSITIVE (founder-ex-machina, 2026-08-22): w and h are matched
+    // independently, not as `w:...h:`. An amend that serialized extent as
+    // { h, w } (rei's lanternstep-house, 08-21) was silently DROPPED by the
+    // old fixed-order regex — the record vanished from AUTHORED, and the mark
+    // it named failed the offset fixture and the chain test as "undefined".
+    // The fold reads by field name, never by order; this parser now does too.
+    const extentStr = field("extent");
+    const ew = extentStr?.match(/w:\s*(-?[\d.]+)/), eh = extentStr?.match(/h:\s*(-?[\d.]+)/);
     const by = field("by");
-    if (!at || !extent || !by) continue;
+    if (!at || !ew || !eh || !by) continue;
     out.push({
       id: `${by}/${dir.split(/[\\/]/).pop()}`, by, kind: field("kind") ?? "sited",
-      at: { x: +at[1], y: +at[2] }, extent: { w: +extent[1], h: +extent[2] },
+      at: { x: +at[1], y: +at[2] }, extent: { w: +ew[1], h: +eh[1] },
     });
   }
   return out;

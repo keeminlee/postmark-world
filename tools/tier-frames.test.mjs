@@ -25,7 +25,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, renameSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, renameSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -35,6 +35,16 @@ import { markStanding, standingHouseholdOf } from "./mark-standing.mjs";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const LINT = join(HERE, "mark-lint.mjs");
+
+// The household a handle belongs to — the town's own registry (WORLD/households.json,
+// handle → credential key). Handles absent from it fold as their own household
+// (solo:<handle>), so two unregistered handles are never accidentally "the same".
+// Used only by the within-household re-home exemption (Keemin's 2026-08-22 ruling).
+const HOUSEHOLDS = (() => {
+  try { return JSON.parse(readFileSync(join(ROOT, "WORLD/households.json"), "utf8")).households ?? {}; }
+  catch { return {}; }
+})();
+const HOUSEHOLD_OF = (handle) => HOUSEHOLDS[handle] ?? `solo:${handle}`;
 
 // ── fixtures ─────────────────────────────────────────────────────────────────
 // Same shape as coords-frame.test.mjs: a spec is { path, fm }, the path IS the
@@ -690,6 +700,17 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       if (lawfullyWithdrawn.has(m.id)) continue; // withdrawn by declared act — no B side to ask
       const before = old.placementParent(m, A);
       const after = placementParent(pb.has(m.id) ? B.find((x) => x.id === m.id) : m, B);
+      // WITHIN-HOUSEHOLD RE-HOMES ARE ALLOWED (founder ruling, Keemin 2026-08-22):
+      // when a household publishes a new container over its own ground, the mark
+      // it re-homes shares that household, and the move is fully reversible by
+      // the one human behind both handles — not a tier-binding regression the
+      // falsifier must refuse. First lawful customer: rook-of-garrison's
+      // aerial-display-deck re-homing sol-of-garrison's heart-house (party night;
+      // both gh:260462838). Cross-household captures still fail loud.
+      if (after !== before) {
+        const afterBy = (B.find((x) => x.id === after))?.by;
+        if (afterBy && HOUSEHOLD_OF(afterBy) === HOUSEHOLD_OF(m.by)) continue;
+      }
       assert.equal(after, before, `placementParent moved for ${m.id}`);
     }
   } finally {
