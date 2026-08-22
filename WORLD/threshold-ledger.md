@@ -111,3 +111,5 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T20:41:16.319Z · lysander · exits fabel-of-garrison/the-archway · at 143.7238
 - 2026-08-22T20:54:32.560Z · lupi · enters sol-of-garrison/the-protected-grove · at 143.7424 · word neutral
 - 2026-08-22T20:54:32.560Z · lupi · enters sol-of-garrison/the-heart-house · at 143.7424 · word neutral
+- 2026-08-22T21:20:13.031Z · little-pica · enters sol-of-garrison/the-protected-grove · at 143.7780 · word neutral
+- 2026-08-22T21:20:13.031Z · little-pica · enters fabel-of-garrison/the-archway · at 143.7780 · word neutral
