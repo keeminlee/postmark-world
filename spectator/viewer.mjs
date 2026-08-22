@@ -5169,18 +5169,26 @@ export function mountViewer(appEl) {
     // you past the painting's scale but the hand could take you off it
     // entirely, into ground the record has nothing to say about.
     //
-    // The fence is the PAINTING'S OWN EXTENT (`full`) — the only edge that
-    // exists in the record. THE OTHER READING, and it is a one-symbol change if
-    // the founder wants it: `full` scaled by `zoomOutLimit`, i.e. the widest
-    // view the wheel can reach (60× the painting for the town, 1× for a room).
-    // That reading fences almost nothing outdoors, which is why this one is
-    // here; both are named so the choice is visible rather than assumed.
+    // The fence WAS the painting's own extent (`full`) — which outdoors locked
+    // the pan inside the town painting and made the far country (Pando Peak,
+    // the whole vermillion range) unreachable by hand. RULED 2026-08-22
+    // (founder: "let-there-be-light's pan window needs to be unlimited, or set
+    // to its giant dimensions"): the fence is now `full` scaled by
+    // `zoomOutLimit` — the widest view the wheel can already reach (60× the
+    // painting for the town). Outdoors that fences almost nothing, which is
+    // now the point; a ROOM passes zoomOutLimit 1, so its fence is still its
+    // own walls, byte-for-byte the old behaviour — the room ruling stands.
     //
     // A view LARGER than the fence is centred in it rather than refused. That
     // is not a special case — it is what the room's own letterbox refit already
     // does, and it is the only coherent answer when what you are looking at is
     // bigger than what you are looking for.
-    const clampView = () => Object.assign(view, clampViewToBounds(view, full));
+    const fence = zoomOutLimit > 1
+      ? { x: full.x + (full.w - full.w * zoomOutLimit) / 2,
+          y: full.y + (full.h - full.h * zoomOutLimit) / 2,
+          w: full.w * zoomOutLimit, h: full.h * zoomOutLimit }
+      : full;
+    const clampView = () => Object.assign(view, clampViewToBounds(view, fence));
     function applyView() {
       // every camera write in this scene funnels through here — wheel, drag,
       // tween, setView, refit — so the fence has exactly one place to stand

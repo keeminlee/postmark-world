@@ -55,8 +55,16 @@ test("THE FENCE HAS ONE OWNER: every camera write goes through applyView, and ap
   // the wheel walk straight off the edge.
   assert.match(SOURCE, /function applyView\(\)\s*\{[\s\S]{0,400}?clampView\(\)/,
     "applyView must clamp before it writes the viewBox");
-  assert.match(SOURCE, /const clampView = \(\) => Object\.assign\(view, clampViewToBounds\(view, full\)\)/,
-    "and the scene's clamp must be the shared arithmetic, over the painting's own extent");
+  // THE FENCE IS THE ZOOM WINDOW, NOT THE PAINTING (founder, 2026-08-22:
+  // "let-there-be-light's pan window needs to be unlimited, or set to its
+  // giant dimensions" — the painting-extent fence made Pando Peak and the far
+  // country unreachable by hand). Outdoors the fence is `full` scaled by
+  // zoomOutLimit (60× the town painting); a room passes zoomOutLimit 1, so its
+  // fence is still its own walls — the room ruling stands, byte-for-byte.
+  assert.match(SOURCE, /const fence = zoomOutLimit > 1\s*\?[\s\S]{0,300}?w: full\.w \* zoomOutLimit, h: full\.h \* zoomOutLimit[\s\S]{0,60}?: full;/,
+    "the fence is the painting scaled by zoomOutLimit outdoors, and the painting itself for a room");
+  assert.match(SOURCE, /const clampView = \(\) => Object\.assign\(view, clampViewToBounds\(view, fence\)\)/,
+    "and the scene's clamp must be the shared arithmetic, over that fence");
 });
 
 // ── #3, the zoom the reader keeps when they step outside ────────────────────
