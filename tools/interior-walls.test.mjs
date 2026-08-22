@@ -69,19 +69,25 @@ test("THE DESK ASKS BEFORE IT ARMS — the guard is wired at the click, not at c
     "with nothing left armed behind it");
 });
 
-test("THE LIVE RECORD: someone really is inside a room small enough for this to bite", () => {
+test("THE LIVE RECORD: someone really is inside a room small enough for this to bite", (t) => {
   // A guard proven only on fixtures could be fencing a shape the town does not
-  // have. rei is inside sable's house on the ledger right now, and that house is
-  // a few metres across while the painting is kilometres — so almost every
-  // click on the map, from inside, is a click through a wall.
+  // have — so when the ledger holds ANYONE inside a small room, the guard is
+  // proven on that resident's actual walls. This test used to name rei, and
+  // went red the moment she lawfully stepped outside (2026-08-22: her exits
+  // turned the whole suite — and with it the settlement's gate — red on an
+  // empty town). A resident's lawful act must never refuse the crossing, so an
+  // empty town SKIPS, out loud: the live proof simply waits for the next
+  // resident indoors. The arithmetic stays pinned by the fixture tests above.
   const marks = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
   const byId = new Map(marks.map((m) => [m.id, m]));
   const { acts } = parseThresholdLedger(readFileSync(join(ROOT, "WORLD/threshold-ledger.md"), "utf8"));
-  const inside = standpointOccupancy({ acts, at: fractionalCrossing(), handle: "rei" }).insideOf;
-  assert.ok(inside, "rei is not inside anything — if that is now true, this test is the thing to re-read");
-  const room = byId.get(inside);
-  assert.ok(room?.extent?.w > 0, `${inside} has no extent to be inside of`);
-  assert.ok(room.extent.w < 100, `${inside} is ${room.extent.w} m across — the case this guards is a small room`);
+  const handles = [...new Set(acts.map((a) => a.who).filter(Boolean))];
+  const proof = handles
+    .map((handle) => ({ handle, inside: standpointOccupancy({ acts, at: fractionalCrossing(), handle }).insideOf }))
+    .map(({ handle, inside }) => ({ handle, inside, room: inside ? byId.get(inside) : null }))
+    .find(({ room }) => room?.extent?.w > 0 && room.extent.w < 100 && room.at);
+  if (!proof) { t.skip("nobody is inside a small room on the ledger right now — the live proof waits for the next resident indoors"); return; }
+  const { room } = proof;
   // a point a kilometre off is outside it, and the desk now says so
   assert.equal(interiorWalkVerdict({ point: { x: room.at.x + 1000, y: room.at.y }, room }).ok, false);
   assert.equal(interiorWalkVerdict({ point: { x: room.at.x, y: room.at.y }, room }).ok, true);

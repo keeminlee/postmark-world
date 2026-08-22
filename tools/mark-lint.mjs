@@ -379,11 +379,22 @@ for (const rec of marks) {
   const dirParent = parentOf(rec);
   const outranks = !!dirParent && rankOf(rec) > rankOf(dirParent);
   const frameKept = samePoint(frameOriginFrom(rec, dirParent), frameOriginFrom(rec, expected === null ? ROOT_MARK : byId.get(expected)));
+  // A ROOT-PARKED mark is the draft door's own parking spot (draft-costs-
+  // nothing, 2026-08-22): the author declared a world position and chose no
+  // filing, so there is no author's word for the geometry to disagree WITH —
+  // the save files it, and the re-home pass re-frames the numbers exactly
+  // (the-town/the-parked, a clause of the-town/the-re-homing). The ERROR arm
+  // below is for a NESTED filing the author chose that the geometry contradicts
+  // — there the machinery may not pick a side.
+  const rootParked = actual === null;
   // A record whose parent is unreadable is not in byId at all, so `outranks` is
   // false and the frame walk starts above it — refusing is the only honest
   // answer about a tier nobody can read.
-  if (!outranks && !frameKept)
+  if (!outranks && !frameKept && !rootParked)
     err(rec, `directory parent is "${actual ?? "(root)"}", but placementParent is "${expected ?? "(root)"}" — the edge must name the tightest geometric container (re-home the directory)${cite("the-town/the-gate")}`);
+  else if (rootParked && !outranks && !frameKept)
+    rehome(rec, actual, expected,
+      `the door parked this mark at the root and its author chose no filing; the tightest container is "${expected ?? "(root)"}" — the save files it by geometry, numbers re-framed, so the mark does not move${cite("the-town/the-parked")}`);
   else
     rehome(rec, actual, expected,
       `this mark stands as ${standingOf(rec)} and is framed by the world, not by "${actual ?? "(root)"}", and the tightest container is now "${expected ?? "(root)"}" — re-point the edge. The mark does not move: its numbers never mentioned "${actual ?? "(root)"}" in the first place${cite("the-town/the-gate")}`);

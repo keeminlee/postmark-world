@@ -287,6 +287,27 @@ test("yellow-in-yellow is BOUND: it rides its parent, and a lying edge is still 
   });
 });
 
+// ── the parked mark (draft-costs-nothing, 2026-08-22) ────────────────────────
+// The law (the-town/the-parked, a clause of the-town/the-re-homing): "A mark
+// the door parked at the root has no author-chosen filing; the save re-homes
+// it by geometry, numbers re-framed, so the mark does not move." The ERROR arm
+// above is for a NESTED filing the author chose; a root parking is the draft
+// door's own act, so geometry is the only author's word there is.
+test("a ROOT-PARKED mark on someone's ground is a REHOME, never a refusal — the door parks; the save files", () => {
+  const HOUSE = { path: `${R}/the-house`, fm: mark("sovereignty", { x: 500, y: 500 }, { w: 100, h: 100 }) };
+  const CUP = { path: `${R}/the-cup`, fm: mark("market", { x: 510, y: 495 }, { w: 1, h: 1 }) };
+  withTree([THE_ROOT, HOUSE, CUP], (dir) => {
+    const out = runLint(dir);
+    assert.equal(out.code, 3, "repair asked, crossing not refused");
+    assert.equal(out.findings.filter((f) => f.sev === "ERROR").length, 0, "zero errors — the whole-town refusal class is closed");
+    const fix = out.rehomes.find((r) => r.mark === "t/the-cup");
+    assert.ok(fix, "the parked cup is offered as a re-home");
+    assert.equal(fix.to, "t/the-house", "into its tightest geometric container");
+    assert.match(fix.msg, /the door parked this mark at the root/);
+    assert.match(fix.msg, /the-town\/the-parked/, "and the finding cites the planted clause");
+  });
+});
+
 // ── QUADRANT 3: blue in blue — equal ranks bind ──────────────────────────────
 test("blue-in-blue is BOUND: the wheelhouse rides the Post Office, and the Centre's three children bind", () => {
   // The live tree, not a fixture: equal tiers bind, so the whole constitution
@@ -366,16 +387,26 @@ test("a TOP-LEVEL mark a new claim grows around is re-homed, not refused", () =>
     // and the repair really is free: framed by the world before and after
     assert.deepEqual(by(dir)["the-town/the-reach"]._origin, { x: 0, y: 0 });
   });
-  // …but a top-level mark the new container WOULD bind is still a refusal:
-  // there the numbers genuinely change meaning, and somebody has to say so.
+  // …and a top-level mark the new container WOULD bind is a REHOME too, as of
+  // 2026-08-22 (this arm used to refuse: "the numbers genuinely change meaning,
+  // and somebody has to say so"). The law that superseded it is
+  // the-town/the-parked: "A mark the door parked at the root has no
+  // author-chosen filing; the save re-homes it by geometry, numbers re-framed,
+  // so the mark does not move." There is no author's filing to defend at the
+  // root, and the sweep's re-home pass rewrites the numbers under an exact
+  // round-trip check — the world position is preserved to the digit. The
+  // refusal arm survives ONLY for a NESTED filing the author chose (the
+  // yellow-in-yellow lying-edge test above).
   withTree([
     THE_ROOT,
     { path: `${R}/the-cottage`, fm: mark("market", { x: 1000, y: 1000 }, { w: 20, h: 20 }) },
     { path: `${R}/the-district`, fm: mark("constitution", { x: 1000, y: 1000 }, { w: 400, h: 400 }, { by: "the-town" }) },
   ], (dir) => {
     const out = runLint(dir);
-    assert.equal(out.code, 1, "refused");
-    assert.deepEqual(out.rehomes, []);
+    assert.equal(out.code, 3, "repair asked, not refused — the door parks; the save files");
+    assert.equal(out.findings.filter((f) => f.sev === "ERROR").length, 0);
+    assert.deepEqual(out.rehomes.map((r) => [r.mark, r.from, r.to]), [["t/the-cottage", null, "the-town/the-district"]]);
+    assert.match(out.rehomes[0].msg, /the-town\/the-parked/);
   });
 });
 
