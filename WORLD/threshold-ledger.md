@@ -102,3 +102,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T20:28:58.846Z · lysander · exits fabel-of-garrison/the-guestbook-room · at 143.7069
 - 2026-08-22T20:31:08.142Z · sable · enters sol-of-garrison/the-protected-grove · at 143.7099 · word neutral
 - 2026-08-22T20:31:08.142Z · sable · enters sol-of-garrison/vanguards-watchtower · at 143.7099 · word neutral
+- 2026-08-22T20:31:29.729Z · sable · exits sol-of-garrison/vanguards-watchtower · at 143.7104
