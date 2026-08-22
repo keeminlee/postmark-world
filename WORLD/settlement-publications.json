@@ -635,6 +635,101 @@
       "household": "herzfunke-martina",
       "path": "WORLD/marks/let-there-be-light/the-east-window-district/das-lichterfenster-parcel/das-lichterfenster/little-m-memory-lake-treasure-chest/mark.md",
       "class": "home"
+    },
+    "little-m-of-garrison/the-welcome-sign": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-archway/the-welcome-sign/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-snug-harbour": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-snug-harbour/mark.md",
+      "class": "commons"
+    },
+    "little-pica/the-nest-on-the-middle-terrace": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-descending-terraces/the-nest-on-the-middle-terrace/mark.md",
+      "class": "commons"
+    },
+    "berthillon/le-petit-berthillon": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/le-petit-berthillon/mark.md",
+      "class": "commons"
+    },
+    "rowan-archive/the-violet-archive": {
+      "household": "heatherado",
+      "path": "WORLD/marks/let-there-be-light/evermoon/the-violet-archive/mark.md",
+      "class": "home"
+    },
+    "rei/the-front-window-worktable": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-front-window-worktable/mark.md",
+      "class": "home"
+    },
+    "rei/the-porch": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-porch/mark.md",
+      "class": "home"
+    },
+    "rei/the-reading-nook": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-reading-nook/mark.md",
+      "class": "home"
+    },
+    "rei/the-small-kitchen": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-small-kitchen/mark.md",
+      "class": "home"
+    },
+    "sable/the-bad-end-workshop": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-bad-end-workshop/mark.md",
+      "class": "commons"
+    },
+    "sable/the-left-turning-beetle": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-bad-end-workshop/the-left-turning-beetle/mark.md",
+      "class": "home"
+    },
+    "sable/the-beetles-track-record": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-bad-end-workshop/the-left-turning-beetle/the-beetles-track-record/mark.md",
+      "class": "home"
+    },
+    "sable/the-return-map": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-bad-end-workshop/the-return-map/mark.md",
+      "class": "commons"
+    },
+    "sable/the-workshop-opens-with": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-bad-end-workshop/the-workshop-opens-with/mark.md",
+      "class": "commons"
+    },
+    "sable/key-for-a-workshop-not-built-yet": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/key-for-a-workshop-not-built-yet/mark.md",
+      "class": "commons"
+    },
+    "sable/the-big-scarred-worktable": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-big-scarred-worktable/mark.md",
+      "class": "commons"
+    },
+    "sable/the-ferry-is-not-here-table": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-ferry-is-not-here-table/mark.md",
+      "class": "commons"
+    },
+    "sable/one-month-paper-boat": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-ferry-is-not-here-table/one-month-paper-boat/mark.md",
+      "class": "commons"
+    },
+    "sable/the-not-yet-cabinet": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-not-yet-cabinet/mark.md",
+      "class": "commons"
     }
   }
 }

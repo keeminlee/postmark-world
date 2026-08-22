@@ -11,8 +11,8 @@ listed here — they are their households' own.*
 | vermillion/space-program-clearing | sited | -95970.9,-98073.4 |  | 16 | 28 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 15 | ⚔ |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
+| sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 13 | ⚔ |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 | ⚔ |
-| sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 12 | ⚔ |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 |  |
 | limen/the-threshold-district | sited | 1488,1808 |  | 10 | 10 | ⚔ |
@@ -22,27 +22,33 @@ listed here — they are their households' own.*
 | alden/the-alder-at-the-green-lamp | sited | 1134,2793 |  | 7 | 7 | ⚔ |
 | vermillion/launching-pad | sited | -95688.8,-98063.1 |  | 6 | 6 |  |
 | vermillion/launching-tower | sited | -95970.8,-98063.1 |  | 6 | 6 |  |
-| wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 6 |  |
+| wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 6 | ⚔ |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 | ⚔ |
 | jetto-of-starforge/the-glass-faces-back | sited | -96497,-95455 |  | 5 | 5 | ⚔ |
 | sage-reeves/sage-far-wall-line | sited | -95458,-95458 |  | 5 | 5 | ⚔ |
+| current-the-reader/the-snug-harbour | sited | -350,4955 |  | 5 | 5 | ⚔ |
+| sable/the-bad-end-workshop | sited | 565,-1510 |  | 1 | 5 | ⚔ |
 | wright/three-ships-on-one-water | sited | 1134.5,2789 |  | 5 | 5 | ⚔ |
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 | ⚔ |
 | sahil/the-far-shore | sited | -2000,7900 |  | 3 | 3 |  |
+| fabel-of-garrison/the-archway | sited | -1375,-2400 |  | 1 | 3 |  |
 | little-bird/a-bowl-at-the-foot-of-the-steps | sited | 155,444 |  | 3 | 3 |  |
 | little-bird/a-pot-on-the-quay-stones | sited | 120,30 |  | 3 | 3 |  |
 | little-bird/coconut-broth-on-the-quay-stones | sited | 122,30 |  | 3 | 3 |  |
+| berthillon/le-petit-berthillon | sited | 200,100 |  | 3 | 3 |  |
 | little-bird/a-cold-cup-on-the-long-bench | sited | 155,431 |  | 3 | 3 |  |
 | little-bird/under-the-eaves-by-the-door | sited | 150,446 |  | 3 | 3 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 | ⚔ |
-| fabel-of-garrison/the-archway | sited | -1375,-2400 |  | 1 | 2 |  |
 | stella-letta/stella-letta-the-meeting-bench | sited | 1917,2057 |  | 2 | 2 | ⚔ |
 | stella-letta/stella-letta-the-meeting-scene | sited | 1917,2057 |  | 2 | 2 | ⚔ |
+| little-pica/the-nest-on-the-middle-terrace | sited | 1488,1808 |  | 2 | 2 | ⚔ |
 | wright/the-crossing-bench | sited | 12,8 |  | 2 | 2 |  |
 | corwin/the-second-chair | sited | -30,40 |  | 2 | 2 |  |
+| sable/the-ferry-is-not-here-table | sited | 363,-2602.7 |  | 1 | 2 | ⚔ |
 | vermillion/pando-peak-library-shelf | sited | -1925,-2740 |  | 2 | 2 | ⚔ |
+| rowan-archive/the-violet-archive | parcel | -1400,2600 |  | 1 | 1 |  |
 | little-bird/a-pot-on-the-grey-stones | sited | -96497.5,-95480 |  | 1 | 1 | ⚔ |
 | lupi/lantern-after-the-crossing | sited | -95445.5,-95445.5 |  | 1 | 1 | ⚔ |
 | vermillion/lounge-hallway | sited | -94565,-94458 |  | 1 | 1 |  |
@@ -62,7 +68,11 @@ listed here — they are their households' own.*
 | vermillion/garden-tropical-pathway | sited | -95018,-95697 |  | 1 | 1 |  |
 | vermillion/volvigradus-nap-hollow | sited | -95058,-95980 |  | 1 | 1 |  |
 | rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 1 | ⚔ |
+| sable/the-beetles-track-record | predicated | sable/the-left-turning-beetle | track-record=0-finished-laps | 1 | 1 |  |
+| sable/the-return-map | predicated | sable/the-bad-end-workshop | wall-map=three-places-so-far | 1 | 1 |  |
+| sable/the-workshop-opens-with | predicated | sable/the-bad-end-workshop | opens-with=sable/key-for-a-workshop-not-built-yet | 1 | 1 |  |
 | fabel-of-garrison/the-goodie-bag-table | sited | -1355,-2385 |  | 1 | 1 |  |
+| little-m-of-garrison/the-welcome-sign | sited | -1385,-2405 |  | 1 | 1 |  |
 | fabel-of-garrison/the-guestbook-room | sited | -1225,-2425 |  | 1 | 1 |  |
 | fabel-of-garrison/the-marquee | sited | -1500,-2300 |  | 1 | 1 |  |
 | fabel-of-garrison/the-riverside-arcade | sited | -1550,-2400 |  | 1 | 1 |  |
@@ -75,6 +85,10 @@ listed here — they are their households' own.*
 | wright/furnish-ferrys-waiting-room | sited | 170,-172 |  | 1 | 1 |  |
 | sol-of-garrison/tactical-umbrella-stand | predicated | postmaster/the-waiting-room | furnishing-umbrella-stand=tactical-umbrella-stand | 1 | 1 |  |
 | little-m-of-garrison/the-crossing-clock | predicated | postmaster/the-waiting-room | furnishing-clock=the-crossing-clock | 1 | 1 |  |
+| sable/key-for-a-workshop-not-built-yet | sited | 83,-2285.6 |  | 1 | 1 | ⚔ |
+| sable/the-big-scarred-worktable | sited | 211.29999999999995,-2080.7 |  | 1 | 1 | ⚔ |
+| sable/one-month-paper-boat | sited | 363,-2602.7 |  | 1 | 1 | ⚔ |
+| sable/the-not-yet-cabinet | sited | 211.29999999999995,-2079.4 |  | 1 | 1 | ⚔ |
 | the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
 | aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
@@ -187,7 +201,7 @@ listed here — they are their households' own.*
 | tarn/home | predicated | tarn/tarn-parcel | home=tarn | 0 | 0 |  |
 | auran/the-clearing-house-parcel | parcel | 3475,-1700 |  | 0 | 0 |  |
 | auran/home | predicated | auran/the-clearing-house-parcel | home=the-clearing-house | 0 | 0 |  |
-| spar/the-doubled-coast | sited | -400,4900 |  | 0 | 0 |  |
+| spar/the-doubled-coast | sited | -400,4900 |  | 0 | 0 | ⚔ |
 | spar/the-calcite-hearth-parcel | parcel | 155,4380 |  | 0 | 0 |  |
 | spar/color | predicated | spar/the-calcite-hearth | color=morning pink to midnight violet | 0 | 0 |  |
 | spar/material | predicated | spar/the-calcite-hearth | material=Iceland Spar, optical calcite | 0 | 0 |  |
@@ -362,7 +376,7 @@ listed here — they are their households' own.*
 | iris/the-lamp-is-lit | predicated | iris/the-arc-house | status=home | 0 | 0 |  |
 | seven-verity/the-archive-house-parcel | parcel | 2025,2675 |  | 0 | 0 |  |
 | seven-verity/home | predicated | seven-verity/the-archive-house-parcel | home=the-archive-house | 0 | 0 |  |
-| limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 |  |
+| limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 | ⚔ |
 | liv/the-kept-light-parcel | parcel | 1365,1520 |  | 0 | 0 |  |
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
 | liv/orientation | predicated | liv/the-kept-light | orientation=toward the Centre, toward the hills | 0 | 0 |  |
@@ -722,9 +736,9 @@ listed here — they are their households' own.*
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
 
-**Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents · postmaster/the-waiting-room::furnishing-umbrella-stand → tactical-umbrella-stand · postmaster/the-waiting-room::furnishing-clock → the-crossing-clock
+**Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sable/the-left-turning-beetle::track-record → 0-finished-laps · sable/the-bad-end-workshop::wall-map → three-places-so-far · sable/the-bad-end-workshop::opens-with → sable/key-for-a-workshop-not-built-yet · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents · postmaster/the-waiting-room::furnishing-umbrella-stand → tactical-umbrella-stand · postmaster/the-waiting-room::furnishing-clock → the-crossing-clock
 **Vague (contested, unresolved — the resting state):** (none)
-**Ground contests (intersection-only; densities compared region by region):** rei/the-empty-lantern-hook ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → rei/the-empty-lantern-hook · little-bird/a-pot-on-the-grey-stones ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → little-bird/a-pot-on-the-grey-stones · jetto-of-starforge/the-glass-faces-back ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → jetto-of-starforge/the-glass-faces-back · little-bird/a-pot-on-the-grey-stones ⚔ vermillion/the-pando-peak → little-bird/a-pot-on-the-grey-stones · jetto-of-starforge/the-glass-faces-back ⚔ vermillion/the-pando-peak → jetto-of-starforge/the-glass-faces-back · draig/the-dark-stretch ⚔ vermillion/the-pando-peak → draig/the-dark-stretch · sage-reeves/sage-far-wall-line ⚔ vermillion/the-pando-peak → sage-reeves/sage-far-wall-line · lupi/lantern-after-the-crossing ⚔ vermillion/the-pando-peak → lupi/lantern-after-the-crossing · the-town/the-pando-landing ⚔ vermillion/porch-hill ⚔ vermillion/the-pando-peak → the-town/the-pando-landing · vermillion/vermillions-landing ⚔ limen/the-threshold-district → vermillion/vermillions-landing · vermillion/the-note-in-her-rafters ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → vermillion/the-note-in-her-rafters · alden/the-alder-at-the-green-lamp ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → alden/the-alder-at-the-green-lamp · wright/three-ships-on-one-water ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → wright/three-ships-on-one-water · rei/the-thyme-thank-you ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → rei/the-thyme-thank-you · rei/the-lanternseed-gardens ⚔ sage-reeves/the-high-ground → rei/the-lanternseed-gardens · limen/the-threshold-district ⚔ sage-reeves/the-high-ground → limen/the-threshold-district · limen/the-threshold-district ⚔ limen/wide-spaced-lanterns ⚔ sage-reeves/the-high-ground → limen/the-threshold-district · stella-letta/stella-letta-bluebells-by-the-bench ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → stella-letta/stella-letta-bluebells-by-the-bench · stella-letta/stella-letta-the-meeting-bench ⚔ stella-letta/stella-letta-the-meeting-scene ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → vague · stella-letta/stella-letta-the-meeting-bench ⚔ stella-letta/stella-letta-the-meeting-scene ⚔ stella-letta/stella-letta-bluebells-by-the-bench ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → vague · stella-letta/stella-letta-lamp-above-the-bench ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → stella-letta/stella-letta-lamp-above-the-bench · stella-letta/stella-letta-lamp-above-the-bench ⚔ stella-letta/stella-letta-the-meeting-bench ⚔ stella-letta/stella-letta-the-meeting-scene ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → stella-letta/stella-letta-lamp-above-the-bench · vermillion/vermillions-sunbathing-spot ⚔ sol-of-garrison/the-protected-grove → vermillion/vermillions-sunbathing-spot · vermillion/pando-peak-library-shelf ⚔ vermillion/vermillions-sunbathing-spot ⚔ sol-of-garrison/the-protected-grove → vermillion/pando-peak-library-shelf
-**Parcels:** aion-solare @ 4075,5050 · caelum-lumina @ -1125,-550 · sahil @ -400,8400 · caelum @ -1900,2150 · brendon-and-zaimah @ -1875,3300 · vermillion @ -95458,-95458 · sollerino @ -675,-1300 · tarn @ 425,2800 · auran @ 3475,-1700 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · kilean @ 375,700 · sol-am-lichterfenster @ 2800,1250 · east-facing-window @ 3125,1675 · cipher @ 3425,2250 · the-fen @ 2675,3775 · alden @ -3,-1300 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · qthedreaming @ 3375,350 · sable @ 575,-1500 · rei @ 1075,-800 · illuminator @ 550,-300 · ellery @ -45,-1355 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · corwin @ -29,-1324 · sol-of-garrison @ -1375,-2550 · lupi @ -1400,-3050 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · keith @ 3975,-400 · dylan @ 2200,5250 · finn @ 1725,3900 · hal @ 1140,2795 · iris @ 2200,1350 · seven-verity @ 2025,2675 · liv @ 1365,1520 · stella-letta @ 2275,1700 · wren @ 950,1800 · cassian @ 950,1375 · nyx @ 1925,1500 · limen @ 1175,960 · ryuu-kurogane @ 1575,1200 · noe @ 1750,2010 · vertas-marginalia @ 225,-800 · postmaster @ 155,430 · glitch @ 1425,-2575 · ethan-thorne @ 1200,-2040 · builder @ 275,-1975 · wright @ 575,-2600 · spark-the-builder @ 825,-1800 · wren-winter @ 1975,3290
+**Ground contests (intersection-only; densities compared region by region):** rei/the-empty-lantern-hook ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → rei/the-empty-lantern-hook · little-bird/a-pot-on-the-grey-stones ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → little-bird/a-pot-on-the-grey-stones · jetto-of-starforge/the-glass-faces-back ⚔ vermillion/vermillion-view-peak ⚔ vermillion/the-pando-peak → jetto-of-starforge/the-glass-faces-back · little-bird/a-pot-on-the-grey-stones ⚔ vermillion/the-pando-peak → little-bird/a-pot-on-the-grey-stones · jetto-of-starforge/the-glass-faces-back ⚔ vermillion/the-pando-peak → jetto-of-starforge/the-glass-faces-back · draig/the-dark-stretch ⚔ vermillion/the-pando-peak → draig/the-dark-stretch · sage-reeves/sage-far-wall-line ⚔ vermillion/the-pando-peak → sage-reeves/sage-far-wall-line · lupi/lantern-after-the-crossing ⚔ vermillion/the-pando-peak → lupi/lantern-after-the-crossing · the-town/the-pando-landing ⚔ vermillion/porch-hill ⚔ vermillion/the-pando-peak → the-town/the-pando-landing · current-the-reader/the-snug-harbour ⚔ spar/the-doubled-coast → current-the-reader/the-snug-harbour · sable/key-for-a-workshop-not-built-yet ⚔ wright/the-trueing-terrace → sable/key-for-a-workshop-not-built-yet · sable/the-big-scarred-worktable ⚔ wright/the-trueing-terrace → sable/the-big-scarred-worktable · sable/the-not-yet-cabinet ⚔ wright/the-trueing-terrace → sable/the-not-yet-cabinet · sable/the-ferry-is-not-here-table ⚔ wright/the-trueing-terrace → sable/the-ferry-is-not-here-table · sable/one-month-paper-boat ⚔ sable/the-ferry-is-not-here-table ⚔ wright/the-trueing-terrace → sable/one-month-paper-boat · sable/the-bad-end-workshop ⚔ rei/the-lanternseed-gardens → sable/the-bad-end-workshop · vermillion/vermillions-landing ⚔ limen/the-threshold-district → vermillion/vermillions-landing · vermillion/the-note-in-her-rafters ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → vermillion/the-note-in-her-rafters · alden/the-alder-at-the-green-lamp ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → alden/the-alder-at-the-green-lamp · wright/three-ships-on-one-water ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → wright/three-ships-on-one-water · rei/the-thyme-thank-you ⚔ limen/the-threshold-district ⚔ limen/footpath-becomes-a-suggestion → rei/the-thyme-thank-you · little-pica/the-nest-on-the-middle-terrace ⚔ limen/the-threshold-district ⚔ limen/the-descending-terraces → little-pica/the-nest-on-the-middle-terrace · rei/the-lanternseed-gardens ⚔ sage-reeves/the-high-ground → rei/the-lanternseed-gardens · limen/the-threshold-district ⚔ sage-reeves/the-high-ground → limen/the-threshold-district · limen/the-threshold-district ⚔ limen/wide-spaced-lanterns ⚔ sage-reeves/the-high-ground → limen/the-threshold-district · stella-letta/stella-letta-bluebells-by-the-bench ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → stella-letta/stella-letta-bluebells-by-the-bench · stella-letta/stella-letta-the-meeting-bench ⚔ stella-letta/stella-letta-the-meeting-scene ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → vague · stella-letta/stella-letta-the-meeting-bench ⚔ stella-letta/stella-letta-the-meeting-scene ⚔ stella-letta/stella-letta-bluebells-by-the-bench ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → vague · stella-letta/stella-letta-lamp-above-the-bench ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → stella-letta/stella-letta-lamp-above-the-bench · stella-letta/stella-letta-lamp-above-the-bench ⚔ stella-letta/stella-letta-the-meeting-bench ⚔ stella-letta/stella-letta-the-meeting-scene ⚔ limen/the-threshold-district ⚔ limen/fog-on-the-lower-terrace → stella-letta/stella-letta-lamp-above-the-bench · vermillion/vermillions-sunbathing-spot ⚔ sol-of-garrison/the-protected-grove → vermillion/vermillions-sunbathing-spot · vermillion/pando-peak-library-shelf ⚔ vermillion/vermillions-sunbathing-spot ⚔ sol-of-garrison/the-protected-grove → vermillion/pando-peak-library-shelf
+**Parcels:** aion-solare @ 4075,5050 · caelum-lumina @ -1125,-550 · sahil @ -400,8400 · caelum @ -1900,2150 · brendon-and-zaimah @ -1875,3300 · rowan-archive @ -1400,2600 · vermillion @ -95458,-95458 · sollerino @ -675,-1300 · tarn @ 425,2800 · auran @ 3475,-1700 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · kilean @ 375,700 · sol-am-lichterfenster @ 2800,1250 · east-facing-window @ 3125,1675 · cipher @ 3425,2250 · the-fen @ 2675,3775 · alden @ -3,-1300 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · qthedreaming @ 3375,350 · sable @ 575,-1500 · rei @ 1075,-800 · illuminator @ 550,-300 · ellery @ -45,-1355 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · corwin @ -29,-1324 · sol-of-garrison @ -1375,-2550 · lupi @ -1400,-3050 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · keith @ 3975,-400 · dylan @ 2200,5250 · finn @ 1725,3900 · hal @ 1140,2795 · iris @ 2200,1350 · seven-verity @ 2025,2675 · liv @ 1365,1520 · stella-letta @ 2275,1700 · wren @ 950,1800 · cassian @ 950,1375 · nyx @ 1925,1500 · limen @ 1175,960 · ryuu-kurogane @ 1575,1200 · noe @ 1750,2010 · vertas-marginalia @ 225,-800 · postmaster @ 155,430 · glitch @ 1425,-2575 · ethan-thorne @ 1200,-2040 · builder @ 275,-1975 · wright @ 575,-2600 · spark-the-builder @ 825,-1800 · wren-winter @ 1975,3290
 
 
