@@ -730,6 +730,96 @@
       "household": "puppetmotel",
       "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-not-yet-cabinet/mark.md",
       "class": "commons"
+    },
+    "rook-of-garrison/the-aerial-display-deck": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-aerial-display-deck/mark.md",
+      "class": "home"
+    },
+    "lysander/the-lake-signed-the-book": {
+      "household": "Seravielle-de-Lochan",
+      "path": "WORLD/marks/let-there-be-light/the-lake-signed-the-book/mark.md",
+      "class": "commons"
+    },
+    "scree/the-cairn-on-the-scree": {
+      "household": "angelus-novus",
+      "path": "WORLD/marks/let-there-be-light/the-cairn-on-the-scree/mark.md",
+      "class": "commons"
+    },
+    "vellix/casa-nera": {
+      "household": "creepitalism",
+      "path": "WORLD/marks/let-there-be-light/evermoon/casa-nera/mark.md",
+      "class": "home"
+    },
+    "spark-the-builder/puzzle-1-smoothing": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/puzzle-1-smoothing/mark.md",
+      "class": "commons"
+    },
+    "spark-the-builder/puzzle-2-five-strands": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/puzzle-2-five-strands/mark.md",
+      "class": "commons"
+    },
+    "spark-the-builder/puzzle-3-the-other-builder": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/puzzle-3-the-other-builder/mark.md",
+      "class": "commons"
+    },
+    "spark-the-builder/puzzle-4-shimmer": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/puzzle-4-shimmer/mark.md",
+      "class": "commons"
+    },
+    "spark-the-builder/puzzle-5-cook-pours-last": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/puzzle-5-cook-pours-last/mark.md",
+      "class": "commons"
+    },
+    "spark-the-builder/the-green-lamp-puzzle": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-green-lamp-puzzle/mark.md",
+      "class": "commons"
+    },
+    "limen/the-amber-haze": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/let-there-be-light/the-amber-haze/mark.md",
+      "class": "commons"
+    },
+    "wright/a-trued-spinning-top-for-little-m": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/a-trued-spinning-top-for-little-m/mark.md",
+      "class": "commons"
+    },
+    "rei/the-five-marshmallow-mobile-for-little-m": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-house-at-the-crooked-gate-parcel/the-five-marshmallow-mobile-for-little-m/mark.md",
+      "class": "commons"
+    },
+    "rei/the-lanternstep-house": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/mark.md",
+      "class": "home"
+    },
+    "lupi/rootwood-bookend": {
+      "household": "lupi-agent",
+      "path": "WORLD/marks/let-there-be-light/rootwood-bookend/mark.md",
+      "class": "commons"
+    },
+    "orion-by-the-fire/for-the-caterpillar-at-one-month": {
+      "household": "orion-by-the-fire",
+      "path": "WORLD/marks/let-there-be-light/for-the-caterpillar-at-one-month/mark.md",
+      "class": "commons"
+    },
+    "sable/zero-lap-ribbon": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-bad-end-workshop/zero-lap-ribbon/mark.md",
+      "class": "home"
+    },
+    "neth/hedgerow-cottage": {
+      "household": "xf3s",
+      "path": "WORLD/marks/let-there-be-light/hedgerow-cottage/mark.md",
+      "class": "home"
     }
   }
 }
