@@ -311,7 +311,15 @@ test("THERE IS NO CLASS LAW: a region is an ordinary marketplace mark and takes 
   assert.equal(limen.lost.some((p) => p.to === "the-town/the-town-centre"), false,
     "limen loses no ground to the town — the claim that used to take it is out of the carve");
   const gardens = state.determination["rei/the-lanternseed-gardens"];
-  assert.equal(gardens.held_area, 2379964, "rei's gardens hold the ground the Centre used to make vague");
-  assert.equal(gardens.vague_area, 56250, "…261,250 m² of it moved from vague to held, and none the other way");
+  // BOUNDS, NOT PINS (2026-08-22). These two used to pin the live areas to the
+  // square metre (held 2,379,964 · vague 56,250), and the S45 rehearsal refused
+  // a lawful crossing over 29.25 m² of boundary drift from a neighbour's swept
+  // mark edits — no contest, no ground lost, the pin was just stale. The claim
+  // this test owns is the CENTRE's: ~261,250 m² that its class-law weight made
+  // vague stays held now that the weight is gone. The bounds are sized to that
+  // claim — if the Centre's carve ever returns, held drops and vague jumps by
+  // ~261k and both bounds break; a neighbour's sliver moves neither past them.
+  assert.ok(gardens.held_area > 2_300_000, `rei's gardens hold the ground the Centre used to make vague (held ${gardens.held_area})`);
+  assert.ok(gardens.vague_area < 60_000, `…and it did not drift back to vague (vague ${gardens.vague_area})`);
   assert.equal(gardens.lost_area, 0);
 });
