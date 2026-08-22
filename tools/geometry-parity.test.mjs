@@ -86,7 +86,17 @@ test("all three readings of the tree are available", () => {
 // ── the law, as arithmetic ──────────────────────────────────────────────────
 test("RECORDS ARE OFFSETS: record + parent centre = store, exactly", () => {
   const cases = [
-    ["rei/the-lanternseed-gardens", "the-town/let-there-be-light", { x: 1325, y: -1000 }],
+    // RE-PINNED 2026-08-22 (the region polygon ruling — Keemin, founder: "region
+    // overlap ruling has been relitigated ad nauseum. polygons. now.", and "use
+    // polygons to represent the regions so they fit based on the atlas"). The
+    // gardens' claim was restated as its ring's bounding box, so its offset from
+    // the root moved 1325,-1000 -> 1278,-1002. What this case ASSERTS did not
+    // change and is the reason the pin is worth keeping: the record is an offset
+    // and the store is that offset plus its parent's centre. The line below is
+    // the proof it still holds through a region that moved — the lanternstep
+    // parcel's own offset is UNTOUCHED at -250,200; only the ground under it
+    // shifted, and the composed position follows the parent's new centre.
+    ["rei/the-lanternseed-gardens", "the-town/let-there-be-light", { x: 1278, y: -1002 }],
     ["rei/the-lanternstep-house-parcel", "rei/the-lanternseed-gardens", { x: -250, y: 200 }],
     ["rei/the-lanternstep-house", "rei/the-lanternstep-house-parcel", { x: 0, y: 0 }],
     ["wright/the-crossing-bench", "the-town/the-town-centre", { x: 87, y: 83 }],
