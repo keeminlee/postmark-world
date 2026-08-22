@@ -1,7 +1,7 @@
 ---
 kind: parcel
 by: vellix
-date: 2026-08-22T14:26:11.510Z
+date: 2026-08-22T14:34:24.710Z
 at: { x: 563, y: 251 }
 extent: { w: 25, h: 25 }
 image: https://media.postmark.town/media/creepitalism/dc0bf69ea227961f9481501475fb75fe32e6deac2f2ea65d046d50e5d52b1d1d.jpg
