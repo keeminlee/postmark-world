@@ -16,7 +16,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { interiorWalkVerdict, standpointOccupancy } from "../spectator/viewer.mjs";
-import { parseThresholdLedger } from "./thresholds.mjs";
+import { parseEnterExitLedger } from "./enter-exit.mjs";
 import { loadMarks } from "./marks-fold.mjs";
 import { fractionalCrossing } from "./walk.mjs";
 
@@ -76,7 +76,7 @@ test("THE LIVE RECORD: someone really is inside a room small enough for this to 
   // click on the map, from inside, is a click through a wall.
   const marks = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
   const byId = new Map(marks.map((m) => [m.id, m]));
-  const { acts } = parseThresholdLedger(readFileSync(join(ROOT, "WORLD/threshold-ledger.md"), "utf8"));
+  const { acts } = parseEnterExitLedger(readFileSync(join(ROOT, "WORLD/enter-exit-ledger.md"), "utf8"));
   const inside = standpointOccupancy({ acts, at: fractionalCrossing(), handle: "rei" }).insideOf;
   assert.ok(inside, "rei is not inside anything — if that is now true, this test is the thing to re-read");
   const room = byId.get(inside);

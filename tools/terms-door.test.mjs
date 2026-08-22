@@ -5,7 +5,7 @@
 // nothing."
 //
 // THE ACT WAS NEVER THE PROBLEM. Both of his presses are in the record —
-// WORLD/threshold-ledger.md carries two `rei · enters
+// WORLD/enter-exit-ledger.md carries two `rei · enters
 // sable/the-house-at-the-crooked-gate` lines, and main carries the crossing
 // commit. The office wrote what it was asked to write; only the page believed
 // nothing had happened. So these tests are about the ANSWER SHAPE the page
@@ -16,14 +16,14 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { crossingSheetHTML } from "../spectator/viewer.mjs";
+import { enterSheetHTML } from "../spectator/viewer.mjs";
 
 const SOURCE = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), "..", "spectator", "viewer.mjs"), "utf8");
 
-// The office's two answers, in the shapes src/world-crossings.mjs really builds.
+// The office's two answers, in the shapes src/world-enter-exit.mjs really builds.
 // THE ASK carries `awaiting` and `terms` as an OBJECT; a CROSSING carries
-// `terms` as an ARRAY — `answer.crossings.map(c => c.terms).filter(Boolean)`.
+// `terms` as an ARRAY — `answer.adjudications.map(c => c.terms).filter(Boolean)`.
 const ASK = {
   handle: "rei", entered: [], within: [],
   awaiting: { mark: "sable/the-house-at-the-crooked-gate", terms: { body: "be kind to the crooked gate", edge: "aboard", consequence: "you are aboard" } },
@@ -44,11 +44,11 @@ const CROSSED_A_PLAIN_DOOR = {
 
 test('"CLICKING ACCEPT AND CROSS DOES NOTHING": a successful crossing must render NO sheet, so crossInto goes on to read the ledger', () => {
   // This is the whole bug. crossInto renders the sheet and RETURNS when one
-  // comes back; only an empty sheet lets it reach loadThresholdLedger() and
+  // comes back; only an empty sheet lets it reach loadEnterExitLedger() and
   // renderCurrent(). The old gate was `answer.awaiting || answer.terms`, and
   // `terms` on this answer is an ARRAY — truthy — so the page re-drew the same
   // door and never read the record that had just moved.
-  assert.equal(crossingSheetHTML(CROSSED_A_TERMS_DOOR, "sable/the-house-at-the-crooked-gate"), "",
+  assert.equal(enterSheetHTML(CROSSED_A_TERMS_DOOR, "sable/the-house-at-the-crooked-gate"), "",
     "a crossing that succeeded must not be mistaken for a door still asking");
 });
 
@@ -57,12 +57,12 @@ test("and an EMPTY terms array is truthy too — so this was never only the cros
   // is visible and identical. But a plain door answers `terms: []`, which is
   // also truthy, so every successful enter through this viewer was dead.
   assert.ok([], "an empty array is truthy in JavaScript — the fact the old gate turned on");
-  assert.equal(crossingSheetHTML(CROSSED_A_PLAIN_DOOR, "a/b"), "",
+  assert.equal(enterSheetHTML(CROSSED_A_PLAIN_DOOR, "a/b"), "",
     "a plain door's successful crossing renders nothing either");
 });
 
 test("THE ASK STILL ASKS, and says everything the door said", () => {
-  const sheet = crossingSheetHTML(ASK, "sable/the-house-at-the-crooked-gate");
+  const sheet = enterSheetHTML(ASK, "sable/the-house-at-the-crooked-gate");
   assert.match(sheet, /this door has terms/);
   assert.match(sheet, /be kind to the crooked gate/, "the door's own words");
   assert.match(sheet, /<b>aboard<\/b>/, "the edge it forms back at you");
@@ -74,17 +74,17 @@ test("THE ASK STILL ASKS, and says everything the door said", () => {
 });
 
 test("the ask still works when the office sends terms as a lone object, the older shape", () => {
-  const sheet = crossingSheetHTML({ entered: [], terms: { body: "older shape" } }, "a/b");
+  const sheet = enterSheetHTML({ entered: [], terms: { body: "older shape" } }, "a/b");
   assert.match(sheet, /this door has terms/);
   assert.match(sheet, /older shape/);
 });
 
 test("the door's other three answers are untouched", () => {
-  assert.match(crossingSheetHTML({ entered: [], terms: [], refused: { because: "the mark opposes entry" } }, "a/b"),
+  assert.match(enterSheetHTML({ entered: [], terms: [], refused: { because: "the mark opposes entry" } }, "a/b"),
     /refused at the door[\s\S]*the mark opposes entry/, "a refusal is the mark's own word");
-  assert.match(crossingSheetHTML({ entered: [], terms: [], crossed_nothing: "no threshold left to cross" }, "a/b"),
+  assert.match(enterSheetHTML({ entered: [], terms: [], crossed_nothing: "no threshold left to cross" }, "a/b"),
     /the door answered, but nothing crossed[\s\S]*no threshold left/, "a fault says it is a fault");
-  assert.match(crossingSheetHTML({ entered: [], terms: [], already: true }, "a/b"),
+  assert.match(enterSheetHTML({ entered: [], terms: [], already: true }, "a/b"),
     /you are already inside/);
 });
 
@@ -104,7 +104,7 @@ test("THE LIVE RECORD: the founder's presses really did land, which is why this 
   // A test that only proved the shape could not tell you the act had worked.
   // The ledger can, and it is the reason nothing office-side needed touching.
   const ledger = readFileSync(
-    join(dirname(fileURLToPath(import.meta.url)), "..", "WORLD/threshold-ledger.md"), "utf8");
+    join(dirname(fileURLToPath(import.meta.url)), "..", "WORLD/enter-exit-ledger.md"), "utf8");
   const enters = ledger.split(/\r?\n/).filter((l) => /· rei · enters sable\/the-house-at-the-crooked-gate/.test(l));
   assert.ok(enters.length >= 1,
     "the record no longer holds rei's crossing into sable's house — if that is deliberate, this test is the thing to re-read");

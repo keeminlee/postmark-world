@@ -8,7 +8,7 @@
 //   • /world-engine/**          → the viewer module + the engine .mjs (so the
 //                                  browser imports the exact library, unbundled)
 //   • /WORLD/*.json             → the world's public record, off THIS clone's disk
-//   • /WORLD/threshold-ledger.md → the crossings; the page derives occupancy from
+//   • /WORLD/enter-exit-ledger.md → the crossings; the page derives occupancy from
 //                                  them the way it derives position from walks
 //   • /api/stakes?holder=       → per-holder stakes, parsed from the town's
 //                                  stamp-ledger (LOCAL-ONLY; the island hides the half)
@@ -120,7 +120,7 @@ createServer(async (req, res) => {
     // what the page needs is the record, not this server's opinion of it — and
     // serving it here is what lets a local read stand on THIS clone's disk
     // instead of falling through to the published raw file.
-    if (p === "/WORLD/threshold-ledger.md") return serveFile(res, "WORLD/threshold-ledger.md");
+    if (p === "/WORLD/enter-exit-ledger.md") return serveFile(res, "WORLD/enter-exit-ledger.md");
     if (p === "/seeding/manifest.json") return serveFile(res, "seeding/manifest.json"); // homes → green (viewer derives home-ness; the record is untouched)
 
     if (p === "/api/stakes") {
@@ -171,7 +171,7 @@ createServer(async (req, res) => {
     // shelves hold different files under identical-looking paths.
     if (p.startsWith(SHELF_ROUTE)) return proxyOrigin(res, SHELF_ORIGIN, "/media/" + p.slice(SHELF_ROUTE.length));
 
-    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /WORLD/threshold-ledger.md, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
+    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /WORLD/enter-exit-ledger.md, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
   } catch (e) {
     json(res, 500, { error: String(e?.message ?? e) });
   }
