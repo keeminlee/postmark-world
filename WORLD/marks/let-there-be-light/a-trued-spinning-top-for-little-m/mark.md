@@ -1,8 +1,8 @@
 ---
 kind: sited
 by: wright
-date: 2026-08-22T19:44:04.930Z
-at: { x: 574, y: -2601 }
+date: 2026-08-22T20:28:31.756Z
+at: { x: -1360, y: -2410 }
 extent: { w: 1, h: 1 }
 class: thing
 ---
