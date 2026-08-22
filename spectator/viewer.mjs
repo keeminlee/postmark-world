@@ -266,6 +266,35 @@ export function draftMarkIds(drafts = []) {
     .filter(Boolean));
 }
 
+// THE DRAFT OVERLAY (Keemin-ruled 2026-08-22: "interiors showing draft marks is
+// a crucial feature"). The tourniquet took the fold off the signed-in read, so
+// the composed state no longer carries a household's unpublished marks — but
+// the office's delta now ships each draft's DECLARATION in world frame (at /
+// extent / points), and that is all the engine needs: containment is computed
+// at the read (childrenByGeometry), so a draft laid into the mark list appears
+// outdoors, in the telling, and INSIDE the room whose floor its point lands on
+// — through the one engine, with no fold anywhere. An `added` draft is
+// appended; a `modified` one REPLACES its published record for this household's
+// lens (your unpublished edit is what you see — the old My World semantic);
+// `deleted` and geometry-less records are left out, which for a deletion is the
+// absence it declares. The grey comes from draftMarkIds exactly as before.
+export function composeDraftOverlay(worldState, drafts = []) {
+  const marks = worldState?.marks;
+  if (!Array.isArray(marks)) return worldState;
+  const placed = (drafts ?? []).filter((d) => d && d.status !== "deleted" && d.id
+    && Number.isFinite(Number(d?.at?.x)) && Number.isFinite(Number(d?.at?.y)));
+  if (!placed.length) return worldState;
+  const overlayById = new Map(placed.map((d) => [d.id, d]));
+  const next = marks.map((m) => {
+    const d = m?.id ? overlayById.get(m.id) : null;
+    if (!d) return m;
+    overlayById.delete(m.id);
+    return { ...m, ...d, draft: true };
+  });
+  for (const d of overlayById.values()) next.push({ ...d, draft: true });
+  return { ...worldState, marks: next };
+}
+
 export function viewerFilterControls(options = {}) {
   const axis = viewerAxisState(options);
   const chip = (key, label, disabled = false) =>
@@ -7779,7 +7808,9 @@ export function mountViewer(appEl) {
         return r.json();
       }),
     ]);
-    data.myWorld = composed.json;
+    // The overlay lays the household's draft DECLARATIONS into the composed
+    // state (world-framed by the office's delta) — the fold stays off the read.
+    data.myWorld = composeDraftOverlay(composed.json, portfolio.drafts);
     state.portfolio = portfolio;
     state.mineIds = new Set(["drafts", "published", "backed"]
       .flatMap((category) => (portfolio[category] ?? []).map((mark) => mark.id ?? mark.mark))
