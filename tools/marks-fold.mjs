@@ -858,10 +858,36 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   // carve entirely — otherwise the world-spanning root would contest every cell
   // of the world it holds.
   const commonsSited = sited.filter(mk => !mk._sovereign && markStanding(mk, byId) !== "constitution" && !gone.has(mk.id));
-  const carved = carve(
-    commonsSited.map(mk => ({ id: mk.id, cred: mk._cred, rect: rect(mk), effective: weightOf(mk.id) })),
-    { prevCells: prev?.cells ?? null, determine_pct: dials.determine_pct, release_pct: dials.release_pct },
-  );
+  // ── CARVE-DISABLED-2026-08-22 ────────────────────────────────────────────
+  // DISABLED BY KEEMIN'S WORD, the morning after the world outage. Deliberately
+  // commented out rather than env-gated: an env flag would make the office and
+  // a local checkout compute different worlds, which is the same drift class as
+  // the departure→depart rename that had the whole town walking 4× slow for four
+  // days. One code path, visible in the diff.
+  //
+  // WHY IT COULD GO: the carve is the most expensive thing in the fold — it
+  // coordinate-compresses every claimant's edges into ~k² cells and resolves
+  // each cell against the claims covering it — and its output is WRITE-ONLY.
+  // `determination`, `cells`, `vague`, `determined` and the ground half of
+  // `rivalries` ship in world-state.json and NO live surface reads them: the
+  // viewer has zero references, there is no consumer in the site or the office,
+  // and the only readers are world-build.mjs and the tests linked below.
+  // Weight does not depend on it — weight_parts is computed ~100 lines above
+  // this call from own_escrow + breadth + fanned children, never from ground.
+  //
+  // TESTS DISABLED WITH IT (same marker — `grep -rn CARVE-DISABLED-2026-08-22`):
+  //   tools/world-carve-live.test.mjs
+  //   tools/determination.test.mjs
+  //   (plus any other file the marker appears in)
+  //
+  // TO RESTORE: uncomment the carve() call, delete the empty literal, and
+  // un-skip every file carrying the marker. Restore it as a whole or not at
+  // all — a half-restored carve is a world that disagrees with its own tests.
+  // const carved = carve(
+  //   commonsSited.map(mk => ({ id: mk.id, cred: mk._cred, rect: rect(mk), effective: weightOf(mk.id) })),
+  //   { prevCells: prev?.cells ?? null, determine_pct: dials.determine_pct, release_pct: dials.release_pct },
+  // );
+  const carved = { determination: {}, contests: [], cells: {}, neighborhoods: 0 };
 
   // determination with hysteresis (prev state carries determined values)
   const prevDet = new Map(Object.entries(prev?.determined ?? {}));

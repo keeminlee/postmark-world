@@ -1,4 +1,16 @@
 #!/usr/bin/env node
+// ── CARVE-DISABLED-2026-08-22 ──────────────────────────────────────────────
+// EVERY TEST IN THIS FILE IS SKIPPED. The carve it asserts is commented out in
+// tools/marks-fold.mjs (same marker) by Keemin's word on 2026-08-22, the morning
+// after the world outage: the carve is the fold's most expensive stage and its
+// output is write-only — no live surface reads `determination`, `cells`,
+// `vague`, `determined` or the ground half of `rivalries`.
+//
+// These assertions are NOT wrong and nothing here was deleted. They are the law
+// of a stage that is currently switched off. Restore them and the carve call
+// together — `grep -rn CARVE-DISABLED-2026-08-22` finds every piece — or not at all: a half-restored
+// carve is a world that disagrees with its own tests.
+
 // determination.test.mjs — the region carve (tools/determination.mjs, ECONOMY.md
 // §9.2). The first test is §9.2's own sentence, used as the specification it is.
 // Run: node --test tools/determination.test.mjs
@@ -15,7 +27,7 @@ const sited = (id, by, x, y, w, h, extra = {}) => ({
 const ground = (state) => state.rivalries.filter((r) => r.kind === "region");
 const areaOf = (rs) => rs.reduce((a, r) => a + r.w * r.h, 0);
 
-test("§9.2 verbatim: a dense pond determines its own cells inside a thin meadow; the meadow keeps the rest", () => {
+test.skip("§9.2 verbatim: a dense pond determines its own cells inside a thin meadow; the meadow keeps the rest", () => {
   // meadow: 1000x1000 backed by 100 → density 1e-4.  pond: 100x100 backed by 100 → density 1e-2.
   // The pond is a HUNDRED times denser, and it is wholly inside the meadow, so a
   // whole-claim comparison (the mechanism this replaces) would have scored 100 vs
@@ -38,7 +50,7 @@ test("§9.2 verbatim: a dense pond determines its own cells inside a thin meadow
   assert.equal(d["a/meadow"].lost.every((r) => r.to === "b/pond"), true, "lost to the pond, by name");
 });
 
-test("contests are INTERSECTION-ONLY — the meadow's ground outside the pond is never in dispute", () => {
+test.skip("contests are INTERSECTION-ONLY — the meadow's ground outside the pond is never in dispute", () => {
   const state = fold({
     marks: [sited("meadow", "a", 0, 0, 1000, 1000), sited("pond", "b", 300, 300, 100, 100)], terrain, tick: 1,
     stakes: [{ holder: "a", mark: "a/meadow", n: 100, weight: 100, tick: 0 },
@@ -51,7 +63,7 @@ test("contests are INTERSECTION-ONLY — the meadow's ground outside the pond is
   assert.deepEqual(g[0].regions, [{ x: 300, y: 300, w: 100, h: 100 }]);
 });
 
-test("the carve is DERIVED — a claim that loses ground keeps its rect whole", () => {
+test.skip("the carve is DERIVED — a claim that loses ground keeps its rect whole", () => {
   const meadow = sited("meadow", "a", 0, 0, 1000, 1000);
   const state = fold({
     marks: [meadow, sited("pond", "b", 0, 0, 100, 100)], terrain, tick: 1,
@@ -64,7 +76,7 @@ test("the carve is DERIVED — a claim that loses ground keeps its rect whole", 
   assert.equal(state.determination["a/meadow"].lost_area, 10000, "it lost the ground in the overlay, and only there");
 });
 
-test("rect-minus-rect is an L — the meadow's held ground tiles its claim minus the pond", () => {
+test.skip("rect-minus-rect is an L — the meadow's held ground tiles its claim minus the pond", () => {
   const state = fold({
     marks: [sited("meadow", "a", 0, 0, 1000, 1000), sited("pond", "b", -450, -450, 100, 100)], terrain, tick: 1,
     stakes: [{ holder: "a", mark: "a/meadow", n: 1, weight: 1, tick: 0 },
@@ -75,7 +87,7 @@ test("rect-minus-rect is an L — the meadow's held ground tiles its claim minus
   assert.equal(areaOf(held), 1000 * 1000 - 100 * 100, "the rects tile the claim minus the bite, with no overlap and no gap");
 });
 
-test("one household's own nesting is NOT a contest — the pseudo-contest class, killed", () => {
+test.skip("one household's own nesting is NOT a contest — the pseudo-contest class, killed", () => {
   // A peak, its porch, and a tree inside the porch: one person's composition. The
   // deleted site-cluster mechanism chained all three into a single slot and scored
   // them against each other; nothing here was ever in dispute.
@@ -93,7 +105,7 @@ test("one household's own nesting is NOT a contest — the pseudo-contest class,
   assert.equal(state.determination["v/peak"].held_area, 3600 * 3600 - 300 * 300, "the peak keeps everything but the porch");
 });
 
-test("hysteresis holds per cell: an incumbent between release and determine keeps its seat, and falls below release", () => {
+test.skip("hysteresis holds per cell: an incumbent between release and determine keeps its seat, and falls below release", () => {
   const marks = [sited("meadow", "a", 0, 0, 100, 100), sited("pond", "b", 0, 0, 100, 100)];
   const stakes = (an, bn) => [{ holder: "a", mark: "a/meadow", n: an, weight: an, tick: 0 },
                               { holder: "b", mark: "b/pond", n: bn, weight: bn, tick: 0 }];
@@ -108,7 +120,7 @@ test("hysteresis holds per cell: an incumbent between release and determine keep
   assert.equal(ground(fell)[0].determined, "b/pond", "…unless the challenger is past determine, which at 65% it is");
 });
 
-test("vague is a real resting state: a fallen incumbent with no challenger past determine leaves the ground to nobody", () => {
+test.skip("vague is a real resting state: a fallen incumbent with no challenger past determine leaves the ground to nobody", () => {
   // Three claims on one patch. The incumbent drops to 38% (below release) and the
   // best challenger is only at 42% (below determine) — so the cell resolves to
   // NOBODY rather than to whoever happens to be ahead. Contested-and-unresolved is
@@ -124,7 +136,7 @@ test("vague is a real resting state: a fallen incumbent with no challenger past 
   assert.ok(fallen.determination["b/two"].vague_area > 0, "and every claimant is told the ground is vague, not lost");
 });
 
-test("incumbency survives a RE-CUT of the grid — a new neighbour must not unseat a sitting winner by bookkeeping", () => {
+test.skip("incumbency survives a RE-CUT of the grid — a new neighbour must not unseat a sitting winner by bookkeeping", () => {
   const meadow = sited("meadow", "a", 0, 0, 100, 100), pond = sited("pond", "b", 0, 0, 100, 100);
   const stakes = [{ holder: "a", mark: "a/meadow", n: 45, weight: 45, tick: 0 },
                   { holder: "b", mark: "b/pond", n: 55, weight: 55, tick: 0 }];
@@ -137,7 +149,7 @@ test("incumbency survives a RE-CUT of the grid — a new neighbour must not unse
   assert.equal(cell.determined, "a/meadow", "the incumbent keeps its seat across a re-cut grid");
 });
 
-test("an overlap nobody has backed is not a contest — ⚔ means two households are pushing, not that two rectangles touch", () => {
+test.skip("an overlap nobody has backed is not a contest — ⚔ means two households are pushing, not that two rectangles touch", () => {
   const state = fold({
     marks: [sited("one", "a", 0, 0, 100, 100), sited("two", "b", 50, 50, 100, 100)], terrain, tick: 1, stakes: [],
   });
@@ -145,7 +157,7 @@ test("an overlap nobody has backed is not a contest — ⚔ means two households
   assert.ok(state.determination["a/one"].vague_area > 0, "but the overlay still says the shared ground is undetermined");
 });
 
-test("a sovereign mark and a constitution mark never enter the carve", () => {
+test.skip("a sovereign mark and a constitution mark never enter the carve", () => {
   const state = fold({
     marks: [
       sited("district", "a", 0, 0, 1000, 1000),

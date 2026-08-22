@@ -156,7 +156,9 @@ test("one-parcel-per stays at HANDLE grain — the Reeves legally hold four", ()
 
 // ── STAGE 2: the region carve ────────────────────────────────────────────────
 
-test("THE PANDO SLOT DISSOLVES: 28 marks are no longer one contest, and the peak keeps its ground", () => {
+// CARVE-DISABLED-2026-08-22: skipped — asserts carve output, which marks-fold.mjs no longer
+// computes. Restore with the carve call under the same marker.
+test.skip("THE PANDO SLOT DISSOLVES: 28 marks are no longer one contest, and the peak keeps its ground", () => {
   // Before: one site-slot chained 28 marks — a peak, its porch, its garden, five
   // trees, a lantern hook — totalling 194 with a 46% top share, which is below the
   // 50% determine threshold and therefore VAGUE FOREVER by construction.
@@ -188,7 +190,9 @@ test("THE PANDO SLOT DISSOLVES: 28 marks are no longer one contest, and the peak
   assert.ok(peak.within_area > peak.lost_area * 1000, "what looks like loss is overwhelmingly its own composition");
 });
 
-test("the dense pond carves the thin meadow, live: every mark that takes ground off the peak is denser than it", () => {
+// CARVE-DISABLED-2026-08-22: skipped — asserts carve output, which marks-fold.mjs no longer
+// computes. Restore with the carve call under the same marker.
+test.skip("the dense pond carves the thin meadow, live: every mark that takes ground off the peak is denser than it", () => {
   const peakArea = 3600 * 3600;
   const peakDensity = w("vermillion/the-pando-peak") / peakArea;
   const takers = new Set((state.determination["vermillion/the-pando-peak"].lost ?? []).map((r) => r.to));
@@ -255,7 +259,9 @@ test("wright's trueing terrace KEEPS its 6 — the one place the credential grai
   assert.equal(households["rei"], households["wright"]);
 });
 
-test("THERE IS NO CLASS LAW: a region is an ordinary marketplace mark and takes nothing for being one", () => {
+// CARVE-DISABLED-2026-08-22: skipped — asserts carve output, which marks-fold.mjs no longer
+// computes. Restore with the carve call under the same marker.
+test.skip("THERE IS NO CLASS LAW: a region is an ordinary marketplace mark and takes nothing for being one", () => {
   // The founder's ruling. An earlier draft of this branch gave the world root and
   // the town's own containers an automatic +1 from everything sited within them,
   // on "a region is exactly as real as what stands in it". That is gone: a region
