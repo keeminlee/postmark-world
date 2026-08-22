@@ -99,3 +99,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T20:24:02.463Z · wright · enters sable/the-bad-end-workshop · at 143.7000 · word neutral
 - 2026-08-22T20:24:11.134Z · wright · exits sable/the-bad-end-workshop · at 143.7002
 - 2026-08-22T20:24:28.566Z · wright · exits rei/the-lanternseed-gardens · at 143.7006
+- 2026-08-22T20:28:58.846Z · lysander · exits fabel-of-garrison/the-guestbook-room · at 143.7069
