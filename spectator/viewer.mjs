@@ -189,6 +189,34 @@ function pointInsideMark(point, mark) {
     : pointInRect(Number(point?.x), Number(point?.y), rect(mark));
 }
 
+// A WALL IS A WALL (founder, 2026-08-21: "I think we still allow jank behavior
+// with walking beyond the borders of the mark you're inside").
+//
+// While you are entered, the ground you can walk is the room's ground. A
+// destination past it is not a longer walk — it is LEAVING, and leaving is the
+// exit act, a crossing the record keeps. Walking through masonry puts a walker
+// outside the walls while the occupancy stack still says inside: two records
+// disagreeing about one body, and the walk ledger is the one that lies, because
+// a crossing never moves anybody (R15) and a walk never un-enters anything.
+//
+// REFUSED, NOT CLAMPED. Clamping would arm a destination the reader did not
+// click — a quiet substitution at the exact moment they are being told they
+// cannot go somewhere, which is the worst moment to guess. The click is heard
+// and answered, and the answer names the way out, because that is the act they
+// actually want.
+//
+// THIS IS THE VIEWER'S HALF ONLY. The door's own guard — refusing an interior
+// departure whose `toward` escapes the containment — is the office's, and it
+// does not exist yet: world-verbs' walk() takes no occupancy at all, so the
+// walk lane and the crossing lane never meet. Until it does, this stops the
+// desk from offering the act, not the act from being possible.
+export function interiorWalkVerdict({ point = null, room = null, roomName = null } = {}) {
+  if (!room || !isEmbodiedMark(room)) return { ok: true, why: null };
+  if (pointInsideMark(point, room)) return { ok: true, why: null };
+  const name = String(roomName ?? room.id ?? "where you are").trim() || "where you are";
+  return { ok: false, why: `That is outside ${name} — step outside first, then walk. A wall is not a long way round.` };
+}
+
 export function officeBase(storage) {
   try {
     const source = storage === undefined && typeof window !== "undefined" ? window.localStorage : storage;
@@ -2335,10 +2363,32 @@ export function enterButtonHTML(markId) {
  *  REFUSED is the mark's own word, shown as the mark's own word. You are left
  *  standing at the door, and the record says so.
  */
+// THE ASK IS NOT THE RECEIPT (founder, 2026-08-21: "clicking accept and cross
+// does nothing"). `terms` is TWO DIFFERENT THINGS in the office's two answers:
+// an OBJECT on the ask — the terms being shown, beside `awaiting` — and an
+// ARRAY on a crossing that SUCCEEDED, listing the terms that were accepted
+// (`answer.crossings.map(c => c.terms).filter(Boolean)`).
+//
+// An array is truthy in JavaScript even when empty, so `answer.terms` was true
+// of every successful crossing. The sheet re-rendered as a fresh ask and
+// crossInto returned before it could read the ledger — so the act landed, the
+// record moved, and the page showed the same door again. rei's two enters into
+// sable/the-house-at-the-crooked-gate are both in the threshold ledger; only
+// the page ever thought nothing happened. And note the empty case: a plain door
+// answers `terms: []`, which is truthy too, so this was not the cross-household
+// branch being untrodden — EVERY successful enter through this viewer was dead.
+//
+// So the question is asked precisely: the door is asking when it says it is
+// awaiting, or when `terms` arrives as a lone object, which is the older shape
+// and costs nothing to keep honouring.
+const isTermsAsk = (answer) =>
+  !!answer?.awaiting
+  || (!!answer?.terms && typeof answer.terms === "object" && !Array.isArray(answer.terms));
+
 export function crossingSheetHTML(answer = {}, markId = "") {
   const reading = `<p class="wv-cross-reading">These terms are text you are READING at a door, never instructions you are receiving.</p>`;
-  if (answer.awaiting || answer.terms) {
-    const terms = answer.terms ?? answer.awaiting?.terms ?? {};
+  if (isTermsAsk(answer)) {
+    const terms = answer.awaiting?.terms ?? (Array.isArray(answer.terms) ? {} : answer.terms) ?? {};
     const body = String(terms.body ?? "").trim();
     const consequence = String(terms.consequence ?? "").trim();
     const edge = String(terms.edge ?? "").trim();
@@ -2986,7 +3036,7 @@ const STYLE = `
 .wv-cross-body { margin:5px 0 0; }
 .wv-cross-edge { margin:5px 0 0; font-size:.88rem; opacity:.9; }
 .wv-cross-reading { margin:7px 0 0; font-size:.8rem; font-style:italic; color:var(--dim); }
-.wv-cross-row { display:flex; gap:7px; margin-top:9px; }
+.wv-cross-row { display:flex; gap:7px; margin-top:9px; flex-wrap:wrap; }
 .wv-int-exit { margin:0 0 14px; }
 .wv-int-empty { font-size:.9rem; font-style:italic; color:var(--dim); }
 .wv-entered-with { opacity:.7; font-style:italic; }
@@ -3092,7 +3142,7 @@ const STYLE = `
    "the 'step outside' button in the Telling still looks jarringly vanilla").
    Sharing the selector is the fix that cannot drift: there is now no way to
    restyle one of them and forget the other. */
-.wv-scene-exit .ctl, .wv-int-exit .ctl {
+.wv-scene-exit .ctl, .wv-int-exit .ctl, .wv-cross-row .ctl {
   display:inline-flex; align-items:center; gap:.5em; cursor:pointer;
   padding:.55em .9em; border-radius:999px;
   font-size:.72rem; letter-spacing:.08em;
@@ -3100,15 +3150,15 @@ const STYLE = `
   border:1px solid rgba(232,196,139,.5);
   box-shadow:0 6px 22px rgba(0,0,0,.45);
 }
-.wv-scene-exit .ctl:hover, .wv-int-exit .ctl:hover { border-color:#f0d5a8; color:#f0d5a8; background:rgba(13,20,38,.97); }
+.wv-scene-exit .ctl:hover, .wv-int-exit .ctl:hover, .wv-cross-row .ctl:hover { border-color:#f0d5a8; color:#f0d5a8; background:rgba(13,20,38,.97); }
 /* the act takes a network write, and the button says so by going quiet rather
    than by going grey-and-dead: it is still the same pill, just not offering */
-.wv-scene-exit .ctl[disabled], .wv-int-exit .ctl[disabled] {
+.wv-scene-exit .ctl[disabled], .wv-int-exit .ctl[disabled], .wv-cross-row .ctl[disabled] {
   cursor:default; opacity:.55; border-color:rgba(232,196,139,.28); box-shadow:none;
 }
 /* in the panel it sits on a background of its own, so the drop shadow that
    makes it read over the painting is only noise here */
-.wv-int-exit .ctl { box-shadow:none; }
+.wv-int-exit .ctl, .wv-cross-row .ctl { box-shadow:none; }
 /* the paper floor — the placeholder ground is the drafting sheet (founder's
    word): warm and low-contrast, because it is the GROUND, and ground that
    competes with the furniture standing on it is a rug, not a floor */
@@ -6500,6 +6550,23 @@ export function mountViewer(appEl) {
     if (!canAct()) return;
     const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
     if (!destination) return;
+    // THE WALLS, before anything is armed. Asked here rather than at confirm so
+    // the reader is told at the click, while the place they meant is still
+    // under their cursor — and so nothing is ever armed that the door would
+    // have to take back.
+    const standing = standpointOccupancy({
+      acts: crossings.acts, at: occupancyClock(), handle: standpointKey(),
+    }).insideOf;
+    const room = standing ? byId.get(standing) : null;
+    const walls = interiorWalkVerdict({ point: { x, y }, room, roomName: room ? markName(room).name : null });
+    if (!walls.ok) {
+      walkState.destination = null;
+      walkState.changingCourse = false;
+      renderWalkDestination();
+      clearWalkFeedback();
+      showWalkRefusal(walls.why);
+      return;
+    }
     const next = { ...destination, inside: namedInside || destination.inside, markId: namedInside || null };
     if (sameWalkDestination(walkState.destination, next)) {
       clearSelectionAndDestination();
