@@ -168,7 +168,7 @@ function markRows(out) {
 // The other two readings answer it, and both are taken against the branch's own
 // MERGE-BASE: what the sketchbook changed since it was cut, and what main
 // changed since that same instant. A candidate the sketchbook never touched is
-// main's amendment showing through a stale drawer and nothing else — so
+// main's amendment showing through a stale sketchbook and nothing else — so
 // supersession falls out by construction rather than by policy, and a mark the
 // resident genuinely edited is still their delta and still publishes.
 function markDelta(repo, main, branch) {
@@ -412,17 +412,17 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
     try {
       try {
         // -X theirs — in a rebase, "theirs" is the commit being REPLAYED: the
-        // sketchbook's own writes. The reseat is pure transport of a drawer
+        // sketchbook's own writes. The reseat is pure transport of a sketchbook
         // whose only readable truth is its final tree (markDelta and recordAt
         // both read final state), so a replay conflict is a transport
-        // artifact, not a finding — and it resolves toward the drawer's own
+        // artifact, not a finding — and it resolves toward the sketchbook's own
         // word. The case that forced this (2026-08-11, draft/FluffUPando): a
         // record ADDED in one commit and REVISED in a later one; the sweep
         // publishes the FINAL blob to main, then the replay hits the earlier
         // add against that published version — add/add, different content —
         // one commit before the revise that makes them identical. Any
         // resident who edits their own draft before admission creates the
-        // same shape. Main is never written by this step, and a drawer whose
+        // same shape. Main is never written by this step, and a sketchbook whose
         // final word genuinely differs from main simply carries that delta to
         // the next crossing, where the gate judges it as always.
         git(wt, ["rebase", "-X", "theirs", mainBranch], {
@@ -494,12 +494,12 @@ export function settlementSweep({
   const published = [];
   const leftDrafted = [];
   const withdrawn = []; // the revision family's terminal half (ruled 2026-08-19)
-  // ONE POISONED DRAWER MUST NOT REFUSE THE WHOLE TOWN (founder, 2026-08-20).
+  // ONE POISONED SKETCHBOOK MUST NOT REFUSE THE WHOLE TOWN (founder, 2026-08-20).
   // Until now foldRef threw straight out of the loop below, so a single ref that
   // folded with errors refused the ENTIRE settlement — every other household's
   // work held hostage by one malformed row. Reopening makes that likely rather
   // than theoretical: many first settlements is exactly when a malformed row
-  // arrives. A one-drawer quarantine beats a whole-town refusal — but only if it
+  // arrives. A one-sketchbook quarantine beats a whole-town refusal — but only if it
   // SHOUTS, which is what this list is for.
   const quarantined = [];
   const touched = [];
@@ -507,7 +507,7 @@ export function settlementSweep({
 
   for (const branch of branches) {
     const household = branch.slice("draft/".length);
-    // THE QUARANTINE, and it is deliberately the FIRST thing in the drawer. A ref
+    // THE QUARANTINE, and it is deliberately the FIRST thing in the sketchbook. A ref
     // that cannot be folded cannot be reasoned about at all, so nothing from it
     // is read, nothing is published, nothing is withdrawn, nothing is touched —
     // the conservative direction is preserved by skipping BEFORE any of that,
@@ -518,7 +518,7 @@ export function settlementSweep({
       state = foldRef(repo, branch, stakes);
     } catch (error) {
       // LOUD. The ref, the reason, and — where the fold named one — the row that
-      // poisoned it, so the crossing's journal says whose drawer was set aside
+      // poisoned it, so the crossing's journal says whose sketchbook was set aside
       // and what to fix. A silent drop here would be a household's work quietly
       // vanishing at a settlement, which is worse than the refusal it replaces.
       const detail = String(error?.message ?? error);
@@ -534,7 +534,7 @@ export function settlementSweep({
     for (const delta of markDelta(repo, mainBranch, branch)) {
       // SUPERSESSION. The sketchbook has not touched this path since it was cut,
       // so the difference between them is main's own amendment read through a
-      // stale drawer. Publishing it would revert main to what the drawer
+      // stale sketchbook. Publishing it would revert main to what the sketchbook
       // remembers, which is the defect this whole reading exists to make
       // impossible. The row is reported rather than skipped: the crossing's
       // journal should say why main's word won.
@@ -788,7 +788,7 @@ export function settlementSweep({
     published: published.map(({ content, ...item }) => item),
     left_drafted: leftDrafted,
     // named in the sweep's own answer, not only in a log — the operator reading
-    // the crossing must see that a drawer was set aside without going looking
+    // the crossing must see that a sketchbook was set aside without going looking
     quarantined,
     unpublished: unpublished.map(({ content, ...item }) => item),
     withdrawn,

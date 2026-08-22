@@ -11,4 +11,4 @@ implements: ["the-town/the-own-hand"]
 source: LOGOS/classes.md
 ---
 
-Nothing town-signed publishes from a household drawer, and no hand writes another's pages — a sketchbook contributes only its author's own delta.
+Nothing town-signed publishes from a household sketchbook, and no hand writes another's pages — a sketchbook contributes only its author's own delta.

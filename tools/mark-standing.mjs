@@ -74,7 +74,7 @@ export function standingHouseholdOf(mark) {
 
 // THE TOWN'S OWN HAND. `by: the-town` is not a household's pen — the town keeps
 // no sketchbook, and its record is ruled onto main by a founder's act. So a
-// record signed by the town arriving through a household's drawer is one of two
+// record signed by the town arriving through a household's sketchbook is one of two
 // things, and neither publishes: a stale copy of main's own text, or a borrowed
 // name. The settlement sweep's town wall reads this (#1697, after the-town/berth
 // was widened by a resurrected draft copy on 2026-08-18).

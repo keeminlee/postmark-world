@@ -141,7 +141,7 @@ test("settlement publishes/keeps/unpublishes per household, then rebases every s
   assert.equal(has("main", aBacked), true);
   assert.equal(has("main", bBacked), true);
   assert.equal(has("main", constitution), false, "the town's own record never arrives on main by sweep");
-  assert.equal(has("draft/founder-house", constitution), true, "it stays in the drawer that drew it");
+  assert.equal(has("draft/founder-house", constitution), true, "it stays in the sketchbook that drew it");
   assert.equal(has("main", aPrivate), false);
   assert.equal(has("main", bPrivate), false);
   assert.equal(has("main", oldPath), false);
@@ -354,7 +354,7 @@ test("a drafted mark revised after its add still reseats — the crossing after 
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
 
-  // The drawer history the 2026-08-11 tense sweep created — and any resident
+  // The sketchbook history the 2026-08-11 tense sweep created — and any resident
   // who edits their own draft creates too: the record is ADDED in one commit
   // and REVISED in a later one. The sweep publishes the FINAL blob to main;
   // a naive history replay then hits the earlier add against main's published
@@ -365,7 +365,7 @@ test("a drafted mark revised after its add still reseats — the crossing after 
   put(twicePath, record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "first telling" }));
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "mark: alice/twice-told-market — add");
-  const finalText = record({ by: "alice", at: { x: 805, y: 805 }, extent: { w: 10, h: 10 }, body: "second telling — same mark, revised in the drawer" });
+  const finalText = record({ by: "alice", at: { x: 805, y: 805 }, extent: { w: 10, h: 10 }, body: "second telling — same mark, revised in the sketchbook" });
   put(twicePath, finalText);
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "revise: alice/twice-told-market");
@@ -386,11 +386,11 @@ test("a drafted mark revised after its add still reseats — the crossing after 
   const receipt = report.rebased.find((row) => row.branch === "draft/house-a");
   assert.ok(receipt, "the sketchbook was reseated at all");
   assert.notEqual(receipt.mode, undefined);
-  // The reseat is pure transport: the drawer's final word survives it
+  // The reseat is pure transport: the sketchbook's final word survives it
   // byte-for-byte, and the published record leaves no delta for the next
   // crossing to re-stage.
   const branchBlob = git("show", `draft/house-a:${twicePath}`);
-  assert.equal(branchBlob, finalText, "the drawer's final word is byte-preserved through the reseat");
+  assert.equal(branchBlob, finalText, "the sketchbook's final word is byte-preserved through the reseat");
   const delta = git("diff", "--name-only", "main", "draft/house-a", "--", twicePath).trim();
   assert.equal(delta, "", "a published record leaves no residual delta on the reseated sketchbook");
 });
@@ -724,7 +724,7 @@ test("FALSIFIER 1 (fox-hearth's shape): a sketchbook's stale UNCHANGED copy neve
   assert.equal(c.blob("main", hearth), amended,
     "main's amendment survives the sweep BYTE-IDENTICAL — this is the assertion the class exists for");
   assert.deepEqual(c.state().marks.find((m) => m.id === "alice/the-fox-hearth").at, { x: 900, y: 900 },
-    "and the folded world stands where main put it, not where the drawer remembers");
+    "and the folded world stands where main put it, not where the sketchbook remembers");
   const row = report.left_drafted.find((r) => r.id === "alice/the-fox-hearth" || /fox-hearth/.test(r.path));
   assert.ok(row, "the crossing reports the superseded copy rather than passing over it in silence");
   assert.match(row.reason, /supersession/, "and the reason names supersession");
@@ -755,7 +755,7 @@ test("FALSIFIER 2 (the berth's shape): a CHANGED copy of a town-owned mark never
     by: "the-town", tier: "constitution", at: { x: 500, y: 500 }, extent: { w: 50, h: 40 },
     body: "a berth may say",
   }));
-  c.commit("house a widens the grant in its own drawer");
+  c.commit("house a widens the grant in its own sketchbook");
   c.git("switch", "-q", "main");
 
   const report = c.sweep();
@@ -766,7 +766,7 @@ test("FALSIFIER 2 (the berth's shape): a CHANGED copy of a town-owned mark never
   assert.ok(row, "the refusal is reported, not silently dropped");
   assert.match(row.reason, /town wall/, "and the reason names the wall");
   assert.equal(c.blob("main", berth), ruled,
-    "main's ruled text survives BYTE-IDENTICAL — the widened copy stays in the drawer");
+    "main's ruled text survives BYTE-IDENTICAL — the widened copy stays in the sketchbook");
   assert.equal(c.git("show", `draft/house-a:${berth}`).includes("for: berth"), false,
     "the sketchbook keeps its own version for its author-of-record to contest");
 });
@@ -802,7 +802,7 @@ test("FALSIFIER 4 (the both-edited edge): when main and the sketchbook both move
   c.commit("published main");
 
   c.git("switch", "-q", "-c", "draft/house-a");
-  c.put(well, record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "the well, as the drawer has it" }));
+  c.put(well, record({ by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "the well, as the sketchbook has it" }));
   c.commit("house a revises the well");
   c.git("switch", "-q", "main");
 
@@ -820,8 +820,8 @@ test("FALSIFIER 4 (the both-edited edge): when main and the sketchbook both move
   assert.match(row.reason, /rebase and re-affirm/,
     "and the reason tells the resident what to do about it");
   assert.equal(c.blob("main", well), amended, "nothing of main's was overwritten");
-  assert.equal(c.git("show", `draft/house-a:${well}`).includes("as the drawer has it"), true,
-    "and nothing of the drawer's was destroyed");
+  assert.equal(c.git("show", `draft/house-a:${well}`).includes("as the sketchbook has it"), true,
+    "and nothing of the sketchbook's was destroyed");
 });
 
 test("the ground-closure hold: a staked child never crosses without its drafted parent (the goodie-bag crossing, 2026-08-21)", (t) => {

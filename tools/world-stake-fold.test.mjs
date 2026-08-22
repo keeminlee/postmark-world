@@ -87,7 +87,7 @@ test('THE RETIREMENT GATE: escrow naming a mark the record does not hold is an e
 test('a stake on a mark the record has NEVER held is pending, not a defect — publish-by-stake waits', () => {
   // The ground-closure hold (2026-08-21) makes this ordinary: a staked child held
   // back with its drafted parent leaves its escrow standing in the ledger while
-  // the mark waits in the drawer. The crossing must settle around it.
+  // the mark waits in the sketchbook. The crossing must settle around it.
   const state = fold({ marks: marks(), terrain, stakes: [
     { tick: 0, holder: 'sol', mark: 'fabel/the-drafted-table', n: 1 },
   ] });

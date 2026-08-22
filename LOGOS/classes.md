@@ -392,7 +392,7 @@ sitting, 2026-08-20):
   mechanic `tools/mark-lint.mjs` (the-fidelity) · `envelope-check` ·
   `stamp-verify`.
 - **the-town-wall** — authorship and custody: town-signed law never
-  publishes from a household drawer; only your own pages: mechanic the
+  publishes from a household sketchbook; only your own pages: mechanic the
   settlement sweep's merge-base delta + `ruled-grants` suite; the
   witness's self-scope check.
 - **consent-at-thresholds** — entry law, welcome-by-silence,

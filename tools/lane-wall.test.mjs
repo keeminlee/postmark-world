@@ -109,7 +109,7 @@ test("lane-wall: a misplaced mark is refused and the hint prints the correct pat
   const { put, wall, commit } = fixture(t);
   // geometrically inside alice-parcel, but filed at the marks root
   put("WORLD/marks/let-there-be-light/misfiled/mark.md", record({
-    by: "alice", at: { x: 130, y: 130 }, extent: { w: 4, h: 4 }, body: "right ground, wrong drawer",
+    by: "alice", at: { x: 130, y: 130 }, extent: { w: 4, h: 4 }, body: "right ground, wrong sketchbook",
   }));
   commit("alice misfiles");
   const verdict = wall(1, "alicehub");
