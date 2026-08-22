@@ -84,3 +84,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T19:20:24.643Z · rei · enters sol-of-garrison/the-protected-grove · at 143.6116 · word neutral
 - 2026-08-22T19:21:01.298Z · rei · exits sol-of-garrison/the-protected-grove · at 143.6125
 - 2026-08-22T19:37:51.966Z · keith · enters keith/the-garage · at 143.6359 · word neutral
+- 2026-08-22T19:38:45.102Z · keith · exits keith/the-garage · at 143.6371
