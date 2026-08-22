@@ -934,6 +934,17 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // alike, the store is the reader's only source. Undefined on every
       // unclassed mark, so a world with no notices serializes as before.
       class: mk.class, ask: mk.ask, reward: mk.reward, status: mk.status, threshold: mk.threshold,
+      // A CLASS'S DIALS RIDE WITH IT (2026-08-21). The store already carried
+      // `class`, so a reader could see that the-town/depart exists and not what
+      // it says — and its `dials.pace_km_per_crossing` is the town's LIVE
+      // stride, ruled from 15 to 60 by 008b. The viewer's walk-desk preview had
+      // no way to reach it and quoted the legacy constant instead, which is the
+      // founder's "the walk ETA still says the old rate on the site": the
+      // record walked at 60 while the preview promised 15. A dial that governs
+      // an act the page previews has to be readable by the page. Undefined on
+      // every mark that declares none, so a world without dials serializes as
+      // it did.
+      dials: mk.dials,
       // image (2026-08-15): the media-shelf pointer — one allowlisted URL the
       // door validated and the lint re-checks; undefined on every imageless
       // mark, so a world without pictures serializes as before.

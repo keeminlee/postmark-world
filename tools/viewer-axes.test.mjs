@@ -766,9 +766,17 @@ test("stake and walk previews use the sealed grammar and pure walk derivation", 
     }),
     "- 2026-07-28 · stake:world-mark/beta/bench → alpha · 2 · for: unstake · sig: …",
   );
+  // A leg now says which stride it was priced at (2026-08-21). Passing no pace
+  // is the pre-008b constant and is REPORTED as a guess rather than quoted as a
+  // fact — the founder's "the walk ETA still says the old rate on the site" was
+  // this shape answering with no provenance. tools/walk-preview-pace.test.mjs
+  // holds the live-record half; this stays the sealed-shape check.
   const leg = previewWalkLeg({ from: { x: 0, y: 0 }, toward: { x: 30_000, y: 0 } });
-  assert.deepEqual(leg, { distanceM: 30_000, etaCrossings: 2, viaCrossings: [] });
+  assert.deepEqual(leg, { distanceM: 30_000, etaCrossings: 2, paceKm: 15, paceFromRecord: false, viaCrossings: [] });
   assert.equal(formatWalkPreviewLabel(leg), "30,000 m · ~24h 00m");
+  // and priced at the town's live stride the same leg is four times quicker
+  const live = previewWalkLeg({ from: { x: 0, y: 0 }, toward: { x: 30_000, y: 0 }, paceKm: 60 });
+  assert.deepEqual(live, { distanceM: 30_000, etaCrossings: 0.5, paceKm: 60, paceFromRecord: true, viaCrossings: [] });
   assert.deepEqual(
     deriveWalkPreview({ from: { x: 0, y: 0 }, destination: { x: 30_000, y: 0 } }),
     { from: { x: 0, y: 0 }, toward: { x: 30_000, y: 0 }, leg },
