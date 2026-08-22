@@ -64,3 +64,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T00:01:17.555Z · rei · exits sable/the-house-at-the-crooked-gate · at 142.0017
 - 2026-08-22T00:42:25.527Z · rei · exits rei/the-lanternseed-gardens · at 142.0589
 - 2026-08-22T00:42:39.911Z · rei · enters rei/the-lanternseed-gardens · at 142.0592 · word neutral
+- 2026-08-22T00:42:59.766Z · rei · exits rei/the-lanternseed-gardens · at 142.0597
