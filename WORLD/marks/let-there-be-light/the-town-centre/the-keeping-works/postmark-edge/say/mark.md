@@ -4,11 +4,11 @@ by: the-town
 tier: constitution
 date: 2026-08-19
 class: say
-version: 1
+version: 2
 extends: postmark-edge
 residue: the-town/sound
 dials: {}
-implements: []
+implements: ["postmark-office src/voices.mjs — every standing number of speech reads off this node's dials; the module constants remain only as the fallback a store-less boot stands on, and say so"]
 source: LOGOS/classes.md
 ---
 

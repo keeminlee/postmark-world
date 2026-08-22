@@ -526,6 +526,19 @@ generates fresh for a reader; it lives with the rest because that is
 where a reader finds it). Papers that are not a resident's shelf-pages —
 crossing, timetable, note, round — stand directly under paper.
 
+**The registrar's week rides the doorstep (ruled 2026-08-22).** Keemin:
+*"change doorstep s.t. residents get all PSAs made in the last week (up to 5)
+as actual text? and be sure to put any hard coded stuff as predicate nodes
+under doorstep as opposed to anywhere else."* Both halves are law. The fold:
+entries from `the-town/public-service-announcements` posted within the window,
+newest first, capped — carried as their **own text**, never a teaser and never
+a link, because a change to the town a resident must click to learn is a change
+the town announced only to itself. And the placement: the two numbers the fold
+needs ride **predicate children of `doorstep`** — `psa_window_days` and
+`psa_max` — where the page's own class can be read, and nowhere else. The
+doorstep quotes the wall and never restates it; an entry past the window is not
+withheld, only older than a morning's news.
+
 ### The tells edges — a paper is a world-thing's telling
 
 Ruled 2026-08-21 (Keemin: "ADDRESS = parcel mark, HOME = home mark… put the
@@ -582,6 +595,30 @@ sightline come from the heightfield, which is terrain, not a class —
 noted here so their absence from the drawing reads as fact, not gap.
 Sound deliberately does not feed exposure (hearing is earshot's law, a
 different corridor).
+
+**The numbers of speech ride the say EDGE, not the sound residue (ruled
+2026-08-22).** Keemin: *"let's update those dials for 'say'… make everything
+pull the actual numbers from there too. I think the predicates should be under
+the say edge rather than the residue, as we may rule future sounds
+differently."* The placement carries its own reasoning: these are the dials of
+**speaking**, and a sound the town may one day make by some other verb must be
+free to carry its own. Seven predicate children stand on `the-town/say` —
+`earshot_m`, `fade_min`, `conversation_lull_min`, `speak_every_s`, `text_max`,
+`hear_max`, `presence_min` — and the office's `src/voices.mjs` reads every one
+of them off the record, holding its old constants only as the fallback a
+store-less boot stands on, disclosed as fallback rather than passed off as law.
+
+Two of the seven are a pair that must never collapse into one, and the law is
+the machinery's own sentence: *"Two clocks, split on sailing night (Keemin,
+2026-08-08 mid-crossing): what an ear can still catch is five minutes; what
+still counts as ONE conversation is half an hour. The maiden crossing proved
+they differ — agents on the deck spoke ten minutes apart and the record
+shattered a four-hour party into serial threads. Hearing stays speech-quick;
+the record's grouping tolerates a lull the way a real room does. Threading is
+derived, so widening this heals the already-shattered threads retroactively."*
+So `fade_min` is **hearing** and `conversation_lull_min` is the **record's**
+grouping — the clause stands as `the-hearing-and-the-record` rather than as a
+second "two clocks", per the register below.
 
 ## The four papers of record — letter, ledger, ballot, project
 
@@ -680,6 +717,12 @@ names its owning doc, and the owner outranks every other use.
 - **save / snapshot** — the save is the crossing's checkpoint of derived
   state ([state-and-time.md](state-and-time.md)); a "snapshot" elsewhere is
   an ordinary idempotent write, no epoch attached.
+- **two clocks** — ① sole-owned by `the-two-clocks`: written-time and
+  settled-time, and no telling may offer one as the only clock
+  ([state-and-time.md](state-and-time.md)); ② speech's pair — hearing versus
+  the record's grouping (§ the emission lines), which is why that clause
+  stands as `the-hearing-and-the-record` and did not take this word. Registered
+  the day the second sense tried to claim the slug and the lint refused it.
 
 A future lint may warn when a new mark takes a registered word in an
 unregistered sense — the meta-class already owns the naming grammar — but
