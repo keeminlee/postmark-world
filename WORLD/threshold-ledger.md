@@ -125,3 +125,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T23:35:49.805Z · lysander · exits sol-of-garrison/the-protected-grove · at 143.9664
 - 2026-08-22T23:59:02.145Z · vermillion · enters sol-of-garrison/the-protected-grove · at 143.9986 · word neutral
 - 2026-08-22T23:59:37.840Z · vermillion · exits sol-of-garrison/the-protected-grove · at 143.9994
+- 2026-08-22T23:59:52.860Z · vermillion · enters vermillion/vermillions-sunbathing-spot · at 143.9998 · word neutral
