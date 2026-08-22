@@ -620,6 +620,28 @@ export function standpointOccupancy({ acts = [], at = Infinity, handle = null } 
   return { entered, insideOf, alongside, manifest };
 }
 
+// WHERE ONE PRESS OF "step outside" ACTUALLY PUTS YOU (Wright, 2026-08-21).
+//
+// Occupancy is a STACK, not a flag — wright entered the-trueing-terrace and
+// the-trueing-house in a single act — so leaving the innermost room lands you
+// in the one around it, still indoors, and the reader had no way to know that
+// before pressing. It is also half of why the camera felt locked afterwards:
+// what they stepped into was another room, capped at its own walls.
+//
+// `entered` is outermost→innermost, so the destination is the one before last.
+// Null means the next press really does put you outdoors.
+export function exitDestination(entered = []) {
+  const stack = Array.isArray(entered) ? entered.filter(Boolean) : [];
+  return stack.length > 1 ? stack[stack.length - 2] : null;
+}
+
+// …and the button says it. One owner for both copies of the button — the
+// Telling's and the pane's — so they can never name different places.
+export function exitButtonLabel(entered = [], nameOf = (id) => id) {
+  const next = exitDestination(entered);
+  return next ? `↤ step outside → ${nameOf(next)}` : "↤ step outside";
+}
+
 // The chip, on the standpoint whose crossings these are. Absent rather than
 // empty: a spectator has crossed nothing and neither has a resident who never
 // entered anywhere, and "entered: —" under every read would be a claim the
@@ -3880,6 +3902,21 @@ export function mountViewer(appEl) {
   // fetch world-state AND report which url won + its X-Postmark-As-Of (the office
   // stamps every response; the auto-update poll compares it). Same office-first
   // preference: office live → same-origin /WORLD → RAW github.
+  // ── EVERY READ IS `credentials: "same-origin"` (2026-08-21) ───────────────
+  //
+  // The reads used to say `omit`, which sounds like the careful choice and is
+  // not: it strips cookies from OUR OWN host too. Behind an authenticating edge
+  // — dev.postmark.town sits behind Cloudflare Access — that drops the
+  // CF_Authorization cookie, the edge answers a login redirect instead of the
+  // record, and the World never loads on a page that otherwise renders fine.
+  //
+  // `same-origin` is the strictly correct setting and not a loosening: it sends
+  // cookies ONLY to the page's own origin. Every office lane here is
+  // same-origin (/api/…), the record files are same-origin, and the raw
+  // fallback below is a different host — which receives nothing under either
+  // setting. So there was never anything `omit` was protecting that
+  // `same-origin` gives away; all eleven sites were read before changing, and
+  // none of them wanted to stay.
   const worldStatePaths = () => [officeUrl("/world/state"), "/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`];
   async function fetchWorldState(paths, options = {}) {
     let lastErr;
@@ -3904,7 +3941,7 @@ export function mountViewer(appEl) {
     if (data) return;
     // The True World is intentionally credentialless. Even a signed-in browser
     // receives the main fold here; the household-composed fold has its own read.
-    const ws = await fetchWorldState(worldStatePaths(), { credentials: "omit" });
+    const ws = await fetchWorldState(worldStatePaths(), { credentials: "same-origin" });
     const [sk, mf] = await Promise.all([
       fetchJson([officeUrl("/world/skeleton"), "/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
       // homes come from the seeding manifest, fetched the same way (same-origin probe
@@ -3918,7 +3955,7 @@ export function mountViewer(appEl) {
   // re-pull the fold from the same source and re-assemble (auto-update). Skeleton
   // and manifest are stable across a write, so only world-state is refetched.
   async function reloadWorld() {
-    const ws = await fetchWorldState([state.dataSource, ...worldStatePaths()], { credentials: "omit" });
+    const ws = await fetchWorldState([state.dataSource, ...worldStatePaths()], { credentials: "same-origin" });
     state.dataSource = ws.url; state.asOf = ws.asOf;
     data.trueWorld = ws.json;
     applyWorldLayer();
@@ -4391,8 +4428,11 @@ export function mountViewer(appEl) {
     const children = (found.children ?? []).map((c) => (isEntity(c) ? c : { ...(byId.get(c.id) ?? c) }));
     const { things, bodies } = interiorFurniture({ room, children });
     const nameOf = (id) => markName(byId.get(id) ?? { id }).name;
+    // what one press actually does: a nested dweller lands in the room around
+    // this one, and the button says which rather than letting them find out
+    const { entered } = standpointOccupancy({ acts: crossings.acts, at: occupancyClock(), handle: key });
     box.innerHTML = interiorPlaqueHTML({ room, bodies, you: key, name: nameOf(room.id), nameOf })
-      + `<div class="wv-int-exit"><button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">↤ step outside</button></div>`
+      + `<div class="wv-int-exit"><button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">${esc(exitButtonLabel(entered, nameOf))}</button></div>`
       + (things.length
         ? `<div class="wv-section-lbl">what is in here — ${things.length}</div>`
           + `<div class="wv-cards">${things.map((t) => markCell(byId.get(t.id) ?? t, { role: "fov" })).join("")}</div>`
@@ -4506,7 +4546,7 @@ export function mountViewer(appEl) {
     const built = interiorByKey.get(key) ?? null;
     const room = built?.room ?? null;
     boxEl.classList.toggle("is-scene-mark", !!room);
-    syncSceneExit(boxEl, room);
+    syncSceneExit(boxEl, room, key);
     if ((room?.id ?? null) === sceneRoomId) return;
     if (room) mountRoomScene(boxEl, room);
     else remountTown(boxEl);
@@ -4516,7 +4556,7 @@ export function mountViewer(appEl) {
   // the default mode — which is how the founder stood in a room with no way to
   // leave it. Same class as the telling's button, so the existing click route
   // carries both and neither can drift.
-  function syncSceneExit(boxEl, room) {
+  function syncSceneExit(boxEl, room, key = null) {
     let chrome = $(boxEl, ".wv-scene-exit");
     if (!room) { chrome?.remove(); return; }
     if (!chrome) {
@@ -4525,7 +4565,9 @@ export function mountViewer(appEl) {
       chrome.setAttribute("data-wv-keep", "");
       boxEl.appendChild(chrome);
     }
-    chrome.innerHTML = `<button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">↤ step outside</button>`;
+    const { entered } = standpointOccupancy({ acts: crossings.acts, at: occupancyClock(), handle: key });
+    const nameOf = (id) => markName(byId.get(id) ?? { id }).name;
+    chrome.innerHTML = `<button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">${esc(exitButtonLabel(entered, nameOf))}</button>`;
   }
   // ── crossing in ──────────────────────────────────────────────────────────
   //
@@ -5767,7 +5809,7 @@ export function mountViewer(appEl) {
   let stakeEvents = [];
   async function loadStakeEvents() {
     try {
-      const r = await fetch(officeUrl("/repo/log?limit=120"), { credentials: "omit" });
+      const r = await fetch(officeUrl("/repo/log?limit=120"), { credentials: "same-origin" });
       if (!r.ok) return;
       const body = await r.json();
       const commits = Array.isArray(body) ? body : (body?.commits ?? body?.log ?? []);
@@ -5776,7 +5818,7 @@ export function mountViewer(appEl) {
   }
   async function loadSettlements() {
     try {
-      const r = await fetch(officeUrl("/world/settlements"), { credentials: "omit" });
+      const r = await fetch(officeUrl("/world/settlements"), { credentials: "same-origin" });
       if (!r.ok) return;
       const body = await r.json();
       if (body && (body.current || Array.isArray(body.recent))) {
@@ -5793,7 +5835,7 @@ export function mountViewer(appEl) {
   }
   async function loadResidentsMeta() {
     try {
-      const r = await fetch("/world-engine/residents-meta.json", { credentials: "omit" });
+      const r = await fetch("/world-engine/residents-meta.json", { credentials: "same-origin" });
       if (!r.ok) return;
       const body = await r.json();
       const entries = Object.entries(body?.residents ?? {});
@@ -5809,7 +5851,7 @@ export function mountViewer(appEl) {
   let convoVisible = false; // the layer is opt-in (upper-right 💬); hidden draws nothing, hits nothing, fetches nothing
   async function loadConversations() {
     try {
-      const r = await fetch(officeUrl("/world/conversations"), { credentials: "omit" });
+      const r = await fetch(officeUrl("/world/conversations"), { credentials: "same-origin" });
       if (!r.ok) return;
       const body = await r.json();
       if (Array.isArray(body?.live) && Array.isArray(body?.closed))
@@ -6228,7 +6270,7 @@ export function mountViewer(appEl) {
     try {
       const response = await fetch(officeUrl(`/stamps/${encodeURIComponent(handle)}`), {
         headers: { accept: "application/json" },
-        credentials: "omit",
+        credentials: "same-origin",
       });
       const body = response.ok ? await response.json() : null;
       const balance = Number(body?.stamps);
@@ -6570,7 +6612,7 @@ export function mountViewer(appEl) {
     try {
       const response = await fetch(officeUrl(`/world/stake?mark=${encodeURIComponent(sheet.dataset.mark)}`), {
         headers: { accept: "application/json" },
-        credentials: "omit",
+        credentials: "same-origin",
       });
       const body = await response.json().catch(() => null);
       if (!response.ok || !body || body.error === "bounce") throw new Error(body?.defect || `the door answered ${response.status}`);
@@ -8108,7 +8150,7 @@ export function mountViewer(appEl) {
   async function loadWalkLedger() {
     for (const url of ["/WORLD/walk-ledger.md", `${RAW}/WORLD/walk-ledger.md`]) {
       try {
-        const r = await fetch(url, { credentials: "omit" });
+        const r = await fetch(url, { credentials: "same-origin" });
         if (!r.ok) continue;
         const parsed = parseWalkLedger(await r.text());
         if (parsed.departures.length) { departures = parsed.departures; return; }
@@ -8157,7 +8199,7 @@ export function mountViewer(appEl) {
         // through. The local rigs already answer no-store; the site serves the
         // ledger as a static file and the RAW fallback caches hard, so the
         // freshness has to be asked for HERE, at the one reader that needs it.
-        const r = await fetch(url, { credentials: "omit", cache: "no-store" });
+        const r = await fetch(url, { credentials: "same-origin", cache: "no-store" });
         if (!r.ok) continue;
         // the office answers JSON carrying the ledger text; a file IS the text
         const text = json ? String((await r.json())?.ledger ?? "") : await r.text();
@@ -8262,7 +8304,7 @@ export function mountViewer(appEl) {
     if (convoVisible && tick % 2 === 0) loadConversations().then(drawConversations);
     if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
       try {
-        const r = await fetch(state.dataSource, { credentials: "omit" });
+        const r = await fetch(state.dataSource, { credentials: "same-origin" });
         const asOf = r.headers.get("x-postmark-as-of");
         if (r.ok && asOf && asOf !== state.asOf) {
           const json = await r.json();
