@@ -442,6 +442,14 @@ listed here — they are their households' own.*
 | the-town/pay-engine | predicated | the-town/pay | engine=postmark/tools/stamp-mint.mjs — the pays: settlement (transfer, or a void that names its reason) | 0 | 0 |  |
 | the-town/reports-to | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/say | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/conversation-lull-min | predicated | the-town/say | conversation_lull_min=30 | 0 | 0 |  |
+| the-town/earshot-m | predicated | the-town/say | earshot_m=60 | 0 | 0 |  |
+| the-town/fade-min | predicated | the-town/say | fade_min=5 | 0 | 0 |  |
+| the-town/hear-max | predicated | the-town/say | hear_max=20 | 0 | 0 |  |
+| the-town/presence-min | predicated | the-town/say | presence_min=15 | 0 | 0 |  |
+| the-town/speak-every-s | predicated | the-town/say | speak_every_s=15 | 0 | 0 |  |
+| the-town/text-max | predicated | the-town/say | text_max=500 | 0 | 0 |  |
+| the-town/the-hearing-and-the-record | predicated | the-town/say | clocks=fade_min is HEARING; conversation_lull_min is the RECORD's grouping — two dials, never one | 0 | 0 |  |
 | the-town/settle | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/co-sign-guard | predicated | the-town/settle | guard=co-signed = true | 0 | 0 |  |
 | the-town/come-ashore-trigger | predicated | the-town/settle | trigger=the berth's own act — a button, never automatic | 0 | 0 |  |
@@ -518,6 +526,9 @@ listed here — they are their households' own.*
 | the-town/white-page | class | the-town/paper |  | 0 | 0 |  |
 | the-town/address | class | the-town/white-page |  | 0 | 0 |  |
 | the-town/doorstep | class | the-town/white-page |  | 0 | 0 |  |
+| the-town/psa-max | predicated | the-town/doorstep | psa_max=5 | 0 | 0 |  |
+| the-town/psa-window-days | predicated | the-town/doorstep | psa_window_days=7 | 0 | 0 |  |
+| the-town/the-weeks-news | predicated | the-town/doorstep | psa-fold=the-town/public-service-announcements, entries within psa_window_days, newest first, at most psa_max — as their own text | 0 | 0 |  |
 | the-town/home | class | the-town/white-page |  | 0 | 0 |  |
 | the-town/mailbox | class | the-town/white-page |  | 0 | 0 |  |
 | the-town/inbox | class | the-town/mailbox |  | 0 | 0 |  |

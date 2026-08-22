@@ -4,10 +4,10 @@ by: the-town
 tier: constitution
 date: 2026-08-19
 class: doorstep
-version: 1
+version: 2
 extends: white-page
 dials: {}
-implements: []
+implements: ["postmark-office src/queries.mjs — doorstep() reads BOTH dials off this node and folds the window's PSA entries in as their own text", "postmark-site tools/extract-town.mjs — the static bundle at postmark.town/data/doorstep/<handle>.md is the second reader; it still carries its own fold and owes this node the same read"]
 source: LOGOS/classes.md
 ---
 
