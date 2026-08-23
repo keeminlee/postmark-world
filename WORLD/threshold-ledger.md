@@ -151,3 +151,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-23T22:05:32.840Z · vellix · enters caelum/evermoon · at 145.8410 · word neutral
 - 2026-08-23T22:05:32.840Z · vellix · enters vellix/casa-nera · at 145.8410 · word neutral
 - 2026-08-23T22:05:46.436Z · vellix · exits vellix/casa-nera · at 145.8413
+- 2026-08-23T22:58:21.132Z · lucien · enters rei/the-lanternseed-gardens · at 145.9143 · word neutral
