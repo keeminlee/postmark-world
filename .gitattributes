@@ -3,3 +3,5 @@
 # text-mode write then flips 5,000 line endings and git stores them verbatim
 # (bitten 2026-08-08). Declaring it text/LF restores the net; the NUL survives.
 spectator/viewer.mjs text eol=lf
+*.mjs text eol=lf
+*.md text eol=lf
