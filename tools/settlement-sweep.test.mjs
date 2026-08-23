@@ -1433,3 +1433,43 @@ test("FALSIFIER (shape two's guard): a sketchbook whose stale copy does NOT norm
     return true;
   });
 });
+
+test("FALSIFIER (the rewind): a shape-one normalization followed by a failed replay leaves the sketchbook's ref exactly where it was found", (t) => {
+  // The normalization is a real commit on the sketchbook, made before the
+  // replay is known to work. Every other refusal in this crossing leaves the
+  // tree as it found it; this one has to as well, or a refused crossing quietly
+  // rewrites 33 sketchbooks.
+  const { repo, git, put, commit } = eolFixture(t, "postmark-settlement-eol-rewind-");
+
+  put("tools/relic.mjs", NUL_RELIC("\r\n"));
+  put("tools/doomed.mjs", "export const doomed = 1;\n");
+  commit("published main, with a CRLF relic nobody has declared a law about");
+  put(".gitattributes", "*.mjs text eol=lf\n");
+  commit("gitattributes: tools pinned LF", ".gitattributes");
+
+  // cut AFTER the law, so the sketchbook carries it over the stale blob
+  git("switch", "-q", "-c", "draft/house-a");
+  rmSync(join(repo, "tools", "doomed.mjs"));
+  put("WORLD/marks/let-there-be-light/alice-market/mark.md", record({
+    by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "a backed commons",
+  }));
+  commit("house a sketches, and deletes a tool", "WORLD/marks", "tools/doomed.mjs");
+  const sketchbookTip = git("rev-parse", "draft/house-a").trim();
+  git("switch", "-q", "--force", "main");
+
+  // main trues the relic (so shape one fires) AND edits the file the sketchbook
+  // deleted (so the replay hits a modify/delete that -X theirs will not resolve)
+  git("add", "--renormalize", "--", "tools/relic.mjs");
+  put("tools/doomed.mjs", "export const doomed = 2;\n");
+  commit("normalize the relic, and edit the doomed tool", "tools/relic.mjs", "tools/doomed.mjs");
+
+  const stakesPath = stakesFile(t, repo, [{ holder: "s1", mark: "alice/alice-market", n: 5, weight: 10 }]);
+  assert.throws(() => settlementSweep({ repo, stakesPath }), (error) => {
+    assert.match(error.message, /draft\/house-a did not rebase cleanly/, "the replay refuses");
+    return true;
+  });
+  assert.equal(git("rev-parse", "draft/house-a").trim(), sketchbookTip,
+    "and the sketchbook's ref is exactly where the crossing found it — the normalization commit is gone");
+  assert.equal(git("log", "--format=%s", "-1", "draft/house-a").trim(), "house a sketches, and deletes a tool",
+    "its own last word is still its own last word");
+});

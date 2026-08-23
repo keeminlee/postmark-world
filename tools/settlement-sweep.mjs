@@ -635,6 +635,8 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
     const wt = join(wtParent, "worktree");
     git(repo, ["worktree", "add", "--quiet", wt, branch]);
     const crossed = [];
+    const tipBefore = git(repo, ["rev-parse", branch]).trim();
+    let normalizedTip = null;
     try {
       const replay = () => {
         // -X theirs — in a rebase, "theirs" is the commit being REPLAYED: the
@@ -687,7 +689,7 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
               `${branch} carries line endings ${mainBranch} does not share: ${dirt.irreconcilable.find((p) => !settled.includes(p))}`,
               { phase: "rebase", branch, eol_dirt: dirt.irreconcilable },
             );
-          commit(wt, settled, `settlement: normalize ${settled.length} path(s) to ${mainBranch}'s line-ending law`);
+          normalizedTip = commit(wt, settled, `settlement: normalize ${settled.length} path(s) to ${mainBranch}'s line-ending law`);
           crossed.push(...settled);
         }
       }
@@ -754,6 +756,15 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
         // own eol law and had to be carried inert across this replay
         eol_crossed: crossed,
       });
+    } catch (error) {
+      // The shape-one normalization is a real commit, and it advanced the
+      // sketchbook's ref before the replay was known to work. A crossing that
+      // ends up refusing must leave that ref exactly where it found it — the
+      // same rule the gate follows. Only rewind what nothing else has moved.
+      if (normalizedTip && git(repo, ["rev-parse", branch]).trim() === normalizedTip) {
+        try { git(wt, ["reset", "--hard", "--quiet", tipBefore]); } catch { /* named in the refusal either way */ }
+      }
+      throw error;
     } finally {
       try { git(repo, ["worktree", "remove", "--force", wt]); } catch { /* temp path only */ }
       rmSync(wtParent, { recursive: true, force: true });
