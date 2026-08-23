@@ -3,7 +3,7 @@
 *The word above the world; the record of what happened; the world that
 follows from it.*
 
-Rendered in the world as `the-town/the-fidelity`.
+Rendered in the world as `the-town/the-fidelity`; the invariant abstraction as `the-town/the-invariant` (2026-08-22).
 (The layers' and binding channels' 2026-08-09 renderings said other than this
 law now says; removed by the seed act, 2026-08-13 — re-render piecewise.)
 
@@ -49,4 +49,8 @@ not yet consulted by the machinery, it says so, and the gap is a named entry
 on the founders' cleanup list, never a silence. (That list IS the red board —
 the works graph's derivation under [classes.md](classes.md)'s red
 conventions; ruled 2026-08-19 — the mechanic-child convention is this
-clause, mechanized.)
+clause, mechanized.) The questions themselves are law: an **invariant** is a
+standing question the town asks of itself at every fold — it reports, never
+repairs, and names its method and its limits; the eight standing invariants
+are classes under `postmark-invariant` in the Keeping Works (ruled
+2026-08-22, the ladder audit).

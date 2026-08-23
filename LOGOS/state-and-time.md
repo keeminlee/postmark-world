@@ -8,7 +8,8 @@ until the homonym ruling, 2026-08-19 — the word "tense" now belongs solely to
 `the-town/the-tenses`, the read-against-the-standpoint law) and
 `the-town/the-two-clocks`; the save grammar stands as `the-town/the-save`
 (planted 2026-08-18); the log's witness rule as `the-town/the-witnessed-line`
-and the sketchbook's phases as `the-town/the-live` and `the-town/the-settled`
+the sketchbook's phases as `the-town/the-live` and `the-town/the-settled`,
+and the drain's atomicity as `the-town/the-atomic-drain`
 (planted 2026-08-22, the ladder audit).
 
 ---
@@ -65,4 +66,6 @@ document does not pretend it closed.
 The STATE substrate crystallizes on the same epochs — the save is a
 checkpoint of derived state for cheap resumption, a projection like any
 other: regenerable, never truth. Replay from the log is the constitutional
-guarantee; the save is its convenience.
+guarantee; the save is its convenience. The drain's write-down and the
+journal's truncate are one act — a crash between them eats no draft
+(rendered as `the-town/the-atomic-drain`, 2026-08-22).

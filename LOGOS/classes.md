@@ -45,7 +45,13 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/money-never-buys-judgment`, `the-town/mint-at-entry`,
 `the-town/the-rho-cap`, `the-town/postmark-economy`, `the-town/stamp`,
 `the-town/minted`, `the-town/liquid`, `the-town/staked`, `the-town/holo`,
-`the-town/mint`, `the-town/burn`, `the-town/pay`, `the-town/tells` and `the-town/home-mark` — the clauses this page renders, among
+`the-town/mint`, `the-town/burn`, `the-town/pay`, `the-town/tells`,
+`the-town/postmark-invariant`, `the-town/the-readable-inputs`,
+`the-town/the-reaching-mechanic`, `the-town/the-unmoved-past`,
+`the-town/the-owned-constants`, `the-town/the-conforming-instance`,
+`the-town/the-consulted-doctrine`, `the-town/the-live-handler`,
+`the-town/the-classed-mark`, `the-town/the-anchor`,
+`the-town/the-not-ground` and `the-town/home-mark` — the clauses this page renders, among
 the one hundred fifteen class-nodes standing in the Keeping Works after the
 graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
@@ -844,3 +850,23 @@ the door's documentation, dials, and terms move with it, with no code in
 between.
 A door implementation is correct precisely insofar as it *reads* the class
 tree, and wrong wherever it hardcodes.
+
+
+## The self-reading town (ruled 2026-08-22, the ladder audit's second pass)
+
+The standing invariants are law, not tooling: a new root primitive
+**postmark-invariant** holds them, each invariant a class extending it, each
+carrying a mechanic child naming the code that asks it (`world-lints.mjs`, one
+question per hydration, the delta between runs the alert surface). The eight:
+the readable inputs (L0) · the reaching mechanic (L1) · the unmoved past (L2)
+· the owned constants (L3) · the conforming instance (L4) · the consulted
+doctrine (L5) · the live handler (L6) · the classed mark (L7). The abstraction
+they implement is `the-town/the-invariant` (three-layers): a standing question
+the town asks of itself at every fold — reports, never repairs.
+
+Two clarifications ruled the same pass. **The anchor generalization**: a
+position's anchor is a mark, an entity, or the world — a held thing rides its
+holder as a rider rides the deck; what may anchor where is class contract
+(rendered as `the-town/the-anchor`). **A thing is not ground**: nothing files
+under a thing by geometry, and a walk onto it sets you down on what it stands
+on (rendered as `the-town/the-not-ground`).
