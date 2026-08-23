@@ -137,3 +137,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-23T01:29:18.973Z · wright · enters the-town/the-town-centre · at 144.1240 · word neutral
 - 2026-08-23T01:29:18.973Z · wright · enters postmaster/the-waiting-room · at 144.1240 · word neutral
 - 2026-08-23T01:29:50.733Z · wright · exits postmaster/the-waiting-room · at 144.1247
+- 2026-08-23T01:30:00.573Z · wright · exits the-town/the-town-centre · at 144.1250
