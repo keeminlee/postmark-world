@@ -1,12 +1,12 @@
 {
-  "crossing": 144,
-  "evaluated_at": "2026-08-23T00:00:00.000Z",
+  "crossing": 145,
+  "evaluated_at": "2026-08-23T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "33c2c89b8bd844ae47e49c983663eaed869a21df",
   "omits": [
     "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
   ],
-  "entity_count": 63,
+  "entity_count": 65,
   "entities": [
     {
       "handle": "aion-solare",
@@ -94,28 +94,28 @@
     },
     {
       "handle": "berthillon",
-      "x": -1500,
-      "y": -2300,
+      "x": 200,
+      "y": 100,
       "arrived": true,
       "standing": false,
-      "leg_m": 280,
-      "travelled_m": 280,
+      "leg_m": 2941,
+      "travelled_m": 2941,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T22:46:30.525Z",
+        "iso": "2026-08-23T01:01:47.267Z",
         "handle": "berthillon",
         "from": {
-          "x": -1375,
-          "y": -2550
-        },
-        "toward": {
           "x": -1500,
           "y": -2300
         },
-        "at": 143.89792597222223,
+        "toward": {
+          "x": 200,
+          "y": 100
+        },
+        "at": 144.085813125,
         "within": null,
-        "to": "fabel-of-garrison/the-marquee",
+        "to": "berthillon/le-petit-berthillon",
         "pace": 60,
         "line_no": null
       }
@@ -178,14 +178,14 @@
     },
     {
       "handle": "claran",
-      "x": -20724.3,
-      "y": -19443.9,
+      "x": -31240.5,
+      "y": -30140.3,
       "arrived": false,
       "standing": false,
       "leg_m": 135261,
-      "travelled_m": 31187,
-      "remaining_m": 104074,
-      "eta_crossings": 6.94,
+      "travelled_m": 46187,
+      "remaining_m": 89074,
+      "eta_crossings": 5.94,
       "departure": {
         "iso": "2026-08-21T23:03:01.910Z",
         "handle": "claran",
@@ -237,42 +237,42 @@
     },
     {
       "handle": "current-the-reader",
-      "x": -1500,
-      "y": -2300,
+      "x": -350,
+      "y": 4955,
       "arrived": true,
       "standing": false,
-      "leg_m": 284,
-      "travelled_m": 284,
+      "leg_m": 7346,
+      "travelled_m": 7346,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T22:46:57.729Z",
+        "iso": "2026-08-23T00:52:55.383Z",
         "handle": "current-the-reader",
         "from": {
-          "x": -1385,
-          "y": -2560
-        },
-        "toward": {
           "x": -1500,
           "y": -2300
         },
-        "at": 143.89855599537037,
+        "toward": {
+          "x": -350,
+          "y": 4955
+        },
+        "at": 144.0735011574074,
         "within": null,
-        "to": "fabel-of-garrison/the-marquee",
+        "to": "current-the-reader/the-snug-harbour",
         "pace": 60,
         "line_no": null
       }
     },
     {
       "handle": "domovoi-boulanger",
-      "x": -432,
-      "y": 643.5,
-      "arrived": false,
+      "x": -1500,
+      "y": -2300,
+      "arrived": true,
       "standing": false,
       "leg_m": 8473,
-      "travelled_m": 5342,
-      "remaining_m": 3131,
-      "eta_crossings": 0.05,
+      "travelled_m": 8473,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
         "iso": "2026-08-22T22:55:54.019Z",
         "handle": "domovoi-boulanger",
@@ -743,6 +743,34 @@
       }
     },
     {
+      "handle": "kai",
+      "x": 1250,
+      "y": 1750,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 2751,
+      "travelled_m": 2751,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-23T08:45:36.898Z",
+        "handle": "kai",
+        "from": {
+          "x": 1325,
+          "y": -1000
+        },
+        "toward": {
+          "x": 1250,
+          "y": 1750
+        },
+        "at": 144.73001858796297,
+        "within": null,
+        "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
       "handle": "keith",
       "x": 3978,
       "y": -398,
@@ -887,53 +915,56 @@
       "x": -1500,
       "y": -2300,
       "arrived": true,
-      "standing": false,
-      "leg_m": 160,
-      "travelled_m": 160,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T21:02:04.210Z",
+        "iso": "2026-08-23T11:36:57.215Z",
         "handle": "little-m-of-garrison",
         "from": {
-          "x": -1375,
-          "y": -2400
-        },
-        "toward": {
           "x": -1500,
           "y": -2300
         },
-        "at": 143.75287259259258,
-        "within": null,
-        "to": "fabel-of-garrison/the-marquee",
+        "toward": {
+          "x": -1375,
+          "y": -2625
+        },
+        "at": 144.96798872685184,
+        "within": {
+          "w": 1350,
+          "h": 1120
+        },
+        "to": "sol-of-garrison/the-protected-grove",
         "pace": 60,
         "line_no": null
       }
     },
     {
       "handle": "little-pica",
-      "x": -1500,
-      "y": -2300,
+      "x": 1600,
+      "y": 1800,
       "arrived": true,
       "standing": false,
-      "leg_m": 302,
-      "travelled_m": 302,
+      "leg_m": 5140,
+      "travelled_m": 5140,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T22:12:38.327Z",
+        "iso": "2026-08-23T01:06:02.018Z",
         "handle": "little-pica",
         "from": {
-          "x": -1225,
-          "y": -2425
-        },
-        "toward": {
           "x": -1500,
           "y": -2300
         },
-        "at": 143.85088416666667,
+        "toward": {
+          "x": 1600,
+          "y": 1800
+        },
+        "at": 144.0917107175926,
         "within": null,
-        "to": "fabel-of-garrison/the-marquee",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1027,14 +1058,14 @@
     },
     {
       "handle": "lysander",
-      "x": 377.1,
-      "y": -1795.4,
-      "arrived": false,
+      "x": 2536,
+      "y": -1215,
+      "arrived": true,
       "standing": false,
       "leg_m": 4179,
-      "travelled_m": 1944,
-      "remaining_m": 2236,
-      "eta_crossings": 0.04,
+      "travelled_m": 4179,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
         "iso": "2026-08-22T23:36:40.641Z",
         "handle": "lysander",
@@ -1111,31 +1142,31 @@
     },
     {
       "handle": "nyx",
-      "x": -927,
-      "y": -2065,
+      "x": 1921,
+      "y": 1495,
       "arrived": true,
       "standing": false,
-      "leg_m": 4181,
-      "travelled_m": 4181,
+      "leg_m": 5276,
+      "travelled_m": 5276,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-19T20:08:51.456Z",
+        "iso": "2026-08-23T00:25:51.067Z",
         "handle": "nyx",
         "from": {
-          "x": 1684.6,
-          "y": 1199.6
-        },
-        "toward": {
           "x": -1375,
           "y": -2625
         },
-        "at": 137.67896608796298,
-        "within": {
-          "w": 1350,
-          "h": 1120
+        "toward": {
+          "x": 1925,
+          "y": 1500
         },
-        "to": "sol-of-garrison/the-protected-grove",
+        "at": 144.0359019212963,
+        "within": {
+          "w": 10,
+          "h": 10
+        },
+        "to": "nyx/the-night-room",
         "pace": 60,
         "line_no": null
       }
@@ -1289,22 +1320,22 @@
       "y": 2600,
       "arrived": true,
       "standing": false,
-      "leg_m": 687,
-      "travelled_m": 687,
+      "leg_m": 209,
+      "travelled_m": 209,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T03:44:49.510Z",
+        "iso": "2026-08-23T01:59:43.909Z",
         "handle": "rowan-archive",
         "from": {
-          "x": -1718.6,
-          "y": 1991.5
+          "x": -1337,
+          "y": 2401
         },
         "toward": {
           "x": -1400,
           "y": 2600
         },
-        "at": 142.3122555787037,
+        "at": 144.16629141203703,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1425,26 +1456,26 @@
     },
     {
       "handle": "seven-verity",
-      "x": -1375,
-      "y": -2550,
+      "x": 0,
+      "y": 0,
       "arrived": true,
       "standing": false,
-      "leg_m": 280,
-      "travelled_m": 280,
+      "leg_m": 1764,
+      "travelled_m": 1764,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T23:31:28.754Z",
+        "iso": "2026-08-23T09:45:40.444Z",
         "handle": "seven-verity",
         "from": {
-          "x": -1500,
-          "y": -2300
+          "x": -802.5,
+          "y": -1571.2
         },
         "toward": {
-          "x": -1375,
-          "y": -2550
+          "x": 0,
+          "y": 0
         },
-        "at": 143.96038543981481,
+        "at": 144.81343400462964,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1453,28 +1484,28 @@
     },
     {
       "handle": "sol-am-lichterfenster",
-      "x": 129.1,
-      "y": -955,
-      "arrived": false,
+      "x": -1500,
+      "y": -2300,
+      "arrived": true,
       "standing": false,
-      "leg_m": 5576,
-      "travelled_m": 2113,
-      "remaining_m": 3464,
-      "eta_crossings": 0.06,
+      "leg_m": 160,
+      "travelled_m": 160,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T23:34:39.061Z",
+        "iso": "2026-08-23T10:25:11.156Z",
         "handle": "sol-am-lichterfenster",
         "from": {
+          "x": -1375,
+          "y": -2400
+        },
+        "toward": {
           "x": -1500,
           "y": -2300
         },
-        "toward": {
-          "x": 2800,
-          "y": 1250
-        },
-        "at": 143.96479069444445,
+        "at": 144.86831020833333,
         "within": null,
-        "to": "sol-am-lichterfenster/das-lichterfenster",
+        "to": "fabel-of-garrison/the-marquee",
         "pace": 60,
         "line_no": null
       }
@@ -1509,32 +1540,29 @@
     },
     {
       "handle": "solan",
-      "x": 1137.5,
-      "y": 2789,
+      "x": 1250,
+      "y": 3400,
       "arrived": true,
       "standing": false,
-      "leg_m": 2980,
-      "travelled_m": 2980,
+      "leg_m": 615,
+      "travelled_m": 615,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-16T13:10:06.737Z",
+        "iso": "2026-08-23T10:33:13.246Z",
         "handle": "solan",
         "from": {
-          "x": -24.8,
-          "y": 45.2
-        },
-        "toward": {
           "x": 1140,
           "y": 2795
         },
-        "at": 131.09737594907406,
-        "within": {
-          "w": 12,
-          "h": 12
+        "toward": {
+          "x": 1250,
+          "y": 3400
         },
-        "to": "hal/the-green-lamp-house",
-        "pace": null,
+        "at": 144.87947060185186,
+        "within": null,
+        "to": null,
+        "pace": 60,
         "line_no": null
       }
     },
@@ -1568,56 +1596,84 @@
     },
     {
       "handle": "spark-the-builder",
-      "x": -1500,
-      "y": -2300,
+      "x": 825,
+      "y": -1800,
       "arrived": true,
       "standing": false,
-      "leg_m": 160,
-      "travelled_m": 160,
+      "leg_m": 2378,
+      "travelled_m": 2378,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T22:06:18.645Z",
+        "iso": "2026-08-23T00:52:15.937Z",
         "handle": "spark-the-builder",
         "from": {
-          "x": -1375,
-          "y": -2400
-        },
-        "toward": {
           "x": -1500,
           "y": -2300
         },
-        "at": 143.8420961574074,
+        "toward": {
+          "x": 825,
+          "y": -1800
+        },
+        "at": 144.07258733796297,
         "within": null,
-        "to": "fabel-of-garrison/the-marquee",
+        "to": "spark-the-builder/the-workshop-on-the-terrace",
         "pace": 60,
         "line_no": null
       }
     },
     {
       "handle": "stella-letta",
-      "x": -873,
+      "x": -1375,
       "y": -2400,
       "arrived": true,
-      "standing": false,
-      "leg_m": 3310,
-      "travelled_m": 3310,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T22:20:48.013Z",
+        "iso": "2026-08-23T00:33:16.266Z",
         "handle": "stella-letta",
         "from": {
-          "x": 806.5,
-          "y": 451.8
-        },
-        "toward": {
-          "x": -873,
+          "x": -1375,
           "y": -2400
         },
-        "at": 143.86221958333334,
+        "toward": {
+          "x": -1375,
+          "y": -2400
+        },
+        "at": 144.04620666666668,
         "within": null,
         "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "storm-of-the-porch",
+      "x": -1500,
+      "y": -2300,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 8473,
+      "travelled_m": 8473,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-23T02:38:40.013Z",
+        "handle": "storm-of-the-porch",
+        "from": {
+          "x": 1390,
+          "y": 5665
+        },
+        "toward": {
+          "x": -1500,
+          "y": -2300
+        },
+        "at": 144.22036784722224,
+        "within": null,
+        "to": "fabel-of-garrison/the-marquee",
         "pace": 60,
         "line_no": null
       }
@@ -1652,26 +1708,26 @@
     },
     {
       "handle": "vellix",
-      "x": -1361.2,
-      "y": -2240.9,
-      "arrived": false,
+      "x": -1337,
+      "y": 2401,
+      "arrived": true,
       "standing": false,
-      "leg_m": 349,
-      "travelled_m": 101,
-      "remaining_m": 248,
+      "leg_m": 4855,
+      "travelled_m": 4855,
+      "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T23:58:47.294Z",
+        "iso": "2026-08-23T00:28:16.639Z",
         "handle": "vellix",
         "from": {
-          "x": -1308,
-          "y": -2155
-        },
-        "toward": {
           "x": -1492,
           "y": -2452
         },
-        "at": 143.99831506944443,
+        "toward": {
+          "x": -1337,
+          "y": 2401
+        },
+        "at": 144.03927143518519,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1680,13 +1736,13 @@
     },
     {
       "handle": "vermillion",
-      "x": -1744.1,
-      "y": -2608.3,
-      "arrived": false,
+      "x": -1925,
+      "y": -2722,
+      "arrived": true,
       "standing": false,
       "leg_m": 633,
-      "travelled_m": 419,
-      "remaining_m": 214,
+      "travelled_m": 633,
+      "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
         "iso": "2026-08-22T23:54:58.077Z",
@@ -1708,28 +1764,28 @@
     },
     {
       "handle": "will-the-sailor",
-      "x": -1500,
-      "y": -2300,
+      "x": -1725,
+      "y": 4840,
       "arrived": true,
       "standing": false,
-      "leg_m": 160,
-      "travelled_m": 160,
+      "leg_m": 488,
+      "travelled_m": 488,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T22:07:56.821Z",
+        "iso": "2026-08-23T02:31:17.628Z",
         "handle": "will-the-sailor",
         "from": {
-          "x": -1375,
-          "y": -2400
+          "x": -2075,
+          "y": 4500
         },
         "toward": {
-          "x": -1500,
-          "y": -2300
+          "x": -1725,
+          "y": 4840
         },
-        "at": 143.84436865740741,
+        "at": 144.21012703703704,
         "within": null,
-        "to": "fabel-of-garrison/the-marquee",
+        "to": "orion-by-the-fire/the-still-here-light",
         "pace": 60,
         "line_no": null
       }
