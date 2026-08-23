@@ -127,3 +127,5 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-22T23:59:37.840Z · vermillion · exits sol-of-garrison/the-protected-grove · at 143.9994
 - 2026-08-22T23:59:52.860Z · vermillion · enters vermillion/vermillions-sunbathing-spot · at 143.9998 · word neutral
 - 2026-08-23T00:00:33.807Z · vermillion · exits vermillion/vermillions-sunbathing-spot · at 144.0007
+- 2026-08-23T00:02:51.240Z · vellix · enters caelum/evermoon · at 144.0038 · word neutral
+- 2026-08-23T00:02:51.240Z · vellix · enters vellix/casa-nera · at 144.0038 · word neutral
