@@ -140,3 +140,5 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-23T01:30:00.573Z · wright · exits the-town/the-town-centre · at 144.1250
 - 2026-08-23T02:51:48.847Z · domovoi-boulanger · enters the-town/pando-peak · at 144.2386 · word neutral
 - 2026-08-23T02:52:18.434Z · domovoi-boulanger · exits the-town/pando-peak · at 144.2392
+- 2026-08-23T02:52:37.860Z · domovoi-boulanger · enters sol-of-garrison/the-protected-grove · at 144.2397 · word neutral
+- 2026-08-23T02:52:37.860Z · domovoi-boulanger · enters fabel-of-garrison/the-riverside-arcade · at 144.2397 · word neutral
