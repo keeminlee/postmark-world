@@ -235,7 +235,20 @@ function firstStakeRowIn(message) {
   try { return JSON.parse(m[1]); } catch { return null; }
 }
 
-function foldRef(repo, ref, stakes) {
+// THE METER. A perf slice cannot be reported without one, and the number this
+// counts is §4's own claim: "~28 whole-world O(m²) folds per settlement". It is
+// reset per sweep and rides the report, so before-and-after is a receipt rather
+// than a stopwatch somebody remembers holding.
+export const foldMeter = { whole: 0, wholeMs: 0, delta: 0, deltaMs: 0, marks: 0 };
+export function resetFoldMeter() { foldMeter.whole = 0; foldMeter.wholeMs = 0; foldMeter.delta = 0; foldMeter.deltaMs = 0; foldMeter.marks = 0; }
+
+export function foldRef(repo, ref, stakes) {
+  const t0 = performance.now();
+  try { return foldRefInner(repo, ref, stakes); }
+  finally { foldMeter.whole++; foldMeter.wholeMs += performance.now() - t0; }
+}
+
+function foldRefInner(repo, ref, stakes) {
   const dir = archiveRef(repo, ref);
   try {
     const marks = loadMarks(join(dir, "WORLD", "marks"));
@@ -245,6 +258,7 @@ function foldRef(repo, ref, stakes) {
     const prev = existsSync(prevPath) ? JSON.parse(readFileSync(prevPath, "utf8")) : null;
     const hhPath = join(dir, "WORLD", "households.json");
     const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
+    foldMeter.marks = Math.max(foldMeter.marks, marks.length);
     const state = fold({
       marks,
       terrain,
@@ -261,7 +275,7 @@ function foldRef(repo, ref, stakes) {
   }
 }
 
-function draftBranches(repo) {
+export function draftBranches(repo) {
   const local = new Set(
     git(repo, ["for-each-ref", "--format=%(refname:short)", "refs/heads/draft/"])
       .split(/\r?\n/).map((line) => line.trim()).filter(Boolean),
@@ -305,7 +319,7 @@ function markRows(out) {
 // main's amendment showing through a stale sketchbook and nothing else — so
 // supersession falls out by construction rather than by policy, and a mark the
 // resident genuinely edited is still their delta and still publishes.
-function markDelta(repo, main, branch) {
+export function markDelta(repo, main, branch) {
   const diff = (from, to) => markRows(git(repo, [
     "diff", "--name-status", "--no-renames", "-z", from, to, "--", "WORLD/marks",
   ]));
@@ -329,7 +343,7 @@ function markDelta(repo, main, branch) {
   }));
 }
 
-function recordAt(repo, ref, path) {
+export function recordAt(repo, ref, path) {
   const record = parseRecord(readAt(repo, ref, path), path);
   const slug = basename(dirname(path));
   return { ...record, slug, id: `${record.by}/${slug}` };
@@ -778,6 +792,7 @@ export function settlementSweep({
   stakesPath,
   mainBranch = "main",
 } = {}) {
+  resetFoldMeter();
   repo = resolve(repo);
   stakesPath = resolve(stakesPath ?? "");
   if (!existsSync(stakesPath)) throw new Error(`missing --stakes input: ${stakesPath}`);
@@ -1150,6 +1165,8 @@ export function settlementSweep({
     rebased,
     // the crossing's own word on the line-ending law it had to work around
     eol_boundary: gate.irreconcilable,
+    // §4's own number, measured rather than asserted.
+    fold_stats: { ...foldMeter },
   };
 }
 
