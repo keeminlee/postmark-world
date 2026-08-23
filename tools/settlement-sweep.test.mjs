@@ -17,8 +17,8 @@ import { withTool } from "./engine-files.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
-const record = ({ kind = "sited", by, tier, at, extent, body, coords }) => {
-  const lines = ["---", `kind: ${kind}`, `by: ${by}`, ...(tier ? [`tier: ${tier}`] : []), "date: 2026-07-28"];
+const record = ({ kind = "sited", by, tier, at, extent, body, coords, date = "2026-07-28" }) => {
+  const lines = ["---", `kind: ${kind}`, `by: ${by}`, ...(tier ? [`tier: ${tier}`] : []), `date: ${date}`];
   if (at) lines.push(`at: { x: ${at.x}, y: ${at.y} }`);
   if (extent) lines.push(`extent: { w: ${extent.w}, h: ${extent.h} }`);
   if (coords) lines.push(`coords: ${coords}`);
@@ -956,6 +956,173 @@ test("a ROOT-PARKED draft publishes AND re-homes on its OWN crossing — the cai
   assert.equal(has("main", parkedPath), false, "and no longer at the root");
   const worldAt = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"))
     .marks.find((m) => m.id === "carys/the-cairn").at;
+  assert.deepEqual(worldAt, { x: 1010, y: 990 }, "the mark did not move — the declared world position to the digit");
+  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
+});
+
+// ── the-already-standing (the-town/the-already-standing, 2026-08-23) ─────────
+//
+// The law these three assert, verbatim:
+//
+//   "A parked copy of a mark already standing in canon, identical but for its
+//    frame and its hour, is the drain's to drop — nothing moves, nothing
+//    refuses."
+//
+// The shape is the S45 refusal class, from the worldkeeper's 2026-08-23 daily:
+// draft/devadavisson was cut before its own puzzles were filed into the
+// protected grove, so it re-offers a root-parked copy of each one every
+// crossing — byte-identical to what stands but for `date:` and the coordinate
+// FRAME ({x:-1375,y:-2510} world against {x:0,y:115} grove-relative: the same
+// place said twice). The publish wrote the copy back at the root, the re-home
+// pass computed the seat it already occupies, and the whole crossing refused.
+//
+// One fixture, three endings. `twin` is what main already holds inside the
+// grove; pass null for the shape where nothing stands there yet.
+const alreadyStandingFixture = (t, { twin, parkedBody }) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-standing-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  const put = (path, text) => {
+    const full = join(repo, path);
+    mkdirSync(dirname(full), { recursive: true });
+    writeFileSync(full, text);
+  };
+  const has = (ref, path) => {
+    try { git("cat-file", "-e", `${ref}:${path}`); return true; } catch { return false; }
+  };
+  const commit = (message) => git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", message);
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs"))
+    cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 },
+    coords: "relative", body: "the frame",
+  }));
+  put("WORLD/marks/let-there-be-light/the-grove/mark.md", record({
+    by: "bram", at: { x: 1000, y: 1000 }, extent: { w: 400, h: 400 }, body: "the protected grove, already canon",
+  }));
+  put("WORLD/settlement-publications.json", JSON.stringify({
+    version: 1,
+    published: {
+      "devadavisson/the-puzzle": {
+        household: "devadavisson",
+        path: "WORLD/marks/let-there-be-light/the-grove/the-puzzle/mark.md",
+        class: "commons",
+      },
+    },
+  }, null, 2) + "\n");
+
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  commit("base main");
+
+  // The sketchbook, cut HERE — before the puzzle was filed — and the door parks
+  // its copy at the root, in world numbers, on the day it was left.
+  git("switch", "-q", "-c", "draft/devadavisson");
+  const parkedPath = "WORLD/marks/let-there-be-light/the-puzzle/mark.md";
+  put(parkedPath, record({
+    by: "devadavisson", at: { x: 1010, y: 990 }, extent: { w: 4, h: 4 },
+    body: parkedBody, date: "2026-08-23",
+  }));
+  git("add", "-A");
+  commit("the door parks a puzzle at the root");
+
+  // Main, meanwhile: an earlier crossing published the puzzle and filed it into
+  // the grove, so its numbers are grove-relative and its hour is that day's.
+  git("switch", "-q", "main");
+  const standingPath = "WORLD/marks/let-there-be-light/the-grove/the-puzzle/mark.md";
+  if (twin) {
+    put(standingPath, record({
+      by: "devadavisson", at: { x: 10, y: -10 }, extent: { w: 4, h: 4 },
+      body: twin, date: "2026-08-01",
+    }));
+    execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+    git("add", "-A");
+    commit("the puzzle stands in the grove");
+  }
+
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([{ holder: "s1", mark: "devadavisson/the-puzzle", n: 5, weight: 10 }]));
+  return { repo, git, has, stakesPath, parkedPath, standingPath };
+};
+
+test("FALSIFIER (the devadavisson shape): a parked copy of a mark already standing in canon, identical but for its frame and its hour, is DROPPED — the crossing proceeds and canon does not move (the-town/the-already-standing, 2026-08-23)", (t) => {
+  const body = "a puzzle in the protected grove";
+  const { repo, git, has, stakesPath, parkedPath, standingPath } =
+    alreadyStandingFixture(t, { twin: body, parkedBody: body });
+
+  const canonBefore = git("rev-parse", `main:${standingPath}`).trim();
+  const said = [];
+  const realError = console.error;
+  console.error = (...args) => said.push(args.join(" "));
+  let report;
+  try { report = settlementSweep({ repo, stakesPath }); } finally { console.error = realError; }
+
+  assert.deepEqual(report.dropped.map((row) => [row.id, row.path, row.standing_path]), [[
+    "devadavisson/the-puzzle",
+    "WORLD/marks/let-there-be-light/the-puzzle/mark.md",
+    "WORLD/marks/let-there-be-light/the-grove/the-puzzle/mark.md",
+  ]], "the drain names the drop, the seat it was parked at, and the seat that already stands");
+  assert.deepEqual(report.published.map((row) => row.id), [],
+    "nothing was published: a copy of what already stands is not a publication");
+  assert.deepEqual(report.rehomed, [], "and nothing moved");
+
+  assert.equal(git("rev-parse", `main:${standingPath}`).trim(), canonBefore,
+    "canon is byte-unchanged — the standing mark is the same blob it was");
+  assert.equal(has("main", parkedPath), false, "and the parked copy is off the tree");
+  assert.equal(
+    JSON.parse(readFileSync(join(repo, "WORLD", "settlement-publications.json"), "utf8"))
+      .published["devadavisson/the-puzzle"].path,
+    standingPath,
+    "the ledger goes on naming the seat that stands, not the root the drain emptied");
+  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
+
+  const line = said.find((s) => s.includes("[the-already-standing]"));
+  assert.ok(line, "the drop is never silent — it says so on the journal");
+  assert.equal(line,
+    "[the-already-standing] dropped devadavisson/the-puzzle parked at WORLD/marks/let-there-be-light/the-puzzle/mark.md — already standing at WORLD/marks/let-there-be-light/the-grove/the-puzzle/mark.md, identical but for its frame and its hour");
+});
+
+test("FALSIFIER (the safety inverse): the SAME shape with one word of the body changed is a real edit against a real seat, and the crossing refuses exactly as it did before (the-town/the-already-standing, 2026-08-23)", (t) => {
+  // The law drops what is "identical but for its frame and its hour". This is
+  // the boundary: everything matches except one word of prose. If it were eaten
+  // silently, a resident's genuine revision would vanish into the drain — so the
+  // refusal must stand, word for word. (Comment out the body comparison in
+  // identicalButForFrameAndHour and this test goes green: that is the flip.)
+  const { repo, stakesPath } = alreadyStandingFixture(t, {
+    twin: "a puzzle in the protected grove",
+    parkedBody: "a puzzle in the forbidden grove",
+  });
+  assert.throws(() => settlementSweep({ repo, stakesPath }), (error) => {
+    assert.equal(error.message,
+      "re-home: WORLD/marks/let-there-be-light/the-grove/the-puzzle already exists — refusing to file devadavisson/the-puzzle over something",
+      "the refusal is the one that was always there, unchanged");
+    return true;
+  });
+});
+
+test("FALSIFIER (the sibling law): a root-parked mark with NO twin already standing re-homes exactly as the-parked says, and the drain never touches it (the-town/the-parked, 2026-08-22)", (t) => {
+  const { repo, git, has, stakesPath, parkedPath, standingPath } =
+    alreadyStandingFixture(t, { twin: null, parkedBody: "a puzzle in the protected grove" });
+
+  const report = settlementSweep({ repo, stakesPath });
+
+  assert.deepEqual(report.dropped, [], "nothing already stands there, so the drain has nothing to drop");
+  assert.deepEqual(report.published.map((row) => row.id), ["devadavisson/the-puzzle"],
+    "the staked parked draft publishes");
+  assert.deepEqual(report.rehomed.map((row) => [row.mark, row.from_parent, row.to_parent]),
+    [["devadavisson/the-puzzle", null, "bram/the-grove"]],
+    "and the same crossing files it into its tightest container");
+  assert.equal(has("main", standingPath), true, "it sits inside the grove on main");
+  assert.equal(has("main", parkedPath), false, "and no longer at the root");
+  const worldAt = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"))
+    .marks.find((m) => m.id === "devadavisson/the-puzzle").at;
   assert.deepEqual(worldAt, { x: 1010, y: 990 }, "the mark did not move — the declared world position to the digit");
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });

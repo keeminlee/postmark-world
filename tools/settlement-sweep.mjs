@@ -253,9 +253,91 @@ const numText = (n) => String(n);
 const ringText = (ring) => ring.map((p) => (Array.isArray(p) ? `${numText(p[0])},${numText(p[1])}` : `${numText(p.x)},${numText(p.y)}`)).join(" ");
 const samePoint = (a, b) => a.x === b.x && a.y === b.y;
 
+// ── the-already-standing (the-town/the-already-standing, 2026-08-23) ─────────
+//
+//   "A parked copy of a mark already standing in canon, identical but for its
+//    frame and its hour, is the drain's to drop — nothing moves, nothing
+//    refuses."
+//
+// The door parks every sited draft at the root (the-town/the-parked). A
+// sketchbook cut before its own mark was filed re-offers that parked copy every
+// crossing: the publish writes it back at the root, the re-home pass computes
+// the seat it ALREADY occupies, and the collision below refused the whole
+// crossing — over paper naming a mark that has not moved. (The S45 class; the
+// worldkeeper's 2026-08-23 daily is the derivation.)
+//
+// The frame is `at`/`points`/`coords`; the hour is `date`. Everything else must
+// match to the character — authorship, kind, tier, extent, image, body, and any
+// field a later schema adds, which is why the comparison walks the keys rather
+// than listing them. The position is compared in the WORLD frame, which the
+// loader composed for both copies out of the fold's own conversion; nothing is
+// re-derived here. A difference in ANY of it is a real edit against a real
+// seat, and it refuses exactly as it always has. This drops copies, never
+// conflicts.
+const FRAME_AND_HOUR = new Set(["at", "points", "coords", "date"]);
+const LOADER_ADDED = new Set(["slug", "id", "body", "household"]);
+
+function identicalButForFrameAndHour(parked, standing) {
+  if (parked._error || standing._error) return false;
+  if (parked.id !== standing.id || parked.by !== standing.by) return false;
+  if (parked.body !== standing.body) return false;
+  if (!parked.at || !standing.at || !samePoint(parked.at, standing.at)) return false;
+  if (JSON.stringify(parked.points ?? null) !== JSON.stringify(standing.points ?? null)) return false;
+  const named = (rec) => Object.keys(rec)
+    .filter((k) => !k.startsWith("_") && !FRAME_AND_HOUR.has(k) && !LOADER_ADDED.has(k))
+    .sort();
+  const a = named(parked);
+  const b = named(standing);
+  if (a.join(" ") !== b.join(" ")) return false;
+  return a.every((k) => JSON.stringify(parked[k]) === JSON.stringify(standing[k]));
+}
+
+// The drain, and it runs BEFORE the move loop for a reason the duplicate itself
+// forces: the loop is keyed by mark id, and a parked copy shares its twin's id
+// exactly (id = by + leaf slug, and the copy carries both). `byId` keeps
+// whichever the walk reached first — the twin, in tree order — so the loop was
+// never even looking at the parked copy; it computed the standing mark's own
+// seat as its destination and refused to file it over itself. The finding names
+// the record by FILE, which is the only unambiguous handle here, so the drain
+// resolves by file and leaves the tree with no duplicate for the loop to trip on.
+function dropAlreadyStanding(repo, rehomes) {
+  const marks = loadMarks(join(repo, "WORLD", "marks"));
+  const byDir = new Map();
+  for (const mark of marks) byDir.set(relative_(repo, mark._dir), mark);
+  const byId = new Map();
+  for (const mark of marks) if (!byId.has(mark.id)) byId.set(mark.id, mark);
+  const root = marks.find((mark) => mark.slug === WORLD_ROOT_SLUG);
+  const dropped = [];
+  for (const item of rehomes) {
+    if (!item.file) continue;                        // a finding naming no seat names nothing to drop
+    const parked = byDir.get(item.file);
+    if (!parked) continue;
+    const parent = item.to === null || item.to === undefined ? root : byId.get(item.to);
+    if (!parent) continue;                           // the move loop refuses this one by name
+    const to = `${relative_(repo, parent._dir)}/${basename(item.file)}`;
+    const standing = byDir.get(to);
+    if (!standing || standing === parked) continue;  // no twin: the-parked's ordinary re-home
+    if (!identicalButForFrameAndHour(parked, standing)) continue; // a real collision, refused below
+    // Nothing may be riding on the parked copy. Dropping a seat with a mark
+    // inside it would MOVE something, and this law moves nothing.
+    if (marks.some((m) => m !== parked && relative_(repo, m._dir).startsWith(`${item.file}/`))) continue;
+    if (hasObject(repo, `HEAD:${item.file}/mark.md`)) git(repo, ["rm", "-r", "-q", "--", item.file]);
+    else rmSync(join(repo, item.file), { recursive: true, force: true });
+    // Paths are the mark.md the rest of the crossing speaks in — the registry
+    // row this restores names a file, and every other journal row does too.
+    dropped.push({ mark: parked.id, file: item.file, from_path: `${item.file}/mark.md`, standing_path: `${to}/mark.md`, to_parent: item.to ?? null });
+    console.error(`[the-already-standing] dropped ${parked.id} parked at ${item.file}/mark.md — already standing at ${to}/mark.md, identical but for its frame and its hour`);
+  }
+  return dropped;
+}
+
 function applyRehomes(repo, rehomes) {
   const marksRoot = join(repo, "WORLD", "marks");
-  const marks = loadMarks(marksRoot);
+  const dropped = dropAlreadyStanding(repo, rehomes);
+  const live = dropped.length
+    ? rehomes.filter((item) => !dropped.some((d) => d.file === item.file))
+    : rehomes;
+  const marks = loadMarks(marksRoot); // reloaded: the dropped copies are off the tree
   const byId = new Map();
   for (const mark of marks) if (!byId.has(mark.id)) byId.set(mark.id, mark);
   const root = marks.find((mark) => mark.slug === WORLD_ROOT_SLUG);
@@ -285,7 +367,7 @@ function applyRehomes(repo, rehomes) {
     }
   };
 
-  const order = [...rehomes].sort((a, b) => (byId.get(b.mark)?._dir ?? "").length - (byId.get(a.mark)?._dir ?? "").length);
+  const order = [...live].sort((a, b) => (byId.get(b.mark)?._dir ?? "").length - (byId.get(a.mark)?._dir ?? "").length);
   const done = [];
   for (const item of order) {
     const rec = byId.get(item.mark);
@@ -363,7 +445,7 @@ function applyRehomes(repo, rehomes) {
     });
   }
   for (const item of done) item.to_path = relative_(repo, dirNow.get(item.mark));
-  return done;
+  return { rehomed: done, dropped };
 }
 
 
@@ -512,6 +594,7 @@ export function settlementSweep({
   const quarantined = [];
   const touched = [];
   let rehomed = [];
+  const dropped = []; // § the-already-standing — the crossing's journal for a copy that was never a conflict
 
   for (const branch of branches) {
     const household = branch.slice("draft/".length);
@@ -725,8 +808,30 @@ export function settlementSweep({
     // never bounced for paper the machinery is allowed to move itself.
     const pending = lintFindings(repo);
     if (pending.rehomes.length) {
-      rehomed = applyRehomes(repo, pending.rehomes);
+      const pass = applyRehomes(repo, pending.rehomes);
+      rehomed = pass.rehomed;
       for (const item of rehomed) touched.push(item.from_path, item.to_path);
+      // § the-already-standing — nothing moved, so the crossing publishes
+      // nothing for a dropped copy and the registry goes on naming the seat
+      // that stands. The publish above had already overwritten the row with the
+      // parked copy's root path; leaving that would point the ledger at a
+      // directory the drain just took away.
+      for (const item of pass.dropped) {
+        touched.push(item.from_path);
+        const i = published.findIndex((row) => row.id === item.mark);
+        const row = i >= 0 ? published[i] : null;
+        if (i >= 0) published.splice(i, 1);
+        dropped.push({
+          household: row?.household ?? null,
+          id: item.mark,
+          path: item.from_path,
+          standing_path: item.standing_path,
+          reason: "the-already-standing: identical to the mark already standing in canon but for its frame and its hour — the drain dropped the parked copy; nothing moved",
+        });
+        const entry = registry.published[item.mark];
+        if (entry) entry.path = item.standing_path;
+      }
+      if (pass.dropped.length) writeRepoFile(repo, REGISTRY_REL, `${JSON.stringify(registry, null, 2)}\n`);
     }
 
     // Now the gate, and it wants a CLEAN tree: an error refuses as it always
@@ -801,6 +906,7 @@ export function settlementSweep({
     unpublished: unpublished.map(({ content, ...item }) => item),
     withdrawn,
     rehomed,
+    dropped,
     rebased,
   };
 }
@@ -827,11 +933,12 @@ if (isMain) {
     const report = settlementSweep(options);
     if (options.json) console.log(JSON.stringify(report, null, 2));
     else {
-      console.log(`settlement sweep: ${report.published.length} published · ${report.left_drafted.length} left drafted · ${report.unpublished.length} unpublished · ${report.rehomed.length} re-homed · ${report.rebased.length} draft branch(es) rebased`);
+      console.log(`settlement sweep: ${report.published.length} published · ${report.left_drafted.length} left drafted · ${report.unpublished.length} unpublished · ${report.rehomed.length} re-homed · ${report.dropped.length} dropped · ${report.rebased.length} draft branch(es) rebased`);
       for (const row of report.published) console.log(`PUBLISH\t${row.household}\t${row.id}\t${row.class}\tescrow=${row.escrow}`);
       for (const row of report.left_drafted) console.log(`KEEP\t${row.household}\t${row.id ?? row.path}\t${row.reason}`);
       for (const row of report.unpublished) console.log(`UNPUBLISH\t${row.household}\t${row.id}\tescrow=${row.escrow}`);
       for (const row of report.rehomed) console.log(`REHOME\t${row.mark}\t${row.from_parent ?? "(root)"} -> ${row.to_parent ?? "(root)"}${row.reframed ? `\tre-framed on ${row.reframed.origin.x},${row.reframed.origin.y}` : ""}`);
+      for (const row of report.dropped) console.log(`DROP\t${row.id}\t${row.path} -> already standing at ${row.standing_path}\tthe-town/the-already-standing`);
     }
   } catch (error) {
     console.error(`settlement sweep refused: ${String(error?.message ?? error)}`);
