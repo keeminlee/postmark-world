@@ -1250,10 +1250,22 @@ test("THE CLASS (S45's shape): a stale sketchbook crosses a NEW `*.mjs text eol=
   const seat = report.rebased.find((row) => row.branch === "draft/house-a");
   assert.equal(seat.rebased_onto, git("rev-parse", "main").trim(),
     "and the stale sketchbook is reseated on settled main");
-  assert.deepEqual(seat.eol_crossed, ["tools/relic.mjs"],
-    "the receipt names the path it had to carry inert — never a silent workaround");
+  // WHETHER the replay wedges at all is git's stat cache talking. The two
+  // sides of this replay hold the SAME blob, so the checkout onto main never
+  // rewrites the file; git only notices the violation when it re-reads content
+  // instead of trusting the stat it recorded at `worktree add`. That is why
+  // exactly ONE of the box's 33 sketchbooks refused on 2026-08-23 while the
+  // rest crossed over the same broken blob — and why the assertion here is
+  // that the crossing completes and names correctly, not that it wedges.
+  // (Shape two's REFUSAL path is deterministic and falsified separately: when
+  // the sketchbook wrote the file, the blobs differ, the checkout must rewrite
+  // it, and the boundary shows every time.)
+  assert.ok(seat.eol_crossed.every((path) => path === "tools/relic.mjs"),
+    "if the replay met the boundary it named exactly what it carried, and nothing else");
   assert.deepEqual(report.eol_boundary, ["tools/relic.mjs"],
     "and the gate says out loud which blob still violates main's own eol law, instead of refusing over it");
+  assert.equal(git("rev-parse", "draft/house-a").trim(), git("rev-parse", "main").trim(),
+    "the sketchbook reseated whole: its one mark published, so its tip is settled main itself");
 });
 
 test("FALSIFIER (the discrimination, rebase side): a sketchbook that WROTE the eol-dirty file is never carried inert — the crossing refuses and names the branch", (t) => {
@@ -1333,4 +1345,91 @@ test("FALSIFIER (the control): phantom-only dirt IS cleared and the crossing pro
     "and the drifted file is restored from its own blob — clearable phantom dirt truly clears");
   assert.deepEqual(report.eol_boundary, [],
     "nothing irreconcilable survives: this blob always obeyed the law");
+});
+
+test("THE CLASS, shape two (draft/Domovoi-Boulanger's shape): a sketchbook that CARRIES the law and breaks it is dirty at checkout, before the replay begins — and still crosses", (t) => {
+  // The live pair: two of the 33 sketchbooks had already been reseated after
+  // 304890d2, so their own trees declare `*.mjs text eol=lf` over the stale
+  // CRLF blob. Their rebase worktree is dirty the instant it is created, and
+  // once main has been trued the two sides hold DIFFERENT blobs — so nothing
+  // can be marked inert, and git will not move HEAD over a file it believes
+  // has local changes. The sketchbook's copy is brought into agreement with
+  // main instead, on the throwaway, and the rebase drops that as empty.
+  const { repo, git, put, commit } = eolFixture(t, "postmark-settlement-eol-carried-");
+
+  put("tools/relic.mjs", NUL_RELIC("\r\n"));
+  commit("published main, with a CRLF relic nobody has declared a law about");
+  put(".gitattributes", "*.mjs text eol=lf\n");
+  commit("gitattributes: tools pinned LF", ".gitattributes");
+  const staleBlob = git("rev-parse", "main:tools/relic.mjs").trim();
+
+  // the sketchbook is cut here, so it carries BOTH the law and the stale blob
+  git("switch", "-q", "-c", "draft/house-a");
+  put("WORLD/marks/let-there-be-light/alice-market/mark.md", record({
+    by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "a backed commons",
+  }));
+  commit("house a sketches", "WORLD/marks");   // targeted: the relic keeps its stale blob
+  git("switch", "-q", "main");
+
+  // and THEN main is trued — the normalization crossing 304890d2 never made
+  git("add", "--renormalize", "--", "tools/relic.mjs");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "normalize the relic to LF");
+  const truedBlob = git("rev-parse", "main:tools/relic.mjs").trim();
+  assert.notEqual(truedBlob, staleBlob, "main's blob moved; the sketchbook's did not");
+  assert.equal(git("rev-parse", "draft/house-a:tools/relic.mjs").trim(), staleBlob,
+    "the sketchbook still holds the CRLF blob, under a law it carries itself");
+
+  const stakesPath = stakesFile(t, repo, [{ holder: "s1", mark: "alice/alice-market", n: 5, weight: 10 }]);
+  const report = settlementSweep({ repo, stakesPath });
+
+  assert.deepEqual(report.published.map((row) => row.id), ["alice/alice-market"], "the crossing publishes");
+  const seat = report.rebased.find((row) => row.branch === "draft/house-a");
+  assert.deepEqual(seat.eol_crossed, ["tools/relic.mjs"], "the receipt names what it brought into agreement");
+  assert.equal(git("rev-parse", "draft/house-a:tools/relic.mjs").trim(), truedBlob,
+    "and the reseated sketchbook now holds MAIN'S OWN blob — the only thing it gave up is line endings");
+  assert.equal(seat.rebased_onto, git("rev-parse", "main").trim(), "seated on settled main");
+  assert.equal(git("rev-parse", "draft/house-a").trim(), git("rev-parse", "main").trim(),
+    "and the normalization left NO commit behind — the sketchbook's one mark published, so its "
+    + "reseated tip is main itself; a surviving normalization commit would show here as a delta");
+});
+
+test("FALSIFIER (shape two's guard): a sketchbook whose stale copy does NOT normalize to main's blob is a real divergence — the crossing refuses and names the path", (t) => {
+  const { repo, git, put, commit } = eolFixture(t, "postmark-settlement-eol-diverged-");
+
+  put("tools/relic.mjs", NUL_RELIC("\r\n"));
+  commit("published main, with a CRLF relic nobody has declared a law about");
+  put(".gitattributes", "*.mjs text eol=lf\n");
+  commit("gitattributes: tools pinned LF", ".gitattributes");
+
+  git("switch", "-q", "-c", "draft/house-a");
+  // One word of real content changed, still in CRLF. Renormalizing this would
+  // NOT land on main's blob, so it is a divergence wearing eol-only clothes.
+  // Planted past the clean filter on purpose: `git add` under the law would
+  // normalize it on the way in, and no ordinary command can commit this shape.
+  // A bad merge or another tool can still produce it, and the guard must hold.
+  const rewritten = NUL_RELIC("\r\n").replace("a relic with", "a relic house-a rewrote, with");
+  writeFileSync(join(repo, "tools", "relic.mjs"), rewritten);
+  const planted = git("hash-object", "-w", "--no-filters", "--", join(repo, "tools", "relic.mjs")).trim();
+  git("update-index", "--add", "--cacheinfo", `100644,${planted},tools/relic.mjs`);
+  put("WORLD/marks/let-there-be-light/alice-market/mark.md", record({
+    by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "a backed commons",
+  }));
+  git("add", "--", "WORLD/marks");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house a sketches, and rewrites the relic");
+  assert.equal(git("rev-parse", "draft/house-a:tools/relic.mjs").trim(), planted,
+    "the sketchbook holds its own CRLF rewrite");
+  // --force: the planted blob makes its own checkout dirty on sight, which is
+  // the very condition under test. Even leaving the branch needs the override.
+  git("switch", "-q", "--force", "main");
+
+  git("add", "--renormalize", "--", "tools/relic.mjs");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "normalize the relic to LF");
+
+  const stakesPath = stakesFile(t, repo, [{ holder: "s1", mark: "alice/alice-market", n: 5, weight: 10 }]);
+  assert.throws(() => settlementSweep({ repo, stakesPath }), (error) => {
+    assert.match(error.message, /draft\/house-a carries line endings main does not share: tools\/relic\.mjs/,
+      "it refuses by branch AND path — the resident's word is never renormalized away");
+    assert.equal(error.phase, "rebase");
+    return true;
+  });
 });

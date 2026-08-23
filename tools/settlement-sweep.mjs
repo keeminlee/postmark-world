@@ -634,7 +634,7 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
     const wtParent = mkdtempSync(join(tmpdir(), "postmark-draft-rebase-"));
     const wt = join(wtParent, "worktree");
     git(repo, ["worktree", "add", "--quiet", wt, branch]);
-    let crossed = [];
+    const crossed = [];
     try {
       const replay = () => {
         // -X theirs — in a rebase, "theirs" is the commit being REPLAYED: the
@@ -660,14 +660,46 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
         { phase: "rebase", branch, ...fields },
       );
 
+      // ── the boundary, shape one: the sketchbook's OWN tree declares the law
+      // and breaks it, so the fresh checkout is dirty BEFORE the replay begins.
+      // Nothing can be marked inert here — main holds a different (trued) blob
+      // for that path, and git will not move HEAD over a file it thinks has
+      // local changes. Bring the paths into agreement with main and commit it
+      // on the throwaway. The proof that this loses nothing is the sha: the
+      // renormalized blob must be MAIN'S OWN, so the only thing the sketchbook
+      // gives up is line endings it never chose. The rebase then drops the
+      // commit as empty against a main that already obeys, and the reseated
+      // branch carries no trace of it.
+      {
+        const dirt = clearEolOnlyDirt(wt);
+        if (dirt.real.length)
+          throw refusal(`${branch} checked out with uncommitted changes: ${dirt.real[0].entry}`,
+            { phase: "rebase", branch, real_dirt: dirt.real.map((row) => row.entry) });
+        if (dirt.irreconcilable.length) {
+          const settled = [];
+          for (const path of dirt.irreconcilable) {
+            git(wt, ["add", "--renormalize", "--", path]);
+            if (indexSha(wt, path) === blobAt(wt, mainBranch, path)) settled.push(path);
+            else git(wt, ["reset", "--quiet", "HEAD", "--", path]);
+          }
+          if (settled.length !== dirt.irreconcilable.length)
+            throw refusal(
+              `${branch} carries line endings ${mainBranch} does not share: ${dirt.irreconcilable.find((p) => !settled.includes(p))}`,
+              { phase: "rebase", branch, eol_dirt: dirt.irreconcilable },
+            );
+          commit(wt, settled, `settlement: normalize ${settled.length} path(s) to ${mainBranch}'s line-ending law`);
+          crossed.push(...settled);
+        }
+      }
+
       try {
         replay();
       } catch (error) {
-        // Read the dirt BEFORE aborting. The abort restores the branch tip, the
-        // old .gitattributes comes back with it, and the boundary un-crosses
-        // itself — the evidence of what stopped the replay is gone. (The rebase
-        // moves HEAD onto main while building its todo list, which is where a
-        // stale sketchbook first meets main's new line-ending law.)
+        // ── the boundary, shape two: MAIN's own blob is the violator, and the
+        // sketchbook meets it only when the replay moves HEAD onto main while
+        // building its todo list. Read the dirt BEFORE aborting — the abort
+        // restores the branch tip, the old .gitattributes comes back with it,
+        // and the boundary un-crosses itself, taking the evidence with it.
         const dirt = clearEolOnlyDirt(wt);
         const inert = dirt.irreconcilable.filter((path) => inertAcross(repo, path, mainBranch, branch));
         try { git(wt, ["rebase", "--abort"]); } catch { /* preserve original branch */ }
@@ -685,20 +717,22 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
           });
         }
 
-        // The normalization crossing. These paths carry the same blob on both
-        // sides of the replay and differ from disk only in line endings, so
-        // they are declared inert for the length of the rebase and handed back
-        // afterwards. The blob is still wrong; a normalization commit on main
-        // is what actually retires it, and the receipt says so out loud.
-        crossed = inert;
-        if (crossed.length) git(wt, ["update-index", "--assume-unchanged", "--", ...crossed]);
+        // Here — and ONLY here — the path holds the same blob on both sides of
+        // the replay, so the checkout onto main never has to rewrite the file
+        // and git can be told to stop looking at it for the length of the
+        // rebase. (Shape one cannot use this: there the blobs differ, and git
+        // refuses to move HEAD over a file it will not touch.) The blob is
+        // still wrong; a normalization commit on main is what actually retires
+        // it, and the receipt says so out loud.
+        crossed.push(...inert);
+        if (inert.length) git(wt, ["update-index", "--assume-unchanged", "--", ...inert]);
         try {
           replay();
         } catch (retry) {
           try { git(wt, ["rebase", "--abort"]); } catch { /* preserve original branch */ }
           throw refuseReplay(retry);
         } finally {
-          if (crossed.length) git(wt, ["update-index", "--no-assume-unchanged", "--", ...crossed]);
+          if (inert.length) git(wt, ["update-index", "--no-assume-unchanged", "--", ...inert]);
         }
       }
 
