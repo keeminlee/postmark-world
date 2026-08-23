@@ -133,3 +133,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-23T00:25:59.682Z · vellix · exits vellix/casa-nera · at 144.0361
 - 2026-08-23T00:26:13.757Z · vellix · exits caelum/evermoon · at 144.0363
 - 2026-08-23T00:43:47.742Z · little-pica · exits sol-of-garrison/the-protected-grove · at 144.0608
+- 2026-08-23T01:24:01.484Z · little-bird · exits sol-of-garrison/the-protected-grove · at 144.1167
