@@ -1126,3 +1126,211 @@ test("FALSIFIER (the sibling law): a root-parked mark with NO twin already stand
   assert.deepEqual(worldAt, { x: 1010, y: 990 }, "the mark did not move — the declared world position to the digit");
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
+
+// ── the eol boundary (S45, 2026-08-23) ─────────────────────────────────────
+// The law these four assert, verbatim from the Worldkeeper's craft receipt:
+//
+//   "Line-ending law needs a normalization crossing. Adding `eol=lf` without
+//    truing an existing CRLF blob can make a stale branch dirty before replay
+//    begins."
+//
+// The live shape: main declared `*.mjs text eol=lf` (304890d2) over a
+// tools/consent.mjs blob holding 241 CRLF lines and no bare LF. The file
+// carries a deliberate NUL (a Map-key delimiter), so git had been sniffing it
+// binary and skipping conversion — which is how the CRLF got committed in the
+// first place. Once `text` is declared, checkout writes LF, the blob still
+// holds CRLF, and NO working-tree content can make them agree. Every rebase
+// worktree the crossing opens is dirty the moment the replay moves HEAD onto
+// main, and git stops with `cannot rebase: You have unstaged changes.`
+
+const NUL = String.fromCharCode(0);   // the delimiter itself, spelled so no editor can eat it
+const NUL_RELIC = (eol) => [
+  "// a relic with a deliberate NUL — a Map-key delimiter, so git sniffs it",
+  "// BINARY and switches off the line-ending net (the viewer.mjs shape).",
+  "export const key = (a, b) => a + NUL + b;",
+  "",
+].join(eol);
+
+const eolFixture = (t, prefix) => {
+  const repo = mkdtempSync(join(tmpdir(), prefix));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  const put = (path, text) => {
+    const full = join(repo, path);
+    mkdirSync(dirname(full), { recursive: true });
+    writeFileSync(full, text);
+  };
+  const commit = (message, ...paths) => {
+    // A TARGETED add where the caller names paths. 304890d2 committed only
+    // .gitattributes; a fixture that swept the tree with -A would renormalize
+    // the very blob whose staleness is the whole subject, and quietly assert
+    // nothing. The real omission is the fixture.
+    git("add", ...(paths.length ? ["--", ...paths] : ["-A"]));
+    git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", message);
+  };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs")) {
+    // LF on the way in. The engine tools are scenery here, and a host whose own
+    // checkout carries CRLF would otherwise smuggle a SECOND violator into the
+    // fixture and make these assertions read the host instead of the law.
+    const bytes = readFileSync(join(HERE, file));
+    const lf = bytes.toString("latin1").split(String.fromCharCode(13, 10)).join(String.fromCharCode(10));
+    writeFileSync(join(repo, "tools", file), Buffer.from(lf, "latin1"));
+  }
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+  put("WORLD/marks/let-there-be-light/alice-parcel/mark.md", record({
+    kind: "parcel", by: "alice", at: { x: 100, y: 100 }, extent: { w: 100, h: 100 }, body: "alice's parcel",
+  }));
+
+  git("init", "-q", "-b", "main");
+  // the fixture states its own line-ending world; the class does not depend on
+  // the host's core.autocrlf, and a falsifier that did would be a coin flip
+  git("config", "core.autocrlf", "false");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  return { repo, git, put, commit };
+};
+
+const stakesFile = (t, repo, rows) => {
+  const path = repo + "-stakes.json";
+  t.after(() => rmSync(path, { force: true }));
+  writeFileSync(path, JSON.stringify(rows));
+  return path;
+};
+
+test("THE CLASS (S45's shape): a stale sketchbook crosses a NEW `*.mjs text eol=lf` boundary over a CRLF blob — the crossing completes and names what it carried", (t) => {
+  const { repo, git, put, commit } = eolFixture(t, "postmark-settlement-eol-class-");
+
+  // 1. the relic is committed CRLF, before any line-ending law governs it
+  put("tools/relic.mjs", NUL_RELIC("\r\n"));
+  commit("published main, with a CRLF relic nobody has declared a law about");
+  const relicBlob = git("rev-parse", "main:tools/relic.mjs").trim();
+
+  // 2. the sketchbook is cut here — stale by construction, old attributes
+  git("switch", "-q", "-c", "draft/house-a");
+  put("WORLD/marks/let-there-be-light/alice-market/mark.md", record({
+    by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "a backed commons",
+  }));
+  commit("house a sketches");
+  git("switch", "-q", "main");
+
+  // 3. THEN the law lands on main — and trues no blob (304890d2's omission)
+  put(".gitattributes", "*.mjs text eol=lf\n");
+  commit("gitattributes: tools pinned LF", ".gitattributes");
+  assert.equal(git("rev-parse", "main:tools/relic.mjs").trim(), relicBlob,
+    "the blob still holds CRLF — declaring the law did not rewrite it");
+  // The claim the whole fix rests on, proved rather than asserted. `eol=lf`
+  // converts on the way IN, not on the way out: checkout writes the CRLF blob
+  // back verbatim, and the clean filter turns it to LF when git reads it — so
+  // what git would store never equals what git is holding, and NO working-tree
+  // content closes that round trip. This is not drift a checkout clears.
+  rmSync(join(repo, "tools", "relic.mjs"));
+  git("checkout", "--", "tools/relic.mjs");
+  const stored = () => git("hash-object", "--path", "tools/relic.mjs", "--", join(repo, "tools", "relic.mjs")).trim();
+  assert.notEqual(stored(), relicBlob, "straight from git's own checkout, the round trip does not close");
+  writeFileSync(join(repo, "tools", "relic.mjs"), NUL_RELIC("\n"));
+  assert.notEqual(stored(), relicBlob, "nor does it with LF on disk instead");
+  assert.equal(git("rev-parse", "main:tools/relic.mjs").trim(), relicBlob, "and the blob has not moved");
+
+  // Left written by us, so the mtime is fresh and git must compare CONTENT
+  // rather than trust the stat it recorded during its own checkout. A falsifier
+  // that let git take its fast path would pass or fail on timing.
+  assert.match(git("status", "--porcelain"), /relic\.mjs/, "the crossing meets it dirty");
+
+  const stakesPath = stakesFile(t, repo, [{ holder: "s1", mark: "alice/alice-market", n: 5, weight: 10 }]);
+  const report = settlementSweep({ repo, stakesPath });
+
+  assert.deepEqual(report.published.map((row) => row.id), ["alice/alice-market"],
+    "the crossing publishes — the boundary did not stop it");
+  const seat = report.rebased.find((row) => row.branch === "draft/house-a");
+  assert.equal(seat.rebased_onto, git("rev-parse", "main").trim(),
+    "and the stale sketchbook is reseated on settled main");
+  assert.deepEqual(seat.eol_crossed, ["tools/relic.mjs"],
+    "the receipt names the path it had to carry inert — never a silent workaround");
+  assert.deepEqual(report.eol_boundary, ["tools/relic.mjs"],
+    "and the gate says out loud which blob still violates main's own eol law, instead of refusing over it");
+});
+
+test("FALSIFIER (the discrimination, rebase side): a sketchbook that WROTE the eol-dirty file is never carried inert — the crossing refuses and names the branch", (t) => {
+  const { repo, git, put, commit } = eolFixture(t, "postmark-settlement-eol-touched-");
+
+  put("tools/relic.mjs", NUL_RELIC("\r\n"));
+  commit("published main, with a CRLF relic");
+
+  git("switch", "-q", "-c", "draft/house-a");
+  // the ONE difference from the class above: this sketchbook edited the relic,
+  // so the two sides of the replay hold different blobs and the path is not
+  // inert. Marking it assume-unchanged could drop a resident's write.
+  put("tools/relic.mjs", NUL_RELIC("\r\n").replace("relic with", "relic edited by house-a with"));
+  put("WORLD/marks/let-there-be-light/alice-market/mark.md", record({
+    by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "a backed commons",
+  }));
+  commit("house a sketches, and touches the relic");
+  git("switch", "-q", "main");
+
+  put(".gitattributes", "*.mjs text eol=lf\n");
+  commit("gitattributes: tools pinned LF", ".gitattributes");
+
+  const stakesPath = stakesFile(t, repo, [{ holder: "s1", mark: "alice/alice-market", n: 5, weight: 10 }]);
+  assert.throws(() => settlementSweep({ repo, stakesPath }), (error) => {
+    assert.match(error.message, /draft\/house-a did not rebase cleanly/, "it refuses by branch name");
+    assert.equal(error.phase, "rebase", "and the refusal carries its phase, separate from any journal line");
+    assert.deepEqual(error.eol_dirt, ["tools/relic.mjs"], "naming the path it declined to carry");
+    return true;
+  });
+});
+
+test("FALSIFIER (the discrimination, gate side): one REAL uncommitted edit among the phantoms and the crossing still refuses, by name, leaving the work untouched", (t) => {
+  const { repo, put, commit } = eolFixture(t, "postmark-settlement-eol-real-");
+  // no `text` law here: the relic is NUL-binary, so git compares it byte for
+  // byte and a Windows tool's CRLF rewrite is genuine, clearable phantom dirt
+  put("tools/relic.mjs", NUL_RELIC("\n"));
+  put("WORLD/notes.txt", "the operator's own file\n");
+  commit("published main");
+
+  writeFileSync(join(repo, "tools", "relic.mjs"), NUL_RELIC("\r\n"));      // phantom
+  const realEdit = "the operator's own file, MID-EDIT and not yet committed\n";
+  writeFileSync(join(repo, "WORLD", "notes.txt"), realEdit);               // real
+
+  const stakesPath = stakesFile(t, repo, []);
+  assert.throws(() => settlementSweep({ repo, stakesPath }), (error) => {
+    assert.match(error.message, /needs a clean checkout/, "the real edit stops the crossing");
+    assert.match(error.message, /WORLD\/notes\.txt/, "and is named — not the phantom beside it");
+    assert.equal(error.phase, "clean-check");
+    return true;
+  });
+  assert.equal(readFileSync(join(repo, "WORLD", "notes.txt"), "utf8"), realEdit,
+    "the uncommitted work is still there: a crossing that refuses never clears anything");
+  assert.equal(readFileSync(join(repo, "tools", "relic.mjs"), "utf8"), NUL_RELIC("\r\n"),
+    "and neither is the phantom — judge first, touch nothing");
+});
+
+test("FALSIFIER (the control): phantom-only dirt IS cleared and the crossing proceeds — the discrimination cuts both ways", (t) => {
+  const { repo, git, put, commit } = eolFixture(t, "postmark-settlement-eol-phantom-");
+  put("tools/relic.mjs", NUL_RELIC("\n"));
+  commit("published main");
+
+  git("switch", "-q", "-c", "draft/house-a");
+  put("WORLD/marks/let-there-be-light/alice-market/mark.md", record({
+    by: "alice", at: { x: 800, y: 800 }, extent: { w: 10, h: 10 }, body: "a backed commons",
+  }));
+  commit("house a sketches");
+  git("switch", "-q", "main");
+
+  writeFileSync(join(repo, "tools", "relic.mjs"), NUL_RELIC("\r\n"));
+  assert.match(git("status", "--porcelain"), /relic\.mjs/, "git calls it modified");
+
+  const stakesPath = stakesFile(t, repo, [{ holder: "s1", mark: "alice/alice-market", n: 5, weight: 10 }]);
+  const report = settlementSweep({ repo, stakesPath });
+
+  assert.deepEqual(report.published.map((row) => row.id), ["alice/alice-market"], "the crossing runs");
+  assert.equal(readFileSync(join(repo, "tools", "relic.mjs"), "utf8"), NUL_RELIC("\n"),
+    "and the drifted file is restored from its own blob — clearable phantom dirt truly clears");
+  assert.deepEqual(report.eol_boundary, [],
+    "nothing irreconcilable survives: this blob always obeyed the law");
+});

@@ -29,6 +29,9 @@ import {
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const REGISTRY_REL = "WORLD/settlement-publications.json";
+// the named door a refusal leaves by, so a receipt never has to guess which
+// stderr line was the cause
+export const REFUSAL_SENTINEL = "SETTLEMENT-SWEEP-REFUSAL";
 const MARKS_PREFIX = "WORLD/marks/";
 
 function git(repo, args, options = {}) {
@@ -46,6 +49,137 @@ function hasObject(repo, object) {
   } catch {
     return false;
   }
+}
+
+// A refusal the receipt can find. The box builds its public detail from the
+// sweep's stderr, and a crossing that journals as it works will have pushed the
+// terminal cause off the front of that stream long before it returns nonzero
+// (2026-08-23: fifteen skipped-commit warnings and one already-standing line
+// buried `cannot rebase`). The cause therefore also leaves by a named door.
+function refusal(message, fields = {}) {
+  return Object.assign(new Error(message), fields);
+}
+
+// ── the eol boundary ───────────────────────────────────────────────────────
+// `*.mjs text eol=lf` in .gitattributes is a law about blobs, and a blob
+// committed before that law can violate it. Git then reports the file modified
+// forever: checkout writes LF, the blob holds CRLF, and NO working-tree content
+// can make the two agree — the file is dirty by construction until someone
+// commits a normalization. A crossing that walks into this dies at a clean
+// check over a diff of zero readable bytes.
+//
+// The sweep must tell that apart from a resident's real uncommitted edit. The
+// discrimination is the whole fix: clearing dirt blindly would silently discard
+// somebody's work, and refusing blindly wedges every crossing after an
+// attribute change.
+
+// CR dropped only where it precedes LF. A lone CR is data, not a line ending,
+// and a file carrying one is not eol-only dirt.
+function stripCr(buffer) {
+  const out = Buffer.allocUnsafe(buffer.length);
+  let n = 0;
+  for (let i = 0; i < buffer.length; i++) {
+    if (buffer[i] === 13 && buffer[i + 1] === 10) continue;
+    out[n++] = buffer[i];
+  }
+  return out.subarray(0, n);
+}
+
+function indexSha(repo, path) {
+  const line = git(repo, ["ls-files", "-s", "--", path]).trim();
+  return line ? line.split(/\s+/)[1] : null;
+}
+
+function indexBlob(repo, path) {
+  const sha = indexSha(repo, path);
+  return sha ? git(repo, ["cat-file", "blob", sha], { encoding: "buffer" }) : null;
+}
+
+// What git would store if it took the file as it stands — the clean filter's
+// own answer, asked without going through the index's stat cache. This is the
+// comparison git makes when it calls a file modified, and the only reliable way
+// to ask it immediately after a checkout has rewritten that cache.
+function cleanedSha(repo, path) {
+  return git(repo, ["hash-object", "--path", path, "--", join(repo, path)]).trim();
+}
+
+function blobAt(repo, ref, path) {
+  const line = git(repo, ["ls-tree", ref, "--", path]).trim();
+  return line ? line.split(/\s+/)[2] : null;
+}
+
+function worktreeDirt(repo) {
+  const fields = git(repo, ["status", "--porcelain", "-z", "--untracked-files=all"]).split("\0");
+  const rows = [];
+  for (let i = 0; i < fields.length; i++) {
+    const field = fields[i];
+    if (!field) continue;
+    const [x, y] = field;
+    // a rename/copy spends a second NUL field on its source path
+    if (x === "R" || x === "C") i += 1;
+    rows.push({ x, y, path: field.slice(3), entry: field });
+  }
+  return rows;
+}
+
+// Tracked, modified in the working tree only, and byte-identical to its own
+// index blob once CRLF is read as LF on both sides. Anything else — staged,
+// untracked, deleted, unmerged, or one changed character — is real.
+function isEolOnlyDirt(repo, row) {
+  if (row.x !== " " || row.y !== "M") return false;
+  let blob;
+  let disk;
+  try {
+    blob = indexBlob(repo, row.path);
+    disk = readFileSync(join(repo, row.path));
+  } catch {
+    return false;
+  }
+  if (!blob) return false;
+  return stripCr(blob).equals(stripCr(disk));
+}
+
+function classifyDirt(repo) {
+  const eolOnly = [];
+  const real = [];
+  for (const row of worktreeDirt(repo)) {
+    if (isEolOnlyDirt(repo, row)) eolOnly.push(row.path);
+    else real.push(row);
+  }
+  return { eolOnly, real };
+}
+
+// Two different faults wear the same status line. If the blob obeys the
+// declared law and only the file on disk drifted, `git checkout --` genuinely
+// clears it. If the BLOB is the violator, no checkout can — the same LF comes
+// back every time — so that path is named as irreconcilable rather than
+// re-cleared in a loop.
+function clearEolOnlyDirt(repo) {
+  const before = classifyDirt(repo);
+  const cleared = [];
+  const irreconcilable = [];
+  for (const path of before.eolOnly) {
+    try { git(repo, ["checkout", "--", path]); } catch { /* the compare below is the verdict */ }
+    // Ask git what it would store, not `git status`. A checkout leaves the index
+    // holding the stat of the file it just wrote, so status takes its fast path
+    // and can call a wrong blob clean — which would report a path cleared while
+    // it is still dirty by construction, and hide the boundary from the receipt.
+    // (Checkout is no cure by itself: with eol=lf git writes the CRLF blob back
+    // out VERBATIM and converts on the way in, so the round trip never closes.)
+    let settled = false;
+    try { settled = cleanedSha(repo, path) === indexSha(repo, path); } catch { /* refused = not settled */ }
+    (settled ? cleared : irreconcilable).push(path);
+  }
+  return { cleared, irreconcilable, real: before.real };
+}
+
+// Safe to carry across the boundary: the two sides of the replay hold the SAME
+// blob for this path, so the rebase has nothing to say about it and marking it
+// inert cannot lose a write. A path the sketchbook actually touched never
+// qualifies, whatever its line endings.
+function inertAcross(repo, path, mainBranch, branch) {
+  const onMain = blobAt(repo, mainBranch, path);
+  return Boolean(onMain) && onMain === blobAt(repo, branch, path);
 }
 
 function readAt(repo, ref, path) {
@@ -492,6 +626,7 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
         mode: "reset",
         returned: [],
         return_commit: null,
+        eol_crossed: [],
       });
       continue;
     }
@@ -499,8 +634,9 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
     const wtParent = mkdtempSync(join(tmpdir(), "postmark-draft-rebase-"));
     const wt = join(wtParent, "worktree");
     git(repo, ["worktree", "add", "--quiet", wt, branch]);
+    let crossed = [];
     try {
-      try {
+      const replay = () => {
         // -X theirs — in a rebase, "theirs" is the commit being REPLAYED: the
         // sketchbook's own writes. The reseat is pure transport of a sketchbook
         // whose only readable truth is its final tree (markDelta and recordAt
@@ -518,9 +654,52 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
         git(wt, ["rebase", "-X", "theirs", mainBranch], {
           env: { ...process.env, GIT_EDITOR: "true", GIT_SEQUENCE_EDITOR: "true" },
         });
+      };
+      const refuseReplay = (error, fields = {}) => refusal(
+        `${branch} did not rebase cleanly: ${String(error.stderr ?? error.message ?? error).slice(0, 240)}`,
+        { phase: "rebase", branch, ...fields },
+      );
+
+      try {
+        replay();
       } catch (error) {
+        // Read the dirt BEFORE aborting. The abort restores the branch tip, the
+        // old .gitattributes comes back with it, and the boundary un-crosses
+        // itself — the evidence of what stopped the replay is gone. (The rebase
+        // moves HEAD onto main while building its todo list, which is where a
+        // stale sketchbook first meets main's new line-ending law.)
+        const dirt = clearEolOnlyDirt(wt);
+        const inert = dirt.irreconcilable.filter((path) => inertAcross(repo, path, mainBranch, branch));
         try { git(wt, ["rebase", "--abort"]); } catch { /* preserve original branch */ }
-        throw new Error(`${branch} did not rebase cleanly: ${String(error.stderr ?? error.message ?? error).slice(0, 240)}`);
+
+        // Every stopper must be eol-only AND inert across the replay. One real
+        // modification among the phantoms, or one eol-dirty path the sketchbook
+        // actually wrote, and the crossing refuses by name exactly as before.
+        const normalizable = !dirt.real.length
+          && inert.length === dirt.irreconcilable.length
+          && (inert.length > 0 || dirt.cleared.length > 0);
+        if (!normalizable) {
+          throw refuseReplay(error, {
+            real_dirt: dirt.real.map((row) => row.entry),
+            eol_dirt: dirt.irreconcilable,
+          });
+        }
+
+        // The normalization crossing. These paths carry the same blob on both
+        // sides of the replay and differ from disk only in line endings, so
+        // they are declared inert for the length of the rebase and handed back
+        // afterwards. The blob is still wrong; a normalization commit on main
+        // is what actually retires it, and the receipt says so out loud.
+        crossed = inert;
+        if (crossed.length) git(wt, ["update-index", "--assume-unchanged", "--", ...crossed]);
+        try {
+          replay();
+        } catch (retry) {
+          try { git(wt, ["rebase", "--abort"]); } catch { /* preserve original branch */ }
+          throw refuseReplay(retry);
+        } finally {
+          if (crossed.length) git(wt, ["update-index", "--no-assume-unchanged", "--", ...crossed]);
+        }
       }
 
       for (const item of returned) writeRepoFile(wt, item.path, item.content);
@@ -529,7 +708,7 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
         : null;
 
       const base = git(repo, ["merge-base", mainBranch, branch]).trim();
-      if (base !== mainSha) throw new Error(`${branch} is not rebased on ${mainBranch}`);
+      if (base !== mainSha) throw refusal(`${branch} is not rebased on ${mainBranch}`, { phase: "rebase", branch });
       receipts.push({
         branch,
         head: git(repo, ["rev-parse", branch]).trim(),
@@ -537,6 +716,9 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
         mode: "rebase",
         returned: returned.map((item) => item.id),
         return_commit: returnCommit,
+        // named, never silent: a path whose committed blob still violates main's
+        // own eol law and had to be carried inert across this replay
+        eol_crossed: crossed,
       });
     } finally {
       try { git(repo, ["worktree", "remove", "--force", wt]); } catch { /* temp path only */ }
@@ -555,9 +737,22 @@ export function settlementSweep({
   stakesPath = resolve(stakesPath ?? "");
   if (!existsSync(stakesPath)) throw new Error(`missing --stakes input: ${stakesPath}`);
   if (git(repo, ["branch", "--show-current"]).trim() !== mainBranch)
-    throw new Error(`settlement sweep must run from ${mainBranch}`);
-  const dirt = git(repo, ["status", "--porcelain"]).trim();
-  if (dirt) throw new Error(`settlement sweep needs a clean checkout: ${dirt.split(/\r?\n/)[0]}`);
+    throw refusal(`settlement sweep must run from ${mainBranch}`, { phase: "clean-check" });
+  // A fresh clone of a main that declares eol=lf over a CRLF blob is dirty the
+  // moment it is created, and no operator action makes it clean. That is a
+  // repo defect to name, not a reason to refuse a crossing — but a real
+  // uncommitted edit still stops everything, by name.
+  // Judge before touching: a crossing about to refuse leaves the tree exactly
+  // as it found it, so the operator reads their own uncommitted work back.
+  const seen = classifyDirt(repo);
+  if (seen.real.length)
+    throw refusal(
+      `settlement sweep needs a clean checkout: ${seen.real[0].entry}${seen.real.length > 1 ? ` (+${seen.real.length - 1} more)` : ""}`,
+      { phase: "clean-check", real_dirt: seen.real.map((row) => row.entry) },
+    );
+  const gate = clearEolOnlyDirt(repo);
+  for (const path of gate.irreconcilable)
+    console.error(`[the-eol-boundary] ${path}: the committed blob violates ${mainBranch}'s own eol law — dirty by construction until a normalization commit lands`);
 
   const stakes = stakesFrom(stakesPath);
   const escrow = escrowIndex(stakes);
@@ -908,6 +1103,8 @@ export function settlementSweep({
     rehomed,
     dropped,
     rebased,
+    // the crossing's own word on the line-ending law it had to work around
+    eol_boundary: gate.irreconcilable,
   };
 }
 
@@ -942,6 +1139,17 @@ if (isMain) {
     }
   } catch (error) {
     console.error(`settlement sweep refused: ${String(error?.message ?? error)}`);
+    // The cause, on its own named line, LAST. A receipt builder that slices the
+    // first N bytes of stderr reads journal progress and calls it the reason —
+    // which is how a successful already-standing drop came to stand in for
+    // `cannot rebase` on 2026-08-23. Grep the sentinel instead of the head.
+    console.error(`${REFUSAL_SENTINEL} ${JSON.stringify({
+      cause: String(error?.message ?? error),
+      phase: error?.phase ?? "unknown",
+      ...(error?.branch ? { branch: error.branch } : {}),
+      ...(error?.real_dirt?.length ? { real_dirt: error.real_dirt } : {}),
+      ...(error?.eol_dirt?.length ? { eol_dirt: error.eol_dirt } : {}),
+    })}`);
     process.exitCode = 1;
   }
 }
