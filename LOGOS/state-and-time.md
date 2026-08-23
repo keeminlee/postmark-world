@@ -7,7 +7,9 @@ Rendered in the world as `the-town/the-witnessed-instant` (named `the-tense`
 until the homonym ruling, 2026-08-19 — the word "tense" now belongs solely to
 `the-town/the-tenses`, the read-against-the-standpoint law) and
 `the-town/the-two-clocks`; the save grammar stands as `the-town/the-save`
-(planted 2026-08-18).
+(planted 2026-08-18); the log's witness rule as `the-town/the-witnessed-line`
+and the sketchbook's phases as `the-town/the-live` and `the-town/the-settled`
+(planted 2026-08-22, the ladder audit).
 
 ---
 
@@ -22,6 +24,12 @@ second record to prove it, and it is never edited — corrections are
 superseding actions at the same level, **latest appended wins** (file order
 is the tiebreaker the era seam taught us to honor; instants can lie about
 order, appends cannot).
+
+A substrate may keep a **cold shelf**: records moved to external storage
+under a content-addressed manifest line kept in the substrate itself (URI and
+digest) remain that substrate's records — the repo still answers, only the
+bytes sleep elsewhere. The manifest is law; the warehouse is furniture.
+(Ruled 2026-08-22, the ladder audit — the R2 shelf.)
 
 The graph — every node, every edge, every standing — is a pure function of
 the log. Same log, same derivation, same world, on any clone, forever.

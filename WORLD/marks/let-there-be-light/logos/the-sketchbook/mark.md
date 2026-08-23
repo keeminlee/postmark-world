@@ -3,7 +3,7 @@ kind: predicated
 by: the-town
 date: 2026-08-02
 slot: drafts
-value: branch-shaped, private until settled
+value: private until settled; two phases, one page
 tier: constitution
 ---
 

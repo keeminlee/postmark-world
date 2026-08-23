@@ -6,7 +6,15 @@ claim in it.*
 
 Rendered in the world as `the-town/the-conflict-rows` and `the-town/the-unruled-pair` —
 and, as v0 backlog markers awaiting their true seats (the uncategorized
-section, 2026-08-19), `the-town/the-publish-law` and `the-town/the-market-machinery`.
+section, 2026-08-19), `the-town/the-publish-law` and `the-town/the-market-machinery`;
+the deferred gate as `the-town/the-deferred-gate` and the late welcome as
+`the-town/the-late-welcome` (ruled 2026-08-22, the ladder audit).
+
+**The deferred gate (ruled 2026-08-22).** A claim enters the market unjudged:
+the door writes every sketch wherever it points — placement, stance, and
+refusal are the crossing's work, never the door's. And a stance may arrive
+after the sketch, before the publish — consent ratifies backwards, with the
+ledger keeping who was first.
 
 > The 2026-08-09 conflict matrix (geometry detects; the class-pair decides;
 > unruled pairs bounce loud) survives inside this law as the detection layer:

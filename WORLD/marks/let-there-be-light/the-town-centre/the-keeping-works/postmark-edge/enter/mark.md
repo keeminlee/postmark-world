@@ -2,9 +2,9 @@
 kind: class
 by: the-town
 tier: constitution
-date: 2026-08-18
+date: 2026-08-22
 class: enter
-version: 3
+version: 4
 extends: postmark-edge
 subject: resident
 object: mark
@@ -13,4 +13,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-An entry is one passage written — who crossed, into what, the word at the threshold; exit writes the next entry, to the effective parent.
+An entry is one passage written — who crossed, into what, at a threshold you truly stand before; exit writes the next, to the effective parent.

@@ -2,7 +2,7 @@
 
 *To act is to declare an edge. Everything else is clothing.*
 
-Rendered in the world as `the-town/the-edit-law` and `the-town/the-standing-children`.
+Rendered in the world as `the-town/the-edit-law`, `the-town/the-standing-children`, and `the-town/the-threshold` (the boundary invariant, 2026-08-22).
 (The revision family's backlog marker graduated the same day it was planted:
 `the-town/amend` and `the-town/withdraw` now stand in the works, sourced to
 classes.md § the revision verbs, built at the door 2026-08-19.)
@@ -57,6 +57,10 @@ remains checkable is **admissibility**: the declared footprint must fit the
 declared parent (a class param, judged at the gate like every boundary).
 The directory tree on disk is the edge's serialization — cache, maintained,
 never truth.
+
+**A frame changes only at a boundary its holder stands on** — reparenting is
+a revision-edge declared from the threshold, never from afar (ruled
+2026-08-22, the ladder audit; rendered as `the-town/the-threshold`).
 
 This section is **frame law — geometry, never governance** (scoped
 2026-08-13): it answers what may carry what and how offsets mean; no tier,
