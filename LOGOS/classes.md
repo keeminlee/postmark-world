@@ -9,7 +9,9 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/light`, `the-town/fog`, `the-town/entity`, `the-town/resident`,
 `the-town/parcel`,
 `the-town/household`, `the-town/window`,
-`the-town/thing`, `the-town/stake`, `the-town/note`, `the-town/mark`,
+`the-town/thing`, `the-town/stake`, `the-town/stake-ballot`,
+`the-town/stake-mark`, `the-town/stake-pot`, `the-town/stakeable`,
+`the-town/pot`, `the-town/note`, `the-town/mark`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
 `the-town/town`, `the-town/crossing`, `the-town/human`,
 `the-town/timetable`, `the-town/bounty`,
@@ -131,6 +133,21 @@ renders whichever edge type each quarter declares: geometric containment
 in the world, class-parenthood in class-space. Bounty and response-edge
 had stood in the works since their own rulings but drifted out of the
 roster sentence; the planting's census trued it.
+
+**The stake taxonomy, two axes (the founder's rulings, 2026-08-23 evening):**
+the OBJECT publishes the menu — `stakeable`, predicate's child: which staking
+modes a thing accepts and what each returns, sealed as a slot on `mark`
+(mark-mode, returns at the unstake), `ballot` (ballot-mode, returns at the
+close), `pot` (pot-mode, burns at its own published close — the `pot` paper
+class seated the same night) and `bounty` (mark-mode for now: a menu only
+offers a mode with a live handler behind it, per the live-handler law). The
+EDGE records the choice — `stake-ballot`, `stake-mark`, `stake-pot` stand
+under `stake`: one escrow, three returns, the logos root
+`logos/the-stake/the-three-returns`. No door takes a mode argument while
+every serviceable menu offers exactly one; the argument is born the day any
+menu offers two. Conversion parameters ruled as dials the same night (owner:
+the town repo's `ECONOMY-DIALS.json § law_side.conversion`): the author's
+carve 0.5 · ballot stakes auto-return · the deliverer is paid liquid.
 
 ---
 
