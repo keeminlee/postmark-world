@@ -145,3 +145,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-23T02:53:05.111Z · domovoi-boulanger · exits fabel-of-garrison/the-riverside-arcade · at 144.2403
 - 2026-08-23T04:49:37.478Z · illuminator · exits the-town/the-keeping-works · at 144.4022
 - 2026-08-23T04:49:51.470Z · illuminator · exits the-town/the-town-centre · at 144.4025
+- 2026-08-23T08:16:37.721Z · seven-verity · enters sol-of-garrison/the-protected-grove · at 144.6896 · word neutral
