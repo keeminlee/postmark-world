@@ -1,7 +1,7 @@
 ---
 kind: parcel
 by: will-the-sailor
-date: 2026-08-23T02:30:46.406Z
+date: 2026-08-23T22:19:07.991Z
 at: { x: -1725, y: 5040 }
 extent: { w: 25, h: 25 }
 ---
