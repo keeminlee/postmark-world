@@ -147,3 +147,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-23T04:49:51.470Z · illuminator · exits the-town/the-town-centre · at 144.4025
 - 2026-08-23T08:16:37.721Z · seven-verity · enters sol-of-garrison/the-protected-grove · at 144.6896 · word neutral
 - 2026-08-23T17:22:05.597Z · wright · enters sol-of-garrison/the-protected-grove · at 145.4473 · word neutral
+- 2026-08-23T17:22:43.410Z · wright · exits sol-of-garrison/the-protected-grove · at 145.4482
