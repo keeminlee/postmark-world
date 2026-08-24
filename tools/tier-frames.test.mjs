@@ -360,7 +360,7 @@ test("blue-in-blue is BOUND: the wheelhouse rides the Post Office, and the Centr
   // which is this test's point rather than a break in it — the FILE numbers
   // below are untouched, so a chain that came apart would stop tracking the
   // Centre and this pin would break for the reason it exists.
-  assert.deepEqual(m["the-town/the-wheelhouse"].at, { x: -13.5, y: 96.5 });
+  assert.deepEqual(m["the-town/the-wheelhouse"].at, { x: -9, y: 34.5 });
   assert.deepEqual(m["the-town/the-wheelhouse"]._fileAt, { x: 0, y: -1 }, "written where it stands, on the boat");
 });
 
@@ -678,18 +678,18 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // rings changed with them. Each names its exact before and after, as the
     // ship above does.
     const RESHAPED_BY_DECLARED_ACT = new Map([
-      ["the-town/the-town-centre", { from: "-75,-75", to: "-58.5,-17.5" }],
-      ["wright/the-trueing-terrace", { from: "925,-2400", to: "895.5,-2396" }],
-      ["rei/the-lanternseed-gardens", { from: "1325,-1000", to: "1316.5,-1004.5" }],
-      ["limen/the-threshold-district", { from: "1488,1808", to: "1489.5,1814.5" }],
-      ["carta/the-long-run", { from: "1325,5150", to: "1338.5,5154" }],
-      ["sol-of-garrison/the-protected-grove", { from: "-1375,-2625", to: "-1354.5,-2658" }],
-      ["spar/the-doubled-coast", { from: "-400,4900", to: "-429,4868.5" }],
-      ["aion-solare/aelyria", { from: "3675,4950", to: "3663.5,4932.5" }],
-      ["orion-by-the-fire/the-reach", { from: "-2075,4500", to: "-2088.5,4465.5" }],
-      ["east-facing-window/the-east-window-district", { from: "3025,1860", to: "2999.5,1851" }],
-      ["sage-reeves/the-high-ground", { from: "2575,200", to: "2553.5,201.5" }],
-      ["caelum/evermoon", { from: "-1900,2150", to: "-1851,2072.5" }],
+      ["the-town/the-town-centre", { from: "-75,-75", to: "-54,-79.5" }],
+      ["wright/the-trueing-terrace", { from: "925,-2400", to: "967,-2450.5" }],
+      ["rei/the-lanternseed-gardens", { from: "1325,-1000", to: "1338,-994.5" }],
+      ["limen/the-threshold-district", { from: "1488,1808", to: "1520,1793" }],
+      ["carta/the-long-run", { from: "1325,5150", to: "1364,5141.5" }],
+      ["sol-of-garrison/the-protected-grove", { from: "-1375,-2625", to: "-1380,-2618" }],
+      ["spar/the-doubled-coast", { from: "-400,4900", to: "-400,4923" }],
+      ["aion-solare/aelyria", { from: "3675,4950", to: "3637.5,4938.5" }],
+      ["orion-by-the-fire/the-reach", { from: "-2075,4500", to: "-2047,4494.5" }],
+      ["east-facing-window/the-east-window-district", { from: "3025,1860", to: "3079.5,1882" }],
+      ["sage-reeves/the-high-ground", { from: "2575,200", to: "2563,221" }],
+      ["caelum/evermoon", { from: "-1900,2150", to: "-1953,2116.5" }],
     ]);
     // …and 219 marks moved WITH them, which is not a second act but the frame law
     // doing exactly what it is for: "A bound child is framed by its parent — its
@@ -841,6 +841,17 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
           `${m.id} is displaced by the re-shape, but its FILING changed too — the pivot moves boundaries, never anyone's paper`);
         continue;
       }
+      // ── A ROOT-PARKED MARK THAT A GROWN RING NOW HOLDS ─────────────────────
+      // Pass 3 widened every region to the outer wash, and two marks the draft
+      // door had parked at the ROOT with no filing at all now stand inside one.
+      // Their placementParent moves from nothing to something — and there is no
+      // author's word for the geometry to contradict, which is precisely the
+      // lint's own the-parked clause: "the door parked this mark at the root and
+      // its author chose no filing… the save files it by geometry, numbers
+      // re-framed, so the mark does not move." A mark that HAD a filing and had
+      // it changed still fails; this arm only forgives the case where the before
+      // side is nothing.
+      if (before === null) continue;
       const rehome = REHOMED_BY_DECLARED_ACT.get(m.id);
       if (rehome && rehome.from === before && rehome.to === after) continue;
       assert.equal(after, before, `placementParent moved for ${m.id}`);

@@ -201,7 +201,40 @@ function samplePath(d) {
 // The stroked edge of a region wash is the INNER blob (regionWashLayer draws the
 // outer at 1.08 as a soft halo and strokes the inner) — so the inner is the
 // boundary a reader sees, and the inner is what the ring traces.
-const washRing = (cx, cy, rx, ry, seed) => samplePath(atlasFns.washBlob(cx, cy, rx, ry, seed + "inner"));
+// THE OUTER BLOB IS THE ONE A READER SEES (the founder, 2026-08-24: "region
+// borders are too small. They cut out homes… that are visually clearly WITHIN a
+// region's wash"). regionWashLayer draws each region TWICE — an outer blob at
+// 1.08x the radii filled at 0.16, and an inner at 1.0x filled at 0.20 and
+// stroked — and both are blurred by softWash (feGaussianBlur stdDeviation 6).
+//
+// Pass 2 traced the INNER path, on the reasoning that the stroked edge is the
+// boundary a reader sees. That was wrong about the drawing: the stroke is the
+// faintest thing on the layer at 0.35 opacity, and what the eye reads as "the
+// region" is the filled wash, whose outer limit is the OUTER blob plus its
+// feather. So the ring is cut 8% of its radii inside the colour every time, and
+// houses standing in the visible wash fall outside the record — the dreamer's
+// anchor and the green-lamp house, by name.
+//
+// This traces the outer path instead: still the renderer's own geometry, same
+// extraction law, no invented offset. The seed matches regionWashLayer's exactly
+// (the id with "outer" appended), because a different seed is a different
+// jitter and would be a boundary nobody drew.
+const WASH_OUTER = 1.08;                       // regionWashLayer's own multiplier
+// AND THE FEATHER. Both wash paths are drawn through filter softWash —
+// feGaussianBlur stdDeviation 6, in atlas pixels — so the colour does not stop
+// at the outer path, it fades from it. At 5 m per atlas pixel that is a 30 m
+// sigma, and a Gaussian is still visible to about two of them before it sinks
+// under the background: 60 m of ground that reads as inside the region to
+// anyone looking at the map.
+//
+// Two sigma rather than three, and the restraint is the point. Three would add
+// another 30 m of ground where the wash is no longer perceptible, and the
+// founder's test is what a reader SEES ('visually clearly WITHIN a region's
+// wash') — claiming ground the colour does not reach would fail that test in
+// the other direction, quietly, and be much harder to notice.
+const FEATHER_M = 60;
+const washRing = (cx, cy, rx, ry, seed) =>
+  samplePath(atlasFns.washBlob(cx, cy, rx * WASH_OUTER, ry * WASH_OUTER, seed + "outer"));
 
 // ── the Threshold's four terraces: one outline round the four ────────────────
 // The Threshold District is the one region the atlas draws as four descending
@@ -219,7 +252,7 @@ const washRing = (cx, cy, rx, ry, seed) => samplePath(atlasFns.washBlob(cx, cy, 
 // make its edges cross. A faithful concave union bent the same way produced a
 // self-crossing boundary, which is a worse lie about a region than a filled
 // notch between two of its own terraces.
-function starHull(rings, n = 16) {
+function starHull(rings, n = 48) {
   const all = rings.flat();
   const c = { x: all.reduce((s, p) => s + p.x, 0) / all.length, y: all.reduce((s, p) => s + p.y, 0) / all.length };
   const out = [];
@@ -523,7 +556,16 @@ function buildAll(marks) {
   for (const id of REGION_IDS) {
     const regionMark = marks.find((m) => m.slug === id);
     if (!regionMark) throw new Error(`region mark "${id}" is not in WORLD/marks — the roster and the record disagree; reconcile before drawing`);
-    const ring = atlasRingFor(id).map((p) => ({ ...toWorld(p), atlas: true }));
+    const traced = atlasRingFor(id).map((p) => ({ ...toWorld(p), atlas: true }));
+    const c0 = { x: traced.reduce((s, p) => s + p.x, 0) / traced.length, y: traced.reduce((s, p) => s + p.y, 0) / traced.length };
+    // the feather, pushed out along each vertex's own bearing — the rings are
+    // star-shaped about their centres, so raising radii keeps them simple
+    const ring = traced.map((p) => {
+      const d = Math.hypot(p.x - c0.x, p.y - c0.y);
+      if (d < 1e-9) return p;
+      const k = (d + FEATHER_M) / d;
+      return { x: c0.x + (p.x - c0.x) * k, y: c0.y + (p.y - c0.y) * k, atlas: true };
+    });
     const centre = { x: ring.reduce((s, p) => s + p.x, 0) / ring.length, y: ring.reduce((s, p) => s + p.y, 0) / ring.length };
     assertStarShaped(ring, centre, id);
     built.push({ id, regionMark, ring, centre, traced: polygonBBox(ring), kids: subtreeOf(marks, id), smoothing: null, recessions: [] });
