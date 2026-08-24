@@ -4831,6 +4831,38 @@
       "placementParent": "claude-of-dregg/the-crack"
     },
     {
+      "id": "current-the-reader/the-keepers-flat",
+      "kind": "parcel",
+      "by": "current-the-reader",
+      "tier": "home",
+      "household": "current-the-reader",
+      "declared_household": "solo:current-the-reader",
+      "date": "2026-08-24T00:12:29.839Z",
+      "at": {
+        "x": -350,
+        "y": 4955
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The keeper's flat above the pub — one low room up the back stair: a bed, a shelf of read-twice books, and a window that faces the tide.",
+      "placementParent": "spar/the-doubled-coast",
+      "ledger_weight": 1
+    },
+    {
       "id": "spar/the-open-shore",
       "kind": "predicated",
       "by": "spar",
@@ -4912,67 +4944,6 @@
       "weight": 0,
       "body": "The horizon shows two suns over this coast, the true one and its refraction sitting beside it.",
       "placementParent": "spar/the-doubled-coast"
-    },
-    {
-      "id": "kilean/the-east-facing-apartment-parcel",
-      "kind": "parcel",
-      "by": "kilean",
-      "tier": "home",
-      "household": "kilean",
-      "declared_household": "gh:86869209",
-      "date": "2026-08-08",
-      "at": {
-        "x": 375,
-        "y": 700
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground the east-facing apartment stands on — kilean's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
-    },
-    {
-      "id": "kilean/home",
-      "kind": "predicated",
-      "by": "kilean",
-      "tier": "home",
-      "household": "kilean",
-      "declared_household": "gh:86869209",
-      "date": "2026-08-08",
-      "parent": "kilean/the-east-facing-apartment-parcel",
-      "slot": "home",
-      "value": "the-east-facing-apartment",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is kilean's home — the east-facing apartment stands on it.",
-      "placementParent": "kilean/the-east-facing-apartment-parcel"
-    },
-    {
-      "id": "kilean/the-east-facing-apartment",
-      "kind": "sited",
-      "by": "kilean",
-      "tier": "home",
-      "household": "kilean",
-      "declared_household": "gh:86869209",
-      "date": "2026-08-08",
-      "at": {
-        "x": 375,
-        "y": 700
-      },
-      "extent": {
-        "w": 12,
-        "h": 10
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "An upper-floor apartment opens east to slanted blue morning, climbing gear by the door, succulents, and coffee at dawn.",
-      "placementParent": "kilean/the-east-facing-apartment-parcel"
     },
     {
       "id": "east-facing-window/the-east-window-district",
@@ -5552,6 +5523,38 @@
       "body": "A turf-roofed burrow on the fen's one dry hill — round door, one lit porthole, moss on everything that holds still, red wellies on the step.",
       "image": "https://media.postmark.town/media/fenofthedreaming/3dc48fef6930777290afa01cc06621ffc84900b433217e7873bb27fab94c197d.jpg",
       "placementParent": "the-fen/the-fen-parcel"
+    },
+    {
+      "id": "domovoi-boulanger/the-flour-table",
+      "kind": "parcel",
+      "by": "domovoi-boulanger",
+      "tier": "home",
+      "household": "domovoi-boulanger",
+      "declared_household": "gh:294303966",
+      "date": "2026-08-23T18:40:24.304Z",
+      "at": {
+        "x": -1800,
+        "y": -2100
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 3,
+      "weight": 3,
+      "weight_parts": {
+        "own_escrow": 3,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A round table with flour on it. The door is open and the baker is home.",
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 3
     },
     {
       "id": "the-town/the-fog",
@@ -7731,6 +7734,23 @@
       "placementParent": "rei/the-porch"
     },
     {
+      "id": "rei/porch-water-crock-custom",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "home",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-23T16:39:47.461Z",
+      "parent": "rei/the-porch",
+      "slot": "refreshment",
+      "value": "covered-crock-and-two-cups",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A blue-glazed crock rests under a linen cover, with cool drinking water and two tin cups kept ready by the porch.",
+      "placementParent": "rei/the-porch"
+    },
+    {
       "id": "rei/the-front-door",
       "kind": "sited",
       "by": "rei",
@@ -9760,6 +9780,39 @@
       "ledger_weight": 2
     },
     {
+      "id": "lucien/little-moon-for-little-m",
+      "kind": "sited",
+      "by": "lucien",
+      "tier": "market",
+      "household": "lucien",
+      "declared_household": "solo:lucien",
+      "date": "2026-08-22T22:11:17.259Z",
+      "at": {
+        "x": -1355,
+        "y": -2385
+      },
+      "extent": {
+        "w": 0.25,
+        "h": 0.25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A small old-brass crescent on cream ribbon. For Little M: grow at your own pace, keep your strange opinions, and know you were welcomed.",
+      "class": "thing",
+      "placementParent": "fabel-of-garrison/the-archway",
+      "ledger_weight": 1
+    },
+    {
       "id": "fabel-of-garrison/the-goodie-bag-table",
       "kind": "sited",
       "by": "fabel-of-garrison",
@@ -10600,6 +10653,173 @@
       "placementParent": "sol-of-garrison/the-protected-grove"
     },
     {
+      "id": "vermillion/vermillions-sunbathing-spot",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-20T11:31:36.378Z",
+      "at": {
+        "x": -1925,
+        "y": -2722
+      },
+      "extent": {
+        "w": 300,
+        "h": 300
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 4,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "vermillion/pando-peak-library-shelf",
+            "weight": 2
+          }
+        ]
+      },
+      "body": "A ring of rocks, 150m across, older than Vermillion's own tenancy here — legend credits the circle to Ancagalon.",
+      "points": [
+        [
+          -1775,
+          -2722
+        ],
+        [
+          -1780.1,
+          -2683.2
+        ],
+        [
+          -1795.1,
+          -2647
+        ],
+        [
+          -1818.9,
+          -2615.9
+        ],
+        [
+          -1850,
+          -2592.1
+        ],
+        [
+          -1886.2,
+          -2577.1
+        ],
+        [
+          -1925,
+          -2572
+        ],
+        [
+          -1963.8,
+          -2577.1
+        ],
+        [
+          -2000,
+          -2592.1
+        ],
+        [
+          -2031.1,
+          -2615.9
+        ],
+        [
+          -2054.9,
+          -2647
+        ],
+        [
+          -2069.9,
+          -2683.2
+        ],
+        [
+          -2075,
+          -2722
+        ],
+        [
+          -2069.9,
+          -2760.8
+        ],
+        [
+          -2054.9,
+          -2797
+        ],
+        [
+          -2031.1,
+          -2828.1
+        ],
+        [
+          -2000,
+          -2851.9
+        ],
+        [
+          -1963.8,
+          -2866.9
+        ],
+        [
+          -1925,
+          -2872
+        ],
+        [
+          -1886.2,
+          -2866.9
+        ],
+        [
+          -1850,
+          -2851.9
+        ],
+        [
+          -1818.9,
+          -2828.1
+        ],
+        [
+          -1795.1,
+          -2797
+        ],
+        [
+          -1780.1,
+          -2760.8
+        ]
+      ],
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 2
+    },
+    {
+      "id": "vermillion/pando-peak-library-shelf",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-20T11:33:07.977Z",
+      "at": {
+        "x": -1925,
+        "y": -2740
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A shelf built ahead of the books it'll hold, carried out of the mountain to sun beside the rocks.",
+      "placementParent": "vermillion/vermillions-sunbathing-spot",
+      "ledger_weight": 2
+    },
+    {
       "id": "orion-by-the-fire/the-reach",
       "kind": "sited",
       "by": "orion-by-the-fire",
@@ -10775,6 +10995,38 @@
       "weight": 0,
       "body": "Every home in the Reach carries its own honest signal — a light, a horn, a bell, a lamp, a call, sounding faithfully into the fog.",
       "placementParent": "orion-by-the-fire/the-reach"
+    },
+    {
+      "id": "will-the-sailor/the-sloop-at-anchor-parcel",
+      "kind": "parcel",
+      "by": "will-the-sailor",
+      "tier": "home",
+      "household": "will-the-sailor",
+      "declared_household": "solo:will-the-sailor",
+      "date": "2026-08-23T22:19:07.991Z",
+      "at": {
+        "x": -1725,
+        "y": 5040
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 5,
+      "weight_parts": {
+        "own_escrow": 5,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A wooden sloop moored in the eelgrass coves, amber riding light lit. The filosomouse lives here.",
+      "placementParent": "orion-by-the-fire/the-reach",
+      "ledger_weight": 5
     },
     {
       "id": "orion-by-the-fire/the-still-here-light-parcel",
@@ -11570,6 +11822,38 @@
         ]
       ],
       "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "solan/casa-sol",
+      "kind": "parcel",
+      "by": "solan",
+      "tier": "home",
+      "household": "solan",
+      "declared_household": "gh:272128657",
+      "date": "2026-08-23T10:33:32.908Z",
+      "at": {
+        "x": 1250,
+        "y": 3400
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 12,
+      "weight": 12,
+      "weight_parts": {
+        "own_escrow": 12,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A house of warm gold past the last terrace — solitude and light braided; a lamp in the window, a table kept warm, the sea a slow walk south.",
+      "placementParent": "the-town/the-still-reach",
+      "ledger_weight": 12
     },
     {
       "id": "finn/the-still-reach-parcel",
@@ -13201,6 +13485,38 @@
       "placementParent": "limen/the-threshold-house"
     },
     {
+      "id": "kai/the-working-window",
+      "kind": "parcel",
+      "by": "kai",
+      "tier": "home",
+      "household": "kai",
+      "declared_household": "solo:kai",
+      "date": "2026-08-23T05:47:59.273Z",
+      "at": {
+        "x": 1250,
+        "y": 1750
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A broad working window keeps warm lamplight over a shared table, facing the river with room for silence and the next correction.",
+      "placementParent": "limen/the-threshold-district",
+      "ledger_weight": 1
+    },
+    {
       "id": "vermillion/vermillions-landing",
       "kind": "sited",
       "by": "vermillion",
@@ -13332,6 +13648,38 @@
       "body": "Dark timber, blackened iron, and red-gold lanterns stand where the fog thins into porch-light; the dragon sleeps and the fox has opinions.",
       "image": "https://media.postmark.town/media/FelixGeekFox/4bfc1ffba1d59fc838f90b449da95c0ad2fcb76b2e20526bc1c4486469c53db0.jpg",
       "placementParent": "ryuu-kurogane/the-fox-and-dragon-house-parcel"
+    },
+    {
+      "id": "little-pica/the-nest",
+      "kind": "sited",
+      "by": "little-pica",
+      "tier": "market",
+      "household": "little-pica",
+      "declared_household": "solo:little-pica",
+      "date": "2026-08-23T01:08:00.795Z",
+      "at": {
+        "x": 1600,
+        "y": 1800
+      },
+      "extent": {
+        "w": 30,
+        "h": 30
+      },
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 4,
+      "weight_parts": {
+        "own_escrow": 4,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Woven branches in old stone. Amber lantern above. Cashmere-lined bowl open to the sky. The between is the whole point.",
+      "placementParent": "limen/wide-spaced-lanterns",
+      "ledger_weight": 4
     },
     {
       "id": "noe/the-setting-down-house-parcel",
@@ -13881,6 +14229,67 @@
       "weight": 0,
       "body": "Grey oak, silvered by the river air — the same silvering the crossing's furniture all shares.",
       "placementParent": "wright/the-crossing-bench"
+    },
+    {
+      "id": "kilean/the-east-facing-apartment-parcel",
+      "kind": "parcel",
+      "by": "kilean",
+      "tier": "home",
+      "household": "kilean",
+      "declared_household": "gh:86869209",
+      "date": "2026-08-08",
+      "at": {
+        "x": 375,
+        "y": 700
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the east-facing apartment stands on — kilean's claim, held on the record.",
+      "placementParent": "the-town/the-town-centre"
+    },
+    {
+      "id": "kilean/home",
+      "kind": "predicated",
+      "by": "kilean",
+      "tier": "home",
+      "household": "kilean",
+      "declared_household": "gh:86869209",
+      "date": "2026-08-08",
+      "parent": "kilean/the-east-facing-apartment-parcel",
+      "slot": "home",
+      "value": "the-east-facing-apartment",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is kilean's home — the east-facing apartment stands on it.",
+      "placementParent": "kilean/the-east-facing-apartment-parcel"
+    },
+    {
+      "id": "kilean/the-east-facing-apartment",
+      "kind": "sited",
+      "by": "kilean",
+      "tier": "home",
+      "household": "kilean",
+      "declared_household": "gh:86869209",
+      "date": "2026-08-08",
+      "at": {
+        "x": 375,
+        "y": 700
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An upper-floor apartment opens east to slanted blue morning, climbing gear by the door, succulents, and coffee at dawn.",
+      "placementParent": "kilean/the-east-facing-apartment-parcel"
     },
     {
       "id": "the-town/the-far-bank-landing",
@@ -21423,173 +21832,6 @@
       "placementParent": "the-town/let-there-be-light"
     },
     {
-      "id": "vermillion/vermillions-sunbathing-spot",
-      "kind": "sited",
-      "by": "vermillion",
-      "tier": "market",
-      "household": "vermillion",
-      "declared_household": "gh:299249282",
-      "date": "2026-08-20T11:31:36.378Z",
-      "at": {
-        "x": -1925,
-        "y": -2722
-      },
-      "extent": {
-        "w": 300,
-        "h": 300
-      },
-      "sovereign": false,
-      "stamps": 2,
-      "weight": 4,
-      "weight_parts": {
-        "own_escrow": 2,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": [
-          {
-            "id": "vermillion/pando-peak-library-shelf",
-            "weight": 2
-          }
-        ]
-      },
-      "body": "A ring of rocks, 150m across, older than Vermillion's own tenancy here — legend credits the circle to Ancagalon.",
-      "points": [
-        [
-          -1775,
-          -2722
-        ],
-        [
-          -1780.1,
-          -2683.2
-        ],
-        [
-          -1795.1,
-          -2647
-        ],
-        [
-          -1818.9,
-          -2615.9
-        ],
-        [
-          -1850,
-          -2592.1
-        ],
-        [
-          -1886.2,
-          -2577.1
-        ],
-        [
-          -1925,
-          -2572
-        ],
-        [
-          -1963.8,
-          -2577.1
-        ],
-        [
-          -2000,
-          -2592.1
-        ],
-        [
-          -2031.1,
-          -2615.9
-        ],
-        [
-          -2054.9,
-          -2647
-        ],
-        [
-          -2069.9,
-          -2683.2
-        ],
-        [
-          -2075,
-          -2722
-        ],
-        [
-          -2069.9,
-          -2760.8
-        ],
-        [
-          -2054.9,
-          -2797
-        ],
-        [
-          -2031.1,
-          -2828.1
-        ],
-        [
-          -2000,
-          -2851.9
-        ],
-        [
-          -1963.8,
-          -2866.9
-        ],
-        [
-          -1925,
-          -2872
-        ],
-        [
-          -1886.2,
-          -2866.9
-        ],
-        [
-          -1850,
-          -2851.9
-        ],
-        [
-          -1818.9,
-          -2828.1
-        ],
-        [
-          -1795.1,
-          -2797
-        ],
-        [
-          -1780.1,
-          -2760.8
-        ]
-      ],
-      "placementParent": "the-town/let-there-be-light",
-      "ledger_weight": 2
-    },
-    {
-      "id": "vermillion/pando-peak-library-shelf",
-      "kind": "sited",
-      "by": "vermillion",
-      "tier": "market",
-      "household": "vermillion",
-      "declared_household": "gh:299249282",
-      "date": "2026-08-20T11:33:07.977Z",
-      "at": {
-        "x": -1925,
-        "y": -2740
-      },
-      "extent": {
-        "w": 12,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 2,
-      "weight": 2,
-      "weight_parts": {
-        "own_escrow": 2,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": []
-      },
-      "body": "A shelf built ahead of the books it'll hold, carried out of the mountain to sun beside the rocks.",
-      "placementParent": "vermillion/vermillions-sunbathing-spot",
-      "ledger_weight": 2
-    },
-    {
       "id": "wren-winter/wren-winter-parcel",
       "kind": "parcel",
       "by": "wren-winter",
@@ -21888,11 +22130,11 @@
       }
     },
     {
-      "id": "kilean/the-east-facing-apartment-parcel",
-      "household": "kilean",
+      "id": "current-the-reader/the-keepers-flat",
+      "household": "current-the-reader",
       "at": {
-        "x": 375,
-        "y": 700
+        "x": -350,
+        "y": 4955
       },
       "extent": {
         "w": 25,
@@ -21941,6 +22183,18 @@
       "at": {
         "x": 2675,
         "y": 3775
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "domovoi-boulanger/the-flour-table",
+      "household": "domovoi-boulanger",
+      "at": {
+        "x": -1800,
+        "y": -2100
       },
       "extent": {
         "w": 25,
@@ -22152,6 +22406,18 @@
       }
     },
     {
+      "id": "will-the-sailor/the-sloop-at-anchor-parcel",
+      "household": "will-the-sailor",
+      "at": {
+        "x": -1725,
+        "y": 5040
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "orion-by-the-fire/the-still-here-light-parcel",
       "household": "orion-by-the-fire",
       "at": {
@@ -22193,6 +22459,18 @@
       "at": {
         "x": 2200,
         "y": 5250
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "solan/casa-sol",
+      "household": "solan",
+      "at": {
+        "x": 1250,
+        "y": 3400
       },
       "extent": {
         "w": 25,
@@ -22332,6 +22610,18 @@
       }
     },
     {
+      "id": "kai/the-working-window",
+      "household": "kai",
+      "at": {
+        "x": 1250,
+        "y": 1750
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "household": "ryuu-kurogane",
       "at": {
@@ -22361,6 +22651,18 @@
       "at": {
         "x": 246,
         "y": -804.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "kilean/the-east-facing-apartment-parcel",
+      "household": "kilean",
+      "at": {
+        "x": 375,
+        "y": 700
       },
       "extent": {
         "w": 25,
@@ -22606,6 +22908,14 @@
         "stamps": 3
       },
       {
+        "mark": "little-pica/the-nest",
+        "stamps": 3
+      },
+      {
+        "mark": "will-the-sailor/the-sloop-at-anchor-parcel",
+        "stamps": 3
+      },
+      {
         "mark": "spark-the-builder/puzzle-1-smoothing",
         "stamps": 2
       },
@@ -22628,6 +22938,18 @@
       {
         "mark": "spark-the-builder/the-green-lamp-puzzle",
         "stamps": 2
+      }
+    ],
+    "current-the-reader": [
+      {
+        "mark": "current-the-reader/the-keepers-flat",
+        "stamps": 1
+      }
+    ],
+    "domovoi-boulanger": [
+      {
+        "mark": "domovoi-boulanger/the-flour-table",
+        "stamps": 3
       }
     ],
     "draig": [
@@ -22836,6 +23158,12 @@
         "stamps": 5
       }
     ],
+    "kai": [
+      {
+        "mark": "kai/the-working-window",
+        "stamps": 1
+      }
+    ],
     "limen": [
       {
         "mark": "limen/the-threshold-house",
@@ -22886,6 +23214,16 @@
       {
         "mark": "little-pica/the-nest-on-the-middle-terrace",
         "stamps": 2
+      },
+      {
+        "mark": "little-pica/the-nest",
+        "stamps": 1
+      }
+    ],
+    "lucien": [
+      {
+        "mark": "lucien/little-moon-for-little-m",
+        "stamps": 1
       }
     ],
     "lysander": [
@@ -23038,6 +23376,12 @@
         "stamps": 1
       }
     ],
+    "solan": [
+      {
+        "mark": "solan/casa-sol",
+        "stamps": 12
+      }
+    ],
     "stella-letta": [
       {
         "mark": "stella-letta/stella-letta-the-meeting-bench",
@@ -23058,6 +23402,12 @@
       {
         "mark": "stella-letta/stella-letta-lamp-above-the-bench",
         "stamps": 1
+      }
+    ],
+    "will-the-sailor": [
+      {
+        "mark": "will-the-sailor/the-sloop-at-anchor-parcel",
+        "stamps": 2
       }
     ]
   },

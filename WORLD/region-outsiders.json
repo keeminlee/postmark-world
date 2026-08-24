@@ -1,7 +1,7 @@
 {
   "generated_by": "tools/marks-fold.mjs (fold-derived)",
-  "count": 32,
-  "residents": 10,
+  "count": 33,
+  "residents": 11,
   "rows": [
     {
       "resident": "aion-solare",
@@ -491,6 +491,22 @@
       "extent": {
         "w": 80,
         "h": 70
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "vermillion",
+      "mark": "vermillion/vermillions-sunbathing-spot",
+      "kind": "sited",
+      "region": "sol-of-garrison/the-protected-grove",
+      "region_by": "sol-of-garrison",
+      "at": {
+        "x": -1925,
+        "y": -2722
+      },
+      "extent": {
+        "w": 300,
+        "h": 300
       },
       "overlaps_another_parcel": []
     },

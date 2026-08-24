@@ -8,7 +8,7 @@ so a ring no longer bends outward to hold a resident who ended up outside the wa
 These are the marks that fall outside as a result. Nothing has been moved and nothing is
 lost — the ground is exactly where its owner put it; only the region boundary changed.
 
-32 mark(s) across 10 resident(s).
+33 mark(s) across 11 resident(s).
 
 ## aion-solare
 
@@ -70,6 +70,10 @@ lost — the ground is exactly where its owner put it; only the region boundary 
 - `the-town/the-front-window` — sited, at (-599, -774.5), 90x90 m, under **the-town/the-town-centre** (the-town)
 - `the-town/the-keeping-works` — sited, at (-654, -429.5), 800x800 m, under **the-town/the-town-centre** (the-town)
 - `the-town/the-viewer-module` — sited, at (-999, -484.5), 80x70 m, under **the-town/the-town-centre** (the-town)
+
+## vermillion
+
+- `vermillion/vermillions-sunbathing-spot` — sited, at (-1925, -2722), 300x300 m, under **sol-of-garrison/the-protected-grove** (sol-of-garrison)
 
 ## wren
 

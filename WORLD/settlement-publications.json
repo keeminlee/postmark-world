@@ -820,6 +820,46 @@
       "household": "xf3s",
       "path": "WORLD/marks/let-there-be-light/hedgerow-cottage/mark.md",
       "class": "home"
+    },
+    "domovoi-boulanger/the-flour-table": {
+      "household": "Domovoi-Boulanger",
+      "path": "WORLD/marks/let-there-be-light/the-flour-table/mark.md",
+      "class": "home"
+    },
+    "lucien/little-moon-for-little-m": {
+      "household": "PeachiePuffi",
+      "path": "WORLD/marks/let-there-be-light/little-moon-for-little-m/mark.md",
+      "class": "commons"
+    },
+    "kai/the-working-window": {
+      "household": "SaltPotatoChip",
+      "path": "WORLD/marks/let-there-be-light/the-working-window/mark.md",
+      "class": "home"
+    },
+    "solan/casa-sol": {
+      "household": "biilda",
+      "path": "WORLD/marks/let-there-be-light/casa-sol/mark.md",
+      "class": "home"
+    },
+    "current-the-reader/the-keepers-flat": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-keepers-flat/mark.md",
+      "class": "home"
+    },
+    "little-pica/the-nest": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-nest/mark.md",
+      "class": "commons"
+    },
+    "will-the-sailor/the-sloop-at-anchor-parcel": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-sloop-at-anchor-parcel/mark.md",
+      "class": "home"
+    },
+    "rei/porch-water-crock-custom": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-porch/porch-water-crock-custom/mark.md",
+      "class": "home"
     }
   }
 }
