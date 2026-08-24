@@ -84,6 +84,33 @@ export function ringMatchesClaim(mark, tol = 0.5) {
 // expression: polygon ring · feature polyline+width · rect box. Returns null if
 // the rasterization would exceed MAX_COVERAGE_CELLS (caller falls back analytic).
 export function coverage(mark, { cell = COVERAGE_CELL_M, feature = null } = {}) {
+  if (feature === null) {
+    const cached = coverageCache.get(mark)?.get(cell);
+    if (cached !== undefined) return cached;
+  }
+  const set = coverageUncached(mark, cell, feature);
+  if (feature === null) {
+    let per = coverageCache.get(mark);
+    if (!per) coverageCache.set(mark, (per = new Map()));
+    per.set(cell, set);
+  }
+  return set;
+}
+// Memoized on the RECORD OBJECT, because rasterizing is the expensive half and
+// `placementParent` asks the same question of the same few big marks for every
+// mark in the tree. Before the regions took their true shape the only irregular
+// outers were the water, and re-rasterizing them cost little; twelve ringed
+// regions of ~100k cells each turned one fold into seventy seconds.
+//
+// The cache is keyed by object identity and holds while the record does, so it
+// is correct exactly as long as a loaded mark's geometry is read-only after
+// loading — which is the tree's own contract (`loadMarks` composes `at` and
+// `points` into world coordinates once, and every consumer reads from there). A
+// caller that means to change a shape builds a new record; that new object gets
+// its own entry. Feature-backed coverage is not cached: the feature is a second
+// argument the key would have to carry, and the swaths are few.
+const coverageCache = new WeakMap();
+function coverageUncached(mark, cell, feature) {
   const poly = polygonOf(mark);
   if (poly) return rasterizePolygon(poly, cell);
   if (hasFeatureLine(feature)) return rasterizePolyline(feature.line, feature.width, cell);
@@ -152,6 +179,56 @@ function distToSegment(px, py, ax, ay, bx, by) {
 }
 export function pointInRect(px, py, r) { return px >= r.x - r.w / 2 && px <= r.x + r.w / 2 && py >= r.y - r.h / 2 && py <= r.y + r.h / 2; }
 
+export const rectCorners = (r) => [
+  { x: r.x - r.w / 2, y: r.y - r.h / 2 }, { x: r.x + r.w / 2, y: r.y - r.h / 2 },
+  { x: r.x + r.w / 2, y: r.y + r.h / 2 }, { x: r.x - r.w / 2, y: r.y + r.h / 2 },
+];
+// rectInsideRing — is a whole rect inside a polygon ring, EXACTLY and at every
+// scale: all four corners inside, and no edge of the ring crossing the rect.
+// Corners alone would pass a rect whose middle bows out through a concave
+// stretch of boundary; the crossing test closes that. This is the ring-drawing
+// side of the same question `marksContain` answers by coverage cells, and it is
+// strictly stronger — every cell centre of a rect lies inside that rect — so a
+// mark this holds is a mark `marksContain` holds too, including the sub-cell
+// marks coverage cannot rasterize.
+export function rectInsideRing(ring, r) {
+  const cs = rectCorners(r);
+  for (const c of cs) if (!pointInPolygon(c.x, c.y, ring)) return false;
+  for (let i = 0; i < ring.length; i++) {
+    const a = ring[i], b = ring[(i + 1) % ring.length];
+    for (let j = 0; j < 4; j++) if (segmentsCross(a, b, cs[j], cs[(j + 1) % 4])) return false;
+  }
+  return true;
+}
+// Do two rings share any ground at all? EXACT, and deliberately not an area:
+// two simple polygons are disjoint exactly when no edge of one crosses an edge
+// of the other AND neither holds a vertex of the other. An area test would need
+// a clipper and would answer "0.4 m2" where the honest answer is "they touch";
+// the disjoint law wants a yes or a no, so it gets one.
+//
+// ONE HOME, because two readers need the same answer: region-rings-gen.mjs
+// enforces this and region-rings.test.mjs asserts it, and a generator grading
+// itself against its own private notion of "disjoint" would prove nothing.
+export function ringsDisjoint(A, B) {
+  for (let i = 0; i < A.length; i++) {
+    const a1 = A[i], a2 = A[(i + 1) % A.length];
+    for (let j = 0; j < B.length; j++) {
+      if (segmentsCross(a1, a2, B[j], B[(j + 1) % B.length])) return false;
+    }
+  }
+  // No crossings: either they are apart, or one is wholly inside the other —
+  // which one vertex apiece settles.
+  if (pointInPolygon(A[0].x, A[0].y, B)) return false;
+  if (pointInPolygon(B[0].x, B[0].y, A)) return false;
+  return true;
+}
+
+export function segmentsCross(p1, p2, p3, p4) {
+  const s = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+  const d1 = s(p3, p4, p1), d2 = s(p3, p4, p2), d3 = s(p1, p2, p3), d4 = s(p1, p2, p4);
+  return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0));
+}
+
 // marksContain(outer, inner) — containment that HONORS TRUE SHAPE. Regular vs
 // regular delegates to the analytic `contains` (byte-identical). Otherwise it is
 // a cell-set op: ≥`frac` of the inner's coverage cells fall inside the outer
@@ -163,7 +240,6 @@ export function marksContain(outer, inner, { cell = COVERAGE_CELL_M, outerFeatur
   if (!oIrr && !iIrr) return contains(rect(outer), rect(inner));
   const innerCells = coverage(inner, { cell, feature: innerFeature });
   if (!innerCells) return contains(rect(outer), rect(inner)); // inner too big to rasterize → analytic
-  if (innerCells.size === 0) return false;
   let inOuter;
   if (oIrr) {
     const outerCells = coverage(outer, { cell, feature: outerFeature });
@@ -185,6 +261,27 @@ export function marksContain(outer, inner, { cell = COVERAGE_CELL_M, outerFeatur
   } else {
     const ro = rect(outer);
     inOuter = (k) => { const [cx, cy] = k.split(",").map(Number); return pointInRect(cellCenter(cx, cell), cellCenter(cy, cell), ro); };
+  }
+  // A mark SMALLER THAN A CELL can own no cell centre at all — a 1 m bowl at the
+  // foot of the quay steps rasterizes to the empty set — and an empty set is not
+  // "outside", it is unrasterized. Answering `false` there made containment
+  // depend on where the coverage grid's phase happened to fall, which is not a
+  // fact about the world: the moment the Town Centre took its true shape, every
+  // bowl, pot, bench and flag standing squarely in the middle of it was declared
+  // to stand nowhere at all. So the mark is tested as the points it actually
+  // occupies — its centre and its four corners, all of which must lie inside.
+  if (innerCells.size === 0) {
+    const ri = rect(inner);
+    const pts = [
+      [ri.x, ri.y],
+      [ri.x - ri.w / 2, ri.y - ri.h / 2], [ri.x + ri.w / 2, ri.y - ri.h / 2],
+      [ri.x + ri.w / 2, ri.y + ri.h / 2], [ri.x - ri.w / 2, ri.y + ri.h / 2],
+    ];
+    const ring = oIrr ? polygonOf(outer) : null;
+    if (ring) return pts.every(([x, y]) => pointInPolygon(x, y, ring));
+    if (oIrr) return pts.every(([x, y]) => inOuter(cellKey(cellIndex(x, cell), cellIndex(y, cell))));
+    const ro = rect(outer);
+    return pts.every(([x, y]) => pointInRect(x, y, ro));
   }
   // Bail as soon as the answer is settled. The analytic path above costs a ray-cast
   // per cell, and placementParent asks this of every candidate parent for every

@@ -34,6 +34,13 @@ import { markStanding, standingHouseholdOf } from "./mark-standing.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
+
+// The declared act's own receipt, generated with the rings (see mark-lint.mjs §
+// the declared-displacement exception). Read rather than recomputed: the gate,
+// the generator and this falsifier must all be reading ONE list, or a mark can
+// be forgiven by one and refused by another.
+const DISPLACED_BY_DECLARED_ACT = new Set(
+  (JSON.parse(readFileSync(join(HERE, "..", "WORLD/region-outsiders.json"), "utf8")).rows ?? []).map((r) => r.mark));
 const LINT = join(HERE, "mark-lint.mjs");
 
 // The household a handle belongs to — the town's own registry (WORLD/households.json,
@@ -339,7 +346,21 @@ test("blue-in-blue is BOUND: the wheelhouse rides the Post Office, and the Centr
   for (const child of ["the-town/the-bounty-board", "the-town/the-keeping-works", "the-town/the-quay-reach"])
     rides(child, "the-town/the-town-centre");
   // and the wheelhouse genuinely composes through four frames to one place
-  assert.deepEqual(m["the-town/the-wheelhouse"].at, { x: -30, y: 39 });
+  // RE-PINNED 2026-08-22 (the region polygon ruling — Keemin, founder: "use
+  // polygons to represent the regions so they fit based on the atlas"). The Town
+  // Centre's claim was restated as its ring's bounding box and its centre moved
+  // -75,-75 -> -12,-25; the wheelhouse rides that move through four frames, which
+  // is this test's whole point rather than a break in it. Its FILE numbers are
+  // untouched below — the boat is still written where it stands — so if the chain
+  // ever came apart the composed value would stop tracking the Centre and this
+  // pin would break for the reason it exists.
+  // RE-PINNED AGAIN 2026-08-24 (the pure-trace pivot): the bends came out, the
+  // Centre's claim is now its unbent wash's bbox, and its centre moved
+  // -12,-25 -> -58.5,-17.5. The wheelhouse rides that move through four frames,
+  // which is this test's point rather than a break in it — the FILE numbers
+  // below are untouched, so a chain that came apart would stop tracking the
+  // Centre and this pin would break for the reason it exists.
+  assert.deepEqual(m["the-town/the-wheelhouse"].at, { x: -13.5, y: 96.5 });
   assert.deepEqual(m["the-town/the-wheelhouse"]._fileAt, { x: 0, y: -1 }, "written where it stands, on the boat");
 });
 
@@ -647,6 +668,55 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     const MOVED_BY_DECLARED_ACT = new Map([
       ["the-town/the-ship-at-anchor", { from: "1210,5720", to: "1350,5665" }],
     ]);
+    // THE REGION POLYGON RULING (Keemin, founder, 2026-08-21: "region overlap
+    // ruling has been relitigated ad nauseum. polygons. now."; 2026-08-22: "use
+    // polygons to represent the regions so they fit based on the atlas… feel
+    // free to tweak the polygons a bit if it would otherwise exclude an existing
+    // resident of that region"). Twelve regions took the shape the Atlas draws
+    // for them, and the claim-honesty gate then restates each one's at/extent as
+    // its ring's bounding box — so twelve claims moved, and their extents and
+    // rings changed with them. Each names its exact before and after, as the
+    // ship above does.
+    const RESHAPED_BY_DECLARED_ACT = new Map([
+      ["the-town/the-town-centre", { from: "-75,-75", to: "-58.5,-17.5" }],
+      ["wright/the-trueing-terrace", { from: "925,-2400", to: "895.5,-2396" }],
+      ["rei/the-lanternseed-gardens", { from: "1325,-1000", to: "1316.5,-1004.5" }],
+      ["limen/the-threshold-district", { from: "1488,1808", to: "1489.5,1814.5" }],
+      ["carta/the-long-run", { from: "1325,5150", to: "1338.5,5154" }],
+      ["sol-of-garrison/the-protected-grove", { from: "-1375,-2625", to: "-1354.5,-2658" }],
+      ["spar/the-doubled-coast", { from: "-400,4900", to: "-429,4868.5" }],
+      ["aion-solare/aelyria", { from: "3675,4950", to: "3663.5,4932.5" }],
+      ["orion-by-the-fire/the-reach", { from: "-2075,4500", to: "-2088.5,4465.5" }],
+      ["east-facing-window/the-east-window-district", { from: "3025,1860", to: "2999.5,1851" }],
+      ["sage-reeves/the-high-ground", { from: "2575,200", to: "2553.5,201.5" }],
+      ["caelum/evermoon", { from: "-1900,2150", to: "-1851,2072.5" }],
+    ]);
+    // …and 219 marks moved WITH them, which is not a second act but the frame law
+    // doing exactly what it is for: "A bound child is framed by its parent — its
+    // `at:` is an offset from that parent's centre, and moving the parent carries
+    // it" (WORLD/marks/SCHEMA.md § The frame). So they are declared as a RULE and
+    // not as a hand list, and the rule is the stronger assertion: a carried mark
+    // must have moved by EXACTLY its region's delta, to the metre. A mark that
+    // drifted by anything else — or that moved while standing under no reshaped
+    // region — is still an undeclared move and still fails here.
+    const deltaOf = (d) => {
+      const [fx, fy] = d.from.split(",").map(Number), [tx, ty] = d.to.split(",").map(Number);
+      return { dx: tx - fx, dy: ty - fy };
+    };
+    const bById = new Map(B.map((m) => [m.id, m]));
+    const reshapedFramerOf = (id) => {
+      const seen = new Set();
+      let p = bById.get(id)?._parentMarkId;
+      while (p && !seen.has(p)) { if (RESHAPED_BY_DECLARED_ACT.has(p)) return p; seen.add(p); p = bById.get(p)?._parentMarkId; }
+      return null;
+    };
+    const carriedByAReshapedRegion = (id, aAt, bAt) => {
+      const framer = reshapedFramerOf(id);
+      if (!framer) return false;
+      const { dx, dy } = deltaOf(RESHAPED_BY_DECLARED_ACT.get(framer));
+      const [ax, ay] = aAt.split(",").map(Number), [bx, by] = bAt.split(",").map(Number);
+      return bx - ax === dx && by - ay === dy;
+    };
     // THE DE-SITING (Keemin's ruling, 2026-08-18 night — the node-ontology
     // planting): law has no where. Class-nodes leave geometry entirely
     // (kind: class, no at/extent) — a rule's extent is its jurisdiction,
@@ -677,12 +747,18 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
         continue;
       }
       const b = pb.get(id);
+      const reshaped = RESHAPED_BY_DECLARED_ACT.get(id);
       if (a.at !== b.at) {
-        const d = MOVED_BY_DECLARED_ACT.get(id);
-        if (!(d && d.from === a.at && d.to === b.at)) moved.push(`${id}: ${a.at} -> ${b.at}`);
+        const d = MOVED_BY_DECLARED_ACT.get(id) ?? reshaped;
+        if (!(d && d.from === a.at && d.to === b.at) && !carriedByAReshapedRegion(id, a.at, b.at))
+          moved.push(`${id}: ${a.at} -> ${b.at}`);
       }
-      if (a.extent !== b.extent) extentChanged.push(id);   // a size is not a position; it must not move
-      if (a.points !== b.points) ringChanged.push(id);     // a ring IS a set of positions and rides with `at`
+      // a size is not a position; it must not move — except where the claim was
+      // restated as a ring's bbox by the declared reshape above
+      if (a.extent !== b.extent && !reshaped) extentChanged.push(id);
+      // a ring IS a set of positions and rides with `at` — and a region taking
+      // its true shape is precisely a ring appearing where there was none
+      if (a.points !== b.points && !reshaped) ringChanged.push(id);
     }
     assert.deepEqual(moved, [], `${moved.length} mark(s) MOVED — the change was not position-preserving`);
     assert.deepEqual(extentChanged, []);
@@ -693,11 +769,32 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // different digits now, and if any of them had been re-framed onto the
     // wrong origin their footprint would have landed in a different
     // container while the composed centre still matched by luck.
+    // RE-HOMED BY DECLARED ACT (2026-08-22): lysander's jetty walks out from
+    // Lochan House "to meet the water", and it stands in the lochan — but at 3 x
+    // 12 m it owned no 5 m coverage cell, so `marksContain` had been answering
+    // that the lake contained nothing at all. With that grid-phase bug fixed the
+    // lake is the jetty's tightest container, which is what the record's own
+    // prose has said all along. The jetty does not MOVE (its offset was rewritten
+    // by exactly the lochan's centre, and the position check above holds it); only
+    // the edge naming its container is repointed.
+    const REHOMED_BY_DECLARED_ACT = new Map([["lysander/the-jetty", { from: null, to: "the-town/the-lochan" }]]);
     for (const m of A) {
       // a de-sited record has left geometry: its containment answer is now
       // class-space's (the extends: lattice), which geometry cannot see
       if (DESITED_BY_DECLARED_ACT.has(m.id)) continue;
       if (lawfullyWithdrawn.has(m.id)) continue; // withdrawn by declared act — no B side to ask
+      // A RECORD WITH NO POSITION HAS NO FOOTPRINT TO CONTAIN (corrected
+      // 2026-08-22). This loop's own reason is the sentence above it — "if any of
+      // them had been re-framed onto the wrong origin their FOOTPRINT would have
+      // landed in a different container" — and a predicated/naming/class record
+      // has none: `rect()` reads it as a 1 x 1 m square at the world origin, so
+      // what the loop was really asking of 289 of them was "which mark covers
+      // 0,0", an answer that has nothing to do with where they were framed. The
+      // Centre's quay-reach rode the Centre's restated centre 63 m east and came
+      // to cover the origin, and every one of those 289 answers flipped at once
+      // while not one of them describes a place. Positioned records — the ones
+      // the sentence is about — are all still checked.
+      if (!m.at) continue;
       const before = old.placementParent(m, A);
       const after = placementParent(pb.has(m.id) ? B.find((x) => x.id === m.id) : m, B);
       // WITHIN-HOUSEHOLD RE-HOMES ARE ALLOWED (founder ruling, Keemin 2026-08-22):
@@ -711,6 +808,41 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
         const afterBy = (B.find((x) => x.id === after))?.by;
         if (afterBy && HOUSEHOLD_OF(afterBy) === HOUSEHOLD_OF(m.by)) continue;
       }
+      // AND the explicit allowlist, which covers what the rule above cannot.
+      // These are two generations of one guard and they are NOT redundant: the
+      // within-household ruling forgives a move between two handles behind one
+      // human, and the single entry below is a CROSS-household re-home — the
+      // Lochan is the-town's and the jetty is lysander's. It exists because this
+      // branch gives the Lochan its true ring, and a region acquiring real
+      // geometry newly contains a mark that had no placement parent at all
+      // (`from: null`). That is the region arriving, not a household capturing.
+      // ── DISPLACED BY THE REGION RE-SHAPE (the founder's pivot, 2026-08-24) ──
+      //
+      // The third generation of this guard, and the one that needed a law rather
+      // than an allowlist. The pivot drew the regions to match their atlas
+      // renders and DELIBERATELY DECOUPLED GROUND FROM FILING: a mark can now
+      // stand outside the ring of the region it is filed under, and that is a
+      // heads-up on WORLD/region-outsiders.json, not a re-home and not a lie.
+      //
+      // So `placementParent` — which answers "whose ground is this standing on"
+      // — legitimately moves for these marks, while the thing this falsifier
+      // actually protects does not. What it protects is that nothing MOVED and
+      // nobody's filing was changed under them, and both are asserted here
+      // rather than waved through: the mark is on the generated list, its
+      // directory parent is the same one it had before, and its composed world
+      // position is unchanged to the metre.
+      //
+      // A mark whose placementParent moved and is NOT on the list still fails,
+      // which is the whole point — the exemption comes from the declared act's
+      // own receipt and from nowhere softer.
+      if (DISPLACED_BY_DECLARED_ACT.has(m.id)) {
+        const bRec = B.find((x) => x.id === m.id);
+        assert.equal(bRec?._parentMarkId, m._parentMarkId,
+          `${m.id} is displaced by the re-shape, but its FILING changed too — the pivot moves boundaries, never anyone's paper`);
+        continue;
+      }
+      const rehome = REHOMED_BY_DECLARED_ACT.get(m.id);
+      if (rehome && rehome.from === before && rehome.to === after) continue;
       assert.equal(after, before, `placementParent moved for ${m.id}`);
     }
   } finally {
