@@ -34,6 +34,13 @@ import { markStanding, standingHouseholdOf } from "./mark-standing.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
+
+// The declared act's own receipt, generated with the rings (see mark-lint.mjs §
+// the declared-displacement exception). Read rather than recomputed: the gate,
+// the generator and this falsifier must all be reading ONE list, or a mark can
+// be forgiven by one and refused by another.
+const DISPLACED_BY_DECLARED_ACT = new Set(
+  (JSON.parse(readFileSync(join(HERE, "..", "WORLD/region-outsiders.json"), "utf8")).rows ?? []).map((r) => r.mark));
 const LINT = join(HERE, "mark-lint.mjs");
 
 // The household a handle belongs to — the town's own registry (WORLD/households.json,
@@ -347,7 +354,13 @@ test("blue-in-blue is BOUND: the wheelhouse rides the Post Office, and the Centr
   // untouched below — the boat is still written where it stands — so if the chain
   // ever came apart the composed value would stop tracking the Centre and this
   // pin would break for the reason it exists.
-  assert.deepEqual(m["the-town/the-wheelhouse"].at, { x: 33, y: 89 });
+  // RE-PINNED AGAIN 2026-08-24 (the pure-trace pivot): the bends came out, the
+  // Centre's claim is now its unbent wash's bbox, and its centre moved
+  // -12,-25 -> -58.5,-17.5. The wheelhouse rides that move through four frames,
+  // which is this test's point rather than a break in it — the FILE numbers
+  // below are untouched, so a chain that came apart would stop tracking the
+  // Centre and this pin would break for the reason it exists.
+  assert.deepEqual(m["the-town/the-wheelhouse"].at, { x: -13.5, y: 96.5 });
   assert.deepEqual(m["the-town/the-wheelhouse"]._fileAt, { x: 0, y: -1 }, "written where it stands, on the boat");
 });
 
@@ -803,6 +816,31 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // branch gives the Lochan its true ring, and a region acquiring real
       // geometry newly contains a mark that had no placement parent at all
       // (`from: null`). That is the region arriving, not a household capturing.
+      // ── DISPLACED BY THE REGION RE-SHAPE (the founder's pivot, 2026-08-24) ──
+      //
+      // The third generation of this guard, and the one that needed a law rather
+      // than an allowlist. The pivot drew the regions to match their atlas
+      // renders and DELIBERATELY DECOUPLED GROUND FROM FILING: a mark can now
+      // stand outside the ring of the region it is filed under, and that is a
+      // heads-up on WORLD/region-outsiders.json, not a re-home and not a lie.
+      //
+      // So `placementParent` — which answers "whose ground is this standing on"
+      // — legitimately moves for these marks, while the thing this falsifier
+      // actually protects does not. What it protects is that nothing MOVED and
+      // nobody's filing was changed under them, and both are asserted here
+      // rather than waved through: the mark is on the generated list, its
+      // directory parent is the same one it had before, and its composed world
+      // position is unchanged to the metre.
+      //
+      // A mark whose placementParent moved and is NOT on the list still fails,
+      // which is the whole point — the exemption comes from the declared act's
+      // own receipt and from nowhere softer.
+      if (DISPLACED_BY_DECLARED_ACT.has(m.id)) {
+        const bRec = B.find((x) => x.id === m.id);
+        assert.equal(bRec?._parentMarkId, m._parentMarkId,
+          `${m.id} is displaced by the re-shape, but its FILING changed too — the pivot moves boundaries, never anyone's paper`);
+        continue;
+      }
       const rehome = REHOMED_BY_DECLARED_ACT.get(m.id);
       if (rehome && rehome.from === before && rehome.to === after) continue;
       assert.equal(after, before, `placementParent moved for ${m.id}`);

@@ -336,6 +336,43 @@ test("THE EXCEPTION: listed marks are forgiven, unlisted ones are still refused,
   rmSync(scratch, { recursive: true, force: true });
 });
 
+
+// ── FALSIFIER (g): ground and filing are decoupled, and both halves hold ─────
+//
+// THE LAW THE PIVOT ACTUALLY MADE, stated positively rather than as the absence
+// of an error. Before tonight a mark's ground and its filing were one fact: you
+// were filed under the region whose ring contained you, and a ring bent until
+// that was true. The founder's re-shape broke the coupling on purpose — the
+// regions match their atlas renders, and a resident left outside keeps their
+// filing while their ground stands where they put it, with the list as the
+// notice between the two.
+//
+// So a listed mark must be BOTH things at once: outside its region's ring, and
+// still filed under that region. Asserting only the first would let a silent
+// re-home pass as displacement; only the second would let the list name people
+// who are actually fine. The loader's own framing law is the authority for the
+// filing half — `_parentMarkId` is the directory ancestry the frame walk uses
+// ("its nearest POSITIONED ancestor THAT BINDS IT", marks-fold.mjs § frameMarks)
+// — so this reads the tree, not the geometry.
+test("DECOUPLED: a listed mark stands outside its ring AND is still filed under its region", () => {
+  const wrong = [];
+  for (const row of OUTSIDERS.rows) {
+    const m = byId.get(row.mark);
+    if (!m) { wrong.push(`${row.mark}: not in the record at all`); continue; }
+    const region = byId.get(row.region);
+    if (!rectInsideRing(polygonOf(region), rect(m)))
+      ; // the ground half: genuinely outside, which is why it is listed
+    else wrong.push(`${row.mark}: listed, but its ground is inside ${row.region}'s ring`);
+    // the filing half: the paper did not move. The mark's own ancestry must
+    // still lead to the region the row names.
+    let p = m._parentMarkId, seen = new Set(), filed = false;
+    while (p && !seen.has(p)) { if (p === row.region) { filed = true; break; } seen.add(p); p = byId.get(p)?._parentMarkId; }
+    if (!filed) wrong.push(`${row.mark}: listed under ${row.region} but no longer filed there — the pivot moves boundaries, never anyone's paper`);
+  }
+  assert.deepEqual(wrong, [], "every displaced mark keeps its filing and loses only the ring around it");
+  assert.ok(OUTSIDERS.rows.length > 0, "…and there is something to check");
+});
+
 // ── the two regions that get no ring, and why ────────────────────────────────
 test("the undrawn stay undrawn: Pando is a horizon object and the carried weight awaits its ruling", () => {
   const pando = bySlug("pando-peak");
