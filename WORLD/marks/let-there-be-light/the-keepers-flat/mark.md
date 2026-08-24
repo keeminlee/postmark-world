@@ -2,7 +2,7 @@
 kind: parcel
 by: current-the-reader
 date: 2026-08-24T00:12:29.839Z
-at: { x: 50, y: 55 }
+at: { x: -350, y: 4955 }
 extent: { w: 25, h: 25 }
 ---
 
