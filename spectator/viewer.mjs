@@ -5233,6 +5233,38 @@ export function mountViewer(appEl) {
       vb = [bb.x, bb.y, bb.width, bb.height];
     }
     const full = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
+    // THE WORLD'S OWN FRAME (RULED 2026-08-24, founder — "remove the false
+    // constraint entirely"): the camera's outer bounds come from the
+    // world-root mark's extent — the root IS the frame — never from the
+    // painting's sheet size. The 1500×2400 canvas was drawing legibility, not
+    // law (MARKS.md, 2026-08-24 provenance note), and off-paper ground is as
+    // real as painted ground: sahil/deepghar published 200 m past the sheet's
+    // foot and folds clean. The painting keeps two jobs only — the opening
+    // view and the LOD reference (`full`); it stops being the world's edge.
+    // A ROOM (zoomOutLimit 1) never reaches for the root frame: its walls
+    // remain its world, byte-for-byte the 08-20 ruling.
+    const rootMk = zoomOutLimit > 1 ? (world?.marks ?? []).find((m) => m.id === WORLD_ROOT_ID) : null;
+    const worldFrame = rootMk?.extent?.w > 0 && rootMk?.extent?.h > 0
+      ? { x: originPx.x + ((rootMk.at?.x ?? 0) - rootMk.extent.w / 2) / mPerPx,
+          y: originPx.y + ((rootMk.at?.y ?? 0) - rootMk.extent.h / 2) / mPerPx,
+          w: rootMk.extent.w / mPerPx, h: rootMk.extent.h / mPerPx }
+      : null;
+    if (worldFrame) {
+      // OPEN COUNTRY: one ground rect spanning the root frame, under the mist
+      // and the painting (which erases everything over itself with its own
+      // full-bleed paper rect). A placeholder tone one shade deeper than the
+      // painting's paper — the surveyed sheet reads as the drawn part of a
+      // continuous ground, not as the ground itself. The atlas→world cutover
+      // owns the real paint here; this rect exists so off-paper parcels stand
+      // on something today instead of on void.
+      const base = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      base.setAttribute("x", worldFrame.x); base.setAttribute("y", worldFrame.y);
+      base.setAttribute("width", worldFrame.w); base.setAttribute("height", worldFrame.h);
+      base.setAttribute("fill", "#e3d5b3");
+      base.setAttribute("id", "wv-open-country");
+      base.style.pointerEvents = "none";
+      svg.insertBefore(base, mistLayer);
+    }
     const view = { ...full };
     mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents };
     drawFarCountry();
@@ -5278,10 +5310,15 @@ export function mountViewer(appEl) {
     // is not a special case — it is what the room's own letterbox refit already
     // does, and it is the only coherent answer when what you are looking at is
     // bigger than what you are looking for.
+    // RULED 2026-08-24 (supersedes the 08-22 60×-the-painting formula): the
+    // town's fence is the WORLD FRAME itself — the root mark's own extent —
+    // so no camera math references the sheet's dimensions for world bounds.
+    // The old multiple survives only as the fallback for a record with no
+    // root mark (the dev spectator on a bare fixture).
     const fence = zoomOutLimit > 1
-      ? { x: full.x + (full.w - full.w * zoomOutLimit) / 2,
+      ? (worldFrame ?? { x: full.x + (full.w - full.w * zoomOutLimit) / 2,
           y: full.y + (full.h - full.h * zoomOutLimit) / 2,
-          w: full.w * zoomOutLimit, h: full.h * zoomOutLimit }
+          w: full.w * zoomOutLimit, h: full.h * zoomOutLimit })
       : full;
     const clampView = () => Object.assign(view, clampViewToBounds(view, fence));
     function applyView() {
@@ -5417,7 +5454,7 @@ export function mountViewer(appEl) {
     svg.addEventListener("wheel", (e) => {
       e.preventDefault(); stopTween(); breakFollow();
       const k = Math.pow(1.0015, e.deltaY);
-      const w = Math.min(full.w * zoomOutLimit, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
+      const w = Math.min(zoomOutLimit > 1 && worldFrame ? worldFrame.w : full.w * zoomOutLimit, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
       const scale = w / view.w;
       const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
       const p = pt.matrixTransform(svg.getScreenCTM().inverse());
