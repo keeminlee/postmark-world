@@ -1167,3 +1167,208 @@ To read the fold without writing it at all: --no-write --json`);
     console.log(`fold: ${state.marks.length} marks · ${state.parcels.length} parcels · ${Object.keys(state.determined).length} determined · ${state.vague.length} vague · ${state.rivalries.length - ground.length} slot rivalries · ${ground.length} ground contests · ${state.returned.length} returned · ${state.errors.length} errors`);
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THE DELTA ADMISSION — §4's "validate only its delta against that folded state"
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// The world-runtime ladder, §4, verbatim:
+//
+//   "Today the sweep folds each of ~27 sketchbooks against the whole world
+//    (`foldRef`): ~28 whole-world O(m²) folds per settlement. Target: fold main
+//    ONCE; per sketchbook, validate only its delta (`markDelta` already computes
+//    it) against that folded state — O(k·m) per branch; keep ONE full fold of
+//    the merged result as the final gate."
+//
+// Measured before this was written (part 1, on a throwaway clone of the live
+// record): 24 whole-world folds of 940 marks, 176.7 s, to adjudicate 37 delta
+// rows. This function is what replaces 23 of those folds.
+//
+// ── WHAT IT IS ALLOWED TO DECIDE, AND WHAT IT IS NOT ────────────────────────
+//
+// It answers exactly the two questions the sweep asked its per-branch fold:
+//
+//   1. is this sketchbook admissible — or does it quarantine?
+//   2. what is the FOLDED VIEW of each mark it is publishing?
+//
+// It does NOT answer contests, weights, rivalries or canon. Those are the
+// merged fold's, which still runs as the final gate exactly as §4 says, so
+// cross-household composition surfaces there as it always did.
+//
+// ── THE FOUNDER'S SENTENCE, AND WHAT IT CHANGES ─────────────────────────────
+//
+// Ruled 2026-08-24: "the crossing judges what a household publishes, not what
+// its stale tree happens to contain."
+//
+// That is the whole licence for the scope below. Today a sketchbook is folded as
+// ITS OWN TREE, so a malformed row anywhere in it — including a row the
+// household is not publishing, and including rows that are simply 115 crossings
+// stale — quarantines the household. Under this function only the CANDIDATES are
+// judged. A household whose stale tree carries residue now settles; a household
+// whose PUBLISHED delta is genuinely bad still refuses, by name. Both halves are
+// pinned in tools/settlement-delta.test.mjs.
+//
+// ── THE FOLDED VIEW IS THE POINT ────────────────────────────────────────────
+//
+// A raw record is not a view. `markStanding` walks a mark's ancestry looking for
+// `kind === "parcel" || sovereign`, and a raw record carries neither `sovereign`
+// nor `placementParent` — so a mark standing on its author's own ground reads
+// "market" where the whole-world fold reads "home". Part 1 found that with a
+// can-fail flip before any of this existed. The three derived fields are
+// reproduced here, each from the fold's own rule above:
+//
+//   declared_household   the household grain (§ the household grain)
+//   sovereign            inside any parcel rect the same CRED holds
+//   placementParent      the loader's directory edge, which the record already
+//                        carries from its path
+//
+// Nothing else is derived, because nothing else is read: the sweep's only
+// consumer of the view is `classifyMark(view, folded)`.
+
+/**
+ * The small indices the admission needs, rebuilt from a published fold.
+ *
+ * O(m) once per settlement rather than per branch. Taken from `state.marks`
+ * (the PUBLIC shape) rather than from fold's internals, so `fold`'s signature is
+ * untouched and this cannot drift with a change to its locals.
+ */
+export function admissionBase(state, { households = null, stakes = [] } = {}) {
+  const marks = state?.marks ?? [];
+  const byId = new Map(marks.map((mk) => [mk.id, mk]));
+  const credOf = (handle) => households?.[handle] ?? `solo:${handle}`;
+  const parcelRectsByCred = new Map();
+  const parcelByHh = new Map();
+  const parcelsByCred = new Map();
+  for (const mk of marks) {
+    if (mk.kind !== "parcel") continue;
+    const cred = mk.declared_household ?? credOf(mk.household);
+    if (!parcelRectsByCred.has(cred)) parcelRectsByCred.set(cred, []);
+    parcelRectsByCred.get(cred).push(rect(mk));
+    parcelByHh.set(mk.household, rect(mk));
+    parcelsByCred.set(cred, (parcelsByCred.get(cred) ?? 0) + 1);
+  }
+  // THE STAKE BOOK, netted per mark. The whole-world fold filters stakes to the
+  // ids present on the ref it is folding, so an over-withdrawal against a
+  // DRAFT-ONLY mark poisons exactly the sketchbook that holds it and no other.
+  // The delta path reproduces that scoping by checking candidates only: a
+  // negative net on a mark this household is publishing is its own bad row, and
+  // a negative net on anything else is main's business (main folds clean, or the
+  // settlement never got here).
+  const netByMark = new Map();
+  for (const row of stakes ?? []) netByMark.set(row.mark, (netByMark.get(row.mark) ?? 0) + Number(row.n ?? 0));
+
+  return { byId, credOf, parcelRectsByCred, parcelByHh, parcelsByCred, netByMark };
+}
+
+const sameRect = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
+
+/**
+ * ONE CANDIDATE, in the PUBLIC shape `state.marks` speaks — because that is what
+ * `classifyMark` is handed everywhere else, and a view in a private shape would
+ * be a second vocabulary for one fact.
+ */
+function deltaView(mk, cred, rectsByCred) {
+  const held = mk.kind === "sited" ? (rectsByCred.get(cred) ?? []) : [];
+  return {
+    id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, household: mk.household ?? mk.by,
+    declared_household: cred, date: mk.date,
+    at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value,
+    sovereign: mk.kind === "sited" ? held.some((pr) => contains(pr, rect(mk))) : false,
+    body: mk.body,
+    ...(mk._parentMarkId ? { placementParent: mk._parentMarkId } : {}),
+  };
+}
+
+/**
+ * ADMIT k CANDIDATES AGAINST AN ALREADY-FOLDED WORLD. Pure: no fs, no git.
+ *
+ * `candidates` are the delta's own records, parsed at the branch ref — the same
+ * shape `loadMarks` yields, so they carry `_parentMarkId` from their path.
+ * `_replacing: true` marks a candidate that MODIFIES a mark main already holds:
+ * it substitutes rather than collides, which is why the duplicate check below
+ * cannot simply ask whether the id exists.
+ *
+ * Returns `{ views, errors }`. A non-empty `errors` is the quarantine, carrying
+ * the fold's own error grammar so the crossing's journal reads the same either
+ * way.
+ */
+export function admitDelta(candidates, base, { dials = DIALS } = {}) {
+  const errors = [];
+  const views = new Map();
+  // Per-run copies: a candidate parcel must be visible to the NEXT candidate's
+  // overlap check (two new parcels in one sketchbook can collide with each
+  // other), and the whole-world fold sees exactly that because they sit in one
+  // array. Mutating the base would leak one branch's candidates into the next.
+  const rectsByCred = new Map([...base.parcelRectsByCred].map(([k, v]) => [k, [...v]]));
+  const heldByHh = new Map(base.parcelByHh);
+  const countByCred = new Map(base.parcelsByCred);
+  const seen = new Set();
+  const candidateIds = new Set(candidates.map((c) => c.id));
+
+  for (const mk of candidates) {
+    if (mk._error) { errors.push({ mark: mk.id, error: mk._error }); continue; }
+    // DUPLICATE, in the delta's own terms: two candidates claiming one id, or a
+    // candidate ADDING an id canon already holds. A candidate that REPLACES its
+    // own published mark is neither — that is an amendment, and it is the
+    // ordinary case.
+    if (seen.has(mk.id)) { errors.push({ mark: mk.id, error: "duplicate id" }); continue; }
+    if (!mk._replacing && base.byId.has(mk.id)) { errors.push({ mark: mk.id, error: "duplicate id" }); continue; }
+    seen.add(mk.id);
+
+    // `household` is loadMarks' normalization of `by`; a record read one file at
+    // a time (recordAt) carries only `by`. Reading through the same fallback
+    // `standingHouseholdOf` uses keeps one vocabulary — and without it the cred
+    // resolves to "solo:undefined", the mark is sovereign nowhere, and a shed on
+    // its author's own parcel publishes as commons needing escrow. Caught by the
+    // sweep's own control test.
+    const handle = mk.household ?? mk.by;
+    const cred = base.credOf(handle);
+    if (mk.kind === "parcel") {
+      const r = rect(mk);
+      r.w = r.w || dials.parcel_w;
+      r.h = r.h || dials.parcel_h;
+      // one parcel per HANDLE, by written law (MARKS.md § Parcels) — the one
+      // rule that stays at handle grain while everything downstream counts
+      // households. Replacing the household's own parcel is a relocation, not a
+      // second claim.
+      if (heldByHh.has(handle) && !mk._replacing) {
+        errors.push({ mark: mk.id, error: "household already holds a parcel (relocation = replace, not add)" });
+        continue;
+      }
+      const held = countByCred.get(cred) ?? 0;
+      if (!mk._replacing && String(mk.date ?? "") > PARCEL_CAP_LAW_DATE && held >= PARCEL_CLAIM_CAP && !PARCEL_CAP_EXCEPTIONS.has(mk.id)) {
+        errors.push({ mark: mk.id, error: `parcel claim capped — this credential household already holds ${held} (cap ${PARCEL_CLAIM_CAP} per household, ruled ${PARCEL_CAP_LAW_DATE}; prior estate stands, new claims wait on the founder's word)` });
+        continue;
+      }
+      const prior = mk._replacing ? rect(base.byId.get(mk.id) ?? {}) : null;
+      const clash = [...rectsByCred.values()].flat()
+        .find((pr) => overlapArea(pr, r) > 0 && !sameRect(pr, prior));
+      if (clash) {
+        errors.push({ mark: mk.id, error: `parcel overlaps an admitted parcel — inadmissible (MARKS.md § Parcels)` });
+        continue;
+      }
+      if (!rectsByCred.has(cred)) rectsByCred.set(cred, []);
+      rectsByCred.get(cred).push(r);
+      heldByHh.set(handle, r);
+      countByCred.set(cred, held + 1);
+    }
+
+    // a predicated/naming mark must find the thing it describes — in canon, or
+    // among this sketchbook's own candidates (a family crossing together)
+    if (mk.parent && !base.byId.has(mk.parent) && !candidateIds.has(mk.parent)) {
+      errors.push({ mark: mk.id, error: `parent '${mk.parent}' not found` });
+      continue;
+    }
+
+    // an over-withdrawal against a mark this household is publishing — the
+    // fold's own error, in the fold's own words
+    const net = base.netByMark?.get(mk.id);
+    if (net != null && net < 0) {
+      errors.push({ mark: mk.id, error: `net stake negative (${net}) — over-withdrawal` });
+      continue;
+    }
+
+    views.set(mk.id, deltaView(mk, cred, rectsByCred));
+  }
+  return { views, errors };
+}
