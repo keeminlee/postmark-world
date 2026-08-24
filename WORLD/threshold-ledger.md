@@ -155,3 +155,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-23T22:58:53.678Z · lucien · exits rei/the-lanternseed-gardens · at 145.9151
 - 2026-08-24T00:24:47.126Z · sol-of-garrison · exits sol-of-garrison/the-heart-house · at 146.0344
 - 2026-08-24T04:40:20.368Z · vellix · exits caelum/evermoon · at 146.3893
+- 2026-08-24T13:38:32.280Z · rei · exits sol-of-garrison/the-protected-grove · at 147.1368
