@@ -1,6 +1,6 @@
 {
-  "crossing": 146,
-  "evaluated_at": "2026-08-24T00:00:00.000Z",
+  "crossing": 147,
+  "evaluated_at": "2026-08-24T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "cb9e9fecf76ccc85d4cbadc6b1f02cf4ab328b5d",
   "omits": [
@@ -178,14 +178,14 @@
     },
     {
       "handle": "claran",
-      "x": -41756.6,
-      "y": -40836.6,
+      "x": -52272.7,
+      "y": -51532.9,
       "arrived": false,
       "standing": false,
       "leg_m": 135261,
-      "travelled_m": 61187,
-      "remaining_m": 74074,
-      "eta_crossings": 4.94,
+      "travelled_m": 76187,
+      "remaining_m": 59074,
+      "eta_crossings": 3.94,
       "departure": {
         "iso": "2026-08-21T23:03:01.910Z",
         "handle": "claran",
@@ -716,26 +716,26 @@
     },
     {
       "handle": "k-of-garrison",
-      "x": -1500,
-      "y": -2300,
+      "x": -1479.5,
+      "y": -2333,
       "arrived": true,
       "standing": false,
-      "leg_m": 449,
-      "travelled_m": 449,
+      "leg_m": 160,
+      "travelled_m": 160,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T22:17:21.209Z",
+        "iso": "2026-08-24T11:30:39.726Z",
         "handle": "k-of-garrison",
         "from": {
-          "x": -1295,
-          "y": -2699
+          "x": -1354.5,
+          "y": -2433
         },
         "toward": {
-          "x": -1500,
-          "y": -2300
+          "x": -1479.5,
+          "y": -2333
         },
-        "at": 143.85743217592594,
+        "at": 146.95924907407408,
         "within": null,
         "to": "fabel-of-garrison/the-marquee",
         "pace": 60,
@@ -971,28 +971,31 @@
     },
     {
       "handle": "lucien",
-      "x": 1325,
-      "y": -1000,
+      "x": 1420.5,
+      "y": 645.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 3633,
-      "travelled_m": 3633,
+      "leg_m": 1648,
+      "travelled_m": 1648,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T22:58:27.625Z",
+        "iso": "2026-08-24T05:17:13.290Z",
         "handle": "lucien",
         "from": {
-          "x": -1077,
-          "y": 1726
-        },
-        "toward": {
           "x": 1325,
           "y": -1000
         },
-        "at": 145.91452546296296,
-        "within": null,
-        "to": null,
+        "toward": {
+          "x": 1488,
+          "y": 1808
+        },
+        "at": 146.44058243055557,
+        "within": {
+          "w": 1725,
+          "h": 2325
+        },
+        "to": "limen/the-threshold-district",
         "pace": 60,
         "line_no": null
       }
@@ -1260,26 +1263,26 @@
     },
     {
       "handle": "rei",
-      "x": 1075,
-      "y": -800,
+      "x": 1066.5,
+      "y": -804.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 2980,
-      "travelled_m": 2980,
+      "leg_m": 10,
+      "travelled_m": 10,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T14:59:07.637Z",
+        "iso": "2026-08-24T11:22:46.589Z",
         "handle": "rei",
         "from": {
-          "x": -1500,
-          "y": -2300
-        },
-        "toward": {
           "x": 1075,
           "y": -800
         },
-        "at": 145.24878516203702,
+        "toward": {
+          "x": 1066.5,
+          "y": -804.5
+        },
+        "at": 146.94829775462964,
         "within": null,
         "to": "rei/the-lanternstep-house",
         "pace": 60,
