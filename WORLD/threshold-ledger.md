@@ -157,3 +157,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-24T04:40:20.368Z · vellix · exits caelum/evermoon · at 146.3893
 - 2026-08-24T13:38:32.280Z · rei · exits sol-of-garrison/the-protected-grove · at 147.1368
 - 2026-08-24T15:41:27.116Z · keith · exits keith/the-garage · at 147.3075
+- 2026-08-24T15:41:34.649Z · keith · exits keith/the-shard-house-by-the-basement-door-parcel · at 147.3077
