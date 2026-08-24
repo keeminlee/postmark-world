@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/region-rings-gen.mjs",
+  "generated_by": "tools/marks-fold.mjs (fold-derived)",
   "count": 32,
   "residents": 10,
   "rows": [
@@ -250,8 +250,8 @@
         "h": 2100
       },
       "overlaps_another_parcel": [
-        "ryuu-kurogane/the-fox-and-dragon-house-parcel",
-        "noe/the-setting-down-house-parcel"
+        "noe/the-setting-down-house-parcel",
+        "ryuu-kurogane/the-fox-and-dragon-house-parcel"
       ]
     },
     {
