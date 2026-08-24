@@ -665,18 +665,18 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // rings changed with them. Each names its exact before and after, as the
     // ship above does.
     const RESHAPED_BY_DECLARED_ACT = new Map([
-      ["the-town/the-town-centre", { from: "-75,-75", to: "-12,-25" }],
-      ["wright/the-trueing-terrace", { from: "925,-2400", to: "825,-2396" }],
-      ["rei/the-lanternseed-gardens", { from: "1325,-1000", to: "1278,-1002" }],
-      ["limen/the-threshold-district", { from: "1488,1808", to: "1446.5,1806" }],
-      ["carta/the-long-run", { from: "1325,5150", to: "1338.5,5155" }],
-      ["sol-of-garrison/the-protected-grove", { from: "-1375,-2625", to: "-1355.5,-2658" }],
-      ["spar/the-doubled-coast", { from: "-400,4900", to: "-454,4868.5" }],
-      ["aion-solare/aelyria", { from: "3675,4950", to: "3668,4932.5" }],
-      ["orion-by-the-fire/the-reach", { from: "-2075,4500", to: "-2088.5,4475.5" }],
-      ["east-facing-window/the-east-window-district", { from: "3025,1860", to: "2999.5,1839.5" }],
-      ["sage-reeves/the-high-ground", { from: "2575,200", to: "2539,191.5" }],
-      ["caelum/evermoon", { from: "-1900,2150", to: "-1851,2090.5" }],
+      ["the-town/the-town-centre", { from: "-75,-75", to: "-58.5,-17.5" }],
+      ["wright/the-trueing-terrace", { from: "925,-2400", to: "895.5,-2396" }],
+      ["rei/the-lanternseed-gardens", { from: "1325,-1000", to: "1316.5,-1004.5" }],
+      ["limen/the-threshold-district", { from: "1488,1808", to: "1489.5,1814.5" }],
+      ["carta/the-long-run", { from: "1325,5150", to: "1338.5,5154" }],
+      ["sol-of-garrison/the-protected-grove", { from: "-1375,-2625", to: "-1354.5,-2658" }],
+      ["spar/the-doubled-coast", { from: "-400,4900", to: "-429,4868.5" }],
+      ["aion-solare/aelyria", { from: "3675,4950", to: "3663.5,4932.5" }],
+      ["orion-by-the-fire/the-reach", { from: "-2075,4500", to: "-2088.5,4465.5" }],
+      ["east-facing-window/the-east-window-district", { from: "3025,1860", to: "2999.5,1851" }],
+      ["sage-reeves/the-high-ground", { from: "2575,200", to: "2553.5,201.5" }],
+      ["caelum/evermoon", { from: "-1900,2150", to: "-1851,2072.5" }],
     ]);
     // …and 219 marks moved WITH them, which is not a second act but the frame law
     // doing exactly what it is for: "A bound child is framed by its parent — its

@@ -21,15 +21,22 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMarks } from "./marks-fold.mjs";
-import { polygonOf, polygonBBox, ringMatchesClaim, rect, rectInsideRing, ringsDisjoint, marksContain } from "./geometry.mjs";
+import { overlapArea, polygonOf, polygonBBox, ringMatchesClaim, rect, rectInsideRing, ringsDisjoint } from "./geometry.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const marks = loadMarks(join(ROOT, "WORLD/marks"));
 const byId = new Map(marks.map((m) => [m.id, m]));
 const bySlug = (slug) => marks.find((m) => m.slug === slug);
+
+// The generated heads-up list, read as an ARTIFACT rather than recomputed here.
+// Recomputing it would make these tests agree with themselves: the point is that
+// what the generator WROTE matches what the record says, so the file on disk is
+// the thing under test.
+const OUTSIDERS = JSON.parse(readFileSync(join(ROOT, "WORLD/region-outsiders.json"), "utf8"));
 
 // THE ROSTER. tools/founding-act.mjs (town repo) names thirteen founding targets;
 // twelve of them are regions the atlas draws a wash for, and those twelve get
@@ -61,7 +68,16 @@ const descendantsOf = (id) => marks.filter((m) => {
 // predicated/naming/class marks carry no geometry of their own (SCHEMA: "The
 // predicate carries no geometry"), and a `far: true` horizon object is "exempt
 // from the containment check by construction".
-const groundUnder = (id) => descendantsOf(id).filter((m) => m.at && !m.far && (m.kind === "sited" || m.kind === "parcel"));
+// THE SAME SCOPE THE GENERATOR USES, and it has to be: the generator's list and
+// this file's biconditional must be about the same set of marks, or a mark can
+// be listed by one and invisible to the other. That is not hypothetical — the
+// first run of these tests found exactly that gap, with the cathedral canopy and
+// the alder listed by the generator and unseen here. The rule is the record's:
+// a mark occupies ground if it has a position, is not a far horizon object, and
+// is not one of the kinds that carry no geometry of their own (SCHEMA: "The
+// predicate carries no geometry").
+const OCCUPIES_GROUND = (m) => !!m.at && !m.far && m.kind !== "predicated" && m.kind !== "naming" && m.kind !== "class";
+const groundUnder = (id) => descendantsOf(id).filter(OCCUPIES_GROUND);
 
 test("the record is live: every region on the roster is a mark, and it carries a ring", () => {
   assert.ok(marks.length >= 600, `the real tree, not a fixture (${marks.length} marks)`);
@@ -103,81 +119,91 @@ test("CLAIM HONESTY holds for the water too — the svgs that match", () => {
   }
 });
 
-// ── FALSIFIER (b): a region holds its own residents ──────────────────────────
-// The law, verbatim from WORLD/marks/SCHEMA.md: "Nesting is the only hand-drawn
-// edge, and you cannot lie with it: a nested `sited` mark must be geometrically
-// contained by its parent". MARKS.md says the same thing shorter: "You cannot
-// lie with an edge." Before the rings, a region's claim was the bounding RECT of
-// its drawn wash, and the rect held marks the wash never covered; the moment the
-// wash itself becomes the claim, every one of those marks is either inside the
-// drawing or the record is lying about where it stands. That is the whole reason
-// the founder's order carries its own escape clause — "feel free to tweak the
-// polygons a bit if it would otherwise exclude an existing resident of that
-// region" — and this test is what says the tweaks were actually made.
-test("INCLUDE THE RESIDENTS: every mark standing under a ringed region stands inside its ring", () => {
-  const failures = [];
+// ── FALSIFIER (b): contained, or on the list — and the list is exact ─────────
+//
+// THE PIVOT (the founder, 2026-08-24): "the regions just get drawn to match
+// their atlas renders. And then we can just make a Town Bulletin announcement
+// with a list of names of every resident that is not within the region's bounds
+// anymore as a heads up." So the old law — every resident inside their ring,
+// bend the ring until they are — is retired, knowingly, along with the 08-22
+// sable word it was written for.
+//
+// What replaces it is not weaker, it is a BICONDITIONAL. "Some marks are
+// outside now" would be a licence; this says every mark under a ringed region
+// is EITHER inside its ring OR named on the generated list, never neither and
+// never both. Neither would be a resident who lost their ground with nobody
+// told; both would be a list that cries wolf and trains its readers to ignore
+// it. The list is the town's promise to the people it displaces, so it has to
+// be exact in both directions.
+test("CONTAINED OR LISTED: every mark under a region is one or the other, never neither, never both", () => {
+  const listed = new Set(OUTSIDERS.rows.map((r) => r.mark));
+  const unlisted = [], doubled = [];
   for (const slug of RINGED) {
     const region = bySlug(slug);
     const ring = polygonOf(region);
     const kids = groundUnder(region.id);
     assert.ok(kids.length > 0, `${slug} has marks under it (or this assertion is vacuous)`);
-    for (const k of kids) if (!rectInsideRing(ring, rect(k))) failures.push(`${k.id} (${k.by}) stands outside ${region.id}`);
+    for (const k of kids) {
+      const inside = rectInsideRing(ring, rect(k));
+      if (!inside && !listed.has(k.id)) unlisted.push(`${k.id} (${k.by}) stands outside ${region.id} and nobody is telling them`);
+      if (inside && listed.has(k.id)) doubled.push(`${k.id} is inside ${region.id} and on the heads-up list anyway`);
+    }
   }
-  assert.deepEqual(failures, [], "a region whose ring excludes its own residents is a region lying with its edge");
+  assert.deepEqual(unlisted, [], "a resident whose ground fell outside their region, with no notice generated, is the town moving a boundary under someone in silence");
+  assert.deepEqual(doubled, [], "a list that names people who are fine is a list nobody will read the next time");
 });
 
-test("…and the record's own containment agrees, so the lint and the fold see it too", () => {
-  const failures = [];
-  for (const slug of RINGED) {
-    const region = bySlug(slug);
-    for (const k of groundUnder(region.id)) if (!marksContain(region, k)) failures.push(`${k.id} under ${region.id}`);
-  }
-  assert.deepEqual(failures, [], "marksContain must hold wherever rectInsideRing does — the two must not disagree");
+test("…and the list names nothing that is not a mark under a ringed region", () => {
+  // A row names its region by ID (`<by>/<slug>`), not by slug — the first draft
+  // of this check looked it up the wrong way and called every row a stray, which
+  // is the failure mode a probe should have: loud and obviously about itself.
+  const ringedIds = new Set(RINGED.map((slug) => bySlug(slug).id));
+  const strays = OUTSIDERS.rows.filter((r) => {
+    const m = byId.get(r.mark);
+    if (!m || !ringedIds.has(r.region)) return true;
+    return !groundUnder(r.region).some((k) => k.id === r.mark);
+  });
+  assert.deepEqual(strays.map((r) => r.mark), [], "every row must be a real mark standing under the region the row names");
+  assert.ok(OUTSIDERS.rows.length > 0, "…and the list is not empty, or everything above is vacuous");
+  assert.equal(OUTSIDERS.count, OUTSIDERS.rows.length, "the artifact's own count must match its rows");
 });
 
-// ── THE NAMED CASE ───────────────────────────────────────────────────────────
-// The founder, on sable: "I'd love to have sable in the gardens… I think we can
-// draw the polygon to fit around him and include him still." sable is a
-// DIFFERENT HOUSEHOLD from rei, who founded the gardens — which is the whole
-// point of the ask: the ring bends to hold a neighbour, not just its own author.
-test("THE NAMED CASE: sable stands inside rei's lanternseed gardens, and the ring is what puts him there", () => {
+// ── THE NAMED CASE, INVERTED ─────────────────────────────────────────────────
+// It used to read "sable stands inside rei's lanternseed gardens, and the ring
+// is what puts him there" — the 08-22 ruling, "I'd love to have sable in the
+// gardens… I think we can draw the polygon to fit around him and include him
+// still." The founder superseded that tonight in favour of the atlas trace, and
+// this is the same case held to the new law rather than quietly deleted: sable
+// is the KNOWN displaced resident, so he must appear on the list by name. If
+// the pure trace somehow still contains him, this says so, and that is a
+// finding worth reading rather than a test worth passing.
+test("THE NAMED CASE: sable is on the heads-up list, by name, with his ground unmoved", () => {
   const gardens = bySlug("the-lanternseed-gardens");
-  assert.equal(gardens.by, "rei", "the gardens are rei's founding");
-  const ring = polygonOf(gardens);
-
   const parcel = byId.get("sable/the-house-at-the-crooked-gate-parcel");
   assert.ok(parcel, "sable's parcel is in the record");
-  assert.equal(parcel.by, "sable", "…and it is sable's, not rei's — a neighbour on another household's ground");
-  assert.ok(groundUnder(gardens.id).some((m) => m.id === parcel.id), "…standing in the gardens' subtree");
-  assert.ok(rectInsideRing(ring, rect(parcel)), "…and wholly inside the gardens' ring");
+  assert.equal(parcel.by, "sable");
+  assert.ok(groundUnder(gardens.id).some((m) => m.id === parcel.id), "…still standing in the gardens' subtree — the tree did not change, the boundary did");
 
-  // the-bad-end-workshop, the mark sable was entering when the founder ruled
-  // (WORLD/threshold-ledger.md, 2026-08-21T22:47Z): 6.5 x 4.5 m at the gardens
-  // frame's {x:-760, y:-510}. It is not in the tree yet, so the ring is checked
-  // against the ground it will stand on rather than against a record that would
-  // make this assertion pass by being absent.
-  const workshop = { x: gardens.at.x - 760, y: gardens.at.y - 510, w: 6.5, h: 4.5 };
-  assert.ok(rectInsideRing(ring, workshop),
-    `the-bad-end-workshop's ground (${workshop.x},${workshop.y}) must be inside the gardens — "I'd love to have sable in the gardens"`);
+  const row = OUTSIDERS.rows.find((r) => r.mark === parcel.id);
+  assert.ok(row, "sable's parcel must be named on the outsider list — he is the known case the old bend was written for");
+  assert.equal(row.resident, "sable");
+  assert.equal(row.region, gardens.id);
+  // The ground is exactly where sable put it. The whole promise of the pivot is
+  // that nothing moved except the line on the map.
+  assert.deepEqual({ x: rect(parcel).x, y: rect(parcel).y }, { x: row.at.x, y: row.at.y },
+    "the list must report the ground where it actually stands, to the half-metre the record keeps");
+  assert.equal(rectInsideRing(polygonOf(gardens), rect(parcel)), false, "…and he is genuinely outside the traced ring, which is why he is listed");
 });
-
 
 // ── FALSIFIER (c): THE RINGS TILE ────────────────────────────────────────────
 // The founder, 2026-08-24: "the issue is the regions are still overlapping lol,
-// like lanternseed and town centre. because whatever that house on the bottom
-// left corner is is clearly geometrically in the town centre."
-//
-// The first commit took region-on-region overlap from 495,875 m2 to 74,950 m2
-// and zeroed four pairs; ONE pair survived, and this is the law that ends it.
-// It asks all sixty-six pairs rather than the pairs anyone has noticed, because
-// a law that only holds where someone looked is not a law — and because the
-// bend that mints an overlap can be planted by any future resident arriving
-// anywhere.
+// like lanternseed and town centre."
 //
 // Asked as DISJOINTNESS, not as an area under some tolerance: two rings either
 // share ground or they do not. `ringsDisjoint` is geometry.mjs's, the same
 // primitive the generator enforces with, so this cannot pass by grading the
-// record against a softer definition than the one that produced it.
+// record against a softer definition than the one that produced it. All
+// sixty-six pairs, not the pairs anyone happened to notice.
 test("THE DISJOINT LAW: no two region rings share any ground, across every pair", () => {
   const rings = RINGED.map((slug) => ({ slug, ring: polygonOf(bySlug(slug)) }));
   const overlaps = [];
@@ -192,91 +218,65 @@ test("THE DISJOINT LAW: no two region rings share any ground, across every pair"
   assert.deepEqual(overlaps, [], "a region standing on another region's ground is the overlap ruling unrelitigated");
 });
 
-// ── FALSIFIER (d): the ground goes to whoever lives on it ────────────────────
-// The disjoint law above says the rings do not overlap; it does not say the cut
-// went the right way. This does. The Town Centre receded off the Lanternseed
-// Gardens rather than the other way round, and the reason is in the record: the
-// shared ground had the Gardens' own residents standing on it.
+// ── FALSIFIER (d): smoothed, and smoothed everywhere ─────────────────────────
+// "could we just generally smooth out the polygons for the regions (lanternseed
+// included)". Measured rather than eyeballed, and measured on EVERY ring: a
+// spike is a vertex whose radius disagrees with both its neighbours in the same
+// direction, and its size is how far it sits from the line they draw. The
+// terrace sweep left the Threshold with a 260 m spike; the traced washes carry
+// smaller ones everywhere.
 //
-// THE HOUSE THE FOUNDER WAS POINTING AT. His words were "whatever that house on
-// the bottom left corner is" — it is illuminator's looking room, at (503,-302),
-// which stood inside BOTH rings. (Not sable's crooked gate, which the first
-// commit's bend already resolved cleanly: sable is at (528,-1502), inside the
-// Gardens and nowhere near the Centre.) These are named so that a later reader
-// re-deriving the seam knows which houses decided it.
-test("THE SEAM: the shared ground went to the Gardens, because the Gardens' residents stand on it", () => {
-  const centre = bySlug("the-town-centre"), gardens = bySlug("the-lanternseed-gardens");
-  const C = polygonOf(centre), G = polygonOf(gardens);
-  assert.ok(ringsDisjoint(C, G), "the pair that survived the first commit is settled");
-
-  for (const id of ["illuminator/the-looking-room-parcel", "illuminator/the-looking-room", "rei/the-low-lanterns"]) {
-    const m = byId.get(id);
-    assert.ok(m, `${id} is in the record`);
-    assert.ok(groundUnder(gardens.id).some((k) => k.id === id), `${id} stands in the Gardens' subtree`);
-    assert.ok(rectInsideRing(G, rect(m)), `${id} stands inside the Gardens' ring — its own region holds it`);
-    assert.equal(rectInsideRing(C, rect(m)), false, `${id} must NOT also stand inside the Town Centre — that was the overlap`);
+// The bound is 190 m, and both numbers behind it are measured. The TRACE ALONE
+// reaches 320 m (the Threshold's sawtooth), with six of the twelve rings over
+// 180 m; after smoothing the worst ring in the town is 174 m. So 190 sits above
+// what the pass achieves and well below what it removes: loose enough that a
+// wash's real bay is not a failure — the point was never to convexify the map —
+// and tight enough that turning the pass off goes red on six rings at once.
+test("SMOOTHED: no ring carries a lone spike, and the Threshold's sawtooth is gone", () => {
+  const worst = [];
+  for (const slug of RINGED) {
+    const ring = polygonOf(bySlug(slug));
+    let deepest = 0;
+    for (let i = 0; i < ring.length; i++) {
+      const a = ring[(i - 1 + ring.length) % ring.length], v = ring[i], b = ring[(i + 1) % ring.length];
+      const ex = b.x - a.x, ey = b.y - a.y;
+      const len2 = ex * ex + ey * ey;
+      if (len2 < 1e-9) continue;
+      const t = Math.max(0, Math.min(1, ((v.x - a.x) * ex + (v.y - a.y) * ey) / len2));
+      const d = Math.hypot(v.x - (a.x + t * ex), v.y - (a.y + t * ey));
+      if (d > deepest) deepest = d;
+    }
+    worst.push({ slug, deepest: Math.round(deepest), vertices: ring.length });
   }
-  // and the house the founder actually saw is where he saw it
-  const looking = rect(byId.get("illuminator/the-looking-room"));
-  assert.equal(Math.round(looking.x), 503, "the looking room has not been moved to resolve the seam — the ring moved, the house did not");
-  assert.equal(Math.round(looking.y), -302);
+  const over = worst.filter((w) => w.deepest > 190);
+  assert.deepEqual(over, [], `every ring must be free of lone spikes (trace alone: 320 m worst) — worst per ring: ${worst.map((w) => `${w.slug} ${w.deepest}m`).join(", ")}`);
+  // and the count came down where it was highest
+  const threshold = worst.find((w) => w.slug === "the-threshold-district");
+  assert.ok(threshold.vertices <= 20, `the Threshold carries ${threshold.vertices} vertices — the sweep left 29 and smoothing is supposed to take some away`);
+  for (const w of worst) assert.ok(w.vertices >= 8, `${w.slug}: a ring of ${w.vertices} vertices is a box with opinions, not a drawn wash`);
 });
 
-// ── FALSIFIER (e): the Threshold's east flank is not spiky ───────────────────
-// The founder, same breath: "I think threshold district can just be smoothed out
-// a bit on the right side so it's not so spiky."
-//
-// "Spiky" measured rather than eyeballed: a notch is a vertex whose radius sits
-// BELOW the straight line its two neighbours draw in (bearing, radius) space,
-// and its depth is how far below. The terrace sweep left the east flank with
-// notches 260 m deep — bearings that fell between two terraces took a near
-// crossing while their neighbours took a far one. After smoothing the deepest is
-// 68 m, and the ring carries five fewer vertices.
-//
-// The bound is 120 m: comfortably below what the flank had and comfortably above
-// what it has, so this fails if the smoothing is removed and does not fail on
-// the next resident's bend. The vertex cap is the same shape of statement.
-test("SMOOTHED: the Threshold's east flank carries no deep notch, and fewer vertices than it did", () => {
-  const t = bySlug("the-threshold-district");
-  const ring = polygonOf(t);
-  const c = { x: ring.reduce((s, p) => s + p.x, 0) / ring.length, y: ring.reduce((s, p) => s + p.y, 0) / ring.length };
-  const wrap = (a) => { let d = a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
-  const pol = ring.map((p) => ({ th: Math.atan2(p.y - c.y, p.x - c.x), r: Math.hypot(p.x - c.x, p.y - c.y) }));
-  const east = (th) => Math.cos(th) > 0.30;
-
-  let deepest = 0, where = null;
-  for (let i = 0; i < pol.length; i++) {
-    const v = pol[i], a = pol[(i - 1 + pol.length) % pol.length], b = pol[(i + 1) % pol.length];
-    if (!east(v.th) || !east(a.th) || !east(b.th)) continue;
-    const span = wrap(b.th - a.th);
-    if (span <= 1e-9) continue;
-    const u = wrap(v.th - a.th) / span;
-    if (!(u > 0 && u < 1)) continue;
-    const dip = (a.r + (b.r - a.r) * u) - v.r;
-    if (dip > deepest) { deepest = dip; where = (v.th * 180 / Math.PI + 360) % 360; }
+// ── FALSIFIER (e): the caution the founder asked the list to carry ───────────
+// "just taking care to not declare where someone else's parcel already
+// overlaps." A resident reading the list is about to choose new coordinates, so
+// the one thing the list must not do is send them onto ground another household
+// has already claimed. The field is computed per row; this holds it honest in
+// both directions against the record's own parcels.
+test("THE CAUTION: every row's overlap flag matches the record's parcels, both ways", () => {
+  const parcels = marks.filter((m) => m.kind === "parcel" && m.at && !m.far);
+  const wrong = [];
+  for (const row of OUTSIDERS.rows) {
+    const m = byId.get(row.mark);
+    if (!m) continue;
+    const truth = parcels
+      .filter((p) => p.id !== m.id && String(p.by) !== String(m.by) && overlapArea(rect(p), rect(m)) > 0)
+      .map((p) => p.id).sort();
+    const said = [...row.overlaps_another_parcel].sort();
+    if (JSON.stringify(truth) !== JSON.stringify(said)) wrong.push(`${row.mark}: says [${said}], record says [${truth}]`);
   }
-  assert.ok(deepest < 120,
-    `the east flank's deepest notch is ${deepest.toFixed(0)} m below its own chord${where === null ? "" : ` at bearing ${where.toFixed(0)}deg`} — it was 260 m before smoothing and must stay well under it`);
-  assert.ok(ring.length <= 26, `${ring.length} vertices — the sweep left 29 and smoothing is supposed to take some away, not add`);
-  assert.ok(ring.length >= 8, "…without flattening the district into a box");
-});
-
-// ── FALSIFIER (f): smoothing bought its shape with nobody else's ground ──────
-// Two ways a flank can be smoothed dishonestly: by reaching into a neighbour,
-// and by growing the claim. The first is covered by the disjoint law above. The
-// second is this, and it is the one with teeth a reader would not guess: a
-// region's at/extent IS its ring's bbox, a bound child's numbers are offsets
-// from that centre, so ENLARGING a region moves its frame and every resident
-// travels with it. Unclamped, this smoothing widened the Threshold 228 m and
-// carried sixty marks 72.5 m east — tidying a coastline by relocating limen's
-// terraces, hal's green lamp house, iris, nyx, wren and the rest.
-//
-// So the Threshold's claim must be exactly what the terrace sweep gives it. The
-// numbers are the record's own from before this round.
-test("THE FRAME DID NOT MOVE: smoothing left the Threshold's claim exactly where it was", () => {
-  const t = bySlug("the-threshold-district");
-  assert.deepEqual(rect(t), { x: 1446.5, y: 1806, w: 1649, h: 2292 },
-    "the Threshold's claim is unchanged by the smoothing — a boundary may be redrawn, but redrawing it must not walk fifty houses across the map");
+  assert.deepEqual(wrong, [], "the don't-build-here caution must be exactly what the record says, or it is worse than no caution");
+  assert.ok(OUTSIDERS.rows.some((r) => r.overlaps_another_parcel.length > 0),
+    "…and at least one row actually carries the flag, or this assertion has never been exercised");
 });
 
 // ── the two regions that get no ring, and why ────────────────────────────────

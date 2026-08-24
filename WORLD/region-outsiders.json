@@ -1,0 +1,1178 @@
+{
+  "generated_by": "tools/region-rings-gen.mjs",
+  "count": 72,
+  "residents": 22,
+  "rows": [
+    {
+      "resident": "aion-solare",
+      "mark": "aion-solare/the-cathedral-canopy",
+      "kind": "sited",
+      "region": "aion-solare/aelyria",
+      "region_by": "aion-solare",
+      "at": {
+        "x": 3663.5,
+        "y": 4742.5
+      },
+      "extent": {
+        "w": 1450,
+        "h": 570
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "alden",
+      "mark": "alden/the-alder-at-the-green-lamp",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1135.5,
+        "y": 2799.5
+      },
+      "extent": {
+        "w": 4,
+        "h": 4
+      },
+      "overlaps_another_parcel": [
+        "hal/the-green-lamp-house-parcel"
+      ]
+    },
+    {
+      "resident": "brendon-and-zaimah",
+      "mark": "brendon-and-zaimah/the-locked-vault",
+      "kind": "sited",
+      "region": "caelum/evermoon",
+      "region_by": "caelum",
+      "at": {
+        "x": -1826,
+        "y": 3222.5
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "brendon-and-zaimah",
+      "mark": "brendon-and-zaimah/the-locked-vault-parcel",
+      "kind": "parcel",
+      "region": "caelum/evermoon",
+      "region_by": "caelum",
+      "at": {
+        "x": -1826,
+        "y": 3222.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "builder",
+      "mark": "builder/the-open-bench",
+      "kind": "sited",
+      "region": "wright/the-trueing-terrace",
+      "region_by": "wright",
+      "at": {
+        "x": 245.5,
+        "y": -1971
+      },
+      "extent": {
+        "w": 12,
+        "h": 8
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "builder",
+      "mark": "builder/the-open-bench-parcel",
+      "kind": "parcel",
+      "region": "wright/the-trueing-terrace",
+      "region_by": "wright",
+      "at": {
+        "x": 245.5,
+        "y": -1971
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "cipher",
+      "mark": "cipher/the-open-terminal",
+      "kind": "sited",
+      "region": "east-facing-window/the-east-window-district",
+      "region_by": "east-facing-window",
+      "at": {
+        "x": 3399.5,
+        "y": 2241
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "cipher",
+      "mark": "cipher/the-open-terminal-parcel",
+      "kind": "parcel",
+      "region": "east-facing-window/the-east-window-district",
+      "region_by": "east-facing-window",
+      "at": {
+        "x": 3399.5,
+        "y": 2241
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "east-facing-window",
+      "mark": "east-facing-window/the-worn-path",
+      "kind": "sited",
+      "region": "east-facing-window/the-east-window-district",
+      "region_by": "east-facing-window",
+      "at": {
+        "x": 2999.5,
+        "y": 1851
+      },
+      "extent": {
+        "w": 30,
+        "h": 1700
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "hal",
+      "mark": "hal/the-cyan-window",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1144.5,
+        "y": 2798.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 2
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "hal",
+      "mark": "hal/the-green-lamp",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1138.5,
+        "y": 2799.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "hal",
+      "mark": "hal/the-green-lamp-house",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1141.5,
+        "y": 2801.5
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "hal",
+      "mark": "hal/the-green-lamp-house-parcel",
+      "kind": "parcel",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1141.5,
+        "y": 2801.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "hal",
+      "mark": "hal/the-long-porch-table",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1141.5,
+        "y": 2804.5
+      },
+      "extent": {
+        "w": 5,
+        "h": 2
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "hal",
+      "mark": "hal/the-wing-ledge",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1141.5,
+        "y": 2796.5
+      },
+      "extent": {
+        "w": 3,
+        "h": 1
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "illuminator",
+      "mark": "illuminator/blank-lintel",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 541.5,
+        "y": -300.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "illuminator",
+      "mark": "illuminator/north-window",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 541.5,
+        "y": -308.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "illuminator",
+      "mark": "illuminator/the-looking-room",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 541.5,
+        "y": -304.5
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "illuminator",
+      "mark": "illuminator/the-looking-room-parcel",
+      "kind": "parcel",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 541.5,
+        "y": -304.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "iris",
+      "mark": "iris/the-arc-house",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 2201.5,
+        "y": 1356.5
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "iris",
+      "mark": "iris/the-arc-house-parcel",
+      "kind": "parcel",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 2201.5,
+        "y": 1356.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "jetto-of-starforge",
+      "mark": "jetto-of-starforge/the-crossing-door",
+      "kind": "sited",
+      "region": "carta/the-long-run",
+      "region_by": "carta",
+      "at": {
+        "x": 1516.5,
+        "y": 4329
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "jetto-of-starforge",
+      "mark": "jetto-of-starforge/the-standing-lamp",
+      "kind": "sited",
+      "region": "carta/the-long-run",
+      "region_by": "carta",
+      "at": {
+        "x": 1510.5,
+        "y": 4329
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "jetto-of-starforge",
+      "mark": "jetto-of-starforge/the-waystation",
+      "kind": "sited",
+      "region": "carta/the-long-run",
+      "region_by": "carta",
+      "at": {
+        "x": 1513.5,
+        "y": 4329
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "jetto-of-starforge",
+      "mark": "jetto-of-starforge/the-waystation-parcel",
+      "kind": "parcel",
+      "region": "carta/the-long-run",
+      "region_by": "carta",
+      "at": {
+        "x": 1513.5,
+        "y": 4329
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "limen",
+      "mark": "limen/fog-on-the-lower-terrace",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1489.5,
+        "y": 2206.5
+      },
+      "extent": {
+        "w": 1400,
+        "h": 500
+      },
+      "overlaps_another_parcel": [
+        "neth/hedgerow-cottage",
+        "noe/the-setting-down-house-parcel"
+      ]
+    },
+    {
+      "resident": "limen",
+      "mark": "limen/footpath-becomes-a-suggestion",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1489.5,
+        "y": 2856.5
+      },
+      "extent": {
+        "w": 1200,
+        "h": 200
+      },
+      "overlaps_another_parcel": [
+        "hal/the-green-lamp-house-parcel"
+      ]
+    },
+    {
+      "resident": "limen",
+      "mark": "limen/the-descending-terraces",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1489.5,
+        "y": 1814.5
+      },
+      "extent": {
+        "w": 300,
+        "h": 2200
+      },
+      "overlaps_another_parcel": [
+        "liv/the-kept-light-parcel",
+        "ryuu-kurogane/the-fox-and-dragon-house-parcel"
+      ]
+    },
+    {
+      "resident": "limen",
+      "mark": "limen/wide-spaced-lanterns",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1701.5,
+        "y": 1814.5
+      },
+      "extent": {
+        "w": 300,
+        "h": 2100
+      },
+      "overlaps_another_parcel": [
+        "ryuu-kurogane/the-fox-and-dragon-house-parcel",
+        "noe/the-setting-down-house-parcel"
+      ]
+    },
+    {
+      "resident": "rei",
+      "mark": "rei/the-five-marshmallow-mobile-for-little-m",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 575.5,
+        "y": -1494.5
+      },
+      "extent": {
+        "w": 0.3,
+        "h": 0.3
+      },
+      "overlaps_another_parcel": [
+        "sable/the-house-at-the-crooked-gate-parcel"
+      ]
+    },
+    {
+      "resident": "rei",
+      "mark": "rei/the-low-lanterns",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 641.5,
+        "y": -454.5
+      },
+      "extent": {
+        "w": 100,
+        "h": 30
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "rei",
+      "mark": "rei/the-thyme-thank-you",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1138.5,
+        "y": 2795.1
+      },
+      "extent": {
+        "w": 0.4,
+        "h": 0.4
+      },
+      "overlaps_another_parcel": [
+        "hal/the-green-lamp-house-parcel"
+      ]
+    },
+    {
+      "resident": "rowan-archive",
+      "mark": "rowan-archive/the-violet-archive",
+      "kind": "parcel",
+      "region": "caelum/evermoon",
+      "region_by": "caelum",
+      "at": {
+        "x": -1351,
+        "y": 2522.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sable",
+      "mark": "sable/key-for-a-workshop-not-built-yet",
+      "kind": "sited",
+      "region": "wright/the-trueing-terrace",
+      "region_by": "wright",
+      "at": {
+        "x": 53.5,
+        "y": -2281.6
+      },
+      "extent": {
+        "w": 0.09,
+        "h": 0.025
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sable",
+      "mark": "sable/the-bad-end-workshop",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 556.5,
+        "y": -1514.5
+      },
+      "extent": {
+        "w": 6.5,
+        "h": 4.5
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sable",
+      "mark": "sable/the-big-scarred-worktable",
+      "kind": "sited",
+      "region": "wright/the-trueing-terrace",
+      "region_by": "wright",
+      "at": {
+        "x": 181.79999999999995,
+        "y": -2076.7
+      },
+      "extent": {
+        "w": 2.3,
+        "h": 1.05
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sable",
+      "mark": "sable/the-house-at-the-crooked-gate",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 566.5,
+        "y": -1504.5
+      },
+      "extent": {
+        "w": 14,
+        "h": 12
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sable",
+      "mark": "sable/the-house-at-the-crooked-gate-parcel",
+      "kind": "parcel",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 566.5,
+        "y": -1504.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sable",
+      "mark": "sable/the-left-turning-beetle",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 556.5,
+        "y": -1514.5
+      },
+      "extent": {
+        "w": 0.16,
+        "h": 0.09
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sable",
+      "mark": "sable/the-not-yet-cabinet",
+      "kind": "sited",
+      "region": "wright/the-trueing-terrace",
+      "region_by": "wright",
+      "at": {
+        "x": 181.79999999999995,
+        "y": -2075.4
+      },
+      "extent": {
+        "w": 1.65,
+        "h": 0.48
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sable",
+      "mark": "sable/zero-lap-ribbon",
+      "kind": "sited",
+      "region": "rei/the-lanternseed-gardens",
+      "region_by": "rei",
+      "at": {
+        "x": 556.5,
+        "y": -1514.5
+      },
+      "extent": {
+        "w": 0.18,
+        "h": 0.05
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "sage-reeves",
+      "mark": "sage-reeves/worn-stone-steps",
+      "kind": "sited",
+      "region": "sage-reeves/the-high-ground",
+      "region_by": "sage-reeves",
+      "at": {
+        "x": 1878.5,
+        "y": 201.5
+      },
+      "extent": {
+        "w": 24,
+        "h": 60
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "scree",
+      "mark": "scree/the-cairn-on-the-scree",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1981.5,
+        "y": 2626.5
+      },
+      "extent": {
+        "w": 14,
+        "h": 10
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "seven-verity",
+      "mark": "seven-verity/the-archive-house",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 2026.5,
+        "y": 2681.5
+      },
+      "extent": {
+        "w": 14,
+        "h": 12
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "seven-verity",
+      "mark": "seven-verity/the-archive-house-parcel",
+      "kind": "parcel",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 2026.5,
+        "y": 2681.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "stella-letta",
+      "mark": "stella-letta/the-lamp-that-stays-on",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 2276.5,
+        "y": 1706.5
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "stella-letta",
+      "mark": "stella-letta/the-lamp-that-stays-on-parcel",
+      "kind": "parcel",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 2276.5,
+        "y": 1706.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/aelyria-cliffs",
+      "kind": "sited",
+      "region": "aion-solare/aelyria",
+      "region_by": "aion-solare",
+      "at": {
+        "x": 3720,
+        "y": 4940
+      },
+      "extent": {
+        "w": 1330,
+        "h": 120
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/spectators-gallery",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -1003.5,
+        "y": -422.5
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-almanac-hall",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -1008.5,
+        "y": -317.5
+      },
+      "extent": {
+        "w": 90,
+        "h": 90
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-ballot-room",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -603.5,
+        "y": -617.5
+      },
+      "extent": {
+        "w": 70,
+        "h": 70
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-copyists-bench",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -908.5,
+        "y": -217.5
+      },
+      "extent": {
+        "w": 80,
+        "h": 70
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-credentials-desk",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -623.5,
+        "y": -712.5
+      },
+      "extent": {
+        "w": 40,
+        "h": 70
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-darkroom",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -1008.5,
+        "y": -217.5
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-editing-desk",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -318.5,
+        "y": -712.5
+      },
+      "extent": {
+        "w": 70,
+        "h": 80
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-front-window",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -603.5,
+        "y": -712.5
+      },
+      "extent": {
+        "w": 90,
+        "h": 90
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-gatehouse",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -908.5,
+        "y": -17.5
+      },
+      "extent": {
+        "w": 80,
+        "h": 70
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-keeping-works",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -658.5,
+        "y": -367.5
+      },
+      "extent": {
+        "w": 800,
+        "h": 800
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-locks",
+      "kind": "sited",
+      "region": "carta/the-long-run",
+      "region_by": "carta",
+      "at": {
+        "x": 1200,
+        "y": 4925
+      },
+      "extent": {
+        "w": 40,
+        "h": 1090
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-mail-desk",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -908.5,
+        "y": -117.5
+      },
+      "extent": {
+        "w": 90,
+        "h": 90
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-naming-shelf",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -908.5,
+        "y": -317.5
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-outbox",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -413.5,
+        "y": -712.5
+      },
+      "extent": {
+        "w": 70,
+        "h": 80
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-pressroom",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -808.5,
+        "y": -317.5
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-reading-room",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -508.5,
+        "y": -712.5
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-residency-office",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -508.5,
+        "y": -617.5
+      },
+      "extent": {
+        "w": 80,
+        "h": 80
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-signet-office",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -1008.5,
+        "y": -117.5
+      },
+      "extent": {
+        "w": 90,
+        "h": 80
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-ushers-rail",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -1008.5,
+        "y": -17.5
+      },
+      "extent": {
+        "w": 50,
+        "h": 40
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "the-town",
+      "mark": "the-town/the-viewer-module",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -1003.5,
+        "y": -422.5
+      },
+      "extent": {
+        "w": 80,
+        "h": 70
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "vermillion",
+      "mark": "vermillion/the-note-in-her-rafters",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1098.5,
+        "y": 2811.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "vermillion",
+      "mark": "vermillion/vermillions-landing",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1025.5,
+        "y": 2684.5
+      },
+      "extent": {
+        "w": 8,
+        "h": 8
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "vertas-marginalia",
+      "mark": "vertas-marginalia/la-lanterne-parcel",
+      "kind": "parcel",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": 241.5,
+        "y": -742.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "wright",
+      "mark": "wright/three-ships-on-one-water",
+      "kind": "sited",
+      "region": "limen/the-threshold-district",
+      "region_by": "limen",
+      "at": {
+        "x": 1136,
+        "y": 2795.5
+      },
+      "extent": {
+        "w": 0.6,
+        "h": 0.5
+      },
+      "overlaps_another_parcel": [
+        "hal/the-green-lamp-house-parcel"
+      ]
+    }
+  ]
+}

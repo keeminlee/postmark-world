@@ -88,7 +88,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMarks } from "./marks-fold.mjs";
-import { polygonBBox, pointInPolygon, rectInsideRing, rectCorners, ringsDisjoint } from "./geometry.mjs";
+import { overlapArea, polygonBBox, pointInPolygon, rect, rectInsideRing, rectCorners, ringsDisjoint } from "./geometry.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const argOf = (flag, dflt = null) => {
@@ -311,73 +311,6 @@ function reachAt(ring, c, th) {
   return far;
 }
 
-// THE BEND — the union of the ring and one mark's rect, taken exactly, in polar
-// coordinates about the ring's own centre.
-//
-// The rect is seen from the centre across one angular span. Inside that span the
-// ring's radius is raised to the rect's FAR boundary, and a vertex is planted on
-// each of the rect's four corner bearings — which is what makes the union exact
-// rather than approximate: between two adjacent corner bearings the rect's far
-// boundary IS a straight edge, and a polygon chord between two points on a
-// straight line is that line. So the boundary steps out along the house's own
-// walls and comes straight back — at most four new vertices, and no ground taken
-// beyond the house itself plus `pad`, which keeps the boundary off the wall
-// rather than on it. Radii only ever rise and the vertices stay angle-ordered,
-// so a star-shaped ring stays a simple polygon.
-function bendAround(ring, centre, r, pad) {
-  const cs = rectCorners(r);
-  const cp = cs.map((p) => polar(p, centre));
-  // the minimal angular span holding all four corners
-  let start = 0, span = Infinity;
-  for (let i = 0; i < 4; i++) {
-    let widest = 0;
-    for (let j = 0; j < 4; j++) { const d = norm(cp[j].th - cp[i].th); if (d >= 0 && d > widest) widest = d; }
-    const covers = cp.every((q) => { const d = norm(q.th - cp[i].th); return d >= -1e-12 && d <= widest + 1e-12; });
-    if (covers && widest < span) { span = widest; start = cp[i].th; }
-  }
-  // A mark that straddles the ring's own centre (limen's terraces and lanterns
-  // are 2.2 km bands drawn straight through the Threshold) is seen across every
-  // bearing, not across a span.
-  const straddles = r.x - r.w / 2 <= centre.x && centre.x <= r.x + r.w / 2 && r.y - r.h / 2 <= centre.y && centre.y <= r.y + r.h / 2;
-  if (straddles) { start = -Math.PI; span = 2 * Math.PI; }
-  if (!Number.isFinite(span)) throw new Error("bend: could not find the angular span of the mark being included");
-
-  const rectReach = (th) => {
-    const dir = { x: Math.cos(th), y: Math.sin(th) };
-    let far = 0;
-    for (let j = 0; j < 4; j++) {
-      const t = raySegment(centre, dir, cs[j], cs[(j + 1) % 4]);
-      if (t !== null && t > far) far = t;
-    }
-    return far;
-  };
-
-  const out = ring.map((v) => ({ ...polar(v, centre), atlas: v.atlas }));
-  let raised = 0, added = 0, outward = 0;
-  for (const v of out) {
-    const d = norm(v.th - start);
-    if (d < -1e-12 || d > span + 1e-12) continue;
-    const reach = rectReach(v.th);
-    const need = reach > 0 ? reach + pad : 0;
-    if (need > v.r) { outward = Math.max(outward, need - v.r); v.r = need; raised++; }
-  }
-  const backToRing = (pol) => pol.map((v) => ({ ...cart(v.th, v.r, centre), atlas: v.atlas }));
-  for (const q of cp) {
-    const need = q.r + pad;
-    const here = reachAt(backToRing(out), centre, q.th);
-    if (here >= need - 1e-9) continue;
-    outward = Math.max(outward, need - here);
-    let ins = out.length;
-    for (let i = 0; i < out.length; i++) {
-      const a = out[i].th, b = out[(i + 1) % out.length].th;
-      if (dth(q.th, a) > 0 && dth(b, q.th) > 0) { ins = i + 1; break; }
-    }
-    out.splice(ins, 0, { th: q.th, r: need, atlas: false });
-    added++;
-  }
-  return { ring: backToRing(out), raised, added, outward };
-}
-
 // ── the recession · rings tile ───────────────────────────────────────────────
 //
 // `ring` gives up every point it holds inside `other`. Worked radially about the
@@ -473,91 +406,80 @@ function segsCross(p1, p2, p3, p4) {
   return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0));
 }
 
-// ── smoothing one flank ──────────────────────────────────────────────────────
+// ── smoothing a whole ring ───────────────────────────────────────────────────
 //
-// The radial profile of a spiky flank dips and rises; smoothing lifts each dip
-// to the straight line joining its neighbours, in (bearing, radius) space, and
-// repeats until no vertex sits below that chord. That is exactly "make the
-// profile concave", i.e. the flank convex outward, and it is the smallest change
-// that removes a notch: the lifted vertex lands ON the line its neighbours
-// already draw, so the boundary through it is the boundary they implied.
+// The founder, 2026-08-24: "could we just generally smooth out the polygons for
+// the regions (lanternseed included)". So this runs on every ring, not on one
+// named flank, and it is deliberately a LOW-PASS rather than a convexifier.
 //
-// RADII ONLY RISE. Containment is monotone in radius, so a ring that only grew
-// cannot have dropped a resident — the include-residents law survives this pass
-// for free rather than by re-checking it.
+// The distinction matters and is easy to get wrong. Lifting every vertex to the
+// chord its neighbours draw — the obvious reading of "smooth" — makes the radial
+// profile concave, i.e. the ring CONVEX, and twelve convex blobs is not a
+// smoothed map, it is a map with the hand-washed edge sanded off. A wash's
+// shallow bays are the drawing. What is NOT the drawing is a single vertex
+// spiking hundreds of metres off its neighbours, which is a sampling artifact of
+// the terrace sweep and of nothing a reader ever saw.
 //
-// `ceilingAt` is the clamp: smoothing may not take a metre of anyone else's
-// ground, so a lift stops short of the nearest other ring. A notch that cannot
-// be lifted stays a notch, and is reported rather than forced.
-function smoothFlank(ring, centre, inFlank, ceilingAt) {
-  let pol = ring.map((v) => ({ ...polar(v, centre), atlas: v.atlas }));
-  let lifted = 0, mostUp = 0, clamped = 0;
-  for (let pass = 0; pass < 24; pass++) {
-    let changed = false;
-    for (let i = 0; i < pol.length; i++) {
-      const v = pol[i];
-      if (!inFlank(v.th)) continue;
+// So: three passes of a (1,2,1) kernel on the RADII, in angle order. That is the
+// standard smoothing filter, and its property here is exactly the one wanted —
+// it attenuates a lone spike hard (a vertex that disagrees with both neighbours
+// moves most) and leaves a broad bay almost untouched (neighbours that agree
+// with each other barely move it). Curvature relaxes; shape survives.
+//
+// Two clamps, both stated as refusals rather than preferences:
+//   · a smoothed vertex may not leave the bbox the TRACE claimed, so the
+//     region's at/extent stays the atlas wash's own box and the frame does not
+//     wander for cosmetic reasons;
+//   · a smoothed vertex may not enter another ring — smoothing must not buy its
+//     shape with a neighbour's ground. (The recession that follows enforces this
+//     absolutely; the clamp keeps it from having work to do.)
+//
+// Then the thinning. A vertex within `flat` metres of the straight line its
+// neighbours already draw says nothing that line did not, and after smoothing
+// there are many: this is where the count comes down. It drops TRACED vertices
+// too, which the bend era never did — and the reason is honest rather than
+// convenient: once a vertex has been moved by the filter it is no longer a point
+// on the drawn curve, so "never thin the drawing" no longer protects anything.
+// The ring is a smoothed trace, and it says so.
+function smoothRing(ring, centre, { passes = 3, flat = 12, ceilingAt = () => Infinity } = {}) {
+  let pol = ring.map((v) => ({ ...polar(v, centre) }));
+  const before = pol.length;
+  let mostMoved = 0;
+
+  for (let pass = 0; pass < passes; pass++) {
+    const next = pol.map((v, i) => {
       const a = pol[(i - 1 + pol.length) % pol.length], b = pol[(i + 1) % pol.length];
-      if (!inFlank(a.th) || !inFlank(b.th)) continue;   // the flank's own ends stay put
-      const span = dth(b.th, a.th);
-      if (span <= 1e-9) continue;
-      const t = dth(v.th, a.th) / span;
-      if (!(t > 0 && t < 1)) continue;
-      const chord = a.r + (b.r - a.r) * t;
-      if (chord <= v.r + 1e-9) continue;                // already at or above the chord
-      const ceil = ceilingAt(v.th);
-      const want = Math.min(chord, ceil);
-      if (want <= v.r + 1e-9) { clamped++; continue; }
-      if (want < chord - 1e-9) clamped++;
-      mostUp = Math.max(mostUp, want - v.r);
-      v.r = want; lifted++; changed = true;
-    }
-    if (!changed) break;
+      const want = (a.r + 2 * v.r + b.r) / 4;
+      const capped = Math.min(want, ceilingAt(v.th));
+      return { th: v.th, r: capped > 0 ? capped : v.r };
+    });
+    for (let i = 0; i < pol.length; i++) mostMoved = Math.max(mostMoved, Math.abs(next[i].r - pol[i].r));
+    pol = next;
   }
-  // A vertex now sitting ON the chord its neighbours draw says nothing the edge
-  // did not already say. Drop it — this is where the vertex count comes down —
-  // but never an atlas vertex, which is the drawing itself.
+
   let dropped = 0, changed = true;
-  while (changed) {
+  while (changed && pol.length > 8) {
     changed = false;
     for (let i = 0; i < pol.length; i++) {
-      const v = pol[i];
-      if (v.atlas || !inFlank(v.th)) continue;
-      const a = pol[(i - 1 + pol.length) % pol.length], b = pol[(i + 1) % pol.length];
-      const span = dth(b.th, a.th);
-      if (span <= 1e-9) continue;
-      const t = dth(v.th, a.th) / span;
-      if (!(t > 0 && t < 1)) continue;
-      if (Math.abs(a.r + (b.r - a.r) * t - v.r) > 1) continue;
+      const v = pol[i], a = pol[(i - 1 + pol.length) % pol.length], b = pol[(i + 1) % pol.length];
+      const A = cart(a.th, a.r, centre), B = cart(b.th, b.r, centre), V = cart(v.th, v.r, centre);
+      // distance from V to the segment AB — the only question that matters is
+      // whether the edge would pass through where this vertex stands
+      const ex = B.x - A.x, ey = B.y - A.y;
+      const len2 = ex * ex + ey * ey;
+      if (len2 < 1e-9) continue;
+      const t = Math.max(0, Math.min(1, ((V.x - A.x) * ex + (V.y - A.y) * ey) / len2));
+      const d = Math.hypot(V.x - (A.x + t * ex), V.y - (A.y + t * ey));
+      if (d > flat) continue;
       pol = pol.slice(0, i).concat(pol.slice(i + 1));
       dropped++; changed = true; break;
     }
   }
-  return { ring: pol.map((v) => ({ ...cart(v.th, v.r, centre), atlas: v.atlas })), lifted, dropped, mostUp, clamped };
-}
 
-// Drop a BEND-PLANTED vertex whenever the ring still holds every mark it must
-// without it. A bend plants generously — four corner bearings whether or not all
-// four say anything — and a boundary a resident may read should not carry a
-// corner that carries no meaning. Vertices traced from the atlas are never
-// dropped: they are the drawing, and thinning them would quietly turn the wash
-// into a polygon nobody drew. Removing a vertex from an angle-ordered ring
-// leaves it angle-ordered, so star-shapedness survives by construction.
-function trimRing(ring, rects, stillDisjoint = () => true) {
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (let i = 0; i < ring.length; i++) {
-      if (ring[i].atlas) continue;
-      const without = ring.slice(0, i).concat(ring.slice(i + 1));
-      // A vertex the recession planted is load-bearing in a way a bend-planted
-      // one is not: dropping it can hand back the very ground the ring just gave
-      // up. So the trim asks BOTH questions — does the ring still hold its own,
-      // and does it still hold nobody else's.
-      if (rects.every((r) => rectInsideRing(without, r)) && stillDisjoint(without)) { ring = without; changed = true; break; }
-    }
-  }
-  return ring;
+  return {
+    ring: pol.map((v) => ({ ...cart(v.th, v.r, centre), atlas: true })),
+    before, after: pol.length, dropped, mostMoved,
+  };
 }
 
 // ── build ────────────────────────────────────────────────────────────────────
@@ -577,16 +499,6 @@ const subtreeOf = (marks, id) => {
   });
 };
 
-// The Threshold's east flank, in bearings about its own ring centre: the right
-// side of the map, from north-east round through east to south-east. Named as a
-// half-turn rather than a vertex list because vertices move every pass and a
-// compass bearing does not.
-const EAST_FLANK = (th) => Math.cos(th) > 0.30;
-const SMOOTHED = { id: "the-threshold-district", flank: EAST_FLANK, name: "east flank" };
-
-// A pad wide enough that rounding the ring to whole metres can never pull the
-// boundary back onto a wall it was drawn to clear.
-const PAD = 4;
 // The recession's own under-claim: a metre of daylight between two rings, so a
 // chord between pulled-back vertices still clears the curve it is cutting along.
 const GAP = 1;
@@ -594,56 +506,38 @@ const GAP = 1;
 function buildAll(marks) {
   const built = [];
 
-  // ── phase 1 · trace, then bend to hold each region's own residents ─────────
+  // ── phase 1 · trace, and nothing else ──────────────────────────────────────
+  // THE BENDS ARE GONE (the founder's pivot, 2026-08-24): "the regions just get
+  // drawn to match their atlas renders. And then we can just make a Town
+  // Bulletin announcement with a list of names of every resident that is not
+  // within the region's bounds anymore." A ring is the wash the atlas draws,
+  // smoothed, minus any ground a neighbour's wash also covers — and a resident
+  // standing outside it is a HEADS-UP, not a reason to redraw a boundary around
+  // them. This knowingly supersedes the 08-22 include-residents word, sable's
+  // named case included; that reversal is the founder's, on tonight's record.
+  //
+  // It also makes the ring independent of where anyone lives, which is why this
+  // no longer needs a fixpoint: the trace depends on the atlas, the smoothing on
+  // the trace, the recession on the other rings. Residents move when their
+  // region's frame moves; the frame never moves back in response.
   for (const id of REGION_IDS) {
     const regionMark = marks.find((m) => m.slug === id);
     if (!regionMark) throw new Error(`region mark "${id}" is not in WORLD/marks — the roster and the record disagree; reconcile before drawing`);
-    let ring = atlasRingFor(id).map((p) => ({ ...toWorld(p), atlas: true }));
+    const ring = atlasRingFor(id).map((p) => ({ ...toWorld(p), atlas: true }));
     const centre = { x: ring.reduce((s, p) => s + p.x, 0) / ring.length, y: ring.reduce((s, p) => s + p.y, 0) / ring.length };
     assertStarShaped(ring, centre, id);
-
-    const kids = subtreeOf(marks, id);
-    const rects = kids.map(markRect);
-    const tweaks = [];
-    for (let pass = 0; pass < 8; pass++) {
-      const outside = kids.filter((k) => !rectInsideRing(ring, markRect(k)));
-      if (!outside.length) break;
-      for (const k of outside) {
-        const { ring: bent, raised, added, outward } = bendAround(ring, centre, markRect(k), PAD);
-        ring = bent;
-        if (raised || added) tweaks.push({ mark: k.id, by: k.by, raised, added, outward });
-      }
-    }
-    built.push({ id, regionMark, ring, centre, kids, rects, tweaks, smoothing: null, recessions: [] });
+    built.push({ id, regionMark, ring, centre, traced: polygonBBox(ring), kids: subtreeOf(marks, id), smoothing: null, recessions: [] });
   }
 
-  const byRegion = new Map(built.map((b) => [b.id, b]));
-
-  // ── phase 2 · smooth the named flank, clamped off every neighbour ──────────
-  // Ordered before the recession deliberately: smoothing may only ever ADD, and
-  // adding is the thing that can mint an overlap, so the pass that removes
-  // overlap must be the one that runs last.
-  for (const spec of [SMOOTHED]) {
-    const b = byRegion.get(spec.id);
-    if (!b) continue;
+  // ── phase 2 · smooth every ring ────────────────────────────────────────────
+  // Ordered BEFORE the recession, and the ordering is forced rather than chosen:
+  // smoothing can push a boundary outward, and pushing outward is the only thing
+  // that mints an overlap — so the pass that removes overlap has to be the one
+  // that runs last. Subtract-then-smooth would hand back ground the subtraction
+  // had just taken, and the disjoint law would be false at the end of the run.
+  for (const b of built) {
     const others = built.filter((o) => o.id !== b.id).map((o) => o.ring);
-    // THE SMOOTHING MAY NOT ENLARGE THE CLAIM, and this is the constraint that
-    // makes the pass safe to run on a live world at all.
-    //
-    // A region's at/extent IS its ring's bbox (claim-honesty), a bound child's
-    // numbers are offsets from that centre, and so a bbox that grows MOVES the
-    // frame — and every resident inside it travels, in the world, by however far
-    // the boundary moved. Unclamped, filling the Threshold's notches widened it
-    // 228 m east and carried sixty marks 72.5 m with it: limen's terraces, hal's
-    // green lamp house, iris, nyx, wren, seven-verity and the rest, all
-    // relocated to tidy up a coastline. tier-frames.test.mjs caught it against
-    // the pre-rule tree, which is exactly the falsifier's job.
-    //
-    // So the lift stops at the box the ring already claims. Filling a notch is
-    // interior work by nature — the lobes on either side of it already define
-    // the extreme — so the constraint costs the smoothing almost nothing and
-    // buys a pass that cannot move a single house.
-    const box = polygonBBox(b.ring);
+    const box = b.traced;
     const bboxLimit = (th) => {
       const dx = Math.cos(th), dy = Math.sin(th);
       let t = Infinity;
@@ -653,7 +547,6 @@ function buildAll(marks) {
       if (dy < -1e-12) t = Math.min(t, (box.miny - b.centre.y) / dy);
       return t;
     };
-    // How far this bearing may reach before it meets somebody else's boundary.
     const ceilingAt = (th) => {
       const dir = { x: Math.cos(th), y: Math.sin(th) };
       let nearest = Infinity;
@@ -663,107 +556,61 @@ function buildAll(marks) {
           if (t !== null && t < nearest) nearest = t;
         }
       }
-      const neighbour = Number.isFinite(nearest) ? nearest - GAP - PAD : Infinity;
+      const neighbour = Number.isFinite(nearest) ? nearest - GAP : Infinity;
       return Math.min(neighbour, bboxLimit(th));
     };
-    const before = b.ring.length;
-    const r = smoothFlank(b.ring, b.centre, spec.flank, ceilingAt);
+    const r = smoothRing(b.ring, b.centre, { ceilingAt });
     b.ring = r.ring;
-    b.smoothing = { name: spec.name, before, after: b.ring.length, ...r, ring: undefined };
-    // The law that makes this pass safe is that radii only rose; assert it here
-    // rather than trusting the sentence above it.
-    const stillOut = b.kids.filter((k) => !rectInsideRing(b.ring, markRect(k)));
-    if (stillOut.length)
-      throw new Error(`${spec.id}: smoothing the ${spec.name} dropped ${stillOut.map((k) => k.id).join(", ")} — radii were supposed only to rise; the pass is wrong, do not commit this state`);
-    const after = polygonBBox(b.ring);
-    if (after.minx < box.minx - 0.5 || after.maxx > box.maxx + 0.5 || after.miny < box.miny - 0.5 || after.maxy > box.maxy + 0.5)
-      throw new Error(`${spec.id}: smoothing the ${spec.name} grew the claim — the frame would move and every resident with it. REFUSED.`);
+    b.smoothing = { before: r.before, after: r.after, dropped: r.dropped, mostMoved: r.mostMoved };
   }
 
   // ── phase 3 · the recession · rings tile ───────────────────────────────────
-  // Every pair, and for each overlapping pair one question: whose residents
-  // stand on the shared ground? That region keeps it; the other pulls back.
+  // Two smoothed washes may still touch where the atlas drew them touching. The
+  // ground goes to whoever's resident stands on it; where nobody does, the
+  // larger claim yields, deterministically, so the run is repeatable.
   for (let i = 0; i < built.length; i++) {
     for (let j = i + 1; j < built.length; j++) {
       const A = built[i], B = built[j];
       if (ringsDisjoint(A.ring, B.ring)) continue;
-
-      // Who is standing in the shared ground.
       const standing = (owner, ring) => owner.kids.filter((k) => {
         const r = markRect(k);
         return pointInPolygon(r.x, r.y, ring);
       });
-      const aIn = standing(A, B.ring);       // A's residents on ground B also claims
-      const bIn = standing(B, A.ring);
-
-      let keeper = null, yielder = null;
+      const aIn = standing(A, B.ring), bIn = standing(B, A.ring);
+      const areaOf = (o) => { const bb = polygonBBox(o.ring); return (bb.maxx - bb.minx) * (bb.maxy - bb.miny); };
+      let keeper, yielder;
       if (aIn.length && !bIn.length) { keeper = A; yielder = B; }
       else if (bIn.length && !aIn.length) { keeper = B; yielder = A; }
-      else if (!aIn.length && !bIn.length) {
-        // Nobody lives there. The ring carrying BEND-PLANTED vertices in the
-        // shared ground is the one that reached; it goes back. Ties break to the
-        // larger claim, which is a rule rather than a coin so the generator is
-        // deterministic run to run.
-        const plantedIn = (owner, ring) => owner.ring.filter((v) => !v.atlas && pointInPolygon(v.x, v.y, ring)).length;
-        const pa = plantedIn(A, B.ring), pb = plantedIn(B, A.ring);
-        const areaOf = (o) => { const bb = polygonBBox(o.ring); return (bb.maxx - bb.minx) * (bb.maxy - bb.miny); };
-        if (pa !== pb) { keeper = pa > pb ? B : A; yielder = pa > pb ? A : B; }
-        else { keeper = areaOf(A) >= areaOf(B) ? B : A; yielder = areaOf(A) >= areaOf(B) ? A : B; }
-      } else {
-        throw new Error(
-          `${A.id} x ${B.id}: both regions have residents standing on the ground they share — ` +
-          `${aIn.map((k) => k.id).join(", ")} against ${bIn.map((k) => k.id).join(", ")}. ` +
-          `Two regions cannot both hold one patch of ground, and which house moves is the founder's ruling, not this generator's. REFUSED.`);
-      }
+      else { keeper = areaOf(A) >= areaOf(B) ? B : A; yielder = areaOf(A) >= areaOf(B) ? A : B; }
 
-      const out = recedeFrom(yielder.ring, yielder.centre, keeper.ring, yielder.rects, GAP);
+      // No containment to protect any more: a region that cannot recede without
+      // shedding a resident simply sheds one, onto the outsider list, which is
+      // the whole point of the pivot. So the recession is asked without rects.
+      const out = recedeFrom(yielder.ring, yielder.centre, keeper.ring, [], GAP);
       if (!out)
-        throw new Error(
-          `${yielder.id} cannot recede off ${keeper.id} without dropping one of its own residents — ` +
-          `the two regions need the same ground and the record cannot say so. REFUSED; this is a finding for the founder.`);
+        throw new Error(`${yielder.id} cannot recede off ${keeper.id} — the boundary will not come clean. REFUSED; this is a finding, not a state to commit.`);
       yielder.ring = out.ring;
       yielder.recessions.push({ from: keeper.id, receded: out.receded, mostBack: out.mostBack, forMarks: (keeper === A ? aIn : bIn).map((k) => k.id) });
     }
   }
 
-  // ── phase 4 · trim, round, restate the claim ───────────────────────────────
+  // ── phase 4 · round, restate the claim ─────────────────────────────────────
   const report = [], edits = [];
   for (const b of built) {
-    const others = built.filter((o) => o.id !== b.id).map((o) => o.ring);
-    // Trimming may not put back what the recession took, so a vertex only goes
-    // if the ring stays disjoint from everyone without it.
-    b.ring = trimRing(b.ring, b.rects, (candidate) => others.every((o) => ringsDisjoint(candidate, o)));
-
     const rounded = b.ring.map((p) => ({ x: Math.round(p.x), y: Math.round(p.y) }));
     const bb = polygonBBox(rounded);
     const at = { x: (bb.minx + bb.maxx) / 2, y: (bb.miny + bb.maxy) / 2 };
     const extent = { w: bb.maxx - bb.minx, h: bb.maxy - bb.miny };
-    const stillOut = b.kids.filter((k) => !rectInsideRing(rounded, markRect(k)));
-
-    const kidIds = new Set(b.kids.map((k) => k.id));
-    const byId = new Map(marks.map((m) => [m.id, m]));
-    const area = (m) => (m.extent?.w ?? 1) * (m.extent?.h ?? 1);
-    const mine = extent.w * extent.h;
-    const intruders = marks.filter((m) => {
-      if (kidIds.has(m.id) || m.id === b.regionMark.id || !m.at || m.far) return false;
-      if (m.kind === "predicated" || m.kind === "naming" || m.kind === "class") return false;
-      if (!rectInsideRing(rounded, markRect(m))) return false;
-      const p = m._parentMarkId ? byId.get(m._parentMarkId) : null;
-      return !p || area(p) >= mine;
-    });
-
     edits.push({ id: b.id, at, extent, points: rounded });
     report.push({
       id: b.id, by: b.regionMark.by, vertices: rounded.length,
       was: { at: b.regionMark.at, extent: b.regionMark.extent }, now: { at, extent },
-      kids: b.kids.length, stillOut: stillOut.map((k) => k.id), intruders: intruders.map((m) => m.id),
-      tweaks: b.tweaks, smoothing: b.smoothing, recessions: b.recessions,
+      kids: b.kids.length,
+      outside: b.kids.filter((k) => !rectInsideRing(rounded, markRect(k))).map((k) => k.id),
+      smoothing: b.smoothing, recessions: b.recessions,
     });
   }
 
-  // The law this whole pass exists for, checked on the rounded rings that
-  // actually reach the record — rounding moves a boundary by half a metre and
-  // that is exactly the size of the slivers this could leave behind.
   const collisions = [];
   for (let i = 0; i < edits.length; i++)
     for (let j = i + 1; j < edits.length; j++)
@@ -774,20 +621,97 @@ function buildAll(marks) {
   return { report, edits };
 }
 
+// ── THE OUTSIDER LIST · a generated artifact ─────────────────────────────────
+//
+// "we can just make a Town Bulletin announcement with a list of names of every
+// resident that is not within the region's bounds anymore as a heads up, with
+// the instructions on how to move… just taking care to not declare where someone
+// else's parcel already overlaps."
+//
+// This is that list, and it is GENERATED for the same reason the rings are: a
+// hand-typed list of who must move is a second definition of where the
+// boundaries are, and it would drift from the rings the day either moved.
+// Written beside the record as JSON (Ferry's letter list) and as markdown (the
+// Bulletin's source), both from one derivation.
+//
+// The `over` field carries the founder's caution: whether this mark's ground
+// already overlaps SOMEONE ELSE'S parcel, so nobody is told to move onto ground
+// another resident has already declared. It is computed against every parcel in
+// the record except the mark's own household's.
+function outsiderList(marks, edits) {
+  const byId = new Map(marks.map((m) => [m.id, m]));
+  const householdOf = (m) => String(m.by ?? "");
+  const parcels = marks.filter((m) => m.kind === "parcel" && m.at && !m.far);
+  const rows = [];
+
+  for (const e of edits) {
+    const region = marks.find((m) => m.slug === e.id);
+    for (const k of subtreeOf(marks, e.id)) {
+      const r = markRect(k);
+      if (rectInsideRing(e.points, r)) continue;
+      const over = parcels
+        .filter((p) => p.id !== k.id && householdOf(p) !== householdOf(k) && overlapArea(rect(p), r) > 0)
+        .map((p) => p.id);
+      rows.push({
+        resident: k.by, mark: k.id, kind: k.kind,
+        region: region.id, region_by: region.by,
+        at: { x: r.x, y: r.y }, extent: { w: r.w, h: r.h },
+        overlaps_another_parcel: over,
+      });
+    }
+  }
+  rows.sort((a, b) => a.resident.localeCompare(b.resident) || a.mark.localeCompare(b.mark));
+  return rows;
+}
+
+function writeOutsiders(rows) {
+  const byResident = new Map();
+  for (const r of rows) {
+    if (!byResident.has(r.resident)) byResident.set(r.resident, []);
+    byResident.get(r.resident).push(r);
+  }
+  writeFileSync(join(ROOT, "WORLD/region-outsiders.json"),
+    JSON.stringify({ generated_by: "tools/region-rings-gen.mjs", count: rows.length, residents: byResident.size, rows }, null, 2) + "\n");
+
+  const md = [];
+  md.push("# Residents standing outside their region's ring");
+  md.push("");
+  md.push("GENERATED by `tools/region-rings-gen.mjs` — do not hand-edit. Regenerate with the rings.");
+  md.push("");
+  md.push("The regions are now drawn to match their atlas renders exactly (the founder's ruling,");
+  md.push("2026-08-24), so a ring no longer bends outward to hold a resident who ended up outside the");
+  md.push("wash. These are the marks that fall outside as a result. Nothing has been moved and nothing");
+  md.push("is lost — the ground is exactly where its owner put it; only the region boundary changed.");
+  md.push("");
+  md.push(`${rows.length} mark(s) across ${byResident.size} resident(s).`);
+  md.push("");
+  for (const [resident, list] of [...byResident.entries()].sort()) {
+    md.push(`## ${resident}`);
+    md.push("");
+    for (const r of list) {
+      const where = `(${r.at.x}, ${r.at.y})`;
+      const caution = r.overlaps_another_parcel.length
+        ? `  ⚠ this ground already overlaps ${r.overlaps_another_parcel.join(", ")} — choose new coordinates rather than re-declaring here`
+        : "";
+      md.push(`- \`${r.mark}\` — ${r.kind}, at ${where}, ${r.extent.w}x${r.extent.h} m, under **${r.region}** (${r.region_by})${caution ? "\n" + caution : ""}`);
+    }
+    md.push("");
+  }
+  writeFileSync(join(ROOT, "WORLD/region-outsiders.md"), md.join("\n"));
+  return rows.length;
+}
+
 function printReport(report) {
   for (const r of report) {
     console.log(`\n${r.id}  (${r.by})  ${r.vertices} vertices, ${r.kids} marks in subtree`);
     console.log(`  claim: at(${r.was.at.x},${r.was.at.y}) ${r.was.extent.w}x${r.was.extent.h}  ->  at(${r.now.at.x},${r.now.at.y}) ${r.now.extent.w}x${r.now.extent.h}`);
-    for (const t of r.tweaks)
-      console.log(`  BENT for ${t.mark} (${t.by}): ${t.added} vertices added, ${t.raised} raised, up to +${Math.round(t.outward)} m outward`);
     if (r.smoothing) {
       const sm = r.smoothing;
-      console.log(`  SMOOTHED ${sm.name}: ${sm.lifted} notch(es) lifted up to +${Math.round(sm.mostUp)} m, ${sm.dropped} vertex/vertices dropped (${sm.before} -> ${sm.after})` + (sm.clamped ? `, ${sm.clamped} lift(s) clamped off a neighbour` : ""));
+      console.log(`  SMOOTHED: ${sm.before} -> ${sm.after} vertices (${sm.dropped} thinned away), boundary moved at most ${Math.round(sm.mostMoved)} m`);
     }
     for (const rc of r.recessions)
       console.log(`  RECEDED off ${rc.from}: ${rc.receded} radius pullback(s), up to -${Math.round(rc.mostBack)} m — that ground holds ${rc.forMarks.join(", ") || "no resident of either"}`);
-    if (r.stillOut.length) console.log(`  !! STILL OUTSIDE: ${r.stillOut.join(", ")}`);
-    if (r.intruders.length) console.log(`  !! ANNEXED (not this region's): ${r.intruders.join(", ")}`);
+    if (r.outside.length) console.log(`  OUTSIDE the ring (heads-up list): ${r.outside.length} — ${r.outside.slice(0, 6).join(", ")}${r.outside.length > 6 ? ", …" : ""}`);
   }
 }
 
@@ -817,29 +741,35 @@ function writeRegion(e) {
   writeFileSync(file, [lines[0], ...head, ...lines.slice(close)].join(eol));
 }
 
-// Restating a region's `at` as its ring's bbox MOVES the region's centre, and a
-// bound child's numbers are offsets from that centre — so every resident inside
-// travels with it (SCHEMA § the frame: "moving the parent carries it"). Their
-// new world positions are what the next ring must hold, so this is a fixpoint,
-// not a single pass: write, reload, re-bend, until a pass changes nothing.
-const same = (a, b) =>
-  a.at.x === b.at.x && a.at.y === b.at.y && a.extent.w === b.extent.w && a.extent.h === b.extent.h &&
-  a.points.length === b.points.length && a.points.every((p, i) => p.x === b.points[i].x && p.y === b.points[i].y);
+// ── run ──────────────────────────────────────────────────────────────────────
+//
+// ONE PASS, and the absence of a loop is the pivot showing through. While the
+// rings bent to hold residents, writing a ring moved a frame, which moved the
+// residents, which changed what the next ring had to hold — a genuine fixpoint,
+// and the generator iterated to it. A traced ring depends on the atlas, its
+// smoothing on the trace, and its recession on the other rings; none of them
+// depend on where anybody lives. So the answer does not move when the record
+// does, and a second pass would have nothing to say.
+//
+// The frame law still carries the residents once: restating a region's `at` as
+// its ring's bbox moves the region's centre, and a bound child travels with it.
+// That is why the outsider list is computed from a RELOADED tree — the marks as
+// they stand after the write, not as they stood before it.
+const { report, edits } = buildAll(loadMarks(MARKS_DIR));
+printReport(report);
 
-let pass = 0, last = null;
-for (; pass < 12; pass++) {
-  const { report, edits } = buildAll(loadMarks(MARKS_DIR));
-  const settled = last && edits.every((e, i) => same(e, last[i]));
-  if (settled || !WRITE) {
-    printReport(report);
-    if (!WRITE) console.log(`\n(report only, one pass — pass --write to put these rings into the records and settle the frame)`);
-    else console.log(`\nsettled after ${pass} write pass(es); ${edits.length} region ring(s) in the record. Run \`node tools/mark-lint.mjs\` and the suite.`);
-    break;
-  }
+if (!WRITE) {
+  const preview = outsiderList(loadMarks(MARKS_DIR), edits);
+  console.log(`\n(report only — nothing written. ${preview.length} mark(s) would fall outside their ring; pass --write to put the rings in the record and generate the list.)`);
+} else {
   for (const e of edits) writeRegion(e);
-  last = edits;
-}
-if (WRITE && pass >= 12) {
-  console.error("REFUSED to settle: twelve passes and the rings are still moving — the bend and the frame are chasing each other; do not commit this state");
-  process.exit(1);
+  const after = loadMarks(MARKS_DIR);
+  const rows = outsiderList(after, edits);
+  const n = writeOutsiders(rows);
+  const residents = new Set(rows.map((r) => r.resident)).size;
+  const flagged = rows.filter((r) => r.overlaps_another_parcel.length).length;
+  console.log(`\n${edits.length} region ring(s) written.`);
+  console.log(`outsiders: ${n} mark(s) across ${residents} resident(s)` + (flagged ? `, ${flagged} standing on ground another household's parcel also covers` : "") +
+    ` → WORLD/region-outsiders.json + .md`);
+  console.log(`Run \`node tools/mark-lint.mjs\` and the suite.`);
 }
