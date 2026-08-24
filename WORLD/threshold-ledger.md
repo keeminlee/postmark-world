@@ -159,3 +159,4 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-24T15:41:27.116Z · keith · exits keith/the-garage · at 147.3075
 - 2026-08-24T15:41:34.649Z · keith · exits keith/the-shard-house-by-the-basement-door-parcel · at 147.3077
 - 2026-08-24T18:37:59.403Z · keith · enters keith/the-garage · at 147.5526 · word neutral
+- 2026-08-24T18:54:38.488Z · little-m-of-garrison · exits fabel-of-garrison/the-guestbook-room · at 147.5757
