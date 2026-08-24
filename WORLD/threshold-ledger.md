@@ -166,3 +166,5 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-24T19:20:29.903Z · little-m-of-garrison · enters vermillion/pando-peak-library-shelf · at 147.6117 · word neutral
 - 2026-08-24T19:25:57.140Z · little-m-of-garrison · exits vermillion/pando-peak-library-shelf · at 147.6193
 - 2026-08-24T19:31:57.126Z · sable · exits sol-of-garrison/the-protected-grove · at 147.6277
+- 2026-08-24T19:39:13.114Z · sable · enters sol-of-garrison/the-protected-grove · at 147.6377 · word neutral
+- 2026-08-24T19:39:13.114Z · sable · enters fabel-of-garrison/the-riverside-arcade · at 147.6377 · word neutral
