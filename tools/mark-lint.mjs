@@ -370,6 +370,34 @@ const parentOf = (rec) => (rec._parentMarkId ? byId.get(rec._parentMarkId) : nul
 // everything, so it reads as "bound" — even though the root's centre IS the
 // world origin and the move would not shift it by a metre. Asking what the
 // frame would actually do catches that; asking only about tiers does not.
+// ── the declared-displacement exception ──────────────────────────────────────
+//
+// THE RULING (Keemin, 2026-08-24, on the region re-shape): the regions were
+// redrawn to match their atlas renders, which left marks standing outside the
+// region they are filed under. That displacement is A DECLARED ACT — the
+// founder's, on tonight's record — and the town already holds the shape for
+// exactly this case in tier-frames' REHOMED_BY_DECLARED_ACT: displaced by a
+// declared act is not a containment lie. This applies that existing shape to
+// the new act rather than inventing a law for it.
+//
+// THE LIST IS THE ACT'S OWN RECEIPT. `WORLD/region-outsiders.json` is generated
+// by tools/region-rings-gen.mjs from the rings themselves, in the same run that
+// draws them — so the exemption cannot drift from the boundaries that caused it,
+// and cannot be granted by hand. A mark is exempt only while it is ON the list.
+//
+// SELF-RETIRING, and that is the property that keeps this from becoming a
+// permanent hole in the gate: the next generation recomputes the list from the
+// rings, a resident who has moved their ground back inside their region is not
+// written into it, and the exemption dies with the row. Nothing has to remember
+// to revoke it. The falsifiers hold both directions — an unlisted (root) mark
+// still refuses, a listed one passes, and a listed mark that has moved home is
+// no longer listed and therefore no longer exempt.
+const OUTSIDERS_PATH = join(ROOT, "WORLD/region-outsiders.json");
+const DISPLACED_BY_DECLARED_ACT = new Set(
+  existsSync(OUTSIDERS_PATH)
+    ? (JSON.parse(readFileSync(OUTSIDERS_PATH, "utf8")).rows ?? []).map((r) => r.mark)
+    : []);
+
 for (const rec of marks) {
   if (rec._error || (rec.kind !== "sited" && rec.kind !== "parcel") || !rec.at) continue;
   if (rec.far) continue; // a horizon object (Pando) sits beyond the ground extent by construction (decision 008)
@@ -387,6 +415,17 @@ for (const rec of marks) {
   // below is for a NESTED filing the author chose that the geometry contradicts
   // — there the machinery may not pick a side.
   const rootParked = actual === null;
+  // The declared-displacement exception (above). Scoped as narrowly as the act
+  // itself: it forgives ONLY the tightest-container refusal, for ONLY the marks
+  // the generated list names, and every other clause of the gate still runs.
+  // A DISPLACED MARK IS NEITHER A REFUSAL NOR A PENDING REPAIR, and skipping the
+  // whole block rather than only the error arm is the point. A standing re-home
+  // is an instruction to move the FILING — and the founder's ruling is expressly
+  // that these residents decide for themselves whether to move their ground or
+  // their paper, by letter, in their own time. The gate saying "re-point this
+  // edge" would be the town making that choice on their behalf while calling it
+  // housekeeping.
+  if (DISPLACED_BY_DECLARED_ACT.has(rec.id)) continue;
   // A record whose parent is unreadable is not in byId at all, so `outranks` is
   // false and the frame walk starts above it — refusing is the only honest
   // answer about a tier nobody can read.

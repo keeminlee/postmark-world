@@ -21,7 +21,9 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { spawnSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMarks } from "./marks-fold.mjs";
@@ -277,6 +279,61 @@ test("THE CAUTION: every row's overlap flag matches the record's parcels, both w
   assert.deepEqual(wrong, [], "the don't-build-here caution must be exactly what the record says, or it is worse than no caution");
   assert.ok(OUTSIDERS.rows.some((r) => r.overlaps_another_parcel.length > 0),
     "…and at least one row actually carries the flag, or this assertion has never been exercised");
+});
+
+
+// ── FALSIFIER (f): the declared-displacement exception, both ways ────────────
+//
+// THE RULING (Keemin, 2026-08-24): "the outsider list IS a declared act… the
+// town already holds the shape for exactly this in REHOMED_BY_DECLARED_ACT —
+// displaced by a declared act is not a containment lie."
+//
+// An exception to a gate is the most dangerous thing to add to a gate, so it is
+// held from both sides. EXACT: only the marks the generated list names are
+// forgiven, and the forgiveness covers only the tightest-container clause. SELF-
+// RETIRING: the list is recomputed from the rings every generation, so a
+// resident who moves their ground back inside their region drops off it, and the
+// exemption dies with the row — nobody has to remember to revoke it.
+//
+// This runs the real lint, in a scratch copy of the record, three ways.
+test("THE EXCEPTION: listed marks are forgiven, unlisted ones are still refused, and it retires itself", () => {
+  const scratch = mkdtempSync(join(tmpdir(), "pm-lint-exc-"));
+  cpSync(join(ROOT, "WORLD"), join(scratch, "WORLD"), { recursive: true });
+  cpSync(join(ROOT, "tools"), join(scratch, "tools"), { recursive: true });
+  const listPath = join(scratch, "WORLD/region-outsiders.json");
+  const list = JSON.parse(readFileSync(listPath, "utf8"));
+  const runLint = () => {
+    const r = spawnSync(process.execPath, [join(scratch, "tools/mark-lint.mjs")], { encoding: "utf8" });
+    const m = /(\d+) error\(s\), (\d+) re-home\(s\)/.exec(r.stdout + r.stderr);
+    assert.ok(m, `the lint must report a count (got: ${(r.stdout + r.stderr).slice(-300)})`);
+    return { errors: Number(m[1]), rehomes: Number(m[2]) };
+  };
+
+  // 1 — as generated: the list forgives, and the gate is back to its own
+  //     pre-existing errors with nothing pending.
+  const asIs = runLint();
+  assert.equal(asIs.rehomes, 0, "a displaced mark must not stand as a pending re-home — the founder's ruling is that the resident chooses, not the sweep");
+
+  // 2 — take ONE row away and the gate refuses that mark again. This is the
+  //     whole exactness claim: the forgiveness comes from the list, not from
+  //     something softer that happens to be true of every outsider.
+  const victim = list.rows.find((r) => r.mark.startsWith("sable/")) ?? list.rows[0];
+  const without = { ...list, rows: list.rows.filter((r) => r.mark !== victim.mark) };
+  writeFileSync(listPath, JSON.stringify(without, null, 2));
+  const dropped = runLint();
+  assert.ok(dropped.errors + dropped.rehomes > asIs.errors + asIs.rehomes,
+    `dropping ${victim.mark} from the list must bring the gate back down on it — an exception that survives its own receipt is not an exception, it is a hole`);
+
+  // 3 — SELF-RETIRING, stated as the thing that actually happens: a mark that
+  //     has moved home is not written into the next list, and with the row gone
+  //     the exemption is gone. Step 2 IS that mechanism, exercised — so this
+  //     pins the other half: the exemption is keyed to the row and to nothing
+  //     else, so it cannot outlive it.
+  writeFileSync(listPath, JSON.stringify(list, null, 2));
+  const restored = runLint();
+  assert.deepEqual(restored, asIs, "restoring the row restores the exemption exactly — the row is the whole grant");
+
+  rmSync(scratch, { recursive: true, force: true });
 });
 
 // ── the two regions that get no ring, and why ────────────────────────────────
