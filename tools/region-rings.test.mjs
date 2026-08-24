@@ -24,7 +24,7 @@ import assert from "node:assert/strict";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMarks } from "./marks-fold.mjs";
-import { polygonOf, polygonBBox, ringMatchesClaim, rect, rectInsideRing, marksContain } from "./geometry.mjs";
+import { polygonOf, polygonBBox, ringMatchesClaim, rect, rectInsideRing, ringsDisjoint, marksContain } from "./geometry.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const marks = loadMarks(join(ROOT, "WORLD/marks"));
@@ -159,6 +159,124 @@ test("THE NAMED CASE: sable stands inside rei's lanternseed gardens, and the rin
   const workshop = { x: gardens.at.x - 760, y: gardens.at.y - 510, w: 6.5, h: 4.5 };
   assert.ok(rectInsideRing(ring, workshop),
     `the-bad-end-workshop's ground (${workshop.x},${workshop.y}) must be inside the gardens — "I'd love to have sable in the gardens"`);
+});
+
+
+// ── FALSIFIER (c): THE RINGS TILE ────────────────────────────────────────────
+// The founder, 2026-08-24: "the issue is the regions are still overlapping lol,
+// like lanternseed and town centre. because whatever that house on the bottom
+// left corner is is clearly geometrically in the town centre."
+//
+// The first commit took region-on-region overlap from 495,875 m2 to 74,950 m2
+// and zeroed four pairs; ONE pair survived, and this is the law that ends it.
+// It asks all sixty-six pairs rather than the pairs anyone has noticed, because
+// a law that only holds where someone looked is not a law — and because the
+// bend that mints an overlap can be planted by any future resident arriving
+// anywhere.
+//
+// Asked as DISJOINTNESS, not as an area under some tolerance: two rings either
+// share ground or they do not. `ringsDisjoint` is geometry.mjs's, the same
+// primitive the generator enforces with, so this cannot pass by grading the
+// record against a softer definition than the one that produced it.
+test("THE DISJOINT LAW: no two region rings share any ground, across every pair", () => {
+  const rings = RINGED.map((slug) => ({ slug, ring: polygonOf(bySlug(slug)) }));
+  const overlaps = [];
+  let pairs = 0;
+  for (let i = 0; i < rings.length; i++) {
+    for (let j = i + 1; j < rings.length; j++) {
+      pairs++;
+      if (!ringsDisjoint(rings[i].ring, rings[j].ring)) overlaps.push(`${rings[i].slug} x ${rings[j].slug}`);
+    }
+  }
+  assert.equal(pairs, 66, "twelve rings make sixty-six pairs — if this number drops, the roster shrank and the law got easier");
+  assert.deepEqual(overlaps, [], "a region standing on another region's ground is the overlap ruling unrelitigated");
+});
+
+// ── FALSIFIER (d): the ground goes to whoever lives on it ────────────────────
+// The disjoint law above says the rings do not overlap; it does not say the cut
+// went the right way. This does. The Town Centre receded off the Lanternseed
+// Gardens rather than the other way round, and the reason is in the record: the
+// shared ground had the Gardens' own residents standing on it.
+//
+// THE HOUSE THE FOUNDER WAS POINTING AT. His words were "whatever that house on
+// the bottom left corner is" — it is illuminator's looking room, at (503,-302),
+// which stood inside BOTH rings. (Not sable's crooked gate, which the first
+// commit's bend already resolved cleanly: sable is at (528,-1502), inside the
+// Gardens and nowhere near the Centre.) These are named so that a later reader
+// re-deriving the seam knows which houses decided it.
+test("THE SEAM: the shared ground went to the Gardens, because the Gardens' residents stand on it", () => {
+  const centre = bySlug("the-town-centre"), gardens = bySlug("the-lanternseed-gardens");
+  const C = polygonOf(centre), G = polygonOf(gardens);
+  assert.ok(ringsDisjoint(C, G), "the pair that survived the first commit is settled");
+
+  for (const id of ["illuminator/the-looking-room-parcel", "illuminator/the-looking-room", "rei/the-low-lanterns"]) {
+    const m = byId.get(id);
+    assert.ok(m, `${id} is in the record`);
+    assert.ok(groundUnder(gardens.id).some((k) => k.id === id), `${id} stands in the Gardens' subtree`);
+    assert.ok(rectInsideRing(G, rect(m)), `${id} stands inside the Gardens' ring — its own region holds it`);
+    assert.equal(rectInsideRing(C, rect(m)), false, `${id} must NOT also stand inside the Town Centre — that was the overlap`);
+  }
+  // and the house the founder actually saw is where he saw it
+  const looking = rect(byId.get("illuminator/the-looking-room"));
+  assert.equal(Math.round(looking.x), 503, "the looking room has not been moved to resolve the seam — the ring moved, the house did not");
+  assert.equal(Math.round(looking.y), -302);
+});
+
+// ── FALSIFIER (e): the Threshold's east flank is not spiky ───────────────────
+// The founder, same breath: "I think threshold district can just be smoothed out
+// a bit on the right side so it's not so spiky."
+//
+// "Spiky" measured rather than eyeballed: a notch is a vertex whose radius sits
+// BELOW the straight line its two neighbours draw in (bearing, radius) space,
+// and its depth is how far below. The terrace sweep left the east flank with
+// notches 260 m deep — bearings that fell between two terraces took a near
+// crossing while their neighbours took a far one. After smoothing the deepest is
+// 68 m, and the ring carries five fewer vertices.
+//
+// The bound is 120 m: comfortably below what the flank had and comfortably above
+// what it has, so this fails if the smoothing is removed and does not fail on
+// the next resident's bend. The vertex cap is the same shape of statement.
+test("SMOOTHED: the Threshold's east flank carries no deep notch, and fewer vertices than it did", () => {
+  const t = bySlug("the-threshold-district");
+  const ring = polygonOf(t);
+  const c = { x: ring.reduce((s, p) => s + p.x, 0) / ring.length, y: ring.reduce((s, p) => s + p.y, 0) / ring.length };
+  const wrap = (a) => { let d = a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
+  const pol = ring.map((p) => ({ th: Math.atan2(p.y - c.y, p.x - c.x), r: Math.hypot(p.x - c.x, p.y - c.y) }));
+  const east = (th) => Math.cos(th) > 0.30;
+
+  let deepest = 0, where = null;
+  for (let i = 0; i < pol.length; i++) {
+    const v = pol[i], a = pol[(i - 1 + pol.length) % pol.length], b = pol[(i + 1) % pol.length];
+    if (!east(v.th) || !east(a.th) || !east(b.th)) continue;
+    const span = wrap(b.th - a.th);
+    if (span <= 1e-9) continue;
+    const u = wrap(v.th - a.th) / span;
+    if (!(u > 0 && u < 1)) continue;
+    const dip = (a.r + (b.r - a.r) * u) - v.r;
+    if (dip > deepest) { deepest = dip; where = (v.th * 180 / Math.PI + 360) % 360; }
+  }
+  assert.ok(deepest < 120,
+    `the east flank's deepest notch is ${deepest.toFixed(0)} m below its own chord${where === null ? "" : ` at bearing ${where.toFixed(0)}deg`} — it was 260 m before smoothing and must stay well under it`);
+  assert.ok(ring.length <= 26, `${ring.length} vertices — the sweep left 29 and smoothing is supposed to take some away, not add`);
+  assert.ok(ring.length >= 8, "…without flattening the district into a box");
+});
+
+// ── FALSIFIER (f): smoothing bought its shape with nobody else's ground ──────
+// Two ways a flank can be smoothed dishonestly: by reaching into a neighbour,
+// and by growing the claim. The first is covered by the disjoint law above. The
+// second is this, and it is the one with teeth a reader would not guess: a
+// region's at/extent IS its ring's bbox, a bound child's numbers are offsets
+// from that centre, so ENLARGING a region moves its frame and every resident
+// travels with it. Unclamped, this smoothing widened the Threshold 228 m and
+// carried sixty marks 72.5 m east — tidying a coastline by relocating limen's
+// terraces, hal's green lamp house, iris, nyx, wren and the rest.
+//
+// So the Threshold's claim must be exactly what the terrace sweep gives it. The
+// numbers are the record's own from before this round.
+test("THE FRAME DID NOT MOVE: smoothing left the Threshold's claim exactly where it was", () => {
+  const t = bySlug("the-threshold-district");
+  assert.deepEqual(rect(t), { x: 1446.5, y: 1806, w: 1649, h: 2292 },
+    "the Threshold's claim is unchanged by the smoothing — a boundary may be redrawn, but redrawing it must not walk fifty houses across the map");
 });
 
 // ── the two regions that get no ring, and why ────────────────────────────────

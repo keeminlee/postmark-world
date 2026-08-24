@@ -200,6 +200,29 @@ export function rectInsideRing(ring, r) {
   }
   return true;
 }
+// Do two rings share any ground at all? EXACT, and deliberately not an area:
+// two simple polygons are disjoint exactly when no edge of one crosses an edge
+// of the other AND neither holds a vertex of the other. An area test would need
+// a clipper and would answer "0.4 m2" where the honest answer is "they touch";
+// the disjoint law wants a yes or a no, so it gets one.
+//
+// ONE HOME, because two readers need the same answer: region-rings-gen.mjs
+// enforces this and region-rings.test.mjs asserts it, and a generator grading
+// itself against its own private notion of "disjoint" would prove nothing.
+export function ringsDisjoint(A, B) {
+  for (let i = 0; i < A.length; i++) {
+    const a1 = A[i], a2 = A[(i + 1) % A.length];
+    for (let j = 0; j < B.length; j++) {
+      if (segmentsCross(a1, a2, B[j], B[(j + 1) % B.length])) return false;
+    }
+  }
+  // No crossings: either they are apart, or one is wholly inside the other —
+  // which one vertex apiece settles.
+  if (pointInPolygon(A[0].x, A[0].y, B)) return false;
+  if (pointInPolygon(B[0].x, B[0].y, A)) return false;
+  return true;
+}
+
 export function segmentsCross(p1, p2, p3, p4) {
   const s = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
   const d1 = s(p3, p4, p1), d2 = s(p3, p4, p2), d3 = s(p1, p2, p3), d4 = s(p1, p2, p4);

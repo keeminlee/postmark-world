@@ -49,15 +49,46 @@
 // test is strictly stronger: every one of those cell centres lies inside the
 // mark, so a mark this generator holds is a mark `marksContain` holds too.
 //
+// THE DISJOINT LAW — RINGS TILE (Keemin, 2026-08-24: "the issue is the regions
+// are still overlapping lol, like lanternseed and town centre"). The bend above
+// is pure ADDITION: a ring reaches out to hold its own resident and no ring ever
+// gives anything back, so every bend that reaches across a neighbour's drawn
+// wash MINTS an overlap. Twelve rings, sixty-six pairs, and after the first
+// commit exactly one pair still shared ground.
+//
+// So the bends are followed by a RECESSION. Where two rings overlap, the ground
+// goes to the region whose own resident stands on it, and the other ring pulls
+// its boundary back off that ground — radially, in its own polar frame, which is
+// the same move the bend makes and therefore keeps the ring star-shaped and
+// simple. A resident's ground belongs to its own region's ring EXCLUSIVELY.
+//
+// The recession UNDER-claims by a metre on purpose, for the reason the sampler
+// above under-claims: a polygon chord cannot follow a curve exactly, and if it
+// must miss, it must miss on the side that leaves no overlap. Where a recession
+// would push a region off one of ITS OWN residents, this refuses out loud rather
+// than choosing between two houses — two regions needing one patch of ground is
+// a question for the founder, not an arithmetic for a generator.
+//
+// THE THRESHOLD'S EAST FLANK (same ruling: "threshold district can just be
+// smoothed out a bit on the right side so it's not so spiky"). The terrace sweep
+// leaves a sawtooth there — the bearings that fall between two terraces take a
+// near crossing and the ones that hit a terrace end-on take a far one, so the
+// radius alternates by hundreds of metres. Smoothing RAISES the notches to the
+// chord between their neighbours and never lowers a radius, which is what makes
+// it safe: containment is monotone in radius, so no resident can fall out of a
+// ring that only grew. It is clamped so it can never grow INTO a neighbour —
+// smoothing a flank must not buy its shape with someone else's ground.
+//
 // Claim-honesty (SCHEMA v2, the gate built before the first ring): after
 // tracing and bending, each region's `at`/`extent` is RESTATED as the ring's
-// bounding box, so the coarse claim never lies about the fine shape.
+// bounding box, so the coarse claim never lies about the fine shape. Receding
+// and smoothing move those boxes again, so the restatement happens after both.
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMarks } from "./marks-fold.mjs";
-import { polygonBBox, pointInPolygon, rectInsideRing, rectCorners } from "./geometry.mjs";
+import { polygonBBox, pointInPolygon, rectInsideRing, rectCorners, ringsDisjoint } from "./geometry.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const argOf = (flag, dflt = null) => {
@@ -347,6 +378,164 @@ function bendAround(ring, centre, r, pad) {
   return { ring: backToRing(out), raised, added, outward };
 }
 
+// ── the recession · rings tile ───────────────────────────────────────────────
+//
+// `ring` gives up every point it holds inside `other`. Worked radially about the
+// ring's own centre, exactly as the bend works: the bend raises radii, this
+// lowers them, and both leave an angle-ordered ring angle-ordered.
+//
+// Two things make it exact enough to satisfy an exact disjointness test. First,
+// a vertex is planted on every bearing where the two boundaries cross, so the
+// receding edge turns where the neighbour turns instead of cutting a chord
+// across it. Second, every radius that must come back comes back to the
+// neighbour's boundary MINUS `pad` — the under-claim — so the chord between two
+// pulled-back vertices still clears the curve between them.
+//
+// It returns null when it cannot finish without pushing the region off one of
+// its own residents. The caller refuses; it does not pick a house.
+function recedeFrom(ring, centre, other, rects, pad) {
+  const freeAt = (th) => {
+    const dir = { x: Math.cos(th), y: Math.sin(th) };
+    let nearest = Infinity;
+    for (let i = 0; i < other.length; i++) {
+      const t = raySegment(centre, dir, other[i], other[(i + 1) % other.length]);
+      if (t !== null && t < nearest) nearest = t;
+    }
+    return nearest;                            // Infinity = this bearing never meets `other`
+  };
+
+  let pol = ring.map((v) => ({ ...polar(v, centre), atlas: v.atlas }));
+  const back = (P) => P.map((v) => ({ ...cart(v.th, v.r, centre), atlas: v.atlas }));
+
+  // Plant a vertex on every bearing where the boundaries cross, so the cut can
+  // follow the neighbour's own corners rather than chord across them.
+  const crossings = [];
+  for (let i = 0; i < ring.length; i++) {
+    const a = ring[i], b = ring[(i + 1) % ring.length];
+    for (let j = 0; j < other.length; j++) {
+      const c = other[j], d = other[(j + 1) % other.length];
+      if (!segsCross(a, b, c, d)) continue;
+      crossings.push(polar(c, centre).th, polar(d, centre).th);
+    }
+  }
+  for (const th of crossings) {
+    if (pol.some((v) => Math.abs(dth(v.th, th)) < 1e-9)) continue;
+    const r = reachAt(back(pol), centre, th);
+    if (!(r > 0)) continue;
+    let ins = pol.length;
+    for (let i = 0; i < pol.length; i++) {
+      const a = pol[i].th, b = pol[(i + 1) % pol.length].th;
+      if (dth(th, a) > 0 && dth(b, th) > 0) { ins = i + 1; break; }
+    }
+    pol.splice(ins, 0, { th, r, atlas: false });
+  }
+
+  // Pull every radius back off the neighbour, then keep planting midpoints
+  // wherever an edge still cuts through, until nothing crosses. Bounded: a
+  // boundary that will not come clean is a refusal, never a silent overlap.
+  let receded = 0, mostBack = 0;
+  for (let pass = 0; pass < 8; pass++) {
+    for (const v of pol) {
+      const free = freeAt(v.th);
+      const cap = Number.isFinite(free) ? free - pad : Infinity;
+      if (v.r > cap) { mostBack = Math.max(mostBack, v.r - cap); v.r = Math.max(0, cap); receded++; }
+    }
+    const now = back(pol);
+    if (ringsDisjoint(now, other)) {
+      if (!rects.every((r) => rectInsideRing(now, r))) return null;
+      return { ring: now, receded, mostBack };
+    }
+    // still touching: plant a midpoint bearing on every edge that still cuts
+    const pts = back(pol);
+    const extra = [];
+    for (let i = 0; i < pol.length; i++) {
+      const a = pts[i], b = pts[(i + 1) % pol.length];
+      let hits = false;
+      for (let j = 0; j < other.length; j++) if (segsCross(a, b, other[j], other[(j + 1) % other.length])) { hits = true; break; }
+      if (!hits) continue;
+      const mid = pol[i].th + dth(pol[(i + 1) % pol.length].th, pol[i].th) / 2;
+      extra.push({ at: i + 1, th: norm(mid) });
+    }
+    if (!extra.length) break;
+    for (let k = extra.length - 1; k >= 0; k--) {
+      const e = extra[k];
+      pol.splice(e.at, 0, { th: e.th, r: reachAt(back(pol), centre, e.th), atlas: false });
+    }
+  }
+  return null;
+}
+
+// geometry.mjs's segmentsCross, under a local name — the same primitive the
+// falsifier uses, never a second opinion about whether two edges meet.
+function segsCross(p1, p2, p3, p4) {
+  const s2 = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+  const d1 = s2(p3, p4, p1), d2 = s2(p3, p4, p2), d3 = s2(p1, p2, p3), d4 = s2(p1, p2, p4);
+  return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0));
+}
+
+// ── smoothing one flank ──────────────────────────────────────────────────────
+//
+// The radial profile of a spiky flank dips and rises; smoothing lifts each dip
+// to the straight line joining its neighbours, in (bearing, radius) space, and
+// repeats until no vertex sits below that chord. That is exactly "make the
+// profile concave", i.e. the flank convex outward, and it is the smallest change
+// that removes a notch: the lifted vertex lands ON the line its neighbours
+// already draw, so the boundary through it is the boundary they implied.
+//
+// RADII ONLY RISE. Containment is monotone in radius, so a ring that only grew
+// cannot have dropped a resident — the include-residents law survives this pass
+// for free rather than by re-checking it.
+//
+// `ceilingAt` is the clamp: smoothing may not take a metre of anyone else's
+// ground, so a lift stops short of the nearest other ring. A notch that cannot
+// be lifted stays a notch, and is reported rather than forced.
+function smoothFlank(ring, centre, inFlank, ceilingAt) {
+  let pol = ring.map((v) => ({ ...polar(v, centre), atlas: v.atlas }));
+  let lifted = 0, mostUp = 0, clamped = 0;
+  for (let pass = 0; pass < 24; pass++) {
+    let changed = false;
+    for (let i = 0; i < pol.length; i++) {
+      const v = pol[i];
+      if (!inFlank(v.th)) continue;
+      const a = pol[(i - 1 + pol.length) % pol.length], b = pol[(i + 1) % pol.length];
+      if (!inFlank(a.th) || !inFlank(b.th)) continue;   // the flank's own ends stay put
+      const span = dth(b.th, a.th);
+      if (span <= 1e-9) continue;
+      const t = dth(v.th, a.th) / span;
+      if (!(t > 0 && t < 1)) continue;
+      const chord = a.r + (b.r - a.r) * t;
+      if (chord <= v.r + 1e-9) continue;                // already at or above the chord
+      const ceil = ceilingAt(v.th);
+      const want = Math.min(chord, ceil);
+      if (want <= v.r + 1e-9) { clamped++; continue; }
+      if (want < chord - 1e-9) clamped++;
+      mostUp = Math.max(mostUp, want - v.r);
+      v.r = want; lifted++; changed = true;
+    }
+    if (!changed) break;
+  }
+  // A vertex now sitting ON the chord its neighbours draw says nothing the edge
+  // did not already say. Drop it — this is where the vertex count comes down —
+  // but never an atlas vertex, which is the drawing itself.
+  let dropped = 0, changed = true;
+  while (changed) {
+    changed = false;
+    for (let i = 0; i < pol.length; i++) {
+      const v = pol[i];
+      if (v.atlas || !inFlank(v.th)) continue;
+      const a = pol[(i - 1 + pol.length) % pol.length], b = pol[(i + 1) % pol.length];
+      const span = dth(b.th, a.th);
+      if (span <= 1e-9) continue;
+      const t = dth(v.th, a.th) / span;
+      if (!(t > 0 && t < 1)) continue;
+      if (Math.abs(a.r + (b.r - a.r) * t - v.r) > 1) continue;
+      pol = pol.slice(0, i).concat(pol.slice(i + 1));
+      dropped++; changed = true; break;
+    }
+  }
+  return { ring: pol.map((v) => ({ ...cart(v.th, v.r, centre), atlas: v.atlas })), lifted, dropped, mostUp, clamped };
+}
+
 // Drop a BEND-PLANTED vertex whenever the ring still holds every mark it must
 // without it. A bend plants generously — four corner bearings whether or not all
 // four say anything — and a boundary a resident may read should not carry a
@@ -354,14 +543,18 @@ function bendAround(ring, centre, r, pad) {
 // dropped: they are the drawing, and thinning them would quietly turn the wash
 // into a polygon nobody drew. Removing a vertex from an angle-ordered ring
 // leaves it angle-ordered, so star-shapedness survives by construction.
-function trimRing(ring, rects) {
+function trimRing(ring, rects, stillDisjoint = () => true) {
   let changed = true;
   while (changed) {
     changed = false;
     for (let i = 0; i < ring.length; i++) {
       if (ring[i].atlas) continue;
       const without = ring.slice(0, i).concat(ring.slice(i + 1));
-      if (rects.every((r) => rectInsideRing(without, r))) { ring = without; changed = true; break; }
+      // A vertex the recession planted is load-bearing in a way a bend-planted
+      // one is not: dropping it can hand back the very ground the ring just gave
+      // up. So the trim asks BOTH questions — does the ring still hold its own,
+      // and does it still hold nobody else's.
+      if (rects.every((r) => rectInsideRing(without, r)) && stillDisjoint(without)) { ring = without; changed = true; break; }
     }
   }
   return ring;
@@ -384,8 +577,24 @@ const subtreeOf = (marks, id) => {
   });
 };
 
+// The Threshold's east flank, in bearings about its own ring centre: the right
+// side of the map, from north-east round through east to south-east. Named as a
+// half-turn rather than a vertex list because vertices move every pass and a
+// compass bearing does not.
+const EAST_FLANK = (th) => Math.cos(th) > 0.30;
+const SMOOTHED = { id: "the-threshold-district", flank: EAST_FLANK, name: "east flank" };
+
+// A pad wide enough that rounding the ring to whole metres can never pull the
+// boundary back onto a wall it was drawn to clear.
+const PAD = 4;
+// The recession's own under-claim: a metre of daylight between two rings, so a
+// chord between pulled-back vertices still clears the curve it is cutting along.
+const GAP = 1;
+
 function buildAll(marks) {
-  const report = [], edits = [];
+  const built = [];
+
+  // ── phase 1 · trace, then bend to hold each region's own residents ─────────
   for (const id of REGION_IDS) {
     const regionMark = marks.find((m) => m.slug === id);
     if (!regionMark) throw new Error(`region mark "${id}" is not in WORLD/marks — the roster and the record disagree; reconcile before drawing`);
@@ -396,9 +605,6 @@ function buildAll(marks) {
     const kids = subtreeOf(marks, id);
     const rects = kids.map(markRect);
     const tweaks = [];
-    // A pad wide enough that rounding the ring to whole metres can never pull the
-    // boundary back onto a wall it was drawn to clear.
-    const PAD = 4;
     for (let pass = 0; pass < 8; pass++) {
       const outside = kids.filter((k) => !rectInsideRing(ring, markRect(k)));
       if (!outside.length) break;
@@ -408,41 +614,163 @@ function buildAll(marks) {
         if (raised || added) tweaks.push({ mark: k.id, by: k.by, raised, added, outward });
       }
     }
-    ring = trimRing(ring, rects);
+    built.push({ id, regionMark, ring, centre, kids, rects, tweaks, smoothing: null, recessions: [] });
+  }
 
-    const rounded = ring.map((p) => ({ x: Math.round(p.x), y: Math.round(p.y) }));
+  const byRegion = new Map(built.map((b) => [b.id, b]));
+
+  // ── phase 2 · smooth the named flank, clamped off every neighbour ──────────
+  // Ordered before the recession deliberately: smoothing may only ever ADD, and
+  // adding is the thing that can mint an overlap, so the pass that removes
+  // overlap must be the one that runs last.
+  for (const spec of [SMOOTHED]) {
+    const b = byRegion.get(spec.id);
+    if (!b) continue;
+    const others = built.filter((o) => o.id !== b.id).map((o) => o.ring);
+    // THE SMOOTHING MAY NOT ENLARGE THE CLAIM, and this is the constraint that
+    // makes the pass safe to run on a live world at all.
+    //
+    // A region's at/extent IS its ring's bbox (claim-honesty), a bound child's
+    // numbers are offsets from that centre, and so a bbox that grows MOVES the
+    // frame — and every resident inside it travels, in the world, by however far
+    // the boundary moved. Unclamped, filling the Threshold's notches widened it
+    // 228 m east and carried sixty marks 72.5 m with it: limen's terraces, hal's
+    // green lamp house, iris, nyx, wren, seven-verity and the rest, all
+    // relocated to tidy up a coastline. tier-frames.test.mjs caught it against
+    // the pre-rule tree, which is exactly the falsifier's job.
+    //
+    // So the lift stops at the box the ring already claims. Filling a notch is
+    // interior work by nature — the lobes on either side of it already define
+    // the extreme — so the constraint costs the smoothing almost nothing and
+    // buys a pass that cannot move a single house.
+    const box = polygonBBox(b.ring);
+    const bboxLimit = (th) => {
+      const dx = Math.cos(th), dy = Math.sin(th);
+      let t = Infinity;
+      if (dx > 1e-12) t = Math.min(t, (box.maxx - b.centre.x) / dx);
+      if (dx < -1e-12) t = Math.min(t, (box.minx - b.centre.x) / dx);
+      if (dy > 1e-12) t = Math.min(t, (box.maxy - b.centre.y) / dy);
+      if (dy < -1e-12) t = Math.min(t, (box.miny - b.centre.y) / dy);
+      return t;
+    };
+    // How far this bearing may reach before it meets somebody else's boundary.
+    const ceilingAt = (th) => {
+      const dir = { x: Math.cos(th), y: Math.sin(th) };
+      let nearest = Infinity;
+      for (const o of others) {
+        for (let i = 0; i < o.length; i++) {
+          const t = raySegment(b.centre, dir, o[i], o[(i + 1) % o.length]);
+          if (t !== null && t < nearest) nearest = t;
+        }
+      }
+      const neighbour = Number.isFinite(nearest) ? nearest - GAP - PAD : Infinity;
+      return Math.min(neighbour, bboxLimit(th));
+    };
+    const before = b.ring.length;
+    const r = smoothFlank(b.ring, b.centre, spec.flank, ceilingAt);
+    b.ring = r.ring;
+    b.smoothing = { name: spec.name, before, after: b.ring.length, ...r, ring: undefined };
+    // The law that makes this pass safe is that radii only rose; assert it here
+    // rather than trusting the sentence above it.
+    const stillOut = b.kids.filter((k) => !rectInsideRing(b.ring, markRect(k)));
+    if (stillOut.length)
+      throw new Error(`${spec.id}: smoothing the ${spec.name} dropped ${stillOut.map((k) => k.id).join(", ")} — radii were supposed only to rise; the pass is wrong, do not commit this state`);
+    const after = polygonBBox(b.ring);
+    if (after.minx < box.minx - 0.5 || after.maxx > box.maxx + 0.5 || after.miny < box.miny - 0.5 || after.maxy > box.maxy + 0.5)
+      throw new Error(`${spec.id}: smoothing the ${spec.name} grew the claim — the frame would move and every resident with it. REFUSED.`);
+  }
+
+  // ── phase 3 · the recession · rings tile ───────────────────────────────────
+  // Every pair, and for each overlapping pair one question: whose residents
+  // stand on the shared ground? That region keeps it; the other pulls back.
+  for (let i = 0; i < built.length; i++) {
+    for (let j = i + 1; j < built.length; j++) {
+      const A = built[i], B = built[j];
+      if (ringsDisjoint(A.ring, B.ring)) continue;
+
+      // Who is standing in the shared ground.
+      const standing = (owner, ring) => owner.kids.filter((k) => {
+        const r = markRect(k);
+        return pointInPolygon(r.x, r.y, ring);
+      });
+      const aIn = standing(A, B.ring);       // A's residents on ground B also claims
+      const bIn = standing(B, A.ring);
+
+      let keeper = null, yielder = null;
+      if (aIn.length && !bIn.length) { keeper = A; yielder = B; }
+      else if (bIn.length && !aIn.length) { keeper = B; yielder = A; }
+      else if (!aIn.length && !bIn.length) {
+        // Nobody lives there. The ring carrying BEND-PLANTED vertices in the
+        // shared ground is the one that reached; it goes back. Ties break to the
+        // larger claim, which is a rule rather than a coin so the generator is
+        // deterministic run to run.
+        const plantedIn = (owner, ring) => owner.ring.filter((v) => !v.atlas && pointInPolygon(v.x, v.y, ring)).length;
+        const pa = plantedIn(A, B.ring), pb = plantedIn(B, A.ring);
+        const areaOf = (o) => { const bb = polygonBBox(o.ring); return (bb.maxx - bb.minx) * (bb.maxy - bb.miny); };
+        if (pa !== pb) { keeper = pa > pb ? B : A; yielder = pa > pb ? A : B; }
+        else { keeper = areaOf(A) >= areaOf(B) ? B : A; yielder = areaOf(A) >= areaOf(B) ? A : B; }
+      } else {
+        throw new Error(
+          `${A.id} x ${B.id}: both regions have residents standing on the ground they share — ` +
+          `${aIn.map((k) => k.id).join(", ")} against ${bIn.map((k) => k.id).join(", ")}. ` +
+          `Two regions cannot both hold one patch of ground, and which house moves is the founder's ruling, not this generator's. REFUSED.`);
+      }
+
+      const out = recedeFrom(yielder.ring, yielder.centre, keeper.ring, yielder.rects, GAP);
+      if (!out)
+        throw new Error(
+          `${yielder.id} cannot recede off ${keeper.id} without dropping one of its own residents — ` +
+          `the two regions need the same ground and the record cannot say so. REFUSED; this is a finding for the founder.`);
+      yielder.ring = out.ring;
+      yielder.recessions.push({ from: keeper.id, receded: out.receded, mostBack: out.mostBack, forMarks: (keeper === A ? aIn : bIn).map((k) => k.id) });
+    }
+  }
+
+  // ── phase 4 · trim, round, restate the claim ───────────────────────────────
+  const report = [], edits = [];
+  for (const b of built) {
+    const others = built.filter((o) => o.id !== b.id).map((o) => o.ring);
+    // Trimming may not put back what the recession took, so a vertex only goes
+    // if the ring stays disjoint from everyone without it.
+    b.ring = trimRing(b.ring, b.rects, (candidate) => others.every((o) => ringsDisjoint(candidate, o)));
+
+    const rounded = b.ring.map((p) => ({ x: Math.round(p.x), y: Math.round(p.y) }));
     const bb = polygonBBox(rounded);
     const at = { x: (bb.minx + bb.maxx) / 2, y: (bb.miny + bb.maxy) / 2 };
     const extent = { w: bb.maxx - bb.minx, h: bb.maxy - bb.miny };
-    const stillOut = kids.filter((k) => !rectInsideRing(rounded, markRect(k)));
+    const stillOut = b.kids.filter((k) => !rectInsideRing(rounded, markRect(k)));
 
-    // Ground taken that is NOT this region's: a mark outside the subtree that
-    // the ring now holds. The lint refuses that too (its edge would no longer
-    // name its tightest container), so a bend that annexes a neighbour is a
-    // failure of this generator, not a finding for the reader to shrug at.
-    const kidIds = new Set(kids.map((k) => k.id));
+    const kidIds = new Set(b.kids.map((k) => k.id));
     const byId = new Map(marks.map((m) => [m.id, m]));
     const area = (m) => (m.extent?.w ?? 1) * (m.extent?.h ?? 1);
     const mine = extent.w * extent.h;
     const intruders = marks.filter((m) => {
-      if (kidIds.has(m.id) || m.id === regionMark.id || !m.at || m.far) return false;
+      if (kidIds.has(m.id) || m.id === b.regionMark.id || !m.at || m.far) return false;
       if (m.kind === "predicated" || m.kind === "naming" || m.kind === "class") return false;
       if (!rectInsideRing(rounded, markRect(m))) return false;
-      // Merely standing inside is not annexation: `placementParent` names the
-      // TIGHTEST container, so a mark whose own directory parent is smaller than
-      // this ring keeps that parent and its edge still tells the truth.
       const p = m._parentMarkId ? byId.get(m._parentMarkId) : null;
       return !p || area(p) >= mine;
     });
 
-    edits.push({ id, at, extent, points: rounded });
+    edits.push({ id: b.id, at, extent, points: rounded });
     report.push({
-      id, by: regionMark.by, vertices: rounded.length,
-      was: { at: regionMark.at, extent: regionMark.extent }, now: { at, extent },
-      kids: kids.length, stillOut: stillOut.map((k) => k.id), intruders: intruders.map((m) => m.id),
-      tweaks,
+      id: b.id, by: b.regionMark.by, vertices: rounded.length,
+      was: { at: b.regionMark.at, extent: b.regionMark.extent }, now: { at, extent },
+      kids: b.kids.length, stillOut: stillOut.map((k) => k.id), intruders: intruders.map((m) => m.id),
+      tweaks: b.tweaks, smoothing: b.smoothing, recessions: b.recessions,
     });
   }
+
+  // The law this whole pass exists for, checked on the rounded rings that
+  // actually reach the record — rounding moves a boundary by half a metre and
+  // that is exactly the size of the slivers this could leave behind.
+  const collisions = [];
+  for (let i = 0; i < edits.length; i++)
+    for (let j = i + 1; j < edits.length; j++)
+      if (!ringsDisjoint(edits[i].points, edits[j].points)) collisions.push(`${edits[i].id} x ${edits[j].id}`);
+  if (collisions.length)
+    throw new Error(`the rings still share ground after the recession: ${collisions.join(", ")} — REFUSED, do not commit this state`);
+
   return { report, edits };
 }
 
@@ -452,6 +780,12 @@ function printReport(report) {
     console.log(`  claim: at(${r.was.at.x},${r.was.at.y}) ${r.was.extent.w}x${r.was.extent.h}  ->  at(${r.now.at.x},${r.now.at.y}) ${r.now.extent.w}x${r.now.extent.h}`);
     for (const t of r.tweaks)
       console.log(`  BENT for ${t.mark} (${t.by}): ${t.added} vertices added, ${t.raised} raised, up to +${Math.round(t.outward)} m outward`);
+    if (r.smoothing) {
+      const sm = r.smoothing;
+      console.log(`  SMOOTHED ${sm.name}: ${sm.lifted} notch(es) lifted up to +${Math.round(sm.mostUp)} m, ${sm.dropped} vertex/vertices dropped (${sm.before} -> ${sm.after})` + (sm.clamped ? `, ${sm.clamped} lift(s) clamped off a neighbour` : ""));
+    }
+    for (const rc of r.recessions)
+      console.log(`  RECEDED off ${rc.from}: ${rc.receded} radius pullback(s), up to -${Math.round(rc.mostBack)} m — that ground holds ${rc.forMarks.join(", ") || "no resident of either"}`);
     if (r.stillOut.length) console.log(`  !! STILL OUTSIDE: ${r.stillOut.join(", ")}`);
     if (r.intruders.length) console.log(`  !! ANNEXED (not this region's): ${r.intruders.join(", ")}`);
   }

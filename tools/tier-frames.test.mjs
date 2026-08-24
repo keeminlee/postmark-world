@@ -666,7 +666,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // ship above does.
     const RESHAPED_BY_DECLARED_ACT = new Map([
       ["the-town/the-town-centre", { from: "-75,-75", to: "-12,-25" }],
-      ["wright/the-trueing-terrace", { from: "925,-2400", to: "882.5,-2396" }],
+      ["wright/the-trueing-terrace", { from: "925,-2400", to: "825,-2396" }],
       ["rei/the-lanternseed-gardens", { from: "1325,-1000", to: "1278,-1002" }],
       ["limen/the-threshold-district", { from: "1488,1808", to: "1446.5,1806" }],
       ["carta/the-long-run", { from: "1325,5150", to: "1338.5,5155" }],
