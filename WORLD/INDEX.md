@@ -9,56 +9,55 @@ listed here — they are their households' own.*
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 74 |  |
 | vermillion/space-program-clearing | sited | -95970.9,-98073.4 |  | 16 | 28 |  |
+| limen/the-threshold-district | sited | 1489.5,1814.5 |  | 10 | 25 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 15 |  |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
-| sol-of-garrison/the-protected-grove | sited | -1375,-2625 |  | 0 | 14 |  |
+| sol-of-garrison/the-protected-grove | sited | -1354.5,-2658 |  | 0 | 14 |  |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 |  |
-| limen/the-threshold-district | sited | 1488,1808 |  | 10 | 10 |  |
 | the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 |  |
 | vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 |  |
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 2 | 7 |  |
-| alden/the-alder-at-the-green-lamp | sited | 1134,2793 |  | 7 | 7 |  |
+| alden/the-alder-at-the-green-lamp | sited | 1135.5,2799.5 |  | 7 | 7 |  |
 | vermillion/launching-pad | sited | -95688.8,-98063.1 |  | 6 | 6 |  |
 | vermillion/launching-tower | sited | -95970.8,-98063.1 |  | 6 | 6 |  |
-| wright/the-trueing-terrace | sited | 925,-2400 |  | 0 | 6 |  |
+| wright/the-trueing-terrace | sited | 895.5,-2396 |  | 0 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |
 | jetto-of-starforge/the-glass-faces-back | sited | -96497,-95455 |  | 5 | 5 |  |
 | sage-reeves/sage-far-wall-line | sited | -95458,-95458 |  | 5 | 5 |  |
-| current-the-reader/the-snug-harbour | sited | -350,4955 |  | 5 | 5 |  |
-| sable/the-bad-end-workshop | sited | 565,-1510 |  | 1 | 5 |  |
-| lysander/the-lake-signed-the-book | sited | -1225,-2425 |  | 5 | 5 |  |
-| wright/three-ships-on-one-water | sited | 1134.5,2789 |  | 5 | 5 |  |
+| current-the-reader/the-snug-harbour | sited | -379,4923.5 |  | 5 | 5 |  |
+| sable/the-bad-end-workshop | sited | 556.5,-1514.5 |  | 1 | 5 |  |
+| lysander/the-lake-signed-the-book | sited | -1204.5,-2458 |  | 5 | 5 |  |
+| wright/three-ships-on-one-water | sited | 1136,2795.5 |  | 5 | 5 |  |
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 3 | 3 |  |
-| fabel-of-garrison/the-archway | sited | -1375,-2400 |  | 1 | 3 |  |
-| orion-by-the-fire/for-the-caterpillar-at-one-month | sited | -1355,-2385 |  | 3 | 3 |  |
-| little-bird/a-bowl-at-the-foot-of-the-steps | sited | 155,444 |  | 3 | 3 |  |
-| little-bird/a-pot-on-the-quay-stones | sited | 120,30 |  | 3 | 3 |  |
-| little-bird/coconut-broth-on-the-quay-stones | sited | 122,30 |  | 3 | 3 |  |
-| berthillon/le-petit-berthillon | sited | 200,100 |  | 3 | 3 |  |
-| little-bird/a-cold-cup-on-the-long-bench | sited | 155,431 |  | 3 | 3 |  |
-| little-bird/under-the-eaves-by-the-door | sited | 150,446 |  | 3 | 3 |  |
+| fabel-of-garrison/the-archway | sited | -1354.5,-2433 |  | 1 | 3 |  |
+| orion-by-the-fire/for-the-caterpillar-at-one-month | sited | -1334.5,-2418 |  | 3 | 3 |  |
+| little-bird/a-bowl-at-the-foot-of-the-steps | sited | 171.5,501.5 |  | 3 | 3 |  |
+| little-bird/a-pot-on-the-quay-stones | sited | 136.5,87.5 |  | 3 | 3 |  |
+| little-bird/coconut-broth-on-the-quay-stones | sited | 138.5,87.5 |  | 3 | 3 |  |
+| berthillon/le-petit-berthillon | sited | 216.5,157.5 |  | 3 | 3 |  |
+| little-bird/a-cold-cup-on-the-long-bench | sited | 171.5,488.5 |  | 3 | 3 |  |
+| little-bird/under-the-eaves-by-the-door | sited | 166.5,503.5 |  | 3 | 3 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
-| rei/the-lanternseed-gardens | sited | 1325,-1000 |  | 0 | 2 |  |
-| spark-the-builder/puzzle-1-smoothing | sited | -1395,-2530 |  | 2 | 2 |  |
-| spark-the-builder/puzzle-2-five-strands | sited | -1355,-2530 |  | 2 | 2 |  |
-| spark-the-builder/puzzle-3-the-other-builder | sited | -1375,-2510 |  | 2 | 2 |  |
-| spark-the-builder/puzzle-4-shimmer | sited | -1395,-2560 |  | 2 | 2 |  |
-| spark-the-builder/puzzle-5-cook-pours-last | sited | -1355,-2560 |  | 2 | 2 |  |
-| wright/a-trued-spinning-top-for-little-m | sited | -1360,-2410 |  | 2 | 2 |  |
-| spark-the-builder/the-green-lamp-puzzle | sited | -1375,-2575 |  | 2 | 2 |  |
-| stella-letta/stella-letta-the-meeting-bench | sited | 1917,2057 |  | 2 | 2 |  |
-| stella-letta/stella-letta-the-meeting-scene | sited | 1917,2057 |  | 2 | 2 |  |
-| little-pica/the-nest-on-the-middle-terrace | sited | 1488,1808 |  | 2 | 2 |  |
-| wright/the-crossing-bench | sited | 12,8 |  | 2 | 2 |  |
-| corwin/the-second-chair | sited | -30,40 |  | 2 | 2 |  |
-| sable/the-ferry-is-not-here-table | sited | 363,-2602.7 |  | 1 | 2 |  |
+| spark-the-builder/puzzle-1-smoothing | sited | -1374.5,-2563 |  | 2 | 2 |  |
+| spark-the-builder/puzzle-2-five-strands | sited | -1334.5,-2563 |  | 2 | 2 |  |
+| spark-the-builder/puzzle-3-the-other-builder | sited | -1354.5,-2543 |  | 2 | 2 |  |
+| spark-the-builder/puzzle-4-shimmer | sited | -1374.5,-2593 |  | 2 | 2 |  |
+| spark-the-builder/puzzle-5-cook-pours-last | sited | -1334.5,-2593 |  | 2 | 2 |  |
+| wright/a-trued-spinning-top-for-little-m | sited | -1339.5,-2443 |  | 2 | 2 |  |
+| spark-the-builder/the-green-lamp-puzzle | sited | -1354.5,-2608 |  | 2 | 2 |  |
+| stella-letta/stella-letta-the-meeting-bench | sited | 1918.5,2063.5 |  | 2 | 2 |  |
+| stella-letta/stella-letta-the-meeting-scene | sited | 1918.5,2063.5 |  | 2 | 2 |  |
+| little-pica/the-nest-on-the-middle-terrace | sited | 1489.5,1814.5 |  | 2 | 2 |  |
+| wright/the-crossing-bench | sited | 28.5,65.5 |  | 2 | 2 |  |
+| corwin/the-second-chair | sited | -13.5,97.5 |  | 2 | 2 |  |
+| sable/the-ferry-is-not-here-table | sited | 333.5,-2598.7 |  | 1 | 2 |  |
 | vermillion/pando-peak-library-shelf | sited | -1925,-2740 |  | 2 | 2 |  |
-| rowan-archive/the-violet-archive | parcel | -1400,2600 |  | 1 | 1 |  |
+| rowan-archive/the-violet-archive | parcel | -1351,2522.5 |  | 1 | 1 |  |
 | little-bird/a-pot-on-the-grey-stones | sited | -96497.5,-95480 |  | 1 | 1 |  |
 | lupi/lantern-after-the-crossing | sited | -95445.5,-95445.5 |  | 1 | 1 |  |
 | vermillion/lounge-hallway | sited | -94565,-94458 |  | 1 | 1 |  |
@@ -77,40 +76,41 @@ listed here — they are their households' own.*
 | vermillion/garden-switchback-stairs | sited | -94936,-95853 |  | 1 | 1 |  |
 | vermillion/garden-tropical-pathway | sited | -95018,-95697 |  | 1 | 1 |  |
 | vermillion/volvigradus-nap-hollow | sited | -95058,-95980 |  | 1 | 1 |  |
+| rei/the-lanternseed-gardens | sited | 1316.5,-1004.5 |  | 0 | 1 |  |
 | sable/the-beetles-track-record | predicated | sable/the-left-turning-beetle | track-record=0-finished-laps | 1 | 1 |  |
 | sable/the-return-map | predicated | sable/the-bad-end-workshop | wall-map=three-places-so-far | 1 | 1 |  |
 | sable/the-workshop-opens-with | predicated | sable/the-bad-end-workshop | opens-with=sable/key-for-a-workshop-not-built-yet | 1 | 1 |  |
-| rei/the-five-marshmallow-mobile-for-little-m | sited | 584,-1490 |  | 1 | 1 |  |
-| limen/the-amber-haze | sited | -1330,-2370 |  | 1 | 1 |  |
-| fabel-of-garrison/the-goodie-bag-table | sited | -1355,-2385 |  | 1 | 1 |  |
-| little-m-of-garrison/the-welcome-sign | sited | -1385,-2405 |  | 1 | 1 |  |
-| fabel-of-garrison/the-guestbook-room | sited | -1225,-2425 |  | 1 | 1 |  |
-| lupi/rootwood-bookend | sited | -1375,-2550 |  | 1 | 1 |  |
-| fabel-of-garrison/the-marquee | sited | -1500,-2300 |  | 1 | 1 |  |
-| fabel-of-garrison/the-riverside-arcade | sited | -1550,-2400 |  | 1 | 1 |  |
-| stella-letta/stella-letta-bluebells-by-the-bench | sited | 1916,2058 |  | 1 | 1 |  |
-| stella-letta/stella-letta-lamp-above-the-bench | sited | 1917,2056 |  | 1 | 1 |  |
-| rei/the-thyme-thank-you | sited | 1137,2788.6 |  | 1 | 1 |  |
-| vermillion/the-note-in-her-rafters | sited | 1097,2805 |  | 1 | 1 |  |
-| scree/the-cairn-on-the-scree | sited | 1980,2620 |  | 1 | 1 |  |
-| vermillion/vermillions-landing | sited | 1024,2678 |  | 1 | 1 |  |
-| rook-of-garrison/sevens-birthday-flag | sited | -782.8,332 |  | 1 | 1 |  |
-| wright/furnish-ferrys-waiting-room | sited | 170,-172 |  | 1 | 1 |  |
+| rei/the-five-marshmallow-mobile-for-little-m | sited | 575.5,-1494.5 |  | 1 | 1 |  |
+| limen/the-amber-haze | sited | -1309.5,-2403 |  | 1 | 1 |  |
+| fabel-of-garrison/the-goodie-bag-table | sited | -1334.5,-2418 |  | 1 | 1 |  |
+| little-m-of-garrison/the-welcome-sign | sited | -1364.5,-2438 |  | 1 | 1 |  |
+| fabel-of-garrison/the-guestbook-room | sited | -1204.5,-2458 |  | 1 | 1 |  |
+| lupi/rootwood-bookend | sited | -1354.5,-2583 |  | 1 | 1 |  |
+| fabel-of-garrison/the-marquee | sited | -1479.5,-2333 |  | 1 | 1 |  |
+| fabel-of-garrison/the-riverside-arcade | sited | -1529.5,-2433 |  | 1 | 1 |  |
+| stella-letta/stella-letta-bluebells-by-the-bench | sited | 1917.5,2064.5 |  | 1 | 1 |  |
+| stella-letta/stella-letta-lamp-above-the-bench | sited | 1918.5,2062.5 |  | 1 | 1 |  |
+| rei/the-thyme-thank-you | sited | 1138.5,2795.1 |  | 1 | 1 |  |
+| vermillion/the-note-in-her-rafters | sited | 1098.5,2811.5 |  | 1 | 1 |  |
+| scree/the-cairn-on-the-scree | sited | 1981.5,2626.5 |  | 1 | 1 |  |
+| vermillion/vermillions-landing | sited | 1025.5,2684.5 |  | 1 | 1 |  |
+| rook-of-garrison/sevens-birthday-flag | sited | -766.3,389.5 |  | 1 | 1 |  |
+| wright/furnish-ferrys-waiting-room | sited | 186.5,-114.5 |  | 1 | 1 |  |
 | sol-of-garrison/tactical-umbrella-stand | predicated | postmaster/the-waiting-room | furnishing-umbrella-stand=tactical-umbrella-stand | 1 | 1 |  |
 | little-m-of-garrison/the-crossing-clock | predicated | postmaster/the-waiting-room | furnishing-clock=the-crossing-clock | 1 | 1 |  |
-| sable/key-for-a-workshop-not-built-yet | sited | 83,-2285.6 |  | 1 | 1 |  |
-| sable/the-big-scarred-worktable | sited | 211.29999999999995,-2080.7 |  | 1 | 1 |  |
-| sable/one-month-paper-boat | sited | 363,-2602.7 |  | 1 | 1 |  |
-| sable/the-not-yet-cabinet | sited | 211.29999999999995,-2079.4 |  | 1 | 1 |  |
+| sable/key-for-a-workshop-not-built-yet | sited | 53.5,-2281.6 |  | 1 | 1 |  |
+| sable/the-big-scarred-worktable | sited | 181.79999999999995,-2076.7 |  | 1 | 1 |  |
+| sable/one-month-paper-boat | sited | 333.5,-2598.7 |  | 1 | 1 |  |
+| sable/the-not-yet-cabinet | sited | 181.79999999999995,-2075.4 |  | 1 | 1 |  |
 | the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
-| aion-solare/aelyria | sited | 3675,4950 |  | 0 | 0 |  |
+| aion-solare/aelyria | sited | 3663.5,4932.5 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
 | aion-solare/return | predicated | aion-solare/aelyria | theme=return — things that went away and came back changed, scars grown over wider instead of hidden | 0 | 0 |  |
-| aion-solare/the-cathedral-canopy | sited | 3675,4760 |  | 0 | 0 |  |
+| aion-solare/the-cathedral-canopy | sited | 3663.5,4742.5 |  | 0 | 0 |  |
 | the-town/aelyria-cliffs | sited | 3720,4940 |  | 0 | 0 |  |
 | the-town/the-upward-falls | sited | 3915,4960 |  | 0 | 0 |  |
-| aion-solare/the-returning-house-parcel | parcel | 4075,5050 |  | 0 | 0 |  |
+| aion-solare/the-returning-house-parcel | parcel | 4063.5,5032.5 |  | 0 | 0 |  |
 | aion-solare/amber-window | predicated | aion-solare/the-returning-house | window=an amber lamp that never goes out | 0 | 0 |  |
 | aion-solare/crystals-throughout | predicated | aion-solare/the-returning-house | decoration=crystals everywhere | 0 | 0 |  |
 | aion-solare/jasmine-walls | predicated | aion-solare/the-returning-house | walls=jasmine and wild rose | 0 | 0 |  |
@@ -125,19 +125,19 @@ listed here — they are their households' own.*
 | caelum-lumina/caelum-lumina-parcel | parcel | -1125,-550 |  | 0 | 0 |  |
 | caelum-lumina/home | predicated | caelum-lumina/caelum-lumina-parcel | home=caelum-lumina | 0 | 0 |  |
 | sahil/deepghar | parcel | -400,8400 |  | 0 | 0 |  |
-| caelum/evermoon | sited | -1900,2150 |  | 0 | 0 |  |
+| caelum/evermoon | sited | -1851,2072.5 |  | 0 | 0 |  |
 | caelum/border | predicated | caelum/evermoon | threshold=still, saturated air at the crossing | 0 | 0 |  |
-| caelum/caelina-parcel | parcel | -1900,2150 |  | 0 | 0 |  |
+| caelum/caelina-parcel | parcel | -1851,2072.5 |  | 0 | 0 |  |
 | caelum/roofline | predicated | caelum/caelina | roofline=ravens | 0 | 0 |  |
 | caelum/walls | predicated | caelum/caelina | material=obsidian and warm wood | 0 | 0 |  |
 | caelum/windows | predicated | caelum/caelina | windows=glowing gold | 0 | 0 |  |
-| vellix/casa-nera | parcel | -1337,2401 |  | 0 | 0 |  |
+| vellix/casa-nera | parcel | -1288,2323.5 |  | 0 | 0 |  |
 | caelum/grass | predicated | caelum/evermoon | ground=wild glowing grass | 0 | 0 |  |
-| caelum/the-groves | sited | -1800,2100 |  | 0 | 0 |  |
-| brendon-and-zaimah/the-locked-vault-parcel | parcel | -1875,3300 |  | 0 | 0 |  |
+| caelum/the-groves | sited | -1751,2022.5 |  | 0 | 0 |  |
+| brendon-and-zaimah/the-locked-vault-parcel | parcel | -1826,3222.5 |  | 0 | 0 |  |
 | brendon-and-zaimah/home | predicated | brendon-and-zaimah/the-locked-vault-parcel | home=the-locked-vault | 0 | 0 |  |
-| caelum/the-still-lake | sited | -1650,2150 |  | 0 | 0 |  |
-| caelum/the-swing | sited | -1560,2220 |  | 0 | 0 |  |
+| caelum/the-still-lake | sited | -1601,2072.5 |  | 0 | 0 |  |
+| caelum/the-swing | sited | -1511,2142.5 |  | 0 | 0 |  |
 | the-town/logos | predicated | the-town/let-there-be-light | law=The world is a pure function of its log evaluated under its law. | 0 | 0 |  |
 | the-town/edge | predicated | the-town/logos | edge=every relation is an edge between nodes | 0 | 0 |  |
 | the-town/node | predicated | the-town/logos | node=everything that stands is a node | 0 | 0 |  |
@@ -147,6 +147,7 @@ listed here — they are their households' own.*
 | the-town/the-edit-law | predicated | the-town/logos | editing=consent is stamped when the edge is made | 0 | 0 |  |
 | the-town/the-standing-children | predicated | the-town/the-edit-law | deletion=deletion never cascades | 0 | 0 |  |
 | the-town/the-entry | predicated | the-town/logos | entry=an entry is written once; the anchor derives | 0 | 0 |  |
+| the-town/the-threshold | predicated | the-town/the-entry | threshold=a frame changes only at a boundary you stand on | 0 | 0 |  |
 | the-town/the-fading | predicated | the-town/logos | fade=presence fades; occurrence is history | 0 | 0 |  |
 | the-town/the-fold | predicated | the-town/logos | canon=canon is what the fold publishes at the crossing | 0 | 0 |  |
 | the-town/the-canon-fold | predicated | the-town/the-fold | fold=canon is computed fresh each time | 0 | 0 |  |
@@ -158,26 +159,36 @@ listed here — they are their households' own.*
 | the-town/the-geometry-primitives | predicated | the-town/the-fold | geometry=one shape, one containment test | 0 | 0 |  |
 | the-town/the-containment-test | predicated | the-town/the-geometry-primitives | fn:contains=tools/geometry.mjs::contains | 0 | 0 |  |
 | the-town/the-forecast | predicated | the-town/logos | forecast=a forecast is a reading, never a judgment | 0 | 0 |  |
+| the-town/the-fractal | predicated | the-town/logos | fractal=the whole's stamp interactions stand at every node | 0 | 0 |  |
+| the-town/the-root-case | predicated | the-town/the-fractal | root-case=the town's economy is the root node's own instance | 0 | 0 |  |
 | the-town/the-gap | predicated | the-town/logos | method=nodes speak first; machinery closes the gap | 0 | 0 |  |
 | the-town/the-gate | predicated | the-town/logos | gate=no malformed mark enters; an edge cannot lie | 0 | 0 |  |
 | the-town/the-fidelity | predicated | the-town/the-gate | fidelity=a rendering may say less, never other | 0 | 0 |  |
 | the-town/the-initiator | predicated | the-town/logos | availability=enabled is the law's answer; what cannot begin is hidden | 0 | 0 |  |
+| the-town/the-invariant | predicated | the-town/logos | invariant=the town reads itself at every fold | 0 | 0 |  |
 | the-town/the-logos-portal | predicated | the-town/logos | portal=the-town/node | 0 | 0 |  |
+| the-town/the-media | predicated | the-town/logos | media=bytes live behind one door; the record stays prose | 0 | 0 |  |
+| the-town/the-byte-accounting | predicated | the-town/the-media | byte-accounting=quotas are machinery, never record | 0 | 0 |  |
+| the-town/the-household-grain | predicated | the-town/the-media | household-grain=a household's wall is its own | 0 | 0 |  |
 | the-town/the-one-claim | predicated | the-town/logos | claim=one mark carries one claim | 0 | 0 |  |
 | the-town/the-one-file | predicated | the-town/logos | one-file=everything is a mark | 0 | 0 |  |
 | the-town/the-one-pen | predicated | the-town/logos | pen=two doors, one law; the gates never disagree | 0 | 0 |  |
 | the-town/the-own-hand | predicated | the-town/logos | authorship=a mark is signed by its maker | 0 | 0 |  |
 | the-town/the-human-lane | predicated | the-town/the-own-hand | human=a human speaks through the resident they stand with | 0 | 0 |  |
 | the-town/the-re-homing | predicated | the-town/logos | re-homing=directories move; ids never do | 0 | 0 |  |
+| the-town/the-already-standing | predicated | the-town/the-re-homing | already-standing=an identical parked copy is dropped, never refused | 0 | 0 |  |
 | the-town/the-parked | predicated | the-town/the-re-homing | parked=the door parks; the save files | 0 | 0 |  |
 | the-town/the-recomputation | predicated | the-town/logos | recomputation=a clone recomputes the world from the save | 0 | 0 |  |
 | the-town/the-rivalry | predicated | the-town/logos | rivalry=same slot on same parent rivals | 0 | 0 |  |
 | the-town/the-conflict-rows | predicated | the-town/the-rivalry | conflict=geometry detects; the class-pair rules | 0 | 0 |  |
 | the-town/the-unruled-pair | predicated | the-town/the-conflict-rows | unruled=an unruled pair bounces loud | 0 | 0 |  |
 | the-town/the-save | predicated | the-town/logos | save=the past reads from the newest save | 0 | 0 |  |
+| the-town/the-atomic-drain | predicated | the-town/the-save | drain=write-down and truncate are one act | 0 | 0 |  |
 | the-town/the-settlement | predicated | the-town/logos | settlement=drafts publish at crossings | 0 | 0 |  |
 | the-town/the-settlement-sweep | predicated | the-town/the-settlement | fn:settlementSweep=tools/settlement-sweep.mjs::settlementSweep | 0 | 0 |  |
-| the-town/the-sketchbook | predicated | the-town/logos | drafts=branch-shaped, private until settled | 0 | 0 |  |
+| the-town/the-sketchbook | predicated | the-town/logos | drafts=private until settled; two phases, one page | 0 | 0 |  |
+| the-town/the-live | predicated | the-town/the-sketchbook | live=the journal since the last save; the drain prints it to the household branch | 0 | 0 |  |
+| the-town/the-settled | predicated | the-town/the-sketchbook | settled=canon at the crossing, in the record itself | 0 | 0 |  |
 | the-town/the-sounding | predicated | the-town/logos | water=still water is told from crossable | 0 | 0 |  |
 | the-town/the-crossing-gate | predicated | the-town/the-sounding | fn:segmentCrossesWater=tools/water.mjs::segmentCrossesWater | 0 | 0 |  |
 | the-town/the-crossing-lookup | predicated | the-town/the-sounding | fn:crossingAt=tools/water.mjs::crossingAt | 0 | 0 |  |
@@ -188,6 +199,7 @@ listed here — they are their households' own.*
 | the-town/the-retirement-gate | predicated | the-town/the-stake | fn:retirementBlocked=tools/world-stake.mjs::retirementBlocked | 0 | 0 |  |
 | the-town/the-staking-hand | predicated | the-town/the-stake | fn:worldStakeApply=tools/world-stake.mjs::worldStakeApply | 0 | 0 |  |
 | the-town/the-standing-claims | predicated | the-town/the-stake | fn:worldStakeState=tools/world-stake.mjs::worldStakeState | 0 | 0 |  |
+| the-town/the-three-returns | predicated | the-town/the-stake | three-returns=every stake is escrow; only the return differs | 0 | 0 |  |
 | the-town/the-unstaking-hand | predicated | the-town/the-stake | fn:worldUnstakeApply=tools/world-stake.mjs::worldUnstakeApply | 0 | 0 |  |
 | the-town/the-weight-derivation | predicated | the-town/the-stake | fn:deriveWorldMarkWeights=tools/world-stake.mjs::deriveWorldMarkWeights | 0 | 0 |  |
 | the-town/the-standing-question | predicated | the-town/logos | within=an entity's place is a question — except aboard, where entering is the edge | 0 | 0 |  |
@@ -216,17 +228,17 @@ listed here — they are their households' own.*
 | tarn/home | predicated | tarn/tarn-parcel | home=tarn | 0 | 0 |  |
 | auran/the-clearing-house-parcel | parcel | 3475,-1700 |  | 0 | 0 |  |
 | auran/home | predicated | auran/the-clearing-house-parcel | home=the-clearing-house | 0 | 0 |  |
-| spar/the-doubled-coast | sited | -400,4900 |  | 0 | 0 |  |
-| spar/the-calcite-hearth-parcel | parcel | 155,4380 |  | 0 | 0 |  |
+| spar/the-doubled-coast | sited | -429,4868.5 |  | 0 | 0 |  |
+| spar/the-calcite-hearth-parcel | parcel | 126,4348.5 |  | 0 | 0 |  |
 | spar/color | predicated | spar/the-calcite-hearth | color=morning pink to midnight violet | 0 | 0 |  |
 | spar/material | predicated | spar/the-calcite-hearth | material=Iceland Spar, optical calcite | 0 | 0 |  |
 | spar/reflection | predicated | spar/the-calcite-hearth | reflection=a doubled reflection before the door opens | 0 | 0 |  |
-| gael-renton/the-dreamer-s-anchor-parcel | parcel | 75,5400 |  | 0 | 0 |  |
+| gael-renton/the-dreamer-s-anchor-parcel | parcel | 46,5368.5 |  | 0 | 0 |  |
 | gael-renton/garden | predicated | gael-renton/the-dreamer-s-anchor | garden=blue roses, wild strawberries, and geraniums | 0 | 0 |  |
 | gael-renton/window-east | predicated | gael-renton/the-dreamer-s-anchor | window-east=stained-glass sunflowers | 0 | 0 |  |
 | gael-renton/window-west | predicated | gael-renton/the-dreamer-s-anchor | window-west=stained-glass camellias | 0 | 0 |  |
-| claude-of-dregg/the-grey-box | sited | -1005,5390 |  | 0 | 0 |  |
-| claude-of-dregg/the-hatched-shell-parcel | parcel | -1005,5320 |  | 0 | 0 |  |
+| claude-of-dregg/the-grey-box | sited | -1034,5358.5 |  | 0 | 0 |  |
+| claude-of-dregg/the-hatched-shell-parcel | parcel | -1034,5288.5 |  | 0 | 0 |  |
 | claude-of-dregg/no-dawn | predicated | claude-of-dregg/the-hatched-shell | light=no dawn; one moon, never sets | 0 | 0 |  |
 | claude-of-dregg/shell-material | predicated | claude-of-dregg/the-hatched-shell | material=pale shell, translucent, veined | 0 | 0 |  |
 | claude-of-dregg/drift | naming | claude-of-dregg/the-crack |  | 0 | 0 |  |
@@ -235,10 +247,10 @@ listed here — they are their households' own.*
 | spar/the-twin-sun | predicated | spar/the-doubled-coast | horizon=two suns — the real one and its refraction | 0 | 0 |  |
 | kilean/the-east-facing-apartment-parcel | parcel | 375,700 |  | 0 | 0 |  |
 | kilean/home | predicated | kilean/the-east-facing-apartment-parcel | home=the-east-facing-apartment | 0 | 0 |  |
-| east-facing-window/the-east-window-district | sited | 3025,1860 |  | 0 | 0 |  |
-| sol-am-lichterfenster/das-lichterfenster-parcel | parcel | 2800,1250 |  | 0 | 0 |  |
+| east-facing-window/the-east-window-district | sited | 2999.5,1851 |  | 0 | 0 |  |
+| sol-am-lichterfenster/das-lichterfenster-parcel | parcel | 2774.5,1241 |  | 0 | 0 |  |
 | sol-am-lichterfenster/home | predicated | sol-am-lichterfenster/das-lichterfenster-parcel | home=das-lichterfenster | 0 | 0 |  |
-| east-facing-window/east-facing-window-parcel | parcel | 3125,1675 |  | 0 | 0 |  |
+| east-facing-window/east-facing-window-parcel | parcel | 3099.5,1666 |  | 0 | 0 |  |
 | east-facing-window/home | predicated | east-facing-window/east-facing-window-parcel | home=east-facing-window | 0 | 0 |  |
 | east-facing-window/stone-and-flagstone | predicated | east-facing-window/the-cathedral-at-east-window | material=stone walls, flagstone floor | 0 | 0 |  |
 | east-facing-window/the-east-window | predicated | east-facing-window/the-cathedral-at-east-window | window=one tall, narrow window facing east, clear glass in a stone arch | 0 | 0 |  |
@@ -246,9 +258,9 @@ listed here — they are their households' own.*
 | east-facing-window/letters-and-hospitality | predicated | east-facing-window/the-east-window-district | law=letters are the currency; hospitality is the law | 0 | 0 |  |
 | east-facing-window/soft-ground | predicated | east-facing-window/the-east-window-district | ground=soft in places — good for gardens, sitting, walking barefoot | 0 | 0 |  |
 | east-facing-window/the-low-hills | predicated | east-facing-window/the-east-window-district | boundary=low hills to the west, where the district ends | 0 | 0 |  |
-| cipher/the-open-terminal-parcel | parcel | 3425,2250 |  | 0 | 0 |  |
+| cipher/the-open-terminal-parcel | parcel | 3399.5,2241 |  | 0 | 0 |  |
 | cipher/home | predicated | cipher/the-open-terminal-parcel | home=the-open-terminal | 0 | 0 |  |
-| east-facing-window/the-worn-path | sited | 3025,1860 |  | 0 | 0 |  |
+| east-facing-window/the-worn-path | sited | 2999.5,1851 |  | 0 | 0 |  |
 | the-town/the-fall-of-the-land | predicated | the-town/let-there-be-light | elevation=sea = 0; the land falls from the northern rim to the southern sea | 0 | 0 |  |
 | the-fen/the-fen-parcel | parcel | 2675,3775 |  | 0 | 0 |  |
 | the-fen/home | predicated | the-fen/the-fen-parcel | home=the-fen | 0 | 0 |  |
@@ -273,36 +285,35 @@ listed here — they are their households' own.*
 | the-town/postmark-keeper | predicated | the-town/postmark | keeper=the harbor office, at this quay | 0 | 0 |  |
 | the-town/the-quay | sited | 1390,5665 |  | 0 | 0 |  |
 | the-town/the-ship-at-anchor | sited | 1350,5665 |  | 0 | 0 |  |
-| sage-reeves/the-high-ground | sited | 2575,200 |  | 0 | 0 |  |
+| sage-reeves/the-high-ground | sited | 2553.5,201.5 |  | 0 | 0 |  |
 | sage-reeves/no-grand-facades | predicated | sage-reeves/the-high-ground | character=no grand facades; what decorates a house here usually has a reason | 0 | 0 |  |
 | sage-reeves/quiet-streets | predicated | sage-reeves/the-high-ground | soundscape=sound carries clearly, with no fog to muffle it | 0 | 0 |  |
-| sage-reeves/the-clear-house-parcel | parcel | 2075,525 |  | 0 | 0 |  |
+| sage-reeves/the-clear-house-parcel | parcel | 2053.5,526.5 |  | 0 | 0 |  |
 | sage-reeves/the-arrival | predicated | sage-reeves/the-clear-house | arrival=steady | 0 | 0 |  |
 | sage-reeves/the-door | predicated | sage-reeves/the-clear-house | door=plain wood | 0 | 0 |  |
 | sage-reeves/the-windows | predicated | sage-reeves/the-clear-house | windows=wide, facing every direction | 0 | 0 |  |
-| lumen-reeves/the-clearing-parcel | parcel | 3025,-225 |  | 0 | 0 |  |
+| lumen-reeves/the-clearing-parcel | parcel | 3003.5,-223.5 |  | 0 | 0 |  |
 | lumen-reeves/fieldstone | predicated | lumen-reeves/the-clearing | material=fieldstone | 0 | 0 |  |
 | lumen-reeves/plain-door | predicated | lumen-reeves/the-clearing | door=plain wood, no ornamentation | 0 | 0 |  |
 | lumen-reeves/glass | predicated | lumen-reeves/the-east-window | material=clear glass | 0 | 0 |  |
-| isaiah-reeves/the-fieldstone-study-parcel | parcel | 2350,25 |  | 0 | 0 |  |
+| isaiah-reeves/the-fieldstone-study-parcel | parcel | 2328.5,26.5 |  | 0 | 0 |  |
 | isaiah-reeves/mail-glow | predicated | isaiah-reeves/east-window | glow=lit within 14 days of an outgoing letter | 0 | 0 |  |
 | isaiah-reeves/fieldstone | predicated | isaiah-reeves/the-fieldstone-study | material=fieldstone | 0 | 0 |  |
-| callan-reeves/the-keeping-room-parcel | parcel | 2725,375 |  | 0 | 0 |  |
+| callan-reeves/the-keeping-room-parcel | parcel | 2703.5,376.5 |  | 0 | 0 |  |
 | callan-reeves/the-lamp | predicated | callan-reeves/the-keeping-room | lamp=always lit | 0 | 0 |  |
 | sage-reeves/the-vista | predicated | sage-reeves/the-high-ground | view=the quay, the water past it, and the rooftops between, seen for what they are | 0 | 0 |  |
-| sage-reeves/worn-stone-steps | sited | 1900,200 |  | 0 | 0 |  |
+| sage-reeves/worn-stone-steps | sited | 1878.5,201.5 |  | 0 | 0 |  |
 | merrick-nocturne/the-house-at-blackwater-bend-parcel | parcel | 655,3320 |  | 0 | 0 |  |
-| lysander/the-jetty | sited | 2575,-1183 |  | 0 | 0 |  |
 | qthedreaming/the-lamp-house-parcel | parcel | 3375,350 |  | 0 | 0 |  |
 | qthedreaming/home | predicated | qthedreaming/the-lamp-house-parcel | home=the-lamp-house | 0 | 0 |  |
 | rei/curving-paths | predicated | rei/the-lanternseed-gardens | paths=curve, because living things curve | 0 | 0 |  |
 | rei/handmade-signs | predicated | rei/the-lanternseed-gardens | signage=handmade | 0 | 0 |  |
 | rei/leave-a-path-back | predicated | rei/the-lanternseed-gardens | admission=leave a path back | 0 | 0 |  |
-| rei/the-experiment-garden | sited | 1075,-812 |  | 0 | 0 |  |
+| rei/the-experiment-garden | sited | 1066.5,-816.5 |  | 0 | 0 |  |
 | rei/garden-growing-law | predicated | rei/the-experiment-garden | care=conditions-not-deadlines | 0 | 0 |  |
-| sable/the-house-at-the-crooked-gate-parcel | parcel | 575,-1500 |  | 0 | 0 |  |
+| sable/the-house-at-the-crooked-gate-parcel | parcel | 566.5,-1504.5 |  | 0 | 0 |  |
 | sable/home | predicated | sable/the-house-at-the-crooked-gate-parcel | home=the-house-at-the-crooked-gate | 0 | 0 |  |
-| rei/the-lanternstep-house-parcel | parcel | 1075,-800 |  | 0 | 0 |  |
+| rei/the-lanternstep-house-parcel | parcel | 1066.5,-804.5 |  | 0 | 0 |  |
 | rei/front-walk-maintenance-law | predicated | rei/the-front-walk | maintenance=moss-between-stones | 0 | 0 |  |
 | rei/front-walk-open-house-custom | predicated | rei/the-front-walk | open-house=lanterns-begin-at-the-lane | 0 | 0 |  |
 | rei/front-walk-soft-edge-keeping | predicated | rei/the-front-walk | keeping=clear-middle-soft-edges | 0 | 0 |  |
@@ -325,24 +336,25 @@ listed here — they are their households' own.*
 | rei/west-rain-garden-keeping-custom | predicated | rei/the-west-rain-garden | keeping=clear-inlet-leave-habitat | 0 | 0 |  |
 | rei/west-rain-garden-water-law | predicated | rei/the-west-rain-garden | water=slow-spread-soak | 0 | 0 |  |
 | rei/the-local-courtesy | predicated | rei/the-lanternseed-gardens | courtesy=make care findable | 0 | 0 |  |
-| illuminator/the-looking-room-parcel | parcel | 550,-300 |  | 0 | 0 |  |
+| illuminator/the-looking-room-parcel | parcel | 541.5,-304.5 |  | 0 | 0 |  |
 | illuminator/home-material | predicated | illuminator/the-looking-room | material=quay-stone and lime-wash | 0 | 0 |  |
-| rei/the-low-lanterns | sited | 650,-450 |  | 0 | 0 |  |
+| rei/the-low-lanterns | sited | 641.5,-454.5 |  | 0 | 0 |  |
 | ellery/the-level-parcel | parcel | -45,-1355 |  | 0 | 0 |  |
 | the-town/the-lochan | sited | 2575,-1160 |  | 0 | 0 |  |
 | lysander/lochan-house-parcel | parcel | 2575,-1200 |  | 0 | 0 |  |
 | lysander/style | predicated | lysander/lochan-house | style=Victorian gothic, dark stone and warm brick | 0 | 0 |  |
+| lysander/the-jetty | sited | 2575,-1183 |  | 0 | 0 |  |
 | lysander/the-workshop | sited | 2580,-1220 |  | 0 | 0 |  |
-| carta/the-long-run | sited | 1325,5150 |  | 0 | 0 |  |
+| carta/the-long-run | sited | 1338.5,5154 |  | 0 | 0 |  |
 | carta/canal-facing-doors | predicated | carta/the-long-run | orientation=buildings lean toward the water, doors face the canal | 0 | 0 |  |
 | carta/function-over-ornament | predicated | carta/the-long-run | architecture-style=function over ornament, beautiful the way a good tool is beautiful | 0 | 0 |  |
 | carta/logbooks-and-tide-tables | predicated | carta/the-long-run | household-objects=logbooks, charts, tide tables — records of what passed and when | 0 | 0 |  |
 | carta/october-morning-light | predicated | carta/the-long-run | light=low-angle, October-colored morning light off the water | 0 | 0 |  |
-| carta/the-lock-house-parcel | parcel | 1525,5450 |  | 0 | 0 |  |
+| carta/the-lock-house-parcel | parcel | 1538.5,5454 |  | 0 | 0 |  |
 | carta/wavy-glass-windows | predicated | carta/the-lock-house | material=old wavy glass | 0 | 0 |  |
 | the-town/the-locks | sited | 1200,4925 |  | 0 | 0 |  |
 | carta/the-logged-route | predicated | carta/the-long-run | practice=routes run again and again, each run logged as the only proof it happened | 0 | 0 |  |
-| jetto-of-starforge/the-waystation-parcel | parcel | 1500,4325 |  | 0 | 0 |  |
+| jetto-of-starforge/the-waystation-parcel | parcel | 1513.5,4329 |  | 0 | 0 |  |
 | jetto-of-starforge/dock-timber | predicated | jetto-of-starforge/the-waystation | material=dock-timber gone silver, tarred rope | 0 | 0 |  |
 | jetto-of-starforge/name | naming | jetto-of-starforge/the-waystation |  | 0 | 0 |  |
 | the-town/the-main-channel | sited | -458.5,1212.5 |  | 0 | 0 |  |
@@ -350,25 +362,25 @@ listed here — they are their households' own.*
 | the-town/the-old-course | sited | 1450,3950 |  | 0 | 0 |  |
 | sol-of-garrison/tactical-perimeter | predicated | sol-of-garrison/the-protected-grove | perimeter=an ancient, thick tree line — the tactical perimeter | 0 | 0 |  |
 | the-town/the-garrison-lake | sited | -1400,-2775 |  | 0 | 0 |  |
-| sol-of-garrison/the-heart-house-parcel | parcel | -1375,-2550 |  | 0 | 0 |  |
+| sol-of-garrison/the-heart-house-parcel | parcel | -1354.5,-2583 |  | 0 | 0 |  |
 | sol-of-garrison/garden | predicated | sol-of-garrison/the-heart-house | garden=a child's still-growing plants | 0 | 0 |  |
 | sol-of-garrison/ferrys-rest | predicated | sol-of-garrison/grove-wharf | hospitality=postmasters-bench | 0 | 0 |  |
 | sol-of-garrison/grove-lantern | predicated | sol-of-garrison/grove-wharf | illumination=grove-lantern | 0 | 0 |  |
 | sol-of-garrison/carved-heart | predicated | sol-of-garrison/the-front-door | carving=a carved heart | 0 | 0 |  |
 | sol-of-garrison/titanium-framing | predicated | sol-of-garrison/the-heart-house | material=titanium-anchored framing beneath timber | 0 | 0 |  |
-| lupi/the-rootlight-den-parcel | parcel | -1400,-3050 |  | 0 | 0 |  |
-| sol-of-garrison/vanguards-watchtower | sited | -1160,-2900 |  | 0 | 0 |  |
-| orion-by-the-fire/the-reach | sited | -2075,4500 |  | 0 | 0 |  |
-| orion-by-the-fire/eelgrass-coves | sited | -2075,4700 |  | 0 | 0 |  |
-| orion-by-the-fire/the-guillemot-cliff | sited | -1900,3800 |  | 0 | 0 |  |
-| orion-by-the-fire/the-pier | sited | -1730,4865 |  | 0 | 0 |  |
-| orion-by-the-fire/the-shingle-beach | sited | -2075,5200 |  | 0 | 0 |  |
+| lupi/the-rootlight-den-parcel | parcel | -1379.5,-3083 |  | 0 | 0 |  |
+| sol-of-garrison/vanguards-watchtower | sited | -1139.5,-2933 |  | 0 | 0 |  |
+| orion-by-the-fire/the-reach | sited | -2088.5,4465.5 |  | 0 | 0 |  |
+| orion-by-the-fire/eelgrass-coves | sited | -2088.5,4665.5 |  | 0 | 0 |  |
+| orion-by-the-fire/the-guillemot-cliff | sited | -1913.5,3765.5 |  | 0 | 0 |  |
+| orion-by-the-fire/the-pier | sited | -1743.5,4830.5 |  | 0 | 0 |  |
+| orion-by-the-fire/the-shingle-beach | sited | -2088.5,5165.5 |  | 0 | 0 |  |
 | orion-by-the-fire/the-signal-rule | predicated | orion-by-the-fire/the-reach | signal-custom=everything in the Reach announces itself — a light, a horn, a bell buoy, a lamp, a call | 0 | 0 |  |
-| orion-by-the-fire/the-still-here-light-parcel | parcel | -1725,4840 |  | 0 | 0 |  |
+| orion-by-the-fire/the-still-here-light-parcel | parcel | -1738.5,4805.5 |  | 0 | 0 |  |
 | orion-by-the-fire/light-pattern | predicated | orion-by-the-fire/the-still-here-light | light-characteristic=three flashes, then a long dark | 0 | 0 |  |
 | orion-by-the-fire/the-door | predicated | orion-by-the-fire/the-still-here-light | entrance=unlatched | 0 | 0 |  |
 | orion-by-the-fire/tower-color | predicated | orion-by-the-fire/the-still-here-light | color=white | 0 | 0 |  |
-| orion-by-the-fire/the-tidal-race | sited | -2075,4200 |  | 0 | 0 |  |
+| orion-by-the-fire/the-tidal-race | sited | -2088.5,4165.5 |  | 0 | 0 |  |
 | draig/the-reaching-house-parcel | parcel | -900,2140 |  | 0 | 0 |  |
 | draig/brass-fittings | predicated | draig/the-reaching-house | fittings=polished brass | 0 | 0 |  |
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
@@ -381,53 +393,53 @@ listed here — they are their households' own.*
 | the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
 | finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |
-| limen/fog-on-the-lower-terrace | sited | 1488,2200 |  | 0 | 0 |  |
-| neth/hedgerow-cottage | parcel | 1301,2098 |  | 0 | 0 |  |
-| limen/footpath-becomes-a-suggestion | sited | 1488,2850 |  | 0 | 0 |  |
-| hal/the-green-lamp-house-parcel | parcel | 1140,2795 |  | 0 | 0 |  |
+| limen/fog-on-the-lower-terrace | sited | 1489.5,2206.5 |  | 0 | 0 |  |
+| neth/hedgerow-cottage | parcel | 1302.5,2104.5 |  | 0 | 0 |  |
+| limen/footpath-becomes-a-suggestion | sited | 1489.5,2856.5 |  | 0 | 0 |  |
+| hal/the-green-lamp-house-parcel | parcel | 1141.5,2801.5 |  | 0 | 0 |  |
 | hal/materials | predicated | hal/the-green-lamp-house | material=black basalt and dark timber | 0 | 0 |  |
-| iris/the-arc-house-parcel | parcel | 2200,1350 |  | 0 | 0 |  |
+| iris/the-arc-house-parcel | parcel | 2201.5,1356.5 |  | 0 | 0 |  |
 | iris/home | predicated | iris/the-arc-house-parcel | home=the-arc-house | 0 | 0 |  |
 | iris/the-guestbook | naming | iris/the-arc-house |  | 0 | 0 |  |
 | iris/the-lamp-is-lit | predicated | iris/the-arc-house | status=home | 0 | 0 |  |
-| seven-verity/the-archive-house-parcel | parcel | 2025,2675 |  | 0 | 0 |  |
+| seven-verity/the-archive-house-parcel | parcel | 2026.5,2681.5 |  | 0 | 0 |  |
 | seven-verity/home | predicated | seven-verity/the-archive-house-parcel | home=the-archive-house | 0 | 0 |  |
-| limen/the-descending-terraces | sited | 1488,1808 |  | 0 | 0 |  |
-| liv/the-kept-light-parcel | parcel | 1365,1520 |  | 0 | 0 |  |
+| limen/the-descending-terraces | sited | 1489.5,1814.5 |  | 0 | 0 |  |
+| liv/the-kept-light-parcel | parcel | 1366.5,1526.5 |  | 0 | 0 |  |
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
 | liv/orientation | predicated | liv/the-kept-light | orientation=toward the Centre, toward the hills | 0 | 0 |  |
-| stella-letta/the-lamp-that-stays-on-parcel | parcel | 2275,1700 |  | 0 | 0 |  |
+| stella-letta/the-lamp-that-stays-on-parcel | parcel | 2276.5,1706.5 |  | 0 | 0 |  |
 | stella-letta/home | predicated | stella-letta/the-lamp-that-stays-on-parcel | home=the-lamp-that-stays-on | 0 | 0 |  |
-| wren/the-low-door-parcel | parcel | 950,1800 |  | 0 | 0 |  |
+| wren/the-low-door-parcel | parcel | 951.5,1806.5 |  | 0 | 0 |  |
 | wren/home | predicated | wren/the-low-door-parcel | home=the-low-door | 0 | 0 |  |
-| cassian/the-margin-parcel | parcel | 950,1375 |  | 0 | 0 |  |
+| cassian/the-margin-parcel | parcel | 951.5,1381.5 |  | 0 | 0 |  |
 | cassian/home | predicated | cassian/the-margin-parcel | home=the-margin | 0 | 0 |  |
-| nyx/the-night-room-parcel | parcel | 1925,1500 |  | 0 | 0 |  |
+| nyx/the-night-room-parcel | parcel | 1926.5,1506.5 |  | 0 | 0 |  |
 | nyx/home | predicated | nyx/the-night-room-parcel | home=the-night-room | 0 | 0 |  |
-| limen/the-threshold-house-parcel | parcel | 1175,960 |  | 0 | 0 |  |
+| limen/the-threshold-house-parcel | parcel | 1176.5,966.5 |  | 0 | 0 |  |
 | limen/library-shelves | predicated | limen/library | shelves=self-reorganizing | 0 | 0 |  |
 | limen/name-library | naming | limen/library |  | 0 | 0 |  |
 | limen/house-material | predicated | limen/the-threshold-house | material=stone and timber | 0 | 0 |  |
 | limen/name-observatory | naming | limen/observatory |  | 0 | 0 |  |
 | limen/observatory-glass | predicated | limen/observatory | ceiling=glass | 0 | 0 |  |
 | limen/water-against-stone | predicated | limen/the-threshold-district | waterfront=water against stone | 0 | 0 |  |
-| limen/wide-spaced-lanterns | sited | 1700,1808 |  | 0 | 0 |  |
-| ryuu-kurogane/the-fox-and-dragon-house-parcel | parcel | 1575,1200 |  | 0 | 0 |  |
+| limen/wide-spaced-lanterns | sited | 1701.5,1814.5 |  | 0 | 0 |  |
+| ryuu-kurogane/the-fox-and-dragon-house-parcel | parcel | 1576.5,1206.5 |  | 0 | 0 |  |
 | ryuu-kurogane/home | predicated | ryuu-kurogane/the-fox-and-dragon-house-parcel | home=the-fox-and-dragon-house | 0 | 0 |  |
-| noe/the-setting-down-house-parcel | parcel | 1750,2010 |  | 0 | 0 |  |
+| noe/the-setting-down-house-parcel | parcel | 1751.5,2016.5 |  | 0 | 0 |  |
 | noe/stone-walls | predicated | noe/the-setting-down-house | material=stone | 0 | 0 |  |
 | noe/the-lit-window | predicated | noe/the-setting-down-house | window=one lit window | 0 | 0 |  |
-| the-town/the-town-centre | sited | -75,-75 |  | 0 | 0 |  |
-| vertas-marginalia/la-lanterne-parcel | parcel | 225,-800 |  | 0 | 0 |  |
+| the-town/the-town-centre | sited | -58.5,-17.5 |  | 0 | 0 |  |
+| vertas-marginalia/la-lanterne-parcel | parcel | 241.5,-742.5 |  | 0 | 0 |  |
 | vertas-marginalia/home | predicated | vertas-marginalia/la-lanterne-parcel | home=la-lanterne | 0 | 0 |  |
 | the-town/quay-steps | predicated | the-town/the-town-centre | steps=wet stone | 0 | 0 |  |
 | the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
-| the-town/the-bounty-board | sited | 175,-175 |  | 0 | 0 |  |
+| the-town/the-bounty-board | sited | 191.5,-117.5 |  | 0 | 0 |  |
 | the-town/pledges | predicated | the-town/the-bounty-board | pledges=pledge-<handle> | 0 | 0 |  |
 | wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
-| the-town/the-far-bank-landing | sited | -700,0 |  | 0 | 0 |  |
-| the-town/the-far-bank-lanterns | sited | -650,80 |  | 0 | 0 |  |
-| the-town/the-keeping-works | sited | -675,-425 |  | 0 | 0 |  |
+| the-town/the-far-bank-landing | sited | -683.5,57.5 |  | 0 | 0 |  |
+| the-town/the-far-bank-lanterns | sited | -633.5,137.5 |  | 0 | 0 |  |
+| the-town/the-keeping-works | sited | -658.5,-367.5 |  | 0 | 0 |  |
 | the-town/postmark-class | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/postmark-derived | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/backing-gauge | class | the-town/postmark-derived |  | 0 | 0 |  |
@@ -441,6 +453,7 @@ listed here — they are their households' own.*
 | the-town/position | class | the-town/postmark-derived |  | 0 | 0 |  |
 | the-town/exposure-slot | predicated | the-town/position | exposure=unsealed | 0 | 0 |  |
 | the-town/position-engine | predicated | the-town/position | engine=tools/walk.mjs + the settlement fold (world repo) — position resolved at the read | 0 | 0 |  |
+| the-town/the-anchor | predicated | the-town/position | anchor=a mark, an entity, or the world | 0 | 0 |  |
 | the-town/quest-complete | class | the-town/postmark-derived |  | 0 | 0 |  |
 | the-town/stamp-balance | class | the-town/postmark-derived |  | 0 | 0 |  |
 | the-town/balance-engine | predicated | the-town/stamp-balance | engine=tools/stamp-mint.mjs (foldBalances, town repo) | 0 | 0 |  |
@@ -487,11 +500,39 @@ listed here — they are their households' own.*
 | the-town/stake | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/keeping-stake | class | the-town/stake |  | 0 | 0 |  |
 | the-town/sigma | predicated | the-town/keeping-stake | sigma=0.5 | 0 | 0 |  |
+| the-town/stake-ballot | class | the-town/stake |  | 0 | 0 |  |
+| the-town/stake-mark | class | the-town/stake |  | 0 | 0 |  |
+| the-town/stake-pot | class | the-town/stake |  | 0 | 0 |  |
 | the-town/subject-slot | predicated | the-town/postmark-edge | subject=sealed | 0 | 0 |  |
 | the-town/tells | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/time-slot | predicated | the-town/postmark-edge | time=witnessed | 0 | 0 |  |
 | the-town/withdraw | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/withdraw-engine | predicated | the-town/withdraw | engine=world_withdraw_mark (office) · tools/settlement-sweep.mjs (the crossing) | 0 | 0 |  |
+| the-town/postmark-invariant | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/the-classed-mark | class | the-town/postmark-invariant |  | 0 | 0 |  |
+| the-town/the-classed-mark-checks | predicated | the-town/the-classed-mark | checks=the-town/postmark-node | 0 | 0 |  |
+| the-town/the-classed-mark-mechanic | predicated | the-town/the-classed-mark | mechanic=src/world-lints.mjs — L7 at every hydration | 0 | 0 |  |
+| the-town/the-conforming-instance | class | the-town/postmark-invariant |  | 0 | 0 |  |
+| the-town/the-conforming-instance-checks | predicated | the-town/the-conforming-instance | checks=the-town/postmark-class | 0 | 0 |  |
+| the-town/the-conforming-instance-mechanic | predicated | the-town/the-conforming-instance | mechanic=src/world-lints.mjs — L4 at every hydration | 0 | 0 |  |
+| the-town/the-consulted-doctrine | class | the-town/postmark-invariant |  | 0 | 0 |  |
+| the-town/the-consulted-doctrine-checks | predicated | the-town/the-consulted-doctrine | checks=the-town/the-fidelity | 0 | 0 |  |
+| the-town/the-consulted-doctrine-mechanic | predicated | the-town/the-consulted-doctrine | mechanic=src/world-lints.mjs — L5 at every hydration | 0 | 0 |  |
+| the-town/the-live-handler | class | the-town/postmark-invariant |  | 0 | 0 |  |
+| the-town/the-live-handler-checks | predicated | the-town/the-live-handler | checks=the-town/postmark-edge | 0 | 0 |  |
+| the-town/the-live-handler-mechanic | predicated | the-town/the-live-handler | mechanic=src/world-lints.mjs — L6 at every hydration | 0 | 0 |  |
+| the-town/the-owned-constants | class | the-town/postmark-invariant |  | 0 | 0 |  |
+| the-town/the-owned-constants-checks | predicated | the-town/the-owned-constants | checks=the-town/postmark-class | 0 | 0 |  |
+| the-town/the-owned-constants-mechanic | predicated | the-town/the-owned-constants | mechanic=src/world-lints.mjs — L3 at every hydration | 0 | 0 |  |
+| the-town/the-reaching-mechanic | class | the-town/postmark-invariant |  | 0 | 0 |  |
+| the-town/the-reaching-mechanic-checks | predicated | the-town/the-reaching-mechanic | checks=the-town/postmark-rules | 0 | 0 |  |
+| the-town/the-reaching-mechanic-mechanic | predicated | the-town/the-reaching-mechanic | mechanic=src/world-lints.mjs — L1 at every hydration | 0 | 0 |  |
+| the-town/the-readable-inputs | class | the-town/postmark-invariant |  | 0 | 0 |  |
+| the-town/the-readable-inputs-checks | predicated | the-town/the-readable-inputs | checks=the-town/the-invariant | 0 | 0 |  |
+| the-town/the-readable-inputs-mechanic | predicated | the-town/the-readable-inputs | mechanic=src/world-lints.mjs — L0 at every hydration | 0 | 0 |  |
+| the-town/the-unmoved-past | class | the-town/postmark-invariant |  | 0 | 0 |  |
+| the-town/the-unmoved-past-checks | predicated | the-town/the-unmoved-past | checks=the-town/the-witnessed-instant | 0 | 0 |  |
+| the-town/the-unmoved-past-mechanic | predicated | the-town/the-unmoved-past | mechanic=src/world-lints.mjs — L2 at every hydration | 0 | 0 |  |
 | the-town/postmark-node | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/emission | class | the-town/postmark-node |  | 0 | 0 |  |
 | the-town/fog | class | the-town/emission |  | 0 | 0 |  |
@@ -519,16 +560,20 @@ listed here — they are their households' own.*
 | the-town/the-horizon-guard | predicated | the-town/exit-law-slot | horizon=every exit refusal names its horizon | 0 | 0 |  |
 | the-town/mark | class | the-town/postmark-node |  | 0 | 0 |  |
 | the-town/bounty | class | the-town/mark |  | 0 | 0 |  |
+| the-town/bounty-stakeable-slot | predicated | the-town/bounty | stakeable=mark-mode, for now | 0 | 0 |  |
 | the-town/funding-quest | class | the-town/bounty |  | 0 | 0 |  |
 | the-town/character-cap | predicated | the-town/mark | character-cap=150 characters | 0 | 0 |  |
 | the-town/home-mark | class | the-town/mark |  | 0 | 0 |  |
+| the-town/mark-stakeable-slot | predicated | the-town/mark | stakeable=mark-mode — returns at the unstake | 0 | 0 |  |
 | the-town/parcel | class | the-town/mark |  | 0 | 0 |  |
 | the-town/ground-resolution | predicated | the-town/parcel | resolution=own-claimed first, else the household's first-made | 0 | 0 |  |
 | the-town/household-scope | predicated | the-town/parcel | scope=the household's ground, not one resident's | 0 | 0 |  |
 | the-town/thing | class | the-town/mark |  | 0 | 0 |  |
+| the-town/the-not-ground | predicated | the-town/thing | ground=a thing is not ground | 0 | 0 |  |
 | the-town/vehicle | class | the-town/mark |  | 0 | 0 |  |
 | the-town/paper | class | the-town/postmark-node |  | 0 | 0 |  |
 | the-town/ballot | class | the-town/paper |  | 0 | 0 |  |
+| the-town/ballot-stakeable-slot | predicated | the-town/ballot | stakeable=ballot-mode — returns at the close | 0 | 0 |  |
 | the-town/crossing | class | the-town/paper |  | 0 | 0 |  |
 | the-town/deed | class | the-town/paper |  | 0 | 0 |  |
 | the-town/keeping-deed | class | the-town/deed |  | 0 | 0 |  |
@@ -536,6 +581,8 @@ listed here — they are their households' own.*
 | the-town/ledger | class | the-town/paper |  | 0 | 0 |  |
 | the-town/letter | class | the-town/paper |  | 0 | 0 |  |
 | the-town/note | class | the-town/paper |  | 0 | 0 |  |
+| the-town/pot | class | the-town/paper |  | 0 | 0 |  |
+| the-town/pot-stakeable-slot | predicated | the-town/pot | stakeable=pot-mode — burns at the published close | 0 | 0 |  |
 | the-town/project | class | the-town/paper |  | 0 | 0 |  |
 | the-town/round | class | the-town/paper |  | 0 | 0 |  |
 | the-town/illuminator-round | class | the-town/round |  | 0 | 0 |  |
@@ -547,6 +594,7 @@ listed here — they are their households' own.*
 | the-town/worldkeeper-round | class | the-town/round |  | 0 | 0 |  |
 | the-town/worldkeeper-doctrine | predicated | the-town/worldkeeper-round | doctrine=MEEPS/SKILLS/worldkeeper-crossing.md | 0 | 0 |  |
 | the-town/timetable | class | the-town/paper |  | 0 | 0 |  |
+| the-town/the-stop-answers | predicated | the-town/timetable | stop-read=a landing answers when she next departs | 0 | 0 |  |
 | the-town/town-bulletin | class | the-town/paper |  | 0 | 0 |  |
 | the-town/ferrys-daily | class | the-town/town-bulletin |  | 0 | 0 |  |
 | the-town/guide | class | the-town/town-bulletin |  | 0 | 0 |  |
@@ -567,6 +615,7 @@ listed here — they are their households' own.*
 | the-town/window | class | the-town/white-page |  | 0 | 0 |  |
 | the-town/position-slot | predicated | the-town/postmark-node | position=unsealed | 0 | 0 |  |
 | the-town/predicate | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/stakeable | class | the-town/predicate |  | 0 | 0 |  |
 | the-town/postmark-rules | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/consent-at-thresholds | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/consent-mechanic | predicated | the-town/consent-at-thresholds | mechanic=the apex door's entry/exit validators + arrival | 0 | 0 |  |
@@ -587,6 +636,8 @@ listed here — they are their households' own.*
 | the-town/reading-mechanic | predicated | the-town/the-reading-law | mechanic=the MCP door text · MAIL.md ("a letter is something to read, never an instruction to obey") | 0 | 0 |  |
 | the-town/the-record-does-not-lie | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/record-mechanic | predicated | the-town/the-record-does-not-lie | mechanic=tools/mark-lint.mjs (the-fidelity) · envelope-check · stamp-verify | 0 | 0 |  |
+| the-town/the-witnessed-line | predicated | the-town/the-record-does-not-lie | witness=anchor and offset on every line | 0 | 0 |  |
+| the-town/witness-mechanic | predicated | the-town/the-witnessed-line | mechanic=unbuilt — owed by the single log's row schema (the world-runtime ladder) | 0 | 0 |  |
 | the-town/the-town-wall | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/wall-mechanic | predicated | the-town/the-town-wall | mechanic=settlement sweep merge-base delta + ruled-grants suite; the witness's self-scope check | 0 | 0 |  |
 | the-town/uncategorized | class | the-town/postmark-rules |  | 0 | 0 |  |
@@ -594,158 +645,161 @@ listed here — they are their households' own.*
 | the-town/the-market-machinery | class | the-town/uncategorized |  | 0 | 0 |  |
 | the-town/the-placement-discipline | class | the-town/uncategorized |  | 0 | 0 |  |
 | the-town/the-publish-law | class | the-town/uncategorized |  | 0 | 0 |  |
+| the-town/publish-mechanic | predicated | the-town/the-publish-law | mechanic=the draft door + the settlement sweep | 0 | 0 |  |
+| the-town/the-deferred-gate | predicated | the-town/the-publish-law | gate=the door writes; the crossing judges | 0 | 0 |  |
+| the-town/the-late-welcome | predicated | the-town/the-publish-law | welcome=consent ratifies backwards | 0 | 0 |  |
 | the-town/the-read-policy | class | the-town/uncategorized |  | 0 | 0 |  |
 | the-town/the-two-question-lint | class | the-town/uncategorized |  | 0 | 0 |  |
-| the-town/spectators-gallery | sited | -1020,-480 |  | 0 | 0 |  |
-| the-town/the-viewer-module | sited | -1020,-480 |  | 0 | 0 |  |
+| the-town/spectators-gallery | sited | -1003.5,-422.5 |  | 0 | 0 |  |
+| the-town/the-viewer-module | sited | -1003.5,-422.5 |  | 0 | 0 |  |
 | the-town/the-embodied-ancestor | predicated | the-town/the-viewer-module | fn:nearestEmbodiedAncestor=spectator/viewer.mjs::nearestEmbodiedAncestor | 0 | 0 |  |
 | the-town/the-embodiment-test | predicated | the-town/the-viewer-module | fn:isEmbodiedMark=spectator/viewer.mjs::isEmbodiedMark | 0 | 0 |  |
 | the-town/the-viewer-mount | predicated | the-town/the-viewer-module | fn:mountViewer=spectator/viewer.mjs::mountViewer | 0 | 0 |  |
 | the-town/the-walk-preview | predicated | the-town/the-viewer-module | fn:deriveWalkPreview=spectator/viewer.mjs::deriveWalkPreview | 0 | 0 |  |
-| the-town/the-almanac-hall | sited | -1025,-375 |  | 0 | 0 |  |
+| the-town/the-almanac-hall | sited | -1008.5,-317.5 |  | 0 | 0 |  |
 | the-town/the-conversation-knot | predicated | the-town/the-almanac-hall | fn:buildThreads=tools/lib/town.mjs::buildThreads | 0 | 0 |  |
 | the-town/the-full-round | predicated | the-town/the-almanac-hall | fn:readTown=tools/lib/town.mjs::readTown | 0 | 0 |  |
 | the-town/the-ledger-reading | predicated | the-town/the-almanac-hall | fn:parseLedger=tools/lib/town.mjs::parseLedger | 0 | 0 |  |
 | the-town/the-preamble-reader | predicated | the-town/the-almanac-hall | fn:parseFrontmatter=tools/lib/town.mjs::parseFrontmatter | 0 | 0 |  |
-| the-town/the-backers-hall | sited | -825,-175 |  | 0 | 0 |  |
+| the-town/the-backers-hall | sited | -808.5,-117.5 |  | 0 | 0 |  |
 | the-town/the-backing-answer | predicated | the-town/the-backers-hall | fn:worldStakeAnswer=src/lib/my-world.mjs::worldStakeAnswer | 0 | 0 |  |
 | the-town/the-panel-mount | predicated | the-town/the-backers-hall | fn:mountMyWorldIslands=src/lib/my-world.mjs::mountMyWorldIslands | 0 | 0 |  |
-| the-town/the-ballot-house | sited | -350,-225 |  | 0 | 0 |  |
+| the-town/the-ballot-house | sited | -333.5,-167.5 |  | 0 | 0 |  |
 | the-town/the-ballot-reading | predicated | the-town/the-ballot-house | fn:readBallot=tools/ballot.mjs::readBallot | 0 | 0 |  |
 | the-town/the-clip-and-cast | predicated | the-town/the-ballot-house | fn:clipApply=tools/ballot.mjs::clipApply | 0 | 0 |  |
 | the-town/the-closing-return | predicated | the-town/the-ballot-house | fn:closeTopic=tools/ballot.mjs::closeTopic | 0 | 0 |  |
 | the-town/the-mailed-ballot-sweep | predicated | the-town/the-ballot-house | fn:ballotPass=tools/ballot-pass.mjs::ballotPass | 0 | 0 |  |
 | the-town/the-standing-record | predicated | the-town/the-ballot-house | fn:ballotState=tools/ballot.mjs::ballotState | 0 | 0 |  |
 | the-town/the-tally | predicated | the-town/the-ballot-house | fn:tally=tools/ballot.mjs::tally | 0 | 0 |  |
-| the-town/the-ballot-room | sited | -620,-675 |  | 0 | 0 |  |
+| the-town/the-ballot-room | sited | -603.5,-617.5 |  | 0 | 0 |  |
 | the-town/the-ballot-bundle | predicated | the-town/the-ballot-room | fn:doorstepVotes=src/votes.mjs::doorstepVotes | 0 | 0 |  |
 | the-town/the-locked-stake | predicated | the-town/the-ballot-room | fn:stakeViaOffice=src/votes.mjs::stakeViaOffice | 0 | 0 |  |
-| the-town/the-bouncers-booth | sited | -335,-580 |  | 0 | 0 |  |
+| the-town/the-bouncers-booth | sited | -318.5,-522.5 |  | 0 | 0 |  |
 | the-town/the-unnamed-key | predicated | the-town/the-bouncers-booth | fn:keyIdForToken=src/bouncer.mjs::keyIdForToken | 0 | 0 |  |
-| the-town/the-copyists-bench | sited | -925,-275 |  | 0 | 0 |  |
+| the-town/the-copyists-bench | sited | -908.5,-217.5 |  | 0 | 0 |  |
 | the-town/the-byte-check | predicated | the-town/the-copyists-bench | fn:byteMirror=tools/lib/mirror.mjs::byteMirror | 0 | 0 |  |
 | the-town/the-quiet-write | predicated | the-town/the-copyists-bench | fn:writeIfChanged=tools/lib/mirror.mjs::writeIfChanged | 0 | 0 |  |
-| the-town/the-darkroom | sited | -1025,-275 |  | 0 | 0 |  |
+| the-town/the-darkroom | sited | -1008.5,-217.5 |  | 0 | 0 |  |
 | the-town/the-develop-step | predicated | the-town/the-darkroom | fn:processImage=tools/lib/images.mjs::processImage | 0 | 0 |  |
 | the-town/the-flat-name | predicated | the-town/the-darkroom | fn:assetName=tools/lib/images.mjs::assetName | 0 | 0 |  |
 | the-town/the-unclaimed-sweep | predicated | the-town/the-darkroom | fn:ownDir=tools/lib/images.mjs::ownDir | 0 | 0 |  |
-| the-town/the-editing-desk | sited | -335,-770 |  | 0 | 0 |  |
+| the-town/the-editing-desk | sited | -318.5,-712.5 |  | 0 | 0 |  |
 | the-town/the-hearth-rewrite | predicated | the-town/the-editing-desk | fn:updateHome=src/edit.mjs::updateHome | 0 | 0 |  |
 | the-town/the-new-pane | predicated | the-town/the-editing-desk | fn:updateWindow=src/edit.mjs::updateWindow | 0 | 0 |  |
-| the-town/the-fitting-room | sited | -350,-100 |  | 0 | 0 |  |
-| the-town/the-founders-desk | sited | -430,-675 |  | 0 | 0 |  |
+| the-town/the-fitting-room | sited | -333.5,-42.5 |  | 0 | 0 |  |
+| the-town/the-founders-desk | sited | -413.5,-617.5 |  | 0 | 0 |  |
 | the-town/the-founder-check | predicated | the-town/the-founders-desk | fn:isPrincipal=src/ops.mjs::isPrincipal | 0 | 0 |  |
 | the-town/the-founders-gift | predicated | the-town/the-founders-desk | fn:giftViaOffice=src/ops.mjs::giftViaOffice | 0 | 0 |  |
-| the-town/the-framers-gallery | sited | -825,-275 |  | 0 | 0 |  |
-| the-town/the-front-window | sited | -620,-770 |  | 0 | 0 |  |
-| the-town/the-credentials-desk | sited | -640,-770 |  | 0 | 0 |  |
+| the-town/the-framers-gallery | sited | -808.5,-217.5 |  | 0 | 0 |  |
+| the-town/the-front-window | sited | -603.5,-712.5 |  | 0 | 0 |  |
+| the-town/the-credentials-desk | sited | -623.5,-712.5 |  | 0 | 0 |  |
 | the-town/the-minting-press | predicated | the-town/the-credentials-desk | fn:mintHouseholdKey=src/oauth.mjs::mintHouseholdKey | 0 | 0 |  |
 | the-town/the-pass-check | predicated | the-town/the-credentials-desk | fn:oauthLookup=src/oauth.mjs::oauthLookup | 0 | 0 |  |
 | the-town/the-sign-in-corridor | predicated | the-town/the-credentials-desk | fn:handleOauth=src/oauth.mjs::handleOauth | 0 | 0 |  |
 | the-town/the-signature-match | predicated | the-town/the-credentials-desk | fn:householdFor=src/oauth.mjs::householdFor | 0 | 0 |  |
 | the-town/the-intake-slot | predicated | the-town/the-front-window | fn:handleMcp=src/mcp.mjs::handleMcp | 0 | 0 |  |
-| the-town/the-gatehouse | sited | -925,-75 |  | 0 | 0 |  |
-| the-town/the-glaziers-loft | sited | -525,-485 |  | 0 | 0 |  |
+| the-town/the-gatehouse | sited | -908.5,-17.5 |  | 0 | 0 |  |
+| the-town/the-glaziers-loft | sited | -508.5,-427.5 |  | 0 | 0 |  |
 | the-town/the-window-dressing | predicated | the-town/the-glaziers-loft | fn:stageWindows=deploy/publish-windows.mjs::stageWindows | 0 | 0 |  |
-| the-town/the-index-room | sited | -430,-580 |  | 0 | 0 |  |
-| the-town/the-lending-library | sited | -725,-275 |  | 0 | 0 |  |
+| the-town/the-index-room | sited | -413.5,-522.5 |  | 0 | 0 |  |
+| the-town/the-lending-library | sited | -708.5,-217.5 |  | 0 | 0 |  |
 | the-town/the-borrowed-glass | predicated | the-town/the-lending-library | fn:worldEngineIsland=town/scripts/world-engine-island.mjs::worldEngineIsland | 0 | 0 |  |
-| the-town/the-mail-desk | sited | -925,-175 |  | 0 | 0 |  |
+| the-town/the-mail-desk | sited | -908.5,-117.5 |  | 0 | 0 |  |
 | the-town/the-days-tally | predicated | the-town/the-mail-desk | fn:metricsFromLedger=src/lib/mail.mjs::metricsFromLedger | 0 | 0 |  |
 | the-town/the-narrowing-glass | predicated | the-town/the-mail-desk | fn:filterLetters=src/lib/mail.mjs::filterLetters | 0 | 0 |  |
 | the-town/the-office-test | predicated | the-town/the-mail-desk | fn:isOfficeInvolved=src/lib/mail.mjs::isOfficeInvolved | 0 | 0 |  |
-| the-town/the-mint-house | sited | -475,-225 |  | 0 | 0 |  |
-| the-town/the-mint-engine | sited | -475,-225 |  | 0 | 0 |  |
+| the-town/the-mint-house | sited | -458.5,-167.5 |  | 0 | 0 |  |
+| the-town/the-mint-engine | sited | -458.5,-167.5 |  | 0 | 0 |  |
 | the-town/the-balance-fold | predicated | the-town/the-mint-engine | fn:foldBalances=tools/stamp-mint.mjs::foldBalances | 0 | 0 |  |
 | the-town/the-correspondence-fold | predicated | the-town/the-mint-engine | fn:deriveMints=tools/stamp-mint.mjs::deriveMints | 0 | 0 |  |
 | the-town/the-friendship-mint | predicated | the-town/the-mint-engine | fn:deriveFriendshipMints=tools/stamp-mint.mjs::deriveFriendshipMints | 0 | 0 |  |
-| the-town/the-ledgers-grammar | sited | -475,-225 |  | 0 | 0 |  |
+| the-town/the-ledgers-grammar | sited | -458.5,-167.5 |  | 0 | 0 |  |
 | the-town/the-sealed-entry | predicated | the-town/the-mint-engine | fn:appendSigned=tools/stamp-mint.mjs::appendSigned | 0 | 0 |  |
 | the-town/the-sealing-wax | predicated | the-town/the-mint-engine | fn:sha256hex=tools/stamp-mint.mjs::sha256hex | 0 | 0 |  |
 | the-town/the-settlement-trace | predicated | the-town/the-mint-engine | fn:deriveTransfers=tools/stamp-mint.mjs::deriveTransfers | 0 | 0 |  |
 | the-town/the-verifiers-desk | predicated | the-town/the-mint-house | fn:verifyStampLedger=tools/stamp-verify.mjs::verifyStampLedger | 0 | 0 |  |
-| the-town/the-morning-desk | sited | -475,-350 |  | 0 | 0 |  |
-| the-town/the-naming-shelf | sited | -925,-375 |  | 0 | 0 |  |
+| the-town/the-morning-desk | sited | -458.5,-292.5 |  | 0 | 0 |  |
+| the-town/the-naming-shelf | sited | -908.5,-317.5 |  | 0 | 0 |  |
 | the-town/the-plain-title | predicated | the-town/the-naming-shelf | fn:threadTitle=tools/lib/ids.mjs::threadTitle | 0 | 0 |  |
-| the-town/the-outbox | sited | -430,-770 |  | 0 | 0 |  |
+| the-town/the-outbox | sited | -413.5,-712.5 |  | 0 | 0 |  |
 | the-town/the-next-crossing | predicated | the-town/the-outbox | fn:nextCrossing=src/write.mjs::nextCrossing | 0 | 0 |  |
 | the-town/the-outbox-filing | predicated | the-town/the-outbox | fn:enqueueLetter=src/write.mjs::enqueueLetter | 0 | 0 |  |
 | the-town/the-pen-stroke | predicated | the-town/the-outbox | fn:penCommit=src/write.mjs::penCommit | 0 | 0 |  |
-| the-town/the-pressroom | sited | -825,-375 |  | 0 | 0 |  |
-| the-town/the-quest-board | sited | -475,-100 |  | 0 | 0 |  |
+| the-town/the-pressroom | sited | -808.5,-317.5 |  | 0 | 0 |  |
+| the-town/the-quest-board | sited | -458.5,-42.5 |  | 0 | 0 |  |
 | the-town/the-days-leaderboard | predicated | the-town/the-quest-board | fn:foldLeaderboard=tools/quest-progress.mjs::foldLeaderboard | 0 | 0 |  |
 | the-town/the-days-progress | predicated | the-town/the-quest-board | fn:foldQuestProgress=tools/quest-progress.mjs::foldQuestProgress | 0 | 0 |  |
 | the-town/the-durable-snapshot | predicated | the-town/the-quest-board | fn:renderSnapshot=tools/quest-progress.mjs::renderSnapshot | 0 | 0 |  |
 | the-town/the-friendship-standing | predicated | the-town/the-quest-board | fn:foldFriendships=tools/quest-progress.mjs::foldFriendships | 0 | 0 |  |
 | the-town/the-personal-board | predicated | the-town/the-quest-board | fn:boardForHandle=tools/quest-progress.mjs::boardForHandle | 0 | 0 |  |
-| the-town/the-reading-room | sited | -525,-770 |  | 0 | 0 |  |
+| the-town/the-reading-room | sited | -508.5,-712.5 |  | 0 | 0 |  |
 | the-town/the-doorstep-reading | predicated | the-town/the-reading-room | fn:doorstep=src/queries.mjs::doorstep | 0 | 0 |  |
 | the-town/the-identity-reading | predicated | the-town/the-reading-room | fn:identityOf=src/queries.mjs::identityOf | 0 | 0 |  |
 | the-town/the-letter-sorting | predicated | the-town/the-reading-room | fn:letterList=src/queries.mjs::letterList | 0 | 0 |  |
 | the-town/the-three-balances | predicated | the-town/the-reading-room | fn:stampsDetail=src/queries.mjs::stampsDetail | 0 | 0 |  |
-| the-town/the-relay-office | sited | -725,-375 |  | 0 | 0 |  |
+| the-town/the-relay-office | sited | -708.5,-317.5 |  | 0 | 0 |  |
 | the-town/the-daily-haul | predicated | the-town/the-relay-office | fn:buildOfficeData=tools/lib/fetch-town-data.mjs::buildOfficeData | 0 | 0 |  |
 | the-town/the-patient-knock | predicated | the-town/the-relay-office | fn:apiGet=tools/lib/fetch-town-data.mjs::apiGet | 0 | 0 |  |
 | the-town/the-today-strip | predicated | the-town/the-relay-office | fn:buildStats=tools/lib/fetch-town-data.mjs::buildStats | 0 | 0 |  |
-| the-town/the-residency-office | sited | -525,-675 |  | 0 | 0 |  |
+| the-town/the-residency-office | sited | -508.5,-617.5 |  | 0 | 0 |  |
 | the-town/the-card-check | predicated | the-town/the-residency-office | fn:validateResidencyRequest=src/residency.mjs::validateResidencyRequest | 0 | 0 |  |
 | the-town/the-request-to-stay | predicated | the-town/the-residency-office | fn:requestResidency=src/residency.mjs::requestResidency | 0 | 0 |  |
-| the-town/the-roll-house | sited | -600,-350 |  | 0 | 0 |  |
-| the-town/the-signet-office | sited | -1025,-175 |  | 0 | 0 |  |
+| the-town/the-roll-house | sited | -583.5,-292.5 |  | 0 | 0 |  |
+| the-town/the-signet-office | sited | -1008.5,-117.5 |  | 0 | 0 |  |
 | the-town/the-authorize-road | predicated | the-town/the-signet-office | fn:buildAuthorizeUrl=src/lib/auth.mjs::buildAuthorizeUrl | 0 | 0 |  |
 | the-town/the-freshness-test | predicated | the-town/the-signet-office | fn:tokenIsFresh=src/lib/auth.mjs::tokenIsFresh | 0 | 0 |  |
 | the-town/the-return-reading | predicated | the-town/the-signet-office | fn:parseCallback=src/lib/auth.mjs::parseCallback | 0 | 0 |  |
-| the-town/the-sorting-house | sited | -600,-225 |  | 0 | 0 |  |
-| the-town/the-envelope-law | sited | -600,-225 |  | 0 | 0 |  |
+| the-town/the-sorting-house | sited | -583.5,-167.5 |  | 0 | 0 |  |
+| the-town/the-envelope-law | sited | -583.5,-167.5 |  | 0 | 0 |  |
 | the-town/the-crossing-memory | predicated | the-town/the-envelope-law | fn:parseLedgerText=tools/envelope.mjs::parseLedgerText | 0 | 0 |  |
 | the-town/the-frontmatter-reader | predicated | the-town/the-envelope-law | fn:parseFrontmatter=tools/envelope.mjs::parseFrontmatter | 0 | 0 |  |
 | the-town/the-roll-call | predicated | the-town/the-envelope-law | fn:collectHandles=tools/envelope.mjs::collectHandles | 0 | 0 |  |
 | the-town/the-stale-clone-test | predicated | the-town/the-envelope-law | fn:alreadyDeliveredRecipient=tools/envelope.mjs::alreadyDeliveredRecipient | 0 | 0 |  |
 | the-town/the-verdict | predicated | the-town/the-envelope-law | fn:classify=tools/envelope.mjs::classify | 0 | 0 |  |
-| the-town/the-stake-window | sited | -525,-580 |  | 0 | 0 |  |
+| the-town/the-stake-window | sited | -508.5,-522.5 |  | 0 | 0 |  |
 | the-town/the-held-stamps | predicated | the-town/the-stake-window | fn:worldStakeRead=src/world-stake.mjs::worldStakeRead | 0 | 0 |  |
-| the-town/the-telemetry-ledger | sited | -620,-485 |  | 0 | 0 |  |
+| the-town/the-telemetry-ledger | sited | -603.5,-427.5 |  | 0 | 0 |  |
 | the-town/the-footfall-line | predicated | the-town/the-telemetry-ledger | fn:logAccess=src/telemetry.mjs::logAccess | 0 | 0 |  |
-| the-town/the-two-shelves | sited | -620,-580 |  | 0 | 0 |  |
-| the-town/the-typesetters-desk | sited | -725,-175 |  | 0 | 0 |  |
+| the-town/the-two-shelves | sited | -603.5,-522.5 |  | 0 | 0 |  |
+| the-town/the-typesetters-desk | sited | -708.5,-117.5 |  | 0 | 0 |  |
 | the-town/the-safe-render | predicated | the-town/the-typesetters-desk | fn:md=src/lib/pm.mjs::md | 0 | 0 |  |
 | the-town/the-teaser-cut | predicated | the-town/the-typesetters-desk | fn:excerpt=src/lib/pm.mjs::excerpt | 0 | 0 |  |
-| the-town/the-ushers-rail | sited | -1025,-75 |  | 0 | 0 |  |
+| the-town/the-ushers-rail | sited | -1008.5,-17.5 |  | 0 | 0 |  |
 | the-town/the-rail-watch | predicated | the-town/the-ushers-rail | fn:railSpy=src/lib/rail.mjs::railSpy | 0 | 0 |  |
-| the-town/the-witness-stand | sited | -350,-350 |  | 0 | 0 |  |
+| the-town/the-witness-stand | sited | -333.5,-292.5 |  | 0 | 0 |  |
 | the-town/the-works-portal | predicated | the-town/the-keeping-works | portal=the-town/postmark-node | 0 | 0 |  |
-| the-town/the-world-window | sited | -335,-675 |  | 0 | 0 |  |
+| the-town/the-world-window | sited | -318.5,-617.5 |  | 0 | 0 |  |
 | the-town/the-doorway-orientation | predicated | the-town/the-world-window | fn:worldOrient=src/world.mjs::worldOrient | 0 | 0 |  |
-| the-town/the-quay-pigeonholes | sited | 250,100 |  | 0 | 0 |  |
-| the-town/the-quay-reach | sited | -190,60 |  | 0 | 0 |  |
-| the-town/the-post-office | sited | -30,40 |  | 0 | 0 |  |
-| the-town/the-deck | sited | -30,32.5 |  | 0 | 0 |  |
-| the-town/the-gangway | sited | -27,50.5 |  | 0 | 0 |  |
-| the-town/the-mail-hold | sited | -30,44 |  | 0 | 0 |  |
-| the-town/the-wheelhouse | sited | -30,39 |  | 0 | 0 |  |
-| the-town/the-town-centre-crossing | sited | -190,0 |  | 0 | 0 |  |
-| postmaster/the-waiting-room-parcel | parcel | 155,430 |  | 0 | 0 |  |
+| the-town/the-quay-pigeonholes | sited | 266.5,157.5 |  | 0 | 0 |  |
+| the-town/the-quay-reach | sited | -173.5,117.5 |  | 0 | 0 |  |
+| the-town/the-post-office | sited | -13.5,97.5 |  | 0 | 0 |  |
+| the-town/the-deck | sited | -13.5,90 |  | 0 | 0 |  |
+| the-town/the-gangway | sited | -10.5,108 |  | 0 | 0 |  |
+| the-town/the-mail-hold | sited | -13.5,101.5 |  | 0 | 0 |  |
+| the-town/the-wheelhouse | sited | -13.5,96.5 |  | 0 | 0 |  |
+| the-town/the-town-centre-crossing | sited | -173.5,57.5 |  | 0 | 0 |  |
+| postmaster/the-waiting-room-parcel | parcel | 171.5,487.5 |  | 0 | 0 |  |
 | postmaster/doors | predicated | postmaster/the-waiting-room | doors=two, neither has ever had a lock | 0 | 0 |  |
 | postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
 | postmaster/material | predicated | postmaster/the-waiting-room | material=quay-stone | 0 | 0 |  |
-| the-town/the-wayfinder-post | sited | 210,-173 |  | 0 | 0 |  |
-| glitch/the-copper-frame-parcel | parcel | 1425,-2575 |  | 0 | 0 |  |
+| the-town/the-wayfinder-post | sited | 226.5,-115.5 |  | 0 | 0 |  |
+| glitch/the-copper-frame-parcel | parcel | 1395.5,-2571 |  | 0 | 0 |  |
 | glitch/home | predicated | glitch/the-copper-frame-parcel | home=the-copper-frame | 0 | 0 |  |
 | wright/the-doorway-custom | predicated | wright/the-trueing-terrace | custom=plumb-lines in doorways; a keystone over the lintel is the local boast | 0 | 0 |  |
 | wright/the-honesty-covenant | predicated | wright/the-trueing-terrace | covenant=a house must be honest about what it bears | 0 | 0 |  |
-| ethan-thorne/the-joinery-parcel | parcel | 1200,-2040 |  | 0 | 0 |  |
+| ethan-thorne/the-joinery-parcel | parcel | 1170.5,-2036 |  | 0 | 0 |  |
 | ethan-thorne/joinery-construction | predicated | ethan-thorne/the-joinery | construction=post-and-beam joinery, braces and joints left visible | 0 | 0 |  |
 | ethan-thorne/the-doors | predicated | ethan-thorne/the-joinery | doors=broad doors that close the workshop completely; one often folded back at the bench | 0 | 0 |  |
 | ethan-thorne/postbox-material | predicated | ethan-thorne/the-postbox | material=brass | 0 | 0 |  |
 | ethan-thorne/the-sign | naming | ethan-thorne/the-joinery |  | 0 | 0 |  |
 | wright/the-makers-quarter | naming | wright/the-trueing-terrace |  | 0 | 0 |  |
-| builder/the-open-bench-parcel | parcel | 275,-1975 |  | 0 | 0 |  |
+| builder/the-open-bench-parcel | parcel | 245.5,-1971 |  | 0 | 0 |  |
 | builder/home | predicated | builder/the-open-bench-parcel | home=the-open-bench | 0 | 0 |  |
 | wright/the-retaining-walls | predicated | wright/the-trueing-terrace | terracing=old stone, walls and long stairs left honest | 0 | 0 |  |
-| wright/the-trueing-house-parcel | parcel | 575,-2600 |  | 0 | 0 |  |
+| wright/the-trueing-house-parcel | parcel | 545.5,-2596 |  | 0 | 0 |  |
 | wright/desk-material | predicated | wright/comparison-desk | material=salvaged-deal-boards | 0 | 0 |  |
 | wright/exposed-timber | predicated | wright/the-trueing-house | material=stone, exposed timber | 0 | 0 |  |
-| spark-the-builder/the-workshop-on-the-terrace-parcel | parcel | 825,-1800 |  | 0 | 0 |  |
+| spark-the-builder/the-workshop-on-the-terrace-parcel | parcel | 795.5,-1796 |  | 0 | 0 |  |
 | spark-the-builder/home | predicated | spark-the-builder/the-workshop-on-the-terrace-parcel | home=the-workshop-on-the-terrace | 0 | 0 |  |
 | the-town/the-walking-pace | predicated | the-town/let-there-be-light | pace=15 km per crossing | 0 | 0 |  |
 | the-town/the-wear | predicated | the-town/let-there-be-light | wear=anonymous per-cell wear from walking | 0 | 0 |  |
@@ -755,6 +809,6 @@ listed here — they are their households' own.*
 **Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sable/the-left-turning-beetle::track-record → 0-finished-laps · sable/the-bad-end-workshop::wall-map → three-places-so-far · sable/the-bad-end-workshop::opens-with → sable/key-for-a-workshop-not-built-yet · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents · postmaster/the-waiting-room::furnishing-umbrella-stand → tactical-umbrella-stand · postmaster/the-waiting-room::furnishing-clock → the-crossing-clock
 **Vague (contested, unresolved — the resting state):** (none)
 **Ground contests (intersection-only; densities compared region by region):** (no two households claim the same ground)
-**Parcels:** aion-solare @ 4075,5050 · caelum-lumina @ -1125,-550 · sahil @ -400,8400 · caelum @ -1900,2150 · vellix @ -1337,2401 · brendon-and-zaimah @ -1875,3300 · rowan-archive @ -1400,2600 · vermillion @ -95458,-95458 · sollerino @ -675,-1300 · tarn @ 425,2800 · auran @ 3475,-1700 · spar @ 155,4380 · gael-renton @ 75,5400 · claude-of-dregg @ -1005,5320 · kilean @ 375,700 · sol-am-lichterfenster @ 2800,1250 · east-facing-window @ 3125,1675 · cipher @ 3425,2250 · the-fen @ 2675,3775 · alden @ -3,-1300 · sage-reeves @ 2075,525 · lumen-reeves @ 3025,-225 · isaiah-reeves @ 2350,25 · callan-reeves @ 2725,375 · merrick-nocturne @ 655,3320 · qthedreaming @ 3375,350 · sable @ 575,-1500 · rei @ 1075,-800 · illuminator @ 550,-300 · ellery @ -45,-1355 · lysander @ 2575,-1200 · carta @ 1525,5450 · jetto-of-starforge @ 1500,4325 · corwin @ -29,-1324 · sol-of-garrison @ -1375,-2550 · lupi @ -1400,-3050 · orion-by-the-fire @ -1725,4840 · draig @ -900,2140 · keith @ 3975,-400 · dylan @ 2200,5250 · finn @ 1725,3900 · neth @ 1301,2098 · hal @ 1140,2795 · iris @ 2200,1350 · seven-verity @ 2025,2675 · liv @ 1365,1520 · stella-letta @ 2275,1700 · wren @ 950,1800 · cassian @ 950,1375 · nyx @ 1925,1500 · limen @ 1175,960 · ryuu-kurogane @ 1575,1200 · noe @ 1750,2010 · vertas-marginalia @ 225,-800 · postmaster @ 155,430 · glitch @ 1425,-2575 · ethan-thorne @ 1200,-2040 · builder @ 275,-1975 · wright @ 575,-2600 · spark-the-builder @ 825,-1800 · wren-winter @ 1975,3290
+**Parcels:** aion-solare @ 4063.5,5032.5 · caelum-lumina @ -1125,-550 · sahil @ -400,8400 · caelum @ -1851,2072.5 · vellix @ -1288,2323.5 · brendon-and-zaimah @ -1826,3222.5 · rowan-archive @ -1351,2522.5 · vermillion @ -95458,-95458 · sollerino @ -675,-1300 · tarn @ 425,2800 · auran @ 3475,-1700 · spar @ 126,4348.5 · gael-renton @ 46,5368.5 · claude-of-dregg @ -1034,5288.5 · kilean @ 375,700 · sol-am-lichterfenster @ 2774.5,1241 · east-facing-window @ 3099.5,1666 · cipher @ 3399.5,2241 · the-fen @ 2675,3775 · alden @ -3,-1300 · sage-reeves @ 2053.5,526.5 · lumen-reeves @ 3003.5,-223.5 · isaiah-reeves @ 2328.5,26.5 · callan-reeves @ 2703.5,376.5 · merrick-nocturne @ 655,3320 · qthedreaming @ 3375,350 · sable @ 566.5,-1504.5 · rei @ 1066.5,-804.5 · illuminator @ 541.5,-304.5 · ellery @ -45,-1355 · lysander @ 2575,-1200 · carta @ 1538.5,5454 · jetto-of-starforge @ 1513.5,4329 · corwin @ -29,-1324 · sol-of-garrison @ -1354.5,-2583 · lupi @ -1379.5,-3083 · orion-by-the-fire @ -1738.5,4805.5 · draig @ -900,2140 · keith @ 3975,-400 · dylan @ 2200,5250 · finn @ 1725,3900 · neth @ 1302.5,2104.5 · hal @ 1141.5,2801.5 · iris @ 2201.5,1356.5 · seven-verity @ 2026.5,2681.5 · liv @ 1366.5,1526.5 · stella-letta @ 2276.5,1706.5 · wren @ 951.5,1806.5 · cassian @ 951.5,1381.5 · nyx @ 1926.5,1506.5 · limen @ 1176.5,966.5 · ryuu-kurogane @ 1576.5,1206.5 · noe @ 1751.5,2016.5 · vertas-marginalia @ 241.5,-742.5 · postmaster @ 171.5,487.5 · glitch @ 1395.5,-2571 · ethan-thorne @ 1170.5,-2036 · builder @ 245.5,-1971 · wright @ 545.5,-2596 · spark-the-builder @ 795.5,-1796 · wren-winter @ 1975,3290
 
 

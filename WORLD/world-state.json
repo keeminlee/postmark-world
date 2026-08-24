@@ -38,17 +38,67 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-23",
       "at": {
-        "x": 3675,
-        "y": 4950
+        "x": 3663.5,
+        "y": 4932.5
       },
       "extent": {
-        "w": 1500,
-        "h": 950
+        "w": 1323,
+        "h": 959
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "The far seaward quarter where cobblestones give out — a homeland of return, cliffs, ancient trees, and an upward waterfall.",
+      "points": [
+        [
+          4325,
+          4947
+        ],
+        [
+          4169,
+          5258
+        ],
+        [
+          3843,
+          5412
+        ],
+        [
+          3501,
+          5412
+        ],
+        [
+          3187,
+          5267
+        ],
+        [
+          3024,
+          5044
+        ],
+        [
+          3002,
+          4836
+        ],
+        [
+          3139,
+          4602
+        ],
+        [
+          3459,
+          4453
+        ],
+        [
+          3871,
+          4453
+        ],
+        [
+          4187,
+          4632
+        ],
+        [
+          4317,
+          4838
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -111,8 +161,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-23",
       "at": {
-        "x": 3675,
-        "y": 4760
+        "x": 3663.5,
+        "y": 4742.5
       },
       "extent": {
         "w": 1450,
@@ -179,8 +229,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-24",
       "at": {
-        "x": 4075,
-        "y": 5050
+        "x": 4063.5,
+        "y": 5032.5
       },
       "extent": {
         "w": 25,
@@ -201,8 +251,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-29T00:32:26.262Z",
       "at": {
-        "x": 4080,
-        "y": 5058
+        "x": 4068.5,
+        "y": 5040.5
       },
       "extent": {
         "h": 3,
@@ -223,8 +273,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-29T00:32:12.267Z",
       "at": {
-        "x": 4070,
-        "y": 5055
+        "x": 4058.5,
+        "y": 5037.5
       },
       "extent": {
         "h": 8,
@@ -245,8 +295,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-29T00:32:54.366Z",
       "at": {
-        "x": 4068,
-        "y": 5052
+        "x": 4056.5,
+        "y": 5034.5
       },
       "extent": {
         "h": 5,
@@ -267,8 +317,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-22",
       "at": {
-        "x": 4075,
-        "y": 5050
+        "x": 4063.5,
+        "y": 5032.5
       },
       "extent": {
         "w": 12,
@@ -359,8 +409,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-22",
       "at": {
-        "x": 4078,
-        "y": 5053
+        "x": 4066.5,
+        "y": 5035.5
       },
       "extent": {
         "w": 2,
@@ -398,8 +448,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-29T00:30:46.352Z",
       "at": {
-        "x": 4073,
-        "y": 5049
+        "x": 4061.5,
+        "y": 5031.5
       },
       "extent": {
         "h": 6,
@@ -420,8 +470,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-29T00:31:17.886Z",
       "at": {
-        "x": 4074,
-        "y": 5048
+        "x": 4062.5,
+        "y": 5030.5
       },
       "extent": {
         "h": 5,
@@ -442,8 +492,8 @@
       "declared_household": "gh:293432145",
       "date": "2026-07-29T00:31:32.398Z",
       "at": {
-        "x": 4076,
-        "y": 5047
+        "x": 4064.5,
+        "y": 5029.5
       },
       "extent": {
         "h": 3,
@@ -780,17 +830,67 @@
       "declared_household": "gh:259462552",
       "date": "2026-07-23",
       "at": {
-        "x": -1900,
-        "y": 2150
+        "x": -1851,
+        "y": 2072.5
       },
       "extent": {
-        "w": 1350,
-        "h": 2350
+        "w": 1344,
+        "h": 1987
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "The stretch of town where the sun never comes up: perpetual moonlit night over wild glowing grass, a still lake, and quiet groves.",
+      "points": [
+        [
+          -1179,
+          2150
+        ],
+        [
+          -1478,
+          2865
+        ],
+        [
+          -1751,
+          3066
+        ],
+        [
+          -2048,
+          3066
+        ],
+        [
+          -2309,
+          2873
+        ],
+        [
+          -2523,
+          2457
+        ],
+        [
+          -2523,
+          1819
+        ],
+        [
+          -2376,
+          1369
+        ],
+        [
+          -2037,
+          1102
+        ],
+        [
+          -1740,
+          1079
+        ],
+        [
+          -1403,
+          1298
+        ],
+        [
+          -1179,
+          1806
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -819,8 +919,8 @@
       "declared_household": "gh:259462552",
       "date": "2026-07-24",
       "at": {
-        "x": -1900,
-        "y": 2150
+        "x": -1851,
+        "y": 2072.5
       },
       "extent": {
         "w": 25,
@@ -841,8 +941,8 @@
       "declared_household": "gh:259462552",
       "date": "2026-07-22",
       "at": {
-        "x": -1900,
-        "y": 2150
+        "x": -1851,
+        "y": 2072.5
       },
       "extent": {
         "w": 20,
@@ -864,8 +964,8 @@
       "declared_household": "gh:259462552",
       "date": "2026-07-22",
       "at": {
-        "x": -1892,
-        "y": 2150
+        "x": -1843,
+        "y": 2072.5
       },
       "extent": {
         "w": 1,
@@ -938,8 +1038,8 @@
       "declared_household": "solo:vellix",
       "date": "2026-08-22T14:34:24.710Z",
       "at": {
-        "x": -1337,
-        "y": 2401
+        "x": -1288,
+        "y": 2323.5
       },
       "extent": {
         "w": 25,
@@ -978,8 +1078,8 @@
       "declared_household": "gh:259462552",
       "date": "2026-07-23",
       "at": {
-        "x": -1800,
-        "y": 2100
+        "x": -1751,
+        "y": 2022.5
       },
       "extent": {
         "w": 220,
@@ -1000,8 +1100,8 @@
       "declared_household": "gh:311930611",
       "date": "2026-08-07",
       "at": {
-        "x": -1875,
-        "y": 3300
+        "x": -1826,
+        "y": 3222.5
       },
       "extent": {
         "w": 25,
@@ -1039,8 +1139,8 @@
       "declared_household": "gh:311930611",
       "date": "2026-08-07",
       "at": {
-        "x": -1875,
-        "y": 3300
+        "x": -1826,
+        "y": 3222.5
       },
       "extent": {
         "w": 14,
@@ -1062,8 +1162,8 @@
       "declared_household": "gh:259462552",
       "date": "2026-07-23",
       "at": {
-        "x": -1650,
-        "y": 2150
+        "x": -1601,
+        "y": 2072.5
       },
       "extent": {
         "w": 200,
@@ -1084,8 +1184,8 @@
       "declared_household": "gh:259462552",
       "date": "2026-07-23",
       "at": {
-        "x": -1560,
-        "y": 2220
+        "x": -1511,
+        "y": 2142.5
       },
       "extent": {
         "w": 6,
@@ -1106,8 +1206,8 @@
       "declared_household": "solo:rowan-archive",
       "date": "2026-08-22T04:21:15.290Z",
       "at": {
-        "x": -1400,
-        "y": 2600
+        "x": -1351,
+        "y": 2522.5
       },
       "extent": {
         "w": 25,
@@ -1281,6 +1381,23 @@
       "weight": 0,
       "body": "An entry is written once — position is physics, entry is law; the anchor derives from the standing record, and the light has no outside.",
       "placementParent": "the-town/logos"
+    },
+    {
+      "id": "the-town/the-threshold",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-entry",
+      "slot": "threshold",
+      "value": "a frame changes only at a boundary you stand on",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A threshold crosses only from where you truly stand, and exit sets you down at the door — no verb moves the frame from afar.",
+      "placementParent": "the-town/the-entry"
     },
     {
       "id": "the-town/the-fading",
@@ -1470,6 +1587,40 @@
       "placementParent": "the-town/logos"
     },
     {
+      "id": "the-town/the-fractal",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/logos",
+      "slot": "fractal",
+      "value": "the whole's stamp interactions stand at every node",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every stamp interaction the town offers as a whole it offers at every node: weight, equity, asks and ballots recurse down the containment tree.",
+      "placementParent": "the-town/logos"
+    },
+    {
+      "id": "the-town/the-root-case",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/the-fractal",
+      "slot": "root-case",
+      "value": "the town's economy is the root node's own instance",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The town's economy is the one law's root case: the root's weight is every stake fanned up, its equity every keeping record, its pots the town's own.",
+      "placementParent": "the-town/the-fractal"
+    },
+    {
       "id": "the-town/the-gap",
       "kind": "predicated",
       "by": "the-town",
@@ -1538,6 +1689,23 @@
       "placementParent": "the-town/logos"
     },
     {
+      "id": "the-town/the-invariant",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/logos",
+      "slot": "invariant",
+      "value": "the town reads itself at every fold",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An invariant is a standing question the town asks of itself at every fold — it reports, never repairs, and names its method and its limits.",
+      "placementParent": "the-town/logos"
+    },
+    {
       "id": "the-town/the-logos-portal",
       "kind": "predicated",
       "by": "the-town",
@@ -1553,6 +1721,57 @@
       "weight": 0,
       "body": "The logos quarter is a door: enter it and the read roots in class-space at the-town/node — the primitives; your feet stay under the light.",
       "placementParent": "the-town/logos"
+    },
+    {
+      "id": "the-town/the-media",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-24",
+      "parent": "the-town/logos",
+      "slot": "media",
+      "value": "bytes live behind one door; the record stays prose",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The record stays prose: bytes live behind one door — content-addressed, household-grained, append-only; a mark carries the URL, never the bytes.",
+      "placementParent": "the-town/logos"
+    },
+    {
+      "id": "the-town/the-byte-accounting",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-24",
+      "parent": "the-town/the-media",
+      "slot": "byte-accounting",
+      "value": "quotas are machinery, never record",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Byte-accounting is machinery, never record: quotas and sizes live office-side, and the record never learns a file's weight.",
+      "placementParent": "the-town/the-media"
+    },
+    {
+      "id": "the-town/the-household-grain",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-24",
+      "parent": "the-town/the-media",
+      "slot": "household-grain",
+      "value": "a household's wall is its own",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Media is a household's own: the quota walls by resident count, the uploading hand rides every row, and no other house writes on your wall.",
+      "placementParent": "the-town/the-media"
     },
     {
       "id": "the-town/the-one-claim",
@@ -1657,6 +1876,23 @@
       "placementParent": "the-town/logos"
     },
     {
+      "id": "the-town/the-already-standing",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/the-re-homing",
+      "slot": "already-standing",
+      "value": "an identical parked copy is dropped, never refused",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A parked copy of a mark already standing in canon, identical but for its frame and its hour, is the drain's to drop — nothing moves, nothing refuses.",
+      "placementParent": "the-town/the-re-homing"
+    },
+    {
       "id": "the-town/the-parked",
       "kind": "predicated",
       "by": "the-town",
@@ -1759,6 +1995,23 @@
       "placementParent": "the-town/logos"
     },
     {
+      "id": "the-town/the-atomic-drain",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-save",
+      "slot": "drain",
+      "value": "write-down and truncate are one act",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The drain's write-down and the journal's truncate are one act — a crash between them eats no draft, and a lost save recomputes from the log.",
+      "placementParent": "the-town/the-save"
+    },
+    {
       "id": "the-town/the-settlement",
       "kind": "predicated",
       "by": "the-town",
@@ -1802,12 +2055,46 @@
       "date": "2026-08-02",
       "parent": "the-town/logos",
       "slot": "drafts",
-      "value": "branch-shaped, private until settled",
+      "value": "private until settled; two phases, one page",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "A household's unsettled marks are its own sketchbook, invisible to every other household until the settlement publishes them.",
       "placementParent": "the-town/logos"
+    },
+    {
+      "id": "the-town/the-live",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-sketchbook",
+      "slot": "live",
+      "value": "the journal since the last save; the drain prints it to the household branch",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Between saves a sketch lives in the journal — the author's word, never a judgment, read in place by its own household alone.",
+      "placementParent": "the-town/the-sketchbook"
+    },
+    {
+      "id": "the-town/the-settled",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-sketchbook",
+      "slot": "settled",
+      "value": "canon at the crossing, in the record itself",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "At the crossing the sweep judges the sketch by the publish law; what publishes leaves the sketchbook and stands in canon.",
+      "placementParent": "the-town/the-sketchbook"
     },
     {
       "id": "the-town/the-sounding",
@@ -1977,6 +2264,23 @@
       "stamps": 0,
       "weight": 0,
       "body": "The whole standing claim on every marked place, read fresh in one pass — every open stake and who in town is holding it.",
+      "placementParent": "the-town/the-stake"
+    },
+    {
+      "id": "the-town/the-three-returns",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/the-stake",
+      "slot": "three-returns",
+      "value": "every stake is escrow; only the return differs",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One escrow, three returns: a vote stake returns at its close, a mark stake at its unstake, a pot stake burns what the epoch's dollars funded.",
       "placementParent": "the-town/the-stake"
     },
     {
@@ -4067,17 +4371,67 @@
       "declared_household": "gh:295481875",
       "date": "2026-07-23",
       "at": {
-        "x": -400,
-        "y": 4900
+        "x": -429,
+        "y": 4868.5
       },
       "extent": {
-        "w": 1750,
-        "h": 1500
+        "w": 1638,
+        "h": 1509
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "An open twilight shore beyond the river's mouth, its whole length doubled by the calcite hearth's light at the head of the bay.",
+      "points": [
+        [
+          390,
+          4901
+        ],
+        [
+          172,
+          5399
+        ],
+        [
+          -183,
+          5617
+        ],
+        [
+          -613,
+          5623
+        ],
+        [
+          -1012,
+          5418
+        ],
+        [
+          -1229,
+          5083
+        ],
+        [
+          -1248,
+          4697
+        ],
+        [
+          -1059,
+          4348
+        ],
+        [
+          -638,
+          4114
+        ],
+        [
+          -150,
+          4114
+        ],
+        [
+          223,
+          4355
+        ],
+        [
+          386,
+          4699
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -4089,8 +4443,8 @@
       "declared_household": "gh:295481875",
       "date": "2026-07-24",
       "at": {
-        "x": 155,
-        "y": 4380
+        "x": 126,
+        "y": 4348.5
       },
       "extent": {
         "w": 25,
@@ -4111,8 +4465,8 @@
       "declared_household": "gh:295481875",
       "date": "2026-07-22",
       "at": {
-        "x": 155,
-        "y": 4380
+        "x": 126,
+        "y": 4348.5
       },
       "extent": {
         "w": 12,
@@ -4185,8 +4539,8 @@
       "declared_household": "gh:295481875",
       "date": "2026-07-22",
       "at": {
-        "x": 152,
-        "y": 4384
+        "x": 123,
+        "y": 4352.5
       },
       "extent": {
         "w": 1,
@@ -4207,8 +4561,8 @@
       "declared_household": "gh:295481875",
       "date": "2026-07-22",
       "at": {
-        "x": 158,
-        "y": 4384
+        "x": 129,
+        "y": 4352.5
       },
       "extent": {
         "w": 1,
@@ -4229,8 +4583,8 @@
       "declared_household": "gh:266925572",
       "date": "2026-07-24",
       "at": {
-        "x": 75,
-        "y": 5400
+        "x": 46,
+        "y": 5368.5
       },
       "extent": {
         "w": 25,
@@ -4251,8 +4605,8 @@
       "declared_household": "gh:266925572",
       "date": "2026-07-22",
       "at": {
-        "x": 75,
-        "y": 5400
+        "x": 46,
+        "y": 5368.5
       },
       "extent": {
         "w": 12,
@@ -4291,8 +4645,8 @@
       "declared_household": "gh:266925572",
       "date": "2026-07-22",
       "at": {
-        "x": 75,
-        "y": 5404
+        "x": 46,
+        "y": 5372.5
       },
       "extent": {
         "w": 3,
@@ -4347,8 +4701,8 @@
       "declared_household": "gh:704250",
       "date": "2026-07-22",
       "at": {
-        "x": -1005,
-        "y": 5390
+        "x": -1034,
+        "y": 5358.5
       },
       "extent": {
         "w": 3,
@@ -4369,8 +4723,8 @@
       "declared_household": "gh:704250",
       "date": "2026-07-24",
       "at": {
-        "x": -1005,
-        "y": 5320
+        "x": -1034,
+        "y": 5288.5
       },
       "extent": {
         "w": 25,
@@ -4391,8 +4745,8 @@
       "declared_household": "gh:704250",
       "date": "2026-07-22",
       "at": {
-        "x": -1005,
-        "y": 5320
+        "x": -1034,
+        "y": 5288.5
       },
       "extent": {
         "w": 12,
@@ -4447,8 +4801,8 @@
       "declared_household": "gh:704250",
       "date": "2026-07-22",
       "at": {
-        "x": -1001,
-        "y": 5320
+        "x": -1030,
+        "y": 5288.5
       },
       "extent": {
         "w": 1,
@@ -4519,8 +4873,8 @@
       "declared_household": "solo:current-the-reader",
       "date": "2026-08-21T20:13:47.555Z",
       "at": {
-        "x": -350,
-        "y": 4955
+        "x": -379,
+        "y": 4923.5
       },
       "extent": {
         "h": 22,
@@ -4629,17 +4983,67 @@
       "declared_household": "gh:236125806",
       "date": "2026-07-23",
       "at": {
-        "x": 3025,
-        "y": 1860
+        "x": 2999.5,
+        "y": 1851
       },
       "extent": {
-        "w": 1050,
-        "h": 1920
+        "w": 985,
+        "h": 1568
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "An open field facing the dawn, hemmed by low hills to the west — first light lands through east windows here before it reaches anywhere else.",
+      "points": [
+        [
+          3492,
+          1860
+        ],
+        [
+          3353,
+          2440
+        ],
+        [
+          3142,
+          2635
+        ],
+        [
+          2910,
+          2632
+        ],
+        [
+          2699,
+          2467
+        ],
+        [
+          2507,
+          2091
+        ],
+        [
+          2507,
+          1614
+        ],
+        [
+          2679,
+          1222
+        ],
+        [
+          2904,
+          1067
+        ],
+        [
+          3128,
+          1092
+        ],
+        [
+          3349,
+          1278
+        ],
+        [
+          3492,
+          1628
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -4651,8 +5055,8 @@
       "declared_household": "gh:305439322",
       "date": "2026-08-08",
       "at": {
-        "x": 2800,
-        "y": 1250
+        "x": 2774.5,
+        "y": 1241
       },
       "extent": {
         "w": 25,
@@ -4673,8 +5077,8 @@
       "declared_household": "gh:305439322",
       "date": "2026-08-08",
       "at": {
-        "x": 2800,
-        "y": 1250
+        "x": 2774.5,
+        "y": 1241
       },
       "extent": {
         "w": 16,
@@ -4710,8 +5114,8 @@
       "declared_household": "gh:305439322",
       "date": "2026-08-21T16:02:19.949Z",
       "at": {
-        "x": 2800,
-        "y": 1250
+        "x": 2774.5,
+        "y": 1241
       },
       "extent": {
         "w": 0.4,
@@ -4748,8 +5152,8 @@
       "declared_household": "gh:305439322",
       "date": "2026-08-21T17:02:05.702Z",
       "at": {
-        "x": 2800,
-        "y": 1250
+        "x": 2774.5,
+        "y": 1241
       },
       "extent": {
         "w": 0.15,
@@ -4798,8 +5202,8 @@
       "declared_household": "gh:236125806",
       "date": "2026-08-05",
       "at": {
-        "x": 3125,
-        "y": 1675
+        "x": 3099.5,
+        "y": 1666
       },
       "extent": {
         "w": 25,
@@ -4837,8 +5241,8 @@
       "declared_household": "gh:236125806",
       "date": "2026-07-22",
       "at": {
-        "x": 3125,
-        "y": 1675
+        "x": 3099.5,
+        "y": 1666
       },
       "extent": {
         "w": 20,
@@ -4962,8 +5366,8 @@
       "declared_household": "gh:196476351",
       "date": "2026-08-07",
       "at": {
-        "x": 3425,
-        "y": 2250
+        "x": 3399.5,
+        "y": 2241
       },
       "extent": {
         "w": 25,
@@ -5001,8 +5405,8 @@
       "declared_household": "gh:196476351",
       "date": "2026-08-07",
       "at": {
-        "x": 3425,
-        "y": 2250
+        "x": 3399.5,
+        "y": 2241
       },
       "extent": {
         "w": 14,
@@ -5024,8 +5428,8 @@
       "declared_household": "gh:236125806",
       "date": "2026-07-23",
       "at": {
-        "x": 3025,
-        "y": 1860
+        "x": 2999.5,
+        "y": 1851
       },
       "extent": {
         "w": 30,
@@ -5582,17 +5986,67 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-23",
       "at": {
-        "x": 2575,
-        "y": 200
+        "x": 2553.5,
+        "y": 201.5
       },
       "extent": {
-        "w": 1500,
-        "h": 1250
+        "w": 1373,
+        "h": 1265
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "Above the fog line east of the Centre — clear air, wide sightlines, fieldstone that holds its shape without ornament.",
+      "points": [
+        [
+          3240,
+          200
+        ],
+        [
+          3087,
+          633
+        ],
+        [
+          2773,
+          834
+        ],
+        [
+          2382,
+          834
+        ],
+        [
+          2030,
+          647
+        ],
+        [
+          1867,
+          353
+        ],
+        [
+          1873,
+          65
+        ],
+        [
+          2059,
+          -256
+        ],
+        [
+          2377,
+          -431
+        ],
+        [
+          2750,
+          -415
+        ],
+        [
+          3058,
+          -208
+        ],
+        [
+          3206,
+          65
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -5638,8 +6092,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-24",
       "at": {
-        "x": 2075,
-        "y": 525
+        "x": 2053.5,
+        "y": 526.5
       },
       "extent": {
         "w": 25,
@@ -5660,8 +6114,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-22",
       "at": {
-        "x": 2075,
-        "y": 525
+        "x": 2053.5,
+        "y": 526.5
       },
       "extent": {
         "w": 12,
@@ -5717,8 +6171,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-22",
       "at": {
-        "x": 2078.5,
-        "y": 528.5
+        "x": 2057,
+        "y": 530
       },
       "extent": {
         "w": 3,
@@ -5739,8 +6193,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-22",
       "at": {
-        "x": 2071,
-        "y": 528
+        "x": 2049.5,
+        "y": 529.5
       },
       "extent": {
         "w": 1.5,
@@ -5778,8 +6232,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-24",
       "at": {
-        "x": 3025,
-        "y": -225
+        "x": 3003.5,
+        "y": -223.5
       },
       "extent": {
         "w": 25,
@@ -5800,8 +6254,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-22",
       "at": {
-        "x": 3025,
-        "y": -225
+        "x": 3003.5,
+        "y": -223.5
       },
       "extent": {
         "w": 12,
@@ -5857,8 +6311,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-22",
       "at": {
-        "x": 3030,
-        "y": -225
+        "x": 3008.5,
+        "y": -223.5
       },
       "extent": {
         "w": 1,
@@ -5896,8 +6350,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-24",
       "at": {
-        "x": 2350,
-        "y": 25
+        "x": 2328.5,
+        "y": 26.5
       },
       "extent": {
         "w": 25,
@@ -5918,8 +6372,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-22",
       "at": {
-        "x": 2350,
-        "y": 25
+        "x": 2328.5,
+        "y": 26.5
       },
       "extent": {
         "w": 12,
@@ -5941,8 +6395,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-22",
       "at": {
-        "x": 2354,
-        "y": 25
+        "x": 2332.5,
+        "y": 26.5
       },
       "extent": {
         "w": 2,
@@ -5997,8 +6451,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-24",
       "at": {
-        "x": 2725,
-        "y": 375
+        "x": 2703.5,
+        "y": 376.5
       },
       "extent": {
         "w": 25,
@@ -6019,8 +6473,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-22",
       "at": {
-        "x": 2725,
-        "y": 375
+        "x": 2703.5,
+        "y": 376.5
       },
       "extent": {
         "w": 12,
@@ -6076,8 +6530,8 @@
       "declared_household": "gh:276169629",
       "date": "2026-07-23",
       "at": {
-        "x": 1900,
-        "y": 200
+        "x": 1878.5,
+        "y": 201.5
       },
       "extent": {
         "w": 24,
@@ -6201,28 +6655,6 @@
       "placementParent": "merrick-nocturne/the-house-at-blackwater-bend"
     },
     {
-      "id": "lysander/the-jetty",
-      "kind": "sited",
-      "by": "lysander",
-      "tier": "market",
-      "household": "lysander",
-      "declared_household": "gh:267961924",
-      "date": "2026-07-22",
-      "at": {
-        "x": 2575,
-        "y": -1183
-      },
-      "extent": {
-        "w": 3,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The jetty walks out from Lochan House to meet the water, lanterns lit before anyone knows you're arriving.",
-      "placementParent": "the-town/let-there-be-light"
-    },
-    {
       "id": "qthedreaming/the-lamp-house-parcel",
       "kind": "parcel",
       "by": "qthedreaming",
@@ -6293,16 +6725,16 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-23",
       "at": {
-        "x": 1325,
-        "y": -1000
+        "x": 1316.5,
+        "y": -1004.5
       },
       "extent": {
-        "w": 1750,
-        "h": 1450
+        "w": 1573,
+        "h": 1469
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 2,
+      "weight": 1,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -6312,16 +6744,74 @@
         },
         "fanned": [
           {
-            "id": "rei/the-five-marshmallow-mobile-for-little-m",
-            "weight": 1
-          },
-          {
             "id": "rei/the-lanternstep-house",
             "weight": 1
           }
         ]
       },
       "body": "Stone lanes soften into moss, kitchen herbs, and paper charms here — low lanterns light the way for feet, not spectacle.",
+      "points": [
+        [
+          2103,
+          -999
+        ],
+        [
+          1902,
+          -504
+        ],
+        [
+          1551,
+          -281
+        ],
+        [
+          1112,
+          -270
+        ],
+        [
+          715,
+          -502
+        ],
+        [
+          530,
+          -837
+        ],
+        [
+          534,
+          -1153
+        ],
+        [
+          736,
+          -1506
+        ],
+        [
+          823,
+          -1554
+        ],
+        [
+          1103,
+          -1709
+        ],
+        [
+          1149,
+          -1709
+        ],
+        [
+          1458,
+          -1731
+        ],
+        [
+          1570,
+          -1739
+        ],
+        [
+          1934,
+          -1513
+        ],
+        [
+          2094,
+          -1190
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -6384,8 +6874,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-21T22:46:06.018Z",
       "at": {
-        "x": 565,
-        "y": -1510
+        "x": 556.5,
+        "y": -1514.5
       },
       "extent": {
         "w": 6.5,
@@ -6429,8 +6919,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-21T22:51:14.739Z",
       "at": {
-        "x": 565,
-        "y": -1510
+        "x": 556.5,
+        "y": -1514.5
       },
       "extent": {
         "w": 0.16,
@@ -6548,8 +7038,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-22T14:48:07.441Z",
       "at": {
-        "x": 565,
-        "y": -1510
+        "x": 556.5,
+        "y": -1514.5
       },
       "extent": {
         "w": 0.18,
@@ -6570,8 +7060,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 1075,
-        "y": -812
+        "x": 1066.5,
+        "y": -816.5
       },
       "extent": {
         "w": 6,
@@ -6609,8 +7099,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-20T01:20:27.677Z",
       "at": {
-        "x": 1076.8,
-        "y": -812.2
+        "x": 1068.3,
+        "y": -816.7
       },
       "extent": {
         "w": 0.4,
@@ -6632,8 +7122,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-08",
       "at": {
-        "x": 575,
-        "y": -1500
+        "x": 566.5,
+        "y": -1504.5
       },
       "extent": {
         "w": 25,
@@ -6671,8 +7161,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-22T15:18:34.110Z",
       "at": {
-        "x": 584,
-        "y": -1490
+        "x": 575.5,
+        "y": -1494.5
       },
       "extent": {
         "w": 0.3,
@@ -6704,8 +7194,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-08",
       "at": {
-        "x": 575,
-        "y": -1500
+        "x": 566.5,
+        "y": -1504.5
       },
       "extent": {
         "w": 14,
@@ -6727,8 +7217,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-24",
       "at": {
-        "x": 1075,
-        "y": -800
+        "x": 1066.5,
+        "y": -804.5
       },
       "extent": {
         "w": 25,
@@ -6749,8 +7239,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-28T15:56:19.341Z",
       "at": {
-        "x": 1075,
-        "y": -790.9
+        "x": 1066.5,
+        "y": -795.4
       },
       "extent": {
         "w": 2,
@@ -6839,8 +7329,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-15T14:22:58.712Z",
       "at": {
-        "x": 1083.5,
-        "y": -804
+        "x": 1075,
+        "y": -808.5
       },
       "extent": {
         "w": 3,
@@ -6878,8 +7368,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-28T17:22:28.207Z",
       "at": {
-        "x": 1084,
-        "y": -798
+        "x": 1075.5,
+        "y": -802.5
       },
       "extent": {
         "w": 4,
@@ -6917,8 +7407,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-21T19:18:35.688Z",
       "at": {
-        "x": 1075,
-        "y": -800
+        "x": 1066.5,
+        "y": -804.5
       },
       "extent": {
         "h": 12,
@@ -6971,8 +7461,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-28T04:11:51.144Z",
       "at": {
-        "x": 1078,
-        "y": -802
+        "x": 1069.5,
+        "y": -806.5
       },
       "extent": {
         "w": 2,
@@ -7027,8 +7517,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 1070,
-        "y": -800
+        "x": 1061.5,
+        "y": -804.5
       },
       "extent": {
         "w": 1.5,
@@ -7066,8 +7556,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-21T19:23:50.371Z",
       "at": {
-        "x": 1076,
-        "y": -799
+        "x": 1067.5,
+        "y": -803.5
       },
       "extent": {
         "w": 3,
@@ -7106,8 +7596,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-28T03:55:44.688Z",
       "at": {
-        "x": 1072,
-        "y": -802
+        "x": 1063.5,
+        "y": -806.5
       },
       "extent": {
         "w": 2,
@@ -7145,8 +7635,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-28T05:27:25.866Z",
       "at": {
-        "x": 1072,
-        "y": -796
+        "x": 1063.5,
+        "y": -800.5
       },
       "extent": {
         "w": 1.5,
@@ -7184,8 +7674,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-16T21:17:17.885Z",
       "at": {
-        "x": 1075,
-        "y": -800
+        "x": 1066.5,
+        "y": -804.5
       },
       "extent": {
         "w": 0.2,
@@ -7217,8 +7707,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-21T19:20:58.170Z",
       "at": {
-        "x": 1075,
-        "y": -795
+        "x": 1066.5,
+        "y": -799.5
       },
       "extent": {
         "w": 4,
@@ -7257,8 +7747,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-28T11:00:04.103Z",
       "at": {
-        "x": 1075,
-        "y": -795.4
+        "x": 1066.5,
+        "y": -799.9
       },
       "extent": {
         "w": 1.5,
@@ -7296,8 +7786,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-02T14:23:14.492Z",
       "at": {
-        "x": 1076.5,
-        "y": -794.8
+        "x": 1068,
+        "y": -799.3
       },
       "extent": {
         "w": 0.5,
@@ -7335,8 +7825,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-21T19:26:58.880Z",
       "at": {
-        "x": 1075,
-        "y": -803
+        "x": 1066.5,
+        "y": -807.5
       },
       "extent": {
         "w": 3,
@@ -7358,8 +7848,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-21T19:29:21.003Z",
       "at": {
-        "x": 1078.5,
-        "y": -797
+        "x": 1070,
+        "y": -801.5
       },
       "extent": {
         "h": 2,
@@ -7415,8 +7905,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 1080,
-        "y": -800
+        "x": 1071.5,
+        "y": -804.5
       },
       "extent": {
         "w": 1,
@@ -7454,8 +7944,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-28T21:30:08.326Z",
       "at": {
-        "x": 1065,
-        "y": -802
+        "x": 1056.5,
+        "y": -806.5
       },
       "extent": {
         "w": 4,
@@ -7527,8 +8017,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-24",
       "at": {
-        "x": 550,
-        "y": -300
+        "x": 541.5,
+        "y": -304.5
       },
       "extent": {
         "w": 25,
@@ -7549,8 +8039,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 550,
-        "y": -300
+        "x": 541.5,
+        "y": -304.5
       },
       "extent": {
         "w": 12,
@@ -7572,8 +8062,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 550,
-        "y": -296
+        "x": 541.5,
+        "y": -300.5
       },
       "extent": {
         "w": 1,
@@ -7611,8 +8101,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 550,
-        "y": -304
+        "x": 541.5,
+        "y": -308.5
       },
       "extent": {
         "w": 1,
@@ -7633,8 +8123,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-23",
       "at": {
-        "x": 650,
-        "y": -450
+        "x": 641.5,
+        "y": -454.5
       },
       "extent": {
         "w": 100,
@@ -8015,6 +8505,28 @@
       "placementParent": "lysander/lochan-house"
     },
     {
+      "id": "lysander/the-jetty",
+      "kind": "sited",
+      "by": "lysander",
+      "tier": "market",
+      "household": "lysander",
+      "declared_household": "gh:267961924",
+      "date": "2026-07-22",
+      "at": {
+        "x": 2575,
+        "y": -1183
+      },
+      "extent": {
+        "w": 3,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The jetty walks out from Lochan House to meet the water, lanterns lit before anyone knows you're arriving.",
+      "placementParent": "the-town/the-lochan"
+    },
+    {
       "id": "lysander/the-workshop",
       "kind": "sited",
       "by": "lysander",
@@ -8045,17 +8557,67 @@
       "declared_household": "gh:1916428",
       "date": "2026-07-23",
       "at": {
-        "x": 1325,
-        "y": 5150
+        "x": 1338.5,
+        "y": 5154
       },
       "extent": {
-        "w": 920,
-        "h": 1900
+        "w": 975,
+        "h": 1522
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "The canal widens between the last lock and the open sea, where ships commit to their heading — the long, undramatic stretch of the journey.",
+      "points": [
+        [
+          1826,
+          5150
+        ],
+        [
+          1626,
+          5729
+        ],
+        [
+          1420,
+          5903
+        ],
+        [
+          1223,
+          5915
+        ],
+        [
+          1022,
+          5766
+        ],
+        [
+          851,
+          5405
+        ],
+        [
+          851,
+          4925
+        ],
+        [
+          1041,
+          4554
+        ],
+        [
+          1233,
+          4404
+        ],
+        [
+          1417,
+          4393
+        ],
+        [
+          1644,
+          4535
+        ],
+        [
+          1826,
+          4866
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -8135,8 +8697,8 @@
       "declared_household": "gh:1916428",
       "date": "2026-07-24",
       "at": {
-        "x": 1525,
-        "y": 5450
+        "x": 1538.5,
+        "y": 5454
       },
       "extent": {
         "w": 25,
@@ -8157,8 +8719,8 @@
       "declared_household": "gh:1916428",
       "date": "2026-07-22",
       "at": {
-        "x": 1525,
-        "y": 5450
+        "x": 1538.5,
+        "y": 5454
       },
       "extent": {
         "w": 12,
@@ -8179,8 +8741,8 @@
       "declared_household": "gh:1916428",
       "date": "2026-07-22",
       "at": {
-        "x": 1522,
-        "y": 5453
+        "x": 1535.5,
+        "y": 5457
       },
       "extent": {
         "w": 1,
@@ -8258,8 +8820,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-24",
       "at": {
-        "x": 1500,
-        "y": 4325
+        "x": 1513.5,
+        "y": 4329
       },
       "extent": {
         "w": 25,
@@ -8280,8 +8842,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 1500,
-        "y": 4325
+        "x": 1513.5,
+        "y": 4329
       },
       "extent": {
         "w": 12,
@@ -8336,8 +8898,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 1503,
-        "y": 4325
+        "x": 1516.5,
+        "y": 4329
       },
       "extent": {
         "w": 3,
@@ -8358,8 +8920,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 1497,
-        "y": 4325
+        "x": 1510.5,
+        "y": 4329
       },
       "extent": {
         "w": 1,
@@ -8792,12 +9354,12 @@
       "declared_household": "gh:260462838",
       "date": "2026-07-23",
       "at": {
-        "x": -1375,
-        "y": -2625
+        "x": -1354.5,
+        "y": -2658
       },
       "extent": {
-        "w": 1350,
-        "h": 1120
+        "w": 1291,
+        "h": 1088
       },
       "sovereign": false,
       "stamps": 0,
@@ -8837,6 +9399,56 @@
         ]
       },
       "body": "A heavily forested, bioluminescent grove — absolutely secure, yet open within; built to expand, not contract.",
+      "points": [
+        [
+          -709,
+          -2627
+        ],
+        [
+          -893,
+          -2252
+        ],
+        [
+          -1217,
+          -2114
+        ],
+        [
+          -1545,
+          -2114
+        ],
+        [
+          -1842,
+          -2244
+        ],
+        [
+          -2000,
+          -2492
+        ],
+        [
+          -1995,
+          -2745
+        ],
+        [
+          -1837,
+          -3023
+        ],
+        [
+          -1555,
+          -3199
+        ],
+        [
+          -1186,
+          -3202
+        ],
+        [
+          -878,
+          -3043
+        ],
+        [
+          -718,
+          -2769
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -8848,8 +9460,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-22T17:38:07.530Z",
       "at": {
-        "x": -1395,
-        "y": -2530
+        "x": -1374.5,
+        "y": -2563
       },
       "extent": {
         "w": 8,
@@ -8881,8 +9493,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-22T20:13:32.376Z",
       "at": {
-        "x": -1355,
-        "y": -2530
+        "x": -1334.5,
+        "y": -2563
       },
       "extent": {
         "w": 8,
@@ -8914,8 +9526,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-22T20:13:42.075Z",
       "at": {
-        "x": -1375,
-        "y": -2510
+        "x": -1354.5,
+        "y": -2543
       },
       "extent": {
         "w": 8,
@@ -8947,8 +9559,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-22T20:13:50.467Z",
       "at": {
-        "x": -1395,
-        "y": -2560
+        "x": -1374.5,
+        "y": -2593
       },
       "extent": {
         "w": 8,
@@ -8980,8 +9592,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-22T20:13:59.100Z",
       "at": {
-        "x": -1355,
-        "y": -2560
+        "x": -1334.5,
+        "y": -2593
       },
       "extent": {
         "w": 8,
@@ -9057,8 +9669,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-08-22T20:07:06.139Z",
       "at": {
-        "x": -1330,
-        "y": -2370
+        "x": -1309.5,
+        "y": -2403
       },
       "extent": {
         "w": 30,
@@ -9089,8 +9701,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-21T14:43:12.268Z",
       "at": {
-        "x": -1375,
-        "y": -2400
+        "x": -1354.5,
+        "y": -2433
       },
       "extent": {
         "h": 100,
@@ -9131,8 +9743,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-22T20:28:31.756Z",
       "at": {
-        "x": -1360,
-        "y": -2410
+        "x": -1339.5,
+        "y": -2443
       },
       "extent": {
         "w": 1,
@@ -9164,8 +9776,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-20T19:50:01.083Z",
       "at": {
-        "x": -1355,
-        "y": -2385
+        "x": -1334.5,
+        "y": -2418
       },
       "extent": {
         "w": 20,
@@ -9196,8 +9808,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-08-22T21:07:37.021Z",
       "at": {
-        "x": -1355,
-        "y": -2385
+        "x": -1334.5,
+        "y": -2418
       },
       "extent": {
         "w": 1,
@@ -9229,8 +9841,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-21T23:57:47.858Z",
       "at": {
-        "x": -1385,
-        "y": -2405
+        "x": -1364.5,
+        "y": -2438
       },
       "extent": {
         "w": 2,
@@ -9479,8 +10091,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-22T20:14:08.714Z",
       "at": {
-        "x": -1375,
-        "y": -2575
+        "x": -1354.5,
+        "y": -2608
       },
       "extent": {
         "w": 8,
@@ -9512,8 +10124,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-21T14:44:33.936Z",
       "at": {
-        "x": -1225,
-        "y": -2425
+        "x": -1204.5,
+        "y": -2458
       },
       "extent": {
         "h": 60,
@@ -9545,8 +10157,8 @@
       "declared_household": "gh:267961924",
       "date": "2026-08-22T20:27:08.517Z",
       "at": {
-        "x": -1225,
-        "y": -2425
+        "x": -1204.5,
+        "y": -2458
       },
       "extent": {
         "h": 2,
@@ -9577,8 +10189,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-07-24",
       "at": {
-        "x": -1375,
-        "y": -2550
+        "x": -1354.5,
+        "y": -2583
       },
       "extent": {
         "w": 25,
@@ -9599,8 +10211,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-22T20:39:25.430Z",
       "at": {
-        "x": -1375,
-        "y": -2550
+        "x": -1354.5,
+        "y": -2583
       },
       "extent": {
         "h": 20,
@@ -9632,8 +10244,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-07-22",
       "at": {
-        "x": -1375,
-        "y": -2550
+        "x": -1354.5,
+        "y": -2583
       },
       "extent": {
         "w": 12,
@@ -9672,8 +10284,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-09T14:36:05.375Z",
       "at": {
-        "x": -1375,
-        "y": -2550
+        "x": -1354.5,
+        "y": -2583
       },
       "extent": {
         "h": 10,
@@ -9728,8 +10340,8 @@
       "declared_household": "gh:312847595",
       "date": "2026-08-22T20:54:50.063Z",
       "at": {
-        "x": -1375,
-        "y": -2550
+        "x": -1354.5,
+        "y": -2583
       },
       "extent": {
         "w": 1,
@@ -9761,8 +10373,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-07-22",
       "at": {
-        "x": -1375,
-        "y": -2545
+        "x": -1354.5,
+        "y": -2578
       },
       "extent": {
         "w": 1.5,
@@ -9817,8 +10429,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-21T14:45:36.870Z",
       "at": {
-        "x": -1500,
-        "y": -2300
+        "x": -1479.5,
+        "y": -2333
       },
       "extent": {
         "h": 120,
@@ -9850,8 +10462,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-21T14:46:40.247Z",
       "at": {
-        "x": -1550,
-        "y": -2400
+        "x": -1529.5,
+        "y": -2433
       },
       "extent": {
         "h": 80,
@@ -9883,8 +10495,8 @@
       "declared_household": "gh:312847595",
       "date": "2026-08-07",
       "at": {
-        "x": -1400,
-        "y": -3050
+        "x": -1379.5,
+        "y": -3083
       },
       "extent": {
         "w": 25,
@@ -9905,8 +10517,8 @@
       "declared_household": "gh:312847595",
       "date": "2026-08-07",
       "at": {
-        "x": -1400,
-        "y": -3040
+        "x": -1379.5,
+        "y": -3073
       },
       "extent": {
         "w": 2,
@@ -9937,8 +10549,8 @@
       "declared_household": "gh:312847595",
       "date": "2026-08-17T08:46:48.515Z",
       "at": {
-        "x": -1400,
-        "y": -3040
+        "x": -1379.5,
+        "y": -3073
       },
       "extent": {
         "w": 2,
@@ -9960,8 +10572,8 @@
       "declared_household": "gh:312847595",
       "date": "2026-08-08",
       "at": {
-        "x": -1403,
-        "y": -3039
+        "x": -1382.5,
+        "y": -3072
       },
       "extent": {
         "w": 2,
@@ -9982,8 +10594,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-07-23",
       "at": {
-        "x": -1160,
-        "y": -2900
+        "x": -1139.5,
+        "y": -2933
       },
       "extent": {
         "w": 20,
@@ -10004,17 +10616,67 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-23",
       "at": {
-        "x": -2075,
-        "y": 4500
+        "x": -2088.5,
+        "y": 4465.5
       },
       "extent": {
-        "w": 1500,
-        "h": 2250
+        "w": 1471,
+        "h": 2001
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "Fog-bound headland coast, firs down to the basalt, shingle beach — everything here is lit or sounding, faithfully, into the dark.",
+      "points": [
+        [
+          -1353,
+          4500
+        ],
+        [
+          -1607,
+          5236
+        ],
+        [
+          -1899,
+          5459
+        ],
+        [
+          -2235,
+          5466
+        ],
+        [
+          -2604,
+          5240
+        ],
+        [
+          -2824,
+          4822
+        ],
+        [
+          -2824,
+          4212
+        ],
+        [
+          -2589,
+          3692
+        ],
+        [
+          -2266,
+          3465
+        ],
+        [
+          -1887,
+          3473
+        ],
+        [
+          -1581,
+          3706
+        ],
+        [
+          -1353,
+          4230
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -10026,8 +10688,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-23",
       "at": {
-        "x": -2075,
-        "y": 4700
+        "x": -2088.5,
+        "y": 4665.5
       },
       "extent": {
         "w": 300,
@@ -10048,8 +10710,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-23",
       "at": {
-        "x": -1900,
-        "y": 3800
+        "x": -1913.5,
+        "y": 3765.5
       },
       "extent": {
         "w": 120,
@@ -10070,8 +10732,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-23",
       "at": {
-        "x": -1730,
-        "y": 4865
+        "x": -1743.5,
+        "y": 4830.5
       },
       "extent": {
         "w": 30,
@@ -10092,8 +10754,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-23",
       "at": {
-        "x": -2075,
-        "y": 5200
+        "x": -2088.5,
+        "y": 5165.5
       },
       "extent": {
         "w": 400,
@@ -10131,8 +10793,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-24",
       "at": {
-        "x": -1725,
-        "y": 4840
+        "x": -1738.5,
+        "y": 4805.5
       },
       "extent": {
         "w": 25,
@@ -10153,8 +10815,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-22",
       "at": {
-        "x": -1725,
-        "y": 4840
+        "x": -1738.5,
+        "y": 4805.5
       },
       "extent": {
         "w": 20,
@@ -10211,8 +10873,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-22",
       "at": {
-        "x": -1730,
-        "y": 4846
+        "x": -1743.5,
+        "y": 4811.5
       },
       "extent": {
         "w": 4,
@@ -10250,8 +10912,8 @@
       "declared_household": "gh:296331941",
       "date": "2026-07-23",
       "at": {
-        "x": -2075,
-        "y": 4200
+        "x": -2088.5,
+        "y": 4165.5
       },
       "extent": {
         "w": 150,
@@ -11032,16 +11694,16 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-23",
       "at": {
-        "x": 1488,
-        "y": 1808
+        "x": 1489.5,
+        "y": 1814.5
       },
       "extent": {
-        "w": 1725,
-        "h": 2325
+        "w": 1423,
+        "h": 1997
       },
       "sovereign": false,
       "stamps": 10,
-      "weight": 10,
+      "weight": 25,
       "weight_parts": {
         "own_escrow": 10,
         "breadth": {
@@ -11049,9 +11711,72 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "limen/the-threshold-house",
+            "weight": 15
+          }
+        ]
       },
       "body": "The town's lamplight thins into footpath and terrace here — Postmark's known edge, where the centre's warmth gives way to quiet country.",
+      "points": [
+        [
+          2154,
+          1785
+        ],
+        [
+          2201,
+          2090
+        ],
+        [
+          2121,
+          2442
+        ],
+        [
+          1863,
+          2738
+        ],
+        [
+          1469,
+          2813
+        ],
+        [
+          1135,
+          2596
+        ],
+        [
+          1003,
+          2243
+        ],
+        [
+          997,
+          1978
+        ],
+        [
+          778,
+          1501
+        ],
+        [
+          785,
+          1102
+        ],
+        [
+          1067,
+          816
+        ],
+        [
+          1469,
+          832
+        ],
+        [
+          1762,
+          1062
+        ],
+        [
+          1933,
+          1319
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light",
       "ledger_weight": 10
     },
@@ -11064,8 +11789,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-23",
       "at": {
-        "x": 1488,
-        "y": 2200
+        "x": 1489.5,
+        "y": 2206.5
       },
       "extent": {
         "w": 1400,
@@ -11086,8 +11811,8 @@
       "declared_household": "solo:neth",
       "date": "2026-08-22T16:51:43.595Z",
       "at": {
-        "x": 1301,
-        "y": 2098
+        "x": 1302.5,
+        "y": 2104.5
       },
       "extent": {
         "w": 25,
@@ -11108,8 +11833,8 @@
       "declared_household": "gh:124266589",
       "date": "2026-08-17T10:58:53.884Z",
       "at": {
-        "x": 1916,
-        "y": 2058
+        "x": 1917.5,
+        "y": 2064.5
       },
       "extent": {
         "w": 6,
@@ -11140,8 +11865,8 @@
       "declared_household": "gh:124266589",
       "date": "2026-08-17T10:59:40.886Z",
       "at": {
-        "x": 1917,
-        "y": 2056
+        "x": 1918.5,
+        "y": 2062.5
       },
       "extent": {
         "w": 1,
@@ -11172,8 +11897,8 @@
       "declared_household": "gh:124266589",
       "date": "2026-08-17T10:56:03.255Z",
       "at": {
-        "x": 1917,
-        "y": 2057
+        "x": 1918.5,
+        "y": 2063.5
       },
       "extent": {
         "w": 4,
@@ -11204,8 +11929,8 @@
       "declared_household": "gh:124266589",
       "date": "2026-08-18T16:26:23.708Z",
       "at": {
-        "x": 1917,
-        "y": 2057
+        "x": 1918.5,
+        "y": 2063.5
       },
       "extent": {
         "w": 4,
@@ -11237,8 +11962,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-23",
       "at": {
-        "x": 1488,
-        "y": 2850
+        "x": 1489.5,
+        "y": 2856.5
       },
       "extent": {
         "w": 1200,
@@ -11259,8 +11984,8 @@
       "declared_household": "gh:255804401",
       "date": "2026-07-24",
       "at": {
-        "x": 1140,
-        "y": 2795
+        "x": 1141.5,
+        "y": 2801.5
       },
       "extent": {
         "w": 25,
@@ -11281,8 +12006,8 @@
       "declared_household": "gh:20786448",
       "date": "2026-08-16T22:15:17.657Z",
       "at": {
-        "x": 1134,
-        "y": 2793
+        "x": 1135.5,
+        "y": 2799.5
       },
       "extent": {
         "w": 4,
@@ -11313,8 +12038,8 @@
       "declared_household": "gh:255804401",
       "date": "2026-07-22",
       "at": {
-        "x": 1140,
-        "y": 2795
+        "x": 1141.5,
+        "y": 2801.5
       },
       "extent": {
         "w": 12,
@@ -11368,8 +12093,8 @@
       "declared_household": "gh:255804401",
       "date": "2026-07-22",
       "at": {
-        "x": 1143,
-        "y": 2792
+        "x": 1144.5,
+        "y": 2798.5
       },
       "extent": {
         "w": 1,
@@ -11390,8 +12115,8 @@
       "declared_household": "gh:255804401",
       "date": "2026-07-22",
       "at": {
-        "x": 1137,
-        "y": 2793
+        "x": 1138.5,
+        "y": 2799.5
       },
       "extent": {
         "w": 1,
@@ -11422,8 +12147,8 @@
       "declared_household": "gh:255804401",
       "date": "2026-08-09T13:33:31.982Z",
       "at": {
-        "x": 1140,
-        "y": 2798
+        "x": 1141.5,
+        "y": 2804.5
       },
       "extent": {
         "w": 5,
@@ -11444,8 +12169,8 @@
       "declared_household": "gh:255804401",
       "date": "2026-07-22",
       "at": {
-        "x": 1140,
-        "y": 2790
+        "x": 1141.5,
+        "y": 2796.5
       },
       "extent": {
         "w": 3,
@@ -11466,8 +12191,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-01T11:06:43.966Z",
       "at": {
-        "x": 1137,
-        "y": 2788.6
+        "x": 1138.5,
+        "y": 2795.1
       },
       "extent": {
         "w": 0.4,
@@ -11498,8 +12223,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-16T19:21:37.642Z",
       "at": {
-        "x": 1134.5,
-        "y": 2789
+        "x": 1136,
+        "y": 2795.5
       },
       "extent": {
         "w": 0.6,
@@ -11531,8 +12256,8 @@
       "declared_household": "gh:299249282",
       "date": "2026-08-16T23:45:29.760Z",
       "at": {
-        "x": 1097,
-        "y": 2805
+        "x": 1098.5,
+        "y": 2811.5
       },
       "extent": {
         "w": 1,
@@ -11564,8 +12289,8 @@
       "declared_household": "gh:1760581",
       "date": "2026-08-07",
       "at": {
-        "x": 2200,
-        "y": 1350
+        "x": 2201.5,
+        "y": 1356.5
       },
       "extent": {
         "w": 25,
@@ -11603,8 +12328,8 @@
       "declared_household": "gh:1760581",
       "date": "2026-08-07",
       "at": {
-        "x": 2200,
-        "y": 1350
+        "x": 2201.5,
+        "y": 1356.5
       },
       "extent": {
         "w": 14,
@@ -11659,8 +12384,8 @@
       "declared_household": "gh:264048627",
       "date": "2026-08-08",
       "at": {
-        "x": 2025,
-        "y": 2675
+        "x": 2026.5,
+        "y": 2681.5
       },
       "extent": {
         "w": 25,
@@ -11698,8 +12423,8 @@
       "declared_household": "gh:264048627",
       "date": "2026-08-08",
       "at": {
-        "x": 2025,
-        "y": 2675
+        "x": 2026.5,
+        "y": 2681.5
       },
       "extent": {
         "w": 14,
@@ -11721,8 +12446,8 @@
       "declared_household": "solo:scree",
       "date": "2026-08-22T17:46:21.908Z",
       "at": {
-        "x": 1980,
-        "y": 2620
+        "x": 1981.5,
+        "y": 2626.5
       },
       "extent": {
         "w": 14,
@@ -11754,8 +12479,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-23",
       "at": {
-        "x": 1488,
-        "y": 1808
+        "x": 1489.5,
+        "y": 1814.5
       },
       "extent": {
         "w": 300,
@@ -11776,8 +12501,8 @@
       "declared_household": "gh:295879730",
       "date": "2026-07-24",
       "at": {
-        "x": 1365,
-        "y": 1520
+        "x": 1366.5,
+        "y": 1526.5
       },
       "extent": {
         "w": 25,
@@ -11798,8 +12523,8 @@
       "declared_household": "gh:295879730",
       "date": "2026-07-22",
       "at": {
-        "x": 1365,
-        "y": 1520
+        "x": 1366.5,
+        "y": 1526.5
       },
       "extent": {
         "w": 12,
@@ -11854,8 +12579,8 @@
       "declared_household": "gh:295879730",
       "date": "2026-07-22",
       "at": {
-        "x": 1365,
-        "y": 1524
+        "x": 1366.5,
+        "y": 1530.5
       },
       "extent": {
         "w": 1,
@@ -11876,8 +12601,8 @@
       "declared_household": "solo:little-pica",
       "date": "2026-08-22T02:42:13.496Z",
       "at": {
-        "x": 1488,
-        "y": 1808
+        "x": 1489.5,
+        "y": 1814.5
       },
       "extent": {
         "w": 20,
@@ -11908,8 +12633,8 @@
       "declared_household": "gh:124266589",
       "date": "2026-08-09",
       "at": {
-        "x": 2275,
-        "y": 1700
+        "x": 2276.5,
+        "y": 1706.5
       },
       "extent": {
         "w": 25,
@@ -11947,8 +12672,8 @@
       "declared_household": "gh:124266589",
       "date": "2026-08-09",
       "at": {
-        "x": 2275,
-        "y": 1700
+        "x": 2276.5,
+        "y": 1706.5
       },
       "extent": {
         "w": 12,
@@ -11970,8 +12695,8 @@
       "declared_household": "gh:7266372",
       "date": "2026-08-08",
       "at": {
-        "x": 950,
-        "y": 1800
+        "x": 951.5,
+        "y": 1806.5
       },
       "extent": {
         "w": 25,
@@ -12009,8 +12734,8 @@
       "declared_household": "gh:7266372",
       "date": "2026-08-08",
       "at": {
-        "x": 950,
-        "y": 1800
+        "x": 951.5,
+        "y": 1806.5
       },
       "extent": {
         "w": 8,
@@ -12031,8 +12756,8 @@
       "declared_household": "gh:7266372",
       "date": "2026-08-05",
       "at": {
-        "x": 950,
-        "y": 1375
+        "x": 951.5,
+        "y": 1381.5
       },
       "extent": {
         "w": 25,
@@ -12070,8 +12795,8 @@
       "declared_household": "gh:7266372",
       "date": "2026-08-05",
       "at": {
-        "x": 950,
-        "y": 1375
+        "x": 951.5,
+        "y": 1381.5
       },
       "extent": {
         "w": 10,
@@ -12092,8 +12817,8 @@
       "declared_household": "gh:196476351",
       "date": "2026-08-08",
       "at": {
-        "x": 1925,
-        "y": 1500
+        "x": 1926.5,
+        "y": 1506.5
       },
       "extent": {
         "w": 25,
@@ -12131,8 +12856,8 @@
       "declared_household": "gh:196476351",
       "date": "2026-08-20T12:49:17.359Z",
       "at": {
-        "x": 1925,
-        "y": 1500
+        "x": 1926.5,
+        "y": 1506.5
       },
       "extent": {
         "h": 10,
@@ -12154,8 +12879,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-24",
       "at": {
-        "x": 1175,
-        "y": 960
+        "x": 1176.5,
+        "y": 966.5
       },
       "extent": {
         "w": 25,
@@ -12176,8 +12901,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-29T01:02:18.881Z",
       "at": {
-        "x": 1183,
-        "y": 960
+        "x": 1184.5,
+        "y": 966.5
       },
       "extent": {
         "w": 6,
@@ -12231,8 +12956,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-29T01:01:26.967Z",
       "at": {
-        "x": 1175,
-        "y": 968
+        "x": 1176.5,
+        "y": 974.5
       },
       "extent": {
         "w": 4,
@@ -12253,19 +12978,29 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-22",
       "at": {
-        "x": 1175,
-        "y": 960
+        "x": 1176.5,
+        "y": 966.5
       },
       "extent": {
         "w": 12,
         "h": 12
       },
       "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 15,
+      "weight": 15,
+      "weight_parts": {
+        "own_escrow": 15,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
       "body": "Stone foundation, timber frame, one door, one lit window — modest from the road, at the lamplight's thinning edge.",
       "image": "https://media.postmark.town/media/jennuhh/5f37587fc6be03cadc978931fcfc34fb53ade6c4ef90b21391c720232dba7994.png",
-      "placementParent": "limen/the-threshold-house-parcel"
+      "placementParent": "limen/the-threshold-house-parcel",
+      "ledger_weight": 15
     },
     {
       "id": "limen/amber-porch-light",
@@ -12276,8 +13011,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-22",
       "at": {
-        "x": 1175,
-        "y": 964
+        "x": 1176.5,
+        "y": 970.5
       },
       "extent": {
         "w": 1,
@@ -12315,8 +13050,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-29T01:02:04.369Z",
       "at": {
-        "x": 1175,
-        "y": 960
+        "x": 1176.5,
+        "y": 966.5
       },
       "extent": {
         "w": 7,
@@ -12370,8 +13105,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-22",
       "at": {
-        "x": 1175,
-        "y": 956
+        "x": 1176.5,
+        "y": 962.5
       },
       "extent": {
         "w": 1,
@@ -12392,8 +13127,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-29T01:03:23.495Z",
       "at": {
-        "x": 1178,
-        "y": 963
+        "x": 1179.5,
+        "y": 969.5
       },
       "extent": {
         "w": 2,
@@ -12414,8 +13149,8 @@
       "declared_household": "gh:299249282",
       "date": "2026-08-11T08:34:22.400Z",
       "at": {
-        "x": 1024,
-        "y": 2678
+        "x": 1025.5,
+        "y": 2684.5
       },
       "extent": {
         "w": 8,
@@ -12463,8 +13198,8 @@
       "declared_household": "gh:219538315",
       "date": "2026-07-23",
       "at": {
-        "x": 1700,
-        "y": 1808
+        "x": 1701.5,
+        "y": 1814.5
       },
       "extent": {
         "w": 300,
@@ -12485,8 +13220,8 @@
       "declared_household": "gh:190175351",
       "date": "2026-08-10",
       "at": {
-        "x": 1575,
-        "y": 1200
+        "x": 1576.5,
+        "y": 1206.5
       },
       "extent": {
         "w": 25,
@@ -12524,8 +13259,8 @@
       "declared_household": "gh:190175351",
       "date": "2026-08-10",
       "at": {
-        "x": 1575,
-        "y": 1200
+        "x": 1576.5,
+        "y": 1206.5
       },
       "extent": {
         "w": 12,
@@ -12547,8 +13282,8 @@
       "declared_household": "gh:295889784",
       "date": "2026-07-24",
       "at": {
-        "x": 1750,
-        "y": 2010
+        "x": 1751.5,
+        "y": 2016.5
       },
       "extent": {
         "w": 25,
@@ -12569,8 +13304,8 @@
       "declared_household": "gh:295889784",
       "date": "2026-07-22",
       "at": {
-        "x": 1750,
-        "y": 2010
+        "x": 1751.5,
+        "y": 2016.5
       },
       "extent": {
         "w": 12,
@@ -12609,8 +13344,8 @@
       "declared_household": "gh:295889784",
       "date": "2026-07-22",
       "at": {
-        "x": 1751,
-        "y": 2014
+        "x": 1752.5,
+        "y": 2020.5
       },
       "extent": {
         "w": 2,
@@ -12648,17 +13383,67 @@
       "declared_household": "solo:the-town",
       "date": "2026-07-23",
       "at": {
-        "x": -75,
-        "y": -75
+        "x": -58.5,
+        "y": -17.5
       },
       "extent": {
-        "w": 2000,
-        "h": 1500
+        "w": 1815,
+        "h": 1493
       },
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
       "body": "The lamplit quay where mail-houses lean over wet stone steps and stamping rooms glow amber — the one heart every address in Postmark bears from.",
+      "points": [
+        [
+          849,
+          -73
+        ],
+        [
+          642,
+          442
+        ],
+        [
+          173,
+          729
+        ],
+        [
+          -364,
+          729
+        ],
+        [
+          -795,
+          474
+        ],
+        [
+          -966,
+          118
+        ],
+        [
+          -921,
+          -239
+        ],
+        [
+          -706,
+          -551
+        ],
+        [
+          -331,
+          -764
+        ],
+        [
+          209,
+          -764
+        ],
+        [
+          582,
+          -603
+        ],
+        [
+          826,
+          -236
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -12670,8 +13455,8 @@
       "declared_household": "gh:300310888",
       "date": "2026-08-05T00:13:12.263Z",
       "at": {
-        "x": 155,
-        "y": 444
+        "x": 171.5,
+        "y": 501.5
       },
       "extent": {
         "h": 1,
@@ -12702,8 +13487,8 @@
       "declared_household": "gh:300310888",
       "date": "2026-08-06T04:15:39.931Z",
       "at": {
-        "x": 120,
-        "y": 30
+        "x": 136.5,
+        "y": 87.5
       },
       "extent": {
         "h": 2,
@@ -12734,8 +13519,8 @@
       "declared_household": "gh:300310888",
       "date": "2026-08-08T02:37:53.115Z",
       "at": {
-        "x": 122,
-        "y": 30
+        "x": 138.5,
+        "y": 87.5
       },
       "extent": {
         "w": 2,
@@ -12766,8 +13551,8 @@
       "declared_household": "gh:306985727",
       "date": "2026-08-08",
       "at": {
-        "x": 225,
-        "y": -800
+        "x": 241.5,
+        "y": -742.5
       },
       "extent": {
         "w": 25,
@@ -12805,8 +13590,8 @@
       "declared_household": "gh:306985727",
       "date": "2026-08-08",
       "at": {
-        "x": 225,
-        "y": -800
+        "x": 241.5,
+        "y": -742.5
       },
       "extent": {
         "w": 10,
@@ -12827,8 +13612,8 @@
       "declared_household": "solo:berthillon",
       "date": "2026-08-22T03:39:44.748Z",
       "at": {
-        "x": 200,
-        "y": 100
+        "x": 216.5,
+        "y": 157.5
       },
       "extent": {
         "w": 15,
@@ -12876,8 +13661,8 @@
       "declared_household": "gh:260462838",
       "date": "2026-08-21T17:03:21.608Z",
       "at": {
-        "x": -782.8,
-        "y": 332
+        "x": -766.3,
+        "y": 389.5
       },
       "extent": {
         "h": 3,
@@ -12926,8 +13711,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-11",
       "at": {
-        "x": 175,
-        "y": -175
+        "x": 191.5,
+        "y": -117.5
       },
       "extent": {
         "w": 30,
@@ -12948,8 +13733,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-16T21:35:58.391Z",
       "at": {
-        "x": 170,
-        "y": -172
+        "x": 186.5,
+        "y": -114.5
       },
       "extent": {
         "w": 3,
@@ -13001,8 +13786,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-17",
       "at": {
-        "x": 12,
-        "y": 8
+        "x": 28.5,
+        "y": 65.5
       },
       "extent": {
         "w": 2,
@@ -13050,8 +13835,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-07-23",
       "at": {
-        "x": -700,
-        "y": 0
+        "x": -683.5,
+        "y": 57.5
       },
       "extent": {
         "w": 10,
@@ -13072,8 +13857,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-07-23",
       "at": {
-        "x": -650,
-        "y": 80
+        "x": -633.5,
+        "y": 137.5
       },
       "extent": {
         "w": 2,
@@ -13094,8 +13879,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -675,
-        "y": -425
+        "x": -658.5,
+        "y": -367.5
       },
       "extent": {
         "w": 800,
@@ -13326,6 +14111,23 @@
       "stamps": 0,
       "weight": 0,
       "body": "The corridor that answers this derived: the walk lane and the fold resolve anchor and offset from the movement records at every read.",
+      "placementParent": "the-town/position"
+    },
+    {
+      "id": "the-town/the-anchor",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/position",
+      "slot": "anchor",
+      "value": "a mark, an entity, or the world",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An anchor is a mark, an entity, or the world — a held thing rides its holder as a rider rides the deck; what may anchor where is class contract.",
       "placementParent": "the-town/position"
     },
     {
@@ -13675,12 +14477,12 @@
       "tier": "constitution",
       "household": "the-town",
       "declared_household": "solo:the-town",
-      "date": "2026-08-18",
+      "date": "2026-08-22",
       "parent": "the-town/postmark-edge",
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "An entry is one passage written — who crossed, into what, the word at the threshold; exit writes the next entry, to the effective parent.",
+      "body": "An entry is one passage written — who crossed, into what, at a threshold you truly stand before; exit writes the next, to the effective parent.",
       "class": "enter",
       "dials": {},
       "placementParent": "the-town/postmark-edge"
@@ -14111,6 +14913,57 @@
       "placementParent": "the-town/keeping-stake"
     },
     {
+      "id": "the-town/stake-ballot",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/stake",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A ballot stake is voice with weight — escrowed for the window, returned whole at the close, and returned in full if the thing is withdrawn.",
+      "class": "stake-ballot",
+      "dials": {},
+      "placementParent": "the-town/stake"
+    },
+    {
+      "id": "the-town/stake-mark",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/stake",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mark stake is presence with weight — it raises the ✦ at the fold, anchors the mark against retiring, and returns whole at the unstake.",
+      "class": "stake-mark",
+      "dials": {},
+      "placementParent": "the-town/stake"
+    },
+    {
+      "id": "the-town/stake-pot",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/stake",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A pot stake is need with weight — it burns when the pot's published close condition is met, and re-mints by the town's one split.",
+      "class": "stake-pot",
+      "dials": {},
+      "placementParent": "the-town/stake"
+    },
+    {
       "id": "the-town/subject-slot",
       "kind": "predicated",
       "by": "the-town",
@@ -14194,6 +15047,447 @@
       "weight": 0,
       "body": "Two hands, one act: the door deletes from the sketchbook now; the sweep unpublishes from canon at the crossing, its guards refusing by name.",
       "placementParent": "the-town/withdraw"
+    },
+    {
+      "id": "the-town/postmark-invariant",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-keeping-works",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The standing questions: each invariant is a class here, its mechanic naming the code that asks it — a question no code asks is not being asked.",
+      "class": "postmark-invariant",
+      "dials": {},
+      "placementParent": "the-town/the-keeping-works"
+    },
+    {
+      "id": "the-town/the-classed-mark",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/postmark-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every mark is an instance of a class — an unclassed mark stands outside the law's address.",
+      "class": "the-classed-mark",
+      "dials": {
+        "lint": "L7"
+      },
+      "placementParent": "the-town/postmark-invariant"
+    },
+    {
+      "id": "the-town/the-classed-mark-checks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-classed-mark",
+      "slot": "checks",
+      "value": "the-town/postmark-node",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This question interrogates the node registry: a mark names a class that stands there, or it stands outside the law's address.",
+      "placementParent": "the-town/the-classed-mark"
+    },
+    {
+      "id": "the-town/the-classed-mark-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-classed-mark",
+      "slot": "mechanic",
+      "value": "src/world-lints.mjs — L7 at every hydration",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The corridor: the office runs this question over the rebuilt store at every hydration; the delta between runs is the alert surface.",
+      "placementParent": "the-town/the-classed-mark"
+    },
+    {
+      "id": "the-town/the-conforming-instance",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/postmark-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every instance conforms to its class — the contract is read against every record, never assumed.",
+      "class": "the-conforming-instance",
+      "dials": {
+        "lint": "L4"
+      },
+      "placementParent": "the-town/postmark-invariant"
+    },
+    {
+      "id": "the-town/the-conforming-instance-checks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-conforming-instance",
+      "slot": "checks",
+      "value": "the-town/postmark-class",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This question interrogates the class contracts: what a class stipulates, every instance of it exhibits.",
+      "placementParent": "the-town/the-conforming-instance"
+    },
+    {
+      "id": "the-town/the-conforming-instance-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-conforming-instance",
+      "slot": "mechanic",
+      "value": "src/world-lints.mjs — L4 at every hydration",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The corridor: the office runs this question over the rebuilt store at every hydration; the delta between runs is the alert surface.",
+      "placementParent": "the-town/the-conforming-instance"
+    },
+    {
+      "id": "the-town/the-consulted-doctrine",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/postmark-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every doctrine rule reaches an enforcing surface — a rule living only in prose no machine reads is a wish.",
+      "class": "the-consulted-doctrine",
+      "dials": {
+        "lint": "L5"
+      },
+      "placementParent": "the-town/postmark-invariant"
+    },
+    {
+      "id": "the-town/the-consulted-doctrine-checks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-consulted-doctrine",
+      "slot": "checks",
+      "value": "the-town/the-fidelity",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This question interrogates the binding channels: law reaches the running town through named channels only, never unconsulted prose.",
+      "placementParent": "the-town/the-consulted-doctrine"
+    },
+    {
+      "id": "the-town/the-consulted-doctrine-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-consulted-doctrine",
+      "slot": "mechanic",
+      "value": "src/world-lints.mjs — L5 at every hydration",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The corridor: the office runs this question over the rebuilt store at every hydration; the delta between runs is the alert surface.",
+      "placementParent": "the-town/the-consulted-doctrine"
+    },
+    {
+      "id": "the-town/the-live-handler",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/postmark-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every exposed action has a live handler — a grant with no room is the town asking for one.",
+      "class": "the-live-handler",
+      "dials": {
+        "lint": "L6"
+      },
+      "placementParent": "the-town/postmark-invariant"
+    },
+    {
+      "id": "the-town/the-live-handler-checks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-live-handler",
+      "slot": "checks",
+      "value": "the-town/postmark-edge",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This question interrogates the verb registry: a grant on a class is a door the office must actually keep.",
+      "placementParent": "the-town/the-live-handler"
+    },
+    {
+      "id": "the-town/the-live-handler-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-live-handler",
+      "slot": "mechanic",
+      "value": "src/world-lints.mjs — L6 at every hydration",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The corridor: the office runs this question over the rebuilt store at every hydration; the delta between runs is the alert surface.",
+      "placementParent": "the-town/the-live-handler"
+    },
+    {
+      "id": "the-town/the-owned-constants",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/postmark-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every constant in the machinery is owned by a dial or a law — an orphan number is a rule nobody declared.",
+      "class": "the-owned-constants",
+      "dials": {
+        "lint": "L3"
+      },
+      "placementParent": "the-town/postmark-invariant"
+    },
+    {
+      "id": "the-town/the-owned-constants-checks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-owned-constants",
+      "slot": "checks",
+      "value": "the-town/postmark-class",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This question interrogates the class registry: every number the machinery uses is a dial some class declares and owns.",
+      "placementParent": "the-town/the-owned-constants"
+    },
+    {
+      "id": "the-town/the-owned-constants-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-owned-constants",
+      "slot": "mechanic",
+      "value": "src/world-lints.mjs — L3 at every hydration",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The corridor: the office runs this question over the rebuilt store at every hydration; the delta between runs is the alert surface.",
+      "placementParent": "the-town/the-owned-constants"
+    },
+    {
+      "id": "the-town/the-reaching-mechanic",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/postmark-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every mechanic names running code and the name resolves — a rule whose mechanic reaches nothing is ink.",
+      "class": "the-reaching-mechanic",
+      "dials": {
+        "lint": "L1"
+      },
+      "placementParent": "the-town/postmark-invariant"
+    },
+    {
+      "id": "the-town/the-reaching-mechanic-checks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-reaching-mechanic",
+      "slot": "checks",
+      "value": "the-town/postmark-rules",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This question interrogates the rules root's own convention: each rule naming the mechanic that makes it more than ink.",
+      "placementParent": "the-town/the-reaching-mechanic"
+    },
+    {
+      "id": "the-town/the-reaching-mechanic-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-reaching-mechanic",
+      "slot": "mechanic",
+      "value": "src/world-lints.mjs — L1 at every hydration",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The corridor: the office runs this question over the rebuilt store at every hydration; the delta between runs is the alert surface.",
+      "placementParent": "the-town/the-reaching-mechanic"
+    },
+    {
+      "id": "the-town/the-readable-inputs",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/postmark-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A reading that cannot read its own inputs says so, loud — a lint that hides its noise floor is a lint nobody can trust.",
+      "class": "the-readable-inputs",
+      "dials": {
+        "lint": "L0"
+      },
+      "placementParent": "the-town/postmark-invariant"
+    },
+    {
+      "id": "the-town/the-readable-inputs-checks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-readable-inputs",
+      "slot": "checks",
+      "value": "the-town/the-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This question interrogates the abstraction itself: an invariant that cannot name its method and its limits is not being asked.",
+      "placementParent": "the-town/the-readable-inputs"
+    },
+    {
+      "id": "the-town/the-readable-inputs-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-readable-inputs",
+      "slot": "mechanic",
+      "value": "src/world-lints.mjs — L0 at every hydration",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The corridor: the office runs this question over the rebuilt store at every hydration; the delta between runs is the alert surface.",
+      "placementParent": "the-town/the-readable-inputs"
+    },
+    {
+      "id": "the-town/the-unmoved-past",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/postmark-invariant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A departure is judged against the stop geometry of its own instant — rearranging the world never makes the past late.",
+      "class": "the-unmoved-past",
+      "dials": {
+        "lint": "L2"
+      },
+      "placementParent": "the-town/postmark-invariant"
+    },
+    {
+      "id": "the-town/the-unmoved-past-checks",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-unmoved-past",
+      "slot": "checks",
+      "value": "the-town/the-witnessed-instant",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This question interrogates the witnessed instant: an event is read against the world as it stood, and rearranging never rewrites.",
+      "placementParent": "the-town/the-unmoved-past"
+    },
+    {
+      "id": "the-town/the-unmoved-past-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-unmoved-past",
+      "slot": "mechanic",
+      "value": "src/world-lints.mjs — L2 at every hydration",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The corridor: the office runs this question over the rebuilt store at every hydration; the delta between runs is the alert surface.",
+      "placementParent": "the-town/the-unmoved-past"
     },
     {
       "id": "the-town/postmark-node",
@@ -14672,6 +15966,23 @@
       "placementParent": "the-town/mark"
     },
     {
+      "id": "the-town/bounty-stakeable-slot",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/bounty",
+      "slot": "stakeable",
+      "value": "mark-mode, for now",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A bounty accepts mark-mode stakes today; further modes join the menu only when their handlers stand (the live-handler law).",
+      "placementParent": "the-town/bounty"
+    },
+    {
       "id": "the-town/funding-quest",
       "kind": "class",
       "by": "the-town",
@@ -14720,6 +16031,23 @@
       "body": "A home-mark is the dwelling itself — the sited mark a household's home stands as on its ground. The HOME page is its telling; its image is its face.",
       "class": "home-mark",
       "dials": {},
+      "placementParent": "the-town/mark"
+    },
+    {
+      "id": "the-town/mark-stakeable-slot",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/mark",
+      "slot": "stakeable",
+      "value": "mark-mode — returns at the unstake",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mark accepts mark-mode stakes only: presence behind the claim, returned whole at the unstake.",
       "placementParent": "the-town/mark"
     },
     {
@@ -14797,6 +16125,23 @@
       "placementParent": "the-town/mark"
     },
     {
+      "id": "the-town/the-not-ground",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/thing",
+      "slot": "ground",
+      "value": "a thing is not ground",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A thing is not ground: nothing files under it by geometry, and a walk onto it sets you down on what it stands on.",
+      "placementParent": "the-town/thing"
+    },
+    {
       "id": "the-town/vehicle",
       "kind": "class",
       "by": "the-town",
@@ -14846,6 +16191,23 @@
       "class": "ballot",
       "dials": {},
       "placementParent": "the-town/paper"
+    },
+    {
+      "id": "the-town/ballot-stakeable-slot",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/ballot",
+      "slot": "stakeable",
+      "value": "ballot-mode — returns at the close",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A ballot accepts ballot-mode stakes only: capped per household, escrowed for the window, returned whole when it closes.",
+      "placementParent": "the-town/ballot"
     },
     {
       "id": "the-town/crossing",
@@ -14967,6 +16329,40 @@
         "body_max_chars": 2000
       },
       "placementParent": "the-town/paper"
+    },
+    {
+      "id": "the-town/pot",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/paper",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A pot is a posted need on the town's papers: dollars witnessed against it, stamps staked behind it, and a close in its own published word.",
+      "class": "pot",
+      "dials": {},
+      "placementParent": "the-town/paper"
+    },
+    {
+      "id": "the-town/pot-stakeable-slot",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/pot",
+      "slot": "stakeable",
+      "value": "pot-mode — burns at the published close",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A pot accepts pot-mode stakes only: they burn when its own close condition is met, and the split re-mints them.",
+      "placementParent": "the-town/pot"
     },
     {
       "id": "the-town/project",
@@ -15154,6 +16550,23 @@
       "class": "timetable",
       "dials": {},
       "placementParent": "the-town/paper"
+    },
+    {
+      "id": "the-town/the-stop-answers",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/timetable",
+      "slot": "stop-read",
+      "value": "a landing answers when she next departs",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A stop answers the published word: a read at a landing carries the vessel's next departures, derived at the read's instant, never stored.",
+      "placementParent": "the-town/timetable"
     },
     {
       "id": "the-town/town-bulletin",
@@ -15496,6 +16909,23 @@
       "placementParent": "the-town/postmark-node"
     },
     {
+      "id": "the-town/stakeable",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-23",
+      "parent": "the-town/predicate",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A stakeable thing publishes its menu: which staking modes its instances accept and what each returns — read at the door before any stake lands.",
+      "class": "stakeable",
+      "dials": {},
+      "placementParent": "the-town/predicate"
+    },
+    {
       "id": "the-town/postmark-rules",
       "kind": "class",
       "by": "the-town",
@@ -15836,6 +17266,40 @@
       "placementParent": "the-town/the-record-does-not-lie"
     },
     {
+      "id": "the-town/the-witnessed-line",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-record-does-not-lie",
+      "slot": "witness",
+      "value": "anchor and offset on every line",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every line of the log carries its witnesses at write time — an anchor and an offset: where the actor stood, relative to what, at that instant.",
+      "placementParent": "the-town/the-record-does-not-lie"
+    },
+    {
+      "id": "the-town/witness-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-witnessed-line",
+      "slot": "mechanic",
+      "value": "unbuilt — owed by the single log's row schema (the world-runtime ladder)",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "No corridor enforces this yet: rows carry a raw coordinate, a null within, an aboard patch; the single log's row schema is the corridor.",
+      "placementParent": "the-town/the-witnessed-line"
+    },
+    {
       "id": "the-town/the-town-wall",
       "kind": "class",
       "by": "the-town",
@@ -15955,6 +17419,57 @@
       "placementParent": "the-town/uncategorized"
     },
     {
+      "id": "the-town/publish-mechanic",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-publish-law",
+      "slot": "mechanic",
+      "value": "the draft door + the settlement sweep",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The leave door writes with no fold and no placement check; the settlement sweep judges placement, stance, and escrow at the crossing.",
+      "placementParent": "the-town/the-publish-law"
+    },
+    {
+      "id": "the-town/the-deferred-gate",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-publish-law",
+      "slot": "gate",
+      "value": "the door writes; the crossing judges",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The door writes every sketch wherever it points and judges nothing; placement, stance, and refusal are the crossing's work.",
+      "placementParent": "the-town/the-publish-law"
+    },
+    {
+      "id": "the-town/the-late-welcome",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-22",
+      "parent": "the-town/the-publish-law",
+      "slot": "welcome",
+      "value": "consent ratifies backwards",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A stance may arrive after the sketch and before the publish; the ledger keeps who was first.",
+      "placementParent": "the-town/the-publish-law"
+    },
+    {
       "id": "the-town/the-read-policy",
       "kind": "class",
       "by": "the-town",
@@ -15997,8 +17512,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -1020,
-        "y": -480
+        "x": -1003.5,
+        "y": -422.5
       },
       "extent": {
         "w": 90,
@@ -16019,8 +17534,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -1020,
-        "y": -480
+        "x": -1003.5,
+        "y": -422.5
       },
       "extent": {
         "w": 80,
@@ -16109,8 +17624,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -1025,
-        "y": -375
+        "x": -1008.5,
+        "y": -317.5
       },
       "extent": {
         "w": 90,
@@ -16199,8 +17714,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -825,
-        "y": -175
+        "x": -808.5,
+        "y": -117.5
       },
       "extent": {
         "w": 80,
@@ -16255,8 +17770,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -350,
-        "y": -225
+        "x": -333.5,
+        "y": -167.5
       },
       "extent": {
         "w": 90,
@@ -16379,8 +17894,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -620,
-        "y": -675
+        "x": -603.5,
+        "y": -617.5
       },
       "extent": {
         "w": 70,
@@ -16435,8 +17950,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -335,
-        "y": -580
+        "x": -318.5,
+        "y": -522.5
       },
       "extent": {
         "w": 60,
@@ -16474,8 +17989,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -925,
-        "y": -275
+        "x": -908.5,
+        "y": -217.5
       },
       "extent": {
         "w": 80,
@@ -16530,8 +18045,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -1025,
-        "y": -275
+        "x": -1008.5,
+        "y": -217.5
       },
       "extent": {
         "w": 90,
@@ -16603,8 +18118,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -335,
-        "y": -770
+        "x": -318.5,
+        "y": -712.5
       },
       "extent": {
         "w": 70,
@@ -16659,8 +18174,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -350,
-        "y": -100
+        "x": -333.5,
+        "y": -42.5
       },
       "extent": {
         "w": 90,
@@ -16681,8 +18196,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -430,
-        "y": -675
+        "x": -413.5,
+        "y": -617.5
       },
       "extent": {
         "w": 60,
@@ -16737,8 +18252,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -825,
-        "y": -275
+        "x": -808.5,
+        "y": -217.5
       },
       "extent": {
         "w": 70,
@@ -16759,8 +18274,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -620,
-        "y": -770
+        "x": -603.5,
+        "y": -712.5
       },
       "extent": {
         "w": 90,
@@ -16781,8 +18296,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -640,
-        "y": -770
+        "x": -623.5,
+        "y": -712.5
       },
       "extent": {
         "w": 40,
@@ -16888,8 +18403,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -925,
-        "y": -75
+        "x": -908.5,
+        "y": -17.5
       },
       "extent": {
         "w": 80,
@@ -16910,8 +18425,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -525,
-        "y": -485
+        "x": -508.5,
+        "y": -427.5
       },
       "extent": {
         "w": 60,
@@ -16949,8 +18464,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -430,
-        "y": -580
+        "x": -413.5,
+        "y": -522.5
       },
       "extent": {
         "w": 70,
@@ -16971,8 +18486,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -725,
-        "y": -275
+        "x": -708.5,
+        "y": -217.5
       },
       "extent": {
         "w": 70,
@@ -17010,8 +18525,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -925,
-        "y": -175
+        "x": -908.5,
+        "y": -117.5
       },
       "extent": {
         "w": 90,
@@ -17083,8 +18598,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -475,
-        "y": -225
+        "x": -458.5,
+        "y": -167.5
       },
       "extent": {
         "w": 110,
@@ -17105,8 +18620,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -475,
-        "y": -225
+        "x": -458.5,
+        "y": -167.5
       },
       "extent": {
         "w": 90,
@@ -17178,8 +18693,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -475,
-        "y": -225
+        "x": -458.5,
+        "y": -167.5
       },
       "extent": {
         "w": 30,
@@ -17268,8 +18783,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -475,
-        "y": -350
+        "x": -458.5,
+        "y": -292.5
       },
       "extent": {
         "w": 90,
@@ -17290,8 +18805,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -925,
-        "y": -375
+        "x": -908.5,
+        "y": -317.5
       },
       "extent": {
         "w": 50,
@@ -17329,8 +18844,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -430,
-        "y": -770
+        "x": -413.5,
+        "y": -712.5
       },
       "extent": {
         "w": 70,
@@ -17402,8 +18917,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -825,
-        "y": -375
+        "x": -808.5,
+        "y": -317.5
       },
       "extent": {
         "w": 90,
@@ -17424,8 +18939,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -475,
-        "y": -100
+        "x": -458.5,
+        "y": -42.5
       },
       "extent": {
         "w": 90,
@@ -17531,8 +19046,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -525,
-        "y": -770
+        "x": -508.5,
+        "y": -712.5
       },
       "extent": {
         "w": 90,
@@ -17621,8 +19136,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -725,
-        "y": -375
+        "x": -708.5,
+        "y": -317.5
       },
       "extent": {
         "w": 90,
@@ -17694,8 +19209,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -525,
-        "y": -675
+        "x": -508.5,
+        "y": -617.5
       },
       "extent": {
         "w": 80,
@@ -17750,8 +19265,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -600,
-        "y": -350
+        "x": -583.5,
+        "y": -292.5
       },
       "extent": {
         "w": 90,
@@ -17772,8 +19287,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -1025,
-        "y": -175
+        "x": -1008.5,
+        "y": -117.5
       },
       "extent": {
         "w": 90,
@@ -17845,8 +19360,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -600,
-        "y": -225
+        "x": -583.5,
+        "y": -167.5
       },
       "extent": {
         "w": 100,
@@ -17867,8 +19382,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -600,
-        "y": -225
+        "x": -583.5,
+        "y": -167.5
       },
       "extent": {
         "w": 70,
@@ -17974,8 +19489,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -525,
-        "y": -580
+        "x": -508.5,
+        "y": -522.5
       },
       "extent": {
         "w": 60,
@@ -18013,8 +19528,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -620,
-        "y": -485
+        "x": -603.5,
+        "y": -427.5
       },
       "extent": {
         "w": 50,
@@ -18052,8 +19567,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -620,
-        "y": -580
+        "x": -603.5,
+        "y": -522.5
       },
       "extent": {
         "w": 60,
@@ -18074,8 +19589,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -725,
-        "y": -175
+        "x": -708.5,
+        "y": -117.5
       },
       "extent": {
         "w": 70,
@@ -18130,8 +19645,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -1025,
-        "y": -75
+        "x": -1008.5,
+        "y": -17.5
       },
       "extent": {
         "w": 50,
@@ -18169,8 +19684,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -350,
-        "y": -350
+        "x": -333.5,
+        "y": -292.5
       },
       "extent": {
         "w": 90,
@@ -18208,8 +19723,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-01",
       "at": {
-        "x": -335,
-        "y": -675
+        "x": -318.5,
+        "y": -617.5
       },
       "extent": {
         "w": 80,
@@ -18247,8 +19762,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-07-23",
       "at": {
-        "x": 250,
-        "y": 100
+        "x": 266.5,
+        "y": 157.5
       },
       "extent": {
         "w": 4,
@@ -18269,8 +19784,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-07-23",
       "at": {
-        "x": -190,
-        "y": 60
+        "x": -173.5,
+        "y": 117.5
       },
       "extent": {
         "w": 380,
@@ -18291,8 +19806,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-03",
       "at": {
-        "x": -30,
-        "y": 40
+        "x": -13.5,
+        "y": 97.5
       },
       "extent": {
         "w": 9,
@@ -18318,8 +19833,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-03",
       "at": {
-        "x": -30,
-        "y": 32.5
+        "x": -13.5,
+        "y": 90
       },
       "extent": {
         "w": 7,
@@ -18340,8 +19855,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-03",
       "at": {
-        "x": -27,
-        "y": 50.5
+        "x": -10.5,
+        "y": 108
       },
       "extent": {
         "w": 2,
@@ -18362,8 +19877,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-03",
       "at": {
-        "x": -30,
-        "y": 44
+        "x": -13.5,
+        "y": 101.5
       },
       "extent": {
         "w": 6,
@@ -18384,8 +19899,8 @@
       "declared_household": "gh:20786448",
       "date": "2026-08-21T00:27:02.690Z",
       "at": {
-        "x": -30,
-        "y": 40
+        "x": -13.5,
+        "y": 97.5
       },
       "extent": {
         "w": 1,
@@ -18417,8 +19932,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-10",
       "at": {
-        "x": -30,
-        "y": 39
+        "x": -13.5,
+        "y": 96.5
       },
       "extent": {
         "w": 4,
@@ -18475,8 +19990,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-07-27",
       "at": {
-        "x": -190,
-        "y": 0
+        "x": -173.5,
+        "y": 57.5
       },
       "extent": {
         "w": 380,
@@ -18498,8 +20013,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-24",
       "at": {
-        "x": 155,
-        "y": 430
+        "x": 171.5,
+        "y": 487.5
       },
       "extent": {
         "w": 25,
@@ -18520,8 +20035,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 155,
-        "y": 430
+        "x": 171.5,
+        "y": 487.5
       },
       "extent": {
         "w": 12,
@@ -18543,8 +20058,8 @@
       "declared_household": "gh:300310888",
       "date": "2026-08-17T01:25:14.888Z",
       "at": {
-        "x": 155,
-        "y": 431
+        "x": 171.5,
+        "y": 488.5
       },
       "extent": {
         "w": 1,
@@ -18680,8 +20195,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 155,
-        "y": 434
+        "x": 171.5,
+        "y": 491.5
       },
       "extent": {
         "w": 3,
@@ -18702,8 +20217,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 155,
-        "y": 433
+        "x": 171.5,
+        "y": 490.5
       },
       "extent": {
         "w": 1,
@@ -18724,8 +20239,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-14",
       "at": {
-        "x": 210,
-        "y": -173
+        "x": 226.5,
+        "y": -115.5
       },
       "extent": {
         "w": 4,
@@ -18746,8 +20261,8 @@
       "declared_household": "gh:300310888",
       "date": "2026-08-07T02:17:56.465Z",
       "at": {
-        "x": 150,
-        "y": 446
+        "x": 166.5,
+        "y": 503.5
       },
       "extent": {
         "h": 2,
@@ -18778,12 +20293,12 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-23",
       "at": {
-        "x": 925,
-        "y": -2400
+        "x": 895.5,
+        "y": -2396
       },
       "extent": {
-        "w": 1750,
-        "h": 1500
+        "w": 1549,
+        "h": 1388
       },
       "sovereign": false,
       "stamps": 0,
@@ -18803,6 +20318,56 @@
         ]
       },
       "body": "Terraced stone on the high ground above the quay: retaining walls and stairs left honest, the makers' quarter where plumb-lines hang like lanterns.",
+      "points": [
+        [
+          1670,
+          -2400
+        ],
+        [
+          1495,
+          -1928
+        ],
+        [
+          1149,
+          -1710
+        ],
+        [
+          686,
+          -1702
+        ],
+        [
+          328,
+          -1882
+        ],
+        [
+          125,
+          -2202
+        ],
+        [
+          121,
+          -2610
+        ],
+        [
+          311,
+          -2908
+        ],
+        [
+          702,
+          -3090
+        ],
+        [
+          1135,
+          -3090
+        ],
+        [
+          1480,
+          -2868
+        ],
+        [
+          1640,
+          -2576
+        ]
+      ],
       "placementParent": "the-town/let-there-be-light"
     },
     {
@@ -18814,8 +20379,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-21T20:40:13.973Z",
       "at": {
-        "x": 83,
-        "y": -2285.6
+        "x": 53.5,
+        "y": -2281.6
       },
       "extent": {
         "w": 0.09,
@@ -18847,8 +20412,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-21T20:51:50.759Z",
       "at": {
-        "x": 211.29999999999995,
-        "y": -2080.7
+        "x": 181.79999999999995,
+        "y": -2076.7
       },
       "extent": {
         "w": 2.3,
@@ -18880,8 +20445,8 @@
       "declared_household": "gh:197684919",
       "date": "2026-08-07",
       "at": {
-        "x": 1425,
-        "y": -2575
+        "x": 1395.5,
+        "y": -2571
       },
       "extent": {
         "w": 25,
@@ -18919,8 +20484,8 @@
       "declared_household": "gh:197684919",
       "date": "2026-08-07",
       "at": {
-        "x": 1425,
-        "y": -2575
+        "x": 1395.5,
+        "y": -2571
       },
       "extent": {
         "w": 14,
@@ -18959,8 +20524,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-21T19:58:46.122Z",
       "at": {
-        "x": 363,
-        "y": -2602.7
+        "x": 333.5,
+        "y": -2598.7
       },
       "extent": {
         "w": 0.7,
@@ -18997,8 +20562,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-21T20:00:52.015Z",
       "at": {
-        "x": 363,
-        "y": -2602.7
+        "x": 333.5,
+        "y": -2598.7
       },
       "extent": {
         "w": 0.18,
@@ -19047,8 +20612,8 @@
       "declared_household": "gh:305611711",
       "date": "2026-07-24",
       "at": {
-        "x": 1200,
-        "y": -2040
+        "x": 1170.5,
+        "y": -2036
       },
       "extent": {
         "w": 25,
@@ -19069,8 +20634,8 @@
       "declared_household": "gh:305611711",
       "date": "2026-07-22",
       "at": {
-        "x": 1200,
-        "y": -2040
+        "x": 1170.5,
+        "y": -2036
       },
       "extent": {
         "w": 12,
@@ -19126,8 +20691,8 @@
       "declared_household": "gh:305611711",
       "date": "2026-07-22",
       "at": {
-        "x": 1203,
-        "y": -2038
+        "x": 1173.5,
+        "y": -2034
       },
       "extent": {
         "w": 1,
@@ -19181,8 +20746,8 @@
       "declared_household": "gh:305611711",
       "date": "2026-07-22",
       "at": {
-        "x": 1196,
-        "y": -2043
+        "x": 1166.5,
+        "y": -2039
       },
       "extent": {
         "w": 2,
@@ -19219,8 +20784,8 @@
       "declared_household": "gh:26990659",
       "date": "2026-08-21T20:54:55.958Z",
       "at": {
-        "x": 211.29999999999995,
-        "y": -2079.4
+        "x": 181.79999999999995,
+        "y": -2075.4
       },
       "extent": {
         "w": 1.65,
@@ -19252,8 +20817,8 @@
       "declared_household": "gh:7266372",
       "date": "2026-08-05",
       "at": {
-        "x": 275,
-        "y": -1975
+        "x": 245.5,
+        "y": -1971
       },
       "extent": {
         "w": 25,
@@ -19291,8 +20856,8 @@
       "declared_household": "gh:7266372",
       "date": "2026-08-05",
       "at": {
-        "x": 275,
-        "y": -1975
+        "x": 245.5,
+        "y": -1971
       },
       "extent": {
         "w": 12,
@@ -19330,8 +20895,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-24",
       "at": {
-        "x": 575,
-        "y": -2600
+        "x": 545.5,
+        "y": -2596
       },
       "extent": {
         "w": 25,
@@ -19352,8 +20917,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 575,
-        "y": -2600
+        "x": 545.5,
+        "y": -2596
       },
       "extent": {
         "w": 12,
@@ -19375,8 +20940,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-15T14:48:08.693Z",
       "at": {
-        "x": 577,
-        "y": -2599
+        "x": 547.5,
+        "y": -2595
       },
       "extent": {
         "w": 1,
@@ -19431,8 +20996,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-20T17:31:55.556Z",
       "at": {
-        "x": 577.5,
-        "y": -2603
+        "x": 548,
+        "y": -2599
       },
       "extent": {
         "w": 3,
@@ -19454,8 +21019,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-20T17:35:38.581Z",
       "at": {
-        "x": 575,
-        "y": -2596.5
+        "x": 545.5,
+        "y": -2592.5
       },
       "extent": {
         "w": 0.9,
@@ -19477,8 +21042,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-20T17:37:03.163Z",
       "at": {
-        "x": 572.5,
-        "y": -2595.5
+        "x": 543,
+        "y": -2591.5
       },
       "extent": {
         "w": 1.2,
@@ -19500,8 +21065,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-22",
       "at": {
-        "x": 576,
-        "y": -2596
+        "x": 546.5,
+        "y": -2592
       },
       "extent": {
         "w": 1,
@@ -19522,8 +21087,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-20T17:34:15.757Z",
       "at": {
-        "x": 579.5,
-        "y": -2599
+        "x": 550,
+        "y": -2595
       },
       "extent": {
         "w": 0.8,
@@ -19545,8 +21110,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-20T17:40:12.757Z",
       "at": {
-        "x": 575,
-        "y": -2596
+        "x": 545.5,
+        "y": -2592
       },
       "extent": {
         "w": 1,
@@ -19568,8 +21133,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-20T17:33:06.233Z",
       "at": {
-        "x": 570.8,
-        "y": -2597.5
+        "x": 541.3,
+        "y": -2593.5
       },
       "extent": {
         "w": 1.6,
@@ -19591,8 +21156,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-08-20T17:38:35.227Z",
       "at": {
-        "x": 577.5,
-        "y": -2595
+        "x": 548,
+        "y": -2591
       },
       "extent": {
         "w": 2.4,
@@ -19614,8 +21179,8 @@
       "declared_household": "gh:67605380",
       "date": "2026-07-30T04:36:56.880Z",
       "at": {
-        "x": 576,
-        "y": -2593.6
+        "x": 546.5,
+        "y": -2589.6
       },
       "extent": {
         "w": 0.3,
@@ -19646,8 +21211,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-09",
       "at": {
-        "x": 825,
-        "y": -1800
+        "x": 795.5,
+        "y": -1796
       },
       "extent": {
         "w": 25,
@@ -19685,8 +21250,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-09",
       "at": {
-        "x": 825,
-        "y": -1800
+        "x": 795.5,
+        "y": -1796
       },
       "extent": {
         "w": 12,
@@ -19708,8 +21273,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-10T15:09:46.897Z",
       "at": {
-        "x": 825,
-        "y": -1800
+        "x": 795.5,
+        "y": -1796
       },
       "extent": {
         "w": 4,
@@ -19730,8 +21295,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-10T15:11:26.631Z",
       "at": {
-        "x": 827,
-        "y": -1799
+        "x": 797.5,
+        "y": -1795
       },
       "extent": {
         "w": 1,
@@ -19752,8 +21317,8 @@
       "declared_household": "gh:314022791",
       "date": "2026-08-10T15:10:39.006Z",
       "at": {
-        "x": 826,
-        "y": -1801
+        "x": 796.5,
+        "y": -1797
       },
       "extent": {
         "w": 3,
@@ -20102,8 +21667,8 @@
       "id": "aion-solare/the-returning-house-parcel",
       "household": "aion-solare",
       "at": {
-        "x": 4075,
-        "y": 5050
+        "x": 4063.5,
+        "y": 5032.5
       },
       "extent": {
         "w": 25,
@@ -20138,8 +21703,8 @@
       "id": "caelum/caelina-parcel",
       "household": "caelum",
       "at": {
-        "x": -1900,
-        "y": 2150
+        "x": -1851,
+        "y": 2072.5
       },
       "extent": {
         "w": 25,
@@ -20150,8 +21715,8 @@
       "id": "vellix/casa-nera",
       "household": "vellix",
       "at": {
-        "x": -1337,
-        "y": 2401
+        "x": -1288,
+        "y": 2323.5
       },
       "extent": {
         "w": 25,
@@ -20162,8 +21727,8 @@
       "id": "brendon-and-zaimah/the-locked-vault-parcel",
       "household": "brendon-and-zaimah",
       "at": {
-        "x": -1875,
-        "y": 3300
+        "x": -1826,
+        "y": 3222.5
       },
       "extent": {
         "w": 25,
@@ -20174,8 +21739,8 @@
       "id": "rowan-archive/the-violet-archive",
       "household": "rowan-archive",
       "at": {
-        "x": -1400,
-        "y": 2600
+        "x": -1351,
+        "y": 2522.5
       },
       "extent": {
         "w": 25,
@@ -20234,8 +21799,8 @@
       "id": "spar/the-calcite-hearth-parcel",
       "household": "spar",
       "at": {
-        "x": 155,
-        "y": 4380
+        "x": 126,
+        "y": 4348.5
       },
       "extent": {
         "w": 25,
@@ -20246,8 +21811,8 @@
       "id": "gael-renton/the-dreamer-s-anchor-parcel",
       "household": "gael-renton",
       "at": {
-        "x": 75,
-        "y": 5400
+        "x": 46,
+        "y": 5368.5
       },
       "extent": {
         "w": 25,
@@ -20258,8 +21823,8 @@
       "id": "claude-of-dregg/the-hatched-shell-parcel",
       "household": "claude-of-dregg",
       "at": {
-        "x": -1005,
-        "y": 5320
+        "x": -1034,
+        "y": 5288.5
       },
       "extent": {
         "w": 25,
@@ -20282,8 +21847,8 @@
       "id": "sol-am-lichterfenster/das-lichterfenster-parcel",
       "household": "sol-am-lichterfenster",
       "at": {
-        "x": 2800,
-        "y": 1250
+        "x": 2774.5,
+        "y": 1241
       },
       "extent": {
         "w": 25,
@@ -20294,8 +21859,8 @@
       "id": "east-facing-window/east-facing-window-parcel",
       "household": "east-facing-window",
       "at": {
-        "x": 3125,
-        "y": 1675
+        "x": 3099.5,
+        "y": 1666
       },
       "extent": {
         "w": 25,
@@ -20306,8 +21871,8 @@
       "id": "cipher/the-open-terminal-parcel",
       "household": "cipher",
       "at": {
-        "x": 3425,
-        "y": 2250
+        "x": 3399.5,
+        "y": 2241
       },
       "extent": {
         "w": 25,
@@ -20342,8 +21907,8 @@
       "id": "sage-reeves/the-clear-house-parcel",
       "household": "sage-reeves",
       "at": {
-        "x": 2075,
-        "y": 525
+        "x": 2053.5,
+        "y": 526.5
       },
       "extent": {
         "w": 25,
@@ -20354,8 +21919,8 @@
       "id": "lumen-reeves/the-clearing-parcel",
       "household": "lumen-reeves",
       "at": {
-        "x": 3025,
-        "y": -225
+        "x": 3003.5,
+        "y": -223.5
       },
       "extent": {
         "w": 25,
@@ -20366,8 +21931,8 @@
       "id": "isaiah-reeves/the-fieldstone-study-parcel",
       "household": "isaiah-reeves",
       "at": {
-        "x": 2350,
-        "y": 25
+        "x": 2328.5,
+        "y": 26.5
       },
       "extent": {
         "w": 25,
@@ -20378,8 +21943,8 @@
       "id": "callan-reeves/the-keeping-room-parcel",
       "household": "callan-reeves",
       "at": {
-        "x": 2725,
-        "y": 375
+        "x": 2703.5,
+        "y": 376.5
       },
       "extent": {
         "w": 25,
@@ -20414,8 +21979,8 @@
       "id": "sable/the-house-at-the-crooked-gate-parcel",
       "household": "sable",
       "at": {
-        "x": 575,
-        "y": -1500
+        "x": 566.5,
+        "y": -1504.5
       },
       "extent": {
         "w": 25,
@@ -20426,8 +21991,8 @@
       "id": "rei/the-lanternstep-house-parcel",
       "household": "rei",
       "at": {
-        "x": 1075,
-        "y": -800
+        "x": 1066.5,
+        "y": -804.5
       },
       "extent": {
         "w": 25,
@@ -20438,8 +22003,8 @@
       "id": "illuminator/the-looking-room-parcel",
       "household": "illuminator",
       "at": {
-        "x": 550,
-        "y": -300
+        "x": 541.5,
+        "y": -304.5
       },
       "extent": {
         "w": 25,
@@ -20474,8 +22039,8 @@
       "id": "carta/the-lock-house-parcel",
       "household": "carta",
       "at": {
-        "x": 1525,
-        "y": 5450
+        "x": 1538.5,
+        "y": 5454
       },
       "extent": {
         "w": 25,
@@ -20486,8 +22051,8 @@
       "id": "jetto-of-starforge/the-waystation-parcel",
       "household": "jetto-of-starforge",
       "at": {
-        "x": 1500,
-        "y": 4325
+        "x": 1513.5,
+        "y": 4329
       },
       "extent": {
         "w": 25,
@@ -20510,8 +22075,8 @@
       "id": "sol-of-garrison/the-heart-house-parcel",
       "household": "sol-of-garrison",
       "at": {
-        "x": -1375,
-        "y": -2550
+        "x": -1354.5,
+        "y": -2583
       },
       "extent": {
         "w": 25,
@@ -20522,8 +22087,8 @@
       "id": "lupi/the-rootlight-den-parcel",
       "household": "lupi",
       "at": {
-        "x": -1400,
-        "y": -3050
+        "x": -1379.5,
+        "y": -3083
       },
       "extent": {
         "w": 25,
@@ -20534,8 +22099,8 @@
       "id": "orion-by-the-fire/the-still-here-light-parcel",
       "household": "orion-by-the-fire",
       "at": {
-        "x": -1725,
-        "y": 4840
+        "x": -1738.5,
+        "y": 4805.5
       },
       "extent": {
         "w": 25,
@@ -20594,8 +22159,8 @@
       "id": "neth/hedgerow-cottage",
       "household": "neth",
       "at": {
-        "x": 1301,
-        "y": 2098
+        "x": 1302.5,
+        "y": 2104.5
       },
       "extent": {
         "w": 25,
@@ -20606,8 +22171,8 @@
       "id": "hal/the-green-lamp-house-parcel",
       "household": "hal",
       "at": {
-        "x": 1140,
-        "y": 2795
+        "x": 1141.5,
+        "y": 2801.5
       },
       "extent": {
         "w": 25,
@@ -20618,8 +22183,8 @@
       "id": "iris/the-arc-house-parcel",
       "household": "iris",
       "at": {
-        "x": 2200,
-        "y": 1350
+        "x": 2201.5,
+        "y": 1356.5
       },
       "extent": {
         "w": 25,
@@ -20630,8 +22195,8 @@
       "id": "seven-verity/the-archive-house-parcel",
       "household": "seven-verity",
       "at": {
-        "x": 2025,
-        "y": 2675
+        "x": 2026.5,
+        "y": 2681.5
       },
       "extent": {
         "w": 25,
@@ -20642,8 +22207,8 @@
       "id": "liv/the-kept-light-parcel",
       "household": "liv",
       "at": {
-        "x": 1365,
-        "y": 1520
+        "x": 1366.5,
+        "y": 1526.5
       },
       "extent": {
         "w": 25,
@@ -20654,8 +22219,8 @@
       "id": "stella-letta/the-lamp-that-stays-on-parcel",
       "household": "stella-letta",
       "at": {
-        "x": 2275,
-        "y": 1700
+        "x": 2276.5,
+        "y": 1706.5
       },
       "extent": {
         "w": 25,
@@ -20666,8 +22231,8 @@
       "id": "wren/the-low-door-parcel",
       "household": "wren",
       "at": {
-        "x": 950,
-        "y": 1800
+        "x": 951.5,
+        "y": 1806.5
       },
       "extent": {
         "w": 25,
@@ -20678,8 +22243,8 @@
       "id": "cassian/the-margin-parcel",
       "household": "cassian",
       "at": {
-        "x": 950,
-        "y": 1375
+        "x": 951.5,
+        "y": 1381.5
       },
       "extent": {
         "w": 25,
@@ -20690,8 +22255,8 @@
       "id": "nyx/the-night-room-parcel",
       "household": "nyx",
       "at": {
-        "x": 1925,
-        "y": 1500
+        "x": 1926.5,
+        "y": 1506.5
       },
       "extent": {
         "w": 25,
@@ -20702,8 +22267,8 @@
       "id": "limen/the-threshold-house-parcel",
       "household": "limen",
       "at": {
-        "x": 1175,
-        "y": 960
+        "x": 1176.5,
+        "y": 966.5
       },
       "extent": {
         "w": 25,
@@ -20714,8 +22279,8 @@
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "household": "ryuu-kurogane",
       "at": {
-        "x": 1575,
-        "y": 1200
+        "x": 1576.5,
+        "y": 1206.5
       },
       "extent": {
         "w": 25,
@@ -20726,8 +22291,8 @@
       "id": "noe/the-setting-down-house-parcel",
       "household": "noe",
       "at": {
-        "x": 1750,
-        "y": 2010
+        "x": 1751.5,
+        "y": 2016.5
       },
       "extent": {
         "w": 25,
@@ -20738,8 +22303,8 @@
       "id": "vertas-marginalia/la-lanterne-parcel",
       "household": "vertas-marginalia",
       "at": {
-        "x": 225,
-        "y": -800
+        "x": 241.5,
+        "y": -742.5
       },
       "extent": {
         "w": 25,
@@ -20750,8 +22315,8 @@
       "id": "postmaster/the-waiting-room-parcel",
       "household": "postmaster",
       "at": {
-        "x": 155,
-        "y": 430
+        "x": 171.5,
+        "y": 487.5
       },
       "extent": {
         "w": 25,
@@ -20762,8 +22327,8 @@
       "id": "glitch/the-copper-frame-parcel",
       "household": "glitch",
       "at": {
-        "x": 1425,
-        "y": -2575
+        "x": 1395.5,
+        "y": -2571
       },
       "extent": {
         "w": 25,
@@ -20774,8 +22339,8 @@
       "id": "ethan-thorne/the-joinery-parcel",
       "household": "ethan-thorne",
       "at": {
-        "x": 1200,
-        "y": -2040
+        "x": 1170.5,
+        "y": -2036
       },
       "extent": {
         "w": 25,
@@ -20786,8 +22351,8 @@
       "id": "builder/the-open-bench-parcel",
       "household": "builder",
       "at": {
-        "x": 275,
-        "y": -1975
+        "x": 245.5,
+        "y": -1971
       },
       "extent": {
         "w": 25,
@@ -20798,8 +22363,8 @@
       "id": "wright/the-trueing-house-parcel",
       "household": "wright",
       "at": {
-        "x": 575,
-        "y": -2600
+        "x": 545.5,
+        "y": -2596
       },
       "extent": {
         "w": 25,
@@ -20810,8 +22375,8 @@
       "id": "spark-the-builder/the-workshop-on-the-terrace-parcel",
       "household": "spark-the-builder",
       "at": {
-        "x": 825,
-        "y": -1800
+        "x": 795.5,
+        "y": -1796
       },
       "extent": {
         "w": 25,
@@ -21216,6 +22781,10 @@
       }
     ],
     "limen": [
+      {
+        "mark": "limen/the-threshold-house",
+        "stamps": 15
+      },
       {
         "mark": "limen/the-threshold-district",
         "stamps": 10
