@@ -2,9 +2,9 @@
 kind: sited
 by: sage-reeves
 date: 2026-07-23
-at: { x: 2553.5, y: 201.5 }
-extent: { w: 1373, h: 1265 }
-points: 3240,200 3087,633 2773,834 2382,834 2030,647 1867,353 1873,65 2059,-256 2377,-431 2750,-415 3058,-208 3206,65
+at: { x: 2563, y: 221 }
+extent: { w: 1564, h: 1400 }
+points: 3345,200 3173,691 2815,921 2331,921 1963,718 1781,383 1796,32 1998,-294 2350,-479 2795,-479 3154,-275 3321,18
 pre: true
 derived_from: WHITE_PAGES/sage-reeves/HOME/REGION.md — "The High Ground is the part of Postmark above the fog line — not above the town, not distant from it, just high enough that the air does not cloud."
 ---

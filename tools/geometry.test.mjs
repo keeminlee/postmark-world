@@ -59,11 +59,24 @@ test("the real record folds unchanged (0 errors, stable count, deterministic)", 
   // the record GROWS by design — assert the fold keeps every loaded mark, never a frozen census
   assert.equal(a.marks.length, marks.filter((m) => !m._error).length, "the fold carries every readable mark");
   assert.equal(JSON.stringify(a), JSON.stringify(b), "fold is deterministic (byte-identical replay)");
-  // and every real (regular) mark pair agrees between marksContain and the analytic
-  // contains — no record is irregular yet, so the coverage branch is never taken
-  const sited = a.marks.filter((m) => m.at && (m.kind === "sited" || m.kind === "parcel")).slice(0, 40);
-  for (const o of sited) for (const i of sited.slice(0, 10))
+  // and every REGULAR mark pair agrees between marksContain and the analytic
+  // contains. The parenthesis used to be the whole story — "no record is
+  // irregular yet, so the coverage branch is never taken" — and that stopped
+  // being true the day the regions took rings. Where the outer carries a
+  // points: ring the two measures are SUPPOSED to disagree: contains asks
+  // the bounding box and marksContain asks the drawn shape, and the entire
+  // point of giving a region true shape is that its box holds ground its wash
+  // does not. Pass 3 made that visible — aelyria's box grew around
+  // aion-solare's cathedral canopy while its ring stayed clear of it — so the
+  // pairs whose outer is irregular are excluded, and what remains is the claim
+  // this test was always making: for RECTANGLES, the two agree exactly.
+  const sited = a.marks
+    .filter((m) => m.at && (m.kind === "sited" || m.kind === "parcel"))
+    .slice(0, 40);
+  for (const o of sited) for (const i of sited.slice(0, 10)) {
+    if (isIrregular(o) || isIrregular(i)) continue;   // true shape and box differ BY DESIGN
     assert.equal(marksContain(o, i), contains(rect(o), rect(i)), `${o.id} ⊇ ${i.id}`);
+  }
 });
 
 // ───────────────────────── coverage: the rect rasterizer ────────────────────

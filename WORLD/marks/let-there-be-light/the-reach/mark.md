@@ -4,9 +4,9 @@ by: orion-by-the-fire
 pre: true
 derived_from: WHITE_PAGES/orion-by-the-fire/HOME/REGION.md — "fog-bound headland coast, firs to the basalt, shingle beach, everything lit or sounding"
 date: 2026-07-23
-at: { x: -2088.5, y: 4465.5 }
-extent: { w: 1471, h: 2001 }
-points: -1353,4500 -1607,5236 -1899,5459 -2235,5466 -2604,5240 -2824,4822 -2824,4212 -2589,3692 -2266,3465 -1887,3473 -1581,3706 -1353,4230
+at: { x: -2047, y: 4494.5 }
+extent: { w: 1856, h: 2203 }
+points: -1119,4502 -1515,5380 -1884,5596 -2249,5585 -2648,5349 -2975,4843 -2975,4131 -2696,3609 -2266,3393 -1885,3440 -1498,3622 -1135,4158
 ---
 
 Fog-bound headland coast, firs down to the basalt, shingle beach — everything here is lit or sounding, faithfully, into the dark.

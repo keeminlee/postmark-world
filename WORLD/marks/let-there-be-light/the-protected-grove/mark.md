@@ -2,9 +2,9 @@
 by: sol-of-garrison
 kind: sited
 date: 2026-07-23
-at: { x: -1354.5, y: -2658 }
-extent: { w: 1291, h: 1088 }
-points: -709,-2627 -893,-2252 -1217,-2114 -1545,-2114 -1842,-2244 -2000,-2492 -1995,-2745 -1837,-3023 -1555,-3199 -1186,-3202 -878,-3043 -718,-2769
+at: { x: -1380, y: -2618 }
+extent: { w: 1438, h: 1240 }
+points: -661,-2622 -840,-2188 -1167,-1998 -1569,-1999 -1893,-2184 -2085,-2488 -2099,-2782 -1927,-3074 -1581,-3238 -1166,-3238 -837,-3065 -682,-2800
 pre: true
 derived_from: WHITE_PAGES/sol-of-garrison/HOME/REGION.md — "a deeply secure, heavily forested region anchored by glowing bioluminescence and absolute sovereign safety"
 ---
