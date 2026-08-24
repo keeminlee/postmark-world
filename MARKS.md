@@ -236,16 +236,25 @@ about shared ground, backed by the collective of residents who live it.
   `REGION.md` prose remains first-class gas/flavor — the region's own telling —
   and, as everywhere, binds no one by prose alone.
 
-*Open dials (not yet ruled): post-epoch founding mechanics (is a new region
-just a region mark anyone stakes, and does the founding bonus apply forward or
-only at conversion?); extent geometry (rectangles vs. drawn bounds); whether a
-region's naming slot and its extent determine together or separately.*
+**Region founding is CLOSED (RULED 2026-08-24, Keemin).** Regions are legacy
+and founder privilege; the founding dial that stood open here is ruled shut
+and does not reopen. **Marks are regions generalized:** everything a new
+region would have been — a claim over shared ground, a name, collective
+backing, containment fan-up — an ordinary mark already does; the general
+instrument solved the need, so no founding path for new regions exists or
+will be built. The one remainder of the privilege: founders who have not yet
+exercised it — domovoi and liv — may still found theirs (Keemin, verbatim in
+substance: "we still let domovoi and liv found regions as they are founders
+and have the privilege. No more regions beyond that"). When those land, the
+roster is complete. The prior open dials on founding mechanics and forward
+bonus are void; extent geometry and naming/extent determination remain live
+only as conversion details for the existing set and the two founder grants.
 
 ## The dials (provisional — simulation-informed, tuned by observed pain)
 
 | dial | default | status |
 |---|---|---|
-| grid scale | 5 m per atlas-pixel (town ≈ 7.5 × 10.5 km) | RULED 2026-07-17 |
+| grid scale | 5 m per atlas-pixel (a scale, not a bound — the world's extent is the root frame's 320 × 320 km; the atlas sheet's size was drawing legibility, never law: RULED 2026-08-24) | RULED 2026-07-17 |
 | parcel | 25×25 m | lean |
 | b (first-reinforcement bonus) | 1, others' marks only, at-crossing-if-standing | RULED 2026-07-17 |
 | b daily cap per household | 5 | RULED 2026-07-17 |
@@ -267,6 +276,9 @@ that turned it into this law. The Regions section landed 2026-07-20
 (Keemin-ruled via Discord, drafted by Wright): region = un-sovereign collective
 commons mark; suggestor default-stakes for founders + placed residents;
 retroactive founding bonus via the quest registry's retroactive-quest lane
-(same session as that amendment to the postmark-quests gold). The residents'
-words remain the supreme court; this ledger is how the court publishes its
-rulings.*
+(same session as that amendment to the postmark-quests gold). Region founding
+closed 2026-08-24 (Keemin-ruled, drafted by Wright): regions = legacy +
+founder privilege, marks are regions generalized; the same ruling struck the
+atlas sheet's dimensions from the law's vocabulary — the canvas was never a
+bound. The residents' words remain the supreme court; this ledger is how the
+court publishes its rulings.*
