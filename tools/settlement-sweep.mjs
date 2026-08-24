@@ -24,6 +24,7 @@ import { fileURLToPath } from "node:url";
 import {
   fold, loadMarks, parseRecord, standingRank, worldToFile, ringToFile, ringToWorld, fileToWorld,
   declaredCoords, COORDS_RELATIVE, WORLD_ROOT_SLUG,
+  admissionBase, admitDelta,   // §4: the delta admission, in place of a fold per sketchbook
 } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -35,6 +36,13 @@ export const REFUSAL_SENTINEL = "SETTLEMENT-SWEEP-REFUSAL";
 const MARKS_PREFIX = "WORLD/marks/";
 
 function git(repo, args, options = {}) {
+  // THE SECOND METER. Part 2 removed 23 whole-world folds (176.7 s -> 12.1 s on
+  // the live record) and the settlement's WALL TIME barely moved, which means
+  // the fold was never where most of the time went. It goes here: this function
+  // spawns a process, and the sweep calls it once per supersession row (4501 of
+  // them on the live record) plus once per rebase. Counting it is how the next
+  // lane finds that out from a receipt instead of from a stopwatch.
+  foldMeter.gitCalls++;
   return execFileSync("git", ["-C", repo, ...args], {
     encoding: options.encoding ?? "utf8",
     stdio: options.stdio ?? ["ignore", "pipe", "pipe"],
@@ -239,8 +247,8 @@ function firstStakeRowIn(message) {
 // counts is §4's own claim: "~28 whole-world O(m²) folds per settlement". It is
 // reset per sweep and rides the report, so before-and-after is a receipt rather
 // than a stopwatch somebody remembers holding.
-export const foldMeter = { whole: 0, wholeMs: 0, delta: 0, deltaMs: 0, marks: 0 };
-export function resetFoldMeter() { foldMeter.whole = 0; foldMeter.wholeMs = 0; foldMeter.delta = 0; foldMeter.deltaMs = 0; foldMeter.marks = 0; }
+export const foldMeter = { whole: 0, wholeMs: 0, delta: 0, deltaMs: 0, marks: 0, gitCalls: 0 };
+export function resetFoldMeter() { foldMeter.whole = 0; foldMeter.wholeMs = 0; foldMeter.delta = 0; foldMeter.deltaMs = 0; foldMeter.marks = 0; foldMeter.gitCalls = 0; }
 
 export function foldRef(repo, ref, stakes) {
   const t0 = performance.now();
@@ -341,6 +349,33 @@ export function markDelta(repo, main, branch) {
     branchTouched: byBranch.has(row.path),
     mainTouched: byMain.has(row.path),
   }));
+}
+
+/**
+ * The id of the mark whose directory ENCLOSES this path — the loader's own
+ * containment edge, recovered from the path rather than from a tree walk.
+ *
+ * `loadMarks` sets `_parentMarkId` while walking directories; the delta path
+ * never builds that tree, so the edge is read here from the nearest ancestor
+ * `mark.md`. The branch first (a family crossing together names its own
+ * parent), then main. An id is `<by>/<slug>`, so the ancestor's own record
+ * supplies the `by` and its directory supplies the slug.
+ *
+ * Null at the root, which is correct: a mark on open ground is enclosed by
+ * nothing, and the standing walk stopping immediately is the honest answer.
+ */
+export function enclosingMarkId(repo, branch, mainBranch, path) {
+  const parts = String(path).replace(/\\/g, "/").split("/");
+  // parts: WORLD marks let-there-be-light [ …dirs… ] <slug> mark.md
+  for (let depth = parts.length - 2; depth > 3; depth--) {
+    const ancestor = `${parts.slice(0, depth).join("/")}/mark.md`;
+    for (const ref of [branch, mainBranch]) {
+      if (!hasObject(repo, `${ref}:${ancestor}`)) continue;
+      const rec = recordAt(repo, ref, ancestor);
+      if (rec?.id) return rec.id;
+    }
+  }
+  return null;
 }
 
 export function recordAt(repo, ref, path) {
@@ -851,33 +886,93 @@ export function settlementSweep({
   let rehomed = [];
   const dropped = []; // § the-already-standing — the crossing's journal for a copy that was never a conflict
 
+  // ── §4 · ONE WHOLE-WORLD FOLD, then k cheap checks per sketchbook ─────────
+  //
+  // "Target: fold main ONCE; per sketchbook, validate only its delta against
+  // that folded state — O(k·m) per branch; keep ONE full fold of the merged
+  // result as the final gate."
+  //
+  // Measured on a throwaway clone of the live record before this landed: 24
+  // whole-world folds of 940 marks, 176.7 s of a 363.7 s settlement, to
+  // adjudicate 37 delta rows. Per sketchbook the fold was only ~60% of the
+  // cost — archive and loadMarks were the other 40% — and the delta path
+  // retires all three, because validating k records needs no branch tree at
+  // all, only k reads at the ref.
+  const mainState = foldRef(repo, mainBranch, stakes);
+  const admitBase = admissionBase(mainState, { households: wallRegistry.households, stakes });
+  const mainFolded = new Map(mainState.marks.map((mark) => [mark.id, mark]));
+
   for (const branch of branches) {
     const household = branch.slice("draft/".length);
-    // THE QUARANTINE, and it is deliberately the FIRST thing in the sketchbook. A ref
-    // that cannot be folded cannot be reasoned about at all, so nothing from it
-    // is read, nothing is published, nothing is withdrawn, nothing is touched —
-    // the conservative direction is preserved by skipping BEFORE any of that,
-    // rather than by unwinding after. Nothing half-applies because nothing
-    // applies.
-    let state;
-    try {
-      state = foldRef(repo, branch, stakes);
-    } catch (error) {
-      // LOUD. The ref, the reason, and — where the fold named one — the row that
-      // poisoned it, so the crossing's journal says whose sketchbook was set aside
-      // and what to fix. A silent drop here would be a household's work quietly
-      // vanishing at a settlement, which is worse than the refusal it replaces.
-      const detail = String(error?.message ?? error);
+    const deltas = markDelta(repo, mainBranch, branch);
+
+    // THE CANDIDATES — read at the ref, k of them, no tree materialized. Only
+    // the rows this household is actually PUBLISHING: a deletion withdraws and
+    // carries no record, and a row the sketchbook never touched is main's own
+    // amendment showing through a stale copy (the supersession reading below).
+    const candidates = [];
+    for (const delta of deltas) {
+      if (delta.status === "D" || !delta.branchTouched) continue;
+      const rec = recordAt(repo, branch, delta.path);
+      if (rec) candidates.push({
+        ...rec,
+        // THE DIRECTORY EDGE, which `recordAt` does not carry because it reads
+        // one file and `loadMarks` gets this from walking a tree. Without it the
+        // standing walk has nowhere to climb, and a mark standing on its
+        // author's own parcel folds "market" instead of "home" — part 1's
+        // finding 4, arriving from the other side. Resolved from the path
+        // itself, at depth-many reads per candidate rather than a tree.
+        _parentMarkId: enclosingMarkId(repo, branch, mainBranch, delta.path),
+        // REPLACING is about the MARK, not the file: a mark canon already
+        // holds is being revised at whatever path it now sits at — the
+        // already-standing shape moves a parked copy from the root to its
+        // re-homed seat and is emphatically not a second claim. Asking "is this
+        // PATH on main" instead quarantined exactly that case (the devadavisson
+        // falsifier caught it).
+        //
+        // The case this no longer catches — one branch tree holding one id at
+        // TWO paths — is a composition fact, and §4 keeps the merged fold as the
+        // final gate precisely so composition surfaces there.
+        _replacing: mainFolded.has(rec.id),
+      });
+    }
+
+    // THE QUARANTINE, and it is deliberately the FIRST thing in the sketchbook,
+    // exactly as when it was a whole-tree fold: nothing is read, published,
+    // withdrawn or touched until the sketchbook is known admissible, so the
+    // conservative direction is preserved by skipping BEFORE any of that rather
+    // than by unwinding after.
+    //
+    // WHAT CHANGED, and it is law rather than an optimization's side effect
+    // (founder, 2026-08-24): "the crossing judges what a household publishes,
+    // not what its stale tree happens to contain." The whole-tree fold
+    // quarantined a household over any malformed row anywhere in its copy of
+    // the world — including rows it was not publishing, and including rows that
+    // are simply many crossings stale. Only the candidates are judged now. A
+    // household whose PUBLISHED delta is bad still refuses, by name and in the
+    // fold's own error grammar.
+    const admitted = admitDelta(candidates, admitBase);
+    if (admitted.errors.length) {
+      // LOUD. The ref, the reason, and the row that poisoned it, so the
+      // crossing's journal says whose sketchbook was set aside and what to fix.
+      const first = admitted.errors[0];
+      const detail = `${branch} publishes ${admitted.errors.length} inadmissible row(s): ${JSON.stringify(first)}`;
       quarantined.push({
         household, ref: branch,
-        reason: "this sketchbook could not be folded, so it was set aside and the rest of the town settled without it",
+        reason: "this sketchbook's own published rows could not be admitted, so it was set aside and the rest of the town settled without it",
         detail: detail.slice(0, 400),
         row: firstStakeRowIn(detail),
       });
       continue;
     }
-    const folded = new Map(state.marks.map((mark) => [mark.id, mark]));
-    for (const delta of markDelta(repo, mainBranch, branch)) {
+
+    // The world this sketchbook is judged in: canon's fold, with its own
+    // candidates laid over. Cross-household composition is NOT decided here and
+    // never was — it surfaces at the merged fold below, exactly as §4 says.
+    const folded = new Map(mainFolded);
+    for (const [id, view] of admitted.views) folded.set(id, view);
+
+    for (const delta of deltas) {
       // SUPERSESSION. The sketchbook has not touched this path since it was cut,
       // so the difference between them is main's own amendment read through a
       // stale sketchbook. Publishing it would revert main to what the sketchbook
