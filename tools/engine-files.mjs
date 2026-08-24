@@ -18,6 +18,12 @@ export const ENGINE_FILES = [
   "marks-fold.mjs",
   "determination.mjs",
   "consent.mjs",
+  // joined 2026-08-24, when the heads-up list became fold-derived state: the
+  // fold now emits WORLD/region-outsiders.{json,md} beside world-state.json, so
+  // this module travels with it. Exactly the case the note above describes —
+  // marks-fold gained an import and six fixtures went ERR_MODULE_NOT_FOUND in a
+  // temp directory, and the one list is why that cost one line instead of eight.
+  "region-outsiders.mjs",
 ];
 
 // Fixtures that additionally exercise the gate or the sketchbook wall name the

@@ -1102,7 +1102,13 @@ export function settlementSweep({
     execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs"), "--stakes", stakesPath], {
       cwd: repo, stdio: ["ignore", "pipe", "inherit"], // stderr -> the journal: the fanup-shadow lines are FOR the reader (S39-era fix; "pipe" was swallowing them)
     });
-    touched.push("WORLD/world-state.json", "WORLD/INDEX.md");
+    // The fold writes THREE files now, not two: the heads-up list became
+    // fold-derived state (tools/region-outsiders.mjs) so that a settlement
+    // cannot leave it stale. All three must be tracked here — a file the fold
+    // writes and the sweep does not stage is left dirty in the working tree,
+    // and the next crossing refuses at checkout for a mess the sweep made.
+    touched.push("WORLD/world-state.json", "WORLD/INDEX.md",
+      "WORLD/region-outsiders.json", "WORLD/region-outsiders.md");
   } catch (error) {
     rollbackBeforeCommit(repo, touched);
     throw error;
@@ -1135,6 +1141,8 @@ export function settlementSweep({
     REGISTRY_REL,
     "WORLD/world-state.json",
     "WORLD/INDEX.md",
+    "WORLD/region-outsiders.json",
+    "WORLD/region-outsiders.md",
   ], `settlement: sweep ${published.length} published, ${unpublished.length} unpublished${withdrawn.length ? `, ${withdrawn.length} withdrawn` : ""}`);
 
   const returnedByHousehold = new Map();

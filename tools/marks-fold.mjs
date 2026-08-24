@@ -391,7 +391,8 @@ function loadStakes() {
 // mark-lint.mjs's `import { … rect, contains } from "./marks-fold.mjs"` is
 // unchanged. rects are centered on at, sized by extent) ----------
 export { rect, overlapArea, contains, marksContain, polygonOf, ringMatchesClaim } from "./geometry.mjs";
-import { rect, overlapArea, contains, marksContain } from "./geometry.mjs";
+import { rect, overlapArea, contains, marksContain, polygonOf, rectInsideRing } from "./geometry.mjs";
+import { deriveOutsiders, outsidersJson, outsidersMarkdown } from "./region-outsiders.mjs";
 import { carve } from "./determination.mjs";
 import { resolveConsent } from "./consent.mjs";
 
@@ -1163,6 +1164,16 @@ To read the fold without writing it at all: --no-write --json`);
     mkdirSync(join(ROOT, "WORLD"), { recursive: true });
     writeFileSync(outPath, JSON.stringify(state, null, 2) + "\n");
     writeFileSync(join(ROOT, "WORLD/INDEX.md"), renderIndex(state));
+    // ── the heads-up list, derived here because it is a VIEW of this tree ────
+    // Emitted beside the other two for the reason S45 found the hard way: the
+    // settlement sweep publishes marks and performs re-homes, and a list written
+    // by a hand-run tool goes stale the moment it does — leaving a published
+    // mark neither contained nor listed, which is exactly what the biconditional
+    // forbids. See tools/region-outsiders.mjs for why it was never really the
+    // generator's to own.
+    const outsiders = deriveOutsiders(marks, { rectInsideRing, polygonOf, overlapArea });
+    writeFileSync(join(ROOT, "WORLD/region-outsiders.json"), JSON.stringify(outsidersJson(outsiders), null, 2) + "\n");
+    writeFileSync(join(ROOT, "WORLD/region-outsiders.md"), outsidersMarkdown(outsiders));
     const ground = state.rivalries.filter(r => r.kind === "region");
     console.log(`fold: ${state.marks.length} marks · ${state.parcels.length} parcels · ${Object.keys(state.determined).length} determined · ${state.vague.length} vague · ${state.rivalries.length - ground.length} slot rivalries · ${ground.length} ground contests · ${state.returned.length} returned · ${state.errors.length} errors`);
   }

@@ -103,7 +103,13 @@ test("RECORDS ARE OFFSETS: record + parent centre = store, exactly", () => {
     // the proof it still holds through a region that moved — the lanternstep
     // parcel's own offset is UNTOUCHED at -250,200; only the ground under it
     // shifted, and the composed position follows the parent's new centre.
-    ["rei/the-lanternseed-gardens", "the-town/let-there-be-light", { x: 1278, y: -1002 }],
+    // RE-PINNED AGAIN 2026-08-24 (pass 3 — the rings were re-traced to the OUTER
+    // wash the reader actually sees, plus its blur feather, so every region'''s
+    // bbox grew and the gardens''' offset moved 1278,-1002 -> 1338,-994.5). Pass 3
+    // regenerated tier-frames''' reshape table and MISSED this second pin, which is
+    // why S45 found it rather than the suite: two files carry region offsets and
+    // only one of them was on the checklist.
+    ["rei/the-lanternseed-gardens", "the-town/let-there-be-light", { x: 1338, y: -994.5 }],
     ["rei/the-lanternstep-house-parcel", "rei/the-lanternseed-gardens", { x: -250, y: 200 }],
     ["rei/the-lanternstep-house", "rei/the-lanternstep-house-parcel", { x: 0, y: 0 }],
     ["wright/the-crossing-bench", "the-town/the-town-centre", { x: 87, y: 83 }],
