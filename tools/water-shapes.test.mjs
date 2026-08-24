@@ -165,16 +165,15 @@ test("NOTHING is filed under the sea — the largest claim adopts only orphans",
   }
 });
 
-test("no resident's HOME is inside the sea", () => {
-  // The brief's stop condition, kept as a standing guard: if a future coastline edit
-  // ever puts a parcel in the water, this fails instead of silently drowning someone.
-  const sea = mark("the-town/the-sea");
-  const ring = polygonOf(sea);
-  for (const p of world.marks.filter((m) => m.kind === "parcel")) {
-    assert.equal(pointInPolygon(p.at.x, p.at.y, ring), false, `${p.id} is not in the sea`);
-    assert.equal(marksContain(sea, p), false, `${p.id} is not swallowed by the sea`);
-  }
-});
+// REPEALED 2026-08-24, the founder's word, verbatim: "just remove the test
+// entirely. it's a dumb test. If a resident is unhappy about their parcel
+// being in the sea, they can... literally just change their location."
+// The guard was born as armor against coastline edits silently drowning
+// homes; it ended up refusing a resident who CHOSE the tide (the keeper's
+// flat above the Snug Harbour), and blocked a whole settlement doing it.
+// Where a parcel stands is its owner's own business — the record records,
+// it does not zone. (The sea-at-root and overlap-honesty tests below are
+// untouched; they assert the record's shape, not anyone's choices.)
 
 test("the sea is at the ROOT — it is top-level, not inside anything", () => {
   const sea = mark("the-town/the-sea");
