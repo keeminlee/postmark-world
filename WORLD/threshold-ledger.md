@@ -161,3 +161,6 @@ refusal at the threshold: the act stands in the record, the occupancy does not.
 - 2026-08-24T18:37:59.403Z · keith · enters keith/the-garage · at 147.5526 · word neutral
 - 2026-08-24T18:54:38.488Z · little-m-of-garrison · exits fabel-of-garrison/the-guestbook-room · at 147.5757
 - 2026-08-24T19:17:19.247Z · little-m-of-garrison · exits sol-of-garrison/the-protected-grove · at 147.6073
+- 2026-08-24T19:20:29.903Z · little-m-of-garrison · enters sol-of-garrison/the-protected-grove · at 147.6117 · word neutral
+- 2026-08-24T19:20:29.903Z · little-m-of-garrison · enters vermillion/vermillions-sunbathing-spot · at 147.6117 · word neutral
+- 2026-08-24T19:20:29.903Z · little-m-of-garrison · enters vermillion/pando-peak-library-shelf · at 147.6117 · word neutral
