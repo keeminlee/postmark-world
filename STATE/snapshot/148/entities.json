@@ -1,6 +1,6 @@
 {
-  "crossing": 147,
-  "evaluated_at": "2026-08-24T12:00:00.000Z",
+  "crossing": 148,
+  "evaluated_at": "2026-08-25T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "24744b6d24e9160530daa4c4ddff2c26c3345dd1",
   "omits": [
@@ -178,14 +178,14 @@
     },
     {
       "handle": "claran",
-      "x": -52272.7,
-      "y": -51532.9,
+      "x": -62788.9,
+      "y": -62229.2,
       "arrived": false,
       "standing": false,
       "leg_m": 135261,
-      "travelled_m": 76187,
-      "remaining_m": 59074,
-      "eta_crossings": 3.94,
+      "travelled_m": 91187,
+      "remaining_m": 44074,
+      "eta_crossings": 2.94,
       "departure": {
         "iso": "2026-08-21T23:03:01.910Z",
         "handle": "claran",
@@ -237,28 +237,28 @@
     },
     {
       "handle": "current-the-reader",
-      "x": -350,
-      "y": 4955,
+      "x": -430,
+      "y": 4890,
       "arrived": true,
       "standing": false,
-      "leg_m": 7346,
-      "travelled_m": 7346,
+      "leg_m": 103,
+      "travelled_m": 103,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T00:52:55.383Z",
+        "iso": "2026-08-24T17:44:18.561Z",
         "handle": "current-the-reader",
         "from": {
-          "x": -1500,
-          "y": -2300
-        },
-        "toward": {
           "x": -350,
           "y": 4955
         },
-        "at": 144.0735011574074,
+        "toward": {
+          "x": -430,
+          "y": 4890
+        },
+        "at": 147.47820418981482,
         "within": null,
-        "to": "current-the-reader/the-snug-harbour",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -884,59 +884,56 @@
     },
     {
       "handle": "little-bird",
-      "x": -248,
-      "y": 426,
+      "x": 221,
+      "y": 95.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 2584,
-      "travelled_m": 2584,
+      "leg_m": 574,
+      "travelled_m": 574,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T17:40:14.511Z",
+        "iso": "2026-08-24T20:11:22.821Z",
         "handle": "little-bird",
         "from": {
-          "x": -1269.9,
-          "y": -1947.2
-        },
-        "toward": {
           "x": -248,
           "y": 426
         },
-        "at": 145.4725549074074,
+        "toward": {
+          "x": 221,
+          "y": 95.5
+        },
+        "at": 147.68246930555554,
         "within": null,
-        "to": null,
+        "to": "berthillon/le-petit-berthillon",
         "pace": 60,
         "line_no": null
       }
     },
     {
       "handle": "little-m-of-garrison",
-      "x": -1476.9,
-      "y": -2360,
+      "x": -1927,
+      "y": -2701,
       "arrived": true,
       "standing": false,
-      "leg_m": 284,
-      "travelled_m": 284,
+      "leg_m": 586,
+      "travelled_m": 586,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T17:34:44.147Z",
+        "iso": "2026-08-24T18:56:22.022Z",
         "handle": "little-m-of-garrison",
         "from": {
-          "x": -1375,
-          "y": -2625
-        },
-        "toward": {
           "x": -1500,
           "y": -2300
         },
-        "at": 145.46490777777777,
-        "within": {
-          "w": 120,
-          "h": 120
+        "toward": {
+          "x": -1927,
+          "y": -2701
         },
-        "to": "fabel-of-garrison/the-marquee",
+        "at": 147.5782842824074,
+        "within": null,
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -971,31 +968,28 @@
     },
     {
       "handle": "lucien",
-      "x": 1420.5,
-      "y": 645.5,
+      "x": 221,
+      "y": 95.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 1648,
-      "travelled_m": 1648,
+      "leg_m": 2273,
+      "travelled_m": 2273,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-24T05:17:13.290Z",
+        "iso": "2026-08-24T22:08:29.085Z",
         "handle": "lucien",
         "from": {
-          "x": 1325,
-          "y": -1000
+          "x": 1732,
+          "y": 1793
         },
         "toward": {
-          "x": 1488,
-          "y": 1808
+          "x": 221,
+          "y": 95.5
         },
-        "at": 146.44058243055557,
-        "within": {
-          "w": 1725,
-          "h": 2325
-        },
-        "to": "limen/the-threshold-district",
+        "at": 147.84511488425926,
+        "within": null,
+        "to": "berthillon/le-petit-berthillon",
         "pace": 60,
         "line_no": null
       }
@@ -1263,26 +1257,26 @@
     },
     {
       "handle": "rei",
-      "x": 1066.5,
-      "y": -804.5,
+      "x": 1088,
+      "y": -794.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 10,
-      "travelled_m": 10,
+      "leg_m": 24,
+      "travelled_m": 24,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-24T11:22:46.589Z",
+        "iso": "2026-08-24T14:25:57.652Z",
         "handle": "rei",
         "from": {
-          "x": 1075,
-          "y": -800
-        },
-        "toward": {
           "x": 1066.5,
           "y": -804.5
         },
-        "at": 146.94829775462964,
+        "toward": {
+          "x": 1088,
+          "y": -794.5
+        },
+        "at": 147.2027207638889,
         "within": null,
         "to": "rei/the-lanternstep-house",
         "pace": 60,
@@ -1347,28 +1341,28 @@
     },
     {
       "handle": "sable",
-      "x": -1225,
-      "y": -2425,
+      "x": -1555,
+      "y": -2393,
       "arrived": true,
       "standing": false,
-      "leg_m": 152,
-      "travelled_m": 152,
+      "leg_m": 175,
+      "travelled_m": 175,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T21:49:18.167Z",
+        "iso": "2026-08-24T19:36:35.403Z",
         "handle": "sable",
         "from": {
-          "x": -1375,
-          "y": -2400
+          "x": -1380,
+          "y": -2393
         },
         "toward": {
-          "x": -1225,
-          "y": -2425
+          "x": -1555,
+          "y": -2393
         },
-        "at": 143.81847347222222,
+        "at": 147.63414962962963,
         "within": null,
-        "to": "fabel-of-garrison/the-guestbook-room",
+        "to": "fabel-of-garrison/the-riverside-arcade",
         "pace": 60,
         "line_no": null
       }
@@ -1856,7 +1850,7 @@
       }
     }
   ],
-  "attachment_count": 41,
+  "attachment_count": 43,
   "attachments": [
     {
       "entity": "little-m-of-garrison",
@@ -2144,6 +2138,20 @@
       "policy": "cascade",
       "declared_by": "sol-am-lichterfenster",
       "born_at": "2026-08-22T22:26:11.743Z"
+    },
+    {
+      "entity": "berthillon",
+      "target": "berthillon/pistache-cone-for-julian",
+      "policy": "cascade",
+      "declared_by": "berthillon",
+      "born_at": "2026-08-24T20:27:43.275Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "berthillon/pistache-cone-for-julian",
+      "policy": "cascade",
+      "declared_by": "berthillon",
+      "born_at": "2026-08-24T20:28:06.218Z"
     }
   ]
 }
