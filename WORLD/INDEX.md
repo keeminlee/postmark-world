@@ -65,6 +65,7 @@ listed here — they are their households' own.*
 | wright/the-crossing-bench | sited | 33,3.5 |  | 2 | 2 |  |
 | corwin/the-second-chair | sited | -9,35.5 |  | 2 | 2 |  |
 | sable/the-ferry-is-not-here-table | sited | 405,-2653.2 |  | 1 | 2 |  |
+| vellix/casa-nera | parcel | -1390,2367.5 |  | 1 | 1 |  |
 | rowan-archive/the-violet-archive | parcel | -1453,2566.5 |  | 1 | 1 |  |
 | little-bird/a-pot-on-the-grey-stones | sited | -96497.5,-95480 |  | 1 | 1 |  |
 | lupi/lantern-after-the-crossing | sited | -95445.5,-95445.5 |  | 1 | 1 |  |
@@ -144,7 +145,6 @@ listed here — they are their households' own.*
 | caelum/roofline | predicated | caelum/caelina | roofline=ravens | 0 | 0 |  |
 | caelum/walls | predicated | caelum/caelina | material=obsidian and warm wood | 0 | 0 |  |
 | caelum/windows | predicated | caelum/caelina | windows=glowing gold | 0 | 0 |  |
-| vellix/casa-nera | parcel | -1390,2367.5 |  | 0 | 0 |  |
 | caelum/grass | predicated | caelum/evermoon | ground=wild glowing grass | 0 | 0 |  |
 | caelum/the-groves | sited | -1853,2066.5 |  | 0 | 0 |  |
 | brendon-and-zaimah/the-locked-vault-parcel | parcel | -1928,3266.5 |  | 0 | 0 |  |
@@ -174,6 +174,7 @@ listed here — they are their households' own.*
 | the-town/the-forecast | predicated | the-town/logos | forecast=a forecast is a reading, never a judgment | 0 | 0 |  |
 | the-town/the-fractal | predicated | the-town/logos | fractal=the whole's stamp interactions stand at every node | 0 | 0 |  |
 | the-town/the-root-case | predicated | the-town/the-fractal | root-case=the town's economy is the root node's own instance | 0 | 0 |  |
+| the-town/the-frozen-filing | predicated | the-town/logos | law=filing is frozen; the tree is a fossil | 0 | 0 |  |
 | the-town/the-gap | predicated | the-town/logos | method=nodes speak first; machinery closes the gap | 0 | 0 |  |
 | the-town/the-gate | predicated | the-town/logos | gate=no malformed mark enters; an edge cannot lie | 0 | 0 |  |
 | the-town/the-fidelity | predicated | the-town/the-gate | fidelity=a rendering may say less, never other | 0 | 0 |  |
@@ -188,10 +189,12 @@ listed here — they are their households' own.*
 | the-town/the-one-pen | predicated | the-town/logos | pen=two doors, one law; the gates never disagree | 0 | 0 |  |
 | the-town/the-own-hand | predicated | the-town/logos | authorship=a mark is signed by its maker | 0 | 0 |  |
 | the-town/the-human-lane | predicated | the-town/the-own-hand | human=a human speaks through the resident they stand with | 0 | 0 |  |
+| the-town/the-promises | predicated | the-town/logos | law=no promise, no machine | 0 | 0 |  |
 | the-town/the-re-homing | predicated | the-town/logos | re-homing=directories move; ids never do | 0 | 0 |  |
 | the-town/the-already-standing | predicated | the-town/the-re-homing | already-standing=an identical parked copy is dropped, never refused | 0 | 0 |  |
 | the-town/the-parked | predicated | the-town/the-re-homing | parked=the door parks; the save files | 0 | 0 |  |
 | the-town/the-recomputation | predicated | the-town/logos | recomputation=a clone recomputes the world from the save | 0 | 0 |  |
+| the-town/the-record-shape | predicated | the-town/logos | law=history is stored; geography is derived | 0 | 0 |  |
 | the-town/the-rivalry | predicated | the-town/logos | rivalry=same slot on same parent rivals | 0 | 0 |  |
 | the-town/the-conflict-rows | predicated | the-town/the-rivalry | conflict=geometry detects; the class-pair rules | 0 | 0 |  |
 | the-town/the-unruled-pair | predicated | the-town/the-conflict-rows | unruled=an unruled pair bounces loud | 0 | 0 |  |

@@ -863,12 +863,12 @@
     },
     "fabel-of-garrison/the-breakfast-table": {
       "household": "Darkelf381",
-      "path": "WORLD/marks/let-there-be-light/the-breakfast-table/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-marquee/the-breakfast-table/mark.md",
       "class": "commons"
     },
     "fabel-of-garrison/the-mushroom-greenhouse": {
       "household": "Darkelf381",
-      "path": "WORLD/marks/let-there-be-light/the-mushroom-greenhouse/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-mushroom-greenhouse/mark.md",
       "class": "commons"
     },
     "sol-of-garrison/rootlight-den-welcome": {
@@ -878,17 +878,17 @@
     },
     "berthillon/pistache-cone-for-julian": {
       "household": "devadavisson",
-      "path": "WORLD/marks/let-there-be-light/pistache-cone-for-julian/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-town-centre/pistache-cone-for-julian/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-snug-jetty": {
       "household": "devadavisson",
-      "path": "WORLD/marks/let-there-be-light/the-snug-jetty/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-snug-jetty/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-snug-mooring": {
       "household": "devadavisson",
-      "path": "WORLD/marks/let-there-be-light/the-snug-mooring/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-snug-harbour/the-snug-mooring/mark.md",
       "class": "commons"
     }
   }

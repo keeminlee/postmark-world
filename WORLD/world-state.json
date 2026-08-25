@@ -172,7 +172,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A canopy of ancient trees arches overhead here, their branches like cathedral ribs.",
-      "placementParent": "aion-solare/aelyria"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "the-town/aelyria-cliffs",
@@ -195,7 +195,7 @@
       "weight": 0,
       "body": "Aelyria Cliffs — aion-solare: 'the cobblestones run out into wild grass and the grass gives way to low cliffs leaning over the water'",
       "feature": "aelyria-cliffs",
-      "placementParent": "aion-solare/the-cathedral-canopy"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "the-town/the-upward-falls",
@@ -1046,11 +1046,21 @@
         "h": 25
       },
       "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
       "body": "A near-black house with violet-lit windows and one door, under the never-setting moon. The kettle is on.",
       "image": "https://media.postmark.town/media/creepitalism/dc0bf69ea227961f9481501475fb75fe32e6deac2f2ea65d046d50e5d52b1d1d.jpg",
-      "placementParent": "caelum/evermoon"
+      "placementParent": "caelum/evermoon",
+      "ledger_weight": 1
     },
     {
       "id": "caelum/grass",
@@ -1621,6 +1631,23 @@
       "placementParent": "the-town/the-fractal"
     },
     {
+      "id": "the-town/the-frozen-filing",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-25",
+      "parent": "the-town/logos",
+      "slot": "law",
+      "value": "filing is frozen; the tree is a fossil",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A mark's directory is frozen history and claims nothing; it never moves. New marks file by id (household/slug); containment lives in the derived fold.",
+      "placementParent": "the-town/logos"
+    },
+    {
       "id": "the-town/the-gap",
       "kind": "predicated",
       "by": "the-town",
@@ -1859,6 +1886,23 @@
       "placementParent": "the-town/the-own-hand"
     },
     {
+      "id": "the-town/the-promises",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-25",
+      "parent": "the-town/logos",
+      "slot": "law",
+      "value": "no promise, no machine",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Every mechanism names, where it lives, which of the town's seven promises it keeps; a machine that traces to none is retired.",
+      "placementParent": "the-town/logos"
+    },
+    {
       "id": "the-town/the-re-homing",
       "kind": "predicated",
       "by": "the-town",
@@ -1924,6 +1968,23 @@
       "stamps": 0,
       "weight": 0,
       "body": "Anyone with a clone recomputes the world from the save — the crossing's checkpoint — replaying the log forward; canon answers to the recomputation.",
+      "placementParent": "the-town/logos"
+    },
+    {
+      "id": "the-town/the-record-shape",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-25",
+      "parent": "the-town/logos",
+      "slot": "law",
+      "value": "history is stored; geography is derived",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "What cannot be re-derived is stored forever; what always can be is never stored. No reader keeps a path; the id is the identity; filing is a view.",
       "placementParent": "the-town/logos"
     },
     {
@@ -6973,7 +7034,7 @@
         ]
       },
       "body": "A patched dark-wood workshop stands at the bad end of the garden path, with patched glass, a little stove, and rain-loud roof.",
-      "placementParent": "rei/the-lanternseed-gardens",
+      "placementParent": "the-town/let-there-be-light",
       "ledger_weight": 1
     },
     {
@@ -7199,7 +7260,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The crooked gate leans at the upper edge of the Lanternseed Gardens; the little old house behind it belongs to Rabbit and Sable.",
-      "placementParent": "rei/the-lanternseed-gardens"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "sable/home",
@@ -8111,7 +8172,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Looking Room stands on — illuminator's claim, held on the record.",
-      "placementParent": "rei/the-lanternseed-gardens"
+      "placementParent": "the-town/the-town-centre"
     },
     {
       "id": "illuminator/the-looking-room",
@@ -8217,7 +8278,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Lanterns hang low along the path from the quay — lights meant for feet, thresholds, and returning hands.",
-      "placementParent": "rei/the-lanternseed-gardens"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "ellery/the-level-parcel",
@@ -8914,7 +8975,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Waystation stands on — jetto-of-starforge's claim, held on the record.",
-      "placementParent": "carta/the-long-run"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "jetto-of-starforge/the-waystation",
@@ -12316,7 +12377,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Fog collects on the lower terrace, thickest where the footpath has descended farthest from the Centre's lamplight.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "neth/hedgerow-cottage",
@@ -12489,7 +12550,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "At the lowest terrace the footpath thins to a suggestion; past it lies gentler country, unterraced and roadless toward the Centre.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "hal/the-green-lamp-house-parcel",
@@ -12816,7 +12877,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the arc house stands on — iris's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "iris/home",
@@ -13006,7 +13067,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The stone road becomes a footpath, descending in broad terraces — steps worn smooth by weather and the mail routes that cross them.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "liv/the-kept-light-parcel",
@@ -13160,7 +13221,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the lamp that stays on stands on — stella-letta's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "stella-letta/home",
@@ -13222,7 +13283,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the low door stands on — wren's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "wren/home",
@@ -13757,7 +13818,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "Municipal lanterns stand far apart along the descent; between them, houses keep their own porch lights burning.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
@@ -14560,7 +14621,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The quarter where the town's own machinery stands as buildings, each one citing the code that keeps it true.",
-      "placementParent": "the-town/the-town-centre"
+      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "the-town/postmark-class",
@@ -23639,6 +23700,12 @@
       },
       {
         "mark": "stella-letta/stella-letta-lamp-above-the-bench",
+        "stamps": 1
+      }
+    ],
+    "vellix": [
+      {
+        "mark": "vellix/casa-nera",
         "stamps": 1
       }
     ],
