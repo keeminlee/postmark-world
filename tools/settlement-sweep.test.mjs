@@ -395,15 +395,31 @@ test("a drafted mark revised after its add still reseats — the crossing after 
   assert.equal(delta, "", "a published record leaves no residual delta on the reseated sketchbook");
 });
 
-test("the re-home pass: a resident's new claim grows around the town's reach, and the sweep re-points the paper instead of refusing the crossing", (t) => {
-  // The live shape of § the tier binding. `the-town/the-reach` stands on open
-  // ground, filed under the root because nothing contained it. Alice then
-  // claims a meadow around it — perfectly lawful, and it makes the reach's
-  // directory edge stop naming its tightest container. The reach outranks the
-  // meadow, so it is framed by the world and re-pointing the edge costs
-  // nothing. The crossing must publish the meadow AND move the paper, in two
-  // readable commits, without moving a metre of ground.
-  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-rehome-"));
+// ── THE MOVER IS GONE (the freeze, 2026-08-25) ──────────────────────────────
+//
+// Three tests stood here, and all three were about the re-home pass: that it
+// re-pointed a drifted edge instead of refusing the crossing, that it re-framed
+// a mark whose new parent bound it so the ground did not move, and that nested
+// moves ended up where the law said with live paths in every commit. It was
+// careful machinery, and the founder deleted it (LOGOS/state-and-time.md § The
+// freeze):
+//
+//   "The re-home pass is DELETED from the settlement save. The settlement writes
+//    a mark once; nothing moves it after. (This retires the publish+re-home
+//    wedge — #1862's class — by removing the mover.)"
+//
+// One test replaces the three, and it is their inverse: the same shape — a
+// resident's new claim growing around the town's reach — and the assertion is
+// that NOTHING HAPPENS to the reach. No move, no re-frame, no second commit, no
+// finding. The three properties the old pass worked to preserve (the ground does
+// not move, the numbers stay true, the history stays readable) are preserved
+// here by there being nothing to preserve them through.
+//
+// The fixture carries a REAL filing-freeze manifest, so this is also the
+// end-to-end receipt for the two gates: the crossing leaves a tree that satisfies
+// them, and it publishes a new mark filed at its id.
+test("THE MOVER IS GONE: a resident's new claim publishes, and the reach it grew around does not move a directory or a digit", (t) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-freeze-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
   const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
     encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
@@ -421,8 +437,9 @@ test("the re-home pass: a resident's new claim grows around the town's reach, an
   for (const file of withTool("mark-lint.mjs"))
     cpSync(join(HERE, file), join(repo, "tools", file));
   put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
-  // the relative frame, declared on the record that IS the frame — without it
-  // the tree is v2 absolute and the re-framing half of this is untested
+  // the relative frame, declared on the record that IS the frame — a directory
+  // still FRAMES what is written inside it after the freeze, and this fixture
+  // would not notice if that half broke
   put("WORLD/marks/let-there-be-light/mark.md", record({
     by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 },
     coords: "relative", body: "the frame",
@@ -432,6 +449,18 @@ test("the re-home pass: a resident's new claim grows around the town's reach, an
     by: "the-town", tier: "constitution", at: { x: 1000, y: 1000 }, extent: { w: 100, h: 20 },
     body: "a reach of the town's own river",
   }));
+  // THE FOSSIL'S BOUNDARY, as of this fixture's own freeze: both marks alive
+  // before the crossing, each at the path it is filed at. Gate A holds them
+  // there; gate B holds anything born after to its id.
+  put("WORLD/filing-freeze.json", JSON.stringify({
+    law: "Filing is frozen as of 2026-08-25. A mark's directory is its historical filing: it carries no claim, and it never moves again.",
+    frozen_at: "2026-08-25",
+    count: 2,
+    marks: {
+      "the-town/let-there-be-light": "WORLD/marks/let-there-be-light",
+      "the-town/the-reach": "WORLD/marks/let-there-be-light/the-reach",
+    },
+  }, null, 2) + "\n");
 
   git("init", "-q", "-b", "main");
   execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
@@ -439,7 +468,9 @@ test("the re-home pass: a resident's new claim grows around the town's reach, an
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
 
   git("switch", "-q", "-c", "draft/house-a");
-  const meadowPath = "WORLD/marks/let-there-be-light/the-meadow/mark.md";
+  // Alice's meadow is born AFTER the freeze, so it is filed by identity:
+  // "New marks are filed by identity — WORLD/marks/<household>/<slug>/."
+  const meadowPath = "WORLD/marks/alice/the-meadow/mark.md";
   put(meadowPath, record({ by: "alice", at: { x: 1000, y: 1000 }, extent: { w: 400, h: 400 }, body: "alice's meadow" }));
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house a claims a meadow");
@@ -456,38 +487,56 @@ test("the re-home pass: a resident's new claim grows around the town's reach, an
 
   assert.deepEqual(report.published.map((row) => row.id), ["alice/the-meadow"],
     "the claim publishes — a lawful mark is never bounced for the paper it disturbs");
-  assert.deepEqual(report.rehomed.map((row) => [row.mark, row.from_parent, row.to_parent]),
-    [["the-town/the-reach", null, "alice/the-meadow"]]);
+  assert.equal("rehomed" in report, false,
+    "and the report carries no re-home channel at all — an always-empty answer is a state with no receipt");
 
-  const moved = "WORLD/marks/let-there-be-light/the-meadow/the-reach/mark.md";
-  assert.equal(has("main", moved), true, "the reach is filed inside the meadow now");
-  assert.equal(has("main", reachPath), false, "and no longer at the top");
+  // THE PAPER DID NOT MOVE. Under the old pass the reach would now be filed
+  // inside the meadow; the meadow contains it, and it outranks the meadow, which
+  // is exactly the shape the pass existed for.
+  assert.equal(has("main", reachPath), true, "the reach is filed where it always was");
+  assert.equal(has("main", "WORLD/marks/alice/the-meadow/the-reach/mark.md"), false,
+    "and nothing filed it inside the claim that grew around it");
 
-  // THE GROUND DID NOT MOVE — the whole claim of the commit message, checked
-  // against the re-folded world rather than asserted.
+  // THE GROUND DID NOT MOVE EITHER — checked against the re-folded world rather
+  // than asserted, exactly as the old test checked it.
   assert.deepEqual(reachAt(), before, "the reach composes to exactly the position it held");
   assert.deepEqual(reachAt(), { x: 1000, y: 1000 });
-  assert.match(readFileSync(join(repo, moved), "utf8"), /^at: \{ x: 1000, y: 1000 \}$/m,
-    "and it still carries world numbers, because the meadow does not bind it");
+  assert.match(readFileSync(join(repo, reachPath), "utf8"), /^at: \{ x: 1000, y: 1000 \}$/m,
+    "and its digits were never re-written, because nothing re-framed it");
 
-  // TWO READABLE COMMITS, the repair ahead of the settlement it made room for
-  const log = git("log", "--format=%s", "-3").split(/\r?\n/);
+  // ONE COMMIT. The old crossing spent a second one on the repair, ahead of the
+  // settlement it made room for. There is no repair.
+  const log = git("log", "--format=%s", "-2").split(/\r?\n/);
   assert.match(log[0], /^settlement: sweep 1 published/);
-  assert.equal(log[1], "re-home: the-town/the-reach from (root) to alice/the-meadow — the paper moved, the ground did not");
-  assert.equal(git("show", "--name-only", "--format=", "HEAD~1").trim().split(/\r?\n/).every((p) => /the-reach/.test(p)), true,
-    "the re-home commit carries the re-home and nothing else");
+  assert.equal(log[1], "published main", "no re-home commit sits between the settlement and the world before it");
 
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
   const lint = execFileSync(process.execPath, [join(repo, "tools", "mark-lint.mjs")], { cwd: repo, encoding: "utf8" });
-  assert.match(lint, /CLEAN/, "and the tree the crossing leaves behind has no re-home standing");
+  assert.match(lint, /CLEAN/,
+    "and the tree the crossing leaves behind satisfies the freeze: every fossil where the manifest names it, and the new mark at its id");
+
+  // THE FLIP, so the manifest above is not decoration: perform BY HAND exactly
+  // the re-home the deleted pass used to perform — file the reach inside the
+  // claim that grew around it — and the same gate that just passed refuses it.
+  // (The slug is preserved, so the id is unchanged and this is a MOVE; renaming
+  // the leaf would change the id and be a different finding, gate B's.)
+  git("mv", "WORLD/marks/let-there-be-light/the-reach", "WORLD/marks/alice/the-meadow/the-reach");
+  const moved = (() => {
+    try { return execFileSync(process.execPath, [join(repo, "tools", "mark-lint.mjs")], { cwd: repo, encoding: "utf8" }); }
+    catch (e) { return String(e.stdout ?? "") + String(e.stderr ?? ""); }
+  })();
+  assert.match(moved, /it never moves again/,
+    "an existing mark directory that moves is refused — the gate quotes the law it is enforcing");
+  assert.match(moved, /the frozen filing names WORLD\/marks\/let-there-be-light\/the-reach/,
+    "…and names the seat the fossil holds it to");
 });
 
-test("the re-home pass re-frames a mark whose new parent DOES bind it, so the ground still does not move", (t) => {
-  // The case a plain `git mv` gets wrong. The cairn outranks the meadow it is
-  // filed under (world-framed, world numbers), but its tightest container turns
-  // out to be a CONSTITUTION district — which binds it. After the move the very
-  // same digits mean somewhere else, so the pass must re-write them.
-  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-reframe-"));
+// The containment map is the other half of the freeze: filing stopped answering
+// "what contains what", so the fold has to. "The fold emits the containment map
+// beside world-state.json every settlement. The browsable truth is generated;
+// the source files rest."
+test("the crossing emits the containment map, and it answers from the GROUND rather than from the tree", (t) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-containment-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
   const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
     encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
@@ -506,140 +555,46 @@ test("the re-home pass re-frames a mark whose new parent DOES bind it, so the gr
     by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 },
     coords: "relative", body: "the frame",
   }));
-  // Alice's meadow, with the town's district correctly filed inside it (the
-  // district outranks the meadow, so it carries WORLD numbers), and the town's
-  // cairn filed beside the district rather than in it — also world-framed,
-  // because the meadow does not bind it either.
-  put("WORLD/marks/let-there-be-light/the-meadow/mark.md", record({
-    by: "alice", at: { x: 1000, y: 1000 }, extent: { w: 400, h: 400 }, body: "alice's meadow",
+  // The cairn is filed at the top of the tree and STANDS inside the district.
+  // That divergence is lawful now and is the whole point of the map: the tree
+  // says one thing about where a file lives, and the map says the other thing —
+  // where the mark stands.
+  put("WORLD/marks/let-there-be-light/the-district/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 1000, y: 1000 }, extent: { w: 400, h: 400 },
+    body: "a district of the town",
   }));
-  put("WORLD/marks/let-there-be-light/the-meadow/the-district/mark.md", record({
-    by: "the-town", tier: "constitution", at: { x: 1010, y: 1005 }, extent: { w: 60, h: 60 },
-    body: "the town's own district",
-  }));
-  const cairnPath = "WORLD/marks/let-there-be-light/the-meadow/the-cairn/mark.md";
-  put(cairnPath, record({
-    by: "the-town", tier: "constitution", at: { x: 1010, y: 1005 }, extent: { w: 4, h: 4 },
-    body: "the town's cairn, framed by the world",
+  put("WORLD/marks/let-there-be-light/the-cairn/mark.md", record({
+    by: "alice", at: { x: 1000, y: 1000 }, extent: { w: 20, h: 20 }, body: "a cairn on the district's ground",
   }));
 
   git("init", "-q", "-b", "main");
   execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  // The map is deliberately NOT in the first commit, so the crossing is what
+  // introduces it. A fold-written file the sweep does not stage leaves the next
+  // checkout dirty, and this fixture would not notice if it did.
+  rmSync(join(repo, "WORLD", "containment.json"), { force: true });
   git("add", "-A");
   git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
 
   const stakesPath = `${repo}-stakes.json`;
   t.after(() => rmSync(stakesPath, { force: true }));
   writeFileSync(stakesPath, JSON.stringify([]));
+  settlementSweep({ repo, stakesPath });
 
-  // The cairn's tightest container is the district, not the meadow — so it
-  // re-homes into a mark of EQUAL tier, which binds it. World numbers become
-  // an offset, or the cairn lands 1010,1005 further out than it stands.
-  const report = settlementSweep({ repo, stakesPath });
-  assert.deepEqual(report.rehomed.map((row) => [row.mark, row.from_parent, row.to_parent]),
-    [["the-town/the-cairn", "alice/the-meadow", "the-town/the-district"]]);
-  const receipt = report.rehomed[0];
-  assert.ok(receipt.reframed, "the pass knew the binding changed and re-framed the record");
-  assert.deepEqual(receipt.reframed.origin, { x: 1010, y: 1005 }, "framed on the district that now binds it");
-  assert.deepEqual(receipt.reframed.was, { x: 1010, y: 1005 }, "it used to carry world numbers");
-  assert.deepEqual(receipt.reframed.at, { x: 0, y: 0 }, "and now carries the offset that means the same place");
+  const map = JSON.parse(readFileSync(join(repo, "WORLD", "containment.json"), "utf8"));
+  const row = (id) => map.marks.find((m) => m.id === id);
+  assert.equal(row("alice/the-cairn").parent, "the-town/the-district",
+    "the cairn is contained by the district it stands in — the ground's answer, not the directory's");
+  assert.deepEqual(row("alice/the-cairn").chain, ["the-town/the-district", "the-town/let-there-be-light"],
+    "and the chain runs all the way to the frame");
+  assert.equal(row("the-town/let-there-be-light").parent, null, "the root is contained by nothing");
+  assert.deepEqual(map.marks.map((m) => m.id), [...map.marks.map((m) => m.id)].sort(),
+    "sorted by id, so a settlement's diff shows what the ground did and never what the walk order was");
 
-  const moved = "WORLD/marks/let-there-be-light/the-meadow/the-district/the-cairn/mark.md";
-  assert.match(readFileSync(join(repo, moved), "utf8"), /^at: \{ x: 0, y: 0 \}$/m);
-  const state = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"));
-  assert.deepEqual(state.marks.find((m) => m.id === "the-town/the-cairn").at, { x: 1010, y: 1005 },
-    "THE GROUND DID NOT MOVE — a plain git mv here would have left the cairn at 2020,2010");
-  assert.equal(state.errors.length, 0);
-  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
-  assert.match(execFileSync(process.execPath, [join(repo, "tools", "mark-lint.mjs")], { cwd: repo, encoding: "utf8" }), /CLEAN/);
-});
-
-test("nested re-homes: a mark re-homed INTO a directory that then moves itself still ends up where the law says, and the paths the commits stage are the live ones", (t) => {
-  // Found by building the fixture above and watching it fail. Deepest-first
-  // ordering keeps a child from being carried off by a parent that is also
-  // leaving — but it does NOT stop the reverse: the cairn moves into the
-  // district, and then the district moves into the meadow, carrying the cairn
-  // with it. The tree ends up right either way; what breaks is the bookkeeping,
-  // because every path recorded before that second move points at a directory
-  // that no longer exists, and `git add` fails on a pathspec matching nothing.
-  //
-  // The district here is also PUBLISHED in the same crossing, so its old path
-  // exists in neither HEAD nor the final worktree — the other half of the same
-  // bug.
-  const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-nested-"));
-  t.after(() => rmSync(repo, { recursive: true, force: true }));
-  const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
-    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
-  });
-  const put = (path, text) => {
-    const full = join(repo, path);
-    mkdirSync(dirname(full), { recursive: true });
-    writeFileSync(full, text);
-  };
-
-  mkdirSync(join(repo, "tools"), { recursive: true });
-  for (const file of withTool("mark-lint.mjs"))
-    cpSync(join(HERE, file), join(repo, "tools", file));
-  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
-  put("WORLD/marks/let-there-be-light/mark.md", record({
-    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 },
-    coords: "relative", body: "the frame",
-  }));
-  // The meadow is anchored ON THE WORLD ORIGIN, and that is load-bearing rather
-  // than decorative. A resident's mark can never OUTRANK another resident's
-  // (standingRank knows two ranks, constitution and market), so the only door
-  // left open to a resident's re-home is the lint's second one: the frame the
-  // mark would be read in does not change. A container sitting on the origin
-  // keeps it, so the district below moves as paper — the same door the lint's
-  // own comment describes for a top-level mark a new claim grew around.
-  put("WORLD/marks/let-there-be-light/the-meadow/mark.md", record({
-    by: "alice", at: { x: 0, y: 0 }, extent: { w: 4000, h: 4000 }, body: "alice's meadow",
-  }));
-  put("WORLD/marks/let-there-be-light/the-meadow/the-cairn/mark.md", record({
-    by: "the-town", tier: "constitution", at: { x: 1010, y: 1005 }, extent: { w: 4, h: 4 },
-    body: "the town's cairn",
-  }));
-
-  git("init", "-q", "-b", "main");
-  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
-  git("add", "-A");
-  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
-
-  // The district arrives at the TOP level in this crossing; geometry puts it
-  // inside the meadow, and the cairn inside it. It is a RESIDENT's district
-  // because of the town wall (#1697): nothing signed `the-town` publishes from a
-  // sketchbook any more, so a town-signed district here would simply never
-  // land and the nested move under test would never happen. The subject is the
-  // bookkeeping of a move that carries another move, which is indifferent to
-  // whose claim it is.
-  git("switch", "-q", "-c", "draft/house-a");
-  put("WORLD/marks/let-there-be-light/the-district/mark.md", record({
-    by: "alice", at: { x: 1010, y: 1005 }, extent: { w: 60, h: 60 },
-    body: "alice's district",
-  }));
-  git("add", "-A");
-  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "the district");
-  git("switch", "-q", "main");
-
-  const stakesPath = `${repo}-stakes.json`;
-  t.after(() => rmSync(stakesPath, { force: true }));
-  writeFileSync(stakesPath, JSON.stringify([{ holder: "s1", mark: "alice/the-district", n: 5, weight: 10 }]));
-
-  const report = settlementSweep({ repo, stakesPath });
-  const rows = Object.fromEntries(report.rehomed.map((r) => [r.mark, r]));
-  assert.deepEqual(Object.keys(rows).sort(), ["alice/the-district", "the-town/the-cairn"]);
-  assert.equal(rows["the-town/the-cairn"].to_path,
-    "WORLD/marks/let-there-be-light/the-meadow/the-district/the-cairn",
-    "the cairn's recorded path followed the district that carried it");
-  assert.equal(rows["alice/the-district"].to_path, "WORLD/marks/let-there-be-light/the-meadow/the-district");
-
-  const state = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"));
-  assert.equal(state.errors.length, 0);
-  for (const id of ["the-town/the-cairn", "alice/the-district"])
-    assert.deepEqual(state.marks.find((m) => m.id === id).at, { x: 1010, y: 1005 },
-      `${id} composes where it always stood`);
-  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
-  assert.match(execFileSync(process.execPath, [join(repo, "tools", "mark-lint.mjs")], { cwd: repo, encoding: "utf8" }), /CLEAN/);
+  assert.equal(git("status", "--porcelain").trim(), "",
+    "and the crossing staged it — a file the fold writes and the sweep does not track leaves the next checkout dirty");
+  assert.match(git("show", "--name-only", "--format=", "HEAD"), /WORLD\/containment\.json/,
+    "…in the settlement commit itself");
 });
 
 // ── #1697, the supersession class: four falsifiers ──────────────────────────
@@ -892,15 +847,20 @@ test("the ground-closure hold: a staked child never crosses without its drafted 
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
 
-test("a ROOT-PARKED draft publishes AND re-homes on its OWN crossing — the cairn case (the-town/the-parked, 2026-08-22)", (t) => {
-  // Tonight's live shape, caught by the shadow rehearsal at 19:03Z: the new
-  // draft door parks every sited draft at the root; a staked one publishes at
-  // the save, and the SAME crossing must file it into its tightest geometric
-  // container. The published file is on disk but not yet in the index when the
-  // re-home pass runs — `git mv` refuses an untracked source as "directory is
-  // empty" — so the pass stages the source first. The law it serves:
-  // "A mark the door parked at the root has no author-chosen filing; the save
-  // re-homes it by geometry, numbers re-framed, so the mark does not move."
+test("a ROOT-PARKED draft publishes and STAYS PARKED — the cairn case, after the freeze (2026-08-25)", (t) => {
+  // The live shape caught by the shadow rehearsal at 19:03Z on 2026-08-22: the
+  // draft door parks every sited draft at the root, and a staked one publishes
+  // at the save. Until the freeze the SAME crossing then filed it into its
+  // tightest geometric container, which is the publish+re-home wedge the founder
+  // named by its class and closed by removing the mover:
+  //
+  //   "The re-home pass is DELETED from the settlement save. The settlement
+  //    writes a mark once; nothing moves it after. (This retires the
+  //    publish+re-home wedge — #1862's class — by removing the mover.)"
+  //
+  // The cairn therefore publishes exactly once, at the seat it was parked in,
+  // and the fold answers where it STANDS. Both halves are asserted below,
+  // because the point of the freeze is that they are allowed to differ.
   const repo = mkdtempSync(join(tmpdir(), "postmark-settlement-parked-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
   const git = (...args) => execFileSync("git", ["-C", repo, ...args], {
@@ -948,15 +908,18 @@ test("a ROOT-PARKED draft publishes AND re-homes on its OWN crossing — the cai
   const report = settlementSweep({ repo, stakesPath });
 
   assert.deepEqual(report.published.map((row) => row.id), ["carys/the-cairn"], "the staked parked draft publishes");
-  assert.deepEqual(report.rehomed.map((row) => [row.mark, row.from_parent, row.to_parent]),
-    [["carys/the-cairn", null, "bram/the-district"]],
-    "and the SAME crossing files it into its tightest container");
-  const moved = "WORLD/marks/let-there-be-light/the-district/the-cairn/mark.md";
-  assert.equal(has("main", moved), true, "the cairn sits inside the district on main");
-  assert.equal(has("main", parkedPath), false, "and no longer at the root");
+  assert.equal(has("main", parkedPath), true, "…and stays at the seat it was parked in");
+  assert.equal(has("main", "WORLD/marks/let-there-be-light/the-district/the-cairn/mark.md"), false,
+    "nothing filed it into the district — the settlement writes a mark once and nothing moves it after");
   const worldAt = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"))
     .marks.find((m) => m.id === "carys/the-cairn").at;
   assert.deepEqual(worldAt, { x: 1010, y: 990 }, "the mark did not move — the declared world position to the digit");
+  // WHERE IT STANDS is still answered, by the fold, in the artifact that exists
+  // for exactly this: "containment lives only in the derived fold, emitted as an
+  // artifact each settlement."
+  const map = JSON.parse(readFileSync(join(repo, "WORLD", "containment.json"), "utf8"));
+  assert.equal(map.marks.find((m) => m.id === "carys/the-cairn").parent, "bram/the-district",
+    "the cairn stands on the district's ground, which the map says and the tree no longer has to");
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
 
@@ -975,6 +938,14 @@ test("a ROOT-PARKED draft publishes AND re-homes on its OWN crossing — the cai
 // FRAME ({x:-1375,y:-2510} world against {x:0,y:115} grove-relative: the same
 // place said twice). The publish wrote the copy back at the root, the re-home
 // pass computed the seat it already occupies, and the whole crossing refused.
+//
+// THE DRAIN OUTLIVED THE PASS THAT FED IT (the freeze, 2026-08-25). It used to
+// read the re-home findings — a parked copy always produced one — and now asks
+// the law's own question directly: which ids stand twice, with one of the two
+// parked at the root. Its behaviour is unchanged and these three still hold it
+// from both sides; what changed is which of them the WORLD refuses through,
+// since without a mover the duplicate the drain declines to drop is a duplicate
+// id at the gate.
 //
 // One fixture, three endings. `twin` is what main already holds inside the
 // grove; pass null for the shape where nothing stands there yet.
@@ -1071,7 +1042,7 @@ test("FALSIFIER (the devadavisson shape): a parked copy of a mark already standi
   ]], "the drain names the drop, the seat it was parked at, and the seat that already stands");
   assert.deepEqual(report.published.map((row) => row.id), [],
     "nothing was published: a copy of what already stands is not a publication");
-  assert.deepEqual(report.rehomed, [], "and nothing moved");
+  assert.equal("rehomed" in report, false, "and there is no mover left for anything to move through");
 
   assert.equal(git("rev-parse", `main:${standingPath}`).trim(), canonBefore,
     "canon is byte-unchanged — the standing mark is the same blob it was");
@@ -1093,21 +1064,28 @@ test("FALSIFIER (the safety inverse): the SAME shape with one word of the body c
   // The law drops what is "identical but for its frame and its hour". This is
   // the boundary: everything matches except one word of prose. If it were eaten
   // silently, a resident's genuine revision would vanish into the drain — so the
-  // refusal must stand, word for word. (Comment out the body comparison in
+  // refusal must stand. (Comment out the body comparison in
   // identicalButForFrameAndHour and this test goes green: that is the flip.)
+  //
+  // WHICH DOOR THE REFUSAL LEAVES BY changed with the freeze, and only that. It
+  // used to be the re-home pass declining to file one seat over another. With no
+  // mover, the tree simply ends the crossing holding the same id twice, and the
+  // gate refuses it by name — which is the more honest refusal of the two: the
+  // problem was never the move, it was two records claiming one identity.
   const { repo, stakesPath } = alreadyStandingFixture(t, {
     twin: "a puzzle in the protected grove",
     parkedBody: "a puzzle in the forbidden grove",
   });
   assert.throws(() => settlementSweep({ repo, stakesPath }), (error) => {
-    assert.equal(error.message,
-      "re-home: WORLD/marks/let-there-be-light/the-grove/the-puzzle already exists — refusing to file devadavisson/the-puzzle over something",
-      "the refusal is the one that was always there, unchanged");
+    assert.match(error.message, /^the crossing does not lint clean: 1 error\(s\)/,
+      "the crossing refuses rather than eating a resident's revision");
+    assert.match(error.message, /duplicate id "devadavisson\/the-puzzle"/,
+      "…and names the real complaint: one identity, two records");
     return true;
   });
 });
 
-test("FALSIFIER (the sibling law): a root-parked mark with NO twin already standing re-homes exactly as the-parked says, and the drain never touches it (the-town/the-parked, 2026-08-22)", (t) => {
+test("FALSIFIER (the sibling law): a root-parked mark with NO twin already standing publishes and STAYS PARKED, and the drain never touches it (the freeze, 2026-08-25)", (t) => {
   const { repo, git, has, stakesPath, parkedPath, standingPath } =
     alreadyStandingFixture(t, { twin: null, parkedBody: "a puzzle in the protected grove" });
 
@@ -1116,11 +1094,15 @@ test("FALSIFIER (the sibling law): a root-parked mark with NO twin already stand
   assert.deepEqual(report.dropped, [], "nothing already stands there, so the drain has nothing to drop");
   assert.deepEqual(report.published.map((row) => row.id), ["devadavisson/the-puzzle"],
     "the staked parked draft publishes");
-  assert.deepEqual(report.rehomed.map((row) => [row.mark, row.from_parent, row.to_parent]),
-    [["devadavisson/the-puzzle", null, "bram/the-grove"]],
-    "and the same crossing files it into its tightest container");
-  assert.equal(has("main", standingPath), true, "it sits inside the grove on main");
-  assert.equal(has("main", parkedPath), false, "and no longer at the root");
+  assert.equal(has("main", parkedPath), true,
+    "and stays exactly where the door parked it — the settlement writes a mark once; nothing moves it after");
+  assert.equal(has("main", standingPath), false, "nothing filed it into the grove");
+  // the grove is still its ground, and the map is where that is now said
+  assert.equal(
+    JSON.parse(readFileSync(join(repo, "WORLD", "containment.json"), "utf8"))
+      .marks.find((m) => m.id === "devadavisson/the-puzzle").parent,
+    "bram/the-grove",
+    "the puzzle stands on the grove's ground, derived at the fold rather than asserted by its path");
   const worldAt = JSON.parse(readFileSync(join(repo, "WORLD", "world-state.json"), "utf8"))
     .marks.find((m) => m.id === "devadavisson/the-puzzle").at;
   assert.deepEqual(worldAt, { x: 1010, y: 990 }, "the mark did not move — the declared world position to the digit");

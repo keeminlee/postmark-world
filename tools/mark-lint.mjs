@@ -12,16 +12,24 @@
 // hand-authored PR path both pre-flight against it, so a malformed mark fails
 // with the exact fix before it ever lands). WARNs are advisory and never fail it.
 //
-// The heart of it is the edge check: a mark nested inside another's directory
-// asserts an edge — contained-by (sited) or predicated-on (predicated|naming).
-// For a nested SITED mark the enclosing mark must GEOMETRICALLY contain it, by
-// the very same `contains` the fold uses. You cannot lie with an edge.
+// THE FREEZE (founder-ruled 2026-08-25; LOGOS/state-and-time.md § "The freeze —
+// filing is static, and the tree is a fossil"):
+//
+//   "Filing is frozen as of 2026-08-25. A mark's directory is its historical
+//    filing: it carries no claim, and it never moves again."
+//
+// The directory-matches-containment law is REPEALED, and this gate's old
+// dir-equals-placementParent check died with it — "the tree's paths make no
+// assertion, so nothing about them can become false." In its place stand the two
+// gates the law names (§6, below): *an existing mark directory that moves is
+// refused*, and *a new mark files at its id*. Containment is no longer asked of
+// the tree at all; it is derived at the fold and emitted as WORLD/containment.json.
 
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  loadMarks, placementParent, polygonOf, ringMatchesClaim, isValidMarkDate, rect, overlapArea,
+  loadMarks, polygonOf, ringMatchesClaim, isValidMarkDate, rect, overlapArea,
   standingRank, fileToWorld, declaredCoords, COORDS_RELATIVE, WORLD_ROOT_SLUG,
 } from "./marks-fold.mjs";
 import { markStanding } from "./mark-standing.mjs";
@@ -44,17 +52,25 @@ const TERRAIN_PATH = opt("--terrain", join(REPO, "WORLD/skeleton.json"));
 // scope. e.g. --scope WORLD/marks/let-there-be-light/<region-slug>
 const SCOPE = opt("--scope", null);
 const scopeRel = SCOPE ? resolve(SCOPE).replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/") : null;
+// --freeze <file>: the frozen filing manifest (§6). Defaults to this repo's own
+// WORLD/filing-freeze.json, and ONLY when the tree being linted is this repo's
+// own — a fixture tree is a synthetic world that never lived through the freeze,
+// and holding one to this repo's fossil would refuse every fixture mark for
+// standing somewhere the fossil never named. A fixture that means to exercise the
+// freeze plants its own manifest and passes it here.
+const OWN_TREE = resolve(MARKS_DIR) === resolve(join(REPO, "WORLD/marks"));
+const FREEZE_PATH = opt("--freeze", OWN_TREE ? join(REPO, "WORLD/filing-freeze.json") : null);
 // --json: the whole finding list as one machine-readable record, so a caller
-// that can REPAIR something (the settlement sweep, for the re-home class) can
-// read what to repair instead of scraping the prose. Same findings, same exit
-// code; only the rendering differs.
+// (the settlement sweep) can read the verdict instead of scraping the prose.
+// Same findings, same exit code; only the rendering differs.
 const JSON_OUT = args.includes("--json");
 
 const KINDS = new Set(["sited", "predicated", "naming", "parcel", "class"]);
 const TIERS = new Set(["constitution", "sovereignty", "market", "draft"]); // v2 protection tiers + draft (gray, 2026-08-09)
 const TOWN = "the-town"; // the town-tier author; only it may claim constitution
-const CONTAINERS = new Set(["sited", "parcel"]); // only extented things contain or carry
-const WORLD_ROOT = "the-town/let-there-be-light"; // placementParent returns null for this frame
+// The world root, kept as a name rather than as a check: the freeze repealed the
+// containment question this gate used to ask of the tree (§6), so nothing here
+// reads placementParent any more. The fold answers containment now.
 const BODY_MAX = 150; // chars (07-22 ruling)
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -62,13 +78,13 @@ const findings = [];
 const at = (rec) => (rec._dir ? rec._dir.replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/") : rec.id ?? "?");
 const err = (rec, msg) => findings.push({ sev: "ERROR", file: at(rec), msg });
 const warn = (rec, msg) => findings.push({ sev: "WARN", file: at(rec), msg });
-// REHOME — the third severity, and the only one that names work for the
-// MACHINERY rather than for the writer. An outranking child's numbers are the
-// world's, so re-pointing its directory edge moves paper and nothing else: the
-// settlement sweep performs it (§ the re-home pass) instead of bouncing a
-// resident for geometry that drifted around their mark while they slept.
-// `mark`/`from`/`to` ride beside the prose so the repair needs no parsing.
-const rehome = (rec, from, to, msg) => findings.push({ sev: "REHOME", file: at(rec), msg, mark: rec.id, from, to });
+// THE THIRD SEVERITY IS GONE. `REHOME` named work for the MACHINERY rather than
+// for the writer — a directory edge that had stopped naming its tightest
+// geometric container, which the settlement sweep re-pointed on the author's
+// behalf. The freeze repealed the law that made such an edge wrong ("the tree's
+// paths make no assertion, so nothing about them can become false") and deleted
+// the mover ("The re-home pass is DELETED from the settlement save"), so there is
+// no repair left for this gate to ask for. Two exit codes now: 0 and 1.
 
 // terrain ids the tier exposes for `parent: terrain:<id>` attachment
 const terrain = existsSync(TERRAIN_PATH) ? JSON.parse(readFileSync(TERRAIN_PATH, "utf8")) : { features: [], far_features: [] };
@@ -319,15 +335,19 @@ for (const rec of marks) {
 }
 
 // THE FRAME LAW, written out here rather than imported from the loader.
-// §6 needs to know what a re-home would COST, and §6b needs a second opinion on
-// what the loader already did — and a check that asks the loader whether it
-// agrees with itself proves nothing. This walks ALREADY-COMPOSED centres, which
-// is a genuinely different computation from the loader's (that one resolves
-// centres recursively and memoizes, with cycle and duplicate-id guards threaded
-// through), so the two can disagree. See marks-fold.mjs § the tier binding.
+// §6b needs a second opinion on what the loader already did — and a check that
+// asks the loader whether it agrees with itself proves nothing. This walks
+// ALREADY-COMPOSED centres, which is a genuinely different computation from the
+// loader's (that one resolves centres recursively and memoizes, with cycle and
+// duplicate-id guards threaded through), so the two can disagree. See
+// marks-fold.mjs § the tier binding.
+//
+// The freeze does NOT touch this. A frozen directory still frames the numbers
+// written inside it — that is arithmetic about a file, not a claim about the
+// world — and the fossil is exactly what keeps it stable: nothing moves, so no
+// mark's frame is ever re-derived out from under its digits again.
 const ROOT_MARK = marks.find((m) => m.slug === WORLD_ROOT_SLUG);
 const WORLD_CENTRE = ROOT_MARK?.at ? { x: ROOT_MARK.at.x, y: ROOT_MARK.at.y } : { x: 0, y: 0 };
-const samePoint = (a, b) => a.x === b.x && a.y === b.y;
 // The centre `rec`'s file numbers would be written against if it were filed
 // directly inside `start` — the nearest positioned ancestor from `start` up
 // (start itself included) whose tier ranks at or above rec's own.
@@ -343,101 +363,115 @@ const frameOriginFrom = (rec, start) => {
 };
 const parentOf = (rec) => (rec._parentMarkId ? byId.get(rec._parentMarkId) : null);
 
-// 6. the nesting edge itself — tree = geometry, exactly.
+// 6. THE FREEZE — the two gates that replaced the nesting edge.
 //
-// Mere containment is too weak: a house filed under its district passes even
-// when its own parcel is the tightest container. Compare the directory edge to
-// placementParent, the same smallest-container function the write door uses.
-// Parcels are covered too; a parcel directory can lie just as quietly as a
-// sited mark's.
+// What stood here until 2026-08-25 was the tightest-container check: the
+// directory edge had to name the smallest mark that geometrically contained the
+// record, and a drifted edge was either a refusal or a re-home. The founder
+// repealed it (LOGOS/state-and-time.md § "The freeze — filing is static, and the
+// tree is a fossil"):
 //
-// WHAT A DRIFTED EDGE COSTS depends on whether re-pointing it would change the
-// mark's FRAME (§ the tier binding). Two different facts, not a severity dial:
+//   "The directory-matches-containment law is REPEALED — the tree's paths make
+//    no assertion, so nothing about them can become false. The lint's old
+//    dir-equals-placementParent check dies with it; in its place stand two gates
+//    that enforce the freeze itself: *an existing mark directory that moves is
+//    refused*, and *a new mark files at its id*."
 //
-//   It would — the numbers are an offset from the parent it is filed under, so
-//   moving the directory re-frames them and MOVES the mark. The machinery may
-//   not choose between the filing and the geometry; the author must. ERROR,
-//   exactly as before.
+// Every receipt of friction the old check produced — the publish+re-home wedge,
+// stranded sketchbooks, stale outsider lists, twenty-seven dead registry paths —
+// came from one property: paths that moved under readers. These two gates take
+// that property away rather than policing its consequences. Nothing here asks
+// where a mark STANDS; that question is the fold's, answered at every settlement
+// in WORLD/containment.json.
 //
-//   It would not — the mark outranks what it is filed under, so its numbers are
-//   the world's and mention no parent at all. Re-pointing is paper, so this is
-//   a REPAIR the sweep performs (§ the re-home pass), never a refusal. The
-//   commonest way to reach it is that somebody ELSE's claim grew around a mark
-//   filed correctly the day it was written, which is nobody's mistake.
-//
-// Both doors matter. The tier comparison alone would refuse a TOP-LEVEL mark
-// that a new claim has grown around — its parent is the root, which binds
-// everything, so it reads as "bound" — even though the root's centre IS the
-// world origin and the move would not shift it by a metre. Asking what the
-// frame would actually do catches that; asking only about tiers does not.
-// ── the declared-displacement exception ──────────────────────────────────────
-//
-// THE RULING (Keemin, 2026-08-24, on the region re-shape): the regions were
-// redrawn to match their atlas renders, which left marks standing outside the
-// region they are filed under. That displacement is A DECLARED ACT — the
-// founder's, on tonight's record — and the town already holds the shape for
-// exactly this case in tier-frames' REHOMED_BY_DECLARED_ACT: displaced by a
-// declared act is not a containment lie. This applies that existing shape to
-// the new act rather than inventing a law for it.
-//
-// THE LIST IS THE ACT'S OWN RECEIPT. `WORLD/region-outsiders.json` is generated
-// by tools/region-rings-gen.mjs from the rings themselves, in the same run that
-// draws them — so the exemption cannot drift from the boundaries that caused it,
-// and cannot be granted by hand. A mark is exempt only while it is ON the list.
-//
-// SELF-RETIRING, and that is the property that keeps this from becoming a
-// permanent hole in the gate: the next generation recomputes the list from the
-// rings, a resident who has moved their ground back inside their region is not
-// written into it, and the exemption dies with the row. Nothing has to remember
-// to revoke it. The falsifiers hold both directions — an unlisted (root) mark
-// still refuses, a listed one passes, and a listed mark that has moved home is
-// no longer listed and therefore no longer exempt.
-const OUTSIDERS_PATH = join(ROOT, "WORLD/region-outsiders.json");
-const DISPLACED_BY_DECLARED_ACT = new Set(
-  existsSync(OUTSIDERS_PATH)
-    ? (JSON.parse(readFileSync(OUTSIDERS_PATH, "utf8")).rows ?? []).map((r) => r.mark)
-    : []);
+// THE MANIFEST IS THE FOSSIL'S BOUNDARY. WORLD/filing-freeze.json was minted
+// once, on the freeze date, mapping every mark then alive to the path it was
+// filed at. It is never regenerated: a rebuild would re-bless whatever the tree
+// happened to say that day, which is the one thing the freeze exists to prevent.
+// An id IN the manifest is a fossil and answers gate A; an id NOT in it was born
+// after the freeze and answers gate B, needing no row, because its path is
+// derivable from its id.
+{
+  const MARKS_POSIX = resolve(MARKS_DIR).replace(/\\/g, "/");
+  const filedAt = (rec) => "WORLD/marks/" + resolve(rec._dir).replace(/\\/g, "/").slice(MARKS_POSIX.length + 1);
 
-for (const rec of marks) {
-  if (rec._error || (rec.kind !== "sited" && rec.kind !== "parcel") || !rec.at) continue;
-  if (rec.far) continue; // a horizon object (Pando) sits beyond the ground extent by construction (decision 008)
-  const actual = rec._parentMarkId === WORLD_ROOT ? null : rec._parentMarkId ?? null;
-  const expected = placementParent(rec, marks);
-  if (actual === expected) continue;
-  const dirParent = parentOf(rec);
-  const outranks = !!dirParent && rankOf(rec) > rankOf(dirParent);
-  const frameKept = samePoint(frameOriginFrom(rec, dirParent), frameOriginFrom(rec, expected === null ? ROOT_MARK : byId.get(expected)));
-  // A ROOT-PARKED mark is the draft door's own parking spot (draft-costs-
-  // nothing, 2026-08-22): the author declared a world position and chose no
-  // filing, so there is no author's word for the geometry to disagree WITH —
-  // the save files it, and the re-home pass re-frames the numbers exactly
-  // (the-town/the-parked, a clause of the-town/the-re-homing). The ERROR arm
-  // below is for a NESTED filing the author chose that the geometry contradicts
-  // — there the machinery may not pick a side.
-  const rootParked = actual === null;
-  // The declared-displacement exception (above). Scoped as narrowly as the act
-  // itself: it forgives ONLY the tightest-container refusal, for ONLY the marks
-  // the generated list names, and every other clause of the gate still runs.
-  // A DISPLACED MARK IS NEITHER A REFUSAL NOR A PENDING REPAIR, and skipping the
-  // whole block rather than only the error arm is the point. A standing re-home
-  // is an instruction to move the FILING — and the founder's ruling is expressly
-  // that these residents decide for themselves whether to move their ground or
-  // their paper, by letter, in their own time. The gate saying "re-point this
-  // edge" would be the town making that choice on their behalf while calling it
-  // housekeeping.
-  if (DISPLACED_BY_DECLARED_ACT.has(rec.id)) continue;
-  // A record whose parent is unreadable is not in byId at all, so `outranks` is
-  // false and the frame walk starts above it — refusing is the only honest
-  // answer about a tier nobody can read.
-  if (!outranks && !frameKept && !rootParked)
-    err(rec, `directory parent is "${actual ?? "(root)"}", but placementParent is "${expected ?? "(root)"}" — the edge must name the tightest geometric container (re-home the directory)${cite("the-town/the-gate")}`);
-  else if (rootParked && !outranks && !frameKept)
-    rehome(rec, actual, expected,
-      `the door parked this mark at the root and its author chose no filing; the tightest container is "${expected ?? "(root)"}" — the save files it by geometry, numbers re-framed, so the mark does not move${cite("the-town/the-parked")}`);
-  else
-    rehome(rec, actual, expected,
-      `this mark stands as ${standingOf(rec)} and is framed by the world, not by "${actual ?? "(root)"}", and the tightest container is now "${expected ?? "(root)"}" — re-point the edge. The mark does not move: its numbers never mentioned "${actual ?? "(root)"}" in the first place${cite("the-town/the-gate")}`);
+  let frozen = null;
+  if (FREEZE_PATH && existsSync(FREEZE_PATH)) {
+    const parsed = JSON.parse(readFileSync(FREEZE_PATH, "utf8"));
+    frozen = parsed?.marks && typeof parsed.marks === "object" ? parsed.marks : {};
+  }
+
+  if (!frozen) {
+    // A tree with no manifest declares no freeze, and the gates below have
+    // nothing to hold it to. There are two ways to arrive here and they are not
+    // the same fact:
+    //
+    //   a tree that is not this repository's — a fixture, a borrowed checkout —
+    //   was never in the freeze's jurisdiction, and saying so on every run would
+    //   be noise about a world that does not exist.
+    //
+    //   THIS repository's own tree with its manifest gone is the loud one. It is
+    //   the single condition under which the freeze silently stops being
+    //   enforced, so it is said out loud: a reader of a passing report is owed
+    //   the reason the gates did not run.
+    if (FREEZE_PATH)
+      findings.push({
+        sev: "WARN",
+        file: "WORLD/filing-freeze.json",
+        msg: `no frozen filing manifest at ${String(FREEZE_PATH).replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/")} — the freeze gates did not run. "Filing is frozen as of 2026-08-25": a tree that carries no boundary is not held to one`,
+      });
+  } else for (const rec of marks) {
+    if (rec._error || !rec._dir) continue;
+    if (rec.by == null) continue;           // an id of the shape "?/slug" is §1's error, not this gate's
+    const here = filedAt(rec);
+    const was = frozen[rec.id];
+
+    if (was !== undefined) {
+      // ── GATE A: an existing mark directory that moves is refused ──────────
+      // A mark absent from the tree is NOT this gate's business: the manifest
+      // names where a mark WAS filed, and a withdrawal removes a seat rather
+      // than moving one. Only a record standing somewhere else answers here.
+      if (here !== was)
+        err(rec, `this mark is filed at ${here}, but the frozen filing names ${was} — "A mark's directory is its historical filing: it carries no claim, and it never moves again." An existing mark directory that moves is refused (the freeze, 2026-08-25); put the directory back${cite("the-town/the-frozen-filing")}`);
+      continue;
+    }
+
+    // ── GATE B: a new mark files at its id ─────────────────────────────────
+    // "New marks are filed by identity — WORLD/marks/<household>/<slug>/."
+    // The id IS <household>/<slug>, so the path is the id and nothing has to be
+    // looked up to know it. This is the layout that arrives organically, mark by
+    // mark, with no rename storm ever.
+    //
+    // ── WHOSE FILING THIS BINDS, AND WHY IT IS NOT EVERY MARK ───────────────
+    //
+    // Only the kinds whose directory was ever a CONTAINMENT claim: sited and
+    // parcel. Those are the marks the freeze is about — "the tree's paths make
+    // no assertion", so their filing is released from geometry and pinned to
+    // identity instead.
+    //
+    // A predicated / naming / class mark is a different edge entirely. It is its
+    // parent CONTINUED (the continuation law, the-town/the-continuation): it
+    // carries no at/extent, has no footprint to be contained by anything, and
+    // takes its subject from the mark it is nested inside. That nesting is
+    // AUTHORSHIP — "this describes that" — not a claim about ground, so the
+    // freeze does not repeal it and §4 still requires it: a top-level predicate
+    // must name a terrain feature or be nested under what it describes.
+    //
+    // Binding those kinds to their id path would mean no predicate, name, or
+    // class instance could ever attach to a MARK again — only to terrain — which
+    // would take the world's whole descriptive layer out with the containment
+    // reading it was never part of. Verified rather than assumed: a naming mark
+    // filed at `WORLD/marks/<by>/<slug>/` bounces on §4 as "a top-level naming
+    // mark must declare parent: terrain:<id>", so the two rules cannot both bind
+    // it. ⚠ THIS IS THE GATE'S READING of a sentence the freeze states without
+    // this qualification, and it is flagged for the founder rather than buried.
+    if (rec.kind !== "sited" && rec.kind !== "parcel") continue;
+    const want = `WORLD/marks/${rec.by}/${rec.slug}`;
+    if (here !== want)
+      err(rec, `this mark was born after the freeze and is filed at ${here} — "New marks are filed by identity — WORLD/marks/<household>/<slug>/". A new mark files at its id: ${want}${cite("the-town/the-frozen-filing")}`);
+  }
 }
+
 
 // 6b. the loader and the law agree — a check on the MACHINERY, not on any
 // resident. Everything above trusts `loadMarks` to have composed each mark's
@@ -454,14 +488,18 @@ if (declaredCoords(marks) === COORDS_RELATIVE) {
 }
 
 // 7. the one-file law (2026-08-02): the only .md inside the record is a mark's
-// own mark.md (SCHEMA.md at the top level is the grammar's one exception).
-// Anything else must be a full mark in its own directory — everything is a mark.
+// own mark.md. Two exceptions, both at the top level and both about the grammar
+// rather than about the world: SCHEMA.md, which is the record's own shape, and
+// README.md, which is the fossil's label — the tree has been historical filing
+// since 2026-08-25 and a browser standing in it is owed that sentence where they
+// are standing. Anything else must be a full mark in its own directory.
+const TOP_LEVEL_MD = new Set(["SCHEMA.md", "README.md"]);
 {
   const walk = (dir, depth) => {
     for (const name of readdirSync(dir)) {
       const p = join(dir, name);
       if (statSync(p).isDirectory()) walk(p, depth + 1);
-      else if (/\.md$/i.test(name) && name !== "mark.md" && !(depth === 0 && name === "SCHEMA.md"))
+      else if (/\.md$/i.test(name) && name !== "mark.md" && !(depth === 0 && TOP_LEVEL_MD.has(name)))
         findings.push({ sev: "ERROR", file: p.replace(/\\/g, "/").replace(/^.*\/WORLD\//, "WORLD/"), msg: `stray .md — the only .md in a mark directory is mark.md; everything else must be its own mark (the one-file law)${cite("the-town/the-one-file")}` });
     }
   };
@@ -702,30 +740,25 @@ if (declaredCoords(marks) === COORDS_RELATIVE) {
 // still checked), but only findings under the scope are reported/gated.
 const reported = scopeRel ? findings.filter((f) => f.file.startsWith(scopeRel)) : findings;
 const scopedMarks = scopeRel ? marks.filter((m) => at(m).startsWith(scopeRel)).length : marks.length;
-const order = { ERROR: 0, REHOME: 1, WARN: 2 };
+const order = { ERROR: 0, WARN: 1 };
 reported.sort((a, b) => (order[a.sev] - order[b.sev]) || a.file.localeCompare(b.file));
 const errors = reported.filter((f) => f.sev === "ERROR");
-const rehomes = reported.filter((f) => f.sev === "REHOME");
 const warns = reported.filter((f) => f.sev === "WARN");
 
-// THREE EXIT CODES, because a caller has three different things to do.
+// TWO EXIT CODES. There used to be three — 3 meant REPAIR NEEDED, a re-home the
+// settlement sweep could perform on the author's behalf. The freeze deleted the
+// mover ("The re-home pass is DELETED from the settlement save. The settlement
+// writes a mark once; nothing moves it after."), so there is no repair for a
+// caller to run and no third answer to give.
 //   0  nothing to answer for.
 //   1  REFUSED — at least one error. A person has to decide something.
-//   3  REPAIR NEEDED — no errors, but at least one re-home. Nobody did anything
-//      wrong and nothing is in question; some paper has to move. A caller that
-//      can perform it (the settlement sweep) does and re-runs; a caller that
-//      cannot treats 3 as a refusal, which is the safe reading of a code it
-//      does not know. That is the whole reason it is not 1: `!= 0` still fails
-//      closed for every existing caller, while a caller that HAS the repair can
-//      tell "fix this" from "decide this" without parsing prose.
-const code = errors.length ? 1 : (rehomes.length ? 3 : 0);
+const code = errors.length ? 1 : 0;
 
 if (JSON_OUT) {
   console.log(JSON.stringify({
     marks: scopedMarks,
     scope: scopeRel,
     errors: errors.length,
-    rehomes: rehomes.map((f) => ({ mark: f.mark, from: f.from, to: f.to, file: f.file, msg: f.msg })),
     warnings: warns.length,
     findings: reported,
     exit: code,
@@ -734,11 +767,9 @@ if (JSON_OUT) {
 }
 
 console.log(`Linted ${scopedMarks} mark(s)${scopeRel ? ` under ${scopeRel}` : ` under ${MARKS_DIR.replace(/\\/g, "/").replace(/^.*\/(WORLD\/marks)$/, "$1")}`}.\n`);
-if (!reported.length) console.log("CLEAN — every mark is well-formed and no edge lies.");
+if (!reported.length) console.log("CLEAN — every mark is well-formed and every filing stands where the freeze left it.");
 else {
   for (const f of reported) console.log(`[${f.sev}] ${f.file}: ${f.msg}`);
-  console.log(`\n${errors.length} error(s), ${rehomes.length} re-home(s), ${warns.length} warning(s).`);
-  if (rehomes.length && !errors.length)
-    console.log(`\nNothing here is refused — ${rehomes.length} directory edge(s) need re-pointing, and no mark moves when they are. The settlement sweep performs them; by hand it is a git mv of the mark's directory.`);
+  console.log(`\n${errors.length} error(s), ${warns.length} warning(s).`);
 }
 process.exit(code);

@@ -422,6 +422,69 @@ export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
   return best ? best.id : null;
 }
 
+// ---------- the containment map (the freeze, 2026-08-25) ----------
+//
+// "The tree is the map" moved here when filing froze (LOGOS/state-and-time.md §
+// The freeze):
+//
+//   "'The tree is the map' moves to where derived views live: the fold emits the
+//    containment map beside `world-state.json` every settlement. The browsable
+//    truth is generated; the source files rest."
+//
+// So this is the answer to "what contains what", asked of the GROUND and not of
+// the directories. A mark's directory is now historical filing that claims
+// nothing; this map claims everything, and is thrown away and rebuilt at every
+// fold, which is what keeps it from rotting the way a stored path does.
+//
+// TWO DERIVATIONS, because there are two kinds of edge in this world and only one
+// of them is geographic:
+//
+//   sited / parcel     — GEOMETRY. `placementParent`: the deepest existing mark
+//                        that contains the claim, the same function the write
+//                        door places by. Nothing about the file's location is
+//                        consulted.
+//   predicated /       — PREDICATION. A predicate is its parent continued (the
+//   naming / class       continuation law, `the-town/the-continuation`); it has
+//                        no footprint to contain and no coordinates to compare,
+//                        so its edge is the one its author declared by nesting
+//                        it. That edge is authorship, never a claim about
+//                        ground, and the freeze does not touch it.
+//
+// `parent: null` belongs to the world root alone. Everything the ground puts
+// under nothing else is under the root, named — a chain that stops short of the
+// frame is a chain with a hole in it.
+export function containmentMap(marks) {
+  const root = marks.find((m) => m.slug === WORLD_ROOT_SLUG);
+  const rootId = root?.id ?? null;
+  const parent = new Map();
+  for (const m of marks) {
+    if (m._error || m.id == null || parent.has(m.id)) continue; // a duplicate id is the lint's error; first wins, as in the loader
+    if (m === root) { parent.set(m.id, null); continue; }
+    const geometric = (m.kind === "sited" || m.kind === "parcel") && m.at;
+    const up = geometric ? placementParent(m, marks) : (m._parentMarkId ?? null);
+    parent.set(m.id, up ?? rootId);
+  }
+  // The chain, walked with a guard: geometry cannot make a cycle (a container is
+  // strictly larger than what it holds) but a predication edge is authored, and
+  // an authored edge can say anything. A chain that closes on itself is reported
+  // as the prefix it walked rather than looped on forever.
+  const chainOf = (id) => {
+    const out = [];
+    const seen = new Set([id]);
+    for (let up = parent.get(id); up != null && !seen.has(up); up = parent.get(up)) {
+      seen.add(up);
+      out.push(up);
+    }
+    return out;
+  };
+  return {
+    law: "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
+    source: "LOGOS/state-and-time.md, the-town/the-frozen-filing",
+    count: parent.size,
+    marks: [...parent.keys()].sort().map((id) => ({ id, parent: parent.get(id), chain: chainOf(id) })),
+  };
+}
+
 // ---------- the fold ----------
 // The parcel-claim cap (Keemin's ruling, 2026-07-30): a HOUSEHOLD may CLAIM at
 // most 3 parcels. Forward law — holdings dated on/before the law date stand as
@@ -1174,6 +1237,12 @@ To read the fold without writing it at all: --no-write --json`);
     const outsiders = deriveOutsiders(marks, { rectInsideRing, polygonOf, overlapArea });
     writeFileSync(join(ROOT, "WORLD/region-outsiders.json"), JSON.stringify(outsidersJson(outsiders), null, 2) + "\n");
     writeFileSync(join(ROOT, "WORLD/region-outsiders.md"), outsidersMarkdown(outsiders));
+    // ── the containment map (the freeze, 2026-08-25) ────────────────────────
+    // "The fold emits the containment map beside world-state.json every
+    // settlement. The browsable truth is generated; the source files rest."
+    // Sorted by id so a settlement's diff shows what the GROUND did and never
+    // what the walk order happened to be.
+    writeFileSync(join(ROOT, "WORLD/containment.json"), JSON.stringify(containmentMap(marks), null, 2) + "\n");
     const ground = state.rivalries.filter(r => r.kind === "region");
     console.log(`fold: ${state.marks.length} marks · ${state.parcels.length} parcels · ${Object.keys(state.determined).length} determined · ${state.vague.length} vague · ${state.rivalries.length - ground.length} slot rivalries · ${ground.length} ground contests · ${state.returned.length} returned · ${state.errors.length} errors`);
   }
