@@ -480,9 +480,47 @@ const parentOf = (rec) => (rec._parentMarkId ? byId.get(rec._parentMarkId) : nul
     // it. ⚠ THIS IS THE GATE'S READING of a sentence the freeze states without
     // this qualification, and it is flagged for the founder rather than buried.
     if (rec.kind !== "sited" && rec.kind !== "parcel") continue;
+    //
+    // ── ADVISORY, PENDING THE FOUNDER'S SEQUENCING WORD (2026-08-25) ────────
+    //
+    // This clause is `warn` rather than `err`, and that is the only difference
+    // between this form and the refusing one. The reason is not doubt about the
+    // law — it is that the office write door still files every sited draft at
+    // `WORLD/marks/let-there-be-light/<slug>/` (leave-exec.mjs, `parentDir =
+    // ROOT_DIR`), so 33 in-flight drafts across 10 sketchbooks sit at fossil
+    // paths through no author's fault. Refusing them is the rename storm the
+    // ruling forbids — "Zero migration, by design… No rename storm, ever" —
+    // only paid by residents instead of by the town.
+    //
+    // TO FLIP IT: `warn(` → `err(` here, and the two assertions in
+    // tools/filing-freeze.test.mjs that name this severity. Nothing else.
+    //
+    // ── THE GRACE COHORT, for whoever performs the flip ────────────────────
+    //
+    // The flip must not refuse work that was lawful when it was written. The
+    // mechanism is an APPEND to WORLD/filing-freeze.json, and it is the one
+    // lawful exception to "never regenerated" — a regeneration re-blesses
+    // whatever the tree says today, while an append records a decision about a
+    // named, closed set:
+    //
+    //   1. Take the drafts that crossed at fossil paths between the freeze and
+    //      the flip — an exact list, computable from the settlement journal, not
+    //      a filter over the tree.
+    //   2. Append each as `"<id>": "<path>"` with a sibling entry under a
+    //      `grace_crossing` object carrying the flip date and the crossing that
+    //      admitted it, so a reader can tell a fossil from a grandfathered row
+    //      and can date the decision.
+    //   3. They then answer GATE A — they never move again — which is the right
+    //      law for them: they are filings that happened, exactly like the
+    //      fossil, and the only thing separating them is which side of a clock
+    //      they landed on.
+    //
+    // What must NOT happen is widening gate B, or regenerating the manifest to
+    // absorb them. Both would make the boundary a function of the current tree
+    // again, which is the property the freeze exists to remove.
     const want = `WORLD/marks/${rec.by}/${rec.slug}`;
     if (here !== want)
-      err(rec, `this mark was born after the freeze and is filed at ${here} — "New marks are filed by identity — WORLD/marks/<household>/<slug>/". A new mark files at its id: ${want}${cite("the-town/the-frozen-filing")}`);
+      warn(rec, `this mark was born after the freeze and is filed at ${here} — "New marks are filed by identity — WORLD/marks/<household>/<slug>/". A new mark files at its id: ${want}. ADVISORY while the office door still writes at the fossil root; it refuses once the door is fixed and the in-flight drafts have drained${cite("the-town/the-frozen-filing")}`);
   }
 }
 

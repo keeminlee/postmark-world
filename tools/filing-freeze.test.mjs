@@ -111,7 +111,7 @@ test('GATE A: "A mark\'s directory is its historical filing: it carries no claim
 });
 
 // ── GATE B: a new mark files at its id ───────────────────────────────────────
-test('GATE B: "New marks are filed by identity — WORLD/marks/<household>/<slug>/" — a mark born after the freeze anywhere else is REFUSED', () => {
+test('GATE B: "New marks are filed by identity — WORLD/marks/<household>/<slug>/" — a mark born after the freeze anywhere else is FLAGGED (advisory; see mark-lint §6 gate B for why, and how to flip it)', () => {
   const frozen = { "the-town/let-there-be-light": "WORLD/marks/let-there-be-light" };
   const CAIRN = { kind: "sited", by: "carys", date: "2026-08-25", at: { x: 1010, y: 990 }, extent: { w: 4, h: 4 } };
 
@@ -125,9 +125,14 @@ test('GATE B: "New marks are filed by identity — WORLD/marks/<household>/<slug
   // world root. Nothing about the record changed; only where it was put.
   withWorld([THE_ROOT, { path: `${R}/the-cairn`, fm: CAIRN }], frozen, ({ marks, freezePath }) => {
     const out = runLint(marks, freezePath);
-    assert.equal(out.code, 1, "refused");
-    const found = errorsOf(out).find((f) => /the-cairn/.test(f.file));
-    assert.ok(found, `the refusal names the new mark:\n${JSON.stringify(out.findings, null, 2)}`);
+    // ASSERTION 1 OF 2 THAT NAME GATE B'S SEVERITY. Advisory, not refused — the
+    // office door still writes every sited draft at the fossil root, so a hard
+    // gate here would refuse 33 in-flight drafts nobody mis-filed. The finding,
+    // its wording and its named seat are identical either way; `warn(` vs `err(`
+    // in mark-lint §6 and this line are the whole difference.
+    assert.equal(out.code, 0, "advisory while the office door still files at the fossil root");
+    const found = out.findings.find((f) => f.sev === "WARN" && /the-cairn/.test(f.file));
+    assert.ok(found, `the finding names the new mark:\n${JSON.stringify(out.findings, null, 2)}`);
     assert.match(found.msg, /New marks are filed by identity — WORLD\/marks\/<household>\/<slug>\//,
       "and quotes the law it is enforcing, verbatim");
     assert.match(found.msg, /A new mark files at its id: WORLD\/marks\/carys\/the-cairn/,
@@ -168,7 +173,12 @@ test("GATE B binds the kinds whose filing was a containment claim — a predicat
   withWorld([THE_ROOT, HOUSE, { path: "jetto/the-name", fm: NAME }], frozen, ({ marks, freezePath }) => {
     const out = runLint(marks, freezePath);
     assert.equal(out.code, 1, "refused — by the continuation law, not by the freeze");
-    const msgs = errorsOf(out).map((f) => f.msg).join("\n");
+    // ASSERTION 2 OF 2. Reads EVERY finding, not only the errors: gate B's
+    // severity is the founder's to set, and a check over `errorsOf` would go
+    // vacuously true the moment it is advisory — which is exactly when this
+    // claim, that one record never gets two contradictory instructions, matters
+    // most.
+    const msgs = out.findings.map((f) => f.msg).join("\n");
     assert.match(msgs, /a top-level naming mark must declare parent: terrain:<id>, or be nested under the mark it describes/,
       "the continuation law is what stops it");
     assert.equal(/A new mark files at its id/.test(msgs), false,

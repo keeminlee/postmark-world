@@ -1100,6 +1100,13 @@ export function settlementSweep({
     const verdict = lintFindings(repo);
     if (verdict.errors)
       throw new Error(`the crossing does not lint clean: ${verdict.errors} error(s), first — ${verdict.findings.find((f) => f.sev === "ERROR")?.msg?.slice(0, 240)}`);
+    // WHAT THE CROSSING LET THROUGH, on the journal, by name. An advisory nobody
+    // reads is not an advisory — and gate B is advisory on purpose right now
+    // (mark-lint §6), so the marks it flags would otherwise cross in silence and
+    // the town would learn the id-keyed layout had not arrived only when someone
+    // went looking. Warnings never fail a crossing; they are said out loud.
+    for (const f of verdict.findings ?? [])
+      if (f.sev === "WARN") console.error(`[lint-advisory] ${f.file}: ${f.msg}`);
 
     execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs"), "--stakes", stakesPath], {
       cwd: repo, stdio: ["ignore", "pipe", "inherit"], // stderr -> the journal: the fanup-shadow lines are FOR the reader (S39-era fix; "pipe" was swallowing them)
