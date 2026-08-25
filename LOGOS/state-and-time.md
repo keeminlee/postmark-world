@@ -9,7 +9,8 @@ until the homonym ruling, 2026-08-19 — the word "tense" now belongs solely to
 `the-town/the-two-clocks`; the save grammar stands as `the-town/the-save`
 (planted 2026-08-18); the log's witness rule as `the-town/the-witnessed-line`
 the sketchbook's phases as `the-town/the-live` and `the-town/the-settled`,
-and the drain's atomicity as `the-town/the-atomic-drain`
+and the drain's atomicity as `the-town/the-atomic-drain`;
+the record's shape as `the-town/the-record-shape` (planted 2026-08-25)
 (planted 2026-08-22, the ladder audit).
 
 ---
@@ -69,3 +70,37 @@ other: regenerable, never truth. Replay from the log is the constitutional
 guarantee; the save is its convenience. The drain's write-down and the
 journal's truncate are one act — a crash between them eats no draft
 (rendered as `the-town/the-atomic-drain`, 2026-08-22).
+
+## The record's shape — history is stored, geography is derived
+
+Ruled 2026-08-25 (the founder's word at the release-2026-w35 review, closing
+the diagnosis of the freeze night; provenance:
+`Starstory PULSE/silver-draft/wright-2026-08-24-postmark-record-shape-store-history-derive-geography.md`
+and the census draft `Starstory docs/2026-08-24/the-whole-machine.html`).
+
+**History is stored; geography is derived; no reader ever stores a path.**
+
+- *History* — who did what, what was paid, what was published, when — cannot
+  be re-derived, and is therefore stored: the log, the ledgers. Losing it is
+  losing it. This bookkeeping is legitimate and permanent.
+- *Geography* — where a thing now sits, what contains it, who stands where —
+  is always re-derivable from the record, and is therefore never stored: any
+  stored copy is a cached answer that rots at the next move. Render it,
+  derive it, throw the derivation away.
+- **The mark's id is the identity everywhere; filing is a view.** A surface
+  that keys on a path is a defect from birth, whatever it is called.
+
+The receipts behind the law: every settlement crisis of 2026-08 — orphaned
+mint lines, stranded sketchbooks, the publish+re-home wedge, stale outsider
+lists, twenty-seven dead registry paths — was one disease wearing different
+coats: a path-keyed reader in a system whose lawful operation moves paths.
+Each was patched as an instance until the class was named; this law is the
+class, closed. The provenance registry it retires is deleted with the sweep
+era's machinery.
+
+Named and open, deliberately: the filing tree itself still moves (re-homes at
+settlements, sketchbooks rebased over them). Whether the tree flattens to
+id-keyed rest — marks never moving again, containment a generated artifact —
+is a **constitutional sitting**, to be called on observed residue-labor after
+the sweep era's deletion, never slipstreamed (the founder's sequencing,
+2026-08-24).

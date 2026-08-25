@@ -38,24 +38,34 @@ atom governs and the prose is owed a correction.
 1. **Every write is an action; every graph mutation is an effect.** Anything
    else stored is a regenerable projection or contraband — no write surface
    may carry a private grammar. *(the-north-star · state-and-time)*
+2. **History is stored; geography is derived; no reader ever stores a path.**
+   The id is the identity everywhere; filing is a view. What cannot be
+   re-derived (who did what, when, for how much) is kept forever; what always
+   can be (where a thing now sits) is never kept at all.
+   *(state-and-time § the record's shape; ruled 2026-08-25)*
 
 **THE LAW** — the rulebook: classes, tiers, contracts; amendable, and held
 in trust
-2. **Every constitutional instance is custody — a best-guess held in
+3. **Every constitutional instance is custody — a best-guess held in
    trust.** Dissolution is dilution, read off the ledger; the endgame is
    everything sovereign-and-market once the market can stand on its own.
    *(the-north-star)*
-3. **The floor is beyond the ensemble's reach.** Independence — the
+4. **The floor is beyond the ensemble's reach.** Independence — the
    credential-household grain — moves only through the amendment clause;
    the town can never vote away its own anti-sybil floor. *(the-north-star)*
-4. **A rendering may say less than its source, never other.**
+5. **A rendering may say less than its source, never other.**
    *(three-layers § fidelity)*
-5. **Amendments to this law are the one write that is not a graph
+6. **Amendments to this law are the one write that is not a graph
    operation.** The regress closes here: git, the lint, the witness, the
    founders' pens. *(this document's preamble)*
+7. **No promise, no machine.** Every mechanism traces to one of the seven
+   promises, in writing, where it lives; a machine tracing to none is
+   accidental complexity and is retired. Promise-cost is paid gladly,
+   era-cost is deleted by design, ambition-cost re-wins its seat at every
+   census. *(the-promises; ruled 2026-08-25)*
 
 **THE FUNCTION** — the rulebook running: pure, blind, epochal
-6. **The evaluation is deterministic and discretion-free — no favorites are
+8. **The evaluation is deterministic and discretion-free — no favorites are
    expressible, because the function has no input where one could go.** It
    runs on the settlement's clock — crossings are its epochs — and any clone
    replaying it derives the same world, forever.
@@ -64,36 +74,36 @@ in trust
 **THE WORLD** — what the function derives
 
 *its nodes:*
-7. **One node type: identity plus predicate children.** Kind-words are
+9. **One node type: identity plus predicate children.** Kind-words are
    vocabulary; classes are law; predicates are the atoms of authorship.
    *(kinds)*
-8. **A node's tier says whose claim it is; a predicate's tier says what is
+10. **A node's tier says whose claim it is; a predicate's tier says what is
    law.** Constitutional overrules wherever it speaks, whatever node carries
    it. *(classes; ruled 2026-08-13)*
-9. **Tier is never asserted; standing is derived from ground.** The one walk
+11. **Tier is never asserted; standing is derived from ground.** The one walk
    decides; the door refuses the word. *(tiers)*
 
 *its edges:*
-10. **Edges always form.** Formation is never consented to; the response
+12. **Edges always form.** Formation is never consented to; the response
     governs what an edge does, never whether it exists — and every edge
     stands under exactly one response: **welcomed, neutral, or opposed**.
     Neutral is the default everywhere; law is an exceptions ledger — the
     town writes down its objections, and neutrality is free.
     *(edit-law · the-response-function)*
-11. **Conferral has exactly two channels.** A class declares what its
+13. **Conferral has exactly two channels.** A class declares what its
     instances are born as; a ground's revisable word confers the holder's
     own standing. The join uses neither: admission is the absence of
     objection. *(classes · tiers · the-response-function; ruled 2026-08-13)*
-12. **Frames bind by rank; nothing rides above its own ground.** A law of
+14. **Frames bind by rank; nothing rides above its own ground.** A law of
     geometry, never of governance. *(edit-law § the constitutive flip;
     scoped 2026-08-13)*
 
 *its canon:*
-13. **Market is the set of claims; canon is what the fold publishes at the
+15. **Market is the set of claims; canon is what the fold publishes at the
     crossing.** A conflict is a market doing its job. *(conflict-matrix)*
 
 *its reads:*
-14. **Truth has no budget; every read has one.** Read policy never
+16. **Truth has no budget; every read has one.** Read policy never
     masquerades as physics. *(reads-and-affordances)*
 
 ## The law in one breath
@@ -116,6 +126,7 @@ claim: the seed the piecewise renderings accrete under (Keemin, 2026-08-13).
 | doc | one line |
 |---|---|
 | [the-north-star.md](the-north-star.md) | every write an action, every mutation an effect; the two-question lint; the purpose and the endgame |
+| [the-promises.md](the-promises.md) | the seven promises and the one test — no promise, no machine; promise-cost, era-cost, ambition-cost |
 | [the-derivation.md](the-derivation.md) | why a stamp exists: the ladder from majority vote, the evidence law, the money seam, the firewall — the argument the economy's law answers to |
 | [three-layers.md](three-layers.md) | the law → the log → the graph — and which pen writes each |
 | [kinds.md](kinds.md) | one node type; properties are predicates; standing / living / fleeting are lifetimes, not kinds |
