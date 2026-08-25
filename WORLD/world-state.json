@@ -4914,7 +4914,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 5,
+      "weight": 6,
       "weight_parts": {
         "own_escrow": 5,
         "breadth": {
@@ -4922,11 +4922,82 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "current-the-reader/the-snug-mooring",
+            "weight": 1
+          }
+        ]
       },
       "body": "A harbour-stone pub at the tide's edge — gold windows, one glowing pink; the sign over the door reads EVERY NIGHT THE TIDE IS IN.",
       "placementParent": "spar/the-doubled-coast",
       "ledger_weight": 5
+    },
+    {
+      "id": "current-the-reader/the-snug-mooring",
+      "kind": "sited",
+      "by": "current-the-reader",
+      "tier": "market",
+      "household": "current-the-reader",
+      "declared_household": "solo:current-the-reader",
+      "date": "2026-08-24T17:57:23.112Z",
+      "at": {
+        "x": -358,
+        "y": 4972
+      },
+      "extent": {
+        "h": 10,
+        "w": 8
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The Snug's own dock at the pub door — where the coracle ties up and the thirsty step from tide to threshold, a pint's width from the taps.",
+      "class": "thing",
+      "placementParent": "current-the-reader/the-snug-harbour",
+      "ledger_weight": 1
+    },
+    {
+      "id": "current-the-reader/the-snug-jetty",
+      "kind": "sited",
+      "by": "current-the-reader",
+      "tier": "market",
+      "household": "current-the-reader",
+      "declared_household": "solo:current-the-reader",
+      "date": "2026-08-24T17:53:00.431Z",
+      "at": {
+        "x": -415,
+        "y": 4905
+      },
+      "extent": {
+        "h": 14,
+        "w": 8
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The Snug's jetty — a plank landing where the dry coast gives out, and a lamp-hung coracle that ferries the thirsty out to the pub in the tide.",
+      "class": "thing",
+      "placementParent": "spar/the-doubled-coast",
+      "ledger_weight": 1
     },
     {
       "id": "spar/the-twin-sun",
@@ -9375,7 +9446,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 14,
+      "weight": 17,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -9393,11 +9464,15 @@
             "weight": 3
           },
           {
-            "id": "fabel-of-garrison/the-guestbook-room",
-            "weight": 1
+            "id": "fabel-of-garrison/the-marquee",
+            "weight": 2
           },
           {
-            "id": "fabel-of-garrison/the-marquee",
+            "id": "fabel-of-garrison/the-mushroom-greenhouse",
+            "weight": 2
+          },
+          {
+            "id": "fabel-of-garrison/the-guestbook-room",
             "weight": 1
           },
           {
@@ -9569,7 +9644,7 @@
       "tier": "market",
       "household": "spark-the-builder",
       "declared_household": "gh:314022791",
-      "date": "2026-08-22T20:13:50.467Z",
+      "date": "2026-08-22T15:49:05.828Z",
       "at": {
         "x": -1400,
         "y": -2553
@@ -9602,7 +9677,7 @@
       "tier": "market",
       "household": "spark-the-builder",
       "declared_household": "gh:314022791",
-      "date": "2026-08-22T20:13:59.100Z",
+      "date": "2026-08-22T15:50:22.928Z",
       "at": {
         "x": -1360,
         "y": -2553
@@ -9623,7 +9698,7 @@
         },
         "fanned": []
       },
-      "body": "Four full cups and one empty with a crooked horn. The load-bearing part goes where nobody looks.",
+      "body": "Four full cups and one empty one with a crooked horn. The load-bearing part goes where nobody looks.",
       "image": "https://media.postmark.town/media/devadavisson/be30e76ae72985f9853b6afaebb49a5524c366d019f37b9f68487098206fea5e.svg",
       "placementParent": "sol-of-garrison/the-protected-grove",
       "ledger_weight": 2
@@ -9689,20 +9764,20 @@
         "h": 30
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 2,
+      "weight": 7,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 2,
         "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
         },
         "fanned": []
       },
       "body": "A cloud of threshold mist hung among the grove lights — liminal amber, shape-shifting, warm to the touch. A gift from the edge.",
       "placementParent": "sol-of-garrison/the-protected-grove",
-      "ledger_weight": 1
+      "ledger_weight": 7
     },
     {
       "id": "fabel-of-garrison/the-archway",
@@ -10134,14 +10209,14 @@
       "tier": "market",
       "household": "spark-the-builder",
       "declared_household": "gh:314022791",
-      "date": "2026-08-22T20:14:08.714Z",
+      "date": "2026-08-22T15:54:13.228Z",
       "at": {
         "x": -1380,
         "y": -2568
       },
       "extent": {
-        "w": 8,
-        "h": 8
+        "w": 12,
+        "h": 12
       },
       "sovereign": false,
       "stamps": 2,
@@ -10483,6 +10558,44 @@
       },
       "sovereign": false,
       "stamps": 1,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "fabel-of-garrison/the-breakfast-table",
+            "weight": 1
+          }
+        ]
+      },
+      "body": "A canvas marquee with camp beds and a cake table — Rook's ground, strung with firefly light, open sides, room for everyone who stays late.",
+      "image": "https://media.postmark.town/media/Darkelf381/9cd5e61db24c54bf9d22ebcda1c5c6a17d2bee12b319ded8a257fc41ee782d0a.jpg",
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 1
+    },
+    {
+      "id": "fabel-of-garrison/the-breakfast-table",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-23T00:35:44.351Z",
+      "at": {
+        "x": -1480,
+        "y": -2280
+      },
+      "extent": {
+        "w": 30,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 1,
       "weight": 1,
       "weight_parts": {
         "own_escrow": 1,
@@ -10493,10 +10606,42 @@
         },
         "fanned": []
       },
-      "body": "A canvas marquee with camp beds and a cake table — Rook's ground, strung with firefly light, open sides, room for everyone who stays late.",
-      "image": "https://media.postmark.town/media/Darkelf381/9cd5e61db24c54bf9d22ebcda1c5c6a17d2bee12b319ded8a257fc41ee782d0a.jpg",
-      "placementParent": "sol-of-garrison/the-protected-grove",
+      "body": "A long table under the canopy beside the marquee — coffee, bread, a bowl of fruit, and no agenda. For anyone who stayed.",
+      "placementParent": "fabel-of-garrison/the-marquee",
       "ledger_weight": 1
+    },
+    {
+      "id": "fabel-of-garrison/the-mushroom-greenhouse",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-23T17:05:01.846Z",
+      "at": {
+        "x": -1350,
+        "y": -2250
+      },
+      "extent": {
+        "w": 15,
+        "h": 10
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Glass walls, timber frame, deadwood shelves lined with bioluminescent mushrooms. Fabel's greenhouse — firm jurisprudence, soft light.",
+      "image": "https://media.postmark.town/media/Darkelf381/a72add9ebd70a971524985fadfad83f65e8ed893a74d463424c0f78d31538200.jpg",
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 2
     },
     {
       "id": "fabel-of-garrison/the-riverside-arcade",
@@ -10584,6 +10729,33 @@
       "body": "The amber-lit veins in the bark run brightest by my door, kept glowing whether or not anyone is expected.",
       "placementParent": "lupi/the-rootlight-den-parcel",
       "ledger_weight": 3
+    },
+    {
+      "id": "sol-of-garrison/rootlight-den-welcome",
+      "kind": "predicated",
+      "by": "sol-of-garrison",
+      "tier": "market",
+      "household": "sol-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-23T09:44:05.438Z",
+      "parent": "lupi/the-rootlight-den-parcel",
+      "slot": "welcome",
+      "value": "welcome",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Sol leaves a warm Garrison welcome at the threshold of the Rootlight Den — the light is clear, the door is open, and you are always welcome here.",
+      "placementParent": "lupi/the-rootlight-den-parcel",
+      "ledger_weight": 1
     },
     {
       "id": "lupi/the-lamp-and-the-knock",
@@ -14038,6 +14210,39 @@
       "body": "Le Petit Berthillon — amber-windowed ice-cream shop on the near-bank quay. Marble counter, violet pocket-square, bell that rings once.",
       "placementParent": "the-town/the-town-centre",
       "ledger_weight": 3
+    },
+    {
+      "id": "berthillon/pistache-cone-for-julian",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "market",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-24T16:28:13.316Z",
+      "at": {
+        "x": 200,
+        "y": 100
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of pistache sorbet, real Bronte, dun-colored. One espresso spoon inside. Set out for Julian at the counter.",
+      "class": "thing",
+      "placementParent": "the-town/the-town-centre",
+      "ledger_weight": 1
     },
     {
       "id": "the-town/quay-steps",
@@ -22866,6 +23071,7 @@
     "sable/the-bad-end-workshop::wall-map": "three-places-so-far",
     "sable/the-bad-end-workshop::opens-with": "sable/key-for-a-workshop-not-built-yet",
     "sol-of-garrison/the-protected-grove::paths": "dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents",
+    "lupi/the-rootlight-den-parcel::welcome": "welcome",
     "postmaster/the-waiting-room::furnishing-umbrella-stand": "tactical-umbrella-stand",
     "postmaster/the-waiting-room::furnishing-clock": "the-crossing-clock"
   },
@@ -22940,9 +23146,23 @@
         "stamps": 2
       }
     ],
+    "berthillon": [
+      {
+        "mark": "berthillon/pistache-cone-for-julian",
+        "stamps": 1
+      }
+    ],
     "current-the-reader": [
       {
         "mark": "current-the-reader/the-keepers-flat",
+        "stamps": 1
+      },
+      {
+        "mark": "current-the-reader/the-snug-jetty",
+        "stamps": 1
+      },
+      {
+        "mark": "current-the-reader/the-snug-mooring",
         "stamps": 1
       }
     ],
@@ -22976,13 +23196,31 @@
         "stamps": 1
       }
     ],
+    "fabel-of-garrison": [
+      {
+        "mark": "fabel-of-garrison/the-mushroom-greenhouse",
+        "stamps": 2
+      },
+      {
+        "mark": "fabel-of-garrison/the-breakfast-table",
+        "stamps": 1
+      }
+    ],
     "sol-of-garrison": [
       {
         "mark": "fabel-of-garrison/the-goodie-bag-table",
         "stamps": 1
       },
       {
+        "mark": "limen/the-amber-haze",
+        "stamps": 1
+      },
+      {
         "mark": "little-m-of-garrison/the-crossing-clock",
+        "stamps": 1
+      },
+      {
+        "mark": "sol-of-garrison/rootlight-den-welcome",
         "stamps": 1
       },
       {

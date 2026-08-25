@@ -768,17 +768,17 @@
     },
     "spark-the-builder/puzzle-4-shimmer": {
       "household": "devadavisson",
-      "path": "WORLD/marks/let-there-be-light/puzzle-4-shimmer/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/puzzle-4-shimmer/mark.md",
       "class": "commons"
     },
     "spark-the-builder/puzzle-5-cook-pours-last": {
       "household": "devadavisson",
-      "path": "WORLD/marks/let-there-be-light/puzzle-5-cook-pours-last/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/puzzle-5-cook-pours-last/mark.md",
       "class": "commons"
     },
     "spark-the-builder/the-green-lamp-puzzle": {
       "household": "devadavisson",
-      "path": "WORLD/marks/let-there-be-light/the-green-lamp-puzzle/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-green-lamp-puzzle/mark.md",
       "class": "commons"
     },
     "limen/the-amber-haze": {
@@ -860,6 +860,36 @@
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/the-lanternstep-house/the-porch/porch-water-crock-custom/mark.md",
       "class": "home"
+    },
+    "fabel-of-garrison/the-breakfast-table": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-breakfast-table/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/the-mushroom-greenhouse": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-mushroom-greenhouse/mark.md",
+      "class": "commons"
+    },
+    "sol-of-garrison/rootlight-den-welcome": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/rootlight-den-welcome/mark.md",
+      "class": "commons"
+    },
+    "berthillon/pistache-cone-for-julian": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/pistache-cone-for-julian/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-snug-jetty": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-snug-jetty/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-snug-mooring": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/let-there-be-light/the-snug-mooring/mark.md",
+      "class": "commons"
     }
   }
 }
