@@ -36,13 +36,26 @@ mechanism. Conflicts are not errors: a slot with two
 claims is a market doing its job, weighed by the stakes behind each claim and
 resolved at canonization.
 
-**Incumbency holds ties.** *(Proposed 2026-08-12, awaiting the founder's
-word.)* For any value the engine must read, canon is HEAD: the standing value
-persists until a challenger strictly outweighs it — a merge conflict never
-empties the file. Null-on-tie remains lawful only where "the world says
-nothing" is a meaningful answer (a contested description). De-classing — "this
-param becomes each instance's own" — is a **first-class claim**, stakeable
-and winnable, never a tie's side effect.
+**Incumbency holds ties — a CLASS-mark rule.** *(Proposed 2026-08-12,
+awaiting the founder's word; scope corrected 2026-08-25 at the founder's own
+hand: this rule was always about CLASS MARKS — the params the engine reads
+off a class-node, its dials and physics — never about sited ground or
+instance marks.)* For a class-mark value the engine must read, canon is HEAD:
+the standing value persists until a challenger strictly outweighs it — a
+merge conflict never empties the file. Null-on-tie remains lawful only where
+"the world says nothing" is a meaningful answer (a contested description).
+De-classing — "this param becomes each instance's own" — is a **first-class
+claim**, stakeable and winnable, never a tie's side effect. Class-mark
+rivalry is deliberately unconjectured beyond this while the INSTANCE-mark
+adjudication machinery is itself unfinished (the sited carve stands disabled,
+2026-08-22); the settlement plans live here, in ECONOMY.md, and in MARKS.md.
+
+**Canon is ontology, not economy (ruled 2026-08-25, the founder's word).**
+The observability and ontology of which marks are canon versus market — who
+stands winning, what the fold published, what remains contested — is a WORLD
+ONTOLOGY question, never an economy question. The economy-parked rule does
+not reach it: building the read surfaces and machinery that make canon
+legible requires no economy reopening.
 
 ## Granularity
 
