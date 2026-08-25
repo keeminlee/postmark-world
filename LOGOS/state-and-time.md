@@ -98,9 +98,34 @@ Each was patched as an instance until the class was named; this law is the
 class, closed. The provenance registry it retires is deleted with the sweep
 era's machinery.
 
-Named and open, deliberately: the filing tree itself still moves (re-homes at
-settlements, sketchbooks rebased over them). Whether the tree flattens to
-id-keyed rest — marks never moving again, containment a generated artifact —
-is a **constitutional sitting**, to be called on observed residue-labor after
-the sweep era's deletion, never slipstreamed (the founder's sequencing,
-2026-08-24).
+### The freeze — filing is static, and the tree is a fossil
+
+The sitting the paragraph above deferred was called the next morning (the
+founder, 2026-08-25, the Q&A that found the load-bearing property: *"static
+is the way to go"* — staticness, not flatness, is what every receipt of
+friction demanded, and flatness is only the layout under which staticness is
+trivially true).
+
+**Filing is frozen as of 2026-08-25. A mark's directory is its historical
+filing: it carries no claim, and it never moves again. New marks are filed by
+identity — `WORLD/marks/<household>/<slug>/` — and containment lives only in
+the derived fold, emitted as an artifact each settlement.**
+
+What this repeals and what it keeps:
+
+- The directory-matches-containment law is REPEALED — the tree's paths make
+  no assertion, so nothing about them can become false. The lint's old
+  dir-equals-placementParent check dies with it; in its place stand two gates
+  that enforce the freeze itself: *an existing mark directory that moves is
+  refused*, and *a new mark files at its id*.
+- The re-home pass is DELETED from the settlement save. The settlement writes
+  a mark once; nothing moves it after. (This retires the publish+re-home
+  wedge — #1862's class — by removing the mover.)
+- "The tree is the map" moves to where derived views live: the fold emits the
+  containment map beside `world-state.json` every settlement. The browsable
+  truth is generated; the source files rest.
+- Zero migration, by design: the existing tree stands exactly as filed on the
+  freeze date (a fossil, labeled as such), and the id-keyed layout arrives
+  organically through every mark filed after it. No rename storm, ever.
+
+Rendered in the world as `the-town/the-frozen-filing` (planted 2026-08-25).
