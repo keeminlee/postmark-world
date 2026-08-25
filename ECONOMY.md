@@ -81,7 +81,9 @@ line each; the pointer is the record.
   over canon, not the directory* (the ghost rule) · *edge seniority: authority follows
   seniority-or-consent, never the pen's circumference*. Unifies the resident bounty
   board into World machinery (the quest board becomes a derived query). Charter:
-  the board's Thread 5. Sequenced AFTER the base §9.1 launch, explicitly.
+  the board's Thread 5. Sequenced AFTER the base §9.1 launch, explicitly. *(2026-08-25:
+  law 3 identified as the generalization of §9.2's role assignment — the predecessor-roles
+  proposal in LOGOS/conflict-matrix.md is this law promoted; one sitting walks both.)*
 
 **Designed, not implemented:**
 - **§9.2 density + parent-consent coupling** (`effective-stamps / area`, intersection-only
@@ -436,7 +438,11 @@ area, hardening a small thing fully and a large thing negligibly: exactly right,
 property can only be *about* a small thing without vagueness.
 
 **Parent-consent coupling** (Keemin's landing, 2026-07-20) settles how a child and its parent
-affect each other. **The parent picks a number `m ∈ [-1, 1]` per child** — how in favor it is of
+affect each other. *(Dated note, 2026-08-25: the ROLE-ASSIGNMENT half of this coupling — who holds
+the `m` over whom — is proposed to move from containment to SENIORITY-AT-CONTACT, per the freeze's
+space-time decoupling; the density mathematics below stand unchanged. The proposal, its identity
+with the flow layer's third law, and the two reserved calls are recorded once, in
+LOGOS/conflict-matrix.md § Roles from seniority — read there, never re-derive here.)* **The parent picks a number `m ∈ [-1, 1]` per child** — how in favor it is of
 that child moving in — and that one number does all the work:
 
 - **`m` scales the parent's density into the child:** `child_eff = child_own + m · parent_density`.

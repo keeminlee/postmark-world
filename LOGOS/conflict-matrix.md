@@ -57,6 +57,28 @@ ONTOLOGY question, never an economy question. The economy-parked rule does
 not reach it: building the read surfaces and machinery that make canon
 legible requires no economy reopening.
 
+**Roles from seniority, not containment — the proposed successor to
+parent-consent (2026-08-25, the founder's sitting; recorded here so it is
+never relitigated).** §9.2's parent-consent coupling assigned the `m` by
+CONTAINMENT — a role hung on geography, which the freeze made a derived view:
+a consent relation that recomputes with the fold is one nobody can stand on.
+The proposed successor: **contact is geometric, seniority is temporal, and
+the senior-at-contact holds the `m`** — per-cell (whoever first covered a
+cell is that cell's incumbent), so partial overlaps get a role parent-child
+never assigned, an expansion is a newcomer on its new cells, and multiple
+incumbents compose as each lending `m · density` on shared ground. This is
+the flow layer's own third law (2026-08-03: *"authority follows
+seniority-or-consent, never the pen's circumference"*) promoted into §9.2's
+role assignment — and the consent door already speaks it: `world-stance.mjs`'s
+who-may-speak is *"the holders of every already-standing mark whose extent it
+overlaps — precedent weighs in on the newcomer, never the reverse. Overlap,
+not containment."* Parent-consent's density mathematics stand unchanged; only
+the role assignment is proposed to move. Two calls reserved for the sitting
+that walks it: the fan-up target under positive `m` (proposed: the senior's
+whole extent, diffuse, keeping the anti-confetti rule), and per-mark vs
+per-cell seniority (proposed: per-cell). Status: PROPOSED, awaiting the
+founder's sitting — like incumbency-holds-ties above, and by the same hand.
+
 ## Granularity
 
 Fields are predicated out ([kinds.md](kinds.md)), so **every property lives
