@@ -21,7 +21,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { join, dirname } from "node:path";
@@ -317,6 +317,30 @@ test("THE EXCEPTION: listed marks are forgiven, unlisted ones are still refused,
   const scratch = mkdtempSync(join(tmpdir(), "pm-lint-exc-"));
   cpSync(join(ROOT, "WORLD"), join(scratch, "WORLD"), { recursive: true });
   cpSync(join(ROOT, "tools"), join(scratch, "tools"), { recursive: true });
+  // The fidelity gate follows each rendering mark's `source:` out of WORLD/
+  // into the repo root (LOGOS/*, WRITES.md, …), so the scratch must carry the
+  // whole source closure or the AS-IS control fails on absent files before it
+  // ever reaches the exception under test (S46's 05:45Z refusal, 2026-08-25).
+  // Computed from the marks rather than listed here, so a new law-doc source
+  // never breaks this fixture again.
+  {
+    const sources = new Set();
+    const walk = (dir) => {
+      for (const e of readdirSync(dir, { withFileTypes: true })) {
+        const p = join(dir, e.name);
+        if (e.isDirectory()) walk(p);
+        else if (e.name.endsWith(".md")) {
+          const m = /^source:\s*(\S+)\s*$/m.exec(readFileSync(p, "utf8"));
+          if (m) sources.add(m[1]);
+        }
+      }
+    };
+    walk(join(ROOT, "WORLD/marks"));
+    for (const rel of sources) {
+      const from = join(ROOT, rel);
+      if (existsSync(from)) cpSync(from, join(scratch, rel), { recursive: true });
+    }
+  }
   const listPath = join(scratch, "WORLD/region-outsiders.json");
   const list = JSON.parse(readFileSync(listPath, "utf8"));
   const runLintLines = () => {
@@ -325,8 +349,14 @@ test("THE EXCEPTION: listed marks are forgiven, unlisted ones are still refused,
   };
   const runLint = () => {
     const r = spawnSync(process.execPath, [join(scratch, "tools/mark-lint.mjs")], { encoding: "utf8" });
-    const m = /(\d+) error\(s\), (\d+) re-home\(s\)/.exec(r.stdout + r.stderr);
-    assert.ok(m, `the lint must report a count (got: ${(r.stdout + r.stderr).slice(-300)})`);
+    const out = r.stdout + r.stderr;
+    // CLEAN is a lawful shape: the lint prints the count line only when it
+    // reported something. A fully clean record answers {0,0} — first seen
+    // 2026-08-25, when the fixture gained the fidelity-source closure and the
+    // as-is control stopped carrying any baseline error.
+    if (/CLEAN — every mark is well-formed/.test(out)) return { errors: 0, rehomes: 0 };
+    const m = /(\d+) error\(s\), (\d+) re-home\(s\)/.exec(out);
+    assert.ok(m, `the lint must report a count or CLEAN (got: ${out.slice(-300)})`);
     return { errors: Number(m[1]), rehomes: Number(m[2]) };
   };
 
