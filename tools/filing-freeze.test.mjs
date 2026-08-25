@@ -225,3 +225,111 @@ test("NEVER REGENERATED: no tool in the repo writes the fossil's boundary", () =
   assert.deepEqual(writers, [],
     "nothing regenerates the boundary; it was minted once, on 2026-08-25, and is committed history from then on");
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WHAT THE FREEZE MOVED OFF THE TREE — the readers that used to ask a directory
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// "Containment lives only in the derived fold, emitted as an artifact each
+// settlement." Three readers asked the directory instead, and each was correct
+// only while the repealed lint forced the directory to equal the geometry. Each
+// test below files its subject AT ITS ID — the layout the freeze creates — and
+// asserts the reader still answers about the GROUND. All three are red against
+// the directory-reading code and green against the map-reading code.
+
+import { fold, loadMarks } from "./marks-fold.mjs";
+
+test("CONFERRAL survives id filing: a guest welcomed onto a neighbour's ground is at home there wherever the file sits", () => {
+  // The 2026-08-12 conferred-sovereignty ruling, met by the freeze. Own-ground
+  // sovereignty was never at risk — `_sovereign` is geometric and answers at hop
+  // 0 — but being WELCOMED requires the standing walk to climb to the holder's
+  // parcel and read the word there, and that climb used to be the directory.
+  const build = ({ ownPath, guestPath }) => {
+    const w = world([
+      THE_ROOT,
+      { path: `${R}/carys-parcel`, fm: { kind: "parcel", by: "carys", date: "2026-08-11", at: { x: 1000, y: 1000 }, extent: { w: 25, h: 25 } } },
+      { path: ownPath, fm: { kind: "sited", by: "carys", date: "2026-08-25", at: { x: 1000, y: 1000 }, extent: { w: 4, h: 4 } } },
+      { path: `${R}/bram-parcel`, fm: {
+        kind: "parcel", by: "bram", date: "2026-08-11", at: { x: 2000, y: 2000 }, extent: { w: 25, h: 25 },
+        consent: `{"dara/the-guest": "welcomed"}`,
+      } },
+      { path: guestPath, fm: { kind: "sited", by: "dara", date: "2026-08-25", at: { x: 2000, y: 2000 }, extent: { w: 4, h: 4 } } },
+    ], null);
+    try {
+      const state = fold({ marks: loadMarks(w.marks), terrain: null, stakes: [], prev: null, tick: 0 });
+      return Object.fromEntries(state.marks.map((m) => [m.id, m]));
+    } finally { rmSync(w.dir, { recursive: true, force: true }); }
+  };
+
+  const fossil = build({ ownPath: `${R}/carys-parcel/the-hearth`, guestPath: `${R}/bram-parcel/the-guest` });
+  const byIdPath = build({ ownPath: "carys/the-hearth", guestPath: "dara/the-guest" });
+
+  // THE CAN-FAIL ONE. Red before the fold carried the containment answer: the
+  // guest read `market`, having lost the word its holder spoke over it.
+  assert.equal(byIdPath["dara/the-guest"].tier, "home",
+    "a welcomed guest filed at its id is still at home on the ground that welcomed it");
+  assert.equal(byIdPath["dara/the-guest"].placementParent, "bram/bram-parcel",
+    "…because the store carries the ground's answer, which is what the standing walk climbs");
+
+  // THE REGRESSION GUARD, labelled as one: this arm passed before the change
+  // too. `sovereign` is geometric already, so own-ground standing never depended
+  // on the filing — worth pinning precisely because it is easy to assume it did.
+  assert.equal(byIdPath["carys/the-hearth"].tier, "home");
+  assert.equal(byIdPath["carys/the-hearth"].sovereign, true);
+
+  // AND THE TWO FILINGS AGREE, which is the whole claim of a static tree: where
+  // a mark's file sits is not a fact about the world.
+  for (const id of ["carys/the-hearth", "dara/the-guest"]) {
+    assert.equal(byIdPath[id].tier, fossil[id].tier, `${id}: standing is the same under both filings`);
+    assert.equal(byIdPath[id].sovereign, fossil[id].sovereign, `${id}: sovereignty is the same under both filings`);
+    assert.equal(byIdPath[id].placementParent, fossil[id].placementParent, `${id}: containment is the same under both filings`);
+  }
+});
+
+test("A BOUNTY NOTICE filed at its id is ON the board — the board is ground, not a directory", () => {
+  const works = { path: `${R}/the-keeping-works`, fm: {
+    kind: "sited", by: "the-town", tier: "constitution", date: "2026-08-11", at: { x: 0, y: 0 }, extent: { w: 200, h: 200 } } };
+  const bountyClass = { path: `${R}/the-keeping-works/bounty`, fm: {
+    kind: "class", by: "the-town", tier: "constitution", date: "2026-08-11", class: "bounty" } };
+  const board = { path: `${R}/the-bounty-board`, fm: {
+    kind: "sited", by: "the-town", tier: "constitution", date: "2026-08-11", at: { x: 5000, y: 5000 }, extent: { w: 100, h: 100 } } };
+  const notice = { kind: "sited", by: "jetto", date: "2026-08-25", at: { x: 5000, y: 5000 }, extent: { w: 2, h: 2 },
+    class: "bounty", ask: "find the thing", reward: 3, status: "open" };
+
+  // No --freeze manifest: this fixture is about the board clause, and holding a
+  // synthetic tree to this repo's fossil would refuse it for a different reason.
+  const offBoard = (records) => withWorld(records, null, ({ marks }) =>
+    runLint(marks).findings.filter((f) => /off the board/.test(f.msg)));
+
+  assert.deepEqual(offBoard([THE_ROOT, works, bountyClass, board, { path: "jetto/a-notice", fm: notice }]), [],
+    "filed at its id and standing on the board's ground: on the board");
+  assert.deepEqual(offBoard([THE_ROOT, works, bountyClass, board, { path: `${R}/the-bounty-board/a-notice`, fm: notice }]), [],
+    "and filed inside the board's directory: still on the board, same answer");
+
+  // THE FLIP: a notice that genuinely stands somewhere else is still told so.
+  const elsewhere = offBoard([THE_ROOT, works, bountyClass, board,
+    { path: "jetto/a-notice", fm: { ...notice, at: { x: 9000, y: 9000 } } }]);
+  assert.equal(elsewhere.length, 1, "a notice standing off the board is warned, wherever it is filed");
+});
+
+test("CONSENT speaks for what stands inside your mark — by ground, not by directory", () => {
+  const house = { path: `${R}/the-house`, fm: {
+    kind: "sited", by: "alice", date: "2026-08-11", at: { x: 1000, y: 1000 }, extent: { w: 100, h: 100 },
+    consent: `{"bob/the-shed": "welcomed"}` } };
+  const shed = { kind: "sited", by: "bob", date: "2026-08-25", at: { x: 1000, y: 1000 }, extent: { w: 4, h: 4 } };
+
+  const refusals = (records) => withWorld(records, null, ({ marks }) =>
+    runLint(marks).findings.filter((f) => f.sev === "ERROR" && /you may speak for your own parcel/.test(f.msg)));
+
+  // THE CAN-FAIL ONE: red before the re-key. Alice's word about a shed standing
+  // inside her own house was refused because the shed's FILE was elsewhere.
+  assert.deepEqual(refusals([THE_ROOT, house, { path: "bob/the-shed", fm: shed }]), [],
+    "a mark standing inside your mark is yours to speak about, wherever its file sits");
+  assert.deepEqual(refusals([THE_ROOT, house, { path: `${R}/the-house/the-shed`, fm: shed }]), [],
+    "and the directory-filed twin answers identically");
+
+  // THE FLIP: a word about a mark standing somewhere else is still refused.
+  const outside = refusals([THE_ROOT, house,
+    { path: "bob/the-shed", fm: { ...shed, at: { x: 9000, y: 9000 } } }]);
+  assert.equal(outside.length, 1, "a word about ground that is not yours is still refused");
+});

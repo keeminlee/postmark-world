@@ -94,11 +94,20 @@ export function markStanding(mark, byId) {
   for (let hops = 0; m && hops < 32; hops++) {
     if (m.kind === "parcel" || m.sovereign || m._sovereign) return groundVerdict(m, mark, house);
     // The containment chain, whatever the caller calls it: `parent` is the
-    // authored edge a predicate carries, `_parentMarkId` the loader's directory
-    // edge, `placementParent` the published store's. The three are the same
-    // fact — the lint refuses an edge that does not name the tightest
-    // geometric container, so the directory IS the geometry here.
-    const up = m.parent ?? m._parentMarkId ?? m.placementParent;
+    // authored edge a predicate carries, `_containedBy` the fold's derived
+    // containment answer, `_parentMarkId` the loader's directory edge,
+    // `placementParent` the published store's — which carries the fold's answer
+    // too, since 2026-08-25.
+    //
+    // THE ORDER MATTERS, and it changed with the freeze. It used to read the
+    // directory second, on the premise written here before: "the lint refuses an
+    // edge that does not name the tightest geometric container, so the directory
+    // IS the geometry here." That lint is repealed — "the tree's paths make no
+    // assertion" — so the directory is now historical filing and is the LAST
+    // thing this walk should believe. It stays in the chain only for callers
+    // that have no folded answer to offer (a raw loader record in a fixture);
+    // where a derived answer exists it wins.
+    const up = m.parent ?? m._containedBy ?? m._parentMarkId ?? m.placementParent;
     m = up ? byId?.get?.(up) : null;
   }
   return "market";

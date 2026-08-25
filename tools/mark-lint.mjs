@@ -31,6 +31,7 @@ import { fileURLToPath } from "node:url";
 import {
   loadMarks, polygonOf, ringMatchesClaim, isValidMarkDate, rect, overlapArea,
   standingRank, fileToWorld, declaredCoords, COORDS_RELATIVE, WORLD_ROOT_SLUG,
+  containmentParents,
 } from "./marks-fold.mjs";
 import { markStanding } from "./mark-standing.mjs";
 import { consentMap, CONSENT_WORDS, CONSENT_FIELD } from "./consent.mjs";
@@ -146,6 +147,14 @@ const standingIndex = new Map();
 for (const m of marks) if (!standingIndex.has(m.id)) standingIndex.set(m.id, m);
 const rankOf = (m) => standingRank(m, standingIndex);
 const standingOf = (m) => markStanding(m, standingIndex);
+// THE CONTAINMENT ANSWER, for the two clauses below that ask what stands inside
+// what. Both used to read `_parentMarkId` — the directory — on the premise §6
+// used to enforce. The freeze repealed it ("containment lives only in the
+// derived fold"), so a directory answer here would be historical filing standing
+// in for geography, and both clauses would go quietly wrong for the first mark
+// filed at its id. Same function the fold and WORLD/containment.json use.
+const { parent: containedBy } = containmentParents(marks);
+
 const slugsByHousehold = new Map();
 const childCount = new Map();
 for (const m of marks) {
@@ -245,7 +254,12 @@ for (const rec of marks) {
   // the works); the old direct-parent test was this rule's per-bounty prototype
   const isClassDefinition = isClassDeclaration(rec);
   if (rec.class === "bounty" && !isClassDefinition) {
-    if (rec._parentMarkId !== "the-town/the-bounty-board")
+    // ON THE BOARD means standing on the board's GROUND, not filed in its
+    // directory (re-keyed 2026-08-25). A notice filed at its id — which is where
+    // every notice written after the freeze goes — has no directory parent at
+    // all, and under the old test every one of them read as "off the board" and
+    // was told it could never render, while sitting squarely on it.
+    if (containedBy.get(rec.id) !== "the-town/the-bounty-board")
       warn(rec, `class: bounty off the board — the board reads only notices standing on the-town/the-bounty-board; this mark can never render there`);
     if (rec.kind !== "sited") err(rec, `a bounty notice is a sited mark (got kind: ${JSON.stringify(rec.kind)})`);
     const askLen = [...String(rec.ask ?? "").trim()].length;
@@ -600,7 +614,12 @@ const TOP_LEVEL_MD = new Set(["SCHEMA.md", "README.md"]);
     // who may speak at all: a parcel holder (about ground) or a mark's author
     // (about what stands inside it).
     const isParcel = rec.kind === "parcel";
-    const speaksFor = new Set(marks.filter((m) => m._parentMarkId === rec.id).map((m) => m.id));
+    // "what stands inside your own mark" — asked of the ground (re-keyed
+    // 2026-08-25). The old test read the directory, so a neighbour's mark
+    // standing inside yours but filed at its id was not something you could
+    // speak about, and your word about it was refused as speaking for ground
+    // that is not yours.
+    const speaksFor = new Set(marks.filter((m) => containedBy.get(m.id) === rec.id).map((m) => m.id));
 
     for (const [target, word] of Object.entries(map)) {
       if (!CONSENT_WORDS.has(word)) {
