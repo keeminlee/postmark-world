@@ -145,6 +145,12 @@ function fidelityRepo() {
   copyFileSync(join(REPO_SRC, "WRITES.md"), join(repo, "WRITES.md"));
   copyFileSync(join(REPO_SRC, "WORLD", "skeleton.json"), join(repo, "WORLD", "skeleton.json"));
   cpSync(join(REPO_SRC, "WORLD", "marks"), join(repo, "WORLD", "marks"), { recursive: true });
+  // The fossil's boundary travels with the tree it bounds (the freeze,
+  // 2026-08-25). A whole-tree copy without it is a tree the freeze gates cannot
+  // read, and the lint says so — which is the warning working, not a fixture
+  // detail: "Filing is frozen as of 2026-08-25. A mark's directory is its
+  // historical filing: it carries no claim, and it never moves again."
+  copyFileSync(join(REPO_SRC, "WORLD", "filing-freeze.json"), join(repo, "WORLD", "filing-freeze.json"));
   return repo;
 }
 

@@ -5,9 +5,16 @@
 //
 // A bound child is framed by its parent and rides when the parent moves. An
 // outranking child is framed by the WORLD and nothing its parent does can move
-// it; when geometry drifts, its directory edge is RE-POINTED (a repair) rather
-// than refused. A predicate can never outrank what it predicates — the one
-// shape with no repair available, so that one IS refused.
+// it. A predicate can never outrank what it predicates, and that one is refused.
+//
+// ── amended by THE FREEZE (the founder, 2026-08-25) ──────────────────────────
+// The binding rule is untouched — a directory still FRAMES the numbers written
+// inside it, which is arithmetic about a file. What went is the other half: the
+// directory no longer CLAIMS containment, so a drifted edge is not a finding and
+// there is no repair. "The directory-matches-containment law is REPEALED — the
+// tree's paths make no assertion, so nothing about them can become false."
+// Several tests below are the inverse of what they used to assert, and say so
+// where they stand.
 //
 // ── amended by the one-walk tier truth (Keemin, 2026-08-12) ──────────────────
 // The binding rule above is untouched. What changed is WHERE A RANK COMES FROM:
@@ -35,10 +42,11 @@ import { markStanding, standingHouseholdOf } from "./mark-standing.mjs";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 
-// The declared act's own receipt, generated with the rings (see mark-lint.mjs §
-// the declared-displacement exception). Read rather than recomputed: the gate,
-// the generator and this falsifier must all be reading ONE list, or a mark can
-// be forgiven by one and refused by another.
+// The declared act's own receipt, generated with the rings. The GATE stopped
+// reading it at the freeze — there is no containment clause left for it to
+// except — but the ref-diff falsifier below still needs it: a region re-shape
+// legitimately moves `placementParent` for the marks it names, and that is the
+// re-shape arriving, not a regression in the tier binding.
 const DISPLACED_BY_DECLARED_ACT = new Set(
   (JSON.parse(readFileSync(join(HERE, "..", "WORLD/region-outsiders.json"), "utf8")).rows ?? []).map((r) => r.mark));
 const LINT = join(HERE, "mark-lint.mjs");
@@ -46,7 +54,9 @@ const LINT = join(HERE, "mark-lint.mjs");
 // The household a handle belongs to — the town's own registry (WORLD/households.json,
 // handle → credential key). Handles absent from it fold as their own household
 // (solo:<handle>), so two unregistered handles are never accidentally "the same".
-// Used only by the within-household re-home exemption (Keemin's 2026-08-22 ruling).
+// Used only by the ref-diff falsifier's within-household allowance (Keemin's
+// 2026-08-22 ruling), which is about a CONTAINMENT answer moving between two
+// handles behind one human — never about anyone's filing, which no longer moves.
 const HOUSEHOLDS = (() => {
   try { return JSON.parse(readFileSync(join(ROOT, "WORLD/households.json"), "utf8")).households ?? {}; }
   catch { return {}; }
@@ -89,8 +99,10 @@ const mark = (tier, at, extent, extra = {}) => {
 };
 const by = (dir) => Object.fromEntries(loadMarks(dir).map((m) => [m.id, m]));
 
-function runLint(marksDir) {
-  const r = spawnSync(process.execPath, [LINT, "--marks-dir", marksDir, "--json"], { encoding: "utf8" });
+function runLint(marksDir, freeze = null) {
+  const r = spawnSync(process.execPath,
+    [LINT, "--marks-dir", marksDir, ...(freeze ? ["--freeze", freeze] : []), "--json"],
+    { encoding: "utf8" });
   return { code: r.status, ...JSON.parse(r.stdout) };
 }
 
@@ -251,23 +263,30 @@ test("blue-in-yellow ANCHORS: the meadow cannot drag the river", () => {
     assert.deepEqual(m["the-town/the-reach"].at, { x: 1000, y: 1000 }, "and the river stayed exactly where it was");
   });
 
-  // …and the edge that now lies is a REPAIR, not a refusal: the meadow no
-  // longer contains the reach, so the directory must be re-pointed at the
-  // tightest container that does — here, the root. Nothing about the reach
-  // moves when it is.
+  // …and the edge that used to "lie" now says NOTHING. The meadow no longer
+  // contains the reach, and until 2026-08-25 that was a finding — a re-home the
+  // save performed on the author's behalf. The freeze repealed the claim the
+  // finding rested on (LOGOS/state-and-time.md § The freeze):
+  //
+  //   "The directory-matches-containment law is REPEALED — the tree's paths make
+  //    no assertion, so nothing about them can become false."
+  //
+  // Both trees below are the same tree to the gate. The reach's POSITION is what
+  // this test was ever really protecting, and it is asserted above, unchanged.
   withTree([THE_ROOT, MOVED, REACH], (dir) => {
     const out = runLint(dir);
     assert.equal(out.errors, 0, "nobody is refused for it");
-    assert.equal(out.code, 3, "exit 3 — repair needed, distinct from refused");
-    assert.deepEqual(out.rehomes.map((r) => [r.mark, r.from, r.to]), [["the-town/the-reach", "t/the-meadow", null]]);
-    assert.match(out.rehomes[0].msg, /The mark does not move/);
+    assert.equal(out.code, 0, "and nothing is asked for either — a path makes no assertion to be wrong about");
+    assert.equal(out.findings.length, 0, "the gate has no opinion at all about where this is filed");
   });
 
-  // While the meadow still contains it, the same filing is simply correct.
+  // While the meadow still contains it, the same filing reads exactly the same
+  // — which is the content of "static": the verdict does not depend on geometry
+  // that moves around a mark while its author sleeps.
   withTree([THE_ROOT, MEADOW, REACH], (dir) => {
     const out = runLint(dir);
-    assert.equal(out.code, 0, "an outranking child filed in its true container is clean");
-    assert.deepEqual(out.rehomes, []);
+    assert.equal(out.code, 0, "clean, as before");
+    assert.equal(out.findings.length, 0);
   });
 });
 
@@ -276,7 +295,7 @@ test("blue-in-yellow ANCHORS: the meadow cannot drag the river", () => {
 // outranks". Under the one-walk truth the house's `tier: sovereignty` line says
 // nothing at all — both stand at market, and EQUAL RANKS BIND. Same answer, and
 // now for the reason that survives a resident writing anything they like.
-test("yellow-in-yellow is BOUND: it rides its parent, and a lying edge is still an ERROR", () => {
+test("yellow-in-yellow is BOUND: it rides its parent, and since the freeze an edge cannot lie", () => {
   const HOUSE = { path: `${R}/the-house`, fm: mark("sovereignty", { x: 500, y: 500 }, { w: 100, h: 100 }) };
   const LAMP = { path: `${R}/the-house/the-lamp`, fm: mark("market", { x: 10, y: -5 }, { w: 2, h: 2 }) };
   withTree([THE_ROOT, HOUSE, LAMP], (dir) => {
@@ -288,40 +307,56 @@ test("yellow-in-yellow is BOUND: it rides its parent, and a lying edge is still 
     assert.deepEqual(by(dir)["t/the-lamp"].at, { x: 810, y: 795 }, "the lamp rode with the house, on the record, with no sweep");
   });
 
-  // A bound child whose edge stops being true is a question for its author, not
-  // a job for the machinery: re-pointing the directory would re-frame the
-  // lamp's numbers and move the lamp.
+  // A bound child whose numbers put it far outside its container used to be a
+  // refusal: the edge asserted containment and the geometry contradicted it, and
+  // the machinery was not allowed to pick a side. Since the freeze the edge
+  // asserts nothing, so there is no contradiction to refuse — "A mark's
+  // directory is its historical filing: it carries no claim, and it never moves
+  // again."
+  //
+  // WHAT SURVIVES IS THE ARITHMETIC, and it is the half that was always real: the
+  // lamp is still framed on the house, so its file numbers still compose against
+  // the house's centre. Filing frames; it does not claim.
   withTree([
     THE_ROOT,
     HOUSE,
     { path: `${R}/the-house/the-lamp`, fm: mark("market", { x: 9000, y: 9000 }, { w: 2, h: 2 }) },
   ], (dir) => {
     const out = runLint(dir);
-    assert.equal(out.code, 1, "refused");
-    assert.deepEqual(out.rehomes, [], "and never offered as a repair");
-    assert.match(out.findings.find((f) => f.sev === "ERROR" && /the-lamp/.test(f.file)).msg,
-      /the edge must name the tightest geometric container/);
+    assert.equal(out.code, 0, "not refused — a path makes no assertion that geometry can contradict");
+    assert.equal(out.findings.length, 0, "and nothing is reported about the filing at all");
+    const m = by(dir);
+    assert.deepEqual(m["t/the-lamp"]._origin, { x: 500, y: 500 }, "still framed on the house it is filed in");
+    assert.deepEqual(m["t/the-lamp"].at, { x: 9500, y: 9500 }, "so the digits still compose against that centre");
   });
 });
 
-// ── the parked mark (draft-costs-nothing, 2026-08-22) ────────────────────────
-// The law (the-town/the-parked, a clause of the-town/the-re-homing): "A mark
-// the door parked at the root has no author-chosen filing; the save re-homes
-// it by geometry, numbers re-framed, so the mark does not move." The ERROR arm
-// above is for a NESTED filing the author chose; a root parking is the draft
-// door's own act, so geometry is the only author's word there is.
-test("a ROOT-PARKED mark on someone's ground is a REHOME, never a refusal — the door parks; the save files", () => {
+// ── the parked mark, after the freeze ────────────────────────────────────────
+// the-town/the-parked said the save re-homed a root-parked mark "by geometry,
+// numbers re-framed, so the mark does not move." The freeze deleted the mover
+// (LOGOS/state-and-time.md § The freeze):
+//
+//   "The re-home pass is DELETED from the settlement save. The settlement writes
+//    a mark once; nothing moves it after."
+//
+// So a parked mark stays parked. It stands on the house's ground and is filed
+// beside it, and those two facts simply stop being the same question: the ground
+// is answered by the fold (WORLD/containment.json), the filing by the tree, and
+// neither is asked to agree with the other.
+test("a ROOT-PARKED mark on someone's ground stays where it was parked — the door parks, and nothing files it afterwards", () => {
   const HOUSE = { path: `${R}/the-house`, fm: mark("sovereignty", { x: 500, y: 500 }, { w: 100, h: 100 }) };
   const CUP = { path: `${R}/the-cup`, fm: mark("market", { x: 510, y: 495 }, { w: 1, h: 1 }) };
   withTree([THE_ROOT, HOUSE, CUP], (dir) => {
     const out = runLint(dir);
-    assert.equal(out.code, 3, "repair asked, crossing not refused");
-    assert.equal(out.findings.filter((f) => f.sev === "ERROR").length, 0, "zero errors — the whole-town refusal class is closed");
-    const fix = out.rehomes.find((r) => r.mark === "t/the-cup");
-    assert.ok(fix, "the parked cup is offered as a re-home");
-    assert.equal(fix.to, "t/the-house", "into its tightest geometric container");
-    assert.match(fix.msg, /the door parked this mark at the root/);
-    assert.match(fix.msg, /the-town\/the-parked/, "and the finding cites the planted clause");
+    assert.equal(out.code, 0, "clean — nothing is refused and nothing is asked for");
+    assert.equal(out.findings.length, 0, "no repair is offered, because there is no mover left to perform one");
+    // the ground still says exactly what it always said; only the paper stopped
+    // being obliged to say it too
+    const m = by(dir);
+    assert.equal(placementParent(m["t/the-cup"], Object.values(m)), "t/the-house",
+      "the cup stands on the house's ground — which is the fold's answer now, not the tree's");
+    assert.equal(m["t/the-cup"]._parentMarkId, "the-town/let-there-be-light",
+      "…and it is still filed where the door parked it");
   });
 });
 
@@ -397,52 +432,49 @@ test("a home on its own parcel BINDS to it: the fence frames the house and carri
   });
 });
 
-test("a TOP-LEVEL mark a new claim grows around is re-homed, not refused", () => {
-  // The case the tier comparison alone gets wrong, and the likeliest one to
-  // actually happen: the town's reach stands on open ground, filed under the
-  // root because nothing contained it. A resident then files a meadow around
-  // it. The reach's parent is the ROOT, which binds everything — so by tiers
-  // alone this reads "bound" and refuses, bouncing a resident whose claim is
-  // perfectly lawful. But the root's centre IS the world origin, so filing the
-  // reach inside the meadow does not shift it by a metre. Repair, not refusal.
+test("a TOP-LEVEL mark a new claim grows around is left alone — nobody's paper moves when somebody else builds", () => {
+  // The likeliest case there is, and the one that generated most of the friction
+  // the freeze was called to end: the town's reach stands on open ground, filed
+  // under the root because nothing contained it. A resident then files a meadow
+  // around it. Nothing about the reach has changed — its author did nothing, was
+  // not consulted, and was asleep — and yet the gate used to have an opinion
+  // about its directory, and the save used to act on that opinion.
+  //
+  // The founder's ruling ends the whole class (LOGOS/state-and-time.md § The
+  // freeze): "A mark's directory is its historical filing: it carries no claim,
+  // and it never moves again." A neighbour's lawful claim can no longer produce
+  // any finding at all against a mark that did not move.
   const REACH = { path: `${R}/the-reach`, fm: mark("constitution", { x: 1000, y: 1000 }, { w: 100, h: 20 }, { by: "the-town" }) };
   const MEADOW = { path: `${R}/the-meadow`, fm: mark("market", { x: 1000, y: 1000 }, { w: 400, h: 400 }) };
   withTree([THE_ROOT, REACH], (dir) => {
-    assert.equal(runLint(dir).code, 0, "on open ground with nothing around it, the filing is simply true");
+    assert.equal(runLint(dir).code, 0, "on open ground with nothing around it, clean");
   });
   withTree([THE_ROOT, REACH, MEADOW], (dir) => {
     const out = runLint(dir);
     assert.equal(out.errors, 0, "the resident's meadow is lawful and nobody is bounced for it");
-    assert.equal(out.code, 3);
-    assert.deepEqual(out.rehomes.map((r) => [r.mark, r.from, r.to]), [["the-town/the-reach", null, "t/the-meadow"]]);
-    // and the repair really is free: framed by the world before and after
-    assert.deepEqual(by(dir)["the-town/the-reach"]._origin, { x: 0, y: 0 });
+    assert.equal(out.code, 0, "…and the reach's author is not asked for anything either");
+    assert.equal(out.findings.length, 0, "the meadow arriving is not an event in the reach's life");
+    assert.deepEqual(by(dir)["the-town/the-reach"]._origin, { x: 0, y: 0 }, "and the reach is framed by the world, before and after");
   });
-  // …and a top-level mark the new container WOULD bind is a REHOME too, as of
-  // 2026-08-22 (this arm used to refuse: "the numbers genuinely change meaning,
-  // and somebody has to say so"). The law that superseded it is
-  // the-town/the-parked: "A mark the door parked at the root has no
-  // author-chosen filing; the save re-homes it by geometry, numbers re-framed,
-  // so the mark does not move." There is no author's filing to defend at the
-  // root, and the sweep's re-home pass rewrites the numbers under an exact
-  // round-trip check — the world position is preserved to the digit. The
-  // refusal arm survives ONLY for a NESTED filing the author chose (the
-  // yellow-in-yellow lying-edge test above).
+  // The second arm is the same fact for a mark the new container WOULD bind.
+  // This one used to refuse outright ("the numbers genuinely change meaning, and
+  // somebody has to say so"), then became a re-home under the-town/the-parked.
+  // It is now neither: nothing moves it, so nothing has to decide anything.
   withTree([
     THE_ROOT,
     { path: `${R}/the-cottage`, fm: mark("market", { x: 1000, y: 1000 }, { w: 20, h: 20 }) },
     { path: `${R}/the-district`, fm: mark("constitution", { x: 1000, y: 1000 }, { w: 400, h: 400 }, { by: "the-town" }) },
   ], (dir) => {
     const out = runLint(dir);
-    assert.equal(out.code, 3, "repair asked, not refused — the door parks; the save files");
-    assert.equal(out.findings.filter((f) => f.sev === "ERROR").length, 0);
-    assert.deepEqual(out.rehomes.map((r) => [r.mark, r.from, r.to]), [["t/the-cottage", null, "the-town/the-district"]]);
-    assert.match(out.rehomes[0].msg, /the-town\/the-parked/);
+    assert.equal(out.code, 0, "not refused, and not repaired — the settlement writes a mark once; nothing moves it after");
+    assert.equal(out.findings.length, 0);
+    assert.deepEqual(by(dir)["t/the-cottage"].at, { x: 1000, y: 1000 },
+      "and the cottage's world position is exactly what its author wrote — no re-framing ever happens to it");
   });
 });
 
 // ── the one refusal ──────────────────────────────────────────────────────────
-test("a predicate cannot outrank what it predicates — refused, never re-homed", () => {
+test("a predicate cannot outrank what it predicates — refused, and it is the gate's only word about a nesting now", () => {
   withTree([
     THE_ROOT,
     { path: `${R}/the-yard`, fm: mark("market", { x: 300, y: 300 }, { w: 50, h: 50 }) },
@@ -451,8 +483,7 @@ test("a predicate cannot outrank what it predicates — refused, never re-homed"
     } },
   ], (dir) => {
     const out = runLint(dir);
-    assert.equal(out.code, 1, "refused, not repaired");
-    assert.deepEqual(out.rehomes, []);
+    assert.equal(out.code, 1, "refused");
     const found = out.findings.find((f) => /a predicate cannot outrank what it predicates/.test(f.msg));
     assert.ok(found, `the refusal names itself:\n${out.findings.map((f) => f.msg).join("\n")}`);
     assert.equal(found.sev, "ERROR");
@@ -862,10 +893,13 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
   }
 });
 
-test("the live tree lints clean, with no re-home standing and no loader/law disagreement", () => {
-  const out = runLint(join(ROOT, "WORLD/marks"));
+test("the live tree lints clean, under the freeze, with no loader/law disagreement", () => {
+  // --freeze is passed explicitly because --marks-dir points the gate at a tree
+  // rather than at a repo, and the freeze manifest is a fact about THIS repo.
+  // Passing it is the point: the live tree is held to its own fossil boundary
+  // here, not merely to the schema.
+  const out = runLint(join(ROOT, "WORLD/marks"), join(ROOT, "WORLD/filing-freeze.json"));
   assert.equal(out.errors, 0, JSON.stringify(out.findings.filter((f) => f.sev === "ERROR"), null, 2));
-  assert.deepEqual(out.rehomes, []);
   assert.equal(out.code, 0);
   assert.ok(out.marks >= 600, `the real tree (${out.marks} marks)`);
 });

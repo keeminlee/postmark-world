@@ -129,7 +129,11 @@ test("CONSERVATIVE: nothing from the quarantined sketchbook half-applies", (t) =
   const out = settlementSweep({ repo, stakesPath, mainBranch: "main" });
   // its mark reaches neither main nor any of the sweep's other channels
   assert.equal(has("main", aPath), false, "the unfoldable sketchbook published nothing to main");
-  for (const channel of ["published", "left_drafted", "unpublished", "withdrawn", "rehomed"])
+  // `rehomed` was in this list until the freeze deleted the pass that filled it
+  // (2026-08-25). `dropped` takes its place rather than the list simply getting
+  // shorter: a channel that no longer exists is `?? []`-vacuous here, and an
+  // assertion that cannot fail is worse than one less channel checked.
+  for (const channel of ["published", "left_drafted", "unpublished", "withdrawn", "dropped"])
     assert.ok(!JSON.stringify(out[channel] ?? []).includes("alice-shed"),
       `alice-shed leaked into ${channel} — a quarantined sketchbook must not be half-read`);
 });

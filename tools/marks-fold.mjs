@@ -422,6 +422,103 @@ export function placementParent(claim, marks, { worldScaleM = 50000 } = {}) {
   return best ? best.id : null;
 }
 
+// ---------- the containment map (the freeze, 2026-08-25) ----------
+//
+// "The tree is the map" moved here when filing froze (LOGOS/state-and-time.md §
+// The freeze):
+//
+//   "'The tree is the map' moves to where derived views live: the fold emits the
+//    containment map beside `world-state.json` every settlement. The browsable
+//    truth is generated; the source files rest."
+//
+// So this is the answer to "what contains what", asked of the GROUND and not of
+// the directories. A mark's directory is now historical filing that claims
+// nothing; this map claims everything, and is thrown away and rebuilt at every
+// fold, which is what keeps it from rotting the way a stored path does.
+//
+// TWO DERIVATIONS, because there are two kinds of edge in this world and only one
+// of them is geographic:
+//
+//   sited / parcel     — GEOMETRY. `placementParent`: the deepest existing mark
+//                        that contains the claim, the same function the write
+//                        door places by. Nothing about the file's location is
+//                        consulted.
+//   predicated /       — PREDICATION. A predicate is its parent continued (the
+//   naming / class       continuation law, `the-town/the-continuation`); it has
+//                        no footprint to contain and no coordinates to compare,
+//                        so its edge is the one its author declared by nesting
+//                        it. That edge is authorship, never a claim about
+//                        ground, and the freeze does not touch it.
+//
+// `parent: null` belongs to the world root alone. Everything the ground puts
+// under nothing else is under the root, named — a chain that stops short of the
+// frame is a chain with a hole in it.
+// The world root, recognised in EITHER shape this file's functions are handed:
+// a loader record carries `slug`, a published `state.marks` row carries only
+// `id`. The delta path asks containment questions against published rows, so a
+// root test that only reads `slug` would silently answer "no root here" and hand
+// every candidate a null frame.
+const leafSlugOf = (m) => m?.slug ?? String(m?.id ?? "").split("/").pop();
+export const worldRootOf = (marks) => marks.find((m) => leafSlugOf(m) === WORLD_ROOT_SLUG) ?? null;
+
+// containmentParentOf — THE ONE CONTAINMENT QUESTION, asked of one mark.
+//
+// Everything that wants to know what holds a mark comes through here, so there
+// is one answer and not four that drift. Two derivations, because there are two
+// kinds of edge and only one of them is geographic (see § the containment map):
+// geometry for the kinds that occupy ground, the authored nesting for the kinds
+// that continue their parent.
+//
+// `null` means the world root itself. A mark that nothing tighter holds returns
+// the root's id, never null — a chain that stops short of the frame is a chain
+// with a hole in it.
+export function containmentParentOf(mark, marks, root = worldRootOf(marks)) {
+  const rootId = root?.id ?? null;
+  if (rootId != null && mark.id === rootId) return null;
+  const geometric = (mark.kind === "sited" || mark.kind === "parcel") && mark.at;
+  // No self-exclusion needed and none paid for: `placementParent` requires a
+  // parent to be STRICTLY larger than the claim, so a mark can never be its own
+  // container, and neither can a twin sharing its rect. Filtering the array per
+  // mark would be 960 copies of 960 elements for an answer that does not change.
+  const up = geometric ? placementParent(mark, marks) : (mark._parentMarkId ?? null);
+  return up ?? rootId;
+}
+
+/** Every mark's containment parent, in one pass. `{ parent: Map, rootId }`. */
+export function containmentParents(marks) {
+  const root = worldRootOf(marks);
+  const rootId = root?.id ?? null;
+  const parent = new Map();
+  for (const m of marks) {
+    if (m._error || m.id == null || parent.has(m.id)) continue; // a duplicate id is the lint's error; first wins, as in the loader
+    parent.set(m.id, containmentParentOf(m, marks, root));
+  }
+  return { parent, rootId };
+}
+
+export function containmentMap(marks) {
+  const { parent, rootId } = containmentParents(marks);
+  // The chain, walked with a guard: geometry cannot make a cycle (a container is
+  // strictly larger than what it holds) but a predication edge is authored, and
+  // an authored edge can say anything. A chain that closes on itself is reported
+  // as the prefix it walked rather than looped on forever.
+  const chainOf = (id) => {
+    const out = [];
+    const seen = new Set([id]);
+    for (let up = parent.get(id); up != null && !seen.has(up); up = parent.get(up)) {
+      seen.add(up);
+      out.push(up);
+    }
+    return out;
+  };
+  return {
+    law: "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
+    source: "LOGOS/state-and-time.md, the-town/the-frozen-filing",
+    count: parent.size,
+    marks: [...parent.keys()].sort().map((id) => ({ id, parent: parent.get(id), chain: chainOf(id) })),
+  };
+}
+
 // ---------- the fold ----------
 // The parcel-claim cap (Keemin's ruling, 2026-07-30): a HOUSEHOLD may CLAIM at
 // most 3 parcels. Forward law — holdings dated on/before the law date stand as
@@ -586,6 +683,18 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       mk._sovereign = held.some((pr) => contains(pr, rect(mk)));
     }
   }
+
+  // THE CONTAINMENT ANSWER, once per fold, for everything downstream that used
+  // to read a directory. Same function the emitted WORLD/containment.json uses,
+  // so the store and the artifact can never disagree about what holds what —
+  // "containment lives only in the derived fold" (the freeze, 2026-08-25).
+  const { parent: containedBy } = containmentParents([...byId.values()]);
+  // Stamped on the record so the standing walk reads it too. `markStanding` used
+  // to climb `_parentMarkId` — the directory — which is how a WELCOMED guest at
+  // an id-filed path lost the holder's word and folded as market. The walk needs
+  // one edge and this is it; the loader's directory edge stays untouched beside
+  // it, because it is still what frames the mark's digits.
+  for (const mk of byId.values()) mk._containedBy = containedBy.get(mk.id) ?? null;
 
   // containment edges (computed, never authored): sited-in-sited by geometry; predicated/naming by parent ref
   const children = new Map(); const parentOf = new Map();
@@ -988,7 +1097,33 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // mark inside a parcel comes back market — the one definition, importable
       // by all four consumers and true for exactly one of them. The edge is the
       // fact that makes the shared walk shared.
-      ...(mk._parentMarkId ? { placementParent: mk._parentMarkId } : {}),
+      //
+      // ── IT CARRIES THE GROUND'S ANSWER NOW, NOT THE TREE'S (2026-08-25) ─────
+      //
+      // This field published `mk._parentMarkId` — the DIRECTORY edge — under a
+      // name that says geometry. That was true only because the old lint refused
+      // any directory that was not the tightest geometric container. The freeze
+      // repealed that lint ("containment lives only in the derived fold"), so the
+      // directory became historical filing and this field became a lie the day
+      // the law landed.
+      //
+      // What it costs when it lies is the comment above, exactly: the walk stops
+      // early and standing comes back market. Own-ground sovereignty survives
+      // regardless — `_sovereign` is geometric and answers at hop 0 — but
+      // CONFERRAL does not. A resident welcomed onto a neighbour's ground is at
+      // home there only if the walk can climb to the holder's parcel and read
+      // the word, and with a fossil edge under an id-filed mark it cannot.
+      // Measured, both filings, before this change: the welcomed guest read
+      // `home` filed inside the parcel and `market` filed at its id.
+      //
+      // The answer VERBATIM, root included, with no special case. Absent only on
+      // the root itself, which is contained by nothing. Two reasons it is not
+      // "omit when the container is the root": that rule churned 61 rows on the
+      // live record for no reader's benefit (a mark filed under the root already
+      // published the root here), and it would leave this field and
+      // WORLD/containment.json giving different answers to one question, which
+      // is the exact shape of drift the freeze exists to end.
+      ...(containedBy.get(mk.id) ? { placementParent: containedBy.get(mk.id) } : {}),
       ...ledgerWeightField(mk.id),
       // `welcomed` across a household line — carried for renderers so a kept mark
       // can be shown as kept. Undefined for every mark nobody has spoken for, so
@@ -1174,6 +1309,12 @@ To read the fold without writing it at all: --no-write --json`);
     const outsiders = deriveOutsiders(marks, { rectInsideRing, polygonOf, overlapArea });
     writeFileSync(join(ROOT, "WORLD/region-outsiders.json"), JSON.stringify(outsidersJson(outsiders), null, 2) + "\n");
     writeFileSync(join(ROOT, "WORLD/region-outsiders.md"), outsidersMarkdown(outsiders));
+    // ── the containment map (the freeze, 2026-08-25) ────────────────────────
+    // "The fold emits the containment map beside world-state.json every
+    // settlement. The browsable truth is generated; the source files rest."
+    // Sorted by id so a settlement's diff shows what the GROUND did and never
+    // what the walk order happened to be.
+    writeFileSync(join(ROOT, "WORLD/containment.json"), JSON.stringify(containmentMap(marks), null, 2) + "\n");
     const ground = state.rivalries.filter(r => r.kind === "region");
     console.log(`fold: ${state.marks.length} marks · ${state.parcels.length} parcels · ${Object.keys(state.determined).length} determined · ${state.vague.length} vague · ${state.rivalries.length - ground.length} slot rivalries · ${ground.length} ground contests · ${state.returned.length} returned · ${state.errors.length} errors`);
   }
@@ -1278,15 +1419,22 @@ const sameRect = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y && a.w === b
  * `classifyMark` is handed everywhere else, and a view in a private shape would
  * be a second vocabulary for one fact.
  */
-function deltaView(mk, cred, rectsByCred) {
+function deltaView(mk, cred, rectsByCred, world = null) {
   const held = mk.kind === "sited" ? (rectsByCred.get(cred) ?? []) : [];
+  // The containment answer, asked of the WHOLE folded world plus this delta's
+  // own candidates — the same question `fold` asks, so a mark's standing does
+  // not depend on which of the two paths judged it. Published `placementParent`
+  // stopped meaning "the directory" on 2026-08-25 (see § the containment answer
+  // in fold); a view that still said the directory would be the one shape where
+  // the freeze had not landed, and `classifyMark` reads this field.
+  const contained = world ? containmentParentOf(mk, world) : (mk._parentMarkId ?? null);
   return {
     id: mk.id, kind: mk.kind, by: mk.by ?? mk.household, household: mk.household ?? mk.by,
     declared_household: cred, date: mk.date,
     at: mk.at, extent: mk.extent, parent: mk.parent, slot: mk.slot, value: mk.value,
     sovereign: mk.kind === "sited" ? held.some((pr) => contains(pr, rect(mk))) : false,
     body: mk.body,
-    ...(mk._parentMarkId ? { placementParent: mk._parentMarkId } : {}),
+    ...(contained ? { placementParent: contained } : {}),
   };
 }
 
@@ -1315,6 +1463,14 @@ export function admitDelta(candidates, base, { dials = DIALS } = {}) {
   const countByCred = new Map(base.parcelsByCred);
   const seen = new Set();
   const candidateIds = new Set(candidates.map((c) => c.id));
+  // The world a candidate's containment is asked against: everything main holds,
+  // plus this delta's own rows. Both halves are needed — a new shed inside a
+  // parcel published LAST crossing wants main's copy, and a new shed inside a
+  // parcel arriving in THIS sketchbook wants its sibling. A candidate that
+  // replaces a published mark appears once, as the candidate, so the stale copy
+  // cannot win the smallest-container race against its own replacement.
+  const replaced = new Set(candidates.filter((c) => c._replacing).map((c) => c.id));
+  const deltaWorld = [...[...base.byId.values()].filter((m) => !replaced.has(m.id)), ...candidates];
 
   for (const mk of candidates) {
     if (mk._error) { errors.push({ mark: mk.id, error: mk._error }); continue; }
@@ -1379,7 +1535,7 @@ export function admitDelta(candidates, base, { dials = DIALS } = {}) {
       continue;
     }
 
-    views.set(mk.id, deltaView(mk, cred, rectsByCred));
+    views.set(mk.id, deltaView(mk, cred, rectsByCred, deltaWorld));
   }
   return { views, errors };
 }

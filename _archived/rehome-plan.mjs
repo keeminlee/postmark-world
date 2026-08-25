@@ -1,4 +1,23 @@
 #!/usr/bin/env node
+// RETIRED 2026-08-25 — THE FREEZE. Do not run this.
+//
+// This tool moves mark directories to match geometric containment, with a
+// --write mode that performs the `git mv`s. The law it served was repealed on
+// 2026-08-25 (LOGOS/state-and-time.md § "The freeze — filing is static, and the
+// tree is a fossil"):
+//
+//   "Filing is frozen as of 2026-08-25. A mark's directory is its historical
+//    filing: it carries no claim, and it never moves again."
+//
+// Running --write against the record now would move directories the frozen
+// manifest holds in place, and every mark it touched would be refused by
+// mark-lint.mjs §6 gate A until it was put back. It is kept here as history —
+// the shape of the machinery the town used while the tree was the map — and it
+// lives under _archived/ so that reading it is easy and reaching for it is not.
+//
+// What answers its questions now: WORLD/containment.json, emitted by the fold at
+// every settlement. Nothing performs the moves it plans, by design.
+//
 // rehome-plan.mjs — move directories to match containment (the v2 law: tree = containment).
 //
 //   node tools/rehome-plan.mjs --against before.json          # print the plan

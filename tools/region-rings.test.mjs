@@ -299,28 +299,37 @@ test("THE CAUTION: every row's overlap flag matches the record's parcels, both w
 });
 
 
-// ── FALSIFIER (f): the declared-displacement exception, both ways ────────────
+// ── FALSIFIER (f): the declared-displacement exception is RETIRED ────────────
 //
-// THE RULING (Keemin, 2026-08-24): "the outsider list IS a declared act… the
-// town already holds the shape for exactly this in REHOMED_BY_DECLARED_ACT —
-// displaced by a declared act is not a containment lie."
+// THE RULING that created it (Keemin, 2026-08-24): "the outsider list IS a
+// declared act… displaced by a declared act is not a containment lie." It
+// forgave the marks the generated list named, against ONE clause of the gate —
+// mark-lint §6's tightest-container check.
 //
-// An exception to a gate is the most dangerous thing to add to a gate, so it is
-// held from both sides. EXACT: only the marks the generated list names are
-// forgiven, and the forgiveness covers only the tightest-container clause. SELF-
-// RETIRING: the list is recomputed from the rings every generation, so a
-// resident who moves their ground back inside their region drops off it, and the
-// exemption dies with the row — nobody has to remember to revoke it.
+// THE FREEZE REPEALED THAT CLAUSE OUTRIGHT the next morning
+// (LOGOS/state-and-time.md § The freeze, 2026-08-25):
 //
-// This runs the real lint, in a scratch copy of the record, three ways.
-test("THE EXCEPTION: listed marks are forgiven, unlisted ones are still refused, and it retires itself", () => {
+//   "The directory-matches-containment law is REPEALED — the tree's paths make
+//    no assertion, so nothing about them can become false."
+//
+// So the exception has no subject left. It was deleted rather than left standing,
+// because an exception with nothing to except is a hole waiting for one — and
+// this test is the exact inverse of the one it replaces. Where that one proved
+// the list was load-bearing at the gate, this proves it is not: the verdict is
+// identical with the list as generated, with every row taken away, and with the
+// file deleted outright. WORLD/region-outsiders.json is a heads-up for a resident
+// about to choose new coordinates, and nothing more.
+//
+// It can still fail, which is the point: re-wire any exemption to that list and
+// emptying it moves the verdict, and this goes red.
+test("THE EXCEPTION IS RETIRED: the outsider list no longer moves the gate, because the containment clause it excepted was repealed", () => {
   const scratch = mkdtempSync(join(tmpdir(), "pm-lint-exc-"));
   cpSync(join(ROOT, "WORLD"), join(scratch, "WORLD"), { recursive: true });
   cpSync(join(ROOT, "tools"), join(scratch, "tools"), { recursive: true });
   // The fidelity gate follows each rendering mark's `source:` out of WORLD/
   // into the repo root (LOGOS/*, WRITES.md, …), so the scratch must carry the
   // whole source closure or the AS-IS control fails on absent files before it
-  // ever reaches the exception under test (S46's 05:45Z refusal, 2026-08-25).
+  // ever reaches the claim under test (S46's 05:45Z refusal, 2026-08-25).
   // Computed from the marks rather than listed here, so a new law-doc source
   // never breaks this fixture again.
   {
@@ -343,10 +352,6 @@ test("THE EXCEPTION: listed marks are forgiven, unlisted ones are still refused,
   }
   const listPath = join(scratch, "WORLD/region-outsiders.json");
   const list = JSON.parse(readFileSync(listPath, "utf8"));
-  const runLintLines = () => {
-    const r = spawnSync(process.execPath, [join(scratch, "tools/mark-lint.mjs")], { encoding: "utf8" });
-    return (r.stdout + r.stderr).split(String.fromCharCode(10)).map((l) => l.trim());
-  };
   const runLint = () => {
     const r = spawnSync(process.execPath, [join(scratch, "tools/mark-lint.mjs")], { encoding: "utf8" });
     const out = r.stdout + r.stderr;
@@ -354,46 +359,30 @@ test("THE EXCEPTION: listed marks are forgiven, unlisted ones are still refused,
     // reported something. A fully clean record answers {0,0} — first seen
     // 2026-08-25, when the fixture gained the fidelity-source closure and the
     // as-is control stopped carrying any baseline error.
-    if (/CLEAN — every mark is well-formed/.test(out)) return { errors: 0, rehomes: 0 };
-    const m = /(\d+) error\(s\), (\d+) re-home\(s\)/.exec(out);
+    if (/CLEAN — every mark is well-formed/.test(out)) return { errors: 0, warnings: 0 };
+    const m = /(\d+) error\(s\), (\d+) warning\(s\)/.exec(out);
     assert.ok(m, `the lint must report a count or CLEAN (got: ${out.slice(-300)})`);
-    return { errors: Number(m[1]), rehomes: Number(m[2]) };
+    return { errors: Number(m[1]), warnings: Number(m[2]) };
   };
 
-  // 1 — as generated: the list forgives, and the gate is back to its own
-  //     pre-existing errors with nothing pending.
+  // 1 — as generated. The control, and the thing the other two are compared to.
   const asIs = runLint();
-  // NO *DISPLACED* MARK STANDS AS A PENDING RE-HOME. Pass 2 asserted the tree
-  // carried zero re-homes at all, which was true then and is the wrong question
-  // now: pass 3's bigger rings legitimately became the tightest container for
-  // two marks the draft door had parked at the ROOT with no filing at all
-  // (the-town/the-parked — "the save files it by geometry, numbers re-framed, so
-  // the mark does not move"). Those are the gate giving an unfiled mark a home,
-  // which is a good outcome of the rings growing, and nothing to do with
-  // displacement. What must stay true is the founder's ruling: a resident whose
-  // ground fell outside is told, not re-filed.
-  const parked = runLintLines().filter((l) => l.startsWith("[REHOME]"));
-  const displacedRehomed = parked.filter((l) => list.rows.some((r) => l.includes(r.mark)));
-  assert.deepEqual(displacedRehomed, [], "a displaced mark must not stand as a pending re-home — the founder's ruling is that the resident chooses, not the sweep");
+  assert.ok(list.rows.length > 0,
+    "the list must actually name somebody, or steps 2 and 3 take nothing away and prove nothing");
 
-  // 2 — take ONE row away and the gate refuses that mark again. This is the
-  //     whole exactness claim: the forgiveness comes from the list, not from
-  //     something softer that happens to be true of every outsider.
-  const victim = list.rows.find((r) => r.mark.startsWith("sable/")) ?? list.rows[0];
-  const without = { ...list, rows: list.rows.filter((r) => r.mark !== victim.mark) };
-  writeFileSync(listPath, JSON.stringify(without, null, 2));
-  const dropped = runLint();
-  assert.ok(dropped.errors + dropped.rehomes > asIs.errors + asIs.rehomes,
-    `dropping ${victim.mark} from the list must bring the gate back down on it — an exception that survives its own receipt is not an exception, it is a hole`);
+  // 2 — take EVERY row away. Under the old exception this brought the gate back
+  //     down on each of them by name. It now changes nothing whatsoever: the
+  //     clause that consulted this list does not exist.
+  writeFileSync(listPath, JSON.stringify({ ...list, rows: [] }, null, 2));
+  assert.deepEqual(runLint(), asIs,
+    `emptying the outsider list must not move the gate — "the tree's paths make no assertion, so nothing about them can become false" (${list.rows.length} row(s) removed)`);
 
-  // 3 — SELF-RETIRING, stated as the thing that actually happens: a mark that
-  //     has moved home is not written into the next list, and with the row gone
-  //     the exemption is gone. Step 2 IS that mechanism, exercised — so this
-  //     pins the other half: the exemption is keyed to the row and to nothing
-  //     else, so it cannot outlive it.
-  writeFileSync(listPath, JSON.stringify(list, null, 2));
-  const restored = runLint();
-  assert.deepEqual(restored, asIs, "restoring the row restores the exemption exactly — the row is the whole grant");
+  // 3 — delete the file outright. The gate no longer READS it, which is a
+  //     stronger claim than "the rows do not matter", and the only one that
+  //     rules out a softer dependency hiding behind an empty array.
+  rmSync(listPath, { force: true });
+  assert.deepEqual(runLint(), asIs,
+    "and with the file gone entirely the verdict is still the same — a displaced mark is a heads-up for its author, never a question for the gate");
 
   rmSync(scratch, { recursive: true, force: true });
 });
