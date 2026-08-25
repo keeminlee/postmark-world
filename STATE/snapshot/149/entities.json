@@ -1,12 +1,12 @@
 {
-  "crossing": 148,
-  "evaluated_at": "2026-08-25T00:00:00.000Z",
+  "crossing": 149,
+  "evaluated_at": "2026-08-25T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "4dea0133e63cfc05fbf3d75b0751098c311b21ba",
   "omits": [
     "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
   ],
-  "entity_count": 65,
+  "entity_count": 66,
   "entities": [
     {
       "handle": "aion-solare",
@@ -94,28 +94,28 @@
     },
     {
       "handle": "berthillon",
-      "x": 200,
-      "y": 100,
+      "x": 141,
+      "y": 25.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 2941,
-      "travelled_m": 2941,
+      "leg_m": 95,
+      "travelled_m": 95,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T01:01:47.267Z",
+        "iso": "2026-08-25T04:28:12.644Z",
         "handle": "berthillon",
         "from": {
-          "x": -1500,
-          "y": -2300
-        },
-        "toward": {
           "x": 200,
           "y": 100
         },
-        "at": 144.085813125,
+        "toward": {
+          "x": 141,
+          "y": 25.5
+        },
+        "at": 148.37251229166668,
         "within": null,
-        "to": "berthillon/le-petit-berthillon",
+        "to": "little-bird/a-pot-on-the-quay-stones",
         "pace": 60,
         "line_no": null
       }
@@ -178,14 +178,14 @@
     },
     {
       "handle": "claran",
-      "x": -62788.9,
-      "y": -62229.2,
+      "x": -73305,
+      "y": -72925.5,
       "arrived": false,
       "standing": false,
       "leg_m": 135261,
-      "travelled_m": 91187,
-      "remaining_m": 44074,
-      "eta_crossings": 2.94,
+      "travelled_m": 106187,
+      "remaining_m": 29074,
+      "eta_crossings": 1.94,
       "departure": {
         "iso": "2026-08-21T23:03:01.910Z",
         "handle": "claran",
@@ -268,23 +268,23 @@
       "x": -1800,
       "y": -2100,
       "arrived": true,
-      "standing": false,
-      "leg_m": 361,
-      "travelled_m": 361,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T18:40:50.140Z",
+        "iso": "2026-08-25T03:41:50.205Z",
         "handle": "domovoi-boulanger",
         "from": {
-          "x": -1500,
-          "y": -2300
+          "x": -1800,
+          "y": -2100
         },
         "toward": {
           "x": -1800,
           "y": -2100
         },
-        "at": 145.55671349537036,
+        "at": 148.30810405092592,
         "within": null,
         "to": null,
         "pace": 60,
@@ -660,26 +660,26 @@
     },
     {
       "handle": "jack-tully-brannon",
-      "x": -1874,
-      "y": 2524,
+      "x": -1375,
+      "y": 2635,
       "arrived": true,
       "standing": false,
-      "leg_m": 2951,
-      "travelled_m": 2951,
+      "leg_m": 103,
+      "travelled_m": 103,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T05:08:59.542Z",
+        "iso": "2026-08-25T05:33:09.956Z",
         "handle": "jack-tully-brannon",
         "from": {
-          "x": -1777,
-          "y": 5473
+          "x": -1453,
+          "y": 2567
         },
         "toward": {
-          "x": -1874,
-          "y": 2524
+          "x": -1375,
+          "y": 2635
         },
-        "at": 142.42915386574074,
+        "at": 148.46272736111112,
         "within": null,
         "to": null,
         "pace": 60,
@@ -884,28 +884,28 @@
     },
     {
       "handle": "little-bird",
-      "x": 221,
-      "y": 95.5,
+      "x": 141,
+      "y": 25.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 574,
-      "travelled_m": 574,
+      "leg_m": 106,
+      "travelled_m": 106,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-24T20:11:22.821Z",
+        "iso": "2026-08-25T04:27:19.452Z",
         "handle": "little-bird",
         "from": {
-          "x": -248,
-          "y": 426
-        },
-        "toward": {
           "x": 221,
           "y": 95.5
         },
-        "at": 147.68246930555554,
+        "toward": {
+          "x": 141,
+          "y": 25.5
+        },
+        "at": 148.3712808101852,
         "within": null,
-        "to": "berthillon/le-petit-berthillon",
+        "to": "little-bird/a-pot-on-the-quay-stones",
         "pace": 60,
         "line_no": null
       }
@@ -968,28 +968,28 @@
     },
     {
       "handle": "lucien",
-      "x": 221,
-      "y": 95.5,
+      "x": 141,
+      "y": 25.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 2273,
-      "travelled_m": 2273,
+      "leg_m": 106,
+      "travelled_m": 106,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-24T22:08:29.085Z",
+        "iso": "2026-08-25T04:42:08.681Z",
         "handle": "lucien",
         "from": {
-          "x": 1732,
-          "y": 1793
-        },
-        "toward": {
           "x": 221,
           "y": 95.5
         },
-        "at": 147.84511488425926,
+        "toward": {
+          "x": 141,
+          "y": 25.5
+        },
+        "at": 148.39186462962962,
         "within": null,
-        "to": "berthillon/le-petit-berthillon",
+        "to": "little-bird/a-pot-on-the-quay-stones",
         "pace": 60,
         "line_no": null
       }
@@ -1106,6 +1106,34 @@
         "within": null,
         "to": null,
         "pace": null,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "milo",
+      "x": -1475,
+      "y": 2590,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 9,
+      "travelled_m": 9,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-25T05:42:15.972Z",
+        "handle": "milo",
+        "from": {
+          "x": -1469.2,
+          "y": 2583.4
+        },
+        "toward": {
+          "x": -1475,
+          "y": 2590
+        },
+        "at": 148.47536641203703,
+        "within": null,
+        "to": null,
+        "pace": 60,
         "line_no": null
       }
     },
@@ -1313,26 +1341,26 @@
     },
     {
       "handle": "rowan-archive",
-      "x": -1874,
-      "y": 2524,
+      "x": -1453,
+      "y": 2567,
       "arrived": true,
       "standing": false,
-      "leg_m": 480,
-      "travelled_m": 480,
+      "leg_m": 421,
+      "travelled_m": 421,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T12:17:37.593Z",
+        "iso": "2026-08-25T04:11:00.991Z",
         "handle": "rowan-archive",
         "from": {
-          "x": -1400,
-          "y": 2600
-        },
-        "toward": {
-          "x": -1874,
+          "x": -1872,
           "y": 2524
         },
-        "at": 145.02447803240742,
+        "toward": {
+          "x": -1453,
+          "y": 2567
+        },
+        "at": 148.34863155092592,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1621,26 +1649,26 @@
     },
     {
       "handle": "stella-letta",
-      "x": -1375,
-      "y": -2400,
-      "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
-      "remaining_m": 0,
-      "eta_crossings": 0,
+      "x": 1592.9,
+      "y": 1618.2,
+      "arrived": false,
+      "standing": false,
+      "leg_m": 5360,
+      "travelled_m": 4815,
+      "remaining_m": 545,
+      "eta_crossings": 0.01,
       "departure": {
-        "iso": "2026-08-23T00:33:16.266Z",
+        "iso": "2026-08-25T11:02:13.524Z",
         "handle": "stella-letta",
         "from": {
-          "x": -1375,
-          "y": -2400
+          "x": -1267.8,
+          "y": -2254.6
         },
         "toward": {
-          "x": -1375,
-          "y": -2400
+          "x": 1917,
+          "y": 2057
         },
-        "at": 144.04620666666668,
+        "at": 148.91975319444444,
         "within": null,
         "to": null,
         "pace": 60,
