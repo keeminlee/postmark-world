@@ -22,7 +22,7 @@ import {
 } from "../spectator/viewer.mjs";
 import { assembleWorld } from "./world-build.mjs";
 import { investigate } from "./world-verbs.mjs";
-import { isEntity, occupancyAt, parseThresholdLedger, withinOf } from "./thresholds.mjs";
+import { isEntity, occupancyAt, parseEnterExitLedger, withinOf } from "./enter-exit.mjs";
 import { fractionalCrossing } from "./walk.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -33,14 +33,14 @@ const world = assembleWorld({
   skeleton: JSON.parse(read("WORLD/skeleton.json")),
 });
 const byId = new Map(world.marks.map((m) => [m.id, m]));
-const LEDGER = read("WORLD/threshold-ledger.md");
-const REAL_ACTS = parseThresholdLedger(LEDGER).acts;
+const LEDGER = read("WORLD/enter-exit-ledger.md");
+const REAL_ACTS = parseEnterExitLedger(LEDGER).acts;
 // THE FIXTURE IS SYNTHETIC ON PURPOSE (state-durable-facts): the live ledger
 // moves with every crossing, so a test pinned to who happens to be inside
 // TODAY fails the day they step out. The MARKS are the durable half — the
 // Town Centre exists by constitution — so the crossing is synthesized and the
 // room is real.
-const FIXTURE_ACTS = parseThresholdLedger(
+const FIXTURE_ACTS = parseEnterExitLedger(
   `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at 138.0000 · word neutral\n`).acts;
 const FIXTURE_AT = 999;
 
@@ -195,7 +195,7 @@ test("bodies come from the ENTITY children and nothing else", () => {
 });
 
 test("PRESENCE IS OCCUPANCY-SCOPED — someone in another room cannot appear in this one", () => {
-  const acts = parseThresholdLedger(
+  const acts = parseEnterExitLedger(
     `- 2026-08-20T01:00:00.000Z · kilean · enters the-town/the-town-centre · at 138.0000 · word neutral\n`
     + `- 2026-08-20T01:01:00.000Z · postmaster · enters the-town/the-post-office · at 138.0010 · word welcomed\n`).acts;
   const occupancy = occupancyAt(acts, 999);
@@ -222,7 +222,7 @@ test("the room is the ENTERED mark, never the geometric one you are standing on"
 });
 
 test("one resident being in a room does not put another resident in it", () => {
-  const acts = parseThresholdLedger(
+  const acts = parseEnterExitLedger(
     `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at 138.0000 · word neutral\n`).acts;
   const at = 999;
   assert.equal(standpointOccupancy({ acts, at, handle: "wright" }).insideOf, "the-town/the-town-centre");
@@ -232,7 +232,7 @@ test("one resident being in a room does not put another resident in it", () => {
 });
 
 test("FALSIFIER: an exit appended to the ledger closes the interior", () => {
-  const exited = parseThresholdLedger(
+  const exited = parseEnterExitLedger(
     `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at 138.0000 · word neutral\n`
     + `- 2026-08-20T02:00:00.000Z · wright · exits the-town/the-town-centre · at 138.1300\n`).acts;
   assert.equal(realInterior({ acts: exited }), null, "no room, so nothing to draw");

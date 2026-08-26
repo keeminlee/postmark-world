@@ -100,17 +100,17 @@ test("conservation over the whole fixture: Σ stakes === the apex, with receipts
 // reason — and this one is measuring a NON-effect, which is exactly the shape
 // that rots into vacuous green.
 
-import { occupancyAt, parseThresholdLedger, formatCrossing, isMark, containsEdges } from "./thresholds.mjs";
+import { occupancyAt, parseEnterExitLedger, formatEnterExit, isMark, containsEdges } from "./enter-exit.mjs";
 import { attachOccupancy } from "./world-verbs.mjs";
 
 const totalsOf = (state) => Object.fromEntries(state.marks.map((m) => [m.id, m.weight ?? 0]));
-const crossings = (lines) => parseThresholdLedger(lines.join("\n")).acts;
+const crossings = (lines) => parseEnterExitLedger(lines.join("\n")).acts;
 
 // a walker boards the shed and a second one boards the stranger's district
 const BOARDED = () => occupancyAt(crossings([
-  formatCrossing({ handle: "rider", act: "enters", mark: "stranger/the-district", at: 1, word: "neutral" }),
-  formatCrossing({ handle: "rider", act: "enters", mark: "rider/my-bicycle", at: 1, word: "welcomed" }),
-  formatCrossing({ handle: "stranger", act: "enters", mark: "stranger/the-district", at: 1, word: "welcomed" }),
+  formatEnterExit({ handle: "rider", act: "enters", mark: "stranger/the-district", at: 1, word: "neutral" }),
+  formatEnterExit({ handle: "rider", act: "enters", mark: "rider/my-bicycle", at: 1, word: "welcomed" }),
+  formatEnterExit({ handle: "stranger", act: "enters", mark: "stranger/the-district", at: 1, word: "welcomed" }),
 ]), 1);
 
 for (const mode of ["legacy", "flow"]) {

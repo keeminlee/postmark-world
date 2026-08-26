@@ -1,32 +1,26 @@
-# Enter/exit ledger — the passages
+# Enter/exit ledger — the frozen era
 
-DERIVED, and regenerated whole every time. Nothing appends to this file. It is
-rebuilt from the frozen era (`WORLD/enter-exit-ledger-frozen.md`, the passages
-made when each act took its own commit) plus the world journal's enter/exit
-rows, which carry their lines verbatim. Delete it and it comes back identical.
+FROZEN 2026-08-24T19:39:13.114Z, and never appended to again.
 
-One line per PASSAGE; occupancy is a pure function of these lines, so no edge is
-ever written here and no departure is (that is the walk ledger's, beside this
-one, in the same spine). Walking is not entering: a walk never appears here, and
-a passage never moves anyone.
+Every passage below was written when each act spent one git commit of its own
+on main. That pen was retired at the instant above, when enter/exit moved into
+the single log and began settling at the save. This file is the record of the
+era that closed, kept exactly as it was written — the same honour
+`WORLD/walk-ledger.md` was given on 2026-08-10 when movement moved into the
+store.
 
-Grammar: `- <iso> · <handle> · enters <mark-id> · ferry <n> · word <welcomed|neutral|opposed>`
-         `- <iso> · <handle> · exits <mark-id> · ferry <n>`
+It is now an INPUT, not an output. `WORLD/enter-exit-ledger.md` is derived,
+regenerated whole every time, from these lines plus the world journal's rows;
+delete the derived file and it comes back identical, because this one does not
+move. That is the whole reason it is frozen: an archive that also grows cannot
+be the fixed point a derivation stands on.
 
-`ferry` is the FERRY's fractional crossing — the town clock's unit, the number
-the ferry counts, and nothing to do with the passage this row records. Rows
-written before 2026-08-26 say `at <n>` instead and are read unchanged: history
-is not editable.
+Grammar, as this era wrote it: `- <iso> · <handle> · enters <mark-id> · at <n> · word <welcomed|neutral|opposed>`
+                               `- <iso> · <handle> · exits <mark-id> · at <n>`
 
-The `word` is the MARK's side of the handshake — its automatic response from
-its standing entry law, stamped as it stood at the passage (the walk ledger's
-`pace` precedent) so amending a law never re-derives a passage already made.
-The walker's side is the row's authorship. `opposed` on an entity child is a
-refusal at the door: the act stands in the record, the occupancy does not.
-
-`WORLD/threshold-ledger.md` carries these same bytes for one grace window, so
-a viewer bundle blessed before the rename still reads a true record. It is the
-retired name and it is going.
+The `at <n>` is the FERRY's fractional crossing. Rows written after 2026-08-26
+say `ferry <n>` instead, which is the same number under a name that does not
+collide with the act beside it. Both are read; neither is rewritten.
 
 - 2026-08-20T01:17:55.978Z · wright · enters the-town/the-town-centre · at 138.1082 · word neutral
 - 2026-08-20T12:03:20.579Z · wren-winter · enters wren-winter/wren-winter · at 139.0046 · word neutral

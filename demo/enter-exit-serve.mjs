@@ -14,7 +14,7 @@
 //   · the field of view, the telling, the containment spine — the viewer imports
 //     the engine unbundled and computes them client-side, exactly as the island
 //   · the walk: tools/walk.mjs's own grammar and derived position
-//   · THE CROSSINGS: tools/thresholds.mjs adjudicates every entry against the
+//   · THE LEDGER_FILE: tools/enter-exit.mjs adjudicates every entry against the
 //     mark's own entry law, appends the acts, and derives occupancy from them.
 //     The handshake, the refusal, the chain, the scoped read — all real.
 //
@@ -38,8 +38,8 @@ import { fileURLToPath } from "node:url";
 
 import { parseWalkLedger, publicWalkers, fractionalCrossing, formatDeparture, positionAt, currentDeparture, extentForArrival } from "../tools/walk.mjs";
 import { publicResidents } from "../tools/where-is.mjs";
-import { enter, exit, enterPrompt, exitPrompt, enteredScope, crossingPlan } from "../tools/world-verbs.mjs";
-import { parseThresholdLedger, occupancyAt, occupantsOf, containsEdges, LEDGER_HEADER, termsAt, stampAt } from "../tools/thresholds.mjs";
+import { enter, exit, enterPrompt, exitPrompt, enteredScope, enterExitPlan } from "../tools/world-verbs.mjs";
+import { parseEnterExitLedger, occupancyAt, occupantsOf, containsEdges, LEDGER_HEADER, termsAt, stampAt } from "../tools/enter-exit.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -75,7 +75,7 @@ const MIME = { ".mjs": "text/javascript; charset=utf-8", ".js": "text/javascript
 
 // ── demo/state — the only thing this server writes ──────────────────────────
 const WALKS = join(STATE, "walk-ledger.md");
-const CROSSINGS = join(STATE, "threshold-ledger.md");
+const LEDGER_FILE = join(STATE, "enter-exit-ledger.md");
 
 function ensureState() {
   if (!existsSync(STATE)) mkdirSync(STATE, { recursive: true });
@@ -86,13 +86,13 @@ function ensureState() {
     const extra = existsSync(seeded) ? readFileSync(seeded, "utf8").split("\n").filter((l) => l.startsWith("- ")) : [];
     writeFileSync(WALKS, `${readFileSync(join(ROOT, "WORLD/walk-ledger.md"), "utf8").replace(/\n*$/, "\n")}${extra.join("\n")}\n`, "utf8");
   }
-  if (!existsSync(CROSSINGS)) {
-    const seed = join(HERE, "seed", "threshold-ledger.md");
-    writeFileSync(CROSSINGS, existsSync(seed) ? readFileSync(seed, "utf8") : LEDGER_HEADER, "utf8");
+  if (!existsSync(LEDGER_FILE)) {
+    const seed = join(HERE, "seed", "enter-exit-ledger.md");
+    writeFileSync(LEDGER_FILE, existsSync(seed) ? readFileSync(seed, "utf8") : LEDGER_HEADER, "utf8");
   }
 }
 const readWalks = () => parseWalkLedger(readFileSync(WALKS, "utf8"));
-const readCrossings = () => parseThresholdLedger(readFileSync(CROSSINGS, "utf8"));
+const readActs = () => parseEnterExitLedger(readFileSync(LEDGER_FILE, "utf8"));
 const appendLines = (file, lines) => {
   const prev = readFileSync(file, "utf8");
   writeFileSync(file, `${prev}${prev.endsWith("\n") ? "" : "\n"}${lines.join("\n")}\n`, "utf8");
@@ -188,10 +188,10 @@ async function apex(body) {
 
   const world = loadWorld();
   // the clock the RECORD will hold, not the one the process happens to read —
-  // the writer and the reader must agree to the last decimal (thresholds.mjs
+  // the writer and the reader must agree to the last decimal (enter-exit.mjs
   // § stampAt, and the QA bug that earned it)
   const at = stampAt(fractionalCrossing());
-  const occupancy = occupancyAt(readCrossings().acts, at);
+  const occupancy = occupancyAt(readActs().acts, at);
   const here = standpointOf(handle, at);
 
   if (action === "walk") {
@@ -239,13 +239,13 @@ async function apex(body) {
         targetExtent: extentForArrival("centre", target?.extent), targetMarkId: markId, pace: DEMO_PACE_KM,
       })]);
     }
-    if (answer.rows.length) appendLines(CROSSINGS, answer.rows);
-    const after = occupancyAt(readCrossings().acts, at);
+    if (answer.rows.length) appendLines(LEDGER_FILE, answer.rows);
+    const after = occupancyAt(readActs().acts, at);
     return {
       did: "enter",
-      terms: answer.crossings.map((c) => c.terms).filter(Boolean),
+      terms: answer.adjudications.map((c) => c.terms).filter(Boolean),
       result: {
-        target: markId, chain: answer.chain, crossings: answer.crossings,
+        target: markId, chain: answer.chain, adjudications: answer.adjudications,
         entered: answer.entered, stranded: answer.stranded,
         refused: answer.refused ?? null, awaiting: answer.awaiting ?? null,
         walked: answer.walk ?? null,
@@ -260,8 +260,8 @@ async function apex(body) {
     if (!markId) return { error: "bounce", code: 422, defect: "you are not within anything", hint: "there is nothing to step out of" };
     const answer = exit(markId, world, { occupancy, handle, at });
     if (answer.error) return { error: "bounce", code: 422, defect: answer.error, hint: "exit names a mark you are within" };
-    appendLines(CROSSINGS, answer.rows);
-    const after = occupancyAt(readCrossings().acts, at);
+    appendLines(LEDGER_FILE, answer.rows);
+    const after = occupancyAt(readActs().acts, at);
     return {
       did: "exit",
       result: { target: markId, left: answer.left, within: after.get(handle) ?? [], into: answer.into,
@@ -304,12 +304,12 @@ createServer(async (req, res) => {
     // THE SITE'S PIN, SIMULATED. Set STAGED_LEDGER to a frozen copy and this route
     // serves that instead of live state — which is precisely what the built site
     // does, and the condition the office-first order exists to survive.
-    if (p === "/WORLD/threshold-ledger.md") return send(res, 200,
-      readFileSync(process.env.STAGED_LEDGER || CROSSINGS, "utf8"), MIME[".md"]);
+    if (p === "/WORLD/enter-exit-ledger.md") return send(res, 200,
+      readFileSync(process.env.STAGED_LEDGER || LEDGER_FILE, "utf8"), MIME[".md"]);
     // the office's own live ledger door, mirrored — the viewer asks this FIRST now,
     // and the demo must exercise the same path the site will (see server.mjs).
-    if (p === "/api/world/threshold-ledger")
-      return json(res, 200, { ledger: readFileSync(CROSSINGS, "utf8"), source: "the demo rig's own state" });
+    if (p === "/api/world/enter-exit-ledger")
+      return json(res, 200, { ledger: readFileSync(LEDGER_FILE, "utf8"), source: "the demo rig's own state" });
 
     // ── the identity door · THE STUB ────────────────────────────────────────
     if (p === "/api/ops/whoami")
@@ -351,7 +351,7 @@ createServer(async (req, res) => {
       const handle = url.searchParams.get("handle") ?? "";
       const at = stampAt(fractionalCrossing());
       const here = handle ? standpointOf(handle, at) : { x: 0, y: 0, name: "a spectator" };
-      const within = occupancyAt(readCrossings().acts, at).get(handle) ?? [];
+      const within = occupancyAt(readActs().acts, at).get(handle) ?? [];
       // A spectator is a camera and is granted nothing — the rail hides itself
       // for them rather than showing an empty section.
       const actions = handle ? [
@@ -382,7 +382,7 @@ createServer(async (req, res) => {
     // ── occupancy: the derived read the viewer's cut is drawn from ──────────
     if (p === "/api/world/occupancy" || p === "/api/occupancy") {
       const at = url.searchParams.get("at") === null ? fractionalCrossing() : Number(url.searchParams.get("at"));
-      const { acts, unrecognized } = readCrossings();
+      const { acts, unrecognized } = readActs();
       const occupancy = occupancyAt(acts, at);
       return json(res, 200, {
         at,
@@ -422,7 +422,7 @@ createServer(async (req, res) => {
     json(res, 500, { error: String(e?.message ?? e), stack: String(e?.stack ?? "").split("\n").slice(0, 4) });
   }
 }).listen(PORT, () => {
-  const { acts } = readCrossings();
+  const { acts } = readActs();
   console.log(`enter/exit DEMO  →  http://localhost:${PORT}`);
   console.log(`  record    : ${join(ROOT, "WORLD")}  (real, this worktree's fold)`);
   console.log(`  demo state: ${STATE}  (${readWalks().departures.length} departures · ${acts.length} crossings) — delete it, or GET /api/demo/reset, to start over`);

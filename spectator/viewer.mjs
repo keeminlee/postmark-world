@@ -28,7 +28,7 @@ import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../t
 import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT, WALK_KM_PER_CROSSING } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
-import { parseThresholdLedger, occupancyAt, occupantsOf, withinOf, isMark, isEntity } from "../tools/thresholds.mjs";
+import { parseEnterExitLedger, occupancyAt, occupantsOf, withinOf, isMark, isEntity } from "../tools/enter-exit.mjs";
 // WHERE A RECORD MAY BE READ FROM — one decision, in one place, with the
 // guardrail it answers to quoted in its header ("tags only, never main tip").
 // There is deliberately no constant here naming the world's main tip: this file
@@ -771,7 +771,7 @@ export function exitButtonLabel(entered = [], nameOf = (id) => id) {
   return next ? `↤ step outside → ${nameOf(next)}` : "↤ step outside";
 }
 
-// The chip, on the standpoint whose crossings these are. Absent rather than
+// The chip, on the standpoint whose enter-exit acts these are. Absent rather than
 // empty: a spectator has crossed nothing and neither has a resident who never
 // entered anywhere, and "entered: —" under every read would be a claim the
 // record never made. The chain is outermost→innermost because occupancy of a
@@ -782,7 +782,7 @@ export function exitButtonLabel(entered = [], nameOf = (id) => id) {
 // joined with "in" and rendered "The Quay Reach in The Post Office", which says
 // the reach is inside the office — the containment backwards, in the one readout
 // whose whole job is to say what contains what. `›` reads as "and then into",
-// which is what a chain of crossings is.
+// which is what a chain of entries is.
 export function occupancyChipHTML({ entered = [], alongside = [], nameOf = deslugMarkId } = {}) {
   if (!entered.length) return "";
   const chain = entered.map((id) =>
@@ -791,7 +791,7 @@ export function occupancyChipHTML({ entered = [], alongside = [], nameOf = deslu
   const with_ = alongside.length
     ? `<span class="wv-entered-with">with ${esc(alongside.join(", "))}</span>`
     : `<span class="wv-entered-with">alone in here</span>`;
-  return `<div class="wv-entered" title="derived from the threshold ledger's crossings — not from where you are standing">`
+  return `<div class="wv-entered" title="derived from the enter-exit ledger's acts — not from where you are standing">`
     + `<span class="wv-entered-lbl">entered</span>${chain}${with_}</div>`;
 }
 
@@ -801,12 +801,14 @@ export function occupancyChipHTML({ entered = [], alongside = [], nameOf = deslu
 // same reason the walk ledger's tally sits down there (Keemin, 2026-08-04).
 export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized = 0, at = null } = {}) {
   const rooms = [...manifest.entries()].sort(([a], [b]) => a.localeCompare(b));
-  const clock = at === null ? "" : ` · at ${Number(at).toFixed(4)}`;
-  const head = `<span class="wv-crossing-lbl">threshold ledger</span>`
-    + `<span>${acts} crossing${acts === 1 ? "" : "s"}${unrecognized ? ` · ${unrecognized} unrecognized` : ""}${clock}</span>`;
+  // `ferry`, not `at`: the number is the FERRY's fractional crossing sitting in
+  // a readout about walking through doors, and the row grammar names it now.
+  const clock = at === null ? "" : ` · ferry ${Number(at).toFixed(4)}`;
+  const head = `<span class="wv-enterexit-lbl">enter-exit ledger</span>`
+    + `<span>${acts} act${acts === 1 ? "" : "s"}${unrecognized ? ` · ${unrecognized} unrecognized` : ""}${clock}</span>`;
   if (!rooms.length) return head + `<span class="wv-quiet">nobody is inside anything</span>`;
   return head + rooms.map(([mark, handles]) =>
-    `<span class="wv-crossing-room"><b>${esc(deslugMarkId(mark))}</b> ${esc(handles.join(", "))}</span>`).join("");
+    `<span class="wv-enterexit-room"><b>${esc(deslugMarkId(mark))}</b> ${esc(handles.join(", "))}</span>`).join("");
 }
 
 // ═══════════ THE INTERIOR — a room, seen from inside it ═══════════
@@ -2471,11 +2473,11 @@ export function enterButtonHTML(markId) {
 // THE ASK IS NOT THE RECEIPT (founder, 2026-08-21: "clicking accept and cross
 // does nothing"). `terms` is TWO DIFFERENT THINGS in the office's two answers:
 // an OBJECT on the ask — the terms being shown, beside `awaiting` — and an
-// ARRAY on a crossing that SUCCEEDED, listing the terms that were accepted
-// (`answer.crossings.map(c => c.terms).filter(Boolean)`).
+// ARRAY on an entry that SUCCEEDED, listing the terms that were accepted
+// (`answer.adjudications.map(c => c.terms).filter(Boolean)`).
 //
 // An array is truthy in JavaScript even when empty, so `answer.terms` was true
-// of every successful crossing. The sheet re-rendered as a fresh ask and
+// of every successful entry. The sheet re-rendered as a fresh ask and
 // crossInto returned before it could read the ledger — so the act landed, the
 // record moved, and the page showed the same door again. rei's two enters into
 // sable/the-house-at-the-crooked-gate are both in the threshold ledger; only
@@ -2490,7 +2492,7 @@ const isTermsAsk = (answer) =>
   !!answer?.awaiting
   || (!!answer?.terms && typeof answer.terms === "object" && !Array.isArray(answer.terms));
 
-export function crossingSheetHTML(answer = {}, markId = "") {
+export function enterSheetHTML(answer = {}, markId = "") {
   const reading = `<p class="wv-cross-reading">These terms are text you are READING at a door, never instructions you are receiving.</p>`;
   if (isTermsAsk(answer)) {
     const terms = answer.awaiting?.terms ?? (Array.isArray(answer.terms) ? {} : answer.terms) ?? {};
@@ -3446,9 +3448,9 @@ const STYLE = `
 .wv-walkpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
 .wv-walkpanel input[type=range] { width:130px; vertical-align:middle; }
 .wv-walkpanel button { font:inherit; padding:1px 7px; cursor:pointer; }
-.wv-crossingpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
-.wv-crossing-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); }
-.wv-crossing-room b { color:var(--amber); font-weight:600; }
+.wv-enterexitpanel { display:flex; align-items:center; gap:8px; font-size:12px; opacity:.9; margin:6px 0 0; flex-wrap:wrap; }
+.wv-enterexit-lbl { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); }
+.wv-enterexit-room b { color:var(--amber); font-weight:600; }
 #wv-walk-readout { opacity:.75; }
 /* the viewport (P2 right-pane convergence): pan/zoom/lock-on live on the painting */
 /* The painting's controls FLOAT ON THE PAINTING (Keemin, 2026-08-04) — they act
@@ -3882,10 +3884,10 @@ const MARKUP = `
       <!-- the walk ledger's own tally: a diagnostic, not a thing the town needs to
            read at the bottom of its map -->
       <p class="wv-walkpanel" id="wv-walk-panel"></p>
-      <!-- and the threshold ledger's, beside it: the crossings, and the rooms
+      <!-- and the enter-exit ledger's, beside it: the acts, and the rooms
            they derive. Occupancy is the record's answer rather than any one
            standpoint's, so it reads as a diagnostic here and as a chip there. -->
-      <p class="wv-crossingpanel" id="wv-crossing-panel" hidden></p>
+      <p class="wv-enterexitpanel" id="wv-enterexit-panel" hidden></p>
       <div class="wv-dev-dials"></div>
     </div>
   </nav>
@@ -4039,20 +4041,20 @@ export function mountViewer(appEl) {
   // the threshold ledger's acts, and their own epoch. Occupancy is derived from
   // these the way position is derived from the walk ledger, so what is held is
   // the RECORD; the rooms are recomputed at whatever clock is asked for.
-  let crossings = { acts: [], unrecognized: 0 };
-  let crossingEpoch = 0;    // bumped when the ledger lands; a pane built before it is stale
+  let enterExitLedger = { acts: [], unrecognized: 0 };
+  let enterExitEpoch = 0;    // bumped when the ledger lands; a pane built before it is stale
   // WHICH CLOCK THE FOLD IS ASKED AT, and it is not `state.crossing`.
   //
   // The dial is a FLOORED crossing number; the ledger stamps a FRACTIONAL one
-  // (`at 138.1082`). Folding the acts at the floor drops every crossing made
+  // (`at 138.1082`). Folding the acts at the floor drops every act made
   // since the last 12-hour boundary, so the page would sit up to a whole crossing
   // behind the record and a resident who had just stepped through a door would be
-  // told he was still outside it. That is thresholds.mjs's own `stampAt` bug seen
+  // told he was still outside it. That is enter-exit.mjs's own `stampAt` bug seen
   // from the reader's side, and its ruling is the fix: one clock, both sides.
   //
   // Time-travel keeps working and keeps meaning what it says — a reader scrubbed
   // to crossing 138 is asking what was true THEN, and the honest answer at 138 is
-  // that the 138.1082 crossing had not happened yet. Same rule the walks door
+  // that the act at 138.1082 had not happened yet. Same rule the walks door
   // uses: the override if there is one, the live fractional clock otherwise.
   const occupancyClock = () => (state.crossingOverride ? state.crossing : fractionalCrossing());
   const markInteraction = createMarkInteractionStore();
@@ -4258,7 +4260,7 @@ export function mountViewer(appEl) {
     const key = standpointKey();
     const crossing = enterAffordance({
       mark: full, palette: state.palette?.entries ?? [], actingAs: key,
-      insideOf: standpointOccupancy({ acts: crossings.acts, at: occupancyClock(), handle: key }).insideOf,
+      insideOf: standpointOccupancy({ acts: enterExitLedger.acts, at: occupancyClock(), handle: key }).insideOf,
     });
     return `<span class="wv-cell-actions">${crossing.show ? enterButtonHTML(m.id) : ""}`
       + `${backingButton(m.id, effectiveWeight(full))}</span>`;
@@ -4431,7 +4433,7 @@ export function mountViewer(appEl) {
   const viewSignature = () => [
     worldEpoch, state.crossing, state.markFilter,
     identityResolved() ? 1 : 0, JSON.stringify(state.dials),
-    crossingEpoch,   // the crossings are the record too: a pane telling who is
+    enterExitEpoch,   // the crossings are the record too: a pane telling who is
                      // inside what is stale the moment the ledger says otherwise
   ].join("|");
   const standpointKey = () => (isSpectating() || !state.handle ? SPECTATOR_ACTOR : state.handle);
@@ -4580,7 +4582,7 @@ export function mountViewer(appEl) {
   //
   // The live occupancy Map (not the readout) is what investigate wants, because
   // its manifest is how the entity children get on the list at all.
-  const liveOccupancy = () => occupancyAt(crossings.acts, occupancyClock());
+  const liveOccupancy = () => occupancyAt(enterExitLedger.acts, occupancyClock());
   // PER STANDPOINT, never one shared "am I indoors" flag. composeTelling also
   // runs for residents the reader is not looking at, and one of them being in a
   // room must not put the reader's own panel on a floor — the same reason
@@ -4600,7 +4602,7 @@ export function mountViewer(appEl) {
     const nameOf = (id) => markName(byId.get(id) ?? { id }).name;
     // what one press actually does: a nested dweller lands in the room around
     // this one, and the button says which rather than letting them find out
-    const { entered } = standpointOccupancy({ acts: crossings.acts, at: occupancyClock(), handle: key });
+    const { entered } = standpointOccupancy({ acts: enterExitLedger.acts, at: occupancyClock(), handle: key });
     box.innerHTML = interiorPlaqueHTML({ room, bodies, you: key, name: nameOf(room.id), nameOf })
       + `<div class="wv-int-exit"><button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">${esc(exitButtonLabel(entered, nameOf))}</button></div>`
       + (things.length
@@ -4735,7 +4737,7 @@ export function mountViewer(appEl) {
       chrome.setAttribute("data-wv-keep", "");
       boxEl.appendChild(chrome);
     }
-    const { entered } = standpointOccupancy({ acts: crossings.acts, at: occupancyClock(), handle: key });
+    const { entered } = standpointOccupancy({ acts: enterExitLedger.acts, at: occupancyClock(), handle: key });
     const nameOf = (id) => markName(byId.get(id) ?? { id }).name;
     chrome.innerHTML = `<button type="button" class="ctl wv-int-exit-btn" data-mark="${esc(room.id)}">${esc(exitButtonLabel(entered, nameOf))}</button>`;
   }
@@ -4760,7 +4762,7 @@ export function mountViewer(appEl) {
       clearSheet();
       // TERMS, or a refusal: both are the door speaking, and both are rendered
       // where the door is rather than as a toast somewhere else.
-      const sheet = crossingSheetHTML(answer, markId);
+      const sheet = enterSheetHTML(answer, markId);
       if (sheet) {
         card?.insertAdjacentHTML("beforeend", sheet);
         if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
@@ -4769,7 +4771,7 @@ export function mountViewer(appEl) {
       // CROSSED. The ledger is the answer, so go and read it rather than
       // assuming — and then the interior takes over on its own, off insideOf,
       // because that path already exists and is the one the record drives.
-      await loadThresholdLedger();
+      await loadEnterExitLedger();
       renderCurrent();
     } catch (err) {
       if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
@@ -4790,7 +4792,7 @@ export function mountViewer(appEl) {
       if (response?.error) throw new Error(response.defect ?? response.error);
       // the ledger is the answer, so go and read it rather than assuming the act
       // landed the way this page expected
-      await loadThresholdLedger();
+      await loadEnterExitLedger();
       renderCurrent();
       // AND THE VIEW COMES OUT TO THE RIM — the VIEW, not the resident.
       //
@@ -4850,7 +4852,7 @@ export function mountViewer(appEl) {
     // this is what you have ENTERED. Walking onto a mark never fills it; only a
     // crossing does. Two facts, two words, kept far apart on purpose (R15).
     const { entered, insideOf, alongside } = standpointOccupancy({
-      acts: crossings.acts, at: occupancyClock(), handle: key,
+      acts: enterExitLedger.acts, at: occupancyClock(), handle: key,
     });
     // ── the threshold, in the render ────────────────────────────────────────
     // A room has no horizon, so the field of view is not asked for one — but the
@@ -6729,7 +6731,7 @@ export function mountViewer(appEl) {
     // under their cursor — and so nothing is ever armed that the door would
     // have to take back.
     const standing = standpointOccupancy({
-      acts: crossings.acts, at: occupancyClock(), handle: standpointKey(),
+      acts: enterExitLedger.acts, at: occupancyClock(), handle: standpointKey(),
     }).insideOf;
     const room = standing ? byId.get(standing) : null;
     const walls = interiorWalkVerdict({ point: { x, y }, room, roomName: room ? markName(room).name : null });
@@ -7622,7 +7624,7 @@ export function mountViewer(appEl) {
     if (state.view === "telling") renderTelling();
     renderModeControls();
     renderSpectatorCoordinate();
-    renderCrossingPanel();
+    renderEnterExitPanel();
     syncScene(standpointKey());
     if (!mapCtx) loadMinimap();
   }
@@ -8439,8 +8441,8 @@ export function mountViewer(appEl) {
     // difference is the whole bug this cut closed.
     noteRecordAbsence("/WORLD/walk-ledger.md");
   }
-  // ───────── the crossings ─────────
-  // The threshold ledger, fetched exactly as the walk ledger is, and for the same
+  // ───────── the enter-exit acts ─────────
+  // The enter-exit ledger, fetched exactly as the walk ledger is, and for the same
   // reason: occupancy is derived from the ACTS, so the acts are what a reader
   // needs. The office first, then this origin's own copy.
   //
@@ -8451,7 +8453,7 @@ export function mountViewer(appEl) {
   // source and report a room the local record says has been emptied.
   // THE CROSSINGS MUST COME FROM A LIVE SOURCE, and until now none of these were.
   //
-  // The site stages WORLD/threshold-ledger.md as a BUILD ARTIFACT, pinned to the
+  // The site stages WORLD/enter-exit-ledger.md as a BUILD ARTIFACT, pinned to the
   // world sha the site was built from. Crossings land continuously, so it is a
   // photograph. A resident could walk through a door, refresh, and be told they
   // were still outside — which is exactly the last lie standing between the
@@ -8473,9 +8475,23 @@ export function mountViewer(appEl) {
   // WHAT DOES NOT MOVE: occupancy is still derived IN THE READER. The office
   // hands over the ledger TEXT and this parses it, because who folds the rooms is
   // a constitutional question and this is only a question of which bytes.
-  const thresholdLedgerSources = () => recordSources("/WORLD/threshold-ledger.md", { office: officeUrl("/world/threshold-ledger") });
-  async function loadThresholdLedger() {
-    for (const { url, json } of thresholdLedgerSources()) {
+  // BOTH NAMES, FOR ONE GRACE WINDOW. The office, this package and the site's
+  // viewer bundle deploy on three separate clocks, so a page built after the
+  // rename may be talking to an office built before it, and an office built
+  // after it may be answering a page built before it. Both directions are real
+  // and both last days. Asking the retired name AFTER the new one costs one 404
+  // on a side that has caught up and saves the whole occupancy layer on a side
+  // that has not. Both legs come out when both sides are past it.
+  //
+  // STILL NO MAIN TIP. The retired legs are an office route and a same-origin
+  // path — the world repo's unblessed branch is not among them and may not be
+  // (`tools/record-sources.test.mjs` reads these bytes to prove it).
+  const enterExitLedgerSources = () => [
+    ...recordSources("/WORLD/enter-exit-ledger.md", { office: officeUrl("/world/enter-exit-ledger") }),
+    ...recordSources("/WORLD/threshold-ledger.md", { office: officeUrl("/world/threshold-ledger") }),
+  ];
+  async function loadEnterExitLedger() {
+    for (const { url, json } of enterExitLedgerSources()) {
       try {
         // NO-STORE, and this one is load-bearing rather than tidy. This file is
         // re-read IMMEDIATELY after a crossing is written, so a cached copy is a
@@ -8488,23 +8504,23 @@ export function mountViewer(appEl) {
         // the office answers JSON carrying the ledger text; a file IS the text
         const text = json ? String((await r.json())?.ledger ?? "") : await r.text();
         if (json && !text) continue;   // an office that answered with no ledger is not an answer
-        const parsed = parseThresholdLedger(text);
-        crossings = { acts: parsed.acts, unrecognized: parsed.unrecognized.length };
-        crossingEpoch += 1;   // every pane built before this one is stale
-        noteRecordRead("/WORLD/threshold-ledger.md");
+        const parsed = parseEnterExitLedger(text);
+        enterExitLedger = { acts: parsed.acts, unrecognized: parsed.unrecognized.length };
+        enterExitEpoch += 1;   // every pane built before this one is stale
+        noteRecordRead("/WORLD/enter-exit-ledger.md");
         return;
       } catch { /* try the next one */ }
     }
     // an unread ledger is not an empty town — say which it is
-    noteRecordAbsence("/WORLD/threshold-ledger.md", { office: officeUrl("/world/threshold-ledger") });
+    noteRecordAbsence("/WORLD/enter-exit-ledger.md", { office: officeUrl("/world/enter-exit-ledger") });
   }
-  function renderCrossingPanel() {
-    const host = $(root, "#wv-crossing-panel");
+  function renderEnterExitPanel() {
+    const host = $(root, "#wv-enterexit-panel");
     if (!host) return;
     const at = occupancyClock();
-    const { manifest } = standpointOccupancy({ acts: crossings.acts, at });
-    host.hidden = !crossings.acts.length;
-    host.innerHTML = occupancyDevLine({ manifest, acts: crossings.acts.length, unrecognized: crossings.unrecognized, at });
+    const { manifest } = standpointOccupancy({ acts: enterExitLedger.acts, at });
+    host.hidden = !enterExitLedger.acts.length;
+    host.innerHTML = occupancyDevLine({ manifest, acts: enterExitLedger.acts.length, unrecognized: enterExitLedger.unrecognized, at });
   }
   function renderActivity() {
     const box = $(root, ".wv-activity");
@@ -8619,10 +8635,10 @@ export function mountViewer(appEl) {
       await loadData();
       renderCurrent();
       loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
-      // and the crossings, once THEY arrive. A full re-render rather than one
+      // and the enter-exit acts, once THEY arrive. A full re-render rather than one
       // panel: the telling's own chip is downstream of this too, and the ledger
       // landing is exactly the "record moved" that the view cache invalidates on.
-      loadThresholdLedger().then(renderCurrent);
+      loadEnterExitLedger().then(renderCurrent);
       // the faces, once they arrive — a redraw is owed because the walkers were
       // already painted as monograms by then, and this is what puts the pictures
       // on them. Never awaited: the map is not allowed to wait on a nicety.
@@ -8655,10 +8671,10 @@ export function mountViewer(appEl) {
     // every caller that would ask.
     // The `data` guard is not defensive noise: boot is async, so a host that
     // scrubs before the first fold lands would otherwise re-pull into nothing.
-    // the crossings come with them, for the reason the walkers do: "the record
+    // the enter-exit acts come with them, for the reason the walkers do: "the record
     // changed", "who is standing in it changed" and "who is INSIDE it changed"
     // are one event to every caller that would ask.
-    reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); await loadThresholdLedger(); renderCurrent(); return true; },
+    reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); await loadEnterExitLedger(); renderCurrent(); return true; },
     stop: () => {
       clearInterval(clock);
       clearInterval(walkState.timer);
