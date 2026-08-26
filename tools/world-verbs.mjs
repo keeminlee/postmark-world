@@ -18,9 +18,9 @@ import {
   marksContain, pointInPolygon, pointInRect, polygonOf, rect,
 } from "./geometry.mjs"; // the ONE containment definition — pure, browser-safe (no node:*)
 import {
-  adjudicate, containsEdges as containsEdgesOf, entityChild, formatCrossing,
+  adjudicate, containsEdges as containsEdgesOf, entityChild, formatEnterExit,
   isMark, occupantsOf, termsAt, withinOf,
-} from "./thresholds.mjs"; // DEMO SLICE — the crossing acts (step 5, jetto/enter-exit-demo)
+} from "./enter-exit.mjs"; // DEMO SLICE — the enter-exit acts (step 5, jetto/enter-exit-demo)
 
 // ───────────────────────── orient — charter + your state ────────────────────
 // The establishing line of every telling: the let-there-be-light root (light
@@ -239,7 +239,7 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
   };
 }
 
-// ───────────────────────── enter / exit(mark) — the crossings ───────────────
+// ───────────────────────── enter / exit(mark) — the acts ───────────────────
 //
 // DEMO SLICE (step 5). Walk and entry are fully decoupled axes (R15): the walk
 // above moves you to coordinates and never puts you INSIDE anything —
@@ -249,7 +249,7 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
 //
 // The plane is free; the tree is mechanical.
 
-/** The chain of crossings between where a walker legally stands and a target.
+/** The chain of entries between where a walker legally stands and a target.
  *
  *  Deep entry is never a teleport: enter(cabin) from the shore is walk +
  *  enter(ship) + enter(cabin), each link adjudicated on its own law, because
@@ -262,7 +262,7 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
  *  is exactly why a refusal leaves you AT the threshold rather than back where
  *  you started.
  */
-export function crossingPlan(state, targetId, world, { occupancy = new Map(), handle = null } = {}) {
+export function enterExitPlan(state, targetId, world, { occupancy = new Map(), handle = null } = {}) {
   const byId = new Map(world.marks.map((m) => [m.id, m]));
   const target = byId.get(targetId);
   if (!target) return { error: `no mark '${targetId}' to enter` };
@@ -283,7 +283,7 @@ export function crossingPlan(state, targetId, world, { occupancy = new Map(), ha
   };
 }
 
-/** enter(mark) — the crossing. Adjudicates each link, stops at the first that
+/** enter(mark) — the act. Adjudicates each link, stops at the first that
  *  does not land, and answers with the rows the pen should append.
  *
  *  `accepted` is the walker's explicit word: `true` (he accepted the terms he
@@ -295,27 +295,27 @@ export function crossingPlan(state, targetId, world, { occupancy = new Map(), ha
 export function enter(state, targetId, world, {
   occupancy = new Map(), handle = null, at = 0, iso = null, accepted = false,
 } = {}) {
-  const plan = crossingPlan(state, targetId, world, { occupancy, handle });
+  const plan = enterExitPlan(state, targetId, world, { occupancy, handle });
   if (plan.error) return plan;
   const byId = new Map(world.marks.map((m) => [m.id, m]));
   const said = accepted === true ? null : new Set(Array.isArray(accepted) ? accepted : accepted ? [accepted] : []);
   const within = [...(plan.held ?? [])];
-  const crossings = [];
+  const adjudications = [];
   const rows = [];
   const entered = [];
   let stranded = null, refused = null, awaiting = null;
 
   if (!plan.links.length) {
-    return { ...plan, crossings, rows, entered, within, stranded: null, refused: null,
+    return { ...plan, adjudications, rows, entered, within, stranded: null, refused: null,
              already: true, note: `${handle ?? "you"} is already within ${targetId}.` };
   }
 
   for (const id of plan.links) {
     const mark = byId.get(id);
     const verdict = adjudicate(mark, { accepted: said === null || said.has(id) });
-    crossings.push(verdict);
+    adjudications.push(verdict);
     if (verdict.effect === "entered") {
-      rows.push(formatCrossing({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
+      rows.push(formatEnterExit({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
       entered.push(id);
       within.push(id);
       continue;
@@ -328,13 +328,13 @@ export function enter(state, targetId, world, {
       // The refusal is a fact about the town and belongs in the record: the act
       // was authored, the door answered opposed, and the occupancy derivation
       // reads that word and mints nothing.
-      rows.push(formatCrossing({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
+      rows.push(formatEnterExit({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
     } else {
       awaiting = verdict; // terms shown, the walker has not spoken — nothing recorded
     }
     break;
   }
-  return { ...plan, crossings, rows, entered, within, stranded, refused, awaiting };
+  return { ...plan, adjudications, rows, entered, within, stranded, refused, awaiting };
 }
 
 /** exit(mark) — the walker nullifying his own side of the edge he authored.
@@ -348,7 +348,7 @@ export function exit(targetId, world, { occupancy = new Map(), handle = null, at
   const leaving = held.slice(i);
   return {
     target: targetId,
-    rows: [formatCrossing({ handle, act: "exits", mark: targetId, at, iso })],
+    rows: [formatEnterExit({ handle, act: "exits", mark: targetId, at, iso })],
     left: leaving,
     within: held.slice(0, i),
     into: i > 0 ? held[i - 1] : null, // the enclosing scope the view restores to
@@ -358,7 +358,7 @@ export function exit(targetId, world, { occupancy = new Map(), handle = null, at
 // ── the QoL prompts (R15, both directions) ──────────────────────────────────
 //
 // The two axes being decoupled is the law; being decoupled SILENTLY would be a
-// trap. So the boundary crossings speak: walking into a mark's extent offers
+// trap. So the boundaries speak: walking into a mark's extent offers
 // entry, and walking out of the extent of a mark you are within offers exit.
 // Offers — the door asks, it never decides.
 
