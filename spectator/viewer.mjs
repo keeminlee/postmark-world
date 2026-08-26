@@ -8,10 +8,15 @@
 // previews the exact intent, then sends one credentialed request on confirmation.
 //
 // It runs in two habitats and feature-detects which without a config flag:
-//   • LOCAL (spectator/server.mjs)  — /WORLD/*.json off disk, /api/walks live,
+//   • LOCAL (spectator/server.mjs)  — /WORLD/* off disk, /api/walks live,
 //     /atlas/* proxied to postmark.town. Signed-in controls feature-detect off.
-//   • ISLAND (postmark.town/world)  — world-state/skeleton from raw.githubusercontent,
-//     /atlas same-origin, with signed-in acts crossing the same-origin office.
+//   • ISLAND (postmark.town/world)  — /WORLD/* staged beside the page at build
+//     time from the blessed world pin, /atlas same-origin, with signed-in acts
+//     crossing the same-origin office.
+//
+// BOTH HABITATS READ SAME-ORIGIN, and that is a law rather than a coincidence:
+// `tools/record-sources.mjs` builds every record's source chain and is forbidden
+// to name the world repo's main tip.
 //
 // One engine, imported the clone's way (relative into the package): the browser
 // runs the exact library anyone can `node`. If this page and a clone disagree,
@@ -24,8 +29,13 @@ import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing r
 import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT, WALK_KM_PER_CROSSING } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
 import { parseThresholdLedger, occupancyAt, occupantsOf, withinOf, isMark, isEntity } from "../tools/thresholds.mjs";
+// WHERE A RECORD MAY BE READ FROM — one decision, in one place, with the
+// guardrail it answers to quoted in its header ("tags only, never main tip").
+// There is deliberately no constant here naming the world's main tip: this file
+// is not allowed to hold one, and `tools/record-sources.test.mjs` reads these
+// bytes to prove it.
+import { recordSources, recordAbsenceMessage } from "../tools/record-sources.mjs";
 
-const RAW = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
 const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const OFFICE_DEFAULT = "/api";
@@ -1200,7 +1210,7 @@ export function disciplineAtlasImages(root) {
 // A mark may carry ONE `image`: a pointer at the town's own media shelf, which
 // the office validated against the uploaded bytes at write time. This gate is
 // the SECOND lock on that same door, and it is not redundant. The viewer
-// renders records it did not write — a fold pulled off raw.githubusercontent, an
+// renders records it did not write — a staged fold read off this origin, an
 // office answer, a replay file someone handed the page — so "the door already
 // checked it" is a claim about somebody else's process, made about bytes that
 // arrived over the wire. One shelf, https, our host, nothing else: a URL that
@@ -3836,6 +3846,11 @@ const MARKUP = `
          read rather than press. -->
     <section class="wv-activity" hidden>
       <h2>Lately</h2>
+      <!-- A RECORD THIS PAGE COULD NOT READ IS NAMED HERE, never guessed at from
+           somewhere else. Empty because nothing happened and empty because the
+           file did not answer are different sentences, and only one of them is
+           the reader's problem. -->
+      <ul class="wv-absences wv-err" hidden></ul>
       <ol class="wv-acts"></ol>
     </section>
     <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
@@ -4049,7 +4064,8 @@ export function mountViewer(appEl) {
   }
   // fetch world-state AND report which url won + its X-Postmark-As-Of (the office
   // stamps every response; the auto-update poll compares it). Same office-first
-  // preference: office live → same-origin /WORLD → RAW github.
+  // preference: office live → same-origin /WORLD. There is no third leg — see
+  // `tools/record-sources.mjs` for the guardrail that removed it.
   // ── EVERY READ IS `credentials: "same-origin"` (2026-08-21) ───────────────
   //
   // The reads used to say `omit`, which sounds like the careful choice and is
@@ -4060,12 +4076,13 @@ export function mountViewer(appEl) {
   //
   // `same-origin` is the strictly correct setting and not a loosening: it sends
   // cookies ONLY to the page's own origin. Every office lane here is
-  // same-origin (/api/…), the record files are same-origin, and the raw
-  // fallback below is a different host — which receives nothing under either
-  // setting. So there was never anything `omit` was protecting that
-  // `same-origin` gives away; all eleven sites were read before changing, and
-  // none of them wanted to stay.
-  const worldStatePaths = () => [officeUrl("/world/state"), "/WORLD/world-state.json", `${RAW}/WORLD/world-state.json`];
+  // same-origin (/api/…) and so is every record file, so `same-origin` is now
+  // simply the whole truth about where these reads go — the cross-host leg that
+  // the original note weighed (2026-08-21: "the raw fallback below is a
+  // different host") no longer exists. There was never anything `omit` was
+  // protecting that `same-origin` gives away; all eleven sites were read before
+  // changing, and none of them wanted to stay.
+  const worldStatePaths = () => recordSources("/WORLD/world-state.json", { office: officeUrl("/world/state") }).map((source) => source.url);
   async function fetchWorldState(paths, options = {}) {
     let lastErr;
     for (const p of paths) {
@@ -4091,10 +4108,11 @@ export function mountViewer(appEl) {
     // receives the main fold here; the household-composed fold has its own read.
     const ws = await fetchWorldState(worldStatePaths(), { credentials: "same-origin" });
     const [sk, mf] = await Promise.all([
-      fetchJson([officeUrl("/world/skeleton"), "/WORLD/skeleton.json", `${RAW}/WORLD/skeleton.json`]),
-      // homes come from the seeding manifest, fetched the same way (same-origin probe
-      // → raw fallback); optional — no manifest just means no green
-      fetchJson(["/seeding/manifest.json", `${RAW}/seeding/manifest.json`]).catch(() => null),
+      fetchJson(recordSources("/WORLD/skeleton.json", { office: officeUrl("/world/skeleton") }).map((source) => source.url)),
+      // homes come from the seeding manifest, read the same way (office first
+      // where one exists, then this origin's own copy); optional — no manifest
+      // just means no green
+      fetchJson(recordSources("/seeding/manifest.json").map((source) => source.url)).catch(() => null),
     ]);
     state.dataSource = ws.url; state.asOf = ws.asOf;
     data = { trueWorld: ws.json, myWorld: null, worldState: ws.json, skeleton: sk, manifest: mf };
@@ -8364,56 +8382,94 @@ export function mountViewer(appEl) {
         `<p class="wv-say-voice"><b>${esc(v.handle ?? "")}</b> <span class="wv-quiet">${esc(v.distance ?? "")} · ${esc(v.ago ?? "")}</span><br>${esc(v.said ?? "")}</p>`).join("");
     }
   }
+  // ───────── records this page could not read ─────────
+  //
+  // The cure for a deleted fallback is not silence, it is a NAME. Every reader
+  // that exhausts its sources says which record went unread, and the rail says
+  // so where the reading it would have fed is shown. A page that is missing the
+  // walk ledger now looks missing instead of looking like a town where nobody
+  // has ever gone anywhere.
+  const recordAbsences = new Map();   // same-origin path → the sentence to show
+  function renderRecordAbsences() {
+    const box = $(root, ".wv-activity");
+    const list = $(root, ".wv-absences");
+    if (!box || !list) return;
+    const lines = [...recordAbsences.values()];
+    list.hidden = !lines.length;
+    list.innerHTML = lines.map((line) => `<li>${esc(line)}</li>`).join("");
+    if (lines.length) box.hidden = false;   // a heading over a named absence is the point
+  }
+  function noteRecordAbsence(record, options = {}) {
+    recordAbsences.set(record, recordAbsenceMessage(record, options));
+    renderRecordAbsences();
+  }
+  /** a later read that succeeded clears an earlier absence — the office came back */
+  function noteRecordRead(record) {
+    if (!recordAbsences.delete(record)) return;
+    renderRecordAbsences();
+  }
+
   // ───────── what has been happening ─────────
   // THE LEDGER IS FETCHED, NOT DERIVED. /api/walks answers with positions — who is
   // where NOW — and a record of acts needs the acts themselves, which only the
-  // append-only ledger has. Same-origin first (the local server has it on disk),
-  // then the published raw file, which is how this page already reaches
-  // world-state when it is served from somewhere without an office.
+  // append-only ledger has. This origin's own copy, and nothing else: the local
+  // server has it on disk and the site stages it, so both habitats can answer.
+  //
+  // THIS READER IS WHY `tools/record-sources.mjs` EXISTS. It used to end at
+  // `raw.githubusercontent.com/…/main/WORLD/walk-ledger.md`, and because the
+  // site's staging list did not carry the file, prod took that leg EVERY TIME —
+  // the town's departures were told from the world's unblessed main tip while
+  // the release lane's guardrail said "tags only, never main tip". A fallback
+  // that fires on every load is not a fallback; it is the mechanism.
   let departures = [];
   async function loadWalkLedger() {
-    for (const url of ["/WORLD/walk-ledger.md", `${RAW}/WORLD/walk-ledger.md`]) {
+    for (const { url } of recordSources("/WORLD/walk-ledger.md")) {
       try {
         const r = await fetch(url, { credentials: "same-origin" });
         if (!r.ok) continue;
         const parsed = parseWalkLedger(await r.text());
-        if (parsed.departures.length) { departures = parsed.departures; return; }
+        if (parsed.departures.length) { departures = parsed.departures; noteRecordRead("/WORLD/walk-ledger.md"); return; }
       } catch { /* try the next one */ }
     }
+    // NOT SILENT. An empty rail and an unread rail look identical, and the
+    // difference is the whole bug this cut closed.
+    noteRecordAbsence("/WORLD/walk-ledger.md");
   }
   // ───────── the crossings ─────────
   // The threshold ledger, fetched exactly as the walk ledger is, and for the same
   // reason: occupancy is derived from the ACTS, so the acts are what a reader
-  // needs. Same-origin first (this clone's disk), then the published raw file.
+  // needs. The office first, then this origin's own copy.
   //
   // A ledger of nothing but exits is a real answer — everyone has left — so this
   // stops at the first source that ANSWERS rather than at the first that answers
   // with acts. The walk loader's non-empty guard is right for positions and would
-  // be wrong here: it would fall through a true "the room is empty" to the raw
-  // file and report a room the local record says has been emptied.
+  // be wrong here: it would fall through a true "the room is empty" to the next
+  // source and report a room the local record says has been emptied.
   // THE CROSSINGS MUST COME FROM A LIVE SOURCE, and until now none of these were.
   //
   // The site stages WORLD/threshold-ledger.md as a BUILD ARTIFACT, pinned to the
-  // world sha the site was built from, and the RAW fallback is whatever github
-  // last served. Crossings land continuously, so both are photographs. A resident
-  // could walk through a door, refresh, and be told they were still outside —
-  // which is exactly the last lie standing between the founder's click and his
-  // interior, and it is not a caching bug: those files are simply OLD.
+  // world sha the site was built from. Crossings land continuously, so it is a
+  // photograph. A resident could walk through a door, refresh, and be told they
+  // were still outside — which is exactly the last lie standing between the
+  // founder's click and his interior, and it is not a caching bug: that file is
+  // simply OLD.
   //
   // So the office goes FIRST. It reads the clone it actually has, the same move
-  // /world/state already makes for the marks. The staged file and RAW stay as
-  // fallbacks, because a page served from somewhere with no office (the local
+  // /world/state already makes for the marks. The staged file stays as the
+  // fallback, because a page served from somewhere with no office (the local
   // spectator, a bare clone) must still derive occupancy — stale crossings are
-  // worth more than none, and the fallbacks are exactly as good as they ever were.
+  // worth more than none.
+  //
+  // THE THIRD LEG IS GONE (2026-08-26). It read the world repo's main tip, which
+  // is the one source the release lane's guardrail forbids — "tags only, never
+  // main tip" — and stale-from-main is not "as good as it ever was", it is a
+  // different world. Both remaining sources are same-origin, so both are the
+  // world this page was built from.
   //
   // WHAT DOES NOT MOVE: occupancy is still derived IN THE READER. The office
   // hands over the ledger TEXT and this parses it, because who folds the rooms is
   // a constitutional question and this is only a question of which bytes.
-  const thresholdLedgerSources = () => [
-    { url: officeUrl("/world/threshold-ledger"), json: true },
-    { url: "/WORLD/threshold-ledger.md", json: false },
-    { url: `${RAW}/WORLD/threshold-ledger.md`, json: false },
-  ];
+  const thresholdLedgerSources = () => recordSources("/WORLD/threshold-ledger.md", { office: officeUrl("/world/threshold-ledger") });
   async function loadThresholdLedger() {
     for (const { url, json } of thresholdLedgerSources()) {
       try {
@@ -8421,8 +8477,8 @@ export function mountViewer(appEl) {
         // re-read IMMEDIATELY after a crossing is written, so a cached copy is a
         // page telling a resident they are still outside a door they just walked
         // through. The local rigs already answer no-store; the site serves the
-        // ledger as a static file and the RAW fallback caches hard, so the
-        // freshness has to be asked for HERE, at the one reader that needs it.
+        // ledger as a static file behind an edge that caches, so the freshness
+        // has to be asked for HERE, at the one reader that needs it.
         const r = await fetch(url, { credentials: "same-origin", cache: "no-store" });
         if (!r.ok) continue;
         // the office answers JSON carrying the ledger text; a file IS the text
@@ -8431,9 +8487,12 @@ export function mountViewer(appEl) {
         const parsed = parseThresholdLedger(text);
         crossings = { acts: parsed.acts, unrecognized: parsed.unrecognized.length };
         crossingEpoch += 1;   // every pane built before this one is stale
+        noteRecordRead("/WORLD/threshold-ledger.md");
         return;
       } catch { /* try the next one */ }
     }
+    // an unread ledger is not an empty town — say which it is
+    noteRecordAbsence("/WORLD/threshold-ledger.md", { office: officeUrl("/world/threshold-ledger") });
   }
   function renderCrossingPanel() {
     const host = $(root, "#wv-crossing-panel");
@@ -8461,8 +8520,12 @@ export function mountViewer(appEl) {
     // Hidden rather than empty: a heading over nothing reads as a thing that
     // broke. A page served without the ledger and before the fold simply has no
     // record to show yet, which is not the same as an empty one.
-    box.hidden = !rows.length;
-    if (!rows.length) return;
+    //
+    // UNLESS A RECORD WENT UNREAD, in which case a thing DID break and hiding
+    // the heading hides the only place we say so.
+    box.hidden = !rows.length && !recordAbsences.size;
+    renderRecordAbsences();
+    if (!rows.length) { list.innerHTML = ""; return; }
     list.innerHTML = rows.map((row) => {
       const gone = actSubjectGone(row.subject, byId);
       const subject = row.name ?? (row.subject ? deslugMarkId(row.subject) : "");
