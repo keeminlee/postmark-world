@@ -6,9 +6,14 @@
 // host as well as anyone else's, so the edge answered a login redirect instead
 // of the record and the World never arrived on a page that otherwise rendered.
 //
-// `same-origin` sends cookies only to the page's own origin, so it fixes the
-// office and record lanes and changes nothing for the cross-origin raw
-// fallback, which receives none either way.
+// `same-origin` sends cookies only to the page's own origin, so it fixed the
+// office and record lanes. It was originally reasoned about ALONGSIDE a
+// cross-origin raw fallback, which received no cookies either way — and on
+// 2026-08-26 that fallback was removed outright (it read the world repo's
+// unblessed main tip, which the release lane's world-pin guardrail forbids:
+// "tags only, never main tip"). So the reasoning is now shorter than it was:
+// every read this module makes for a record goes to the page's own origin, and
+// `same-origin` is simply the whole truth about where they go.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -38,13 +43,15 @@ test("and every fetch that names credentials at all names same-origin", () => {
     "no read may send this page's cookies to another host");
 });
 
-test("the cross-origin fallback is unaffected, which is why the change is safe", () => {
-  // The record chain ends at raw.githubusercontent — a different origin, which
-  // receives no cookies under same-origin exactly as it received none under
-  // omit. If that ever stops being a different host, this assumption needs
-  // re-reading rather than inheriting.
-  assert.match(SOURCE, /const RAW = "https:\/\/raw\.githubusercontent\.com/,
-    "the fallback is still an absolute cross-origin URL");
-  assert.match(SOURCE, /worldStatePaths = \(\) => \[officeUrl\("\/world\/state"\), "\/WORLD\/world-state\.json", `\$\{RAW\}/,
-    "and the chain still runs same-origin office, then same-origin file, then the cross-origin fallback");
+test("there is no cross-origin record lane left to reason about", () => {
+  // SUPERSEDES "the cross-origin fallback is unaffected, which is why the change
+  // is safe" (2026-08-21). That test asserted the raw-github fallback was still
+  // present, because the credentials change had to be shown not to disturb it.
+  // The fallback is gone (2026-08-26), so the assertion that it EXISTS is now a
+  // written-down false premise rather than a guard, and asserting its absence is
+  // the guard the same reasoning wants today.
+  assert.doesNotMatch(SOURCE, /raw\.githubusercontent\.com\/keeminlee\/postmark-world/,
+    "no read may reach the world repo's raw host — see tools/record-sources.mjs");
+  assert.match(SOURCE, /worldStatePaths = \(\) => recordSources\("\/WORLD\/world-state\.json", \{ office: officeUrl\("\/world\/state"\) \}\)/,
+    "and the chain runs same-origin office, then this origin's own staged file, and stops");
 });

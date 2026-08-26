@@ -17,8 +17,10 @@
 //                                  placed artwork from)
 //
 // The island (postmark.town/world) has none of this server — it serves the same
-// viewer.mjs statically, fetches the record from raw.githubusercontent, reads the
-// atlas same-origin, and the stakes half feature-detects itself off.
+// viewer.mjs statically and STAGES the same record files beside it at build time,
+// so the page reads `/WORLD/**` same-origin exactly as it does here. It reads the
+// atlas same-origin too, and the stakes half feature-detects itself off. Neither
+// habitat reads the world repo's main tip any more; see `tools/record-sources.mjs`.
 //
 // Run: node server.mjs   → http://localhost:4877
 import { createServer } from "node:http";
@@ -121,6 +123,13 @@ createServer(async (req, res) => {
     // serving it here is what lets a local read stand on THIS clone's disk
     // instead of falling through to the published raw file.
     if (p === "/WORLD/threshold-ledger.md") return serveFile(res, "WORLD/threshold-ledger.md");
+    // the walks, for the same reason and by the same rule. This route was
+    // MISSING until 2026-08-26, and its absence is what the raw-github fallback
+    // was really covering: a local spectator asked this server for the ledger,
+    // got a 404, and quietly read the world repo's main tip instead — a
+    // different world from the one on this clone's disk. The fallback is gone
+    // now, so this route is not a convenience; it is the answer.
+    if (p === "/WORLD/walk-ledger.md") return serveFile(res, "WORLD/walk-ledger.md");
     if (p === "/seeding/manifest.json") return serveFile(res, "seeding/manifest.json"); // homes → green (viewer derives home-ness; the record is untouched)
 
     if (p === "/api/stakes") {
