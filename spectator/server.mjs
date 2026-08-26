@@ -8,7 +8,7 @@
 //   • /world-engine/**          → the viewer module + the engine .mjs (so the
 //                                  browser imports the exact library, unbundled)
 //   • /WORLD/*.json             → the world's public record, off THIS clone's disk
-//   • /WORLD/threshold-ledger.md → the crossings; the page derives occupancy from
+//   • /WORLD/enter-exit-ledger.md → the crossings; the page derives occupancy from
 //                                  them the way it derives position from walks
 //   • /api/stakes?holder=       → per-holder stakes, parsed from the town's
 //                                  stamp-ledger (LOCAL-ONLY; the island hides the half)
@@ -122,6 +122,12 @@ createServer(async (req, res) => {
     // what the page needs is the record, not this server's opinion of it — and
     // serving it here is what lets a local read stand on THIS clone's disk
     // instead of falling through to the published raw file.
+    if (p === "/WORLD/enter-exit-ledger.md") return serveFile(res, "WORLD/enter-exit-ledger.md");
+    // BOTH NAMES, for one grace window. A viewer bundle blessed before the
+    // rename asks for the retired path, and a 404 for a record is not a small
+    // thing here: the reader shows an ABSENCE where a town full of occupied
+    // rooms should be. Both files are on disk (the office emits them together)
+    // and both come out once the rename is blessed everywhere.
     if (p === "/WORLD/threshold-ledger.md") return serveFile(res, "WORLD/threshold-ledger.md");
     // the walks, for the same reason and by the same rule. This route was
     // MISSING until 2026-08-26, and its absence is what the raw-github fallback
@@ -180,7 +186,7 @@ createServer(async (req, res) => {
     // shelves hold different files under identical-looking paths.
     if (p.startsWith(SHELF_ROUTE)) return proxyOrigin(res, SHELF_ORIGIN, "/media/" + p.slice(SHELF_ROUTE.length));
 
-    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /WORLD/threshold-ledger.md, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
+    json(res, 404, { error: "not found — /, /world-engine/**, /WORLD/*.json, /WORLD/enter-exit-ledger.md, /api/stakes?holder=, /api/walks?at=, /atlas/*, /media/*" });
   } catch (e) {
     json(res, 500, { error: String(e?.message ?? e) });
   }

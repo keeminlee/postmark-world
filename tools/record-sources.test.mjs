@@ -48,6 +48,12 @@ const RECORDS = [
   { record: "/WORLD/world-state.json", office: "/api/world/state" },
   { record: "/WORLD/skeleton.json", office: "/api/world/skeleton" },
   { record: "/WORLD/walk-ledger.md", office: null },
+  { record: "/WORLD/enter-exit-ledger.md", office: "/api/world/enter-exit-ledger" },
+  // THE RETIRED NAME, still asked second for one grace window. The office, this
+  // package and the site's viewer bundle deploy on three separate clocks, so a
+  // page built after the rename may be talking to an office built before it and
+  // the other way round. Both legs are same-origin-or-office; neither is the
+  // world repo's main tip, which is the whole point of listing them here.
   { record: "/WORLD/threshold-ledger.md", office: "/api/world/threshold-ledger" },
   { record: "/seeding/manifest.json", office: null },
 ];

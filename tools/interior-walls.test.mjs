@@ -16,7 +16,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { interiorWalkVerdict, standpointOccupancy } from "../spectator/viewer.mjs";
-import { parseThresholdLedger } from "./thresholds.mjs";
+import { parseEnterExitLedger } from "./enter-exit.mjs";
 import { loadMarks } from "./marks-fold.mjs";
 import { fractionalCrossing } from "./walk.mjs";
 
@@ -80,7 +80,7 @@ test("THE LIVE RECORD: someone really is inside a room small enough for this to 
   // resident indoors. The arithmetic stays pinned by the fixture tests above.
   const marks = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
   const byId = new Map(marks.map((m) => [m.id, m]));
-  const { acts } = parseThresholdLedger(readFileSync(join(ROOT, "WORLD/threshold-ledger.md"), "utf8"));
+  const { acts } = parseEnterExitLedger(readFileSync(join(ROOT, "WORLD/enter-exit-ledger.md"), "utf8"));
   const handles = [...new Set(acts.map((a) => a.who).filter(Boolean))];
   const proof = handles
     .map((handle) => ({ handle, inside: standpointOccupancy({ acts, at: fractionalCrossing(), handle }).insideOf }))
