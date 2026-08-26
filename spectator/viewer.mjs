@@ -3642,6 +3642,10 @@ const STYLE = `
 .wv-nav .settlenow { font-size:.72rem; color:var(--dim); font-variant-numeric:tabular-nums; }
 .wv-activity h2 { margin-top:0; }
 .wv-acts { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+/* a record that could not be read, said above the reading it belongs to — same
+   flush-left register as the acts, so it reads as part of the rail rather than
+   as furniture that wandered in */
+.wv-absences { list-style:none; margin:0 0 12px; padding:0; font-size:.8rem; line-height:1.5; }
 .wv-act-line { font-size:.76rem; line-height:1.42; color:var(--dim); }
 .wv-act-line .who { color:var(--paper); }
 .wv-act-line .what { color:var(--amber); cursor:pointer; }
