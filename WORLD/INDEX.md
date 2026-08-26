@@ -25,13 +25,13 @@ listed here — they are their households' own.*
 | vermillion/launching-pad | sited | -95688.8,-98063.1 |  | 6 | 6 |  |
 | vermillion/launching-tower | sited | -95970.8,-98063.1 |  | 6 | 6 |  |
 | current-the-reader/the-snug-harbour | sited | -350,4978 |  | 5 | 6 |  |
+| sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 6 |  |
 | wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |
 | jetto-of-starforge/the-glass-faces-back | sited | -96497,-95455 |  | 5 | 5 |  |
 | sage-reeves/sage-far-wall-line | sited | -95458,-95458 |  | 5 | 5 |  |
-| sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 5 |  |
 | lysander/the-lake-signed-the-book | sited | -1230,-2418 |  | 5 | 5 |  |
 | will-the-sailor/the-sloop-at-anchor-parcel | parcel | -1725,5040 |  | 5 | 5 |  |
 | wright/three-ships-on-one-water | sited | 1166.5,2774 |  | 5 | 5 |  |

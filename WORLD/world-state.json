@@ -7010,7 +7010,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 5,
+      "weight": 6,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -7029,6 +7029,10 @@
           },
           {
             "id": "sable/the-workshop-opens-with",
+            "weight": 1
+          },
+          {
+            "id": "sable/zero-lap-ribbon",
             "weight": 1
           }
         ]
@@ -7173,10 +7177,20 @@
         "h": 0.05
       },
       "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
       "body": "A tiny cream ribbon says ZERO LAPS in crooked black ink; its brass pin is sized improbably well for a wooden beetle.",
-      "placementParent": "sable/the-bad-end-workshop"
+      "placementParent": "sable/the-bad-end-workshop",
+      "ledger_weight": 1
     },
     {
       "id": "rei/the-experiment-garden",
@@ -23644,6 +23658,10 @@
       },
       {
         "mark": "sable/the-workshop-opens-with",
+        "stamps": 1
+      },
+      {
+        "mark": "sable/zero-lap-ribbon",
         "stamps": 1
       }
     ],
