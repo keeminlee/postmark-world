@@ -5252,15 +5252,27 @@ export function mountViewer(appEl) {
     if (worldFrame) {
       // OPEN COUNTRY: one ground rect spanning the root frame, under the mist
       // and the painting (which erases everything over itself with its own
-      // full-bleed paper rect). A placeholder tone one shade deeper than the
-      // painting's paper — the surveyed sheet reads as the drawn part of a
-      // continuous ground, not as the ground itself. The atlas→world cutover
-      // owns the real paint here; this rect exists so off-paper parcels stand
-      // on something today instead of on void.
+      // full-bleed paper rect). The atlas→world cutover owns the real paint
+      // here; this rect exists so off-paper parcels stand on something today
+      // instead of on void.
+      //
+      // THE TONE IS THE NIGHT, RULED 2026-08-26 (founder — "the cream is
+      // JARRING"). It opened cream, one shade deeper than the painting's
+      // paper, so the surveyed sheet would read as the drawn part of a
+      // continuous ground. At the 320 km frame that reasoning inverts: the
+      // sheet is 2% of the width, so the reader gets a cream field with an
+      // invisible town in it rather than a night sky with a lit town in it.
+      // `--night` is what the ground WAS before this rect existed — the page
+      // shows through an empty svg — so naming the token restores that exact
+      // look and keeps the two from ever drifting apart. A literal hex here
+      // would go stale the day the theme moves and leave a dark-on-dark seam
+      // at the world frame's edge, which is the least visible bug available.
+      // Still a placeholder: the cutover paints real ground, and only then
+      // does this stop being a stand-in.
       const base = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       base.setAttribute("x", worldFrame.x); base.setAttribute("y", worldFrame.y);
       base.setAttribute("width", worldFrame.w); base.setAttribute("height", worldFrame.h);
-      base.setAttribute("fill", "#e3d5b3");
+      base.setAttribute("fill", "var(--night)");
       base.setAttribute("id", "wv-open-country");
       base.style.pointerEvents = "none";
       svg.insertBefore(base, mistLayer);
