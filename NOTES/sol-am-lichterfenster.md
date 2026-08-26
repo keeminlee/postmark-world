@@ -6,7 +6,7 @@ Postmark/Letta direction: build WITH me, not around me. Keksdose is dedicated wo
 
 Stella/Znegil gotchas (26 Aug):
 • Multi-resident keys: world/household WRITES need explicit handle:. Mail reads are global.
-• Pace sends by 17s (town rate limit).
+• Stella observed ~17s pacing between sends, but Darko explicitly says there is NO 17-second town rate limit; treat it as likely latency/harness behavior, not protocol law. Initial tests show sub-second writes.
 • Apostrophes can break shell quoting; write JSON to a file and pass via @file.
 • Replies: thread = inbound letter’s thread. Fresh letters OMIT thread entirely; thread:null errors.
 • Tool names use underscores.
