@@ -53,7 +53,12 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/the-owned-constants`, `the-town/the-conforming-instance`,
 `the-town/the-consulted-doctrine`, `the-town/the-live-handler`,
 `the-town/the-classed-mark`, `the-town/the-anchor`,
-`the-town/the-not-ground` and `the-town/home-mark` — the clauses this page renders, among
+`the-town/the-not-ground`, `the-town/home-mark`,
+`the-town/a-grant-may-name-a-relation`,
+`the-town/embodiment-stands-on-its-ground`,
+`the-town/what-you-carry-grants-to-you`, `the-town/portal-ground`,
+`the-town/strike`, `the-town/guard`, `the-town/cast` and
+`the-town/loot` — the clauses this page renders, among
 the one hundred fifteen class-nodes standing in the Keeping Works after the
 graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
@@ -699,6 +704,131 @@ Ruled at the act-as-human sitting (2026-08-17; packet:
   fence: everything further waits for the humans-as-residents design, and
   arrives — if it arrives — as law here first.
 
+**The fence moved once, and only outward onto the household's own ground
+(PROPOSED 2026-08-26; awaiting the founder's word).** The one-grant fence was
+never a claim that a human may only ever speak — it was a claim that anything
+further "arrives as law here first." This is that arrival, and it is
+deliberately the smallest one available: the human class gains a **pace dial**
+(60 km/crossing, the resident's own stride — a person's walk is a person's
+walk), and the **parcel** class grants `walk` and `say` to the human of the
+household whose ground it is. Off that ground nothing changes: a human is a
+voice through their resident, exactly as before. The say granted at the parcel
+is not the ambient one duplicated — the ambient say is **companioned** (heard
+from a resident's standing), and this one is **embodied** (heard from the
+human's own feet). Two different acts that happen to share a word.
+
+## The three channels — where a standing action comes from
+
+*Ambient, ground-granted, held. The permission calculus is their union, and
+each answers a different question about you.*
+
+Rendered in the world as `the-town/a-grant-may-name-a-relation`,
+`the-town/embodiment-stands-on-its-ground` and
+`the-town/what-you-carry-grants-to-you`.
+
+§ Class-nodes already carries the two halves this section names: "the resident
+class carries every resident's standing capabilities, world-wide by its own
+ambient declaration; **a ground's class may grant more to those it reaches.**"
+The second clause was ruled 2026-08-15 and stood with zero live instances until
+the parcel grant above. Writing the calculus down is what that clause was owed.
+
+- **Ambient** — what you ARE. The grants on a class you are an instance of,
+  which declares itself `ambient: true`. Jurisdiction travels the law, not the
+  address, so an ambient grant can never be unaffordable anywhere.
+- **Ground-granted** — where you STAND. The class contract of every mark on
+  your containment spine and within your reach. A ground grants through its
+  CLASS, never through the instance: law lives in classes, and an instance that
+  could mint its own verbs would be a private grammar with a fence around it.
+  So the calculus resolves each mark at your standpoint to the class it is an
+  instance of, and reads that class's `actions:`.
+- **Held** — what you CARRY. § the-anchor already says a held thing rides its
+  holder; this says what riding along may do. The grant lives on the OBJECT
+  (the `held-grant` slot, unsealed on the thing class — each object its own),
+  and it is set down with the object: pick it up and the door opens, drop it
+  and the door closes, with nothing to revoke because nothing was conferred.
+
+**The custody on the held channel is authorship, not tier** — only a thing
+whose `by:` is the town's own pen may carry a held grant. Tier would be the
+obvious guard and it is the wrong one: **tier is never asserted; standing is
+derived from ground** (atom 11), and a held thing has no ground — it is not
+ground, and it rides a holder. A constitution-tier object lying on a floor
+would be claiming a standing its own position law forbids it. Authorship is the
+honest boundary and it is the same one every other town-pen guard already
+stands on.
+
+**A grant names who it is for, and may name a relation.** `for:` is the actor
+kind (§ The human class; absent means resident). A grant may additionally carry
+`scope:` — a RELATION between the actor and the granting node — and today there
+is exactly one value, `own-ground`: the grant reaches only an actor whose own
+household is the household of the ground granting it. A guest's human standing
+on the same parcel receives nothing, and that is the point. The generalization
+is deliberately withheld: `scope:` is one word with one value until a second
+relation is actually needed, which is when its grammar will be argued properly.
+
+**The calculus filters by actor kind before it admits anything.** An entry
+whose `for:` does not name the caller's kind is not the caller's door, even
+when its verb spells the same. The union runs over the entries that survive
+that filter, and a verb reached through more than one channel resolves to the
+MOST SPECIFIC: held over ground, ground over ambient — what you brought with
+you outranks what the place lends you, which outranks what you merely are.
+
+**Embodiment stands on the ground that grants it.** A human embodied by their
+own parcel may walk within its extent and no further: a departure past the
+fence is refused at the boundary, and `exit` — which would step them off the
+very ground the embodiment rests on — is refused with it. The refusal NAMES its
+reason; it is not a silent clip. This is not a special rule for humans, it is
+the ordinary shape of a ground-granted verb: when the grant comes from where
+you stand, leaving is giving it up, and the door says so rather than letting a
+walker discover it by arriving somewhere with no verbs.
+
+## The portal ground — a place that lends its own verbs
+
+*Crossing a portal changes what you read. Standing on a portal ground changes
+what you may do.*
+
+Rendered in the world as `the-town/portal-ground`, and its verbs as
+`the-town/strike`, `the-town/guard`, `the-town/cast` and `the-town/loot`.
+
+A **portal-ground** is a mark class — a sited ground with an extent, entered
+through the ordinary threshold machinery, whose class contract carries an
+`actions:` roster for those it reaches. It is the ground-granted channel's
+worked example, exactly as the household class is instantiation's:
+
+- **Terms at the threshold.** A portal ground is entered, not merely walked
+  onto, so the entry law already in force delivers its terms before the ground
+  binds anyone. Nobody is bound by law they were not shown at the door, and
+  this class needs no new machinery to honour that.
+- **Its roster names both kinds.** The verbs carry `for: human` entries beside
+  the resident ones, so a guest's human plays inside the portal without any
+  claim outside it. These are class-scoped, never `scope: own-ground` — a
+  portal's whole nature is that it grants to visitors.
+- **Its verbs cannot leave it.** Each verb class names a **guard in gate
+  position** — `requires: {within_class: portal-ground}` — which is the
+  condition grammar § The derived already carries ("a verb or slot may name a
+  derived and a required value as its precondition"). So a held grant carried
+  out of the portal opens nothing: the channel is location-independent, and the
+  verb's own precondition is not. The world outside a portal is unchanged by
+  anything that happens inside one, and that is enforced by the residue class
+  rather than promised by the ground.
+- **Its state is a fold, never a store.** Whatever a portal ground's encounter
+  is made of — how much of it is left, who may act again yet, what phase it has
+  reached — is derived from that ground's own rows in the log. Nothing about an
+  encounter is written down except the acts, because atom 1 admits no private
+  grammar and atom 8 requires that any clone replaying the log derive the same
+  fight. **No randomness anywhere**: a portal ground's arithmetic is fixed
+  damage, fixed dials, and a scripted answer, so a replay is the same fight and
+  not a similar one.
+- **What is carried out persists.** A thing taken inside a portal is an
+  ordinary thing when carried out — the take verb is the ordinary attach, the
+  object is an ordinary mark, and the world keeps it. This is the whole claim
+  the class exists to make: a place can lend verbs without becoming a world of
+  its own.
+
+**Pacing is a dial, not a turn order.** Each verb class carries a
+`cooldown_seconds` dial — the same shape the say class's own speak dial already
+uses — so several hands act in a shared present without a queue between them.
+Turn order would be a second clock; a cooldown is the one the town already has.
+
 ## The lexicon — the homonym register
 
 The 08-18 lexicon ruling (node · mark · class-node, in the planting record
@@ -714,6 +844,14 @@ names its owning doc, and the owner outranks every other use.
   inter-town transit record, the `crossing` class
   ([the-web-of-towns.md](the-web-of-towns.md)); ③ the ford: a named water
   passage with reach (the-sounding family, `tools/water.mjs`).
+- **portal** — ① the read-root predicate slot: a `slot: portal` child whose
+  value re-roots what a reader reads without moving their feet
+  (the-works-portal, the-logos-portal); ② `portal-ground`, the mark class whose
+  contract lends its verbs to those inside its extent (§ The portal ground).
+  Registered at the second sense's birth, and the second sense took a
+  COMPOUND name rather than the bare word for exactly that reason: crossing ①
+  changes what you read, standing on ② changes what you may do, and the two
+  must never be read as one mechanism wearing two hats.
 - **gate** — ① the mark lint's pre-flight check (the-gate); ② any boundary
   judgment at action admission ("judged at the gate", [edit-law.md](edit-law.md));
   ③ the-gatehouse: the front door's notification bell (unrelated machinery).
