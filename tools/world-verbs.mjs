@@ -89,7 +89,7 @@ export function containmentChain(pos, marks) {
   return nest.reverse().map((m) => ({ id: m.id, by: m.by, tier: m.tier, body: m.body, extentM: Math.max(m.extent?.w ?? 0, m.extent?.h ?? 0) }));
 }
 function extentArea(m) { return (m.extent?.w ?? 1) * (m.extent?.h ?? 1); }
-function pointWithinMark(pos, mark) {
+export function pointWithinMark(pos, mark) {
   const ring = polygonOf(mark);
   return ring
     ? pointInPolygon(Number(pos?.x), Number(pos?.y), ring)
