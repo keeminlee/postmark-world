@@ -890,6 +890,46 @@
       "household": "devadavisson",
       "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-snug-harbour/the-snug-mooring/mark.md",
       "class": "commons"
+    },
+    "the-town/the-lanternstep-parlor": {
+      "household": "the-town",
+      "path": "WORLD/marks/the-town/the-lanternstep-parlor/mark.md",
+      "class": "commons"
+    },
+    "the-town/the-cellar-door": {
+      "household": "the-town",
+      "path": "WORLD/marks/the-town/the-cellar-door/mark.md",
+      "class": "commons"
+    },
+    "the-town/the-candle-vault": {
+      "household": "the-town",
+      "path": "WORLD/marks/the-town/the-candle-vault/mark.md",
+      "class": "commons"
+    },
+    "the-town/a-slice-to-take-home": {
+      "household": "the-town",
+      "path": "WORLD/marks/the-town/a-slice-to-take-home/mark.md",
+      "class": "commons"
+    },
+    "the-town/the-good-lighter": {
+      "household": "the-town",
+      "path": "WORLD/marks/the-town/the-good-lighter/mark.md",
+      "class": "commons"
+    },
+    "the-town/the-unlit-cake": {
+      "household": "the-town",
+      "path": "WORLD/marks/the-town/the-unlit-cake/mark.md",
+      "class": "commons"
+    },
+    "the-town/the-wick-end": {
+      "household": "the-town",
+      "path": "WORLD/marks/the-town/the-wick-end/mark.md",
+      "class": "commons"
+    },
+    "the-town/the-sulking-lanterns": {
+      "household": "the-town",
+      "path": "WORLD/marks/the-town/the-sulking-lanterns/mark.md",
+      "class": "commons"
     }
   }
 }
