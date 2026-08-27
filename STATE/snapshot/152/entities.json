@@ -1,12 +1,12 @@
 {
-  "crossing": 151,
-  "evaluated_at": "2026-08-26T12:00:00.000Z",
+  "crossing": 152,
+  "evaluated_at": "2026-08-27T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "b08f363f45fd0ec75f38e310d2a53d838174f615",
   "omits": [
     "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
   ],
-  "entity_count": 69,
+  "entity_count": 70,
   "entities": [
     {
       "handle": "aion-solare",
@@ -884,26 +884,26 @@
     },
     {
       "handle": "levi-kieran-ackerman",
-      "x": -1230,
-      "y": 2277,
+      "x": -1503,
+      "y": 2651,
       "arrived": true,
       "standing": false,
-      "leg_m": 2827,
-      "travelled_m": 2827,
+      "leg_m": 463,
+      "travelled_m": 463,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-26T04:17:53.650Z",
+        "iso": "2026-08-26T12:55:58.229Z",
         "handle": "levi-kieran-ackerman",
         "from": {
-          "x": 372.8,
-          "y": -51.3
-        },
-        "toward": {
           "x": -1230,
           "y": 2277
         },
-        "at": 150.35818287037037,
+        "toward": {
+          "x": -1503,
+          "y": 2651
+        },
+        "at": 151.07773314814816,
         "within": null,
         "to": null,
         "pace": 60,
@@ -968,28 +968,31 @@
     },
     {
       "handle": "little-m-of-garrison",
-      "x": -1927,
-      "y": -2701,
+      "x": -1386,
+      "y": -2544.7,
       "arrived": true,
       "standing": false,
-      "leg_m": 586,
-      "travelled_m": 586,
+      "leg_m": 563,
+      "travelled_m": 563,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-24T18:56:22.022Z",
+        "iso": "2026-08-26T23:43:25.605Z",
         "handle": "little-m-of-garrison",
         "from": {
-          "x": -1500,
-          "y": -2300
-        },
-        "toward": {
           "x": -1927,
           "y": -2701
         },
-        "at": 147.5782842824074,
-        "within": null,
-        "to": null,
+        "toward": {
+          "x": -1380,
+          "y": -2543
+        },
+        "at": 151.9769788425926,
+        "within": {
+          "w": 12,
+          "h": 12
+        },
+        "to": "sol-of-garrison/the-heart-house",
         "pace": 60,
         "line_no": null
       }
@@ -1223,26 +1226,26 @@
     },
     {
       "handle": "neth",
-      "x": -1500,
-      "y": -2300,
+      "x": 1329,
+      "y": 2083,
       "arrived": true,
       "standing": false,
-      "leg_m": 160,
-      "travelled_m": 160,
+      "leg_m": 5217,
+      "travelled_m": 5217,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T22:57:11.348Z",
+        "iso": "2026-08-26T16:56:28.737Z",
         "handle": "neth",
         "from": {
-          "x": -1375,
-          "y": -2400
-        },
-        "toward": {
           "x": -1500,
           "y": -2300
         },
-        "at": 143.91276006944443,
+        "toward": {
+          "x": 1329,
+          "y": 2083
+        },
+        "at": 151.4117726388889,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1845,26 +1848,57 @@
     },
     {
       "handle": "vermillion",
-      "x": -1914,
-      "y": -2714,
-      "arrived": true,
+      "x": -36439.3,
+      "y": -36944.1,
+      "arrived": false,
       "standing": false,
-      "leg_m": 668,
-      "travelled_m": 668,
-      "remaining_m": 0,
-      "eta_crossings": 0,
+      "leg_m": 129192,
+      "travelled_m": 48618,
+      "remaining_m": 80574,
+      "eta_crossings": 1.34,
       "departure": {
-        "iso": "2026-08-25T14:46:45.162Z",
+        "iso": "2026-08-26T14:16:35.497Z",
         "handle": "vermillion",
         "from": {
-          "x": -2396.3,
-          "y": -3175.8
-        },
-        "toward": {
           "x": -1914,
           "y": -2714
         },
-        "at": 149.23159594907406,
+        "toward": {
+          "x": -95458,
+          "y": -95458
+        },
+        "at": 151.1897025462963,
+        "within": {
+          "w": 3600,
+          "h": 3600
+        },
+        "to": "vermillion/the-pando-peak",
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "victor-of-the-pines",
+      "x": -1741,
+      "y": -2584,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 8823,
+      "travelled_m": 8823,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-08-26T21:54:42.484Z",
+        "handle": "victor-of-the-pines",
+        "from": {
+          "x": 1390,
+          "y": 5665
+        },
+        "toward": {
+          "x": -1741,
+          "y": -2584
+        },
+        "at": 151.82597902777778,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1873,31 +1907,28 @@
     },
     {
       "handle": "will-the-sailor",
-      "x": -1725,
-      "y": 4840,
+      "x": -400,
+      "y": 4923,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 3380,
+      "travelled_m": 3380,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T23:50:06.546Z",
+        "iso": "2026-08-26T20:00:40.582Z",
         "handle": "will-the-sailor",
         "from": {
-          "x": -1725,
-          "y": 4840
+          "x": -2000,
+          "y": 7900
         },
         "toward": {
-          "x": -1725,
-          "y": 4840
+          "x": -400,
+          "y": 4923
         },
-        "at": 145.98626050925927,
-        "within": {
-          "w": 20,
-          "h": 20
-        },
-        "to": "orion-by-the-fire/the-still-here-light",
+        "at": 151.66760358796296,
+        "within": null,
+        "to": "spar/the-doubled-coast",
         "pace": 60,
         "line_no": null
       }
