@@ -30,6 +30,7 @@ const PARCEL = `${WORKS}/postmark-node/mark/parcel/mark.md`;
 const PORTAL = `${WORKS}/postmark-node/mark/portal-ground/mark.md`;
 const HELD = `${WORKS}/postmark-node/mark/thing/held-grant-slot/mark.md`;
 const VERB = (v) => `${WORKS}/postmark-edge/${v}/mark.md`;
+const ARENA = `${WORKS}/postmark-node/mark/portal-ground/arena/mark.md`;
 
 /** Each flip: the file it breaks, the edit, and the test title that must catch it. */
 const FLIPS = [
@@ -83,21 +84,59 @@ const FLIPS = [
     file: VERB("loot"), catches: "loot is additionally fenced to a spent encounter",
     edit: (t) => t.replace(', "phase": "spent"', "") },
 
-  { name: "cast loses its cooldown (a word you may spend without pause)",
-    file: VERB("cast"), catches: "every portal verb carries its own cooldown dial",
-    edit: (t) => t.replace(', "cooldown_seconds": 60', "") },
 
-  { name: "a verb declares a turn order (a second clock beside the town's)",
-    file: VERB("guard"), catches: "every portal verb carries its own cooldown dial",
-    edit: (t) => t.replace('"cooldown_seconds": 40', '"cooldown_seconds": 40, "turn_order": 2') },
+  // ── the wheel, the dice and the lift (the founder's 2026-08-26 rulings) ──
+  { name: "a fighting verb keeps a cooldown beside the wheel (two pacing laws at once)",
+    file: VERB("strike"), catches: "every fighting verb ENDS THE TURN",
+    edit: (t) => t.replace("\"ends_turn\": true}", "\"ends_turn\": true, \"cooldown_seconds\": 20}") },
 
-  { name: "cast stops buying more than strike (nobody would ever spend it)",
-    file: VERB("cast"), catches: "the fighting verbs' damage lives on the record",
-    edit: (t) => t.replace('"damage": 6', '"damage": 4') },
+  { name: "a fighting verb stops spending the turn that used it",
+    file: VERB("guard"), catches: "every fighting verb ENDS THE TURN",
+    edit: (t) => t.replace("\"ends_turn\": true}", "\"ends_turn\": false}") },
+
+  { name: "a verb grows a duration dial of its own (a ticker in the making)",
+    file: VERB("cast"), catches: "the one dial that names a duration resolves at a door",
+    edit: (t) => t.replace("\"ends_turn\": true}", "\"ends_turn\": true, \"recharge_seconds\": 30}") },
+
+  { name: "the arena drops its turn timeout, so an absent hand freezes the room",
+    file: ARENA, catches: "the one dial that names a duration resolves at a door",
+    edit: (t) => t.replace("\"turn_timeout_s\": 600, ", "") },
+
+  { name: "a verb carries flat damage beside its die — two answers to one question",
+    file: VERB("strike"), catches: "the fighting verbs roll DICE",
+    edit: (t) => t.replace("\"damage_die\": 6", "\"damage_die\": 6, \"damage\": 4") },
+
+  { name: "a verb's die leaves the record",
+    file: VERB("cast"), catches: "the fighting verbs roll DICE",
+    edit: (t) => t.replace("\"to_hit_die\": 20, ", "") },
+
+  { name: "cast stops buying more than strike (nobody would ever spend one)",
+    file: VERB("cast"), catches: "the fighting verbs roll DICE",
+    edit: (t) => t.replace("\"damage_die\": 10", "\"damage_die\": 6") },
 
   { name: "guard's effect leaves the record for the code",
-    file: VERB("guard"), catches: "the fighting verbs' damage lives on the record",
-    edit: (t) => t.replace('"halves_next_hit": true, ', "") },
+    file: VERB("guard"), catches: "the fighting verbs roll DICE",
+    edit: (t) => t.replace("\"halves_next_hit\": true, ", "") },
+
+  { name: "the arena stops extending the portal ground",
+    file: ARENA, catches: "the arena keeps the wheel, and the plain portal ground does NOT",
+    edit: (t) => t.replace("extends: portal-ground", "extends: mark") },
+
+  { name: "the plain portal ground grows a wheel (a room you cannot walk through)",
+    file: PORTAL, catches: "the arena keeps the wheel, and the plain portal ground does NOT",
+    edit: (t) => t.replace("dials: {\"beat_seconds\": 20}", "dials: {\"beat_seconds\": 20, \"turn_timeout_s\": 600, \"initiative_die\": 20, \"lift_to\": 8}") },
+
+  { name: "the arena stops granting lift, so nobody can be picked up",
+    file: ARENA, catches: "lift is granted by the arena and by nothing else",
+    edit: (t) => t.replace("{\"action\": \"lift\", \"residue\": \"the-town/lift\"}, ", "") },
+
+  { name: "lifting costs no turn",
+    file: VERB("lift"), catches: "lift is granted by the arena and by nothing else",
+    edit: (t) => t.replace("\"ends_turn\": true", "\"ends_turn\": false") },
+
+  { name: "lift escapes the arena",
+    file: VERB("lift"), catches: "lift is granted by the arena and by nothing else",
+    edit: (t) => t.replace("requires: {\"within_class\": \"arena\"}", "requires: {}") },
 
   // ── the first instances ─────────────────────────────────────────────────
   { name: "the portal ground drifts outside the parcel it was built on",
@@ -123,7 +162,13 @@ const FLIPS = [
   { name: "the adversary's numbers move off its own mark",
     file: "WORLD/marks/the-town/the-unlit-cake/mark.md",
     catches: "the adversary's numbers are on its own mark",
-    edit: (t) => t.replace('dials: {"hp": 60, "hits_for": 5}', "dials: {}") },
+    // ⚠ ANCHORED ON THE LINE'S SHAPE, NOT ITS CONTENTS. The literal spelling
+    // was `dials: {"hp": 60, "hits_for": 5}` until the dice ruling added three
+    // more dials to the boss — at which point this flip silently matched
+    // nothing and the runner reported it as an APPARATUS failure. A flip keyed
+    // to an exact value rots the first time the value it names is amended,
+    // which for a class dial is the ordinary case rather than the rare one.
+    edit: (t) => t.replace(/^dials: \{.*$/m, "dials: {}") },
 
   { name: "the adversary CLASS seals a value every instance must wear",
     file: `${WORKS}/postmark-node/mark/adversary/mark.md`,

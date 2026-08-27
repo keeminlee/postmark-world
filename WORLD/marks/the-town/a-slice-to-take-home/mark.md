@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 class: thing
 date: 2026-08-26
-at: { x: 1098, y: -786.5 }
+at: { x: 1096, y: -783 }
 extent: { w: 0.3, h: 0.3 }
 loot: true
 ---

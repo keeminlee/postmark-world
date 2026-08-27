@@ -8,7 +8,7 @@ version: 1
 extends: postmark-edge
 subject: entity
 object: mark
-dials: {"cooldown_seconds": 0}
+dials: {"ends_turn": false}
 requires: {"within_class": "portal-ground", "phase": "spent"}
 implements: ["postmark-office src/encounter.mjs — the phase guard is a derived in gate position, read off the fold"]
 source: LOGOS/classes.md

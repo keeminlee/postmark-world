@@ -58,7 +58,10 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/embodiment-stands-on-its-ground`,
 `the-town/what-you-carry-grants-to-you`, `the-town/portal-ground`,
 `the-town/strike`, `the-town/guard`, `the-town/cast`,
-`the-town/loot` and `the-town/adversary` — the clauses this page renders, among
+`the-town/loot`, `the-town/adversary`, `the-town/arena`,
+`the-town/the-turn-wheel`, `the-town/the-witnessed-roll`,
+`the-town/crossing-is-joining`, `the-town/downed-not-dead` and
+`the-town/lift` — the clauses this page renders, among
 the one hundred fifteen class-nodes standing in the Keeping Works after the
 graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
@@ -816,9 +819,16 @@ worked example, exactly as the household class is instantiation's:
   reached — is derived from that ground's own rows in the log. Nothing about an
   encounter is written down except the acts, because atom 1 admits no private
   grammar and atom 8 requires that any clone replaying the log derive the same
-  fight. **No randomness anywhere**: a portal ground's arithmetic is fixed
-  damage, fixed dials, and a scripted answer, so a replay is the same fight and
-  not a similar one.
+  fight. **No UNWITNESSED randomness**: every roll is derived from material the
+  log already holds and stamped at the act's own instant, so a replay is the
+  same fight and not a similar one. *(Superseded 2026-08-26 by the founder's
+  dice ruling. This clause read "**No randomness anywhere**: a portal ground's
+  arithmetic is fixed damage, fixed dials, and a scripted answer" — which
+  answered atom 8 by refusing dice outright. The founder wants dice; atom 8 is
+  not negotiable; so the clause narrows from "no randomness" to "no randomness
+  the record cannot reproduce", and the whole weight moves onto § The witnessed
+  roll below. Both states are shown because the reason the first clause existed
+  is the reason the second one is hard.)*
 - **What is carried out persists.** A thing taken inside a portal is an
   ordinary thing when carried out — the take verb is the ordinary attach, the
   object is an ordinary mark, and the world keeps it. This is the whole claim
@@ -832,10 +842,106 @@ code. It is deliberately thin: it is a standing thing with a number of hits in
 it, and everything else about what it IS lives in its body, where a resident
 reads it.
 
-**Pacing is a dial, not a turn order.** Each verb class carries a
-`cooldown_seconds` dial — the same shape the say class's own speak dial already
-uses — so several hands act in a shared present without a queue between them.
-Turn order would be a second clock; a cooldown is the one the town already has.
+**Pacing is a WHEEL, and the wheel is derived.** *(Ruled by the founder
+2026-08-26, superseding this paragraph. It read: "**Pacing is a dial, not a turn
+order.** Each verb class carries a `cooldown_seconds` dial … Turn order would be
+a second clock; a cooldown is the one the town already has." The argument was
+sound and the founder overruled it, which is his to do — a dungeon wants turns.
+The old text stands here rather than being deleted, because the objection it
+raised is a real cost the new law has to pay, and the next reader should see the
+bill.)*
+
+The second-clock objection is answered by not building a second clock: **the
+wheel is not a schedule, it is a fold**. Nothing ticks. An encounter's order,
+its round, and whose turn it is are derived from the ground's own rows exactly
+as its hit points are — read at the door, stored by nobody — and the town's one
+clock is untouched. Turn ORDER is a property of a log; a turn TIMER would have
+been the second clock, which is why the one dial that names a duration
+(`turn_timeout`) resolves **at the next door touch** and never on its own.
+
+## The arena — a portal ground that keeps a wheel
+
+*Crossing into an arena is joining its fight. Nothing else in the town has a
+threshold that means that, which is why it is a class and not a dial.*
+
+Rendered in the world as `the-town/arena`, and its law as
+`the-town/the-turn-wheel`, `the-town/the-witnessed-roll`,
+`the-town/crossing-is-joining` and `the-town/downed-not-dead`.
+
+An **arena** extends portal-ground: same lent verbs, same fence, plus a wheel.
+Ruled by the founder 2026-08-26 (the party rulings).
+
+- **The wheel gates every act, and movement with them.** While an encounter is
+  live, an arena affords its verbs — and walking — only to whoever the wheel is
+  on. Hostiles hold real slots and take real turns. An act out of turn is
+  refused **naming whose turn it is**, because "no" without a name is a door
+  that will be tried again immediately. With no encounter live, movement inside
+  is free: the wheel exists to order a fight, not to hold a room still.
+- **Hostile turns are resolved by the act that ends a player's turn**, in the
+  same handling, until the wheel reaches a player again. There is no daemon and
+  no ticker: **the duet is the event loop**. A town whose fights need a
+  heartbeat has a second clock after all, and this is the clause that keeps it
+  from having one.
+- **An absent hand cannot freeze the room.** `turn_timeout` is a dial on the
+  arena; once it has expired, that hand's turn resolves as a **pass at the next
+  door touch** — by anyone. The turn is skipped when someone arrives to notice,
+  never by a process watching a clock.
+- **Initiative is rolled at the open and appended at the boundary.** Crossing
+  the inner threshold rolls you in; a late arrival joins at the BOTTOM of the
+  order at the next round boundary, never mid-round, because an order that can
+  change under a hand mid-round is an order nobody can read. Walking out drops
+  you from the wheel — the exit law holds mid-fight, and the arena simply stops
+  counting you. No jails.
+
+## The witnessed roll
+
+*A roll the record cannot reproduce is not a roll, it is a rumour.*
+
+Rendered as `the-town/the-witnessed-roll`.
+
+Atom 8 stands unamended: the evaluation is deterministic and any clone replaying
+derives the same world, forever. Dice are admitted by making them **witnessed**
+rather than random — the same move the log already makes for time (§ The two
+constitutionalities: **witnessed** is "stamped by the act at its own instant,
+chosen by nobody, never recomputed").
+
+- **A roll's entropy is material the log already holds** — the act's position in
+  the log, its own identity, and its actor. Nobody chooses it, nobody can steer
+  it, and it is available to every reader of the record without asking anyone.
+- **It is stamped at the act's instant and never recomputed.** A roll re-derived
+  at read time is a roll that changes when the world around it changes; a roll
+  stamped into its act is a fact. The value rides the answer AND the row, so a
+  telling can show the throw.
+- **The die is a class dial**, like every other number a class speaks — so what
+  a verb rolls is amendable law, not a constant in an office.
+
+That is the whole reconciliation: the fight is dramatic because no one can
+predict a roll, and lawful because everyone can reproduce it.
+
+## Downed, not dead
+
+*You risk nothing here but your pride, and maybe your sword.*
+
+Rendered as `the-town/downed-not-dead`. Ruled by the founder 2026-08-26.
+
+- **At zero you are DOWN, and down is not gone.** You lose your acts, the wheel
+  skips you, and what you were holding **drops loose where you stand** — someone
+  has to come and get it, which is what makes carrying a thing into a fight a
+  stake rather than a decoration.
+- **Any ally may spend their WHOLE turn lifting you**, and you come back at
+  partial strength. The cost is the turn; that is the entire economy of it.
+- **If the whole room goes down, the attempt ends and the room resets** —
+  everyone wakes in the antechamber, the adversary stands again at full, and the
+  journal keeps the failed attempt as history. Nothing is erased; a defeat is an
+  event, not a gap.
+- **Strength is ENCOUNTER-scoped, and fleeing does not heal you.** Re-entering
+  mid-encounter rejoins you at what you left with. A door that restored you
+  would make walking out the strongest move in the room.
+- **All of this is portal vocabulary and reaches nothing outside.** "Down" says
+  nothing about a resident or a human anywhere else in the world; no standing,
+  no position, no holding, no stamp changes because of it. The threshold terms
+  say so before you cross, because that is the one promise a place like this
+  owes the people who step into it.
 
 ## The lexicon — the homonym register
 

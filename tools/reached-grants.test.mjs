@@ -46,6 +46,7 @@ const PARCEL = `${WORKS}/postmark-node/mark/parcel/mark.md`;
 const PORTAL = `${WORKS}/postmark-node/mark/portal-ground/mark.md`;
 const HELD_SLOT = `${WORKS}/postmark-node/mark/thing/held-grant-slot/mark.md`;
 const VERB = (v) => `${WORKS}/postmark-edge/${v}/mark.md`;
+const ARENA = `${WORKS}/postmark-node/mark/portal-ground/arena/mark.md`;
 
 // ── channel 1 · ambient, unchanged ──────────────────────────────────────────
 
@@ -197,50 +198,112 @@ test("loot is additionally fenced to a spent encounter, and it is the only one t
       `${v} carries no phase guard — you may swing at a boss that is still standing`);
 });
 
-test("every portal verb carries its own cooldown dial, and nothing carries a turn order", () => {
-  // LOGOS/classes.md § The portal ground, verbatim:
-  //   "Turn order would be a second clock; a cooldown is the one the town
-  //    already has."
-  for (const v of ["strike", "guard", "cast", "loot"]) {
+test("every fighting verb ENDS THE TURN, and none of them carries a cooldown any more", () => {
+  // ⚠ SUPERSEDED 2026-08-26 by the founder's turn ruling, and the replacement
+  // is STRICTER than what it replaced. This test used to assert the opposite —
+  // that each verb carried a `cooldown_seconds` dial and that NOTHING declared
+  // a turn order — quoting the clause "Turn order would be a second clock; a
+  // cooldown is the one the town already has." The founder overruled the clause.
+  //
+  // The lazy repair is deleting this test. The honest one asserts the property
+  // the change establishes AND the absence of the thing it replaced, so a
+  // half-migration — a verb that ends the turn while still carrying a cooldown,
+  // i.e. two pacing laws at once — fails here where before it could not.
+  //
+  // LOGOS/classes.md § The arena, verbatim:
+  //   "While an encounter is live, an arena affords its verbs — and walking —
+  //    only to whoever the wheel is on."
+  for (const v of ["strike", "guard", "cast", "lift"]) {
     const dials = field(VERB(v), "dials");
-    assert.ok("cooldown_seconds" in dials, `${v} paces itself with a cooldown`);
-    assert.ok(Number.isFinite(dials.cooldown_seconds) && dials.cooldown_seconds >= 0);
-    assert.equal(dials.turn_order, undefined, `${v} declares no turn order — the free-for-all is the design`);
+    assert.equal(dials.ends_turn, true, `${v} spends the turn that used it`);
+    assert.equal(dials.cooldown_seconds, undefined,
+      `${v} still carries a cooldown — a wheel and a cooldown are two pacing laws, and a verb under both obeys neither predictably`);
   }
+  // loot is the exception and it is on the record as one: the fight is over by
+  // then, so there is no wheel left for it to spend.
+  assert.equal(field(VERB("loot"), "dials").ends_turn, false);
 });
 
-test("the fighting verbs' damage lives on the record, and no two of them agree by accident", () => {
-  // LOGOS/classes.md, atom 8, verbatim:
-  //   "The evaluation is deterministic and discretion-free — no favorites are
-  //    expressible, because the function has no input where one could go."
-  // Fixed damage on the class is what makes that true of a fight. A verb whose
-  // damage is not on the record has its number somewhere the town cannot amend.
+test("the one dial that names a duration resolves at a door, never on a clock", () => {
+  // LOGOS/classes.md § Pacing is a WHEEL, verbatim:
+  //   "Turn ORDER is a property of a log; a turn TIMER would have been the
+  //    second clock, which is why the one dial that names a duration
+  //    (`turn_timeout`) resolves at the next door touch and never on its own."
+  // The founder's second-clock objection to turn order was overruled; the
+  // objection itself was not answered by ignoring it, and this is where the
+  // answer is checkable. A duration dial anywhere but the arena would be a
+  // ticker in the making.
+  const arena = field(ARENA, "dials");
+  assert.ok(Number.isFinite(arena.turn_timeout_s) && arena.turn_timeout_s > 0);
+  for (const v of ["strike", "guard", "cast", "lift", "loot"])
+    for (const k of Object.keys(field(VERB(v), "dials")))
+      assert.ok(!/_s$|_seconds$/.test(k),
+        `${v} declares "${k}" — no verb names a duration; the only one in this design is the arena's, and it fires at a door`);
+});
+
+test("the fighting verbs roll DICE, and every die is on the record", () => {
+  // ⚠ SUPERSEDED 2026-08-26 by the founder's dice ruling. This asserted fixed
+  // integer damage and quoted "a portal ground's arithmetic is fixed damage,
+  // fixed dials, and a scripted answer". The founder wants dice; atom 8 is
+  // unchanged; so the clause narrowed to "no UNWITNESSED randomness" and the
+  // number became a DIE.
+  //
+  // The replacement is stricter in the way that matters: a die on the record is
+  // amendable law, and this test fails if any verb's randomness moves off the
+  // record into an office — which is the only way dice could break atom 8 here.
+  //
+  // LOGOS/classes.md § The witnessed roll, verbatim:
+  //   "The die is a class dial, like every other number a class speaks — so
+  //    what a verb rolls is amendable law, not a constant in an office."
   const strike = field(VERB("strike"), "dials");
   const cast = field(VERB("cast"), "dials");
-  assert.ok(Number.isInteger(strike.damage) && strike.damage > 0, "strike's damage is a whole number on the record");
-  assert.ok(Number.isInteger(cast.damage) && cast.damage > 0, "cast's damage is a whole number on the record");
-  assert.ok(cast.damage > strike.damage,
-    "cast costs a longer cooldown and buys more — if it did not, nobody would ever spend it");
+  for (const [name, d] of [["strike", strike], ["cast", cast]]) {
+    assert.ok(Number.isInteger(d.to_hit_die) && d.to_hit_die > 1, `${name} names its to-hit die`);
+    assert.ok(Number.isInteger(d.damage_die) && d.damage_die > 1, `${name} names its damage die`);
+    assert.ok(Number.isInteger(d.beats_ac), `${name} names what a hit has to beat`);
+    assert.equal(d.damage, undefined, `${name} still carries flat damage beside a die — two answers to one question`);
+  }
+  assert.ok(cast.damage_die > strike.damage_die,
+    "cast costs the same turn and reaches further — if its die were no better, nobody would ever spend one on it");
   assert.equal(field(VERB("guard"), "dials").halves_next_hit, true,
     "guard's effect is a dial, not a hardcode — the town can amend what bravery is worth");
 });
 
-// ── the sweep's own reader ──────────────────────────────────────────────────
-//
-// Deliberately last and deliberately small: a directory walk of the works, so
-// the scope check above inspects the whole registry rather than the list this
-// file happens to know about. A guard that only checks its author's own marks
-// is a guard against nothing.
+test("the arena keeps the wheel, and the plain portal ground does NOT", () => {
+  // LOGOS/classes.md § The arena, verbatim:
+  //   "Crossing into an arena is joining its fight. Nothing else in the town
+  //    has a threshold that means that, which is why it is a class and not a
+  //    dial."
+  // The discriminating leg: if both classes carried the wheel dials, the split
+  // would be decoration and the antechamber would be a fight nobody declared.
+  assert.equal(scalar(ARENA, "extends"), "portal-ground",
+    "an arena IS a portal ground — same lent verbs, same fence, plus a wheel");
+  const arena = field(ARENA, "dials");
+  for (const k of ["turn_timeout_s", "initiative_die", "lift_to"])
+    assert.ok(k in arena, `the arena declares ${k}`);
+  const plain = field(PORTAL, "dials");
+  for (const k of ["turn_timeout_s", "initiative_die", "lift_to"])
+    assert.equal(plain[k], undefined, `the plain portal ground must not declare ${k} — a room with a wheel and no fight is a room that cannot be walked through`);
+});
 
-import { readdirSync, statSync } from "node:fs";
-function markFiles(dir = join(here, "..", WORKS), out = []) {
-  for (const name of readdirSync(dir)) {
-    const p = join(dir, name);
-    if (statSync(p).isDirectory()) markFiles(p, out);
-    else if (name === "mark.md") out.push(p);
-  }
-  return out;
-}
+test("lift is granted by the arena and by nothing else", () => {
+  // LOGOS/classes.md § Downed, not dead, verbatim:
+  //   "Any ally may spend their WHOLE turn lifting you, and you come back at
+  //    partial strength. The cost is the turn; that is the entire economy of
+  //    it."
+  const arenaActions = field(ARENA, "actions");
+  const liftKinds = arenaActions.filter((a) => a.action === "lift").map((a) => a.for ?? "resident").sort();
+  assert.deepEqual(liftKinds, ["human", "resident"],
+    "the arena grants lift to BOTH kinds — a guest's human watching a housemate lie there and unable to help is the one shape this room must not have");
+  assert.ok(!(field(PORTAL, "actions") ?? []).some((a) => a.action === "lift"),
+    "the antechamber does not — there is nobody down in a room with no fight in it");
+  const lift = field(VERB("lift"), "dials");
+  assert.equal(lift.ends_turn, true, "the cost IS the turn");
+  assert.ok(Number.isInteger(lift.restores_to) && lift.restores_to > 0,
+    "and you come back at PARTIAL strength, a number the record carries");
+  assert.equal(field(VERB("lift"), "requires").within_class, "arena",
+    "lifting happens where the falling happens and nowhere else");
+});
 
 // ── the first instances ─────────────────────────────────────────────────────
 //
@@ -325,6 +388,22 @@ function frontmatter(rel) {
       try { out[k] = JSON.parse(raw); }
       catch { try { out[k] = JSON.parse(raw.replace(/([{,]\s*)([a-z_]+)\s*:/g, '$1"$2":')); } catch { out[k] = raw; } }
     } else out[k] = /^-?\d+(\.\d+)?$/.test(raw) ? Number(raw) : raw;
+  }
+  return out;
+}
+
+// ── the sweep's own reader ──────────────────────────────────────────────────
+//
+// Deliberately small: a directory walk of the works, so the scope check above
+// inspects the whole registry rather than the list this file happens to know
+// about. A guard that only checks its author's own marks is a guard against
+// nothing.
+import { readdirSync, statSync } from "node:fs";
+function markFiles(dir = join(here, "..", WORKS), out = []) {
+  for (const name of readdirSync(dir)) {
+    const p = join(dir, name);
+    if (statSync(p).isDirectory()) markFiles(p, out);
+    else if (name === "mark.md") out.push(p);
   }
   return out;
 }

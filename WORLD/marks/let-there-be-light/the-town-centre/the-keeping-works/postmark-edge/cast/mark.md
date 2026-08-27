@@ -8,7 +8,7 @@ version: 1
 extends: postmark-edge
 subject: entity
 object: mark
-dials: {"damage": 6, "cooldown_seconds": 60}
+dials: {"to_hit_die": 20, "damage_die": 10, "beats_ac": 11, "ends_turn": true}
 requires: {"within_class": "portal-ground"}
 implements: ["postmark-office src/encounter.mjs — the fold reads this node's dials; the module holds no second copy"]
 source: LOGOS/classes.md
