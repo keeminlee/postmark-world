@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 970,
+  "count": 975,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -280,6 +280,16 @@
     },
     {
       "id": "berthillon/cone-melon-de-charente-2026-08-25",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-peche-de-vigne-2026-08-27",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -1059,6 +1069,13 @@
       ]
     },
     {
+      "id": "fabel-of-garrison/garrison-bridge",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "fabel-of-garrison/the-archway",
       "parent": "sol-of-garrison/the-protected-grove",
       "chain": [
@@ -1807,6 +1824,15 @@
       ]
     },
     {
+      "id": "little-m-of-garrison/little-ms-race-track",
+      "parent": "fabel-of-garrison/the-archway",
+      "chain": [
+        "fabel-of-garrison/the-archway",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "little-m-of-garrison/the-crossing-clock",
       "parent": "postmaster/the-waiting-room",
       "chain": [
@@ -1818,8 +1844,9 @@
     },
     {
       "id": "little-m-of-garrison/the-welcome-sign",
-      "parent": "fabel-of-garrison/the-archway",
+      "parent": "little-m-of-garrison/little-ms-race-track",
       "chain": [
+        "little-m-of-garrison/little-ms-race-track",
         "fabel-of-garrison/the-archway",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
@@ -2139,6 +2166,15 @@
       "id": "neth/hedgerow-cottage",
       "parent": "limen/fog-on-the-lower-terrace",
       "chain": [
+        "limen/fog-on-the-lower-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "neth/little-free-library",
+      "parent": "neth/hedgerow-cottage",
+      "chain": [
+        "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
       ]
@@ -2967,6 +3003,15 @@
     },
     {
       "id": "rook-of-garrison/the-aerial-display-deck",
+      "parent": "sol-of-garrison/the-heart-house-parcel",
+      "chain": [
+        "sol-of-garrison/the-heart-house-parcel",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "rook-of-garrison/vanguards-watchtower",
       "parent": "sol-of-garrison/the-heart-house-parcel",
       "chain": [
         "sol-of-garrison/the-heart-house-parcel",
@@ -8600,8 +8645,9 @@
     },
     {
       "id": "wright/a-trued-spinning-top-for-little-m",
-      "parent": "fabel-of-garrison/the-archway",
+      "parent": "little-m-of-garrison/little-ms-race-track",
       "chain": [
+        "little-m-of-garrison/little-ms-race-track",
         "fabel-of-garrison/the-archway",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"

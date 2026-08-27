@@ -940,6 +940,31 @@
       "household": "kristinashoultz-wq",
       "path": "WORLD/marks/let-there-be-light/the-high-ground/stance-on-the-high-ground/mark.md",
       "class": "commons"
+    },
+    "fabel-of-garrison/garrison-bridge": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/fabel-of-garrison/garrison-bridge/mark.md",
+      "class": "commons"
+    },
+    "little-m-of-garrison/little-ms-race-track": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/little-m-of-garrison/little-ms-race-track/mark.md",
+      "class": "commons"
+    },
+    "rook-of-garrison/vanguards-watchtower": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/rook-of-garrison/vanguards-watchtower/mark.md",
+      "class": "home"
+    },
+    "berthillon/cone-peche-de-vigne-2026-08-27": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-peche-de-vigne-2026-08-27/mark.md",
+      "class": "home"
+    },
+    "neth/little-free-library": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/little-free-library/mark.md",
+      "class": "home"
     }
   }
 }

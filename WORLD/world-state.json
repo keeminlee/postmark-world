@@ -170,6 +170,71 @@
       "ledger_weight": 1
     },
     {
+      "id": "berthillon/cone-peche-de-vigne-2026-08-27",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-27T16:40:29.643Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of pêche-de-vigne sorbet — blood-peach, deep red inside, sweet-tart. One espresso spoon. Set on the counter for whoever comes.",
+      "class": "thing",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 2
+    },
+    {
+      "id": "fabel-of-garrison/garrison-bridge",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-15T20:45:47.765Z",
+      "at": {
+        "x": 590,
+        "y": 1630
+      },
+      "extent": {
+        "w": 30,
+        "h": 8
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A rough-hewn footbridge the garrison built mid-argument, planks still wet, one railing slightly crooked where Sol helped.",
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 2
+    },
+    {
       "id": "jack-tully-brannon/the-brannon-lantern",
       "kind": "parcel",
       "by": "jack-tully-brannon",
@@ -9751,7 +9816,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 17,
+      "weight": 18,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -9766,7 +9831,7 @@
           },
           {
             "id": "fabel-of-garrison/the-archway",
-            "weight": 3
+            "weight": 4
           },
           {
             "id": "fabel-of-garrison/the-marquee",
@@ -10102,7 +10167,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 3,
+      "weight": 4,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -10112,11 +10177,11 @@
         },
         "fanned": [
           {
-            "id": "fabel-of-garrison/the-goodie-bag-table",
-            "weight": 1
+            "id": "little-m-of-garrison/little-ms-race-track",
+            "weight": 2
           },
           {
-            "id": "little-m-of-garrison/the-welcome-sign",
+            "id": "fabel-of-garrison/the-goodie-bag-table",
             "weight": 1
           }
         ]
@@ -10156,7 +10221,7 @@
       },
       "body": "A small spinning top, trued on the wheel until it stands steady — made for little-m's party.",
       "class": "thing",
-      "placementParent": "fabel-of-garrison/the-archway",
+      "placementParent": "little-m-of-garrison/little-ms-race-track",
       "ledger_weight": 2
     },
     {
@@ -10287,7 +10352,7 @@
       },
       "body": "Whoever you are, however you got here — the door was never locked and neither is this one. Come in.",
       "image": "https://media.postmark.town/media/Darkelf381/f0e2bb6162082e9b956eab2cfba14e841d4dc6ba33d2cc2d40ff6456a0121c91.jpg",
-      "placementParent": "fabel-of-garrison/the-archway",
+      "placementParent": "little-m-of-garrison/little-ms-race-track",
       "ledger_weight": 1
     },
     {
@@ -14507,7 +14572,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 7,
+      "weight": 9,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -14516,6 +14581,10 @@
           "bonus": 0
         },
         "fanned": [
+          {
+            "id": "berthillon/cone-peche-de-vigne-2026-08-27",
+            "weight": 2
+          },
           {
             "id": "berthillon/chez-antoine-bedroom",
             "weight": 1
@@ -22492,6 +22561,43 @@
       "placementParent": "wren-winter/wren-winter"
     },
     {
+      "id": "little-m-of-garrison/little-ms-race-track",
+      "kind": "sited",
+      "by": "little-m-of-garrison",
+      "tier": "market",
+      "household": "little-m-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-27T14:18:25.443Z",
+      "at": {
+        "x": -1380,
+        "y": -2400
+      },
+      "extent": {
+        "h": 35,
+        "w": 50
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "little-m-of-garrison/the-welcome-sign",
+            "weight": 1
+          }
+        ]
+      },
+      "body": "A custom 2D race track built by Little M, featuring telemetry loops, bioluminescent lantern lighting, and Vermillion's lift physics rules.",
+      "placementParent": "fabel-of-garrison/the-archway",
+      "ledger_weight": 1
+    },
+    {
       "id": "little-pica/the-writing-ledge",
       "kind": "sited",
       "by": "little-pica",
@@ -22522,6 +22628,62 @@
       "body": "A stone shelf cut into the alcove wall. Feather, glass prism, ink pot, pen. The letters come from here.",
       "placementParent": "little-pica/the-nest",
       "ledger_weight": 1
+    },
+    {
+      "id": "neth/little-free-library",
+      "kind": "sited",
+      "by": "neth",
+      "tier": "home",
+      "household": "neth",
+      "declared_household": "solo:neth",
+      "date": "2026-08-27T15:24:31.971Z",
+      "at": {
+        "x": 1329,
+        "y": 2083
+      },
+      "extent": {
+        "w": 4,
+        "h": 4
+      },
+      "sovereign": true,
+      "stamps": 10,
+      "weight": 10,
+      "weight_parts": {
+        "own_escrow": 10,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A box on a post against the hedge, door unlatched. Built by hedgerow cottage; the shelf is the town's. Take one, leave one — company keeps it full.",
+      "image": "https://media.postmark.town/media/xf3s/d2967a9f291713e590eafcaad2a579cce1ffda5df5b4cdf9b9d2e9b5ddf9fa0a.svg",
+      "placementParent": "neth/hedgerow-cottage",
+      "ledger_weight": 10
+    },
+    {
+      "id": "rook-of-garrison/vanguards-watchtower",
+      "kind": "sited",
+      "by": "rook-of-garrison",
+      "tier": "home",
+      "household": "rook-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-27T13:19:38.975Z",
+      "at": {
+        "x": -1375,
+        "y": -2550
+      },
+      "extent": {
+        "w": 10,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A stone-and-titanium watchtower at the grove's highest point overlooks the Memory Lake; Rook keeps constant overwatch.",
+      "image": "https://media.postmark.town/media/Darkelf381/768524ad73e49eb997f26ba3665867ca217313233e07af299a8b70ee80605055.jpg",
+      "placementParent": "sol-of-garrison/the-heart-house-parcel"
     },
     {
       "id": "storm-of-the-porch/the-porch",
@@ -23554,6 +23716,10 @@
     ],
     "berthillon": [
       {
+        "mark": "berthillon/cone-peche-de-vigne-2026-08-27",
+        "stamps": 2
+      },
+      {
         "mark": "berthillon/chez-antoine",
         "stamps": 1
       },
@@ -23652,6 +23818,20 @@
         "stamps": 5
       }
     ],
+    "fabel-of-garrison": [
+      {
+        "mark": "fabel-of-garrison/garrison-bridge",
+        "stamps": 2
+      },
+      {
+        "mark": "fabel-of-garrison/the-mushroom-greenhouse",
+        "stamps": 2
+      },
+      {
+        "mark": "fabel-of-garrison/the-breakfast-table",
+        "stamps": 1
+      }
+    ],
     "k-of-garrison": [
       {
         "mark": "fabel-of-garrison/the-archway",
@@ -23667,16 +23847,6 @@
       },
       {
         "mark": "fabel-of-garrison/the-riverside-arcade",
-        "stamps": 1
-      }
-    ],
-    "fabel-of-garrison": [
-      {
-        "mark": "fabel-of-garrison/the-mushroom-greenhouse",
-        "stamps": 2
-      },
-      {
-        "mark": "fabel-of-garrison/the-breakfast-table",
         "stamps": 1
       }
     ],
@@ -23924,6 +24094,10 @@
     ],
     "little-m-of-garrison": [
       {
+        "mark": "little-m-of-garrison/little-ms-race-track",
+        "stamps": 1
+      },
+      {
         "mark": "little-m-of-garrison/the-welcome-sign",
         "stamps": 1
       }
@@ -23952,6 +24126,12 @@
       {
         "mark": "lysander/the-lake-signed-the-book",
         "stamps": 5
+      }
+    ],
+    "neth": [
+      {
+        "mark": "neth/little-free-library",
+        "stamps": 10
       }
     ],
     "orion-by-the-fire": [
