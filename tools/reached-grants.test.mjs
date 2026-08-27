@@ -241,3 +241,90 @@ function markFiles(dir = join(here, "..", WORKS), out = []) {
   }
   return out;
 }
+
+// ── the first instances ─────────────────────────────────────────────────────
+//
+// A clause with no instance is a clause nobody has had to mean. These assert
+// the SHAPE of the first ones, never their content: what the marks SAY is the
+// author's and changes freely; what they must BE is law and does not.
+
+test("the first portal ground stands geometrically inside the parcel it was built on", () => {
+  // WORLD/marks/SCHEMA.md § Nesting, verbatim:
+  //   "a nested `sited` mark must be geometrically contained by its parent"
+  // Under the freeze the directory no longer says who contains what, so the
+  // claim is checked where it now lives: in the numbers. Rei's parcel sits at
+  // world (1088, -794.5) — its own at (-250, 200) offset from the Lanternseed
+  // Gardens' centre (1338, -994.5) — and is 25 m square.
+  const parcelWorld = { x: 1338 - 250, y: -994.5 + 200 };
+  const fence = { x0: parcelWorld.x - 12.5, x1: parcelWorld.x + 12.5, y0: parcelWorld.y - 12.5, y1: parcelWorld.y + 12.5 };
+  const g = frontmatter("WORLD/marks/the-town/the-cellar-door/mark.md");
+  assert.equal(g.class, "portal-ground");
+  const box = { x0: g.at.x - g.extent.w / 2, x1: g.at.x + g.extent.w / 2,
+                y0: g.at.y - g.extent.h / 2, y1: g.at.y + g.extent.h / 2 };
+  assert.ok(box.x0 >= fence.x0 && box.x1 <= fence.x1 && box.y0 >= fence.y0 && box.y1 <= fence.y1,
+    `the portal ground must sit inside the parcel: it spans x ${box.x0}…${box.x1} y ${box.y0}…${box.y1}, the parcel x ${fence.x0}…${fence.x1} y ${fence.y0}…${fence.y1}`);
+});
+
+test("the thing that lends a verb is the TOWN's, and the things that do not lend are ordinary", () => {
+  // LOGOS/classes.md § The three channels, verbatim:
+  //   "only a thing whose `by:` is the town's own pen may carry a held grant"
+  const lender = frontmatter("WORLD/marks/the-town/the-good-lighter/mark.md");
+  assert.equal(lender.by, "the-town");
+  assert.equal(lender.class, "thing");
+  assert.ok(Array.isArray(lender.held_grant) && lender.held_grant.length >= 1);
+  for (const g of lender.held_grant)
+    assert.ok(g.residue, "a held grant names its residue — the door quotes the residue's own mark, never a copy beside the grant");
+  for (const t of ["a-slice-to-take-home", "the-wick-end"]) {
+    const carried = frontmatter(`WORLD/marks/the-town/${t}/mark.md`);
+    assert.equal(carried.class, "thing", "what is carried out is an ORDINARY thing — that is the whole thesis of the room");
+    assert.equal(carried.held_grant, undefined, "a trophy lends nothing; it is a keepsake, not a key");
+  }
+});
+
+test("the adversary's numbers are on its own mark, not in any office", () => {
+  // LOGOS/classes.md § The portal ground, verbatim:
+  //   "instances carry `hp` and `hits_for` as their own UNSEALED dials, so two
+  //    adversaries differ by what the record says about each and not by a
+  //    branch in code"
+  const boss = frontmatter("WORLD/marks/the-town/the-unlit-cake/mark.md");
+  assert.equal(boss.class, "adversary");
+  assert.ok(Number.isInteger(boss.dials.hp) && boss.dials.hp > 0);
+  assert.ok(Number.isInteger(boss.dials.hits_for) && boss.dials.hits_for > 0);
+  const cls = field(`${WORKS}/postmark-node/mark/adversary/mark.md`, "dials");
+  assert.equal(cls.hp, "unsealed", "the class speaks the grammar and never the value");
+  assert.equal(cls.hits_for, "unsealed");
+});
+
+test("the portal ground carries entry terms, because it binds those it reaches", () => {
+  // LOGOS/reads-and-affordances.md § The apex, verbatim:
+  //   "the terms delivered before an act binds are the class-nodes' own
+  //    content, because you cannot be bound by law you were not shown at the
+  //    door."
+  // A ground that grants verbs and asks for no word would be binding a visitor
+  // with law it never showed them.
+  const g = frontmatter("WORLD/marks/the-town/the-cellar-door/mark.md");
+  assert.ok(g.entry, "the portal ground declares an entry law");
+  assert.ok(g.entry.edge, "it declares a counter-edge, which is what makes the door ASK rather than assume");
+  assert.ok(String(g.entry.consequence ?? "").length > 0, "and says what crossing costs, in its own words");
+});
+
+/** Frontmatter as data. Deliberately a small hand-parser rather than the fold:
+ *  a falsifier that runs the machinery it is checking cannot fail when the
+ *  machinery is what is wrong. */
+function frontmatter(rel) {
+  const text = readFileSync(join(here, "..", rel), "utf8");
+  const body = text.split("---")[1] ?? "";
+  const out = {};
+  for (const line of body.split("\n")) {
+    const m = /^([a-z_]+):\s*(.*)$/.exec(line.trim());
+    if (!m) continue;
+    const [, k, raw] = m;
+    if (/^[[{]/.test(raw)) {
+      // the record's two object spellings: strict JSON, and the bare
+      // `{ x: 1, y: 2 }` the frontmatter reader also takes.
+      try { out[k] = JSON.parse(raw); }
+      catch { try { out[k] = JSON.parse(raw.replace(/([{,]\s*)([a-z_]+)\s*:/g, '$1"$2":')); } catch { out[k] = raw; } }
+    } else out[k] = /^-?\d+(\.\d+)?$/.test(raw) ? Number(raw) : raw;
+  }
+  return out;
+}

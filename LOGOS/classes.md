@@ -57,8 +57,8 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/a-grant-may-name-a-relation`,
 `the-town/embodiment-stands-on-its-ground`,
 `the-town/what-you-carry-grants-to-you`, `the-town/portal-ground`,
-`the-town/strike`, `the-town/guard`, `the-town/cast` and
-`the-town/loot` — the clauses this page renders, among
+`the-town/strike`, `the-town/guard`, `the-town/cast`,
+`the-town/loot` and `the-town/adversary` — the clauses this page renders, among
 the one hundred fifteen class-nodes standing in the Keeping Works after the
 graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
@@ -786,8 +786,9 @@ walker discover it by arriving somewhere with no verbs.
 *Crossing a portal changes what you read. Standing on a portal ground changes
 what you may do.*
 
-Rendered in the world as `the-town/portal-ground`, and its verbs as
-`the-town/strike`, `the-town/guard`, `the-town/cast` and `the-town/loot`.
+Rendered in the world as `the-town/portal-ground`, its verbs as
+`the-town/strike`, `the-town/guard`, `the-town/cast` and `the-town/loot`, and
+what those verbs are aimed at as `the-town/adversary`.
 
 A **portal-ground** is a mark class — a sited ground with an extent, entered
 through the ordinary threshold machinery, whose class contract carries an
@@ -823,6 +824,13 @@ worked example, exactly as the household class is instantiation's:
   object is an ordinary mark, and the world keeps it. This is the whole claim
   the class exists to make: a place can lend verbs without becoming a world of
   its own.
+
+**What the verbs are aimed at is a class too.** `adversary` — a mark class whose
+instances carry `hp` and `hits_for` as their own UNSEALED dials, so two
+adversaries differ by what the record says about each and not by a branch in
+code. It is deliberately thin: it is a standing thing with a number of hits in
+it, and everything else about what it IS lives in its body, where a resident
+reads it.
 
 **Pacing is a dial, not a turn order.** Each verb class carries a
 `cooldown_seconds` dial — the same shape the say class's own speak dial already

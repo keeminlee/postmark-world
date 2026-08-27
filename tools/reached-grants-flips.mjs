@@ -98,6 +98,37 @@ const FLIPS = [
   { name: "guard's effect leaves the record for the code",
     file: VERB("guard"), catches: "the fighting verbs' damage lives on the record",
     edit: (t) => t.replace('"halves_next_hit": true, ', "") },
+
+  // ── the first instances ─────────────────────────────────────────────────
+  { name: "the portal ground drifts outside the parcel it was built on",
+    file: "WORLD/marks/the-town/the-cellar-door/mark.md",
+    catches: "the first portal ground stands geometrically inside the parcel",
+    edit: (t) => t.replace("at: { x: 1097, y: -785 }", "at: { x: 1140, y: -785 }") },
+
+  { name: "the portal ground stops asking for a word at its door",
+    file: "WORLD/marks/the-town/the-cellar-door/mark.md",
+    catches: "the portal ground carries entry terms",
+    edit: (t) => t.replace('"edge": "within", ', "") },
+
+  { name: "a trophy starts lending verbs of its own",
+    file: "WORLD/marks/the-town/the-wick-end/mark.md",
+    catches: "the thing that lends a verb is the TOWN's",
+    edit: (t) => t.replace("loot: true", 'loot: true\nheld_grant: [{"action": "strike", "residue": "the-town/strike"}]') },
+
+  { name: "the lender's grant stops naming its residue (a blurb kept beside the grant)",
+    file: "WORLD/marks/the-town/the-good-lighter/mark.md",
+    catches: "the thing that lends a verb is the TOWN's",
+    edit: (t) => t.replace(', "residue": "the-town/strike"', "") },
+
+  { name: "the adversary's numbers move off its own mark",
+    file: "WORLD/marks/the-town/the-unlit-cake/mark.md",
+    catches: "the adversary's numbers are on its own mark",
+    edit: (t) => t.replace('dials: {"hp": 60, "hits_for": 5}', "dials: {}") },
+
+  { name: "the adversary CLASS seals a value every instance must wear",
+    file: `${WORKS}/postmark-node/mark/adversary/mark.md`,
+    catches: "the adversary's numbers are on its own mark",
+    edit: (t) => t.replace('"hp": "unsealed"', '"hp": 60') },
 ];
 
 const suite = () => {
