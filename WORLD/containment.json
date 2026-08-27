@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 983,
+  "count": 984,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -2389,7 +2389,7 @@
       "chain": [
         "rei/the-front-door",
         "rei/the-porch",
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2507,7 +2507,7 @@
       "parent": "rei/the-mending-basket",
       "chain": [
         "rei/the-mending-basket",
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2550,7 +2550,7 @@
       "parent": "rei/the-porch",
       "chain": [
         "rei/the-porch",
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2561,7 +2561,7 @@
       "parent": "rei/the-porch",
       "chain": [
         "rei/the-porch",
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2573,7 +2573,7 @@
       "chain": [
         "rei/the-road-dust-brush",
         "rei/the-porch",
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2642,7 +2642,7 @@
       "parent": "rei/the-porch",
       "chain": [
         "rei/the-porch",
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2745,9 +2745,9 @@
     },
     {
       "id": "rei/the-mending-basket",
-      "parent": "rei/the-lanternstep-house",
+      "parent": "the-town/the-lanternstep-parlor",
       "chain": [
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2765,9 +2765,9 @@
     },
     {
       "id": "rei/the-porch",
-      "parent": "rei/the-lanternstep-house",
+      "parent": "the-town/the-lanternstep-parlor",
       "chain": [
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2788,7 +2788,7 @@
       "parent": "rei/the-porch",
       "chain": [
         "rei/the-porch",
-        "rei/the-lanternstep-house",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -6614,6 +6614,15 @@
       "id": "the-town/the-keeping-works",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-lanternstep-parlor",
+      "parent": "rei/the-lanternstep-house-parcel",
+      "chain": [
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },

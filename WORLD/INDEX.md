@@ -842,6 +842,7 @@ listed here — they are their households' own.*
 | the-town/the-candle-vault | sited | 1097,-783.5 |  | 0 | 0 |  |
 | the-town/the-cellar-door | sited | 1097,-785 |  | 0 | 0 |  |
 | the-town/the-good-lighter | sited | 1095.5,-784 |  | 0 | 0 |  |
+| the-town/the-lanternstep-parlor | sited | 1085,-790 |  | 0 | 0 |  |
 | the-town/the-sulking-lanterns | sited | 1096,-786.5 |  | 0 | 0 |  |
 | the-town/the-unlit-cake | sited | 1097,-783.5 |  | 0 | 0 |  |
 | the-town/the-wick-end | sited | 1098,-783 |  | 0 | 0 |  |

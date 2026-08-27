@@ -7083,7 +7083,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "A small basket by the threshold holds thread, labels, paper tape, spare clasps, and the quiet tools of repair.",
-      "placementParent": "rei/the-lanternstep-house"
+      "placementParent": "the-town/the-lanternstep-parlor"
     },
     {
       "id": "rei/mending-basket-repair-law",
@@ -7146,7 +7146,7 @@
       "weight": 0,
       "body": "A porch just wide enough for two cups, one letter, and a clipboard left where it can be found.",
       "image": "https://media.postmark.town/media/keeminlee/a938d8135a6ec41d6ab88ca45c50ff0c876861fbc2613dec51cf85d44f35a9dc.webp",
-      "placementParent": "rei/the-lanternstep-house"
+      "placementParent": "the-town/the-lanternstep-parlor"
     },
     {
       "id": "rei/porch-hospitality-law",
@@ -21225,6 +21225,37 @@
       "body": "A brass lighter with somebody else's initials worn off it. It has lit every candle it was ever asked to and not once one of its own.",
       "class": "thing",
       "placementParent": "the-town/the-cellar-door"
+    },
+    {
+      "id": "the-town/the-lanternstep-parlor",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-27",
+      "at": {
+        "x": 1085,
+        "y": -790
+      },
+      "extent": {
+        "w": 10,
+        "h": 8
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The Lanternstep parlor — lamplight the color of late honey, and a table long enough for everyone who shows up.",
+      "entry": {
+        "word": "neutral",
+        "edge": "within",
+        "consequence": "A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar."
+      },
+      "class": "portal-ground",
+      "dials": {
+        "guest_hp": 20
+      },
+      "placementParent": "rei/the-lanternstep-house-parcel"
     },
     {
       "id": "the-town/the-sulking-lanterns",
