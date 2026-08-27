@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 960,
+  "count": 983,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -3838,11 +3838,41 @@
       ]
     },
     {
+      "id": "the-town/a-grant-may-name-a-relation",
+      "parent": "the-town/postmark-rules",
+      "chain": [
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/a-slice-to-take-home",
+      "parent": "the-town/the-candle-vault",
+      "chain": [
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/address",
       "parent": "the-town/white-page",
       "chain": [
         "the-town/white-page",
         "the-town/paper",
+        "the-town/postmark-node",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/adversary",
+      "parent": "the-town/mark",
+      "chain": [
+        "the-town/mark",
         "the-town/postmark-node",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
@@ -3870,6 +3900,17 @@
       "chain": [
         "the-town/amend",
         "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/arena",
+      "parent": "the-town/portal-ground",
+      "chain": [
+        "the-town/portal-ground",
+        "the-town/mark",
+        "the-town/postmark-node",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -4011,6 +4052,15 @@
       ]
     },
     {
+      "id": "the-town/cast",
+      "parent": "the-town/postmark-edge",
+      "chain": [
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/character-cap",
       "parent": "the-town/mark",
       "chain": [
@@ -4099,6 +4149,15 @@
       ]
     },
     {
+      "id": "the-town/crossing-is-joining",
+      "parent": "the-town/postmark-rules",
+      "chain": [
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/declare-stance-on",
       "parent": "the-town/postmark-edge",
       "chain": [
@@ -4138,6 +4197,15 @@
       ]
     },
     {
+      "id": "the-town/downed-not-dead",
+      "parent": "the-town/postmark-rules",
+      "chain": [
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/earshot-m",
       "parent": "the-town/say",
       "chain": [
@@ -4152,6 +4220,15 @@
       "parent": "the-town/logos",
       "chain": [
         "the-town/logos",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/embodiment-stands-on-its-ground",
+      "parent": "the-town/postmark-rules",
+      "chain": [
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
     },
@@ -4313,6 +4390,15 @@
       ]
     },
     {
+      "id": "the-town/guard",
+      "parent": "the-town/postmark-edge",
+      "chain": [
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/guide",
       "parent": "the-town/town-bulletin",
       "chain": [
@@ -4329,6 +4415,17 @@
       "chain": [
         "the-town/say",
         "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/held-grant-slot",
+      "parent": "the-town/thing",
+      "chain": [
+        "the-town/thing",
+        "the-town/mark",
+        "the-town/postmark-node",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -4544,6 +4641,15 @@
       ]
     },
     {
+      "id": "the-town/lift",
+      "parent": "the-town/postmark-edge",
+      "chain": [
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/light",
       "parent": "the-town/emission",
       "chain": [
@@ -4567,6 +4673,15 @@
       "id": "the-town/logos",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/loot",
+      "parent": "the-town/postmark-edge",
+      "chain": [
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
     },
@@ -4854,6 +4969,16 @@
       "chain": [
         "the-town/the-bounty-board",
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/portal-ground",
+      "parent": "the-town/mark",
+      "chain": [
+        "the-town/mark",
+        "the-town/postmark-node",
+        "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
     },
@@ -5418,6 +5543,15 @@
       ]
     },
     {
+      "id": "the-town/strike",
+      "parent": "the-town/postmark-edge",
+      "chain": [
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/subject-slot",
       "parent": "the-town/postmark-edge",
       "chain": [
@@ -5618,6 +5752,16 @@
       ]
     },
     {
+      "id": "the-town/the-candle-vault",
+      "parent": "the-town/the-cellar-door",
+      "chain": [
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/the-canon-computation",
       "parent": "the-town/the-canon-fold",
       "chain": [
@@ -5642,6 +5786,15 @@
       "chain": [
         "the-town/the-residency-office",
         "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-cellar-door",
+      "parent": "rei/the-lanternstep-house-parcel",
+      "chain": [
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
@@ -6339,6 +6492,16 @@
       "parent": "the-town/the-keeping-works",
       "chain": [
         "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-good-lighter",
+      "parent": "the-town/the-cellar-door",
+      "chain": [
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
@@ -7517,6 +7680,16 @@
       ]
     },
     {
+      "id": "the-town/the-sulking-lanterns",
+      "parent": "the-town/the-cellar-door",
+      "chain": [
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/the-tally",
       "parent": "the-town/the-ballot-house",
       "chain": [
@@ -7628,6 +7801,15 @@
       ]
     },
     {
+      "id": "the-town/the-turn-wheel",
+      "parent": "the-town/postmark-rules",
+      "chain": [
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/the-two-clocks",
       "parent": "the-town/the-witnessed-instant",
       "chain": [
@@ -7668,6 +7850,17 @@
       "chain": [
         "the-town/the-darkroom",
         "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-unlit-cake",
+      "parent": "the-town/the-candle-vault",
+      "chain": [
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
@@ -7872,6 +8065,17 @@
       ]
     },
     {
+      "id": "the-town/the-wick-end",
+      "parent": "the-town/the-candle-vault",
+      "chain": [
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/the-window-dressing",
       "parent": "the-town/the-glaziers-loft",
       "chain": [
@@ -7901,6 +8105,15 @@
       "parent": "the-town/the-record-does-not-lie",
       "chain": [
         "the-town/the-record-does-not-lie",
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-witnessed-roll",
+      "parent": "the-town/postmark-rules",
+      "chain": [
         "the-town/postmark-rules",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
@@ -8014,6 +8227,15 @@
       "parent": "the-town/the-town-wall",
       "chain": [
         "the-town/the-town-wall",
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/what-you-carry-grants-to-you",
+      "parent": "the-town/postmark-rules",
+      "chain": [
         "the-town/postmark-rules",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
