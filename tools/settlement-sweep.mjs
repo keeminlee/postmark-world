@@ -35,6 +35,8 @@ const REGISTRY_REL = "WORLD/settlement-publications.json";
 // the named door a refusal leaves by, so a receipt never has to guess which
 // stderr line was the cause
 export const REFUSAL_SENTINEL = "SETTLEMENT-SWEEP-REFUSAL";
+/** The loud-empty guard's own line, so a blind crossing is never filed as a bad record. */
+export const STARVING_SENTINEL = "SETTLEMENT-SWEEP-STARVING";
 const MARKS_PREFIX = "WORLD/marks/";
 
 function git(repo, args, options = {}) {
@@ -283,6 +285,69 @@ function foldRefInner(repo, ref, stakes) {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+}
+
+/**
+ * WHAT WAS THERE TO LOOK AT — derived the OTHER way (2026-08-27, the loud-empty
+ * guard).
+ *
+ * The sweep's own reading of a sketchbook goes `draftBranches` → `markDelta` →
+ * the three-readings supersession logic → candidates. That path is where a
+ * starving crossing comes from: on 2026-08-25 and 08-26 it returned nothing at
+ * all while sketchbooks held escrowed marks, and the crossing exited 0 green
+ * twice a day for two days because "I found no candidates" and "there were no
+ * candidates" print identically.
+ *
+ * This is the second opinion, and it is deliberately built from DIFFERENT
+ * primitives: raw `for-each-ref` over both local and remote draft refs (not
+ * `draftBranches`, which creates tracking branches and could itself be the
+ * thing returning an empty list), and a raw `git diff --name-only` against main
+ * (not `markDelta`, whose supersession reading is the subtlest code in this
+ * file). It answers exactly one question — "is any sketchbook holding a mark
+ * that the town has staked stamps behind" — and it has no vote on what should
+ * publish. Only the CONTRADICTION is actionable: the crossing found nothing on
+ * every channel, and this found something with escrow behind it.
+ *
+ * A survey that agrees with a zero crossing is the receipt that the quiet pass
+ * was quiet because the town was quiet.
+ */
+export function surveySketchbooks(repo, mainBranch, escrow) {
+  const refs = [
+    ...git(repo, ["for-each-ref", "--format=%(refname:short)", "refs/heads/draft/"]).split(/\r?\n/),
+    ...git(repo, ["for-each-ref", "--format=%(refname:short)", "refs/remotes/origin/draft/"]).split(/\r?\n/),
+  ].map((line) => line.trim()).filter(Boolean);
+
+  // One reading per household: a local branch and its origin counterpart are the
+  // same sketchbook, and counting both would double every number here.
+  const byHousehold = new Map();
+  for (const ref of refs) {
+    const household = ref.replace(/^origin\//, "").slice("draft/".length);
+    if (!byHousehold.has(household)) byHousehold.set(household, ref);
+    else if (!ref.startsWith("origin/")) byHousehold.set(household, ref); // local wins: it is what the sweep will judge
+  }
+
+  let deltaRows = 0;
+  const escrowBacked = [];
+  for (const [household, ref] of byHousehold) {
+    let paths = [];
+    try {
+      paths = git(repo, ["diff", "--name-only", "--diff-filter=d", `${mainBranch}...${ref}`, "--", MARKS_PREFIX])
+        .split(/\r?\n/).map((l) => l.trim()).filter((l) => l.endsWith("/mark.md"));
+    } catch { continue; } // a ref with no merge base tells this survey nothing
+    deltaRows += paths.length;
+    for (const path of paths) {
+      const id = idAt(repo, ref, path);
+      const n = id ? (escrow.get(id) ?? 0) : 0;
+      if (n > 0) escrowBacked.push({ household, ref, path, id, escrow: n });
+    }
+  }
+
+  return {
+    branches: byHousehold.size,
+    delta_rows: deltaRows,
+    escrow_backed_deltas: escrowBacked.length,
+    escrow_backed: escrowBacked,
+  };
 }
 
 export function draftBranches(repo) {
@@ -725,10 +790,48 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
   return receipts;
 }
 
+/**
+ * The reason a mark carries when the FINAL GATE, not the sweep's own judgment,
+ * held it back. Exported because the isolation pass asserts on it and a reason
+ * string two files apart drifts the moment one of them is edited.
+ */
+export const SUITE_QUARANTINE_REASON =
+  "the grammar suite refused this crossing while this mark was in it — held back so the rest of the town could settle; the mark stands in your sketchbook and crosses again once its geometry passes";
+
 export function settlementSweep({
   repo = ROOT,
   stakesPath,
   mainBranch = "main",
+  // ── THE FINAL GATE'S OWN QUARANTINE (founder-mandated 2026-08-27, defect 4) ─
+  //
+  //   "ONE BAD MARK REFUSES THE WHOLE TOWN — the final suite gate is all-or-
+  //    nothing: tonight vermillion's amend moving the-pando-peak to
+  //    (-95458,-95458) turned vessel tests red and refused EVERYONE'S
+  //    settlement."
+  //
+  // The sweep already quarantines per-sketchbook for FOLD errors. Nothing
+  // mapped a SUITE failure back to an offending mark, because the suite runs
+  // after the sweep is over and speaks in test names, not mark ids. This is the
+  // seam that lets `tools/settlement-isolate.mjs` answer that question the only
+  // way it can be answered soundly — by re-running the crossing without a
+  // candidate and seeing whether the gate goes green.
+  //
+  // Held-back ids leave on the `left_drafted` channel like any other declined
+  // row (their sketchbook keeps them, so nothing is lost and they cross again
+  // next time) and are ALSO listed on `suite_quarantined`, because "the gate
+  // refused your geometry" is a different thing to be told than "you need
+  // escrow", and the household is owed the difference.
+  suiteQuarantine = new Set(),
+  // The loud-empty guard's sensor, injected so the guard itself can be
+  // falsified. The contradiction it fires on — "the crossing saw nothing on
+  // every channel, and a sketchbook is holding an escrow-backed mark" — cannot
+  // be planted in a fixture through the front door: with the reading code
+  // WORKING, seeing nothing and there being nothing are the same state, which is
+  // exactly why the bug was invisible. So the seam is here, like `failAt` and
+  // `beforeSwap` in the drain, and for the same reason: a guard whose trigger
+  // condition cannot be reached in a test is a guard nobody has ever seen work.
+  // Nothing in production passes it.
+  surveyor = surveySketchbooks,
 } = {}) {
   resetFoldMeter();
   repo = resolve(repo);
@@ -785,6 +888,11 @@ export function settlementSweep({
   // arrives. A one-sketchbook quarantine beats a whole-town refusal — but only if it
   // SHOUTS, which is what this list is for.
   const quarantined = [];
+  // The final gate's held-back rows, kept apart from the fold's quarantine
+  // because they are a different finding: the fold's quarantine means "this
+  // sketchbook wrote something inadmissible", this one means "the town's whole
+  // grammar went red while this was in the crossing".
+  const suiteQuarantined = [];
   const touched = [];
   // `rehomed` was a channel here until 2026-08-25. It is gone rather than left
   // permanently empty: a report that always says zero is a state with no receipt,
@@ -931,6 +1039,14 @@ export function settlementSweep({
           leftDrafted.push({ household, id: wid, path: delta.path, reason: `${inside.length} mark(s) still stand inside it on main — withdraw or move them first` });
           continue;
         }
+        if (suiteQuarantine.has(wid)) {
+          // A WITHDRAWAL can redden the gate too — taking a mark out of canon
+          // moves everything anchored on it. The isolator must be able to hold
+          // one back for the same reason it holds a publish back.
+          leftDrafted.push({ household, id: wid, path: delta.path, reason: SUITE_QUARANTINE_REASON });
+          suiteQuarantined.push({ household, id: wid, path: delta.path, withdrawal: true });
+          continue;
+        }
         withdrawn.push({ household, id: wid, path: delta.path });
         continue;
       }
@@ -977,6 +1093,11 @@ export function settlementSweep({
       const eligible = rowClass !== "commons" || n > 0;
       if (!eligible) {
         leftDrafted.push({ household, id: record.id, path: delta.path, class: rowClass, escrow: n, reason: "commons needs escrow > 0" });
+        continue;
+      }
+      if (suiteQuarantine.has(record.id)) {
+        leftDrafted.push({ household, id: record.id, path: delta.path, class: rowClass, escrow: n, reason: SUITE_QUARANTINE_REASON });
+        suiteQuarantined.push({ household, id: record.id, path: delta.path, class: rowClass, escrow: n });
         continue;
       }
       published.push({
@@ -1042,6 +1163,37 @@ export function settlementSweep({
         break;
       }
     }
+  }
+
+  // ── THE LOUD-EMPTY GUARD (founder-mandated 2026-08-27) ─────────────────────
+  //
+  //   "A sweep finding zero candidates while draft branches hold escrowed marks
+  //    completes green."  — defect 3 of the drain night
+  //
+  // The failure this ends is not a wrong answer, it is a CONFIDENT NOTHING. On
+  // 2026-08-25 and 08-26 crossings reported "0 published, 0 unpublished", exited
+  // 0, and were read as quiet days — while the town had staked stamps behind
+  // marks sitting in sketchbooks the crossing never saw.
+  //
+  // The condition is a contradiction, not a threshold: EVERY outcome channel is
+  // empty (the crossing had nothing to say about anything, which is different
+  // from having declined things for reasons) AND the independent survey above
+  // found at least one escrow-backed delta. A crossing that left marks drafted
+  // for stated reasons is not starving — it is working, and it says so on the
+  // left_drafted channel. Only "I saw nothing, and something was there" refuses.
+  const survey = surveyor(repo, mainBranch, escrow);
+  const sawNothing = published.length === 0 && unpublished.length === 0
+    && leftDrafted.length === 0 && withdrawn.length === 0
+    && quarantined.length === 0 && dropped.length === 0;
+  if (sawNothing && survey.escrow_backed.length) {
+    const first = survey.escrow_backed[0];
+    const e = refusal(
+      `starving crossing: the sweep found no candidates on any channel, but ${survey.escrow_backed.length} escrow-backed mark(s) stand in sketchbooks — first, ${first.id} on ${first.ref} with ${first.escrow}✦ staked. Publishing nothing here would be a quiet day that is not one.`,
+      { phase: "loud-empty" },
+    );
+    e.starving = survey.escrow_backed.slice(0, 20);
+    e.surveyed = { branches: survey.branches, delta_rows: survey.delta_rows, escrow_backed_deltas: survey.escrow_backed_deltas };
+    throw e;
   }
 
   try {
@@ -1139,7 +1291,27 @@ export function settlementSweep({
     "WORLD/region-outsiders.json",
     "WORLD/region-outsiders.md",
     "WORLD/containment.json",
-  ], `settlement: sweep ${published.length} published, ${unpublished.length} unpublished${withdrawn.length ? `, ${withdrawn.length} withdrawn` : ""}`);
+  // EVERY CHANNEL, INCLUDING THE EMPTY ONES (founder-mandated 2026-08-27,
+  // defect 2 — "receipts lie by omission"). This line used to name published and
+  // unpublished, and mentioned withdrawn only when it was non-zero. So a
+  // crossing that left 42 marks drafted, quarantined a sketchbook and dropped a
+  // parked copy committed the sentence "sweep 0 published, 0 unpublished" — true
+  // in every word and false as a report. The counts that are zero carry the most
+  // information here: "0 quarantined" is a fact about this crossing, and its
+  // ABSENCE is indistinguishable from a crossing that never looked.
+  ], `settlement: sweep ${[
+    `${published.length} published`,
+    `${unpublished.length} unpublished`,
+    `${leftDrafted.length} left drafted`,
+    `${withdrawn.length} withdrawn`,
+    `${quarantined.length} quarantined`,
+    `${dropped.length} dropped`,
+  ].join(", ")}${suiteQuarantined.length
+    // Named only when it happened, and then in full: this is the sentence a
+    // household reads to learn its mark was the one that reddened the town, and
+    // a count would send them looking for a list that lives in a JSON on a box.
+    ? `\n\nThe grammar suite refused this crossing until ${suiteQuarantined.length} mark(s) were held back, and they were:\n${suiteQuarantined.map((q) => `  ${q.id} (${q.household})${q.withdrawal ? " — a withdrawal" : ""}`).join("\n")}\nEach stands in its own sketchbook and crosses again once its geometry passes. The rest of the town settled.`
+    : ""}`);
 
   const returnedByHousehold = new Map();
   for (const item of unpublished) {
@@ -1162,10 +1334,17 @@ export function settlementSweep({
     // named in the sweep's own answer, not only in a log — the operator reading
     // the crossing must see that a sketchbook was set aside without going looking
     quarantined,
+    suite_quarantined: suiteQuarantined,
     unpublished: unpublished.map(({ content, ...item }) => item),
     withdrawn,
     dropped,
     rebased,
+    // WHAT THE CROSSING LOOKED AT, from the survey that has no vote on the
+    // outcome. Carried on every report, not only the refusing one: a quiet pass
+    // without this is a claim with no receipt, and the whole point of the
+    // loud-empty guard is that a reader can tell a quiet town from a blind
+    // crossing without going and looking themselves.
+    surveyed: { branches: survey.branches, delta_rows: survey.delta_rows, escrow_backed_deltas: survey.escrow_backed_deltas },
     // the crossing's own word on the line-ending law it had to work around
     eol_boundary: gate.irreconcilable,
     // §4's own number, measured rather than asserted.
@@ -1178,11 +1357,17 @@ function parseCli(argv) {
     const i = argv.indexOf(name);
     return i >= 0 ? argv[i + 1] : fallback;
   };
+  const quarantinePath = opt("--quarantine");
   return {
     repo: opt("--repo", ROOT),
     stakesPath: opt("--stakes"),
     mainBranch: opt("--main", "main"),
     json: argv.includes("--json"),
+    // One mark id per line — the isolation pass's instrument, and an operator's
+    // hand-hold when the keeper already knows which mark is the problem.
+    suiteQuarantine: new Set(quarantinePath
+      ? readFileSync(quarantinePath, "utf8").split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+      : []),
   };
 }
 
@@ -1195,7 +1380,9 @@ if (isMain) {
     const report = settlementSweep(options);
     if (options.json) console.log(JSON.stringify(report, null, 2));
     else {
-      console.log(`settlement sweep: ${report.published.length} published · ${report.left_drafted.length} left drafted · ${report.unpublished.length} unpublished · ${report.dropped.length} dropped · ${report.rebased.length} draft branch(es) rebased`);
+      console.log(`settlement sweep: ${report.published.length} published · ${report.left_drafted.length} left drafted · ${report.unpublished.length} unpublished · ${report.withdrawn.length} withdrawn · ${report.quarantined.length} quarantined · ${report.dropped.length} dropped · ${report.rebased.length} draft branch(es) rebased`);
+      console.log(`  surveyed: ${report.surveyed.branches} sketchbook(s), ${report.surveyed.delta_rows} delta row(s), ${report.surveyed.escrow_backed_deltas} escrow-backed`);
+      for (const row of report.quarantined) console.log(`QUARANTINE\t${row.household}\t${row.ref}\t${row.detail ?? row.reason}`);
       for (const row of report.published) console.log(`PUBLISH\t${row.household}\t${row.id}\t${row.class}\tescrow=${row.escrow}`);
       for (const row of report.left_drafted) console.log(`KEEP\t${row.household}\t${row.id ?? row.path}\t${row.reason}`);
       for (const row of report.unpublished) console.log(`UNPUBLISH\t${row.household}\t${row.id}\tescrow=${row.escrow}`);
@@ -1207,6 +1394,16 @@ if (isMain) {
     // first N bytes of stderr reads journal progress and calls it the reason —
     // which is how a successful already-standing drop came to stand in for
     // `cannot rebase` on 2026-08-23. Grep the sentinel instead of the head.
+    // A STARVING CROSSING GETS ITS OWN SENTINEL. "The record is wrong" and "the
+    // crossing is blind" are different findings and want different hands: the
+    // first is the keeper's judgment, the second is a machinery bug that has
+    // been publishing nothing behind a green exit code. A reader grepping only
+    // the refusal sentinel would file the second as the first.
+    if (error?.starving) console.error(`${STARVING_SENTINEL} ${JSON.stringify({
+      cause: String(error?.message ?? error),
+      surveyed: error.surveyed ?? null,
+      escrow_backed: error.starving,
+    })}`);
     console.error(`${REFUSAL_SENTINEL} ${JSON.stringify({
       cause: String(error?.message ?? error),
       phase: error?.phase ?? "unknown",
