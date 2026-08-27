@@ -839,10 +839,10 @@ listed here — they are their households' own.*
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
 | the-town/a-slice-to-take-home | sited | 1096,-783 |  | 0 | 0 |  |
-| the-town/the-candle-vault | sited | 1097,-783.5 |  | 0 | 0 |  |
-| the-town/the-cellar-door | sited | 1097,-785 |  | 0 | 0 |  |
+| the-town/the-candle-vault | sited | 1083,-792 |  | 0 | 0 |  |
+| the-town/the-cellar-door | sited | 1083,-792 |  | 0 | 0 |  |
 | the-town/the-good-lighter | sited | 1095.5,-784 |  | 0 | 0 |  |
-| the-town/the-lanternstep-parlor | sited | 1085,-790 |  | 0 | 0 |  |
+| the-town/the-lanternstep-parlor | sited | 1088,-792 |  | 0 | 0 |  |
 | the-town/the-sulking-lanterns | sited | 1096,-786.5 |  | 0 | 0 |  |
 | the-town/the-unlit-cake | sited | 1097,-783.5 |  | 0 | 0 |  |
 | the-town/the-wick-end | sited | 1098,-783 |  | 0 | 0 |  |

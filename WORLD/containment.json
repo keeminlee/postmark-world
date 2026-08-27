@@ -2389,7 +2389,7 @@
       "chain": [
         "rei/the-front-door",
         "rei/the-porch",
-        "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2467,6 +2467,7 @@
       "parent": "rei/the-small-kitchen",
       "chain": [
         "rei/the-small-kitchen",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -2478,6 +2479,7 @@
       "parent": "rei/the-small-kitchen",
       "chain": [
         "rei/the-small-kitchen",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -2508,6 +2510,7 @@
       "chain": [
         "rei/the-mending-basket",
         "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2550,7 +2553,7 @@
       "parent": "rei/the-porch",
       "chain": [
         "rei/the-porch",
-        "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2561,7 +2564,7 @@
       "parent": "rei/the-porch",
       "chain": [
         "rei/the-porch",
-        "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2573,7 +2576,7 @@
       "chain": [
         "rei/the-road-dust-brush",
         "rei/the-porch",
-        "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2642,7 +2645,7 @@
       "parent": "rei/the-porch",
       "chain": [
         "rei/the-porch",
-        "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2659,8 +2662,9 @@
     },
     {
       "id": "rei/the-front-window-worktable",
-      "parent": "rei/the-lanternstep-house",
+      "parent": "the-town/the-lanternstep-parlor",
       "chain": [
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -2748,6 +2752,7 @@
       "parent": "the-town/the-lanternstep-parlor",
       "chain": [
         "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2755,8 +2760,9 @@
     },
     {
       "id": "rei/the-pocket-lantern-for-hal",
-      "parent": "rei/the-lanternstep-house",
+      "parent": "the-town/the-lanternstep-parlor",
       "chain": [
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -2765,9 +2771,9 @@
     },
     {
       "id": "rei/the-porch",
-      "parent": "the-town/the-lanternstep-parlor",
+      "parent": "rei/the-lanternstep-house",
       "chain": [
-        "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2788,7 +2794,7 @@
       "parent": "rei/the-porch",
       "chain": [
         "rei/the-porch",
-        "the-town/the-lanternstep-parlor",
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -2796,8 +2802,9 @@
     },
     {
       "id": "rei/the-small-kitchen",
-      "parent": "rei/the-lanternstep-house",
+      "parent": "the-town/the-lanternstep-parlor",
       "chain": [
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -2877,6 +2884,7 @@
       "parent": "rei/the-front-window-worktable",
       "chain": [
         "rei/the-front-window-worktable",
+        "the-town/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -3848,10 +3856,8 @@
     },
     {
       "id": "the-town/a-slice-to-take-home",
-      "parent": "the-town/the-candle-vault",
+      "parent": "rei/the-lanternstep-house-parcel",
       "chain": [
-        "the-town/the-candle-vault",
-        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -6497,9 +6503,8 @@
     },
     {
       "id": "the-town/the-good-lighter",
-      "parent": "the-town/the-cellar-door",
+      "parent": "rei/the-lanternstep-house-parcel",
       "chain": [
-        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -6619,8 +6624,9 @@
     },
     {
       "id": "the-town/the-lanternstep-parlor",
-      "parent": "rei/the-lanternstep-house-parcel",
+      "parent": "rei/the-lanternstep-house",
       "chain": [
+        "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -7690,9 +7696,8 @@
     },
     {
       "id": "the-town/the-sulking-lanterns",
-      "parent": "the-town/the-cellar-door",
+      "parent": "rei/the-lanternstep-house-parcel",
       "chain": [
-        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -7864,10 +7869,8 @@
     },
     {
       "id": "the-town/the-unlit-cake",
-      "parent": "the-town/the-candle-vault",
+      "parent": "rei/the-lanternstep-house-parcel",
       "chain": [
-        "the-town/the-candle-vault",
-        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -8075,10 +8078,8 @@
     },
     {
       "id": "the-town/the-wick-end",
-      "parent": "the-town/the-candle-vault",
+      "parent": "rei/the-lanternstep-house-parcel",
       "chain": [
-        "the-town/the-candle-vault",
-        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"

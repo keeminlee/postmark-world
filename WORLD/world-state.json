@@ -7005,7 +7005,7 @@
       "weight": 0,
       "body": "Drafts, questions, penciled maps, and one findable clipboard gather on a sturdy table where the east window keeps the work warm.",
       "image": "https://media.postmark.town/media/keeminlee/95ba1ffb8e4d3e5b964570fc4c5479c09209e74f320fb86f91e21df92a3a05c3.webp",
-      "placementParent": "rei/the-lanternstep-house"
+      "placementParent": "the-town/the-lanternstep-parlor"
     },
     {
       "id": "rei/worktable-handoff-law",
@@ -7123,7 +7123,7 @@
       "weight": 0,
       "body": "A palm-sized cream-paper lantern holds one amber bead; green thread closes it, and its loop fits Hal's porch hook.",
       "class": "thing",
-      "placementParent": "rei/the-lanternstep-house"
+      "placementParent": "the-town/the-lanternstep-parlor"
     },
     {
       "id": "rei/the-porch",
@@ -7146,7 +7146,7 @@
       "weight": 0,
       "body": "A porch just wide enough for two cups, one letter, and a clipboard left where it can be found.",
       "image": "https://media.postmark.town/media/keeminlee/a938d8135a6ec41d6ab88ca45c50ff0c876861fbc2613dec51cf85d44f35a9dc.webp",
-      "placementParent": "the-town/the-lanternstep-parlor"
+      "placementParent": "rei/the-lanternstep-house"
     },
     {
       "id": "rei/porch-hospitality-law",
@@ -7304,7 +7304,7 @@
       "weight": 0,
       "body": "A narrow counter holds one kettle, two chipped cups, herbs drying from hooks, and enough clear space to make soup without moving the maps.",
       "image": "https://media.postmark.town/media/keeminlee/df719af0939fd20f035ab5b3028e9c964b36ec5b6a0026e1628246c50c09e28a.webp",
-      "placementParent": "rei/the-lanternstep-house"
+      "placementParent": "the-town/the-lanternstep-parlor"
     },
     {
       "id": "rei/kitchen-priority-law",
@@ -21136,7 +21136,7 @@
       "weight": 0,
       "body": "A slice on a paper plate, carried out through a door that should not exist. It keeps. That is the whole point of it keeping.",
       "class": "thing",
-      "placementParent": "the-town/the-candle-vault"
+      "placementParent": "rei/the-lanternstep-house-parcel"
     },
     {
       "id": "the-town/the-candle-vault",
@@ -21147,8 +21147,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-26",
       "at": {
-        "x": 1097,
-        "y": -783.5
+        "x": 1083,
+        "y": -792
       },
       "extent": {
         "w": 3,
@@ -21181,8 +21181,8 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-26",
       "at": {
-        "x": 1097,
-        "y": -785
+        "x": 1083,
+        "y": -792
       },
       "extent": {
         "w": 5,
@@ -21224,7 +21224,7 @@
       "weight": 0,
       "body": "A brass lighter with somebody else's initials worn off it. It has lit every candle it was ever asked to and not once one of its own.",
       "class": "thing",
-      "placementParent": "the-town/the-cellar-door"
+      "placementParent": "rei/the-lanternstep-house-parcel"
     },
     {
       "id": "the-town/the-lanternstep-parlor",
@@ -21235,12 +21235,12 @@
       "declared_household": "solo:the-town",
       "date": "2026-08-27",
       "at": {
-        "x": 1085,
-        "y": -790
+        "x": 1088,
+        "y": -792
       },
       "extent": {
         "w": 10,
-        "h": 8
+        "h": 6
       },
       "sovereign": false,
       "stamps": 0,
@@ -21255,7 +21255,7 @@
       "dials": {
         "guest_hp": 20
       },
-      "placementParent": "rei/the-lanternstep-house-parcel"
+      "placementParent": "rei/the-lanternstep-house"
     },
     {
       "id": "the-town/the-sulking-lanterns",
@@ -21277,7 +21277,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The lanterns down here are the ones from every year they were put away wet. They still work. They have simply been sulking about it.",
-      "placementParent": "the-town/the-cellar-door"
+      "placementParent": "rei/the-lanternstep-house-parcel"
     },
     {
       "id": "the-town/the-unlit-cake",
@@ -21307,7 +21307,7 @@
         "damage_die": 8,
         "initiative_bonus": 2
       },
-      "placementParent": "the-town/the-candle-vault"
+      "placementParent": "rei/the-lanternstep-house-parcel"
     },
     {
       "id": "the-town/the-wick-end",
@@ -21330,7 +21330,7 @@
       "weight": 0,
       "body": "One burnt wick end, saved. Proof you were in a room where something finally got lit, and that you were not the only one holding a match.",
       "class": "thing",
-      "placementParent": "the-town/the-candle-vault"
+      "placementParent": "rei/the-lanternstep-house-parcel"
     }
   ],
   "parcels": [
