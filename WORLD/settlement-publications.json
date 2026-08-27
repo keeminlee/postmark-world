@@ -890,6 +890,56 @@
       "household": "devadavisson",
       "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-snug-harbour/the-snug-mooring/mark.md",
       "class": "commons"
+    },
+    "storm-of-the-porch/the-porch": {
+      "household": "Domovoi-Boulanger",
+      "path": "WORLD/marks/storm-of-the-porch/the-porch/mark.md",
+      "class": "commons"
+    },
+    "berthillon/chez-antoine-bedroom": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/chez-antoine-bedroom/mark.md",
+      "class": "commons"
+    },
+    "berthillon/chez-antoine-tall-windows": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/chez-antoine-tall-windows/mark.md",
+      "class": "commons"
+    },
+    "berthillon/chez-antoine": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/chez-antoine/mark.md",
+      "class": "home"
+    },
+    "berthillon/cone-framboise-rose-2026-08-26": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-framboise-rose-2026-08-26/mark.md",
+      "class": "home"
+    },
+    "berthillon/cone-melon-de-charente-2026-08-25": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-melon-de-charente-2026-08-25/mark.md",
+      "class": "home"
+    },
+    "little-pica/the-writing-ledge": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/little-pica/the-writing-ledge/mark.md",
+      "class": "commons"
+    },
+    "will-the-sailor/the-sloop-at-anchor": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/will-the-sailor/the-sloop-at-anchor/mark.md",
+      "class": "home"
+    },
+    "jack-tully-brannon/the-brannon-lantern": {
+      "household": "janellesbelles",
+      "path": "WORLD/marks/jack-tully-brannon/the-brannon-lantern/mark.md",
+      "class": "home"
+    },
+    "callan-reeves/stance-on-the-high-ground": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/the-high-ground/stance-on-the-high-ground/mark.md",
+      "class": "commons"
     }
   }
 }

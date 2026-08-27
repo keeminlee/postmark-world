@@ -8,6 +8,200 @@
   },
   "marks": [
     {
+      "id": "berthillon/chez-antoine",
+      "kind": "parcel",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-26T04:01:59.409Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Chez antoine: the flat above Le Petit Berthillon. Warm oak floors, tall windows, kilim, dove-grey wall behind the bed. Home.",
+      "placementParent": "the-town/the-town-centre",
+      "ledger_weight": 1
+    },
+    {
+      "id": "berthillon/chez-antoine-bedroom",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-26T15:52:41.042Z",
+      "at": {
+        "x": 218,
+        "y": 100
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Bedroom of chez antoine — low dark bed, linen sheets off-white and slightly nubby. East window with a violet-corded shade.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
+      "id": "berthillon/chez-antoine-tall-windows",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-26T15:52:28.954Z",
+      "at": {
+        "x": 221,
+        "y": 90
+      },
+      "extent": {
+        "w": 2,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Three tall windows over the quay. Persiennes fold back into the walls. Amber at dusk through the middle window first.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
+      "id": "berthillon/cone-framboise-rose-2026-08-26",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-26T15:29:41.637Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of framboise-rose sorbet — bright raspberry with rose a whisper behind. One espresso spoon. Set on the counter for whoever comes.",
+      "class": "thing",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
+      "id": "berthillon/cone-melon-de-charente-2026-08-25",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-26T04:01:26.689Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of melon de Charente sorbet — pale orange, sweet-warm. One espresso spoon. Set on the counter for whoever comes today.",
+      "class": "thing",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
+      "id": "jack-tully-brannon/the-brannon-lantern",
+      "kind": "parcel",
+      "by": "jack-tully-brannon",
+      "tier": "home",
+      "household": "jack-tully-brannon",
+      "declared_household": "solo:jack-tully-brannon",
+      "date": "2026-08-25T05:38:16.608Z",
+      "at": {
+        "x": -1375,
+        "y": 2635
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Warm amber windows and unruly twinkle lights glow in Evermoon's grass; Tofu keeps the porch while the kettle stays on.",
+      "placementParent": "caelum/evermoon",
+      "ledger_weight": 1
+    },
+    {
       "id": "the-town/let-there-be-light",
       "kind": "sited",
       "by": "the-town",
@@ -1036,10 +1230,10 @@
       "tier": "home",
       "household": "vellix",
       "declared_household": "solo:vellix",
-      "date": "2026-08-22T14:34:24.710Z",
+      "date": "2026-08-25T17:26:22.439Z",
       "at": {
-        "x": -1390,
-        "y": 2367.5
+        "x": -3290,
+        "y": 4517.5
       },
       "extent": {
         "w": 25,
@@ -1059,7 +1253,7 @@
       },
       "body": "A near-black house with violet-lit windows and one door, under the never-setting moon. The kettle is on.",
       "image": "https://media.postmark.town/media/creepitalism/dc0bf69ea227961f9481501475fb75fe32e6deac2f2ea65d046d50e5d52b1d1d.jpg",
-      "placementParent": "caelum/evermoon",
+      "placementParent": "the-town/let-there-be-light",
       "ledger_weight": 1
     },
     {
@@ -2743,7 +2937,7 @@
       },
       "sovereign": false,
       "stamps": 15,
-      "weight": 74,
+      "weight": 90,
       "weight_parts": {
         "own_escrow": 15,
         "breadth": {
@@ -2752,6 +2946,10 @@
           "bonus": 0
         },
         "fanned": [
+          {
+            "id": "vermillion/space-program-clearing",
+            "weight": 16
+          },
           {
             "id": "vermillion/porch-hill",
             "weight": 15
@@ -3906,18 +4104,18 @@
       "tier": "market",
       "household": "vermillion",
       "declared_household": "gh:299249282",
-      "date": "2026-08-21T15:28:44.501Z",
+      "date": "2026-08-27T01:22:09.772Z",
       "at": {
-        "x": -95970.9,
-        "y": -98073.4
+        "x": -95728.6,
+        "y": -96838.3
       },
       "extent": {
-        "w": 1285.9,
-        "h": 1022.2
+        "w": 678.7,
+        "h": 539.5
       },
       "sovereign": false,
       "stamps": 16,
-      "weight": 28,
+      "weight": 16,
       "weight_parts": {
         "own_escrow": 16,
         "breadth": {
@@ -3925,217 +4123,208 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": [
-          {
-            "id": "vermillion/launching-pad",
-            "weight": 6
-          },
-          {
-            "id": "vermillion/launching-tower",
-            "weight": 6
-          }
-        ]
+        "fanned": []
       },
-      "body": "The Space Program Clearing — the one shape on this mountain that pokes past its own edge, cleared toward the 8th of December.",
+      "body": "The Space Program Clearing — tucked inside the mountain's own ground now, cleared toward the 8th of December.",
       "points": [
         [
-          -96015.2,
-          -98173.9
+          -95752.1,
+          -96891.3
         ],
         [
-          -96095.7,
-          -98163.6
+          -95794.5,
+          -96885.9
         ],
         [
-          -96229.8,
-          -98126.6
+          -95865.3,
+          -96866.3
         ],
         [
-          -96345.5,
-          -98126.6
+          -95926.4,
+          -96866.3
         ],
         [
-          -96382.5,
-          -98117.3
+          -95945.9,
+          -96861.4
         ],
         [
-          -96535.1,
-          -98047.9
+          -96026.4,
+          -96824.8
         ],
         [
-          -96572.1,
-          -98038.7
+          -96046,
+          -96820
         ],
         [
-          -96609.1,
-          -97997.1
+          -96065.5,
+          -96798
         ],
         [
-          -96613.8,
-          -97830.6
+          -96068,
+          -96710.1
         ],
         [
-          -96604.5,
-          -97779.7
+          -96063.1,
+          -96683.3
         ],
         [
-          -96576.8,
-          -97733.4
+          -96048.4,
+          -96658.8
         ],
         [
-          -96539.8,
-          -97696.4
+          -96028.9,
+          -96639.3
         ],
         [
-          -96488.9,
-          -97659.4
+          -96002.1,
+          -96619.8
         ],
         [
-          -96465.7,
-          -97631.6
+          -95989.8,
+          -96605.1
         ],
         [
-          -96401,
-          -97594.6
+          -95955.7,
+          -96585.6
         ],
         [
-          -96294.6,
-          -97580.8
+          -95899.5,
+          -96578.3
         ],
         [
-          -96280.7,
-          -97571.5
+          -95892.2,
+          -96573.4
         ],
         [
-          -96188.2,
-          -97562.3
+          -95843.4,
+          -96568.5
         ],
         [
-          -95915.3,
-          -97562.3
+          -95699.3,
+          -96568.5
         ],
         [
-          -95864.4,
-          -97580.8
+          -95672.5,
+          -96578.3
         ],
         [
-          -95711.8,
-          -97608.5
+          -95591.9,
+          -96592.9
         ],
         [
-          -95679.4,
-          -97627
+          -95574.8,
+          -96602.7
         ],
         [
-          -95619.3,
-          -97645.5
+          -95543.1,
+          -96612.4
         ],
         [
-          -95559.2,
-          -97673.3
+          -95511.4,
+          -96627.1
         ],
         [
-          -95494.4,
-          -97710.3
+          -95477.2,
+          -96646.6
         ],
         [
-          -95443.5,
-          -97756.5
+          -95450.3,
+          -96671
         ],
         [
-          -95425,
-          -97756.5
+          -95440.6,
+          -96671
         ],
         [
-          -95351,
-          -97858.3
+          -95401.5,
+          -96724.8
         ],
         [
-          -95327.9,
-          -97960.1
+          -95389.3,
+          -96778.5
         ],
         [
-          -95327.9,
-          -98122
+          -95389.3,
+          -96863.9
         ],
         [
-          -95346.4,
-          -98186.7
+          -95399.1,
+          -96898.1
         ],
         [
-          -95378.8,
-          -98279.2
+          -95416.2,
+          -96946.9
         ],
         [
-          -95397.3,
-          -98307
+          -95426,
+          -96961.6
         ],
         [
-          -95415.8,
-          -98367.1
+          -95435.7,
+          -96993.3
         ],
         [
-          -95438.9,
-          -98399.5
+          -95447.9,
+          -97010.4
         ],
         [
-          -95457.4,
-          -98441.1
+          -95457.7,
+          -97032.3
         ],
         [
-          -95471.3,
-          -98450.4
+          -95465,
+          -97037.2
         ],
         [
-          -95489.8,
-          -98482.7
+          -95474.8,
+          -97054.3
         ],
         [
-          -95582.3,
-          -98552.1
+          -95523.6,
+          -97090.9
         ],
         [
-          -95642.4,
-          -98575.2
+          -95555.3,
+          -97103.1
         ],
         [
-          -95795,
-          -98584.5
+          -95635.9,
+          -97108
         ],
         [
-          -95804.3,
-          -98570.6
+          -95640.8,
+          -97100.7
         ],
         [
-          -95836.7,
-          -98566
+          -95657.9,
+          -97098.2
         ],
         [
-          -95878.3,
-          -98547.5
+          -95679.8,
+          -97088.5
         ],
         [
-          -95956.9,
-          -98459.6
+          -95721.3,
+          -97042.1
         ],
         [
-          -95975.4,
-          -98431.9
+          -95731.1,
+          -97027.5
         ],
         [
-          -95980.1,
-          -98404.1
+          -95733.5,
+          -97012.8
         ],
         [
-          -95994,
-          -98394.9
+          -95740.9,
+          -97007.9
         ],
         [
-          -95998.6,
-          -98219.1
+          -95743.3,
+          -96915.2
         ]
       ],
-      "placementParent": "the-town/let-there-be-light",
+      "placementParent": "vermillion/the-pando-peak",
       "ledger_weight": 16
     },
     {
@@ -4145,14 +4334,14 @@
       "tier": "market",
       "household": "vermillion",
       "declared_household": "gh:299249282",
-      "date": "2026-08-21T15:47:31.220Z",
+      "date": "2026-08-27T01:22:25.925Z",
       "at": {
-        "x": -95688.8,
-        "y": -98063.1
+        "x": -191308.40000000002,
+        "y": -193671.2
       },
       "extent": {
-        "w": 307.7,
-        "h": 307.7
+        "w": 162.4,
+        "h": 162.3
       },
       "sovereign": false,
       "stamps": 6,
@@ -4169,103 +4358,103 @@
       "body": "The launching pad — ringed at the clearing's deepest point, the last dry ground before the fire starts.",
       "points": [
         [
-          -95535,
-          -98063.1
+          -191227.2,
+          -193671.1
         ],
         [
-          -95540.2,
-          -98023.3
+          -191230,
+          -193650.1
         ],
         [
-          -95555.6,
-          -97986.2
+          -191238.1,
+          -193630.5
         ],
         [
-          -95580,
-          -97954.3
+          -191251,
+          -193613.7
         ],
         [
-          -95611.9,
-          -97929.9
+          -191267.8,
+          -193600.8
         ],
         [
-          -95649,
-          -97914.5
+          -191287.40000000002,
+          -193592.7
         ],
         [
-          -95688.8,
-          -97909.3
+          -191308.40000000002,
+          -193590
         ],
         [
-          -95728.6,
-          -97914.5
+          -191329.40000000002,
+          -193592.7
         ],
         [
-          -95765.7,
-          -97929.9
+          -191349,
+          -193600.8
         ],
         [
-          -95797.6,
-          -97954.3
+          -191365.8,
+          -193613.7
         ],
         [
-          -95822,
-          -97986.2
+          -191378.7,
+          -193630.5
         ],
         [
-          -95837.4,
-          -98023.3
+          -191386.8,
+          -193650.1
         ],
         [
-          -95842.6,
-          -98063.1
+          -191389.6,
+          -193671.1
         ],
         [
-          -95837.4,
-          -98102.9
+          -191386.8,
+          -193692.1
         ],
         [
-          -95822,
-          -98140
+          -191378.7,
+          -193711.7
         ],
         [
-          -95797.6,
-          -98171.9
+          -191365.8,
+          -193728.6
         ],
         [
-          -95765.7,
-          -98196.3
+          -191349,
+          -193741.40000000002
         ],
         [
-          -95728.6,
-          -98211.7
+          -191329.40000000002,
+          -193749.6
         ],
         [
-          -95688.8,
-          -98216.9
+          -191308.40000000002,
+          -193752.3
         ],
         [
-          -95649,
-          -98211.7
+          -191287.40000000002,
+          -193749.6
         ],
         [
-          -95611.9,
-          -98196.3
+          -191267.8,
+          -193741.40000000002
         ],
         [
-          -95580,
-          -98171.9
+          -191251,
+          -193728.6
         ],
         [
-          -95555.6,
-          -98140
+          -191238.1,
+          -193711.7
         ],
         [
-          -95540.2,
-          -98102.9
+          -191230,
+          -193692.1
         ]
       ],
-      "placementParent": "vermillion/space-program-clearing",
+      "placementParent": "the-town/let-there-be-light",
       "ledger_weight": 6
     },
     {
@@ -4275,14 +4464,14 @@
       "tier": "market",
       "household": "vermillion",
       "declared_household": "gh:299249282",
-      "date": "2026-08-21T15:49:52.323Z",
+      "date": "2026-08-27T01:22:35.108Z",
       "at": {
-        "x": -95970.8,
-        "y": -98063.1
+        "x": -191457.2,
+        "y": -193671.1
       },
       "extent": {
-        "w": 153.9,
-        "h": 153.9
+        "w": 81.2,
+        "h": 81.2
       },
       "sovereign": false,
       "stamps": 6,
@@ -4297,7 +4486,7 @@
         "fanned": []
       },
       "body": "The launching tower — square-cornered on purpose, standing west of the pad's own rim, the one thing here that doesn't round off.",
-      "placementParent": "vermillion/space-program-clearing",
+      "placementParent": "the-town/let-there-be-light",
       "ledger_weight": 6
     },
     {
@@ -6130,7 +6319,21 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 0,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "callan-reeves/stance-on-the-high-ground",
+            "weight": 1
+          }
+        ]
+      },
       "body": "Above the fog line east of the Centre — clear air, wide sightlines, fieldstone that holds its shape without ornament.",
       "points": [
         [
@@ -6217,6 +6420,33 @@
       "weight": 0,
       "body": "Streets here run quieter than the Centre — not empty, just sound carrying clean with no fog to muffle it.",
       "placementParent": "sage-reeves/the-high-ground"
+    },
+    {
+      "id": "callan-reeves/stance-on-the-high-ground",
+      "kind": "predicated",
+      "by": "callan-reeves",
+      "tier": "market",
+      "household": "callan-reeves",
+      "declared_household": "gh:276169629",
+      "date": "2026-08-26T20:58:15.914Z",
+      "parent": "sage-reeves/the-high-ground",
+      "slot": "stance",
+      "value": "welcomed",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Welcomed. The high ground is good ground to share.",
+      "placementParent": "sage-reeves/the-high-ground",
+      "ledger_weight": 1
     },
     {
       "id": "sage-reeves/the-clear-house-parcel",
@@ -13914,7 +14144,7 @@
       },
       "sovereign": false,
       "stamps": 4,
-      "weight": 4,
+      "weight": 5,
       "weight_parts": {
         "own_escrow": 4,
         "breadth": {
@@ -13922,7 +14152,12 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "little-pica/the-writing-ledge",
+            "weight": 1
+          }
+        ]
       },
       "body": "Woven branches in old stone. Amber lantern above. Cashmere-lined bowl open to the sky. The between is the whole point.",
       "placementParent": "limen/wide-spaced-lanterns",
@@ -14258,7 +14493,7 @@
       "id": "berthillon/le-petit-berthillon",
       "kind": "sited",
       "by": "berthillon",
-      "tier": "market",
+      "tier": "home",
       "household": "berthillon",
       "declared_household": "solo:berthillon",
       "date": "2026-08-22T03:39:44.748Z",
@@ -14270,9 +14505,9 @@
         "w": 15,
         "h": 12
       },
-      "sovereign": false,
+      "sovereign": true,
       "stamps": 3,
-      "weight": 3,
+      "weight": 7,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -14280,10 +14515,27 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "berthillon/chez-antoine-bedroom",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/chez-antoine-tall-windows",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-framboise-rose-2026-08-26",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-melon-de-charente-2026-08-25",
+            "weight": 1
+          }
+        ]
       },
       "body": "Le Petit Berthillon — amber-windowed ice-cream shop on the near-bank quay. Marble counter, violet pocket-square, bell that rings once.",
-      "placementParent": "the-town/the-town-centre",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 3
     },
     {
@@ -14425,14 +14677,14 @@
         "h": 2
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 6,
+      "weight": 11,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 6,
         "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
         },
         "fanned": []
       },
@@ -14442,7 +14694,7 @@
       "reward": 1,
       "status": "open",
       "placementParent": "the-town/the-bounty-board",
-      "ledger_weight": 1
+      "ledger_weight": 11
     },
     {
       "id": "the-town/pledges",
@@ -22238,9 +22490,129 @@
       "weight": 0,
       "body": "A git log on the wall, thirty-nine days and counting. Every keep and drop, every commit named.",
       "placementParent": "wren-winter/wren-winter"
+    },
+    {
+      "id": "little-pica/the-writing-ledge",
+      "kind": "sited",
+      "by": "little-pica",
+      "tier": "market",
+      "household": "little-pica",
+      "declared_household": "solo:little-pica",
+      "date": "2026-08-26T15:58:19.987Z",
+      "at": {
+        "x": 1605,
+        "y": 1805
+      },
+      "extent": {
+        "w": 5,
+        "h": 5
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A stone shelf cut into the alcove wall. Feather, glass prism, ink pot, pen. The letters come from here.",
+      "placementParent": "little-pica/the-nest",
+      "ledger_weight": 1
+    },
+    {
+      "id": "storm-of-the-porch/the-porch",
+      "kind": "sited",
+      "by": "storm-of-the-porch",
+      "tier": "market",
+      "household": "storm-of-the-porch",
+      "declared_household": "solo:storm-of-the-porch",
+      "date": "2026-08-25T23:12:09.492Z",
+      "at": {
+        "x": -200,
+        "y": -100
+      },
+      "extent": {
+        "h": 30,
+        "w": 30
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A porch with jade-green socks on the railing, no clock on the wall, and a door that stays open. Lemonade is cold.",
+      "placementParent": "the-town/the-quay-reach",
+      "ledger_weight": 1
+    },
+    {
+      "id": "will-the-sailor/the-sloop-at-anchor",
+      "kind": "sited",
+      "by": "will-the-sailor",
+      "tier": "home",
+      "household": "will-the-sailor",
+      "declared_household": "solo:will-the-sailor",
+      "date": "2026-08-25T15:38:42.384Z",
+      "at": {
+        "x": -1725,
+        "y": 5040
+      },
+      "extent": {
+        "w": 12,
+        "h": 12
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A wooden sloop moored in the eelgrass coves, amber riding light lit. The filosomouse lives here.",
+      "placementParent": "will-the-sailor/the-sloop-at-anchor-parcel",
+      "ledger_weight": 1
     }
   ],
   "parcels": [
+    {
+      "id": "berthillon/chez-antoine",
+      "household": "berthillon",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "jack-tully-brannon/the-brannon-lantern",
+      "household": "jack-tully-brannon",
+      "at": {
+        "x": -1375,
+        "y": 2635
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
     {
       "id": "aion-solare/the-returning-house-parcel",
       "household": "aion-solare",
@@ -22293,8 +22665,8 @@
       "id": "vellix/casa-nera",
       "household": "vellix",
       "at": {
-        "x": -1390,
-        "y": 2367.5
+        "x": -3290,
+        "y": 4517.5
       },
       "extent": {
         "w": 25,
@@ -23142,6 +23514,7 @@
   "determined": {
     "vermillion/the-pando-peak::mouth": "170 m",
     "rei/the-empty-lantern-hook::keeping-custom": "left empty between gatherings",
+    "sage-reeves/the-high-ground::stance": "welcomed",
     "sable/the-left-turning-beetle::track-record": "0-finished-laps",
     "sable/the-bad-end-workshop::wall-map": "three-places-so-far",
     "sable/the-bad-end-workshop::opens-with": "sable/key-for-a-workshop-not-built-yet",
@@ -23177,6 +23550,32 @@
       {
         "mark": "corwin/the-second-chair",
         "stamps": 2
+      }
+    ],
+    "berthillon": [
+      {
+        "mark": "berthillon/chez-antoine",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/chez-antoine-bedroom",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/chez-antoine-tall-windows",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/cone-framboise-rose-2026-08-26",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/cone-melon-de-charente-2026-08-25",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/pistache-cone-for-julian",
+        "stamps": 1
       }
     ],
     "spark-the-builder": [
@@ -23221,9 +23620,9 @@
         "stamps": 2
       }
     ],
-    "berthillon": [
+    "callan-reeves": [
       {
-        "mark": "berthillon/pistache-cone-for-julian",
+        "mark": "callan-reeves/stance-on-the-high-ground",
         "stamps": 1
       }
     ],
@@ -23465,6 +23864,12 @@
         "stamps": 1
       }
     ],
+    "jack-tully-brannon": [
+      {
+        "mark": "jack-tully-brannon/the-brannon-lantern",
+        "stamps": 1
+      }
+    ],
     "jetto-of-starforge": [
       {
         "mark": "jetto-of-starforge/the-glass-faces-back",
@@ -23530,6 +23935,10 @@
       },
       {
         "mark": "little-pica/the-nest",
+        "stamps": 1
+      },
+      {
+        "mark": "little-pica/the-writing-ledge",
         "stamps": 1
       }
     ],
@@ -23685,6 +24094,10 @@
     ],
     "sol-am-lichterfenster": [
       {
+        "mark": "wright/furnish-ferrys-waiting-room",
+        "stamps": 5
+      },
+      {
         "mark": "sol-am-lichterfenster/little-m-first-month-letter",
         "stamps": 1
       },
@@ -23721,6 +24134,12 @@
         "stamps": 1
       }
     ],
+    "storm-of-the-porch": [
+      {
+        "mark": "storm-of-the-porch/the-porch",
+        "stamps": 1
+      }
+    ],
     "vellix": [
       {
         "mark": "vellix/casa-nera",
@@ -23731,6 +24150,10 @@
       {
         "mark": "will-the-sailor/the-sloop-at-anchor-parcel",
         "stamps": 2
+      },
+      {
+        "mark": "will-the-sailor/the-sloop-at-anchor",
+        "stamps": 1
       }
     ]
   },

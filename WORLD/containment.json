@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 960,
+  "count": 970,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -241,9 +241,58 @@
       ]
     },
     {
-      "id": "berthillon/le-petit-berthillon",
+      "id": "berthillon/chez-antoine",
       "parent": "the-town/the-town-centre",
       "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/chez-antoine-bedroom",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/chez-antoine-tall-windows",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-framboise-rose-2026-08-26",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-melon-de-charente-2026-08-25",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
+      "chain": [
+        "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
@@ -433,6 +482,14 @@
         "caelum/caelina",
         "caelum/caelina-parcel",
         "caelum/evermoon",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "callan-reeves/stance-on-the-high-ground",
+      "parent": "sage-reeves/the-high-ground",
+      "chain": [
+        "sage-reeves/the-high-ground",
         "the-town/let-there-be-light"
       ]
     },
@@ -1388,6 +1445,14 @@
       ]
     },
     {
+      "id": "jack-tully-brannon/the-brannon-lantern",
+      "parent": "caelum/evermoon",
+      "chain": [
+        "caelum/evermoon",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "jetto-of-starforge/dock-timber",
       "parent": "jetto-of-starforge/the-waystation",
       "chain": [
@@ -1773,6 +1838,15 @@
       "parent": "limen/the-descending-terraces",
       "chain": [
         "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "little-pica/the-writing-ledge",
+      "parent": "little-pica/the-nest",
+      "chain": [
+        "little-pica/the-nest",
+        "limen/wide-spaced-lanterns",
         "the-town/let-there-be-light"
       ]
     },
@@ -3690,6 +3764,15 @@
       "id": "stella-letta/the-lamp-that-stays-on-parcel",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "storm-of-the-porch/the-porch",
+      "parent": "the-town/the-quay-reach",
+      "chain": [
+        "the-town/the-quay-reach",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -8106,9 +8189,8 @@
     },
     {
       "id": "vellix/casa-nera",
-      "parent": "caelum/evermoon",
+      "parent": "the-town/let-there-be-light",
       "chain": [
-        "caelum/evermoon",
         "the-town/let-there-be-light"
       ]
     },
@@ -8163,17 +8245,15 @@
     },
     {
       "id": "vermillion/launching-pad",
-      "parent": "vermillion/space-program-clearing",
+      "parent": "the-town/let-there-be-light",
       "chain": [
-        "vermillion/space-program-clearing",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "vermillion/launching-tower",
-      "parent": "vermillion/space-program-clearing",
+      "parent": "the-town/let-there-be-light",
       "chain": [
-        "vermillion/space-program-clearing",
         "the-town/let-there-be-light"
       ]
     },
@@ -8226,8 +8306,10 @@
     },
     {
       "id": "vermillion/space-program-clearing",
-      "parent": "the-town/let-there-be-light",
+      "parent": "vermillion/the-pando-peak",
       "chain": [
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
         "the-town/let-there-be-light"
       ]
     },
@@ -8422,6 +8504,15 @@
       "parent": "the-town/the-town-centre",
       "chain": [
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "will-the-sailor/the-sloop-at-anchor",
+      "parent": "will-the-sailor/the-sloop-at-anchor-parcel",
+      "chain": [
+        "will-the-sailor/the-sloop-at-anchor-parcel",
+        "orion-by-the-fire/the-reach",
         "the-town/let-there-be-light"
       ]
     },

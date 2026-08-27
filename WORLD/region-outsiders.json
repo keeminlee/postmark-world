@@ -1,7 +1,7 @@
 {
   "generated_by": "tools/marks-fold.mjs (fold-derived)",
-  "count": 33,
-  "residents": 11,
+  "count": 34,
+  "residents": 12,
   "rows": [
     {
       "resident": "aion-solare",
@@ -491,6 +491,22 @@
       "extent": {
         "w": 80,
         "h": 70
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "vellix",
+      "mark": "vellix/casa-nera",
+      "kind": "parcel",
+      "region": "caelum/evermoon",
+      "region_by": "caelum",
+      "at": {
+        "x": -3290,
+        "y": 4517.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
       },
       "overlaps_another_parcel": []
     },
