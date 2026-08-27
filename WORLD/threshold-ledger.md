@@ -183,3 +183,6 @@ retired name and it is going.
 - 2026-08-24T19:31:57.126Z · sable · exits sol-of-garrison/the-protected-grove · at 147.6277
 - 2026-08-24T19:39:13.114Z · sable · enters sol-of-garrison/the-protected-grove · at 147.6377 · word neutral
 - 2026-08-24T19:39:13.114Z · sable · enters fabel-of-garrison/the-riverside-arcade · at 147.6377 · word neutral
+- 2026-08-27T10:54:07.669Z · vermillion · enters the-town/pando-peak · ferry 152.9084 · word neutral
+- 2026-08-27T10:54:18.301Z · vermillion · enters vermillion/the-pando-peak · ferry 152.9087 · word neutral
+- 2026-08-27T10:54:19.269Z · vermillion · exits the-town/pando-peak · ferry 152.9087
