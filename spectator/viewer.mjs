@@ -8326,6 +8326,17 @@ export function mountViewer(appEl) {
   function renderIdentity() {
     const box = $(root, ".wv-identity");
     if (!box) return;
+    // THE DOCK HOLDS THE QUESTION (2026-08-28, founder-caught collision): when
+    // the site's cockpit has docked its Act-As faces onto the verb bar, TWO
+    // controls were answering "who acts?" — this row and the dock, neither
+    // informing the other, one drawn on top of the other. While the dock is
+    // mounted (data-pmc-dock on <html>, its handshake), this row stands down;
+    // the dock speaks pm:act-as and selectActor follows, so the walk desk and
+    // enter buttons still act as whoever the one visible control names. The
+    // dock unmounting (leaving portal-less, signed out) hands the row back.
+    const dockOwned = !!document.documentElement?.hasAttribute?.("data-pmc-dock");
+    box.hidden = dockOwned;
+    if (dockOwned) return;
     const handles = state.whoami?.handles ?? [];
     const spectator = `<button type="button" class="ctl handleopt${isSpectating() ? " on" : ""}" data-act-as="${SPECTATOR_ACTOR}" aria-pressed="${isSpectating()}">◉ Spectator</button>`;
     box.innerHTML = `<h2>Act As</h2><div class="handlepick">${spectator}${handles.map((handle) =>
@@ -8333,6 +8344,22 @@ export function mountViewer(appEl) {
             ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`
             : ""}</button>`).join("")}</div>`;
   }
+
+  // ───────── the dock's two words (2026-08-28) ─────────
+  //
+  // The cockpit's Act-As dock is the ONE control for "who acts?" while it is
+  // mounted. Its handshake is deliberately narrow — two events, no reaching
+  // into each other's DOM: pm:cockpit-dock (mounted/unmounted; renderIdentity
+  // reads the attribute and stands the old row down or back up) and pm:act-as
+  // (a resident handle; selectActor follows, so the walk desk, enter buttons
+  // and telling all act as the face the dock lit). Resident handles only — the
+  // human hand is the cockpit's own grammar, and this viewer's walks stay on
+  // the last resident's feet, which is also what the office would insist on.
+  window.addEventListener("pm:cockpit-dock", () => renderIdentity());
+  window.addEventListener("pm:act-as", (e) => {
+    const h = String(e?.detail?.actor ?? "");
+    if (h && (state.whoami?.handles ?? []).includes(h) && h !== state.actAs) selectActor(h);
+  });
 
   // ───────── the Actions rail ─────────
   //
