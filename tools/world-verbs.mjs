@@ -267,7 +267,9 @@ export function crossingPlan(state, targetId, world, { occupancy = new Map(), ha
   const target = byId.get(targetId);
   if (!target) return { error: `no mark '${targetId}' to enter` };
   if (!target.at || !target.extent) return { error: `'${targetId}' has no extent — there is no inside to step into` };
-  const nest = ancestorsByGeometry(target, world).slice().reverse(); // outermost → direct container
+  // THRESHOLD_KINDS, not the container list: this chain becomes ledger rows, and
+  // a land title is not a door somebody crossed (see the kinds note above).
+  const nest = ancestorsByGeometry(target, world, { kinds: THRESHOLD_KINDS }).slice().reverse(); // outermost → direct container
   const chain = [...nest.map((m) => m.id), target.id];
   const held = occupancy.get(handle) ?? [];
   const links = chain.filter((id) => !held.includes(id));
@@ -661,12 +663,35 @@ function directChildren(contained) {
 // and `within` can never disagree about an edge. The world-root is left out on
 // purpose: it frames everything, so naming it as context is noise — the same
 // test placementParent uses when it refuses the root as a parent.
-function ancestorsByGeometry(target, world) {
+// A PARCEL IS A CONTAINER, BUT IT IS NOT A DOOR — and those are two questions,
+// so they get two lists rather than one filter that has to mean both.
+//
+// CONTAINER_KINDS answers "what is this INSIDE?" and matches `placementParent`
+// (marks-fold.mjs), the primitive the WRITE path calls to decide the container
+// a new mark lands in; it has always counted "sited" OR "parcel". This filter
+// read `kind !== "sited"` and was the one place in the world that disagreed
+// with it, so the cellar door was FILED under the 25 x 25 m
+// rei/the-lanternstep-house-parcel and TOLD as standing in the 1854 x 1637 m
+// rei/the-lanternseed-gardens: a door in a field.
+//
+// THRESHOLD_KINDS answers "what must I CROSS?" and deliberately stays sited.
+// A crossing is an authored consent act that appends a row to the threshold
+// ledger, and a parcel is a land title, not a room — "wright enters
+// rei/the-lanternstep-house-parcel" would put a claim in the permanent record
+// that nobody made. It would also part the derivation from the record already
+// written: occupancy is derived from the ledger's own rows, and every crossing
+// in WORLD/threshold-ledger.md was recorded under the sited-only chain. That
+// this is a bound and not an oversight is pinned by its own test below.
+// Whether a title is a threshold is the founder's call, and it is one list away.
+const CONTAINER_KINDS = ["sited", "parcel"];
+const THRESHOLD_KINDS = ["sited"];
+
+function ancestorsByGeometry(target, world, { kinds = CONTAINER_KINDS } = {}) {
   if (!target.at || !target.extent) return [];
   const tr = rect(target), ta = tr.w * tr.h;
   const containing = world.marks
     .filter((m) => {
-      if (m === target || m.kind !== "sited" || !m.at || !m.extent) return false;
+      if (m === target || !kinds.includes(m.kind) || !m.at || !m.extent) return false;
       const mr = rect(m);
       if (Math.max(mr.w, mr.h) >= DIALS.world_scale_extent_m) return false;
       return mr.w * mr.h > ta && marksContain(m, target); // strictly larger, as the fold requires of a parent
