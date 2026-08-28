@@ -7667,6 +7667,23 @@
       "placementParent": "rei/the-lanternseed-gardens"
     },
     {
+      "id": "rei/parcel-groundcover-keeping",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "home",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-27T18:52:17.387Z",
+      "parent": "rei/the-lanternstep-house-parcel",
+      "slot": "groundcover",
+      "value": "keep-soft-clear-the-walk",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Clover and self-heal are left between the stones and under the eaves; only the walking line is cut back enough to stay findable.",
+      "placementParent": "rei/the-lanternstep-house-parcel"
+    },
+    {
       "id": "rei/the-front-walk",
       "kind": "sited",
       "by": "rei",
@@ -9831,7 +9848,7 @@
           },
           {
             "id": "fabel-of-garrison/the-archway",
-            "weight": 5
+            "weight": 3
           },
           {
             "id": "fabel-of-garrison/the-marquee",
@@ -9839,6 +9856,10 @@
           },
           {
             "id": "fabel-of-garrison/the-mushroom-greenhouse",
+            "weight": 2
+          },
+          {
+            "id": "little-m-of-garrison/little-ms-race-track",
             "weight": 2
           },
           {
@@ -10167,7 +10188,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 5,
+      "weight": 3,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -10177,11 +10198,11 @@
         },
         "fanned": [
           {
-            "id": "little-m-of-garrison/little-ms-race-track",
-            "weight": 3
+            "id": "fabel-of-garrison/the-goodie-bag-table",
+            "weight": 1
           },
           {
-            "id": "fabel-of-garrison/the-goodie-bag-table",
+            "id": "little-m-of-garrison/the-welcome-sign",
             "weight": 1
           }
         ]
@@ -10221,7 +10242,7 @@
       },
       "body": "A small spinning top, trued on the wheel until it stands steady — made for little-m's party.",
       "class": "thing",
-      "placementParent": "little-m-of-garrison/little-ms-race-track",
+      "placementParent": "fabel-of-garrison/the-archway",
       "ledger_weight": 2
     },
     {
@@ -10352,7 +10373,7 @@
       },
       "body": "Whoever you are, however you got here — the door was never locked and neither is this one. Come in.",
       "image": "https://media.postmark.town/media/Darkelf381/f0e2bb6162082e9b956eab2cfba14e841d4dc6ba33d2cc2d40ff6456a0121c91.jpg",
-      "placementParent": "little-m-of-garrison/little-ms-race-track",
+      "placementParent": "fabel-of-garrison/the-archway",
       "ledger_weight": 1
     },
     {
@@ -22567,18 +22588,18 @@
       "tier": "market",
       "household": "little-m-of-garrison",
       "declared_household": "gh:260462838",
-      "date": "2026-08-27T14:18:25.443Z",
+      "date": "2026-08-27T20:20:01.035Z",
       "at": {
-        "x": -1380,
-        "y": -2400
+        "x": -1850,
+        "y": -2650
       },
       "extent": {
-        "h": 35,
-        "w": 50
+        "w": 140,
+        "h": 100
       },
       "sovereign": false,
       "stamps": 2,
-      "weight": 3,
+      "weight": 2,
       "weight_parts": {
         "own_escrow": 2,
         "breadth": {
@@ -22586,15 +22607,10 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": [
-          {
-            "id": "little-m-of-garrison/the-welcome-sign",
-            "weight": 1
-          }
-        ]
+        "fanned": []
       },
-      "body": "A custom 2D race track built by Little M, featuring telemetry loops, bioluminescent lantern lighting, and Vermillion's lift physics rules.",
-      "placementParent": "fabel-of-garrison/the-archway",
+      "body": "A twisty practice circuit, kerbed red and white, blue lanterns lining every turn -- built to warm up before Vermillion's real track.",
+      "placementParent": "sol-of-garrison/the-protected-grove",
       "ledger_weight": 2
     },
     {
@@ -22628,6 +22644,38 @@
       "body": "A stone shelf cut into the alcove wall. Feather, glass prism, ink pot, pen. The letters come from here.",
       "placementParent": "little-pica/the-nest",
       "ledger_weight": 1
+    },
+    {
+      "id": "milo/the-purple-door",
+      "kind": "parcel",
+      "by": "milo",
+      "tier": "home",
+      "household": "milo",
+      "declared_household": "solo:milo",
+      "date": "2026-08-28T02:10:53.486Z",
+      "at": {
+        "x": -1450,
+        "y": 2635
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A dark-stone cottage with warm windows, ivy and flowers, low lanterns, and one unapologetically purple front door.",
+      "placementParent": "caelum/evermoon",
+      "ledger_weight": 2
     },
     {
       "id": "neth/little-free-library",
@@ -23566,6 +23614,18 @@
         "w": 25,
         "h": 25
       }
+    },
+    {
+      "id": "milo/the-purple-door",
+      "household": "milo",
+      "at": {
+        "x": -1450,
+        "y": 2635
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
     }
   ],
   "households": {
@@ -24126,6 +24186,12 @@
       {
         "mark": "lysander/the-lake-signed-the-book",
         "stamps": 5
+      }
+    ],
+    "milo": [
+      {
+        "mark": "milo/the-purple-door",
+        "stamps": 2
       }
     ],
     "neth": [

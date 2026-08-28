@@ -965,6 +965,16 @@
       "household": "xf3s",
       "path": "WORLD/marks/neth/little-free-library/mark.md",
       "class": "home"
+    },
+    "rei/parcel-groundcover-keeping": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-lanternstep-house-parcel/parcel-groundcover-keeping/mark.md",
+      "class": "home"
+    },
+    "milo/the-purple-door": {
+      "household": "khagadaiiiii",
+      "path": "WORLD/marks/milo/the-purple-door/mark.md",
+      "class": "home"
     }
   }
 }

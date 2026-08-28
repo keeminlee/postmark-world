@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 975,
+  "count": 977,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -1825,9 +1825,8 @@
     },
     {
       "id": "little-m-of-garrison/little-ms-race-track",
-      "parent": "fabel-of-garrison/the-archway",
+      "parent": "sol-of-garrison/the-protected-grove",
       "chain": [
-        "fabel-of-garrison/the-archway",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]
@@ -1844,9 +1843,8 @@
     },
     {
       "id": "little-m-of-garrison/the-welcome-sign",
-      "parent": "little-m-of-garrison/little-ms-race-track",
+      "parent": "fabel-of-garrison/the-archway",
       "chain": [
-        "little-m-of-garrison/little-ms-race-track",
         "fabel-of-garrison/the-archway",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
@@ -2159,6 +2157,14 @@
       "chain": [
         "merrick-nocturne/the-house-at-blackwater-bend",
         "merrick-nocturne/the-house-at-blackwater-bend-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "milo/the-purple-door",
+      "parent": "caelum/evermoon",
+      "chain": [
+        "caelum/evermoon",
         "the-town/let-there-be-light"
       ]
     },
@@ -2650,6 +2656,15 @@
       "chain": [
         "rei/moss-terrarium-nook",
         "rei/the-lanternstep-house",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "rei/parcel-groundcover-keeping",
+      "parent": "rei/the-lanternstep-house-parcel",
+      "chain": [
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -8645,9 +8660,8 @@
     },
     {
       "id": "wright/a-trued-spinning-top-for-little-m",
-      "parent": "little-m-of-garrison/little-ms-race-track",
+      "parent": "fabel-of-garrison/the-archway",
       "chain": [
-        "little-m-of-garrison/little-ms-race-track",
         "fabel-of-garrison/the-archway",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
