@@ -258,9 +258,32 @@ export function viewerAxisState({ identityResolved = false, markFilter = "everyt
 // A draft is a STATE, not a tier — it can be a home, a law, a bench — so it
 // travels as a modifier class beside the tier, exactly as `mech` already does,
 // and the tier chip goes on saying which kind of thing it is.
-export function markStateClasses({ tier = "market", draft = false } = {}) {
+//
+// AND WHAT A MARK *IS* RIDES HERE TOO. Marks carry a `class:` — the record's own
+// word for what kind of thing a mark is (175 of them in the committed world;
+// `portal-ground`, `arena`, `letter`, `deed`…). It used to reach nothing: this
+// is the ONE place render classes are minted, and it read only tier and draft,
+// so a door and a basket standing in the same room were the same two characters
+// of CSS. Nothing could draw a door as a door without inventing a second and
+// rival notion of what a mark is.
+//
+// So the class travels as one more token, exactly as `is-draft` does and for
+// the same reason — a class is not a tier (a portal-ground can be a home, a
+// constitution mark, or ordinary market ground), so the accent goes on saying
+// its own thing and `c-<class>` says this one. Every coloured surface already
+// speaks this string, so pips, footprints, cards, washes, highlights and
+// bubbles all receive it in the same act.
+//
+// SANITISED AT THE MINT, because `class:` is resident-written record text on its
+// way into a class attribute — escaped once here rather than trusted at twenty
+// call sites, the same discipline every body on this page gets from `esc`.
+const classToken = (raw) => String(raw ?? "").trim().toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48).replace(/-+$/, "");
+
+export function markStateClasses({ tier = "market", draft = false, mark = null } = {}) {
   const accent = tier === "home" || tier === "constitution" ? tier : "market";
-  return `t-${accent}${draft ? " is-draft" : ""}`;
+  const cls = classToken(mark?.class);
+  return `t-${accent}${draft ? " is-draft" : ""}${cls ? ` c-${cls}` : ""}`;
 }
 
 // The office's delta reports three statuses, and only two of them can be grey.
@@ -2704,7 +2727,7 @@ export function worldFrameReading(mark, marks = []) {
 // the owning cell's always-visible byline.
 export function investigateNameLine(mark, { name, determined = false, tier = "market", draft = false } = {}) {
   const identity = name || deslugMarkId(mark?.id);
-  return `<div class="wv-rnode ${markStateClasses({ tier, draft })}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
+  return `<div class="wv-rnode ${markStateClasses({ tier, draft, mark })}" data-id="${esc(mark?.id)}" role="button" tabindex="0">`
     + `<div class="wv-rnode-head"><b class="cname${determined ? " is-determined" : ""}">${esc(identity)}</b>`
     + `${backingButton(mark?.id, mark?.weight ?? mark?.stamps ?? 0)}</div>`
     + `</div>`;
@@ -4184,7 +4207,11 @@ export function mountViewer(appEl) {
   const isDraft = (m) => !!m?.id && state.draftIds.has(m.id);
   // the ONE class string every coloured surface speaks — cells, relation lines,
   // attribute rows, pips, footprints, hover boxes, edge arrows, bubbles
-  const markClasses = (m) => markStateClasses({ tier: tierOf(m), draft: isDraft(m) });
+  // THE FULL MARK, not the FOV entry. An entry the field of view built carries
+  // id/at/body and none of the record's own fields, so `class:` would have been
+  // undefined on exactly the surfaces that most need it — the pips and
+  // footprints, which are drawn from FOV entries.
+  const markClasses = (m) => markStateClasses({ tier: tierOf(m), draft: isDraft(m), mark: byId.get(m?.id) ?? m });
   // ───────── the telling view ─────────
   function chips(m) {
     const c = [];
