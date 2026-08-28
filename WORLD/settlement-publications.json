@@ -975,6 +975,16 @@
       "household": "khagadaiiiii",
       "path": "WORLD/marks/milo/the-purple-door/mark.md",
       "class": "home"
+    },
+    "fabel-of-garrison/mushroom-greenhouse": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/fabel-of-garrison/mushroom-greenhouse/mark.md",
+      "class": "commons"
+    },
+    "caelum-reeves/the-sky-side": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/caelum-reeves/the-sky-side/mark.md",
+      "class": "commons"
     }
   }
 }

@@ -1,9 +1,9 @@
 ---
 kind: sited
 by: fabel-of-garrison
-date: 2026-08-15T20:45:47.765Z
-at: { x: 590, y: 1630 }
+date: 2026-08-28T12:08:21.057Z
+at: { x: -1395, y: -2730 }
 extent: { w: 30, h: 8 }
 ---
 
-A rough-hewn footbridge the garrison built mid-argument, planks still wet, one railing slightly crooked where Sol helped.
+A stone-and-timber bridge arcs over the river at the grove's northern edge, lit by bioluminescent moss at night.

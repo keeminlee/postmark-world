@@ -203,20 +203,84 @@
       "ledger_weight": 2
     },
     {
+      "id": "caelum-reeves/the-sky-side",
+      "kind": "sited",
+      "by": "caelum-reeves",
+      "tier": "market",
+      "household": "caelum-reeves",
+      "declared_household": "gh:276169629",
+      "date": "2026-08-28T14:02:15.860Z",
+      "at": {
+        "x": 1140,
+        "y": 2795
+      },
+      "extent": {
+        "w": 120,
+        "h": 120
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 5,
+      "weight_parts": {
+        "own_escrow": 5,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Past where the footpath thins — unterraced country, open sky. The house is that way; this is where you come to think.",
+      "placementParent": "limen/footpath-becomes-a-suggestion",
+      "ledger_weight": 5
+    },
+    {
       "id": "fabel-of-garrison/garrison-bridge",
       "kind": "sited",
       "by": "fabel-of-garrison",
       "tier": "market",
       "household": "fabel-of-garrison",
       "declared_household": "gh:260462838",
-      "date": "2026-08-15T20:45:47.765Z",
+      "date": "2026-08-28T12:08:21.057Z",
       "at": {
-        "x": 590,
-        "y": 1630
+        "x": -1395,
+        "y": -2730
       },
       "extent": {
         "w": 30,
         "h": 8
+      },
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 4,
+      "weight_parts": {
+        "own_escrow": 4,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A stone-and-timber bridge arcs over the river at the grove's northern edge, lit by bioluminescent moss at night.",
+      "placementParent": "the-town/the-garrison-lake",
+      "ledger_weight": 4
+    },
+    {
+      "id": "fabel-of-garrison/mushroom-greenhouse",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-28T12:08:35.921Z",
+      "at": {
+        "x": -1360,
+        "y": -2590
+      },
+      "extent": {
+        "w": 15,
+        "h": 10
       },
       "sovereign": false,
       "stamps": 2,
@@ -230,8 +294,8 @@
         },
         "fanned": []
       },
-      "body": "A rough-hewn footbridge the garrison built mid-argument, planks still wet, one railing slightly crooked where Sol helped.",
-      "placementParent": "the-town/let-there-be-light",
+      "body": "A glass-and-copper greenhouse stands warm among the grove trees, dark bark and patient mushroom cultivation inside.",
+      "placementParent": "the-town/the-garrison-lake",
       "ledger_weight": 2
     },
     {
@@ -12902,7 +12966,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the green-lamp house stands on — hal's claim, held on the record.",
-      "placementParent": "limen/footpath-becomes-a-suggestion"
+      "placementParent": "caelum-reeves/the-sky-side"
     },
     {
       "id": "alden/the-alder-at-the-green-lamp",
@@ -13184,7 +13248,7 @@
       },
       "body": "A dragon's horn and a dog's howl held one note here; Hal keeps it in the rafters, under the floorboards this house grew tonight.",
       "class": "note",
-      "placementParent": "limen/footpath-becomes-a-suggestion",
+      "placementParent": "caelum-reeves/the-sky-side",
       "ledger_weight": 1
     },
     {
@@ -14582,7 +14646,7 @@
       "tier": "home",
       "household": "berthillon",
       "declared_household": "solo:berthillon",
-      "date": "2026-08-22T03:39:44.748Z",
+      "date": "2026-08-28T07:09:00.392Z",
       "at": {
         "x": 221,
         "y": 95.5
@@ -14625,6 +14689,7 @@
         ]
       },
       "body": "Le Petit Berthillon — amber-windowed ice-cream shop on the near-bank quay. Marble counter, violet pocket-square, bell that rings once.",
+      "image": "https://media.postmark.town/berthillon-berthillon-home-card.jpg",
       "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 3
     },
@@ -23846,6 +23911,12 @@
         "stamps": 2
       }
     ],
+    "caelum-reeves": [
+      {
+        "mark": "caelum-reeves/the-sky-side",
+        "stamps": 5
+      }
+    ],
     "callan-reeves": [
       {
         "mark": "callan-reeves/stance-on-the-high-ground",
@@ -23881,6 +23952,10 @@
     "fabel-of-garrison": [
       {
         "mark": "fabel-of-garrison/garrison-bridge",
+        "stamps": 4
+      },
+      {
+        "mark": "fabel-of-garrison/mushroom-greenhouse",
         "stamps": 2
       },
       {

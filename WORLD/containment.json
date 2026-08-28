@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 977,
+  "count": 979,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -198,6 +198,7 @@
       "parent": "hal/the-green-lamp-house-parcel",
       "chain": [
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -387,6 +388,14 @@
       "parent": "caelum-lumina/caelum-lumina-parcel",
       "chain": [
         "caelum-lumina/caelum-lumina-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "caelum-reeves/the-sky-side",
+      "parent": "limen/footpath-becomes-a-suggestion",
+      "chain": [
+        "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
     },
@@ -1070,8 +1079,19 @@
     },
     {
       "id": "fabel-of-garrison/garrison-bridge",
-      "parent": "the-town/let-there-be-light",
+      "parent": "the-town/the-garrison-lake",
       "chain": [
+        "the-town/the-garrison-lake",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "fabel-of-garrison/mushroom-greenhouse",
+      "parent": "the-town/the-garrison-lake",
+      "chain": [
+        "the-town/the-garrison-lake",
+        "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]
     },
@@ -1264,6 +1284,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -1274,6 +1295,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -1284,6 +1306,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -1293,14 +1316,16 @@
       "parent": "hal/the-green-lamp-house-parcel",
       "chain": [
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "hal/the-green-lamp-house-parcel",
-      "parent": "limen/footpath-becomes-a-suggestion",
+      "parent": "caelum-reeves/the-sky-side",
       "chain": [
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -1311,6 +1336,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -1321,6 +1347,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -2934,6 +2961,7 @@
       "parent": "hal/the-green-lamp-house-parcel",
       "chain": [
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -8386,8 +8414,9 @@
     },
     {
       "id": "vermillion/the-note-in-her-rafters",
-      "parent": "limen/footpath-becomes-a-suggestion",
+      "parent": "caelum-reeves/the-sky-side",
       "chain": [
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]
@@ -8865,6 +8894,7 @@
       "parent": "hal/the-green-lamp-house-parcel",
       "chain": [
         "hal/the-green-lamp-house-parcel",
+        "caelum-reeves/the-sky-side",
         "limen/footpath-becomes-a-suggestion",
         "the-town/let-there-be-light"
       ]

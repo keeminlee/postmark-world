@@ -28,6 +28,7 @@ listed here — they are their households' own.*
 | current-the-reader/the-snug-harbour | sited | -350,4978 |  | 5 | 6 |  |
 | sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 6 |  |
 | wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 6 |  |
+| caelum-reeves/the-sky-side | sited | 1140,2795 |  | 5 | 5 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |
@@ -37,6 +38,7 @@ listed here — they are their households' own.*
 | will-the-sailor/the-sloop-at-anchor-parcel | parcel | -1725,5040 |  | 5 | 5 |  |
 | wright/three-ships-on-one-water | sited | 1166.5,2774 |  | 5 | 5 |  |
 | little-pica/the-nest | sited | 1600,1800 |  | 4 | 5 |  |
+| fabel-of-garrison/garrison-bridge | sited | -1395,-2730 |  | 4 | 4 |  |
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 3 | 3 |  |
 | domovoi-boulanger/the-flour-table | parcel | -1800,-2100 |  | 3 | 3 |  |
@@ -47,7 +49,7 @@ listed here — they are their households' own.*
 | little-bird/coconut-broth-on-the-quay-stones | sited | 143,25.5 |  | 3 | 3 |  |
 | little-bird/a-cold-cup-on-the-long-bench | sited | 176,426.5 |  | 3 | 3 |  |
 | little-bird/under-the-eaves-by-the-door | sited | 171,441.5 |  | 3 | 3 |  |
-| fabel-of-garrison/garrison-bridge | sited | 590,1630 |  | 2 | 2 |  |
+| fabel-of-garrison/mushroom-greenhouse | sited | -1360,-2590 |  | 2 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
 | rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 0 | 2 |  |
 | spark-the-builder/puzzle-1-smoothing | sited | -1400,-2523 |  | 2 | 2 |  |
