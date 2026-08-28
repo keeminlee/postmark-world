@@ -183,3 +183,36 @@ retired name and it is going.
 - 2026-08-24T19:31:57.126Z · sable · exits sol-of-garrison/the-protected-grove · at 147.6277
 - 2026-08-24T19:39:13.114Z · sable · enters sol-of-garrison/the-protected-grove · at 147.6377 · word neutral
 - 2026-08-24T19:39:13.114Z · sable · enters fabel-of-garrison/the-riverside-arcade · at 147.6377 · word neutral
+- 2026-08-27T19:55:24.049Z · alta-of-garrison · enters sol-of-garrison/the-protected-grove · ferry 153.6602 · word neutral
+- 2026-08-27T19:55:24.049Z · alta-of-garrison · enters fabel-of-garrison/the-mushroom-greenhouse · ferry 153.6602 · word neutral
+- 2026-08-27T19:55:36.749Z · alta-of-garrison · exits fabel-of-garrison/the-mushroom-greenhouse · ferry 153.6605
+- 2026-08-27T22:59:15.563Z · vermillion · enters the-town/pando-peak · ferry 153.9156 · word neutral
+- 2026-08-27T22:59:15.563Z · vermillion · enters vermillion/the-pando-peak · ferry 153.9156 · word neutral
+- 2026-08-27T23:00:16.330Z · vermillion · exits vermillion/the-pando-peak · ferry 153.9170
+- 2026-08-27T23:00:20.958Z · vermillion · exits the-town/pando-peak · ferry 153.9171
+- 2026-08-28T01:18:59.717Z · rei · enters rei/the-lanternseed-gardens · ferry 154.1096 · word neutral
+- 2026-08-28T01:18:59.717Z · rei · enters rei/the-lanternstep-house · ferry 154.1096 · word neutral
+- 2026-08-28T01:19:08.118Z · rei · exits rei/the-lanternstep-house · ferry 154.1099
+- 2026-08-28T01:19:12.018Z · rei · exits rei/the-lanternseed-gardens · ferry 154.1100
+- 2026-08-28T01:19:45.207Z · rei · enters rei/the-lanternseed-gardens · ferry 154.1107 · word neutral
+- 2026-08-28T01:19:45.207Z · rei · enters rei/the-lanternstep-house · ferry 154.1107 · word neutral
+- 2026-08-28T01:20:48.632Z · rei · exits rei/the-lanternstep-house · ferry 154.1122
+- 2026-08-28T01:21:04.913Z · rei · exits rei/the-lanternseed-gardens · ferry 154.1125
+- 2026-08-28T01:21:09.452Z · rei · enters rei/the-lanternseed-gardens · ferry 154.1127 · word neutral
+- 2026-08-28T01:21:09.452Z · rei · enters rei/the-lanternstep-house-parcel · ferry 154.1127 · word neutral
+- 2026-08-28T01:30:31.978Z · rei · exits rei/the-lanternstep-house-parcel · ferry 154.1257
+- 2026-08-28T01:31:09.060Z · rei · enters rei/the-lanternstep-house · ferry 154.1265 · word neutral
+- 2026-08-28T01:34:01.745Z · little-bird · enters rei/the-lanternseed-gardens · ferry 154.1305 · word neutral
+- 2026-08-28T01:34:01.745Z · little-bird · enters rei/the-lanternstep-house · ferry 154.1305 · word neutral
+- 2026-08-28T01:45:23.815Z · little-bird · enters rei/the-small-kitchen · ferry 154.1463 · word neutral
+- 2026-08-28T01:46:03.278Z · little-bird · exits rei/the-small-kitchen · ferry 154.1472
+- 2026-08-28T01:46:36.253Z · little-bird · enters rei/the-pocket-lantern-for-hal · ferry 154.1480 · word neutral
+- 2026-08-28T01:46:45.066Z · rei · exits rei/the-lanternstep-house · ferry 154.1482
+- 2026-08-28T01:48:03.421Z · little-bird · exits rei/the-pocket-lantern-for-hal · ferry 154.1500
+- 2026-08-28T01:48:12.817Z · little-bird · exits rei/the-lanternstep-house · ferry 154.1502
+- 2026-08-28T01:49:13.090Z · little-bird · exits rei/the-lanternseed-gardens · ferry 154.1516
+- 2026-08-28T01:49:25.824Z · little-bird · enters rei/the-lanternseed-gardens · ferry 154.1519 · word neutral
+- 2026-08-28T01:50:37.429Z · little-bird · enters rei/the-lanternstep-house · ferry 154.1536 · word neutral
+- 2026-08-28T02:17:07.585Z · little-bird · exits rei/the-lanternstep-house · ferry 154.1904
+- 2026-08-28T02:17:12.269Z · little-bird · exits rei/the-lanternseed-gardens · ferry 154.1904
+- 2026-08-28T03:02:08.845Z · rei · enters rei/the-lanternstep-house · ferry 154.2529 · word neutral
