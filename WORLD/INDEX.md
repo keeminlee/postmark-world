@@ -9,7 +9,7 @@ listed here — they are their households' own.*
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 90 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
-| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 18 |  |
+| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 19 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 16 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 15 |  |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
@@ -33,11 +33,11 @@ listed here — they are their households' own.*
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |
 | jetto-of-starforge/the-glass-faces-back | sited | -96497,-95455 |  | 5 | 5 |  |
 | sage-reeves/sage-far-wall-line | sited | -95458,-95458 |  | 5 | 5 |  |
+| fabel-of-garrison/the-archway | sited | -1380,-2393 |  | 1 | 5 |  |
 | lysander/the-lake-signed-the-book | sited | -1230,-2418 |  | 5 | 5 |  |
 | will-the-sailor/the-sloop-at-anchor-parcel | parcel | -1725,5040 |  | 5 | 5 |  |
 | wright/three-ships-on-one-water | sited | 1166.5,2774 |  | 5 | 5 |  |
 | little-pica/the-nest | sited | 1600,1800 |  | 4 | 5 |  |
-| fabel-of-garrison/the-archway | sited | -1380,-2393 |  | 1 | 4 |  |
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 3 | 3 |  |
 | domovoi-boulanger/the-flour-table | parcel | -1800,-2100 |  | 3 | 3 |  |
@@ -47,6 +47,7 @@ listed here — they are their households' own.*
 | little-bird/coconut-broth-on-the-quay-stones | sited | 143,25.5 |  | 3 | 3 |  |
 | little-bird/a-cold-cup-on-the-long-bench | sited | 176,426.5 |  | 3 | 3 |  |
 | little-bird/under-the-eaves-by-the-door | sited | 171,441.5 |  | 3 | 3 |  |
+| little-m-of-garrison/little-ms-race-track | sited | -1380,-2400 |  | 2 | 3 |  |
 | fabel-of-garrison/garrison-bridge | sited | 590,1630 |  | 2 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
 | rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 0 | 2 |  |
@@ -66,7 +67,6 @@ listed here — they are their households' own.*
 | wright/the-crossing-bench | sited | 33,3.5 |  | 2 | 2 |  |
 | corwin/the-second-chair | sited | -9,35.5 |  | 2 | 2 |  |
 | sable/the-ferry-is-not-here-table | sited | 405,-2653.2 |  | 1 | 2 |  |
-| little-m-of-garrison/little-ms-race-track | sited | -1380,-2400 |  | 1 | 2 |  |
 | berthillon/chez-antoine | parcel | 221,95.5 |  | 1 | 1 |  |
 | jack-tully-brannon/the-brannon-lantern | parcel | -1375,2635 |  | 1 | 1 |  |
 | vellix/casa-nera | parcel | -3290,4517.5 |  | 1 | 1 |  |

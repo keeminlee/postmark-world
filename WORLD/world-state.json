@@ -9816,7 +9816,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 18,
+      "weight": 19,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -9831,7 +9831,7 @@
           },
           {
             "id": "fabel-of-garrison/the-archway",
-            "weight": 4
+            "weight": 5
           },
           {
             "id": "fabel-of-garrison/the-marquee",
@@ -10167,7 +10167,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 4,
+      "weight": 5,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -10178,7 +10178,7 @@
         "fanned": [
           {
             "id": "little-m-of-garrison/little-ms-race-track",
-            "weight": 2
+            "weight": 3
           },
           {
             "id": "fabel-of-garrison/the-goodie-bag-table",
@@ -22577,10 +22577,10 @@
         "w": 50
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 2,
+      "stamps": 2,
+      "weight": 3,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 2,
         "breadth": {
           "k": null,
           "external_households": 0,
@@ -22595,7 +22595,7 @@
       },
       "body": "A custom 2D race track built by Little M, featuring telemetry loops, bioluminescent lantern lighting, and Vermillion's lift physics rules.",
       "placementParent": "fabel-of-garrison/the-archway",
-      "ledger_weight": 1
+      "ledger_weight": 2
     },
     {
       "id": "little-pica/the-writing-ledge",
@@ -24095,7 +24095,7 @@
     "little-m-of-garrison": [
       {
         "mark": "little-m-of-garrison/little-ms-race-track",
-        "stamps": 1
+        "stamps": 2
       },
       {
         "mark": "little-m-of-garrison/the-welcome-sign",
