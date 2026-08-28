@@ -24,7 +24,7 @@
 import { orient, openYourEyes, investigate, containmentChain } from "../tools/world-verbs.mjs";
 import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
-import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
+import { marksContain, pointInPolygon, pointInRect, polygonBBox, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT, WALK_KM_PER_CROSSING } from "../tools/walk.mjs";
 import { crossingsOnSegment } from "../tools/water.mjs";
@@ -1000,21 +1000,66 @@ export function sceneArtSVG(mark, px) {
     + `</g>`;
 }
 
+// A DOOR DRAWS AS A DOOR (founder, 2026-08-27, standing in the Lanternstep
+// parlor with nothing to look at). A portal-ground used to be an id-hashed
+// 22%-saturation tint on a rectangle — the exact treatment a mending basket
+// gets, differing only in a hue that is a hash and so carries no meaning a
+// reader could ever learn.
+//
+// The floor is a drafting sheet: warm paper, a square rule, walls in #3a3428.
+// So a door is drawn the way an architect draws one on a plan — the threshold's
+// doubled line inside the opening, the leaf, and the quarter-arc it swings
+// through — in the wall's own ink, introducing no colour the page did not have.
+// The glyph is decoration over the block, never instead of it: the extent still
+// carries the fill, the stroke and the data-id every other surface reads.
+const PH_DOOR_INSET = 0.16;   // the threshold's inner line, as a fraction of the short side
+const PH_DOOR_LEAF = 0.62;    // the leaf's length, likewise — a door swings across most of its own opening
+function placeholderDoorSVG(a, b) {
+  const w = b.x - a.x, h = b.y - a.y;
+  const short = Math.min(Math.abs(w), Math.abs(h));
+  if (!(short > 0)) return "";
+  const inset = short * PH_DOOR_INSET;
+  const leaf = short * PH_DOOR_LEAF;
+  const n = (v) => v.toFixed(1);
+  // hinged at the opening's lower-left, swinging up and to the right — one
+  // orientation for every door, because a consistent glyph is a symbol and a
+  // per-mark one is a puzzle
+  const hx = a.x + inset, hy = b.y - inset;
+  return `<g class="wv-ph-door" pointer-events="none">`
+    + `<rect class="wv-ph-threshold" x="${n(a.x + inset)}" y="${n(a.y + inset)}"`
+    + ` width="${n(w - 2 * inset)}" height="${n(h - 2 * inset)}"/>`
+    + `<path class="wv-ph-door-leaf" d="M ${n(hx)} ${n(hy)} L ${n(hx)} ${n(hy - leaf)}"/>`
+    + `<path class="wv-ph-door-swing" d="M ${n(hx)} ${n(hy - leaf)} A ${n(leaf)} ${n(leaf)} 0 0 1 ${n(hx + leaf)} ${n(hy)}"/>`
+    + `</g>`;
+}
+
 export function placeholderExtentSVG(mark, px) {
   if (!isEmbodiedMark(mark) || markImagePath(mark)) return "";
   const hue = placeholderHue(mark.id);
+  // the record's OWN word for what this is, through the same mint every other
+  // coloured surface reads — so the floor, the pips and the stylesheet cannot
+  // hold three private notions of what counts as a door
+  const portal = classToken(mark?.class) === "portal-ground";
   const fill = `hsl(${hue} 22% 76%)`, edge = `hsl(${hue} 26% 58%)`;
-  const attrs = `class="wv-ph-extent" data-id="${esc(mark.id)}" fill="${fill}" stroke="${edge}"`;
+  const attrs = `class="wv-ph-extent${portal ? " c-portal-ground" : ""}" data-id="${esc(mark.id)}" fill="${fill}" stroke="${edge}"`;
   const ring = polygonOf(mark);
   if (ring) {
     const pts = ring.map((p) => { const q = px(p); return `${q.x.toFixed(1)},${q.y.toFixed(1)}`; }).join(" ");
-    return `<polygon ${attrs} points="${pts}"/>`;
+    const poly = `<polygon ${attrs} points="${pts}"/>`;
+    if (!portal) return poly;
+    // a ringed portal-ground gets the glyph on its ring's own bounding box —
+    // the arc is a symbol, not a survey of the opening
+    const bb = polygonBBox(ring);
+    if (!bb) return poly;
+    return `<g class="wv-ph-portal">${poly}`
+      + `${placeholderDoorSVG(px({ x: bb.minx, y: bb.miny }), px({ x: bb.maxx, y: bb.maxy }))}</g>`;
   }
   const r = rect(mark);
   const a = px({ x: r.x - r.w / 2, y: r.y - r.h / 2 });
   const b = px({ x: r.x + r.w / 2, y: r.y + r.h / 2 });
-  return `<rect ${attrs} x="${a.x.toFixed(1)}" y="${a.y.toFixed(1)}"`
+  const box = `<rect ${attrs} x="${a.x.toFixed(1)}" y="${a.y.toFixed(1)}"`
     + ` width="${(b.x - a.x).toFixed(1)}" height="${(b.y - a.y).toFixed(1)}"/>`;
+  return portal ? `<g class="wv-ph-portal">${box}${placeholderDoorSVG(a, b)}</g>` : box;
 }
 
 // the drafting sheet's rule: a round number of metres, near enough to 48 ground
@@ -1369,6 +1414,16 @@ export const OVERLAY_HALO_R = 36;
 /** One pip, at its painting coordinates. The fan offset is a `cx`/`cy` INSIDE
  *  the scaled group, so it stays a constant few panel pixels at any zoom — the
  *  same thing dividing it by k used to buy. */
+// A DOORWAY IS CUT INTO THE DOT, never drawn instead of it. `.ov-pip` is the
+// hover anchor selector, the click target and the tier-colour surface, and the
+// fan offset is a cx/cy inside the scaled group — swapping the circle for a
+// bespoke shape would have quietly cost all four to gain a picture. So the
+// circle is untouched and a small arched opening sits over it in the page's own
+// dark, which is enough to tell a way through from a thing on a shelf at a
+// glance. Emitted only for a portal-ground: no mark pays for a door it is not.
+const PIP_DOOR = `M -3.4 5 L -3.4 -0.6 A 3.4 3.4 0 0 1 3.4 -0.6 L 3.4 5 Z`;
+const isPortalGround = (classes) => /(?:^|\s)c-portal-ground(?:\s|$)/.test(String(classes ?? ""));
+
 export function overlayPipSVG({ at, id, classes = "", fan = null, title = null } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
@@ -1376,7 +1431,10 @@ export function overlayPipSVG({ at, id, classes = "", fan = null, title = null }
   return `<g transform="translate(${x} ${y})"><g class="ov-s">`
     + `<circle cx="${dx}" cy="${dy}" r="${OVERLAY_PIP_R}" class="ov-pip ${classes}" data-id="${esc(id)}">`
     + (title ? `<title>${esc(title)}</title>` : "")
-    + `</circle></g></g>`;
+    + `</circle>`
+    + (isPortalGround(classes)
+      ? `<path class="ov-pip-door" transform="translate(${dx} ${dy})" d="${PIP_DOOR}" pointer-events="none"/>` : "")
+    + `</g></g>`;
 }
 
 /** Where the reader is standing: the dot and its halo, counter-scaled together. */
@@ -3313,6 +3371,17 @@ const STYLE = `
 /* placeholder extents: the block is presence, not glass — colour does the
    distinguishing (low saturation, per-mark hue), so no transparency games */
 .wv-ph-extent { stroke-width:1.2; pointer-events:none; }
+/* A DOOR DRAWS AS A DOOR (founder, 2026-08-27). A portal-ground is a way
+   through, and on a plan a way through is drawn the way an architect draws
+   one: the opening's edge in the WALL's own ink rather than the block's hash
+   hue, the threshold's doubled line just inside it, and the leaf with the
+   quarter-arc it swings through. Nothing here is a new colour — #3a3428 is the
+   ink .wv-scene-wall and .wv-scene-art-frame already use, so the door reads as
+   drawn on the same sheet as the walls and not stuck onto it. */
+.wv-ph-extent.c-portal-ground { stroke:#3a3428; stroke-width:2.4; }
+.wv-ph-threshold { fill:none; stroke:#3a3428; stroke-width:1.1; stroke-dasharray:3 2.4; opacity:.7; }
+.wv-ph-door-leaf { fill:none; stroke:#3a3428; stroke-width:2.2; stroke-linecap:round; }
+.wv-ph-door-swing { fill:none; stroke:#3a3428; stroke-width:1.1; stroke-dasharray:2.5 2.5; opacity:.62; }
 .wv-scene-art-frame { stroke:#3a3428; stroke-width:1.6; }
 .wv-scene-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
 .wv-scene-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
@@ -3408,6 +3477,10 @@ const STYLE = `
 .ov-pip { fill:var(--amber); opacity:.65; }
 .ov-pip.t-constitution { fill:var(--blue); }
 .ov-pip.t-home { fill:var(--green); }
+/* a portal-ground on the map: the tier dot it always was, with a doorway cut
+   into it in the page's own dark. The tier still says whose ground this is;
+   the opening says you can go through it. */
+.ov-pip-door { fill:var(--night); opacity:.8; }
 .ov-dot { fill:var(--you); stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:var(--you); stroke-width:3; opacity:.55; }
 /* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
