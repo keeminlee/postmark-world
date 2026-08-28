@@ -15,7 +15,7 @@ import {
   bearingDeg, quantizeBearing, distanceBand, DIALS,
 } from "./world-engine.mjs";
 import {
-  marksContain, pointInPolygon, pointInRect, polygonOf, rect,
+  marksContain, marksOverlapArea, overlapArea, pointInPolygon, pointInRect, polygonOf, rect,
 } from "./geometry.mjs"; // the ONE containment definition — pure, browser-safe (no node:*)
 import {
   adjudicate, containsEdges as containsEdgesOf, entityChild, formatCrossing,
@@ -593,9 +593,50 @@ function householdNear(target, world, radius = DIALS.cluster_beyond_m) {
   return world.marks.filter((m) => m !== target && m.household === target.household && m.at && m.kind !== "parcel"
     && Math.hypot(m.at.x - target.at.x, m.at.y - target.at.y) <= radius);
 }
+// A THRESHOLD STRADDLING A WALL IS FURNITURE OF BOTH ROOMS IT JOINS
+// (founder-ruled 2026-08-27). Strict full-rect containment is the primary
+// relation and does not move; this stands BESIDE it. A door is in a wall —
+// that is the only place a door can be — so the-town/the-cellar-door runs
+// x 1080.5→1085.5 across the Lanternstep parlor's west wall at x 1083 and was
+// contained by neither room. It was a child of nothing, rendered nowhere, and
+// the parlor went on telling the founder about a door the parlor did not hold.
+//
+// OVERLAP ADMITS; IT DOES NOT RE-PARENT. A straddler appears in both rooms it
+// joins, which is the ruling rather than a duplicate to clean up.
+//
+// TWO BOUNDS, because "shares any ground" would flatten the world:
+//   1. STRICTLY SMALLER. Furniture is smaller than its room. Without this the
+//      relation is symmetric and a wall would hold the house it is part of.
+//   2. NOT THE FRAME. A mark at world scale is the establishing line, never a
+//      room with things in it — the same test every other reader here uses.
+// and a THRESHOLD, so a mark that merely grazes a corner is not furniture: at
+// least this fraction of the mark's OWN footprint must lie inside the room.
+// A quarter is chosen against the live case — the cellar door lies half inside
+// the parlor and 70% inside the house, so the ruling's own instance clears it
+// with room, while the mending basket's 7.5% graze does not.
+export const OVERLAP_ADMIT_FRAC = 0.25;
+
+/** The ONE admission test. `childrenByGeometry` and `directChildren` both ask
+ *  it, so what a room HOLDS and what it holds DIRECTLY can never be computed
+ *  under two different notions of inside. */
+function admitsAsFurniture(outer, inner) {
+  if (marksContain(outer, inner)) return true;      // the primary relation, unchanged
+  const or = rect(outer), ir = rect(inner);
+  const oa = or.w * or.h, ia = ir.w * ir.h;
+  if (!(ia < oa)) return false;                     // bound 1: furniture is smaller than its room
+  if (Math.max(or.w, or.h) >= DIALS.world_scale_extent_m) return false; // bound 2: the frame is not a room
+  // The analytic rect overlap is an UPPER BOUND on the true-shape overlap, so a
+  // mark that cannot clear the threshold even by its bounding box is rejected
+  // before anything is rasterized. This is what keeps the branch cheap: the
+  // main channel's 1.6M-cell ring is only ever asked about the handful of marks
+  // that genuinely straddle it.
+  if (overlapArea(or, ir) < OVERLAP_ADMIT_FRAC * ia) return false;
+  return marksOverlapArea(outer, inner) >= OVERLAP_ADMIT_FRAC * ia;
+}
+
 function childrenByGeometry(parent, world) {
   if (!parent.at || !parent.extent) return [];
-  return world.marks.filter((m) => m !== parent && m.at && m.kind === "sited" && marksContain(parent, m));
+  return world.marks.filter((m) => m !== parent && m.at && m.extent && m.kind === "sited" && admitsAsFurniture(parent, m));
 }
 // ONE STEP DOWN ONLY (Keemin, 2026-08-04: parents and children should show their
 // direct relations, no grandchildren and no grandparents).
@@ -605,9 +646,15 @@ function childrenByGeometry(parent, world) {
 // lamp and ledge as if all four were its own. A child is DIRECT when nothing else
 // inside the parent contains it. Strictly-larger, the same tiebreak the ancestor
 // walk uses, so two marks with one footprint cannot delete each other.
+// PRUNED UNDER THE SAME ADMISSION TEST that admitted them. When the overlap
+// branch was added to `childrenByGeometry` and this one still asked
+// `marksContain`, the cellar door was direct furniture of the parlor AND of the
+// house that holds the parlor — a straddler reaching past its own room, which
+// is not what "furniture of both rooms it joins" means. One predicate, two
+// readers: a room's contents and which of them are its OWN cannot disagree.
 function directChildren(contained) {
   return contained.filter((m) =>
-    !contained.some((n) => n !== m && extentArea(n) > extentArea(m) && marksContain(n, m)));
+    !contained.some((n) => n !== m && extentArea(n) > extentArea(m) && admitsAsFurniture(n, m)));
 }
 // The marks that CONTAIN the target, nearest (smallest) first — the exact
 // inverse of childrenByGeometry, under the same true-shape rule, so `inside`
