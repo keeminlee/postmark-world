@@ -851,7 +851,26 @@ export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized 
  *
  *  Nearest-to-centre first, so a budget cut drops the far corner of the room
  *  rather than whichever child the fold happened to list last. */
-export function interiorFurniture({ room, children = [], limit = 40 } = {}) {
+/** THE INTERIOR BUDGET, and it is not the telling's.
+ *
+ *  `DIALS.context_budget` (12) exists because a horizon has no natural end: a
+ *  look across a landscape must be cut somewhere or it carries the world. A
+ *  ROOM has a natural end — its walls — and everything standing inside them is
+ *  simply what is in it. There is no editorial judgement left to make.
+ *
+ *  composeInterior read the telling's dial anyway, so an interior silently
+ *  dropped its thirteenth thing. The Lanternstep parcel stands at EXACTLY 12/12:
+ *  the next mark laid in that house would have gone missing from the floor with
+ *  no cut anywhere for a reader to see — furniture that is in the room, in the
+ *  record, and not on the floor.
+ *
+ *  The number was already written down and already unused: this function has
+ *  carried `limit = 40` since it was built, dead code because its caller was
+ *  starved upstream. One number now, read by both, so the floor and the engine
+ *  cannot hold two opinions about how much of a room a room has. */
+export const INTERIOR_BUDGET = 40;
+
+export function interiorFurniture({ room, children = [], limit = INTERIOR_BUDGET } = {}) {
   const at = { x: Number(room?.at?.x) || 0, y: Number(room?.at?.y) || 0 };
   const things = children
     .filter((c) => isMark(c) && c && c.at && Number.isFinite(Number(c.at.x)) && Number.isFinite(Number(c.at.y)))
@@ -4589,7 +4608,11 @@ export function mountViewer(appEl) {
   function composeInterior(box, roomId, key) {
     const room = byId.get(roomId);
     if (!room) return null;             // a room the fold does not hold is not a room
-    const found = investigate(roomId, world, { occupancy: liveOccupancy(), budget: state.dials.context_budget });
+    // INTERIOR_BUDGET, not the telling's dial. A room's walls are its own cut —
+    // see the note on INTERIOR_BUDGET. This asked for `state.dials.context_budget`
+    // (12) and the Lanternstep parcel stands at exactly 12/12, so the next mark
+    // laid in that house would have gone missing from the floor silently.
+    const found = investigate(roomId, world, { occupancy: liveOccupancy(), budget: INTERIOR_BUDGET });
     if (found?.error) return null;
     // investigate SHAPES its children for a reader (id, kind, at, body) and drops
     // extent and image on the way. A floor needs both, so each child is resolved
