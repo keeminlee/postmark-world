@@ -2636,6 +2636,62 @@ export function crossingSheetHTML(answer = {}, markId = "") {
   return "";
 }
 
+/** THE LIVE CARD, never the one captured before the await.
+ *
+ *  crossInto awaits the office. A re-render in that window replaces the node
+ *  the closure was holding, and an orphaned element is a perfectly good object
+ *  to write into — it is simply no longer on the page. The failure looks
+ *  identical to rendering below the fold: the reader presses a button and
+ *  nothing happens. So the card is re-resolved by `data-id` off the live tree,
+ *  and the captured reference is kept only while it is still connected. */
+export function liveMarkCard(root, markId, card = null) {
+  if (card && card.isConnected) return card;
+  for (const el of root?.querySelectorAll?.(".wv-card[data-id]") ?? []) {
+    if (el.dataset.id === markId) return el;
+  }
+  return null;
+}
+
+/** WHERE THE DOOR'S ANSWER GOES, and it is not the end of the card.
+ *
+ *  The founder pressed `enter` on a terms door and the button reverted with
+ *  nothing to show for it. The sheet was rendering. It was rendering past the
+ *  bottom of a scroll box: `insertAdjacentHTML("beforeend", …)` put it after
+ *  the card's full investigate expansion tree — opened unconditionally when the
+ *  pinned bubble is built — inside `.wv-bubble.is-pinned`, which is 32rem tall
+ *  with `overflow-y:auto`. Nothing scrolled it into view. A dossier the reader
+ *  cannot see is a dossier that was not delivered.
+ *
+ *  So the answer goes beside the byline row that holds the button that was
+ *  pressed, which is WHERE THE DOOR IS, and it asks to be scrolled into its own
+ *  container's view. The pressed button's own row wins over any other, because
+ *  one page can show the same mark twice (a card and a bubble) and the answer
+ *  belongs at the press.
+ *
+ *  AND IT ALWAYS HAS A HOME. The old line was `card?.insertAdjacentHTML(…)`, so
+ *  a standpoint whose enter affordance lives outside a `.wv-card` got its
+ *  answer swallowed by the optional chain — the same vanished click from a
+ *  different cause (the founder's own standing list, 2026-08-27, A1: "the sheet
+ *  needs a guaranteed render home wherever an enter affordance lives, not only
+ *  on roster cards"). The button is a home when nothing else is. */
+export function placeCrossingSheet(host, sheet, { button = null } = {}) {
+  if (!sheet) return null;
+  const pressedRow = button?.isConnected ? button.closest(".wv-cell-byline-row") : null;
+  const anchor = pressedRow
+    ?? host?.querySelector?.(".wv-cell-byline-row")
+    ?? null;
+  const at = anchor ?? host ?? (button?.isConnected ? button.parentElement : null);
+  if (!at) return null;
+  const position = anchor ? "afterend" : "beforeend";
+  at.insertAdjacentHTML(position, sheet);
+  const node = anchor ? anchor.nextElementSibling : at.lastElementChild;
+  // `nearest` — bring it into view without yanking a reader who can already
+  // see it. Guarded: this runs in every browser the town has, and in none of
+  // the test harnesses, which have no layout to scroll.
+  node?.scrollIntoView?.({ block: "nearest" });
+  return node ?? null;
+}
+
 // ───────── the Actions rail (R16, 2026-08-18) ─────────
 //
 // DERIVED, NEVER LISTED. There is no vocabulary of verbs anywhere in this file,
@@ -4872,10 +4928,16 @@ export function mountViewer(appEl) {
   async function crossInto(markId, { accept = false, button = null } = {}) {
     const room = markId && byId.get(markId);
     if (!room) return;
-    const card = button?.closest?.(".wv-card") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
+    const clicked = button?.closest?.(".wv-card") ?? null;
+    // THE CARD IS A FUNCTION OF THE LIVE DOM, never a value captured across the
+    // await. A re-render between the click and the office's answer replaces the
+    // node this closure was holding, and a sheet written into the orphan is a
+    // dossier no reader can reach — the same invisibility as writing it below
+    // the fold, which is the other half of this fix.
+    const liveCard = () => liveMarkCard(root, markId, clicked);
     const label = button?.textContent;
     if (button) { button.disabled = true; button.textContent = accept ? "crossing…" : "at the door…"; }
-    const clearSheet = () => card?.querySelector(".wv-cross-sheet")?.remove();
+    const clearSheet = () => liveCard()?.querySelector(".wv-cross-sheet")?.remove();
     try {
       const response = await apexAct("enter", { mark: markId, ...(accept ? { accept: true } : {}) });
       const answer = response?.body ?? {};
@@ -4885,7 +4947,9 @@ export function mountViewer(appEl) {
       // where the door is rather than as a toast somewhere else.
       const sheet = crossingSheetHTML(answer, markId);
       if (sheet) {
-        card?.insertAdjacentHTML("beforeend", sheet);
+        placeCrossingSheet(liveCard(), sheet, { button });
+        positionBubbles();   // the bubble just grew; re-place it or the sheet
+                             // is pushed off the pane it was put on
         if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
         return;
       }
@@ -4897,9 +4961,14 @@ export function mountViewer(appEl) {
     } catch (err) {
       if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
       clearSheet();
-      card?.insertAdjacentHTML("beforeend",
+      // THE SAME TREATMENT, through the same function. This branch had its own
+      // hand-rolled append, so fixing only the terms path would have left a
+      // refusal below the fold — half a fix that reads as a whole one right up
+      // until somebody is refused.
+      placeCrossingSheet(liveCard(),
         `<div class="wv-cross-sheet is-refused"><div class="wv-cross-head">the door did not take it</div>`
-        + `<p class="wv-cross-body">${esc(String(err?.message ?? err))}</p></div>`);
+        + `<p class="wv-cross-body">${esc(String(err?.message ?? err))}</p></div>`, { button });
+      positionBubbles();
     }
   }
 

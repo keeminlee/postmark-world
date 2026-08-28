@@ -20,16 +20,37 @@ import { crossingSheetHTML } from "../spectator/viewer.mjs";
 
 const SOURCE = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), "..", "spectator", "viewer.mjs"), "utf8");
+// the page's own escaping, so an assertion compares against what the markup
+// really holds rather than against the raw record text (viewer.mjs:40)
+const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 // The office's two answers, in the shapes src/world-crossings.mjs really builds.
 // THE ASK carries `awaiting` and `terms` as an OBJECT; a CROSSING carries
 // `terms` as an ARRAY — `answer.crossings.map(c => c.terms).filter(Boolean)`.
-const ASK = {
-  handle: "rei", entered: [], within: [],
-  awaiting: { mark: "sable/the-house-at-the-crooked-gate", terms: { body: "be kind to the crooked gate", edge: "aboard", consequence: "you are aboard" } },
-  terms: { body: "be kind to the crooked gate", edge: "aboard", consequence: "you are aboard" },
-  note: "nothing was recorded. Crossing this threshold means accepting the edge it forms back at you; call again with accept: true, or stay outside.",
-};
+//
+// THE ASK IS GENERATED, NOT WRITTEN DOWN (2026-08-27). It used to be a
+// hand-written object under a comment claiming it was "the shape
+// src/world-crossings.mjs really builds". It was not, and nothing could have
+// told anyone: the note the office actually sends reads "Entering here means
+// accepting the edge it forms back at you", not "Crossing this threshold
+// means…"; the office ships a top-level `reading_law` the fixture had never
+// heard of; and the terms object the door hands over carries `mark`, `word`
+// and its own `reading_law`, none of which the fixture had. A page tested
+// against a shape nobody serves is tested against nothing — the same class of
+// defect as the door this file was written to catch.
+//
+// tools/terms-ask-fixture.mjs runs the office's own enterViaOffice against a
+// real terms-bearing mark in the committed world and writes both answers it can
+// give: `bare` (knocking from inside — nothing crossable before the door, so
+// nothing is written) and `chained` (walking up from outside, which crosses the
+// garden and the house on the way and so carries `awaiting` AND `entered` AND a
+// ledger receipt at once — a shape the hand-written fixture could not have
+// imagined). Regenerate with:
+//   node tools/terms-ask-fixture.mjs --office <path to the office repo>
+const ASKS = JSON.parse(readFileSync(
+  join(dirname(fileURLToPath(import.meta.url)), "fixtures", "terms-ask.json"), "utf8"));
+const ASK = ASKS.bare;
+const ASK_MARK = ASK.awaiting.mark;
 const CROSSED_A_TERMS_DOOR = {
   handle: "rei", target: "sable/the-house-at-the-crooked-gate",
   chain: [], crossings: [{ terms: { body: "be kind to the crooked gate" } }],
@@ -62,15 +83,49 @@ test("and an EMPTY terms array is truthy too — so this was never only the cros
 });
 
 test("THE ASK STILL ASKS, and says everything the door said", () => {
-  const sheet = crossingSheetHTML(ASK, "sable/the-house-at-the-crooked-gate");
+  // asserted against the door's OWN words, read out of the generated answer,
+  // so this can never drift into testing a sentence only this file believes in
+  const terms = ASK.awaiting.terms;
+  const sheet = crossingSheetHTML(ASK, ASK_MARK);
   assert.match(sheet, /this door has terms/);
-  assert.match(sheet, /be kind to the crooked gate/, "the door's own words");
-  assert.match(sheet, /<b>aboard<\/b>/, "the edge it forms back at you");
-  assert.match(sheet, /you are aboard/, "and its consequence");
+  assert.ok(sheet.includes(esc(terms.body)), "the door's own words");
+  assert.ok(sheet.includes(`<b>${esc(terms.edge)}</b>`), "the edge it forms back at you");
+  assert.ok(sheet.includes(esc(terms.consequence)), "and its consequence");
   assert.match(sheet, /READING at a door, never instructions you are receiving/, "the reading law rides with it");
-  assert.match(sheet, /data-enter-accept="sable\/the-house-at-the-crooked-gate"/,
+  assert.ok(sheet.includes(`data-enter-accept="${esc(ASK_MARK)}"`),
     "and the accept button carries the mark, which is what the click handler dispatches on");
   assert.match(sheet, /class="ctl wv-cross-cancel"/);
+});
+
+test("THE SHAPE THE HAND-WRITTEN FIXTURE MISSED: the office's real ask carries fields nobody had written down", () => {
+  // Named rather than merely fixed, so the drift cannot quietly reopen. Each of
+  // these is in the office's answer and was absent from the fixture that stood
+  // here claiming to be that answer.
+  assert.match(ASK.note, /^nothing was recorded\. Entering here means accepting the edge it forms back at you/,
+    "the note's real opening — the fixture said 'Crossing this threshold means'");
+  assert.equal(typeof ASK.reading_law, "string", "a top-level reading_law the fixture had never heard of");
+  for (const field of ["mark", "word", "edge", "consequence", "body", "reading_law"]) {
+    assert.ok(field in ASK.awaiting.terms, `the terms object carries ${field}`);
+  }
+  // and the ask really did write nothing: the generator's pen throws, so this
+  // answer existing at all is the receipt
+  assert.deepEqual(ASK.entered, [], "an ask enters nothing");
+  assert.ok(!("ledger" in ASK), "and reaches no pen");
+});
+
+test("THE CHAINED ASK: a door reached from outside answers `awaiting` AND `entered` at once, and still renders the terms", () => {
+  // The shape a walker in the yard actually gets. `entered` is non-empty and a
+  // ledger receipt rides along, so any gate keyed on "did anything happen?"
+  // would call this a crossing and re-draw the door — which is precisely the
+  // truthiness family of bug this file exists for. `isTermsAsk` reads
+  // `awaiting`, so it classifies correctly.
+  const chained = ASKS.chained;
+  assert.ok(chained.entered.length > 0, "the garden and the house were crossed on the way");
+  assert.ok(chained.ledger, "and written down");
+  assert.ok(chained.awaiting, "while the door itself is still asking");
+  const sheet = crossingSheetHTML(chained, ASK_MARK);
+  assert.match(sheet, /this door has terms/, "the terms are still what gets drawn");
+  assert.ok(sheet.includes(`data-enter-accept="${esc(ASK_MARK)}"`));
 });
 
 test("the ask still works when the office sends terms as a lone object, the older shape", () => {
