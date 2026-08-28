@@ -123,12 +123,13 @@ createServer(async (req, res) => {
     // serving it here is what lets a local read stand on THIS clone's disk
     // instead of falling through to the published raw file.
     if (p === "/WORLD/enter-exit-ledger.md") return serveFile(res, "WORLD/enter-exit-ledger.md");
-    // BOTH NAMES, for one grace window. A viewer bundle blessed before the
-    // rename asks for the retired path, and a 404 for a record is not a small
-    // thing here: the reader shows an ABSENCE where a town full of occupied
-    // rooms should be. Both files are on disk (the office emits them together)
-    // and both come out once the rename is blessed everywhere.
-    if (p === "/WORLD/threshold-ledger.md") return serveFile(res, "WORLD/threshold-ledger.md");
+    // ONE NAME. The retired `threshold` spelling was served here too while the
+    // record answered to both, and the twin file it read is deleted (2026-08-28,
+    // #2152). A route to a file that is not in this package would serve a 404
+    // dressed as an answer, which is worse than the absence the viewer already
+    // knows how to report. The viewer in this package asks for the new name and
+    // nothing else; a bundle built before the rename reaches the office's
+    // `/world/threshold-ledger` door, which still answers the derived bytes.
     // the walks, for the same reason and by the same rule. This route was
     // MISSING until 2026-08-26, and its absence is what the raw-github fallback
     // was really covering: a local spectator asked this server for the ledger,

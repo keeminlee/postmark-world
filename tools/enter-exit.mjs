@@ -89,10 +89,17 @@ export const FERRY_FIELD = "ferry";
  * THE DERIVED LEDGER'S HEADER, and this module is its one home.
  *
  * `WORLD/enter-exit-ledger.md` is derived: regenerated whole, every time, from
- * the frozen era plus the world journal's rows. The office emits it at the save
- * and serves it at its door, and it reads THIS constant out of the clone rather
- * than keeping a copy — the same division of labour the grammar keeps. One home
- * for a serialization, or two eras disagree in a way that still parses.
+ * the frozen era plus the world journal's rows. The office serves it at its
+ * door, and it reads THIS constant out of the clone rather than keeping a copy —
+ * the same division of labour the grammar keeps. One home for a serialization,
+ * or two eras disagree in a way that still parses.
+ *
+ * NOBODY EMITS IT INTO THIS REPO (2026-08-28, #2152). Two office pens used to
+ * fold the derived text into the clone at the save, which meant the committed
+ * copy grew live-era lines this repo cannot account for — the exact thing
+ * `tools/enter-exit-record.test.mjs` refuses, three hand-repairs deep. Both pens
+ * are gone. The copy standing in this tree is the frozen era, and the header
+ * below says so to whoever opens the file next.
  */
 export const LEDGER_HEADER = `# Enter/exit ledger — the passages
 
@@ -120,9 +127,14 @@ its standing entry law, stamped as it stood at the passage (the walk ledger's
 The walker's side is the row's authorship. \`opposed\` on an entity child is a
 refusal at the door: the act stands in the record, the occupancy does not.
 
-\`WORLD/threshold-ledger.md\` carries these same bytes for one grace window, so
-a viewer bundle blessed before the rename still reads a true record. It is the
-retired name and it is going.
+THE COPY IN THIS REPO IS THE FROZEN ERA, and only that. This repo has no journal
+to read, so every line here is a passage made before the 2026-08-24 cutover; the
+passages since live in the office's journal and are served by the derivation, not
+by this file. A longer file here means a hand wrote in it.
+
+The retired name \`WORLD/threshold-ledger.md\` is gone (2026-08-28). The office's
+\`/world/threshold-ledger\` door still answers the derived bytes for viewer
+bundles built before the rename; there is no second file.
 `;
 
 /** The act's clock value AS THE RECORD WILL HOLD IT — floored to the

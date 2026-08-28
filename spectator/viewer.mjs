@@ -8475,21 +8475,26 @@ export function mountViewer(appEl) {
   // WHAT DOES NOT MOVE: occupancy is still derived IN THE READER. The office
   // hands over the ledger TEXT and this parses it, because who folds the rooms is
   // a constitutional question and this is only a question of which bytes.
-  // BOTH NAMES, FOR ONE GRACE WINDOW. The office, this package and the site's
-  // viewer bundle deploy on three separate clocks, so a page built after the
-  // rename may be talking to an office built before it, and an office built
-  // after it may be answering a page built before it. Both directions are real
-  // and both last days. Asking the retired name AFTER the new one costs one 404
-  // on a side that has caught up and saves the whole occupancy layer on a side
-  // that has not. Both legs come out when both sides are past it.
+  // THE RETIRED LEGS ARE GONE (2026-08-28, #2152). For one grace window this
+  // asked the old `threshold-ledger` name after the new one, because the office,
+  // this package and the site's viewer bundle deploy on three separate clocks
+  // and a page built after the rename could be talking to an office built before
+  // it. That window is closed on the side this file can see: the twin file is
+  // deleted from this package, so its same-origin leg could only ever 404 now,
+  // and the office has answered the enter/exit spelling since 2026-08-26, so the
+  // office leg it used has a live sibling that goes first anyway.
   //
-  // STILL NO MAIN TIP. The retired legs are an office route and a same-origin
+  // The other direction — a bundle built BEFORE the rename, still deployed —
+  // is not fixed here and cannot be: those bytes are already shipped. It asks
+  // the office's `/world/threshold-ledger` door, which still answers, and its
+  // same-origin leg 404s into `noteRecordAbsence`, which is a named absence
+  // rather than a wrong answer. It catches up at the next site repin.
+  //
+  // STILL NO MAIN TIP. Both legs below are an office route and a same-origin
   // path — the world repo's unblessed branch is not among them and may not be
   // (`tools/record-sources.test.mjs` reads these bytes to prove it).
-  const enterExitLedgerSources = () => [
-    ...recordSources("/WORLD/enter-exit-ledger.md", { office: officeUrl("/world/enter-exit-ledger") }),
-    ...recordSources("/WORLD/threshold-ledger.md", { office: officeUrl("/world/threshold-ledger") }),
-  ];
+  const enterExitLedgerSources = () =>
+    recordSources("/WORLD/enter-exit-ledger.md", { office: officeUrl("/world/enter-exit-ledger") });
   async function loadEnterExitLedger() {
     for (const { url, json } of enterExitLedgerSources()) {
       try {

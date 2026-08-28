@@ -49,12 +49,11 @@ const RECORDS = [
   { record: "/WORLD/skeleton.json", office: "/api/world/skeleton" },
   { record: "/WORLD/walk-ledger.md", office: null },
   { record: "/WORLD/enter-exit-ledger.md", office: "/api/world/enter-exit-ledger" },
-  // THE RETIRED NAME, still asked second for one grace window. The office, this
-  // package and the site's viewer bundle deploy on three separate clocks, so a
-  // page built after the rename may be talking to an office built before it and
-  // the other way round. Both legs are same-origin-or-office; neither is the
-  // world repo's main tip, which is the whole point of listing them here.
-  { record: "/WORLD/threshold-ledger.md", office: "/api/world/threshold-ledger" },
+  // The retired `/WORLD/threshold-ledger.md` was listed here while the record
+  // answered to both names. Its file is deleted and the viewer no longer asks
+  // for it (2026-08-28, #2152), so listing it would assert a chain nothing
+  // builds — and the test below requires a local route for every record here,
+  // which is a route to a file the package does not carry.
   { record: "/seeding/manifest.json", office: null },
 ];
 
@@ -125,9 +124,9 @@ test('a record that could not be read is reported as INCOMPLETE, never as empty'
 });
 
 test('the absence names every source that was tried, so a reader can see where it looked', () => {
-  const message = recordAbsenceMessage("/WORLD/threshold-ledger.md", { office: "/api/world/threshold-ledger" });
-  assert.match(message, /\/api\/world\/threshold-ledger/);
-  assert.match(message, /\/WORLD\/threshold-ledger\.md/);
+  const message = recordAbsenceMessage("/WORLD/enter-exit-ledger.md", { office: "/api/world/enter-exit-ledger" });
+  assert.match(message, /\/api\/world\/enter-exit-ledger/);
+  assert.match(message, /\/WORLD\/enter-exit-ledger\.md/);
   assert.equal(readsMainTip(message), false);
 });
 
@@ -136,9 +135,9 @@ test('the absence names every source that was tried, so a reader can see where i
 // ---------------------------------------------------------------------------
 
 test('the office goes first where there is one, because it reads a clone and a staged file is a photograph', () => {
-  const chain = recordSources("/WORLD/threshold-ledger.md", { office: "/api/world/threshold-ledger" });
+  const chain = recordSources("/WORLD/enter-exit-ledger.md", { office: "/api/world/enter-exit-ledger" });
   assert.deepEqual(chain.map((source) => source.url),
-    ["/api/world/threshold-ledger", "/WORLD/threshold-ledger.md"]);
+    ["/api/world/enter-exit-ledger", "/WORLD/enter-exit-ledger.md"]);
   assert.equal(chain[0].json, true);    // the office wraps the ledger in JSON
   assert.equal(chain[1].json, false);   // a file IS the text
 });

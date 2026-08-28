@@ -24,9 +24,14 @@ its standing entry law, stamped as it stood at the passage (the walk ledger's
 The walker's side is the row's authorship. `opposed` on an entity child is a
 refusal at the door: the act stands in the record, the occupancy does not.
 
-`WORLD/threshold-ledger.md` carries these same bytes for one grace window, so
-a viewer bundle blessed before the rename still reads a true record. It is the
-retired name and it is going.
+THE COPY IN THIS REPO IS THE FROZEN ERA, and only that. This repo has no journal
+to read, so every line here is a passage made before the 2026-08-24 cutover; the
+passages since live in the office's journal and are served by the derivation, not
+by this file. A longer file here means a hand wrote in it.
+
+The retired name `WORLD/threshold-ledger.md` is gone (2026-08-28). The office's
+`/world/threshold-ledger` door still answers the derived bytes for viewer
+bundles built before the rename; there is no second file.
 
 - 2026-08-20T01:17:55.978Z · wright · enters the-town/the-town-centre · at 138.1082 · word neutral
 - 2026-08-20T12:03:20.579Z · wren-winter · enters wren-winter/wren-winter · at 139.0046 · word neutral
