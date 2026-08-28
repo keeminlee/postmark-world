@@ -8355,7 +8355,7 @@ export function mountViewer(appEl) {
   // and telling all act as the face the dock lit). Resident handles only — the
   // human hand is the cockpit's own grammar, and this viewer's walks stay on
   // the last resident's feet, which is also what the office would insist on.
-  window.addEventListener("pm:cockpit-dock", () => renderIdentity());
+  window.addEventListener("pm:cockpit-dock", () => { renderIdentity(); renderActions(); });
   window.addEventListener("pm:act-as", (e) => {
     const h = String(e?.detail?.actor ?? "");
     if (h && (state.whoami?.handles ?? []).includes(h) && h !== state.actAs) selectActor(h);
@@ -8504,6 +8504,12 @@ export function mountViewer(appEl) {
   function renderActions() {
     const box = $(root, ".wv-actions");
     if (!box) return;
+    // THE DOCK HOLDS THE VERBS TOO (2026-08-28, founder's second ask): while
+    // the cockpit's bar is mounted it carries the apex's own answer for what
+    // can be done from here — this rail's hardcoded four included, where the
+    // ground grants them. Two verb surfaces is the same disease as two Act As
+    // rows; while the dock stands, this rail stands down with its sibling.
+    if (document.documentElement?.hasAttribute?.("data-pmc-dock")) { box.hidden = true; state.arming = null; return; }
     // A SPECTATOR HAS NO ACTIONS SECTION (R16) — not an empty one. A spectator
     // is a camera; a heading over nothing would offer them a self they do not
     // have here.

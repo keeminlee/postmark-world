@@ -30,6 +30,14 @@ test("the dock's word moves this viewer's own actor", () => {
     "the viewer listens for the dock's selection");
   assert.match(viewer, /\(state\.whoami\?\.handles \?\? \[\]\)\.includes\(h\) && h !== state\.actAs\) selectActor\(h\);/,
     "resident handles only, own-key only, and a repeat is not a re-selection");
-  assert.match(viewer, /window\.addEventListener\("pm:cockpit-dock", \(\) => renderIdentity\(\)\);/,
-    "mount/unmount re-renders the row — the early-boot half of the handshake");
+  assert.match(viewer, /window\.addEventListener\("pm:cockpit-dock", \(\) => \{ renderIdentity\(\); renderActions\(\); \}\);/,
+    "mount/unmount re-renders both standing-down surfaces — the early-boot half of the handshake");
+});
+
+test("the ACTIONS rail stands down with its sibling (founder's second ask, 2026-08-28)", () => {
+  // Two verb surfaces is the same disease as two Act As rows: the cockpit's
+  // bar carries the apex's own answer for what can be done from here, so while
+  // the dock stands, the rail's hardcoded four stand down.
+  assert.match(viewer, /function renderActions\(\) \{[\s\S]{0,900}?data-pmc-dock"\)\) \{ box\.hidden = true; state\.arming = null; return; \}/,
+    "renderActions hides the rail (and disarms any half-begun act) while the dock is mounted");
 });
