@@ -3,7 +3,7 @@ kind: sited
 by: the-town
 class: thing
 date: 2026-08-26
-at: { x: 1095.5, y: -784 }
+at: { x: 1081, y: -793.8 }
 extent: { w: 0.2, h: 0.2 }
 held_grant: [{"action": "strike", "residue": "the-town/strike", "bonus": 3, "says": "a flame that has never once gone out on the way over"}]
 ---
