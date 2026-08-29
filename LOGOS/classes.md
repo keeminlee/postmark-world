@@ -834,11 +834,44 @@ worked example, exactly as the household class is instantiation's:
   object is an ordinary mark, and the world keeps it. This is the whole claim
   the class exists to make: a place can lend verbs without becoming a world of
   its own.
+- **Loot is not in the room until the room is spent.** A thing whose mark
+  declares `loot` is NEITHER VISIBLE NOR TAKEABLE while the encounter on its
+  ground is afoot: it is absent from that ground's loose things, absent from
+  what a standpoint says stands nearby, and a `take` or a `give` aimed at it is
+  refused with a sentence that explains itself rather than a bounce that reads
+  like a fault. At `spent` it appears, and from that moment it is an ordinary
+  thing under the ordinary law above. A weapon lying on the floor is loose
+  WITHOUT being loot — the flag says "this is what the fight is FOR", and what a
+  fight is for cannot be pocketed before it is fought.
+
+  *(Ruled by the founder 2026-08-29: "it's a bit odd that 'slice to take home'
+  and 'the wick end' are already marks sitting in the room before you even beat
+  the cake." The record holds them the whole time — nothing is minted at the
+  kill and no clone replaying the log derives a different set of marks. What
+  changes is what the DOORS answer, which is a read law and not a write one.)*
+- **A ground may set its own stride.** `walk_min_step` is a dial on the ground's
+  own mark, in metres: within that ground a walk is validated and snapped at
+  that granularity instead of the town's whole-metre step. Absent — which is
+  every ground in the town on the day this is written — the town-wide step
+  governs and nothing anywhere changes. A room three metres across cannot be
+  crossed in useful pieces by a town whose smallest step is a third of it, and
+  this is the smallest law that fixes it: the dial says how fine THIS floor is
+  and says nothing about any other.
+
+  The dial **rides the ground's answer at the door**, so a reader drawing that
+  floor can draw the grid the door will actually accept. A client left to guess
+  the granularity would be inventing law, and would be wrong the first time a
+  ground ruled otherwise.
+
+  *(Asked for by the founder 2026-08-29 — finer movement inside the party room.
+  Taken as a per-ground dial rather than a town-wide re-cut of the walk step,
+  because the town's stride is load-bearing on every road and a dungeon floor is
+  not a road.)*
 
 **What the verbs are aimed at is a class too.** `adversary` — a mark class whose
-instances carry `hp` and `hits_for` as their own UNSEALED dials, so two
-adversaries differ by what the record says about each and not by a branch in
-code. It is deliberately thin: it is a standing thing with a number of hits in
+instances carry `hp`, `hits_for` and `persistent` (§ Downed, not dead) as their
+own UNSEALED dials, so two adversaries differ by what the record says about each
+and not by a branch in code. It is deliberately thin: it is a standing thing with a number of hits in
 it, and everything else about what it IS lives in its body, where a resident
 reads it.
 
@@ -871,12 +904,47 @@ Rendered in the world as `the-town/arena`, and its law as
 An **arena** extends portal-ground: same lent verbs, same fence, plus a wheel.
 Ruled by the founder 2026-08-26 (the party rulings).
 
-- **The wheel gates every act, and movement with them.** While an encounter is
-  live, an arena affords its verbs — and walking — only to whoever the wheel is
-  on. Hostiles hold real slots and take real turns. An act out of turn is
-  refused **naming whose turn it is**, because "no" without a name is a door
-  that will be tried again immediately. With no encounter live, movement inside
-  is free: the wheel exists to order a fight, not to hold a room still.
+- **The wheel gates this ground's ARENA verbs, and nothing else.** While an
+  encounter is live, an arena affords `strike`, `cast`, `guard`, `lift` and
+  `pass` only to whoever the wheel is on. Hostiles hold real slots and take real
+  turns. An act out of turn is refused **naming whose turn it is**, because "no"
+  without a name is a door that will be tried again immediately. **The ordinary
+  verbs of the town are not the wheel's business**: walk, say, stake, unstake,
+  give, take and every other verb a resident holds anywhere flow UNGATED inside
+  a live encounter, exactly as they do outside one. `loot` is an arena verb the
+  wheel does not gate either — it waits on the PHASE instead, and a phase that
+  admits it is a phase in which no encounter is live. With no encounter live
+  nothing here is gated at all: the wheel exists to order a fight, not to hold a
+  room still.
+
+  *(Amended by the founder 2026-08-29, the birthday rulings: "walk/say/stake/
+  unstake etc need to be allowed in ADDITION to the combat actions. only strike,
+  guard, cast, lift should cause EOT." The clause read "**The wheel gates every
+  act, and movement with them.** While an encounter is live, an arena affords
+  its verbs — and walking — only to whoever the wheel is on … With no encounter
+  live, movement inside is free." Both states stand because the old one names
+  the cost the new one pays: a room anyone may cross mid-fight is a room where
+  position is not worth a turn. The founder took that trade knowingly — a party
+  is a place people move around in — and the wheel keeps the only thing it was
+  ever needed for, which is the ORDER OF BLOWS.)*
+- **Turn-ending is five acts and stays five**: `strike`, `cast`, `guard`, `lift`
+  and `pass`. `loot` does not end a turn and never did; walking, speaking and
+  staking do not end one either, because a verb the wheel does not gate is a
+  verb the wheel does not count.
+- **Crossing in puts you at the door-side edge, never inside what you came to
+  fight.** An entrant into a wheel-keeping ground is placed where the ground was
+  entered from — the point on its boundary the crossing came through — and never
+  within an adversary's own extent. Where that edge point falls inside one, the
+  placement steps back OUT along the way in until it is clear, by arithmetic
+  every reader repeats identically. A room that sets you down standing inside
+  the thing you came to hit has told you nothing true about where you are.
+
+  *(Ruled by the founder 2026-08-29: "residents enter the room with their tokens
+  essentially INSIDE the cake mark's extent. we should make this so they are not
+  in it." This is PLACEMENT law, not entry law: the threshold machinery is
+  untouched and R15 stands — walking never implies entry, entry never implies a
+  walk. What is ruled is where a body stands when it arrives, which the arena
+  may answer because the arena is the ground it arrives on.)*
 - **Hostile turns are resolved by the act that ends a player's turn**, in the
   same handling, until the wheel reaches a player again. There is no daemon and
   no ticker: **the duet is the event loop**. A town whose fights need a
@@ -927,13 +995,33 @@ Rendered as `the-town/downed-not-dead`. Ruled by the founder 2026-08-26.
 - **At zero you are DOWN, and down is not gone.** You lose your acts, the wheel
   skips you, and what you were holding **drops loose where you stand** — someone
   has to come and get it, which is what makes carrying a thing into a fight a
-  stake rather than a decoration.
+  stake rather than a decoration. **Down stops your ARENA acts, not your voice**:
+  a downed hand still speaks, still walks, still holds and hands things over.
+  What they have lost is the fight, not the room (founder-ruled 2026-08-29, the
+  same amendment that narrowed the wheel's gate above).
 - **Any ally may spend their WHOLE turn lifting you**, and you come back at
   partial strength. The cost is the turn; that is the entire economy of it.
 - **If the whole room goes down, the attempt ends and the room resets** —
-  everyone wakes in the antechamber, the adversary stands again at full, and the
+  everyone wakes in the antechamber, the hands stand again at full, and the
   journal keeps the failed attempt as history. Nothing is erased; a defeat is an
   event, not a gap.
+- **Whether the ADVERSARY stands again at full is its own dial.** `persistent`
+  is a dial on the adversary's own mark. Absent or false it is the town's
+  standing law and the wipe restores the adversary whole, which is what a fight
+  worth re-fighting means. Declared true, **the adversary keeps its wounds
+  across the wipe**: the attempt ends, the room resets, the hands come back
+  whole, and the thing they were hitting is exactly as hurt as they left it. A
+  persistent adversary is a ONE-OFF — the party's own boss, worn down by
+  everyone who attends, across as many attempts as it takes — rather than a room
+  that resets into the same fight forever.
+
+  *(Ruled by the founder 2026-08-29: "10x the hit points of the cake, and NOT
+  make it reset on wipe. that way, whoever attends the party can continue trying
+  to defeat it and it will eventually go down." Written as a dial rather than a
+  new class because it is one number's worth of difference and the adversary
+  class already carries its numbers unsealed. The clause it narrows read "the
+  adversary stands again at full" with no condition, and that reading still
+  governs every adversary that does not declare the dial.)*
 - **Strength is ENCOUNTER-scoped, and fleeing does not heal you.** Re-entering
   mid-encounter rejoins you at what you left with. A door that restored you
   would make walking out the strongest move in the room.
