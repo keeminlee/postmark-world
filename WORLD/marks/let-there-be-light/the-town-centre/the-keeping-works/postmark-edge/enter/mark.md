@@ -13,4 +13,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-An entry is one passage written — who crossed, into what, at a threshold you truly stand before; exit writes the next, to the effective parent.
+An entry is one passage written — who entered, into what, at a threshold you truly stand before; exit writes the next, to the effective parent.

@@ -1,4 +1,4 @@
-# Threshold ledger — the crossings
+# Enter-exit ledger — the enterexit record
 
 Append-only. One line per CROSSING; occupancy is a pure function of these lines,
 so no edge is ever written here and no departure is (that is the walk ledger's,

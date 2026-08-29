@@ -1,4 +1,4 @@
-// viewer-occupancy.test.mjs — the crossings, as the VIEWER reads them.
+// viewer-occupancy.test.mjs — the enterexit acts, as the VIEWER reads them.
 //
 // tools/thresholds.test.mjs already proves the derivation. This file proves the
 // half that was missing until now: that the viewer asks it the right question,
@@ -9,8 +9,8 @@
 //   · STANDING IS NOT ENTERING (R15) — the viewer already had a `within`, and it
 //     is the geometric one. A readout that quietly reused it would look right on
 //     every screenshot and be wrong about the whole feature.
-//   · THE CLOCK — the viewer's crossing dial is FLOORED, the ledger stamps
-//     FRACTIONAL. Folding at the floor hides every crossing made since the last
+//   · THE CLOCK — the viewer's ferry-crossing dial is FLOORED, the ledger stamps
+//     FRACTIONAL. Folding at the floor hides every act made since the last
 //     12-hour boundary. The real ledger's one act is the fixture that catches it.
 
 import { test } from "node:test";
@@ -25,7 +25,7 @@ import { fractionalCrossing } from "./walk.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-// THE LIVE FIXTURE: the town's own record, not a mock. wright's crossing into
+// THE LIVE FIXTURE: the town's own record, not a mock. wright's entry into
 // the-town-centre is on main, so these tests read the same bytes the page does.
 // If the ledger's grammar ever changes under the viewer, this file fails first.
 const LEDGER = readFileSync(join(ROOT, "WORLD/enter-exit-ledger.md"), "utf8");
@@ -33,7 +33,7 @@ const REAL = parseEnterExitLedger(LEDGER);
 const WRIGHT_ENTRY = REAL.acts.find((a) => a.handle === "wright" && a.act === "enters");
 
 // THE STANDING FIXTURE IS SYNTHETIC (state-durable-facts, 2026-08-20): the
-// ledger is a working record — residents cross doors daily, and five of these
+// ledger is a working record — residents enter doors daily, and five of these
 // tests broke the day wright stepped OUT of the room they had pinned him to.
 // The stamp stays fractional and just under the live clock, so the floored-
 // clock trap this file exists for keeps its teeth.
@@ -53,7 +53,7 @@ test("the viewer derives wright's entered-stack from the standing fixture", () =
   const { entered, insideOf, alongside } = standpointOccupancy({ acts: SYN.acts, at, handle: "wright" });
   assert.deepEqual(entered, ["the-town/the-town-centre"]);
   assert.equal(insideOf, "the-town/the-town-centre");
-  assert.deepEqual(alongside, [], "nobody else has crossed in yet, and the readout must not invent company");
+  assert.deepEqual(alongside, [], "nobody else has entered yet, and the readout must not invent company");
 });
 
 test("who is in this room — occupantsOf reaches the viewer as the manifest", () => {
@@ -92,7 +92,7 @@ test("FALSIFIER: an exit appended to the ledger empties the readout", () => {
 });
 
 // ── the clock ───────────────────────────────────────────────────────────────
-test("THE FLOORED CLOCK HIDES THE CROSSING — the fold must be asked fractionally", () => {
+test("THE FLOORED CLOCK HIDES THE ACT — the fold must be asked fractionally", () => {
   const fractional = WRIGHT_ENTRY.at + 0.001;
   const floored = Math.floor(fractional);
   assert.notEqual(floored, fractional, "the fixture must straddle a boundary or this proves nothing");
@@ -104,14 +104,14 @@ test("THE FLOORED CLOCK HIDES THE CROSSING — the fold must be asked fractional
     [], "at the floored dial the act has not happened yet — which is why the viewer never asks at it");
 });
 
-test("time-travel to before the crossing reports the truth of that instant", () => {
+test("time-travel to before the entry reports the truth of that instant", () => {
   const { entered, manifest } = standpointOccupancy({ acts: REAL.acts, at: WRIGHT_ENTRY.at - 1, handle: "wright" });
   assert.deepEqual(entered, []);
   assert.equal(manifest.size, 0);
 });
 
 // ── standing is not entering (R15) ──────────────────────────────────────────
-test("a walker standing on a mark's ground has entered nothing — only a crossing fills the stack", () => {
+test("a walker standing on a mark's ground has entered nothing — only an entry fills the stack", () => {
   // no acts at all is exactly the state of every resident who has only ever
   // walked: the walk ledger can put them on the Post Office's doorstep and this
   // answer stays empty, which is the whole of the law in one assertion
@@ -121,7 +121,7 @@ test("a walker standing on a mark's ground has entered nothing — only a crossi
   assert.equal(manifest.size, 0);
 });
 
-test("a refused crossing is in the record and not in the occupancy", () => {
+test("a refused entry is in the record and not in the occupancy", () => {
   const acts = parseEnterExitLedger(
     `- 2026-08-20T01:00:00.000Z · kilean · enters the-town/the-wheelhouse · at 138.0000 · word opposed\n`).acts;
   assert.equal(acts.length, 1, "the act happened and the record holds it");
@@ -132,7 +132,7 @@ test("a refused crossing is in the record and not in the occupancy", () => {
 test("the spectator is inside nothing but can still read the manifest", () => {
   const at = fractionalCrossing();
   const spectator = standpointOccupancy({ acts: SYN.acts, at, handle: SPECTATOR_ACTOR });
-  assert.deepEqual(spectator.entered, [], "a camera has crossed no thresholds");
+  assert.deepEqual(spectator.entered, [], "a camera has entered nothing");
   assert.equal(spectator.insideOf, null);
   assert.deepEqual([...spectator.manifest.get("the-town/the-town-centre")], ["wright"],
     "but who is inside what is not a private fact");
@@ -140,7 +140,7 @@ test("the spectator is inside nothing but can still read the manifest", () => {
 });
 
 // ── the deep stack ──────────────────────────────────────────────────────────
-test("a chain of crossings reads outermost→innermost, and exiting the ship leaves her cabins", () => {
+test("a chain of entries reads outermost→innermost, and exiting the ship leaves her cabins", () => {
   const acts = parseEnterExitLedger(
     `- 2026-08-20T01:00:00.000Z · kilean · enters the-town/the-post-office · at 138.0000 · word welcomed\n`
     + `- 2026-08-20T01:10:00.000Z · kilean · enters the-town/the-mail-hold · at 138.0100 · word neutral\n`).acts;
@@ -188,7 +188,7 @@ test("a deep chain reads outermost first and the separator points INTO, not back
     nameOf: (id) => (id.endsWith("quay-reach") ? "The Quay Reach" : "The Post Office"),
   });
   assert.ok(html.indexOf("The Quay Reach") < html.indexOf("The Post Office"),
-    "the outer mark is named first — you crossed the reach, and then the office inside it");
+    "the outer mark is named first — you entered the reach, and then the office inside it");
   assert.doesNotMatch(html, />in</, "`X in Y` with X outermost states the containment backwards");
   assert.match(html, /›/, "the separator points inward");
 });

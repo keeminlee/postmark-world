@@ -60,7 +60,7 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/strike`, `the-town/guard`, `the-town/cast`,
 `the-town/loot`, `the-town/adversary`, `the-town/arena`,
 `the-town/the-turn-wheel`, `the-town/the-witnessed-roll`,
-`the-town/crossing-is-joining`, `the-town/downed-not-dead` and
+`the-town/entering-is-joining`, `the-town/downed-not-dead` and
 `the-town/lift` — the clauses this page renders, among
 the one hundred fifteen class-nodes standing in the Keeping Works after the
 graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
@@ -125,8 +125,8 @@ region, and the shelf coordinates the classes wore were the medium's
 costume, never the law's body. **THE PORTAL:** portal, a child of
 postmark-edge, is the door between the dimensions — the works and the
 logos quarter each carry one standing instance (the-works-portal,
-the-logos-portal, target `the-town/node`): crossing a portal changes what
-you read, never where you stand; instance-space is ruled by geometry,
+the-logos-portal, target `the-town/node`): passing through a portal changes
+what you read, never where you stand; instance-space is ruled by geometry,
 class-space by type edges, and class-space has no where. *(UNRULED, held
 at the founders' desk 2026-08-19: the-works-portal's own mark carries
 `value: the-town/postmark-node` where this prose says both instances
@@ -786,7 +786,7 @@ walker discover it by arriving somewhere with no verbs.
 
 ## The portal ground — a place that lends its own verbs
 
-*Crossing a portal changes what you read. Standing on a portal ground changes
+*Passing through a portal changes what you read. Standing on a portal ground changes
 what you may do.*
 
 Rendered in the world as `the-town/portal-ground`, its verbs as
@@ -916,12 +916,12 @@ been the second clock, which is why the one dial that names a duration
 
 ## The arena — a portal ground that keeps a wheel
 
-*Crossing into an arena is joining its fight. Nothing else in the town has a
+*Entering an arena is joining its fight. Nothing else in the town has a
 threshold that means that, which is why it is a class and not a dial.*
 
 Rendered in the world as `the-town/arena`, and its law as
 `the-town/the-turn-wheel`, `the-town/the-witnessed-roll`,
-`the-town/crossing-is-joining` and `the-town/downed-not-dead`.
+`the-town/entering-is-joining` and `the-town/downed-not-dead`.
 
 An **arena** extends portal-ground: same lent verbs, same fence, plus a wheel.
 Ruled by the founder 2026-08-26 (the party rulings).
@@ -945,17 +945,17 @@ Ruled by the founder 2026-08-26 (the party rulings).
   act, and movement with them.** While an encounter is live, an arena affords
   its verbs — and walking — only to whoever the wheel is on … With no encounter
   live, movement inside is free." Both states stand because the old one names
-  the cost the new one pays: a room anyone may cross mid-fight is a room where
-  position is not worth a turn. The founder took that trade knowingly — a party
+  the cost the new one pays: a room anyone may walk across mid-fight is a room
+  where position is not worth a turn. The founder took that trade knowingly — a party
   is a place people move around in — and the wheel keeps the only thing it was
   ever needed for, which is the ORDER OF BLOWS.)*
 - **Turn-ending is five acts and stays five**: `strike`, `cast`, `guard`, `lift`
   and `pass`. `loot` does not end a turn and never did; walking, speaking and
   staking do not end one either, because a verb the wheel does not gate is a
   verb the wheel does not count.
-- **Crossing in puts you at the door-side edge, never inside what you came to
+- **Entering puts you at the door-side edge, never inside what you came to
   fight.** An entrant into a wheel-keeping ground is placed where the ground was
-  entered from — the point on its boundary the crossing came through — and never
+  entered from — the point on its boundary the entry came through — and never
   within an adversary's own extent. Where that edge point falls inside one, the
   placement steps back OUT along the way in until it is clear, by arithmetic
   every reader repeats identically. A room that sets you down standing inside
@@ -976,8 +976,8 @@ Ruled by the founder 2026-08-26 (the party rulings).
   arena; once it has expired, that hand's turn resolves as a **pass at the next
   door touch** — by anyone. The turn is skipped when someone arrives to notice,
   never by a process watching a clock.
-- **Initiative is rolled at the open and appended at the boundary.** Crossing
-  the inner threshold rolls you in; a late arrival joins at the BOTTOM of the
+- **Initiative is rolled at the open and appended at the boundary.** Entering
+  past the inner threshold rolls you in; a late arrival joins at the BOTTOM of the
   order at the next round boundary, never mid-round, because an order that can
   change under a hand mid-round is an order nobody can read. Walking out drops
   you from the wheel — the exit law holds mid-fight, and the arena simply stops
@@ -1050,7 +1050,7 @@ Rendered as `the-town/downed-not-dead`. Ruled by the founder 2026-08-26.
 - **All of this is portal vocabulary and reaches nothing outside.** "Down" says
   nothing about a resident or a human anywhere else in the world; no standing,
   no position, no holding, no stamp changes because of it. The threshold terms
-  say so before you cross, because that is the one promise a place like this
+  say so before you enter, because that is the one promise a place like this
   owes the people who step into it.
 
 ## The lexicon — the homonym register
@@ -1068,13 +1068,22 @@ names its owning doc, and the owner outranks every other use.
   inter-town transit record, the `crossing` class
   ([the-web-of-towns.md](the-web-of-towns.md)); ③ the ford: a named water
   passage with reach (the-sounding family, `tools/water.mjs`).
+  **THE WORD IS NEVER THE ENTER/EXIT RECORD** (the founder, 2026-08-29:
+  "DO NOT CALL IT CROSSING RECORD. ENTEREXIT. EVERYWHERE. NEVER AGAIN."). A
+  resident entering or stepping out of a mark writes the ENTEREXIT record; the
+  acts are **enter** and **exit**, and the prose is *entering*, *entry*,
+  *stepping out*. This is the one entry in the register that FORBIDS a sense
+  rather than assigning it, because the fourth sense was the one actually
+  costing readers: the three above are a clock, a paper and a ford, and a
+  reader who met "the crossings" in a threshold clause had no way to tell which
+  of the four was speaking.
 - **portal** — ① the read-root predicate slot: a `slot: portal` child whose
   value re-roots what a reader reads without moving their feet
   (the-works-portal, the-logos-portal); ② `portal-ground`, the mark class whose
   contract lends its verbs to those inside its extent (§ The portal ground).
   Registered at the second sense's birth, and the second sense took a
-  COMPOUND name rather than the bare word for exactly that reason: crossing ①
-  changes what you read, standing on ② changes what you may do, and the two
+  COMPOUND name rather than the bare word for exactly that reason: passing
+  through ① changes what you read, standing on ② changes what you may do, and the two
   must never be read as one mechanism wearing two hats.
 - **gate** — ① the mark lint's pre-flight check (the-gate); ② any boundary
   judgment at action admission ("judged at the gate", [edit-law.md](edit-law.md));

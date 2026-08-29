@@ -38,7 +38,7 @@
 //
 // `the-town/enter`, class, constitution tier, version 4, source LOGOS/classes.md:
 //
-//     "An entry is one passage written — who crossed, into what, at a threshold
+//     "An entry is one passage written — who entered, into what, at a threshold
 //      you truly stand before; exit writes the next, to the effective parent."
 //
 // A passage that is written and that no reader can reach is not written. On

@@ -1665,7 +1665,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A threshold crosses only from where you truly stand, and exit sets you down at the door — no verb moves the frame from afar.",
+      "body": "A threshold is entered only from where you truly stand, and exit sets you down at the door — no verb moves the frame from afar.",
       "placementParent": "the-town/the-entry"
     },
     {
@@ -15569,7 +15569,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "An entry is one passage written — who crossed, into what, at a threshold you truly stand before; exit writes the next, to the effective parent.",
+      "body": "An entry is one passage written — who entered, into what, at a threshold you truly stand before; exit writes the next, to the effective parent.",
       "class": "enter",
       "dials": {},
       "placementParent": "the-town/postmark-edge"

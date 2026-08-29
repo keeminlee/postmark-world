@@ -36,9 +36,9 @@ const byId = new Map(world.marks.map((m) => [m.id, m]));
 const LEDGER = read("WORLD/enter-exit-ledger.md");
 const REAL_ACTS = parseEnterExitLedger(LEDGER).acts;
 // THE FIXTURE IS SYNTHETIC ON PURPOSE (state-durable-facts): the live ledger
-// moves with every crossing, so a test pinned to who happens to be inside
+// moves with every act, so a test pinned to who happens to be inside
 // TODAY fails the day they step out. The MARKS are the durable half — the
-// Town Centre exists by constitution — so the crossing is synthesized and the
+// Town Centre exists by constitution — so the entry is synthesized and the
 // room is real.
 const FIXTURE_ACTS = parseEnterExitLedger(
   `- 2026-08-20T01:00:00.000Z · wright · enters the-town/the-town-centre · at 138.0000 · word neutral\n`).acts;
@@ -59,7 +59,7 @@ function realInterior({ acts = FIXTURE_ACTS, handle = "wright", at = FIXTURE_AT 
 // ── the real record ─────────────────────────────────────────────────────────
 test("the real marks build a real interior — the Town Centre, entered", () => {
   const built = realInterior();
-  assert.ok(built, "wright's standing crossing is the fixture; without it nothing below proves anything");
+  assert.ok(built, "wright's standing entry is the fixture; without it nothing below proves anything");
   assert.equal(built.room.id, "the-town/the-town-centre");
   assert.ok(built.things.length >= 10,
     `the Town Centre holds real furniture on the record (got ${built.things.length})`);
@@ -202,8 +202,8 @@ test("PRESENCE IS OCCUPANCY-SCOPED — someone in another room cannot appear in 
   const found = investigate("the-town/the-town-centre", world, { occupancy, budget: 40 });
   const children = (found.children ?? []).map((c) => (isEntity(c) ? c : { ...(byId.get(c.id) ?? c) }));
   const { bodies } = interiorFurniture({ room: byId.get("the-town/the-town-centre"), children });
-  assert.ok(bodies.includes("kilean"), "the one who crossed into THIS room is here");
-  assert.ok(!bodies.includes("postmaster"), "the one who crossed into another is not");
+  assert.ok(bodies.includes("kilean"), "the one who entered THIS room is here");
+  assert.ok(!bodies.includes("postmaster"), "the one who entered another is not");
 });
 
 // ── who gets a scene ────────────────────────────────────────────────────────
@@ -227,7 +227,7 @@ test("one resident being in a room does not put another resident in it", () => {
   const at = 999;
   assert.equal(standpointOccupancy({ acts, at, handle: "wright" }).insideOf, "the-town/the-town-centre");
   assert.equal(standpointOccupancy({ acts, at, handle: "kilean" }).insideOf, null,
-    "kilean has crossed nothing, so kilean is inside nothing");
+    "kilean has entered nothing, so kilean is inside nothing");
   assert.deepEqual(standpointOccupancy({ acts, at, handle: "kilean" }).entered, []);
 });
 
@@ -318,5 +318,5 @@ test("and says nothing extra when the next press really does put you outdoors", 
 test("a stack three deep names the room it opens onto, not the one at the bottom", async () => {
   const { exitDestination } = await import("../spectator/viewer.mjs");
   assert.equal(exitDestination(["a/outer", "a/middle", "a/inner"]), "a/middle",
-    "the destination is one step out, never all the way out — that is what a crossing means");
+    "the destination is one step out, never all the way out — that is what entering means");
 });

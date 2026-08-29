@@ -242,7 +242,7 @@ test("the exit prompt fires when you walk off the ground of a mark you are withi
   assert.equal(exitPrompt(ASHORE, world, { occupancy, handle: "adam" }).mark, SHIP.id);
 });
 
-// ── deep entry: a chain of crossings, each adjudicated ──────────────────────
+// ── deep entry: a chain of entries, each adjudicated ───────────────────────
 
 test("enter from the shore bundles the walk and crosses each link in turn", () => {
   const plan = enterExitPlan(ASHORE, HOLD.id, world, { handle: "adam" });

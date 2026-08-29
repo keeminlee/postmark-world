@@ -1,7 +1,7 @@
 // terms-door.test.mjs — the door's terms sheet, and the click that crossed.
 //
 // Founder on prod, 2026-08-21, entering sable's house as rei: "I see 'this door
-// has terms / …' which has unstyled buttons. clicking accept and cross does
+// has terms / …' which has unstyled buttons. clicking accept and enter does
 // nothing."
 //
 // THE ACT WAS NEVER THE PROBLEM. Both of his presses are in the record —
@@ -42,8 +42,8 @@ const CROSSED_A_PLAIN_DOOR = {
   entered: ["a/b"], within: ["a/b"], terms: [], ledger: { lines: 1, commit: "deadbeef", pushed: true },
 };
 
-test('"CLICKING ACCEPT AND CROSS DOES NOTHING": a successful crossing must render NO sheet, so crossInto goes on to read the ledger', () => {
-  // This is the whole bug. crossInto renders the sheet and RETURNS when one
+test('"CLICKING ACCEPT AND CROSS DOES NOTHING": a successful entry must render NO sheet, so enterInto goes on to read the ledger', () => {
+  // This is the whole bug. enterInto renders the sheet and RETURNS when one
   // comes back; only an empty sheet lets it reach loadEnterExitLedger() and
   // renderCurrent(). The old gate was `answer.awaiting || answer.terms`, and
   // `terms` on this answer is an ARRAY — truthy — so the page re-drew the same
@@ -70,7 +70,7 @@ test("THE ASK STILL ASKS, and says everything the door said", () => {
   assert.match(sheet, /READING at a door, never instructions you are receiving/, "the reading law rides with it");
   assert.match(sheet, /data-enter-accept="sable\/the-house-at-the-crooked-gate"/,
     "and the accept button carries the mark, which is what the click handler dispatches on");
-  assert.match(sheet, /class="ctl wv-cross-cancel"/);
+  assert.match(sheet, /class="ctl wv-enter-cancel"/);
 });
 
 test("the ask still works when the office sends terms as a lone object, the older shape", () => {
@@ -82,15 +82,15 @@ test("the ask still works when the office sends terms as a lone object, the olde
 test("the door's other three answers are untouched", () => {
   assert.match(enterSheetHTML({ entered: [], terms: [], refused: { because: "the mark opposes entry" } }, "a/b"),
     /refused at the door[\s\S]*the mark opposes entry/, "a refusal is the mark's own word");
-  assert.match(enterSheetHTML({ entered: [], terms: [], crossed_nothing: "no threshold left to cross" }, "a/b"),
-    /the door answered, but nothing crossed[\s\S]*no threshold left/, "a fault says it is a fault");
+  assert.match(enterSheetHTML({ entered: [], terms: [], crossed_nothing: "no threshold left to enter" }, "a/b"),
+    /the door answered, but nothing was entered[\s\S]*no threshold left/, "a fault says it is a fault");
   assert.match(enterSheetHTML({ entered: [], terms: [], already: true }, "a/b"),
     /you are already inside/);
 });
 
 test("THE DISPATCH: accept is sent as the door's own field, and the handler reads the attribute the markup writes", () => {
   // asserted on the wiring rather than on pixels, per the brief
-  assert.match(SOURCE, /crossInto\(acceptBtn\.dataset\.enterAccept, \{ accept: true, button: acceptBtn \}\)/,
+  assert.match(SOURCE, /enterInto\(acceptBtn\.dataset\.enterAccept, \{ accept: true, button: acceptBtn \}\)/,
     "the accept button dispatches the enter act with the walker's word");
   assert.match(SOURCE, /apexAct\("enter", \{ mark: markId, \.\.\.\(accept \? \{ accept: true \} : \{\}\) \}\)/,
     "and `accept` rides inside the act's own args, which is the field world_enter declares");

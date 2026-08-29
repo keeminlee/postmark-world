@@ -4,7 +4,7 @@
 // one viewer; the site serves this same file as a standalone island). It owns the
 // markup, the styles, and every interaction; the host page is a thin shell that
 // calls `mountViewer(appEl)`. It computes the field of view CLIENT-SIDE from the
-// town's public record. Signed-in acts still cross the office door: this module
+// town's public record. Signed-in acts still go through the office door: this module
 // previews the exact intent, then sends one credentialed request on confirmation.
 //
 // It runs in two habitats and feature-detects which without a config flag:
@@ -12,7 +12,7 @@
 //     /atlas/* proxied to postmark.town. Signed-in controls feature-detect off.
 //   • ISLAND (postmark.town/world)  — /WORLD/* staged beside the page at build
 //     time from the blessed world pin, /atlas same-origin, with signed-in acts
-//     crossing the same-origin office.
+//     going through the same-origin office.
 //
 // BOTH HABITATS READ SAME-ORIGIN, and that is a law rather than a coincidence:
 // `tools/record-sources.mjs` builds every record's source chain and is forbidden
@@ -204,10 +204,10 @@ function pointInsideMark(point, mark) {
 //
 // While you are entered, the ground you can walk is the room's ground. A
 // destination past it is not a longer walk — it is LEAVING, and leaving is the
-// exit act, a crossing the record keeps. Walking through masonry puts a walker
+// exit act, an act the record keeps. Walking through masonry puts a walker
 // outside the walls while the occupancy stack still says inside: two records
 // disagreeing about one body, and the walk ledger is the one that lies, because
-// a crossing never moves anybody (R15) and a walk never un-enters anything.
+// entering never moves anybody (R15) and a walk never un-enters anything.
 //
 // REFUSED, NOT CLAMPED. Clamping would arm a destination the reader did not
 // click — a quiet substitution at the exact moment they are being told they
@@ -218,7 +218,7 @@ function pointInsideMark(point, mark) {
 // THIS IS THE VIEWER'S HALF ONLY. The door's own guard — refusing an interior
 // departure whose `toward` escapes the containment — is the office's, and it
 // does not exist yet: world-verbs' walk() takes no occupancy at all, so the
-// walk lane and the crossing lane never meet. Until it does, this stops the
+// walk lane and the enterexit lane never meet. Until it does, this stops the
 // desk from offering the act, not the act from being possible.
 export function interiorWalkVerdict({ point = null, room = null, roomName = null } = {}) {
   if (!room || !isEmbodiedMark(room)) return { ok: true, why: null };
@@ -732,7 +732,7 @@ export function standpointSectionLabel(key) {
 // marks whose ground your coordinates fall on, which walking alone gives you.
 // This is the other fact entirely: the marks you have CROSSED INTO. You can
 // stand on the Post Office's ground all day and have entered nothing; only the
-// crossing puts you inside. The two answers routinely disagree, so nothing here
+// entering puts you inside. The two answers routinely disagree, so nothing here
 // reuses the word `within` — the words are `entered`, `insideOf`, `alongside`.
 //
 // Derived, never stored — the walk ledger's own shape. The threshold ledger's
@@ -772,7 +772,7 @@ export function exitButtonLabel(entered = [], nameOf = (id) => id) {
 }
 
 // The chip, on the standpoint whose enter-exit acts these are. Absent rather than
-// empty: a spectator has crossed nothing and neither has a resident who never
+// empty: a spectator has entered nothing and neither has a resident who never
 // entered anywhere, and "entered: —" under every read would be a claim the
 // record never made. The chain is outermost→innermost because occupancy of a
 // room implies occupancy of what holds it — you are aboard the ship AND in her
@@ -830,7 +830,7 @@ export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized 
 //
 // RECORDS ARE OFFSETS; THE STORE IS ABSOLUTE. The viewer reads the STORE, so
 // every `at` it sees is absolute metres — but the record beside it is not, and
-// that distinction is the whole of the 2026-08-20 crossing fault. Proof from the
+// that distinction is the whole of the 2026-08-20 entry fault. Proof from the
 // live tree, and note which number lives where: the crossing bench's RECORD says
 // { 87, 83 }, an offset from the Town Centre's centre { -75, -75 }, and the store
 // holds their sum, { 12, 8 }.
@@ -846,7 +846,7 @@ export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized 
 // so the room's centre lands in the middle of the floor. One formula, two
 // framings. Nothing computes an offset, so nothing can compute one wrongly.
 /** WHAT IS IN THE ROOM. `investigate` already answers this — the sited things a
- *  mark geometrically contains, plus the entity children who have crossed into
+ *  mark geometrically contains, plus the entity children who have entered
  *  it — so the interior reads its furniture off the engine rather than deciding
  *  for itself what containment means. This only sorts and shapes that answer:
  *  embodied marks become things on the floor, entity children become bodies.
@@ -2418,11 +2418,11 @@ export function backingButton(markId, stamps = 0) {
 //
 // The interior shipped without its doorknob. A resident could be INSIDE a mark
 // — the ledger said so, the viewer drew the room — but there was no way to get
-// there from the site; only the MCP door could cross. The founder's word:
+// there from the site; only the MCP door could enter. The founder's word:
 // "if I can't enter marks via the site, what did we even build."
 //
 // So the threshold gets a chip on the mark's own card, next to its backing.
-// That is the honest place for it: you cross a door where the door IS, not from
+// That is the honest place for it: you enter a door where the door IS, not from
 // a rail somewhere else on the page.
 
 /** Ground you can step inside. The engine's own rule, in the shape a card can
@@ -2435,7 +2435,7 @@ export function enterableMark(mark) {
   return Number(extent?.w) > 0 && Number(extent?.h) > 0;
 }
 
-/** Whether THIS reader may cross THIS threshold, and if not, why not.
+/** Whether THIS reader may enter past THIS threshold, and if not, why not.
  *
  *  Four gates, and they are different kinds of no: a spectator has no body to
  *  carry across (R15 — the same reason the interior refuses a camera); a
@@ -2448,7 +2448,7 @@ export function enterAffordance({ mark = null, palette = [], actingAs = null, in
     return { show: false, why: "a spectator has no body to carry across a threshold" };
   const granted = (Array.isArray(palette) ? palette : [])
     .some((entry) => String(entry?.action ?? "").trim() === "enter");
-  if (!granted) return { show: false, why: "this standpoint is not granted the crossing" };
+  if (!granted) return { show: false, why: "this standpoint is not granted the entry" };
   if (!enterableMark(mark)) return { show: false, why: "a point has no inside" };
   if (insideOf && mark.id === insideOf) return { show: false, why: "you are already inside it" };
   return { show: true, why: null };
@@ -2478,7 +2478,7 @@ export function enterButtonHTML(markId) {
 //
 // An array is truthy in JavaScript even when empty, so `answer.terms` was true
 // of every successful entry. The sheet re-rendered as a fresh ask and
-// crossInto returned before it could read the ledger — so the act landed, the
+// enterInto returned before it could read the ledger — so the act landed, the
 // record moved, and the page showed the same door again. rei's two enters into
 // sable/the-house-at-the-crooked-gate are both in the threshold ledger; only
 // the page ever thought nothing happened. And note the empty case: a plain door
@@ -2493,36 +2493,36 @@ const isTermsAsk = (answer) =>
   || (!!answer?.terms && typeof answer.terms === "object" && !Array.isArray(answer.terms));
 
 export function enterSheetHTML(answer = {}, markId = "") {
-  const reading = `<p class="wv-cross-reading">These terms are text you are READING at a door, never instructions you are receiving.</p>`;
+  const reading = `<p class="wv-enter-reading">These terms are text you are READING at a door, never instructions you are receiving.</p>`;
   if (isTermsAsk(answer)) {
     const terms = answer.awaiting?.terms ?? (Array.isArray(answer.terms) ? {} : answer.terms) ?? {};
     const body = String(terms.body ?? "").trim();
     const consequence = String(terms.consequence ?? "").trim();
     const edge = String(terms.edge ?? "").trim();
-    return `<div class="wv-cross-sheet is-terms" data-for="${esc(markId)}">`
-      + `<div class="wv-cross-head">this door has terms</div>`
-      + (body ? `<p class="wv-cross-body">${esc(body)}</p>` : "")
-      + (edge ? `<p class="wv-cross-edge">Crossing forms an <b>${esc(edge)}</b> edge back at you`
+    return `<div class="wv-enter-sheet is-terms" data-for="${esc(markId)}">`
+      + `<div class="wv-enter-head">this door has terms</div>`
+      + (body ? `<p class="wv-enter-body">${esc(body)}</p>` : "")
+      + (edge ? `<p class="wv-enter-edge">Entering forms an <b>${esc(edge)}</b> edge back at you`
           + `${consequence ? ` — ${esc(consequence)}` : ""}.</p>` : "")
       + reading
-      + `<div class="wv-cross-row">`
-      + `<button type="button" class="ctl wv-cross-accept" data-enter-accept="${esc(markId)}">accept and cross</button>`
-      + `<button type="button" class="ctl wv-cross-cancel">stay outside</button>`
+      + `<div class="wv-enter-row">`
+      + `<button type="button" class="ctl wv-enter-accept" data-enter-accept="${esc(markId)}">accept and enter</button>`
+      + `<button type="button" class="ctl wv-enter-cancel">stay outside</button>`
       + `</div></div>`;
   }
   if (answer.refused) {
     const because = String(answer.refused.because ?? answer.refused.word ?? "").trim();
-    return `<div class="wv-cross-sheet is-refused" data-for="${esc(markId)}">`
-      + `<div class="wv-cross-head">refused at the door</div>`
-      + `<p class="wv-cross-body">${esc(because || "the mark opposes entry — you are left standing outside")}</p>`
-      + `<p class="wv-cross-edge wv-quiet">The act is in the record. Being turned away is a fact about the town.</p>`
+    return `<div class="wv-enter-sheet is-refused" data-for="${esc(markId)}">`
+      + `<div class="wv-enter-head">refused at the door</div>`
+      + `<p class="wv-enter-body">${esc(because || "the mark opposes entry — you are left standing outside")}</p>`
+      + `<p class="wv-enter-edge wv-quiet">The act is in the record. Being turned away is a fact about the town.</p>`
       + `</div>`;
   }
   // NO SILENT CLICK, EVER AGAIN (founder, 2026-08-20). A door that answered but
-  // crossed nothing used to render as nothing at all — the click vanished and the
+  // entering nothing used to render as nothing at all — the click vanished and the
   // reader had no way to tell a bug from a no-op. The office now says WHY it
-  // crossed nothing (`crossed_nothing`, and `note` where that is the reason),
-  // so the only remaining silence is a genuine crossing, which the interior
+  // entered nothing (`crossed_nothing`, and `note` where that is the reason),
+  // so the only remaining silence is a genuine entry, which the interior
   // announces on its own.
   //
   // The fallback text is deliberately not reassuring: an answer that entered
@@ -2530,9 +2530,9 @@ export function enterSheetHTML(answer = {}, markId = "") {
   // who saw their click do nothing should be told that rather than soothed.
   if (answer.crossed_nothing || answer.already) {
     const why = String(answer.crossed_nothing ?? answer.note ?? "").trim();
-    return `<div class="wv-cross-sheet is-refused" data-for="${esc(markId)}">`
-      + `<div class="wv-cross-head">${answer.already ? "you are already inside" : "the door answered, but nothing crossed"}</div>`
-      + `<p class="wv-cross-body">${esc(why || "the door took the act and crossed no threshold — this is a fault in the crossing, not an entry")}</p>`
+    return `<div class="wv-enter-sheet is-refused" data-for="${esc(markId)}">`
+      + `<div class="wv-enter-head">${answer.already ? "you are already inside" : "the door answered, but nothing was entered"}</div>`
+      + `<p class="wv-enter-body">${esc(why || "the door took the act and entered nothing — this is a fault in the passage, not an entry")}</p>`
       + `</div>`;
   }
   return "";
@@ -3136,14 +3136,14 @@ const STYLE = `
   border:1px solid var(--amber-dark); border-radius:999px; background:transparent; color:var(--amber); }
 .wv-enter:hover { background:rgba(224,160,42,.12); }
 .wv-enter[disabled] { opacity:.6; cursor:default; }
-.wv-cross-sheet { margin:10px 0 0; padding:10px 12px; border-left:4px solid var(--amber);
+.wv-enter-sheet { margin:10px 0 0; padding:10px 12px; border-left:4px solid var(--amber);
   background:rgba(224,160,42,.07); font-size:.92rem; }
-.wv-cross-sheet.is-refused { border-left-color:var(--red, #b4472b); background:rgba(180,71,43,.08); }
-.wv-cross-head { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); }
-.wv-cross-body { margin:5px 0 0; }
-.wv-cross-edge { margin:5px 0 0; font-size:.88rem; opacity:.9; }
-.wv-cross-reading { margin:7px 0 0; font-size:.8rem; font-style:italic; color:var(--dim); }
-.wv-cross-row { display:flex; gap:7px; margin-top:9px; flex-wrap:wrap; }
+.wv-enter-sheet.is-refused { border-left-color:var(--red, #b4472b); background:rgba(180,71,43,.08); }
+.wv-enter-head { font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); }
+.wv-enter-body { margin:5px 0 0; }
+.wv-enter-edge { margin:5px 0 0; font-size:.88rem; opacity:.9; }
+.wv-enter-reading { margin:7px 0 0; font-size:.8rem; font-style:italic; color:var(--dim); }
+.wv-enter-row { display:flex; gap:7px; margin-top:9px; flex-wrap:wrap; }
 .wv-int-exit { margin:0 0 14px; }
 .wv-int-empty { font-size:.9rem; font-style:italic; color:var(--dim); }
 .wv-entered-with { opacity:.7; font-style:italic; }
@@ -3249,7 +3249,7 @@ const STYLE = `
    "the 'step outside' button in the Telling still looks jarringly vanilla").
    Sharing the selector is the fix that cannot drift: there is now no way to
    restyle one of them and forget the other. */
-.wv-scene-exit .ctl, .wv-int-exit .ctl, .wv-cross-row .ctl {
+.wv-scene-exit .ctl, .wv-int-exit .ctl, .wv-enter-row .ctl {
   display:inline-flex; align-items:center; gap:.5em; cursor:pointer;
   padding:.55em .9em; border-radius:999px;
   font-size:.72rem; letter-spacing:.08em;
@@ -3257,15 +3257,15 @@ const STYLE = `
   border:1px solid rgba(232,196,139,.5);
   box-shadow:0 6px 22px rgba(0,0,0,.45);
 }
-.wv-scene-exit .ctl:hover, .wv-int-exit .ctl:hover, .wv-cross-row .ctl:hover { border-color:#f0d5a8; color:#f0d5a8; background:rgba(13,20,38,.97); }
+.wv-scene-exit .ctl:hover, .wv-int-exit .ctl:hover, .wv-enter-row .ctl:hover { border-color:#f0d5a8; color:#f0d5a8; background:rgba(13,20,38,.97); }
 /* the act takes a network write, and the button says so by going quiet rather
    than by going grey-and-dead: it is still the same pill, just not offering */
-.wv-scene-exit .ctl[disabled], .wv-int-exit .ctl[disabled], .wv-cross-row .ctl[disabled] {
+.wv-scene-exit .ctl[disabled], .wv-int-exit .ctl[disabled], .wv-enter-row .ctl[disabled] {
   cursor:default; opacity:.55; border-color:rgba(232,196,139,.28); box-shadow:none;
 }
 /* in the panel it sits on a background of its own, so the drop shadow that
    makes it read over the painting is only noise here */
-.wv-int-exit .ctl, .wv-cross-row .ctl { box-shadow:none; }
+.wv-int-exit .ctl, .wv-enter-row .ctl { box-shadow:none; }
 /* the paper floor — the placeholder ground is the drafting sheet (founder's
    word): warm and low-contrast, because it is the GROUND, and ground that
    competes with the furniture standing on it is a rug, not a floor */
@@ -4433,7 +4433,7 @@ export function mountViewer(appEl) {
   const viewSignature = () => [
     worldEpoch, state.crossing, state.markFilter,
     identityResolved() ? 1 : 0, JSON.stringify(state.dials),
-    enterExitEpoch,   // the crossings are the record too: a pane telling who is
+    enterExitEpoch,   // the enterexit acts are the record too: a pane telling who is
                      // inside what is stale the moment the ledger says otherwise
   ].join("|");
   const standpointKey = () => (isSpectating() || !state.handle ? SPECTATOR_ACTOR : state.handle);
@@ -4502,7 +4502,7 @@ export function mountViewer(appEl) {
     // where which standpoint is showing gets decided — including on the warm
     // switch, which reuses a built pane and never re-renders. Syncing the scene
     // only from renderCurrent left the previous resident's room on screen under
-    // the next resident's name: QA switched to kilean, who has crossed nothing,
+    // the next resident's name: QA switched to kilean, who has entered nothing,
     // and was shown standing in wright's Town Centre. Before the early return,
     // so a spectator switch still remounts the town.
     syncScene(key);
@@ -4748,13 +4748,13 @@ export function mountViewer(appEl) {
   // withholding it is the walker declining to author the act — so the first call
   // goes WITHOUT accept, and if the answer is terms, nothing has been written.
   // The second button is the walker's word. There is no third state to invent.
-  async function crossInto(markId, { accept = false, button = null } = {}) {
+  async function enterInto(markId, { accept = false, button = null } = {}) {
     const room = markId && byId.get(markId);
     if (!room) return;
     const card = button?.closest?.(".wv-card") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
     const label = button?.textContent;
     if (button) { button.disabled = true; button.textContent = accept ? "crossing…" : "at the door…"; }
-    const clearSheet = () => card?.querySelector(".wv-cross-sheet")?.remove();
+    const clearSheet = () => card?.querySelector(".wv-enter-sheet")?.remove();
     try {
       const response = await apexAct("enter", { mark: markId, ...(accept ? { accept: true } : {}) });
       const answer = response?.body ?? {};
@@ -4777,8 +4777,8 @@ export function mountViewer(appEl) {
       if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
       clearSheet();
       card?.insertAdjacentHTML("beforeend",
-        `<div class="wv-cross-sheet is-refused"><div class="wv-cross-head">the door did not take it</div>`
-        + `<p class="wv-cross-body">${esc(String(err?.message ?? err))}</p></div>`);
+        `<div class="wv-enter-sheet is-refused"><div class="wv-enter-head">the door did not take it</div>`
+        + `<p class="wv-enter-body">${esc(String(err?.message ?? err))}</p></div>`);
     }
   }
 
@@ -4797,7 +4797,7 @@ export function mountViewer(appEl) {
       // AND THE VIEW COMES OUT TO THE RIM — the VIEW, not the resident.
       //
       // The brief said stepping out returns you to the mark's rim, and taken
-      // literally that would have to move you. It must not: a crossing never
+      // literally that would have to move you. It must not: entering never
       // moves anybody (R15), which is the whole reason walking and entering are
       // two records. wright is inside the Town Centre on the ledger while his
       // walk position is 2.6 km away, and both of those are true — so writing a
@@ -4846,11 +4846,11 @@ export function mountViewer(appEl) {
     // and anything downstream of `radial.observer` name the resident. The
     // spectator keeps the spectator words.
     const name = observerNameFor(key, standpoint);
-    // THE CROSSINGS, asked BEFORE the eyes are opened — because if this
+    // THE ENTEREXIT ACTS, asked BEFORE the eyes are opened — because if this
     // standpoint is inside something, opening its eyes is the wrong question and
     // the answer is thrown away. `within` (below, geometric) is where you STAND;
     // this is what you have ENTERED. Walking onto a mark never fills it; only a
-    // crossing does. Two facts, two words, kept far apart on purpose (R15).
+    // entering does. Two facts, two words, kept far apart on purpose (R15).
     const { entered, insideOf, alongside } = standpointOccupancy({
       acts: enterExitLedger.acts, at: occupancyClock(), handle: key,
     });
@@ -7833,7 +7833,7 @@ export function mountViewer(appEl) {
     // the telling recomputes from there. For a RESIDENT recorded inside a room
     // it moves the view and not the record: they are still standing where the
     // ledger says, and stepping outside is the act that changes that. Moving
-    // the standpoint from a map control would be writing a crossing nobody
+    // the standpoint from a map control would be writing an entry nobody
     // asked for, which is the founder's call and not this button's.
     if (e.target.closest(".wv-map-world")) {
       state.cam = { x: 0, y: 0 };                 // the-town/let-there-be-light's own centre
@@ -7916,11 +7916,11 @@ export function mountViewer(appEl) {
     // the door on a card: first press asks, second press (on the terms sheet)
     // carries the walker's word
     const enterBtn = e.target.closest("[data-enter]");
-    if (enterBtn) { e.stopPropagation(); crossInto(enterBtn.dataset.enter, { button: enterBtn }); return; }
+    if (enterBtn) { e.stopPropagation(); enterInto(enterBtn.dataset.enter, { button: enterBtn }); return; }
     const acceptBtn = e.target.closest("[data-enter-accept]");
-    if (acceptBtn) { e.stopPropagation(); crossInto(acceptBtn.dataset.enterAccept, { accept: true, button: acceptBtn }); return; }
-    const cancelBtn = e.target.closest(".wv-cross-cancel");
-    if (cancelBtn) { e.stopPropagation(); cancelBtn.closest(".wv-cross-sheet")?.remove(); return; }
+    if (acceptBtn) { e.stopPropagation(); enterInto(acceptBtn.dataset.enterAccept, { accept: true, button: acceptBtn }); return; }
+    const cancelBtn = e.target.closest(".wv-enter-cancel");
+    if (cancelBtn) { e.stopPropagation(); cancelBtn.closest(".wv-enter-sheet")?.remove(); return; }
     const exitBtn = e.target.closest(".wv-int-exit-btn");
     if (exitBtn) { stepOutside(exitBtn.dataset.mark, exitBtn); return; }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } syncDevReadouts(); return; }
@@ -8579,10 +8579,10 @@ export function mountViewer(appEl) {
   // with acts. The walk loader's non-empty guard is right for positions and would
   // be wrong here: it would fall through a true "the room is empty" to the next
   // source and report a room the local record says has been emptied.
-  // THE CROSSINGS MUST COME FROM A LIVE SOURCE, and until now none of these were.
+  // THE ENTEREXIT ACTS MUST COME FROM A LIVE SOURCE, and until now none of these were.
   //
   // The site stages WORLD/enter-exit-ledger.md as a BUILD ARTIFACT, pinned to the
-  // world sha the site was built from. Crossings land continuously, so it is a
+  // world sha the site was built from. The acts land continuously, so it is a
   // photograph. A resident could walk through a door, refresh, and be told they
   // were still outside — which is exactly the last lie standing between the
   // founder's click and his interior, and it is not a caching bug: that file is
@@ -8591,7 +8591,7 @@ export function mountViewer(appEl) {
   // So the office goes FIRST. It reads the clone it actually has, the same move
   // /world/state already makes for the marks. The staged file stays as the
   // fallback, because a page served from somewhere with no office (the local
-  // spectator, a bare clone) must still derive occupancy — stale crossings are
+  // spectator, a bare clone) must still derive occupancy — stale acts are
   // worth more than none.
   //
   // THE THIRD LEG IS GONE (2026-08-26). It read the world repo's main tip, which
@@ -8627,7 +8627,7 @@ export function mountViewer(appEl) {
     for (const { url, json } of enterExitLedgerSources()) {
       try {
         // NO-STORE, and this one is load-bearing rather than tidy. This file is
-        // re-read IMMEDIATELY after a crossing is written, so a cached copy is a
+        // re-read IMMEDIATELY after an act is written, so a cached copy is a
         // page telling a resident they are still outside a door they just walked
         // through. The local rigs already answer no-store; the site serves the
         // ledger as a static file behind an edge that caches, so the freshness

@@ -115,7 +115,7 @@ function drawMap() {
 }
 
 // ---------------------------------------------------------- the threshold
-// "Crossing a portal changes what you read, never where you stand" — so the map
+// "Passing through a portal changes what you read, never where you stand" — so the map
 // does not go anywhere. It recedes and dims while class-space blooms over it.
 // The handoff is 170ms, not 260: measured through the crossing, a 260ms gap put
 // the map at 16% opacity before class-space had reached 7%, so the crossing read

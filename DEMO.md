@@ -47,7 +47,7 @@ building, so the branches were merged and **Enter and Exit are the rail's own
 buttons** — minted by its derivation from what the door granted, not written
 into the viewer. Exit starts dimmed, because she is within nothing; hovering it
 says why. Under the buttons is the part a palette cannot say: which marks she is
-inside, what Enter would cross next, and the word that door has already spoken.
+inside, what Enter would take next, and the word that door has already spoken.
 
 The demo office grants the two verbs **as a stub** — there is no world store
 here, so no class mark is being read. That is the last honest gap between this
@@ -62,8 +62,8 @@ illuminator set out for her.
 Actions now offers **enter The Post Office**, with the word the boat has already
 spoken (`WELCOMED`) and her terms underneath: *aboard when she sails.* The rail
 also says the walk comes with it — she is 450 m away and entering from outside
-bundles the navigation in, because you cannot cross a threshold you are not
-standing at.
+bundles the navigation in, because you cannot enter past a threshold you are
+not standing at.
 
 **3 · Press enter.**
 Nothing is recorded. A **threshold sheet** opens instead: the boat's own words,
@@ -71,12 +71,12 @@ the edge she forms back at you (`aboard`), what that edge means, and the reading
 law. This is the handshake's second half asking for your first: the door has
 terms, so it wants your explicit word, and *declining is free.*
 
-Press **stay outside** and look at Actions: she crossed into the Town Centre and
+Press **stay outside** and look at Actions: she entered the Town Centre and
 the Quay Reach on the way, and she is standing at the boat's gangway. A chain of
 entries stops where it was asked a question. Press enter again to reopen the
 sheet.
 
-**4 · Press "cross — I accept".**
+**4 · Press "accept and enter".**
 
 **This is the thing to look at.** The read stops being a point of view and
 becomes a place:
@@ -84,7 +84,7 @@ becomes a place:
 - **You are in: The Post Office** · `[exit]` — the chrome, with the chain
   (Town Centre › Quay Reach › The Post Office) under it.
 - **what this place says** — the boat's own read, and the terms you are here on.
-- **who is here** — *postmaster (you)* and *illuminator*. He crossed her
+- **who is here** — *postmaster (you)* and *illuminator*. He entered past her
   threshold two hours ago; he is a child of the boat now, in the same
   containment relation her cabins are, so he renders for free.
 - **what is inside** — The Deck, The Gangway, The Mail Hold, The Wheelhouse.

@@ -122,7 +122,7 @@ for (const mode of ["legacy", "flow"]) {
     const occupancy = BOARDED();
     assert.ok(occupancy.get("rider")?.length, "the walker really did cross — an unentered world proves nothing");
     const peopled = attachOccupancy(empty, occupancy);
-    assert.equal(peopled.containsEdges.length, 3, "and the crossings really did derive contains edges");
+    assert.equal(peopled.containsEdges.length, 3, "and the entries really did derive contains edges");
     assert.ok(peopled.containsEdges.every((e) => e.childKind === "entity"));
 
     const after = totalsOf(fold({ marks: peopled.marks, terrain, tick: 1, stakes, fanup: mode }));
