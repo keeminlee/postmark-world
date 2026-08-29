@@ -288,3 +288,84 @@ test("one resolver for who is acting, in a module both sides can import", () => 
   assert.match(VIEWER, /export \{ SPECTATOR_ACTOR, resolveActAsSelection \};/, "and re-exports for its existing readers");
   assert.doesNotMatch(VIEWER, /export function resolveActAsSelection\(/, "there is exactly one definition");
 });
+
+// ══ THE BOOT NEVER HANGS ON A REFUSED STANDPOINT (party-critical, 2026-08-29) ═
+//
+// FOUND LIVE, by the founder, minutes before a party: the office restarted, its
+// in-memory session keys went with it, and a browser holding a remembered
+// act-as handle booted straight into a refused standpoint read. The page sat on
+// "opening your eyes…" forever. He read it as "dev is down".
+//
+// ⚑ WHY IT WAS INVISIBLE: the bounce rides an HTTP 200. Every fetch in the
+// network tab was green, nothing threw, nothing logged. A failure that answers
+// "success" is the hardest kind to see, and no amount of console-watching would
+// have found it.
+
+import { apexBounced, bounceNotice } from "../spectator/viewer.mjs";
+
+test("a refusal dressed as success is recognised as a refusal", () => {
+  // the shape the office actually sent, with its own words
+  const real = {
+    error: "bounce",
+    defect: "wright is not one of your residents",
+    hint: "no key at the door — sign in, or read as a spectator",
+  };
+  assert.equal(apexBounced(real), true, "the word `bounce` on a 200 body");
+  assert.match(bounceNotice(real), /not one of your residents/, "the door's own defect");
+  assert.match(bounceNotice(real), /no key at the door/, "and its own hint");
+
+  // …and the same shape without the word: a defect where the affordance list
+  // should be. A standpoint read that answers no `actions` has not answered.
+  assert.equal(apexBounced({ defect: "no key at the door" }), true);
+
+  // ⚑ THE CAN-FAIL CONTROL. A predicate that says "bounced" to everything would
+  // pass every assertion above and would send every healthy boot to the
+  // spectator fallback — which is a worse bug than the one being fixed.
+  assert.equal(apexBounced({ actions: [{ action: "walk" }] }), false, "a real answer is not a bounce");
+  assert.equal(apexBounced({ actions: [] }), false, "nor is an honest empty affordance list");
+  assert.equal(apexBounced({ actions: [], defect: "" }), false, "nor an empty defect beside real actions");
+  assert.equal(apexBounced(null), false);
+  assert.equal(apexBounced("bounce"), false, "a string is not an answer");
+});
+
+test("the boot guard asks the one question it can answer for certain", () => {
+  // ⚑ KEYED ON THE OBSERVABLE, NOT ON A GUESSED CAUSE. Which await left the
+  // placeholder standing could not be proven from the source: the embodied path
+  // renders through `renderCurrent`, and `renderTelling` is deliberately SKIPPED
+  // when the camera move reports it re-rendered — so a silent failure in there
+  // leaves the placeholder with nothing to log. The guard asks instead: IS THERE
+  // A PANE? If the boot finished and nothing was built, the embodied read did
+  // not work, whatever the reason.
+  assert.match(VIEWER, /function ensureWorldRendered\(\) \{/);
+  assert.match(VIEWER, /if \(!host \|\| \$\(host, "\.wv-telling-pane"\)\) return false;/,
+    "a pane on screen is the proof the world rendered");
+  assert.match(VIEWER, /ensureWorldRendered\(\);/, "and the boot ends by asking");
+  // the fallback is the spectator read, which needs no key and no standpoint —
+  // so it can always be drawn
+  assert.match(VIEWER, /state\.actAs = SPECTATOR_ACTOR;\r?\n\s*state\.handle = "";\r?\n\s*walkState\.actorBound = false;/,
+    "falls back to the read that cannot fail");
+});
+
+test("the fallback says why, and forgets the name the door refused", () => {
+  // A working page that has silently stopped being you is the same failure one
+  // layer along, not a fix.
+  assert.match(VIEWER, /state\.bootNotice = bootBounce/, "the door's own sentence is kept");
+  assert.match(VIEWER, /wv-boot-notice/, "and rendered in the identity area");
+  assert.match(VIEWER, /handles\.length \? "" : " \u2014 sign in to act"/, "with the sign-in state when there is no key");
+  // a remembered handle the door will not honour is dropped, so a reload does
+  // not walk back into the same wall — which is how he met it twice
+  assert.match(VIEWER, /try \{ localStorage\.removeItem\(ACT_AS_KEY\); \} catch \{\}/,
+    "the refused name is forgotten");
+  // and choosing a face clears the notice — it explains an absence, not a state
+  assert.match(VIEWER, /state\.bootNotice = null; \/\/ a reader who picked a face/,
+    "the notice is about having no face, so picking one ends it");
+});
+
+test("nothing in the boot's last steps can end it silently", () => {
+  // The renders that build the world are wrapped, because a throw inside an
+  // awaited async function whose caller swallows leaves the placeholder up and
+  // the console clean — the exact signature of what was reported.
+  assert.match(VIEWER, /try \{ recentred = syncActorPosition\(\{ moveCamera: true \}\); \} catch \{\}/);
+  assert.match(VIEWER, /try \{ mountWalkers\(\); \} catch \{\}/);
+  assert.match(VIEWER, /if \(!recentred && state\.view === "telling"\) \{ try \{ renderTelling\(\); \} catch \{\} \}/);
+});
