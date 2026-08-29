@@ -15,7 +15,7 @@ import {
   bearingDeg, quantizeBearing, distanceBand, DIALS,
 } from "./world-engine.mjs";
 import {
-  marksContain, pointInPolygon, pointInRect, polygonOf, rect,
+  marksContain, marksOverlapArea, overlapArea, pointInPolygon, pointInRect, polygonOf, rect,
 } from "./geometry.mjs"; // the ONE containment definition — pure, browser-safe (no node:*)
 import {
   adjudicate, containsEdges as containsEdgesOf, entityChild, formatEnterExit,
@@ -89,7 +89,7 @@ export function containmentChain(pos, marks) {
   return nest.reverse().map((m) => ({ id: m.id, by: m.by, tier: m.tier, body: m.body, extentM: Math.max(m.extent?.w ?? 0, m.extent?.h ?? 0) }));
 }
 function extentArea(m) { return (m.extent?.w ?? 1) * (m.extent?.h ?? 1); }
-function pointWithinMark(pos, mark) {
+export function pointWithinMark(pos, mark) {
   const ring = polygonOf(mark);
   return ring
     ? pointInPolygon(Number(pos?.x), Number(pos?.y), ring)
@@ -239,7 +239,7 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
   };
 }
 
-// ───────────────────────── enter / exit(mark) — the acts ───────────────────
+// ───────────────────────── enter / exit(mark) — the crossings ───────────────
 //
 // DEMO SLICE (step 5). Walk and entry are fully decoupled axes (R15): the walk
 // above moves you to coordinates and never puts you INSIDE anything —
@@ -249,7 +249,7 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
 //
 // The plane is free; the tree is mechanical.
 
-/** The chain of entries between where a walker legally stands and a target.
+/** The chain of crossings between where a walker legally stands and a target.
  *
  *  Deep entry is never a teleport: enter(cabin) from the shore is walk +
  *  enter(ship) + enter(cabin), each link adjudicated on its own law, because
@@ -267,7 +267,9 @@ export function enterExitPlan(state, targetId, world, { occupancy = new Map(), h
   const target = byId.get(targetId);
   if (!target) return { error: `no mark '${targetId}' to enter` };
   if (!target.at || !target.extent) return { error: `'${targetId}' has no extent — there is no inside to step into` };
-  const nest = ancestorsByGeometry(target, world).slice().reverse(); // outermost → direct container
+  // THRESHOLD_KINDS, not the container list: this chain becomes ledger rows, and
+  // a land title is not a door somebody crossed (see the kinds note above).
+  const nest = ancestorsByGeometry(target, world, { kinds: THRESHOLD_KINDS }).slice().reverse(); // outermost → direct container
   const chain = [...nest.map((m) => m.id), target.id];
   const held = occupancy.get(handle) ?? [];
   const links = chain.filter((id) => !held.includes(id));
@@ -283,7 +285,7 @@ export function enterExitPlan(state, targetId, world, { occupancy = new Map(), h
   };
 }
 
-/** enter(mark) — the act. Adjudicates each link, stops at the first that
+/** enter(mark) — the crossing. Adjudicates each link, stops at the first that
  *  does not land, and answers with the rows the pen should append.
  *
  *  `accepted` is the walker's explicit word: `true` (he accepted the terms he
@@ -300,20 +302,20 @@ export function enter(state, targetId, world, {
   const byId = new Map(world.marks.map((m) => [m.id, m]));
   const said = accepted === true ? null : new Set(Array.isArray(accepted) ? accepted : accepted ? [accepted] : []);
   const within = [...(plan.held ?? [])];
-  const adjudications = [];
+  const crossings = [];
   const rows = [];
   const entered = [];
   let stranded = null, refused = null, awaiting = null;
 
   if (!plan.links.length) {
-    return { ...plan, adjudications, rows, entered, within, stranded: null, refused: null,
+    return { ...plan, crossings, rows, entered, within, stranded: null, refused: null,
              already: true, note: `${handle ?? "you"} is already within ${targetId}.` };
   }
 
   for (const id of plan.links) {
     const mark = byId.get(id);
     const verdict = adjudicate(mark, { accepted: said === null || said.has(id) });
-    adjudications.push(verdict);
+    crossings.push(verdict);
     if (verdict.effect === "entered") {
       rows.push(formatEnterExit({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
       entered.push(id);
@@ -334,7 +336,7 @@ export function enter(state, targetId, world, {
     }
     break;
   }
-  return { ...plan, adjudications, rows, entered, within, stranded, refused, awaiting };
+  return { ...plan, crossings, rows, entered, within, stranded, refused, awaiting };
 }
 
 /** exit(mark) — the walker nullifying his own side of the edge he authored.
@@ -358,7 +360,7 @@ export function exit(targetId, world, { occupancy = new Map(), handle = null, at
 // ── the QoL prompts (R15, both directions) ──────────────────────────────────
 //
 // The two axes being decoupled is the law; being decoupled SILENTLY would be a
-// trap. So the boundaries speak: walking into a mark's extent offers
+// trap. So the boundary crossings speak: walking into a mark's extent offers
 // entry, and walking out of the extent of a mark you are within offers exit.
 // Offers — the door asks, it never decides.
 
@@ -593,9 +595,50 @@ function householdNear(target, world, radius = DIALS.cluster_beyond_m) {
   return world.marks.filter((m) => m !== target && m.household === target.household && m.at && m.kind !== "parcel"
     && Math.hypot(m.at.x - target.at.x, m.at.y - target.at.y) <= radius);
 }
+// A THRESHOLD STRADDLING A WALL IS FURNITURE OF BOTH ROOMS IT JOINS
+// (founder-ruled 2026-08-27). Strict full-rect containment is the primary
+// relation and does not move; this stands BESIDE it. A door is in a wall —
+// that is the only place a door can be — so the-town/the-cellar-door runs
+// x 1080.5→1085.5 across the Lanternstep parlor's west wall at x 1083 and was
+// contained by neither room. It was a child of nothing, rendered nowhere, and
+// the parlor went on telling the founder about a door the parlor did not hold.
+//
+// OVERLAP ADMITS; IT DOES NOT RE-PARENT. A straddler appears in both rooms it
+// joins, which is the ruling rather than a duplicate to clean up.
+//
+// TWO BOUNDS, because "shares any ground" would flatten the world:
+//   1. STRICTLY SMALLER. Furniture is smaller than its room. Without this the
+//      relation is symmetric and a wall would hold the house it is part of.
+//   2. NOT THE FRAME. A mark at world scale is the establishing line, never a
+//      room with things in it — the same test every other reader here uses.
+// and a THRESHOLD, so a mark that merely grazes a corner is not furniture: at
+// least this fraction of the mark's OWN footprint must lie inside the room.
+// A quarter is chosen against the live case — the cellar door lies half inside
+// the parlor and 70% inside the house, so the ruling's own instance clears it
+// with room, while the mending basket's 7.5% graze does not.
+export const OVERLAP_ADMIT_FRAC = 0.25;
+
+/** The ONE admission test. `childrenByGeometry` and `directChildren` both ask
+ *  it, so what a room HOLDS and what it holds DIRECTLY can never be computed
+ *  under two different notions of inside. */
+function admitsAsFurniture(outer, inner) {
+  if (marksContain(outer, inner)) return true;      // the primary relation, unchanged
+  const or = rect(outer), ir = rect(inner);
+  const oa = or.w * or.h, ia = ir.w * ir.h;
+  if (!(ia < oa)) return false;                     // bound 1: furniture is smaller than its room
+  if (Math.max(or.w, or.h) >= DIALS.world_scale_extent_m) return false; // bound 2: the frame is not a room
+  // The analytic rect overlap is an UPPER BOUND on the true-shape overlap, so a
+  // mark that cannot clear the threshold even by its bounding box is rejected
+  // before anything is rasterized. This is what keeps the branch cheap: the
+  // main channel's 1.6M-cell ring is only ever asked about the handful of marks
+  // that genuinely straddle it.
+  if (overlapArea(or, ir) < OVERLAP_ADMIT_FRAC * ia) return false;
+  return marksOverlapArea(outer, inner) >= OVERLAP_ADMIT_FRAC * ia;
+}
+
 function childrenByGeometry(parent, world) {
   if (!parent.at || !parent.extent) return [];
-  return world.marks.filter((m) => m !== parent && m.at && m.kind === "sited" && marksContain(parent, m));
+  return world.marks.filter((m) => m !== parent && m.at && m.extent && m.kind === "sited" && admitsAsFurniture(parent, m));
 }
 // ONE STEP DOWN ONLY (Keemin, 2026-08-04: parents and children should show their
 // direct relations, no grandchildren and no grandparents).
@@ -605,21 +648,50 @@ function childrenByGeometry(parent, world) {
 // lamp and ledge as if all four were its own. A child is DIRECT when nothing else
 // inside the parent contains it. Strictly-larger, the same tiebreak the ancestor
 // walk uses, so two marks with one footprint cannot delete each other.
+// PRUNED UNDER THE SAME ADMISSION TEST that admitted them. When the overlap
+// branch was added to `childrenByGeometry` and this one still asked
+// `marksContain`, the cellar door was direct furniture of the parlor AND of the
+// house that holds the parlor — a straddler reaching past its own room, which
+// is not what "furniture of both rooms it joins" means. One predicate, two
+// readers: a room's contents and which of them are its OWN cannot disagree.
 function directChildren(contained) {
   return contained.filter((m) =>
-    !contained.some((n) => n !== m && extentArea(n) > extentArea(m) && marksContain(n, m)));
+    !contained.some((n) => n !== m && extentArea(n) > extentArea(m) && admitsAsFurniture(n, m)));
 }
 // The marks that CONTAIN the target, nearest (smallest) first — the exact
 // inverse of childrenByGeometry, under the same true-shape rule, so `inside`
 // and `within` can never disagree about an edge. The world-root is left out on
 // purpose: it frames everything, so naming it as context is noise — the same
 // test placementParent uses when it refuses the root as a parent.
-function ancestorsByGeometry(target, world) {
+// A PARCEL IS A CONTAINER, BUT IT IS NOT A DOOR — and those are two questions,
+// so they get two lists rather than one filter that has to mean both.
+//
+// CONTAINER_KINDS answers "what is this INSIDE?" and matches `placementParent`
+// (marks-fold.mjs), the primitive the WRITE path calls to decide the container
+// a new mark lands in; it has always counted "sited" OR "parcel". This filter
+// read `kind !== "sited"` and was the one place in the world that disagreed
+// with it, so the cellar door was FILED under the 25 x 25 m
+// rei/the-lanternstep-house-parcel and TOLD as standing in the 1854 x 1637 m
+// rei/the-lanternseed-gardens: a door in a field.
+//
+// THRESHOLD_KINDS answers "what must I CROSS?" and deliberately stays sited.
+// A crossing is an authored consent act that appends a row to the threshold
+// ledger, and a parcel is a land title, not a room — "wright enters
+// rei/the-lanternstep-house-parcel" would put a claim in the permanent record
+// that nobody made. It would also part the derivation from the record already
+// written: occupancy is derived from the ledger's own rows, and every crossing
+// in WORLD/threshold-ledger.md was recorded under the sited-only chain. That
+// this is a bound and not an oversight is pinned by its own test below.
+// Whether a title is a threshold is the founder's call, and it is one list away.
+const CONTAINER_KINDS = ["sited", "parcel"];
+const THRESHOLD_KINDS = ["sited"];
+
+function ancestorsByGeometry(target, world, { kinds = CONTAINER_KINDS } = {}) {
   if (!target.at || !target.extent) return [];
   const tr = rect(target), ta = tr.w * tr.h;
   const containing = world.marks
     .filter((m) => {
-      if (m === target || m.kind !== "sited" || !m.at || !m.extent) return false;
+      if (m === target || !kinds.includes(m.kind) || !m.at || !m.extent) return false;
       const mr = rect(m);
       if (Math.max(mr.w, mr.h) >= DIALS.world_scale_extent_m) return false;
       return mr.w * mr.h > ta && marksContain(m, target); // strictly larger, as the fold requires of a parent
