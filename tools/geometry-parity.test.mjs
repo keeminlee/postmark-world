@@ -2,12 +2,12 @@
 //
 // tools/coords-equivalence.mjs proves the v2→v3 migration preserved every mark's
 // POSITION. This proves the thing built on top of positions: that the CHAIN a
-// crossing derives is the same one, and that it is only the same when the
+// entering derives is the same one, and that it is only the same when the
 // derivation stands on the STORE.
 //
 // Founder-found 2026-08-20: clicking enter on rei/the-lanternstep-house did
 // nothing — the door answered success with entered: [], no terms, no refusal, no
-// ledger row. And entering a 2×2 bench in the town centre wrote crossings
+// ledger row. And entering a 2×2 bench in the town centre wrote acts
 // through a house 1.3 km away.
 //
 // ── THE LAW, and there is only ONE transform ────────────────────────────────
@@ -42,7 +42,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { crossingPlan } from "./world-verbs.mjs";
+import { entryPlan } from "./world-verbs.mjs";
 import { loadMarks } from "./marks-fold.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -137,12 +137,12 @@ test("THE STORE AND THE COMPOSING LOADER AGREE EVERYWHERE", () => {
   assert.deepEqual(off, [], `store and composing loader disagree on: ${off.slice(0, 5).join(", ")}`);
 });
 
-// ── crossing-space: the extension coords-equivalence does not cover ─────────
+// ── entry-space: the extension coords-equivalence does not cover ────────────
 const TOWN_CENTRE = "the-town/the-town-centre";
 const held = new Map([["wright", [TOWN_CENTRE]]]);
 const chainOn = (marks, target) => {
   const at = storeById.get(TOWN_CENTRE).at;
-  const plan = crossingPlan({ x: at.x, y: at.y }, target, { marks }, { occupancy: held, handle: "wright" });
+  const plan = entryPlan({ x: at.x, y: at.y }, target, { marks }, { occupancy: held, handle: "wright" });
   return plan.error ? null : plan;
 };
 
@@ -174,7 +174,7 @@ test("THE CROSSING-SPACE EQUIVALENCE: every mark's chain is the same on the stor
     checked += 1;
     if (JSON.stringify(a.chain) !== JSON.stringify(b.chain)) differ.push(id);
   }
-  assert.ok(checked > 100, `swept ${checked} marks in crossing-space`);
+  assert.ok(checked > 100, `swept ${checked} marks in entry-space`);
   assert.deepEqual(differ.slice(0, 5), [],
     `${differ.length} marks derive a different chain from the store than from the loader`);
 });

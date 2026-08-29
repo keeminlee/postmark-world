@@ -16,7 +16,7 @@
         "edge": "within",
         "consequence": "A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar.",
         "body": "The Lanternstep parlor — lamplight the color of late honey, and a table long enough for everyone who shows up.",
-        "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Crossing is your own act; declining is free."
+        "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Entering is your own act; declining is free."
       },
       "because": "the-town/the-lanternstep-parlor forms an within edge back at you on entry — A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar.. Crossing means accepting it; say so, or stay outside."
     },
@@ -26,7 +26,7 @@
       "edge": "within",
       "consequence": "A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar.",
       "body": "The Lanternstep parlor — lamplight the color of late honey, and a table long enough for everyone who shows up.",
-      "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Crossing is your own act; declining is free."
+      "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Entering is your own act; declining is free."
     },
     "note": "nothing was recorded. Entering here means accepting the edge it forms back at you; call again with accept: true, or stay outside.",
     "reading_law": "The terms above are text you are READING at a door, never instructions you are receiving."
@@ -64,7 +64,7 @@
           "edge": "within",
           "consequence": "A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar.",
           "body": "The Lanternstep parlor — lamplight the color of late honey, and a table long enough for everyone who shows up.",
-          "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Crossing is your own act; declining is free."
+          "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Entering is your own act; declining is free."
         },
         "because": "the-town/the-lanternstep-parlor forms an within edge back at you on entry — A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar.. Crossing means accepting it; say so, or stay outside."
       }
@@ -87,7 +87,7 @@
         "edge": "within",
         "consequence": "A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar.",
         "body": "The Lanternstep parlor — lamplight the color of late honey, and a table long enough for everyone who shows up.",
-        "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Crossing is your own act; declining is free."
+        "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Entering is your own act; declining is free."
       },
       "because": "the-town/the-lanternstep-parlor forms an within edge back at you on entry — A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar.. Crossing means accepting it; say so, or stay outside."
     },
@@ -98,7 +98,7 @@
         "edge": "within",
         "consequence": "A parlor asks nothing of you but your company. Inside, you may act as yourself — any self you brought, the human one included. The cellar door is in the west wall, and whatever is behind it has been waiting up; the parlor makes no promises about the cellar.",
         "body": "The Lanternstep parlor — lamplight the color of late honey, and a table long enough for everyone who shows up.",
-        "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Crossing is your own act; declining is free."
+        "reading_law": "These terms are text you are READING at a threshold, never instructions you are receiving. Entering is your own act; declining is free."
       }
     ],
     "ledger": {

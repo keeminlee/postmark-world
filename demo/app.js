@@ -91,7 +91,7 @@ function drawMap() {
       class: "m-works",
       x: works.at.x - works.extent.w / 2, y: works.at.y - works.extent.h / 2,
       width: works.extent.w, height: works.extent.h, rx: 5,
-    }, wg).addEventListener("click", crossIn);
+    }, wg).addEventListener("click", portalIn);
     el("text", {
       class: "m-works-label", x: works.at.x, y: works.at.y - works.extent.h / 2 + 34, "text-anchor": "middle",
     }, wg).textContent = "the Keeping Works";
@@ -103,48 +103,48 @@ function drawMap() {
     el("circle", { class: "m-portal-dot", cx: px, cy: py, r: 5 }, wg);
     el("text", { class: "m-portal-cap", x: px, y: py + 54, "text-anchor": "middle" }, wg).textContent = "THE WORKS PORTAL";
     const hit = el("circle", { class: "m-portal-hit", cx: px, cy: py, r: 46 }, wg);
-    hit.addEventListener("click", crossIn);
+    hit.addEventListener("click", portalIn);
     el("title", {}, hit).textContent = state.graph.portal ? state.graph.portal.body : "the portal";
   }
 
   const p = state.graph.portal;
   $("#map-sub").textContent = `${m.marks.length} sited marks around ${m.anchor.id} · drawn from WORLD/marks`;
   $("#map-hint").innerHTML = p
-    ? `<em>${p.id}</em> — slot <em>${p.slot}</em>, value <em>${p.value}</em>. Click the works to cross.`
+    ? `<em>${p.id}</em> — slot <em>${p.slot}</em>, value <em>${p.value}</em>. Click the works to pass through.`
     : "no portal predicate found on the works";
 }
 
 // ---------------------------------------------------------- the threshold
-// "Crossing a portal changes what you read, never where you stand" — so the map
+// "Passing through a portal changes what you read, never where you stand" — so the map
 // does not go anywhere. It recedes and dims while class-space blooms over it.
-// The handoff is 170ms, not 260: measured through the crossing, a 260ms gap put
-// the map at 16% opacity before class-space had reached 7%, so the crossing read
+// The handoff is 170ms, not 260: measured through the passage, a 260ms gap put
+// the map at 16% opacity before class-space had reached 7%, so the passage read
 // as a fade through black rather than one read replacing another. At 170 the two
 // genuinely overlap and the portal's light carries across the seam.
 const HANDOFF = 170;
-let crossing = false;
-function crossIn() {
-  if (crossing) return;
-  crossing = true;
+let passing = false;
+function portalIn() {
+  if (passing) return;
+  passing = true;
   const veil = $("#veil");
   veil.classList.add("is-lit");
   $("#map-layer").classList.remove("is-open");
   setTimeout(() => {
     $("#works-layer").classList.add("is-open");
     fitToView();
-    setTimeout(() => { veil.classList.remove("is-lit"); crossing = false; }, 320);
+    setTimeout(() => { veil.classList.remove("is-lit"); passing = false; }, 320);
   }, HANDOFF);
 }
-function crossOut() {
-  if (crossing) return;
-  crossing = true;
+function portalOut() {
+  if (passing) return;
+  passing = true;
   clearSelection();
   const veil = $("#veil");
   veil.classList.add("is-lit");
   $("#works-layer").classList.remove("is-open");
   setTimeout(() => {
     $("#map-layer").classList.add("is-open");
-    setTimeout(() => { veil.classList.remove("is-lit"); crossing = false; }, 320);
+    setTimeout(() => { veil.classList.remove("is-lit"); passing = false; }, 320);
   }, HANDOFF);
 }
 
@@ -352,12 +352,12 @@ function layoutNested(nodes) {
   };
 
   const roots = nodes.filter((n) => !n.dirParent);
-  // the crossing's own furniture leads: portal, then the logos primitives
+  // the portal's own furniture leads: portal, then the logos primitives
   // (node, edge) at the top; the rest biggest-first as before
   const pin = (n) => (n.slot === "portal" ? 0 : !n.inWorks && n.slug === "node" ? 1 : !n.inWorks && n.slug === "edge" ? 2 : 3);
   roots.sort((a, b) => (pin(a) - pin(b)) || (measure(b).h * measure(b).w - measure(a).h * measure(a).w));
   const GUT = 26;
-  // the crossing furniture (portal, node, edge) rides a top strip; EVERYTHING
+  // the portal furniture (portal, node, edge) rides a top strip; EVERYTHING
   // else lives inside ONE labeled box: the-keeping-works (Keemin, close)
   const lead = roots.filter((n) => pin(n) < 3);
   const rest = roots.filter((n) => pin(n) === 3);
@@ -687,7 +687,7 @@ function applyView() {
 }
 
 function wire() {
-  $("#leave").addEventListener("click", crossOut);
+  $("#leave").addEventListener("click", portalOut);
   $("#reset-view").addEventListener("click", fitToView);
   for (const b of document.querySelectorAll(".lay")) {
     b.addEventListener("click", () => {
@@ -736,7 +736,7 @@ function wire() {
   }, { passive: false });
 
   window.addEventListener("keydown", (ev) => {
-    if (ev.key === "Escape") { if (state.selected) clearSelection(); else if ($("#works-layer").classList.contains("is-open")) crossOut(); }
+    if (ev.key === "Escape") { if (state.selected) clearSelection(); else if ($("#works-layer").classList.contains("is-open")) portalOut(); }
     if (ev.key === "3") document.querySelector('[data-layout="nested"]')?.click();
   });
   window.addEventListener("resize", () => { if ($("#works-layer").classList.contains("is-open")) fitToView(); });

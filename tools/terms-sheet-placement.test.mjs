@@ -4,7 +4,7 @@
 // to "enter" with nothing to show for it. The sheet was there. It was just
 // nowhere he could see it.
 //
-// crossInto appended the door's answer with
+// enterInto appended the door's answer with
 // `card.insertAdjacentHTML("beforeend", sheet)`. By the time it runs, the card
 // already ends with a full investigate expansion tree — opened unconditionally
 // when the pinned bubble is built — and the pinned bubble is a 32rem scroll box
@@ -39,7 +39,7 @@ import { fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 
 import {
-  crossingSheetHTML, enterButtonHTML, liveMarkCard, markCellBylineRow, placeCrossingSheet,
+  enterSheetHTML, enterButtonHTML, liveMarkCard, markCellBylineRow, placeEntrySheet,
 } from "../spectator/viewer.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -82,12 +82,12 @@ function freshDom() {
 test("THE FALSIFIER: the door's answer lands beside the door, not past the end of the expansion tree", () => {
   const { dom } = freshDom();
   const { card } = mountBubble(dom);
-  const sheet = crossingSheetHTML(ASKS.bare, MARK);
+  const sheet = enterSheetHTML(ASKS.bare, MARK);
   assert.ok(sheet, "the office's real ask renders a sheet at all");
 
-  const node = placeCrossingSheet(card, sheet);
+  const node = placeEntrySheet(card, sheet);
   assert.ok(node && node.isConnected, "the sheet is on the page");
-  assert.ok(node.classList.contains("wv-cross-sheet"));
+  assert.ok(node.classList.contains("wv-enter-sheet"));
 
   // THE ASSERTION THAT WAS RED. Appended `beforeend`, the sheet is the card's
   // LAST child — after 24 relation nodes, inside a 32rem scroll box.
@@ -106,7 +106,7 @@ test("and the inserted node asks to be scrolled into its own container's view", 
   // who never got one.
   const { dom, seen } = freshDom();
   const { card } = mountBubble(dom);
-  const node = placeCrossingSheet(card, crossingSheetHTML(ASKS.bare, MARK));
+  const node = placeEntrySheet(card, enterSheetHTML(ASKS.bare, MARK));
   assert.equal(seen.length, 1, "exactly one scroll was requested");
   assert.equal(seen[0].el, node, "and it was the sheet, not the card or the bubble");
   assert.deepEqual(seen[0].opts, { block: "nearest" },
@@ -114,7 +114,7 @@ test("and the inserted node asks to be scrolled into its own container's view", 
 });
 
 test("THE RESIDUAL: a re-render between the click and the answer must not send the sheet into an orphan", () => {
-  // crossInto awaits the office. A re-render in that window replaces the card
+  // enterInto awaits the office. A re-render in that window replaces the card
   // node the closure captured, and the replaced node is still a perfectly good
   // object to write into — it is simply no longer on the page. That failure
   // looks EXACTLY like the one being fixed, so it is closed in the same act.
@@ -129,9 +129,9 @@ test("THE RESIDUAL: a re-render between the click and the answer must not send t
 
   const resolved = liveMarkCard(root, MARK, stale);
   assert.equal(resolved, live, "the live card is found by data-id, not trusted from before the await");
-  placeCrossingSheet(resolved, crossingSheetHTML(ASKS.bare, MARK));
-  assert.equal(live.querySelectorAll(".wv-cross-sheet").length, 1, "the answer is on the page");
-  assert.equal(stale.querySelectorAll(".wv-cross-sheet").length, 0, "and not in the orphan");
+  placeEntrySheet(resolved, enterSheetHTML(ASKS.bare, MARK));
+  assert.equal(live.querySelectorAll(".wv-enter-sheet").length, 1, "the answer is on the page");
+  assert.equal(stale.querySelectorAll(".wv-enter-sheet").length, 0, "and not in the orphan");
 });
 
 test("liveMarkCard keeps a card that is still connected, and answers null when there is no card at all", () => {
@@ -151,7 +151,7 @@ test("a card with no byline row still gets its answer — the fallback is the ol
   const doc = dom.window.document;
   doc.body.innerHTML = `<article class="wv-card" data-id="${MARK}"><div class="cbody">bare</div></article>`;
   const card = doc.querySelector(".wv-card");
-  const node = placeCrossingSheet(card, crossingSheetHTML(ASKS.bare, MARK));
+  const node = placeEntrySheet(card, enterSheetHTML(ASKS.bare, MARK));
   assert.ok(node?.isConnected);
   assert.equal(card.lastElementChild, node, "appended at the end, as before");
   assert.equal(seen.length, 1, "and still scrolled to");
@@ -169,7 +169,7 @@ test("THE CLASS: an enter affordance with NO card at all still has somewhere to 
     + markCellBylineRow(null, `<span class="wv-cell-actions">${enterButtonHTML(MARK)}</span>`)
     + `</div>`;
   const button = doc.querySelector("[data-enter]");
-  const node = placeCrossingSheet(null, crossingSheetHTML(ASKS.bare, MARK), { button });
+  const node = placeEntrySheet(null, enterSheetHTML(ASKS.bare, MARK), { button });
   assert.ok(node?.isConnected, "the answer is on the page even with no .wv-card anywhere");
   assert.equal(node.previousElementSibling, button.closest(".wv-cell-byline-row"),
     "and still beside the button that was pressed");
@@ -187,7 +187,7 @@ test("the pressed button's OWN row wins over some other card's row", () => {
     + `</article>`;
   const card = doc.querySelector(".wv-card");
   const button = doc.querySelector("#second [data-enter]");
-  const node = placeCrossingSheet(card, crossingSheetHTML(ASKS.bare, MARK), { button });
+  const node = placeEntrySheet(card, enterSheetHTML(ASKS.bare, MARK), { button });
   assert.equal(node.previousElementSibling?.id, "second", "the answer follows the press");
 });
 
@@ -195,15 +195,15 @@ test("THE REFUSAL GETS THE SAME TREATMENT — a door that says no must be as vis
   // The catch branch had its own hand-rolled `insertAdjacentHTML("beforeend")`,
   // so fixing only the terms path would have left the refusal below the fold —
   // half a fix that reads as a whole one until someone is refused.
-  assert.match(SOURCE, /placeCrossingSheet\(liveCard\(\),[\s\S]{0,220}?wv-cross-sheet is-refused/,
+  assert.match(SOURCE, /placeEntrySheet\(liveCard\(\),[\s\S]{0,220}?wv-enter-sheet is-refused/,
     "the catch places its sheet through the same function");
   assert.doesNotMatch(SOURCE, /card\?\.insertAdjacentHTML\("beforeend"/,
-    "no crossing sheet is appended to a card's end by hand any more");
+    "no entry sheet is appended to a card's end by hand any more");
 });
 
-test("THE WIRING: crossInto re-resolves the card after the await and re-places the bubble it grew", () => {
+test("THE WIRING: enterInto re-resolves the card after the await and re-places the bubble it grew", () => {
   assert.match(SOURCE, /const liveCard = \(\) => liveMarkCard\(root, markId, clicked\)/,
     "the card is a function of the live DOM, not a value captured before the await");
-  assert.match(SOURCE, /placeCrossingSheet\(liveCard\(\), sheet, \{ button \}\);\s*\n\s*positionBubbles\(\)/,
+  assert.match(SOURCE, /placeEntrySheet\(liveCard\(\), sheet, \{ button \}\);\s*\n\s*positionBubbles\(\)/,
     "and the bubble is re-placed after it grows, or the sheet is pushed off the pane it was just put on");
 });

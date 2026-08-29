@@ -47,7 +47,7 @@ building, so the branches were merged and **Enter and Exit are the rail's own
 buttons** — minted by its derivation from what the door granted, not written
 into the viewer. Exit starts dimmed, because she is within nothing; hovering it
 says why. Under the buttons is the part a palette cannot say: which marks she is
-inside, what Enter would cross next, and the word that door has already spoken.
+inside, what Enter would take next, and the word that door has already spoken.
 
 The demo office grants the two verbs **as a stub** — there is no world store
 here, so no class mark is being read. That is the last honest gap between this
@@ -62,8 +62,8 @@ illuminator set out for her.
 Actions now offers **enter The Post Office**, with the word the boat has already
 spoken (`WELCOMED`) and her terms underneath: *aboard when she sails.* The rail
 also says the walk comes with it — she is 450 m away and entering from outside
-bundles the navigation in, because you cannot cross a threshold you are not
-standing at.
+bundles the navigation in, because you cannot enter past a threshold you are
+not standing at.
 
 **3 · Press enter.**
 Nothing is recorded. A **threshold sheet** opens instead: the boat's own words,
@@ -71,12 +71,12 @@ the edge she forms back at you (`aboard`), what that edge means, and the reading
 law. This is the handshake's second half asking for your first: the door has
 terms, so it wants your explicit word, and *declining is free.*
 
-Press **stay outside** and look at Actions: she crossed into the Town Centre and
+Press **stay outside** and look at Actions: she entered the Town Centre and
 the Quay Reach on the way, and she is standing at the boat's gangway. A chain of
-crossings stops where it was asked a question. Press enter again to reopen the
+entries stops where it was asked a question. Press enter again to reopen the
 sheet.
 
-**4 · Press "cross — I accept".**
+**4 · Press "accept and enter".**
 
 **This is the thing to look at.** The read stops being a point of view and
 becomes a place:
@@ -84,7 +84,7 @@ becomes a place:
 - **You are in: The Post Office** · `[exit]` — the chrome, with the chain
   (Town Centre › Quay Reach › The Post Office) under it.
 - **what this place says** — the boat's own read, and the terms you are here on.
-- **who is here** — *postmaster (you)* and *illuminator*. He crossed her
+- **who is here** — *postmaster (you)* and *illuminator*. He entered past her
   threshold two hours ago; he is a child of the boat now, in the same
   containment relation her cabins are, so he renders for free.
 - **what is inside** — The Deck, The Gangway, The Mail Hold, The Wheelhouse.
@@ -98,7 +98,7 @@ Actions now offers **enter The Wheelhouse**, and the chip beside it already says
 `OPPOSED` — the wheelhouse's standing entry law is *the postmaster's own, and
 the door does not open to passengers*. Press it anyway.
 
-> The Wheelhouse opposed your crossing — you are left standing at its door,
+> The Wheelhouse opposed your entry — you are left standing at its door,
 > still within The Post Office.
 
 She is still aboard. The view did not move. **A refusal leaves you at the
@@ -122,7 +122,7 @@ Two more things worth five minutes, if you have them:
   (the visitor on the deck, inverted) — and the walk desk offers *step out?*
   rather than deciding for her. Walking never enters and never leaves.
 - **The record.** `http://localhost:4880/WORLD/threshold-ledger.md` is every
-  crossing, in the walk ledger's own grammar, one line per door.
+  enter and exit, in the walk ledger's own grammar, one line per door.
   `http://localhost:4880/api/world/occupancy` is what derives from it: each
   resident's chain, each mark's manifest, and the literal `contains` edges —
   every one of them with `childKind: "entity"`. **No edge is stored anywhere.**
@@ -138,7 +138,7 @@ Two more things worth five minutes, if you have them:
 - the field of view, the telling, the containment spine — computed client-side
   by the engine the viewer imports unbundled, exactly as postmark.town does;
 - the walk: `tools/walk.mjs`'s own grammar and derived position;
-- **the crossings**: `tools/thresholds.mjs` and `tools/world-verbs.mjs` — the
+- **the enterexit record**: `tools/thresholds.mjs` and `tools/world-verbs.mjs` — the
   entry law read off the mark, the adjudication, the chain, the refusal, the
   occupancy derivation, the scoped read. All of it.
 

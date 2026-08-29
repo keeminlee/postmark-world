@@ -5,10 +5,10 @@
 //
 // While entered, the ground you can walk is the room's ground. A destination
 // past it is not a longer walk, it is LEAVING — and leaving is the exit act, a
-// crossing the record keeps. Walking through it puts the walker outside the
+// act the record keeps. Walking through it puts the walker outside the
 // walls while the occupancy stack still says inside: two records disagreeing
 // about one body, and the walk ledger is the one telling the lie, because a
-// crossing never moves anybody (R15) and a walk never un-enters anything.
+// entering never moves anybody (R15) and a walk never un-enters anything.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -75,7 +75,7 @@ test("THE LIVE RECORD: someone really is inside a room small enough for this to 
   // proven on that resident's actual walls. This test used to name rei, and
   // went red the moment she lawfully stepped outside (2026-08-22: her exits
   // turned the whole suite — and with it the settlement's gate — red on an
-  // empty town). A resident's lawful act must never refuse the crossing, so an
+  // empty town). A resident's lawful act must never refuse the entry, so an
   // empty town SKIPS, out loud: the live proof simply waits for the next
   // resident indoors. The arithmetic stays pinned by the fixture tests above.
   const marks = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);

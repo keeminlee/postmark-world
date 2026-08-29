@@ -8,7 +8,7 @@
 //   • /world-engine/**          → the viewer module + the engine .mjs (so the
 //                                  browser imports the exact library, unbundled)
 //   • /WORLD/*.json             → the world's public record, off THIS clone's disk
-//   • /WORLD/threshold-ledger.md → the crossings; the page derives occupancy from
+//   • /WORLD/threshold-ledger.md → the enterexit acts; the page derives occupancy from
 //                                  them the way it derives position from walks
 //   • /api/stakes?holder=       → per-holder stakes, parsed from the town's
 //                                  stamp-ledger (LOCAL-ONLY; the island hides the half)
@@ -117,7 +117,7 @@ createServer(async (req, res) => {
     // record off this clone's disk, byte for byte as before.
     if (p === "/WORLD/world-state.json") return serveWorld(res, "world-state.json");
     if (p === "/WORLD/skeleton.json") return serveWorld(res, "skeleton.json");
-    // the crossings, as a FILE rather than as a door. Occupancy is derived from
+    // the enterexit acts, as a FILE rather than as a door. Occupancy is derived from
     // the acts client-side (the same shape as position from the walk ledger), so
     // what the page needs is the record, not this server's opinion of it — and
     // serving it here is what lets a local read stand on THIS clone's disk

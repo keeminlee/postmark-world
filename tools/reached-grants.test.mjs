@@ -271,7 +271,7 @@ test("the fighting verbs roll DICE, and every die is on the record", () => {
 
 test("the arena keeps the wheel, and the plain portal ground does NOT", () => {
   // LOGOS/classes.md § The arena, verbatim:
-  //   "Crossing into an arena is joining its fight. Nothing else in the town
+  //   "Entering an arena is joining its fight. Nothing else in the town
   //    has a threshold that means that, which is why it is a class and not a
   //    dial."
   // The discriminating leg: if both classes carried the wheel dials, the split
@@ -368,7 +368,7 @@ test("the portal ground carries entry terms, because it binds those it reaches",
   const g = frontmatter("WORLD/marks/the-town/the-cellar-door/mark.md");
   assert.ok(g.entry, "the portal ground declares an entry law");
   assert.ok(g.entry.edge, "it declares a counter-edge, which is what makes the door ASK rather than assume");
-  assert.ok(String(g.entry.consequence ?? "").length > 0, "and says what crossing costs, in its own words");
+  assert.ok(String(g.entry.consequence ?? "").length > 0, "and says what entering costs, in its own words");
 });
 
 /** Frontmatter as data. Deliberately a small hand-parser rather than the fold:

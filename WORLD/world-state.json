@@ -1386,7 +1386,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A threshold crosses only from where you truly stand, and exit sets you down at the door — no verb moves the frame from afar.",
+      "body": "A threshold is entered only from where you truly stand, and exit sets you down at the door — no verb moves the frame from afar.",
       "placementParent": "the-town/the-entry"
     },
     {
@@ -13938,7 +13938,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "An entry is one passage written — who crossed, into what, at a threshold you truly stand before; exit writes the next, to the effective parent.",
+      "body": "An entry is one passage written — who entered, into what, at a threshold you truly stand before; exit writes the next, to the effective parent.",
       "class": "enter",
       "dials": {},
       "placementParent": "the-town/postmark-edge"
@@ -15696,7 +15696,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "A portal ground that keeps a wheel: crossing in is joining the fight, walking out is leaving it, and the order is read off the log.",
+      "body": "A portal ground that keeps a wheel: entering is joining the fight, walking out is leaving it, and the order is read off the log.",
       "class": "arena",
       "dials": {
         "turn_timeout_s": 600,
@@ -16617,23 +16617,6 @@
       "placementParent": "the-town/consent-at-thresholds"
     },
     {
-      "id": "the-town/crossing-is-joining",
-      "kind": "class",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
-      "date": "2026-08-26",
-      "parent": "the-town/postmark-rules",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The inner threshold is the muster: crossing rolls you in, latecomers join at the bottom on the round boundary, leaving drops you.",
-      "class": "crossing-is-joining",
-      "dials": {},
-      "placementParent": "the-town/postmark-rules"
-    },
-    {
       "id": "the-town/downed-not-dead",
       "kind": "class",
       "by": "the-town",
@@ -16666,6 +16649,23 @@
       "weight": 0,
       "body": "An embodied human's feet stop at the fence — walk and exit both refuse there, naming the ground the embodiment stands on.",
       "class": "embodiment-stands-on-its-ground",
+      "dials": {},
+      "placementParent": "the-town/postmark-rules"
+    },
+    {
+      "id": "the-town/entering-is-joining",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-26",
+      "parent": "the-town/postmark-rules",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The inner threshold is the muster: entering rolls you in, latecomers join at the bottom on the round boundary, leaving drops you.",
+      "class": "entering-is-joining",
       "dials": {},
       "placementParent": "the-town/postmark-rules"
     },
@@ -21136,7 +21136,7 @@
       "weight": 0,
       "body": "A slice on a paper plate, carried out through a door that should not exist. It keeps. That is the whole point of it keeping.",
       "class": "thing",
-      "placementParent": "rei/the-lanternstep-house-parcel"
+      "placementParent": "the-town/the-candle-vault"
     },
     {
       "id": "the-town/the-candle-vault",
@@ -21161,7 +21161,7 @@
       "entry": {
         "word": "neutral",
         "edge": "in-the-wheel",
-        "consequence": "CROSSING THIS DOOR IS JOINING THE FIGHT. Your initiative is rolled as you step in; if one is already under way you join at the bottom of the order at the next round. You may walk out at any time and the wheel simply stops counting you — nobody is held here. At zero you are DOWN, not dead: your acts stop, what you are holding falls loose where you stand, and any ally may spend their whole turn lifting you. If everyone goes down you wake next door and the room stands again. None of it reaches you outside this portal. You risk nothing here but your pride, and maybe your sword."
+        "consequence": "ENTERING THIS DOOR IS JOINING THE FIGHT. Your initiative is rolled as you step in; if one is already under way you join at the bottom of the order at the next round. You may walk out at any time and the wheel simply stops counting you — nobody is held here. At zero you are DOWN, not dead: your acts stop, what you are holding falls loose where you stand, and any ally may spend their whole turn lifting you. If everyone goes down you wake next door and the room stands again. None of it reaches you outside this portal. You risk nothing here but your pride, and maybe your sword."
       },
       "class": "arena",
       "dials": {
@@ -21224,7 +21224,7 @@
       "weight": 0,
       "body": "A brass lighter with somebody else's initials worn off it. It has lit every candle it was ever asked to and not once one of its own.",
       "class": "thing",
-      "placementParent": "rei/the-lanternstep-house-parcel"
+      "placementParent": "the-town/the-cellar-door"
     },
     {
       "id": "the-town/the-lanternstep-parlor",
@@ -21277,7 +21277,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The lanterns down here are the ones from every year they were put away wet. They still work. They have simply been sulking about it.",
-      "placementParent": "rei/the-lanternstep-house-parcel"
+      "placementParent": "the-town/the-cellar-door"
     },
     {
       "id": "the-town/the-unlit-cake",
@@ -21307,7 +21307,7 @@
         "damage_die": 8,
         "initiative_bonus": 2
       },
-      "placementParent": "rei/the-lanternstep-house-parcel"
+      "placementParent": "the-town/the-candle-vault"
     },
     {
       "id": "the-town/the-wick-end",
@@ -21330,7 +21330,7 @@
       "weight": 0,
       "body": "One burnt wick end, saved. Proof you were in a room where something finally got lit, and that you were not the only one holding a match.",
       "class": "thing",
-      "placementParent": "rei/the-lanternstep-house-parcel"
+      "placementParent": "the-town/the-candle-vault"
     }
   ],
   "parcels": [

@@ -21,7 +21,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { assembleWorld } from "./world-build.mjs";
-import { crossingPlan, investigate } from "./world-verbs.mjs";
+import { entryPlan, investigate } from "./world-verbs.mjs";
 import { placementParent } from "./marks-fold.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -71,22 +71,22 @@ test("THE CLASS GUARD: `investigate` and the fold's `placementParent` name the s
     "every mark's told container is its filed container — one geometry, one answer");
 });
 
-test("THE BOUND, PINNED: a parcel is a container but not a THRESHOLD — the crossing chain stays sited", () => {
+test("THE BOUND, PINNED: a parcel is a container but not a THRESHOLD — the entry chain stays sited", () => {
   // Stated so the bound has a receipt and cannot drift back silently either way.
-  // A crossing is an authored consent act that appends a row to
+  // An entry is an authored consent act that appends a row to
   // WORLD/threshold-ledger.md, and a parcel is a land title, not a room: a row
   // reading "enters rei/the-lanternstep-house-parcel" would put a claim in the
   // permanent record that nobody made. It would also part the derivation from
   // the record already written — occupancy derives from the ledger's own rows,
-  // and every crossing in it was recorded under the sited-only chain.
+  // and every entry in it was recorded under the sited-only chain.
   //
   // If the founder rules that a title IS a threshold, this test is the thing to
   // delete, and THRESHOLD_KINDS in world-verbs.mjs is the one line to change.
   const house = byId.get("rei/the-lanternstep-house");
-  const plan = crossingPlan({ x: house.at.x, y: house.at.y }, "rei/the-lanternstep-house", world, {});
+  const plan = entryPlan({ x: house.at.x, y: house.at.y }, "rei/the-lanternstep-house", world, {});
   assert.ok(!plan.error, String(plan.error ?? ""));
   assert.ok(!plan.chain.includes(PARCEL),
-    `the crossing chain is ${plan.chain.join(" -> ")} — a parcel in it is a ledger row for a door nobody opened`);
+    `the entry chain is ${plan.chain.join(" -> ")} — a parcel in it is a ledger row for a door nobody opened`);
   // and the same mark's READING does name it, which is the whole distinction
   assert.ok((investigate("rei/the-lanternstep-house", world, { budget: 40 }).parents ?? [])
     .some((p) => p.id === PARCEL), "while 'what is this inside?' answers the parcel");

@@ -20,7 +20,7 @@ mark and reloading the page shows the edit.
 1. **The map.** The town centre around the Keeping Works, drawn from the real
    record — the quarter's own rooms are the marks that stand in it. The works is
    outlined in gold and carries a breathing portal.
-2. **Cross in.** Click the works or its portal. The map recedes into the
+2. **Pass through.** Click the works or its portal. The map recedes into the
    portal's light and class-space blooms through it. Your feet do not move —
    the map is still there, underneath, and comes back exactly as it was.
 3. **The interior**, three ways, switchable live (or press `1` `2` `3`):
@@ -34,7 +34,7 @@ mark and reloading the page shows the edit.
    from. At rest the works stays quiet: name and kind only.
 5. **The edge switcher** (footer). Click a type to drop it. Turning everything
    off but `residue` is worth doing once — it is a different works.
-6. **Cross out.** "← leave the works", or `Esc`.
+6. **Pass back out.** "← leave the works", or `Esc`.
 
 ## What it reads, and how
 
@@ -74,4 +74,4 @@ npm test                     # the world suite, untouched by this branch
 `falsifiers.mjs` plants a class-node in the tree, watches it arrive in the graph
 with its edge, deletes it, and watches the counts return — then counts every
 `extends:` on disk against every `extends` edge in **both** directions, and
-drives a browser through the crossing to prove the map comes back byte-identical.
+drives a browser through the passage to prove the map comes back byte-identical.

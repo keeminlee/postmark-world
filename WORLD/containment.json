@@ -3856,8 +3856,10 @@
     },
     {
       "id": "the-town/a-slice-to-take-home",
-      "parent": "rei/the-lanternstep-house-parcel",
+      "parent": "the-town/the-candle-vault",
       "chain": [
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -4155,15 +4157,6 @@
       ]
     },
     {
-      "id": "the-town/crossing-is-joining",
-      "parent": "the-town/postmark-rules",
-      "chain": [
-        "the-town/postmark-rules",
-        "the-town/the-keeping-works",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "the-town/declare-stance-on",
       "parent": "the-town/postmark-edge",
       "chain": [
@@ -4252,6 +4245,15 @@
       "parent": "the-town/postmark-edge",
       "chain": [
         "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/entering-is-joining",
+      "parent": "the-town/postmark-rules",
+      "chain": [
+        "the-town/postmark-rules",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -6503,8 +6505,9 @@
     },
     {
       "id": "the-town/the-good-lighter",
-      "parent": "rei/the-lanternstep-house-parcel",
+      "parent": "the-town/the-cellar-door",
       "chain": [
+        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -7696,8 +7699,9 @@
     },
     {
       "id": "the-town/the-sulking-lanterns",
-      "parent": "rei/the-lanternstep-house-parcel",
+      "parent": "the-town/the-cellar-door",
       "chain": [
+        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -7869,8 +7873,10 @@
     },
     {
       "id": "the-town/the-unlit-cake",
-      "parent": "rei/the-lanternstep-house-parcel",
+      "parent": "the-town/the-candle-vault",
       "chain": [
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
@@ -8078,8 +8084,10 @@
     },
     {
       "id": "the-town/the-wick-end",
-      "parent": "rei/the-lanternstep-house-parcel",
+      "parent": "the-town/the-candle-vault",
       "chain": [
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"

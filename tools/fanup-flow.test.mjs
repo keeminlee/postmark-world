@@ -100,17 +100,17 @@ test("conservation over the whole fixture: Σ stakes === the apex, with receipts
 // reason — and this one is measuring a NON-effect, which is exactly the shape
 // that rots into vacuous green.
 
-import { occupancyAt, parseThresholdLedger, formatCrossing, isMark, containsEdges } from "./thresholds.mjs";
+import { occupancyAt, parseThresholdLedger, formatEnterExit, isMark, containsEdges } from "./thresholds.mjs";
 import { attachOccupancy } from "./world-verbs.mjs";
 
 const totalsOf = (state) => Object.fromEntries(state.marks.map((m) => [m.id, m.weight ?? 0]));
-const crossings = (lines) => parseThresholdLedger(lines.join("\n")).acts;
+const acts = (lines) => parseThresholdLedger(lines.join("\n")).acts;
 
 // a walker boards the shed and a second one boards the stranger's district
-const BOARDED = () => occupancyAt(crossings([
-  formatCrossing({ handle: "rider", act: "enters", mark: "stranger/the-district", at: 1, word: "neutral" }),
-  formatCrossing({ handle: "rider", act: "enters", mark: "rider/my-bicycle", at: 1, word: "welcomed" }),
-  formatCrossing({ handle: "stranger", act: "enters", mark: "stranger/the-district", at: 1, word: "welcomed" }),
+const BOARDED = () => occupancyAt(acts([
+  formatEnterExit({ handle: "rider", act: "enters", mark: "stranger/the-district", at: 1, word: "neutral" }),
+  formatEnterExit({ handle: "rider", act: "enters", mark: "rider/my-bicycle", at: 1, word: "welcomed" }),
+  formatEnterExit({ handle: "stranger", act: "enters", mark: "stranger/the-district", at: 1, word: "welcomed" }),
 ]), 1);
 
 for (const mode of ["legacy", "flow"]) {
@@ -120,9 +120,9 @@ for (const mode of ["legacy", "flow"]) {
     const before = totalsOf(fold({ marks: empty.marks, terrain, tick: 1, stakes, fanup: mode }));
 
     const occupancy = BOARDED();
-    assert.ok(occupancy.get("rider")?.length, "the walker really did cross — an unentered world proves nothing");
+    assert.ok(occupancy.get("rider")?.length, "the walker really did enter — an unentered world proves nothing");
     const peopled = attachOccupancy(empty, occupancy);
-    assert.equal(peopled.containsEdges.length, 3, "and the crossings really did derive contains edges");
+    assert.equal(peopled.containsEdges.length, 3, "and the entries really did derive contains edges");
     assert.ok(peopled.containsEdges.every((e) => e.childKind === "entity"));
 
     const after = totalsOf(fold({ marks: peopled.marks, terrain, tick: 1, stakes, fanup: mode }));

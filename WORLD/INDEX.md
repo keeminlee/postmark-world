@@ -635,9 +635,9 @@ listed here — they are their households' own.*
 | the-town/a-grant-may-name-a-relation | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/consent-at-thresholds | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/consent-mechanic | predicated | the-town/consent-at-thresholds | mechanic=the apex door's entry/exit validators + arrival | 0 | 0 |  |
-| the-town/crossing-is-joining | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/downed-not-dead | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/embodiment-stands-on-its-ground | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/entering-is-joining | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/identity-is-pinned | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/identity-mechanic | predicated | the-town/identity-is-pinned | mechanic=the oauth door + tools/rename-handle.mjs; the Registrar's door round | 0 | 0 |  |
 | the-town/money-moves-at-the-save | class | the-town/postmark-rules |  | 0 | 0 |  |
@@ -838,14 +838,14 @@ listed here — they are their households' own.*
 | the-town/the-wear | predicated | the-town/let-there-be-light | wear=anonymous per-cell wear from walking | 0 | 0 |  |
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
-| the-town/a-slice-to-take-home | sited | 1096,-783 |  | 0 | 0 |  |
+| the-town/a-slice-to-take-home | sited | 1083.9,-792.4 |  | 0 | 0 |  |
 | the-town/the-candle-vault | sited | 1083,-792 |  | 0 | 0 |  |
 | the-town/the-cellar-door | sited | 1083,-792 |  | 0 | 0 |  |
-| the-town/the-good-lighter | sited | 1095.5,-784 |  | 0 | 0 |  |
+| the-town/the-good-lighter | sited | 1081,-793.8 |  | 0 | 0 |  |
 | the-town/the-lanternstep-parlor | sited | 1088,-792 |  | 0 | 0 |  |
-| the-town/the-sulking-lanterns | sited | 1096,-786.5 |  | 0 | 0 |  |
-| the-town/the-unlit-cake | sited | 1097,-783.5 |  | 0 | 0 |  |
-| the-town/the-wick-end | sited | 1098,-783 |  | 0 | 0 |  |
+| the-town/the-sulking-lanterns | sited | 1084.5,-790.2 |  | 0 | 0 |  |
+| the-town/the-unlit-cake | sited | 1083,-791.7 |  | 0 | 0 |  |
+| the-town/the-wick-end | sited | 1082.2,-792.4 |  | 0 | 0 |  |
 
 **Determined:** (nothing contested has resolved)
 **Vague (contested, unresolved — the resting state):** (none)

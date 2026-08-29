@@ -14,7 +14,7 @@
 //   · the field of view, the telling, the containment spine — the viewer imports
 //     the engine unbundled and computes them client-side, exactly as the island
 //   · the walk: tools/walk.mjs's own grammar and derived position
-//   · THE CROSSINGS: tools/thresholds.mjs adjudicates every entry against the
+//   · THE ENTEREXIT ACTS: tools/thresholds.mjs adjudicates every entry against the
 //     mark's own entry law, appends the acts, and derives occupancy from them.
 //     The handshake, the refusal, the chain, the scoped read — all real.
 //
@@ -38,7 +38,7 @@ import { fileURLToPath } from "node:url";
 
 import { parseWalkLedger, publicWalkers, fractionalCrossing, formatDeparture, positionAt, currentDeparture, extentForArrival } from "../tools/walk.mjs";
 import { publicResidents } from "../tools/where-is.mjs";
-import { enter, exit, enterPrompt, exitPrompt, enteredScope, crossingPlan } from "../tools/world-verbs.mjs";
+import { enter, exit, enterPrompt, exitPrompt, enteredScope, entryPlan } from "../tools/world-verbs.mjs";
 import { parseThresholdLedger, occupancyAt, occupantsOf, containsEdges, LEDGER_HEADER, termsAt, stampAt } from "../tools/thresholds.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -53,7 +53,7 @@ const STAMP_LEDGER = process.env.STAMP_LEDGER ?? "G:/Wright-HQ/postmark/WHITE_PA
 // reads as a mock-up and this one is meant to read as the place. The postmaster
 // lives 450 m from her own boat, which is why she walks first.
 // Overridable for the same reason DEMO_PACE_KM is: a demo dial, stated out loud.
-// QA for the interiors work needs the stub to hand out the handle whose crossing
+// QA for the interiors work needs the stub to hand out the handle whose entry
 // is on the REAL record, and hardcoding that resident into the demo household
 // would put him in a script he never agreed to be in.
 const DEMO_HANDLES = String(process.env.DEMO_HANDLES ?? "postmaster,illuminator,kilean")
@@ -75,24 +75,24 @@ const MIME = { ".mjs": "text/javascript; charset=utf-8", ".js": "text/javascript
 
 // ── demo/state — the only thing this server writes ──────────────────────────
 const WALKS = join(STATE, "walk-ledger.md");
-const CROSSINGS = join(STATE, "threshold-ledger.md");
+const ENTER_EXIT_LEDGER = join(STATE, "threshold-ledger.md");
 
 function ensureState() {
   if (!existsSync(STATE)) mkdirSync(STATE, { recursive: true });
   if (!existsSync(WALKS)) {
     // the town's real ledger, copied — then the demo's own departures appended,
-    // so the seeded occupant's body stands where his crossing says he is
+    // so the seeded occupant's body stands where his entry says he is
     const seeded = join(HERE, "seed", "walk-seed.md");
     const extra = existsSync(seeded) ? readFileSync(seeded, "utf8").split("\n").filter((l) => l.startsWith("- ")) : [];
     writeFileSync(WALKS, `${readFileSync(join(ROOT, "WORLD/walk-ledger.md"), "utf8").replace(/\n*$/, "\n")}${extra.join("\n")}\n`, "utf8");
   }
-  if (!existsSync(CROSSINGS)) {
+  if (!existsSync(ENTER_EXIT_LEDGER)) {
     const seed = join(HERE, "seed", "threshold-ledger.md");
-    writeFileSync(CROSSINGS, existsSync(seed) ? readFileSync(seed, "utf8") : LEDGER_HEADER, "utf8");
+    writeFileSync(ENTER_EXIT_LEDGER, existsSync(seed) ? readFileSync(seed, "utf8") : LEDGER_HEADER, "utf8");
   }
 }
 const readWalks = () => parseWalkLedger(readFileSync(WALKS, "utf8"));
-const readCrossings = () => parseThresholdLedger(readFileSync(CROSSINGS, "utf8"));
+const readEnterExits = () => parseThresholdLedger(readFileSync(ENTER_EXIT_LEDGER, "utf8"));
 const appendLines = (file, lines) => {
   const prev = readFileSync(file, "utf8");
   writeFileSync(file, `${prev}${prev.endsWith("\n") ? "" : "\n"}${lines.join("\n")}\n`, "utf8");
@@ -191,7 +191,7 @@ async function apex(body) {
   // the writer and the reader must agree to the last decimal (thresholds.mjs
   // § stampAt, and the QA bug that earned it)
   const at = stampAt(fractionalCrossing());
-  const occupancy = occupancyAt(readCrossings().acts, at);
+  const occupancy = occupancyAt(readEnterExits().acts, at);
   const here = standpointOf(handle, at);
 
   if (action === "walk") {
@@ -239,13 +239,13 @@ async function apex(body) {
         targetExtent: extentForArrival("centre", target?.extent), targetMarkId: markId, pace: DEMO_PACE_KM,
       })]);
     }
-    if (answer.rows.length) appendLines(CROSSINGS, answer.rows);
-    const after = occupancyAt(readCrossings().acts, at);
+    if (answer.rows.length) appendLines(ENTER_EXIT_LEDGER, answer.rows);
+    const after = occupancyAt(readEnterExits().acts, at);
     return {
       did: "enter",
-      terms: answer.crossings.map((c) => c.terms).filter(Boolean),
+      terms: answer.adjudications.map((c) => c.terms).filter(Boolean),
       result: {
-        target: markId, chain: answer.chain, crossings: answer.crossings,
+        target: markId, chain: answer.chain, adjudications: answer.adjudications,
         entered: answer.entered, stranded: answer.stranded,
         refused: answer.refused ?? null, awaiting: answer.awaiting ?? null,
         walked: answer.walk ?? null,
@@ -260,8 +260,8 @@ async function apex(body) {
     if (!markId) return { error: "bounce", code: 422, defect: "you are not within anything", hint: "there is nothing to step out of" };
     const answer = exit(markId, world, { occupancy, handle, at });
     if (answer.error) return { error: "bounce", code: 422, defect: answer.error, hint: "exit names a mark you are within" };
-    appendLines(CROSSINGS, answer.rows);
-    const after = occupancyAt(readCrossings().acts, at);
+    appendLines(ENTER_EXIT_LEDGER, answer.rows);
+    const after = occupancyAt(readEnterExits().acts, at);
     return {
       did: "exit",
       result: { target: markId, left: answer.left, within: after.get(handle) ?? [], into: answer.into,
@@ -305,11 +305,11 @@ createServer(async (req, res) => {
     // serves that instead of live state — which is precisely what the built site
     // does, and the condition the office-first order exists to survive.
     if (p === "/WORLD/threshold-ledger.md") return send(res, 200,
-      readFileSync(process.env.STAGED_LEDGER || CROSSINGS, "utf8"), MIME[".md"]);
+      readFileSync(process.env.STAGED_LEDGER || ENTER_EXIT_LEDGER, "utf8"), MIME[".md"]);
     // the office's own live ledger door, mirrored — the viewer asks this FIRST now,
     // and the demo must exercise the same path the site will (see server.mjs).
     if (p === "/api/world/threshold-ledger")
-      return json(res, 200, { ledger: readFileSync(CROSSINGS, "utf8"), source: "the demo rig's own state" });
+      return json(res, 200, { ledger: readFileSync(ENTER_EXIT_LEDGER, "utf8"), source: "the demo rig's own state" });
 
     // ── the identity door · THE STUB ────────────────────────────────────────
     if (p === "/api/ops/whoami")
@@ -351,13 +351,13 @@ createServer(async (req, res) => {
       const handle = url.searchParams.get("handle") ?? "";
       const at = stampAt(fractionalCrossing());
       const here = handle ? standpointOf(handle, at) : { x: 0, y: 0, name: "a spectator" };
-      const within = occupancyAt(readCrossings().acts, at).get(handle) ?? [];
+      const within = occupancyAt(readEnterExits().acts, at).get(handle) ?? [];
       // A spectator is a camera and is granted nothing — the rail hides itself
       // for them rather than showing an empty section.
       const actions = handle ? [
         { action: "enter", dispatches_to: "world_enter", grant: "yours", class: "resident", via: "within",
           from: "the-town/resident",
-          blurb: "Cross a mark's threshold. Walking moves you to coordinates and puts you inside nothing; entering is the act with mechanical weight, and the mark answers it with its own word." },
+          blurb: "Enter a mark. Walking moves you to coordinates and puts you inside nothing; entering is the act with mechanical weight, and the mark answers it with its own word." },
         { action: "exit", dispatches_to: "world_exit", grant: "yours", class: "resident", via: "within",
           from: "the-town/resident",
           blurb: "Step out of a mark you are within — you nullifying your own side of the edge you authored, which needs nobody's answer." },
@@ -382,11 +382,11 @@ createServer(async (req, res) => {
     // ── occupancy: the derived read the viewer's cut is drawn from ──────────
     if (p === "/api/world/occupancy" || p === "/api/occupancy") {
       const at = url.searchParams.get("at") === null ? fractionalCrossing() : Number(url.searchParams.get("at"));
-      const { acts, unrecognized } = readCrossings();
+      const { acts, unrecognized } = readEnterExits();
       const occupancy = occupancyAt(acts, at);
       return json(res, 200, {
         at,
-        within: Object.fromEntries(occupancy),                      // handle → the chain of marks they crossed into
+        within: Object.fromEntries(occupancy),                      // handle → the chain of marks they entered
         occupants: Object.fromEntries(occupantsOf(occupancy)),      // mark → who is inside it
         edges: containsEdges(occupancy),                            // the literal contains edges, entity children
         acts: acts.length, unrecognized: unrecognized.length,
@@ -422,10 +422,10 @@ createServer(async (req, res) => {
     json(res, 500, { error: String(e?.message ?? e), stack: String(e?.stack ?? "").split("\n").slice(0, 4) });
   }
 }).listen(PORT, () => {
-  const { acts } = readCrossings();
+  const { acts } = readEnterExits();
   console.log(`enter/exit DEMO  →  http://localhost:${PORT}`);
   console.log(`  record    : ${join(ROOT, "WORLD")}  (real, this worktree's fold)`);
-  console.log(`  demo state: ${STATE}  (${readWalks().departures.length} departures · ${acts.length} crossings) — delete it, or GET /api/demo/reset, to start over`);
+  console.log(`  demo state: ${STATE}  (${readWalks().departures.length} departures · ${acts.length} enterexit acts) — delete it, or GET /api/demo/reset, to start over`);
   console.log(`  identity  : STUBBED — household ${DEMO_HANDLES.join(", ")}`);
   console.log(`  the box, the real office and every main branch are untouched by this process.`);
 });

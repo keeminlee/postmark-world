@@ -2,7 +2,7 @@
 // terms-ask-fixture.mjs — GENERATE the office's real ASK, do not write one down.
 //
 // tools/terms-door.test.mjs used to carry a hand-written ASK object with a
-// comment claiming it was "the shape src/world-crossings.mjs really builds".
+// comment claiming it was "the shape src/world-enter-exit.mjs really builds".
 // It was not, and nothing could have told anyone: the note the office actually
 // sends reads "Entering here means accepting the edge it forms back at you"
 // while the fixture said "Crossing this threshold means…", the office ships a
@@ -30,7 +30,7 @@ const OUT = join(ROOT, "tools", "fixtures", "terms-ask.json");
 
 // The Lanternstep parlor: a real door in the committed world that declares a
 // counter-edge (`entry.edge: within`), so the office answers with the ASK
-// rather than a crossing. It is also the door the dungeon stage opens on.
+// rather than an entry. It is also the door the dungeon stage opens on.
 const MARK = "the-town/the-lanternstep-parlor";
 const WHO = "rei";
 
@@ -43,23 +43,31 @@ function officePathFromArgv(argv) {
 /** TWO REAL ANSWERS, because the same door gives two and the page must draw both.
  *
  *  A terms door is rarely the FIRST link of a chain. Walking up to the parlor
- *  from outside, the office crosses the garden and the house on the way — those
+ *  from outside, the office enters the garden and the house on the way — those
  *  land in the record — and only then stands at the parlor and asks. That
  *  answer carries `awaiting` AND `entered` AND a ledger receipt at once, which
  *  is a shape the hand-written fixture could not have imagined.
  *
  *  Knock from INSIDE the house and the chain is one link long, nothing is
- *  crossable before the door, and the office takes its `awaiting && !rows`
+ *  to enter before the door, and the office takes its `awaiting && !rows`
  *  branch: the pure ASK, with nothing written anywhere.
  *
  *  Both are the office's own output, generated the same way. `bare` is the one
  *  the sheet's terms branch is specified against; `chained` is what the dungeon
  *  door actually returns to a walker in the yard. */
 export async function generateTermsAsks(officePath, { mark = MARK, who = WHO } = {}) {
-  const { enterViaOffice } = await import(pathToFileURL(join(officePath, "src", "world-crossings.mjs")));
+  // BOTH OFFICE MODULE NAMES, new first. `src/world-crossings.mjs` was renamed
+  // `src/world-enter-exit.mjs` when the enter/exit pair stopped sharing a word
+  // with the ferry, and this generator resolves it by STRING out of a repo that
+  // moves on its own clock — so a fixture run against an office one pull behind
+  // must not die on the name. The legacy arm comes out when every office is past
+  // the rename.
+  const officeDoor = await import(pathToFileURL(join(officePath, "src", "world-enter-exit.mjs")))
+    .catch(() => import(pathToFileURL(join(officePath, "src", "world-crossings.mjs"))));
+  const { enterViaOffice } = officeDoor;
   const { assembleWorld } = await import(pathToFileURL(join(ROOT, "tools", "world-build.mjs")));
-  const { crossingPlan } = await import(pathToFileURL(join(ROOT, "tools", "world-verbs.mjs")));
-  const { formatCrossing, LEDGER_HEADER } = await import(pathToFileURL(join(ROOT, "tools", "thresholds.mjs")));
+  const { entryPlan } = await import(pathToFileURL(join(ROOT, "tools", "world-verbs.mjs")));
+  const { formatEnterExit, LEDGER_HEADER } = await import(pathToFileURL(join(ROOT, "tools", "thresholds.mjs")));
   const world = assembleWorld({
     worldState: JSON.parse(readFileSync(join(ROOT, "WORLD", "world-state.json"), "utf8")),
     skeleton: JSON.parse(readFileSync(join(ROOT, "WORLD", "skeleton.json"), "utf8")),
@@ -84,10 +92,10 @@ export async function generateTermsAsks(officePath, { mark = MARK, who = WHO } =
 
   // stand the walker inside everything up to (not including) the door, using
   // the world's OWN chain rather than a guess at what the containers are
-  const plan = crossingPlan(here, mark, world, {});
+  const plan = entryPlan(here, mark, world, {});
   const already = plan.chain.filter((id) => id !== mark);
   const seated = LEDGER_HEADER + "\n"
-    + already.map((id) => formatCrossing({
+    + already.map((id) => formatEnterExit({
       handle: who, act: "enters", mark: id, at: 0, word: "neutral", iso: "2026-08-27T00:00:00.000Z",
     })).join("\n") + "\n";
 

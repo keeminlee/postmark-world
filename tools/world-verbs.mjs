@@ -18,9 +18,9 @@ import {
   marksContain, marksOverlapArea, overlapArea, pointInPolygon, pointInRect, polygonOf, rect,
 } from "./geometry.mjs"; // the ONE containment definition — pure, browser-safe (no node:*)
 import {
-  adjudicate, containsEdges as containsEdgesOf, entityChild, formatCrossing,
+  adjudicate, containsEdges as containsEdgesOf, entityChild, formatEnterExit,
   isMark, occupantsOf, termsAt, withinOf,
-} from "./thresholds.mjs"; // DEMO SLICE — the crossing acts (step 5, jetto/enter-exit-demo)
+} from "./thresholds.mjs"; // DEMO SLICE — the enterexit acts (step 5, jetto/enter-exit-demo)
 
 // ───────────────────────── orient — charter + your state ────────────────────
 // The establishing line of every telling: the let-there-be-light root (light
@@ -141,7 +141,7 @@ export function investigate(markId, world, { depth = 1, budget = DIALS.context_b
     .map((entry) => entry.m);
   const children = allChildren.slice(0, budget)
     .map((m) => ({ id: m.id, kind: m.kind, at: m.at, weight: m.weight ?? 0, stamps: m.stamps ?? 0, body: firstLine(m.body) }));
-  // the entity children — the walkers who have crossed INTO this mark. They are
+  // the entity children — the walkers who have entered this mark. They are
   // children of it (R14: one contains taxonomy, no new edge class), so they ride
   // the manifest; every consumer that means AREA reads `children.filter(isMark)`
   // instead, which is exactly what the hoisted predicate is for.
@@ -239,7 +239,7 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
   };
 }
 
-// ───────────────────────── enter / exit(mark) — the crossings ───────────────
+// ───────────────────────── enter / exit(mark) — the enterexit pair ──────────
 //
 // DEMO SLICE (step 5). Walk and entry are fully decoupled axes (R15): the walk
 // above moves you to coordinates and never puts you INSIDE anything —
@@ -249,7 +249,7 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
 //
 // The plane is free; the tree is mechanical.
 
-/** The chain of crossings between where a walker legally stands and a target.
+/** The chain of entries between where a walker legally stands and a target.
  *
  *  Deep entry is never a teleport: enter(cabin) from the shore is walk +
  *  enter(ship) + enter(cabin), each link adjudicated on its own law, because
@@ -262,18 +262,18 @@ export function walk(state, dir, distM, world, { walkLedger = null, cell = 50 } 
  *  is exactly why a refusal leaves you AT the threshold rather than back where
  *  you started.
  */
-export function crossingPlan(state, targetId, world, { occupancy = new Map(), handle = null } = {}) {
+export function entryPlan(state, targetId, world, { occupancy = new Map(), handle = null } = {}) {
   const byId = new Map(world.marks.map((m) => [m.id, m]));
   const target = byId.get(targetId);
   if (!target) return { error: `no mark '${targetId}' to enter` };
   if (!target.at || !target.extent) return { error: `'${targetId}' has no extent — there is no inside to step into` };
   // THRESHOLD_KINDS, not the container list: this chain becomes ledger rows, and
-  // a land title is not a door somebody crossed (see the kinds note above).
+  // a land title is not a door somebody entered (see the kinds note above).
   const nest = ancestorsByGeometry(target, world, { kinds: THRESHOLD_KINDS }).slice().reverse(); // outermost → direct container
   const chain = [...nest.map((m) => m.id), target.id];
   const held = occupancy.get(handle) ?? [];
   const links = chain.filter((id) => !held.includes(id));
-  // The bundled walk (the QoL convergence): you cannot cross a threshold you
+  // The bundled walk (the QoL convergence): you cannot enter past a threshold you
   // are not standing at, so entering from outside carries the navigation with
   // it. Walking to the target's own ground puts you inside every link at once,
   // since the target sits within all of them.
@@ -285,7 +285,7 @@ export function crossingPlan(state, targetId, world, { occupancy = new Map(), ha
   };
 }
 
-/** enter(mark) — the crossing. Adjudicates each link, stops at the first that
+/** enter(mark) — the entry. Adjudicates each link, stops at the first that
  *  does not land, and answers with the rows the pen should append.
  *
  *  `accepted` is the walker's explicit word: `true` (he accepted the terms he
@@ -297,46 +297,46 @@ export function crossingPlan(state, targetId, world, { occupancy = new Map(), ha
 export function enter(state, targetId, world, {
   occupancy = new Map(), handle = null, at = 0, iso = null, accepted = false,
 } = {}) {
-  const plan = crossingPlan(state, targetId, world, { occupancy, handle });
+  const plan = entryPlan(state, targetId, world, { occupancy, handle });
   if (plan.error) return plan;
   const byId = new Map(world.marks.map((m) => [m.id, m]));
   const said = accepted === true ? null : new Set(Array.isArray(accepted) ? accepted : accepted ? [accepted] : []);
   const within = [...(plan.held ?? [])];
-  const crossings = [];
+  const adjudications = [];
   const rows = [];
   const entered = [];
   let stranded = null, refused = null, awaiting = null;
 
   if (!plan.links.length) {
-    return { ...plan, crossings, rows, entered, within, stranded: null, refused: null,
+    return { ...plan, adjudications, rows, entered, within, stranded: null, refused: null,
              already: true, note: `${handle ?? "you"} is already within ${targetId}.` };
   }
 
   for (const id of plan.links) {
     const mark = byId.get(id);
     const verdict = adjudicate(mark, { accepted: said === null || said.has(id) });
-    crossings.push(verdict);
+    adjudications.push(verdict);
     if (verdict.effect === "entered") {
-      rows.push(formatCrossing({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
+      rows.push(formatEnterExit({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
       entered.push(id);
       within.push(id);
       continue;
     }
     // A failed link strands you at THAT threshold — not at the shore, and not
-    // inside. Everything crossed before it stands; nothing after it is tried.
+    // inside. Everything entered before it stands; nothing after it is tried.
     stranded = id;
     if (verdict.effect === "refused") {
       refused = verdict;
       // The refusal is a fact about the town and belongs in the record: the act
       // was authored, the door answered opposed, and the occupancy derivation
       // reads that word and mints nothing.
-      rows.push(formatCrossing({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
+      rows.push(formatEnterExit({ handle, act: "enters", mark: id, at, word: verdict.word, iso }));
     } else {
       awaiting = verdict; // terms shown, the walker has not spoken — nothing recorded
     }
     break;
   }
-  return { ...plan, crossings, rows, entered, within, stranded, refused, awaiting };
+  return { ...plan, adjudications, rows, entered, within, stranded, refused, awaiting };
 }
 
 /** exit(mark) — the walker nullifying his own side of the edge he authored.
@@ -350,7 +350,7 @@ export function exit(targetId, world, { occupancy = new Map(), handle = null, at
   const leaving = held.slice(i);
   return {
     target: targetId,
-    rows: [formatCrossing({ handle, act: "exits", mark: targetId, at, iso })],
+    rows: [formatEnterExit({ handle, act: "exits", mark: targetId, at, iso })],
     left: leaving,
     within: held.slice(0, i),
     into: i > 0 ? held[i - 1] : null, // the enclosing scope the view restores to
@@ -360,12 +360,12 @@ export function exit(targetId, world, { occupancy = new Map(), handle = null, at
 // ── the QoL prompts (R15, both directions) ──────────────────────────────────
 //
 // The two axes being decoupled is the law; being decoupled SILENTLY would be a
-// trap. So the boundary crossings speak: walking into a mark's extent offers
+// trap. So the boundary acts speak: walking into a mark's extent offers
 // entry, and walking out of the extent of a mark you are within offers exit.
 // Offers — the door asks, it never decides.
 
 /** The mark a walker has walked INTO but is not within: the smallest containing
- *  mark he has not crossed into. Null when the two axes already agree. */
+ *  mark he has not entered. Null when the two axes already agree. */
 export function enterPrompt(state, world, { occupancy = new Map(), handle = null } = {}) {
   const held = occupancy.get(handle) ?? [];
   const chain = containmentChain(state, world.marks);
@@ -442,7 +442,7 @@ export function enteredScope(markId, world, { occupancy = new Map(), budget = DI
   };
 }
 
-/** The legal containment chain — the marks a walker has crossed INTO, root
+/** The legal containment chain — the marks a walker has entered, root
  *  first. The geometric `containmentChain` above answers where his BODY is;
  *  this answers where he stands in the tree, and they are allowed to differ. */
 export function withinChain(world, { occupancy = new Map(), handle = null } = {}) {
@@ -674,12 +674,12 @@ function directChildren(contained) {
 // rei/the-lanternstep-house-parcel and TOLD as standing in the 1854 x 1637 m
 // rei/the-lanternseed-gardens: a door in a field.
 //
-// THRESHOLD_KINDS answers "what must I CROSS?" and deliberately stays sited.
-// A crossing is an authored consent act that appends a row to the threshold
+// THRESHOLD_KINDS answers "what must I ENTER?" and deliberately stays sited.
+// An entry is an authored consent act that appends a row to the threshold
 // ledger, and a parcel is a land title, not a room — "wright enters
 // rei/the-lanternstep-house-parcel" would put a claim in the permanent record
 // that nobody made. It would also part the derivation from the record already
-// written: occupancy is derived from the ledger's own rows, and every crossing
+// written: occupancy is derived from the ledger's own rows, and every entry
 // in WORLD/threshold-ledger.md was recorded under the sited-only chain. That
 // this is a bound and not an oversight is pinned by its own test below.
 // Whether a title is a threshold is the founder's call, and it is one list away.

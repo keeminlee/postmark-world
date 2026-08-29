@@ -4,7 +4,7 @@
 //
 // Nothing here ships and nothing here asserts law. These test the DEMO's claims
 // about itself: that its graph is derived rather than kept, that every edge it
-// draws says what kind of edge it is, and that crossing out puts the map back.
+// draws says what kind of edge it is, and that passing back out puts the map back.
 
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join, dirname, sep } from "node:path";
@@ -195,7 +195,7 @@ ok("nothing was silently dropped", g.counts.unresolved === 0, `${g.counts.unreso
 // ---------------------------------------------------------------- F3 + F2b
 // Rendered, in a browser: the map after the return is byte-identical to the map
 // before entry, and every drawn edge has a visible type label.
-console.log("\nF3 — the crossing is lossless, and the drawn edges are labelled");
+console.log("\nF3 — the passage is lossless, and the drawn edges are labelled");
 const { chromium } = await import(pathToFileURL(PW).href);
 const browser = await chromium.launch();
 try {
@@ -205,8 +205,8 @@ try {
   const mapBefore = await page.locator("#map").innerHTML();
   // The identity check at the foot of this block compares two snapshots — and
   // two EMPTY snapshots are identical. Say the precondition out loud, or a map
-  // that never drew at all would sail through the crossing as "lossless".
-  ok("the map was drawn before the crossing (the identity check has something to compare)",
+  // that never drew at all would sail through the passage as "lossless".
+  ok("the map was drawn before the passage (the identity check has something to compare)",
     mapBefore.length > 0 && mapBefore.includes("m-works"), `${mapBefore.length} chars`);
 
   await page.locator("#map .m-portal-hit").click();
@@ -234,9 +234,9 @@ try {
   await page.waitForSelector("#map-layer.is-open");
   await page.waitForTimeout(900);
   const mapAfter = await page.locator("#map").innerHTML();
-  ok("the map after the return is identical to before the crossing", mapBefore === mapAfter,
+  ok("the map after the return is identical to before the passage", mapBefore === mapAfter,
     mapBefore === mapAfter ? `${mapBefore.length} chars unchanged` : describeMapDrift(mapBefore, mapAfter));
-  ok("the works is standing there to be crossed again", await page.locator("#map .m-portal-hit").isVisible());
+  ok("the works is standing there to be entered again", await page.locator("#map .m-portal-hit").isVisible());
 } finally {
   await browser.close();
 }

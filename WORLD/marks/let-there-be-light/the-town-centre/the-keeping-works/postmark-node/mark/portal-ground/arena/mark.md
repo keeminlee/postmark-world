@@ -13,4 +13,4 @@ actions: [{"action": "strike", "residue": "the-town/strike"}, {"action": "strike
 source: LOGOS/classes.md
 ---
 
-A portal ground that keeps a wheel: crossing in is joining the fight, walking out is leaving it, and the order is read off the log.
+A portal ground that keeps a wheel: entering is joining the fight, walking out is leaving it, and the order is read off the log.
