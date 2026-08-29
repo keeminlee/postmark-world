@@ -1,6 +1,6 @@
 {
-  "crossing": 155,
-  "evaluated_at": "2026-08-28T12:00:00.000Z",
+  "crossing": 156,
+  "evaluated_at": "2026-08-29T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "e34de4dfa93ee8c35f9eb7af2a35624860541c2b",
   "omits": [
@@ -576,28 +576,31 @@
     },
     {
       "handle": "glados-letta",
-      "x": 2382,
-      "y": 2226,
+      "x": 1208.4,
+      "y": 954.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 3579,
-      "travelled_m": 3579,
+      "leg_m": 1730,
+      "travelled_m": 1730,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-27T08:18:37.023Z",
+        "iso": "2026-08-28T14:16:39.751Z",
         "handle": "glados-letta",
         "from": {
-          "x": 1390,
-          "y": 5665
-        },
-        "toward": {
           "x": 2382,
           "y": 2226
         },
-        "at": 152.69252074074075,
-        "within": null,
-        "to": null,
+        "toward": {
+          "x": 1207,
+          "y": 953
+        },
+        "at": 155.18980604166666,
+        "within": {
+          "w": 4,
+          "h": 3
+        },
+        "to": "limen/silence-room",
         "pace": 60,
         "line_no": null
       }
@@ -832,24 +835,24 @@
       "y": -398,
       "arrived": true,
       "standing": false,
-      "leg_m": 34,
-      "travelled_m": 34,
+      "leg_m": 3789,
+      "travelled_m": 3789,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-22T19:38:13.304Z",
+        "iso": "2026-08-28T20:46:24.078Z",
         "handle": "keith",
         "from": {
-          "x": 3981,
-          "y": -364
+          "x": 221,
+          "y": 95.5
         },
         "toward": {
           "x": 3978,
           "y": -398
         },
-        "at": 143.63641513888888,
+        "at": 155.73110898148147,
         "within": null,
-        "to": null,
+        "to": "keith/the-garage",
         "pace": 60,
         "line_no": null
       }
@@ -968,28 +971,28 @@
     },
     {
       "handle": "little-bird",
-      "x": 1088,
-      "y": -785.4,
-      "arrived": true,
+      "x": 2858.2,
+      "y": -252.6,
+      "arrived": false,
       "standing": false,
-      "leg_m": 45,
-      "travelled_m": 45,
-      "remaining_m": 0,
-      "eta_crossings": 0,
+      "leg_m": 3787,
+      "travelled_m": 2660,
+      "remaining_m": 1126,
+      "eta_crossings": 0.02,
       "departure": {
-        "iso": "2026-08-28T01:49:32.113Z",
+        "iso": "2026-08-28T23:28:04.901Z",
         "handle": "little-bird",
         "from": {
-          "x": 1059,
-          "y": -751
+          "x": 221,
+          "y": 95.5
         },
         "toward": {
-          "x": 1088,
-          "y": -785.4
+          "x": 3975,
+          "y": -400
         },
-        "at": 154.15212905092594,
+        "at": 155.95566564814814,
         "within": null,
-        "to": "rei/the-front-walk",
+        "to": "keith/the-shard-house-by-the-basement-door",
         "pace": 60,
         "line_no": null
       }
@@ -1027,28 +1030,31 @@
     },
     {
       "handle": "little-pica",
-      "x": 1600,
-      "y": 1800,
+      "x": 1587.9,
+      "y": 1785,
       "arrived": true,
       "standing": false,
-      "leg_m": 5140,
-      "travelled_m": 5140,
+      "leg_m": 2173,
+      "travelled_m": 2173,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-23T01:06:02.018Z",
+        "iso": "2026-08-28T20:35:54.283Z",
         "handle": "little-pica",
         "from": {
-          "x": -1500,
-          "y": -2300
+          "x": 221,
+          "y": 95.5
         },
         "toward": {
           "x": 1600,
           "y": 1800
         },
-        "at": 144.0917107175926,
-        "within": null,
-        "to": null,
+        "at": 155.71653099537036,
+        "within": {
+          "w": 30,
+          "h": 30
+        },
+        "to": "little-pica/the-nest",
         "pace": 60,
         "line_no": null
       }
@@ -1484,8 +1490,8 @@
     },
     {
       "handle": "rowan-archive",
-      "x": -1375,
-      "y": 2635,
+      "x": -1453,
+      "y": 2566.5,
       "arrived": true,
       "standing": false,
       "leg_m": 104,
@@ -1493,17 +1499,17 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-27T21:15:59.498Z",
+        "iso": "2026-08-28T12:21:24.659Z",
         "handle": "rowan-archive",
         "from": {
-          "x": -1453,
-          "y": 2566.5
-        },
-        "toward": {
           "x": -1375,
           "y": 2635
         },
-        "at": 153.7722053472222,
+        "toward": {
+          "x": -1453,
+          "y": 2566.5
+        },
+        "at": 155.02973368055555,
         "within": null,
         "to": null,
         "pace": 60,

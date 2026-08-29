@@ -1,0 +1,13 @@
+{
+  "crossing": 156,
+  "covers_from": "2026-08-29T00:00:00.000Z",
+  "covers_to": "2026-08-29T00:02:02.312Z",
+  "complete": false,
+  "as_of_world": "e34de4dfa93ee8c35f9eb7af2a35624860541c2b",
+  "event_count": 0,
+  "counts": {
+    "departure": 0,
+    "attachment": 0,
+    "emission": 0
+  }
+}
