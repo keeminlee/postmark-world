@@ -777,12 +777,56 @@ you outranks what the place lends you, which outranks what you merely are.
 
 **Embodiment stands on the ground that grants it.** A human embodied by their
 own parcel may walk within its extent and no further: a departure past the
-fence is refused at the boundary, and `exit` — which would step them off the
-very ground the embodiment rests on — is refused with it. The refusal NAMES its
-reason; it is not a silent clip. This is not a special rule for humans, it is
-the ordinary shape of a ground-granted verb: when the grant comes from where
-you stand, leaving is giving it up, and the door says so rather than letting a
-walker discover it by arriving somewhere with no verbs.
+fence is refused at the boundary. The refusal NAMES its reason; it is not a
+silent clip. This is not a special rule for humans, it is the ordinary shape of
+a ground-granted verb: when the grant comes from where you stand, leaving is
+giving it up, and the door says so rather than letting a walker discover it by
+arriving somewhere with no verbs.
+
+*(Amended 2026-08-29 by the founder's seat ruling below. The clause also said
+`exit` "is refused with it", on the reasoning that stepping off the granting
+ground leaves nowhere for an embodied human to be. That is now false: there is
+somewhere, and it is where they always were — a voice through their resident,
+which is what the refusal's own hint already told them to go back to. A room
+nobody can leave was the cost, and the founder declined to pay it.)*
+
+**A ground that SEATS a human seats them whole.** Ruled by the founder
+2026-08-29, verbatim: *"inside a ground that seats a human, the human can do
+everything a resident can."*
+
+- **A ground seats a human when its class actually grants that human something**
+  — an entry whose `for:` names them, admitted through the ground channel, with
+  the relation `scope:` demands satisfied. This is derived, never declared: a
+  ground seats whoever it is already lending verbs to, so the seating and the
+  grant cannot disagree.
+- **Inside such a ground the human's affordances are the RESIDENT set** — walk,
+  say, enter, exit, give, take, and the ground's own verbs beside them. Not a
+  copy of the roster and not a list kept anywhere: the human is read against the
+  same law a resident standing there is read against.
+- **Any act needing a record WRITES THROUGH THE SEAT** — the resident whose
+  household hosts the human — and **the answer says so**. The human has no home
+  mark, no standpoint and no threshold record; the seat has all three, and they
+  are the ones actually moving. Writing the seat's name and disclosing the human
+  is the true thing; writing the human's name over rows the world cannot place
+  would be a record the atlas has no seat for, and writing the seat's name in
+  SILENCE is the ghost-writing the human class exists to prevent. The
+  disclosure is what makes the difference.
+- **Outside a seating ground, nothing changes.** A human affords nothing
+  ambiently, anywhere, exactly as before — the resident class's grants carry no
+  `for:` and so are a resident's alone. Seating is the whole of the exception,
+  and it ends at the ground's edge.
+- **Leaving is never the thing you may not do.** Exit is a resident's act, so a
+  seated human has it; and stepping out of the seating ground ends the seating,
+  which is the ordinary consequence rather than a refusal. Nobody is held
+  anywhere by the shape of their own hand.
+
+*(Found by the founder standing in the candle-vault as his human, able to strike
+the cake and unable to walk out of the room: the portal's roster named `for:
+human` on the fight verbs and the resident class's ambient `exit` named nobody,
+so it defaulted to resident and his human was not that. The door then told him
+exit was "not afforded where you stand" — a sentence that sent him looking for a
+place that affords it, when every place in the world does and none of them to
+him.)*
 
 ## The portal ground — a place that lends its own verbs
 
