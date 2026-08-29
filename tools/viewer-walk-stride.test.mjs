@@ -140,3 +140,42 @@ test("pressing the face you are already wearing does nothing", () => {
   assert.match(VIEWER, /const origin = actorOrigin\(\);\r?\n\s*if \(origin\) state\.cam = \{ x: origin\.x, y: origin\.y \};/,
     "and the recentre on a REAL switch is untouched — it is the line that looked like a reload bug");
 });
+
+// ══ THE STORE CARRIES WHAT THE STATIC RENDER HAS TO SEE (2026-08-29) ═════════
+//
+// TWO SURFACES READ A MARK, and only one of them was being told things. The
+// office's LIVE door reads the hydrated store and shrouds a loot-flagged thing
+// until the encounter is spent. The BAKED map reads WORLD/world-state.json —
+// and that file carried no `loot` at all, so the static render drew the wick end
+// and the slice from the first moment of the fight. The founder reported it
+// twice. One fact, two readers, held by one of them.
+//
+// The fix is one line in the fold beside `image`, which had already learned this
+// lesson: a surface that renders from the store cannot see a frontmatter key the
+// fold does not carry.
+
+test("the fold carries the shroud's flag into the store, beside the picture", () => {
+  const fold = readFileSync(join(HERE, "marks-fold.mjs"), "utf8");
+  assert.match(fold, /image: mk\.image,/, "the picture pointer, which already worked");
+  assert.match(fold, /loot: mk\.loot,/, "and the prize flag, which did not");
+  // both are undefined-on-absent, so a world with neither serializes unchanged
+  assert.doesNotMatch(fold, /loot: mk\.loot \?\? false/, "no default — absent stays absent");
+});
+
+test("the picture pointer was never the missing half", () => {
+  // ⚑ RECORDED BECAUSE IT WAS THE OBVIOUS SUSPECT AND IT WAS INNOCENT. The
+  // founder sees no mark art on dev, and the natural reading is that the fold
+  // drops `image` the way it dropped `loot`. It does not — it has carried the
+  // pointer since 2026-08-15, and the parlor art rendered through it on the
+  // rehearsal night.
+  //
+  // So the art's absence is not a fold defect: it is a STALE world-state.json
+  // in the clone the dev site builds from, written before the seven marks were
+  // restaged. The fix is to re-run the fold over that clone, not to change this
+  // file. Its own header states the invocation:
+  //     node tools/marks-fold.mjs
+  // which writes WORLD/world-state.json and WORLD/INDEX.md from the repo.
+  const fold = readFileSync(join(HERE, "marks-fold.mjs"), "utf8");
+  assert.match(fold, /node tools\/marks-fold\.mjs\s+# fold the repo, write WORLD\/world-state\.json/,
+    "the regeneration command is documented where a reader would look for it");
+});
