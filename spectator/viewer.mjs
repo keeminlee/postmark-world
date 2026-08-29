@@ -725,35 +725,6 @@ export function formatSpectatorCoordinate(point, elevationM) {
   return `${position} · elevation ${rounded >= 0 ? "+" : ""}${rounded.toLocaleString()} m`;
 }
 
-/**
- * DID THE APEX REFUSE THIS READ, dressed as success?
- *
- * ⚑ THE BOUNCE RIDES A 200, which is the whole reason this is a function and
- * not an `if (!response.ok)`. The office answers a refused standpoint read with
- * `{ error: "bounce", defect, hint }` and an HTTP 200 — so every fetch in the
- * network tab is green, nothing throws, nothing logs, and a reader watching the
- * console sees a healthy page that never finishes opening.
- *
- * Found live 2026-08-29: the office restarted, its in-memory session keys went
- * with it, and a browser holding a remembered act-as handle booted straight into
- * this. The founder read the blank page as "dev is down".
- */
-export function apexBounced(body) {
-  if (!body || typeof body !== "object") return false;
-  if (body.error === "bounce") return true;
-  // …and the shape without the word: an answer that carries a defect instead of
-  // the affordance list a standpoint read is supposed to return.
-  return !Array.isArray(body.actions) && typeof body.defect === "string" && !!body.defect;
-}
-
-/** What such a refusal should say to a reader, in the door's own words. */
-export function bounceNotice(body) {
-  const b = body?.bounce && typeof body.bounce === "object" ? body.bounce : body;
-  const defect = typeof b?.defect === "string" && b.defect ? b.defect : null;
-  const hint = typeof b?.hint === "string" && b.hint ? b.hint : null;
-  return [defect, hint].filter(Boolean).join(" — ") || "the door refused this standpoint";
-}
-
 export function viewerCanAct({ identityResolved = false, actAs = SPECTATOR_ACTOR } = {}) {
   return !!identityResolved && actAs !== SPECTATOR_ACTOR;
 }
@@ -8129,48 +8100,6 @@ export function mountViewer(appEl) {
     state.draftIds = draftMarkIds(portfolio.drafts);
     applyWorldLayer();
   }
-  /** The door's refusal from the last standpoint read, or null. Read by the boot
-   *  guard below; cleared the moment a read succeeds. */
-  let bootBounce = null;
-
-  /**
-   * THE WORLD IS ON SCREEN, OR THIS SAYS WHY — never neither.
-   *
-   * ⚑ THE FAILURE THIS CLOSES was invisible by construction: every fetch
-   * answered 200, nothing threw, nothing logged, and the page sat on "opening
-   * your eyes…" forever. The founder read it as the site being down.
-   *
-   * ⚑ AND IT IS KEYED ON THE OBSERVABLE, NOT ON A GUESSED CAUSE. I could not
-   * prove which await left the placeholder standing — the embodied path renders
-   * through `renderCurrent`, and `renderTelling` is deliberately SKIPPED when
-   * the camera move claims to have re-rendered, so any silent failure in there
-   * leaves the placeholder with nothing to log. Rather than guess at that, this
-   * asks the only question that actually matters and can be answered for
-   * certain: IS THERE A PANE? If the boot finished and nothing was built, the
-   * embodied read did not work, whatever the reason was.
-   *
-   * The fallback is the spectator world, which needs no key and no standpoint —
-   * so it can always be drawn — and the identity area carries the door's own
-   * sentence about why the reader is not embodied. A remembered handle the door
-   * will not honour is also forgotten, so the next reload does not walk back
-   * into the same wall.
-   */
-  function ensureWorldRendered() {
-    const host = $(root, ".wv-telling");
-    if (!host || $(host, ".wv-telling-pane")) return false;
-    state.actAs = SPECTATOR_ACTOR;
-    state.handle = "";
-    walkState.actorBound = false;
-    // forget the name the door refused — keeping it would reproduce this on
-    // every reload, which is exactly how the founder met it twice
-    try { localStorage.removeItem(ACT_AS_KEY); } catch {}
-    state.bootNotice = bootBounce
-      ?? "the office did not answer for that resident — you are reading as a spectator";
-    try { renderTelling(); } catch {}
-    try { renderIdentity(); renderActions(); renderModeControls(); } catch {}
-    return true;
-  }
-
   async function resolveIdentity() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
     if (pmKey()) {
@@ -8224,15 +8153,9 @@ export function mountViewer(appEl) {
     // ONE telling per identity resolve: syncActorPosition re-renders when it
     // moves the camera, so the fallback below covers only the case where it
     // could not (no origin, or a spectator)
-    // ⚑ WRAPPED, because a throw in here used to end the boot with the
-    // placeholder still up and (being inside an awaited async function whose
-    // caller swallows) nothing in the console.
-    let recentred = false;
-    try { recentred = syncActorPosition({ moveCamera: true }); } catch {}
-    try { mountWalkers(); } catch {}
-    if (!recentred && state.view === "telling") { try { renderTelling(); } catch {} } // the chips + filter reflect the new identity
-    // and whatever happened above, the reader ends up looking at a world
-    ensureWorldRendered();
+    const recentred = syncActorPosition({ moveCamera: true });
+    mountWalkers();
+    if (!recentred && state.view === "telling") renderTelling(); // the chips + filter reflect the new identity
     // the office has answered, so we finally know whose first visit this is
     const unseen = !!tourWho() && !readTourSeen(localStore, tourWho());
     $(root, ".wv-tour-open")?.classList.toggle("is-unseen", unseen);
@@ -8282,7 +8205,6 @@ export function mountViewer(appEl) {
     // so coming back is the same page rather than a fresh one.
     state.actAs = actor;
     state.handle = actor;
-    state.bootNotice = null; // a reader who picked a face is no longer being told why they had none
     try {
       localStorage.setItem(ACT_AS_KEY, actor);
       localStorage.setItem(LAST_RESIDENT_KEY, actor);
@@ -8355,18 +8277,10 @@ export function mountViewer(appEl) {
     if (!box) return;
     const handles = state.whoami?.handles ?? [];
     const spectator = `<button type="button" class="ctl handleopt${isSpectating() ? " on" : ""}" data-act-as="${SPECTATOR_ACTOR}" aria-pressed="${isSpectating()}">◉ Spectator</button>`;
-    // ⚑ WHY YOU ARE NOT EMBODIED, IN THE DOOR'S OWN WORDS. Set only by the boot
-    // guard, and only when the world had to fall back to the spectator read —
-    // so on an ordinary page it renders nothing at all. Without it the fallback
-    // would be its own quiet lie: a working page that has silently stopped being
-    // you, which is the failure one layer along rather than a fix.
-    const notice = state.bootNotice
-      ? `<p class="wv-quiet wv-boot-notice">${esc(state.bootNotice)}${handles.length ? "" : " — sign in to act"}</p>`
-      : "";
     box.innerHTML = `<h2>Act As</h2><div class="handlepick">${spectator}${handles.map((handle) =>
           `<button type="button" class="ctl handleopt${state.actAs === handle ? " on" : ""}" data-act-as="${esc(handle)}" aria-pressed="${state.actAs === handle}">${esc(handle)}${state.actAs === handle
             ? ` · <span class="wv-stamp-balance">✦ ${Number.isInteger(state.actorBalance) ? state.actorBalance : state.actorBalance === null ? "…" : "unavailable"}</span>`
-            : ""}</button>`).join("")}</div>${notice}`;
+            : ""}</button>`).join("")}</div>`;
   }
 
   // ───────── the Actions rail ─────────
@@ -8487,11 +8401,6 @@ export function mountViewer(appEl) {
       next = response.ok && Array.isArray(body?.actions)
         ? { for: handle, entries: body.actions, status: "ready", detail: "" }
         : { for: handle, entries: [], status: "unavailable", detail: body?.defect || `the apex answered ${response.status}` };
-      // ⚑ AND A REFUSED STANDPOINT IS REMEMBERED, not just reported as an empty
-      // palette. A bounce here means the door does not hold this key's claim to
-      // this resident — the boot guard below turns that into a spectator world
-      // with the reason on screen, rather than a page that never opens.
-      bootBounce = apexBounced(body) ? bounceNotice(body) : null;
       // ── THE GROUND'S OWN STRIDE, off the read we were already making ──
       //
       // The founder, live-testing 2026-08-29: "I still can't walk less than 1
