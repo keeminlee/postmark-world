@@ -75,6 +75,28 @@ const cockpitAiming = () => {
 // why it names no destination and appears in no containment answer
 export const WORLD_ROOT_ID = "the-town/let-there-be-light";
 
+/**
+ * WHICH MARK THE CHIP IN THE PAINTING'S CORNER IS. It names the mark whose
+ * INTERIOR you are looking at, and outdoors that is the world root.
+ *
+ * ⚑ ENTERED, NOT CONTAINING, and the founder ruled this in exactly these words
+ * (2026-08-29): "it has to be the mark you're currently viewing the INTERIOR OF
+ * (aka ENTERED). geometric containment smallest is NOT appropriate for this."
+ *
+ * THE ARGUMENT IS THE WHOLE GUARANTEE. This function is never handed the marks
+ * list, so there is no containment chain here to fall back on by accident — the
+ * only thing it can answer with is a mark somebody ENTERED. The caller passes
+ * what the camera is showing, which is set from `insideOf`, which
+ * `standpointOccupancy` folds out of the enter-exit ledger's own acts. The
+ * distinction is the one this file already spells out at that function: standing
+ * on a mark's ground is not being inside it, you can stand on the Post Office's
+ * ground all day and have entered nothing, and only the ENTER act puts you
+ * inside. The two answers routinely disagree, and the chip follows the act.
+ */
+export function chipMark({ viewingInteriorOf = null } = {}) {
+  return viewingInteriorOf || WORLD_ROOT_ID;
+}
+
 const markIndex = (marks) => marks instanceof Map
   ? marks
   : new Map((marks ?? []).filter((mark) => mark?.id).map((mark) => [mark.id, mark]));
@@ -2338,9 +2360,32 @@ export function coLocatedMarkIds(marks, withinM = FAN_SAME_SPOT_M) {
   return stacked;
 }
 
-export function smallestContainingMark(point, marks = []) {
+export function smallestContainingMark(point, marks = [], { insideRoomId = null } = {}) {
   const x = Number(point?.x), y = Number(point?.y);
   if (![x, y].every(Number.isFinite)) return null;
+  // ⚑ INSIDE A ROOM, THE ROOM AND EVERYTHING AROUND IT STOP ANSWERING — and it
+  // has to be everything around it, not just the room. Dropping the room alone
+  // was the first version of this and it was worse than useless: the containment
+  // ladder simply fell through to the next rung, so the vault's card was
+  // replaced by the CELLAR DOOR's card at every pixel of the same floor. One
+  // noisy card swapped for another.
+  //
+  // The rule that is actually meant: while you are inside R, the ground in front
+  // of you is R's floor, and a mark that CONTAINS R is not in this view at all —
+  // it is on the other side of the walls. So R itself and every mark enclosing
+  // it are out, and everything standing on R's floor is untouched.
+  //
+  // TESTED BY THE ROOM'S OWN ANCHOR, which is the cheapest true reading of
+  // "encloses R" available here — a containment test this function already owns,
+  // rather than a second geometry.
+  const room = insideRoomId ? (marks ?? []).find((mark) => mark?.id === insideRoomId) : null;
+  const encloses = (mark) => insideRoomId
+    && (mark?.id === insideRoomId || (room ? pointInsideMark(room.at, mark) : false));
+  // ⚑ AND THE LIST ITSELF STAYS WHOLE. `isAmbientMark` walks a mark's parent
+  // chain through this same array and treats a parent it cannot find as ambient,
+  // so filtering the room OUT of `marks` before the call would have swallowed
+  // the room's own predicated children along with it. The marks are all still
+  // here; some are dropped from the answer.
   // A THING IS NOT GROUND (Keemin, 2026-08-22: carried things were winning the
   // walk desk's "From"). A class:thing object rides at its holder's own feet —
   // a 1×1 rect containing your point, so smallest-area crowned it your
@@ -2349,20 +2394,36 @@ export function smallestContainingMark(point, marks = []) {
   // (Deliberately class-keyed, not size-keyed — a tiny sited mark like a bench
   // is still ground; a giant sculpture is still a thing.)
   return (marks ?? [])
-    .filter((mark) => mark?.class !== "thing" && !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
+    .filter((mark) => mark?.class !== "thing" && !encloses(mark)
+      && !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
     .map((mark) => ({ mark, area: Number(mark.extent.w) * Number(mark.extent.h) }))
     .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)))[0]?.mark?.id ?? null;
 }
 
+/**
+ * ⚑ `insideRoomId` IS THE ROOM WHOSE INTERIOR IS ON SCREEN, and only the
+ * CONTAINMENT half honours it (founder, 2026-08-29: "right now EVERYWHERE you
+ * put your mouse, the candle vault's mark-card noisily fills the center of the
+ * screen").
+ *
+ * A room's extent is the whole floor of its own interior, so containment answers
+ * with the room at every pixel — its card was not something a reader summoned by
+ * pointing at it, it was what pointing at nothing meant in here. The PIP half is
+ * left alone on purpose: a pip is a target the size of the thing it names, so
+ * hovering one is an aimed act rather than a side effect of moving the mouse.
+ * Nothing becomes unreachable either way — the chip in the painting's corner
+ * names this room and opens its card.
+ */
 export function paintingMarkAtPoint({
   screenPoint,
   worldPoint,
   glyphs = [],
   marks = [],
   radiusPx = MARK_SNAP_RADIUS_PX,
+  insideRoomId = null,
 } = {}) {
   return snappedMarkAtPoint(screenPoint, glyphs, radiusPx)
-    ?? smallestContainingMark(worldPoint, marks);
+    ?? smallestContainingMark(worldPoint, marks, { insideRoomId });
 }
 
 export function toldPaintingMarks(radial, marks = []) {
@@ -3487,11 +3548,20 @@ const STYLE = `
    2026-08-04) — it is the only mark with no footprint to hover over and no pip on
    the painting to find, so the corner is the whole of its target. */
 .wv-worldmark { position:absolute; z-index:6; top:13px; left:13px; }
+/* ⚑ AND IT TAKES THE TIER OF WHATEVER IT NAMES (2026-08-29). Blue was hardcoded
+   here while this dot could only ever be let-there-be-light, and blue is the
+   colour this whole page uses to mean CONSTITUTION. Now that the chip names the
+   room you are standing inside, a blue dot over somebody's home would be the
+   surface saying "constitution" about a house — in the one language a reader
+   learns by colour rather than by words. The tint is the same tier reading every
+   pip and every card is coloured from. */
 .wv-root-mark { display:block; width:26px; height:26px; padding:0; cursor:pointer;
-  border:0; border-radius:999px; background:var(--blue); opacity:.65;
+  border:0; border-radius:999px; background:var(--wv-chip-tint, var(--blue)); opacity:.65;
   box-shadow:0 1px 6px rgba(0,0,0,.55); transition:opacity .12s, box-shadow .12s; }
+.wv-root-mark.t-home { --wv-chip-tint:var(--green); --wv-chip-halo:rgba(132,201,143,.35); }
+.wv-root-mark.t-market { --wv-chip-tint:var(--amber); --wv-chip-halo:rgba(232,197,106,.35); }
 .wv-root-mark:hover, .wv-root-mark.is-hovered { opacity:1; }
-.wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px rgba(123,167,224,.35), 0 1px 6px rgba(0,0,0,.55); }
+.wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px var(--wv-chip-halo, rgba(123,167,224,.35)), 0 1px 6px rgba(0,0,0,.55); }
 .wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
   flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
 /* glyph only, so they are round rather than pill-shaped — the word each one used
@@ -4668,6 +4738,16 @@ export function mountViewer(appEl) {
     return () => overlays.forEach((el) => boxEl.appendChild(el));
   }
   let sceneRoomId = null;       // the mark whose scene is mounted, or null = the town
+  // WHAT THE CHIP IN THE PAINTING'S CORNER NAMES, everywhere it is read from.
+  //
+  // `sceneRoomId` is the mark whose scene is MOUNTED — literally the interior the
+  // camera is showing — and it is set from `insideOf`, which is folded out of the
+  // enter-exit ledger's own acts. So this is the ENTERED mark by construction,
+  // and there is no containment chain anywhere on its way here.
+  // One accessor rather than five reads, because the chip is a name in five
+  // places (its label, its lit state, its hover, and the click that opens its
+  // card) and five copies of a rule are five chances for them to disagree.
+  const chipMarkId = () => chipMark({ viewingInteriorOf: sceneRoomId });
   let townKeep = null;          // { svg, ctx } — the town scene, held aside while inside
 
   // ── WHY STEPPING OUTSIDE TOOK A WHILE (founder, 2026-08-21) ────────────────
@@ -5571,11 +5651,32 @@ export function mountViewer(appEl) {
     // offered to that half now. The PIP half is identical in both, so a region
     // is still selected by the dot that is exactly the size of the thing it
     // names — and it still lights under the pointer on the way there.
+    // ⚑ AND INSIDE A ROOM, THE ROOM ITSELF IS NOT ONE OF THE ANSWERS (founder,
+    // 2026-08-29: "right now EVERYWHERE you put your mouse, the candle vault's
+    // mark-card noisily fills the center of the screen").
+    //
+    // The paragraph above is still right about the OUTDOORS, where pointing at
+    // the region that contains you is the entire reason to point at it. In here
+    // it stops being true, because the room's extent IS the floor: containment
+    // answers with the vault at every pixel, so its card was not something a
+    // reader summoned by pointing at it — it was what pointing at nothing meant.
+    //
+    // SCOPED TO THE MOUNTED ROOM AND NOTHING ELSE. `sceneRoomId` is null in the
+    // town, so this passes null out there and the atlas is untouched. And the
+    // room stays reachable: the chip in the painting's corner names it now (see
+    // chipMark), which is what makes this a removal from the noise rather than a
+    // mark quietly becoming unlearnable.
+    //
+    // ⚑ THE FIRST TRY DROPPED ONLY THE ROOM AND WAS NO BETTER. The containment
+    // ladder just fell through to the next rung, so the vault's card was
+    // replaced by the cellar door's at every pixel of the same floor. What is
+    // out is the room and everything ENCLOSING it — see smallestContainingMark.
     const markAt = (event, marks) => paintingMarkAtPoint({
       screenPoint: { x: event.clientX, y: event.clientY },
       worldPoint: worldPointForEvent(event),
       glyphs: screenMarkCandidates(),
       marks,
+      insideRoomId: sceneRoomId,
     });
     const toldHere = () => toldPaintingMarks(lastRadial, world?.marks ?? []);
     const paintingMarkForEvent = (event) => markAt(event, toldHere());
@@ -6028,8 +6129,20 @@ export function mountViewer(appEl) {
     renderMarkHighlight();
     const rootGlyph = $(root, ".wv-root-mark");
     if (rootGlyph) {
-      rootGlyph.classList.toggle("on", interaction.selectedId === WORLD_ROOT_ID);
-      rootGlyph.classList.toggle("is-hovered", interaction.hoveredId === WORLD_ROOT_ID);
+      const chip = chipMarkId();
+      rootGlyph.classList.toggle("on", interaction.selectedId === chip);
+      rootGlyph.classList.toggle("is-hovered", interaction.hoveredId === chip);
+      // ⚑ THE LABEL IS THE ONLY NAME THIS BUTTON HAS. It carries no text and no
+      // `title` (a mark answers the pointer with its own bubble, and the
+      // browser's tooltip covered it), so a chip that changed which mark it
+      // opened while still saying "Let There Be Light" would be a button that
+      // lies to exactly the readers who cannot see which dot is lit.
+      rootGlyph.setAttribute("aria-label", markName({ id: chip }).name);
+      // and it is DRAWN as what it names, in the tier colour the rest of the
+      // painting reads by — see the .wv-root-mark rules for why that matters
+      // once this dot can be somebody's home.
+      const tier = tierOf({ id: chip });
+      for (const t of ["constitution", "home", "market"]) rootGlyph.classList.toggle(`t-${t}`, tier === t);
     }
     renderBubbles();
   }
@@ -7907,7 +8020,7 @@ export function mountViewer(appEl) {
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
     const cvbtn = e.target.closest(".wv-map-convo");
     if (cvbtn) { if (!mapCtx?.toggleConvo) return; cvbtn.classList.toggle("on", !!mapCtx.toggleConvo()); return; }
-    if (e.target.closest("[data-root-mark]")) { selectMark(WORLD_ROOT_ID, { scrollCell: true }); return; }
+    if (e.target.closest("[data-root-mark]")) { selectMark(chipMarkId(), { scrollCell: true }); return; }
     if (e.target.closest(".wv-walk-cancel")) { clearSelectionAndDestination(); return; }
     if (e.target.closest(".wv-telling-toggle")) {
       state.paintingOnly = !state.paintingOnly;
@@ -8036,7 +8149,7 @@ export function mountViewer(appEl) {
     target?.closest?.(".wv-card[data-id], .wv-rnode[data-id], .wv-attribute[data-id]") ?? null;
   root.addEventListener("mouseover", (e) => {
     // the root's glyph is a mark to the pointer as much as to the click
-    if (e.target.closest("[data-root-mark]")) { hoverMark(WORLD_ROOT_ID); return; }
+    if (e.target.closest("[data-root-mark]")) { hoverMark(chipMarkId()); return; }
     const cell = markCellAt(e.target);
     if (cell) hoverMark(cell.dataset.id, !!cell.closest(".wv-bubble"));
   });
