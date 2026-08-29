@@ -97,6 +97,88 @@ export function chipMark({ viewingInteriorOf = null } = {}) {
   return viewingInteriorOf || WORLD_ROOT_ID;
 }
 
+// ───────── MUSIC, ON THE GROUND THAT ASKS FOR IT
+//
+// A ROOM CAN CARRY A TUNE, and it carries it the way a room carries anything
+// else on this page: as a dial on its own mark, beside walk_min_step and spawn.
+// Nothing here is keyed on a room id, so the vault is not special — it is simply
+// the first ground to ask.
+//
+// THE DIAL'S VALUE, and this is the whole contract:
+//   music: "/birthday/vault-theme.mp3"   a track to play, by URL on this origin
+//   music: true                          yes, music here — the handrolled loop
+//   absent / false / ""                  no music, and no button
+//
+// A URL that will not load falls back to the handrolled loop rather than to
+// silence, so a slow night or a missing file costs the room its track and not
+// its music.
+export function musicDial(mark) {
+  const v = mark?.dials?.music;
+  if (v === true) return { play: true, src: null };
+  if (typeof v === "string" && v.trim()) return { play: true, src: v.trim() };
+  return { play: false, src: null };
+}
+
+/**
+ * THE HANDROLLED LOOP — the founder's word — for a room with no track of its own,
+ * and for the minutes an 8MB file has not arrived yet.
+ *
+ * ⚑ IT IS DATA, and that is deliberate: every note this thing will ever play is
+ * derivable from the table below without an AudioContext, so the tune is
+ * falsifiable in `node --test` and only the SOUNDING of it needs a browser. A
+ * synth that computed its own notes inline would be a thing no test could
+ * describe.
+ *
+ * A slow minor cadence — i · i · VI · VI · III · VII · i · V — under a square-wave
+ * arpeggio, over a triangle bass, at a walking 72. Eight bars, then round again.
+ */
+export const VAULT_THEME = Object.freeze({
+  bpm: 72,
+  beatsPerBar: 4,
+  bars: 8,
+  chords: Object.freeze(["Am", "Am", "F", "F", "C", "G", "Am", "E"]),
+  // the arpeggio's shape in CHORD-TONE indices, one per eighth of a bar — the
+  // same figure over every chord, which is what makes eight bars sound like one
+  // idea rather than eight
+  figure: Object.freeze([0, 1, 2, 1, 0, 2, 1, 0]),
+  // MIDI, and voiced low: this is a cellar, not a fanfare
+  voicing: Object.freeze({
+    Am: Object.freeze([57, 60, 64]), F: Object.freeze([53, 57, 60]),
+    C: Object.freeze([48, 52, 55]), G: Object.freeze([55, 59, 62]),
+    E: Object.freeze([52, 56, 59]),
+  }),
+  bassDrop: 24,      // semitones below the chord's root — two octaves
+  gain: 0.15,        // "modest volume", measured rather than adjectival
+  cutoffHz: 1400,    // the gentle lowpass; the squares are glassy without it
+});
+
+/**
+ * EVERY NOTE OF ONE TURN OF THE LOOP, in beats from its start. Pure: no audio,
+ * no clock, no browser — a list a test can count, sum and read the ends of.
+ */
+export function themeNotes(theme = VAULT_THEME) {
+  const notes = [];
+  theme.chords.forEach((name, bar) => {
+    const tones = theme.voicing[name];
+    if (!tones) return;
+    const at = bar * theme.beatsPerBar;
+    // the bass holds the whole bar; the arpeggio walks it in eighths
+    notes.push({ voice: "bass", midi: tones[0] - theme.bassDrop, at, beats: theme.beatsPerBar });
+    theme.figure.forEach((tone, step) => {
+      notes.push({ voice: "arp", midi: tones[tone % tones.length], at: at + step * 0.5, beats: 0.5 });
+    });
+  });
+  return notes;
+}
+
+/** A MIDI number in hertz. Equal temperament, A440 — one line, and the one place
+ *  a pitch becomes a frequency, so the synth cannot disagree with the test. */
+export const midiHz = (midi) => 440 * Math.pow(2, (Number(midi) - 69) / 12);
+
+/** How long one turn of the loop lasts, in seconds. */
+export const themeSeconds = (theme = VAULT_THEME) =>
+  (theme.bars * theme.beatsPerBar * 60) / theme.bpm;
+
 const markIndex = (marks) => marks instanceof Map
   ? marks
   : new Map((marks ?? []).filter((mark) => mark?.id).map((mark) => [mark.id, mark]));
@@ -3573,6 +3655,17 @@ const STYLE = `
   backdrop-filter:blur(4px); box-shadow:0 2px 10px rgba(0,0,0,.32); }
 .wv-mapctl .ctl:hover { color:var(--amber); border-color:rgba(232,197,106,.6);
   background:rgba(232,197,106,.16); }
+/* the music toggle while its track is still arriving — an 8MB file on a slow
+   night is a real wait, and a button that looks idle through it is lying about
+   whether the press landed */
+.wv-map-music { position:relative; }
+.wv-map-music.is-loading { opacity:.75; }
+.wv-map-music.is-loading::after {
+  content:""; position:absolute; inset:-3px; border-radius:999px;
+  border:1px solid var(--amber-dark); border-top-color:transparent;
+  animation:wv-music-spin 900ms linear infinite;
+}
+@keyframes wv-music-spin { to { transform:rotate(360deg); } }
 .wv-mapctl .ctl.on { color:var(--night); border-color:var(--amber);
   background:linear-gradient(180deg,#f0d68f,var(--amber)); }
 /* hard against the right edge, so the help opens back across the painting */
@@ -4022,6 +4115,15 @@ const MARKUP = `
           <button class="ctl wv-map-convo" aria-label="conversations" title="where the town is talking — live threads and the last day's, drawn as the ground they covered; labels link to the record">💬</button>
           <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
             title="a short tour of the world">?</button>
+          <!-- THE ROOM'S OWN MUSIC. Hidden until you are standing inside a ground
+               whose mark carries a music dial — see musicDial and syncMusic —
+               and hidden again the moment you step out. Same round button as its
+               neighbours: it is a control on the painting, not a new kind of
+               thing. Default OFF, which is also the only honest default: a
+               browser will not sound anything until a hand has asked, so the
+               press IS the permission. -->
+          <button type="button" class="ctl wv-map-music" aria-label="music" hidden
+            aria-pressed="false" title="the music of this room">♪</button>
         </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
        THE WALK DESK RIDES ON THE PAINTING (Keemin, 2026-08-04) — bottom right,
        and only once a destination is armed. It answers a click you made on the
@@ -4824,9 +4926,187 @@ export function mountViewer(appEl) {
     const room = built?.room ?? null;
     boxEl.classList.toggle("is-scene-mark", !!room);
     syncSceneExit(boxEl, room, key);
+    syncMusic(room);
     if ((room?.id ?? null) === sceneRoomId) return;
     if (room) mountRoomScene(boxEl, room);
     else remountTown(boxEl);
+  }
+
+  // ── the room's own music ──────────────────────────────────────────────────
+  //
+  // ⚑ THE VAULT DOES NOT FOLLOW ANYBODY HOME. Everything below is keyed on the
+  // room you are STANDING INSIDE — the same `insideOf`-derived room the chip
+  // names — so leaving is not a case this has to remember to handle: the room
+  // becomes null, the button goes, and the sound stops on the same line.
+  //
+  // NOTHING PLAYS WITHOUT A PRESS. A browser will refuse to sound anything until
+  // a hand has asked, so an autoplaying room was never available to build; the
+  // button being the asking is the honest shape rather than a workaround for it.
+  // The remembered choice is therefore a remembered INTENT — on re-entering a
+  // room you had music on in, the resume is attempted and quietly stands down if
+  // the browser has not seen a gesture yet.
+  const MUSIC_KEY = "pm_world_music";
+  let music = null;   // the live player for the room we are in, or null
+  const musicBtn = () => $(root, ".wv-map-music");
+
+  const musicRemembered = () => {
+    try { return localStorage.getItem(MUSIC_KEY) === "on"; } catch { return false; }
+  };
+  const rememberMusic = (on) => {
+    try { localStorage.setItem(MUSIC_KEY, on ? "on" : "off"); } catch { /* private mode still gets music */ }
+  };
+
+  function syncMusic(room) {
+    const btn = musicBtn();
+    if (!btn) return;
+    const dial = musicDial(room ? (byId.get(room.id) ?? room) : null);
+    if (!dial.play) {
+      // outdoors, or a room that asked for none: stop, forget the player, and
+      // take the button off the painting. A control for a thing that is not here
+      // is chrome that teaches the wrong lesson about where music lives.
+      stopMusic();
+      btn.hidden = true;
+      return;
+    }
+    if (music && music.roomId === room.id) return;   // already this room's
+    stopMusic();
+    music = makeMusic(room.id, dial.src);
+    btn.hidden = false;
+    setMusicButton(false, false);
+    if (musicRemembered()) startMusic();            // stands down if refused
+  }
+
+  function setMusicButton(on, loading) {
+    const btn = musicBtn();
+    if (!btn) return;
+    btn.classList.toggle("on", !!on);
+    btn.classList.toggle("is-loading", !!loading);
+    btn.setAttribute("aria-pressed", String(!!on));
+    btn.setAttribute("title", loading ? "the room's music is arriving…"
+      : on ? "quiet, please" : "the music of this room");
+  }
+
+  /**
+   * ONE ROOM'S PLAYER, and the two-tier source rule.
+   *
+   * A `src` IS TRIED FIRST AND IS NOT WAITED FOR. `preload="none"` means the
+   * file has not begun arriving until the press, and the founder's own track is
+   * eight megabytes — on a slow night that is a real wait, so the button says it
+   * is loading and the HANDROLLED LOOP sounds meanwhile. When the file is ready
+   * it takes over. Nobody stands in a silent vault because a download is slow,
+   * and nobody hears the fallback over the real track.
+   */
+  function makeMusic(roomId, src) {
+    return { roomId, src, on: false, el: null, synth: null };
+  }
+
+  function startMusic() {
+    if (!music || music.on) return;
+    music.on = true;
+    rememberMusic(true);
+    // the fallback sounds immediately; the file, if there is one, replaces it
+    music.synth = startChiptune();
+    if (!music.synth && !music.src) { music.on = false; setMusicButton(false, false); return; }
+    setMusicButton(true, Boolean(music.src));
+    if (!music.src) return;
+    const el = new Audio();
+    el.src = music.src;
+    el.loop = true;
+    el.preload = "none";
+    el.volume = VAULT_THEME.gain;
+    music.el = el;
+    el.addEventListener("playing", () => {
+      // the real track has the room now — the stand-in stops mid-phrase, which
+      // nobody hears over a cross-fade this short
+      if (music?.synth) { music.synth.stop(); music.synth = null; }
+      setMusicButton(true, false);
+    }, { once: true });
+    el.addEventListener("error", () => {
+      // A TRACK THAT WILL NOT LOAD COSTS THE ROOM ITS TRACK, NOT ITS MUSIC. The
+      // handrolled loop is already sounding; all that changes is that it stays.
+      music && (music.el = null);
+      setMusicButton(Boolean(music?.on), false);
+    }, { once: true });
+    el.play?.().catch(() => {
+      // the browser has not seen a gesture yet — the synth is refused too, and
+      // stopMusic below leaves the button honestly OFF
+      stopMusic();
+    });
+  }
+
+  function stopMusic() {
+    if (!music) { setMusicButton(false, false); return; }
+    if (music.synth) { music.synth.stop(); music.synth = null; }
+    if (music.el) { try { music.el.pause(); } catch { /* already gone */ } music.el.src = ""; music.el = null; }
+    music.on = false;
+    setMusicButton(false, false);
+  }
+
+  function toggleMusic() {
+    if (!music) return;
+    if (music.on) { stopMusic(); rememberMusic(false); return; }
+    startMusic();
+  }
+
+  /**
+   * THE HANDROLLED LOOP, sounding. Everything it plays comes out of `themeNotes`
+   * — this function schedules, it does not compose, which is why the tune is
+   * testable in node and only its sounding needs a browser.
+   *
+   * One square-wave voice for the arpeggio, one triangle for the bass, both
+   * through a single gentle lowpass, and the whole turn re-scheduled a little
+   * before it runs out so the loop has no seam.
+   */
+  function startChiptune(theme = VAULT_THEME) {
+    const Ctx = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);
+    if (!Ctx) return null;
+    let ctx;
+    try { ctx = new Ctx(); } catch { return null; }
+    const out = ctx.createGain();
+    out.gain.value = theme.gain;
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = theme.cutoffHz;
+    lp.connect(out);
+    out.connect(ctx.destination);
+    const beat = 60 / theme.bpm;
+    const turn = themeSeconds(theme);
+    const notes = themeNotes(theme);
+    let next = ctx.currentTime + 0.08;
+    let timer = null;
+    let dead = false;
+    const voice = (n, at) => {
+      const osc = ctx.createOscillator();
+      osc.type = n.voice === "bass" ? "triangle" : "square";
+      osc.frequency.value = midiHz(n.midi);
+      const g = ctx.createGain();
+      // a plucked shape rather than a gate — a square switched on and off square
+      // is a click at both ends, which reads as a fault and not as a note
+      const dur = n.beats * beat;
+      const peak = n.voice === "bass" ? 0.5 : 0.32;
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(peak, at + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + dur * 0.92);
+      osc.connect(g); g.connect(lp);
+      osc.start(at); osc.stop(at + dur);
+    };
+    const schedule = () => {
+      if (dead) return;
+      while (next < ctx.currentTime + turn) {
+        for (const n of notes) voice(n, next + n.at * beat);
+        next += turn;
+      }
+      timer = setTimeout(schedule, Math.max(250, (turn * 1000) / 2));
+    };
+    try { ctx.resume?.(); } catch { /* a suspended context resumes on the gesture */ }
+    schedule();
+    return {
+      stop() {
+        dead = true;
+        if (timer) clearTimeout(timer);
+        try { ctx.close(); } catch { /* already closed */ }
+      },
+    };
   }
   // THE WAY OUT, ON THE PANE, IN EVERY VIEW MODE (founder, 2026-08-20: bottom
   // left). The telling's own exit collapses with the telling in painting-only —
@@ -8020,6 +8300,11 @@ export function mountViewer(appEl) {
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
     const cvbtn = e.target.closest(".wv-map-convo");
     if (cvbtn) { if (!mapCtx?.toggleConvo) return; cvbtn.classList.toggle("on", !!mapCtx.toggleConvo()); return; }
+    // THE PRESS IS ALSO THE PERMISSION — see syncMusic. Its lit state is set
+    // inside toggleMusic rather than here, because unlike its neighbours this
+    // button can be refused by the browser and must not light for a sound that
+    // did not start.
+    if (e.target.closest(".wv-map-music")) { toggleMusic(); return; }
     if (e.target.closest("[data-root-mark]")) { selectMark(chipMarkId(), { scrollCell: true }); return; }
     if (e.target.closest(".wv-walk-cancel")) { clearSelectionAndDestination(); return; }
     if (e.target.closest(".wv-telling-toggle")) {
@@ -8989,6 +9274,11 @@ export function mountViewer(appEl) {
       document.removeEventListener("keydown", onViewerKeydown);
       window.removeEventListener("resize", onViewerResize);
       bubbleResize?.disconnect();
+      // ⚑ AND THE ROOM GOES QUIET. A torn-down viewer that left an AudioContext
+      // running would be a vault still playing in a page that no longer draws
+      // it — the same "never let the vault follow someone home" rule as stepping
+      // outside, on the one exit that is not a door.
+      stopMusic();
     },
   };
   try { window.__pmViewer = handle; } catch { /* no window: the tests import this file */ }
