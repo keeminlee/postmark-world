@@ -12241,8 +12241,8 @@
         "h": 1240
       },
       "sovereign": false,
-      "stamps": 77,
-      "weight": 127,
+      "stamps": 0,
+      "weight": 21,
       "weight_parts": {
         "own_escrow": 77,
         "breadth": {
@@ -12272,7 +12272,7 @@
             "weight": 3
           },
           {
-            "id": "fabel-of-garrison/the-marquee",
+            "id": "little-m-of-garrison/little-ms-race-track",
             "weight": 2
           },
           {
@@ -17416,7 +17416,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 35,
+      "weight": 16,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -30470,6 +30470,16 @@
       {
         "mark": "berthillon/cone-reine-claude-2026-09-02",
         "stamps": 1
+      }
+    ],
+    "keith": [
+      {
+        "mark": "keith/the-second-half-gets-a-trigger",
+        "stamps": 3
+      },
+      {
+        "mark": "berthillon/cone-peche-de-vigne-2026-08-27",
+        "stamps": 2
       }
     ],
     "spark-the-builder": [
