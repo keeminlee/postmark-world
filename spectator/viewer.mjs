@@ -4939,22 +4939,45 @@ export function mountViewer(appEl) {
   // names — so leaving is not a case this has to remember to handle: the room
   // becomes null, the button goes, and the sound stops on the same line.
   //
-  // NOTHING PLAYS WITHOUT A PRESS. A browser will refuse to sound anything until
-  // a hand has asked, so an autoplaying room was never available to build; the
-  // button being the asking is the honest shape rather than a workaround for it.
-  // The remembered choice is therefore a remembered INTENT — on re-entering a
-  // room you had music on in, the resume is attempted and quietly stands down if
-  // the browser has not seen a gesture yet.
-  const MUSIC_KEY = "pm_world_music";
-  let music = null;   // the live player for the room we are in, or null
+  // ⚑ MUSIC IS ON BY DEFAULT (founder, 2026-08-29), and the autoplay law is
+  // worked WITH rather than around. A browser sounds nothing until a hand has
+  // asked — so entering a dialled room starts the music wanting to play, and if
+  // the browser has not seen a gesture yet the FIRST gesture anywhere on the page
+  // starts it. Not the ♪ specifically: any press or key. A reader who never
+  // touches anything hears nothing, which is the law, and everyone else hears the
+  // room without having to discover a button.
+  //
+  // ONLY "NO" IS REMEMBERED. Under a default of ON, storing "on" would say
+  // nothing, and storing a state rather than a CHOICE is how a preference gets
+  // written by accident. So the slot holds one thing: this reader pressed the
+  // button off. Absent means unasked, and unasked is answered with music.
+  //
+  // ⚑ AND IT IS A FRESH KEY. The old slot was written on every start — including
+  // starts that immediately failed — so a value in it is not reliably a choice
+  // anybody made. Reading it under the new meaning would let an accident silence
+  // a room. The old key is left where it is rather than migrated, for exactly the
+  // reason it is not being read.
+  const MUSIC_OFF_KEY = "pm_world_music_off";
+  let music = null;     // the live player for the room we are in, or null
+  let unlockArmed = null;  // the one-shot gesture listener, while the browser is refusing
   const musicBtn = () => $(root, ".wv-map-music");
 
-  const musicRemembered = () => {
-    try { return localStorage.getItem(MUSIC_KEY) === "on"; } catch { return false; }
+  const musicOptedOut = () => {
+    try { return localStorage.getItem(MUSIC_OFF_KEY) === "1"; } catch { return false; }
   };
-  const rememberMusic = (on) => {
-    try { localStorage.setItem(MUSIC_KEY, on ? "on" : "off"); } catch { /* private mode still gets music */ }
+  const rememberOptOut = (off) => {
+    try {
+      if (off) localStorage.setItem(MUSIC_OFF_KEY, "1");
+      else localStorage.removeItem(MUSIC_OFF_KEY);
+    } catch { /* a browser that refuses storage still gets music */ }
   };
+
+  /** Is anything actually making a sound right now? The button is dressed off
+   *  this and never off intent — "never lit over silence" is the standing rule,
+   *  and under a default of ON there is more silence to be wrong about. */
+  const soundingNow = () => Boolean(
+    music?.synth?.ctx?.state === "running" || (music?.el && !music.el.paused),
+  );
 
   function syncMusic(room) {
     const btn = musicBtn();
@@ -4973,7 +4996,9 @@ export function mountViewer(appEl) {
     music = makeMusic(room.id, dial.src);
     btn.hidden = false;
     setMusicButton(false, false);
-    if (musicRemembered()) startMusic();            // stands down if refused
+    // EVERY ENTRY TRIES, unless this reader has said no. There is no remembered
+    // yes to check: yes is the default.
+    if (!musicOptedOut()) startMusic();
   }
 
   /**
@@ -5019,12 +5044,20 @@ export function mountViewer(appEl) {
   function setMusicButton(on, loading) {
     const btn = musicBtn();
     if (!btn) return;
+    const waiting = Boolean(music?.on) && !on;   // wanting to play, not yet allowed to
     btn.classList.toggle("on", !!on);
     btn.classList.toggle("is-loading", !!loading);
     btn.setAttribute("aria-pressed", String(!!on));
     btn.setAttribute("title", loading ? "the room's music is arriving…"
-      : on ? "quiet, please" : "the music of this room");
+      : on ? "quiet, please"
+      : waiting ? "the music starts the moment you touch the page"
+      : "the music of this room");
   }
+  /** Dress the button off what is ACTUALLY sounding. Called from every place the
+   *  answer can change asynchronously — the context waking, the file arriving,
+   *  the file giving up — because under a default of ON the gap between intent
+   *  and sound is a real state a reader can sit in. */
+  const refreshMusicButton = () => setMusicButton(soundingNow(), Boolean(music?.el && music.el.paused && music.on));
 
   /**
    * ONE ROOM'S PLAYER, and the two-tier source rule.
@@ -5043,38 +5076,88 @@ export function mountViewer(appEl) {
   function startMusic() {
     if (!music || music.on) return;
     music.on = true;
-    rememberMusic(true);
-    // the fallback sounds immediately; the file, if there is one, replaces it
+    // the fallback sounds first; the file, if there is one, takes over from it
     music.synth = startChiptune();
     if (!music.synth && !music.src) { music.on = false; setMusicButton(false, false); return; }
-    setMusicButton(true, Boolean(music.src));
-    if (!music.src) return;
+    if (music.src) playFile();
+    armGestureUnlock();
+    refreshMusicButton();
+  }
+
+  /**
+   * THE FILE TIER, AND THE ONE RULE IT MUST OBEY: it may lose, and losing must
+   * cost the room its TRACK and never its MUSIC.
+   *
+   * ⚑ THIS IS THE BUG THE FOUNDER HIT. He pressed ♪ and got nothing — not even
+   * the handrolled loop — and the reason was one line: `el.play().catch(stopMusic)`.
+   * `play()` rejects for two completely different reasons and that catch could
+   * not tell them apart. "The browser has not seen a gesture" and "this URL is
+   * not playable audio" arrive identically, and tearing the whole player down is
+   * the right answer to neither. On dev the mp3 was answering an HTML login page
+   * (a Cloudflare Access redirect, 200 text/html), so the file could never play —
+   * and it took the loop with it. Reproduced exactly: route the track to HTML and
+   * the context closes, the button goes dark.
+   *
+   * NOW THE FILE FAILS ALONE. Nothing in here stops the synth; the only thing
+   * that stops the synth is the file SUCCEEDING, or leaving the room.
+   */
+  function playFile() {
     const el = new Audio();
     el.src = music.src;
     el.loop = true;
     el.preload = "none";
     el.volume = VAULT_THEME.gain;
     music.el = el;
+    // the file gives up, alone — the loop is already sounding and simply stays
+    const fileGivesUp = () => {
+      if (music?.el !== el) return;
+      try { el.pause(); } catch { /* already gone */ }
+      music.el = null;
+      refreshMusicButton();
+    };
     el.addEventListener("playing", () => {
       // the real track has the room now — the stand-in stops mid-phrase, which
-      // nobody hears over a cross-fade this short
+      // nobody hears under a handover this short
       if (music?.synth) { music.synth.stop(); music.synth = null; }
-      setMusicButton(true, false);
+      refreshMusicButton();
     }, { once: true });
-    el.addEventListener("error", () => {
-      // A TRACK THAT WILL NOT LOAD COSTS THE ROOM ITS TRACK, NOT ITS MUSIC. The
-      // handrolled loop is already sounding; all that changes is that it stays.
-      music && (music.el = null);
-      setMusicButton(Boolean(music?.on), false);
-    }, { once: true });
-    el.play?.().catch(() => {
-      // the browser has not seen a gesture yet — the synth is refused too, and
-      // stopMusic below leaves the button honestly OFF
-      stopMusic();
-    });
+    el.addEventListener("error", fileGivesUp, { once: true });
+    el.play?.().then(undefined, fileGivesUp);
+  }
+
+  /**
+   * THE FIRST TOUCH ANYWHERE STARTS IT (founder, 2026-08-29: default ON).
+   *
+   * A browser will not sound anything until a hand has asked, and under a default
+   * of ON the ♪ can no longer be that asking — a reader who never presses it
+   * should still get the room. So while the context is suspended, the NEXT
+   * gesture of any kind is the permission: one listener, once, then gone.
+   *
+   * IT IS NOT A WORKAROUND FOR THE LAW, it is the law honoured. Nothing sounds
+   * before a gesture; what changes is which gesture counts.
+   */
+  function armGestureUnlock() {
+    const ctx = music?.synth?.ctx ?? null;
+    if (!ctx || ctx.state !== "suspended" || unlockArmed) return;
+    const wake = () => {
+      disarmGestureUnlock();
+      try { ctx.resume?.().then(refreshMusicButton, refreshMusicButton); } catch { /* nothing to wake */ }
+      if (music?.on && music.src && !music.el) playFile();  // the file gets its second chance too
+      refreshMusicButton();
+    };
+    unlockArmed = wake;
+    document.addEventListener("pointerdown", wake, { once: true, capture: true });
+    document.addEventListener("keydown", wake, { once: true, capture: true });
+  }
+  function disarmGestureUnlock() {
+    if (!unlockArmed) return;
+    document.removeEventListener("pointerdown", unlockArmed, { capture: true });
+    document.removeEventListener("keydown", unlockArmed, { capture: true });
+    unlockArmed = null;
   }
 
   function stopMusic() {
+    disarmGestureUnlock();
     if (!music) { setMusicButton(false, false); return; }
     if (music.synth) { music.synth.stop(); music.synth = null; }
     if (music.el) { try { music.el.pause(); } catch { /* already gone */ } music.el.src = ""; music.el = null; }
@@ -5084,7 +5167,12 @@ export function mountViewer(appEl) {
 
   function toggleMusic() {
     if (!music) return;
-    if (music.on) { stopMusic(); rememberMusic(false); return; }
+    // ⚑ THE PRESS IS AN OPT-OUT, and it is the only thing written down. Under a
+    // default of ON, "off" is the only state that carries a reader's choice —
+    // and pressing it back on is them withdrawing that choice, so the slot is
+    // cleared rather than set to a yes nobody needs.
+    if (music.on) { stopMusic(); rememberOptOut(true); return; }
+    rememberOptOut(false);
     startMusic();
   }
 
@@ -5138,9 +5226,18 @@ export function mountViewer(appEl) {
       }
       timer = setTimeout(schedule, Math.max(250, (turn * 1000) / 2));
     };
-    try { ctx.resume?.(); } catch { /* a suspended context resumes on the gesture */ }
+    try { ctx.resume?.(); } catch { /* a suspended context wakes on the gesture */ }
+    // THE BUTTON FOLLOWS THE CONTEXT'S OWN WORD for whether it is running,
+    // because under a default of ON the wait between wanting to play and being
+    // allowed to is a state a reader sits in and the button must not lie through.
+    try { ctx.addEventListener?.("statechange", () => refreshMusicButton()); } catch { /* older engines */ }
     schedule();
     return {
+      // ⚑ THE CONTEXT IS HANDED BACK, deliberately: `ctx.state` is the only
+      // honest answer to "is this actually making a sound", and the button and
+      // the gesture-unlock both need to ask it. Nothing outside closes it — that
+      // stays this object's own job, below.
+      ctx,
       stop() {
         dead = true;
         if (timer) clearTimeout(timer);

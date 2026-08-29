@@ -124,45 +124,103 @@ test("it appears only inside a ground whose dial asks for music, and goes when y
     "a torn-down viewer stops it too");
 });
 
-test("the file is preferred and the handrolled loop covers the wait for it", () => {
+test("the file is preferred, and its FAILURE may never stop the loop", () => {
   // TWO TIERS, and the ORDER is the interesting half: the fallback sounds
   // immediately and the file replaces it when it arrives. An 8MB track behind
-  // preload="none" has not begun downloading until the press, so waiting for it
-  // would be a silent vault for as long as the night is slow.
+  // preload="none" has not begun downloading until then, so waiting for it would
+  // be a silent vault for as long as the night is slow.
   assert.match(SOURCE, /music\.synth = startChiptune\(\);/, "the stand-in starts at once");
   assert.match(SOURCE, /el\.addEventListener\("playing", \(\) => \{[\s\S]{0,400}?music\.synth\.stop\(\)/,
     "and stands down the moment the real track is sounding");
-  assert.match(SOURCE, /el\.preload = "none";/, "the file is not fetched until somebody asks for it");
+  assert.match(SOURCE, /el\.preload = "none";/, "the file is not fetched until somebody wants it");
   assert.match(SOURCE, /el\.loop = true;/, "and it loops, like the fallback");
-  // A TRACK THAT WILL NOT LOAD COSTS THE ROOM ITS TRACK, NOT ITS MUSIC.
-  assert.match(SOURCE, /el\.addEventListener\("error", \(\) => \{[\s\S]{0,300}?music && \(music\.el = null\);/,
-    "a broken URL leaves the handrolled loop playing");
-  // and the button says the wait out loud rather than looking idle through it
-  assert.match(SOURCE, /setMusicButton\(true, Boolean\(music\.src\)\);/, "loading is a state the button has");
-  assert.match(SOURCE, /\.wv-map-music\.is-loading::after \{/, "and wears");
+
+  // ⚑ THE BUG THE FOUNDER HIT, pinned so it cannot come back. It was one line:
+  //     el.play().catch(() => { stopMusic(); })
+  // `play()` rejects for two unrelated reasons — "no gesture yet" and "this URL
+  // is not playable audio" — and that catch could not tell them apart, so a file
+  // that would not play tore down the whole player INCLUDING the chiptune. On dev
+  // the mp3 was answering a Cloudflare Access login page (HTML, 200), so he
+  // pressed the button and got silence and a dark button.
+  assert.doesNotMatch(SOURCE, /el\.play\?\.\(\)\.catch\(\(\) => \{[\s\S]{0,200}?stopMusic\(\)/,
+    "the file's rejection no longer stops the music");
+  assert.match(SOURCE, /el\.play\?\.\(\)\.then\(undefined, fileGivesUp\);/,
+    "it hands both failure routes to one narrow handler");
+  assert.match(SOURCE, /const fileGivesUp = \(\) => \{\r?\n\s*if \(music\?\.el !== el\) return;[\s\S]{0,240}?music\.el = null;\r?\n\s*refreshMusicButton\(\);\r?\n\s*\};/,
+    "which puts down the ELEMENT and nothing else");
+  // THE CAN-FAIL CONTROL FOR THAT CLAIM: the giving-up path must not mention the
+  // synth at all. If a future edit adds a synth teardown there, this fails.
+  const givesUp = /const fileGivesUp = \(\) => \{([\s\S]*?)\n    \};/.exec(SOURCE);
+  assert.ok(givesUp, "the handler is findable");
+  assert.doesNotMatch(givesUp[1], /synth|stopMusic/,
+    "nothing in the file's failure path can reach the loop");
+  // and the only two things that DO stop the loop are named
+  assert.match(SOURCE, /el\.addEventListener\("playing", \(\) => \{[\s\S]{0,400}?music\.synth\.stop\(\); music\.synth = null;/,
+    "the file succeeding");
+  assert.match(SOURCE, /function stopMusic\(\) \{[\s\S]{0,300}?music\.synth\.stop\(\)/, "and leaving the room");
 });
 
-test("default OFF, and a remembered choice is an intent rather than an autoplay", () => {
-  // The browser will not sound anything until a hand has asked, so there was
-  // never an autoplaying room to build — the press IS the permission, and that
-  // makes OFF the only honest default rather than a cautious one.
-  assert.match(SOURCE, /aria-pressed="false" title="the music of this room"/, "the markup ships off");
-  assert.match(SOURCE, /if \(musicRemembered\(\)\) startMusic\(\);/, "a remembered yes is re-attempted on entering");
-  assert.match(SOURCE, /el\.play\?\.\(\)\.catch\(\(\) => \{[\s\S]{0,300}?stopMusic\(\);/,
-    "and if the browser refuses, the button is left honestly OFF rather than lit over silence");
-  // storage is a convenience and never a requirement
-  assert.match(SOURCE, /try \{ return localStorage\.getItem\(MUSIC_KEY\) === "on"; \} catch \{ return false; \}/,
-    "a browser that refuses storage still gets music");
-  assert.match(SOURCE, /catch \{ \/\* private mode still gets music \*\/ \}/);
+test("music defaults ON, and the first touch anywhere is the permission", () => {
+  // FOUNDER, 2026-08-29. A browser sounds nothing until a hand has asked, so the
+  // default cannot be "playing" — it is "wanting to play, and starting the moment
+  // it is allowed to". Which gesture counts is the only thing that changed.
+  assert.match(SOURCE, /if \(!musicOptedOut\(\)\) startMusic\(\);/,
+    "every entry tries, unless this reader has said no");
+  assert.doesNotMatch(SOURCE, /if \(musicRemembered\(\)\) startMusic\(\);/, "there is no remembered YES to wait for");
+  // ⚑ `document`, NOT `doc` — and this one was a live ReferenceError, caught by
+  // the browser run and by nothing else. In this file `doc` is a locally-scoped
+  // parsed XML document, so the unlock threw the moment it was reached: the one
+  // path that only runs when the browser is refusing, which is the path hardest
+  // to reach on purpose. Pinned by name.
+  assert.match(SOURCE, /document\.addEventListener\("pointerdown", wake, \{ once: true, capture: true \}\);\r?\n\s*document\.addEventListener\("keydown", wake, \{ once: true, capture: true \}\);/,
+    "the next gesture of ANY kind, once, on the real document");
+  assert.doesNotMatch(SOURCE, /\bdoc\.(add|remove)EventListener/,
+    "and never on the parsed-XML `doc` this file also has a name for");
+  assert.match(SOURCE, /if \(!ctx \|\| ctx\.state !== "suspended" \|\| unlockArmed\) return;/,
+    "armed only while the browser is actually refusing, and only once");
+  assert.match(SOURCE, /if \(music\?\.on && music\.src && !music\.el\) playFile\(\);/,
+    "and the file gets its second chance on the same gesture");
+  // it is given back — a page-wide capture listener left armed is a page that
+  // reacts to a press nobody aimed at it
+  assert.match(SOURCE, /function disarmGestureUnlock\(\) \{/);
+  assert.match(SOURCE, /function stopMusic\(\) \{\r?\n\s*disarmGestureUnlock\(\);/, "leaving disarms it");
 });
 
-test("the toggle is a toggle, and forgetting is part of it", () => {
-  assert.match(SOURCE, /function toggleMusic\(\) \{\r?\n\s*if \(!music\) return;\r?\n\s*if \(music\.on\) \{ stopMusic\(\); rememberMusic\(false\); return; \}\r?\n\s*startMusic\(\);/,
-    "pressing it while playing stops it AND remembers that you wanted quiet");
+test("only the NO is remembered, and it is remembered in a fresh slot", () => {
+  // Under a default of ON, storing "on" says nothing — and storing a STATE rather
+  // than a CHOICE is how a preference gets written by accident. The slot holds one
+  // thing: this reader pressed the button off.
+  assert.match(SOURCE, /const MUSIC_OFF_KEY = "pm_world_music_off";/);
+  assert.match(SOURCE, /if \(music\.on\) \{ stopMusic\(\); rememberOptOut\(true\); return; \}\r?\n\s*rememberOptOut\(false\);/,
+    "pressing off records the opt-out; pressing back on withdraws it rather than writing a yes");
+  // ⚑ AND THE OLD SLOT IS NOT READ. It was written on every start, including
+  // starts that immediately failed, so a value in it is not reliably anybody's
+  // choice — and under the new meaning reading it could silence a room on the
+  // strength of an accident.
+  assert.doesNotMatch(SOURCE, /getItem\("pm_world_music"\)/, "the old key is not consulted");
+  assert.doesNotMatch(SOURCE, /musicRemembered/, "nor its reader");
+  // storage stays a convenience and never a requirement
+  assert.match(SOURCE, /catch \{ \/\* a browser that refuses storage still gets music \*\/ \}/);
+});
+
+test("the button is dressed off what is SOUNDING, never off what was intended", () => {
+  // "never lit over silence" was already the rule; a default of ON gives it far
+  // more silence to be wrong about, so the dressing reads the real sources.
+  assert.match(SOURCE, /const soundingNow = \(\) => Boolean\(\r?\n\s*music\?\.synth\?\.ctx\?\.state === "running" \|\| \(music\?\.el && !music\.el\.paused\),\r?\n\s*\);/,
+    "the context's own word, or the element's own word");
+  assert.match(SOURCE, /const refreshMusicButton = \(\) => setMusicButton\(soundingNow\(\)/,
+    "and every asynchronous turn re-reads them");
+  assert.match(SOURCE, /ctx\.addEventListener\?\.\("statechange", \(\) => refreshMusicButton\(\)\);/,
+    "including the context waking up on its own");
+  // WANTING AND SOUNDING ARE DIFFERENT, and the button says which it is in
+  assert.match(SOURCE, /const waiting = Boolean\(music\?\.on\) && !on;/);
+  assert.match(SOURCE, /waiting \? "the music starts the moment you touch the page"/,
+    "a reader waiting on their own first gesture is told so, not left at a dead button");
+});
+
+test("the toggle is a toggle, and the context is released rather than silenced", () => {
   assert.match(SOURCE, /if \(e\.target\.closest\("\.wv-map-music"\)\) \{ toggleMusic\(\); return; \}/,
     "on the same delegated click every other map control uses");
-  // stopping really releases the context — an AudioContext per room entered
-  // would be a leak you can hear before you can measure
   assert.match(SOURCE, /if \(music\.synth\) \{ music\.synth\.stop\(\); music\.synth = null; \}/);
   assert.match(SOURCE, /try \{ ctx\.close\(\); \} catch/, "the context is closed, not just silenced");
 });
