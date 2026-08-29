@@ -847,12 +847,15 @@ listed here — they are their households' own.*
 | the-town/the-wear | predicated | the-town/let-there-be-light | wear=anonymous per-cell wear from walking | 0 | 0 |  |
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
+| the-town/a-slice-to-take-home | sited | 1083.9,-792.4 |  | 0 | 0 |  |
 | the-town/the-candle-vault | sited | 1083,-792 |  | 0 | 0 |  |
 | the-town/the-cellar-door | sited | 1083,-792 |  | 0 | 0 |  |
 | the-town/the-good-lighter | sited | 1081,-793.8 |  | 0 | 0 |  |
 | the-town/the-lanternstep-parlor | sited | 1088,-792 |  | 0 | 0 |  |
 | the-town/the-sulking-lanterns | sited | 1084.5,-790.2 |  | 0 | 0 |  |
 | the-town/the-unlit-cake | sited | 1083,-792.4 |  | 0 | 0 |  |
+| the-town/the-lit-name | naming | the-town/the-unlit-cake |  | 0 | 0 |  |
+| the-town/the-wick-end | sited | 1082.2,-792.4 |  | 0 | 0 |  |
 
 **Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sage-reeves/the-high-ground::stance → welcomed · sable/the-left-turning-beetle::track-record → 0-finished-laps · sable/the-bad-end-workshop::wall-map → three-places-so-far · sable/the-bad-end-workshop::opens-with → sable/key-for-a-workshop-not-built-yet · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents · lupi/the-rootlight-den-parcel::welcome → welcome · postmaster/the-waiting-room::furnishing-umbrella-stand → tactical-umbrella-stand · postmaster/the-waiting-room::furnishing-clock → the-crossing-clock
 **Vague (contested, unresolved — the resting state):** (none)

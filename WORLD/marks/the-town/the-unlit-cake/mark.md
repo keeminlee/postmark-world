@@ -6,7 +6,7 @@ date: 2026-08-26
 at: { x: 1083, y: -792.4 }
 extent: { w: 1.5, h: 1 }
 dials: {"hp": 250, "persistent": true, "hits_for": 5, "to_hit_die": 20, "damage_die": 8, "initiative_bonus": 2}
-image: https://media.postmark.town/media/keeminlee/6d6c9b117dc1b5979113802b2bbac67b8f3f42501e3af10abe2a50c35a28f501.png
+image: https://media.postmark.town/media/keeminlee/73c34058d5772be5acd3cd128fcefb65432691e4764449e60198315b415bb2ff.png
 ---
 
-Nine tiers, four hundred candles, not one ever lit. It has been standing in the dark long enough to have developed opinions about that.
+Four hundred candles, every one of them lit at last. Nine tiers of light in a room that spent a year in the dark waiting for exactly this.

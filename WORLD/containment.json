@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1000,
+  "count": 1003,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -4009,6 +4009,17 @@
       ]
     },
     {
+      "id": "the-town/a-slice-to-take-home",
+      "parent": "the-town/the-candle-vault",
+      "chain": [
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/address",
       "parent": "the-town/white-page",
       "chain": [
@@ -6835,6 +6846,18 @@
       ]
     },
     {
+      "id": "the-town/the-lit-name",
+      "parent": "the-town/the-unlit-cake",
+      "chain": [
+        "the-town/the-unlit-cake",
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/the-live",
       "parent": "the-town/the-sketchbook",
       "chain": [
@@ -8222,6 +8245,17 @@
         "the-town/the-post-office",
         "the-town/the-quay-reach",
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-wick-end",
+      "parent": "the-town/the-candle-vault",
+      "chain": [
+        "the-town/the-candle-vault",
+        "the-town/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
