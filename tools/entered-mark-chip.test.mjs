@@ -210,3 +210,37 @@ test("the chip is drawn as what it names, not always as a constitution", () => {
   assert.match(SOURCE, /const tier = tierOf\(\{ id: chip \}\);\r?\n\s*for \(const t of \["constitution", "home", "market"\]\) rootGlyph\.classList\.toggle\(`t-\$\{t\}`, tier === t\);/,
     "…and the class is the same tierOf reading every pip and card on this page is coloured from");
 });
+
+// ══ THE CAMERA STEPS OUTSIDE WHEN THE EXIT DOES ═════════════════════════════
+
+test("a landed exit takes the interior down without waiting for the ledger's clock", () => {
+  // ⚑ FOUNDER, 2026-08-29: he exited as rei, the door took it, and he was still
+  // looking at the inside of the vault. The scene is mounted off `insideOf`,
+  // folded out of the enter-exit ledger — read on a clock — so the page went on
+  // drawing a room its reader had left. The stale entry IS cleaned up, but only
+  // in the OUTDOORS branch of the telling's render, which never runs in
+  // painting-only mode: the default, and the mode he was in.
+  assert.match(SOURCE, /function standOutOfRoom\(leftId = null\) \{/);
+  assert.match(SOURCE, /interiorByKey\.delete\(key\);\r?\n\s*const boxEl = \$\(root, "\.wv-minimap"\);/,
+    "the built pane is dropped, then the town goes back up");
+  assert.match(SOURCE, /boxEl\.classList\.remove\("is-scene-mark"\);[\s\S]{0,120}?syncSceneExit\(boxEl, null, key\);[\s\S]{0,120}?syncMusic\(null\);[\s\S]{0,120}?remountTown\(boxEl\);/,
+    "and everything the room owned goes with it — the way-out pill and its music included");
+  // driven by the ACT, not by a poll — the founder's own instruction
+  assert.match(SOURCE, /window\.addEventListener\("pm:stood-out", onStoodOut\);/);
+  assert.match(SOURCE, /window\.removeEventListener\("pm:stood-out", onStoodOut\);/, "and given back at stop()");
+});
+
+test("…and it is a redraw, not a second source of truth", () => {
+  // Nothing here decides that somebody left. The door decided, the cockpit
+  // relayed it, and this is the picture catching up — with the record asked to
+  // catch up behind it, so the next render agrees with what is already on screen
+  // rather than undoing it.
+  assert.match(SOURCE, /loadEnterExitLedger\(\)\.then\(\(\) => renderCurrent\(\)\)/,
+    "the ledger read still happens; it is no longer what the reader waits on");
+  // AND IT IGNORES AN EXIT THAT IS NOT THIS STANDPOINT'S. Two residents on one
+  // key, one stepping out, must not take the other's scene down.
+  assert.match(SOURCE, /if \(leftId && built\?\.room\?\.id && built\.room\.id !== leftId\) return;/);
+  // a page with no cockpit never fires it, and a throw in a redraw is not worth
+  // taking the viewer down for
+  assert.match(SOURCE, /const onStoodOut = \(ev\) => \{ try \{ standOutOfRoom\(ev\?\.detail\?\.left \?\? null\); \} catch/);
+});
