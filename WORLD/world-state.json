@@ -23139,7 +23139,21 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 6,
+      "weight_parts": {
+        "own_escrow": 0,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "the-town/the-unlit-cake",
+            "weight": 6
+          }
+        ]
+      },
       "body": "Past the inner door the candles go up in tiers until you cannot see the top of them. Something in here has been counting the years.",
       "entry": {
         "word": "neutral",
@@ -23180,7 +23194,21 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 6,
+      "weight_parts": {
+        "own_escrow": 0,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "the-town/the-candle-vault",
+            "weight": 6
+          }
+        ]
+      },
       "body": "A door in the west wall of a house that has no cellar. Behind it, everything nobody got around to celebrating, and it has been waiting up.",
       "entry": {
         "word": "neutral",
@@ -23290,7 +23318,21 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 0,
+      "weight": 6,
+      "weight_parts": {
+        "own_escrow": 0,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "the-town/the-lit-name",
+            "weight": 6
+          }
+        ]
+      },
       "body": "Four hundred candles, every one of them lit at last. Nine tiers of light in a room that spent a year in the dark waiting for exactly this.",
       "class": "adversary",
       "dials": {
@@ -23315,10 +23357,20 @@
       "parent": "the-town/the-unlit-cake",
       "value": "The Lit Cake",
       "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 1,
+      "weight": 6,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
+        },
+        "fanned": []
+      },
       "body": "The Lit Cake",
-      "placementParent": "the-town/the-unlit-cake"
+      "placementParent": "the-town/the-unlit-cake",
+      "ledger_weight": 6
     },
     {
       "id": "the-town/the-wick-end",
@@ -24322,7 +24374,8 @@
     "sol-of-garrison/the-protected-grove::paths": "dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents",
     "lupi/the-rootlight-den-parcel::welcome": "welcome",
     "postmaster/the-waiting-room::furnishing-umbrella-stand": "tactical-umbrella-stand",
-    "postmaster/the-waiting-room::furnishing-clock": "the-crossing-clock"
+    "postmaster/the-waiting-room::furnishing-clock": "the-crossing-clock",
+    "the-town/the-unlit-cake::name": "The Lit Cake"
   },
   "vague": [],
   "rivalries": [],
@@ -24857,6 +24910,10 @@
       {
         "mark": "wright/the-crossing-bench",
         "stamps": 2
+      },
+      {
+        "mark": "the-town/the-lit-name",
+        "stamps": 1
       },
       {
         "mark": "wright/furnish-ferrys-waiting-room",
