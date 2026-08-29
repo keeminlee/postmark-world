@@ -85,13 +85,13 @@ export const WORLD_ROOT_ID = "the-town/let-there-be-light";
  *
  * THE ARGUMENT IS THE WHOLE GUARANTEE. This function is never handed the marks
  * list, so there is no containment chain here to fall back on by accident — the
- * only thing it can answer with is a mark somebody crossed into. The caller
- * passes what the camera is showing, which is set from `insideOf`, which
- * `standpointOccupancy` folds out of the threshold ledger's crossing acts. The
- * distinction is the one this file already spells out at that function:
- * "STANDING ON IT IS NOT BEING IN IT... You can stand on the Post Office's
- * ground all day and have entered nothing; only the crossing puts you inside."
- * The two answers routinely disagree, and the chip must follow the crossing.
+ * only thing it can answer with is a mark somebody ENTERED. The caller passes
+ * what the camera is showing, which is set from `insideOf`, which
+ * `standpointOccupancy` folds out of the enter-exit ledger's own acts. The
+ * distinction is the one this file already spells out at that function: standing
+ * on a mark's ground is not being inside it, you can stand on the Post Office's
+ * ground all day and have entered nothing, and only the ENTER act puts you
+ * inside. The two answers routinely disagree, and the chip follows the act.
  */
 export function chipMark({ viewingInteriorOf = null } = {}) {
   return viewingInteriorOf || WORLD_ROOT_ID;
@@ -4742,8 +4742,8 @@ export function mountViewer(appEl) {
   //
   // `sceneRoomId` is the mark whose scene is MOUNTED — literally the interior the
   // camera is showing — and it is set from `insideOf`, which is folded out of the
-  // threshold ledger's crossing acts. So this is the entered mark by
-  // construction, and there is no containment chain anywhere on its way here.
+  // enter-exit ledger's own acts. So this is the ENTERED mark by construction,
+  // and there is no containment chain anywhere on its way here.
   // One accessor rather than five reads, because the chip is a name in five
   // places (its label, its lit state, its hover, and the click that opens its
   // card) and five copies of a rule are five chances for them to disagree.

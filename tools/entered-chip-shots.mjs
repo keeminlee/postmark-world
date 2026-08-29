@@ -28,8 +28,8 @@ const PORT = Number(process.argv[2] ?? 4893);
 const OUT = process.argv[3] ?? "qa-shots/entered-chip";
 const BASE = `http://127.0.0.1:${PORT}/`;
 
-// sable's last two crossings in WORLD/enter-exit-ledger.md are ENTERS with no
-// exit after them, so sable is standing inside the arcade, inside the grove.
+// sable's last two acts in WORLD/enter-exit-ledger.md are ENTERS with no exit
+// after them, so sable is standing inside the arcade, inside the grove.
 const WHO = "sable";
 const ROOM = "fabel-of-garrison/the-riverside-arcade";
 const ROOT_MARK = "the-town/let-there-be-light";

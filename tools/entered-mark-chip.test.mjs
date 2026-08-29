@@ -85,8 +85,8 @@ test("the chip cannot fall back on containment, because it is never handed the m
 
 test("the viewer feeds the chip the MOUNTED room, which is the entered one", () => {
   // `sceneRoomId` is the mark whose scene is mounted — set from `insideOf`,
-  // which standpointOccupancy folds out of the threshold ledger's crossing
-  // acts. So the value reaching chipMark is a crossing, never a coordinate.
+  // which standpointOccupancy folds out of the enter-exit ledger's own acts. So
+  // the value reaching chipMark is an ENTER, never a coordinate.
   assert.match(SOURCE, /const chipMarkId = \(\) => chipMark\(\{ viewingInteriorOf: sceneRoomId \}\);/);
   assert.match(SOURCE, /let sceneRoomId = null;\s+\/\/ the mark whose scene is mounted/,
     "and that variable still means what this depends on it meaning");
