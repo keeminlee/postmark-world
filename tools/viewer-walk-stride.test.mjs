@@ -179,3 +179,112 @@ test("the picture pointer was never the missing half", () => {
   assert.match(fold, /node tools\/marks-fold\.mjs\s+# fold the repo, write WORLD\/world-state\.json/,
     "the regeneration command is documented where a reader would look for it");
 });
+
+// ══ THE HANDSHAKE, MADE REAL ON THIS SIDE (seam review, 2026-08-29) ══════════
+//
+// ⚑ THE FINDING, AND IT IS A STRUCTURAL ONE. The cockpit tried twice to stop the
+// viewer acting on a click it had already claimed — once with stopPropagation on
+// a document-level CLICK capture, once with `pointer-events: none` on the
+// overlay from the site's stylesheet. Both were INERT:
+//
+//   • `pointerup` fires before `click`, so the mark was selected and the walk
+//     armed before the click the cockpit was capturing existed at all;
+//   • `contestedMarksAtPoint` hit-tests by SCREEN COORDINATES against a
+//     candidate list, not by DOM element, so taking the overlay out of the
+//     pointer path never reached it.
+//
+// Two fixes, both reasonable, both aimed at a mechanism this handler does not
+// use — and no event ordering can put a click ahead of a pointerup, so it could
+// not have been fixed from the other side. The stand-down belongs here.
+//
+// AND UNTIL NOW NOTHING IN THIS FILE READ EITHER COCKPIT SIGNAL. Every
+// stand-down described as "the same handshake the rail uses" was a rule in the
+// SITE's stylesheet hiding an element by display — survivable for chrome, fatal
+// for behaviour, because a hidden panel's HANDLER still runs.
+
+test("the viewer reads the cockpit's two signals, and they mean different scopes", () => {
+  assert.match(VIEWER, /const cockpitMounted = \(\) => \{/, "mounted: the cockpit owns the acts");
+  assert.match(VIEWER, /const cockpitAiming = \(\) => \{/, "aiming: it owns the next click on the painting");
+  assert.match(VIEWER, /hasAttribute\("data-pmc-dock"\)/, "the attribute the mount plants");
+  assert.match(VIEWER, /classList\.contains\("pmc-aiming"\)/, "and the class it sets while armed");
+  // both are try/caught — a viewer running without a document (its own unit
+  // tests import this module in node) must not throw on a signal read
+  assert.match(VIEWER, /const cockpitMounted = \(\) => \{\r?\n\s*try \{/, "read defensively, so a DOM-less import survives");
+});
+
+test("an armed act stands the whole pointerup aside; a mounted one stands down only walking", () => {
+  // THE SCOPES ARE DELIBERATELY DIFFERENT. While AIMING the map is a crosshair,
+  // so mark-select, the chooser, the talk lens and walking all stand aside for
+  // that one gesture. While merely MOUNTED, clicking a pip to inspect a mark is
+  // still a perfectly good thing to do in a room — only walking is the
+  // cockpit's, because a walk now begins at its button and is confirmed on its
+  // panel.
+  assert.match(VIEWER, /if \(cockpitAiming\(\)\) return;/, "aiming: the whole handler stands aside");
+  assert.match(VIEWER, /if \(canAct\(\) && !cockpitMounted\(\)\) chooseWalkPoint\(point\.x, point\.y\);/,
+    "mounted: only the walk-arming stands down");
+  // the guard is at the TOP of the handler, after the drag check — before any
+  // selection, chooser or lens can consume the gesture
+  // ORDER ASSERTED BY INDEX rather than by one long regex: the guard and the
+  // first hit-test are separated by the paragraph explaining why the guard is
+  // here, and a span-capped pattern fails the day somebody explains more. (It
+  // did, on this test's first run — the third time tonight a source check has
+  // been tripped by its own justification.)
+  //
+  // ⚑ AND IT IS SCOPED TO THE HANDLER'S OWN TEXT. The first `contestedMarksAtPoint`
+  // in the file is its DEFINITION, two hundred thousand characters earlier, so a
+  // whole-file index comparison compared the guard against a function rather
+  // than against the call it must precede — and passed or failed for reasons
+  // that had nothing to do with the law. The handler is the unit of ordering.
+  const handler = VIEWER.slice(VIEWER.indexOf('svg.addEventListener("pointerup"'));
+  const body = handler.slice(0, handler.indexOf('svg.addEventListener("pointercancel"'));
+  // …and matched as a CALL, not as a name. The paragraph above the guard
+  // explains what `contestedMarksAtPoint` does, so a bare-name search found the
+  // explanation before the code — the FOURTH time tonight a source check has
+  // been tripped by the sentence written to justify it. Prose is not the thing
+  // under test; the call is.
+  const guard = body.indexOf("if (cockpitAiming()) return;");
+  const firstHitTest = body.indexOf("contestedMarksAtPoint({");
+  assert.ok(guard > -1, "the guard is inside the pointerup handler");
+  assert.ok(firstHitTest > -1, "and so is the first hit-test");
+  assert.ok(guard < firstHitTest,
+    "the guard stands aside BEFORE anything hit-tests the point");
+});
+
+test("the crossing ceremony has one door while the cockpit is mounted", () => {
+  // The card chip and the way-out pill are not inside `.wv-actions`, so the
+  // rail's own stand-down never covered them — a reader in portal ground was
+  // offered the same act by two surfaces with different chrome and confirms.
+  assert.match(VIEWER, /if \(cockpit\) return \{ show: false, why: "the cockpit's bar carries the crossing while it is mounted" \};/,
+    "the card's chip stands down");
+  assert.match(VIEWER, /if \(!room \|\| cockpitMounted\(\)\) \{ chrome\?\.remove\(\); return; \}/,
+    "and the pane's way-out is not built at all — which also stops its handler existing");
+  assert.match(VIEWER, /cockpit: cockpitMounted\(\),/, "the affordance is told, at its one call site");
+});
+
+test("one poller on the conversations door at a time", () => {
+  // The cockpit runs its own speech layer at seven seconds while mounted; this
+  // wash asks the same door on a slower tick. Two readers of one door is two
+  // sets of requests and two paintings of the same sounds.
+  assert.match(VIEWER, /if \(convoVisible && tick % 2 === 0 && !cockpitMounted\(\)\) loadConversations\(\)/,
+    "the wash stands down while the cockpit is up, and resumes when it unmounts");
+});
+
+test("one resolver for who is acting, in a module both sides can import", () => {
+  // ⚑ THE MISMATCH IT CLOSES: the viewer resolved the boot selection from
+  // `act_as` AND `last_resident` with the spectator sentinel handled; the site's
+  // cockpit read only `act_as` and fell back to the first handle. On a reload
+  // where `act_as` was absent or held the sentinel, the two rooted at DIFFERENT
+  // residents until a face was clicked.
+  //
+  // The function was already exported from viewer.mjs — what it lacked was a
+  // home the site could import without pulling eight thousand lines into the
+  // cockpit's bundle. viewer.mjs re-exports both names, so its own callers and
+  // falsifiers are untouched.
+  const shared = readFileSync(join(HERE, "..", "spectator", "act-as.mjs"), "utf8");
+  assert.match(shared, /export function resolveActAsSelection\(/, "the resolver lives in the small module");
+  assert.match(shared, /export const SPECTATOR_ACTOR = "__spectator__";/, "with the sentinel it needs");
+  assert.match(VIEWER, /import \{ SPECTATOR_ACTOR, resolveActAsSelection, ACT_AS_KEY, LAST_RESIDENT_KEY \} from "\.\/act-as\.mjs";/,
+    "the viewer imports rather than defines");
+  assert.match(VIEWER, /export \{ SPECTATOR_ACTOR, resolveActAsSelection \};/, "and re-exports for its existing readers");
+  assert.doesNotMatch(VIEWER, /export function resolveActAsSelection\(/, "there is exactly one definition");
+});

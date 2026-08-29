@@ -39,9 +39,38 @@ import { recordSources, recordAbsenceMessage } from "../tools/record-sources.mjs
 const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const OFFICE_DEFAULT = "/api";
-const ACT_AS_KEY = "pm.world.act_as";
-const LAST_RESIDENT_KEY = "pm.world.last_resident";
-export const SPECTATOR_ACTOR = "__spectator__";
+// ── ONE RESOLVER FOR "WHO IS ACTING", shared with the site ──
+// It lived here and was exported, but the site's cockpit could not import it
+// without pulling this whole module into its bundle — so it grew its own,
+// simpler reading and the two disagreed on reload. See spectator/act-as.mjs for
+// what that cost. Re-exported below so every caller and falsifier of this file
+// is untouched.
+import { SPECTATOR_ACTOR, resolveActAsSelection, ACT_AS_KEY, LAST_RESIDENT_KEY } from "./act-as.mjs";
+export { SPECTATOR_ACTOR, resolveActAsSelection };
+
+// ── THE COCKPIT'S TWO SIGNALS, READ HERE FOR THE FIRST TIME ─────────────────
+//
+// The site's world page mounts a cockpit over this viewer inside portal ground,
+// and it has been announcing itself since it shipped — `data-pmc-dock` on <html>
+// while it is mounted, `pmc-aiming` while one of its acts is armed and waiting
+// for a target. Until now NOTHING IN THIS FILE READ EITHER WORD: every
+// stand-down that was said to be "the same handshake the viewer's rail uses"
+// was in fact a rule in the SITE's stylesheet, hiding an element by display.
+//
+// That was survivable for chrome (a hidden pill takes no clicks) and fatal for
+// behaviour (a hidden panel's HANDLER still runs). These two readers are what
+// makes the handshake real on this side.
+//
+// MOUNTED means the cockpit owns the acts. AIMING means it owns the next click
+// on the painting. They are deliberately different scopes — see the pointerup
+// guards, where one stands a whole gesture aside and the other stands down only
+// walking.
+const cockpitMounted = () => {
+  try { return document.documentElement.hasAttribute("data-pmc-dock"); } catch { return false; }
+};
+const cockpitAiming = () => {
+  try { return document.documentElement.classList.contains("pmc-aiming"); } catch { return false; }
+};
 // the mark that frames everything — being inside it is being outdoors, which is
 // why it names no destination and appears in no containment answer
 export const WORLD_ROOT_ID = "the-town/let-there-be-light";
@@ -694,18 +723,6 @@ export function formatSpectatorCoordinate(point, elevationM) {
   if (!position || !Number.isFinite(elevation)) return "";
   const rounded = Math.round(elevation * 10) / 10;
   return `${position} · elevation ${rounded >= 0 ? "+" : ""}${rounded.toLocaleString()} m`;
-}
-
-export function resolveActAsSelection({ handles = [], remembered = "", lastResident = "" } = {}) {
-  const residents = [...new Set((handles ?? []).filter((handle) => typeof handle === "string" && handle))];
-  if (!residents.length) return { actAs: SPECTATOR_ACTOR, handle: "" };
-  const handle = residents.includes(remembered)
-    ? remembered
-    : residents.includes(lastResident) ? lastResident : residents[0];
-  return {
-    actAs: remembered === SPECTATOR_ACTOR ? SPECTATOR_ACTOR : handle,
-    handle,
-  };
 }
 
 export function viewerCanAct({ identityResolved = false, actAs = SPECTATOR_ACTOR } = {}) {
@@ -2443,7 +2460,14 @@ export function enterableMark(mark) {
  *  no inside cannot be entered by anyone; and being already inside makes the
  *  door a no-op rather than a refusal. The reason is returned rather than
  *  swallowed so a caller can say it instead of just hiding a button. */
-export function enterAffordance({ mark = null, palette = [], actingAs = null, insideOf = null } = {}) {
+export function enterAffordance({ mark = null, palette = [], actingAs = null, insideOf = null, cockpit = false } = {}) {
+  // ⚑ THE COCKPIT IS THE ONE DOOR WHILE IT IS MOUNTED (2026-08-29). The
+  // crossing ceremony lives in three places on this page — this chip on a mark
+  // card, the way-out button on the pane, and the cockpit's own seat — and the
+  // rail stand-down never covered the first two because neither is inside
+  // `.wv-actions`. A reader in portal ground was offered the same act by two
+  // surfaces with different chrome and different confirms.
+  if (cockpit) return { show: false, why: "the cockpit's bar carries the crossing while it is mounted" };
   if (!actingAs || actingAs === SPECTATOR_ACTOR)
     return { show: false, why: "a spectator has no body to carry across a threshold" };
   const granted = (Array.isArray(palette) ? palette : [])
@@ -4261,6 +4285,7 @@ export function mountViewer(appEl) {
     const crossing = enterAffordance({
       mark: full, palette: state.palette?.entries ?? [], actingAs: key,
       insideOf: standpointOccupancy({ acts: enterExitLedger.acts, at: occupancyClock(), handle: key }).insideOf,
+      cockpit: cockpitMounted(),
     });
     return `<span class="wv-cell-actions">${crossing.show ? enterButtonHTML(m.id) : ""}`
       + `${backingButton(m.id, effectiveWeight(full))}</span>`;
@@ -4730,7 +4755,11 @@ export function mountViewer(appEl) {
   // carries both and neither can drift.
   function syncSceneExit(boxEl, room, key = null) {
     let chrome = $(boxEl, ".wv-scene-exit");
-    if (!room) { chrome?.remove(); return; }
+    // the second half of the same one-door rule — see enterAffordance. The
+    // site's stylesheet already hid this pill on `data-pmc-dock`; not building
+    // it is the honest version of the same sentence, and it is the version that
+    // also stops its handler existing.
+    if (!room || cockpitMounted()) { chrome?.remove(); return; }
     if (!chrome) {
       chrome = document.createElement("div");
       chrome.className = "wv-scene-exit";
@@ -5609,6 +5638,24 @@ export function mountViewer(appEl) {
       if (!press || e.pointerId !== press.id) return;
       const wasDrag = press.moved; press = null; boxEl.classList.remove("panning");
       if (wasDrag) return;
+      // ⚑ WHILE THE COCKPIT HAS AN ACT ARMED, THE PAINTING IS ITS TARGETING
+      // SURFACE AND THIS HANDLER STANDS ASIDE ENTIRELY.
+      //
+      // THE BUG THIS CLOSES, and it is a nastier shape than it looks. The
+      // cockpit suppressed the founder's "clicking the target also opens the
+      // 'unlit cake' MARK" twice, and both suppressions were INERT against this
+      // line. It stops propagation on a document-level CLICK — but `pointerup`
+      // fires first, so the mark was already selected before the click existed.
+      // And the site's stylesheet takes the overlay out of the pointer path —
+      // but `contestedMarksAtPoint` hit-tests by SCREEN COORDINATES against a
+      // candidate list, not by DOM element, so `pointer-events: none` never
+      // reached it either. Two fixes, both reasonable, both aimed at a
+      // mechanism this handler does not use.
+      //
+      // It cannot be fixed from the cockpit's side at all: there is no event
+      // ordering that puts a click ahead of a pointerup. So the stand-down
+      // belongs here, and it is the same word the rest of the handshake uses.
+      if (cockpitAiming()) return;
       // ONLY A PIP NAMES A MARK. Containment is how the destination gets its
       // NAME, not how the click picks its target — so clicking inside the East
       // Window District sets out for the spot you clicked, in that district,
@@ -5664,8 +5711,18 @@ export function mountViewer(appEl) {
       const worldPoint = worldPointForEvent(e);
       const point = { x: Math.round(worldPoint.x), y: Math.round(worldPoint.y) };
       markInteraction.select(null);
-      if (canAct()) chooseWalkPoint(point.x, point.y);
-      else {
+      // ⚑ AND WALKING IS THE COCKPIT'S WHILE IT IS MOUNTED (founder's governing
+      // ruling, 2026-08-29): a walk begins at its button, goes through the one
+      // panel with WHO/FROM/TO, and is confirmed there. This line was the second
+      // way to walk — it armed a destination in a desk the site now hides, so a
+      // reader could arm a walk they had no way to confirm.
+      //
+      // Note the scope difference from the guard above: AIMING stands the whole
+      // handler aside for one gesture, because the map is a crosshair at that
+      // moment. MOUNTED stands down only walking, because inspecting a mark by
+      // clicking its pip is still a perfectly good thing to do in a room.
+      if (canAct() && !cockpitMounted()) chooseWalkPoint(point.x, point.y);
+      else if (!canAct()) {
         state.cam = point;
         renderCurrent();
       }
@@ -8741,7 +8798,12 @@ export function mountViewer(appEl) {
     // the talk moves faster than the record: every other tick (~60 s), gentler
     // than the conversations page's own 7 s poll — this is a map, not a feed,
     // and a hidden layer costs the office nothing
-    if (convoVisible && tick % 2 === 0) loadConversations().then(drawConversations);
+    // ⚑ ONE POLLER ON THAT DOOR AT A TIME. The cockpit runs its own speech
+    // layer at seven seconds while it is mounted; this wash asks the SAME
+    // conversations door on a slower tick. Two readers of one door is two sets
+    // of requests and two paintings of the same sounds, so the wash stands down
+    // while the cockpit is up and resumes the moment it unmounts.
+    if (convoVisible && tick % 2 === 0 && !cockpitMounted()) loadConversations().then(drawConversations);
     if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
       try {
         const r = await fetch(state.dataSource, { credentials: "same-origin" });
