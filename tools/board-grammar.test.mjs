@@ -125,10 +125,51 @@ const RESIDENT_INSTANTIABLE = new Set(["bounty", "thing", "note"]);
 test("LIVE TREE: class law -- town marks define; residents instantiate only the whitelist", () => {
   const live = loadMarks(MARKS_DIR);
   const classed = live.filter((m) => m.class !== undefined);
-  const defs = classed.filter((m) => m.by === "the-town");
+
+  // ⚠ NARROWED 2026-08-26, and the narrowing is the LAW'S OWN LINE, not a
+  // loosening to make a new mark fit.
+  //
+  // This filter used to be `by === "the-town"`, which reads "the town only ever
+  // authors class DEFINITIONS." That was true for as long as it was true, and
+  // it stopped being true the first time the town's pen authored a classed
+  // INSTANCE out in the world. The record already draws the distinction — the
+  // step-1 promotion, 2026-08-18, LOGOS/classes.md § Instantiation:
+  //
+  //   "a class-carrying mark standing in the Keeping Works DECLARES its class;
+  //    anywhere else it is an INSTANCE"
+  //
+  // — so the honest fix is to ask that question instead of inferring it from
+  // authorship. The assertion below is STRICTER than what it replaced, not
+  // weaker: it now pins the definition/instance boundary itself, and a
+  // definition that wandered out of the works, or an instance that crept into
+  // it, fails here where before either could pass.
+  const inTheWorks = (m) => String(m._dir ?? "").split("\\").join("/").includes("/the-keeping-works/");
+  const defs = classed.filter((m) => m.by === "the-town" && inTheWorks(m));
+  const townInstances = classed.filter((m) => m.by === "the-town" && !inTheWorks(m));
   assert.ok(defs.length >= 11, `expected the Keeping Works roster, found ${defs.length}`);
   for (const m of defs)
     assert.equal(m.tier, "constitution", `${m.id}: type marks are constitution-tier`);
+  // ⚠ AND HERE IS WHAT I ASSERTED FIRST AND THE RECORD REFUTED.
+  //
+  // The tempting second clause was "a town-authored classed mark outside the
+  // works may not wear constitution" — instances are ordinary, standing is
+  // derived from ground, a bench that binds without stamps is asserting a tier.
+  // It reads well and it is FALSE about this world. Four live marks refute it,
+  // all lawful, all founder-placed: `the-town/1f3d9`, `the-town/1f916` and
+  // `the-town/postmark` (class `town`, the harbor registry's charters — "the
+  // founder pen siting the mark until traffic earns a door of its own"), and
+  // `the-town/the-wheelhouse` (class `timetable`, that class's own standing
+  // institution). Chartered infrastructure IS constitution wherever it stands.
+  //
+  // So the checkable claim is not about tier at all — it is about DECLARING.
+  // The roster is built from the works and only from the works, and that is the
+  // property a stray definition would break.
+  const townInstanceIds = townInstances.map((m) => m.id);
+  assert.ok(townInstanceIds.length > 0, "the town authors instances as well as definitions — a sweep finding none is a sweep that ran on nothing");
+  const rosterFromWorks = new Set(defs.map((m) => m.class));
+  for (const m of townInstances)
+    assert.ok(rosterFromWorks.has(m.class),
+      `${m.id}: an instance names a class the WORKS declares — the roster comes from the works alone, so a class known only by an instance is a class nothing defined`);
   assert.ok(defs.some((m) => m.class === "bounty"), "the bounty class stands in the roster");
   for (const m of classed.filter((m) => m.by !== "the-town"))
     assert.ok(RESIDENT_INSTANTIABLE.has(m.class),
