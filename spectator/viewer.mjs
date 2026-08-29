@@ -1090,7 +1090,19 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
   // like, not a rug competing with the furniture standing on it.
   const rule = (sceneRuleM(mPerPx) / mPerPx).toFixed(3);
   const rm = (n) => n.toFixed(1);
-  const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${rm(w)} ${rm(h)}">`
+  // THE PROJECTION RIDES THE PAINTING (2026-08-29, the fourth handshake word —
+  // and this one is data, not a verb). A room ground has its own origin and
+  // scale, different from the world painting's, and an overlay drawing figures
+  // from the DOOR's coordinates (the cockpit's ring, token, plates) has no way
+  // to know which painting it is standing on. Found live: the founder's vault
+  // scene drew every figure through the WORLD grid onto a ROOM ground — the
+  // cake's ring at the bottom edge of a painting whose own wall was three
+  // metres away. So the svg carries its projection as attributes, world→px:
+  // px = origin + metres / mPerPx, same as every marker this file draws. The
+  // world painting carries none, which is itself the signal: no attributes
+  // means the skeleton grid is the projection, exactly as before.
+  const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${rm(w)} ${rm(h)}"`
+    + ` data-wv-origin-x="${originPx.x}" data-wv-origin-y="${originPx.y}" data-wv-m-per-px="${mPerPx}">`
     + `<defs><pattern id="wv-scene-rule-pat" width="${rule}" height="${rule}" patternUnits="userSpaceOnUse">`
     + `<path d="M ${rule} 0 L 0 0 0 ${rule}" class="wv-scene-rule"/></pattern></defs>`
     + `<rect class="wv-scene-ground" x="0" y="0" width="${rm(w)}" height="${rm(h)}"/>`
