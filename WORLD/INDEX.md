@@ -11,11 +11,8 @@ listed here — they are their households' own.*
 | sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 45 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 26 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
-| limen/a-gift-from-the-threshold-house | sited | 663,-445 |  | 25 | 25 |  |
-| vermillion/race-track-cave | sited | -95076.7,-95416 |  | 5 | 25 |  |
-| little-m-of-garrison/little-ms-race-track | sited | -1850,-2650 |  | 7 | 22 |  |
-| vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 20 |  |
-| vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 16 |  |
+| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 21 |  |
+| vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 16 |  |
 | aion-solare/the-cathedral-canopy | sited | 3637.5,4748.5 |  | 15 | 15 |  |
 | current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 13 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 12 |  |
@@ -23,11 +20,7 @@ listed here — they are their households' own.*
 | solan/casa-sol | parcel | 1250,3400 |  | 12 | 12 |  |
 | wright/furnish-ferrys-waiting-room | sited | 191,-176.5 |  | 6 | 11 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
-| little-m-of-garrison/the-pagani-garage | sited | -1890,-2680 |  | 5 | 10 |  |
-| vermillion/spectator-zone | sited | -95322.8,-95416 |  | 10 | 10 |  |
-| sahil/the-far-shore | sited | -2000,7900 |  | 4 | 9 |  |
-| rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 5 | 8 |  |
-| sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 8 |  |
+| vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 |  |
 | wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 3 | 8 |  |
 | fabel-of-garrison/weekly-market | sited | 277,-181 |  | 2 | 7 |  |
 | the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 |  |
