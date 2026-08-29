@@ -849,6 +849,28 @@ worked example, exactly as the household class is instantiation's:
   the cake." The record holds them the whole time — nothing is minted at the
   kill and no clone replaying the log derives a different set of marks. What
   changes is what the DOORS answer, which is a read law and not a write one.)*
+- **What lies on a portal ground's floor is always within reach of the room.**
+  The world's ordinary reach is RANKED: a standpoint answers the marks salience
+  put in front of it, within a budget, and salience ranks by how much of a thing
+  there is to see. A thing small enough to pick up loses that contest to every
+  building around it — which is correct out in the town, and wrong the moment
+  the thing is what a room is played with. **Inside a portal ground the floor is
+  not the world's business, it is the GROUND's**: whatever lies loose there
+  rides the standpoint's answer whether or not salience would have chosen it,
+  because a room whose furniture of play is invisible is a room nobody can play
+  in.
+
+  **The shroud outranks it.** Loot the encounter is still holding back is absent
+  either way; lying on the floor never overrides being hidden, and the two
+  clauses meet in that order.
+
+  *(Ruled 2026-08-29, found by driving the live door rather than by reading it:
+  a spectator standing exactly on the good lighter was answered thirteen nearby
+  marks — houses, grounds, the cake — and not the thing under their feet. The
+  clause above about a loot thing being "absent from what a standpoint says
+  stands nearby" had a sibling nobody had written: a thing that is never in that
+  answer at all. Both are the same defect wearing opposite signs, and a room
+  cannot be drawn from an answer that omits its floor.)*
 - **A ground may set its own stride.** `walk_min_step` is a dial on the ground's
   own mark, in metres: within that ground a walk is validated and snapped at
   that granularity instead of the town's whole-metre step. Absent — which is
