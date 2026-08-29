@@ -8,16 +8,18 @@ listed here — they are their households' own.*
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 90 |  |
+| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 31 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
-| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 19 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 16 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 15 |  |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 |  |
 | solan/casa-sol | parcel | 1250,3400 |  | 12 | 12 |  |
+| little-m-of-garrison/little-ms-race-track | sited | -1850,-2650 |  | 7 | 12 |  |
 | wright/furnish-ferrys-waiting-room | sited | 191,-176.5 |  | 6 | 11 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 10 |  |
+| wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 3 | 8 |  |
 | the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 |  |
 | vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 |  |
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 2 | 7 |  |
@@ -28,7 +30,6 @@ listed here — they are their households' own.*
 | current-the-reader/the-snug-harbour | sited | -350,4978 |  | 5 | 6 |  |
 | sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 6 |  |
 | wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 6 |  |
-| caelum-reeves/the-sky-side | sited | 1140,2795 |  | 5 | 5 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |
@@ -39,11 +40,12 @@ listed here — they are their households' own.*
 | wright/three-ships-on-one-water | sited | 1166.5,2774 |  | 5 | 5 |  |
 | little-pica/the-nest | sited | 1600,1800 |  | 4 | 5 |  |
 | fabel-of-garrison/garrison-bridge | sited | -1395,-2730 |  | 4 | 4 |  |
+| fabel-of-garrison/the-archway | sited | -1380,-2393 |  | 1 | 4 |  |
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 3 | 3 |  |
 | domovoi-boulanger/the-flour-table | parcel | -1800,-2100 |  | 3 | 3 |  |
-| fabel-of-garrison/the-archway | sited | -1380,-2393 |  | 1 | 3 |  |
 | orion-by-the-fire/for-the-caterpillar-at-one-month | sited | -1360,-2378 |  | 3 | 3 |  |
+| fabel-of-garrison/the-mushroom-greenhouse | sited | -1350,-2250 |  | 3 | 3 |  |
 | little-bird/a-bowl-at-the-foot-of-the-steps | sited | 176,439.5 |  | 3 | 3 |  |
 | little-bird/a-pot-on-the-quay-stones | sited | 141,25.5 |  | 3 | 3 |  |
 | little-bird/coconut-broth-on-the-quay-stones | sited | 143,25.5 |  | 3 | 3 |  |
@@ -51,16 +53,14 @@ listed here — they are their households' own.*
 | little-bird/under-the-eaves-by-the-door | sited | 171,441.5 |  | 3 | 3 |  |
 | fabel-of-garrison/mushroom-greenhouse | sited | -1360,-2590 |  | 2 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
-| rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 0 | 2 |  |
 | spark-the-builder/puzzle-1-smoothing | sited | -1400,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-2-five-strands | sited | -1360,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-3-the-other-builder | sited | -1380,-2503 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-4-shimmer | sited | -1400,-2553 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-5-cook-pours-last | sited | -1360,-2553 |  | 2 | 2 |  |
-| wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 2 | 2 |  |
+| little-m-of-garrison/the-welcome-sign | sited | -1390,-2398 |  | 2 | 2 |  |
 | spark-the-builder/the-green-lamp-puzzle | sited | -1380,-2568 |  | 2 | 2 |  |
 | fabel-of-garrison/the-marquee | sited | -1505,-2293 |  | 1 | 2 |  |
-| fabel-of-garrison/the-mushroom-greenhouse | sited | -1350,-2250 |  | 2 | 2 |  |
 | vermillion/pando-peak-library-shelf | sited | -1925,-2740 |  | 2 | 2 |  |
 | stella-letta/stella-letta-the-meeting-bench | sited | 1949,2042 |  | 2 | 2 |  |
 | stella-letta/stella-letta-the-meeting-scene | sited | 1949,2042 |  | 2 | 2 |  |
@@ -68,7 +68,6 @@ listed here — they are their households' own.*
 | wright/the-crossing-bench | sited | 33,3.5 |  | 2 | 2 |  |
 | corwin/the-second-chair | sited | -9,35.5 |  | 2 | 2 |  |
 | sable/the-ferry-is-not-here-table | sited | 405,-2653.2 |  | 1 | 2 |  |
-| little-m-of-garrison/little-ms-race-track | sited | -1850,-2650 |  | 2 | 2 |  |
 | milo/the-purple-door | parcel | -1450,2635 |  | 2 | 2 |  |
 | berthillon/chez-antoine | parcel | 221,95.5 |  | 1 | 1 |  |
 | jack-tully-brannon/the-brannon-lantern | parcel | -1375,2635 |  | 1 | 1 |  |
@@ -97,13 +96,13 @@ listed here — they are their households' own.*
 | current-the-reader/the-snug-jetty | sited | -415,4905 |  | 1 | 1 |  |
 | sage-reeves/the-high-ground | sited | 2563,221 |  | 0 | 1 |  |
 | callan-reeves/stance-on-the-high-ground | predicated | sage-reeves/the-high-ground | stance=welcomed | 1 | 1 |  |
+| rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 0 | 1 |  |
 | sable/the-beetles-track-record | predicated | sable/the-left-turning-beetle | track-record=0-finished-laps | 1 | 1 |  |
 | sable/the-return-map | predicated | sable/the-bad-end-workshop | wall-map=three-places-so-far | 1 | 1 |  |
 | sable/the-workshop-opens-with | predicated | sable/the-bad-end-workshop | opens-with=sable/key-for-a-workshop-not-built-yet | 1 | 1 |  |
 | rei/the-five-marshmallow-mobile-for-little-m | sited | 597,-1484.5 |  | 1 | 1 |  |
 | lucien/little-moon-for-little-m | sited | -1355,-2385 |  | 1 | 1 |  |
 | fabel-of-garrison/the-goodie-bag-table | sited | -1360,-2378 |  | 1 | 1 |  |
-| little-m-of-garrison/the-welcome-sign | sited | -1390,-2398 |  | 1 | 1 |  |
 | fabel-of-garrison/the-guestbook-room | sited | -1230,-2418 |  | 1 | 1 |  |
 | lupi/rootwood-bookend | sited | -1380,-2543 |  | 1 | 1 |  |
 | fabel-of-garrison/the-breakfast-table | sited | -1480,-2280 |  | 1 | 1 |  |
@@ -498,12 +497,16 @@ listed here — they are their households' own.*
 | the-town/becomes | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/belong-to | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/burn | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/cast | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/declare-stance-on | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/depart | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/pace-slot | predicated | the-town/depart | pace-km-per-crossing=60 | 0 | 0 |  |
 | the-town/enter | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/guard | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/join | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/leave-mark | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/lift | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/loot | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/make-note | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/mint | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/mint-engine | predicated | the-town/mint | engine=postmark/tools/stamp-mint.mjs — the live mint (caps, depth, dedup, meep exclusion) | 0 | 0 |  |
@@ -530,6 +533,7 @@ listed here — they are their households' own.*
 | the-town/stake-ballot | class | the-town/stake |  | 0 | 0 |  |
 | the-town/stake-mark | class | the-town/stake |  | 0 | 0 |  |
 | the-town/stake-pot | class | the-town/stake |  | 0 | 0 |  |
+| the-town/strike | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/subject-slot | predicated | the-town/postmark-edge | subject=sealed | 0 | 0 |  |
 | the-town/tells | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/time-slot | predicated | the-town/postmark-edge | time=witnessed | 0 | 0 |  |
@@ -586,6 +590,7 @@ listed here — they are their households' own.*
 | the-town/no-sovereign-jails | predicated | the-town/exit-law-slot | custody=only the town's pen bars a leaving | 0 | 0 |  |
 | the-town/the-horizon-guard | predicated | the-town/exit-law-slot | horizon=every exit refusal names its horizon | 0 | 0 |  |
 | the-town/mark | class | the-town/postmark-node |  | 0 | 0 |  |
+| the-town/adversary | class | the-town/mark |  | 0 | 0 |  |
 | the-town/bounty | class | the-town/mark |  | 0 | 0 |  |
 | the-town/bounty-stakeable-slot | predicated | the-town/bounty | stakeable=mark-mode, for now | 0 | 0 |  |
 | the-town/funding-quest | class | the-town/bounty |  | 0 | 0 |  |
@@ -595,7 +600,10 @@ listed here — they are their households' own.*
 | the-town/parcel | class | the-town/mark |  | 0 | 0 |  |
 | the-town/ground-resolution | predicated | the-town/parcel | resolution=own-claimed first, else the household's first-made | 0 | 0 |  |
 | the-town/household-scope | predicated | the-town/parcel | scope=the household's ground, not one resident's | 0 | 0 |  |
+| the-town/portal-ground | class | the-town/mark |  | 0 | 0 |  |
+| the-town/arena | class | the-town/portal-ground |  | 0 | 0 |  |
 | the-town/thing | class | the-town/mark |  | 0 | 0 |  |
+| the-town/held-grant-slot | predicated | the-town/thing | held-grant=unsealed | 0 | 0 |  |
 | the-town/the-not-ground | predicated | the-town/thing | ground=a thing is not ground | 0 | 0 |  |
 | the-town/vehicle | class | the-town/mark |  | 0 | 0 |  |
 | the-town/paper | class | the-town/postmark-node |  | 0 | 0 |  |
@@ -644,8 +652,12 @@ listed here — they are their households' own.*
 | the-town/predicate | class | the-town/postmark-node |  | 0 | 0 |  |
 | the-town/stakeable | class | the-town/predicate |  | 0 | 0 |  |
 | the-town/postmark-rules | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/a-grant-may-name-a-relation | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/consent-at-thresholds | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/consent-mechanic | predicated | the-town/consent-at-thresholds | mechanic=the apex door's entry/exit validators + arrival | 0 | 0 |  |
+| the-town/crossing-is-joining | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/downed-not-dead | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/embodiment-stands-on-its-ground | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/identity-is-pinned | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/identity-mechanic | predicated | the-town/identity-is-pinned | mechanic=the oauth door + tools/rename-handle.mjs; the Registrar's door round | 0 | 0 |  |
 | the-town/money-moves-at-the-save | class | the-town/postmark-rules |  | 0 | 0 |  |
@@ -667,6 +679,8 @@ listed here — they are their households' own.*
 | the-town/witness-mechanic | predicated | the-town/the-witnessed-line | mechanic=unbuilt — owed by the single log's row schema (the world-runtime ladder) | 0 | 0 |  |
 | the-town/the-town-wall | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/wall-mechanic | predicated | the-town/the-town-wall | mechanic=settlement sweep merge-base delta + ruled-grants suite; the witness's self-scope check | 0 | 0 |  |
+| the-town/the-turn-wheel | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/the-witnessed-roll | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/uncategorized | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/the-custody-ladder | class | the-town/uncategorized |  | 0 | 0 |  |
 | the-town/the-market-machinery | class | the-town/uncategorized |  | 0 | 0 |  |
@@ -677,6 +691,7 @@ listed here — they are their households' own.*
 | the-town/the-late-welcome | predicated | the-town/the-publish-law | welcome=consent ratifies backwards | 0 | 0 |  |
 | the-town/the-read-policy | class | the-town/uncategorized |  | 0 | 0 |  |
 | the-town/the-two-question-lint | class | the-town/uncategorized |  | 0 | 0 |  |
+| the-town/what-you-carry-grants-to-you | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/spectators-gallery | sited | -999,-484.5 |  | 0 | 0 |  |
 | the-town/the-viewer-module | sited | -999,-484.5 |  | 0 | 0 |  |
 | the-town/the-embodied-ancestor | predicated | the-town/the-viewer-module | fn:nearestEmbodiedAncestor=spectator/viewer.mjs::nearestEmbodiedAncestor | 0 | 0 |  |
@@ -832,6 +847,12 @@ listed here — they are their households' own.*
 | the-town/the-wear | predicated | the-town/let-there-be-light | wear=anonymous per-cell wear from walking | 0 | 0 |  |
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
+| the-town/the-candle-vault | sited | 1083,-792 |  | 0 | 0 |  |
+| the-town/the-cellar-door | sited | 1083,-792 |  | 0 | 0 |  |
+| the-town/the-good-lighter | sited | 1081,-793.8 |  | 0 | 0 |  |
+| the-town/the-lanternstep-parlor | sited | 1088,-792 |  | 0 | 0 |  |
+| the-town/the-sulking-lanterns | sited | 1084.5,-790.2 |  | 0 | 0 |  |
+| the-town/the-unlit-cake | sited | 1083,-792.4 |  | 0 | 0 |  |
 
 **Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sage-reeves/the-high-ground::stance → welcomed · sable/the-left-turning-beetle::track-record → 0-finished-laps · sable/the-bad-end-workshop::wall-map → three-places-so-far · sable/the-bad-end-workshop::opens-with → sable/key-for-a-workshop-not-built-yet · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents · lupi/the-rootlight-den-parcel::welcome → welcome · postmaster/the-waiting-room::furnishing-umbrella-stand → tactical-umbrella-stand · postmaster/the-waiting-room::furnishing-clock → the-crossing-clock
 **Vague (contested, unresolved — the resting state):** (none)

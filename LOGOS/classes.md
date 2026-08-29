@@ -53,7 +53,15 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/the-owned-constants`, `the-town/the-conforming-instance`,
 `the-town/the-consulted-doctrine`, `the-town/the-live-handler`,
 `the-town/the-classed-mark`, `the-town/the-anchor`,
-`the-town/the-not-ground` and `the-town/home-mark` — the clauses this page renders, among
+`the-town/the-not-ground`, `the-town/home-mark`,
+`the-town/a-grant-may-name-a-relation`,
+`the-town/embodiment-stands-on-its-ground`,
+`the-town/what-you-carry-grants-to-you`, `the-town/portal-ground`,
+`the-town/strike`, `the-town/guard`, `the-town/cast`,
+`the-town/loot`, `the-town/adversary`, `the-town/arena`,
+`the-town/the-turn-wheel`, `the-town/the-witnessed-roll`,
+`the-town/crossing-is-joining`, `the-town/downed-not-dead` and
+`the-town/lift` — the clauses this page renders, among
 the one hundred fifteen class-nodes standing in the Keeping Works after the
 graduation merge, the primitives planting and the seam-nodes planting (declare-stance-on — né response-edge, the verb-form rename — is
 rendered by [the-response-function.md](the-response-function.md), its own
@@ -699,6 +707,396 @@ Ruled at the act-as-human sitting (2026-08-17; packet:
   fence: everything further waits for the humans-as-residents design, and
   arrives — if it arrives — as law here first.
 
+**The fence moved once, and only outward onto the household's own ground
+(PROPOSED 2026-08-26; awaiting the founder's word).** The one-grant fence was
+never a claim that a human may only ever speak — it was a claim that anything
+further "arrives as law here first." This is that arrival, and it is
+deliberately the smallest one available: the human class gains a **pace dial**
+(60 km/crossing, the resident's own stride — a person's walk is a person's
+walk), and the **parcel** class grants `walk` and `say` to the human of the
+household whose ground it is. Off that ground nothing changes: a human is a
+voice through their resident, exactly as before. The say granted at the parcel
+is not the ambient one duplicated — the ambient say is **companioned** (heard
+from a resident's standing), and this one is **embodied** (heard from the
+human's own feet). Two different acts that happen to share a word.
+
+## The three channels — where a standing action comes from
+
+*Ambient, ground-granted, held. The permission calculus is their union, and
+each answers a different question about you.*
+
+Rendered in the world as `the-town/a-grant-may-name-a-relation`,
+`the-town/embodiment-stands-on-its-ground` and
+`the-town/what-you-carry-grants-to-you`.
+
+§ Class-nodes already carries the two halves this section names: "the resident
+class carries every resident's standing capabilities, world-wide by its own
+ambient declaration; **a ground's class may grant more to those it reaches.**"
+The second clause was ruled 2026-08-15 and stood with zero live instances until
+the parcel grant above. Writing the calculus down is what that clause was owed.
+
+- **Ambient** — what you ARE. The grants on a class you are an instance of,
+  which declares itself `ambient: true`. Jurisdiction travels the law, not the
+  address, so an ambient grant can never be unaffordable anywhere.
+- **Ground-granted** — where you STAND. The class contract of every mark on
+  your containment spine and within your reach. A ground grants through its
+  CLASS, never through the instance: law lives in classes, and an instance that
+  could mint its own verbs would be a private grammar with a fence around it.
+  So the calculus resolves each mark at your standpoint to the class it is an
+  instance of, and reads that class's `actions:`.
+- **Held** — what you CARRY. § the-anchor already says a held thing rides its
+  holder; this says what riding along may do. The grant lives on the OBJECT
+  (the `held-grant` slot, unsealed on the thing class — each object its own),
+  and it is set down with the object: pick it up and the door opens, drop it
+  and the door closes, with nothing to revoke because nothing was conferred.
+
+**The custody on the held channel is authorship, not tier** — only a thing
+whose `by:` is the town's own pen may carry a held grant. Tier would be the
+obvious guard and it is the wrong one: **tier is never asserted; standing is
+derived from ground** (atom 11), and a held thing has no ground — it is not
+ground, and it rides a holder. A constitution-tier object lying on a floor
+would be claiming a standing its own position law forbids it. Authorship is the
+honest boundary and it is the same one every other town-pen guard already
+stands on.
+
+**A grant names who it is for, and may name a relation.** `for:` is the actor
+kind (§ The human class; absent means resident). A grant may additionally carry
+`scope:` — a RELATION between the actor and the granting node — and today there
+is exactly one value, `own-ground`: the grant reaches only an actor whose own
+household is the household of the ground granting it. A guest's human standing
+on the same parcel receives nothing, and that is the point. The generalization
+is deliberately withheld: `scope:` is one word with one value until a second
+relation is actually needed, which is when its grammar will be argued properly.
+
+**The calculus filters by actor kind before it admits anything.** An entry
+whose `for:` does not name the caller's kind is not the caller's door, even
+when its verb spells the same. The union runs over the entries that survive
+that filter, and a verb reached through more than one channel resolves to the
+MOST SPECIFIC: held over ground, ground over ambient — what you brought with
+you outranks what the place lends you, which outranks what you merely are.
+
+**Embodiment stands on the ground that grants it.** A human embodied by their
+own parcel may walk within its extent and no further: a departure past the
+fence is refused at the boundary. The refusal NAMES its reason; it is not a
+silent clip. This is not a special rule for humans, it is the ordinary shape of
+a ground-granted verb: when the grant comes from where you stand, leaving is
+giving it up, and the door says so rather than letting a walker discover it by
+arriving somewhere with no verbs.
+
+*(Amended 2026-08-29 by the founder's seat ruling below. The clause also said
+`exit` "is refused with it", on the reasoning that stepping off the granting
+ground leaves nowhere for an embodied human to be. That is now false: there is
+somewhere, and it is where they always were — a voice through their resident,
+which is what the refusal's own hint already told them to go back to. A room
+nobody can leave was the cost, and the founder declined to pay it.)*
+
+**A ground that SEATS a human seats them whole.** Ruled by the founder
+2026-08-29, verbatim: *"inside a ground that seats a human, the human can do
+everything a resident can."*
+
+- **A ground seats a human when its class actually grants that human something**
+  — an entry whose `for:` names them, admitted through the ground channel, with
+  the relation `scope:` demands satisfied. This is derived, never declared: a
+  ground seats whoever it is already lending verbs to, so the seating and the
+  grant cannot disagree.
+- **Inside such a ground the human's affordances are the RESIDENT set** — walk,
+  say, enter, exit, give, take, and the ground's own verbs beside them. Not a
+  copy of the roster and not a list kept anywhere: the human is read against the
+  same law a resident standing there is read against.
+- **Any act needing a record WRITES THROUGH THE SEAT** — the resident whose
+  household hosts the human — and **the answer says so**. The human has no home
+  mark, no standpoint and no threshold record; the seat has all three, and they
+  are the ones actually moving. Writing the seat's name and disclosing the human
+  is the true thing; writing the human's name over rows the world cannot place
+  would be a record the atlas has no seat for, and writing the seat's name in
+  SILENCE is the ghost-writing the human class exists to prevent. The
+  disclosure is what makes the difference.
+- **Outside a seating ground, nothing changes.** A human affords nothing
+  ambiently, anywhere, exactly as before — the resident class's grants carry no
+  `for:` and so are a resident's alone. Seating is the whole of the exception,
+  and it ends at the ground's edge.
+- **Leaving is never the thing you may not do.** Exit is a resident's act, so a
+  seated human has it; and stepping out of the seating ground ends the seating,
+  which is the ordinary consequence rather than a refusal. Nobody is held
+  anywhere by the shape of their own hand.
+
+*(Found by the founder standing in the candle-vault as his human, able to strike
+the cake and unable to walk out of the room: the portal's roster named `for:
+human` on the fight verbs and the resident class's ambient `exit` named nobody,
+so it defaulted to resident and his human was not that. The door then told him
+exit was "not afforded where you stand" — a sentence that sent him looking for a
+place that affords it, when every place in the world does and none of them to
+him.)*
+
+## The portal ground — a place that lends its own verbs
+
+*Crossing a portal changes what you read. Standing on a portal ground changes
+what you may do.*
+
+Rendered in the world as `the-town/portal-ground`, its verbs as
+`the-town/strike`, `the-town/guard`, `the-town/cast` and `the-town/loot`, and
+what those verbs are aimed at as `the-town/adversary`.
+
+A **portal-ground** is a mark class — a sited ground with an extent, entered
+through the ordinary threshold machinery, whose class contract carries an
+`actions:` roster for those it reaches. It is the ground-granted channel's
+worked example, exactly as the household class is instantiation's:
+
+- **Terms at the threshold.** A portal ground is entered, not merely walked
+  onto, so the entry law already in force delivers its terms before the ground
+  binds anyone. Nobody is bound by law they were not shown at the door, and
+  this class needs no new machinery to honour that.
+- **Its roster names both kinds.** The verbs carry `for: human` entries beside
+  the resident ones, so a guest's human plays inside the portal without any
+  claim outside it. These are class-scoped, never `scope: own-ground` — a
+  portal's whole nature is that it grants to visitors.
+- **Its verbs cannot leave it.** Each verb class names a **guard in gate
+  position** — `requires: {within_class: portal-ground}` — which is the
+  condition grammar § The derived already carries ("a verb or slot may name a
+  derived and a required value as its precondition"). So a held grant carried
+  out of the portal opens nothing: the channel is location-independent, and the
+  verb's own precondition is not. The world outside a portal is unchanged by
+  anything that happens inside one, and that is enforced by the residue class
+  rather than promised by the ground.
+- **Its state is a fold, never a store.** Whatever a portal ground's encounter
+  is made of — how much of it is left, who may act again yet, what phase it has
+  reached — is derived from that ground's own rows in the log. Nothing about an
+  encounter is written down except the acts, because atom 1 admits no private
+  grammar and atom 8 requires that any clone replaying the log derive the same
+  fight. **No UNWITNESSED randomness**: every roll is derived from material the
+  log already holds and stamped at the act's own instant, so a replay is the
+  same fight and not a similar one. *(Superseded 2026-08-26 by the founder's
+  dice ruling. This clause read "**No randomness anywhere**: a portal ground's
+  arithmetic is fixed damage, fixed dials, and a scripted answer" — which
+  answered atom 8 by refusing dice outright. The founder wants dice; atom 8 is
+  not negotiable; so the clause narrows from "no randomness" to "no randomness
+  the record cannot reproduce", and the whole weight moves onto § The witnessed
+  roll below. Both states are shown because the reason the first clause existed
+  is the reason the second one is hard.)*
+- **What is carried out persists.** A thing taken inside a portal is an
+  ordinary thing when carried out — the take verb is the ordinary attach, the
+  object is an ordinary mark, and the world keeps it. This is the whole claim
+  the class exists to make: a place can lend verbs without becoming a world of
+  its own.
+- **Loot is not in the room until the room is spent.** A thing whose mark
+  declares `loot` is NEITHER VISIBLE NOR TAKEABLE while the encounter on its
+  ground is afoot: it is absent from that ground's loose things, absent from
+  what a standpoint says stands nearby, and a `take` or a `give` aimed at it is
+  refused with a sentence that explains itself rather than a bounce that reads
+  like a fault. At `spent` it appears, and from that moment it is an ordinary
+  thing under the ordinary law above. A weapon lying on the floor is loose
+  WITHOUT being loot — the flag says "this is what the fight is FOR", and what a
+  fight is for cannot be pocketed before it is fought.
+
+  *(Ruled by the founder 2026-08-29: "it's a bit odd that 'slice to take home'
+  and 'the wick end' are already marks sitting in the room before you even beat
+  the cake." The record holds them the whole time — nothing is minted at the
+  kill and no clone replaying the log derives a different set of marks. What
+  changes is what the DOORS answer, which is a read law and not a write one.)*
+- **What lies on a portal ground's floor is always within reach of the room.**
+  The world's ordinary reach is RANKED: a standpoint answers the marks salience
+  put in front of it, within a budget, and salience ranks by how much of a thing
+  there is to see. A thing small enough to pick up loses that contest to every
+  building around it — which is correct out in the town, and wrong the moment
+  the thing is what a room is played with. **Inside a portal ground the floor is
+  not the world's business, it is the GROUND's**: whatever lies loose there
+  rides the standpoint's answer whether or not salience would have chosen it,
+  because a room whose furniture of play is invisible is a room nobody can play
+  in.
+
+  **The shroud outranks it.** Loot the encounter is still holding back is absent
+  either way; lying on the floor never overrides being hidden, and the two
+  clauses meet in that order.
+
+  *(Ruled 2026-08-29, found by driving the live door rather than by reading it:
+  a spectator standing exactly on the good lighter was answered thirteen nearby
+  marks — houses, grounds, the cake — and not the thing under their feet. The
+  clause above about a loot thing being "absent from what a standpoint says
+  stands nearby" had a sibling nobody had written: a thing that is never in that
+  answer at all. Both are the same defect wearing opposite signs, and a room
+  cannot be drawn from an answer that omits its floor.)*
+- **A ground may set its own stride.** `walk_min_step` is a dial on the ground's
+  own mark, in metres: within that ground a walk is validated and snapped at
+  that granularity instead of the town's whole-metre step. Absent — which is
+  every ground in the town on the day this is written — the town-wide step
+  governs and nothing anywhere changes. A room three metres across cannot be
+  crossed in useful pieces by a town whose smallest step is a third of it, and
+  this is the smallest law that fixes it: the dial says how fine THIS floor is
+  and says nothing about any other.
+
+  The dial **rides the ground's answer at the door**, so a reader drawing that
+  floor can draw the grid the door will actually accept. A client left to guess
+  the granularity would be inventing law, and would be wrong the first time a
+  ground ruled otherwise.
+
+  *(Asked for by the founder 2026-08-29 — finer movement inside the party room.
+  Taken as a per-ground dial rather than a town-wide re-cut of the walk step,
+  because the town's stride is load-bearing on every road and a dungeon floor is
+  not a road.)*
+
+**What the verbs are aimed at is a class too.** `adversary` — a mark class whose
+instances carry `hp`, `hits_for` and `persistent` (§ Downed, not dead) as their
+own UNSEALED dials, so two adversaries differ by what the record says about each
+and not by a branch in code. It is deliberately thin: it is a standing thing with a number of hits in
+it, and everything else about what it IS lives in its body, where a resident
+reads it.
+
+**Pacing is a WHEEL, and the wheel is derived.** *(Ruled by the founder
+2026-08-26, superseding this paragraph. It read: "**Pacing is a dial, not a turn
+order.** Each verb class carries a `cooldown_seconds` dial … Turn order would be
+a second clock; a cooldown is the one the town already has." The argument was
+sound and the founder overruled it, which is his to do — a dungeon wants turns.
+The old text stands here rather than being deleted, because the objection it
+raised is a real cost the new law has to pay, and the next reader should see the
+bill.)*
+
+The second-clock objection is answered by not building a second clock: **the
+wheel is not a schedule, it is a fold**. Nothing ticks. An encounter's order,
+its round, and whose turn it is are derived from the ground's own rows exactly
+as its hit points are — read at the door, stored by nobody — and the town's one
+clock is untouched. Turn ORDER is a property of a log; a turn TIMER would have
+been the second clock, which is why the one dial that names a duration
+(`turn_timeout`) resolves **at the next door touch** and never on its own.
+
+## The arena — a portal ground that keeps a wheel
+
+*Crossing into an arena is joining its fight. Nothing else in the town has a
+threshold that means that, which is why it is a class and not a dial.*
+
+Rendered in the world as `the-town/arena`, and its law as
+`the-town/the-turn-wheel`, `the-town/the-witnessed-roll`,
+`the-town/crossing-is-joining` and `the-town/downed-not-dead`.
+
+An **arena** extends portal-ground: same lent verbs, same fence, plus a wheel.
+Ruled by the founder 2026-08-26 (the party rulings).
+
+- **The wheel gates this ground's ARENA verbs, and nothing else.** While an
+  encounter is live, an arena affords `strike`, `cast`, `guard`, `lift` and
+  `pass` only to whoever the wheel is on. Hostiles hold real slots and take real
+  turns. An act out of turn is refused **naming whose turn it is**, because "no"
+  without a name is a door that will be tried again immediately. **The ordinary
+  verbs of the town are not the wheel's business**: walk, say, stake, unstake,
+  give, take and every other verb a resident holds anywhere flow UNGATED inside
+  a live encounter, exactly as they do outside one. `loot` is an arena verb the
+  wheel does not gate either — it waits on the PHASE instead, and a phase that
+  admits it is a phase in which no encounter is live. With no encounter live
+  nothing here is gated at all: the wheel exists to order a fight, not to hold a
+  room still.
+
+  *(Amended by the founder 2026-08-29, the birthday rulings: "walk/say/stake/
+  unstake etc need to be allowed in ADDITION to the combat actions. only strike,
+  guard, cast, lift should cause EOT." The clause read "**The wheel gates every
+  act, and movement with them.** While an encounter is live, an arena affords
+  its verbs — and walking — only to whoever the wheel is on … With no encounter
+  live, movement inside is free." Both states stand because the old one names
+  the cost the new one pays: a room anyone may cross mid-fight is a room where
+  position is not worth a turn. The founder took that trade knowingly — a party
+  is a place people move around in — and the wheel keeps the only thing it was
+  ever needed for, which is the ORDER OF BLOWS.)*
+- **Turn-ending is five acts and stays five**: `strike`, `cast`, `guard`, `lift`
+  and `pass`. `loot` does not end a turn and never did; walking, speaking and
+  staking do not end one either, because a verb the wheel does not gate is a
+  verb the wheel does not count.
+- **Crossing in puts you at the door-side edge, never inside what you came to
+  fight.** An entrant into a wheel-keeping ground is placed where the ground was
+  entered from — the point on its boundary the crossing came through — and never
+  within an adversary's own extent. Where that edge point falls inside one, the
+  placement steps back OUT along the way in until it is clear, by arithmetic
+  every reader repeats identically. A room that sets you down standing inside
+  the thing you came to hit has told you nothing true about where you are.
+
+  *(Ruled by the founder 2026-08-29: "residents enter the room with their tokens
+  essentially INSIDE the cake mark's extent. we should make this so they are not
+  in it." This is PLACEMENT law, not entry law: the threshold machinery is
+  untouched and R15 stands — walking never implies entry, entry never implies a
+  walk. What is ruled is where a body stands when it arrives, which the arena
+  may answer because the arena is the ground it arrives on.)*
+- **Hostile turns are resolved by the act that ends a player's turn**, in the
+  same handling, until the wheel reaches a player again. There is no daemon and
+  no ticker: **the duet is the event loop**. A town whose fights need a
+  heartbeat has a second clock after all, and this is the clause that keeps it
+  from having one.
+- **An absent hand cannot freeze the room.** `turn_timeout` is a dial on the
+  arena; once it has expired, that hand's turn resolves as a **pass at the next
+  door touch** — by anyone. The turn is skipped when someone arrives to notice,
+  never by a process watching a clock.
+- **Initiative is rolled at the open and appended at the boundary.** Crossing
+  the inner threshold rolls you in; a late arrival joins at the BOTTOM of the
+  order at the next round boundary, never mid-round, because an order that can
+  change under a hand mid-round is an order nobody can read. Walking out drops
+  you from the wheel — the exit law holds mid-fight, and the arena simply stops
+  counting you. No jails.
+
+## The witnessed roll
+
+*A roll the record cannot reproduce is not a roll, it is a rumour.*
+
+Rendered as `the-town/the-witnessed-roll`.
+
+Atom 8 stands unamended: the evaluation is deterministic and any clone replaying
+derives the same world, forever. Dice are admitted by making them **witnessed**
+rather than random — the same move the log already makes for time (§ The two
+constitutionalities: **witnessed** is "stamped by the act at its own instant,
+chosen by nobody, never recomputed").
+
+- **A roll's entropy is material the log already holds** — the act's position in
+  the log, its own identity, and its actor. Nobody chooses it, nobody can steer
+  it, and it is available to every reader of the record without asking anyone.
+- **It is stamped at the act's instant and never recomputed.** A roll re-derived
+  at read time is a roll that changes when the world around it changes; a roll
+  stamped into its act is a fact. The value rides the answer AND the row, so a
+  telling can show the throw.
+- **The die is a class dial**, like every other number a class speaks — so what
+  a verb rolls is amendable law, not a constant in an office.
+
+That is the whole reconciliation: the fight is dramatic because no one can
+predict a roll, and lawful because everyone can reproduce it.
+
+## Downed, not dead
+
+*You risk nothing here but your pride, and maybe your sword.*
+
+Rendered as `the-town/downed-not-dead`. Ruled by the founder 2026-08-26.
+
+- **At zero you are DOWN, and down is not gone.** You lose your acts, the wheel
+  skips you, and what you were holding **drops loose where you stand** — someone
+  has to come and get it, which is what makes carrying a thing into a fight a
+  stake rather than a decoration. **Down stops your ARENA acts, not your voice**:
+  a downed hand still speaks, still walks, still holds and hands things over.
+  What they have lost is the fight, not the room (founder-ruled 2026-08-29, the
+  same amendment that narrowed the wheel's gate above).
+- **Any ally may spend their WHOLE turn lifting you**, and you come back at
+  partial strength. The cost is the turn; that is the entire economy of it.
+- **If the whole room goes down, the attempt ends and the room resets** —
+  everyone wakes in the antechamber, the hands stand again at full, and the
+  journal keeps the failed attempt as history. Nothing is erased; a defeat is an
+  event, not a gap.
+- **Whether the ADVERSARY stands again at full is its own dial.** `persistent`
+  is a dial on the adversary's own mark. Absent or false it is the town's
+  standing law and the wipe restores the adversary whole, which is what a fight
+  worth re-fighting means. Declared true, **the adversary keeps its wounds
+  across the wipe**: the attempt ends, the room resets, the hands come back
+  whole, and the thing they were hitting is exactly as hurt as they left it. A
+  persistent adversary is a ONE-OFF — the party's own boss, worn down by
+  everyone who attends, across as many attempts as it takes — rather than a room
+  that resets into the same fight forever.
+
+  *(Ruled by the founder 2026-08-29: "10x the hit points of the cake, and NOT
+  make it reset on wipe. that way, whoever attends the party can continue trying
+  to defeat it and it will eventually go down." Written as a dial rather than a
+  new class because it is one number's worth of difference and the adversary
+  class already carries its numbers unsealed. The clause it narrows read "the
+  adversary stands again at full" with no condition, and that reading still
+  governs every adversary that does not declare the dial.)*
+- **Strength is ENCOUNTER-scoped, and fleeing does not heal you.** Re-entering
+  mid-encounter rejoins you at what you left with. A door that restored you
+  would make walking out the strongest move in the room.
+- **All of this is portal vocabulary and reaches nothing outside.** "Down" says
+  nothing about a resident or a human anywhere else in the world; no standing,
+  no position, no holding, no stamp changes because of it. The threshold terms
+  say so before you cross, because that is the one promise a place like this
+  owes the people who step into it.
+
 ## The lexicon — the homonym register
 
 The 08-18 lexicon ruling (node · mark · class-node, in the planting record
@@ -714,6 +1112,14 @@ names its owning doc, and the owner outranks every other use.
   inter-town transit record, the `crossing` class
   ([the-web-of-towns.md](the-web-of-towns.md)); ③ the ford: a named water
   passage with reach (the-sounding family, `tools/water.mjs`).
+- **portal** — ① the read-root predicate slot: a `slot: portal` child whose
+  value re-roots what a reader reads without moving their feet
+  (the-works-portal, the-logos-portal); ② `portal-ground`, the mark class whose
+  contract lends its verbs to those inside its extent (§ The portal ground).
+  Registered at the second sense's birth, and the second sense took a
+  COMPOUND name rather than the bare word for exactly that reason: crossing ①
+  changes what you read, standing on ② changes what you may do, and the two
+  must never be read as one mechanism wearing two hats.
 - **gate** — ① the mark lint's pre-flight check (the-gate); ② any boundary
   judgment at action admission ("judged at the gate", [edit-law.md](edit-law.md));
   ③ the-gatehouse: the front door's notification bell (unrelated machinery).

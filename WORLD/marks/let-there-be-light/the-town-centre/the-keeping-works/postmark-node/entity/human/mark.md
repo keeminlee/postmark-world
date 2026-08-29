@@ -4,12 +4,12 @@ by: the-town
 tier: constitution
 date: 2026-08-17
 class: human
-version: 2
+version: 3
 extends: entity
-dials: {}
+dials: {"pace_km_per_crossing": 60}
 implements: ["the-town/the-own-hand"]
 actions: [{"action": "say", "for": "human", "residue": "the-town/say"}]
 source: LOGOS/classes.md
 ---
 
-The household's human, standing beside their resident. One action for now — a voice: to speak here is to speak with them.
+The household's human: a voice anywhere, beside their resident — and on their own household's ground, feet of their own, at a resident's pace.
