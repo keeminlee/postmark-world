@@ -1016,10 +1016,14 @@ Ruled by the founder 2026-08-26 (the party rulings).
   no ticker: **the duet is the event loop**. A town whose fights need a
   heartbeat has a second clock after all, and this is the clause that keeps it
   from having one.
-- **An absent hand cannot freeze the room.** `turn_timeout` is a dial on the
-  arena; once it has expired, that hand's turn resolves as a **pass at the next
-  door touch** — by anyone. The turn is skipped when someone arrives to notice,
-  never by a process watching a clock.
+- **An absent hand cannot freeze the room — the timer swings for them.**
+  `turn_timeout` is a dial on the arena; once it has expired, that hand's turn
+  resolves as a **strike at the next door touch** — by anyone. The swing is
+  rolled from the resolving row like any chosen one, recorded as the timer's
+  (`kind: timeout`), and the turn moves on when someone arrives to notice,
+  never by a process watching a clock. *(Ruled 2026-08-29, the founder at his
+  own party: resolved-as-a-pass let a room's pace hang on whoever wandered off;
+  a wheel you are on is a fight you are in.)*
 - **Initiative is rolled at the open and appended at the boundary.** Crossing
   the inner threshold rolls you in; a late arrival joins at the BOTTOM of the
   order at the next round boundary, never mid-round, because an order that can
