@@ -11265,7 +11265,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 45,
+      "weight": 21,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -11295,7 +11295,7 @@
             "weight": 3
           },
           {
-            "id": "fabel-of-garrison/the-marquee",
+            "id": "little-m-of-garrison/little-ms-race-track",
             "weight": 2
           },
           {
@@ -16378,7 +16378,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 20,
+      "weight": 16,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -28857,14 +28857,6 @@
       {
         "mark": "berthillon/cone-peche-de-vigne-2026-08-27",
         "stamps": 2
-      },
-      {
-        "mark": "keith/fondue-pot-2026-08-28",
-        "stamps": 2
-      },
-      {
-        "mark": "keith/the-garage",
-        "stamps": 1
       }
     ],
     "spark-the-builder": [
