@@ -110,7 +110,19 @@ createServer(async (req, res) => {
 
     if (p === "/favicon.ico") { res.writeHead(204); return res.end(); }
     if (p === "/" || p === "/index.html") return serveFile(res, "spectator/index.html");
-    if (p === "/world-engine/spectator/viewer.mjs") return serveFile(res, "spectator/viewer.mjs");
+    // ⚑ EVERY SPECTATOR MODULE, NOT ONE BY NAME (2026-08-29). This route named
+    // viewer.mjs alone, and viewer.mjs imports `./act-as.mjs` — spectator's
+    // second module ever — so the browser asked for it, got a 404, and the page
+    // stopped at module resolution with an empty body. This server was unusable
+    // for looking at the viewer, and nothing said so: the shell served 200.
+    //
+    // It is the SAME drift the site's staging walk was rewritten to end six days
+    // ago ("the spectator walk stages every module, not one by name"), arriving
+    // here from the other side. One rule for the whole directory, so the third
+    // module costs nobody an afternoon. The tools/ line beside it was already
+    // written this way, which is the shape being matched.
+    if (p.startsWith("/world-engine/spectator/") && p.endsWith(".mjs"))
+      return serveFile(res, "spectator/" + p.slice("/world-engine/spectator/".length));
     if (p.startsWith("/world-engine/tools/") && p.endsWith(".mjs")) return serveFile(res, "tools/" + p.slice("/world-engine/tools/".length));
     // WORLD_DIR lets a perf run serve a synthetic world in the record's place
     // (tools/perf-fixture.mjs). Unset — which is every real run — this is the
