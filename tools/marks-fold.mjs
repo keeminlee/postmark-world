@@ -1085,6 +1085,21 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
       // door validated and the lint re-checks; undefined on every imageless
       // mark, so a world without pictures serializes as before.
       image: mk.image,
+      // loot (2026-08-29): the shroud's own flag, and it is in the STORE for the
+      // same reason `image` is — a surface that renders from world-state.json
+      // cannot see a frontmatter key the fold does not carry.
+      //
+      // ⚑ THE BUG THIS CLOSES, founder-reported twice: the baked map draws
+      // the-wick-end and a-slice-to-take-home before the cake has fallen. The
+      // office's LIVE door already shrouds them (a loot-flagged thing is absent
+      // from `nearby` until the encounter is spent), so the fight itself is
+      // right — but the STATIC render reads this file, and this file had no idea
+      // those marks were prizes. Two readers, one fact, and only one of them
+      // held it.
+      //
+      // Undefined on every ordinary mark, so a world with no prizes in it
+      // serializes exactly as before.
+      loot: mk.loot,
       // A mark's PLACEMENT — the mark it stands inside. Disclosed for classed
       // marks since the bounty grammar (a notice is a notice because it stands
       // ON the board), and for EVERY mark since the conferred-sovereignty
