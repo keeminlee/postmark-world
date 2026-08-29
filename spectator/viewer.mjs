@@ -8361,6 +8361,50 @@ export function mountViewer(appEl) {
     if (h && (state.whoami?.handles ?? []).includes(h) && h !== state.actAs) selectActor(h);
   });
 
+  // ───────── the camera, asked for rather than taken (2026-08-29) ─────────
+  //
+  // ⚑ THE THIRD WORD OF THE HANDSHAKE, and it exists because the cockpit had
+  // no way to point this camera and started writing the viewBox attribute
+  // itself. That looked like it worked and was not: THIS viewer owns a `view`
+  // object, and every one of its own camera paths — wheel, drag, tween, fit,
+  // follow, refit — computes from `view` and then writes the attribute through
+  // applyView. An outside write moves the attribute and leaves `view` where it
+  // was, so the two disagree the instant it lands.
+  //
+  // What that cost, in the founder's own words: "just a blank page with a red
+  // cake ring, no tokens. the moment I try to zoom, it just kicks me out to the
+  // parent level view." Nothing ejected him. The wheel handler scaled the
+  // viewer's stale `view` and applyView wrote it back over the cockpit's frame,
+  // so one notch of scroll replaced the room with the wide view this viewer had
+  // never left. And in between, the decorations were the worse half: markers,
+  // atlas art and interior panels are sized off `mapCtx.zoomK`, which is
+  // derived from `view` — so every panel drew at the scale of a frame nobody
+  // was looking at. Interior artwork sprawled across the map and one panel
+  // landed on top of the action bar.
+  //
+  // So the camera is ASKED for and stays this file's to move. Everything still
+  // funnels through applyView, `view` and the attribute never disagree, and a
+  // caller gets the same clamping, tweening and fencing as the reader's own
+  // hand. The detail is world METRES — the cockpit speaks the door's
+  // coordinates and has no business knowing this painting's units.
+  window.addEventListener("pm:frame-on", (e) => {
+    if (!mapCtx?.setView || !mapCtx.originPx || !mapCtx.mPerPx) return;
+    const d = e?.detail ?? {};
+    const at = d.at;
+    const m = Number(d.extent_m);
+    if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
+    if (!Number.isFinite(m) || m <= 0) return;
+    const cx = mapCtx.originPx.x + at.x / mapCtx.mPerPx;
+    const cy = mapCtx.originPx.y + at.y / mapCtx.mPerPx;
+    const w = m / mapCtx.mPerPx;
+    // the PANE's aspect, not the painting's — the same rectangle frameOn asks,
+    // and the reason its own note gives: a height derived from the painting is
+    // a height for a shape the reader is not looking through
+    const box = mapCtx.svg?.getBoundingClientRect?.();
+    const h = box && box.width ? w * (box.height / box.width) : w;
+    mapCtx.setView({ x: cx - w / 2, y: cy - h / 2, w, h }, d.animate !== false);
+  });
+
   // ───────── the Actions rail ─────────
   //
   // THE DOORS THIS VIEWER HAS, and under R17 a door is a BEGINNING rather than
