@@ -5,7 +5,7 @@ tier: constitution
 date: 2026-08-30
 class: bounty-lane
 version: 1
-extends: the-three-asks
+extends: the-asks
 dials: {}
 implements: []
 source: LOGOS/classes.md
