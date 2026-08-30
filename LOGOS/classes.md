@@ -1061,13 +1061,31 @@ Ruled by the founder 2026-08-26 (the party rulings).
   heartbeat has a second clock after all, and this is the clause that keeps it
   from having one.
 - **An absent hand cannot freeze the room — the timer swings for them.**
-  `turn_timeout` is a dial on the arena; once it has expired, that hand's turn
-  resolves as a **strike at the next door touch** — by anyone. The swing is
-  rolled from the resolving row like any chosen one, recorded as the timer's
-  (`kind: timeout`), and the turn moves on when someone arrives to notice,
-  never by a process watching a clock. *(Ruled 2026-08-29, the founder at his
-  own party: resolved-as-a-pass let a room's pace hang on whoever wandered off;
-  a wheel you are on is a fight you are in.)*
+  `turn_timeout_s` is an **unsealed instance dial**: the arena class carries
+  the default (**600**) and each encounter may set its own, the way every
+  unsealed slot in this record works — the class never speaks the instance's
+  value. Once it has expired, that hand's turn resolves as a **strike at the
+  next door touch** — by anyone. The swing is rolled from the resolving row
+  like any chosen one, recorded as the timer's (`kind: timeout`), and the turn
+  moves on when someone arrives to notice, never by a process watching a clock.
+  *(Ruled 2026-08-29, the founder at his own party: resolved-as-a-pass let a
+  room's pace hang on whoever wandered off; a wheel you are on is a fight you
+  are in.)*
+
+  *(Amended 2026-08-30. This clause read "`turn_timeout` is a dial on the
+  arena", written at 16:54 on 2026-08-29 in the same ruling that set the candle
+  vault's timeout to a named **45 seconds** — 0352e561, "the vault dial settles
+  at the named 45 seconds (the 20s overshoot reverted; with the timer swinging,
+  the timeout is damage cadence)". Both states are shown because the 45 is the
+  instance that PROVED the dial works: the founder overrode the class default
+  for one fight, on pacing grounds he could only have found by fighting it, and
+  the room obeyed. The number itself is gone — 992a3338 reclassed the vault to
+  a plain portal ground three hours later and stripped its wheel dials with the
+  rest, so no `turn_timeout_s` of 45 survives anywhere in the world, and the
+  only one that does is the class default of 600. Recording it as "a dial on
+  the arena" would leave a reader hunting for a 45 that died on the record; it
+  was never a second constitutional number, it was one encounter's own, and the
+  unsealed reading above is what the ruling actually demonstrated.)*
 - **Initiative is rolled at the open and appended at the boundary.** Crossing
   the inner threshold rolls you in; a late arrival joins at the BOTTOM of the
   order at the next round boundary, never mid-round, because an order that can

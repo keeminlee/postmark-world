@@ -256,6 +256,21 @@ test("the one dial that names a duration resolves at a door, never on a clock", 
   // ticker in the making.
   const arena = field(ARENA, "dials");
   assert.ok(Number.isFinite(arena.turn_timeout_s) && arena.turn_timeout_s > 0);
+
+  // THE CLASS DEFAULT IS A NUMBER, and this asserts WHICH — LOGOS/classes.md
+  // § Pacing is a wheel, as amended 2026-08-30, verbatim:
+  //   "`turn_timeout_s` is an unsealed instance dial: the arena class carries
+  //    the default (600) and each encounter may set its own, the way every
+  //    unsealed slot in this record works — the class never speaks the
+  //    instance's value."
+  // `> 0` could not tell 600 from 45, which is exactly the confusion the
+  // amendment settles: the founder's 16:54 ruling on 2026-08-29 (0352e561) set
+  // the candle vault to a named 45, and 992a3338 stripped the vault's wheel
+  // dials three hours later, so that 45 now exists nowhere in the world. The
+  // doc names 600 and so does the record; pinning it here is what keeps a
+  // rename or a re-tune failing a test instead of failing the town.
+  assert.equal(arena.turn_timeout_s, 600,
+    "the arena class carries the DEFAULT turn timeout, and LOGOS names it 600 — an instance may set its own, but the class's own number is this one");
   for (const v of ["strike", "guard", "cast", "lift", "loot"])
     for (const k of Object.keys(field(VERB(v), "dials")))
       assert.ok(!/_s$|_seconds$/.test(k),
