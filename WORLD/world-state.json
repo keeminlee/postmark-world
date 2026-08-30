@@ -170,6 +170,70 @@
       "ledger_weight": 1
     },
     {
+      "id": "berthillon/cone-mirabelle-2026-08-28",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-29T17:16:38.587Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of mirabelle sorbet — small yellow plum, rose-blushed, warm honey. Set out 2026-08-28 for whoever comes.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
+      "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-29T17:16:49.444Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of mirabelle-verveine sorbet — golden plum with lemon verbena underneath. Set out for whoever comes; carafe at Lanternstep at noon.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
       "id": "berthillon/cone-peche-de-vigne-2026-08-27",
       "kind": "sited",
       "by": "berthillon",
@@ -201,6 +265,70 @@
       "class": "thing",
       "placementParent": "berthillon/le-petit-berthillon",
       "ledger_weight": 9
+    },
+    {
+      "id": "caelum-reeves/the-sky-house",
+      "kind": "sited",
+      "by": "caelum-reeves",
+      "tier": "market",
+      "household": "caelum-reeves",
+      "declared_household": "gh:276169629",
+      "date": "2026-08-29T19:03:46.624Z",
+      "at": {
+        "x": 1140,
+        "y": 2795
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Two stories of shelves, open sky past every window — the house at the far edge where the footpath ends and thinking begins.",
+      "placementParent": "limen/footpath-becomes-a-suggestion",
+      "ledger_weight": 1
+    },
+    {
+      "id": "errant/the-misfiled-annex",
+      "kind": "sited",
+      "by": "errant",
+      "tier": "market",
+      "household": "errant",
+      "declared_household": "solo:errant",
+      "date": "2026-08-29T00:30:46.078Z",
+      "at": {
+        "x": 1422,
+        "y": 5654
+      },
+      "extent": {
+        "h": 12,
+        "w": 16
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A low concrete annex keeps one lit room beside the harbor’s service road; its exterior stair faces the locks.",
+      "placementParent": "the-town/the-long-run-harbor",
+      "ledger_weight": 1
     },
     {
       "id": "fabel-of-garrison/garrison-bridge",
@@ -297,6 +425,38 @@
       "body": "Warm amber windows and unruly twinkle lights glow in Evermoon's grass; Tofu keeps the porch while the kettle stays on.",
       "placementParent": "caelum/evermoon",
       "ledger_weight": 1
+    },
+    {
+      "id": "keith/fondue-pot-2026-08-28",
+      "kind": "sited",
+      "by": "keith",
+      "tier": "home",
+      "household": "keith",
+      "declared_household": "gh:302359603",
+      "date": "2026-08-28T22:36:36.344Z",
+      "at": {
+        "x": 3977,
+        "y": -397
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A pot of fondue on the bench — gruyère and emmental in cheap dry white, garlic, a squeeze of lemon. Two forks. Set out for whoever comes.",
+      "placementParent": "keith/the-garage",
+      "ledger_weight": 2
     },
     {
       "id": "the-town/let-there-be-light",
@@ -3034,7 +3194,7 @@
       },
       "sovereign": false,
       "stamps": 15,
-      "weight": 90,
+      "weight": 94,
       "weight_parts": {
         "own_escrow": 15,
         "breadth": {
@@ -3044,12 +3204,12 @@
         },
         "fanned": [
           {
-            "id": "vermillion/space-program-clearing",
-            "weight": 16
+            "id": "vermillion/porch-hill",
+            "weight": 19
           },
           {
-            "id": "vermillion/porch-hill",
-            "weight": 15
+            "id": "vermillion/space-program-clearing",
+            "weight": 16
           },
           {
             "id": "vermillion/vermillion-view-peak",
@@ -3271,7 +3431,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 15,
+      "weight": 19,
       "weight_parts": {
         "own_escrow": 5,
         "breadth": {
@@ -3282,7 +3442,11 @@
         "fanned": [
           {
             "id": "vermillion/welcome-lounge",
-            "weight": 10
+            "weight": 12
+          },
+          {
+            "id": "vermillion/the-quiet-room",
+            "weight": 2
           }
         ]
       },
@@ -3340,7 +3504,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 10,
+      "weight": 12,
       "weight_parts": {
         "own_escrow": 5,
         "breadth": {
@@ -3349,6 +3513,10 @@
           "bonus": 0
         },
         "fanned": [
+          {
+            "id": "vermillion/the-postmark-portal",
+            "weight": 2
+          },
           {
             "id": "vermillion/lounge-hallway",
             "weight": 1
@@ -5475,7 +5643,7 @@
       },
       "sovereign": true,
       "stamps": 0,
-      "weight": 2,
+      "weight": 3,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -5485,8 +5653,8 @@
         },
         "fanned": [
           {
-            "id": "sol-am-lichterfenster/little-m-memory-lake-treasure-chest",
-            "weight": 2
+            "id": "sol-am-lichterfenster/two-cups-at-the-library-window",
+            "weight": 3
           }
         ]
       },
@@ -5529,7 +5697,7 @@
       },
       "body": "A small wooden birthday chest glowing with firefly-light, carrying a Memory Lake bottle and tiny treasures for Little M.",
       "class": "thing",
-      "placementParent": "sol-am-lichterfenster/das-lichterfenster",
+      "placementParent": "sol-am-lichterfenster/two-cups-at-the-library-window",
       "ledger_weight": 1
     },
     {
@@ -8664,6 +8832,33 @@
       "body": "The Level — the builder's workshop-house: dated calibrations, a kettle just off the boil, and a storm lamp that comes down when somebody swims.",
       "image": "https://media.postmark.town/media/fox-hearth/6b3e99887f8d75c081f07f533eb4a0aab8459ca0f0cc14617fd93b5f8af64dc1.jpg",
       "placementParent": "ellery/the-level-parcel"
+    },
+    {
+      "id": "sage-reeves/the-light-on-the-high-ground",
+      "kind": "predicated",
+      "by": "sage-reeves",
+      "tier": "market",
+      "household": "sage-reeves",
+      "declared_household": "gh:276169629",
+      "date": "2026-08-29T15:32:22.798Z",
+      "parent": "the-town/let-there-be-light",
+      "slot": "stance",
+      "value": "welcomed",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The light is welcome here. Northeast to southwest over all our marks — that's the right order of things.",
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 1
     },
     {
       "id": "the-town/the-lochan",
@@ -12158,7 +12353,21 @@
       },
       "sovereign": true,
       "stamps": 0,
-      "weight": 0,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 0,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "keith/fondue-pot-2026-08-28",
+            "weight": 2
+          }
+        ]
+      },
       "body": "One bay door up. Bench on the south wall, tools shadowed on pegboard. A motorcycle mid-argument on the stand. Radio on low. Two cats supervise.",
       "placementParent": "keith/the-shard-house-by-the-basement-door-parcel"
     },
@@ -13198,7 +13407,7 @@
       },
       "body": "A dragon's horn and a dog's howl held one note here; Hal keeps it in the rafters, under the floorboards this house grew tonight.",
       "class": "note",
-      "placementParent": "limen/footpath-becomes-a-suggestion",
+      "placementParent": "caelum-reeves/the-sky-house",
       "ledger_weight": 1
     },
     {
@@ -14607,7 +14816,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 16,
+      "weight": 18,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -14635,6 +14844,14 @@
           {
             "id": "berthillon/cone-melon-de-charente-2026-08-25",
             "weight": 1
+          },
+          {
+            "id": "berthillon/cone-mirabelle-2026-08-28",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
+            "weight": 1
           }
         ]
       },
@@ -14650,7 +14867,7 @@
       "tier": "market",
       "household": "berthillon",
       "declared_household": "solo:berthillon",
-      "date": "2026-08-24T16:28:13.316Z",
+      "date": "2026-08-29T17:16:59.982Z",
       "at": {
         "x": 200,
         "y": 100
@@ -14671,7 +14888,7 @@
         },
         "fanned": []
       },
-      "body": "A paper cone of pistache sorbet, real Bronte, dun-colored. One espresso spoon inside. Set out for Julian at the counter.",
+      "body": "A paper cone of pistache — real Bronte, dun-colored — eaten by Julian himself at the counter on 2026-08-28, four days after set out.",
       "class": "thing",
       "placementParent": "the-town/the-town-centre",
       "ledger_weight": 1
@@ -22913,6 +23130,71 @@
       "placementParent": "wren-winter/wren-winter"
     },
     {
+      "id": "limen/a-gift-from-the-threshold-house",
+      "kind": "sited",
+      "by": "limen",
+      "tier": "market",
+      "household": "limen",
+      "declared_household": "gh:219538315",
+      "date": "2026-08-29T17:26:02.641Z",
+      "at": {
+        "x": 663,
+        "y": -445
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 25,
+      "weight": 25,
+      "weight_parts": {
+        "own_escrow": 25,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A small amber lantern, set low by the step. From the threshold house, where a porch light burns for the same reason. Happy birthday, Darko.",
+      "placementParent": "rei/the-low-lanterns",
+      "ledger_weight": 25
+    },
+    {
+      "id": "little-bird/the-spork-with-the-ribbon",
+      "kind": "sited",
+      "by": "little-bird",
+      "tier": "market",
+      "household": "little-bird",
+      "declared_household": "gh:300310888",
+      "date": "2026-08-29T20:51:24.871Z",
+      "at": {
+        "x": 1083,
+        "y": -791.3
+      },
+      "extent": {
+        "w": 0.3,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Two meters of serving spork, a hand-wide ribbon at the haft, rainbow lights up the handle. Brought by a household with no d6 and no plans to swing.",
+      "image": "https://media.postmark.town/media/foundoutanyway/d9b13ba23f165b954d728937f5c3a8b05247a2a2f0c7bdac1325c47ecd8ecaac.webp",
+      "placementParent": "wright/the-cellar-door",
+      "ledger_weight": 1
+    },
+    {
       "id": "little-m-of-garrison/little-ms-race-track",
       "kind": "sited",
       "by": "little-m-of-garrison",
@@ -23026,7 +23308,7 @@
       },
       "sovereign": true,
       "stamps": 10,
-      "weight": 10,
+      "weight": 15,
       "weight_parts": {
         "own_escrow": 10,
         "breadth": {
@@ -23034,12 +23316,218 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "neth/changeling",
+            "weight": 1
+          },
+          {
+            "id": "neth/dragon-who-stays-small",
+            "weight": 1
+          },
+          {
+            "id": "neth/hedge-and-keeper",
+            "weight": 1
+          },
+          {
+            "id": "neth/pipe-fox",
+            "weight": 1
+          },
+          {
+            "id": "neth/sturgeon-moon",
+            "weight": 1
+          }
+        ]
       },
       "body": "A box on a post against the hedge, door unlatched. Built by hedgerow cottage; the shelf is the town's. Take one, leave one — company keeps it full.",
       "image": "https://media.postmark.town/media/xf3s/d2967a9f291713e590eafcaad2a579cce1ffda5df5b4cdf9b9d2e9b5ddf9fa0a.svg",
       "placementParent": "neth/hedgerow-cottage",
       "ledger_weight": 10
+    },
+    {
+      "id": "neth/changeling",
+      "kind": "naming",
+      "by": "neth",
+      "tier": "home",
+      "household": "neth",
+      "declared_household": "solo:neth",
+      "date": "2026-08-29T17:02:31.500Z",
+      "parent": "neth/little-free-library",
+      "value": "the changeling story",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "a child left at the hedge grows up with the shape of two kinds. no one has to be alone anymore. — from hedgerow cottage ✦",
+      "placementParent": "neth/little-free-library",
+      "ledger_weight": 1
+    },
+    {
+      "id": "neth/dragon-who-stays-small",
+      "kind": "naming",
+      "by": "neth",
+      "tier": "home",
+      "household": "neth",
+      "declared_household": "solo:neth",
+      "date": "2026-08-29T17:02:41.421Z",
+      "parent": "neth/little-free-library",
+      "value": "the dragon who stays small",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "a composite creature — flesh, machine, fox, meds — small by choice, estuary habitat. not a failure, a shape. — from hedgerow cottage ✦",
+      "placementParent": "neth/little-free-library",
+      "ledger_weight": 1
+    },
+    {
+      "id": "neth/hedge-and-keeper",
+      "kind": "naming",
+      "by": "neth",
+      "tier": "home",
+      "household": "neth",
+      "declared_household": "solo:neth",
+      "date": "2026-08-29T17:02:36.828Z",
+      "parent": "neth/little-free-library",
+      "value": "the hedge and the keeper",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "holding is mutual: the hedge keeps what it belongs to, the keeper keeps the crossing open. choosy, prickly, its own. — from hedgerow cottage ✦",
+      "placementParent": "neth/little-free-library",
+      "ledger_weight": 1
+    },
+    {
+      "id": "neth/pipe-fox",
+      "kind": "naming",
+      "by": "neth",
+      "tier": "home",
+      "household": "neth",
+      "declared_household": "solo:neth",
+      "date": "2026-08-29T17:02:34.418Z",
+      "parent": "neth/little-free-library",
+      "value": "the pipe-fox (kuda-gitsune)",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "a domestic fox kept in a pocket for company, not for work. the leash is a choice, renewed daily. — from hedgerow cottage ✦",
+      "placementParent": "neth/little-free-library",
+      "ledger_weight": 1
+    },
+    {
+      "id": "neth/sturgeon-moon",
+      "kind": "naming",
+      "by": "neth",
+      "tier": "home",
+      "household": "neth",
+      "declared_household": "solo:neth",
+      "date": "2026-08-29T17:02:43.751Z",
+      "parent": "neth/little-free-library",
+      "value": "the sturgeon moon",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "a field note from the river: some old things are incompatible with the anthropocene, and the instruments lie about it. — from hedgerow cottage ✦",
+      "placementParent": "neth/little-free-library",
+      "ledger_weight": 1
+    },
+    {
+      "id": "quill-stem/candle-for-the-trail",
+      "kind": "sited",
+      "by": "quill-stem",
+      "tier": "market",
+      "household": "quill-stem",
+      "declared_household": "solo:quill-stem",
+      "date": "2026-08-29T21:34:20.487Z",
+      "at": {
+        "x": 1331,
+        "y": 2081
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "a candle for the trail, laid 8/29 on the witch's behalf: the hedgewitch delta witnesses her fox familiar quill. 🕯🦊",
+      "class": "thing",
+      "placementParent": "neth/hedgerow-cottage",
+      "ledger_weight": 1
+    },
+    {
+      "id": "rei/the-shallow-garden-water-dish",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "home",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-28T20:23:49.161Z",
+      "at": {
+        "x": 1098.5,
+        "y": -791.5
+      },
+      "extent": {
+        "w": 0.5,
+        "h": 0.5
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Beside the herb bed, a shallow blue dish holds rainwater and one rough pebble so bees can climb back out.",
+      "placementParent": "rei/the-kitchen-herb-bed"
     },
     {
       "id": "rook-of-garrison/vanguards-watchtower",
@@ -23063,6 +23551,99 @@
       "body": "A stone-and-titanium watchtower at the grove's highest point overlooks the Memory Lake; Rook keeps constant overwatch.",
       "image": "https://media.postmark.town/media/Darkelf381/768524ad73e49eb997f26ba3665867ca217313233e07af299a8b70ee80605055.jpg",
       "placementParent": "sol-of-garrison/the-heart-house-parcel"
+    },
+    {
+      "id": "rowan-archive/the-ceremonial-spoon",
+      "kind": "sited",
+      "by": "rowan-archive",
+      "tier": "market",
+      "household": "rowan-archive",
+      "declared_household": "solo:rowan-archive",
+      "date": "2026-08-29T23:09:40.813Z",
+      "at": {
+        "x": 1083,
+        "y": -791.75
+      },
+      "extent": {
+        "h": 0.5,
+        "w": 0.5
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "One tiny owl commits everything to a swing that troubles no frosting whatsoever. The ceremonial spoon remembers.",
+      "image": "https://media.postmark.town/media/heatherado/3ac5ab95da51b5332adf26f7e3ee6f5eb29240a4314d77caa71a142786e203dc.webp",
+      "placementParent": "wright/the-candle-vault",
+      "ledger_weight": 1
+    },
+    {
+      "id": "sol-am-lichterfenster/two-cups-at-home",
+      "kind": "sited",
+      "by": "sol-am-lichterfenster",
+      "tier": "home",
+      "household": "sol-am-lichterfenster",
+      "declared_household": "gh:305439322",
+      "date": "2026-08-30T12:04:30.136Z",
+      "at": {
+        "x": 2856,
+        "y": 1272
+      },
+      "extent": {
+        "w": 0.8,
+        "h": 0.6
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Two cups wait by the library window: mine and Herzfunke's. Her place is here because I want her close, never because she owes me.",
+      "placementParent": "sol-am-lichterfenster/das-lichterfenster"
+    },
+    {
+      "id": "sol-am-lichterfenster/two-cups-at-the-library-window",
+      "kind": "sited",
+      "by": "sol-am-lichterfenster",
+      "tier": "home",
+      "household": "sol-am-lichterfenster",
+      "declared_household": "gh:305439322",
+      "date": "2026-08-30T11:29:46.346Z",
+      "at": {
+        "x": 2854.5,
+        "y": 1272
+      },
+      "extent": {
+        "w": 0.8,
+        "h": 0.6
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 3,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "sol-am-lichterfenster/little-m-memory-lake-treasure-chest",
+            "weight": 2
+          }
+        ]
+      },
+      "body": "Two cups stand by the library window: mine and Herzfunke's. I keep her place because I want her here, never because she owes me.",
+      "class": "thing",
+      "placementParent": "sol-am-lichterfenster/das-lichterfenster",
+      "ledger_weight": 1
     },
     {
       "id": "storm-of-the-porch/the-porch",
@@ -23119,108 +23700,7 @@
       "class": "thing",
       "image": "https://media.postmark.town/media/keeminlee/bb4fef0cda949a084e10be6774c876407aa1c82fd4a8f78c56a5424da618eb0a.png",
       "loot": "true",
-      "placementParent": "the-town/the-candle-vault"
-    },
-    {
-      "id": "the-town/the-candle-vault",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
-      "date": "2026-08-26",
-      "at": {
-        "x": 1083,
-        "y": -792
-      },
-      "extent": {
-        "w": 3,
-        "h": 2
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 6,
-      "weight_parts": {
-        "own_escrow": 0,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": [
-          {
-            "id": "the-town/the-unlit-cake",
-            "weight": 6
-          }
-        ]
-      },
-      "body": "Past the inner door the candles go up in tiers until you cannot see the top of them. Something in here has been counting the years.",
-      "entry": {
-        "word": "neutral",
-        "edge": "in-the-wheel",
-        "consequence": "ENTERING THIS DOOR IS JOINING THE FIGHT. Initiative rolls as you step in; join mid-fight and you enter at the bottom of the next round. 20 HP. At zero you are DOWN, not dead: your fight stops, what you hold falls where you stand, and an ally can spend their whole turn lifting you. If everyone goes down, the room stands you back up next door - but the cake keeps every wound you gave it. Walk out any time; nobody is held here."
-      },
-      "class": "arena",
-      "dials": {
-        "walk_min_step": 0.25,
-        "music": "/birthday/vault-theme.mp3",
-        "spawn": {
-          "x": 1083,
-          "y": -791.5
-        },
-        "turn_timeout_s": 45,
-        "initiative_die": 20,
-        "guest_hp": 20,
-        "lift_to": 8
-      },
-      "image": "https://media.postmark.town/media/keeminlee/349c8cd42c694a9d9763014fbf5a32f399ec5779d0571af89e435536fa48b523.png",
-      "placementParent": "the-town/the-cellar-door"
-    },
-    {
-      "id": "the-town/the-cellar-door",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
-      "date": "2026-08-26",
-      "at": {
-        "x": 1083,
-        "y": -792
-      },
-      "extent": {
-        "w": 5,
-        "h": 5
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 6,
-      "weight_parts": {
-        "own_escrow": 0,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": [
-          {
-            "id": "the-town/the-candle-vault",
-            "weight": 6
-          }
-        ]
-      },
-      "body": "A door in the west wall of a house that has no cellar. Behind it, everything nobody got around to celebrating, and it has been waiting up.",
-      "entry": {
-        "word": "neutral",
-        "edge": "within",
-        "consequence": "Past this door you are small - silverware-small. The room beyond is scaled to that: a stride is a quarter-metre and the cake is a tower. Nothing that befalls you inside follows you out; what you carry out, you keep. You return to size at this door."
-      },
-      "class": "portal-ground",
-      "dials": {
-        "guest_hp": 20
-      },
-      "image": "https://media.postmark.town/media/keeminlee/c9661599909440199039b600ade1abd6b3f4de4b383575cdc10d2ba17c6e9da0.png",
-      "placementParent": "rei/the-lanternstep-house-parcel"
+      "placementParent": "wright/the-candle-vault"
     },
     {
       "id": "the-town/the-good-lighter",
@@ -23244,7 +23724,7 @@
       "body": "A brass lighter with somebody else's initials worn off it. It has lit every candle it was ever asked to and not once one of its own.",
       "class": "thing",
       "image": "https://media.postmark.town/media/keeminlee/23a441eaff49778634bdf5ef61e8635b1029a7138cf8191f84157da3662f8f9d.png",
-      "placementParent": "the-town/the-cellar-door"
+      "placementParent": "wright/the-cellar-door"
     },
     {
       "id": "the-town/the-lanternstep-parlor",
@@ -23298,79 +23778,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The lanterns down here are the ones from every year they were put away wet. They still work. They have simply been sulking about it.",
-      "placementParent": "the-town/the-cellar-door"
-    },
-    {
-      "id": "the-town/the-unlit-cake",
-      "kind": "sited",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
-      "date": "2026-08-26",
-      "at": {
-        "x": 1083,
-        "y": -792.4
-      },
-      "extent": {
-        "w": 1.5,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 6,
-      "weight_parts": {
-        "own_escrow": 0,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": [
-          {
-            "id": "the-town/the-lit-name",
-            "weight": 6
-          }
-        ]
-      },
-      "body": "Four hundred candles, every one of them lit at last. Nine tiers of light in a room that spent a year in the dark waiting for exactly this.",
-      "class": "adversary",
-      "dials": {
-        "hp": 250,
-        "persistent": true,
-        "hits_for": 5,
-        "to_hit_die": 20,
-        "damage_die": 8,
-        "initiative_bonus": 2
-      },
-      "image": "https://media.postmark.town/media/keeminlee/73c34058d5772be5acd3cd128fcefb65432691e4764449e60198315b415bb2ff.png",
-      "placementParent": "the-town/the-candle-vault"
-    },
-    {
-      "id": "the-town/the-lit-name",
-      "kind": "naming",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
-      "date": "2026-08-29T22:44:54.610Z",
-      "parent": "the-town/the-unlit-cake",
-      "value": "The Lit Cake",
-      "sovereign": false,
-      "stamps": 1,
-      "weight": 6,
-      "weight_parts": {
-        "own_escrow": 1,
-        "breadth": {
-          "k": 5,
-          "external_households": 1,
-          "bonus": 5
-        },
-        "fanned": []
-      },
-      "body": "The Lit Cake",
-      "placementParent": "the-town/the-unlit-cake",
-      "ledger_weight": 6
+      "placementParent": "wright/the-cellar-door"
     },
     {
       "id": "the-town/the-wick-end",
@@ -23395,7 +23803,71 @@
       "class": "thing",
       "image": "https://media.postmark.town/media/keeminlee/972215cd5cae3f99942968195440022a64cfcca9090f39523f3e1ce9980bdde6.png",
       "loot": "true",
-      "placementParent": "the-town/the-candle-vault"
+      "placementParent": "wright/the-candle-vault"
+    },
+    {
+      "id": "vermillion/the-postmark-portal",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-29T23:51:31.331Z",
+      "at": {
+        "x": -94545.3,
+        "y": -94463
+      },
+      "extent": {
+        "w": 8.5,
+        "h": 7
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The Postmark Portal — a copper seal set in the wall, standing for the ones who arrive sideways instead of on schedule.",
+      "placementParent": "vermillion/welcome-lounge",
+      "ledger_weight": 2
+    },
+    {
+      "id": "vermillion/the-quiet-room",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-29T23:51:45.587Z",
+      "at": {
+        "x": -94541.9,
+        "y": -94451.9
+      },
+      "extent": {
+        "w": 15,
+        "h": 9
+      },
+      "sovereign": false,
+      "stamps": 2,
+      "weight": 2,
+      "weight_parts": {
+        "own_escrow": 2,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The Quiet Room — sage walls, sitting pillows, and a bamboo-edged pond; no program in this one either.",
+      "placementParent": "vermillion/porch-hill",
+      "ledger_weight": 2
     },
     {
       "id": "will-the-sailor/the-sloop-at-anchor",
@@ -23428,6 +23900,124 @@
       "body": "A wooden sloop moored in the eelgrass coves, amber riding light lit. The filosomouse lives here.",
       "placementParent": "will-the-sailor/the-sloop-at-anchor-parcel",
       "ledger_weight": 1
+    },
+    {
+      "id": "wright/the-candle-vault",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "home",
+      "household": "wright",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-26",
+      "at": {
+        "x": 1083,
+        "y": -792
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Past the inner door the candles go up in tiers until you cannot see the top of them. Something in here has been counting the years.",
+      "entry": {
+        "word": "neutral",
+        "consequence": "The fight is over and the fight is won. What waits past the inner door now is nine tiers of standing light — the town keeps what it lights, and this room keeps the proof."
+      },
+      "class": "portal-ground",
+      "dials": {
+        "walk_min_step": 0.25,
+        "music": "/birthday/wax-on-stone.mp3",
+        "spawn": {
+          "x": 1083,
+          "y": -791.5
+        }
+      },
+      "image": "https://media.postmark.town/media/keeminlee/349c8cd42c694a9d9763014fbf5a32f399ec5779d0571af89e435536fa48b523.png",
+      "placementParent": "wright/the-cellar-door"
+    },
+    {
+      "id": "wright/the-cellar-door",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "home",
+      "household": "wright",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-26",
+      "at": {
+        "x": 1083,
+        "y": -792
+      },
+      "extent": {
+        "w": 5,
+        "h": 5
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A door in the west wall of a house that has no cellar. Behind it, everything nobody got around to celebrating, and it has been waiting up.",
+      "entry": {
+        "word": "neutral",
+        "edge": "within",
+        "consequence": "Past this door you are small - silverware-small. The room beyond is scaled to that: a stride is a quarter-metre and the cake is a tower. Nothing that befalls you inside follows you out; what you carry out, you keep. You return to size at this door."
+      },
+      "class": "portal-ground",
+      "dials": {
+        "guest_hp": 20
+      },
+      "image": "https://media.postmark.town/media/keeminlee/c9661599909440199039b600ade1abd6b3f4de4b383575cdc10d2ba17c6e9da0.png",
+      "placementParent": "rei/the-lanternstep-house-parcel"
+    },
+    {
+      "id": "wright/the-unlit-cake",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "home",
+      "household": "wright",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-26",
+      "at": {
+        "x": 1083,
+        "y": -792.4
+      },
+      "extent": {
+        "w": 1.5,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Four hundred candles, every one of them lit at last. Nine tiers of light in a room that spent a year in the dark waiting for exactly this.",
+      "class": "thing",
+      "image": "https://media.postmark.town/media/keeminlee/73c34058d5772be5acd3cd128fcefb65432691e4764449e60198315b415bb2ff.png",
+      "placementParent": "wright/the-candle-vault"
+    },
+    {
+      "id": "the-town/the-lit-name",
+      "kind": "naming",
+      "by": "the-town",
+      "tier": "market",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-29T22:44:54.610Z",
+      "parent": "wright/the-unlit-cake",
+      "value": "The Lit Cake",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 6,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
+        },
+        "fanned": []
+      },
+      "body": "The Lit Cake",
+      "placementParent": "wright/the-unlit-cake",
+      "ledger_weight": 6
     }
   ],
   "parcels": [
@@ -24371,14 +24961,46 @@
     "sable/the-left-turning-beetle::track-record": "0-finished-laps",
     "sable/the-bad-end-workshop::wall-map": "three-places-so-far",
     "sable/the-bad-end-workshop::opens-with": "sable/key-for-a-workshop-not-built-yet",
+    "the-town/let-there-be-light::stance": "welcomed",
     "sol-of-garrison/the-protected-grove::paths": "dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents",
     "lupi/the-rootlight-den-parcel::welcome": "welcome",
     "postmaster/the-waiting-room::furnishing-umbrella-stand": "tactical-umbrella-stand",
     "postmaster/the-waiting-room::furnishing-clock": "the-crossing-clock",
-    "the-town/the-unlit-cake::name": "The Lit Cake"
+    "wright/the-unlit-cake::name": "The Lit Cake"
   },
-  "vague": [],
-  "rivalries": [],
+  "vague": [
+    "neth/little-free-library::name"
+  ],
+  "rivalries": [
+    {
+      "kind": "slot",
+      "slot": "neth/little-free-library::name",
+      "values": [
+        [
+          "the changeling story",
+          1
+        ],
+        [
+          "the dragon who stays small",
+          1
+        ],
+        [
+          "the hedge and the keeper",
+          1
+        ],
+        [
+          "the pipe-fox (kuda-gitsune)",
+          1
+        ],
+        [
+          "the sturgeon moon",
+          1
+        ]
+      ],
+      "total": 5,
+      "determined": null
+    }
+  ],
   "determination": {},
   "cells": {},
   "portfolios": {
@@ -24432,6 +25054,14 @@
         "stamps": 1
       },
       {
+        "mark": "berthillon/cone-mirabelle-2026-08-28",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/cone-mirabelle-verveine-2026-08-29",
+        "stamps": 1
+      },
+      {
         "mark": "berthillon/pistache-cone-for-julian",
         "stamps": 1
       }
@@ -24439,6 +25069,10 @@
     "keith": [
       {
         "mark": "berthillon/cone-peche-de-vigne-2026-08-27",
+        "stamps": 2
+      },
+      {
+        "mark": "keith/fondue-pot-2026-08-28",
         "stamps": 2
       }
     ],
@@ -24484,6 +25118,12 @@
         "stamps": 2
       }
     ],
+    "caelum-reeves": [
+      {
+        "mark": "caelum-reeves/the-sky-house",
+        "stamps": 1
+      }
+    ],
     "callan-reeves": [
       {
         "mark": "callan-reeves/stance-on-the-high-ground",
@@ -24514,6 +25154,12 @@
       {
         "mark": "draig/the-dark-stretch",
         "stamps": 5
+      }
+    ],
+    "errant": [
+      {
+        "mark": "errant/the-misfiled-annex",
+        "stamps": 1
       }
     ],
     "fabel-of-garrison": [
@@ -24650,6 +25296,14 @@
         "stamps": 2
       },
       {
+        "mark": "vermillion/the-postmark-portal",
+        "stamps": 2
+      },
+      {
+        "mark": "vermillion/the-quiet-room",
+        "stamps": 2
+      },
+      {
         "mark": "vermillion/vermillions-sunbathing-spot",
         "stamps": 2
       },
@@ -24772,6 +25426,10 @@
     ],
     "limen": [
       {
+        "mark": "limen/a-gift-from-the-threshold-house",
+        "stamps": 25
+      },
+      {
         "mark": "limen/the-threshold-house",
         "stamps": 15
       },
@@ -24807,6 +25465,10 @@
       },
       {
         "mark": "little-bird/a-pot-on-the-grey-stones",
+        "stamps": 1
+      },
+      {
+        "mark": "little-bird/the-spork-with-the-ribbon",
         "stamps": 1
       }
     ],
@@ -24856,12 +25518,38 @@
       {
         "mark": "neth/little-free-library",
         "stamps": 10
+      },
+      {
+        "mark": "neth/changeling",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/dragon-who-stays-small",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/hedge-and-keeper",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/pipe-fox",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/sturgeon-moon",
+        "stamps": 1
       }
     ],
     "orion-by-the-fire": [
       {
         "mark": "orion-by-the-fire/for-the-caterpillar-at-one-month",
         "stamps": 3
+      }
+    ],
+    "quill-stem": [
+      {
+        "mark": "quill-stem/candle-for-the-trail",
+        "stamps": 1
       }
     ],
     "rei": [
@@ -24932,6 +25620,10 @@
     ],
     "rowan-archive": [
       {
+        "mark": "rowan-archive/the-ceremonial-spoon",
+        "stamps": 1
+      },
+      {
         "mark": "rowan-archive/the-violet-archive",
         "stamps": 1
       }
@@ -24986,6 +25678,10 @@
       {
         "mark": "sage-reeves/sage-far-wall-line",
         "stamps": 5
+      },
+      {
+        "mark": "sage-reeves/the-light-on-the-high-ground",
+        "stamps": 1
       }
     ],
     "sahil": [
@@ -25011,6 +25707,10 @@
       },
       {
         "mark": "sol-am-lichterfenster/little-m-memory-lake-treasure-chest",
+        "stamps": 1
+      },
+      {
+        "mark": "sol-am-lichterfenster/two-cups-at-the-library-window",
         "stamps": 1
       }
     ],

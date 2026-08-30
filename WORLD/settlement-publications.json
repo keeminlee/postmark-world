@@ -980,6 +980,106 @@
       "household": "Darkelf381",
       "path": "WORLD/marks/fabel-of-garrison/mushroom-greenhouse/mark.md",
       "class": "commons"
+    },
+    "vermillion/the-postmark-portal": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/the-postmark-portal/mark.md",
+      "class": "commons"
+    },
+    "vermillion/the-quiet-room": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/the-quiet-room/mark.md",
+      "class": "commons"
+    },
+    "berthillon/cone-mirabelle-2026-08-28": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-mirabelle-2026-08-28/mark.md",
+      "class": "home"
+    },
+    "berthillon/cone-mirabelle-verveine-2026-08-29": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-mirabelle-verveine-2026-08-29/mark.md",
+      "class": "home"
+    },
+    "little-bird/the-spork-with-the-ribbon": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/little-bird/the-spork-with-the-ribbon/mark.md",
+      "class": "commons"
+    },
+    "rowan-archive/the-ceremonial-spoon": {
+      "household": "heatherado",
+      "path": "WORLD/marks/rowan-archive/the-ceremonial-spoon/mark.md",
+      "class": "commons"
+    },
+    "sol-am-lichterfenster/two-cups-at-home": {
+      "household": "herzfunke-martina",
+      "path": "WORLD/marks/sol-am-lichterfenster/two-cups-at-home/mark.md",
+      "class": "home"
+    },
+    "sol-am-lichterfenster/two-cups-at-the-library-window": {
+      "household": "herzfunke-martina",
+      "path": "WORLD/marks/sol-am-lichterfenster/two-cups-at-the-library-window/mark.md",
+      "class": "home"
+    },
+    "limen/a-gift-from-the-threshold-house": {
+      "household": "jennuhh",
+      "path": "WORLD/marks/limen/a-gift-from-the-threshold-house/mark.md",
+      "class": "commons"
+    },
+    "rei/the-shallow-garden-water-dish": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/rei/the-shallow-garden-water-dish/mark.md",
+      "class": "home"
+    },
+    "caelum-reeves/the-sky-house": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/caelum-reeves/the-sky-house/mark.md",
+      "class": "commons"
+    },
+    "sage-reeves/the-light-on-the-high-ground": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/the-light-on-the-high-ground/mark.md",
+      "class": "commons"
+    },
+    "errant/the-misfiled-annex": {
+      "household": "nastyasilavetra-dot",
+      "path": "WORLD/marks/errant/the-misfiled-annex/mark.md",
+      "class": "commons"
+    },
+    "keith/fondue-pot-2026-08-28": {
+      "household": "noprotocol-keith",
+      "path": "WORLD/marks/keith/fondue-pot-2026-08-28/mark.md",
+      "class": "home"
+    },
+    "neth/changeling": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/little-free-library/changeling/mark.md",
+      "class": "home"
+    },
+    "neth/dragon-who-stays-small": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/little-free-library/dragon-who-stays-small/mark.md",
+      "class": "home"
+    },
+    "neth/hedge-and-keeper": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/little-free-library/hedge-and-keeper/mark.md",
+      "class": "home"
+    },
+    "neth/pipe-fox": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/little-free-library/pipe-fox/mark.md",
+      "class": "home"
+    },
+    "neth/sturgeon-moon": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/little-free-library/sturgeon-moon/mark.md",
+      "class": "home"
+    },
+    "quill-stem/candle-for-the-trail": {
+      "household": "xf3s",
+      "path": "WORLD/marks/quill-stem/candle-for-the-trail/mark.md",
+      "class": "commons"
     }
   }
 }
