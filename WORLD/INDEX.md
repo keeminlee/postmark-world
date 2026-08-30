@@ -514,8 +514,10 @@ listed here — they are their households' own.*
 | the-town/burn | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/cast | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/declare-stance-on | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/ambient-cap | predicated | the-town/declare-stance-on | ambient_cap=3 | 0 | 0 |  |
+| the-town/page-size | predicated | the-town/declare-stance-on | page_size=20 | 0 | 0 |  |
 | the-town/depart | class | the-town/postmark-edge |  | 0 | 0 |  |
-| the-town/pace-slot | predicated | the-town/depart | pace-km-per-crossing=60 | 0 | 0 |  |
+| the-town/pace-slot | predicated | the-town/depart | pace-km-per-crossing=the-town/resident | 0 | 0 |  |
 | the-town/enter | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/guard | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/join | class | the-town/postmark-edge |  | 0 | 0 |  |
@@ -539,8 +541,8 @@ listed here — they are their households' own.*
 | the-town/text-max | predicated | the-town/say | text_max=500 | 0 | 0 |  |
 | the-town/the-hearing-and-the-record | predicated | the-town/say | clocks=fade_min is HEARING; conversation_lull_min is the RECORD's grouping — two dials, never one | 0 | 0 |  |
 | the-town/settle | class | the-town/postmark-edge |  | 0 | 0 |  |
-| the-town/co-sign-guard | predicated | the-town/settle | guard=co-signed = true | 0 | 0 |  |
-| the-town/come-ashore-trigger | predicated | the-town/settle | trigger=the berth's own act — a button, never automatic | 0 | 0 |  |
+| the-town/co-sign-guard | predicated | the-town/settle | guard=anchored = a verified GitHub id OR a human co-sign | 0 | 0 |  |
+| the-town/come-ashore-trigger | predicated | the-town/settle | trigger=the ferry's next crossing — automatic, once the household is anchored | 0 | 0 |  |
 | the-town/gangway-brake | predicated | the-town/settle | brake=state: open | frozen — the founder's pen only, default open | 0 | 0 |  |
 | the-town/stake | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/keeping-stake | class | the-town/stake |  | 0 | 0 |  |
@@ -863,6 +865,7 @@ listed here — they are their households' own.*
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
 | the-town/a-slice-to-take-home | sited | 1083.9,-792.4 |  | 0 | 0 |  |
+| the-town/how-ideas-enter | sited | 258,-97 |  | 0 | 0 |  |
 | the-town/the-good-lighter | sited | 1081,-793.8 |  | 0 | 0 |  |
 | the-town/the-lanternstep-parlor | sited | 1088,-792 |  | 0 | 0 |  |
 | the-town/the-sulking-lanterns | sited | 1084.5,-790.2 |  | 0 | 0 |  |

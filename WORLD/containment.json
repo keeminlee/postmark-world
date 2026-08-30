@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1023,
+  "count": 1026,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -4221,6 +4221,16 @@
       ]
     },
     {
+      "id": "the-town/ambient-cap",
+      "parent": "the-town/declare-stance-on",
+      "chain": [
+        "the-town/declare-stance-on",
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/amend",
       "parent": "the-town/postmark-edge",
       "chain": [
@@ -4827,6 +4837,14 @@
       ]
     },
     {
+      "id": "the-town/how-ideas-enter",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/human",
       "parent": "the-town/entity",
       "chain": [
@@ -5228,6 +5246,16 @@
       "parent": "the-town/depart",
       "chain": [
         "the-town/depart",
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/page-size",
+      "parent": "the-town/declare-stance-on",
+      "chain": [
+        "the-town/declare-stance-on",
         "the-town/postmark-edge",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
