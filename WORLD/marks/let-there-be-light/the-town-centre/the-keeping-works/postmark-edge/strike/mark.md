@@ -10,7 +10,7 @@ subject: entity
 object: mark
 dials: {"to_hit_die": 20, "damage_die": 6, "beats_ac": 8, "ends_turn": true}
 requires: {"within_class": "portal-ground"}
-implements: ["postmark-office src/encounter.mjs — the fold reads this node's dials; the module holds no second copy"]
+implements: ["postmark-office src/encounter.mjs — the fold reads this node's dials; the module holds no second copy", "ends_turn is ASPIRATIONAL — declared ahead of its wiring: nothing reads it, and the turn-ending set is hardcoded at postmark-office src/encounter.mjs:245 (TURN_ENDING, which agrees with these five). The 2.0-native combat rebuild is what reads it."]
 source: LOGOS/classes.md
 ---
 

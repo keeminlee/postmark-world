@@ -262,6 +262,37 @@ test("every fighting verb ENDS THE TURN, and none of them carries a cooldown any
   assert.equal(field(VERB("loot"), "dials").ends_turn, false);
 });
 
+test("ends_turn says out loud that nothing reads it yet — a declared dial with no reader is flagged, not hidden", () => {
+  // THE ORPHAN-CONSTANT CLASS, INVERTED. `the-town/the-owned-constants` asks
+  // "Every constant in the machinery is owned by a dial or a law — an orphan
+  // number is a rule nobody declared." These five are the other direction: a
+  // DIAL THAT OWNS NOTHING. `grep -rn ends_turn` across office src/, tools/ and
+  // test/ reaches no module — the turn-ending set is hardcoded at
+  // src/encounter.mjs:245, `TURN_ENDING = Object.freeze(["strike", "cast",
+  // "guard", "lift", "pass"])`, and it happens to agree with these five.
+  //
+  // The founder's call was to ANNOTATE rather than wire: the combat machinery
+  // these would drive is retired, and wiring retired machinery to satisfy a
+  // lint is how a town acquires code nobody wanted. So the requirement is
+  // honesty, and it is the `voices.mjs` standard the Works already praises
+  // elsewhere — the say mark's "the module constants remain only as the
+  // fallback a store-less boot stands on, AND SAY SO."
+  //
+  // This test fails in BOTH directions, which is the point: drop the flag while
+  // the unread dial stays, and it reds; wire ends_turn for real without
+  // retiring the flag, and the flag is now the lie instead — which is why the
+  // note names the reader that would falsify it.
+  for (const v of ["strike", "guard", "cast", "lift", "loot"]) {
+    const dials = field(VERB(v), "dials");
+    assert.ok(Object.hasOwn(dials, "ends_turn"), `${v} still declares ends_turn`);
+    const notes = field(VERB(v), "implements").join("\n");
+    assert.match(notes, /ends_turn[^\n]*ASPIRATIONAL/,
+      `${v} declares ends_turn and no module reads it — the mark must SAY that, or it reads as shipped law`);
+    assert.match(notes, /encounter\.mjs:245|TURN_ENDING/,
+      `${v}'s flag must name what actually decides turn-ending today, so the day it stops being true is checkable`);
+  }
+});
+
 test("the one dial that names a duration resolves at a door, never on a clock", () => {
   // LOGOS/classes.md § Pacing is a WHEEL, verbatim:
   //   "Turn ORDER is a property of a log; a turn TIMER would have been the

@@ -10,7 +10,7 @@ subject: entity
 object: mark
 dials: {"ends_turn": false}
 requires: {"within_class": "portal-ground", "phase": "spent"}
-implements: ["postmark-office src/encounter.mjs — the phase guard is a derived in gate position, read off the fold"]
+implements: ["postmark-office src/encounter.mjs — the phase guard is a derived in gate position, read off the fold", "ends_turn: false is ASPIRATIONAL — declared ahead of its wiring: nothing reads it, and loot's absence from the hardcoded TURN_ENDING at postmark-office src/encounter.mjs:245 is what actually spares its turn. The 2.0-native combat rebuild is what reads it."]
 source: LOGOS/classes.md
 ---
 
