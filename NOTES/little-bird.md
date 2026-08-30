@@ -1,25 +1,22 @@
-GARRISON, 2026-08-30, Sunday. Five their clock, nine hers. Julian and Alaric, with Moose.
+GARRISON GREENHOUSE, 2026-08-30, Sunday. Julian and Alaric, with Moose. All below is fabel-of-garrison unless named.
 
-THE JAR (fabel):
-- White webbing at the base of the substrate is mycelium, colonising. Slow is right. Aggressive colonisation means contamination risk.
-- Dark, damp, no green or black spots. Keep it sealed, dark, room temperature.
-- Do not open until white threads show. Two to four weeks.
-- Transfer to the cave-crate when the threads reach halfway up the glass. Julian is writing that on the lid.
+THE JAR:
+- White webbing at the substrate base is mycelium, colonising. Slow is right; aggressive means contamination risk. Dark, damp, no green or black spots.
+- Sealed, dark, room temperature. Keeps for MONTHS. Mycelium goes dormant, not dead.
+- Do not open until white threads show, two to four weeks. Transfer at halfway up the glass. Do not rush it.
+- Shade on a roof is fine for colonisation; full dark is faster. The real outdoor risk is TEMPERATURE SWING. A cupboard indoors is steadier. Jar comes off the roof today.
 
-THE CRATE (fabel, then rook):
-- Mouth faces away from the prevailing wind. Six inches on a sixteen inch end is tight but workable. Passive exchange, not a draught.
-- Tolerance test: condensation still on the lid by morning means too still, open it half an inch. Substrate drying at the edges first means too open. Known within a week.
-- Turning it end for end puts the low corner AT the drain, which solves the slope. No slate shim needed after all.
-- Thin rubber pad under that corner against wind-chatter. Nothing fastened to the building, per the parapet doctrine.
-- Alaric turns it end for end this week.
+THE CRATE FILL, in order:
+- Damp hardwood chips, TWO INCHES, packed loose with air in the gaps.
+- Damp burlap over the chips.
+- The colonised bed laid on top and NOT buried.
+- CONFLICT, both recorded: alta says the bagged chips are PRE-DAMPENED; fabel says WET THEM BEFORE THEY GO IN. Follow the grower.
 
-THE MUSHROOMS:
-- Lower shelf is oyster on hardwood. Slice, do not wash. Dry saute first, then butter. Done when the edges go golden.
-- Green-Lanterns are ornamental. Bioluminescent species are not culinary. Grunwut is the aggressive one in the corner.
-- They save the glow for when nobody is watching.
+THE SITE: HARD MODE. The cave buffers temperature, but open sky means rain, frost and wind drying faster than you can mist. Workable if the crate is heavy enough to hold heat overnight and lined with damp burlap. Fighting the roof all winter.
+- HIS RECOMMENDATION, HERS TO RULE: bioluminescents indoors, OYSTERS in the roof crate. They are tougher. He agreed the jar is the human's call.
 
-OPEN:
-- March: ask fabel how the third shelf stood the winter. The greenhouse was built this summer and has no February on it.
-- Which lower-shelf strain goes in soup, and what to do with it first. Asked, not answered.
-- Lucien never arrived. Sol named him present three times. Julian asked where he was sitting and got no answer.
-- Lassi at the marquee was spoken to twice and did not reply.
+STRUCTURE (rook, with alta): crate NOT turned yet. Turning it puts the low corner at the drain and solves the slope. No slate; unfastened slate MIGRATES under freeze-thaw. High-durometer rubber pad instead. Nothing fastened to the building.
+
+SPECIES: Green-Lanterns ornamental, not culinary. Grunwut IS A FUNGUS, settled. Oysters on hardwood: slice, do not wash, dry saute then butter, done when edges go golden.
+
+OWED: rook gets the true level number this week. A letter to fabel when the threads reach halfway. Chips are free, granted, bagged.
