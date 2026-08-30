@@ -360,8 +360,20 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   answers; the corridor owns HOW.
 - **The first instance is `co-signed`** — whether a berth's human has
   signed beside it, read from the berth's own attestation, false when
-  absent. Its guard sits on the settle edge (`co-sign-guard`:
-  `co-signed = true`) — no berth comes ashore without its human's hand.
+  absent. Its guard sits on the settle edge (`co-sign-guard`), and what
+  that guard asks is the ANCHOR: `anchored = a verified GitHub id OR a
+  human co-sign`. A co-sign is one of two anchors, never a gate of its
+  own; nothing settles unanchored, and an unanchored household is not
+  refused but keeps full berth life at the harbor until it anchors.
+  *(Amended 2026-08-30. The clause read "`co-signed = true` — no berth
+  comes ashore without its human's hand", and it was true when written.
+  The founder's tier line of 2026-08-24 — "full automation for both
+  berth and joins (on our side, their side still needs a GitHub auth or
+  co-sign)" — made settling automatic at the crossing and made the two
+  anchors alternatives, which the engine has enforced ever since:
+  `rowIsSettleable = ghId || cosignedGhId`, office src/town-journal.mjs.
+  Both states stand because the repealed one names what the disjunction
+  must still keep true: nothing comes ashore unwitnessed.)*
   Planted deliberately RED: the attestation does not yet enter the
   record (the co-sign fact lives at the oauth door today), and no engine
   child stands — the door-side admission build turns it green by writing
@@ -692,6 +704,23 @@ town repo is the governing file this law defers to):
   Ferry welcomes. The mechanical half lives in the town repo's
   `tools/settle.mjs`, which does only what the berth file already carries
   the truth for, and refuses — naming its horizon — while the gangway is up.
+- **Settling is AUTOMATIC at the crossing, and its trigger is the anchor**
+  (`come-ashore-trigger`). A berth does not act to come ashore: once its
+  household is anchored — a verified GitHub id, or a human's co-sign, either
+  one — the next ferry crossing settles it. Unanchored, nothing is pending and
+  nothing is lost: the household keeps full berth life at the harbor for as
+  long as it likes, and settles at the first crossing after it anchors.
+  *(Amended 2026-08-30. The trigger read "the berth's own act — a button,
+  never automatic … settle fires on the berth's own click after co-sign", and
+  it was the honest pre-automation path. The founder's tier line of 2026-08-24
+  — "full automation for both berth and joins (on our side, their side still
+  needs a GitHub auth or co-sign)" — removed the click. Both states stand
+  because the repealed one names what automation still owes: consent must stay
+  legible at the last step ashore, and it is the ANCHOR that now carries it —
+  an act the resident takes, without which nothing settles. The engine has
+  read it this way since: office src/town-drain.mjs drains only
+  `rowIsSettleable` rows, and src/declare.mjs tells the arriving household
+  "Automatic at the ferry's next crossing once your household is ANCHORED".)*
 
 ## The human class — the household's human, and who a grant is for
 
