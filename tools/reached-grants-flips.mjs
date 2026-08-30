@@ -39,9 +39,15 @@ const FLIPS = [
     edit: (t) => t.replace('"residue": "the-town/say"}]',
       '"residue": "the-town/say"}, {"action": "walk", "for": "human", "residue": "the-town/depart"}]') },
 
-  { name: "the human's stride drifts off the resident's",
-    file: HUMAN, catches: "the human carries the resident's own stride",
-    edit: (t) => t.replace('"pace_km_per_crossing": 60', '"pace_km_per_crossing": 30') },
+  // ⚠ TRUED 2026-08-30 with the pointer (the audit's F5). This flip put a
+  // DIFFERENT literal on the human class, which only worked while the class
+  // carried a literal at all. The live rot it now catches is the one the audit
+  // actually found: a second copy of the number growing back where the pointer
+  // stands. Any literal here is the defect, whether or not it agrees with the
+  // resident's — 60 would have been the invisible version.
+  { name: "the human's stride grows a second copy of the number (agreeing today, drifting tomorrow)",
+    file: HUMAN, catches: "the human's stride POINTS at the resident's",
+    edit: (t) => t.replace('"pace_km_per_crossing": "the-town/resident"', '"pace_km_per_crossing": 60') },
 
   { name: "the parcel's walk loses its relation scope (every guest's human walks your garden)",
     file: PARCEL, catches: "the parcel class grants walk and say to the ground's OWN household's human",

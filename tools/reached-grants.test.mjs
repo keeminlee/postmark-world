@@ -68,18 +68,35 @@ test("the human's ambient roster is STILL one grant — the fence moved onto the
     "an absent for: reads as RESIDENT under LOGOS — this widening is exactly what the sweep must refuse");
 });
 
-test("the human carries the resident's own stride, 60 km/crossing", () => {
-  // LOGOS/classes.md § The human class (2026-08-26 proposal), verbatim:
-  //   "the human class gains a pace dial (60 km/crossing, the resident's own
-  //    stride — a person's walk is a person's walk)"
-  // The number is the one ruled for the resident at decision 008b and guarded
-  // in ruled-grants.test.mjs. Two classes, ONE number, and this asserts they
-  // agree rather than asserting the literal twice.
+test("the human's stride POINTS at the resident's — one number, one home", () => {
+  // LOGOS/classes.md § The human class, as amended 2026-08-30, verbatim:
+  //   "the pace dial POINTS, it does not restate … Both dead copies now name
+  //    their owner — `the-town/resident` — in the record's own sentinel idiom,
+  //    the way `held-grant-slot` and the adversary's dials say `unsealed`: the
+  //    slot stays declared, so the law still says a human has a stride, and the
+  //    VALUE has one home."
+  //
+  // This test used to assert `human.pace_km_per_crossing === 60` and then that
+  // it equalled the resident's — which reads like a consistency check and is
+  // not one: it PINNED a second copy of the number, so the copy could only be
+  // removed by editing the test. Three nodes declared this stride and exactly
+  // one was ever read (`departurePace` asks the-town/resident by name, office
+  // src/world-classes.mjs:143-146). The assertion now is that the second copy
+  // does not exist.
   const resident = field(`${WORKS}/postmark-node/entity/resident/mark.md`, "dials");
   const human = field(HUMAN, "dials");
-  assert.equal(human.pace_km_per_crossing, 60);
-  assert.equal(human.pace_km_per_crossing, resident.pace_km_per_crossing,
-    "a person's walk is a person's walk — an embodied human moves at the resident stride, and the two dials are one ruling");
+
+  assert.equal(human.pace_km_per_crossing, "the-town/resident",
+    "the human class declares the SLOT and names its owner — a literal here is a second copy of a number that has one home");
+  assert.equal(typeof resident.pace_km_per_crossing, "number",
+    "and the owner carries the value itself — the pointer must point at a declaration that actually declares");
+  assert.ok(resident.pace_km_per_crossing > 0);
+
+  // the pointer resolves: whatever the resident is ruled to, the human is that,
+  // because there is nothing else for it to be.
+  const slot = `${WORKS}/postmark-edge/depart/pace-slot/mark.md`;
+  assert.equal(scalar(slot, "value"), "the-town/resident",
+    "the third declaration points too — depart's own body already said 'The stride is the mover's, never this verb's'");
 });
 
 // ── channel 2 · ground-granted, and the relation scope ──────────────────────

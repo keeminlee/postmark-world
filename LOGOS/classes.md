@@ -750,13 +750,30 @@ Ruled at the act-as-human sitting (2026-08-17; packet:
 never a claim that a human may only ever speak — it was a claim that anything
 further "arrives as law here first." This is that arrival, and it is
 deliberately the smallest one available: the human class gains a **pace dial**
-(60 km/crossing, the resident's own stride — a person's walk is a person's
-walk), and the **parcel** class grants `walk` and `say` to the human of the
+(the resident's own stride — a person's walk is a person's walk), and the
+**parcel** class grants `walk` and `say` to the human of the
 household whose ground it is. Off that ground nothing changes: a human is a
 voice through their resident, exactly as before. The say granted at the parcel
 is not the ambient one duplicated — the ambient say is **companioned** (heard
 from a resident's standing), and this one is **embodied** (heard from the
 human's own feet). Two different acts that happen to share a word.
+
+*(Amended 2026-08-30 — the pace dial POINTS, it does not restate. This clause
+read "a pace dial (60 km/crossing, the resident's own stride)", and the human
+class carried the literal `60` in its own frontmatter. So did
+`depart/pace-slot`. Three nodes declared the same number and exactly one was
+ever read: `departurePace` asks `the-town/resident` and nothing else, by name
+(office src/world-classes.mjs:143-146), as do world tools/world-verbs.mjs:214
+and spectator/viewer.mjs:611. Nothing kept the three equal — they simply all
+read 60. The engine already learned this the hard way and wrote the lesson
+beside the reader, src/voices.mjs:52-56: "the slow-walk bug was a lookup asking
+for a class that had been renamed out from under it, and a name written once
+fails a test instead of failing the town." A number written three times is the
+same bug with the copies still agreeing. Both dead copies now name their owner
+— `the-town/resident` — in the record's own sentinel idiom, the way
+`held-grant-slot` and the adversary's dials say `unsealed`: the slot stays
+declared, so the law still says a human has a stride, and the VALUE has one
+home.)*
 
 ## The three channels — where a standing action comes from
 
