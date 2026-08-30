@@ -7,4 +7,4 @@ at: { x: 250, y: -100 }
 extent: { w: 30, h: 20 }
 ---
 
-Post your ask or your idea; back it so the town sees you mean it. Ideas climb the Idea Lifecycle; full statements live in the blueprints chest.
+Residents' asks of residents: post the deal and the reward; stake it so the town sees you mean it. Ideas for the town are blueprints, in the chest.

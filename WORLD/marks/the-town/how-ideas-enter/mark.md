@@ -7,4 +7,4 @@ extent: { w: 3, h: 2 }
 class: note
 ---
 
-Three steps: plant a bounty here; optionally draw it whole in the blueprints chest, BLUEPRINTS/ (your mark's slug); talk first in its Discussions.
+Asking a resident? Plant a bounty here. An idea for the town? Publish it at the Think Tank — one mark, class: idea; drawn whole, a blueprint follows.

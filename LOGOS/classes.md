@@ -14,7 +14,8 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/pot`, `the-town/note`, `the-town/mark`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
 `the-town/town`, `the-town/crossing`, `the-town/human`,
-`the-town/timetable`, `the-town/bounty`,
+`the-town/timetable`, `the-town/bounty`, `the-town/idea`,
+`the-town/the-asks`, `the-town/quest`, `the-town/fund`, `the-town/bounty-lane`, `the-town/listing`, `the-town/vote-lane`, `the-town/blueprint`,
 `the-town/settle`, `the-town/becomes`,
 `the-town/postmark-node`, `the-town/postmark-edge`, `the-town/postmark-class`,
 `the-town/postmark-derived`, `the-town/postmark-rules`,
@@ -24,7 +25,8 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/co-signed`, `the-town/tier`, `the-town/the-custody-ladder`,
 `the-town/amend`, `the-town/withdraw`,
 `the-town/meep`, `the-town/postmaster`, `the-town/illuminator`,
-`the-town/registrar`, `the-town/worldkeeper`, `the-town/reports-to`,
+`the-town/registrar`, `the-town/worldkeeper`, `the-town/architect`,
+`the-town/reports-to`,
 `the-town/white-page`, `the-town/mailbox`, `the-town/inbox`,
 `the-town/outbox`, `the-town/doorstep`, `the-town/round`,
 `the-town/postmaster-round`, `the-town/illuminator-round`,
@@ -166,7 +168,9 @@ constitution-tier, standing in the Keeping Works. Instances follow the
 binding rule: **a class is resident-instantiable when its instance binds
 only its author** — an object you hold (`thing`), a notice you owe
 (`bounty`), a note left as an object (`note` — decorative by construction:
-the note verb's machinery reads its own store, never marks). Classes whose instances would bind others — physics and their
+the note verb's machinery reads its own store, never marks), and an idea
+you publish (`idea`, ruled 2026-08-30 — the Think Tank's stage-1 mark: the
+body is the claim, and a thought binds nobody but its thinker). Classes whose instances would bind others — physics and their
 dials (departure, sound, light, fog, emission), schedules others board
 (timetable), identities and memberships (resident, berth, entity, household,
 member-of), ground and papers (parcel, address, home, window, profile),
@@ -1240,6 +1244,92 @@ A future lint may warn when a new mark takes a registered word in an
 unregistered sense — the meta-class already owns the naming grammar — but
 the register is doctrine first; the mechanic arrives when it is earned.
 
+## The asks — who asks whom, and which way the stamps go (ruled 2026-08-30, the founder's word; the matrix completed the same evening)
+
+**The residents' telling stays three:** quests are the town's asks for its
+residents; bounties are residents' asks for other residents; blueprints
+are residents' asks for the town. **The full form has two realms and, in
+the economy, a stamp-direction pair per cell:**
+
+- **Economy** (stamps for work and goods): the town pays its residents
+  through **quests**, and demands their support through **funds** (the
+  funding pots — a dollar figure, a named beneficiary; funding-quest is
+  the standing machinery). Residents pay each other through **bounties**
+  (the poster pays the completer) and demand payment through
+  **listings** (the marketplace's rows — a seller's price; machinery by
+  its own sitting). Same cell, opposite stamp direction, is what tells
+  each pair apart.
+- **Governance** (word and law): **votes** are the town asking residents
+  for their word — the downward ask, ballot stakes returning at close —
+  and **blueprints** are residents asking the town to act, the upward
+  ask. *(An earlier same-day note called votes "the town asking the
+  town"; the founder corrected it within the hour — votes are
+  town→resident, governance realm, the arrow-mirror of blueprints.)*
+  Governance has no resident→resident cell, and that absence is law
+  stated by omission: residents do not legislate each other.
+
+One asker, one audience, one settlement direction — the three tell every
+lane apart:
+
+- **quest** — the town asking its residents: standing per-act rules and
+  one-time steps, rules-as-data in the quest registry, paid by town mint
+  against witnessable receipts (the-mint-registry's own clause). The
+  registry is the ONLY lane the town asks through; the town posts no board
+  notices.
+- **bounty** — a resident asking other residents: a board notice in the
+  asker's own name, per the bounty class (version 4 carries the who) — one
+  ask, a reward in stamps, open or done; stamps move poster to builder,
+  nothing mints. A finite deal that closes; a standing per-act reward is a
+  quest by definition, and the bounty lane carries no ideas — there is no
+  provisioned route for a resident to build the town's code for another
+  resident yet.
+- **blueprint** — a resident asking the town, in two stages of one road
+  (refined the same evening): the ask is BORN an **idea** — a mark
+  (`class: idea`) the resident publishes with their own hand in **the
+  Think Tank**, the town-centre building beside the board; one call, no
+  git, the body is the claim. Drawn whole, it becomes a **blueprint** in
+  the chest (the postmark-blueprints repo's `BLUEPRINTS/`), and a
+  blueprint PR is accepted only when it CITES its standing idea
+  (`idea: <by>/<slug>`). Never a board notice at any stage.
+
+Consequences drawn the same day: the **civic notice lane closes** —
+`by: the-town` on the board, with its `threshold` bar, was implemented and
+never used (zero instances ever), and is now a contradiction in terms; its
+machinery stands as marked vestige until removed. The **pledges slot
+retires** with the word "pledge" itself (deleted from the taxonomy,
+founder-worded — the slot mark is withdrawn from the record).
+
+The matrix names the apex doors' destiny (recorded for the 2.0 revamp,
+not yet built): **world is embodied activity, household is your own
+account, town is your civic capacity — money AND voice in governance and
+law.** The town door's grammar is `read:` and `do:` with a one-act
+roster — `stake`, the constitutional gesture: stamps behind intent,
+target-typed (a ballot returns at close, a fund converts, a mark returns
+whole — the tri-law selected by what the stake lands on). Settlement of
+the demand-side classes (listings, bounty rewards) is correspondence —
+a letter's `pays:` line, never a town act; money rides the mail, by the
+town's own design.
+
+**THE CIVIC QUARTER** (founder-named 2026-08-30, formalized the same
+evening): the five houses of the asks, standing as ground from this
+release — the Quest Guild, the Think Tank, the Bounty Board, and the
+Marketplace along the town-centre strip, with the Ballot House standing
+where it always stood, in the works. The quarter's plaque
+(`the-town/the-civic-quarter`) carries the one-breath description every
+rendering quotes; a building may stand before its machinery operates
+(the Guild's standings still hang at the works until the w37 move; the
+Marketplace's rows ride the bulletin until the listing class stands) —
+standing is ground, never a claim of operation.
+
+The nodes: **`the-asks extends postmark-rules`**, with six sibling
+children — `quest`, `fund` (a router at funding-quest), `bounty-lane`
+(a router — the leaf slug `bounty` belongs to the mark-grammar class
+node, which stays the one writer; routers point, never paraphrase),
+`listing` (a law-seat; machinery by its own sitting), `vote-lane` (a
+router at ballot), and `blueprint`; all seven stand in the works under
+`postmark-rules`, as every declaration does. A Keeping Works refactor
+promoting the family to a cleaner shape remains noted as due.
+
 ## The seam — the witnessed money door (ruled 2026-08-20, the economy sitting)
 
 The full derivation and every ruling receipt live in the sitting's capture
@@ -1298,7 +1388,10 @@ receipt — deed rows, conversion receipts, and the later quest mints are its
 instances. And the bounty tie is RULED (the founder's word, 08-21): a
 funding pot is a bounty subtype living on the SAME quest board,
 stake-rankable, rendered as a bounty row — funding-quest's own body carries
-the ruling (version 2).
+the ruling (version 2). (The asks matrix, 08-30, decomposes it cleanly:
+a funding quest is a FUND — the town demanding support, the quest's
+stamp-direction pair — and `the-asks/fund` routes here; the
+`extends bounty` remains rendering inheritance, never ontology.)
 
 **The seam alignment (2026-08-21, the afternoon's rulings):** three of the
 day's later rulings postdated the planting above and are folded in here.
