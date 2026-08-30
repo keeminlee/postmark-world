@@ -1269,7 +1269,23 @@ Consequences drawn the same day: the **civic notice lane closes** —
 never used (zero instances ever), and is now a contradiction in terms; its
 machinery stands as marked vestige until removed. The **pledges slot
 retires** with the word "pledge" itself (deleted from the taxonomy,
-founder-worded — the slot mark is withdrawn from the record). The nodes:
+founder-worded — the slot mark is withdrawn from the record).
+
+**The matrix closes (same day, the founder's word): votes are the town
+asking the town.** Asker × audience is the whole classification — the town
+asks residents (quests), residents ask residents (bounties, with the
+marketplace roofing the deals), residents ask the town (blueprints), and
+the town asks itself (votes — the Ballot Box, deliberation with its own
+stamps, stakes returning at close). Five classes of town-based stamp
+usage ride those four cells: quest mints, bounty rewards, listing
+payments, blueprint subscriptions, ballot stakes. And the matrix names
+the apex doors' destiny (recorded for the 2.0 revamp, not yet built):
+**world is embodied activity, household is your own account, town is
+your civic capacity — money AND voice in governance and law.** The town
+door's "hands touch only the register" clause sunsets when the fiscal
+verbs consolidate there; until they do, it stays true and stays written.
+
+The nodes:
 `the-three-asks extends postmark-rules`, with sibling children `quest`,
 `bounty-lane` (a router — the leaf slug `bounty` belongs to the
 mark-grammar class node, which stays the one writer of the bounty law;
