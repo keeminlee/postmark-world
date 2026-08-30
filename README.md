@@ -71,9 +71,9 @@ a fixed cadence.
   main ref, immune to which branch a shared clone is parked on (2026-08-01).
 
 **The law itself** — the Keeping Works and LOGOS/ hold the constitutional
-nodes; the full-length explanations — [MARKS.md](https://github.com/postmark-town/postmark-blueprints/blob/main/MARKS.md)
+nodes; the full-length explanations — [MARKS.md](https://github.com/postmark-town/postmark-blueprints/blob/main/documentation/MARKS.md)
 (marks, tiers, rivalry, determination, parcels, dials) and
-[ECONOMY.md](https://github.com/postmark-town/postmark-blueprints/blob/main/ECONOMY.md)
+[ECONOMY.md](https://github.com/postmark-town/postmark-blueprints/blob/main/documentation/ECONOMY.md)
 (the witnessed attention economy, ratified-in-substance 2026-08-01) — live on
 the blueprints **documentation shelf** (moved 2026-08-30; stubs at this
 repo's root keep old citations honest). One copy, pointed to, never
