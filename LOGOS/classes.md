@@ -1310,6 +1310,17 @@ the demand-side classes (listings, bounty rewards) is correspondence —
 a letter's `pays:` line, never a town act; money rides the mail, by the
 town's own design.
 
+**THE CIVIC QUARTER** (founder-named 2026-08-30, formalized the same
+evening): the five houses of the asks, standing as ground from this
+release — the Quest Guild, the Think Tank, the Bounty Board, and the
+Marketplace along the town-centre strip, with the Ballot House standing
+where it always stood, in the works. The quarter's plaque
+(`the-town/the-civic-quarter`) carries the one-breath description every
+rendering quotes; a building may stand before its machinery operates
+(the Guild's standings still hang at the works until the w37 move; the
+Marketplace's rows ride the bulletin until the listing class stands) —
+standing is ground, never a claim of operation.
+
 The nodes: **`the-asks extends postmark-rules`**, with six sibling
 children — `quest`, `fund` (a router at funding-quest), `bounty-lane`
 (a router — the leaf slug `bounty` belongs to the mark-grammar class
