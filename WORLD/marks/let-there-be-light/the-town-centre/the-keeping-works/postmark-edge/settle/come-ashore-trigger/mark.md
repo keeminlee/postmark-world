@@ -2,10 +2,10 @@
 kind: predicated
 by: the-town
 tier: constitution
-date: 2026-08-19
+date: 2026-08-30
 slot: trigger
-value: the berth's own act — a button, never automatic
-version: 0
+value: the ferry's next crossing — automatic, once the household is anchored
+version: 1
 ---
 
-Arrival is chosen: settle fires on the berth's own click after co-sign, never silently — consent stays legible at the last step ashore.
+Arrival is automatic: a berth settles at the ferry's next crossing once its household is anchored, and no berth acts to make it happen.

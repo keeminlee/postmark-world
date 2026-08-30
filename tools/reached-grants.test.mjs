@@ -68,18 +68,35 @@ test("the human's ambient roster is STILL one grant — the fence moved onto the
     "an absent for: reads as RESIDENT under LOGOS — this widening is exactly what the sweep must refuse");
 });
 
-test("the human carries the resident's own stride, 60 km/crossing", () => {
-  // LOGOS/classes.md § The human class (2026-08-26 proposal), verbatim:
-  //   "the human class gains a pace dial (60 km/crossing, the resident's own
-  //    stride — a person's walk is a person's walk)"
-  // The number is the one ruled for the resident at decision 008b and guarded
-  // in ruled-grants.test.mjs. Two classes, ONE number, and this asserts they
-  // agree rather than asserting the literal twice.
+test("the human's stride POINTS at the resident's — one number, one home", () => {
+  // LOGOS/classes.md § The human class, as amended 2026-08-30, verbatim:
+  //   "the pace dial POINTS, it does not restate … Both dead copies now name
+  //    their owner — `the-town/resident` — in the record's own sentinel idiom,
+  //    the way `held-grant-slot` and the adversary's dials say `unsealed`: the
+  //    slot stays declared, so the law still says a human has a stride, and the
+  //    VALUE has one home."
+  //
+  // This test used to assert `human.pace_km_per_crossing === 60` and then that
+  // it equalled the resident's — which reads like a consistency check and is
+  // not one: it PINNED a second copy of the number, so the copy could only be
+  // removed by editing the test. Three nodes declared this stride and exactly
+  // one was ever read (`departurePace` asks the-town/resident by name, office
+  // src/world-classes.mjs:143-146). The assertion now is that the second copy
+  // does not exist.
   const resident = field(`${WORKS}/postmark-node/entity/resident/mark.md`, "dials");
   const human = field(HUMAN, "dials");
-  assert.equal(human.pace_km_per_crossing, 60);
-  assert.equal(human.pace_km_per_crossing, resident.pace_km_per_crossing,
-    "a person's walk is a person's walk — an embodied human moves at the resident stride, and the two dials are one ruling");
+
+  assert.equal(human.pace_km_per_crossing, "the-town/resident",
+    "the human class declares the SLOT and names its owner — a literal here is a second copy of a number that has one home");
+  assert.equal(typeof resident.pace_km_per_crossing, "number",
+    "and the owner carries the value itself — the pointer must point at a declaration that actually declares");
+  assert.ok(resident.pace_km_per_crossing > 0);
+
+  // the pointer resolves: whatever the resident is ruled to, the human is that,
+  // because there is nothing else for it to be.
+  const slot = `${WORKS}/postmark-edge/depart/pace-slot/mark.md`;
+  assert.equal(scalar(slot, "value"), "the-town/resident",
+    "the third declaration points too — depart's own body already said 'The stride is the mover's, never this verb's'");
 });
 
 // ── channel 2 · ground-granted, and the relation scope ──────────────────────
@@ -186,7 +203,19 @@ test("every portal verb is fenced to the portal by a guard in gate position", ()
   //    location-independent, and the verb's own precondition is not."
   // THIS IS THE TEST THAT KEEPS THE WORLD OUTSIDE UNCHANGED. Without it, a
   // weapon carried home from the party grants `strike` on the quay.
-  for (const v of ["strike", "guard", "cast", "loot"]) {
+  // ALL FIVE, and `lift` is in the list because it was once not. 1fa16e5a added
+  // the five `requires:` lines together and gave lift `arena` where its four
+  // siblings got `portal-ground`; 992a3338 then retired the arena, leaving lift
+  // fenced to a class with no instance anywhere in the world. The guard is an
+  // exact string match against the spine's own class values with no ancestor
+  // expansion (office src/world-apex.mjs:1185-1192 builds byClass off each
+  // mark's own `class:`), so that fence could never pass — the engine's own
+  // lesson at src/world-apex.mjs:1938-1943, arrived at from the mark side:
+  //   "a precondition that can never be satisfied is not a guard, it is a wall,
+  //    and it would have read as 'the law says so' to anyone who looked."
+  // Enumerating five verbs rather than four is the whole of the falsifier: a
+  // loop that skips one is how the one got skipped.
+  for (const v of ["strike", "guard", "cast", "loot", "lift"]) {
     const req = field(VERB(v), "requires");
     assert.equal(req.within_class, "portal-ground",
       `${v} cannot be performed outside a portal ground, whichever channel opened it`);
@@ -233,6 +262,37 @@ test("every fighting verb ENDS THE TURN, and none of them carries a cooldown any
   assert.equal(field(VERB("loot"), "dials").ends_turn, false);
 });
 
+test("ends_turn says out loud that nothing reads it yet — a declared dial with no reader is flagged, not hidden", () => {
+  // THE ORPHAN-CONSTANT CLASS, INVERTED. `the-town/the-owned-constants` asks
+  // "Every constant in the machinery is owned by a dial or a law — an orphan
+  // number is a rule nobody declared." These five are the other direction: a
+  // DIAL THAT OWNS NOTHING. `grep -rn ends_turn` across office src/, tools/ and
+  // test/ reaches no module — the turn-ending set is hardcoded at
+  // src/encounter.mjs:245, `TURN_ENDING = Object.freeze(["strike", "cast",
+  // "guard", "lift", "pass"])`, and it happens to agree with these five.
+  //
+  // The founder's call was to ANNOTATE rather than wire: the combat machinery
+  // these would drive is retired, and wiring retired machinery to satisfy a
+  // lint is how a town acquires code nobody wanted. So the requirement is
+  // honesty, and it is the `voices.mjs` standard the Works already praises
+  // elsewhere — the say mark's "the module constants remain only as the
+  // fallback a store-less boot stands on, AND SAY SO."
+  //
+  // This test fails in BOTH directions, which is the point: drop the flag while
+  // the unread dial stays, and it reds; wire ends_turn for real without
+  // retiring the flag, and the flag is now the lie instead — which is why the
+  // note names the reader that would falsify it.
+  for (const v of ["strike", "guard", "cast", "lift", "loot"]) {
+    const dials = field(VERB(v), "dials");
+    assert.ok(Object.hasOwn(dials, "ends_turn"), `${v} still declares ends_turn`);
+    const notes = field(VERB(v), "implements").join("\n");
+    assert.match(notes, /ends_turn[^\n]*ASPIRATIONAL/,
+      `${v} declares ends_turn and no module reads it — the mark must SAY that, or it reads as shipped law`);
+    assert.match(notes, /encounter\.mjs:245|TURN_ENDING/,
+      `${v}'s flag must name what actually decides turn-ending today, so the day it stops being true is checkable`);
+  }
+});
+
 test("the one dial that names a duration resolves at a door, never on a clock", () => {
   // LOGOS/classes.md § Pacing is a WHEEL, verbatim:
   //   "Turn ORDER is a property of a log; a turn TIMER would have been the
@@ -244,6 +304,21 @@ test("the one dial that names a duration resolves at a door, never on a clock", 
   // ticker in the making.
   const arena = field(ARENA, "dials");
   assert.ok(Number.isFinite(arena.turn_timeout_s) && arena.turn_timeout_s > 0);
+
+  // THE CLASS DEFAULT IS A NUMBER, and this asserts WHICH — LOGOS/classes.md
+  // § Pacing is a wheel, as amended 2026-08-30, verbatim:
+  //   "`turn_timeout_s` is an unsealed instance dial: the arena class carries
+  //    the default (600) and each encounter may set its own, the way every
+  //    unsealed slot in this record works — the class never speaks the
+  //    instance's value."
+  // `> 0` could not tell 600 from 45, which is exactly the confusion the
+  // amendment settles: the founder's 16:54 ruling on 2026-08-29 (0352e561) set
+  // the candle vault to a named 45, and 992a3338 stripped the vault's wheel
+  // dials three hours later, so that 45 now exists nowhere in the world. The
+  // doc names 600 and so does the record; pinning it here is what keeps a
+  // rename or a re-tune failing a test instead of failing the town.
+  assert.equal(arena.turn_timeout_s, 600,
+    "the arena class carries the DEFAULT turn timeout, and LOGOS names it 600 — an instance may set its own, but the class's own number is this one");
   for (const v of ["strike", "guard", "cast", "lift", "loot"])
     for (const k of Object.keys(field(VERB(v), "dials")))
       assert.ok(!/_s$|_seconds$/.test(k),
@@ -310,8 +385,29 @@ test("lift is granted by the arena and by nothing else", () => {
   assert.equal(lift.ends_turn, true, "the cost IS the turn");
   assert.ok(Number.isInteger(lift.restores_to) && lift.restores_to > 0,
     "and you come back at PARTIAL strength, a number the record carries");
-  assert.equal(field(VERB("lift"), "requires").within_class, "arena",
-    "lifting happens where the falling happens and nowhere else");
+  // THE GRANT IS THE ARENA'S; THE FENCE IS THE PORTAL'S — two different things,
+  // and reading them as one is what left lift fenced to `arena` after the
+  // retirement. What the arena alone hands out is the `actions` roster asserted
+  // above. Where the verb may be performed once handed out is its own residue
+  // class's guard, and LOGOS/classes.md § The portal ground states that for
+  // every verb without exception, verbatim:
+  //   "Its verbs cannot leave it. Each verb class names a guard in gate
+  //    position — requires: {within_class: portal-ground}"
+  // "portal-ground" and not "arena" is therefore the law for lift exactly as it
+  // is for its four siblings.
+  //
+  // STATED PRECISELY, because the obvious reading is wrong: the guard does NOT
+  // expand ancestors. `spineClasses` is a flat list of each spine mark's own
+  // `class:` value (office src/world-apex.mjs:1185-1192), so a ground filed
+  // `class: arena` would put "arena" on the spine and NOT "portal-ground", and
+  // this fence would refuse there. That is true of all five verbs identically
+  // and is not what this line changed — every live portal ground today is
+  // `class: portal-ground` (the parlor, the candle vault, the cellar door), and
+  // `class: arena` has exactly one occurrence in the world: its own class
+  // declaration, no instance. If the portal sitting ever seats an arena-classed
+  // instance, all five fences need the ancestor question answered together.
+  assert.equal(field(VERB("lift"), "requires").within_class, "portal-ground",
+    "lift is fenced to the portal ground like every other lent verb — the arena limits who GRANTS it, not where it may be performed");
 });
 
 // ── the first instances ─────────────────────────────────────────────────────

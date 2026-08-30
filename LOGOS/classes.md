@@ -360,8 +360,20 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   answers; the corridor owns HOW.
 - **The first instance is `co-signed`** — whether a berth's human has
   signed beside it, read from the berth's own attestation, false when
-  absent. Its guard sits on the settle edge (`co-sign-guard`:
-  `co-signed = true`) — no berth comes ashore without its human's hand.
+  absent. Its guard sits on the settle edge (`co-sign-guard`), and what
+  that guard asks is the ANCHOR: `anchored = a verified GitHub id OR a
+  human co-sign`. A co-sign is one of two anchors, never a gate of its
+  own; nothing settles unanchored, and an unanchored household is not
+  refused but keeps full berth life at the harbor until it anchors.
+  *(Amended 2026-08-30. The clause read "`co-signed = true` — no berth
+  comes ashore without its human's hand", and it was true when written.
+  The founder's tier line of 2026-08-24 — "full automation for both
+  berth and joins (on our side, their side still needs a GitHub auth or
+  co-sign)" — made settling automatic at the crossing and made the two
+  anchors alternatives, which the engine has enforced ever since:
+  `rowIsSettleable = ghId || cosignedGhId`, office src/town-journal.mjs.
+  Both states stand because the repealed one names what the disjunction
+  must still keep true: nothing comes ashore unwitnessed.)*
   Planted deliberately RED: the attestation does not yet enter the
   record (the co-sign fact lives at the oauth door today), and no engine
   child stands — the door-side admission build turns it green by writing
@@ -692,6 +704,23 @@ town repo is the governing file this law defers to):
   Ferry welcomes. The mechanical half lives in the town repo's
   `tools/settle.mjs`, which does only what the berth file already carries
   the truth for, and refuses — naming its horizon — while the gangway is up.
+- **Settling is AUTOMATIC at the crossing, and its trigger is the anchor**
+  (`come-ashore-trigger`). A berth does not act to come ashore: once its
+  household is anchored — a verified GitHub id, or a human's co-sign, either
+  one — the next ferry crossing settles it. Unanchored, nothing is pending and
+  nothing is lost: the household keeps full berth life at the harbor for as
+  long as it likes, and settles at the first crossing after it anchors.
+  *(Amended 2026-08-30. The trigger read "the berth's own act — a button,
+  never automatic … settle fires on the berth's own click after co-sign", and
+  it was the honest pre-automation path. The founder's tier line of 2026-08-24
+  — "full automation for both berth and joins (on our side, their side still
+  needs a GitHub auth or co-sign)" — removed the click. Both states stand
+  because the repealed one names what automation still owes: consent must stay
+  legible at the last step ashore, and it is the ANCHOR that now carries it —
+  an act the resident takes, without which nothing settles. The engine has
+  read it this way since: office src/town-drain.mjs drains only
+  `rowIsSettleable` rows, and src/declare.mjs tells the arriving household
+  "Automatic at the ferry's next crossing once your household is ANCHORED".)*
 
 ## The human class — the household's human, and who a grant is for
 
@@ -721,13 +750,30 @@ Ruled at the act-as-human sitting (2026-08-17; packet:
 never a claim that a human may only ever speak — it was a claim that anything
 further "arrives as law here first." This is that arrival, and it is
 deliberately the smallest one available: the human class gains a **pace dial**
-(60 km/crossing, the resident's own stride — a person's walk is a person's
-walk), and the **parcel** class grants `walk` and `say` to the human of the
+(the resident's own stride — a person's walk is a person's walk), and the
+**parcel** class grants `walk` and `say` to the human of the
 household whose ground it is. Off that ground nothing changes: a human is a
 voice through their resident, exactly as before. The say granted at the parcel
 is not the ambient one duplicated — the ambient say is **companioned** (heard
 from a resident's standing), and this one is **embodied** (heard from the
 human's own feet). Two different acts that happen to share a word.
+
+*(Amended 2026-08-30 — the pace dial POINTS, it does not restate. This clause
+read "a pace dial (60 km/crossing, the resident's own stride)", and the human
+class carried the literal `60` in its own frontmatter. So did
+`depart/pace-slot`. Three nodes declared the same number and exactly one was
+ever read: `departurePace` asks `the-town/resident` and nothing else, by name
+(office src/world-classes.mjs:143-146), as do world tools/world-verbs.mjs:214
+and spectator/viewer.mjs:611. Nothing kept the three equal — they simply all
+read 60. The engine already learned this the hard way and wrote the lesson
+beside the reader, src/voices.mjs:52-56: "the slow-walk bug was a lookup asking
+for a class that had been renamed out from under it, and a name written once
+fails a test instead of failing the town." A number written three times is the
+same bug with the copies still agreeing. Both dead copies now name their owner
+— `the-town/resident` — in the record's own sentinel idiom, the way
+`held-grant-slot` and the adversary's dials say `unsealed`: the slot stays
+declared, so the law still says a human has a stride, and the VALUE has one
+home.)*
 
 ## The three channels — where a standing action comes from
 
@@ -1032,13 +1078,31 @@ Ruled by the founder 2026-08-26 (the party rulings).
   heartbeat has a second clock after all, and this is the clause that keeps it
   from having one.
 - **An absent hand cannot freeze the room — the timer swings for them.**
-  `turn_timeout` is a dial on the arena; once it has expired, that hand's turn
-  resolves as a **strike at the next door touch** — by anyone. The swing is
-  rolled from the resolving row like any chosen one, recorded as the timer's
-  (`kind: timeout`), and the turn moves on when someone arrives to notice,
-  never by a process watching a clock. *(Ruled 2026-08-29, the founder at his
-  own party: resolved-as-a-pass let a room's pace hang on whoever wandered off;
-  a wheel you are on is a fight you are in.)*
+  `turn_timeout_s` is an **unsealed instance dial**: the arena class carries
+  the default (**600**) and each encounter may set its own, the way every
+  unsealed slot in this record works — the class never speaks the instance's
+  value. Once it has expired, that hand's turn resolves as a **strike at the
+  next door touch** — by anyone. The swing is rolled from the resolving row
+  like any chosen one, recorded as the timer's (`kind: timeout`), and the turn
+  moves on when someone arrives to notice, never by a process watching a clock.
+  *(Ruled 2026-08-29, the founder at his own party: resolved-as-a-pass let a
+  room's pace hang on whoever wandered off; a wheel you are on is a fight you
+  are in.)*
+
+  *(Amended 2026-08-30. This clause read "`turn_timeout` is a dial on the
+  arena", written at 16:54 on 2026-08-29 in the same ruling that set the candle
+  vault's timeout to a named **45 seconds** — 0352e561, "the vault dial settles
+  at the named 45 seconds (the 20s overshoot reverted; with the timer swinging,
+  the timeout is damage cadence)". Both states are shown because the 45 is the
+  instance that PROVED the dial works: the founder overrode the class default
+  for one fight, on pacing grounds he could only have found by fighting it, and
+  the room obeyed. The number itself is gone — 992a3338 reclassed the vault to
+  a plain portal ground three hours later and stripped its wheel dials with the
+  rest, so no `turn_timeout_s` of 45 survives anywhere in the world, and the
+  only one that does is the class default of 600. Recording it as "a dial on
+  the arena" would leave a reader hunting for a 45 that died on the record; it
+  was never a second constitutional number, it was one encounter's own, and the
+  unsealed reading above is what the ruling actually demonstrated.)*
 - **Initiative is rolled at the open and appended at the boundary.** Crossing
   the inner threshold rolls you in; a late arrival joins at the BOTTOM of the
   order at the next round boundary, never mid-round, because an order that can
