@@ -146,16 +146,27 @@ test("the held-grant slot is unsealed and in the town's own custody", () => {
 // ── the portal ground ───────────────────────────────────────────────────────
 
 test("the portal ground's roster names BOTH actor kinds for every verb it grants", () => {
-  // LOGOS/classes.md § The portal ground, verbatim:
-  //   "The verbs carry `for: human` entries beside the resident ones, so a
-  //    guest's human plays inside the portal without any claim outside it.
-  //    These are class-scoped, never `scope: own-ground` — a portal's whole
-  //    nature is that it grants to visitors."
+  // LOGOS/classes.md § The portal ground, verbatim (amended 2026-08-30):
+  //   "Its roster names both kinds — for every verb it grants. ... (Interim
+  //    state, 2026-08-30: the roster stands EMPTY — the arena retired with its
+  //    boss (992a3338) and the combat verbs returned to the town's keeping ...
+  //    The contract above is the law of any verb the roster carries, not a
+  //    promise that it carries one; which verbs return ... is the portal
+  //    sitting's to rule.)"
+  //
+  // ⚠ SUPERSEDED IN PLACE 2026-08-30 with that amendment. Before it, this
+  // test pinned the dungeon-era roster (four verbs × two kinds). The law it
+  // asserts now is the both-kinds contract on WHATEVER the roster carries,
+  // plus the interim fact itself — an empty roster — so a verb quietly
+  // re-granted without its human twin, or with own-ground scope, still fails
+  // here the day it appears.
   const actions = field(PORTAL, "actions");
-  const verbs = ["cast", "guard", "loot", "strike"];
-  for (const v of verbs) {
-    const entries = actions.filter((a) => a.action === v);
-    assert.equal(entries.length, 2, `${v} is granted to two kinds`);
+  assert.ok(Array.isArray(actions), "the class carries a roster, even empty — the channel is law, its contents are rulings");
+  assert.equal(actions.length, 0,
+    "the interim roster is EMPTY (992a3338; the portal sitting rules what returns) — a verb appearing here without that sitting is drift, not a tidy");
+  const byVerb = new Map();
+  for (const a of actions) byVerb.set(a.action, [...(byVerb.get(a.action) ?? []), a]);
+  for (const [v, entries] of byVerb) {
     const kinds = entries.map((a) => a.for ?? "resident").sort();
     assert.deepEqual(kinds, ["human", "resident"],
       `${v} reaches a resident and a guest's human — an absent for: IS the resident entry`);
@@ -163,8 +174,6 @@ test("the portal ground's roster names BOTH actor kinds for every verb it grants
       assert.equal(e.scope, undefined,
         `${v} is class-scoped: a portal grants to VISITORS, so own-ground would empty the room`);
   }
-  assert.deepEqual([...new Set(actions.map((a) => a.action))].sort(), verbs,
-    "the roster is exactly these four — a fifth verb is a law change, not a tidy");
 });
 
 test("every portal verb is fenced to the portal by a guard in gate position", () => {
@@ -320,7 +329,7 @@ test("the first portal ground stands geometrically inside the parcel it was buil
   // Gardens' centre (1338, -994.5) — and is 25 m square.
   const parcelWorld = { x: 1338 - 250, y: -994.5 + 200 };
   const fence = { x0: parcelWorld.x - 12.5, x1: parcelWorld.x + 12.5, y0: parcelWorld.y - 12.5, y1: parcelWorld.y + 12.5 };
-  const g = frontmatter("WORLD/marks/the-town/the-cellar-door/mark.md");
+  const g = frontmatter("WORLD/marks/wright/the-cellar-door/mark.md");
   assert.equal(g.class, "portal-ground");
   const box = { x0: g.at.x - g.extent.w / 2, x1: g.at.x + g.extent.w / 2,
                 y0: g.at.y - g.extent.h / 2, y1: g.at.y + g.extent.h / 2 };
@@ -349,13 +358,21 @@ test("the adversary's numbers are on its own mark, not in any office", () => {
   //   "instances carry `hp` and `hits_for` as their own UNSEALED dials, so two
   //    adversaries differ by what the record says about each and not by a
   //    branch in code"
-  const boss = frontmatter("WORLD/marks/the-town/the-unlit-cake/mark.md");
-  assert.equal(boss.class, "adversary");
-  assert.ok(Number.isInteger(boss.dials.hp) && boss.dials.hp > 0);
-  assert.ok(Number.isInteger(boss.dials.hits_for) && boss.dials.hits_for > 0);
+  //
+  // ⚠ SUPERSEDED IN PLACE 2026-08-30: the first adversary FELL (the cake,
+  // 2026-08-29 ~22:44Z, Sol's natural 20) and was reclassed `thing` by the
+  // retirement ruling (dff16f12) — the Lit Cake is a monument now, not a boss.
+  // So the instance half of this falsifier retires with its subject: the
+  // adversary class stands with NO live instance again, which the header's own
+  // words allow ("a clause with no instance is a clause nobody has had to
+  // mean"). The class-grammar half is still live law and still checked. When
+  // the next adversary stands, the instance assertions return with its name.
   const cls = field(`${WORKS}/postmark-node/mark/adversary/mark.md`, "dials");
   assert.equal(cls.hp, "unsealed", "the class speaks the grammar and never the value");
   assert.equal(cls.hits_for, "unsealed");
+  const monument = frontmatter("WORLD/marks/wright/the-unlit-cake/mark.md");
+  assert.equal(monument.class, "thing", "the fallen boss is an ordinary thing — the retirement ruling, held");
+  assert.equal(monument.dials, undefined, "a monument carries no combat dials");
 });
 
 test("the portal ground carries entry terms, because it binds those it reaches", () => {
@@ -365,7 +382,7 @@ test("the portal ground carries entry terms, because it binds those it reaches",
   //    door."
   // A ground that grants verbs and asks for no word would be binding a visitor
   // with law it never showed them.
-  const g = frontmatter("WORLD/marks/the-town/the-cellar-door/mark.md");
+  const g = frontmatter("WORLD/marks/wright/the-cellar-door/mark.md");
   assert.ok(g.entry, "the portal ground declares an entry law");
   assert.ok(g.entry.edge, "it declares a counter-edge, which is what makes the door ASK rather than assume");
   assert.ok(String(g.entry.consequence ?? "").length > 0, "and says what crossing costs, in its own words");

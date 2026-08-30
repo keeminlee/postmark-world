@@ -855,10 +855,16 @@ worked example, exactly as the household class is instantiation's:
   onto, so the entry law already in force delivers its terms before the ground
   binds anyone. Nobody is bound by law they were not shown at the door, and
   this class needs no new machinery to honour that.
-- **Its roster names both kinds.** The verbs carry `for: human` entries beside
-  the resident ones, so a guest's human plays inside the portal without any
-  claim outside it. These are class-scoped, never `scope: own-ground` — a
-  portal's whole nature is that it grants to visitors.
+- **Its roster names both kinds — for every verb it grants.** The verbs carry
+  `for: human` entries beside the resident ones, so a guest's human plays
+  inside the portal without any claim outside it. These are class-scoped,
+  never `scope: own-ground` — a portal's whole nature is that it grants to
+  visitors. *(Interim state, 2026-08-30: the roster stands EMPTY — the arena
+  retired with its boss (992a3338) and the combat verbs returned to the town's
+  keeping, so no portal-ground grants anything today and human embodiment is
+  parcels-only again. The contract above is the law of any verb the roster
+  carries, not a promise that it carries one; which verbs return, and whether
+  portals seat humans as standing law, is the portal sitting's to rule.)*
 - **Its verbs cannot leave it.** Each verb class names a **guard in gate
   position** — `requires: {within_class: portal-ground}` — which is the
   condition grammar § The derived already carries ("a verb or slot may name a

@@ -61,14 +61,16 @@ const FLIPS = [
     file: HELD, catches: "the held-grant slot is unsealed and in the town's own custody",
     edit: (t) => t.replace("values-tier: constitution", "values-tier: sovereign") },
 
-  { name: "the portal stops granting to guests' humans",
+  // ⚠ TRUED 2026-08-30 with the roster's interim emptiness (992a3338 + the
+  // LOGOS amendment): the two dungeon-era flips edited grant entries that no
+  // longer exist, so they matched nothing. The live flips now catch the two
+  // ways the interim state can rot: a verb sneaking back in at all, and — for
+  // the day the sitting DOES re-grant — a verb arriving without its human
+  // twin. (The own-ground flip returns with the roster.)
+  { name: "a verb sneaks back onto the retired roster without the portal sitting",
     file: PORTAL, catches: "the portal ground's roster names BOTH actor kinds",
-    edit: (t) => t.replace('{"action": "strike", "for": "human", "residue": "the-town/strike"}, ', "") },
-
-  { name: "a portal grant picks up own-ground (a portal that only its owner may play in)",
-    file: PORTAL, catches: "the portal ground's roster names BOTH actor kinds",
-    edit: (t) => t.replace('{"action": "loot", "for": "human", "residue": "the-town/loot"}',
-                           '{"action": "loot", "for": "human", "scope": "own-ground", "residue": "the-town/loot"}') },
+    edit: (t) => t.replace(/^actions: \[\]$/m,
+      'actions: [{"action": "strike", "residue": "the-town/strike"}]') },
 
   { name: "strike escapes the portal (the weapon carried home works on the quay)",
     file: VERB("strike"), catches: "every portal verb is fenced to the portal by a guard in gate position",
@@ -140,12 +142,16 @@ const FLIPS = [
 
   // ── the first instances ─────────────────────────────────────────────────
   { name: "the portal ground drifts outside the parcel it was built on",
-    file: "WORLD/marks/the-town/the-cellar-door/mark.md",
+    file: "WORLD/marks/wright/the-cellar-door/mark.md",
     catches: "the first portal ground stands geometrically inside the parcel",
-    edit: (t) => t.replace("at: { x: 1097, y: -785 }", "at: { x: 1140, y: -785 }") },
+    // ⚠ TRUED 2026-08-30: this flip edited coordinates the door no longer
+    // wears (1097,-785 — a pre-transfer placement), so it matched nothing and
+    // proved nothing (the wake-card had it flagged as the dead flip). Same
+    // rot class as the dials flip below: anchored on a value, not a shape.
+    edit: (t) => t.replace(/^at: \{.*$/m, "at: { x: 1140, y: -785 }") },
 
   { name: "the portal ground stops asking for a word at its door",
-    file: "WORLD/marks/the-town/the-cellar-door/mark.md",
+    file: "WORLD/marks/wright/the-cellar-door/mark.md",
     catches: "the portal ground carries entry terms",
     edit: (t) => t.replace('"edge": "within", ', "") },
 
@@ -159,16 +165,16 @@ const FLIPS = [
     catches: "the thing that lends a verb is the TOWN's",
     edit: (t) => t.replace(', "residue": "the-town/strike"', "") },
 
-  { name: "the adversary's numbers move off its own mark",
-    file: "WORLD/marks/the-town/the-unlit-cake/mark.md",
+  { name: "the fallen boss regrows combat dials (the monument un-retires)",
+    file: "WORLD/marks/wright/the-unlit-cake/mark.md",
     catches: "the adversary's numbers are on its own mark",
-    // ⚠ ANCHORED ON THE LINE'S SHAPE, NOT ITS CONTENTS. The literal spelling
-    // was `dials: {"hp": 60, "hits_for": 5}` until the dice ruling added three
-    // more dials to the boss — at which point this flip silently matched
-    // nothing and the runner reported it as an APPARATUS failure. A flip keyed
-    // to an exact value rots the first time the value it names is amended,
-    // which for a class dial is the ordinary case rather than the rare one.
-    edit: (t) => t.replace(/^dials: \{.*$/m, "dials: {}") },
+    // ⚠ SUPERSEDED IN PLACE 2026-08-30 with its test: the cake fell and was
+    // reclassed `thing` (dff6→ the retirement ruling), so the old flip —
+    // mangle the boss's dials — has no dials to mangle. The test now asserts
+    // the MONUMENT state (class thing, no dials); the flip that catches it is
+    // giving the monument dials back. (The prior flip's own lesson kept:
+    // anchor on shape, never on a literal value.)
+    edit: (t) => t.replace(/^class: thing$/m, 'class: thing\ndials: {"hp": 1}') },
 
   { name: "the adversary CLASS seals a value every instance must wear",
     file: `${WORKS}/postmark-node/mark/adversary/mark.md`,

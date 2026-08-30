@@ -32,7 +32,7 @@ const world = assembleWorld({
 });
 const byId = new Map(world.marks.map((m) => [m.id, m]));
 
-const DOOR = "the-town/the-cellar-door";
+const DOOR = "wright/the-cellar-door"; // renamed by the 2026-08-30 transfer (61c5fdfb): the dungeon passes to its builder
 const PARCEL = "rei/the-lanternstep-house-parcel";
 
 test("THE FALSIFIER: the cellar door's parents include the parcel it sits in", () => {

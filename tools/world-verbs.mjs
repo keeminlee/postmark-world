@@ -598,7 +598,7 @@ function householdNear(target, world, radius = DIALS.cluster_beyond_m) {
 // A THRESHOLD STRADDLING A WALL IS FURNITURE OF BOTH ROOMS IT JOINS
 // (founder-ruled 2026-08-27). Strict full-rect containment is the primary
 // relation and does not move; this stands BESIDE it. A door is in a wall —
-// that is the only place a door can be — so the-town/the-cellar-door runs
+// that is the only place a door can be — so wright/the-cellar-door (né the-town/, the 08-30 transfer) runs
 // x 1080.5→1085.5 across the Lanternstep parlor's west wall at x 1083 and was
 // contained by neither room. It was a child of nothing, rendered nowhere, and
 // the parlor went on telling the founder about a door the parlor did not hold.

@@ -9,7 +9,7 @@
 //      waiting up; the parlor makes no promises about the cellar."
 //
 // And the geometry agrees with the prose: the parlor's west wall stands at
-// x 1083, and the-town/the-cellar-door runs x 1080.5 → 1085.5 — it is IN the
+// x 1083, and wright/the-cellar-door (né the-town/, the 08-30 transfer) runs x 1080.5 → 1085.5 — it is IN the
 // wall, which is the only place a door can be. Room furniture was strict
 // full-rect containment (`marksContain`), so a door in a wall is contained by
 // neither room and was a child of NOTHING. It rendered nowhere, and the parlor
@@ -40,7 +40,7 @@ const world = assembleWorld({
 const byId = new Map(world.marks.map((m) => [m.id, m]));
 
 const PARLOR = "the-town/the-lanternstep-parlor";
-const DOOR = "the-town/the-cellar-door";
+const DOOR = "wright/the-cellar-door"; // renamed by the 2026-08-30 transfer (61c5fdfb): the dungeon passes to its builder
 const HOUSE = "rei/the-lanternstep-house";
 
 test("THE FALSIFIER: the parlor's own children hold the cellar door its own prose promises", () => {
