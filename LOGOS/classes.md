@@ -180,6 +180,15 @@ enforced whitelist lives in `tools/board-grammar.test.mjs`
 instances under this law: a resident's pocket lantern (`thing`) and the
 waiting-room bounty (`bounty`), settled the night it was ruled.
 
+One dated exception stands beside the whitelist (founder ruling, 2026-08-29,
+the night after the fight — "I'd like for you, wright, to own the marks from
+the dungeon; you wrote them"): the dungeon's two portal-grounds,
+`wright/the-candle-vault` and `wright/the-cellar-door`, pass to their
+builder as instances. The class stays town-only for everyone else; the
+exception is carried BY NAME in the same test file
+(`INSTANCE_EXCEPTIONS_BY_RULING`) and is subsumed when #1797's general
+mechanism lands.
+
 ## Class-nodes
 
 A class is a **node in the constitutional tree** — addressable, renderable,

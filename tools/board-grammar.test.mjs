@@ -171,9 +171,25 @@ test("LIVE TREE: class law -- town marks define; residents instantiate only the 
     assert.ok(rosterFromWorks.has(m.class),
       `${m.id}: an instance names a class the WORKS declares — the roster comes from the works alone, so a class known only by an instance is a class nothing defined`);
   assert.ok(defs.some((m) => m.class === "bounty"), "the bounty class stands in the roster");
-  for (const m of classed.filter((m) => m.by !== "the-town"))
+  // ⚠ EXCEPTIONS BY RULING — the law's own line: the set grows by ruling,
+  // never by drift, and an exception is a ruling with a name and a date.
+  // 2026-08-29, the night after the fight (founder, verbatim in substance:
+  // "I'd like for you, wright, to own the marks from the dungeon — you wrote
+  // them; now that the fight is over, as regular marks"): the dungeon's two
+  // portal-grounds pass to their builder. The class stays town-only for
+  // everyone else — an UNLISTED resident portal-ground still fails here, which
+  // is what keeps this an exception and not a loosening. #1797's general
+  // mechanism subsumes these entries when it lands; LOGOS/classes.md
+  // § Instantiation carries the same words (nodes first).
+  const INSTANCE_EXCEPTIONS_BY_RULING = new Map([
+    ["wright/the-candle-vault", "founder ruling 2026-08-29 -- the dungeon passes to its builder"],
+    ["wright/the-cellar-door", "founder ruling 2026-08-29 -- the dungeon passes to its builder"],
+  ]);
+  for (const m of classed.filter((m) => m.by !== "the-town")) {
+    if (INSTANCE_EXCEPTIONS_BY_RULING.has(m.id)) continue;
     assert.ok(RESIDENT_INSTANTIABLE.has(m.class),
       `${m.id}: residents may instantiate only [${[...RESIDENT_INSTANTIABLE].join(", ")}] today -- "${m.class}" is town-only (#1797)`);
+  }
   // Notice fields ride only bounty-classed marks (the board grammar); anywhere
   // else they are strays to investigate.
   for (const m of live.filter((m) => m.ask !== undefined || m.reward !== undefined || m.status !== undefined || m.threshold !== undefined))
