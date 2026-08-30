@@ -9,7 +9,7 @@ extends: postmark-edge
 subject: entity
 object: entity
 dials: {"restores_to": 8, "ends_turn": true}
-requires: {"within_class": "arena"}
+requires: {"within_class": "portal-ground"}
 implements: ["postmark-office src/encounter.mjs — the fold reads this node's dials; the module holds no second copy"]
 source: LOGOS/classes.md
 ---

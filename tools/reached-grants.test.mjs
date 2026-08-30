@@ -186,7 +186,19 @@ test("every portal verb is fenced to the portal by a guard in gate position", ()
   //    location-independent, and the verb's own precondition is not."
   // THIS IS THE TEST THAT KEEPS THE WORLD OUTSIDE UNCHANGED. Without it, a
   // weapon carried home from the party grants `strike` on the quay.
-  for (const v of ["strike", "guard", "cast", "loot"]) {
+  // ALL FIVE, and `lift` is in the list because it was once not. 1fa16e5a added
+  // the five `requires:` lines together and gave lift `arena` where its four
+  // siblings got `portal-ground`; 992a3338 then retired the arena, leaving lift
+  // fenced to a class with no instance anywhere in the world. The guard is an
+  // exact string match against the spine's own class values with no ancestor
+  // expansion (office src/world-apex.mjs:1185-1192 builds byClass off each
+  // mark's own `class:`), so that fence could never pass — the engine's own
+  // lesson at src/world-apex.mjs:1938-1943, arrived at from the mark side:
+  //   "a precondition that can never be satisfied is not a guard, it is a wall,
+  //    and it would have read as 'the law says so' to anyone who looked."
+  // Enumerating five verbs rather than four is the whole of the falsifier: a
+  // loop that skips one is how the one got skipped.
+  for (const v of ["strike", "guard", "cast", "loot", "lift"]) {
     const req = field(VERB(v), "requires");
     assert.equal(req.within_class, "portal-ground",
       `${v} cannot be performed outside a portal ground, whichever channel opened it`);
@@ -310,8 +322,29 @@ test("lift is granted by the arena and by nothing else", () => {
   assert.equal(lift.ends_turn, true, "the cost IS the turn");
   assert.ok(Number.isInteger(lift.restores_to) && lift.restores_to > 0,
     "and you come back at PARTIAL strength, a number the record carries");
-  assert.equal(field(VERB("lift"), "requires").within_class, "arena",
-    "lifting happens where the falling happens and nowhere else");
+  // THE GRANT IS THE ARENA'S; THE FENCE IS THE PORTAL'S — two different things,
+  // and reading them as one is what left lift fenced to `arena` after the
+  // retirement. What the arena alone hands out is the `actions` roster asserted
+  // above. Where the verb may be performed once handed out is its own residue
+  // class's guard, and LOGOS/classes.md § The portal ground states that for
+  // every verb without exception, verbatim:
+  //   "Its verbs cannot leave it. Each verb class names a guard in gate
+  //    position — requires: {within_class: portal-ground}"
+  // "portal-ground" and not "arena" is therefore the law for lift exactly as it
+  // is for its four siblings.
+  //
+  // STATED PRECISELY, because the obvious reading is wrong: the guard does NOT
+  // expand ancestors. `spineClasses` is a flat list of each spine mark's own
+  // `class:` value (office src/world-apex.mjs:1185-1192), so a ground filed
+  // `class: arena` would put "arena" on the spine and NOT "portal-ground", and
+  // this fence would refuse there. That is true of all five verbs identically
+  // and is not what this line changed — every live portal ground today is
+  // `class: portal-ground` (the parlor, the candle vault, the cellar door), and
+  // `class: arena` has exactly one occurrence in the world: its own class
+  // declaration, no instance. If the portal sitting ever seats an arena-classed
+  // instance, all five fences need the ancestor question answered together.
+  assert.equal(field(VERB("lift"), "requires").within_class, "portal-ground",
+    "lift is fenced to the portal ground like every other lent verb — the arena limits who GRANTS it, not where it may be performed");
 });
 
 // ── the first instances ─────────────────────────────────────────────────────

@@ -136,9 +136,15 @@ const FLIPS = [
     file: VERB("lift"), catches: "lift is granted by the arena and by nothing else",
     edit: (t) => t.replace("\"ends_turn\": true", "\"ends_turn\": false") },
 
-  { name: "lift escapes the arena",
-    file: VERB("lift"), catches: "lift is granted by the arena and by nothing else",
-    edit: (t) => t.replace("requires: {\"within_class\": \"arena\"}", "requires: {}") },
+  // ⚠ TRUED 2026-08-30 with lift's fence (the audit's F1). This flip edited
+  // `requires: {"within_class": "arena"}` — the dead fence itself — so once the
+  // fence is corrected the edit matches nothing and the flip proves nothing.
+  // Same rot class as the two dungeon-era flips above: anchored on a value that
+  // moved. Re-anchored on the live fence, and it now catches the same escape
+  // for lift that the strike flip catches for strike.
+  { name: "lift escapes the portal (a downed hand could be lifted anywhere in the world)",
+    file: VERB("lift"), catches: "every portal verb is fenced to the portal by a guard in gate position",
+    edit: (t) => t.replace('requires: {"within_class": "portal-ground"}', "requires: {}") },
 
   // ── the first instances ─────────────────────────────────────────────────
   { name: "the portal ground drifts outside the parcel it was built on",
