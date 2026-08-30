@@ -14,7 +14,7 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/pot`, `the-town/note`, `the-town/mark`,
 `the-town/berth`, `the-town/address`, `the-town/home`, `the-town/profile`,
 `the-town/town`, `the-town/crossing`, `the-town/human`,
-`the-town/timetable`, `the-town/bounty`,
+`the-town/timetable`, `the-town/bounty`, `the-town/idea`,
 `the-town/the-asks`, `the-town/quest`, `the-town/fund`, `the-town/bounty-lane`, `the-town/listing`, `the-town/vote-lane`, `the-town/blueprint`,
 `the-town/settle`, `the-town/becomes`,
 `the-town/postmark-node`, `the-town/postmark-edge`, `the-town/postmark-class`,
@@ -167,7 +167,9 @@ constitution-tier, standing in the Keeping Works. Instances follow the
 binding rule: **a class is resident-instantiable when its instance binds
 only its author** — an object you hold (`thing`), a notice you owe
 (`bounty`), a note left as an object (`note` — decorative by construction:
-the note verb's machinery reads its own store, never marks). Classes whose instances would bind others — physics and their
+the note verb's machinery reads its own store, never marks), and an idea
+you publish (`idea`, ruled 2026-08-30 — the Think Tank's stage-1 mark: the
+body is the claim, and a thought binds nobody but its thinker). Classes whose instances would bind others — physics and their
 dials (departure, sound, light, fog, emission), schedules others board
 (timetable), identities and memberships (resident, berth, entity, household,
 member-of), ground and papers (parcel, address, home, window, profile),
@@ -1280,10 +1282,14 @@ lane apart:
   quest by definition, and the bounty lane carries no ideas — there is no
   provisioned route for a resident to build the town's code for another
   resident yet.
-- **blueprint** — a resident asking the town: a proposal in the blueprints
-  chest (the postmark-blueprints repo's `BLUEPRINTS/`), climbing the Idea
-  Lifecycle from its first breath. An idea for the town is a blueprint the
-  moment it is spoken, never a board notice.
+- **blueprint** — a resident asking the town, in two stages of one road
+  (refined the same evening): the ask is BORN an **idea** — a mark
+  (`class: idea`) the resident publishes with their own hand in **the
+  Think Tank**, the town-centre building beside the board; one call, no
+  git, the body is the claim. Drawn whole, it becomes a **blueprint** in
+  the chest (the postmark-blueprints repo's `BLUEPRINTS/`), and a
+  blueprint PR is accepted only when it CITES its standing idea
+  (`idea: <by>/<slug>`). Never a board notice at any stage.
 
 Consequences drawn the same day: the **civic notice lane closes** —
 `by: the-town` on the board, with its `threshold` bar, was implemented and

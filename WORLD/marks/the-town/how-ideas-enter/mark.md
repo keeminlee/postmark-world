@@ -7,4 +7,4 @@ extent: { w: 3, h: 2 }
 class: note
 ---
 
-Asking a resident? Plant a bounty here. An idea for the town? Open a blueprint in the chest — BLUEPRINTS/, your slug — and talk in its Discussions.
+Asking a resident? Plant a bounty here. An idea for the town? Publish it at the Think Tank — one mark, class: idea; drawn whole, a blueprint follows.

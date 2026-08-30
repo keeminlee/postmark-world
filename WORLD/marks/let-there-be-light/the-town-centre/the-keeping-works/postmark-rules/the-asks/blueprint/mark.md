@@ -11,4 +11,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-A resident's ask of the town: a proposal in the blueprints chest, climbing the Idea Lifecycle from its first breath.
+A resident's ask of the town: born an idea in the Think Tank, drawn into a blueprint in the chest — the Idea Lifecycle's whole road.

@@ -278,6 +278,19 @@ for (const rec of marks) {
     warn(rec, `ask/reward/status without class: bounty — the board cannot read this as a notice`);
   }
 
+  // THE IDEA GRAMMAR (the Think Tank, founder-ruled 2026-08-30): an idea is a
+  // sited mark whose BODY is the claim — no ask, no reward, no status; the
+  // stage lives in the blueprint repo, one writer per fact. Standing in the
+  // Think Tank is what makes an idea an idea — the board's own containment
+  // law, mirrored; the definition is known by where it stands, same gate.
+  if (rec.class === "idea" && !isClassDeclaration(rec)) {
+    if (containedBy.get(rec.id) !== "the-town/the-think-tank")
+      warn(rec, `class: idea off the Think Tank — the tank reads only ideas standing on the-town/the-think-tank; this mark can never render there`);
+    if (rec.kind !== "sited") err(rec, `an idea is a sited mark (got kind: ${JSON.stringify(rec.kind)})`);
+    if ([...String(rec.body ?? "").trim()].length === 0)
+      err(rec, `an idea needs its thought — the BODY is the claim${cite("the-town/the-one-claim")}`);
+  }
+
   // 4. kind-specific shape
   if (rec.kind === "sited" || rec.kind === "parcel") {
     if (rec.kind === "sited" && !hasGeom(rec)) err(rec, `sited marks need at {x,y} and extent {w,h} in grid meters${cite("the-town/the-kinds")}`);

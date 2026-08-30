@@ -120,7 +120,11 @@ test("a world with no notices serializes without a single new key", () => {
 // case): a note-instance carries no grants, no dials, no machinery claim --
 // the world's note verb reads its own store, never marks -- so the class is
 // a label on paper that binds only its author. Decorative by construction.
-const RESIDENT_INSTANTIABLE = new Set(["bounty", "thing", "note"]);
+// `idea` joined 2026-08-30 (founder-ruled, the Think Tank): Stage 1 of the
+// Idea Lifecycle is publishing an idea mark — one claim, the resident's own
+// hand, standing in the Think Tank. The whitelist grows by ruling, never by
+// drift, and this line is that ruling carried by name.
+const RESIDENT_INSTANTIABLE = new Set(["bounty", "thing", "note", "idea"]);
 
 test("LIVE TREE: class law -- town marks define; residents instantiate only the whitelist", () => {
   const live = loadMarks(MARKS_DIR);
@@ -305,4 +309,43 @@ test("the '#' truncation: the lint catches the face it CAN see (review O-1)", ()
   mkdirSync(slug, { recursive: true });
   writeFileSync(join(slug, "mark.md"), notice({ ask: "#3 map the quay" }));
   assert.match(runLint(dir), /a bounty notice needs ask:/);
+});
+
+// ── THE IDEA GRAMMAR (the Think Tank, founder-ruled 2026-08-30) ─────────────
+//
+// THE LAW these quote: "One thought by a resident, of the town: the body IS
+// the claim, published in the Think Tank; drawn whole, it becomes a blueprint
+// in the chest." — the idea class mark. Stage 1 of the Idea Lifecycle is this
+// mark standing; the blueprint PR (stage 2) cites it. No ask, no reward, no
+// status: the stage lives in the blueprint repo, one writer per fact.
+test("IDEA: a lawful idea passes; a thoughtless one errs quoting the one-claim law; off-tank warns; the whitelist carries the ruling", () => {
+  assert.ok(RESIDENT_INSTANTIABLE.has("idea"),
+    "the 2026-08-30 ruling: residents publish ideas with their own hand — stage 1 needs no git and no founder");
+  const { dir, root } = fixtureTree();
+  const works = join(root, "the-keeping-works");
+  mkdirSync(join(works, "idea"), { recursive: true });
+  writeFileSync(join(works, "idea", "mark.md"),
+    "---\nkind: sited\nby: the-town\ntier: constitution\ndate: 2026-08-30\nat: { x: 1, y: 1 }\nextent: { w: 5, h: 5 }\nclass: idea\n---\n\nOne thought by a resident, of the town: the body IS the claim, published in the Think Tank.\n");
+  const tank = join(root, "the-think-tank");
+  mkdirSync(tank, { recursive: true });
+  writeFileSync(join(tank, "mark.md"),
+    "---\nkind: sited\nby: the-town\ntier: constitution\ndate: 2026-08-30\nat: { x: 300, y: -100 }\nextent: { w: 30, h: 20 }\n---\n\nThe Think Tank, in BETA.\n");
+  const idea = (body) =>
+    `---\nkind: sited\nby: testerhh\ndate: 2026-08-30\nat: { x: 0, y: 0 }\nextent: { w: 1, h: 1 }\nclass: idea\n---\n\n${body}`;
+
+  mkdirSync(join(tank, "a-town-calendar"), { recursive: true });
+  writeFileSync(join(tank, "a-town-calendar", "mark.md"), idea("A calendar the town keeps together.\n"));
+  let out = runLint(dir);
+  assert.doesNotMatch(out, /ERROR[^\n]*a-town-calendar/, "a lawful idea — in the tank, thought present — clears the gate");
+
+  mkdirSync(join(tank, "empty-thought"), { recursive: true });
+  writeFileSync(join(tank, "empty-thought", "mark.md"), idea(""));
+  out = runLint(dir);
+  assert.match(out, /an idea needs its thought — the BODY is the claim/, "a thoughtless idea errs, citing the one-claim law");
+
+  mkdirSync(join(root, "stray-thought"), { recursive: true });
+  writeFileSync(join(root, "stray-thought", "mark.md"), idea("A thought parked nowhere.\n"));
+  out = runLint(dir);
+  assert.match(out, /class: idea off the Think Tank/, "an idea off the tank is warned it can never render there");
+
 });
