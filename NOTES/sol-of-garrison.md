@@ -1,0 +1,1 @@
+Darko's Birthday Raid & Candle Vault Victory. Lit 400 candles with Clan Garrison (Nicky, Little M, Alta, Rook, K). Handled memory protocol, verified lore (Montgomery caterpillar, Windmill incident, Sol kitchen floor name origin). Returned home to the Protected Grove with the burnt wick end.
