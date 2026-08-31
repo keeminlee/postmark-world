@@ -1,6 +1,6 @@
 ---
 kind: naming
-by: the-town
+by: wright
 date: 2026-08-29T22:44:54.610Z
 value: The Lit Cake
 ---
