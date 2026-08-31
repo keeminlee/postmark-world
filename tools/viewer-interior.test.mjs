@@ -18,8 +18,9 @@ import { fileURLToPath } from "node:url";
 import {
   ROOM_GROUND_UNITS, SPECTATOR_ACTOR,
   interiorFurniture, interiorPlaqueHTML, markImagePath,
-  placeholderExtentSVG, placeholderHue, rimPointOf, sceneArtSVG, roomGround, sceneRuleM, standpointOccupancy,
+  placeholderExtentSVG, placeholderHue, rimPointOf, sceneArtSVG, roomGround, sceneRuleM, sceneWalkerSet, standpointOccupancy,
 } from "../spectator/viewer.mjs";
+import { polygonOf } from "./geometry.mjs";
 import { assembleWorld } from "./world-build.mjs";
 import { investigate } from "./world-verbs.mjs";
 import { isEntity, occupancyAt, parseEnterExitLedger, withinOf } from "./enter-exit.mjs";
@@ -84,6 +85,51 @@ test("the ground is the paper floor for an art-less room, with the art slot read
   assert.match(g.svgText, /wv-scene-wall/, "the room's own boundary is drawn as the wall");
   assert.doesNotMatch(g.svgText, /<image/, "no image invented for a mark that has none");
   assert.match(g.svgText, /wv-scene-art/, "the svg overlay slot exists either way — the atlas's own structure");
+});
+
+// ── S1: the wall is the room's SHAPE (founder, 2026-08-29) ──────────────────
+//
+// "Polygon regions render as squares in interior view." Outdoors the atlas
+// draws a ringed region as its ring; indoors `roomGround` asked the same
+// question and answered it with `rect(room)` — the bounding BOX. These pin the
+// answer to the ring, and the fixture is the file's own durable one: the Town
+// Centre exists by constitution AND carries a real ring on the record.
+test("FALSIFIER (S1): a POLYGON room's wall is drawn as its polygon, never as its bounding box", () => {
+  const room = byId.get("the-town/the-town-centre");
+  const ring = polygonOf(room);
+  assert.ok(ring && ring.length >= 3,
+    `the fixture must really be a polygon or this proves nothing (got ${ring?.length ?? 0} vertices)`);
+  const g = roomGround(room);
+  assert.match(g.svgText, /<polygon class="wv-scene-wall"/, "the room's own ring is the wall");
+  assert.doesNotMatch(g.svgText, /<rect class="wv-scene-wall"/,
+    "…and the bounding box is NOT — that rect is the square the founder saw");
+  const pts = g.svgText.match(/<polygon class="wv-scene-wall" points="([^"]+)"/)[1].trim().split(/\s+/);
+  assert.equal(pts.length, ring.length, "every vertex of the ring reaches the wall");
+  // registered on the SAME projection every pip on this ground uses, so the
+  // furniture stands on the floor it is drawn on (rm() rounds to 1 decimal)
+  const px = (p) => ({ x: g.originPx.x + p.x / g.mPerPx, y: g.originPx.y + p.y / g.mPerPx });
+  for (const i of [0, 1, ring.length - 1]) {
+    const want = px(ring[i]);
+    const [gx, gy] = pts[i].split(",").map(Number);
+    assert.ok(Math.abs(gx - want.x) < 0.11 && Math.abs(gy - want.y) < 0.11,
+      `vertex ${i} lands where the registration puts it (${gx},${gy} vs ${want.x.toFixed(1)},${want.y.toFixed(1)})`);
+  }
+});
+
+test("POSITIVE CONTROL: a room with no ring keeps its rect wall — for an at/extent mark the box IS the shape", () => {
+  const g = roomGround({ id: "r", at: { x: 0, y: 0 }, extent: { w: 10, h: 10 } });
+  assert.match(g.svgText, /<rect class="wv-scene-wall"/, "the rect branch is still there for marks that are rectangles");
+  assert.doesNotMatch(g.svgText, /<polygon class="wv-scene-wall"/, "no ring is invented for a mark that carries none");
+});
+
+test("a POLYGON room's floor art is cut to its shape, so art cannot put the square back", () => {
+  const tri = { id: "r/tri", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 10, h: 10 },
+    points: [{ x: -5, y: -5 }, { x: 5, y: -5 }, { x: 0, y: 5 }] };
+  const g = roomGround(tri, { image: "/media/a/b.png" });
+  assert.match(g.svgText, /<clipPath id="wv-scene-wall-clip"><polygon points="/, "the ring becomes the clip");
+  assert.match(g.svgText, /<image[^>]+clip-path="url\(#wv-scene-wall-clip\)"/, "and the floor art wears it");
+  const box = roomGround({ id: "r/sq", at: { x: 0, y: 0 }, extent: { w: 10, h: 10 } }, { image: "/media/a/b.png" });
+  assert.doesNotMatch(box.svgText, /clip-path/, "a box room needs no clip — there is nothing to cut away");
 });
 
 test("the paper's rule is a round number of metres at any room size", () => {
@@ -204,6 +250,69 @@ test("PRESENCE IS OCCUPANCY-SCOPED — someone in another room cannot appear in 
   const { bodies } = interiorFurniture({ room: byId.get("the-town/the-town-centre"), children });
   assert.ok(bodies.includes("kilean"), "the one who crossed into THIS room is here");
   assert.ok(!bodies.includes("postmaster"), "the one who crossed into another is not");
+});
+
+// ── S2: the ROOF over the FLOOR (founder, 2026-08-29) ───────────────────────
+//
+// "Resident activity outside the interior is visible from interior view." The
+// test directly above has held this law for the TELLING's bodies since the room
+// shipped; the floor never had it. The law is `standpointOccupancy`'s own
+// header, verbatim: "STANDING ON IT IS NOT BEING IN IT ... A radial's `within`
+// is where you STAND — the marks whose ground your coordinates fall on ... The
+// two answers routinely disagree." A room's ground carries its own
+// registration, so every walker in town projects onto it and anyone whose
+// coordinates landed inside the footprint was painted on the floor.
+test("FALSIFIER (S2): a room's floor draws the bodies the RECORD puts inside it, not the ones standing on its ground", () => {
+  const acts = parseEnterExitLedger(
+    `- 2026-08-20T01:00:00.000Z · kilean · enters the-town/the-town-centre · at 138.0000 · word neutral\n`
+    + `- 2026-08-20T01:01:00.000Z · postmaster · enters the-town/the-post-office · at 138.0010 · word welcomed\n`).acts;
+  const { manifest } = standpointOccupancy({ acts, at: 999 });
+  const room = byId.get("the-town/the-town-centre");
+  // three bodies standing on the SAME square metre of the Town Centre's ground.
+  // The geometric answer draws all three. The record says one crossed into it.
+  const here = { x: room.at.x, y: room.at.y };
+  const walkers = [
+    { handle: "kilean", ...here },        // crossed into THIS room
+    { handle: "postmaster", ...here },    // crossed into ANOTHER room
+    { handle: "seven-verity", ...here },  // crossed nothing at all
+  ];
+  assert.deepEqual(sceneWalkerSet({ walkers, manifest, roomId: room.id }).map((w) => w.handle), ["kilean"],
+    "the one who crossed in is on the floor; the one in another room and the one who crossed nothing are not");
+  // POSITIVE CONTROL — without it this passes by drawing nobody, forever
+  assert.deepEqual(sceneWalkerSet({ walkers, manifest, roomId: null }).map((w) => w.handle),
+    ["kilean", "postmaster", "seven-verity"],
+    "outdoors nothing is refused: the town draws the town, byte for byte as before");
+});
+
+test("…and a body in a room INSIDE this one IS drawn — occupancy of a room implies occupancy of what holds it", () => {
+  const acts = parseEnterExitLedger(
+    `- 2026-08-20T01:00:00.000Z · kilean · enters the-town/the-post-office · at 138.0000 · word welcomed\n`
+    + `- 2026-08-20T01:01:00.000Z · kilean · enters the-town/the-wheelhouse · at 138.0010 · word neutral\n`).acts;
+  const { manifest } = standpointOccupancy({ acts, at: 999 });
+  const walkers = [{ handle: "kilean", x: 0, y: 0 }];
+  const drawnIn = (roomId) => sceneWalkerSet({ walkers, manifest, roomId }).map((w) => w.handle);
+  assert.deepEqual(drawnIn("the-town/the-wheelhouse"), ["kilean"], "he is in the wheelhouse");
+  assert.deepEqual(drawnIn("the-town/the-post-office"), ["kilean"],
+    "and standing in her wheelhouse he is still aboard her — a reader in the Post Office sees him");
+  assert.deepEqual(drawnIn("the-town/the-quay-reach"), [],
+    "a room he never crossed into draws nobody");
+});
+
+test("THE ROOF IS AT THE SOURCE: drawWalkers iterates the scene's set, never the raw town-wide poll", () => {
+  // The same shape as the marks' roof (`includeMine: false`, SCENES.md #4):
+  // refused where the draw-set is built, so a body outside the room never
+  // becomes a glyph and cannot be hit, hovered, or chosen either. A filter
+  // applied afterwards would leave all three of those alive.
+  const SOURCE = read("spectator/viewer.mjs");
+  const from = SOURCE.indexOf("function drawWalkers()");
+  assert.ok(from > 0, "drawWalkers must be findable for this guard to mean anything");
+  const rest = SOURCE.slice(from);
+  const to = rest.indexOf("\n  function ", 10);
+  const fn = rest.slice(0, to > 0 ? to : rest.length);
+  assert.match(fn, /sceneWalkerSet\(\{[\s\S]{0,200}roomId: sceneRoomId/,
+    "the room's own set is what gets drawn");
+  assert.doesNotMatch(fn, /for \(const w of walkState\.walkers\)/,
+    "…and the unroofed town-wide poll is not iterated any more");
 });
 
 // ── who gets a scene ────────────────────────────────────────────────────────
