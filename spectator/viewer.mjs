@@ -749,6 +749,33 @@ export function standpointOccupancy({ acts = [], at = Infinity, handle = null } 
   return { entered, insideOf, alongside, manifest };
 }
 
+// ───────── THE ROOF OVER THE FLOOR: which bodies a ROOM draws
+//
+// The law is the one stated directly above: STANDING ON IT IS NOT BEING IN IT.
+// The walk layer broke it. A room's ground carries its OWN registration, so
+// every walker in the town projects onto that ground, and anyone whose
+// coordinates happened to fall inside the room's footprint was painted on its
+// floor — the founder's second report, 2026-08-29: "resident activity outside
+// the interior is visible from interior view." Coordinates answer `within`; a
+// room is `insideOf`; the header above already says the two "routinely
+// disagree." The telling has enforced this for its own bodies since the room
+// shipped (`interiorFurniture` takes the occupancy children); the FLOOR never
+// did, and a reader believes what they can see.
+//
+// So a scene draws the manifest's answer and no one else's — child rooms
+// included, because a walker inside a cabin is aboard the ship too
+// (`occupantsOf`'s own rule), and a reader standing in the Grove should see the
+// people in its Arcade. Refused at the SOURCE rather than clipped afterwards,
+// the same shape as the marks' roof (`includeMine: false`): a body that is not
+// in this room never becomes a glyph, so it cannot be hit, hovered, or chosen
+// either. Outdoors (`roomId` null) nothing is refused — the town draws the town,
+// byte for byte as before.
+export function sceneWalkerSet({ walkers = [], manifest = new Map(), roomId = null } = {}) {
+  if (!roomId) return walkers;
+  const inside = new Set(manifest.get(roomId) ?? []);
+  return walkers.filter((w) => inside.has(w?.handle));
+}
+
 // WHERE ONE PRESS OF "step outside" ACTUALLY PUTS YOU (Wright, 2026-08-21).
 //
 // Occupancy is a STACK, not a flag — wright entered the-trueing-terrace and
@@ -1005,9 +1032,33 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
   // like, not a rug competing with the furniture standing on it.
   const rule = (sceneRuleM(mPerPx) / mPerPx).toFixed(3);
   const rm = (n) => n.toFixed(1);
+  // THE WALL IS THE ROOM'S OWN SHAPE (founder, 2026-08-29: "polygon regions
+  // render as squares in interior view").
+  //
+  // A mark that carries a polygon ring IS that ring — the town draws it as one
+  // out on the atlas, and `placeholderExtentSVG` two screens up already draws a
+  // ringed mark as a <polygon> and an unringed one as a <rect>. This function
+  // was the one place that asked the shape question and answered it with
+  // `rect(room)` — the bounding BOX — so every ringed room (21 of them on the
+  // record, the Town Centre and the Protected Grove among them) came out
+  // rectangular indoors while being curved outdoors. One question, one owner:
+  // the ring is read here with the same `polygonOf` every other shape reader
+  // uses, projected through the registration this same call just built, so the
+  // wall lands exactly where the pips standing on it land. A mark with no ring
+  // keeps the rect, because for an at/extent mark the box IS its shape.
+  const ring = polygonOf(room);
+  const groundPt = (p) => `${rm(originPx.x + p.x / mPerPx)},${rm(originPx.y + p.y / mPerPx)}`;
+  const ringPts = ring ? ring.map(groundPt).join(" ") : null;
+  // …and the floor art is cut to the same shape. No ringed mark wears art on
+  // today's record, so this branch has no instance in the town yet — it is here
+  // because the alternative is a polygon room that goes back to looking square
+  // the day someone hangs a picture in it, which is the same defect wearing a
+  // different hat. Falsified synthetically beside the wall's own test.
+  const clipId = "wv-scene-wall-clip";
   const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${rm(w)} ${rm(h)}">`
     + `<defs><pattern id="wv-scene-rule-pat" width="${rule}" height="${rule}" patternUnits="userSpaceOnUse">`
     + `<path d="M ${rule} 0 L 0 0 0 ${rule}" class="wv-scene-rule"/></pattern></defs>`
+    + (ringPts && image ? `<defs><clipPath id="${clipId}"><polygon points="${ringPts}"/></clipPath></defs>` : "")
     + `<rect class="wv-scene-ground" x="0" y="0" width="${rm(w)}" height="${rm(h)}"/>`
     + `<rect x="0" y="0" width="${rm(w)}" height="${rm(h)}" fill="url(#wv-scene-rule-pat)"/>`
     + (image
@@ -1015,9 +1066,12 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
         // slice, not meet (Keemin, 2026-08-21: "the background represented by the
         // image" — a ground FILLS its room). The mark card keeps meet: there the
         // art is the subject and is shown whole; here it is the floor.
-        + ` width="${rm(roomPx.w)}" height="${rm(roomPx.h)}" preserveAspectRatio="xMidYMid slice"/>`
+        + ` width="${rm(roomPx.w)}" height="${rm(roomPx.h)}" preserveAspectRatio="xMidYMid slice"`
+        + (ringPts ? ` clip-path="url(#${clipId})"` : "") + `/>`
       : "")
-    + `<rect class="wv-scene-wall" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}" width="${rm(roomPx.w)}" height="${rm(roomPx.h)}"/>`
+    + (ringPts
+      ? `<polygon class="wv-scene-wall" points="${ringPts}"/>`
+      : `<rect class="wv-scene-wall" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}" width="${rm(roomPx.w)}" height="${rm(roomPx.h)}"/>`)
     + `<g class="wv-scene-art"></g>`
     + `</svg>`;
   return { svgText, originPx, mPerPx };
@@ -6251,7 +6305,16 @@ export function mountViewer(appEl) {
     // be painted over the crowd it is carrying by whoever boarded after it.
     let hulls = "";
     let s = "";
-    for (const w of walkState.walkers) {
+    // THE ROOF (see sceneWalkerSet): indoors, the bodies drawn are the ones the
+    // crossing record puts in this room — not the ones whose town coordinates
+    // land on its ground. Outdoors `sceneRoomId` is null and this is the whole
+    // town, unchanged. Derived per draw rather than cached: occupancy is a pure
+    // function of the acts and the clock, the ledger is a couple of hundred
+    // lines, and a cached roof is a roof that goes stale the moment someone
+    // crosses a threshold — which is exactly when a reader is looking.
+    const { manifest } = standpointOccupancy({ acts: enterExitLedger.acts, at: occupancyClock() });
+    const drawnWalkers = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId });
+    for (const w of drawnWalkers) {
       // The drawn leg ends where the WALK ends — the first point on the
       // target's ground, not its centre (Keemin, party night: the dotted line
       // overshot into the mark while the derivation stopped at the edge).
@@ -6346,11 +6409,14 @@ export function mountViewer(appEl) {
     mapCtx.walkLayer.innerHTML = hulls + s;
     const box = $(root, "#wv-walk-readout");
     if (box) {
-      const on = walkState.walkers.filter((w) => w.moving ?? (!w.arrived && !w.standing)).length;
-      const still = walkState.walkers.length - on;
+      // the readout counts what is ON THE MAP, and indoors the map is the room —
+      // saying "80 on the map" over a floor holding six was the same untruth the
+      // roof just fixed, told in words. Outdoors this is the whole town, as ever.
+      const on = drawnWalkers.filter((w) => w.moving ?? (!w.arrived && !w.standing)).length;
+      const still = drawnWalkers.length - on;
       box.textContent = walkState.at === null ? "no walk records"
         : `crossing ${walkState.at.toFixed(3)} — ` +
-          `${walkState.walkers.length} on the map, ${on} on the road, ${still} at rest`;
+          `${drawnWalkers.length} on the map, ${on} on the road, ${still} at rest`;
     }
     syncActorPosition();
     renderWalkDestination();

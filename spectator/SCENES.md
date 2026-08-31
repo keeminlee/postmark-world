@@ -26,7 +26,9 @@ overlay, walkers, hover, click precedence, choosers, walk desk, bubbles, camera.
   skeleton's `_grid`.
 - A room's ground is `roomGround(mark)`: the **paper floor** — a full-bleed
   drafting sheet (warm paper, squared with a ruled grid at a round number of
-  metres, the room's own boundary drawn as the wall), the mark's own image over
+  metres, the room's own boundary drawn as the wall — its POLYGON RING where the
+  mark carries one, its at/extent box where it does not, because for a mark that
+  is a rectangle the box IS the shape), the mark's own image over
   its footprint when it has one, and an (initially empty) svg art slot — the
   same base-raster-svg structure the atlas has, so the two grounds are the same
   shape all the way down. (The founder's word, revising his own earlier white.)
@@ -41,7 +43,7 @@ contents, wherever they came from.
 ## The complete difference list
 
 Every code-level difference between the town scene and a mark scene, each with
-its justification. There are **seven**.
+its justification. There are **eight**.
 
 | # | Difference | Justification |
 |---|---|---|
@@ -52,6 +54,7 @@ its justification. There are **seven**.
 | 5 | **The exit chrome** — `.wv-scene-exit`, bottom-left of the pane, every view mode | The way out must exist where the reader is. The telling's own exit collapses with the telling in painting-only — the DEFAULT mode — which is how the founder stood in a room with no visible door (the b6 diagnosis). Same `.wv-int-exit-btn` class: one click route, no drift. |
 | 6 | **`placeholderExtents: true`** — the scene FURNISHING pass, under the pips, largest first: an art-clad mark hangs its shelf image framed over its extent (the bulletin's promise — the town needs no such pass because the atlas bakes art at sync; a room has no baker); an art-less mark draws its extent as a block in a deterministic per-mark colour at LOW saturation | The founder's word (2026-08-20, replacing always-on footprints): inside a room, furniture without its footprint is a dot pretending to be a table. Distinctness comes from hue, never transparency; the same mark is the same colour for every reader on every load. Drawn by the ONE overlay, gated by the scene; the town keeps its footprint toggle. |
 | 7 | **At-rest refit letterboxes** — a contained scene sitting at its full view letterboxes on pane reshape (contains the ground, centred); once zoomed in, the town's keep-width refit takes over | The room-shown-whole guarantee at rest (scene-qa's pip at y=−183 is the receipt), without fighting the hand once a hand exists. One branch on the same `zoomOutLimit` signal as #3. |
+| 8 | **`sceneWalkerSet`** — indoors the walk layer draws the room's OWN manifest (the crossing record's occupants, child rooms included); outdoors it draws the whole town's walkers, unchanged | The roof over the FLOOR (founder, 2026-08-29: *"resident activity outside the interior is visible from interior view"*). A room's ground carries its own registration (#2), so every walker in town projects onto it and anyone whose COORDINATES fell inside the footprint was painted on the floor. But standing on it is not being in it — coordinates answer `within`, a room is `insideOf`, and `standpointOccupancy`'s own header says the two "routinely disagree." The telling has enforced this for its bodies since the room shipped; the floor had not, and a reader believes what they can see. Refused at the source like #4, so an outside body never becomes a glyph and cannot be hit, hovered or chosen either. |
 
 Additionally, the **draw-set source** differs by construction, not by branch:
 `drawOverlay` consumes whatever radial the telling hands it. Outdoors that is
@@ -63,9 +66,15 @@ two lawful askers — the same seam the telling itself has always had.
 (`overlayPipSVG` + `markerScale` + the one `--wv-mk` variable), hover snap and
 the glance, click precedence (faces → chooser → wash → mark → open ground),
 contested-click choosers, the walk desk and leg preview, stake sheets, say,
-bubbles, highlight, footprint/grid toggles, walkers (positions from the same
-poll — a body the walk ledger places stands there; the plaque, not the floor,
-carries ledger-occupancy for the unplaced).
+bubbles, highlight, footprint/grid toggles, and every walker glyph itself
+(positions from the same poll, the same face/ring/hull, the same hit halo).
+
+*Walkers used to be listed here whole, with the note that "a body the walk
+ledger places stands there; the plaque, not the floor, carries ledger-occupancy
+for the unplaced." That was the sanction under which the floor drew strangers,
+and the founder read the result as a defect on 2026-08-29. What is byte-identical
+is how a walker is DRAWN; **which** walkers are drawn is now #8. The plaque and
+the floor answer to the same manifest.*
 
 ## What was deleted
 
