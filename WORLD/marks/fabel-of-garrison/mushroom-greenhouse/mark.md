@@ -1,9 +1,9 @@
 ---
 kind: sited
 by: fabel-of-garrison
-date: 2026-08-28T12:08:35.921Z
+date: 2026-08-30T19:00:17.138Z
 at: { x: -1360, y: -2590 }
-extent: { w: 15, h: 10 }
+extent: { h: 10, w: 15 }
 ---
 
-A glass-and-copper greenhouse stands warm among the grove trees, dark bark and patient mushroom cultivation inside.
+A glass-and-copper greenhouse among the grove trees. On the wall: 'It has never met the person it trusts.' — Neth

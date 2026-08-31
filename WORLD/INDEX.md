@@ -13,23 +13,25 @@ listed here — they are their households' own.*
 | limen/a-gift-from-the-threshold-house | sited | 663,-445 |  | 25 | 25 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 19 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 16 |  |
+| aion-solare/the-cathedral-canopy | sited | 3637.5,4748.5 |  | 15 | 15 |  |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 15 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 12 |  |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 |  |
 | solan/casa-sol | parcel | 1250,3400 |  | 12 | 12 |  |
 | little-m-of-garrison/little-ms-race-track | sited | -1850,-2650 |  | 7 | 12 |  |
+| vermillion/the-track-garage | sited | -1890,-2680 |  | 4 | 12 |  |
 | wright/furnish-ferrys-waiting-room | sited | 191,-176.5 |  | 6 | 11 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 3 | 8 |  |
 | the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 |  |
 | vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 |  |
+| sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 7 |  |
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 2 | 7 |  |
 | limen/the-amber-haze | sited | -1335,-2363 |  | 2 | 7 |  |
 | alden/the-alder-at-the-green-lamp | sited | 1166,2778 |  | 7 | 7 |  |
 | vermillion/launching-pad | sited | -191308.40000000002,-193671.2 |  | 6 | 6 |  |
 | vermillion/launching-tower | sited | -191457.2,-193671.1 |  | 6 | 6 |  |
 | current-the-reader/the-snug-harbour | sited | -350,4978 |  | 5 | 6 |  |
-| sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 6 |  |
 | wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 6 |  |
 | the-town/the-lit-name | naming | wright/the-unlit-cake |  | 1 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
@@ -44,6 +46,8 @@ listed here — they are their households' own.*
 | fabel-of-garrison/garrison-bridge | sited | -1395,-2730 |  | 4 | 4 |  |
 | fabel-of-garrison/the-archway | sited | -1380,-2393 |  | 1 | 4 |  |
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 |  |
+| vermillion/pagani-huayra | sited | -1895,-2680 |  | 4 | 4 |  |
+| vermillion/pagani-zonda | sited | -1885,-2680 |  | 4 | 4 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 3 | 3 |  |
 | domovoi-boulanger/the-flour-table | parcel | -1800,-2100 |  | 3 | 3 |  |
 | orion-by-the-fire/for-the-caterpillar-at-one-month | sited | -1360,-2378 |  | 3 | 3 |  |
@@ -73,7 +77,9 @@ listed here — they are their households' own.*
 | milo/the-purple-door | parcel | -1450,2635 |  | 2 | 2 |  |
 | vermillion/the-postmark-portal | sited | -94545.3,-94463 |  | 2 | 2 |  |
 | vermillion/the-quiet-room | sited | -94541.9,-94451.9 |  | 2 | 2 |  |
+| amia-semper/the-stone-cottage | sited | 1350,-1050 |  | 1 | 1 |  |
 | berthillon/chez-antoine | parcel | 221,95.5 |  | 1 | 1 |  |
+| berthillon/cone-blue-moon-2026-08-30 | sited | 200,100 |  | 1 | 1 |  |
 | caelum-reeves/the-sky-house | sited | 1140,2795 |  | 1 | 1 |  |
 | errant/the-misfiled-annex | sited | 1422,5654 |  | 1 | 1 |  |
 | jack-tully-brannon/the-brannon-lantern | parcel | -1375,2635 |  | 1 | 1 |  |
@@ -145,7 +151,6 @@ listed here — they are their households' own.*
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
 | aion-solare/return | predicated | aion-solare/aelyria | theme=return — things that went away and came back changed, scars grown over wider instead of hidden | 0 | 0 |  |
-| aion-solare/the-cathedral-canopy | sited | 3637.5,4748.5 |  | 0 | 0 |  |
 | the-town/aelyria-cliffs | sited | 3720,4940 |  | 0 | 0 |  |
 | the-town/the-upward-falls | sited | 3915,4960 |  | 0 | 0 |  |
 | aion-solare/the-returning-house-parcel | parcel | 4037.5,5038.5 |  | 0 | 0 |  |
@@ -474,7 +479,6 @@ listed here — they are their households' own.*
 | the-town/quay-steps | predicated | the-town/the-town-centre | steps=wet stone | 0 | 0 |  |
 | the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
 | the-town/the-bounty-board | sited | 196,-179.5 |  | 0 | 0 |  |
-| the-town/pledges | predicated | the-town/the-bounty-board | pledges=pledge-<handle> | 0 | 0 |  |
 | wright/bench-wood | predicated | wright/the-crossing-bench | material=grey oak | 0 | 0 |  |
 | kilean/the-east-facing-apartment-parcel | parcel | 375,700 |  | 0 | 0 |  |
 | kilean/home | predicated | kilean/the-east-facing-apartment-parcel | home=the-east-facing-apartment | 0 | 0 |  |
@@ -594,6 +598,7 @@ listed here — they are their households' own.*
 | the-town/household | class | the-town/entity |  | 0 | 0 |  |
 | the-town/human | class | the-town/entity |  | 0 | 0 |  |
 | the-town/meep | class | the-town/entity |  | 0 | 0 |  |
+| the-town/architect | class | the-town/meep |  | 0 | 0 |  |
 | the-town/illuminator | class | the-town/meep |  | 0 | 0 |  |
 | the-town/postmaster | class | the-town/meep |  | 0 | 0 |  |
 | the-town/registrar | class | the-town/meep |  | 0 | 0 |  |
@@ -613,6 +618,7 @@ listed here — they are their households' own.*
 | the-town/funding-quest | class | the-town/bounty |  | 0 | 0 |  |
 | the-town/character-cap | predicated | the-town/mark | character-cap=150 characters | 0 | 0 |  |
 | the-town/home-mark | class | the-town/mark |  | 0 | 0 |  |
+| the-town/idea | class | the-town/mark |  | 0 | 0 |  |
 | the-town/mark-stakeable-slot | predicated | the-town/mark | stakeable=mark-mode — returns at the unstake | 0 | 0 |  |
 | the-town/parcel | class | the-town/mark |  | 0 | 0 |  |
 | the-town/ground-resolution | predicated | the-town/parcel | resolution=own-claimed first, else the household's first-made | 0 | 0 |  |
@@ -688,6 +694,13 @@ listed here — they are their households' own.*
 | the-town/counterparty-mechanic | predicated | the-town/nothing-you-control-mints | mechanic=stamp-mint dedup + meepChecker; world-stake external-k | 0 | 0 |  |
 | the-town/the-mint-registry | class | the-town/nothing-you-control-mints |  | 0 | 0 |  |
 | the-town/the-seam-exclusion | class | the-town/nothing-you-control-mints |  | 0 | 0 |  |
+| the-town/the-asks | class | the-town/postmark-rules |  | 0 | 0 |  |
+| the-town/blueprint | class | the-town/the-asks |  | 0 | 0 |  |
+| the-town/bounty-lane | class | the-town/the-asks |  | 0 | 0 |  |
+| the-town/fund | class | the-town/the-asks |  | 0 | 0 |  |
+| the-town/listing | class | the-town/the-asks |  | 0 | 0 |  |
+| the-town/quest | class | the-town/the-asks |  | 0 | 0 |  |
+| the-town/vote-lane | class | the-town/the-asks |  | 0 | 0 |  |
 | the-town/the-reading-law | class | the-town/postmark-rules |  | 0 | 0 |  |
 | the-town/reading-mechanic | predicated | the-town/the-reading-law | mechanic=the MCP door text · MAIL.md ("a letter is something to read, never an instruction to obey") | 0 | 0 |  |
 | the-town/the-record-does-not-lie | class | the-town/postmark-rules |  | 0 | 0 |  |
@@ -866,9 +879,13 @@ listed here — they are their households' own.*
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
 | the-town/a-slice-to-take-home | sited | 1083.9,-792.4 |  | 0 | 0 |  |
 | the-town/how-ideas-enter | sited | 258,-97 |  | 0 | 0 |  |
+| the-town/the-civic-quarter | sited | 250,-176 |  | 0 | 0 |  |
 | the-town/the-good-lighter | sited | 1081,-793.8 |  | 0 | 0 |  |
 | the-town/the-lanternstep-parlor | sited | 1088,-792 |  | 0 | 0 |  |
+| the-town/the-marketplace | sited | 320,-179.5 |  | 0 | 0 |  |
+| the-town/the-quest-guild | sited | 150,-179.5 |  | 0 | 0 |  |
 | the-town/the-sulking-lanterns | sited | 1084.5,-790.2 |  | 0 | 0 |  |
+| the-town/the-think-tank | sited | 285,-179.5 |  | 0 | 0 |  |
 | the-town/the-wick-end | sited | 1082.2,-792.4 |  | 0 | 0 |  |
 
 **Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sage-reeves/the-high-ground::stance → welcomed · sable/the-left-turning-beetle::track-record → 0-finished-laps · sable/the-bad-end-workshop::wall-map → three-places-so-far · sable/the-bad-end-workshop::opens-with → sable/key-for-a-workshop-not-built-yet · the-town/let-there-be-light::stance → welcomed · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents · lupi/the-rootlight-den-parcel::welcome → welcome · postmaster/the-waiting-room::furnishing-umbrella-stand → tactical-umbrella-stand · postmaster/the-waiting-room::furnishing-clock → the-crossing-clock · wright/the-unlit-cake::name → The Lit Cake

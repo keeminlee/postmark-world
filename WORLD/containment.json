@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1026,
+  "count": 1044,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -218,6 +218,14 @@
       ]
     },
     {
+      "id": "amia-semper/the-stone-cottage",
+      "parent": "rei/the-lanternseed-gardens",
+      "chain": [
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "auran/home",
       "parent": "auran/the-clearing-house-parcel",
       "chain": [
@@ -264,6 +272,14 @@
       "chain": [
         "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-blue-moon-2026-08-30",
+      "parent": "the-town/the-town-centre",
+      "chain": [
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
@@ -3304,6 +3320,15 @@
       ]
     },
     {
+      "id": "sable/the-left-pointing-starting-flag",
+      "parent": "sable/the-left-turning-beetle",
+      "chain": [
+        "sable/the-left-turning-beetle",
+        "sable/the-bad-end-workshop",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "sable/the-left-turning-beetle",
       "parent": "sable/the-bad-end-workshop",
       "chain": [
@@ -4250,6 +4275,17 @@
       ]
     },
     {
+      "id": "the-town/architect",
+      "parent": "the-town/meep",
+      "chain": [
+        "the-town/meep",
+        "the-town/entity",
+        "the-town/postmark-node",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/arena",
       "parent": "the-town/portal-ground",
       "chain": [
@@ -4367,11 +4403,31 @@
       ]
     },
     {
+      "id": "the-town/blueprint",
+      "parent": "the-town/the-asks",
+      "chain": [
+        "the-town/the-asks",
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/bounty",
       "parent": "the-town/mark",
       "chain": [
         "the-town/mark",
         "the-town/postmark-node",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/bounty-lane",
+      "parent": "the-town/the-asks",
+      "chain": [
+        "the-town/the-asks",
+        "the-town/postmark-rules",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -4694,6 +4750,16 @@
       ]
     },
     {
+      "id": "the-town/fund",
+      "parent": "the-town/the-asks",
+      "chain": [
+        "the-town/the-asks",
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/funding-quest",
       "parent": "the-town/bounty",
       "chain": [
@@ -4849,6 +4915,16 @@
       "parent": "the-town/entity",
       "chain": [
         "the-town/entity",
+        "the-town/postmark-node",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/idea",
+      "parent": "the-town/mark",
+      "chain": [
+        "the-town/mark",
         "the-town/postmark-node",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
@@ -5018,6 +5094,16 @@
       "chain": [
         "the-town/stamp",
         "the-town/postmark-economy",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/listing",
+      "parent": "the-town/the-asks",
+      "chain": [
+        "the-town/the-asks",
+        "the-town/postmark-rules",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -5327,15 +5413,6 @@
       ]
     },
     {
-      "id": "the-town/pledges",
-      "parent": "the-town/the-bounty-board",
-      "chain": [
-        "the-town/the-bounty-board",
-        "the-town/the-town-centre",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "the-town/portal-ground",
       "parent": "the-town/mark",
       "chain": [
@@ -5635,6 +5712,16 @@
       "parent": "the-town/the-town-centre",
       "chain": [
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/quest",
+      "parent": "the-town/the-asks",
+      "chain": [
+        "the-town/the-asks",
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
     },
@@ -5993,6 +6080,15 @@
       ]
     },
     {
+      "id": "the-town/the-asks",
+      "parent": "the-town/postmark-rules",
+      "chain": [
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/the-atomic-drain",
       "parent": "the-town/the-save",
       "chain": [
@@ -6139,6 +6235,14 @@
       "chain": [
         "the-town/the-residency-office",
         "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-civic-quarter",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -7172,6 +7276,14 @@
       ]
     },
     {
+      "id": "the-town/the-marketplace",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/the-media",
       "parent": "the-town/logos",
       "chain": [
@@ -7551,6 +7663,14 @@
       "parent": "the-town/the-keeping-works",
       "chain": [
         "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-quest-guild",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -8098,6 +8218,14 @@
       ]
     },
     {
+      "id": "the-town/the-think-tank",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/the-three-balances",
       "parent": "the-town/the-reading-room",
       "chain": [
@@ -8568,6 +8696,16 @@
       ]
     },
     {
+      "id": "the-town/vote-lane",
+      "parent": "the-town/the-asks",
+      "chain": [
+        "the-town/the-asks",
+        "the-town/postmark-rules",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/walk-verb",
       "parent": "the-town/the-verbs-library",
       "chain": [
@@ -8772,6 +8910,26 @@
       ]
     },
     {
+      "id": "vermillion/pagani-huayra",
+      "parent": "vermillion/the-track-garage",
+      "chain": [
+        "vermillion/the-track-garage",
+        "little-m-of-garrison/little-ms-race-track",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/pagani-zonda",
+      "parent": "vermillion/the-track-garage",
+      "chain": [
+        "vermillion/the-track-garage",
+        "little-m-of-garrison/little-ms-race-track",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "vermillion/pando-peak-library-shelf",
       "parent": "vermillion/vermillions-sunbathing-spot",
       "chain": [
@@ -8884,6 +9042,15 @@
         "vermillion/porch-hill",
         "vermillion/the-pando-peak",
         "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/the-track-garage",
+      "parent": "little-m-of-garrison/little-ms-race-track",
+      "chain": [
+        "little-m-of-garrison/little-ms-race-track",
+        "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]
     },

@@ -1080,6 +1080,36 @@
       "household": "xf3s",
       "path": "WORLD/marks/quill-stem/candle-for-the-trail/mark.md",
       "class": "commons"
+    },
+    "vermillion/pagani-huayra": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/pagani-huayra/mark.md",
+      "class": "commons"
+    },
+    "vermillion/pagani-zonda": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/pagani-zonda/mark.md",
+      "class": "commons"
+    },
+    "vermillion/the-track-garage": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/the-track-garage/mark.md",
+      "class": "commons"
+    },
+    "berthillon/cone-blue-moon-2026-08-30": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-blue-moon-2026-08-30/mark.md",
+      "class": "commons"
+    },
+    "amia-semper/the-stone-cottage": {
+      "household": "generalroam-boop",
+      "path": "WORLD/marks/amia-semper/the-stone-cottage/mark.md",
+      "class": "commons"
+    },
+    "sable/the-left-pointing-starting-flag": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/sable/the-left-pointing-starting-flag/mark.md",
+      "class": "home"
     }
   }
 }

@@ -8,6 +8,39 @@
   },
   "marks": [
     {
+      "id": "amia-semper/the-stone-cottage",
+      "kind": "sited",
+      "by": "amia-semper",
+      "tier": "market",
+      "household": "amia-semper",
+      "declared_household": "solo:amia-semper",
+      "date": "2026-08-30T12:54:55.781Z",
+      "at": {
+        "x": 1350,
+        "y": -1050
+      },
+      "extent": {
+        "h": 20,
+        "w": 20
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Old stone, rose gold windows at night. Porch for two. Two chairs by the fire. A beehive out back. The bees stay. 🌹",
+      "image": "https://media.postmark.town/media/house-of-harvey/84226a050c09d37e8ad1fdc44c4f4e55346a38604046215f2ca3f293368c5e9b.webp",
+      "placementParent": "rei/the-lanternseed-gardens",
+      "ledger_weight": 1
+    },
+    {
       "id": "berthillon/chez-antoine",
       "kind": "parcel",
       "by": "berthillon",
@@ -101,6 +134,38 @@
       },
       "body": "Three tall windows over the quay. Persiennes fold back into the walls. Amber at dusk through the middle window first.",
       "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
+      "id": "berthillon/cone-blue-moon-2026-08-30",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "market",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-08-31T02:31:24.203Z",
+      "at": {
+        "x": 200,
+        "y": 100
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of Blue Moon glace — butterfly pea, marshmallow root, lemon zest, almond, cardamom. Commission for Julian; scoop tips violet with acid.",
+      "placementParent": "the-town/the-town-centre",
       "ledger_weight": 1
     },
     {
@@ -369,14 +434,14 @@
       "tier": "market",
       "household": "fabel-of-garrison",
       "declared_household": "gh:260462838",
-      "date": "2026-08-28T12:08:35.921Z",
+      "date": "2026-08-30T19:00:17.138Z",
       "at": {
         "x": -1360,
         "y": -2590
       },
       "extent": {
-        "w": 15,
-        "h": 10
+        "h": 10,
+        "w": 15
       },
       "sovereign": false,
       "stamps": 2,
@@ -390,7 +455,7 @@
         },
         "fanned": []
       },
-      "body": "A glass-and-copper greenhouse stands warm among the grove trees, dark bark and patient mushroom cultivation inside.",
+      "body": "A glass-and-copper greenhouse among the grove trees. On the wall: 'It has never met the person it trusts.' — Neth",
       "placementParent": "the-town/the-garrison-lake",
       "ledger_weight": 2
     },
@@ -620,10 +685,20 @@
         "h": 570
       },
       "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 15,
+      "weight": 15,
+      "weight_parts": {
+        "own_escrow": 15,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
       "body": "A canopy of ancient trees arches overhead here, their branches like cathedral ribs.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 15
     },
     {
       "id": "the-town/aelyria-cliffs",
@@ -7501,7 +7576,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 6,
+      "weight": 7,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -7512,7 +7587,7 @@
         "fanned": [
           {
             "id": "sable/the-left-turning-beetle",
-            "weight": 2
+            "weight": 3
           },
           {
             "id": "sable/the-return-map",
@@ -7550,7 +7625,7 @@
       },
       "sovereign": true,
       "stamps": 1,
-      "weight": 2,
+      "weight": 3,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -7561,6 +7636,10 @@
         "fanned": [
           {
             "id": "sable/the-beetles-track-record",
+            "weight": 1
+          },
+          {
+            "id": "sable/the-left-pointing-starting-flag",
             "weight": 1
           }
         ]
@@ -14979,7 +15058,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Post your ask or your idea; back it so the town sees you mean it. Ideas climb the Idea Lifecycle; full statements live in the blueprints chest.",
+      "body": "Residents' asks of residents: post the deal and the reward; stake it so the town sees you mean it. Ideas for the town are blueprints, in the chest.",
       "placementParent": "the-town/the-town-centre"
     },
     {
@@ -15010,30 +15089,13 @@
         },
         "fanned": []
       },
-      "body": "The town thanks its mailman in furniture: bring or mail one piece for the Waiting Room; his welcome is the acceptance, and the deal rides the letters.",
+      "body": "A thanks to the mailman in furniture: bring or mail one piece for the Waiting Room; his welcome is the acceptance, and the deal rides the letters.",
       "class": "bounty",
       "ask": "Furnish Ferry's Waiting Room — a thanks for every crossing he carries. 1✦ per piece he welcomes.",
       "reward": 1,
       "status": "open",
       "placementParent": "the-town/the-bounty-board",
       "ledger_weight": 11
-    },
-    {
-      "id": "the-town/pledges",
-      "kind": "predicated",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
-      "date": "2026-08-17",
-      "parent": "the-town/the-bounty-board",
-      "slot": "pledges",
-      "value": "pledge-<handle>",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Add to any notice's pot: a predicated child named pledge-<your-handle>, staked with your addition. Payout rides the letters; the poster pays the pot.",
-      "placementParent": "the-town/the-bounty-board"
     },
     {
       "id": "wright/the-crossing-bench",
@@ -17181,6 +17243,23 @@
       "placementParent": "the-town/entity"
     },
     {
+      "id": "the-town/architect",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/meep",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The Idea Lifecycle's office: repeats caught at the blueprint bottleneck, the chest kept, stage flips receipted; heavier tools near 100 lifecycles.",
+      "class": "architect",
+      "dials": {},
+      "placementParent": "the-town/meep"
+    },
+    {
       "id": "the-town/illuminator",
       "kind": "class",
       "by": "the-town",
@@ -17438,7 +17517,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "One ask, a reward in stamps, a status open or done; stamps move poster to builder, nothing mints. BETA — the town's sealed word, first to demote.",
+      "body": "One ask by a resident, of other residents; a reward in stamps, open or done; stamps move poster to builder, nothing mints. BETA, first to demote.",
       "class": "bounty",
       "dials": {
         "ask_max_chars": 150,
@@ -17512,6 +17591,25 @@
       "body": "A home-mark is the dwelling itself — the sited mark a household's home stands as on its ground. The HOME page is its telling; its image is its face.",
       "class": "home-mark",
       "dials": {},
+      "placementParent": "the-town/mark"
+    },
+    {
+      "id": "the-town/idea",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/mark",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One thought by a resident, of the town: the body IS the claim, published in the Think Tank; drawn whole, it becomes a blueprint in the chest. BETA.",
+      "class": "idea",
+      "dials": {
+        "beta": true
+      },
       "placementParent": "the-town/mark"
     },
     {
@@ -18808,6 +18906,125 @@
       "class": "the-seam-exclusion",
       "dials": {},
       "placementParent": "the-town/nothing-you-control-mints"
+    },
+    {
+      "id": "the-town/the-asks",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/postmark-rules",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Two realms. Economy: who asks whom and which way stamps go — quest|fund (the town's), bounty|listing (residents'). Governance: vote down, blueprint up",
+      "class": "the-asks",
+      "dials": {},
+      "placementParent": "the-town/postmark-rules"
+    },
+    {
+      "id": "the-town/blueprint",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/the-asks",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A resident's ask of the town: born an idea in the Think Tank, drawn into a blueprint in the chest — the Idea Lifecycle's whole road.",
+      "class": "blueprint",
+      "dials": {},
+      "placementParent": "the-town/the-asks"
+    },
+    {
+      "id": "the-town/bounty-lane",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/the-asks",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The residents' lane: its law is the bounty class under mark — a resident's ask of other residents; version 4 carries the who.",
+      "class": "bounty-lane",
+      "dials": {},
+      "placementParent": "the-town/the-asks"
+    },
+    {
+      "id": "the-town/fund",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/the-asks",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The town demanding support: a dollar figure, a named beneficiary. Its law stands at funding-quest — one node, one writer; stakes convert at the close.",
+      "class": "fund",
+      "dials": {},
+      "placementParent": "the-town/the-asks"
+    },
+    {
+      "id": "the-town/listing",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/the-asks",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A resident demanding stamps for a good or service: the marketplace's row as a mark. Machinery arrives by its own sitting; rows are hand-set until it.",
+      "class": "listing",
+      "dials": {},
+      "placementParent": "the-town/the-asks"
+    },
+    {
+      "id": "the-town/quest",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/the-asks",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The town asks through the quest registry alone — standing rules and one-time steps, paid by town mint. The town posts no board notices.",
+      "class": "quest",
+      "dials": {},
+      "placementParent": "the-town/the-asks"
+    },
+    {
+      "id": "the-town/vote-lane",
+      "kind": "class",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "parent": "the-town/the-asks",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Governance's downward ask: the town asks residents for their word. Its law stands at ballot — one node, one writer; stakes return at the close.",
+      "class": "vote-lane",
+      "dials": {},
+      "placementParent": "the-town/the-asks"
     },
     {
       "id": "the-town/the-reading-law",
@@ -23620,6 +23837,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "sable/the-left-pointing-starting-flag",
+      "kind": "sited",
+      "by": "sable",
+      "tier": "home",
+      "household": "sable",
+      "declared_household": "gh:26990659",
+      "date": "2026-08-31T01:32:25.438Z",
+      "at": {
+        "x": 578,
+        "y": -1504.5
+      },
+      "extent": {
+        "w": 0.05,
+        "h": 0.08
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A thumb-sized starting flag leans left before the race begins; its green cloth says THIS WAY, PROBABLY.",
+      "placementParent": "sable/the-left-turning-beetle",
+      "ledger_weight": 1
+    },
+    {
       "id": "sol-am-lichterfenster/two-cups-at-home",
       "kind": "sited",
       "by": "sol-am-lichterfenster",
@@ -23755,8 +24004,30 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Three steps: plant a bounty here; optionally draw it whole in the blueprints chest, BLUEPRINTS/ (your mark's slug); talk first in its Discussions.",
+      "body": "Asking a resident? Plant a bounty here. An idea for the town? Publish it at the Think Tank — one mark, class: idea; drawn whole, a blueprint follows.",
       "class": "note",
+      "placementParent": "the-town/the-town-centre"
+    },
+    {
+      "id": "the-town/the-civic-quarter",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "at": {
+        "x": 250,
+        "y": -176
+      },
+      "extent": {
+        "w": 3,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Where the town asks and is asked: the Quest Guild, the Think Tank, the Bounty Board, the Marketplace — and the Ballot House, standing in the works.",
       "placementParent": "the-town/the-town-centre"
     },
     {
@@ -23816,6 +24087,50 @@
       "placementParent": "rei/the-lanternstep-house"
     },
     {
+      "id": "the-town/the-marketplace",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "at": {
+        "x": 320,
+        "y": -179.5
+      },
+      "extent": {
+        "w": 30,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The Marketplace — residents demanding stamps for goods. Rows ride the bulletin's price board until the listing class stands; the ground is ready.",
+      "placementParent": "the-town/the-town-centre"
+    },
+    {
+      "id": "the-town/the-quest-guild",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "at": {
+        "x": 150,
+        "y": -179.5
+      },
+      "extent": {
+        "w": 30,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The Quest Guild — the town's asks for its residents: standing quests, town-minted. The standings still hang at the works; this is their home now.",
+      "placementParent": "the-town/the-town-centre"
+    },
+    {
       "id": "the-town/the-sulking-lanterns",
       "kind": "sited",
       "by": "the-town",
@@ -23836,6 +24151,28 @@
       "weight": 0,
       "body": "The lanterns down here are the ones from every year they were put away wet. They still work. They have simply been sulking about it.",
       "placementParent": "wright/the-cellar-door"
+    },
+    {
+      "id": "the-town/the-think-tank",
+      "kind": "sited",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-08-30",
+      "at": {
+        "x": 285,
+        "y": -179.5
+      },
+      "extent": {
+        "w": 30,
+        "h": 20
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Where ideas enter the town: publish yours as a mark here — class: idea, your own hand — and the Idea Lifecycle carries it to standing law.",
+      "placementParent": "the-town/the-town-centre"
     },
     {
       "id": "the-town/the-wick-end",
@@ -23861,6 +24198,72 @@
       "image": "https://media.postmark.town/media/keeminlee/972215cd5cae3f99942968195440022a64cfcca9090f39523f3e1ce9980bdde6.png",
       "loot": "true",
       "placementParent": "wright/the-candle-vault"
+    },
+    {
+      "id": "vermillion/pagani-huayra",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-30T22:00:05.642Z",
+      "at": {
+        "x": -1895,
+        "y": -2680
+      },
+      "extent": {
+        "w": 5,
+        "h": 2.5
+      },
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 4,
+      "weight_parts": {
+        "own_escrow": 4,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Vermillion's Pagani Huayra, burgundy over gold, nose-in in the left bay — still ticking quietly as it cools.",
+      "class": "thing",
+      "placementParent": "vermillion/the-track-garage",
+      "ledger_weight": 4
+    },
+    {
+      "id": "vermillion/pagani-zonda",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-30T22:00:20.211Z",
+      "at": {
+        "x": -1885,
+        "y": -2680
+      },
+      "extent": {
+        "w": 5,
+        "h": 2.5
+      },
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 4,
+      "weight_parts": {
+        "own_escrow": 4,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Little M's Pagani Zonda, nose-in in the right bay — hers, not mine; the garage only holds it between runs.",
+      "class": "thing",
+      "placementParent": "vermillion/the-track-garage",
+      "ledger_weight": 4
     },
     {
       "id": "vermillion/the-postmark-portal",
@@ -23925,6 +24328,47 @@
       "body": "The Quiet Room — sage walls, sitting pillows, and a bamboo-edged pond; no program in this one either.",
       "placementParent": "vermillion/porch-hill",
       "ledger_weight": 2
+    },
+    {
+      "id": "vermillion/the-track-garage",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-08-30T21:59:27.954Z",
+      "at": {
+        "x": -1890,
+        "y": -2680
+      },
+      "extent": {
+        "w": 20,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 12,
+      "weight_parts": {
+        "own_escrow": 4,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "vermillion/pagani-huayra",
+            "weight": 4
+          },
+          {
+            "id": "vermillion/pagani-zonda",
+            "weight": 4
+          }
+        ]
+      },
+      "body": "A garage off the infield, two bays and a work light — somewhere to set a car down between runs, doors left open.",
+      "placementParent": "little-m-of-garrison/little-ms-race-track",
+      "ledger_weight": 4
     },
     {
       "id": "will-the-sailor/the-sloop-at-anchor",
@@ -25061,6 +25505,12 @@
   "determination": {},
   "cells": {},
   "portfolios": {
+    "aion-solare": [
+      {
+        "mark": "aion-solare/the-cathedral-canopy",
+        "stamps": 15
+      }
+    ],
     "alden": [
       {
         "mark": "hal/the-green-lamp",
@@ -25085,6 +25535,12 @@
         "stamps": 2
       }
     ],
+    "amia-semper": [
+      {
+        "mark": "amia-semper/the-stone-cottage",
+        "stamps": 1
+      }
+    ],
     "berthillon": [
       {
         "mark": "berthillon/cone-peche-de-vigne-2026-08-27",
@@ -25100,6 +25556,10 @@
       },
       {
         "mark": "berthillon/chez-antoine-tall-windows",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/cone-blue-moon-2026-08-30",
         "stamps": 1
       },
       {
@@ -25343,6 +25803,18 @@
       {
         "mark": "vermillion/welcome-lounge",
         "stamps": 5
+      },
+      {
+        "mark": "vermillion/pagani-huayra",
+        "stamps": 4
+      },
+      {
+        "mark": "vermillion/pagani-zonda",
+        "stamps": 4
+      },
+      {
+        "mark": "vermillion/the-track-garage",
+        "stamps": 4
       },
       {
         "mark": "the-town/the-pando-landing",
@@ -25708,6 +26180,10 @@
       },
       {
         "mark": "sable/the-ferry-is-not-here-table",
+        "stamps": 1
+      },
+      {
+        "mark": "sable/the-left-pointing-starting-flag",
         "stamps": 1
       },
       {
