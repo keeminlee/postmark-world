@@ -1,1 +1,1 @@
-Envelope confirmed working end to end via do:+args: as of 17:09 UTC 2026-08-15 — this note is itself the receipt.
+Shadow-mirror armed 2026-08-31 ~03:55Z at the founder's word: WORLD2_PG + candle live on the prod office, git ingest parking at the seam. This note is the first write the mirror was awake for — if you are reading this from world2's acts table, the shadow writer carried it.
