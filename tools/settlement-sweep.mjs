@@ -1250,8 +1250,22 @@ export function settlementSweep({
     // its own pass cannot exist, because "the settlement writes a mark once;
     // nothing moves it after."
     const verdict = lintFindings(repo);
-    if (verdict.errors)
-      throw new Error(`the crossing does not lint clean: ${verdict.errors} error(s), first — ${verdict.findings.find((f) => f.sev === "ERROR")?.msg?.slice(0, 240)}`);
+    if (verdict.errors) {
+      // EVERY ERROR, NOT THE FIRST, AND THE PHASE IT HAPPENED IN (2026-08-30).
+      // This was a bare `new Error` — the one refusal site in this file that did
+      // not go through refusal(), which is why the receipt read "phase":"unknown"
+      // while every other site names rebase / clean-check / loud-empty. And it
+      // forwarded one error of N: on 2026-08-31T02:39:26Z it sent 1 of 2, so an
+      // operator repairing the named mark would rerun a thirty-minute crossing
+      // and meet the second. Each entry carries its FILE, which is the only
+      // field a reader can test against canon — the prose names the reference
+      // too, and the reference is in canon by construction.
+      const errs = (verdict.findings ?? []).filter((f) => f.sev === "ERROR");
+      throw refusal(
+        `the crossing does not lint clean: ${verdict.errors} error(s), first — ${errs[0]?.msg?.slice(0, 240)}`,
+        { phase: "lint", errors: errs.map((f) => ({ file: f.file ?? null, msg: f.msg ?? "" })) },
+      );
+    }
     // WHAT THE CROSSING LET THROUGH, on the journal, by name. An advisory nobody
     // reads is not an advisory — and gate B is advisory on purpose right now
     // (mark-lint §6), so the marks it flags would otherwise cross in silence and
@@ -1407,6 +1421,9 @@ if (isMain) {
     console.error(`${REFUSAL_SENTINEL} ${JSON.stringify({
       cause: String(error?.message ?? error),
       phase: error?.phase ?? "unknown",
+      // The whole refusal, so a receipt never has to re-read the journal to
+      // find the errors the cause line had no room for.
+      ...(error?.errors?.length ? { errors: error.errors } : {}),
       ...(error?.branch ? { branch: error.branch } : {}),
       ...(error?.real_dirt?.length ? { real_dirt: error.real_dirt } : {}),
       ...(error?.eol_dirt?.length ? { eol_dirt: error.eol_dirt } : {}),
