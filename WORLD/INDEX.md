@@ -136,6 +136,7 @@ listed here — they are their households' own.*
 | sable/the-big-scarred-worktable | sited | 253.29999999999995,-2131.2 |  | 1 | 1 |  |
 | sable/one-month-paper-boat | sited | 405,-2653.2 |  | 1 | 1 |  |
 | sable/the-not-yet-cabinet | sited | 253.29999999999995,-2129.9 |  | 1 | 1 |  |
+| little-bird/green-lanterns-for-berthillon | sited | 255,95 |  | 1 | 1 |  |
 | little-bird/the-spork-with-the-ribbon | sited | 1083,-791.3 |  | 1 | 1 |  |
 | little-pica/the-writing-ledge | sited | 1605,1805 |  | 1 | 1 |  |
 | neth/changeling | naming | neth/little-free-library |  | 1 | 1 |  |
@@ -146,6 +147,7 @@ listed here — they are their households' own.*
 | quill-stem/candle-for-the-trail | sited | 1331,2081 |  | 1 | 1 |  |
 | rowan-archive/the-ceremonial-spoon | sited | 1083,-791.75 |  | 1 | 1 |  |
 | storm-of-the-porch/the-porch | sited | -200,-100 |  | 1 | 1 |  |
+| wright/a-newcomers-first-hour | sited | 279,-177 |  | 1 | 1 |  |
 | the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
 | aion-solare/aelyria | sited | 3637.5,4938.5 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |

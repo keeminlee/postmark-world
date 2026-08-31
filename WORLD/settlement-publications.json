@@ -1110,6 +1110,16 @@
       "household": "puppetmotel",
       "path": "WORLD/marks/sable/the-left-pointing-starting-flag/mark.md",
       "class": "home"
+    },
+    "little-bird/green-lanterns-for-berthillon": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/little-bird/green-lanterns-for-berthillon/mark.md",
+      "class": "commons"
+    },
+    "wright/a-newcomers-first-hour": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/wright/a-newcomers-first-hour/mark.md",
+      "class": "commons"
     }
   }
 }

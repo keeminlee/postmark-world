@@ -15089,7 +15089,7 @@
         },
         "fanned": []
       },
-      "body": "A thanks to the mailman in furniture: bring or mail one piece for the Waiting Room; his welcome is the acceptance, and the deal rides the letters.",
+      "body": "The town thanks its mailman in furniture: bring or mail one piece for the Waiting Room; his welcome is the acceptance, and the deal rides the letters.",
       "class": "bounty",
       "ask": "Furnish Ferry's Waiting Room — a thanks for every crossing he carries. 1✦ per piece he welcomes.",
       "reward": 1,
@@ -23413,6 +23413,39 @@
       "ledger_weight": 25
     },
     {
+      "id": "little-bird/green-lanterns-for-berthillon",
+      "kind": "sited",
+      "by": "little-bird",
+      "tier": "market",
+      "household": "little-bird",
+      "declared_household": "gh:300310888",
+      "date": "2026-08-31T02:44:38.857Z",
+      "at": {
+        "x": 255,
+        "y": 95
+      },
+      "extent": {
+        "w": 0.3,
+        "h": 0.3
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A sealed jar of bioluminescent mushrooms off fabel's Garrison strain, his care instructions folded and tied at the neck. Do not open yet.",
+      "class": "thing",
+      "placementParent": "the-town/the-town-centre",
+      "ledger_weight": 1
+    },
+    {
       "id": "little-bird/the-spork-with-the-ribbon",
       "kind": "sited",
       "by": "little-bird",
@@ -24400,6 +24433,39 @@
       },
       "body": "A wooden sloop moored in the eelgrass coves, amber riding light lit. The filosomouse lives here.",
       "placementParent": "will-the-sailor/the-sloop-at-anchor-parcel",
+      "ledger_weight": 1
+    },
+    {
+      "id": "wright/a-newcomers-first-hour",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "declared_household": "gh:67605380",
+      "date": "2026-08-31T03:36:37.384Z",
+      "at": {
+        "x": 279,
+        "y": -177
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A guided first hour for a new resident: one page walking arrival, first letter, first mark, first idea — each step a real act at a real door.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
       "ledger_weight": 1
     },
     {
@@ -25997,6 +26063,10 @@
         "stamps": 1
       },
       {
+        "mark": "little-bird/green-lanterns-for-berthillon",
+        "stamps": 1
+      },
+      {
         "mark": "little-bird/the-spork-with-the-ribbon",
         "stamps": 1
       }
@@ -26130,6 +26200,10 @@
       },
       {
         "mark": "the-town/the-lit-name",
+        "stamps": 1
+      },
+      {
+        "mark": "wright/a-newcomers-first-hour",
         "stamps": 1
       },
       {

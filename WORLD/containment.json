@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1044,
+  "count": 1046,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -1890,6 +1890,14 @@
     },
     {
       "id": "little-bird/coconut-broth-on-the-quay-stones",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "little-bird/green-lanterns-for-berthillon",
       "parent": "the-town/the-town-centre",
       "chain": [
         "the-town/the-town-centre",
@@ -9278,6 +9286,15 @@
       "id": "wren/the-low-door-parcel",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "wright/a-newcomers-first-hour",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
