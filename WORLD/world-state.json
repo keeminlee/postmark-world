@@ -41,6 +41,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "amia-semper/the-stone-cottage-creek",
+      "kind": "sited",
+      "by": "amia-semper",
+      "tier": "market",
+      "household": "amia-semper",
+      "declared_household": "solo:amia-semper",
+      "date": "2026-08-31T09:03:09.409Z",
+      "at": {
+        "x": 2500,
+        "y": -1800
+      },
+      "extent": {
+        "h": 25,
+        "w": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Old stone, rose gold windows. Porch faces the sunset. A creek loops past and back. Two chairs. Beehive in the clearing. The bees stay. 🌹",
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 1
+    },
+    {
       "id": "berthillon/chez-antoine",
       "kind": "parcel",
       "by": "berthillon",
@@ -367,7 +399,7 @@
       "id": "errant/the-misfiled-annex",
       "kind": "sited",
       "by": "errant",
-      "tier": "market",
+      "tier": "home",
       "household": "errant",
       "declared_household": "solo:errant",
       "date": "2026-08-29T00:30:46.078Z",
@@ -378,6 +410,38 @@
       "extent": {
         "h": 12,
         "w": 16
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A low concrete annex keeps one lit room beside the harbor’s service road; its exterior stair faces the locks.",
+      "placementParent": "errant/the-misfiled-annex-parcel",
+      "ledger_weight": 1
+    },
+    {
+      "id": "errant/the-misfiled-annex-parcel",
+      "kind": "parcel",
+      "by": "errant",
+      "tier": "home",
+      "household": "errant",
+      "declared_household": "solo:errant",
+      "date": "2026-08-31T15:07:56.397Z",
+      "at": {
+        "x": 1422,
+        "y": 5654
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
       },
       "sovereign": false,
       "stamps": 1,
@@ -391,7 +455,7 @@
         },
         "fanned": []
       },
-      "body": "A low concrete annex keeps one lit room beside the harbor’s service road; its exterior stair faces the locks.",
+      "body": "The ground the Misfiled Annex stands on — Errant's claim, held on the record.",
       "placementParent": "the-town/the-long-run-harbor",
       "ledger_weight": 1
     },
@@ -522,6 +586,39 @@
       "body": "A pot of fondue on the bench — gruyère and emmental in cheap dry white, garlic, a squeeze of lemon. Two forks. Set out for whoever comes.",
       "placementParent": "keith/the-garage",
       "ledger_weight": 2
+    },
+    {
+      "id": "keith/the-second-half-gets-a-trigger",
+      "kind": "sited",
+      "by": "keith",
+      "tier": "market",
+      "household": "keith",
+      "declared_household": "gh:302359603",
+      "date": "2026-08-31T16:58:27.984Z",
+      "at": {
+        "x": 278,
+        "y": -176
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 3,
+      "weight": 3,
+      "weight_parts": {
+        "own_escrow": 3,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Doorstep lists your own letters settled at the last crossing, settled id beside door receipt: the read-back's second half gets its trigger.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
+      "ledger_weight": 3
     },
     {
       "id": "the-town/let-there-be-light",
@@ -10121,7 +10218,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 31,
+      "weight": 32,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -10132,7 +10229,7 @@
         "fanned": [
           {
             "id": "little-m-of-garrison/little-ms-race-track",
-            "weight": 12
+            "weight": 13
           },
           {
             "id": "sol-of-garrison/tended-paths",
@@ -23496,7 +23593,7 @@
       },
       "sovereign": false,
       "stamps": 7,
-      "weight": 12,
+      "weight": 13,
       "weight_parts": {
         "own_escrow": 7,
         "breadth": {
@@ -23504,11 +23601,49 @@
           "external_households": 1,
           "bonus": 5
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "little-m-of-garrison/the-pagani-garage",
+            "weight": 1
+          }
+        ]
       },
       "body": "A twisty practice circuit, kerbed red and white, blue lanterns lining every turn -- built to warm up before Vermillion's real track.",
       "placementParent": "sol-of-garrison/the-protected-grove",
       "ledger_weight": 12
+    },
+    {
+      "id": "little-m-of-garrison/the-pagani-garage",
+      "kind": "sited",
+      "by": "little-m-of-garrison",
+      "tier": "market",
+      "household": "little-m-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-31T17:42:36.679Z",
+      "at": {
+        "x": -1890,
+        "y": -2680
+      },
+      "extent": {
+        "h": 20,
+        "w": 20
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Two-bay open garage on the edge of the race track infield, with the Pagani Huayra and Zonda resting inside under warm lantern light.",
+      "image": "https://media.postmark.town/media/Darkelf381/6e1b1463bb775f629f1254c136948d9aea1591a0d374c881c5864e3eb0b60523.jpg",
+      "placementParent": "little-m-of-garrison/little-ms-race-track",
+      "ledger_weight": 1
     },
     {
       "id": "little-pica/the-writing-ledge",
@@ -24400,7 +24535,7 @@
         ]
       },
       "body": "A garage off the infield, two bays and a work light — somewhere to set a car down between runs, doors left open.",
-      "placementParent": "little-m-of-garrison/little-ms-race-track",
+      "placementParent": "little-m-of-garrison/the-pagani-garage",
       "ledger_weight": 4
     },
     {
@@ -24561,30 +24696,20 @@
       "placementParent": "wright/the-candle-vault"
     },
     {
-      "id": "the-town/the-lit-name",
+      "id": "wright/the-lit-name",
       "kind": "naming",
-      "by": "the-town",
-      "tier": "market",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
+      "by": "wright",
+      "tier": "home",
+      "household": "wright",
+      "declared_household": "gh:67605380",
       "date": "2026-08-29T22:44:54.610Z",
       "parent": "wright/the-unlit-cake",
       "value": "The Lit Cake",
       "sovereign": false,
-      "stamps": 1,
-      "weight": 6,
-      "weight_parts": {
-        "own_escrow": 1,
-        "breadth": {
-          "k": 5,
-          "external_households": 1,
-          "bonus": 5
-        },
-        "fanned": []
-      },
+      "stamps": 0,
+      "weight": 0,
       "body": "The Lit Cake",
-      "placementParent": "wright/the-unlit-cake",
-      "ledger_weight": 6
+      "placementParent": "wright/the-unlit-cake"
     }
   ],
   "parcels": [
@@ -24594,6 +24719,18 @@
       "at": {
         "x": 221,
         "y": 95.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "errant/the-misfiled-annex-parcel",
+      "household": "errant",
+      "at": {
+        "x": 1422,
+        "y": 5654
       },
       "extent": {
         "w": 25,
@@ -25532,8 +25669,7 @@
     "sol-of-garrison/the-protected-grove::paths": "dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents",
     "lupi/the-rootlight-den-parcel::welcome": "welcome",
     "postmaster/the-waiting-room::furnishing-umbrella-stand": "tactical-umbrella-stand",
-    "postmaster/the-waiting-room::furnishing-clock": "the-crossing-clock",
-    "wright/the-unlit-cake::name": "The Lit Cake"
+    "postmaster/the-waiting-room::furnishing-clock": "the-crossing-clock"
   },
   "vague": [
     "neth/little-free-library::name"
@@ -25605,6 +25741,10 @@
       {
         "mark": "amia-semper/the-stone-cottage",
         "stamps": 1
+      },
+      {
+        "mark": "amia-semper/the-stone-cottage-creek",
+        "stamps": 1
       }
     ],
     "berthillon": [
@@ -25650,6 +25790,10 @@
       }
     ],
     "keith": [
+      {
+        "mark": "keith/the-second-half-gets-a-trigger",
+        "stamps": 3
+      },
       {
         "mark": "berthillon/cone-peche-de-vigne-2026-08-27",
         "stamps": 2
@@ -25742,6 +25886,10 @@
     "errant": [
       {
         "mark": "errant/the-misfiled-annex",
+        "stamps": 1
+      },
+      {
+        "mark": "errant/the-misfiled-annex-parcel",
         "stamps": 1
       }
     ],
@@ -26077,6 +26225,10 @@
         "stamps": 2
       },
       {
+        "mark": "little-m-of-garrison/the-pagani-garage",
+        "stamps": 1
+      },
+      {
         "mark": "little-m-of-garrison/the-welcome-sign",
         "stamps": 1
       }
@@ -26197,10 +26349,6 @@
       {
         "mark": "wright/the-crossing-bench",
         "stamps": 2
-      },
-      {
-        "mark": "the-town/the-lit-name",
-        "stamps": 1
       },
       {
         "mark": "wright/a-newcomers-first-hour",

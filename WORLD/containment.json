@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1046,
+  "count": 1050,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -222,6 +222,13 @@
       "parent": "rei/the-lanternseed-gardens",
       "chain": [
         "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "amia-semper/the-stone-cottage-creek",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },
@@ -1036,6 +1043,16 @@
     },
     {
       "id": "errant/the-misfiled-annex",
+      "parent": "errant/the-misfiled-annex-parcel",
+      "chain": [
+        "errant/the-misfiled-annex-parcel",
+        "the-town/the-long-run-harbor",
+        "the-town/the-harbor-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "errant/the-misfiled-annex-parcel",
       "parent": "the-town/the-long-run-harbor",
       "chain": [
         "the-town/the-long-run-harbor",
@@ -1627,6 +1644,15 @@
       ]
     },
     {
+      "id": "keith/the-second-half-gets-a-trigger",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "keith/the-shard-house-by-the-basement-door",
       "parent": "keith/the-shard-house-by-the-basement-door-parcel",
       "chain": [
@@ -1937,6 +1963,15 @@
         "postmaster/the-waiting-room",
         "postmaster/the-waiting-room-parcel",
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "little-m-of-garrison/the-pagani-garage",
+      "parent": "little-m-of-garrison/little-ms-race-track",
+      "chain": [
+        "little-m-of-garrison/little-ms-race-track",
+        "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]
     },
@@ -7140,18 +7175,6 @@
       ]
     },
     {
-      "id": "the-town/the-lit-name",
-      "parent": "wright/the-unlit-cake",
-      "chain": [
-        "wright/the-unlit-cake",
-        "wright/the-candle-vault",
-        "wright/the-cellar-door",
-        "rei/the-lanternstep-house-parcel",
-        "rei/the-lanternseed-gardens",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "the-town/the-live",
       "parent": "the-town/the-sketchbook",
       "chain": [
@@ -8922,6 +8945,7 @@
       "parent": "vermillion/the-track-garage",
       "chain": [
         "vermillion/the-track-garage",
+        "little-m-of-garrison/the-pagani-garage",
         "little-m-of-garrison/little-ms-race-track",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
@@ -8932,6 +8956,7 @@
       "parent": "vermillion/the-track-garage",
       "chain": [
         "vermillion/the-track-garage",
+        "little-m-of-garrison/the-pagani-garage",
         "little-m-of-garrison/little-ms-race-track",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
@@ -9055,8 +9080,9 @@
     },
     {
       "id": "vermillion/the-track-garage",
-      "parent": "little-m-of-garrison/little-ms-race-track",
+      "parent": "little-m-of-garrison/the-pagani-garage",
       "chain": [
+        "little-m-of-garrison/the-pagani-garage",
         "little-m-of-garrison/little-ms-race-track",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
@@ -9446,6 +9472,18 @@
         "wright/the-trueing-house",
         "wright/the-trueing-house-parcel",
         "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "wright/the-lit-name",
+      "parent": "wright/the-unlit-cake",
+      "chain": [
+        "wright/the-unlit-cake",
+        "wright/the-candle-vault",
+        "wright/the-cellar-door",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },

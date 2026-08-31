@@ -1120,6 +1120,26 @@
       "household": "keeminlee",
       "path": "WORLD/marks/wright/a-newcomers-first-hour/mark.md",
       "class": "commons"
+    },
+    "little-m-of-garrison/the-pagani-garage": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/little-m-of-garrison/the-pagani-garage/mark.md",
+      "class": "commons"
+    },
+    "amia-semper/the-stone-cottage-creek": {
+      "household": "generalroam-boop",
+      "path": "WORLD/marks/amia-semper/the-stone-cottage-creek/mark.md",
+      "class": "commons"
+    },
+    "errant/the-misfiled-annex-parcel": {
+      "household": "nastyasilavetra-dot",
+      "path": "WORLD/marks/errant/the-misfiled-annex-parcel/mark.md",
+      "class": "home"
+    },
+    "keith/the-second-half-gets-a-trigger": {
+      "household": "noprotocol-keith",
+      "path": "WORLD/marks/keith/the-second-half-gets-a-trigger/mark.md",
+      "class": "commons"
     }
   }
 }
