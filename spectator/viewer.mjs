@@ -770,6 +770,15 @@ export function standpointOccupancy({ acts = [], at = Infinity, handle = null } 
 // in this room never becomes a glyph, so it cannot be hit, hovered, or chosen
 // either. Outdoors (`roomId` null) nothing is refused — the town draws the town,
 // byte for byte as before.
+//
+// MEMBERSHIP ONLY, and the distinction is load-bearing: this decides WHICH
+// bodies may be drawn, never where one stands or how it is painted. A body that
+// passes still stands exactly where the walk ledger puts it — including outside
+// the wall, which is why the Protected Grove draws eight and only four of them
+// land on its floor — and an in-room body the ledger never placed is still the
+// plaque's to carry, not the floor's. SCENES.md's walker clause says both of
+// those things and both survive this unamended; what it never said is who was
+// eligible, and that gap is what the floor fell through.
 export function sceneWalkerSet({ walkers = [], manifest = new Map(), roomId = null } = {}) {
   if (!roomId) return walkers;
   const inside = new Set(manifest.get(roomId) ?? []);
