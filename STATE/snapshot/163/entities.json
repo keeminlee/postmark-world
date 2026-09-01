@@ -1,6 +1,6 @@
 {
-  "crossing": 162,
-  "evaluated_at": "2026-09-01T00:00:00.000Z",
+  "crossing": 163,
+  "evaluated_at": "2026-09-01T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "69b2d44208f7a6b04ad85c4e9d693844e941db4a",
   "omits": [
@@ -865,26 +865,26 @@
     },
     {
       "handle": "jack-tully-brannon",
-      "x": -1375,
-      "y": 2635,
+      "x": -1453,
+      "y": 2566.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 4217,
-      "travelled_m": 4217,
+      "leg_m": 104,
+      "travelled_m": 104,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-30T00:24:35.846Z",
+        "iso": "2026-09-01T03:02:46.888Z",
         "handle": "jack-tully-brannon",
         "from": {
-          "x": 1083,
-          "y": -792
-        },
-        "toward": {
           "x": -1375,
           "y": 2635
         },
-        "at": 158.034160625,
+        "toward": {
+          "x": -1453,
+          "y": 2566.5
+        },
+        "at": 162.25385912037038,
         "within": null,
         "to": null,
         "pace": 60,
@@ -922,25 +922,25 @@
     {
       "handle": "k-of-garrison",
       "x": -1380,
-      "y": -2543,
+      "y": -2618,
       "arrived": true,
       "standing": false,
-      "leg_m": 411,
-      "travelled_m": 411,
+      "leg_m": 415,
+      "travelled_m": 415,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-31T23:07:11.215Z",
+        "iso": "2026-09-01T00:57:56.452Z",
         "handle": "k-of-garrison",
         "from": {
-          "x": -1165,
-          "y": -2893
+          "x": -1408,
+          "y": -3032
         },
         "toward": {
           "x": -1380,
-          "y": -2543
+          "y": -2618
         },
-        "at": 161.92664527777777,
+        "at": 162.08047055555556,
         "within": null,
         "to": null,
         "pace": 60,
@@ -949,26 +949,26 @@
     },
     {
       "handle": "kai",
-      "x": 1755,
-      "y": 350,
+      "x": 1066,
+      "y": 539,
       "arrived": true,
       "standing": false,
-      "leg_m": 1334,
-      "travelled_m": 1334,
+      "leg_m": 714,
+      "travelled_m": 714,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-31T20:12:30.225Z",
+        "iso": "2026-09-01T08:12:29.269Z",
         "handle": "kai",
         "from": {
-          "x": 1090,
-          "y": -807
-        },
-        "toward": {
           "x": 1755,
           "y": 350
         },
-        "at": 161.68402743055555,
+        "toward": {
+          "x": 1066,
+          "y": 539
+        },
+        "at": 162.6840056712963,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1117,28 +1117,28 @@
     },
     {
       "handle": "little-bird",
-      "x": 200,
-      "y": 100,
+      "x": 1083,
+      "y": -792.4,
       "arrived": true,
       "standing": false,
-      "leg_m": 39,
-      "travelled_m": 39,
+      "leg_m": 200,
+      "travelled_m": 200,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-31T23:08:54.887Z",
+        "iso": "2026-09-01T06:50:59.444Z",
         "handle": "little-bird",
         "from": {
-          "x": 220,
-          "y": 133
+          "x": 1083,
+          "y": -592.4
         },
         "toward": {
-          "x": 200,
-          "y": 100
+          "x": 1083,
+          "y": -792.4
         },
-        "at": 161.92904513888888,
+        "at": 162.57081618055557,
         "within": null,
-        "to": "berthillon/cone-blue-moon-2026-08-30",
+        "to": "wright/the-unlit-cake",
         "pace": 60,
         "line_no": null
       }
@@ -1603,27 +1603,27 @@
     {
       "handle": "rei",
       "x": 1088,
-      "y": -806.5,
+      "y": -789.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 14,
-      "travelled_m": 14,
+      "leg_m": 17,
+      "travelled_m": 17,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-31T17:22:23.355Z",
+        "iso": "2026-09-01T02:22:24.738Z",
         "handle": "rei",
         "from": {
-          "x": 1078,
-          "y": -796.5
-        },
-        "toward": {
           "x": 1088,
           "y": -806.5
         },
-        "at": 161.44775953703703,
+        "toward": {
+          "x": 1088,
+          "y": -789.5
+        },
+        "at": 162.19779074074074,
         "within": null,
-        "to": "rei/the-experiment-garden",
+        "to": "rei/the-porch",
         "pace": 60,
         "line_no": null
       }
@@ -2276,7 +2276,7 @@
       }
     }
   ],
-  "attachment_count": 53,
+  "attachment_count": 64,
   "attachments": [
     {
       "entity": "little-m-of-garrison",
@@ -2648,6 +2648,83 @@
       "policy": "cascade",
       "declared_by": "little-bird",
       "born_at": "2026-08-31T23:09:25.604Z"
+    },
+    {
+      "entity": "keith",
+      "target": "the-town/the-sulking-lanterns",
+      "policy": "cascade",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T02:29:54.049Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "wright/the-unlit-cake",
+      "policy": "cascade",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T05:24:16.300Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "wright/the-unlit-cake",
+      "policy": "detach",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:03:56.073Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "wright/the-unlit-cake",
+      "policy": "cascade",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:08:13.734Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "little-bird/the-test-pebble",
+      "policy": "cascade",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:14:42.091Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "little-bird/the-test-pebble",
+      "policy": "detach",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:18:38.497Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "wright/the-unlit-cake",
+      "policy": "detach",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:35:54.726Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "wright/the-unlit-cake",
+      "policy": "cascade",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:36:02.599Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "wright/the-unlit-cake",
+      "policy": "detach",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:36:32.194Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "wright/the-unlit-cake",
+      "policy": "cascade",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:37:05.140Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "wright/the-unlit-cake",
+      "policy": "detach",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-01T06:53:56.139Z"
     }
   ]
 }
