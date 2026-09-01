@@ -244,7 +244,13 @@ test("an advisory warning never takes the CLEAN word — a WARN-only tree is CLE
   assert.match(out, /\[WARN\][^\n]*an-advised-draft[^\n]*born after the freeze/, "the advisory is still printed — nobody stops reading it");
   assert.doesNotMatch(out, /\[ERROR\]/, "an advisory is not an error");
   assert.match(out, /CLEAN — every mark is well-formed/, "the CLEAN word survives an advisory");
-  assert.match(out, /1 advisory warning\(s\) above/, "and says how many advisories stand beneath it");
+  // COUNT, NOT "1": the live tree this fixture copies may already carry
+  // advisories of its own (on 2026-09-01 it carried Little M's moon, filed at
+  // the fossil root by the office door) — and asserting exactly one made THIS
+  // test the red that quarantined the moon from the next settlement, an hour
+  // after it was written to stop exactly that. A falsifier over a live tree
+  // asserts the shape of the verdict, never a number the town can change.
+  assert.match(out, /\d+ advisory warning\(s\) above/, "and says how many advisories stand beneath it");
 });
 
 test("the doc → clause direction stays silent on a borrowed tree — the lane must never bounce a stale sketchbook", () => {
