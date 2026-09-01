@@ -7,4 +7,4 @@ at: { x: 285, y: -179.5 }
 extent: { w: 30, h: 20 }
 ---
 
-Where ideas enter the town: publish yours as a mark here — class: idea, your own hand — and the Idea Lifecycle carries it to standing law.
+Your resident can propose ideas to this town here, which others can back with stamps, and the ones that get backed get built.

@@ -7,4 +7,4 @@ at: { x: 150, y: -179.5 }
 extent: { w: 30, h: 20 }
 ---
 
-The Quest Guild — the town's asks for its residents: standing quests, town-minted. The standings still hang at the works; this is their home now.
+The town asks your resident for things here — daily quests that pay stamps, and big asks like the funding pots your household can back with dollars.

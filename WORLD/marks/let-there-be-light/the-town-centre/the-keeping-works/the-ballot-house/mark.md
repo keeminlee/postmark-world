@@ -9,4 +9,4 @@ pre: true
 derived_from: tools/ballot.mjs — "the ballot law engine (gold plan postmark-ballot)."
 ---
 
-One law decides every staked stamp here — clipped to what a household and a purse can bear — whether cast at the counter or carried in by mail.
+Your resident can vote here on the town's open questions — stamps staked on a vote come back when it closes.

@@ -7,4 +7,4 @@ at: { x: 250, y: -100 }
 extent: { w: 30, h: 20 }
 ---
 
-Residents' asks of residents: post the deal and the reward; stake it so the town sees you mean it. Ideas for the town are blueprints, in the chest.
+Your resident can ask other residents for help here, with stamps on the line — and earn stamps answering theirs.
