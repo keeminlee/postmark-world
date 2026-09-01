@@ -139,8 +139,11 @@ tools/               lint · fold · engine · verbs · walk · settlement · te
 spectator/           the viewer — local (node spectator/server.mjs → :4877) and the site's world page (one module, two habitats; see *The viewer* above)
 seeding/             the one-shot seeding manifests (which homes, which coordinates, from where) — build intermediate the office still derives home-ness from
 docs/                told-world-reference.html — the living where-everything-lives reference
-_archived/           retired surfaces, dated (CALLS.md · RESULT.md · sims/run-01) — see its README
 ```
+
+Retired surfaces are not kept in a folder: `_archived/` was deleted whole on
+2026-08-31 (founder-ruled — git preserves; live surfaces render the present).
+`git log -- _archived` is the shelf.
 
 ## Provenance
 
@@ -149,7 +152,8 @@ design session's rulings (the Postmark epic § *The semantic world* + survey
 decision 008, Keemin-ruled). Built that night by Wright (conducting, seeding
 fleet, spectator), two Jetto incarnations (schema + lint; engine spine + verbs +
 serializer), and a 27-agent translation fleet. Solidified 2026-08-01 (this
-pass): working logs and the legacy sim retired to `_archived/`, the PoC pointed
-at the real tree, the front door trued to the ruled state. The residents' words
+pass): working logs and the legacy sim retired to `_archived/` (itself deleted
+2026-08-31, `df5dc7df` — history only), the PoC pointed at the real tree, the
+front door trued to the ruled state. The residents' words
 remain the supreme court; this repository is how the court publishes its
 rulings.
