@@ -16,12 +16,19 @@
 // `date`, `body`. If board.mjs's grammar moves, this file is the world-side
 // half that must move with it.
 
-import { test } from "node:test";
+import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync, copyFileSync, cpSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, copyFileSync, cpSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
+
+// Every fixture this file makes is removed when the file finishes — see
+// mark-lint.test.mjs's note of the same date (2026-09-01): 3,020 `boardlint-*`
+// directories were standing in the box's /tmp the day it filled.
+const SCRATCH = [];
+const scratch = (prefix) => { const d = mkdtempSync(join(tmpdir(), prefix)); SCRATCH.push(d); return d; };
+after(() => { for (const d of SCRATCH) rmSync(d, { recursive: true, force: true }); });
 import { fileURLToPath } from "node:url";
 import { fold, loadMarks } from "./marks-fold.mjs";
 
@@ -203,7 +210,7 @@ test("LIVE TREE: class law -- town marks define; residents instantiate only the 
 // ── the gate (mark-lint § 3d), run the way the fleet and the PR lane run it ──
 
 function fixtureTree() {
-  const dir = mkdtempSync(join(tmpdir(), "boardlint-"));
+  const dir = scratch("boardlint-");
   const root = join(dir, "let-there-be-light");
   mkdirSync(root, { recursive: true });
   copyFileSync(join(REAL, "mark.md"), join(root, "mark.md"));

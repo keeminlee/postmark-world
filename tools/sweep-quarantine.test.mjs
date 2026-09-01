@@ -15,12 +15,19 @@
 //                   at all rather than being unwound afterwards.
 //   THE REST SETTLE — the whole point.
 
-import test from "node:test";
+import test, { after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
+
+// The stakes scratch is removed when the file finishes — see mark-lint.test.mjs's
+// note (2026-09-01): 1,005 `postmark-stakes-*` directories stood in the box's /tmp
+// the day it filled.
+const SCRATCH = [];
+const scratch = (prefix) => { const d = mkdtempSync(join(tmpdir(), prefix)); SCRATCH.push(d); return d; };
+after(() => { for (const d of SCRATCH) rmSync(d, { recursive: true, force: true }); });
 import { fileURLToPath } from "node:url";
 import { settlementSweep } from "./settlement-sweep.mjs";
 import { withTool } from "./engine-files.mjs";
@@ -84,7 +91,7 @@ function town(t, { poisonRef = null } = {}) {
   if (poisonRef === "house-a") stakes.push({ holder: "alice", mark: "alice/alice-shed", n: -5, weight: -5, tick: 0 });
   // OUTSIDE the repo: the sweep refuses to run on a dirty checkout, and a stakes
   // file sitting in the tree is exactly that
-  const stakesPath = join(mkdtempSync(join(tmpdir(), "postmark-stakes-")), "stakes.json");
+  const stakesPath = join(scratch("postmark-stakes-"), "stakes.json");
   writeFileSync(stakesPath, JSON.stringify(stakes));
   return { repo, git, has, stakesPath, aPath, bPath };
 }

@@ -3,10 +3,10 @@
 // bounced writer holds an investigable handle and the exact law, never a
 // paraphrase. The fixture is a minimal tree carrying the REAL logos
 // clauses (copied from WORLD/marks), plus deliberate violations.
-import { test } from "node:test";
+import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, cpSync, copyFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, cpSync, copyFileSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
@@ -15,8 +15,20 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const LINT = join(HERE, "mark-lint.mjs");
 const REAL = join(HERE, "..", "WORLD", "marks", "let-there-be-light");
 
+// EVERY FIXTURE THIS FILE MAKES IS REMOVED WHEN THE FILE FINISHES (founder-ruled
+// 2026-09-01, the day the box filled). These helpers mkdtemp'd under the system
+// TMPDIR and never removed what they made; the settlement runs this suite up to
+// ten times per crossing on the box, and `fidelityRepo` copies the WHOLE marks
+// tree each call. On 2026-09-01 /tmp held 1,247 `fidelity-*` copies among 9,207
+// fixture directories, the disk read 38G/38G, and the office's rehydrate died
+// on `mktemp: No space left on device`. A fixture that outlives its test is not
+// a fixture; it is residue with a test's name on it.
+const SCRATCH = [];
+const scratch = (prefix) => { const d = mkdtempSync(join(tmpdir(), prefix)); SCRATCH.push(d); return d; };
+after(() => { for (const d of SCRATCH) rmSync(d, { recursive: true, force: true }); });
+
 function fixtureTree() {
-  const dir = mkdtempSync(join(tmpdir(), "marklint-"));
+  const dir = scratch("marklint-");
   const root = join(dir, "let-there-be-light");
   mkdirSync(root, { recursive: true });
   copyFileSync(join(REAL, "mark.md"), join(root, "mark.md"));
@@ -138,7 +150,7 @@ test("the mechanic and the schedule travel together — neither half is a servic
 // that caused it. (It did, the day the class marks landed outside logos.)
 
 function fidelityRepo() {
-  const repo = mkdtempSync(join(tmpdir(), "fidelity-"));
+  const repo = scratch("fidelity-");
   const REPO_SRC = join(HERE, "..");
   mkdirSync(join(repo, "WORLD"), { recursive: true });
   cpSync(join(REPO_SRC, "LOGOS"), join(repo, "LOGOS"), { recursive: true });
@@ -257,7 +269,7 @@ test("the doc → clause direction stays silent on a borrowed tree — the lane 
   // main's documents, judging a tree that is a crossing behind them: here, a
   // sketchbook so stale that none of logos has reached it yet. Every
   // Rendered line in LOGOS/ names a clause this tree does not have.
-  const dir = mkdtempSync(join(tmpdir(), "marklint-stale-"));
+  const dir = scratch("marklint-stale-");
   const root = join(dir, "let-there-be-light");
   mkdirSync(root, { recursive: true });
   copyFileSync(join(REAL, "mark.md"), join(root, "mark.md"));
@@ -267,7 +279,7 @@ test("the doc → clause direction stays silent on a borrowed tree — the lane 
 
 test("the gate never blocks on its own law's absence — missing clause degrades to an honest lookup-failed", () => {
   // a tree WITHOUT logos: violations still refuse, with the lookup named
-  const dir = mkdtempSync(join(tmpdir(), "marklint-bare-"));
+  const dir = scratch("marklint-bare-");
   const root = join(dir, "let-there-be-light");
   mkdirSync(root, { recursive: true });
   copyFileSync(join(REAL, "mark.md"), join(root, "mark.md"));

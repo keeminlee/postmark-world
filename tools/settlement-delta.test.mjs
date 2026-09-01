@@ -47,12 +47,19 @@
 //
 //   node --test tools/settlement-delta.test.mjs
 
-import test from "node:test";
+import test, { after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
+
+// The stakes scratch is removed when the file finishes — see mark-lint.test.mjs's
+// note (2026-09-01): 447 `delta-stakes-*` directories stood in the box's /tmp the
+// day it filled.
+const SCRATCH = [];
+const scratch = (prefix) => { const d = mkdtempSync(join(tmpdir(), prefix)); SCRATCH.push(d); return d; };
+after(() => { for (const d of SCRATCH) rmSync(d, { recursive: true, force: true }); });
 import { fileURLToPath } from "node:url";
 
 import { draftBranches, enclosingMarkId, foldRef, markDelta, recordAt, foldMeter, resetFoldMeter, settlementSweep } from "./settlement-sweep.mjs";
@@ -292,7 +299,7 @@ test("THE RULED EXCEPTION — a household whose STALE TREE carries residue now S
   assert.throws(() => foldRef(repo, "draft/house-a", []), /household already holds a parcel/,
     "the sketchbook's stale tree really is inadmissible — that is the premise");
 
-  const stakesPath = join(mkdtempSync(join(tmpdir(), "delta-stakes-")), "s.json");
+  const stakesPath = join(scratch("delta-stakes-"), "s.json");
   writeFileSync(stakesPath, "[]");
   const out = settlementSweep({ repo, stakesPath, mainBranch: "main" });
 
@@ -316,7 +323,7 @@ test("THE OTHER HALF — a household whose PUBLISHED delta is genuinely bad stil
   g("add", "-A"); g("commit", "-qm", "publishing a second parcel");
   g("switch", "-q", "main");
 
-  const stakesPath = join(mkdtempSync(join(tmpdir(), "delta-stakes-")), "s.json");
+  const stakesPath = join(scratch("delta-stakes-"), "s.json");
   writeFileSync(stakesPath, "[]");
   const out = settlementSweep({ repo, stakesPath, mainBranch: "main" });
   assert.equal(out.quarantined.length, 1, "the bad row is offered, so the sketchbook is set aside");
@@ -360,7 +367,7 @@ test("THE DIRECTORY EDGE — a PREDICATED mark, which sovereignty cannot reach, 
   g("commit", "-q", "-m", "a rule with no coordinates");
   g("switch", "-q", "main");
 
-  const stakesPath = join(mkdtempSync(join(tmpdir(), "delta-stakes-")), "s.json");
+  const stakesPath = join(scratch("delta-stakes-"), "s.json");
   writeFileSync(stakesPath, "[]");
   const out = settlementSweep({ repo, stakesPath, mainBranch: "main" });
 
