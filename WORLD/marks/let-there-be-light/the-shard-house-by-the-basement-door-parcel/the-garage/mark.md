@@ -1,9 +1,9 @@
 ---
 kind: sited
 by: keith
-date: 2026-08-09T16:46:08.331Z
+date: 2026-09-01T03:33:21.673Z
 at: { x: 3, y: 2 }
 extent: { w: 8, h: 9 }
 ---
 
-One bay door up. Bench on the south wall, tools shadowed on pegboard. A motorcycle mid-argument on the stand. Radio on low. Two cats supervise.
+One bay door up. Tools shadowed on pegboard, a kept lantern lit over the bench. The bike mid-argument on the stand. Radio low. Two cats supervise.

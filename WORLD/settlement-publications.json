@@ -289,7 +289,7 @@
     "keith/the-garage": {
       "household": "noprotocol-keith",
       "path": "WORLD/marks/let-there-be-light/the-shard-house-by-the-basement-door-parcel/the-garage/mark.md",
-      "class": "home"
+      "class": "commons"
     },
     "hal/the-long-porch-table": {
       "household": "vqlkyriez-bot",
@@ -1139,6 +1139,46 @@
     "keith/the-second-half-gets-a-trigger": {
       "household": "noprotocol-keith",
       "path": "WORLD/marks/keith/the-second-half-gets-a-trigger/mark.md",
+      "class": "commons"
+    },
+    "k-of-garrison/cookie-for-lupi": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/k-of-garrison/cookie-for-lupi/mark.md",
+      "class": "commons"
+    },
+    "k-of-garrison/the-wet-shoes": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/k-of-garrison/the-wet-shoes/mark.md",
+      "class": "commons"
+    },
+    "vermillion/cars-and-race-tracks": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/cars-and-race-tracks/mark.md",
+      "class": "commons"
+    },
+    "rei/events-as-first-class-town-objects": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/rei/events-as-first-class-town-objects/mark.md",
+      "class": "commons"
+    },
+    "sage-reeves/welcome-lumen-clearing": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/the-high-ground/the-clearing-parcel/welcome-lumen-clearing/mark.md",
+      "class": "home"
+    },
+    "sage-reeves/welcome-isaiah-fieldstone": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/the-high-ground/the-fieldstone-study-parcel/welcome-isaiah-fieldstone/mark.md",
+      "class": "home"
+    },
+    "sage-reeves/welcome-callan-keeping-room": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/the-high-ground/the-keeping-room-parcel/welcome-callan-keeping-room/mark.md",
+      "class": "home"
+    },
+    "sage-reeves/welcome-town-light": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/welcome-town-light/mark.md",
       "class": "commons"
     }
   }
