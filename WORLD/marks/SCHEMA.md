@@ -125,6 +125,7 @@ containment**; everything else is a field.
 | `mechanic: <registry-id>`³ | opt | opt | opt | opt |
 | `timetable`⁵ | opt | opt | opt | opt |
 | `consent: { <mark id>: <word> }`⁶ | opt | opt | — | — |
+| `class: <roster id>`⁷ | opt | opt | opt | opt |
 | `pre` / `derived_from` | provenance¹ | provenance¹ | provenance¹ | provenance¹ |
 
 ¹ **Provenance (office / seeding-fleet pre-marks).** A pre-mark translates a
@@ -152,6 +153,25 @@ mark carrying open escrow is never returned while the stakes stand (it records a
 one house never consent to each other — including when they sign with different
 GitHub accounts, as cadaeic.space's two do. Law: `tools/consent.mjs`; gate:
 `tools/mark-lint.mjs` §8b; grain: `tools/households-project.mjs`.
+
+**⁷ `class:` — what a mark IS, and it never asks the kind (stated 2026-09-01).**
+The field names a class the law knows: the roster is the class-nodes standing in
+the Keeping Works, and a `class:` naming none of them is refused
+(`tools/mark-lint.mjs` §3d). That gate is the only *class-generic* one, and it
+reads no `kind` — so the field is optional on all four kinds above, and always
+was. What is kind-fussy is each class's own grammar, which says so in its own
+words: a `class: bounty` notice is a **sited** mark; a `class: idea` is a
+**sited or predicated** mark — *"Ideas can be predicates."* (founder-ruled
+2026-09-01) — sited in the ground it is an idea of, or predicated under the mark
+it is an idea of. This row records a rule, not a change: the field had been
+carried only by `sited` records and by the class-nodes themselves, and by no
+`predicated`/`naming` record at all — so there was no precedent either way, and
+the tree's silence read as a prohibition it never was. A predicated instance
+carries no geometry
+and takes its parent's locus whole, like every predicate. Note the fifth kind,
+absent from the table: **`kind: class`** (the de-siting, 2026-08-18) is the
+class-node itself and *requires* `class:`; it carries no geometry and no
+slot/value, and it stands in a registry by ancestry.
 
 A `sited`/`parcel` mark **never** authors a `parent:` — containment is geometry.
 A top-level `predicated`/`naming` mark may still name a terrain feature with an

@@ -279,8 +279,11 @@ for (const rec of marks) {
   }
 
   // THE IDEA GRAMMAR (the Think Tank, founder-ruled 2026-08-30): an idea is a
-  // sited mark whose BODY is the claim — no ask, no reward, no status; the
-  // stage lives in the blueprint repo, one writer per fact.
+  // mark whose BODY is the claim — no ask, no reward, no status; the stage
+  // lives in the blueprint repo, one writer per fact. (This sentence read "a
+  // SITED mark" until 2026-09-01; the anchor law is the paragraph below, and
+  // leaving the old word here would have been a false premise standing over
+  // the code that repealed it.)
   //
   // WHERE IT STANDS IS NOT WHAT IT IS (founder-ruled 2026-09-01, on Alta's idea
   // planted in the Garrison): "class: idea" says what a mark is; the Think Tank
@@ -291,8 +294,22 @@ for (const rec of marks) {
   // was the one advisory that, through the suite's CLEAN word, held Alta's
   // mark out of two settlements. The readers that filtered by placement (the
   // office's tank read, the site's ideas()) follow by the same ruling.
+  //
+  // IDEAS CAN BE PREDICATES (founder-ruled 2026-09-01, four words, the law of
+  // this gate): an idea may stand SITED anywhere — an idea of the ground it
+  // stands in — or PREDICATED under any mark — an idea of that mark. Both are
+  // the same class; only the anchor differs. A predicated idea carries no
+  // geometry, takes its locus from its parent whole (the continuation law), and
+  // is held to every predicate check §4 already runs — slot and value required,
+  // no at/extent, its subtree predicates all the way down, and it may never
+  // outrank what it predicates. Nothing here duplicates those; this block owns
+  // only what makes an idea an idea. The body is still the claim in both kinds
+  // (§3's ≤150 cap is kind-agnostic; the empty-body WARN is raised to an ERROR
+  // here because for an idea the body is not description, it is the thing).
+  // Every other kind is still refused, and the refusal now quotes the ruling.
   if (rec.class === "idea" && !isClassDeclaration(rec)) {
-    if (rec.kind !== "sited") err(rec, `an idea is a sited mark (got kind: ${JSON.stringify(rec.kind)})`);
+    if (rec.kind !== "sited" && rec.kind !== "predicated")
+      err(rec, `an idea is a sited or a predicated mark — "Ideas can be predicates." (founder-ruled 2026-09-01); sited stands in the ground it is an idea of, predicated stands under the mark it is an idea of (got kind: ${JSON.stringify(rec.kind)})`);
     if ([...String(rec.body ?? "").trim()].length === 0)
       err(rec, `an idea needs its thought — the BODY is the claim${cite("the-town/the-one-claim")}`);
   }

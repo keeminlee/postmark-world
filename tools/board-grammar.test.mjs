@@ -314,18 +314,25 @@ test("the '#' truncation: the lint catches the face it CAN see (review O-1)", ()
 // ── THE IDEA GRAMMAR (the Think Tank, founder-ruled 2026-08-30) ─────────────
 //
 // THE LAW these quote: "One thought by a resident, of the town: the body IS
-// the claim, published in the Think Tank; drawn whole, it becomes a blueprint
-// in the chest." — the idea class mark. Stage 1 of the Idea Lifecycle is this
-// mark standing; the blueprint PR (stage 2) cites it. No ask, no reward, no
-// status: the stage lives in the blueprint repo, one writer per fact.
-test("IDEA: a lawful idea passes; a thoughtless one errs quoting the one-claim law; an idea may stand ANYWHERE (2026-09-01); the whitelist carries the ruling", () => {
+// the claim. Sited anywhere or predicated under any mark; the Think Tank reads
+// them all." — the idea class mark (version 2, 2026-09-01). Stage 1 of the
+// Idea Lifecycle is this mark standing; the blueprint PR (stage 2) cites it.
+// No ask, no reward, no status: that stage lives in the blueprint repo, one
+// writer per fact.
+//
+// AND THE FOUR WORDS THIS FILE EXISTS TO HOLD (founder-ruled 2026-09-01):
+// "Ideas can be predicates." An idea is a class, never a place or a kind —
+// sited it is an idea OF the ground it stands in, predicated it is an idea OF
+// the mark it stands under. Both anchors, one class. Drop either half of the
+// gate and the cases below go red by name.
+test("IDEA: sited OR predicated — \"Ideas can be predicates.\" (2026-09-01); a thoughtless one errs on the one-claim law either way; any other kind is refused quoting the four words; an idea may stand ANYWHERE; the whitelist carries the ruling", () => {
   assert.ok(RESIDENT_INSTANTIABLE.has("idea"),
     "the 2026-08-30 ruling: residents publish ideas with their own hand — stage 1 needs no git and no founder");
   const { dir, root } = fixtureTree();
   const works = join(root, "the-keeping-works");
   mkdirSync(join(works, "idea"), { recursive: true });
   writeFileSync(join(works, "idea", "mark.md"),
-    "---\nkind: sited\nby: the-town\ntier: constitution\ndate: 2026-08-30\nat: { x: 1, y: 1 }\nextent: { w: 5, h: 5 }\nclass: idea\n---\n\nOne thought by a resident, of the town: the body IS the claim, published in the Think Tank.\n");
+    "---\nkind: sited\nby: the-town\ntier: constitution\ndate: 2026-08-30\nat: { x: 1, y: 1 }\nextent: { w: 5, h: 5 }\nclass: idea\n---\n\nOne thought by a resident, of the town: the body IS the claim. Sited anywhere or predicated under any mark; the Think Tank reads them all. BETA.\n");
   const tank = join(root, "the-think-tank");
   mkdirSync(tank, { recursive: true });
   writeFileSync(join(tank, "mark.md"),
@@ -355,4 +362,60 @@ test("IDEA: a lawful idea passes; a thoughtless one errs quoting the one-claim l
   assert.doesNotMatch(out, /off the Think Tank/, "an idea standing anywhere is an idea — no warning, no error");
   assert.doesNotMatch(out, /(ERROR|WARN)[^\n]*stray-thought/, "the stray thought draws no finding at all");
 
+  // ── "Ideas can be predicates." (founder-ruled 2026-09-01) ────────────────
+  //
+  // An idea predicated under a mark is an idea OF that mark. It carries no
+  // geometry (§4 refuses at/extent on a predicate) and it carries slot/value
+  // like every predicate — those checks are §4's and are NOT duplicated in the
+  // idea grammar, so this case is also the falsifier that they still reach a
+  // classed record. It nests under the Tank here only because the Tank is a
+  // sited mark within arm's reach of the fixture; under the ruling any parent
+  // would do.
+  const predIdea = (fields, body) =>
+    `---\nkind: predicated\nby: testerhh\ndate: 2026-09-01\nclass: idea\n${fields}---\n\n${body}`;
+  const SLOTTED = "slot: idea\nvalue: a bench at the quay\n";
+
+  mkdirSync(join(tank, "a-bench-at-the-quay"), { recursive: true });
+  writeFileSync(join(tank, "a-bench-at-the-quay", "mark.md"),
+    predIdea(SLOTTED, "A bench at the quay, facing the water, for the waiting.\n"));
+  out = runLint(dir);
+  assert.doesNotMatch(out, /(ERROR|WARN)[^\n]*a-bench-at-the-quay/,
+    "a predicated idea — slot, value, a thought — draws no finding at all: \"Ideas can be predicates.\"");
+  assert.doesNotMatch(out, /an idea is a sited mark/,
+    "the pre-ruling refusal is gone by its own words, not merely unreached");
+
+  // THE CROSS-REPO CONTRACT for the new shape (this file's whole reason): the
+  // office's tank read and the site's ideas() join on `class`, and a predicated
+  // idea reaches them as a row with NO `at` and a `parent` — the one shape a
+  // reader written for sited ideas alone will drop. Asserted here, world-side,
+  // so the day it stops folding this way the two sibling repos are told by a
+  // red test rather than by an empty Tank.
+  const folded = serialized(fold({ marks: loadMarks(dir), terrain, stakes: [] }));
+  const row = folded.marks.find((m) => m.id === "testerhh/a-bench-at-the-quay");
+  assert.ok(row, "the predicated idea folds into the store at all");
+  assert.equal(row.class, "idea", "the class survives the fold — the Tank's join key");
+  assert.equal(row.kind, "predicated");
+  assert.equal(row.at, undefined, "a predicated idea publishes NO at: — it has no geometry of its own");
+  assert.equal(row.parent, "the-town/the-think-tank", "it publishes the mark it is an idea OF");
+  assert.equal(row.slot, "idea");
+  assert.equal(row.value, "a bench at the quay");
+
+  // the thoughtless PREDICATED idea: the one-claim law binds both anchors, and
+  // it is the idea grammar that raises the empty body from §3's warning to an
+  // error — the body of an idea is not description, it is the thing.
+  mkdirSync(join(tank, "a-predicated-blank"), { recursive: true });
+  writeFileSync(join(tank, "a-predicated-blank", "mark.md"), predIdea(SLOTTED, ""));
+  out = runLint(dir);
+  assert.match(out, /an idea needs its thought — the BODY is the claim/,
+    "a thoughtless predicated idea errs, citing the one-claim law exactly as a sited one does");
+
+  // and every OTHER kind is still refused — the ruling opened one door, not the
+  // house. A parcel is ground: an idea is not ground.
+  mkdirSync(join(root, "a-parcelled-thought"), { recursive: true });
+  writeFileSync(join(root, "a-parcelled-thought", "mark.md"),
+    "---\nkind: parcel\nby: testerhh\ndate: 2026-09-01\nat: { x: 40, y: 40 }\nclass: idea\n---\n\nA thought that tried to be ground.\n");
+  out = runLint(dir);
+  assert.match(out, /an idea is a sited or a predicated mark[^\n]*"Ideas can be predicates\."/,
+    "kind: parcel is still refused, and the refusal quotes the founder's four words");
+  assert.match(out, /got kind: "parcel"/, "the refusal names the kind it got");
 });

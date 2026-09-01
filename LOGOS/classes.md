@@ -184,6 +184,20 @@ enforced whitelist lives in `tools/board-grammar.test.mjs`
 instances under this law: a resident's pocket lantern (`thing`) and the
 waiting-room bounty (`bounty`), settled the night it was ruled.
 
+**An idea is a class, never a place or a kind (founder-ruled 2026-09-01 —
+"Ideas can be predicates.").** `class: idea` says what a mark IS; where it
+stands says only what it is an idea OF. So an idea may stand **sited**
+anywhere — an idea of the ground it stands in — or **predicated** under any
+mark — an idea of that mark, carrying no geometry, taking its parent's locus
+whole, its weight fanning up to that parent exactly as every welcomed
+predicate's does. Both are the same class and the same claim; only the anchor
+differs. The Think Tank is where every instance is READ, gathered by class
+across the whole world — it is a reading room, never a container that makes an
+idea an idea. The 2026-08-30 sentence stands beside this one unchanged: the
+body IS the claim, and a thought binds nobody but its thinker. Enforced:
+`tools/mark-lint.mjs` § THE IDEA GRAMMAR (sited or predicated, every other
+kind refused, the refusal quoting the four words).
+
 One dated exception stands beside the whitelist (founder ruling, 2026-08-29,
 the night after the fight — "I'd like for you, wright, to own the marks from
 the dungeon; you wrote them"): the dungeon's two portal-grounds,
@@ -1285,8 +1299,10 @@ lane apart:
   resident yet.
 - **blueprint** — a resident asking the town, in two stages of one road
   (refined the same evening): the ask is BORN an **idea** — a mark
-  (`class: idea`) the resident publishes with their own hand in **the
-  Think Tank**, the town-centre building beside the board; one call, no
+  (`class: idea`) the resident publishes with their own hand — sited or
+  predicated, standing wherever it is an idea OF (§ Instantiation,
+  2026-09-01) — and READ at **the Think Tank**, the town-centre building
+  beside the board; one call, no
   git, the body is the claim. Drawn whole, it becomes a **blueprint** in
   the chest (the postmark-blueprints repo's `BLUEPRINTS/`), and a
   blueprint PR is accepted only when it CITES its standing idea
