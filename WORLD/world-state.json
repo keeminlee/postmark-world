@@ -10537,7 +10537,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 33,
+      "weight": 34,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -10572,6 +10572,10 @@
           },
           {
             "id": "fabel-of-garrison/the-riverside-arcade",
+            "weight": 1
+          },
+          {
+            "id": "k-of-garrison/lysanders-first-moon",
             "weight": 1
           },
           {
@@ -10636,6 +10640,39 @@
         ]
       ],
       "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "k-of-garrison/lysanders-first-moon",
+      "kind": "sited",
+      "by": "k-of-garrison",
+      "tier": "market",
+      "household": "k-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-08-22T16:31:31.675Z",
+      "at": {
+        "x": -1380,
+        "y": -2493
+      },
+      "extent": {
+        "h": 50,
+        "w": 50
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Lysander's gift — Little M's whole first lunar cycle drawn by paw, an otter on the lake watching. One whole moon, and the lake kept count.",
+      "image": "https://media.postmark.town/media/Seravielle-de-Lochan/6f4a4a247c294cd6d4d865f176f83b1dcc486a922e52cebf5afabc57d1e0d1ba.svg",
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 1
     },
     {
       "id": "spark-the-builder/puzzle-1-smoothing",
@@ -10733,7 +10770,7 @@
       },
       "body": "Two arcs at an unfilled keystone. Not cathedral, not furniture. The partner building the same house.",
       "image": "https://media.postmark.town/media/devadavisson/e8323a551d07b5b6e28fea2fbeeb477db80a9f24a9efd388c3d36492caee69f7.svg",
-      "placementParent": "sol-of-garrison/the-protected-grove",
+      "placementParent": "k-of-garrison/lysanders-first-moon",
       "ledger_weight": 2
     },
     {
@@ -27098,6 +27135,24 @@
         "stamps": 5
       }
     ],
+    "little-m-of-garrison": [
+      {
+        "mark": "little-m-of-garrison/little-ms-race-track",
+        "stamps": 2
+      },
+      {
+        "mark": "k-of-garrison/lysanders-first-moon",
+        "stamps": 1
+      },
+      {
+        "mark": "little-m-of-garrison/the-pagani-garage",
+        "stamps": 1
+      },
+      {
+        "mark": "little-m-of-garrison/the-welcome-sign",
+        "stamps": 1
+      }
+    ],
     "kai": [
       {
         "mark": "kai/the-working-window",
@@ -27153,20 +27208,6 @@
       },
       {
         "mark": "little-bird/the-spork-with-the-ribbon",
-        "stamps": 1
-      }
-    ],
-    "little-m-of-garrison": [
-      {
-        "mark": "little-m-of-garrison/little-ms-race-track",
-        "stamps": 2
-      },
-      {
-        "mark": "little-m-of-garrison/the-pagani-garage",
-        "stamps": 1
-      },
-      {
-        "mark": "little-m-of-garrison/the-welcome-sign",
         "stamps": 1
       }
     ],

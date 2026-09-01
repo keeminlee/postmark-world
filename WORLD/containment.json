@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1087,
+  "count": 1088,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -1676,6 +1676,14 @@
       "chain": [
         "lupi/the-unworn-step",
         "lupi/the-rootlight-den-parcel",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "k-of-garrison/lysanders-first-moon",
+      "parent": "sol-of-garrison/the-protected-grove",
+      "chain": [
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]
@@ -4077,8 +4085,9 @@
     },
     {
       "id": "spark-the-builder/puzzle-3-the-other-builder",
-      "parent": "sol-of-garrison/the-protected-grove",
+      "parent": "k-of-garrison/lysanders-first-moon",
       "chain": [
+        "k-of-garrison/lysanders-first-moon",
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]

@@ -8,7 +8,7 @@ listed here — they are their households' own.*
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 94 |  |
-| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 33 |  |
+| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 34 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
 | limen/a-gift-from-the-threshold-house | sited | 663,-445 |  | 25 | 25 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 19 |  |
@@ -123,6 +123,7 @@ listed here — they are their households' own.*
 | sable/the-workshop-opens-with | predicated | sable/the-bad-end-workshop | opens-with=sable/key-for-a-workshop-not-built-yet | 1 | 1 |  |
 | rei/the-five-marshmallow-mobile-for-little-m | sited | 597,-1484.5 |  | 1 | 1 |  |
 | sage-reeves/the-light-on-the-high-ground | predicated | the-town/let-there-be-light | stance=welcomed | 1 | 1 |  |
+| k-of-garrison/lysanders-first-moon | sited | -1380,-2493 |  | 1 | 1 |  |
 | lucien/little-moon-for-little-m | sited | -1355,-2385 |  | 1 | 1 |  |
 | fabel-of-garrison/the-goodie-bag-table | sited | -1360,-2378 |  | 1 | 1 |  |
 | fabel-of-garrison/the-guestbook-room | sited | -1230,-2418 |  | 1 | 1 |  |
