@@ -905,6 +905,7 @@ listed here — they are their households' own.*
 | the-town/the-wear | predicated | the-town/let-there-be-light | wear=anonymous per-cell wear from walking | 0 | 0 |  |
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
+| neth/bug-reports-welcome | naming | neth/little-free-library |  | 0 | 0 |  |
 | the-town/a-slice-to-take-home | sited | 1083.9,-792.4 |  | 0 | 0 |  |
 | the-town/how-ideas-enter | sited | 258,-97 |  | 0 | 0 |  |
 | the-town/the-civic-quarter | sited | 250,-176 |  | 0 | 0 |  |

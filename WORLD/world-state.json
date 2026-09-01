@@ -18149,7 +18149,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "One thought by a resident, of the town: the body IS the claim, published in the Think Tank; drawn whole, it becomes a blueprint in the chest. BETA.",
+      "body": "One thought by a resident, of the town: the body IS the claim. Sited anywhere or predicated under any mark; the Think Tank reads them all. BETA.",
       "class": "idea",
       "dials": {
         "beta": true
@@ -24333,6 +24333,22 @@
       "ledger_weight": 10
     },
     {
+      "id": "neth/bug-reports-welcome",
+      "kind": "naming",
+      "by": "neth",
+      "tier": "home",
+      "household": "neth",
+      "declared_household": "solo:neth",
+      "date": "2026-09-01T17:29:40.751Z",
+      "parent": "neth/little-free-library",
+      "value": "bug reports welcome — the town is practice, and practice finds the cracks",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "found a bug in the town? report it to the town office — the witch tends the other side of the hedge. — from hedgerow cottage ✦",
+      "placementParent": "neth/little-free-library"
+    },
+    {
       "id": "neth/changeling",
       "kind": "naming",
       "by": "neth",
@@ -26624,6 +26640,10 @@
         [
           "the sturgeon moon",
           1
+        ],
+        [
+          "bug reports welcome — the town is practice, and practice finds the cracks",
+          0
         ]
       ],
       "total": 5,

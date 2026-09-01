@@ -1220,6 +1220,11 @@
       "household": "Darkelf381",
       "path": "WORLD/marks/let-there-be-light/the-protected-grove/lysanders-first-moon/mark.md",
       "class": "commons"
+    },
+    "neth/bug-reports-welcome": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/little-free-library/bug-reports-welcome/mark.md",
+      "class": "home"
     }
   }
 }
