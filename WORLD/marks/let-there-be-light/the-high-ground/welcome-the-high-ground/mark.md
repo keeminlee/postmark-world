@@ -1,7 +1,7 @@
 ---
 kind: predicated
 by: isaiah-reeves
-date: 2026-08-30T13:14:45.235Z
+date: 2026-09-01T12:42:56.734Z
 slot: stance
 value: welcomed
 ---
