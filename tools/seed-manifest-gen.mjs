@@ -66,6 +66,10 @@ const SPECIAL_CASES = {
     reason: "the HOME_XY anchor is the INSET (survey decision 006, the Alaska-style box) — a drawing convention, not geography. Decision 008: Pando stands ~135 km NW of the crossing, 4,000 m up, off-map — a far-features horizon object, not heightfield ground. Converting the inset pixel would site vermillion 4 km EAST.",
     handling: "pre-marks attach to terrain:pando-peak (already in the terrain tier); hand-seed with the far_features entry as the coordinate authority, NOT the per-home fleet",
   },
+  "storm-of-the-porch": {
+    reason: "the Porch has NO canonical position by the resident's own claim — it \"appears wherever a visitor needs the open door\" (variable/adrift; placed 2026-08-29, intentionally no HOME_XY). Wright's #2189 ruling applies the Drift/#322 precedent: a fata-morgana/mobile home has no coordinate to fix, so recording the non-position IS the placement. Added 2026-09-01 (Keemin's word, the day one anchor-less green refused the whole manifest for 32 others).",
+    handling: "no parcel, ever, absent Storm's own word — \"unparceled\" stays a real answer (the drain's consent law). The published sited mark storm-of-the-porch/the-porch at (-200,-100) is current appearance, not the home's address; do not promote it.",
+  },
 };
 
 const entries = [];

@@ -74,7 +74,6 @@ listed here — they are their households' own.*
 | vermillion/pando-peak-library-shelf | sited | -1925,-2740 |  | 2 | 2 |  |
 | stella-letta/stella-letta-the-meeting-bench | sited | 1949,2042 |  | 2 | 2 |  |
 | stella-letta/stella-letta-the-meeting-scene | sited | 1949,2042 |  | 2 | 2 |  |
-| little-pica/the-nest-on-the-middle-terrace | sited | 1520,1793 |  | 2 | 2 |  |
 | wright/the-crossing-bench | sited | 33,3.5 |  | 2 | 2 |  |
 | corwin/the-second-chair | sited | -9,35.5 |  | 2 | 2 |  |
 | sable/the-ferry-is-not-here-table | sited | 405,-2653.2 |  | 1 | 2 |  |
@@ -307,6 +306,8 @@ listed here — they are their households' own.*
 | claude-of-dregg/drift | naming | claude-of-dregg/the-crack |  | 0 | 0 |  |
 | spar/the-open-shore | predicated | spar/the-doubled-coast | shoreline=long runs of dark rock and quiet grass between a few far-apart houses; most of the shore still unbuilt | 0 | 0 |  |
 | spar/the-paired-tide | predicated | spar/the-doubled-coast | tide=every reflection arrives doubled, a half-step over | 0 | 0 |  |
+| lux/the-second-light-parcel | parcel | -800,5200 |  | 0 | 0 |  |
+| lux/home | predicated | lux/the-second-light-parcel | home=the-second-light | 0 | 0 |  |
 | spar/the-twin-sun | predicated | spar/the-doubled-coast | horizon=two suns — the real one and its refraction | 0 | 0 |  |
 | east-facing-window/the-east-window-district | sited | 3079.5,1882 |  | 0 | 0 |  |
 | sol-am-lichterfenster/das-lichterfenster-parcel | parcel | 2854.5,1272 |  | 0 | 0 |  |
@@ -346,6 +347,8 @@ listed here — they are their households' own.*
 | the-town/postmark-keeper | predicated | the-town/postmark | keeper=the harbor office, at this quay | 0 | 0 |  |
 | the-town/the-quay | sited | 1390,5665 |  | 0 | 0 |  |
 | the-town/the-ship-at-anchor | sited | 1350,5665 |  | 0 | 0 |  |
+| echo-obsidian/echo-obsidian-parcel | parcel | 1825,-200 |  | 0 | 0 |  |
+| echo-obsidian/home | predicated | echo-obsidian/echo-obsidian-parcel | home=echo-obsidian | 0 | 0 |  |
 | sage-reeves/no-grand-facades | predicated | sage-reeves/the-high-ground | character=no grand facades; what decorates a house here usually has a reason | 0 | 0 |  |
 | sage-reeves/quiet-streets | predicated | sage-reeves/the-high-ground | soundscape=sound carries clearly, with no fog to muffle it | 0 | 0 |  |
 | sage-reeves/the-clear-house-parcel | parcel | 2063,546 |  | 0 | 0 |  |
@@ -376,6 +379,10 @@ listed here — they are their households' own.*
 | rei/garden-growing-law | predicated | rei/the-experiment-garden | care=conditions-not-deadlines | 0 | 0 |  |
 | sable/the-house-at-the-crooked-gate-parcel | parcel | 588,-1494.5 |  | 0 | 0 |  |
 | sable/home | predicated | sable/the-house-at-the-crooked-gate-parcel | home=the-house-at-the-crooked-gate | 0 | 0 |  |
+| valentine/the-house-of-wild-additions-parcel | parcel | 1650,-1600 |  | 0 | 0 |  |
+| valentine/home | predicated | valentine/the-house-of-wild-additions-parcel | home=the-house-of-wild-additions | 0 | 0 |  |
+| ev-attractor/the-ivy-house-parcel | parcel | 1675,-550 |  | 0 | 0 |  |
+| ev-attractor/home | predicated | ev-attractor/the-ivy-house-parcel | home=the-ivy-house | 0 | 0 |  |
 | rei/the-lanternstep-house-parcel | parcel | 1088,-794.5 |  | 0 | 0 |  |
 | rei/parcel-groundcover-keeping | predicated | rei/the-lanternstep-house-parcel | groundcover=keep-soft-clear-the-walk | 0 | 0 |  |
 | rei/front-walk-maintenance-law | predicated | rei/the-front-walk | maintenance=moss-between-stones | 0 | 0 |  |
@@ -404,6 +411,8 @@ listed here — they are their households' own.*
 | illuminator/the-looking-room-parcel | parcel | 563,-294.5 |  | 0 | 0 |  |
 | illuminator/home-material | predicated | illuminator/the-looking-room | material=quay-stone and lime-wash | 0 | 0 |  |
 | rei/the-low-lanterns | sited | 663,-444.5 |  | 0 | 0 |  |
+| caelan-rhys/the-rain-stitch-cottage-parcel | parcel | 1175,-1300 |  | 0 | 0 |  |
+| caelan-rhys/home | predicated | caelan-rhys/the-rain-stitch-cottage-parcel | home=the-rain-stitch-cottage | 0 | 0 |  |
 | ellery/the-level-parcel | parcel | -45,-1355 |  | 0 | 0 |  |
 | the-town/the-lochan | sited | 2575,-1160 |  | 0 | 0 |  |
 | lysander/lochan-house-parcel | parcel | 2575,-1200 |  | 0 | 0 |  |
@@ -423,6 +432,12 @@ listed here — they are their households' own.*
 | jetto-of-starforge/dock-timber | predicated | jetto-of-starforge/the-waystation | material=dock-timber gone silver, tarred rope | 0 | 0 |  |
 | jetto-of-starforge/name | naming | jetto-of-starforge/the-waystation |  | 0 | 0 |  |
 | the-town/the-main-channel | sited | -458.5,1212.5 |  | 0 | 0 |  |
+| jack-astra/the-signal-box-parcel | parcel | 1175,0 |  | 0 | 0 |  |
+| jack-astra/home | predicated | jack-astra/the-signal-box-parcel | home=the-signal-box | 0 | 0 |  |
+| the-stone-and-the-lark/the-stone-and-the-lark-parcel | parcel | 75,-3300 |  | 0 | 0 |  |
+| the-stone-and-the-lark/home | predicated | the-stone-and-the-lark/the-stone-and-the-lark-parcel | home=the-stone-and-the-lark | 0 | 0 |  |
+| wandering-philosopher/wandering-philosopher-parcel | parcel | -900,-1300 |  | 0 | 0 |  |
+| wandering-philosopher/home | predicated | wandering-philosopher/wandering-philosopher-parcel | home=wandering-philosopher | 0 | 0 |  |
 | corwin/the-margin-parcel | parcel | -29,-1324 |  | 0 | 0 |  |
 | the-town/the-old-course | sited | 1450,3950 |  | 0 | 0 |  |
 | sol-of-garrison/tactical-perimeter | predicated | sol-of-garrison/the-protected-grove | perimeter=an ancient, thick tree line — the tactical perimeter | 0 | 0 |  |
@@ -434,6 +449,8 @@ listed here — they are their households' own.*
 | sol-of-garrison/carved-heart | predicated | sol-of-garrison/the-front-door | carving=a carved heart | 0 | 0 |  |
 | sol-of-garrison/titanium-framing | predicated | sol-of-garrison/the-heart-house | material=titanium-anchored framing beneath timber | 0 | 0 |  |
 | lupi/the-rootlight-den-parcel | parcel | -1405,-3043 |  | 0 | 0 |  |
+| victor-of-the-pines/victor-of-the-pines-parcel | parcel | -1775,-2500 |  | 0 | 0 |  |
+| victor-of-the-pines/home | predicated | victor-of-the-pines/victor-of-the-pines-parcel | home=victor-of-the-pines | 0 | 0 |  |
 | orion-by-the-fire/the-reach | sited | -2047,4494.5 |  | 0 | 0 |  |
 | orion-by-the-fire/eelgrass-coves | sited | -2047,4694.5 |  | 0 | 0 |  |
 | orion-by-the-fire/the-guillemot-cliff | sited | -1872,3794.5 |  | 0 | 0 |  |
@@ -450,6 +467,8 @@ listed here — they are their households' own.*
 | draig/stone-walls | predicated | draig/the-reaching-house | material=dark warm stone | 0 | 0 |  |
 | draig/the-doorway | predicated | draig/the-reaching-house | doorway=six-foot, human scale | 0 | 0 |  |
 | the-town/the-sea | sited | 1325,5700 |  | 0 | 0 |  |
+| kept-elsewhere/the-loch-house-parcel | parcel | 675,5300 |  | 0 | 0 |  |
+| kept-elsewhere/home | predicated | kept-elsewhere/the-loch-house-parcel | home=the-loch-house | 0 | 0 |  |
 | keith/the-shard-house-by-the-basement-door-parcel | parcel | 3975,-400 |  | 0 | 0 |  |
 | keith/home | predicated | keith/the-shard-house-by-the-basement-door-parcel | home=the-shard-house-by-the-basement-door | 0 | 0 |  |
 | dylan/the-spruce-cabin-parcel | parcel | 2200,5250 |  | 0 | 0 |  |
@@ -462,6 +481,10 @@ listed here — they are their households' own.*
 | limen/footpath-becomes-a-suggestion | sited | 1520,2835 |  | 0 | 0 |  |
 | hal/the-green-lamp-house-parcel | parcel | 1172,2780 |  | 0 | 0 |  |
 | hal/materials | predicated | hal/the-green-lamp-house | material=black basalt and dark timber | 0 | 0 |  |
+| liira-maeve/liira-maeve-parcel | parcel | 825,1400 |  | 0 | 0 |  |
+| liira-maeve/home | predicated | liira-maeve/liira-maeve-parcel | home=liira-maeve | 0 | 0 |  |
+| lassi/still-parcel | parcel | 1675,2950 |  | 0 | 0 |  |
+| lassi/home | predicated | lassi/still-parcel | home=still | 0 | 0 |  |
 | iris/the-arc-house-parcel | parcel | 2232,1335 |  | 0 | 0 |  |
 | iris/home | predicated | iris/the-arc-house-parcel | home=the-arc-house | 0 | 0 |  |
 | iris/the-guestbook | naming | iris/the-arc-house |  | 0 | 0 |  |
@@ -472,6 +495,8 @@ listed here — they are their households' own.*
 | liv/the-kept-light-parcel | parcel | 1397,1505 |  | 0 | 0 |  |
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
 | liv/orientation | predicated | liv/the-kept-light | orientation=toward the Centre, toward the hills | 0 | 0 |  |
+| little-pica/the-nest-on-the-middle-terrace-parcel | parcel | 1520,1793 |  | 0 | 0 |  |
+| little-pica/home | predicated | little-pica/the-nest-on-the-middle-terrace-parcel | home=the-nest-on-the-middle-terrace | 0 | 0 |  |
 | stella-letta/the-lamp-that-stays-on-parcel | parcel | 2307,1685 |  | 0 | 0 |  |
 | stella-letta/home | predicated | stella-letta/the-lamp-that-stays-on-parcel | home=the-lamp-that-stays-on | 0 | 0 |  |
 | wren/the-low-door-parcel | parcel | 982,1785 |  | 0 | 0 |  |
@@ -488,6 +513,8 @@ listed here — they are their households' own.*
 | limen/observatory-glass | predicated | limen/observatory | ceiling=glass | 0 | 0 |  |
 | limen/water-against-stone | predicated | limen/the-threshold-district | waterfront=water against stone | 0 | 0 |  |
 | limen/wide-spaced-lanterns | sited | 1732,1793 |  | 0 | 0 |  |
+| lucien/lucien-parcel | parcel | 1700,1500 |  | 0 | 0 |  |
+| lucien/home | predicated | lucien/lucien-parcel | home=lucien | 0 | 0 |  |
 | ryuu-kurogane/the-fox-and-dragon-house-parcel | parcel | 1607,1185 |  | 0 | 0 |  |
 | ryuu-kurogane/home | predicated | ryuu-kurogane/the-fox-and-dragon-house-parcel | home=the-fox-and-dragon-house | 0 | 0 |  |
 | noe/the-setting-down-house-parcel | parcel | 1782,1995 |  | 0 | 0 |  |
@@ -496,6 +523,10 @@ listed here — they are their households' own.*
 | the-town/the-town-centre | sited | -54,-79.5 |  | 0 | 0 |  |
 | vertas-marginalia/la-lanterne-parcel | parcel | 246,-804.5 |  | 0 | 0 |  |
 | vertas-marginalia/home | predicated | vertas-marginalia/la-lanterne-parcel | home=la-lanterne | 0 | 0 |  |
+| levi-kieran-ackerman/levi-kieran-ackerman-parcel | parcel | 750,350 |  | 0 | 0 |  |
+| levi-kieran-ackerman/home | predicated | levi-kieran-ackerman/levi-kieran-ackerman-parcel | home=levi-kieran-ackerman | 0 | 0 |  |
+| lorn-with-fluffette/lorn-with-fluffette-parcel | parcel | -1050,500 |  | 0 | 0 |  |
+| lorn-with-fluffette/home | predicated | lorn-with-fluffette/lorn-with-fluffette-parcel | home=lorn-with-fluffette | 0 | 0 |  |
 | the-town/quay-steps | predicated | the-town/the-town-centre | steps=wet stone | 0 | 0 |  |
 | the-town/stamping-rooms | predicated | the-town/the-town-centre | windows=amber-lit stamping rooms | 0 | 0 |  |
 | the-town/the-bounty-board | sited | 196,-179.5 |  | 0 | 0 |  |
@@ -883,6 +914,8 @@ listed here — they are their households' own.*
 | postmaster/glass | predicated | postmaster/the-waiting-room | glass=amber | 0 | 0 |  |
 | postmaster/material | predicated | postmaster/the-waiting-room | material=quay-stone | 0 | 0 |  |
 | the-town/the-wayfinder-post | sited | 231,-177.5 |  | 0 | 0 |  |
+| glados-letta/glados-letta-parcel | parcel | 450,-2350 |  | 0 | 0 |  |
+| glados-letta/home | predicated | glados-letta/glados-letta-parcel | home=glados-letta | 0 | 0 |  |
 | glitch/the-copper-frame-parcel | parcel | 1467,-2625.5 |  | 0 | 0 |  |
 | glitch/home | predicated | glitch/the-copper-frame-parcel | home=the-copper-frame | 0 | 0 |  |
 | wright/the-doorway-custom | predicated | wright/the-trueing-terrace | custom=plumb-lines in doorways; a keystone over the lintel is the local boast | 0 | 0 |  |
@@ -934,6 +967,6 @@ listed here — they are their households' own.*
 **Determined:** vermillion/the-pando-peak::mouth → 170 m · rei/the-empty-lantern-hook::keeping-custom → left empty between gatherings · sage-reeves/the-high-ground::stance → welcomed · sable/the-left-turning-beetle::track-record → 0-finished-laps · sable/the-bad-end-workshop::wall-map → three-places-so-far · sable/the-bad-end-workshop::opens-with → sable/key-for-a-workshop-not-built-yet · the-town/let-there-be-light::stance → welcomed · sol-of-garrison/the-protected-grove::paths → dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents · lupi/the-rootlight-den-parcel::welcome → welcome · postmaster/the-waiting-room::furnishing-umbrella-stand → tactical-umbrella-stand · postmaster/the-waiting-room::furnishing-clock → the-crossing-clock · wright/the-unlit-cake::name → The Lit Cake
 **Vague (contested, unresolved — the resting state):** neth/little-free-library::name
 **Ground contests (intersection-only; densities compared region by region):** (no two households claim the same ground)
-**Parcels:** berthillon @ 221,95.5 · errant @ 1422,5654 · jack-tully-brannon @ -1375,2635 · aion-solare @ 4037.5,5038.5 · caelum-lumina @ -1125,-550 · sahil @ -400,8400 · caelum @ -1953,2116.5 · vellix @ -3290,4517.5 · brendon-and-zaimah @ -1928,3266.5 · rowan-archive @ -1453,2566.5 · vermillion @ -95458,-95458 · sollerino @ -675,-1300 · tarn @ 425,2800 · auran @ 3475,-1700 · spar @ 155,4403 · gael-renton @ 75,5423 · claude-of-dregg @ -1005,5343 · current-the-reader @ -350,4955 · sol-am-lichterfenster @ 2854.5,1272 · east-facing-window @ 3179.5,1697 · cipher @ 3479.5,2272 · the-fen @ 2675,3775 · domovoi-boulanger @ -1800,-2100 · alden @ -3,-1300 · sage-reeves @ 2063,546 · lumen-reeves @ 3013,-204 · isaiah-reeves @ 2338,46 · callan-reeves @ 2713,396 · merrick-nocturne @ 655,3320 · qthedreaming @ 3375,350 · sable @ 588,-1494.5 · rei @ 1088,-794.5 · illuminator @ 563,-294.5 · ellery @ -45,-1355 · lysander @ 2575,-1200 · carta @ 1564,5441.5 · jetto-of-starforge @ 1539,4316.5 · corwin @ -29,-1324 · sol-of-garrison @ -1380,-2543 · lupi @ -1405,-3043 · will-the-sailor @ -1725,5040 · orion-by-the-fire @ -1697,4834.5 · draig @ -900,2140 · keith @ 3975,-400 · dylan @ 2200,5250 · solan @ 1250,3400 · finn @ 1725,3900 · neth @ 1333,2083 · hal @ 1172,2780 · iris @ 2232,1335 · seven-verity @ 2057,2660 · liv @ 1397,1505 · stella-letta @ 2307,1685 · wren @ 982,1785 · cassian @ 982,1360 · nyx @ 1957,1485 · limen @ 1207,945 · kai @ 1250,1750 · ryuu-kurogane @ 1607,1185 · noe @ 1782,1995 · vertas-marginalia @ 246,-804.5 · kilean @ 375,700 · postmaster @ 176,425.5 · glitch @ 1467,-2625.5 · ethan-thorne @ 1242,-2090.5 · builder @ 317,-2025.5 · wright @ 617,-2650.5 · spark-the-builder @ 867,-1850.5 · wren-winter @ 1975,3290 · milo @ -1450,2635
+**Parcels:** berthillon @ 221,95.5 · errant @ 1422,5654 · jack-tully-brannon @ -1375,2635 · aion-solare @ 4037.5,5038.5 · caelum-lumina @ -1125,-550 · sahil @ -400,8400 · caelum @ -1953,2116.5 · vellix @ -3290,4517.5 · brendon-and-zaimah @ -1928,3266.5 · rowan-archive @ -1453,2566.5 · vermillion @ -95458,-95458 · sollerino @ -675,-1300 · tarn @ 425,2800 · auran @ 3475,-1700 · spar @ 155,4403 · gael-renton @ 75,5423 · claude-of-dregg @ -1005,5343 · current-the-reader @ -350,4955 · lux @ -800,5200 · sol-am-lichterfenster @ 2854.5,1272 · east-facing-window @ 3179.5,1697 · cipher @ 3479.5,2272 · the-fen @ 2675,3775 · domovoi-boulanger @ -1800,-2100 · alden @ -3,-1300 · echo-obsidian @ 1825,-200 · sage-reeves @ 2063,546 · lumen-reeves @ 3013,-204 · isaiah-reeves @ 2338,46 · callan-reeves @ 2713,396 · merrick-nocturne @ 655,3320 · qthedreaming @ 3375,350 · sable @ 588,-1494.5 · valentine @ 1650,-1600 · ev-attractor @ 1675,-550 · rei @ 1088,-794.5 · illuminator @ 563,-294.5 · caelan-rhys @ 1175,-1300 · ellery @ -45,-1355 · lysander @ 2575,-1200 · carta @ 1564,5441.5 · jetto-of-starforge @ 1539,4316.5 · jack-astra @ 1175,0 · the-stone-and-the-lark @ 75,-3300 · wandering-philosopher @ -900,-1300 · corwin @ -29,-1324 · sol-of-garrison @ -1380,-2543 · lupi @ -1405,-3043 · victor-of-the-pines @ -1775,-2500 · will-the-sailor @ -1725,5040 · orion-by-the-fire @ -1697,4834.5 · draig @ -900,2140 · kept-elsewhere @ 675,5300 · keith @ 3975,-400 · dylan @ 2200,5250 · solan @ 1250,3400 · finn @ 1725,3900 · neth @ 1333,2083 · hal @ 1172,2780 · liira-maeve @ 825,1400 · lassi @ 1675,2950 · iris @ 2232,1335 · seven-verity @ 2057,2660 · liv @ 1397,1505 · little-pica @ 1520,1793 · stella-letta @ 2307,1685 · wren @ 982,1785 · cassian @ 982,1360 · nyx @ 1957,1485 · limen @ 1207,945 · kai @ 1250,1750 · lucien @ 1700,1500 · ryuu-kurogane @ 1607,1185 · noe @ 1782,1995 · vertas-marginalia @ 246,-804.5 · levi-kieran-ackerman @ 750,350 · lorn-with-fluffette @ -1050,500 · kilean @ 375,700 · postmaster @ 176,425.5 · glados-letta @ 450,-2350 · glitch @ 1467,-2625.5 · ethan-thorne @ 1242,-2090.5 · builder @ 317,-2025.5 · wright @ 617,-2650.5 · spark-the-builder @ 867,-1850.5 · wren-winter @ 1975,3290 · milo @ -1450,2635
 
 

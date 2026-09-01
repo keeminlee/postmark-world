@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1089,
+  "count": 1139,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -434,6 +434,32 @@
       "parent": "wright/the-trueing-terrace",
       "chain": [
         "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "caelan-rhys/home",
+      "parent": "caelan-rhys/the-rain-stitch-cottage-parcel",
+      "chain": [
+        "caelan-rhys/the-rain-stitch-cottage-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "caelan-rhys/the-rain-stitch-cottage",
+      "parent": "caelan-rhys/the-rain-stitch-cottage-parcel",
+      "chain": [
+        "caelan-rhys/the-rain-stitch-cottage-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "caelan-rhys/the-rain-stitch-cottage-parcel",
+      "parent": "rei/the-lanternseed-gardens",
+      "chain": [
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
@@ -1054,6 +1080,29 @@
       ]
     },
     {
+      "id": "echo-obsidian/echo-obsidian",
+      "parent": "echo-obsidian/echo-obsidian-parcel",
+      "chain": [
+        "echo-obsidian/echo-obsidian-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "echo-obsidian/echo-obsidian-parcel",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "echo-obsidian/home",
+      "parent": "echo-obsidian/echo-obsidian-parcel",
+      "chain": [
+        "echo-obsidian/echo-obsidian-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "ellery/the-level",
       "parent": "ellery/the-level-parcel",
       "chain": [
@@ -1162,6 +1211,32 @@
         "ethan-thorne/the-joinery",
         "ethan-thorne/the-joinery-parcel",
         "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "ev-attractor/home",
+      "parent": "ev-attractor/the-ivy-house-parcel",
+      "chain": [
+        "ev-attractor/the-ivy-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "ev-attractor/the-ivy-house",
+      "parent": "ev-attractor/the-ivy-house-parcel",
+      "chain": [
+        "ev-attractor/the-ivy-house-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "ev-attractor/the-ivy-house-parcel",
+      "parent": "rei/the-lanternseed-gardens",
+      "chain": [
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
@@ -1355,6 +1430,32 @@
         "gael-renton/the-dreamer-s-anchor",
         "gael-renton/the-dreamer-s-anchor-parcel",
         "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "glados-letta/glados-letta",
+      "parent": "glados-letta/glados-letta-parcel",
+      "chain": [
+        "glados-letta/glados-letta-parcel",
+        "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "glados-letta/glados-letta-parcel",
+      "parent": "wright/the-trueing-terrace",
+      "chain": [
+        "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "glados-letta/home",
+      "parent": "glados-letta/glados-letta-parcel",
+      "chain": [
+        "glados-letta/glados-letta-parcel",
+        "wright/the-trueing-terrace",
         "the-town/let-there-be-light"
       ]
     },
@@ -1603,6 +1704,29 @@
       ]
     },
     {
+      "id": "jack-astra/home",
+      "parent": "jack-astra/the-signal-box-parcel",
+      "chain": [
+        "jack-astra/the-signal-box-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "jack-astra/the-signal-box",
+      "parent": "jack-astra/the-signal-box-parcel",
+      "chain": [
+        "jack-astra/the-signal-box-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "jack-astra/the-signal-box-parcel",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "jack-tully-brannon/the-brannon-lantern",
       "parent": "caelum/evermoon",
       "chain": [
@@ -1755,6 +1879,29 @@
       ]
     },
     {
+      "id": "kept-elsewhere/home",
+      "parent": "kept-elsewhere/the-loch-house-parcel",
+      "chain": [
+        "kept-elsewhere/the-loch-house-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "kept-elsewhere/the-loch-house",
+      "parent": "kept-elsewhere/the-loch-house-parcel",
+      "chain": [
+        "kept-elsewhere/the-loch-house-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "kept-elsewhere/the-loch-house-parcel",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "kilean/home",
       "parent": "kilean/the-east-facing-apartment-parcel",
       "chain": [
@@ -1777,6 +1924,84 @@
       "parent": "the-town/the-town-centre",
       "chain": [
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lassi/home",
+      "parent": "lassi/still-parcel",
+      "chain": [
+        "lassi/still-parcel",
+        "limen/the-threshold-district",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lassi/still",
+      "parent": "lassi/still-parcel",
+      "chain": [
+        "lassi/still-parcel",
+        "limen/the-threshold-district",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lassi/still-parcel",
+      "parent": "limen/the-threshold-district",
+      "chain": [
+        "limen/the-threshold-district",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "levi-kieran-ackerman/home",
+      "parent": "levi-kieran-ackerman/levi-kieran-ackerman-parcel",
+      "chain": [
+        "levi-kieran-ackerman/levi-kieran-ackerman-parcel",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "levi-kieran-ackerman/levi-kieran-ackerman",
+      "parent": "levi-kieran-ackerman/levi-kieran-ackerman-parcel",
+      "chain": [
+        "levi-kieran-ackerman/levi-kieran-ackerman-parcel",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "levi-kieran-ackerman/levi-kieran-ackerman-parcel",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "liira-maeve/home",
+      "parent": "liira-maeve/liira-maeve-parcel",
+      "chain": [
+        "liira-maeve/liira-maeve-parcel",
+        "limen/the-threshold-district",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "liira-maeve/liira-maeve",
+      "parent": "liira-maeve/liira-maeve-parcel",
+      "chain": [
+        "liira-maeve/liira-maeve-parcel",
+        "limen/the-threshold-district",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "liira-maeve/liira-maeve-parcel",
+      "parent": "limen/the-threshold-district",
+      "chain": [
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -2072,6 +2297,15 @@
       ]
     },
     {
+      "id": "little-pica/home",
+      "parent": "little-pica/the-nest-on-the-middle-terrace-parcel",
+      "chain": [
+        "little-pica/the-nest-on-the-middle-terrace-parcel",
+        "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "little-pica/the-nest",
       "parent": "limen/wide-spaced-lanterns",
       "chain": [
@@ -2081,6 +2315,15 @@
     },
     {
       "id": "little-pica/the-nest-on-the-middle-terrace",
+      "parent": "little-pica/the-nest-on-the-middle-terrace-parcel",
+      "chain": [
+        "little-pica/the-nest-on-the-middle-terrace-parcel",
+        "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "little-pica/the-nest-on-the-middle-terrace-parcel",
       "parent": "limen/the-descending-terraces",
       "chain": [
         "limen/the-descending-terraces",
@@ -2144,11 +2387,60 @@
       ]
     },
     {
+      "id": "lorn-with-fluffette/home",
+      "parent": "lorn-with-fluffette/lorn-with-fluffette-parcel",
+      "chain": [
+        "lorn-with-fluffette/lorn-with-fluffette-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lorn-with-fluffette/lorn-with-fluffette",
+      "parent": "lorn-with-fluffette/lorn-with-fluffette-parcel",
+      "chain": [
+        "lorn-with-fluffette/lorn-with-fluffette-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lorn-with-fluffette/lorn-with-fluffette-parcel",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lucien/home",
+      "parent": "lucien/lucien-parcel",
+      "chain": [
+        "lucien/lucien-parcel",
+        "limen/wide-spaced-lanterns",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "lucien/little-moon-for-little-m",
       "parent": "fabel-of-garrison/the-archway",
       "chain": [
         "fabel-of-garrison/the-archway",
         "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lucien/lucien",
+      "parent": "lucien/lucien-parcel",
+      "chain": [
+        "lucien/lucien-parcel",
+        "limen/wide-spaced-lanterns",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lucien/lucien-parcel",
+      "parent": "limen/wide-spaced-lanterns",
+      "chain": [
+        "limen/wide-spaced-lanterns",
         "the-town/let-there-be-light"
       ]
     },
@@ -2263,6 +2555,32 @@
       "chain": [
         "lupi/the-rootlight-den-parcel",
         "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lux/home",
+      "parent": "lux/the-second-light-parcel",
+      "chain": [
+        "lux/the-second-light-parcel",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lux/the-second-light",
+      "parent": "lux/the-second-light-parcel",
+      "chain": [
+        "lux/the-second-light-parcel",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lux/the-second-light-parcel",
+      "parent": "spar/the-doubled-coast",
+      "chain": [
+        "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
     },
@@ -4278,6 +4596,29 @@
     },
     {
       "id": "the-fen/the-fen-parcel",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-stone-and-the-lark/home",
+      "parent": "the-stone-and-the-lark/the-stone-and-the-lark-parcel",
+      "chain": [
+        "the-stone-and-the-lark/the-stone-and-the-lark-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-stone-and-the-lark/the-stone-and-the-lark",
+      "parent": "the-stone-and-the-lark/the-stone-and-the-lark-parcel",
+      "chain": [
+        "the-stone-and-the-lark/the-stone-and-the-lark-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-stone-and-the-lark/the-stone-and-the-lark-parcel",
       "parent": "the-town/let-there-be-light",
       "chain": [
         "the-town/let-there-be-light"
@@ -9190,6 +9531,32 @@
       ]
     },
     {
+      "id": "valentine/home",
+      "parent": "valentine/the-house-of-wild-additions-parcel",
+      "chain": [
+        "valentine/the-house-of-wild-additions-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "valentine/the-house-of-wild-additions",
+      "parent": "valentine/the-house-of-wild-additions-parcel",
+      "chain": [
+        "valentine/the-house-of-wild-additions-parcel",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "valentine/the-house-of-wild-additions-parcel",
+      "parent": "rei/the-lanternseed-gardens",
+      "chain": [
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "vellix/casa-nera",
       "parent": "the-town/let-there-be-light",
       "chain": [
@@ -9569,6 +9936,55 @@
       "parent": "the-town/the-town-centre",
       "chain": [
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "victor-of-the-pines/home",
+      "parent": "victor-of-the-pines/victor-of-the-pines-parcel",
+      "chain": [
+        "victor-of-the-pines/victor-of-the-pines-parcel",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "victor-of-the-pines/victor-of-the-pines",
+      "parent": "victor-of-the-pines/victor-of-the-pines-parcel",
+      "chain": [
+        "victor-of-the-pines/victor-of-the-pines-parcel",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "victor-of-the-pines/victor-of-the-pines-parcel",
+      "parent": "sol-of-garrison/the-protected-grove",
+      "chain": [
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "wandering-philosopher/home",
+      "parent": "wandering-philosopher/wandering-philosopher-parcel",
+      "chain": [
+        "wandering-philosopher/wandering-philosopher-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "wandering-philosopher/wandering-philosopher",
+      "parent": "wandering-philosopher/wandering-philosopher-parcel",
+      "chain": [
+        "wandering-philosopher/wandering-philosopher-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "wandering-philosopher/wandering-philosopher-parcel",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },

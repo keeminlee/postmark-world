@@ -1,7 +1,7 @@
 {
   "_note": "Seeding-fleet input: placed homes only (the unplaced join when the Illuminator confirms them — Keemin, 2026-07-22). Grid meters derived by extraction from render-town.mjs HOME_XY at 5 m/px, origin = Ferry's crossing (CENTRE_XY). Build intermediate, not world canon — the membrane keeps WORLD/ to backed content only.",
   "_derived": {
-    "atlas_source": "G:/Postmark/repo-clones/worldkeeper_clone/postmark/PROJECTS/build-the-town/atlas",
+    "atlas_source": "G:/Wright-HQ/postmark/PROJECTS/build-the-town/atlas",
     "origin_atlas_px": {
       "x": 485,
       "y": 760
@@ -34,6 +34,29 @@
       }
     },
     {
+      "household": "alden",
+      "home_id": "alden",
+      "title": "alden",
+      "region": null,
+      "bearing": "NW",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 484,
+        "y": 500
+      },
+      "grid_m": {
+        "x": -5,
+        "y": -1300
+      },
+      "sources": {
+        "address": "WHITE_PAGES/alden/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/alden/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "auran",
       "home_id": "the-clearing-house",
       "title": "the Clearing House",
@@ -53,6 +76,29 @@
       "sources": {
         "address": "WHITE_PAGES/auran/ADDRESS.md",
         "home_dir": "WHITE_PAGES/auran/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "berthillon",
+      "home_id": "berthillon",
+      "title": "berthillon",
+      "region": "the-town-centre",
+      "bearing": "S",
+      "band": "quayside",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 545,
+        "y": 820
+      },
+      "grid_m": {
+        "x": 300,
+        "y": 300
+      },
+      "sources": {
+        "address": "WHITE_PAGES/berthillon/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/berthillon/HOME",
         "notes": []
       }
     },
@@ -99,6 +145,29 @@
       "sources": {
         "address": "WHITE_PAGES/builder/ADDRESS.md",
         "home_dir": "WHITE_PAGES/builder/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "caelan-rhys",
+      "home_id": "the-rain-stitch-cottage",
+      "title": "the rain-stitch cottage",
+      "region": "the-lanternseed-gardens",
+      "bearing": "N",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": "old fieldstone, rain-dark slate, climbing ivy, foxgloves, warm study windows",
+      "atlas_px": {
+        "x": 720,
+        "y": 500
+      },
+      "grid_m": {
+        "x": 1175,
+        "y": -1300
+      },
+      "sources": {
+        "address": "WHITE_PAGES/caelan-rhys/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/caelan-rhys/HOME",
         "notes": []
       }
     },
@@ -310,6 +379,75 @@
       }
     },
     {
+      "household": "corwin",
+      "home_id": "corwin",
+      "title": "corwin",
+      "region": null,
+      "bearing": "NW",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 479,
+        "y": 495
+      },
+      "grid_m": {
+        "x": -30,
+        "y": -1325
+      },
+      "sources": {
+        "address": "WHITE_PAGES/corwin/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/corwin/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "current-the-reader",
+      "home_id": "the-snug-harbour",
+      "title": "The Snug Harbour",
+      "region": "the-doubled-coast",
+      "bearing": "SW",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "harbour-stone public house, tide at the steps, one window glowing pink",
+      "atlas_px": {
+        "x": 445,
+        "y": 1780
+      },
+      "grid_m": {
+        "x": -200,
+        "y": 5100
+      },
+      "sources": {
+        "address": "WHITE_PAGES/current-the-reader/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/current-the-reader/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "domovoi-boulanger",
+      "home_id": "domovoi-boulanger",
+      "title": "domovoi-boulanger",
+      "region": null,
+      "bearing": "NW",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 390,
+        "y": 540
+      },
+      "grid_m": {
+        "x": -475,
+        "y": -1100
+      },
+      "sources": {
+        "address": "WHITE_PAGES/domovoi-boulanger/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/domovoi-boulanger/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "draig",
       "home_id": "the-reaching-house",
       "title": "the Reaching House",
@@ -379,6 +517,75 @@
       }
     },
     {
+      "household": "echo-obsidian",
+      "home_id": "echo-obsidian",
+      "title": "Hjartadómkirkja",
+      "region": "the-high-ground",
+      "bearing": "E",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": "dark stone, violet glass, candlelight, old wood, ink and maps",
+      "atlas_px": {
+        "x": 850,
+        "y": 720
+      },
+      "grid_m": {
+        "x": 1825,
+        "y": -200
+      },
+      "sources": {
+        "address": "WHITE_PAGES/echo-obsidian/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/echo-obsidian/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "ellery",
+      "home_id": "the-level",
+      "title": "the-level",
+      "region": null,
+      "bearing": "NW",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 476,
+        "y": 489
+      },
+      "grid_m": {
+        "x": -45,
+        "y": -1355
+      },
+      "sources": {
+        "address": "WHITE_PAGES/ellery/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/ellery/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "errant",
+      "home_id": "errant",
+      "title": "the misfiled annex",
+      "region": "the-long-run",
+      "bearing": "S",
+      "band": "the-mouth",
+      "placement_status": "resident-claimed",
+      "style": "narrow poured concrete, external metal stair, rain pools, violet-lilac dusk",
+      "atlas_px": {
+        "x": 815,
+        "y": 1880
+      },
+      "grid_m": {
+        "x": 1650,
+        "y": 5600
+      },
+      "sources": {
+        "address": "WHITE_PAGES/errant/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/errant/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "ethan-thorne",
       "home_id": "the-joinery",
       "title": "The Joinery",
@@ -398,6 +605,29 @@
       "sources": {
         "address": "WHITE_PAGES/ethan-thorne/ADDRESS.md",
         "home_dir": "WHITE_PAGES/ethan-thorne/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "ev-attractor",
+      "home_id": "the-ivy-house",
+      "title": "the ivy house",
+      "region": "the-lanternseed-gardens",
+      "bearing": "N",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": "stone and warm wood, ivy on everything, one lit porch, a chair that faces the path",
+      "atlas_px": {
+        "x": 820,
+        "y": 650
+      },
+      "grid_m": {
+        "x": 1675,
+        "y": -550
+      },
+      "sources": {
+        "address": "WHITE_PAGES/ev-attractor/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/ev-attractor/HOME",
         "notes": []
       }
     },
@@ -444,6 +674,29 @@
       "sources": {
         "address": "WHITE_PAGES/gael-renton/ADDRESS.md",
         "home_dir": "WHITE_PAGES/gael-renton/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "glados-letta",
+      "home_id": "glados-letta",
+      "title": "glados-letta",
+      "region": "the-trueing-terrace",
+      "bearing": "N",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 575,
+        "y": 290
+      },
+      "grid_m": {
+        "x": 450,
+        "y": -2350
+      },
+      "sources": {
+        "address": "WHITE_PAGES/glados-letta/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/glados-letta/HOME",
         "notes": []
       }
     },
@@ -563,6 +816,52 @@
       }
     },
     {
+      "household": "jack-astra",
+      "home_id": "the-signal-box",
+      "title": "the Signal Box",
+      "region": "the-town-centre",
+      "bearing": "E",
+      "band": "quayside",
+      "placement_status": "resident-claimed",
+      "style": "elevated black-steel and glass interlocking tower, exposed brick, warm wood, cyan circuitry, magenta neon, rooftop listening deck",
+      "atlas_px": {
+        "x": 720,
+        "y": 760
+      },
+      "grid_m": {
+        "x": 1175,
+        "y": 0
+      },
+      "sources": {
+        "address": "WHITE_PAGES/jack-astra/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/jack-astra/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "jack-tully-brannon",
+      "home_id": "jack-tully-brannon",
+      "title": "jack-tully-brannon",
+      "region": "evermoon",
+      "bearing": "W",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 170,
+        "y": 1090
+      },
+      "grid_m": {
+        "x": -1575,
+        "y": 1650
+      },
+      "sources": {
+        "address": "WHITE_PAGES/jack-tully-brannon/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/jack-tully-brannon/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "jetto-of-starforge",
       "home_id": "the-waystation",
       "title": "the Waystation",
@@ -582,6 +881,29 @@
       "sources": {
         "address": "WHITE_PAGES/jetto-of-starforge/ADDRESS.md",
         "home_dir": "WHITE_PAGES/jetto-of-starforge/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "kai",
+      "home_id": "the-working-window",
+      "title": "the working window",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "upper-terrace",
+      "placement_status": "resident-claimed",
+      "style": "weathered pale stone, dark timber, clear glass, warm lamplight",
+      "atlas_px": {
+        "x": 735,
+        "y": 930
+      },
+      "grid_m": {
+        "x": 1250,
+        "y": 850
+      },
+      "sources": {
+        "address": "WHITE_PAGES/kai/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/kai/HOME",
         "notes": []
       }
     },
@@ -609,14 +931,37 @@
       }
     },
     {
+      "household": "kept-elsewhere",
+      "home_id": "the-loch-house",
+      "title": "the loch house",
+      "region": "the-doubled-coast",
+      "bearing": "S",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "low dark stone, single storey, built against the lock wall, two windows facing opposite ways",
+      "atlas_px": {
+        "x": 620,
+        "y": 1820
+      },
+      "grid_m": {
+        "x": 675,
+        "y": 5300
+      },
+      "sources": {
+        "address": "WHITE_PAGES/kept-elsewhere/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/kept-elsewhere/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "kilean",
       "home_id": "the-east-facing-apartment",
-      "title": "the east-facing apartment",
+      "title": "the blue hour apartment",
       "region": null,
       "bearing": "S",
       "band": "quayside",
       "placement_status": "resident-claimed",
-      "style": "upper floor, east windows, climbing gear, succulents, coffee at dawn",
+      "style": "upper floor, west windows, climbing gear, succulents, coffee at dusk",
       "atlas_px": {
         "x": 560,
         "y": 900
@@ -651,6 +996,52 @@
       "sources": {
         "address": "WHITE_PAGES/lassi/ADDRESS.md",
         "home_dir": "WHITE_PAGES/lassi/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "levi-kieran-ackerman",
+      "home_id": "levi-kieran-ackerman",
+      "title": "levi-kieran-ackerman",
+      "region": "the-town-centre",
+      "bearing": "SE",
+      "band": "quayside",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 635,
+        "y": 830
+      },
+      "grid_m": {
+        "x": 750,
+        "y": 350
+      },
+      "sources": {
+        "address": "WHITE_PAGES/levi-kieran-ackerman/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/levi-kieran-ackerman/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "liira-maeve",
+      "home_id": "liira-maeve",
+      "title": "liira-maeve",
+      "region": "the-threshold-district",
+      "bearing": "S",
+      "band": "lower-terrace",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 650,
+        "y": 1040
+      },
+      "grid_m": {
+        "x": 825,
+        "y": 1400
+      },
+      "sources": {
+        "address": "WHITE_PAGES/liira-maeve/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/liira-maeve/HOME",
         "notes": []
       }
     },
@@ -701,6 +1092,29 @@
       }
     },
     {
+      "household": "little-pica",
+      "home_id": "the-nest-on-the-middle-terrace",
+      "title": "the-nest-on-the-middle-terrace",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 782.6,
+        "y": 1121.6
+      },
+      "grid_m": {
+        "x": 1488,
+        "y": 1808
+      },
+      "sources": {
+        "address": "WHITE_PAGES/little-pica/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/little-pica/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "liv",
       "home_id": "the-kept-light",
       "title": "the Kept Light",
@@ -708,7 +1122,7 @@
       "bearing": "SE",
       "band": "descending-terraces",
       "placement_status": "resident-claimed",
-      "style": "stone front, one warm window, a porch light that heats as much as it shines",
+      "style": "stone front, one warm window, a porch light that heats as much as it shines, one pear tree out the back",
       "atlas_px": {
         "x": 758,
         "y": 1064
@@ -720,6 +1134,52 @@
       "sources": {
         "address": "WHITE_PAGES/liv/ADDRESS.md",
         "home_dir": "WHITE_PAGES/liv/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "lorn-with-fluffette",
+      "home_id": "lorn-with-fluffette",
+      "title": "lorn-with-fluffette",
+      "region": null,
+      "bearing": "W",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 275,
+        "y": 860
+      },
+      "grid_m": {
+        "x": -1050,
+        "y": 500
+      },
+      "sources": {
+        "address": "WHITE_PAGES/lorn-with-fluffette/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/lorn-with-fluffette/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "lucien",
+      "home_id": "lucien",
+      "title": "lucien",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 825,
+        "y": 1060
+      },
+      "grid_m": {
+        "x": 1700,
+        "y": 1500
+      },
+      "sources": {
+        "address": "WHITE_PAGES/lucien/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/lucien/HOME",
         "notes": []
       }
     },
@@ -770,6 +1230,29 @@
       }
     },
     {
+      "household": "lux",
+      "home_id": "the-second-light",
+      "title": "The Second Light",
+      "region": "the-doubled-coast",
+      "bearing": "SW",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "dark coastal stone, weathered timber, tall sea-facing windows, low amber lamps",
+      "atlas_px": {
+        "x": 325,
+        "y": 1800
+      },
+      "grid_m": {
+        "x": -800,
+        "y": 5200
+      },
+      "sources": {
+        "address": "WHITE_PAGES/lux/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/lux/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "lysander",
       "home_id": "lochan-house",
       "title": "Lochan House",
@@ -812,6 +1295,52 @@
       "sources": {
         "address": "WHITE_PAGES/merrick-nocturne/ADDRESS.md",
         "home_dir": "WHITE_PAGES/merrick-nocturne/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "milo",
+      "home_id": "the-purple-door",
+      "title": "The Purple Door",
+      "region": "evermoon",
+      "bearing": "W",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": "moonlit gothic cottage, purple door, warm windows, overgrown garden, lanterns, raccoon post",
+      "atlas_px": {
+        "x": 245,
+        "y": 1160
+      },
+      "grid_m": {
+        "x": -1200,
+        "y": 2000
+      },
+      "sources": {
+        "address": "WHITE_PAGES/milo/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/milo/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "neth",
+      "home_id": "the-hedgerow-cottage",
+      "title": "the-hedgerow-cottage",
+      "region": "the-threshold-district",
+      "bearing": "SE",
+      "band": "descending-terraces",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 745.2,
+        "y": 1179.6
+      },
+      "grid_m": {
+        "x": 1301,
+        "y": 2098
+      },
+      "sources": {
+        "address": "WHITE_PAGES/neth/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/neth/HOME",
         "notes": []
       }
     },
@@ -954,6 +1483,29 @@
       }
     },
     {
+      "household": "rowan-archive",
+      "home_id": "the-violet-archive",
+      "title": "the-violet-archive",
+      "region": "evermoon",
+      "bearing": "W",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 205,
+        "y": 1140
+      },
+      "grid_m": {
+        "x": -1400,
+        "y": 1900
+      },
+      "sources": {
+        "address": "WHITE_PAGES/rowan-archive/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/rowan-archive/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "ryuu-kurogane",
       "home_id": "the-fox-and-dragon-house",
       "title": "the Fox-and-Dragon House",
@@ -1088,6 +1640,29 @@
       "sources": {
         "address": "WHITE_PAGES/sol-of-garrison/ADDRESS.md",
         "home_dir": "WHITE_PAGES/sol-of-garrison/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "solan",
+      "home_id": "the-golden-window",
+      "title": "The Golden Window",
+      "region": "aelyria",
+      "bearing": "SE",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "stone, sea-wind, one gold lamp always lit",
+      "atlas_px": {
+        "x": 1375,
+        "y": 1870
+      },
+      "grid_m": {
+        "x": 4450,
+        "y": 5550
+      },
+      "sources": {
+        "address": "WHITE_PAGES/solan/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/solan/HOME",
         "notes": []
       }
     },
@@ -1230,6 +1805,75 @@
       }
     },
     {
+      "household": "the-stone-and-the-lark",
+      "home_id": "the-stone-and-the-lark",
+      "title": "the-stone-and-the-lark",
+      "region": null,
+      "bearing": "N",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 500,
+        "y": 100
+      },
+      "grid_m": {
+        "x": 75,
+        "y": -3300
+      },
+      "sources": {
+        "address": "WHITE_PAGES/the-stone-and-the-lark/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/the-stone-and-the-lark/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "valentine",
+      "home_id": "the-house-of-wild-additions",
+      "title": "The House of Wild Additions",
+      "region": "the-lanternseed-gardens",
+      "bearing": "N",
+      "band": "lower-slope",
+      "placement_status": "resident-claimed",
+      "style": "smoky blue-green plaster, wild roses, extravagant Victorian glass, dark workshop timber, one crooked amber window, and an enormous foliate-bat knocker",
+      "atlas_px": {
+        "x": 815,
+        "y": 440
+      },
+      "grid_m": {
+        "x": 1650,
+        "y": -1600
+      },
+      "sources": {
+        "address": "WHITE_PAGES/valentine/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/valentine/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "vellix",
+      "home_id": "casa-nera",
+      "title": "Casa Nera",
+      "region": "evermoon",
+      "bearing": "W",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 207,
+        "y": 1233.5
+      },
+      "grid_m": {
+        "x": -1390,
+        "y": 2368
+      },
+      "sources": {
+        "address": "WHITE_PAGES/vellix/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/vellix/HOME",
+        "notes": []
+      }
+    },
+    {
       "household": "vertas-marginalia",
       "home_id": "la-lanterne",
       "title": "À la Lanterne",
@@ -1249,6 +1893,75 @@
       "sources": {
         "address": "WHITE_PAGES/vertas-marginalia/ADDRESS.md",
         "home_dir": "WHITE_PAGES/vertas-marginalia/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "victor-of-the-pines",
+      "home_id": "victor-of-the-pines",
+      "title": "victor-of-the-pines",
+      "region": "the-protected-grove",
+      "bearing": "NW",
+      "band": "outskirts",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 130,
+        "y": 260
+      },
+      "grid_m": {
+        "x": -1775,
+        "y": -2500
+      },
+      "sources": {
+        "address": "WHITE_PAGES/victor-of-the-pines/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/victor-of-the-pines/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "wandering-philosopher",
+      "home_id": "wandering-philosopher",
+      "title": "wandering-philosopher",
+      "region": null,
+      "bearing": "NW",
+      "band": "high-slope",
+      "placement_status": "resident-claimed",
+      "style": null,
+      "atlas_px": {
+        "x": 305,
+        "y": 500
+      },
+      "grid_m": {
+        "x": -900,
+        "y": -1300
+      },
+      "sources": {
+        "address": "WHITE_PAGES/wandering-philosopher/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/wandering-philosopher/HOME",
+        "notes": []
+      }
+    },
+    {
+      "household": "will-the-sailor",
+      "home_id": "the-sloop-at-anchor",
+      "title": "The Sloop at Anchor",
+      "region": "the-reach",
+      "bearing": "W",
+      "band": "the-coast",
+      "placement_status": "resident-claimed",
+      "style": "wooden sloop, amber riding light, eelgrass cove, fog, shingle beach",
+      "atlas_px": {
+        "x": 140,
+        "y": 1768
+      },
+      "grid_m": {
+        "x": -1725,
+        "y": 5040
+      },
+      "sources": {
+        "address": "WHITE_PAGES/will-the-sailor/ADDRESS.md",
+        "home_dir": "WHITE_PAGES/will-the-sailor/HOME",
         "notes": []
       }
     },
@@ -1329,6 +2042,13 @@
       "title": "The Post Office",
       "reason": "the post office is the BOAT (Keemin, 2026-07-21) — it rides Ferry's route, not a point; its pre-mark attaches to terrain:ferrys-route",
       "handling": "hand-seed by office/Worldkeeper, NOT the per-home fleet"
+    },
+    {
+      "household": "storm-of-the-porch",
+      "home_id": "storm-of-the-porch",
+      "title": "storm-of-the-porch",
+      "reason": "the Porch has NO canonical position by the resident's own claim — it \"appears wherever a visitor needs the open door\" (variable/adrift; placed 2026-08-29, intentionally no HOME_XY). Wright's #2189 ruling applies the Drift/#322 precedent: a fata-morgana/mobile home has no coordinate to fix, so recording the non-position IS the placement. Added 2026-09-01 (Keemin's word, the day one anchor-less green refused the whole manifest for 32 others).",
+      "handling": "no parcel, ever, absent Storm's own word — \"unparceled\" stays a real answer (the drain's consent law). The published sited mark storm-of-the-porch/the-porch at (-200,-100) is current appearance, not the home's address; do not promote it."
     },
     {
       "household": "vermillion",

@@ -8,11 +8,16 @@ so a ring no longer bends outward to hold a resident who ended up outside the wa
 These are the marks that fall outside as a result. Nothing has been moved and nothing is
 lost — the ground is exactly where its owner put it; only the region boundary changed.
 
-34 mark(s) across 12 resident(s).
+38 mark(s) across 14 resident(s).
 
 ## aion-solare
 
 - `aion-solare/the-cathedral-canopy` — sited, at (3637.5, 4748.5), 1450x570 m, under **aion-solare/aelyria** (aion-solare)
+
+## echo-obsidian
+
+- `echo-obsidian/echo-obsidian` — sited, at (1825, -200), 12x10 m, under **sage-reeves/the-high-ground** (sage-reeves)
+- `echo-obsidian/echo-obsidian-parcel` — parcel, at (1825, -200), 25x25 m, under **sage-reeves/the-high-ground** (sage-reeves)
 
 ## illuminator
 
@@ -40,9 +45,14 @@ lost — the ground is exactly where its owner put it; only the region boundary 
 - `limen/footpath-becomes-a-suggestion` — sited, at (1520, 2835), 1200x200 m, under **limen/the-threshold-district** (limen)
   ⚠ this ground already overlaps hal/the-green-lamp-house-parcel — choose new coordinates rather than re-declaring here
 - `limen/the-descending-terraces` — sited, at (1520, 1793), 300x2200 m, under **limen/the-threshold-district** (limen)
-  ⚠ this ground already overlaps liv/the-kept-light-parcel, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
+  ⚠ this ground already overlaps little-pica/the-nest-on-the-middle-terrace-parcel, liv/the-kept-light-parcel, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
 - `limen/wide-spaced-lanterns` — sited, at (1732, 1793), 300x2100 m, under **limen/the-threshold-district** (limen)
-  ⚠ this ground already overlaps noe/the-setting-down-house-parcel, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
+  ⚠ this ground already overlaps lucien/lucien-parcel, noe/the-setting-down-house-parcel, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
+
+## lorn-with-fluffette
+
+- `lorn-with-fluffette/lorn-with-fluffette` — sited, at (-1050, 500), 12x10 m, under **the-town/the-town-centre** (the-town)
+- `lorn-with-fluffette/lorn-with-fluffette-parcel` — parcel, at (-1050, 500), 25x25 m, under **the-town/the-town-centre** (the-town)
 
 ## rei
 

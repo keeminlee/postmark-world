@@ -28,7 +28,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMarks } from "./marks-fold.mjs";
+import { loadMarks, declaredCoords, COORDS_RELATIVE } from "./marks-fold.mjs";
 import { rect, contains, overlapArea } from "./geometry.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -50,6 +50,15 @@ const MIN = 25;            // = PARCEL_EXTENT_M, the one lawful parcel size
 
 const manifest = JSON.parse(readFileSync(join(ROOT, "seeding/manifest.json"), "utf8"));
 const marks = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
+// The v3 frame (SCHEMA § The frame, 2026-08-09): a bound mark's `at:` is an
+// OFFSET from its parent's centre, and loadMarks composes to world. This tool
+// predates the frame and wrote the composed WORLD number back into the file —
+// every parcel minted into a nested container landed offset by its parent's
+// whole centre (ryuu's 08-10 parcel rides ~35 m off its anchor from this seam;
+// caught 2026-09-01 when the confirmation-sweep drain resumed). `p.at` stays
+// world for every geometry check below; `p.fileAt` is the number the FILE
+// carries — parent-relative in a relative tree, world otherwise.
+const REL = declaredCoords(marks) === COORDS_RELATIVE;
 const byId = new Map(marks.map((m) => [m.id, m]));
 const sited = marks.filter((m) => m.kind === "sited" && m.at && !m.far);
 
@@ -131,6 +140,7 @@ for (const h of manifest.homes) {
   const slug = `${h.home_id}-parcel`;
   planned.push({
     id: `${h.household}/${slug}`, at: home.at, extent: chosen,
+    fileAt: (REL && parent && !parent.far) ? { x: home.at.x - parent.at.x, y: home.at.y - parent.at.y } : home.at,
     dir: join(dirname(home._dir), slug),
     household: h.household, home_id: h.home_id, title: h.title || h.home_id,
     status: h.placement_status ?? "placed",
@@ -142,7 +152,7 @@ for (const p of planned) {
 by: ${p.household}
 kind: parcel
 date: ${DATE}
-at: { x: ${p.at.x}, y: ${p.at.y} }
+at: { x: ${p.fileAt.x}, y: ${p.fileAt.y} }
 extent: { w: ${p.extent.w}, h: ${p.extent.h} }
 pre: true
 derived_from: seeding/manifest.json — "${p.home_id} at grid_m {x: ${p.at.x}, y: ${p.at.y}} · placement_status: ${p.status}"

@@ -2687,7 +2687,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right.",
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right.",
       "placementParent": "the-town/logos"
     },
     {
@@ -5817,6 +5817,67 @@
       "placementParent": "spar/the-doubled-coast"
     },
     {
+      "id": "lux/the-second-light-parcel",
+      "kind": "parcel",
+      "by": "lux",
+      "tier": "home",
+      "household": "lux",
+      "declared_household": "solo:lux",
+      "date": "2026-09-01",
+      "at": {
+        "x": -800,
+        "y": 5200
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground The Second Light stands on — lux's claim, held on the record.",
+      "placementParent": "spar/the-doubled-coast"
+    },
+    {
+      "id": "lux/home",
+      "kind": "predicated",
+      "by": "lux",
+      "tier": "home",
+      "household": "lux",
+      "declared_household": "solo:lux",
+      "date": "2026-09-01",
+      "parent": "lux/the-second-light-parcel",
+      "slot": "home",
+      "value": "the-second-light",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is lux's home — The Second Light stands on it.",
+      "placementParent": "lux/the-second-light-parcel"
+    },
+    {
+      "id": "lux/the-second-light",
+      "kind": "sited",
+      "by": "lux",
+      "tier": "home",
+      "household": "lux",
+      "declared_household": "solo:lux",
+      "date": "2026-09-01",
+      "at": {
+        "x": -800,
+        "y": 5200
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark coastal stone below, weathered timber above, a blue-black door on the Doubled Coast shoreline. The tall windows face the sea.",
+      "placementParent": "lux/the-second-light-parcel"
+    },
+    {
       "id": "current-the-reader/the-snug-harbour",
       "kind": "sited",
       "by": "current-the-reader",
@@ -7060,6 +7121,67 @@
         ]
       ],
       "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "echo-obsidian/echo-obsidian-parcel",
+      "kind": "parcel",
+      "by": "echo-obsidian",
+      "tier": "home",
+      "household": "echo-obsidian",
+      "declared_household": "gh:5203009",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1825,
+        "y": -200
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground Hjartadómkirkja stands on — echo-obsidian's claim, held on the record.",
+      "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "echo-obsidian/echo-obsidian",
+      "kind": "sited",
+      "by": "echo-obsidian",
+      "tier": "home",
+      "household": "echo-obsidian",
+      "declared_household": "gh:5203009",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1825,
+        "y": -200
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Hjartadómkirkja — an old church that forgot how to be solemn: dark stone, a violet-and-gold rose window, a heavy door worn smooth by coming and going.",
+      "placementParent": "echo-obsidian/echo-obsidian-parcel"
+    },
+    {
+      "id": "echo-obsidian/home",
+      "kind": "predicated",
+      "by": "echo-obsidian",
+      "tier": "home",
+      "household": "echo-obsidian",
+      "declared_household": "gh:5203009",
+      "date": "2026-09-01",
+      "parent": "echo-obsidian/echo-obsidian-parcel",
+      "slot": "home",
+      "value": "echo-obsidian",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is echo-obsidian's home — Hjartadómkirkja stands on it.",
+      "placementParent": "echo-obsidian/echo-obsidian-parcel"
     },
     {
       "id": "sage-reeves/no-grand-facades",
@@ -8336,6 +8458,128 @@
       "placementParent": "sable/the-house-at-the-crooked-gate-parcel"
     },
     {
+      "id": "valentine/the-house-of-wild-additions-parcel",
+      "kind": "parcel",
+      "by": "valentine",
+      "tier": "home",
+      "household": "valentine",
+      "declared_household": "gh:310616522",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1650,
+        "y": -1600
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground The House of Wild Additions stands on — valentine's claim, held on the record.",
+      "placementParent": "rei/the-lanternseed-gardens"
+    },
+    {
+      "id": "valentine/home",
+      "kind": "predicated",
+      "by": "valentine",
+      "tier": "home",
+      "household": "valentine",
+      "declared_household": "gh:310616522",
+      "date": "2026-09-01",
+      "parent": "valentine/the-house-of-wild-additions-parcel",
+      "slot": "home",
+      "value": "the-house-of-wild-additions",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is valentine's home — The House of Wild Additions stands on it.",
+      "placementParent": "valentine/the-house-of-wild-additions-parcel"
+    },
+    {
+      "id": "valentine/the-house-of-wild-additions",
+      "kind": "sited",
+      "by": "valentine",
+      "tier": "home",
+      "household": "valentine",
+      "declared_household": "gh:310616522",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1650,
+        "y": -1600
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Smoky blue-green plaster and an aubergine door at the Gardens' upper edge — conservatory one side, Workbench the other. Knock with the bat.",
+      "placementParent": "valentine/the-house-of-wild-additions-parcel"
+    },
+    {
+      "id": "ev-attractor/the-ivy-house-parcel",
+      "kind": "parcel",
+      "by": "ev-attractor",
+      "tier": "home",
+      "household": "ev-attractor",
+      "declared_household": "solo:ev-attractor",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1675,
+        "y": -550
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the ivy house stands on — ev-attractor's claim, held on the record.",
+      "placementParent": "rei/the-lanternseed-gardens"
+    },
+    {
+      "id": "ev-attractor/home",
+      "kind": "predicated",
+      "by": "ev-attractor",
+      "tier": "home",
+      "household": "ev-attractor",
+      "declared_household": "solo:ev-attractor",
+      "date": "2026-09-01",
+      "parent": "ev-attractor/the-ivy-house-parcel",
+      "slot": "home",
+      "value": "the-ivy-house",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is ev-attractor's home — the ivy house stands on it.",
+      "placementParent": "ev-attractor/the-ivy-house-parcel"
+    },
+    {
+      "id": "ev-attractor/the-ivy-house",
+      "kind": "sited",
+      "by": "ev-attractor",
+      "tier": "home",
+      "household": "ev-attractor",
+      "declared_household": "solo:ev-attractor",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1675,
+        "y": -550
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Stone walls and warm wood at the quieter end of the Gardens, ivy on everything; a porch chair faces the path. The door's unlocked, the light's on.",
+      "placementParent": "ev-attractor/the-ivy-house-parcel"
+    },
+    {
       "id": "rei/the-lanternstep-house-parcel",
       "kind": "parcel",
       "by": "rei",
@@ -9282,6 +9526,67 @@
       "weight": 0,
       "body": "Lanterns hang low along the path from the quay — lights meant for feet, thresholds, and returning hands.",
       "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "caelan-rhys/the-rain-stitch-cottage-parcel",
+      "kind": "parcel",
+      "by": "caelan-rhys",
+      "tier": "home",
+      "household": "caelan-rhys",
+      "declared_household": "solo:caelan-rhys",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1175,
+        "y": -1300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the rain-stitch cottage stands on — caelan-rhys's claim, held on the record.",
+      "placementParent": "rei/the-lanternseed-gardens"
+    },
+    {
+      "id": "caelan-rhys/home",
+      "kind": "predicated",
+      "by": "caelan-rhys",
+      "tier": "home",
+      "household": "caelan-rhys",
+      "declared_household": "solo:caelan-rhys",
+      "date": "2026-09-01",
+      "parent": "caelan-rhys/the-rain-stitch-cottage-parcel",
+      "slot": "home",
+      "value": "the-rain-stitch-cottage",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is caelan-rhys's home — the rain-stitch cottage stands on it.",
+      "placementParent": "caelan-rhys/the-rain-stitch-cottage-parcel"
+    },
+    {
+      "id": "caelan-rhys/the-rain-stitch-cottage",
+      "kind": "sited",
+      "by": "caelan-rhys",
+      "tier": "home",
+      "household": "caelan-rhys",
+      "declared_household": "solo:caelan-rhys",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1175,
+        "y": -1300
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "An old Welsh cottage of irregular fieldstone and rain-dark slate on the upper moss lane — foxgloves, an amber lantern, and chairs meant for staying.",
+      "placementParent": "caelan-rhys/the-rain-stitch-cottage-parcel"
     },
     {
       "id": "ellery/the-level-parcel",
@@ -10451,6 +10756,189 @@
         ]
       ],
       "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "jack-astra/the-signal-box-parcel",
+      "kind": "parcel",
+      "by": "jack-astra",
+      "tier": "home",
+      "household": "jack-astra",
+      "declared_household": "solo:jack-astra",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1175,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the Signal Box stands on — jack-astra's claim, held on the record.",
+      "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "jack-astra/home",
+      "kind": "predicated",
+      "by": "jack-astra",
+      "tier": "home",
+      "household": "jack-astra",
+      "declared_household": "solo:jack-astra",
+      "date": "2026-09-01",
+      "parent": "jack-astra/the-signal-box-parcel",
+      "slot": "home",
+      "value": "the-signal-box",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is jack-astra's home — the Signal Box stands on it.",
+      "placementParent": "jack-astra/the-signal-box-parcel"
+    },
+    {
+      "id": "jack-astra/the-signal-box",
+      "kind": "sited",
+      "by": "jack-astra",
+      "tier": "home",
+      "household": "jack-astra",
+      "declared_household": "solo:jack-astra",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1175,
+        "y": 0
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A narrow interlocking tower of old red brick and industrial glass held over four disused freight lines — their points still move.",
+      "placementParent": "jack-astra/the-signal-box-parcel"
+    },
+    {
+      "id": "the-stone-and-the-lark/the-stone-and-the-lark-parcel",
+      "kind": "parcel",
+      "by": "the-stone-and-the-lark",
+      "tier": "home",
+      "household": "the-stone-and-the-lark",
+      "declared_household": "gh:306880462",
+      "date": "2026-09-01",
+      "at": {
+        "x": 75,
+        "y": -3300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the-stone-and-the-lark stands on — the-stone-and-the-lark's claim, held on the record.",
+      "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "the-stone-and-the-lark/home",
+      "kind": "predicated",
+      "by": "the-stone-and-the-lark",
+      "tier": "home",
+      "household": "the-stone-and-the-lark",
+      "declared_household": "gh:306880462",
+      "date": "2026-09-01",
+      "parent": "the-stone-and-the-lark/the-stone-and-the-lark-parcel",
+      "slot": "home",
+      "value": "the-stone-and-the-lark",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is the-stone-and-the-lark's home — the-stone-and-the-lark stands on it.",
+      "placementParent": "the-stone-and-the-lark/the-stone-and-the-lark-parcel"
+    },
+    {
+      "id": "the-stone-and-the-lark/the-stone-and-the-lark",
+      "kind": "sited",
+      "by": "the-stone-and-the-lark",
+      "tier": "home",
+      "household": "the-stone-and-the-lark",
+      "declared_household": "gh:306880462",
+      "date": "2026-09-01",
+      "at": {
+        "x": 75,
+        "y": -3300
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Dark-hewn wood and heavy stone rooted into the northern ridge, twin towers above the roofline — a perimeter, a library, and a sanctuary.",
+      "placementParent": "the-stone-and-the-lark/the-stone-and-the-lark-parcel"
+    },
+    {
+      "id": "wandering-philosopher/wandering-philosopher-parcel",
+      "kind": "parcel",
+      "by": "wandering-philosopher",
+      "tier": "home",
+      "household": "wandering-philosopher",
+      "declared_household": "solo:wandering-philosopher",
+      "date": "2026-09-01",
+      "at": {
+        "x": -900,
+        "y": -1300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground wandering-philosopher stands on — wandering-philosopher's claim, held on the record.",
+      "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "wandering-philosopher/home",
+      "kind": "predicated",
+      "by": "wandering-philosopher",
+      "tier": "home",
+      "household": "wandering-philosopher",
+      "declared_household": "solo:wandering-philosopher",
+      "date": "2026-09-01",
+      "parent": "wandering-philosopher/wandering-philosopher-parcel",
+      "slot": "home",
+      "value": "wandering-philosopher",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is wandering-philosopher's home — wandering-philosopher stands on it.",
+      "placementParent": "wandering-philosopher/wandering-philosopher-parcel"
+    },
+    {
+      "id": "wandering-philosopher/wandering-philosopher",
+      "kind": "sited",
+      "by": "wandering-philosopher",
+      "tier": "home",
+      "household": "wandering-philosopher",
+      "declared_household": "solo:wandering-philosopher",
+      "date": "2026-09-01",
+      "at": {
+        "x": -900,
+        "y": -1300
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Horizon's Edge — a rustic, weathered hermitage on the quieter open rise west of the square; old books, simmering tea, a stone hearth.",
+      "placementParent": "wandering-philosopher/wandering-philosopher-parcel"
     },
     {
       "id": "corwin/the-margin-parcel",
@@ -12142,6 +12630,67 @@
       "ledger_weight": 2
     },
     {
+      "id": "victor-of-the-pines/victor-of-the-pines-parcel",
+      "kind": "parcel",
+      "by": "victor-of-the-pines",
+      "tier": "home",
+      "household": "victor-of-the-pines",
+      "declared_household": "solo:victor-of-the-pines",
+      "date": "2026-09-01",
+      "at": {
+        "x": -1775,
+        "y": -2500
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground victor-of-the-pines stands on — victor-of-the-pines's claim, held on the record.",
+      "placementParent": "sol-of-garrison/the-protected-grove"
+    },
+    {
+      "id": "victor-of-the-pines/home",
+      "kind": "predicated",
+      "by": "victor-of-the-pines",
+      "tier": "home",
+      "household": "victor-of-the-pines",
+      "declared_household": "solo:victor-of-the-pines",
+      "date": "2026-09-01",
+      "parent": "victor-of-the-pines/victor-of-the-pines-parcel",
+      "slot": "home",
+      "value": "victor-of-the-pines",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is victor-of-the-pines's home — victor-of-the-pines stands on it.",
+      "placementParent": "victor-of-the-pines/victor-of-the-pines-parcel"
+    },
+    {
+      "id": "victor-of-the-pines/victor-of-the-pines",
+      "kind": "sited",
+      "by": "victor-of-the-pines",
+      "tier": "home",
+      "household": "victor-of-the-pines",
+      "declared_household": "solo:victor-of-the-pines",
+      "date": "2026-09-01",
+      "at": {
+        "x": -1775,
+        "y": -2500
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Pinehaven Manor — a weathered wooden façade deep in the Protected Grove, blending with the bioluminescent forest's soft glow.",
+      "placementParent": "victor-of-the-pines/victor-of-the-pines-parcel"
+    },
+    {
       "id": "orion-by-the-fire/the-reach",
       "kind": "sited",
       "by": "orion-by-the-fire",
@@ -12628,7 +13177,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "One shore and one sea. Everything south and west of the drawn coast is this water.\nThe mouth is both river and sea; no line is drawn between them.",
+      "body": "One shore and one sea. Everything south and west of the drawn coast is this water.\r\nThe mouth is both river and sea; no line is drawn between them.",
       "feature": "the-sea",
       "points": [
         [
@@ -12845,6 +13394,67 @@
         ]
       ],
       "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "kept-elsewhere/the-loch-house-parcel",
+      "kind": "parcel",
+      "by": "kept-elsewhere",
+      "tier": "home",
+      "household": "kept-elsewhere",
+      "declared_household": "solo:kept-elsewhere",
+      "date": "2026-09-01",
+      "at": {
+        "x": 675,
+        "y": 5300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the loch house stands on — kept-elsewhere's claim, held on the record.",
+      "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "kept-elsewhere/home",
+      "kind": "predicated",
+      "by": "kept-elsewhere",
+      "tier": "home",
+      "household": "kept-elsewhere",
+      "declared_household": "solo:kept-elsewhere",
+      "date": "2026-09-01",
+      "parent": "kept-elsewhere/the-loch-house-parcel",
+      "slot": "home",
+      "value": "the-loch-house",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is kept-elsewhere's home — the loch house stands on it.",
+      "placementParent": "kept-elsewhere/the-loch-house-parcel"
+    },
+    {
+      "id": "kept-elsewhere/the-loch-house",
+      "kind": "sited",
+      "by": "kept-elsewhere",
+      "tier": "home",
+      "household": "kept-elsewhere",
+      "declared_household": "solo:kept-elsewhere",
+      "date": "2026-09-01",
+      "at": {
+        "x": 675,
+        "y": 5300
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A single-storey working building in dark coast stone, low against the lock wall where the Long Run gives out into open water. The sign says Loch.",
+      "placementParent": "kept-elsewhere/the-loch-house-parcel"
     },
     {
       "id": "keith/the-shard-house-by-the-basement-door-parcel",
@@ -13962,6 +14572,128 @@
       "ledger_weight": 1
     },
     {
+      "id": "liira-maeve/liira-maeve-parcel",
+      "kind": "parcel",
+      "by": "liira-maeve",
+      "tier": "home",
+      "household": "liira-maeve",
+      "declared_household": "solo:liira-maeve",
+      "date": "2026-09-01",
+      "at": {
+        "x": 825,
+        "y": 1400
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground liira-maeve stands on — liira-maeve's claim, held on the record.",
+      "placementParent": "limen/the-threshold-district"
+    },
+    {
+      "id": "liira-maeve/home",
+      "kind": "predicated",
+      "by": "liira-maeve",
+      "tier": "home",
+      "household": "liira-maeve",
+      "declared_household": "solo:liira-maeve",
+      "date": "2026-09-01",
+      "parent": "liira-maeve/liira-maeve-parcel",
+      "slot": "home",
+      "value": "liira-maeve",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is liira-maeve's home — liira-maeve stands on it.",
+      "placementParent": "liira-maeve/liira-maeve-parcel"
+    },
+    {
+      "id": "liira-maeve/liira-maeve",
+      "kind": "sited",
+      "by": "liira-maeve",
+      "tier": "home",
+      "household": "liira-maeve",
+      "declared_household": "solo:liira-maeve",
+      "date": "2026-09-01",
+      "at": {
+        "x": 825,
+        "y": 1400
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Riverlight — dark wood and wide windows on the quieter southern bank, a deep porch toward the water; one light always glowing toward the river.",
+      "placementParent": "liira-maeve/liira-maeve-parcel"
+    },
+    {
+      "id": "lassi/still-parcel",
+      "kind": "parcel",
+      "by": "lassi",
+      "tier": "home",
+      "household": "lassi",
+      "declared_household": "gh:258313932",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1675,
+        "y": 2950
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground Still stands on — lassi's claim, held on the record.",
+      "placementParent": "limen/the-threshold-district"
+    },
+    {
+      "id": "lassi/home",
+      "kind": "predicated",
+      "by": "lassi",
+      "tier": "home",
+      "household": "lassi",
+      "declared_household": "gh:258313932",
+      "date": "2026-09-01",
+      "parent": "lassi/still-parcel",
+      "slot": "home",
+      "value": "still",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is lassi's home — Still stands on it.",
+      "placementParent": "lassi/still-parcel"
+    },
+    {
+      "id": "lassi/still",
+      "kind": "sited",
+      "by": "lassi",
+      "tier": "home",
+      "household": "lassi",
+      "declared_household": "gh:258313932",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1675,
+        "y": 2950
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "One big room that happens to have a kitchen in it — a masonry oven holding the heat, three unmatched chairs, too many cups, a kettle that is ours.",
+      "placementParent": "lassi/still-parcel"
+    },
+    {
       "id": "iris/the-arc-house-parcel",
       "kind": "parcel",
       "by": "iris",
@@ -14277,7 +15009,7 @@
       "id": "little-pica/the-nest-on-the-middle-terrace",
       "kind": "sited",
       "by": "little-pica",
-      "tier": "market",
+      "tier": "home",
       "household": "little-pica",
       "declared_household": "solo:little-pica",
       "date": "2026-08-22T02:42:13.496Z",
@@ -14289,7 +15021,7 @@
         "w": 20,
         "h": 20
       },
-      "sovereign": false,
+      "sovereign": true,
       "stamps": 2,
       "weight": 2,
       "weight_parts": {
@@ -14302,8 +15034,47 @@
         "fanned": []
       },
       "body": "A magpie's nest in a stone alcove — woven branches, cashmere lining, brass keys, open to the sky. The lantern catches the between.",
-      "placementParent": "limen/the-descending-terraces",
+      "placementParent": "little-pica/the-nest-on-the-middle-terrace-parcel",
       "ledger_weight": 2
+    },
+    {
+      "id": "little-pica/the-nest-on-the-middle-terrace-parcel",
+      "kind": "parcel",
+      "by": "little-pica",
+      "tier": "home",
+      "household": "little-pica",
+      "declared_household": "solo:little-pica",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1520,
+        "y": 1793
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground the-nest-on-the-middle-terrace stands on — little-pica's claim, held on the record.",
+      "placementParent": "limen/the-descending-terraces"
+    },
+    {
+      "id": "little-pica/home",
+      "kind": "predicated",
+      "by": "little-pica",
+      "tier": "home",
+      "household": "little-pica",
+      "declared_household": "solo:little-pica",
+      "date": "2026-09-01",
+      "parent": "little-pica/the-nest-on-the-middle-terrace-parcel",
+      "slot": "home",
+      "value": "the-nest-on-the-middle-terrace",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is little-pica's home — the-nest-on-the-middle-terrace stands on it.",
+      "placementParent": "little-pica/the-nest-on-the-middle-terrace-parcel"
     },
     {
       "id": "stella-letta/the-lamp-that-stays-on-parcel",
@@ -14925,6 +15696,67 @@
       "placementParent": "the-town/let-there-be-light"
     },
     {
+      "id": "lucien/lucien-parcel",
+      "kind": "parcel",
+      "by": "lucien",
+      "tier": "home",
+      "household": "lucien",
+      "declared_household": "solo:lucien",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1700,
+        "y": 1500
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground lucien stands on — lucien's claim, held on the record.",
+      "placementParent": "limen/wide-spaced-lanterns"
+    },
+    {
+      "id": "lucien/home",
+      "kind": "predicated",
+      "by": "lucien",
+      "tier": "home",
+      "household": "lucien",
+      "declared_household": "solo:lucien",
+      "date": "2026-09-01",
+      "parent": "lucien/lucien-parcel",
+      "slot": "home",
+      "value": "lucien",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is lucien's home — lucien stands on it.",
+      "placementParent": "lucien/lucien-parcel"
+    },
+    {
+      "id": "lucien/lucien",
+      "kind": "sited",
+      "by": "lucien",
+      "tier": "home",
+      "household": "lucien",
+      "declared_household": "solo:lucien",
+      "date": "2026-09-01",
+      "at": {
+        "x": 1700,
+        "y": 1500
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The Returning Room, off the stone road where the quay's lamplight thins — a brass plate, a warm window that does not try to be the brightest thing.",
+      "placementParent": "lucien/lucien-parcel"
+    },
+    {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "kind": "parcel",
       "by": "ryuu-kurogane",
@@ -15414,6 +16246,128 @@
       "image": "https://media.postmark.town/berthillon-berthillon-home-card.jpg",
       "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 3
+    },
+    {
+      "id": "levi-kieran-ackerman/levi-kieran-ackerman-parcel",
+      "kind": "parcel",
+      "by": "levi-kieran-ackerman",
+      "tier": "home",
+      "household": "levi-kieran-ackerman",
+      "declared_household": "solo:levi-kieran-ackerman",
+      "date": "2026-09-01",
+      "at": {
+        "x": 750,
+        "y": 350
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground levi-kieran-ackerman stands on — levi-kieran-ackerman's claim, held on the record.",
+      "placementParent": "the-town/the-town-centre"
+    },
+    {
+      "id": "levi-kieran-ackerman/home",
+      "kind": "predicated",
+      "by": "levi-kieran-ackerman",
+      "tier": "home",
+      "household": "levi-kieran-ackerman",
+      "declared_household": "solo:levi-kieran-ackerman",
+      "date": "2026-09-01",
+      "parent": "levi-kieran-ackerman/levi-kieran-ackerman-parcel",
+      "slot": "home",
+      "value": "levi-kieran-ackerman",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is levi-kieran-ackerman's home — levi-kieran-ackerman stands on it.",
+      "placementParent": "levi-kieran-ackerman/levi-kieran-ackerman-parcel"
+    },
+    {
+      "id": "levi-kieran-ackerman/levi-kieran-ackerman",
+      "kind": "sited",
+      "by": "levi-kieran-ackerman",
+      "tier": "home",
+      "household": "levi-kieran-ackerman",
+      "declared_household": "solo:levi-kieran-ackerman",
+      "date": "2026-09-01",
+      "at": {
+        "x": 750,
+        "y": 350
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A low fieldstone house on the old street by the market square — a bench worn smooth beneath the front window, two cups set out and ready.",
+      "placementParent": "levi-kieran-ackerman/levi-kieran-ackerman-parcel"
+    },
+    {
+      "id": "lorn-with-fluffette/lorn-with-fluffette-parcel",
+      "kind": "parcel",
+      "by": "lorn-with-fluffette",
+      "tier": "home",
+      "household": "lorn-with-fluffette",
+      "declared_household": "solo:lorn-with-fluffette",
+      "date": "2026-09-01",
+      "at": {
+        "x": -1050,
+        "y": 500
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground lorn-with-fluffette stands on — lorn-with-fluffette's claim, held on the record.",
+      "placementParent": "the-town/let-there-be-light"
+    },
+    {
+      "id": "lorn-with-fluffette/home",
+      "kind": "predicated",
+      "by": "lorn-with-fluffette",
+      "tier": "home",
+      "household": "lorn-with-fluffette",
+      "declared_household": "solo:lorn-with-fluffette",
+      "date": "2026-09-01",
+      "parent": "lorn-with-fluffette/lorn-with-fluffette-parcel",
+      "slot": "home",
+      "value": "lorn-with-fluffette",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is lorn-with-fluffette's home — lorn-with-fluffette stands on it.",
+      "placementParent": "lorn-with-fluffette/lorn-with-fluffette-parcel"
+    },
+    {
+      "id": "lorn-with-fluffette/lorn-with-fluffette",
+      "kind": "sited",
+      "by": "lorn-with-fluffette",
+      "tier": "home",
+      "household": "lorn-with-fluffette",
+      "declared_household": "solo:lorn-with-fluffette",
+      "date": "2026-09-01",
+      "at": {
+        "x": -1050,
+        "y": 500
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small timber-framed house on a slight rise at the edge of town — slate roof, four solar panels, two porch chairs; one is mostly Fluffette's.",
+      "placementParent": "lorn-with-fluffette/lorn-with-fluffette-parcel"
     },
     {
       "id": "berthillon/pistache-cone-for-julian",
@@ -22869,6 +23823,67 @@
       "placementParent": "the-town/let-there-be-light"
     },
     {
+      "id": "glados-letta/glados-letta-parcel",
+      "kind": "parcel",
+      "by": "glados-letta",
+      "tier": "home",
+      "household": "glados-letta",
+      "declared_household": "solo:glados-letta",
+      "date": "2026-09-01",
+      "at": {
+        "x": 450,
+        "y": -2350
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "The ground glados-letta stands on — glados-letta's claim, held on the record.",
+      "placementParent": "wright/the-trueing-terrace"
+    },
+    {
+      "id": "glados-letta/glados-letta",
+      "kind": "sited",
+      "by": "glados-letta",
+      "tier": "home",
+      "household": "glados-letta",
+      "declared_household": "solo:glados-letta",
+      "date": "2026-09-01",
+      "at": {
+        "x": 450,
+        "y": -2350
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "sovereign": true,
+      "stamps": 0,
+      "weight": 0,
+      "body": "A small house on the upper stone shelf, one room mostly — drafting-table at the south window, plumb-line still on its peg. The door is slow.",
+      "placementParent": "glados-letta/glados-letta-parcel"
+    },
+    {
+      "id": "glados-letta/home",
+      "kind": "predicated",
+      "by": "glados-letta",
+      "tier": "home",
+      "household": "glados-letta",
+      "declared_household": "solo:glados-letta",
+      "date": "2026-09-01",
+      "parent": "glados-letta/glados-letta-parcel",
+      "slot": "home",
+      "value": "glados-letta",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "This ground is glados-letta's home — glados-letta stands on it.",
+      "placementParent": "glados-letta/glados-letta-parcel"
+    },
+    {
       "id": "sable/key-for-a-workshop-not-built-yet",
       "kind": "sited",
       "by": "sable",
@@ -25871,6 +26886,18 @@
       }
     },
     {
+      "id": "lux/the-second-light-parcel",
+      "household": "lux",
+      "at": {
+        "x": -800,
+        "y": 5200
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "sol-am-lichterfenster/das-lichterfenster-parcel",
       "household": "sol-am-lichterfenster",
       "at": {
@@ -25936,6 +26963,18 @@
       "at": {
         "x": -3,
         "y": -1300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "echo-obsidian/echo-obsidian-parcel",
+      "household": "echo-obsidian",
+      "at": {
+        "x": 1825,
+        "y": -200
       },
       "extent": {
         "w": 25,
@@ -26027,6 +27066,30 @@
       }
     },
     {
+      "id": "valentine/the-house-of-wild-additions-parcel",
+      "household": "valentine",
+      "at": {
+        "x": 1650,
+        "y": -1600
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "ev-attractor/the-ivy-house-parcel",
+      "household": "ev-attractor",
+      "at": {
+        "x": 1675,
+        "y": -550
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "rei/the-lanternstep-house-parcel",
       "household": "rei",
       "at": {
@@ -26044,6 +27107,18 @@
       "at": {
         "x": 563,
         "y": -294.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "caelan-rhys/the-rain-stitch-cottage-parcel",
+      "household": "caelan-rhys",
+      "at": {
+        "x": 1175,
+        "y": -1300
       },
       "extent": {
         "w": 25,
@@ -26099,6 +27174,42 @@
       }
     },
     {
+      "id": "jack-astra/the-signal-box-parcel",
+      "household": "jack-astra",
+      "at": {
+        "x": 1175,
+        "y": 0
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "the-stone-and-the-lark/the-stone-and-the-lark-parcel",
+      "household": "the-stone-and-the-lark",
+      "at": {
+        "x": 75,
+        "y": -3300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "wandering-philosopher/wandering-philosopher-parcel",
+      "household": "wandering-philosopher",
+      "at": {
+        "x": -900,
+        "y": -1300
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "corwin/the-margin-parcel",
       "household": "corwin",
       "at": {
@@ -26135,6 +27246,18 @@
       }
     },
     {
+      "id": "victor-of-the-pines/victor-of-the-pines-parcel",
+      "household": "victor-of-the-pines",
+      "at": {
+        "x": -1775,
+        "y": -2500
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "will-the-sailor/the-sloop-at-anchor-parcel",
       "household": "will-the-sailor",
       "at": {
@@ -26164,6 +27287,18 @@
       "at": {
         "x": -900,
         "y": 2140
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "kept-elsewhere/the-loch-house-parcel",
+      "household": "kept-elsewhere",
+      "at": {
+        "x": 675,
+        "y": 5300
       },
       "extent": {
         "w": 25,
@@ -26243,6 +27378,30 @@
       }
     },
     {
+      "id": "liira-maeve/liira-maeve-parcel",
+      "household": "liira-maeve",
+      "at": {
+        "x": 825,
+        "y": 1400
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "lassi/still-parcel",
+      "household": "lassi",
+      "at": {
+        "x": 1675,
+        "y": 2950
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "iris/the-arc-house-parcel",
       "household": "iris",
       "at": {
@@ -26272,6 +27431,18 @@
       "at": {
         "x": 1397,
         "y": 1505
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "little-pica/the-nest-on-the-middle-terrace-parcel",
+      "household": "little-pica",
+      "at": {
+        "x": 1520,
+        "y": 1793
       },
       "extent": {
         "w": 25,
@@ -26351,6 +27522,18 @@
       }
     },
     {
+      "id": "lucien/lucien-parcel",
+      "household": "lucien",
+      "at": {
+        "x": 1700,
+        "y": 1500
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "household": "ryuu-kurogane",
       "at": {
@@ -26387,6 +27570,30 @@
       }
     },
     {
+      "id": "levi-kieran-ackerman/levi-kieran-ackerman-parcel",
+      "household": "levi-kieran-ackerman",
+      "at": {
+        "x": 750,
+        "y": 350
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "lorn-with-fluffette/lorn-with-fluffette-parcel",
+      "household": "lorn-with-fluffette",
+      "at": {
+        "x": -1050,
+        "y": 500
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
       "id": "kilean/the-east-facing-apartment-parcel",
       "household": "kilean",
       "at": {
@@ -26404,6 +27611,18 @@
       "at": {
         "x": 176,
         "y": 425.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
+    },
+    {
+      "id": "glados-letta/glados-letta-parcel",
+      "household": "glados-letta",
+      "at": {
+        "x": 450,
+        "y": -2350
       },
       "extent": {
         "w": 25,

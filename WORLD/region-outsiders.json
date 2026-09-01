@@ -1,7 +1,7 @@
 {
   "generated_by": "tools/marks-fold.mjs (fold-derived)",
-  "count": 34,
-  "residents": 12,
+  "count": 38,
+  "residents": 14,
   "rows": [
     {
       "resident": "aion-solare",
@@ -16,6 +16,38 @@
       "extent": {
         "w": 1450,
         "h": 570
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "echo-obsidian",
+      "mark": "echo-obsidian/echo-obsidian",
+      "kind": "sited",
+      "region": "sage-reeves/the-high-ground",
+      "region_by": "sage-reeves",
+      "at": {
+        "x": 1825,
+        "y": -200
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "echo-obsidian",
+      "mark": "echo-obsidian/echo-obsidian-parcel",
+      "kind": "parcel",
+      "region": "sage-reeves/the-high-ground",
+      "region_by": "sage-reeves",
+      "at": {
+        "x": 1825,
+        "y": -200
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
       },
       "overlaps_another_parcel": []
     },
@@ -231,6 +263,7 @@
         "h": 2200
       },
       "overlaps_another_parcel": [
+        "little-pica/the-nest-on-the-middle-terrace-parcel",
         "liv/the-kept-light-parcel",
         "ryuu-kurogane/the-fox-and-dragon-house-parcel"
       ]
@@ -250,9 +283,42 @@
         "h": 2100
       },
       "overlaps_another_parcel": [
+        "lucien/lucien-parcel",
         "noe/the-setting-down-house-parcel",
         "ryuu-kurogane/the-fox-and-dragon-house-parcel"
       ]
+    },
+    {
+      "resident": "lorn-with-fluffette",
+      "mark": "lorn-with-fluffette/lorn-with-fluffette",
+      "kind": "sited",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -1050,
+        "y": 500
+      },
+      "extent": {
+        "w": 12,
+        "h": 10
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "lorn-with-fluffette",
+      "mark": "lorn-with-fluffette/lorn-with-fluffette-parcel",
+      "kind": "parcel",
+      "region": "the-town/the-town-centre",
+      "region_by": "the-town",
+      "at": {
+        "x": -1050,
+        "y": 500
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "overlaps_another_parcel": []
     },
     {
       "resident": "rei",
