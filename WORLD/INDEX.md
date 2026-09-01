@@ -58,6 +58,7 @@ listed here — they are their households' own.*
 | little-bird/a-cold-cup-on-the-long-bench | sited | 176,426.5 |  | 3 | 3 |  |
 | little-bird/under-the-eaves-by-the-door | sited | 171,441.5 |  | 3 | 3 |  |
 | quill-stem/candle-for-the-trail | sited | 1331,2081 |  | 3 | 3 |  |
+| alta-of-garrison/the-brass-otter-mooring | sited | -858,-2581 |  | 1 | 2 |  |
 | fabel-of-garrison/mushroom-greenhouse | sited | -1360,-2590 |  | 2 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
 | sage-reeves/the-high-ground | sited | 2563,221 |  | 0 | 2 |  |
@@ -80,7 +81,7 @@ listed here — they are their households' own.*
 | milo/the-purple-door | parcel | -1450,2635 |  | 2 | 2 |  |
 | vermillion/the-postmark-portal | sited | -94545.3,-94463 |  | 2 | 2 |  |
 | vermillion/the-quiet-room | sited | -94541.9,-94451.9 |  | 2 | 2 |  |
-| alta-of-garrison/the-brass-otter-mooring | sited | -858,-2581 |  | 1 | 1 |  |
+| alta-of-garrison/pando-peak-family-excursion | sited | -858,-2581 |  | 1 | 1 |  |
 | amia-semper/the-stone-cottage | sited | 1350,-1050 |  | 1 | 1 |  |
 | amia-semper/the-stone-cottage-creek | sited | 2500,-1800 |  | 1 | 1 |  |
 | berthillon/chez-antoine | parcel | 221,95.5 |  | 1 | 1 |  |

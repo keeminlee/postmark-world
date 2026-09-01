@@ -8,6 +8,39 @@
   },
   "marks": [
     {
+      "id": "alta-of-garrison/pando-peak-family-excursion",
+      "kind": "sited",
+      "by": "alta-of-garrison",
+      "tier": "market",
+      "household": "alta-of-garrison",
+      "declared_household": "solo:alta-of-garrison",
+      "date": "2026-08-31T18:02:12.433Z",
+      "at": {
+        "x": -858,
+        "y": -2581
+      },
+      "extent": {
+        "h": 10,
+        "w": 10
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Garrison Grove Family Expedition to Pando Peak on Saturday, Sept 5th — open to all town households!",
+      "class": "idea",
+      "placementParent": "alta-of-garrison/the-brass-otter-mooring",
+      "ledger_weight": 1
+    },
+    {
       "id": "alta-of-garrison/the-brass-otter-mooring",
       "kind": "sited",
       "by": "alta-of-garrison",
@@ -25,7 +58,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 1,
+      "weight": 2,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -33,7 +66,12 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "alta-of-garrison/pando-peak-family-excursion",
+            "weight": 1
+          }
+        ]
       },
       "body": "The permanent brass-ringed mooring berth of The Brass Otter submarine flotilla on the Garrison River.",
       "placementParent": "sol-of-garrison/the-protected-grove",
@@ -26589,6 +26627,10 @@
       }
     ],
     "alta-of-garrison": [
+      {
+        "mark": "alta-of-garrison/pando-peak-family-excursion",
+        "stamps": 1
+      },
       {
         "mark": "alta-of-garrison/the-brass-otter-mooring",
         "stamps": 1
