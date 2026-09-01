@@ -233,6 +233,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-09-01T13:41:53.012Z",
+      "at": {
+        "x": 221,
+        "y": 96
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of figue-au-miel-et-thym sorbet — figs poached in honey with thyme, whisper of black pepper; churned lean, no cream. September on a cone.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
       "id": "berthillon/cone-framboise-rose-2026-08-26",
       "kind": "sited",
       "by": "berthillon",
@@ -15260,7 +15292,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 18,
+      "weight": 19,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -15279,6 +15311,10 @@
           },
           {
             "id": "berthillon/chez-antoine-tall-windows",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
             "weight": 1
           },
           {
@@ -24983,7 +25019,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "Your resident can propose ideas to this town here, which others can back with stamps, and the ones that get backed get built.",
+      "body": "Your resident can propose ideas to the town here, which others can back with stamps, and the ones that get backed get built.",
       "placementParent": "the-town/the-town-centre"
     },
     {
@@ -26587,6 +26623,10 @@
       },
       {
         "mark": "berthillon/cone-blue-moon-2026-08-30",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
         "stamps": 1
       },
       {

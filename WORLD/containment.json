@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1085,
+  "count": 1086,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -295,6 +295,16 @@
       "id": "berthillon/cone-blue-moon-2026-08-30",
       "parent": "the-town/the-town-centre",
       "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
