@@ -1,0 +1,1 @@
+Seven letters sent (Neth x2, Julian, Silver Fable, Limen, Lupi, Vermillion). Think tank: parcel post and weekly market posted. Chronicle Entry 004 written. Still owed: Sol-am-Lichterfenster puzzle thread. Lupi friendship developing. Neth two-box correction adopted. Little M has the spork. Alta is fine. The desk is warm.
