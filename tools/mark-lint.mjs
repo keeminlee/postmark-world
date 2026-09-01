@@ -280,12 +280,18 @@ for (const rec of marks) {
 
   // THE IDEA GRAMMAR (the Think Tank, founder-ruled 2026-08-30): an idea is a
   // sited mark whose BODY is the claim — no ask, no reward, no status; the
-  // stage lives in the blueprint repo, one writer per fact. Standing in the
-  // Think Tank is what makes an idea an idea — the board's own containment
-  // law, mirrored; the definition is known by where it stands, same gate.
+  // stage lives in the blueprint repo, one writer per fact.
+  //
+  // WHERE IT STANDS IS NOT WHAT IT IS (founder-ruled 2026-09-01, on Alta's idea
+  // planted in the Garrison): "class: idea" says what a mark is; the Think Tank
+  // is where the class is READ, not a container that makes it so. An idea may
+  // stand anywhere — standing in the Garrison is an idea OF the Garrison — and
+  // the Tank gathers every instance by class. The off-Tank warning that stood
+  // here ("this mark can never render there") was retired with that ruling: it
+  // was the one advisory that, through the suite's CLEAN word, held Alta's
+  // mark out of two settlements. The readers that filtered by placement (the
+  // office's tank read, the site's ideas()) follow by the same ruling.
   if (rec.class === "idea" && !isClassDeclaration(rec)) {
-    if (containedBy.get(rec.id) !== "the-town/the-think-tank")
-      warn(rec, `class: idea off the Think Tank — the tank reads only ideas standing on the-town/the-think-tank; this mark can never render there`);
     if (rec.kind !== "sited") err(rec, `an idea is a sited mark (got kind: ${JSON.stringify(rec.kind)})`);
     if ([...String(rec.body ?? "").trim()].length === 0)
       err(rec, `an idea needs its thought — the BODY is the claim${cite("the-town/the-one-claim")}`);
@@ -837,9 +843,20 @@ if (JSON_OUT) {
 }
 
 console.log(`Linted ${scopedMarks} mark(s)${scopeRel ? ` under ${scopeRel}` : ` under ${MARKS_DIR.replace(/\\/g, "/").replace(/^.*\/(WORLD\/marks)$/, "$1")}`}.\n`);
-if (!reported.length) console.log("CLEAN — every mark is well-formed and every filing stands where the freeze left it.");
-else {
-  for (const f of reported) console.log(`[${f.sev}] ${f.file}: ${f.msg}`);
+// THE VERDICT WORD FOLLOWS THE EXIT CODE, NOT THE FINDINGS LIST (founder-directed
+// 2026-09-01, the S53 morning). The header above says "WARNs are advisory and
+// never fail it", and the exit code agrees — but this line used to print CLEAN
+// only on ZERO findings, warnings included, and two suite tests assert the word
+// CLEAN over the live tree. So one advisory anywhere (a draft filed at the
+// fossil root by the office door; an idea standing off the Tank) turned the
+// whole suite red, the settlement isolate blamed the mark that drew it and held
+// it back crossing after crossing, and the shadow said WOULD-REFUSE every run.
+// An advisory that can refuse a settlement is not advisory. Now: no errors =
+// CLEAN, with the advisories listed beneath it so nobody stops reading them.
+for (const f of reported) console.log(`[${f.sev}] ${f.file}: ${f.msg}`);
+if (!errors.length) {
+  console.log(`${reported.length ? "\n" : ""}CLEAN — every mark is well-formed and every filing stands where the freeze left it.${warns.length ? ` (${warns.length} advisory warning(s) above — read them; they never refuse.)` : ""}`);
+} else {
   console.log(`\n${errors.length} error(s), ${warns.length} warning(s).`);
 }
 process.exit(code);

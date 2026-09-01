@@ -224,6 +224,29 @@ test('"Rendered in the world: not yet" is an honest declaration — tolerated, u
     "a clause rendering a document that says it has no rendering yet");
 });
 
+// THE LAW (mark-lint.mjs's own header, and the founder 2026-09-01): "WARNs are
+// advisory and never fail it." Before this test, CLEAN was printed only on zero
+// findings — so a single advisory (a draft filed at the fossil root by the
+// office door) made the two CLEAN tests above go red over the live tree, the
+// settlement isolate held the advised mark back crossing after crossing, and
+// the shadow reported WOULD-REFUSE every run. An advisory that can refuse a
+// settlement is not advisory.
+test("an advisory warning never takes the CLEAN word — a WARN-only tree is CLEAN with its advisories listed, exit 0", () => {
+  const repo = fidelityRepo();
+  // one mark born after the freeze, filed at the fossil root: the exact advisory
+  // (mark-lint.mjs § the frozen filing, "ADVISORY while the office door still
+  // writes at the fossil root") that held K's moon out of S53.
+  const stray = join(repo, "WORLD", "marks", "let-there-be-light", "the-protected-grove", "an-advised-draft");
+  mkdirSync(stray, { recursive: true });
+  writeFileSync(join(stray, "mark.md"),
+    "---\nkind: sited\nby: testerhh\ndate: 2026-09-01\nat: { x: 0, y: 0 }\nextent: { w: 1, h: 1 }\n---\n\nA draft the office door filed at the old root.\n");
+  const out = runRepoLint(repo);
+  assert.match(out, /\[WARN\][^\n]*an-advised-draft[^\n]*born after the freeze/, "the advisory is still printed — nobody stops reading it");
+  assert.doesNotMatch(out, /\[ERROR\]/, "an advisory is not an error");
+  assert.match(out, /CLEAN — every mark is well-formed/, "the CLEAN word survives an advisory");
+  assert.match(out, /1 advisory warning\(s\) above/, "and says how many advisories stand beneath it");
+});
+
 test("the doc → clause direction stays silent on a borrowed tree — the lane must never bounce a stale sketchbook", () => {
   // main's documents, judging a tree that is a crossing behind them: here, a
   // sketchbook so stale that none of logos has reached it yet. Every

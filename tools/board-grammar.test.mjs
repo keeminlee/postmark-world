@@ -318,7 +318,7 @@ test("the '#' truncation: the lint catches the face it CAN see (review O-1)", ()
 // in the chest." — the idea class mark. Stage 1 of the Idea Lifecycle is this
 // mark standing; the blueprint PR (stage 2) cites it. No ask, no reward, no
 // status: the stage lives in the blueprint repo, one writer per fact.
-test("IDEA: a lawful idea passes; a thoughtless one errs quoting the one-claim law; off-tank warns; the whitelist carries the ruling", () => {
+test("IDEA: a lawful idea passes; a thoughtless one errs quoting the one-claim law; an idea may stand ANYWHERE (2026-09-01); the whitelist carries the ruling", () => {
   assert.ok(RESIDENT_INSTANTIABLE.has("idea"),
     "the 2026-08-30 ruling: residents publish ideas with their own hand — stage 1 needs no git and no founder");
   const { dir, root } = fixtureTree();
@@ -343,9 +343,16 @@ test("IDEA: a lawful idea passes; a thoughtless one errs quoting the one-claim l
   out = runLint(dir);
   assert.match(out, /an idea needs its thought — the BODY is the claim/, "a thoughtless idea errs, citing the one-claim law");
 
+  // THE LAW (founder-ruled 2026-09-01, Alta's idea in the Garrison): "class
+  // says what a mark is; the Think Tank is where ideas are READ, not a
+  // container that makes them ideas" — an idea standing off the Tank draws
+  // no finding at all. Before this ruling the line below asserted the
+  // opposite warning, and that warning held a resident's mark out of two
+  // settlements through the suite's CLEAN word.
   mkdirSync(join(root, "stray-thought"), { recursive: true });
   writeFileSync(join(root, "stray-thought", "mark.md"), idea("A thought parked nowhere.\n"));
   out = runLint(dir);
-  assert.match(out, /class: idea off the Think Tank/, "an idea off the tank is warned it can never render there");
+  assert.doesNotMatch(out, /off the Think Tank/, "an idea standing anywhere is an idea — no warning, no error");
+  assert.doesNotMatch(out, /(ERROR|WARN)[^\n]*stray-thought/, "the stray thought draws no finding at all");
 
 });
