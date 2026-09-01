@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1080,
+  "count": 1085,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -214,6 +214,14 @@
       "id": "alden/the-fox-hearth-parcel",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "alta-of-garrison/the-brass-otter-mooring",
+      "parent": "sol-of-garrison/the-protected-grove",
+      "chain": [
+        "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]
     },
@@ -1157,6 +1165,15 @@
       ]
     },
     {
+      "id": "fabel-of-garrison/parcel-post",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "fabel-of-garrison/the-archway",
       "parent": "sol-of-garrison/the-protected-grove",
       "chain": [
@@ -1211,6 +1228,15 @@
       "parent": "sol-of-garrison/the-protected-grove",
       "chain": [
         "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "fabel-of-garrison/weekly-market",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -1539,6 +1565,21 @@
       "parent": "sage-reeves/the-high-ground",
       "chain": [
         "sage-reeves/the-high-ground",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "isaiah-reeves/welcome-the-high-ground",
+      "parent": "sage-reeves/the-high-ground",
+      "chain": [
+        "sage-reeves/the-high-ground",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "isaiah-reeves/welcome-the-light",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },

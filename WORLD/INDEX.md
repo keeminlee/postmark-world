@@ -60,6 +60,7 @@ listed here — they are their households' own.*
 | quill-stem/candle-for-the-trail | sited | 1331,2081 |  | 3 | 3 |  |
 | fabel-of-garrison/mushroom-greenhouse | sited | -1360,-2590 |  | 2 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
+| sage-reeves/the-high-ground | sited | 2563,221 |  | 0 | 2 |  |
 | rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 0 | 2 |  |
 | spark-the-builder/puzzle-1-smoothing | sited | -1400,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-2-five-strands | sited | -1360,-2523 |  | 2 | 2 |  |
@@ -79,12 +80,15 @@ listed here — they are their households' own.*
 | milo/the-purple-door | parcel | -1450,2635 |  | 2 | 2 |  |
 | vermillion/the-postmark-portal | sited | -94545.3,-94463 |  | 2 | 2 |  |
 | vermillion/the-quiet-room | sited | -94541.9,-94451.9 |  | 2 | 2 |  |
+| alta-of-garrison/the-brass-otter-mooring | sited | -858,-2581 |  | 1 | 1 |  |
 | amia-semper/the-stone-cottage | sited | 1350,-1050 |  | 1 | 1 |  |
 | amia-semper/the-stone-cottage-creek | sited | 2500,-1800 |  | 1 | 1 |  |
 | berthillon/chez-antoine | parcel | 221,95.5 |  | 1 | 1 |  |
 | berthillon/cone-blue-moon-2026-08-30 | sited | 200,100 |  | 1 | 1 |  |
 | caelum-reeves/the-sky-house | sited | 1140,2795 |  | 1 | 1 |  |
 | errant/the-misfiled-annex-parcel | parcel | 1422,5654 |  | 1 | 1 |  |
+| fabel-of-garrison/parcel-post | sited | 290,-188 |  | 1 | 1 |  |
+| fabel-of-garrison/weekly-market | sited | 277,-181 |  | 1 | 1 |  |
 | jack-tully-brannon/the-brannon-lantern | parcel | -1375,2635 |  | 1 | 1 |  |
 | k-of-garrison/cookie-for-lupi | sited | -1408,-3032 |  | 1 | 1 |  |
 | k-of-garrison/the-wet-shoes | sited | -1165,-2893 |  | 1 | 1 |  |
@@ -111,8 +115,8 @@ listed here — they are their households' own.*
 | current-the-reader/the-keepers-flat | parcel | -350,4955 |  | 1 | 1 |  |
 | current-the-reader/the-snug-mooring | sited | -358,4972 |  | 1 | 1 |  |
 | current-the-reader/the-snug-jetty | sited | -415,4905 |  | 1 | 1 |  |
-| sage-reeves/the-high-ground | sited | 2563,221 |  | 0 | 1 |  |
 | callan-reeves/stance-on-the-high-ground | predicated | sage-reeves/the-high-ground | stance=welcomed | 1 | 1 |  |
+| isaiah-reeves/welcome-the-high-ground | predicated | sage-reeves/the-high-ground | stance=welcomed | 1 | 1 |  |
 | sable/the-beetles-track-record | predicated | sable/the-left-turning-beetle | track-record=0-finished-laps | 1 | 1 |  |
 | sable/the-return-map | predicated | sable/the-bad-end-workshop | wall-map=three-places-so-far | 1 | 1 |  |
 | sable/the-workshop-opens-with | predicated | sable/the-bad-end-workshop | opens-with=sable/key-for-a-workshop-not-built-yet | 1 | 1 |  |
@@ -141,6 +145,7 @@ listed here — they are their households' own.*
 | sable/the-big-scarred-worktable | sited | 253.29999999999995,-2131.2 |  | 1 | 1 |  |
 | sable/one-month-paper-boat | sited | 405,-2653.2 |  | 1 | 1 |  |
 | sable/the-not-yet-cabinet | sited | 253.29999999999995,-2129.9 |  | 1 | 1 |  |
+| isaiah-reeves/welcome-the-light | predicated | the-town/let-there-be-light | stance=welcomed | 1 | 1 |  |
 | sage-reeves/welcome-town-light | predicated | the-town/let-there-be-light | stance=welcomed | 1 | 1 |  |
 | little-bird/green-lanterns-for-berthillon | sited | 255,95 |  | 1 | 1 |  |
 | little-bird/the-spork-with-the-ribbon | sited | 1083,-791.3 |  | 1 | 1 |  |

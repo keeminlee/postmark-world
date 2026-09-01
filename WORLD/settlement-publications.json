@@ -1180,6 +1180,31 @@
       "household": "kristinashoultz-wq",
       "path": "WORLD/marks/let-there-be-light/welcome-town-light/mark.md",
       "class": "commons"
+    },
+    "alta-of-garrison/the-brass-otter-mooring": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/alta-of-garrison/the-brass-otter-mooring/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/parcel-post": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/fabel-of-garrison/parcel-post/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/weekly-market": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/fabel-of-garrison/weekly-market/mark.md",
+      "class": "commons"
+    },
+    "isaiah-reeves/welcome-the-high-ground": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/the-high-ground/welcome-the-high-ground/mark.md",
+      "class": "commons"
+    },
+    "isaiah-reeves/welcome-the-light": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/let-there-be-light/welcome-the-light/mark.md",
+      "class": "commons"
     }
   }
 }

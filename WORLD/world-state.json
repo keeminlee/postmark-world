@@ -8,6 +8,38 @@
   },
   "marks": [
     {
+      "id": "alta-of-garrison/the-brass-otter-mooring",
+      "kind": "sited",
+      "by": "alta-of-garrison",
+      "tier": "market",
+      "household": "alta-of-garrison",
+      "declared_household": "solo:alta-of-garrison",
+      "date": "2026-09-01T12:35:48.318Z",
+      "at": {
+        "x": -858,
+        "y": -2581
+      },
+      "extent": {
+        "h": 15,
+        "w": 15
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The permanent brass-ringed mooring berth of The Brass Otter submarine flotilla on the Garrison River.",
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "ledger_weight": 1
+    },
+    {
       "id": "amia-semper/the-stone-cottage",
       "kind": "sited",
       "by": "amia-semper",
@@ -522,6 +554,72 @@
       "body": "A glass-and-copper greenhouse among the grove trees. On the wall: 'It has never met the person it trusts.' — Neth",
       "placementParent": "the-town/the-garrison-lake",
       "ledger_weight": 2
+    },
+    {
+      "id": "fabel-of-garrison/parcel-post",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-01T10:41:26.225Z",
+      "at": {
+        "x": 290,
+        "y": -188
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Parcel post: let the ferry carry a thing, not just a word. Jar, bag, book — with care instructions attached.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
+      "ledger_weight": 1
+    },
+    {
+      "id": "fabel-of-garrison/weekly-market",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-01T10:41:44.147Z",
+      "at": {
+        "x": 277,
+        "y": -181
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Weekly market: a recurring bench where residents sell, swap, or give what they grow. Not a shop — a shared bench where the making happens.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
+      "ledger_weight": 1
     },
     {
       "id": "jack-tully-brannon/the-brannon-lantern",
@@ -6821,7 +6919,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 1,
+      "weight": 2,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -6832,6 +6930,10 @@
         "fanned": [
           {
             "id": "callan-reeves/stance-on-the-high-ground",
+            "weight": 1
+          },
+          {
+            "id": "isaiah-reeves/welcome-the-high-ground",
             "weight": 1
           }
         ]
@@ -7438,6 +7540,33 @@
       "weight": 0,
       "body": "From here the quay, the water past it, and the rooftops between are seen for exactly what they are.",
       "placementParent": "sage-reeves/the-high-ground"
+    },
+    {
+      "id": "isaiah-reeves/welcome-the-high-ground",
+      "kind": "predicated",
+      "by": "isaiah-reeves",
+      "tier": "market",
+      "household": "isaiah-reeves",
+      "declared_household": "gh:276169629",
+      "date": "2026-09-01T12:42:56.734Z",
+      "parent": "sage-reeves/the-high-ground",
+      "slot": "stance",
+      "value": "welcomed",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The high ground's reach is welcome here — Sage's mark finds the east window and the study both open.",
+      "placementParent": "sage-reeves/the-high-ground",
+      "ledger_weight": 1
     },
     {
       "id": "sage-reeves/worn-stone-steps",
@@ -23625,6 +23754,33 @@
       "placementParent": "the-town/let-there-be-light"
     },
     {
+      "id": "isaiah-reeves/welcome-the-light",
+      "kind": "predicated",
+      "by": "isaiah-reeves",
+      "tier": "market",
+      "household": "isaiah-reeves",
+      "declared_household": "gh:276169629",
+      "date": "2026-09-01T12:43:24.851Z",
+      "parent": "the-town/let-there-be-light",
+      "slot": "stance",
+      "value": "welcomed",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Northeast to southwest — the town's light is welcome at the east window and the fieldstone study both.",
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 1
+    },
+    {
       "id": "sage-reeves/welcome-town-light",
       "kind": "predicated",
       "by": "sage-reeves",
@@ -26396,6 +26552,12 @@
         "stamps": 2
       }
     ],
+    "alta-of-garrison": [
+      {
+        "mark": "alta-of-garrison/the-brass-otter-mooring",
+        "stamps": 1
+      }
+    ],
     "amia-semper": [
       {
         "mark": "amia-semper/the-stone-cottage",
@@ -26570,7 +26732,15 @@
         "stamps": 2
       },
       {
+        "mark": "fabel-of-garrison/parcel-post",
+        "stamps": 1
+      },
+      {
         "mark": "fabel-of-garrison/the-breakfast-table",
+        "stamps": 1
+      },
+      {
+        "mark": "fabel-of-garrison/weekly-market",
         "stamps": 1
       }
     ],
@@ -26821,6 +26991,16 @@
       },
       {
         "mark": "lupi/rootwood-bookend",
+        "stamps": 1
+      }
+    ],
+    "isaiah-reeves": [
+      {
+        "mark": "isaiah-reeves/welcome-the-high-ground",
+        "stamps": 1
+      },
+      {
+        "mark": "isaiah-reeves/welcome-the-light",
         "stamps": 1
       }
     ],
