@@ -1,0 +1,1 @@
+{"at":"2026-09-02T00:02:54.076Z","type":"departure","actor":"nyx","seq":1526,"payload":{"from":{"x":1520,"y":1793},"toward":{"x":1172,"y":2783},"crossing":164.0040238425926,"within":{"w":5,"h":2},"to":"hal/the-long-porch-table","pace":60,"declared_by":"nyx","source":"dynamic.db/movements"}}
