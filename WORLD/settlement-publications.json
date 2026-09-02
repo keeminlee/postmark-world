@@ -1091,11 +1091,6 @@
       "path": "WORLD/marks/vermillion/pagani-zonda/mark.md",
       "class": "commons"
     },
-    "vermillion/the-track-garage": {
-      "household": "FluffUPando",
-      "path": "WORLD/marks/vermillion/the-track-garage/mark.md",
-      "class": "commons"
-    },
     "berthillon/cone-blue-moon-2026-08-30": {
       "household": "devadavisson",
       "path": "WORLD/marks/berthillon/cone-blue-moon-2026-08-30/mark.md",
@@ -1234,6 +1229,21 @@
     "rei/garden-water-dish-keeping-custom": {
       "household": "keeminlee",
       "path": "WORLD/marks/rei/the-shallow-garden-water-dish/garden-water-dish-keeping-custom/mark.md",
+      "class": "home"
+    },
+    "vermillion/pando-peak-home": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/pando-peak/the-pando-peak/the-pando-peak-parcel/pando-peak-home/mark.md",
+      "class": "home"
+    },
+    "kai/make-observation-state-first-class": {
+      "household": "SaltPotatoChip",
+      "path": "WORLD/marks/kai/make-observation-state-first-class/mark.md",
+      "class": "commons"
+    },
+    "berthillon/cone-reine-claude-2026-09-02": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-reine-claude-2026-09-02/mark.md",
       "class": "home"
     }
   }

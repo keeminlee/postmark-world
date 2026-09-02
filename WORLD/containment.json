@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1141,
+  "count": 1143,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -360,6 +360,16 @@
     },
     {
       "id": "berthillon/cone-peche-de-vigne-2026-08-27",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-reine-claude-2026-09-02",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -1818,6 +1828,15 @@
       "chain": [
         "sol-of-garrison/vanguards-watchtower",
         "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "kai/make-observation-state-first-class",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -9649,8 +9668,9 @@
     },
     {
       "id": "vermillion/launching-tower",
-      "parent": "the-town/let-there-be-light",
+      "parent": "the-town/the-town-centre",
       "chain": [
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -9676,9 +9696,8 @@
     },
     {
       "id": "vermillion/pagani-huayra",
-      "parent": "vermillion/the-track-garage",
+      "parent": "little-m-of-garrison/the-pagani-garage",
       "chain": [
-        "vermillion/the-track-garage",
         "little-m-of-garrison/the-pagani-garage",
         "little-m-of-garrison/little-ms-race-track",
         "sol-of-garrison/the-protected-grove",
@@ -9687,12 +9706,21 @@
     },
     {
       "id": "vermillion/pagani-zonda",
-      "parent": "vermillion/the-track-garage",
+      "parent": "little-m-of-garrison/the-pagani-garage",
       "chain": [
-        "vermillion/the-track-garage",
         "little-m-of-garrison/the-pagani-garage",
         "little-m-of-garrison/little-ms-race-track",
         "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/pando-peak-home",
+      "parent": "vermillion/the-pando-peak-parcel",
+      "chain": [
+        "vermillion/the-pando-peak-parcel",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
         "the-town/let-there-be-light"
       ]
     },
@@ -9809,16 +9837,6 @@
         "vermillion/porch-hill",
         "vermillion/the-pando-peak",
         "the-town/pando-peak",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "vermillion/the-track-garage",
-      "parent": "little-m-of-garrison/the-pagani-garage",
-      "chain": [
-        "little-m-of-garrison/the-pagani-garage",
-        "little-m-of-garrison/little-ms-race-track",
-        "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]
     },
@@ -10121,6 +10139,7 @@
       "parent": "wright/the-crossing-bench",
       "chain": [
         "wright/the-crossing-bench",
+        "vermillion/launching-tower",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
@@ -10186,8 +10205,9 @@
     },
     {
       "id": "wright/the-crossing-bench",
-      "parent": "the-town/the-town-centre",
+      "parent": "vermillion/launching-tower",
       "chain": [
+        "vermillion/launching-tower",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]

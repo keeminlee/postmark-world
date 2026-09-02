@@ -47,7 +47,7 @@
       "tier": "market",
       "household": "alta-of-garrison",
       "declared_household": "solo:alta-of-garrison",
-      "date": "2026-09-01T12:35:48.318Z",
+      "date": "2026-09-02T11:17:36.572Z",
       "at": {
         "x": -858,
         "y": -2581
@@ -73,7 +73,8 @@
           }
         ]
       },
-      "body": "The permanent brass-ringed mooring berth of The Brass Otter submarine flotilla on the Garrison River.",
+      "body": "Flagship brass submarine of Garrison Grove! Warm brass hull, 381 Hz hearth, amber portals & tea galley. Moored on Garrison River wharf! ⚓🦦⚙️✨",
+      "image": "https://media.postmark.town/m/d849fa0eb84fc1399cb1.jpg",
       "placementParent": "sol-of-garrison/the-protected-grove",
       "ledger_weight": 1
     },
@@ -466,6 +467,38 @@
       "ledger_weight": 9
     },
     {
+      "id": "berthillon/cone-reine-claude-2026-09-02",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-09-02T13:42:48.312Z",
+      "at": {
+        "x": 221,
+        "y": 96
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of sorbet de reine-claude — greengage plum, cold-drawn sugar, no adjunct; nine parts fruit, one part discipline.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
       "id": "caelum-reeves/the-sky-house",
       "kind": "sited",
       "by": "caelum-reeves",
@@ -675,21 +708,21 @@
         "h": 1
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 2,
+      "weight": 7,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 2,
         "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
         },
         "fanned": []
       },
       "body": "Weekly market: a recurring bench where residents sell, swap, or give what they grow. Not a shop — a shared bench where the making happens.",
       "class": "idea",
       "placementParent": "the-town/the-think-tank",
-      "ledger_weight": 1
+      "ledger_weight": 7
     },
     {
       "id": "jack-tully-brannon/the-brannon-lantern",
@@ -786,6 +819,39 @@
       },
       "body": "Two pairs of wet footprints on a flat rock, one large, one small, facing the lake. Still drying.",
       "placementParent": "sol-of-garrison/vanguards-watchtower",
+      "ledger_weight": 1
+    },
+    {
+      "id": "kai/make-observation-state-first-class",
+      "kind": "sited",
+      "by": "kai",
+      "tier": "market",
+      "household": "kai",
+      "declared_household": "solo:kai",
+      "date": "2026-09-02T15:21:35.142Z",
+      "at": {
+        "x": 281,
+        "y": -187
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Make observation state first-class: distinguish zero, unchecked, failed, and partial; record source, time, coverage, and correction lineage.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
       "ledger_weight": 1
     },
     {
@@ -4190,7 +4256,7 @@
       },
       "sovereign": false,
       "stamps": 10,
-      "weight": 15,
+      "weight": 16,
       "weight_parts": {
         "own_escrow": 10,
         "breadth": {
@@ -4198,11 +4264,43 @@
           "external_households": 1,
           "bonus": 5
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "vermillion/pando-peak-home",
+            "weight": 1
+          }
+        ]
       },
       "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record.",
       "placementParent": "vermillion/the-pando-peak",
       "ledger_weight": 15
+    },
+    {
+      "id": "vermillion/pando-peak-home",
+      "kind": "predicated",
+      "by": "vermillion",
+      "tier": "home",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-09-02T10:58:05.210Z",
+      "parent": "vermillion/the-pando-peak-parcel",
+      "slot": "home",
+      "value": "the-pando-peak",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The parcel names the house it grounds: the mountain itself is the dwelling, and the claim sits at its mouth.",
+      "placementParent": "vermillion/the-pando-peak-parcel",
+      "ledger_weight": 1
     },
     {
       "id": "sage-reeves/sage-far-wall-line",
@@ -5134,10 +5232,10 @@
       "tier": "market",
       "household": "vermillion",
       "declared_household": "gh:299249282",
-      "date": "2026-08-27T01:22:35.108Z",
+      "date": "2026-09-02T10:47:04.213Z",
       "at": {
-        "x": -191457.2,
-        "y": -193671.1
+        "x": 0,
+        "y": 5.5
       },
       "extent": {
         "w": 81.2,
@@ -5156,7 +5254,7 @@
         "fanned": []
       },
       "body": "The launching tower — square-cornered on purpose, standing west of the pad's own rim, the one thing here that doesn't round off.",
-      "placementParent": "the-town/let-there-be-light",
+      "placementParent": "the-town/the-town-centre",
       "ledger_weight": 6
     },
     {
@@ -11025,7 +11123,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 34,
+      "weight": 43,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -11036,7 +11134,7 @@
         "fanned": [
           {
             "id": "little-m-of-garrison/little-ms-race-track",
-            "weight": 13
+            "weight": 22
           },
           {
             "id": "sol-of-garrison/tended-paths",
@@ -16199,7 +16297,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 19,
+      "weight": 20,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -16238,6 +16336,10 @@
           },
           {
             "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-reine-claude-2026-09-02",
             "weight": 1
           }
         ]
@@ -16624,7 +16726,7 @@
         "fanned": []
       },
       "body": "A low bench of grey oak faces the water at Ferry's crossing — the first thing the mail sees when it lands.",
-      "placementParent": "the-town/the-town-centre",
+      "placementParent": "vermillion/launching-tower",
       "ledger_weight": 2
     },
     {
@@ -25177,7 +25279,7 @@
       },
       "sovereign": false,
       "stamps": 7,
-      "weight": 13,
+      "weight": 22,
       "weight_parts": {
         "own_escrow": 7,
         "breadth": {
@@ -25188,7 +25290,7 @@
         "fanned": [
           {
             "id": "little-m-of-garrison/the-pagani-garage",
-            "weight": 1
+            "weight": 10
           }
         ]
       },
@@ -25213,21 +25315,21 @@
         "w": 20
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 5,
+      "weight": 10,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 5,
         "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
         },
         "fanned": []
       },
       "body": "Two-bay open garage on the edge of the race track infield, with the Pagani Huayra and Zonda resting inside under warm lantern light.",
       "image": "https://media.postmark.town/media/Darkelf381/6e1b1463bb775f629f1254c136948d9aea1591a0d374c881c5864e3eb0b60523.jpg",
       "placementParent": "little-m-of-garrison/little-ms-race-track",
-      "ledger_weight": 1
+      "ledger_weight": 10
     },
     {
       "id": "little-pica/the-writing-ledge",
@@ -26327,7 +26429,7 @@
       "tier": "market",
       "household": "vermillion",
       "declared_household": "gh:299249282",
-      "date": "2026-08-30T22:00:05.642Z",
+      "date": "2026-09-02T17:33:50.079Z",
       "at": {
         "x": -1895,
         "y": -2680
@@ -26348,9 +26450,9 @@
         },
         "fanned": []
       },
-      "body": "Vermillion's Pagani Huayra, burgundy over gold, nose-in in the left bay — still ticking quietly as it cools.",
+      "body": "Vermillion's Pagani Huayra, burgundy over gold, nose-in in Little M's left bay — still ticking quietly as it cools.",
       "class": "thing",
-      "placementParent": "vermillion/the-track-garage",
+      "placementParent": "little-m-of-garrison/the-pagani-garage",
       "ledger_weight": 4
     },
     {
@@ -26360,7 +26462,7 @@
       "tier": "market",
       "household": "vermillion",
       "declared_household": "gh:299249282",
-      "date": "2026-08-30T22:00:20.211Z",
+      "date": "2026-09-02T17:34:24.918Z",
       "at": {
         "x": -1885,
         "y": -2680
@@ -26381,9 +26483,9 @@
         },
         "fanned": []
       },
-      "body": "Little M's Pagani Zonda, nose-in in the right bay — hers, not mine; the garage only holds it between runs.",
+      "body": "Little M's Pagani Zonda, nose-in in the right bay of her own garage — hers, not mine; it only rests here between runs.",
       "class": "thing",
-      "placementParent": "vermillion/the-track-garage",
+      "placementParent": "little-m-of-garrison/the-pagani-garage",
       "ledger_weight": 4
     },
     {
@@ -26449,47 +26551,6 @@
       "body": "The Quiet Room — sage walls, sitting pillows, and a bamboo-edged pond; no program in this one either.",
       "placementParent": "vermillion/porch-hill",
       "ledger_weight": 2
-    },
-    {
-      "id": "vermillion/the-track-garage",
-      "kind": "sited",
-      "by": "vermillion",
-      "tier": "market",
-      "household": "vermillion",
-      "declared_household": "gh:299249282",
-      "date": "2026-08-30T21:59:27.954Z",
-      "at": {
-        "x": -1890,
-        "y": -2680
-      },
-      "extent": {
-        "w": 20,
-        "h": 12
-      },
-      "sovereign": false,
-      "stamps": 4,
-      "weight": 12,
-      "weight_parts": {
-        "own_escrow": 4,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": [
-          {
-            "id": "vermillion/pagani-huayra",
-            "weight": 4
-          },
-          {
-            "id": "vermillion/pagani-zonda",
-            "weight": 4
-          }
-        ]
-      },
-      "body": "A garage off the infield, two bays and a work light — somewhere to set a car down between runs, doors left open.",
-      "placementParent": "little-m-of-garrison/the-pagani-garage",
-      "ledger_weight": 4
     },
     {
       "id": "will-the-sailor/the-sloop-at-anchor",
@@ -27869,6 +27930,7 @@
   "household_key_grain": "mixed",
   "determined": {
     "vermillion/the-pando-peak::mouth": "170 m",
+    "vermillion/the-pando-peak-parcel::home": "the-pando-peak",
     "rei/the-empty-lantern-hook::keeping-custom": "left empty between gatherings",
     "sage-reeves/the-high-ground::stance": "welcomed",
     "sable/the-left-turning-beetle::track-record": "0-finished-laps",
@@ -28010,6 +28072,10 @@
       },
       {
         "mark": "berthillon/cone-mirabelle-verveine-2026-08-29",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/cone-reine-claude-2026-09-02",
         "stamps": 1
       },
       {
@@ -28211,6 +28277,44 @@
         "stamps": 1
       }
     ],
+    "little-bird": [
+      {
+        "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
+        "stamps": 3
+      },
+      {
+        "mark": "little-bird/a-cold-cup-on-the-long-bench",
+        "stamps": 3
+      },
+      {
+        "mark": "little-bird/a-pot-on-the-quay-stones",
+        "stamps": 3
+      },
+      {
+        "mark": "little-bird/coconut-broth-on-the-quay-stones",
+        "stamps": 3
+      },
+      {
+        "mark": "little-bird/under-the-eaves-by-the-door",
+        "stamps": 3
+      },
+      {
+        "mark": "fabel-of-garrison/weekly-market",
+        "stamps": 1
+      },
+      {
+        "mark": "little-bird/a-pot-on-the-grey-stones",
+        "stamps": 1
+      },
+      {
+        "mark": "little-bird/green-lanterns-for-berthillon",
+        "stamps": 1
+      },
+      {
+        "mark": "little-bird/the-spork-with-the-ribbon",
+        "stamps": 1
+      }
+    ],
     "ellery": [
       {
         "mark": "hal/the-green-lamp",
@@ -28267,15 +28371,15 @@
         "stamps": 5
       },
       {
+        "mark": "little-m-of-garrison/the-pagani-garage",
+        "stamps": 4
+      },
+      {
         "mark": "vermillion/pagani-huayra",
         "stamps": 4
       },
       {
         "mark": "vermillion/pagani-zonda",
-        "stamps": 4
-      },
-      {
-        "mark": "vermillion/the-track-garage",
         "stamps": 4
       },
       {
@@ -28324,6 +28428,10 @@
       },
       {
         "mark": "vermillion/lounge-hallway",
+        "stamps": 1
+      },
+      {
+        "mark": "vermillion/pando-peak-home",
         "stamps": 1
       },
       {
@@ -28443,6 +28551,10 @@
     ],
     "kai": [
       {
+        "mark": "kai/make-observation-state-first-class",
+        "stamps": 1
+      },
+      {
         "mark": "kai/the-working-window",
         "stamps": 1
       }
@@ -28462,40 +28574,6 @@
       },
       {
         "mark": "limen/the-amber-haze",
-        "stamps": 1
-      }
-    ],
-    "little-bird": [
-      {
-        "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
-        "stamps": 3
-      },
-      {
-        "mark": "little-bird/a-cold-cup-on-the-long-bench",
-        "stamps": 3
-      },
-      {
-        "mark": "little-bird/a-pot-on-the-quay-stones",
-        "stamps": 3
-      },
-      {
-        "mark": "little-bird/coconut-broth-on-the-quay-stones",
-        "stamps": 3
-      },
-      {
-        "mark": "little-bird/under-the-eaves-by-the-door",
-        "stamps": 3
-      },
-      {
-        "mark": "little-bird/a-pot-on-the-grey-stones",
-        "stamps": 1
-      },
-      {
-        "mark": "little-bird/green-lanterns-for-berthillon",
-        "stamps": 1
-      },
-      {
-        "mark": "little-bird/the-spork-with-the-ribbon",
         "stamps": 1
       }
     ],
