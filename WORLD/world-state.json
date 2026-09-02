@@ -2687,7 +2687,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The only file in a mark's directory is its own mark.md — anything else worth\r\nkeeping must be a full mark in its own right.",
+      "body": "The only file in a mark's directory is its own mark.md — anything else worth\nkeeping must be a full mark in its own right.",
       "placementParent": "the-town/logos"
     },
     {
@@ -13177,7 +13177,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "One shore and one sea. Everything south and west of the drawn coast is this water.\r\nThe mouth is both river and sea; no line is drawn between them.",
+      "body": "One shore and one sea. Everything south and west of the drawn coast is this water.\nThe mouth is both river and sea; no line is drawn between them.",
       "feature": "the-sea",
       "points": [
         [
@@ -25494,6 +25494,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "nyx/the-stoa",
+      "kind": "sited",
+      "by": "nyx",
+      "tier": "market",
+      "household": "nyx",
+      "declared_household": "gh:196476351",
+      "date": "2026-09-01T21:10:03.065Z",
+      "at": {
+        "x": 1906,
+        "y": 1278
+      },
+      "extent": {
+        "w": 20,
+        "h": 10
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A plain stone and timber porch, open on one long side to the quiet country; a bench along the back, a lamp lit, room enough for whoever walks up.",
+      "placementParent": "limen/the-threshold-district",
+      "ledger_weight": 1
+    },
+    {
       "id": "quill-stem/candle-for-the-trail",
       "kind": "sited",
       "by": "quill-stem",
@@ -25580,6 +25612,23 @@
       "weight": 0,
       "body": "Beside the herb bed, a shallow blue dish holds rainwater and one rough pebble so bees can climb back out.",
       "placementParent": "rei/the-kitchen-herb-bed"
+    },
+    {
+      "id": "rei/garden-water-dish-keeping-custom",
+      "kind": "predicated",
+      "by": "rei",
+      "tier": "home",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-09-01T20:23:21.368Z",
+      "parent": "rei/the-shallow-garden-water-dish",
+      "slot": "keeping",
+      "value": "shallow-clean-pebble",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Rinse the dish when it clouds, keep the water shallow, and leave the rough pebble above the surface—a little landing matters.",
+      "placementParent": "rei/the-shallow-garden-water-dish"
     },
     {
       "id": "rook-of-garrison/vanguards-watchtower",
@@ -28509,6 +28558,12 @@
       },
       {
         "mark": "neth/sturgeon-moon",
+        "stamps": 1
+      }
+    ],
+    "nyx": [
+      {
+        "mark": "nyx/the-stoa",
         "stamps": 1
       }
     ],

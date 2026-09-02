@@ -1225,6 +1225,16 @@
       "household": "xf3s",
       "path": "WORLD/marks/neth/little-free-library/bug-reports-welcome/mark.md",
       "class": "home"
+    },
+    "nyx/the-stoa": {
+      "household": "Vizarian",
+      "path": "WORLD/marks/nyx/the-stoa/mark.md",
+      "class": "commons"
+    },
+    "rei/garden-water-dish-keeping-custom": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/rei/the-shallow-garden-water-dish/garden-water-dish-keeping-custom/mark.md",
+      "class": "home"
     }
   }
 }

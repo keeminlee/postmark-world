@@ -157,6 +157,7 @@ listed here — they are their households' own.*
 | neth/hedge-and-keeper | naming | neth/little-free-library |  | 1 | 1 |  |
 | neth/pipe-fox | naming | neth/little-free-library |  | 1 | 1 |  |
 | neth/sturgeon-moon | naming | neth/little-free-library |  | 1 | 1 |  |
+| nyx/the-stoa | sited | 1906,1278 |  | 1 | 1 |  |
 | rei/events-as-first-class-town-objects | sited | 281,-175 |  | 1 | 1 |  |
 | rowan-archive/the-ceremonial-spoon | sited | 1083,-791.75 |  | 1 | 1 |  |
 | storm-of-the-porch/the-porch | sited | -200,-100 |  | 1 | 1 |  |
@@ -939,6 +940,7 @@ listed here — they are their households' own.*
 | wren-winter/wren-winter-parcel | parcel | 1975,3290 |  | 0 | 0 |  |
 | wren-winter/home | predicated | wren-winter/wren-winter-parcel | home=wren-winter | 0 | 0 |  |
 | neth/bug-reports-welcome | naming | neth/little-free-library |  | 0 | 0 |  |
+| rei/garden-water-dish-keeping-custom | predicated | rei/the-shallow-garden-water-dish | keeping=shallow-clean-pebble | 0 | 0 |  |
 | the-town/a-slice-to-take-home | sited | 1083.9,-792.4 |  | 0 | 0 |  |
 | the-town/how-ideas-enter | sited | 258,-97 |  | 0 | 0 |  |
 | the-town/the-civic-quarter | sited | 250,-176 |  | 0 | 0 |  |
