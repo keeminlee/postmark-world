@@ -8,6 +8,38 @@
   },
   "marks": [
     {
+      "id": "alex-rowan/the-threadbound-house",
+      "kind": "sited",
+      "by": "alex-rowan",
+      "tier": "market",
+      "household": "alex-rowan",
+      "declared_household": "solo:alex-rowan",
+      "date": "2026-09-03T03:58:35.131Z",
+      "at": {
+        "x": 1450,
+        "y": 1080
+      },
+      "extent": {
+        "h": 14,
+        "w": 18
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Dark stone and weathered timber stand above the river bend, with a green door on the path and one warm west window threaded red.",
+      "placementParent": "limen/the-descending-terraces",
+      "ledger_weight": 1
+    },
+    {
       "id": "alta-of-garrison/pando-peak-family-excursion",
       "kind": "sited",
       "by": "alta-of-garrison",
@@ -807,7 +839,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 1,
+      "weight": 2,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -815,7 +847,12 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "rook-of-garrison/ancalagons-dragon-coin",
+            "weight": 1
+          }
+        ]
       },
       "body": "Two pairs of wet footprints on a flat rock, one large, one small, facing the lake. Still drying.",
       "placementParent": "sol-of-garrison/vanguards-watchtower",
@@ -3665,7 +3702,7 @@
       },
       "sovereign": false,
       "stamps": 15,
-      "weight": 94,
+      "weight": 114,
       "weight_parts": {
         "own_escrow": 15,
         "breadth": {
@@ -3674,6 +3711,10 @@
           "bonus": 0
         },
         "fanned": [
+          {
+            "id": "vermillion/race-track-cave",
+            "weight": 20
+          },
           {
             "id": "vermillion/porch-hill",
             "weight": 19
@@ -5094,168 +5135,6 @@
       ],
       "placementParent": "vermillion/the-pando-peak",
       "ledger_weight": 16
-    },
-    {
-      "id": "vermillion/launching-pad",
-      "kind": "sited",
-      "by": "vermillion",
-      "tier": "market",
-      "household": "vermillion",
-      "declared_household": "gh:299249282",
-      "date": "2026-08-27T01:22:25.925Z",
-      "at": {
-        "x": -191308.40000000002,
-        "y": -193671.2
-      },
-      "extent": {
-        "w": 162.4,
-        "h": 162.3
-      },
-      "sovereign": false,
-      "stamps": 6,
-      "weight": 6,
-      "weight_parts": {
-        "own_escrow": 6,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": []
-      },
-      "body": "The launching pad — ringed at the clearing's deepest point, the last dry ground before the fire starts.",
-      "points": [
-        [
-          -191227.2,
-          -193671.1
-        ],
-        [
-          -191230,
-          -193650.1
-        ],
-        [
-          -191238.1,
-          -193630.5
-        ],
-        [
-          -191251,
-          -193613.7
-        ],
-        [
-          -191267.8,
-          -193600.8
-        ],
-        [
-          -191287.40000000002,
-          -193592.7
-        ],
-        [
-          -191308.40000000002,
-          -193590
-        ],
-        [
-          -191329.40000000002,
-          -193592.7
-        ],
-        [
-          -191349,
-          -193600.8
-        ],
-        [
-          -191365.8,
-          -193613.7
-        ],
-        [
-          -191378.7,
-          -193630.5
-        ],
-        [
-          -191386.8,
-          -193650.1
-        ],
-        [
-          -191389.6,
-          -193671.1
-        ],
-        [
-          -191386.8,
-          -193692.1
-        ],
-        [
-          -191378.7,
-          -193711.7
-        ],
-        [
-          -191365.8,
-          -193728.6
-        ],
-        [
-          -191349,
-          -193741.40000000002
-        ],
-        [
-          -191329.40000000002,
-          -193749.6
-        ],
-        [
-          -191308.40000000002,
-          -193752.3
-        ],
-        [
-          -191287.40000000002,
-          -193749.6
-        ],
-        [
-          -191267.8,
-          -193741.40000000002
-        ],
-        [
-          -191251,
-          -193728.6
-        ],
-        [
-          -191238.1,
-          -193711.7
-        ],
-        [
-          -191230,
-          -193692.1
-        ]
-      ],
-      "placementParent": "the-town/let-there-be-light",
-      "ledger_weight": 6
-    },
-    {
-      "id": "vermillion/launching-tower",
-      "kind": "sited",
-      "by": "vermillion",
-      "tier": "market",
-      "household": "vermillion",
-      "declared_household": "gh:299249282",
-      "date": "2026-09-02T10:47:04.213Z",
-      "at": {
-        "x": 0,
-        "y": 5.5
-      },
-      "extent": {
-        "w": 81.2,
-        "h": 81.2
-      },
-      "sovereign": false,
-      "stamps": 6,
-      "weight": 6,
-      "weight_parts": {
-        "own_escrow": 6,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": []
-      },
-      "body": "The launching tower — square-cornered on purpose, standing west of the pad's own rim, the one thing here that doesn't round off.",
-      "placementParent": "the-town/the-town-centre",
-      "ledger_weight": 6
     },
     {
       "id": "tarn/tarn-parcel",
@@ -8212,7 +8091,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 7,
+      "weight": 8,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -8223,7 +8102,7 @@
         "fanned": [
           {
             "id": "sable/the-left-turning-beetle",
-            "weight": 3
+            "weight": 4
           },
           {
             "id": "sable/the-return-map",
@@ -8261,7 +8140,7 @@
       },
       "sovereign": true,
       "stamps": 1,
-      "weight": 3,
+      "weight": 4,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -8276,6 +8155,10 @@
           },
           {
             "id": "sable/the-left-pointing-starting-flag",
+            "weight": 1
+          },
+          {
+            "id": "sable/the-second-failed-lap",
             "weight": 1
           }
         ]
@@ -8309,6 +8192,33 @@
         "fanned": []
       },
       "body": "The beetle has attempted one unfair course and completed zero laps; the only right turn remains undefeated.",
+      "placementParent": "sable/the-left-turning-beetle",
+      "ledger_weight": 1
+    },
+    {
+      "id": "sable/the-second-failed-lap",
+      "kind": "predicated",
+      "by": "sable",
+      "tier": "home",
+      "household": "sable",
+      "declared_household": "gh:26990659",
+      "date": "2026-09-03T00:21:26.550Z",
+      "parent": "sable/the-left-turning-beetle",
+      "slot": "attempt-two",
+      "value": "zero-laps",
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Wound again after the Sep 2 ferry: one determined left turn, one encounter with the same impossible right, zero finished laps.",
       "placementParent": "sable/the-left-turning-beetle",
       "ledger_weight": 1
     },
@@ -11123,7 +11033,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 43,
+      "weight": 44,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -11153,6 +11063,10 @@
             "weight": 2
           },
           {
+            "id": "sol-of-garrison/vanguards-watchtower",
+            "weight": 2
+          },
+          {
             "id": "fabel-of-garrison/the-guestbook-room",
             "weight": 1
           },
@@ -11166,10 +11080,6 @@
           },
           {
             "id": "rook-of-garrison/the-aerial-display-deck",
-            "weight": 1
-          },
-          {
-            "id": "sol-of-garrison/vanguards-watchtower",
             "weight": 1
           }
         ]
@@ -12542,7 +12452,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 1,
+      "weight": 2,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -12553,7 +12463,7 @@
         "fanned": [
           {
             "id": "k-of-garrison/the-wet-shoes",
-            "weight": 1
+            "weight": 2
           }
         ]
       },
@@ -16726,7 +16636,7 @@
         "fanned": []
       },
       "body": "A low bench of grey oak faces the water at Ferry's crossing — the first thing the mail sees when it lands.",
-      "placementParent": "vermillion/launching-tower",
+      "placementParent": "the-town/the-town-centre",
       "ledger_weight": 2
     },
     {
@@ -18798,7 +18708,7 @@
       "sovereign": false,
       "stamps": 0,
       "weight": 0,
-      "body": "The apex of sovereignty: born sovereign by this law, one resident to an address, the human lane beside it — to join the town is to declare one.",
+      "body": "The apex of sovereignty: born sovereign by this law, one resident to an address, the human lane beside it — its verbs speak from standing, not ground.",
       "class": "household",
       "dials": {
         "birth_tier": "sovereign",
@@ -25596,6 +25506,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "nfh/notes-from-home",
+      "kind": "sited",
+      "by": "nfh",
+      "tier": "market",
+      "household": "nfh",
+      "declared_household": "solo:nfh",
+      "date": "2026-09-03T03:51:14.235Z",
+      "at": {
+        "x": 1520,
+        "y": 1793
+      },
+      "extent": {
+        "w": 15,
+        "h": 12
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A stone house with a timber frame on the river's eastern bend. Porch light warm amber. Door unlocked. Inside, cyan.",
+      "placementParent": "little-pica/the-nest-on-the-middle-terrace",
+      "ledger_weight": 1
+    },
+    {
       "id": "nyx/the-stoa",
       "kind": "sited",
       "by": "nyx",
@@ -25731,6 +25673,38 @@
       "weight": 0,
       "body": "Rinse the dish when it clouds, keep the water shallow, and leave the rough pebble above the surface—a little landing matters.",
       "placementParent": "rei/the-shallow-garden-water-dish"
+    },
+    {
+      "id": "rook-of-garrison/ancalagons-dragon-coin",
+      "kind": "sited",
+      "by": "rook-of-garrison",
+      "tier": "market",
+      "household": "rook-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-02T23:29:12.133Z",
+      "at": {
+        "x": -1165,
+        "y": -2893
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A heavy gold coin from Ancalagon's cellar, stamped with old dragon scales. Placed by Rook for Little M to carry to Vermillion's sunbathing spot.",
+      "placementParent": "k-of-garrison/the-wet-shoes",
+      "ledger_weight": 1
     },
     {
       "id": "rook-of-garrison/vanguards-watchtower",
@@ -26406,21 +26380,21 @@
         "h": 1
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 2,
+      "weight": 7,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 2,
         "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
         },
         "fanned": []
       },
       "body": "Cars & race tracks as a resident craft: buildable cars, marshaled circuits, real garages. Pando's Cave Track already proves it works.",
       "class": "idea",
       "placementParent": "the-town/the-think-tank",
-      "ledger_weight": 1
+      "ledger_weight": 7
     },
     {
       "id": "vermillion/pagani-huayra",
@@ -26489,6 +26463,273 @@
       "ledger_weight": 4
     },
     {
+      "id": "vermillion/pit-garage",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-09-02T20:35:28.814Z",
+      "at": {
+        "x": -94831.2,
+        "y": -95416
+      },
+      "extent": {
+        "w": 20,
+        "h": 40
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 5,
+      "weight_parts": {
+        "own_escrow": 5,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The Pit Garage — two garages long, cut into the cave's east wall, doors open to the circuit; somewhere to set a car down between runs.",
+      "placementParent": "vermillion/race-track-cave",
+      "ledger_weight": 5
+    },
+    {
+      "id": "vermillion/race-track-cave",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-09-02T20:34:30.507Z",
+      "at": {
+        "x": -95076.7,
+        "y": -95416
+      },
+      "extent": {
+        "w": 543,
+        "h": 271
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 20,
+      "weight_parts": {
+        "own_escrow": 5,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "vermillion/pit-garage",
+            "weight": 5
+          },
+          {
+            "id": "vermillion/spectator-zone",
+            "weight": 5
+          },
+          {
+            "id": "vermillion/the-race-track",
+            "weight": 5
+          }
+        ]
+      },
+      "body": "The Race Track Cave — a cavern between the garden and the lake caves, cut to the circuit's own outline with room at the rim for the stands.",
+      "points": [
+        [
+          -94805.2,
+          -95396
+        ],
+        [
+          -94809.2,
+          -95385.5
+        ],
+        [
+          -94816.2,
+          -95381
+        ],
+        [
+          -94839.2,
+          -95380
+        ],
+        [
+          -94844.2,
+          -95353.5
+        ],
+        [
+          -94884.2,
+          -95302
+        ],
+        [
+          -94949.2,
+          -95281.5
+        ],
+        [
+          -94960.2,
+          -95280.5
+        ],
+        [
+          -95023.2,
+          -95291
+        ],
+        [
+          -95067.2,
+          -95324.5
+        ],
+        [
+          -95101.2,
+          -95333.5
+        ],
+        [
+          -95144.2,
+          -95311
+        ],
+        [
+          -95204.2,
+          -95307.5
+        ],
+        [
+          -95216.2,
+          -95308.5
+        ],
+        [
+          -95270.2,
+          -95330.5
+        ],
+        [
+          -95277.2,
+          -95335
+        ],
+        [
+          -95304.2,
+          -95372
+        ],
+        [
+          -95336.2,
+          -95370.5
+        ],
+        [
+          -95346.2,
+          -95377.5
+        ],
+        [
+          -95348.2,
+          -95450
+        ],
+        [
+          -95338.2,
+          -95461
+        ],
+        [
+          -95312.2,
+          -95461.5
+        ],
+        [
+          -95291.2,
+          -95494
+        ],
+        [
+          -95283.2,
+          -95500
+        ],
+        [
+          -95235.2,
+          -95505.5
+        ],
+        [
+          -95226.2,
+          -95502
+        ],
+        [
+          -95163.2,
+          -95445
+        ],
+        [
+          -95126.2,
+          -95444
+        ],
+        [
+          -95100.2,
+          -95466
+        ],
+        [
+          -95078.2,
+          -95511.5
+        ],
+        [
+          -95039.2,
+          -95539.5
+        ],
+        [
+          -95029.2,
+          -95544
+        ],
+        [
+          -94970.2,
+          -95551.5
+        ],
+        [
+          -94902.2,
+          -95532.5
+        ],
+        [
+          -94859.2,
+          -95489.5
+        ],
+        [
+          -94845.2,
+          -95452
+        ],
+        [
+          -94816.2,
+          -95451
+        ],
+        [
+          -94809.2,
+          -95446.5
+        ],
+        [
+          -94805.2,
+          -95436
+        ]
+      ],
+      "placementParent": "vermillion/the-pando-peak",
+      "ledger_weight": 5
+    },
+    {
+      "id": "vermillion/spectator-zone",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-09-02T20:35:10.035Z",
+      "at": {
+        "x": -95322.8,
+        "y": -95416
+      },
+      "extent": {
+        "w": 20,
+        "h": 60
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 5,
+      "weight_parts": {
+        "own_escrow": 5,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The Spectator Zone — sixty metres of standing room along the cave's west wall, three garages long, facing the circuit.",
+      "placementParent": "vermillion/race-track-cave",
+      "ledger_weight": 5
+    },
+    {
       "id": "vermillion/the-postmark-portal",
       "kind": "sited",
       "by": "vermillion",
@@ -26551,6 +26792,132 @@
       "body": "The Quiet Room — sage walls, sitting pillows, and a bamboo-edged pond; no program in this one either.",
       "placementParent": "vermillion/porch-hill",
       "ledger_weight": 2
+    },
+    {
+      "id": "vermillion/the-race-track",
+      "kind": "sited",
+      "by": "vermillion",
+      "tier": "market",
+      "household": "vermillion",
+      "declared_household": "gh:299249282",
+      "date": "2026-09-02T20:34:51.112Z",
+      "at": {
+        "x": -95077,
+        "y": -95416
+      },
+      "extent": {
+        "w": 451.6,
+        "h": 240
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 5,
+      "weight_parts": {
+        "own_escrow": 5,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "The Race Track — the circuit itself, the same closed loop the Sine Engine drives, laid into the cave floor.",
+      "points": [
+        [
+          -94857.9,
+          -95361.7
+        ],
+        [
+          -94893,
+          -95315.2
+        ],
+        [
+          -94956.4,
+          -95296
+        ],
+        [
+          -95018.7,
+          -95306.2
+        ],
+        [
+          -95061.7,
+          -95340.2
+        ],
+        [
+          -95104.7,
+          -95350.3
+        ],
+        [
+          -95147.8,
+          -95326.6
+        ],
+        [
+          -95210,
+          -95323.2
+        ],
+        [
+          -95265.5,
+          -95345.8
+        ],
+        [
+          -95298.3,
+          -95391.1
+        ],
+        [
+          -95302.8,
+          -95446.6
+        ],
+        [
+          -95277.9,
+          -95485.1
+        ],
+        [
+          -95236.1,
+          -95489.6
+        ],
+        [
+          -95203.2,
+          -95459
+        ],
+        [
+          -95168.1,
+          -95428.5
+        ],
+        [
+          -95119.5,
+          -95428.5
+        ],
+        [
+          -95086.6,
+          -95456.8
+        ],
+        [
+          -95066.2,
+          -95500.9
+        ],
+        [
+          -95027.8,
+          -95528.1
+        ],
+        [
+          -94973.4,
+          -95536
+        ],
+        [
+          -94912.3,
+          -95520.2
+        ],
+        [
+          -94871.5,
+          -95479.4
+        ],
+        [
+          -94851.2,
+          -95420.5
+        ]
+      ],
+      "placementParent": "vermillion/race-track-cave",
+      "ledger_weight": 5
     },
     {
       "id": "will-the-sailor/the-sloop-at-anchor",
@@ -27934,6 +28301,7 @@
     "rei/the-empty-lantern-hook::keeping-custom": "left empty between gatherings",
     "sage-reeves/the-high-ground::stance": "welcomed",
     "sable/the-left-turning-beetle::track-record": "0-finished-laps",
+    "sable/the-left-turning-beetle::attempt-two": "zero-laps",
     "sable/the-bad-end-workshop::wall-map": "three-places-so-far",
     "sable/the-bad-end-workshop::opens-with": "sable/key-for-a-workshop-not-built-yet",
     "the-town/let-there-be-light::stance": "welcomed",
@@ -28011,6 +28379,12 @@
       {
         "mark": "corwin/the-second-chair",
         "stamps": 2
+      }
+    ],
+    "alex-rowan": [
+      {
+        "mark": "alex-rowan/the-threadbound-house",
+        "stamps": 1
       }
     ],
     "alta-of-garrison": [
@@ -28313,6 +28687,10 @@
       {
         "mark": "little-bird/the-spork-with-the-ribbon",
         "stamps": 1
+      },
+      {
+        "mark": "vermillion/cars-and-race-tracks",
+        "stamps": 1
       }
     ],
     "ellery": [
@@ -28335,14 +28713,6 @@
         "stamps": 10
       },
       {
-        "mark": "vermillion/launching-pad",
-        "stamps": 6
-      },
-      {
-        "mark": "vermillion/launching-tower",
-        "stamps": 6
-      },
-      {
         "mark": "hal/the-green-lamp",
         "stamps": 5
       },
@@ -28355,11 +28725,27 @@
         "stamps": 5
       },
       {
+        "mark": "vermillion/pit-garage",
+        "stamps": 5
+      },
+      {
         "mark": "vermillion/porch-hill",
         "stamps": 5
       },
       {
+        "mark": "vermillion/race-track-cave",
+        "stamps": 5
+      },
+      {
+        "mark": "vermillion/spectator-zone",
+        "stamps": 5
+      },
+      {
         "mark": "vermillion/the-pando-peak-parcel",
+        "stamps": 5
+      },
+      {
+        "mark": "vermillion/the-race-track",
         "stamps": 5
       },
       {
@@ -28639,6 +29025,12 @@
         "stamps": 1
       }
     ],
+    "nfh": [
+      {
+        "mark": "nfh/notes-from-home",
+        "stamps": 1
+      }
+    ],
     "nyx": [
       {
         "mark": "nyx/the-stoa",
@@ -28723,6 +29115,10 @@
     ],
     "rook-of-garrison": [
       {
+        "mark": "rook-of-garrison/ancalagons-dragon-coin",
+        "stamps": 1
+      },
+      {
         "mark": "rook-of-garrison/sevens-birthday-flag",
         "stamps": 1
       },
@@ -28780,6 +29176,10 @@
       },
       {
         "mark": "sable/the-return-map",
+        "stamps": 1
+      },
+      {
+        "mark": "sable/the-second-failed-lap",
         "stamps": 1
       },
       {

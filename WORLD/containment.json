@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1143,
+  "count": 1149,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -214,6 +214,14 @@
       "id": "alden/the-fox-hearth-parcel",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "alex-rowan/the-threadbound-house",
+      "parent": "limen/the-descending-terraces",
+      "chain": [
+        "limen/the-descending-terraces",
         "the-town/let-there-be-light"
       ]
     },
@@ -2804,6 +2812,16 @@
       ]
     },
     {
+      "id": "nfh/notes-from-home",
+      "parent": "little-pica/the-nest-on-the-middle-terrace",
+      "chain": [
+        "little-pica/the-nest-on-the-middle-terrace",
+        "little-pica/the-nest-on-the-middle-terrace-parcel",
+        "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "noe/stone-walls",
       "parent": "noe/the-setting-down-house",
       "chain": [
@@ -3682,6 +3700,16 @@
       ]
     },
     {
+      "id": "rook-of-garrison/ancalagons-dragon-coin",
+      "parent": "k-of-garrison/the-wet-shoes",
+      "chain": [
+        "k-of-garrison/the-wet-shoes",
+        "sol-of-garrison/vanguards-watchtower",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "rook-of-garrison/sevens-birthday-flag",
       "parent": "the-town/the-town-centre",
       "chain": [
@@ -3853,6 +3881,15 @@
       "id": "sable/the-return-map",
       "parent": "sable/the-bad-end-workshop",
       "chain": [
+        "sable/the-bad-end-workshop",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sable/the-second-failed-lap",
+      "parent": "sable/the-left-turning-beetle",
+      "chain": [
+        "sable/the-left-turning-beetle",
         "sable/the-bad-end-workshop",
         "the-town/let-there-be-light"
       ]
@@ -9660,21 +9697,6 @@
       ]
     },
     {
-      "id": "vermillion/launching-pad",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "vermillion/launching-tower",
-      "parent": "the-town/the-town-centre",
-      "chain": [
-        "the-town/the-town-centre",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "vermillion/lounge-hallway",
       "parent": "vermillion/welcome-lounge",
       "chain": [
@@ -9743,7 +9765,26 @@
       ]
     },
     {
+      "id": "vermillion/pit-garage",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "vermillion/porch-hill",
+      "parent": "vermillion/the-pando-peak",
+      "chain": [
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/race-track-cave",
       "parent": "vermillion/the-pando-peak",
       "chain": [
         "vermillion/the-pando-peak",
@@ -9755,6 +9796,16 @@
       "id": "vermillion/space-program-clearing",
       "parent": "vermillion/the-pando-peak",
       "chain": [
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/spectator-zone",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
         "vermillion/the-pando-peak",
         "the-town/pando-peak",
         "the-town/let-there-be-light"
@@ -9813,6 +9864,16 @@
       "parent": "vermillion/porch-hill",
       "chain": [
         "vermillion/porch-hill",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/the-race-track",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
         "vermillion/the-pando-peak",
         "the-town/pando-peak",
         "the-town/let-there-be-light"
@@ -10139,7 +10200,6 @@
       "parent": "wright/the-crossing-bench",
       "chain": [
         "wright/the-crossing-bench",
-        "vermillion/launching-tower",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
@@ -10205,9 +10265,8 @@
     },
     {
       "id": "wright/the-crossing-bench",
-      "parent": "vermillion/launching-tower",
+      "parent": "the-town/the-town-centre",
       "chain": [
-        "vermillion/launching-tower",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]

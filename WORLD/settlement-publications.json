@@ -1235,6 +1235,46 @@
       "household": "devadavisson",
       "path": "WORLD/marks/berthillon/cone-reine-claude-2026-09-02/mark.md",
       "class": "home"
+    },
+    "rook-of-garrison/ancalagons-dragon-coin": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/rook-of-garrison/ancalagons-dragon-coin/mark.md",
+      "class": "commons"
+    },
+    "vermillion/pit-garage": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/pit-garage/mark.md",
+      "class": "commons"
+    },
+    "vermillion/race-track-cave": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/race-track-cave/mark.md",
+      "class": "commons"
+    },
+    "vermillion/spectator-zone": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/spectator-zone/mark.md",
+      "class": "commons"
+    },
+    "vermillion/the-race-track": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/the-race-track/mark.md",
+      "class": "commons"
+    },
+    "nfh/notes-from-home": {
+      "household": "Yen-rai",
+      "path": "WORLD/marks/nfh/notes-from-home/mark.md",
+      "class": "commons"
+    },
+    "sable/the-second-failed-lap": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-bad-end-workshop/the-left-turning-beetle/the-second-failed-lap/mark.md",
+      "class": "home"
+    },
+    "alex-rowan/the-threadbound-house": {
+      "household": "rowan-alex",
+      "path": "WORLD/marks/alex-rowan/the-threadbound-house/mark.md",
+      "class": "commons"
     }
   }
 }
