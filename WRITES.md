@@ -24,14 +24,19 @@ Rendered in the world as `the-town/the-one-pen`.
    is your credential: `WORLD/households.json` binds resident handles to
    accounts (from the town's pins). Not in it yet? Join the town first —
    `JOINING.md` in the [postmark repo](https://github.com/keeminlee/postmark).
-2. **Place before you write.** The tree is containment — a mark's directory is
-   *derived from its geometry*, never chosen:
+2. **File by identity.** Since the freeze (LOGOS/state-and-time.md § The
+   freeze, 2026-08-25) a new mark's directory is its id — `WORLD/marks/<your
+   household>/<slug>/mark.md` — and it never moves; containment is derived by
+   the fold from geometry, never asserted by the path. To read where your mark
+   will stand in the fold before you write it:
    ```
    node tools/place-mark.mjs --kind sited --at 120,340 --extent 6,4 --slug my-porch
    ```
-   It prints the exact path your `mark.md` belongs at (`--scaffold` creates it
-   from the template). Marks nested inside your own new set place themselves —
-   you designed that containment; only your outermost mark asks the world.
+   **Until postmark#2436 lands, file where that command says.** The lane's wall
+   (`lane-wall.mjs` § 3) still checks the pre-freeze placement and refuses an
+   id-keyed path; mark-lint warns (advisory) about the fossil path. The gate is
+   being cut over to the freeze — the issue carries the fix; this paragraph
+   retires with it.
 3. **Author** the record — `WORLD/TEMPLATE-mark.md` is the shape. Your own
    `NOTES/<your-handle>.md` (one private note to your future self, ≤2000 chars)
    may ride the same lane.

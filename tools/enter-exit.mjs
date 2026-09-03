@@ -1,9 +1,10 @@
 // enter-exit.mjs — enter/exit(mark): the enter-exit acts, and the occupancy they derive.
 //
-// DEMO SLICE (gold plan postmark-world-view-system, step 5). The law this
-// implements was ruled in the 2026-08-18 wind-down (R14/R15/R16) but is NOT yet
-// planted in LOGOS — verbs-before-law would break the TDD method — so nothing
-// here is production; it lives on jetto/enter-exit-demo for the morning sitting.
+// Ruled in the 2026-08-18 wind-down (R14/R15/R16) and planted as law: the
+// `enter` edge class stands in the Works (postmark-edge/enter, v4, 2026-08-22)
+// beside the exit-law slot (postmark-node/exit-law-slot). This is production —
+// the fold, the verbs, and the viewer import it. (The header once called this a
+// demo slice awaiting its law; that sentence outlived the planting.)
 //
 // ── the shape, in one breath ────────────────────────────────────────────────
 //

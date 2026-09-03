@@ -26,7 +26,7 @@ recomputes the entire world-state from the records:
 ```
 node tools/mark-lint.mjs         # every mark well-formed, no edge lies
 node tools/marks-fold.mjs --no-write --json   # canon = what the fold computes
-npm test                         # the engine + fold + settlement invariants (81)
+npm test                         # the engine + fold + settlement invariants (the suite names its own count)
 node tools/world-poc.mjs --at 0,0    # stand on the quay, zero deps
 ```
 
@@ -135,6 +135,7 @@ WORLD/
   households.json    handle → credential-household registry (derived from the town's pins)
   settlement-publications.json   what each Settlement published
   fixtures/          test fixtures (stakes-draft-demo.json)
+STATE/               crossing-saves — the box's replayable checkpoints of the log (a projection; see WRITE-REGISTRY.md)
 tools/               lint · fold · engine · verbs · walk · settlement · terrain/seed extractors (node, zero deps)
 spectator/           the viewer — local (node spectator/server.mjs → :4877) and the site's world page (one module, two habitats; see *The viewer* above)
 seeding/             the one-shot seeding manifests (which homes, which coordinates, from where) — build intermediate the office still derives home-ness from

@@ -3,7 +3,7 @@
 //
 // Everything in determination.test.mjs and consent.test.mjs is a two-rectangle
 // fixture, which is how you check that a rule says what you think it says. This
-// file checks something else: that the rule, turned loose on the 612 marks the
+// file checks something else: that the rule, turned loose on every mark the
 // town has actually made, moves EXACTLY what was predicted and nothing else.
 //
 // Escrow comes from WORLD/fixtures/stakes-2026-08-10.json — the town's own
@@ -205,7 +205,7 @@ test.skip("the dense pond carves the thin meadow, live: every mark that takes gr
 });
 
 test("the carve is an OVERLAY on the real world — not one claim on disk was moved or resized", () => {
-  // The falsifier for "derived, never stored", run over all 612: every published
+  // The falsifier for "derived, never stored", run over every mark: every published
   // position and extent is byte-identical to the record the fold read.
   const onDisk = new Map(marks.filter((m) => !m._error).map((m) => [m.id, m]));
   for (const m of state.marks) {
@@ -268,7 +268,7 @@ test.skip("THERE IS NO CLASS LAW: a region is an ordinary marketplace mark and t
   // wanting the weight of what stands in it must be BACKED, like anything else, or
   // be welcomed in by the marks themselves.
   //
-  // The world root is the sharpest case. It geometrically contains all 612 marks,
+  // The world root is the sharpest case. It geometrically contains every mark,
   // so under class law it summed nearly the whole world (147) and read as the most
   // significant thing in it by construction rather than by anyone's choice. It is
   // now worth exactly what is staked on it.

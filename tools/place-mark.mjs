@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 // place-mark.mjs — WHERE does this mark go in the tree? Ask, don't guess.
 //
-// The v2 law is tree = containment: a mark's directory sits under the deepest
-// existing claim that geometrically contains it (root if none). At the office
-// door this is computed for you (`leave-exec.mjs` calls `placementParent`); in
-// the PR lane you write the path yourself — so this tool answers with the same
-// function the fold, the lint, and the door all use. One engine, no drift.
+// FILING IS FROZEN (LOGOS/state-and-time.md § The freeze, ruled 2026-08-25;
+// rendered as the-town/the-frozen-filing): a mark's directory is historical
+// filing, claims nothing, never moves; NEW marks file by identity —
+// WORLD/marks/<household>/<slug>/ — and containment lives only in the derived
+// fold. The directory-matches-containment law this tool computed is REPEALED.
+// What this tool still answers truthfully: WHAT CONTAINS THIS GEOMETRY — the
+// same `placementParent` the fold derives containment from — and, until
+// postmark#2436 lands, ALSO the path the lane's wall (lane-wall.mjs § 3) still
+// checks for: file where this says; the wall refuses an id-keyed path today and
+// mark-lint only warns about this one. The cutover (wall § 3 retired, --scaffold
+// writing WORLD/marks/<household>/<slug>/) rides that issue; this header retires
+// with it.
 //
 //   node tools/place-mark.mjs --kind sited  --at 120,340 --extent 6,4 --slug my-porch
 //   node tools/place-mark.mjs --kind parcel --at 900,1200 --slug my-ground

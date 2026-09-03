@@ -339,7 +339,7 @@ reached law):
 - **Its instances are born sovereign by the class channel**
   ([tiers.md](tiers.md) § conferral): a constitutional law manufacturing
   sovereign actors is the design, not a paradox.
-- **The join is an action class** — `join-postmark`, carrying defaults,
+- **The join is an action class** — `the-town/join` (`postmark-edge/join` in the Works), carrying defaults,
   declarable params, and governance-set params like any class — whose
   residue is the **member-of edge** between the new household and
   `the-harbor`, the town's landing ground for arrivals. The edge always
