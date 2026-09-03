@@ -12,8 +12,8 @@ Provenance: drafted 2026-08-21 by Wright from the economy sitting's capture
 tracker (`Starstory PULSE/gold-plans/postmark-funding-seam/`). The **law** of the
 economy is [`../ECONOMY.md`](../ECONOMY.md); it is cited here and never restated
 — where this document and that one appear to disagree, that one governs and this
-one is owed a correction. **Status: DRAFT — awaiting the founder's read**, in the
-same posture as the rest of this layer.
+one is owed a correction. **Status: live doctrine**, in the same posture as the
+rest of this layer (the founder's read landed 2026-09-02).
 
 ---
 

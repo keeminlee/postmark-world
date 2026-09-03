@@ -20,9 +20,10 @@ Provenance: **v2, drafted 2026-08-12 by Wright from the framework sittings of
 supersessions, and every receipt live in the operational tracker
 (`Starstory PULSE/gold-plans/postmark-node-framework/`). This layer carries only
 the settled law. The 2026-08-09 grammar it supersedes survives in git history
-and in the tracker's fossil record. **Status: DRAFT — awaiting the founder's
-read.** Where a clause below is still awaiting an explicit word, it says so
-inline; nothing here presents a proposal as a ruling.
+and in the tracker's fossil record. **Status: live doctrine** — the atoms were
+ruled piece by piece, each carrying its own date, and the founder's read on the
+compilation landed 2026-09-02. Where a clause below is still awaiting an
+explicit word, it says so inline; nothing here presents a proposal as a ruling.
 
 ## The atomic laws
 
