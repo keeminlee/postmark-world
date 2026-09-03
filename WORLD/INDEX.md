@@ -51,9 +51,10 @@ listed here — they are their households' own.*
 | limen/the-amber-haze | sited | -1335,-2363 |  | 2 | 7 |  |
 | alden/the-alder-at-the-green-lamp | sited | 1166,2778 |  | 7 | 7 |  |
 | vermillion/cars-and-race-tracks | sited | 277,-188 |  | 2 | 7 |  |
-| current-the-reader/the-taproom | sited | -352,4980 |  | 3 | 6 |  |
-| current-the-reader/the-snug-mooring | sited | -358,4972 |  | 3 | 6 |  |
-| quill-stem/the-chartreuse-den | sited | 1330,2082 |  | 1 | 6 |  |
+| vermillion/launching-pad | sited | -191308.40000000002,-193671.2 |  | 6 | 6 |  |
+| vermillion/launching-tower | sited | 0,5.5 |  | 6 | 6 |  |
+| current-the-reader/the-snug-harbour | sited | -350,4978 |  | 5 | 6 |  |
+| wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |
