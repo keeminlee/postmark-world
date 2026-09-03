@@ -329,6 +329,31 @@ test("THE OVERLAP REPLAYED (defect 4, second shape): two marks that redden the g
   assert.equal(gate(w.repo).green, true, "and the record it leaves behind actually passes the gate");
 });
 
+test("THE WINNING CHECKOUT: two independently red marks leave the repo on the green crossing the report names", (t) => {
+  const w = town(t, "isolate-two-independent", [
+    { login: "house-a", by: "alice", slug: "the-bad-lamp", at: { x: 800, y: 800 } },
+    { login: "house-b", by: "bob", slug: "the-bad-well", at: { x: 1200, y: 1200 } },
+    { login: "house-c", by: "cara", slug: "the-orchard", at: { x: 4000, y: 4000 } },
+    { login: "house-d", by: "dev", slug: "the-bridge", at: { x: 6000, y: 6000 } },
+  ]);
+  w.firstSweep();
+
+  const gate = (repo) => {
+    const on = execFileSync("git", ["-C", repo, "ls-tree", "-r", "--name-only", "main", "--", "WORLD/marks"], { encoding: "utf8" });
+    const red = on.includes("the-bad-lamp") || on.includes("the-bad-well");
+    return { green: !red, log: red ? "not ok - either bad mark reddens the town alone\n" : "" };
+  };
+
+  const result = isolate({ repo: w.repo, sweepPath: w.sweepPath, beforePath: w.beforePath, stakesPath: w.stakesPath, gate });
+
+  assert.deepEqual(result.quarantined.map((q) => q.id), ["alice/the-bad-lamp", "bob/the-bad-well"],
+    "both independently red marks are necessary quarantines");
+  assert.equal(gate(w.repo).green, true,
+    "the checkout must be rewound from the final red shrink trial to the remembered green winner");
+  assert.equal(w.git("rev-parse", "main").trim(), result.main,
+    "the immutable main left for publication must be the same green commit returned in the report");
+});
+
 test("THE HONEST REFUSAL: a red the crossing did not cause is NOT pinned on a household — the town refuses, exactly as it did before", (t) => {
   const w = town(t, "isolate-unattributable", [
     { login: "house-a", by: "alice", slug: "the-lamp", at: { x: 800, y: 800 } },

@@ -205,6 +205,7 @@ export function isolate({
   // ── PHASE 1 · bisect ───────────────────────────────────────────────────────
   let held = allIds;
   let lastGreen = clean;
+  let checkoutState = clean;
   for (;;) {
     if (held.length <= 1) break;
     const mid = Math.floor(held.length / 2);
@@ -212,9 +213,11 @@ export function isolate({
     const right = held.slice(mid);
     budget();
     const a = trial(repo, before, mainBranch, stakesPath, left, `round ${rounds} (phase 1, left half)`, gate);
+    checkoutState = a;
     if (a.green) { held = left; lastGreen = a; continue; }
     budget();
     const b = trial(repo, before, mainBranch, stakesPath, right, `round ${rounds} (phase 1, right half)`, gate);
+    checkoutState = b;
     if (b.green) { held = right; lastGreen = b; continue; }
     // Neither half alone is enough: the culprits straddle the split. That is the
     // overlap shape (two households' marks are only wrong TOGETHER), and it is
@@ -233,12 +236,13 @@ export function isolate({
     let a;
     try { budget(); a = trial(repo, before, mainBranch, stakesPath, attempt, `round ${rounds} (phase 2, re-admitting ${id})`, gate); }
     catch (e) { if (e.budget) { say(`${e.message} — stopping the shrink and keeping the smallest green set found`); break; } throw e; }
+    checkoutState = a;
     if (a.green) { held = attempt; lastGreen = a; }
   }
 
   // The repo must be left standing on the winning crossing, and the last trial
   // run was not necessarily the winner (phase 2 ends on a red as often as not).
-  if ((lastGreen.held ?? []).join(",") !== held.join(",")) {
+  if (!checkoutState.green || (checkoutState.held ?? []).join(",") !== held.join(",")) {
     budget();
     lastGreen = trial(repo, before, mainBranch, stakesPath, held, `round ${rounds} (final, the winning crossing)`, gate);
     if (!lastGreen.green) throw new Error("the winning set stopped being green on its confirming run — the gate is not deterministic and this must not publish");
