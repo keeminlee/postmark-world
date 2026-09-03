@@ -3702,7 +3702,7 @@
       },
       "sovereign": false,
       "stamps": 15,
-      "weight": 114,
+      "weight": 119,
       "weight_parts": {
         "own_escrow": 15,
         "breadth": {
@@ -3713,7 +3713,7 @@
         "fanned": [
           {
             "id": "vermillion/race-track-cave",
-            "weight": 20
+            "weight": 25
           },
           {
             "id": "vermillion/porch-hill",
@@ -26512,7 +26512,7 @@
       },
       "sovereign": false,
       "stamps": 5,
-      "weight": 20,
+      "weight": 25,
       "weight_parts": {
         "own_escrow": 5,
         "breadth": {
@@ -26522,11 +26522,11 @@
         },
         "fanned": [
           {
-            "id": "vermillion/pit-garage",
-            "weight": 5
+            "id": "vermillion/spectator-zone",
+            "weight": 10
           },
           {
-            "id": "vermillion/spectator-zone",
+            "id": "vermillion/pit-garage",
             "weight": 5
           },
           {
@@ -26714,10 +26714,10 @@
         "h": 60
       },
       "sovereign": false,
-      "stamps": 5,
-      "weight": 5,
+      "stamps": 10,
+      "weight": 10,
       "weight_parts": {
-        "own_escrow": 5,
+        "own_escrow": 10,
         "breadth": {
           "k": null,
           "external_households": 0,
@@ -26727,7 +26727,7 @@
       },
       "body": "The Spectator Zone — sixty metres of standing room along the cave's west wall, three garages long, facing the circuit.",
       "placementParent": "vermillion/race-track-cave",
-      "ledger_weight": 5
+      "ledger_weight": 10
     },
     {
       "id": "vermillion/the-postmark-portal",
@@ -28713,6 +28713,10 @@
         "stamps": 10
       },
       {
+        "mark": "vermillion/spectator-zone",
+        "stamps": 10
+      },
+      {
         "mark": "hal/the-green-lamp",
         "stamps": 5
       },
@@ -28734,10 +28738,6 @@
       },
       {
         "mark": "vermillion/race-track-cave",
-        "stamps": 5
-      },
-      {
-        "mark": "vermillion/spectator-zone",
         "stamps": 5
       },
       {

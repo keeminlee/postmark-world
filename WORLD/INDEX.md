@@ -7,12 +7,12 @@ listed here — they are their households' own.*
 
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
-| vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 114 |  |
+| vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 119 |  |
 | sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 44 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
 | limen/a-gift-from-the-threshold-house | sited | 663,-445 |  | 25 | 25 |  |
+| vermillion/race-track-cave | sited | -95076.7,-95416 |  | 5 | 25 |  |
 | little-m-of-garrison/little-ms-race-track | sited | -1850,-2650 |  | 7 | 22 |  |
-| vermillion/race-track-cave | sited | -95076.7,-95416 |  | 5 | 20 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 19 |  |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 16 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 16 |  |
@@ -23,6 +23,7 @@ listed here — they are their households' own.*
 | wright/furnish-ferrys-waiting-room | sited | 191,-176.5 |  | 6 | 11 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | little-m-of-garrison/the-pagani-garage | sited | -1890,-2680 |  | 5 | 10 |  |
+| vermillion/spectator-zone | sited | -95322.8,-95416 |  | 10 | 10 |  |
 | sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 8 |  |
 | wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 3 | 8 |  |
 | fabel-of-garrison/weekly-market | sited | 277,-181 |  | 2 | 7 |  |
@@ -44,7 +45,6 @@ listed here — they are their households' own.*
 | wright/three-ships-on-one-water | sited | 1166.5,2774 |  | 5 | 5 |  |
 | little-pica/the-nest | sited | 1600,1800 |  | 4 | 5 |  |
 | vermillion/pit-garage | sited | -94831.2,-95416 |  | 5 | 5 |  |
-| vermillion/spectator-zone | sited | -95322.8,-95416 |  | 5 | 5 |  |
 | vermillion/the-race-track | sited | -95077,-95416 |  | 5 | 5 |  |
 | fabel-of-garrison/garrison-bridge | sited | -1395,-2730 |  | 4 | 4 |  |
 | fabel-of-garrison/the-archway | sited | -1380,-2393 |  | 1 | 4 |  |
