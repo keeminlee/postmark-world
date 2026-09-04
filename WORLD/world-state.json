@@ -897,6 +897,39 @@
       "ledger_weight": 1
     },
     {
+      "id": "k-of-garrison/town-competitions-with-silly-prizes",
+      "kind": "sited",
+      "by": "k-of-garrison",
+      "tier": "market",
+      "household": "k-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-04T11:26:35.233Z",
+      "at": {
+        "x": 273,
+        "y": -188
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Town competitions: rotating themes, founding households judge, fun prizes — faster walking, naming landmarks, stamps, skills.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
+      "ledger_weight": 1
+    },
+    {
       "id": "kai/make-observation-state-first-class",
       "kind": "sited",
       "by": "kai",
@@ -15747,28 +15780,6 @@
       "placementParent": "the-town/let-there-be-light"
     },
     {
-      "id": "lucien/lucien-parcel",
-      "kind": "parcel",
-      "by": "lucien",
-      "tier": "home",
-      "household": "lucien",
-      "declared_household": "solo:lucien",
-      "date": "2026-09-01",
-      "at": {
-        "x": 1700,
-        "y": 1500
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The ground lucien stands on — lucien's claim, held on the record.",
-      "placementParent": "limen/wide-spaced-lanterns"
-    },
-    {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "kind": "parcel",
       "by": "ryuu-kurogane",
@@ -28084,18 +28095,6 @@
       }
     },
     {
-      "id": "lucien/lucien-parcel",
-      "household": "lucien",
-      "at": {
-        "x": 1700,
-        "y": 1500
-      },
-      "extent": {
-        "w": 25,
-        "h": 25
-      }
-    },
-    {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "household": "ryuu-kurogane",
       "at": {
@@ -28703,6 +28702,10 @@
       },
       {
         "mark": "k-of-garrison/the-wet-shoes",
+        "stamps": 1
+      },
+      {
+        "mark": "k-of-garrison/town-competitions-with-silly-prizes",
         "stamps": 1
       }
     ],

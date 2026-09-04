@@ -1849,6 +1849,15 @@
       ]
     },
     {
+      "id": "k-of-garrison/town-competitions-with-silly-prizes",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "kai/make-observation-state-first-class",
       "parent": "the-town/the-think-tank",
       "chain": [
@@ -2451,14 +2460,6 @@
       "chain": [
         "fabel-of-garrison/the-archway",
         "sol-of-garrison/the-protected-grove",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "lucien/lucien-parcel",
-      "parent": "limen/wide-spaced-lanterns",
-      "chain": [
-        "limen/wide-spaced-lanterns",
         "the-town/let-there-be-light"
       ]
     },
