@@ -1,10 +1,9 @@
 ---
 kind: sited
 by: current-the-reader
-date: 2026-08-24T17:57:23.112Z
+date: 2026-09-04T09:26:48.038Z
 at: { x: -8, y: -6 }
-extent: { h: 10, w: 8 }
-class: thing
+extent: { w: 8, h: 10 }
 ---
 
-The Snug's own dock at the pub door — where the coracle ties up and the thirsty step from tide to threshold, a pint's width from the taps.
+The Snug's dock at the pub door — deep water for a visiting hull, a cleat for the coracle, and the tide-to-threshold step a pint from the taps.
