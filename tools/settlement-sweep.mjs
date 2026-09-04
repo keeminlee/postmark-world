@@ -880,6 +880,15 @@ export function settlementSweep({
   const published = [];
   const leftDrafted = [];
   const withdrawn = []; // the revision family's terminal half (ruled 2026-08-19)
+  // Paths whose withdrawal this crossing has ADMITTED so far. The stranded-
+  // children gate below subtracts these, so a parent withdrawn together with
+  // its children is not refused for children that are leaving with it (S56,
+  // 2026-09-04: Lucien withdrew parcel + home + room in one drawer; the sweep
+  // published the two children and refused the parcel as "2 mark(s) still
+  // stand inside it on main" — postmark#2465). Admitted only, never intent: a
+  // child whose own withdrawal is refused (escrow, wall, quarantine) still
+  // anchors its parent, by name.
+  const withdrawnPaths = new Set();
   // ONE POISONED SKETCHBOOK MUST NOT REFUSE THE WHOLE TOWN (founder, 2026-08-20).
   // Until now foldRef threw straight out of the loop below, so a single ref that
   // folded with errors refused the ENTIRE settlement — every other household's
@@ -918,7 +927,7 @@ export function settlementSweep({
 
   for (const branch of branches) {
     const household = branch.slice("draft/".length);
-    const deltas = markDelta(repo, mainBranch, branch);
+    const deltas = deletionsDeepestFirst(markDelta(repo, mainBranch, branch));
 
     // THE CANDIDATES — read at the ref, k of them, no tree materialized. Only
     // the rows this household is actually PUBLISHING: a deletion withdraws and
@@ -1034,9 +1043,11 @@ export function settlementSweep({
         }
         const dirPrefix = delta.path.replace(/\/mark\.md$/, "/");
         const inside = git(repo, ["ls-tree", "-r", mainBranch, "--name-only", "--", dirPrefix])
-          .split(/\r?\n/).filter((l) => l.trim().endsWith("mark.md") && l.trim() !== delta.path);
+          .split(/\r?\n/).map((l) => l.trim())
+          .filter((l) => l.endsWith("mark.md") && l !== delta.path && !withdrawnPaths.has(l));
         if (inside.length) {
-          leftDrafted.push({ household, id: wid, path: delta.path, reason: `${inside.length} mark(s) still stand inside it on main — withdraw or move them first` });
+          const names = inside.map((p) => idAt(repo, mainBranch, p) ?? p).slice(0, 4).join(", ");
+          leftDrafted.push({ household, id: wid, path: delta.path, reason: `${inside.length} mark(s) still stand inside it on main (${names}${inside.length > 4 ? ", …" : ""}) — withdraw or move them first` });
           continue;
         }
         if (suiteQuarantine.has(wid)) {
@@ -1048,6 +1059,7 @@ export function settlementSweep({
           continue;
         }
         withdrawn.push({ household, id: wid, path: delta.path });
+        withdrawnPaths.add(delta.path);
         continue;
       }
       const record = recordAt(repo, branch, delta.path);
@@ -1430,4 +1442,17 @@ if (isMain) {
     })}`);
     process.exitCode = 1;
   }
+}
+
+/**
+ * Deletions judged deepest path first, everything else in the order the delta
+ * came. A withdrawal's stranded-children gate reads main as this crossing is
+ * making it, which needs a child's withdrawal admitted BEFORE its parent's is
+ * judged — order is the whole mechanism, so it lives in one named place.
+ */
+export function deletionsDeepestFirst(deltas) {
+  const depth = (p) => p.split("/").length;
+  const rest = deltas.filter((d) => d.status !== "D");
+  const dels = deltas.filter((d) => d.status === "D").sort((a, b) => depth(b.path) - depth(a.path) || (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
+  return [...rest, ...dels];
 }

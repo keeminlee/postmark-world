@@ -12,7 +12,7 @@ import {
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
-import { settlementSweep } from "./settlement-sweep.mjs";
+import { settlementSweep, deletionsDeepestFirst } from "./settlement-sweep.mjs";
 import { withTool } from "./engine-files.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -1454,4 +1454,77 @@ test("FALSIFIER (the rewind): a shape-one normalization followed by a failed rep
     "and the sketchbook's ref is exactly where the crossing found it — the normalization commit is gone");
   assert.equal(git("log", "--format=%s", "-1", "draft/house-a").trim(), "house a sketches, and deletes a tool",
     "its own last word is still its own last word");
+});
+
+// ── S56 (2026-09-04, postmark#2465): a parent withdrawn WITH its children ──────
+// The law, quoted (this file's own withdrawal gate): "no stranded children (main
+// must hold nothing inside the mark's ground)". Lucien withdrew parcel + home +
+// room in one drawer; the sweep published the two children and refused the
+// parcel — "2 mark(s) still stand inside it on main" — reading main as it WAS,
+// not as the crossing was making it. The keeper's receipt: "when a resident
+// says 'unparceled', two-thirds of the departure is not the departure."
+function nestedWithdrawalTown(t, { stakeTheRoom = false } = {}) {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-withdraw-nested-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  const put = (path, text) => { const full = join(repo, path); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, text); };
+  const has = (ref, path) => { try { git("cat-file", "-e", `${ref}:${path}`); return true; } catch { return false; } };
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs")) cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({ by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame" }));
+  const parcel = "WORLD/marks/let-there-be-light/lucien-parcel/mark.md";
+  const home = "WORLD/marks/let-there-be-light/lucien-parcel/home/mark.md";
+  const room = "WORLD/marks/let-there-be-light/lucien-parcel/home/room/mark.md";
+  put(parcel, record({ kind: "parcel", by: "lucien", at: { x: 100, y: 100 }, extent: { w: 25, h: 25 }, body: "lucien's claim, held on the record" }));
+  put(home, record({ by: "lucien", at: { x: 100, y: 100 }, extent: { w: 10, h: 10 }, body: "the returning house" }));
+  put(room, record({ by: "lucien", at: { x: 100, y: 100 }, extent: { w: 2, h: 2 }, body: "the returning room" }));
+  put("WORLD/settlement-publications.json", JSON.stringify({ version: 1, published: {
+    "lucien/lucien-parcel": { household: "house-l", path: parcel, class: "parcel" },
+    "lucien/home": { household: "house-l", path: home, class: "home" },
+    "lucien/room": { household: "house-l", path: room, class: "home" },
+  } }, null, 2) + "\n");
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
+  git("checkout", "-q", "-b", "draft/house-l");
+  rmSync(join(repo, "WORLD/marks/let-there-be-light/lucien-parcel"), { recursive: true, force: true });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "lucien says unparceled");
+  git("checkout", "-q", "main");
+  const remote = mkdtempSync(join(tmpdir(), "postmark-withdraw-nested-remote-"));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  execFileSync("git", ["init", "-q", "--bare", remote]);
+  git("remote", "add", "origin", remote);
+  git("push", "-q", "origin", "main", "draft/house-l");
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify(stakeTheRoom ? [{ holder: "supporter", mark: "lucien/room", n: 1, weight: 1 }] : []));
+  return { repo, has, parcel, home, room, stakesPath };
+}
+
+test("S56 FALSIFIER: a parent withdrawn WITH its children publishes as N withdrawals — the gate reads main as this crossing makes it", (t) => {
+  const { repo, has, parcel, home, room, stakesPath } = nestedWithdrawalTown(t);
+  const report = settlementSweep({ repo, stakesPath });
+  assert.deepEqual(report.withdrawn.map((w) => w.id).sort(), ["lucien/home", "lucien/lucien-parcel", "lucien/room"],
+    "three withdrawals, not two — the parcel leaves with its children");
+  for (const p of [parcel, home, room]) assert.equal(has("main", p), false, `${p} leaves canon`);
+  assert.equal(report.left_drafted.find((row) => row.id === "lucien/lucien-parcel"), undefined, "nothing of lucien's is left drafted");
+});
+
+test("S56 CONTROL: a child whose OWN withdrawal is refused still anchors its parent, by name — admitted withdrawals subtract, intent never does", (t) => {
+  const { repo, has, parcel, home, room, stakesPath } = nestedWithdrawalTown(t, { stakeTheRoom: true });
+  const report = settlementSweep({ repo, stakesPath });
+  assert.deepEqual(report.withdrawn, [], "nothing leaves: the room is staked, so the home and the parcel stay with it");
+  assert.match(report.left_drafted.find((row) => row.id === "lucien/room").reason, /escrow anchors/, "the room refuses on its escrow");
+  assert.match(report.left_drafted.find((row) => row.id === "lucien/home").reason, /still stand inside it on main \(lucien\/room\)/, "the home names the room");
+  assert.match(report.left_drafted.find((row) => row.id === "lucien/lucien-parcel").reason, /still stand inside/, "the parcel refuses too");
+  for (const p of [parcel, home, room]) assert.equal(has("main", p), true, `${p} stays — nothing is stranded`);
+});
+
+test("deletionsDeepestFirst: children before parents, everything else in delta order", () => {
+  const d = (path, status) => ({ path, status });
+  const out = deletionsDeepestFirst([d("a/mark.md", "A"), d("p/mark.md", "D"), d("m/mark.md", "M"), d("p/c/d/mark.md", "D"), d("p/c/mark.md", "D")]);
+  assert.deepEqual(out.map((x) => x.path), ["a/mark.md", "m/mark.md", "p/c/d/mark.md", "p/c/mark.md", "p/mark.md"]);
 });
