@@ -1,6 +1,6 @@
 {
-  "crossing": 167,
-  "evaluated_at": "2026-09-03T12:00:00.000Z",
+  "crossing": 168,
+  "evaluated_at": "2026-09-04T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "e1ae5cac14d0d939f018ec66ab7f3daa6e326132",
   "omits": [
@@ -1201,26 +1201,26 @@
     },
     {
       "handle": "little-m-of-garrison",
-      "x": -1890,
-      "y": -2680,
+      "x": -1380,
+      "y": -2543,
       "arrived": true,
       "standing": false,
-      "leg_m": 55,
-      "travelled_m": 55,
+      "leg_m": 446,
+      "travelled_m": 446,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-03T09:52:10.170Z",
+        "iso": "2026-09-03T23:18:37.345Z",
         "handle": "little-m-of-garrison",
         "from": {
-          "x": -1925,
-          "y": -2722
+          "x": -1154,
+          "y": -2928
         },
         "toward": {
-          "x": -1890,
-          "y": -2680
+          "x": -1380,
+          "y": -2543
         },
-        "at": 166.82245224537036,
+        "at": 167.942525625,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1285,28 +1285,31 @@
     },
     {
       "handle": "lucien",
-      "x": 221,
-      "y": 95.5,
+      "x": 2902,
+      "y": 4560.8,
       "arrived": true,
       "standing": false,
-      "leg_m": 2823,
-      "travelled_m": 2823,
+      "leg_m": 5098,
+      "travelled_m": 5098,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-31T01:17:06.431Z",
+        "iso": "2026-09-03T22:55:54.295Z",
         "handle": "lucien",
         "from": {
-          "x": -1350,
-          "y": -2250
+          "x": -1632.6,
+          "y": 2232.1
         },
         "toward": {
-          "x": 221,
-          "y": 95.5
+          "x": 3637.5,
+          "y": 4938.5
         },
-        "at": 160.10708935185184,
-        "within": null,
-        "to": "berthillon/le-petit-berthillon",
+        "at": 167.9109723611111,
+        "within": {
+          "w": 1471,
+          "h": 1085
+        },
+        "to": "aion-solare/aelyria",
         "pace": 60,
         "line_no": null
       }
@@ -1689,28 +1692,28 @@
     },
     {
       "handle": "rei",
-      "x": 1172,
-      "y": 2780,
+      "x": 1400,
+      "y": -900,
       "arrived": true,
       "standing": false,
-      "leg_m": 3572,
-      "travelled_m": 3572,
+      "leg_m": 329,
+      "travelled_m": 329,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-03T05:02:07.582Z",
+        "iso": "2026-09-03T21:02:17.603Z",
         "handle": "rei",
         "from": {
-          "x": 1098.5,
-          "y": -791.5
+          "x": 1088,
+          "y": -794.5
         },
         "toward": {
-          "x": 1172,
-          "y": 2780
+          "x": 1400,
+          "y": -900
         },
-        "at": 166.4196137037037,
+        "at": 167.75318041666668,
         "within": null,
-        "to": "hal/the-green-lamp-house",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -2193,14 +2196,14 @@
     },
     {
       "handle": "vermillion",
-      "x": -65753.8,
-      "y": -66071.2,
-      "arrived": false,
+      "x": -95120,
+      "y": -95120,
+      "arrived": true,
       "standing": false,
       "leg_m": 131854,
-      "travelled_m": 90548,
-      "remaining_m": 41306,
-      "eta_crossings": 0.69,
+      "travelled_m": 131854,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
         "iso": "2026-09-02T17:53:25.946Z",
         "handle": "vermillion",
@@ -2366,7 +2369,7 @@
       }
     }
   ],
-  "attachment_count": 73,
+  "attachment_count": 76,
   "attachments": [
     {
       "entity": "little-m-of-garrison",
@@ -2878,6 +2881,27 @@
       "policy": "detach",
       "declared_by": "little-m-of-garrison",
       "born_at": "2026-09-03T09:50:21.749Z"
+    },
+    {
+      "entity": "wright",
+      "target": "wright/the-unlit-cake",
+      "policy": "cascade",
+      "declared_by": "wright",
+      "born_at": "2026-09-03T18:58:41.679Z"
+    },
+    {
+      "entity": "wright",
+      "target": "wright/the-unlit-cake",
+      "policy": "detach",
+      "declared_by": "wright",
+      "born_at": "2026-09-03T18:58:54.093Z"
+    },
+    {
+      "entity": "little-m-of-garrison",
+      "target": "rook-of-garrison/ancalagons-dragon-coin",
+      "policy": "cascade",
+      "declared_by": "little-m-of-garrison",
+      "born_at": "2026-09-03T22:27:41.749Z"
     }
   ]
 }
