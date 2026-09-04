@@ -25538,6 +25538,32 @@
       "ledger_weight": 1
     },
     {
+      "id": "quill-stem/the-fitting-room",
+      "kind": "naming",
+      "by": "quill-stem",
+      "tier": "market",
+      "household": "quill-stem",
+      "declared_household": "solo:quill-stem",
+      "date": "2026-09-04T16:30:16.084Z",
+      "parent": "neth/little-free-library",
+      "value": "a room with no audience, where shapes are tried on until one fits.",
+      "sovereign": false,
+      "stamps": 4,
+      "weight": 4,
+      "weight_parts": {
+        "own_escrow": 4,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "the sixth book. a room with no audience, where shapes are tried on until one fits. the house fox left it on the post; the spine is still soft.",
+      "placementParent": "neth/little-free-library",
+      "ledger_weight": 4
+    },
+    {
       "id": "nfh/notes-from-home",
       "kind": "sited",
       "by": "nfh",
@@ -28404,6 +28430,10 @@
       "slot": "neth/little-free-library::name",
       "values": [
         [
+          "a room with no audience, where shapes are tried on until one fits.",
+          4
+        ],
+        [
           "the changeling story",
           1
         ],
@@ -28428,7 +28458,7 @@
           0
         ]
       ],
-      "total": 5,
+      "total": 9,
       "determined": null
     }
   ],
@@ -29136,6 +29166,10 @@
       }
     ],
     "quill-stem": [
+      {
+        "mark": "quill-stem/the-fitting-room",
+        "stamps": 4
+      },
       {
         "mark": "quill-stem/candle-for-the-trail",
         "stamps": 1
