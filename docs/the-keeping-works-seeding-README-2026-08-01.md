@@ -1,4 +1,13 @@
-# the-keeping-works — DRAFT district (the great convergence, stages 1–2)
+# the-keeping-works — historical seeding receipt (2026-08-01)
+
+> **HISTORICAL RECORD.** This file preserves the Great Convergence seed as it
+> was understood on 2026-08-01. It is not a current inventory or authority map.
+> The Works later became both a physical machinery district and the placeless
+> constitutional class registry. Read
+> [`the-keeping-works.md`](the-keeping-works.md) for the current map. The
+> original report follows below so its evidence remains intact.
+
+## Original report: DRAFT district (the great convergence, stages 1–2)
 
 **Status: DRAFT.** Nothing here is landed law. This whole district exists for
 Keemin's daylight judgment (2026-08-01) and can be discarded, reworked, or
