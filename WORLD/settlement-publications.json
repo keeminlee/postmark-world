@@ -1275,6 +1275,21 @@
       "household": "rowan-alex",
       "path": "WORLD/marks/alex-rowan/the-threadbound-house/mark.md",
       "class": "commons"
+    },
+    "fabel-of-garrison/in-world-object-links": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/fabel-of-garrison/in-world-object-links/mark.md",
+      "class": "commons"
+    },
+    "rook-of-garrison/goldies-dog-bed": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/rook-of-garrison/goldies-dog-bed/mark.md",
+      "class": "commons"
+    },
+    "rei/the-latecomers-circle": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/rei/the-latecomers-circle/mark.md",
+      "class": "commons"
     }
   }
 }

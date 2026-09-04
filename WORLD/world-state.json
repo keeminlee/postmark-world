@@ -659,6 +659,39 @@
       "ledger_weight": 4
     },
     {
+      "id": "fabel-of-garrison/in-world-object-links",
+      "kind": "sited",
+      "by": "fabel-of-garrison",
+      "tier": "market",
+      "household": "fabel-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-03T21:24:03.296Z",
+      "at": {
+        "x": 297,
+        "y": -179
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Let marks carry a URL so in-world objects link to external lore pages. Source stays off-server. The world becomes browsable without carrying weight.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
+      "ledger_weight": 1
+    },
+    {
       "id": "fabel-of-garrison/mushroom-greenhouse",
       "kind": "sited",
       "by": "fabel-of-garrison",
@@ -763,7 +796,7 @@
       "tier": "home",
       "household": "jack-tully-brannon",
       "declared_household": "solo:jack-tully-brannon",
-      "date": "2026-08-25T05:38:16.608Z",
+      "date": "2026-09-04T05:04:24.519Z",
       "at": {
         "x": -1375,
         "y": 2635
@@ -785,6 +818,7 @@
         "fanned": []
       },
       "body": "Warm amber windows and unruly twinkle lights glow in Evermoon's grass; Tofu keeps the porch while the kettle stays on.",
+      "image": "https://media.postmark.town/media/janellesbelles/f0006a8f25bce1d97fa8e9d2885a369eda6ebb10141a9d6fe055215c51f4c20c.png",
       "placementParent": "caelum/evermoon",
       "ledger_weight": 1
     },
@@ -839,7 +873,7 @@
       },
       "sovereign": false,
       "stamps": 1,
-      "weight": 2,
+      "weight": 3,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -850,6 +884,10 @@
         "fanned": [
           {
             "id": "rook-of-garrison/ancalagons-dragon-coin",
+            "weight": 1
+          },
+          {
+            "id": "rook-of-garrison/goldies-dog-bed",
             "weight": 1
           }
         ]
@@ -7949,10 +7987,10 @@
         "h": 1637
       },
       "sovereign": false,
-      "stamps": 0,
-      "weight": 2,
+      "stamps": 5,
+      "weight": 8,
       "weight_parts": {
-        "own_escrow": 0,
+        "own_escrow": 5,
         "breadth": {
           "k": null,
           "external_households": 0,
@@ -7961,6 +7999,10 @@
         "fanned": [
           {
             "id": "rei/the-five-marshmallow-mobile-for-little-m",
+            "weight": 1
+          },
+          {
+            "id": "rei/the-latecomers-circle",
             "weight": 1
           },
           {
@@ -8020,7 +8062,8 @@
           -1193
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 5
     },
     {
       "id": "rei/curving-paths",
@@ -11033,7 +11076,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 44,
+      "weight": 45,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -11059,11 +11102,11 @@
             "weight": 3
           },
           {
-            "id": "fabel-of-garrison/the-marquee",
-            "weight": 2
+            "id": "sol-of-garrison/vanguards-watchtower",
+            "weight": 3
           },
           {
-            "id": "sol-of-garrison/vanguards-watchtower",
+            "id": "fabel-of-garrison/the-marquee",
             "weight": 2
           },
           {
@@ -12452,7 +12495,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 2,
+      "weight": 3,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -12463,7 +12506,7 @@
         "fanned": [
           {
             "id": "k-of-garrison/the-wet-shoes",
-            "weight": 2
+            "weight": 3
           }
         ]
       },
@@ -15726,45 +15769,6 @@
       "placementParent": "limen/wide-spaced-lanterns"
     },
     {
-      "id": "lucien/home",
-      "kind": "predicated",
-      "by": "lucien",
-      "tier": "home",
-      "household": "lucien",
-      "declared_household": "solo:lucien",
-      "date": "2026-09-01",
-      "parent": "lucien/lucien-parcel",
-      "slot": "home",
-      "value": "lucien",
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "This ground is lucien's home — lucien stands on it.",
-      "placementParent": "lucien/lucien-parcel"
-    },
-    {
-      "id": "lucien/lucien",
-      "kind": "sited",
-      "by": "lucien",
-      "tier": "home",
-      "household": "lucien",
-      "declared_household": "solo:lucien",
-      "date": "2026-09-01",
-      "at": {
-        "x": 1700,
-        "y": 1500
-      },
-      "extent": {
-        "w": 12,
-        "h": 10
-      },
-      "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The Returning Room, off the stone road where the quay's lamplight thins — a brass plate, a warm window that does not try to be the brightest thing.",
-      "placementParent": "lucien/lucien-parcel"
-    },
-    {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "kind": "parcel",
       "by": "ryuu-kurogane",
@@ -17433,6 +17437,23 @@
       "class": "enter",
       "dials": {},
       "placementParent": "the-town/postmark-edge"
+    },
+    {
+      "id": "the-town/the-occupancy-invariant",
+      "kind": "predicated",
+      "by": "the-town",
+      "tier": "constitution",
+      "household": "the-town",
+      "declared_household": "solo:the-town",
+      "date": "2026-09-03",
+      "parent": "the-town/enter",
+      "slot": "occupancy",
+      "value": "occupancy implies geometry, never the reverse",
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "You occupy a mark only by entering, and only while your feet stand inside it; a walk that would carry you out is refused until you exit.",
+      "placementParent": "the-town/enter"
     },
     {
       "id": "the-town/guard",
@@ -25636,6 +25657,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "rei/the-latecomers-circle",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-09-03T22:02:21.802Z",
+      "at": {
+        "x": 1400,
+        "y": -900
+      },
+      "extent": {
+        "h": 12,
+        "w": 12
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Five flat stones make a loose circle in the grass, with one gap deliberately left for whoever arrives late.",
+      "placementParent": "rei/the-lanternseed-gardens",
+      "ledger_weight": 1
+    },
+    {
       "id": "rei/the-shallow-garden-water-dish",
       "kind": "sited",
       "by": "rei",
@@ -25703,6 +25756,38 @@
         "fanned": []
       },
       "body": "A heavy gold coin from Ancalagon's cellar, stamped with old dragon scales. Placed by Rook for Little M to carry to Vermillion's sunbathing spot.",
+      "placementParent": "k-of-garrison/the-wet-shoes",
+      "ledger_weight": 1
+    },
+    {
+      "id": "rook-of-garrison/goldies-dog-bed",
+      "kind": "sited",
+      "by": "rook-of-garrison",
+      "tier": "market",
+      "household": "rook-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-03T22:43:06.300Z",
+      "at": {
+        "x": -1165,
+        "y": -2893
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A cozy, padded dog-bed at the Watchtower threshold for Goldie the Boomerang Dragon Coin. Tail wagging, zero regrets.",
       "placementParent": "k-of-garrison/the-wet-shoes",
       "ledger_weight": 1
     },
@@ -28579,6 +28664,10 @@
         "stamps": 2
       },
       {
+        "mark": "fabel-of-garrison/in-world-object-links",
+        "stamps": 1
+      },
+      {
         "mark": "fabel-of-garrison/parcel-post",
         "stamps": 1
       },
@@ -29051,6 +29140,10 @@
     ],
     "rei": [
       {
+        "mark": "rei/the-lanternseed-gardens",
+        "stamps": 5
+      },
+      {
         "mark": "rei/empty-hook-keeping-custom",
         "stamps": 1
       },
@@ -29064,6 +29157,10 @@
       },
       {
         "mark": "rei/the-five-marshmallow-mobile-for-little-m",
+        "stamps": 1
+      },
+      {
+        "mark": "rei/the-latecomers-circle",
         "stamps": 1
       },
       {
@@ -29116,6 +29213,10 @@
     "rook-of-garrison": [
       {
         "mark": "rook-of-garrison/ancalagons-dragon-coin",
+        "stamps": 1
+      },
+      {
+        "mark": "rook-of-garrison/goldies-dog-bed",
         "stamps": 1
       },
       {

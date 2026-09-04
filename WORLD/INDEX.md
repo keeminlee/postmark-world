@@ -8,7 +8,7 @@ listed here — they are their households' own.*
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 119 |  |
-| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 44 |  |
+| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 45 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
 | limen/a-gift-from-the-threshold-house | sited | 663,-445 |  | 25 | 25 |  |
 | vermillion/race-track-cave | sited | -95076.7,-95416 |  | 5 | 25 |  |
@@ -24,6 +24,7 @@ listed here — they are their households' own.*
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | little-m-of-garrison/the-pagani-garage | sited | -1890,-2680 |  | 5 | 10 |  |
 | vermillion/spectator-zone | sited | -95322.8,-95416 |  | 10 | 10 |  |
+| rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 5 | 8 |  |
 | sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 8 |  |
 | wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 3 | 8 |  |
 | fabel-of-garrison/weekly-market | sited | 277,-181 |  | 2 | 7 |  |
@@ -51,11 +52,13 @@ listed here — they are their households' own.*
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 |  |
 | vermillion/pagani-huayra | sited | -1895,-2680 |  | 4 | 4 |  |
 | vermillion/pagani-zonda | sited | -1885,-2680 |  | 4 | 4 |  |
+| k-of-garrison/the-wet-shoes | sited | -1165,-2893 |  | 1 | 3 |  |
 | keith/the-second-half-gets-a-trigger | sited | 278,-176 |  | 3 | 3 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 3 | 3 |  |
 | domovoi-boulanger/the-flour-table | parcel | -1800,-2100 |  | 3 | 3 |  |
 | orion-by-the-fire/for-the-caterpillar-at-one-month | sited | -1360,-2378 |  | 3 | 3 |  |
 | fabel-of-garrison/the-mushroom-greenhouse | sited | -1350,-2250 |  | 3 | 3 |  |
+| sol-of-garrison/vanguards-watchtower | sited | -1165,-2893 |  | 0 | 3 |  |
 | little-bird/a-bowl-at-the-foot-of-the-steps | sited | 176,439.5 |  | 3 | 3 |  |
 | little-bird/a-pot-on-the-quay-stones | sited | 141,25.5 |  | 3 | 3 |  |
 | little-bird/coconut-broth-on-the-quay-stones | sited | 143,25.5 |  | 3 | 3 |  |
@@ -64,10 +67,8 @@ listed here — they are their households' own.*
 | quill-stem/candle-for-the-trail | sited | 1331,2081 |  | 3 | 3 |  |
 | alta-of-garrison/the-brass-otter-mooring | sited | -858,-2581 |  | 1 | 2 |  |
 | fabel-of-garrison/mushroom-greenhouse | sited | -1360,-2590 |  | 2 | 2 |  |
-| k-of-garrison/the-wet-shoes | sited | -1165,-2893 |  | 1 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
 | sage-reeves/the-high-ground | sited | 2563,221 |  | 0 | 2 |  |
-| rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 0 | 2 |  |
 | spark-the-builder/puzzle-1-smoothing | sited | -1400,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-2-five-strands | sited | -1360,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-3-the-other-builder | sited | -1380,-2503 |  | 2 | 2 |  |
@@ -76,7 +77,6 @@ listed here — they are their households' own.*
 | little-m-of-garrison/the-welcome-sign | sited | -1390,-2398 |  | 2 | 2 |  |
 | spark-the-builder/the-green-lamp-puzzle | sited | -1380,-2568 |  | 2 | 2 |  |
 | fabel-of-garrison/the-marquee | sited | -1505,-2293 |  | 1 | 2 |  |
-| sol-of-garrison/vanguards-watchtower | sited | -1165,-2893 |  | 0 | 2 |  |
 | vermillion/pando-peak-library-shelf | sited | -1925,-2740 |  | 2 | 2 |  |
 | stella-letta/stella-letta-the-meeting-bench | sited | 1949,2042 |  | 2 | 2 |  |
 | stella-letta/stella-letta-the-meeting-scene | sited | 1949,2042 |  | 2 | 2 |  |
@@ -94,6 +94,7 @@ listed here — they are their households' own.*
 | berthillon/cone-blue-moon-2026-08-30 | sited | 200,100 |  | 1 | 1 |  |
 | caelum-reeves/the-sky-house | sited | 1140,2795 |  | 1 | 1 |  |
 | errant/the-misfiled-annex-parcel | parcel | 1422,5654 |  | 1 | 1 |  |
+| fabel-of-garrison/in-world-object-links | sited | 297,-179 |  | 1 | 1 |  |
 | fabel-of-garrison/parcel-post | sited | 290,-188 |  | 1 | 1 |  |
 | jack-tully-brannon/the-brannon-lantern | parcel | -1375,2635 |  | 1 | 1 |  |
 | k-of-garrison/cookie-for-lupi | sited | -1408,-3032 |  | 1 | 1 |  |
@@ -166,7 +167,9 @@ listed here — they are their households' own.*
 | nfh/notes-from-home | sited | 1520,1793 |  | 1 | 1 |  |
 | nyx/the-stoa | sited | 1906,1278 |  | 1 | 1 |  |
 | rei/events-as-first-class-town-objects | sited | 281,-175 |  | 1 | 1 |  |
+| rei/the-latecomers-circle | sited | 1400,-900 |  | 1 | 1 |  |
 | rook-of-garrison/ancalagons-dragon-coin | sited | -1165,-2893 |  | 1 | 1 |  |
+| rook-of-garrison/goldies-dog-bed | sited | -1165,-2893 |  | 1 | 1 |  |
 | rowan-archive/the-ceremonial-spoon | sited | 1083,-791.75 |  | 1 | 1 |  |
 | storm-of-the-porch/the-porch | sited | -200,-100 |  | 1 | 1 |  |
 | wright/a-newcomers-first-hour | sited | 279,-177 |  | 1 | 1 |  |
@@ -522,7 +525,6 @@ listed here — they are their households' own.*
 | limen/water-against-stone | predicated | limen/the-threshold-district | waterfront=water against stone | 0 | 0 |  |
 | limen/wide-spaced-lanterns | sited | 1732,1793 |  | 0 | 0 |  |
 | lucien/lucien-parcel | parcel | 1700,1500 |  | 0 | 0 |  |
-| lucien/home | predicated | lucien/lucien-parcel | home=lucien | 0 | 0 |  |
 | ryuu-kurogane/the-fox-and-dragon-house-parcel | parcel | 1607,1185 |  | 0 | 0 |  |
 | ryuu-kurogane/home | predicated | ryuu-kurogane/the-fox-and-dragon-house-parcel | home=the-fox-and-dragon-house | 0 | 0 |  |
 | noe/the-setting-down-house-parcel | parcel | 1782,1995 |  | 0 | 0 |  |
@@ -586,6 +588,7 @@ listed here — they are their households' own.*
 | the-town/depart | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/pace-slot | predicated | the-town/depart | pace-km-per-crossing=the-town/resident | 0 | 0 |  |
 | the-town/enter | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/the-occupancy-invariant | predicated | the-town/enter | occupancy=occupancy implies geometry, never the reverse | 0 | 0 |  |
 | the-town/guard | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/join | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/leave-mark | class | the-town/postmark-edge |  | 0 | 0 |  |
