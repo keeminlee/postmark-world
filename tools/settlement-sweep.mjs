@@ -1013,12 +1013,7 @@ export function settlementSweep({
       // crossing's journal says whose sketchbook was set aside and what to fix.
       const first = admitted.errors[0];
       const detail = `${branch} publishes ${admitted.errors.length} inadmissible row(s): ${JSON.stringify(first)}`;
-      quarantined.push({
-        household, ref: branch,
-        reason: "this sketchbook's own published rows could not be admitted, so it was set aside and the rest of the town settled without it",
-        detail: detail.slice(0, 400),
-        row: firstStakeRowIn(detail),
-      });
+      throw new Error("the quarantine machinery was deleted at G2 (P-130) — a refusal is now attributable by construction and names its own failing check; nothing sets a sketchbook aside");
       continue;
     }
 
@@ -1088,7 +1083,7 @@ export function settlementSweep({
           // moves everything anchored on it. The isolator must be able to hold
           // one back for the same reason it holds a publish back.
           leftDrafted.push({ household, id: wid, path: delta.path, reason: SUITE_QUARANTINE_REASON });
-          suiteQuarantined.push({ household, id: wid, path: delta.path, withdrawal: true });
+          throw new Error("the quarantine machinery was deleted at G2 (P-130) — the grammar suite no longer holds a mark back; the refusal names its own failing check");
           continue;
         }
         withdrawn.push({ household, id: wid, path: delta.path });
@@ -1142,7 +1137,7 @@ export function settlementSweep({
       }
       if (suiteQuarantine.has(record.id)) {
         leftDrafted.push({ household, id: record.id, path: delta.path, class: rowClass, escrow: n, reason: SUITE_QUARANTINE_REASON });
-        suiteQuarantined.push({ household, id: record.id, path: delta.path, class: rowClass, escrow: n });
+        throw new Error("the quarantine machinery was deleted at G2 (P-130) — the grammar suite no longer holds a mark back; the refusal names its own failing check");
         continue;
       }
       published.push({
