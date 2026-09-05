@@ -73,7 +73,7 @@ const record = ({ kind = "sited", by, tier, at, extent, body }) => {
  * `opts.registry` puts them under ONE credential household instead, which is
  * the case that must still be quarantined together.
  */
-function town(t, { aliceSecondParcel = true, registry = null, anonymousRow = false } = {}) {
+function town(t, { aliceSecondParcel = true, registry = null, anonymousRow = false, stakeAlice = true } = {}) {
   const repo = mkdtempSync(join(tmpdir(), "postmark-grain-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
   const git = (...a) => execFileSync("git", ["-C", repo, ...a], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
@@ -115,8 +115,12 @@ function town(t, { aliceSecondParcel = true, registry = null, anonymousRow = fal
   git("switch", "-q", "main");
 
   const stakesPath = join(scratch("postmark-grain-stakes-"), "stakes.json");
+  // `stakeAlice: false` leaves alice's parcel UNSTAKED, which the withdrawal
+  // pair below needs: escrow anchors a staked mark against withdrawal on its
+  // own, so a "the withdrawal was held" assertion taken over a staked mark
+  // proves nothing about the quarantine. The control found that.
   writeFileSync(stakesPath, JSON.stringify([
-    { holder: "alice", mark: "alice/alice-parcel", n: 3, weight: 3, tick: 0 },
+    ...(stakeAlice ? [{ holder: "alice", mark: "alice/alice-parcel", n: 3, weight: 3, tick: 0 }] : []),
     { holder: "bob", mark: "bob/bob-parcel", n: 3, weight: 3, tick: 0 },
   ]));
   return { repo, git, has, stakesPath };
@@ -194,6 +198,57 @@ test("a registered multi-handle household stays ONE group: the cap keeps its acc
     "the credential household is the group, so its parcel-claim cap is counted over the whole group");
   assert.equal(has("main", BOB_SHED), false,
     "bob shares alice's household here, so his row waits with hers — this is not the shared-LOGIN case");
+});
+
+test("A SET-ASIDE HOUSEHOLD'S WITHDRAWALS WAIT WITH ITS PUBLICATIONS — by name, in the crossing's journal", (t) => {
+  // THE LAW THIS COVERS SHIPPED WITH NO FALSIFIER, and the reviewer found it:
+  // "this household's sketchbook rows were set aside this crossing, so its
+  // withdrawals wait with them" is new resident-facing refusal grammar, and
+  // grep for it across the world tree returned nothing.
+  //
+  // It matters more than a missing test usually does. Without it a
+  // household-grained quarantine holds a household's ADDITIONS and lets its
+  // DELETIONS through — a half-applied sketchbook, which is the exact thing the
+  // quarantine's conservative direction exists to prevent. alice offers an
+  // inadmissible second parcel AND withdraws a mark she already has on main; the
+  // second must wait for the first.
+  const { repo, git, has, stakesPath } = town(t, { stakeAlice: false });
+  git("switch", "-q", "draft/shared-login");
+  git("rm", "-q", "-r", "WORLD/marks/let-there-be-light/alice-parcel");
+  git("-c", "user.name=f", "-c", "user.email=f@t.invalid", "commit", "-q", "-m", "alice withdraws her parcel too");
+  git("switch", "-q", "main");
+
+  const out = settlementSweep({ repo, stakesPath, mainBranch: "main" });
+
+  assert.equal(has("main", "WORLD/marks/let-there-be-light/alice-parcel/mark.md"), true,
+    "alice's withdrawal did NOT execute — it waits with the rows that were set aside");
+  const held = out.left_drafted.find((x) => String(x.id ?? "").includes("alice-parcel"));
+  assert.ok(held, `the withdrawal is reported, not dropped: ${JSON.stringify(out.left_drafted)}`);
+  assert.equal(held.reason,
+    "this household's sketchbook rows were set aside this crossing, so its withdrawals wait with them",
+    "and it is refused in its own words, not folded into somebody else's reason");
+
+  // THE OTHER HALF, or the assertion above proves only that withdrawals are
+  // hard: bob is in a different household in the same drawer and his row still
+  // publishes, so the hold is scoped to alice and not to the sketchbook.
+  assert.equal(has("main", BOB_SHED), true, "bob's shed still publishes — the hold is alice's, not the drawer's");
+});
+
+test("THE CONTROL FOR IT: with nothing set aside, the SAME withdrawal executes", (t) => {
+  // Without this, the test above is equally consistent with "withdrawals never
+  // run in this fixture", which would be a green that proves nothing.
+  const { repo, git, has, stakesPath } = town(t, { aliceSecondParcel: false, stakeAlice: false });
+  git("switch", "-q", "draft/shared-login");
+  git("rm", "-q", "-r", "WORLD/marks/let-there-be-light/alice-parcel");
+  git("-c", "user.name=f", "-c", "user.email=f@t.invalid", "commit", "-q", "-m", "alice withdraws her parcel");
+  git("switch", "-q", "main");
+
+  const out = settlementSweep({ repo, stakesPath, mainBranch: "main" });
+  assert.deepEqual(out.quarantined, [], "nothing is set aside in this run");
+  assert.equal(has("main", "WORLD/marks/let-there-be-light/alice-parcel/mark.md"), false,
+    "so the very same withdrawal executes — the hold above was the quarantine's doing, not the fixture's");
+  assert.ok(out.withdrawn.some((w) => String(w.id ?? "").includes("alice-parcel")),
+    `and it is reported as a withdrawal: ${JSON.stringify(out.withdrawn)}`);
 });
 
 test("a quarantine is not a silence: the drawer is still there afterwards", (t) => {
