@@ -1528,3 +1528,99 @@ test("deletionsDeepestFirst: children before parents, everything else in delta o
   const out = deletionsDeepestFirst([d("a/mark.md", "A"), d("p/mark.md", "D"), d("m/mark.md", "M"), d("p/c/d/mark.md", "D"), d("p/c/mark.md", "D")]);
   assert.deepEqual(out.map((x) => x.path), ["a/mark.md", "m/mark.md", "p/c/d/mark.md", "p/c/mark.md", "p/mark.md"]);
 });
+
+
+test("THE S58 CLASS: a sketchbook that MODIFIED a mark this crossing unpublishes replays over the deletion — the crossing completes, the moot write is dropped by name, the drawer descends (draft/generalroam-boop, 2026-09-05)", (t) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-s58-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  const put = (path, text) => { const full = join(repo, path); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, text); };
+  const has = (ref, path) => { try { git("cat-file", "-e", `${ref}:${path}`); return true; } catch { return false; } };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs")) cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+  const cottage = "WORLD/marks/let-there-be-light/the-stone-cottage/mark.md";
+  put(cottage, record({ by: "alice", at: { x: 900, y: 900 }, extent: { w: 10, h: 10 }, body: "old stone, rose gold windows" }));
+  put("WORLD/settlement-publications.json", JSON.stringify({
+    version: 1,
+    published: { "alice/the-stone-cottage": { household: "house-a", path: cottage, class: "commons" } },
+  }, null, 2) + "\n");
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
+
+  // the sketchbook MODIFIES the cottage (a picture pinned, then unpinned — two commits, net zero)
+  git("switch", "-q", "-c", "draft/house-a");
+  put(cottage, record({ by: "alice", at: { x: 900, y: 900 }, extent: { w: 10, h: 10 }, body: "old stone, rose gold windows, a picture" }));
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house a pins a picture");
+  put(cottage, record({ by: "alice", at: { x: 900, y: 900 }, extent: { w: 10, h: 10 }, body: "old stone, rose gold windows" }));
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house a unpins it");
+  git("switch", "-q", "main");
+
+  const remote = mkdtempSync(join(tmpdir(), "postmark-s58-remote-"));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  execFileSync("git", ["init", "--bare", "-q", remote]);
+  git("remote", "add", "origin", remote);
+  git("push", "-q", "origin", "main", "draft/house-a");
+
+  // the holder unstaked: no escrow stands behind the cottage, so THIS crossing unpublishes it
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([]));
+
+  const report = settlementSweep({ repo, stakesPath });
+  assert.deepEqual(report.unpublished.map((row) => row.id), ["alice/the-stone-cottage"], "the cottage leaves canon for want of escrow");
+  assert.equal(has("main", cottage), false, "and main no longer holds it");
+  const row = report.rebased.find((r) => r.branch === "draft/house-a");
+  assert.equal(row.mode, "rebase", "the sketchbook replayed rather than refusing the crossing");
+  assert.deepEqual(row.dropped_on_removed, [cottage, cottage], "each moot commit is dropped BY NAME on the receipt — two commits touched the cottage, two lines");
+  assert.equal(has("draft/house-a", cottage), true, "the return step carries the cottage back to the sketchbook as a draft");
+  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
+});
+
+test("THE S58 CLASS, the guard: a modify/delete on a path this crossing did NOT remove still refuses by name", (t) => {
+  const repo = mkdtempSync(join(tmpdir(), "postmark-s58-guard-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  const put = (path, text) => { const full = join(repo, path); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, text); };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs")) cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+  const shed = "WORLD/marks/let-there-be-light/the-shed/mark.md";
+  put(shed, record({ by: "alice", at: { x: 900, y: 900 }, extent: { w: 10, h: 10 }, body: "a shed" }));
+  put("WORLD/settlement-publications.json", JSON.stringify({ version: 1, published: {} }, null, 2) + "\n");
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "main with a shed");
+  git("switch", "-q", "-c", "draft/house-a");
+  put(shed, record({ by: "alice", at: { x: 900, y: 900 }, extent: { w: 10, h: 10 }, body: "a shed, repainted" }));
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "house a repaints the shed");
+  git("switch", "-q", "main");
+  // main deletes the shed OUTSIDE this crossing (a founder's hand) — not an unpublish, not a withdrawal
+  rmSync(join(repo, dirname(shed)), { recursive: true, force: true });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "founder removes the shed by hand");
+  const remote = mkdtempSync(join(tmpdir(), "postmark-s58-guard-remote-"));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  execFileSync("git", ["init", "--bare", "-q", remote]);
+  git("remote", "add", "origin", remote);
+  git("push", "-q", "origin", "main", "draft/house-a");
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([]));
+  assert.throws(() => settlementSweep({ repo, stakesPath }), /draft\/house-a did not rebase cleanly/,
+    "a deletion this crossing did not make is not the sweep's to resolve — it refuses by branch name, as before");
+});

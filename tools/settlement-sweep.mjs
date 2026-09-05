@@ -622,8 +622,17 @@ function commit(repo, paths, message) {
   return git(repo, ["rev-parse", "HEAD"]).trim();
 }
 
-function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable) {
+// A path THIS crossing removed from main — an unpublish (escrow gone) names its
+// mark.md; a withdrawal removes the whole seat, so its directory is the prefix.
+function removedAtFactory(removed) {
+  const files = new Set(removed.filter((p) => p.endsWith("/mark.md")));
+  const dirs = removed.filter((p) => !p.endsWith("/mark.md"));
+  return (path) => files.has(path) || dirs.some((d) => path === d || path.startsWith(`${d}/`));
+}
+
+function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable, removed = []) {
   const receipts = [];
+  const removedAt = removedAtFactory(removed);
   for (const branch of branches) {
     const household = branch.slice("draft/".length);
     const returned = returnedByHousehold.get(household) ?? [];
@@ -652,10 +661,35 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
     const wt = join(wtParent, "worktree");
     git(repo, ["worktree", "add", "--quiet", wt, branch]);
     const crossed = [];
+    const droppedOnRemoved = [];
     const tipBefore = git(repo, ["rev-parse", branch]).trim();
     let normalizedTip = null;
     try {
+      const rebaseEnv = { ...process.env, GIT_EDITOR: "true", GIT_SEQUENCE_EDITOR: "true" };
+      // ── THE S58 CLASS (2026-09-05, draft/generalroam-boop): a sketchbook commit
+      // that MODIFIES a mark this very crossing removed from main (the cottage
+      // unpublished on its holder's own unstake) stops the replay on modify/delete,
+      // which `-X theirs` cannot resolve — and the whole town's crossing refused.
+      // The sketchbook's writes on a mark that is leaving the record are moot (the
+      // return step below carries the mark back as a draft regardless), so a stop
+      // whose EVERY unmerged path is a deleted-by-main / modified-by-sketchbook pair
+      // on a path this crossing removed resolves toward the deletion, and a commit
+      // emptied by that is dropped. Any other stop — one path the crossing did not
+      // remove, one shape that is not DU — refuses by name exactly as before.
       const replay = () => {
+        let pending;
+        try { replayOnce(); return; } catch (error) { pending = error; }
+        for (;;) {
+          const unmerged = worktreeDirt(wt).filter((row) => row.x === "U" || row.y === "U");
+          if (!unmerged.length) throw pending;
+          const moot = unmerged.filter((row) => row.x === "D" && row.y === "U" && removedAt(row.path));
+          if (moot.length !== unmerged.length) throw pending;
+          for (const row of moot) { git(wt, ["rm", "-q", "--", row.path]); droppedOnRemoved.push(row.path); }
+          const empty = (() => { try { git(wt, ["diff", "--cached", "--quiet"]); return true; } catch { return false; } })();
+          try { git(wt, ["rebase", empty ? "--skip" : "--continue"], { env: rebaseEnv }); return; } catch (error) { pending = error; }
+        }
+      };
+      const replayOnce = () => {
         // -X theirs — in a rebase, "theirs" is the commit being REPLAYED: the
         // sketchbook's own writes. The reseat is pure transport of a sketchbook
         // whose only readable truth is its final tree (markDelta and recordAt
@@ -670,9 +704,7 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
         // same shape. Main is never written by this step, and a sketchbook whose
         // final word genuinely differs from main simply carries that delta to
         // the next crossing, where the gate judges it as always.
-        git(wt, ["rebase", "-X", "theirs", mainBranch], {
-          env: { ...process.env, GIT_EDITOR: "true", GIT_SEQUENCE_EDITOR: "true" },
-        });
+        git(wt, ["rebase", "-X", "theirs", mainBranch], { env: rebaseEnv });
       };
       const refuseReplay = (error, fields = {}) => refusal(
         `${branch} did not rebase cleanly: ${String(error.stderr ?? error.message ?? error).slice(0, 240)}`,
@@ -767,6 +799,7 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
         head: git(repo, ["rev-parse", branch]).trim(),
         rebased_onto: mainSha,
         mode: "rebase",
+        dropped_on_removed: droppedOnRemoved,
         returned: returned.map((item) => item.id),
         return_commit: returnCommit,
         // named, never silent: a path whose committed blob still violates main's
@@ -1350,7 +1383,8 @@ export function settlementSweep({
     }
   }
   branches.sort();
-  const rebased = rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable);
+  const removed = [...unpublished.map((item) => item.path), ...withdrawn.map((item) => dirname(item.path))];
+  const rebased = rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable, removed);
 
   return {
     main: mainCommit,
