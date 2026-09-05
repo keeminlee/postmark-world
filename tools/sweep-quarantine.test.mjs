@@ -110,7 +110,14 @@ test("FALSIFIER: a poisoned ref is QUARANTINED while the other sketchbooks settl
 
   assert.equal(out.quarantined.length, 1, "exactly the one bad sketchbook");
   const q = out.quarantined[0];
-  assert.equal(q.household, "house-a");
+  // THE GRAIN CHANGED HERE ON 2026-09-05 (postmark#2515). `household` used to be
+  // the DRAWER — `branch.slice("draft/")`, a GitHub login — and is now the
+  // authoring household the fold's own `credOf` names. `alice` stands in no
+  // registry in this fixture, so she is her own household: `solo:alice`. The
+  // drawer has not gone anywhere; it is `ref`, asserted on the next line, and
+  // the handle a letter would be addressed to is `by`.
+  assert.equal(q.household, "solo:alice");
+  assert.equal(q.by, "alice");
   assert.equal(q.ref, "draft/house-a");
 
   // THE REST SETTLED — the whole point of the change

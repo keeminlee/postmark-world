@@ -967,10 +967,13 @@ export function settlementSweep({
     // carries no record, and a row the sketchbook never touched is main's own
     // amendment showing through a stale copy (the supersession reading below).
     const candidates = [];
+    // The path each candidate came from, so the household-grained skip below can
+    // be built without re-reading anything at the ref (postmark#2515).
+    const candidateByPath = new Map();
     for (const delta of deltas) {
       if (delta.status === "D" || !delta.branchTouched) continue;
       const rec = recordAt(repo, branch, delta.path);
-      if (rec) candidates.push({
+      if (rec) candidateByPath.set(delta.path, candidates[candidates.push({
         ...rec,
         // THE DIRECTORY EDGE, which `recordAt` does not carry because it reads
         // one file and `loadMarks` gets this from walking a tree. Without it the
@@ -990,7 +993,7 @@ export function settlementSweep({
         // TWO paths — is a composition fact, and §4 keeps the merged fold as the
         // final gate precisely so composition surfaces there.
         _replacing: mainFolded.has(rec.id),
-      });
+      }) - 1]);
     }
 
     // THE QUARANTINE, and it is deliberately the FIRST thing in the sketchbook,
@@ -1007,20 +1010,111 @@ export function settlementSweep({
     // are simply many crossings stale. Only the candidates are judged now. A
     // household whose PUBLISHED delta is bad still refuses, by name and in the
     // fold's own error grammar.
-    const admitted = admitDelta(candidates, admitBase);
-    if (admitted.errors.length) {
-      // LOUD. The ref, the reason, and the row that poisoned it, so the
-      // crossing's journal says whose sketchbook was set aside and what to fix.
-      const first = admitted.errors[0];
-      const detail = `${branch} publishes ${admitted.errors.length} inadmissible row(s): ${JSON.stringify(first)}`;
+    //
+    // WHAT CHANGED AGAIN, and it is the OTHER axis of the same ruling
+    // (founder-approved 2026-09-05, postmark#2515). The 08-24 narrowing fixed
+    // WHICH ROWS are judged and left WHOSE ROWS THEY ARE alone. A sketchbook is
+    // named for a GitHub LOGIN, and one login may keep several handles:
+    // `draft/devadavisson` is one drawer for `berthillon` and
+    // `current-the-reader`. Between S55 and S58 berthillon offered three cones
+    // declared `kind: parcel` — inadmissible, because berthillon already holds
+    // `chez-antoine` — and the drawer was set aside whole every crossing.
+    // Current-the-reader's eleven admissible marks were never judged, for five
+    // crossings, and the residents learned of it from the silence.
+    //
+    // So: group the candidates by household and quarantine only the groups that
+    // actually offered a bad row. THE GROUPING KEY IS THE FOLD'S OWN
+    // `credOf` — not a second household answer written here — and that choice
+    // is load-bearing twice over:
+    //
+    //   · `wallRegistry.households[record.by]` alone would be VACUOUS on the
+    //     very case this is for: berthillon and current-the-reader are both
+    //     ABSENT from main's registry, so that lookup is null for each and they
+    //     would share one bucket. `credOf`'s fallback is written down as law in
+    //     marks-fold's grain note — "A handle absent from the registry is its
+    //     own household" — and it separates them.
+    //   · Grouping by bare HANDLE would have split a genuinely registered
+    //     multi-handle household (the five Reeves under one credential) into
+    //     five groups, each counting the parcel claim cap from main alone; two
+    //     of them could then have added a parcel apiece over a cap of three
+    //     without either group seeing the other. `credOf` keeps them one group,
+    //     so the cap keeps its accounting.
+    //
+    // THE SURVIVORS ARE RE-ADMITTED TOGETHER, not group by group. Duplicate
+    // ids, parcel overlap and containment are cross-candidate questions that
+    // `admitDelta` answers over the whole set it is handed; judging each group
+    // against main alone would have blinded every one of them to its
+    // drawer-mates. Iterating to a fixpoint keeps the conservative direction: a
+    // survivor that only becomes inadmissible once a quarantined row leaves is
+    // quarantined in its turn, and the loop shrinks the set strictly, so it
+    // terminates in at most one pass per group.
+    const handleOf = (c) => c.household ?? c.by ?? null;
+    const groupOf = (c) => { const h = handleOf(c); return h ? admitBase.credOf(h) : null; };
+    const heldGroups = new Map();   // group key -> { error, by } — first bad row per household
+    let surviving = candidates;
+    let admitted = admitDelta(surviving, admitBase);
+    let unbindable = null;          // a bad row whose author cannot be read AT ALL
+    while (admitted.errors.length && !unbindable) {
+      const bySeenId = new Map(surviving.map((c) => [c.id, c]));
+      const bad = new Set();
+      for (const e of admitted.errors) {
+        const c = e.mark ? bySeenId.get(e.mark) : null;
+        const key = c ? groupOf(c) : null;
+        // THE ONE CASE THAT STILL REFUSES THE WHOLE DRAWER. Not "the registry
+        // does not know this handle" — that is the ordinary case and `credOf`
+        // binds it — but "there is no handle to read", or an error the fold
+        // raised against no mark at all (the stake-row shape). Attributing that
+        // to a household would be a guess, and a guess is the one thing a
+        // quarantine may not be. Note it bites only where the unreadable row is
+        // ALSO inadmissible: an authorless row that folds clean still publishes,
+        // because the sweep's own registry note forbids new refusals here —
+        // "registry lag must not strand the pen's own writes".
+        if (!key) { unbindable = e; break; }
+        bad.add(key);
+        if (!heldGroups.has(key)) heldGroups.set(key, { error: e, by: handleOf(c) });
+      }
+      if (unbindable) break;
+      surviving = surviving.filter((c) => !bad.has(groupOf(c)));
+      admitted = admitDelta(surviving, admitBase);
+    }
+
+    // LOUD, and now BY NAME. The authoring household, the handle a letter would
+    // be addressed to, the drawer, the fold's own sentence, and the row —
+    // `row` carried null on every receipt from S55 to S58 while `detail` had the
+    // mark id in it the whole time (postmark#2516). The stake row keeps its own
+    // key rather than sharing `row` with a mark id, so neither reader has to ask
+    // which shape it got.
+    const setAside = (entry) => {
+      const { error, by, key, count = 1 } = entry;
+      const detail = `${branch} publishes ${count} inadmissible row(s): ${JSON.stringify(error)}`;
       quarantined.push({
-        household, ref: branch,
-        reason: "this sketchbook's own published rows could not be admitted, so it was set aside and the rest of the town settled without it",
+        household: key, by, ref: branch,
+        reason: "this household's own published rows could not be admitted, so they were set aside and the rest of the town settled without them",
         detail: detail.slice(0, 400),
-        row: firstStakeRowIn(detail),
+        row: error?.mark ?? null,
+        stake_row: firstStakeRowIn(detail),
       });
+    };
+    if (unbindable) {
+      // The whole drawer, named for the drawer, exactly as before this change.
+      setAside({ error: unbindable, by: null, key: household, count: admitted.errors.length });
       continue;
     }
+    for (const [key, { error, by }] of heldGroups) setAside({ error, by, key });
+
+    // THE SKIP, narrowed from the drawer to the household. `heldPaths` is built
+    // from the candidates already read at the ref, so the narrowing costs no
+    // extra git call — §4's whole claim is about not paying per row. A
+    // WITHDRAWAL by a set-aside household is caught in the deletion arm below,
+    // which already reads its record from main.
+    // NOT `if (!surviving.length) continue`. A sketchbook whose whole delta is
+    // DELETIONS carries no candidates at all, and an early exit on an empty
+    // survivor set silently swallowed every withdrawal in the town — four reds
+    // in the sweep's own suite, none of them about quarantine. The deltas loop
+    // is the only thing that decides what a branch does.
+    const heldKeys = new Set(heldGroups.keys());
+    const heldPaths = new Set();
+    if (heldKeys.size) for (const [path, cand] of candidateByPath) if (heldKeys.has(groupOf(cand))) heldPaths.add(path);
 
     // The world this sketchbook is judged in: canon's fold, with its own
     // candidates laid over. Cross-household composition is NOT decided here and
@@ -1029,6 +1123,13 @@ export function settlementSweep({
     for (const [id, view] of admitted.views) folded.set(id, view);
 
     for (const delta of deltas) {
+      // SET ASIDE WITH ITS HOUSEHOLD. Nothing from a quarantined household is
+      // read, published, withdrawn or touched — the same conservative skip the
+      // drawer used to get, now at the grain the quarantine is named for. It is
+      // silent here on purpose: the household's own `quarantined[]` entry above
+      // is the loud part, and a second row per mark would say the same thing
+      // many times.
+      if (heldPaths.has(delta.path)) continue;
       // SUPERSESSION. The sketchbook has not touched this path since it was cut,
       // so the difference between them is main's own amendment read through a
       // stale sketchbook. Publishing it would revert main to what the sketchbook
@@ -1063,6 +1164,19 @@ export function settlementSweep({
         if (townOwned(record)) {
           leftDrafted.push({ household, id: wid, path: delta.path, reason: "the town wall: town-signed records never withdraw from a sketchbook" });
           continue;
+        }
+        // A WITHDRAWAL BY A SET-ASIDE HOUSEHOLD WAITS WITH ITS PUBLICATIONS
+        // (postmark#2515). The record is already in hand from main, so this
+        // costs no read; without it the household-grained quarantine would hold
+        // a household's additions and let its deletions through, which is a
+        // half-applied sketchbook — the exact thing the quarantine's
+        // conservative direction exists to prevent.
+        if (heldKeys.size) {
+          const wHandle = record.household ?? record.by ?? null;
+          if (wHandle && heldKeys.has(admitBase.credOf(wHandle))) {
+            leftDrafted.push({ household, id: wid, path: delta.path, reason: "this household's sketchbook rows were set aside this crossing, so its withdrawals wait with them" });
+            continue;
+          }
         }
         const authorHh = wallRegistry.households[record.by] ?? null;
         const branchHh = branchHouseholdOf(branch);

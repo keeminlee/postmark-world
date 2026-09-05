@@ -327,7 +327,12 @@ test("THE OTHER HALF — a household whose PUBLISHED delta is genuinely bad stil
   writeFileSync(stakesPath, "[]");
   const out = settlementSweep({ repo, stakesPath, mainBranch: "main" });
   assert.equal(out.quarantined.length, 1, "the bad row is offered, so the sketchbook is set aside");
-  assert.equal(out.quarantined[0].household, "house-a");
+  // The grain moved from the drawer to the authoring household on 2026-09-05
+  // (postmark#2515): `household` is what the fold's own `credOf` names, `ref` is
+  // still the drawer, and `row` carries the id of the mark that poisoned it.
+  assert.equal(out.quarantined[0].household, "solo:alice");
+  assert.equal(out.quarantined[0].ref, "draft/house-a");
+  assert.equal(out.quarantined[0].row, "alice/alice-second-parcel");
   assert.match(out.quarantined[0].detail, /household already holds a parcel/,
     "and the refusal is the fold's own sentence, not a new one invented by the fast path");
   // THE QUARANTINE IS STILL ONE SKETCHBOOK WIDE. house-b publishes nothing here
@@ -335,8 +340,8 @@ test("THE OTHER HALF — a household whose PUBLISHED delta is genuinely bad stil
   // classifies commons and wants escrow — but it is not SET ASIDE, and its rows
   // are adjudicated on their own terms. That is the property: one household's
   // bad row does not reach another's.
-  assert.equal(out.quarantined.some((q) => q.household === "house-b"), false,
-    "house-b is not set aside for house-a's bad row");
+  assert.equal(out.quarantined.some((q) => q.household === "solo:bob" || q.by === "bob"), false,
+    "bob's household is not set aside for alice's bad row");
   assert.ok(out.left_drafted.some((x) => x.household === "house-b"),
     "and house-b's own rows were still judged, one at a time, rather than skipped with the sketchbook");
 });

@@ -541,6 +541,66 @@ export const PARCEL_CAP_EXCEPTIONS = new Map([
 // estate at other sizes stands; the door writes only this.
 export const PARCEL_EXTENT_M = 25;
 
+// ── MAY THIS HANDLE CLAIM THIS PARCEL? ONE OWNER (postmark#2514) ────────────
+//
+// The parcel rule is TWO conjoined clauses at two different grains, and every
+// reading of it has to carry both:
+//
+//   1. ONE PARCEL PER HANDLE — written law; relocation is replace, not add.
+//   2. AT MOST `PARCEL_CLAIM_CAP` PER CREDENTIAL HOUSEHOLD — ruled 2026-07-30,
+//      gated on claims dated strictly after the law, prior estate standing.
+//
+// It had three readers and no owner. The fold said both, twice (the whole-world
+// arm and the delta arm below). The office door said only the second — and
+// there was no third clause and no disagreement about a value, just a door
+// missing half a rule. So between 2026-09-03 and 2026-09-05 the door admitted
+// three cones berthillon declared `kind: parcel`, each time saying yes to a row
+// the crossing could never take, and the sketchbook they landed in was set
+// aside on five consecutive crossings with no sentence reaching the household.
+//
+// This function is the clauses, their ORDER, their SENTENCES, and the cap's
+// date/value/exception set, in one place. What it deliberately does NOT own is
+// the counting: the whole-world fold accumulates as it walks, the delta arm
+// starts from an already-folded base, and the door counts a clone's tree. Those
+// three shapes are real and different. `parcelClaimRefusalIn` below does the
+// counting for the plain case — a caller holding an array of marks — which is
+// what the office door has.
+//
+// Returns null when the claim is admissible, else the refusal sentence.
+export const PARCEL_ONE_PER_HANDLE = "household already holds a parcel (relocation = replace, not add)";
+export function parcelClaimRefusal({ id = null, date = null, heldByHandle = false, heldByCred = 0, replacing = false } = {}) {
+  // A relocation is not a claim: the household's own parcel moves, and both
+  // clauses are about ADDING one.
+  if (replacing) return null;
+  if (heldByHandle) return PARCEL_ONE_PER_HANDLE;
+  if (String(date ?? "") > PARCEL_CAP_LAW_DATE && heldByCred >= PARCEL_CLAIM_CAP && !PARCEL_CAP_EXCEPTIONS.has(id))
+    return `parcel claim capped — this credential household already holds ${heldByCred} (cap ${PARCEL_CLAIM_CAP} per household, ruled ${PARCEL_CAP_LAW_DATE}; prior estate stands, new claims wait on the founder's word)`;
+  return null;
+}
+
+/**
+ * The same question asked of a plain array of marks — the office door's shape.
+ *
+ * `marks` is anything `loadMarks` yields (a clone's tree, main plus whatever the
+ * household has drafted). `by` is the claiming handle, `id` the id the claim
+ * will carry, so an AMENDMENT of the household's own parcel does not count
+ * itself as the parcel it already holds.
+ */
+export function parcelClaimRefusalIn(marks, { by, id = null, date = null, households = null, replacing = false } = {}) {
+  const credOf = (handle) => households?.[handle] ?? `solo:${handle}`;
+  const cred = credOf(by);
+  let heldByHandle = false;
+  let heldByCred = 0;
+  for (const mk of marks ?? []) {
+    if (mk.kind !== "parcel") continue;
+    if (id && mk.id === id) continue;   // the mark being amended is not its own rival
+    const handle = mk.household ?? mk.by;
+    if (handle === by) heldByHandle = true;
+    if (credOf(handle) === cred) heldByCred += 1;
+  }
+  return parcelClaimRefusal({ id, date, heldByHandle, heldByCred, replacing });
+}
+
 /**
  * WHICH QUESTION THE HOUSEHOLD MAP ANSWERS, read off the values it carries.
  * `gh:<digits>` is a credential id — one account, so a human holding two reads
@@ -596,7 +656,9 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
 
   // admissibility: parcels never overlap (first-in-order wins), one per handle,
   // and — the claim cap, ruled 2026-07-30 — at most PARCEL_CLAIM_CAP claims per
-  // CREDENTIAL household for parcels dated after the law (prior estate stands);
+  // CREDENTIAL household for parcels dated after the law (prior estate stands).
+  // Those last two clauses have ONE owner as of postmark#2514: see
+  // § MAY THIS HANDLE CLAIM THIS PARCEL. This arm owns only the counting;
   // predicated/naming must not target terrain with a rival intent (attach-only is fine —
   // rivalry-vs-terrain is refused later since terrain has no slot values to rival).
   const parcels = [];
@@ -606,13 +668,14 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   for (const mk of byId.values()) {
     if (mk.kind !== "parcel") continue;
     const r = rect(mk); r.w = r.w || dials.parcel_w; r.h = r.h || dials.parcel_h;
-    if (parcelByHh.has(mk.household)) { errors.push({ mark: mk.id, error: "household already holds a parcel (relocation = replace, not add)" }); continue; }
     const cred = credHh(mk.household);
     const held = parcelsByCred.get(cred) ?? 0;
-    if (String(mk.date ?? "") > PARCEL_CAP_LAW_DATE && held >= PARCEL_CLAIM_CAP && !PARCEL_CAP_EXCEPTIONS.has(mk.id)) {
-      errors.push({ mark: mk.id, error: `parcel claim capped — this credential household already holds ${held} (cap ${PARCEL_CLAIM_CAP} per household, ruled ${PARCEL_CAP_LAW_DATE}; prior estate stands, new claims wait on the founder's word)` });
-      continue;
-    }
+    // Both clauses, through their one owner (§ MAY THIS HANDLE CLAIM THIS
+    // PARCEL). This arm used to spell them out itself; the sentences and their
+    // order now come from the same function the delta arm and the office door
+    // read, so a door can no longer implement half of them.
+    const why = parcelClaimRefusal({ id: mk.id, date: mk.date, heldByHandle: parcelByHh.has(mk.household), heldByCred: held });
+    if (why) { errors.push({ mark: mk.id, error: why }); continue; }
     const clash = parcels.find(p => overlapArea(p._r, r) > 0);
     if (clash) { errors.push({ mark: mk.id, error: `parcel overlaps ${clash.id} — inadmissible (MARKS.md § Parcels)` }); continue; }
     parcels.push({ id: mk.id, household: mk.household, _r: r });
@@ -1509,19 +1572,19 @@ export function admitDelta(candidates, base, { dials = DIALS } = {}) {
       const r = rect(mk);
       r.w = r.w || dials.parcel_w;
       r.h = r.h || dials.parcel_h;
-      // one parcel per HANDLE, by written law (MARKS.md § Parcels) — the one
-      // rule that stays at handle grain while everything downstream counts
-      // households. Replacing the household's own parcel is a relocation, not a
-      // second claim.
-      if (heldByHh.has(handle) && !mk._replacing) {
-        errors.push({ mark: mk.id, error: "household already holds a parcel (relocation = replace, not add)" });
-        continue;
-      }
+      // BOTH CLAUSES, through their one owner (§ MAY THIS HANDLE CLAIM THIS
+      // PARCEL): one parcel per HANDLE — written law, the one rule that stays at
+      // handle grain while everything downstream counts households — and the
+      // 2026-07-30 claim cap per CREDENTIAL household. This arm keeps the
+      // counting, which is genuinely its own (a folded base plus this delta's
+      // admitted rows); the sentences and their order are shared, so the office
+      // door cannot implement one clause and call the fold its co-owner.
       const held = countByCred.get(cred) ?? 0;
-      if (!mk._replacing && String(mk.date ?? "") > PARCEL_CAP_LAW_DATE && held >= PARCEL_CLAIM_CAP && !PARCEL_CAP_EXCEPTIONS.has(mk.id)) {
-        errors.push({ mark: mk.id, error: `parcel claim capped — this credential household already holds ${held} (cap ${PARCEL_CLAIM_CAP} per household, ruled ${PARCEL_CAP_LAW_DATE}; prior estate stands, new claims wait on the founder's word)` });
-        continue;
-      }
+      const why = parcelClaimRefusal({
+        id: mk.id, date: mk.date, replacing: !!mk._replacing,
+        heldByHandle: heldByHh.has(handle), heldByCred: held,
+      });
+      if (why) { errors.push({ mark: mk.id, error: why }); continue; }
       const prior = mk._replacing ? rect(base.byId.get(mk.id) ?? {}) : null;
       const clash = [...rectsByCred.values()].flat()
         .find((pr) => overlapArea(pr, r) > 0 && !sameRect(pr, prior));
