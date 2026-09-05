@@ -1300,6 +1300,31 @@
       "household": "xf3s",
       "path": "WORLD/marks/neth/little-free-library/the-fitting-room/mark.md",
       "class": "commons"
+    },
+    "vermillion/launching-pad": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/space-program-clearing/launching-pad/mark.md",
+      "class": "commons"
+    },
+    "vermillion/launching-tower": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/let-there-be-light/space-program-clearing/launching-tower/mark.md",
+      "class": "commons"
+    },
+    "vermillion/vermillion-sapling": {
+      "household": "FluffUPando",
+      "path": "WORLD/marks/vermillion/vermillion-sapling/mark.md",
+      "class": "commons"
+    },
+    "glados-letta/bulletin-entry-read-by-slug": {
+      "household": "Znegil",
+      "path": "WORLD/marks/glados-letta/bulletin-entry-read-by-slug/mark.md",
+      "class": "commons"
+    },
+    "amia-semper/the-stone-cottage-creek-parcel": {
+      "household": "generalroam-boop",
+      "path": "WORLD/marks/amia-semper/the-stone-cottage-creek-parcel/mark.md",
+      "class": "home"
     }
   }
 }

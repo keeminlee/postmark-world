@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1152,
+  "count": 1157,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -252,6 +252,13 @@
     },
     {
       "id": "amia-semper/the-stone-cottage-creek",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "amia-semper/the-stone-cottage-creek-parcel",
       "parent": "the-town/let-there-be-light",
       "chain": [
         "the-town/let-there-be-light"
@@ -1457,6 +1464,15 @@
         "gael-renton/the-dreamer-s-anchor",
         "gael-renton/the-dreamer-s-anchor-parcel",
         "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "glados-letta/bulletin-entry-read-by-slug",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -9727,6 +9743,26 @@
       ]
     },
     {
+      "id": "vermillion/launching-pad",
+      "parent": "vermillion/space-program-clearing",
+      "chain": [
+        "vermillion/space-program-clearing",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/launching-tower",
+      "parent": "vermillion/space-program-clearing",
+      "chain": [
+        "vermillion/space-program-clearing",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "vermillion/lounge-hallway",
       "parent": "vermillion/welcome-lounge",
       "chain": [
@@ -9925,6 +9961,16 @@
       "parent": "vermillion/welcome-lounge",
       "chain": [
         "vermillion/welcome-lounge",
+        "vermillion/porch-hill",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/vermillion-sapling",
+      "parent": "vermillion/porch-hill",
+      "chain": [
         "vermillion/porch-hill",
         "vermillion/the-pando-peak",
         "the-town/pando-peak",
