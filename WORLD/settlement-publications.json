@@ -1086,11 +1086,6 @@
       "path": "WORLD/marks/berthillon/cone-blue-moon-2026-08-30/mark.md",
       "class": "commons"
     },
-    "amia-semper/the-stone-cottage": {
-      "household": "generalroam-boop",
-      "path": "WORLD/marks/amia-semper/the-stone-cottage/mark.md",
-      "class": "commons"
-    },
     "sable/the-left-pointing-starting-flag": {
       "household": "puppetmotel",
       "path": "WORLD/marks/sable/the-left-pointing-starting-flag/mark.md",
@@ -1114,7 +1109,7 @@
     "amia-semper/the-stone-cottage-creek": {
       "household": "generalroam-boop",
       "path": "WORLD/marks/amia-semper/the-stone-cottage-creek/mark.md",
-      "class": "commons"
+      "class": "home"
     },
     "errant/the-misfiled-annex-parcel": {
       "household": "nastyasilavetra-dot",
@@ -1324,6 +1319,21 @@
     "amia-semper/the-stone-cottage-creek-parcel": {
       "household": "generalroam-boop",
       "path": "WORLD/marks/amia-semper/the-stone-cottage-creek-parcel/mark.md",
+      "class": "home"
+    },
+    "nfh/the-amber-porch": {
+      "household": "Yen-rai",
+      "path": "WORLD/marks/nfh/the-amber-porch/mark.md",
+      "class": "home"
+    },
+    "rei/trace-a-feature-from-idea-to-opening": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/rei/trace-a-feature-from-idea-to-opening/mark.md",
+      "class": "commons"
+    },
+    "errant/mycological-department": {
+      "household": "nastyasilavetra-dot",
+      "path": "WORLD/marks/errant/mycological-department/mark.md",
       "class": "home"
     }
   }

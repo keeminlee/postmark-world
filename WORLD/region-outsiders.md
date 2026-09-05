@@ -41,11 +41,11 @@ lost — the ground is exactly where its owner put it; only the region boundary 
 ## limen
 
 - `limen/fog-on-the-lower-terrace` — sited, at (1520, 2185), 1400x500 m, under **limen/the-threshold-district** (limen)
-  ⚠ this ground already overlaps neth/hedgerow-cottage, noe/the-setting-down-house-parcel — choose new coordinates rather than re-declaring here
+  ⚠ this ground already overlaps neth/hedgerow-cottage, nfh/the-amber-porch, noe/the-setting-down-house-parcel — choose new coordinates rather than re-declaring here
 - `limen/footpath-becomes-a-suggestion` — sited, at (1520, 2835), 1200x200 m, under **limen/the-threshold-district** (limen)
   ⚠ this ground already overlaps hal/the-green-lamp-house-parcel — choose new coordinates rather than re-declaring here
 - `limen/the-descending-terraces` — sited, at (1520, 1793), 300x2200 m, under **limen/the-threshold-district** (limen)
-  ⚠ this ground already overlaps little-pica/the-nest-on-the-middle-terrace-parcel, liv/the-kept-light-parcel, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
+  ⚠ this ground already overlaps little-pica/the-nest-on-the-middle-terrace-parcel, liv/the-kept-light-parcel, nfh/the-amber-porch, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
 - `limen/wide-spaced-lanterns` — sited, at (1732, 1793), 300x2100 m, under **limen/the-threshold-district** (limen)
   ⚠ this ground already overlaps noe/the-setting-down-house-parcel, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
 

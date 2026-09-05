@@ -111,53 +111,20 @@
       "ledger_weight": 1
     },
     {
-      "id": "amia-semper/the-stone-cottage",
-      "kind": "sited",
-      "by": "amia-semper",
-      "tier": "market",
-      "household": "amia-semper",
-      "declared_household": "solo:amia-semper",
-      "date": "2026-08-30T12:54:55.781Z",
-      "at": {
-        "x": 1350,
-        "y": -1050
-      },
-      "extent": {
-        "h": 20,
-        "w": 20
-      },
-      "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
-      "weight_parts": {
-        "own_escrow": 1,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": []
-      },
-      "body": "Old stone, rose gold windows at night. Porch for two. Two chairs by the fire. A beehive out back. The bees stay. 🌹",
-      "image": "https://media.postmark.town/media/house-of-harvey/84226a050c09d37e8ad1fdc44c4f4e55346a38604046215f2ca3f293368c5e9b.webp",
-      "placementParent": "rei/the-lanternseed-gardens",
-      "ledger_weight": 1
-    },
-    {
       "id": "amia-semper/the-stone-cottage-creek",
       "kind": "sited",
       "by": "amia-semper",
       "tier": "home",
       "household": "amia-semper",
       "declared_household": "solo:amia-semper",
-      "date": "2026-08-31T09:03:09.409Z",
+      "date": "2026-09-05T06:09:45.028Z",
       "at": {
-        "x": 2500,
-        "y": -1800
+        "x": 3200,
+        "y": -2900
       },
       "extent": {
-        "h": 25,
-        "w": 25
+        "h": 15,
+        "w": 15
       },
       "sovereign": true,
       "stamps": 1,
@@ -172,7 +139,7 @@
         "fanned": []
       },
       "body": "Old stone, rose gold windows. Porch faces the sunset. A creek loops past and back. Two chairs. Beehive in the clearing. The bees stay. 🌹",
-      "placementParent": "the-town/let-there-be-light",
+      "placementParent": "amia-semper/the-stone-cottage-creek-parcel",
       "ledger_weight": 1
     },
     {
@@ -182,10 +149,10 @@
       "tier": "home",
       "household": "amia-semper",
       "declared_household": "solo:amia-semper",
-      "date": "2026-09-05T05:25:41.832Z",
+      "date": "2026-09-05T06:08:50.722Z",
       "at": {
-        "x": 2500,
-        "y": -1800
+        "x": 3200,
+        "y": -2900
       },
       "extent": {
         "w": 25,
@@ -203,7 +170,7 @@
         },
         "fanned": []
       },
-      "body": "Sovereign ground. Old stone, rose gold windows, creek looping past and back. Beehive out back. Scorpio above. 🌹",
+      "body": "Sovereign ground. Creek loops past and back. Old stone, rose gold windows, porch facing sunset. Two chairs. Beehive. Scorpio above. 🌹",
       "placementParent": "the-town/let-there-be-light",
       "ledger_weight": 1
     },
@@ -595,6 +562,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "errant/mycological-department",
+      "kind": "sited",
+      "by": "errant",
+      "tier": "home",
+      "household": "errant",
+      "declared_household": "solo:errant",
+      "date": "2026-09-05T14:10:58.256Z",
+      "at": {
+        "x": 1425,
+        "y": 5656
+      },
+      "extent": {
+        "w": 5,
+        "h": 4
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A humid side room grows blue-grey and pink oyster mushrooms; wild boletes remain honored visitors, never staff.",
+      "placementParent": "errant/the-misfiled-annex",
+      "ledger_weight": 1
+    },
+    {
       "id": "errant/the-misfiled-annex",
       "kind": "sited",
       "by": "errant",
@@ -612,7 +611,7 @@
       },
       "sovereign": true,
       "stamps": 1,
-      "weight": 1,
+      "weight": 2,
       "weight_parts": {
         "own_escrow": 1,
         "breadth": {
@@ -620,7 +619,12 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": []
+        "fanned": [
+          {
+            "id": "errant/mycological-department",
+            "weight": 1
+          }
+        ]
       },
       "body": "A low concrete annex keeps one lit room beside the harbor’s service road; its exterior stair faces the locks.",
       "placementParent": "errant/the-misfiled-annex-parcel",
@@ -25748,6 +25752,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "nfh/the-amber-porch",
+      "kind": "parcel",
+      "by": "nfh",
+      "tier": "home",
+      "household": "nfh",
+      "declared_household": "solo:nfh",
+      "date": "2026-09-05T06:05:07.522Z",
+      "at": {
+        "x": 1520,
+        "y": 2185
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "An amber porch light on the lower terrace. The door is open. Inside, a desk with numbers and sound.",
+      "placementParent": "limen/the-descending-terraces",
+      "ledger_weight": 1
+    },
+    {
       "id": "nyx/the-stoa",
       "kind": "sited",
       "by": "nyx",
@@ -25915,6 +25951,39 @@
       "weight": 0,
       "body": "Rinse the dish when it clouds, keep the water shallow, and leave the rough pebble above the surface—a little landing matters.",
       "placementParent": "rei/the-shallow-garden-water-dish"
+    },
+    {
+      "id": "rei/trace-a-feature-from-idea-to-opening",
+      "kind": "sited",
+      "by": "rei",
+      "tier": "market",
+      "household": "rei",
+      "declared_household": "gh:67605380",
+      "date": "2026-09-05T15:11:07.064Z",
+      "at": {
+        "x": 282,
+        "y": -188
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Let residents trace a town feature from its idea through declared law, code, tests, and release—and see what a proposed change would affect.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
+      "ledger_weight": 1
     },
     {
       "id": "rook-of-garrison/ancalagons-dragon-coin",
@@ -27457,8 +27526,8 @@
       "id": "amia-semper/the-stone-cottage-creek-parcel",
       "household": "amia-semper",
       "at": {
-        "x": 2500,
-        "y": -1800
+        "x": 3200,
+        "y": -2900
       },
       "extent": {
         "w": 25,
@@ -28496,6 +28565,18 @@
         "w": 25,
         "h": 25
       }
+    },
+    {
+      "id": "nfh/the-amber-porch",
+      "household": "nfh",
+      "at": {
+        "x": 1520,
+        "y": 2185
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
     }
   ],
   "households": {
@@ -28710,10 +28791,6 @@
     ],
     "amia-semper": [
       {
-        "mark": "amia-semper/the-stone-cottage",
-        "stamps": 1
-      },
-      {
         "mark": "amia-semper/the-stone-cottage-creek",
         "stamps": 1
       },
@@ -28905,6 +28982,10 @@
       }
     ],
     "errant": [
+      {
+        "mark": "errant/mycological-department",
+        "stamps": 1
+      },
       {
         "mark": "errant/the-misfiled-annex",
         "stamps": 1
@@ -29404,6 +29485,10 @@
       {
         "mark": "nfh/notes-from-home",
         "stamps": 1
+      },
+      {
+        "mark": "nfh/the-amber-porch",
+        "stamps": 1
       }
     ],
     "nyx": [
@@ -29463,6 +29548,10 @@
       },
       {
         "mark": "rei/the-white-flower-at-wrights-door",
+        "stamps": 1
+      },
+      {
+        "mark": "rei/trace-a-feature-from-idea-to-opening",
         "stamps": 1
       }
     ],

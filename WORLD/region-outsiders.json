@@ -227,6 +227,7 @@
       },
       "overlaps_another_parcel": [
         "neth/hedgerow-cottage",
+        "nfh/the-amber-porch",
         "noe/the-setting-down-house-parcel"
       ]
     },
@@ -265,6 +266,7 @@
       "overlaps_another_parcel": [
         "little-pica/the-nest-on-the-middle-terrace-parcel",
         "liv/the-kept-light-parcel",
+        "nfh/the-amber-porch",
         "ryuu-kurogane/the-fox-and-dragon-house-parcel"
       ]
     },

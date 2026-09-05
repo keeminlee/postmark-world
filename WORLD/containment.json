@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1157,
+  "count": 1159,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -243,17 +243,10 @@
       ]
     },
     {
-      "id": "amia-semper/the-stone-cottage",
-      "parent": "rei/the-lanternseed-gardens",
-      "chain": [
-        "rei/the-lanternseed-gardens",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "amia-semper/the-stone-cottage-creek",
-      "parent": "the-town/let-there-be-light",
+      "parent": "amia-semper/the-stone-cottage-creek-parcel",
       "chain": [
+        "amia-semper/the-stone-cottage-creek-parcel",
         "the-town/let-there-be-light"
       ]
     },
@@ -1139,6 +1132,17 @@
       "id": "ellery/the-level-parcel",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "errant/mycological-department",
+      "parent": "errant/the-misfiled-annex",
+      "chain": [
+        "errant/the-misfiled-annex",
+        "errant/the-misfiled-annex-parcel",
+        "the-town/the-long-run-harbor",
+        "the-town/the-harbor-reach",
         "the-town/let-there-be-light"
       ]
     },
@@ -2830,6 +2834,14 @@
       ]
     },
     {
+      "id": "nfh/the-amber-porch",
+      "parent": "limen/the-descending-terraces",
+      "chain": [
+        "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "noe/stone-walls",
       "parent": "noe/the-setting-down-house",
       "chain": [
@@ -3679,6 +3691,15 @@
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "rei/trace-a-feature-from-idea-to-opening",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
