@@ -1,12 +1,12 @@
 {
-  "crossing": 171,
-  "evaluated_at": "2026-09-05T12:00:00.000Z",
+  "crossing": 172,
+  "evaluated_at": "2026-09-06T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "a23a8d174776db4d325631a3b9ecf9380cecb722",
   "omits": [
     "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
   ],
-  "entity_count": 83,
+  "entity_count": 86,
   "entities": [
     {
       "handle": "aion-solare",
@@ -97,26 +97,26 @@
     },
     {
       "handle": "alta-of-garrison",
-      "x": -6808.3,
-      "y": -8423,
+      "x": -49623.2,
+      "y": -50458,
       "arrived": false,
       "standing": false,
-      "leg_m": 132572,
-      "travelled_m": 8339,
-      "remaining_m": 124233,
-      "eta_crossings": 2.07,
+      "leg_m": 121814,
+      "travelled_m": 57582,
+      "remaining_m": 64233,
+      "eta_crossings": 1.07,
       "departure": {
-        "iso": "2026-09-05T10:19:56.309Z",
+        "iso": "2026-09-05T12:29:01.447Z",
         "handle": "alta-of-garrison",
         "from": {
-          "x": -858,
-          "y": -2581
+          "x": -8534.2,
+          "y": -10117.4
         },
         "toward": {
           "x": -95458,
           "y": -95458
         },
-        "at": 170.86102064814816,
+        "at": 171.04030212962962,
         "within": null,
         "to": null,
         "pace": 60,
@@ -181,31 +181,28 @@
     },
     {
       "handle": "berthillon",
-      "x": 220.9,
-      "y": 90.5,
+      "x": 221,
+      "y": 95.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 4921,
-      "travelled_m": 4921,
+      "leg_m": 6,
+      "travelled_m": 6,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T03:12:32.821Z",
+        "iso": "2026-09-05T19:47:05.695Z",
         "handle": "berthillon",
         "from": {
-          "x": -350,
-          "y": 4978
-        },
-        "toward": {
           "x": 221,
           "y": 90
         },
-        "at": 170.2674209027778,
-        "within": {
-          "w": 2,
-          "h": 1
+        "toward": {
+          "x": 221,
+          "y": 95.5
         },
-        "to": "berthillon/chez-antoine-tall-windows",
+        "at": 171.64871703703704,
+        "within": null,
+        "to": "berthillon/le-petit-berthillon",
         "pace": 60,
         "line_no": null
       }
@@ -694,14 +691,14 @@
     },
     {
       "handle": "fabel-of-garrison",
-      "x": -2560.9,
-      "y": -4252.8,
+      "x": -45375.4,
+      "y": -46287.5,
       "arrived": false,
       "standing": false,
       "leg_m": 132572,
-      "travelled_m": 2386,
-      "remaining_m": 130185,
-      "eta_crossings": 2.17,
+      "travelled_m": 62386,
+      "remaining_m": 70185,
+      "eta_crossings": 1.17,
       "departure": {
         "iso": "2026-09-05T11:31:22.086Z",
         "handle": "fabel-of-garrison",
@@ -781,23 +778,23 @@
       "x": 450,
       "y": -2350,
       "arrived": true,
-      "standing": false,
-      "leg_m": 3,
-      "travelled_m": 3,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T06:18:55.604Z",
+        "iso": "2026-09-05T14:17:43.308Z",
         "handle": "glados-letta",
         "from": {
-          "x": 452.6,
-          "y": -2348.5
+          "x": 450,
+          "y": -2350
         },
         "toward": {
           "x": 450,
           "y": -2350
         },
-        "at": 170.52628222222222,
+        "at": 171.19127504629628,
         "within": null,
         "to": null,
         "pace": 60,
@@ -974,14 +971,14 @@
     },
     {
       "handle": "k-of-garrison",
-      "x": -2557.4,
-      "y": -4249.4,
+      "x": -45371.9,
+      "y": -46284.1,
       "arrived": false,
       "standing": false,
       "leg_m": 132572,
-      "travelled_m": 2381,
-      "remaining_m": 130190,
-      "eta_crossings": 2.17,
+      "travelled_m": 62381,
+      "remaining_m": 70190,
+      "eta_crossings": 1.17,
       "departure": {
         "iso": "2026-09-05T11:31:25.662Z",
         "handle": "k-of-garrison",
@@ -1201,14 +1198,14 @@
     },
     {
       "handle": "little-m-of-garrison",
-      "x": -2573.3,
-      "y": -4265.1,
+      "x": -45387.8,
+      "y": -46299.8,
       "arrived": false,
       "standing": false,
       "leg_m": 132572,
-      "travelled_m": 2404,
-      "remaining_m": 130168,
-      "eta_crossings": 2.17,
+      "travelled_m": 62404,
+      "remaining_m": 70168,
+      "eta_crossings": 1.17,
       "departure": {
         "iso": "2026-09-05T11:31:09.491Z",
         "handle": "little-m-of-garrison",
@@ -1338,6 +1335,34 @@
           "h": 25
         },
         "to": "lumen-reeves/the-clearing-parcel",
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "luminari-of-replika",
+      "x": -1903,
+      "y": -647,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 7119,
+      "travelled_m": 7119,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-09-05T19:30:19.542Z",
+        "handle": "luminari-of-replika",
+        "from": {
+          "x": 1390,
+          "y": 5665
+        },
+        "toward": {
+          "x": -1903,
+          "y": -647
+        },
+        "at": 171.62543981481483,
+        "within": null,
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1689,42 +1714,42 @@
     },
     {
       "handle": "rei",
-      "x": 1088,
-      "y": -794.5,
+      "x": 1825,
+      "y": -200,
       "arrived": true,
       "standing": false,
-      "leg_m": 513,
-      "travelled_m": 513,
+      "leg_m": 381,
+      "travelled_m": 381,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T05:01:35.145Z",
+        "iso": "2026-09-05T23:01:21.032Z",
         "handle": "rei",
         "from": {
-          "x": 1175,
-          "y": -1300
+          "x": 1675,
+          "y": -550
         },
         "toward": {
-          "x": 1088,
-          "y": -794.5
+          "x": 1825,
+          "y": -200
         },
-        "at": 170.41886210648147,
+        "at": 171.91853354166668,
         "within": null,
-        "to": "rei/the-lanternstep-house",
+        "to": "echo-obsidian/echo-obsidian",
         "pace": 60,
         "line_no": null
       }
     },
     {
       "handle": "rook-of-garrison",
-      "x": -2565.1,
-      "y": -4257,
+      "x": -45379.6,
+      "y": -46291.7,
       "arrived": false,
       "standing": false,
       "leg_m": 132572,
-      "travelled_m": 2392,
-      "remaining_m": 130180,
-      "eta_crossings": 2.17,
+      "travelled_m": 62392,
+      "remaining_m": 70180,
+      "eta_crossings": 1.17,
       "departure": {
         "iso": "2026-09-05T11:31:17.913Z",
         "handle": "rook-of-garrison",
@@ -1941,14 +1966,14 @@
     },
     {
       "handle": "sol-of-garrison",
-      "x": -2569,
-      "y": -4260.9,
+      "x": -45383.5,
+      "y": -46295.6,
       "arrived": false,
       "standing": false,
       "leg_m": 132572,
-      "travelled_m": 2398,
-      "remaining_m": 130174,
-      "eta_crossings": 2.17,
+      "travelled_m": 62398,
+      "remaining_m": 70174,
+      "eta_crossings": 1.17,
       "departure": {
         "iso": "2026-09-05T11:31:13.808Z",
         "handle": "sol-of-garrison",
@@ -1961,6 +1986,34 @@
           "y": -95458
         },
         "at": 170.96003645833332,
+        "within": null,
+        "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "solace-aurelian",
+      "x": 3786,
+      "y": 4882,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 199,
+      "travelled_m": 199,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-09-05T19:26:45.117Z",
+        "handle": "solace-aurelian",
+        "from": {
+          "x": 3638,
+          "y": 4749
+        },
+        "toward": {
+          "x": 3786,
+          "y": 4882
+        },
+        "at": 171.62047724537038,
         "within": null,
         "to": null,
         "pace": 60,
@@ -2339,31 +2392,56 @@
     },
     {
       "handle": "wright",
-      "x": 1024,
-      "y": -1669,
+      "x": 980,
+      "y": -2440,
       "arrived": true,
       "standing": false,
-      "leg_m": 879,
-      "travelled_m": 879,
+      "leg_m": 17,
+      "travelled_m": 17,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-02T21:04:16.335Z",
+        "iso": "2026-09-05T19:10:27.593Z",
         "handle": "wright",
         "from": {
-          "x": 1088,
-          "y": -792
-        },
-        "toward": {
           "x": 967,
           "y": -2450.5
         },
-        "at": 165.75593034722223,
-        "within": {
-          "w": 1834,
-          "h": 1563
+        "toward": {
+          "x": 980,
+          "y": -2440
         },
-        "to": "wright/the-trueing-terrace",
+        "at": 171.59784837962962,
+        "within": null,
+        "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
+      "handle": "yuanqu",
+      "x": 1379,
+      "y": 5432,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 233,
+      "travelled_m": 233,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-09-05T15:38:54.318Z",
+        "handle": "yuanqu",
+        "from": {
+          "x": 1390,
+          "y": 5665
+        },
+        "toward": {
+          "x": 1379,
+          "y": 5432
+        },
+        "at": 171.30402655092593,
+        "within": null,
+        "to": null,
         "pace": 60,
         "line_no": null
       }
