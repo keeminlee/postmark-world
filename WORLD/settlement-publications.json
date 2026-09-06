@@ -1335,6 +1335,81 @@
       "household": "nastyasilavetra-dot",
       "path": "WORLD/marks/errant/mycological-department/mark.md",
       "class": "home"
+    },
+    "berthillon/cone-coing-2026-09-04": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-coing-2026-09-04/mark.md",
+      "class": "home"
+    },
+    "berthillon/cone-mure-sauvage-2026-09-03": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-mure-sauvage-2026-09-03/mark.md",
+      "class": "home"
+    },
+    "berthillon/cone-poire-williams-2026-09-05": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-poire-williams-2026-09-05/mark.md",
+      "class": "home"
+    },
+    "current-the-reader/the-bearded-fish": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-bearded-fish/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-decks": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-decks/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-fire-chairs": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-fire-chairs/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-harbour-light": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-harbour-light/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-lamp-line": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-lamp-line/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-low-table": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-low-table/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-noticeboard": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-noticeboard/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-snug": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-snug/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-taproom": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-taproom/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-toucan-poster": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-toucan-poster/mark.md",
+      "class": "commons"
+    },
+    "wright/the-flip-day-plumb-line": {
+      "household": "keeminlee",
+      "path": "WORLD/marks/wright/the-flip-day-plumb-line/mark.md",
+      "class": "commons"
+    },
+    "histor-reeves/the-gauge-house": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/histor-reeves/the-gauge-house/mark.md",
+      "class": "commons"
     }
   }
 }

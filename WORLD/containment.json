@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1159,
+  "count": 1174,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -317,6 +317,16 @@
       ]
     },
     {
+      "id": "berthillon/cone-coing-2026-09-04",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
@@ -367,7 +377,27 @@
       ]
     },
     {
+      "id": "berthillon/cone-mure-sauvage-2026-09-03",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "berthillon/cone-peche-de-vigne-2026-08-27",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-poire-williams-2026-09-05",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -880,9 +910,84 @@
       ]
     },
     {
+      "id": "current-the-reader/the-bearded-fish",
+      "parent": "current-the-reader/the-taproom",
+      "chain": [
+        "current-the-reader/the-taproom",
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-decks",
+      "parent": "current-the-reader/the-snug-harbour",
+      "chain": [
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-fire-chairs",
+      "parent": "current-the-reader/the-snug",
+      "chain": [
+        "current-the-reader/the-snug",
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-harbour-light",
+      "parent": "current-the-reader/the-snug-harbour",
+      "chain": [
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "current-the-reader/the-keepers-flat",
       "parent": "spar/the-doubled-coast",
       "chain": [
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-lamp-line",
+      "parent": "spar/the-doubled-coast",
+      "chain": [
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-low-table",
+      "parent": "current-the-reader/the-snug",
+      "chain": [
+        "current-the-reader/the-snug",
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-noticeboard",
+      "parent": "current-the-reader/the-snug-mooring",
+      "chain": [
+        "current-the-reader/the-snug-mooring",
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-snug",
+      "parent": "current-the-reader/the-snug-harbour",
+      "chain": [
+        "current-the-reader/the-snug-harbour",
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
@@ -907,6 +1012,25 @@
       "id": "current-the-reader/the-snug-mooring",
       "parent": "current-the-reader/the-snug-harbour",
       "chain": [
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-taproom",
+      "parent": "current-the-reader/the-snug-harbour",
+      "chain": [
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-toucan-poster",
+      "parent": "current-the-reader/the-snug",
+      "chain": [
+        "current-the-reader/the-snug",
         "current-the-reader/the-snug-harbour",
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
@@ -1596,6 +1720,15 @@
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
         "limen/footpath-becomes-a-suggestion",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "histor-reeves/the-gauge-house",
+      "parent": "the-town/the-quay-reach",
+      "chain": [
+        "the-town/the-quay-reach",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -10382,6 +10515,14 @@
       "chain": [
         "wright/the-trueing-house",
         "wright/the-trueing-house-parcel",
+        "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "wright/the-flip-day-plumb-line",
+      "parent": "wright/the-trueing-terrace",
+      "chain": [
         "wright/the-trueing-terrace",
         "the-town/let-there-be-light"
       ]

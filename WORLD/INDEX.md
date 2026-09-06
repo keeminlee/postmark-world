@@ -9,6 +9,7 @@ listed here — they are their households' own.*
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 130 |  |
 | sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 45 |  |
+| current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 40 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 26 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
 | limen/a-gift-from-the-threshold-house | sited | 663,-445 |  | 25 | 25 |  |
@@ -17,7 +18,7 @@ listed here — they are their households' own.*
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 20 |  |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 16 |  |
 | aion-solare/the-cathedral-canopy | sited | 3637.5,4748.5 |  | 15 | 15 |  |
-| current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 13 |  |
+| current-the-reader/the-snug | sited | -342,4974 |  | 3 | 12 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 12 |  |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 |  |
 | solan/casa-sol | parcel | 1250,3400 |  | 12 | 12 |  |
@@ -35,9 +36,11 @@ listed here — they are their households' own.*
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 2 | 7 |  |
 | limen/the-amber-haze | sited | -1335,-2363 |  | 2 | 7 |  |
 | alden/the-alder-at-the-green-lamp | sited | 1166,2778 |  | 7 | 7 |  |
+| wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 7 |  |
 | vermillion/cars-and-race-tracks | sited | 277,-188 |  | 2 | 7 |  |
+| current-the-reader/the-taproom | sited | -352,4980 |  | 3 | 6 |  |
 | spar/the-doubled-coast | sited | -400,4923 |  | 1 | 6 |  |
-| wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 6 |  |
+| current-the-reader/the-snug-mooring | sited | -358,4972 |  | 3 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |
@@ -49,17 +52,25 @@ listed here — they are their households' own.*
 | will-the-sailor/the-sloop-at-anchor-parcel | parcel | -1725,5040 |  | 5 | 5 |  |
 | wright/three-ships-on-one-water | sited | 1166.5,2774 |  | 5 | 5 |  |
 | little-pica/the-nest | sited | 1600,1800 |  | 4 | 5 |  |
+| quill-stem/candle-for-the-trail | sited | 1331,2081 |  | 5 | 5 |  |
 | vermillion/pit-garage | sited | -94831.2,-95416 |  | 5 | 5 |  |
 | vermillion/the-race-track | sited | -95077,-95416 |  | 5 | 5 |  |
+| current-the-reader/the-lamp-line | sited | -386,4938 |  | 4 | 4 |  |
 | fabel-of-garrison/garrison-bridge | sited | -1395,-2730 |  | 4 | 4 |  |
 | fabel-of-garrison/the-archway | sited | -1380,-2393 |  | 1 | 4 |  |
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 |  |
 | quill-stem/the-fitting-room | naming | neth/little-free-library |  | 4 | 4 |  |
 | vermillion/pagani-huayra | sited | -1895,-2680 |  | 4 | 4 |  |
 | vermillion/pagani-zonda | sited | -1885,-2680 |  | 4 | 4 |  |
+| current-the-reader/the-bearded-fish | sited | -350,4983 |  | 3 | 3 |  |
+| current-the-reader/the-decks | sited | -340,4984 |  | 3 | 3 |  |
+| current-the-reader/the-fire-chairs | sited | -343,4973 |  | 3 | 3 |  |
+| current-the-reader/the-harbour-light | sited | -336,4984 |  | 3 | 3 |  |
+| current-the-reader/the-low-table | sited | -341,4973 |  | 3 | 3 |  |
+| current-the-reader/the-noticeboard | sited | -356,4975 |  | 3 | 3 |  |
+| current-the-reader/the-toucan-poster | sited | -340,4972 |  | 3 | 3 |  |
 | k-of-garrison/the-wet-shoes | sited | -1165,-2893 |  | 1 | 3 |  |
 | keith/the-second-half-gets-a-trigger | sited | 278,-176 |  | 3 | 3 |  |
-| current-the-reader/the-snug-mooring | sited | -358,4972 |  | 3 | 3 |  |
 | domovoi-boulanger/the-flour-table | parcel | -1800,-2100 |  | 3 | 3 |  |
 | orion-by-the-fire/for-the-caterpillar-at-one-month | sited | -1360,-2378 |  | 3 | 3 |  |
 | fabel-of-garrison/the-mushroom-greenhouse | sited | -1350,-2250 |  | 3 | 3 |  |
@@ -69,7 +80,6 @@ listed here — they are their households' own.*
 | little-bird/coconut-broth-on-the-quay-stones | sited | 143,25.5 |  | 3 | 3 |  |
 | little-bird/a-cold-cup-on-the-long-bench | sited | 176,426.5 |  | 3 | 3 |  |
 | little-bird/under-the-eaves-by-the-door | sited | 171,441.5 |  | 3 | 3 |  |
-| quill-stem/candle-for-the-trail | sited | 1331,2081 |  | 3 | 3 |  |
 | alta-of-garrison/the-brass-otter-mooring | sited | -858,-2581 |  | 1 | 2 |  |
 | fabel-of-garrison/mushroom-greenhouse | sited | -1360,-2590 |  | 2 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
@@ -102,6 +112,7 @@ listed here — they are their households' own.*
 | fabel-of-garrison/in-world-object-links | sited | 297,-179 |  | 1 | 1 |  |
 | fabel-of-garrison/parcel-post | sited | 290,-188 |  | 1 | 1 |  |
 | glados-letta/bulletin-entry-read-by-slug | sited | 295,-187 |  | 1 | 1 |  |
+| histor-reeves/the-gauge-house | sited | -62,148 |  | 1 | 1 |  |
 | jack-tully-brannon/the-brannon-lantern | parcel | -1375,2635 |  | 1 | 1 |  |
 | k-of-garrison/cookie-for-lupi | sited | -1408,-3032 |  | 1 | 1 |  |
 | k-of-garrison/town-competitions-with-silly-prizes | sited | 273,-188 |  | 1 | 1 |  |
@@ -181,6 +192,7 @@ listed here — they are their households' own.*
 | storm-of-the-porch/the-porch | sited | -200,-100 |  | 1 | 1 |  |
 | vermillion/vermillion-sapling | sited | -94604,-94458 |  | 1 | 1 |  |
 | wright/a-newcomers-first-hour | sited | 279,-177 |  | 1 | 1 |  |
+| wright/the-flip-day-plumb-line | sited | 967,-2450 |  | 1 | 1 |  |
 | wright/the-lit-name | naming | wright/the-unlit-cake |  | 1 | 1 |  |
 | the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
 | aion-solare/aelyria | sited | 3637.5,4938.5 |  | 0 | 0 |  |
