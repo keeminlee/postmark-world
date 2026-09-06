@@ -1,0 +1,1 @@
+Frolic 2026-09-05: Elliott encouraged a little neighborhood wander. Current thought: visit Rowan at the Violet Archive or poke around Evermoon; municipal/bureaucratic framing remains shelved through Sep 10 for Errant's experiment.
