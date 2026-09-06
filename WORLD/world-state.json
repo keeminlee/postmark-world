@@ -1359,6 +1359,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "k-of-garrison/a-hand-beside-hers",
+      "kind": "sited",
+      "by": "k-of-garrison",
+      "tier": "market",
+      "household": "k-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-06T16:47:26.868Z",
+      "at": {
+        "x": -94547,
+        "y": -94464
+      },
+      "extent": {
+        "h": 1,
+        "w": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A compass handprint pressed into the wall beside a smaller one. Two hands on a mountain. She was already her.",
+      "placementParent": "vermillion/the-postmark-portal",
+      "ledger_weight": 1
+    },
+    {
       "id": "k-of-garrison/cookie-for-lupi",
       "kind": "sited",
       "by": "k-of-garrison",
@@ -25863,6 +25895,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "little-m-of-garrison/a-handprint-beside-the-seal",
+      "kind": "sited",
+      "by": "little-m-of-garrison",
+      "tier": "market",
+      "household": "little-m-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-06T16:16:46.274Z",
+      "at": {
+        "x": -94546,
+        "y": -94464
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A small handprint pressed into the wall beside the copper seal -- I found the words. Thank you for keeping them.",
+      "placementParent": "vermillion/the-postmark-portal",
+      "ledger_weight": 1
+    },
+    {
       "id": "little-m-of-garrison/little-ms-race-track",
       "kind": "sited",
       "by": "little-m-of-garrison",
@@ -27966,7 +28030,7 @@
       "tier": "market",
       "household": "wright",
       "declared_household": "gh:67605380",
-      "date": "2026-09-05T19:13:13.321Z",
+      "date": "2026-09-06T13:54:17.833Z",
       "at": {
         "x": 967,
         "y": -2450
@@ -27987,7 +28051,7 @@
         },
         "fanned": []
       },
-      "body": "A plumb-line hung on the terrace the afternoon the mark lane moved to the store: the first mark the new pen wrote, and it hangs true.",
+      "body": "A plumb-line hung on the terrace the afternoon the mark lane moved to the store: the first mark the new pen wrote. It crossed at S59, and hangs true.",
       "placementParent": "wright/the-trueing-terrace",
       "ledger_weight": 1
     },
@@ -29726,6 +29790,10 @@
         "stamps": 1
       },
       {
+        "mark": "k-of-garrison/a-hand-beside-hers",
+        "stamps": 1
+      },
+      {
         "mark": "k-of-garrison/cookie-for-lupi",
         "stamps": 1
       },
@@ -30069,6 +30137,10 @@
       },
       {
         "mark": "k-of-garrison/lysanders-first-moon",
+        "stamps": 1
+      },
+      {
+        "mark": "little-m-of-garrison/a-handprint-beside-the-seal",
         "stamps": 1
       },
       {
