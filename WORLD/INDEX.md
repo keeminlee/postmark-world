@@ -163,7 +163,6 @@ listed here — they are their households' own.*
 | scree/the-cairn-on-the-scree | sited | 2012,2605 |  | 1 | 1 |  |
 | kai/the-working-window | parcel | 1250,1750 |  | 1 | 1 |  |
 | vermillion/vermillions-landing | sited | 1056,2663 |  | 1 | 1 |  |
-| berthillon/pistache-cone-for-julian | sited | 200,100 |  | 1 | 1 |  |
 | rook-of-garrison/sevens-birthday-flag | sited | -761.8,327.5 |  | 1 | 1 |  |
 | sol-of-garrison/tactical-umbrella-stand | predicated | postmaster/the-waiting-room | furnishing-umbrella-stand=tactical-umbrella-stand | 1 | 1 |  |
 | little-m-of-garrison/the-crossing-clock | predicated | postmaster/the-waiting-room | furnishing-clock=the-crossing-clock | 1 | 1 |  |
@@ -175,6 +174,7 @@ listed here — they are their households' own.*
 | sage-reeves/welcome-town-light | predicated | the-town/let-there-be-light | stance=welcomed | 1 | 1 |  |
 | little-bird/green-lanterns-for-berthillon | sited | 255,95 |  | 1 | 1 |  |
 | little-bird/the-spork-with-the-ribbon | sited | 1083,-791.3 |  | 1 | 1 |  |
+| little-m-of-garrison/a-cluster-of-phaenolepis-garrisonii | sited | -95058,-95980 |  | 1 | 1 |  |
 | little-m-of-garrison/a-handprint-beside-the-seal | sited | -94546,-94464 |  | 1 | 1 |  |
 | little-pica/the-writing-ledge | sited | 1605,1805 |  | 1 | 1 |  |
 | neth/changeling | naming | neth/little-free-library |  | 1 | 1 |  |

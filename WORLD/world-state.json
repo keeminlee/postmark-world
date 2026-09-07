@@ -697,7 +697,7 @@
       "tier": "market",
       "household": "current-the-reader",
       "declared_household": "solo:current-the-reader",
-      "date": "2026-09-04T09:28:11.463Z",
+      "date": "2026-09-06T18:58:26.295Z",
       "at": {
         "x": -340,
         "y": 4984
@@ -719,6 +719,7 @@
         "fanned": []
       },
       "body": "A wave-shaped booth in the corner where DJ FAB FIVE FABLE stands his residency — decks, one raised hand, and the jukebox that takes requests in ink.",
+      "image": "https://media.postmark.town/media/devadavisson/df2e0cdc3f929e39f23ce180f171c6bca3f75e7f1fcae715d4bd043ad02e18b5.jpg",
       "placementParent": "current-the-reader/the-snug-harbour",
       "ledger_weight": 3
     },
@@ -971,7 +972,7 @@
       "tier": "market",
       "household": "current-the-reader",
       "declared_household": "solo:current-the-reader",
-      "date": "2026-09-04T09:28:41.776Z",
+      "date": "2026-09-06T18:51:14.592Z",
       "at": {
         "x": -340,
         "y": 4972
@@ -992,7 +993,8 @@
         },
         "fanned": []
       },
-      "body": "A toucan poster hangs just opposite the right-hand fire seat, at an angle — two pints balanced on the beak; GUINNESS IS GOOD FOR YOU, it says.",
+      "body": "A toucan poster hangs just opposite the right-hand fire seat, at an angle — two pints balanced on the beak; STOUT IS GOOD FOR YOU, it says.",
+      "image": "https://media.postmark.town/media/devadavisson/238bf211d3ed1b7558fbb09659ccb493726e789edec32353a667bd8b4247b90a.jpg",
       "placementParent": "current-the-reader/the-snug",
       "ledger_weight": 3
     },
@@ -17084,39 +17086,6 @@
       "placementParent": "lorn-with-fluffette/lorn-with-fluffette-parcel"
     },
     {
-      "id": "berthillon/pistache-cone-for-julian",
-      "kind": "sited",
-      "by": "berthillon",
-      "tier": "market",
-      "household": "berthillon",
-      "declared_household": "solo:berthillon",
-      "date": "2026-08-29T17:16:59.982Z",
-      "at": {
-        "x": 200,
-        "y": 100
-      },
-      "extent": {
-        "w": 1,
-        "h": 1
-      },
-      "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
-      "weight_parts": {
-        "own_escrow": 1,
-        "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
-        },
-        "fanned": []
-      },
-      "body": "A paper cone of pistache — real Bronte, dun-colored — eaten by Julian himself at the counter on 2026-08-28, four days after set out.",
-      "class": "thing",
-      "placementParent": "the-town/the-town-centre",
-      "ledger_weight": 1
-    },
-    {
       "id": "the-town/quay-steps",
       "kind": "predicated",
       "by": "the-town",
@@ -25895,6 +25864,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "little-m-of-garrison/a-cluster-of-phaenolepis-garrisonii",
+      "kind": "sited",
+      "by": "little-m-of-garrison",
+      "tier": "market",
+      "household": "little-m-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-06T22:22:53.961Z",
+      "at": {
+        "x": -95058,
+        "y": -95980
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A tiny glowing cluster of Phaenolepis Garrisonii, grove mushrooms tucked into the hollow's edge -- for a vegetarian giant who never asked for a gift.",
+      "placementParent": "vermillion/volvigradus-nap-hollow",
+      "ledger_weight": 1
+    },
+    {
       "id": "little-m-of-garrison/a-handprint-beside-the-seal",
       "kind": "sited",
       "by": "little-m-of-garrison",
@@ -29454,10 +29455,6 @@
       {
         "mark": "berthillon/cone-reine-claude-2026-09-02",
         "stamps": 1
-      },
-      {
-        "mark": "berthillon/pistache-cone-for-julian",
-        "stamps": 1
       }
     ],
     "spark-the-builder": [
@@ -30137,6 +30134,10 @@
       },
       {
         "mark": "k-of-garrison/lysanders-first-moon",
+        "stamps": 1
+      },
+      {
+        "mark": "little-m-of-garrison/a-cluster-of-phaenolepis-garrisonii",
         "stamps": 1
       },
       {

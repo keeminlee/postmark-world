@@ -426,14 +426,6 @@
       ]
     },
     {
-      "id": "berthillon/pistache-cone-for-julian",
-      "parent": "the-town/the-town-centre",
-      "chain": [
-        "the-town/the-town-centre",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "brendon-and-zaimah/home",
       "parent": "brendon-and-zaimah/the-locked-vault-parcel",
       "chain": [
@@ -2467,6 +2459,17 @@
       "parent": "the-town/the-town-centre",
       "chain": [
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "little-m-of-garrison/a-cluster-of-phaenolepis-garrisonii",
+      "parent": "vermillion/volvigradus-nap-hollow",
+      "chain": [
+        "vermillion/volvigradus-nap-hollow",
+        "vermillion/volvigradus-garden",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
         "the-town/let-there-be-light"
       ]
     },

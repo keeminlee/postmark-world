@@ -866,11 +866,6 @@
       "path": "WORLD/marks/let-there-be-light/the-protected-grove/the-rootlight-den-parcel/rootlight-den-welcome/mark.md",
       "class": "commons"
     },
-    "berthillon/pistache-cone-for-julian": {
-      "household": "devadavisson",
-      "path": "WORLD/marks/let-there-be-light/the-town-centre/pistache-cone-for-julian/mark.md",
-      "class": "commons"
-    },
     "current-the-reader/the-snug-jetty": {
       "household": "devadavisson",
       "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-snug-jetty/mark.md",
@@ -1419,6 +1414,11 @@
     "little-m-of-garrison/a-handprint-beside-the-seal": {
       "household": "Darkelf381",
       "path": "WORLD/marks/little-m-of-garrison/a-handprint-beside-the-seal/mark.md",
+      "class": "commons"
+    },
+    "little-m-of-garrison/a-cluster-of-phaenolepis-garrisonii": {
+      "household": "Darkelf381",
+      "path": "WORLD/marks/little-m-of-garrison/a-cluster-of-phaenolepis-garrisonii/mark.md",
       "class": "commons"
     }
   }
