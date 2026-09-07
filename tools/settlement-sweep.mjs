@@ -13,6 +13,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  readdirSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -192,6 +193,16 @@ function clearEolOnlyDirt(repo) {
 function inertAcross(repo, path, mainBranch, branch) {
   const onMain = blobAt(repo, mainBranch, path);
   return Boolean(onMain) && onMain === blobAt(repo, branch, path);
+}
+
+/** Does any mark.md stand anywhere beneath `dir`? (the seat-keeping test for an unpublish) */
+function holdsAStandingMark(dir) {
+  if (!existsSync(dir)) return false;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isFile() && entry.name === "mark.md") return true;
+    if (entry.isDirectory() && holdsAStandingMark(join(dir, entry.name))) return true;
+  }
+  return false;
 }
 
 function readAt(repo, ref, path) {
@@ -1253,6 +1264,18 @@ export function settlementSweep({
     }
     for (const item of unpublished) {
       rmSync(join(repo, item.path), { force: true });
+      // § the husk (2026-09-07, S61 — #2430's second half). An unpublished
+      // mark's directory is its historical filing only while a record stands
+      // in it. With mark.md gone and no mark standing beneath it, the seat is
+      // empty — remove it whole, the way a withdrawal does. Git never sees an
+      // empty directory, but the freeze test reads the WORKING TREE, and a
+      // directory-without-mark.md is "a broken filing" there: the husk left
+      // by berthillon's unstaked cone refused S61 unattributably, exactly as
+      // vermillion's launching pad refused four runs on 09-03. A seat that
+      // still holds a standing child keeps standing: the child's filing is
+      // its own.
+      const seat = join(repo, dirname(item.path));
+      if (!holdsAStandingMark(seat)) rmSync(seat, { recursive: true, force: true });
       touched.push(item.path);
       delete registry.published[item.id];
     }

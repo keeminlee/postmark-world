@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import {
   cpSync,
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -1582,6 +1583,62 @@ test("THE S58 CLASS: a sketchbook that MODIFIED a mark this crossing unpublishes
   assert.equal(row.mode, "rebase", "the sketchbook replayed rather than refusing the crossing");
   assert.deepEqual(row.dropped_on_removed, [cottage, cottage], "each moot commit is dropped BY NAME on the receipt — two commits touched the cottage, two lines");
   assert.equal(has("draft/house-a", cottage), true, "the return step carries the cottage back to the sketchbook as a draft");
+  assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
+});
+
+test("THE HUSK (S61 class, 2026-09-07): an unpublished mark leaves no directory behind — and a seat with a standing child keeps standing", (t) => {
+  // Git never sees an empty directory, but the freeze test reads the WORKING
+  // TREE: a directory without a mark.md is "a broken filing" there. rmSync on
+  // mark.md alone left berthillon's unstaked cone as a husk and S61 refused,
+  // unattributably (isolation holds back candidates, and an unpublish is a
+  // rule, not a candidate). The same class refused four runs on 09-03.
+  const repo = mkdtempSync(join(tmpdir(), "postmark-husk-"));
+  t.after(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  const put = (path, text) => { const full = join(repo, path); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, text); };
+
+  mkdirSync(join(repo, "tools"), { recursive: true });
+  for (const file of withTool("mark-lint.mjs")) cpSync(join(HERE, file), join(repo, "tools", file));
+  put("WORLD/skeleton.json", JSON.stringify({ features: [], physics_registry: {} }, null, 2));
+  put("WORLD/marks/let-there-be-light/mark.md", record({
+    by: "the-town", tier: "constitution", at: { x: 0, y: 0 }, extent: { w: 320000, h: 320000 }, body: "the frame",
+  }));
+  // the cone: a commons mark whose holder unstaked — this crossing unpublishes it
+  const cone = "WORLD/marks/let-there-be-light/the-town-centre/pistache-cone/mark.md";
+  put(cone, record({ by: "berthillon", at: { x: 221, y: 95 }, extent: { w: 1, h: 1 }, body: "a paper cone of pistache" }));
+  // the stall: a commons mark unpublished the same way, but a founding-estate child stands beneath it
+  const stall = "WORLD/marks/let-there-be-light/the-town-centre/the-stall/mark.md";
+  put(stall, record({ by: "berthillon", at: { x: 230, y: 95 }, extent: { w: 4, h: 4 }, body: "a sorbet stall" }));
+  const sign = "WORLD/marks/let-there-be-light/the-town-centre/the-stall/the-sign/mark.md";
+  put(sign, record({ by: "the-town", tier: "constitution", at: { x: 231, y: 96 }, extent: { w: 1, h: 1 }, body: "the stall's sign, the town's own" }));
+  put("WORLD/settlement-publications.json", JSON.stringify({
+    version: 1,
+    published: {
+      "berthillon/pistache-cone": { household: "house-b", path: cone, class: "commons" },
+      "berthillon/the-stall": { household: "house-b", path: stall, class: "commons" },
+    },
+  }, null, 2) + "\n");
+  git("init", "-q", "-b", "main");
+  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@test.invalid", "commit", "-q", "-m", "published main");
+  const remote = mkdtempSync(join(tmpdir(), "postmark-husk-remote-"));
+  t.after(() => rmSync(remote, { recursive: true, force: true }));
+  execFileSync("git", ["init", "--bare", "-q", remote]);
+  git("remote", "add", "origin", remote);
+  git("push", "-q", "origin", "main");
+
+  const stakesPath = `${repo}-stakes.json`;
+  t.after(() => rmSync(stakesPath, { force: true }));
+  writeFileSync(stakesPath, JSON.stringify([]));
+
+  const report = settlementSweep({ repo, stakesPath });
+  assert.deepEqual(report.unpublished.map((row) => row.id).sort(), ["berthillon/pistache-cone", "berthillon/the-stall"], "both leave canon for want of escrow");
+  assert.equal(existsSync(join(repo, cone)), false, "the cone's mark.md is gone");
+  assert.equal(existsSync(join(repo, dirname(cone))), false, "THE HUSK: the cone's seat is gone with it — no directory without a mark.md is left in the working tree");
+  assert.equal(existsSync(join(repo, stall)), false, "the stall's mark.md is gone");
+  assert.equal(existsSync(join(repo, dirname(stall))), true, "but the stall's seat STANDS: a founding-estate child still files beneath it");
+  assert.equal(existsSync(join(repo, sign)), true, "and the child's own filing is untouched");
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
 
