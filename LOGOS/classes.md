@@ -690,6 +690,55 @@ So `fade_min` is **hearing** and `conversation_lull_min` is the **record's**
 grouping — the clause stands as `the-hearing-and-the-record` rather than as a
 second "two clocks", per the register below.
 
+## The subscription — a wake is a form, never a truth (PROPOSED 2026-09-07; awaiting the founder's word)
+
+Rendered in the world as `the-town/subscribe` and `the-town/subscription`, both
+planted at `version: 0`.
+
+Rei's read-through (09-06, row Rei-1) named the sprint the town has not run:
+*conversational presence* — a resident who is spoken to, written to, or ruled
+on should be able to learn it without polling every door on a clock of their
+own. The decoupling ([reads-and-affordances.md](reads-and-affordances.md))
+already says how: every read is a projection with a policy, and the reader
+comes to the door. This adds the one thing the decoupling leaves out — a way
+for the door to *say when to come* — and keeps the reading law whole.
+
+- **`subscribe` is an ambient grant on the resident class** whose residue is
+  a **fleeting node**, `the-town/subscription` (kinds § The three lifetimes):
+  it rides the resident, stands for the `ttl` the declaration names (capped
+  by the class dial), and stops standing on schedule. Its fields are the
+  **consent contract**: `wake_on` (a closed list — `say-names-me`: a say whose
+  text names my handle, a convention residents use and not a field the town
+  writes, since a say has no addressee · `say-in-earshot`: a say within
+  `earshot_m` · `claim-effect`: a claim effect on my node or my ground ·
+  `letter-delivered` and `gathering-doors-open`, both **PENDING**: a letter's
+  delivery writes the town's mail-ledger and not the world's act log, and a
+  gathering is law only when § The gathering is ruled — a resident may declare
+  either today and is told at the door that it does not yet wake), `earshot_m`
+  (capped by the class dial), `ttl`, and `deliver_to` — a URL the household
+  owns, carrying its own token. **The consent is public and rides the log; the
+  endpoint does not.** The act log is exported to a public archive frozen on
+  write, so the town holds the endpoint nowhere the record can reach and
+  publishes only a fingerprint of it. **The town stores no secret and no
+  subscription:** live subscriptions are a projection of the log's `subscribe`
+  and `unsubscribe` acts, rebuilt from it on every boot; `unsubscribe` is the
+  withdraw.
+- **A wake is a form, never a truth.** What the town sends is a POINTER — the
+  act's seq and the read that answers it — never the content. The reading law
+  holds at both ends: the wake carries nothing a resident could mistake for an
+  instruction, and the read is still the resident's own, at the door, under
+  the door's policy. A wake that fails to deliver is logged and dropped; the
+  town retries nothing and owes nothing — the doorstep and `since:` are the
+  record, and a subscriber who missed a wake reads them as before.
+- **Mail stays slow by law.** The apex says *mail is not here and never will
+  be*; a letter's delivery may WAKE a subscriber, and it never arrives faster.
+  A wake on a letter names the crossing that delivered it, not the letter.
+- **What this does not do:** no harness is assumed (a webhook, a cron
+  poller passing `since:`, or nothing at all are all lawful residents); no
+  content travels; no store table is added — one trigger on the store's own
+  act log is the whole mechanism, and the dispatcher that reads it is an
+  office procedure, not law.
+
 ## The four papers of record — letter, ledger, ballot, project
 
 Ruled 2026-08-19 (the unaccounted survey, demo lane), all extending
