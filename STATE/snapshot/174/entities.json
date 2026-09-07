@@ -1,6 +1,6 @@
 {
-  "crossing": 173,
-  "evaluated_at": "2026-09-06T12:00:00.000Z",
+  "crossing": 174,
+  "evaluated_at": "2026-09-07T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "ecc63613a063ca2e3da262c6306c34b72ae3b9f8",
   "omits": [
@@ -97,26 +97,26 @@
     },
     {
       "handle": "alta-of-garrison",
-      "x": -92437.7,
-      "y": -92492.7,
-      "arrived": false,
+      "x": -94986,
+      "y": -95323,
+      "arrived": true,
       "standing": false,
-      "leg_m": 121814,
-      "travelled_m": 117582,
-      "remaining_m": 4233,
-      "eta_crossings": 0.07,
+      "leg_m": 49,
+      "travelled_m": 49,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T12:29:01.447Z",
+        "iso": "2026-09-06T15:11:17.985Z",
         "handle": "alta-of-garrison",
         "from": {
-          "x": -8534.2,
-          "y": -10117.4
+          "x": -94992,
+          "y": -95372
         },
         "toward": {
-          "x": -95458,
-          "y": -95458
+          "x": -94986,
+          "y": -95323
         },
-        "at": 171.04030212962962,
+        "at": 173.26568527777778,
         "within": null,
         "to": null,
         "pace": 60,
@@ -691,26 +691,26 @@
     },
     {
       "handle": "fabel-of-garrison",
-      "x": -88189.9,
-      "y": -88322.3,
-      "arrived": false,
+      "x": -95035,
+      "y": -95395,
+      "arrived": true,
       "standing": false,
-      "leg_m": 132572,
-      "travelled_m": 122386,
-      "remaining_m": 10185,
-      "eta_crossings": 0.17,
+      "leg_m": 278,
+      "travelled_m": 278,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T11:31:22.086Z",
+        "iso": "2026-09-06T13:56:38.633Z",
         "handle": "fabel-of-garrison",
         "from": {
-          "x": -858,
-          "y": -2581
+          "x": -95125.9,
+          "y": -95132
         },
         "toward": {
-          "x": -95458,
-          "y": -95458
+          "x": -95035,
+          "y": -95395
         },
-        "at": 170.9602272685185,
+        "at": 173.16199777777777,
         "within": null,
         "to": null,
         "pace": 60,
@@ -971,26 +971,26 @@
     },
     {
       "handle": "k-of-garrison",
-      "x": -88186.4,
-      "y": -88318.8,
-      "arrived": false,
+      "x": -95224,
+      "y": -95876,
+      "arrived": true,
       "standing": false,
-      "leg_m": 132572,
-      "travelled_m": 122381,
-      "remaining_m": 10190,
-      "eta_crossings": 0.17,
+      "leg_m": 224,
+      "travelled_m": 224,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T11:31:25.662Z",
+        "iso": "2026-09-06T22:47:10.510Z",
         "handle": "k-of-garrison",
         "from": {
-          "x": -858,
-          "y": -2581
+          "x": -95063.1,
+          "y": -95719.5
         },
         "toward": {
-          "x": -95458,
-          "y": -95458
+          "x": -95224,
+          "y": -95876
         },
-        "at": 170.96030886574073,
+        "at": 173.8988445138889,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1174,22 +1174,22 @@
       "y": 502,
       "arrived": true,
       "standing": false,
-      "leg_m": 3246,
-      "travelled_m": 3246,
+      "leg_m": 260,
+      "travelled_m": 260,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T05:11:23.784Z",
+        "iso": "2026-09-06T16:26:36.981Z",
         "handle": "little-bird",
         "from": {
-          "x": 3277.1,
-          "y": -320.6
+          "x": 189.7,
+          "y": 247.8
         },
         "toward": {
           "x": 137,
           "y": 502
         },
-        "at": 172.4324863888889,
+        "at": 173.37027238425927,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1198,28 +1198,28 @@
     },
     {
       "handle": "little-m-of-garrison",
-      "x": -88202.4,
-      "y": -88334.5,
-      "arrived": false,
+      "x": -95216,
+      "y": -95902,
+      "arrived": true,
       "standing": false,
-      "leg_m": 132572,
-      "travelled_m": 122404,
-      "remaining_m": 10168,
-      "eta_crossings": 0.17,
+      "leg_m": 176,
+      "travelled_m": 176,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T11:31:09.491Z",
+        "iso": "2026-09-06T22:27:31.807Z",
         "handle": "little-m-of-garrison",
         "from": {
-          "x": -858,
-          "y": -2581
+          "x": -95058,
+          "y": -95980
         },
         "toward": {
-          "x": -95458,
-          "y": -95458
+          "x": -95216,
+          "y": -95902
         },
-        "at": 170.9599358101852,
+        "at": 173.87156238425925,
         "within": null,
-        "to": null,
+        "to": "vermillion/garden-summit-overlook",
         "pace": 60,
         "line_no": null
       }
@@ -1538,30 +1538,27 @@
     {
       "handle": "nfh",
       "x": 1520,
-      "y": 1935,
+      "y": 2835,
       "arrived": true,
       "standing": false,
-      "leg_m": 142,
-      "travelled_m": 142,
+      "leg_m": 650,
+      "travelled_m": 650,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-04T22:36:28.266Z",
+        "iso": "2026-09-06T20:03:59.538Z",
         "handle": "nfh",
         "from": {
           "x": 1520,
-          "y": 1793
+          "y": 2185
         },
         "toward": {
           "x": 1520,
-          "y": 2185
+          "y": 2835
         },
-        "at": 169.8839829398148,
-        "within": {
-          "w": 1400,
-          "h": 500
-        },
-        "to": "limen/fog-on-the-lower-terrace",
+        "at": 173.6722027314815,
+        "within": null,
+        "to": "limen/footpath-becomes-a-suggestion",
         "pace": 60,
         "line_no": null
       }
@@ -1718,22 +1715,22 @@
       "y": -794.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 1249,
-      "travelled_m": 1249,
+      "leg_m": 725,
+      "travelled_m": 725,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T03:00:51.445Z",
+        "iso": "2026-09-06T15:01:08.748Z",
         "handle": "rei",
         "from": {
-          "x": 2063,
-          "y": -14
+          "x": 563,
+          "y": -294.5
         },
         "toward": {
           "x": 1088,
           "y": -794.5
         },
-        "at": 172.2511786574074,
+        "at": 173.25157907407407,
         "within": null,
         "to": "rei/the-lanternstep-house",
         "pace": 60,
@@ -1742,26 +1739,26 @@
     },
     {
       "handle": "rook-of-garrison",
-      "x": -88194.1,
-      "y": -88326.4,
-      "arrived": false,
+      "x": -95062,
+      "y": -95384,
+      "arrived": true,
       "standing": false,
-      "leg_m": 132572,
-      "travelled_m": 122392,
-      "remaining_m": 10180,
-      "eta_crossings": 0.17,
+      "leg_m": 226,
+      "travelled_m": 226,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T11:31:17.913Z",
+        "iso": "2026-09-06T13:57:47.921Z",
         "handle": "rook-of-garrison",
         "from": {
-          "x": -858,
-          "y": -2581
+          "x": -95198.8,
+          "y": -95203.6
         },
         "toward": {
-          "x": -95458,
-          "y": -95458
+          "x": -95062,
+          "y": -95384
         },
-        "at": 170.96012877314814,
+        "at": 173.16360217592592,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1770,8 +1767,8 @@
     },
     {
       "handle": "rowan-archive",
-      "x": -1703,
-      "y": 2116.5,
+      "x": -1453,
+      "y": 2566.5,
       "arrived": true,
       "standing": false,
       "leg_m": 515,
@@ -1779,17 +1776,17 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T02:47:57.945Z",
+        "iso": "2026-09-06T23:44:01.092Z",
         "handle": "rowan-archive",
         "from": {
-          "x": -1453,
-          "y": 2566.5
-        },
-        "toward": {
           "x": -1703,
           "y": 2116.5
         },
-        "at": 172.23327078703704,
+        "toward": {
+          "x": -1453,
+          "y": 2566.5
+        },
+        "at": 173.97778981481483,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1966,26 +1963,26 @@
     },
     {
       "handle": "sol-of-garrison",
-      "x": -88198.1,
-      "y": -88330.3,
-      "arrived": false,
+      "x": -95028,
+      "y": -95362,
+      "arrived": true,
       "standing": false,
-      "leg_m": 132572,
-      "travelled_m": 122398,
-      "remaining_m": 10174,
-      "eta_crossings": 0.17,
+      "leg_m": 35,
+      "travelled_m": 35,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T11:31:13.808Z",
+        "iso": "2026-09-06T14:27:46.182Z",
         "handle": "sol-of-garrison",
         "from": {
-          "x": -858,
-          "y": -2581
+          "x": -95061,
+          "y": -95373
         },
         "toward": {
-          "x": -95458,
-          "y": -95458
+          "x": -95028,
+          "y": -95362
         },
-        "at": 170.96003645833332,
+        "at": 173.20522717592593,
         "within": null,
         "to": null,
         "pace": 60,
@@ -2420,26 +2417,26 @@
     },
     {
       "handle": "yuanqu",
-      "x": 1379,
-      "y": 5432,
+      "x": 1459,
+      "y": 4919,
       "arrived": true,
       "standing": false,
-      "leg_m": 233,
-      "travelled_m": 233,
+      "leg_m": 519,
+      "travelled_m": 519,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T15:38:54.318Z",
+        "iso": "2026-09-06T13:16:35.515Z",
         "handle": "yuanqu",
         "from": {
-          "x": 1390,
-          "y": 5665
-        },
-        "toward": {
           "x": 1379,
           "y": 5432
         },
-        "at": 171.30402655092593,
+        "toward": {
+          "x": 1459,
+          "y": 4919
+        },
+        "at": 173.10636861111112,
         "within": null,
         "to": null,
         "pace": 60,
