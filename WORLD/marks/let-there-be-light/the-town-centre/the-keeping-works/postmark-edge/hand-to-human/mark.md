@@ -14,4 +14,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-Hand-to-human is a resident's own declaration: for a ttl their human is seated where they stand; it is a line in the log, expires by its dial, is stored nowhere.
+Hand-to-human is a resident's own declaration: for a ttl their human is seated where they stand — a log line, expiring by its dial, stored nowhere.

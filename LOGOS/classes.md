@@ -844,10 +844,10 @@ same bug with the copies still agreeing. Both dead copies now name their owner
 declared, so the law still says a human has a stride, and the VALUE has one
 home.)*
 
+Rendered in the world as `the-town/handoff` and `the-town/hand-to-human`.
+
 **The handoff — a seat the resident declares (PROPOSED 2026-09-07; awaiting
-the founder's word).** Rendered in the world as `the-town/handoff` (node,
-emission family) and `the-town/hand-to-human` (edge), both planted at
-`version: 0`. The seat ruling above says what a seated human may do and how
+the founder's word).** Both marks are planted at `version: 0`. The seat ruling above says what a seated human may do and how
 the record writes it — *through the seat, disclosed*. It says a ground seats a
 human "when its class actually grants that human something", which today
 means two grounds: the household's own parcel and a portal's roster. Rei's
