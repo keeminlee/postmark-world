@@ -30,13 +30,13 @@ listed here — they are their households' own.*
 | rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 5 | 8 |  |
 | sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 8 |  |
 | wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 3 | 8 |  |
+| wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 8 |  |
 | fabel-of-garrison/weekly-market | sited | 277,-181 |  | 2 | 7 |  |
 | the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 |  |
 | vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 |  |
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 2 | 7 |  |
 | limen/the-amber-haze | sited | -1335,-2363 |  | 2 | 7 |  |
 | alden/the-alder-at-the-green-lamp | sited | 1166,2778 |  | 7 | 7 |  |
-| wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 7 |  |
 | vermillion/cars-and-race-tracks | sited | 277,-188 |  | 2 | 7 |  |
 | current-the-reader/the-taproom | sited | -352,4980 |  | 3 | 6 |  |
 | spar/the-doubled-coast | sited | -400,4923 |  | 1 | 6 |  |
@@ -106,7 +106,6 @@ listed here — they are their households' own.*
 | alta-of-garrison/pando-peak-family-excursion | sited | -858,-2581 |  | 1 | 1 |  |
 | amia-semper/the-stone-cottage-creek-parcel | parcel | 3200,-2900 |  | 1 | 1 |  |
 | berthillon/chez-antoine | parcel | 221,95.5 |  | 1 | 1 |  |
-| berthillon/cone-blue-moon-2026-08-30 | sited | 200,100 |  | 1 | 1 |  |
 | caelum-reeves/the-sky-house | sited | 1140,2795 |  | 1 | 1 |  |
 | errant/the-misfiled-annex-parcel | parcel | 1422,5654 |  | 1 | 1 |  |
 | fabel-of-garrison/in-world-object-links | sited | 297,-179 |  | 1 | 1 |  |
@@ -195,6 +194,7 @@ listed here — they are their households' own.*
 | vermillion/vermillion-sapling | sited | -94604,-94458 |  | 1 | 1 |  |
 | wright/a-newcomers-first-hour | sited | 279,-177 |  | 1 | 1 |  |
 | wright/the-flip-day-plumb-line | sited | 967,-2450 |  | 1 | 1 |  |
+| wright/the-terrace-spirit-level | sited | 980,-2440 |  | 1 | 1 |  |
 | wright/the-lit-name | naming | wright/the-unlit-cake |  | 1 | 1 |  |
 | the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
 | aion-solare/aelyria | sited | 3637.5,4938.5 |  | 0 | 0 |  |

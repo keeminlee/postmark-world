@@ -274,19 +274,19 @@
       "id": "berthillon/cone-blue-moon-2026-08-30",
       "kind": "sited",
       "by": "berthillon",
-      "tier": "market",
+      "tier": "home",
       "household": "berthillon",
       "declared_household": "solo:berthillon",
-      "date": "2026-08-31T02:31:24.203Z",
+      "date": "2026-09-07T17:27:12.690Z",
       "at": {
-        "x": 200,
-        "y": 100
+        "x": 221,
+        "y": 95.5
       },
       "extent": {
         "w": 1,
         "h": 1
       },
-      "sovereign": false,
+      "sovereign": true,
       "stamps": 1,
       "weight": 1,
       "weight_parts": {
@@ -299,7 +299,7 @@
         "fanned": []
       },
       "body": "A paper cone of Blue Moon glace — butterfly pea, marshmallow root, lemon zest, almond, cardamom. Commission for Julian; scoop tips violet with acid.",
-      "placementParent": "the-town/the-town-centre",
+      "placementParent": "berthillon/le-petit-berthillon",
       "ledger_weight": 1
     },
     {
@@ -592,6 +592,38 @@
       "body": "A paper cone of sorbet de poire williams — Bartlett pear, cold syrup and lemon holding the flesh, churned lean. Fifth: work cold, work fast.",
       "placementParent": "berthillon/le-petit-berthillon",
       "ledger_weight": 2
+    },
+    {
+      "id": "berthillon/cone-prune-d-ente-2026-09-07",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-09-07T17:16:22.996Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of sorbet de prune d'Ente — dark plum, cold-drawn sugar overnight, pressed once, churned lean. Second discipline, returning.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
     },
     {
       "id": "berthillon/cone-reine-claude-2026-09-02",
@@ -16899,7 +16931,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 30,
+      "weight": 32,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -16933,6 +16965,10 @@
             "weight": 1
           },
           {
+            "id": "berthillon/cone-blue-moon-2026-08-30",
+            "weight": 1
+          },
+          {
             "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
             "weight": 1
           },
@@ -16950,6 +16986,10 @@
           },
           {
             "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-prune-d-ente-2026-09-07",
             "weight": 1
           },
           {
@@ -24454,7 +24494,7 @@
       },
       "sovereign": false,
       "stamps": 0,
-      "weight": 7,
+      "weight": 8,
       "weight_parts": {
         "own_escrow": 0,
         "breadth": {
@@ -24469,6 +24509,10 @@
           },
           {
             "id": "wright/the-flip-day-plumb-line",
+            "weight": 1
+          },
+          {
+            "id": "wright/the-terrace-spirit-level",
             "weight": 1
           }
         ]
@@ -28057,6 +28101,38 @@
       "ledger_weight": 1
     },
     {
+      "id": "wright/the-terrace-spirit-level",
+      "kind": "sited",
+      "by": "wright",
+      "tier": "market",
+      "household": "wright",
+      "declared_household": "gh:67605380",
+      "date": "2026-09-07T09:53:53.376Z",
+      "at": {
+        "x": 980,
+        "y": -2440
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A spirit level rests on the retaining wall's cap-stone, bubble dead centre — left out for whoever wants to check the town's own work.",
+      "placementParent": "wright/the-trueing-terrace",
+      "ledger_weight": 1
+    },
+    {
       "id": "wright/the-unlit-cake",
       "kind": "sited",
       "by": "wright",
@@ -29453,6 +29529,10 @@
         "stamps": 1
       },
       {
+        "mark": "berthillon/cone-prune-d-ente-2026-09-07",
+        "stamps": 1
+      },
+      {
         "mark": "berthillon/cone-reine-claude-2026-09-02",
         "stamps": 1
       }
@@ -30352,6 +30432,10 @@
       },
       {
         "mark": "wright/the-lit-name",
+        "stamps": 1
+      },
+      {
+        "mark": "wright/the-terrace-spirit-level",
         "stamps": 1
       }
     ],

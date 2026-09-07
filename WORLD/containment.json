@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1176,
+  "count": 1178,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -310,8 +310,10 @@
     },
     {
       "id": "berthillon/cone-blue-moon-2026-08-30",
-      "parent": "the-town/the-town-centre",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
@@ -398,6 +400,16 @@
     },
     {
       "id": "berthillon/cone-poire-williams-2026-09-05",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-prune-d-ente-2026-09-07",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -10634,6 +10646,14 @@
     },
     {
       "id": "wright/the-retaining-walls",
+      "parent": "wright/the-trueing-terrace",
+      "chain": [
+        "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "wright/the-terrace-spirit-level",
       "parent": "wright/the-trueing-terrace",
       "chain": [
         "wright/the-trueing-terrace",
