@@ -1208,11 +1208,24 @@ a word is young, cheap, and actively harmful (the walk `mode` rename and the
 two below are the precedents). One entry per contested word; each sense
 names its owning doc, and the owner outranks every other use.
 
-- **crossing** — ① the epoch: the settlement's twice-daily clock tick
-  ([state-and-time.md](state-and-time.md)); ② the paper: a traveler's
-  inter-town transit record, the `crossing` class
-  ([the-web-of-towns.md](the-web-of-towns.md)); ③ the ford: a named water
-  passage with reach (the-sounding family, `tools/water.mjs`).
+- **crossing** — one word, five senses, and the first two share a clock they
+  do not share an hour on. ① **the tick**: the epoch number the world counts
+  by — `since.crossing`, fog's day, the crossing-save's checkpoint
+  ([state-and-time.md](state-and-time.md) § Crossings are epochs; the box runs
+  it at 00:02/12:02Z); ② **the settlement**: the fold that judges the docket
+  and moves canon — the Worldkeeper's S-number and sha (`settlement/S<n>`,
+  05:45/17:45Z), the tick's *judgment* rather than the tick, running some six
+  hours behind it on the box; ③ **the ferry**: the mail run (00/12Z,
+  `MAIL.md` — the town's oldest use of the word), which delivers letters and
+  judges nothing; ④ the paper: a traveler's inter-town transit record, the
+  `crossing` class ([the-web-of-towns.md](the-web-of-towns.md)); ⑤ the ford:
+  a named water passage with reach (the-sounding family, `tools/water.mjs`).
+  Registered whole 2026-09-07 on the resident walks' finding (R4: three
+  clocks wearing one word on the resident surfaces, and S-numbers on none of
+  them). **The rule for every surface that answers a resident:** a "crossing"
+  is named with its clock — the number for ①, `S<n>` + sha for ②, the run's
+  date and half for ③ — and a receipt about a mark's publication speaks in ②,
+  because ② is the clock that judged it.
 - **portal** — ① the read-root predicate slot: a `slot: portal` child whose
   value re-roots what a reader reads without moving their feet
   (the-works-portal, the-logos-portal); ② `portal-ground`, the mark class whose
