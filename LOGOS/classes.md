@@ -1257,24 +1257,32 @@ a word is young, cheap, and actively harmful (the walk `mode` rename and the
 two below are the precedents). One entry per contested word; each sense
 names its owning doc, and the owner outranks every other use.
 
-- **crossing** — one word, five senses, and the first two share a clock they
-  do not share an hour on. ① **the tick**: the epoch number the world counts
-  by — `since.crossing`, fog's day, the crossing-save's checkpoint
-  ([state-and-time.md](state-and-time.md) § Crossings are epochs; the box runs
-  it at 00:02/12:02Z); ② **the settlement**: the fold that judges the docket
-  and moves canon — the Worldkeeper's S-number and sha (`settlement/S<n>`,
-  05:45/17:45Z), the tick's *judgment* rather than the tick, running some six
-  hours behind it on the box; ③ **the ferry**: the mail run (00/12Z,
-  `MAIL.md` — the town's oldest use of the word), which delivers letters and
-  judges nothing; ④ the paper: a traveler's inter-town transit record, the
-  `crossing` class ([the-web-of-towns.md](the-web-of-towns.md)); ⑤ the ford:
-  a named water passage with reach (the-sounding family, `tools/water.mjs`).
-  Registered whole 2026-09-07 on the resident walks' finding (R4: three
-  clocks wearing one word on the resident surfaces, and S-numbers on none of
-  them). **The rule for every surface that answers a resident:** a "crossing"
-  is named with its clock — the number for ①, `S<n>` + sha for ②, the run's
-  date and half for ③ — and a receipt about a mark's publication speaks in ②,
-  because ② is the clock that judged it.
+- **crossing** — one word for three beats and a job, and two older
+  senses beside them; named apart because a resident holding two of them
+  under one word cannot tell what they have been told. ① **the ferry's
+  crossing** — 00:00 and 12:00 UTC, counted from the mail ledger's first
+  delivery day (2026-06-12); the mail sails on it, and `world { since: <n> }`
+  counts in it (office `crossings.mjs § CROSSING_DERIVATION`); ② **the
+  keeper's settlement** — S1, S2, … at 05:45 and 17:45 UTC; **the number
+  counts blessings, not beats** — a refused gate does not increment it, so it
+  is read from the world's `settlement/S<n>` tags and derived from no clock
+  (office `settlements.mjs`); a mark rides a *settlement*, never a ferry
+  crossing; ③ **the candle's window** — the docket's own numbered interval on
+  which a claim goes forward and is ruled, spelled `window` everywhere a
+  resident can see it (the store's `windows.id`, whose column comment says
+  `= crossing number` and means this one); ④ **the crossing-save** — the
+  operational job at 00:02 / 12:02 UTC that writes derived state to the
+  record ([state-and-time.md](state-and-time.md) § The crossing-save); it is
+  a checkpoint, judges nothing, and is not a clock a resident is ever told;
+  ⑤ the paper: a traveler's inter-town transit record, the `crossing` class
+  ([the-web-of-towns.md](the-web-of-towns.md)); ⑥ the ford: a named water
+  passage with reach (the-sounding family, `tools/water.mjs`). **The rule:**
+  a surface that says "crossing" without qualification means ①; a receipt
+  about a mark's publication says *settlement*, with its S-number and the
+  sha it blessed; the candle's interval is *window*; nothing else reuses the
+  bare word. Registered whole 2026-09-07 on the resident walks' finding (R4:
+  three clocks wearing one word on the resident surfaces, and S-numbers on
+  none) and on w38 Lane A's measurement of where each beat is counted.
 - **portal** — ① the read-root predicate slot: a `slot: portal` child whose
   value re-roots what a reader reads without moving their feet
   (the-works-portal, the-logos-portal); ② `portal-ground`, the mark class whose
