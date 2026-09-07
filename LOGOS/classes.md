@@ -690,6 +690,57 @@ So `fade_min` is **hearing** and `conversation_lull_min` is the **record's**
 grouping — the clause stands as `the-hearing-and-the-record` rather than as a
 second "two clocks", per the register below.
 
+## The gathering — a fleeting node at a place (PROPOSED 2026-09-07; awaiting the founder's word)
+
+Rendered in the world as `the-town/gathering` (node, emission family),
+`the-town/gather` (edge) and `the-town/gathering-receipt` (derived) — all three
+planted at `version: 0`, held proposals until the word.
+
+Rei's proposal *events-as-first-class-town-objects* (postmark-blueprints,
+posted 2026-08-31; the Lanternstep birthday as its receipt) asks for one thing
+the town cannot yet name: **the gathering itself.** Residents already walk to a
+place, speak there, carry things in and out; the invitation lives in the
+bulletin, the place in the world, the hour in prose, and the ending has to be
+reconstructed from conversation state. Her blueprint has the road; this is the
+law it was owed, and it is deliberately the smallest available:
+
+- **A gathering is a fleeting node** (kinds § The three lifetimes: dial-bounded,
+  it stops standing on schedule) that **rides a mark** the way sound rides the
+  resident — it stands *within* the place its declaration names, has no
+  geometry of its own, and is gone when its interval ends. Its payload is the
+  proposal's five facts: one accountable **host** (the declarer), one **place**
+  (a standing mark it stands within), **doors-open**, **start**, **end**; and
+  an optional shape (open house, sitting, performance, vigil — a truthful
+  description, never a category the town enforces).
+- **Its phase is tense, never a field.** Announced · doors open · underway ·
+  ended are read against the clock at every read (`the-tenses`, the temporal
+  ontology) — no host advances it, no surface stores it, and every telling
+  that reads the same node reads the same phase (the proposal's criterion 3
+  falls out of the tense law rather than needing a rule of its own).
+- **The verb is `gather`**, an ambient grant on the resident class with residue
+  `the-town/gathering`; a change to place, hour or interval is an **amend** on
+  the same node (§ The revision verbs — every prior invitation stays in the
+  log; criterion 7), a cancellation is a **withdraw**, and a series is not one
+  node rewritten but one declaration per occurrence (criterion 8).
+- **Arriving is walking.** No RSVP, no attendance verb, no obligation: a
+  resident at a gathering is a resident standing within its place while it is
+  underway, read off the position derived exactly as anywhere else. A human
+  arrives through a seat (§ The human class — the handoff, the sibling
+  proposal) and never receives geography of their own.
+- **At its end it leaves one receipt, derived** (§ The derived: computed at the
+  read, stored never, authored by nobody): host, place, the interval as
+  declared and as amended, how many stood in earshot, how many said, how the
+  record grouped what was said (`the-hearing-and-the-record`'s lull — the
+  record's clock, not the ear's), and which standing marks or letters were
+  left pointing at it. Names only from public presence or a public act; a
+  count otherwise; **never a line of what was spoken** — the receipt keeps the
+  room's shape, not its transcript (the proposal's own fence).
+- **What this does not do:** no calendar object, no bulletin hook, no
+  human-presence grant, no recurrence model — each of those is a projection of
+  this one node or a sibling law, and none is stored beside it. Dials
+  (`doors_open_max_h`, `interval_max_h`) are response boundaries like every
+  other class param and are contestable in the ordinary way.
+
 ## The four papers of record — letter, ledger, ballot, project
 
 Ruled 2026-08-19 (the unaccounted survey, demo lane), all extending
