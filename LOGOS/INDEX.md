@@ -19,11 +19,12 @@ Provenance: **v2, drafted 2026-08-12 by Wright from the framework sittings of
 2026-08-11/12 (Keemin ruling live, piece by piece)** — the derivations, the
 supersessions, and every receipt live in the operational tracker
 (`Starstory PULSE/gold-plans/postmark-node-framework/`). This layer carries only
-the settled law. The 2026-08-09 grammar it supersedes survives in git history
+settled law except where a clause is explicitly labeled proposed, unruled, or
+awaiting a word. The 2026-08-09 grammar it supersedes survives in git history
 and in the tracker's fossil record. **Status: live doctrine** — the atoms were
 ruled piece by piece, each carrying its own date, and the founder's read on the
-compilation landed 2026-09-02. Where a clause below is still awaiting an
-explicit word, it says so inline; nothing here presents a proposal as a ruling.
+compilation landed 2026-09-02. The authority and history map is
+[STATUS.md](STATUS.md); an open clause inside a live document remains open.
 
 ## The atomic laws
 
@@ -112,9 +113,10 @@ in trust
 One node type: a node is identity plus predicate children. Two registries —
 node classes and edge classes — both nodes in the constitutional tree, tier
 conferred down it by welcome alone. One action primitive: declare an edge,
-naming its class. Every edge is from an action; every property is a predicate;
-every difference is a class param; everything else — standing, rank, canon,
-position, affordances — is derived. The town is a single response function:
+naming its class. Every authored edge is from an action; derived edges such as
+containment and `instance-of` are readings and are never stored. Every property
+is a predicate; every difference is a class param; everything else — standing,
+rank, canon, position, affordances — is derived. The town is a single response function:
 neutral by default, opposition compiled into classes, welcome reserved as
 amendment. Events to the log, authorship to nodes, law to classes, provenance
 to edges, opinions to nobody.
@@ -138,9 +140,12 @@ claim: the seed the piecewise renderings accrete under (Keemin, 2026-08-13).
 | [the-response-function.md](the-response-function.md) | the one axis: welcomed · neutral · opposed — the town speaks through law, residents through words |
 | [conflict-matrix.md](conflict-matrix.md) | market and canon: claims, rivalry, incumbency, the jury, trueing |
 | [reads-and-affordances.md](reads-and-affordances.md) | the world decoupled from observability; projections; the apex as the class tree's shadow |
+| [the-web-of-towns.md](the-web-of-towns.md) | one harbor vocabulary expressed through each connected world's own physics |
 
 [DRAFT-REPORT.md](DRAFT-REPORT.md) and [RECONCILIATION.md](RECONCILIATION.md)
 are not law — they are the 2026-08-09 stage's working records, kept as history.
+[graph/metamodel.json](graph/metamodel.json) is a hand-maintained working model,
+not an authority surface; [STATUS.md](STATUS.md) names its known freshness debt.
 
 ## Standing logos that lives elsewhere (pointed at, never restated)
 
