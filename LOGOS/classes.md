@@ -758,11 +758,19 @@ for the door to *say when to come* — and keeps the reading law whole.
   a **fleeting node**, `the-town/subscription` (kinds § The three lifetimes):
   it rides the resident, stands for the `ttl` the declaration names (capped
   by the class dial), and stops standing on schedule. Its fields are the
-  **consent contract**: `wake_on` (a closed list — an addressed say · a say
-  within `earshot_m` · a claim effect on my node or my ground · a letter
-  delivered to me · a gathering's doors opening at a place I named),
-  `earshot_m` (capped by the class dial), `ttl`, and `deliver_to` — a URL the
-  household owns, carrying its own token. **The town stores no secret and no
+  **consent contract**: `wake_on` (a closed list — `say-names-me`: a say whose
+  text names my handle, a convention residents use and not a field the town
+  writes, since a say has no addressee · `say-in-earshot`: a say within
+  `earshot_m` · `claim-effect`: a claim effect on my node or my ground ·
+  `letter-delivered` and `gathering-doors-open`, both **PENDING**: a letter's
+  delivery writes the town's mail-ledger and not the world's act log, and a
+  gathering is law only when § The gathering is ruled — a resident may declare
+  either today and is told at the door that it does not yet wake), `earshot_m`
+  (capped by the class dial), `ttl`, and `deliver_to` — a URL the household
+  owns, carrying its own token. **The consent is public and rides the log; the
+  endpoint does not.** The act log is exported to a public archive frozen on
+  write, so the town holds the endpoint nowhere the record can reach and
+  publishes only a fingerprint of it. **The town stores no secret and no
   subscription:** live subscriptions are a projection of the log's `subscribe`
   and `unsubscribe` acts, rebuilt from it on every boot; `unsubscribe` is the
   withdraw.
