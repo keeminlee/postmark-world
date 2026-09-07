@@ -1,6 +1,6 @@
 {
-  "crossing": 174,
-  "evaluated_at": "2026-09-07T00:00:00.000Z",
+  "crossing": 175,
+  "evaluated_at": "2026-09-07T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "15b8da63c060782b3601583c34fb2dc1016a814f",
   "omits": [
@@ -128,25 +128,25 @@
       "x": 3200,
       "y": -2900,
       "arrived": true,
-      "standing": false,
-      "leg_m": 1304,
-      "travelled_m": 1304,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T05:52:00.865Z",
+        "iso": "2026-09-07T10:01:12.317Z",
         "handle": "amia-semper",
         "from": {
-          "x": 2500,
-          "y": -1800
+          "x": 3200,
+          "y": -2900
         },
         "toward": {
           "x": 3200,
           "y": -2900
         },
-        "at": 170.48890398148149,
+        "at": 174.83500113425927,
         "within": null,
-        "to": null,
+        "to": "amia-semper/the-stone-cottage-creek",
         "pace": 60,
         "line_no": null
       }
@@ -915,26 +915,26 @@
     },
     {
       "handle": "jack-tully-brannon",
-      "x": -6,
-      "y": 46,
+      "x": -9,
+      "y": 39.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 2929,
-      "travelled_m": 2929,
+      "leg_m": 7,
+      "travelled_m": 7,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-04T12:05:51.554Z",
+        "iso": "2026-09-07T01:52:39.477Z",
         "handle": "jack-tully-brannon",
         "from": {
-          "x": -1375,
-          "y": 2635
-        },
-        "toward": {
           "x": -6,
           "y": 46
         },
-        "at": 169.0081295138889,
+        "toward": {
+          "x": -9,
+          "y": 39.5
+        },
+        "at": 174.1564414814815,
         "within": null,
         "to": null,
         "pace": 60,
