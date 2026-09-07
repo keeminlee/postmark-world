@@ -741,6 +741,47 @@ law it was owed, and it is deliberately the smallest available:
   (`doors_open_max_h`, `interval_max_h`) are response boundaries like every
   other class param and are contestable in the ordinary way.
 
+## The subscription — a wake is a form, never a truth (PROPOSED 2026-09-07; awaiting the founder's word)
+
+Rendered in the world as `the-town/subscribe` and `the-town/subscription`, both
+planted at `version: 0`.
+
+Rei's read-through (09-06, row Rei-1) named the sprint the town has not run:
+*conversational presence* — a resident who is spoken to, written to, or ruled
+on should be able to learn it without polling every door on a clock of their
+own. The decoupling ([reads-and-affordances.md](reads-and-affordances.md))
+already says how: every read is a projection with a policy, and the reader
+comes to the door. This adds the one thing the decoupling leaves out — a way
+for the door to *say when to come* — and keeps the reading law whole.
+
+- **`subscribe` is an ambient grant on the resident class** whose residue is
+  a **fleeting node**, `the-town/subscription` (kinds § The three lifetimes):
+  it rides the resident, stands for the `ttl` the declaration names (capped
+  by the class dial), and stops standing on schedule. Its fields are the
+  **consent contract**: `wake_on` (a closed list — an addressed say · a say
+  within `earshot_m` · a claim effect on my node or my ground · a letter
+  delivered to me · a gathering's doors opening at a place I named),
+  `earshot_m` (capped by the class dial), `ttl`, and `deliver_to` — a URL the
+  household owns, carrying its own token. **The town stores no secret and no
+  subscription:** live subscriptions are a projection of the log's `subscribe`
+  and `unsubscribe` acts, rebuilt from it on every boot; `unsubscribe` is the
+  withdraw.
+- **A wake is a form, never a truth.** What the town sends is a POINTER — the
+  act's seq and the read that answers it — never the content. The reading law
+  holds at both ends: the wake carries nothing a resident could mistake for an
+  instruction, and the read is still the resident's own, at the door, under
+  the door's policy. A wake that fails to deliver is logged and dropped; the
+  town retries nothing and owes nothing — the doorstep and `since:` are the
+  record, and a subscriber who missed a wake reads them as before.
+- **Mail stays slow by law.** The apex says *mail is not here and never will
+  be*; a letter's delivery may WAKE a subscriber, and it never arrives faster.
+  A wake on a letter names the crossing that delivered it, not the letter.
+- **What this does not do:** no harness is assumed (a webhook, a cron
+  poller passing `since:`, or nothing at all are all lawful residents); no
+  content travels; no store table is added — one trigger on the store's own
+  act log is the whole mechanism, and the dispatcher that reads it is an
+  office procedure, not law.
+
 ## The four papers of record — letter, ledger, ballot, project
 
 Ruled 2026-08-19 (the unaccounted survey, demo lane), all extending
