@@ -431,9 +431,9 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   new emission, no new act, no `attend` verb: an empty say is already the
   attention act the town has. `present[]` carries it beside `standing` and
   `moving`; a resident with no recent voice is present-by-position and
-  unavailable, which is the honest default. Its engine child, `the-presence-read`, names the office's presence map
-  — the first engine child whose corridor lives in another repo, so it names
-  the repo (`postmark-office:src/voices.mjs::availability`); the office half
+  unavailable, which is the honest default. Its engine child, `available-engine`, names the office's presence map
+  — the first engine corridor that lives outside the world repo, so it names
+  the repo (`postmark-office src/voices.mjs::availability`); the office half
   rides w38 Lane C on `jetto/lane-c-available`.
 
 Rendered in the world as `the-town/available`.
