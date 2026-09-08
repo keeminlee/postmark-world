@@ -58,10 +58,18 @@ import { test, after, before } from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
+import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { townRegionMarks } from "../spectator/viewer.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+// what the rig SERVES — WORLD/world-state.json off this clone's disk, which is
+// the same file the page fetches. The expected region count comes from here so
+// the assertion is a relation and not a number somebody has to remember to bump.
+const SERVED = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
+const expectedRegions = townRegionMarks(SERVED.marks).length;
 
 // Playwright is not a dependency of this package and must not become one — the
 // world is browser-pure and its suite runs anywhere node does. It is resolved
@@ -178,8 +186,17 @@ test("THE PAGE DRAWS THE WORLD — with the atlas unreachable, the mounted groun
   // ≥ 40, not = 43: the record grows. A region founded tomorrow must not red
   // this file, but the whole record going missing must.
   assert.ok(g.sourced >= 40, `every drawn shape names its source: ${g.sourced} carry data-src (want >= 40)`);
-  assert.equal(g.regions, 12, "the twelve regions are washes on the ground, from their own rings");
-  assert.equal(g.labels, 12, "and each one wears its own name");
+  // THE COUNT IS READ OFF THE SERVED RECORD, never typed. The roster went from
+  // twelve to thirteen on 2026-09-08 the moment the founder ruled the Headland a
+  // region, and a test carrying the literal 12 would have gone red on its own for
+  // a founding — the failure mode of every calendar-pinned control. What must
+  // hold is the RELATION: the page draws every region the record it is served
+  // actually holds. (Which is why this is also the assertion that will notice the
+  // settlement publishing the Headland: the served count moves and the drawn
+  // count must move with it.)
+  assert.equal(g.regions, expectedRegions,
+    `the page draws every region the served record holds (${expectedRegions})`);
+  assert.equal(g.labels, expectedRegions, "and each one wears its own name");
   assert.ok(g.water >= 6, `the inland water and the sea: ${g.water}`);
   assert.ok(g.features >= 6, `the skeleton's terrain: ${g.features}`);
   assert.equal(g.atlasImages, 0, "nothing on the ground is served out of /atlas/");

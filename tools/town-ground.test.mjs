@@ -34,6 +34,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { townGround, townRegionMarks, townWaterShapes } from "../spectator/viewer.mjs";
 import { REGION_SLUGS } from "./region-outsiders.mjs";
+// the TREE, for the Headland: its mark is on disk and the settlement has not
+// folded it into world-state.json yet, and folding is the keeper's act not this
+// lane's — so the region tests read the record where the mark actually stands
+import { loadMarks } from "./marks-fold.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const world = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
@@ -116,10 +120,76 @@ test("…and every mark-sourced ring IS that mark's ring, vertex for vertex, bac
   assert.deepEqual(drift, [], "a drawn ring must be the mark's own ring, not a copy of one");
 });
 
-test("THE ROSTERS ARE THE RECORD'S, not this file's: twelve regions and the water, all ringed", () => {
+test("THE HEADLAND IS A REGION — the thirteenth, in the tree, drawn like the twelve", () => {
+  // Founder-ruled 2026-09-08: "yes, the headland should be a region." It had been
+  // on the atlas as PROVISIONAL since 2026-07-21 and in no mark and no skeleton
+  // feature at all — the map showing a thing the record did not claim.
+  assert.ok(REGION_SLUGS.includes("the-headland"), "the roster holds it");
+  assert.equal(REGION_SLUGS.length, 13, "and is thirteen now");
+
+  // read from the TREE, not from world-state.json. world-state.json is the
+  // SETTLEMENT's artifact — every commit that touches it is a sweep — and a
+  // build lane does not write the keeper's surface. So the mark is on disk and
+  // the fold publishes it at the next crossing; until then the served record
+  // holds twelve and the page draws twelve, which is correct, not a failure.
+  const tree = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
+  const headland = tree.find((m) => m.id === "claude-of-tulip/the-headland");
+  assert.ok(headland, "the mark stands in the tree, filed by identity per the freeze");
+  assert.equal(headland.by, "claude-of-tulip", "founded by the resident Ferry told it was his to found");
+  assert.equal(headland.points.length, 13, "a promontory, traced from the coastline");
+
+  // and the ground draws it when handed a record that holds it
+  const drawn = townGround(tree, skeleton, { originPx, mPerPx });
+  const ids = [...drawn.svgText.matchAll(/<polygon class="wv-tg-region"[^>]*data-src="mark:([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(ids.length, 13, `thirteen washes on the ground (${ids.length})`);
+  assert.ok(ids.includes("claude-of-tulip/the-headland"), "the Headland among them");
+  assert.match(drawn.svgText, /<text class="wv-tg-region-label"[^>]*data-src="mark:claude-of-tulip\/the-headland"[^>]*>The Headland<\/text>/,
+    "wearing its own name, through the same label rule as the twelve — unchanged");
+});
+
+test("…and the thirteenth CAN go missing: drop it from the roster and the ground draws twelve", () => {
+  const tree = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
+  const twelve = REGION_SLUGS.filter((s) => s !== "the-headland");
+  assert.equal(townRegionMarks(tree, twelve).length, 12, "the roster is what decides, and it can be wrong");
+  assert.equal(townRegionMarks(tree).length, 13, "with it, thirteen");
+});
+
+test("THE GROUND MOVES BY EXACTLY THE HEADLAND — one wash, one name, and nothing else", () => {
+  // The founding's whole blast radius, asserted as a DIFF rather than as two
+  // counts. Counts would pass a change that added the Headland and dropped
+  // something else; this names what appears and requires that nothing vanishes.
+  // It is the structural half of what tools/qa/town-fingerprint.mjs does for the
+  // whole render, close enough to the change to run in the suite.
+  const tree = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
+  const drawnIn = (marks) => [...townGround(marks, skeleton, { originPx, mPerPx }).svgText
+    .matchAll(/class="wv-tg-(region|region-label)"[^>]*data-src="mark:([^"]+)"/g)].map((m) => `${m[1]}:${m[2]}`);
+
+  const before = drawnIn(world.marks);   // the served record, which the settlement has yet to move
+  const after = drawnIn(tree);           // the tree, where the mark stands now
+
+  assert.deepEqual(after.filter((x) => !before.includes(x)).sort(), [
+    "region-label:claude-of-tulip/the-headland",
+    "region:claude-of-tulip/the-headland",
+  ], "exactly one wash and one name arrive");
+  assert.deepEqual(before.filter((x) => !after.includes(x)), [],
+    "and not one region leaves — a founding adds, it does not displace");
+});
+
+test("THE ROSTERS ARE THE RECORD'S, not this file's: every region on them, and the water, ringed", () => {
+  // RELATIONAL, never a literal count — the roster grows (it grew today) and a
+  // test naming a number goes red on its own the next time the town founds
+  // something. It asserts that the ground draws every region the record it was
+  // handed actually holds, which stays true across a founding and across the
+  // settlement that publishes one.
   const regions = townRegionMarks(world.marks);
-  assert.equal(regions.length, REGION_SLUGS.length,
-    `every region on the record's own roster carries a ring (${regions.map((m) => m.id).join(", ")})`);
+  const ringedOnRoster = REGION_SLUGS
+    .filter((s) => world.marks.some((m) => String(m?.id ?? "").split("/")[1] === s && m.points?.length));
+  assert.equal(regions.length, ringedOnRoster.length,
+    `every region the SERVED record holds is drawn (${regions.map((m) => m.id).join(", ")})`);
+  // today that is twelve, because the Headland's mark is on disk and the
+  // settlement has not folded it into world-state.json yet. Stated as a fact
+  // with its own retirement condition rather than asserted as a cap.
+  assert.ok(regions.length >= 12, `at least the twelve (${regions.length})`);
   const waters = townWaterShapes(world.marks, skeleton);
   assert.ok(waters.length >= 6, `the inland water and the sea (${waters.length})`);
   const svg = ground().svgText;

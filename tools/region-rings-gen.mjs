@@ -136,10 +136,14 @@ function extractArr(name) {
 // region its hand-washed edge is the same jitter the reader sees on the map.
 const atlasFns = new Function(
   [extractFnSource("hash"), extractFnSource("jitter"), extractFnSource("smoothSegment"), extractFnSource("smoothPath"), extractFnSource("washBlob")].join("\n") +
-    "\nreturn { washBlob };"
+    "\nreturn { washBlob, jitter };"
 )();
 
 const LAYOUT = extractObjMultiline("REGION_LAYOUT");
+// The Headland's geometry is a COASTLINE, not a layout entry — see atlasRingFor.
+const COASTLINE = extractArr("COASTLINE");
+const HEADLAND_INLAND = extractArr("HEADLAND_INLAND");
+const HEADLAND_COAST = extractObjInline("HEADLAND_COAST");
 const ORIGIN_PX = extractObjInline("CENTRE_XY");
 const CENTRE_SHAPE = extractObjInline("TOWN_CENTRE_SHAPE");
 const TERRACES = extractArr("THRESHOLD_TERRACES");
@@ -311,7 +315,67 @@ const REGION_IDS = [
   "the-east-window-district", "the-high-ground", "evermoon",
 ];
 
+// ── AND THE THIRTEENTH, WHICH THIS PIPELINE CANNOT PROCESS ──────────────────
+//
+// the-headland is a region as of 2026-09-08 (the founder's word) and this file
+// CAN trace it — see `atlasRingFor` — but it is deliberately NOT in the roster
+// above, because everything that happens after the trace assumes a STAR-SHAPED
+// ring: the include-residents bend pushes a single boundary point outward along
+// a bearing, the recession pulls one back, and `assertStarShaped` refuses
+// anything with two boundary points on one bearing rather than tearing it.
+//
+// A promontory has two. It is a hook: a wedge running out to a point with the
+// sea folding back around it, and its own centroid sees parts of its coast
+// twice. Run it through the roster and the generator refuses, correctly:
+//
+//   the-headland: the traced ring doubles back on itself at vertex 0 — it is
+//   not star-shaped from its own centre, so the include-residents bend cannot
+//   be applied to it safely
+//
+// THAT REFUSAL IS RIGHT AND IS NOT TO BE LOOSENED. Weakening `assertStarShaped`
+// so one region fits would blind the check for the twelve it was written for.
+// So the Headland is traced but not BENT, which costs nothing today — the bend
+// exists to reach out and hold a region's own sited residents, and nobody is
+// sited in the Headland yet. The day someone is, this is the note that says the
+// question is open and has to be answered on purpose.
+//
+// Its ring is reproducible without the pipeline:
+//
+//   node tools/region-rings-gen.mjs --atlas <dir> --trace the-headland
+//
+// which prints the mark's own `at` / `extent` / `points`, so the record's copy
+// is checkable against the drawing rather than taken on trust.
+const TRACE_ONLY = ["the-headland"];
+
 function atlasRingFor(id) {
+  // THE HEADLAND IS NOT A WASH ELLIPSE, and that is what "provisional" turns out
+  // to mean geometrically — the question was asked on 2026-09-08 and this is the
+  // answer. The other twelve get `washBlob(cx, cy, rx, ry)` from a REGION_LAYOUT
+  // entry. The Headland has no entry, because a provisional region deliberately
+  // lives only in the drawing, and its wash is THE PROMONTORY ITSELF. The
+  // renderer says why in its own words: "a wedge that is 130px across at the neck
+  // and comes to a point cannot be covered by any ellipse that also stays out of
+  // the water — size it to reach the tip and it spills off both flanks, size it
+  // to the flanks and the point sticks out bare." So it takes the stretch of
+  // COASTLINE the promontory occupies, closes it across the neck with
+  // HEADLAND_INLAND, and shrinks that polygon about its own centroid.
+  //
+  // THE RING IS THE INNER (1.02), NOT THE OUTER (1.12). The renderer strokes its
+  // dashed boundary — the line a reader reads as the edge — on the inner; the
+  // outer is deliberately proud of the shore and spills into the water, which
+  // the renderer calls "the right fault to have" for a wash. A ring is a claim on
+  // GROUND, so the claim is the inner one and the spill stays a drawing choice.
+  if (id === "the-headland") {
+    const land = COASTLINE.slice(HEADLAND_COAST.first, HEADLAND_COAST.last + 1).concat(HEADLAND_INLAND);
+    const gx = land.reduce((s, p) => s + p.x, 0) / land.length;
+    const gy = land.reduce((s, p) => s + p.y, 0) / land.length;
+    // the renderer's own jitter, for the same reason this file imports washBlob
+    // as text: the edge in the record is the edge the reader sees
+    return land.map((p, i) => {
+      const j = 1 + atlasFns.jitter("headland-inner", "p" + i) * 0.03;
+      return { x: gx + (p.x - gx) * 1.02 * j, y: gy + (p.y - gy) * 1.02 * j };
+    });
+  }
   if (id === "the-town-centre") {
     const c = CENTRE_SHAPE;
     return washRing(c.cx, c.cy, c.rx, c.ry, "centre");
@@ -726,6 +790,27 @@ function writeRegion(e) {
 // its ring's bbox moves the region's centre, and a bound child travels with it.
 // That is why the outsider list is computed from a RELOADED tree — the marks as
 // they stand after the write, not as they stood before it.
+// ── --trace <id>: the ring, printed, for a region the pipeline cannot bend ──
+//
+// This is how a hand-planted ring stops being hand-typed. The Headland's mark
+// carries numbers; this prints the same numbers from the drawing, so the two can
+// be compared instead of believed. It runs the trace and the transform and
+// nothing else — no bend, no recession, no smoothing, no write.
+const TRACE = argOf("--trace", null);
+if (TRACE) {
+  if (!TRACE_ONLY.includes(TRACE) && !REGION_IDS.includes(TRACE))
+    throw new Error(`--trace ${TRACE}: not a region this file knows how to trace`);
+  const ring = atlasRingFor(TRACE).map(toWorld);
+  const xs = ring.map((p) => p.x), ys = ring.map((p) => p.y);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const r = (n) => Math.round(n * 10) / 10;
+  console.log(`${TRACE} — traced from the atlas, ${ring.length} vertices, nothing bent or smoothed\n`);
+  console.log(`at: { x: ${r((minX + maxX) / 2)}, y: ${r((minY + maxY) / 2)} }`);
+  console.log(`extent: { w: ${r(maxX - minX)}, h: ${r(maxY - minY)} }`);
+  console.log(`points: ${ring.map((p) => `${r(p.x)},${r(p.y)}`).join(" ")}`);
+  process.exit(0);
+}
+
 const { report, edits } = buildAll(loadMarks(MARKS_DIR));
 printReport(report);
 

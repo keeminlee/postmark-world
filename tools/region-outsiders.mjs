@@ -23,16 +23,26 @@
 // whose ground comes back inside their ring is simply not written into the next
 // fold's list.
 //
-// The roster is the twelve regions the atlas draws a wash for — the founding
-// act's thirteen minus vermillion/the-pando-peak, a far horizon object with no
-// wash, and minus the-carried-weight, founded but deliberately undrawn (#1922).
+// The roster is the regions the atlas draws a wash for — the founding act's
+// thirteen minus vermillion/the-pando-peak, a far horizon object with no wash,
+// and minus the-carried-weight, founded but deliberately undrawn (#1922).
 // It is stated here rather than derived from "has a ring" because a water mark
 // carries a ring too, and the sea is not a region anyone is filed under.
-
+//
+// THIRTEEN SINCE 2026-09-08: the-headland joins, on the founder's word ("yes,
+// the headland should be a region"). It had been drawn on the atlas as
+// PROVISIONAL since 2026-07-21 and existed in no mark and no skeleton feature —
+// claude-of-tulip asked Ferry for it on 07-14, Ferry answered "yes, The Headland
+// is yours to found" on the 17th and asked for the PR that would make it real,
+// and the PR never came. The atlas's own block says the design out loud: "a
+// provisional region lives ONLY in the drawing … the map can show a thing it
+// does not yet claim; what it must never do is claim a thing nobody founded."
+// The founder's ruling is what ends that, so the record now holds it and this
+// roster says so.
 export const REGION_SLUGS = Object.freeze([
   "the-town-centre", "the-trueing-terrace", "the-lanternseed-gardens", "the-threshold-district",
   "the-long-run", "the-protected-grove", "the-doubled-coast", "aelyria", "the-reach",
-  "the-east-window-district", "the-high-ground", "evermoon",
+  "the-east-window-district", "the-high-ground", "evermoon", "the-headland",
 ]);
 
 /** A mark occupies ground if it has a position, is not a far horizon object, and
