@@ -139,11 +139,39 @@ test("THE REGISTRATION DID NOT MOVE — the ground still stands on the skeleton'
     "dawn (5075,450) and dark (-1900,2150) project to the atlas's own (1500,850) → (105,1190)");
 });
 
+test("THE CALL SITE PASSES A SET THAT EXISTS — the test that would have caught this lane's own bug", () => {
+  // The first version of this lane passed `data.marks`. `data` is
+  // { trueWorld, myWorld, worldState, skeleton, manifest } — there is no
+  // `marks` on it. Every assertion in this file stayed green, because each one
+  // hands `townGround` the marks itself and none of them asked what the PAGE
+  // hands it. A falsifier that supplies its own input cannot watch the wiring.
+  // the CALL, not the declaration (`export function townGround(marks, …)` sits
+  // 4,000 lines above it and matches a lazier pattern — the first version of
+  // this assertion caught the definition and reported `marks`)
+  const call = VIEWER.match(/const ground = townGround\(([A-Za-z0-9_.]+), ([A-Za-z0-9_.]+)/);
+  assert.ok(call, "loadMinimap calls townGround");
+  assert.equal(call[1], "world.marks",
+    "the ground reads the ASSEMBLED fold — the same marks the pips stand on");
+  assert.equal(call[2], "data.skeleton");
+  // and the name it passes is a thing the module actually builds
+  assert.match(VIEWER, /world = assembleWorld\(\{ worldState: data\.worldState, skeleton: data\.skeleton \}\)/);
+  assert.doesNotMatch(VIEWER, /townGround\(data\.marks/, "`data.marks` is undefined and always was");
+});
+
+test("A GROUNDLESS RECORD REFUSES rather than drawing a plausible lie", () => {
+  // the class fix behind the bug above: handed no rings, the function used to
+  // fall back to the skeleton's centrelines and paint something that looked
+  // like a map. It now says so.
+  assert.throws(() => townGround([], skeleton, { originPx, mPerPx }), /not one of the record's \d+ regions/);
+  assert.throws(() => townGround(world.marks.filter((m) => !m.points), skeleton, { originPx, mPerPx }),
+    /the ground would be drawn from the skeleton alone/);
+  // …and the real record still passes, so the guard is not simply always-on
+  assert.ok(townGround(world.marks, skeleton, { originPx, mPerPx }).svgText.length > 1000);
+});
+
 test("THE ATLAS IS NOT FETCHED — the last read of a surface the world does not own is gone", () => {
   assert.doesNotMatch(VIEWER, /fetch\(\s*["'`]\/atlas\//,
     "the viewer no longer fetches the atlas anywhere");
-  assert.match(VIEWER, /townGround\(data\.marks, data\.skeleton/,
-    "loadMinimap builds the town's ground from the record it already holds");
   // the town now runs the room's furnishing pass, because the baker is gone
   assert.match(VIEWER, /mountScene\(\{ boxEl, svg, originPx, mPerPx, reattachOverlays, placeholderExtents: true \}\)/,
     "the town hangs its own art (SCENES.md #6, retired the same day)");

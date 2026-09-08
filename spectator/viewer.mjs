@@ -1191,6 +1191,24 @@ export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUN
   for (const f of features) bounds.push(...tgFeaturePoints(f));
   for (const p of [light.dawn_pole_m, light.dark_pole_m]) if (Number.isFinite(p?.x)) bounds.push(p);
   if (!bounds.length) throw new Error("townGround: the record draws nothing — no region ring, no water, no feature");
+  // A TOWN WITH NO REGIONS IS NOT A TOWN, IT IS A WIRING BUG — refuse loudly.
+  //
+  // This clause is here because the absence of it cost this lane an hour. The
+  // first call site passed `data.marks`, which does not exist, and the function
+  // did the accommodating thing: no region ring found, so no washes; no water
+  // ring found, so each water feature quietly fell back to its own centreline.
+  // The page then painted a ground that was plausible from across the room — a
+  // sheet, a river, some cliffs — and was drawing from the SKELETON alone, with
+  // the entire mark record missing. Every falsifier stayed green, because they
+  // were handed the marks by hand and never asked what the page passes.
+  //
+  // A fallback that can stand in for the whole record is not resilience; it is a
+  // way for a wiring fault to look like a feature. The centreline fallback keeps
+  // its narrow job — ONE water feature whose ring has not been generated yet —
+  // and the roster being empty is now a refusal the reader can see.
+  if (!regions.length) throw new Error(
+    `townGround: not one of the record's ${REGION_SLUGS.length} regions carries a ring in the marks handed in`
+    + ` (${(marks ?? []).length} marks) — the ground would be drawn from the skeleton alone`);
   const minX = Math.min(...bounds.map((p) => p.x)) - pad, maxX = Math.max(...bounds.map((p) => p.x)) + pad;
   const minY = Math.min(...bounds.map((p) => p.y)) - pad, maxY = Math.max(...bounds.map((p) => p.y)) + pad;
 
@@ -5440,7 +5458,12 @@ export function mountViewer(appEl) {
       const sm = String(g.scale ?? "").match(/(\d+(?:\.\d+)?)\s*m per atlas px/);
       if (!om || !sm) throw new Error("skeleton _grid changed shape");
       const originPx = { x: +om[1], y: +om[2] }, mPerPx = +sm[1];
-      const ground = townGround(data.marks, data.skeleton, { originPx, mPerPx });
+      // `world.marks` — the ASSEMBLED fold, which is the same set `byId`, the
+      // overlay and every other geometry reader use. Not `data.worldState.marks`
+      // and emphatically not `data.marks`, which does not exist: `data` is
+      // { trueWorld, myWorld, worldState, skeleton, manifest }. One question, one
+      // owner; the ground reads the marks the pips stand on.
+      const ground = townGround(world.marks, data.skeleton, { originPx, mPerPx });
       const doc = new DOMParser().parseFromString(ground.svgText, "image/svg+xml");
       const svg = document.importNode(doc.documentElement, true);
       // THE SCENE-LIFECYCLE GUARD: a ground that finishes building while a ROOM
