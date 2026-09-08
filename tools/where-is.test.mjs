@@ -157,7 +157,8 @@ test("household grain: the handle's OWN parcel wins over the household's, determ
 });
 
 test("REGISTRY LAG NEVER BLOCKS: with no projection, both resolve as their own solo households", () => {
-  // households-project.mjs's own law. This is the control for the test above —
+  // The projector's own law, which outlived it (G2 · P-145 deleted the tool, not
+  // the rule). This is the control for the test above —
   // it must go RED if household grain leaks in without a declaration behind it.
   const unregistered = { ...garrison, households: undefined,
     parcels: [{ id: "sol-of-garrison/the-heart-house-parcel", household: "sol-of-garrison", at: { x: -1375, y: -2550 }, extent: { w: 25, h: 25 } }] };

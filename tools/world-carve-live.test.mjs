@@ -13,8 +13,10 @@
 // assertion below is vacuous, and the test would pass while proving nothing.
 //
 // The household grain comes from WORLD/fixtures/households-declared-2026-08-10.json
-// — handle → DECLARED HOUSEHOLD SLUG, projected by tools/households-project.mjs
-// from the town's own tools/households.json. NOT from WORLD/households.json, which
+// — handle → DECLARED HOUSEHOLD SLUG, projected from the town's own
+// tools/households.json by tools/households-project.mjs, which G2 (P-145) has since
+// deleted. The fixture is therefore FROZEN at its generated_at and cannot be
+// refreshed from this repo. NOT from WORLD/households.json, which
 // is stale (2026-08-07) and keyed by credential id, a grain that files one
 // household's two accounts as strangers. Both facts are asserted below rather than
 // trusted.

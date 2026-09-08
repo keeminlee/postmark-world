@@ -67,14 +67,17 @@ export function porchOf(world) {
 //
 // Ruled 2026-08-18: ground resolves at HOUSEHOLD grain. The vocabulary is the
 // one the fold already consumes — the registry projection from the town's own
-// resolver (tools/households-project.mjs), published back out as
-// `world.households`. Asking it here rather than deriving a second answer is the
+// resolver, published back out as `world.households`. (The projector,
+// tools/households-project.mjs, was deleted by G2 · P-145; this module never called
+// it and asks `world` for the answer, which is the point.) Asking it here rather
+// than deriving a second answer is the
 // whole point: a second resolver is how the four position implementations this
 // module replaced came to disagree in the first place.
 //
 // A handle the registry does not know falls back to what it always did — the
 // household its own marks carry, else the handle. Registry lag must never
-// unplace anyone; it may only leave them ungrouped (households-project's law).
+// unplace anyone; it may only leave them ungrouped — the projector's law, which
+// outlived the projector (G2 · P-145).
 export function householdOf(handle, world) {
   const declared = world?.households?.[handle];
   if (declared) return declared;

@@ -73,8 +73,9 @@ if (!TOWN) {
 
 The town clone is the authority for BOTH the roll (WHITE_PAGES/) and the declared
 household registry (tools/households.json). There is no default path on purpose,
-for households-project.mjs's reason: this must be read from a clone whose
-freshness you have checked, not from whatever copy happens to be lying around.`);
+for the reason the G2-deleted households-project.mjs gave: this must be read from a
+clone whose freshness you have checked, not from whatever copy happens to be lying
+around. A copy without a channel is a copy that rots.`);
   process.exit(2);
 }
 

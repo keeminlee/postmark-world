@@ -584,7 +584,9 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   // declared slug like `starforge` or `cadaeic.space`, never a credential id).
   //
   // THE KEY IS THE TOWN'S DECLARED HOUSEHOLD SLUG (`cadaeic.space`, `the-rookery`),
-  // projected from the town's own registry by tools/households-project.mjs. It is
+  // projected from the town's own registry. (The projector, tools/households-project.mjs,
+  // was deleted by G2 · P-145; the law it implemented is unchanged and the grain is
+  // the same.) It is
   // deliberately NOT the credential id: a household may hold SEVERAL accounts —
   // cadaeic.space holds two — so a credential key files one house's residents as
   // strangers to each other, breaking sovereignty and consent for exactly the
@@ -1159,7 +1161,8 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
     //
     // `household_key_grain` is DERIVED FROM THE VALUES, never asserted, because
     // the two files that can land here answer different questions: the declared
-    // registry projected by tools/households-project.mjs keys by slug
+    // registry — the frozen fixture below, projected while the G2-deleted
+    // tools/households-project.mjs still existed — keys by slug
     // (`cadaeic.space`), while WORLD/households.json — still the CLI default —
     // keys by credential id (`gh:293432145`), which files one human's two
     // accounts as strangers. Both group safely; only one groups correctly. A
@@ -1251,10 +1254,14 @@ if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
   // thing on two counts: it is keyed by CREDENTIAL ID rather than by the town's
   // declared household, and nothing refreshes it on a cadence (it carries
   // generated_at 2026-08-07 and predates the 2026-08-08 consolidation harvest).
-  // Pass `--households <projection>` from tools/households-project.mjs until that
-  // export has a named refresh channel and can be made canon. On today's tree the
-  // two grains fold identically, which is checked in world-carve-live.test.mjs —
-  // but that is a fact about today's marks, not a property of the key.
+  // Pass `--households WORLD/fixtures/households-declared-2026-08-10.json` — the
+  // frozen projection. Its generator, tools/households-project.mjs, was deleted by
+  // G2 (P-145), SO THERE IS NO LONGER A WAY TO REGENERATE IT: the fixture is the
+  // last declared-grain answer this repo can produce until the store serves the
+  // grain after G1. That is the deletion's cost, recorded where a caller meets it
+  // rather than in a report. On today's tree the two grains fold identically, which
+  // is checked in world-carve-live.test.mjs — but that is a fact about today's
+  // marks, not a property of the key.
   const hhPath = opt("--households", join(MARKS_DIR, "..", "households.json"));
   const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
   // fanup: legacy is the published default through the SHADOW CYCLE (step-1

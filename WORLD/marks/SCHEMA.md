@@ -152,7 +152,9 @@ mark carrying open escrow is never returned while the stakes stand (it records a
 (`1 human = 1 household = N residents = up to N accounts`), so two residents of
 one house never consent to each other — including when they sign with different
 GitHub accounts, as cadaeic.space's two do. Law: `tools/consent.mjs`; gate:
-`tools/mark-lint.mjs` §8b; grain: `tools/households-project.mjs`.
+`tools/mark-lint.mjs` §8b; grain: the declared household slug, frozen at
+`WORLD/fixtures/households-declared-2026-08-10.json` (its projector
+`tools/households-project.mjs` was deleted by G2 · P-145; the law is unchanged).
 
 **⁷ `class:` — what a mark IS, and it never asks the kind (stated 2026-09-01).**
 The field names a class the law knows: the roster is the class-nodes standing in
