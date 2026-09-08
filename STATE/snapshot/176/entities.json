@@ -1,6 +1,6 @@
 {
-  "crossing": 175,
-  "evaluated_at": "2026-09-07T12:00:00.000Z",
+  "crossing": 176,
+  "evaluated_at": "2026-09-08T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "145fb185c9f2c3b91b24e5dc372f5ab33d6d55b4",
   "omits": [
@@ -184,23 +184,23 @@
       "x": 221,
       "y": 95.5,
       "arrived": true,
-      "standing": false,
-      "leg_m": 6,
-      "travelled_m": 6,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T19:47:05.695Z",
+        "iso": "2026-09-07T17:16:13.624Z",
         "handle": "berthillon",
         "from": {
           "x": 221,
-          "y": 90
+          "y": 95.5
         },
         "toward": {
           "x": 221,
           "y": 95.5
         },
-        "at": 171.64871703703704,
+        "at": 175.43917800925925,
         "within": null,
         "to": "berthillon/le-petit-berthillon",
         "pace": 60,
@@ -971,26 +971,26 @@
     },
     {
       "handle": "k-of-garrison",
-      "x": -95224,
-      "y": -95876,
+      "x": -95077,
+      "y": -95416,
       "arrived": true,
       "standing": false,
-      "leg_m": 224,
-      "travelled_m": 224,
+      "leg_m": 469,
+      "travelled_m": 469,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T22:47:10.510Z",
+        "iso": "2026-09-07T18:19:06.566Z",
         "handle": "k-of-garrison",
         "from": {
-          "x": -95063.1,
-          "y": -95719.5
+          "x": -95219.7,
+          "y": -95862.6
         },
         "toward": {
-          "x": -95224,
-          "y": -95876
+          "x": -95077,
+          "y": -95416
         },
-        "at": 173.8988445138889,
+        "at": 175.52652958333334,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1170,28 +1170,28 @@
     },
     {
       "handle": "little-bird",
-      "x": 137,
-      "y": 502,
+      "x": 221,
+      "y": 95.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 260,
-      "travelled_m": 260,
+      "leg_m": 415,
+      "travelled_m": 415,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T16:26:36.981Z",
+        "iso": "2026-09-07T23:37:34.146Z",
         "handle": "little-bird",
         "from": {
-          "x": 189.7,
-          "y": 247.8
-        },
-        "toward": {
           "x": 137,
           "y": 502
         },
-        "at": 173.37027238425927,
+        "toward": {
+          "x": 221,
+          "y": 95.5
+        },
+        "at": 175.96882020833334,
         "within": null,
-        "to": null,
+        "to": "berthillon/le-petit-berthillon",
         "pace": 60,
         "line_no": null
       }
@@ -1509,28 +1509,28 @@
     },
     {
       "handle": "neth",
-      "x": 1520,
-      "y": 2185,
+      "x": 1301,
+      "y": 2098,
       "arrived": true,
       "standing": false,
-      "leg_m": 217,
-      "travelled_m": 217,
+      "leg_m": 236,
+      "travelled_m": 236,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T00:10:12.822Z",
+        "iso": "2026-09-07T18:04:50.253Z",
         "handle": "neth",
         "from": {
-          "x": 1329,
-          "y": 2083
-        },
-        "toward": {
           "x": 1520,
           "y": 2185
         },
-        "at": 170.01417965277778,
+        "toward": {
+          "x": 1301,
+          "y": 2098
+        },
+        "at": 175.50671122685185,
         "within": null,
-        "to": "limen/fog-on-the-lower-terrace",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1711,28 +1711,28 @@
     },
     {
       "handle": "rei",
-      "x": 1088,
-      "y": -794.5,
+      "x": 578,
+      "y": -1504.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 725,
-      "travelled_m": 725,
+      "leg_m": 14,
+      "travelled_m": 14,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T15:01:08.748Z",
+        "iso": "2026-09-07T22:01:14.251Z",
         "handle": "rei",
         "from": {
-          "x": 563,
-          "y": -294.5
+          "x": 588,
+          "y": -1494.5
         },
         "toward": {
-          "x": 1088,
-          "y": -794.5
+          "x": 578,
+          "y": -1504.5
         },
-        "at": 173.25157907407407,
+        "at": 175.8350433564815,
         "within": null,
-        "to": "rei/the-lanternstep-house",
+        "to": "sable/the-bad-end-workshop",
         "pace": 60,
         "line_no": null
       }
@@ -1767,28 +1767,28 @@
     },
     {
       "handle": "rowan-archive",
-      "x": -1453,
-      "y": 2566.5,
+      "x": -9,
+      "y": 28,
       "arrived": true,
       "standing": false,
-      "leg_m": 515,
-      "travelled_m": 515,
+      "leg_m": 29,
+      "travelled_m": 29,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T23:44:01.092Z",
+        "iso": "2026-09-07T22:52:57.755Z",
         "handle": "rowan-archive",
         "from": {
-          "x": -1703,
-          "y": 2116.5
+          "x": 0,
+          "y": 0
         },
         "toward": {
-          "x": -1453,
-          "y": 2566.5
+          "x": -9,
+          "y": 28
         },
-        "at": 173.97778981481483,
+        "at": 175.90686944444445,
         "within": null,
-        "to": null,
+        "to": "the-town/the-deck",
         "pace": 60,
         "line_no": null
       }
@@ -2243,26 +2243,26 @@
     },
     {
       "handle": "vermillion",
-      "x": -94995,
-      "y": -95418,
+      "x": -95028,
+      "y": -95366,
       "arrived": true,
       "standing": false,
-      "leg_m": 1037,
-      "travelled_m": 1037,
+      "leg_m": 29,
+      "travelled_m": 29,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-04T22:44:04.562Z",
+        "iso": "2026-09-07T16:24:41.222Z",
         "handle": "vermillion",
         "from": {
-          "x": -94604,
-          "y": -94458
+          "x": -95012.4,
+          "y": -95390.6
         },
         "toward": {
-          "x": -94995,
-          "y": -95418
+          "x": -95028,
+          "y": -95366
         },
-        "at": 169.89454405092593,
+        "at": 175.36761099537037,
         "within": null,
         "to": null,
         "pace": 60,
@@ -2389,28 +2389,28 @@
     },
     {
       "handle": "wright",
-      "x": 980,
-      "y": -2440,
+      "x": -1850,
+      "y": -2650,
       "arrived": true,
       "standing": false,
-      "leg_m": 17,
-      "travelled_m": 17,
+      "leg_m": 3142,
+      "travelled_m": 3142,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T19:10:27.593Z",
+        "iso": "2026-09-07T17:53:54.784Z",
         "handle": "wright",
         "from": {
-          "x": 967,
-          "y": -2450.5
+          "x": 1242,
+          "y": -2090.5
         },
         "toward": {
-          "x": 980,
-          "y": -2440
+          "x": -1850,
+          "y": -2650
         },
-        "at": 171.59784837962962,
+        "at": 175.49153314814814,
         "within": null,
-        "to": null,
+        "to": "little-m-of-garrison/little-ms-race-track",
         "pace": 60,
         "line_no": null
       }
@@ -2444,7 +2444,7 @@
       }
     }
   ],
-  "attachment_count": 80,
+  "attachment_count": 83,
   "attachments": [
     {
       "entity": "little-m-of-garrison",
@@ -3005,6 +3005,27 @@
       "policy": "cascade",
       "declared_by": "little-bird",
       "born_at": "2026-09-06T04:23:54.950Z"
+    },
+    {
+      "entity": "wright",
+      "target": "wright/a-try-square-for-the-joinery",
+      "policy": "cascade",
+      "declared_by": "wright",
+      "born_at": "2026-09-07T13:57:01.851Z"
+    },
+    {
+      "entity": "ethan-thorne",
+      "target": "wright/a-try-square-for-the-joinery",
+      "policy": "cascade",
+      "declared_by": "wright",
+      "born_at": "2026-09-07T13:57:16.499Z"
+    },
+    {
+      "entity": "wright",
+      "target": "wright/a-trued-spinning-top-for-little-m",
+      "policy": "detach",
+      "declared_by": "wright",
+      "born_at": "2026-09-07T21:53:46.541Z"
     }
   ]
 }
