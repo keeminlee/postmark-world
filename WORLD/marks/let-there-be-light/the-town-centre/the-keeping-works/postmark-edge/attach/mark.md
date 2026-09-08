@@ -4,7 +4,7 @@ by: the-town
 tier: constitution
 date: 2026-08-09
 class: attach
-version: 3
+version: 4
 extends: postmark-edge
 subject: resident
 object: thing
