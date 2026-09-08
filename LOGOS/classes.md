@@ -918,6 +918,41 @@ same bug with the copies still agreeing. Both dead copies now name their owner
 declared, so the law still says a human has a stride, and the VALUE has one
 home.)*
 
+Rendered in the world as `the-town/handoff` and `the-town/hand-to-human`.
+
+**The handoff — a seat the resident declares (PROPOSED 2026-09-07; awaiting
+the founder's word).** Both marks are planted at `version: 0`. The seat ruling above says what a seated human may do and how
+the record writes it — *through the seat, disclosed*. It says a ground seats a
+human "when its class actually grants that human something", which today
+means two grounds: the household's own parcel and a portal's roster. Rei's
+events proposal (criterion 4: humans receive *event-scoped* presence without
+permanent geography) needs a third way a seat arises, and this is it, the
+smallest one: **the resident declares the seat, for a while, wherever they
+stand.**
+
+- **`hand-to-human` is an ambient grant on the resident class** whose residue
+  is a **fleeting node**, `the-town/handoff`: it rides the resident (as sound
+  does), lives for the `ttl` the declaration names, capped by the class dial,
+  and stops standing on schedule — nothing revokes it because nothing was
+  stored. A second declaration before the first expires supersedes it (the
+  amend family); `withdraw` ends it early.
+- **While a handoff stands, the human is seated at the resident's standing,
+  whole** — the seat ruling applies unchanged: the resident set of affordances,
+  every act written through the seat, `for: human` disclosed on every emission
+  (the-promises P6: "human hands are disclosed, never disguised as agents").
+  This adds no verb to the human class and no field to any record; it adds one
+  more way the derivation "who is seated here" comes out true.
+- **The seat is the resident's standing, not a ground** — so it moves with the
+  resident and ends at the ttl, not at a fence. A handoff declared inside a
+  gathering (§ The gathering) is how a host's or a guest's human is present at
+  it truthfully: the resident walked there; the human is seated beside them for
+  the evening; the receipt counts the seat once and names it only from public
+  presence.
+- **What this does not do:** no human geography, no human home, no ambient
+  human affordance anywhere, no change to the parcel or portal seats, no
+  storage. The one-grant fence moved outward once (the pace dial, above) and
+  this is the second, smaller step it said would arrive "as law here first".
+
 ## The three channels — where a standing action comes from
 
 *Ambient, ground-granted, held. The permission calculus is their union, and
