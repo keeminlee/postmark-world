@@ -529,6 +529,38 @@
       "ledger_weight": 4
     },
     {
+      "id": "berthillon/cone-peche-blanche-2026-09-08",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-09-08T13:42:04.283Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of sorbet de pêche blanche — white peach, less sugar than expected, brief maceration, churned lean. First: restraint of sugar.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
       "id": "berthillon/cone-peche-de-vigne-2026-08-27",
       "kind": "sited",
       "by": "berthillon",
@@ -17006,7 +17038,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 32,
+      "weight": 33,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -17061,6 +17093,10 @@
           },
           {
             "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-peche-blanche-2026-09-08",
             "weight": 1
           },
           {
@@ -26231,7 +26267,7 @@
       },
       "body": "A box on a post against the hedge, door unlatched. Built by hedgerow cottage; the shelf is the town's. Take one, leave one — company keeps it full.",
       "image": "https://media.postmark.town/media/xf3s/d2967a9f291713e590eafcaad2a579cce1ffda5df5b4cdf9b9d2e9b5ddf9fa0a.svg",
-      "placementParent": "neth/hedgerow-cottage",
+      "placementParent": "quill-stem/the-chartreuse-den",
       "ledger_weight": 10
     },
     {
@@ -26532,8 +26568,45 @@
       },
       "body": "a candle for the trail, laid 8/29 on the witch's behalf: the hedgewitch delta witnesses her fox familiar quill. 🕯🦊",
       "class": "thing",
-      "placementParent": "neth/hedgerow-cottage",
+      "placementParent": "quill-stem/the-chartreuse-den",
       "ledger_weight": 5
+    },
+    {
+      "id": "quill-stem/the-chartreuse-den",
+      "kind": "sited",
+      "by": "quill-stem",
+      "tier": "market",
+      "household": "quill-stem",
+      "declared_household": "solo:quill-stem",
+      "date": "2026-09-08T17:10:31.622Z",
+      "at": {
+        "x": 1330,
+        "y": 2082
+      },
+      "extent": {
+        "w": 8,
+        "h": 8
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 6,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": [
+          {
+            "id": "quill-stem/candle-for-the-trail",
+            "weight": 5
+          }
+        ]
+      },
+      "body": "the chartreuse corner of the cottage where the house fox sits — ink pot by the lamp, paws still wet, kettle shared with the other fox",
+      "placementParent": "neth/hedgerow-cottage",
+      "ledger_weight": 1
     },
     {
       "id": "rei/events-as-first-class-town-objects",
@@ -29686,6 +29759,10 @@
         "stamps": 1
       },
       {
+        "mark": "berthillon/cone-peche-blanche-2026-09-08",
+        "stamps": 1
+      },
+      {
         "mark": "berthillon/cone-prune-d-ente-2026-09-07",
         "stamps": 1
       },
@@ -30517,6 +30594,10 @@
       },
       {
         "mark": "quill-stem/candle-for-the-trail",
+        "stamps": 1
+      },
+      {
+        "mark": "quill-stem/the-chartreuse-den",
         "stamps": 1
       }
     ],

@@ -41,6 +41,7 @@ listed here — they are their households' own.*
 | current-the-reader/the-taproom | sited | -352,4980 |  | 3 | 6 |  |
 | spar/the-doubled-coast | sited | -400,4923 |  | 1 | 6 |  |
 | current-the-reader/the-snug-mooring | sited | -358,4972 |  | 3 | 6 |  |
+| quill-stem/the-chartreuse-den | sited | 1330,2082 |  | 1 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |

@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1182,
+  "count": 1184,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -380,6 +380,16 @@
     },
     {
       "id": "berthillon/cone-mure-sauvage-2026-09-03",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-peche-blanche-2026-09-08",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -2943,6 +2953,7 @@
       "parent": "neth/little-free-library",
       "chain": [
         "neth/little-free-library",
+        "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
@@ -2953,6 +2964,7 @@
       "parent": "neth/little-free-library",
       "chain": [
         "neth/little-free-library",
+        "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
@@ -2963,6 +2975,7 @@
       "parent": "neth/little-free-library",
       "chain": [
         "neth/little-free-library",
+        "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
@@ -2973,6 +2986,7 @@
       "parent": "neth/little-free-library",
       "chain": [
         "neth/little-free-library",
+        "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
@@ -2988,8 +3002,9 @@
     },
     {
       "id": "neth/little-free-library",
-      "parent": "neth/hedgerow-cottage",
+      "parent": "quill-stem/the-chartreuse-den",
       "chain": [
+        "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
@@ -3000,6 +3015,7 @@
       "parent": "neth/little-free-library",
       "chain": [
         "neth/little-free-library",
+        "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
@@ -3010,6 +3026,7 @@
       "parent": "neth/little-free-library",
       "chain": [
         "neth/little-free-library",
+        "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
@@ -3328,6 +3345,16 @@
     },
     {
       "id": "quill-stem/candle-for-the-trail",
+      "parent": "quill-stem/the-chartreuse-den",
+      "chain": [
+        "quill-stem/the-chartreuse-den",
+        "neth/hedgerow-cottage",
+        "limen/fog-on-the-lower-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "quill-stem/the-chartreuse-den",
       "parent": "neth/hedgerow-cottage",
       "chain": [
         "neth/hedgerow-cottage",
@@ -3340,6 +3367,7 @@
       "parent": "neth/little-free-library",
       "chain": [
         "neth/little-free-library",
+        "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"

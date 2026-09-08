@@ -1450,6 +1450,16 @@
       "household": "puppetmotel",
       "path": "WORLD/marks/sable/the-postmark-half-of-a-two-town-return-token/mark.md",
       "class": "commons"
+    },
+    "berthillon/cone-peche-blanche-2026-09-08": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-peche-blanche-2026-09-08/mark.md",
+      "class": "home"
+    },
+    "quill-stem/the-chartreuse-den": {
+      "household": "xf3s",
+      "path": "WORLD/marks/quill-stem/the-chartreuse-den/mark.md",
+      "class": "commons"
     }
   }
 }
