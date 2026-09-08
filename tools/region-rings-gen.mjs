@@ -565,6 +565,11 @@ function atlasRingFor(id) {
   // feather) would give it. Nobody is sited in the Headland, so nothing turns on
   // it today; the day someone is, this is the note saying the trade was made on
   // purpose and which way it went.
+  //
+  // RULED 2026-09-08 (Keemin, on the review's item (d) — 1.02 tight vs the
+  // twelve's 1.08): 1.02 STANDS. Widening to the twelve's rule would more than
+  // double the ring's entry into spar's ground (0.87 → 2.07 ha before the clip)
+  // to claim shore nobody is sited on. Re-open only when someone sites there.
   if (id === "the-headland") {
     const land = COASTLINE.slice(HEADLAND_COAST.first, HEADLAND_COAST.last + 1).concat(HEADLAND_INLAND);
     const gx = land.reduce((s, p) => s + p.x, 0) / land.length;
