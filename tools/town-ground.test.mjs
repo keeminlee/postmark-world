@@ -127,6 +127,64 @@ test("THE ROSTERS ARE THE RECORD'S, not this file's: twelve regions and the wate
   for (const w of waters) assert.match(svg, new RegExp(`data-(src|feature)="(mark:)?${w.feature.id}"`), `${w.feature.id} is drawn`);
 });
 
+test("A FLOOR UNDER OMISSION: every skeleton feature that has geometry is ON the ground", () => {
+  // Every other assertion in this file checks that what IS drawn is honest.
+  // None of them notices something QUIETLY MISSING — drop a `kind` from the
+  // filter and a whole feature leaves the map with every test still green.
+  // Presence is a different question from provenance and needs its own floor.
+  //
+  // THE RULE HAS TWO SPELLINGS, and stating only the first would be wrong about
+  // six of the thirteen. A feature whose outline lives on a mark's `points:` is
+  // drawn by the WATER pass and sourced `mark:<mark id>` with the feature named
+  // in `data-feature`; the rest are drawn from the skeleton's own geometry and
+  // sourced `feature:<id>`. Both are "on the ground"; neither is optional.
+  const svg = ground().svgText;
+  const GEOMETRY = ["line_m", "trees_m", "at_m", "centerline_m", "ring_m", "center_m"];
+  const hasGeometry = (f) => GEOMETRY.some((k) => f[k] !== undefined);
+
+  const missing = [];
+  for (const f of skeleton.features ?? []) {
+    if (!hasGeometry(f)) continue;
+    const asFeature = svg.includes(`data-src="feature:${f.id}"`);
+    const asWater = svg.includes(`data-feature="${f.id}"`);
+    if (!asFeature && !asWater) missing.push(f.id);
+  }
+  assert.deepEqual(missing, [], "a feature the skeleton gives geometry to is not on the map");
+
+  // ferrys-route is the ONE exclusion and it is excluded by name, with its
+  // reason, rather than by a filter that would silently swallow the next one:
+  // the record itself says it has no shape yet — "geometry derived per-crossing
+  // from delivery walk; v0 symbolic" — so there is nothing to draw.
+  const ferry = (skeleton.features ?? []).find((f) => f.id === "ferrys-route");
+  assert.ok(ferry, "the route is still on the record");
+  assert.equal(hasGeometry(ferry), false,
+    "ferrys-route carries no geometry — if it ever does, this test starts requiring it on the ground");
+  assert.doesNotMatch(svg, /data-src="feature:ferrys-route"/, "and nothing is drawn for it meanwhile");
+
+  // the count is stated so a feature vanishing from the SKELETON is also visible
+  const geometric = (skeleton.features ?? []).filter(hasGeometry);
+  assert.equal(geometric.length, 12, `twelve of the thirteen features have a shape (${geometric.length})`);
+});
+
+test("…and the floor CAN fail: a feature dropped from the filter is caught", () => {
+  // the flip, run against the function rather than against a mutilated source:
+  // hand townGround a skeleton with one feature's geometry removed, and the
+  // floor's own predicate must stop finding it on the ground
+  const svg = ground().svgText;
+  for (const id of ["aelyria-cliffs", "the-sea", "blackwater-bend-grove"]) {
+    assert.ok(svg.includes(`data-src="feature:${id}"`) || svg.includes(`data-feature="${id}"`),
+      `${id} is on the ground today`);
+  }
+  // remove one and the ground stops carrying it — which is exactly what the
+  // floor above reads, so the floor reds
+  const without = { ...skeleton, features: (skeleton.features ?? []).filter((f) => f.id !== "aelyria-cliffs") };
+  const thinned = townGround(world.marks, without, { originPx, mPerPx }).svgText;
+  assert.ok(!thinned.includes('data-src="feature:aelyria-cliffs"'),
+    "the cliffs leave the map when the skeleton stops naming them — the floor's red condition");
+  // and the rest of the ground is untouched, so the floor points at the one that left
+  assert.ok(thinned.includes('data-feature="the-sea"'), "the sea is still there");
+});
+
 test("THE REGISTRATION DID NOT MOVE — the ground still stands on the skeleton's own grid", () => {
   const g = ground();
   assert.deepEqual(g.originPx, originPx, "the origin is the skeleton's Ferry's-crossing anchor");
@@ -139,12 +197,25 @@ test("THE REGISTRATION DID NOT MOVE — the ground still stands on the skeleton'
     "dawn (5075,450) and dark (-1900,2150) project to the atlas's own (1500,850) → (105,1190)");
 });
 
-test("THE CALL SITE PASSES A SET THAT EXISTS — the test that would have caught this lane's own bug", () => {
-  // The first version of this lane passed `data.marks`. `data` is
-  // { trueWorld, myWorld, worldState, skeleton, manifest } — there is no
-  // `marks` on it. Every assertion in this file stayed green, because each one
-  // hands `townGround` the marks itself and none of them asked what the PAGE
-  // hands it. A falsifier that supplies its own input cannot watch the wiring.
+test("THE CALL SITE PASSES A SET THAT EXISTS — a CHEAP SECOND GUARD, not the real one", () => {
+  // ⚠ READ THIS BEFORE TRUSTING THIS TEST. It is a source-text regex, and a
+  // regex proves a line was TYPED — never that its value reaches the screen.
+  // The fresh reviewer kept this exact call site, discarded its answer, mounted
+  // a blank sheet, and every assertion in this file stayed green. It is brittle
+  // the other way too: reordering `mountScene`'s arguments reds it while nothing
+  // about the page has changed.
+  //
+  // THE REAL GUARD IS `tools/town-ground-page.test.mjs`, which boots the rig and
+  // counts what is actually on the mounted ground. This one is kept because it
+  // costs nothing and it still runs where Playwright is absent — which is the
+  // one condition in which the real guard silently stops watching.
+  //
+  // The bug it was written for: this lane's first call site passed `data.marks`.
+  // `data` is { trueWorld, myWorld, worldState, skeleton, manifest } and there
+  // is no `marks` on it. Every other assertion in this file stayed green,
+  // because each one hands `townGround` the marks itself and none of them asked
+  // what the PAGE hands it. A falsifier that supplies its own input cannot watch
+  // the wiring.
   // the CALL, not the declaration (`export function townGround(marks, …)` sits
   // 4,000 lines above it and matches a lazier pattern — the first version of
   // this assertion caught the definition and reported `marks`)
