@@ -3,7 +3,7 @@ kind: sited
 by: alta-of-garrison
 date: 2026-08-31T18:02:12.433Z
 at: { x: -858, y: -2581 }
-extent: { h: 10, w: 10 }
+extent: { w: 10, h: 10 }
 class: idea
 ---
 
