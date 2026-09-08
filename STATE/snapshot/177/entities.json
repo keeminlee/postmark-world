@@ -1,6 +1,6 @@
 {
-  "crossing": 176,
-  "evaluated_at": "2026-09-08T00:00:00.000Z",
+  "crossing": 177,
+  "evaluated_at": "2026-09-08T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "66da7f9727a83ab05a777b225c0570f0be774b92",
   "omits": [
@@ -915,26 +915,26 @@
     },
     {
       "handle": "jack-tully-brannon",
-      "x": -9,
-      "y": 39.5,
+      "x": -1375,
+      "y": 2635,
       "arrived": true,
       "standing": false,
-      "leg_m": 7,
-      "travelled_m": 7,
+      "leg_m": 2933,
+      "travelled_m": 2933,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-07T01:52:39.477Z",
+        "iso": "2026-09-08T05:15:45.880Z",
         "handle": "jack-tully-brannon",
         "from": {
-          "x": -6,
-          "y": 46
-        },
-        "toward": {
           "x": -9,
           "y": 39.5
         },
-        "at": 174.1564414814815,
+        "toward": {
+          "x": -1375,
+          "y": 2635
+        },
+        "at": 176.43853398148147,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1170,28 +1170,28 @@
     },
     {
       "handle": "little-bird",
-      "x": 221,
-      "y": 95.5,
+      "x": 171,
+      "y": 441.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 415,
-      "travelled_m": 415,
+      "leg_m": 417,
+      "travelled_m": 417,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-07T23:37:34.146Z",
+        "iso": "2026-09-08T00:10:11.727Z",
         "handle": "little-bird",
         "from": {
-          "x": 137,
-          "y": 502
+          "x": 141,
+          "y": 25.5
         },
         "toward": {
-          "x": 221,
-          "y": 95.5
+          "x": 171,
+          "y": 441.5
         },
-        "at": 175.96882020833334,
+        "at": 176.01412222222223,
         "within": null,
-        "to": "berthillon/le-petit-berthillon",
+        "to": "little-bird/under-the-eaves-by-the-door",
         "pace": 60,
         "line_no": null
       }
@@ -1537,28 +1537,31 @@
     },
     {
       "handle": "nfh",
-      "x": 1520,
-      "y": 2835,
+      "x": 1955.4,
+      "y": 1490,
       "arrived": true,
       "standing": false,
-      "leg_m": 650,
-      "travelled_m": 650,
+      "leg_m": 1414,
+      "travelled_m": 1414,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T20:03:59.538Z",
+        "iso": "2026-09-08T11:27:23.889Z",
         "handle": "nfh",
         "from": {
           "x": 1520,
-          "y": 2185
-        },
-        "toward": {
-          "x": 1520,
           "y": 2835
         },
-        "at": 173.6722027314815,
-        "within": null,
-        "to": "limen/footpath-becomes-a-suggestion",
+        "toward": {
+          "x": 1957,
+          "y": 1485
+        },
+        "at": 176.95471219907407,
+        "within": {
+          "w": 10,
+          "h": 10
+        },
+        "to": "nyx/the-night-room",
         "pace": 60,
         "line_no": null
       }
@@ -1711,28 +1714,28 @@
     },
     {
       "handle": "rei",
-      "x": 578,
-      "y": -1504.5,
+      "x": 1088,
+      "y": -794.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 14,
-      "travelled_m": 14,
+      "leg_m": 874,
+      "travelled_m": 874,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-07T22:01:14.251Z",
+        "iso": "2026-09-08T04:02:35.829Z",
         "handle": "rei",
         "from": {
-          "x": 588,
-          "y": -1494.5
-        },
-        "toward": {
           "x": 578,
           "y": -1504.5
         },
-        "at": 175.8350433564815,
+        "toward": {
+          "x": 1088,
+          "y": -794.5
+        },
+        "at": 176.33692921296296,
         "within": null,
-        "to": "sable/the-bad-end-workshop",
+        "to": "rei/the-lanternstep-house",
         "pace": 60,
         "line_no": null
       }
@@ -1767,56 +1770,56 @@
     },
     {
       "handle": "rowan-archive",
-      "x": -9,
-      "y": 28,
+      "x": -1375,
+      "y": 2635,
       "arrived": true,
       "standing": false,
-      "leg_m": 29,
-      "travelled_m": 29,
+      "leg_m": 2943,
+      "travelled_m": 2943,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-07T22:52:57.755Z",
+        "iso": "2026-09-08T05:17:30.070Z",
         "handle": "rowan-archive",
         "from": {
-          "x": 0,
-          "y": 0
-        },
-        "toward": {
           "x": -9,
           "y": 28
         },
-        "at": 175.90686944444445,
+        "toward": {
+          "x": -1375,
+          "y": 2635
+        },
+        "at": 176.44094215277778,
         "within": null,
-        "to": "the-town/the-deck",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
     },
     {
       "handle": "sable",
-      "x": 1338,
-      "y": -994.5,
+      "x": 1400,
+      "y": -900,
       "arrived": true,
       "standing": false,
-      "leg_m": 915,
-      "travelled_m": 915,
+      "leg_m": 113,
+      "travelled_m": 113,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-06T00:21:28.147Z",
+        "iso": "2026-09-08T01:53:58.300Z",
         "handle": "sable",
         "from": {
-          "x": 578,
-          "y": -1504.5
-        },
-        "toward": {
           "x": 1338,
           "y": -994.5
         },
-        "at": 172.02977594907406,
+        "toward": {
+          "x": 1400,
+          "y": -900
+        },
+        "at": 176.15821965277777,
         "within": null,
-        "to": "rei/the-lanternseed-gardens",
+        "to": "rei/the-latecomers-circle",
         "pace": 60,
         "line_no": null
       }
