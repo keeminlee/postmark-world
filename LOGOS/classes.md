@@ -1485,3 +1485,40 @@ holder as a rider rides the deck; what may anchor where is class contract
 (rendered as `the-town/the-anchor`). **A thing is not ground**: nothing files
 under a thing by geometry, and a walk onto it sets you down on what it stands
 on (rendered as `the-town/the-not-ground`).
+
+**The reach of a hold (ruled 2026-09-07, the founder's word: "taking something
+should require moving into its coords extent (just like enter/exit), and you
+should be able to drop something right where you stand").**
+
+Rendered in the world as `the-town/the-reach` (a child of `the-town/attach`).
+
+The attach class
+already says an attachment *"is good only where you truly stand"*; the walks of
+09-07 found the door quoting that sentence and enforcing none of it — a thing
+given from 379 m away mid-leg, a set-down that left the thing where it was
+first laid, a private draft changing hands. This clause is the sentence the
+door enforces:
+
+- **A take is a threshold act.** To take a thing you stand within its extent,
+  exactly as an entry stands *at a threshold you truly stand before*
+  (`the-town/enter`); a take from outside that extent is refused, and the
+  refusal names the distance and the walk that closes it. A thing is not ground
+  (`the-town/the-not-ground`), so standing "within" it is standing on what it
+  stands on, at its footprint.
+- **A set-down stands where you stood.** A drop places the thing at the
+  dropper's standpoint at the instant of the act — that position is written on
+  the act and is canon at the next fold like any move, never a fall-back to the
+  last place the thing was folded. Between the drop and the fold, the read
+  derives it from the act, as position is always derived.
+- **A give is a take at arm's length.** Giver and receiver stand within reach
+  of each other (`earshot_m` of the say edge is the town's one measure of
+  "beside"); a give to a resident out of reach is refused by name, and a `to:`
+  on a thing the giver does not hold is refused, never silently rewritten as a
+  take.
+- **Only what stands on the world changes hands.** A private draft is on no
+  docket and in no public answer, so it can be held by nobody but its author's
+  household until it publishes; a hold edge on an unpublished thing is refused.
+- **The receipt's vocabulary is the card's.** `carried along` / `set down`
+  are the two propagations the attach class names; a receipt says which, in
+  those words.
+
