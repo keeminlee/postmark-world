@@ -22,8 +22,16 @@ GROUND (an svg document) and a REGISTRATION (origin/scale turning world metres
 into that svg's units) and mounts the entire painting machinery on it — layers,
 overlay, walkers, hover, click precedence, choosers, walk desk, bubbles, camera.
 
-- The town's ground is the atlas (`/atlas/town.html`), registration from the
-  skeleton's `_grid`.
+- The town's ground is `townGround(marks, skeleton)`, registration from the
+  skeleton's `_grid`. **It was the atlas** (`/atlas/town.html`, a drawing
+  rendered in the town repo and synced to the site) **until 2026-09-08**, when
+  the founder ruled: *"no more atlas background, all world visuals are from the
+  world."* Same sheet, same registration, different source — the regions' and
+  the water's own `points:` rings, the skeleton's light poles and night
+  enclaves, and its terrain features. Every drawn element names its source in
+  `data-src` (`mark:<id>` · `feature:<id>` · `light:<id>` · `light:day-axis`),
+  which is what makes "from the world" a thing a test can read rather than a
+  claim a screenshot would pass on.
 - A room's ground is `roomGround(mark)`: the **paper floor** — a full-bleed
   drafting sheet (warm paper, squared with a ruled grid at a round number of
   metres, the room's own boundary drawn as the wall — its POLYGON RING where the
@@ -43,16 +51,17 @@ contents, wherever they came from.
 ## The complete difference list
 
 Every code-level difference between the town scene and a mark scene, each with
-its justification. There are **eight**.
+its justification. There are **seven** (2026-09-08: #6 was retired by the atlas
+merge — see its row).
 
 | # | Difference | Justification |
 |---|---|---|
-| 1 | **Ground source** — atlas fetch vs `roomGround()` (white / mark image / art slot) | The founder's ruling itself: the background is the ONE scene-unique element. Same layer slot, same structure, different src. |
+| 1 | **Ground source** — `townGround(marks, skeleton)` vs `roomGround(mark)` | The founder's ruling itself: the background is the ONE scene-unique element. Same layer slot, same structure, different src. **Narrowed 2026-09-08:** it used to be a fetch versus a function, and the fetch was the last thing on this page that read a surface the world does not own. Both grounds are now generated from the record by a sibling function, so the difference is which record — the town's whole ground versus one mark's floor — and no longer where the picture comes from. |
 | 2 | **Registration** — the skeleton grid vs a per-room frame (`ROOM_GROUND_UNITS` span) | Keeps the engine in the numeric regime the town tuned it for (zoomK ≈ 1, marker var ≈ 1). A shared frame forced rooms to zoomK 400–600 — past `MAX_ZOOM_IN`, where markers blow out and atlas text drowns the art. Same arithmetic, sane numbers; QA-asserted. |
 | 3 | **`zoomOutLimit: 1`** — the wheel's zoom-OUT clamp is the whole room (the town keeps `MAX_ZOOM_OUT`); everything else on the camera — zoom-in, pan, the full `.wv-mapctl` rail (fit, follow, grid, footprints, conversations) — is the town's own, live | The revised camera ruling (founder, 2026-08-20 evening, superseding "a room refuses a camera"): a room HAS a camera, but its outermost state IS the whole room — dive into a corner, toggle the extent outlines, read the talk, and fit brings the floor back; you never drift past the walls into the void. |
 | 4 | **`includeMine: false`** — the portfolio union (`state.mineIds`) stays out of the draw-set | The roof. Without it every mark the acting resident owns anywhere in town enters `glyphIds` and stays hit-testable from inside a room (2026-08-20 spike receipt). Refused at the source, not filtered later. |
 | 5 | **The exit chrome** — `.wv-scene-exit`, bottom-left of the pane, every view mode | The way out must exist where the reader is. The telling's own exit collapses with the telling in painting-only — the DEFAULT mode — which is how the founder stood in a room with no visible door (the b6 diagnosis). Same `.wv-int-exit-btn` class: one click route, no drift. |
-| 6 | **`placeholderExtents: true`** — the scene FURNISHING pass, under the pips, largest first: an art-clad mark hangs its shelf image framed over its extent (the bulletin's promise — the town needs no such pass because the atlas bakes art at sync; a room has no baker); an art-less mark draws its extent as a block in a deterministic per-mark colour at LOW saturation | The founder's word (2026-08-20, replacing always-on footprints): inside a room, furniture without its footprint is a dot pretending to be a table. Distinctness comes from hue, never transparency; the same mark is the same colour for every reader on every load. Drawn by the ONE overlay, gated by the scene; the town keeps its footprint toggle. |
+| 6 | ~~**`placeholderExtents: true`**~~ — **RETIRED 2026-09-08. NOT A DIFFERENCE ANY MORE: both scenes pass `true`.** | This row's justification was *"the town needs no such pass because the atlas bakes art at sync; a room has no baker"* — and on 2026-09-08 the town stopped being served by the baker. `townGround()` draws geometry, never images, so an unfurnished town would have hung nothing at all: 540 sited marks as bare pips over a ground with no houses on it. The pass itself is unchanged and its founder's word still governs it (2026-08-20, replacing always-on footprints: inside a room, furniture without its footprint is a dot pretending to be a table; distinctness comes from hue, never transparency; the same mark is the same colour for every reader on every load; drawn by the ONE overlay). What changed is that it is no longer *scene-unique* — which is the direction this list is supposed to move. The town keeps its footprint toggle, unchanged. |
 | 7 | **At-rest refit letterboxes** — a contained scene sitting at its full view letterboxes on pane reshape (contains the ground, centred); once zoomed in, the town's keep-width refit takes over | The room-shown-whole guarantee at rest (scene-qa's pip at y=−183 is the receipt), without fighting the hand once a hand exists. One branch on the same `zoomOutLimit` signal as #3. |
 | 8 | **`sceneWalkerSet`** — WHICH bodies the walk layer may draw, and nothing else about them: indoors, the room's own manifest (the crossing record's occupants, child rooms included); outdoors, the whole town, unchanged. How a body is drawn and where it stands are untouched — see the walker clause below | The founder's word (fix list 2026-08-29, reaffirmed 2026-08-31): *"resident activity OUTSIDE the interior is visible from interior view."* A room's ground carries its own registration (#2), so every walker in town projected onto it and anyone whose COORDINATES happened to fall inside the footprint was painted on the floor — 81 bodies offered, 2 of the 6 that landed being people the record puts in other rooms entirely. But standing on it is not being in it: coordinates answer `within`, a room is `insideOf`, and `standpointOccupancy`'s own header says the two "routinely disagree." The telling has enforced the crossing answer for its bodies since the room shipped; the floor was never asked the question, and a reader believes what they can see. Refused at the source like #4, so a body outside the room never becomes a glyph and cannot be hit, hovered or chosen either. |
 

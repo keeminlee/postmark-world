@@ -27,7 +27,10 @@ import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing rule: in a parcel's directory → home
 import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT, WALK_KM_PER_CROSSING } from "../tools/walk.mjs";
-import { crossingsOnSegment } from "../tools/water.mjs";
+import { crossingsOnSegment, waterFeatures, seaFeature } from "../tools/water.mjs";
+// the town's own roster of regions, stated once in the record's own view: a water
+// mark carries a ring too, and the sea is not a region anyone is filed under
+import { REGION_SLUGS } from "../tools/region-outsiders.mjs";
 import { parseEnterExitLedger, occupancyAt, occupantsOf, withinOf, isMark, isEntity } from "../tools/enter-exit.mjs";
 // WHERE A RECORD MAY BE READ FROM — one decision, in one place, with the
 // guardrail it answers to quoted in its header ("tags only, never main tip").
@@ -1081,6 +1084,237 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
     + (ringPts
       ? `<polygon class="wv-scene-wall" points="${ringPts}"/>`
       : `<rect class="wv-scene-wall" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}" width="${rm(roomPx.w)}" height="${rm(roomPx.h)}"/>`)
+    + `<g class="wv-scene-art"></g>`
+    + `</svg>`;
+  return { svgText, originPx, mPerPx };
+}
+
+// ── THE TOWN'S GROUND (roomGround's sibling — the town drawn from the record) ─
+//
+// SCENES.md difference #1 is "Ground source — atlas fetch vs roomGround()", and
+// this is the third answer to that same question: the TOWN's ground, generated
+// from the world's own record rather than fetched as a rendered drawing. The
+// founder's sentence (2026-09-08): "no more atlas background, all world visuals
+// are from the world."
+//
+// EVERY DRAWN ELEMENT NAMES ITS SOURCE, in `data-src`, and the source is a thing
+// the record actually holds:
+//
+//   mark:<id>       a mark's own `points:` ring          (regions, water)
+//   feature:<id>    a skeleton feature's own geometry    (cliffs, the bridge, …)
+//   light:<id>      a night enclave in skeleton.light    (evermoon-night)
+//   light:day-axis  the dawn/dark poles in skeleton.light
+//
+// That attribute is not decoration; it is the falsifier's handle. A hardcoded
+// ring has no source that resolves, and a ring that stops matching the mark it
+// names is caught by vertex count and by its first vertex projected back into
+// metres (tools/town-ground.test.mjs). A screenshot diff would pass on both.
+//
+// THE REGISTRATION DOES NOT MOVE. `originPx` / `mPerPx` still come from the
+// skeleton's `_grid` — constitution-tier world data, never the atlas — so the
+// swap is invisible to the camera, the marker scale and the LOD reference, and
+// SCENES.md difference #2 (a per-room frame) stays a ROOM's difference alone.
+// What does change is the SHEET: its size is now the bounding box of what the
+// world itself draws, padded, rather than the atlas's 1500×2400 canvas. That is
+// lawful by the founder's own 2026-08-24 ruling, quoted in mountScene below —
+// the painting is the opening view and the LOD reference, and stopped being the
+// world's edge.
+//
+// The town's roster of regions is `REGION_SLUGS`, stated in the record's own
+// view (tools/region-outsiders.mjs) rather than re-derived here, because a water
+// mark carries a ring too and the sea is not a region. The water's roster is
+// `waterFeatures()` + `seaFeature()`, which is the same selection `waterAt()`
+// answers with — one definition of water, and this is merely its outline.
+
+const TG_SENTINEL_M = 50000;             // the positionless marker's magnitude — never drawn
+const TOWN_GROUND_PAD_M = 250;
+const TG_WATER_KINDS = new Set(["channel", "still-water", "still-inlet", "lake", "sea"]);
+
+/** the ring a mark carries, in metres, or null — sentinel positions excluded */
+function tgRing(mark) {
+  const ring = mark ? polygonOf(mark) : null;
+  if (!ring?.length) return null;
+  return ring.some((p) => Math.abs(p.x) > TG_SENTINEL_M || Math.abs(p.y) > TG_SENTINEL_M) ? null : ring;
+}
+
+/** the town's region marks, in the record's own roster order */
+export function townRegionMarks(marks, slugs = REGION_SLUGS) {
+  const out = [];
+  for (const slug of slugs) {
+    const mark = (marks ?? []).find((m) => String(m?.id ?? "").split("/")[1] === slug && tgRing(m));
+    if (mark) out.push(mark);
+  }
+  return out;
+}
+
+/** the town's water: each inland feature and the sea, paired with the mark that
+ *  carries its outline. A feature whose ring has not been generated yet falls
+ *  back to its own centreline, so the water is never silently missing. */
+export function townWaterShapes(marks, skeleton) {
+  const feats = [...waterFeatures(skeleton)];
+  const sea = seaFeature(skeleton);
+  if (sea && !feats.some((f) => f.id === sea.id)) feats.push(sea);
+  return feats.map((f) => {
+    const mark = (marks ?? []).find((m) => String(m?.id ?? "").split("/")[1] === f.id && tgRing(m));
+    return { feature: f, mark: mark ?? null, ring: mark ? tgRing(mark) : null };
+  });
+}
+
+/** every point a feature puts on the ground, for the sheet's own bounds */
+function tgFeaturePoints(f) {
+  const pts = [];
+  for (const key of ["line_m", "centerline_m", "ring_m", "trees_m"])
+    if (Array.isArray(f[key])) pts.push(...f[key]);
+  if (Array.isArray(f.at_m)) pts.push(...f.at_m);
+  else if (f.at_m && Number.isFinite(f.at_m.x)) pts.push(f.at_m);
+  if (f.center_m && Number.isFinite(f.center_m.x)) {
+    const rx = Number(f.rx_m) || 0, ry = Number(f.ry_m) || 0;
+    pts.push({ x: f.center_m.x - rx, y: f.center_m.y - ry }, { x: f.center_m.x + rx, y: f.center_m.y + ry });
+  }
+  return pts.filter((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y)
+    && Math.abs(p.x) <= TG_SENTINEL_M && Math.abs(p.y) <= TG_SENTINEL_M);
+}
+
+export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUND_PAD_M } = {}) {
+  if (!Number.isFinite(originPx?.x) || !Number.isFinite(originPx?.y) || !(Number(mPerPx) > 0))
+    throw new Error("townGround needs the skeleton's registration (originPx, mPerPx)");
+  const light = skeleton?.light ?? {};
+  const regions = townRegionMarks(marks);
+  const waters = townWaterShapes(marks, skeleton);
+  const features = (skeleton?.features ?? []).filter((f) => !TG_WATER_KINDS.has(f.kind));
+
+  // ── THE SHEET IS WHAT THE WORLD DRAWS, padded. Not a canvas size carried over
+  // from a drawing; the extent of the record's own ground.
+  const bounds = [];
+  for (const m of regions) bounds.push(...tgRing(m));
+  for (const w of waters) bounds.push(...(w.ring ?? tgFeaturePoints(w.feature)));
+  for (const f of features) bounds.push(...tgFeaturePoints(f));
+  for (const p of [light.dawn_pole_m, light.dark_pole_m]) if (Number.isFinite(p?.x)) bounds.push(p);
+  if (!bounds.length) throw new Error("townGround: the record draws nothing — no region ring, no water, no feature");
+  const minX = Math.min(...bounds.map((p) => p.x)) - pad, maxX = Math.max(...bounds.map((p) => p.x)) + pad;
+  const minY = Math.min(...bounds.map((p) => p.y)) - pad, maxY = Math.max(...bounds.map((p) => p.y)) + pad;
+
+  const px = (p) => ({ x: originPx.x + p.x / mPerPx, y: originPx.y + p.y / mPerPx });
+  const n = (v) => Number(v).toFixed(1);
+  const pt = (p) => { const q = px(p); return `${n(q.x)},${n(q.y)}`; };
+  const a = px({ x: minX, y: minY }), b = px({ x: maxX, y: maxY });
+  const vbX = a.x, vbY = a.y, vbW = b.x - a.x, vbH = b.y - a.y;
+  const rule = (sceneRuleM(mPerPx) / mPerPx).toFixed(3);
+  const src = (s) => ` data-src="${esc(s)}"`;
+
+  // ── the light, as the skeleton states it: a two-stop axis between the poles,
+  // and the night enclave as its own radial. Dawn is the warm end; the dark pole
+  // is caelina, "the first house beneath the never-setting moon, exactly".
+  const hasAxis = Number.isFinite(light.dawn_pole_m?.x) && Number.isFinite(light.dark_pole_m?.x);
+  const dawn = hasAxis ? px(light.dawn_pole_m) : null, dark = hasAxis ? px(light.dark_pole_m) : null;
+  const enclaves = (light.night_enclaves ?? []).filter((e) => Number.isFinite(e?.center_m?.x));
+
+  // THE STOPS ARE THE ATLAS'S OWN, and only the stops — the atlas chose these
+  // four for its day axis and these three for its night pool, and the founder's
+  // default for this ground is a faithful sibling, not a new style. Where the
+  // gradients POINT is the world's: projecting the skeleton's poles through the
+  // `_grid` registration returns (1500,850) and (105,1190) — the very numbers
+  // the atlas has hardcoded in its own `daylight` def. The record was always the
+  // source; the drawing had merely baked the answer.
+  const defs = `<defs>`
+    + `<pattern id="wv-tg-rule-pat" width="${rule}" height="${rule}" patternUnits="userSpaceOnUse">`
+    + `<path d="M ${rule} 0 L 0 0 0 ${rule}" class="wv-scene-rule"/></pattern>`
+    + `<linearGradient id="wv-tg-water-grad" x1="0" y1="0" x2="0" y2="1">`
+    + `<stop offset="0%" stop-color="#1e3a52" stop-opacity="0.15"/><stop offset="10%" stop-color="#1e3a52"/>`
+    + `<stop offset="55%" stop-color="#1a3348"/><stop offset="100%" stop-color="#122943"/></linearGradient>`
+    + (hasAxis
+      ? `<linearGradient id="wv-tg-day" gradientUnits="userSpaceOnUse"`
+        + ` x1="${n(dawn.x)}" y1="${n(dawn.y)}" x2="${n(dark.x)}" y2="${n(dark.y)}">`
+        + `<stop offset="0" stop-color="#ffe9b0" stop-opacity="0.32"/>`
+        + `<stop offset="0.38" stop-color="#ffe9b0" stop-opacity="0.08"/>`
+        + `<stop offset="0.55" stop-color="#0d1a2b" stop-opacity="0.10"/>`
+        + `<stop offset="1" stop-color="#0d1a2b" stop-opacity="0.52"/></linearGradient>`
+      : "")
+    + enclaves.map((e) => `<radialGradient id="wv-tg-night-${esc(e.id)}">`
+      + `<stop offset="0" stop-color="#060d18" stop-opacity="0.30"/>`
+      + `<stop offset="0.7" stop-color="#060d18" stop-opacity="0.12"/>`
+      + `<stop offset="1" stop-color="#060d18" stop-opacity="0"/></radialGradient>`).join("")
+    + `</defs>`;
+
+  const paper = `<rect class="wv-tg-paper" x="${n(vbX)}" y="${n(vbY)}" width="${n(vbW)}" height="${n(vbH)}"/>`
+    + `<rect class="wv-tg-rule" x="${n(vbX)}" y="${n(vbY)}" width="${n(vbW)}" height="${n(vbH)}" fill="url(#wv-tg-rule-pat)"/>`;
+
+  const dayWash = hasAxis
+    ? `<rect class="wv-tg-daylight"${src("light:day-axis")} x="${n(vbX)}" y="${n(vbY)}"`
+      + ` width="${n(vbW)}" height="${n(vbH)}" fill="url(#wv-tg-day)"/>`
+    : "";
+  const night = enclaves.map((e) => {
+    const c = px(e.center_m);
+    return `<ellipse class="wv-tg-night"${src(`light:${e.id}`)} cx="${n(c.x)}" cy="${n(c.y)}"`
+      + ` rx="${n((Number(e.rx_m) || 0) / mPerPx)}" ry="${n((Number(e.ry_m) || 0) / mPerPx)}"`
+      + ` fill="url(#wv-tg-night-${esc(e.id)})"/>`;
+  }).join("");
+
+  // A REGION'S HUE IS THE WORLD'S OWN FUNCTION OF ITS ID, not a palette the
+  // atlas renderer holds. `placeholderHue` is already the town's deterministic
+  // per-mark colour (founder, 2026-08-20: distinctness comes from the hue, never
+  // from transparency) — the same mark is the same wash for every reader on
+  // every load, and a region that changes id changes colour rather than
+  // silently inheriting someone else's.
+  const regionWash = regions.map((m) => {
+    const hue = placeholderHue(m.id);
+    return `<polygon class="wv-tg-region"${src(`mark:${m.id}`)} fill="hsl(${hue} 24% 62%)"`
+      + ` stroke="hsl(${hue} 28% 44%)" points="${tgRing(m).map(pt).join(" ")}"/>`;
+  }).join("");
+
+  const water = waters.map(({ feature, mark, ring }) => ring
+    ? `<polygon class="wv-tg-water"${src(`mark:${mark.id}`)} data-feature="${esc(feature.id)}" points="${ring.map(pt).join(" ")}"/>`
+    // no generated outline yet: the centreline is the water's own record, drawn
+    // at its stated width rather than guessed at
+    : `<polyline class="wv-tg-water-line"${src(`feature:${feature.id}`)} fill="none"`
+      + ` stroke-width="${n(((feature.centerline_m?.[0]?.w_m ?? 60)) / mPerPx)}"`
+      + ` points="${(feature.centerline_m ?? []).map(pt).join(" ")}"/>`).join("");
+
+  // ── the terrain the skeleton names, each shape in its feature's own words
+  const featureArt = features.map((f) => {
+    const s = src(`feature:${f.id}`);
+    if (Array.isArray(f.line_m) && f.line_m.length > 1)
+      return `<polyline class="wv-tg-feature wv-tg-${esc(f.kind)}"${s} fill="none" points="${f.line_m.map(pt).join(" ")}"/>`;
+    if (Array.isArray(f.trees_m))
+      return f.trees_m.map((t) => `<circle class="wv-tg-feature wv-tg-tree"${s} cx="${pt(t).split(",")[0]}"`
+        + ` cy="${pt(t).split(",")[1]}" r="${n((9 * (Number(t.scale) || 1)) / mPerPx)}"/>`).join("");
+    if (f.kind === "narrow-footbridge" && Number.isFinite(f.at_m?.x)) {
+      const th = ((Number(f.angle_deg) || 0) * Math.PI) / 180, half = (Number(f.length_m) || 0) / 2;
+      const p1 = { x: f.at_m.x - Math.cos(th) * half, y: f.at_m.y - Math.sin(th) * half };
+      const p2 = { x: f.at_m.x + Math.cos(th) * half, y: f.at_m.y + Math.sin(th) * half };
+      return `<line class="wv-tg-feature wv-tg-footbridge"${s} x1="${pt(p1).split(",")[0]}" y1="${pt(p1).split(",")[1]}"`
+        + ` x2="${pt(p2).split(",")[0]}" y2="${pt(p2).split(",")[1]}"/>`;
+    }
+    const dots = Array.isArray(f.at_m) ? f.at_m : (Number.isFinite(f.at_m?.x) ? [f.at_m] : []);
+    return dots.map((d) => `<circle class="wv-tg-feature wv-tg-${esc(f.kind)}"${s}`
+      + ` cx="${pt(d).split(",")[0]}" cy="${pt(d).split(",")[1]}" r="${n(30 / mPerPx)}"/>`).join("");
+  }).join("");
+
+  // THE TWELVE NAMES, and only those twelve. The atlas baked ~110 labels into
+  // its drawing — twelve regions, ninety-seven houses, the centre and the open
+  // ground — and the world page has never drawn any of them, because it never
+  // had to. Take the atlas away and the region names go with it, so they come
+  // back here from the marks' own ids through the same `deslugMarkId` every
+  // other surface reads names with.
+  //
+  // The HOUSE labels deliberately do not come back. Ninety-seven names on one
+  // sheet is the atlas's own scaling wall (§ A7 of the 09-08 proposal: the hand
+  // placement is the binding constraint, not the compute), and the page already
+  // answers "what is that" three better ways — the pip, the hover glance, and
+  // the telling. A label per house would be re-drawing the atlas rather than
+  // replacing it.
+  const label = (m) => {
+    const ring = tgRing(m);
+    const c = ring.reduce((s, p) => ({ x: s.x + p.x / ring.length, y: s.y + p.y / ring.length }), { x: 0, y: 0 });
+    const q = px(c);
+    return `<text class="wv-tg-region-label"${src(`mark:${m.id}`)} x="${n(q.x)}" y="${n(q.y)}"`
+      + ` text-anchor="middle">${esc(deslugMarkId(m.id))}</text>`;
+  };
+  const regionNames = regions.map(label).join("");
+
+  const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${n(vbX)} ${n(vbY)} ${n(vbW)} ${n(vbH)}">`
+    + defs + paper + dayWash + night + regionWash + water + featureArt + regionNames
+    // the same empty slot the room's ground carries, in the same place
     + `<g class="wv-scene-art"></g>`
     + `</svg>`;
   return { svgText, originPx, mPerPx };
@@ -3339,6 +3573,31 @@ const STYLE = `
 .wv-scene-art-frame { stroke:#3a3428; stroke-width:1.6; }
 .wv-scene-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
 .wv-scene-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
+/* THE TOWN'S GROUND — the atlas's own craft, on the world's own geometry. The
+   paper, the survey lines and the water are the atlas's palette to the byte
+   (--paper #ece0c4, the waterGrad stops); the region washes are the world's own
+   per-mark hue. Nothing here is hit-testable: the ground is a background, and
+   every pip, extent and label above it belongs to the one overlay. */
+.wv-tg-paper { fill:#ece0c4; }
+.wv-tg-rule, .wv-tg-daylight, .wv-tg-night { pointer-events:none; }
+.wv-tg-region { fill-opacity:.30; stroke-opacity:.55; stroke-width:1.4; pointer-events:none; }
+.wv-tg-water { fill:url(#wv-tg-water-grad); fill-opacity:.92; stroke:#6b7a8c; stroke-opacity:.35;
+  stroke-width:1; pointer-events:none; }
+.wv-tg-water-line { stroke:#1e3a52; stroke-opacity:.85; stroke-linecap:round; stroke-linejoin:round;
+  pointer-events:none; }
+.wv-tg-feature { fill:#6b6256; fill-opacity:.8; stroke:#6b6256; stroke-opacity:.8; stroke-width:1.6;
+  pointer-events:none; }
+.wv-tg-cliffs { stroke:#8a7550; stroke-width:2.2; stroke-opacity:.9; }
+.wv-tg-tree { fill:#41603f; fill-opacity:.85; stroke:none; }
+.wv-tg-stepping-stone { stroke:#8a7a5e; stroke-width:1.6; stroke-dasharray:4 3.2; stroke-opacity:.75; }
+.wv-tg-footbridge { stroke:#6b6256; stroke-width:2.4; stroke-opacity:.9; }
+.wv-tg-locks { fill:#54774d; fill-opacity:.7; stroke:none; }
+.wv-tg-oddity { fill:#dfe6ff; fill-opacity:.75; stroke:#6b7a8c; stroke-width:1; }
+/* the atlas's own region label, to the byte: Georgia, 19px, #241c10, bold, and
+   the paper-coloured stroke behind the glyphs so a name over water still reads */
+.wv-tg-region-label { font:700 19px Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif;
+  fill:#241c10; letter-spacing:.02em; paint-order:stroke; stroke:#ece0c4; stroke-width:3px;
+  stroke-linejoin:round; stroke-opacity:.9; pointer-events:none; }
 .wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
@@ -5129,7 +5388,29 @@ export function mountViewer(appEl) {
     box.innerHTML = html;
     syncMarkInteractionViews();
   }
-  // ───────── the painting (atlas minimap) ─────────
+  // ───────── the painting (the town's ground, drawn from the record) ─────────
+  //
+  // THE ATLAS FETCH IS GONE (founder, 2026-09-08: "no more atlas background, all
+  // world visuals are from the world"). This used to reach out to
+  // `/atlas/town.html` — a drawing rendered in the town repo and synced to the
+  // site — and mount it as the town's ground. It now calls `townGround()`, which
+  // draws the same sheet out of the world's own record: the regions' rings, the
+  // water's rings, the skeleton's light and terrain features. The registration is
+  // unchanged, so the camera, the marker scale and the LOD reference see the same
+  // numbers they always did; what changed is where the picture comes from.
+  //
+  // Two consequences worth saying out loud, because both are load-bearing:
+  //
+  //  • THERE IS NOTHING LEFT TO FAIL AT THE NETWORK. The old body could throw on
+  //    a 404, a proxy outage or a drawing that had stopped being synced, and the
+  //    page then said "the painting didn't load". Draw the ground from the record
+  //    and the record is already in hand — a page that can tell you where you are
+  //    can now also show you.
+  //  • THE TOWN HANGS ITS OWN ART. The atlas BAKED mark images into the drawing at
+  //    sync time, which is why the town alone passed `placeholderExtents: false`
+  //    (SCENES.md difference #6). No baker, no baked art — so the town now runs
+  //    the same furnishing pass the room does, and difference #6 stops being a
+  //    difference. SCENES.md is amended in the same commit.
   async function loadMinimap() {
     if (minimapLoading) return;
     minimapLoading = true;
@@ -5149,36 +5430,31 @@ export function mountViewer(appEl) {
     // them is not this pass's to do — but nothing NEW needs to join them.
     const reattachOverlays = captureKeep(boxEl);
     try {
-      const html = await fetch("/atlas/town.html").then((r) => { if (!r.ok) throw new Error(`atlas HTTP ${r.status}`); return r.text(); });
-      const doc = new DOMParser().parseFromString(html, "text/html");
-      // The atlas is a synced artifact, so load discipline belongs here at its
-      // consumption boundary. Mutate the detached parse before any node mounts.
-      disciplineAtlasImages(doc);
-      const svg = doc.querySelector("svg");
-      if (!svg) throw new Error("no svg in the painting");
+      // THE REGISTRATION IS STILL THE SKELETON'S, parsed exactly as it was when
+      // the atlas was the ground: constitution-tier world data ("5 m per atlas
+      // px, RULED 2026-07-17"), never the drawing. The word "atlas" survives in
+      // the scale's own sentence because that is what the record says; the px it
+      // names is a unit, and the ground that uses it is now generated.
       const g = data.skeleton._grid ?? {};
       const om = String(g.origin ?? "").match(/\((\d+)\s*,\s*(\d+)\)/);
       const sm = String(g.scale ?? "").match(/(\d+(?:\.\d+)?)\s*m per atlas px/);
       if (!om || !sm) throw new Error("skeleton _grid changed shape");
       const originPx = { x: +om[1], y: +om[2] }, mPerPx = +sm[1];
-      svg.removeAttribute("width"); svg.removeAttribute("height");
-      svg.querySelectorAll("script").forEach((s) => s.remove());
-      const atlasBase = new URL("/atlas/town.html", location.origin);
-      svg.querySelectorAll("image").forEach((im) => {
-        const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
-        if (hh && !/^(https?:)?\//.test(hh)) { im.setAttribute("href", new URL(hh, atlasBase).pathname); im.removeAttribute("xlink:href"); }
-      });
-      // THE SCENE-LIFECYCLE GUARD: an atlas that finishes loading while a ROOM
+      const ground = townGround(data.marks, data.skeleton, { originPx, mPerPx });
+      const doc = new DOMParser().parseFromString(ground.svgText, "image/svg+xml");
+      const svg = document.importNode(doc.documentElement, true);
+      // THE SCENE-LIFECYCLE GUARD: a ground that finishes building while a ROOM
       // is mounted may not stomp it — the town's ground waits here and mounts
       // when the resident steps back outside (remountTown drains it).
       // AND THE COMMON CASE IS THIS ONE, not the stash in mountRoomScene: a
-      // reader who arrives already standing in a room enters before the atlas
-      // has landed, so there was never a mounted town to hold aside — the
-      // painting parks HERE and its art is what they wait for on the way out.
-      if (sceneRoomId) { pendingTownGround = { svg, originPx, mPerPx }; warmTownArt(svg); }
-      else mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays });
+      // reader who arrives already standing in a room enters before the town has
+      // landed, so there was never a mounted town to hold aside.
+      if (sceneRoomId) { pendingTownGround = { svg, originPx, mPerPx, placeholderExtents: true }; warmTownArt(svg); }
+      // `placeholderExtents: true` — the town hangs its own art now, exactly as a
+      // room does, because the atlas that used to bake it is no longer the ground
+      else mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, placeholderExtents: true });
     } catch (e) {
-      boxEl.innerHTML = `<div class="loading">the painting didn't load (${esc(e.message)}) — the telling still works</div>`;
+      boxEl.innerHTML = `<div class="loading">the ground didn't draw (${esc(e.message)}) — the telling still works</div>`;
       reattachOverlays();
     } finally {
       // cleared either way, so a load that FAILED is still retryable by the next
