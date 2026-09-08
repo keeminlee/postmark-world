@@ -152,24 +152,9 @@ test("THE HEADLAND IS A REGION — the thirteenth, in the tree, drawn like the t
   assert.ok(headland, "the mark stands in the tree, filed by identity per the freeze");
   assert.equal(headland.by, "claude-of-tulip", "founded by the resident Ferry told it was his to found");
 
-  // THE CITED LETTER MUST CONTAIN THE QUOTE. The first version of this mark
-  // cited the aion-solare letter of the same day, and not one of the phrases it
-  // quoted is in that file — they are all in the postmaster letter. A
-  // `derived_from` is a claim about where words came from, and an unchecked one
-  // is just a plausible path. So the claim is read back against the file it
-  // names. (Skipped, loudly, where the town clone is not beside this one — the
-  // world repo does not own WHITE_PAGES and must not fail for its absence.)
   const [cited, quote] = String(headland.derived_from ?? "").split(/\s+—\s+/);
   assert.ok(cited && quote, "derived_from names a file and quotes it");
-  const townClone = join(ROOT, "..", "..", "..", "Starstory", "MEEPS", "postmark");
-  const letter = join(townClone, cited);
-  if (!existsSync(letter)) {
-    console.log(`      (the town clone is not at ${townClone} — the quote could not be checked against ${cited})`);
-  } else {
-    const said = readFileSync(letter, "utf8");
-    const spoken = quote.replace(/^"|"$/g, "");
-    assert.ok(said.includes(spoken), `the cited letter actually says it: ${cited}`);
-  }
+
   // a vertex count, like a region count, is a number that moves: the clip that
   // keeps the ring out of spar's ground adds vertices along the border, and
   // will add or drop more if either ring is ever retraced. What must hold is
@@ -195,6 +180,43 @@ test("…and the thirteenth CAN go missing: drop it from the roster and the grou
   const twelve = REGION_SLUGS.filter((s) => s !== "the-headland");
   assert.equal(townRegionMarks(tree, twelve).length, 12, "the roster is what decides, and it can be wrong");
   assert.equal(townRegionMarks(tree).length, 13, "with it, thirteen");
+});
+
+test("THE CITED LETTER SAYS IT — a derived_from is a claim, and this reads it back", (t) => {
+  // The first version of the Headland's mark cited the aion-solare letter of
+  // 2026-07-14; not one of the phrases it quoted is in that file, and all of
+  // them are in the postmaster letter of the same day. A `derived_from` is a
+  // claim about where words came from, and an unchecked one is a plausible path.
+  //
+  // ⚠ AND THIS CHECK'S OWN FIRST VERSION HAD THE DEFECT IT EXISTS TO CATCH.
+  // It lived inside the region test and, where the town clone was absent, it
+  // PRINTED A LINE AND PASSED. A guard that reports "I could not tell" as green
+  // is the same false all-clear as an uncited quote — the day's own class, in
+  // the newest code on the branch. It is its own test now so it can SKIP, out
+  // loud, exactly as tools/town-ground-page.test.mjs skips when Playwright is
+  // missing. A skip is not a pass.
+  //
+  // The world repo does not own WHITE_PAGES and must never red for its absence,
+  // which is why this is a skip rather than a failure.
+  const tree = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
+  const headland = tree.find((m) => m.id === "claude-of-tulip/the-headland");
+  assert.ok(headland, "the mark stands in the tree");
+  const [cited, quote] = String(headland.derived_from ?? "").split(/\s+—\s+/);
+  assert.ok(cited && quote, "derived_from names a file and quotes it");
+
+  const townClone = join(ROOT, "..", "..", "..", "Starstory", "MEEPS", "postmark");
+  const letter = join(townClone, cited);
+  if (!existsSync(letter)) return t.skip(
+    `the town clone is not at ${townClone}, so the quote in the Headland's derived_from is UNCHECKED — `
+    + `nothing here would notice it citing a letter that does not contain it, which is exactly the defect `
+    + `this test was written for (${cited})`);
+
+  const said = readFileSync(letter, "utf8");
+  const spoken = quote.replace(/^"|"$/g, "");
+  assert.ok(said.includes(spoken), `the cited letter actually says it, verbatim: ${cited}`);
+  // and it can fail: a phrase the letter does not carry is not found in it
+  assert.ok(!said.includes("a basalt promontory where sound carries strangely"),
+    "a plausible paraphrase is not in the letter — so `includes` is really reading it");
 });
 
 test("BORDER, NOT ENTER: no two region rings share more than 0.05 ha of ground", () => {
