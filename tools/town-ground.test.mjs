@@ -173,8 +173,28 @@ test("THE ATLAS IS NOT FETCHED — the last read of a surface the world does not
   assert.doesNotMatch(VIEWER, /fetch\(\s*["'`]\/atlas\//,
     "the viewer no longer fetches the atlas anywhere");
   // the town now runs the room's furnishing pass, because the baker is gone
-  assert.match(VIEWER, /mountScene\(\{ boxEl, svg, originPx, mPerPx, reattachOverlays, placeholderExtents: true \}\)/,
+  assert.match(VIEWER, /mountScene\(\{ boxEl, svg, originPx, mPerPx, reattachOverlays, placeholderExtents: true, groundMarkIds: ground\.groundMarkIds \}\)/,
     "the town hangs its own art (SCENES.md #6, retired the same day)");
+});
+
+test("A MARK IS DRAWN ONCE — the ground names what it drew, and the furnishing pass skips it", () => {
+  // The defect this answers was visible from across the room: the main channel
+  // came out dark and correct as water, and was then repainted on top as a pale
+  // placeholder block in its own hue — a river running sage-green down the
+  // middle of the town, because the ground and the overlay were two renderers
+  // reading one record with no rule about who owns a shape.
+  const g = ground();
+  assert.ok(g.groundMarkIds instanceof Set, "the ground reports what it drew");
+  const regionIds = townRegionMarks(world.marks).map((m) => m.id);
+  const waterIds = townWaterShapes(world.marks, skeleton).filter((w) => w.mark).map((w) => w.mark.id);
+  assert.deepEqual([...g.groundMarkIds].sort(), [...regionIds, ...waterIds].sort(),
+    "every ringed mark the ground draws, and nothing it does not");
+  assert.ok(g.groundMarkIds.has("the-town/the-main-channel"), "the channel that caught this");
+  // the overlay honours it, and the honouring is at the SOURCE of the furnish set
+  assert.match(VIEWER, /const onTheGround = mapCtx\.groundMarkIds \?\? new Set\(\);/);
+  assert.match(VIEWER, /isEmbodiedMark\(m\) && m\.extent && !onTheGround\.has\(m\.id\)/);
+  // and the room's ground answers the same question about its own wall
+  assert.match(VIEWER, /groundMarkIds: new Set\(\[room\?\.id\]\.filter\(Boolean\)\)/);
 });
 
 test("the falsifiers CAN fail: a hardcoded ring, an invented source, and a drifted ring are all caught", () => {

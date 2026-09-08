@@ -1086,7 +1086,10 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
       : `<rect class="wv-scene-wall" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}" width="${rm(roomPx.w)}" height="${rm(roomPx.h)}"/>`)
     + `<g class="wv-scene-art"></g>`
     + `</svg>`;
-  return { svgText, originPx, mPerPx };
+  // the room's own shape is drawn HERE, as the wall — so the furnishing pass
+  // must not draw it a second time as a block standing inside itself (the same
+  // one-owner rule townGround states at greater length)
+  return { svgText, originPx, mPerPx, groundMarkIds: new Set([room?.id].filter(Boolean)) };
 }
 
 // ── THE TOWN'S GROUND (roomGround's sibling — the town drawn from the record) ─
@@ -1335,7 +1338,14 @@ export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUN
     // the same empty slot the room's ground carries, in the same place
     + `<g class="wv-scene-art"></g>`
     + `</svg>`;
-  return { svgText, originPx, mPerPx };
+  // WHICH MARKS THIS GROUND HAS ALREADY DRAWN. A ground and the furnishing pass
+  // are two renderers looking at one record, and without this they both draw the
+  // same shape: the main channel came out dark and correct as water and was then
+  // repainted, on top, as a pale placeholder block in its own hue — a river
+  // running sage-green down the middle of the town. One question, one owner: a
+  // mark's shape belongs to whoever draws it on this scene, and the overlay
+  // skips what the ground has under it.
+  return { svgText, originPx, mPerPx, groundMarkIds: new Set([...regions.map((m) => m.id), ...waters.filter((w) => w.mark).map((w) => w.mark.id)]) };
 }
 
 // ── the plaque ──────────────────────────────────────────────────────────────
@@ -5021,6 +5031,7 @@ export function mountViewer(appEl) {
     mountScene({
       boxEl, svg, originPx: ground.originPx, mPerPx: ground.mPerPx,
       reattachOverlays: captureKeep(boxEl),
+      groundMarkIds: ground.groundMarkIds, // the wall is already this mark's shape
       zoomOutLimit: 1,          // the room is the outermost state; zoom-in only (revised ruling)
       includeMine: false,       // the roof: your marks elsewhere don't follow you in
       placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
@@ -5472,10 +5483,10 @@ export function mountViewer(appEl) {
       // AND THE COMMON CASE IS THIS ONE, not the stash in mountRoomScene: a
       // reader who arrives already standing in a room enters before the town has
       // landed, so there was never a mounted town to hold aside.
-      if (sceneRoomId) { pendingTownGround = { svg, originPx, mPerPx, placeholderExtents: true }; warmTownArt(svg); }
+      if (sceneRoomId) { pendingTownGround = { svg, originPx, mPerPx, placeholderExtents: true, groundMarkIds: ground.groundMarkIds }; warmTownArt(svg); }
       // `placeholderExtents: true` — the town hangs its own art now, exactly as a
       // room does, because the atlas that used to bake it is no longer the ground
-      else mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, placeholderExtents: true });
+      else mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, placeholderExtents: true, groundMarkIds: ground.groundMarkIds });
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the ground didn't draw (${esc(e.message)}) — the telling still works</div>`;
       reattachOverlays();
@@ -5521,7 +5532,7 @@ export function mountViewer(appEl) {
   // presence, muted hue — so a room reads as a floor plan and nested
   // placeholders read as distinct blocks. Drawn by the ONE overlay, gated by
   // the scene; the town keeps its footprint toggle unchanged.
-  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, zoomOutLimit = MAX_ZOOM_OUT, includeMine = true, placeholderExtents = false }) {
+  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, zoomOutLimit = MAX_ZOOM_OUT, includeMine = true, placeholderExtents = false, groundMarkIds = null }) {
     // THE FAR COUNTRY, mounted UNDER the painting rather than over it.
     //
     // Every other derived layer is appended, so it draws on top. These two are
@@ -5664,7 +5675,7 @@ export function mountViewer(appEl) {
       svg.insertBefore(base, mistLayer);
     }
     const view = { ...full };
-    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents };
+    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents, groundMarkIds };
     drawFarCountry();
     let tween = null;
     // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
@@ -6200,8 +6211,17 @@ export function mountViewer(appEl) {
     // child's block sits readable on its parent's. Same overlay, same loop —
     // a rule of the one renderer, switched by the scene, never a second one.
     if (mapCtx?.placeholderExtents) {
+      // THE FULL MARK BY ID, not the radial's own entry — the same reason
+      // `tierOf` looks a tier up rather than reading `m.tier` fifteen lines
+      // below: a radial entry carries `id`, `at`, `distM` and `bearing`, and
+      // nothing else. `isEmbodiedMark` asks for `kind` and `extent`, so handed
+      // the thin entry it answers no to every mark in the set and the pass
+      // furnishes an empty room. Invisible until the TOWN started running this
+      // pass on 2026-09-08 and drew twelve pips over an unfurnished ground.
+      const onTheGround = mapCtx.groundMarkIds ?? new Set();
       const furnishable = drawn
-        .filter((m) => isEmbodiedMark(m) && m.extent)
+        .map((m) => byId.get(m.id) ?? m)
+        .filter((m) => isEmbodiedMark(m) && m.extent && !onTheGround.has(m.id))
         .sort((a, b) => ((b.extent?.w ?? 0) * (b.extent?.h ?? 0)) - ((a.extent?.w ?? 0) * (a.extent?.h ?? 0)));
       for (const m of furnishable) s += markImagePath(m) ? sceneArtSVG(m, px) : placeholderExtentSVG(m, px);
     }
