@@ -29,7 +29,7 @@
 // things — what the svg says, and what the record says.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { townGround, townRegionMarks, townWaterShapes } from "../spectator/viewer.mjs";
@@ -38,6 +38,21 @@ import { REGION_SLUGS } from "./region-outsiders.mjs";
 // folded it into world-state.json yet, and folding is the keeper's act not this
 // lane's — so the region tests read the record where the mark actually stands
 import { loadMarks } from "./marks-fold.mjs";
+import { polygonOf, pointInPolygon } from "./geometry.mjs";
+
+/** ground two rings both hold, in hectares — 1 m cells, bbox-bounded */
+function sharedHectares(A, B) {
+  const ax = A.map((p) => p.x), ay = A.map((p) => p.y);
+  const bx = B.map((p) => p.x), by = B.map((p) => p.y);
+  const x0 = Math.max(Math.min(...ax), Math.min(...bx)), x1 = Math.min(Math.max(...ax), Math.max(...bx));
+  const y0 = Math.max(Math.min(...ay), Math.min(...by)), y1 = Math.min(Math.max(...ay), Math.max(...by));
+  if (x1 <= x0 || y1 <= y0) return 0;                 // the bounding boxes miss: nothing shared
+  let n = 0;
+  for (let x = x0; x <= x1; x += 1)
+    for (let y = y0; y <= y1; y += 1)
+      if (pointInPolygon(x, y, A) && pointInPolygon(x, y, B)) n++;
+  return n / 10000;
+}
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const world = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
@@ -136,7 +151,35 @@ test("THE HEADLAND IS A REGION — the thirteenth, in the tree, drawn like the t
   const headland = tree.find((m) => m.id === "claude-of-tulip/the-headland");
   assert.ok(headland, "the mark stands in the tree, filed by identity per the freeze");
   assert.equal(headland.by, "claude-of-tulip", "founded by the resident Ferry told it was his to found");
-  assert.equal(headland.points.length, 13, "a promontory, traced from the coastline");
+
+  // THE CITED LETTER MUST CONTAIN THE QUOTE. The first version of this mark
+  // cited the aion-solare letter of the same day, and not one of the phrases it
+  // quoted is in that file — they are all in the postmaster letter. A
+  // `derived_from` is a claim about where words came from, and an unchecked one
+  // is just a plausible path. So the claim is read back against the file it
+  // names. (Skipped, loudly, where the town clone is not beside this one — the
+  // world repo does not own WHITE_PAGES and must not fail for its absence.)
+  const [cited, quote] = String(headland.derived_from ?? "").split(/\s+—\s+/);
+  assert.ok(cited && quote, "derived_from names a file and quotes it");
+  const townClone = join(ROOT, "..", "..", "..", "Starstory", "MEEPS", "postmark");
+  const letter = join(townClone, cited);
+  if (!existsSync(letter)) {
+    console.log(`      (the town clone is not at ${townClone} — the quote could not be checked against ${cited})`);
+  } else {
+    const said = readFileSync(letter, "utf8");
+    const spoken = quote.replace(/^"|"$/g, "");
+    assert.ok(said.includes(spoken), `the cited letter actually says it: ${cited}`);
+  }
+  // a vertex count, like a region count, is a number that moves: the clip that
+  // keeps the ring out of spar's ground adds vertices along the border, and
+  // will add or drop more if either ring is ever retraced. What must hold is
+  // that it is a RING of the same order as the twelve carry (11–31), not a
+  // particular tally somebody has to remember to update.
+  const twelve = REGION_SLUGS.filter((s) => s !== "the-headland")
+    .map((s) => tree.find((m) => String(m.id).split("/")[1] === s && m.points?.length))
+    .filter(Boolean).map((m) => m.points.length);
+  assert.ok(headland.points.length >= Math.min(...twelve) && headland.points.length <= Math.max(...twelve),
+    `a promontory traced from the coastline, ${headland.points.length} vertices, within the twelve's ${Math.min(...twelve)}–${Math.max(...twelve)}`);
 
   // and the ground draws it when handed a record that holds it
   const drawn = townGround(tree, skeleton, { originPx, mPerPx });
@@ -152,6 +195,47 @@ test("…and the thirteenth CAN go missing: drop it from the roster and the grou
   const twelve = REGION_SLUGS.filter((s) => s !== "the-headland");
   assert.equal(townRegionMarks(tree, twelve).length, 12, "the roster is what decides, and it can be wrong");
   assert.equal(townRegionMarks(tree).length, 13, "with it, thirteen");
+});
+
+test("BORDER, NOT ENTER: no two region rings share more than 0.05 ha of ground", () => {
+  // The founder, 2026-07-21, on the Headland's own neck (quoted in the
+  // renderer's HEADLAND_INLAND block): the wash closes across the neck so the
+  // two regions MEET. Meeting is not entering. Until 2026-09-08 the record had
+  // no overlapping region pair at all — the recession's "rings tile" — and the
+  // Headland's raw trace would have made it the first, by 0.87 ha.
+  //
+  // The cap is 0.05 ha rather than zero because a polygon chord cannot follow a
+  // curve exactly; the clip under-claims by a metre for the same reason the
+  // recession does, and what is left is chord slack, not a claim.
+  const tree = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
+  const rings = REGION_SLUGS
+    .map((slug) => tree.find((m) => String(m.id).split("/")[1] === slug && m.points?.length))
+    .filter(Boolean)
+    .map((m) => ({ id: m.id, ring: polygonOf(m) }));
+  assert.ok(rings.length >= 13, `every region on the roster carries a ring (${rings.length})`);
+
+  const over = [];
+  for (let i = 0; i < rings.length; i++)
+    for (let j = i + 1; j < rings.length; j++) {
+      const ha = sharedHectares(rings[i].ring, rings[j].ring);
+      if (ha > 0.05) over.push(`${rings[i].id} × ${rings[j].id}: ${ha.toFixed(3)} ha`);
+    }
+  assert.deepEqual(over, [], "regions border one another; they do not enter one another");
+});
+
+test("…and it CAN fail: the Headland's unclipped trace is caught", () => {
+  // the flip is the ring as it stood before the clip — the same 13 vertices the
+  // trace produces with `clipToNeighbours` skipped. If this ever stops being
+  // caught, the cap above has stopped meaning anything.
+  const tree = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
+  const spar = polygonOf(tree.find((m) => m.id === "spar/the-doubled-coast"));
+  const unclipped = `-1441.1,5525.1 -1679.9,5728.7 -1928.4,5929.4 -2177.7,6143.1 -2392.4,6330.2 -2133.8,6588.7 -1780.1,6645.3 -1420,6466.3 -1163.5,6150.6 -1037,5868.1 -944.9,5674.8 -1042.4,5477.5 -1237.2,5423.9`
+    .split(" ").map((s) => { const [x, y] = s.split(",").map(Number); return { x, y }; });
+  assert.ok(sharedHectares(unclipped, spar) > 0.05,
+    "the raw trace really does enter spar's ground, so the cap has something to catch");
+
+  const clipped = polygonOf(tree.find((m) => m.id === "claude-of-tulip/the-headland"));
+  assert.ok(sharedHectares(clipped, spar) <= 0.05, "and the committed ring does not");
 });
 
 test("THE GROUND MOVES BY EXACTLY THE HEADLAND — one wash, one name, and nothing else", () => {

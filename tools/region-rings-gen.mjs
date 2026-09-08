@@ -88,7 +88,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadMarks } from "./marks-fold.mjs";
-import { overlapArea, polygonBBox, pointInPolygon, rect, rectInsideRing, rectCorners, ringsDisjoint } from "./geometry.mjs";
+import { overlapArea, polygonBBox, pointInPolygon, polygonOf, rect, rectInsideRing, rectCorners, ringsDisjoint } from "./geometry.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const argOf = (flag, dflt = null) => {
@@ -202,9 +202,19 @@ function samplePath(d) {
   return out;
 }
 
-// The stroked edge of a region wash is the INNER blob (regionWashLayer draws the
-// outer at 1.08 as a soft halo and strokes the inner) — so the inner is the
-// boundary a reader sees, and the inner is what the ring traces.
+// ⚠ A SUPERSEDED RULE STOOD HERE UNTIL 2026-09-08, three lines above the ruling
+// that overturned it: "the stroked edge of a region wash is the INNER blob … so
+// the inner is the boundary a reader sees, and the inner is what the ring
+// traces." That was pass 2's rule. The founder overruled it on 2026-08-24 and
+// the paragraph below has said so ever since, but the old sentence was never
+// deleted — so this file asserted both, in its own voice, and a reader arriving
+// at the top of the block got the wrong one first.
+//
+// It cost something real: the Headland's ring was traced at the inner on 09-08
+// and its comment reproduced this reasoning nearly word for word. Removed rather
+// than annotated, because a false premise kept for its history is still the
+// first thing the next reader believes. The history is in the diff.
+//
 // THE OUTER BLOB IS THE ONE A READER SEES (the founder, 2026-08-24: "region
 // borders are too small. They cut out homes… that are visually clearly WITHIN a
 // region's wash"). regionWashLayer draws each region TWICE — an outer blob at
@@ -347,6 +357,185 @@ const REGION_IDS = [
 // is checkable against the drawing rather than taken on trust.
 const TRACE_ONLY = ["the-headland"];
 
+// ── BORDER, NOT ENTER ───────────────────────────────────────────────────────
+//
+// The founder's 2026-07-21 ruling on the Headland's own neck, quoted in the
+// renderer's HEADLAND_INLAND block: the wash closes back across the neck so the
+// two regions MEET rather than leaving no-man's ground between them. Meeting is
+// not entering, and the twelve do not overlap each other at all — the recession
+// above exists to guarantee exactly that ("rings tile").
+//
+// The traced Headland entered `spar/the-doubled-coast` by 0.87 ha. So the ring
+// is CLIPPED at spar's boundary before it is offered as a claim, and the clip
+// lives HERE, inside the trace, rather than being applied by hand to the number
+// afterwards — otherwise `--trace` would stop reproducing the committed mark and
+// the ring would be hand-typed again by the back door.
+//
+// Why not `recedeFrom`, which is this file's own recession and does exactly this
+// job for the twelve: it works in POLAR about the ring's own centre, and that is
+// sound only for a star-shaped ring. The Headland is the one region that is not
+// (see TRACE_ONLY), so borrowing it would be borrowing an assumption that is
+// false here. This clip is purely local instead — plant a vertex where the
+// boundaries cross, then push any vertex still inside the neighbour out to the
+// neighbour's own edge — which needs no angular assumption at all.
+//
+// It UNDER-claims by `gap`, the same metre of daylight `GAP` gives the twelve,
+// for the same reason: a chord between two pushed-back vertices must still clear
+// the curve it is cutting along.
+const nearestOnSegment = (p, a, b) => {
+  const vx = b.x - a.x, vy = b.y - a.y;
+  const len2 = vx * vx + vy * vy;
+  if (len2 < 1e-12) return { ...a, d: Math.hypot(p.x - a.x, p.y - a.y) };
+  let t = ((p.x - a.x) * vx + (p.y - a.y) * vy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  const q = { x: a.x + vx * t, y: a.y + vy * t };
+  return { ...q, d: Math.hypot(p.x - q.x, p.y - q.y) };
+};
+const nearestOnRing = (p, ring) => {
+  let best = null;
+  for (let i = 0; i < ring.length; i++) {
+    const q = nearestOnSegment(p, ring[i], ring[(i + 1) % ring.length]);
+    if (!best || q.d < best.d) best = q;
+  }
+  return best;
+};
+const segmentHit = (a, b, c, d) => {
+  const r = { x: b.x - a.x, y: b.y - a.y }, s = { x: d.x - c.x, y: d.y - c.y };
+  const den = r.x * s.y - r.y * s.x;
+  if (Math.abs(den) < 1e-12) return null;
+  const t = ((c.x - a.x) * s.y - (c.y - a.y) * s.x) / den;
+  const u = ((c.x - a.x) * r.y - (c.y - a.y) * r.x) / den;
+  if (t <= 0 || t >= 1 || u <= 0 || u >= 1) return null;
+  return { x: a.x + r.x * t, y: a.y + r.y * t, t };
+};
+
+// the same metre the recession's own GAP uses; stated locally because GAP is
+// declared further down the file and a default argument reaching forward for it
+// is a temporal-dead-zone trap waiting for the first caller that runs earlier
+const CLIP_GAP_M = 1;
+
+function clipRingAgainst(ring, other, gap = CLIP_GAP_M) {
+  // DENSIFY, PUSH, THIN — in that order, and deliberately the dull way.
+  //
+  // The clever version is a boolean difference, and two attempts at one here
+  // both left ground behind: planting only the CROSSINGS leaves a straight chord
+  // that still swallows a convex corner of the neighbour (0.87 ha -> 0.38 ha),
+  // and planting the neighbour's corner as well needs a rule for which side to
+  // push it toward — a rule I got backwards twice, because "outward from the
+  // neighbour's centre" and "out of the neighbour" are only the same sentence
+  // when the neighbour is convex and you are on the far side of it.
+  //
+  // So: no side reasoning at all. Walk the boundary at a fine step, move every
+  // sample that stands inside the neighbour to the neighbour's own edge plus a
+  // metre, and then drop the samples that turn out to say nothing. Correctness
+  // rests on one fact that needs no geometry — a point either is inside the
+  // neighbour or it is not — and the thinning is only allowed to remove a point
+  // whose removal keeps that true.
+  const STEP_M = 2;
+
+  // 1 · densify. Only where it can matter: an edge is subdivided when either end
+  //     is within a step of the neighbour, so the rest of the coast keeps the
+  //     vertex count the record has to carry.
+  const near = (p) => nearestOnRing(p, other).d <= STEP_M * 2 || pointInPolygon(p.x, p.y, other);
+  const dense = [];
+  for (let i = 0; i < ring.length; i++) {
+    const a = ring[i], b = ring[(i + 1) % ring.length];
+    dense.push({ x: a.x, y: a.y, _original: true });     // the trace itself; never dropped
+    if (!near(a) && !near(b)) continue;
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    const n = Math.floor(len / STEP_M);
+    for (let k = 1; k < n; k++)
+      dense.push({ x: a.x + (b.x - a.x) * (k / n), y: a.y + (b.y - a.y) * (k / n), keep: false });
+  }
+
+  // 2 · push every sample that stands inside the neighbour out to its edge, plus
+  //     the gap. `q - p` points out of the neighbour by construction — q is the
+  //     nearest point on its boundary — so no side has to be decided.
+  //
+  // A PUSHED SAMPLE IS LOAD-BEARING and is marked so. The first version let the
+  // thinning below treat it as ordinary, and along a border where the two rings
+  // run nearly parallel that is fatal: the drift test passes for almost every
+  // one of them, they are all dropped, and the chord springs back inside the
+  // neighbour. The overlap barely moved (0.26 ha) and the cause was the pass
+  // meant to tidy up after the fix, not the fix.
+  const pushed = dense.map((p) => {
+    if (!pointInPolygon(p.x, p.y, other)) return p;
+    const q = nearestOnRing(p, other);
+    if (!(q.d > 1e-9)) return { ...p, _pushed: true };
+    const k = (q.d + gap) / q.d;
+    return { x: p.x + (q.x - p.x) * k, y: p.y + (q.y - p.y) * k, _original: p._original, _pushed: true };
+  });
+
+  // 3 · thin. A densified sample earns its place only if dropping it would let
+  //     the chord across its neighbours re-enter the other region, or would move
+  //     the boundary by more than a tenth of a metre. Original vertices are never
+  //     dropped: they are the trace, and the trace is what makes this ring
+  //     reproducible rather than authored.
+  // THE TEST IS THE WHOLE CHORD, not its midpoint. A midpoint test passes for
+  // every point along a border where the two rings run nearly parallel, which is
+  // most of this one — so it drops the samples that were doing the work and the
+  // boundary springs back inside. Walking the chord is what actually asks the
+  // question the drop has to answer: does removing this point let the edge
+  // re-enter the neighbour anywhere along it?
+  //
+  // An ORIGINAL vertex is never dropped — those are the trace, and the trace is
+  // what makes this ring reproducible instead of authored. A densified one is
+  // dropped only when the chord that would replace it stays out of the
+  // neighbour AND the point sits within a quarter-metre of that chord, which is
+  // far inside the metre of daylight the gap already holds.
+  const chordClear = (a, b) => {
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    const n = Math.max(2, Math.ceil(len / 0.5));
+    for (let k = 0; k <= n; k++) {
+      const t = k / n;
+      if (pointInPolygon(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, other)) return false;
+    }
+    return true;
+  };
+  const out = [];
+  for (let i = 0; i < pushed.length; i++) {
+    const p = pushed[i];
+    if (p.keep && !p._pushed) { out.push(p); continue; }
+    if (p._original) { out.push(p); continue; }
+    const prev = out[out.length - 1] ?? pushed[(i - 1 + pushed.length) % pushed.length];
+    const next = pushed[(i + 1) % pushed.length];
+    if (nearestOnSegment(p, prev, next).d <= 0.25 && chordClear(prev, next)) continue;
+    out.push(p);
+  }
+  return out.map((p) => ({ x: p.x, y: p.y }));
+}
+
+// BORDER, NOT ENTER — applied in WORLD METRES, against the record's own rings.
+//
+// The founder's 2026-07-21 ruling on this very neck, quoted in the renderer's
+// HEADLAND_INLAND block: the wash closes back across the neck so the two regions
+// MEET rather than leaving no-man's ground between them. Meeting is not
+// entering, and the twelve do not overlap one another at all — the recession
+// exists to guarantee exactly that ("rings tile"). The traced Headland ran 0.87
+// ha into spar's ground, which would have been the record's first overlapping
+// region pair.
+//
+// It runs HERE rather than inside the trace for a reason worth keeping: the
+// neighbour that matters is the one THE RECORD HOLDS — traced, feathered,
+// smoothed and receded — not the raw wash `atlasRingFor` returns. Clipping
+// against the raw one leaves twenty of the Headland's vertices inside the real
+// spar and the overlap essentially unmoved.
+//
+// Only the regions that are traced but NOT bent need this: everything in
+// REGION_IDS goes through the recession, which already tiles them.
+function clipToNeighbours(id, ringM, marks) {
+  if (!TRACE_ONLY.includes(id)) return ringM;
+  let out = ringM;
+  for (const slug of REGION_IDS) {
+    const m = marks.find((x) => String(x.id).split("/")[1] === slug && x.points?.length);
+    if (!m) continue;
+    const other = polygonOf(m);
+    if (!other?.length) continue;
+    out = clipRingAgainst(out, other);
+  }
+  return out;
+}
+
 function atlasRingFor(id) {
   // THE HEADLAND IS NOT A WASH ELLIPSE, and that is what "provisional" turns out
   // to mean geometrically — the question was asked on 2026-09-08 and this is the
@@ -360,21 +549,41 @@ function atlasRingFor(id) {
   // COASTLINE the promontory occupies, closes it across the neck with
   // HEADLAND_INLAND, and shrinks that polygon about its own centroid.
   //
-  // THE RING IS THE INNER (1.02), NOT THE OUTER (1.12). The renderer strokes its
-  // dashed boundary — the line a reader reads as the edge — on the inner; the
-  // outer is deliberately proud of the shore and spills into the water, which
-  // the renderer calls "the right fault to have" for a wash. A ring is a claim on
-  // GROUND, so the claim is the inner one and the spill stays a drawing choice.
+  // THE RING IS THE INNER (1.02), NOT THE OUTER (1.12) — AND NOT FOR THE REASON
+  // THE OVERRULED RULE ABOVE WOULD HAVE GIVEN. "The stroke is the edge a reader
+  // sees" is exactly the reasoning the founder overturned on 2026-08-24, and it
+  // would not distinguish this case anyway: the twelve's renderer strokes its
+  // inner too. The Headland's reason is its own, and it is about WATER. Its outer
+  // is deliberately drawn proud of the shore and spills into the sea — "the right
+  // fault to have" for a wash, in the renderer's words, because a soft edge over
+  // water reads as a boundary while bare coastline reads as an error. A wash may
+  // spill into the sea. A RING MAY NOT: a ring is a claim on ground, and out
+  // there there is no ground to claim.
+  //
+  // What that costs is real and is written here rather than left to be found: the
+  // ring claims roughly 28% less than the twelve's rule (outer 1.08 plus the 60 m
+  // feather) would give it. Nobody is sited in the Headland, so nothing turns on
+  // it today; the day someone is, this is the note saying the trade was made on
+  // purpose and which way it went.
   if (id === "the-headland") {
     const land = COASTLINE.slice(HEADLAND_COAST.first, HEADLAND_COAST.last + 1).concat(HEADLAND_INLAND);
     const gx = land.reduce((s, p) => s + p.x, 0) / land.length;
     const gy = land.reduce((s, p) => s + p.y, 0) / land.length;
     // the renderer's own jitter, for the same reason this file imports washBlob
     // as text: the edge in the record is the edge the reader sees
-    return land.map((p, i) => {
+    const traced = land.map((p, i) => {
       const j = 1 + atlasFns.jitter("headland-inner", "p" + i) * 0.03;
       return { x: gx + (p.x - gx) * 1.02 * j, y: gy + (p.y - gy) * 1.02 * j };
     });
+    // The BORDER-NOT-ENTER clip does NOT happen here, and the reason is a bug
+    // this file taught me: `atlasRingFor` returns the raw traced wash in ATLAS
+    // PIXELS, before the feather, the smoothing and the recession. Clipping
+    // against that clips against a spar 60 m smaller than the one the record
+    // actually holds — twenty of the Headland's own vertices were still inside
+    // the real spar afterwards, and the overlap barely moved. The neighbour to
+    // respect is the one in the RECORD, so the clip runs downstream, in world
+    // metres, where that ring can be read. See `clipToNeighbours`.
+    return traced;
   }
   if (id === "the-town-centre") {
     const c = CENTRE_SHAPE;
@@ -800,11 +1009,16 @@ const TRACE = argOf("--trace", null);
 if (TRACE) {
   if (!TRACE_ONLY.includes(TRACE) && !REGION_IDS.includes(TRACE))
     throw new Error(`--trace ${TRACE}: not a region this file knows how to trace`);
-  const ring = atlasRingFor(TRACE).map(toWorld);
+  // trace in atlas pixels, transform to metres, THEN clip against the rings the
+  // record actually holds — the order matters and is the whole of the bug that
+  // preceded it (see the note in atlasRingFor's the-headland branch)
+  const ring = clipToNeighbours(TRACE, atlasRingFor(TRACE).map(toWorld), loadMarks(MARKS_DIR));
   const xs = ring.map((p) => p.x), ys = ring.map((p) => p.y);
   const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
   const r = (n) => Math.round(n * 10) / 10;
-  console.log(`${TRACE} — traced from the atlas, ${ring.length} vertices, nothing bent or smoothed\n`);
+  const clipped = TRACE_ONLY.includes(TRACE);
+  console.log(`${TRACE} — traced from the atlas, ${ring.length} vertices, not bent and not smoothed`
+    + `${clipped ? ", clipped at its neighbours' recorded rings (border, not enter)" : ""}\n`);
   console.log(`at: { x: ${r((minX + maxX) / 2)}, y: ${r((minY + maxY) / 2)} }`);
   console.log(`extent: { w: ${r(maxX - minX)}, h: ${r(maxY - minY)} }`);
   console.log(`points: ${ring.map((p) => `${r(p.x)},${r(p.y)}`).join(" ")}`);
