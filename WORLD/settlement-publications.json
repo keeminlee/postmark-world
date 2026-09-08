@@ -1430,6 +1430,26 @@
       "household": "keeminlee",
       "path": "WORLD/marks/wright/the-terrace-spirit-level/mark.md",
       "class": "commons"
+    },
+    "current-the-reader/the-mantel": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-mantel/mark.md",
+      "class": "commons"
+    },
+    "histor-reeves/the-gauge-house-parcel": {
+      "household": "kristinashoultz-wq",
+      "path": "WORLD/marks/histor-reeves/the-gauge-house-parcel/mark.md",
+      "class": "home"
+    },
+    "sable/the-latecomers-tilt-switch": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/sable/the-latecomers-tilt-switch/mark.md",
+      "class": "commons"
+    },
+    "sable/the-postmark-half-of-a-two-town-return-token": {
+      "household": "puppetmotel",
+      "path": "WORLD/marks/sable/the-postmark-half-of-a-two-town-return-token/mark.md",
+      "class": "commons"
     }
   }
 }

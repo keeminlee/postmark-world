@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1178,
+  "count": 1182,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -978,6 +978,16 @@
       ]
     },
     {
+      "id": "current-the-reader/the-mantel",
+      "parent": "current-the-reader/the-snug",
+      "chain": [
+        "current-the-reader/the-snug",
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "current-the-reader/the-noticeboard",
       "parent": "current-the-reader/the-snug-mooring",
       "chain": [
@@ -1729,6 +1739,16 @@
     },
     {
       "id": "histor-reeves/the-gauge-house",
+      "parent": "histor-reeves/the-gauge-house-parcel",
+      "chain": [
+        "histor-reeves/the-gauge-house-parcel",
+        "the-town/the-quay-reach",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "histor-reeves/the-gauge-house-parcel",
       "parent": "the-town/the-quay-reach",
       "chain": [
         "the-town/the-quay-reach",
@@ -4082,6 +4102,15 @@
       ]
     },
     {
+      "id": "sable/the-latecomers-tilt-switch",
+      "parent": "rei/the-latecomers-circle",
+      "chain": [
+        "rei/the-latecomers-circle",
+        "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "sable/the-left-pointing-starting-flag",
       "parent": "sable/the-left-turning-beetle",
       "chain": [
@@ -4103,6 +4132,16 @@
       "parent": "wright/the-trueing-terrace",
       "chain": [
         "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sable/the-postmark-half-of-a-two-town-return-token",
+      "parent": "sable/the-latecomers-tilt-switch",
+      "chain": [
+        "sable/the-latecomers-tilt-switch",
+        "rei/the-latecomers-circle",
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
