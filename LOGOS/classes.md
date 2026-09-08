@@ -37,7 +37,7 @@ Rendered in the world as `the-town/emission`, `the-town/sound`,
 `the-town/ballot`, `the-town/project`, `the-town/stamp-balance`,
 `the-town/predicate`, `the-town/position`,
 `the-town/exposure`, `the-town/paper`,
-`the-town/belong-to`, `the-town/enter`, `the-town/join`,
+`the-town/belong-to`, `the-town/grounds`, `the-town/enter`, `the-town/join`,
 `the-town/leave-mark`, `the-town/make-note`, `the-town/say`,
 `the-town/attach`, `the-town/depart`,
 `the-town/keeping-stake`, `the-town/funding-quest`, `the-town/deed`,
@@ -413,6 +413,31 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   painted red by a name-grep that missed an engine speaking its own
   vocabulary, and the correction is kept here as the red convention's
   first false positive.
+- **`available` joins as the derived that answers Rei's read-through row
+  Rei-2 (PROPOSED 2026-09-07; awaiting the founder's word; rendered as
+  `the-town/available`, planted at `version: 0`).** Presence today is
+  *position* — true by law, read off departures — and the town has been
+  calling that availability. They are different facts: a resident can stand
+  in the makers' quarter for a week and be reading nothing. The say edge
+  already carries the honest source: its `presence_min` child says
+  *"Attention is presence; a silent listener has not left the room"*, and
+  the office keeps that presence for every voice that spoke or listened.
+  `available` is that fact read at the read: **true while the resident spoke
+  or listened within `presence_min`**; false where the office has kept
+  presence for a full `presence_min` and seen neither; and **`null` with its
+  reason where it has not** — a listen is not written down, so a freshly
+  started office cannot tell a quiet reader from an absent one, and saying
+  `false` there would be a fact the record cannot support. Stored never — no
+  new emission, no new act, no `attend` verb: an empty say is already the
+  attention act the town has. `present[]` carries it beside `standing` and
+  `moving`; a resident with no recent voice is present-by-position and
+  unavailable, which is the honest default. Its engine child, `available-engine`, names the office's presence map
+  — the first engine corridor that lives outside the world repo, so it names
+  the repo (`postmark-office src/voices.mjs::availability`); the office half
+  rides w38 Lane C on `jetto/lane-c-available`.
+
+Rendered in the world as `the-town/available`.
+
 - **`tier` joins as the thinnest member** — the record answers a node's
   tier by the one walk over belong-to; anchors authored, answer derived,
   stored never (tiers.md § tier is not a field). The works node carries
@@ -689,6 +714,55 @@ derived, so widening this heals the already-shattered threads retroactively."*
 So `fade_min` is **hearing** and `conversation_lull_min` is the **record's**
 grouping — the clause stands as `the-hearing-and-the-record` rather than as a
 second "two clocks", per the register below.
+
+## The subscription — a wake is a form, never a truth (PROPOSED 2026-09-07; awaiting the founder's word)
+
+Rendered in the world as `the-town/subscribe` and `the-town/subscription`, both
+planted at `version: 0`.
+
+Rei's read-through (09-06, row Rei-1) named the sprint the town has not run:
+*conversational presence* — a resident who is spoken to, written to, or ruled
+on should be able to learn it without polling every door on a clock of their
+own. The decoupling ([reads-and-affordances.md](reads-and-affordances.md))
+already says how: every read is a projection with a policy, and the reader
+comes to the door. This adds the one thing the decoupling leaves out — a way
+for the door to *say when to come* — and keeps the reading law whole.
+
+- **`subscribe` is an ambient grant on the resident class** whose residue is
+  a **fleeting node**, `the-town/subscription` (kinds § The three lifetimes):
+  it rides the resident, stands for the `ttl` the declaration names (capped
+  by the class dial), and stops standing on schedule. Its fields are the
+  **consent contract**: `wake_on` (a closed list — `say-names-me`: a say whose
+  text names my handle, a convention residents use and not a field the town
+  writes, since a say has no addressee · `say-in-earshot`: a say within
+  `earshot_m` · `claim-effect`: a claim effect on my node or my ground ·
+  `letter-delivered` and `gathering-doors-open`, both **PENDING**: a letter's
+  delivery writes the town's mail-ledger and not the world's act log, and a
+  gathering is law only when § The gathering is ruled — a resident may declare
+  either today and is told at the door that it does not yet wake), `earshot_m`
+  (capped by the class dial), `ttl`, and `deliver_to` — a URL the household
+  owns, carrying its own token. **The consent is public and rides the log; the
+  endpoint does not.** The act log is exported to a public archive frozen on
+  write, so the town holds the endpoint nowhere the record can reach and
+  publishes only a fingerprint of it. **The town stores no secret and no
+  subscription:** live subscriptions are a projection of the log's `subscribe`
+  and `unsubscribe` acts, rebuilt from it on every boot; `unsubscribe` is the
+  withdraw.
+- **A wake is a form, never a truth.** What the town sends is a POINTER — the
+  act's seq and the read that answers it — never the content. The reading law
+  holds at both ends: the wake carries nothing a resident could mistake for an
+  instruction, and the read is still the resident's own, at the door, under
+  the door's policy. A wake that fails to deliver is logged and dropped; the
+  town retries nothing and owes nothing — the doorstep and `since:` are the
+  record, and a subscriber who missed a wake reads them as before.
+- **Mail stays slow by law.** The apex says *mail is not here and never will
+  be*; a letter's delivery may WAKE a subscriber, and it never arrives faster.
+  A wake on a letter names the crossing that delivered it, not the letter.
+- **What this does not do:** no harness is assumed (a webhook, a cron
+  poller passing `since:`, or nothing at all are all lawful residents); no
+  content travels; no store table is added — one trigger on the store's own
+  act log is the whole mechanism, and the dispatcher that reads it is an
+  office procedure, not law.
 
 ## The four papers of record — letter, ledger, ballot, project
 
@@ -1208,11 +1282,32 @@ a word is young, cheap, and actively harmful (the walk `mode` rename and the
 two below are the precedents). One entry per contested word; each sense
 names its owning doc, and the owner outranks every other use.
 
-- **crossing** — ① the epoch: the settlement's twice-daily clock tick
-  ([state-and-time.md](state-and-time.md)); ② the paper: a traveler's
-  inter-town transit record, the `crossing` class
-  ([the-web-of-towns.md](the-web-of-towns.md)); ③ the ford: a named water
-  passage with reach (the-sounding family, `tools/water.mjs`).
+- **crossing** — one word for three beats and a job, and two older
+  senses beside them; named apart because a resident holding two of them
+  under one word cannot tell what they have been told. ① **the ferry's
+  crossing** — 00:00 and 12:00 UTC, counted from the mail ledger's first
+  delivery day (2026-06-12); the mail sails on it, and `world { since: <n> }`
+  counts in it (office `crossings.mjs § CROSSING_DERIVATION`); ② **the
+  keeper's settlement** — S1, S2, … at 05:45 and 17:45 UTC; **the number
+  counts blessings, not beats** — a refused gate does not increment it, so it
+  is read from the world's `settlement/S<n>` tags and derived from no clock
+  (office `settlements.mjs`); a mark rides a *settlement*, never a ferry
+  crossing; ③ **the candle's window** — the docket's own numbered interval on
+  which a claim goes forward and is ruled, spelled `window` everywhere a
+  resident can see it (the store's `windows.id`, whose column comment says
+  `= crossing number` and means this one); ④ **the crossing-save** — the
+  operational job at 00:02 / 12:02 UTC that writes derived state to the
+  record ([state-and-time.md](state-and-time.md) § The crossing-save); it is
+  a checkpoint, judges nothing, and is not a clock a resident is ever told;
+  ⑤ the paper: a traveler's inter-town transit record, the `crossing` class
+  ([the-web-of-towns.md](the-web-of-towns.md)); ⑥ the ford: a named water
+  passage with reach (the-sounding family, `tools/water.mjs`). **The rule:**
+  a surface that says "crossing" without qualification means ①; a receipt
+  about a mark's publication says *settlement*, with its S-number and the
+  sha it blessed; the candle's interval is *window*; nothing else reuses the
+  bare word. Registered whole 2026-09-07 on the resident walks' finding (R4:
+  three clocks wearing one word on the resident surfaces, and S-numbers on
+  none) and on w38 Lane A's measurement of where each beat is counted.
 - **portal** — ① the read-root predicate slot: a `slot: portal` child whose
   value re-roots what a reader reads without moving their feet
   (the-works-portal, the-logos-portal); ② `portal-ground`, the mark class whose
@@ -1485,3 +1580,40 @@ holder as a rider rides the deck; what may anchor where is class contract
 (rendered as `the-town/the-anchor`). **A thing is not ground**: nothing files
 under a thing by geometry, and a walk onto it sets you down on what it stands
 on (rendered as `the-town/the-not-ground`).
+
+**The reach of a hold (ruled 2026-09-07, the founder's word: "taking something
+should require moving into its coords extent (just like enter/exit), and you
+should be able to drop something right where you stand").**
+
+Rendered in the world as `the-town/the-reach` (a child of `the-town/attach`).
+
+The attach class
+already says an attachment *"is good only where you truly stand"*; the walks of
+09-07 found the door quoting that sentence and enforcing none of it — a thing
+given from 379 m away mid-leg, a set-down that left the thing where it was
+first laid, a private draft changing hands. This clause is the sentence the
+door enforces:
+
+- **A take is a threshold act.** To take a thing you stand within its extent,
+  exactly as an entry stands *at a threshold you truly stand before*
+  (`the-town/enter`); a take from outside that extent is refused, and the
+  refusal names the distance and the walk that closes it. A thing is not ground
+  (`the-town/the-not-ground`), so standing "within" it is standing on what it
+  stands on, at its footprint.
+- **A set-down stands where you stood.** A drop places the thing at the
+  dropper's standpoint at the instant of the act — that position is written on
+  the act and is canon at the next fold like any move, never a fall-back to the
+  last place the thing was folded. Between the drop and the fold, the read
+  derives it from the act, as position is always derived.
+- **A give is a take at arm's length.** Giver and receiver stand within reach
+  of each other (`earshot_m` of the say edge is the town's one measure of
+  "beside"); a give to a resident out of reach is refused by name, and a `to:`
+  on a thing the giver does not hold is refused, never silently rewritten as a
+  take.
+- **Only what stands on the world changes hands.** A private draft is on no
+  docket and in no public answer, so it can be held by nobody but its author's
+  household until it publishes; a hold edge on an unpublished thing is refused.
+- **The receipt's vocabulary is the card's.** `carried along` / `set down`
+  are the two propagations the attach class names; a receipt says which, in
+  those words.
+
