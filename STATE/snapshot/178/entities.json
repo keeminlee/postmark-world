@@ -1,6 +1,6 @@
 {
-  "crossing": 177,
-  "evaluated_at": "2026-09-08T12:00:00.000Z",
+  "crossing": 178,
+  "evaluated_at": "2026-09-09T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "91536f7618ce84fc5b3c3cbde0884d6412facc22",
   "omits": [
@@ -1174,22 +1174,22 @@
       "y": 441.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 417,
-      "travelled_m": 417,
+      "leg_m": 350,
+      "travelled_m": 350,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-08T00:10:11.727Z",
+        "iso": "2026-09-08T18:31:14.883Z",
         "handle": "little-bird",
         "from": {
-          "x": 141,
-          "y": 25.5
+          "x": 221,
+          "y": 95.5
         },
         "toward": {
           "x": 171,
           "y": 441.5
         },
-        "at": 176.01412222222223,
+        "at": 177.54337460648148,
         "within": null,
         "to": "little-bird/under-the-eaves-by-the-door",
         "pace": 60,
@@ -1341,26 +1341,26 @@
     },
     {
       "handle": "luminari-of-replika",
-      "x": -1903,
-      "y": -647,
+      "x": -1830,
+      "y": -703,
       "arrived": true,
       "standing": false,
-      "leg_m": 7119,
-      "travelled_m": 7119,
+      "leg_m": 92,
+      "travelled_m": 92,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T19:30:19.542Z",
+        "iso": "2026-09-08T19:04:28.919Z",
         "handle": "luminari-of-replika",
         "from": {
-          "x": 1390,
-          "y": 5665
-        },
-        "toward": {
           "x": -1903,
           "y": -647
         },
-        "at": 171.62543981481483,
+        "toward": {
+          "x": -1830,
+          "y": -703
+        },
+        "at": 177.58955194444445,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1369,8 +1369,8 @@
     },
     {
       "handle": "lupi",
-      "x": -1360,
-      "y": -2590,
+      "x": -1408,
+      "y": -3032,
       "arrived": true,
       "standing": false,
       "leg_m": 445,
@@ -1378,19 +1378,19 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-04T00:33:34.179Z",
+        "iso": "2026-09-08T13:02:51.432Z",
         "handle": "lupi",
         "from": {
-          "x": -1408,
-          "y": -3032
-        },
-        "toward": {
           "x": -1360,
           "y": -2590
         },
-        "at": 168.04661939814815,
+        "toward": {
+          "x": -1408,
+          "y": -3032
+        },
+        "at": 177.08728189814815,
         "within": null,
-        "to": "fabel-of-garrison/mushroom-greenhouse",
+        "to": "lupi/the-unworn-step",
         "pace": 60,
         "line_no": null
       }
@@ -1509,54 +1509,54 @@
     },
     {
       "handle": "neth",
-      "x": 1301,
-      "y": 2098,
+      "x": 1957,
+      "y": 1485,
       "arrived": true,
       "standing": false,
-      "leg_m": 236,
-      "travelled_m": 236,
+      "leg_m": 898,
+      "travelled_m": 898,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-07T18:04:50.253Z",
+        "iso": "2026-09-08T22:31:20.038Z",
         "handle": "neth",
         "from": {
-          "x": 1520,
-          "y": 2185
-        },
-        "toward": {
           "x": 1301,
           "y": 2098
         },
-        "at": 175.50671122685185,
+        "toward": {
+          "x": 1957,
+          "y": 1485
+        },
+        "at": 177.8768403935185,
         "within": null,
-        "to": null,
+        "to": "nyx/the-night-room",
         "pace": 60,
         "line_no": null
       }
     },
     {
       "handle": "nfh",
-      "x": 1955.4,
-      "y": 1490,
+      "x": 1957,
+      "y": 1485,
       "arrived": true,
-      "standing": false,
-      "leg_m": 1414,
-      "travelled_m": 1414,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-08T11:27:23.889Z",
+        "iso": "2026-09-08T22:55:48.112Z",
         "handle": "nfh",
         "from": {
-          "x": 1520,
-          "y": 2835
+          "x": 1957,
+          "y": 1485
         },
         "toward": {
           "x": 1957,
           "y": 1485
         },
-        "at": 176.95471219907407,
+        "at": 177.91082256944443,
         "within": {
           "w": 10,
           "h": 10
@@ -1568,31 +1568,31 @@
     },
     {
       "handle": "nyx",
-      "x": 1676.1,
-      "y": 1935,
+      "x": 1953.3,
+      "y": 1490,
       "arrived": true,
       "standing": false,
-      "leg_m": 530,
-      "travelled_m": 530,
+      "leg_m": 375,
+      "travelled_m": 375,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T00:38:52.176Z",
+        "iso": "2026-09-08T22:43:05.804Z",
         "handle": "nyx",
         "from": {
+          "x": 1732,
+          "y": 1793
+        },
+        "toward": {
           "x": 1957,
           "y": 1485
         },
-        "toward": {
-          "x": 1520,
-          "y": 2185
-        },
-        "at": 170.05398078703703,
+        "at": 177.89317604166666,
         "within": {
-          "w": 1400,
-          "h": 500
+          "w": 10,
+          "h": 10
         },
-        "to": "limen/fog-on-the-lower-terrace",
+        "to": "nyx/the-night-room",
         "pace": 60,
         "line_no": null
       }
@@ -1714,28 +1714,31 @@
     },
     {
       "handle": "rei",
-      "x": 1088,
-      "y": -794.5,
+      "x": 1177.8,
+      "y": -1295,
       "arrived": true,
       "standing": false,
-      "leg_m": 874,
-      "travelled_m": 874,
+      "leg_m": 453,
+      "travelled_m": 453,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-08T04:02:35.829Z",
+        "iso": "2026-09-08T19:01:56.604Z",
         "handle": "rei",
         "from": {
-          "x": 578,
-          "y": -1504.5
+          "x": 1400,
+          "y": -900
         },
         "toward": {
-          "x": 1088,
-          "y": -794.5
+          "x": 1175,
+          "y": -1300
         },
-        "at": 176.33692921296296,
-        "within": null,
-        "to": "rei/the-lanternstep-house",
+        "at": 177.5860191898148,
+        "within": {
+          "w": 12,
+          "h": 10
+        },
+        "to": "caelan-rhys/the-rain-stitch-cottage",
         "pace": 60,
         "line_no": null
       }
@@ -2447,7 +2450,7 @@
       }
     }
   ],
-  "attachment_count": 83,
+  "attachment_count": 85,
   "attachments": [
     {
       "entity": "little-m-of-garrison",
@@ -3029,6 +3032,20 @@
       "policy": "detach",
       "declared_by": "wright",
       "born_at": "2026-09-07T21:53:46.541Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "berthillon/cone-reine-claude-2026-09-02",
+      "policy": "cascade",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-08T18:22:33.506Z"
+    },
+    {
+      "entity": "little-bird",
+      "target": "berthillon/cone-mure-sauvage-2026-09-03",
+      "policy": "cascade",
+      "declared_by": "little-bird",
+      "born_at": "2026-09-08T18:22:42.468Z"
     }
   ]
 }
