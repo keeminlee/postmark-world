@@ -36,13 +36,7 @@ const REGISTRY_REL = "WORLD/settlement-publications.json";
 // the named door a refusal leaves by, so a receipt never has to guess which
 // stderr line was the cause
 export const REFUSAL_SENTINEL = "SETTLEMENT-SWEEP-REFUSAL";
-/**
- * The loud-empty guard's own line, so a blind crossing is never filed as a bad
- * record. It is the guard's voice while sketchbooks are the register — see
- * `surveyedLine`: on a crossing whose survey found no sketchbooks at all this
- * sentinel cannot be reached, and the quiet-pass line says so rather than
- * letting an empty register read as a quiet town.
- */
+/** The loud-empty guard's own line, so a blind crossing is never filed as a bad record. */
 export const STARVING_SENTINEL = "SETTLEMENT-SWEEP-STARVING";
 const MARKS_PREFIX = "WORLD/marks/";
 
@@ -327,6 +321,29 @@ function foldRefInner(repo, ref, stakes) {
  *
  * A survey that agrees with a zero crossing is the receipt that the quiet pass
  * was quiet because the town was quiet.
+ *
+ * ── WHOSE SKETCHBOOKS THESE ARE, UNDER A STORE CROSSING (2026-09-09) ────────
+ *
+ * That last sentence is a claim about the git era, and it does not carry across
+ * on its own. On the office train's `SETTLEMENT_SOURCE=store` path the record
+ * lives in the store, and the office does not hand this survey a smaller world
+ * — it deletes every draft ref and then BUILDS one local sketchbook per
+ * household before the sweep runs (`src/store-writedown.mjs`, in the office
+ * repo, whose own words for these branches are "a scratch surface this crossing
+ * makes for the sweep to read"). So a store crossing that carries anything
+ * gives this survey `branches ≥ 1`, and the numbers below count surfaces the
+ * crossing made seconds earlier rather than a register of work that was
+ * waiting.
+ *
+ * NOTHING HERE CAN TELL THE DIFFERENCE, and it should not try: a ref count is
+ * not an era, and the store path deliberately keeps it non-zero. The mode is
+ * known in exactly one place — the office receipt, which reads it from
+ * `SETTLEMENT_SOURCE_MODE` and carries it as `source:` beside these very counts
+ * — and that is where the distinction belongs. Do not infer the era here.
+ * (Measured against office `train/2026-w38` @ `a2bac38`; an earlier pass of
+ * this lane inferred it from `branches === 0` and was wrong twice — that state
+ * is unreachable on a carrying store crossing, and in the git era it is an
+ * honestly quiet town.)
  */
 export function surveySketchbooks(repo, mainBranch, escrow) {
   const refs = [
@@ -365,43 +382,6 @@ export function surveySketchbooks(repo, mainBranch, escrow) {
     escrow_backed_deltas: escrowBacked.length,
     escrow_backed: escrowBacked,
   };
-}
-
-/**
- * THE QUIET-PASS RECEIPT NAMES ITS OWN INSTRUMENT (2026-09-09, the store-era
- * sentence pass — cutover-ready for w38).
- *
- * `surveyed: N sketchbook(s), N delta row(s), N escrow-backed` was written as
- * the receipt that tells a quiet town from a blind crossing. It reads exactly
- * ONE register — `refs/heads/draft/*` and its origin counterparts — and it only
- * carries that meaning while a sketchbook is where a waiting mark lives.
- *
- * A STORE CROSSING EMPTIES THE REGISTER. With the record in the store there are
- * no sketchbooks to starve, so every number this survey returns is 0 because it
- * had nothing to read, not because the town was quiet. The old line prints the
- * same six words in both cases, and a reader who takes `0 escrow-backed` for
- * the old receipt reads a claim the survey never made.
- *
- * The discriminator is MEASURED here, not a mode handed in from outside:
- * `branches === 0` is the survey itself saying its register was empty. With
- * sketchbooks standing the words are today's, byte for byte. With none, the
- * line says what it actually measured, and names what does stand between a
- * stampless fold and canon one layer down — `marks-fold.mjs`'s stamp gate,
- * which refuses to write a world-state that would strip every stamp the world
- * holds.
- *
- * THE GUARD ITSELF IS UNTOUCHED. It still refuses exactly one contradiction —
- * "I saw nothing on every channel, and the survey found an escrow-backed mark".
- * On an empty register that contradiction cannot arise, and this sentence now
- * states that out loud instead of implying its opposite.
- */
-export function surveyedLine(surveyed) {
-  return surveyed.branches > 0
-    ? `  surveyed: ${surveyed.branches} sketchbook(s), ${surveyed.delta_rows} delta row(s), ${surveyed.escrow_backed_deltas} escrow-backed`
-    : "  surveyed: no sketchbooks at all — the register this survey reads is empty, so its 0 escrow-backed is not "
-      + "evidence that the town was quiet, and the loud-empty guard cannot fire on this crossing. What stands one "
-      + "layer down is marks-fold's stamp gate, which refuses to write a world-state that would strip every stamp "
-      + "the world holds.";
 }
 
 export function draftBranches(repo) {
@@ -1470,12 +1450,6 @@ export function settlementSweep({
     // without this is a claim with no receipt, and the whole point of the
     // loud-empty guard is that a reader can tell a quiet town from a blind
     // crossing without going and looking themselves.
-    //
-    // These are numbers, and they mean what `surveyedLine` says they mean: a
-    // `branches` of 0 is the survey reporting an EMPTY REGISTER, which is not
-    // the same finding as a quiet town and must not be read as one. Any reader
-    // that renders these three counts into prose of its own owes the same
-    // distinction — `deploy/settlement-auto.sh`'s quiet-pass echo is one.
     surveyed: { branches: survey.branches, delta_rows: survey.delta_rows, escrow_backed_deltas: survey.escrow_backed_deltas },
     // the crossing's own word on the line-ending law it had to work around
     eol_boundary: gate.irreconcilable,
@@ -1513,7 +1487,7 @@ if (isMain) {
     if (options.json) console.log(JSON.stringify(report, null, 2));
     else {
       console.log(`settlement sweep: ${report.published.length} published · ${report.left_drafted.length} left drafted · ${report.unpublished.length} unpublished · ${report.withdrawn.length} withdrawn · ${report.quarantined.length} quarantined · ${report.dropped.length} dropped · ${report.rebased.length} draft branch(es) rebased`);
-      console.log(surveyedLine(report.surveyed));
+      console.log(`  surveyed: ${report.surveyed.branches} sketchbook(s), ${report.surveyed.delta_rows} delta row(s), ${report.surveyed.escrow_backed_deltas} escrow-backed`);
       for (const row of report.quarantined) console.log(`QUARANTINE\t${row.household}\t${row.ref}\t${row.detail ?? row.reason}`);
       for (const row of report.published) console.log(`PUBLISH\t${row.household}\t${row.id}\t${row.class}\tescrow=${row.escrow}`);
       for (const row of report.left_drafted) console.log(`KEEP\t${row.household}\t${row.id ?? row.path}\t${row.reason}`);
