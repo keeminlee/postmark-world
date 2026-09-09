@@ -1178,7 +1178,7 @@ function tgFeaturePoints(f) {
     && Math.abs(p.x) <= TG_SENTINEL_M && Math.abs(p.y) <= TG_SENTINEL_M);
 }
 
-export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUND_PAD_M } = {}) {
+export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUND_PAD_M, washes = REGION_WASH_LAYER } = {}) {
   if (!Number.isFinite(originPx?.x) || !Number.isFinite(originPx?.y) || !(Number(mPerPx) > 0))
     throw new Error("townGround needs the skeleton's registration (originPx, mPerPx)");
   const light = skeleton?.light ?? {};
@@ -1277,10 +1277,40 @@ export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUN
   // from transparency) — the same mark is the same wash for every reader on
   // every load, and a region that changes id changes colour rather than
   // silently inheriting someone else's.
+  //
+  // ── THE WASH — the region's own picture, walked from its pointer (2026-09-09,
+  // the atlas sitting). Keemin: "the goal should be to try to replicate the
+  // visuals of World 1.0" — and the ruling: region washes as SVG, linked to the
+  // region mark by a POINTER. The pointer is the record's own `image:` (the
+  // media-shelf pointer, through the same gate every art surface here uses,
+  // markImageURL); a ringed region whose pointer names an SVG wears it as its
+  // wash, hung over the ring's own bounding box — tools/region-wash-gen.mjs
+  // makes the SVG's viewBox exactly that box, so the wash and the ring agree by
+  // construction — in THIS layer order, right where the ring's polygon stands:
+  // under every mark, above the paper and the light. The polygon stays (it is
+  // the provenance the falsifiers read back in metres, and the ring's own
+  // outline) with its paint withdrawn; a region with no wash pointer keeps the
+  // hue it has today, so the ground never loses a region to a missing picture.
+  //
+  // THE URL NEVER TOUCHES THIS STRING — hydrateMarkImages' rule, kept: the
+  // <image> is emitted EMPTY, naming only the mark it is for, and the href is
+  // set on the real node by hydrateRegionWashes after the parse, where a picture
+  // that fails takes its node with it and hands the polygon its hue back. So a
+  // dangling pointer reads as today's ground plus one line in the receipt,
+  // never as a broken glyph. REGION_WASH_LAYER is the toggle, default ON; with
+  // it off this block emits exactly what it emitted before the sitting.
+  const washReceipt = [];
   const regionWash = regions.map((m) => {
     const hue = placeholderHue(m.id);
-    return `<polygon class="wv-tg-region"${src(`mark:${m.id}`)} fill="hsl(${hue} 24% 62%)"`
-      + ` stroke="hsl(${hue} 28% 44%)" points="${tgRing(m).map(pt).join(" ")}"/>`;
+    const ring = tgRing(m);
+    const pointer = washes ? regionWashPointer(m) : null;
+    washReceipt.push({ id: m.id, pointer, state: pointer ? "asked" : (washes ? regionWashWhyNot(m) : "layer-off") });
+    const image = pointer ? regionWashImageSVG(m, ring, px) : "";
+    return image
+      + `<polygon class="wv-tg-region"${src(`mark:${m.id}`)}`
+      + (pointer ? ` data-wash-of="${esc(m.id)}"` : "") + ` data-hue="${hue}"`
+      + ` fill="${pointer ? "none" : `hsl(${hue} 24% 62%)`}" stroke="${pointer ? "none" : `hsl(${hue} 28% 44%)`}"`
+      + ` points="${ring.map(pt).join(" ")}"/>`;
   }).join("");
 
   const water = waters.map(({ feature, mark, ring }) => ring
@@ -1345,7 +1375,85 @@ export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUN
   // running sage-green down the middle of the town. One question, one owner: a
   // mark's shape belongs to whoever draws it on this scene, and the overlay
   // skips what the ground has under it.
-  return { svgText, originPx, mPerPx, groundMarkIds: new Set([...regions.map((m) => m.id), ...waters.filter((w) => w.mark).map((w) => w.mark.id)]) };
+  return { svgText, originPx, mPerPx, groundMarkIds: new Set([...regions.map((m) => m.id), ...waters.filter((w) => w.mark).map((w) => w.mark.id)]),
+    // every region on the ground and what the wash layer did with it — "asked" is
+    // settled to "drawn" / "missing" by hydrateRegionWashes once the browser answers
+    washes: washReceipt };
+}
+
+// ── THE WASH LAYER'S OWN FUNCTIONS (2026-09-09) ──────────────────────────────
+//
+// One constant, one gate, one emitter, one hydrator, one receipt. Kept beside
+// townGround because a wash IS ground: it belongs to the sheet, not to the
+// overlay — which is also why it is built once from the whole record and never
+// from the field of view (a region does not come and go with where you stand).
+
+/** the layer's toggle — default ON (the sitting's word, 2026-09-09); off, the ground is exactly what it was before */
+export const REGION_WASH_LAYER = true;
+
+/** a ringed mark whose shelf pointer names an SVG: that URL, else null — the record's own shape, no roster */
+export function regionWashPointer(mark) {
+  if (!Array.isArray(mark?.points) || mark.points.length < 3) return null;
+  const url = markImageURL(mark);
+  return url && /\.svg$/i.test(url) ? url : null;
+}
+
+/** why a region draws no wash — one word per reason, for the receipt */
+export function regionWashWhyNot(mark) {
+  const raw = typeof mark?.image === "string" ? mark.image.trim() : "";
+  if (!raw) return "no-pointer";
+  if (!markImageURL(mark)) return "off-shelf";
+  return "not-svg";
+}
+
+/** the EMPTY <image> for one region's wash: the ring's bbox in sheet units, no href — the url is hung by hydrateRegionWashes */
+export function regionWashImageSVG(mark, ring, px) {
+  const xs = ring.map((p) => p.x), ys = ring.map((p) => p.y);
+  const a = px({ x: Math.min(...xs), y: Math.min(...ys) }), b = px({ x: Math.max(...xs), y: Math.max(...ys) });
+  const n = (v) => Number(v).toFixed(1);
+  return `<image class="wv-tg-wash" data-src="mark:${esc(mark.id)}" data-wash-for="${esc(mark.id)}"`
+    + ` x="${n(Math.min(a.x, b.x))}" y="${n(Math.min(a.y, b.y))}" width="${n(Math.abs(b.x - a.x))}" height="${n(Math.abs(b.y - a.y))}"`
+    + ` preserveAspectRatio="none"/>`;
+}
+
+/** hang each wash on its real node. `resolve(id)` → the folded mark; `onState(id, "drawn" | "missing" | "no-pointer")`.
+ *  A picture that fails removes its node and gives the ring polygon its hue back — no broken glyph. Returns how many were asked for. */
+export function hydrateRegionWashes(svg, resolve, { onState = () => {} } = {}) {
+  let asked = 0;
+  for (const image of [...svg.querySelectorAll("image.wv-tg-wash[data-wash-for]")]) {
+    const id = image.getAttribute("data-wash-for");
+    image.removeAttribute("data-wash-for"); // hydrate once, whatever follows
+    const polygon = svg.querySelector(`polygon.wv-tg-region[data-wash-of="${String(id).replace(/"/g, "")}"]`);
+    const giveBack = () => {
+      if (!polygon) return;
+      const hue = polygon.getAttribute("data-hue");
+      polygon.setAttribute("fill", `hsl(${hue} 24% 62%)`);
+      polygon.setAttribute("stroke", `hsl(${hue} 28% 44%)`);
+      polygon.removeAttribute("data-wash-of");
+    };
+    const url = regionWashPointer(resolve(id));
+    if (!url) { image.remove(); giveBack(); onState(id, "no-pointer"); continue; }
+    // handlers BEFORE the href — a cached failure can fire before the next statement
+    image.addEventListener("error", () => { image.remove(); giveBack(); onState(id, "missing"); }, { once: true });
+    image.addEventListener("load", () => onState(id, "drawn"), { once: true });
+    image.setAttribute("href", url);
+    asked += 1;
+  }
+  return asked;
+}
+
+/** the page's own receipt for the wash layer: one line, and the regions that draw no wash named with why */
+export function washReceiptText(rows = []) {
+  const count = (state) => rows.filter((r) => r.state === state).length;
+  const asked = rows.filter((r) => r.state !== "no-pointer" && r.state !== "off-shelf" && r.state !== "not-svg" && r.state !== "layer-off").length;
+  if (rows.length && rows.every((r) => r.state === "layer-off")) return { summary: "region washes: off", lines: [] };
+  const summary = `${asked} region wash${asked === 1 ? "" : "es"} asked for · ${count("drawn")} drawn`
+    + (count("missing") ? ` · ${count("missing")} did not answer` : "")
+    + (count("asked") ? ` · ${count("asked")} loading` : "")
+    + (rows.length - asked ? ` · ${rows.length - asked} without a wash` : "");
+  const why = { missing: "its pointer did not answer — nothing drawn", "no-pointer": "no wash pointer on the record", "off-shelf": "its image is not on the town's shelf — not asked for", "not-svg": "its image is not an SVG — a picture, not a wash" };
+  const lines = rows.filter((r) => r.state !== "drawn" && r.state !== "asked").map((r) => `${deslugMarkId(r.id)}: ${why[r.state] ?? r.state}`);
+  return { summary, lines };
 }
 
 // ── the plaque ──────────────────────────────────────────────────────────────
@@ -3609,6 +3717,14 @@ const STYLE = `
 .wv-tg-paper { fill:#ece0c4; }
 .wv-tg-rule, .wv-tg-daylight, .wv-tg-night { pointer-events:none; }
 .wv-tg-region { fill-opacity:.30; stroke-opacity:.55; stroke-width:1.4; pointer-events:none; }
+/* the wash layer (2026-09-09): a region's own SVG, hung over its ring's bbox, under every
+   mark; the ring polygon under it keeps its geometry and gives up its paint */
+.wv-tg-wash { pointer-events:none; }
+.wv-tg-region[data-wash-of] { fill-opacity:1; stroke-opacity:1; }
+.wv-tg-wash-receipt { position:absolute; z-index:6; left:8px; top:8px; max-width:44ch; padding:4px 8px;
+  border-radius:4px; background:rgba(13,15,19,.82); color:var(--dim); font:.68rem/1.35 Georgia,"Times New Roman",serif;
+  pointer-events:none; }
+.wv-tg-wash-receipt ul { list-style:none; margin:2px 0 0; padding:0; }
 .wv-tg-water { fill:url(#wv-tg-water-grad); fill-opacity:.92; stroke:#6b7a8c; stroke-opacity:.35;
   stroke-width:1; pointer-events:none; }
 .wv-tg-water-line { stroke:#1e3a52; stroke-opacity:.85; stroke-linecap:round; stroke-linejoin:round;
@@ -5487,6 +5603,10 @@ export function mountViewer(appEl) {
       // `placeholderExtents: true` — the town hangs its own art now, exactly as a
       // room does, because the atlas that used to bake it is no longer the ground
       else mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, placeholderExtents: true, groundMarkIds: ground.groundMarkIds });
+      // THE WASHES ARE HUNG ON REAL NODES, after the parse (2026-09-09): the
+      // ground's string carries no url; each region's pointer is resolved off
+      // the folded record here and answered into the page's own receipt.
+      mountRegionWashes(svg, boxEl, ground.washes);
     } catch (e) {
       boxEl.innerHTML = `<div class="loading">the ground didn't draw (${esc(e.message)}) — the telling still works</div>`;
       reattachOverlays();
@@ -8807,6 +8927,33 @@ export function mountViewer(appEl) {
   function noteRecordRead(record) {
     if (!recordAbsences.delete(record)) return;
     renderRecordAbsences();
+  }
+
+  // ───────── the wash layer's receipt (2026-09-09) ─────────
+  //
+  // The ground's own sibling of the record absences: every region the ground
+  // drew is accounted for — its wash drawn, or the reason it has none, in words
+  // a reader can check against the record. Nothing here guesses: "drawn" and
+  // "did not answer" are written only when the browser fired load or error.
+  // The element is `data-wv-keep` so a trip through a room does not erase it.
+  const washStates = new Map();   // mark id → state
+  function mountRegionWashes(svg, boxEl, rows = []) {
+    washStates.clear();
+    for (const r of rows) washStates.set(r.id, r.state);
+    const paint = () => renderWashReceipt(boxEl, rows.map((r) => ({ ...r, state: washStates.get(r.id) ?? r.state })));
+    hydrateRegionWashes(svg, (id) => (world.marks ?? []).find((m) => m.id === id), {
+      onState: (id, state) => { washStates.set(id, state); paint(); },
+    });
+    paint();
+  }
+  function renderWashReceipt(boxEl, rows) {
+    if (!boxEl) return;
+    let box = $(boxEl, ".wv-tg-wash-receipt");
+    if (!rows.length) { box?.remove(); return; }
+    if (!box) { box = document.createElement("div"); box.className = "wv-tg-wash-receipt"; box.setAttribute("data-wv-keep", ""); boxEl.appendChild(box); }
+    const { summary, lines } = washReceiptText(rows);
+    box.innerHTML = `<div class="wv-tg-wash-sum">${esc(summary)}</div>`
+      + (lines.length ? `<ul>${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>` : "");
   }
 
   // ───────── what has been happening ─────────
