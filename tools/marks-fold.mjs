@@ -542,6 +542,86 @@ export const PARCEL_CAP_EXCEPTIONS = new Map([
 export const PARCEL_EXTENT_M = 25;
 
 /**
+ * THE PARCELS, IN CLAIM ORDER — the order the cap is applied in, and a ruling
+ * rather than a tidy-up.
+ *
+ * The gate refuses a parcel when its household ALREADY HOLDS `PARCEL_CLAIM_CAP`
+ * admitted ones, so WHICH parcel is refused is decided entirely by the order the
+ * loop runs in. That order was `byId`'s insertion order, which is `loadMarks`'
+ * `readdirSync` walk — the filesystem's directory listing. A household over the
+ * cap lost whichever of its parcels the walk reached fourth, and adding an
+ * unrelated mark anywhere in the tree could move that to a different one on the
+ * next crossing. A resident's ground is not a thing that may flicker.
+ *
+ * It was invisible while the registry was stale, because a stale registry filed
+ * a family's handles as strangers and no household was over the cap at all.
+ * Measured on world main `d38a5f7e` with the registry refreshed from the town:
+ * the walk refuses `spark-the-builder/the-workshop-on-the-terrace-parcel`,
+ * claimed 2026-08-09, while `berthillon/chez-antoine`, claimed seventeen days
+ * later, stands. Nothing about the record says that; the directory order does.
+ *
+ * FIRST THREE BY CLAIM DATE STAND. The law is "a HOUSEHOLD may CLAIM at most 3
+ * parcels" with "prior estate stands" — both statements about WHEN — so the
+ * order the gate reads them in is the order they were claimed. Ties break on id,
+ * so the verdict is a function of the record and of nothing else.
+ *
+ * ── IT CARRIES TWO OTHER RULES WITH IT, AND THAT IS THE THING TO KNOW ────────
+ *
+ * The same loop decides parcel OVERLAP ("first-in-order wins") and ONE PARCEL
+ * PER HANDLE ("relocation = replace, not add"). Ordering by claim date means the
+ * EARLIER claim wins an overlap and the earlier of a handle's two parcels is the
+ * one kept. That is the same answer the cap now gives, which is why they move
+ * together rather than each on its own key — but it is a change to three rules
+ * and not to one, and anyone reading this line as a sort should know that.
+ *
+ * On world main `d38a5f7e`, under both the standing registry and one refreshed
+ * from the town, neither of those two rules changes its verdict: no parcel
+ * overlaps another and no handle holds two. That is a fact about today's tree,
+ * measured rather than assumed, and not a property of the ordering.
+ *
+ * ── WHAT IT DOES TO TODAY'S TREE, MEASURED ──────────────────────────────────
+ *
+ * Against the registry AS COMMITTED on `d38a5f7e` this ordering changes NOTHING:
+ * the fold is identical mark for mark, 89 parcels admitted and 0 errors either
+ * way, because the stale registry files every family's handles as strangers and
+ * no household is over the cap at all. It becomes visible only once the registry
+ * is refreshed, which is the office lane it travels with.
+ *
+ * Against a registry refreshed from the town it moves the refusal set from
+ *
+ *     spark-the-builder/the-workshop-on-the-terrace-parcel   claimed 2026-08-09
+ *     little-pica/the-nest-on-the-middle-terrace-parcel      claimed 2026-09-01
+ *
+ * to
+ *
+ *     berthillon/chez-antoine                                claimed 2026-08-26
+ *     little-pica/the-nest-on-the-middle-terrace-parcel      claimed 2026-09-01
+ *     histor-reeves/the-gauge-house-parcel                   claimed 2026-09-08
+ *
+ * — it gives the earliest claim back and refuses the latest, which is what
+ * "prior estate stands" says. THE COUNT GOES UP, from two to three: the walk
+ * reached `histor-reeves/the-gauge-house-parcel` before four of the Reeves'
+ * pre-law parcels and admitted it at a count of two, and claim order does not.
+ * Whether those three are refused at all is the founder's question and not this
+ * function's; `PARCEL_CAP_EXCEPTIONS` above is the mechanism for answering it.
+ *
+ * NOT APPLIED AT `admitDelta`'s gate, deliberately. That loop walks EVERY kind
+ * of candidate and the parcel branch is nested inside it, so ordering it by date
+ * would reorder duplicate-id detection and containment resolution for marks that
+ * have nothing to do with parcels — not a sort, a rewrite. It also seeds its
+ * count from `base.parcelsByCred`, which is this fold's own admitted count, so
+ * the determinism established here is what it counts against. What is left
+ * order-dependent there is one sketchbook's several simultaneous parcel claims,
+ * not the town's standing estate.
+ */
+export function parcelsInClaimOrder(byId) {
+  return [...byId.values()]
+    .filter((mk) => mk.kind === "parcel")
+    .sort((a, b) => String(a.date ?? "").localeCompare(String(b.date ?? ""))
+      || String(a.id ?? "").localeCompare(String(b.id ?? "")));
+}
+
+/**
  * WHICH QUESTION THE HOUSEHOLD MAP ANSWERS, read off the values it carries.
  * `gh:<digits>` is a credential id — one account, so a human holding two reads
  * as two households. Anything else is a declared slug, the grain the law means.
@@ -603,8 +683,10 @@ export function fold({ marks, terrain, stakes, prev = null, tick = 0, dials = DI
   const parcelByHh = new Map();
   const parcelsByCred = new Map();
   const parcelRectsByCred = new Map();   // cred -> every parcel rect that household holds
-  for (const mk of byId.values()) {
-    if (mk.kind !== "parcel") continue;
+  // IN CLAIM ORDER, not in the filesystem's — see parcelsInClaimOrder above for
+  // why the cap's verdict must be a function of the record, and for the two
+  // other rules this loop decides that move with it.
+  for (const mk of parcelsInClaimOrder(byId)) {
     const r = rect(mk); r.w = r.w || dials.parcel_w; r.h = r.h || dials.parcel_h;
     if (parcelByHh.has(mk.household)) { errors.push({ mark: mk.id, error: "household already holds a parcel (relocation = replace, not add)" }); continue; }
     const cred = credHh(mk.household);
