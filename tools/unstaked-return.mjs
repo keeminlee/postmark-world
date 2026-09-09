@@ -115,7 +115,13 @@ const ROOT = join(HERE, "..");
  *  move does. Exported, which is why it must be reachable WITHOUT running the
  *  tool — hence the CLI guard at the tail rather than a bare script body. */
 export const isUnstakedCommons = (m) =>
-  m.by !== "the-town" && !m.sovereign && !(m.stamps > 0) && !(m.weight > 0);
+  !m.sovereign && !(m.stamps > 0) && !(m.weight > 0);
+// THE TOWN CLAUSE IS NOT HERE ANY MORE, and its absence is the point. It used to
+// sit in this predicate as `m.by !== "the-town"` — an incidental filter that
+// happened to be true. The founder ruled it a LAW on 2026-09-09 ("exempt all the
+// town's own marks, no mint"), so it lives in `exemptionFor` with the other
+// three, where it has a receipt reason of its own and a falsifier that reds when
+// it is removed. Left in both places it would be a rule no flip could disprove.
 
 /**
  * THE FOUNDER'S TWO EXEMPTIONS (Keemin, 2026-09-09, after the PSA).
@@ -160,12 +166,26 @@ export const isUnstakedCommons = (m) =>
  * already the roster the atlas and the outsiders view read. A second copy here
  * would be a fourteenth region waiting to happen.
  */
+export const EXEMPTION_ORDER = Object.freeze(["law", "parcel", "region", "town"]);
+
 export function exemptionFor(mark, { authoredTier = undefined } = {}) {
+  // 1 — LAW. The authored tier, never the projection: see the section below.
   const tier = authoredTier !== undefined ? authoredTier : mark?.authored_tier;
   if (tier === "constitution") return "constitution-tier: law needs no stake";
+  // 2 — PARCEL. Before region and town, so a household's parcel reads as the
+  //     founding privilege rather than borrowing a reason that is about the town.
+  if (mark?.kind === "parcel") return "parcel: the founding privilege — needs no stake";
+  // 3 — REGION. A true reason: the founding act at town e1415f207 minted 1001 to
+  //     the-town and staked 77 onto each of the thirteen rings, thirteen signed
+  //     ledger lines. "No mint" answered a different question — whether the
+  //     town's OTHER marks get a second issuance — and did not retract this act.
   const leaf = String(mark?.id ?? "").split("/").slice(1).join("/");
   if (REGION_SLUGS.includes(leaf)) return "region: the town's founding stake";
-  if (mark?.kind === "parcel") return "parcel: the founding privilege — needs no stake";
+  // 4 — TOWN, last, so this bucket reads what ONLY the town clause protects.
+  //     The reason uses the ruling's own words and does NOT say the town stakes,
+  //     because "no mint" is precisely the ruling that it does not.
+  if ((mark?.by ?? mark?.household) === "the-town")
+    return "town: the town's own mark — exempt by the founder's ruling of 2026-09-09";
   return null;
 }
 
@@ -300,14 +320,76 @@ const existingBranches = new Set(
     .split("\n").map((l) => l.trim()).filter(Boolean)
     .map((l) => l.replace(/^origin\//, "").replace(/^draft\//, "")));
 
+// THE MATCH IS CASE-FOLDED AND THE EXISTING SPELLING WINS. `households.json`
+// lower-cases its logins; the sketchbooks on origin do not. Compared
+// case-sensitively the tool creates `draft/aionsolare` beside `draft/AionSolare`
+// — five of them (aionsolare, vizarian, seravielle-de-lochan, darkelf381,
+// znegil) — landing those residents' returned marks on a brand-new branch
+// instead of their sketchbook, and leaving origin with two sketchbooks per
+// person that a case-insensitive Windows clone cannot hold as loose refs at all.
+// So the registry decides WHICH login and the branch that already exists decides
+// how it is SPELLED.
+const canonicalBranch = new Map([...existingBranches].map((b) => [b.toLowerCase(), b]));
+
+// ── THE REPO IS THE REPO IT SAYS IT IS ──────────────────────────────────────
+//
+// `git -C <path>` WALKS UP. Point it at a directory that is not a repository and
+// it finds the nearest ancestor that is — so a mistyped `--repo`, or a scratch
+// directory under a checkout, silently borrows another repository's refs. This
+// tool then reads ITS `draft/*` list (wrong counts, no warning) and, on `--apply`,
+// writes sketchbook refs and a commit INTO IT. Found while building the gate
+// below: a fixture path in the scratchpad resolved to a real HEAD.
+//
+// So the repo must be its own top level, and must be the tree being folded.
+const topLevel = gitQ("rev-parse", "--show-toplevel");
+if (!topLevel) {
+  console.error(`unstaked-return: "${REPO}" is not a git repository. Pass --repo <world clone>.`);
+  process.exit(2);
+}
+{
+  const norm = (p) => String(p).replace(/\\/g, "/").replace(/\/+$/, "").toLowerCase();
+  if (norm(topLevel) !== norm(REPO)) {
+    console.error(
+      `unstaked-return: "${REPO}" is not the top of a git repository — git walked up to\n` +
+      `  "${topLevel}".\n` +
+      "  Refusing rather than reading (and, on --apply, WRITING) another repository's refs.");
+    process.exit(2);
+  }
+}
+
+// ── THE DENOMINATOR GATE ────────────────────────────────────────────────────
+//
+// The receipt's counts depend silently on which `draft/*` refs this clone can
+// see. Measured: the same tree and the same stakes gave 238 movable / 26
+// unmovable / cascade 139 before the sketchbook refs were fetched, and
+// 240 / 24 / 140 after — with no warning of any kind. A clone that has fetched
+// no sketchbooks does not report a smaller move; it reports a WRONG one, and
+// every household reads as having no branch.
+//
+// So zero is a refusal. `--allow-no-sketchbooks` exists for the fixtures, which
+// genuinely have none.
+if (!existingBranches.size && !has("--allow-no-sketchbooks")) {
+  console.error(
+    "unstaked-return: this clone can see no draft/* sketchbook refs at all.\n" +
+    "  Every household would read as having no branch, and the receipt's counts would be\n" +
+    "  wrong rather than merely smaller. Fetch them first:\n" +
+    "    git fetch origin 'refs/heads/draft/*:refs/remotes/origin/draft/*'\n" +
+    "  (--allow-no-sketchbooks is for fixtures that really have none.)");
+  process.exit(2);
+}
+
 function branchFor(household) {
   const key = keyOfHousehold[household];
   if (key) {
     const cands = key.startsWith("login:") ? [key.slice("login:".length)] : (loginsOfKey.get(key) ?? []);
-    for (const c of cands) if (existingBranches.has(c)) return { branch: c, how: "registry", existed: true };
+    for (const c of cands) {
+      const hit = canonicalBranch.get(String(c).toLowerCase());
+      if (hit) return { branch: hit, how: "registry", existed: true };
+    }
     if (cands.length) return { branch: cands[0], how: "registry", existed: false };
   }
-  if (existingBranches.has(household)) return { branch: household, how: "name", existed: true };
+  const own = canonicalBranch.get(String(household).toLowerCase());
+  if (own) return { branch: own, how: "name", existed: true };
   // No login for this household anywhere in the registry. The drain names a
   // sketchbook after a GITHUB LOGIN and this household has none, so there is no
   // honest name to create one under either.
@@ -395,6 +477,12 @@ if (movedIds.size) {
 
 const receipt = {
   tool: "unstaked-return", record: "git", law: "town PSA 2026-09-09; town #1990; founder's ruling 2026-08-28",
+  // THE ORDER THE EXEMPTIONS ARE READ IN, on the receipt rather than only in the
+  // code, because it decides which bucket a mark that qualifies twice lands in.
+  // A town-owned law node is both `law` and `town`; under this order it is `law`,
+  // so the TOWN bucket reads what only the town clause protects. Change the order
+  // and the same set produces a different receipt.
+  exemption_order: EXEMPTION_ORDER,
   measured_at: new Date().toISOString(),
   repo_head: gitQ("rev-parse", "HEAD"),
   marks_dir: dirRel(MARKS_DIR),
@@ -412,6 +500,13 @@ const receipt = {
     exempt_constitution: skipped.filter((s) => s.why.startsWith("constitution-tier")).length,
     exempt_region: skipped.filter((s) => s.why.startsWith("region:")).length,
     exempt_parcel: skipped.filter((s) => s.why.startsWith("parcel:")).length,
+    exempt_town: skipped.filter((s) => s.why.startsWith("town:")).length,
+    stayed_sovereign: skipped.filter((s) => s.why.startsWith("sovereign")).length,
+    stayed_staked: skipped.filter((s) => s.why.startsWith("staked")).length,
+    staying: skipped.filter((s) => !s.why.startsWith("no sketchbook") && !s.why.startsWith("no directory")).length,
+    set_households: new Set([...moved.map((m) => m.household),
+      ...skipped.filter((s) => s.why.startsWith("no sketchbook") || s.why.startsWith("no directory"))
+        .map((s) => s.household)]).size,
   },
   moved, skipped, reparents, shifts, cascade,
   applied: false,
@@ -445,12 +540,22 @@ if (APPLY) {
   //    needed and no working tree is ever left half-moved.
   for (const [branch, items] of byBranch) {
     const ref = `refs/heads/${branch}`;
+    // A NEW SKETCHBOOK IS BUILT FROM MAIN, NEVER AN ORPHAN. The drain's idiom is
+    // one line — `git branch -qf draft/<login> <mainSha>`
+    // (office src/store-writedown.mjs:770) — and the brief asked for that idiom
+    // by name. `read-tree --empty` here would have made a ROOT COMMIT holding
+    // only the returned files: 31 of them today, a sketchbook with no history,
+    // no shared ancestor with main, and nothing for the drain's own force-reset
+    // to fast-forward from. The returned marks would be the only thing the
+    // resident's branch had ever contained.
     const base = gitQ("rev-parse", "--verify", `${ref}^{commit}`)
-      ?? gitQ("rev-parse", "--verify", `refs/remotes/origin/${branch}^{commit}`);
+      ?? gitQ("rev-parse", "--verify", `refs/remotes/origin/${branch}^{commit}`)
+      ?? head;
     const idx = join(REPO, ".git", `unstaked-return-index-${branch.replace(/[^A-Za-z0-9]/g, "_")}`);
     const env = { ...process.env, GIT_INDEX_FILE: idx };
     const g = (...a) => execFileSync("git", ["-C", REPO, ...a], { encoding: "utf8", env, maxBuffer: 1 << 28 }).trim();
-    g("read-tree", base ? `${base}^{tree}` : "--empty");
+    if (!base) throw new Error(`unstaked-return: no base for ${ref} and no HEAD to build it from`);
+    g("read-tree", `${base}^{tree}`);
     for (const mv of items) {
       for (const f of mv.files) {
         const blob = git("hash-object", "-w", f);
@@ -466,9 +571,9 @@ if (APPLY) {
       items.map((i) => `  ${i.mark} (${i.kind})`).join("\n") + "\n" + receiptNote + "\n\n" +
       `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>\n` +
       `Claude-Session: https://claude.ai/code/session_01PDJ7RsS1Mykj4YMnBhphy4\n`;
-    const commit = base
-      ? execFileSync("git", ["-C", REPO, "commit-tree", tree, "-p", base, "-m", msg], { encoding: "utf8" }).trim()
-      : execFileSync("git", ["-C", REPO, "commit-tree", tree, "-m", msg], { encoding: "utf8" }).trim();
+    // Always parented. The parentless spelling is gone rather than guarded: a
+    // branch of this shape that could still be created is a branch that will be.
+    const commit = execFileSync("git", ["-C", REPO, "commit-tree", tree, "-p", base, "-m", msg], { encoding: "utf8" }).trim();
     git("update-ref", ref, commit);
   }
 
@@ -538,9 +643,14 @@ const t = receipt.totals;
 console.log(`unstaked-return · ${APPLY ? "APPLIED" : "dry run"} · ${receipt.marks_dir} @ ${(receipt.repo_head ?? "").slice(0, 8)}`);
 console.log(`  folded ${t.marks_folded} marks with ${stakes.length} stake row(s)${STAKES ? "" : "  ⚠ ZERO ESCROW"}`);
 console.log(`  returning to drafts: ${t.returning} mark(s) across ${t.returning_households} household(s)`);
-console.log(`  set before branch resolution: ${t.set_size_before_branch_resolution}`);
-console.log(`  staying: ${t.skipped} (town-owned, sovereign, or staked — each named in the receipt)`);
-console.log(`  exempt by the founder's ruling of 2026-09-09: ${t.exempt_by_ruling} (${t.exempt_constitution} constitution-tier, ${t.exempt_region} region rings, ${t.exempt_parcel} parcels)`);
+console.log(`  set before branch resolution: ${t.set_size_before_branch_resolution} across ${t.set_households} household(s)`);
+// `skipped` also carries the marks that ARE in the set and simply had nowhere to
+// go, so it is not the number that stays. Reporting it as "staying" would count
+// those 12 twice — once as unmovable, once as safe.
+console.log(`  staying: ${t.staying} (exempt, sovereign, or staked — each named in the receipt)`);
+console.log(`  exempt by the founder's rulings of 2026-09-09: ${t.exempt_by_ruling}, read in the order ${EXEMPTION_ORDER.join(" → ")}`);
+console.log(`    law ${t.exempt_constitution} · parcel ${t.exempt_parcel} · region ${t.exempt_region} · town ${t.exempt_town}`);
+console.log(`  standing on their own ground: ${t.stayed_sovereign} · carrying a stake: ${t.stayed_staked}`);
 if (t.placement_parent_shifts) console.log(`  ${t.placement_parent_shifts} sited/parcel child(ren) keep standing with a re-computed placementParent`);
 if (t.cascade_next_crossing) {
   console.log(`  ⚠ CASCADE: ${t.cascade_next_crossing} mark(s) standing today would enter the set once this move lands.`);
