@@ -158,6 +158,12 @@ export function npmTestGate(repo) {
  *
  * So phase 0 now asks a second question it can actually answer, and the answer
  * changes the sentence rather than the verdict.
+ *
+ * THIS QUESTION IS ASKED OF THE TREE, and that is its limit. It cannot see a
+ * write that never became a file here. The companion question — did the rewind
+ * restore anything the candidates came OUT of — is asked at
+ * `rewindableSketchbooks` in `isolate()`, and it is what keeps a store crossing
+ * whose tree does come back from being called canon's.
  */
 function unheldChanges(repo, before, mainBranch, candidates) {
   const candidatePaths = new Set(candidates.map((c) => c.path).filter(Boolean));
