@@ -71,7 +71,35 @@ test('"the town mints 77 stamps onto every region ring" — all thirteen are exe
 });
 
 test("a mark that merely sits inside a region is not a region ring", () => {
-  assert.equal(exemptionFor({ id: "rei/a-bench-in-evermoon" }, { authoredTier: "market" }), null);
+  assert.equal(exemptionFor({ id: "rei/a-bench-in-evermoon", kind: "sited" }, { authoredTier: "market" }), null);
+});
+
+test('"parcels need no staking either" — every parcel is exempt, staked or not', () => {
+  const p = { id: "rei/rei-parcel", kind: "parcel", by: "rei", sovereign: false, stamps: 0, weight: 0 };
+  assert.equal(isUnstakedCommons(p), true, "the economic predicate alone would sweep it");
+  assert.equal(exemptionFor(p, { authoredTier: "market" }),
+    "parcel: the founding privilege — needs no stake");
+});
+
+test("the parcel exemption is the LAW, so no flag can undo it", () => {
+  const { root, marks } = estate();
+  try {
+    for (const dead of ["--hold-parcels", "--hold-occupied-parcels", "--return-parcels"]) {
+      const r = run(marks, ["--allow-stampless", dead]);
+      assert.equal(r.code, 2, `${dead} must be refused, not ignored`);
+      assert.match(r.err, /needs no staking|no flag returns one/);
+    }
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("no parcel is ever in the move, whatever else the tree holds", () => {
+  const { root, marks } = estate();
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless"]).out);
+    assert.equal(receipt.moved.some((m) => m.kind === "parcel"), false);
+    const p = receipt.skipped.find((s) => s.mark === "rei/rei-parcel");
+    assert.match(p.why, /founding privilege/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
 // ── the set is re-measured, never read from a list ──────────────────────────
@@ -193,29 +221,22 @@ function estate() {
   return { root, marks };
 }
 
-test("returning an unstaked parcel de-sovereigns what stands on it, and the run says so", () => {
+test("the parcel exemption closes the cascade at its root, and the instrument still reads it", () => {
+  // Before the ruling this fixture produced a cascade of 1: rei's parcel left,
+  // so rei's house lost the ground that made it sovereign and would have been
+  // swept on the next crossing. The parcel now stands, so nothing is pulled out
+  // from under the house. The check is kept BECAUSE it reads zero — an
+  // instrument that reads zero for a reason is the only kind that can tell you
+  // when the reason stops being true.
   const { root, marks } = estate();
   try {
-    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent"]).out);
-    assert.ok(receipt.moved.some((m) => m.mark === "rei/rei-parcel"), "the unstaked parcel is in the move");
+    const receipt = JSON.parse(run(marks, ["--allow-stampless"]).out);
+    assert.equal(receipt.moved.some((m) => m.mark === "rei/rei-parcel"), false);
     const house = receipt.skipped.find((s) => s.mark === "rei/the-quiet-house");
-    assert.match(house.why, /sovereign/, "the house stands today, as the PSA promises");
-    assert.equal(receipt.totals.cascade_next_crossing, 1,
-      "the house would enter the set on the next crossing — the cascade must be reported, not discovered later");
-    assert.equal(receipt.cascade[0].mark, "rei/the-quiet-house");
-    assert.match(receipt.cascade[0].was, /own ground/);
-  } finally { rmSync(root, { recursive: true, force: true }); }
-});
-
-test("--hold-occupied-parcels keeps the ground under a standing mark, and closes the cascade", () => {
-  const { root, marks } = estate();
-  try {
-    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent", "--hold-occupied-parcels"]).out);
-    assert.equal(receipt.moved.some((m) => m.mark === "rei/rei-parcel"), false, "the occupied parcel is held");
-    assert.equal(receipt.totals.parcels_held_occupied, 1);
-    assert.equal(receipt.held[0].parcel, "rei/rei-parcel");
+    assert.match(house.why, /sovereign/, "the house stands, as the PSA promises");
     assert.equal(receipt.totals.cascade_next_crossing, 0,
-      "a held parcel is a choice, not a consequence — it must not report itself as its own cascade");
+      "no ground moves, so nothing newly enters the set");
+    assert.deepEqual(receipt.cascade, []);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
