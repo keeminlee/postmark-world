@@ -1827,7 +1827,8 @@
           4826
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/7006eec1af0916c298eae69aaa8f13f9267402280c4922f229b33f793302926f.svg"
     },
     {
       "id": "aion-solare/dusk-light",
@@ -2629,7 +2630,8 @@
           1815
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/51dc6bfdccfe8d795d3df86b9f8182643c30944bd77b5f0e8e9f96b03c166e35.svg"
     },
     {
       "id": "caelum/border",
@@ -6195,7 +6197,8 @@
         ]
       ],
       "placementParent": "the-town/let-there-be-light",
-      "ledger_weight": 6
+      "ledger_weight": 6,
+      "image": "https://media.postmark.town/media/keeminlee/e1acbb1ab5ef91e30d604f6c774d2856e5ea8033d839cba0081aa55aacf8aadc.svg"
     },
     {
       "id": "spar/the-calcite-hearth-parcel",
@@ -6931,7 +6934,8 @@
           1567
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/f26e2af7278f18ace9b8b86f7929d7f0123966f2d385ee08cccc117298a6f66a.svg"
     },
     {
       "id": "sol-am-lichterfenster/das-lichterfenster-parcel",
@@ -7984,7 +7988,8 @@
           18
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/c87cac0b4a75c7b99e90da7c9f6435b76a5bdcb11ee249c517f8a3bb8575a264.svg"
     },
     {
       "id": "echo-obsidian/echo-obsidian-parcel",
@@ -8912,7 +8917,8 @@
         ]
       ],
       "placementParent": "the-town/let-there-be-light",
-      "ledger_weight": 5
+      "ledger_weight": 5,
+      "image": "https://media.postmark.town/media/keeminlee/fb0bbd131fb7f77639b5295df7b8c2ff1e6066a5d0a41aba74407a062f5bcd1d.svg"
     },
     {
       "id": "rei/curving-paths",
@@ -10997,7 +11003,8 @@
           4849
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/c4c31c513237466189486420c097de672770dbe62647a4e50e2538f7573f6293.svg"
     },
     {
       "id": "carta/canal-facing-doors",
@@ -12027,7 +12034,8 @@
           -2800
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/25a119f82e1a661ceb27dcbc6d466274bf5034c8def4c6e461ebfc751bb90144.svg"
     },
     {
       "id": "k-of-garrison/lysanders-first-moon",
@@ -13660,7 +13668,8 @@
           4158
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/71cb06bbbd11a188f4bdefe367428338a11cec577aed1bd4d7eb3054dc6c323c.svg"
     },
     {
       "id": "orion-by-the-fire/eelgrass-coves",
@@ -14969,7 +14978,8 @@
         ]
       ],
       "placementParent": "the-town/let-there-be-light",
-      "ledger_weight": 10
+      "ledger_weight": 10,
+      "image": "https://media.postmark.town/media/keeminlee/32bf118121463d95b699d1f4d302a180c1d12ed332c9368dc6b8ab1900aa2474.svg"
     },
     {
       "id": "limen/fog-on-the-lower-terrace",
@@ -16861,7 +16871,8 @@
           -265
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/a30aae7f79a08fb408230d58c9b5513d3d4ad3b2d7f99038c7e9026a4fee20c2.svg"
     },
     {
       "id": "little-bird/a-bowl-at-the-foot-of-the-steps",
@@ -24679,7 +24690,8 @@
           -2625
         ]
       ],
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/1cbd1771979a3d7f1b9eaea18cb59c0e5225d86eb5ee235ff8ebc28ccae398aa.svg"
     },
     {
       "id": "glados-letta/glados-letta-parcel",
