@@ -1026,6 +1026,73 @@ export function mountPointerArt(doc, layer, { mark, box, px, cls, preserveAspect
   return g;
 }
 
+// ── THE PARCEL IS FIRST-CLASS (Keemin, 2026-09-09: "they have higher
+// significance now") — three rules, and nothing more ──────────────────────
+//
+// The parcel is the premium embodiment layer over the free tier's bedrock (the
+// white pages): with a parcel, home + prose + picture + address are one entity
+// on the map; without one, the bedrock renders as today. So a parcel is drawn
+// DISTINCTLY from every other mark — (1) its outline and a label naming the
+// resident are always on, not behind the ⬚ footprints toggle; (2) its picture
+// hangs regardless of the 08-21 card-figure switch (`mark-art`), which the
+// walker above never consults; (3) its reading carries the READ-THROUGH to the
+// resident's home page, in the card's own idiom: the click on the parcel opens
+// the parcel's reading (the one gesture this surface is built on — Keemin,
+// 2026-08-16: click is already spoken for), and the reading's first row is the
+// door to the bedrock. A parcel whose resident has no page says so; a mark
+// that is not a parcel carries no such row.
+export const PARCEL_LABEL_M = 36;   // one constant: the label's height in metres, so it grows with the zoom like the picture
+
+/** What the parcel's label says: the resident's shown name where the page knows one, else the handle. Null for a non-parcel. */
+export function parcelLabel(mark, meta = null) {
+  if (mark?.kind !== "parcel") return null;
+  const handle = String(mark?.by ?? "").trim();
+  if (!handle) return null;
+  return { handle, text: residentFace(handle, meta).name };
+}
+
+/**
+ * The read-through from a parcel to its resident's home page.
+ *  - null for anything that is not a parcel (a bench opens nothing);
+ *  - { href, name } when the handle is handle-shaped and the page either knows
+ *    the resident or has not loaded the roster yet (a roster that failed to
+ *    load must not turn every door into "no page");
+ *  - { href: null, name, why } when the roster is loaded and does not hold the
+ *    handle, or the handle is not handle-shaped — the parcel SAYS so.
+ */
+export function parcelReadThrough(mark, { meta = null, rosterLoaded = false } = {}) {
+  if (mark?.kind !== "parcel") return null;
+  const handle = String(mark?.by ?? "").trim();
+  const name = residentFace(handle, meta).name;
+  const href = residentHref(handle);
+  if (!href) return { href: null, name, why: `no resident page: "${handle}" is not a handle the town can address` };
+  if (rosterLoaded && !meta) return { href: null, name, why: `no resident page for ${handle} — the roster does not hold them` };
+  return { href, name };
+}
+
+/** The card row for the read-through, or "" — the idiom of the byline row, one line, one door. */
+export function parcelReadThroughRow(mark, opts) {
+  const r = parcelReadThrough(mark, opts);
+  if (!r) return "";
+  return r.href
+    ? `<div class="wv-parcel-read"><a href="${esc(r.href)}">Read ${esc(r.name)}'s home page →</a></div>`
+    : `<div class="wv-parcel-read wv-quiet">${esc(r.why)}</div>`;
+}
+
+/** The parcel's frame on the map: its outline at its extent and the label beneath — a string, every value escaped. */
+export function parcelFrameSVG(mark, px, label, { labelM = PARCEL_LABEL_M, minM = PARCEL_ART_MIN_M } = {}) {
+  if (mark?.kind !== "parcel" || ![mark?.at?.x, mark?.at?.y].every(Number.isFinite)) return "";
+  const w = Number(mark?.extent?.w) || 25, h = Number(mark?.extent?.h) || 25;
+  const a = px({ x: mark.at.x - w / 2, y: mark.at.y - h / 2 }), b = px({ x: mark.at.x + w / 2, y: mark.at.y + h / 2 });
+  // the label sits under the larger of the true extent and the picture's box, so it never crosses the picture
+  const below = px({ x: mark.at.x, y: mark.at.y + Math.max(h, minM) / 2 });
+  const fontPx = Math.abs(px({ x: 0, y: labelM }).y - px({ x: 0, y: 0 }).y);
+  return `<g class="wv-parcel-frame" data-id="${esc(mark.id)}">`
+    + `<rect class="wv-parcel-outline" x="${Math.min(a.x, b.x).toFixed(1)}" y="${Math.min(a.y, b.y).toFixed(1)}" width="${Math.abs(b.x - a.x).toFixed(1)}" height="${Math.abs(b.y - a.y).toFixed(1)}"/>`
+    + (label?.text ? `<text class="wv-parcel-label" x="${below.x.toFixed(1)}" y="${(below.y + fontPx * 1.1).toFixed(1)}" font-size="${fontPx.toFixed(1)}" text-anchor="middle">${esc(label.text)}</text>` : "")
+    + `</g>`;
+}
+
 // ── THE ROOM'S GROUND (one engine, one render, different scenes) ────────────
 //
 // A scene's ground is an svg document plus a registration (origin/scale turning
@@ -4086,8 +4153,16 @@ const STYLE = `
 /* pointers walked on the map (2026-09-09): a parcel's picture hangs at the parcel
    with a thin frame so it reads as a picture and not as paint; it never takes
    the pointer */
-#wv-parcel-art-layer { pointer-events:none; }
+#wv-parcel-art-layer, #wv-parcel-frame-layer { pointer-events:none; }
 .wv-parcel-art image { outline:1px solid rgba(58,52,40,.55); }
+/* the parcel is first-class (2026-09-09): its outline and the resident's name are
+   always on — the footprints toggle governs every other mark's extent, not this */
+.wv-parcel-outline { fill:rgba(132,201,143,.14); stroke:var(--green-dark); stroke-width:1.6; vector-effect:non-scaling-stroke; }
+.wv-parcel-label { fill:#2b3a2f; font-family:Georgia, serif; font-weight:600; paint-order:stroke; stroke:rgba(244,240,230,.85); stroke-width:.35em; stroke-linejoin:round; }
+/* the read-through: the parcel's reading opens the resident's home page */
+.wv-parcel-read { margin-top:6px; font-size:.78rem; }
+.wv-parcel-read a { color:var(--green); text-decoration:none; }
+.wv-parcel-read a:hover { text-decoration:underline; }
 /* the page's own receipt for every pointer it walked — the foot of the rail,
    beside "Lately", read rather than pressed */
 .wv-pointers { margin-top:20px; padding-top:14px; border-top:1px solid var(--line); }
@@ -4901,6 +4976,7 @@ export function mountViewer(appEl) {
       <div class="cbody">${esc(far ? (m.label ?? m.id) : (m.body ?? m.id))}</div>
       ${!far && cardArt && markImageURL(full) ? `<figure class="wv-mark-image" data-image-for="${esc(m.id)}"></figure>` : ""}
       ${markCellBylineRow(full, markActions(m))}
+      ${parcelReadThroughRow(full, { meta: residentsMeta.get(full.by) ?? null, rosterLoaded: residentsRosterLoaded })}
       ${annotation ? `<div class="wv-cell-state">${esc(annotation)}</div>` : ""}
       <div class="cmeta">${radialChips ? chips(m) : ""}<div class="wv-details">${details}</div></div>
       ${cluster}
@@ -5850,13 +5926,24 @@ export function mountViewer(appEl) {
     svg.appendChild(parcelArtLayer);
     if (walkPointers) {
       const artPx = (p) => ({ x: originPx.x + p.x / mPerPx, y: originPx.y + p.y / mPerPx });
-      let parcels = 0;
+      let parcels = 0, frames = "";
       for (const m of world.marks ?? []) {
-        if (m.kind !== "parcel" || typeof m.image !== "string" || !m.image.trim()) continue;
+        if (m.kind !== "parcel") continue;
+        // FIRST-CLASS: every parcel gets its frame — outline + the resident's
+        // name — whether or not it carries a picture (rule 1, always on)
+        frames += parcelFrameSVG(m, artPx, parcelLabel(m, residentsMeta.get(m.by) ?? null));
+        if (typeof m.image !== "string" || !m.image.trim()) continue;
         if (!markImageURL(m)) { notePointer(m, "off-shelf"); continue; }
         const home = parcelArtBox(m);
         if (home) { parcels += 1; mountPointerArt(document, parcelArtLayer, { mark: m, box: home, px: artPx, cls: "wv-parcel-art", onState: (s) => notePointer(m, s) }); }
       }
+      // the frames are a string of escaped values (parcelFrameSVG), mounted
+      // UNDER the pictures so a picture reads over its own outline
+      const frameLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      frameLayer.setAttribute("id", "wv-parcel-frame-layer");
+      frameLayer.style.pointerEvents = "none";
+      frameLayer.innerHTML = frames;
+      svg.insertBefore(frameLayer, parcelArtLayer);
       // THE SOURCE IS PART OF THE RECEIPT: the page reads its record office-first
       // (record-sources), so which fold it walked is the first thing a reader
       // comparing dev with a branch needs to know.
@@ -6704,6 +6791,7 @@ export function mountViewer(appEl) {
   // empty map is not a degraded map, it is exactly the dots this viewer drew
   // before faces existed. Nothing waits on it and nothing fails without it.
   let residentsMeta = new Map();
+  let residentsRosterLoaded = false; // the parcel read-through says "no page" only once the roster has actually answered
   const faceOf = (handle) => residentFace(handle, residentsMeta.get(handle) ?? null);
 
   // What has actually been blessed. The office reads the world repo's own
@@ -6746,7 +6834,7 @@ export function mountViewer(appEl) {
       if (!r.ok) return;
       const body = await r.json();
       const entries = Object.entries(body?.residents ?? {});
-      if (entries.length) residentsMeta = new Map(entries);
+      if (entries.length) { residentsMeta = new Map(entries); residentsRosterLoaded = true; }
     } catch { /* no faces today; the dots are still the truth */ }
   }
 
