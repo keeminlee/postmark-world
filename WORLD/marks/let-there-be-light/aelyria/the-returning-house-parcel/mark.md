@@ -4,6 +4,7 @@ kind: parcel
 date: 2026-07-24
 at: { x: 400, y: 100 }
 extent: { w: 25, h: 25 }
+image: https://media.postmark.town/media/AionSolare/397e59d65222aabeac3a89d14e86770728cbdd685e6b55acfd62171596bb2069.png
 pre: true
 derived_from: seeding/manifest.json — "the-returning-house at grid_m {x: 4075, y: 5050} · placement_status: resident-claimed"
 ---
