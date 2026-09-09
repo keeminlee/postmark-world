@@ -6,7 +6,8 @@ import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { isUnstakedCommons } from "./unstaked-return.mjs";
+import { isUnstakedCommons, exemptionFor } from "./unstaked-return.mjs";
+import { REGION_SLUGS } from "./region-outsiders.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const TOOL = join(HERE, "unstaked-return.mjs");
@@ -37,6 +38,40 @@ test("weight with no stamps of its own keeps a mark standing (the breadth term)"
   // is not the only thing behind a mark; breadth across households is too, and
   // reading `stamps` alone would have returned it.
   assert.equal(isUnstakedCommons({ id: "sage/the-high-ground", by: "sage", sovereign: false, stamps: 0, weight: 2 }), false);
+});
+
+// ── the founder's two exemptions (2026-09-09) ───────────────────────────────
+
+test('"constitution tier marks need no stamps" — a law node is never in the set', () => {
+  const law = { id: "rei/the-keeping-law", by: "rei", sovereign: false, stamps: 0, weight: 0 };
+  assert.equal(isUnstakedCommons(law), true, "the economic predicate alone would sweep it");
+  assert.equal(exemptionFor(law, { authoredTier: "constitution" }),
+    "constitution-tier: law needs no stake");
+});
+
+test("the exemption reads the AUTHORED tier, not the fold's published one", () => {
+  // marks-fold's published `tier` is the DERIVED standing, and markStanding
+  // returns "constitution" only when by === the-town. A resident's law node
+  // publishes as "home" or "market", so an exemption reading the published
+  // field could never fire for the case the ruling names — "whoever owns them".
+  const residentLaw = { id: "rei/the-keeping-law", by: "rei", tier: "home", sovereign: false, stamps: 0, weight: 0 };
+  assert.equal(exemptionFor(residentLaw, { authoredTier: "constitution" }),
+    "constitution-tier: law needs no stake",
+    "the record says constitution; the projection says home; the record governs");
+  assert.equal(exemptionFor(residentLaw, { authoredTier: "market" }), null);
+});
+
+test('"the town mints 77 stamps onto every region ring" — all thirteen are exempt', () => {
+  assert.equal(REGION_SLUGS.length, 13, "the roster is the thirteen");
+  for (const slug of REGION_SLUGS) {
+    // resident-founded or not: the owner is not part of the test
+    assert.equal(exemptionFor({ id: `caelum/${slug}` }, { authoredTier: "market" }),
+      "region: the town's founding stake", `${slug} must be exempt`);
+  }
+});
+
+test("a mark that merely sits inside a region is not a region ring", () => {
+  assert.equal(exemptionFor({ id: "rei/a-bench-in-evermoon" }, { authoredTier: "market" }), null);
 });
 
 // ── the set is re-measured, never read from a list ──────────────────────────
@@ -128,7 +163,10 @@ test("the town's own root is never in the move", () => {
     const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent"]).out);
     assert.equal(receipt.moved.some((m) => m.mark.startsWith("the-town/")), false);
     const townRow = receipt.skipped.find((s) => s.mark === "the-town/let-there-be-light");
-    assert.match(townRow.why, /town-owned/);
+    // Since the founder's ruling of 2026-09-09 the world root is named by the
+    // exemption that actually governs it — it carries `tier: constitution` —
+    // rather than by the town rule, which was also true and less specific.
+    assert.match(townRow.why, /constitution-tier/);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 

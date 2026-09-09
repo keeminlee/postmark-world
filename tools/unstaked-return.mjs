@@ -97,6 +97,7 @@ import { join, dirname, relative, basename } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
 import { loadMarks, fold, rect, contains } from "./marks-fold.mjs";
+import { REGION_SLUGS } from "./region-outsiders.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -106,6 +107,45 @@ const ROOT = join(HERE, "..");
  *  tool — hence the CLI guard at the tail rather than a bare script body. */
 export const isUnstakedCommons = (m) =>
   m.by !== "the-town" && !m.sovereign && !(m.stamps > 0) && !(m.weight > 0);
+
+/**
+ * THE FOUNDER'S TWO EXEMPTIONS (Keemin, 2026-09-09, after the PSA).
+ * Returns the receipt's skip reason, or null if the mark is not exempt.
+ *
+ *   (1) "constitution tier marks need no stamps" — every mark whose record
+ *       carries `tier: constitution` (the LOGOS class/law nodes and the
+ *       predicated law rows under them, WHOEVER OWNS THEM) is never in the set.
+ *   (2) The town mints 77 stamps onto every region ring before 09-16, so the
+ *       thirteen rings are never in the set either — resident-founded or not.
+ *
+ * ── WHY THE AUTHORED TIER AND NOT THE MARK'S OWN `tier` FIELD ───────────────
+ *
+ * The fold's published `tier` is the DERIVED STANDING, not the line the record
+ * carries — marks-fold.mjs says so where it builds the projection — and
+ * `markStanding` returns "constitution" ONLY when `by === the-town`:
+ *
+ *     if ((mark.by ?? mark.household) === TOWN && mark.tier === "constitution")
+ *       return "constitution";
+ *
+ * Everything else walks the ground chain and comes out "home" or "market". So
+ * reading the projected field would make exemption (1) a rule that can NEVER
+ * FIRE for the exact case the ruling names — a resident-authored law node —
+ * while looking correct on every town-owned row, which the town rule already
+ * excluded anyway. The authored tier is passed in from the loaded record.
+ *
+ * ── WHY THE REGION ROSTER IS IMPORTED AND NOT LISTED ────────────────────────
+ *
+ * `REGION_SLUGS` in region-outsiders.mjs is the thirteen, already frozen and
+ * already the roster the atlas and the outsiders view read. A second copy here
+ * would be a fourteenth region waiting to happen.
+ */
+export function exemptionFor(mark, { authoredTier = undefined } = {}) {
+  const tier = authoredTier !== undefined ? authoredTier : mark?.authored_tier;
+  if (tier === "constitution") return "constitution-tier: law needs no stake";
+  const leaf = String(mark?.id ?? "").split("/").slice(1).join("/");
+  if (REGION_SLUGS.includes(leaf)) return "region: the town's founding stake";
+  return null;
+}
 
 // ── the CLI guard (the realpath idiom, wright/cli-guard-sweep) ──────────────
 // An entry path that reaches this file through a Windows junction realpaths in
@@ -166,7 +206,10 @@ if (!STAKES && !ALLOW_STAMPLESS) {
 // ── re-measure: fold the tree as it stands right now ────────────────────────
 const loaded = loadMarks(MARKS_DIR);
 const dirOf = new Map();
-for (const rec of loaded) if (rec.id != null) dirOf.set(rec.id, rec._dir);
+// The AUTHORED tier, kept from the record before the fold projects over it —
+// see `exemptionFor` for why the published `tier` is the wrong field to read.
+const authoredTier = new Map();
+for (const rec of loaded) if (rec.id != null) { dirOf.set(rec.id, rec._dir); authoredTier.set(rec.id, rec.tier); }
 
 const stakes = STAKES ? JSON.parse(readFileSync(STAKES, "utf8")).map((s) => ({
   tick: s.tick ?? 0, holder: s.holder, mark: s.mark, n: s.n,
@@ -218,7 +261,8 @@ if (HOLD_OCCUPIED) {
   }
 }
 const heldIds = new Set(held.map((h) => h.parcel));
-const S = all.filter((m) => isUnstakedCommons(m) && !heldIds.has(m.id));
+const exemptOf = (m) => exemptionFor(m, { authoredTier: authoredTier.get(m.id) });
+const S = all.filter((m) => isUnstakedCommons(m) && !heldIds.has(m.id) && !exemptOf(m));
 const Sids = new Set(S.map((m) => m.id));
 
 // ── destination branches: households.json is the only map, and it is walked ──
@@ -251,8 +295,15 @@ function branchFor(household) {
 // ── the move plan ───────────────────────────────────────────────────────────
 const moved = [], skipped = [], reparents = [], shifts = [];
 
+let exemptCount = 0;
 for (const m of all) {
   if (Sids.has(m.id)) continue;
+  // The founder's exemptions are read FIRST, so a law node or a region ring is
+  // named in the receipt as what it is rather than as "town-owned" or "staked",
+  // which would be true of some of them and would hide the ruling behind a
+  // coincidence.
+  const ex = exemptOf(m);
+  if (ex) { skipped.push({ mark: m.id, household: m.household, why: ex }); exemptCount++; continue; }
   if (m.by === "the-town") skipped.push({ mark: m.id, household: m.household, why: "town-owned — the town's own ground is the town's to stake" });
   else if (m.sovereign) skipped.push({ mark: m.id, household: m.household, why: "sovereign — on the household's own ground, where the law lets a zero stand" });
   else skipped.push({ mark: m.id, household: m.household, why: `staked — stamps ${m.stamps ?? 0}, weight ${m.weight ?? 0}` });
@@ -307,9 +358,12 @@ if (movedIds.size) {
   });
   // A HELD parcel is deliberately left in the set-but-not-moved, so it is not a
   // consequence of the move and must not be reported as one — without this the
-  // hold flag "discovers" the 73 parcels it just chose to keep.
+  // hold flag "discovers" the 73 parcels it just chose to keep. A mark EXEMPT by
+  // the founder's ruling is the same shape of false positive: the six unstaked
+  // region rings read as a cascade of six the move did not cause, which is how
+  // this was found (140 -> 146 the moment the exemptions landed).
   cascade = (after.marks ?? []).filter((m) => isUnstakedCommons(m)
-      && !movedIds.has(m.id) && !Sids.has(m.id) && !heldIds.has(m.id))
+      && !movedIds.has(m.id) && !Sids.has(m.id) && !heldIds.has(m.id) && !exemptOf(m))
     .map((m) => ({
       mark: m.id, household: m.household, kind: m.kind,
       was: byId.get(m.id)?.sovereign ? "sovereign — it stood on its household's own ground"
@@ -333,6 +387,9 @@ const receipt = {
     placement_parent_shifts: shifts.length,
     parcels_held_occupied: held.length,
     cascade_next_crossing: cascade.length,
+    exempt_by_ruling: exemptCount,
+    exempt_constitution: skipped.filter((s) => s.why.startsWith("constitution-tier")).length,
+    exempt_region: skipped.filter((s) => s.why.startsWith("region:")).length,
   },
   moved, skipped, reparents, shifts, held, cascade,
   applied: false,
@@ -461,6 +518,7 @@ console.log(`  folded ${t.marks_folded} marks with ${stakes.length} stake row(s)
 console.log(`  returning to drafts: ${t.returning} mark(s) across ${t.returning_households} household(s)`);
 console.log(`  set before branch resolution: ${t.set_size_before_branch_resolution}`);
 console.log(`  staying: ${t.skipped} (town-owned, sovereign, or staked — each named in the receipt)`);
+console.log(`  exempt by the founder's ruling of 2026-09-09: ${t.exempt_by_ruling} (${t.exempt_constitution} constitution-tier, ${t.exempt_region} region rings)`);
 if (t.placement_parent_shifts) console.log(`  ${t.placement_parent_shifts} sited/parcel child(ren) keep standing with a re-computed placementParent`);
 if (t.parcels_held_occupied) console.log(`  ${t.parcels_held_occupied} parcel(s) HELD by --hold-occupied-parcels — marks of their household still stand on them`);
 if (t.cascade_next_crossing) {
