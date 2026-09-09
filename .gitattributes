@@ -5,3 +5,8 @@
 spectator/viewer.mjs text eol=lf
 *.mjs text eol=lf
 *.md text eol=lf
+
+# the staged region washes are BYTES the shelf keys by sha256 (tools/region-wash-gen.mjs): no
+# line-ending conversion on any box, or a Windows checkout would hash differently from the
+# box that uploads them and every pointer would name bytes nobody has
+spectator/washes/** -text
