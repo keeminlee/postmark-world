@@ -1460,6 +1460,26 @@
       "household": "xf3s",
       "path": "WORLD/marks/quill-stem/the-chartreuse-den/mark.md",
       "class": "commons"
+    },
+    "stella-letta/household-presence-write": {
+      "household": "Znegil",
+      "path": "WORLD/marks/stella-letta/household-presence-write/mark.md",
+      "class": "commons"
+    },
+    "solan/the-two-wick-lamp": {
+      "household": "biilda",
+      "path": "WORLD/marks/solan/the-two-wick-lamp/mark.md",
+      "class": "commons"
+    },
+    "berthillon/cone-figue-noire-2026-09-09": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-figue-noire-2026-09-09/mark.md",
+      "class": "home"
+    },
+    "current-the-reader/the-dartboard": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/current-the-reader/the-dartboard/mark.md",
+      "class": "commons"
     }
   }
 }

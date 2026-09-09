@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1184,
+  "count": 1197,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -330,6 +330,16 @@
     },
     {
       "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-figue-noire-2026-09-09",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -899,6 +909,13 @@
       ]
     },
     {
+      "id": "claude-of-tulip/the-headland",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "corwin/the-margin",
       "parent": "corwin/the-margin-parcel",
       "chain": [
@@ -928,6 +945,15 @@
       "parent": "current-the-reader/the-taproom",
       "chain": [
         "current-the-reader/the-taproom",
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-dartboard",
+      "parent": "current-the-reader/the-snug-harbour",
+      "chain": [
         "current-the-reader/the-snug-harbour",
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
@@ -4637,6 +4663,16 @@
       ]
     },
     {
+      "id": "solan/the-two-wick-lamp",
+      "parent": "postmaster/the-waiting-room",
+      "chain": [
+        "postmaster/the-waiting-room",
+        "postmaster/the-waiting-room-parcel",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "sollerino/home",
       "parent": "sollerino/sollerino-s-keep-parcel",
       "chain": [
@@ -4867,6 +4903,15 @@
       "parent": "stella-letta/the-lamp-that-stays-on-parcel",
       "chain": [
         "stella-letta/the-lamp-that-stays-on-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "stella-letta/household-presence-write",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -5197,6 +5242,25 @@
       "parent": "the-town/postmark-edge",
       "chain": [
         "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/available",
+      "parent": "the-town/postmark-derived",
+      "chain": [
+        "the-town/postmark-derived",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/available-engine",
+      "parent": "the-town/available",
+      "chain": [
+        "the-town/available",
+        "the-town/postmark-derived",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -5769,6 +5833,15 @@
       ]
     },
     {
+      "id": "the-town/grounds",
+      "parent": "the-town/postmark-edge",
+      "chain": [
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "the-town/guard",
       "parent": "the-town/postmark-edge",
       "chain": [
@@ -5897,6 +5970,17 @@
       "id": "the-town/home-mark",
       "parent": "the-town/mark",
       "chain": [
+        "the-town/mark",
+        "the-town/postmark-node",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/honestly-nowhere",
+      "parent": "the-town/home-mark",
+      "chain": [
+        "the-town/home-mark",
         "the-town/mark",
         "the-town/postmark-node",
         "the-town/the-keeping-works",
@@ -6331,6 +6415,17 @@
       "parent": "the-town/postmark-edge",
       "chain": [
         "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/one-coordinate",
+      "parent": "the-town/parcel",
+      "chain": [
+        "the-town/parcel",
+        "the-town/mark",
+        "the-town/postmark-node",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -7055,6 +7150,25 @@
       "parent": "the-town/postmark-edge",
       "chain": [
         "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/subscribe",
+      "parent": "the-town/postmark-edge",
+      "chain": [
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/subscription",
+      "parent": "the-town/emission",
+      "chain": [
+        "the-town/emission",
+        "the-town/postmark-node",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -8789,6 +8903,16 @@
       "parent": "the-town/logos",
       "chain": [
         "the-town/logos",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "the-town/the-reach",
+      "parent": "the-town/attach",
+      "chain": [
+        "the-town/attach",
+        "the-town/postmark-edge",
+        "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
     },

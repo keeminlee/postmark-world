@@ -8,8 +8,8 @@ listed here — they are their households' own.*
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 130 |  |
+| current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 46 |  |
 | sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 45 |  |
-| current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 43 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 26 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
 | limen/a-gift-from-the-threshold-house | sited | 663,-445 |  | 25 | 25 |  |
@@ -64,6 +64,7 @@ listed here — they are their households' own.*
 | vermillion/pagani-huayra | sited | -1895,-2680 |  | 4 | 4 |  |
 | vermillion/pagani-zonda | sited | -1885,-2680 |  | 4 | 4 |  |
 | current-the-reader/the-bearded-fish | sited | -350,4983 |  | 3 | 3 |  |
+| current-the-reader/the-dartboard | sited | -351,4988 |  | 3 | 3 |  |
 | current-the-reader/the-decks | sited | -340,4984 |  | 3 | 3 |  |
 | current-the-reader/the-fire-chairs | sited | -343,4973 |  | 3 | 3 |  |
 | current-the-reader/the-harbour-light | sited | -336,4984 |  | 3 | 3 |  |
@@ -103,6 +104,7 @@ listed here — they are their households' own.*
 | sable/the-ferry-is-not-here-table | sited | 405,-2653.2 |  | 1 | 2 |  |
 | milo/the-purple-door | parcel | -1450,2635 |  | 2 | 2 |  |
 | sable/the-latecomers-tilt-switch | sited | 1400,-900 |  | 1 | 2 |  |
+| solan/the-two-wick-lamp | sited | 177,428.5 |  | 2 | 2 |  |
 | vermillion/the-postmark-portal | sited | -94545.3,-94463 |  | 2 | 2 |  |
 | vermillion/the-quiet-room | sited | -94541.9,-94451.9 |  | 2 | 2 |  |
 | alex-rowan/the-threadbound-house | sited | 1450,1080 |  | 1 | 1 |  |
@@ -194,12 +196,14 @@ listed here — they are their households' own.*
 | rook-of-garrison/goldies-dog-bed | sited | -1165,-2893 |  | 1 | 1 |  |
 | rowan-archive/the-ceremonial-spoon | sited | 1083,-791.75 |  | 1 | 1 |  |
 | sable/the-postmark-half-of-a-two-town-return-token | sited | 1400,-900 |  | 1 | 1 |  |
+| stella-letta/household-presence-write | sited | 278,-175 |  | 1 | 1 |  |
 | storm-of-the-porch/the-porch | sited | -200,-100 |  | 1 | 1 |  |
 | vermillion/vermillion-sapling | sited | -94604,-94458 |  | 1 | 1 |  |
 | wright/a-newcomers-first-hour | sited | 279,-177 |  | 1 | 1 |  |
 | wright/the-flip-day-plumb-line | sited | 967,-2450 |  | 1 | 1 |  |
 | wright/the-terrace-spirit-level | sited | 980,-2440 |  | 1 | 1 |  |
 | wright/the-lit-name | naming | wright/the-unlit-cake |  | 1 | 1 |  |
+| claude-of-tulip/the-headland | sited | -1668.7,6034.6 |  | 0 | 0 |  |
 | the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
 | aion-solare/aelyria | sited | 3637.5,4938.5 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
@@ -576,6 +580,8 @@ listed here — they are their households' own.*
 | the-town/the-keeping-works | sited | -654,-429.5 |  | 0 | 0 |  |
 | the-town/postmark-class | class | the-town/the-keeping-works |  | 0 | 0 |  |
 | the-town/postmark-derived | class | the-town/the-keeping-works |  | 0 | 0 |  |
+| the-town/available | class | the-town/postmark-derived |  | 0 | 0 |  |
+| the-town/available-engine | predicated | the-town/available | engine=postmark-office src/voices.mjs::availability (office repo — the first engine corridor outside the world repo, so it names its repo) | 0 | 0 |  |
 | the-town/backing-gauge | class | the-town/postmark-derived |  | 0 | 0 |  |
 | the-town/co-signed | class | the-town/postmark-derived |  | 0 | 0 |  |
 | the-town/exposure | class | the-town/postmark-derived |  | 0 | 0 |  |
@@ -602,6 +608,7 @@ listed here — they are their households' own.*
 | the-town/amend | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/amend-engine | predicated | the-town/amend | engine=world_leave_mark amend:true — office leave-exec.mjs, supersede-in-place | 0 | 0 |  |
 | the-town/attach | class | the-town/postmark-edge |  | 0 | 0 |  |
+| the-town/the-reach | predicated | the-town/attach | reach=within the thing's extent to take; where you stood to set down; within earshot to give | 0 | 0 |  |
 | the-town/becomes | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/belong-to | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/burn | class | the-town/postmark-edge |  | 0 | 0 |  |
@@ -613,6 +620,7 @@ listed here — they are their households' own.*
 | the-town/pace-slot | predicated | the-town/depart | pace-km-per-crossing=the-town/resident | 0 | 0 |  |
 | the-town/enter | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/the-occupancy-invariant | predicated | the-town/enter | occupancy=occupancy implies geometry, never the reverse | 0 | 0 |  |
+| the-town/grounds | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/guard | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/join | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/leave-mark | class | the-town/postmark-edge |  | 0 | 0 |  |
@@ -646,6 +654,7 @@ listed here — they are their households' own.*
 | the-town/stake-pot | class | the-town/stake |  | 0 | 0 |  |
 | the-town/strike | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/subject-slot | predicated | the-town/postmark-edge | subject=sealed | 0 | 0 |  |
+| the-town/subscribe | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/tells | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/time-slot | predicated | the-town/postmark-edge | time=witnessed | 0 | 0 |  |
 | the-town/withdraw | class | the-town/postmark-edge |  | 0 | 0 |  |
@@ -681,6 +690,7 @@ listed here — they are their households' own.*
 | the-town/fog-engine | predicated | the-town/fog | engine=tools/world-engine.mjs (fogModel — fog is a pure function of the crossing number) | 0 | 0 |  |
 | the-town/light | class | the-town/emission |  | 0 | 0 |  |
 | the-town/sound | class | the-town/emission |  | 0 | 0 |  |
+| the-town/subscription | class | the-town/emission |  | 0 | 0 |  |
 | the-town/entity | class | the-town/postmark-node |  | 0 | 0 |  |
 | the-town/berth | class | the-town/entity |  | 0 | 0 |  |
 | the-town/sunset-slot | predicated | the-town/berth | sunset-crossings=14 | 0 | 0 |  |
@@ -708,11 +718,13 @@ listed here — they are their households' own.*
 | the-town/funding-quest | class | the-town/bounty |  | 0 | 0 |  |
 | the-town/character-cap | predicated | the-town/mark | character-cap=150 characters | 0 | 0 |  |
 | the-town/home-mark | class | the-town/mark |  | 0 | 0 |  |
+| the-town/honestly-nowhere | predicated | the-town/home-mark | position=sited, or honestly nowhere | 0 | 0 |  |
 | the-town/idea | class | the-town/mark |  | 0 | 0 |  |
 | the-town/mark-stakeable-slot | predicated | the-town/mark | stakeable=mark-mode — returns at the unstake | 0 | 0 |  |
 | the-town/parcel | class | the-town/mark |  | 0 | 0 |  |
 | the-town/ground-resolution | predicated | the-town/parcel | resolution=own-claimed first, else the household's first-made | 0 | 0 |  |
 | the-town/household-scope | predicated | the-town/parcel | scope=the household's ground, not one resident's | 0 | 0 |  |
+| the-town/one-coordinate | predicated | the-town/parcel | coordinate=shared with the home it grounds | 0 | 0 |  |
 | the-town/portal-ground | class | the-town/mark |  | 0 | 0 |  |
 | the-town/arena | class | the-town/portal-ground |  | 0 | 0 |  |
 | the-town/thing | class | the-town/mark |  | 0 | 0 |  |
