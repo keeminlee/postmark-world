@@ -94,6 +94,9 @@ const git = (repo, args) => execFileSync("git", ["-C", repo, ...args], {
 
 const say = (line) => process.stderr.write(`[settlement-isolate] ${line}\n`);
 
+/** The record's own prefix, spelled once — `settlement-sweep.mjs` uses the same string. */
+const MARKS_PREFIX = "WORLD/marks/";
+
 /**
  * The state a trial starts from, captured by settlement-auto.sh BEFORE the first
  * sweep ran. It cannot be recovered afterwards: the sweep rebases every draft
@@ -129,6 +132,58 @@ function rewind(repo, before, mainBranch) {
 export function npmTestGate(repo) {
   const run = spawnSync("npm", ["test", "--silent"], { cwd: repo, encoding: "utf8", shell: process.platform === "win32", maxBuffer: 128 * 1024 * 1024 });
   return { green: run.status === 0, log: `${run.stdout ?? ""}${run.stderr ?? ""}` };
+}
+
+/**
+ * WHAT A TRIAL COULD NOT HOLD BACK (G1, 2026-09-08).
+ *
+ * A trial does not undo the crossing — it REWINDS and RE-RUNS it with `held`
+ * quarantined. So everything the crossing does that is not a candidate happens
+ * again on every trial: the `unpublished` channel still removes files, and the
+ * fold still rewrites `WORLD/world-state.json` and its siblings. Holding back
+ * every candidate therefore does NOT return the tree to where it started.
+ *
+ * In the git era that gap was small enough to ignore. A crossing publishes a
+ * handful of marks and unpublishes almost none — S63 published 2 — so "held back
+ * everything I carried" was very nearly "held back everything I changed", and
+ * phase 0's sentence was true in practice.
+ *
+ * A STORE CROSSING BREAKS THAT. Measured 2026-09-08 on a scratch: a store fold
+ * over the standing set published 434 and UNPUBLISHED 75, and the world-state
+ * rewrite spans the whole town. Phase 0 held back all 434, the suite stayed red,
+ * and the isolator reported "the red is not this crossing's to fix" — over a
+ * crossing whose own baseline at S63 was measured green (742/728/0). The red was
+ * entirely the crossing's. The refusal was right; the reason sent the operator to
+ * another lane's door at 05:45Z.
+ *
+ * So phase 0 now asks a second question it can actually answer, and the answer
+ * changes the sentence rather than the verdict.
+ */
+function unheldChanges(repo, before, mainBranch, candidates) {
+  const candidatePaths = new Set(candidates.map((c) => c.path).filter(Boolean));
+  let changed = [];
+  try {
+    changed = git(repo, ["diff", "--name-only", before.main, mainBranch])
+      .split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  } catch {
+    // A diff this cannot take is not evidence either way, and inventing an empty
+    // answer here would restore exactly the false sentence this exists to end.
+    return null;
+  }
+  // ── ONLY MARK FILES, AND THE FIRST DRAFT OF THIS WAS WRONG ─────────────────
+  //
+  // Written first as "every path that differs", which measured as non-empty on
+  // EVERY crossing — the git-era control test reddened on
+  // `WORLD/settlement-publications.json`, because the sweep records the crossing
+  // in the registry whether it published anything or not. A signal that fires on
+  // every crossing is not a signal, and shipping it would have replaced one
+  // always-wrong sentence with another.
+  //
+  // The question phase 0 is actually asking is whether some RECORD changed that
+  // no candidate covers. The registry and the derived world-state family are
+  // bookkeeping the fold rewrites either way; where they change because a mark
+  // left, the mark's own file is in this set already and says so directly.
+  return changed.filter((p) => p.startsWith(MARKS_PREFIX) && !candidatePaths.has(p));
 }
 
 /**
@@ -192,9 +247,30 @@ export function isolate({
   budget();
   const clean = trial(repo, before, mainBranch, stakesPath, allIds, `round ${rounds} (phase 0, hold back all ${allIds.length})`, gate);
   if (!clean.green) {
+    // THE TWO CASES PHASE 0 USED TO PRINT AS ONE. Both refuse the town, and the
+    // refusal is right in both. They send an operator to different doors.
+    const unheld = unheldChanges(repo, before, mainBranch, candidates);
+    const couldNotHoldBack = unheld === null ? null : unheld;
+    const reason = unheld === null
+      ? "the suite is red with every mark this crossing carried held back, and this could not read what else the "
+        + "crossing changed — so it cannot say whether the red belongs to this crossing or to canon. Treat it as "
+        + "unattributed, not as somebody else's."
+      : unheld.length === 0
+        ? "the suite is red even with every mark this crossing carried held back, and holding them back returned the "
+          + "tree to where the crossing started — so the red is not this crossing's to fix, and no household is "
+          + "quarantined for it"
+        : `the suite is red with every mark this crossing carried held back, BUT ${unheld.length} path(s) this `
+          + `crossing changed are not candidates and cannot be held back (first: ${unheld[0]}) — so this is NOT `
+          + "evidence that the red belongs to canon. The unattributable set is larger than the candidate set: what "
+          + "the sweep UNPUBLISHES removes files that are nobody's candidate, and the fold rewrites the world-state "
+          + "beside them. Read the paths below before looking upstream.";
     return {
       attributed: false,
-      reason: "the suite is red even with every mark this crossing carried held back — the red is not this crossing's to fix, and no household is quarantined for it",
+      reason,
+      // NAMED, not counted. The whole defect was a sentence that could not be
+      // checked against anything; a count would be a second one.
+      could_not_hold_back: couldNotHoldBack === null ? null : couldNotHoldBack.slice(0, 40),
+      could_not_hold_back_total: couldNotHoldBack === null ? null : couldNotHoldBack.length,
       rounds,
       not_ok: clean.notOk ?? [],
       sweep_refused: clean.sweepRefused ?? null,
@@ -279,6 +355,12 @@ if (isMain) {
     if (argv.includes("--json")) process.stdout.write(body);
     if (!result.attributed) {
       say(`UNATTRIBUTABLE after ${result.rounds} trial(s): ${result.reason}`);
+      // The paths, in the unit's journal beside the sentence that names them.
+      // An operator reading `journalctl -u postmark-settlement` at 05:45Z has
+      // this and the receipt; a list only in the JSON is a list behind a door.
+      if (result.could_not_hold_back?.length) {
+        say(`could not hold back ${result.could_not_hold_back_total} path(s): ${result.could_not_hold_back.slice(0, 12).join(", ")}${result.could_not_hold_back_total > 12 ? ` … and ${result.could_not_hold_back_total - 12} more` : ""}`);
+      }
       process.exitCode = 1;
     } else {
       say(`attributed in ${result.rounds} trial(s): ${result.quarantined.map((q) => `${q.id} (${q.household})`).join(", ")}`);

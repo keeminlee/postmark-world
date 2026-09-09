@@ -369,4 +369,78 @@ test("THE HONEST REFUSAL: a red the crossing did not cause is NOT pinned on a ho
   assert.deepEqual(result.quarantined, [], "and NOBODY is quarantined for it — this is the guard against blaming a household for a broken box");
   assert.equal(result.rounds, 1, "and it costs exactly one trial to find out, because phase 0 asks the question first");
   assert.match(result.reason, /not this crossing's to fix/);
+  // THE CONTROL FOR THE G1 REPAIR BELOW, and it is what keeps that repair from
+  // swallowing this case: holding back every candidate DID return the tree to
+  // where the crossing started, so the old sentence is the true one and must
+  // still be said. `could_not_hold_back` is the evidence for that claim rather
+  // than an assertion about it.
+  assert.deepEqual(result.could_not_hold_back, [],
+    "this crossing changed nothing outside its candidate set, which is what makes 'not this crossing's to fix' true here");
+});
+
+test("G1 · PHASE 0 CANNOT HOLD BACK AN UNPUBLISH, and must not call the leftover red somebody else's", (t) => {
+  // ── THE DEFECT (G1 lane 3's reviewer, 2026-09-08) ──────────────────────────
+  //
+  // A trial does not undo the crossing, it REWINDS and RE-RUNS it with `held`
+  // quarantined. Everything the crossing does that is not a candidate therefore
+  // happens again on every trial: `unpublished` removes files that are nobody's
+  // candidate, and the fold rewrites the world-state beside them. So "held back
+  // everything I carried" is not "held back everything I changed".
+  //
+  // In the git era the gap was invisible — a crossing publishes a handful and
+  // unpublishes almost none (S63 published 2, unpublished 0), so phase 0's
+  // sentence was true in practice, and the test above is that case.
+  //
+  // A STORE CROSSING BREAKS IT. Measured on a scratch 2026-09-08: a store fold
+  // published 434 and UNPUBLISHED 75. Phase 0 held back all 434, the suite
+  // stayed red, and the isolator said "the red is not this crossing's to fix" —
+  // over a crossing whose own baseline was measured GREEN at the same tree. The
+  // refusal was right; the sentence sent the operator to another lane's door.
+  //
+  // This reproduces the shape with the fixture's own machinery: a second
+  // crossing that publishes one new mark AND unpublishes an old one, with a gate
+  // that is red whatever it carries.
+  const w = town(t, "isolate-store-unpublish", [
+    { login: "house-a", by: "alice", slug: "the-lamp", at: { x: 800, y: 800 } },
+    { login: "house-b", by: "bob", slug: "the-well", at: { x: 1200, y: 1200 } },
+  ]);
+  const first = w.firstSweep();
+  assert.equal(first.published.length, 2, "the first crossing seats both");
+
+  // The SECOND crossing: one new draft to publish (so there is a candidate at
+  // all), and alice's escrow falls to zero so her mark is unpublished.
+  w.git("checkout", "-q", "draft/house-b");
+  w.put("WORLD/marks/let-there-be-light/the-second-well/mark.md",
+    record({ by: "bob", at: { x: 1600, y: 1600 }, extent: { w: 10, h: 10 }, body: "bob's second well" }));
+  w.commit("bob leaves the-second-well");
+  w.git("checkout", "-q", "main");
+  w.stakes([
+    { holder: "s1", mark: "alice/the-lamp", n: 0, weight: 0 },
+    { holder: "s1", mark: "bob/the-well", n: 5, weight: 5 },
+    { holder: "s1", mark: "bob/the-second-well", n: 5, weight: 5 },
+  ]);
+
+  const before2 = {
+    main: w.git("rev-parse", "main").trim(),
+    branches: {
+      "draft/house-a": w.git("rev-parse", "draft/house-a").trim(),
+      "draft/house-b": w.git("rev-parse", "draft/house-b").trim(),
+    },
+  };
+  writeFileSync(w.beforePath, JSON.stringify(before2));
+  const second = w.sweep();
+  writeFileSync(w.sweepPath, JSON.stringify(second));
+  assert.ok(second.unpublished.length > 0, "the fixture must actually unpublish something, or this test proves nothing");
+
+  const gate = () => ({ green: false, log: "not ok 1 - red whatever this crossing carries\n" });
+  const result = isolate({ repo: w.repo, sweepPath: w.sweepPath, beforePath: w.beforePath, stakesPath: w.stakesPath, gate });
+
+  assert.equal(result.attributed, false, "the verdict is unchanged: it still refuses the town");
+  assert.deepEqual(result.quarantined, [], "and still blames no household");
+  assert.ok(result.could_not_hold_back.length > 0,
+    `phase 0 must name what it could not hold back; got ${JSON.stringify(result.could_not_hold_back)}`);
+  assert.match(result.reason, /cannot be held back/,
+    "and the SENTENCE must change — this is not evidence that the red belongs to canon");
+  assert.doesNotMatch(result.reason, /not this crossing's to fix/,
+    "the false sentence must not be printed over a crossing whose own changes were never held back");
 });
