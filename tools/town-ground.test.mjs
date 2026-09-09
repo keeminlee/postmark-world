@@ -66,7 +66,9 @@ const originPx = { x: +om[1], y: +om[2] }, mPerPx = +sm[1];
 const ground = () => townGround(world.marks, skeleton, { originPx, mPerPx });
 
 // the sheet: the paper and the ruled wash carry no geometry of their own
-const SHEET = new Set(["wv-tg-paper", "wv-tg-rule"]);
+// …and, since 2026-09-09, the sheet's grain and its frame (the look's constants
+// beside townGround): parchment and border, drawn from nothing in the world
+const SHEET = new Set(["wv-tg-paper", "wv-tg-rule", "wv-tg-grain", "wv-tg-frame"]);
 const DRAWN = /<(polygon|polyline|line|circle|ellipse|rect|text|path)\b([^>]*)>/g;
 
 /** every drawn element OUTSIDE <defs> */

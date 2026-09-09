@@ -1178,7 +1178,7 @@ function tgFeaturePoints(f) {
     && Math.abs(p.x) <= TG_SENTINEL_M && Math.abs(p.y) <= TG_SENTINEL_M);
 }
 
-export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUND_PAD_M, washes = REGION_WASH_LAYER } = {}) {
+export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUND_PAD_M, washes = REGION_WASH_LAYER, founderLine = REGION_FOUNDER_LINE, grain = PAPER_GRAIN, frame = GROUND_FRAME } = {}) {
   if (!Number.isFinite(originPx?.x) || !Number.isFinite(originPx?.y) || !(Number(mPerPx) > 0))
     throw new Error("townGround needs the skeleton's registration (originPx, mPerPx)");
   const light = skeleton?.light ?? {};
@@ -1255,10 +1255,26 @@ export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUN
       + `<stop offset="0" stop-color="#060d18" stop-opacity="0.30"/>`
       + `<stop offset="0.7" stop-color="#060d18" stop-opacity="0.12"/>`
       + `<stop offset="1" stop-color="#060d18" stop-opacity="0"/></radialGradient>`).join("")
+    // the Atlas's own paperGrain def, to the byte (render-town.mjs DEFS @ town 715eb65f)
+    + (grain ? `<filter id="wv-tg-grain" x="-5%" y="-5%" width="110%" height="110%">`
+      + `<feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" stitchTiles="stitch" result="noise"/>`
+      + `<feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 0.05 0"/></filter>` : "")
     + `</defs>`;
 
+  // ── THE LOOK (2026-09-09, the atlas sitting): what of the Atlas's identity the
+  // sheet can carry without a hand — each under one named constant beside
+  // townGround, each a SHEET element (no world source; the ground test exempts
+  // them by class the way it exempts the paper), each byte-for-byte the Atlas's
+  // own value from render-town.mjs / town.html @ town 715eb65f:
+  //   PAPER_GRAIN         the parchment's feTurbulence grain over the paper
+  //   GROUND_FRAME        the .mapwrap border around the sheet (#5a4c33, rx 4)
+  //   REGION_FOUNDER_LINE the italic founder line under each region's name
   const paper = `<rect class="wv-tg-paper" x="${n(vbX)}" y="${n(vbY)}" width="${n(vbW)}" height="${n(vbH)}"/>`
+    + (grain ? `<rect class="wv-tg-grain" x="${n(vbX)}" y="${n(vbY)}" width="${n(vbW)}" height="${n(vbH)}" filter="url(#wv-tg-grain)"/>` : "")
     + `<rect class="wv-tg-rule" x="${n(vbX)}" y="${n(vbY)}" width="${n(vbW)}" height="${n(vbH)}" fill="url(#wv-tg-rule-pat)"/>`;
+  const frameLine = frame
+    ? `<rect class="wv-tg-frame" x="${n(vbX + 1)}" y="${n(vbY + 1)}" width="${n(vbW - 2)}" height="${n(vbH - 2)}" rx="4"/>`
+    : "";
 
   const dayWash = hasAxis
     ? `<rect class="wv-tg-daylight"${src("light:day-axis")} x="${n(vbX)}" y="${n(vbY)}"`
@@ -1359,12 +1375,15 @@ export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUN
     const c = ring.reduce((s, p) => ({ x: s.x + p.x / ring.length, y: s.y + p.y / ring.length }), { x: 0, y: 0 });
     const q = px(c);
     return `<text class="wv-tg-region-label"${src(`mark:${m.id}`)} x="${n(q.x)}" y="${n(q.y)}"`
-      + ` text-anchor="middle">${esc(deslugMarkId(m.id))}</text>`;
+      + ` text-anchor="middle">${esc(deslugMarkId(m.id))}</text>`
+      // the Atlas's founder line, 18 px under the name, from the mark's own `by:`
+      + (founderLine ? `<text class="wv-tg-region-founder"${src(`mark:${m.id}`)} x="${n(q.x)}" y="${n(q.y + 18)}"`
+        + ` text-anchor="middle">${esc(regionFounderLine(m))}</text>` : "");
   };
   const regionNames = regions.map(label).join("");
 
   const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${n(vbX)} ${n(vbY)} ${n(vbW)} ${n(vbH)}">`
-    + defs + paper + dayWash + night + regionWash + water + featureArt + regionNames
+    + defs + paper + dayWash + night + regionWash + water + featureArt + regionNames + frameLine
     // the same empty slot the room's ground carries, in the same place
     + `<g class="wv-scene-art"></g>`
     + `</svg>`;
@@ -1390,6 +1409,25 @@ export function townGround(marks, skeleton, { originPx, mPerPx, pad = TOWN_GROUN
 
 /** the layer's toggle — default ON (the sitting's word, 2026-09-09); off, the ground is exactly what it was before */
 export const REGION_WASH_LAYER = true;
+
+// ── THE LOOK'S THREE CONSTANTS (2026-09-09) — the Atlas's identity the sheet can
+// carry without a hand. Each defaults ON; each off returns that element to
+// exactly the 09-08 ground. What CANNOT be carried this way (vignettes, fog,
+// hand-seated labels, house icons) is listed in the lane report, not faked.
+/** the parchment's grain — the Atlas's paperGrain filter over the paper */
+export const PAPER_GRAIN = true;
+/** the frame — the Atlas's .mapwrap border drawn on the sheet's edge */
+export const GROUND_FRAME = true;
+/** the italic founder line under each region's name, from the mark's own `by:` */
+export const REGION_FOUNDER_LINE = true;
+
+/** the Atlas's founder line for a region, from the record: "founded by <by>" — and for the town's own
+ *  region the Atlas's doctrine line, minus the holder the record does not carry */
+export function regionFounderLine(mark) {
+  const by = String(mark?.by ?? "").trim();
+  if (!by) return "";
+  return by === "the-town" ? "tended, never owned" : `founded by ${by}`;
+}
 
 /** a ringed mark whose shelf pointer names an SVG: that URL, else null — the record's own shape, no roster */
 export function regionWashPointer(mark) {
@@ -3742,6 +3780,13 @@ const STYLE = `
 .wv-tg-region-label { font:700 19px Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif;
   fill:#241c10; letter-spacing:.02em; paint-order:stroke; stroke:#ece0c4; stroke-width:3px;
   stroke-linejoin:round; stroke-opacity:.9; pointer-events:none; }
+/* the look (2026-09-09): the Atlas's .region-founder to the byte; the grain and the frame are sheet,
+   not world — pointer-events none, no data-src, exempt by class in tools/town-ground.test.mjs */
+.wv-tg-region-founder { font:italic 12px Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif;
+  fill:#4a3f2a; paint-order:stroke; stroke:#ece0c4; stroke-width:3px; stroke-linejoin:round;
+  stroke-opacity:.9; pointer-events:none; }
+.wv-tg-grain { pointer-events:none; }
+.wv-tg-frame { fill:none; stroke:#5a4c33; stroke-width:1.6; pointer-events:none; }
 .wv-minimap > svg { display:block; width:100%; height:auto; }
 .wv-minimap .loading { padding:18px 12px; font-size:.82rem; font-style:italic; color:var(--dim); }
 .wv-spectator-coordinate { position:absolute; z-index:6; left:50%; bottom:8px; transform:translateX(-50%);
