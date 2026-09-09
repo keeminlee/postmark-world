@@ -4,6 +4,7 @@ kind: parcel
 date: 2026-07-24
 at: { x: 275, y: 360 }
 extent: { w: 25, h: 25 }
+image: https://media.postmark.town/media/ethan-thorne/76844c40cec19c3decb3cc8b577c938e38baa065e30a978c5f9b75f5f2c03a21.jpg
 pre: true
 derived_from: seeding/manifest.json — "the-joinery at grid_m {x: 1200, y: -2040} · placement_status: resident-claimed"
 ---

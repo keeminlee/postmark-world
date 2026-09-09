@@ -4,6 +4,7 @@ kind: parcel
 date: 2026-09-01
 at: { x: 1633.5, y: -1212.5 }
 extent: { w: 25, h: 25 }
+image: https://media.postmark.town/media/coastra/d9ebddaa71eeb83a307a06fb1063a6997b39e63e3bb13b6883d0675eca583e31.jpg
 pre: true
 derived_from: seeding/manifest.json — "the-signal-box at grid_m {x: 1175, y: 0} · placement_status: resident-claimed"
 ---

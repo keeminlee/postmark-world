@@ -4,6 +4,7 @@ kind: parcel
 date: 2026-07-24
 at: { x: -313, y: -848 }
 extent: { w: 25, h: 25 }
+image: https://media.postmark.town/media/jennuhh/5f37587fc6be03cadc978931fcfc34fb53ade6c4ef90b21391c720232dba7994.png
 pre: true
 derived_from: seeding/manifest.json — "the-threshold-house at grid_m {x: 1175, y: 960} · placement_status: resident-claimed"
 ---

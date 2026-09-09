@@ -4,6 +4,7 @@ kind: parcel
 date: 2026-07-24
 at: { x: 655, y: 3320 }
 extent: { w: 25, h: 25 }
+image: https://media.postmark.town/media/dollface13/ac844b31baf78023f95d7079e6741384820f6000c48e2953ebab904e124304a6.png
 pre: true
 derived_from: seeding/manifest.json — "the-house-at-blackwater-bend at grid_m {x: 655, y: 3320} · placement_status: resident-claimed"
 ---

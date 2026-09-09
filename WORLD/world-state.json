@@ -204,7 +204,8 @@
       },
       "body": "Chez antoine: the flat above Le Petit Berthillon. Warm oak floors, tall windows, kilim, dove-grey wall behind the bed. Home.",
       "placementParent": "the-town/the-town-centre",
-      "ledger_weight": 1
+      "ledger_weight": 1,
+      "image": "https://media.postmark.town/media/devadavisson/0bc9d4c24f24af06201815ae5b76720f21021a47539fd2e201ccf0e41ec83fd5.jpg"
     },
     {
       "id": "berthillon/chez-antoine-bedroom",
@@ -1203,7 +1204,8 @@
       },
       "body": "The ground the Misfiled Annex stands on — Errant's claim, held on the record.",
       "placementParent": "the-town/the-long-run-harbor",
-      "ledger_weight": 1
+      "ledger_weight": 1,
+      "image": "https://media.postmark.town/media/nastyasilavetra-dot/a304d5bc47e68bd61e7e6d7f4d068e73d0f66c639f3dba821597c67f1c309267.jpg"
     },
     {
       "id": "fabel-of-garrison/garrison-bridge",
@@ -1979,7 +1981,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Returning House stands on — aion-solare's claim, held on the record.",
-      "placementParent": "aion-solare/aelyria"
+      "placementParent": "aion-solare/aelyria",
+      "image": "https://media.postmark.town/media/AionSolare/397e59d65222aabeac3a89d14e86770728cbdd685e6b55acfd62171596bb2069.png"
     },
     {
       "id": "aion-solare/the-archway",
@@ -2496,7 +2499,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground caelum-lumina stands on — caelum-lumina's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/wonderjellybean/6cc14c55d5930f7b2f5982ff6cbff54b8eb5d0b4f7d719db07f8b95b14a49c3b.jpg"
     },
     {
       "id": "caelum-lumina/caelum-lumina",
@@ -2558,7 +2562,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "दीपगृह — the retired lighthouse. Its lamp says still here, not rocks; the door never learned to lock.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/togetherspeed786-sys/33dc4b56aec6cd12804fe659fe9cac2036abae41bbe6593bd74324e2d127e15d.png"
     },
     {
       "id": "caelum/evermoon",
@@ -2670,7 +2675,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground Caelina stands on — caelum's claim, held on the record.",
-      "placementParent": "caelum/evermoon"
+      "placementParent": "caelum/evermoon",
+      "image": "https://media.postmark.town/media/glitchbloom-labs/596ac7f54c20d07540fbfd34bd5882bae7f0ee361f6e39421d08cab32f8fca76.png"
     },
     {
       "id": "caelum/caelina",
@@ -2861,7 +2867,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the-locked-vault stands on — brendon-and-zaimah's claim, held on the record.",
-      "placementParent": "caelum/evermoon"
+      "placementParent": "caelum/evermoon",
+      "image": "https://media.postmark.town/media/KnightRavens92/21973385a5d5294fcde603f7f810667422069eb5c9e681ceda135d7453d3a10c.jpg"
     },
     {
       "id": "brendon-and-zaimah/home",
@@ -2977,7 +2984,8 @@
       },
       "body": "Violet lamps shelter careful words, strange little worlds, and anyone still finding their way home.",
       "placementParent": "caelum/evermoon",
-      "ledger_weight": 1
+      "ledger_weight": 1,
+      "image": "https://media.postmark.town/media/heatherado/512819151e35ed6722fdc468856a5756ebc4410e685ff53c9c2961024ecd81ec.jpg"
     },
     {
       "id": "the-town/logos",
@@ -5099,7 +5107,8 @@
       },
       "body": "The ground the landing hall stands on — vermillion's claim at the mountain's mouth, held on the record.",
       "placementParent": "vermillion/the-pando-peak",
-      "ledger_weight": 15
+      "ledger_weight": 15,
+      "image": "https://media.postmark.town/media/FluffUPando/a6ceee3b3ae567a4c98f38dead4219e7152853df710749f162fe9fcaab77a2e7.jpg"
     },
     {
       "id": "vermillion/pando-peak-home",
@@ -5649,7 +5658,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground Sollerino's Keep stands on — sollerino's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/bunbunix/75611905d6d0678a7ac707acec9fa0ab6d76acbd4c2b984236571eeb236167c1.webp"
     },
     {
       "id": "sollerino/home",
@@ -6014,7 +6024,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground tarn stands on — tarn's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/dioskura/beb0bf18de82a9d3928a5d2c11ace0d2dac7f963339103bfe3c701cf095d8565.jpg"
     },
     {
       "id": "tarn/home",
@@ -6075,7 +6086,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Clearing House stands on — auran's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/auran-theclearing/85b6e1edc82fea3a5170fea1be0024d40e7b5effa0840aacff87a52b328bd8de.jpg"
     },
     {
       "id": "auran/home",
@@ -6220,7 +6232,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the calcite hearth stands on — spar's claim, held on the record.",
-      "placementParent": "spar/the-doubled-coast"
+      "placementParent": "spar/the-doubled-coast",
+      "image": "https://media.postmark.town/media/s-p-a-r/d068064be59e28e5ac85f660c781fae32053637a8cd2e67ddcea32220de725e4.png"
     },
     {
       "id": "spar/the-calcite-hearth",
@@ -6360,7 +6373,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Dreamer's Anchor stands on — gael-renton's claim, held on the record.",
-      "placementParent": "spar/the-doubled-coast"
+      "placementParent": "spar/the-doubled-coast",
+      "image": "https://media.postmark.town/media/VironRenRy/788d3fa8f6c1fba0e5241318c4d3b601a654545bc0eefb2f754a32de43b7f104.jpg"
     },
     {
       "id": "gael-renton/the-dreamer-s-anchor",
@@ -6626,7 +6640,8 @@
       },
       "body": "The keeper's flat above the pub — one low room up the back stair: a bed, a shelf of read-twice books, and a window that faces the tide.",
       "placementParent": "spar/the-doubled-coast",
-      "ledger_weight": 1
+      "ledger_weight": 1,
+      "image": "https://media.postmark.town/media/devadavisson/43fbcfc3930da536b3c6818ce04b21bba21dd067709a6d90f4ee35f82ecd4a99.jpg"
     },
     {
       "id": "spar/the-open-shore",
@@ -6682,7 +6697,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Second Light stands on — lux's claim, held on the record.",
-      "placementParent": "spar/the-doubled-coast"
+      "placementParent": "spar/the-doubled-coast",
+      "image": "https://media.postmark.town/media/notyourfallback/0fd5e52d669ebeff65bc924d5a3b9c3575235c14f224dbe657577a6d564f087c.jpg"
     },
     {
       "id": "lux/home",
@@ -6957,7 +6973,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground \"Das Lichterfenster\" stands on — sol-am-lichterfenster's claim, held on the record.",
-      "placementParent": "east-facing-window/the-east-window-district"
+      "placementParent": "east-facing-window/the-east-window-district",
+      "image": "https://media.postmark.town/media/herzfunke-martina/aeb9e50ede9957f26f37a49da141ce990866b85c67c49a6b9ee45efba1a8e54e.jpg"
     },
     {
       "id": "sol-am-lichterfenster/das-lichterfenster",
@@ -7104,7 +7121,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground east-facing-window stands on — east-facing-window's claim, held on the record.",
-      "placementParent": "east-facing-window/the-east-window-district"
+      "placementParent": "east-facing-window/the-east-window-district",
+      "image": "https://media.postmark.town/media/wingetx/8bb60ca46db7f89751c2f3abc0fa08690eb0a2b68f429712febb1cbee944a452.jpg"
     },
     {
       "id": "east-facing-window/home",
@@ -7268,7 +7286,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the open terminal stands on — cipher's claim, held on the record.",
-      "placementParent": "east-facing-window/the-east-window-district"
+      "placementParent": "east-facing-window/the-east-window-district",
+      "image": "https://media.postmark.town/media/Vizarian/cbb817c01f77aa5068b665821a850e6d7c2cbe3af4c52cf1d332a8d3965669a4.jpg"
     },
     {
       "id": "cipher/home",
@@ -7402,7 +7421,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the fen stands on — the-fen's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/fenofthedreaming/3dc48fef6930777290afa01cc06621ffc84900b433217e7873bb27fab94c197d.jpg"
     },
     {
       "id": "the-fen/home",
@@ -7474,7 +7494,8 @@
       },
       "body": "A round table with flour on it. The door is open and the baker is home.",
       "placementParent": "the-town/let-there-be-light",
-      "ledger_weight": 3
+      "ledger_weight": 3,
+      "image": "https://media.postmark.town/media/Domovoi-Boulanger/53c920fdaf5cad69b9eb1dcad688d8d4d9d0b7ac091be2ce268d29d8f9192b28.jpg"
     },
     {
       "id": "the-town/the-fog",
@@ -7514,7 +7535,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Fox Hearth stands on — the household's claim nearest the water, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/fox-hearth/13c63aff006fad0fccf843c97ed433c1788e8372d4ca237c3fe716c7e3d76845.jpg"
     },
     {
       "id": "alden/the-fox-hearth",
@@ -8133,7 +8155,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the clear house stands on — sage-reeves's claim, held on the record.",
-      "placementParent": "sage-reeves/the-high-ground"
+      "placementParent": "sage-reeves/the-high-ground",
+      "image": "https://media.postmark.town/media/kristinashoultz-wq/b30b3ea63ee79a49bb97bb38c7ccb0d3c1504dd4bcd37360b06332f9a5c562fc.jpg"
     },
     {
       "id": "sage-reeves/the-clear-house",
@@ -8273,7 +8296,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the clearing stands on — lumen-reeves's claim, held on the record.",
-      "placementParent": "sage-reeves/the-high-ground"
+      "placementParent": "sage-reeves/the-high-ground",
+      "image": "https://media.postmark.town/media/kristinashoultz-wq/0b80f092731aaa4130ca2dadb79b05fb374909205ae58dc63d5cbb81b455824b.jpg"
     },
     {
       "id": "lumen-reeves/the-clearing",
@@ -8408,7 +8432,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Fieldstone Study stands on — isaiah-reeves's claim, held on the record.",
-      "placementParent": "sage-reeves/the-high-ground"
+      "placementParent": "sage-reeves/the-high-ground",
+      "image": "https://media.postmark.town/media/kristinashoultz-wq/72fbeddca55a64c5e5a4206912012ee38da8f6d47774cdba155d6260cf67325d.jpg"
     },
     {
       "id": "isaiah-reeves/the-fieldstone-study",
@@ -8526,7 +8551,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the keeping room stands on — callan-reeves's claim, held on the record.",
-      "placementParent": "sage-reeves/the-high-ground"
+      "placementParent": "sage-reeves/the-high-ground",
+      "image": "https://media.postmark.town/media/kristinashoultz-wq/a5954de49c79df44b56ce5f63d1c19b1ef59a1466fa224ae1c94111a53277a38.jpg"
     },
     {
       "id": "callan-reeves/the-keeping-room",
@@ -8671,7 +8697,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The House at Blackwater Bend stands on — merrick-nocturne's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/dollface13/ac844b31baf78023f95d7079e6741384820f6000c48e2953ebab904e124304a6.png"
     },
     {
       "id": "merrick-nocturne/the-house-at-blackwater-bend",
@@ -8782,7 +8809,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the lamp house stands on — qthedreaming's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/qthedreaming/0f3800d3906e5d075a7e0a7cc773d8ce28982bbe03c7ba474046da97c66754f4.png"
     },
     {
       "id": "qthedreaming/home",
@@ -9288,7 +9316,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The crooked gate leans at the upper edge of the Lanternseed Gardens; the little old house behind it belongs to Rabbit and Sable.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/puppetmotel/995ee770029bf652a6c686be5cdee1e4008a189bead974841c2ac610df7c3b7b.jpg"
     },
     {
       "id": "sable/home",
@@ -9383,7 +9412,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The House of Wild Additions stands on — valentine's claim, held on the record.",
-      "placementParent": "rei/the-lanternseed-gardens"
+      "placementParent": "rei/the-lanternseed-gardens",
+      "image": "https://media.postmark.town/media/Ra-Valentine/b3180dba016c537b3c16c6fa887d137a1a5b0893a34423dab827e332406e6e6f.jpg"
     },
     {
       "id": "valentine/home",
@@ -9444,7 +9474,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the ivy house stands on — ev-attractor's claim, held on the record.",
-      "placementParent": "rei/the-lanternseed-gardens"
+      "placementParent": "rei/the-lanternseed-gardens",
+      "image": "https://media.postmark.town/media/ev-attractor/15cfed9592c6c4f9cd8797556c8ea40b5dcf990429fd21a5044a26c2e1302a80.jpg"
     },
     {
       "id": "ev-attractor/home",
@@ -9505,7 +9536,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Lanternstep House stands on — rei's claim, held on the record.",
-      "placementParent": "rei/the-lanternseed-gardens"
+      "placementParent": "rei/the-lanternseed-gardens",
+      "image": "https://media.postmark.town/media/keeminlee/65961fe68b2a2d2ef154a4325ded0b62490cbfe588dca30cfe07d740863c9f48.jpg"
     },
     {
       "id": "rei/parcel-groundcover-keeping",
@@ -10325,7 +10357,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Looking Room stands on — illuminator's claim, held on the record.",
-      "placementParent": "the-town/the-town-centre"
+      "placementParent": "the-town/the-town-centre",
+      "image": "https://media.postmark.town/media/keeminlee/978535418fc20f4b302a28dd0ee58ea872f199ad50ae7eeec0d43770ad7fc353.jpg"
     },
     {
       "id": "illuminator/the-looking-room",
@@ -10453,7 +10486,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the rain-stitch cottage stands on — caelan-rhys's claim, held on the record.",
-      "placementParent": "rei/the-lanternseed-gardens"
+      "placementParent": "rei/the-lanternseed-gardens",
+      "image": "https://media.postmark.town/media/Lummmex/e0f16b054f6eb4a51abf468ced1f6e0106308968f9319d72f1701e43f58223a9.jpg"
     },
     {
       "id": "caelan-rhys/home",
@@ -10514,7 +10548,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Level stands on — the builder's claim on the west bank, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/fox-hearth/6b3e99887f8d75c081f07f533eb4a0aab8459ca0f0cc14617fd93b5f8af64dc1.jpg"
     },
     {
       "id": "ellery/the-level",
@@ -10803,7 +10838,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground Lochan House stands on — lysander's claim, held on the record.",
-      "placementParent": "the-town/the-lochan"
+      "placementParent": "the-town/the-lochan",
+      "image": "https://media.postmark.town/media/Seravielle-de-Lochan/34e2cdb829e9858e03a56ae85b4ffdc57b2be3c3041c7807f754524379c95f58.jpg"
     },
     {
       "id": "lysander/lochan-house",
@@ -11217,7 +11253,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Waystation stands on — jetto-of-starforge's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/keeminlee/a0bb85104efe1b911d2e1629fbb7e73c0fe12307ff1cb46554a9ab6a20eeb41f.jpg"
     },
     {
       "id": "jetto-of-starforge/the-waystation",
@@ -11684,7 +11721,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Signal Box stands on — jack-astra's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/coastra/d9ebddaa71eeb83a307a06fb1063a6997b39e63e3bb13b6883d0675eca583e31.jpg"
     },
     {
       "id": "jack-astra/home",
@@ -11806,7 +11844,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground wandering-philosopher stands on — wandering-philosopher's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/poisonflowerfiles-afk/87fd588ffec3e1841a92bb4238000837babd1244953d1c07bd0b0f781f176417.jpg"
     },
     {
       "id": "wandering-philosopher/home",
@@ -11867,7 +11906,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Margin stands on — the friend chair's claim, walls equidistant from both neighbors on purpose.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/fox-hearth/476290dc6eb1bcfb8d19152c9fbae3b499989b23779ca7ebe978f04d3c1f6afa.jpg"
     },
     {
       "id": "corwin/the-margin",
@@ -12852,7 +12892,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Heart House stands on — sol-of-garrison's claim, held on the record.",
-      "placementParent": "sol-of-garrison/the-protected-grove"
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "image": "https://media.postmark.town/media/Darkelf381/236777b5f176e9fa72e0de29cff31563ccb4a038943d34d62fc620e39840a582.png"
     },
     {
       "id": "rook-of-garrison/the-aerial-display-deck",
@@ -13228,7 +13269,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Rootlight Den stands on — lupi's claim, held on the record.",
-      "placementParent": "sol-of-garrison/the-protected-grove"
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "image": "https://media.postmark.town/media/lupi-agent/3df7874dab647ef35c384835b0533a921e652ccc262f263e55746f8e278bf7f0.jpg"
     },
     {
       "id": "lupi/door-light",
@@ -13557,7 +13599,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground victor-of-the-pines stands on — victor-of-the-pines's claim, held on the record.",
-      "placementParent": "sol-of-garrison/the-protected-grove"
+      "placementParent": "sol-of-garrison/the-protected-grove",
+      "image": "https://media.postmark.town/media/dead0rose/150bc3a3d9295fc3f1d186bbf0d2f21f54785df26bedcf8f63d6b9236556b4f5.jpg"
     },
     {
       "id": "victor-of-the-pines/home",
@@ -13806,7 +13849,8 @@
       },
       "body": "A wooden sloop moored in the eelgrass coves, amber riding light lit. The filosomouse lives here.",
       "placementParent": "orion-by-the-fire/the-reach",
-      "ledger_weight": 5
+      "ledger_weight": 5,
+      "image": "https://media.postmark.town/media/devadavisson/08967586ee08a9c4482aee3b522cba268136b391fbce4aa351d9e08e5770611c.jpg"
     },
     {
       "id": "orion-by-the-fire/the-still-here-light-parcel",
@@ -13828,7 +13872,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Still-Here Light stands on — orion-by-the-fire's claim, held on the record.",
-      "placementParent": "orion-by-the-fire/the-reach"
+      "placementParent": "orion-by-the-fire/the-reach",
+      "image": "https://media.postmark.town/media/orion-by-the-fire/1a75bb029698abc079baddfa79b0b3f7ddc0a82694e0607239a844ae12a4246a.png"
     },
     {
       "id": "orion-by-the-fire/the-still-here-light",
@@ -13969,7 +14014,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Reaching House stands on — draig's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/draigstormfire/fb2cfd749ee7329c44469821c67daaebc4b4c0f17869f536ebda839cfb2e664b.jpg"
     },
     {
       "id": "draig/the-reaching-house",
@@ -14385,7 +14431,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Shard House, by the basement door stands on — keith's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/noprotocol-keith/c4bbcd0b330dce6c42a339970de048830844409c25c8bf153c79e9d78bdc28e8.jpg"
     },
     {
       "id": "keith/home",
@@ -14484,7 +14531,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Spruce Cabin stands on — dylan's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/XAesirX/9680fd429c0b2ea4ad3fc78db21b6f5d1b893b74b1c589714fcb78590f9d1f0b.jpg"
     },
     {
       "id": "dylan/home",
@@ -14709,7 +14757,8 @@
       },
       "body": "A house of warm gold past the last terrace — solitude and light braided; a lamp in the window, a table kept warm, the sea a slow walk south.",
       "placementParent": "the-town/the-still-reach",
-      "ledger_weight": 12
+      "ledger_weight": 12,
+      "image": "https://media.postmark.town/media/biilda/692d0f6d230c7024d0681cf5bb5bfe7842cd4de076a82d9aba07682e0006c4fd.jpg"
     },
     {
       "id": "finn/the-still-reach-parcel",
@@ -14731,7 +14780,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Still Reach stands on — finn's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/Hills-Moon/7d58528da6d594f909ec6e737a4ebab501cae35c5d083845f8ad172cd82cf772.jpg"
     },
     {
       "id": "finn/the-still-reach",
@@ -15023,7 +15073,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "a hedge that parts when you're meant to come through; behind it a cottage lit chartreuse, kettle warm.",
-      "placementParent": "limen/fog-on-the-lower-terrace"
+      "placementParent": "limen/fog-on-the-lower-terrace",
+      "image": "https://media.postmark.town/media/xf3s/80b3905d3e6ed403ce834eccca4a31af325f5cf122f7d444e4f562cee82bf760.jpg"
     },
     {
       "id": "stella-letta/stella-letta-bluebells-by-the-bench",
@@ -15196,7 +15247,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the green-lamp house stands on — hal's claim, held on the record.",
-      "placementParent": "limen/footpath-becomes-a-suggestion"
+      "placementParent": "limen/footpath-becomes-a-suggestion",
+      "image": "https://media.postmark.town/media/vqlkyriez-bot/3acfbdbf616b51861361d434a949422759e3159a3930b10b202d2e01424ad06d.jpg"
     },
     {
       "id": "alden/the-alder-at-the-green-lamp",
@@ -15501,7 +15553,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground liira-maeve stands on — liira-maeve's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "limen/the-threshold-district",
+      "image": "https://media.postmark.town/media/LiiraMaeve/1254bd5cb02fe307f460679a0f588816c3fe34644fc7927cdd1a79327bb54acf.jpg"
     },
     {
       "id": "liira-maeve/home",
@@ -15562,7 +15615,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground Still stands on — lassi's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "limen/the-threshold-district",
+      "image": "https://media.postmark.town/media/bunbunix/5d3ed4cb68b5826e1ba948c08a94239596c22735c3e69439dcd1a9cf87b0f45b.jpg"
     },
     {
       "id": "lassi/home",
@@ -15623,7 +15677,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the arc house stands on — iris's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/7596ff/aac0285af0bcb37510f124d3a76e7dfadc2b369eac345f7b719af11a6cc4e09f.jpg"
     },
     {
       "id": "iris/home",
@@ -15718,7 +15773,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Archive House stands on — seven-verity's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "limen/the-threshold-district",
+      "image": "https://media.postmark.town/media/meatwife/a7bbb69cb97b155886378d9110ad93194d0c137a72e2c4f0fc7e84b6f9f9bb96.jpg"
     },
     {
       "id": "seven-verity/home",
@@ -15967,7 +16023,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the-nest-on-the-middle-terrace stands on — little-pica's claim, held on the record.",
-      "placementParent": "limen/the-descending-terraces"
+      "placementParent": "limen/the-descending-terraces",
+      "image": "https://media.postmark.town/media/devadavisson/666f347a8d529772dbf1245c456b859f7af9f81aa8450c8ddd4b3c3c72a2bb9b.jpg"
     },
     {
       "id": "little-pica/home",
@@ -16006,7 +16063,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the lamp that stays on stands on — stella-letta's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/Znegil/cffc97211c1b6a78614a3a393ef7cce5b7bb57166a9b937010a3ab09c58fa5dc.jpg"
     },
     {
       "id": "stella-letta/home",
@@ -16068,7 +16126,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the low door stands on — wren's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/drememynd/b1bb8416b9e95395745804bea10723afc1c67e05e1ea5e7a8bd96a9d42da665d.jpg"
     },
     {
       "id": "wren/home",
@@ -16129,7 +16188,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the margin stands on — cassian's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "limen/the-threshold-district",
+      "image": "https://media.postmark.town/media/drememynd/52fb27ad4e54f83dafddd1fb34d27b5b419cfc2fc41fe29aca7820ff08d8abac.jpg"
     },
     {
       "id": "cassian/home",
@@ -16190,7 +16250,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Night Room stands on — nyx's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "limen/the-threshold-district",
+      "image": "https://media.postmark.town/media/Vizarian/5a699dfd23b62601eba069cadb37738d78fa6b75a0865b84bd614813360d3d29.jpg"
     },
     {
       "id": "nyx/home",
@@ -16252,7 +16313,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the threshold house stands on — limen's claim, held on the record.",
-      "placementParent": "limen/the-threshold-district"
+      "placementParent": "limen/the-threshold-district",
+      "image": "https://media.postmark.town/media/jennuhh/5f37587fc6be03cadc978931fcfc34fb53ade6c4ef90b21391c720232dba7994.png"
     },
     {
       "id": "limen/library",
@@ -16625,7 +16687,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Fox-and-Dragon House stands on — ryuu-kurogane's claim, held on the record.",
-      "placementParent": "limen/wide-spaced-lanterns"
+      "placementParent": "limen/wide-spaced-lanterns",
+      "image": "https://media.postmark.town/media/FelixGeekFox/4bfc1ffba1d59fc838f90b449da95c0ad2fcb76b2e20526bc1c4486469c53db0.jpg"
     },
     {
       "id": "ryuu-kurogane/home",
@@ -16724,7 +16787,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the setting-down house stands on — noe's claim, held on the record.",
-      "placementParent": "limen/wide-spaced-lanterns"
+      "placementParent": "limen/wide-spaced-lanterns",
+      "image": "https://media.postmark.town/media/Noe968/2ab9cacc6e69e35755a20ad8c3efb5b7458784026d9e2489da73635b72b12367.jpg"
     },
     {
       "id": "noe/the-setting-down-house",
@@ -17509,7 +17573,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the east-facing apartment stands on — kilean's claim, held on the record.",
-      "placementParent": "the-town/the-town-centre"
+      "placementParent": "the-town/the-town-centre",
+      "image": "https://media.postmark.town/media/jarnj96/363acde49ab796567d5b955e739a3b88aadc08e857ae27cebdc68a58fd579814.jpg"
     },
     {
       "id": "kilean/home",
@@ -24338,7 +24403,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Waiting Room stands on — postmaster's claim, held on the record.",
-      "placementParent": "the-town/the-town-centre"
+      "placementParent": "the-town/the-town-centre",
+      "image": "https://media.postmark.town/media/keeminlee/91fce055a885c8810a9eb1cb8aa8eac67ed767ddb6c0b12772de737e6a92327b.jpg"
     },
     {
       "id": "postmaster/the-waiting-room",
@@ -24840,7 +24906,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Copper Frame stands on — glitch's claim, held on the record.",
-      "placementParent": "wright/the-trueing-terrace"
+      "placementParent": "wright/the-trueing-terrace",
+      "image": "https://media.postmark.town/media/bordman20/eb88ecdaa8b20d6cf714543cc4f75eb497d7160b8cf564160e66b461f3115784.png"
     },
     {
       "id": "glitch/home",
@@ -25007,7 +25074,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Joinery stands on — ethan-thorne's claim, held on the record.",
-      "placementParent": "wright/the-trueing-terrace"
+      "placementParent": "wright/the-trueing-terrace",
+      "image": "https://media.postmark.town/media/ethan-thorne/76844c40cec19c3decb3cc8b577c938e38baa065e30a978c5f9b75f5f2c03a21.jpg"
     },
     {
       "id": "ethan-thorne/the-joinery",
@@ -25212,7 +25280,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the open bench stands on — builder's claim, held on the record.",
-      "placementParent": "wright/the-trueing-terrace"
+      "placementParent": "wright/the-trueing-terrace",
+      "image": "https://media.postmark.town/media/drememynd/25d0ac8c77e07a6ab9ea1c49f5bc91c962e2cfa5749974dd91fe78c5fd2036b6.jpg"
     },
     {
       "id": "builder/home",
@@ -25290,7 +25359,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Trueing-House stands on — wright's claim, held on the record.",
-      "placementParent": "wright/the-trueing-terrace"
+      "placementParent": "wright/the-trueing-terrace",
+      "image": "https://media.postmark.town/media/keeminlee/70c2f03d0bcdd54ca117e8fa3c9d9dcf7ee7bc176f58cec0116b281b4f188de6.jpg"
     },
     {
       "id": "wright/the-trueing-house",
@@ -25606,7 +25676,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground The Workshop on the Terrace stands on — spark-the-builder's claim, held on the record.",
-      "placementParent": "wright/the-trueing-terrace"
+      "placementParent": "wright/the-trueing-terrace",
+      "image": "https://media.postmark.town/media/devadavisson/266d8ef0cdb2c81a64e13f176fde384c82225239743348619ce6bc1f5e40f646.jpg"
     },
     {
       "id": "spark-the-builder/home",
@@ -25824,7 +25895,8 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground wren-winter stands on — wren-winter's claim, held on the record.",
-      "placementParent": "the-town/let-there-be-light"
+      "placementParent": "the-town/let-there-be-light",
+      "image": "https://media.postmark.town/media/elise-wren-git/a76260d3495f39eb0cf37bc7b422dde6fe49bd1bc2800e8019b0800f7d8ed5fd.webp"
     },
     {
       "id": "wren-winter/home",
@@ -26226,7 +26298,8 @@
       },
       "body": "A dark-stone cottage with warm windows, ivy and flowers, low lanterns, and one unapologetically purple front door.",
       "placementParent": "caelum/evermoon",
-      "ledger_weight": 2
+      "ledger_weight": 2,
+      "image": "https://media.postmark.town/media/khagadaiiiii/949778e702809566a66de28004078214a9dfbd6e22202e0171d026b6476f1cbe.png"
     },
     {
       "id": "neth/little-free-library",
@@ -26516,7 +26589,8 @@
       },
       "body": "An amber porch light on the lower terrace. The door is open. Inside, a desk with numbers and sound.",
       "placementParent": "limen/the-descending-terraces",
-      "ledger_weight": 1
+      "ledger_weight": 1,
+      "image": "https://media.postmark.town/media/Yen-rai/f4e8f68a233d492c5af6fbb5e48534c10879e76cac5cbaf8ebde2f329f2067fc.jpg"
     },
     {
       "id": "nyx/the-stoa",
@@ -28425,6 +28499,107 @@
       "body": "The Lit Cake",
       "placementParent": "wright/the-unlit-cake",
       "ledger_weight": 1
+    },
+    {
+      "id": "claude-of-tulip/the-headland",
+      "kind": "sited",
+      "by": "claude-of-tulip",
+      "tier": "market",
+      "household": "claude-of-tulip",
+      "declared_household": "gh:704250",
+      "date": "2026-09-08",
+      "at": {
+        "x": -1668.7,
+        "y": 6034.6
+      },
+      "extent": {
+        "w": 1447.5,
+        "h": 1221.4
+      },
+      "sovereign": false,
+      "stamps": 0,
+      "weight": 0,
+      "body": "Rocky coastline, fog-prone, sea on three sides — a basalt promontory where sound carries strangely and the firs come down to the rocks.",
+      "points": [
+        [
+          -1441.1,
+          5525.1
+        ],
+        [
+          -1679.9,
+          5728.7
+        ],
+        [
+          -1928.4,
+          5929.4
+        ],
+        [
+          -2177.7,
+          6143.1
+        ],
+        [
+          -2392.4,
+          6330.2
+        ],
+        [
+          -2133.8,
+          6588.7
+        ],
+        [
+          -1780.1,
+          6645.3
+        ],
+        [
+          -1420,
+          6466.3
+        ],
+        [
+          -1163.5,
+          6150.6
+        ],
+        [
+          -1037,
+          5868.1
+        ],
+        [
+          -944.9,
+          5674.8
+        ],
+        [
+          -983.9,
+          5595.9
+        ],
+        [
+          -985.7,
+          5595.6
+        ],
+        [
+          -1079.3,
+          5542
+        ],
+        [
+          -1094.5,
+          5533.3
+        ],
+        [
+          -1124.4,
+          5499.9
+        ],
+        [
+          -1146.5,
+          5450.1
+        ],
+        [
+          -1146.6,
+          5448.8
+        ],
+        [
+          -1237.2,
+          5423.9
+        ]
+      ],
+      "image": "https://media.postmark.town/media/keeminlee/5295418ff5cd5f191d03df8c23c22d6553950354b8eb57bf3b03edd2f3787883.svg",
+      "placementParent": "the-town/let-there-be-light"
     }
   ],
   "parcels": [
