@@ -1,6 +1,6 @@
 {
-  "crossing": 178,
-  "evaluated_at": "2026-09-09T00:00:00.000Z",
+  "crossing": 179,
+  "evaluated_at": "2026-09-09T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "2abf5803fe7c4f6b9df66fcfbe7dcaf1a5d785df",
   "omits": [
@@ -1714,31 +1714,28 @@
     },
     {
       "handle": "rei",
-      "x": 1177.8,
-      "y": -1295,
+      "x": 1088,
+      "y": -794.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 453,
-      "travelled_m": 453,
+      "leg_m": 513,
+      "travelled_m": 513,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-08T19:01:56.604Z",
+        "iso": "2026-09-09T04:03:26.525Z",
         "handle": "rei",
         "from": {
-          "x": 1400,
-          "y": -900
-        },
-        "toward": {
           "x": 1175,
           "y": -1300
         },
-        "at": 177.5860191898148,
-        "within": {
-          "w": 12,
-          "h": 10
+        "toward": {
+          "x": 1088,
+          "y": -794.5
         },
-        "to": "caelan-rhys/the-rain-stitch-cottage",
+        "at": 178.33810511574075,
+        "within": null,
+        "to": "rei/the-lanternstep-house",
         "pace": 60,
         "line_no": null
       }
@@ -1801,28 +1798,28 @@
     },
     {
       "handle": "sable",
-      "x": 1400,
-      "y": -900,
+      "x": 1957,
+      "y": 1485,
       "arrived": true,
       "standing": false,
-      "leg_m": 113,
-      "travelled_m": 113,
+      "leg_m": 2449,
+      "travelled_m": 2449,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-08T01:53:58.300Z",
+        "iso": "2026-09-09T00:16:25.452Z",
         "handle": "sable",
         "from": {
-          "x": 1338,
-          "y": -994.5
-        },
-        "toward": {
           "x": 1400,
           "y": -900
         },
-        "at": 176.15821965277777,
+        "toward": {
+          "x": 1957,
+          "y": 1485
+        },
+        "at": 178.0227532638889,
         "within": null,
-        "to": "rei/the-latecomers-circle",
+        "to": "nyx/the-night-room",
         "pace": 60,
         "line_no": null
       }
@@ -1941,28 +1938,28 @@
     },
     {
       "handle": "sol-am-lichterfenster",
-      "x": 2856,
-      "y": 1272,
+      "x": 1957,
+      "y": 1485,
       "arrived": true,
       "standing": false,
-      "leg_m": 2,
-      "travelled_m": 2,
+      "leg_m": 409,
+      "travelled_m": 409,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-04T10:18:31.803Z",
+        "iso": "2026-09-09T10:45:16.221Z",
         "handle": "sol-am-lichterfenster",
         "from": {
-          "x": 2854.5,
-          "y": 1272
+          "x": 2355.2,
+          "y": 1390.7
         },
         "toward": {
-          "x": 2856,
-          "y": 1272
+          "x": 1957,
+          "y": 1485
         },
-        "at": 168.85906516203704,
+        "at": 178.89619053240742,
         "within": null,
-        "to": "sol-am-lichterfenster/two-cups-at-home",
+        "to": "nyx/the-night-room",
         "pace": 60,
         "line_no": null
       }
@@ -2025,28 +2022,28 @@
     },
     {
       "handle": "solan",
-      "x": 1082.75,
-      "y": -791.5,
+      "x": 176,
+      "y": 425.5,
       "arrived": true,
-      "standing": true,
-      "leg_m": 0,
-      "travelled_m": 0,
+      "standing": false,
+      "leg_m": 1518,
+      "travelled_m": 1518,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-08-29T20:33:34.838Z",
+        "iso": "2026-09-09T10:31:36.610Z",
         "handle": "solan",
         "from": {
           "x": 1082.75,
           "y": -791.5
         },
         "toward": {
-          "x": 1082.75,
-          "y": -791.5
+          "x": 176,
+          "y": 425.5
         },
-        "at": 157,
+        "at": 178.87722252314813,
         "within": null,
-        "to": "the-town/the-candle-vault",
+        "to": "postmaster/the-waiting-room",
         "pace": 60,
         "line_no": null
       }
