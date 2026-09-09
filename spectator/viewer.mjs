@@ -6925,12 +6925,22 @@ export function mountViewer(appEl) {
   // Which mountain, and where, is read off the record: the far feature's own
   // mark carries the coordinate and the extent. Nothing is placed by hand here,
   // so a peak that moves on the record moves its picture with it.
-  const PANDO_ART_URL = "/media/vermillion-pando-peak-the-true-mountain-card.jpg";
+  //
+  // AND THE PICTURE IS THE MARK'S TOO (2026-09-09, the Atlas sitting: "the mark
+  // stores a pointer … used by the site"). Until tonight this was the one
+  // hardcoded visual left on the painting — a site-hosted file named in this
+  // function while vermillion's own marks already carried the same mountain
+  // card on the shelf. The far mark's `image:` is the only source now, read
+  // through the same shelf route every parcel picture takes; a far mark with
+  // no pointer hangs no picture and draws no broken glyph, exactly like a
+  // parcel without one.
   function drawFarCountry() {
     if (!mapCtx?.mistLayer || !mapCtx.farArtLayer) return;
     const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
     const peak = (world?.marks ?? []).find((m) => m.far && m.feature === "pando-peak" && m.at);
     if (!peak) return;                      // no far feature on the record, no far country
+    const art = markImagePath(peak);        // the mark's own pointer, or nothing
+    if (!art) return;
     const centre = px(peak.at);
     // the corridor runs from Ferry's crossing — grid origin, the town's own
     // registration point — out to the peak; the mist is the water between
@@ -6938,7 +6948,7 @@ export function mountViewer(appEl) {
     mapCtx.farArtLayer.innerHTML = placedArtSVG({
       at: centre,
       extent: { w: (peak.extent?.w ?? 0) / mapCtx.mPerPx, h: (peak.extent?.h ?? 0) / mapCtx.mPerPx },
-      href: PANDO_ART_URL,
+      href: art,
       label: `${peak.label ?? peak.feature} — the mountain, seen from the town side`,
       id: "pando-peak",
     });
