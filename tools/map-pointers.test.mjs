@@ -127,11 +127,16 @@ test("FALSIFIER 4 — a wash is a RINGED mark's SVG pointer, told apart by the r
 });
 
 test("THE WIRING — washes under the record, homes over the footprints and under the pips, town scene only, and the 08-21 switch untouched", () => {
-  const wash = SOURCE.indexOf('washLayer.setAttribute("id", "wv-wash-layer")');
-  const grid = SOURCE.indexOf('gridLayer.setAttribute("id", "wv-grid-layer")');
-  const fp = SOURCE.indexOf('fpLayer.setAttribute("id", "wv-fp-layer")');
-  const art = SOURCE.indexOf('parcelArtLayer.setAttribute("id", "wv-parcel-art-layer")');
-  const convo = SOURCE.indexOf('convoLayer.setAttribute("id", "wv-convo-layer")');
+  // THE APPEND ORDER, not the declaration order: what a reader sees is which
+  // node was appended after which (a flip that moved only the appendChild left
+  // a declaration-order check green — the check must read the behaviour it names).
+  const wash = SOURCE.indexOf("svg.appendChild(washLayer);");
+  const grid = SOURCE.indexOf("svg.appendChild(gridLayer);");
+  const fp = SOURCE.indexOf("svg.appendChild(fpLayer);");
+  const art = SOURCE.indexOf("svg.appendChild(parcelArtLayer);");
+  const convo = SOURCE.indexOf("svg.appendChild(convoLayer);");
+  for (const [name, i] of Object.entries({ wash, grid, fp, art, convo })) assert.ok(i > 0, `${name} layer is appended exactly once, by name`);
+  assert.equal(SOURCE.split("svg.appendChild(washLayer);").length, 2, "the wash layer is appended once");
   assert.ok(wash > 0 && grid > wash, "the wash layer is appended BEFORE the grid — the first derived layer above the painting");
   assert.ok(fp > 0 && art > fp && convo > art, "the parcel-art layer sits after the footprints and before the conversations/pips");
   assert.match(SOURCE, /if \(!placeholderExtents\) \{\s*\n\s*const artPx/, "the pointers are walked in the TOWN scene only — a room hangs its art through sceneArtSVG");
