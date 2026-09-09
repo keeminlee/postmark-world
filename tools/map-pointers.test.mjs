@@ -23,8 +23,56 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as viewer from "../spectator/viewer.mjs";
 import {
-  PARCEL_ART_MIN_M, markArtOnMap, mountPointerArt, parcelArtBox, pointerReceiptLine,
+  PARCEL_ART_MIN_M, PARCEL_LABEL_M, markArtOnMap, mountPointerArt, parcelArtBox, parcelFrameSVG,
+  parcelLabel, parcelReadThrough, parcelReadThroughRow, pointerReceiptLine,
 } from "../spectator/viewer.mjs";
+
+// ── THE PARCEL IS FIRST-CLASS (Keemin, 2026-09-09: "they have higher significance now") ──
+// Three rules: (1) outline + a label naming the resident, always on; (2) the
+// picture regardless of the mark-art toggle; (3) the read-through to the
+// resident's home page — a parcel without one says so, a non-parcel opens nothing.
+
+test("RULE 1 — every parcel gets its frame: the outline at its extent and a label naming the resident, whether or not it has a picture", () => {
+  const pxf = (p) => ({ x: 485 + p.x / 5, y: 760 + p.y / 5 });
+  const bare = { id: "alpha/home-parcel", kind: "parcel", by: "alpha", at: { x: 500, y: -200 }, extent: { w: 25, h: 25 } };
+  const meta = { name: "Alpha of the Reach" };
+  assert.deepEqual(parcelLabel(bare, meta), { handle: "alpha", text: "Alpha of the Reach" }, "the shown name where the roster knows one");
+  assert.deepEqual(parcelLabel(bare, null), { handle: "alpha", text: "alpha" }, "the handle where it does not");
+  assert.equal(parcelLabel({ ...bare, kind: "sited" }, meta), null, "a bench is not labelled as a home");
+  const svg = parcelFrameSVG(bare, pxf, parcelLabel(bare, meta));
+  assert.match(svg, /<rect class="wv-parcel-outline" x="582\.5" y="717\.5" width="5\.0" height="5\.0"\/>/, "the outline is the TRUE extent, five painting units for a 25 m parcel");
+  assert.match(svg, /<text class="wv-parcel-label"[^>]*>Alpha of the Reach<\/text>/, "the label names the resident");
+  assert.match(svg, new RegExp(`font-size="${(PARCEL_LABEL_M / 5).toFixed(1)}"`), "the label's height is the one constant, in painting units");
+  const y = Number(svg.match(/<text[^>]* y="([0-9.]+)"/)[1]);
+  assert.ok(y > 720 + PARCEL_ART_MIN_M / 10, "the label sits below the picture's box, never across it");
+  assert.equal(parcelFrameSVG({ ...bare, kind: "sited" }, pxf, null), "", "no frame for a non-parcel");
+  const hostile = parcelFrameSVG({ ...bare, id: 'x/"><script>' }, pxf, { handle: "x", text: "<b>&" });
+  assert.doesNotMatch(hostile, /<script>|<b>/, "every value is escaped — the frame is a string, so it must be");
+});
+
+test("RULE 2 — the picture hangs regardless of the 08-21 card-figure switch", () => {
+  assert.equal(markArtOnMap(""), false, "the switch is off");
+  assert.ok(parcelArtBox({ id: "a/p", kind: "parcel", by: "a", at: { x: 0, y: 0 }, extent: { w: 25, h: 25 }, image: SHELF_JPG }), "and the parcel still has its box");
+  const walker = SOURCE.slice(SOURCE.indexOf("if (walkPointers) {"), SOURCE.indexOf("svg.insertBefore(frameLayer, parcelArtLayer);"));
+  assert.ok(walker.length > 100, "the walker block was found");
+  assert.doesNotMatch(walker, /markArtOnMap|cardArt/, "the walker never consults the switch");
+});
+
+test("RULE 3 — the read-through: a parcel opens its resident's home page; a parcel without one says so; a non-parcel opens nothing", () => {
+  const p = { id: "alpha/home-parcel", kind: "parcel", by: "alpha", at: { x: 0, y: 0 } };
+  assert.deepEqual(parcelReadThrough(p, { meta: { name: "Alpha" }, rosterLoaded: true }), { href: "/residents/alpha/", name: "Alpha" });
+  assert.deepEqual(parcelReadThrough(p, { meta: null, rosterLoaded: false }), { href: "/residents/alpha/", name: "alpha" }, "a roster that has not loaded is not 'no page'");
+  const missing = parcelReadThrough(p, { meta: null, rosterLoaded: true });
+  assert.equal(missing.href, null); assert.match(missing.why, /no resident page for alpha/);
+  const odd = parcelReadThrough({ ...p, by: "Not A Handle" }, { rosterLoaded: false });
+  assert.equal(odd.href, null); assert.match(odd.why, /not a handle/);
+  assert.equal(parcelReadThrough({ ...p, kind: "sited" }, { meta: { name: "Alpha" }, rosterLoaded: true }), null, "a bench opens nothing");
+  assert.match(parcelReadThroughRow(p, { meta: { name: "Alpha" }, rosterLoaded: true }), /<a href="\/residents\/alpha\/">Read Alpha's home page →<\/a>/);
+  assert.match(parcelReadThroughRow(p, { meta: null, rosterLoaded: true }), /wv-quiet.*no resident page for alpha/);
+  assert.equal(parcelReadThroughRow({ ...p, kind: "sited" }, {}), "", "no row on a non-parcel's card");
+  assert.match(SOURCE, /\$\{parcelReadThroughRow\(full, \{ meta: residentsMeta\.get\(full\.by\) \?\? null, rosterLoaded: residentsRosterLoaded \}\)\}/, "the row rides the mark cell, in the byline's own idiom");
+  assert.match(SOURCE, /if \(entries\.length\) \{ residentsMeta = new Map\(entries\); residentsRosterLoaded = true; \}/, "and 'loaded' means the roster actually answered");
+});
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SOURCE = readFileSync(join(HERE, "..", "spectator", "viewer.mjs"), "utf8");
@@ -121,7 +169,7 @@ test("FALSIFIER 4 — the walker carries NO wash arm: a ringed mark's SVG pointe
   assert.equal(parcelArtBox(region({ image: SHELF_SVG })), null, "a ringed sited mark wearing an svg pointer is not a parcel and gets no box");
   assert.equal(parcelArtBox(region({ image: SHELF_JPG })), null, "nor with a photograph");
   assert.doesNotMatch(SOURCE, /wv-wash-layer/, "no wash layer is mounted by this walker");
-  assert.match(SOURCE, /if \(m\.kind !== "parcel" \|\| typeof m\.image !== "string"/, "the walk is parcels only, decided at the top of the loop");
+  assert.match(SOURCE, /for \(const m of world\.marks \?\? \[\]\) \{\s*\n\s*if \(m\.kind !== "parcel"\) continue;/, "the walk is parcels only, decided at the top of the loop");
 });
 
 test("THE WIRING — homes over the footprints and under the pips, town scene only, the receipt names its source, and the 08-21 switch untouched", () => {
