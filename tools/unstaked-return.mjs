@@ -17,10 +17,15 @@
 // THE SET, in the fold's own terms:  S = { m : m.by !== "the-town"
 //                                            AND NOT m.sovereign
 //                                            AND m.stamps === 0
-//                                            AND m.weight  === 0 }
+//                                            AND m.weight  === 0
+//                                            AND NOT exempt (below) }
 // `sovereign` is the fold's geometric flag (marks-fold.mjs § sovereignty: a
 // sited mark fully inside its OWN household's parcel). It is not a field anyone
 // writes, which is why this tool re-derives it rather than reading it.
+//
+// THE THREE EXEMPTIONS the founder ruled on 2026-09-09, each carrying its own
+// receipt reason and none of them reachable by a flag: constitution-tier law
+// nodes, the thirteen region rings, and EVERY PARCEL. See `exemptionFor`.
 //
 // THE SET IS RE-MEASURED, NEVER READ FROM A LIST. Residents will stake between
 // the announcement and the crossing; the whole point of the week is that the
@@ -87,6 +92,10 @@
 // (`sol-of-garrison/rootlight-den-welcome`, under `lupi/the-rootlight-den-parcel`).
 // The tool names every such mark and refuses without `--allow-reparent`.
 //
+// SINCE PARCELS BECAME EXEMPT that one hazard is gone: it existed only because
+// `lupi/the-rootlight-den-parcel` was leaving. The gate stays, because the next
+// tree is not this tree.
+//
 // Sited/parcel children are not exposed to this: their parent is geometric, so
 // they keep standing and only their `placementParent` re-computes (101 marks at
 // d38a5f7). That is a fold output changing, not a mark changing hands, and it is
@@ -115,8 +124,20 @@ export const isUnstakedCommons = (m) =>
  *   (1) "constitution tier marks need no stamps" — every mark whose record
  *       carries `tier: constitution` (the LOGOS class/law nodes and the
  *       predicated law rows under them, WHOEVER OWNS THEM) is never in the set.
- *   (2) The town mints 77 stamps onto every region ring before 09-16, so the
- *       thirteen rings are never in the set either — resident-founded or not.
+ *   (2) The town mints 77 stamps onto every region ring before 09-16 (the
+ *       founding act at town main e1415f207), so the thirteen rings are never
+ *       in the set either — resident-founded or not.
+ *   (3) "PARCELS NEED NO STAKING EITHER" (~18:1x EDT). Every mark of kind
+ *       `parcel` is exempt. The founder's doctrine of 09-09 affords the first
+ *       144 households up to three parcels, and an AFFORDED thing needs no
+ *       stake to stand.
+ *
+ * (3) ARRIVED AS A FLAG AND WAS RULED INTO LAW, which is why there is no flag
+ * for it. It was built first as `--hold-parcels` beside `--hold-occupied-parcels`
+ * so the founder could choose between three readings; the ruling made the third
+ * one the law. A flag that could return a parcel would now be a flag that breaks
+ * the law, so both flags are gone rather than defaulted — the difference matters,
+ * because a default is something a later hand can pass a flag to undo.
  *
  * ── WHY THE AUTHORED TIER AND NOT THE MARK'S OWN `tier` FIELD ───────────────
  *
@@ -144,6 +165,7 @@ export function exemptionFor(mark, { authoredTier = undefined } = {}) {
   if (tier === "constitution") return "constitution-tier: law needs no stake";
   const leaf = String(mark?.id ?? "").split("/").slice(1).join("/");
   if (REGION_SLUGS.includes(leaf)) return "region: the town's founding stake";
+  if (mark?.kind === "parcel") return "parcel: the founding privilege — needs no stake";
   return null;
 }
 
@@ -173,7 +195,17 @@ const APPLY = has("--apply");
 const JSON_OUT = has("--json");
 const ALLOW_STAMPLESS = has("--allow-stampless");
 const ALLOW_REPARENT = has("--allow-reparent");
-const HOLD_OCCUPIED = has("--hold-occupied-parcels");
+// A flag that could return a parcel would be a flag that breaks the law of
+// 2026-09-09, so an old invocation carrying one is refused rather than ignored.
+// Silently accepting it would let a hand that learned the earlier shape believe
+// it had chosen a reading the town no longer offers.
+for (const dead of ["--hold-parcels", "--hold-occupied-parcels", "--return-parcels"]) {
+  if (has(dead)) {
+    console.error(`unstaked-return: ${dead} is gone. Parcels need no staking (the founder's ruling of ` +
+      `2026-09-09) — every parcel is exempt by law, and no flag returns one.`);
+    process.exit(2);
+  }
+}
 const MARKS_DIR = opt("--marks-dir", join(ROOT, "WORLD/marks"));
 const TERRAIN = opt("--terrain", join(ROOT, "WORLD/skeleton.json"));
 const HOUSEHOLDS = opt("--households", join(ROOT, "WORLD/households.json"));
@@ -232,37 +264,27 @@ const state = fold({ marks: loaded, terrain, stakes, households: households.hous
 const all = state.marks ?? [];
 const byId = new Map(all.map((m) => [m.id, m]));
 
-// ── THE PARCEL CASCADE, and the flag that answers it ────────────────────────
+// ── THE PARCEL CASCADE, and why the ruling of 09-09 ends it ─────────────────
 //
 // A parcel IS the ground the fold's sovereignty is measured against: a mark is
 // sovereign because it sits fully inside its own household's parcel. So a
-// parcel that returns to drafts takes that ground with it, and every mark that
-// was standing on it becomes a commons mark at zero — swept by this very move
-// on the NEXT crossing.
+// parcel that returned to drafts took that ground with it, and every mark that
+// was standing on it became a commons mark at zero — swept by this very move on
+// the NEXT crossing.
 //
-// Measured on the rehearsal at 91b4b5e5: 74 of the 270 marks in the set are
-// parcels; returning them re-folds 141 previously-sovereign marks straight into
-// the set. That is the PSA's own promise — "a further 150 stand on residents'
-// OWN ground ... and those stand" — coming apart one crossing later.
+// This was measured on the rehearsal before the ruling, and it is why the
+// question reached the founder at all: 74 of the 270 marks in the set were
+// parcels, and returning them re-folded 140 previously-sovereign marks straight
+// back into the set. That was the PSA's own promise — "a further 150 stand on
+// residents' OWN ground ... and those stand" — coming apart one crossing later.
 //
-// 73 of those 74 parcels carry sovereign marks; exactly one is empty. So this
-// is a founder's call, not a tuning knob, and the tool does not make it: the
-// DEFAULT stays faithful to the law as written (an unstaked commons mark
-// returns, parcel or not) and the cascade is REPORTED loudly every run.
-// `--hold-occupied-parcels` is the other answer, ready for the day it is ruled:
-// a parcel returns only if nothing of its household's still stands on it.
-const held = [];
-if (HOLD_OCCUPIED) {
-  for (const p of all) {
-    if (p.kind !== "parcel" || !isUnstakedCommons(p)) continue;
-    const standing = all.filter((m) => m.id !== p.id && m.household === p.household
-      && m.sovereign && contains(rect(p), rect(m)));
-    if (standing.length) held.push({ parcel: p.id, household: p.household, standing: standing.length });
-  }
-}
-const heldIds = new Set(held.map((h) => h.parcel));
+// "PARCELS NEED NO STAKING EITHER" closes it at the root rather than patching
+// the symptom: no parcel returns, so no ground is pulled out from under
+// anything, so there is no cascade to report. The check below stays, and it
+// stays BECAUSE it now reads zero — an instrument that reads zero for a good
+// reason is the only kind that can tell you when the reason stops being true.
 const exemptOf = (m) => exemptionFor(m, { authoredTier: authoredTier.get(m.id) });
-const S = all.filter((m) => isUnstakedCommons(m) && !heldIds.has(m.id) && !exemptOf(m));
+const S = all.filter((m) => isUnstakedCommons(m) && !exemptOf(m));
 const Sids = new Set(S.map((m) => m.id));
 
 // ── destination branches: households.json is the only map, and it is walked ──
@@ -303,20 +325,20 @@ for (const m of all) {
   // which would be true of some of them and would hide the ruling behind a
   // coincidence.
   const ex = exemptOf(m);
-  if (ex) { skipped.push({ mark: m.id, household: m.household, why: ex }); exemptCount++; continue; }
-  if (m.by === "the-town") skipped.push({ mark: m.id, household: m.household, why: "town-owned — the town's own ground is the town's to stake" });
-  else if (m.sovereign) skipped.push({ mark: m.id, household: m.household, why: "sovereign — on the household's own ground, where the law lets a zero stand" });
-  else skipped.push({ mark: m.id, household: m.household, why: `staked — stamps ${m.stamps ?? 0}, weight ${m.weight ?? 0}` });
+  if (ex) { skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: ex }); exemptCount++; continue; }
+  if (m.by === "the-town") skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: "town-owned — the town's own ground is the town's to stake" });
+  else if (m.sovereign) skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: "sovereign — on the household's own ground, where the law lets a zero stand" });
+  else skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: `staked — stamps ${m.stamps ?? 0}, weight ${m.weight ?? 0}` });
 }
 
 const dirRel = (d) => relative(ROOT, d).split("\\").join("/");
 
 for (const m of S) {
   const dir = dirOf.get(m.id);
-  if (!dir) { skipped.push({ mark: m.id, household: m.household, why: "no directory in the tree — the fold saw it, the tree does not" }); continue; }
+  if (!dir) { skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: "no directory in the tree — the fold saw it, the tree does not" }); continue; }
   const dest = branchFor(m.household);
   if (!dest) {
-    skipped.push({ mark: m.id, household: m.household, why: "no sketchbook branch and no login in WORLD/households.json to name one after" });
+    skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: "no sketchbook branch and no login in WORLD/households.json to name one after" });
     continue;
   }
   // the mark's OWN files: everything in its directory that is not a directory.
@@ -363,7 +385,7 @@ if (movedIds.size) {
   // region rings read as a cascade of six the move did not cause, which is how
   // this was found (140 -> 146 the moment the exemptions landed).
   cascade = (after.marks ?? []).filter((m) => isUnstakedCommons(m)
-      && !movedIds.has(m.id) && !Sids.has(m.id) && !heldIds.has(m.id) && !exemptOf(m))
+      && !movedIds.has(m.id) && !Sids.has(m.id) && !exemptOf(m))
     .map((m) => ({
       mark: m.id, household: m.household, kind: m.kind,
       was: byId.get(m.id)?.sovereign ? "sovereign — it stood on its household's own ground"
@@ -385,13 +407,13 @@ const receipt = {
     set_size_before_branch_resolution: S.length,
     reparent_hazards: reparents.length,
     placement_parent_shifts: shifts.length,
-    parcels_held_occupied: held.length,
     cascade_next_crossing: cascade.length,
     exempt_by_ruling: exemptCount,
     exempt_constitution: skipped.filter((s) => s.why.startsWith("constitution-tier")).length,
     exempt_region: skipped.filter((s) => s.why.startsWith("region:")).length,
+    exempt_parcel: skipped.filter((s) => s.why.startsWith("parcel:")).length,
   },
-  moved, skipped, reparents, shifts, held, cascade,
+  moved, skipped, reparents, shifts, cascade,
   applied: false,
 };
 
@@ -518,14 +540,13 @@ console.log(`  folded ${t.marks_folded} marks with ${stakes.length} stake row(s)
 console.log(`  returning to drafts: ${t.returning} mark(s) across ${t.returning_households} household(s)`);
 console.log(`  set before branch resolution: ${t.set_size_before_branch_resolution}`);
 console.log(`  staying: ${t.skipped} (town-owned, sovereign, or staked — each named in the receipt)`);
-console.log(`  exempt by the founder's ruling of 2026-09-09: ${t.exempt_by_ruling} (${t.exempt_constitution} constitution-tier, ${t.exempt_region} region rings)`);
+console.log(`  exempt by the founder's ruling of 2026-09-09: ${t.exempt_by_ruling} (${t.exempt_constitution} constitution-tier, ${t.exempt_region} region rings, ${t.exempt_parcel} parcels)`);
 if (t.placement_parent_shifts) console.log(`  ${t.placement_parent_shifts} sited/parcel child(ren) keep standing with a re-computed placementParent`);
-if (t.parcels_held_occupied) console.log(`  ${t.parcels_held_occupied} parcel(s) HELD by --hold-occupied-parcels — marks of their household still stand on them`);
 if (t.cascade_next_crossing) {
   console.log(`  ⚠ CASCADE: ${t.cascade_next_crossing} mark(s) standing today would enter the set once this move lands.`);
   const sov = cascade.filter((c) => c.was.startsWith("sovereign")).length;
   if (sov) console.log(`     ${sov} of them are sovereign now — their household's parcel is returning, so their ground goes with it.`);
-  console.log(`     The PSA promises those marks stand. --hold-occupied-parcels is the other reading; this is a founder's call.`);
+  console.log(`     Parcels are exempt by law since 2026-09-09, so this should read zero; a non-zero here means some OTHER ground moved.`);
 }
 if (t.reparent_hazards) console.log(`  ⚠ ${t.reparent_hazards} re-parent hazard(s) allowed through by --allow-reparent`);
 const noBranch = skipped.filter((s) => s.why.startsWith("no sketchbook branch"));
