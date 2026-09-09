@@ -19,8 +19,28 @@
 // **Wright HELD P-145 on 2026-09-08** (deleting a generator whose output nothing can
 // regenerate), so that commit came off this branch and its checks went with it. They
 // stand at `jetto/g2-p145-held` and want re-adding in the same commit that ever
-// deletes the tool — the imperative rule especially, because four comments in this
-// repo still tell a reader to RUN it, and today that instruction is TRUE.
+// deletes the tool.
+//
+// HOW MUCH IS ACTUALLY OWED THERE — counted, because the first version of this note
+// said "four comments still tell a reader to RUN it" and the reviewer disproved it by
+// running the imperative rule itself. Re-measured with that same pattern over this
+// tree, the honest breakdown is:
+//
+//   ONE genuine instruction from elsewhere in the repo — `marks-fold.mjs:1254`,
+//   "Pass `--households <projection>` from tools/households-project.mjs". A reader
+//   following that today reaches a tool that IS there, so it is true now and would
+//   become false the day P-145 lands. That is the one the imperative rule guards.
+//
+//   THREE PROVENANCE CITATIONS, which are a different thing and were miscounted as
+//   instructions: `mark-lint.mjs:671` and `world-carve-live.test.mjs:16` say the grain
+//   is "projected by" the tool, and `position-seed-manifest.mjs:76` cites "for
+//   households-project.mjs's reason". None tells anyone to run anything. They are what
+//   the MENTION rule governs, not the imperative one.
+//
+//   TWO SELF-USAGE LINES inside the tool's own header, which die with the file.
+//
+// The distinction is the whole point of splitting the two rules, so getting the count
+// wrong in the note that explains them was the worst place to be sloppy.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
