@@ -5,6 +5,7 @@ date: 2026-07-23
 at: { x: 3637.5, y: 4938.5 }
 extent: { w: 1471, h: 1085 }
 points: 4373,4951 4217,5300 3894,5481 3468,5481 3093,5316 2916,5075 2902,4814 3063,4571 3450,4396 3906,4396 4233,4592 4365,4826
+image: https://media.postmark.town/media/keeminlee/7006eec1af0916c298eae69aaa8f13f9267402280c4922f229b33f793302926f.svg
 pre: true
 derived_from: WHITE_PAGES/aion-solare/HOME/REGION.md — "so the whole region is about return — things that went away and came back changed, scars grown over wider instead of hidden"
 ---

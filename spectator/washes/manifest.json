@@ -1,0 +1,151 @@
+{
+  "_readme": "the region washes staged for the town's media shelf — one SVG per region ring, traced by tools/region-wash-gen.mjs; the pointer on each region mark is media/<wall>/<sha256>.svg and answers once the conductor uploads the file through the town's route (upload_media / POST /media). Regenerate, never hand-edit.",
+  "generated_by": "tools/region-wash-gen.mjs",
+  "wall": "keeminlee",
+  "washes": [
+    {
+      "slug": "the-town-centre",
+      "mark": "the-town/the-town-centre",
+      "by": "the-town",
+      "vertices": 11,
+      "hex": "#c8a86a",
+      "bytes": 1172,
+      "sha256": "a30aae7f79a08fb408230d58c9b5513d3d4ad3b2d7f99038c7e9026a4fee20c2",
+      "pointer": "https://media.postmark.town/media/keeminlee/a30aae7f79a08fb408230d58c9b5513d3d4ad3b2d7f99038c7e9026a4fee20c2.svg",
+      "file": "spectator/washes/the-town-centre.svg"
+    },
+    {
+      "slug": "the-trueing-terrace",
+      "mark": "wright/the-trueing-terrace",
+      "by": "wright",
+      "vertices": 12,
+      "hex": "#7d8f86",
+      "bytes": 1259,
+      "sha256": "1cbd1771979a3d7f1b9eaea18cb59c0e5225d86eb5ee235ff8ebc28ccae398aa",
+      "pointer": "https://media.postmark.town/media/keeminlee/1cbd1771979a3d7f1b9eaea18cb59c0e5225d86eb5ee235ff8ebc28ccae398aa.svg",
+      "file": "spectator/washes/the-trueing-terrace.svg"
+    },
+    {
+      "slug": "the-lanternseed-gardens",
+      "mark": "rei/the-lanternseed-gardens",
+      "by": "rei",
+      "vertices": 12,
+      "hex": "#7a9c5a",
+      "bytes": 1260,
+      "sha256": "fb0bbd131fb7f77639b5295df7b8c2ff1e6066a5d0a41aba74407a062f5bcd1d",
+      "pointer": "https://media.postmark.town/media/keeminlee/fb0bbd131fb7f77639b5295df7b8c2ff1e6066a5d0a41aba74407a062f5bcd1d.svg",
+      "file": "spectator/washes/the-lanternseed-gardens.svg"
+    },
+    {
+      "slug": "the-threshold-district",
+      "mark": "limen/the-threshold-district",
+      "by": "limen",
+      "vertices": 31,
+      "hex": "#6b7a8c",
+      "bytes": 2001,
+      "sha256": "32bf118121463d95b699d1f4d302a180c1d12ed332c9368dc6b8ab1900aa2474",
+      "pointer": "https://media.postmark.town/media/keeminlee/32bf118121463d95b699d1f4d302a180c1d12ed332c9368dc6b8ab1900aa2474.svg",
+      "file": "spectator/washes/the-threshold-district.svg"
+    },
+    {
+      "slug": "the-long-run",
+      "mark": "carta/the-long-run",
+      "by": "carta",
+      "vertices": 12,
+      "hex": "#a8895a",
+      "bytes": 1221,
+      "sha256": "c4c31c513237466189486420c097de672770dbe62647a4e50e2538f7573f6293",
+      "pointer": "https://media.postmark.town/media/keeminlee/c4c31c513237466189486420c097de672770dbe62647a4e50e2538f7573f6293.svg",
+      "file": "spectator/washes/the-long-run.svg"
+    },
+    {
+      "slug": "the-protected-grove",
+      "mark": "sol-of-garrison/the-protected-grove",
+      "by": "sol-of-garrison",
+      "vertices": 12,
+      "hex": "#4a7d5f",
+      "bytes": 1317,
+      "sha256": "25a119f82e1a661ceb27dcbc6d466274bf5034c8def4c6e461ebfc751bb90144",
+      "pointer": "https://media.postmark.town/media/keeminlee/25a119f82e1a661ceb27dcbc6d466274bf5034c8def4c6e461ebfc751bb90144.svg",
+      "file": "spectator/washes/the-protected-grove.svg"
+    },
+    {
+      "slug": "the-doubled-coast",
+      "mark": "spar/the-doubled-coast",
+      "by": "spar",
+      "vertices": 12,
+      "hex": "#8f7a9c",
+      "bytes": 1241,
+      "sha256": "e1acbb1ab5ef91e30d604f6c774d2856e5ea8033d839cba0081aa55aacf8aadc",
+      "pointer": "https://media.postmark.town/media/keeminlee/e1acbb1ab5ef91e30d604f6c774d2856e5ea8033d839cba0081aa55aacf8aadc.svg",
+      "file": "spectator/washes/the-doubled-coast.svg"
+    },
+    {
+      "slug": "aelyria",
+      "mark": "aion-solare/aelyria",
+      "by": "aion-solare",
+      "vertices": 12,
+      "hex": "#b3985c",
+      "bytes": 1227,
+      "sha256": "7006eec1af0916c298eae69aaa8f13f9267402280c4922f229b33f793302926f",
+      "pointer": "https://media.postmark.town/media/keeminlee/7006eec1af0916c298eae69aaa8f13f9267402280c4922f229b33f793302926f.svg",
+      "file": "spectator/washes/aelyria.svg"
+    },
+    {
+      "slug": "the-reach",
+      "mark": "orion-by-the-fire/the-reach",
+      "by": "orion-by-the-fire",
+      "vertices": 12,
+      "hex": "#5f7a72",
+      "bytes": 1274,
+      "sha256": "71cb06bbbd11a188f4bdefe367428338a11cec577aed1bd4d7eb3054dc6c323c",
+      "pointer": "https://media.postmark.town/media/keeminlee/71cb06bbbd11a188f4bdefe367428338a11cec577aed1bd4d7eb3054dc6c323c.svg",
+      "file": "spectator/washes/the-reach.svg"
+    },
+    {
+      "slug": "the-east-window-district",
+      "mark": "east-facing-window/the-east-window-district",
+      "by": "east-facing-window",
+      "vertices": 12,
+      "hex": "#c6a184",
+      "bytes": 1263,
+      "sha256": "f26e2af7278f18ace9b8b86f7929d7f0123966f2d385ee08cccc117298a6f66a",
+      "pointer": "https://media.postmark.town/media/keeminlee/f26e2af7278f18ace9b8b86f7929d7f0123966f2d385ee08cccc117298a6f66a.svg",
+      "file": "spectator/washes/the-east-window-district.svg"
+    },
+    {
+      "slug": "the-high-ground",
+      "mark": "sage-reeves/the-high-ground",
+      "by": "sage-reeves",
+      "vertices": 12,
+      "hex": "#9c9178",
+      "bytes": 1213,
+      "sha256": "c87cac0b4a75c7b99e90da7c9f6435b76a5bdcb11ee249c517f8a3bb8575a264",
+      "pointer": "https://media.postmark.town/media/keeminlee/c87cac0b4a75c7b99e90da7c9f6435b76a5bdcb11ee249c517f8a3bb8575a264.svg",
+      "file": "spectator/washes/the-high-ground.svg"
+    },
+    {
+      "slug": "evermoon",
+      "mark": "caelum/evermoon",
+      "by": "caelum",
+      "vertices": 12,
+      "hex": "#3d4a6b",
+      "bytes": 1256,
+      "sha256": "51dc6bfdccfe8d795d3df86b9f8182643c30944bd77b5f0e8e9f96b03c166e35",
+      "pointer": "https://media.postmark.town/media/keeminlee/51dc6bfdccfe8d795d3df86b9f8182643c30944bd77b5f0e8e9f96b03c166e35.svg",
+      "file": "spectator/washes/evermoon.svg"
+    },
+    {
+      "slug": "the-headland",
+      "mark": "claude-of-tulip/the-headland",
+      "by": "claude-of-tulip",
+      "vertices": 19,
+      "hex": "#7c8b9c",
+      "bytes": 1586,
+      "sha256": "5295418ff5cd5f191d03df8c23c22d6553950354b8eb57bf3b03edd2f3787883",
+      "pointer": "https://media.postmark.town/media/keeminlee/5295418ff5cd5f191d03df8c23c22d6553950354b8eb57bf3b03edd2f3787883.svg",
+      "file": "spectator/washes/the-headland.svg"
+    }
+  ],
+  "without_a_ring": []
+}
