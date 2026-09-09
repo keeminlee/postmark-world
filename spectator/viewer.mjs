@@ -954,12 +954,10 @@ export function markImagePath(mark) {
 // gated by MARK_IMAGE_SHELF exactly as every other art surface here); nothing
 // below reads a field the record did not already have.
 //
-// TWO READERS OF ONE FIELD, told apart by the RECORD'S OWN SHAPE, never by a
-// roster: a PARCEL's pointer is its household's home picture and hangs AT THE
-// PARCEL; a RINGED mark's SVG pointer is its wash and lies UNDER the marks,
-// above the ground. The world keeps no "region" class, so "ringed + svg" is
-// what a region wash is on the record, and a ringed mark wearing a photograph
-// stays a photograph (the card, as today).
+// ONE READER OF ONE FIELD, on the map: a PARCEL's pointer is its household's
+// home picture and hangs AT THE PARCEL. (A region's wash is the GROUND's own
+// business — townGround draws it from the mark, under everything derived — so
+// this walker carries no wash arm; ruled 2026-09-09, the regions lane owns it.)
 //
 // THIS FLIPS ONE DEFAULT, AND SAYS SO. "The map carries no pictures, for now"
 // (founder, 2026-08-21, above) gated the mark CELL's figure on `mark-art=on`.
@@ -976,9 +974,6 @@ export function markImagePath(mark) {
 // zoom like every other unit on the painting, and never shrinks below the
 // constant.
 export const PARCEL_ART_MIN_M = 120;
-// A wash is the region's whole ground: it is drawn at the mark's own extent
-// (the ring's bbox, which the lint holds equal to it), stretched, never fitted.
-export const WASH_PRESERVE_ASPECT = "none";
 
 /** A parcel wearing a shelf pointer: the box (metres, centred on `at`) its picture hangs in, else null. */
 export function parcelArtBox(mark, minM = PARCEL_ART_MIN_M) {
@@ -986,20 +981,6 @@ export function parcelArtBox(mark, minM = PARCEL_ART_MIN_M) {
   if (![mark?.at?.x, mark?.at?.y].every(Number.isFinite)) return null;
   const w = Math.max(Number(mark?.extent?.w) || 0, minM), h = Math.max(Number(mark?.extent?.h) || 0, minM);
   return { x: mark.at.x, y: mark.at.y, w, h };
-}
-
-/** A ringed mark whose shelf pointer is an SVG: its wash. The record's own shape, no roster. */
-export function isWashPointer(mark) {
-  if (!isEmbodiedMark(mark)) return false;
-  if (!(Array.isArray(mark?.points) && mark.points.length >= 3)) return false;
-  const url = markImageURL(mark);
-  return Boolean(url) && /\.svg$/i.test(url);
-}
-
-/** The wash's box: the mark's own extent, centred on `at` — or null. */
-export function washBox(mark) {
-  if (!isWashPointer(mark)) return null;
-  return { x: mark.at.x, y: mark.at.y, w: Number(mark.extent.w), h: Number(mark.extent.h) };
 }
 
 /** What the page says about one pointer it walked. One sentence per state; the id and the url ride every one. */
@@ -3941,11 +3922,10 @@ const STYLE = `
 /* footprints — every mark's true extent from the record. ONE vocabulary with the
    cells: tier sets the color (tierOf), dashed = the law/mechanic modifier. */
 #wv-fp-layer { pointer-events:none; }
-/* pointers walked on the map (2026-09-09): a wash lies on the ground, a parcel's
-   picture hangs at the parcel with a thin frame so it reads as a picture and not
-   as paint; neither takes the pointer */
-#wv-wash-layer, #wv-parcel-art-layer { pointer-events:none; }
-.wv-wash image { opacity:.85; }
+/* pointers walked on the map (2026-09-09): a parcel's picture hangs at the parcel
+   with a thin frame so it reads as a picture and not as paint; it never takes
+   the pointer */
+#wv-parcel-art-layer { pointer-events:none; }
 .wv-parcel-art image { outline:1px solid rgba(58,52,40,.55); }
 /* the page's own receipt for every pointer it walked — the foot of the rail,
    beside "Lately", read rather than pressed */
@@ -5679,17 +5659,6 @@ export function mountViewer(appEl) {
     svg.insertBefore(mistLayer, svg.firstChild);
     // the survey grid — the FIRST derived layer: drawn from the registration
     // (origin + scale), never traced from the paint. Sits under the overlay.
-    // THE WASHES — the region marks' SVG pointers, walked (2026-09-09). The
-    // first derived layer ABOVE the painting and UNDER everything the record
-    // draws: appended before the grid, so a wash lies on the ground and the
-    // footprints, pips and walkers all read over it. Built once, from the whole
-    // record, not the FOV: a region is ground, and ground does not come and go
-    // with where you stand. pointer-events none — a wash is weather, not
-    // furniture.
-    const washLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    washLayer.setAttribute("id", "wv-wash-layer");
-    washLayer.style.pointerEvents = "none";
-    svg.appendChild(washLayer);
     const gridLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
     gridLayer.setAttribute("id", "wv-grid-layer");
     gridLayer.style.display = "none"; // NOT the hidden attribute — SVG <g> ignores it
@@ -5703,8 +5672,8 @@ export function mountViewer(appEl) {
     svg.appendChild(fpLayer);
     // THE HOMES — each parcel's pointer, walked (2026-09-09): its household's
     // picture hung AT the parcel, over the footprints and under the pips, so a
-    // pip still names the mark and the picture is what stands there. Same
-    // whole-record build as the washes. `walkPointers` is the scene's own word:
+    // pip still names the mark and the picture is what stands there. Built
+    // once, from the whole record, not the FOV. `walkPointers` is the scene's own word:
     // the town walks them (the default); a room passes false, because a room's
     // ground already hangs its art through sceneArtSVG. (Not gated on
     // `placeholderExtents`: since 2026-09-08 the town runs that pass too, and a
@@ -5716,16 +5685,17 @@ export function mountViewer(appEl) {
     svg.appendChild(parcelArtLayer);
     if (walkPointers) {
       const artPx = (p) => ({ x: originPx.x + p.x / mPerPx, y: originPx.y + p.y / mPerPx });
-      let parcels = 0, washes = 0;
+      let parcels = 0;
       for (const m of world.marks ?? []) {
-        if (typeof m.image !== "string" || !m.image.trim()) continue;
+        if (m.kind !== "parcel" || typeof m.image !== "string" || !m.image.trim()) continue;
         if (!markImageURL(m)) { notePointer(m, "off-shelf"); continue; }
-        const wash = washBox(m);
-        if (wash) { washes += 1; mountPointerArt(document, washLayer, { mark: m, box: wash, px: artPx, cls: "wv-wash", preserveAspectRatio: WASH_PRESERVE_ASPECT, onState: (s) => notePointer(m, s) }); continue; }
         const home = parcelArtBox(m);
         if (home) { parcels += 1; mountPointerArt(document, parcelArtLayer, { mark: m, box: home, px: artPx, cls: "wv-parcel-art", onState: (s) => notePointer(m, s) }); }
       }
-      notePointerCounts({ parcels, washes });
+      // THE SOURCE IS PART OF THE RECEIPT: the page reads its record office-first
+      // (record-sources), so which fold it walked is the first thing a reader
+      // comparing dev with a branch needs to know.
+      notePointerCounts({ parcels, source: state.dataSource ?? null });
     }
     // conversations — where the town is TALKING: each thread from the office's
     // earshot derivation, drawn as the ground it actually covered. Above the
@@ -8979,23 +8949,25 @@ export function mountViewer(appEl) {
   // written only when the browser fired load or error, or when the shelf gate
   // refused the url before any fetch.
   const pointerStates = new Map();   // mark id → { mark, state }
-  let pointerCounts = { parcels: 0, washes: 0 };
+  let pointerCounts = { parcels: 0, source: null };
   function renderPointerReceipt() {
     const box = $(root, ".wv-pointers");
     const sum = $(root, ".wv-pointer-sum");
     const list = $(root, ".wv-pointer-lines");
     if (!box || !sum || !list) return;
     const states = [...pointerStates.values()];
-    const asked = pointerCounts.parcels + pointerCounts.washes;
+    const asked = pointerCounts.parcels;
     if (!asked && !states.length) { box.hidden = true; return; }
     const drawn = states.filter((s) => s.state === "drawn").length;
     const missing = states.filter((s) => s.state === "missing").length;
     const offShelf = states.filter((s) => s.state === "off-shelf").length;
     const pending = asked - drawn - missing;
-    sum.textContent = `${pointerCounts.parcels} parcel picture${pointerCounts.parcels === 1 ? "" : "s"} and ${pointerCounts.washes} region wash${pointerCounts.washes === 1 ? "" : "es"} asked for · ${drawn} drawn`
+    sum.textContent = `${pointerCounts.parcels} parcel picture${pointerCounts.parcels === 1 ? "" : "s"} asked for · ${drawn} drawn`
       + (missing ? ` · ${missing} did not answer` : "")
       + (offShelf ? ` · ${offShelf} not on the shelf` : "")
-      + (pending > 0 ? ` · ${pending} still loading` : "");
+      + (pending > 0 ? ` · ${pending} still loading` : "")
+      + (pointerCounts.source ? ` · record read from ${pointerCounts.source}` : "")
+      + " · a home without a parcel renders from the white pages, the free tier's bedrock";
     list.innerHTML = states
       .filter((s) => s.state !== "drawn")   // the drawn ones are on the map; the receipt names what is not
       .map((s) => `<li>${esc(pointerReceiptLine(s.mark, s.state))}</li>`).join("");
@@ -9007,7 +8979,7 @@ export function mountViewer(appEl) {
     renderPointerReceipt();
   }
   function notePointerCounts(counts) {
-    pointerCounts = { parcels: Number(counts?.parcels) || 0, washes: Number(counts?.washes) || 0 };
+    pointerCounts = { parcels: Number(counts?.parcels) || 0, source: counts?.source ? String(counts.source) : null };
     renderPointerReceipt();
   }
 

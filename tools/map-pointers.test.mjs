@@ -10,8 +10,8 @@
 //   2. a parcel without one renders as today (no box, no node);
 //   3. a pointer to a missing resource renders NOTHING — the node leaves with
 //      the error — and the page's receipt SAYS SO (no broken-image glyph);
-//   4. a wash is a ringed mark's SVG pointer, told from a photograph by the
-//      record's own shape, and lies under the marks, above the ground;
+//   4. the walker carries NO wash arm — a region's wash is the ground's own
+//      (townGround, the regions lane; ruled 2026-09-09) — and only parcels are walked;
 //   5. the 08-21 card-figure switch (`mark-art`) is untouched.
 //
 //   node --test tools/map-pointers.test.mjs
@@ -21,9 +21,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import * as viewer from "../spectator/viewer.mjs";
 import {
-  PARCEL_ART_MIN_M, WASH_PRESERVE_ASPECT, isWashPointer, markArtOnMap, mountPointerArt,
-  parcelArtBox, pointerReceiptLine, washBox,
+  PARCEL_ART_MIN_M, markArtOnMap, mountPointerArt, parcelArtBox, pointerReceiptLine,
 } from "../spectator/viewer.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -115,30 +115,28 @@ test("FALSIFIER 3 — a pointer to a missing resource renders nothing and the re
   assert.match(pointerReceiptLine(parcel({ image: OFF_SHELF }), "off-shelf"), /not on the town's shelf/);
 });
 
-test("FALSIFIER 4 — a wash is a RINGED mark's SVG pointer, told apart by the record's own shape", () => {
-  assert.equal(isWashPointer(region({ image: SHELF_SVG })), true, "ring + svg pointer = a wash");
-  assert.equal(isWashPointer(region({ image: SHELF_JPG })), false, "ring + photograph = a photograph (the card, as today)");
-  assert.equal(isWashPointer(region({ image: SHELF_SVG, points: undefined })), false, "no ring: no wash");
-  assert.equal(isWashPointer(region({ image: OFF_SHELF.replace(".png", ".svg") })), false, "an off-shelf svg is never asked for");
-  assert.equal(isWashPointer(parcel({ image: SHELF_SVG })), false, "a parcel carries no ring and is a home, not a region");
-  const box = washBox(region({ image: SHELF_SVG }));
-  assert.deepEqual(box, { x: 50, y: 30, w: 100, h: 60 }, "the wash is the mark's whole extent — the ring's bbox");
-  assert.equal(WASH_PRESERVE_ASPECT, "none", "stretched onto the bbox the svg's own viewBox already is");
+test("FALSIFIER 4 — the walker carries NO wash arm: a ringed mark's SVG pointer is the ground's business, and only parcels are walked", () => {
+  for (const name of ["isWashPointer", "washBox", "WASH_PRESERVE_ASPECT"])
+    assert.equal(name in viewer, false, `${name} must not exist — the wash layer lives in townGround (the regions lane), not in this walker`);
+  assert.equal(parcelArtBox(region({ image: SHELF_SVG })), null, "a ringed sited mark wearing an svg pointer is not a parcel and gets no box");
+  assert.equal(parcelArtBox(region({ image: SHELF_JPG })), null, "nor with a photograph");
+  assert.doesNotMatch(SOURCE, /wv-wash-layer/, "no wash layer is mounted by this walker");
+  assert.match(SOURCE, /if \(m\.kind !== "parcel" \|\| typeof m\.image !== "string"/, "the walk is parcels only, decided at the top of the loop");
 });
 
-test("THE WIRING — washes under the record, homes over the footprints and under the pips, town scene only, and the 08-21 switch untouched", () => {
+test("THE WIRING — homes over the footprints and under the pips, town scene only, the receipt names its source, and the 08-21 switch untouched", () => {
   // THE APPEND ORDER, not the declaration order: what a reader sees is which
   // node was appended after which (a flip that moved only the appendChild left
   // a declaration-order check green — the check must read the behaviour it names).
-  const wash = SOURCE.indexOf("svg.appendChild(washLayer);");
-  const grid = SOURCE.indexOf("svg.appendChild(gridLayer);");
   const fp = SOURCE.indexOf("svg.appendChild(fpLayer);");
   const art = SOURCE.indexOf("svg.appendChild(parcelArtLayer);");
   const convo = SOURCE.indexOf("svg.appendChild(convoLayer);");
-  for (const [name, i] of Object.entries({ wash, grid, fp, art, convo })) assert.ok(i > 0, `${name} layer is appended exactly once, by name`);
-  assert.equal(SOURCE.split("svg.appendChild(washLayer);").length, 2, "the wash layer is appended once");
-  assert.ok(wash > 0 && grid > wash, "the wash layer is appended BEFORE the grid — the first derived layer above the painting");
+  for (const [name, i] of Object.entries({ fp, art, convo })) assert.ok(i > 0, `${name} layer is appended exactly once, by name`);
+  assert.equal(SOURCE.split("svg.appendChild(parcelArtLayer);").length, 2, "the parcel-art layer is appended once");
   assert.ok(fp > 0 && art > fp && convo > art, "the parcel-art layer sits after the footprints and before the conversations/pips");
+  assert.match(SOURCE, /notePointerCounts\(\{ parcels, source: state\.dataSource \?\? null \}\)/, "the receipt is told which record the page drew from (office-first read)");
+  assert.match(SOURCE, /record read from \$\{pointerCounts\.source\}/, "and prints it");
+  assert.match(SOURCE, /renders from the white pages, the free tier's bedrock/, "a home without a parcel is the free tier's bedrock, said in the receipt's own words");
   assert.match(SOURCE, /if \(walkPointers\) \{\s*\n\s*const artPx/, "the pointers are walked when the scene says so");
   assert.match(SOURCE, /walkPointers = true \}\) \{/, "and the town says so by default");
   assert.match(SOURCE, /placeholderExtents: true,[^\n]*\n\s*walkPointers: false,/, "a room does not — its ground hangs its own art through sceneArtSVG");
@@ -146,5 +144,4 @@ test("THE WIRING — washes under the record, homes over the footprints and unde
   assert.match(SOURCE, /const cardArt = markArtOnMap\(\);/, "the card-figure switch of 2026-08-21 is exactly where it was");
   assert.equal(markArtOnMap(""), false, "and its default is still off");
   assert.match(SOURCE, /image\.setAttribute\("href", url\); \/\/ last, after the handlers/);
-  assert.match(SOURCE, /notePointerCounts\(\{ parcels, washes \}\)/, "the receipt is told how many were asked for");
 });
