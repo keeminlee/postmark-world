@@ -132,6 +132,55 @@ test("the town's own root is never in the move", () => {
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
+// ── the parcel cascade ──────────────────────────────────────────────────────
+//
+// The PSA: "A further 150 stand on residents' OWN ground, a home or a parcel;
+// the law lets your own ground carry a zero, and those stand." A parcel IS that
+// ground, so an unstaked parcel returning takes it away from everything on it.
+
+function estate() {
+  const root = mkdtempSync(join(tmpdir(), "unstaked-return-parcel-"));
+  const marks = join(root, "WORLD", "marks");
+  const mk = (relPath, fm) => {
+    const d = join(marks, relPath);
+    mkdirSync(d, { recursive: true });
+    writeFileSync(join(d, "mark.md"),
+      `---\n${Object.entries(fm).map(([k, v]) => `${k}: ${v}`).join("\n")}\n---\n\nA thing.\n`);
+  };
+  mk("let-there-be-light", { by: "the-town", kind: "sited", date: "2026-07-01", at: "{ x: 0, y: 0 }", extent: "{ w: 60000, h: 60000 }", tier: "constitution" });
+  // rei's parcel, unstaked — and rei's house standing fully inside it, which is
+  // what makes the house sovereign and is exactly what the PSA says stands.
+  mk("let-there-be-light/rei-parcel", { by: "rei", kind: "parcel", date: "2026-07-10", at: "{ x: 500, y: 500 }", extent: "{ w: 25, h: 25 }" });
+  mk("let-there-be-light/rei-parcel/the-quiet-house", { by: "rei", kind: "sited", date: "2026-07-11", at: "{ x: 500, y: 500 }", extent: "{ w: 8, h: 8 }" });
+  return { root, marks };
+}
+
+test("returning an unstaked parcel de-sovereigns what stands on it, and the run says so", () => {
+  const { root, marks } = estate();
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent"]).out);
+    assert.ok(receipt.moved.some((m) => m.mark === "rei/rei-parcel"), "the unstaked parcel is in the move");
+    const house = receipt.skipped.find((s) => s.mark === "rei/the-quiet-house");
+    assert.match(house.why, /sovereign/, "the house stands today, as the PSA promises");
+    assert.equal(receipt.totals.cascade_next_crossing, 1,
+      "the house would enter the set on the next crossing — the cascade must be reported, not discovered later");
+    assert.equal(receipt.cascade[0].mark, "rei/the-quiet-house");
+    assert.match(receipt.cascade[0].was, /own ground/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("--hold-occupied-parcels keeps the ground under a standing mark, and closes the cascade", () => {
+  const { root, marks } = estate();
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent", "--hold-occupied-parcels"]).out);
+    assert.equal(receipt.moved.some((m) => m.mark === "rei/rei-parcel"), false, "the occupied parcel is held");
+    assert.equal(receipt.totals.parcels_held_occupied, 1);
+    assert.equal(receipt.held[0].parcel, "rei/rei-parcel");
+    assert.equal(receipt.totals.cascade_next_crossing, 0,
+      "a held parcel is a choice, not a consequence — it must not report itself as its own cascade");
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
 test("every mark the fold saw is accounted for — moved or skipped with a reason", () => {
   const { root, marks } = tinyWorld();
   try {

@@ -92,11 +92,11 @@
 // d38a5f7). That is a fold output changing, not a mark changing hands, and it is
 // reported rather than gated.
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, realpathSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, realpathSync, rmSync } from "node:fs";
 import { join, dirname, relative, basename } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
-import { loadMarks, fold } from "./marks-fold.mjs";
+import { loadMarks, fold, rect, contains } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -133,6 +133,7 @@ const APPLY = has("--apply");
 const JSON_OUT = has("--json");
 const ALLOW_STAMPLESS = has("--allow-stampless");
 const ALLOW_REPARENT = has("--allow-reparent");
+const HOLD_OCCUPIED = has("--hold-occupied-parcels");
 const MARKS_DIR = opt("--marks-dir", join(ROOT, "WORLD/marks"));
 const TERRAIN = opt("--terrain", join(ROOT, "WORLD/skeleton.json"));
 const HOUSEHOLDS = opt("--households", join(ROOT, "WORLD/households.json"));
@@ -141,7 +142,14 @@ const RECEIPT = opt("--receipt", null);
 const REPO = opt("--repo", ROOT);
 
 const git = (...a) => execFileSync("git", ["-C", REPO, ...a], { encoding: "utf8", maxBuffer: 1 << 28 }).trim();
-const gitQ = (...a) => { try { return git(...a); } catch { return null; } };
+// `stdio: pipe` on the quiet form so a probe for a ref that does not exist stays
+// a probe: without it every "Needed a single revision" from a household that has
+// no sketchbook yet prints to the console and reads as 49 failures during a run
+// that is working exactly as intended.
+const gitQ = (...a) => {
+  try { return execFileSync("git", ["-C", REPO, ...a], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 1 << 28 }).trim(); }
+  catch { return null; }
+};
 
 // ── the stamp gate ──────────────────────────────────────────────────────────
 if (!STAKES && !ALLOW_STAMPLESS) {
@@ -179,8 +187,38 @@ const households = existsSync(HOUSEHOLDS) ? JSON.parse(readFileSync(HOUSEHOLDS, 
 const state = fold({ marks: loaded, terrain, stakes, households: households.households ?? null });
 
 const all = state.marks ?? [];
-const S = all.filter(isUnstakedCommons);
 const byId = new Map(all.map((m) => [m.id, m]));
+
+// ── THE PARCEL CASCADE, and the flag that answers it ────────────────────────
+//
+// A parcel IS the ground the fold's sovereignty is measured against: a mark is
+// sovereign because it sits fully inside its own household's parcel. So a
+// parcel that returns to drafts takes that ground with it, and every mark that
+// was standing on it becomes a commons mark at zero — swept by this very move
+// on the NEXT crossing.
+//
+// Measured on the rehearsal at 91b4b5e5: 74 of the 270 marks in the set are
+// parcels; returning them re-folds 141 previously-sovereign marks straight into
+// the set. That is the PSA's own promise — "a further 150 stand on residents'
+// OWN ground ... and those stand" — coming apart one crossing later.
+//
+// 73 of those 74 parcels carry sovereign marks; exactly one is empty. So this
+// is a founder's call, not a tuning knob, and the tool does not make it: the
+// DEFAULT stays faithful to the law as written (an unstaked commons mark
+// returns, parcel or not) and the cascade is REPORTED loudly every run.
+// `--hold-occupied-parcels` is the other answer, ready for the day it is ruled:
+// a parcel returns only if nothing of its household's still stands on it.
+const held = [];
+if (HOLD_OCCUPIED) {
+  for (const p of all) {
+    if (p.kind !== "parcel" || !isUnstakedCommons(p)) continue;
+    const standing = all.filter((m) => m.id !== p.id && m.household === p.household
+      && m.sovereign && contains(rect(p), rect(m)));
+    if (standing.length) held.push({ parcel: p.id, household: p.household, standing: standing.length });
+  }
+}
+const heldIds = new Set(held.map((h) => h.parcel));
+const S = all.filter((m) => isUnstakedCommons(m) && !heldIds.has(m.id));
 const Sids = new Set(S.map((m) => m.id));
 
 // ── destination branches: households.json is the only map, and it is walked ──
@@ -254,6 +292,31 @@ for (const m of S) {
   });
 }
 
+// ── the cascade, measured rather than assumed ───────────────────────────────
+// Fold the tree again WITHOUT the marks that are leaving and ask what the set
+// looks like then. Anything newly in it was standing before this move and is
+// not standing after — the ground it stood on left with the move. This is the
+// check that can fail: if the move were self-contained the answer is an empty
+// list, and on today's tree it is not.
+const movedIds = new Set(moved.map((m) => m.mark));
+let cascade = [];
+if (movedIds.size) {
+  const after = fold({
+    marks: loaded.filter((r) => !movedIds.has(r.id)),
+    terrain, stakes, households: households.households ?? null,
+  });
+  // A HELD parcel is deliberately left in the set-but-not-moved, so it is not a
+  // consequence of the move and must not be reported as one — without this the
+  // hold flag "discovers" the 73 parcels it just chose to keep.
+  cascade = (after.marks ?? []).filter((m) => isUnstakedCommons(m)
+      && !movedIds.has(m.id) && !Sids.has(m.id) && !heldIds.has(m.id))
+    .map((m) => ({
+      mark: m.id, household: m.household, kind: m.kind,
+      was: byId.get(m.id)?.sovereign ? "sovereign — it stood on its household's own ground"
+        : `standing with weight ${byId.get(m.id)?.weight ?? 0}`,
+    }));
+}
+
 const receipt = {
   tool: "unstaked-return", record: "git", law: "town PSA 2026-09-09; town #1990; founder's ruling 2026-08-28",
   measured_at: new Date().toISOString(),
@@ -268,8 +331,10 @@ const receipt = {
     set_size_before_branch_resolution: S.length,
     reparent_hazards: reparents.length,
     placement_parent_shifts: shifts.length,
+    parcels_held_occupied: held.length,
+    cascade_next_crossing: cascade.length,
   },
-  moved, skipped, reparents, shifts,
+  moved, skipped, reparents, shifts, held, cascade,
   applied: false,
 };
 
@@ -357,6 +422,29 @@ if (APPLY) {
       `Claude-Session: https://claude.ai/code/session_01PDJ7RsS1Mykj4YMnBhphy4\n`;
     const commit = execFileSync("git", ["-C", REPO, "commit-tree", tree, "-p", head, "-m", msg], { encoding: "utf8" }).trim();
     git("update-ref", "HEAD", commit, head);
+    // The REAL index still holds the old tree — the commit above was built in a
+    // scratch one — so without this `git status` reports 246 deletions that have
+    // already been committed, and the next hand to touch the repo sees a dirty
+    // tree it did not make.
+    git("read-tree", commit);
+
+    // 3. THE WORKING TREE FOLLOWS THE COMMIT, and this step is not tidiness.
+    //    The move above is pure plumbing — it writes trees and refs and never
+    //    touches a file on disk. The SET IS RE-MEASURED BY FOLDING THE TREE ON
+    //    DISK, so a run that leaves those files sitting there re-measures the
+    //    same marks on the next run and moves them a second time. That is what
+    //    happened on the first rehearsal: two applies, 246 marks moved twice,
+    //    and a "second dry run reports 0" check that would have read 246.
+    //    Deleting them here is what makes the tool idempotent and what makes the
+    //    idempotence check able to fail.
+    for (const f of files) { try { rmSync(join(REPO, f), { force: true }); } catch { /* already gone */ } }
+    // A directory that is now completely empty was the mark and nothing else, so
+    // it goes. One that still holds child directories STAYS — those are other
+    // marks' homes and the whole point of the file-level move.
+    for (const mv of moved) {
+      const d = join(REPO, mv.dir);
+      try { if (existsSync(d) && readdirSync(d).length === 0) rmSync(d, { recursive: true, force: true }); } catch { /* leave it */ }
+    }
   }
   receipt.applied = true;
   receipt.applied_at = stamp;
@@ -374,6 +462,13 @@ console.log(`  returning to drafts: ${t.returning} mark(s) across ${t.returning_
 console.log(`  set before branch resolution: ${t.set_size_before_branch_resolution}`);
 console.log(`  staying: ${t.skipped} (town-owned, sovereign, or staked — each named in the receipt)`);
 if (t.placement_parent_shifts) console.log(`  ${t.placement_parent_shifts} sited/parcel child(ren) keep standing with a re-computed placementParent`);
+if (t.parcels_held_occupied) console.log(`  ${t.parcels_held_occupied} parcel(s) HELD by --hold-occupied-parcels — marks of their household still stand on them`);
+if (t.cascade_next_crossing) {
+  console.log(`  ⚠ CASCADE: ${t.cascade_next_crossing} mark(s) standing today would enter the set once this move lands.`);
+  const sov = cascade.filter((c) => c.was.startsWith("sovereign")).length;
+  if (sov) console.log(`     ${sov} of them are sovereign now — their household's parcel is returning, so their ground goes with it.`);
+  console.log(`     The PSA promises those marks stand. --hold-occupied-parcels is the other reading; this is a founder's call.`);
+}
 if (t.reparent_hazards) console.log(`  ⚠ ${t.reparent_hazards} re-parent hazard(s) allowed through by --allow-reparent`);
 const noBranch = skipped.filter((s) => s.why.startsWith("no sketchbook branch"));
 if (noBranch.length) console.log(`  ⚠ ${noBranch.length} mark(s) have no nameable sketchbook and did NOT move`);
