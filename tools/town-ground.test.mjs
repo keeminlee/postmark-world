@@ -17,7 +17,8 @@
 //      skeleton.light holds, or the day axis with both its poles present. An
 //      invented source reddens here.
 //   3. Every mark-sourced polygon MATCHES the mark it names — vertex for vertex,
-//      projected back through the registration into metres, to 0.1 m. This is
+//      projected back through the registration into metres, to the ground's
+//      own grain (it writes a tenth of a px; 0.25 m at 5 m per px). This is
 //      the one with teeth: a ring copied out of the atlas and labelled with a
 //      mark's id passes (1) and (2) and dies here, and so does a ring that stops
 //      tracking a region the record has since moved.
@@ -34,9 +35,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { townGround, townRegionMarks, townWaterShapes } from "../spectator/viewer.mjs";
 import { REGION_SLUGS } from "./region-outsiders.mjs";
-// the TREE, for the Headland: its mark is on disk and the settlement has not
-// folded it into world-state.json yet, and folding is the keeper's act not this
-// lane's — so the region tests read the record where the mark actually stands
+// the TREE, for the Headland: its mark is on disk, and folding it into
+// world-state.json is the keeper's act not this lane's — so the region tests
+// read the record where the mark actually stands, and hold whether or not the
+// served fold has caught up (it had not on 09-08; it had by S64 on 09-09)
 import { loadMarks } from "./marks-fold.mjs";
 import { polygonOf, pointInPolygon } from "./geometry.mjs";
 
@@ -63,6 +65,13 @@ const VIEWER = readFileSync(join(ROOT, "spectator/viewer.mjs"), "utf8");
 const om = String(skeleton._grid?.origin ?? "").match(/\((\d+)\s*,\s*(\d+)\)/);
 const sm = String(skeleton._grid?.scale ?? "").match(/(\d+(?:\.\d+)?)\s*m per atlas px/);
 const originPx = { x: +om[1], y: +om[2] }, mPerPx = +sm[1];
+// the ground writes svg coordinates to a tenth of a px (viewer.mjs, `toFixed(1)`),
+// so a vertex comes back through the registration within half of that, in
+// metres: 0.05 px × 5 m per px = 0.25 m. The tolerance is the instrument's own
+// resolution, read off the record's scale — not a number chosen to be green.
+// (S64, 2026-09-09: a 0.1 m pin turned red on the Headland's decimal trace the
+// first time the fold carried it; postmark#2618.)
+const GRAIN_M = 0.05 * mPerPx + 1e-9;
 const ground = () => townGround(world.marks, skeleton, { originPx, mPerPx });
 
 // the sheet: the paper and the ruled wash carry no geometry of their own
@@ -128,7 +137,7 @@ test("…and every mark-sourced ring IS that mark's ring, vertex for vertex, bac
       // back through the registration: ground units → metres
       const mx = (drawn[i][0] - g.originPx.x) * g.mPerPx, my = (drawn[i][1] - g.originPx.y) * g.mPerPx;
       const [rx, ry] = Array.isArray(ring[i]) ? ring[i] : [ring[i].x, ring[i].y];
-      if (Math.abs(mx - rx) > 0.1 || Math.abs(my - ry) > 0.1)
+      if (Math.abs(mx - rx) > GRAIN_M || Math.abs(my - ry) > GRAIN_M)
         { drift.push(`${e.src} vertex ${i}: drawn (${mx},${my}) vs record (${rx},${ry})`); break; }
     }
   }
@@ -260,25 +269,32 @@ test("…and it CAN fail: the Headland's unclipped trace is caught", () => {
   assert.ok(sharedHectares(clipped, spar) <= 0.05, "and the committed ring does not");
 });
 
-test("THE GROUND MOVES BY EXACTLY THE HEADLAND — one wash, one name, and nothing else", () => {
-  // The founding's whole blast radius, asserted as a DIFF rather than as two
-  // counts. Counts would pass a change that added the Headland and dropped
-  // something else; this names what appears and requires that nothing vanishes.
-  // It is the structural half of what tools/qa/town-fingerprint.mjs does for the
-  // whole render, close enough to the change to run in the suite.
+test("THE GROUND CARRIES THE HEADLAND — and the tree never draws less than the served record", () => {
+  // Written 2026-09-08 as a pinned DIFF: "exactly one wash and one name arrive,
+  // and nothing leaves", read between the served fold (which had not yet caught
+  // up) and the tree (where the mark already stood). The first fold that carried
+  // the Headland made that diff lawfully EMPTY and the test red — S64, 09-09,
+  // refused on it: an instrument placed at a moment, measuring itself
+  // (postmark#2618). A founding diff is not a permanent invariant. What IS
+  // permanent is the relation the diff was standing in for: the Headland is on
+  // the ground the tree draws, and the tree draws every region the served
+  // record draws — a founding adds, it does not displace.
   const tree = loadMarks(join(ROOT, "WORLD/marks")).filter((m) => !m._error);
   const drawnIn = (marks) => [...townGround(marks, skeleton, { originPx, mPerPx }).svgText
     .matchAll(/class="wv-tg-(region|region-label)"[^>]*data-src="mark:([^"]+)"/g)].map((m) => `${m[1]}:${m[2]}`);
 
-  const before = drawnIn(world.marks);   // the served record, which the settlement has yet to move
-  const after = drawnIn(tree);           // the tree, where the mark stands now
+  const served = drawnIn(world.marks);   // the record as the settlement last published it
+  const drawn = drawnIn(tree);           // the record where the marks stand now
 
-  assert.deepEqual(after.filter((x) => !before.includes(x)).sort(), [
-    "region-label:claude-of-tulip/the-headland",
-    "region:claude-of-tulip/the-headland",
-  ], "exactly one wash and one name arrive");
-  assert.deepEqual(before.filter((x) => !after.includes(x)), [],
+  for (const token of ["region:claude-of-tulip/the-headland", "region-label:claude-of-tulip/the-headland"])
+    assert.ok(drawn.includes(token), `the founding is on the ground: ${token}`);
+  assert.deepEqual(served.filter((x) => !drawn.includes(x)), [],
     "and not one region leaves — a founding adds, it does not displace");
+
+  // the relation CAN fail: a tree that has lost a region draws less than the record
+  const lost = townRegionMarks(tree)[0].id;
+  const lessened = drawnIn(tree.filter((m) => m.id !== lost));
+  assert.ok(served.some((x) => !lessened.includes(x)), `dropping ${lost} is caught as a region leaving`);
 });
 
 test("THE ROSTERS ARE THE RECORD'S, not this file's: every region on them, and the water, ringed", () => {
@@ -468,5 +484,5 @@ test("the falsifiers CAN fail: a hardcoded ring, an invented source, and a drift
   const el = drawnElements(drifted).find((e) => e.src === `mark:${region.id}` && e.points);
   const dx = (Number(el.points.trim().split(/\s+/)[0].split(",")[0]) - originPx.x) * mPerPx;
   const recordX = Array.isArray(region.points[0]) ? region.points[0][0] : region.points[0].x;
-  assert.ok(Math.abs(dx - recordX) > 0.1, "a 5 m drift in one vertex is outside the 0.1 m tolerance");
+  assert.ok(Math.abs(dx - recordX) > GRAIN_M, `a 5 m drift in one vertex is outside the ${GRAIN_M.toFixed(2)} m grain`);
 });
