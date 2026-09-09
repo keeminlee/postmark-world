@@ -23,7 +23,7 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
-import { settlementSweep, surveySketchbooks, SUITE_QUARANTINE_REASON } from "./settlement-sweep.mjs";
+import { settlementSweep, surveySketchbooks, surveyedLine, SUITE_QUARANTINE_REASON } from "./settlement-sweep.mjs";
 import { isolate } from "./settlement-isolate.mjs";
 import { withTool } from "./engine-files.mjs";
 
@@ -443,4 +443,140 @@ test("G1 · PHASE 0 CANNOT HOLD BACK AN UNPUBLISH, and must not call the leftove
     "and the SENTENCE must change — this is not evidence that the red belongs to canon");
   assert.doesNotMatch(result.reason, /not this crossing's to fix/,
     "the false sentence must not be printed over a crossing whose own changes were never held back");
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THE STORE-ERA SENTENCE PASS (2026-09-09, G1 lane 3 — cutover-ready for w38)
+//
+// Founder's finding, verbatim: "Two of the four dated settlement guards say
+// something untrue in the store era: the loud-empty guard cannot fire (no
+// sketchbooks to starve; marks-fold's stampless refusal catches it one layer
+// down) and the isolator's 'the red is not this crossing's to fix' is false on
+// a store crossing. Both SAFE; both need their sentences re-read before the
+// swap."
+//
+// Nothing either guard REFUSES changes here. Each test below pins the git-era
+// words to the byte and pins the store-era words to what was actually measured,
+// so the swap cannot quietly restore the untrue sentence.
+// ─────────────────────────────────────────────────────────────────────────────
+
+test("THE QUIET-PASS LINE · with sketchbooks standing, today's sentence survives to the byte", () => {
+  // THE LAW, quoted from crossings that have printed it since 2026-08-27 — the
+  // keeper's room records "surveyed 36 drawers / 46 deltas / 10 escrow-backed
+  // deltas" for the 08-27 crossing and 40 / 54 / nine for 09-03.
+  assert.equal(
+    surveyedLine({ branches: 36, delta_rows: 46, escrow_backed_deltas: 10 }),
+    "  surveyed: 36 sketchbook(s), 46 delta row(s), 10 escrow-backed",
+    "a git crossing's receipt is unchanged to the byte — the swap does not get to rewrite what already reads true",
+  );
+  // AND THE QUIET GIT CROSSING, which is the whole reason the line exists: 40
+  // drawers with nothing in them IS the receipt that the town was quiet.
+  assert.equal(
+    surveyedLine({ branches: 40, delta_rows: 0, escrow_backed_deltas: 0 }),
+    "  surveyed: 40 sketchbook(s), 0 delta row(s), 0 escrow-backed",
+    "a register that was read and found empty still says so the old way",
+  );
+});
+
+test("THE QUIET-PASS LINE · with the register itself empty, it names the empty register instead of claiming a quiet town", () => {
+  const line = surveyedLine({ branches: 0, delta_rows: 0, escrow_backed_deltas: 0 });
+  assert.equal(
+    line,
+    "  surveyed: no sketchbooks at all — the register this survey reads is empty, so its 0 escrow-backed is not "
+    + "evidence that the town was quiet, and the loud-empty guard cannot fire on this crossing. What stands one "
+    + "layer down is marks-fold's stamp gate, which refuses to write a world-state that would strip every stamp "
+    + "the world holds.",
+    "an empty register must be named as one, with the guard that DOES stand named beside it",
+  );
+  // THE FLIP THAT MAKES THIS ABLE TO FAIL. The old six words over the same input
+  // are the confident nothing this pass exists to end; if the tool ever prints
+  // them again for a register it never got to read, this goes red.
+  assert.doesNotMatch(line, /^ {2}surveyed: 0 sketchbook/,
+    "0 / 0 / 0 in the old shape is the untrue sentence itself");
+});
+
+test("THE LOUD-EMPTY GUARD IS UNTOUCHED: an empty register still completes, and the numbers the line reads are the report's own", (t) => {
+  const c = crossing(t, "store-era-quiet");
+  c.commit("the world, with the record kept somewhere this survey cannot read");
+
+  // The store shape at the sensor: no register to read, so it returns zeros —
+  // which is exactly what surveySketchbooks returns against a repo holding no
+  // draft/* refs, and is why the guard cannot fire.
+  const report = c.sweep({ surveyor: () => ({ branches: 0, delta_rows: 0, escrow_backed_deltas: 0, escrow_backed: [] }) });
+  assert.equal(report.published.length, 0, "the crossing still completes — the REFUSAL is unchanged by this pass");
+  assert.deepEqual(report.surveyed, { branches: 0, delta_rows: 0, escrow_backed_deltas: 0 },
+    "and the measurement is unchanged too: this pass moved the sentence, not the numbers");
+  assert.match(surveyedLine(report.surveyed), /the register this survey reads is empty/,
+    "the line the crossing prints from those numbers is the true one");
+
+  // THE CONTROL: the same numbers with one drawer standing print the old line,
+  // so an ordinary git crossing can never reach the new branch.
+  assert.equal(surveyedLine({ ...report.surveyed, branches: 1 }),
+    "  surveyed: 1 sketchbook(s), 0 delta row(s), 0 escrow-backed",
+    "one drawer read and found empty is still the git-era receipt");
+});
+
+test("PHASE 0 · with sketchbooks to rewind, 'not this crossing's to fix' survives to the byte", (t) => {
+  const w = town(t, "isolate-git-era-sentence", [
+    { login: "house-a", by: "alice", slug: "the-lamp", at: { x: 800, y: 800 } },
+    { login: "house-b", by: "bob", slug: "the-well", at: { x: 1200, y: 1200 } },
+  ]);
+  w.firstSweep();
+
+  const gate = () => ({ green: false, log: "not ok 1 - the fixture is live\n" });
+  const result = isolate({ repo: w.repo, sweepPath: w.sweepPath, beforePath: w.beforePath, stakesPath: w.stakesPath, gate });
+
+  assert.equal(result.rewound_sketchbooks, 2,
+    "both sketchbooks were restorable, which is what makes the old sentence true here");
+  assert.equal(
+    result.reason,
+    "the suite is red even with every mark this crossing carried held back, and holding them back returned the "
+    + "tree to where the crossing started — so the red is not this crossing's to fix, and no household is "
+    + "quarantined for it",
+    "the git-era sentence is unchanged to the byte",
+  );
+});
+
+test("PHASE 0 · with NO sketchbook to rewind, the tree came back but the crossing did not — and the sentence says so", (t) => {
+  // ── THE RESIDUAL DEFECT AFTER G1 REPAIR 10 ────────────────────────────────
+  //
+  // Repair 10 caught the store crossing whose UNPUBLISHES could not be held back
+  // (434 published, 75 unpublished, measured 2026-09-08). It reads the TREE —
+  // `git diff --name-only` over WORLD/marks/ — and the tree is no longer the
+  // whole of what a crossing writes. A store crossing that leaves no mark file
+  // outside its candidate set still lands in the `unheld.length === 0` branch,
+  // where the old sentence sends the operator upstream over a red that may be
+  // entirely the crossing's own store write.
+  //
+  // The fixture plants the measured STATE rather than the era: candidates in the
+  // crossing's own report, no sketchbook in the pre-sweep refs (what
+  // settlement-auto.sh writes when refs/heads/draft/* is empty), and a tree that
+  // does come back.
+  const w = town(t, "isolate-store-no-sketchbook", [
+    { login: "house-a", by: "alice", slug: "the-lamp", at: { x: 800, y: 800 } },
+  ]);
+  const first = w.firstSweep();
+  assert.equal(first.published.length, 1, "the crossing must actually carry a candidate, or this test proves nothing");
+
+  writeFileSync(w.beforePath, JSON.stringify({ main: w.before.main, branches: {} }));
+
+  const gate = () => ({ green: false, log: "not ok 1 - red whatever this crossing carries\n" });
+  const result = isolate({ repo: w.repo, sweepPath: w.sweepPath, beforePath: w.beforePath, stakesPath: w.stakesPath, gate });
+
+  // THE VERDICT IS UNCHANGED — sentences only.
+  assert.equal(result.attributed, false, "it still refuses the town");
+  assert.deepEqual(result.quarantined, [], "and still blames no household");
+
+  // THE EVIDENCE, named rather than asserted.
+  assert.equal(result.rewound_sketchbooks, 0, "the rewind restored main and nothing else");
+  assert.deepEqual(result.could_not_hold_back, [],
+    "and the TREE did come back — this is precisely the case the old sentence called canon's");
+
+  // THE SENTENCE.
+  assert.doesNotMatch(result.reason, /not this crossing's to fix/,
+    "the false sentence must not be printed over a crossing whose own sources were never restored");
+  assert.match(result.reason, /the re-run did not start where the crossing started/,
+    "and the true one says exactly why it cannot make that claim");
+  assert.match(result.reason, /never held back/,
+    "naming what went unheld, not merely that something did");
 });

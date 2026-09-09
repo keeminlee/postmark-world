@@ -238,6 +238,27 @@ export function isolate({
     return { attributed: false, reason: "this crossing published and withdrew nothing, so the red suite cannot be attributed to any candidate it carried", rounds: 0, quarantined: [] };
   }
 
+  // ── WHAT A REWIND COULD ACTUALLY PUT BACK (2026-09-09, the store-era
+  // sentence pass) ──────────────────────────────────────────────────────────
+  //
+  // `rewind` restores two things and no others: `before.main`, and every
+  // sketchbook in `before.branches`. In the git era that is the whole of what a
+  // crossing reads from — EVERY candidate, published or withdrawn, is a delta
+  // read off a `draft/*` branch (see the sweep's `draftBranches`) — so a trial
+  // genuinely re-runs the crossing from where it started.
+  //
+  // A STORE CROSSING CARRIES CANDIDATES OUT OF NO SKETCHBOOK. `before.branches`
+  // is written by `deploy/settlement-auto.sh` from `refs/heads/draft/*`; with
+  // the record in the store there are none, and the rewind restores nothing the
+  // candidates came from. The re-run then does not start where the crossing
+  // did, and whatever the crossing wrote outside this tree was never held back
+  // — so phase 0's leftover red cannot be read as canon's.
+  //
+  // Measured, not assumed: candidates in hand AND nothing to rewind is a state
+  // the git era cannot produce, so on a git crossing this number is > 0 and
+  // phase 0's sentence below is today's, byte for byte.
+  const rewindableSketchbooks = Object.keys(before.branches ?? {}).length;
+
   const byId = new Map(candidates.map((c) => [c.id, c]));
   const allIds = candidates.map((c) => c.id);
   let rounds = 0;
@@ -247,8 +268,8 @@ export function isolate({
   budget();
   const clean = trial(repo, before, mainBranch, stakesPath, allIds, `round ${rounds} (phase 0, hold back all ${allIds.length})`, gate);
   if (!clean.green) {
-    // THE TWO CASES PHASE 0 USED TO PRINT AS ONE. Both refuse the town, and the
-    // refusal is right in both. They send an operator to different doors.
+    // THE THREE CASES PHASE 0 USED TO PRINT AS ONE. All refuse the town, and the
+    // refusal is right in all of them. They send an operator to different doors.
     const unheld = unheldChanges(repo, before, mainBranch, candidates);
     const couldNotHoldBack = unheld === null ? null : unheld;
     const reason = unheld === null
@@ -256,9 +277,19 @@ export function isolate({
         + "crossing changed — so it cannot say whether the red belongs to this crossing or to canon. Treat it as "
         + "unattributed, not as somebody else's."
       : unheld.length === 0
-        ? "the suite is red even with every mark this crossing carried held back, and holding them back returned the "
-          + "tree to where the crossing started — so the red is not this crossing's to fix, and no household is "
-          + "quarantined for it"
+        ? (rewindableSketchbooks > 0
+          ? "the suite is red even with every mark this crossing carried held back, and holding them back returned the "
+            + "tree to where the crossing started — so the red is not this crossing's to fix, and no household is "
+            + "quarantined for it"
+          // THE THIRD CASE. Nothing outside the candidate set moved in the TREE,
+          // and the tree is no longer the whole of what a crossing writes. With
+          // no sketchbook to rewind, the trial never restored what these
+          // candidates came out of, so "the tree came back" is not "the crossing
+          // was undone" and the leftover red may still be the crossing's own.
+          : `the suite is red with every mark this crossing carried held back, and no mark file outside its candidate `
+            + `set changed in the tree — BUT this crossing carried ${candidates.length} candidate(s) out of no `
+            + `sketchbook this trial can rewind, so the re-run did not start where the crossing started. Whatever it `
+            + `wrote outside this tree was never held back, and this is NOT evidence that the red belongs to canon.`)
         : `the suite is red with every mark this crossing carried held back, BUT ${unheld.length} path(s) this `
           + `crossing changed are not candidates and cannot be held back (first: ${unheld[0]}) — so this is NOT `
           + "evidence that the red belongs to canon. The unattributable set is larger than the candidate set: what "
@@ -271,6 +302,11 @@ export function isolate({
       // checked against anything; a count would be a second one.
       could_not_hold_back: couldNotHoldBack === null ? null : couldNotHoldBack.slice(0, 40),
       could_not_hold_back_total: couldNotHoldBack === null ? null : couldNotHoldBack.length,
+      // The evidence for the sentence above, the same way `could_not_hold_back`
+      // is: how many sketchbooks the trial's rewind could actually restore. A
+      // zero here beside candidates in hand is what makes "the re-run did not
+      // start where the crossing started" a measurement rather than a mood.
+      rewound_sketchbooks: rewindableSketchbooks,
       rounds,
       not_ok: clean.notOk ?? [],
       sweep_refused: clean.sweepRefused ?? null,
@@ -360,6 +396,12 @@ if (isMain) {
       // this and the receipt; a list only in the JSON is a list behind a door.
       if (result.could_not_hold_back?.length) {
         say(`could not hold back ${result.could_not_hold_back_total} path(s): ${result.could_not_hold_back.slice(0, 12).join(", ")}${result.could_not_hold_back_total > 12 ? ` … and ${result.could_not_hold_back_total - 12} more` : ""}`);
+      }
+      // The other half of the same evidence, in the same journal: a rewind that
+      // restored no sketchbook did not put the crossing's sources back, and the
+      // sentence above says so. Printed only when it is the finding.
+      if (result.rewound_sketchbooks === 0) {
+        say("rewound 0 sketchbook(s): this trial restored main and nothing else, so the crossing's own sources were never put back");
       }
       process.exitCode = 1;
     } else {
