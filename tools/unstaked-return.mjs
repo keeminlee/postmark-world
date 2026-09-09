@@ -413,7 +413,13 @@ for (const m of all) {
   else skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: `staked — stamps ${m.stamps ?? 0}, weight ${m.weight ?? 0}` });
 }
 
-const dirRel = (d) => relative(ROOT, d).split("\\").join("/");
+// Paths in the receipt and in `update-index` are relative to THE REPO BEING
+// WRITTEN, not to the tool's own checkout. They coincide by default (`--repo`
+// defaults to the tool's root) and diverge the moment either flag is passed —
+// and the divergence is not cosmetic: `git update-index --cacheinfo` refuses an
+// absolute path outright, so a run against a separate tree died on its first
+// file rather than writing the wrong one.
+const dirRel = (d) => relative(REPO, d).split("\\").join("/");
 
 for (const m of S) {
   const dir = dirOf.get(m.id);
@@ -633,6 +639,41 @@ if (APPLY) {
   receipt.applied = true;
   receipt.applied_at = stamp;
   receipt.new_head = gitQ("rev-parse", "HEAD");
+
+  // ── DISPLACEMENT: what the move did to the marks that STAYED ──────────────
+  //
+  // A nested mark's `at:` is an OFFSET from its framing parent's centre
+  // (marks-fold § the frame). Take the parent's mark.md away and the child
+  // re-frames against the GRANDPARENT — so it keeps standing and it is somewhere
+  // else. Measured on the rehearsal at 9c93b07d: 22 standing marks moved, the
+  // furthest by 1,042 m, carrying a household's parcel and the house on it; two
+  // lost sovereignty because their new position is outside their own ground.
+  //
+  // THIS RUNS ONLY AFTER --apply, and that is not a limitation, it is the reason
+  // it is trustworthy: the working tree now holds the post-move truth, so this
+  // re-folds it and compares, rather than predicting. The `cascade` field above
+  // predicts, and it is a LOWER BOUND — it filters the loaded records after
+  // `walkMarks` has already assigned parents, so it cannot see re-framing at all.
+  try {
+    const afterLoad = loadMarks(MARKS_DIR);
+    const afterState = fold({ marks: afterLoad, terrain, stakes, households: households.households ?? null });
+    const beforeById = new Map(all.map((m) => [m.id, m]));
+    const displaced = [];
+    for (const a of afterState.marks ?? []) {
+      const b = beforeById.get(a.id);
+      if (!b) continue;
+      const d = Math.hypot((a.at?.x ?? 0) - (b.at?.x ?? 0), (a.at?.y ?? 0) - (b.at?.y ?? 0));
+      if (d <= 0.5) continue;
+      displaced.push({ mark: a.id, kind: a.kind, household: a.household, metres: Math.round(d),
+        from: b.at, to: a.at, was_sovereign: !!b.sovereign, now_sovereign: !!a.sovereign });
+    }
+    displaced.sort((x, y) => y.metres - x.metres);
+    receipt.displaced = displaced;
+    receipt.totals.displaced = displaced.length;
+    receipt.totals.displaced_lost_sovereignty = displaced.filter((d) => d.was_sovereign && !d.now_sovereign).length;
+  } catch (e) {
+    receipt.displaced_error = String(e?.message ?? e);
+  }
 }
 
 if (RECEIPT) writeFileSync(RECEIPT, JSON.stringify(receipt, null, 2) + "\n");
@@ -652,11 +693,17 @@ console.log(`  exempt by the founder's rulings of 2026-09-09: ${t.exempt_by_ruli
 console.log(`    law ${t.exempt_constitution} · parcel ${t.exempt_parcel} · region ${t.exempt_region} · town ${t.exempt_town}`);
 console.log(`  standing on their own ground: ${t.stayed_sovereign} · carrying a stake: ${t.stayed_staked}`);
 if (t.placement_parent_shifts) console.log(`  ${t.placement_parent_shifts} sited/parcel child(ren) keep standing with a re-computed placementParent`);
+if (t.displaced) {
+  console.log(`  ⚠ ${t.displaced} mark(s) that STAYED were moved in the world by this move — furthest ${receipt.displaced[0].metres} m.`);
+  console.log(`     A nested mark's position is an offset from its framing parent; when the parent returns, the child re-frames on the grandparent.`);
+  if (t.displaced_lost_sovereignty) console.log(`     ${t.displaced_lost_sovereignty} of them left their own ground and are no longer sovereign.`);
+}
+if (APPLY && !t.displaced) console.log("  no standing mark changed position.");
 if (t.cascade_next_crossing) {
   console.log(`  ⚠ CASCADE: ${t.cascade_next_crossing} mark(s) standing today would enter the set once this move lands.`);
   const sov = cascade.filter((c) => c.was.startsWith("sovereign")).length;
   if (sov) console.log(`     ${sov} of them are sovereign now — their household's parcel is returning, so their ground goes with it.`);
-  console.log(`     Parcels are exempt by law since 2026-09-09, so this should read zero; a non-zero here means some OTHER ground moved.`);
+  console.log(`     This is a LOWER BOUND: it cannot see re-framing (see displacement above), so the real second pass can be larger.`);
 }
 if (t.reparent_hazards) console.log(`  ⚠ ${t.reparent_hazards} re-parent hazard(s) allowed through by --allow-reparent`);
 const noBranch = skipped.filter((s) => s.why.startsWith("no sketchbook branch"));

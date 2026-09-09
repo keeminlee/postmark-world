@@ -368,3 +368,45 @@ test("--repo that is not a repository's top level refuses, instead of borrowing 
     assert.match(r.err, /not the top of a git repository|is not a git repository/);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
+
+// ── DISPLACEMENT: the move relocates marks that stay ────────────────────────
+//
+// A nested mark's `at:` is an offset from its framing parent's centre. Take the
+// parent away and the child re-frames on the grandparent — it keeps standing,
+// and it is somewhere else. On the live tree 22 standing marks move, the
+// furthest by 1,042 m, and two leave their own ground.
+
+test("a mark that stays under a returning parent is reported as displaced", () => {
+  const root = mkdtempSync(join(tmpdir(), "unstaked-return-displace-"));
+  const marks = join(root, "WORLD", "marks");
+  const mk = (p, fm) => {
+    const d = join(marks, p);
+    mkdirSync(d, { recursive: true });
+    writeFileSync(join(d, "mark.md"),
+      `---\n${Object.entries(fm).map(([k, v]) => `${k}: ${v}`).join("\n")}\n---\n\nA thing.\n`);
+  };
+  // `coords: relative` is declared once on the world root, exactly as the live
+  // tree declares it — and it is what makes a nested `at:` an OFFSET from the
+  // parent's centre rather than a world position. That is the whole mechanism.
+  mk("let-there-be-light", { by: "the-town", kind: "sited", date: "2026-07-01", at: "{ x: 0, y: 0 }", extent: "{ w: 60000, h: 60000 }", tier: "constitution", coords: "relative" });
+  // rei's yard, unstaked — it returns, and it is the FRAME for what is inside it
+  mk("let-there-be-light/the-yard", { by: "rei", kind: "sited", date: "2026-07-10", at: "{ x: 900, y: 900 }", extent: "{ w: 60, h: 60 }" });
+  // the town's bench inside it: stays (town law), and its at: is an offset
+  mk("let-there-be-light/the-yard/the-bench", { by: "the-town", kind: "sited", date: "2026-07-11", at: "{ x: 5, y: 5 }", extent: "{ w: 2, h: 2 }" });
+
+  execFileSync("git", ["init", "-q", root]);
+  execFileSync("git", ["-C", root, "add", "-A"]);
+  execFileSync("git", ["-C", root, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "fixture"]);
+  execFileSync("git", ["-C", root, "update-ref", "refs/remotes/origin/draft/rei", "HEAD"]);
+  try {
+    const out = execFileSync("node", [TOOL, "--marks-dir", marks, "--repo", root,
+      "--allow-stampless", "--apply", "--json"], { encoding: "utf8", maxBuffer: 1 << 28 });
+    const receipt = JSON.parse(out);
+    assert.ok(receipt.moved.some((m) => m.mark === "rei/the-yard"), "the yard returns");
+    assert.equal(receipt.totals.displaced, 1,
+      "the bench stays and must be reported as having moved — a silent relocation is the whole defect");
+    const d = receipt.displaced[0];
+    assert.equal(d.mark, "the-town/the-bench");
+    assert.ok(d.metres > 0, "it is somewhere else now");
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
