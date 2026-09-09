@@ -25,8 +25,17 @@ test('"marks on a resident\'s own ground stand" — sovereign is excluded', () =
   assert.equal(isUnstakedCommons({ id: "rei/a-bench", by: "rei", sovereign: true, stamps: 0, weight: 0 }), false);
 });
 
-test('"the town\'s own ground is the town\'s to stake" — the-town is excluded', () => {
-  assert.equal(isUnstakedCommons({ id: "the-town/a-region", by: "the-town", sovereign: false, stamps: 0, weight: 0 }), false);
+test("the town's own marks are excluded BY THE NAMED LAW, not by the economic predicate", () => {
+  // Until 2026-09-09 18:56 EDT this read `isUnstakedCommons(...) === false`,
+  // because the town clause sat inside the economic predicate as an incidental
+  // filter. The founder ruled it a law ("exempt all the town's own marks, no
+  // mint"), so the clause moved to `exemptionFor` where a flip can disprove it.
+  // The PSA's old sentence — "the town's own ground is the town's to stake" —
+  // is superseded by "no mint": the town does not stake its own furniture.
+  const m = { id: "the-town/a-region", by: "the-town", kind: "sited", sovereign: false, stamps: 0, weight: 0 };
+  assert.equal(isUnstakedCommons(m), true, "the economic predicate no longer carries the town clause");
+  assert.equal(exemptionFor(m, { authoredTier: "market" }),
+    "town: the town's own mark — exempt by the founder's ruling of 2026-09-09");
 });
 
 test('"only with a stake behind it" — own escrow keeps a mark standing', () => {
@@ -248,5 +257,114 @@ test("every mark the fold saw is accounted for — moved or skipped with a reaso
     assert.equal(named.size, receipt.totals.marks_folded,
       "a mark that is neither moved nor skipped is a mark the receipt lost");
     for (const s of receipt.skipped) assert.ok(s.why && s.why.length > 8, `${s.mark} skipped with no reason`);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+// ── THE REASON MUST BE TRUE, AND THIS IS THE TEST THAT READS IT ─────────────
+//
+// The reviewer replaced EVERY staying mark's reason with a false one
+// ("staked — stamps 999, weight 999") and the suite stayed 17/17 green: the
+// accounting falsifier reads the PRESENCE of a reason, never its truth. So 73
+// held parcels could be told they were "staked — stamps 0, weight 0" — a string
+// that contradicts itself on its face — on an audit surface, and no test cared.
+//
+// These assert the EXACT string each mark gets. Any substitution reds them.
+
+test("every staying mark's reason is the true one, named exactly", () => {
+  const { root, marks } = estate();
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
+    const why = Object.fromEntries(receipt.skipped.map((s) => [s.mark, s.why]));
+    assert.equal(why["the-town/let-there-be-light"], "constitution-tier: law needs no stake");
+    assert.equal(why["rei/rei-parcel"], "parcel: the founding privilege — needs no stake");
+    assert.match(why["rei/the-quiet-house"], /^sovereign — /);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("no mark is ever told it is staked when it carries nothing", () => {
+  // The self-contradicting string W1 found. A "staked" reason must name numbers
+  // that are actually above zero, and they must be the mark's own.
+  const { root, marks } = estate();
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
+    for (const s of receipt.skipped) {
+      const m = /^staked — stamps (\d+), weight (\d+)$/.exec(s.why);
+      if (!m) continue;
+      assert.ok(Number(m[1]) > 0 || Number(m[2]) > 0,
+        `${s.mark} is told it is "staked" while carrying stamps ${m[1]} and weight ${m[2]}`);
+    }
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("every reason is one the law actually offers — no free-text drift", () => {
+  const KNOWN = [
+    /^constitution-tier: law needs no stake$/,
+    /^parcel: the founding privilege — needs no stake$/,
+    /^region: the town's founding stake$/,
+    /^town: the town's own mark — exempt by the founder's ruling of 2026-09-09$/,
+    /^sovereign — /, /^staked — stamps \d+, weight \d+$/,
+    /^no sketchbook branch /, /^no directory in the tree/,
+  ];
+  const { root, marks } = estate();
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
+    for (const s of receipt.skipped)
+      assert.ok(KNOWN.some((re) => re.test(s.why)), `${s.mark}: unrecognised reason "${s.why}"`);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+// ── the town law (founder, 2026-09-09 18:56 EDT: "exempt all the town's own
+//    marks, no mint") ────────────────────────────────────────────────────────
+
+test('"exempt all the town\'s own marks" — a market-tier town mark with no stake is never in S', () => {
+  const ship = { id: "the-town/the-ship-at-anchor", by: "the-town", kind: "sited",
+                 sovereign: false, stamps: 0, weight: 0 };
+  assert.equal(isUnstakedCommons(ship), true, "the economic predicate alone would sweep it");
+  assert.equal(exemptionFor(ship, { authoredTier: "market" }),
+    "town: the town's own mark — exempt by the founder's ruling of 2026-09-09");
+});
+
+test("the town reason does NOT claim the town stakes — that is what 'no mint' ruled", () => {
+  const r = exemptionFor({ id: "the-town/a-bench", by: "the-town", kind: "sited" }, { authoredTier: "market" });
+  assert.doesNotMatch(r, /stake\b(?!.*needs no)/i.test(r) ? /$^/ : /the town's to stake/);
+  assert.match(r, /exempt by the founder's ruling/);
+});
+
+test("the exemptions are read law → parcel → region → town, and the receipt says so", () => {
+  const { root, marks } = estate();
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
+    assert.deepEqual(receipt.exemption_order, ["law", "parcel", "region", "town"]);
+    // A town-owned law node qualifies under BOTH law and town; under this order
+    // it lands in law, which is what makes the town bucket mean something.
+    const root_ = receipt.skipped.find((s) => s.mark === "the-town/let-there-be-light");
+    assert.match(root_.why, /^constitution-tier/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("the denominator gate: a clone with no sketchbook refs refuses", () => {
+  const { root, marks } = estate();
+  try {
+    // A REAL but empty repo: no draft ref is visible, the same blindness as a
+    // clone that never fetched them. It has to be a real repo, because `git -C`
+    // on a non-repo walks up and borrows an ancestor's refs — which is the
+    // separate gate asserted below, and is how this one was found.
+    execFileSync("git", ["init", "-q", root]);
+    const r = run(marks, ["--allow-stampless", "--repo", root]);
+    assert.equal(r.code, 2, "counts that depend on invisible refs must not be reported as facts");
+    assert.match(r.err, /no draft\/\* sketchbook refs/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("--repo that is not a repository's top level refuses, instead of borrowing an ancestor's", () => {
+  // `git -C <path>` walks up. A fixture directory under the scratchpad resolved
+  // to a real HEAD in the user's home during this lane — so a mistyped --repo
+  // would have read that repository's draft refs and, under --apply, written
+  // sketchbook refs and a commit into it.
+  const { root, marks } = estate();          // deliberately NOT a git repo
+  try {
+    const r = run(marks, ["--allow-stampless", "--repo", root]);
+    assert.equal(r.code, 2);
+    assert.match(r.err, /not the top of a git repository|is not a git repository/);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
