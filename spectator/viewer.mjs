@@ -5158,6 +5158,7 @@ export function mountViewer(appEl) {
       zoomOutLimit: 1,          // the room is the outermost state; zoom-in only (revised ruling)
       includeMine: false,       // the roof: your marks elsewhere don't follow you in
       placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
+      walkPointers: false,      // a room's ground hangs its own art; the map's pointer walk is the town's
     });
     sceneRoomId = room.id;
   }
@@ -5655,7 +5656,7 @@ export function mountViewer(appEl) {
   // presence, muted hue — so a room reads as a floor plan and nested
   // placeholders read as distinct blocks. Drawn by the ONE overlay, gated by
   // the scene; the town keeps its footprint toggle unchanged.
-  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, zoomOutLimit = MAX_ZOOM_OUT, includeMine = true, placeholderExtents = false, groundMarkIds = null }) {
+  function mountScene({ boxEl, svg, originPx, mPerPx, reattachOverlays, zoomOutLimit = MAX_ZOOM_OUT, includeMine = true, placeholderExtents = false, groundMarkIds = null, walkPointers = true }) {
     // THE FAR COUNTRY, mounted UNDER the painting rather than over it.
     //
     // Every other derived layer is appended, so it draws on top. These two are
@@ -5703,13 +5704,17 @@ export function mountViewer(appEl) {
     // THE HOMES — each parcel's pointer, walked (2026-09-09): its household's
     // picture hung AT the parcel, over the footprints and under the pips, so a
     // pip still names the mark and the picture is what stands there. Same
-    // whole-record build as the washes; the town scene only (a room's ground
-    // already hangs its art through sceneArtSVG).
+    // whole-record build as the washes. `walkPointers` is the scene's own word:
+    // the town walks them (the default); a room passes false, because a room's
+    // ground already hangs its art through sceneArtSVG. (Not gated on
+    // `placeholderExtents`: since 2026-09-08 the town runs that pass too, and a
+    // first spelling gated on it walked nothing — caught by the eye, not the
+    // suite, on the local rig.)
     const parcelArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
     parcelArtLayer.setAttribute("id", "wv-parcel-art-layer");
     parcelArtLayer.style.pointerEvents = "none";
     svg.appendChild(parcelArtLayer);
-    if (!placeholderExtents) {
+    if (walkPointers) {
       const artPx = (p) => ({ x: originPx.x + p.x / mPerPx, y: originPx.y + p.y / mPerPx });
       let parcels = 0, washes = 0;
       for (const m of world.marks ?? []) {

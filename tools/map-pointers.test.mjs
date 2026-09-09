@@ -139,7 +139,10 @@ test("THE WIRING — washes under the record, homes over the footprints and unde
   assert.equal(SOURCE.split("svg.appendChild(washLayer);").length, 2, "the wash layer is appended once");
   assert.ok(wash > 0 && grid > wash, "the wash layer is appended BEFORE the grid — the first derived layer above the painting");
   assert.ok(fp > 0 && art > fp && convo > art, "the parcel-art layer sits after the footprints and before the conversations/pips");
-  assert.match(SOURCE, /if \(!placeholderExtents\) \{\s*\n\s*const artPx/, "the pointers are walked in the TOWN scene only — a room hangs its art through sceneArtSVG");
+  assert.match(SOURCE, /if \(walkPointers\) \{\s*\n\s*const artPx/, "the pointers are walked when the scene says so");
+  assert.match(SOURCE, /walkPointers = true \}\) \{/, "and the town says so by default");
+  assert.match(SOURCE, /placeholderExtents: true,[^\n]*\n\s*walkPointers: false,/, "a room does not — its ground hangs its own art through sceneArtSVG");
+  assert.doesNotMatch(SOURCE, /if \(!placeholderExtents\) \{\s*\n\s*const artPx/, "the walk is NOT gated on placeholderExtents — the town has run that pass too since 2026-09-08, and a first spelling gated on it walked nothing");
   assert.match(SOURCE, /const cardArt = markArtOnMap\(\);/, "the card-figure switch of 2026-08-21 is exactly where it was");
   assert.equal(markArtOnMap(""), false, "and its default is still off");
   assert.match(SOURCE, /image\.setAttribute\("href", url\); \/\/ last, after the handlers/);
