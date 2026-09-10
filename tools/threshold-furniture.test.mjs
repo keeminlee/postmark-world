@@ -39,7 +39,7 @@ const world = assembleWorld({
 });
 const byId = new Map(world.marks.map((m) => [m.id, m]));
 
-const PARLOR = "the-town/the-lanternstep-parlor";
+const PARLOR = "wright/the-lanternstep-parlor"; // renamed by the 2026-09-10 transfer (92ff95b5): the birthday parlor passes to its builder
 const DOOR = "wright/the-cellar-door"; // renamed by the 2026-08-30 transfer (61c5fdfb): the dungeon passes to its builder
 const HOUSE = "rei/the-lanternstep-house";
 
