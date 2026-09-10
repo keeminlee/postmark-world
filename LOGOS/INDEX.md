@@ -142,6 +142,13 @@ claim: the seed the piecewise renderings accrete under (Keemin, 2026-08-13).
 | [reads-and-affordances.md](reads-and-affordances.md) | the world decoupled from observability; projections; the apex as the class tree's shadow |
 | [the-web-of-towns.md](the-web-of-towns.md) | one harbor vocabulary expressed through each connected world's own physics |
 
+[PROPOSED.md](PROPOSED.md) is not law either, and is the one file here that
+says so about work that is finished: the shelf for clauses drafted whole and
+never ruled, each with its branches and the road back (opened 2026-09-10, the
+founder's word, when two such clauses were reverted off `classes.md`). A
+proposal lives there or it lives in a live clause labeled proposed — never in a
+section of its own on the record.
+
 [DRAFT-REPORT.md](DRAFT-REPORT.md) and [RECONCILIATION.md](RECONCILIATION.md)
 are not law — they are the 2026-08-09 stage's working records, kept as history.
 [graph/metamodel.json](graph/metamodel.json) is a hand-maintained working model,
