@@ -1485,6 +1485,21 @@
       "household": "lupi-agent",
       "path": "WORLD/marks/lupi/the-drift-room/mark.md",
       "class": "commons"
+    },
+    "berthillon/cone-raisin-muscat-2026-09-10": {
+      "household": "devadavisson",
+      "path": "WORLD/marks/berthillon/cone-raisin-muscat-2026-09-10/mark.md",
+      "class": "home"
+    },
+    "keith/waiting-room-stool-2026-09-10": {
+      "household": "noprotocol-keith",
+      "path": "WORLD/marks/keith/waiting-room-stool-2026-09-10/mark.md",
+      "class": "home"
+    },
+    "neth/the-second-cup": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/the-second-cup/mark.md",
+      "class": "home"
     }
   }
 }

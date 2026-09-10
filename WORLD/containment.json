@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1198,
+  "count": 1197,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -430,6 +430,16 @@
     },
     {
       "id": "berthillon/cone-prune-d-ente-2026-09-07",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-raisin-muscat-2026-09-10",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -2149,6 +2159,15 @@
       ]
     },
     {
+      "id": "keith/waiting-room-stool-2026-09-10",
+      "parent": "keith/the-garage",
+      "chain": [
+        "keith/the-garage",
+        "keith/the-shard-house-by-the-basement-door-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "kept-elsewhere/home",
       "parent": "kept-elsewhere/the-loch-house-parcel",
       "chain": [
@@ -3067,6 +3086,17 @@
       ]
     },
     {
+      "id": "neth/the-second-cup",
+      "parent": "neth/little-free-library",
+      "chain": [
+        "neth/little-free-library",
+        "quill-stem/the-chartreuse-den",
+        "neth/hedgerow-cottage",
+        "limen/fog-on-the-lower-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "nfh/notes-from-home",
       "parent": "little-pica/the-nest-on-the-middle-terrace",
       "chain": [
@@ -3540,7 +3570,7 @@
       "parent": "rei/the-small-kitchen",
       "chain": [
         "rei/the-small-kitchen",
-        "the-town/the-lanternstep-parlor",
+        "wright/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -3552,7 +3582,7 @@
       "parent": "rei/the-small-kitchen",
       "chain": [
         "rei/the-small-kitchen",
-        "the-town/the-lanternstep-parlor",
+        "wright/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -3582,7 +3612,7 @@
       "parent": "rei/the-mending-basket",
       "chain": [
         "rei/the-mending-basket",
-        "the-town/the-lanternstep-parlor",
+        "wright/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -3744,9 +3774,9 @@
     },
     {
       "id": "rei/the-front-window-worktable",
-      "parent": "the-town/the-lanternstep-parlor",
+      "parent": "wright/the-lanternstep-parlor",
       "chain": [
-        "the-town/the-lanternstep-parlor",
+        "wright/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -3839,9 +3869,9 @@
     },
     {
       "id": "rei/the-mending-basket",
-      "parent": "the-town/the-lanternstep-parlor",
+      "parent": "wright/the-lanternstep-parlor",
       "chain": [
-        "the-town/the-lanternstep-parlor",
+        "wright/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -3850,9 +3880,9 @@
     },
     {
       "id": "rei/the-pocket-lantern-for-hal",
-      "parent": "the-town/the-lanternstep-parlor",
+      "parent": "wright/the-lanternstep-parlor",
       "chain": [
-        "the-town/the-lanternstep-parlor",
+        "wright/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -3902,9 +3932,9 @@
     },
     {
       "id": "rei/the-small-kitchen",
-      "parent": "the-town/the-lanternstep-parlor",
+      "parent": "wright/the-lanternstep-parlor",
       "chain": [
-        "the-town/the-lanternstep-parlor",
+        "wright/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -3993,7 +4023,7 @@
       "parent": "rei/the-front-window-worktable",
       "chain": [
         "rei/the-front-window-worktable",
-        "the-town/the-lanternstep-parlor",
+        "wright/the-lanternstep-parlor",
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
@@ -5250,25 +5280,6 @@
       "parent": "the-town/postmark-edge",
       "chain": [
         "the-town/postmark-edge",
-        "the-town/the-keeping-works",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "the-town/available",
-      "parent": "the-town/postmark-derived",
-      "chain": [
-        "the-town/postmark-derived",
-        "the-town/the-keeping-works",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "the-town/available-engine",
-      "parent": "the-town/available",
-      "chain": [
-        "the-town/available",
-        "the-town/postmark-derived",
         "the-town/the-keeping-works",
         "the-town/let-there-be-light"
       ]
@@ -7163,25 +7174,6 @@
       ]
     },
     {
-      "id": "the-town/subscribe",
-      "parent": "the-town/postmark-edge",
-      "chain": [
-        "the-town/postmark-edge",
-        "the-town/the-keeping-works",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "the-town/subscription",
-      "parent": "the-town/emission",
-      "chain": [
-        "the-town/emission",
-        "the-town/postmark-node",
-        "the-town/the-keeping-works",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "the-town/sunset-scope",
       "parent": "the-town/sunset-slot",
       "chain": [
@@ -8278,16 +8270,6 @@
       "id": "the-town/the-keeping-works",
       "parent": "the-town/let-there-be-light",
       "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "the-town/the-lanternstep-parlor",
-      "parent": "rei/the-lanternstep-house",
-      "chain": [
-        "rei/the-lanternstep-house",
-        "rei/the-lanternstep-house-parcel",
-        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
@@ -10800,6 +10782,16 @@
         "wright/the-trueing-house",
         "wright/the-trueing-house-parcel",
         "wright/the-trueing-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "wright/the-lanternstep-parlor",
+      "parent": "rei/the-lanternstep-house",
+      "chain": [
+        "rei/the-lanternstep-house",
+        "rei/the-lanternstep-house-parcel",
+        "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
     },
