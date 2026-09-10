@@ -939,9 +939,23 @@ export function settlementSweep({
   // two were the same thing: a file 33 days behind the town stood the wall down
   // for 21 households and looked exactly like a clean crossing.
   //
-  // So the crossing's pinned town sha is the discriminator. Given one, a
-  // registry derived from any other tree refuses the crossing by name, and an
-  // UNSTAMPED registry refuses too. Given none, nothing changes.
+  // So the discriminator is whether anything CHECKED the registry against the
+  // live town on this crossing — a fact only the office knows, because the
+  // office holds the town clone. It states it, and this side reads the
+  // statement: `{ verifiedAt }` proceeds whatever stamp the file carries,
+  // `{ unverified }` proceeds and the caller is loud about it, and nothing at
+  // all leaves the guard unarmed. See refuseStaleHouseholds in marks-fold.mjs.
+  //
+  // CORRECTED 2026-09-09, and this comment is the last citation of a repealed
+  // rule in either tree. It read: "the crossing's pinned town sha is the
+  // discriminator. Given one, a registry derived from any other tree refuses the
+  // crossing by name." That rule compared the file's stamp to the crossing's pin
+  // for EQUALITY, and the export rewrites the file only when the mapping moves
+  // while the town takes 150-300 commits a day — so it refused every crossing
+  // after a quiet one, and the town would have settled only on the days somebody
+  // joined. What survives of it is narrow and is stated at the call below: a
+  // claim of VERIFIED over a registry the export has never written cannot be
+  // true, because a verified registry is a written one.
   //
   // CHECKED HERE, AND ALSO IN `foldRefInner`. The second call is not redundant
   // cover for a different ref: `foldRef` has ONE call site and it archives
