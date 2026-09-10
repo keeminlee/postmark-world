@@ -16,7 +16,10 @@
 //   constitution. Two-precision geometry: the mark carries a COARSE bounding
 //   rect as the CLAIM and a `feature: <skeleton-feature-id>` link; skeleton.json
 //   remains beneath as the precise survey (followable through that link).
-// - `by: the-town` is the town-tier author (flagged reviewable — Wright's call).
+// - `by: the-town` is the town-tier author (flagged reviewable — Wright's call)
+//   for the features the town still holds. A feature whose MARK has passed to a
+//   household is SPOKEN FOR and is not regenerated — see the transferred-ground
+//   gate below (founder-ruled 2026-09-10).
 // - Pando is a horizon object, not heightfield ground (decision 008): its mark
 //   carries `far: true`, and the containment check exempts it (it sits beyond
 //   the world's ground extent by construction).
@@ -30,6 +33,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const DRY = process.argv.includes("--dry");
 const SKELETON = join(ROOT, "WORLD/skeleton.json");
+const ALL_MARKS = join(ROOT, "WORLD/marks");
 const MARKS_ROOT = join(ROOT, "WORLD/marks/let-there-be-light");
 const TODAY = "2026-07-22"; // the ruling date — deterministic, not wall-clock
 
@@ -86,6 +90,60 @@ function indexExistingDirs() {
   return bySlug;
 }
 const EXISTING = indexExistingDirs();
+
+// ---- the transferred-ground gate (founder-ruled 2026-09-10) ------------------
+// "the inlet is terrain; everything else is just a mark, and belongs to the
+// resident/household." A terrain mark may pass out of the town's hand by the
+// DEC-16 transfer act: the SURVEY beneath it stays the town's — the skeleton
+// entry, its geometry, its kind, everything this file extracts from — but the
+// CLAIM over that ground is now a household's record, and this generator has no
+// business rewriting it.
+//
+// WHAT GOES WRONG WITHOUT THIS GATE, measured on the first three (merrick's
+// footbridge, stone path and grove, 2026-09-10). indexExistingDirs() above
+// indexes ONLY `by: the-town` records, so a transferred mark drops out of it and
+// writeMarkRaw() falls back to `relDir` — the bare feature id at the root:
+//
+//   a mark ALREADY at the root (the grove, the stone path) is silently
+//   OVERWRITTEN, the household's record replaced by a town-authored one;
+//   a NESTED mark (the footbridge, under the inlet) gets a TWIN planted at the
+//   root while the household's copy stays where it is.
+//
+// Both print success. Neither is visible until someone reads the tree.
+//
+// KEYED ON THE `feature:` LINK, not on the slug. The link is the join between
+// the coarse claim and the precise survey (SCHEMA § the two-precision link), it
+// survives a transfer by that section's own ruling, and it is how the other
+// generator finds a record too (water-shapes-gen's recordPathFor). A slug key
+// could not do this job: `finn/the-still-reach` shares a leaf with the town's
+// own reach and would falsely gate it, which is the very confusion the index
+// above keeps its author check to avoid.
+//
+// The walk is over ALL of WORLD/marks, not just the root: a fossil transfer
+// leaves the directory in place (the freeze), but a post-freeze terrain mark
+// would file at WORLD/marks/<household>/<slug>, outside MARKS_ROOT entirely.
+function indexTransferredFeatures() {
+  const byFeature = new Map();               // feature id -> "<by>/<slug>"
+  const walk = (dir) => {
+    for (const e of readdirSync(dir)) {
+      const p = join(dir, e);
+      let st; try { st = statSync(p); } catch { continue; }
+      if (!st.isDirectory()) continue;
+      const mp = join(p, "mark.md");
+      if (existsSync(mp)) {
+        const text = readFileSync(mp, "utf8");
+        const feat = (text.match(/^feature:\s*(.+?)\s*$/m) || [])[1];
+        const by = (text.match(/^by:\s*(.+?)\s*$/m) || [])[1];
+        if (feat && by && by !== "the-town") byFeature.set(feat, `${by}/${e}`);
+      }
+      walk(p);
+    }
+  };
+  if (existsSync(ALL_MARKS)) walk(ALL_MARKS);
+  return byFeature;
+}
+const TRANSFERRED = indexTransferredFeatures();
+const skipped = [];
 
 // ---- coarse bounding rect from a feature's own geometry (the CLAIM) ----------
 function pointsOf(f) {
@@ -169,6 +227,7 @@ function writeRootAndTerrain() {
 
   // terrain marks, one per feature, directly under root
   for (const f of skeleton.features ?? []) {
+    if (TRANSFERRED.has(f.id)) { skipped.push([f.id, TRANSFERRED.get(f.id)]); continue; } // spoken for
     const box = boundingRect(f);
     if (!box) continue; // route/sea with no point geometry: skip point-claim (survey carries them)
     writeMarkRaw(f.id, {
@@ -178,6 +237,7 @@ function writeRootAndTerrain() {
   }
   // far features (Pando): horizon object, exempt from ground containment
   for (const f of skeleton.far_features ?? []) {
+    if (TRANSFERRED.has(f.id)) { skipped.push([f.id, TRANSFERRED.get(f.id)]); continue; } // spoken for
     const proj = projectHorizon(f);
     writeMarkRaw(f.id, {
       kind: "sited", by: "the-town", tier: "constitution", date: TODAY, far: true,
@@ -218,3 +278,7 @@ function writeMarkRaw(relDir, fm, body) {
 // ---- report ------------------------------------------------------------------
 console.log(`world-root-gen: ${written.length} record(s) ${DRY ? "(dry run)" : "written"} under WORLD/marks/let-there-be-light/`);
 for (const w of written) console.log(`  ${w.path}`);
+if (skipped.length) {
+  console.log(`\n${skipped.length} feature(s) SPOKEN FOR — the survey stays the town's, the claim is not the town's to write:`);
+  for (const [feature, owner] of skipped) console.log(`  ${feature} -> ${owner}`);
+}

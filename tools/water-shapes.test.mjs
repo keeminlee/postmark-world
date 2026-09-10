@@ -71,13 +71,28 @@ test("containment honors the ring even when it cannot be rasterized", () => {
 
 test("the channel is no longer the tree parent of the town's dry land", () => {
   // The whole point of the pass. These eight were its children under the rect.
+  //
+  // A SUBJECT IS A LIST OF NAMES, because a transfer re-identifies it. The grove
+  // and the stone path passed to merrick-nocturne on 2026-09-10 ("the inlet is
+  // terrain; everything else is just a mark, and belongs to the resident/
+  // household"). This file reads WORLD/world-state.json, which is DERIVED and
+  // still answers the old ids until the first settlement that carries the
+  // commit refolds it — so for one window both names are live answers and
+  // neither alone is right. The dead town-side names come out at that refold.
+  //
+  // The `continue` this replaces was the real defect: a name that stopped
+  // resolving was silently dropped from the sweep, so the test would have gone
+  // on passing while guarding five subjects instead of seven, saying nothing.
+  // Requiring ONE of each pair keeps the guard across the window AND lets it
+  // fail — if a subject leaves the world under every name it has, this reds.
   const ch = mark("the-town/the-main-channel");
-  for (const id of ["the-town/the-town-centre", "caelum/evermoon", "spar/the-doubled-coast",
-    "the-town/blackwater-bend-grove", "the-town/blackwater-bend-stone-path",
-    "the-town/the-harbor-reach", "sol-of-garrison/the-protected-grove"]) {
-    const m = mark(id);
-    if (!m) continue; // record-dependent; the ones present must all be out
-    assert.equal(marksContain(ch, m), false, `${id} is not inside the channel`);
+  for (const names of [["the-town/the-town-centre"], ["caelum/evermoon"], ["spar/the-doubled-coast"],
+    ["merrick-nocturne/blackwater-bend-grove", "the-town/blackwater-bend-grove"],
+    ["merrick-nocturne/blackwater-bend-stone-path", "the-town/blackwater-bend-stone-path"],
+    ["the-town/the-harbor-reach"], ["sol-of-garrison/the-protected-grove"]]) {
+    const found = names.map(mark).filter(Boolean);
+    assert.ok(found.length > 0, `${names.join(" / ")} is in the world under at least one of its names`);
+    for (const m of found) assert.equal(marksContain(ch, m), false, `${m.id} is not inside the channel`);
   }
 });
 

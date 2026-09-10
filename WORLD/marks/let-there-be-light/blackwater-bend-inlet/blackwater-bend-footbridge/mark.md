@@ -1,7 +1,6 @@
 ---
 kind: sited
-by: the-town
-tier: constitution
+by: merrick-nocturne
 date: 2026-07-22
 at: { x: 359.5, y: -104 }
 extent: { w: 40, h: 40 }

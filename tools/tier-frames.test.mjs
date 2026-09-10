@@ -657,7 +657,46 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // leaving carries its own act — nyx's room did exactly this chain).
       if (/^(settlement: |withdraw|amend: )/.test(subject)) lawfullyWithdrawn.add(id);
     }
-    assert.deepEqual(lostIds.filter((i) => !lawfullyWithdrawn.has(i)), [],
+
+    // ── RE-IDENTIFICATION IS NOT A LOSS (DEC-16, first met here 2026-09-10) ──
+    //
+    // A transfer is a RE-IDENTIFICATION, not a retirement plus a claim: `by:`
+    // and the slug move together, the leaf never changes, and the record stands
+    // exactly where it stood. So the old id leaves the census while NOTHING
+    // leaves the world — and the two clauses above cannot see it. There is no
+    // deleting commit to query (the file was edited, not deleted), and a hand
+    // list would be the constant this test spent three amendments retiring.
+    //
+    // DERIVED, from the same signature the office's own replay reads off the
+    // filing — "the same path at both tags, a different id standing there":
+    // a lost id whose directory still holds a record, with the same leaf slug
+    // and a different author, has changed hands. A path that went empty is
+    // still a loss; a leaf that changed is still a retirement (which is
+    // precisely what replay-ingest refuses to read as a transfer).
+    //
+    // This does not weaken the geometry gates below — it STRENGTHENS them. The
+    // re-identified record is looked up in B under its new name rather than
+    // skipped, so a transfer that also moved a mark, resized it, or re-framed
+    // it still fails loud. First customers: merrick-nocturne's footbridge,
+    // stone path and grove (founder, 2026-09-10 — "the inlet is terrain;
+    // everything else is just a mark, and belongs to the resident/household"),
+    // the first transfer of marks that existed at this falsifier's baseline.
+    const marksRootB = join(ROOT, "WORLD", "marks").replace(/\\/g, "/");
+    const bByPath = new Map(B.map((m) => [String(m._dir ?? "").replace(/\\/g, "/").slice(marksRootB.length), m]));
+    const reIdentified = new Map();                       // old id -> new id
+    for (const id of lostIds) {
+      if (lawfullyWithdrawn.has(id)) continue;
+      const a = A.find((m) => m.id === id);
+      const dirA = String(a?._dir ?? "").replace(/\\/g, "/");
+      if (!dirA.startsWith(marksRootA)) continue;
+      const standing = bByPath.get(dirA.slice(marksRootA.length));
+      if (!standing) continue;                            // the path went empty — a real loss
+      if (standing.slug !== a.slug) continue;             // the leaf changed — a retirement, not a transfer
+      if (standing.by === a.by) continue;                 // same author: not a change of hands at all
+      reIdentified.set(id, standing.id);
+    }
+
+    assert.deepEqual(lostIds.filter((i) => !lawfullyWithdrawn.has(i) && !reIdentified.has(i)), [],
       "no record was lost without a declaring act");
     // All A-side positions below are looked up in B; the withdrawn ids are
     // predicated (no `at`), so the geometry loop never meets them — asserted
@@ -687,7 +726,11 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       extent: JSON.stringify(m.extent ? { w: m.extent.w, h: m.extent.h } : null),
       points: JSON.stringify(m.points ?? null),
     }]));
-    const pa = posOf(A), pb = posOf(B);
+    const pa = posOf(A), pbById = posOf(B);
+    // A record that changed hands is looked up under the name it carries now, so
+    // every gate below asks the same question of it that it asks of everyone
+    // else. A transfer that moved a mark still reads as a move.
+    const pb = new Map([...pbById, ...[...reIdentified].flatMap(([o, n]) => (pbById.has(n) ? [[o, pbById.get(n)]] : []))]);
     assert.ok(pa.size > 300, `enough positioned records to be worth checking (${pa.size})`);
     // NOTHING MOVES WITHOUT A DECLARING ACT (the loss check's doctrine,
     // extended to geometry 2026-08-17; first lawful customer the same day):
@@ -838,7 +881,10 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // the sentence is about — are all still checked.
       if (!m.at) continue;
       const before = old.placementParent(m, A);
-      const after = placementParent(pb.has(m.id) ? B.find((x) => x.id === m.id) : m, B);
+      // a re-identified record is asked under the name it carries now (the
+      // fallback to the A-side record stays for a mark the B side never had)
+      const bId = reIdentified.get(m.id) ?? m.id;
+      const after = placementParent(B.find((x) => x.id === bId) ?? m, B);
       // WITHIN-HOUSEHOLD RE-HOMES ARE ALLOWED (founder ruling, Keemin 2026-08-22):
       // when a household publishes a new container over its own ground, the mark
       // it re-homes shares that household, and the move is fully reversible by
