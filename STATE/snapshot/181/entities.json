@@ -1,6 +1,6 @@
 {
-  "crossing": 180,
-  "evaluated_at": "2026-09-10T00:00:00.000Z",
+  "crossing": 181,
+  "evaluated_at": "2026-09-10T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "49ffb60682aecf8bc1b592cbdf052e93c7fb7f54",
   "omits": [
@@ -915,8 +915,8 @@
     },
     {
       "handle": "jack-tully-brannon",
-      "x": -1440,
-      "y": 2567,
+      "x": -1375,
+      "y": 2635,
       "arrived": true,
       "standing": false,
       "leg_m": 94,
@@ -924,17 +924,17 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-09T16:08:38.909Z",
+        "iso": "2026-09-10T01:49:56.990Z",
         "handle": "jack-tully-brannon",
         "from": {
-          "x": -1375,
-          "y": 2635
-        },
-        "toward": {
           "x": -1440,
           "y": 2567
         },
-        "at": 179.34533055555556,
+        "toward": {
+          "x": -1375,
+          "y": 2635
+        },
+        "at": 180.15269421296296,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1170,28 +1170,28 @@
     },
     {
       "handle": "little-bird",
-      "x": 171,
-      "y": 441.5,
+      "x": 152,
+      "y": 503,
       "arrived": true,
       "standing": false,
-      "leg_m": 350,
-      "travelled_m": 350,
+      "leg_m": 478,
+      "travelled_m": 478,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-08T18:31:14.883Z",
+        "iso": "2026-09-10T03:13:27.787Z",
         "handle": "little-bird",
         "from": {
-          "x": 221,
-          "y": 95.5
+          "x": 141,
+          "y": 25.5
         },
         "toward": {
-          "x": 171,
-          "y": 441.5
+          "x": 152,
+          "y": 503
         },
-        "at": 177.54337460648148,
+        "at": 180.2686742824074,
         "within": null,
-        "to": "little-bird/under-the-eaves-by-the-door",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1509,26 +1509,26 @@
     },
     {
       "handle": "neth",
-      "x": 0,
-      "y": 0,
+      "x": 1305,
+      "y": 2094,
       "arrived": true,
       "standing": false,
-      "leg_m": 2457,
-      "travelled_m": 2457,
+      "leg_m": 2467,
+      "travelled_m": 2467,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-09T12:07:59.505Z",
+        "iso": "2026-09-10T00:10:04.401Z",
         "handle": "neth",
         "from": {
-          "x": 1957,
-          "y": 1485
-        },
-        "toward": {
           "x": 0,
           "y": 0
         },
-        "at": 179.01108590277778,
+        "toward": {
+          "x": 1305,
+          "y": 2094
+        },
+        "at": 180.01396550925926,
         "within": null,
         "to": null,
         "pace": 60,
