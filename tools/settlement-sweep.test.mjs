@@ -1240,9 +1240,17 @@ test("THE CLASS (S45's shape): a stale sketchbook crosses a NEW `*.mjs text eol=
   // exactly ONE of the box's 33 sketchbooks refused on 2026-08-23 while the
   // rest crossed over the same broken blob — and why the assertion here is
   // that the crossing completes and names correctly, not that it wedges.
-  // (Shape two's REFUSAL path is deterministic and falsified separately: when
-  // the sketchbook wrote the file, the blobs differ, the checkout must rewrite
-  // it, and the boundary shows every time.)
+  // (Shape two's REFUSAL path is falsified separately, below. It is NOT
+  // deterministic in git — this comment used to claim it was, on the argument
+  // that differing blobs force the checkout to rewrite the file and so the
+  // boundary shows every time. Measured 2026-09-10 on a loaded box: the raw
+  // rebase completed instead of stopping in 1 run of 60, and the sweep
+  // completed instead of refusing in 4 of 100. A rewritten file is still a
+  // file git wrote itself and recorded a stat for, and an eol violation is
+  // invisible to stat by construction. So the sweep now makes that
+  // discrimination from the two BLOBS before the replay is asked anything,
+  // and the falsifier below asserts a refusal the crossing owns rather than
+  // one git happens to trip over.)
   assert.ok(seat.eol_crossed.every((path) => path === "tools/relic.mjs"),
     "if the replay met the boundary it named exactly what it carried, and nothing else");
   assert.deepEqual(report.eol_boundary, ["tools/relic.mjs"],
@@ -1272,8 +1280,15 @@ test("FALSIFIER (the discrimination, rebase side): a sketchbook that WROTE the e
   commit("gitattributes: tools pinned LF", ".gitattributes");
 
   const stakesPath = stakesFile(t, repo, [{ holder: "s1", mark: "alice/alice-market", n: 5, weight: 10 }]);
+  // The refusal this asserts is the CROSSING'S, read off the two blobs, not
+  // git's stop read off its own stat cache. Until 2026-09-10 this asserted the
+  // latter (`did not rebase cleanly`), and it was a 1-in-25 red on a loaded
+  // box — green 12/12 in isolation, which is what made it look deterministic.
+  // The trees are identical in both outcomes; only git's decision to re-read
+  // content differs. See the note in settlement-sweep.mjs beside `eolBoundary`.
   assert.throws(() => settlementSweep({ repo, stakesPath }), (error) => {
-    assert.match(error.message, /draft\/house-a did not rebase cleanly/, "it refuses by branch name");
+    assert.match(error.message, /^draft\/house-a wrote a path whose blob violates main's own eol law/,
+      "it refuses by branch name");
     assert.equal(error.phase, "rebase", "and the refusal carries its phase, separate from any journal line");
     assert.deepEqual(error.eol_dirt, ["tools/relic.mjs"], "naming the path it declined to carry");
     return true;

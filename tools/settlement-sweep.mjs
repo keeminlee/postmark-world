@@ -672,7 +672,7 @@ function removedAtFactory(removed) {
   return (path) => files.has(path) || dirs.some((d) => path === d || path.startsWith(`${d}/`));
 }
 
-function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable, removed = []) {
+function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable, removed = [], eolBoundary = []) {
   const receipts = [];
   const removedAt = removedAtFactory(removed);
   for (const branch of branches) {
@@ -783,6 +783,45 @@ function rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettabl
           normalizedTip = commit(wt, settled, `settlement: normalize ${settled.length} path(s) to ${mainBranch}'s line-ending law`);
           crossed.push(...settled);
         }
+      }
+
+      // ── the boundary, shape two, DECIDED FROM BLOBS (2026-09-10) ───────────
+      // Read this beside the note thirty lines down and the one in
+      // clearEolOnlyDirt: all three are the same warning, at three heights.
+      //
+      // Shape two used to be discovered only by letting `git rebase` trip over
+      // it. It does not always trip. An eol violation is invisible to `stat` BY
+      // CONSTRUCTION — the file on disk holds the blob's own bytes, at the
+      // blob's own size, written by git's own checkout, and only the clean
+      // filter on the way back IN disagrees. So whether the replay stops comes
+      // down to whether git re-read the content or trusted the stat its own
+      // checkout had just recorded, which is a timing question, not a fact
+      // about the tree. clearEolOnlyDirt already says this out loud one level
+      // down ("Ask git what it would store, not `git status`") and asks
+      // hash-object instead. This step was still asking git status, by proxy.
+      //
+      // MEASURED, on a loaded box, on the exact shape of the falsifier below:
+      // the sweep completed instead of refusing in 4 of 100 runs, and stripped
+      // to raw git (worktree add; rebase -X theirs main) the rebase completed
+      // in 1 of 60. Nothing about the trees differed between the runs.
+      //
+      // So the discrimination is made here, from the two blobs, before the
+      // replay is asked anything. A path is on main's own eol boundary and the
+      // sketchbook holds a DIFFERENT blob for it: the sketchbook wrote it, it
+      // can never be carried inert (assume-unchanged would drop that write),
+      // and the crossing refuses by name — every time, not four times in five.
+      // A path the sketchbook did not write still has the same blob on both
+      // sides, is still inert, and still takes the replay path below unchanged.
+      {
+        const wrote = eolBoundary.filter((path) => {
+          const onBranch = blobAt(repo, branch, path);
+          return Boolean(onBranch) && onBranch !== blobAt(repo, mainBranch, path);
+        });
+        if (wrote.length)
+          throw refusal(
+            `${branch} wrote a path whose blob violates ${mainBranch}'s own eol law and cannot be carried inert: ${wrote[0]}`,
+            { phase: "rebase", branch, eol_dirt: wrote },
+          );
       }
 
       try {
@@ -1488,7 +1527,7 @@ export function settlementSweep({
   }
   branches.sort();
   const removed = [...unpublished.map((item) => item.path), ...withdrawn.map((item) => dirname(item.path))];
-  const rebased = rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable, removed);
+  const rebased = rebaseDrafts(repo, mainBranch, branches, returnedByHousehold, resettable, removed, gate.irreconcilable);
 
   return {
     main: mainCommit,
