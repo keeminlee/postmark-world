@@ -533,6 +533,12 @@ export const PARCEL_CAP_LAW_DATE = "2026-07-30"; // claims dated strictly after 
 // but wears a later date — the drain queue dates a parcel at seating, not at
 // asking. Case-by-case, dated, quoted; this map is the record.
 export const PARCEL_CAP_EXCEPTIONS = new Map([
+  ["histor-reeves/the-gauge-house-parcel",
+    "2026-09-09 Keemin: “let's let the reeves have their fifth.” — the Reeves household (gh:276169629) "
+    + "holds four parcels dated 2026-07-24, prior estate that stands and is COUNTED; the gauge house is "
+    + "their fifth, claimed 2026-09-08, and it is post-law behind a count of four. It was admitted only "
+    + "because the directory walk happened to reach it before four of the pre-law four; under claim order "
+    + "it is refused, and this entry is the founder's word that it stands anyway"],
   ["caelum-reeves/the-still-house-parcel",
     "2026-08-10 Keemin: “They have 4 parcels, it was an early exception before we made the 3 max rule.” — the comment above always said the Reeves' four stand; the still-house is that fourth, dated late by the drain backlog"],
 ]);
@@ -614,11 +620,95 @@ export const PARCEL_EXTENT_M = 25;
  * order-dependent there is one sketchbook's several simultaneous parcel claims,
  * not the town's standing estate.
  */
+/**
+ * THE CLAIM COMPARATOR. Earlier claim first; ties break on the whole id.
+ *
+ * BY PARSED INSTANT, NOT BY STRING, and that is a correctness fix rather than a
+ * preference. `isValidMarkDate` accepts a UTC OFFSET — `2026-07-23T14:30:00+05:30`
+ * is one of its own accepted forms — and that instant is 2026-07-23T09:00Z, which
+ * a string comparison sorts AFTER `2026-07-23T10:00:00Z`. Lexicographic order is
+ * right across plain days and wrong the first time a household claims from a
+ * machine with a timezone, which is a defect that would arrive silently, on
+ * somebody's deed.
+ *
+ * A BARE DAY PARSES TO ITS MIDNIGHT UTC, so `2026-09-01` sorts before every
+ * stamped claim on 2026-09-01. That is deliberate: the bare form is the older
+ * door's shape, its hour is unknown, and treating an unknown hour as the
+ * earliest is the reading that leaves standing ground standing.
+ *
+ * UNPARSEABLE dates fall back to the string, then to the id, so the comparator
+ * is total and never returns NaN into a sort. A mark with no date at all sorts
+ * first, which matches how `> PARCEL_CAP_LAW_DATE` already treats it: an absent
+ * date is not post-law, so it is never the refusal.
+ */
+export function compareClaimOrder(a, b) {
+  const ta = Date.parse(String(a?.date ?? ""));
+  const tb = Date.parse(String(b?.date ?? ""));
+  if (Number.isFinite(ta) && Number.isFinite(tb) && ta !== tb) return ta - tb;
+  if (Number.isFinite(ta) !== Number.isFinite(tb)) return Number.isFinite(ta) ? 1 : -1;
+  const sa = String(a?.date ?? ""), sb = String(b?.date ?? "");
+  if (sa !== sb) return sa.localeCompare(sb);
+  return String(a?.id ?? "").localeCompare(String(b?.id ?? ""));
+}
+
 export function parcelsInClaimOrder(byId) {
-  return [...byId.values()]
-    .filter((mk) => mk.kind === "parcel")
-    .sort((a, b) => String(a.date ?? "").localeCompare(String(b.date ?? ""))
-      || String(a.id ?? "").localeCompare(String(b.id ?? "")));
+  return [...byId.values()].filter((mk) => mk.kind === "parcel").sort(compareClaimOrder);
+}
+
+/**
+ * THE SAME ORDER FOR `admitDelta`'S LOOP — required, not symmetric-for-its-own-
+ * sake (the solo-households reviewer, 2026-09-09).
+ *
+ * That loop's cap counts from `base.parcelsByCred`, this fold's own admitted
+ * count, so the standing estate is already deterministic once the fold above is.
+ * What is NOT is a sketchbook carrying several parcels at once: whichever the
+ * candidate array happens to list fourth is the one refused. It also decides
+ * duplicate-id resolution and which of two colliding candidate parcels wins,
+ * both by arrival.
+ *
+ * The WHOLE candidate list is ordered, not just its parcels, because the loop
+ * interleaves them: a sited mark's view is built against the parcels admitted
+ * BEFORE it, so ordering parcels among themselves while leaving the rest in
+ * arrival order would make one half of the loop a function of the record and the
+ * other half a function of the array. One order for the loop, or none.
+ */
+export function candidatesInClaimOrder(candidates) {
+  return [...(candidates ?? [])].sort(compareClaimOrder);
+}
+
+// ── THE REGISTRY MAY NOT BE STALE, AND THAT IS A REFUSAL ─────────────────────
+//                                                     (founder, 2026-09-09)
+//
+//   "please make sure this incident cannot happen again by construction."
+//
+// The incident: `WORLD/households.json` sat 33 days behind the town while this
+// fold, the lint and the authorship wall read it as live. Refreshing it every
+// crossing (postmark-office `deploy/settlement-auto.sh`) is the mechanism; this
+// is the CONSTRUCTION. The registry carries `town_sha`, the commit of the town
+// it was derived from, and a reader handed the crossing's own pinned town sha
+// REFUSES when the two disagree.
+//
+// EXACT MATCH, not "not older". The founder's words allow either; exact is
+// strictly stronger and needs no ancestry walk, and there is no honest reason
+// for a crossing to fold a registry derived from a town it did not pin —
+// including a NEWER one, which would mean somebody hand-ran the export against a
+// tree this crossing never read.
+//
+// AN ABSENT STAMP REFUSES TOO. That is the pre-2026-09-09 file exactly, and the
+// whole point is that its absence must stop being invisible.
+//
+// The pin is OPTIONAL: a caller that passes none gets today's behaviour, so a
+// hand-run against any town still works. The crossing always passes one.
+export function refuseStaleHouseholds(registry, pinnedTownSha, where = "WORLD/households.json") {
+  if (!pinnedTownSha) return null;
+  const stamped = registry?.town_sha ?? null;
+  if (stamped === pinnedTownSha) return null;
+  return `${where} was derived from town ${stamped ?? "an UNSTAMPED tree"}, and this crossing pinned town `
+    + `${pinnedTownSha}. Refusing rather than grouping households from a registry nobody re-derived: the `
+    + `registry is refreshed by the crossing itself (postmark-office deploy/settlement-auto.sh), so a `
+    + `mismatch means the refresh did not run, or ran against a different town. A stale registry files one `
+    + `household's handles as strangers, which silently ungates the parcel cap and stands the authorship `
+    + `wall down.`;
 }
 
 /**
@@ -1338,7 +1428,14 @@ if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
   // two grains fold identically, which is checked in world-carve-live.test.mjs —
   // but that is a fact about today's marks, not a property of the key.
   const hhPath = opt("--households", join(MARKS_DIR, "..", "households.json"));
-  const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
+  const registryFile = existsSync(hhPath) ? JSON.parse(readFileSync(hhPath, "utf8")) : null;
+  // `--town-sha <sha>`: the town this crossing pinned. Given it, the fold
+  // REFUSES a registry derived from any other tree — see refuseStaleHouseholds
+  // above for why that is a construction and not a warning. Absent, nothing
+  // changes, so every hand-run still works exactly as it did.
+  const staleRegistry = refuseStaleHouseholds(registryFile, opt("--town-sha", null), hhPath);
+  if (staleRegistry) { console.error(`REFUSING TO FOLD — ${staleRegistry}`); process.exit(1); }
+  const households = registryFile?.households ?? null;
   // fanup: legacy is the published default through the SHADOW CYCLE (step-1
   // promotion, 2026-08-18); pass --fanup flow to publish the conserved flow.
   // The flip to flow-as-default is the founder's word after the shadow diffs
@@ -1569,7 +1666,10 @@ export function admitDelta(candidates, base, { dials = DIALS } = {}) {
   const replaced = new Set(candidates.filter((c) => c._replacing).map((c) => c.id));
   const deltaWorld = [...[...base.byId.values()].filter((m) => !replaced.has(m.id)), ...candidates];
 
-  for (const mk of candidates) {
+  // IN CLAIM ORDER — see candidatesInClaimOrder for why the whole list and not
+  // only its parcels. Without it, which of a sketchbook's several parcels is
+  // refused is decided by the order the delta happened to list them in.
+  for (const mk of candidatesInClaimOrder(candidates)) {
     if (mk._error) { errors.push({ mark: mk.id, error: mk._error }); continue; }
     // DUPLICATE, in the delta's own terms: two candidates claiming one id, or a
     // candidate ADDING an id canon already holds. A candidate that REPLACES its

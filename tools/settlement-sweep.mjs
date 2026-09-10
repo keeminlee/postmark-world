@@ -28,11 +28,15 @@ import {
   // left with the re-home pass on 2026-08-25: re-framing a mark's numbers was
   // something only a MOVE ever needed, and the settlement no longer moves one.
   admissionBase, admitDelta,   // §4: the delta admission, in place of a fold per sketchbook
+  refuseStaleHouseholds,       // the registry-freshness construction (2026-09-09)
 } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const REGISTRY_REL = "WORLD/settlement-publications.json";
+// Set once per `settlementSweep` run; read by `foldRefInner`. Null means no pin
+// was given and the registry-freshness construction is not armed.
+let pinnedTownSha = null;
 // the named door a refusal leaves by, so a receipt never has to guess which
 // stderr line was the cause
 export const REFUSAL_SENTINEL = "SETTLEMENT-SWEEP-REFUSAL";
@@ -280,7 +284,13 @@ function foldRefInner(repo, ref, stakes) {
     const prevPath = join(dir, "WORLD", "world-state.json");
     const prev = existsSync(prevPath) ? JSON.parse(readFileSync(prevPath, "utf8")) : null;
     const hhPath = join(dir, "WORLD", "households.json");
-    const households = existsSync(hhPath) ? (JSON.parse(readFileSync(hhPath, "utf8")).households ?? null) : null;
+    const registryFile = existsSync(hhPath) ? JSON.parse(readFileSync(hhPath, "utf8")) : null;
+    // The same construction, on the tree actually being folded: a sketchbook
+    // branched off an older main carries an older registry, and folding it would
+    // group that household's marks by a map the crossing has already refused.
+    const staleHere = refuseStaleHouseholds(registryFile, pinnedTownSha, `${ref}:WORLD/households.json`);
+    if (staleHere) throw refusal(staleHere, { phase: "registry-freshness", ref });
+    const households = registryFile?.households ?? null;
     foldMeter.marks = Math.max(foldMeter.marks, marks.length);
     const state = fold({
       marks,
@@ -846,6 +856,12 @@ export function settlementSweep({
   repo = ROOT,
   stakesPath,
   mainBranch = "main",
+  // THE TOWN THIS CROSSING PINNED. The office chain passes it; a hand-run may
+  // not, and then the freshness construction is simply not armed. It is stored
+  // in a module-scoped `pinnedTownSha` rather than threaded through `foldRef`
+  // because the fold is reached through three call sites and a parameter added
+  // to two of them is a construction with a hole in it.
+  townSha = null,
   // ── THE FINAL GATE'S OWN QUARANTINE (founder-mandated 2026-08-27, defect 4) ─
   //
   //   "ONE BAD MARK REFUSES THE WHOLE TOWN — the final suite gate is all-or-
@@ -912,8 +928,33 @@ export function settlementSweep({
   // registry cannot bind is left alone — unverifiable is the status quo, never
   // a new refusal (registry lag must not strand the pen's own writes).
   let wallRegistry = { households: {}, logins: {} };
-  try { const r = JSON.parse(readAt(repo, mainBranch, "WORLD/households.json")); wallRegistry = { households: r.households ?? {}, logins: r.logins ?? {} }; }
+  let wallRegistryFile = null;
+  try { const r = JSON.parse(readAt(repo, mainBranch, "WORLD/households.json")); wallRegistryFile = r; wallRegistry = { households: r.households ?? {}, logins: r.logins ?? {} }; }
   catch { /* no registry on main → the wall stands down entirely */ }
+  // ── AND IT MAY NOT BE STALE (founder, 2026-09-09: "make sure this incident
+  // cannot happen again by construction") ──────────────────────────────────────
+  //
+  // The sentence above says a registry the wall cannot bind leaves a branch
+  // ALONE — "unverifiable is the status quo, never a new refusal". That is right
+  // for registry LAG and wrong for registry STALENESS, and until this line the
+  // two were the same thing: a file 33 days behind the town stood the wall down
+  // for 21 households and looked exactly like a clean crossing.
+  //
+  // So the crossing's pinned town sha is the discriminator. Given one, a
+  // registry derived from any other tree refuses the crossing by name, and an
+  // UNSTAMPED registry refuses too. Given none, nothing changes.
+  //
+  // CHECKED ONCE, HERE, AND IT COVERS THE FOLD. `foldRef` reads this same file
+  // out of each ref it archives; `refuseStaleHouseholds` is called there too,
+  // against the same pin, because a sketchbook behind main carries an older copy
+  // and the PR lane's path law is what keeps a head-side edit out, not this.
+  pinnedTownSha = townSha ?? null;
+  const staleWall = refuseStaleHouseholds(wallRegistryFile, pinnedTownSha, `${mainBranch}:WORLD/households.json`);
+  if (staleWall) throw refusal(staleWall, {
+    phase: "registry-freshness",
+    stamped: wallRegistryFile?.town_sha ?? null,
+    pinned: pinnedTownSha,
+  });
   const branchHouseholdOf = (branchName) =>
     wallRegistry.logins[branchName.slice("draft/".length).toLowerCase()] ?? null;
   const mainTree = git(repo, ["rev-parse", `${mainBranch}^{tree}`]).trim();
@@ -1445,6 +1486,7 @@ function parseCli(argv) {
     repo: opt("--repo", ROOT),
     stakesPath: opt("--stakes"),
     mainBranch: opt("--main", "main"),
+    townSha: opt("--town-sha", null),
     json: argv.includes("--json"),
     // One mark id per line — the isolation pass's instrument, and an operator's
     // hand-hold when the keeper already knows which mark is the problem.

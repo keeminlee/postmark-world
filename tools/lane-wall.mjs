@@ -59,11 +59,24 @@ const showAt = (ref, path) => git(["show", `${ref}:${path.replace(/\\/g, "/")}`]
 // (The path law below refuses any head-side registry edit regardless.)
 let registry = {};
 let logins = {};
+// THE STAMP THIS LANE READ, put on the surface (2026-09-09). It is NOT a refusal
+// here, deliberately, and the reason is worth writing down: this lane runs in CI
+// on somebody's pull request with no pinned town sha to compare against, so a
+// hard refusal would block every PR on a registry the PR author cannot refresh.
+// Its freshness is guaranteed one layer up instead — the settlement crossing
+// re-derives this file every crossing and REFUSES on a stale stamp, so the copy
+// on main that this lane reads cannot be stale without the town having stopped
+// settling, which is loud. What belongs here is the fact, said out loud, so a
+// refusal about an unbindable sketchbook can be read against the registry's age.
+let registryTownSha = null;
 try {
   const regPath = opt("--registry");
   const r = JSON.parse(regPath ? readFileSync(regPath, "utf8") : showAt(BASE, "WORLD/households.json"));
   registry = r.households ?? {};
   logins = r.logins ?? {};
+  registryTownSha = r.town_sha ?? null;
+  console.error(`[lane-wall] registry: ${Object.keys(registry).length} handle(s), ${Object.keys(logins).length} binding(s), `
+    + `derived from town ${registryTownSha ?? "an UNSTAMPED tree (this registry predates the crossing's refresh)"}`);
 } catch { /* no registry → every handle is unverifiable and will refuse below */ }
 
 const myKeys = new Set([`gh:${AUTHOR_ID}`, ...(AUTHOR_LOGIN ? [`login:${AUTHOR_LOGIN}`] : [])]);
@@ -86,7 +99,8 @@ if (baseBranch) {
   } else {
     const bound = logins[baseBranch.slice("draft/".length).toLowerCase()] ?? null;
     if (!bound) refuse(baseBranch, "this sketchbook is not in the registry",
-      "the logins map in WORLD/households.json binds branch names to households; it refreshes from the town pins");
+      "the logins map in WORLD/households.json binds branch names to households; the settlement crossing "
+      + `re-derives it from the town every crossing (this copy: town ${registryTownSha ?? "UNSTAMPED"})`);
     else if (!myKeys.has(bound)) refuse(baseBranch, "this sketchbook is not yours",
       `${baseBranch} belongs to ${bound}; yours is draft/${AUTHOR_LOGIN || "<your-github-login>"}`);
   }
