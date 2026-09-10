@@ -26,7 +26,7 @@ import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadMarks } from "./marks-fold.mjs";
+import { loadMarks, currentMarkId, loadReIdentifications } from "./marks-fold.mjs";
 import { overlapArea, polygonOf, polygonBBox, ringMatchesClaim, rect, rectInsideRing, ringsDisjoint } from "./geometry.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -39,6 +39,12 @@ const bySlug = (slug) => marks.find((m) => m.slug === slug);
 // what the generator WROTE matches what the record says, so the file on disk is
 // the thing under test.
 const OUTSIDERS = JSON.parse(readFileSync(join(ROOT, "WORLD/region-outsiders.json"), "utf8"));
+// the list is COMMITTED and refolded only at the crossing; `marks` above is a fresh
+// fold. A mark that changed hands in between is named differently on each side, so
+// every row's id is said in the names marks carry today before it is matched against
+// one (the class fix, 2026-09-10).
+const HOPS = loadReIdentifications();
+const outsiderRowFor = (id) => OUTSIDERS.rows.find((r) => currentMarkId(r.mark, HOPS) === currentMarkId(id, HOPS));
 
 // THE ROSTER. tools/founding-act.mjs (town repo) names thirteen founding targets;
 // twelve of them are regions the atlas draws a wash for, and those twelve get
@@ -186,7 +192,7 @@ test("THE NAMED CASE: sable is on the heads-up list, by name, with his ground un
   assert.equal(parcel.by, "sable");
   assert.ok(groundUnder(gardens.id).some((m) => m.id === parcel.id), "…still standing in the gardens' subtree — the tree did not change, the boundary did");
 
-  const row = OUTSIDERS.rows.find((r) => r.mark === parcel.id);
+  const row = outsiderRowFor(parcel.id);
   assert.ok(row, "sable's parcel must be named on the outsider list — he is the known case the old bend was written for");
   assert.equal(row.resident, "sable");
   assert.equal(row.region, gardens.id);

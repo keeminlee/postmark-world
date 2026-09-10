@@ -1,6 +1,7 @@
 ---
 kind: sited
 by: wright
+formerly: the-town/the-cellar-door
 class: portal-ground
 date: 2026-08-26
 at: { x: 1083, y: -792 }

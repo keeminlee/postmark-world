@@ -36,7 +36,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, renameSync, 
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { loadMarks, placementParent, tierRank, standingRank, TIER_RANK, COORDS_FIELD, COORDS_RELATIVE } from "./marks-fold.mjs";
+import { loadMarks, placementParent, tierRank, standingRank, TIER_RANK, COORDS_FIELD, COORDS_RELATIVE, currentMarkId, loadReIdentifications } from "./marks-fold.mjs";
 import { markStanding, standingHouseholdOf } from "./mark-standing.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -47,8 +47,16 @@ const ROOT = join(HERE, "..");
 // except — but the ref-diff falsifier below still needs it: a region re-shape
 // legitimately moves `placementParent` for the marks it names, and that is the
 // re-shape arriving, not a regression in the tier binding.
+// Every id below is said in ONE vocabulary — the names marks carry today. The list is
+// a COMMITTED derived artifact, refolded only at the crossing, and the `m.id` it is
+// asked about comes off a BASELINE checkout, so the two are read at different instants
+// and a mark that changed hands in between is named differently on each side. Without
+// this the exemption silently stops applying to a transferred mark and the falsifier
+// reds on a transfer nobody did anything wrong in (the class fix, 2026-09-10).
+const HOPS = loadReIdentifications();
 const DISPLACED_BY_DECLARED_ACT = new Set(
-  (JSON.parse(readFileSync(join(HERE, "..", "WORLD/region-outsiders.json"), "utf8")).rows ?? []).map((r) => r.mark));
+  (JSON.parse(readFileSync(join(HERE, "..", "WORLD/region-outsiders.json"), "utf8")).rows ?? [])
+    .map((r) => currentMarkId(r.mark, HOPS)));
 const LINT = join(HERE, "mark-lint.mjs");
 
 // The household a handle belongs to — the town's own registry (WORLD/households.json,
@@ -877,7 +885,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // A mark whose placementParent moved and is NOT on the list still fails,
       // which is the whole point — the exemption comes from the declared act's
       // own receipt and from nowhere softer.
-      if (DISPLACED_BY_DECLARED_ACT.has(m.id)) {
+      if (DISPLACED_BY_DECLARED_ACT.has(currentMarkId(m.id, HOPS))) {
         const bRec = B.find((x) => x.id === m.id);
         assert.equal(bRec?._parentMarkId, m._parentMarkId,
           `${m.id} is displaced by the re-shape, but its FILING changed too — the pivot moves boundaries, never anyone's paper`);
