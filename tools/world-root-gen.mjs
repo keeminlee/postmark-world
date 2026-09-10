@@ -27,7 +27,7 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { COORDS_FIELD, COORDS_RELATIVE } from "./marks-fold.mjs";
+import { COORDS_FIELD, COORDS_RELATIVE, parseRecord } from "./marks-fold.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -122,8 +122,24 @@ const EXISTING = indexExistingDirs();
 // The walk is over ALL of WORLD/marks, not just the root: a fossil transfer
 // leaves the directory in place (the freeze), but a post-freeze terrain mark
 // would file at WORLD/marks/<household>/<slug>, outside MARKS_ROOT entirely.
-function indexTransferredFeatures() {
-  const byFeature = new Map();               // feature id -> "<by>/<slug>"
+//
+// THE FIELD IS READ FROM THE FRONTMATTER, NOT FOUND IN THE FILE (hardened
+// 2026-09-10, on review). A `/^feature:.../m` scan over the whole text also
+// matches a line in a BODY, and this gate turns that into a refusal to write:
+// a passer-by's ordinary mark whose prose happens to contain a line reading
+// `feature: blackwater-bend-grove` would make the generator decline to write
+// the town's own grove and say the grove was spoken for. So the record is
+// parsed and the field is read where the schema puts it. (The same looseness
+// still sits in water-shapes-gen's recordPathFor, which this gate is otherwise
+// modelled on; it is noted rather than fixed here, being that tool's own.)
+//
+// AND A FEATURE IS CLAIMED ONCE. recordPathFor refuses on `hits.length !== 1`
+// for exactly this reason: two records claiming one survey entry is an
+// ambiguous world, and a silent last-wins would pick a winner by directory
+// order. Two claims on one feature is the twin condition this gate exists to
+// prevent, so meeting one already planted is a refusal, not a shrug.
+function indexFeatureClaims() {
+  const claims = new Map();                  // feature id -> [{ by, slug, rel }]
   const walk = (dir) => {
     for (const e of readdirSync(dir)) {
       const p = join(dir, e);
@@ -131,18 +147,36 @@ function indexTransferredFeatures() {
       if (!st.isDirectory()) continue;
       const mp = join(p, "mark.md");
       if (existsSync(mp)) {
-        const text = readFileSync(mp, "utf8");
-        const feat = (text.match(/^feature:\s*(.+?)\s*$/m) || [])[1];
-        const by = (text.match(/^by:\s*(.+?)\s*$/m) || [])[1];
-        if (feat && by && by !== "the-town") byFeature.set(feat, `${by}/${e}`);
+        let rec = null;
+        try { rec = parseRecord(readFileSync(mp, "utf8"), mp); } catch { /* malformed: §1's error, not this gate's */ }
+        const feat = rec?.feature;
+        if (feat != null && rec.by != null) {
+          const key = String(feat);
+          if (!claims.has(key)) claims.set(key, []);
+          claims.get(key).push({ by: String(rec.by), slug: e, rel: p.replace(/\\/g, "/").slice(ROOT.length + 1) });
+        }
       }
       walk(p);
     }
   };
   if (existsSync(ALL_MARKS)) walk(ALL_MARKS);
-  return byFeature;
+  return claims;
 }
-const TRANSFERRED = indexTransferredFeatures();
+const CLAIMS = indexFeatureClaims();
+{
+  const doubled = [...CLAIMS].filter(([, v]) => v.length > 1);
+  if (doubled.length) {
+    console.error(`world-root-gen: REFUSING — ${doubled.length} terrain feature(s) are claimed by more than one record. A feature is surveyed once and claimed once; two claims is the twin condition this generator's transferred-ground gate exists to prevent, and picking a winner by directory order would bury it.\n`);
+    for (const [feature, recs] of doubled)
+      console.error(`  ${feature}\n${recs.map((r) => `    ${r.by}/${r.slug}  (${r.rel})`).join("\n")}`);
+    console.error(`\n  Withdraw or re-point the duplicate claim, then re-run.`);
+    process.exit(1);
+  }
+}
+// feature id -> "<by>/<slug>", for the features whose one claimant is not the town
+const TRANSFERRED = new Map(
+  [...CLAIMS].filter(([, v]) => v[0].by !== "the-town").map(([k, v]) => [k, `${v[0].by}/${v[0].slug}`]),
+);
 const skipped = [];
 
 // ---- coarse bounding rect from a feature's own geometry (the CLAIM) ----------

@@ -226,9 +226,14 @@ rec"*):** the four birthday things — `the-town/the-good-lighter`,
 `the-town/a-slice-to-take-home` — **stay the town's parting gifts.** They are
 not an oversight and they are not waiting on anything. Three residents are
 holding them right now (ellery two, keith one, little-bird one), and a
-holding is recorded against the mark's **slug**, not its uuid, so a transfer
-would leave each holder pointing at a slug that no longer answers while the
-thing itself lay unheld under a new name — silently, with nothing erroring.
+holding is recorded against the mark's **id** — `<household>/<slug>`, the
+composite — and not against its uuid, so a transfer would leave each holder
+pointing at an id that no longer answers while the thing itself lay unheld
+under a new name — silently, with nothing erroring. It is the id and not the
+bare leaf slug that breaks, and the distinction is the whole reasoning: a
+transfer deliberately KEEPS the leaf (that is what makes it a
+re-identification rather than a retirement), so if holdings keyed on the leaf
+these four could move and nobody would notice the difference.
 That is the reasoning the founder already gave on **2026-08-29** and this
 ruling affirms: *"a guest's holdings key on their ids"* (world `61c5fdfb`).
 The good lighter is doubly held here: its `held_grant` may only hang on a
