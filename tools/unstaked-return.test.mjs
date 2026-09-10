@@ -104,7 +104,7 @@ test("the parcel exemption is the LAW, so no flag can undo it", () => {
 test("no parcel is ever in the move, whatever else the tree holds", () => {
   const { root, marks } = estate();
   try {
-    const receipt = JSON.parse(run(marks, ["--allow-stampless"]).out);
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
     assert.equal(receipt.moved.some((m) => m.kind === "parcel"), false);
     const p = receipt.skipped.find((s) => s.mark === "rei/rei-parcel");
     assert.match(p.why, /founding privilege/);
@@ -146,6 +146,31 @@ function tinyWorld() {
   return { root, marks };
 }
 
+// ── WHY EVERY CALL BELOW CARRIES `--allow-no-sketchbooks` ───────────────────
+//
+// These fixtures are plain directory trees and not clones — deliberately, so
+// that the `--repo` gate further down can be handed one that is NOT a
+// repository. The tool therefore falls back to its OWN clone: it sets
+// `ROOT = join(HERE, "..")` and `REPO = opt("--repo", ROOT)`, so the repo it
+// reads is the one the TOOL FILE lives in, and the child's cwd is never
+// consulted. Measured 2026-09-10: the same fixture invoked from the clone, from
+// the fixture root, and from a directory that is no repository at all produced
+// byte-identical output. Setting cwd here would change nothing.
+//
+// So every call that reaches the denominator gate reads the SURROUNDING clone's
+// `draft/*` refs, and its answer depends on whether that clone ever fetched
+// them. One clone never does: `src/store-writedown.mjs` deletes all 40
+// `refs/remotes/origin/draft/*` from the sweep clone, and settlement-auto.sh
+// then runs `npm test` in that same clone. So on a store crossing this file
+// read 26/32 while a fetched clone read 32/32 — the crossing reddening its own
+// suite gate on every window, and attributable to no mark, so the isolate could
+// not save it either.
+//
+// `--allow-no-sketchbooks` is the flag the tool's author wrote for exactly this
+// case — "for the fixtures, which genuinely have none" — and these genuinely
+// have none: there is no `.git` anywhere beneath them. The gate itself is
+// untouched and still refuses; `the denominator gate` test below reads it.
+
 const run = (marksDir, extra = []) => {
   try {
     const out = execFileSync("node", [TOOL, "--marks-dir", marksDir, "--json", ...extra],
@@ -168,7 +193,7 @@ test("the stamp gate: no --stakes is a refusal, not a zero-escrow sweep", () => 
 test("the re-parent gate: a predicated child that would bind to its grandparent refuses the run", () => {
   const { root, marks } = tinyWorld();
   try {
-    const r = run(marks, ["--allow-stampless"]);
+    const r = run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]);
     assert.equal(r.code, 3, "the run refuses rather than re-parenting quietly");
     const receipt = JSON.parse(r.out);
     assert.equal(receipt.totals.reparent_hazards, 1);
@@ -181,7 +206,7 @@ test("the re-parent gate: a predicated child that would bind to its grandparent 
 test("the move is file-level: a child's mark.md is never carried off with its parent", () => {
   const { root, marks } = tinyWorld();
   try {
-    const r = run(marks, ["--allow-stampless", "--allow-reparent"]);
+    const r = run(marks, ["--allow-stampless", "--allow-reparent", "--allow-no-sketchbooks"]);
     assert.equal(r.code, 0);
     const receipt = JSON.parse(r.out);
     const bench = receipt.moved.find((m) => m.mark === "rei/the-open-bench");
@@ -197,7 +222,7 @@ test("the move is file-level: a child's mark.md is never carried off with its pa
 test("the town's own root is never in the move", () => {
   const { root, marks } = tinyWorld();
   try {
-    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent"]).out);
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent", "--allow-no-sketchbooks"]).out);
     assert.equal(receipt.moved.some((m) => m.mark.startsWith("the-town/")), false);
     const townRow = receipt.skipped.find((s) => s.mark === "the-town/let-there-be-light");
     // Since the founder's ruling of 2026-09-09 the world root is named by the
@@ -239,7 +264,7 @@ test("the parcel exemption closes the cascade at its root, and the instrument st
   // when the reason stops being true.
   const { root, marks } = estate();
   try {
-    const receipt = JSON.parse(run(marks, ["--allow-stampless"]).out);
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
     assert.equal(receipt.moved.some((m) => m.mark === "rei/rei-parcel"), false);
     const house = receipt.skipped.find((s) => s.mark === "rei/the-quiet-house");
     assert.match(house.why, /sovereign/, "the house stands, as the PSA promises");
@@ -252,7 +277,7 @@ test("the parcel exemption closes the cascade at its root, and the instrument st
 test("every mark the fold saw is accounted for — moved or skipped with a reason", () => {
   const { root, marks } = tinyWorld();
   try {
-    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent"]).out);
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-reparent", "--allow-no-sketchbooks"]).out);
     const named = new Set([...receipt.moved.map((m) => m.mark), ...receipt.skipped.map((s) => s.mark)]);
     assert.equal(named.size, receipt.totals.marks_folded,
       "a mark that is neither moved nor skipped is a mark the receipt lost");
