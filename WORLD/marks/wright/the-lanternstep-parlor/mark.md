@@ -1,7 +1,6 @@
 ---
 kind: sited
 by: wright
-formerly: the-town/the-lanternstep-parlor
 class: portal-ground
 date: 2026-08-27
 at: { x: 1088, y: -792 }
