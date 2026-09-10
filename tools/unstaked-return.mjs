@@ -113,8 +113,11 @@
 // crossing and stands on the commons at zero the next HAS changed hands, without
 // its author touching it.
 //
-// So a mark that frames a staying sovereign child is HELD — see § a mark that
-// holds a child's ground. Four marks today, carrying twelve.
+// SO NOTHING IS HELD AND NOTHING MOVES. The apply rewrites each staying
+// descendant's `at:` to the offset from its NEW frame that yields the SAME world
+// coordinate — the fold's own arithmetic run backwards. Holding the parents
+// instead would have fixed only the sovereignty flip, left the other children
+// relocated, and kept unstaked marks standing, which weakens the rule.
 
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, realpathSync, rmSync } from "node:fs";
 import { join, dirname, relative, basename } from "node:path";
@@ -320,42 +323,24 @@ const byId = new Map(all.map((m) => [m.id, m]));
 // reason is the only kind that can tell you when the reason stops being true.
 const exemptOf = (m) => exemptionFor(m, { authoredTier: authoredTier.get(m.id) });
 
-// ── A MARK THAT HOLDS A CHILD'S GROUND STAYS ────────────────────────────────
+// ── NOTHING IS HELD; NOTHING MOVES ──────────────────────────────────────────
 //
-// A nested mark's `at:` is an OFFSET from its framing parent's centre. So when a
-// parent returns to drafts, its children re-frame on the grandparent and MOVE —
-// and a child that was sovereign can land outside its own parcel and stop being
-// sovereign. That is not a fold output changing. It is a mark changing hands:
-// standing on its household's own ground one crossing, on the commons at zero
-// the next, swept by this very move without its author touching it.
+// An earlier lap held back every mark that framed a staying sovereign child.
+// That was the wrong shape and the conductor was right to send it back: it fixed
+// only the SOVEREIGNTY flip and left the other staying children relocated (five
+// still moved, the furthest by 392 m), and it kept four unstaked marks standing,
+// which weakens the rule this move exists to enforce.
 //
-// The header used to claim the opposite for sited/parcel children ("a fold
-// output changing, not a mark changing hands"). It was wrong, and
-// `rei/the-garden-notebook-tin` is the counter-example: its parent
-// `rei/the-experiment-garden` leaves, the tin re-frames onto the region, moves
-// 250 m east and 188 m south, and loses sovereignty.
+// The rule stays whole. Nothing moves either, because the apply rewrites each
+// staying descendant's `at:` to the offset from its NEW frame that yields the
+// SAME world coordinate — see § the working tree first, then the coordinates.
 //
-// So a mark in the set that carries a SOVEREIGN descendant which is staying is
-// held back. Measured on the tree at 255cb921: 4 such marks, carrying 12
-// sovereign marks between them — including `limen/footpath-becomes-a-suggestion`,
-// under which `hal/the-green-lamp-house` and its parcel sit, which is the 1,042 m
-// displacement. Holding four marks to keep twelve residents' homes where their
-// authors put them is the trade, and the receipt names all four.
-const baseS = all.filter((m) => isUnstakedCommons(m) && !exemptOf(m));
-const baseIds = new Set(baseS.map((m) => m.id));
-const groundHolders = [];
-for (const m of baseS) {
-  const d = dirOf.get(m.id);
-  if (!d) continue;
-  const carried = loaded
-    .filter((r) => r._dir && r._dir !== d && (r._dir.startsWith(d + "\\") || r._dir.startsWith(d + "/")))
-    .map((r) => byId.get(r.id))
-    .filter((c) => c && !baseIds.has(c.id) && c.sovereign);
-  if (carried.length) groundHolders.push({ mark: m.id, kind: m.kind, household: m.household,
-    carries: carried.length, marks: carried.map((c) => c.id) });
-}
-const heldIds = new Set(groundHolders.map((h) => h.mark));
-const S = baseS.filter((m) => !heldIds.has(m.id));
+// `preserveFailed` is the only place a hold survives, and it is a genuine
+// fallback rather than a policy: a descendant whose `mark.md` cannot be read or
+// whose `at:` line cannot be found cannot be given back its coordinate, and the
+// receipt says so by name. It is empty on this tree.
+const preserved = [], preserveFailed = [];
+const S = all.filter((m) => isUnstakedCommons(m) && !exemptOf(m));
 const Sids = new Set(S.map((m) => m.id));
 
 // ── destination branches: households.json is the only map, and it is walked ──
@@ -459,12 +444,6 @@ for (const m of all) {
   // coincidence.
   const ex = exemptOf(m);
   if (ex) { skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: ex }); exemptCount++; continue; }
-  const holder = groundHolders.find((h) => h.mark === m.id);
-  if (holder) {
-    skipped.push({ mark: m.id, household: m.household, kind: m.kind,
-      why: `holds a child's ground — ${holder.carries} sovereign mark(s) are framed by it and would move off their own ground` });
-    continue;
-  }
   // There is no `by === "the-town"` arm here any more. It was unreachable the
   // moment the town became the fourth clause of `exemptionFor` above — and it
   // carried the sentence the ruling of 18:56 falsifies ("the town's own ground is
@@ -534,7 +513,7 @@ if (movedIds.size) {
   // region rings read as a cascade of six the move did not cause, which is how
   // this was found (140 -> 146 the moment the exemptions landed).
   cascade = (after.marks ?? []).filter((m) => isUnstakedCommons(m)
-      && !movedIds.has(m.id) && !Sids.has(m.id) && !exemptOf(m) && !heldIds.has(m.id))
+      && !movedIds.has(m.id) && !Sids.has(m.id) && !exemptOf(m))
     .map((m) => ({
       mark: m.id, household: m.household, kind: m.kind,
       was: byId.get(m.id)?.sovereign ? "sovereign — it stood on its household's own ground"
@@ -568,8 +547,8 @@ const receipt = {
     exempt_region: skipped.filter((s) => s.why.startsWith("region:")).length,
     exempt_parcel: skipped.filter((s) => s.why.startsWith("parcel:")).length,
     exempt_town: skipped.filter((s) => s.why.startsWith("town:")).length,
-    held_holding_ground: groundHolders.length,
-    sovereign_marks_kept_in_place: groundHolders.reduce((a, h) => a + h.carries, 0),
+    coordinates_preserved: preserved.length,
+    coordinates_not_preservable: preserveFailed.length,
     stayed_sovereign: skipped.filter((s) => s.why.startsWith("sovereign")).length,
     stayed_staked: skipped.filter((s) => s.why.startsWith("staked")).length,
     staying: skipped.filter((s) => !s.why.startsWith("no sketchbook") && !s.why.startsWith("no directory")).length,
@@ -577,7 +556,7 @@ const receipt = {
       ...skipped.filter((s) => s.why.startsWith("no sketchbook") || s.why.startsWith("no directory"))
         .map((s) => s.household)]).size,
   },
-  moved, skipped, reparents, shifts, cascade, ground_holders: groundHolders,
+  moved, skipped, reparents, shifts, cascade, preserved, preserve_failed: preserveFailed,
   applied: false,
 };
 
@@ -646,14 +625,107 @@ if (APPLY) {
     git("update-ref", ref, commit);
   }
 
-  // 2. main loses exactly the mark files, and nothing else.
+  // ── 2. THE WORKING TREE FIRST, THEN THE COORDINATES, THEN ONE COMMIT ──────
+  //
+  // The order here is the whole of the fix for the relocation finding, so it is
+  // spelled out. A nested mark's `at:` is an OFFSET from its framing parent's
+  // centre; take the parent away and the child re-frames on the grandparent and
+  // MOVES. Holding the parent back would have fixed only the sovereignty flip
+  // and left the other children relocated — and it would have kept unstaked
+  // marks standing, which weakens the rule the whole move exists to enforce.
+  //
+  // So nothing is held. The rule stays and NOTHING MOVES: each staying
+  // descendant's `at:` is rewritten to the offset from its NEW frame that yields
+  // THE SAME WORLD COORDINATE. That is the fold's own framing arithmetic run
+  // backwards — `at_world = at_file + origin`, so `at_file' = at_world - origin'`.
+  //
+  // The new origin is not predicted, it is READ: the leaving files come off the
+  // disk first, the tree is re-loaded, and each survivor's `_origin` is whatever
+  // the fold now says it is. No second implementation of `frameOriginOf` to drift.
   const files = moved.flatMap((m) => m.files);
   if (files.length) {
+    // 2a. the files leave the disk
+    for (const f of files) { try { rmSync(join(REPO, f), { force: true }); } catch { /* already gone */ } }
+    // A directory that is now completely empty was the mark and nothing else, so
+    // it goes. One that still holds child directories STAYS — those are other
+    // marks' homes and the whole point of the file-level move.
+    for (const mv of moved) {
+      const d = join(REPO, mv.dir);
+      try { if (existsSync(d) && readdirSync(d).length === 0) rmSync(d, { recursive: true, force: true }); } catch { /* leave it */ }
+    }
+
+    // 2b/2c. RE-FOLD, REWRITE, REPEAT UNTIL NOTHING MOVES.
+    //
+    // One pass is not enough and the first rehearsal proved it: fixing a mark's
+    // `at:` restores ITS world position, which moves every child framed on it
+    // again. A single pass computed each offset against origins read before any
+    // rewrite, so parents and children were corrected against each other and the
+    // tree came out worse — 11 marks displaced, the furthest by 2,084 m, against
+    // 22 before the fix. The frame is a chain, so the correction is a fixpoint.
+    //
+    // Each round re-folds — the fold's own `frameOriginOf`, never a second
+    // implementation — rewrites only the marks that are still off their original
+    // world coordinate, and stops when a round finds none. Depth-bounded: the
+    // deepest chain in this tree is single digits, and 24 rounds is far past it.
+    const wasAt = new Map(all.map((m) => [m.id, m.at]));
+    const numOf = (n) => (Number.isInteger(n) ? String(n) : String(Number(n.toFixed(6))));
+    const AT_LINE = /^at:[ \t]*\{[^}]*\}[ \t]*$/m;
+    const movedBy = new Map();          // id -> how far it would have gone, first time we saw it
+    let reLoaded = [], rounds = 0;
+    for (; rounds < 24; rounds++) {
+      reLoaded = loadMarks(MARKS_DIR);
+      const reState = fold({ marks: reLoaded, terrain, stakes, households: households.households ?? null });
+      const nowById = new Map((reState.marks ?? []).map((m) => [m.id, m]));
+      let fixedThisRound = 0;
+      for (const rec of reLoaded) {
+        const before = wasAt.get(rec.id), now = nowById.get(rec.id);
+        if (!before || !now || !rec._fileAt || !rec._origin) continue;
+        const dx = (now.at?.x ?? 0) - before.x, dy = (now.at?.y ?? 0) - before.y;
+        if (Math.abs(dx) < 1e-9 && Math.abs(dy) < 1e-9) continue;     // already where it was
+        if (!movedBy.has(rec.id)) movedBy.set(rec.id, Math.hypot(dx, dy));
+        const want = { x: before.x - rec._origin.x, y: before.y - rec._origin.y };
+        const abs = join(REPO, `${dirRel(rec._dir)}/mark.md`);
+        let text; try { text = readFileSync(abs, "utf8"); } catch { text = null; }
+        if (!text || !AT_LINE.test(text)) {
+          if (!preserveFailed.some((f) => f.mark === rec.id))
+            preserveFailed.push({ mark: rec.id, household: rec.by ?? rec.household,
+              why: text ? "its mark.md carries no single-line `at:` to rewrite, so the same world coordinate cannot be written back"
+                        : "its mark.md could not be read, so the same world coordinate cannot be written back" });
+          continue;
+        }
+        // Only the `at:` line changes. Every other field, and the resident's own
+        // words below the frontmatter, are untouched.
+        writeFileSync(abs, text.replace(AT_LINE, `at: { x: ${numOf(want.x)}, y: ${numOf(want.y)} }`));
+        fixedThisRound++;
+      }
+      if (!fixedThisRound) break;
+    }
+    receipt.preserve_rounds = rounds;
+    // The record of what was put back, taken from the final fold so `now_file_at`
+    // is what the file actually says.
+    {
+      const finalById = new Map(reLoaded.map((r) => [r.id, r]));
+      for (const [id, metres] of movedBy) {
+        const r = finalById.get(id);
+        if (!r || preserveFailed.some((f) => f.mark === id)) continue;
+        preserved.push({ mark: id, household: r.by ?? r.household, kind: r.kind,
+          world: wasAt.get(id), now_file_at: r._fileAt,
+          would_have_moved_m: Math.round(metres) });
+      }
+    }
+
+    // 2d. ONE commit carrying both the removals and the rewrites
     const idx = join(REPO, ".git", "unstaked-return-index-main");
     const env = { ...process.env, GIT_INDEX_FILE: idx };
     const g = (...a) => execFileSync("git", ["-C", REPO, ...a], { encoding: "utf8", env, maxBuffer: 1 << 28 }).trim();
     g("read-tree", `${head}^{tree}`);
     for (const f of files) g("update-index", "--force-remove", f);
+    for (const rec of reLoaded) {
+      if (!preserved.some((p) => p.mark === rec.id)) continue;
+      const f = `${dirRel(rec._dir)}/mark.md`;
+      const blob = git("hash-object", "-w", f);
+      g("update-index", "--add", "--cacheinfo", `100644,${blob},${f}`);
+    }
     const tree = g("write-tree");
     const hh = new Set(moved.map((m) => m.household));
     const msg = `unstaked return 2026-09-16: ${moved.length} commons mark(s) across ${hh.size} household(s) return to drafts\n\n` +
@@ -681,24 +753,16 @@ if (APPLY) {
     // tree it did not make.
     git("read-tree", commit);
 
-    // 3. THE WORKING TREE FOLLOWS THE COMMIT, and this step is not tidiness.
-    //    The move above is pure plumbing — it writes trees and refs and never
-    //    touches a file on disk. The SET IS RE-MEASURED BY FOLDING THE TREE ON
-    //    DISK, so a run that leaves those files sitting there re-measures the
-    //    same marks on the next run and moves them a second time. That is what
-    //    happened on the first rehearsal: two applies, 246 marks moved twice,
-    //    and a "second dry run reports 0" check that would have read 246.
-    //    Deleting them here is what makes the tool idempotent and what makes the
-    //    idempotence check able to fail.
-    for (const f of files) { try { rmSync(join(REPO, f), { force: true }); } catch { /* already gone */ } }
-    // A directory that is now completely empty was the mark and nothing else, so
-    // it goes. One that still holds child directories STAYS — those are other
-    // marks' homes and the whole point of the file-level move.
-    for (const mv of moved) {
-      const d = join(REPO, mv.dir);
-      try { if (existsSync(d) && readdirSync(d).length === 0) rmSync(d, { recursive: true, force: true }); } catch { /* leave it */ }
-    }
+    // The working tree already holds the post-move truth — the files came off in
+    // 2a and the coordinates were rewritten in 2c — so there is nothing left to
+    // sync here. That ordering is also what makes the move idempotent: the set is
+    // re-measured by folding the tree ON DISK, and a run that left the moved
+    // files sitting there would move them again next time.
   }
+  // The totals were fixed when the receipt object was built, before the apply
+  // filled these — so they are set again here, from the arrays themselves.
+  receipt.totals.coordinates_preserved = preserved.length;
+  receipt.totals.coordinates_not_preservable = preserveFailed.length;
   receipt.applied = true;
   receipt.applied_at = stamp;
   receipt.new_head = gitQ("rev-parse", "HEAD");
@@ -754,7 +818,8 @@ console.log(`  set before branch resolution: ${t.set_size_before_branch_resoluti
 console.log(`  staying: ${t.staying} (exempt, sovereign, or staked — each named in the receipt)`);
 console.log(`  exempt by the founder's rulings of 2026-09-09: ${t.exempt_by_ruling}, read in the order ${EXEMPTION_ORDER.join(" → ")}`);
 console.log(`    law ${t.exempt_constitution} · parcel ${t.exempt_parcel} · region ${t.exempt_region} · town ${t.exempt_town}`);
-if (t.held_holding_ground) console.log(`  ${t.held_holding_ground} mark(s) HELD because they frame a child's ground — keeping ${t.sovereign_marks_kept_in_place} sovereign mark(s) where their authors put them`);
+if (t.coordinates_preserved) console.log(`  ${t.coordinates_preserved} staying mark(s) had their at: rewritten so their world position is unchanged (${receipt.preserve_rounds} round(s))`);
+if (t.coordinates_not_preservable) console.log(`  ⚠ ${t.coordinates_not_preservable} staying mark(s) could NOT be given their coordinate back — named in the receipt`);
 console.log(`  standing on their own ground: ${t.stayed_sovereign} · carrying a stake: ${t.stayed_staked}`);
 if (t.placement_parent_shifts) console.log(`  ${t.placement_parent_shifts} sited/parcel child(ren) keep standing with a re-computed placementParent`);
 if (t.displaced) {

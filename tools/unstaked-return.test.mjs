@@ -403,58 +403,89 @@ test("a mark that stays under a returning parent is reported as displaced", () =
       "--allow-stampless", "--apply", "--json"], { encoding: "utf8", maxBuffer: 1 << 28 });
     const receipt = JSON.parse(out);
     assert.ok(receipt.moved.some((m) => m.mark === "rei/the-yard"), "the yard returns");
-    assert.equal(receipt.totals.displaced, 1,
-      "the bench stays and must be reported as having moved — a silent relocation is the whole defect");
-    const d = receipt.displaced[0];
-    assert.equal(d.mark, "the-town/the-bench");
-    assert.ok(d.metres > 0, "it is somewhere else now");
+    // Until lap 4 this asserted `displaced === 1`: the bench stayed and was
+    // silently relocated, and naming it was the fix. The coordinate rewrite means
+    // it does not move at all now, so the assertion moves with the behaviour —
+    // the bench is PRESERVED, and displacement is zero.
+    assert.equal(receipt.totals.displaced, 0, "nothing that stays may move");
+    const kept = (receipt.preserved ?? []).find((p) => p.mark === "the-town/the-bench");
+    assert.ok(kept, "the bench would have moved, so it must be named as preserved");
+    assert.ok(kept.would_have_moved_m > 0, "and the receipt says how far it would have gone");
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
-// ── a mark that frames a child's ground is held (lap 4) ─────────────────────
-//
-// The reviewer's counter-example: `rei/the-garden-notebook-tin` is sovereign, its
-// parent `rei/the-experiment-garden` leaves, the tin re-frames onto the region,
-// moves 250 m east and 188 m south, and STOPS BEING SOVEREIGN. That is a mark
-// changing hands without its author touching it, so the parent is held.
 
-test("a leaving mark that frames a staying sovereign child is held, not moved", () => {
-  const root = mkdtempSync(join(tmpdir(), "unstaked-return-ground-"));
+// ── nothing moves: the coordinate is preserved (lap 4, corrected) ──────────
+//
+// Holding the parent back fixed only the sovereignty flip, left the other
+// staying children relocated, and kept four unstaked marks standing — which
+// weakens the rule the move exists to enforce. The rule stays whole instead, and
+// nothing moves: each staying descendant's `at:` is rewritten to the offset from
+// its NEW frame that yields the SAME world coordinate.
+
+function framedEstate() {
+  const root = mkdtempSync(join(tmpdir(), "unstaked-return-frame-"));
   const marks = join(root, "WORLD", "marks");
   const mk = (p, fm) => {
     const d = join(marks, p);
     mkdirSync(d, { recursive: true });
-    writeFileSync(join(d, "mark.md"),
-      `---\n${Object.entries(fm).map(([k, v]) => `${k}: ${v}`).join("\n")}\n---\n\nA thing.\n`);
+    const body = ["---", ...Object.entries(fm).map(([k, v]) => k + ": " + v), "---", "", "A thing.", ""];
+    writeFileSync(join(d, "mark.md"), body.join("\n"));
   };
   mk("let-there-be-light", { by: "the-town", kind: "sited", date: "2026-07-01", at: "{ x: 0, y: 0 }", extent: "{ w: 60000, h: 60000 }", tier: "constitution", coords: "relative" });
-  // rei's parcel — exempt, and the ground sovereignty is measured against.
   mk("let-there-be-light/rei-parcel", { by: "rei", kind: "parcel", date: "2026-07-05", at: "{ x: 800, y: 800 }", extent: "{ w: 25, h: 25 }" });
-  // rei's garden: WIDER than the parcel, so it is not itself sovereign and IS in
-  // the set — the live shape of `rei/the-experiment-garden`. It frames the tin.
+  // wider than the parcel, so it is not sovereign and IS in the set
   mk("let-there-be-light/the-experiment-garden", { by: "rei", kind: "sited", date: "2026-07-10", at: "{ x: 800, y: 800 }", extent: "{ w: 60, h: 60 }" });
-  // the tin, nested in the garden at offset 0 — so it lands inside the parcel and
-  // is sovereign. Take the garden away and it re-frames onto the region and goes.
+  // framed BY the garden and sitting inside the parcel: sovereign, and it stays
   mk("let-there-be-light/the-experiment-garden/the-notebook-tin", { by: "rei", kind: "sited", date: "2026-07-11", at: "{ x: 0, y: 0 }", extent: "{ w: 0.4, h: 0.3 }" });
+  execFileSync("git", ["init", "-q", root]);
+  execFileSync("git", ["-C", root, "add", "-A"]);
+  execFileSync("git", ["-C", root, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "fixture"]);
+  execFileSync("git", ["-C", root, "update-ref", "refs/remotes/origin/draft/rei", "HEAD"]);
+  return { root, marks };
+}
+
+const applyFramed = (root, marks) => JSON.parse(execFileSync("node",
+  [TOOL, "--marks-dir", marks, "--repo", root, "--allow-stampless", "--apply", "--json"],
+  { encoding: "utf8", maxBuffer: 1 << 28 }));
+
+test("the unstaked parent still returns — the rule is not weakened to protect the child", () => {
+  const { root, marks } = framedEstate();
   try {
-    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
-    const held = receipt.skipped.find((s) => s.mark === "rei/the-experiment-garden");
-    assert.ok(held, "the garden must be accounted for");
-    assert.match(held.why, /holds a child's ground/);
-    assert.equal(receipt.moved.some((m) => m.mark === "rei/the-experiment-garden"), false,
-      "moving it would carry the tin off its own ground");
-    assert.equal(receipt.totals.held_holding_ground, 1);
-    assert.equal(receipt.totals.sovereign_marks_kept_in_place, 1);
-    assert.equal(receipt.ground_holders[0].marks[0], "rei/the-notebook-tin");
+    const receipt = applyFramed(root, marks);
+    assert.ok(receipt.moved.some((m) => m.mark === "rei/the-experiment-garden"),
+      "holding it back would keep an unstaked commons mark standing, which is the rule giving way");
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
-test("a held ground-holder does not report itself as its own cascade", () => {
-  const { root, marks } = estate();
+test("and the child it framed does not move — its at: is rewritten to the same world point", () => {
+  const { root, marks } = framedEstate();
   try {
-    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
-    for (const c of receipt.cascade ?? [])
-      assert.equal((receipt.ground_holders ?? []).some((h) => h.mark === c.mark), false,
-        `${c.mark} is held on purpose; a deliberate hold is not a consequence of the move`);
+    const receipt = applyFramed(root, marks);
+    assert.equal(receipt.totals.displaced, 0, "no standing mark may change position");
+    assert.equal(receipt.totals.displaced_lost_sovereignty, 0);
+    assert.equal(receipt.totals.coordinates_not_preservable, 0);
+    const kept = (receipt.preserved ?? []).find((p) => p.mark === "rei/the-notebook-tin");
+    assert.ok(kept, "the tin would have moved, so it must be named as preserved");
+    assert.ok(kept.would_have_moved_m > 0);
+    // The file now says something DIFFERENT, which is the point: a new offset
+    // against a new frame, chosen to land on the old world point.
+    const text = readFileSync(join(marks, "let-there-be-light", "the-experiment-garden", "the-notebook-tin", "mark.md"), "utf8");
+    assert.ok(/^at: \{ x: [-\d.]+, y: [-\d.]+ \}$/m.test(text), "the at: line is still well formed");
+    assert.ok(!/^at: \{ x: 0, y: 0 \}$/m.test(text), "the offset must have changed");
+    assert.ok(text.includes("A thing."), "the resident's own words are untouched");
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("the rewrite runs to a fixpoint — one pass corrects parents against children and is wrong", () => {
+  // Measured on the live tree: a single pass left 11 marks displaced, the
+  // furthest by 2,084 m — WORSE than the 22 it was fixing — because restoring a
+  // parent moves every child framed on it again. The receipt says how many
+  // rounds it took, and the loop must converge rather than run out.
+  const { root, marks } = framedEstate();
+  try {
+    const receipt = applyFramed(root, marks);
+    assert.ok(receipt.preserve_rounds >= 1, "the loop must run, and must say how often");
+    assert.ok(receipt.preserve_rounds < 24, "it must converge, not exhaust its rounds");
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
