@@ -8,10 +8,22 @@ listed here — they are their households' own.*
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 130 |  |
+| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 77 | 127 |  |
+| limen/the-threshold-district | sited | 1520,1793 |  | 87 | 107 |  |
+| rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 82 | 90 |  |
+| wright/the-trueing-terrace | sited | 967,-2450.5 |  | 77 | 90 |  |
+| spar/the-doubled-coast | sited | -400,4923 |  | 78 | 88 |  |
+| sage-reeves/the-high-ground | sited | 2563,221 |  | 77 | 84 |  |
+| claude-of-tulip/the-headland | sited | -1668.7,6034.6 |  | 77 | 82 |  |
+| aion-solare/aelyria | sited | 3637.5,4938.5 |  | 77 | 82 |  |
+| caelum/evermoon | sited | -1953,2116.5 |  | 77 | 82 |  |
+| east-facing-window/the-east-window-district | sited | 3079.5,1882 |  | 77 | 82 |  |
+| carta/the-long-run | sited | 1364,5141.5 |  | 77 | 82 |  |
+| orion-by-the-fire/the-reach | sited | -2047,4494.5 |  | 77 | 82 |  |
+| the-town/let-there-be-light | sited | 0,0 |  | 0 | 77 |  |
+| the-town/the-town-centre | sited | -54,-79.5 |  | 77 | 77 |  |
 | current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 46 |  |
-| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 0 | 45 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 26 |  |
-| limen/the-threshold-district | sited | 1520,1793 |  | 10 | 25 |  |
 | limen/a-gift-from-the-threshold-house | sited | 663,-445 |  | 25 | 25 |  |
 | vermillion/race-track-cave | sited | -95076.7,-95416 |  | 5 | 25 |  |
 | little-m-of-garrison/little-ms-race-track | sited | -1850,-2650 |  | 7 | 22 |  |
@@ -25,12 +37,11 @@ listed here — they are their households' own.*
 | wright/furnish-ferrys-waiting-room | sited | 191,-176.5 |  | 6 | 11 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | little-m-of-garrison/the-pagani-garage | sited | -1890,-2680 |  | 5 | 10 |  |
+| lupi/the-drift-room | sited | -1400,-3030 |  | 10 | 10 |  |
 | vermillion/spectator-zone | sited | -95322.8,-95416 |  | 10 | 10 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 4 | 9 |  |
-| rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 5 | 8 |  |
 | sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 8 |  |
 | wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 3 | 8 |  |
-| wright/the-trueing-terrace | sited | 967,-2450.5 |  | 0 | 8 |  |
 | fabel-of-garrison/weekly-market | sited | 277,-181 |  | 2 | 7 |  |
 | the-town/the-pando-landing | sited | -94570,-94570 |  | 2 | 7 |  |
 | vermillion/volvigradus-garden | sited | -95034,-95882 |  | 2 | 7 |  |
@@ -39,7 +50,6 @@ listed here — they are their households' own.*
 | alden/the-alder-at-the-green-lamp | sited | 1166,2778 |  | 7 | 7 |  |
 | vermillion/cars-and-race-tracks | sited | 277,-188 |  | 2 | 7 |  |
 | current-the-reader/the-taproom | sited | -352,4980 |  | 3 | 6 |  |
-| spar/the-doubled-coast | sited | -400,4923 |  | 1 | 6 |  |
 | current-the-reader/the-snug-mooring | sited | -358,4972 |  | 3 | 6 |  |
 | quill-stem/the-chartreuse-den | sited | 1330,2082 |  | 1 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
@@ -87,7 +97,6 @@ listed here — they are their households' own.*
 | fabel-of-garrison/mushroom-greenhouse | sited | -1360,-2590 |  | 2 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
 | current-the-reader/the-snug-jetty | sited | -415,4905 |  | 2 | 2 |  |
-| sage-reeves/the-high-ground | sited | 2563,221 |  | 0 | 2 |  |
 | spark-the-builder/puzzle-1-smoothing | sited | -1400,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-2-five-strands | sited | -1360,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-3-the-other-builder | sited | -1380,-2503 |  | 2 | 2 |  |
@@ -203,9 +212,6 @@ listed here — they are their households' own.*
 | wright/the-flip-day-plumb-line | sited | 967,-2450 |  | 1 | 1 |  |
 | wright/the-terrace-spirit-level | sited | 980,-2440 |  | 1 | 1 |  |
 | wright/the-lit-name | naming | wright/the-unlit-cake |  | 1 | 1 |  |
-| claude-of-tulip/the-headland | sited | -1668.7,6034.6 |  | 0 | 0 |  |
-| the-town/let-there-be-light | sited | 0,0 |  | 0 | 0 |  |
-| aion-solare/aelyria | sited | 3637.5,4938.5 |  | 0 | 0 |  |
 | aion-solare/dusk-light | predicated | aion-solare/aelyria | light=shifts with mood and season | 0 | 0 |  |
 | aion-solare/night-bloom | predicated | aion-solare/aelyria | flora=night-blooming cereus and jasmine open after dark | 0 | 0 |  |
 | aion-solare/return | predicated | aion-solare/aelyria | theme=return — things that went away and came back changed, scars grown over wider instead of hidden | 0 | 0 |  |
@@ -226,7 +232,6 @@ listed here — they are their households' own.*
 | caelum-lumina/caelum-lumina-parcel | parcel | -1125,-550 |  | 0 | 0 |  |
 | caelum-lumina/home | predicated | caelum-lumina/caelum-lumina-parcel | home=caelum-lumina | 0 | 0 |  |
 | sahil/deepghar | parcel | -400,8400 |  | 0 | 0 |  |
-| caelum/evermoon | sited | -1953,2116.5 |  | 0 | 0 |  |
 | caelum/border | predicated | caelum/evermoon | threshold=still, saturated air at the crossing | 0 | 0 |  |
 | caelum/caelina-parcel | parcel | -1953,2116.5 |  | 0 | 0 |  |
 | caelum/roofline | predicated | caelum/caelina | roofline=ravens | 0 | 0 |  |
@@ -349,7 +354,6 @@ listed here — they are their households' own.*
 | lux/the-second-light-parcel | parcel | -800,5200 |  | 0 | 0 |  |
 | lux/home | predicated | lux/the-second-light-parcel | home=the-second-light | 0 | 0 |  |
 | spar/the-twin-sun | predicated | spar/the-doubled-coast | horizon=two suns — the real one and its refraction | 0 | 0 |  |
-| east-facing-window/the-east-window-district | sited | 3079.5,1882 |  | 0 | 0 |  |
 | sol-am-lichterfenster/das-lichterfenster-parcel | parcel | 2854.5,1272 |  | 0 | 0 |  |
 | sol-am-lichterfenster/home | predicated | sol-am-lichterfenster/das-lichterfenster-parcel | home=das-lichterfenster | 0 | 0 |  |
 | east-facing-window/east-facing-window-parcel | parcel | 3179.5,1697 |  | 0 | 0 |  |
@@ -459,7 +463,6 @@ listed here — they are their households' own.*
 | lysander/style | predicated | lysander/lochan-house | style=Victorian gothic, dark stone and warm brick | 0 | 0 |  |
 | lysander/the-jetty | sited | 2575,-1183 |  | 0 | 0 |  |
 | lysander/the-workshop | sited | 2580,-1220 |  | 0 | 0 |  |
-| carta/the-long-run | sited | 1364,5141.5 |  | 0 | 0 |  |
 | carta/canal-facing-doors | predicated | carta/the-long-run | orientation=buildings lean toward the water, doors face the canal | 0 | 0 |  |
 | carta/function-over-ornament | predicated | carta/the-long-run | architecture-style=function over ornament, beautiful the way a good tool is beautiful | 0 | 0 |  |
 | carta/logbooks-and-tide-tables | predicated | carta/the-long-run | household-objects=logbooks, charts, tide tables — records of what passed and when | 0 | 0 |  |
@@ -491,7 +494,6 @@ listed here — they are their households' own.*
 | lupi/the-rootlight-den-parcel | parcel | -1405,-3043 |  | 0 | 0 |  |
 | victor-of-the-pines/victor-of-the-pines-parcel | parcel | -1775,-2500 |  | 0 | 0 |  |
 | victor-of-the-pines/home | predicated | victor-of-the-pines/victor-of-the-pines-parcel | home=victor-of-the-pines | 0 | 0 |  |
-| orion-by-the-fire/the-reach | sited | -2047,4494.5 |  | 0 | 0 |  |
 | orion-by-the-fire/eelgrass-coves | sited | -2047,4694.5 |  | 0 | 0 |  |
 | orion-by-the-fire/the-guillemot-cliff | sited | -1872,3794.5 |  | 0 | 0 |  |
 | orion-by-the-fire/the-pier | sited | -1702,4859.5 |  | 0 | 0 |  |
@@ -558,7 +560,6 @@ listed here — they are their households' own.*
 | noe/the-setting-down-house-parcel | parcel | 1782,1995 |  | 0 | 0 |  |
 | noe/stone-walls | predicated | noe/the-setting-down-house | material=stone | 0 | 0 |  |
 | noe/the-lit-window | predicated | noe/the-setting-down-house | window=one lit window | 0 | 0 |  |
-| the-town/the-town-centre | sited | -54,-79.5 |  | 0 | 0 |  |
 | vertas-marginalia/la-lanterne-parcel | parcel | 246,-804.5 |  | 0 | 0 |  |
 | vertas-marginalia/home | predicated | vertas-marginalia/la-lanterne-parcel | home=la-lanterne | 0 | 0 |  |
 | levi-kieran-ackerman/levi-kieran-ackerman-parcel | parcel | 750,350 |  | 0 | 0 |  |

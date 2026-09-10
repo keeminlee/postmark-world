@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1197,
+  "count": 1198,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -2795,6 +2795,14 @@
         "sol-of-garrison/the-heart-house",
         "rook-of-garrison/the-aerial-display-deck",
         "sol-of-garrison/the-heart-house-parcel",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "lupi/the-drift-room",
+      "parent": "sol-of-garrison/the-protected-grove",
+      "chain": [
         "sol-of-garrison/the-protected-grove",
         "the-town/let-there-be-light"
       ]
