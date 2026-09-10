@@ -43,7 +43,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { enterExitPlan } from "./world-verbs.mjs";
-import { loadMarks } from "./marks-fold.mjs";
+import { loadMarks, markIndex, currentMarkId, loadReIdentifications } from "./marks-fold.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const STORE = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
@@ -52,7 +52,16 @@ const storeById = new Map((STORE.marks ?? []).map((m) => [m.id, m]));
 // THE COMPOSING LOADER — the one function that knows the frame. Its output is
 // what the store is made of, so store and loader must agree everywhere.
 const COMPOSED = loadMarks(join(ROOT, "WORLD/marks"));
-const composedById = new Map(COMPOSED.map((m) => [m.id, m]));
+// A MARK THAT CHANGED HANDS IS STILL THE SAME MARK, and this file's whole subject is
+// the store and the loader answering the same question. The store is COMMITTED and
+// refolded only at the crossing, so after a transfer commit it holds the old id while
+// the fold holds the new one — and a plain id map would answer `undefined` for that
+// mark in all three sweeps below, dropping the one record most worth comparing. The
+// alias index keeps it in: `markIndex` answers to every name a record has carried,
+// following the `formerly:` line the transferring commit writes. This STRENGTHENS the
+// sweeps rather than loosening them — nothing is skipped that used to be checked.
+const HOPS = loadReIdentifications();
+const composedById = markIndex(COMPOSED, { hops: HOPS });
 
 /** The AUTHORED frame: mark.md frontmatter read the naive way — exactly what a
  *  component that "just parses the records" ends up holding. Offsets, mistaken
@@ -165,14 +174,19 @@ test("THE CROSSING-SPACE EQUIVALENCE: every mark's chain is the same on the stor
   // survive composition, but that the CONTAINMENT they imply does
   let checked = 0;
   const differ = [];
+  const canonical = (chain) => JSON.stringify(chain.map((x) => currentMarkId(x, HOPS)));
   for (const [id, mark] of storeById) {
     if (!mark.at || !mark.extent) continue;
     if (!composedById.has(id)) continue;
     const a = chainOn(STORE.marks, id);
-    const b = chainOn(COMPOSED, id);
+    const b = chainOn(COMPOSED, composedById.get(id).id);
     if (!a || !b) continue;
     checked += 1;
-    if (JSON.stringify(a.chain) !== JSON.stringify(b.chain)) differ.push(id);
+    // Each side is read in its OWN names and then both are said in one vocabulary, so
+    // a chain that differs only because a link changed hands is equal, and a chain
+    // that differs for any other reason still reds. Renaming is not the same event as
+    // re-parenting and this is the line that keeps them apart.
+    if (canonical(a.chain) !== canonical(b.chain)) differ.push(id);
   }
   assert.ok(checked > 100, `swept ${checked} marks in enter-exit space`);
   assert.deepEqual(differ.slice(0, 5), [],

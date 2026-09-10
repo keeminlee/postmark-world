@@ -22,6 +22,7 @@ import {
 } from "../spectator/viewer.mjs";
 import { polygonOf } from "./geometry.mjs";
 import { assembleWorld } from "./world-build.mjs";
+import { markIndex } from "./marks-fold.mjs";
 import { investigate } from "./world-verbs.mjs";
 import { isEntity, occupancyAt, parseEnterExitLedger, withinOf } from "./enter-exit.mjs";
 import { fractionalCrossing } from "./walk.mjs";
@@ -33,7 +34,14 @@ const world = assembleWorld({
   worldState: JSON.parse(read("WORLD/world-state.json")),
   skeleton: JSON.parse(read("WORLD/skeleton.json")),
 });
-const byId = new Map(world.marks.map((m) => [m.id, m]));
+// A LITERAL IS A HANDLE, NOT A NAME. `world` here is the COMMITTED world-state —
+// derived, and refolded only at the crossing — so between a transfer commit and the
+// next settlement it answers to the name a mark carried BEFORE it changed hands while
+// a fresh fold answers to the name it carries now. `markIndex` answers to every name a
+// record has ever carried, following the `formerly:` line the transferring commit
+// writes, so no literal in this file has to guess which side of a transfer it is on.
+// (The class fix of 2026-09-10, after one such split refused a whole settlement.)
+const byId = markIndex(world.marks);
 const LEDGER = read("WORLD/enter-exit-ledger.md");
 const REAL_ACTS = parseEnterExitLedger(LEDGER).acts;
 // THE FIXTURE IS SYNTHETIC ON PURPOSE (state-durable-facts): the live ledger

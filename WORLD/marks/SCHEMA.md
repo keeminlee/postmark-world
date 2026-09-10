@@ -72,6 +72,37 @@ the **frame**, and only the frame:
 - **A predicate can never outrank what it predicates** — it is its parent
   continued, and the lint refuses one that tries.
 
+**`formerly: <old id>` — a transfer is a RE-IDENTIFICATION, and the record keeps
+its own old name (DEC-16, 2026-09-04; world half added 2026-09-10).** When a mark
+changes hands, `by:` and the slug move together and *the leaf never changes* —
+that is what makes it a transfer and not a retirement plus a new claim. But an id
+here **is** `<by>/<slug>`, so moving `by:` moves the id, and DEC-16's promise that
+"every reference by id follows for free" is not free in the world: it is free in
+the office because a row there has a primary key underneath its id, and there is
+no such key in a tree of files. `formerly:` is that key, written down.
+
+- It carries the **id** the mark had before, spelled `<by>/<slug>` — a list if it
+  has changed hands more than once, oldest last.
+- It is for a mark born **after** the filing freeze, whose directory moves with
+  its id (gate B). A **fossil**'s path never moves (gate A), so its old→new pair
+  is re-keyed in place in `WORLD/filing-freeze.json` § `re_identified` instead.
+  Between them they are the only two declared sources of a re-identification, and
+  `tools/marks-fold.mjs` § identity reads both.
+- **The fold ignores it.** Adding it changes no derived artifact — verified
+  byte-for-byte against `WORLD/world-state.json` when the five standing transfers
+  were backfilled. It is a record about the record, for readers of the record.
+- **Why it must be declared and never inferred.** A transfer and an unruled
+  re-authorship look identical in the tree — same path, same leaf, a different
+  `by:`. Inferring one from that shape would let the other through, which is the
+  exact thing `tier-frames.test.mjs`'s loss clause exists to catch. So this field
+  says a **ruling happened**, and the commit that adds it is where the ruling is
+  quoted.
+- **The reader it was written for.** `resolveMarkId` / `markIndex` in
+  `tools/marks-fold.mjs`: a test that names a mark by a literal id resolves it
+  through this field rather than pinning it, so a ruled transfer no longer reds
+  the crossing that first carries it (the 2026-09-10 settlement refusal —
+  `tools/mark-identity.test.mjs` holds the falsifier).
+
 ## Protection tiers
 
 Every mark carries a **`tier:`** (default `market`):
@@ -113,6 +144,7 @@ containment**; everything else is a field.
 |---|---|---|---|---|
 | `kind` | required | required | required | required |
 | `by` (author handle) | required | required | required | required |
+| `formerly: <old id>` (§ Identity) | opt | opt | opt | opt |
 | `tier` (default market) | opt | opt | opt | opt |
 | `date` (`YYYY-MM-DD` or ISO 8601⁴) | required | required | required | required |
 | `at: { x, y }` (grid m) | required | required | — | — |

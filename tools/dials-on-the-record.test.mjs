@@ -19,10 +19,19 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
+import { markIndex } from "./marks-fold.mjs";
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const state = JSON.parse(readFileSync(join(ROOT, "WORLD", "world-state.json"), "utf8"));
 const marks = Array.isArray(state.marks) ? state.marks : Object.values(state.marks ?? {});
-const byId = new Map(marks.map((m) => [m.id, m]));
+// A LITERAL IS A HANDLE, NOT A NAME. `state` here is the COMMITTED world-state —
+// derived, and refolded only at the crossing — so between a transfer commit and the
+// next settlement it answers to the name a mark carried BEFORE it changed hands while
+// a fresh fold answers to the name it carries now. `markIndex` answers to every name a
+// record has ever carried, following the `formerly:` line the transferring commit
+// writes, so no literal in this file has to guess which side of a transfer it is on.
+// (The class fix of 2026-09-10, after one such split refused a whole settlement.)
+const byId = markIndex(marks);
 
 // ── RULING B, verbatim (Keemin, 2026-08-22) ─────────────────────────────────
 // "let's update those dials for 'say'... make everything pull the actual

@@ -353,6 +353,169 @@ function walkMarks(nodeDir, parentMarkId, out) {
   }
 }
 
+// ---------- identity: a transfer is a RE-IDENTIFICATION, not a new mark -------
+//
+// DEC-16 (2026-09-04, shipped office-side as world2/schema/012_reidentification.sql):
+// "the same row keeps its `id`; `slug` and `owner` move together; `data.formerly`
+// keeps the old slug; every reference by id follows for free." The office gets that
+// last clause for free because its rows have a primary key underneath the id. The
+// WORLD has no such key — here a mark's id IS `<by>/<slug>`, so when `by:` moves the
+// id moves with it, and every reference by id follows NOTHING unless the record says
+// where it came from. This section is the world half of that decision.
+//
+// WHY IT EXISTS (the incident, 2026-09-10). PR #29 moved the-town/the-lanternstep-parlor
+// to wright/. `WORLD/world-state.json` is DERIVED and is refolded at the crossing, so
+// between the transfer commit and the next settlement the committed file said the old
+// id while a fresh fold said the new one. threshold-furniture.test.mjs named the mark
+// by a literal, and there was NO id it could carry that was true on both sides: the old
+// one reds after the refold, the new one reds before it. It went `not ok 423/424`, the
+// isolation pass could not attribute the failure to a carried mark, and the 17:45Z
+// settlement REFUSED — 2 published, 330 left drafted. A ruled transfer redded the very
+// crossing that was carrying it. The one-id repoint was the instance (#32); this is the
+// class, and the class is that a literal must be resolved, not pinned.
+//
+// THE TWO DECLARED SOURCES, and there is no third. Nothing here reads git, and nothing
+// here infers a transfer from a matching leaf slug. An inference would let an unruled
+// re-authorship pass as a ruled transfer, which is the one thing tier-frames' loss
+// clause exists to catch — this must not quietly launder it.
+//
+//   `formerly:` on the record        — a mark born AFTER the filing freeze. Its
+//                                      directory moves with its id (gate B files a new
+//                                      mark at its id), so the record itself is the
+//                                      only place the old name can be kept. The world
+//                                      spelling of the office's `data.formerly`.
+//   `re_identified` in the freeze    — a FOSSIL. Its path never moves (gate A), so the
+//                                      manifest row is re-keyed in place and the
+//                                      manifest itself carries the old→new pair.
+//
+// Both are RULINGS written down. A mark may change hands more than once, so the walk
+// follows the chain to its end, and refuses a cycle rather than spinning.
+
+/** Every declared old→new re-identification, from both sources, as a flat map — one
+ *  hop per entry, not transitive. `freeze` is the parsed WORLD/filing-freeze.json;
+ *  pass null to read the records alone. */
+export function reIdentifications(records, freeze = null) {
+  const hops = new Map();                                  // old id -> new id
+  const claim = (from, to, where) => {
+    if (from === to) throw new Error(`re-identification names itself: ${from} (${where})`);
+    const prior = hops.get(from);
+    if (prior && prior !== to) throw new Error(`${from} is re-identified twice, to ${prior} and to ${to} (${where})`);
+    hops.set(from, to);
+  };
+  for (const rec of records ?? []) {
+    const was = rec?.formerly;
+    if (was == null) continue;
+    for (const from of (Array.isArray(was) ? was : [was])) {
+      const id = String(from).trim();
+      if (!id) throw new Error(`${rec.id}: an empty \`formerly:\` says nothing — name the id it was, or drop the field`);
+      if (!/^[^/\s]+\/[^/\s]+$/.test(id)) throw new Error(`${rec.id}: \`formerly: ${id}\` is not a mark id — it must be spelled <by>/<slug>`);
+      claim(id, rec.id, `WORLD/marks — ${rec.id}`);
+    }
+  }
+  for (const [date, ruling] of Object.entries(freeze?.re_identified ?? {})) {
+    if (!ruling || typeof ruling !== "object" || !ruling.rows) continue;   // `law` and other prose keys
+    for (const [from, to] of Object.entries(ruling.rows)) claim(from, to, `WORLD/filing-freeze.json — ${date}`);
+  }
+  return hops;
+}
+
+/** The declared re-identifications of THIS repo, read from the tree and the freeze
+ *  manifest — the two files that hold the rulings. Cached per process: the tree walk
+ *  is the expensive half and every caller wants the same answer. */
+let _hopsCache = new Map();
+export function loadReIdentifications({ root = ROOT, marksDir = null } = {}) {
+  const dir = marksDir ?? join(root, "WORLD/marks");
+  if (_hopsCache.has(dir)) return _hopsCache.get(dir);
+  const freezePath = join(root, "WORLD/filing-freeze.json");
+  const freeze = existsSync(freezePath) ? JSON.parse(readFileSync(freezePath, "utf8")) : null;
+  const hops = reIdentifications(loadMarks(dir), freeze);
+  _hopsCache.set(dir, hops);
+  return hops;
+}
+
+/** Follow the re-identification chain from `id` to the name that stands today. An id
+ *  that was never re-identified is its own current name. */
+export function currentMarkId(id, hops) {
+  let at = String(id);
+  const seen = new Set([at]);
+  while (hops.has(at)) {
+    at = hops.get(at);
+    if (seen.has(at)) throw new Error(`re-identification cycle at ${id}: ${[...seen].join(" -> ")} -> ${at}`);
+    seen.add(at);
+  }
+  return at;
+}
+
+/** Every name this mark has ever answered to, the one it carries today last.
+ *
+ *  Not a walk in one direction: a record may list several `formerly:` ids at once
+ *  (a mark assembled from names that were separately retired into it), so the
+ *  names that reach a given current id are a SET and not a line. This is that set
+ *  — every id whose chain ends where `id`'s does. */
+export function markIdentityChain(id, hops) {
+  const current = currentMarkId(id, hops);
+  const names = new Set([String(id), current]);
+  for (const from of hops.keys()) if (currentMarkId(from, hops) === current) names.add(from);
+  return [...names].filter((n) => n !== current).sort().concat(current);
+}
+
+/** THE ONE CALL a test makes when it names a mark by a literal id: which name does
+ *  THIS set of records know it by? — and it REFUSES, naming the id, when the literal
+ *  resolves to nothing.
+ *
+ *  It answers in BOTH directions on purpose, because the two sides of a transfer are
+ *  both real and a test meets each of them. A fresh fold knows the mark by the name it
+ *  carries today; the committed `WORLD/world-state.json` still knows it by the name it
+ *  carried when that file was last folded, until the crossing refolds it. Neither is
+ *  wrong. So the literal in the test is not a name to be pinned but a HANDLE, and this
+ *  is the function that turns it into the name the set at hand actually uses.
+ *
+ *  A literal that matches nothing is an ERROR and never a skip. The skip is the
+ *  water-shapes `if (!m) continue` class, where a test whose subject has quietly left
+ *  the world goes on reporting `ok` about nobody, forever. */
+export function resolveMarkId(id, records, { hops = null, where = "" } = {}) {
+  const standing = new Set((records ?? []).map((m) => m.id));
+  const chain = markIdentityChain(id, hops ?? loadReIdentifications());
+  // nearest first: the literal itself, then the names it has been known by
+  const ordered = [String(id), ...chain.filter((n) => n !== String(id))];
+  for (const name of ordered) if (standing.has(name)) return name;
+  const also = chain.length > 1 ? ` (nor any of its other names: ${chain.filter((n) => n !== String(id)).join(", ")})` : "";
+  throw new Error(
+    `${where ? where + ": " : ""}"${id}"${also} names no mark in this set of ${standing.size}. ` +
+    `If it changed hands, the record that holds it now must say \`formerly: ${id}\` ` +
+    `(a fossil is re-keyed in WORLD/filing-freeze.json § re_identified instead). ` +
+    `If it was withdrawn, this test's subject is gone and the test is what needs the edit.`);
+}
+
+/** An id→record map in which a re-identified mark answers to EVERY name it has ever
+ *  carried. Swap it in for `new Map(marks.map((m) => [m.id, m]))` wherever the records
+ *  came from a COMMITTED derived artifact — WORLD/world-state.json, containment.json,
+ *  region-outsiders.json. Those are refolded at the crossing, so between a transfer and
+ *  the next settlement they answer the old name while a fresh fold answers the new one,
+ *  and no single literal is true on both sides.
+ *
+ *  The rulings are read from the TREE, not from `records`: the derived artifacts carry
+ *  a projection of each record and not its `formerly:` line, and in any case the
+ *  committed copy was folded BEFORE the transfer that is being resolved.
+ *
+ *  A former name that some OTHER standing mark has since taken is not an alias — the
+ *  live mark keeps its own name, because answering a question about the wrong mark is
+ *  worse than not answering it. */
+export function markIndex(records, { hops = null } = {}) {
+  const rows = records ?? [];
+  const byId = new Map(rows.map((m) => [m.id, m]));
+  const chain = hops ?? loadReIdentifications();
+  const touched = new Set([...chain.keys(), ...chain.values()]);
+  for (const rec of rows) {
+    if (!touched.has(rec.id)) continue;                    // this mark has never changed hands
+    for (const name of markIdentityChain(rec.id, chain)) {
+      if (byId.has(name)) continue;                        // its own name, or one a standing mark holds
+      byId.set(name, rec);
+    }
+  }
+  return byId;
+}
+
 // ---------- load stakes ----------
 function loadStakes() {
   if (STAKES_PATH) {
