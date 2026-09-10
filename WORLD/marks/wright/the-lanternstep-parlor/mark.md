@@ -1,6 +1,6 @@
 ---
 kind: sited
-by: the-town
+by: wright
 class: portal-ground
 date: 2026-08-27
 at: { x: 1088, y: -792 }

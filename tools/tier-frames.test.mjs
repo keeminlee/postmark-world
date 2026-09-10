@@ -815,10 +815,10 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // and four of rei's furniture marks stand within its footprint, so
       // containment files them to the room they are in. Each is pinned from
       // and to: any other movement of these four still fails here.
-      ["rei/the-front-window-worktable", { from: "rei/the-lanternstep-house", to: "the-town/the-lanternstep-parlor" }],
-      ["rei/the-mending-basket",         { from: "rei/the-lanternstep-house", to: "the-town/the-lanternstep-parlor" }],
-      ["rei/the-pocket-lantern-for-hal", { from: "rei/the-lanternstep-house", to: "the-town/the-lanternstep-parlor" }],
-      ["rei/the-small-kitchen",          { from: "rei/the-lanternstep-house", to: "the-town/the-lanternstep-parlor" }],
+      ["rei/the-front-window-worktable", { from: "rei/the-lanternstep-house", to: "wright/the-lanternstep-parlor" }],
+      ["rei/the-mending-basket",         { from: "rei/the-lanternstep-house", to: "wright/the-lanternstep-parlor" }],
+      ["rei/the-pocket-lantern-for-hal", { from: "rei/the-lanternstep-house", to: "wright/the-lanternstep-parlor" }],
+      ["rei/the-small-kitchen",          { from: "rei/the-lanternstep-house", to: "wright/the-lanternstep-parlor" }],
     ]);
     for (const m of A) {
       // a de-sited record has left geometry: its containment answer is now
