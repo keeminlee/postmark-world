@@ -2,9 +2,9 @@
 
 > **What this file is.** A shelf, not a layer. Nothing on it is law, nothing on
 > it is retired, and nothing on it is lost. Each row names a body of work that
-> was drafted whole — clause, nodes, and in three cases a working office module
-> with its own suite — and then stopped short of the one thing that makes law
-> law: the founder's word.
+> was drafted whole — clause, nodes, and in every case working office code with
+> its own suite — and then stopped short of the one thing that makes law law:
+> the founder's word.
 
 **Why the shelf exists (the founder, 2026-09-10):** *"I asked you to 'fix
 whatever sucks about being a resident' and these were the results. I do think
@@ -24,19 +24,28 @@ from being read wrong. So the sections come off, and stand here instead.
 
 ## The road back, and it runs in one direction
 
-A shelved proposal returns in three steps, in this order. Skipping one is how
+A shelved proposal returns in these steps, in this order. Skipping one is how
 all four got here.
 
 1. **The founder's ruling on the clause.** Not approval of the code — a word on
    whether the town wants the thing at all. Until then the office half is
    speculative by definition, however well it is built.
-2. **The grant.** A verb the resident class does not carry cannot be exercised,
-   so the clause's own edit to the class node is what makes it reachable. This
-   is the step that makes the difference visible: all three office modules
-   below are unreachable today, not because they are broken, but because the
-   resident class does not grant `gather`, `hand-to-human`, or `subscribe`.
+2. **The grant** — *for a verb, and only for a verb.* An action the resident
+   class does not carry cannot be exercised, so the clause's own edit to the
+   class node is what makes it reachable. This is the step that made the
+   difference visible: the gathering, the handoff and the subscription each
+   shipped a complete office module that no resident could reach, not because
+   it was broken but because the class granted no `gather`, `hand-to-human` or
+   `subscribe`.
 3. **The office.** The module rejoins the train, its door rows go back on the
    apex, its suite runs in the gate.
+
+**`available` walks two of those three, and the exception is worth stating
+rather than filing off.** It is a **derived**, never a verb — nothing is
+granted, nothing is dispatched, and step 2 has nothing to do. Its road is the
+ruling and then the office. Three rows here are unreachable code awaiting a
+grant; that one was *live* code awaiting a ruling, which is a different failure
+and reads back differently.
 
 ## The shelf
 
@@ -45,7 +54,7 @@ all four got here.
 | the gathering | #15 (closed, unmerged) | `wright/law-gathering-class` | `wright/parked-proposals-office` | 2026-09-07 |
 | the handoff | #16 (closed, unmerged; stacked on #15) | `wright/law-hand-to-human` | `wright/parked-proposals-office` | 2026-09-07 |
 | the subscription | #20 (merged 09-08, **reverted** 09-10); #18 superseded | `wright/law-subscribe-alone` | `wright/parked-proposals-office` | 2026-09-07 |
-| available | #19 (merged 09-08, **reverted** 09-10) | `wright/law-available` | `jetto/lane-c-available` — **but see below** | 2026-09-07 |
+| available | #19 (merged 09-08, **reverted** 09-10) | `wright/law-available` | `wright/parked-proposals-office` | 2026-09-07 |
 
 ### the gathering — world #15, `wright/law-gathering-class`
 
@@ -102,19 +111,30 @@ departures, and a resident can stand in the makers' quarter for a week while
 reading nothing. Stored never; `null` with its reason where the office cannot
 say, because a listen is not written down.
 
-**Office — and this row is not like the other three.** Its office half is
-**already on office main and live**: `src/voices.mjs § availability`, threaded
-into presence rows by `src/dynamic-presence.mjs` and the walkers read in
-`src/world.mjs`. It was not parked with the other three, and this shelf says so
-rather than implying a symmetry that is not there. So today the office answers
-`available` at doors the world's record no longer describes — a live surface
-ahead of its law, which is the mirror image of the problem this shelf was made
-to fix, and it is the founder's call which end moves.
+**Office, parked** — `wright/parked-proposals-office`, and this row got there
+by a different road than the other three. Its office half was not sitting on a
+branch waiting: it was **already on office main and live**, answering at
+presence doors whose law had just been reverted off this record. A live surface
+ahead of its law is the mirror image of what this shelf was made to fix, so the
+first pass reported the asymmetry instead of quietly resolving it, and the
+founder ruled: *park it with the others.*
 
-**To bring it back:** the founder rules on the `available` bullet in § The
-derived, and the clause and its two nodes (`available`, `available-engine`)
-return. No grant step — `available` is a derived, never a verb, so step 2 is
-vacuous here and the office half is already past step 3.
+So it came out too: `src/voices.mjs § availability` with its last-spoke index
+and presence horizon, its injection into `near()` and `everyone()` in
+`src/dynamic-presence.mjs`, its three resolver sites in `src/world.mjs`, the
+walkers door's `withAvailability`, and both suites (`available.test.mjs`,
+`available-present.test.mjs`). The removal rides `jetto/park-proposals` with
+the other three; the bytes stand on `wright/parked-proposals-office`, which
+already held them because `available`'s office half is byte-for-byte identical
+on office main and on the train. The lane branch `jetto/lane-c-available` still
+exists and carries its own history.
+
+**To bring it back — two steps, not three.** The founder rules on the
+`available` bullet in § The derived, and the clause and its two nodes
+(`available`, `available-engine`) return; then the office half returns with
+them. There is no grant step: `available` is a **derived, never a verb**, so
+nothing has to be added to the resident class for it to be readable. That is
+the one row on this shelf whose road is short.
 
 ---
 
