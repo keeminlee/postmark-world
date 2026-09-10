@@ -634,6 +634,17 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       "the-town/the-three-tenses",     // renamed → the-town/the-three-balances (Tier-2 rename, 08-19)
       "the-town/attachment",           // renamed → the-town/attach (verb-form grammar)
       "the-town/departure",            // renamed → the-town/depart (verb-form grammar)
+      // BLACKWATER BEND CHANGED HANDS (founder, 2026-09-10, verbatim: "the inlet
+      // is terrain; everything else is just a mark, and belongs to the resident/
+      // household"). A mark's id is `<by>/<slug>`, so when `by:` moves the id
+      // moves with it and the old id leaves the census — the same shape as the
+      // renames above, where the id rides the slug. The mark did not go
+      // anywhere; only this name did. The declaring act is the founder's ruling,
+      // carried by the transfer commit (f1ffaaae) and by the freeze manifest,
+      // whose rows for these three are re-keyed to the ids they carry now.
+      "the-town/blackwater-bend-footbridge",  // → merrick-nocturne/blackwater-bend-footbridge
+      "the-town/blackwater-bend-grove",       // → merrick-nocturne/blackwater-bend-grove
+      "the-town/blackwater-bend-stone-path",  // → merrick-nocturne/blackwater-bend-stone-path
     ]);
     const idsA = new Set(A.map((m) => m.id)), idsB = new Set(B.map((m) => m.id));
     // THE WITHDRAW VERB SHIPPED (2026-08-19), so the constant's own retirement
@@ -667,7 +678,21 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // was already declared (DESITED_BY_DECLARED_ACT below — the loop is
     // taught), and their id exit is the verb-form rename — two declarations,
     // one lawful act each. Any OTHER positioned withdrawal still fails loud.
-    const WITHDRAWN_WHILE_POSITIONED = new Set(["the-town/attachment", "the-town/departure"]);
+    //
+    // The Blackwater three were positioned at the ref and are positioned still —
+    // under the ids they carry now, which is the whole of what a transfer does.
+    // They are NOT de-sited: the loops below skip them by name rather than
+    // pretending they left geometry. WHAT THAT COSTS, said plainly: this
+    // falsifier no longer diffs their A-side position against their B-side one,
+    // because the two sides call them different things and no line here may
+    // hold the pair without becoming the register this file just deleted. What
+    // still reads them: geometry-parity (store vs loader), mark-lint gate A
+    // (the freeze row, re-keyed), position-law, and the region gates.
+    const WITHDRAWN_WHILE_POSITIONED = new Set([
+      "the-town/attachment", "the-town/departure",
+      "the-town/blackwater-bend-footbridge", "the-town/blackwater-bend-grove",
+      "the-town/blackwater-bend-stone-path",
+    ]);
     for (const id of WITHDRAWN_BY_DECLARED_ACT)
       assert.ok(!A.find((m) => m.id === id)?.at || WITHDRAWN_WHILE_POSITIONED.has(id),
         `${id} was predicated — a positioned withdrawal needs the loop below taught, not just this list`);
@@ -777,6 +802,11 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
         assert.ok(!pb.has(id), `${id} was de-sited by declared act, but the B side still positions it at ${pb.get(id)?.at}`);
         continue;
       }
+      // the id left the census by the hand list's own act (a rename, or a
+      // transfer — the id rides the slug or the author), so nothing on the B
+      // side answers to it. Checked AFTER the de-sited branch so that branch's
+      // "and the B side must not still position it" still runs for its own ids.
+      if (WITHDRAWN_BY_DECLARED_ACT.has(id)) continue;
       const b = pb.get(id);
       const reshaped = RESHAPED_BY_DECLARED_ACT.get(id);
       if (a.at !== b.at) {
@@ -825,6 +855,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // class-space's (the extends: lattice), which geometry cannot see
       if (DESITED_BY_DECLARED_ACT.has(m.id)) continue;
       if (lawfullyWithdrawn.has(m.id)) continue; // withdrawn by declared act — no B side to ask
+      if (WITHDRAWN_BY_DECLARED_ACT.has(m.id)) continue; // ditto, by the hand list rather than the log
       // A RECORD WITH NO POSITION HAS NO FOOTPRINT TO CONTAIN (corrected
       // 2026-08-22). This loop's own reason is the sentence above it — "if any of
       // them had been re-framed onto the wrong origin their FOOTPRINT would have
