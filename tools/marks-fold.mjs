@@ -721,7 +721,7 @@ export function candidatesInClaimOrder(candidates) {
   return [...(candidates ?? [])].sort(compareClaimOrder);
 }
 
-// ── THE REGISTRY MAY NOT BE STALE, AND THAT IS A REFUSAL ─────────────────────
+// ── WAS THIS REGISTRY VERIFIED AGAINST THE LIVE TOWN, THIS CROSSING? ─────────
 //                                                     (founder, 2026-09-09)
 //
 //   "please make sure this incident cannot happen again by construction."
@@ -729,31 +729,62 @@ export function candidatesInClaimOrder(candidates) {
 // The incident: `WORLD/households.json` sat 33 days behind the town while this
 // fold, the lint and the authorship wall read it as live. Refreshing it every
 // crossing (postmark-office `deploy/settlement-auto.sh`) is the mechanism; this
-// is the CONSTRUCTION. The registry carries `town_sha`, the commit of the town
-// it was derived from, and a reader handed the crossing's own pinned town sha
-// REFUSES when the two disagree.
+// is the construction that makes the mechanism's absence visible.
 //
-// EXACT MATCH, not "not older". The founder's words allow either; exact is
-// strictly stronger and needs no ancestry walk, and there is no honest reason
-// for a crossing to fold a registry derived from a town it did not pin —
-// including a NEWER one, which would mean somebody hand-ran the export against a
-// tree this crossing never read.
+// ── THE FIRST CUT ASKED THE WRONG QUESTION, AND IT WOULD HAVE STOPPED THE
+//    TOWN (caught in review, 2026-09-09) ───────────────────────────────────────
 //
-// AN ABSENT STAMP REFUSES TOO. That is the pre-2026-09-09 file exactly, and the
-// whole point is that its absence must stop being invisible.
+// It demanded the registry's `town_sha` EQUAL the sha the crossing pinned. But
+// the export writes the file only when the MAPPING moved — `generated_at` and
+// `town_sha` are deliberately excluded from that comparison, so a registry
+// nothing changed keeps its older stamp. The town takes 150-300 commits a day,
+// so two crossings never pin the same sha. Every crossing after a quiet one
+// would have refused, and the town would have settled only on the days somebody
+// joined. The export's own header states the sentence that refutes it: "an older
+// `town_sha` means the mapping has not changed since — never that nobody
+// looked."
 //
-// The pin is OPTIONAL: a caller that passes none gets today's behaviour, so a
-// hand-run against any town still works. The crossing always passes one.
-export function refuseStaleHouseholds(registry, pinnedTownSha, where = "WORLD/households.json") {
-  if (!pinnedTownSha) return null;
-  const stamped = registry?.town_sha ?? null;
-  if (stamped === pinnedTownSha) return null;
-  return `${where} was derived from town ${stamped ?? "an UNSTAMPED tree"}, and this crossing pinned town `
-    + `${pinnedTownSha}. Refusing rather than grouping households from a registry nobody re-derived: the `
-    + `registry is refreshed by the crossing itself (postmark-office deploy/settlement-auto.sh), so a `
-    + `mismatch means the refresh did not run, or ran against a different town. A stale registry files one `
-    + `household's handles as strangers, which silently ungates the parcel cap and stands the authorship `
-    + `wall down.`;
+// ── THE QUESTION THAT IS ACTUALLY BEING ASKED ────────────────────────────────
+//
+// Freshness is not "the stamp equals my sha". It is "somebody checked this file
+// against the live town on this crossing". That is a fact only the OFFICE knows,
+// because the office is the side holding the town clone. So the office STATES
+// it and this side checks the statement:
+//
+//   { verifiedAt: <sha> }   the refresh ran, re-derived the registry from the
+//                           town at <sha>, and either rewrote this file or found
+//                           it already correct. FRESH, whatever stamp it carries.
+//   { unverified: <reason>} the operator deliberately skipped the refresh
+//                           (SETTLEMENT_REGISTRY=0). NEVER a refusal — a
+//                           documented bypass that refuses is not a bypass — and
+//                           the caller says so LOUDLY on the receipt.
+//   null                    no crossing context: a hand run, or the isolation
+//                           pass re-running a crossing whose registry this same
+//                           line already cleared. Not armed, exactly as before.
+//
+// WHAT THIS SIDE CAN STILL CATCH, and it is worth being honest that it is
+// narrow: a caller claiming VERIFIED over a registry the export has never
+// written. Such a file carries no `town_sha` at all — that is the 2026-08-07
+// file exactly — and a claim of verification over it is a claim that cannot be
+// true, because a verified registry is a written one (postmark-office
+// `deploy/settlement-registry.mjs` writes whenever the prior file is unstamped,
+// so "verified" implies "stamped" by construction on that side).
+//
+// The real refusal for a crossing that could not verify happens where the town
+// actually is: the office chain refuses before it ever reaches the sweep.
+export function refuseStaleHouseholds(registry, verification, where = "WORLD/households.json") {
+  if (!verification) return null;                       // not armed
+  if (verification.unverified) return null;             // a bypass is never a refusal
+  if (!verification.verifiedAt) {
+    return `${where}: the caller passed a registry verification that states neither a verified sha nor a `
+      + `declared bypass (${JSON.stringify(verification)}). Refusing rather than guessing which it meant.`;
+  }
+  if (registry?.town_sha) return null;                  // verified, and attributable
+  return `${where} carries NO town_sha, so the export has never written it — this is the 2026-08-07 file `
+    + `exactly — yet the caller states it was verified against the town at ${verification.verifiedAt}. A `
+    + `verified registry is a written one, so that claim cannot be true, and folding on it would file one `
+    + `household's handles as strangers: it silently ungates the parcel cap and stands the authorship wall `
+    + `down. Refusing.`;
 }
 
 /**
@@ -1474,11 +1505,22 @@ if (isMain || basename(process.argv[1] ?? "") === "marks-fold.mjs") {
   // but that is a fact about today's marks, not a property of the key.
   const hhPath = opt("--households", join(MARKS_DIR, "..", "households.json"));
   const registryFile = existsSync(hhPath) ? JSON.parse(readFileSync(hhPath, "utf8")) : null;
-  // `--town-sha <sha>`: the town this crossing pinned. Given it, the fold
-  // REFUSES a registry derived from any other tree — see refuseStaleHouseholds
-  // above for why that is a construction and not a warning. Absent, nothing
-  // changes, so every hand-run still works exactly as it did.
-  const staleRegistry = refuseStaleHouseholds(registryFile, opt("--town-sha", null), hhPath);
+  // `--registry-verified-at <sha>`: the caller re-derived this registry from the
+  // town at <sha> on this crossing. `--registry-unverified <reason>`: the caller
+  // deliberately did not, and says why. Neither: no crossing context, and the
+  // guard is not armed, so every hand-run works exactly as it did.
+  //
+  // NOT `--town-sha`, which is what this was and which asked the wrong question
+  // — see refuseStaleHouseholds above. A registry the refresh checked and found
+  // unchanged keeps an older stamp and is FRESH; demanding equality refused the
+  // crossing after every quiet one.
+  const verifiedAt = opt("--registry-verified-at", null);
+  const unverified = opt("--registry-unverified", null);
+  const staleRegistry = refuseStaleHouseholds(
+    registryFile,
+    verifiedAt ? { verifiedAt } : (unverified ? { unverified } : null),
+    hhPath,
+  );
   if (staleRegistry) { console.error(`REFUSING TO FOLD — ${staleRegistry}`); process.exit(1); }
   const households = registryFile?.households ?? null;
   // fanup: legacy is the published default through the SHADOW CYCLE (step-1

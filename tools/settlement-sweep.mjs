@@ -34,9 +34,9 @@ import {
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const REGISTRY_REL = "WORLD/settlement-publications.json";
-// Set once per `settlementSweep` run; read by `foldRefInner`. Null means no pin
-// was given and the registry-freshness construction is not armed.
-let pinnedTownSha = null;
+// Set once per `settlementSweep` run; read by `foldRefInner`. Null means the
+// caller stated nothing about the registry and the construction is not armed.
+let registryVerification = null;
 // the named door a refusal leaves by, so a receipt never has to guess which
 // stderr line was the cause
 export const REFUSAL_SENTINEL = "SETTLEMENT-SWEEP-REFUSAL";
@@ -285,10 +285,8 @@ function foldRefInner(repo, ref, stakes) {
     const prev = existsSync(prevPath) ? JSON.parse(readFileSync(prevPath, "utf8")) : null;
     const hhPath = join(dir, "WORLD", "households.json");
     const registryFile = existsSync(hhPath) ? JSON.parse(readFileSync(hhPath, "utf8")) : null;
-    // The same construction, on the tree actually being folded: a sketchbook
-    // branched off an older main carries an older registry, and folding it would
-    // group that household's marks by a map the crossing has already refused.
-    const staleHere = refuseStaleHouseholds(registryFile, pinnedTownSha, `${ref}:WORLD/households.json`);
+    // The same construction, on the tree actually being folded.
+    const staleHere = refuseStaleHouseholds(registryFile, registryVerification, `${ref}:WORLD/households.json`);
     if (staleHere) throw refusal(staleHere, { phase: "registry-freshness", ref });
     const households = registryFile?.households ?? null;
     foldMeter.marks = Math.max(foldMeter.marks, marks.length);
@@ -856,12 +854,13 @@ export function settlementSweep({
   repo = ROOT,
   stakesPath,
   mainBranch = "main",
-  // THE TOWN THIS CROSSING PINNED. The office chain passes it; a hand-run may
-  // not, and then the freshness construction is simply not armed. It is stored
-  // in a module-scoped `pinnedTownSha` rather than threaded through `foldRef`
-  // because the fold is reached through three call sites and a parameter added
-  // to two of them is a construction with a hole in it.
-  townSha = null,
+  // WHETHER THE REGISTRY WAS VERIFIED THIS CROSSING, stated by the caller that
+  // holds the town clone. `{ verifiedAt }`, `{ unverified }`, or null for no
+  // crossing context — see refuseStaleHouseholds. It is stored in a
+  // module-scoped `registryVerification` rather than threaded through `foldRef`
+  // because a parameter added to some call sites and not others is a
+  // construction with a hole in it.
+  registryVerification = null,
   // ── THE FINAL GATE'S OWN QUARANTINE (founder-mandated 2026-08-27, defect 4) ─
   //
   //   "ONE BAD MARK REFUSES THE WHOLE TOWN — the final suite gate is all-or-
@@ -944,16 +943,20 @@ export function settlementSweep({
   // registry derived from any other tree refuses the crossing by name, and an
   // UNSTAMPED registry refuses too. Given none, nothing changes.
   //
-  // CHECKED ONCE, HERE, AND IT COVERS THE FOLD. `foldRef` reads this same file
-  // out of each ref it archives; `refuseStaleHouseholds` is called there too,
-  // against the same pin, because a sketchbook behind main carries an older copy
-  // and the PR lane's path law is what keeps a head-side edit out, not this.
-  pinnedTownSha = townSha ?? null;
-  const staleWall = refuseStaleHouseholds(wallRegistryFile, pinnedTownSha, `${mainBranch}:WORLD/households.json`);
+  // CHECKED HERE, AND ALSO IN `foldRefInner`. The second call is not redundant
+  // cover for a different ref: `foldRef` has ONE call site and it archives
+  // `mainBranch`, so both calls see the same file today. It is there because the
+  // fold is the reader whose failure is silent, and a future second call site —
+  // a sketchbook folded on its own ref, which is exactly what the delta path
+  // stopped doing — would carry an older registry with it. Corrected 2026-09-09:
+  // this comment used to claim the fold reads a different copy per ref, which
+  // was not true of any call site that exists.
+  registryVerification = registryVerification ?? null;
+  const staleWall = refuseStaleHouseholds(wallRegistryFile, registryVerification, `${mainBranch}:WORLD/households.json`);
   if (staleWall) throw refusal(staleWall, {
     phase: "registry-freshness",
     stamped: wallRegistryFile?.town_sha ?? null,
-    pinned: pinnedTownSha,
+    verification: registryVerification,
   });
   const branchHouseholdOf = (branchName) =>
     wallRegistry.logins[branchName.slice("draft/".length).toLowerCase()] ?? null;
@@ -1486,7 +1489,10 @@ function parseCli(argv) {
     repo: opt("--repo", ROOT),
     stakesPath: opt("--stakes"),
     mainBranch: opt("--main", "main"),
-    townSha: opt("--town-sha", null),
+    // One of these, or neither. See refuseStaleHouseholds in marks-fold.mjs.
+    registryVerification: opt("--registry-verified-at", null)
+      ? { verifiedAt: opt("--registry-verified-at") }
+      : (opt("--registry-unverified", null) ? { unverified: opt("--registry-unverified") } : null),
     json: argv.includes("--json"),
     // One mark id per line — the isolation pass's instrument, and an operator's
     // hand-hold when the keeper already knows which mark is the problem.

@@ -335,29 +335,69 @@ test("F9 · admitDelta orders its candidates too, so one sketchbook's several pa
 });
 
 test("F10 · refuseStaleHouseholds — the unit both readers share", () => {
-  const PIN = "a".repeat(40);
-  const fresh = { town_sha: PIN, households: {} };
-  assert.equal(refuseStaleHouseholds(fresh, PIN), null, "a matching stamp passes");
-  assert.equal(refuseStaleHouseholds(fresh, null), null, "no pin, no construction — a hand-run still works");
+  const A = "a".repeat(40);   // the town a registry was DERIVED from
+  const B = "b".repeat(40);   // the town a later crossing PINNED — always different
+  const stamped = { town_sha: A, households: {} };
+  const unstamped = { households: {} };
+
+  // ── THE BLOCKER, FIRST, BECAUSE IT IS THE ONE THAT SHIPPED ────────────────
+  //
+  // The export rewrites the file only when the MAPPING moved, so a registry
+  // nothing changed keeps its older stamp. The real town takes 150-300 commits a
+  // day, so two crossings never pin the same sha. The first cut of this rule
+  // demanded equality, which refused the crossing after every quiet one — the
+  // town would have settled only on the days somebody joined.
+  assert.equal(refuseStaleHouseholds(stamped, { verifiedAt: B }), null,
+    "a registry VERIFIED this crossing is fresh whatever stamp it carries");
+  assert.equal(refuseStaleHouseholds(stamped, { verifiedAt: A }), null,
+    "…and equally so when the two happen to coincide, which is the case that hid the defect");
+
+  // A BYPASS IS NEVER A REFUSAL. A documented escape hatch that refuses on the
+  // very file it exists to tolerate is not an escape hatch.
+  assert.equal(refuseStaleHouseholds(unstamped, { unverified: "SETTLEMENT_REGISTRY=0" }), null);
+
+  // NOT ARMED: a hand run, or the isolation pass re-running a crossing this same
+  // line already cleared.
+  assert.equal(refuseStaleHouseholds(unstamped, null), null);
   assert.equal(refuseStaleHouseholds(null, null), null);
 
-  const other = refuseStaleHouseholds({ town_sha: "b".repeat(40) }, PIN);
-  assert.match(String(other), /derived from town b{40}/);
-  assert.match(String(other), new RegExp(`pinned town ${PIN}`), "and it NAMES BOTH shas, which is the whole point");
+  // ── WHAT THIS SIDE CAN STILL CATCH ───────────────────────────────────────
+  // A caller claiming VERIFIED over a registry the export has never written.
+  // That file carries no town_sha — the 2026-08-07 file exactly — and a verified
+  // registry is a written one, so the claim cannot be true.
+  const lie = refuseStaleHouseholds(unstamped, { verifiedAt: B }, "main:WORLD/households.json");
+  assert.match(String(lie), /NO town_sha/);
+  assert.match(String(lie), new RegExp(`verified against the town at ${B}`),
+    "and it names the claim it is refusing, not just the file");
 
-  const unstamped = refuseStaleHouseholds({ households: {} }, PIN);
-  assert.match(String(unstamped), /UNSTAMPED/,
-    "an absent stamp refuses too — that is the pre-2026-09-09 file exactly, and its absence must stop being invisible");
+  // A token that states neither is a caller that has not been updated.
+  assert.match(String(refuseStaleHouseholds(stamped, {})), /neither a verified sha nor a declared bypass/);
 });
 
-test("F11 · a crossing handed a stale registry REFUSES, and names both shas", (t) => {
-  // The construction where it matters: the sweep, on a real fixture repo.
+test("F10b · THE CAN-FAIL CONTROL — the equality rule this lane shipped refuses F10's first case", () => {
+  // F10's headline assertions are ABSENCES, and an absence is what a rule that
+  // ignores its argument entirely produces too. So the rule as it was first
+  // written, on F10's own inputs, must answer the other way. Written out here
+  // rather than imported, because the point is that it no longer exists.
+  const A = "a".repeat(40), B = "b".repeat(40);
+  const asShipped = (registry, pinned) => ((registry?.town_sha ?? null) === pinned ? null : "REFUSED");
+  assert.equal(asShipped({ town_sha: A }, B), "REFUSED",
+    "the shipped rule refused the crossing after a quiet one — if this passes, F10 asserts nothing");
+  assert.equal(asShipped({}, B), "REFUSED", "and refused the documented bypass, which was the second blocker");
+});
+
+test("F11 · a crossing whose registry NOBODY verified refuses; one that was verified crosses", (t) => {
   const repo = mkdtempSync(join(tmpdir(), "postmark-registry-freshness-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
   const stakesPath = join(repo, "stakes.json");
 
   const git = (...a) => execFileSync("git", ["-C", repo, ...a], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   const put = (p, text) => { mkdirSync(dirname(join(repo, p)), { recursive: true }); writeFileSync(join(repo, p), text); };
+  const commit = (m) => {
+    execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
+    git("add", "-A");
+    git("-c", "user.name=fixture", "-c", "user.email=f@test.invalid", "commit", "-q", "-m", m);
+  };
 
   mkdirSync(join(repo, "tools"), { recursive: true });
   for (const file of withTool("mark-lint.mjs")) cpSync(join(HERE, file), join(repo, "tools", file));
@@ -366,37 +406,33 @@ test("F11 · a crossing handed a stale registry REFUSES, and names both shas", (
     "---\nkind: sited\nby: the-town\ntier: constitution\nat: { x: 0, y: 0 }\nextent: { w: 320000, h: 320000 }\ndate: 2026-07-01\n---\n\nthe frame\n");
   writeFileSync(stakesPath, JSON.stringify([]));
 
-  const PINNED = "c".repeat(40);
-  const STALE = "d".repeat(40);
-  put("WORLD/households.json", `${JSON.stringify({ town_sha: STALE, households: {}, logins: {} }, null, 2)}\n`);
-  git("init", "-q", "-b", "main");
-  execFileSync(process.execPath, [join(repo, "tools", "marks-fold.mjs")], { cwd: repo });
-  git("add", "-A");
-  git("-c", "user.name=fixture", "-c", "user.email=f@test.invalid", "commit", "-q", "-m", "canon");
+  const DERIVED_FROM = "c".repeat(40);
+  const PINNED_NOW = "d".repeat(40);   // a later crossing, a different town sha
 
+  // ── the ordinary crossing: verified now, file stamped from an EARLIER town ──
+  put("WORLD/households.json", `${JSON.stringify({ town_sha: DERIVED_FROM, households: {}, logins: {} }, null, 2)}
+`);
+  git("init", "-q", "-b", "main");
+  commit("canon");
+  assert.ok(settlementSweep({ repo, stakesPath, registryVerification: { verifiedAt: PINNED_NOW } }),
+    "the crossing after a quiet one must cross — the registry was checked, it simply had not changed");
+
+  // ── the bypass: nothing verified it, and a person said so ──────────────────
+  assert.ok(settlementSweep({ repo, stakesPath, registryVerification: { unverified: "SETTLEMENT_REGISTRY=0" } }),
+    "a declared bypass is never a refusal");
+
+  // ── the incident: a registry the export has never written, claimed verified ─
+  put("WORLD/households.json", `${JSON.stringify({ households: {}, logins: {} }, null, 2)}
+`);
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=f@test.invalid", "commit", "-q", "-m", "the 2026-08-07 shape");
   assert.throws(
-    () => settlementSweep({ repo, stakesPath, townSha: PINNED }),
-    (e) => {
-      assert.match(String(e.message), new RegExp(`derived from town ${STALE}`), "the refusal names the registry's own sha");
-      assert.match(String(e.message), new RegExp(`pinned town ${PINNED}`), "and the one the crossing pinned");
-      return true;
-    },
-    "a crossing folding a registry derived from a town it did not pin must REFUSE, not group quietly",
+    () => settlementSweep({ repo, stakesPath, registryVerification: { verifiedAt: PINNED_NOW } }),
+    /NO town_sha/,
+    "a verified claim over a file the export never wrote cannot be true, and folding on it is the incident",
   );
 
-  // THE FLIP, and it is the reason to believe the assertion above: the same
-  // crossing with a matching stamp must NOT refuse for this reason.
-  put("WORLD/households.json", `${JSON.stringify({ town_sha: PINNED, households: {}, logins: {} }, null, 2)}\n`);
-  git("add", "-A");
-  git("-c", "user.name=fixture", "-c", "user.email=f@test.invalid", "commit", "-q", "-m", "registry refreshed");
-  const report = settlementSweep({ repo, stakesPath, townSha: PINNED });
-  assert.ok(report, "a fresh registry crosses");
-
-  // AND with no pin at all, the old behaviour: an unstamped registry crosses.
-  put("WORLD/households.json", `${JSON.stringify({ households: {}, logins: {} }, null, 2)}\n`);
-  git("add", "-A");
-  git("-c", "user.name=fixture", "-c", "user.email=f@test.invalid", "commit", "-q", "-m", "unstamped");
-  assert.ok(settlementSweep({ repo, stakesPath }), "no pin means the construction is not armed, so a hand-run still works");
-  assert.throws(() => settlementSweep({ repo, stakesPath, townSha: PINNED }), /UNSTAMPED/,
-    "…but a pinned crossing refuses the unstamped file, which is the 2026-08-07 state exactly");
+  // ── and unarmed, the same file crosses, because that is today's contract ───
+  assert.ok(settlementSweep({ repo, stakesPath }),
+    "no statement means no crossing context — hand runs and the isolation pass are unaffected");
 });
