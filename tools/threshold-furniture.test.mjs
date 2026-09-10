@@ -26,7 +26,6 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { assembleWorld } from "./world-build.mjs";
-import { resolveMarkId } from "./marks-fold.mjs";
 import { investigate } from "./world-verbs.mjs";
 import { DIALS } from "./world-engine.mjs";
 
@@ -40,22 +39,9 @@ const world = assembleWorld({
 });
 const byId = new Map(world.marks.map((m) => [m.id, m]));
 
-// A LITERAL IS A HANDLE, NOT A NAME (the class fix, 2026-09-10). These three marks
-// have changed hands, and `world` above is the COMMITTED world-state — derived, and
-// refolded only at the crossing. So between a transfer commit and the next settlement
-// the committed file answers to the old name while a fresh fold answers to the new
-// one, and there is no literal that is true on both sides. That is exactly how this
-// file went `not ok 423/424` on 2026-09-10 and took the 17:45Z settlement down with
-// it: repointing it redded it before the refold, leaving it redded it after.
-//
-// `resolveMarkId` asks the set at hand which name it knows the mark by, following the
-// `formerly:` line the transferring commit writes on the record. A handle that names
-// nothing at all still THROWS here, naming it — the subject going missing is the one
-// thing this file must never fall silent about.
-const inWorld = (id) => resolveMarkId(id, world.marks, { where: "threshold-furniture" });
-const PARLOR = inWorld("wright/the-lanternstep-parlor"); // the 2026-09-10 transfer (92ff95b5): the birthday parlor passes to its builder
-const DOOR = inWorld("wright/the-cellar-door");          // the 2026-08-30 transfer (61c5fdfb): the dungeon passes to its builder
-const HOUSE = inWorld("rei/the-lanternstep-house");
+const PARLOR = "wright/the-lanternstep-parlor"; // renamed by the 2026-09-10 transfer (92ff95b5): the birthday parlor passes to its builder
+const DOOR = "wright/the-cellar-door"; // renamed by the 2026-08-30 transfer (61c5fdfb): the dungeon passes to its builder
+const HOUSE = "rei/the-lanternstep-house";
 
 test("THE FALSIFIER: the parlor's own children hold the cellar door its own prose promises", () => {
   const parlor = byId.get(PARLOR);

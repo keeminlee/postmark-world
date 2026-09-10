@@ -21,7 +21,6 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { assembleWorld } from "./world-build.mjs";
-import { markIndex } from "./marks-fold.mjs";
 import { enterExitPlan, investigate } from "./world-verbs.mjs";
 import { placementParent } from "./marks-fold.mjs";
 
@@ -31,14 +30,7 @@ const world = assembleWorld({
   worldState: JSON.parse(read("WORLD/world-state.json")),
   skeleton: JSON.parse(read("WORLD/skeleton.json")),
 });
-// A LITERAL IS A HANDLE, NOT A NAME. `world` here is the COMMITTED world-state —
-// derived, and refolded only at the crossing — so between a transfer commit and the
-// next settlement it answers to the name a mark carried BEFORE it changed hands while
-// a fresh fold answers to the name it carries now. `markIndex` answers to every name a
-// record has ever carried, following the `formerly:` line the transferring commit
-// writes, so no literal in this file has to guess which side of a transfer it is on.
-// (The class fix of 2026-09-10, after one such split refused a whole settlement.)
-const byId = markIndex(world.marks);
+const byId = new Map(world.marks.map((m) => [m.id, m]));
 
 const DOOR = "wright/the-cellar-door"; // renamed by the 2026-08-30 transfer (61c5fdfb): the dungeon passes to its builder
 const PARCEL = "rei/the-lanternstep-house-parcel";

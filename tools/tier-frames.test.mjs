@@ -36,7 +36,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, renameSync, 
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { loadMarks, placementParent, tierRank, standingRank, TIER_RANK, COORDS_FIELD, COORDS_RELATIVE, currentMarkId, loadReIdentifications } from "./marks-fold.mjs";
+import { loadMarks, placementParent, tierRank, standingRank, TIER_RANK, COORDS_FIELD, COORDS_RELATIVE } from "./marks-fold.mjs";
 import { markStanding, standingHouseholdOf } from "./mark-standing.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -47,16 +47,8 @@ const ROOT = join(HERE, "..");
 // except — but the ref-diff falsifier below still needs it: a region re-shape
 // legitimately moves `placementParent` for the marks it names, and that is the
 // re-shape arriving, not a regression in the tier binding.
-// Every id below is said in ONE vocabulary — the names marks carry today. The list is
-// a COMMITTED derived artifact, refolded only at the crossing, and the `m.id` it is
-// asked about comes off a BASELINE checkout, so the two are read at different instants
-// and a mark that changed hands in between is named differently on each side. Without
-// this the exemption silently stops applying to a transferred mark and the falsifier
-// reds on a transfer nobody did anything wrong in (the class fix, 2026-09-10).
-const HOPS = loadReIdentifications();
 const DISPLACED_BY_DECLARED_ACT = new Set(
-  (JSON.parse(readFileSync(join(HERE, "..", "WORLD/region-outsiders.json"), "utf8")).rows ?? [])
-    .map((r) => currentMarkId(r.mark, HOPS)));
+  (JSON.parse(readFileSync(join(HERE, "..", "WORLD/region-outsiders.json"), "utf8")).rows ?? []).map((r) => r.mark));
 const LINT = join(HERE, "mark-lint.mjs");
 
 // The household a handle belongs to — the town's own registry (WORLD/households.json,
@@ -665,68 +657,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // leaving carries its own act — nyx's room did exactly this chain).
       if (/^(settlement: |withdraw|amend: )/.test(subject)) lawfullyWithdrawn.add(id);
     }
-
-    // ── RE-IDENTIFICATION IS NOT A LOSS (DEC-16, first met here 2026-09-10) ──
-    //
-    // A transfer is a RE-IDENTIFICATION, not a retirement plus a claim: `by:`
-    // and the slug move together, the leaf never changes, and the record stands
-    // exactly where it stood. So the old id leaves the census while NOTHING
-    // leaves the world — and the two clauses above cannot see it. There is no
-    // deleting commit to query (the file was edited, not deleted), and a hand
-    // list would be the constant this test spent three amendments retiring.
-    //
-    // DERIVED, from the same signature the office's own replay reads off the
-    // filing — "the same path at both tags, a different id standing there":
-    // a lost id whose directory still holds a record, with the same leaf slug
-    // and a different author, has changed hands. A path that went empty is
-    // still a loss; a leaf that changed is still a retirement (which is
-    // precisely what replay-ingest refuses to read as a transfer).
-    //
-    // WHAT THIS COSTS, SAID PLAINLY, because the point of this block is to tell
-    // the next reader what the falsifier can and cannot see. The two halves move
-    // in opposite directions and only one of them is good news.
-    //
-    //   THE GEOMETRY GATES ARE STRENGTHENED. The re-identified record is looked
-    //   up in B under its NEW name rather than skipped, so a transfer that also
-    //   moved a mark, resized it, or re-framed it still fails loud. Skipping it
-    //   would have been the weakening; this is the opposite.
-    //
-    //   THE LOSS CLAUSE IS GENUINELY LOOSENED, and there is no way to have the
-    //   ruling without it: a transfer edits a file and deletes nothing, so there
-    //   is NO DECLARING COMMIT to query. An id may now leave the census with no
-    //   commit naming it, provided a same-leaf record by another author stands
-    //   at its path. mark-lint does not backstop this — gate A checks the PATH,
-    //   which has not moved, and gate B only warns.
-    //
-    // SO WHAT HOLDS A TRANSFER HONEST IS THE GEOMETRY, NOT THIS CLAUSE. In
-    // practice that is nearly everything: changing a mark's author changes how
-    // it binds to its parent, so an unauthorised in-place re-authorship moves
-    // the mark, or moves its children's placement parent, and reds below. The
-    // residue — the exact class that slips through — is a mark whose composed
-    // position does not depend on its author at all: a ROOT-FRAMED mark, which
-    // is precisely the class transferred here. For those, this clause is the
-    // only thing that ever spoke, and it now says yes.
-    //
-    // First customers: merrick-nocturne's footbridge, stone path and grove
-    // (founder, 2026-09-10 — "the inlet is terrain; everything else is just a
-    // mark, and belongs to the resident/household"), the first transfer of
-    // marks that existed at this falsifier's baseline.
-    const marksRootB = join(ROOT, "WORLD", "marks").replace(/\\/g, "/");
-    const bByPath = new Map(B.map((m) => [String(m._dir ?? "").replace(/\\/g, "/").slice(marksRootB.length), m]));
-    const reIdentified = new Map();                       // old id -> new id
-    for (const id of lostIds) {
-      if (lawfullyWithdrawn.has(id)) continue;
-      const a = A.find((m) => m.id === id);
-      const dirA = String(a?._dir ?? "").replace(/\\/g, "/");
-      if (!dirA.startsWith(marksRootA)) continue;
-      const standing = bByPath.get(dirA.slice(marksRootA.length));
-      if (!standing) continue;                            // the path went empty — a real loss
-      if (standing.slug !== a.slug) continue;             // the leaf changed — a retirement, not a transfer
-      if (standing.by === a.by) continue;                 // same author: not a change of hands at all
-      reIdentified.set(id, standing.id);
-    }
-
-    assert.deepEqual(lostIds.filter((i) => !lawfullyWithdrawn.has(i) && !reIdentified.has(i)), [],
+    assert.deepEqual(lostIds.filter((i) => !lawfullyWithdrawn.has(i)), [],
       "no record was lost without a declaring act");
     // All A-side positions below are looked up in B; the withdrawn ids are
     // predicated (no `at`), so the geometry loop never meets them — asserted
@@ -756,11 +687,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       extent: JSON.stringify(m.extent ? { w: m.extent.w, h: m.extent.h } : null),
       points: JSON.stringify(m.points ?? null),
     }]));
-    const pa = posOf(A), pbById = posOf(B);
-    // A record that changed hands is looked up under the name it carries now, so
-    // every gate below asks the same question of it that it asks of everyone
-    // else. A transfer that moved a mark still reads as a move.
-    const pb = new Map([...pbById, ...[...reIdentified].flatMap(([o, n]) => (pbById.has(n) ? [[o, pbById.get(n)]] : []))]);
+    const pa = posOf(A), pb = posOf(B);
     assert.ok(pa.size > 300, `enough positioned records to be worth checking (${pa.size})`);
     // NOTHING MOVES WITHOUT A DECLARING ACT (the loss check's doctrine,
     // extended to geometry 2026-08-17; first lawful customer the same day):
@@ -911,10 +838,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // the sentence is about — are all still checked.
       if (!m.at) continue;
       const before = old.placementParent(m, A);
-      // a re-identified record is asked under the name it carries now (the
-      // fallback to the A-side record stays for a mark the B side never had)
-      const bId = reIdentified.get(m.id) ?? m.id;
-      const after = placementParent(B.find((x) => x.id === bId) ?? m, B);
+      const after = placementParent(pb.has(m.id) ? B.find((x) => x.id === m.id) : m, B);
       // WITHIN-HOUSEHOLD RE-HOMES ARE ALLOWED (founder ruling, Keemin 2026-08-22):
       // when a household publishes a new container over its own ground, the mark
       // it re-homes shares that household, and the move is fully reversible by
@@ -953,7 +877,7 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       // A mark whose placementParent moved and is NOT on the list still fails,
       // which is the whole point — the exemption comes from the declared act's
       // own receipt and from nowhere softer.
-      if (DISPLACED_BY_DECLARED_ACT.has(currentMarkId(m.id, HOPS))) {
+      if (DISPLACED_BY_DECLARED_ACT.has(m.id)) {
         const bRec = B.find((x) => x.id === m.id);
         assert.equal(bRec?._parentMarkId, m._parentMarkId,
           `${m.id} is displaced by the re-shape, but its FILING changed too — the pivot moves boundaries, never anyone's paper`);

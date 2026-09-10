@@ -39,7 +39,7 @@ import { REGION_SLUGS } from "./region-outsiders.mjs";
 // world-state.json is the keeper's act not this lane's — so the region tests
 // read the record where the mark actually stands, and hold whether or not the
 // served fold has caught up (it had not on 09-08; it had by S64 on 09-09)
-import { loadMarks, markIndex } from "./marks-fold.mjs";
+import { loadMarks } from "./marks-fold.mjs";
 import { polygonOf, pointInPolygon } from "./geometry.mjs";
 
 /** ground two rings both hold, in hectares — 1 m cells, bbox-bounded */
@@ -58,7 +58,6 @@ function sharedHectares(A, B) {
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const world = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
-const WORLD_BY_ID = markIndex(world.marks ?? []);
 const skeleton = JSON.parse(readFileSync(join(ROOT, "WORLD/skeleton.json"), "utf8"));
 const VIEWER = readFileSync(join(ROOT, "spectator/viewer.mjs"), "utf8");
 
@@ -99,10 +98,7 @@ function drawnElements(svgText) {
 function resolveSource(src) {
   const [kind, ...rest] = String(src).split(":");
   const id = rest.join(":");
-  // the committed world is refolded only at the crossing, so a source token written
-  // before a transfer names the mark by the id it carried then; `WORLD_BY_ID` answers
-  // to every name a record has carried (the class fix, 2026-09-10)
-  if (kind === "mark") return WORLD_BY_ID.get(id) ?? null;
+  if (kind === "mark") return world.marks.find((m) => m.id === id) ?? null;
   if (kind === "feature") return (skeleton.features ?? []).find((f) => f.id === id) ?? null;
   if (kind === "light" && id === "day-axis")
     return Number.isFinite(skeleton.light?.dawn_pole_m?.x) && Number.isFinite(skeleton.light?.dark_pole_m?.x)
