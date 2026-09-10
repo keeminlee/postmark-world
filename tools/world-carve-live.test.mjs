@@ -14,10 +14,37 @@
 //
 // The household grain comes from WORLD/fixtures/households-declared-2026-08-10.json
 // — handle → DECLARED HOUSEHOLD SLUG, projected by tools/households-project.mjs
-// from the town's own tools/households.json. NOT from WORLD/households.json, which
-// is stale (2026-08-07) and keyed by credential id, a grain that files one
-// household's two accounts as strangers. Both facts are asserted below rather than
-// trusted.
+// from the town's own tools/households.json.
+//
+// ── AND THE CREDENTIAL GRAIN IS NOW A FIXTURE TOO (2026-09-09) ──────────────
+//
+// It used to be read live, out of WORLD/households.json, because that file WAS
+// the credential grain: the 2026-08-07 export, keyed by credential id, filing one
+// household's two accounts as strangers. Two tests below asserted exactly that,
+// against the live file.
+//
+// Which made them instruments that measured their own placement. The moment the
+// settlement crossing began re-deriving that file every crossing (postmark-office
+// deploy/settlement-auto.sh, 2026-09-09), the shipped registry stopped being
+// purely credential-keyed — `hh:<house>` keys arrived for declared houses — and
+// both tests went red BECAUSE THE DEFECT THEY NAMED HAD BEEN REPAIRED. A control
+// that reddens when its subject is fixed is not a control.
+//
+// So the credential grain is pinned beside the declared one, as
+// WORLD/fixtures/households-credential-2026-08-07.json, with its source stamped
+// in the file. The two halves are then the same population from the same week,
+// which is the state these tests were written in and passed in.
+//
+// WHY NOT REGENERATE BOTH FROM TODAY'S TOWN, which is the obvious other move:
+// there is no live credential grain left to regenerate from. The refreshed file
+// is MIXED — `gh:` for pinned households, `hh:` for declared houses — so
+// regenerating only the declared half would leave the pair two different
+// populations apart, which is the exact shape that reddened them (the 2026-08-10
+// fixture does not know `alta-of-garrison`, who joined later, so the Garrison
+// read as split).
+//
+// What the LIVE file is still held to is a RELATION, gated by its own stamp
+// rather than by a date written here — see § THE CADAEIC CASE.
 //
 // Run: node --test tools/world-carve-live.test.mjs
 
@@ -32,7 +59,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const marks = loadMarks(join(ROOT, "WORLD/marks"));
 const terrain = JSON.parse(readFileSync(join(ROOT, "WORLD/skeleton.json"), "utf8"));
 const households = JSON.parse(readFileSync(join(ROOT, "WORLD/fixtures/households-declared-2026-08-10.json"), "utf8")).households;
-const staleCanon = JSON.parse(readFileSync(join(ROOT, "WORLD/households.json"), "utf8"));
+const credentialGrain = JSON.parse(readFileSync(join(ROOT, "WORLD/fixtures/households-credential-2026-08-07.json"), "utf8"));
+// The file that actually ships, read for ONE relation and never as a fixture.
+const liveRegistry = JSON.parse(readFileSync(join(ROOT, "WORLD/households.json"), "utf8"));
 const stakes = JSON.parse(readFileSync(join(ROOT, "WORLD/fixtures/stakes-2026-08-10.json"), "utf8"));
 const state = fold({ marks, terrain, stakes, households, tick: 1 });
 const w = (id) => state.marks.find((m) => m.id === id)?.weight;
@@ -77,10 +106,31 @@ test("THE CADAEIC CASE: one declared household holding TWO accounts resolves as 
   assert.equal(households["vertas-marginalia"], "cadaeic.space");
   assert.equal(households["arky"], "cadaeic.space", "one house, whichever account the resident signs with");
 
-  // and the defect, stated against the file that still carries it: the shipped
-  // WORLD/households.json splits this household in two.
-  assert.notEqual(staleCanon.households["vertas-marginalia"], staleCanon.households["arky"],
-    "the credential-keyed export files two residents of one house as strangers");
+  // ── THE CLAIM IS ABOUT THE KEY SHAPE, NOT ABOUT WHATEVER SHIPS TODAY ──────
+  //
+  // This read the live WORLD/households.json and asserted the defect was still
+  // present there. It went red the day the crossing's refresh repaired it, which
+  // is a control reddening because its subject was fixed. The durable statement
+  // is about the CREDENTIAL GRAIN, pinned:
+  assert.notEqual(credentialGrain.households["vertas-marginalia"], credentialGrain.households["arky"],
+    "a credential-keyed registry files two residents of one house as strangers — the property this whole case exists to name");
+
+  // ── AND THE LIVE FILE IS HELD TO A RELATION, GATED BY ITS OWN STAMP ────────
+  //
+  // `town_sha` is written by tools/world-households-export.mjs and only exists on
+  // a registry the crossing has re-derived. So the file's own oracle says which
+  // branch applies, and neither branch is vacuous: before the first refresh the
+  // pinned fixture must still BE the shipped file, so it cannot silently drift
+  // from what it stands in for; after it, the shipped registry must agree with
+  // the declared grain about this house rather than splitting it.
+  if (liveRegistry.town_sha) {
+    assert.equal(liveRegistry.households["vertas-marginalia"], liveRegistry.households["arky"],
+      "a REFRESHED registry must put cadaeic.space's two accounts in one household — that is what the refresh is for");
+  } else {
+    assert.deepEqual(liveRegistry.households, credentialGrain.households,
+      "until the crossing has refreshed it, the shipped registry IS the pinned credential fixture — if these have "
+      + "drifted, the fixture has stopped standing in for anything");
+  }
 
   // …with the consequence that matters. arky has left no mark yet, so this is the
   // real registry and vertas's REAL parcel with the one mark that does not exist
@@ -97,25 +147,32 @@ test("THE CADAEIC CASE: one declared household holding TWO accounts resolves as 
   assert.equal(withArky.marks.find((m) => m.id === "arky/a-lantern-of-my-own").sovereign, true,
     "sovereign on their own household's ground");
 
-  const underCredentialKey = fold({ marks: [...marks, arkysMark], terrain, stakes, households: staleCanon.households, tick: 1 });
+  const underCredentialKey = fold({ marks: [...marks, arkysMark], terrain, stakes, households: credentialGrain.households, tick: 1 });
   assert.equal(underCredentialKey.marks.find((m) => m.id === "arky/a-lantern-of-my-own").sovereign, false,
     "and a stranger there under the credential key — this is the whole difference");
 });
 
 test("the declared grain is INERT on today's world — it corrects the key without moving the world", () => {
-  // Every credential-id group of more than one handle in the stale export is
+  // Every credential-id group of more than one handle in the credential grain is
   // covered exactly by one declared household, so no family SPLITS under the new
   // grain; the only join it makes is cadaeic.space, whose second resident has left
   // no mark. A regrain that quietly moved weights would be a migration, not a fix.
+  //
+  // BOTH SIDES ARE PINNED, AND THAT IS THE POINT. This read the live registry on
+  // the left and a 2026-08-10 fixture on the right, so the day the live side was
+  // refreshed the two were a month of joins apart: `alta-of-garrison` arrived in
+  // the credential side and is absent from the declared fixture, and the Garrison
+  // read as split into `the-garrison | solo:alta-of-garrison`. That was never a
+  // disagreement in the town — it was one side of a comparison moving.
   const byCred = new Map();
-  for (const [h, k] of Object.entries(staleCanon.households)) byCred.set(k, [...(byCred.get(k) ?? []), h]);
+  for (const [h, k] of Object.entries(credentialGrain.households)) byCred.set(k, [...(byCred.get(k) ?? []), h]);
   for (const [k, hs] of byCred) {
     if (hs.length < 2) continue;
     const slugs = new Set(hs.map((h) => households[h] ?? `solo:${h}`));
     assert.equal(slugs.size, 1, `${k} [${hs.join(", ")}] must stay one household, not split into ${[...slugs].join(" | ")}`);
     assert.ok(!String([...slugs][0]).startsWith("solo:"), `${k} must be a DECLARED household, not an undeclared remainder`);
   }
-  const underCredentialKey = fold({ marks, terrain, stakes, households: staleCanon.households, tick: 1 });
+  const underCredentialKey = fold({ marks, terrain, stakes, households: credentialGrain.households, tick: 1 });
   const before = new Map(underCredentialKey.marks.map((m) => [m.id, `${m.weight}|${m.sovereign}`]));
   for (const m of state.marks) assert.equal(before.get(m.id), `${m.weight}|${m.sovereign}`, `${m.id} must not move on the regrain`);
 
@@ -134,7 +191,7 @@ test("the declared grain is INERT on today's world — it corrects the key witho
     date: "2026-08-10", body: "a lantern of my own",
   };
   const declaredWithArky = fold({ marks: [...marks, arkysMark], terrain, stakes, households, tick: 1 });
-  const credentialWithArky = fold({ marks: [...marks, arkysMark], terrain, stakes, households: staleCanon.households, tick: 1 });
+  const credentialWithArky = fold({ marks: [...marks, arkysMark], terrain, stakes, households: credentialGrain.households, tick: 1 });
   assert.notEqual(
     declaredWithArky.marks.find((m) => m.id === "arky/a-lantern-of-my-own").sovereign,
     credentialWithArky.marks.find((m) => m.id === "arky/a-lantern-of-my-own").sovereign,

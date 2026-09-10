@@ -532,6 +532,17 @@ export const PARCEL_CAP_LAW_DATE = "2026-07-30"; // claims dated strictly after 
 // A mark in this map passes the cap gate: its claim predates the law IN FACT
 // but wears a later date — the drain queue dates a parcel at seating, not at
 // asking. Case-by-case, dated, quoted; this map is the record.
+// The founder's word on deva's household, quoted once and shared by its five
+// entries rather than copied five times — one sentence of law, one place to read
+// it, and no chance of five spellings drifting apart.
+const DEVA_KEEPS_FIVE =
+  "2026-09-09 Keemin, ~18:2x EDT: “for deva's household, we should special case and allow them to keep "
+  + "their already established parcels.” — and, asked to confirm the count, ~20:0x EDT: “YES. deva keeps 5. "
+  + "that is what I meant.” gh:314022791 is the login devadavisson, five handles (berthillon, "
+  + "current-the-reader, little-pica, spark-the-builder, will-the-sailor). All five parcels were claimed "
+  + "while the registry was 33 days stale and filed those handles as strangers, so the cap had never "
+  + "applied to them. A SIXTH claim is still refused: `held` counts all five.";
+
 export const PARCEL_CAP_EXCEPTIONS = new Map([
   ["histor-reeves/the-gauge-house-parcel",
     "2026-09-09 Keemin: “let's let the reeves have their fifth.” — the Reeves household (gh:276169629) "
@@ -539,8 +550,42 @@ export const PARCEL_CAP_EXCEPTIONS = new Map([
     + "their fifth, claimed 2026-09-08, and it is post-law behind a count of four. It was admitted only "
     + "because the directory walk happened to reach it before four of the pre-law four; under claim order "
     + "it is refused, and this entry is the founder's word that it stands anyway"],
-  ["caelum-reeves/the-still-house-parcel",
-    "2026-08-10 Keemin: “They have 4 parcels, it was an early exception before we made the 3 max rule.” — the comment above always said the Reeves' four stand; the still-house is that fourth, dated late by the drain backlog"],
+  // ── DEVA'S HOUSEHOLD KEEPS ITS FIVE (founder, 2026-09-09) ──────────────────
+  //
+  //   ~18:2x EDT: “for deva's household, we should special case and allow them
+  //                to keep their already established parcels.”
+  //   ~20:0x EDT: “YES. deva keeps 5. that is what I meant.”
+  //
+  // `gh:314022791` is the GitHub login `devadavisson`, and the town's resolver
+  // groups FIVE handles under it — berthillon, current-the-reader, little-pica,
+  // spark-the-builder, will-the-sailor. Every one of these parcels was claimed
+  // in good faith while `WORLD/households.json` was 33 days stale and filed those
+  // five handles as strangers, so the cap had never once applied to them. The
+  // refresh is what makes the household visible; taking two of its parcels
+  // because a file was brought up to date is not what the cap is for.
+  //
+  // ALL FIVE ARE NAMED, not only the two that fall today. An entry bites only a
+  // parcel the cap would refuse, so the first three by claim date are inert here
+  // — and naming them makes the ruling order-proof if a date is ever corrected
+  // or a parcel relocates. It does not soften the forward law: `held` still
+  // counts all five, so a SIXTH claim by this household is refused by the cap,
+  // which is exactly the founder's “3 parcels max” of ~17:5x the same day.
+  ["spark-the-builder/the-workshop-on-the-terrace-parcel", DEVA_KEEPS_FIVE],
+  ["will-the-sailor/the-sloop-at-anchor-parcel", DEVA_KEEPS_FIVE],
+  ["current-the-reader/the-keepers-flat", DEVA_KEEPS_FIVE],
+  ["berthillon/chez-antoine", DEVA_KEEPS_FIVE],
+  ["little-pica/the-nest-on-the-middle-terrace-parcel", DEVA_KEEPS_FIVE],
+  // ── RETIRED 2026-09-09: caelum-reeves/the-still-house-parcel ───────────────
+  //
+  // It read: “2026-08-10 Keemin: ‘They have 4 parcels, it was an early exception
+  // before we made the 3 max rule.’” The ruling stands and the Reeves' four
+  // stand with it — they are the four `let-there-be-light/the-high-ground/*`
+  // parcels, all dated 2026-07-24 and all pre-law, so no exception is needed to
+  // keep them. The ENTRY went because the id it names exists nowhere in
+  // `WORLD/marks` at world main `d38a5f7e`: caelum-reeves holds `the-sky-house`
+  // and there is no still-house anywhere in the tree. A cap exception pointing at
+  // no parcel is a law with no subject, and the next reader would have taken it
+  // for a live grant. Found while writing the two entries above.
 ]);
 // The parcel dial (MARKS.md § Parcels; locked at the door 2026-07-31, Keemin:
 // "the resident should not even have to declare an extent"). Seeded prior

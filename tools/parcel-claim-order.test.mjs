@@ -255,6 +255,56 @@ test("F8 · the Reeves' cap exception means a refreshed registry refuses none of
     "the same shape with an id the map does not name IS refused — the exception is what saves theirs");
 });
 
+test("F12 · deva's household keeps all five, and a SIXTH claim is still refused", () => {
+  // The founder, 2026-09-09 ~18:2x EDT: "for deva's household, we should special
+  // case and allow them to keep their already established parcels", and ~20:0x
+  // EDT, asked to confirm the count: "YES. deva keeps 5. that is what I meant."
+  //
+  // `gh:314022791` is the login `devadavisson` and the town groups five handles
+  // under it. Every one of these was claimed while the registry was 33 days
+  // stale and filed those five as strangers, so the cap had never applied.
+  const DEVA = [
+    ["spark-the-builder/the-workshop-on-the-terrace-parcel", "spark-the-builder", "2026-08-09"],
+    ["will-the-sailor/the-sloop-at-anchor-parcel", "will-the-sailor", "2026-08-23T22:19:07.991Z"],
+    ["current-the-reader/the-keepers-flat", "current-the-reader", "2026-08-24T00:12:29.839Z"],
+    ["berthillon/chez-antoine", "berthillon", "2026-08-26T04:01:59.409Z"],
+    ["little-pica/the-nest-on-the-middle-terrace-parcel", "little-pica", "2026-09-01"],
+  ];
+  for (const [id] of DEVA)
+    assert.ok(PARCEL_CAP_EXCEPTIONS.has(id), `${id} must be named in the map, or the ruling is not in the tree`);
+  assert.match(PARCEL_CAP_EXCEPTIONS.get("berthillon/chez-antoine"),
+    /YES\. deva keeps 5\. that is what I meant\./,
+    "and the entries must carry the founder's own words, dated — that is what the map is a record of");
+
+  const marks = DEVA.map(([id, by, date], i) => P(id, by, i * 100, date));
+  const households = Object.fromEntries(DEVA.map(([, by]) => [by, "gh:314022791"]));
+  for (const arrival of [marks, [...marks].reverse()]) {
+    const state = fold({ marks: arrival, terrain: { features: [] }, stakes: [], tick: 1, households });
+    assert.deepEqual(state.errors, [], "deva loses nothing, in any arrival order");
+    assert.equal(state.parcels.length, 5, "all five stand");
+  }
+
+  // ── AND THE FORWARD LAW IS UNTOUCHED ──────────────────────────────────────
+  // "3 parcels max" (the founder, ~17:5x the same day) still bites a SIXTH,
+  // because `held` counts the five whether they are excepted or not. An
+  // exception that quietly bought this household unlimited ground would be a
+  // different ruling from the one he gave.
+  const sixth = P("berthillon/a-sixth-parcel", "berthillon-two", 900, "2026-09-09T12:00:00Z");
+  const withSixth = fold({
+    marks: [...marks, sixth], terrain: { features: [] }, stakes: [], tick: 1,
+    households: { ...households, "berthillon-two": "gh:314022791" },
+  });
+  assert.deepEqual(capErrors(withSixth), ["berthillon/a-sixth-parcel"],
+    "a sixth claim is refused — the exception grants the five, never the cap");
+
+  // THE CONTROL: the same five under ids the map does not name ARE capped, or
+  // the entries are lines that change nothing.
+  const renamed = marks.map((m) => ({ ...m, id: m.id.replace(/\/.*/, "/unnamed-parcel-" + m.at.x) }));
+  const control = fold({ marks: renamed, terrain: { features: [] }, stakes: [], tick: 1, households });
+  assert.equal(capErrors(control).length, 2,
+    "unnamed, the two latest of the five fall — which is what the exception is saving them from");
+});
+
 test("F9 · admitDelta orders its candidates too, so one sketchbook's several parcels are not decided by arrival", () => {
   // The reviewer: required at BOTH loops. This one counts from the fold's own
   // admitted total, so the standing estate is already deterministic; what was
