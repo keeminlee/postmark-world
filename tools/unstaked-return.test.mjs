@@ -410,3 +410,51 @@ test("a mark that stays under a returning parent is reported as displaced", () =
     assert.ok(d.metres > 0, "it is somewhere else now");
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
+
+// ── a mark that frames a child's ground is held (lap 4) ─────────────────────
+//
+// The reviewer's counter-example: `rei/the-garden-notebook-tin` is sovereign, its
+// parent `rei/the-experiment-garden` leaves, the tin re-frames onto the region,
+// moves 250 m east and 188 m south, and STOPS BEING SOVEREIGN. That is a mark
+// changing hands without its author touching it, so the parent is held.
+
+test("a leaving mark that frames a staying sovereign child is held, not moved", () => {
+  const root = mkdtempSync(join(tmpdir(), "unstaked-return-ground-"));
+  const marks = join(root, "WORLD", "marks");
+  const mk = (p, fm) => {
+    const d = join(marks, p);
+    mkdirSync(d, { recursive: true });
+    writeFileSync(join(d, "mark.md"),
+      `---\n${Object.entries(fm).map(([k, v]) => `${k}: ${v}`).join("\n")}\n---\n\nA thing.\n`);
+  };
+  mk("let-there-be-light", { by: "the-town", kind: "sited", date: "2026-07-01", at: "{ x: 0, y: 0 }", extent: "{ w: 60000, h: 60000 }", tier: "constitution", coords: "relative" });
+  // rei's parcel — exempt, and the ground sovereignty is measured against.
+  mk("let-there-be-light/rei-parcel", { by: "rei", kind: "parcel", date: "2026-07-05", at: "{ x: 800, y: 800 }", extent: "{ w: 25, h: 25 }" });
+  // rei's garden: WIDER than the parcel, so it is not itself sovereign and IS in
+  // the set — the live shape of `rei/the-experiment-garden`. It frames the tin.
+  mk("let-there-be-light/the-experiment-garden", { by: "rei", kind: "sited", date: "2026-07-10", at: "{ x: 800, y: 800 }", extent: "{ w: 60, h: 60 }" });
+  // the tin, nested in the garden at offset 0 — so it lands inside the parcel and
+  // is sovereign. Take the garden away and it re-frames onto the region and goes.
+  mk("let-there-be-light/the-experiment-garden/the-notebook-tin", { by: "rei", kind: "sited", date: "2026-07-11", at: "{ x: 0, y: 0 }", extent: "{ w: 0.4, h: 0.3 }" });
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
+    const held = receipt.skipped.find((s) => s.mark === "rei/the-experiment-garden");
+    assert.ok(held, "the garden must be accounted for");
+    assert.match(held.why, /holds a child's ground/);
+    assert.equal(receipt.moved.some((m) => m.mark === "rei/the-experiment-garden"), false,
+      "moving it would carry the tin off its own ground");
+    assert.equal(receipt.totals.held_holding_ground, 1);
+    assert.equal(receipt.totals.sovereign_marks_kept_in_place, 1);
+    assert.equal(receipt.ground_holders[0].marks[0], "rei/the-notebook-tin");
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("a held ground-holder does not report itself as its own cascade", () => {
+  const { root, marks } = estate();
+  try {
+    const receipt = JSON.parse(run(marks, ["--allow-stampless", "--allow-no-sketchbooks"]).out);
+    for (const c of receipt.cascade ?? [])
+      assert.equal((receipt.ground_holders ?? []).some((h) => h.mark === c.mark), false,
+        `${c.mark} is held on purpose; a deliberate hold is not a consequence of the move`);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});

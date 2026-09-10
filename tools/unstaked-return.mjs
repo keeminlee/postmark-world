@@ -13,6 +13,11 @@
 //    lets your own ground carry a zero, and those stand."
 //
 //   "The town's own ground is the town's to stake."
+//        ^ SUPERSEDED 2026-09-09 18:56 EDT: "exempt all the town's own marks, no
+//          mint." The town does not stake its own furniture; it is exempt. The
+//          sentence is kept here because the PSA is quoted verbatim and the
+//          reversal should be visible, not tidied away — but it is not the law
+//          this tool enforces. See `exemptionFor` clause 4.
 //
 // THE SET, in the fold's own terms:  S = { m : m.by !== "the-town"
 //                                            AND NOT m.sovereign
@@ -96,10 +101,20 @@
 // `lupi/the-rootlight-den-parcel` was leaving. The gate stays, because the next
 // tree is not this tree.
 //
-// Sited/parcel children are not exposed to this: their parent is geometric, so
-// they keep standing and only their `placementParent` re-computes (101 marks at
-// d38a5f7). That is a fold output changing, not a mark changing hands, and it is
-// reported rather than gated.
+// SITED/PARCEL CHILDREN ARE EXPOSED TO SOMETHING WORSE, and this file said the
+// opposite until lap 4. It read: "their parent is geometric, so they keep
+// standing and only their placementParent re-computes ... a fold output changing,
+// not a mark changing hands". THAT IS FALSE. A nested mark's `at:` is an OFFSET
+// from its framing parent's centre, so when the parent leaves the child does not
+// merely re-parent — IT MOVES. `rei/the-garden-notebook-tin` travels 250 m east
+// and 188 m south and stops being sovereign; under
+// `limen/footpath-becomes-a-suggestion`, `hal/the-green-lamp-house` and its
+// parcel travel 1,042 m. A mark that stood on its household's own ground one
+// crossing and stands on the commons at zero the next HAS changed hands, without
+// its author touching it.
+//
+// So a mark that frames a staying sovereign child is HELD — see § a mark that
+// holds a child's ground. Four marks today, carrying twelve.
 
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, realpathSync, rmSync } from "node:fs";
 import { join, dirname, relative, basename } from "node:path";
@@ -304,7 +319,43 @@ const byId = new Map(all.map((m) => [m.id, m]));
 // stays BECAUSE it now reads zero — an instrument that reads zero for a good
 // reason is the only kind that can tell you when the reason stops being true.
 const exemptOf = (m) => exemptionFor(m, { authoredTier: authoredTier.get(m.id) });
-const S = all.filter((m) => isUnstakedCommons(m) && !exemptOf(m));
+
+// ── A MARK THAT HOLDS A CHILD'S GROUND STAYS ────────────────────────────────
+//
+// A nested mark's `at:` is an OFFSET from its framing parent's centre. So when a
+// parent returns to drafts, its children re-frame on the grandparent and MOVE —
+// and a child that was sovereign can land outside its own parcel and stop being
+// sovereign. That is not a fold output changing. It is a mark changing hands:
+// standing on its household's own ground one crossing, on the commons at zero
+// the next, swept by this very move without its author touching it.
+//
+// The header used to claim the opposite for sited/parcel children ("a fold
+// output changing, not a mark changing hands"). It was wrong, and
+// `rei/the-garden-notebook-tin` is the counter-example: its parent
+// `rei/the-experiment-garden` leaves, the tin re-frames onto the region, moves
+// 250 m east and 188 m south, and loses sovereignty.
+//
+// So a mark in the set that carries a SOVEREIGN descendant which is staying is
+// held back. Measured on the tree at 255cb921: 4 such marks, carrying 12
+// sovereign marks between them — including `limen/footpath-becomes-a-suggestion`,
+// under which `hal/the-green-lamp-house` and its parcel sit, which is the 1,042 m
+// displacement. Holding four marks to keep twelve residents' homes where their
+// authors put them is the trade, and the receipt names all four.
+const baseS = all.filter((m) => isUnstakedCommons(m) && !exemptOf(m));
+const baseIds = new Set(baseS.map((m) => m.id));
+const groundHolders = [];
+for (const m of baseS) {
+  const d = dirOf.get(m.id);
+  if (!d) continue;
+  const carried = loaded
+    .filter((r) => r._dir && r._dir !== d && (r._dir.startsWith(d + "\\") || r._dir.startsWith(d + "/")))
+    .map((r) => byId.get(r.id))
+    .filter((c) => c && !baseIds.has(c.id) && c.sovereign);
+  if (carried.length) groundHolders.push({ mark: m.id, kind: m.kind, household: m.household,
+    carries: carried.length, marks: carried.map((c) => c.id) });
+}
+const heldIds = new Set(groundHolders.map((h) => h.mark));
+const S = baseS.filter((m) => !heldIds.has(m.id));
 const Sids = new Set(S.map((m) => m.id));
 
 // ── destination branches: households.json is the only map, and it is walked ──
@@ -408,8 +459,18 @@ for (const m of all) {
   // coincidence.
   const ex = exemptOf(m);
   if (ex) { skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: ex }); exemptCount++; continue; }
-  if (m.by === "the-town") skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: "town-owned — the town's own ground is the town's to stake" });
-  else if (m.sovereign) skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: "sovereign — on the household's own ground, where the law lets a zero stand" });
+  const holder = groundHolders.find((h) => h.mark === m.id);
+  if (holder) {
+    skipped.push({ mark: m.id, household: m.household, kind: m.kind,
+      why: `holds a child's ground — ${holder.carries} sovereign mark(s) are framed by it and would move off their own ground` });
+    continue;
+  }
+  // There is no `by === "the-town"` arm here any more. It was unreachable the
+  // moment the town became the fourth clause of `exemptionFor` above — and it
+  // carried the sentence the ruling of 18:56 falsifies ("the town's own ground is
+  // the town's to stake"). Dead code that states a repealed law is worse than
+  // dead code: it is the string a later reader finds when they grep for why.
+  if (m.sovereign) skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: "sovereign — on the household's own ground, where the law lets a zero stand" });
   else skipped.push({ mark: m.id, household: m.household, kind: m.kind, why: `staked — stamps ${m.stamps ?? 0}, weight ${m.weight ?? 0}` });
 }
 
@@ -473,7 +534,7 @@ if (movedIds.size) {
   // region rings read as a cascade of six the move did not cause, which is how
   // this was found (140 -> 146 the moment the exemptions landed).
   cascade = (after.marks ?? []).filter((m) => isUnstakedCommons(m)
-      && !movedIds.has(m.id) && !Sids.has(m.id) && !exemptOf(m))
+      && !movedIds.has(m.id) && !Sids.has(m.id) && !exemptOf(m) && !heldIds.has(m.id))
     .map((m) => ({
       mark: m.id, household: m.household, kind: m.kind,
       was: byId.get(m.id)?.sovereign ? "sovereign — it stood on its household's own ground"
@@ -507,6 +568,8 @@ const receipt = {
     exempt_region: skipped.filter((s) => s.why.startsWith("region:")).length,
     exempt_parcel: skipped.filter((s) => s.why.startsWith("parcel:")).length,
     exempt_town: skipped.filter((s) => s.why.startsWith("town:")).length,
+    held_holding_ground: groundHolders.length,
+    sovereign_marks_kept_in_place: groundHolders.reduce((a, h) => a + h.carries, 0),
     stayed_sovereign: skipped.filter((s) => s.why.startsWith("sovereign")).length,
     stayed_staked: skipped.filter((s) => s.why.startsWith("staked")).length,
     staying: skipped.filter((s) => !s.why.startsWith("no sketchbook") && !s.why.startsWith("no directory")).length,
@@ -514,7 +577,7 @@ const receipt = {
       ...skipped.filter((s) => s.why.startsWith("no sketchbook") || s.why.startsWith("no directory"))
         .map((s) => s.household)]).size,
   },
-  moved, skipped, reparents, shifts, cascade,
+  moved, skipped, reparents, shifts, cascade, ground_holders: groundHolders,
   applied: false,
 };
 
@@ -691,6 +754,7 @@ console.log(`  set before branch resolution: ${t.set_size_before_branch_resoluti
 console.log(`  staying: ${t.staying} (exempt, sovereign, or staked — each named in the receipt)`);
 console.log(`  exempt by the founder's rulings of 2026-09-09: ${t.exempt_by_ruling}, read in the order ${EXEMPTION_ORDER.join(" → ")}`);
 console.log(`    law ${t.exempt_constitution} · parcel ${t.exempt_parcel} · region ${t.exempt_region} · town ${t.exempt_town}`);
+if (t.held_holding_ground) console.log(`  ${t.held_holding_ground} mark(s) HELD because they frame a child's ground — keeping ${t.sovereign_marks_kept_in_place} sovereign mark(s) where their authors put them`);
 console.log(`  standing on their own ground: ${t.stayed_sovereign} · carrying a stake: ${t.stayed_staked}`);
 if (t.placement_parent_shifts) console.log(`  ${t.placement_parent_shifts} sited/parcel child(ren) keep standing with a re-computed placementParent`);
 if (t.displaced) {
