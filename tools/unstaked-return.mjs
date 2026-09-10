@@ -688,9 +688,18 @@ if (APPLY) {
         let text; try { text = readFileSync(abs, "utf8"); } catch { text = null; }
         if (!text || !AT_LINE.test(text)) {
           if (!preserveFailed.some((f) => f.mark === rec.id))
+            // Z2: NAME THE PERMANENCE, NOT JUST THE COUNT. A mark whose
+            // coordinate cannot be written back is one whose framing parent must
+            // therefore stay — and that parent is an unstaked commons mark THE
+            // MOVE WILL NEVER COLLECT while this child stands. Not "held this
+            // crossing": held every crossing, until the child is staked, moved or
+            // re-authored. A receipt that reported a count would hide a permanent
+            // exception behind a number.
             preserveFailed.push({ mark: rec.id, household: rec.by ?? rec.household,
+              frame: rec._parentMarkId ?? null,
               why: text ? "its mark.md carries no single-line `at:` to rewrite, so the same world coordinate cannot be written back"
-                        : "its mark.md could not be read, so the same world coordinate cannot be written back" });
+                        : "its mark.md could not be read, so the same world coordinate cannot be written back",
+              permanence: "its framing parent must stay, and stays EVERY crossing — an unstaked commons mark this move can never collect while this child stands" });
           continue;
         }
         // Only the `at:` line changes. Every other field, and the resident's own
@@ -819,7 +828,10 @@ console.log(`  staying: ${t.staying} (exempt, sovereign, or staked — each name
 console.log(`  exempt by the founder's rulings of 2026-09-09: ${t.exempt_by_ruling}, read in the order ${EXEMPTION_ORDER.join(" → ")}`);
 console.log(`    law ${t.exempt_constitution} · parcel ${t.exempt_parcel} · region ${t.exempt_region} · town ${t.exempt_town}`);
 if (t.coordinates_preserved) console.log(`  ${t.coordinates_preserved} staying mark(s) had their at: rewritten so their world position is unchanged (${receipt.preserve_rounds} round(s))`);
-if (t.coordinates_not_preservable) console.log(`  ⚠ ${t.coordinates_not_preservable} staying mark(s) could NOT be given their coordinate back — named in the receipt`);
+if (t.coordinates_not_preservable) {
+  console.log(`  ⚠ ${t.coordinates_not_preservable} staying mark(s) could NOT be given their coordinate back.`);
+  console.log(`     Each one's framing parent must stay, and stays EVERY crossing — a PERMANENT exception, not a held one. Named in the receipt.`);
+}
 console.log(`  standing on their own ground: ${t.stayed_sovereign} · carrying a stake: ${t.stayed_staked}`);
 if (t.placement_parent_shifts) console.log(`  ${t.placement_parent_shifts} sited/parcel child(ren) keep standing with a re-computed placementParent`);
 if (t.displaced) {

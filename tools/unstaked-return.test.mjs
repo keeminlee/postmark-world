@@ -489,3 +489,39 @@ test("the rewrite runs to a fixpoint — one pass corrects parents against child
     assert.ok(receipt.preserve_rounds < 24, "it must converge, not exhaust its rounds");
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
+
+// ── Z1: the reviewer's own acceptance test, run inside the lane's suite ─────
+//
+// The probe at G:/Starstory/docs/2026-09-09/reloc-probe.mjs compares two folds
+// and asserts that a mark which STAYS has a byte-equal world coordinate and an
+// unchanged sovereignty. It is reproduced here in the same terms so the
+// acceptance test runs on every suite rather than only when a reviewer runs it,
+// and so it can fail in CI rather than in a verdict.
+//
+// On the live tree the reviewer's probe reads RELOCATED 0 / SOVEREIGNTY FLIPS 0
+// at this tip, and RELOCATED 5 / SOVEREIGNTY FLIPS 1 at the previous one — so it
+// is an instrument that distinguishes them, not one that always says zero.
+
+test("Z1: nothing that stays moves, and nothing that stays changes standing", () => {
+  const { root, marks } = framedEstate();
+  const foldJson = () => JSON.parse(execFileSync("node",
+    [join(HERE, "marks-fold.mjs"), "--marks-dir", marks, "--no-write", "--json"],
+    { encoding: "utf8", maxBuffer: 1 << 28, stdio: ["ignore", "pipe", "ignore"] }));
+  try {
+    const before = new Map((foldJson().marks ?? []).map((m) => [m.id, m]));
+    execFileSync("node", [TOOL, "--marks-dir", marks, "--repo", root,
+      "--allow-stampless", "--apply"], { encoding: "utf8", maxBuffer: 1 << 28 });
+    const after = new Map((foldJson().marks ?? []).map((m) => [m.id, m]));
+
+    const relocated = [], sovFlips = [];
+    for (const [id, b] of before) {
+      const a = after.get(id);
+      if (!a) continue;                                  // it left in the move
+      if (b.at?.x !== a.at?.x || b.at?.y !== a.at?.y) relocated.push(id);
+      if (!!b.sovereign !== !!a.sovereign) sovFlips.push(id);
+    }
+    assert.deepEqual(relocated, [], "RELOCATED must be 0 — a staying mark's world coordinate is byte-equal");
+    assert.deepEqual(sovFlips, [], "SOVEREIGNTY FLIPS must be 0");
+    assert.ok(after.size < before.size, "and the move must actually have moved something");
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
