@@ -674,13 +674,35 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // still a loss; a leaf that changed is still a retirement (which is
     // precisely what replay-ingest refuses to read as a transfer).
     //
-    // This does not weaken the geometry gates below — it STRENGTHENS them. The
-    // re-identified record is looked up in B under its new name rather than
-    // skipped, so a transfer that also moved a mark, resized it, or re-framed
-    // it still fails loud. First customers: merrick-nocturne's footbridge,
-    // stone path and grove (founder, 2026-09-10 — "the inlet is terrain;
-    // everything else is just a mark, and belongs to the resident/household"),
-    // the first transfer of marks that existed at this falsifier's baseline.
+    // WHAT THIS COSTS, SAID PLAINLY, because the point of this block is to tell
+    // the next reader what the falsifier can and cannot see. The two halves move
+    // in opposite directions and only one of them is good news.
+    //
+    //   THE GEOMETRY GATES ARE STRENGTHENED. The re-identified record is looked
+    //   up in B under its NEW name rather than skipped, so a transfer that also
+    //   moved a mark, resized it, or re-framed it still fails loud. Skipping it
+    //   would have been the weakening; this is the opposite.
+    //
+    //   THE LOSS CLAUSE IS GENUINELY LOOSENED, and there is no way to have the
+    //   ruling without it: a transfer edits a file and deletes nothing, so there
+    //   is NO DECLARING COMMIT to query. An id may now leave the census with no
+    //   commit naming it, provided a same-leaf record by another author stands
+    //   at its path. mark-lint does not backstop this — gate A checks the PATH,
+    //   which has not moved, and gate B only warns.
+    //
+    // SO WHAT HOLDS A TRANSFER HONEST IS THE GEOMETRY, NOT THIS CLAUSE. In
+    // practice that is nearly everything: changing a mark's author changes how
+    // it binds to its parent, so an unauthorised in-place re-authorship moves
+    // the mark, or moves its children's placement parent, and reds below. The
+    // residue — the exact class that slips through — is a mark whose composed
+    // position does not depend on its author at all: a ROOT-FRAMED mark, which
+    // is precisely the class transferred here. For those, this clause is the
+    // only thing that ever spoke, and it now says yes.
+    //
+    // First customers: merrick-nocturne's footbridge, stone path and grove
+    // (founder, 2026-09-10 — "the inlet is terrain; everything else is just a
+    // mark, and belongs to the resident/household"), the first transfer of
+    // marks that existed at this falsifier's baseline.
     const marksRootB = join(ROOT, "WORLD", "marks").replace(/\\/g, "/");
     const bByPath = new Map(B.map((m) => [String(m._dir ?? "").replace(/\\/g, "/").slice(marksRootB.length), m]));
     const reIdentified = new Map();                       // old id -> new id

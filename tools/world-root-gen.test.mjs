@@ -33,6 +33,19 @@
 //                     assertions able to fail, and it is the receipt for
 //                     SCHEMA's ruling that the link survives a transfer: the
 //                     link is the only handle the gate has.
+//
+// And two on the gate's own reach, added 2026-09-10 on review, because a field
+// that decides what the town may not write is a field a stranger can also type:
+//
+//   4. THE BODY LINE — a passer-by's ordinary mark whose PROSE contains a line
+//                     reading `feature: <id>`. It must not speak for that
+//                     ground. A whole-file regex could not tell the difference,
+//                     and the failure it produced was a silent refusal to write.
+//   5. TWO CLAIMS    — two records claiming one survey entry. The generator
+//                     refuses the whole run and names both, rather than picking
+//                     a winner by directory order — which is what a silent
+//                     last-wins would do with the twin this gate exists to
+//                     prevent.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -88,9 +101,17 @@ const transferredMark = (feature, at, { link = true } = {}) => markText([
   ...(link ? [`feature: ${feature}`] : []),
 ], `${feature} — merrick's own.`);
 
+// An ordinary mark that names no feature in its FRONTMATTER but says the words
+// in its body. Nobody's terrain claim; a note about someone else's ground.
+const passerbyNote = (feature) => markText([
+  "kind: sited", "by: passerby", "date: 2026-09-10",
+  "at: { x: 900, y: 900 }", "extent: { w: 10, h: 10 }",
+], `A note. Someone told me this stands on\nfeature: ${feature}\nand I wrote it down.`);
+
 // A scratch repo: the generator resolves its ROOT from its own file location, so
 // the tools it needs are copied in and it is run from inside the scratch.
-function scratch(footbridgeMark) {
+// `extra` files are written after the three fixtures, as [relative dir, text].
+function scratch(footbridgeMark, extra = []) {
   const dir = mkdtempSync(join(tmpdir(), "world-root-gen-"));
   cpSync(join(ROOT, "tools"), join(dir, "tools"), { recursive: true });
   const marks = join(dir, "WORLD/marks/let-there-be-light");
@@ -101,6 +122,7 @@ function scratch(footbridgeMark) {
     ["fixture-inlet", townMark("fixture-inlet", { x: 100, y: 100 })],
     ["fixture-grove", townMark("fixture-grove", { x: 520, y: 510 })],
     ["fixture-inlet/fixture-footbridge", footbridgeMark],
+    ...extra,
   ]) {
     mkdirSync(join(marks, ...rel.split("/")), { recursive: true });
     writeFileSync(join(marks, ...rel.split("/"), "mark.md"), text);
@@ -109,6 +131,15 @@ function scratch(footbridgeMark) {
 }
 
 const run = (dir) => execFileSync(process.execPath, [join(dir, "tools/world-root-gen.mjs")], { encoding: "utf8" });
+// the refusing form: the generator exits 1 and says why on stderr
+function runExpectingRefusal(dir) {
+  try {
+    const out = execFileSync(process.execPath, [join(dir, "tools/world-root-gen.mjs")], { encoding: "utf8", stdio: "pipe" });
+    return { status: 0, stderr: "", stdout: out };
+  } catch (e) {
+    return { status: e.status, stderr: String(e.stderr ?? ""), stdout: String(e.stdout ?? "") };
+  }
+}
 const at = (dir, ...rel) => join(dir, "WORLD/marks/let-there-be-light", ...rel, "mark.md");
 const read = (p) => (existsSync(p) ? readFileSync(p, "utf8") : null);
 
@@ -144,9 +175,13 @@ test("THE GATE: a transferred terrain mark is left alone, and the rest of the wo
 
     // THE DISCRIMINATION: the gate must skip THIS feature and nothing else. A
     // generator that wrote nothing at all would pass every assertion above.
-    assert.match(read(at(dir, "fixture-inlet")), /^by: the-town$/m, "the inlet is still generated");
-    assert.match(read(at(dir, "fixture-grove")), /^by: the-town$/m, "the grove is still generated");
-    assert.match(read(at(dir)), /^mechanic: light$/m, "and the root itself is still written");
+    // Read off the run's own WRITTEN list rather than off the files: the
+    // fixture put the town's records there before the generator ran, so their
+    // presence afterwards says nothing about whether it wrote them.
+    assert.match(out, /^ {2}let-there-be-light\/fixture-inlet\/mark\.md$/m, "the inlet is still generated");
+    assert.match(out, /^ {2}let-there-be-light\/fixture-grove\/mark\.md$/m, "the grove is still generated");
+    assert.match(out, /^ {2}let-there-be-light\/mark\.md$/m, "and the root itself is still written");
+    assert.doesNotMatch(out, /^ {2}.*fixture-footbridge\/mark\.md$/m, "and the transferred one is not in the written list");
     assert.match(out, /SPOKEN FOR/, "the run says out loud what it declined to write");
     assert.match(out, /fixture-footbridge -> merrick-nocturne\/fixture-footbridge/,
       "…and names the feature and the household it belongs to");
@@ -172,5 +207,40 @@ test("THE FLIP: strip the `feature:` link and the twin comes back — which is w
     assert.ok(twin, "THE TWIN: a second footbridge record now stands at the root");
     assert.match(twin, /^by: the-town$/m, "…authored by the town, beside merrick's copy");
     assert.doesNotMatch(out, /SPOKEN FOR/, "and the run never noticed — it prints success");
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("THE BODY LINE: a stranger's prose cannot speak for the town's ground", () => {
+  // The gate's field decides what the town may not write, so it is read where
+  // the schema puts it. A whole-file scan matched this note's BODY and made the
+  // generator decline to write the town's own grove — a refusal to write,
+  // caused by a passer-by who claimed nothing.
+  const dir = scratch(townMark("fixture-footbridge", { x: 100, y: 100 }),
+    [["a-note-about-the-grove", passerbyNote("fixture-grove")]]);
+  try {
+    const out = run(dir);
+    // read the WRITTEN list, not the file: the fixture already put the town's
+    // grove there, so its presence afterwards proves nothing either way
+    assert.match(out, /^ {2}let-there-be-light\/fixture-grove\/mark\.md$/m,
+      "the town's grove is still generated — the note in the body claimed nothing");
+    assert.doesNotMatch(out, /SPOKEN FOR/, "and nothing was reported as spoken for");
+    // the note itself is untouched: it is not a terrain record and never was
+    assert.match(read(at(dir, "a-note-about-the-grove")), /^by: passerby$/m, "the note is left alone");
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("TWO CLAIMS: one survey entry claimed twice is refused, not resolved by directory order", () => {
+  // recordPathFor refuses on `hits.length !== 1` for the same reason. A silent
+  // last-wins here would pick a winner among exactly the twins this gate exists
+  // to prevent, so the run stops and names both.
+  const dir = scratch(townMark("fixture-footbridge", { x: 100, y: 100 }),
+    [["a-second-grove", transferredMark("fixture-grove", { x: 520, y: 510 })]]);
+  try {
+    const r = runExpectingRefusal(dir);
+    assert.equal(r.status, 1, "the run refuses");
+    assert.match(r.stderr, /claimed by more than one record/, "…and says what is wrong");
+    assert.match(r.stderr, /the-town\/fixture-grove/, "naming the first claimant");
+    assert.match(r.stderr, /merrick-nocturne\/a-second-grove/, "and the second");
+    assert.doesNotMatch(r.stdout, /record\(s\) written/, "nothing was written before it stopped");
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
