@@ -207,6 +207,18 @@ exception is carried BY NAME in the same test file
 (`INSTANCE_EXCEPTIONS_BY_RULING`) and is subsumed when #1797's general
 mechanism lands.
 
+The same exception grew a third name on **2026-09-10** (founder ruling: *"it
+looks like lanternstep's marks from my bday (the parlor and everything in it)
+belong to the-town; they should be yours (wright)"*):
+`wright/the-lanternstep-parlor`, the portal ground the town stood inside rei's
+house for the birthday, passes to its builder on the same reasoning as the
+other two — the party is over, and what needed the town's name while the
+fight ran does not need it now. This supersedes, for the parlor alone, the
+2026-08-29 line that left it waiting on the portal sitting (world 61c5fdfb);
+the sitting still rules which verbs a portal-ground roster carries, which is a
+different question from whose mark this one is. The class stays town-only for
+everyone else.
+
 ## Class-nodes
 
 A class is a **node in the constitutional tree** — addressable, renderable,

@@ -195,6 +195,14 @@ test("LIVE TREE: class law -- town marks define; residents instantiate only the 
   const INSTANCE_EXCEPTIONS_BY_RULING = new Map([
     ["wright/the-candle-vault", "founder ruling 2026-08-29 -- the dungeon passes to its builder"],
     ["wright/the-cellar-door", "founder ruling 2026-08-29 -- the dungeon passes to its builder"],
+    // 2026-09-10, the third name, and by the same door the first two came
+    // through -- a ruling with a name and a date, not a loosening (founder,
+    // verbatim: "it looks like lanternstep's marks from my bday (the parlor
+    // and everything in it) belong to the-town; they should be yours
+    // (wright)"). The parlor is the room the dungeon opened off; it waited on
+    // the portal sitting only for WHOSE it was, and that half is now ruled.
+    // LOGOS/classes.md Instantiation carries the same words, nodes first.
+    ["wright/the-lanternstep-parlor", "founder ruling 2026-09-10 -- the birthday parlor passes to its builder"],
   ]);
   for (const m of classed.filter((m) => m.by !== "the-town")) {
     if (INSTANCE_EXCEPTIONS_BY_RULING.has(m.id)) continue;
