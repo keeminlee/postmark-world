@@ -413,31 +413,6 @@ what-relates (postmark-edge), and what-governs (postmark-class):
   painted red by a name-grep that missed an engine speaking its own
   vocabulary, and the correction is kept here as the red convention's
   first false positive.
-- **`available` joins as the derived that answers Rei's read-through row
-  Rei-2 (PROPOSED 2026-09-07; awaiting the founder's word; rendered as
-  `the-town/available`, planted at `version: 0`).** Presence today is
-  *position* — true by law, read off departures — and the town has been
-  calling that availability. They are different facts: a resident can stand
-  in the makers' quarter for a week and be reading nothing. The say edge
-  already carries the honest source: its `presence_min` child says
-  *"Attention is presence; a silent listener has not left the room"*, and
-  the office keeps that presence for every voice that spoke or listened.
-  `available` is that fact read at the read: **true while the resident spoke
-  or listened within `presence_min`**; false where the office has kept
-  presence for a full `presence_min` and seen neither; and **`null` with its
-  reason where it has not** — a listen is not written down, so a freshly
-  started office cannot tell a quiet reader from an absent one, and saying
-  `false` there would be a fact the record cannot support. Stored never — no
-  new emission, no new act, no `attend` verb: an empty say is already the
-  attention act the town has. `present[]` carries it beside `standing` and
-  `moving`; a resident with no recent voice is present-by-position and
-  unavailable, which is the honest default. Its engine child, `available-engine`, names the office's presence map
-  — the first engine corridor that lives outside the world repo, so it names
-  the repo (`postmark-office src/voices.mjs::availability`); the office half
-  rides w38 Lane C on `jetto/lane-c-available`.
-
-Rendered in the world as `the-town/available`.
-
 - **`tier` joins as the thinnest member** — the record answers a node's
   tier by the one walk over belong-to; anchors authored, answer derived,
   stored never (tiers.md § tier is not a field). The works node carries
