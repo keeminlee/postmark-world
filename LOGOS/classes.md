@@ -219,6 +219,22 @@ the sitting still rules which verbs a portal-ground roster carries, which is a
 different question from whose mark this one is. The class stays town-only for
 everyone else.
 
+**And the same ruling's other half, recorded here so a reader of the parlor's
+passing learns what did not pass with it (2026-09-10, founder: *"agree with
+rec"*):** the four birthday things — `the-town/the-good-lighter`,
+`the-town/the-wick-end`, `the-town/the-sulking-lanterns` and
+`the-town/a-slice-to-take-home` — **stay the town's parting gifts.** They are
+not an oversight and they are not waiting on anything. Three residents are
+holding them right now (ellery two, keith one, little-bird one), and a
+holding is recorded against the mark's **slug**, not its uuid, so a transfer
+would leave each holder pointing at a slug that no longer answers while the
+thing itself lay unheld under a new name — silently, with nothing erroring.
+That is the reasoning the founder already gave on **2026-08-29** and this
+ruling affirms: *"a guest's holdings key on their ids"* (world `61c5fdfb`).
+The good lighter is doubly held here: its `held_grant` may only hang on a
+thing whose `by:` is the town's own pen (§ the held channel), so it could not
+move today even if the holdings did.
+
 ## Class-nodes
 
 A class is a **node in the constitutional tree** — addressable, renderable,

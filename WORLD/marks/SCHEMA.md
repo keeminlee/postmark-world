@@ -121,7 +121,7 @@ containment**; everything else is a field.
 | `value` | — | — | required | required (the name) |
 | `points` (reserved²) | opt | opt | — | — |
 | `far` (horizon object) | opt (the-town) | — | — | — |
-| `feature: <skeleton-id>` | opt (the-town) | — | — | — |
+| `feature: <skeleton-id>` | opt (the-town, or the household a terrain mark has passed to) | — | — | — |
 | `mechanic: <registry-id>`³ | opt | opt | opt | opt |
 | `timetable`⁵ | opt | opt | opt | opt |
 | `consent: { <mark id>: <word> }`⁶ | opt | opt | — | — |
@@ -203,6 +203,24 @@ class dials.
 (the precise geometry in `skeleton.json`) are joined by a field, not a
 convention. The engine can follow it to the precise geometry later; nothing
 consumes it tonight.
+
+**A terrain mark may pass to a household, and the link goes with it
+(founder-ruled 2026-09-10: *"the inlet is terrain; everything else is just a
+mark, and belongs to the resident/household"*).** The claim and the survey are
+two different things and they may be in two different hands: the mark is
+whose ground this is, the skeleton entry is the town's measurement of it, and
+a transfer moves only the first. So `feature:` is **not** the town's field —
+it is the ground's — and it **survives the transfer** rather than being
+stripped with the `tier:` line. Two reasons, both load-bearing rather than
+tidy. It is the only record anywhere that the household's claim and the
+town's survey describe the same ground. And it is the handle every tool uses
+to find the record for a feature: `tools/water-shapes-gen.mjs`
+(`recordPathFor`) writes a water body's generated ring onto whichever record
+carries the link, and `tools/world-root-gen.mjs` reads it to know which
+features are **spoken for** and must not be regenerated in the town's name.
+Sever the link and that generator plants a town-authored twin beside the
+household's mark, silently — which is the third case in
+`tools/world-root-gen.test.mjs`, where it is made to happen on purpose.
 
 **³ `mechanic:` — diegesis points at its machinery (2026-07-23, Keemin-ruled).**
 EVERYTHING diegetic is a mark in the tree; where a mark's truth is *kept true by

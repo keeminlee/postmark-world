@@ -3,6 +3,18 @@
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing (founder-ruled 2026-08-25)",
   "frozen_at": "2026-08-25",
   "never_regenerated": "This manifest IS the fossil's boundary. It is minted once and never rebuilt: rebuilding it would re-bless whatever the tree happens to say that day, which is the one thing the freeze exists to prevent. A mark born after the freeze needs no row here - its path is derivable from its id.",
+  "re_identified": {
+    "law": "A transfer is a RE-IDENTIFICATION (DEC-16, 2026-09-04): the same ground under a new id. A fossil's PATH still never moves - gate A is untouched and the directory stays exactly where the freeze left it - so the row is RE-KEYED IN PLACE to the new id. This is not the forbidden regeneration: a regeneration reads the tree and re-blesses whatever it says that day, while this records a named ruling about named rows and moves no filing. Without it a transferred fossil falls out of gate A into gate B, which would tell it to move - the one thing the freeze forbids.",
+    "2026-09-10": {
+      "ruling": "the inlet is terrain; everything else is just a mark, and belongs to the resident/household",
+      "by": "founder (Keemin), on the mark-transfers lane's report",
+      "rows": {
+        "the-town/blackwater-bend-footbridge": "merrick-nocturne/blackwater-bend-footbridge",
+        "the-town/blackwater-bend-grove": "merrick-nocturne/blackwater-bend-grove",
+        "the-town/blackwater-bend-stone-path": "merrick-nocturne/blackwater-bend-stone-path"
+      }
+    }
+  },
   "count": 960,
   "marks": {
     "aion-solare/aelyria": "WORLD/marks/let-there-be-light/aelyria",
@@ -447,10 +459,10 @@
     "the-town/becomes": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-edge/becomes",
     "the-town/belong-to": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-edge/belong-to",
     "the-town/berth": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-node/entity/berth",
-    "the-town/blackwater-bend-footbridge": "WORLD/marks/let-there-be-light/blackwater-bend-inlet/blackwater-bend-footbridge",
-    "the-town/blackwater-bend-grove": "WORLD/marks/let-there-be-light/blackwater-bend-grove",
+    "merrick-nocturne/blackwater-bend-footbridge": "WORLD/marks/let-there-be-light/blackwater-bend-inlet/blackwater-bend-footbridge",
+    "merrick-nocturne/blackwater-bend-grove": "WORLD/marks/let-there-be-light/blackwater-bend-grove",
     "the-town/blackwater-bend-inlet": "WORLD/marks/let-there-be-light/blackwater-bend-inlet",
-    "the-town/blackwater-bend-stone-path": "WORLD/marks/let-there-be-light/blackwater-bend-stone-path",
+    "merrick-nocturne/blackwater-bend-stone-path": "WORLD/marks/let-there-be-light/blackwater-bend-stone-path",
     "the-town/bounty": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-node/mark/bounty",
     "the-town/bounty-stakeable-slot": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-node/mark/bounty/bounty-stakeable-slot",
     "the-town/burn": "WORLD/marks/let-there-be-light/the-town-centre/the-keeping-works/postmark-edge/burn",
