@@ -5022,10 +5022,24 @@ export function mountViewer(appEl) {
     worldEpoch += 1;      // and so is every view built against the old one
   }
 
-  // Every mark the page can currently speak about: the fold's, or — with no
-  // fold — exactly what the read and the portfolio named. One accessor so the
-  // dozen places that used to walk `world.marks` need no opinion about which.
-  const allMarks = () => world?.marks ?? [...byId.values()];
+  // Every mark the page can currently speak about.
+  //
+  // ⚑ THE RESIDENT PATH IS DECIDED BY WHO IS READING, NOT BY WHAT IS IN HAND
+  // (2026-09-10, Keemin: act as wright → Spectator → wright brought the whole
+  // town back, 89 cards). This read `world?.marks ?? […]` — prefer the fold —
+  // which is true of a page that has one and catastrophic for a page that
+  // acquired one on a detour. A Spectator visit loads the fold, correctly, and
+  // `applyWorldLayer` assembles `world`; on the way back to a resident nothing
+  // cleared it, so the overlay, parcel and footprint passes painted the entire
+  // town while the pane composed from a thirteen-mark read. One page, two
+  // answers, and the louder one wins the screen.
+  //
+  // So the question is asked the other way round: WHO is reading decides the
+  // set, and a fold in hand is simply not consulted on this path. `world` may
+  // stay assembled for a later Spectator switch — it is expensive to fetch and
+  // there is no reason to throw it away — it just does not get to feed the
+  // resident's painting.
+  const allMarks = () => (onResidentPath() ? [...byId.values()] : (world?.marks ?? [...byId.values()]));
   const isOfficeLive = (url) => url === officeUrl("/world/state");
   // ── TWO LOADS, BECAUSE THEY ARE TWO DIFFERENT SIZES (2026-09-10) ──────────
   //
@@ -9713,6 +9727,19 @@ export function mountViewer(appEl) {
     // is a restore from this resident's own entry — home, balance, palette,
     // standpoint — none of it a fetch and none of it a rebuild. The office is
     // consulted AFTER the swap, and only a difference costs a re-render.
+    // ── THE INDEX FOLLOWS THE READER (2026-09-10) ───────────────────────────
+    //
+    // Coming back to a resident after a Spectator detour, `byId` is whatever
+    // that detour left behind — the whole fold. The painting reads `byId`
+    // through `allMarks()`, so it has to be refilled from THIS resident's read
+    // before anything is drawn, and `homeSet` with it or green stops meaning
+    // home. The read is normally cached, so this costs nothing; where it is not
+    // the compose pass asks for it and this repeats when it lands.
+    const cachedRead = readCache.get(residentReadKey({ handle: actor, crossing: state.crossing }));
+    if (cachedRead) {
+      byId = residentById(cachedRead, mineSet.marks);
+      homeSet = buildHomeSet(data?.manifest, allMarks());
+    }
     const entry = viewCache.get(actor) ?? null;
     // the home lands BEFORE the standpoint is asked for: originFor falls back to
     // state.actorHome for the selected handle, and that still held the resident
