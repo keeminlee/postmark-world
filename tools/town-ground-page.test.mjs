@@ -172,7 +172,52 @@ async function readGround({ zoomToNear = false, stopAtTier = "near", tellingOpen
   // than for a duration, so a slow box cannot turn a real red into a flake
   await page.waitForFunction(() => !!document.querySelector(".wv-minimap > svg"), null, { timeout: 60_000 })
     .catch(() => { /* absence is a real answer here — the base commit's answer */ });
-  await page.waitForTimeout(2500);
+
+  // ── A DURATION IS NOT AN EVENT (2026-09-11, after a gate red) ──────────
+  //
+  // This file waited 2,500 ms for the overlay and 900 ms after the last wheel
+  // step. Alone on an idle box that is generous; inside the full gate, with
+  // ~800 other tests and three other Chromium instances running beside it, it is
+  // not — "THE PICTURE WAITS FOR THE GROUND" took 19,216 ms and red under the
+  // gate while passing 6/6 three times in a row alone on the same scratch. A
+  // load-dependent timeout, not the rule.
+  //
+  // So both waits now watch the thing under test and stop when it stops moving:
+  // the overlay's own `data-tier`, the drawn card count and the drawn picture
+  // count — which are exactly the three numbers every assertion below reads.
+  // The ceilings are sized for a loaded box; a page that genuinely never settles
+  // still fails, and says which of "never drew" and "never stopped redrawing" it
+  // was.
+  const drawState = () => page.evaluate(() => {
+    const ov = document.getElementById("wv-overlay");
+    return [
+      ov?.getAttribute("data-tier") ?? "-",
+      document.querySelectorAll("#wv-overlay [data-id]").length,
+      document.querySelectorAll("#wv-overlay .ov-home").length,
+      document.querySelectorAll("#wv-overlay .ov-home image").length,
+      document.querySelectorAll("#wv-overlay .ov-glyph").length,
+    ].join("/");
+  });
+  /** wait until the drawing stops changing, or say why it never did */
+  const settleDrawing = async (holdMs = 900, ceilingMs = 45_000) => {
+    let last = await drawState(), held = 0, waited = 0;
+    while (held < holdMs && waited < ceilingMs) {
+      await page.waitForTimeout(150);
+      waited += 150;
+      const now = await drawState();
+      held = now === last ? held + 150 : 0;
+      last = now;
+    }
+    return { settled: held >= holdMs, waited, state: last };
+  };
+  // the overlay arrives after the fold; wait for it to have drawn ANYTHING, then
+  // for it to stop. (Nothing drawn is a real answer on the base commit, so a
+  // timeout here is not a throw.)
+  await page.waitForFunction(() => document.querySelectorAll("#wv-overlay [data-id]").length > 0,
+    null, { timeout: 60_000 }).catch(() => {});
+  const firstSettle = await settleDrawing();
+  let zoomSettle = null;
+
   if (zoomToNear) {
     // ZOOM IN ON WHERE THE READER STANDS, not on the middle of the sheet. The
     // overlay is cut by the STANDPOINT — fog, sight, the context budget — so the
@@ -185,16 +230,44 @@ async function readGround({ zoomToNear = false, stopAtTier = "near", tellingOpen
       return box ? { x: box.x + box.width / 2, y: box.y + box.height / 2 } : null;
     });
     if (at) {
-      const tier = () => page.evaluate(() =>
-        document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? null);
-      for (let i = 0; i < 40 && (await tier()) !== stopAtTier; i++) {
+      // ── STEER BY THE CAMERA, ASSERT ON THE DRAWING (2026-09-11) ─────────
+      //
+      // This loop used to wheel until `data-tier` said the word it wanted. That
+      // is steering by the OUTPUT: `data-tier` is written by drawOverlay, which
+      // runs on the settle-debounced rebuild 140 ms after the camera moves, so
+      // under load the attribute lags the camera and the loop wheels again — and
+      // one extra step at the mid/near boundary lands in `near`. Reproduced by
+      // running this file six ways at once: "the camera stopped at district
+      // width (tier: near)". It reads as a flake and is not one; it is a
+      // control loop reading its own stale answer.
+      //
+      // The viewBox is written synchronously by applyView, so it is the honest
+      // input. zoomK = full.w / view.w, and the tier boundaries are metres
+      // across the viewport over that ratio: the painting is 7,500 m wide, so
+      // far/mid is k = 1.5 and mid/near is k = 7.5. The loop aims at the MIDDLE
+      // of the wanted band, which no single wheel step can overshoot.
+      const vbW = () => page.evaluate(() => {
+        const m = document.querySelector(".wv-minimap > svg");
+        return m ? Number((m.getAttribute("viewBox") ?? "").split(/[\s,]+/)[2]) : NaN;
+      });
+      const w0 = await vbW();                    // the opening view: zoomK 1, the whole painting
+      const wantK = stopAtTier === "mid" ? 3 : 15;
+      for (let i = 0; i < 60; i++) {
+        const w = await vbW();
+        if (!Number.isFinite(w) || !Number.isFinite(w0) || w0 / w >= wantK) break;
         // re-aim every step: the wheel zooms toward the cursor, so the dot stays
         // put on screen, but a settle-driven rebuild can move what is under it
         await page.mouse.move(at.x, at.y);
         await page.mouse.wheel(0, -300);
-        await page.waitForTimeout(120);
+        await page.waitForTimeout(60);
       }
-      await page.waitForTimeout(900);
+      // NOW wait for the drawing to catch up with the camera, and for it to stop
+      // moving. The attribute is the thing under test, so it is waited ON here
+      // and asserted by the caller — never used to decide when to stop wheeling.
+      await page.waitForFunction((want) =>
+        document.getElementById("wv-overlay")?.getAttribute("data-tier") === want,
+        stopAtTier, { timeout: 45_000 }).catch(() => { /* the assertion says it better */ });
+      zoomSettle = await settleDrawing();
     }
   }
   const seen = await page.evaluate(() => {
@@ -225,7 +298,9 @@ async function readGround({ zoomToNear = false, stopAtTier = "near", tellingOpen
     };
   });
   await page.close();
-  return { ...seen, errors };
+  // the settle evidence rides with the counts, so a surprising row can be told
+  // apart from a row taken before the page had finished drawing
+  return { ...seen, errors, firstSettle, zoomSettle };
 }
 
 test("THE PAGE DRAWS THE WORLD — with the atlas unreachable, the mounted ground is the record's", async (t) => {
@@ -515,12 +590,34 @@ test("THE HOUSE IS THE TARGET — the card's own edge decides what a hover reach
     const b = (dot ?? document.querySelector(".wv-minimap > svg"))?.getBoundingClientRect();
     return b ? { x: b.x + b.width / 2, y: b.y + b.height / 2 } : null;
   });
-  for (let i = 0; i < 40 && (await tier()) !== "near"; i++) {
-    await page.mouse.move(aim.x, aim.y);
-    await page.mouse.wheel(0, -300);
-    await page.waitForTimeout(120);
-  }
-  await page.waitForTimeout(1200);
+  // ── STEER BY THE CAMERA, NOT BY THE TIER ATTRIBUTE ──────────────────
+  //
+  // Same correction as readGround's, for the same reason and found the same way
+  // (six concurrent runs of this file). `data-tier` is written by drawOverlay on
+  // the settle-debounced rebuild, so stopping the instant it says "near" stops
+  // at whatever depth the lag happened to allow — and a shallow near has the
+  // cards crowded and mostly off screen, so no card passes the filters and the
+  // test reds on its own setup rather than on the rule. The viewBox is written
+  // synchronously by applyView, so it is what the loop reads.
+  const vbW = () => page.evaluate(() => {
+    const m = document.querySelector(".wv-minimap > svg");
+    return m ? Number((m.getAttribute("viewBox") ?? "").split(/[\s,]+/)[2]) : NaN;
+  });
+  const w0 = await vbW();                      // the opening view: zoomK 1
+  const zoomTo = async (wantK) => {
+    for (let i = 0; i < 60; i++) {
+      const w = await vbW();
+      if (!Number.isFinite(w) || !Number.isFinite(w0) || w0 / w >= wantK) break;
+      await page.mouse.move(aim.x, aim.y);
+      await page.mouse.wheel(0, -300);
+      await page.waitForTimeout(60);
+    }
+    await page.waitForFunction(() =>
+      document.getElementById("wv-overlay")?.getAttribute("data-tier") === "near",
+      null, { timeout: 45_000 }).catch(() => {});
+    await page.waitForTimeout(700);
+  };
+  await zoomTo(15);
   assert.equal(await tier(), "near", "the camera reached a zoom where parcels wear cards");
 
   // A CARD ON SCREEN, CLEAR OF ITS NEIGHBOURS. Two filters, each learned here:
@@ -530,7 +627,7 @@ test("THE HOUSE IS THE TARGET — the card's own edge decides what a hover reach
   //              drawn at street width, 21 were off screen.
   //   ISOLATED   cards overlap; a point inside a NEIGHBOUR's box would make this
   //              test about which of two houses answered.
-  const target = await page.evaluate(() => {
+  const findClearCard = () => page.evaluate(() => {
     const map = document.querySelector(".wv-minimap > svg").getBoundingClientRect();
     const inMap = (x, y) => x >= map.left + 4 && x <= map.right - 4 && y >= map.top + 4 && y <= map.bottom - 4;
     const boxes = [...document.querySelectorAll("#wv-overlay .ov-home[data-id]")]
@@ -560,6 +657,16 @@ test("THE HOUSE IS THE TARGET — the card's own edge decides what a hover reach
     }
     return null;
   });
+
+  // AND IF NONE QUALIFIES, GO DEEPER RATHER THAN GIVE UP. Zooming spreads the
+  // cards apart: the same town at half the width has half as many houses on
+  // screen and twice the ground between them. A bounded climb, so a page that
+  // genuinely never draws a usable card still fails and says so.
+  let target = await findClearCard();
+  for (let deeper = 1; deeper <= 4 && !target; deeper++) {
+    await zoomTo(15 * (1 + deeper));
+    target = await findClearCard();
+  }
   assert.ok(target, "a card is drawn on screen, clear of its neighbours, with room outside it");
 
   // ⚑ THE ASSERTION THAT MAKES THIS TEST MEAN ANYTHING. Both inside points must
@@ -611,6 +718,14 @@ test("THE PICTURE WAITS FOR THE GROUND — a home card wears its art only where 
     + "which cannot tell a rule that is computed from a rule that is read.");
 
   const near = await readGround({ zoomToNear: true });
+  // ⚑ THE SETTLE IS ASSERTED, NOT ASSUMED. This case red under the full gate at
+  //   19,216 ms while passing in about a second alone — a load-dependent timeout
+  //   reading as a broken rule. Every count below is only meaningful if the
+  //   drawing had stopped moving when it was taken, so that is said out loud and
+  //   a failure names which of the two things went wrong.
+  assert.ok(near.zoomSettle?.settled,
+    `the drawing settled at street width before it was counted `
+    + `(waited ${near.zoomSettle?.waited} ms, last state ${near.zoomSettle?.state})`);
   assert.equal(near.tier, "near");
   assert.ok(near.cards > 0, `cards are drawn at street width: ${near.cards}`);
   assert.ok(near.pictures > 0,
@@ -630,6 +745,9 @@ test("THE PICTURE WAITS FOR THE GROUND — a home card wears its art only where 
   // 1,000–5,000 m is 6–32 screen pixels, every one of them under the 40 px dial,
   // so the frames and the names are drawn and the photographs are not.
   const mid = await readGround({ zoomToNear: true, stopAtTier: "mid" });
+  assert.ok(mid.zoomSettle?.settled,
+    `the drawing settled at district width before it was counted `
+    + `(waited ${mid.zoomSettle?.waited} ms, last state ${mid.zoomSettle?.state})`);
   assert.equal(mid.tier, "mid", `the camera stopped at district width (tier: ${mid.tier})`);
   assert.ok(mid.cards > 0, `cards are drawn at district width: ${mid.cards}`);
   assert.ok(mid.labels2 > 0, `wearing their households' names: ${mid.labels2}`);
