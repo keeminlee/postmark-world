@@ -247,10 +247,67 @@ test("FALSIFIER — a person with no position is DROPPED, never drawn at the ori
   assert.equal(walkersFromPresent(withPlace).length, 1);
 });
 
+test("FALSIFIER — the READER is drawn, and a subset assertion could never have said so", () => {
+  // ⚑ THIS IS THE TEST THAT WAS MISSING, and its absence is why a resident on
+  // dev saw the whole town on the map and not themselves — the spectator's red
+  // coordinate dot standing where their face should be. The falsifier beside
+  // this one says "drawn ⊆ present", which is SATISFIED BY THE READER BEING
+  // ABSENT. A subset assertion bounds a set; it can never require a member.
+  //
+  // `present` answers "who ELSE is about" — the office builds it with
+  // `exclude: [handle]`, correctly, because presence is a thing you observe and
+  // you do not observe yourself. The old path hid that for free by asking
+  // /world/walkers, which returns everyone in town.
+  const self = { handle: "wright", at: { x: 967, y: -2450 } };
+  const w = walkersFromPresent(PRESENT, { self });
+  const me = w.find((r) => r.handle === "wright");
+  assert.ok(me, "the reader is not on their own map");
+  assert.equal(me.x, 967); assert.equal(me.y, -2450);
+  assert.equal(me.standing, true);
+  assert.equal(me.self, true, "and is marked as the reader, so the renderer can tell");
+  // the others are still there — adding the reader is not replacing the list
+  assert.deepEqual(w.filter((r) => !r.self).map((r) => r.handle), ["rei", "hal"]);
+  // THE FLIP: without `self` the reader is absent, which is the bug exactly
+  assert.ok(!walkersFromPresent(PRESENT).some((r) => r.handle === "wright"),
+    "without the reader handed in, nothing invents them — the fix must be the caller's doing");
+});
+
+test("FALSIFIER — the reader is NEVER drawn twice", () => {
+  // If `present` ever does carry the reader — a different exclusion rule,
+  // another door, a later ruling — the list's own row wins and nothing is
+  // added. A reader drawn twice is a reader split in two, which is worse than
+  // the bug this fixes.
+  const carriesMe = { residents: [
+    { handle: "wright", at: { x: 1, y: 2 }, standing: false, moving: true },
+    { handle: "rei", at: { x: 10, y: -20 } },
+  ] };
+  const w = walkersFromPresent(carriesMe, { self: { handle: "wright", at: { x: 967, y: -2450 } } });
+  assert.equal(w.filter((r) => r.handle === "wright").length, 1, "one body, one reader");
+  assert.equal(w[0].x, 1, "and it is the LIST's row that wins — the door outranks the standpoint");
+  assert.equal(w[0].moving, true);
+});
+
+test("a standpoint nobody is standing at draws nobody", () => {
+  // `stance: "embodied"` is the read saying these coordinates are a person.
+  // The caller owns that test; this asserts the shape it depends on — a self
+  // with no usable position adds nothing rather than a body at the origin.
+  assert.equal(walkersFromPresent({}, { self: null }).length, 0);
+  assert.equal(walkersFromPresent({}, { self: { handle: "wright" } }).length, 0);
+  assert.equal(walkersFromPresent({}, { self: { handle: "", at: { x: 1, y: 1 } } }).length, 0);
+  assert.equal(walkersFromPresent({}, { self: { handle: "wright", at: { x: 0, y: 0 } } }).length, 1,
+    "and (0,0) IS a real standpoint — Ferry's crossing — when it is the read's own");
+});
+
 test("FALSIFIER — the drawn set is a SUBSET of what the read named, never a superset", () => {
+  // present ∪ {self}: the reader is the one body the read does not name and the
+  // page is nonetheless right to draw, because the read's standpoint IS them.
   const named = new Set(PRESENT.residents.map((r) => r.handle));
   for (const w of walkersFromPresent(PRESENT))
     assert.ok(named.has(w.handle), `${w.handle} was drawn and the read never named them`);
+  const withSelf = walkersFromPresent(PRESENT, { self: { handle: "wright", at: { x: 1, y: 1 } } });
+  for (const w of withSelf)
+    assert.ok(named.has(w.handle) || w.self === true,
+      `${w.handle} was drawn, is not in present, and is not the reader`);
   // and an empty reading draws nobody rather than falling back to the town
   assert.deepEqual(walkersFromPresent({}), []);
   assert.deepEqual(walkersFromPresent({ residents: [] }), []);
