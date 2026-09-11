@@ -1826,6 +1826,24 @@ export function homeMarkOfParcel(parcelId, marks = []) {
   return best;
 }
 
+/** THE ROOM IS ASKED OF THE MARKS THE PAGE HOLDS (2026-09-11). `investigate`
+ *  wants a world — `world.marks` is its first line — and on the resident path
+ *  there is none: the fold is never loaded, `world` stays null, and a resident
+ *  who boots ENTERED (rei, home inside the lanternstep house) mounted her room
+ *  into `investigate(roomId, null)` and the telling failed on "reading 'marks'
+ *  of null" — a blank overlay, no houses, no pips, no people. It only ever
+ *  worked when the page had been a Spectator first and still held the fold.
+ *  So the room is asked of what the page HOLDS: the fold when there is one,
+ *  else the read's own index — the seam's one rule (the index fills from the
+ *  read; the call sites never care which). Terrain rides along when the fold
+ *  has it; a room asked of the read has none, and investigate reads it
+ *  optionally. Pure. */
+export function worldForRoom(world, marks = []) {
+  if (world?.marks) return world;
+  const list = Array.isArray(marks) ? marks : [...(marks?.values?.() ?? [])];
+  return { marks: list, terrain: world?.terrain ?? null };
+}
+
 /** THE PARCEL UNDERFOOT WEARS NO CARD (founder, 2026-09-11: "let's not display
  *  the parcel card when the view is the parcel itself or anything within it").
  *  Given the MOUNTED room, the parcels it is or is inside of by the record's
@@ -5719,7 +5737,9 @@ export function mountViewer(appEl) {
   function composeInterior(box, roomId, key) {
     const room = byId.get(roomId);
     if (!room) return null;             // a room the fold does not hold is not a room
-    const found = investigate(roomId, world, { occupancy: liveOccupancy(), budget: state.dials.context_budget });
+    // the fold when there is one, the read's index when there is not — never
+    // a null world into an engine whose first line reads its marks
+    const found = investigate(roomId, worldForRoom(world, allMarks()), { occupancy: liveOccupancy(), budget: state.dials.context_budget });
     if (found?.error) return null;
     // investigate SHAPES its children for a reader (id, kind, at, body) and drops
     // extent and image on the way. A floor needs both, so each child is resolved
