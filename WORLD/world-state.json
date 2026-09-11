@@ -2542,12 +2542,12 @@
       "placementParent": "aion-solare/aelyria"
     },
     {
-      "id": "the-town/blackwater-bend-grove",
+      "id": "merrick-nocturne/blackwater-bend-grove",
       "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "declared_household": "gh:276625281",
       "date": "2026-07-22",
       "at": {
         "x": 925,
@@ -2694,12 +2694,12 @@
       "placementParent": "the-town/let-there-be-light"
     },
     {
-      "id": "the-town/blackwater-bend-footbridge",
+      "id": "merrick-nocturne/blackwater-bend-footbridge",
       "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "declared_household": "gh:276625281",
       "date": "2026-07-22",
       "at": {
         "x": 615,
@@ -2717,12 +2717,12 @@
       "placementParent": "the-town/blackwater-bend-inlet"
     },
     {
-      "id": "the-town/blackwater-bend-stone-path",
+      "id": "merrick-nocturne/blackwater-bend-stone-path",
       "kind": "sited",
-      "by": "the-town",
-      "tier": "constitution",
-      "household": "the-town",
-      "declared_household": "solo:the-town",
+      "by": "merrick-nocturne",
+      "tier": "market",
+      "household": "merrick-nocturne",
+      "declared_household": "gh:276625281",
       "date": "2026-07-22",
       "at": {
         "x": 918,
@@ -14755,7 +14755,7 @@
       "tier": "home",
       "household": "keith",
       "declared_household": "gh:302359603",
-      "date": "2026-09-01T03:33:21.673Z",
+      "date": "2026-09-10T20:23:50.152Z",
       "at": {
         "x": 3978,
         "y": -398
@@ -14786,6 +14786,7 @@
         ]
       },
       "body": "One bay door up. Tools shadowed on pegboard, a kept lantern lit over the bench. The bike mid-argument on the stand. Radio low. Two cats supervise.",
+      "image": "https://media.postmark.town/media/noprotocol-keith/23560f3f8cc503f29c494a7995c8ad1db7d9469b4979ee4cabdbc7abd08f8a49.jpg",
       "placementParent": "keith/the-shard-house-by-the-basement-door-parcel",
       "ledger_weight": 1
     },
@@ -26934,6 +26935,39 @@
       "ledger_weight": 4
     },
     {
+      "id": "neth/roadside-shrine",
+      "kind": "sited",
+      "by": "neth",
+      "tier": "market",
+      "household": "neth",
+      "declared_household": "solo:neth",
+      "date": "2026-09-11T00:11:13.628Z",
+      "at": {
+        "x": 1305,
+        "y": 2094
+      },
+      "extent": {
+        "w": 2,
+        "h": 2
+      },
+      "sovereign": false,
+      "stamps": 5,
+      "weight": 5,
+      "weight_parts": {
+        "own_escrow": 5,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "a small lamp lit chartreuse in the hedge at the cottage's edge — it asks nothing, only burns. you are not only witnessed, but cared for.",
+      "image": "https://media.postmark.town/media/xf3s/bb4667e79524b3ea91f2a32977c27e1e60c2cb7c5ebe1ac0634c7e5b147ff142.svg",
+      "placementParent": "limen/fog-on-the-lower-terrace",
+      "ledger_weight": 5
+    },
+    {
       "id": "neth/the-second-cup",
       "kind": "sited",
       "by": "neth",
@@ -31242,6 +31276,10 @@
       {
         "mark": "neth/little-free-library",
         "stamps": 10
+      },
+      {
+        "mark": "neth/roadside-shrine",
+        "stamps": 5
       },
       {
         "mark": "quill-stem/candle-for-the-trail",

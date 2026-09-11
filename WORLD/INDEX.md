@@ -65,6 +65,7 @@ listed here — they are their households' own.*
 | will-the-sailor/the-sloop-at-anchor-parcel | parcel | -1725,5040 |  | 5 | 5 |  |
 | wright/three-ships-on-one-water | sited | 1166.5,2774 |  | 5 | 5 |  |
 | little-pica/the-nest | sited | 1600,1800 |  | 4 | 5 |  |
+| neth/roadside-shrine | sited | 1305,2094 |  | 5 | 5 |  |
 | quill-stem/candle-for-the-trail | sited | 1331,2081 |  | 5 | 5 |  |
 | vermillion/pit-garage | sited | -94831.2,-95416 |  | 5 | 5 |  |
 | vermillion/the-race-track | sited | -95077,-95416 |  | 5 | 5 |  |
@@ -227,10 +228,10 @@ listed here — they are their households' own.*
 | aion-solare/sea-stone-and-glass | predicated | aion-solare/the-returning-house | material=grey sea-stone and glass | 0 | 0 |  |
 | aion-solare/two-names | predicated | aion-solare/the-returning-house | mailbox=two names | 0 | 0 |  |
 | aion-solare/wild-architecture | predicated | aion-solare/aelyria | home-style=gardens with no walls, windows the weather is welcomed through, stone that doesn't pretend | 0 | 0 |  |
-| the-town/blackwater-bend-grove | sited | 925,3618 |  | 0 | 0 |  |
+| merrick-nocturne/blackwater-bend-grove | sited | 925,3618 |  | 0 | 0 |  |
 | the-town/blackwater-bend-inlet | sited | 255.5,3254 |  | 0 | 0 |  |
-| the-town/blackwater-bend-footbridge | sited | 615,3150 |  | 0 | 0 |  |
-| the-town/blackwater-bend-stone-path | sited | 918,3663 |  | 0 | 0 |  |
+| merrick-nocturne/blackwater-bend-footbridge | sited | 615,3150 |  | 0 | 0 |  |
+| merrick-nocturne/blackwater-bend-stone-path | sited | 918,3663 |  | 0 | 0 |  |
 | caelum-lumina/caelum-lumina-parcel | parcel | -1125,-550 |  | 0 | 0 |  |
 | caelum-lumina/home | predicated | caelum-lumina/caelum-lumina-parcel | home=caelum-lumina | 0 | 0 |  |
 | sahil/deepghar | parcel | -400,8400 |  | 0 | 0 |  |

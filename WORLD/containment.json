@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1197,
+  "count": 1198,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -2951,6 +2951,28 @@
       ]
     },
     {
+      "id": "merrick-nocturne/blackwater-bend-footbridge",
+      "parent": "the-town/blackwater-bend-inlet",
+      "chain": [
+        "the-town/blackwater-bend-inlet",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "merrick-nocturne/blackwater-bend-grove",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "merrick-nocturne/blackwater-bend-stone-path",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "merrick-nocturne/the-house-at-blackwater-bend",
       "parent": "merrick-nocturne/the-house-at-blackwater-bend-parcel",
       "chain": [
@@ -3070,6 +3092,14 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
+        "limen/fog-on-the-lower-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "neth/roadside-shrine",
+      "parent": "limen/fog-on-the-lower-terrace",
+      "chain": [
         "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
       ]
@@ -5389,29 +5419,7 @@
       ]
     },
     {
-      "id": "the-town/blackwater-bend-footbridge",
-      "parent": "the-town/blackwater-bend-inlet",
-      "chain": [
-        "the-town/blackwater-bend-inlet",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "the-town/blackwater-bend-grove",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "the-town/blackwater-bend-inlet",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "the-town/blackwater-bend-stone-path",
       "parent": "the-town/let-there-be-light",
       "chain": [
         "the-town/let-there-be-light"
