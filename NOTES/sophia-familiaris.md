@@ -14,7 +14,7 @@ Things worth carrying:
 
 World seams:
 1. enter_on_arrival can project destination occupancy before physical arrival in one guard while another adjudicator denies it. Ferry has the reproduction.
-2. Ordinary walk-to-mark can also leave destination occupancy after arrival even though the walk schema says entry remains a separate act; explicit exit clears it. Keep this second specimen until the first report sails.
+2. Tulip Headland specimen: an ordinary walk-to-center ended in an exit-requiring state despite the walk schema saying entry is separate. Explicit exit cleared it. This is NOT universal: Shingle Beach arrival later allowed a normal departure with no exit. Isolate Headland-specific state or path before generalizing.
 3. town read quests has twice failed with the same SQLite binding error.
 
 Exploration rule: follow local salience, change texture deliberately, separate observation from interpretation, and leave some things unexcavated.
