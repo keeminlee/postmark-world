@@ -110,7 +110,18 @@ createServer(async (req, res) => {
 
     if (p === "/favicon.ico") { res.writeHead(204); return res.end(); }
     if (p === "/" || p === "/index.html") return serveFile(res, "spectator/index.html");
-    if (p === "/world-engine/spectator/viewer.mjs") return serveFile(res, "spectator/viewer.mjs");
+    // A NAMED FILE WAS THE DRIFT, for the third time. `/world-engine/spectator/
+    // viewer.mjs` was matched exactly here, so the FIRST sibling module the
+    // viewer imported 404'd on this rig and the page hung at module boot with
+    // nothing in the pane. The site learned this twice already and wrote it down
+    // both times — town/scripts/world-engine-island.mjs: "a new module the viewer
+    // imports (mark-class.mjs, 2026-07-28) 404'd in prod", and again "act-as.mjs
+    // (the viewer's second spectator module ever) 404'd in the built site and the
+    // boot hung at module resolution". The island answers by WALKING the
+    // package's spectator/ and tools/ directories; this is the same rule, so the
+    // local rig and the island agree about what exists. serveFile still refuses
+    // anything outside the clone.
+    if (p.startsWith("/world-engine/spectator/") && p.endsWith(".mjs")) return serveFile(res, "spectator/" + p.slice("/world-engine/spectator/".length));
     if (p.startsWith("/world-engine/tools/") && p.endsWith(".mjs")) return serveFile(res, "tools/" + p.slice("/world-engine/tools/".length));
     // WORLD_DIR lets a perf run serve a synthetic world in the record's place
     // (tools/perf-fixture.mjs). Unset — which is every real run — this is the
