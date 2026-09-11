@@ -327,16 +327,45 @@ test("THE CULL IS A CULL — what the camera is over decides what is drawn, and 
     await page.mouse.up();
     await page.waitForTimeout(400);
   }
-  await page.waitForTimeout(1600);   // the settle rebuild is debounced, on purpose
-  const after = await drawnIds();
+  // WAIT FOR THE DRAWING, NOT FOR A DURATION. The settle rebuild is debounced on
+  // purpose (a drag must not rebuild sixty times a second), so there is a window
+  // in which the overlay still describes the camera's PREVIOUS position — and
+  // under a loaded box running the whole suite that window is wider than any
+  // number this test could hardcode. Asserting inside it reads a stale draw as a
+  // cull failure, which is a flake wearing a real red's clothes.
+  //
+  // So: poll until the drawn set has held still, and fail with the reason if it
+  // never does. A rebuild that genuinely never arrives still reds here, which is
+  // the failure this is protecting.
+  let after = await drawnIds(), stableFor = 0;
+  for (let waited = 0; waited < 12_000 && stableFor < 700; waited += 250) {
+    await page.waitForTimeout(250);
+    const now = await drawnIds();
+    stableFor = now.join("|") === after.join("|") ? stableFor + 250 : 0;
+    after = now;
+  }
+  assert.ok(stableFor >= 700, "the overlay settled after the pan rather than rebuilding forever");
 
   assert.notDeepEqual(after, before,
     `the drawn set follows the camera (${before.length} over the standpoint, ${after.length} a few screens away) `
     + `— an identical set means the overlay is not culled by the viewport at all`);
 
-  // AND NOTHING SMALL IS DRAWN OFF THE MARGIN. Measured in screen space against
-  // the map's own box grown by one viewport on each side, which is what the cull
-  // dial says it keeps.
+  // AND WHAT IS DRAWN IS BOUNDED — by TWO viewports, which is the bound the
+  // design actually gives and not the one it is tempting to assert.
+  //
+  // The derivation, because a margin number nobody can derive is a number that
+  // will be tightened by somebody in good faith and red for a week: the overlay
+  // is drawn with ONE viewport of margin, and it is rebuilt only once the
+  // camera has LEFT that box — so a camera that has travelled almost a full
+  // viewport since the last draw is still legitimately looking at a drawing
+  // centred one viewport away. Worst case: one viewport of drift plus one
+  // viewport of margin. (Asserting one viewport here reds under load on a
+  // perfectly correct draw, which this test did, three times, before the bound
+  // was derived instead of guessed.)
+  //
+  // Two viewports is nine screens of area against a town of any size — the
+  // property being protected is that the drawn set is bounded by the CAMERA and
+  // not by N, and nine screens is bounded.
   //
   // ⚑ PARCELS, NOT EVERY PIP, AND THE EXEMPTION IS THE POINT. A mark is culled
   // by its GROUND, never by its centre — the threshold district is 2,325 m
@@ -349,13 +378,15 @@ test("THE CULL IS A CULL — what the camera is over decides what is drawn, and 
   const strays = await page.evaluate(() => {
     const svg = document.querySelector(".wv-minimap > svg");
     const m = svg.getBoundingClientRect();
-    const lim = { l: m.left - m.width, r: m.right + m.width, t: m.top - m.height, b: m.bottom + m.height };
+    const lim = { l: m.left - m.width * 2, r: m.right + m.width * 2,
+      t: m.top - m.height * 2, b: m.bottom + m.height * 2 };
     return [...document.querySelectorAll("#wv-overlay .ov-pip.ov-pip-home")].filter((n) => {
       const b = n.getBoundingClientRect();
       return b.right < lim.l || b.left > lim.r || b.bottom < lim.t || b.top > lim.b;
     }).map((n) => n.dataset.id).slice(0, 8);
   });
-  assert.deepEqual(strays, [], "no drawn parcel lies outside the viewBox plus one viewport of margin");
+  assert.deepEqual(strays, [],
+    "no drawn parcel lies further than two viewports from the camera — one of margin, one of drift");
   assert.deepEqual(errors, [], "and the page threw nothing getting there");
   await page.close();
   // ⚑ THE FLIP: make drawnBounds() return null in viewer.mjs (the cull off) and
