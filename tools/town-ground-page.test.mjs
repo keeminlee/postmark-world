@@ -199,6 +199,14 @@ async function readGround({ zoomToNear = false } = {}) {
       water: q(".wv-tg-water, .wv-tg-water-line"),
       features: q(".wv-tg-feature"),
       furnished: q(".wv-ph-extent, .wv-scene-mark-art"),
+      // the spectator's parcel pass, counted three ways: the far glyph, the
+      // card, and the picture inside the card — which are the three answers the
+      // tier gate picks between
+      glyphs: document.querySelectorAll("#wv-overlay .ov-glyph").length,
+      cards: document.querySelectorAll("#wv-overlay .ov-home").length,
+      pictures: document.querySelectorAll("#wv-overlay .ov-home image").length,
+      labels2: document.querySelectorAll("#wv-overlay .ov-home-label").length,
+      titles: document.querySelectorAll("#wv-overlay title").length,
       // which of the spectator's three paintings this was counted in — read off
       // the drawing itself, never recomputed here from the zoom
       tier: document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? null,
@@ -369,7 +377,51 @@ test("THE FAR TIER DRAWS NO FURNITURE — the spectator opens on the town, not o
   assert.equal(g.tier, "far", `the opening view is the whole town (tier: ${g.tier})`);
   assert.equal(g.furnished, 0,
     `no furniture is drawn at town width: ${g.furnished} (the 09-09 record put 11,961 marks through this pass)`);
+  // THE HOUSES ARE GLYPHS, NOT CARDS. This is the pass that made the contact
+  // sheet: a card is a clipped photograph, a frame, a name and a pip, and there
+  // is one per parcel whatever the zoom. At town width they are one filled
+  // roofline each.
+  assert.ok(g.glyphs > 0, `the town's houses are drawn as glyphs: ${g.glyphs}`);
+  assert.equal(g.cards, 0, `and not one of them is a card: ${g.cards}`);
+  assert.equal(g.pictures, 0, `no pictures at town width: ${g.pictures}`);
+  assert.equal(g.labels2, 0, `no names under the houses: ${g.labels2}`);
+  assert.equal(g.titles, 0, `and no tooltips standing in for the names: ${g.titles}`);
   // and the ground is still the ground — the gate cuts the furniture, never the floor
   assert.equal(g.regions, expectedRegions, "the region rings are NOT culled or tiered away");
   assert.deepEqual(g.errors, [], "and the page threw nothing getting there");
+  // ⚑ THE FLIP: drop the `tier` argument at homeCard's two call sites in
+  //   drawOverlay (so it never sees "far") and `cards`/`labels2` red while the
+  //   furniture assertion above stays green — the two gates are independent and
+  //   this proves the parcel one separately.
+});
+
+// ── THE PIXEL RULE, ON THE PAGE (2026-09-11) ───────────────────────────────
+//
+// `footprintPx` is proved arithmetically in tools/viewer-spectator-tiers.test.mjs
+// and that proof is worth exactly nothing until the number reaches a decision a
+// reader can see. A parcel is 25 m of ground: across a district it is thirteen
+// screen pixels and has no room for a photograph; down at street width it is
+// ninety and does.
+test("THE PICTURE WAITS FOR THE GROUND — a home card wears its art only where its parcel has room", async (t) => {
+  if (!chromium) return t.skip(
+    "playwright is absent: the picture gate is unguarded on the page. The arithmetic is tested in isolation, "
+    + "which cannot tell a rule that is computed from a rule that is read.");
+
+  const near = await readGround({ zoomToNear: true });
+  assert.equal(near.tier, "near");
+  assert.ok(near.cards > 0, `cards are drawn at street width: ${near.cards}`);
+  assert.ok(near.pictures > 0,
+    `and they wear their pictures there: ${near.pictures} of ${near.cards} cards `
+    + `(a parcel is 25 m, which is ~90 px at this zoom — well past the 40 px dial)`);
+  assert.ok(near.labels2 > 0, `and their households' names: ${near.labels2}`);
+
+  const far = await readGround();
+  assert.equal(far.tier, "far");
+  assert.equal(far.pictures, 0, "and not one picture at town width, where a parcel is under a pixel");
+  // ⚑ THE FLIP: force `room = true` in homeCard (the picture gate off) and the
+  //   far assertion here stays green — the FAR tier draws a glyph, not a card,
+  //   so it never reaches the rule. The rule's own red is at `mid`, which the
+  //   10x measurement in the lane report takes: with the dial at 40 px a 25 m
+  //   parcel is 13.9 px across a district and draws nothing, and with the dial
+  //   at 0 the pictures come back. Both numbers are in the report.
 });
