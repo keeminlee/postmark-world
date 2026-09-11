@@ -351,9 +351,15 @@ export function renderHomeColumn(doc, host, model, { imagePath = null } = {}) {
   const kicker = el(doc, "span", "wv-homecol-kicker");
   kicker.textContent = model.kicker;
   if (model.enter) {
-    const enter = el(doc, "button", "wv-homecol-enter");
+    // THE CARD'S OWN DOOR (founder, 2026-09-11: "make the enter button in the
+    // column more similar to the enter button style elsewhere"): the same
+    // `wv-enter` class the card's `enterButtonHTML` wears, so the viewer's one
+    // rule styles it, and the same `data-enter` the viewer's one click delegate
+    // reads. The column's own class stays as a name, nothing more.
+    const enter = el(doc, "button", "wv-homecol-enter wv-enter");
     enter.setAttribute("type", "button");
     enter.setAttribute("data-enter", model.enter.parcelId);
+    enter.setAttribute("title", "step inside this mark");
     enter.textContent = "enter";
     nav.appendChild(enter);
   }
@@ -431,17 +437,14 @@ export function renderHomeColumn(doc, host, model, { imagePath = null } = {}) {
  * for the same reason: a rebuild under the reader's cursor loses their scroll
  * position in the middle of a paragraph.
  */
-export function createHomeColumn({ doc, host, readHome, imagePath = null, residentHref = null, onEnter = null } = {}) {
+export function createHomeColumn({ doc, host, readHome, imagePath = null, residentHref = null } = {}) {
   const cache = new Map();     // handle → { door } | { error }
-  // the column is rebuilt on every paint, so the enter click is delegated on
-  // the host once rather than bound to a button that will not be there next time
-  if (host && typeof onEnter === "function") {
-    host.addEventListener("click", (e) => {
-      const button = e.target?.closest?.(".wv-homecol-enter");
-      if (!button || !host.contains(button)) return;
-      onEnter(button.getAttribute("data-enter"), button);
-    });
-  }
+  // THE COLUMN HAS NO DOOR HANDLER OF ITS OWN (2026-09-11). For a few hours it
+  // had one — a click delegate on the host calling an `onEnter` callback — and
+  // the viewer's root delegate, which crosses on ANY `[data-enter]`, fired on
+  // the same click: two crossings per press. One question, one owner: the
+  // button carries `data-enter`, and the viewer's door handler is the one that
+  // reads it, for this button exactly as for the card's.
   let shown = null;            // the parcel id on screen, or null
   let inFlight = 0;
 
