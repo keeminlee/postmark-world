@@ -4381,7 +4381,7 @@ const MARKUP = `
        THE PARCEL'S COLUMN hangs here, over the painting's right — the atlas's
        own place for it. One node, built by home-column.mjs and by nothing else;
        empty and hidden until a parcel is clicked. -->
-     <aside class="wv-homecol" hidden></aside><!--
+     <aside class="wv-homecol" data-wv-keep hidden></aside><!--
        THE WALK DESK RIDES ON THE PAINTING (Keemin, 2026-08-04) — bottom right,
        and only once a destination is armed. It answers a click you made on the
        painting, so it belongs to the painting; in the rail it was a permanent
@@ -8104,9 +8104,22 @@ export function mountViewer(appEl) {
   // picture — the same two the map's own home card already draws from it — and
   // the door supplies everything else.
   function parcelColumnView(id) {
+    // INDOORS THERE ARE NO PARCELS. A room's ground is its own scene and the
+    // town's houses are not drawn on it, so a column left standing from the
+    // street would be a reading of somewhere else.
+    if (sceneRoomId) return null;
     const mark = id ? byId.get(id) : null;
     if (!isParcelMark(mark)) return null;
-    const home = homeMarkOfParcel(mark.id, allMarks());
+    // THE FULL MARK, NOT THE THIN ONE. On the resident path allMarks() is the
+    // READ — entries that carry a place and a tier and need not carry a picture —
+    // so the dwelling found here is resolved through byId before its art is
+    // asked for. The overlay's own furnishing pass learned this first and has a
+    // guard named after it ("drawOverlay's SET is built from full marks, not thin
+    // radial entries"); measured here 2026-09-11, the column's lead picture was
+    // null for wright on the resident path and present for a spectator looking
+    // at the same house, which is the same bug wearing different clothes.
+    const found = homeMarkOfParcel(mark.id, allMarks());
+    const home = found ? (byId.get(found.id) ?? found) : null;
     const handle = homeHandleForParcel(mark, home);
     if (!handle) return null;
     return {
@@ -8114,7 +8127,8 @@ export function mountViewer(appEl) {
       handle,
       kicker: String(mark.household ?? mark.by ?? handle),
       title: markIdentity(home ?? mark),
-      leadImage: home ? markImagePath(home) : null,
+      // the dwelling's picture, and failing that the ground's own
+      leadImage: (home && markImagePath(home)) ?? markImagePath(mark),
     };
   }
   const bubbleEls = { hover: null, pinned: null };
@@ -8428,9 +8442,20 @@ export function mountViewer(appEl) {
   let renderingBubbles = false;
   function renderBubbles() {
     if (renderingBubbles) return;
+    // ── THE PARCEL'S COLUMN, DECIDED ABOVE THE GATE BELOW ─────────────────
+    //
+    // The gate below is about BUBBLES, which exist only in painting-only mode.
+    // The column is not a bubble: it is a reading hung over the map, and the map
+    // is there whether the Telling stands beside it or not. Measured on dev
+    // 2026-09-11 — its world page comes up SPLIT, not painting-only, so a column
+    // gated on paintingOnly would never have opened for anyone arriving at
+    // /world, which is the whole audience. (In that mode there is no little card
+    // to swap either: the click scrolls the mark's cell up in the Telling, and
+    // it still does.)
+    const column = parcelColumnView(markInteraction.getState().selectedId);
+    if (column) homeColumn.open(column); else homeColumn.close();
     if (!state.paintingOnly) {
       for (const el of Object.values(bubbleEls)) if (el) el.hidden = true;
-      homeColumn.close();
       return;
     }
     renderingBubbles = true;
@@ -8441,8 +8466,6 @@ export function mountViewer(appEl) {
       // bubble is told the truth about what IT holds, which is nothing — so it
       // hides itself, and positionBubbles steps the glance around a box that is
       // not there, both by paths that already existed.
-      const column = parcelColumnView(selectedId);
-      if (column) homeColumn.open(column); else homeColumn.close();
       renderPinnedBubble(column ? null : selectedId);
       // the glance stands down for the mark it is already showing in full, and
       // for a pointer that is reading a bubble rather than pointing at the
