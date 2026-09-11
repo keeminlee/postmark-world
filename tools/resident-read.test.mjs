@@ -147,6 +147,22 @@ test("FALSIFIER — the cache key carries the crossing, so an answer never outli
     "the same standpoint is the same key");
 });
 
+test("FALSIFIER — an EMBODIED read is keyed by who and when, never by where", () => {
+  // The office's own refusal, in its own words: "your eyes ride your body — an
+  // embodied call cannot stand at coordinates." A read taken AS a resident has
+  // no coordinates to key on, and must not invent any: the where is the body's
+  // and only the office knows it. Learned by shipping the other thing first —
+  // the page asked for ?handle=…&x=…&y=… and dev answered 422.
+  const embodied = residentReadKey({ handle: "wright", crossing: 182 });
+  assert.equal(embodied, "wright|embodied|182");
+  assert.equal(residentReadKey({ handle: "wright", x: null, y: null, crossing: 182 }), embodied,
+    "no coordinates and null coordinates are the same standpoint: the body's");
+  assert.notEqual(embodied, residentReadKey({ handle: "wright", x: 0, y: 0, crossing: 182 }),
+    "and a keyless read AT a point is a different question, so a different key");
+  assert.notEqual(embodied, residentReadKey({ handle: "wright", crossing: 183 }),
+    "the crossing still moves it");
+});
+
 // ───────── "plus all of yours", without a fold ──────────────────────────────
 
 import { residentMineMarks, residentById, MINE_SENTINEL_M } from "../spectator/viewer.mjs";
