@@ -339,3 +339,35 @@ test("FALSIFIER — the resident path does not ask /world/walkers", async () => 
   assert.ok(/(^|[^A-Za-z])return;/.test(residentArm),
     "and it RETURNS — falling through would ask both");
 });
+
+// ───────── a fold in hand must not feed a resident's painting ──────────────
+
+test("FALSIFIER — the drawn set is decided by WHO is reading, not by what is in hand", async () => {
+  // Keemin, 2026-09-10: act as wright, switch to Spectator, switch back — and
+  // the whole town came back, 89 cards. The Spectator visit loads the fold
+  // (correctly) and assembles `world`; nothing cleared it on the way back, and
+  // `allMarks()` preferred a fold in hand. So the overlay painted the entire
+  // town while the pane composed from a thirteen-mark read: one page, two
+  // answers, and the louder one won the screen.
+  //
+  // A SOURCE GUARD, because the behaviour lives in a browser this test does not
+  // have. It reads code, not prose — comments are stripped first, the lesson
+  // from the walker guard one commit ago.
+  const { readFileSync } = await import("node:fs");
+  const code = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8")
+    .replace(/^\s*\/\/.*$/gm, "");
+  const decl = code.match(/const allMarks = \(\) =>[^;]+;/);
+  assert.ok(decl, "allMarks is defined");
+  assert.match(decl[0], /onResidentPath\(\)/,
+    "allMarks must ask WHO is reading before it reaches for a fold — otherwise a "
+    + "Spectator detour leaves one behind and the resident's painting reverts to the town");
+  // and the resident arm must not consult the fold at all
+  const residentArm = decl[0].slice(decl[0].indexOf("onResidentPath()"), decl[0].indexOf(":"));
+  assert.ok(!/world\?\.marks/.test(residentArm),
+    "the resident arm reads the index, never the fold");
+  // switching back to a resident refills the index from that resident's read
+  assert.match(code, /byId = residentById\(cachedRead, mineSet\.marks\)/,
+    "selectActor refills byId from the returning resident's own read");
+  assert.match(code, /homeSet = buildHomeSet\(data\?\.manifest, allMarks\(\)\)/,
+    "and homeSet with it, or green stops meaning home");
+});
