@@ -277,6 +277,8 @@ async function readGround({ zoomToNear = false, stopAtTier = "near", tellingOpen
       mounted: !!svg,
       pane: (document.querySelector(".wv-minimap .loading")?.textContent ?? null),
       sourced: q("[data-src]"),
+      // which ground drew — the pre-drawn picture or the generated sheet (2026-09-11)
+      groundKind: svg?.getAttribute("data-ground") ?? null,
       regions: q(".wv-tg-region"),
       labels: q(".wv-tg-region-label"),
       water: q(".wv-tg-water, .wv-tg-water-line"),
@@ -477,6 +479,11 @@ test("THE CULL IS A CULL — what the camera is over decides what is drawn, and 
   });
   assert.deepEqual(strays, [],
     "no drawn parcel lies further than two viewports from the camera — one of margin, one of drift");
+  // THE PICTURE OR THE SHEET, SAID OUT LOUD. The rig's atlas is a dead port, so
+  // this is the generated ground by construction; a rig that serves
+  // /atlas/ground.html would read "atlas" here — the one word the two paths differ by.
+  const groundKind = await page.evaluate(() => document.querySelector(".wv-minimap > svg")?.getAttribute("data-ground") ?? null);
+  assert.equal(groundKind, "generated", "with the atlas unreachable the generated sheet drew, and the svg says so");
   assert.deepEqual(errors, [], "and the page threw nothing getting there");
   await page.close();
   // ⚑ THE FLIP: make drawnBounds() return null in viewer.mjs (the cull off) and

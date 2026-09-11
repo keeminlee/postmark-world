@@ -939,6 +939,15 @@ export function interiorFurniture({ room, children = [], limit = 40 } = {}) {
 // exactly the 404 QA caught. So shelf art gets a prefix that cannot collide with
 // anything, and each habitat routes /shelf/* at the shelf host.
 export const SHELF_ROUTE = "/shelf/";
+// THE PRE-DRAWN GROUND (founder, 2026-09-11: "the pre-drawn-and-loaded ground
+// looks *better*. so we *should* do that"). The town renders its own map —
+// PROJECTS/build-the-town/atlas/render-town.mjs — and the site syncs it. This
+// is the ground-only rendition of that map: sea, water, terrain, the regions
+// with their art, WITHOUT the houses and their labels, which were the part of
+// the old atlas that broke at scale and which the overlay now draws by zoom
+// band. Absent (a site before its first sync, a broken sync, the test rig),
+// the generated ground draws instead — see loadMinimap.
+export const ATLAS_GROUND_URL = "/atlas/ground.html";
 const SHELF_PREFIX = "/media/";
 export function markImagePath(mark) {
   const url = markImageURL(mark);
@@ -6304,6 +6313,30 @@ export function mountViewer(appEl) {
   //    (SCENES.md difference #6). No baker, no baked art — so the town now runs
   //    the same furnishing pass the room does, and difference #6 stops being a
   //    difference. SCENES.md is amended in the same commit.
+  // The town's own rendering of its ground, mounted exactly as the atlas was
+  // until 2026-09-08 (that code, restored): scripts stripped, images made lazy,
+  // relative art paths rebased on the atlas directory. Null when the file is
+  // absent or unreadable — never a throw, because the generated ground is the
+  // answer then and the reader must not see "the ground didn't draw" for a
+  // missing picture.
+  async function fetchAtlasGround() {
+    try {
+      const r = await fetch(ATLAS_GROUND_URL, { credentials: "same-origin" });
+      if (!r.ok) return null;
+      const doc = new DOMParser().parseFromString(await r.text(), "text/html");
+      const svg = doc.querySelector("svg#map-svg") ?? doc.querySelector("svg");   // the sheet, never an icon inside it
+      if (!svg) return null;
+      disciplineAtlasImages(doc);
+      svg.removeAttribute("width"); svg.removeAttribute("height");
+      svg.querySelectorAll("script").forEach((el) => el.remove());
+      const base = new URL(ATLAS_GROUND_URL, location.origin);
+      svg.querySelectorAll("image").forEach((im) => {
+        const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
+        if (hh && !/^(https?:)?\//.test(hh)) { im.setAttribute("href", new URL(hh, base).pathname); im.removeAttribute("xlink:href"); }
+      });
+      return document.importNode(svg, true);
+    } catch { return null; }
+  }
   async function loadMinimap() {
     if (minimapLoading) return;
     minimapLoading = true;
@@ -6341,9 +6374,17 @@ export function mountViewer(appEl) {
       // `data.worldState.marks` and emphatically not `data.marks`, which does
       // not exist: `data` is { trueWorld, myWorld, worldState, skeleton,
       // manifest }.
+      // The ground-set ids (the regions and the water — what the furnishing pass
+      // must leave alone) come from the generated ground in EITHER case: it is
+      // 6 ms and 13 KB, and the picture carries no such list.
       const ground = townGround(allMarks(), data.skeleton, { originPx, mPerPx });
-      const doc = new DOMParser().parseFromString(ground.svgText, "image/svg+xml");
-      const svg = document.importNode(doc.documentElement, true);
+      // THE PICTURE FIRST, THE GENERATED GROUND AS THE FALLBACK (2026-09-11).
+      // Which one drew is written on the svg itself (`data-ground`) so a page
+      // test — and a reader with dev tools open — can say which they are seeing.
+      const picture = await fetchAtlasGround();
+      const svg = picture ?? document.importNode(
+        new DOMParser().parseFromString(ground.svgText, "image/svg+xml").documentElement, true);
+      svg.setAttribute("data-ground", picture ? "atlas" : "generated");
       // THE SCENE-LIFECYCLE GUARD: a ground that finishes building while a ROOM
       // is mounted may not stomp it — the town's ground waits here and mounts
       // when the resident steps back outside (remountTown drains it).
