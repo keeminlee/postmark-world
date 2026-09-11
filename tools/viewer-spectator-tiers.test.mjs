@@ -31,7 +31,7 @@ import {
   viewportWorldBounds,
   markInDrawnBounds,
   pointInDrawnBounds,
-  clusterWalkers,
+  farWalkerSVG,
   overlayHouseGlyphSVG,
   overlayHomeCardSVG,
   placeholderExtentSVG,
@@ -166,32 +166,19 @@ test("A MARK IS CULLED BY ITS GEOMETRY, NOT BY ITS CENTRE — a district straddl
   // and the arrow can never disagree about what is on screen
 });
 
-test("THE FAR CROWD — one dot per household past the engine's own cluster dial", () => {
-  const walkers = [
-    { handle: "berthillon-s1", x: 3000, y: 3000 },
-    { handle: "berthillon-s2", x: 3020, y: 3010 },
-    { handle: "berthillon-s3", x: 2990, y: 2995 },
-    { handle: "wright", x: 10, y: 10 },          // inside the radius: their own dot
-    { handle: "rei", x: 3000, y: -3000 },
-  ];
-  const householdOf = (h) => String(h).split("-")[0];
-  const dots = clusterWalkers(walkers, { cam: { x: 0, y: 0 }, beyondM: 600, householdOf });
-  const byWho = new Map(dots.map((d) => [d.household, d]));
-  assert.equal(byWho.get("berthillon").count, 3, "three Berthillons across the town are one dot");
-  assert.ok(Math.abs(byWho.get("berthillon").x - 3003.33) < 0.1, "at their centroid");
-  assert.equal(byWho.get("wright").count, 1, "a walker inside the radius keeps their own dot");
-  assert.equal(byWho.get("wright").x, 10, "at their own position, not a centroid");
-  assert.equal(byWho.get("rei").count, 1);
-  // the biggest crowd is drawn first, so the order does not wander between draws
-  assert.equal(dots[0].household, "berthillon");
-  // NO CAMERA, NO CLUSTERING: without a standpoint to measure from, everybody
-  // keeps their own dot. Collapsing on a guess would be the map inventing a
-  // crowd.
-  assert.equal(clusterWalkers(walkers, { householdOf }).length, 5);
-  assert.deepEqual(clusterWalkers(), []);
-  // ⚑ THE FLIP: drop the `near` test in clusterWalkers so everyone clusters, and
-  //   the wright assertions red — a resident standing beside you merging into a
-  //   household dot is the map refusing to show you what you are looking at.
+test("THE FAR WALKER — one static dot with legs per resident, fixed where they stand, nothing merged", () => {
+  const svg = farWalkerSVG({ at: { x: 100, y: 200 }, k: 2, handle: "rei" });
+  assert.match(svg, /^<g class="wv-walker-far" data-handle="rei"/, "one group, named by the handle so a hover can say who");
+  assert.equal((svg.match(/<line /g) ?? []).length, 2, "a little pair of legs");
+  assert.equal((svg.match(/wv-walker-far-head/g) ?? []).length, 1, "one head");
+  assert.ok(!/<image|clip-path/.test(svg), "no picture and no clip path — that is what broke at ten times the town");
+  assert.match(svg, /wv-walker-hit/, "and the same hit disc the near walker wears");
+  // marker space: at k=2 the head is half the size it is at k=1
+  const r = (s) => Number(s.match(/wv-walker-far-head"\/>/) ? s.match(/r="([\d.]+)" class="wv-walker-far-head"/)[1] : NaN);
+  assert.equal(r(farWalkerSVG({ at: { x: 0, y: 0 }, k: 2 })) * 2, r(farWalkerSVG({ at: { x: 0, y: 0 }, k: 1 })));
+  assert.match(farWalkerSVG({ at: { x: 0, y: 0 }, moving: true }), /class="wv-walker-far moving"/, "a mover wears the moving class");
+  assert.equal(farWalkerSVG({ at: { x: NaN, y: 1 } }), "", "an unplaced walker draws nothing");
+  // ⚑ THE FLIP: drop one <line> from farWalkerSVG and the legs count reds.
 });
 
 test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, and the pip stays", () => {

@@ -1734,6 +1734,27 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
     + `</circle></g></g>`;
 }
 
+/** THE FAR WALKER — a dot with a little pair of legs (founder, 2026-09-11:
+ *  "let's do static dots then. could we make the dots have a little pair of
+ *  legs?"). One per resident at town width, fixed where they stand — never
+ *  merged by household or re-decided by the camera, which is what made the
+ *  old far dots jump on every zoom step. No image, no clip path: a head and
+ *  two strokes, all in the `1/k` marker space so it stays the same few
+ *  screen pixels at any zoom. Carries the handle so a hover can name it, and
+ *  the same hit disc the near walker wears. Pure. */
+export function farWalkerSVG({ at, k = 1, handle = "", moving = false } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
+  const s = 1 / (Number(k) > 0 ? Number(k) : 1);
+  const head = 3.2 * s, legTop = y + 1.5 * s, legBottom = y + 6.5 * s;
+  return `<g class="wv-walker-far${moving ? " moving" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${esc(handle)}">`
+    + `<circle cx="${x}" cy="${y - 2.2 * s}" r="${head}" class="wv-walker-far-head"/>`
+    + `<line x1="${x - 1.4 * s}" y1="${legTop}" x2="${x - 2.6 * s}" y2="${legBottom}" class="wv-walker-far-leg"/>`
+    + `<line x1="${x + 1.4 * s}" y1="${legTop}" x2="${x + 2.6 * s}" y2="${legBottom}" class="wv-walker-far-leg"/>`
+    + `<circle cx="${x}" cy="${y + 1.5 * s}" r="${9 * s}" class="wv-walker-hit"/>`
+    + `</g>`;
+}
+
 // THE SAME HOUSE, TOLD SMALLER (2026-09-11). At `far` a parcel is a landmark
 // and nothing else: the reader is looking at the shape of a town, and 890
 // photographs at 45 px apiece over ground 3 px wide is not a town, it is a
@@ -1936,34 +1957,6 @@ export function pointInDrawnBounds(at, bounds) {
   return x >= bounds.minX && x <= bounds.maxX && y >= bounds.minY && y <= bounds.maxY;
 }
 
-/** THE FAR WALKERS, one dot per household. Past `beyondM` from the camera a
- *  household's people are a place, not a crowd: the town-wide view wants to
- *  know that the Berthillons are at home, not to draw nine faces two pixels
- *  apart. Inside that radius everyone keeps their own dot, because that is
- *  where the reader is actually looking.
- *
- *  Returns rows of `{ x, y, household, count, handles }`, largest first so the
- *  drawing order is stable. Pure — `householdOf` is the caller's map. */
-export function clusterWalkers(walkers = [], { cam = null, beyondM = Infinity, householdOf = null } = {}) {
-  const out = [], groups = new Map();
-  const cx = Number(cam?.x), cy = Number(cam?.y);
-  const haveCam = [cx, cy].every(Number.isFinite) && Number.isFinite(beyondM);
-  for (const w of walkers ?? []) {
-    const x = Number(w?.x), y = Number(w?.y);
-    if (![x, y].every(Number.isFinite)) continue;
-    // NO CAMERA, NO CLUSTERING. Without a standpoint to measure from there is
-    // no "past this distance", and collapsing anyway would be the map inventing
-    // a crowd out of an unanswered question.
-    const near = haveCam ? Math.hypot(x - cx, y - cy) <= beyondM : true;
-    const household = String((householdOf ? householdOf(w.handle) : null) ?? w?.handle ?? "");
-    if (near || !household) { out.push({ x, y, household, count: 1, handles: [String(w?.handle ?? "")] }); continue; }
-    const g = groups.get(household) ?? { x: 0, y: 0, count: 0, handles: [], household };
-    g.x += x; g.y += y; g.count += 1; g.handles.push(String(w?.handle ?? ""));
-    groups.set(household, g);
-  }
-  for (const g of groups.values()) out.push({ ...g, x: g.x / g.count, y: g.y / g.count });
-  return out.sort((a, b) => b.count - a.count);
-}
 
 // The zoom-IN floor: the viewport may never get narrower than full.w / this.
 // The painting is 1500 atlas units wide at 5 m per unit (WORLD/skeleton.json),
@@ -4068,8 +4061,10 @@ const STYLE = `
    sizes, so the town does not appear to change species when a reader zooms. */
 .ov-glyph { fill:#f4e6c8; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; pointer-events:none; }
 /* a household seen from across the town: one dot for its people, not nine */
-.wv-walker-cluster { fill:var(--green); opacity:.8; stroke:none; pointer-events:none; }
-.wv-walker-cluster.moving { fill:#e0507a; }
+.wv-walker-far .wv-walker-far-head { fill:var(--green); stroke:none; }
+.wv-walker-far .wv-walker-far-leg { stroke:var(--green); stroke-width:1.6; stroke-linecap:round; vector-effect:non-scaling-stroke; }
+.wv-walker-far.moving .wv-walker-far-head { fill:#e0507a; }
+.wv-walker-far.moving .wv-walker-far-leg { stroke:#e0507a; }
 .ov-dot { fill:var(--you); stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:var(--you); stroke-width:3; opacity:.55; }
 /* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
@@ -7756,25 +7751,18 @@ export function mountViewer(appEl) {
     // own `cluster_beyond_m` — the dial that already decides when a household's
     // marks collapse into one — its people collapse into one dot too, and the
     // faces come back the moment the camera comes down to district width.
+    // ONE STATIC WALKER PER RESIDENT AT TOWN WIDTH (founder, 2026-09-11, after
+    // "get rid of the cluster-dots": "let's do static dots then. could we make
+    // the dots have a little pair of legs?"). The far tier used to draw one
+    // dot per household, sized by headcount at the household's middle — and
+    // because who was merged depended on distance from the camera, every zoom
+    // step re-decided it and the dots jumped; they took no clicks either. Now:
+    // every resident, fixed where they stand, as `farWalkerSVG` — a head and
+    // two legs, no image, no clip path. Cheap into the thousands; the hover
+    // scan is the first thing that would grow, not this.
     if (tier === "far") {
-      const dots = clusterWalkers(drawnWalkers, {
-        cam: state.cam,
-        beyondM: Number(state.dials.cluster_beyond_m),
-        householdOf: (h) => faceOf(h).household,
-      });
-      const moversByHousehold = new Set(drawnWalkers
-        .filter((w) => w.moving ?? (!w.arrived && !w.standing))
-        .map((w) => String(faceOf(w.handle).household ?? w.handle ?? "")));
-      for (const d of dots) {
-        const p = px(d);
-        // the dot grows a little with the crowd it stands for, and says how many
-        // to a screen reader — a cluster that looked like a person would be the
-        // map lying about how many people are in a place
-        const r = (d.count > 1 ? 9 + Math.min(6, Math.sqrt(d.count - 1) * 2.5) : 7) / k;
-        const who = d.count > 1 ? `${d.household} — ${d.count} people` : `${d.handles[0] ?? d.household}`;
-        s += `<circle cx="${p.x}" cy="${p.y}" r="${r}"`
-          + ` class="wv-walker-cluster${moversByHousehold.has(d.household) ? " moving" : ""}"`
-          + ` role="img" aria-label="${esc(who)}"/>`;
+      for (const w of drawnWalkers) {
+        s += farWalkerSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing) });
       }
       mapCtx.walkLayer.innerHTML = s;
       walkReadout(drawnWalkers);
