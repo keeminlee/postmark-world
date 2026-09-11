@@ -199,22 +199,6 @@ export function homeHandleForParcel(parcel, homeMark = null) {
   return ground || null;
 }
 
-/**
- * The parcel a household stands on, from the fold — the ground the column
- * reads for when the reader is INDOORS (2026-09-11, Keemin: "interiors don't
- * have parcels. can we extend the parcel view to those?"). A room's ground is
- * its household's home, so the column indoors is that household's column;
- * this finds the parcel that names the household so the same view can be
- * built from it. First match wins; a household with no parcel gets null and
- * the column still opens on the room mark alone.
- */
-export function parcelForHousehold(household, marks = []) {
-  const who = String(household ?? "").trim();
-  if (!who) return null;
-  return (marks ?? []).find((m) => m?.kind === "parcel"
-    && String(m.household ?? m.by ?? "").trim() === who) ?? null;
-}
-
 /** Is this mark a parcel — the one mark kind that gets a column? */
 export function isParcelMark(mark) {
   return !!mark && mark.kind === "parcel";
