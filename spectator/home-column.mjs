@@ -522,7 +522,7 @@ export const HOME_COLUMN_CSS = `
   font-size:.8rem; text-decoration:none; border-bottom:1px solid rgba(232,197,106,.4); }
 .wv-homecol-resident:hover, .wv-homecol-resident:focus-visible { color:var(--paper); border-bottom-color:var(--paper); }
 @media (min-width:820px) {
-  .wv-sticky.has-homecol .wv-mapctl { right:calc(var(--wv-homecol-w, min(26rem, 92%)) + 10px); }
-  .wv-sticky.has-homecol .wv-walkdesk { right:calc(var(--wv-homecol-w, min(26rem, 92%)) + 10px); }
+  .wv-minimap.has-homecol .wv-mapctl { right:calc(var(--wv-homecol-w, min(26rem, 92%)) + 10px); }
+  .wv-minimap.has-homecol .wv-walkdesk { right:calc(var(--wv-homecol-w, min(26rem, 92%)) + 10px); }
 }
 `;
