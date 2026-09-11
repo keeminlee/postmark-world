@@ -215,3 +215,70 @@ test("byId: the READ's record wins over the portfolio's thinner copy", () => {
   assert.equal(byId.get("other/backed").body, "b", "and a mark only the portfolio knows still resolves");
   assert.equal(byId.size, 3);
 });
+
+// ───────── the people the read names ───────────────────────────────────────
+
+import { walkersFromPresent } from "../spectator/viewer.mjs";
+
+const PRESENT = {
+  count: 3, shown: 3, radius_m: 500, capped: false,
+  residents: [
+    { handle: "rei", at: { x: 10, y: -20 }, distance_m: 22, bearing: "N", standing: true, moving: false, aboard: false, place: "the gardens" },
+    { handle: "hal", at: { x: 40, y: 0 }, distance_m: 40, bearing: "E", standing: false, moving: true, aboard: false, remaining_m: 90 },
+    { handle: "ghost", distance_m: 5 },                       // no position at all
+  ],
+};
+
+test("present becomes walkers: at{x,y} becomes x/y, and the flags ride", () => {
+  const w = walkersFromPresent(PRESENT);
+  assert.deepEqual(w.map((r) => r.handle), ["rei", "hal"]);
+  assert.equal(w[0].x, 10); assert.equal(w[0].y, -20);
+  assert.equal(w[0].standing, true); assert.equal(w[0].place, "the gardens");
+  assert.equal(w[1].moving, true);
+});
+
+test("FALSIFIER — a person with no position is DROPPED, never drawn at the origin", () => {
+  const w = walkersFromPresent(PRESENT);
+  assert.ok(!w.some((r) => r.handle === "ghost"),
+    "a row with no `at` must not be drawn — (0,0) is Ferry's crossing, and putting someone "
+    + "there is a lie the map would tell convincingly");
+  // the anti-vacuity half: give it a position and it draws
+  const withPlace = { residents: [{ handle: "ghost", at: { x: 1, y: 2 } }] };
+  assert.equal(walkersFromPresent(withPlace).length, 1);
+});
+
+test("FALSIFIER — the drawn set is a SUBSET of what the read named, never a superset", () => {
+  const named = new Set(PRESENT.residents.map((r) => r.handle));
+  for (const w of walkersFromPresent(PRESENT))
+    assert.ok(named.has(w.handle), `${w.handle} was drawn and the read never named them`);
+  // and an empty reading draws nobody rather than falling back to the town
+  assert.deepEqual(walkersFromPresent({}), []);
+  assert.deepEqual(walkersFromPresent({ residents: [] }), []);
+});
+
+test("FALSIFIER — the resident path does not ask /world/walkers", async () => {
+  // A SOURCE GUARD, and it is the one the reviewer asked for: the whole-town
+  // poll must not be reachable from the resident branch. Read from the bytes,
+  // because the behaviour lives in a browser this test does not have.
+  const { readFileSync } = await import("node:fs");
+  const src = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
+  // ⚑ COMMENTS ARE STRIPPED FIRST, and the first version of this test did not
+  // strip them — so it went red on the branch's own explanation of why the
+  // whole-town poll is not used, which mentions the path by name. A source
+  // guard that a COMMENT can trip is a guard that gets silenced by rewording
+  // instead of by fixing, which is the opposite of what it is for. It reads
+  // code now.
+  const code = src.replace(/^\s*\/\/.*$/gm, "");
+  const body = code.slice(code.indexOf("async function pollWalkers()"));
+  const townPoll = body.indexOf('const paths = [officeUrl("/world/walkers")');
+  assert.ok(townPoll > 0, "the town-wide poll is still there for the spectator path");
+  const residentArm = body.slice(0, townPoll);
+  assert.ok(residentArm.includes("onResidentPath()"),
+    "pollWalkers branches on the resident path before it reaches the town-wide poll");
+  assert.ok(residentArm.includes("/world/present"),
+    "and that branch asks who is within earshot");
+  assert.ok(!residentArm.includes("/world/walkers"),
+    "the resident branch must not reach the whole-town poll");
+  assert.ok(/(^|[^A-Za-z])return;/.test(residentArm),
+    "and it RETURNS — falling through would ask both");
+});

@@ -411,14 +411,34 @@ test("THE CALL SITE PASSES A SET THAT EXISTS — a CHEAP SECOND GUARD, not the r
   // the CALL, not the declaration (`export function townGround(marks, …)` sits
   // 4,000 lines above it and matches a lazier pattern — the first version of
   // this assertion caught the definition and reported `marks`)
-  const call = VIEWER.match(/const ground = townGround\(([A-Za-z0-9_.]+), ([A-Za-z0-9_.]+)/);
+  // ⚑ THE CALL SITE MOVED ON 2026-09-10 and this guard went red, correctly:
+  // it is a source-text regex and the source text changed. The ground now reads
+  // `allMarks()`, which is the assembled fold where there is one and — on the
+  // resident path, which loads no fold at all — the read's own `records`,
+  // carrying the town's ground set for exactly this call. The guard follows the
+  // call site; it does not get to hold it still.
+  //
+  // The regex now accepts a CALL as well as a dotted name, because the first
+  // version could only see `world.marks` and a lane that swapped in an accessor
+  // reported "loadMinimap calls townGround" — a failure about the regex wearing
+  // the costume of a failure about the page.
+  const call = VIEWER.match(/const ground = townGround\(([A-Za-z0-9_.]+(?:\(\))?), ([A-Za-z0-9_.]+)/);
   assert.ok(call, "loadMinimap calls townGround");
-  assert.equal(call[1], "world.marks",
-    "the ground reads the ASSEMBLED fold — the same marks the pips stand on");
+  assert.equal(call[1], "allMarks()",
+    "the ground reads every mark the page can speak about — the same set the pips stand on, "
+    + "which is the fold where there is one and the read's records where there is not");
   assert.equal(call[2], "data.skeleton");
-  // and the name it passes is a thing the module actually builds
+  // and the name it passes is a thing the module actually builds, on BOTH paths
+  assert.match(VIEWER, /const allMarks = \(\) => world\?\.marks \?\? \[\.\.\.byId\.values\(\)\]/,
+    "`allMarks` is defined, and defined as the union it claims to be");
   assert.match(VIEWER, /world = assembleWorld\(\{ worldState: data\.worldState, skeleton: data\.skeleton \}\)/);
   assert.doesNotMatch(VIEWER, /townGround\(data\.marks/, "`data.marks` is undefined and always was");
+  // THE ORIGINAL BUG, still watched: a set that does not exist. `world.marks`
+  // is now the one that can be absent — the resident path never assembles a
+  // world — so passing it bare would draw a town on nothing for a resident and
+  // nothing at all for anyone else.
+  assert.doesNotMatch(VIEWER, /const ground = townGround\(world\.marks/,
+    "`world.marks` is null on the resident path; the ground must go through allMarks()");
 });
 
 test("A GROUNDLESS RECORD REFUSES rather than drawing a plausible lie", () => {

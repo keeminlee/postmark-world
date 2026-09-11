@@ -4586,6 +4586,35 @@ export function residentById(read = {}, mine = new Map()) {
   return byId;
 }
 
+/**
+ * The people a read names, as the walker layer draws them.
+ *
+ * The resident path does not ask who is in the TOWN; it draws who the read says
+ * is within earshot. Same people, two vocabularies: `present.residents` carries
+ * `at: {x, y}` because it is a list of readings taken from a standpoint, and
+ * `drawWalkers` wants `x`/`y` on the row because it is a list of bodies on a
+ * map. This is the one place the two meet.
+ *
+ * A row with no position is DROPPED rather than drawn at the origin — a person
+ * placed at (0,0) is a person standing on Ferry's crossing, which is a lie the
+ * map would tell convincingly.
+ */
+export function walkersFromPresent(present = {}) {
+  const rows = Array.isArray(present?.residents) ? present.residents : [];
+  const out = [];
+  for (const r of rows) {
+    const at = r?.at;
+    if (!r?.handle || !at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) continue;
+    out.push({
+      handle: r.handle, x: at.x, y: at.y,
+      standing: r.standing ?? false, moving: r.moving ?? false, aboard: r.aboard ?? false,
+      ...(r.place ? { place: r.place } : {}),
+      ...(r.available ? { available: r.available } : {}),
+    });
+  }
+  return out;
+}
+
 /** The ids a resident read names — its own list, for the page to resolve against. */
 export function residentReadIds(read = {}) {
   const named = Array.isArray(read.nearby) ? read.nearby
@@ -7338,6 +7367,44 @@ export function mountViewer(appEl) {
   }
 
   async function pollWalkers() {
+    // ⚑ NOT BEFORE WE KNOW WHO IS READING. The first poll fires at boot, which
+    // is before the office has answered whoami — so a reader with a key would
+    // ask the whole town ONCE on the way to asking only about earshot, and the
+    // measurement said so: whole_town 1, within_earshot 0. Exactly the class
+    // that caught the fold one commit earlier, one layer over. `resolveIdentity`
+    // calls `mountWalkers` when it finishes, so nothing is lost by waiting.
+    if (pmKey() && !identitySettled) return;
+    // ── THE RESIDENT PATH ASKS WHO IS WITHIN EARSHOT, NOT WHO IS IN TOWN ─────
+    //
+    // `/world/walkers` answers with EVERYONE, every fifteen seconds — which is
+    // the same shape of question as the whole fold, one layer over, and the
+    // same answer: a resident sees who is about, not who exists. So this path
+    // asks `/world/present` at the standpoint the read was taken from, which is
+    // the very function the read's own `present` block is built by.
+    //
+    // THE STANDPOINT COMES FROM THE READ, never from the camera. `present` is a
+    // reading taken from a body, and the office will not answer an embodied
+    // question at coordinates — the same law that reshaped the read itself.
+    if (onResidentPath()) {
+      const read = readCache.get(residentStandpointKey(null, state.handle));
+      const at = read?.standpoint;
+      if (read?.present) { walkState.walkers = walkersFromPresent(read.present); drawWalkers(); }
+      if (at && Number.isFinite(at.x) && Number.isFinite(at.y)) {
+        try {
+          const r = await fetch(officeUrl(`/world/present?x=${Math.round(at.x)}&y=${Math.round(at.y)}`),
+            { credentials: "same-origin" });
+          if (r.ok) {
+            const j = await r.json();
+            if (!j?.error) {
+              walkState.at = Number(j.at ?? walkState.at);
+              walkState.walkers = walkersFromPresent(j);
+              drawWalkers();
+            }
+          }
+        } catch { /* a poll miss is silent — the last good reading stands */ }
+      }
+      return;
+    }
     // /world/walkers is a PUBLIC office read — "visible to anyone who asks who
     // is out today" applies to spectators too. /walks stays the local-spectator
     // fallback shape.
@@ -8965,6 +9032,12 @@ export function mountViewer(appEl) {
         if (handle === state.handle) {
           byId = residentById(read, mineSet.marks);
           homeSet = buildHomeSet(data?.manifest, allMarks());
+          // AND THE PEOPLE, from the same answer. The walker poll fires at boot
+          // and the read lands after it, so a poll that ran first found nothing
+          // and the map drew nobody until the next fifteen-second tick — which
+          // is longer than a reader waits and longer than a measurement runs.
+          // `present` is already in hand here; there is no reason to ask again.
+          if (read.present) { walkState.walkers = walkersFromPresent(read.present); drawWalkers(); }
         }
         return read;
       })
