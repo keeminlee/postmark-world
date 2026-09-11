@@ -38,6 +38,13 @@ import { parseEnterExitLedger, occupancyAt, occupantsOf, withinOf, isMark, isEnt
 // is not allowed to hold one, and `tools/record-sources.test.mjs` reads these
 // bytes to prove it.
 import { recordSources, recordAbsenceMessage } from "../tools/record-sources.mjs";
+// THE PARCEL'S COLUMN — the atlas's right-hand panel, back (Keemin 2026-09-11).
+// It owns its own markdown reader, its own builder and its own dress, and it
+// takes no viewer internals: the door read, the shelf gate and the handle rule
+// are handed to it. A home page is resident-authored prose arriving over a wire,
+// so the one thing that module may never do is parse a string as HTML — see its
+// header, and tools/home-column.test.mjs, which proves it cannot.
+import { createHomeColumn, homeHandleForParcel, isParcelMark, HOME_COLUMN_CSS } from "./home-column.mjs";
 
 const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -4470,6 +4477,7 @@ const STYLE = `
 .wv-edge-indicator.is-draft, .wv-hl-label.is-draft { color:var(--draft); }
 .wv-bubble.is-draft { --wv-mark-accent:var(--draft); }
 .wv-bubble-back.is-draft { color:var(--draft); }
+${HOME_COLUMN_CSS}
 `;
 
 const MARKUP = `
@@ -4591,6 +4599,10 @@ const MARKUP = `
           <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
             title="a short tour of the world">?</button>
         </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
+       THE PARCEL'S COLUMN hangs here, over the painting's right — the atlas's
+       own place for it. One node, built by home-column.mjs and by nothing else;
+       empty and hidden until a parcel is clicked. -->
+     <aside class="wv-homecol" data-wv-keep hidden></aside><!--
        THE WALK DESK RIDES ON THE PAINTING (Keemin, 2026-08-04) — bottom right,
        and only once a destination is armed. It answers a click you made on the
        painting, so it belongs to the painting; in the rail it was a permanent
@@ -8464,6 +8476,70 @@ export function mountViewer(appEl) {
     markInteraction.hover(id);
   }
   const bubbleHost = () => $(root, ".wv-bubbles");
+  // ── THE PARCEL'S COLUMN (Keemin, 2026-09-11) ──────────────────────────────
+  //
+  // A fourth reading surface, and the first that is NOT a bubble: a parcel is a
+  // whole home, and a home is pages of the resident's own prose. The little card
+  // capped itself at 32 rem of scroll and offered a button out to the resident's
+  // page; the atlas answered the same click with a full column and the home
+  // itself. That is what this restores — for parcels only. Every other mark's
+  // click is untouched, which is why this is a swap at ONE line of renderBubbles
+  // rather than a new kind of bubble.
+  //
+  // ONE READ PER HANDLE for the page's life, cached inside the column. The door
+  // is public ("every GET here is public" — the office's own manifest lists
+  // /homes/{handle} among its reads), so the spectator path reaches it with no
+  // credential at all; a signed-in reader's headers ride along because every
+  // other read on this page carries them and a home is not a secret either way.
+  async function readHomePage(handle) {
+    const response = await fetch(officeUrl(`/homes/${encodeURIComponent(handle)}`), {
+      headers: { accept: "application/json", ...authHeaders() },
+      credentials: "same-origin",
+    });
+    if (!response.ok) throw new Error(`the door answered ${response.status}`);
+    return response.json();
+  }
+  const homeColumn = createHomeColumn({
+    doc: document,
+    host: $(root, ".wv-homecol"),
+    readHome: readHomePage,
+    // the SAME shelf gate every other art surface uses: off-shelf never becomes
+    // a path, here or anywhere
+    imagePath: (url) => markImagePath({ image: url }),
+    residentHref,
+  });
+  // What the column would show for this selection, or null if this selection is
+  // not a parcel. The home sited on the ground supplies the title and the lead
+  // picture — the same two the map's own home card already draws from it — and
+  // the door supplies everything else.
+  function parcelColumnView(id) {
+    // INDOORS THERE ARE NO PARCELS. A room's ground is its own scene and the
+    // town's houses are not drawn on it, so a column left standing from the
+    // street would be a reading of somewhere else.
+    if (sceneRoomId) return null;
+    const mark = id ? byId.get(id) : null;
+    if (!isParcelMark(mark)) return null;
+    // THE FULL MARK, NOT THE THIN ONE. On the resident path allMarks() is the
+    // READ — entries that carry a place and a tier and need not carry a picture —
+    // so the dwelling found here is resolved through byId before its art is
+    // asked for. The overlay's own furnishing pass learned this first and has a
+    // guard named after it ("drawOverlay's SET is built from full marks, not thin
+    // radial entries"); measured here 2026-09-11, the column's lead picture was
+    // null for wright on the resident path and present for a spectator looking
+    // at the same house, which is the same bug wearing different clothes.
+    const found = homeMarkOfParcel(mark.id, allMarks());
+    const home = found ? (byId.get(found.id) ?? found) : null;
+    const handle = homeHandleForParcel(mark, home);
+    if (!handle) return null;
+    return {
+      key: mark.id,
+      handle,
+      kicker: String(mark.household ?? mark.by ?? handle),
+      title: markIdentity(home ?? mark),
+      // the dwelling's picture, and failing that the ground's own
+      leadImage: (home && markImagePath(home)) ?? markImagePath(mark),
+    };
+  }
   const bubbleEls = { hover: null, pinned: null };
   let bubbleResize = null;
   let pinnedBuiltId = null;   // which mark the pinned bubble currently holds
@@ -8775,6 +8851,18 @@ export function mountViewer(appEl) {
   let renderingBubbles = false;
   function renderBubbles() {
     if (renderingBubbles) return;
+    // ── THE PARCEL'S COLUMN, DECIDED ABOVE THE GATE BELOW ─────────────────
+    //
+    // The gate below is about BUBBLES, which exist only in painting-only mode.
+    // The column is not a bubble: it is a reading hung over the map, and the map
+    // is there whether the Telling stands beside it or not. Measured on dev
+    // 2026-09-11 — its world page comes up SPLIT, not painting-only, so a column
+    // gated on paintingOnly would never have opened for anyone arriving at
+    // /world, which is the whole audience. (In that mode there is no little card
+    // to swap either: the click scrolls the mark's cell up in the Telling, and
+    // it still does.)
+    const column = parcelColumnView(markInteraction.getState().selectedId);
+    if (column) homeColumn.open(column); else homeColumn.close();
     if (!state.paintingOnly) {
       for (const el of Object.values(bubbleEls)) if (el) el.hidden = true;
       return;
@@ -8782,7 +8870,12 @@ export function mountViewer(appEl) {
     renderingBubbles = true;
     try {
       const { hoveredId, selectedId } = markInteraction.getState();
-      renderPinnedBubble(selectedId);
+      // THE ONE SWAP. A parcel's selection is held by the column; every other
+      // selection is held by the pinned bubble exactly as before. The pinned
+      // bubble is told the truth about what IT holds, which is nothing — so it
+      // hides itself, and positionBubbles steps the glance around a box that is
+      // not there, both by paths that already existed.
+      renderPinnedBubble(column ? null : selectedId);
       // the glance stands down for the mark it is already showing in full, and
       // for a pointer that is reading a bubble rather than pointing at the
       // painting — running a finger down a relations list should light each one
@@ -9275,7 +9368,9 @@ export function mountViewer(appEl) {
     }
     // the ✕ closes the pinned bubble, which is the same act as deselecting —
     // there is one selection, and the bubble is what it looks like here
-    if (e.target.closest(".wv-bubble-close")) { clearSelectionAndDestination(); return; }
+    // the ✕ on the parcel's column is the same act for the same reason — one
+    // selection, and the column is what it looks like for a parcel
+    if (e.target.closest(".wv-bubble-close, .wv-homecol-close")) { clearSelectionAndDestination(); return; }
     if (e.target.closest(".wv-bubble-back")) { bubbleBack(); return; }
     const filterChip = e.target.closest("[data-mark-filter]");
     if (filterChip && !filterChip.disabled) {
