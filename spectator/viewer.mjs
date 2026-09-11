@@ -8670,9 +8670,9 @@ export function mountViewer(appEl) {
     // a path, here or anywhere
     imagePath: (url) => markImagePath({ image: url }),
     residentHref,
-    // the column's enter button is the little card's enter verb: same door,
-    // same sheet for terms and refusals (crossInto)
-    onEnter: (parcelId, button) => crossInto(parcelId, { button }),
+    // the column's enter button IS the little card's enter verb — same class,
+    // same `data-enter`, same root click delegate, same sheet for terms and
+    // refusals (crossInto). No callback: a second handler here crossed twice.
   });
   // What the column would show for this selection, or null if this selection is
   // not a parcel. The home sited on the ground supplies the title and the lead

@@ -18,6 +18,7 @@
 // sentence.
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   parseHomeMarkdown, parseInline, safeLinkHref, homeHandleForParcel, isParcelMark,
   homeColumnModel, renderHomeColumn, createHomeColumn,
@@ -370,11 +371,22 @@ test("the model carries an enter door only for a parcel a reader who can act is 
 
 test("the column renders the enter button in its nav, naming the parcel it enters — and not otherwise", () => {
   const withDoor = render(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel", canEnter: true }));
-  const buttons = find(withDoor, "button").filter((b) => b.className === "wv-homecol-enter");
+  const isDoor = (b) => b.className.split(" ").includes("wv-homecol-enter");
+  const buttons = find(withDoor, "button").filter(isDoor);
   assert.equal(buttons.length, 1, "one enter button");
+  // THE CARD'S OWN DOOR (founder, 2026-09-11): the card door's class and title, so the
+  // viewer's one rule styles it — and ONE handler. The column's own click delegate
+  // plus the viewer's root `[data-enter]` delegate fired two crossings per press.
+  assert.ok(buttons[0].className.split(" ").includes("wv-enter"), "it wears the card door's class");
+  assert.equal(buttons[0].attrs.title, "step inside this mark", "and its title");
+  const HC = readFileSync(new URL("../spectator/home-column.mjs", import.meta.url), "utf8");
+  const VIEWER = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
+  assert.doesNotMatch(HC, /addEventListener\("click"/, "the column registers no door click of its own");
+  assert.doesNotMatch(VIEWER, /onEnter/, "and the viewer hands it no door callback — its root delegate is the one owner");
+  assert.match(VIEWER, /const enterBtn = e\.target\.closest\("\[data-enter\]"\);/, "which reads the same attribute this button carries");
   assert.equal(buttons[0].attrs["data-enter"], "nyx/the-night-room-parcel", "it names the parcel, so the click needs no lookup");
   assert.equal(serialize(buttons[0]), "enter");
   const without = render(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel", canEnter: false }));
-  assert.equal(find(without, "button").filter((b) => b.className === "wv-homecol-enter").length, 0, "a spectator's column has no enter button");
+  assert.equal(find(without, "button").filter(isDoor).length, 0, "a spectator's column has no enter button");
   // flip: drop `nav.appendChild(enter)` in renderHomeColumn → the first count reds
 });
