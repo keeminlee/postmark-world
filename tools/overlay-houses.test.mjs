@@ -5,11 +5,14 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import {
   OVERLAY_PIP_R, HOME_CARD, homeCardPath, markerScale,
-  overlayHomeCardSVG, homeMarkOfParcel, houseIsLit,
+  overlayHomeCardSVG, homeMarkOfParcel, houseIsLit, enclosingParcels,
 } from "../spectator/viewer.mjs";
+
+const SOURCE = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
 
 const PARCEL = { id: "jack/the-lantern-parcel", kind: "parcel", household: "jack", at: { x: 100, y: 200 }, extent: { w: 25, h: 25 } };
 const HOME = { id: "jack/the-lantern", kind: "sited", tier: "home", placementParent: PARCEL.id, at: { x: 100, y: 200 }, extent: { w: 12, h: 12 }, image: "https://media.postmark.town/media/jack/abc.jpg" };
@@ -70,4 +73,23 @@ test("HOME: the household's walker at rest inside the parcel lights the frame", 
   assert.equal(houseIsLit(shared, [{ handle: "wright", x: 100, y: 200, arrived: true }], (h) => (h === "wright" ? "keeminlee" : null)), true, "a multi-resident household lights through the resolver");
   assert.equal(houseIsLit(shared, [{ handle: "wright", x: 100, y: 200, arrived: true }]), false, "…and not without it");
   assert.equal(houseIsLit({ ...PARCEL, at: null }, [home]), false);
+});
+
+test("THE PARCEL UNDERFOOT — entered directly, through the dwelling on it, or a room in that dwelling — is the one parcel whose card is not drawn", () => {
+  const ROOM = { id: "jack/the-lantern/kitchen", kind: "sited", parent: HOME.id, at: { x: 102, y: 201 }, extent: { w: 3, h: 3 } };
+  const OTHER = { id: "rei/the-attic-parcel", kind: "parcel", household: "rei", at: { x: 300, y: 300 }, extent: { w: 25, h: 25 } };
+  const marks = [PARCEL, HOME, ROOM, OTHER];
+  assert.deepEqual([...enclosingParcels(PARCEL.id, marks)], [PARCEL.id], "the parcel itself");
+  assert.deepEqual([...enclosingParcels(HOME.id, marks)], [PARCEL.id], "the dwelling sited on it (placementParent)");
+  assert.deepEqual([...enclosingParcels(ROOM.id, marks)], [PARCEL.id], "a room in the dwelling (parent, then placementParent)");
+  assert.deepEqual([...enclosingParcels(OTHER.id, marks)], [OTHER.id], "somebody else's parcel hides only itself");
+  assert.equal(enclosingParcels(null, marks).size, 0, "outside — nothing mounted — nothing hidden");
+  assert.equal(enclosingParcels("the-town/let-there-be-light", marks).size, 0, "the town is not a parcel");
+  assert.equal(enclosingParcels("a", [{ id: "a", parent: "b" }, { id: "b", parent: "a" }]).size, 0, "a cycle in the record ends");
+  assert.equal(enclosingParcels(HOME.id, new Map(marks.map((m) => [m.id, m]))).size, 1, "handed the viewer's own index, the same answer");
+  // the viewer asks it of the MOUNTED room, once per draw, and both house passes honour it
+  assert.match(SOURCE, /const underfoot = enclosingParcels\(sceneRoomId, byId\);/, "asked of the mounted room — the entered one, never geometry");
+  assert.match(SOURCE, /if \(full\.kind === "parcel" && underfoot\.has\(m\.id\)\) continue;\n(?:.*\n){0,6}\s*glyphIds\.add\(m\.id\);/, "…before the card, the pip, or the glyph id");
+  assert.match(SOURCE, /glyphIds\.has\(m\.id\) \|\| underfoot\.has\(m\.id\)\) continue;/, "and the landmark pass too");
+  // ⚑ THE FLIP: drop `m.placementParent` from the queue push → the dwelling line reds.
 });
