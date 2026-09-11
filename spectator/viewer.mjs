@@ -44,7 +44,7 @@ import { recordSources, recordAbsenceMessage } from "../tools/record-sources.mjs
 // are handed to it. A home page is resident-authored prose arriving over a wire,
 // so the one thing that module may never do is parse a string as HTML — see its
 // header, and tools/home-column.test.mjs, which proves it cannot.
-import { createHomeColumn, homeHandleForParcel, isParcelMark, parcelForHousehold, HOME_COLUMN_CSS } from "./home-column.mjs";
+import { createHomeColumn, homeHandleForParcel, isParcelMark, HOME_COLUMN_CSS } from "./home-column.mjs";
 
 const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -5696,12 +5696,6 @@ export function mountViewer(appEl) {
     return () => overlays.forEach((el) => boxEl.appendChild(el));
   }
   let sceneRoomId = null;       // the mark whose scene is mounted, or null = the town
-  // THE COLUMN INDOORS (2026-09-11, Keemin). A room has no parcels to click, so
-  // the household's column is opened by ENTERING their room and by a click on
-  // the room's own floor; the close button and Escape put it away like any
-  // other selection. It is a flag beside the scene rather than a selection
-  // because selecting the room mark would also arm a walk preview to it.
-  let roomColumnOpen = false;
   let townKeep = null;          // { svg, ctx } — the town scene, held aside while inside
 
   // ── WHY STEPPING OUTSIDE TOOK A WHILE (founder, 2026-08-21) ────────────────
@@ -5746,12 +5740,10 @@ export function mountViewer(appEl) {
       placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
     });
     sceneRoomId = room.id;
-    roomColumnOpen = true;      // the column opens with the room (2026-09-11)
   }
   function remountTown(boxEl) {
     if (!sceneRoomId) return;
     sceneRoomId = null;
-    roomColumnOpen = false;
     const reattach = captureKeep(boxEl);
     // an atlas that landed while we were indoors mounts NOW — the scene
     // lifecycle guard: a load may never stomp a mounted room, so it waited here
@@ -6968,11 +6960,6 @@ export function mountViewer(appEl) {
       const worldPoint = worldPointForEvent(e);
       const point = { x: Math.round(worldPoint.x), y: Math.round(worldPoint.y) };
       markInteraction.select(null);
-      // THE FLOOR INDOORS OPENS THE HOUSEHOLD'S COLUMN (2026-09-11). The walk
-      // desk still takes the point for a resident — the column is a reading
-      // on the right, the desk is the act in the corner, and they do not
-      // compete for the same screen.
-      if (sceneRoomId) { roomColumnOpen = true; renderBubbles(); }
       if (canAct()) chooseWalkPoint(point.x, point.y);
       else {
         state.cam = point;
@@ -8257,7 +8244,6 @@ export function mountViewer(appEl) {
 
   function clearSelectionAndDestination() {
     bubbleTrail = [];
-    roomColumnOpen = false;     // the close button and Escape put the room's column away too
     markInteraction.select(null);
     walkState.destination = null;
     walkState.changingCourse = false;
@@ -8589,11 +8575,7 @@ export function mountViewer(appEl) {
     // INDOORS THERE ARE NO PARCELS. A room's ground is its own scene and the
     // town's houses are not drawn on it, so a column left standing from the
     // street would be a reading of somewhere else.
-    // …UNLESS THE READER IS INSIDE ONE (2026-09-11, Keemin: "interiors don't
-    // have parcels. can we extend the parcel view to those?"). A room's ground
-    // is its household's home, so indoors the column is that household's,
-    // opened by entering and by the floor, closed like any selection.
-    if (sceneRoomId) return roomColumnOpen ? roomColumnView(sceneRoomId) : null;
+    if (sceneRoomId) return null;
     const mark = id ? byId.get(id) : null;
     if (!isParcelMark(mark)) return null;
     // THE FULL MARK, NOT THE THIN ONE. On the resident path allMarks() is the
@@ -8615,23 +8597,6 @@ export function mountViewer(appEl) {
       title: markIdentity(home ?? mark),
       // the dwelling's picture, and failing that the ground's own
       leadImage: (home && markImagePath(home)) ?? markImagePath(mark),
-    };
-  }
-  // The household's column, read from the room the reader is standing in: the
-  // room mark names the household, the fold names their parcel, and the same
-  // view the street builds is built here from the two.
-  function roomColumnView(roomId) {
-    const room = roomId ? (byId.get(roomId) ?? null) : null;
-    if (!room) return null;
-    const parcel = parcelForHousehold(room.household ?? room.by, allMarks());
-    const handle = parcel ? homeHandleForParcel(parcel, room) : String(room.by ?? room.household ?? "").trim();
-    if (!handle) return null;
-    return {
-      key: `room:${room.id}`,
-      handle,
-      kicker: String(room.household ?? room.by ?? handle),
-      title: markIdentity(room),
-      leadImage: markImagePath(room) ?? (parcel ? markImagePath(parcel) : null),
     };
   }
   const bubbleEls = { hover: null, pinned: null };
