@@ -20,7 +20,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   parseHomeMarkdown, parseInline, safeLinkHref, homeHandleForParcel, isParcelMark,
-  homeColumnModel, renderHomeColumn, createHomeColumn, parcelForHousehold } from "../spectator/home-column.mjs";
+  homeColumnModel, renderHomeColumn, createHomeColumn,
+} from "../spectator/home-column.mjs";
 
 // ── the stand-in ────────────────────────────────────────────────────────────
 
@@ -354,33 +355,4 @@ test("a reader who moves on before the door answers does not get the old home", 
   await new Promise((r) => setTimeout(r, 5));
   assert.ok(serialize(host).includes("bbb"), "the column shows the parcel the reader is on");
   assert.ok(!serialize(host).includes("# aaa"));
-});
-
-
-// ── the column indoors (2026-09-11, Keemin: "interiors don't have parcels") ──
-
-test("indoors the column reads for the household whose room you are in — the parcel is found by household, never by the room's own id", () => {
-  const marks = [
-    { id: "nyx/the-night-room-parcel", kind: "parcel", household: "nyx", by: "nyx" },
-    { id: "liv/the-kept-light-parcel", kind: "parcel", by: "liv" },
-    { id: "nyx/the-night-room", kind: "sited", by: "nyx", image: "x.jpg" },
-  ];
-  assert.equal(parcelForHousehold("nyx", marks)?.id, "nyx/the-night-room-parcel");
-  assert.equal(parcelForHousehold("liv", marks)?.id, "liv/the-kept-light-parcel", "by: is the household when household: is absent");
-  assert.equal(parcelForHousehold("nobody", marks), null, "a household with no parcel gets null, not a guess");
-  assert.equal(parcelForHousehold("", marks), null);
-});
-
-test("the viewer opens the household's column indoors: on entering the room, on the floor, and closes it with the selection", async () => {
-  const { readFileSync } = await import("node:fs");
-  const code = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8").replace(/^\s*\/\/.*$/gm, "");
-  assert.match(code, /if \(sceneRoomId\) return roomColumnOpen \? roomColumnView\(sceneRoomId\) : null;/,
-    "indoors the column is the room's household's, not null");
-  const mount = code.slice(code.indexOf("function mountRoomScene("), code.indexOf("function remountTown("));
-  assert.match(mount, /roomColumnOpen = true;/, "entering a room opens its household's column");
-  const remount = code.slice(code.indexOf("function remountTown("), code.indexOf("function syncScene("));
-  assert.match(remount, /roomColumnOpen = false;/, "leaving the room puts the column away");
-  assert.match(code, /if \(sceneRoomId\) \{ roomColumnOpen = true; renderBubbles\(\); \}/, "a click on the room's floor opens the column");
-  const clear = code.slice(code.indexOf("function clearSelectionAndDestination("), code.indexOf("function chooseWalkMark("));
-  assert.match(clear, /roomColumnOpen = false;/, "clearing the selection (close button, Escape) closes the room's column too");
 });
