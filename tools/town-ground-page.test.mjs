@@ -467,6 +467,137 @@ test("THE NAMES STAND DOWN AT TOWN WIDTH — and the gate is a gate, not an off 
   //   gate) and the far assertion reds while the near one stays green.
 });
 
+// ── THE HOUSE IS THE TARGET, ON THE PAGE (Keemin, 2026-09-11) ──────────────
+//
+// "make parcels more clickable (match their drawn size)". The pure ranking is
+// proved in tools/viewer-axes.test.mjs, and that is the weaker half: it asserts
+// that a box in an array beats a distance, not that the box under a reader's
+// cursor is the one the overlay actually drew. Only the page can say whether
+// `getBoundingClientRect` on the drawn group, resolved at the moment of the
+// gesture, lands where the house is.
+//
+// HOW THE MARK IS IDENTIFIED, AND WHY NOT BY ITS PIP. The obvious test hovers
+// the pip, remembers the name, then hovers the corner and compares. It does not
+// survive contact with the town: a walker wins the hover over the ground they
+// stand on (the person is what you were pointing at, ruled 2026-08-04), and on
+// this rig BOTH houses in view at street width have a resident standing on them
+// — the pip said "histor-reeves" and the corner said "The Gauge House Parcel",
+// and the comparison read a working box test as a failure.
+//
+// So the card identifies itself by its own EDGE instead. Two points inside the
+// box, far apart and both outside the snap circle, must raise the SAME name;
+// a point just outside the box must raise a different one. That is the box
+// being the target, stated without needing to know what the card is called.
+test("THE HOUSE IS THE TARGET — the card's own edge decides what a hover reaches", async (t) => {
+  if (!chromium) return t.skip(
+    "playwright is absent: the drawn-box hit test is unguarded on the page. The ranking is proved in "
+    + "viewer-axes, which cannot tell a box that is measured from a box that is measured in the right place.");
+
+  const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
+  // the Telling open, because painting-only suppresses the hover label and the
+  // label is how this test learns WHICH mark answered
+  await page.addInitScript(() => { try { localStorage.setItem("pm_world_painting_only", "0"); } catch {} });
+  await page.goto(`http://localhost:${rig.port}/`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.waitForSelector(".wv-telling-pane", { state: "attached", timeout: 90_000 });
+  await page.evaluate(() => { const el = document.querySelector(".wv-tour-skip"); if (el && el.offsetParent) el.click(); });
+  await page.waitForFunction(() => !!document.querySelector(".wv-minimap > svg"), null, { timeout: 60_000 });
+  await page.waitForTimeout(2500);
+
+  // down to a zoom where parcels are drawn as CARDS rather than glyphs, aiming
+  // at the reader's own standpoint — the overlay is cut by the standpoint, so
+  // that is where the houses are
+  const tier = () => page.evaluate(() =>
+    document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? null);
+  const aim = await page.evaluate(() => {
+    const dot = document.querySelector("#wv-overlay .ov-dot");
+    const b = (dot ?? document.querySelector(".wv-minimap > svg"))?.getBoundingClientRect();
+    return b ? { x: b.x + b.width / 2, y: b.y + b.height / 2 } : null;
+  });
+  for (let i = 0; i < 40 && (await tier()) !== "near"; i++) {
+    await page.mouse.move(aim.x, aim.y);
+    await page.mouse.wheel(0, -300);
+    await page.waitForTimeout(120);
+  }
+  await page.waitForTimeout(1200);
+  assert.equal(await tier(), "near", "the camera reached a zoom where parcels wear cards");
+
+  // A CARD ON SCREEN, CLEAR OF ITS NEIGHBOURS. Two filters, each learned here:
+  //   ON SCREEN  the overlay draws one viewport of MARGIN beyond the viewBox, so
+  //              cards exist in the DOM at negative screen coordinates and a
+  //              hover aimed at one lands on nothing. Measured: of 23 cards
+  //              drawn at street width, 21 were off screen.
+  //   ISOLATED   cards overlap; a point inside a NEIGHBOUR's box would make this
+  //              test about which of two houses answered.
+  const target = await page.evaluate(() => {
+    const map = document.querySelector(".wv-minimap > svg").getBoundingClientRect();
+    const inMap = (x, y) => x >= map.left + 4 && x <= map.right - 4 && y >= map.top + 4 && y <= map.bottom - 4;
+    const boxes = [...document.querySelectorAll("#wv-overlay .ov-home[data-id]")]
+      .map((g) => ({ g, b: g.getBoundingClientRect() }));
+    const walkers = [...document.querySelectorAll("#wv-walk-layer circle")]
+      .map((n) => n.getBoundingClientRect())
+      .map((b) => ({ x: b.x + b.width / 2, y: b.y + b.height / 2 }));
+    const clear = (pt) => inMap(pt.x, pt.y) && !walkers.some((w) => Math.hypot(w.x - pt.x, w.y - pt.y) <= 24);
+    const inAnyOther = (pt, self) => boxes.some(({ g: o, b: ob }) => o !== self
+      && pt.x >= ob.left && pt.x <= ob.right && pt.y >= ob.top && pt.y <= ob.bottom);
+    for (const { g, b } of boxes) {
+      if (b.width < 30 || b.height < 30) continue;
+      if (!inMap(b.left, b.top) || !inMap(b.right, b.bottom)) continue;
+      // two points INSIDE, far apart, and one just OUTSIDE past the same corner
+      const topLeft = { x: b.left + 3, y: b.top + 3 };
+      const bottomRight = { x: b.right - 3, y: b.bottom - 3 };
+      const beyond = { x: b.left - 14, y: b.top - 14 };
+      if ([topLeft, bottomRight, beyond].some((pt) => !clear(pt) || inAnyOther(pt, g))) continue;
+      const pipEl = [...document.querySelectorAll("#wv-overlay .ov-pip")].find((p) => p.dataset.id === g.dataset.id);
+      if (!pipEl) continue;
+      const p = pipEl.getBoundingClientRect();
+      return {
+        id: g.dataset.id, topLeft, bottomRight, beyond,
+        pip: { x: p.x + p.width / 2, y: p.y + p.height / 2 },
+        w: Math.round(b.width), h: Math.round(b.height),
+      };
+    }
+    return null;
+  });
+  assert.ok(target, "a card is drawn on screen, clear of its neighbours, with room outside it");
+
+  // ⚑ THE ASSERTION THAT MAKES THIS TEST MEAN ANYTHING. Both inside points must
+  //   be OUTSIDE the 18 px snap circle, or the old code would have hit them too
+  //   and this would pass just as well without the change.
+  const reach = (pt) => Math.hypot(pt.x - target.pip.x, pt.y - target.pip.y);
+  assert.ok(reach(target.topLeft) > 18 && reach(target.bottomRight) > 18,
+    `both points are outside the 18 px snap circle (${reach(target.topLeft).toFixed(1)} px and `
+    + `${reach(target.bottomRight).toFixed(1)} px from the pip; the card is ${target.w}x${target.h} px `
+    + `on screen, which is the whole complaint)`);
+
+  const hoverName = async (pt) => {
+    await page.mouse.move(pt.x - 60, pt.y - 60);   // leave, so a stale label cannot read as a fresh one
+    await page.waitForTimeout(200);
+    await page.mouse.move(pt.x, pt.y);
+    await page.waitForTimeout(400);
+    return page.evaluate(() =>
+      document.querySelector("#wv-hl-layer .wv-hl-label text")?.textContent ?? null);
+  };
+
+  const atTopLeft = await hoverName(target.topLeft);
+  const atBottomRight = await hoverName(target.bottomRight);
+  const justOutside = await hoverName(target.beyond);
+
+  assert.ok(atTopLeft, `the card's top-left corner raises a name: ${JSON.stringify(atTopLeft)}`);
+  assert.equal(atBottomRight, atTopLeft,
+    `and its opposite corner raises the same one (${JSON.stringify(atBottomRight)}) — one house, `
+    + `answering across its whole drawn body`);
+  assert.notEqual(justOutside, atTopLeft,
+    `while fourteen pixels further out, past the card's edge, something else answers `
+    + `(${JSON.stringify(justOutside)}) — which is what the reader got everywhere on the house before this`);
+  assert.deepEqual(errors, [], "and the page threw nothing getting there");
+  await page.close();
+  // ⚑ THE FLIP: drop the `mark?.box &&` branch from rankMarksAtPoint, or return
+  //   no box from screenMarkCandidates, and both inside points fall through to
+  //   containment — the same answer as the point outside, and the notEqual reds.
+});
+
 // ── THE PIXEL RULE, ON THE PAGE (2026-09-11) ───────────────────────────────
 //
 // `footprintPx` is proved arithmetically in tools/viewer-spectator-tiers.test.mjs

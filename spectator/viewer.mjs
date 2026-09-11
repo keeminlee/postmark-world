@@ -2773,19 +2773,66 @@ export const walkerHandleFromHoverId = (id) =>
     ? id.slice(WALKER_HOVER_PREFIX.length) || null
     : null;
 
-export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
+// ── A MARK IS HIT BY WHAT WAS DRAWN FOR IT (Keemin, 2026-09-11: "make parcels
+// more clickable (match their drawn size)") ─────────────────────────────────
+//
+// Every candidate is a point and, if the overlay drew a SHAPE for it rather
+// than a pip, a screen box. A parcel's home card is about 45 px wide and the
+// snap circle is 18 px around its centre, so the roof and both lower corners of
+// every house in town were dead to a click: the reader aimed at the house, hit
+// the ground, and walked there.
+//
+// TWO TIERS, AND THE ORDER IS THE WHOLE SAFETY ARGUMENT:
+//
+//   tier 0  within the snap radius of the point — today's rule, untouched
+//   tier 1  inside the drawn box
+//
+// A pip therefore still beats a box it sits inside, which is what keeps this
+// change from taking anything away: a mark standing on a parcel is exactly as
+// reachable as it was yesterday, and the card answers only where no pip does.
+// Reversing that would have made every small mark on a parcel unclickable —
+// the opposite of what was asked for.
+//
+// A box candidate's distance is to the box's CENTRE, so two overlapping cards
+// order by which one the reader was more nearly pointing at rather than by id.
+// (They do overlap: at ten times the town, measured 2026-09-11, 4,726 pairs of
+// cards overlap at district width. The chooser is the answer to that, and it is
+// the answer this map already gives for piled pips.)
+//
+// Pure — the box arrives already in screen coordinates, resolved at use by the
+// caller, because a box measured at mount time is a box about a camera that has
+// moved.
+function pointInBox(x, y, box) {
+  const l = Number(box?.left), r = Number(box?.right), t = Number(box?.top), b = Number(box?.bottom);
+  if (![l, r, t, b].every(Number.isFinite)) return false;
+  return x >= l && x <= r && y >= t && y <= b;
+}
+
+/** Every candidate the point reaches, best first. ONE ranking, so the snap and
+ *  the chooser can never disagree about what is under the cursor — the head of
+ *  this list IS what the snap returns, by construction rather than by two
+ *  functions being kept in step by hand. */
+export function rankMarksAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
   const x = Number(point?.x), y = Number(point?.y), radius = Number(radiusPx);
-  if (![x, y, radius].every(Number.isFinite) || radius < 0) return null;
-  return marks
+  if (![x, y, radius].every(Number.isFinite) || radius < 0) return [];
+  return (marks ?? [])
     .map((mark) => {
       const mx = Number(mark?.x), my = Number(mark?.y);
-      return {
-        id: mark?.id,
-        distancePx: [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity,
-      };
+      const near = [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity;
+      if (near <= radius) return { id: mark?.id, tier: 0, distancePx: near };
+      if (mark?.box && pointInBox(x, y, mark.box)) {
+        const cx = (Number(mark.box.left) + Number(mark.box.right)) / 2;
+        const cy = (Number(mark.box.top) + Number(mark.box.bottom)) / 2;
+        return { id: mark?.id, tier: 1, distancePx: Math.hypot(cx - x, cy - y) };
+      }
+      return { id: mark?.id, tier: 2, distancePx: Infinity };
     })
-    .filter((mark) => mark.id && mark.distancePx <= radius)
-    .sort((a, b) => a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)))[0]?.id ?? null;
+    .filter((mark) => mark.id && mark.tier < 2)
+    .sort((a, b) => a.tier - b.tier || a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)));
+}
+
+export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
+  return rankMarksAtPoint(point, marks, radiusPx)[0]?.id ?? null;
 }
 
 // ───────── the contested click ─────────
@@ -2799,23 +2846,11 @@ export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIU
 // guarantee, and the fan below is only a courtesy that makes the pile legible
 // before you click it.
 
-// Everything within the snap radius, nearest first — the same distance metric
-// and the same tie-break as snappedMarkAtPoint, so the head of this list IS
-// what that function would have returned. They can never disagree.
+// Everything the point reaches, best first. It is the SAME ranking function the
+// snap calls, not merely the same metric written twice, so the head of this list
+// IS what that function returns — an identity rather than a promise.
 export function contestedMarksAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
-  const x = Number(point?.x), y = Number(point?.y), radius = Number(radiusPx);
-  if (![x, y, radius].every(Number.isFinite) || radius < 0) return [];
-  return marks
-    .map((mark) => {
-      const mx = Number(mark?.x), my = Number(mark?.y);
-      return {
-        id: mark?.id,
-        distancePx: [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity,
-      };
-    })
-    .filter((mark) => mark.id && mark.distancePx <= radius)
-    .sort((a, b) => a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)))
-    .map((mark) => mark.id);
+  return rankMarksAtPoint(point, marks, radiusPx).map((mark) => mark.id);
 }
 
 // INNERMOST FIRST: the smallest extent leads, because the thing you are standing
@@ -6668,6 +6703,32 @@ export function mountViewer(appEl) {
     function screenMarkCandidates() {
       const matrix = svg.getScreenCTM();
       if (!matrix) return [];
+      // ── THE DRAWN BOX, READ AT USE (2026-09-11) ──────────────────────────
+      //
+      // A parcel is hit by the shape the overlay drew for it — the home card at
+      // mid/near, the house glyph at far — and not by the transparent pip under
+      // its middle. Measured before changing anything: the card is ~45 px wide
+      // on screen at the opening view and the pip's snap circle is 18 px around
+      // its centre, so the roof and both lower corners missed.
+      //
+      // READ FROM THE DOM, EVERY TIME, and that is the rule rather than the
+      // lazy option (the living-references shelf: resolve at use, never a
+      // mount-time reference). These boxes are a function of the camera, and
+      // the camera moves on every frame of a drag; a box cached at mount is a
+      // box about where the town used to be. `getBoundingClientRect` on the
+      // group answers in screen coordinates, which is the space the pointer is
+      // already in, so no second transform can drift from the first.
+      //
+      // The `.ov-home` GROUP, so the household's name under the house is part
+      // of the target too — pointing at the name is pointing at the house.
+      const boxes = new Map();
+      for (const drawn of overlay.querySelectorAll(".ov-home[data-id], .ov-glyph[data-id]")) {
+        const id = drawn.dataset.id;
+        if (!id || boxes.has(id)) continue;
+        const b = drawn.getBoundingClientRect();
+        if (b.width > 0 && b.height > 0)
+          boxes.set(id, { left: b.left, right: b.right, top: b.top, bottom: b.bottom });
+      }
       return [...mapCtx.glyphIds].flatMap((id) => {
         const mark = byId.get(id);
         if (!mark?.at || ![mark.at.x, mark.at.y].every(Number.isFinite)) return [];
@@ -6675,7 +6736,9 @@ export function mountViewer(appEl) {
         point.x = originPx.x + mark.at.x / mPerPx;
         point.y = originPx.y + mark.at.y / mPerPx;
         const screen = point.matrixTransform(matrix);
-        return [{ id, x: screen.x, y: screen.y }];
+        // no box for a mark drawn as a pip: it keeps the snap radius it always
+        // had, which is the fallback the addendum asks for by name
+        return [{ id, x: screen.x, y: screen.y, box: boxes.get(id) ?? null }];
       });
     }
     const worldPointForEvent = (event) => {
