@@ -5598,6 +5598,19 @@ export function mountViewer(appEl) {
       }
       return composeResidentTelling(box, cached, key, chips);
     }
+    // ── THE FOLD, FETCHED LATE IF IT WAS NEVER FETCHED EARLY ────────────────
+    //
+    // The mirror of the resident arm above, and it exists because of a hole the
+    // spectator falsifier found: boot now SKIPS the fold for a signed-in
+    // reader, so one who then chooses the Spectator standpoint would arrive
+    // here with `world` null and the telling would fail. The page owes them the
+    // town at that moment instead — asked for once, the same way the resident
+    // arm asks for its read, with the pane saying so meanwhile.
+    if (!world) {
+      loadFold().then(() => { applyWorldLayer(); renderCurrent(); }).catch(() => {});
+      box.innerHTML = chips + `<div class="wv-quiet">reading the whole town…</div>`;
+      return null;
+    }
     const e = openYourEyes({ x: standpoint.x, y: standpoint.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
     const within = e.radial.within ?? [];
     const obs = e.radial.observer ?? {};
