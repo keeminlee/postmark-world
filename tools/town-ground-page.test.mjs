@@ -140,8 +140,18 @@ before(async () => {
   CLEANUP.push(() => browser.close());
 });
 
-/** what the mounted ground actually contains, counted in the page */
-async function readGround() {
+/** what the mounted ground actually contains, counted in the page.
+ *
+ *  `zoomToNear` (2026-09-11) drives the camera DOWN to street width before
+ *  counting. The spectator's tier gates turn the furnishing pass off at town
+ *  width on purpose, so the pass's own guard below has to be taken at a zoom
+ *  where the pass runs — otherwise this file would report the gate working as
+ *  the pass being dead, which is precisely the confusion it exists to end.
+ *
+ *  Driven with real wheel events on the map, never by writing the viewBox: the
+ *  question is what the DRAWING CODE does at a zoom, and setting the viewBox
+ *  moves the picture without asking it. */
+async function readGround({ zoomToNear = false } = {}) {
   const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
@@ -153,6 +163,30 @@ async function readGround() {
   await page.waitForFunction(() => !!document.querySelector(".wv-minimap > svg"), null, { timeout: 60_000 })
     .catch(() => { /* absence is a real answer here — the base commit's answer */ });
   await page.waitForTimeout(2500);
+  if (zoomToNear) {
+    // ZOOM IN ON WHERE THE READER STANDS, not on the middle of the sheet. The
+    // overlay is cut by the STANDPOINT — fog, sight, the context budget — so the
+    // marks this pass has to furnish are the ones around the reader's own dot.
+    // Wheeling at the sheet's centre lands the camera on ground the telling
+    // never named, and the pass would correctly furnish nothing there.
+    const at = await page.evaluate(() => {
+      const dot = document.querySelector("#wv-overlay .ov-dot");
+      const box = (dot ?? document.querySelector(".wv-minimap > svg"))?.getBoundingClientRect();
+      return box ? { x: box.x + box.width / 2, y: box.y + box.height / 2 } : null;
+    });
+    if (at) {
+      const tier = () => page.evaluate(() =>
+        document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? null);
+      for (let i = 0; i < 40 && (await tier()) !== "near"; i++) {
+        // re-aim every step: the wheel zooms toward the cursor, so the dot stays
+        // put on screen, but a settle-driven rebuild can move what is under it
+        await page.mouse.move(at.x, at.y);
+        await page.mouse.wheel(0, -300);
+        await page.waitForTimeout(120);
+      }
+      await page.waitForTimeout(900);
+    }
+  }
   const seen = await page.evaluate(() => {
     const svg = document.querySelector(".wv-minimap > svg");
     const q = (s) => (svg ? svg.querySelectorAll(s).length : 0);
@@ -165,6 +199,9 @@ async function readGround() {
       water: q(".wv-tg-water, .wv-tg-water-line"),
       features: q(".wv-tg-feature"),
       furnished: q(".wv-ph-extent, .wv-scene-mark-art"),
+      // which of the spectator's three paintings this was counted in — read off
+      // the drawing itself, never recomputed here from the zoom
+      tier: document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? null,
       atlasImages: svg ? [...svg.querySelectorAll("image")]
         .filter((i) => (i.getAttribute("href") ?? "").includes("/atlas/")).length : 0,
     };
@@ -209,7 +246,13 @@ test("THE FURNISHING PASS IS ALIVE — drawOverlay's SET is built from full mark
     + "(map-art-default, viewer-interior) calls placeholderExtentSVG directly with a hand-built mark, which is "
     + "exactly why the pass could furnish nothing at all while 48 scene tests stayed green.");
 
-  const g = await readGround();
+  // ⚑ COUNTED AT STREET WIDTH (2026-09-11). The opening view is `far`, where the
+  // spectator draws no furniture at all — by design, and asserted as such in the
+  // test below. Taking THIS count there would read the gate as the defect.
+  const g = await readGround({ zoomToNear: true });
+  assert.equal(g.tier, "near",
+    `the camera reached street width before counting (tier: ${g.tier}) — a count taken at any other `
+    + `tier is a count of a gate, not of the pass`);
   // The town runs the same pass a room runs (SCENES.md #6, retired 2026-09-08),
   // so this one assertion now guards the set construction for BOTH scenes. It is
   // the assertion that was missing when `overlayMarks`' thin entries met
@@ -217,4 +260,116 @@ test("THE FURNISHING PASS IS ALIVE — drawOverlay's SET is built from full mark
   assert.ok(g.furnished > 0,
     `art-clad and art-less marks in view are furnished under the pips: ${g.furnished} `
     + `(zero means the set was built from radial entries that carry no extent — the 2026-09-08 defect)`);
+});
+
+// ── THE CULL, ON THE PAGE (2026-09-11) ─────────────────────────────────────
+//
+// The unit file proves the cull BOX is the right rectangle. Only the page can
+// prove the overlay is cut by it, that a pan which leaves the drawn margin
+// rebuilds, and that nothing lands outside — and "the page proves it" is this
+// file's whole argument.
+test("THE CULL IS A CULL — what the camera is over decides what is drawn, and nothing is drawn off the margin", async (t) => {
+  if (!chromium) return t.skip(
+    "playwright is absent: the spectator's viewport cull is unguarded on the page. Nothing else in the suite "
+    + "drives drawOverlay's drawn set against a moving camera, which is the half a pure bounds test cannot reach.");
+
+  const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
+  await page.goto(`http://localhost:${rig.port}/`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.waitForSelector(".wv-telling-pane", { state: "attached", timeout: 90_000 });
+  await page.evaluate(() => { const el = document.querySelector(".wv-tour-skip"); if (el && el.offsetParent) el.click(); });
+  await page.waitForFunction(() => !!document.querySelector(".wv-minimap > svg"), null, { timeout: 60_000 });
+  await page.waitForTimeout(2500);
+
+  const drawnIds = () => page.evaluate(() =>
+    [...document.querySelectorAll("#wv-overlay [data-id]")].map((n) => n.dataset.id).sort());
+  const tier = () => page.evaluate(() =>
+    document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? null);
+
+  // down to a zoom where the cull has something to cut: at town width the whole
+  // painting plus a viewport of margin is on screen and a correct cull removes
+  // nothing, which would make this test pass while doing nothing.
+  const box = await page.locator(".wv-minimap > svg").boundingBox();
+  const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+  for (let i = 0; i < 40 && (await tier()) !== "near"; i++) {
+    await page.mouse.move(cx, cy);
+    await page.mouse.wheel(0, -300);
+    await page.waitForTimeout(120);
+  }
+  await page.waitForTimeout(1000);
+  assert.equal(await tier(), "near", "the camera reached street width");
+  const before = await drawnIds();
+  assert.ok(before.length > 0, `something is drawn to begin with: ${before.length}`);
+
+  // TRAVEL THREE SCREENS, IN THREE DRAGS. One drag can only ever cross one
+  // viewport — the hand cannot leave the window — and one viewport is exactly
+  // the drawn margin, which a correct cull absorbs without rebuilding anything.
+  // That is the property being protected, not a failure, so this test has to go
+  // further than it on purpose. (Measured on this rig: a 1,388 px drag across a
+  // 1,388 px map moves the viewBox 1.008 viewports.)
+  for (let drag = 0; drag < 3; drag++) {
+    await page.mouse.move(cx + box.width * 0.45, cy + box.height * 0.45);
+    await page.mouse.down();
+    for (let i = 1; i <= 30; i++) {
+      await page.mouse.move(cx + box.width * 0.45 - i * (box.width * 0.9 / 30),
+        cy + box.height * 0.45 - i * (box.height * 0.9 / 30));
+      await page.waitForTimeout(10);
+    }
+    await page.mouse.up();
+    await page.waitForTimeout(400);
+  }
+  await page.waitForTimeout(1600);   // the settle rebuild is debounced, on purpose
+  const after = await drawnIds();
+
+  assert.notDeepEqual(after, before,
+    `the drawn set follows the camera (${before.length} over the standpoint, ${after.length} a few screens away) `
+    + `— an identical set means the overlay is not culled by the viewport at all`);
+
+  // AND NOTHING SMALL IS DRAWN OFF THE MARGIN. Measured in screen space against
+  // the map's own box grown by one viewport on each side, which is what the cull
+  // dial says it keeps.
+  //
+  // ⚑ PARCELS, NOT EVERY PIP, AND THE EXEMPTION IS THE POINT. A mark is culled
+  // by its GROUND, never by its centre — the threshold district is 2,325 m
+  // across, so a reader standing inside it at street width has its ground under
+  // their feet and its centre 2.33 viewports off the top of the screen
+  // (measured on this rig). Culling that would delete the ground they are
+  // standing on, and the off-screen highlight arrow exists precisely because a
+  // mark in view can have its marker out of it. A parcel is 25 m, so its pip and
+  // its ground are the same place, and it has no such excuse.
+  const strays = await page.evaluate(() => {
+    const svg = document.querySelector(".wv-minimap > svg");
+    const m = svg.getBoundingClientRect();
+    const lim = { l: m.left - m.width, r: m.right + m.width, t: m.top - m.height, b: m.bottom + m.height };
+    return [...document.querySelectorAll("#wv-overlay .ov-pip.ov-pip-home")].filter((n) => {
+      const b = n.getBoundingClientRect();
+      return b.right < lim.l || b.left > lim.r || b.bottom < lim.t || b.top > lim.b;
+    }).map((n) => n.dataset.id).slice(0, 8);
+  });
+  assert.deepEqual(strays, [], "no drawn parcel lies outside the viewBox plus one viewport of margin");
+  assert.deepEqual(errors, [], "and the page threw nothing getting there");
+  await page.close();
+  // ⚑ THE FLIP: make drawnBounds() return null in viewer.mjs (the cull off) and
+  //   the notDeepEqual reds — the same set is drawn wherever the camera is.
+});
+
+// ── THE GATE ITSELF, ON THE PAGE (2026-09-11) ──────────────────────────────
+//
+// The unit tests can prove `tierFor` returns the word "far". Only the page can
+// prove the word reached the drawing — which is this file's entire argument,
+// and the same argument the furnishing pass needed a page to settle.
+test("THE FAR TIER DRAWS NO FURNITURE — the spectator opens on the town, not on the contact sheet", async (t) => {
+  if (!chromium) return t.skip(
+    "playwright is absent: the spectator's zoom gates are unguarded on the page. tools/viewer-spectator-tiers.test.mjs "
+    + "proves tierFor and the markup builders in isolation, which is exactly the kind of proof that stayed green "
+    + "while the furnishing pass drew nothing at all.");
+
+  const g = await readGround();
+  assert.equal(g.tier, "far", `the opening view is the whole town (tier: ${g.tier})`);
+  assert.equal(g.furnished, 0,
+    `no furniture is drawn at town width: ${g.furnished} (the 09-09 record put 11,961 marks through this pass)`);
+  // and the ground is still the ground — the gate cuts the furniture, never the floor
+  assert.equal(g.regions, expectedRegions, "the region rings are NOT culled or tiered away");
+  assert.deepEqual(g.errors, [], "and the page threw nothing getting there");
 });
