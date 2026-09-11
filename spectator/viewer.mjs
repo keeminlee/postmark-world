@@ -1757,6 +1757,22 @@ export function homeMarkOfParcel(parcelId, marks = []) {
   return best;
 }
 
+/** THE TOWN'S HOUSES, as a set a resident's map can be handed (2026-09-11,
+ *  Keemin on dev as wright: "we still don't have the new parcel cards loaded
+ *  (just the marks)"). Every parcel, plus the dwelling sited on each — and
+ *  nothing else: the furniture, the people and the rest of the fold stay the
+ *  read's. Order is the record's; a parcel with no dwelling rides alone. Pure. */
+export function townHouseMarks(marks = []) {
+  const out = [];
+  for (const m of marks ?? []) {
+    if (m?.kind !== "parcel" || !m.id) continue;
+    out.push(m);
+    const home = homeMarkOfParcel(m.id, marks);
+    if (home) out.push(home);
+  }
+  return out;
+}
+
 /** HOME: a walker of the parcel's household, at rest, inside the parcel. Pure. */
 export function houseIsLit(parcel, walkers = [], householdOf = null) {
   const w = Number(parcel?.extent?.w), h = Number(parcel?.extent?.h);
@@ -1816,8 +1832,16 @@ export function markerScale(zoomK) {
 export const SPECTATOR_DRAW_DEFAULTS = Object.freeze({
   tier_far_m: 5000,      // wider than this across the viewport → far
   tier_near_m: 1000,     // narrower than this across the viewport → near
-  art_min_px: 40,        // a home card wears its picture only once its parcel owns this many screen px
-  cull_margin: 1,        // viewports of margin kept drawn on each side of the viewBox
+  // PICTURES AT MID (founder, 2026-09-11: "pictures should appear at mid zoom").
+  // Every parcel in the town is 25 m across (WORLD/world-state.json, all 89);
+  // on a 1,360 px pane that is 34 px at the near boundary and 7 px at the far
+  // one, so 40 meant "never at mid". 6 means the whole mid tier, and `far`
+  // still draws glyphs. The trade is the cull margin right below.
+  art_min_px: 6,         // a home card wears its picture only once its parcel owns this many screen px
+  // HALF A VIEWPORT (the same ruling): with pictures at mid, the margin is
+  // what bounds the `<image>` count — one viewport of margin drew nine
+  // viewports of cards; half draws four. A pan past the margin rebuilds once.
+  cull_margin: 0.5,      // viewports of margin kept drawn on each side of the viewBox
 });
 
 /** How much town is on screen, in metres. `viewW` is the painting's full width
@@ -4967,6 +4991,41 @@ export function mountViewer(appEl) {
   let byId = new Map();     // id → folded mark, for cell lookups
   let homeSet = new Set();  // ids that render green: homes (+ descendants) and sovereigns
   let mapCtx = null;
+  // ── THE TOWN'S HOUSES ON A RESIDENT'S MAP (2026-09-11) ────────────────────
+  //
+  // Keemin, on dev as wright: "we still don't have the new parcel cards loaded
+  // (just the marks)". The overlay's own law already says THE TOWN'S HOUSES ARE
+  // ALWAYS ON THE MAP — "the field-of-view rule is right for the town's
+  // furniture and wrong for its houses, which are the map's landmarks" — and
+  // the Spectator honours it because the fold is in hand. The resident path
+  // stopped loading the fold (2026-09-10), so its house loop had only the
+  // read's records to walk: a house or two within earshot, pips for the rest.
+  //
+  // This is the smallest set that restores the landmarks without widening the
+  // READ: every parcel and the dwelling sited on it (`townHouseMarks`, pure),
+  // taken ONCE from this origin's own copy of the record, after the read has
+  // painted — the page appears first and the houses arrive a moment later,
+  // exactly as the town's ground does. The read still decides everything else,
+  // and a record the read carries wins over the copy here (see withTownHouses).
+  let townHouses = null;          // the parcels + their dwellings, once loaded
+  let townHousesPending = null;
+  function loadTownHouses() {
+    if (townHouses || townHousesPending) return townHousesPending;
+    townHousesPending = fetchWorldState(recordSources("/WORLD/world-state.json").map((source) => source.url), { credentials: "same-origin" })
+      .then(({ json }) => {
+        townHouses = townHouseMarks(json?.marks ?? []);
+        if (onResidentPath()) { withTownHouses(); if (lastRadial) drawOverlay(lastRadial); }
+      })
+      .catch((e) => { console.warn(`[world] the town's houses could not be read (${String(e?.message ?? e).slice(0, 120)}) — the map shows the read's own`); })
+      .finally(() => { townHousesPending = null; });
+    return townHousesPending;
+  }
+  // the houses ride into the resident's index UNDER the read: an id the read
+  // already carries keeps the office's own record, so a house within earshot
+  // is never replaced by this origin's copy of it
+  function withTownHouses() {
+    for (const m of townHouses ?? []) if (!byId.has(m.id)) byId.set(m.id, m);
+  }
   // THE ATLAS USED TO LOAD FOUR TIMES. Its one caller is guarded by `if (!mapCtx)`,
   // but mapCtx is not assigned until the scene is built, which is on the far side
   // of an await — so every render that ran inside that window started another full
@@ -9650,6 +9709,8 @@ export function mountViewer(appEl) {
         // `homeSet` follows from the same set, so green still means home.
         if (handle === state.handle) {
           byId = residentById(read, mineSet.marks);
+          loadTownHouses();      // once; fills + repaints when it lands
+          withTownHouses();      // and at once, when it already has
           homeSet = buildHomeSet(data?.manifest, allMarks());
           // AND THE PEOPLE, from the same answer. The walker poll fires at boot
           // and the read lands after it, so a poll that ran first found nothing
@@ -9955,6 +10016,7 @@ export function mountViewer(appEl) {
     const cachedRead = readCache.get(residentReadKey({ handle: actor, crossing: state.crossing }));
     if (cachedRead) {
       byId = residentById(cachedRead, mineSet.marks);
+      withTownHouses();
       homeSet = buildHomeSet(data?.manifest, allMarks());
     }
     const entry = viewCache.get(actor) ?? null;

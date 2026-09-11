@@ -61,7 +61,7 @@ import { createServer } from "node:net";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { townRegionMarks } from "../spectator/viewer.mjs";
+import { townRegionMarks, homeMarkOfParcel, markImagePath } from "../spectator/viewer.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -288,6 +288,11 @@ async function readGround({ zoomToNear = false, stopAtTier = "near", tellingOpen
       glyphs: document.querySelectorAll("#wv-overlay .ov-glyph").length,
       cards: document.querySelectorAll("#wv-overlay .ov-home").length,
       pictures: document.querySelectorAll("#wv-overlay .ov-home image").length,
+      // WHICH cards, and which of them wear a picture — so the picture rule can
+      // be asserted against the record (does this parcel's dwelling HAVE one?)
+      // instead of against whatever the cull box happened to catch
+      cardIds: [...document.querySelectorAll("#wv-overlay .ov-home")].map((e) => e.getAttribute("data-id")),
+      picturedIds: [...document.querySelectorAll("#wv-overlay .ov-home")].filter((e) => e.querySelector("image")).map((e) => e.getAttribute("data-id")),
       labels2: document.querySelectorAll("#wv-overlay .ov-home-label").length,
       titles: document.querySelectorAll("#wv-overlay title").length,
       // which of the spectator's three paintings this was counted in — read off
@@ -709,9 +714,12 @@ test("THE HOUSE IS THE TARGET — the card's own edge decides what a hover reach
 //
 // `footprintPx` is proved arithmetically in tools/viewer-spectator-tiers.test.mjs
 // and that proof is worth exactly nothing until the number reaches a decision a
-// reader can see. A parcel is 25 m of ground: across a district it is thirteen
-// screen pixels and has no room for a photograph; down at street width it is
-// ninety and does.
+// reader can see. A parcel is 25 m of ground: across a district it is seven to
+// thirty screen pixels, down at street width ninety; across the whole town it
+// is under a pixel and draws a glyph. PICTURES AT MID (founder, 2026-09-11:
+// "pictures should appear at mid zoom"): the dial is 6 px, so the rule says
+// yes everywhere a card is drawn at all, and the cull margin (halved the same
+// day) is what bounds how many of them there are.
 test("THE PICTURE WAITS FOR THE GROUND — a home card wears its art only where its parcel has room", async (t) => {
   if (!chromium) return t.skip(
     "playwright is absent: the picture gate is unguarded on the page. The arithmetic is tested in isolation, "
@@ -728,22 +736,37 @@ test("THE PICTURE WAITS FOR THE GROUND — a home card wears its art only where 
     + `(waited ${near.zoomSettle?.waited} ms, last state ${near.zoomSettle?.state})`);
   assert.equal(near.tier, "near");
   assert.ok(near.cards > 0, `cards are drawn at street width: ${near.cards}`);
-  assert.ok(near.pictures > 0,
-    `and they wear their pictures there: ${near.pictures} of ${near.cards} cards `
-    + `(a parcel is 25 m, which is ~90 px at this zoom — well past the 40 px dial)`);
+  // ── THE PICTURE RULE, ASKED OF THE RECORD (2026-09-11) ─────────────────
+  //
+  // This used to assert `pictures > 0` at street width and passed on luck: with
+  // a one-viewport margin the cull box held nine viewports of cards and one of
+  // them had a pictured dwelling. Halve the margin and the two cards actually
+  // near the reader's dot have none — 0 of 2 — and a true rule read as broken.
+  // So the question is now the record's: of the cards DRAWN, exactly the ones
+  // whose dwelling carries a picture wear it — no more (a card inventing art)
+  // and no fewer (the rule saying no where the ground has room).
+  // "has a picture" is the viewer's own word for it (`markImagePath`): a dwelling whose
+  // image is a URL the shelf rule refuses draws no picture on purpose, and is not owed one
+  const pictured = (ids) => ids.filter((id) => !!markImagePath(homeMarkOfParcel(id, SERVED.marks)));
+  assert.deepEqual([...near.picturedIds].sort(), pictured(near.cardIds).sort(),
+    `at street width every drawn card whose dwelling has a picture wears it, and no other `
+    + `(drawn ${near.cardIds.join(", ")}; pictured ${near.picturedIds.join(", ") || "none"})`);
   assert.ok(near.labels2 > 0, `and their households' names: ${near.labels2}`);
 
   const far = await readGround();
   assert.equal(far.tier, "far");
   assert.equal(far.pictures, 0, "and not one picture at town width, where a parcel is under a pixel");
 
-  // ── AND THE RULE'S OWN RED IS AT DISTRICT WIDTH ──────────────────────────
+  // ── AND THE RULE'S OWN ANSWER IS AT DISTRICT WIDTH ───────────────────────
   //
   // `far` draws a glyph and never reaches the picture rule at all, so the far
   // assertion above proves the PARCEL gate and not this one. At `mid` the card
   // is drawn and the rule decides: a 25 m parcel across a ~1,300 px map showing
-  // 1,000–5,000 m is 6–32 screen pixels, every one of them under the 40 px dial,
-  // so the frames and the names are drawn and the photographs are not.
+  // 1,000–5,000 m is 6–32 screen pixels. Until 2026-09-11 the dial asked for 40
+  // and this block asserted ZERO pictures here ("the number that killed 'half
+  // the town's pictures overlap at N=20'"). The founder ruled the other way —
+  // pictures at mid — and the dial is 6, so the same block now asserts that the
+  // rule, consulted, says yes: the photographs ride the cards at district width.
   const mid = await readGround({ zoomToNear: true, stopAtTier: "mid" });
   assert.ok(mid.zoomSettle?.settled,
     `the drawing settled at district width before it was counted `
@@ -751,12 +774,15 @@ test("THE PICTURE WAITS FOR THE GROUND — a home card wears its art only where 
   assert.equal(mid.tier, "mid", `the camera stopped at district width (tier: ${mid.tier})`);
   assert.ok(mid.cards > 0, `cards are drawn at district width: ${mid.cards}`);
   assert.ok(mid.labels2 > 0, `wearing their households' names: ${mid.labels2}`);
-  assert.equal(mid.pictures, 0,
-    `and none of them wears a photograph: ${mid.pictures} (a 25 m parcel is under 33 px here, `
-    + `and the dial asks for 40 — this is the number that killed "half the town's pictures overlap at N=20")`);
-  // ⚑ THE FLIP: force `room = true` in homeCard (the picture gate off) and the
-  //   MID assertion reds while far and near stay green — which is right, and is
-  //   why the mid half had to be written: far draws a glyph and never reaches
-  //   the rule, near passes it honestly, and only district width can tell a rule
-  //   that is consulted from a rule that is ignored.
+  const midPictured = pictured(mid.cardIds);
+  assert.ok(midPictured.length > 0,
+    `the district around the reader holds at least one pictured dwelling, or this case proves nothing (drawn ${mid.cards})`);
+  assert.deepEqual([...mid.picturedIds].sort(), midPictured.sort(),
+    `and they wear their photographs here too: ${mid.pictures} of ${mid.cards}, exactly the pictured ones `
+    + `(a 25 m parcel is 6–32 px at district width and the dial asks for 6 — pictures at mid, founder-ruled 2026-09-11)`);
+  // ⚑ THE FLIP: `art_min_px` back to 40 and the MID assertion reds (0 pictures)
+  //   while far and near stay green — which is right, and is why the mid half
+  //   had to be written: far draws a glyph and never reaches the rule, near
+  //   passes it at any sane dial, and only district width can tell a rule that
+  //   is consulted from a rule that is ignored.
 });
