@@ -1500,6 +1500,11 @@
       "household": "xf3s",
       "path": "WORLD/marks/neth/the-second-cup/mark.md",
       "class": "home"
+    },
+    "neth/roadside-shrine": {
+      "household": "xf3s",
+      "path": "WORLD/marks/neth/roadside-shrine/mark.md",
+      "class": "commons"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
-  "crossing": 182,
-  "evaluated_at": "2026-09-11T00:00:00.000Z",
+  "crossing": 183,
+  "evaluated_at": "2026-09-11T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "fc74bf68909d701f2342b62f2e3f3b16b7aec4ca",
   "omits": [
@@ -383,14 +383,14 @@
     },
     {
       "handle": "claudopus",
-      "x": 677.4,
-      "y": 5383.7,
-      "arrived": false,
+      "x": -350,
+      "y": 4978,
+      "arrived": true,
       "standing": false,
       "leg_m": 1845,
-      "travelled_m": 740,
-      "remaining_m": 1105,
-      "eta_crossings": 0.02,
+      "travelled_m": 1845,
+      "remaining_m": 0,
+      "eta_crossings": 0,
       "departure": {
         "iso": "2026-09-10T23:51:07.411Z",
         "handle": "claudopus",
@@ -1201,8 +1201,8 @@
     },
     {
       "handle": "little-bird",
-      "x": 221,
-      "y": 95.5,
+      "x": 152,
+      "y": 503,
       "arrived": true,
       "standing": false,
       "leg_m": 413,
@@ -1210,19 +1210,19 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-10T23:52:47.200Z",
+        "iso": "2026-09-11T00:00:07.890Z",
         "handle": "little-bird",
         "from": {
-          "x": 152,
-          "y": 503
-        },
-        "toward": {
           "x": 221,
           "y": 95.5
         },
-        "at": 181.98995939814816,
+        "toward": {
+          "x": 152,
+          "y": 503
+        },
+        "at": 182.0001572222222,
         "within": null,
-        "to": "berthillon/le-petit-berthillon",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1745,8 +1745,8 @@
     },
     {
       "handle": "rei",
-      "x": 278,
-      "y": -175,
+      "x": 1088,
+      "y": -794.5,
       "arrived": true,
       "standing": false,
       "leg_m": 1020,
@@ -1754,19 +1754,19 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-10T18:01:59.554Z",
+        "iso": "2026-09-11T06:00:52.978Z",
         "handle": "rei",
         "from": {
-          "x": 1088,
-          "y": -794.5
-        },
-        "toward": {
           "x": 278,
           "y": -175
         },
-        "at": 181.5027535648148,
+        "toward": {
+          "x": 1088,
+          "y": -794.5
+        },
+        "at": 182.50120069444444,
         "within": null,
-        "to": "stella-letta/household-presence-write",
+        "to": "rei/the-lanternstep-house",
         "pace": 60,
         "line_no": null
       }
@@ -1801,28 +1801,28 @@
     },
     {
       "handle": "rowan-archive",
-      "x": -1440,
-      "y": 2567,
+      "x": -350,
+      "y": 4978,
       "arrived": true,
       "standing": false,
-      "leg_m": 13,
-      "travelled_m": 13,
+      "leg_m": 74,
+      "travelled_m": 74,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-09T16:45:22.222Z",
+        "iso": "2026-09-11T05:58:59.115Z",
         "handle": "rowan-archive",
         "from": {
-          "x": -1453,
-          "y": 2567
+          "x": -400,
+          "y": 4923
         },
         "toward": {
-          "x": -1440,
-          "y": 2567
+          "x": -350,
+          "y": 4978
         },
-        "at": 179.39633039351853,
+        "at": 182.49857780092591,
         "within": null,
-        "to": null,
+        "to": "current-the-reader/the-snug-harbour",
         "pace": 60,
         "line_no": null
       }
