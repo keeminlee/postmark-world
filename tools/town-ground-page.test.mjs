@@ -151,7 +151,7 @@ before(async () => {
  *  Driven with real wheel events on the map, never by writing the viewBox: the
  *  question is what the DRAWING CODE does at a zoom, and setting the viewBox
  *  moves the picture without asking it. */
-async function readGround({ zoomToNear = false, tellingOpen = false } = {}) {
+async function readGround({ zoomToNear = false, stopAtTier = "near", tellingOpen = false } = {}) {
   const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
   // ⚑ `tellingOpen` EXISTS BECAUSE A GATE NOBODY CAN SEE IS A GATE NOBODY CAN
   // TEST (2026-09-11). Painting-only is the page's DEFAULT (readPaintingOnly
@@ -187,7 +187,7 @@ async function readGround({ zoomToNear = false, tellingOpen = false } = {}) {
     if (at) {
       const tier = () => page.evaluate(() =>
         document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? null);
-      for (let i = 0; i < 40 && (await tier()) !== "near"; i++) {
+      for (let i = 0; i < 40 && (await tier()) !== stopAtTier; i++) {
         // re-aim every step: the wheel zooms toward the cursor, so the dot stays
         // put on screen, but a settle-driven rebuild can move what is under it
         await page.mouse.move(at.x, at.y);
@@ -490,10 +490,24 @@ test("THE PICTURE WAITS FOR THE GROUND — a home card wears its art only where 
   const far = await readGround();
   assert.equal(far.tier, "far");
   assert.equal(far.pictures, 0, "and not one picture at town width, where a parcel is under a pixel");
+
+  // ── AND THE RULE'S OWN RED IS AT DISTRICT WIDTH ──────────────────────────
+  //
+  // `far` draws a glyph and never reaches the picture rule at all, so the far
+  // assertion above proves the PARCEL gate and not this one. At `mid` the card
+  // is drawn and the rule decides: a 25 m parcel across a ~1,300 px map showing
+  // 1,000–5,000 m is 6–32 screen pixels, every one of them under the 40 px dial,
+  // so the frames and the names are drawn and the photographs are not.
+  const mid = await readGround({ zoomToNear: true, stopAtTier: "mid" });
+  assert.equal(mid.tier, "mid", `the camera stopped at district width (tier: ${mid.tier})`);
+  assert.ok(mid.cards > 0, `cards are drawn at district width: ${mid.cards}`);
+  assert.ok(mid.labels2 > 0, `wearing their households' names: ${mid.labels2}`);
+  assert.equal(mid.pictures, 0,
+    `and none of them wears a photograph: ${mid.pictures} (a 25 m parcel is under 33 px here, `
+    + `and the dial asks for 40 — this is the number that killed "half the town's pictures overlap at N=20")`);
   // ⚑ THE FLIP: force `room = true` in homeCard (the picture gate off) and the
-  //   far assertion here stays green — the FAR tier draws a glyph, not a card,
-  //   so it never reaches the rule. The rule's own red is at `mid`, which the
-  //   10x measurement in the lane report takes: with the dial at 40 px a 25 m
-  //   parcel is 13.9 px across a district and draws nothing, and with the dial
-  //   at 0 the pictures come back. Both numbers are in the report.
+  //   MID assertion reds while far and near stay green — which is right, and is
+  //   why the mid half had to be written: far draws a glyph and never reaches
+  //   the rule, near passes it honestly, and only district width can tell a rule
+  //   that is consulted from a rule that is ignored.
 });
