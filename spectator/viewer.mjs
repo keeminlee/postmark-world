@@ -1672,6 +1672,88 @@ export function overlayStandpointSVG({ at } = {}) {
     + `<circle r="${OVERLAY_DOT_R}" class="ov-dot"/><circle r="${OVERLAY_HALO_R}" class="ov-halo"/></g></g>`;
 }
 
+// ── THE HOME CARD ON THE PARCEL (Keemin, 2026-09-10) ───────────────────────
+//
+// The atlas hung every household's home picture on the map in a small frame
+// with the household's name under it, and those cards left with the atlas fetch
+// on 09-08. They come back here, drawn from the WORLD's record: a parcel's card
+// shows the picture its HOME mark carries (the dwelling sited on the parcel,
+// tier `home`, whose `image:` the media door minted at the home-shelf backfill),
+// and the only thing that changed about the frame is its shape — it has a roof
+// now ("replace the boring rectangular frame … with a more house-shaped one with
+// a roof"). A parcel whose home has no picture gets the empty frame, as the
+// atlas gave it.
+//
+// Same contract as the pips: authored in painting units, sized by the camera
+// through `.ov-s`, no camera argument. The pip circle is still emitted on top,
+// transparent — it is the hover anchor (`anchor: ".ov-pip"`), the hit target and
+// the fan's seat, and none of that moves.
+//
+// THE FRAME IS THE LIGHT (the two derived lights, ruled 2026-09-10): a house is
+// LIT when its resident is HOME — a walker of the parcel's household at rest
+// inside the parcel. Derived at draw time from the walkers the map already
+// holds; nothing is stored. AWAKE (acted within 72 h) has no source at the door
+// yet and is not drawn — a light that cannot be derived is left dark.
+export const HOME_CARD = Object.freeze({ w: 52, h: 44, roof: 14 });
+export function homeCardPath({ w, h, roof } = HOME_CARD) {
+  const x0 = -w / 2, top = -(h + roof) / 2, eave = top + roof, base = eave + h;
+  return `M ${x0 - 2} ${eave} L 0 ${top} L ${w / 2 + 2} ${eave} L ${w / 2} ${eave} L ${w / 2} ${base} L ${x0} ${base} L ${x0} ${eave} Z`;
+}
+export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = false, fan = null, title = null, classes = "" } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
+  const { w, h, roof } = HOME_CARD;
+  const x0 = -w / 2, top = -(h + roof) / 2, base = top + roof + h;
+  const dx = Number(fan?.dx) || 0, dy = Number(fan?.dy) || 0;
+  const d = homeCardPath();
+  // a clip id must be unique per card and safe: built from the id's own
+  // handle-shaped characters only, never the raw string
+  const clip = `wv-home-${String(id ?? "").toLowerCase().replace(/[^a-z0-9-]+/g, "-")}`;
+  const art = image
+    ? `<clipPath id="${clip}"><path d="${d}"/></clipPath>`
+      + `<image href="${esc(image)}" x="${x0}" y="${top}" width="${w}" height="${h + roof}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
+    : `<path d="${d}" class="ov-home-blank"/>`;
+  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+    + `<g class="ov-home${lit ? " lit" : ""}${image ? "" : " no-art"}" data-id="${esc(id)}" transform="translate(${dx} ${dy})">`
+    + art
+    + `<path d="${d}" class="ov-home-frame"/>`
+    + (label ? `<text class="ov-home-label" y="${base + 11}" text-anchor="middle">${esc(label)}</text>` : "")
+    + `</g>`
+    + `<circle cx="${dx}" cy="${dy}" r="${OVERLAY_PIP_R}" class="ov-pip ov-pip-home ${classes}" data-id="${esc(id)}">`
+    + (title ? `<title>${esc(title)}</title>` : "")
+    + `</circle></g></g>`;
+}
+
+/** The dwelling sited on a parcel: the home-tier mark whose placementParent is
+ *  the parcel — preferring one that carries a picture. Pure. */
+export function homeMarkOfParcel(parcelId, marks = []) {
+  let best = null;
+  for (const m of marks ?? []) {
+    if (m?.kind !== "sited" || m?.tier !== "home" || m?.placementParent !== parcelId) continue;
+    if (!best || (m.image && !best.image)) best = m;
+  }
+  return best;
+}
+
+/** HOME: a walker of the parcel's household, at rest, inside the parcel. Pure. */
+export function houseIsLit(parcel, walkers = [], householdOf = null) {
+  const w = Number(parcel?.extent?.w), h = Number(parcel?.extent?.h);
+  const cx = Number(parcel?.at?.x), cy = Number(parcel?.at?.y);
+  if (![cx, cy, w, h].every(Number.isFinite)) return false;
+  const who = String(parcel?.household ?? parcel?.by ?? "");
+  if (!who) return false;
+  return (walkers ?? []).some((k) => {
+    if (!k) return false;
+    const moving = k.moving ?? (!k.arrived && !k.standing);
+    if (moving) return false;
+    const handle = String(k.handle ?? "");
+    const hh = householdOf ? String(householdOf(handle) ?? "") : "";
+    if (handle !== who && hh !== who) return false;
+    const x = Number(k.x), y = Number(k.y);
+    return Number.isFinite(x) && Number.isFinite(y) && Math.abs(x - cx) <= w / 2 && Math.abs(y - cy) <= h / 2;
+  });
+}
+
 export function markerScale(zoomK) {
   const k = Number.isFinite(zoomK) && zoomK > 0 ? zoomK : 1;
   return Math.max(1, Math.sqrt(k), k / MARKER_MAX_GROWTH);
@@ -3718,6 +3800,15 @@ const STYLE = `
 .ov-pip { fill:var(--amber); opacity:.65; }
 .ov-pip.t-constitution { fill:var(--blue); }
 .ov-pip.t-home { fill:var(--green); }
+/* the home card on a parcel: the pip stays as the anchor and hit target,
+   transparent; the card is what the eye reads. The frame is the HOME light. */
+.ov-pip.ov-pip-home { opacity:0; }
+.ov-home { pointer-events:none; }
+.ov-home-frame { fill:none; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; }
+.ov-home-blank { fill:#f4e6c8; }
+.ov-home.lit .ov-home-frame { stroke:#ffcf5c; stroke-width:2.2; filter:drop-shadow(0 0 3px #ffb84a); }
+.ov-home-label { font:600 9px Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif; fill:#241c10;
+  paint-order:stroke; stroke:#ece0c4; stroke-width:2.5px; stroke-linejoin:round; }
 .ov-dot { fill:var(--you); stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:var(--you); stroke-width:3; opacity:.55; }
 /* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
@@ -6186,6 +6277,19 @@ export function mountViewer(appEl) {
     mapCtx.overlay.style.setProperty("--wv-mk", overlayScale(k));
     return k;
   }
+  // One parcel's card: the picture from the home sited on it (through the same
+  // shelf gate every other art surface uses), the household's name under it,
+  // lit when the household is home.
+  function homeCard(parcel, at, fan, title) {
+    const home = homeMarkOfParcel(parcel.id, world?.marks ?? []);
+    return overlayHomeCardSVG({
+      at, id: parcel.id, classes: markClasses(parcel),
+      label: String(parcel.household ?? parcel.by ?? ""),
+      image: home ? markImagePath(home) : null,
+      lit: houseIsLit(parcel, walkState.walkers, (h) => faceOf(h).household),
+      fan, title,
+    });
+  }
   function drawOverlay(radial) {
     if (!mapCtx) return;
     const { overlay, originPx, mPerPx } = mapCtx;
@@ -6233,6 +6337,13 @@ export function mountViewer(appEl) {
       // variable, it stays the constant few panel pixels it was when the string
       // divided it by k.
       glyphIds.add(m.id);
+      // THE FULL MARK BY ID: the radial's thin entry carries no `kind`, and a
+      // parcel is told from a pip by its kind (see the furnishing pass above).
+      const full = byId.get(m.id) ?? m;
+      if (full.kind === "parcel") {
+        s += homeCard(full, p, fanned.has(m.id) ? fanOffsetPx(m.id) : null, state.paintingOnly ? null : markIdentity(m));
+        continue;
+      }
       s += overlayPipSVG({
         at: p, id: m.id, classes: markClasses(m),
         fan: fanned.has(m.id) ? fanOffsetPx(m.id) : null,
@@ -6240,6 +6351,18 @@ export function mountViewer(appEl) {
         // label does: the bubble is already saying this word, sooner and better
         title: state.paintingOnly ? null : markIdentity(m),
       });
+    }
+    // THE TOWN'S HOUSES ARE ALWAYS ON THE MAP. The atlas drew every home on its
+    // sheet, whoever was looking; the field-of-view rule above is right for the
+    // town's furniture and wrong for its houses, which are the map's landmarks.
+    // Outdoors, every parcel not already drawn gets its card; indoors the roof
+    // rule stands and none is added.
+    if (!sceneRoomId) {
+      for (const m of world.marks ?? []) {
+        if (m.kind !== "parcel" || !m.at || glyphIds.has(m.id)) continue;
+        glyphIds.add(m.id);
+        s += homeCard(m, px(m.at), null, state.paintingOnly ? null : markIdentity(m));
+      }
     }
     s += overlayStandpointSVG({ at: me });
     overlay.innerHTML = s;
@@ -6746,8 +6869,21 @@ export function mountViewer(appEl) {
         : `crossing ${walkState.at.toFixed(3)} — ` +
           `${drawnWalkers.length} on the map, ${on} on the road, ${still} at rest`;
     }
+    syncHouseLights();
     syncActorPosition();
     renderWalkDestination();
+  }
+
+  // The lights read the walkers, and the walkers arrive after the first overlay
+  // is drawn (a poll, not the record) — so they are trued here, on the cards
+  // already standing, rather than by rebuilding the overlay.
+  function syncHouseLights() {
+    if (!mapCtx?.overlay) return;
+    for (const g of mapCtx.overlay.querySelectorAll(".ov-home[data-id]")) {
+      const full = byId.get(g.dataset.id);
+      if (!full) continue;
+      g.classList.toggle("lit", houseIsLit(full, walkState.walkers, (h) => faceOf(h).household));
+    }
   }
 
   function drawWalkPreview() {
