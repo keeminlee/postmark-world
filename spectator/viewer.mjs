@@ -5814,7 +5814,9 @@ export function mountViewer(appEl) {
   async function crossInto(markId, { accept = false, button = null } = {}) {
     const room = markId && byId.get(markId);
     if (!room) return;
-    const card = button?.closest?.(".wv-card") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
+    // the sheet (terms, or a refusal) lands where the button lives: the little
+    // card on the street, or the parcel column since its enter button (2026-09-11)
+    const card = button?.closest?.(".wv-card, .wv-homecol") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
     const label = button?.textContent;
     if (button) { button.disabled = true; button.textContent = accept ? "crossing…" : "at the door…"; }
     const clearSheet = () => card?.querySelector(".wv-cross-sheet")?.remove();
@@ -8611,6 +8613,9 @@ export function mountViewer(appEl) {
     // a path, here or anywhere
     imagePath: (url) => markImagePath({ image: url }),
     residentHref,
+    // the column's enter button is the little card's enter verb: same door,
+    // same sheet for terms and refusals (crossInto)
+    onEnter: (parcelId, button) => crossInto(parcelId, { button }),
   });
   // What the column would show for this selection, or null if this selection is
   // not a parcel. The home sited on the ground supplies the title and the lead
@@ -8635,9 +8640,11 @@ export function mountViewer(appEl) {
     const home = found ? (byId.get(found.id) ?? found) : null;
     const handle = homeHandleForParcel(mark, home);
     if (!handle) return null;
+    const parcelId = mark.id, canEnter = canAct();
     return {
       key: mark.id,
       handle,
+      parcelId, canEnter,
       kicker: String(mark.household ?? mark.by ?? handle),
       title: markIdentity(home ?? mark),
       // the dwelling's picture, and failing that the ground's own
