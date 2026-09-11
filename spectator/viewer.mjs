@@ -4599,18 +4599,49 @@ export function residentById(read = {}, mine = new Map()) {
  * placed at (0,0) is a person standing on Ferry's crossing, which is a lie the
  * map would tell convincingly.
  */
-export function walkersFromPresent(present = {}) {
+export function walkersFromPresent(present = {}, { self = null } = {}) {
   const rows = Array.isArray(present?.residents) ? present.residents : [];
   const out = [];
+  const seen = new Set();
   for (const r of rows) {
     const at = r?.at;
     if (!r?.handle || !at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) continue;
+    seen.add(r.handle);
     out.push({
       handle: r.handle, x: at.x, y: at.y,
       standing: r.standing ?? false, moving: r.moving ?? false, aboard: r.aboard ?? false,
       ...(r.place ? { place: r.place } : {}),
       ...(r.available ? { available: r.available } : {}),
     });
+  }
+  // ── AND THE READER'S OWN BODY (2026-09-10, Keemin's eyes on dev) ──────────
+  //
+  // `present` answers "who ELSE is about": the office builds it with
+  // `exclude: [choice.handle]` (world.mjs § worldEyes), so the reader is never
+  // in their own list — correctly, because presence is a thing you observe and
+  // you do not observe yourself. The OLD path hid this for free: it asked
+  // `/world/walkers`, which returns everyone in town, and the reader simply
+  // fell out of that. Drawing only `present` therefore left a resident looking
+  // at a map with everybody on it but themselves, and the spectator's red
+  // coordinate dot standing where their face should be.
+  //
+  // The body comes from the READ, which is the one thing that does know where
+  // this resident stands: `read.standpoint`. Not from the camera, which is a
+  // view and not a person, and not from a second door.
+  //
+  // ⚑ NEVER DUPLICATED. If `present` ever does carry the reader — a different
+  // exclusion rule, another door, a future ruling — the list's own row wins and
+  // this adds nothing. A reader drawn twice is a reader who has been split in
+  // two, which is worse than the bug this fixes.
+  if (self?.handle && !seen.has(self.handle)) {
+    const at = self.at;
+    if (at && Number.isFinite(at.x) && Number.isFinite(at.y))
+      out.push({
+        handle: self.handle, x: at.x, y: at.y,
+        standing: self.standing ?? true, moving: self.moving ?? false, aboard: self.aboard ?? false,
+        ...(self.place ? { place: self.place } : {}),
+        self: true,
+      });
   }
   return out;
 }
@@ -7388,7 +7419,7 @@ export function mountViewer(appEl) {
     if (onResidentPath()) {
       const read = readCache.get(residentStandpointKey(null, state.handle));
       const at = read?.standpoint;
-      if (read?.present) { walkState.walkers = walkersFromPresent(read.present); drawWalkers(); }
+      if (read) { walkState.walkers = walkersFromPresent(read.present ?? {}, { self: selfFromRead(read) }); drawWalkers(); }
       if (at && Number.isFinite(at.x) && Number.isFinite(at.y)) {
         try {
           const r = await fetch(officeUrl(`/world/present?x=${Math.round(at.x)}&y=${Math.round(at.y)}`),
@@ -7397,7 +7428,7 @@ export function mountViewer(appEl) {
             const j = await r.json();
             if (!j?.error) {
               walkState.at = Number(j.at ?? walkState.at);
-              walkState.walkers = walkersFromPresent(j);
+              walkState.walkers = walkersFromPresent(j, { self: selfFromRead(read) });
               drawWalkers();
             }
           }
@@ -9037,7 +9068,10 @@ export function mountViewer(appEl) {
           // and the map drew nobody until the next fifteen-second tick — which
           // is longer than a reader waits and longer than a measurement runs.
           // `present` is already in hand here; there is no reason to ask again.
-          if (read.present) { walkState.walkers = walkersFromPresent(read.present); drawWalkers(); }
+          // the reader's own body rides from the read's standpoint — `present`
+          // is who ELSE is about and excludes them by construction
+          walkState.walkers = walkersFromPresent(read.present ?? {}, { self: selfFromRead(read) });
+          drawWalkers();
         }
         return read;
       })
@@ -9116,6 +9150,16 @@ export function mountViewer(appEl) {
     investigatePending.set(id, p);
     return p;
   }
+
+  // The acting resident, as a body on the map. `stance: "embodied"` is the
+  // read saying these coordinates are a person and not a camera; anything else
+  // is a standpoint nobody is standing at, and nobody is what gets drawn.
+  const selfFromRead = (read) => {
+    const at = read?.standpoint;
+    if (!state.handle || !at || at.stance !== "embodied") return null;
+    if (!Number.isFinite(at.x) || !Number.isFinite(at.y)) return null;
+    return { handle: state.handle, at: { x: at.x, y: at.y }, standing: true };
+  };
 
   // ONE ID LOOKUP FOR THE RESIDENT PATH, and it never touches the fold: the
   // read's `records` first (the town's canon at this standpoint), then the
