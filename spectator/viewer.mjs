@@ -4603,9 +4603,21 @@ export function residentReadIds(read = {}) {
  * about a moment, and the office's own fog moves with the crossing (it did not
  * until 2026-09-10 — see the office's crossing fix). A cache that kept an
  * answer across a crossing would show a resident last night's light.
+ *
+ * ⚑ COORDINATES ARE OPTIONAL, AND AN EMBODIED READ HAS NONE. The office
+ * refuses, in its own words, to answer an embodied call at a point: "your eyes
+ * ride your body — an embodied call cannot stand at coordinates." So a read
+ * taken AS a resident is keyed by who and when, never by where — the where is
+ * the body's and the office is the one that knows it. Coordinates are for the
+ * keyless form, a read at a point with nobody standing in it.
+ *
+ * I learned this by shipping the other thing first: the page asked for
+ * `?handle=wright&x=…&y=…` and dev answered 422 twice on the first run.
  */
-export function residentReadKey({ handle = "", x = 0, y = 0, crossing = 0 } = {}) {
-  return `${handle}|${Math.round(x)}|${Math.round(y)}|${crossing}`;
+export function residentReadKey({ handle = "", x = null, y = null, crossing = 0 } = {}) {
+  const where = Number.isFinite(x) && Number.isFinite(y)
+    ? `${Math.round(x)}|${Math.round(y)}` : "embodied";
+  return `${handle}|${where}|${crossing}`;
 }
 
 export function mountViewer(appEl) {
@@ -5500,14 +5512,39 @@ export function mountViewer(appEl) {
     // was in before, it is not in it now — leaving the stale entry behind is how
     // a reader who has stepped out keeps looking at a floor.
     interiorByKey.delete(key);
+    // The one row of chips both paths wear, hoisted above the branch below so
+    // the resident arm can put it over "opening your eyes…" — a filter row that
+    // vanished while a read was in flight would flicker on every step.
+    const chips = viewerFilterControls({ identityResolved: hasIdentity, markFilter: state.markFilter });
+    // ── THE RESIDENT PATH READS; IT DOES NOT COMPUTE ─────────────────────────
+    //
+    // Keemin, 2026-09-10: "for resident views, we should just load whatever the
+    // resident can see or hear (like residents)." The office runs the same
+    // engine over the same record, so this is not a second opinion — it is the
+    // SAME opinion, asked for instead of reproduced.
+    //
+    // The fetch is kicked from here and the pane says so meanwhile, rather than
+    // this function becoming async: `renderCurrent` is synchronous and called
+    // from a dozen places, and making the whole spine async to serve one branch
+    // would be the tail wagging the dog. The read lands, the cache fills, and
+    // the render that follows finds it.
+    if (onResidentPath() && key !== SPECTATOR_ACTOR) {
+      const cached = readCache.get(residentStandpointKey(standpoint, key));
+      if (!cached) {
+        loadResidentRead(standpoint, key).then((read) => { if (read) renderCurrent(); });
+        box.innerHTML = chips + (readError
+          ? `<div class="wv-err">the office could not say what you can see from here: ${esc(readError)}</div>`
+          : `<div class="wv-quiet">opening your eyes…</div>`);
+        return null;
+      }
+      return composeResidentTelling(box, cached, key, chips);
+    }
     const e = openYourEyes({ x: standpoint.x, y: standpoint.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
     const within = e.radial.within ?? [];
     const obs = e.radial.observer ?? {};
     const isNew = state.markFilter === "new";
-    // One row, one question: everything, just mine, or recency. The World lens
-    // that used to sit above it is gone — composition is not a question the
-    // reader has to answer any more, because a draft says so in its own colour.
-    const chips = viewerFilterControls({ identityResolved: hasIdentity, markFilter: state.markFilter });
+    // (`chips` — one row, one question: everything, just mine, or recency — is
+    // hoisted above the resident branch, since both arms wear it.)
     // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
     // context even under Mine (filtering the frame to yours would usually empty
     // "where you stand"); the filter narrows the visible marks, not your footing.
@@ -5566,6 +5603,95 @@ export function mountViewer(appEl) {
     mountMarkImages(box);
     return e.radial;
   }
+  // ───────── the resident's telling, written from the read ───────────────────
+  //
+  // The same pane, the same cells, the same ladder — built from what the office
+  // said instead of from what the page worked out. Deliberately its own function
+  // rather than a set of `if`s threaded through `composeTelling`: the two arms
+  // answer the same question from different evidence, and a single body that
+  // kept asking which one it was in would be the place their behaviour quietly
+  // drifted apart.
+  //
+  // ⚑ THE THREE STATE LINES ARE GONE HERE, BY RULING, NOT BY OVERSIGHT.
+  // `lightStateLine`, `elevStateLine` and `fogStateLine` read `radial.observer`,
+  // which is the ENGINE's internal state and no part of what a resident reads.
+  // Keemin, 2026-09-10: "my confusion is on why we need this info for the page."
+  // The office already renders the same facts as PROSE in `telling`, so the
+  // prose is what goes in — one author for the world's voice, which is the rule
+  // `worldEyes` has followed since it refused to re-render the engine's telling.
+  function residentTellingCards(radial, keep = null) {
+    const spineIds = new Set((radial.within ?? []).map((w) => w.id));
+    // Bearing, then distance — the READ's own organisation. The engine's
+    // distance bands are its vocabulary, built from dials this read does not
+    // carry, and rebuilding them here would be the page inventing a yardstick
+    // and then measuring with it.
+    const bearings = Object.keys(radial.byBearing ?? {}).sort();
+    let html = "";
+    for (const bearing of bearings) {
+      let rows = Object.values(radial.byBearing[bearing] ?? {}).flat()
+        .filter((m) => !spineIds.has(m.id));     // the ladder above already gives the spine its cards
+      if (keep) rows = rows.filter(keep);
+      if (!rows.length) continue;
+      html += `<div class="wv-band"><h3>${esc(bearing)}</h3>`;
+      for (const m of rows) html += m.unread
+        // NEVER A BLANK. The read named this and could not hand over its record;
+        // saying so where the card would have been is the whole point.
+        ? `<div class="wv-card wv-unread" data-id="${esc(m.id)}">`
+          + `<b>${esc(deslugMarkId(m.id))}</b>`
+          + `<p class="wv-quiet">the read names this, and the office sent no record for it — `
+          + `it is there, and this page cannot tell you what it is.</p></div>`
+        : markCell(m, { role: "fov", radialChips: true });
+      html += `</div>`;
+    }
+    return html || (keep
+      ? `<div class="wv-quiet">none of yours tells from here.</div>`
+      : `<div class="wv-quiet">nothing tells from here — walk, or wait for clearer air.</div>`);
+  }
+
+  function composeResidentTelling(box, read, key, chips) {
+    const radial = residentRadial(read);
+    const mine = state.markFilter === "mine";
+    const isNew = state.markFilter === "new";
+    const { entered, alongside } = standpointOccupancy({
+      acts: enterExitLedger.acts, at: occupancyClock(), handle: key,
+    });
+    const nameOf = (id) => markName(residentMarkById(id) ?? { id }).name;
+    // the ladder: where you STAND, from the read's own spine
+    let ladder = "";
+    if (!isNew) {
+      const chain = mine ? (radial.within ?? []).filter((w) => isMine(residentMarkById(w.id) ?? w)) : (radial.within ?? []);
+      chain.forEach((w, i) => {
+        const m = residentMarkById(w.id) ?? w;
+        ladder += markCell(m, { role: i === 0 ? "frame" : "ladder" });
+      });
+    }
+    // THE OFFICE'S OWN PROSE, where the three state lines used to be. It is the
+    // engine's telling, rendered by the one author entitled to render it.
+    const telling = typeof read.telling === "string" && read.telling.trim()
+      ? `<div class="wv-telling-prose">${read.telling.split(/\n{2,}/).map((p) =>
+          `<p>${esc(p.trim())}</p>`).join("")}</div>`
+      : "";
+    // What the page could not place, said out loud rather than left as a gap.
+    const notes = [];
+    if (radial.counts?.unread)
+      notes.push(`${radial.counts.unread} thing${radial.counts.unread === 1 ? "" : "s"} the read named but could not describe`);
+    if (mineSet.sentinel.length)
+      notes.push(`${mineSet.sentinel.length} of yours carry a marker position rather than a place, and are not on the map`);
+    if (!mineSet.complete)
+      notes.push(mineSet.exhausted
+        ? `your marks ran past ${MINE_PAGE_LIMIT} pages — the map shows what was walked`
+        : `your marks are still being counted`);
+    box.innerHTML = chips
+      + occupancyChipHTML({ entered, alongside, nameOf })
+      + (ladder ? `<div class="wv-section-lbl">${esc(standpointSectionLabel(key))}</div>`
+                + `<div class="wv-ladder-cells">${ladder}</div>` : "")
+      + telling
+      + `<div class="wv-cards">${residentTellingCards(radial, mine ? isMine : null)}</div>`
+      + (notes.length ? `<div class="wv-tallies">${esc(notes.join(" · "))}</div>` : "");
+    mountMarkImages(box);
+    return radial;
+  }
+
   // The just-mine tail: the same filtered list continues beyond this sight with
   // the same mark cells. Backing is not a second shelf; it stays on the cell.
   function elsewhereRow(m) {
@@ -8655,15 +8781,137 @@ export function mountViewer(appEl) {
   // selected handle is sticky; the office remains choose-per-call.
   const pmKey = () => { try { return localStorage.getItem("pm_key") || null; } catch { return null; } };
   const authHeaders = () => { const k = pmKey(); return k ? { Authorization: "Bearer " + k } : {}; };
+
+  // ───────── the resident's read ────────────────────────────────────────────
+  //
+  // On the resident path the page stops computing the field of view and asks
+  // the office for it. One read per standpoint per crossing, cached, because a
+  // reader who steps back to where they were is asking the same question and
+  // should not pay for it twice — and because `renderCurrent` is called from a
+  // dozen places that have no idea whether anything moved.
+  //
+  // ⚑ THE CACHE IS KEYED ON THE CROSSING TOO. The read is an answer about a
+  // MOMENT — the office's own fog moves with the crossing (it did not until
+  // 2026-09-10; see the office's crossing fix) — so an answer kept across one
+  // would show a resident last night's light. `residentReadKey` owns that.
+  const readCache = new Map();
+  const readPending = new Map();   // key -> promise, so N callers make ONE request
+  let readError = null;
+
+  // WHO THE PAGE IS FOR. Not "is somebody signed in" — that was the mistake the
+  // render probe made and reported as success: signing in is not standing. This
+  // asks whether a RESIDENT IS ACTING, which is what selects the read path.
+  const onResidentPath = () => identityResolved() && !isSpectating() && !!state.handle;
+
+  // EMBODIED: who and when, never where. See `residentReadKey`'s note and the
+  // office's own refusal — "your eyes ride your body".
+  function residentStandpointKey(_standpoint, handle) {
+    return residentReadKey({ handle, crossing: state.crossing });
+  }
+
+  /**
+   * The read at one standpoint, from the office. Never throws to its caller:
+   * the render spine is synchronous and a rejected promise there would leave a
+   * pane half-written, so a failure is recorded and the pane says so.
+   */
+  function loadResidentRead(standpoint, handle) {
+    const key = residentStandpointKey(standpoint, handle);
+    if (readCache.has(key)) return Promise.resolve(readCache.get(key));
+    if (readPending.has(key)) return readPending.get(key);
+    // NO x/y. The office stands the resident where their BODY is and refuses
+    // to do otherwise; asking for both is a 422, which is how I found out.
+    const url = officeUrl(`/world/apex?handle=${encodeURIComponent(handle)}`
+      + `&crossing=${state.crossing}&telling=true`);
+    const p = fetch(url, { headers: authHeaders(), credentials: "same-origin" })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`the office answered ${r.status}`);
+        const read = await r.json();
+        if (read?.error) throw new Error(read.defect ?? read.error);
+        readCache.set(key, read);
+        readError = null;
+        return read;
+      })
+      .catch((e) => { readError = String(e?.message ?? e).slice(0, 160); return null; })
+      .finally(() => readPending.delete(key));
+    readPending.set(key, p);
+    return p;
+  }
+
+  // The acting resident's own marks — "plus all of yours", and the door is PAGED
+  // at 20 a list, so the offset is WALKED until the answer says it is complete
+  // (Keemin's ruling via the lane, 2026-09-10). A page that drew the first
+  // twenty as though they were all of yours would be lying by arithmetic, and
+  // one extra request is much the cheaper of the two.
+  //
+  // BOUNDED ANYWAY. A door that never said `complete` would otherwise spin this
+  // forever; twelve pages is 240 marks, past any household on the record, and
+  // running out says so rather than pretending the walk finished.
+  // ONE ID LOOKUP FOR THE RESIDENT PATH, and it never touches the fold: the
+  // read's `records` first (the town's canon at this standpoint), then the
+  // resident's own rows. `residentById` owns the precedence and the reason.
+  function residentMarkById(id) {
+    if (!id) return null;
+    const standpoint = { x: state.cam.x, y: state.cam.y };
+    const read = readCache.get(residentStandpointKey(standpoint, state.handle));
+    return residentById(read ?? {}, mineSet.marks).get(id) ?? null;
+  }
+
+  const MINE_PAGE_LIMIT = 12;
+  let mineSet = { marks: new Map(), unplaced: [], sentinel: [], complete: true, pages: 0, exhausted: false };
+  async function loadMineMarks() {
+    const options = { headers: authHeaders(), credentials: "same-origin" };
+    const LISTS = ["drafts", "docket", "published", "backed"];
+    const merged = { drafts: [], docket: [], published: [], backed: [], complete: true };
+    const seen = new Set();
+    let offset = 0, pages = 0, exhausted = false, counts = null;
+    for (;;) {
+      const r = await fetch(officeUrl(`/world/my-marks?offset=${offset}`), options);
+      if (!r.ok) throw new Error(`/world/my-marks → ${r.status}`);
+      const page = await r.json();
+      if (page?.error) throw new Error(page.defect ?? page.error);
+      counts ??= page.counts ?? null;
+      let added = 0;
+      for (const list of LISTS)
+        for (const row of page[list] ?? []) {
+          const tag = `${list}:${row?.id}`;
+          if (!row?.id || seen.has(tag)) continue;
+          seen.add(tag); merged[list].push(row); added += 1;
+        }
+      pages += 1;
+      // ⚑ `complete` IS NOT AN END-OF-WALK FLAG, and reading it as one cost this
+      // lane a run of twelve requests that collected the same page over and
+      // over. It means "this ONE page holds everything", so for any portfolio
+      // past 20 it is false at EVERY offset and never becomes true. The door's
+      // `counts` are the real totals (drafts 2, docket 0, published 91, backed
+      // 22 for this household), so the walk ends when what has been collected
+      // matches them — or when a page adds nothing new, which is the same end
+      // reached from the other side and costs one wasted request to find.
+      const done = counts
+        ? LISTS.every((l) => merged[l].length >= (counts[l] ?? 0))
+        : page.complete !== false;
+      if (done || added === 0) break;
+      if (pages >= MINE_PAGE_LIMIT) { exhausted = true; merged.complete = false; break; }
+      offset += 20;   // the door's own page size
+    }
+    mineSet = { ...residentMineMarks(merged), pages, exhausted };
+    // The merged portfolio rides back too: `state.portfolio`, `state.mineIds`
+    // and the draft overlay are all built from it, and they must see EVERY page
+    // rather than the first — the same arithmetic lie, one surface over.
+    return { mine: mineSet, portfolio: merged };
+  }
   async function loadIdentityWorld() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
-    const [composed, portfolio] = await Promise.all([
+    // THE PORTFOLIO IS WALKED, NOT SAMPLED (2026-09-10). This used to take the
+    // door's first answer. The door is paged at 20 a list and a household over
+    // that got its first twenty treated as the whole of what it owns — by
+    // `state.mineIds`, by the draft overlay, and by the painting's "plus all of
+    // yours". Measured on the live door for the keeminlee household: `complete`
+    // comes back FALSE. `loadMineMarks` walks the offset until it is true.
+    const [composed, walked] = await Promise.all([
       fetchWorldState([officeUrl("/world/state")], options),
-      fetch(officeUrl("/world/my-marks"), options).then(async (r) => {
-        if (!r.ok) throw new Error(`${officeUrl("/world/my-marks")} → ${r.status}`);
-        return r.json();
-      }),
+      loadMineMarks(),
     ]);
+    const portfolio = walked.portfolio;
     // The overlay lays the household's draft DECLARATIONS into the composed
     // state (world-framed by the office's delta) — the fold stays off the read.
     data.myWorld = composeDraftOverlay(composed.json, portfolio.drafts);
