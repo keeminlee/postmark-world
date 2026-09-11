@@ -146,3 +146,56 @@ test("FALSIFIER — the cache key carries the crossing, so an answer never outli
   assert.equal(residentReadKey({ ...at, crossing: 300 }), residentReadKey({ ...at, x: 888.4, crossing: 300 }),
     "the same standpoint is the same key");
 });
+
+// ───────── "plus all of yours", without a fold ──────────────────────────────
+
+import { residentMineMarks, residentById, MINE_SENTINEL_M } from "../spectator/viewer.mjs";
+
+const PORTFOLIO = {
+  drafts: [{ id: "me/sketch", kind: "sited", at: { x: 5, y: 5 }, extent: { w: 2, h: 2 }, body: "d" }],
+  docket: [],
+  published: [
+    { id: "me/one", kind: "sited", at: { x: 10, y: 20 }, extent: { w: 3, h: 3 }, body: "p1" },
+    { id: "me/a-predicate", kind: "predicated", body: "no site of its own" },
+    { id: "me/far-marker", kind: "sited", at: { x: -96497, y: -95455 }, body: "a marker, not a place" },
+  ],
+  backed: [
+    { id: "me/one", kind: "sited", at: { x: 10, y: 20 }, body: "the same mark, backed too" },
+    { id: "other/backed", kind: "sited", at: { x: 40, y: 0 }, extent: { w: 1, h: 1 }, body: "b" },
+  ],
+  complete: true,
+};
+
+test("mine: the drawable ones are drawn, across all four lists, each once", () => {
+  const { marks } = residentMineMarks(PORTFOLIO);
+  assert.deepEqual([...marks.keys()].sort(), ["me/one", "me/sketch", "other/backed"]);
+  assert.deepEqual(marks.get("me/one").at, { x: 10, y: 20 });
+  assert.equal(marks.get("me/one").body, "p1", "published wins over the backed copy — first list, one row");
+});
+
+test("FALSIFIER — a position that is not a place is NOT drawn, and is NAMED", () => {
+  const { marks, sentinel, unplaced } = residentMineMarks(PORTFOLIO);
+  assert.ok(!marks.has("me/far-marker"), `a mark ${MINE_SENTINEL_M} m past the edge is not put on the map`);
+  assert.deepEqual(sentinel, ["me/far-marker"], "and it is named, never silently dropped");
+  assert.deepEqual(unplaced, ["me/a-predicate"], "a mark with no site is its own category, not an error");
+  // the anti-vacuity half: a real position is not mistaken for a marker
+  const near = residentMineMarks({ published: [{ id: "me/edge", at: { x: MINE_SENTINEL_M - 1, y: 0 } }] });
+  assert.ok(near.marks.has("me/edge"), "one metre inside the magnitude is a place");
+  assert.deepEqual(near.sentinel, []);
+});
+
+test("FALSIFIER — a paged portfolio says so, so a painting cannot lie by arithmetic", () => {
+  assert.equal(residentMineMarks(PORTFOLIO).complete, true);
+  assert.equal(residentMineMarks({ ...PORTFOLIO, complete: false }).complete, false,
+    "the door is bounded at 20 a list; a page that drew the first twenty as though they were all of yours would be lying");
+});
+
+test("byId: the READ's record wins over the portfolio's thinner copy", () => {
+  const read = { records: { "me/one": { id: "me/one", body: "the town's whole record", extent: { w: 9, h: 9 } } } };
+  const { marks } = residentMineMarks(PORTFOLIO);
+  const byId = residentById(read, marks);
+  assert.equal(byId.get("me/one").body, "the town's whole record",
+    "a portfolio row is a projection with fewer fields; the canon at this standpoint is the one to keep");
+  assert.equal(byId.get("other/backed").body, "b", "and a mark only the portfolio knows still resolves");
+  assert.equal(byId.size, 3);
+});
