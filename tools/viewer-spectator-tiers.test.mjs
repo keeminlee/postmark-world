@@ -36,7 +36,9 @@ import {
   overlayHomeCardSVG,
   placeholderExtentSVG,
   OVERLAY_PIP_R,
+  townHouseMarks,
 } from "../spectator/viewer.mjs";
+import { readFileSync } from "node:fs";
 
 // The painting is 1500 atlas units at 5 m each (WORLD/skeleton.json), so the
 // whole sheet is 7,500 m across. Written as the product rather than as 7500 so
@@ -233,4 +235,63 @@ test("THE MID FURNITURE — a mark's shape without its photograph", () => {
   // an art-LESS mark is unchanged either way, which is what makes this additive
   const bare = { id: "a/bare", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 10, h: 10 } };
   assert.equal(placeholderExtentSVG(bare, px), placeholderExtentSVG(bare, px, { ignoreArt: true }));
+});
+
+// ── PICTURES AT MID, and the margin that pays for them (founder, 2026-09-11) ──
+//
+// Keemin: "I think pictures should appear at mid zoom … I do want to hear what
+// the performance side of the story is." The story: the `<image>` count is
+// bounded by the cull box, so the margin came down with the picture rule.
+// Both are asked as RELATIONS against the town's own record, never as the
+// numbers themselves (a pinned 6 or 0.5 would be a calendar).
+
+const TOWN = JSON.parse(readFileSync(new URL("../WORLD/world-state.json", import.meta.url), "utf8"));
+const PANE_PX = 1360;   // the painting's width on a laptop, the same figure the 10x report measured with
+
+test("PICTURES AT MID: at the mid tier's widest, the smallest parcel in the town still earns its picture", () => {
+  const parcels = TOWN.marks.filter((m) => m.kind === "parcel" && m.extent);
+  assert.ok(parcels.length > 0, "the record carries parcels");
+  const smallest = parcels.reduce((a, b) => (Math.max(b.extent.w, b.extent.h) < Math.max(a.extent.w, a.extent.h) ? b : a));
+  const across = SPECTATOR_DRAW_DEFAULTS.tier_far_m;   // any wider is `far`, which draws glyphs
+  assert.equal(tierFor(PANE_PX / across, PANE_PX), "mid", "the widest mid view is still mid");
+  const px = footprintPx(smallest, { across, panePx: PANE_PX });
+  assert.ok(px >= SPECTATOR_DRAW_DEFAULTS.art_min_px,
+    `a ${Math.max(smallest.extent.w, smallest.extent.h)} m parcel at ${across} m across is ${px.toFixed(1)} px — under art_min_px ${SPECTATOR_DRAW_DEFAULTS.art_min_px}, so mid would draw initials, not pictures`);
+  // flip: art_min_px back to 40 → this reds (7 px < 40)
+});
+
+test("THE MARGIN IS HALF A VIEWPORT: the cull box at the default margin is twice the viewBox, not three times", () => {
+  const view = { x: 0, y: 0, w: 1000, h: 500 };
+  const box = viewportWorldBounds({ view, originPx: { x: 0, y: 0 }, mPerPx: 1, margin: SPECTATOR_DRAW_DEFAULTS.cull_margin });
+  const w = box.maxX - box.minX;
+  assert.ok(w <= 2 * view.w + 1e-9, `drawn width ${w} m for a ${view.w} m view — more than twice the viewport is drawn`);
+  assert.ok(w > view.w, "some margin remains, or a pan tears");
+  // flip: cull_margin back to 1 → this reds (3000 > 2000)
+});
+
+// ── THE TOWN'S HOUSES, as a set (2026-09-11, Keemin: "just the marks") ──
+
+test("townHouseMarks hands over every parcel and the dwelling sited on it — preferring the pictured one — and nothing else", () => {
+  const marks = [
+    { id: "nyx/the-night-room-parcel", kind: "parcel", by: "nyx", at: { x: 0, y: 0 }, extent: { w: 25, h: 25 } },
+    { id: "nyx/the-night-room", kind: "sited", tier: "home", placementParent: "nyx/the-night-room-parcel", by: "nyx" },
+    { id: "nyx/the-night-room-2", kind: "sited", tier: "home", placementParent: "nyx/the-night-room-parcel", by: "nyx", image: "night.jpg" },
+    { id: "liv/the-kept-light-parcel", kind: "parcel", by: "liv", at: { x: 9, y: 9 }, extent: { w: 25, h: 25 } },
+    { id: "liv/a-lantern", kind: "sited", tier: "market", placementParent: "liv/the-kept-light-parcel", by: "liv" },
+    { id: "limen/the-threshold-district", kind: "sited", tier: "market", by: "limen", points: [[0, 0], [1, 0], [1, 1]] },
+  ];
+  const out = townHouseMarks(marks).map((m) => m.id);
+  assert.deepEqual(out, ["nyx/the-night-room-parcel", "nyx/the-night-room-2", "liv/the-kept-light-parcel"],
+    "parcels in record order, each followed by its pictured dwelling; a parcel with no dwelling rides alone; furniture and regions stay out");
+  assert.deepEqual(townHouseMarks([]), []);
+  assert.deepEqual(townHouseMarks(null), []);
+  // flip: drop the `homeMarkOfParcel` line → the night room's dwelling goes missing → red
+});
+
+test("townHouseMarks on the town's own record: one dwelling per parcel at most, and every parcel present", () => {
+  const out = townHouseMarks(TOWN.marks);
+  const parcels = TOWN.marks.filter((m) => m.kind === "parcel").length;
+  assert.equal(out.filter((m) => m.kind === "parcel").length, parcels, "every parcel is handed over");
+  assert.ok(out.length <= 2 * parcels, "at most one dwelling rides with each parcel");
+  assert.ok(out.every((m) => m.kind === "parcel" || (m.kind === "sited" && m.tier === "home")), "nothing but parcels and dwellings");
 });
