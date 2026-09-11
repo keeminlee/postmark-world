@@ -140,3 +140,32 @@ test("standing inside the ring already is 'stand here', as a box walk always der
   assert.equal(p.standing, true);
   assert.equal(p.legM, 0);
 });
+
+test("a ring whose ANCHOR is off its own ground has no middle to walk to — and two real ones exist", () => {
+  // THE BRANCH IS NOT HYPOTHETICAL. `ringMatchesClaim` pins a ring's bbox to its
+  // declared at/extent, and the bbox CENTRE of a snaking shape need not be on the
+  // shape at all: in the record at 0dce31ce, the-town/the-main-channel and
+  // the-town/the-still-reach both have anchors outside their own rings. Neither is
+  // reachable through the walk door today (`WALK_EXCLUDED_TIERS` bars constitution
+  // tier), but `walkTargetFor` is a library function and an untested branch rots.
+  //
+  // An L, whose bbox centre falls in the notch:
+  const L = {
+    id: "test/the-ell", kind: "sited", at: { x: 50, y: 50 }, extent: { w: 100, h: 100 },
+    points: [[0, 0], [100, 0], [100, 40], [40, 40], [40, 100], [0, 100]],
+  };
+  assert.equal(ringMatchesClaim(L), true, "the fixture is schema-honest: the ring's bbox IS at/extent");
+  assert.equal(pointWithinMark({ x: L.at.x, y: L.at.y }, L), false,
+    "the anchor stands in the notch — off the mark's own ground");
+
+  // `center` cannot answer with the anchor, so it takes the rim answer, and the
+  // rim answer is on the ground. Walking to a place must land you in the place.
+  const from = { x: -100, y: 20 };
+  for (const mode of ["center", "rim"]) {
+    const t = walkTargetFor(L, from, mode);
+    assert.ok(t, `${mode} answers for a ringed mark`);
+    assert.equal(pointWithinMark(t.toward, L), true,
+      `${mode} ends on the ell's own ground, not in its notch`);
+    assert.equal(t.targetExtent, null);
+  }
+});
