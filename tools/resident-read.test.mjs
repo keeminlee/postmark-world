@@ -371,3 +371,27 @@ test("FALSIFIER — the drawn set is decided by WHO is reading, not by what is i
   assert.match(code, /homeSet = buildHomeSet\(data\?\.manifest, allMarks\(\)\)/,
     "and homeSet with it, or green stops meaning home");
 });
+
+test("the Spectator arm refills the index from the fold — a house outside the last resident's read is clickable again (2026-09-11)", async () => {
+  // Keemin, 2026-09-11: act as wright, switch to Spectator, walk to the
+  // Threshold District — "I cannot click any of the parcels in there".
+  // Measured in his tab with the index exposed: after the detour `byId` held
+  // 88 records and `byId.get("nyx/the-night-room-parcel").at` was null, so
+  // `screenMarkCandidates` (which asks `byId` for every drawn mark's place)
+  // returned no candidate and the click fell through to open ground. Fresh
+  // Spectator, same house, same click: 1,185 records, `at` present, the
+  // column opened. The resident arm already refills the index on the way
+  // back; this asserts the Spectator arm refills it on the way out, from the
+  // fold, when the fold is in hand.
+  const { readFileSync } = await import("node:fs");
+  const code = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8")
+    .replace(/^\s*\/\/.*$/gm, "");
+  const arm = code.slice(code.indexOf("if (actor === SPECTATOR_ACTOR) {"), code.indexOf("if (!(state.whoami?.handles ?? []).includes(actor)) return;"));
+  assert.ok(arm.length > 0, "the Spectator arm of selectActor is where it was");
+  assert.match(arm, /byId = new Map\(world\.marks\.map\(\(m\) => \[m\.id, m\]\)\)/,
+    "the Spectator arm refills byId from the fold's marks, so every drawn house has a place the click can find");
+  assert.match(arm, /homeSet = buildHomeSet\(data\?\.manifest, world\.marks\)/,
+    "and homeSet with it, from the same fold");
+  assert.match(arm, /if \(world\) \{/,
+    "guarded on the fold being in hand — with none, the telling's late fetch runs applyWorldLayer, which fills both");
+});
