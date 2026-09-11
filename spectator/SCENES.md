@@ -90,6 +90,8 @@ different question, one this list simply never asked; #8 is where it is asked no
 
 ## What was deleted
 
+- **2026-09-11 (founder: "outside and inside should REALLY not be that different"):** two gates this list never carried — the house pass skipped indoors ("the roof rule") and the parcel column answering null indoors. Both removed; the houses draw and click inside exactly as outside.
+
 The parallel interior renderer: `interiorSVG`, `interiorThingSVG`,
 `interiorBodySVG`, `paperFloorSVG`, `interiorFraming`, `interiorPx`,
 `interiorRuleM`, `interiorRecipe`, `labelPlacer`, the `.wv-interior-panel`

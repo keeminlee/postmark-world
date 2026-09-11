@@ -7275,13 +7275,17 @@ export function mountViewer(appEl) {
     // loop alone was 890 cards, every one of them drawn whether the camera was
     // over the quay or three viewports away from it. Same rule as the pips
     // above, same box, one viewport of margin.
-    if (!sceneRoomId) {
-      for (const m of allMarks()) {
-        if (m.kind !== "parcel" || !m.at || glyphIds.has(m.id)) continue;
-        if (!markInDrawnBounds(m, bounds)) continue;
-        glyphIds.add(m.id);
-        s += homeCard(m, px(m.at), null, nameOf(m), tier);
-      }
+    // INSIDE AS OUTSIDE (founder, 2026-09-11: "when I ENTER the Trueing Terrace,
+    // I DON'T SEE HOUSES … outside and inside should REALLY not be that
+    // different"). This pass used to be skipped indoors ("the roof rule") — a
+    // difference SCENES.md never listed, which by its own rule made it a defect.
+    // The houses are the map's landmarks in both scenes; the room's own
+    // registration places them where they stand.
+    for (const m of allMarks()) {
+      if (m.kind !== "parcel" || !m.at || glyphIds.has(m.id)) continue;
+      if (!markInDrawnBounds(m, bounds)) continue;
+      glyphIds.add(m.id);
+      s += homeCard(m, px(m.at), null, nameOf(m), tier);
     }
     s += overlayStandpointSVG({ at: me });
     overlay.innerHTML = s;
@@ -8572,10 +8576,10 @@ export function mountViewer(appEl) {
   // picture — the same two the map's own home card already draws from it — and
   // the door supplies everything else.
   function parcelColumnView(id) {
-    // INDOORS THERE ARE NO PARCELS. A room's ground is its own scene and the
-    // town's houses are not drawn on it, so a column left standing from the
-    // street would be a reading of somewhere else.
-    if (sceneRoomId) return null;
+    // INSIDE AS OUTSIDE (founder, 2026-09-11): the houses are drawn indoors now,
+    // so a click on one opens its column exactly as it does on the street. The
+    // old "indoors there are no parcels" gate was the second unlisted scene
+    // difference (SCENES.md), removed with the first.
     const mark = id ? byId.get(id) : null;
     if (!isParcelMark(mark)) return null;
     // THE FULL MARK, NOT THE THIN ONE. On the resident path allMarks() is the
