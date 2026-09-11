@@ -1751,7 +1751,7 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
  *  which should take up most of the icon, with short little legs coming off of
  *  it (so it's mostly a frame). the frame fills in with info at the same zoom
  *  that parcels do"). One glyph for every zoom: at town width the frame is
- *  EMPTY (`art` null) — a small square and two strokes, no image, no clip
+ *  EMPTY (`art` null) — a small circle and two strokes, no image, no clip
  *  path; at district and street width the same frame, larger, FILLED with the
  *  face (the picture clipped to the frame, or the monogram on the household's
  *  colour) — exactly the house card's rule: frame far out, picture near. Fixed
@@ -1766,24 +1766,30 @@ export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label =
   const filled = !!(art && (art.avatar || art.monogram));
   const size = (filled ? WALKER_FRAME.near : WALKER_FRAME.far) * s;
   const leg = (filled ? WALKER_FRAME.legNear : WALKER_FRAME.legFar) * s;
-  const x0 = x - size / 2, y0 = y - size / 2, rx = 2 * s, bottom = y + size / 2;
+  const r = size / 2, x0 = x - r, y0 = y - r;
+  // THE FRAME IS ROUND (founder, 2026-09-11: "make the frame circular rather
+  // than square. keep the legs (they're perfect)"). The legs are untouched —
+  // same stance, same length — and start where they meet the rim: on a circle
+  // of radius r the point 0.22·size off centre lies √(r² − (0.22·size)²) below
+  // the middle, a hair above where the square's bottom edge was.
+  const rim = y + Math.sqrt(r * r - (size * 0.22) ** 2);
   const who = esc(label ?? handle);
   const safe = String(handle ?? "").toLowerCase().replace(/[^a-z0-9-]/g, "");
   let fill = "";
   if (filled && art.avatar) {
     const clip = `wv-face-${safe}`;
-    fill = `<clipPath id="${clip}"><rect x="${x0}" y="${y0}" width="${size}" height="${size}" rx="${rx}"/></clipPath>`
+    fill = `<clipPath id="${clip}"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath>`
       + `<image href="${esc(art.avatar)}" x="${x0}" y="${y0}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
   } else if (filled) {
-    fill = `<rect x="${x0}" y="${y0}" width="${size}" height="${size}" rx="${rx}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
+    fill = `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
       + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
   }
   return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
     + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit"/>`
     + fill
-    + `<rect x="${x0}" y="${y0}" width="${size}" height="${size}" rx="${rx}" class="wv-walker-frame"/>`
-    + `<line x1="${x - size * 0.22}" y1="${bottom}" x2="${x - size * 0.3}" y2="${bottom + leg}" class="wv-walker-leg"/>`
-    + `<line x1="${x + size * 0.22}" y1="${bottom}" x2="${x + size * 0.3}" y2="${bottom + leg}" class="wv-walker-leg"/>`
+    + `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-frame"/>`
+    + `<line x1="${x - size * 0.22}" y1="${rim}" x2="${x - size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
+    + `<line x1="${x + size * 0.22}" y1="${rim}" x2="${x + size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
     + `</g>`;
 }
 
@@ -1818,6 +1824,30 @@ export function homeMarkOfParcel(parcelId, marks = []) {
     if (!best || (m.image && !best.image)) best = m;
   }
   return best;
+}
+
+/** THE PARCEL UNDERFOOT WEARS NO CARD (founder, 2026-09-11: "let's not display
+ *  the parcel card when the view is the parcel itself or anything within it").
+ *  Given the MOUNTED room, the parcels it is or is inside of by the record's
+ *  own chain — `parent` and `placementParent`, both walked, cycle-safe: a
+ *  parcel entered directly, the dwelling sited on it, a room in that dwelling.
+ *  A card is a landmark seen from outside; drawn over the floor you are
+ *  standing on it is the roof over your head, and every other parcel in view
+ *  keeps its card exactly as outside. Nothing mounted — the town — is the
+ *  empty set. Pure. */
+export function enclosingParcels(roomId, marks = []) {
+  const byMarkId = markIndex(marks);
+  const out = new Set(), seen = new Set(), queue = roomId ? [roomId] : [];
+  while (queue.length) {
+    const id = queue.shift();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    const m = byMarkId.get(id);
+    if (!m) continue;
+    if (m.kind === "parcel") out.add(id);
+    queue.push(m.parent, m.placementParent);
+  }
+  return out;
 }
 
 /** THE TOWN'S HOUSES, as a set a resident's map can be handed (2026-09-11,
@@ -3957,9 +3987,14 @@ const STYLE = `
    word): warm and low-contrast, because it is the GROUND, and ground that
    competes with the furniture standing on it is a rug, not a floor */
 .wv-scene-ground { fill:#e8e0cf; fill-opacity:.94; }
-/* placeholder extents: the block is presence, not glass — colour does the
-   distinguishing (low saturation, per-mark hue), so no transparency games */
-.wv-ph-extent { stroke-width:1.2; pointer-events:none; }
+/* placeholder extents at HALF PRESENCE (founder, 2026-09-11: "reduce the
+   opacity of placeholder mark-images to around 50%"). This revises his 08-20
+   word — "the block is presence, not glass … no transparency games" — said of
+   a room holding a dozen blocks; with every art-less mark in town drawn as one
+   at district width, and the houses now carded inside rooms, a full block
+   buried the ground it stands on. Hue still does the distinguishing (low
+   saturation, per-mark); the half is so the ground reads through. */
+.wv-ph-extent { stroke-width:1.2; opacity:.5; pointer-events:none; }
 .wv-scene-art-frame { stroke:#3a3428; stroke-width:1.6; }
 .wv-scene-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
 .wv-scene-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
@@ -7272,6 +7307,9 @@ export function mountViewer(appEl) {
     // box as "everything is in it".
     const tier = drawTier();
     const bounds = drawnBounds();
+    // …and the one parcel NEITHER house pass draws: the one underfoot. Empty
+    // outdoors, where nothing is mounted — see enclosingParcels.
+    const underfoot = enclosingParcels(sceneRoomId, byId);
     // THE TIER IS PUT ON THE DRAWING ITSELF, not kept in a closure. A reader
     // with dev tools open, a screenshot, and the QA probes all need to know
     // which of the three paintings they are looking at, and the honest source
@@ -7335,14 +7373,17 @@ export function mountViewer(appEl) {
     const fanned = mapCtx?.zoomK >= FAN_MIN_ZOOM ? coLocatedMarkIds(drawn) : new Set();
     for (const m of drawn) {
       const p = px(m.at);
+      // THE FULL MARK BY ID: the radial's thin entry carries no `kind`, and a
+      // parcel is told from a pip by its kind (see the furnishing pass above).
+      const full = byId.get(m.id) ?? m;
+      // THE PARCEL UNDERFOOT WEARS NO CARD (2026-09-11) — and no pip and no
+      // glyph id either, so nothing of it is left to hover or hit.
+      if (full.kind === "parcel" && underfoot.has(m.id)) continue;
       // THE FAN RIDES INSIDE THE SCALED SPACE, which is why it is a `cx`/`cy` on
       // the circle rather than an addition to the translate: scaled by the same
       // variable, it stays the constant few panel pixels it was when the string
       // divided it by k.
       glyphIds.add(m.id);
-      // THE FULL MARK BY ID: the radial's thin entry carries no `kind`, and a
-      // parcel is told from a pip by its kind (see the furnishing pass above).
-      const full = byId.get(m.id) ?? m;
       if (full.kind === "parcel") {
         s += homeCard(full, p, fanned.has(m.id) ? fanOffsetPx(m.id) : null, nameOf(m), tier);
         continue;
@@ -7371,9 +7412,10 @@ export function mountViewer(appEl) {
     // different"). This pass used to be skipped indoors ("the roof rule") — a
     // difference SCENES.md never listed, which by its own rule made it a defect.
     // The houses are the map's landmarks in both scenes; the room's own
-    // registration places them where they stand.
+    // registration places them where they stand. The one parcel not carded in
+    // EITHER scene is the one underfoot (2026-09-11) — see enclosingParcels.
     for (const m of allMarks()) {
-      if (m.kind !== "parcel" || !m.at || glyphIds.has(m.id)) continue;
+      if (m.kind !== "parcel" || !m.at || glyphIds.has(m.id) || underfoot.has(m.id)) continue;
       if (!markInDrawnBounds(m, bounds)) continue;
       glyphIds.add(m.id);
       s += homeCard(m, px(m.at), null, nameOf(m), tier);

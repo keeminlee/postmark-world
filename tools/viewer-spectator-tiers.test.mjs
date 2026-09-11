@@ -41,6 +41,8 @@ import {
 } from "../spectator/viewer.mjs";
 import { readFileSync } from "node:fs";
 
+const SOURCE = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
+
 // The painting is 1500 atlas units at 5 m each (WORLD/skeleton.json), so the
 // whole sheet is 7,500 m across. Written as the product rather than as 7500 so
 // the relation is visible: if the skeleton's scale ever moves, what this file
@@ -174,8 +176,18 @@ test("THE WALKER IS A FRAME WITH LEGS — empty at town width, no picture, no cl
   assert.equal((svg.match(/<line /g) ?? []).length, 2, "a little pair of legs");
   assert.ok(!/<image|clip-path|wv-walker-mono/.test(svg), "empty: no picture, no clip path, no monogram — the frame is the whole icon");
   assert.match(svg, /wv-walker-hit/, "and a hit disc");
-  const w = Number(svg.match(/width="([\d.]+)" height="[\d.]+" rx="[\d.]+" class="wv-walker-frame"/)[1]);
-  assert.equal(w, WALKER_FRAME.far / 2, "marker space: at k=2 the frame is half its k=1 size");
+  // THE FRAME IS ROUND (founder, 2026-09-11): one circle, no square anywhere in it
+  const r = Number(svg.match(/<circle cx="100" cy="200" r="([\d.]+)" class="wv-walker-frame"\/>/)[1]);
+  assert.equal(r * 2, WALKER_FRAME.far / 2, "marker space: at k=2 the frame is half its k=1 size");
+  assert.ok(!/<rect/.test(svg), "no square anywhere in it");
+  // …and the legs, untouched in stance and length, start where they meet the rim
+  const size = WALKER_FRAME.far / 2, legTop = 200 + Math.sqrt((size / 2) ** 2 - (size * 0.22) ** 2);
+  const legs = [...svg.matchAll(/<line x1="([\d.]+)" y1="([\d.]+)" x2="([\d.]+)" y2="([\d.]+)"/g)].map((m) => m.slice(1).map(Number));
+  for (const [x1, y1, , y2] of legs) {
+    assert.ok(Math.abs(y1 - legTop) < 1e-9, `a leg starts on the rim: ${y1} vs ${legTop}`);
+    assert.ok(Math.abs(Math.abs(x1 - 100) - size * 0.22) < 1e-9, "the same stance as before");
+    assert.ok(Math.abs((y2 - y1) - WALKER_FRAME.legFar / 2) < 1e-9, "the same length as before");
+  }
   assert.match(walkerFrameSVG({ at: { x: 0, y: 0 }, moving: true }), /class="wv-walker-far moving"/);
   assert.equal(walkerFrameSVG({ at: { x: NaN, y: 1 } }), "", "an unplaced walker draws nothing");
   // ⚑ THE FLIP: drop one <line> from walkerFrameSVG and the legs count reds.
@@ -184,17 +196,17 @@ test("THE WALKER IS A FRAME WITH LEGS — empty at town width, no picture, no cl
 test("THE FRAME FILLS IN nearer in — the picture clipped to the frame, or the monogram on the household's colour — at the house card's own size step", () => {
   const pic = walkerFrameSVG({ at: { x: 10, y: 20 }, k: 1, handle: "rei", art: { avatar: "/shelf/rei.jpg" } });
   assert.match(pic, /^<g class="wv-walker-near" data-handle="rei"/, "the filled frame is the walker proper");
-  assert.match(pic, /<clipPath id="wv-face-rei"><rect /, "the picture is clipped to the FRAME, not a circle");
+  assert.match(pic, /<clipPath id="wv-face-rei"><circle cx="10" cy="20" r="11"\/>/, "the picture is clipped to the FRAME — which is round (founder, 2026-09-11)");
   assert.match(pic, /<image href="\/shelf\/rei.jpg"[^>]*class="wv-walker-face"/);
   assert.equal((pic.match(/<line /g) ?? []).length, 2, "legs stay");
-  const w = Number(pic.match(/width="([\d.]+)" height="[\d.]+" rx="[\d.]+" class="wv-walker-frame"/)[1]);
-  assert.equal(w, WALKER_FRAME.near, "filled, the frame is the near size");
+  const r = Number(pic.match(/r="([\d.]+)" class="wv-walker-frame"/)[1]);
+  assert.equal(r * 2, WALKER_FRAME.near, "filled, the frame is the near size");
   assert.ok(WALKER_FRAME.near > WALKER_FRAME.far, "and larger than the empty one");
   const mono = walkerFrameSVG({ at: { x: 10, y: 20 }, handle: "nyx", art: { monogram: "N", color: "#123456" } });
   assert.match(mono, /wv-walker-mono" fill="#123456"/, "no picture: the household's colour fills the frame");
   assert.match(mono, /class="wv-walker-initial"[^>]*>N</, "with the monogram on it");
   assert.ok(!/<image/.test(mono));
-  // ⚑ THE FLIP: clip to a <circle> instead of the frame's <rect> → the clipPath assertion reds.
+  // ⚑ THE FLIP: clip to a <rect> instead of the frame's <circle> → the clipPath assertion reds.
 });
 
 test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, and the pip stays", () => {
@@ -218,6 +230,14 @@ test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, a
   assert.ok(nodes(glyph) < nodes(card) / 2,
     `the far house is under half the card's nodes (${nodes(glyph)} vs ${nodes(card)})`);
   assert.equal(overlayHouseGlyphSVG({ at: { x: NaN, y: 0 }, id: "x" }), "", "a mark with no place draws nothing");
+});
+
+test("THE PLACEHOLDER BLOCK IS HALF PRESENT — the ground reads through it (founder, 2026-09-11, revising 08-20's 'no transparency games')", () => {
+  assert.match(SOURCE, /\.wv-ph-extent \{ [^}]*opacity:\.5;/, "50%, on the element, so the edge fades with the fill");
+  const svg = placeholderExtentSVG({ id: "a/b", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 4, h: 4 } }, (p) => p);
+  assert.match(svg, /class="wv-ph-extent"/, "the block is still the block");
+  assert.doesNotMatch(svg, /opacity/, "the half is the stylesheet's, not the markup's — one place");
+  // ⚑ THE FLIP: delete `opacity:.5;` from the .wv-ph-extent rule → reds.
 });
 
 test("THE MID FURNITURE — a mark's shape without its photograph", () => {
