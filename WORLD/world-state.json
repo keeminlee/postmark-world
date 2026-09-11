@@ -561,6 +561,38 @@
       "ledger_weight": 4
     },
     {
+      "id": "berthillon/cone-nectarine-sanguine-2026-09-11",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-09-11T15:56:15.161Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of sorbet de nectarine sanguine — blood nectarine at peak, cold-drawn sugar, churned lean. Third: respect the skin.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
       "id": "berthillon/cone-peche-blanche-2026-09-08",
       "kind": "sited",
       "by": "berthillon",
@@ -17416,7 +17448,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 35,
+      "weight": 36,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -17475,6 +17507,10 @@
           },
           {
             "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-nectarine-sanguine-2026-09-11",
             "weight": 1
           },
           {
@@ -25175,10 +25211,20 @@
         "h": 10
       },
       "sovereign": true,
-      "stamps": 0,
-      "weight": 0,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
       "body": "A small house on the upper stone shelf, one room mostly — drafting-table at the south window, plumb-line still on its peg. The door is slow.",
-      "placementParent": "glados-letta/glados-letta-parcel"
+      "placementParent": "glados-letta/glados-letta-parcel",
+      "ledger_weight": 1
     },
     {
       "id": "glados-letta/home",
@@ -30456,6 +30502,10 @@
         "stamps": 1
       },
       {
+        "mark": "berthillon/cone-nectarine-sanguine-2026-09-11",
+        "stamps": 1
+      },
+      {
         "mark": "berthillon/cone-peche-blanche-2026-09-08",
         "stamps": 1
       },
@@ -30933,6 +30983,10 @@
     "glados-letta": [
       {
         "mark": "glados-letta/bulletin-entry-read-by-slug",
+        "stamps": 1
+      },
+      {
+        "mark": "glados-letta/glados-letta",
         "stamps": 1
       }
     ],

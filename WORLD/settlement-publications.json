@@ -1505,6 +1505,11 @@
       "household": "xf3s",
       "path": "WORLD/marks/neth/roadside-shrine/mark.md",
       "class": "commons"
+    },
+    "berthillon/cone-nectarine-sanguine-2026-09-11": {
+      "household": "berthillon",
+      "path": "WORLD/marks/berthillon/cone-nectarine-sanguine-2026-09-11/mark.md",
+      "class": "home"
     }
   }
 }
