@@ -4421,6 +4421,121 @@ const MARKUP = `
 </div>
 `;
 
+// ───────── the resident's read, as the painting and the pane want it ────────
+//
+// WHAT THIS IS FOR. On the resident path the page no longer computes the field
+// of view: the office does, and the page reads the answer. But every surface
+// downstream — `overlayMarks`, `syncWithin`, the card list — was written
+// against the ENGINE's radial, an eighteen-field row organised by bearing and
+// band. The read is a six-field row and a flat list. This is the one place the
+// two meet, and it is a pure function so the meeting can be tested without a
+// browser, an office or a fold.
+//
+// ⚑ WHAT IT DELIBERATELY DOES NOT DO (Keemin, 2026-09-10 22:4x — the compact
+// read). It does not re-judge anything. No occlusion, no dimming, no salience
+// score, no fog: the READ already decided what is visible from that standpoint,
+// and a page that recomputed any of it would be a second engine quietly
+// disagreeing with the first. Rows carry what the read gave and nothing
+// invented. Where the engine's radial had a number this read does not carry,
+// the number is ABSENT, not guessed — `tallies` printing nothing is the honest
+// outcome, and far better than a count the door never said.
+//
+// BANDS ARE NOT REBUILT EITHER. The engine's distance bands are its own
+// vocabulary, derived from dials this read does not carry. The ruling is that
+// the page groups by BEARING and sorts by distance, which is the read's own
+// organisation, so each bearing gets one band — the single word below — and the
+// resident card list reads bearing-first. `overlayMarks` flattens every band it
+// is given, so the painting is unaffected by that choice.
+export const RESIDENT_BAND = "in sight";
+
+/**
+ * An apex/eyes read → the radial shape the painting and the pane consume.
+ *
+ * `read` is what the office answers: `within` (the containment spine),
+ * `nearby` (or `objects` — the same six-field rows under the two doors' two
+ * names), and `records` (Half 1: the full mark record for everything named,
+ * plus the town's ground).
+ *
+ * Each row is the RECORD with the read's own positional fields laid over it, in
+ * that order: the record supplies `body`, `extent`, `image`, `household`,
+ * `weight` — what a card draws — and the read supplies `at`, `bearing`,
+ * `distM`, `kind`, `tier`, which are what the STANDPOINT says and must win. A
+ * record for an id the read did not name is not a row; the ground set is the
+ * floor, not scenery.
+ *
+ * An id the read names with no record in it is NOT dropped and NOT faked: the
+ * row stands with `unread: true` on it, so the page can say so where it would
+ * have drawn. A blank where a mark should be is the failure this whole lane is
+ * meant to make impossible.
+ */
+export function residentRadial(read = {}) {
+  const named = Array.isArray(read.nearby) ? read.nearby
+    : Array.isArray(read.objects) ? read.objects : [];
+  const records = read.records ?? {};
+  const byBearing = {};
+  let unread = 0;
+  for (const o of named) {
+    if (!o?.id) continue;
+    const record = records[o.id] ?? null;
+    if (!record) unread += 1;
+    const row = {
+      ...(record ?? {}),
+      id: o.id,
+      at: o.at ?? record?.at ?? null,
+      bearing: o.bearing ?? null,
+      distM: o.distance_m ?? o.distM ?? null,
+      kind: o.kind ?? record?.kind ?? null,
+      tier: o.tier ?? record?.tier ?? null,
+      ...(record ? {} : { unread: true }),
+    };
+    const bearing = row.bearing ?? "—";
+    (byBearing[bearing] ??= {});
+    (byBearing[bearing][RESIDENT_BAND] ??= []).push(row);
+  }
+  // nearest first within each bearing — the read's own ordering, made explicit
+  for (const bands of Object.values(byBearing))
+    for (const rows of Object.values(bands))
+      rows.sort((a, b) => (a.distM ?? 0) - (b.distM ?? 0) || String(a.id).localeCompare(String(b.id)));
+  return {
+    within: Array.isArray(read.within) ? read.within : [],
+    byBearing,
+    // ABSENT, NOT EMPTY. `observer`, `fog` and `sightReachM` are the engine's
+    // own state and the read does not carry them; the three state lines that
+    // read them are dropped on this path and the telling PROSE says what they
+    // said. `null` here rather than `{}` so a consumer that forgets to check
+    // fails loudly instead of rendering a confident blank.
+    observer: null, fog: null, sightReachM: null, aggregate: null,
+    // The only count this read can honestly make. `tallies` needs `candidates`
+    // to print its first line and will print nothing — which is correct: the
+    // door never said how many it considered.
+    counts: { shown: named.length, ...(unread ? { unread } : {}) },
+    telling: typeof read.telling === "string" ? read.telling : null,
+    fromRead: true,   // the one flag the render spine branches on
+  };
+}
+
+/** The ids a resident read names — its own list, for the page to resolve against. */
+export function residentReadIds(read = {}) {
+  const named = Array.isArray(read.nearby) ? read.nearby
+    : Array.isArray(read.objects) ? read.objects : [];
+  const out = new Set();
+  for (const o of named) if (o?.id) out.add(o.id);
+  for (const w of read.within ?? []) if (w?.id) out.add(w.id);
+  return out;
+}
+
+/**
+ * The cache key for one resident read.
+ *
+ * THE CROSSING IS IN IT, and that is not housekeeping: the read is an answer
+ * about a moment, and the office's own fog moves with the crossing (it did not
+ * until 2026-09-10 — see the office's crossing fix). A cache that kept an
+ * answer across a crossing would show a resident last night's light.
+ */
+export function residentReadKey({ handle = "", x = 0, y = 0, crossing = 0 } = {}) {
+  return `${handle}|${Math.round(x)}|${Math.round(y)}|${crossing}`;
+}
+
 export function mountViewer(appEl) {
   if (!appEl) throw new Error("mountViewer needs a host element");
   const shadowHost = appEl;
