@@ -8565,14 +8565,21 @@ export function mountViewer(appEl) {
     const room = roomId ? (byId.get(roomId) ?? null) : null;
     if (!room) return null;
     const parcel = parcelForHousehold(room.household ?? room.by, allMarks());
-    const handle = parcel ? homeHandleForParcel(parcel, room) : String(room.by ?? room.household ?? "").trim();
+    // THE DWELLING'S PICTURE, exactly as the street's column takes it — never
+    // the room's own art. A room with no shelf picture stands in as a tinted
+    // extent (the founder's placeholder rule for the scene), and that
+    // placeholder is the wrong thing to hang at the top of a reading: seen on
+    // dev 2026-09-11 as a 320 px dark polygon over wright's own words.
+    const found = parcel ? homeMarkOfParcel(parcel.id, allMarks()) : null;
+    const home = found ? (byId.get(found.id) ?? found) : null;
+    const handle = parcel ? homeHandleForParcel(parcel, home ?? room) : String(room.by ?? room.household ?? "").trim();
     if (!handle) return null;
     return {
       key: `room:${room.id}`,
       handle,
       kicker: String(room.household ?? room.by ?? handle),
-      title: markIdentity(room),
-      leadImage: markImagePath(room) ?? (parcel ? markImagePath(parcel) : null),
+      title: markIdentity(home ?? parcel ?? room),
+      leadImage: (home && markImagePath(home)) ?? (parcel ? markImagePath(parcel) : null),
     };
   }
   const bubbleEls = { hover: null, pinned: null };
