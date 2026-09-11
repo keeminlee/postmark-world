@@ -5606,9 +5606,20 @@ export function mountViewer(appEl) {
     // here with `world` null and the telling would fail. The page owes them the
     // town at that moment instead — asked for once, the same way the resident
     // arm asks for its read, with the pane saying so meanwhile.
+    // ⚑ ONLY ONCE WE KNOW WHO IS READING. Without `identitySettled` this arm
+    // fires at the FIRST render — which happens before the office has answered
+    // whoami, when every reader still looks like a spectator — and fetches the
+    // very fold the boot order was rearranged to avoid. That is exactly what it
+    // did: this repair silently undid the saving it was written to protect, and
+    // the next dev run showed `world=true` on a resident page. Measure after
+    // every change, including the small safe-looking ones.
     if (!world) {
-      loadFold().then(() => { applyWorldLayer(); renderCurrent(); }).catch(() => {});
-      box.innerHTML = chips + `<div class="wv-quiet">reading the whole town…</div>`;
+      if (identitySettled) {
+        loadFold().then(() => { applyWorldLayer(); renderCurrent(); }).catch(() => {});
+        box.innerHTML = chips + `<div class="wv-quiet">reading the whole town…</div>`;
+      } else {
+        box.innerHTML = chips + `<div class="wv-quiet">opening your eyes…</div>`;
+      }
       return null;
     }
     const e = openYourEyes({ x: standpoint.x, y: standpoint.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
@@ -5862,7 +5873,30 @@ export function mountViewer(appEl) {
     const id = stack[stack.length - 1];
     // one branch, both surfaces: renderExpansion is what the Telling's cells and
     // the painting's bubble each fold open, so the frame reads the same in both
-    const d = id === WORLD_ROOT_ID ? worldFrameReading(byId.get(id), allMarks()) : investigate(id, world);
+    // ── CLICK FOR MORE = INVESTIGATE (Keemin, 2026-09-10 22:1x) ─────────────
+    //
+    // "We just need 'click for more' to = investigate." On the fold path that
+    // is the engine's own `investigate` over the world in hand. On the resident
+    // path there IS no world in hand — and the answer is not to widen `records`
+    // to carry every mark's children and predicates, it is to ask the door that
+    // already answers exactly this question. Same verb, same answer, one side
+    // of the wire or the other.
+    //
+    // Cached by id: opening a card, closing it and opening it again is the same
+    // question, and the descent is the commonest thing a reader does.
+    let d;
+    if (id === WORLD_ROOT_ID) d = worldFrameReading(byId.get(id), allMarks());
+    else if (world) d = investigate(id, world);
+    else {
+      const seen = investigateCache.get(id);
+      if (seen) d = seen;
+      else {
+        loadInvestigate(id).then((got) => { if (got) renderExpansion(card); });
+        if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
+        box.innerHTML = `<div class="wv-quiet">looking closer…</div>`;
+        return;
+      }
+    }
     if (d.error) {
       if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
       box.innerHTML = `<div class="wv-err">${esc(d.error)}</div>`;
@@ -7644,6 +7678,23 @@ export function mountViewer(appEl) {
     if (!canAct()) return;
     const destination = pointWalkDestination({ x, y }, allMarks());
     if (!destination) return;
+    // ── A CLICK OUTSIDE WHAT THE READ NAMED (Q4, 2026-09-10) ────────────────
+    //
+    // On the resident path `allMarks()` is the drawn set, so a click out in the
+    // country lands on nothing this page has ever heard of and the destination
+    // is a bare coordinate. That IS the ruled fallback, and it stays the answer
+    // if the office has nothing either — but the office usually does: one
+    // ANONYMOUS read at the point (no handle: nobody is standing there, and an
+    // embodied call could not stand there anyway) comes back with the
+    // containment spine, and the innermost mark on it is the ground underfoot.
+    //
+    // ⚑ INNERMOST, NOT `within[0]`. The ruling says "within[0] names the
+    // ground"; `containmentChain` returns the nest ROOT-FIRST, so `within[0]`
+    // is the world itself — "you are walking to Let There Be Light" for every
+    // point on the map. The last entry is the ground. Reading the code rather
+    // than the phrasing, and saying so here so the next reader is not confused
+    // by the difference.
+    if (!destination.inside && !world) nameThePoint(destination);
     // THE WALLS, before anything is armed. Asked here rather than at confirm so
     // the reader is told at the click, while the place they meant is still
     // under their cursor — and so nothing is ever armed that the door would
@@ -8869,6 +8920,9 @@ export function mountViewer(appEl) {
   // MOMENT — the office's own fog moves with the crossing (it did not until
   // 2026-09-10; see the office's crossing fix) — so an answer kept across one
   // would show a resident last night's light. `residentReadKey` owns that.
+  // Has the office told us who is reading? Until it has, every reader looks
+  // like a spectator and nothing may be decided on that resemblance.
+  let identitySettled = false;
   const readCache = new Map();
   const readPending = new Map();   // key -> promise, so N callers make ONE request
   let readError = null;
@@ -8929,6 +8983,67 @@ export function mountViewer(appEl) {
   // BOUNDED ANYWAY. A door that never said `complete` would otherwise spin this
   // forever; twelve pages is 240 marks, past any household on the record, and
   // running out says so rather than pretending the walk finished.
+  // The ground under a point nobody is standing on. Keyless by construction —
+  // this is a question about a PLACE, not about a resident — and cached by the
+  // point and the crossing, because a reader choosing a destination clicks the
+  // same patch of country more than once.
+  const pointNameCache = new Map();
+  function nameThePoint(destination) {
+    const key = `${destination.x}|${destination.y}|${state.crossing}`;
+    const known = pointNameCache.get(key);
+    if (known !== undefined) { applyPointName(destination, known); return; }
+    fetch(officeUrl(`/world/apex?x=${destination.x}&y=${destination.y}&crossing=${state.crossing}`),
+      { credentials: "same-origin" })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        const read = await r.json();
+        if (read?.error) throw new Error(read.defect ?? read.error);
+        // the records ride into the index so the label has something to name
+        for (const [id, record] of Object.entries(read.records ?? {}))
+          if (!byId.has(id)) byId.set(id, record);
+        const spine = Array.isArray(read.within) ? read.within : [];
+        const innermost = spine.length ? spine[spine.length - 1]?.id ?? null : null;
+        pointNameCache.set(key, innermost);
+        applyPointName(destination, innermost);
+      })
+      .catch(() => { pointNameCache.set(key, null); });   // a bare coordinate is a real answer
+  }
+  function applyPointName(destination, innermost) {
+    if (!innermost) return;
+    destination.inside = innermost;
+    // only repaint if this is still the destination the reader is looking at
+    if (walkState.destination && walkState.destination.x === destination.x
+      && walkState.destination.y === destination.y) renderWalkDestination();
+  }
+
+  // The close look, from the door that owns it. `worldInvestigate` is what the
+  // office answers with and what the engine computes on the other path, so the
+  // two cannot drift: it is one verb with two homes, not two implementations.
+  const investigateCache = new Map();
+  const investigatePending = new Map();
+  function loadInvestigate(id) {
+    if (investigateCache.has(id)) return Promise.resolve(investigateCache.get(id));
+    if (investigatePending.has(id)) return investigatePending.get(id);
+    const p = fetch(officeUrl(`/world/investigate?mark=${encodeURIComponent(id)}`),
+      { headers: authHeaders(), credentials: "same-origin" })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`the office answered ${r.status}`);
+        const got = await r.json();
+        // A BOUNCE IS AN ANSWER AND IS KEPT. Caching it stops a card that cannot
+        // be opened from asking the office again on every click.
+        investigateCache.set(id, got?.error ? { error: got.defect ?? got.error } : got);
+        return investigateCache.get(id);
+      })
+      .catch((e) => {
+        const failed = { error: `the office could not open this one: ${String(e?.message ?? e).slice(0, 120)}` };
+        investigateCache.set(id, failed);
+        return failed;
+      })
+      .finally(() => investigatePending.delete(id));
+    investigatePending.set(id, p);
+    return p;
+  }
+
   // ONE ID LOOKUP FOR THE RESIDENT PATH, and it never touches the fold: the
   // read's `records` first (the town's canon at this standpoint), then the
   // resident's own rows. `residentById` owns the precedence and the reason.
@@ -9057,6 +9172,7 @@ export function mountViewer(appEl) {
       if (state.markFilter === "mine") state.markFilter = "everything";
       applyWorldLayer();
     }
+    identitySettled = true;   // the office has answered; a spectator is now a CHOICE, not a default
     pruneViewCache(handles); // a pane for a handle this key no longer has describes nobody
     renderPresets();
     renderIdentity();
