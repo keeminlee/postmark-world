@@ -9861,6 +9861,23 @@ export function mountViewer(appEl) {
       state.actAs = SPECTATOR_ACTOR;
       walkState.actorBound = false;
       try { localStorage.setItem(ACT_AS_KEY, SPECTATOR_ACTOR); } catch {}
+      // ── THE INDEX FOLLOWS THE READER, THIS WAY TOO (2026-09-11) ─────────
+      //
+      // The resident arm below refills `byId` from the returning resident's
+      // read. Nothing refilled it on the way OUT: a Spectator arriving after
+      // a resident detour drew the whole town from the fold (`allMarks()`
+      // reads `world.marks` here) while `byId` still held that resident's
+      // read — 88 records, no `at` for anything outside their eyes. The click
+      // path asks `byId` for a mark's place, found none, and fell through to
+      // "open ground": every house outside the last resident's read was
+      // unclickable, which is what Keemin met in the Threshold District. The
+      // fold's own index is what a Spectator's page is; when the fold is in
+      // hand it is restored here, and `homeSet` with it. When it is not, the
+      // telling's late fetch assembles it and `applyWorldLayer` fills both.
+      if (world) {
+        byId = new Map(world.marks.map((m) => [m.id, m]));
+        homeSet = buildHomeSet(data?.manifest, world.marks);
+      }
       clearSelectionAndDestination();
       root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
       renderIdentity();
