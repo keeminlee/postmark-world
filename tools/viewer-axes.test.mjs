@@ -91,6 +91,7 @@ import {
   writePaintingOnly,
   PAINTING_ONLY_KEY,
   contestedMarksAtPoint,
+  rankMarksAtPoint,
   orderInnermostFirst,
   chooserLeadLine,
   chooserId,
@@ -1585,6 +1586,87 @@ test("nothing in radius is an empty list, and bad input is not a throw", () => {
   assert.deepEqual(contestedMarksAtPoint({ x: NaN, y: 0 }, [PIP("a", 0, 0)]), []);
   assert.deepEqual(contestedMarksAtPoint({ x: 0, y: 0 }, []), []);
   assert.deepEqual(contestedMarksAtPoint({ x: 0, y: 0 }, [{ x: 0, y: 0 }]), [], "a pip with no id is not a choice");
+});
+
+// ───── a mark is hit by what was drawn for it (Keemin, 2026-09-11) ─────
+//
+// "make parcels more clickable (match their drawn size)". A parcel's home card
+// is about 45 px wide on screen and the snap circle is 18 px around its centre,
+// so the roof and both lower corners of every house in town were dead to a
+// click: the reader aimed at the house and walked to the ground instead.
+//
+// A candidate may now carry the screen box of the shape the overlay drew for
+// it. A pip-drawn mark carries none and keeps the radius it always had, which
+// is why every test above this line is untouched — and that is the point of
+// them being untouched rather than adjusted.
+
+const CARD = (id, x, y, w = 46, h = 58) => ({
+  id, x, y,
+  box: { left: x - w / 2, right: x + w / 2, top: y - h / 2, bottom: y + h / 2 },
+});
+
+test("THE HOUSE BODY IS THE TARGET — a point inside the card, outside the 18 px circle, hits", () => {
+  const card = CARD("jack/the-lantern-parcel", 100, 100);
+  const corner = { x: card.box.left + 1, y: card.box.top + 1 };   // the card's top-left, one pixel in
+  // ⚑ THE ASSERTION THAT MAKES THIS TEST MEAN ANYTHING. The point must be
+  //   OUTSIDE the snap circle, or it would have hit before this change too and
+  //   the test would pass just as well on the old code.
+  assert.ok(Math.hypot(corner.x - 100, corner.y - 100) > MARK_SNAP_RADIUS_PX,
+    "the corner is outside the 18 px snap circle — otherwise this proves nothing");
+  assert.equal(snappedMarkAtPoint(corner, [card]), "jack/the-lantern-parcel");
+  assert.deepEqual(contestedMarksAtPoint(corner, [card]), ["jack/the-lantern-parcel"]);
+  // and a point outside the box is still a miss: the box is a box, not a free pass
+  assert.equal(snappedMarkAtPoint({ x: card.box.left - 2, y: card.box.top - 2 }, [card]), null);
+  // ⚑ THE FLIP: drop the `mark?.box &&` branch from rankMarksAtPoint and the two
+  //   hits red while every pip test above stays green.
+});
+
+test("A PIP BEATS A BOX IT SITS INSIDE — nothing standing on a parcel becomes less clickable", () => {
+  // The safety argument for the whole change, in one assertion. A bench, a
+  // predicate, a building: each is a pip standing on the parcel's ground, and
+  // each would have become unreachable the moment a card's box outranked it.
+  // The addendum asked for parcels to be MORE clickable, and a change that made
+  // their contents less clickable would be answering a different request.
+  const card = CARD("jack/the-lantern-parcel", 100, 100);
+  const bench = PIP("jack/the-bench", 108, 112);
+  const at = { x: 108, y: 112 };
+  assert.equal(snappedMarkAtPoint(at, [card, bench]), "jack/the-bench", "the pip wins");
+  assert.deepEqual(contestedMarksAtPoint(at, [card, bench]), ["jack/the-bench", "jack/the-lantern-parcel"],
+    "and the parcel is still offered — the reader chooses, which is the rule this map already has");
+});
+
+test("TWO CARDS UNDER ONE POINT ORDER BY WHICH ONE YOU WERE MORE NEARLY POINTING AT", () => {
+  // They do overlap. Measured 2026-09-11 on the synthetic ten-times record:
+  // 4,726 pairs of cards overlap at district width. An alphabetical answer there
+  // would make the map feel arbitrary; distance to the card's own centre does
+  // not, and it is the same "nearest wins" the pips have always used.
+  const near = CARD("b/near", 100, 100);
+  const far = CARD("a/far", 130, 100);
+  // inside both boxes, outside both snap circles, and measurably nearer to
+  // b/near's centre (23.3 px) than to a/far's (26.9 px) — the numbers are the
+  // test. A point chosen by eye put it nearer a/far and this read as a code
+  // failure until the distances were worked out.
+  const at = { x: 112, y: 120 };
+  assert.ok(Math.hypot(at.x - 100, at.y - 100) > MARK_SNAP_RADIUS_PX
+    && Math.hypot(at.x - 130, at.y - 100) > MARK_SNAP_RADIUS_PX, "outside both snap circles");
+  assert.deepEqual(contestedMarksAtPoint(at, [far, near]), ["b/near", "a/far"],
+    "nearest card centre first, despite a/far winning alphabetically");
+});
+
+test("THE RANKING IS ONE FUNCTION — the snap and the chooser cannot drift apart", () => {
+  // They used to be two functions holding the same arithmetic, kept in step by a
+  // comment asking the next person to keep them in step. Now the chooser IS the
+  // ranking and the snap is its head, so "they can never disagree" is an
+  // identity rather than a promise.
+  const marks = [CARD("b/card", 100, 100), PIP("a/pip", 112, 108), PIP("z/away", 900, 900)];
+  for (const at of [{ x: 112, y: 108 }, { x: 82, y: 76 }, { x: 500, y: 500 }]) {
+    const ranked = rankMarksAtPoint(at, marks);
+    assert.equal(snappedMarkAtPoint(at, marks), ranked[0]?.id ?? null);
+    assert.deepEqual(contestedMarksAtPoint(at, marks), ranked.map((m) => m.id));
+  }
+  // a candidate whose box is malformed is a pip, not a throw
+  assert.equal(snappedMarkAtPoint({ x: 300, y: 300 }, [{ id: "x", x: 0, y: 0, box: { left: NaN } }]), null);
+  assert.deepEqual(rankMarksAtPoint({ x: NaN, y: 0 }, marks), []);
 });
 
 test("the chooser lists INNERMOST first \u2014 the thing you are standing on top of", () => {
