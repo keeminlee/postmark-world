@@ -61,7 +61,6 @@ import {
   observerNameFor,
   standpointSectionLabel,
   viewIsWarm,
-  staleViewHandles,
   viewerJourneyState,
   viewerCanAct,
   walkDestinationLabel,
@@ -1973,32 +1972,6 @@ test("a prebuilt view is warm only while both the world and the resident have he
   assert.equal(viewIsWarm({ ...warm, radial: null }, { signature: "sig-1", origin: at }), false);
   assert.equal(viewIsWarm(null, { signature: "sig-1", origin: at }), false);
   assert.equal(viewIsWarm(undefined, { signature: "sig-1", origin: at }), false);
-});
-
-test("the idle lane owes every view but the one on screen, and none it cannot place", () => {
-  const signature = "sig-1";
-  const standing = { alden: { x: 10, y: 10 }, corwin: { x: 20, y: 20 }, ellery: { x: 30, y: 30 } };
-  const entries = new Map([
-    ["alden", { radial: {}, mounted: true, signature, origin: { x: 10, y: 10 } }],
-    ["corwin", { radial: {}, mounted: true, signature: "sig-0", origin: { x: 20, y: 20 } }],
-  ]);
-  const handles = ["alden", "corwin", "ellery", "nowhere"];
-  const originOf = (h) => standing[h] ?? null;
-  // alden is selected (on screen); corwin is stale; ellery has never been built;
-  // `nowhere` has no standpoint on the record, so there is nothing to read from
-  assert.deepEqual(
-    staleViewHandles({ handles, active: "alden", signature, entries, originOf }),
-    ["corwin", "ellery"]);
-  // deselect and alden joins the queue only if their own view has gone stale
-  assert.deepEqual(
-    staleViewHandles({ handles, active: null, signature, entries, originOf }),
-    ["corwin", "ellery"]);
-  assert.deepEqual(
-    staleViewHandles({ handles, active: null, signature: "sig-9", entries, originOf }),
-    ["alden", "corwin", "ellery"], "a signature change stales every prebuilt view at once");
-  // a household with nothing to warm queues nothing rather than spinning
-  assert.deepEqual(staleViewHandles({ handles: [], active: null, signature, entries, originOf }), []);
-  assert.deepEqual(staleViewHandles(), []);
 });
 
 // ───────── ride-along #4: the contested-click chooser learns residents ─────────

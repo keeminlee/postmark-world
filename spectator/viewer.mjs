@@ -1006,8 +1006,14 @@ export function sceneArtSVG(mark, px) {
     + `</g>`;
 }
 
-export function placeholderExtentSVG(mark, px) {
-  if (!isEmbodiedMark(mark) || markImagePath(mark)) return "";
+// `ignoreArt` (2026-09-11) is the `mid` tier asking for the extent of a mark
+// that HAS a picture. The default refusal is right for its first caller — a
+// room where the art itself is hung, and a tinted block under a photograph is
+// just a smudge — but at district width the spectator wants every mark's shape
+// and no mark's photograph, which is the same block for a different reason.
+// Defaulted off, so every existing caller renders byte-for-byte what it did.
+export function placeholderExtentSVG(mark, px, { ignoreArt = false } = {}) {
+  if (!isEmbodiedMark(mark) || (!ignoreArt && markImagePath(mark))) return "";
   const hue = placeholderHue(mark.id);
   const fill = `hsl(${hue} 22% 76%)`, edge = `hsl(${hue} 26% 58%)`;
   const attrs = `class="wv-ph-extent" data-id="${esc(mark.id)}" fill="${fill}" stroke="${edge}"`;
@@ -1413,18 +1419,6 @@ export function viewIsWarm(entry, { signature = "", origin = null } = {}) {
   return entry.origin.x === origin.x && entry.origin.y === origin.y;
 }
 
-// WHICH VIEWS THE IDLE LANE OWES. The selected resident is not in the queue —
-// their view is the one on screen — and neither is a resident the record cannot
-// place, because there is no standpoint to read from.
-export function staleViewHandles({ handles = [], active = null, signature = "", entries = new Map(), originOf = () => null } = {}) {
-  return (handles ?? []).filter((handle) => {
-    if (!handle || handle === active) return false;
-    const origin = originOf(handle);
-    if (!origin) return false;
-    return !viewIsWarm(entries.get(handle), { signature, origin });
-  });
-}
-
 export function distanceBandLabel(name, bands = DIALS.distance_bands) {
   const index = (bands ?? []).findIndex((band) => band.name === name);
   if (index < 0) return String(name ?? "");
@@ -1731,6 +1725,27 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
     + `</circle></g></g>`;
 }
 
+// THE SAME HOUSE, TOLD SMALLER (2026-09-11). At `far` a parcel is a landmark
+// and nothing else: the reader is looking at the shape of a town, and 890
+// photographs at 45 px apiece over ground 3 px wide is not a town, it is a
+// contact sheet. So the card's own roofline is drawn once, filled, at half
+// size — no picture, no clip path, no frame, no name, no tooltip. Four nodes
+// instead of ten, and the map still reads as houses.
+//
+// The pip stays, and that is not an oversight: it is the hover anchor, the hit
+// target and the fan's seat (`anchor: ".ov-pip"`, screenMarkCandidates), so a
+// glyph that dropped it would make every house at town width unclickable —
+// which is the zoom a reader arrives at.
+export const HOME_GLYPH_SCALE = 0.46;
+export function overlayHouseGlyphSVG({ at, id, classes = "" } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
+  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+    + `<path d="${homeCardPath()}" class="ov-glyph" transform="scale(${HOME_GLYPH_SCALE})" data-id="${esc(id)}"/>`
+    + `<circle r="${OVERLAY_PIP_R}" class="ov-pip ov-pip-home ${classes}" data-id="${esc(id)}"/>`
+    + `</g></g>`;
+}
+
 /** The dwelling sited on a parcel: the home-tier mark whose placementParent is
  *  the parcel — preferring one that carries a picture. Pure. */
 export function homeMarkOfParcel(parcelId, marks = []) {
@@ -1764,6 +1779,157 @@ export function houseIsLit(parcel, walkers = [], householdOf = null) {
 export function markerScale(zoomK) {
   const k = Number.isFinite(zoomK) && zoomK > 0 ? zoomK : 1;
   return Math.max(1, Math.sqrt(k), k / MARKER_MAX_GROWTH);
+}
+
+// ── THE SPECTATOR'S THREE DISTANCES (Keemin, 2026-09-11) ───────────────────
+//
+// A RESIDENT loads what they can see; a SPECTATOR is given the town, and the
+// town is what the painting cannot afford to draw at full resolution. At the
+// opening view the camera holds 7,500 m across about 700 px of pane — eleven
+// metres to the pixel — and the overlay was drawing, for every one of the
+// town's parcels at once, a clipped photograph, its clip path, a framed roof,
+// a name and a hit pip. Measured on the 09-09 synthetic ten-times record
+// (11,961 marks, 890 parcels): 8,105 nodes in the overlay, 461 pictures, and
+// 53 s before the town appeared. The pictures are ~45 px wide and the parcels
+// they stand on are 2.8 px apart, so the reader is handed a contact sheet.
+//
+// So the drawing asks one question first — HOW MUCH TOWN IS ON SCREEN — and
+// every per-mark pass reads the answer. Not how far away a thing is (that is
+// the field of view's question, and it is the RESIDENT's), and not how many
+// marks there are (which would make the painting change under a reader when
+// somebody else published). Metres across the viewport, and nothing else.
+//
+// The boundaries are Wright's recommended defaults, and they are DIALS in the
+// dev pane, not constants buried in a pass — the whole point of the 09-10
+// proposal's open calls being open. Their arithmetic:
+//
+//     metres across = the painting's full width in metres ÷ zoomK
+//     (viewer.mjs applyView: `zoomK = full.w / view.w`; the painting is
+//      1500 atlas units at 5 m each — WORLD/skeleton.json — so 7,500 m)
+//
+//     far   > 5,000 m across   (zoomK < 1.5)  the town as a whole
+//     mid   1,000–5,000 m      (1.5–7.5)      a district
+//     near  < 1,000 m          (zoomK > 7.5)  a street — today's painting
+//
+// The opening view is 7,500 m across, so a reader arrives at `far`. That is
+// deliberate: the first thing the page must do is appear.
+export const SPECTATOR_DRAW_DEFAULTS = Object.freeze({
+  tier_far_m: 5000,      // wider than this across the viewport → far
+  tier_near_m: 1000,     // narrower than this across the viewport → near
+  art_min_px: 40,        // a home card wears its picture only once its parcel owns this many screen px
+  cull_margin: 1,        // viewports of margin kept drawn on each side of the viewBox
+});
+
+/** How much town is on screen, in metres. `viewW` is the painting's full width
+ *  in metres; `zoomK` is the camera's own ratio (full.w / view.w). Pure. */
+export function metresAcross(zoomK, viewW) {
+  const k = Number.isFinite(zoomK) && zoomK > 0 ? zoomK : 1;
+  const w = Number(viewW);
+  return Number.isFinite(w) && w > 0 ? w / k : NaN;
+}
+
+/** `far` | `mid` | `near`, from metres across the viewport. Pure, and the only
+ *  place the three words are decided.
+ *
+ *  A camera it cannot read answers `near` — today's painting. That is the safe
+ *  direction on purpose: the failure mode of guessing `far` is a blank town,
+ *  and a viewer that quietly stops drawing because it could not measure itself
+ *  is the worst bug on this list. Drawing too much is visible; drawing nothing
+ *  looks like the page is broken, which it would be. */
+export function tierFor(zoomK, viewW, dials = SPECTATOR_DRAW_DEFAULTS) {
+  const across = metresAcross(zoomK, viewW);
+  if (!Number.isFinite(across)) return "near";
+  const far = Number(dials?.tier_far_m ?? SPECTATOR_DRAW_DEFAULTS.tier_far_m);
+  const near = Number(dials?.tier_near_m ?? SPECTATOR_DRAW_DEFAULTS.tier_near_m);
+  if (Number.isFinite(far) && across > far) return "far";
+  if (Number.isFinite(near) && across < near) return "near";
+  return "mid";
+}
+
+/** A mark's own ground, in screen pixels — the width of its extent as the
+ *  reader actually sees it. This is the "120 m art box" written as a pixel
+ *  rule: a picture is worth drawing when the ground under it is big enough to
+ *  hold one, and at no zoom does that depend on how many marks there are.
+ *  Pure. Returns 0 for a mark with no extent. */
+export function footprintPx(mark, { across, panePx } = {}) {
+  const w = Number(mark?.extent?.w), h = Number(mark?.extent?.h);
+  const a = Number(across), p = Number(panePx);
+  if (!Number.isFinite(a) || a <= 0 || !Number.isFinite(p) || p <= 0) return 0;
+  const m = Math.max(Number.isFinite(w) ? w : 0, Number.isFinite(h) ? h : 0);
+  return m > 0 ? (m * p) / a : 0;
+}
+
+/** The viewBox in WORLD METRES, grown by `margin` viewports on each side — the
+ *  box every per-mark pass culls against.
+ *
+ *  One viewport of margin is not padding for its own sake: it is what lets a
+ *  pan stay free. The overlay is rebuilt only when the camera settles OUTSIDE
+ *  what was drawn, so a reader dragging around inside the margin moves a
+ *  viewBox and touches no DOM — which is the property the 08-21 camera split
+ *  bought and this must not spend.
+ *
+ *  Pure: takes the registration rather than reading a context. */
+export function viewportWorldBounds({ view, originPx, mPerPx, margin = 0 } = {}) {
+  const x = Number(view?.x), y = Number(view?.y), w = Number(view?.w), h = Number(view?.h);
+  const ox = Number(originPx?.x), oy = Number(originPx?.y), s = Number(mPerPx);
+  if (![x, y, w, h, ox, oy, s].every(Number.isFinite) || !(s > 0) || !(w > 0) || !(h > 0)) return null;
+  const m = Number.isFinite(Number(margin)) ? Math.max(0, Number(margin)) : 0;
+  return {
+    minX: (x - w * m - ox) * s, maxX: (x + w + w * m - ox) * s,
+    minY: (y - h * m - oy) * s, maxY: (y + h + h * m - oy) * s,
+  };
+}
+
+/** Is this mark inside the drawn box? A mark with an extent is asked by its
+ *  geometry (the same `markGeometryIntersectsViewport` the off-screen highlight
+ *  arrow already uses, so a culled mark and a flagged mark always agree); a
+ *  mark with only a point is asked by its point. Pure.
+ *
+ *  A null box draws everything — see `tierFor`: a camera we cannot read is
+ *  never a reason to stop painting the town. */
+export function markInDrawnBounds(mark, bounds) {
+  if (!bounds) return true;
+  const x = Number(mark?.at?.x), y = Number(mark?.at?.y);
+  if (isEmbodiedMark(mark) && mark?.extent) return markGeometryIntersectsViewport(mark, bounds);
+  if (![x, y].every(Number.isFinite)) return true;
+  return x >= bounds.minX && x <= bounds.maxX && y >= bounds.minY && y <= bounds.maxY;
+}
+
+/** Is a bare point inside the drawn box? Walkers are points, not marks. Pure. */
+export function pointInDrawnBounds(at, bounds) {
+  if (!bounds) return true;
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return false;
+  return x >= bounds.minX && x <= bounds.maxX && y >= bounds.minY && y <= bounds.maxY;
+}
+
+/** THE FAR WALKERS, one dot per household. Past `beyondM` from the camera a
+ *  household's people are a place, not a crowd: the town-wide view wants to
+ *  know that the Berthillons are at home, not to draw nine faces two pixels
+ *  apart. Inside that radius everyone keeps their own dot, because that is
+ *  where the reader is actually looking.
+ *
+ *  Returns rows of `{ x, y, household, count, handles }`, largest first so the
+ *  drawing order is stable. Pure — `householdOf` is the caller's map. */
+export function clusterWalkers(walkers = [], { cam = null, beyondM = Infinity, householdOf = null } = {}) {
+  const out = [], groups = new Map();
+  const cx = Number(cam?.x), cy = Number(cam?.y);
+  const haveCam = [cx, cy].every(Number.isFinite) && Number.isFinite(beyondM);
+  for (const w of walkers ?? []) {
+    const x = Number(w?.x), y = Number(w?.y);
+    if (![x, y].every(Number.isFinite)) continue;
+    // NO CAMERA, NO CLUSTERING. Without a standpoint to measure from there is
+    // no "past this distance", and collapsing anyway would be the map inventing
+    // a crowd out of an unanswered question.
+    const near = haveCam ? Math.hypot(x - cx, y - cy) <= beyondM : true;
+    const household = String((householdOf ? householdOf(w.handle) : null) ?? w?.handle ?? "");
+    if (near || !household) { out.push({ x, y, household, count: 1, handles: [String(w?.handle ?? "")] }); continue; }
+    const g = groups.get(household) ?? { x: 0, y: 0, count: 0, handles: [], household };
+    g.x += x; g.y += y; g.count += 1; g.handles.push(String(w?.handle ?? ""));
+    groups.set(household, g);
+  }
+  for (const g of groups.values()) out.push({ ...g, x: g.x / g.count, y: g.y / g.count });
+  return out.sort((a, b) => b.count - a.count);
 }
 
 // The zoom-IN floor: the viewport may never get narrower than full.w / this.
@@ -3230,6 +3396,19 @@ const DEV_DIALS = [
   { key: "los_clearance_m", label: "LOS clearance (m)", min: 0, max: 5, step: 0.25 },
 ];
 
+// the SPECTATOR's drawing dials — what the painting draws at a given zoom. A
+// separate list from DEV_DIALS above because these never reach the engine: they
+// re-DRAW, where the engine's dials re-TELL. Every open call in the 09-10
+// proposal is one of these rows, which is the point — the thresholds were
+// Wright's recommendation and Keemin gets to move them with a finger rather
+// than with a pull request. Ranges are prototyping room, not law.
+const DRAW_DIALS = [
+  { key: "tier_far_m", label: "far beyond (m across)", min: 1000, max: 20000, step: 250 },
+  { key: "tier_near_m", label: "near below (m across)", min: 100, max: 5000, step: 50 },
+  { key: "art_min_px", label: "picture needs (px)", min: 0, max: 200, step: 2 },
+  { key: "cull_margin", label: "cull margin (viewports)", min: 0, max: 4, step: 0.25 },
+];
+
 const STYLE = `
 .wv { --night:#14171d; --panel:#1c2129; --panel2:#20262f; --line:#2e3542;
   --paper:#e8e0cf; --dim:#9a9280; --amber:#e8c56a; --amber-dark:#b8964a; --err:#d98a7a;
@@ -3816,6 +3995,13 @@ const STYLE = `
 .ov-home.lit .ov-home-frame { stroke:#ffcf5c; stroke-width:2.2; filter:drop-shadow(0 0 3px #ffb84a); }
 .ov-home-label { font:600 9px Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif; fill:#241c10;
   paint-order:stroke; stroke:#ece0c4; stroke-width:2.5px; stroke-linejoin:round; }
+/* the far tier's house: the card's own roofline, filled, at half size. It reads
+   as the same house as the card because it IS the same path — one outline, two
+   sizes, so the town does not appear to change species when a reader zooms. */
+.ov-glyph { fill:#f4e6c8; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; pointer-events:none; }
+/* a household seen from across the town: one dot for its people, not nine */
+.wv-walker-cluster { fill:var(--green); opacity:.8; stroke:none; pointer-events:none; }
+.wv-walker-cluster.moving { fill:#e0507a; }
 .ov-dot { fill:var(--you); stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:var(--you); stroke-width:3; opacity:.55; }
 /* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
@@ -4729,6 +4915,14 @@ export function mountViewer(appEl) {
     // acts waiting on the same click is a question the reader cannot answer.
     arming: null,
     dials: { ...DIALS },
+    // THE DRAWING'S DIALS, KEPT APART FROM THE ENGINE'S (2026-09-11). These
+    // decide what the SPECTATOR's painting draws at a given zoom; they are not
+    // the field of view's leans. Kept in their own object because `state.dials`
+    // is handed to `openYourEyes` and `investigate` and is stringified into the
+    // telling's cache key — so folding a drawing dial in there would make
+    // dragging a zoom threshold re-tell the whole world for no reason, and
+    // would put a word the engine has never heard of into its dial bag.
+    drawDials: { ...SPECTATOR_DRAW_DEFAULTS },
     dataSource: null,       // which world-state URL won (for the auto-update poll)
     asOf: null,             // X-Postmark-As-Of of the loaded fold (office-live only)
     whoami: null,           // { principal, household, handles } from office /ops/whoami
@@ -5294,48 +5488,27 @@ export function mountViewer(appEl) {
     syncMarkInteractionViews();
   }
 
-  // The other residents' views, built while nothing else wants the thread. One
-  // handle per idle slice: a household of six should not spend one long frame
-  // on five tellings nobody has asked for. The queue is REPLACED rather than
-  // appended to, so a pass never outlives the world it was queued for.
-  let warmQueue = [];
-  let warmTicket = null;
-  const onIdle = (fn) => (typeof requestIdleCallback === "function" ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 32));
-  function warmOtherViews() {
-    if (!identityResolved()) return;
-    // ⚑ NOT ON THE RESIDENT PATH (2026-09-10). Warming built a full telling for
-    // every OTHER resident in the household in idle time. That was cheap when a
-    // telling was a local computation over a fold already in hand; it is a
-    // network read per resident now, and a household of six would quietly ask
-    // the office six questions nobody had asked it. The proposal counted this
-    // at 100x the work at ten times the town; at one read each it is simply
-    // requests nobody wanted.
-    if (onResidentPath()) return;
-    warmQueue = staleViewHandles({
-      handles: state.whoami?.handles ?? [],
-      active: isSpectating() ? null : state.handle,
-      signature: viewSignature(),
-      entries: mountedEntries(),
-      originOf: originFor,
-    });
-    if (!warmQueue.length || warmTicket != null) return;
-    warmTicket = onIdle(warmStep);
-  }
-  // `mounted` is the DOM half of warmth, and it is asked HERE rather than inside
-  // the rule, so the rule itself stays a pure comparison of two records.
-  function mountedEntries() {
-    const out = new Map();
-    for (const [handle, entry] of viewCache) out.set(handle, { ...entry, mounted: !!entry.pane?.isConnected });
-    return out;
-  }
-  function warmStep() {
-    warmTicket = null;
-    const handle = warmQueue.shift();
-    if (!handle) return;
-    const origin = originFor(handle);
-    if (origin) buildPane(handle, origin);
-    if (warmQueue.length) warmTicket = onIdle(warmStep);
-  }
+  // ── WARMING IS GONE (2026-09-11, and the resident path turned it off on
+  // 2026-09-10) ──────────────────────────────────────────────────────────────
+  //
+  // `warmOtherViews` built a whole telling, in idle time, for every OTHER
+  // resident in the reader's household — a page nobody had asked for, against a
+  // world nobody was looking at. It was defensible while a telling was a local
+  // computation over a fold already in hand. It stopped being defensible twice
+  // over: the resident path made each one a NETWORK READ (a household of six
+  // quietly asking the office six questions), and at ten times the town the
+  // 09-10 proposal counted the pass at 1,550 × 11,961 — a hundred times the
+  // work, to warm a cache nobody asked for.
+  //
+  // The resident lane turned it off on its own path. It is off everywhere now.
+  // `viewIsWarm` STAYS — it is the pure rule for "is this prebuilt view still
+  // true", and the resident switch still asks it every time, so the cache and
+  // its freshness rule outlive the idle lane that used to fill it ahead of
+  // time. `staleViewHandles` does NOT: it answered "which views does the idle
+  // lane owe", and there is no idle lane to owe them. A pure rule with no
+  // caller is not a rule, it is residue, and its test would go on passing
+  // forever about nothing.
+  //
   // sign-out, or a different key: panes for handles this household no longer
   // has are markup describing nobody
   function pruneViewCache(handles) {
@@ -5347,14 +5520,15 @@ export function mountViewer(appEl) {
     }
   }
 
-  // The active view: build the reader's standpoint, show it, then let the idle
-  // lane true the rest. Every path that already refreshed the telling calls
-  // this, which is why the cached views need no invalidation rule of their own.
+  // The active view: build the reader's standpoint and show it. The idle lane
+  // that used to true the OTHER residents' views behind this is gone (see
+  // "warming is gone" above); a view that has gone stale is rebuilt when a
+  // reader switches onto it, which is the moment it is needed and the only
+  // moment it was ever read.
   function renderTelling() {
     const key = standpointKey();
     const radial = buildPane(key, { x: state.cam.x, y: state.cam.y });
     activateTellingPane(key, radial);
-    warmOtherViews();
   }
 
   // ───────── inside ─────────
@@ -6296,6 +6470,34 @@ export function mountViewer(appEl) {
       if (k !== lastMarkerK) { lastMarkerK = k; drawWalkers(); drawConversations(); }
       renderMarkHighlight();
       positionBubbles(); // the anchors are on the painting, so they move with it
+      noticeTheCameraSettling();
+    }
+    // ── WHEN A PAN HAS TO COST SOMETHING (2026-09-11) ────────────────────────
+    //
+    // A pan rebuilds nothing, and that is the property the 08-21 camera split
+    // bought: position is in painting units, so moving the viewBox moves every
+    // pip for free on the compositor. The spectator's cull would break exactly
+    // that if it redrew on every frame of a drag — which is why the overlay is
+    // drawn with ONE VIEWPORT OF MARGIN on each side and only rebuilt when the
+    // camera has left what was drawn, or has crossed a tier boundary.
+    //
+    // So the cost is: a drag inside the margin is free, as it was; a drag that
+    // travels a whole screen pays one rebuild, once, after the hand stops. The
+    // "after" is what the timer is for — rebuilding mid-drag would be the sixty
+    // rebuilds a second this map was rewritten to stop doing.
+    let settleTimer2 = null;
+    const CAMERA_SETTLE_MS = 140;
+    function noticeTheCameraSettling() {
+      const drawnAt = mapCtx?.drawnAt;
+      if (!drawnAt) return;                         // nothing drawn yet, or the resident path
+      const now = viewportWorldBounds({ view, originPx, mPerPx, margin: 0 });
+      const stale = drawTier() !== drawnAt.tier
+        || !now || !drawnAt.bounds
+        || now.minX < drawnAt.bounds.minX || now.maxX > drawnAt.bounds.maxX
+        || now.minY < drawnAt.bounds.minY || now.maxY > drawnAt.bounds.maxY;
+      if (!stale) return;
+      clearTimeout(settleTimer2);
+      settleTimer2 = setTimeout(() => { if (lastRadial) drawOverlay(lastRadial); }, CAMERA_SETTLE_MS);
     }
     // ── THE PAN FENCE (founder, 2026-08-21: "we should also lock pan to the
     // edges") ────────────────────────────────────────────────────────────────
@@ -6785,15 +6987,55 @@ export function mountViewer(appEl) {
     mapCtx.overlay.style.setProperty("--wv-mk", overlayScale(k));
     return k;
   }
+  // ── WHAT THE CAMERA IS LOOKING AT (2026-09-11) ───────────────────────────
+  //
+  // Three readings, asked once per draw and handed to every pass, so that no
+  // pass gets to have its own opinion about the zoom.
+  //
+  // ⚑ `drawTier()` RETURNS NULL ON THE RESIDENT PATH, and every gate below is
+  // written as "null → exactly what this drew yesterday". That is the shape of
+  // the whole change: a resident loads what they can see (the other lane's
+  // ruling, shipped) and their painting is already the ≤ 25 marks their read
+  // named — there is nothing here for a tier to cut, and a gate that fired on
+  // their path would be cutting the answer instead of the town.
+  const paintingWidthM = () => (mapCtx ? mapCtx.full.w * mapCtx.mPerPx : NaN);
+  const panePx = () => {
+    const w = mapCtx?.svg?.getBoundingClientRect?.().width;
+    return Number.isFinite(w) && w > 0 ? w : NaN;
+  };
+  const drawTier = () => (onResidentPath() ? null : tierFor(mapCtx?.zoomK, paintingWidthM(), state.drawDials));
+  // The box the passes cull against — null on the resident path (nothing to
+  // cull) and null when the camera cannot be read (never a reason to stop
+  // painting; see markInDrawnBounds).
+  const drawnBounds = () => (onResidentPath() || !mapCtx ? null : viewportWorldBounds({
+    view: mapCtx.view, originPx: mapCtx.originPx, mPerPx: mapCtx.mPerPx,
+    margin: Number(state.drawDials.cull_margin),
+  }));
+
   // One parcel's card: the picture from the home sited on it (through the same
   // shelf gate every other art surface uses), the household's name under it,
   // lit when the household is home.
-  function homeCard(parcel, at, fan, title) {
+  //
+  // THE TIER DECIDES HOW MUCH CARD (2026-09-11):
+  //   far   a small house glyph — no picture, no frame, no name, no tooltip
+  //   mid   the frame and the name; the picture only once the parcel's own
+  //         ground is at least `art_min_px` wide on screen
+  //   near  the card as it was, and as the resident path still draws it
+  //
+  // The picture gate asks the GROUND, not the card: a card is a fixed size on
+  // screen and would answer the same at every N, while the ground it stands on
+  // is the thing that actually runs out when a town gets ten times bigger.
+  function homeCard(parcel, at, fan, title, tier = null) {
+    if (tier === "far") return overlayHouseGlyphSVG({ at, id: parcel.id, classes: markClasses(parcel) });
     const home = homeMarkOfParcel(parcel.id, allMarks());
+    const room = tier === "mid"
+      ? footprintPx(parcel, { across: metresAcross(mapCtx?.zoomK, paintingWidthM()), panePx: panePx() })
+        >= Number(state.drawDials.art_min_px)
+      : true;
     return overlayHomeCardSVG({
       at, id: parcel.id, classes: markClasses(parcel),
       label: String(parcel.household ?? parcel.by ?? ""),
-      image: home ? markImagePath(home) : null,
+      image: room && home ? markImagePath(home) : null,
       lit: houseIsLit(parcel, walkState.walkers, (h) => faceOf(h).household),
       fan, title,
     });
@@ -6811,18 +7053,44 @@ export function mountViewer(appEl) {
     // about 7,560 m"). This was only ever the drawing of it.
     let s = "";
     const glyphIds = new Set();
+    // THE TWO READINGS THIS DRAW IS GATED BY, taken once. `tier` is null on the
+    // resident path and every gate below reads that as "draw what you drew
+    // before"; `bounds` is null there too, and `markInDrawnBounds` reads a null
+    // box as "everything is in it".
+    const tier = drawTier();
+    const bounds = drawnBounds();
+    // THE TIER IS PUT ON THE DRAWING ITSELF, not kept in a closure. A reader
+    // with dev tools open, a screenshot, and the QA probes all need to know
+    // which of the three paintings they are looking at, and the honest source
+    // for that is the thing that was drawn — never a second calculation about
+    // the zoom, which is how two answers to one question get born.
+    overlay.setAttribute("data-tier", tier ?? "resident");
     // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
     // mark up by id (and catches sovereign/home, which is not a tier value).
     // THE FAN, high zoom only. Pips sharing a spot get a few pixels of
     // separation so a hover can tell them apart before anyone has to click.
     // At low zoom they merge again on purpose — the pile is honest about being
     // a pile, and the chooser is the guarantee that you can still reach into it.
-    const drawn = overlayMarks(radial);
+    //
+    // THE CULL (2026-09-11): a mark outside the viewBox plus one viewport of
+    // margin is not drawn. It is the same question the off-screen highlight
+    // arrow already asks (`markGeometryIntersectsViewport`), asked one layer
+    // earlier, so the overlay and the arrow can never disagree about what is on
+    // screen. The margin is what keeps a pan free — see viewportWorldBounds.
+    const drawn = overlayMarks(radial)
+      .filter((m) => markInDrawnBounds(byId.get(m.id) ?? m, bounds));
     // PLACEHOLDER EXTENTS (scene-gated): art-less embodied marks stand in as
     // low-saturation tinted blocks, drawn UNDER the pips, largest first so a
     // child's block sits readable on its parent's. Same overlay, same loop —
     // a rule of the one renderer, switched by the scene, never a second one.
-    if (mapCtx?.placeholderExtents) {
+    //
+    // THE FURNITURE BY TIER (2026-09-11): art is a `near` thing. At `mid` the
+    // town's furniture is still there as its own tinted extent — the shape of
+    // what is on the ground, without the photograph of it — and at `far` it is
+    // not drawn at all, because at eleven metres to the pixel a chair is a
+    // smear and 11,961 of them are a fog. `null` (the resident path) draws it
+    // exactly as it drew yesterday.
+    if (mapCtx?.placeholderExtents && tier !== "far") {
       // THE FULL MARK BY ID, not the radial's own entry — the same reason
       // `tierOf` looks a tier up rather than reading `m.tier` fifteen lines
       // below: a radial entry carries `id`, `at`, `distM` and `bearing`, and
@@ -6835,8 +7103,22 @@ export function mountViewer(appEl) {
         .map((m) => byId.get(m.id) ?? m)
         .filter((m) => isEmbodiedMark(m) && m.extent && !onTheGround.has(m.id))
         .sort((a, b) => ((b.extent?.w ?? 0) * (b.extent?.h ?? 0)) - ((a.extent?.w ?? 0) * (a.extent?.h ?? 0)));
-      for (const m of furnishable) s += markImagePath(m) ? sceneArtSVG(m, px) : placeholderExtentSVG(m, px);
+      for (const m of furnishable)
+        s += tier === "mid"
+          ? placeholderExtentSVG(m, px, { ignoreArt: true })
+          : (markImagePath(m) ? sceneArtSVG(m, px) : placeholderExtentSVG(m, px));
     }
+    // THE LABELS BY TIER (2026-09-11). `far` draws none: at town width a name
+    // is a smear, 890 of them are a grey band across the painting, and the
+    // reader who wants one points at it — the hover box is a single node raised
+    // on demand and is NOT gated here, because at `far` it is the only way to
+    // learn what anything is. `mid` and `near` name things as they always did.
+    //
+    // The tooltip rides the same rule it already rode in painting-only mode:
+    // when the label is standing down, the OS bubble standing up in its place
+    // would be the same word, later and uglier.
+    const named = tier !== "far" && !state.paintingOnly;
+    const nameOf = (m) => (named ? markIdentity(m) : null);
     const fanned = mapCtx?.zoomK >= FAN_MIN_ZOOM ? coLocatedMarkIds(drawn) : new Set();
     for (const m of drawn) {
       const p = px(m.at);
@@ -6849,7 +7131,7 @@ export function mountViewer(appEl) {
       // parcel is told from a pip by its kind (see the furnishing pass above).
       const full = byId.get(m.id) ?? m;
       if (full.kind === "parcel") {
-        s += homeCard(full, p, fanned.has(m.id) ? fanOffsetPx(m.id) : null, state.paintingOnly ? null : markIdentity(m));
+        s += homeCard(full, p, fanned.has(m.id) ? fanOffsetPx(m.id) : null, nameOf(m), tier);
         continue;
       }
       s += overlayPipSVG({
@@ -6857,7 +7139,7 @@ export function mountViewer(appEl) {
         fan: fanned.has(m.id) ? fanOffsetPx(m.id) : null,
         // the OS tooltip stands down in painting-only for the same reason the SVG
         // label does: the bubble is already saying this word, sooner and better
-        title: state.paintingOnly ? null : markIdentity(m),
+        title: nameOf(m),
       });
     }
     // THE TOWN'S HOUSES ARE ALWAYS ON THE MAP. The atlas drew every home on its
@@ -6865,16 +7147,29 @@ export function mountViewer(appEl) {
     // town's furniture and wrong for its houses, which are the map's landmarks.
     // Outdoors, every parcel not already drawn gets its card; indoors the roof
     // rule stands and none is added.
+    //
+    // …AND THEY ARE STILL NOT ALL ON THE SCREEN (2026-09-11). A landmark you
+    // cannot see is not a landmark; it is a node. At ten times the town this
+    // loop alone was 890 cards, every one of them drawn whether the camera was
+    // over the quay or three viewports away from it. Same rule as the pips
+    // above, same box, one viewport of margin.
     if (!sceneRoomId) {
       for (const m of allMarks()) {
         if (m.kind !== "parcel" || !m.at || glyphIds.has(m.id)) continue;
+        if (!markInDrawnBounds(m, bounds)) continue;
         glyphIds.add(m.id);
-        s += homeCard(m, px(m.at), null, state.paintingOnly ? null : markIdentity(m));
+        s += homeCard(m, px(m.at), null, nameOf(m), tier);
       }
     }
     s += overlayStandpointSVG({ at: me });
     overlay.innerHTML = s;
     applyCameraScale();          // the markup is sizeless until the camera says
+    // WHAT THIS DRAW COVERS, written down where the camera can check it. The
+    // frame pass compares the live viewBox against this box and this tier, and
+    // rebuilds only when the camera has left one of them — see
+    // noticeTheCameraSettling. Null on the resident path, which never rebuilds
+    // on a pan because it never culled.
+    mapCtx.drawnAt = bounds ? { bounds, tier } : null;
     mapCtx.glyphIds = glyphIds;
     mapCtx.syncWithin?.(radial);
     renderMarkHighlight();
@@ -7272,7 +7567,53 @@ export function mountViewer(appEl) {
     // lines, and a cached roof is a roof that goes stale the moment someone
     // crosses a threshold — which is exactly when a reader is looking.
     const { manifest } = standpointOccupancy({ acts: enterExitLedger.acts, at: occupancyClock() });
-    const drawnWalkers = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId });
+    // THE SPECTATOR'S TWO CUTS (2026-09-11), both null-safe on the resident path
+    // — whose walkers are already only the people within earshot, so `bounds`
+    // and `tier` come back null and this is the pass it was yesterday.
+    //
+    // The CULL first: a walker three viewports away costs six nodes and a
+    // network-fetched photograph to draw somewhere nobody is looking. Hit
+    // testing is NOT cut with it (screenWalkerCandidates reads the full walker
+    // list), and that is safe rather than sloppy: the snap radius is 18 screen
+    // px, and a walker outside the viewBox is by definition further than that
+    // from any pointer inside it.
+    const tier = drawTier();
+    const bounds = drawnBounds();
+    const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId });
+    const drawnWalkers = inView.filter((w) => pointInDrawnBounds(w, bounds));
+    // …then the TIER. At town width a face is eleven pixels of photograph with
+    // its own clip path, and the 09-09 record has 1,550 of them; what a reader
+    // at that zoom can actually read is WHERE PEOPLE ARE. So beyond the engine's
+    // own `cluster_beyond_m` — the dial that already decides when a household's
+    // marks collapse into one — its people collapse into one dot too, and the
+    // faces come back the moment the camera comes down to district width.
+    if (tier === "far") {
+      const dots = clusterWalkers(drawnWalkers, {
+        cam: state.cam,
+        beyondM: Number(state.dials.cluster_beyond_m),
+        householdOf: (h) => faceOf(h).household,
+      });
+      const moversByHousehold = new Set(drawnWalkers
+        .filter((w) => w.moving ?? (!w.arrived && !w.standing))
+        .map((w) => String(faceOf(w.handle).household ?? w.handle ?? "")));
+      for (const d of dots) {
+        const p = px(d);
+        // the dot grows a little with the crowd it stands for, and says how many
+        // to a screen reader — a cluster that looked like a person would be the
+        // map lying about how many people are in a place
+        const r = (d.count > 1 ? 9 + Math.min(6, Math.sqrt(d.count - 1) * 2.5) : 7) / k;
+        const who = d.count > 1 ? `${d.household} — ${d.count} people` : `${d.handles[0] ?? d.household}`;
+        s += `<circle cx="${p.x}" cy="${p.y}" r="${r}"`
+          + ` class="wv-walker-cluster${moversByHousehold.has(d.household) ? " moving" : ""}"`
+          + ` role="img" aria-label="${esc(who)}"/>`;
+      }
+      mapCtx.walkLayer.innerHTML = s;
+      walkReadout(drawnWalkers);
+      syncHouseLights();
+      syncActorPosition();
+      renderWalkDestination();
+      return;
+    }
     for (const w of drawnWalkers) {
       // The drawn leg ends where the WALK ends — the first point on the
       // target's ground, not its centre (Keemin, party night: the dotted line
@@ -7366,20 +7707,29 @@ export function mountViewer(appEl) {
       s += `<circle cx="${now.x}" cy="${now.y}" r="${r}" class="${cls}" role="img" aria-label="${esc(identity)}"/>`;
     }
     mapCtx.walkLayer.innerHTML = hulls + s;
-    const box = $(root, "#wv-walk-readout");
-    if (box) {
-      // the readout counts what is ON THE MAP, and indoors the map is the room —
-      // saying "80 on the map" over a floor holding six was the same untruth the
-      // roof just fixed, told in words. Outdoors this is the whole town, as ever.
-      const on = drawnWalkers.filter((w) => w.moving ?? (!w.arrived && !w.standing)).length;
-      const still = drawnWalkers.length - on;
-      box.textContent = walkState.at === null ? "no walk records"
-        : `crossing ${walkState.at.toFixed(3)} — ` +
-          `${drawnWalkers.length} on the map, ${on} on the road, ${still} at rest`;
-    }
+    walkReadout(drawnWalkers);
     syncHouseLights();
     syncActorPosition();
     renderWalkDestination();
+  }
+
+  // the readout counts what is ON THE MAP, and indoors the map is the room —
+  // saying "80 on the map" over a floor holding six was the same untruth the
+  // roof just fixed, told in words.
+  //
+  // ⚑ AND SINCE 2026-09-11 THE MAP CAN BE SMALLER THAN THE TOWN: the spectator's
+  // cull means the drawn set is what is in view, so the sentence keeps meaning
+  // exactly what it says while the number it reports gets honest about a camera
+  // pointed at one district. Lifted out of drawWalkers so the far tier, which
+  // draws dots instead of people, still counts PEOPLE.
+  function walkReadout(drawnWalkers) {
+    const box = $(root, "#wv-walk-readout");
+    if (!box) return;
+    const on = drawnWalkers.filter((w) => w.moving ?? (!w.arrived && !w.standing)).length;
+    const still = drawnWalkers.length - on;
+    box.textContent = walkState.at === null ? "no walk records"
+      : `crossing ${walkState.at.toFixed(3)} — ` +
+        `${drawnWalkers.length} on the map, ${on} on the road, ${still} at rest`;
   }
 
   // The lights read the walkers, and the walkers arrive after the first overlay
@@ -7487,10 +7837,6 @@ export function mountViewer(appEl) {
           state.cam = { x: origin.x, y: origin.y };
           if (moved) renderCurrent();
         }
-        // the same tick trues the views the reader is NOT looking at: a resident
-        // who walked while cold is rebuilt at the standpoint this poll just
-        // learned, so the switch onto them is never a stale page
-        warmOtherViews();
         return true;
       } catch { /* try the spectator-local shape, then feature-detect off */ }
     }
@@ -8759,6 +9105,17 @@ export function mountViewer(appEl) {
         return `<div class="dial"><label>${esc(d.label)} <b data-out="${d.key}">${fmt(v)}</b></label>
           <input type="range" data-dial="${d.key}" min="${d.min}" max="${d.max}" step="${d.step}" value="${v}"></div>`;
       }).join("")
+      // THE DRAWING'S DIALS, IN THE SAME PANE AND UNDER THEIR OWN NOTE. They
+      // re-draw rather than re-tell, and they apply to the SPECTATOR only — a
+      // resident's painting is the ≤ 25 marks their read named, which no tier
+      // has anything to cut. Said in the note rather than left for a reader to
+      // discover by dragging one and watching nothing happen.
+      + `<div class="devnote">spectator drawing dials — re-draws on change; the resident path is not gated by them.</div>`
+      + DRAW_DIALS.map((d) => {
+        const v = state.drawDials[d.key];
+        return `<div class="dial"><label>${esc(d.label)} <b data-out="draw:${d.key}">${fmt(v)}</b></label>
+          <input type="range" data-draw-dial="${d.key}" min="${d.min}" max="${d.max}" step="${d.step}" value="${v}"></div>`;
+      }).join("")
       + `<div class="devrow"><button class="ctl wv-dev-reset">reset dials</button></div>`;
   }
   function fmt(v) { return Number.isInteger(v) ? String(v) : (+v).toFixed(2).replace(/\.?0+$/, ""); }
@@ -9014,7 +9371,11 @@ export function mountViewer(appEl) {
     const exitBtn = e.target.closest(".wv-int-exit-btn");
     if (exitBtn) { stepOutside(exitBtn.dataset.mark, exitBtn); return; }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } syncDevReadouts(); return; }
-    if (e.target.closest(".wv-dev-reset")) { state.dials = { ...DIALS }; buildDevPane(); renderCurrent(); return; }
+    if (e.target.closest(".wv-dev-reset")) {
+      state.dials = { ...DIALS };
+      state.drawDials = { ...SPECTATOR_DRAW_DEFAULTS };
+      buildDevPane(); renderCurrent(); return;
+    }
     if (e.target.closest(".crosslive")) { state.crossingOverride = false; state.crossing = liveCrossing(); const i = root.querySelector(".crossover"); if (i) i.value = state.crossing; const l = root.querySelector(".crossovlbl"); if (l) l.textContent = "live · " + state.crossing; reRender(); return; }
     const b = e.target.closest("button.ctl, .wv-card");
     if (!b) return;
@@ -9107,6 +9468,19 @@ export function mountViewer(appEl) {
       state.dials = { ...state.dials, [dial]: Number(e.target.value) };
       const out = root.querySelector(`[data-out="${dial}"]`); if (out) out.textContent = fmt(state.dials[dial]);
       clearTimeout(devTimer); devTimer = setTimeout(renderCurrent, 70);
+      return;
+    }
+    // A DRAWING DIAL RE-DRAWS AND DOES NOT RE-TELL. The engine never hears
+    // about these, so there is nothing to recompute: the same radial is painted
+    // again by the new rule, which is why dragging one is instant where
+    // dragging a sight dial is not.
+    const draw = e.target.dataset?.drawDial;
+    if (draw) {
+      state.drawDials = { ...state.drawDials, [draw]: Number(e.target.value) };
+      const out = root.querySelector(`[data-out="draw:${draw}"]`);
+      if (out) out.textContent = fmt(state.drawDials[draw]);
+      clearTimeout(devTimer);
+      devTimer = setTimeout(() => { if (lastRadial) drawOverlay(lastRadial); }, 70);
     }
   });
   // Identity is UI memory, not door law. The token is presented on every signed
@@ -9513,7 +9887,6 @@ export function mountViewer(appEl) {
       syncActorPosition(moved ? { moveCamera: true } : {});
     }).catch(() => {});
     pollWalkers().catch(() => {}); // its own body re-renders only when someone actually moved
-    warmOtherViews();
   }
 
   // stashActiveView is GONE, with the per-resident viewBox it existed to save.
