@@ -214,7 +214,7 @@ export function isParcelMark(mark) {
  * renders blank: every state below ends in either prose or one line saying why
  * there is none.
  */
-export function homeColumnModel({ handle, kicker, title, region, leadImage, door = null, error = null, loading = false, residentHref = null } = {}) {
+export function homeColumnModel({ handle, kicker, title, region, leadImage, door = null, error = null, loading = false, residentHref = null, parcelId = null, canEnter = false } = {}) {
   const who = String(handle ?? "").trim();
   const text = typeof door?.description === "string" ? door.description.trim() : "";
   const blocks = text ? parseHomeMarkdown(text) : [];
@@ -231,6 +231,11 @@ export function homeColumnModel({ handle, kicker, title, region, leadImage, door
       : error ? `the office did not answer for this home — ${error}`
       : "nothing written here yet",
     residentHref: residentHref ?? null,
+    // THE ENTER BUTTON (founder, 2026-09-11: "add the enter button for the parcel
+    // columns? and it just enters the parcel"). The column names a parcel; a
+    // reader who can act gets the same door the little card offers, on the same
+    // verb. A spectator, or a column with no parcel behind it, gets no button.
+    enter: parcelId && canEnter ? { parcelId: String(parcelId) } : null,
   };
 }
 
@@ -345,6 +350,13 @@ export function renderHomeColumn(doc, host, model, { imagePath = null } = {}) {
   const nav = el(doc, "div", "wv-homecol-nav");
   const kicker = el(doc, "span", "wv-homecol-kicker");
   kicker.textContent = model.kicker;
+  if (model.enter) {
+    const enter = el(doc, "button", "wv-homecol-enter");
+    enter.setAttribute("type", "button");
+    enter.setAttribute("data-enter", model.enter.parcelId);
+    enter.textContent = "enter";
+    nav.appendChild(enter);
+  }
   const close = el(doc, "button", "wv-homecol-close");
   close.setAttribute("type", "button");
   close.setAttribute("aria-label", "close this home");
@@ -419,8 +431,17 @@ export function renderHomeColumn(doc, host, model, { imagePath = null } = {}) {
  * for the same reason: a rebuild under the reader's cursor loses their scroll
  * position in the middle of a paragraph.
  */
-export function createHomeColumn({ doc, host, readHome, imagePath = null, residentHref = null } = {}) {
+export function createHomeColumn({ doc, host, readHome, imagePath = null, residentHref = null, onEnter = null } = {}) {
   const cache = new Map();     // handle → { door } | { error }
+  // the column is rebuilt on every paint, so the enter click is delegated on
+  // the host once rather than bound to a button that will not be there next time
+  if (host && typeof onEnter === "function") {
+    host.addEventListener("click", (e) => {
+      const button = e.target?.closest?.(".wv-homecol-enter");
+      if (!button || !host.contains(button)) return;
+      onEnter(button.getAttribute("data-enter"), button);
+    });
+  }
   let shown = null;            // the parcel id on screen, or null
   let inFlight = 0;
 
@@ -435,6 +456,8 @@ export function createHomeColumn({ doc, host, readHome, imagePath = null, reside
       error: state.error ?? null,
       loading: !!state.loading,
       residentHref: residentHref ? residentHref(view.handle) : null,
+      parcelId: view.parcelId ?? null,
+      canEnter: !!view.canEnter,
     }), { imagePath });
   };
 

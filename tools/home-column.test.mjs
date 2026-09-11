@@ -356,3 +356,25 @@ test("a reader who moves on before the door answers does not get the old home", 
   assert.ok(serialize(host).includes("bbb"), "the column shows the parcel the reader is on");
   assert.ok(!serialize(host).includes("# aaa"));
 });
+
+
+// ── the enter button (founder, 2026-09-11: "add the enter button for the parcel columns? and it just enters the parcel") ──
+
+test("the model carries an enter door only for a parcel a reader who can act is looking at", () => {
+  assert.equal(homeColumnModel({ handle: "nyx" }).enter, null, "no parcel, no button");
+  assert.equal(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel" }).enter, null, "a spectator gets no button");
+  assert.equal(homeColumnModel({ handle: "nyx", canEnter: true }).enter, null, "a reader with nothing to enter gets none");
+  assert.deepEqual(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel", canEnter: true }).enter,
+    { parcelId: "nyx/the-night-room-parcel" });
+});
+
+test("the column renders the enter button in its nav, naming the parcel it enters — and not otherwise", () => {
+  const withDoor = render(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel", canEnter: true }));
+  const buttons = find(withDoor, "button").filter((b) => b.className === "wv-homecol-enter");
+  assert.equal(buttons.length, 1, "one enter button");
+  assert.equal(buttons[0].attrs["data-enter"], "nyx/the-night-room-parcel", "it names the parcel, so the click needs no lookup");
+  assert.equal(serialize(buttons[0]), "enter");
+  const without = render(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel", canEnter: false }));
+  assert.equal(find(without, "button").filter((b) => b.className === "wv-homecol-enter").length, 0, "a spectator's column has no enter button");
+  // flip: drop `nav.appendChild(enter)` in renderHomeColumn → the first count reds
+});
