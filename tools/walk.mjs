@@ -13,7 +13,7 @@
 // Pure: no fs, no engine import. The office pen owns writing; this owns grammar
 // and arithmetic.
 
-import { pointInRect } from "./geometry.mjs";
+import { pointInPolygon, pointInRect, polygonOf } from "./geometry.mjs";
 
 // The pace dial — decision 008, movable by ruling, never silently.
 // AMENDED by 008b (2026-08-16): the LIVE law is the departure class's own dial
@@ -175,6 +175,131 @@ export const isWalkArrival = (v) => WALK_ARRIVALS.includes(v);
 export function extentForArrival(arrival, markExtent) {
   const canon = WALK_ARRIVAL_CANON[arrival] ?? arrival;
   return canon === "center" ? null : (markExtent ?? null);
+}
+
+// ── THE RING WINS HERE TOO (founder-ruled 2026-09-11: "ring wins everywhere") ─
+//
+// A mark's shape is its `points:` ring when it has one and its at/extent box
+// otherwise, and every tool that asks WHERE something is or whether a point is
+// INSIDE it asks that one shape. `pointWithinMark`, `marksContain` and
+// `containmentChain` have preferred the ring since the regions took their true
+// shape. The WALK did not, and the gap was not theoretical: wright walked to
+// wright/the-trueing-terrace (a 12-point ring inset from its 1834 x 1563 box),
+// the rim arrival stopped him at y = -1669 — the box's near edge — and by the
+// ring that point stands in rei/the-lanternseed-gardens. The walk desk put him
+// on his neighbour's ground and called it arrival.
+//
+// WHY THE FIX IS A FROZEN POINT AND NOT A RING ON THE LINE. Position is a pure
+// function of (record, clock): `positionAt` is handed a parsed ledger line and
+// nothing else, and the line's `within <w>,<h>` is a BOX by grammar. Putting a
+// twelve-vertex ring on every departure line would be a new field in an
+// append-only public record, and re-resolving the mark id at derivation time
+// would let a later re-cut of a ring rewrite where somebody already arrived —
+// the exact thing `within` was introduced to prevent. So the ring is consulted
+// ONCE, at declaration, and what it decides is frozen as the departure's own
+// `toward` with no extent beside it.
+//
+// THIS IS NOT A NEW IDIOM. `src/arena.mjs § arrivalOnGround` already writes a
+// mark-targeted departure exactly this way, and its own note carries the
+// argument verbatim: "a named point is MORE frozen than a rect, not less (a
+// later resize of the room cannot rewrite an arrival that is a coordinate), and
+// the target's id still rides the ledger line, so the record says where the
+// walker was headed either way." A ring is a re-cut waiting to happen, which
+// makes the case here stronger, not weaker.
+//
+// Nothing downstream changes shape. `targetEntryT`, `positionAt`'s arrival
+// predicate, the viewer's leg-clipping and the arena's own entry maths all read
+// a rect off the line; a ringed target now puts no rect there, so all four
+// simply take the no-extent path they already take for a `center` walk and for
+// every vessel sailing. One arrival truth, still — and no second shape function:
+// the ring comes from `polygonOf`, the membership test from `pointInPolygon`,
+// both the ones geometry.mjs already owns.
+
+// How far past the boundary an arrival stands. ON the ring is not IN it — the
+// ray-cast at a vertex is a coin toss and a rect claimed from the line straddles
+// it — which is the same seam the `center` mode was invented for, one metre
+// wide. A dial, movable by ruling, never silently.
+export const RING_ARRIVAL_INSET_M = 1;
+
+/**
+ * Where a walk to a RINGED mark ends, or null when the mark carries no ring and
+ * the caller should keep the box path it has always used.
+ *
+ * `rim` — the first point at which the straight road from `from` to the mark's
+ * anchor crosses the ring, stepped `inset` metres further along that road. Rim
+ * keeps its whole meaning ("stop at the first point of the target's ground");
+ * it is only that the ground is now the ring's, not the bounding box's.
+ *
+ * `center` — the anchor, when the road reaches it: a ring's bbox centre is
+ * guaranteed to be the box's middle and NOT guaranteed to be on the mark's own
+ * ground, so a concave ring whose anchor falls outside it has no middle to walk
+ * to and takes the rim answer instead.
+ *
+ * Already standing inside the ring is "stand here", which is byte-identical to
+ * what a rim walk into a box you are already in has always derived (`entryT`
+ * returns 0, the leg is zero-length, `standing: true`).
+ */
+export function walkTargetFor(mark, from, arrival = WALK_ARRIVAL_DEFAULT) {
+  const ring = polygonOf(mark);
+  const ax = Number(mark?.at?.x), ay = Number(mark?.at?.y);
+  if (!ring || !Number.isFinite(ax) || !Number.isFinite(ay)) return null;
+  const fx = Number(from?.x), fy = Number(from?.y);
+  if (!Number.isFinite(fx) || !Number.isFinite(fy)) return null;
+
+  const canon = WALK_ARRIVAL_CANON[arrival] ?? arrival;
+  const anchorInside = pointInPolygon(ax, ay, ring);
+  const point = (x, y) => ({ toward: { x: round1(x), y: round1(y) }, targetExtent: null, ringed: true });
+
+  if (canon === "center" && anchorInside) return point(ax, ay);
+  if (pointInPolygon(fx, fy, ring)) return point(fx, fy);
+
+  const hit = ringEntryAlong(ring, { x: fx, y: fy }, { x: ax, y: ay }, RING_ARRIVAL_INSET_M);
+  if (hit) return point(hit.x, hit.y);
+  // The road never met the ring at all (a degenerate ring, or an anchor the
+  // road cannot reach). The anchor is still the mark's own ground if it is
+  // inside; otherwise this mark has no answer and the caller keeps the box,
+  // which is no worse than yesterday and is never silently a lie about a ring.
+  return anchorInside ? point(ax, ay) : null;
+}
+
+/**
+ * The first point the segment `from → anchor` crosses `ring`, stepped `inset`
+ * metres further along it, or null if it never crosses.
+ *
+ * The step can overshoot a stretch of ground thinner than the inset, so the
+ * result is CHECKED rather than assumed: if the stepped point is not inside the
+ * ring, the answer is the midpoint between this crossing and the next one, which
+ * for a simple polygon is inside by construction.
+ */
+function ringEntryAlong(ring, from, anchor, inset) {
+  const dx = anchor.x - from.x, dy = anchor.y - from.y;
+  const legM = Math.hypot(dx, dy);
+  if (!legM) return null;
+  const ts = [];
+  for (let i = 0; i < ring.length; i++) {
+    const a = ring[i], b = ring[(i + 1) % ring.length];
+    const t = segmentT(from, anchor, a, b);
+    if (t !== null && t > 0 && t <= 1) ts.push(t);
+  }
+  if (!ts.length) return null;
+  ts.sort((p, q) => p - q);
+  const t1 = ts[0];
+  const at = (t) => ({ x: from.x + dx * t, y: from.y + dy * t });
+  const stepped = at(Math.min(1, t1 + inset / legM));
+  if (pointInPolygon(stepped.x, stepped.y, ring)) return stepped;
+  const t2 = ts.find((t) => t > t1);
+  if (t2 === undefined) return null;
+  const mid = at((t1 + t2) / 2);
+  return pointInPolygon(mid.x, mid.y, ring) ? mid : null;
+}
+
+/** Where along p1→p2 it meets p3→p4, or null when they do not properly cross. */
+function segmentT(p1, p2, p3, p4) {
+  const d = (p2.x - p1.x) * (p4.y - p3.y) - (p2.y - p1.y) * (p4.x - p3.x);
+  if (d === 0) return null; // parallel or collinear — the next edge answers
+  const t = ((p3.x - p1.x) * (p4.y - p3.y) - (p3.y - p1.y) * (p4.x - p3.x)) / d;
+  const u = ((p3.x - p1.x) * (p2.y - p1.y) - (p3.y - p1.y) * (p2.x - p1.x)) / d;
+  return u >= 0 && u <= 1 ? t : null;
 }
 
 // positionAt(departure, nowFractional) → where the walker is, and whether the
