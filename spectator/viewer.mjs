@@ -56,6 +56,18 @@ export const SPECTATOR_ACTOR = "__spectator__";
 // why it names no destination and appears in no containment answer
 export const WORLD_ROOT_ID = "the-town/let-there-be-light";
 
+/** THE CHIP NAMES THE MARK YOU ENTERED — ported 2026-09-11 from the birthday
+ *  lineage (8d0eb580, 2026-08-29), which never reached main. The founder ruled
+ *  it in these words: "no not containment! it has to be the mark you're
+ *  currently viewing the INTERIOR OF (aka ENTERED). geometric containment
+ *  smallest is NOT appropriate for this." So this function is never handed the
+ *  marks — it cannot fall back on a containment chain by accident; the caller
+ *  passes the mounted room, which is set from a crossing, and outside any room
+ *  the chip is the root, as it always was. Pure. */
+export function chipMark({ viewingInteriorOf = null } = {}) {
+  return viewingInteriorOf || WORLD_ROOT_ID;
+}
+
 const markIndex = (marks) => marks instanceof Map
   ? marks
   : new Map((marks ?? []).filter((mark) => mark?.id).map((mark) => [mark.id, mark]));
@@ -4182,10 +4194,13 @@ const STYLE = `
    the painting to find, so the corner is the whole of its target. */
 .wv-worldmark { position:absolute; z-index:6; top:13px; left:13px; }
 .wv-root-mark { display:block; width:26px; height:26px; padding:0; cursor:pointer;
-  border:0; border-radius:999px; background:var(--blue); opacity:.65;
+  border:0; border-radius:999px; background:var(--wv-chip-tint, var(--blue)); opacity:.65;
   box-shadow:0 1px 6px rgba(0,0,0,.55); transition:opacity .12s, box-shadow .12s; }
 .wv-root-mark:hover, .wv-root-mark.is-hovered { opacity:1; }
-.wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px rgba(123,167,224,.35), 0 1px 6px rgba(0,0,0,.55); }
+.wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px var(--wv-chip-halo, rgba(123,167,224,.35)), 0 1px 6px rgba(0,0,0,.55); }
+/* the chip takes the tier of whatever it names (ported from the birthday lineage, 2026-09-11) */
+.wv-root-mark.t-home { --wv-chip-tint:var(--green); --wv-chip-halo:rgba(132,201,143,.35); }
+.wv-root-mark.t-market { --wv-chip-tint:var(--amber); --wv-chip-halo:rgba(232,197,106,.35); }
 .wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
   flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
 /* glyph only, so they are round rather than pill-shaped — the word each one used
@@ -5721,6 +5736,21 @@ export function mountViewer(appEl) {
     return () => overlays.forEach((el) => boxEl.appendChild(el));
   }
   let sceneRoomId = null;       // the mark whose scene is mounted, or null = the town
+  // the top-left chip follows the MOUNTED room, which is the entered one
+  const chipMarkId = () => chipMark({ viewingInteriorOf: sceneRoomId });
+  // …and wears that mark's name and tier colour: a blue dot over somebody's
+  // home would be the page saying "constitution" about a house, in the one
+  // language a reader learns by colour rather than by words
+  function syncChip(interaction = markInteraction.getState()) {
+    const rootGlyph = $(root, ".wv-root-mark");
+    if (!rootGlyph) return;
+    const chip = chipMarkId();
+    rootGlyph.classList.toggle("on", interaction.selectedId === chip);
+    rootGlyph.classList.toggle("is-hovered", interaction.hoveredId === chip);
+    rootGlyph.setAttribute("aria-label", markName({ id: chip }).name);
+    const tier = tierOf({ id: chip });
+    for (const t of ["constitution", "home", "market"]) rootGlyph.classList.toggle(`t-${t}`, tier === t);
+  }
   let townKeep = null;          // { svg, ctx } — the town scene, held aside while inside
 
   // ── WHY STEPPING OUTSIDE TOOK A WHILE (founder, 2026-08-21) ────────────────
@@ -5765,10 +5795,12 @@ export function mountViewer(appEl) {
       placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
     });
     sceneRoomId = room.id;
+    syncChip();
   }
   function remountTown(boxEl) {
     if (!sceneRoomId) return;
     sceneRoomId = null;
+    syncChip();
     const reattach = captureKeep(boxEl);
     // an atlas that landed while we were indoors mounts NOW — the scene
     // lifecycle guard: a load may never stomp a mounted room, so it waited here
@@ -7462,11 +7494,7 @@ export function mountViewer(appEl) {
       if (cell.classList.contains("wv-card")) cell.setAttribute("aria-selected", String(selected));
     }
     renderMarkHighlight();
-    const rootGlyph = $(root, ".wv-root-mark");
-    if (rootGlyph) {
-      rootGlyph.classList.toggle("on", interaction.selectedId === WORLD_ROOT_ID);
-      rootGlyph.classList.toggle("is-hovered", interaction.hoveredId === WORLD_ROOT_ID);
-    }
+    syncChip(interaction);
     renderBubbles();
   }
   markInteraction.subscribe(syncMarkInteractionViews);
@@ -9456,7 +9484,7 @@ export function mountViewer(appEl) {
     if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
     const cvbtn = e.target.closest(".wv-map-convo");
     if (cvbtn) { if (!mapCtx?.toggleConvo) return; cvbtn.classList.toggle("on", !!mapCtx.toggleConvo()); return; }
-    if (e.target.closest("[data-root-mark]")) { selectMark(WORLD_ROOT_ID, { scrollCell: true }); return; }
+    if (e.target.closest("[data-root-mark]")) { selectMark(chipMarkId(), { scrollCell: true }); return; }
     if (e.target.closest(".wv-walk-cancel")) { clearSelectionAndDestination(); return; }
     if (e.target.closest(".wv-telling-toggle")) {
       state.paintingOnly = !state.paintingOnly;
@@ -9591,7 +9619,7 @@ export function mountViewer(appEl) {
     target?.closest?.(".wv-card[data-id], .wv-rnode[data-id], .wv-attribute[data-id]") ?? null;
   root.addEventListener("mouseover", (e) => {
     // the root's glyph is a mark to the pointer as much as to the click
-    if (e.target.closest("[data-root-mark]")) { hoverMark(WORLD_ROOT_ID); return; }
+    if (e.target.closest("[data-root-mark]")) { hoverMark(chipMarkId()); return; }
     const cell = markCellAt(e.target);
     if (cell) hoverMark(cell.dataset.id, !!cell.closest(".wv-bubble"));
   });
