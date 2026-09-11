@@ -4514,6 +4514,78 @@ export function residentRadial(read = {}) {
   };
 }
 
+// ───────── "plus all of yours", without a fold ──────────────────────────────
+//
+// Keemin, 2026-08-04: the painting draws "the field of view, plus all of yours
+// whether it holds them or not". That rule STANDS on the resident path; what
+// changed underneath it is that there is no fold to look the ids up in, so the
+// `/world/my-marks` rows now carry `at` and `extent` themselves (office,
+// 2026-09-10) and this is where they become things a painting can draw.
+//
+// THE SENTINEL. A mark can carry a position that is not a place: the record
+// parks positionless markers out past ±50,000 m, and `townGround` has always
+// refused to draw a ring with a vertex beyond that magnitude. One of these is
+// live right now — `jetto-of-starforge/the-glass-faces-back` at roughly
+// (-96497, -95455) — and it reaches this page like any other placed mark. The
+// guard is HERE, on the draw side, rather than in the door: the door's job is to
+// report the record faithfully, and a mark whose recorded position is a marker
+// is still a mark the portfolio should list. It is the PAINTING that must not
+// put it 96 km off the map.
+//
+// AND IT IS NAMED, NEVER SILENTLY DROPPED. A resident's own mark vanishing from
+// their own map with no word is precisely the quiet-failure class this lane
+// exists to close; `sentinel` and `unplaced` come back so the page can say how
+// many of yours it could not place and why.
+export const MINE_SENTINEL_M = 50000;
+
+/**
+ * The acting resident's own marks, as the painting can use them.
+ *
+ * Three honest categories, because "not drawn" has three different reasons and
+ * a reader deserves to be told which:
+ *   marks     — a real position: drawable
+ *   unplaced  — no `at` at all. A predicated or naming mark HAS no site of its
+ *               own; nothing is wrong and nothing is missing.
+ *   sentinel  — an `at` past the marker magnitude: a position that is not a
+ *               place. Not drawn, and said out loud.
+ *
+ * `complete` rides through from the door so the page can tell "these are all of
+ * yours" from "these are the first twenty of yours" — the door is paged at 20 a
+ * list, and a painting that quietly drew the first page would be lying by
+ * arithmetic.
+ */
+export function residentMineMarks(portfolio = {}) {
+  const marks = new Map();
+  const unplaced = [], sentinel = [];
+  for (const list of ["drafts", "docket", "published", "backed"]) {
+    for (const row of portfolio[list] ?? []) {
+      if (!row?.id || marks.has(row.id)) continue;
+      const at = row.at;
+      if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) { unplaced.push(row.id); continue; }
+      if (Math.abs(at.x) > MINE_SENTINEL_M || Math.abs(at.y) > MINE_SENTINEL_M) { sentinel.push(row.id); continue; }
+      marks.set(row.id, { ...row });
+    }
+  }
+  return { marks, unplaced, sentinel, complete: portfolio.complete !== false };
+}
+
+/**
+ * The id index the resident path resolves against — records first, then the
+ * resident's own rows.
+ *
+ * ORDER MATTERS AND THE READ WINS. Where a mark is both in sight and yours, the
+ * READ's record is the one kept: it is the town's published canon at this
+ * standpoint, and a portfolio row is a projection of it with fewer fields. The
+ * reverse order would quietly serve a resident their own thinner copy of a mark
+ * the town can see whole.
+ */
+export function residentById(read = {}, mine = new Map()) {
+  const byId = new Map();
+  for (const [id, row] of mine) byId.set(id, row);
+  for (const [id, record] of Object.entries(read.records ?? {})) byId.set(id, record);
+  return byId;
+}
+
 /** The ids a resident read names — its own list, for the page to resolve against. */
 export function residentReadIds(read = {}) {
   const named = Array.isArray(read.nearby) ? read.nearby
