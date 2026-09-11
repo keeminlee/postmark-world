@@ -156,6 +156,25 @@ test("a picture on the shelf hangs; a picture anywhere else reads as its caption
   assert.equal(byClass(host, "wv-homecol-altonly").length, 1);
 });
 
+// ⚑ THE ABOVE PASSES THROUGH ONE BRANCH ONLY, and I found that out by flipping.
+// A picture alone on a line is a FIGURE and is built by the block pass; a picture
+// inside a sentence is built by the INLINE pass, which is a second copy of the
+// same decision. Removing the shelf gate from the inline pass left every test
+// above green, because not one of them had an inline picture in it. So:
+test("the shelf gate holds on the inline pass too — a picture inside a sentence", () => {
+  const host = render(homeColumnModel({
+    handle: "wright",
+    door: { description: `look here ![on the shelf](${SHELF}) and here ![not on the shelf](the-trueing-house.png) too` },
+  }));
+  const imgs = find(host, "IMG");
+  assert.equal(imgs.length, 1, "an inline picture off the shelf must not become an image either");
+  assert.equal(imgs[0].src, "/shelf/keeminlee/abc123.png");
+  const read = serialize(host);
+  assert.ok(read.includes("look here"), "the sentence around the pictures survives");
+  assert.ok(read.includes("not on the shelf"), "the refused picture's words stay in the sentence");
+  assert.ok(!read.includes("the-trueing-house.png"), "and its path does not");
+});
+
 // ── the markdown reader ─────────────────────────────────────────────────────
 
 test("headings, paragraphs, lists, quotes, rules and code read as themselves", () => {
