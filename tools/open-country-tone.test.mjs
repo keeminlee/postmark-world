@@ -86,6 +86,18 @@ test("A ROOM NEVER GETS OPEN COUNTRY — interiors are byte-identical either way
   // worldFrame is null indoors and the whole block is skipped. This is the
   // 08-20 ruling the 08-24 one promised not to disturb, and the tone change
   // does not reach it either.
-  assert.match(SOURCE, /const rootMk = zoomOutLimit > 1 \? \(world\?\.marks \?\? \[\]\)/,
+  // ⚑ THE GATE IS THE RULE; THE SET IS NOT. On 2026-09-10 the marks source
+  // became `allMarks()` — the assembled fold where there is one, the read's own
+  // records on the resident path, which loads no fold at all. This guard went
+  // red on that and it was right to: it is a source-text match and the source
+  // text changed. But what it protects is the CONDITION, not the expression
+  // after it, so it now pins the condition and accepts either set. Pinning the
+  // whole line made it a guard against editing, which is not the same thing as
+  // a guard against a room reaching for open country.
+  assert.match(SOURCE, /const rootMk = zoomOutLimit > 1 \?/,
     "a room now reaches for the root frame, which the 08-20 ruling forbids");
+  // and the gate still decides something: the false arm is still null, so
+  // indoors there is no frame to draw rather than a frame drawn from nothing.
+  assert.match(SOURCE, /const rootMk = zoomOutLimit > 1 \?[\s\S]{0,120}?:\s*null;/,
+    "indoors the lookup must yield null, not an empty-set lookup that reads as a frame");
 });
