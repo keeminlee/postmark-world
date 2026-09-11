@@ -1734,26 +1734,47 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
     + `</circle></g></g>`;
 }
 
-/** THE FAR WALKER — a dot with a little pair of legs (founder, 2026-09-11:
- *  "let's do static dots then. could we make the dots have a little pair of
- *  legs?"). One per resident at town width, fixed where they stand — never
- *  merged by household or re-decided by the camera, which is what made the
- *  old far dots jump on every zoom step. No image, no clip path: a head and
- *  two strokes, all in the `1/k` marker space so it stays the same few
- *  screen pixels at any zoom. Carries the handle so a hover can name it, and
- *  the same hit disc the near walker wears. Pure. */
-export function farWalkerSVG({ at, k = 1, handle = "", moving = false } = {}) {
+/** THE WALKER IS A FRAME WITH LEGS (founder, 2026-09-11: "residents can be
+ *  similar to the parcel-homes, where there's an empty frame that's the 'face'
+ *  which should take up most of the icon, with short little legs coming off of
+ *  it (so it's mostly a frame). the frame fills in with info at the same zoom
+ *  that parcels do"). One glyph for every zoom: at town width the frame is
+ *  EMPTY (`art` null) — a small square and two strokes, no image, no clip
+ *  path; at district and street width the same frame, larger, FILLED with the
+ *  face (the picture clipped to the frame, or the monogram on the household's
+ *  colour) — exactly the house card's rule: frame far out, picture near. Fixed
+ *  where the resident stands, never merged, never re-decided by the camera.
+ *  Everything is in marker space (`1/k`) so it stays the same screen size at
+ *  any zoom. Carries the handle and the hit disc the walker always wore. Pure. */
+export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
+export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
   const s = 1 / (Number(k) > 0 ? Number(k) : 1);
-  const head = 3.2 * s, legTop = y + 1.5 * s, legBottom = y + 6.5 * s;
-  return `<g class="wv-walker-far${moving ? " moving" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${esc(handle)}">`
-    + `<circle cx="${x}" cy="${y - 2.2 * s}" r="${head}" class="wv-walker-far-head"/>`
-    + `<line x1="${x - 1.4 * s}" y1="${legTop}" x2="${x - 2.6 * s}" y2="${legBottom}" class="wv-walker-far-leg"/>`
-    + `<line x1="${x + 1.4 * s}" y1="${legTop}" x2="${x + 2.6 * s}" y2="${legBottom}" class="wv-walker-far-leg"/>`
-    + `<circle cx="${x}" cy="${y + 1.5 * s}" r="${9 * s}" class="wv-walker-hit"/>`
+  const filled = !!(art && (art.avatar || art.monogram));
+  const size = (filled ? WALKER_FRAME.near : WALKER_FRAME.far) * s;
+  const leg = (filled ? WALKER_FRAME.legNear : WALKER_FRAME.legFar) * s;
+  const x0 = x - size / 2, y0 = y - size / 2, rx = 2 * s, bottom = y + size / 2;
+  const who = esc(label ?? handle);
+  const safe = String(handle ?? "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+  let fill = "";
+  if (filled && art.avatar) {
+    const clip = `wv-face-${safe}`;
+    fill = `<clipPath id="${clip}"><rect x="${x0}" y="${y0}" width="${size}" height="${size}" rx="${rx}"/></clipPath>`
+      + `<image href="${esc(art.avatar)}" x="${x0}" y="${y0}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
+  } else if (filled) {
+    fill = `<rect x="${x0}" y="${y0}" width="${size}" height="${size}" rx="${rx}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
+      + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
+  }
+  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
+    + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit"/>`
+    + fill
+    + `<rect x="${x0}" y="${y0}" width="${size}" height="${size}" rx="${rx}" class="wv-walker-frame"/>`
+    + `<line x1="${x - size * 0.22}" y1="${bottom}" x2="${x - size * 0.3}" y2="${bottom + leg}" class="wv-walker-leg"/>`
+    + `<line x1="${x + size * 0.22}" y1="${bottom}" x2="${x + size * 0.3}" y2="${bottom + leg}" class="wv-walker-leg"/>`
     + `</g>`;
 }
+
 
 // THE SAME HOUSE, TOLD SMALLER (2026-09-11). At `far` a parcel is a landmark
 // and nothing else: the reader is looking at the shape of a town, and 890
@@ -4061,10 +4082,10 @@ const STYLE = `
    sizes, so the town does not appear to change species when a reader zooms. */
 .ov-glyph { fill:#f4e6c8; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; pointer-events:none; }
 /* a household seen from across the town: one dot for its people, not nine */
-.wv-walker-far .wv-walker-far-head { fill:var(--green); stroke:none; }
-.wv-walker-far .wv-walker-far-leg { stroke:var(--green); stroke-width:1.6; stroke-linecap:round; vector-effect:non-scaling-stroke; }
-.wv-walker-far.moving .wv-walker-far-head { fill:#e0507a; }
-.wv-walker-far.moving .wv-walker-far-leg { stroke:#e0507a; }
+/* the walker frame: empty at town width, filled with the face nearer in */
+.wv-walker-frame { fill:none; stroke:var(--green); stroke-width:2; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+.wv-walker-leg { stroke:var(--green); stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke; }
+.moving > .wv-walker-frame, .moving > .wv-walker-leg { stroke:#e0507a; }
 .ov-dot { fill:var(--you); stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:var(--you); stroke-width:3; opacity:.55; }
 /* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
@@ -7757,12 +7778,13 @@ export function mountViewer(appEl) {
     // dot per household, sized by headcount at the household's middle — and
     // because who was merged depended on distance from the camera, every zoom
     // step re-decided it and the dots jumped; they took no clicks either. Now:
-    // every resident, fixed where they stand, as `farWalkerSVG` — a head and
-    // two legs, no image, no clip path. Cheap into the thousands; the hover
-    // scan is the first thing that would grow, not this.
+    // every resident, fixed where they stand, as `walkerFrameSVG` with no art —
+    // an empty frame and two legs, no image, no clip path (the same glyph the
+    // near tiers fill with the face). Cheap into the thousands; the hover scan
+    // is the first thing that would grow, not this.
     if (tier === "far") {
       for (const w of drawnWalkers) {
-        s += farWalkerSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing) });
+        s += walkerFrameSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing) });
       }
       mapCtx.walkLayer.innerHTML = s;
       walkReadout(drawnWalkers);
@@ -7795,7 +7817,6 @@ export function mountViewer(appEl) {
       // that difference made a resident who had never walked look like another
       // species. Provenance still shows in the words; it no longer picks a colour.
       const moving = w.moving ?? (!w.arrived && !w.standing);
-      const cls = moving ? "wv-walker moving" : "wv-walker";
       const eta = moving
         ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
         : (w.mark_id ? `at ${w.mark_id}` : "at rest");
@@ -7834,34 +7855,12 @@ export function mountViewer(appEl) {
         hulls += vesselGlyphSVG({ at: now, toward: dest, unit: vesselUnit, moving, label: identity });
         continue;
       }
-      s += `<circle cx="${now.x}" cy="${now.y}" r="${27 / k}" class="wv-walker-hit"/>`;
-
-      // THE FACE, and the ring that is still the ruling. The dot became a
-      // circle carrying the resident's own picture — but green-still /
-      // pink-moving is the map's motion language, so it survives as a RING
-      // around the face rather than being replaced by it. Read the ring for
-      // state, the face for who.
-      //
-      // A resident with no avatar gets their monogram on their own colour;
-      // a resident the meta map has never heard of gets the same circle in the
-      // town's gold, which is the old dot with a letter in it. There is no
-      // path here that renders nothing.
+      // THE FRAME, FILLED (2026-09-11): the same glyph the far tier draws empty,
+      // now wearing the face — the picture clipped to the frame, or the monogram
+      // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
-      const r = 11 / k;
-      if (face.avatar) {
-        // The clip is per-walker because each face is a different picture; the
-        // id is built from the handle, which residentHref's own rule has
-        // already established is [a-z0-9-] — and a handle that fails it simply
-        // never reaches this branch, because the meta map is keyed by handle.
-        const clip = `wv-face-${face.handle.replace(/[^a-z0-9-]/g, "")}`;
-        s += `<clipPath id="${clip}"><circle cx="${now.x}" cy="${now.y}" r="${r}"/></clipPath>`
-           + `<image href="${esc(face.avatar)}" x="${now.x - r}" y="${now.y - r}" width="${r * 2}" height="${r * 2}"`
-           + ` preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
-      } else {
-        s += `<circle cx="${now.x}" cy="${now.y}" r="${r}" class="wv-walker-mono" fill="${esc(face.color)}"/>`
-           + `<text x="${now.x}" y="${now.y}" class="wv-walker-initial" font-size="${13 / k}">${esc(face.monogram)}</text>`;
-      }
-      s += `<circle cx="${now.x}" cy="${now.y}" r="${r}" class="${cls}" role="img" aria-label="${esc(identity)}"/>`;
+      s += walkerFrameSVG({ at: now, k, handle: w.handle, moving, label: identity,
+        art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
     mapCtx.walkLayer.innerHTML = hulls + s;
     walkReadout(drawnWalkers);

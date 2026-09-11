@@ -31,7 +31,8 @@ import {
   viewportWorldBounds,
   markInDrawnBounds,
   pointInDrawnBounds,
-  farWalkerSVG,
+  walkerFrameSVG,
+  WALKER_FRAME,
   overlayHouseGlyphSVG,
   overlayHomeCardSVG,
   placeholderExtentSVG,
@@ -166,19 +167,34 @@ test("A MARK IS CULLED BY ITS GEOMETRY, NOT BY ITS CENTRE — a district straddl
   // and the arrow can never disagree about what is on screen
 });
 
-test("THE FAR WALKER — one static dot with legs per resident, fixed where they stand, nothing merged", () => {
-  const svg = farWalkerSVG({ at: { x: 100, y: 200 }, k: 2, handle: "rei" });
-  assert.match(svg, /^<g class="wv-walker-far" data-handle="rei"/, "one group, named by the handle so a hover can say who");
+test("THE WALKER IS A FRAME WITH LEGS — empty at town width, no picture, no clip path, fixed where they stand", () => {
+  const svg = walkerFrameSVG({ at: { x: 100, y: 200 }, k: 2, handle: "rei" });
+  assert.match(svg, /^<g class="wv-walker-far" data-handle="rei"/, "one group, named by the handle");
+  assert.equal((svg.match(/wv-walker-frame/g) ?? []).length, 1, "one frame");
   assert.equal((svg.match(/<line /g) ?? []).length, 2, "a little pair of legs");
-  assert.equal((svg.match(/wv-walker-far-head/g) ?? []).length, 1, "one head");
-  assert.ok(!/<image|clip-path/.test(svg), "no picture and no clip path — that is what broke at ten times the town");
-  assert.match(svg, /wv-walker-hit/, "and the same hit disc the near walker wears");
-  // marker space: at k=2 the head is half the size it is at k=1
-  const r = (s) => Number(s.match(/wv-walker-far-head"\/>/) ? s.match(/r="([\d.]+)" class="wv-walker-far-head"/)[1] : NaN);
-  assert.equal(r(farWalkerSVG({ at: { x: 0, y: 0 }, k: 2 })) * 2, r(farWalkerSVG({ at: { x: 0, y: 0 }, k: 1 })));
-  assert.match(farWalkerSVG({ at: { x: 0, y: 0 }, moving: true }), /class="wv-walker-far moving"/, "a mover wears the moving class");
-  assert.equal(farWalkerSVG({ at: { x: NaN, y: 1 } }), "", "an unplaced walker draws nothing");
-  // ⚑ THE FLIP: drop one <line> from farWalkerSVG and the legs count reds.
+  assert.ok(!/<image|clip-path|wv-walker-mono/.test(svg), "empty: no picture, no clip path, no monogram — the frame is the whole icon");
+  assert.match(svg, /wv-walker-hit/, "and a hit disc");
+  const w = Number(svg.match(/width="([\d.]+)" height="[\d.]+" rx="[\d.]+" class="wv-walker-frame"/)[1]);
+  assert.equal(w, WALKER_FRAME.far / 2, "marker space: at k=2 the frame is half its k=1 size");
+  assert.match(walkerFrameSVG({ at: { x: 0, y: 0 }, moving: true }), /class="wv-walker-far moving"/);
+  assert.equal(walkerFrameSVG({ at: { x: NaN, y: 1 } }), "", "an unplaced walker draws nothing");
+  // ⚑ THE FLIP: drop one <line> from walkerFrameSVG and the legs count reds.
+});
+
+test("THE FRAME FILLS IN nearer in — the picture clipped to the frame, or the monogram on the household's colour — at the house card's own size step", () => {
+  const pic = walkerFrameSVG({ at: { x: 10, y: 20 }, k: 1, handle: "rei", art: { avatar: "/shelf/rei.jpg" } });
+  assert.match(pic, /^<g class="wv-walker-near" data-handle="rei"/, "the filled frame is the walker proper");
+  assert.match(pic, /<clipPath id="wv-face-rei"><rect /, "the picture is clipped to the FRAME, not a circle");
+  assert.match(pic, /<image href="\/shelf\/rei.jpg"[^>]*class="wv-walker-face"/);
+  assert.equal((pic.match(/<line /g) ?? []).length, 2, "legs stay");
+  const w = Number(pic.match(/width="([\d.]+)" height="[\d.]+" rx="[\d.]+" class="wv-walker-frame"/)[1]);
+  assert.equal(w, WALKER_FRAME.near, "filled, the frame is the near size");
+  assert.ok(WALKER_FRAME.near > WALKER_FRAME.far, "and larger than the empty one");
+  const mono = walkerFrameSVG({ at: { x: 10, y: 20 }, handle: "nyx", art: { monogram: "N", color: "#123456" } });
+  assert.match(mono, /wv-walker-mono" fill="#123456"/, "no picture: the household's colour fills the frame");
+  assert.match(mono, /class="wv-walker-initial"[^>]*>N</, "with the monogram on it");
+  assert.ok(!/<image/.test(mono));
+  // ⚑ THE FLIP: clip to a <circle> instead of the frame's <rect> → the clipPath assertion reds.
 });
 
 test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, and the pip stays", () => {
