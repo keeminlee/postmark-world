@@ -151,8 +151,18 @@ before(async () => {
  *  Driven with real wheel events on the map, never by writing the viewBox: the
  *  question is what the DRAWING CODE does at a zoom, and setting the viewBox
  *  moves the picture without asking it. */
-async function readGround({ zoomToNear = false } = {}) {
+async function readGround({ zoomToNear = false, tellingOpen = false } = {}) {
   const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+  // ⚑ `tellingOpen` EXISTS BECAUSE A GATE NOBODY CAN SEE IS A GATE NOBODY CAN
+  // TEST (2026-09-11). Painting-only is the page's DEFAULT (readPaintingOnly
+  // returns true for an unset key), and it already suppresses every `<title>` on
+  // the overlay — so an assertion that the far tier draws no tooltips passes on
+  // a page that has no tooltips at any tier, whatever the label gate does. That
+  // is a falsifier that cannot fail, and it was one until a flip proved it.
+  // Opening the Telling turns the tooltips back on, and the assertion starts
+  // meaning what it says.
+  if (tellingOpen)
+    await page.addInitScript(() => { try { localStorage.setItem("pm_world_painting_only", "0"); } catch {} });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
   await page.goto(`http://localhost:${rig.port}/`, { waitUntil: "domcontentloaded", timeout: 90_000 });
@@ -416,7 +426,7 @@ test("THE FAR TIER DRAWS NO FURNITURE — the spectator opens on the town, not o
   assert.equal(g.cards, 0, `and not one of them is a card: ${g.cards}`);
   assert.equal(g.pictures, 0, `no pictures at town width: ${g.pictures}`);
   assert.equal(g.labels2, 0, `no names under the houses: ${g.labels2}`);
-  assert.equal(g.titles, 0, `and no tooltips standing in for the names: ${g.titles}`);
+  // (the tooltips are asked for separately, below, on a page where they exist)
   // and the ground is still the ground — the gate cuts the furniture, never the floor
   assert.equal(g.regions, expectedRegions, "the region rings are NOT culled or tiered away");
   assert.deepEqual(g.errors, [], "and the page threw nothing getting there");
@@ -424,6 +434,37 @@ test("THE FAR TIER DRAWS NO FURNITURE — the spectator opens on the town, not o
   //   drawOverlay (so it never sees "far") and `cards`/`labels2` red while the
   //   furniture assertion above stays green — the two gates are independent and
   //   this proves the parcel one separately.
+});
+
+// ── THE LABEL GATE, ON A PAGE THAT HAS LABELS (2026-09-11) ─────────────────
+//
+// This test exists in this shape because its first shape was a lie. It asserted
+// "no tooltips at town width" against the page's DEFAULT, which is painting-only
+// — and painting-only suppresses every tooltip at every tier, so the assertion
+// was green with the label gate deleted. The flip proved it, which is the only
+// reason this note can be written at all.
+//
+// So the Telling is opened first, the tooltips exist, and the gate is asked a
+// question it can answer wrongly.
+test("THE NAMES STAND DOWN AT TOWN WIDTH — and the gate is a gate, not an off switch", async (t) => {
+  if (!chromium) return t.skip(
+    "playwright is absent: the label gate is unguarded. Its unit-level twin does not exist — the gate is one "
+    + "boolean inside drawOverlay and there is nothing pure to ask.");
+
+  const far = await readGround({ tellingOpen: true });
+  assert.equal(far.tier, "far");
+  assert.equal(far.titles, 0,
+    `no names are carried at town width: ${far.titles} tooltips (890 of them would be a grey band, `
+    + `and the hover box — one node, raised on demand — is how a reader asks at this zoom)`);
+
+  // AND THE SAME PAGE NAMES THINGS WHEN THE CAMERA COMES DOWN. Without this the
+  // test above is satisfied by a viewer that never names anything, which is a
+  // different bug wearing this one's green.
+  const near = await readGround({ tellingOpen: true, zoomToNear: true });
+  assert.equal(near.tier, "near");
+  assert.ok(near.titles > 0, `and it names them at street width: ${near.titles} tooltips`);
+  // ⚑ THE FLIP: `const named = !state.paintingOnly;` (the tier dropped from the
+  //   gate) and the far assertion reds while the near one stays green.
 });
 
 // ── THE PIXEL RULE, ON THE PAGE (2026-09-11) ───────────────────────────────
