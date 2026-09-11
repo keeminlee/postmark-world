@@ -4739,20 +4739,49 @@ export function mountViewer(appEl) {
   }
   // ONE world. When a signed-in household has a composed fold it IS the world,
   // and its unpublished marks are told apart by colour rather than by a swap.
+  // ── THE INDEX IS THE SEAM (2026-09-10) ────────────────────────────────────
+  //
+  // `byId` was always the page's one answer to "what is this id". Forty-odd
+  // call sites ask it and none of them care where it came from. So the resident
+  // path does not branch at those forty sites — it fills THIS MAP from the read
+  // instead of from the fold, and every consumer downstream is untouched. That
+  // is the whole reason this change is small enough to be safe.
+  //
+  // `world` (the assembled engine world: heightfield, light, terrain) stays NULL
+  // on the resident path, because nothing there computes a field of view any
+  // more — the office does. Everything that used to walk `world.marks` goes
+  // through `allMarks()` below, which is the drawn set here and the fold there.
   function applyWorldLayer() {
+    if (!data?.trueWorld && !data?.myWorld) {
+      // no fold in hand: the resident path. `byId` is filled by the read.
+      data.worldState = null;
+      world = null;
+      pinnedBuiltId = null;
+      worldEpoch += 1;
+      return;
+    }
     data.worldState = data?.myWorld || data.trueWorld;
     world = assembleWorld({ worldState: data.worldState, skeleton: data.skeleton });
-    byId = new Map(world.marks.map((m) => [m.id, m]));
+    byId = new Map(allMarks().map((m) => [m.id, m]));
     homeSet = buildHomeSet(data.manifest, world.marks);
     pinnedBuiltId = null; // the record moved: an open bubble is now stale prose
     worldEpoch += 1;      // and so is every view built against the old one
   }
+
+  // Every mark the page can currently speak about: the fold's, or — with no
+  // fold — exactly what the read and the portfolio named. One accessor so the
+  // dozen places that used to walk `world.marks` need no opinion about which.
+  const allMarks = () => world?.marks ?? [...byId.values()];
   const isOfficeLive = (url) => url === officeUrl("/world/state");
-  async function loadData() {
+  // ── TWO LOADS, BECAUSE THEY ARE TWO DIFFERENT SIZES (2026-09-10) ──────────
+  //
+  // `loadData` fetched three things as one act, and one of them is the town.
+  // The skeleton (22 KB) and the manifest are SMALL WHOLES every path needs —
+  // the ground cannot be drawn without the skeleton's registration, and green
+  // homes cannot be decided without the manifest. The fold is 0.93 MB and the
+  // resident path never opens it. Splitting them is what lets the order change.
+  async function loadGround() {
     if (data) return;
-    // The True World is intentionally credentialless. Even a signed-in browser
-    // receives the main fold here; the household-composed fold has its own read.
-    const ws = await fetchWorldState(worldStatePaths(), { credentials: "same-origin" });
     const [sk, mf] = await Promise.all([
       fetchJson(recordSources("/WORLD/skeleton.json", { office: officeUrl("/world/skeleton") }).map((source) => source.url)),
       // homes come from the seeding manifest, read the same way (office first
@@ -4760,8 +4789,23 @@ export function mountViewer(appEl) {
       // just means no green
       fetchJson(recordSources("/seeding/manifest.json").map((source) => source.url)).catch(() => null),
     ]);
+    data = { trueWorld: null, myWorld: null, worldState: null, skeleton: sk, manifest: mf };
+  }
+
+  // The whole town. The True World is intentionally credentialless: even a
+  // signed-in browser receives the main fold here.
+  async function loadFold() {
+    if (data?.trueWorld) return;
+    await loadGround();
+    const ws = await fetchWorldState(worldStatePaths(), { credentials: "same-origin" });
     state.dataSource = ws.url; state.asOf = ws.asOf;
-    data = { trueWorld: ws.json, myWorld: null, worldState: ws.json, skeleton: sk, manifest: mf };
+    data.trueWorld = ws.json;
+  }
+
+  // Kept for the hosts that call it (the published `reload` handle, the replay
+  // shell): both halves, in the old order, with the old name.
+  async function loadData() {
+    await loadFold();
     applyWorldLayer();
   }
   // re-pull the fold from the same source and re-assemble (auto-update). Skeleton
@@ -4864,9 +4908,16 @@ export function mountViewer(appEl) {
       + `${glyph}</svg>`
       + `<span class="wv-extent-t">${fmt(w)}×${fmt(h)} m</span></span>`;
   }
+  // ⚑ `data.myWorld` IS NO LONGER PART OF THIS (2026-09-10). It was the second,
+  // household-composed FOLD, and the resident path does not load one — so
+  // leaving it in the test would have made the predicate false forever and the
+  // resident path would never have activated at all. Silently: no error, no
+  // warning, just a signed-in reader looking at the spectator page. The lane
+  // named this coupling before deleting the fold precisely so the two changes
+  // would land in one commit rather than one breaking the other.
   function identityResolved() {
     return !!pmKey() && (state.whoami?.handles ?? []).length > 0
-      && !!state.portfolio && !!data?.myWorld && !!state.handle;
+      && !!state.portfolio && !!state.handle;
   }
   function isSpectating() {
     return state.actAs === SPECTATOR_ACTOR;
@@ -5001,7 +5052,7 @@ export function mountViewer(appEl) {
   // the feed's ORDER, without its markup — the painting needs the same list the
   // panel lists, and deriving it twice is how the two would come to disagree
   function newFeedMarks(keep = null) {
-    const dated = (world?.marks ?? []).filter((m) => m.id && m.date && (!keep || keep(m)));
+    const dated = (allMarks()).filter((m) => m.id && m.date && (!keep || keep(m)));
     // newest first; id breaks ties so the order is stable across re-tells (dates are
     // day-precision for most records, so ties are the common case, not the edge)
     return dated.slice().sort((a, b) =>
@@ -5166,6 +5217,14 @@ export function mountViewer(appEl) {
   const onIdle = (fn) => (typeof requestIdleCallback === "function" ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 32));
   function warmOtherViews() {
     if (!identityResolved()) return;
+    // ⚑ NOT ON THE RESIDENT PATH (2026-09-10). Warming built a full telling for
+    // every OTHER resident in the household in idle time. That was cheap when a
+    // telling was a local computation over a fold already in hand; it is a
+    // network read per resident now, and a household of six would quietly ask
+    // the office six questions nobody had asked it. The proposal counted this
+    // at 100x the work at ten times the town; at one read each it is simply
+    // requests nobody wanted.
+    if (onResidentPath()) return;
     warmQueue = staleViewHandles({
       handles: state.whoami?.handles ?? [],
       active: isSpectating() ? null : state.handle,
@@ -5578,7 +5637,7 @@ export function mountViewer(appEl) {
     // World-law cells are the-town's (constitution) — skipped under Mine, and part
     // of the ladder, so they go with it under New.
     if (showLadder && !mine)
-      for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
+      for (const lm of allMarks().filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
         ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
     // 3. then the listing. The CHIP governs it: All and Mine tell the standpoint —
     // ladder, then the bands, then the FOV tallies. New tells the record instead —
@@ -5703,7 +5762,7 @@ export function mountViewer(appEl) {
     (radial.within ?? []).forEach((w) => shown.add(w.id));
     const by = radial.byBearing ?? {};
     for (const b of Object.keys(by)) for (const m of Object.values(by[b]).flat()) shown.add(m.id);
-    const yours = (world.marks ?? []).filter(isMine);
+    const yours = allMarks().filter(isMine);
     const elsewhere = yours.filter((m) => m.id && !shown.has(m.id));
     const anyInView = yours.some((m) => shown.has(m.id));
 
@@ -5790,7 +5849,7 @@ export function mountViewer(appEl) {
     const id = stack[stack.length - 1];
     // one branch, both surfaces: renderExpansion is what the Telling's cells and
     // the painting's bubble each fold open, so the frame reads the same in both
-    const d = id === WORLD_ROOT_ID ? worldFrameReading(byId.get(id), world?.marks ?? []) : investigate(id, world);
+    const d = id === WORLD_ROOT_ID ? worldFrameReading(byId.get(id), allMarks()) : investigate(id, world);
     if (d.error) {
       if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
       box.innerHTML = `<div class="wv-err">${esc(d.error)}</div>`;
@@ -5873,12 +5932,15 @@ export function mountViewer(appEl) {
       const sm = String(g.scale ?? "").match(/(\d+(?:\.\d+)?)\s*m per atlas px/);
       if (!om || !sm) throw new Error("skeleton _grid changed shape");
       const originPx = { x: +om[1], y: +om[2] }, mPerPx = +sm[1];
-      // `world.marks` — the ASSEMBLED fold, which is the same set `byId`, the
-      // overlay and every other geometry reader use. Not `data.worldState.marks`
-      // and emphatically not `data.marks`, which does not exist: `data` is
-      // { trueWorld, myWorld, worldState, skeleton, manifest }. One question, one
-      // owner; the ground reads the marks the pips stand on.
-      const ground = townGround(world.marks, data.skeleton, { originPx, mPerPx });
+      // THE MARKS THE PIPS STAND ON — one question, one owner. `allMarks()` is
+      // the assembled fold where there is one, and on the resident path it is
+      // the read's own `records`, which carry the town's GROUND SET for exactly
+      // this call: the thirteen region rings and the water, the one small whole
+      // a painting needs for its floor (office, Half 1). Not
+      // `data.worldState.marks` and emphatically not `data.marks`, which does
+      // not exist: `data` is { trueWorld, myWorld, worldState, skeleton,
+      // manifest }.
+      const ground = townGround(allMarks(), data.skeleton, { originPx, mPerPx });
       const doc = new DOMParser().parseFromString(ground.svgText, "image/svg+xml");
       const svg = document.importNode(doc.documentElement, true);
       // THE SCENE-LIFECYCLE GUARD: a ground that finishes building while a ROOM
@@ -6044,7 +6106,7 @@ export function mountViewer(appEl) {
     // view and the LOD reference (`full`); it stops being the world's edge.
     // A ROOM (zoomOutLimit 1) never reaches for the root frame: its walls
     // remain its world, byte-for-byte the 08-20 ruling.
-    const rootMk = zoomOutLimit > 1 ? (world?.marks ?? []).find((m) => m.id === WORLD_ROOT_ID) : null;
+    const rootMk = zoomOutLimit > 1 ? (allMarks()).find((m) => m.id === WORLD_ROOT_ID) : null;
     const worldFrame = rootMk?.extent?.w > 0 && rootMk?.extent?.h > 0
       ? { x: originPx.x + ((rootMk.at?.x ?? 0) - rootMk.extent.w / 2) / mPerPx,
           y: originPx.y + ((rootMk.at?.y ?? 0) - rootMk.extent.h / 2) / mPerPx,
@@ -6325,7 +6387,7 @@ export function mountViewer(appEl) {
       glyphs: screenMarkCandidates(),
       marks,
     });
-    const toldHere = () => toldPaintingMarks(lastRadial, world?.marks ?? []);
+    const toldHere = () => toldPaintingMarks(lastRadial, allMarks());
     const paintingMarkForEvent = (event) => markAt(event, toldHere());
     // walkers, in the same screen-space shape the mark snap already eats
     function screenWalkerCandidates() {
@@ -6488,7 +6550,7 @@ export function mountViewer(appEl) {
     const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
     function buildFpLayer() {
       let s = "";
-      for (const m of world.marks ?? []) {
+      for (const m of allMarks()) {
         if (!m.at || !m.extent || isAmbientMark(m, byId)) continue;
         const cls = markClasses(m) + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
         s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
@@ -6594,7 +6656,7 @@ export function mountViewer(appEl) {
   // shelf gate every other art surface uses), the household's name under it,
   // lit when the household is home.
   function homeCard(parcel, at, fan, title) {
-    const home = homeMarkOfParcel(parcel.id, world?.marks ?? []);
+    const home = homeMarkOfParcel(parcel.id, allMarks());
     return overlayHomeCardSVG({
       at, id: parcel.id, classes: markClasses(parcel),
       label: String(parcel.household ?? parcel.by ?? ""),
@@ -6671,7 +6733,7 @@ export function mountViewer(appEl) {
     // Outdoors, every parcel not already drawn gets its card; indoors the roof
     // rule stands and none is added.
     if (!sceneRoomId) {
-      for (const m of world.marks ?? []) {
+      for (const m of allMarks()) {
         if (m.kind !== "parcel" || !m.at || glyphIds.has(m.id)) continue;
         glyphIds.add(m.id);
         s += homeCard(m, px(m.at), null, state.paintingOnly ? null : markIdentity(m));
@@ -6948,7 +7010,7 @@ export function mountViewer(appEl) {
 
   function syncActorPosition({ moveCamera = false } = {}) {
     const origin = actorOrigin();
-    const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
+    const journey = viewerJourneyState(actorWalker(), allMarks(), data?.worldState?.determined);
     const here = $(root, ".wv-youhere");
     if (here) {
       // how the office learned your position is provenance, not a thing to read
@@ -6956,7 +7018,7 @@ export function mountViewer(appEl) {
       here.innerHTML = journey.kind === "journey"
         ? `<b>on the road</b> · ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}`
         : origin
-          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined, { prefix: false }))}</b>`
+          ? `<b>${esc(standingLocationLabel(origin, allMarks(), data?.worldState?.determined, { prefix: false }))}</b>`
           : `<span class="wv-quiet">the office has no position for you yet</span>`;
     }
     // reports whether it re-rendered, so a caller does not build the telling a
@@ -6981,7 +7043,7 @@ export function mountViewer(appEl) {
   function drawFarCountry() {
     if (!mapCtx?.mistLayer || !mapCtx.farArtLayer) return;
     const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
-    const peak = (world?.marks ?? []).find((m) => m.far && m.feature === "pando-peak" && m.at);
+    const peak = (allMarks()).find((m) => m.far && m.feature === "pando-peak" && m.at);
     if (!peak) return;                      // no far feature on the record, no far country
     const centre = px(peak.at);
     // the corridor runs from Ferry's crossing — grid origin, the town's own
@@ -7062,7 +7124,7 @@ export function mountViewer(appEl) {
     // the vessel's own floor against being zoomed away from (see farGlyphUnit):
     // out at journey width she would otherwise be three pixels of hull
     const vesselUnit = farGlyphUnit(k, mapCtx.view?.w, VESSEL_MIN_FRAME_FRACTION) * VESSEL_GLYPH_SCALE;
-    const vessels = vesselHandles(world?.marks ?? []);
+    const vessels = vesselHandles(allMarks());
     const px = (m) => ({ x: mapCtx.originPx.x + m.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.y / mapCtx.mPerPx });
     // TWO PASSES, ONE LAYER. Hulls are collected separately and emitted first so
     // every deck sits under every passenger — a boat drawn in walker order would
@@ -7088,7 +7150,7 @@ export function mountViewer(appEl) {
       // mid-walk.
       let towardM = w.toward ?? w;
       if (w.moving && w.toward && w.mark_id) {
-        const tm = (world?.marks ?? []).find((m) => m.id === w.mark_id);
+        const tm = (allMarks()).find((m) => m.id === w.mark_id);
         if (tm?.at && tm?.extent) {
           const t = targetEntryT({ x: w.x, y: w.y }, w.toward,
             { x: w.toward.x, y: w.toward.y, w: tm.extent.w, h: tm.extent.h });
@@ -7386,7 +7448,7 @@ export function mountViewer(appEl) {
     // because there is no armed destination behind it, which is exactly the
     // point: the demonstration is not one.
     if (tourStage === "walk") return;
-    const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
+    const journey = viewerJourneyState(actorWalker(), allMarks(), data?.worldState?.determined);
     // The desk is for a walk, so it appears when there IS one (Keemin,
     // 2026-08-04): a destination you have armed, or a journey already under way.
     // Standing still it said only where you stand, which the painting's own dot
@@ -7567,7 +7629,7 @@ export function mountViewer(appEl) {
   // moving it to the painting's corner solves — it now opens where you are looking.
   function chooseWalkPoint(x, y, namedInside = null) {
     if (!canAct()) return;
-    const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
+    const destination = pointWalkDestination({ x, y }, allMarks());
     if (!destination) return;
     // THE WALLS, before anything is armed. Asked here rather than at confirm so
     // the reader is told at the click, while the place they meant is still
@@ -7945,7 +8007,7 @@ export function mountViewer(appEl) {
     const where = moving
       ? `on the road — ${Number(w.remaining_m ?? 0).toLocaleString()} m to go`
       : [w.x, w.y].every(Number.isFinite)
-        ? standingLocationLabel({ x: Number(w.x), y: Number(w.y) }, world?.marks ?? [], data?.worldState?.determined, { prefix: false })
+        ? standingLocationLabel({ x: Number(w.x), y: Number(w.y) }, allMarks(), data?.worldState?.determined, { prefix: false })
         : "somewhere on the record";
     return `<button type="button" class="wv-choose-row is-walker${moving ? " moving" : ""}" data-choose="${esc(id)}">`
       + `<span class="wv-choose-who">${esc(face.name)}</span>`
@@ -8100,7 +8162,7 @@ export function mountViewer(appEl) {
     pinnedBuiltId = mark.id;
     // the cell, plus this mark's own predicates as cells, then the SAME fold the
     // telling runs — so an attribute reads identically in both places
-    const predicates = (world?.marks ?? []).filter((p) => p.parent === mark.id && isPredicateAttribute(p));
+    const predicates = (allMarks()).filter((p) => p.parent === mark.id && isPredicateAttribute(p));
     // the way back, NAMED — "◂ back" makes you remember what you left, and the
     // one thing a bubble on a map should never ask you to do is hold the route
     // in your head
@@ -8829,6 +8891,14 @@ export function mountViewer(appEl) {
         if (read?.error) throw new Error(read.defect ?? read.error);
         readCache.set(key, read);
         readError = null;
+        // THE INDEX, FILLED FROM THE READ. `byId` is what forty call sites ask
+        // "what is this id", and on this path this is the only thing that fills
+        // it — the records the read carries, plus the resident's own rows.
+        // `homeSet` follows from the same set, so green still means home.
+        if (handle === state.handle) {
+          byId = residentById(read, mineSet.marks);
+          homeSet = buildHomeSet(data?.manifest, allMarks());
+        }
         return read;
       })
       .catch((e) => { readError = String(e?.message ?? e).slice(0, 160); return null; })
@@ -8907,14 +8977,24 @@ export function mountViewer(appEl) {
     // `state.mineIds`, by the draft overlay, and by the painting's "plus all of
     // yours". Measured on the live door for the keeminlee household: `complete`
     // comes back FALSE. `loadMineMarks` walks the offset until it is true.
-    const [composed, walked] = await Promise.all([
-      fetchWorldState([officeUrl("/world/state")], options),
-      loadMineMarks(),
-    ]);
+    // ⚑ THE SECOND FOLD IS GONE (2026-09-10). This used to fetch
+    // `/world/state` a second time, credentialled, so the household's draft
+    // DECLARATIONS could be laid into a composed copy of the whole town. The
+    // resident path has no town to compose into and does not want one: the
+    // drafts arrive with their own geometry in the portfolio rows, and
+    // `residentMineMarks` draws them from there.
+    //
+    // A SPECTATOR-WITH-A-KEY still gets the composed fold, because that path
+    // still paints from one, and `composeDraftOverlay` is still how its drafts
+    // get in. The fetch is now conditional on there being a fold at all.
+    const walked = await loadMineMarks();
     const portfolio = walked.portfolio;
+    const composed = data?.trueWorld
+      ? await fetchWorldState([officeUrl("/world/state")], options)
+      : null;
     // The overlay lays the household's draft DECLARATIONS into the composed
     // state (world-framed by the office's delta) — the fold stays off the read.
-    data.myWorld = composeDraftOverlay(composed.json, portfolio.drafts);
+    data.myWorld = composed ? composeDraftOverlay(composed.json, portfolio.drafts) : null;
     state.portfolio = portfolio;
     state.mineIds = new Set(["drafts", "published", "backed"]
       .flatMap((category) => (portfolio[category] ?? []).map((mark) => mark.id ?? mark.mark))
@@ -9504,7 +9584,7 @@ export function mountViewer(appEl) {
       // quiet lane must never be able to empty the whole rail.
       stakes: stakeEvents,
       blessings: settleState.recent,
-      names: new Map((world?.marks ?? []).map((m) => [m.id, markName(m).name])),
+      names: new Map((allMarks()).map((m) => [m.id, markName(m).name])),
       limit: 14,
     });
     // Hidden rather than empty: a heading over nothing reads as a thing that
@@ -9579,7 +9659,11 @@ export function mountViewer(appEl) {
     // than the conversations page's own 7 s poll — this is a map, not a feed,
     // and a hidden layer costs the office nothing
     if (convoVisible && tick % 2 === 0) loadConversations().then(drawConversations);
-    if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
+    // ⚑ THE AMBIENT RE-DOWNLOAD ONLY RUNS WHERE THERE IS A FOLD. It re-fetched
+    // the WHOLE town every ~60 s to notice the record had moved. On the
+    // resident path there is no fold to refresh and the reads are keyed by
+    // crossing, so the town arrives again when the clock says it should.
+    if (tick % 2 === 0 && data?.trueWorld && isOfficeLive(state.dataSource)) {
       try {
         const r = await fetch(state.dataSource, { credentials: "same-origin" });
         const asOf = r.headers.get("x-postmark-as-of");
@@ -9602,7 +9686,23 @@ export function mountViewer(appEl) {
     // the ring is the same question, asked of whoever turns out to be signed in;
     // renderIdentity settles it once the office has answered
     try {
-      await loadData();
+      // ── THE FOLD IS NOT LOADED FOR A RESIDENT (2026-09-10) ────────────────
+      //
+      // The order is the whole change. Boot used to fetch the fold, paint, and
+      // only then ask who was reading — so a resident paid for 0.93 MB of town
+      // before anything knew they would never look at it. With a key in hand we
+      // ask WHO FIRST, and the fold is fetched only if the answer is "nobody in
+      // particular": a spectator, or a key that turns out to hold no residents.
+      //
+      // A reader with no key is untouched, down to the order of the requests.
+      await loadGround();
+      if (pmKey()) {
+        await resolveIdentity();
+        if (!onResidentPath()) { await loadFold(); applyWorldLayer(); }
+      } else {
+        await loadFold();
+        applyWorldLayer();
+      }
       renderCurrent();
       loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
       // and the enter-exit acts, once THEY arrive. A full re-render rather than one
@@ -9617,7 +9717,7 @@ export function mountViewer(appEl) {
       loadSettlements().then(() => { renderSettlementChip(); renderActivity(); });
       loadStakeEvents().then(renderActivity);
       // conversations load on first toggle (💬), not at boot — the layer is opt-in
-      resolveIdentity(); // after data (the presets filter reads the manifest)
+      if (!pmKey()) resolveIdentity(); // keyless: still settles the ring and the presets
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
     }
