@@ -1863,19 +1863,25 @@ export function worldForRoom(world, marks = []) {
  *  Walks `parent`, `placementParent`, `_containedBy` and `_parentMarkId` — the
  *  same family markStanding walks — from the mark's OWN parents (never the mark
  *  itself: a parcel is not inside itself) to the first parcel, cycle-safe.
- *  Null when nothing on the chain is a parcel. Pure. */
-export function parcelEnclosing(mark, marks = []) {
+ *  Null when nothing on the chain is a parcel. `chain` (optional) is a second
+ *  index of id → { kind, parent, placementParent } consulted where `marks`
+ *  has no full record: on the resident path the read's nearby entries are
+ *  thin (id, at, bearing) and the office does not send their parents, so
+ *  without the town's own chain eight marks inside houses drew from outside
+ *  (measured on dev, 2026-09-11 21:1x). Pure. */
+export function parcelEnclosing(mark, marks = [], chain = null) {
   const byMarkId = markIndex(marks);
+  const linksOf = (m, id) => { const c = chain?.get?.(id); return [m?.parent ?? c?.parent, m?.placementParent ?? c?.placementParent, m?._containedBy, m?._parentMarkId]; };
   const seen = new Set([mark?.id]);
-  const queue = [mark?.parent, mark?.placementParent, mark?._containedBy, mark?._parentMarkId];
+  const queue = linksOf(mark, mark?.id);
   while (queue.length) {
     const id = queue.shift();
     if (!id || seen.has(id)) continue;
     seen.add(id);
-    const m = byMarkId.get(id);
-    if (!m) continue;
-    if (m.kind === "parcel") return id;
-    queue.push(m.parent, m.placementParent, m._containedBy, m._parentMarkId);
+    const m = byMarkId.get(id), c = chain?.get?.(id);
+    if ((m?.kind ?? c?.kind) === "parcel") return id;
+    if (!m && !c) continue;
+    queue.push(...linksOf(m ?? {}, id));
   }
   return null;
 }
@@ -1886,9 +1892,24 @@ export function parcelEnclosing(mark, marks = []) {
  *  reader is INSIDE that parcel (the mounted room is the parcel, or something
  *  within it: `underfoot`). From outside, the parcel's card is the whole of
  *  what is seen — a house is a landmark, not a window. Pure. */
-export function hiddenInsideParcel(mark, marks = [], underfoot = new Set()) {
-  const parcel = parcelEnclosing(mark, marks);
+export function hiddenInsideParcel(mark, marks = [], underfoot = new Set(), chain = null) {
+  const parcel = parcelEnclosing(mark, marks, chain);
   return !!parcel && !underfoot.has(parcel);
+}
+
+/** THE CHOOSER IS SORTED — residents, parcels, then other marks (founder,
+ *  2026-09-11: "separate the multi-mark selector (when clicking a crowded space)
+ *  into residents, parcels, and then other marks"). Order within a group is the
+ *  order handed in (people first, marks innermost-first — see openChooser).
+ *  `isWalker` says which ids are people; `kindOf` answers a mark's kind. Pure. */
+export function groupChooserIds(ids = [], { isWalker = () => false, kindOf = () => null } = {}) {
+  const residents = [], parcels = [], others = [];
+  for (const id of ids ?? []) {
+    if (isWalker(id)) residents.push(id);
+    else if (kindOf(id) === "parcel") parcels.push(id);
+    else others.push(id);
+  }
+  return { residents, parcels, others };
 }
 
 /** THE PARCEL UNDERFOOT WEARS NO CARD (founder, 2026-09-11: "let's not display
@@ -4594,6 +4615,7 @@ const STYLE = `
    the thing it opens. */
 .wv-chooser { padding:9px 10px; display:flex; flex-direction:column; gap:5px; }
 .wv-choose-lead { margin:0 0 3px; font-size:.72rem; color:var(--dim); }
+.wv-choose-group { margin:5px 0 0; font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
 .wv-choose-row {
   display:block; width:100%; text-align:left; cursor:pointer;
   padding:6px 8px; border-radius:7px; color:inherit; font:inherit;
@@ -5161,12 +5183,16 @@ export function mountViewer(appEl) {
   // exactly as the town's ground does. The read still decides everything else,
   // and a record the read carries wins over the copy here (see withTownHouses).
   let townHouses = null;          // the parcels + their dwellings, once loaded
+  let townChain = null;           // id → { kind, parent, placementParent } for every mark on the record, from the same read
   let townHousesPending = null;
   function loadTownHouses() {
     if (townHouses || townHousesPending) return townHousesPending;
     townHousesPending = fetchWorldState(recordSources("/WORLD/world-state.json").map((source) => source.url), { credentials: "same-origin" })
       .then(({ json }) => {
         townHouses = townHouseMarks(json?.marks ?? []);
+        // the containment chain of every mark, for the rule that hides what is
+        // inside a parcel: the read's nearby entries carry no parents
+        townChain = new Map((json?.marks ?? []).map((m) => [m.id, { kind: m.kind ?? null, parent: m.parent ?? null, placementParent: m.placementParent ?? null }]));
         if (onResidentPath()) { withTownHouses(); if (lastRadial) drawOverlay(lastRadial); }
       })
       .catch((e) => { console.warn(`[world] the town's houses could not be read (${String(e?.message ?? e).slice(0, 120)}) — the map shows the read's own`); })
@@ -7430,7 +7456,7 @@ export function mountViewer(appEl) {
     // hiddenInsideParcel: the card is the house from outside.
     const drawn = overlayMarks(radial)
       .filter((m) => markInDrawnBounds(byId.get(m.id) ?? m, bounds))
-      .filter((m) => !hiddenInsideParcel(byId.get(m.id) ?? m, byId, underfoot));
+      .filter((m) => !hiddenInsideParcel(byId.get(m.id) ?? m, byId, underfoot, townChain));
     // PLACEHOLDER EXTENTS (scene-gated): art-less embodied marks stand in as
     // low-saturation tinted blocks, drawn UNDER the pips, largest first so a
     // child's block sits readable on its parent's. Same overlay, same loop —
@@ -8954,7 +8980,7 @@ export function mountViewer(appEl) {
   // esc as text and the row carries the id in a data attribute, never in prose.
   function chooserHTML(id) {
     const ids = chooserIdsFrom(id) ?? [];
-    const rows = ids.map((markId) => {
+    const rowOf = (markId) => {
       if (walkerHandleFromHoverId(markId)) return chooserWalkerRow(markId);
       const full = byId.get(markId);
       if (!full) return "";
@@ -8963,11 +8989,15 @@ export function mountViewer(appEl) {
         + markCellTitle({ name: identity.name, determined: identity.determined,
                           bearing: where.bearing, tier: tierOf(full), draft: isDraft(full) })
         + `</button>`;
-    }).filter(Boolean).join("");
-    if (!rows) return "";
+    };
+    // THREE GROUPS, LABELLED, EMPTY ONES SILENT (founder, 2026-09-11) — see groupChooserIds
+    const groups = groupChooserIds(ids, { isWalker: (x) => !!walkerHandleFromHoverId(x), kindOf: (x) => byId.get(x)?.kind ?? null });
+    const section = (label, list) => { const rows = list.map(rowOf).filter(Boolean).join(""); return rows ? `<p class="wv-choose-group">${label}</p>${rows}` : ""; };
+    const body = section("residents", groups.residents) + section("parcels", groups.parcels) + section("other marks", groups.others);
+    if (!body) return "";
     return `<div class="wv-chooser">`
       + `<p class="wv-choose-lead">${esc(chooserLeadLine(ids))}</p>`
-      + rows
+      + body
       + `</div>`;
   }
 
