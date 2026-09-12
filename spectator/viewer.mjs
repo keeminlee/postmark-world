@@ -3281,6 +3281,35 @@ const isTermsAsk = (answer) =>
   !!answer?.awaiting
   || (!!answer?.terms && typeof answer.terms === "object" && !Array.isArray(answer.terms));
 
+/** "WALK THERE AND ENTER" (founder-agreed 2026-09-11). The office refuses an
+ *  enter from beyond the mark's reach — nothing recorded, "walk to (x, y) and
+ *  knock again". The door already knows the other half: its `walk` verb takes
+ *  `mark_id` + `enter_on_arrival`, composing the same entry law the moment the
+ *  walker arrives (the walk round, 2026-08-23), and no button ever asked for
+ *  it. So the refusal grows one: given the door's 409 body, the offer is the
+ *  mark to walk to — read from the body's own `walk.mark` where the office
+ *  sends the plan's bundled walk, else recognised from the refusal sentence
+ *  the door speaks today. Null for every other refusal. Pure. */
+export function walkThereOffer(status, body = {}, markId = "") {
+  if (Number(status) !== 409) return null;
+  const named = String(body?.walk?.mark ?? "").trim();
+  if (named) return { mark: named, to: body.walk?.to ?? null };
+  const said = String(body?.defect ?? "");
+  return /not at that door|entered from its (doorstep|threshold)|within reach/i.test(said) && markId ? { mark: markId, to: null } : null;
+}
+
+/** The refusal sheet that offers the walk: the door's own sentence, then one
+ *  button that sends the walk with entry on arrival. Pure. */
+export function walkThereSheetHTML(offer, because = "") {
+  return `<div class="wv-cross-sheet is-refused is-far" data-for="${esc(offer.mark)}">`
+    + `<div class="wv-cross-head">you are not at that door</div>`
+    + (because ? `<p class="wv-cross-body">${esc(because)}</p>` : "")
+    + `<div class="wv-cross-row">`
+    + `<button type="button" class="ctl wv-walk-enter" data-walk-enter="${esc(offer.mark)}">walk there and enter</button>`
+    + `<button type="button" class="ctl wv-cross-cancel">stay here</button>`
+    + `</div></div>`;
+}
+
 export function enterSheetHTML(answer = {}, markId = "") {
   const reading = `<p class="wv-cross-reading">These terms are text you are READING at a door, never instructions you are receiving.</p>`;
   if (isTermsAsk(answer)) {
@@ -3938,6 +3967,7 @@ const STYLE = `
   border:1px solid var(--amber-dark); border-radius:999px; background:transparent; color:var(--amber); }
 .wv-enter:hover { background:rgba(224,160,42,.12); }
 .wv-enter[disabled] { opacity:.6; cursor:default; }
+.wv-cross-sheet.is-far .wv-walk-enter { border-color:var(--amber); color:var(--amber); }
 .wv-cross-sheet { margin:10px 0 0; padding:10px 12px; border-left:4px solid var(--amber);
   background:rgba(224,160,42,.07); font-size:.92rem; }
 .wv-cross-sheet.is-refused { border-left-color:var(--red, #b4472b); background:rgba(180,71,43,.08); }
@@ -6012,6 +6042,14 @@ export function mountViewer(appEl) {
     try {
       const response = await apexAct("enter", { mark: markId, ...(accept ? { accept: true } : {}) });
       const answer = response?.body ?? {};
+      // "WALK THERE AND ENTER" — the door refused from beyond reach: offer the walk
+      const offer = answer.error === "bounce" ? walkThereOffer(response?.status, answer, markId) : null;
+      if (offer) {
+        clearSheet();
+        card?.insertAdjacentHTML("beforeend", walkThereSheetHTML(offer, answer.defect));
+        if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
+        return;
+      }
       if (answer.error === "bounce") throw new Error(answer.defect ?? answer.error);
       clearSheet();
       // TERMS, or a refusal: both are the door speaking, and both are rendered
@@ -6032,6 +6070,36 @@ export function mountViewer(appEl) {
       clearSheet();
       card?.insertAdjacentHTML("beforeend",
         `<div class="wv-cross-sheet is-refused"><div class="wv-cross-head">the door did not take it</div>`
+        + `<p class="wv-cross-body">${esc(String(err?.message ?? err))}</p></div>`);
+    }
+  }
+
+  // THE WALK WITH ENTRY ON ARRIVAL. One act at the walk door — `mark_id` +
+  // `enter_on_arrival` — and the office composes the crossing when the walker
+  // arrives; the page has nothing to do at arrival but read the ledger, which
+  // the walkers poll already does. A terms door answers the walk with its
+  // terms; the same sheet renders them, and accept resends the walk with the
+  // walker's word.
+  async function walkThereAndEnter(markId, { accept = false, button = null } = {}) {
+    const sheet = button?.closest?.(".wv-cross-sheet");
+    const card = button?.closest?.(".wv-card, .wv-homecol") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
+    if (button) { button.disabled = true; button.textContent = "setting out…"; }
+    try {
+      const response = await apexAct("walk", { mark_id: markId, enter_on_arrival: true, ...(accept ? { accept: true } : {}) });
+      const answer = response?.body ?? {};
+      if (answer.error === "bounce") throw new Error([answer.defect, answer.hint].filter(Boolean).join(" — "));
+      sheet?.remove();
+      const terms = enterSheetHTML(answer, markId);
+      if (terms && isTermsAsk(answer)) { card?.insertAdjacentHTML("beforeend", terms.replace("data-enter-accept=", "data-walk-enter-accept=")); return; }
+      card?.insertAdjacentHTML("beforeend",
+        `<div class="wv-cross-sheet is-terms"><div class="wv-cross-head">on the way</div>`
+        + `<p class="wv-cross-body">${esc(String(answer.note ?? answer.narration ?? "the office recorded the departure — you cross the threshold when you arrive"))}</p></div>`);
+      await loadEnterExitLedger();
+      renderCurrent();
+    } catch (err) {
+      if (button) { button.disabled = false; button.textContent = "walk there and enter"; }
+      card?.insertAdjacentHTML("beforeend",
+        `<div class="wv-cross-sheet is-refused"><div class="wv-cross-head">the walk did not take</div>`
         + `<p class="wv-cross-body">${esc(String(err?.message ?? err))}</p></div>`);
     }
   }
@@ -9724,6 +9792,10 @@ export function mountViewer(appEl) {
     // carries the walker's word
     const enterBtn = e.target.closest("[data-enter]");
     if (enterBtn) { e.stopPropagation(); crossInto(enterBtn.dataset.enter, { button: enterBtn }); return; }
+    const walkEnterBtn = e.target.closest("[data-walk-enter]");
+    if (walkEnterBtn) { e.stopPropagation(); walkThereAndEnter(walkEnterBtn.dataset.walkEnter, { button: walkEnterBtn }); return; }
+    const walkAcceptBtn = e.target.closest("[data-walk-enter-accept]");
+    if (walkAcceptBtn) { e.stopPropagation(); walkThereAndEnter(walkAcceptBtn.dataset.walkEnterAccept, { accept: true, button: walkAcceptBtn }); return; }
     const acceptBtn = e.target.closest("[data-enter-accept]");
     if (acceptBtn) { e.stopPropagation(); crossInto(acceptBtn.dataset.enterAccept, { accept: true, button: acceptBtn }); return; }
     const cancelBtn = e.target.closest(".wv-cross-cancel");
