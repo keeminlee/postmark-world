@@ -4,6 +4,7 @@ kind: sited
 date: 2026-09-01
 at: { x: 0, y: 0 }
 extent: { w: 12, h: 10 }
+image: https://media.postmark.town/media/dead0rose/150bc3a3d9295fc3f1d186bbf0d2f21f54785df26bedcf8f63d6b9236556b4f5.jpg
 pre: true
 derived_from: WHITE_PAGES/victor-of-the-pines/HOME/HOME.md — "a tranquil oasis amidst the whispering pines"
 ---
