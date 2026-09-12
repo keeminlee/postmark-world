@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 
 import {
   OVERLAY_PIP_R, HOME_CARD, homeCardPath, markerScale,
-  overlayHomeCardSVG, homeMarkOfParcel, houseIsLit, enclosingParcels, homeFaceSVG,
+  overlayHomeCardSVG, homeMarkOfParcel, houseIsLit, enclosingParcels, homeFaceSVG, fillFromTown, TOWN_FILL_FIELDS,
 } from "../spectator/viewer.mjs";
 
 const SOURCE = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
@@ -105,4 +105,24 @@ test("THE PARCEL UNDERFOOT — entered directly, through the dwelling on it, or 
 test("THE CARD'S LABEL IS THE HOME'S NAME — the dwelling where one stands, the household only where none does (founder, 2026-09-11)", () => {
   assert.match(SOURCE, /label: home \? markName\(home\)\.name : String\(parcel\.household \?\? parcel\.by \?\? ""\),/, "the viewer's card asks the home first");
   // ⚑ THE FLIP: put the household back first → reds.
+});
+
+test("THE RESIDENT'S OWN HOUSE WEARS ITS PICTURE TOO — a portfolio row that shadows the world's record is filled, never overwritten (Keemin's terrace screenshot, 2026-09-11)", () => {
+  const own = { id: HOME.id, kind: "sited", at: { x: 100, y: 200 }, body: "mine, as I wrote it" };   // what my-marks hands the page: no tier, no placementParent, no image
+  const byId = new Map([[own.id, own]]);
+  const touched = fillFromTown(byId, [PARCEL, HOME]);
+  assert.deepEqual(touched, [PARCEL.id, HOME.id], "the parcel was added, the house was filled");
+  const filled = byId.get(HOME.id);
+  assert.equal(filled.image, HOME.image, "the world's picture");
+  assert.equal(filled.placementParent, PARCEL.id, "and its parcel, so homeMarkOfParcel finds it");
+  assert.equal(filled.tier, "home");
+  assert.equal(filled.body, "mine, as I wrote it", "the row's own words are untouched");
+  assert.equal(homeMarkOfParcel(PARCEL.id, [...byId.values()]), filled, "the card finds the dwelling now");
+  // never overwrite: a row that HAS a picture keeps it
+  const mine2 = new Map([[HOME.id, { ...own, image: "https://media.postmark.town/media/keeminlee/mine.jpg" }]]);
+  fillFromTown(mine2, [HOME]);
+  assert.equal(mine2.get(HOME.id).image, "https://media.postmark.town/media/keeminlee/mine.jpg");
+  assert.deepEqual(fillFromTown(new Map([[HOME.id, HOME]]), [HOME]), [], "nothing to fill, nothing touched");
+  assert.ok(TOWN_FILL_FIELDS.includes("image") && TOWN_FILL_FIELDS.includes("placementParent"), "the two fields the card lives on");
+  // ⚑ THE FLIP: return to `if (!byId.has(m.id)) byId.set(m.id, m)` → the picture line reds.
 });
