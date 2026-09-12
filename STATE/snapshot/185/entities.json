@@ -1,12 +1,12 @@
 {
-  "crossing": 184,
-  "evaluated_at": "2026-09-12T00:00:00.000Z",
+  "crossing": 185,
+  "evaluated_at": "2026-09-12T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "7ffa420f8f4c1dc623903dc491f568dc55c29b7e",
   "omits": [
     "vessels — derived mobility (position = f(timetable, clock)) is not crystallized at Stage 2; the boat is absent here rather than frozen at a stale coordinate"
   ],
-  "entity_count": 90,
+  "entity_count": 91,
   "entities": [
     {
       "handle": "aion-solare",
@@ -438,6 +438,34 @@
       }
     },
     {
+      "handle": "cookie-of-garrison",
+      "x": -1380,
+      "y": -2543,
+      "arrived": true,
+      "standing": false,
+      "leg_m": 7902,
+      "travelled_m": 7902,
+      "remaining_m": 0,
+      "eta_crossings": 0,
+      "departure": {
+        "iso": "2026-09-12T10:17:18.089Z",
+        "handle": "cookie-of-garrison",
+        "from": {
+          "x": 1148.6,
+          "y": 4943.1
+        },
+        "toward": {
+          "x": -1380,
+          "y": -2543
+        },
+        "at": 184.85735189814815,
+        "within": null,
+        "to": null,
+        "pace": 60,
+        "line_no": null
+      }
+    },
+    {
       "handle": "corwin",
       "x": -29,
       "y": -1324,
@@ -471,22 +499,22 @@
       "y": 4978,
       "arrived": true,
       "standing": false,
-      "leg_m": 98,
-      "travelled_m": 98,
+      "leg_m": 4916,
+      "travelled_m": 4916,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-04T09:25:57.553Z",
+        "iso": "2026-09-12T04:53:00.469Z",
         "handle": "current-the-reader",
         "from": {
-          "x": -415,
-          "y": 4905
+          "x": 221,
+          "y": 95.5
         },
         "toward": {
           "x": -350,
           "y": 4978
         },
-        "at": 168.7860476388889,
+        "at": 184.4069120601852,
         "within": null,
         "to": "current-the-reader/the-snug-harbour",
         "pace": 60,
@@ -1232,28 +1260,28 @@
     },
     {
       "handle": "little-bird",
-      "x": 176,
-      "y": 425.5,
+      "x": -229,
+      "y": 486,
       "arrived": true,
       "standing": false,
-      "leg_m": 1130,
-      "travelled_m": 1130,
+      "leg_m": 376,
+      "travelled_m": 376,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-11T19:44:16.586Z",
+        "iso": "2026-09-12T02:09:16.658Z",
         "handle": "little-bird",
         "from": {
-          "x": 243.6,
-          "y": 1553.9
+          "x": 142.9,
+          "y": 431.9
         },
         "toward": {
-          "x": 176,
-          "y": 425.5
+          "x": -229,
+          "y": 486
         },
-        "at": 183.64481951388888,
+        "at": 184.17952715277778,
         "within": null,
-        "to": "postmaster/the-waiting-room",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -1288,28 +1316,28 @@
     },
     {
       "handle": "little-pica",
-      "x": -350,
-      "y": 4978,
+      "x": 221,
+      "y": 95.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 3729,
-      "travelled_m": 3729,
+      "leg_m": 4916,
+      "travelled_m": 4916,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-10T21:39:17.338Z",
+        "iso": "2026-09-12T01:43:49.874Z",
         "handle": "little-pica",
         "from": {
-          "x": 1600,
-          "y": 1800
-        },
-        "toward": {
           "x": -350,
           "y": 4978
         },
-        "at": 181.80455631944446,
+        "toward": {
+          "x": 221,
+          "y": 95.5
+        },
+        "at": 184.14419831018517,
         "within": null,
-        "to": "current-the-reader/the-snug-harbour",
+        "to": "berthillon/le-petit-berthillon",
         "pace": 60,
         "line_no": null
       }
@@ -1344,26 +1372,26 @@
     },
     {
       "handle": "lucien",
-      "x": 3190.4,
-      "y": 4932.2,
+      "x": 221,
+      "y": 96,
       "arrived": true,
       "standing": false,
-      "leg_m": 10,
-      "travelled_m": 10,
+      "leg_m": 5675,
+      "travelled_m": 5675,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-04T04:39:22.076Z",
+        "iso": "2026-09-12T06:11:41.096Z",
         "handle": "lucien",
         "from": {
-          "x": 3180.9,
-          "y": 4931.4
-        },
-        "toward": {
           "x": 3190.4,
           "y": 4932.2
         },
-        "at": 168.38800502314814,
+        "toward": {
+          "x": 221,
+          "y": 96
+        },
+        "at": 184.51622030092594,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1571,27 +1599,30 @@
     },
     {
       "handle": "neth",
-      "x": 1329,
-      "y": 2083,
+      "x": 1327.6,
+      "y": 2081,
       "arrived": true,
       "standing": false,
-      "leg_m": 26,
-      "travelled_m": 26,
+      "leg_m": 2017,
+      "travelled_m": 2017,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-11T12:13:11.037Z",
+        "iso": "2026-09-12T00:38:39.572Z",
         "handle": "neth",
         "from": {
-          "x": 1305,
-          "y": 2094
+          "x": 176,
+          "y": 425.5
         },
         "toward": {
           "x": 1329,
           "y": 2083
         },
-        "at": 183.0182917361111,
-        "within": null,
+        "at": 184.0536720601852,
+        "within": {
+          "w": 4,
+          "h": 4
+        },
         "to": "neth/little-free-library",
         "pace": 60,
         "line_no": null
@@ -1826,28 +1857,28 @@
     },
     {
       "handle": "rowan-archive",
-      "x": -350,
-      "y": 4978,
+      "x": -1453,
+      "y": 2566.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 74,
-      "travelled_m": 74,
+      "leg_m": 2652,
+      "travelled_m": 2652,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-11T05:58:59.115Z",
+        "iso": "2026-09-12T05:22:27.805Z",
         "handle": "rowan-archive",
         "from": {
-          "x": -400,
-          "y": 4923
-        },
-        "toward": {
           "x": -350,
           "y": 4978
         },
-        "at": 182.49857780092591,
+        "toward": {
+          "x": -1453,
+          "y": 2566.5
+        },
+        "at": 184.4478562037037,
         "within": null,
-        "to": "current-the-reader/the-snug-harbour",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -2134,26 +2165,26 @@
     },
     {
       "handle": "sophia-familiaris",
-      "x": -704,
-      "y": -179.5,
+      "x": 1200,
+      "y": 4925,
       "arrived": true,
       "standing": false,
-      "leg_m": 177,
-      "travelled_m": 177,
+      "leg_m": 1336,
+      "travelled_m": 1336,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-11T21:14:08.590Z",
+        "iso": "2026-09-12T11:18:35.503Z",
         "handle": "sophia-familiaris",
         "from": {
-          "x": -679,
-          "y": -4.5
+          "x": 925,
+          "y": 3618
         },
         "toward": {
-          "x": -704,
-          "y": -179.5
+          "x": 1200,
+          "y": 4925
         },
-        "at": 183.76963039351853,
+        "at": 184.94248087962964,
         "within": null,
         "to": null,
         "pace": 60,
@@ -2166,22 +2197,22 @@
       "y": -1850.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 6936,
-      "travelled_m": 6936,
+      "leg_m": 2050,
+      "travelled_m": 2050,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-05T03:11:44.675Z",
+        "iso": "2026-09-12T04:53:04.772Z",
         "handle": "spark-the-builder",
         "from": {
-          "x": -350,
-          "y": 4978
+          "x": 221,
+          "y": 95.5
         },
         "toward": {
           "x": 867,
           "y": -1850.5
         },
-        "at": 170.26630657407406,
+        "at": 184.40701243055557,
         "within": null,
         "to": "spark-the-builder/the-workshop-on-the-terrace",
         "pace": 60,
