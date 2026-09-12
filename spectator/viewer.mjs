@@ -4149,6 +4149,12 @@ const STYLE = `
 /* a household seen from across the town: one dot for its people, not nine */
 /* the walker frame: empty at town width, filled with the face nearer in */
 .wv-walker-frame { fill:none; stroke:var(--green); stroke-width:2; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+/* the EMPTY frame — town width — is filled a lighter green, not left as glass
+   (founder, 2026-09-11: "the resident frames should be filled with a lighter
+   green instead of transparent when zoomed out"); the filled frame keeps its
+   face or monogram underneath and needs no fill of its own */
+.wv-walker-far > .wv-walker-frame { fill:#bfe4c6; fill-opacity:.85; }
+.wv-walker-far.moving > .wv-walker-frame { fill:#f2c6d3; }
 .wv-walker-leg { stroke:var(--green); stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke; }
 .moving > .wv-walker-frame, .moving > .wv-walker-leg { stroke:#e0507a; }
 .ov-dot { fill:var(--you); stroke:#fff; stroke-width:3; }
@@ -7260,22 +7266,28 @@ export function mountViewer(appEl) {
   // Three readings, asked once per draw and handed to every pass, so that no
   // pass gets to have its own opinion about the zoom.
   //
-  // ⚑ `drawTier()` RETURNS NULL ON THE RESIDENT PATH, and every gate below is
-  // written as "null → exactly what this drew yesterday". That is the shape of
-  // the whole change: a resident loads what they can see (the other lane's
-  // ruling, shipped) and their painting is already the ≤ 25 marks their read
-  // named — there is nothing here for a tier to cut, and a gate that fired on
-  // their path would be cutting the answer instead of the town.
+  // ⚑ THE TIER IS THE CAMERA'S ON EVERY PATH (founder, 2026-09-11 evening:
+  // "zoom out has issues. whatever happened to the zoom out removing images
+  // and replacing with static?"). Until tonight `drawTier()` answered null on
+  // the resident path and every gate read null as "draw what you drew
+  // yesterday" — right on 09-10, when a resident's painting was the ≤ 25
+  // marks their read named and there was nothing for a tier to cut. Then the
+  // town's 89 houses joined the resident's map (townHouseMarks, this
+  // afternoon, his word: "both is good"), and a resident zooming out got 89
+  // pictured cards at every width while the Spectator beside them got the
+  // far tier's glyphs. Same town, same zoom, one answer: metres across the
+  // viewport, whoever is looking. The cull box follows for the same reason —
+  // the landmarks pass draws every house in the box, and a resident's box is
+  // no bigger than a Spectator's.
   const paintingWidthM = () => (mapCtx ? mapCtx.full.w * mapCtx.mPerPx : NaN);
   const panePx = () => {
     const w = mapCtx?.svg?.getBoundingClientRect?.().width;
     return Number.isFinite(w) && w > 0 ? w : NaN;
   };
-  const drawTier = () => (onResidentPath() ? null : tierFor(mapCtx?.zoomK, paintingWidthM(), state.drawDials));
-  // The box the passes cull against — null on the resident path (nothing to
-  // cull) and null when the camera cannot be read (never a reason to stop
-  // painting; see markInDrawnBounds).
-  const drawnBounds = () => (onResidentPath() || !mapCtx ? null : viewportWorldBounds({
+  const drawTier = () => tierFor(mapCtx?.zoomK, paintingWidthM(), state.drawDials);
+  // The box the passes cull against — null only when the camera cannot be
+  // read (never a reason to stop painting; see markInDrawnBounds).
+  const drawnBounds = () => (!mapCtx ? null : viewportWorldBounds({
     view: mapCtx.view, originPx: mapCtx.originPx, mPerPx: mapCtx.mPerPx,
     margin: Number(state.drawDials.cull_margin),
   }));
@@ -7288,7 +7300,7 @@ export function mountViewer(appEl) {
   //   far   a small house glyph — no picture, no frame, no name, no tooltip
   //   mid   the frame and the name; the picture only once the parcel's own
   //         ground is at least `art_min_px` wide on screen
-  //   near  the card as it was, and as the resident path still draws it
+  //   near  the card as it was
   //
   // The picture gate asks the GROUND, not the card: a card is a fixed size on
   // screen and would answer the same at every N, while the ground it stands on
@@ -7302,7 +7314,11 @@ export function mountViewer(appEl) {
       : true;
     return overlayHomeCardSVG({
       at, id: parcel.id, classes: markClasses(parcel),
-      label: String(parcel.household ?? parcel.by ?? ""),
+      // THE LABEL IS THE HOME'S NAME (founder, 2026-09-11: "let's have the actual
+      // home's name instead of the resident name in the label for each parcel
+      // card") — the dwelling's own name where a dwelling stands, the household
+      // only where none does
+      label: home ? markName(home).name : String(parcel.household ?? parcel.by ?? ""),
       image: room && home ? markImagePath(home) : null,
       lit: houseIsLit(parcel, walkState.walkers, (h) => faceOf(h).household),
       fan, title,
@@ -7448,7 +7464,9 @@ export function mountViewer(appEl) {
     // rebuilds only when the camera has left one of them — see
     // noticeTheCameraSettling. Null on the resident path, which never rebuilds
     // on a pan because it never culled.
-    mapCtx.drawnAt = bounds ? { bounds, tier } : null;
+    // …on every path now, so a resident's zoom past a tier boundary rebuilds
+    // exactly as a Spectator's does (noticeTheCameraSettling reads this)
+    mapCtx.drawnAt = { bounds, tier };
     mapCtx.glyphIds = glyphIds;
     mapCtx.syncWithin?.(radial);
     renderMarkHighlight();

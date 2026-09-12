@@ -180,6 +180,8 @@ test("THE WALKER IS A FRAME WITH LEGS — empty at town width, no picture, no cl
   const r = Number(svg.match(/<circle cx="100" cy="200" r="([\d.]+)" class="wv-walker-frame"\/>/)[1]);
   assert.equal(r * 2, WALKER_FRAME.far / 2, "marker space: at k=2 the frame is half its k=1 size");
   assert.ok(!/<rect/.test(svg), "no square anywhere in it");
+  // …and at town width the empty frame is filled a lighter green, not glass (founder, 2026-09-11)
+  assert.match(SOURCE, /\.wv-walker-far > \.wv-walker-frame \{ fill:#bfe4c6;/, "the far frame's fill is the stylesheet's");
   // …and the legs, untouched in stance and length, start where they meet the rim
   const size = WALKER_FRAME.far / 2, legTop = 200 + Math.sqrt((size / 2) ** 2 - (size * 0.22) ** 2);
   const legs = [...svg.matchAll(/<line x1="([\d.]+)" y1="([\d.]+)" x2="([\d.]+)" y2="([\d.]+)"/g)].map((m) => m.slice(1).map(Number));
@@ -230,6 +232,14 @@ test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, a
   assert.ok(nodes(glyph) < nodes(card) / 2,
     `the far house is under half the card's nodes (${nodes(glyph)} vs ${nodes(card)})`);
   assert.equal(overlayHouseGlyphSVG({ at: { x: NaN, y: 0 }, id: "x" }), "", "a mark with no place draws nothing");
+});
+
+test("THE TIER IS THE CAMERA'S ON EVERY PATH — no resident-path null, no resident-path skip of the cull box (founder, 2026-09-11: 'whatever happened to the zoom out removing images and replacing with static?')", () => {
+  assert.match(SOURCE, /const drawTier = \(\) => tierFor\(mapCtx\?\.zoomK, paintingWidthM\(\), state\.drawDials\);/, "one tier reader, no path branch");
+  assert.match(SOURCE, /const drawnBounds = \(\) => \(!mapCtx \? null : viewportWorldBounds\(\{/, "one cull box, no path branch");
+  assert.match(SOURCE, /mapCtx\.drawnAt = \{ bounds, tier \};/, "and the settle pass can see what every path drew");
+  assert.doesNotMatch(SOURCE, /onResidentPath\(\) \? null : tierFor/, "the 09-10 null is gone");
+  // ⚑ THE FLIP: restore `onResidentPath() ? null :` in drawTier → the first and last lines red.
 });
 
 test("THE PLACEHOLDER BLOCK IS HALF PRESENT — the ground reads through it (founder, 2026-09-11, revising 08-20's 'no transparency games')", () => {
