@@ -214,6 +214,10 @@ test("THE FRAME FILLS IN nearer in — the picture clipped to the frame, or the 
 test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, and the pip stays", () => {
   const glyph = overlayHouseGlyphSVG({ at: { x: 10, y: 20 }, id: "jack/the-lantern-parcel", classes: "t-home" });
   assert.match(glyph, /class="ov-glyph"/, "the house is drawn");
+  // THE DEFAULT FACE (founder, 2026-09-11): a door and two windows sit in the frame, at the glyph's own scale
+  assert.equal((glyph.match(/class="ov-home-door"/g) ?? []).length, 1, "one door");
+  assert.equal((glyph.match(/class="ov-home-window"/g) ?? []).length, 2, "two windows");
+  assert.match(glyph, /<g transform="scale\(0\.46\)"><path d="M [^"]+" class="ov-glyph" data-id="jack\/the-lantern-parcel"\/><rect /, "roof, then the face, in one scaled group");
   assert.doesNotMatch(glyph, /<image/, "no picture at town width");
   assert.doesNotMatch(glyph, /<clipPath/, "and therefore no clip path either");
   assert.doesNotMatch(glyph, /<text/, "no name");
@@ -229,8 +233,11 @@ test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, a
     image: "/shelf/jack/abc.png", title: "the lantern",   // overlayHomeCardSVG takes a PATH, already gated
   });
   const nodes = (s) => (s.match(/<[a-zA-Z]/g) ?? []).length;
-  assert.ok(nodes(glyph) < nodes(card) / 2,
-    `the far house is under half the card's nodes (${nodes(glyph)} vs ${nodes(card)})`);
+  // (was "under half": the founder's default face — a door and two windows —
+  // rides the glyph since 2026-09-11, three rects; what the far tier still
+  // saves is the picture, its clip path, the frame and the name)
+  assert.ok(nodes(glyph) < nodes(card),
+    `the far house has fewer nodes than the card (${nodes(glyph)} vs ${nodes(card)})`);
   assert.equal(overlayHouseGlyphSVG({ at: { x: NaN, y: 0 }, id: "x" }), "", "a mark with no place draws nothing");
 });
 

@@ -1721,6 +1721,21 @@ export function homeCardPath({ w, h, roof } = HOME_CARD) {
   const x0 = -w / 2, top = -(h + roof) / 2, eave = top + roof, base = eave + h;
   return `M ${x0 - 2} ${eave} L 0 ${top} L ${w / 2 + 2} ${eave} L ${w / 2} ${eave} L ${w / 2} ${base} L ${x0} ${base} L ${x0} ${eave} Z`;
 }
+/** THE DEFAULT HOUSE FACE (founder, 2026-09-11: "draw a simple, cute default
+ *  icon for houses without art in them (like a door and windows, sitting in
+ *  the frame) and make it the static instead of the blank cream houses"). A
+ *  door on the ground line and two windows under the eaves, in the card's own
+ *  units, so it sits inside `homeCardPath` at any scale: the art-less card
+ *  wears it behind the frame, and the far glyph wears it at HOME_GLYPH_SCALE.
+ *  Three rects, no picture. Pure. */
+export function homeFaceSVG({ w, h, roof } = HOME_CARD) {
+  const top = -(h + roof) / 2, eave = top + roof, base = eave + h;
+  const doorW = Math.round(w * 0.2), doorH = Math.round(h * 0.38);
+  const winW = Math.round(w * 0.16), winH = Math.round(h * 0.17), winY = eave + Math.round(h * 0.2);
+  return `<rect x="${-doorW / 2}" y="${base - doorH}" width="${doorW}" height="${doorH}" rx="1" class="ov-home-door"/>`
+    + `<rect x="${-w / 2 + Math.round(w * 0.14)}" y="${winY}" width="${winW}" height="${winH}" class="ov-home-window"/>`
+    + `<rect x="${w / 2 - Math.round(w * 0.14) - winW}" y="${winY}" width="${winW}" height="${winH}" class="ov-home-window"/>`;
+}
 export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = false, fan = null, title = null, classes = "" } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
@@ -1734,7 +1749,7 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
   const art = image
     ? `<clipPath id="${clip}"><path d="${d}"/></clipPath>`
       + `<image href="${esc(image)}" x="${x0}" y="${top}" width="${w}" height="${h + roof}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
-    : `<path d="${d}" class="ov-home-blank"/>`;
+    : `<path d="${d}" class="ov-home-blank"/>${homeFaceSVG()}`;
   return `<g transform="translate(${x} ${y})"><g class="ov-s">`
     + `<g class="ov-home${lit ? " lit" : ""}${image ? "" : " no-art"}" data-id="${esc(id)}" transform="translate(${dx} ${dy})">`
     + art
@@ -1810,7 +1825,7 @@ export function overlayHouseGlyphSVG({ at, id, classes = "" } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
   return `<g transform="translate(${x} ${y})"><g class="ov-s">`
-    + `<path d="${homeCardPath()}" class="ov-glyph" transform="scale(${HOME_GLYPH_SCALE})" data-id="${esc(id)}"/>`
+    + `<g transform="scale(${HOME_GLYPH_SCALE})"><path d="${homeCardPath()}" class="ov-glyph" data-id="${esc(id)}"/>${homeFaceSVG()}</g>`
     + `<circle r="${OVERLAY_PIP_R}" class="ov-pip ov-pip-home ${classes}" data-id="${esc(id)}"/>`
     + `</g></g>`;
 }
@@ -1842,6 +1857,38 @@ export function worldForRoom(world, marks = []) {
   if (world?.marks) return world;
   const list = Array.isArray(marks) ? marks : [...(marks?.values?.() ?? [])];
   return { marks: list, terrain: world?.terrain ?? null };
+}
+
+/** THE PARCEL A MARK STANDS INSIDE OF, by the record's own chain (2026-09-11).
+ *  Walks `parent`, `placementParent`, `_containedBy` and `_parentMarkId` — the
+ *  same family markStanding walks — from the mark's OWN parents (never the mark
+ *  itself: a parcel is not inside itself) to the first parcel, cycle-safe.
+ *  Null when nothing on the chain is a parcel. Pure. */
+export function parcelEnclosing(mark, marks = []) {
+  const byMarkId = markIndex(marks);
+  const seen = new Set([mark?.id]);
+  const queue = [mark?.parent, mark?.placementParent, mark?._containedBy, mark?._parentMarkId];
+  while (queue.length) {
+    const id = queue.shift();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    const m = byMarkId.get(id);
+    if (!m) continue;
+    if (m.kind === "parcel") return id;
+    queue.push(m.parent, m.placementParent, m._containedBy, m._parentMarkId);
+  }
+  return null;
+}
+
+/** WHAT IS INSIDE A PARCEL STAYS INSIDE IT (founder, 2026-09-11: "let's not load
+ *  any marks within a parcel when outside of it"). A mark standing inside a
+ *  parcel — the dwelling, its furniture, the rooms — is drawn only when the
+ *  reader is INSIDE that parcel (the mounted room is the parcel, or something
+ *  within it: `underfoot`). From outside, the parcel's card is the whole of
+ *  what is seen — a house is a landmark, not a window. Pure. */
+export function hiddenInsideParcel(mark, marks = [], underfoot = new Set()) {
+  const parcel = parcelEnclosing(mark, marks);
+  return !!parcel && !underfoot.has(parcel);
 }
 
 /** THE PARCEL UNDERFOOT WEARS NO CARD (founder, 2026-09-11: "let's not display
@@ -2261,8 +2308,7 @@ export const TOUR_SLIDES = [
     title: "The painting, and its controls",
     body: "Drag to pan, scroll to zoom. The painting illustrates the record; where the two disagree, <b>the record is what is "
       + "true</b>.<br><br>"
-      + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand. <b>▦</b> draws the survey grid — a "
-      + "kilometre to the line. <b>⬚</b> draws each mark's true extent instead of a dot.<br><br>"
+      + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand.<br><br>"
       // The ? is inside the cluster this slide is pointing at, and it was the one
       // button in it the slide did not name — which left the tour ending without
       // ever saying how to get it back.
@@ -4146,6 +4192,11 @@ const STYLE = `
    as the same house as the card because it IS the same path — one outline, two
    sizes, so the town does not appear to change species when a reader zooms. */
 .ov-glyph { fill:#f4e6c8; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; pointer-events:none; }
+/* the default face — a door and two windows — on the art-less card and on the
+   far glyph alike; the lit house's windows glow with its frame */
+.ov-home-door { fill:#a8763e; stroke:#3a3428; stroke-width:1; pointer-events:none; }
+.ov-home-window { fill:#fff3c4; stroke:#3a3428; stroke-width:1; pointer-events:none; }
+.ov-home.lit .ov-home-window { fill:#ffcf5c; }
 /* a household seen from across the town: one dot for its people, not nine */
 /* the walker frame: empty at town width, filled with the face nearer in */
 .wv-walker-frame { fill:none; stroke:var(--green); stroke-width:2; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
@@ -4716,8 +4767,11 @@ const MARKUP = `
           <button class="ctl wv-map-world" aria-label="to the World" title="to the World — stand at Let There Be Light and see the whole painting">◍</button>
           <button class="ctl wv-map-home" aria-label="fit" title="fit the whole painting">⛶</button>
           <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">◎</button>
-          <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">▦</button>
-          <button class="ctl wv-map-fp" aria-label="marks" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">⬚</button>
+          <!-- THE GRID AND THE TRUE-EXTENT TOGGLES ARE GONE (founder, 2026-09-11:
+               "remove the 'grid' button in the upper right (it's meaningless), as
+               well as the every mark's true extent button"). The layers and their
+               toggles (mapCtx.toggleGrid / toggleFp) still exist for the dev pane;
+               the rail no longer offers them. -->
           <button class="ctl wv-map-convo" aria-label="conversations" title="where the town is talking — live threads and the last day's, drawn as the ground they covered; labels link to the record">💬</button>
           <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
             title="a short tour of the world">?</button>
@@ -6222,12 +6276,12 @@ export function mountViewer(appEl) {
         ladder += markCell(m, { role: i === 0 ? "frame" : "ladder" });
       });
     }
-    // THE OFFICE'S OWN PROSE, where the three state lines used to be. It is the
-    // engine's telling, rendered by the one author entitled to render it.
-    const telling = typeof read.telling === "string" && read.telling.trim()
-      ? `<div class="wv-telling-prose">${read.telling.split(/\n{2,}/).map((p) =>
-          `<p>${esc(p.trim())}</p>`).join("")}</div>`
-      : "";
+    // THE OFFICE'S PROSE IS NOT RENDERED (founder, 2026-09-11: "the telling is
+    // broken on dev. we have a giant regular-text blob redundant with the
+    // formatted cards"). `read.telling` is the engine's narration — the agent's
+    // read, in words — and the cards below say the same things in the page's
+    // own grammar; two tellings of one read is the blob he met. The words stay
+    // on the wire for agents; the page shows the cards.
     // What the page could not place, said out loud rather than left as a gap.
     const notes = [];
     if (radial.counts?.unread)
@@ -6242,7 +6296,6 @@ export function mountViewer(appEl) {
       + occupancyChipHTML({ entered, alongside, nameOf })
       + (ladder ? `<div class="wv-section-lbl">${esc(standpointSectionLabel(key))}</div>`
                 + `<div class="wv-ladder-cells">${ladder}</div>` : "")
-      + telling
       + `<div class="wv-cards">${residentTellingCards(radial, mine ? isMine : null)}</div>`
       + (notes.length ? `<div class="wv-tallies">${esc(notes.join(" · "))}</div>` : "");
     mountMarkImages(box);
@@ -6450,6 +6503,14 @@ export function mountViewer(appEl) {
   }
   async function loadMinimap() {
     if (minimapLoading) return;
+    // NOT BEFORE THE READ (founder, 2026-09-11: "why do I keep briefly getting
+    // 'the ground didn't draw' before the world page loads?"). On the resident
+    // path the ground is drawn from the marks the read fills, and the first
+    // render runs before that read lands — so this used to try, throw on a
+    // near-empty set, print the error, and be retried by the read's own
+    // renderCurrent a second later. The box already says "fetching the
+    // painting…"; leave it saying that until there is something to draw.
+    if (onResidentPath() && !readCache.get(residentStandpointKey({ x: state.cam.x, y: state.cam.y }, state.handle))) return;
     minimapLoading = true;
     const boxEl = $(root, ".wv-minimap");
     // The chrome that rides ON the painting is held across the wipe below rather
@@ -7344,7 +7405,8 @@ export function mountViewer(appEl) {
     const tier = drawTier();
     const bounds = drawnBounds();
     // …and the one parcel NEITHER house pass draws: the one underfoot. Empty
-    // outdoors, where nothing is mounted — see enclosingParcels.
+    // outdoors, where nothing is mounted — see enclosingParcels. Read here, before
+    // the drawn set, because what is inside a parcel is drawn only underfoot.
     const underfoot = enclosingParcels(sceneRoomId, byId);
     // THE TIER IS PUT ON THE DRAWING ITSELF, not kept in a closure. A reader
     // with dev tools open, a screenshot, and the QA probes all need to know
@@ -7364,8 +7426,11 @@ export function mountViewer(appEl) {
     // arrow already asks (`markGeometryIntersectsViewport`), asked one layer
     // earlier, so the overlay and the arrow can never disagree about what is on
     // screen. The margin is what keeps a pan free — see viewportWorldBounds.
+    // …AND NOTHING FROM INSIDE A PARCEL THE READER IS NOT IN (2026-09-11) — see
+    // hiddenInsideParcel: the card is the house from outside.
     const drawn = overlayMarks(radial)
-      .filter((m) => markInDrawnBounds(byId.get(m.id) ?? m, bounds));
+      .filter((m) => markInDrawnBounds(byId.get(m.id) ?? m, bounds))
+      .filter((m) => !hiddenInsideParcel(byId.get(m.id) ?? m, byId, underfoot));
     // PLACEHOLDER EXTENTS (scene-gated): art-less embodied marks stand in as
     // low-saturation tinted blocks, drawn UNDER the pips, largest first so a
     // child's block sits readable on its parent's. Same overlay, same loop —
@@ -9558,10 +9623,6 @@ export function mountViewer(appEl) {
     if (e.target.closest(".wv-map-home")) { mapCtx?.fitAll?.(); return; }
     const fbtn = e.target.closest(".wv-map-follow");
     if (fbtn) { if (!mapCtx) return; mapCtx.follow = !mapCtx.follow; fbtn.classList.toggle("on", mapCtx.follow); if (mapCtx.follow) mapCtx.lockOn(); return; }
-    const gbtn = e.target.closest(".wv-map-grid");
-    if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
-    const fpbtn = e.target.closest(".wv-map-fp");
-    if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
     const cvbtn = e.target.closest(".wv-map-convo");
     if (cvbtn) { if (!mapCtx?.toggleConvo) return; cvbtn.classList.toggle("on", !!mapCtx.toggleConvo()); return; }
     if (e.target.closest("[data-root-mark]")) { selectMark(chipMarkId(), { scrollCell: true }); return; }
