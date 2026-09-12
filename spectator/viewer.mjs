@@ -1936,6 +1936,31 @@ export function enclosingParcels(roomId, marks = []) {
   return out;
 }
 
+/** THE RESIDENT'S OWN HOUSE WEARS ITS PICTURE TOO (2026-09-11, Keemin's
+ *  screenshot of the terrace: every house pictured or faced by the record —
+ *  except wright's, labelled by household, blank). On the resident path the
+ *  index is filled from the read's records and the resident's OWN rows
+ *  (my-marks: drafts, docket, published, backed) FIRST, and the town's houses
+ *  only where an id is missing — so a resident's own dwelling, present as a
+ *  portfolio row that carries no `image`, `tier` or `placementParent`, shadowed
+ *  the world's record of it and the card could not find the dwelling. This
+ *  fills what is missing from the town's record and never overwrites a value
+ *  the row already has: the row stays the resident's, the picture is the
+ *  world's. Returns the ids it touched. Pure. */
+export const TOWN_FILL_FIELDS = Object.freeze(["kind", "tier", "placementParent", "image", "extent", "household", "by", "at"]);
+export function fillFromTown(byId, townHouses = []) {
+  const touched = [];
+  for (const m of townHouses ?? []) {
+    if (!m?.id) continue;
+    const have = byId.get(m.id);
+    if (!have) { byId.set(m.id, m); touched.push(m.id); continue; }
+    let filled = null;
+    for (const k of TOWN_FILL_FIELDS) if (have[k] == null && m[k] != null) { filled ??= { ...have }; filled[k] = m[k]; }
+    if (filled) { byId.set(m.id, filled); touched.push(m.id); }
+  }
+  return touched;
+}
+
 /** THE TOWN'S HOUSES, as a set a resident's map can be handed (2026-09-11,
  *  Keemin on dev as wright: "we still don't have the new parcel cards loaded
  *  (just the marks)"). Every parcel, plus the dwelling sited on each — and
@@ -5233,7 +5258,9 @@ export function mountViewer(appEl) {
   // already carries keeps the office's own record, so a house within earshot
   // is never replaced by this origin's copy of it
   function withTownHouses() {
-    for (const m of townHouses ?? []) if (!byId.has(m.id)) byId.set(m.id, m);
+    // adds the town's houses the index lacks, and fills what the resident's own
+    // rows are missing about their house — see fillFromTown
+    fillFromTown(byId, townHouses);
   }
   // THE ATLAS USED TO LOAD FOUR TIMES. Its one caller is guarded by `if (!mapCtx)`,
   // but mapCtx is not assigned until the scene is built, which is on the far side
