@@ -369,11 +369,15 @@ test("the model carries an enter door only for a parcel a reader who can act is 
     { parcelId: "nyx/the-night-room-parcel" });
 });
 
-test("the column renders the enter button in its nav, naming the parcel it enters — and not otherwise", () => {
+test("the column renders the enter button BESIDE ITS NAME, naming the parcel it enters — and not otherwise", () => {
   const withDoor = render(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel", canEnter: true }));
   const isDoor = (b) => b.className.split(" ").includes("wv-homecol-enter");
   const buttons = find(withDoor, "button").filter(isDoor);
   assert.equal(buttons.length, 1, "one enter button");
+  // beside the name (founder, 2026-09-11: "so it's hard to miss"): the button shares a row with the h2, not the nav's corner
+  assert.equal(buttons[0].parent.className, "wv-homecol-titlerow", "the door sits in the title row");
+  assert.ok(buttons[0].parent.children.some((c) => c.tagName === "H2"), "with the name beside it");
+  assert.ok(!byClass(withDoor, "wv-homecol-nav")[0].children.includes(buttons[0]), "and not in the nav");
   // THE CARD'S OWN DOOR (founder, 2026-09-11): the card door's class and title, so the
   // viewer's one rule styles it — and ONE handler. The column's own click delegate
   // plus the viewer's root `[data-enter]` delegate fired two crossings per press.
@@ -388,5 +392,5 @@ test("the column renders the enter button in its nav, naming the parcel it enter
   assert.equal(serialize(buttons[0]), "enter");
   const without = render(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel", canEnter: false }));
   assert.equal(find(without, "button").filter(isDoor).length, 0, "a spectator's column has no enter button");
-  // flip: drop `nav.appendChild(enter)` in renderHomeColumn → the first count reds
+  // flip: append `enter` to the nav again instead of the title row → the parent assertion reds
 });

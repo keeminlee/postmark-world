@@ -350,18 +350,18 @@ export function renderHomeColumn(doc, host, model, { imagePath = null } = {}) {
   const nav = el(doc, "div", "wv-homecol-nav");
   const kicker = el(doc, "span", "wv-homecol-kicker");
   kicker.textContent = model.kicker;
+  let enter = null;
   if (model.enter) {
     // THE CARD'S OWN DOOR (founder, 2026-09-11: "make the enter button in the
     // column more similar to the enter button style elsewhere"): the same
     // `wv-enter` class the card's `enterButtonHTML` wears, so the viewer's one
     // rule styles it, and the same `data-enter` the viewer's one click delegate
     // reads. The column's own class stays as a name, nothing more.
-    const enter = el(doc, "button", "wv-homecol-enter wv-enter");
+    enter = el(doc, "button", "wv-homecol-enter wv-enter");
     enter.setAttribute("type", "button");
     enter.setAttribute("data-enter", model.enter.parcelId);
     enter.setAttribute("title", "step inside this mark");
     enter.textContent = "enter";
-    nav.appendChild(enter);
   }
   const close = el(doc, "button", "wv-homecol-close");
   close.setAttribute("type", "button");
@@ -373,9 +373,15 @@ export function renderHomeColumn(doc, host, model, { imagePath = null } = {}) {
 
   const scroll = el(doc, "div", "wv-homecol-scroll");
 
+  // THE DOOR SITS BESIDE THE NAME (founder, 2026-09-11: "reposition the enter
+  // button to sit next to the name in the column, so it's hard to miss") — the
+  // nav's corner was chrome; the name is what the eye reads first
+  const titleRow = el(doc, "div", "wv-homecol-titlerow");
   const title = el(doc, "h2", "wv-homecol-title");
   title.textContent = model.title;
-  scroll.appendChild(title);
+  titleRow.appendChild(title);
+  if (enter) titleRow.appendChild(enter);
+  scroll.appendChild(titleRow);
 
   if (model.region) {
     const meta = el(doc, "div", "wv-homecol-meta");
@@ -520,6 +526,9 @@ export const HOME_COLUMN_CSS = `
 .wv-homecol-scroll { flex:1; min-height:0; overflow-y:auto; padding:14px 15px 26px;
   scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
 .wv-homecol-title { margin:0; color:var(--paper); font-size:1.22rem; line-height:1.25; }
+/* the door beside the name (founder, 2026-09-11) */
+.wv-homecol-titlerow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.wv-homecol-titlerow .wv-enter { flex:none; margin:0; font-size:.82rem; padding:2px 11px; }
 .wv-homecol-meta { margin-top:.25rem; color:var(--dim); font-size:.78rem; font-style:italic; }
 .wv-homecol-lead { margin:.9rem 0 0; }
 .wv-homecol-lead img { display:block; width:100%; border:1px solid var(--line); border-radius:4px; }
