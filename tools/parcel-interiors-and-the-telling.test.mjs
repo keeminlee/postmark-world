@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { parcelEnclosing, hiddenInsideParcel, enclosingParcels } from "../spectator/viewer.mjs";
+import { parcelEnclosing, hiddenInsideParcel, enclosingParcels, groupChooserIds } from "../spectator/viewer.mjs";
 
 const SOURCE = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
 
@@ -32,7 +32,15 @@ test("WHAT IS INSIDE A PARCEL STAYS INSIDE IT — the dwelling and its furniture
   const marks2 = [...MARKS, OTHER, { id: "wright/the-trueing-house-parcel", kind: "parcel", at: { x: 0, y: 0 }, extent: { w: 25, h: 25 } }];
   assert.equal(hiddenInsideParcel(OTHER, marks2, inside), true, "inside rei's house, wright's house is still a card from outside");
   assert.equal(parcelEnclosing({ id: "a", parent: "b" }, [{ id: "a", parent: "b" }, { id: "b", parent: "a" }]), null, "a cycle ends");
-  assert.match(SOURCE, /\.filter\(\(m\) => !hiddenInsideParcel\(byId\.get\(m\.id\) \?\? m, byId, underfoot\)\);/, "the drawn set honours it");
+  // THE THIN ENTRY (the resident read's `nearby` row: id, at, bearing — no parents): the town's own
+  // chain answers for it. Measured on dev 2026-09-11 21:1x: eight marks inside houses drew from outside.
+  const thin = { id: CHAIR.id, at: CHAIR.at };
+  const chain = new Map(MARKS.map((m) => [m.id, { kind: m.kind, parent: m.parent ?? null, placementParent: m.placementParent ?? null }]));
+  assert.equal(hiddenInsideParcel(thin, [], outside), false, "with no record and no chain, nothing can be known — drawn");
+  assert.equal(hiddenInsideParcel(thin, [], outside, chain), true, "with the chain, the thin entry is inside the parcel — hidden");
+  assert.equal(hiddenInsideParcel(thin, [], inside, chain), false, "and drawn again from inside");
+  assert.match(SOURCE, /\.filter\(\(m\) => !hiddenInsideParcel\(byId\.get\(m\.id\) \?\? m, byId, underfoot, townChain\)\);/, "the drawn set honours it, chain in hand");
+  assert.match(SOURCE, /townChain = new Map\(\(json\?\.marks \?\? \[\]\)\.map/, "the chain is built from the same world read the houses come from");
   // ⚑ THE FLIP: make hiddenInsideParcel return false unconditionally → four lines red.
 });
 
@@ -45,4 +53,14 @@ test("THE TELLING IS THE CARDS — the office's prose twin is not rendered (foun
 test("NO GROUND BEFORE THE READ — the resident path does not attempt the ground until its read is in hand", () => {
   assert.match(SOURCE, /if \(onResidentPath\(\) && !readCache\.get\(residentStandpointKey\(\{ x: state\.cam\.x, y: state\.cam\.y \}, state\.handle\)\)\) return;\n\s*minimapLoading = true;/, "the gate sits before the loading flag, so the read's own render retries");
   // ⚑ THE FLIP: delete the gate → the flash returns ("the ground didn't draw (townGround: …)").
+});
+
+test("THE CHOOSER IS SORTED — residents, parcels, then other marks, each group labelled and empty groups silent", () => {
+  const kinds = { "a/p": "parcel", "b/p": "parcel", "a/house": "sited", "the-town/x": "sited" };
+  const g = groupChooserIds(["walker:rei", "a/house", "a/p", "walker:nyx", "the-town/x", "b/p"], { isWalker: (id) => id.startsWith("walker:"), kindOf: (id) => kinds[id] ?? null });
+  assert.deepEqual(g, { residents: ["walker:rei", "walker:nyx"], parcels: ["a/p", "b/p"], others: ["a/house", "the-town/x"] }, "three groups, order within each as handed in");
+  assert.deepEqual(groupChooserIds([]), { residents: [], parcels: [], others: [] });
+  assert.match(SOURCE, /section\("residents", groups\.residents\) \+ section\("parcels", groups\.parcels\) \+ section\("other marks", groups\.others\)/, "the chooser renders the three in that order");
+  assert.match(SOURCE, /return rows \? `<p class="wv-choose-group">\$\{label\}<\/p>\$\{rows\}` : ""/, "an empty group draws no label");
+  // ⚑ THE FLIP: swap the parcels and others sections → the order line reds.
 });
