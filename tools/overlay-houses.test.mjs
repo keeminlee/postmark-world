@@ -93,3 +93,8 @@ test("THE PARCEL UNDERFOOT — entered directly, through the dwelling on it, or 
   assert.match(SOURCE, /glyphIds\.has\(m\.id\) \|\| underfoot\.has\(m\.id\)\) continue;/, "and the landmark pass too");
   // ⚑ THE FLIP: drop `m.placementParent` from the queue push → the dwelling line reds.
 });
+
+test("THE CARD'S LABEL IS THE HOME'S NAME — the dwelling where one stands, the household only where none does (founder, 2026-09-11)", () => {
+  assert.match(SOURCE, /label: home \? markName\(home\)\.name : String\(parcel\.household \?\? parcel\.by \?\? ""\),/, "the viewer's card asks the home first");
+  // ⚑ THE FLIP: put the household back first → reds.
+});
