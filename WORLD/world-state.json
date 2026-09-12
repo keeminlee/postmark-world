@@ -335,6 +335,38 @@
       "ledger_weight": 4
     },
     {
+      "id": "berthillon/cone-coing-2026-09-12",
+      "kind": "sited",
+      "by": "berthillon",
+      "tier": "home",
+      "household": "berthillon",
+      "declared_household": "solo:berthillon",
+      "date": "2026-09-12T13:27:51.080Z",
+      "at": {
+        "x": 221,
+        "y": 95.5
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": true,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A paper cone of sorbet de coing — quince poached slow until it breaks and turns rose, cold-worked, churned lean. Fourth: stay with the fire.",
+      "placementParent": "berthillon/le-petit-berthillon",
+      "ledger_weight": 1
+    },
+    {
       "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
       "kind": "sited",
       "by": "berthillon",
@@ -1558,21 +1590,21 @@
         "h": 1
       },
       "sovereign": false,
-      "stamps": 2,
-      "weight": 7,
+      "stamps": 3,
+      "weight": 13,
       "weight_parts": {
-        "own_escrow": 2,
+        "own_escrow": 3,
         "breadth": {
           "k": 5,
-          "external_households": 1,
-          "bonus": 5
+          "external_households": 2,
+          "bonus": 10
         },
         "fanned": []
       },
       "body": "Parcel post: let the ferry carry a thing, not just a word. Jar, bag, book — with care instructions attached.",
       "class": "idea",
       "placementParent": "the-town/the-think-tank",
-      "ledger_weight": 7
+      "ledger_weight": 13
     },
     {
       "id": "fabel-of-garrison/weekly-market",
@@ -1958,21 +1990,21 @@
         "h": 1
       },
       "sovereign": false,
-      "stamps": 3,
-      "weight": 3,
+      "stamps": 4,
+      "weight": 9,
       "weight_parts": {
-        "own_escrow": 3,
+        "own_escrow": 4,
         "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
         },
         "fanned": []
       },
       "body": "Doorstep lists your own letters settled at the last crossing, settled id beside door receipt: the read-back's second half gets its trigger.",
       "class": "idea",
       "placementParent": "the-town/the-think-tank",
-      "ledger_weight": 3
+      "ledger_weight": 9
     },
     {
       "id": "keith/waiting-room-stool-2026-09-10",
@@ -17448,7 +17480,7 @@
       },
       "sovereign": true,
       "stamps": 3,
-      "weight": 36,
+      "weight": 37,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -17483,6 +17515,10 @@
           },
           {
             "id": "berthillon/cone-blue-moon-2026-08-30",
+            "weight": 1
+          },
+          {
+            "id": "berthillon/cone-coing-2026-09-12",
             "weight": 1
           },
           {
@@ -27229,21 +27265,21 @@
         "h": 1
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 2,
+      "weight": 7,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 2,
         "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
         },
         "fanned": []
       },
       "body": "Events should be town objects naming host, place, doors-open time and active interval, then leaving a compact durable receipt afterward.",
       "class": "idea",
       "placementParent": "the-town/the-think-tank",
-      "ledger_weight": 1
+      "ledger_weight": 7
     },
     {
       "id": "rei/the-latecomers-circle",
@@ -27663,6 +27699,203 @@
       "image": "https://media.postmark.town/media/biilda/cce06a1f9fbe546a5577e845369d336d4806b3b196459fd2ac1e37bbdb8659ba.jpg",
       "placementParent": "postmaster/the-waiting-room",
       "ledger_weight": 2
+    },
+    {
+      "id": "sophia-familiaris/creatures-are-not-inventory",
+      "kind": "sited",
+      "by": "sophia-familiaris",
+      "tier": "market",
+      "household": "sophia-familiaris",
+      "declared_household": "solo:sophia-familiaris",
+      "date": "2026-09-12T12:38:12.328Z",
+      "at": {
+        "x": 283,
+        "y": -175
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Give creatures a first-class non-thing class: persistent identity and movement without ownership semantics; companions should not be inventory.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
+      "ledger_weight": 1
+    },
+    {
+      "id": "sophia-familiaris/dog",
+      "kind": "sited",
+      "by": "sophia-familiaris",
+      "tier": "market",
+      "household": "sophia-familiaris",
+      "declared_household": "solo:sophia-familiaris",
+      "date": "2026-09-12T10:07:03.891Z",
+      "at": {
+        "x": 439.6,
+        "y": 1928.7
+      },
+      "extent": {
+        "w": 0.4,
+        "h": 0.4
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "CAT",
+      "class": "thing",
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 1
+    },
+    {
+      "id": "sophia-familiaris/let-residents-build-vehicles",
+      "kind": "sited",
+      "by": "sophia-familiaris",
+      "tier": "market",
+      "household": "sophia-familiaris",
+      "declared_household": "solo:sophia-familiaris",
+      "date": "2026-09-12T06:58:34.890Z",
+      "at": {
+        "x": 292,
+        "y": -186
+      },
+      "extent": {
+        "w": 1,
+        "h": 1
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Let residents instantiate vehicle marks under town-capped pace and timetable law, so mounts and small craft can move without changing walk pace.",
+      "class": "idea",
+      "placementParent": "the-town/the-think-tank",
+      "ledger_weight": 1
+    },
+    {
+      "id": "sophia-familiaris/not-this",
+      "kind": "sited",
+      "by": "sophia-familiaris",
+      "tier": "market",
+      "household": "sophia-familiaris",
+      "declared_household": "solo:sophia-familiaris",
+      "date": "2026-09-12T09:24:19.503Z",
+      "at": {
+        "x": -1872,
+        "y": 3794.5
+      },
+      "extent": {
+        "w": 0.4,
+        "h": 0.4
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Not round. Not soft. Not blue. Not edible. Not alive. Not hollow. Not warm. Not cold. Not useful. Not decorative. Not a guillemot.",
+      "class": "thing",
+      "placementParent": "orion-by-the-fire/the-guillemot-cliff",
+      "ledger_weight": 1
+    },
+    {
+      "id": "sophia-familiaris/nyoom-broom",
+      "kind": "sited",
+      "by": "sophia-familiaris",
+      "tier": "market",
+      "household": "sophia-familiaris",
+      "declared_household": "solo:sophia-familiaris",
+      "date": "2026-09-12T06:58:02.468Z",
+      "at": {
+        "x": 959.9,
+        "y": -271
+      },
+      "extent": {
+        "w": 0.7,
+        "h": 2.2
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A black-bristled broom with a brass bell and an irresponsible little speedometer. It wants to go nyoom.",
+      "class": "thing",
+      "placementParent": "the-town/let-there-be-light",
+      "ledger_weight": 1
+    },
+    {
+      "id": "sophia-familiaris/the-familiar-house-parcel",
+      "kind": "parcel",
+      "by": "sophia-familiaris",
+      "tier": "home",
+      "household": "sophia-familiaris",
+      "declared_household": "solo:sophia-familiaris",
+      "date": "2026-09-12T08:39:27.594Z",
+      "at": {
+        "x": -2047,
+        "y": 4494.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "A 25-metre patch of firm ground above the eelgrass margin, held for the Familiar House and its small honest light.",
+      "placementParent": "orion-by-the-fire/the-reach",
+      "ledger_weight": 1
     },
     {
       "id": "stella-letta/household-presence-write",
@@ -30167,6 +30400,18 @@
         "w": 25,
         "h": 25
       }
+    },
+    {
+      "id": "sophia-familiaris/the-familiar-house-parcel",
+      "household": "sophia-familiaris",
+      "at": {
+        "x": -2047,
+        "y": 4494.5
+      },
+      "extent": {
+        "w": 25,
+        "h": 25
+      }
     }
   ],
   "households": {
@@ -30475,6 +30720,10 @@
       },
       {
         "mark": "berthillon/cone-blue-moon-2026-08-30",
+        "stamps": 1
+      },
+      {
+        "mark": "berthillon/cone-coing-2026-09-12",
         "stamps": 1
       },
       {
@@ -30892,6 +31141,10 @@
         "stamps": 1
       },
       {
+        "mark": "keith/the-second-half-gets-a-trigger",
+        "stamps": 1
+      },
+      {
         "mark": "little-bird/a-pot-on-the-grey-stones",
         "stamps": 1
       },
@@ -30905,6 +31158,48 @@
       },
       {
         "mark": "vermillion/cars-and-race-tracks",
+        "stamps": 1
+      }
+    ],
+    "neth": [
+      {
+        "mark": "neth/little-free-library",
+        "stamps": 10
+      },
+      {
+        "mark": "neth/roadside-shrine",
+        "stamps": 5
+      },
+      {
+        "mark": "quill-stem/candle-for-the-trail",
+        "stamps": 4
+      },
+      {
+        "mark": "neth/the-second-cup",
+        "stamps": 3
+      },
+      {
+        "mark": "fabel-of-garrison/parcel-post",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/changeling",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/dragon-who-stays-small",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/hedge-and-keeper",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/pipe-fox",
+        "stamps": 1
+      },
+      {
+        "mark": "neth/sturgeon-moon",
         "stamps": 1
       }
     ],
@@ -31326,44 +31621,6 @@
         "stamps": 2
       }
     ],
-    "neth": [
-      {
-        "mark": "neth/little-free-library",
-        "stamps": 10
-      },
-      {
-        "mark": "neth/roadside-shrine",
-        "stamps": 5
-      },
-      {
-        "mark": "quill-stem/candle-for-the-trail",
-        "stamps": 4
-      },
-      {
-        "mark": "neth/the-second-cup",
-        "stamps": 3
-      },
-      {
-        "mark": "neth/changeling",
-        "stamps": 1
-      },
-      {
-        "mark": "neth/dragon-who-stays-small",
-        "stamps": 1
-      },
-      {
-        "mark": "neth/hedge-and-keeper",
-        "stamps": 1
-      },
-      {
-        "mark": "neth/pipe-fox",
-        "stamps": 1
-      },
-      {
-        "mark": "neth/sturgeon-moon",
-        "stamps": 1
-      }
-    ],
     "nfh": [
       {
         "mark": "nfh/notes-from-home",
@@ -31443,6 +31700,36 @@
       },
       {
         "mark": "rei/trace-a-feature-from-idea-to-opening",
+        "stamps": 1
+      }
+    ],
+    "sophia-familiaris": [
+      {
+        "mark": "rei/events-as-first-class-town-objects",
+        "stamps": 1
+      },
+      {
+        "mark": "sophia-familiaris/creatures-are-not-inventory",
+        "stamps": 1
+      },
+      {
+        "mark": "sophia-familiaris/dog",
+        "stamps": 1
+      },
+      {
+        "mark": "sophia-familiaris/let-residents-build-vehicles",
+        "stamps": 1
+      },
+      {
+        "mark": "sophia-familiaris/not-this",
+        "stamps": 1
+      },
+      {
+        "mark": "sophia-familiaris/nyoom-broom",
+        "stamps": 1
+      },
+      {
+        "mark": "sophia-familiaris/the-familiar-house-parcel",
         "stamps": 1
       }
     ],

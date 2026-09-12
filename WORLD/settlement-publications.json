@@ -1510,6 +1510,41 @@
       "household": "berthillon",
       "path": "WORLD/marks/berthillon/cone-nectarine-sanguine-2026-09-11/mark.md",
       "class": "home"
+    },
+    "berthillon/cone-coing-2026-09-12": {
+      "household": "berthillon",
+      "path": "WORLD/marks/berthillon/cone-coing-2026-09-12/mark.md",
+      "class": "home"
+    },
+    "sophia-familiaris/creatures-are-not-inventory": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/creatures-are-not-inventory/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/dog": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/dog/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/let-residents-build-vehicles": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/let-residents-build-vehicles/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/not-this": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/not-this/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/nyoom-broom": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/nyoom-broom/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/the-familiar-house-parcel": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/the-familiar-house-parcel/mark.md",
+      "class": "home"
     }
   }
 }
