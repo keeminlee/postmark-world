@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 
 import {
   OVERLAY_PIP_R, HOME_CARD, homeCardPath, markerScale,
-  overlayHomeCardSVG, homeMarkOfParcel, houseIsLit, enclosingParcels,
+  overlayHomeCardSVG, homeMarkOfParcel, houseIsLit, enclosingParcels, homeFaceSVG,
 } from "../spectator/viewer.mjs";
 
 const SOURCE = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
@@ -42,6 +42,14 @@ test("no picture: the empty frame, as the atlas gave it", () => {
   assert.match(svg, /class="ov-home no-art"/);
   assert.match(svg, /class="ov-home-blank"/);
   assert.doesNotMatch(svg, /<image/);
+  // …and the default face sits in the frame (founder, 2026-09-11): the same three rects the far glyph wears
+  assert.equal((svg.match(/class="ov-home-door"/g) ?? []).length, 1, "a door");
+  assert.equal((svg.match(/class="ov-home-window"/g) ?? []).length, 2, "two windows");
+  assert.doesNotMatch(overlayHomeCardSVG({ at: { x: 0, y: 0 }, id: "a/b", label: "a", image: "/shelf/a/x.jpg" }), /ov-home-door/, "a pictured house wears its picture, not the default face");
+  const face = homeFaceSVG();
+  const bottoms = [...face.matchAll(/y="(-?[\d.]+)" width="\d+" height="(\d+)"/g)].map((m) => Number(m[1]) + Number(m[2]));
+  assert.equal(bottoms[0], (HOME_CARD.h + HOME_CARD.roof) / 2, "the door stands on the ground line");
+  // ⚑ THE FLIP: drop homeFaceSVG() from the blank card → the door count reds.
 });
 
 test("identical inputs give identical markup at any camera", () => {
