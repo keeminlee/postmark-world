@@ -5999,6 +5999,11 @@ export function mountViewer(appEl) {
     return () => overlays.forEach((el) => boxEl.appendChild(el));
   }
   let sceneRoomId = null;       // the mark whose scene is mounted, or null = the town
+  // THE HOUSE WHOSE COLUMN IS OPEN (Keemin, 2026-09-12: "when a house is clicked
+  // (and the column is up), it gets pinned in its 'zoomed' form even when zoomed
+  // out"). One parcel id, or null. Read by homeCard, written where the column
+  // opens and closes — see renderBubbles.
+  let pinnedColumnParcelId = null;
   // the top-left chip follows the MOUNTED room, which is the entered one
   const chipMarkId = () => chipMark({ viewingInteriorOf: sceneRoomId });
   // …and wears that mark's name and tier colour: a blue dot over somebody's
@@ -7572,6 +7577,16 @@ export function mountViewer(appEl) {
   // screen and would answer the same at every N, while the ground it stands on
   // is the thing that actually runs out when a town gets ten times bigger.
   function homeCard(parcel, at, fan, title, tier = null) {
+    // THE READ HOUSE STAYS THE READ HOUSE (Keemin, 2026-09-12: "when a house is
+    // clicked (and the column is up), it gets pinned in its 'zoomed' form even
+    // when zoomed out"). While a column is open the reader is reading THAT
+    // house, and zooming out to see where it sits should not take the thing
+    // they are reading and turn it back into a bead. So the one parcel whose
+    // column is up answers `near` at every tier — its picture, its name, its
+    // frame — and every other house on the map follows the camera exactly as
+    // before. It is still culled with the others: pinned is not "always drawn",
+    // it is "drawn near WHEN drawn".
+    if (pinnedColumnParcelId && parcel.id === pinnedColumnParcelId) tier = "near";
     if (tier === "far") return overlayHouseGlyphSVG({ at, id: parcel.id, classes: markClasses(parcel) });
     const home = homeMarkOfParcel(parcel.id, allMarks());
     const room = tier === "mid"
@@ -9463,6 +9478,29 @@ export function mountViewer(appEl) {
     // it still does.)
     const column = parcelColumnView(markInteraction.getState().selectedId);
     if (column) homeColumn.open(column); else homeColumn.close();
+    // ── AND THE MAP HAS TO HEAR ABOUT IT (2026-09-12) ─────────────────────
+    //
+    // A selection does not redraw the overlay. Measured, not assumed: the six
+    // `drawOverlay` call sites are the first radial, the camera settle, the pane
+    // refit, the layout settle, the dev dials and the resident record read —
+    // none of them is a click. `markInteraction.subscribe` runs
+    // syncMarkInteractionViews, which toggles classes, moves the highlight,
+    // syncs the chip and renders the bubbles, and touches the overlay's markup
+    // not at all. So the pin above would have been dead until the reader next
+    // moved the camera, which is the one thing they were not doing.
+    //
+    // ONLY WHEN THE PINNED HOUSE CHANGES, which is why this is not simply a
+    // redraw on selection: hovering and selecting run through here constantly,
+    // and rebuilding 890 cards on each would make the map cost a mouse move.
+    // Opening or closing a column is a handful of times a session.
+    //
+    // The id is assigned BEFORE the draw, so if anything downstream re-enters
+    // this function it finds nothing changed and stops, rather than recurring.
+    const pinnedNow = column?.parcelId ?? null;
+    if (pinnedNow !== pinnedColumnParcelId) {
+      pinnedColumnParcelId = pinnedNow;
+      if (lastRadial) drawOverlay(lastRadial);
+    }
     if (!state.paintingOnly) {
       for (const el of Object.values(bubbleEls)) if (el) el.hidden = true;
       return;
