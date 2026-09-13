@@ -598,3 +598,88 @@ test("the tint filter exists and is scoped to mid — a source pin, and it says 
   assert.match(src, /if \(tier === "mid" && isRegionMark\(m\)\) return false;/,
     "and so does the hanging pass");
 });
+
+// ── A REGION'S PICTURE IS A DOOR (Keemin, 2026-09-13) ───────────────────────
+
+test("the hit rect is opt-in, carries the id, and nothing else hung gets one", () => {
+  const base = { at: { x: 0, y: 0 }, extent: { w: 900, h: 600 }, href: "/media/x.jpg", fit: "meet" };
+  const region = placedArtSVG({ ...base, id: "caelum/evermoon", label: "Evermoon", clickable: true });
+  const mountain = placedArtSVG({ ...base, id: "the-town/pando-peak", label: "Pando" });
+  assert.match(region, /class="wv-far-art-hit" data-id="caelum\/evermoon"/, "a region's picture takes clicks");
+  assert.match(region, /role="button"/, "…as a button, reachable by keyboard");
+  assert.doesNotMatch(mountain, /wv-far-art-hit/,
+    "and nothing else hung does — the mountain stays as untouchable as it was");
+  // the layer itself must stay pointer-transparent, or a hung picture eats the
+  // clicks meant for the marks drawn over it
+  assert.match(SOURCE, /\.wv-far-art, \.wv-mist \{ pointer-events:none; \}/, "the layer is still transparent");
+  assert.match(SOURCE, /\.wv-far-art-hit \{ fill:transparent; pointer-events:auto; cursor:pointer; \}/,
+    "and only the hit rect takes them back");
+});
+
+test("THE PAGE — clicking a region's hung picture at far opens its column", async (t) => {
+  if (!chromium) { t.skip("NO PLAYWRIGHT — the region click and its column went UNGUARDED."); return; }
+  const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
+  await page.goto(`http://localhost:${port}/`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.waitForSelector(".wv-telling-pane", { state: "attached", timeout: 90_000 });
+  await page.evaluate(() => { const el = document.querySelector(".wv-tour-skip"); if (el && el.offsetParent) el.click(); });
+  await page.waitForFunction(() => document.querySelectorAll("#wv-placed-art-layer .wv-far-art").length > 0,
+    null, { timeout: 60_000 }).catch(() => {});
+  await page.waitForTimeout(2500);
+
+  const before = await page.evaluate(() => {
+    const c = document.querySelector(".wv-homecol");
+    return { hit: document.querySelectorAll(".wv-far-art-hit[data-id]").length, columnUp: !!c && !c.hidden };
+  });
+  assert.ok(before.hit >= 1, "the region's picture is hung and carries a hit rect");
+  assert.equal(before.columnUp, false, "…and no column is open yet, so the next line is about the click");
+
+  // CLICK WITH THE MOUSE AT A PLACE ON THE SCREEN. A synthetic event on the rect
+  // would prove nothing about whether a reader can reach it: the rect has to be
+  // the topmost thing at that point, which is the whole question.
+  //
+  // WHERE ON THE PICTURE, and this is a real property of the thing rather than
+  // a test convenience. A region is the biggest mark on the map and it is drawn
+  // LOWEST, so most of its picture has houses, pips and walkers standing on it;
+  // the centre of Evermoon is a walker. Clicking there raises the crowded-click
+  // chooser, correctly, and the chooser is built from pips — a region has none,
+  // so it is not in the list. What a reader actually clicks is an exposed part
+  // of the region, and that is what this finds: the first point on a grid over
+  // the picture where the hit rect is the topmost thing.
+  const at = await page.evaluate(() => {
+    const r = document.querySelector('.wv-far-art-hit[data-id="caelum/evermoon"]')
+      ?? document.querySelector(".wv-far-art-hit[data-id]");
+    const b = r.getBoundingClientRect();
+    for (let fx = 0.1; fx <= 0.9; fx += 0.1) {
+      for (let fy = 0.1; fy <= 0.9; fy += 0.1) {
+        const x = b.x + b.width * fx, y = b.y + b.height * fy;
+        if (document.elementsFromPoint(x, y)[0] === r) return { x, y, id: r.getAttribute("data-id"), exposed: true };
+      }
+    }
+    return { x: b.x + b.width / 2, y: b.y + b.height / 2, id: r.getAttribute("data-id"), exposed: false };
+  });
+  assert.equal(at.exposed, true,
+    "some part of the region's picture is clickable — if this reds, a region is unreachable at far and that is the finding");
+  await page.mouse.click(at.x, at.y);
+  await page.waitForTimeout(1200);
+
+  const after = await page.evaluate(() => {
+    const c = document.querySelector(".wv-homecol");
+    return {
+      columnUp: !!c && !c.hidden && c.offsetParent !== null,
+      kicker: c?.querySelector(".wv-homecol-kicker")?.textContent ?? null,
+      title: c?.querySelector("h2, .wv-homecol-title")?.textContent ?? null,
+      text: (c?.textContent ?? "").replace(/\s+/g, " ").slice(0, 200),
+      enterButton: !!c?.querySelector("[data-enter]"),
+    };
+  });
+  assert.deepEqual(errors, [], "the click threw nothing");
+  assert.equal(after.columnUp, true, `the column opened (${at.id})`);
+  assert.match(after.text, /Evermoon/i, "…showing the region's own name");
+  assert.match(after.text, /held by caelum/i, "…and who holds it, as the atlas panel says it");
+  assert.equal(after.enterButton, false, "no enter button: a region is not a parcel");
+  await page.close();
+  // ⚑ THE FLIP: drop `clickable: isRegionMark(m)` and the hit rect is gone, so
+  //   `before.hit` reds before the click is even attempted.
+});

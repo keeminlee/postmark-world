@@ -2849,7 +2849,7 @@ export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving
 // So `slice` stays the default and Pando's old call is byte-for-byte what it
 // was, while the general rule below asks for `meet` and gets the extent the
 // record actually wrote.
-export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art", fit = "slice" } = {}) {
+export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art", fit = "slice", clickable = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   const url = safeAvatarUrl(href);
   if (![x, y].every(Number.isFinite) || !url) return "";
@@ -2867,6 +2867,15 @@ export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "
     + `<image href="${url}" ${box}`
     + ` preserveAspectRatio="xMidYMid ${meet ? "meet" : "slice"}" clip-path="url(#${clip})"/>`
     + `<rect ${box} rx="${rx}" class="wv-far-art-frame"/>`
+    // THE PICTURE IS A DOOR WHEN THE CALLER SAYS SO (Keemin, 2026-09-13). The
+    // whole layer is `pointer-events:none` — a hung picture must never eat the
+    // clicks meant for the marks drawn over it — so a clickable one gets ONE
+    // transparent rect that takes them back, and only that rect. Opt-in, so the
+    // mountain and anything else hung stay exactly as untouchable as they were.
+    + (clickable
+      ? `<rect ${box} rx="${rx}" class="wv-far-art-hit" data-id="${esc(id)}" role="button" tabindex="0"`
+        + ` aria-label="${esc(String(label ?? ""))}"/>`
+      : "")
     + `</g>`;
 }
 
@@ -4425,6 +4434,9 @@ const STYLE = `
    and not a filter, so panning it costs the compositor a translate. Neither
    layer takes the pointer — the record's pips are still what you click. */
 .wv-far-art, .wv-mist { pointer-events:none; }
+/* …except the one rect that makes a region's picture a door (2026-09-13) */
+.wv-far-art-hit { fill:transparent; pointer-events:auto; cursor:pointer; }
+.wv-far-art-hit:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
 .wv-far-art-frame { fill:none; stroke:var(--amber); stroke-width:1.5; opacity:.7; vector-effect:non-scaling-stroke; }
 .wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
 .wv-walk-dest { fill:none; stroke:#e0507a; stroke-width:2; vector-effect:non-scaling-stroke; }
@@ -7256,7 +7268,7 @@ export function mountViewer(appEl) {
         if (b.width > 0 && b.height > 0)
           boxes.set(id, { left: b.left, right: b.right, top: b.top, bottom: b.bottom });
       }
-      return [...mapCtx.glyphIds].flatMap((id) => {
+      const fromGlyphs = [...mapCtx.glyphIds].flatMap((id) => {
         const mark = byId.get(id);
         if (!mark?.at || ![mark.at.x, mark.at.y].every(Number.isFinite)) return [];
         const point = svg.createSVGPoint();
@@ -7267,6 +7279,33 @@ export function mountViewer(appEl) {
         // had, which is the fallback the addendum asks for by name
         return [{ id, x: screen.x, y: screen.y, box: boxes.get(id) ?? null }];
       });
+      // ── AND A REGION'S HUNG PICTURE (Keemin, 2026-09-13) ─────────────────
+      //
+      // The candidates above come from `glyphIds`, which the overlay fills —
+      // and a region is not drawn there, it is hung on the placed-art layer
+      // underneath. So a region had no way of being the thing under the cursor.
+      //
+      // THIS IS WHY IT IS HERE AND NOT A CLICK HANDLER. I wired a root-level
+      // click delegate on the hit rect first and it never fired once: the map's
+      // svg takes the pointer on pointerdown, so no `click` event reaches the
+      // document at all, and even pointerup arrives with the svg as its target.
+      // Measured, after the delegate silently did nothing. The map hit-tests
+      // screen coordinates, so a target that wants to be clicked joins the
+      // candidates — which is also the reuse the ruling asked for: same
+      // ranking, same chooser when a house stands on top, same selectMark.
+      //
+      // Innermost-first ordering does the rest: a house glyph over a region
+      // wins the click, and the region takes only what is left of itself.
+      const art = mapCtx?.placedArtLayer?.querySelectorAll(".wv-far-art-hit[data-id]") ?? [];
+      const hung = [...art].flatMap((el) => {
+        const id = el.getAttribute("data-id");
+        if (!id || boxes.has(id)) return [];
+        const b = el.getBoundingClientRect();
+        if (!(b.width > 0 && b.height > 0)) return [];
+        return [{ id, x: b.left + b.width / 2, y: b.top + b.height / 2,
+          box: { left: b.left, right: b.right, top: b.top, bottom: b.bottom } }];
+      });
+      return hung.length ? [...fromGlyphs, ...hung] : fromGlyphs;
     }
     const worldPointForEvent = (event) => {
       const point = svg.createSVGPoint();
@@ -8252,6 +8291,8 @@ export function mountViewer(appEl) {
         label: markName(m).name,
         id: m.id,
         fit: "meet",
+        // a region's picture opens its column; nothing else hung is a door
+        clickable: isRegionMark(m),
       });
     mapCtx.placedArtLayer.innerHTML = s;
     // THE IDS, not a count: the furnishing pass below has to know which marks
@@ -8838,7 +8879,15 @@ export function mountViewer(appEl) {
       markInteraction.select(id);
       return true;
     }
-    if (!id || !byId.has(id)) return false;
+    // A MARK THE READER CAN SEE MUST BE ONE THE READER CAN SELECT (2026-09-13).
+    // This gated on `byId`, the READ's index. The placed-art layer hangs
+    // regions from `allMarks()`, which is a wider set — measured on dev, some
+    // regions have an overlay entry and some do not — so a region could be
+    // hanging its picture on screen and refuse the click that opens it. Widened
+    // for regions only, and only to marks the record actually holds; everything
+    // below this line works off the id alone.
+    if (!id) return false;
+    if (!byId.has(id) && !(isRegionMark({ id }) && allMarks().some((m) => m?.id === id))) return false;
     if (markInteraction.getState().selectedId === id) {
       clearSelectionAndDestination();
       return false;
@@ -9226,6 +9275,39 @@ export function mountViewer(appEl) {
       leadImage: (home && markImagePath(home)) ?? markImagePath(mark),
     };
   }
+  // WHAT THE COLUMN SHOWS FOR A REGION (Keemin, 2026-09-13: "we should be able
+  // to click regions at far zoom s.t. it pops up the same side column that it
+  // does in the atlas"). The same column, the same host, the same dress — only
+  // the view differs, and it is built to the atlas's own region panel:
+  // kicker "Region", the region's name, "held by <founder>", its picture, and
+  // its OWN prose. The atlas reads that prose off the record and so does this;
+  // the parcel column's door would have fetched the founder's home page, which
+  // is a different place with the same name attached.
+  //
+  // No enter button: the model only offers one for a parcelId, and a region is
+  // not a parcel. Residents CAN cross into a region, but that is a door nobody
+  // asked for here and it is not this piece's to add.
+  function regionColumnView(id) {
+    // the read's index first, the record behind it second — same reason as the
+    // gate in selectMark: the layer that drew this region read the wider set
+    const mark = id ? (byId.get(id) ?? allMarks().find((m) => m?.id === id)) : null;
+    if (!mark || !isRegionMark(mark)) return null;
+    const handle = String(mark.by ?? mark.household ?? "").trim();
+    if (!handle) return null;
+    const body = typeof mark.body === "string" ? mark.body.trim() : "";
+    return {
+      key: mark.id,
+      handle,
+      kicker: "Region",
+      title: markIdentity(mark),
+      region: `held by ${handle}`,
+      leadImage: markImagePath(mark),
+      // the record's own words, handed over as the door so the column paints
+      // them without asking the office for somebody's house
+      door: { description: body },
+    };
+  }
+
   const bubbleEls = { hover: null, pinned: null };
   let bubbleResize = null;
   let pinnedBuiltId = null;   // which mark the pinned bubble currently holds
@@ -9551,7 +9633,8 @@ export function mountViewer(appEl) {
     // /world, which is the whole audience. (In that mode there is no little card
     // to swap either: the click scrolls the mark's cell up in the Telling, and
     // it still does.)
-    const column = parcelColumnView(markInteraction.getState().selectedId);
+    const selected = markInteraction.getState().selectedId;
+    const column = parcelColumnView(selected) ?? regionColumnView(selected);
     if (column) homeColumn.open(column); else homeColumn.close();
     // ── AND THE MAP HAS TO HEAR ABOUT IT (2026-09-12) ─────────────────────
     //
