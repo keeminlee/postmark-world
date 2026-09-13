@@ -4693,6 +4693,12 @@ const STYLE = `
    min-width repeats the value so nothing downstream can squeeze it below its own
    sentence — clipping the placeholder is the one outcome not allowed.
 
+   ⛑ THIS IS NOW ONLY THE FLOOR. sizeSearchField measures the placeholder in the
+   input's own resolved font at mount and writes the real width inline, because
+   ch is the advance of the "0" glyph and not of the sentence: on a face whose
+   letters are wider than its zero, this calc under-measures and the last letter
+   clips. It did, on the founder's screen, at 25ch.
+
    ⛑ 25ch, NOT 24, AND THE EXTRA ONE IS MEASURED. The ch unit is the advance of
    the "0" glyph, and this face is not strictly monospace across the letters the
    sentence actually uses: at 24ch the inner box came to 171 px against a
@@ -10472,9 +10478,55 @@ export function mountViewer(appEl) {
     requestAnimationFrame(positionBubbles); // the bubbles ride along mid-slide
   }
   let settleTimer = null;
+
+  // ── THE FIELD IS SIZED BY MEASUREMENT, NOT BY ch (Keemin, 2026-09-13, on dev:
+  // "the 'find a house or resident' bubble is still too small. the last letter
+  // is cut off") ─────────────────────────────────────────────────────────────
+  //
+  // It was calc(25ch + 2.55rem), and that fits here and clipped on his screen.
+  // The ch unit is the advance of the "0" GLYPH, not of the sentence: where the
+  // mono stack resolves to a face whose letters are wider than its zero, ch
+  // under-measures and the last letter goes over the edge. Counting more
+  // characters would have been guessing at somebody else's font.
+  //
+  // So the width is the placeholder's own rendered width in the input's own
+  // computed font, plus its padding, its border and a few pixels of headroom.
+  // Re-measured when the fonts finish loading (the first measurement can land on
+  // a fallback face) and on resize (a root font-size can move with the viewport).
+  // The CSS keeps a ch-based floor so the field is never zero-wide in the frame
+  // before this runs.
+  const SEARCH_WIDTH_HEADROOM_PX = 3;
+  function sizeSearchField() {
+    const input = $(root, ".wv-search-input");
+    if (!input || !input.placeholder) return 0;
+    const cs = getComputedStyle(input);
+    // `font` is a shorthand and is what a canvas or a span needs; a browser that
+    // leaves it empty gets it rebuilt from the longhands rather than measured
+    // against the document's default, which would be a different face entirely.
+    const font = cs.font && cs.font.trim()
+      ? cs.font
+      : `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize}/${cs.lineHeight} ${cs.fontFamily}`;
+    const span = document.createElement("span");
+    span.style.cssText = "position:absolute;visibility:hidden;white-space:pre;"
+      + `font:${font};letter-spacing:${cs.letterSpacing}`;
+    span.textContent = input.placeholder;
+    document.body.appendChild(span);
+    const textW = span.getBoundingClientRect().width;
+    span.remove();
+    if (!(textW > 0)) return 0;          // nothing measurable: the CSS floor stands
+    const chrome = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)
+      + parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
+    const want = Math.ceil(textW + chrome + SEARCH_WIDTH_HEADROOM_PX);
+    input.style.width = `${want}px`;
+    return want;
+  }
+
   // a window resize is the same event as a toggle, only slower
-  const onViewerResize = () => { mapCtx?.refit?.(); positionBubbles(); placeTour(); };
+  const onViewerResize = () => { mapCtx?.refit?.(); positionBubbles(); placeTour(); sizeSearchField(); };
   window.addEventListener("resize", onViewerResize);
+  sizeSearchField();
+  // the first measurement can land on a fallback face; the real one arrives later
+  try { document.fonts?.ready?.then(() => sizeSearchField()); } catch { /* no font loading API */ }
 
   // ───────── dev pane ─────────
   function buildDevPane() {
