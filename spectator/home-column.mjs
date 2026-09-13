@@ -214,7 +214,7 @@ export function isParcelMark(mark) {
  * renders blank: every state below ends in either prose or one line saying why
  * there is none.
  */
-export function homeColumnModel({ handle, kicker, title, region, leadImage, door = null, error = null, loading = false, residentHref = null, parcelId = null, canEnter = false } = {}) {
+export function homeColumnModel({ handle, kicker, title, region, leadImage, door = null, error = null, loading = false, residentHref = null, parcelId = null, canEnter = false, byline = null } = {}) {
   const who = String(handle ?? "").trim();
   const text = typeof door?.description === "string" ? door.description.trim() : "";
   const blocks = text ? parseHomeMarkdown(text) : [];
@@ -224,7 +224,21 @@ export function homeColumnModel({ handle, kicker, title, region, leadImage, door
     title: String(door?.title ?? title ?? who ?? "").trim(),
     region: String(door?.region ?? region ?? "").trim(),
     leadImage: leadImage ?? null,
-    byline: who ? `in ${who}'s own words` : "",
+    // THE BYLINE SAYS WHERE THE WORDS CAME FROM (Keemin, 2026-09-13: "the region
+    // column pulls text from the mark body instead of REGION.md in the town
+    // repo"). A parcel's column really is the resident's home page, fetched
+    // from the office, so "in their own words" is the plain truth there and is
+    // unchanged. A region's column is NOT: it is the region mark's body,
+    // because no door at release/2026-w38 serves REGION.md whole — measured on
+    // prod, /homes/{handle} carries the HOUSE and only the region's slug, and
+    // /regions caps its description at 200 characters, cut mid-word, with two
+    // regions empty or bare frontmatter.
+    //
+    // Until that door exists the column keeps the mark's words and SAYS SO, so
+    // it stops implying it is showing the region's own page. A caller may
+    // therefore name its own byline; nobody else does, and the default is what
+    // it always was.
+    byline: byline ? String(byline) : (who ? `in ${who}'s own words` : ""),
     blocks,
     note: blocks.length ? ""
       : loading ? "reading the home…"
@@ -467,6 +481,7 @@ export function createHomeColumn({ doc, host, readHome, imagePath = null, reside
       residentHref: residentHref ? residentHref(view.handle) : null,
       parcelId: view.parcelId ?? null,
       canEnter: !!view.canEnter,
+      byline: view.byline ?? null,
     }), { imagePath });
   };
 

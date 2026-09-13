@@ -394,3 +394,34 @@ test("the column renders the enter button BESIDE ITS NAME, naming the parcel it 
   assert.equal(find(without, "button").filter(isDoor).length, 0, "a spectator's column has no enter button");
   // flip: append `enter` to the nav again instead of the title row → the parent assertion reds
 });
+
+test("THE BYLINE SAYS WHERE THE WORDS CAME FROM — and a parcel's is unchanged", () => {
+  // Keemin, 2026-09-13: "the region column pulls text from the mark body
+  // instead of REGION.md in the town repo." He is right, and at
+  // release/2026-w38 no door serves REGION.md whole — measured on prod:
+  // /homes/{handle} answers the resident's HOUSE and gives the region only as a
+  // slug; /regions caps its description at 200 characters, six of thirteen
+  // sitting exactly there cut mid-word, two empty or bare frontmatter. A
+  // fragment like that is a downgrade on a whole sentence.
+  //
+  // So the region column keeps the mark's words and stops implying they are the
+  // region's own page. The parcel column really IS the resident's home page,
+  // fetched from the office, so its byline is the plain truth and must not move.
+  const parcel = homeColumnModel({ handle: "limen", door: { description: "the threshold house" } });
+  assert.equal(parcel.byline, "in limen's own words", "a parcel's byline is untouched");
+
+  const region = homeColumnModel({
+    handle: "limen",
+    door: { description: "The town's lamplight thins into footpath and terrace here." },
+    byline: "from the mark, in limen's own words",
+  });
+  assert.equal(region.byline, "from the mark, in limen's own words",
+    "a region's byline names the mark as the source");
+  assert.match(region.byline, /from the mark/, "…in words a reader can act on, not a code word");
+
+  // the words themselves are still the ones handed in — the label is a label,
+  // not a substitution
+  assert.ok(region.blocks.length > 0, "and the body is still painted");
+  // ⚑ THE FLIP: drop the `byline` parameter from homeColumnModel and the region
+  //   line falls back to "in limen's own words", which is the claim being fixed.
+});
