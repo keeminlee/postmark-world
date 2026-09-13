@@ -215,7 +215,7 @@ before(async () => {
 });
 
 /** open the page, settle the drawing, and read the art layer */
-async function readArt({ zoomIn = 0 } = {}) {
+async function readArt({ zoomIn = 0, stopAtTier = null } = {}) {
   const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
@@ -247,10 +247,18 @@ async function readArt({ zoomIn = 0 } = {}) {
       const b = (el ?? document.querySelector("#wv-map"))?.getBoundingClientRect();
       return b ? { x: b.x + b.width / 2, y: b.y + b.height / 2 } : { x: 700, y: 450 };
     }, HUNG);
+    // STOP AT THE TIER, NOT AFTER N TURNS OF THE WHEEL. A step count is a guess
+    // about how far a wheel notch travels, and mine overshot mid and landed in
+    // near — where the pass under test is switched off, so the probe would have
+    // been asking its question of the one tier that cannot answer it.
     for (let i = 0; i < zoomIn; i++) {
       await page.mouse.move(at.x, at.y);
       await page.mouse.wheel(0, -240);
       await page.waitForTimeout(140);
+      if (stopAtTier) {
+        const t = await page.evaluate(() => document.getElementById("wv-overlay")?.getAttribute("data-tier"));
+        if (t === stopAtTier) break;
+      }
     }
     await settle();
   }
@@ -285,6 +293,13 @@ async function readArt({ zoomIn = 0 } = {}) {
         return !!(ground.compareDocumentPosition(layer) & Node.DOCUMENT_POSITION_FOLLOWING);
       })(),
       groundDrawn: !!document.querySelector(".wv-tg-paper, #wv-ground-base, .wv-ground-base"),
+      // THE OTHER PASS ON THE SAME GROUND. The furnishing pass paints every
+      // furnishable mark as a half-opaque tinted block at mid, deliberately —
+      // "the shape of what is on the ground, without the photograph of it".
+      // For a chair that is right. For a place that is wearing its picture it
+      // is a wash over the picture, which is what it was doing.
+      tinted: [...document.querySelectorAll("#wv-overlay .wv-ph-extent[data-id]")].map((e) => e.dataset.id),
+      hungIds: [...(layer?.querySelectorAll(".wv-far-art") ?? [])].map((a) => a.getAttribute("aria-label")),
       mist: document.querySelectorAll("#wv-mist-layer *").length,
       overlayMarks: overlay?.querySelectorAll("[data-id]").length ?? 0,
     };
@@ -406,4 +421,24 @@ test("THE PAGE — one picture deep: a covered child stays down, an uncovered on
   // ⚑ THE FLIP: make the rule literal — hang only when placementParent is the
   //   root — and "bare child" reds while "covered child" stays green, which is
   //   exactly the difference between the two readings of the ruling.
+});
+
+test("THE PAGE — a hung picture is not then painted over by the furnishing pass", async (t) => {
+  if (!chromium) { t.skip("NO PLAYWRIGHT — the two passes' agreement went UNGUARDED."); return; }
+  // Mid is where they meet: at far the furnishing pass is off entirely, at near
+  // the hanging rule is. Only mid runs both, so only mid can show the argument.
+  const mid = await readArt({ zoomIn: 60, stopAtTier: "mid" });
+  assert.deepEqual(mid.errors, [], "the page survived the zoom");
+  assert.equal(mid.tier, "mid", `the camera reached mid (got ${mid.tier})`);
+  assert.ok(mid.count > 0, "…and something is hung there, so the next line asks a question");
+  assert.ok(mid.tinted.length > 0,
+    "…and the furnishing pass IS running, so a clean result is agreement and not absence");
+
+  // the whole claim, in one line: nothing wears a picture AND a tint
+  const both = mid.tinted.filter((id) => /broad-common|long-terrace|covering-district|bare-child/.test(id));
+  assert.deepEqual(both, [],
+    `no hung mark also carries a tinted block (tinted: ${mid.tinted.join(", ")})`);
+  // ⚑ THE FLIP: drop the `!hungArt.has(m.id)` filter and this reds with the two
+  //   hung ids named, while every other assertion in this file stays green —
+  //   which is how it shipped in #40 without anybody seeing it.
 });
