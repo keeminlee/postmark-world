@@ -6738,7 +6738,7 @@ export function mountViewer(appEl) {
   // absent or unreadable — never a throw, because the generated ground is the
   // answer then and the reader must not see "the ground didn't draw" for a
   // missing picture.
-  async function fetchAtlasGround() {
+  async function fetchAtlasGround(generated = null) {
     try {
       const r = await fetch(ATLAS_GROUND_URL, { credentials: "same-origin" });
       if (!r.ok) return null;
@@ -6808,6 +6808,49 @@ export function mountViewer(appEl) {
       for (const g of svg.querySelectorAll("g.region")) {
         for (const el of g.querySelectorAll('rect[fill="none"], svg, rect[fill="transparent"]')) el.remove();
       }
+      // ── AND THE WASHES BECOME THE RECORD'S OWN SHAPES (Keemin, 2026-09-13:
+      //    "can we actually correct the background map html's region washes to
+      //    use the literal polygons of the marks instead of the old
+      //    approximations?") ─────────────────────────────────────────────────
+      //
+      // Each region's wash in the picture is two or three hand-drawn blobs — a
+      // `<path>` of quadratics, or an `<ellipse>` — laid down when the atlas was
+      // drawn. The record has the real thing: each region mark carries a ring,
+      // and `townGround` already turns those rings into polygons in THIS
+      // coordinate space, from the same skeleton registration the picture is
+      // drawn in ("5 m per atlas px", origin at atlas 485,760).
+      //
+      // MEASURED BEFORE REPLACING, because a blob drawn somewhere else than the
+      // ring would move the map rather than correct it: across all twelve region
+      // groups the generated ring's centroid and the picture's wash centroid are
+      // 2-11 px apart, except the town centre at 33. Tens, not hundreds. The
+      // approximations were honest, just soft.
+      //
+      // Each polygon goes INSIDE the group whose slug it matches, so the depth
+      // and paint order the picture had are exactly the depth and paint order it
+      // keeps - water and terrain live outside these groups and never move. The
+      // record holds thirteen regions and the picture drew twelve; the one the
+      // picture never had is placed beside the groups rather than dropped, and
+      // at their depth rather than in a layer of its own.
+      if (generated?.svgText) {
+        const gdoc = new DOMParser().parseFromString(generated.svgText, "image/svg+xml");
+        const bySlug = new Map();
+        for (const poly of gdoc.querySelectorAll("polygon.wv-tg-region")) {
+          const slug = String(poly.getAttribute("data-src") ?? "").replace(/^mark:/, "").split("/")[1];
+          if (slug) bySlug.set(slug, poly);
+        }
+        let last = null;
+        for (const g of svg.querySelectorAll("g.region")) {
+          for (const el of g.querySelectorAll("path, ellipse")) el.remove();
+          const slug = String(g.getAttribute("data-id") ?? "");
+          const poly = bySlug.get(slug);
+          if (poly) { g.appendChild(doc.importNode(poly, true)); bySlug.delete(slug); }
+          last = g;
+        }
+        if (last?.parentNode) {
+          for (const poly of bySlug.values()) last.parentNode.insertBefore(doc.importNode(poly, true), last.nextSibling);
+        }
+      }
       const base = new URL(ATLAS_GROUND_URL, location.origin);
       svg.querySelectorAll("image").forEach((im) => {
         const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
@@ -6868,7 +6911,7 @@ export function mountViewer(appEl) {
       // THE PICTURE FIRST, THE GENERATED GROUND AS THE FALLBACK (2026-09-11).
       // Which one drew is written on the svg itself (`data-ground`) so a page
       // test — and a reader with dev tools open — can say which they are seeing.
-      const picture = await fetchAtlasGround();
+      const picture = await fetchAtlasGround(ground);
       const svg = picture ?? document.importNode(
         new DOMParser().parseFromString(ground.svgText, "image/svg+xml").documentElement, true);
       svg.setAttribute("data-ground", picture ? "atlas" : "generated");

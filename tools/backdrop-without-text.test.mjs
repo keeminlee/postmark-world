@@ -164,6 +164,21 @@ async function readGround(port) {
       inRegionWashes: svg.querySelectorAll("g.region path, g.region ellipse").length,
       // …and what lives OUTSIDE them, which is the picture's actual job
       terrainOutside: [...svg.querySelectorAll("path.terrain, path.water")].filter((e) => !e.closest("g.region")).length,
+      // the record's own shapes, transplanted into the picture
+      literalPolys: svg.querySelectorAll('g.region polygon.wv-tg-region[data-src^="mark:"]').length,
+      literalAnywhere: svg.querySelectorAll('polygon.wv-tg-region[data-src^="mark:"]').length,
+      literalSlugs: [...svg.querySelectorAll('polygon.wv-tg-region[data-src^="mark:"]')]
+        .map((e) => (e.getAttribute("data-src") ?? "").replace(/^mark:/, "")).slice(0, 4),
+      // the ones the picture had no group for: placed beside the groups, at the
+      // same depth, never in a layer of their own
+      literalOutsideShareTheParent: (() => {
+        const groups = [...svg.querySelectorAll("g.region")];
+        if (!groups.length) return null;
+        const parent = groups[0].parentNode;
+        const loose = [...svg.querySelectorAll('polygon.wv-tg-region[data-src^="mark:"]')]
+          .filter((e) => !e.closest("g.region"));
+        return loose.length === 0 || loose.every((e) => e.parentNode === parent);
+      })(),
     };
   });
   await page.close();
@@ -254,4 +269,42 @@ test("THE REGION GROUPS LOSE THEIR FRAMES — and the picture's own art is untou
   // outside the region groups and are the picture's actual job.
   assert.equal(g.terrainOutside, 2, "the terrain and the water outside the groups survive");
   // ⚑ THE FLIP: drop the g.region loop and the three counts above read 2, 2, 2.
+});
+
+test("THE WASHES ARE THE RECORD'S OWN POLYGONS, in the groups they replaced", async (t) => {
+  if (!chromium) { t.skip("NO PLAYWRIGHT — the wash transplant went UNGUARDED."); return; }
+  // Keemin, 2026-09-13: "can we actually correct the background map html's
+  // region washes to use the literal polygons of the marks instead of the old
+  // approximations?" Measured before building: the generated ring's centroid
+  // and the picture's wash centroid are 2–11 px apart across the twelve region
+  // groups, 33 for the town centre. Tens, not hundreds.
+  const g = await readGround(withAtlas);
+  assert.equal(g.ground, "atlas", "the picture path — the transplant only lives here");
+  assert.equal(g.inRegionWashes, 0, "not one hand-drawn blob left inside a region group");
+  assert.ok(g.literalPolys >= 1,
+    `the record's polygons are in the groups instead (${g.literalPolys}: ${g.literalSlugs.join(", ")})`);
+  // THE RECORD HOLDS MORE REGIONS THAN THE PICTURE DREW GROUPS FOR, and the
+  // fixture makes that the common case rather than the edge: two groups, and the
+  // record's thirteen regions. The eleven with no group of their own are placed
+  // beside the groups at the same depth — not dropped, and not lifted into a new
+  // layer where they would paint over the water.
+  assert.ok(g.literalAnywhere >= g.literalPolys,
+    `every region the record holds is drawn (${g.literalAnywhere}), including the ${g.literalAnywhere - g.literalPolys} the picture had no group for`);
+  assert.equal(g.literalOutsideShareTheParent, true,
+    "…and those sit at the region groups' own depth, not in a layer of their own");
+  assert.equal(g.terrainOutside, 2, "the water and the terrain outside the groups are untouched");
+  // ⚑ THE FLIP: drop the transplant and `inRegionWashes` reads 3 while
+  //   `literalPolys` reads 0.
+});
+
+test("the generated ground is untouched by any of it", async (t) => {
+  if (!chromium) { t.skip("NO PLAYWRIGHT — the fallback went UNGUARDED."); return; }
+  // The transplant READS the generated ground and must not consume it: with the
+  // atlas unreachable the page still draws its own, whole.
+  const g = await readGround(withoutAtlas);
+  assert.equal(g.ground, "generated");
+  assert.ok(g.generatedRegionLabels > 0,
+    `the fallback still names its regions (${g.generatedRegionLabels})`);
+  assert.ok(g.literalAnywhere > 0,
+    `…and still draws them (${g.literalAnywhere} polygons)`);
 });

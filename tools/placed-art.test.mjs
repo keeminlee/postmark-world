@@ -306,12 +306,31 @@ async function readArt({ zoomIn = 0, stopAtTier = null } = {}) {
       // picture was painted and then covered. Both grounds are checked, since
       // the atlas takes one road (`base`) and the generated town another
       // (`.wv-tg-paper`), and a seam that only holds on one of them is not one.
+      // WHICHEVER GROUND MOUNTED. This looked only for the GENERATED ground's
+      // paper, and that made it a coin toss: this rig's atlas origin defaults to
+      // prod, which answers from here, so the PICTURE mounts and there is no
+      // `.wv-tg-paper` at all. It passed only on the runs where prod was slow.
+      // Found when a change of mine made prod answer reliably enough to expose
+      // it. The seam is the same either way — the art layer must paint after
+      // whatever ground is under it — so the ground is whichever one is there.
+      groundEl: (() => {
+        const gen = document.querySelector(".wv-tg-paper, #wv-ground-base, .wv-ground-base");
+        if (gen) return "generated";
+        const svg = document.querySelector(".wv-minimap > svg");
+        return svg?.getAttribute("data-ground") === "atlas" ? "atlas" : null;
+      })(),
       artAfterGround: (() => {
-        const ground = document.querySelector(".wv-tg-paper") ?? document.querySelector("#wv-ground-base, .wv-ground-base");
+        const svg = document.querySelector(".wv-minimap > svg");
+        const ground = document.querySelector(".wv-tg-paper")
+          ?? document.querySelector("#wv-ground-base, .wv-ground-base")
+          // the picture's own first painted child stands for it: everything the
+          // atlas draws is a child of the same svg, ahead of the viewer's layers
+          ?? (svg?.getAttribute("data-ground") === "atlas" ? svg.querySelector("rect, path, polygon") : null);
         if (!layer || !ground) return null;              // no ground drawn: not an answer
         return !!(ground.compareDocumentPosition(layer) & Node.DOCUMENT_POSITION_FOLLOWING);
       })(),
-      groundDrawn: !!document.querySelector(".wv-tg-paper, #wv-ground-base, .wv-ground-base"),
+      groundDrawn: !!document.querySelector(".wv-tg-paper, #wv-ground-base, .wv-ground-base")
+        || document.querySelector(".wv-minimap > svg")?.getAttribute("data-ground") === "atlas",
       // THE OTHER PASS ON THE SAME GROUND. The furnishing pass paints every
       // furnishable mark as a half-opaque tinted block at mid, deliberately —
       // "the shape of what is on the ground, without the photograph of it".
@@ -394,7 +413,8 @@ test("THE PAGE — a large mark with a picture hangs it; a small one does not; n
 
   // THE SEAM: under the glyphs, over the ground
   assert.equal(far.artBeforeOverlay, true, "the art layer paints before the overlay");
-  assert.equal(far.groundDrawn, true, "a ground is actually drawn, so the next line is answerable");
+  assert.equal(far.groundDrawn, true,
+    `a ground is actually drawn (${far.groundEl}), so the next line is answerable`);
   assert.equal(far.artAfterGround, true,
     "the art layer paints AFTER the ground — a picture on a district is on it, not under it");
   // ⚑ THE FLIP: put the layer back at svg.firstChild, where the mountain's was,
