@@ -152,6 +152,7 @@ const PERSON = { handle: "rig-person", x: 1200, y: -800 };
 // the skeleton's own registration, the same numbers the viewer parses
 const ORIGIN_PX = { x: 485, y: 760 }, M_PER_PX = 5;
 const PERSON_PX = { x: ORIGIN_PX.x + PERSON.x / M_PER_PX, y: ORIGIN_PX.y + PERSON.y / M_PER_PX };
+const pxOf = (at) => ({ x: ORIGIN_PX.x + at.x / M_PER_PX, y: ORIGIN_PX.y + at.y / M_PER_PX });
 
 // the reader stands on the house the record chose, so the standpoint moves with it
 const STANDPOINT = { x: HOUSE?.at?.x ?? 0, y: HOUSE?.at?.y ?? 0 };
@@ -257,12 +258,13 @@ async function openPage({ signedIn = false } = {}) {
 
 /** type a query into the open search and read the rows it offers */
 async function search(page, query) {
-  await page.click(".wv-search-open");
+  // no opening step: the field is always there (Keemin, on dev)
   await page.fill(".wv-search-input", "");
   await page.type(".wv-search-input", query, { delay: 8 });
   await page.waitForTimeout(700);
   return page.evaluate(() => ({
-    open: document.querySelector(".wv-search")?.classList.contains("is-open") ?? false,
+    focused: document.activeElement === document.querySelector(".wv-search-input"),
+    value: document.querySelector(".wv-search-input")?.value ?? null,
     hits: [...document.querySelectorAll(".wv-search-hit")].map((b) => ({
       kind: b.dataset.kind, key: b.dataset.hit,
       label: (b.childNodes[0]?.textContent ?? "").trim(),
@@ -283,12 +285,55 @@ const readState = (page) => page.evaluate(() => {
     kicker: col?.querySelector(".wv-homecol-kicker")?.textContent?.trim() ?? null,
     title: col?.querySelector(".wv-homecol-title")?.textContent?.trim() ?? null,
     centre: vb.length === 4 ? { x: vb[0] + vb[2] / 2, y: vb[1] + vb[3] / 2 } : null,
-    searchOpen: document.querySelector(".wv-search")?.classList.contains("is-open") ?? false,
+    searchFocused: document.activeElement === document.querySelector(".wv-search-input"),
+    searchValue: document.querySelector(".wv-search-input")?.value ?? null,
+    openButtons: document.querySelectorAll(".wv-search-open").length,
+    inputWidth: Math.round(document.querySelector(".wv-search-input")?.getBoundingClientRect().width ?? 0),
+    found: [...document.querySelectorAll("#wv-walk-layer .is-found[data-handle]")]
+      .map((e) => e.getAttribute("data-handle")),
   };
 });
 
 const skipReason = "playwright is absent, so the search bar's whole wiring goes unguarded: "
   + "no unit test can tell which verb a hit called, nor whether a house is findable when signed in.";
+
+test("THE FIELD IS ALWAYS THERE, AND THERE IS NO BUTTON BESIDE IT", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  const { page, errors } = await openPage();
+  const at1500 = await readState(page);
+  // Keemin, on dev: "always extended, remove the icon as a separate button, and
+  // put it into the main bubble itself". Both halves, asserted at load with no
+  // click of any kind having happened.
+  assert.equal(at1500.openButtons, 0, "the separate search button is still in the page");
+  assert.ok(at1500.inputWidth > 100,
+    "the field is not extended at load: " + at1500.inputWidth + " px");
+  const glyph = await page.evaluate(() => {
+    const g = document.querySelector(".wv-search-glyph");
+    if (!g) return null;
+    const box = g.getBoundingClientRect(), input = document.querySelector(".wv-search-input").getBoundingClientRect();
+    return { events: getComputedStyle(g).pointerEvents, hidden: g.getAttribute("aria-hidden"),
+      inside: box.left >= input.left - 1 && box.right <= input.right + 1 };
+  });
+  assert.ok(glyph, "the magnifier is gone entirely; it was meant to move inside the pill");
+  assert.equal(glyph.events, "none", "the adornment can still take a click, so it is still a button");
+  assert.equal(glyph.hidden, "true", "the adornment is announced beside the field's own label");
+  assert.ok(glyph.inside, "the magnifier is not inside the pill");
+
+  // THE PILL SHRINKS BEFORE THE ROW WRAPS. A fixed width would push the five
+  // circles onto a second line on a phone.
+  await page.setViewportSize({ width: 400, height: 800 });
+  await page.waitForTimeout(600);
+  const at400 = await readState(page);
+  assert.ok(at400.inputWidth > 0 && at400.inputWidth < at1500.inputWidth,
+    `the field did not shrink on a narrow screen: ${at400.inputWidth} px at 400 wide against ${at1500.inputWidth} px at 1500`);
+  const fits = await page.evaluate(() => {
+    const row = document.querySelector(".wv-mapctl");
+    return row ? Math.round(row.getBoundingClientRect().width) <= window.innerWidth : false;
+  });
+  assert.ok(fits, "the control row is wider than a 400 px screen");
+  await page.close();
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
 
 test("A HIT DOES WHAT A CLICK DOES — a house opens its column, a region opens the region column", async (t) => {
   if (!chromium) return t.skip(skipReason);
@@ -306,7 +351,7 @@ test("A HIT DOES WHAT A CLICK DOES — a house opens its column, a region opens 
   // working hit, which is what the first run of this file did.
   assert.ok(afterHouse.columnOpen, "a house hit must open its column, as a click on it does");
   assert.ok(afterHouse.title, "the column opened on nothing: " + JSON.stringify(afterHouse));
-  assert.ok(!afterHouse.searchOpen, "the search stayed open over the thing it just opened");
+  assert.equal(afterHouse.searchValue, "", "the query stayed in the field over the thing it just opened");
 
   // A REGION IS A PLACED MARK LIKE ANY OTHER, so the same verb opens the region
   // column — the reviewer asked for this to be said out loud.
@@ -319,6 +364,29 @@ test("A HIT DOES WHAT A CLICK DOES — a house opens its column, a region opens 
   assert.ok(afterRegion.columnOpen, "a region hit opened no column");
   assert.equal(afterRegion.kicker, "Region", "a region hit must open the REGION column, not a house's");
 
+  await page.close();
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
+
+test("A HOUSE HIT BRINGS THE READER TO THE HOUSE", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  assert.ok(HOUSE, NO_HOUSE);
+  const { page, errors } = await openPage();
+  const before = await readState(page);
+  await search(page, HOUSE_Q);
+  await clickHit(page, HOUSE_ID);
+  const after = await readState(page);
+
+  // ⚑ SEPARATE FROM THE COLUMN ON PURPOSE (Keemin, on dev: "selecting a result
+  // would pin/select that item on the world map"). Before this piece a hit
+  // selected the house and opened its column while leaving the camera wherever
+  // it was, so a parcel off-screen or a bead at town width was chosen and never
+  // seen. Asserting the column and the centre in one test would let a change
+  // that breaks only the move hide behind the half that still works.
+  const want = pxOf(HOUSE.at);
+  assert.notDeepEqual(after.centre, before.centre, "the hit did not move the map at all");
+  assert.ok(Math.abs(after.centre.x - want.x) < 2 && Math.abs(after.centre.y - want.y) < 2,
+    `the map centred somewhere else: ${JSON.stringify(after.centre)} wanted ${JSON.stringify(want)}`);
   await page.close();
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });
@@ -356,6 +424,16 @@ test("A RESIDENT HIT MOVES THE CAMERA TO THEIR BODY", async (t) => {
     `the camera moved somewhere else: ${JSON.stringify(after.centre)} wanted ${JSON.stringify(PERSON_PX)}`);
   assert.equal(after.selected, null, "centring on a person must not select a mark");
   assert.ok(!after.columnOpen, "centring on a person must not open somebody's column");
+  // ⚑ AND THE BODY IS MARKED. Centring on one of fifty walkers without saying
+  // which one is the answer leaves the reader to find them again by eye.
+  assert.deepEqual(after.found, [PERSON.handle],
+    "the found body carries no mark of being found: " + JSON.stringify(after.found));
+
+  // the finding ends when the reader lets it go
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(700);
+  const cleared = await readState(page);
+  assert.deepEqual(cleared.found, [], "Escape left the found body still marked");
   await page.close();
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });
@@ -381,14 +459,23 @@ test("SLASH OPENS THE SEARCH, AND NEVER OUT OF SOMEBODY'S SENTENCE", async (t) =
   if (!chromium) return t.skip(skipReason);
   const { page, errors } = await openPage();
 
-  // from the painting, "/" opens it
+  // from the painting, "/" puts the cursor in the field
   await page.evaluate(() => document.activeElement?.blur?.());
   await page.keyboard.press("/");
   await page.waitForTimeout(400);
-  assert.ok((await readState(page)).searchOpen, "\"/\" did not open the search from the painting");
+  assert.ok((await readState(page)).searchFocused, "\"/\" did not focus the search from the painting");
+  // and the slash itself must not end up IN the field it just focused
+  assert.equal((await readState(page)).searchValue, "", "the shortcut typed itself into the field");
+
+  // Escape puts a query down; an empty field is not a thing to put down
+  await page.type(".wv-search-input", "the", { delay: 8 });
+  await page.waitForTimeout(500);
+  assert.ok((await readState(page)).searchValue, "typing did not reach the field");
   await page.keyboard.press("Escape");
-  await page.waitForTimeout(400);
-  assert.ok(!(await readState(page)).searchOpen, "Escape did not close the search");
+  await page.waitForTimeout(500);
+  const escaped = await readState(page);
+  assert.equal(escaped.searchValue, "", "Escape did not clear the query");
+  assert.ok(!escaped.searchFocused, "Escape cleared the query but left the cursor in the field");
 
   // …and from inside a field it does not. The field is injected because the
   // guard is about ANY focused input and this rig has no say box open; what is
@@ -402,7 +489,7 @@ test("SLASH OPENS THE SEARCH, AND NEVER OUT OF SOMEBODY'S SENTENCE", async (t) =
   await page.keyboard.press("/");
   await page.waitForTimeout(400);
   const after = await readState(page);
-  assert.ok(!after.searchOpen, "\"/\" yanked the cursor out of a field someone was typing in");
+  assert.ok(!after.searchFocused, "\"/\" yanked the cursor out of a field someone was typing in");
   const typed = await page.evaluate(() => {
     const i = document.getElementById("rig-someones-sentence");
     const v = i.value; i.remove(); return v;
