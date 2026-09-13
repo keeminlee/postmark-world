@@ -155,6 +155,10 @@ const freePort = () => new Promise((resolve, reject) => {
  *  out and cannot answer a question about the mid tier. */
 const HUNG = "fixture/the-broad-common";
 const TOO_SMALL = "fixture/the-small-yard";
+const COVERING = "fixture/the-covering-district";
+const COVERED_CHILD = "fixture/the-covered-child";
+const BARE_PARENT = "fixture/the-bare-parent";
+const BARE_CHILD = "fixture/the-bare-child";
 function fixtureWorld() {
   const dir = mkdtempSync(join(tmpdir(), "placed-art-"));
   cpSync(join(ROOT, "WORLD"), dir, { recursive: true });
@@ -164,6 +168,24 @@ function fixtureWorld() {
   w.marks.push(
     { id: HUNG, kind: "sited", tier: "market", by: "fixture", at, extent: { w: 1800, h: 1200 }, image },
     { id: TOO_SMALL, kind: "sited", tier: "market", by: "fixture", at, extent: { w: 150, h: 150 }, image },
+    // ── the nesting the depth rule has to cut, and the nesting it must not ──
+    // A pictured district with a pictured child inside it: the district hangs,
+    // the child does not, because one picture is already on that ground.
+    { id: COVERING, kind: "sited", tier: "market", by: "fixture",
+      at: { x: at.x - 2200, y: at.y }, extent: { w: 1700, h: 1200 },
+      image, placementParent: "the-town/let-there-be-light" },
+    { id: COVERED_CHILD, kind: "sited", tier: "market", by: "fixture",
+      at: { x: at.x - 2200, y: at.y }, extent: { w: 800, h: 600 },
+      image, placementParent: COVERING },
+    // …and PANDO'S OWN SHAPE, which is the case a literal direct-child-of-the-
+    // root rule gets wrong: a large parent carrying NO picture, with a large
+    // pictured child. Nothing is covering the child, so the child hangs.
+    { id: BARE_PARENT, kind: "sited", tier: "market", by: "fixture",
+      at: { x: at.x + 2600, y: at.y }, extent: { w: 1700, h: 1200 },
+      placementParent: "the-town/let-there-be-light" },
+    { id: BARE_CHILD, kind: "sited", tier: "market", by: "fixture",
+      at: { x: at.x + 2600, y: at.y }, extent: { w: 900, h: 700 },
+      image, placementParent: BARE_PARENT },
   );
   writeFileSync(join(dir, "world-state.json"), JSON.stringify(w));
   return dir;
@@ -335,4 +357,53 @@ test("THE PAGE — zooming in to near takes the placed art off the ground", asyn
   assert.equal(near.count, 0, "no placed art at near: the cards and the furnishing pass say it better");
   // ⚑ THE FLIP: drop the `tier === "near"` guard and this reds while every
   //   far assertion above stays green.
+});
+
+// ── ONE PICTURE DEEP (Keemin's addendum, 2026-09-12) ────────────────────────
+
+test("the edge is placementParent — measured on the record, not assumed", () => {
+  const big = WORLD.marks.filter((m) => m.at && m.extent && span(m) >= SPECTATOR_DRAW_DEFAULTS.placed_art_min_m);
+  const withPlacement = big.filter((m) => m.placementParent).length;
+  const withParent = big.filter((m) => m.parent).length;
+  assert.ok(big.length > 40, `there are large marks to measure (${big.length})`);
+  assert.equal(withParent, 0, "no large mark on the record uses `parent`");
+  assert.equal(withPlacement, big.length - 1,
+    "every large mark but one uses `placementParent` — the exception is the root itself");
+  const rootless = big.filter((m) => !m.placementParent && !m.parent).map((m) => m.id);
+  assert.deepEqual(rootless, ["the-town/let-there-be-light"], "and the exception is the root");
+});
+
+test("PANDO is why depth is measured against the hanging set, not against the root", () => {
+  // The mark that carries the mountain's picture is a GRANDCHILD of the root.
+  // A literal "direct child of the root" rule drops it, which is the one
+  // outcome the ruling that asked for depth explicitly did not want.
+  const pictured = WORLD.marks.find((m) => m.id === "vermillion/the-pando-peak");
+  const parent = WORLD.marks.find((m) => m.id === pictured.placementParent);
+  assert.equal(pictured.placementParent, "the-town/pando-peak", "the pictured Pando hangs off the peak mark");
+  assert.equal(parent.placementParent, "the-town/let-there-be-light", "…which is itself a child of the root");
+  assert.ok(!parent.image, "and the peak mark carries NO picture");
+  assert.ok(span(parent) >= SPECTATOR_DRAW_DEFAULTS.placed_art_min_m, "…though it is large enough to have one");
+  // so under "nothing between it and the ground is hanging a picture", the
+  // pictured mark hangs — nothing is covering it
+});
+
+test("THE PAGE — one picture deep: a covered child stays down, an uncovered one hangs", async (t) => {
+  if (!chromium) { t.skip("NO PLAYWRIGHT — the depth rule went UNGUARDED."); return; }
+  const far = await readArt();
+  assert.deepEqual(far.errors, [], "the page mounted without throwing");
+  const hung = (frag) => far.labels.some((l) => new RegExp(frag, "i").test(String(l)));
+
+  // a pictured district hangs…
+  assert.ok(hung("covering district"), `the pictured district hangs (labels: ${far.labels.join(", ")})`);
+  // …and the pictured child inside it does NOT: one picture on that ground
+  assert.ok(!hung("covered child"), "the child inside a hanging district does not hang a second picture");
+
+  // PANDO'S SHAPE: a large parent with NO picture, and a pictured child. The
+  // child hangs, because nothing is covering it.
+  assert.ok(!hung("bare parent"), "a large mark with no picture hangs nothing (there is nothing to hang)");
+  assert.ok(hung("bare child"), "…and its pictured child DOES hang — nothing is above it");
+
+  // ⚑ THE FLIP: make the rule literal — hang only when placementParent is the
+  //   root — and "bare child" reds while "covered child" stays green, which is
+  //   exactly the difference between the two readings of the ruling.
 });
