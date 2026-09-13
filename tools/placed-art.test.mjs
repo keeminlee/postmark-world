@@ -217,10 +217,14 @@ async function readArt({ zoomIn = 0 } = {}) {
   };
   await settle();
   if (zoomIn) {
-    const at = await page.evaluate(() => {
-      const b = document.querySelector("#wv-map")?.getBoundingClientRect();
+    // ZOOM ONTO THE FIXTURE MARK ITSELF, never the middle of the pane. Wheeling
+    // at the centre walks the camera off the mark, and then "no art at near" is
+    // the cull answering, not the gate.
+    const at = await page.evaluate((hungId) => {
+      const el = document.querySelector(`#wv-overlay [data-id="${hungId}"]`);
+      const b = (el ?? document.querySelector("#wv-map"))?.getBoundingClientRect();
       return b ? { x: b.x + b.width / 2, y: b.y + b.height / 2 } : { x: 700, y: 450 };
-    });
+    }, HUNG);
     for (let i = 0; i < zoomIn; i++) {
       await page.mouse.move(at.x, at.y);
       await page.mouse.wheel(0, -240);
@@ -228,11 +232,16 @@ async function readArt({ zoomIn = 0 } = {}) {
     }
     await settle();
   }
-  const read = await page.evaluate(() => {
+  const read = await page.evaluate((hungId) => {
     const layer = document.getElementById("wv-far-art-layer");
     const overlay = document.getElementById("wv-overlay");
     const arts = [...(layer?.querySelectorAll(".wv-far-art") ?? [])];
     return {
+      // IS THE MARK EVEN ON SCREEN? Without this the near assertion below is a
+      // falsifier that cannot fail: at near the camera may simply have left the
+      // mark behind, and "no art" would mean "culled", not "gated". Proved by
+      // flipping the gate off and watching this test stay green — it did.
+      hungOnScreen: !!overlay?.querySelector(`[data-id="${hungId}"]`),
       tier: overlay?.getAttribute("data-tier") ?? "-",
       count: arts.length,
       labels: arts.map((a) => a.getAttribute("aria-label")),
@@ -245,7 +254,7 @@ async function readArt({ zoomIn = 0 } = {}) {
       mist: document.querySelectorAll("#wv-mist-layer *").length,
       overlayMarks: overlay?.querySelectorAll("[data-id]").length ?? 0,
     };
-  });
+  }, HUNG);
   await page.close();
   return { ...read, errors };
 }
@@ -303,6 +312,8 @@ test("THE PAGE — zooming in to near takes the placed art off the ground", asyn
     // say what happened rather than pass quietly on a camera that did not arrive
     assert.fail(`the camera reached ${near.tier}, not near — the gate went unread`);
   }
+  assert.equal(near.hungOnScreen, true,
+    "the 1,800 m mark is STILL ON SCREEN at near — so a zero below is the gate, not the cull");
   assert.equal(near.count, 0, "no placed art at near: the cards and the furnishing pass say it better");
   // ⚑ THE FLIP: drop the `tier === "near"` guard and this reds while every
   //   far assertion above stays green.
