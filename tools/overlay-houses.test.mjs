@@ -10,6 +10,7 @@ import { readFileSync } from "node:fs";
 import {
   OVERLAY_PIP_R, HOME_CARD, homeCardPath, markerScale,
   overlayHomeCardSVG, homeMarkOfParcel, houseIsLit, enclosingParcels, homeFaceSVG, fillFromTown, TOWN_FILL_FIELDS,
+  sceneArtSVG,
 } from "../spectator/viewer.mjs";
 
 const SOURCE = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
@@ -152,4 +153,40 @@ test("THE RESIDENT'S OWN HOUSE WEARS ITS PICTURE TOO — a portfolio row that sh
   assert.deepEqual(fillFromTown(new Map([[HOME.id, HOME]]), [HOME]), [], "nothing to fill, nothing touched");
   assert.ok(TOWN_FILL_FIELDS.includes("image") && TOWN_FILL_FIELDS.includes("placementParent"), "the two fields the card lives on");
   // ⚑ THE FLIP: return to `if (!byId.has(m.id)) byId.set(m.id, m)` → the picture line reds.
+});
+
+test("A PARCEL IS NOT FURNITURE — its card is its whole drawing", () => {
+  // Keemin's dev screenshot, 2026-09-12: his own house drawn twice from outside
+  // the parcel — the card, and an unframed square photograph sitting on top of
+  // it. Both carried the PARCEL's id, measured on dev at 152 px:
+  //   g.wv-scene-mark-art 152x152 WITH IMAGE   <- the furnishing pass
+  //   g.ov-home lit        139x89 WITH IMAGE   <- the card
+  //
+  // Only a signed-in reader could see it: sceneArtSVG needs markImagePath() on
+  // the parcel, the fold gives a parcel none, and a resident's own row does.
+  assert.match(SOURCE, /\.filter\(\(m\) => m\.kind !== "parcel"\)/,
+    "the furnishing pass excludes parcels");
+  // …and it is excluded in the FURNISHING pass, not somewhere that would also
+  // stop the card being drawn. The card's own call site must be untouched.
+  assert.match(SOURCE, /s \+= homeCard\(full, p, fanned\.has\(m\.id\) \? fanOffsetPx\(m\.id\) : null, nameOf\(m\), tier\)/,
+    "the card is still drawn from the drawn set");
+  // ⚑ THE FLIP: drop the filter and a parcel carrying a picture is furnished
+  //   again — which on dev is the square over the card, and on the spectator
+  //   path is invisible, which is how it lived.
+});
+
+test("sceneArtSVG is what drew the square, and it still draws for real furniture", () => {
+  // The pass is not disabled, only kept off parcels: a pictured non-parcel mark
+  // inside a room still hangs its art, which is the whole point of the pass.
+  const chair = { id: "rei/the-mending-basket", kind: "sited", tier: "market",
+    at: { x: 0, y: 0 }, extent: { w: 2, h: 2 }, image: "https://media.postmark.town/media/rei/x.jpg" };
+  const px = (p) => ({ x: p.x, y: p.y });
+  const art = sceneArtSVG(chair, px);
+  assert.match(art, /class="wv-scene-mark-art"/, "furniture with a picture still hangs it");
+  assert.match(art, /<image /, "…and it is an image, not a tint");
+  // a parcel handed to the same function would still draw — the rule is the
+  // pass's, not the function's, and that is deliberate: sceneArtSVG stays pure
+  // and reusable, the caller decides what is furniture.
+  assert.ok(sceneArtSVG({ ...chair, id: "a/b-parcel", kind: "parcel" }, px).length > 0,
+    "the function itself is unchanged and still answers for any embodied mark");
 });
