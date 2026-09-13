@@ -2068,6 +2068,17 @@ export const SPECTATOR_DRAW_DEFAULTS = Object.freeze({
   // what bounds the `<image>` count — one viewport of margin drew nine
   // viewports of cards; half draws four. A pan past the margin rebuilds once.
   cull_margin: 0.5,      // viewports of margin kept drawn on each side of the viewBox
+  // A LARGE MARK HANGS ITS OWN PICTURE (Keemin, 2026-09-12, on seeing the
+  // mountain do it: "oh yes that's beautiful. let's do that").
+  //
+  // 200 m is read off the record, not chosen for its roundness. Every parcel in
+  // the town is EXACTLY 25 m across — all 89 of them, min and max alike — and
+  // the whole tail of furniture sits under 200 m with it: 505 of the 574 marks
+  // that carry an extent. The district marks start at 300 m on their narrow
+  // side and run to 3,873 m. So 200 is the gap: above every parcel and every
+  // chair, below the narrowest district, and it draws the line between "a thing
+  // in a place" and "a place".
+  placed_art_min_m: 200, // a mark this many metres across, wearing a picture, hangs it on the ground
 });
 
 /** How much town is on screen, in metres. `viewW` is the painting's full width
@@ -2814,21 +2825,37 @@ export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving
 // The href is whitelisted through the same door a resident's avatar goes
 // through: this one is a constant rather than user data, but a second road for
 // URLs into an <image href> is exactly how the first one stops being checked.
-export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art" } = {}) {
+// `fit` (2026-09-12) — SQUARE-AND-SLICE, or the mark's true extent, MEET.
+//
+// The square was right while this drew one thing: a peak is as tall as it is
+// wide, and slicing a square photograph into a square box crops nothing. It is
+// wrong for the ground a town is actually made of. `limen/the-descending-
+// terraces` is 300 m by 2,200 m on the record; squaring that hangs a 2,200 m
+// picture over a 300 m strip — seven times too wide, spilling across every
+// neighbour it has. And a place's own picture is not a texture to be cropped to
+// taste: `meet` shows the whole of what somebody hung there.
+//
+// So `slice` stays the default and Pando's old call is byte-for-byte what it
+// was, while the general rule below asks for `meet` and gets the extent the
+// record actually wrote.
+export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art", fit = "slice" } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   const url = safeAvatarUrl(href);
   if (![x, y].every(Number.isFinite) || !url) return "";
-  const authored = Math.max(Number(extent?.w) || 0, Number(extent?.h) || 0);
   const floor = Number(minSize) > 0 ? Number(minSize) : 0;
-  const size = Math.max(authored, floor);
-  if (!(size > 0)) return "";
-  const half = size / 2;
+  const wRaw = Number(extent?.w) || 0, hRaw = Number(extent?.h) || 0;
+  const meet = fit === "meet";
+  const w = meet ? Math.max(wRaw, floor) : Math.max(Math.max(wRaw, hRaw), floor);
+  const h = meet ? Math.max(hRaw, floor) : w;
+  if (!(w > 0 && h > 0)) return "";
   const clip = `wv-art-clip-${String(id).replace(/[^a-z0-9-]/gi, "")}`;
+  const box = `x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}"`;
+  const rx = Math.min(w, h) * 0.02;
   return `<g class="wv-far-art" role="img" aria-label="${esc(String(label ?? ""))}">`
-    + `<clipPath id="${clip}"><rect x="${x - half}" y="${y - half}" width="${size}" height="${size}" rx="${size * 0.02}"/></clipPath>`
-    + `<image href="${url}" x="${x - half}" y="${y - half}" width="${size}" height="${size}"`
-    + ` preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
-    + `<rect x="${x - half}" y="${y - half}" width="${size}" height="${size}" rx="${size * 0.02}" class="wv-far-art-frame"/>`
+    + `<clipPath id="${clip}"><rect ${box} rx="${rx}"/></clipPath>`
+    + `<image href="${url}" ${box}`
+    + ` preserveAspectRatio="xMidYMid ${meet ? "meet" : "slice"}" clip-path="url(#${clip})"/>`
+    + `<rect ${box} rx="${rx}" class="wv-far-art-frame"/>`
     + `</g>`;
 }
 
@@ -3692,6 +3719,7 @@ const DRAW_DIALS = [
   { key: "tier_near_m", label: "near below (m across)", min: 100, max: 5000, step: 50 },
   { key: "art_min_px", label: "picture needs (px)", min: 0, max: 200, step: 2 },
   { key: "cull_margin", label: "cull margin (viewports)", min: 0, max: 4, step: 0.25 },
+  { key: "placed_art_min_m", label: "hangs its picture above (m)", min: 25, max: 4000, step: 25 },
 ];
 
 const STYLE = `
@@ -6786,10 +6814,6 @@ export function mountViewer(appEl) {
     const mistLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
     mistLayer.setAttribute("id", "wv-mist-layer");
     mistLayer.style.pointerEvents = "none";
-    const farArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    farArtLayer.setAttribute("id", "wv-far-art-layer");
-    farArtLayer.style.pointerEvents = "none";
-    svg.insertBefore(farArtLayer, svg.firstChild);
     svg.insertBefore(mistLayer, svg.firstChild);
     // the survey grid — the FIRST derived layer: drawn from the registration
     // (origin + scale), never traced from the paint. Sits under the overlay.
@@ -6797,6 +6821,29 @@ export function mountViewer(appEl) {
     gridLayer.setAttribute("id", "wv-grid-layer");
     gridLayer.style.display = "none"; // NOT the hidden attribute — SVG <g> ignores it
     svg.appendChild(gridLayer);
+    // THE PLACED ART: above the ground, below everything derived from the record.
+    //
+    // It used to be `wv-far-art-layer`, inserted at the very front of the svg,
+    // and that was right for the one thing it drew: a mountain 135 km out, on
+    // open country, where there is no ground to be under. It is wrong for
+    // ground. The generated town ground appends its own `wv-tg-*` rects and
+    // polygons as siblings LATER in the svg — paper, rule, daylight, night,
+    // then twenty region washes — so a picture hung on a district inside the
+    // town was painted and then buried under the paper. Caught in the
+    // screenshots for this piece, which is what they were taken for: the DOM
+    // said two pictures, the census said two pictures, and the map showed none.
+    //
+    // (The atlas ground takes the other road — `base`, inserted before the mist
+    // — so the same picture would have shown in production and not on the rig.
+    // A seam that depends on which ground loaded is not a seam.)
+    //
+    // Here it is after the ground on both roads and before the grid, the
+    // footprints, the conversations and the overlay, which is the one position
+    // that means "on the ground, under everything the record draws on it".
+    const placedArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    placedArtLayer.setAttribute("id", "wv-placed-art-layer");
+    placedArtLayer.style.pointerEvents = "none";
+    svg.appendChild(placedArtLayer);
     // footprints — the second derived layer: every mark's true extent, from the
     // record. Sits above the grid, under the pips; pointer-events none so the
     // stand-click and drag pass straight through it.
@@ -6913,7 +6960,7 @@ export function mountViewer(appEl) {
       svg.insertBefore(base, mistLayer);
     }
     const view = { ...full };
-    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents, groundMarkIds };
+    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, placedArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents, groundMarkIds };
     drawFarCountry();
     let tween = null;
     // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
@@ -7589,6 +7636,10 @@ export function mountViewer(appEl) {
     const drawn = overlayMarks(radial)
       .filter((m) => markInDrawnBounds(byId.get(m.id) ?? m, bounds))
       .filter((m) => !hiddenInsideParcel(byId.get(m.id) ?? m, byId, underfoot, townChain));
+    // THE PLACED ART, into its own layer under this one. Driven from here so it
+    // is culled and tier-gated by the same two readings every other pass uses,
+    // rather than laid down once at mount as the mountain's picture was.
+    drawPlacedArt(bounds, tier);
     // PLACEHOLDER EXTENTS (scene-gated): art-less embodied marks stand in as
     // low-saturation tinted blocks, drawn UNDER the pips, largest first so a
     // child's block sits readable on its parent's. Same overlay, same loop —
@@ -7983,23 +8034,139 @@ export function mountViewer(appEl) {
   // Which mountain, and where, is read off the record: the far feature's own
   // mark carries the coordinate and the extent. Nothing is placed by hand here,
   // so a peak that moves on the record moves its picture with it.
-  const PANDO_ART_URL = "/media/vermillion-pando-peak-the-true-mountain-card.jpg";
+  // THE MIST ONLY, SINCE 2026-09-12. This drew the mountain's picture too, from
+  // a URL typed into this file — and that hard-coded line was the whole reason
+  // the far country was a one-off instead of a rule. The picture now comes off
+  // the mark's own `image:`, through `drawPlacedArt` below, along with every
+  // other large mark's. What stays here is the weather, which is scenery: it is
+  // not any mark's picture, it belongs to the corridor rather than to a place,
+  // and it is laid down once at mount because it never changes.
   function drawFarCountry() {
-    if (!mapCtx?.mistLayer || !mapCtx.farArtLayer) return;
+    if (!mapCtx?.mistLayer) return;
     const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
     const peak = (allMarks()).find((m) => m.far && m.feature === "pando-peak" && m.at);
     if (!peak) return;                      // no far feature on the record, no far country
-    const centre = px(peak.at);
     // the corridor runs from Ferry's crossing — grid origin, the town's own
     // registration point — out to the peak; the mist is the water between
-    mapCtx.mistLayer.innerHTML = mistBandSVG({ from: px({ x: 0, y: 0 }), to: centre });
-    mapCtx.farArtLayer.innerHTML = placedArtSVG({
-      at: centre,
-      extent: { w: (peak.extent?.w ?? 0) / mapCtx.mPerPx, h: (peak.extent?.h ?? 0) / mapCtx.mPerPx },
-      href: PANDO_ART_URL,
-      label: `${peak.label ?? peak.feature} — the mountain, seen from the town side`,
-      id: "pando-peak",
-    });
+    mapCtx.mistLayer.innerHTML = mistBandSVG({ from: px({ x: 0, y: 0 }), to: px(peak.at) });
+  }
+
+  // ── A LARGE MARK HANGS ITS OWN PICTURE ON ITS OWN GROUND ───────────────────
+  //
+  // Keemin, 2026-09-12, looking at the mountain: "oh yes that's beautiful.
+  // let's do that." So it stops being about the mountain. Any mark big enough
+  // to be a PLACE rather than a thing in one, that carries a picture, wears it
+  // over the ground it actually covers.
+  //
+  // WHERE IT DRAWS. `wv-placed-art-layer`, which is new, and the reason it is
+  // new is written where it is created: the mountain's old layer sat at the
+  // FRONT of the svg, which is under the town's generated ground, so a picture
+  // hung on a district was painted and then buried. On open country, where the
+  // mountain lives, there was no ground to be under and nobody noticed. The new
+  // layer sits after the ground and before the grid, and it is filled from the
+  // draw cycle rather than once at mount, so it is culled and tier-gated like
+  // everything else the camera governs.
+  //
+  // THE TIERS. `far` and `mid` only. `near` is the card-and-room world, where a
+  // reader is close enough that the house cards and the furnishing pass are
+  // saying it better, and a district-sized photograph underfoot is a wall. The
+  // resident path (`tier` null) draws it, which is what it did yesterday — the
+  // mountain was on that path unconditionally.
+  //
+  // WHY `allMarks()` AND NOT THE RADIAL'S SET, the same reason the houses pass
+  // below reads it: a landmark is not field-of-view furniture. The mountain is
+  // 135 km out and in nobody's radial, and a district a reader has not walked
+  // is still a district. The viewport cull is what bounds the work, exactly as
+  // it bounds the cards.
+  const placedArtSpanM = (m) => Math.max(Number(m?.extent?.w) || 0, Number(m?.extent?.h) || 0);
+  function drawPlacedArt(bounds, tier) {
+    if (!mapCtx?.placedArtLayer) return 0;
+    if (tier === "near") { mapCtx.placedArtLayer.innerHTML = ""; return 0; }
+    const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
+    const floor = Number(state.drawDials.placed_art_min_m);
+    // …AND A CEILING NOBODY ASKED FOR, which is worth one line. The record
+    // carries `the-town/let-there-be-light` at 320,000 m — the constitution's
+    // root, the frame around the world rather than any ground inside it. It has
+    // no picture today and is not meant to get one, but a rule that reads only
+    // "big enough" would hang a 320 km photograph over the entire painting the
+    // day somebody gave it art. A mark wider than the whole painting is not a
+    // place; it is the edge of the map.
+    const ceiling = paintingWidthM();
+    // ── ONE PICTURE DEEP (Keemin, 2026-09-12: the mark must be a direct child
+    //    of the mark you are viewing from, "so nested large marks do not
+    //    clutter") ────────────────────────────────────────────────────────────
+    //
+    // THE EDGE IS `placementParent`, measured rather than assumed: of the 53
+    // marks at or above the dial, 52 carry `placementParent` and ZERO carry
+    // `parent`. The one that carries neither is `the-town/let-there-be-light`,
+    // the root everything else hangs off. `parent` is read as a fallback only
+    // because the enclosing rule next door reads both and a record that starts
+    // using it should not silently escape this.
+    //
+    // WHAT IS ASKED IS DEPTH, AND THE HONEST MEASURE OF DEPTH IS THE HANGING
+    // SET, NOT THE ROOT. A literal "direct child of the root" reads well and
+    // deletes the mountain: the mark that carries Pando's picture is
+    // `vermillion/the-pando-peak`, whose placementParent is
+    // `the-town/pando-peak` — so the pictured mark is a GRANDCHILD of the root
+    // and would stop hanging, which is the one outcome the ruling explicitly
+    // did not want. What the ruling is actually protecting against is two
+    // pictures stacked on the same ground. So: a mark hangs unless some mark
+    // BETWEEN it and where you stand is hanging one too.
+    //
+    // That satisfies every case the ruling named. A district hangs and its
+    // nested large child does not, whenever the district itself has a picture.
+    // A nested child of a picture-less district DOES hang, which is right —
+    // nothing is covering it. Pando hangs, because `the-town/pando-peak` has no
+    // image and so is not hanging anything for it to hide under. And it needs
+    // no new state: when a district becomes somewhere you can stand, the walk
+    // already stops at `sceneRoomId` and the rule extends unchanged.
+    //
+    // THE GROUND YOU STAND ON IS NOT A HANGING. Inside a mark's own scene its
+    // picture is the floor, drawn by the room's ground, and hanging it again
+    // over itself would be a picture of the room inside the room.
+    const from = sceneRoomId;
+    const byMarkId = new Map(allMarks().map((m) => [m.id, m]));
+    const stepUp = (m) => byMarkId.get(m?.placementParent ?? m?.parent ?? "");
+    const bigEnough = (m) => {
+      if (!m?.at || !m.extent) return false;
+      const span = placedArtSpanM(m);
+      if (!(span >= floor)) return false;
+      if (Number.isFinite(ceiling) && span > ceiling) return false;
+      return !!markImagePath(m);
+    };
+    /** is some mark between this one and where the reader stands hanging a
+     *  picture of its own? Cycle-safe and depth-capped: the record's chains run
+     *  three or four deep and a cycle in it must not take the painting down. */
+    const underAnotherPicture = (m) => {
+      const seen = new Set([m.id]);
+      for (let up = stepUp(m), steps = 0; up && steps < 12; up = stepUp(up), steps++) {
+        if (seen.has(up.id)) break;          // the record disagrees with itself; draw rather than hang
+        if (from && up.id === from) return false;  // reached the ground underfoot
+        if (bigEnough(up)) return true;
+        seen.add(up.id);
+      }
+      return false;
+    };
+    const hung = allMarks().filter((m) => {
+      if (!bigEnough(m)) return false;
+      if (from && m.id === from) return false;   // your own ground is not a hanging
+      if (underAnotherPicture(m)) return false;
+      return markInDrawnBounds(m, bounds);
+    // largest first, so a district's picture lies under the smaller ground
+    // inside it rather than blotting it out — the placeholder pass's own rule
+    }).sort((a, b) => placedArtSpanM(b) - placedArtSpanM(a));
+    let s = "";
+    for (const m of hung)
+      s += placedArtSVG({
+        at: px(m.at),
+        extent: { w: (m.extent.w ?? 0) / mapCtx.mPerPx, h: (m.extent.h ?? 0) / mapCtx.mPerPx },
+        href: markImagePath(m),
+        label: markName(m).name,
+        id: m.id,
+        fit: "meet",
+      });
+    mapCtx.placedArtLayer.innerHTML = s;
+    return hung.length;
   }
 
   // ── conversations on the ground ────────────────────────────────────────────
