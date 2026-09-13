@@ -26,7 +26,7 @@ import { assembleWorld } from "../tools/world-build.mjs";
 import { DIALS, bearingDeg, quantizeBearing } from "../tools/world-engine.mjs";
 import { marksContain, pointInPolygon, pointInRect, polygonOf, rect } from "../tools/geometry.mjs"; // read-only: home color + point-destination labels
 import { markStanding } from "../tools/mark-standing.mjs"; // the ONE standing rule: in a parcel's directory → home
-import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT, WALK_KM_PER_CROSSING } from "../tools/walk.mjs";
+import { fractionalCrossing, positionAt, parseWalkLedger, targetEntryT, currentDeparture, WALK_KM_PER_CROSSING } from "../tools/walk.mjs";
 import { crossingsOnSegment, waterFeatures, seaFeature } from "../tools/water.mjs";
 // the town's own roster of regions, stated once in the record's own view: a water
 // mark carries a ring too, and the sea is not a region anyone is filed under
@@ -1769,7 +1769,7 @@ export function homeFaceSVG({ w, h, roof } = HOME_CARD) {
   return `<rect x="${r(x0)}" y="${r(y0)}" width="${envW}" height="${envH}" rx="2" class="ov-home-envelope"/>`
     + `<path d="M ${r(x0 + inx)} ${r(y0 + iny)} L 0 ${r(y0 + deep)} L ${r(x0 + envW - inx)} ${r(y0 + iny)}" class="ov-home-flap"/>`;
 }
-export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = false, fan = null, title = null, classes = "" } = {}) {
+export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = false, fan = null, title = null, classes = "", mine = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
   const { w, h, roof } = HOME_CARD;
@@ -1783,7 +1783,7 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
     ? `<clipPath id="${clip}"><path d="${d}"/></clipPath>`
       + `<image href="${esc(image)}" x="${x0}" y="${top}" width="${w}" height="${h + roof}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
     : `<path d="${d}" class="ov-home-blank"/>${homeFaceSVG()}`;
-  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+  return `<g transform="translate(${x} ${y})"><g class="ov-s${mine ? " ov-mine" : ""}">`
     + `<g class="ov-home${lit ? " lit" : ""}${image ? "" : " no-art"}" data-id="${esc(id)}" transform="translate(${dx} ${dy})">`
     + art
     + `<path d="${d}" class="ov-home-frame"/>`
@@ -1793,6 +1793,61 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
     + (title ? `<title>${esc(title)}</title>` : "")
     + `</circle></g></g>`;
 }
+
+/**
+ * The visible part of a segment, or null when none of it is.
+ *
+ * WHY THIS EXISTS AT ALL (2026-09-13). The walk ledger records where a walk
+ * STARTED, and for the 28 residents who arrived in the seeding that is
+ * (-94570, -94570) — 133,749 m from the post office they walked to, in a
+ * painting 7,500 m across. Drawn raw those are lines to nowhere, all identical,
+ * all leaving the sheet at the same angle. The svg would clip them at its own
+ * edge and the reader would see 28 rays converging on the middle of town.
+ *
+ * So the segment is clipped to the painting BEFORE it is drawn, and a walk that
+ * begins off the sheet begins at the edge instead. Liang-Barsky, which answers
+ * with the parameter range that survives rather than with points, so a segment
+ * lying entirely outside is a clean null and not a degenerate line.
+ *
+ * Pure, and exported so it can be asked directly: the drawing that uses it is
+ * only correct if this is.
+ */
+export function clipSegmentToBox(from, to, box) {
+  const x0 = Number(from?.x), y0 = Number(from?.y);
+  const x1 = Number(to?.x), y1 = Number(to?.y);
+  if (![x0, y0, x1, y1].every(Number.isFinite)) return null;
+  const { minX, minY, maxX, maxY } = box ?? {};
+  if (![minX, minY, maxX, maxY].every(Number.isFinite)) return null;
+  const dx = x1 - x0, dy = y1 - y0;
+  // a zero-length segment is a point, and a point is not a path: without this
+  // it survives every clipping test below (no axis constrains it) and is drawn
+  // as an invisible line nobody asked for
+  if (dx === 0 && dy === 0) return null;
+  let t0 = 0, t1 = 1;
+  for (const [p, q] of [[-dx, x0 - minX], [dx, maxX - x0], [-dy, y0 - minY], [dy, maxY - y0]]) {
+    if (p === 0) { if (q < 0) return null; continue; }
+    const r = q / p;
+    if (p < 0) { if (r > t1) return null; if (r > t0) t0 = r; }
+    else { if (r < t0) return null; if (r < t1) t1 = r; }
+  }
+  if (!(t1 > t0)) return null;   // a point is not a path
+  return {
+    from: { x: x0 + dx * t0, y: y0 + dy * t0 },
+    to: { x: x0 + dx * t1, y: y0 + dy * t1 },
+  };
+}
+
+// ── HOW MUCH BIGGER "YOURS" IS (Keemin, 2026-09-13: "let's make them bigger
+// than the others") ────────────────────────────────────────────────────────
+//
+// One factor for both your houses and your bodies, so the two read as one
+// family rather than two decisions. It is deliberately modest: the reviewer's
+// constraint is that a card at town width "must not swallow the neighbours",
+// and the pips are already held at a constant size on screen by `--wv-mk`, so
+// the loud part of standing out is the CARD APPEARING AT ALL at far — this
+// factor is the accent, not the shout. The vessel's own VESSEL_GLYPH_SCALE is
+// the precedent for a per-kind size and sits beside this for comparison.
+export const MINE_GLYPH_SCALE = 1.35;
 
 /** THE WALKER IS A FRAME WITH LEGS (founder, 2026-09-11: "residents can be
  *  similar to the parcel-homes, where there's an empty frame that's the 'face'
@@ -1807,10 +1862,15 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
  *  Everything is in marker space (`1/k`) so it stays the same screen size at
  *  any zoom. Carries the handle and the hit disc the walker always wore. Pure. */
 export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
-export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null } = {}) {
+export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null, mine = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
-  const s = 1 / (Number(k) > 0 ? Number(k) : 1);
+  // YOUR OWN HOUSEHOLD'S BODIES ARE DRAWN LARGER, geometry and all, rather than
+  // scaled by CSS: every measurement below is derived from `s`, and a transform
+  // on the group would need an origin that moves with the walker. One factor,
+  // one place, and the hit circle grows with the frame so the bigger target is
+  // actually bigger to the pointer too.
+  const s = (1 / (Number(k) > 0 ? Number(k) : 1)) * (mine ? MINE_GLYPH_SCALE : 1);
   const filled = !!(art && (art.avatar || art.monogram));
   const size = (filled ? WALKER_FRAME.near : WALKER_FRAME.far) * s;
   const leg = (filled ? WALKER_FRAME.legNear : WALKER_FRAME.legFar) * s;
@@ -1832,7 +1892,7 @@ export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label =
     fill = `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
       + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
   }
-  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
+  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
     + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit"/>`
     + fill
     + `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-frame"/>`
@@ -1854,10 +1914,10 @@ export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label =
 // glyph that dropped it would make every house at town width unclickable —
 // which is the zoom a reader arrives at.
 export const HOME_GLYPH_SCALE = 0.46;
-export function overlayHouseGlyphSVG({ at, id, classes = "" } = {}) {
+export function overlayHouseGlyphSVG({ at, id, classes = "", mine = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
-  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+  return `<g transform="translate(${x} ${y})"><g class="ov-s${mine ? " ov-mine" : ""}">`
     + `<g transform="scale(${HOME_GLYPH_SCALE})"><path d="${homeCardPath()}" class="ov-glyph" data-id="${esc(id)}"/>${homeFaceSVG()}</g>`
     + `<circle r="${OVERLAY_PIP_R}" class="ov-pip ov-pip-home ${classes}" data-id="${esc(id)}"/>`
     + `</g></g>`;
@@ -4369,6 +4429,19 @@ const STYLE = `
    box is the viewBox by default, so an unstated origin would scale each pip
    about the middle of the painting instead of about itself. */
 .ov-s { transform:scale(var(--wv-mk,1)); transform-origin:0 0; }
+/* YOURS, LARGER. One multiplier over the camera's own scale, so the pip stays a
+   constant size on screen and yours is a constant size LARGER — the accent on
+   top of the real change, which is that your parcels draw their card at every
+   tier instead of a bead. */
+.ov-s.ov-mine { transform:scale(calc(var(--wv-mk,1) * var(--wv-mine-k, 1.35))); }
+/* and your own people, named in the same gold the frame already uses for a
+   reader's own body elsewhere */
+.wv-walker-far.is-mine > .wv-walker-frame,
+.wv-walker-near.is-mine > .wv-walker-frame { stroke-width:3; }
+/* the rest of your own household's journey: thin, the walker's own colour, and
+   never in the way of a click — the route is a reading, not a target */
+.wv-walk-path { stroke-width:1.5; stroke-opacity:.75; stroke-dasharray:5 4;
+  vector-effect:non-scaling-stroke; fill:none; pointer-events:none; }
 .ov-pip { fill:var(--amber); opacity:.65; }
 .ov-pip.t-constitution { fill:var(--blue); }
 .ov-pip.t-home { fill:var(--green); }
@@ -5329,6 +5402,17 @@ export function mountViewer(appEl) {
     draftIds: new Set(),                // household marks the town has not published — grey
     portfolio: null,                    // authenticated world_my_marks response
     mineIds: new Set(),                 // portfolio ids across drafts/published/backed
+    // ── WHAT IS ACTUALLY YOURS (Keemin, 2026-09-13: "we need YOUR residents and
+    // their parcels to stand out on the page, even at far zoom") ─────────────
+    //
+    // `mineIds` above includes BACKED, and rightly so: a mark you have staked is
+    // one you should be able to SEE, so it joins the draw set. It is not one you
+    // own. Measured on dev, rei backs 22 marks, 19 of them placed — promoting
+    // those to big pinned cards would tell a reader they own what they merely
+    // paid attention to. So standing out reads this narrower set, and the two
+    // questions stay apart: `mineIds` decides what is drawn, `ownIds` decides
+    // what is drawn LOUDLY.
+    ownIds: new Set(),                  // published + drafts only — a stake is not ownership
     handle: "",
     actAs: SPECTATOR_ACTOR,
     actorBalance: null,                 // liquid stamps from keyless /stamps/{handle}; null while loading
@@ -5601,6 +5685,18 @@ export function mountViewer(appEl) {
   // the ONE class string every coloured surface speaks — cells, relation lines,
   // attribute rows, pips, footprints, hover boxes, edge arrows, bubbles
   const markClasses = (m) => markStateClasses({ tier: tierOf(m), draft: isDraft(m) });
+  // ── "YOURS", ASKED TWO WAYS ────────────────────────────────────────────
+  //
+  // A MARK is yours when the portfolio published or drafted it (never when you
+  // merely backed it — see `ownIds`). A BODY is yours when the key you are
+  // holding carries that handle: `whoami.handles` is the household's roster, so
+  // acting as one resident still makes the whole household's people yours,
+  // which is what "your residents" means to the man who has three of them.
+  //
+  // Both answer FALSE for a spectator, by construction: no key, no portfolio,
+  // no handles. Nothing on that path changes.
+  const isOwnMark = (m) => !!m?.id && state.ownIds.has(m.id);
+  const isOwnHandle = (h) => !!h && (state.whoami?.handles ?? []).includes(h);
   // ───────── the telling view ─────────
   function chips(m) {
     const c = [];
@@ -7791,14 +7887,25 @@ export function mountViewer(appEl) {
     // before. It is still culled with the others: pinned is not "always drawn",
     // it is "drawn near WHEN drawn".
     if (pinnedColumnParcelId && parcel.id === pinnedColumnParcelId) tier = "near";
-    if (tier === "far") return overlayHouseGlyphSVG({ at, id: parcel.id, classes: markClasses(parcel) });
+    // ── AND SO IS EVERY PARCEL OF YOURS (Keemin, 2026-09-13: "always 'pinned'
+    // as if they are clicked") ───────────────────────────────────────────────
+    //
+    // The same mechanism the read house uses one line above, asked of a set
+    // instead of a single id: your parcels answer `near` at every tier, so they
+    // keep their picture, their name and their frame while the rest of the town
+    // is beads. Culling is untouched — pinned is "drawn near WHEN drawn", not
+    // "always drawn" — and so is the chooser: a card that overlaps a neighbour
+    // is still ranked innermost-first on a click.
+    const mine = isOwnMark(parcel);
+    if (mine) tier = "near";
+    if (tier === "far") return overlayHouseGlyphSVG({ at, id: parcel.id, classes: markClasses(parcel), mine });
     const home = homeMarkOfParcel(parcel.id, allMarks());
     const room = tier === "mid"
       ? footprintPx(parcel, { across: metresAcross(mapCtx?.zoomK, paintingWidthM()), panePx: panePx() })
         >= Number(state.drawDials.art_min_px)
       : true;
     return overlayHomeCardSVG({
-      at, id: parcel.id, classes: markClasses(parcel),
+      at, id: parcel.id, classes: markClasses(parcel), mine,
       // THE LABEL IS THE HOME'S NAME (founder, 2026-09-11: "let's have the actual
       // home's name instead of the resident name in the label for each parcel
       // card") — the dwelling's own name where a dwelling stands, the household
@@ -8496,6 +8603,56 @@ export function mountViewer(appEl) {
     mapCtx.convoLayer.innerHTML = s;
   }
 
+  // ── WHERE YOUR OWN PEOPLE ARE GOING (Keemin, 2026-09-13: "walk paths
+  // visible too, from any distance") ──────────────────────────────────────
+  //
+  // MEASURED FIRST: nothing drew a walk path before this, at any tier. The walk
+  // layer held bodies only, and the `<line>`s inside it are the walkers' own
+  // legs; `#wv-walk-preview-layer` exists from mount but holds the reader's
+  // ARMED walk and is empty the rest of the time. So this is new drawing rather
+  // than a gate being relaxed, and it is the household's alone — the whole town
+  // trailing lines at town width is a different picture and nobody asked for it.
+  //
+  // THE DATA IS ALREADY IN HAND. `/WORLD/walk-ledger.md` is loaded on both paths
+  // and carries every departure's origin, destination, extent and pace, so no
+  // office read is added. `positionAt` decides arrival, and it decides it with
+  // `targetEntryT` — arrival is ENTERING THE TARGET'S GROUND, not reaching its
+  // centre. That distinction is the whole difference between 0 walkers moving
+  // and 37: measured with a naive distance test, 37 residents looked en route
+  // while the office reported nobody moving at all.
+  //
+  // The line runs from where the walker IS to where they are going, not from
+  // where they set out: a reader wants the rest of the journey, and the part
+  // already walked is behind them.
+  function walkPathsSVG(k) {
+    if (!mapCtx || !departures.length) return "";
+    const handles = state.whoami?.handles ?? [];
+    if (!handles.length) return "";
+    const { originPx, mPerPx, full } = mapCtx;
+    const box = {
+      minX: (full.x - originPx.x) * mPerPx,
+      minY: (full.y - originPx.y) * mPerPx,
+      maxX: (full.x + full.w - originPx.x) * mPerPx,
+      maxY: (full.y + full.h - originPx.y) * mPerPx,
+    };
+    const now = Number.isFinite(walkState.at) ? walkState.at : undefined;
+    const px = (m) => ({ x: originPx.x + m.x / mPerPx, y: originPx.y + m.y / mPerPx });
+    let s = "";
+    for (const handle of handles) {
+      const departure = currentDeparture(departures, handle);
+      if (!departure) continue;
+      const now_ = positionAt(departure, now);
+      if (!now_ || now_.arrived || now_.standing) continue;   // a finished walk is not a path
+      const seg = clipSegmentToBox(now_, departure.toward, box);
+      if (!seg) continue;                                      // all of it is off the sheet
+      const a = px(seg.from), b = px(seg.to);
+      const colour = faceOf(handle).color ?? "#bfe4c6";
+      s += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="wv-walk-path"`
+        + ` stroke="${esc(colour)}" data-handle="${esc(handle)}"/>`;
+    }
+    return s;
+  }
+
   function drawWalkers() {
     if (!mapCtx?.walkLayer) return;
     const k = markerScale(mapCtx.zoomK);
@@ -8531,6 +8688,8 @@ export function mountViewer(appEl) {
     const bounds = drawnBounds();
     const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId });
     const drawnWalkers = inView.filter((w) => pointInDrawnBounds(w, bounds));
+    // under every body, at both tiers: a route is ground, not a person
+    const paths = walkPathsSVG(k);
     // …then the TIER. At town width a face is eleven pixels of photograph with
     // its own clip path, and the 09-09 record has 1,550 of them; what a reader
     // at that zoom can actually read is WHERE PEOPLE ARE. So beyond the engine's
@@ -8549,9 +8708,10 @@ export function mountViewer(appEl) {
     // is the first thing that would grow, not this.
     if (tier === "far") {
       for (const w of drawnWalkers) {
-        s += walkerFrameSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing) });
+        s += walkerFrameSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
+          mine: isOwnHandle(w.handle) });
       }
-      mapCtx.walkLayer.innerHTML = s;
+      mapCtx.walkLayer.innerHTML = paths + s;
       walkReadout(drawnWalkers);
       syncHouseLights();
       syncActorPosition();
@@ -8624,10 +8784,10 @@ export function mountViewer(appEl) {
       // now wearing the face — the picture clipped to the frame, or the monogram
       // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
-      s += walkerFrameSVG({ at: now, k, handle: w.handle, moving, label: identity,
+      s += walkerFrameSVG({ at: now, k, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
         art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
-    mapCtx.walkLayer.innerHTML = hulls + s;
+    mapCtx.walkLayer.innerHTML = paths + hulls + s;
     walkReadout(drawnWalkers);
     syncHouseLights();
     syncActorPosition();
@@ -10791,6 +10951,9 @@ export function mountViewer(appEl) {
     state.mineIds = new Set(["drafts", "published", "backed"]
       .flatMap((category) => (portfolio[category] ?? []).map((mark) => mark.id ?? mark.mark))
       .filter(Boolean));
+    state.ownIds = new Set(["drafts", "published"]
+      .flatMap((category) => (portfolio[category] ?? []).map((mark) => mark.id ?? mark.mark))
+      .filter(Boolean));
     state.draftIds = draftMarkIds(portfolio.drafts);
     applyWorldLayer();
   }
@@ -10824,6 +10987,7 @@ export function mountViewer(appEl) {
         data.myWorld = null;
         state.portfolio = null;
         state.mineIds = new Set();
+        state.ownIds = new Set();
         state.draftIds = new Set();
         if (state.markFilter === "mine") state.markFilter = "everything";
         applyWorldLayer();
@@ -10832,6 +10996,7 @@ export function mountViewer(appEl) {
       data.myWorld = null;
       state.portfolio = null;
       state.mineIds = new Set();
+      state.ownIds = new Set();
       state.draftIds = new Set();
       if (state.markFilter === "mine") state.markFilter = "everything";
       applyWorldLayer();
