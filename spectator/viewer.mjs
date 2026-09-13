@@ -2836,19 +2836,28 @@ export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving
 // The href is whitelisted through the same door a resident's avatar goes
 // through: this one is a constant rather than user data, but a second road for
 // URLs into an <image href> is exactly how the first one stops being checked.
-// `fit` (2026-09-12) — SQUARE-AND-SLICE, or the mark's true extent, MEET.
+// `fit` — THE MARK'S TRUE EXTENT, AND THE PICTURE FILLS IT (revised 2026-09-13).
 //
-// The square was right while this drew one thing: a peak is as tall as it is
-// wide, and slicing a square photograph into a square box crops nothing. It is
-// wrong for the ground a town is actually made of. `limen/the-descending-
-// terraces` is 300 m by 2,200 m on the record; squaring that hangs a 2,200 m
-// picture over a 300 m strip — seven times too wide, spilling across every
-// neighbour it has. And a place's own picture is not a texture to be cropped to
-// taste: `meet` shows the whole of what somebody hung there.
+// Half of this is unchanged and half was overruled, so both are written down.
 //
-// So `slice` stays the default and Pando's old call is byte-for-byte what it
-// was, while the general rule below asks for `meet` and gets the extent the
-// record actually wrote.
+// UNCHANGED: the box is the mark's own extent, not a square. Squaring was right
+// while this drew one thing — a peak is as tall as it is wide — and wrong for
+// the ground a town is made of. `limen/the-descending-terraces` is 300 m by
+// 2,200 m on the record; squaring that hangs a 2,200 m picture over a 300 m
+// strip, spilling across every neighbour it has.
+//
+// OVERRULED: on 09-12 the second half of that argument was "a place's picture
+// is not a texture to be cropped to taste, so `meet` shows the whole of what
+// somebody hung there." Keemin, 09-13, looking at the result: "pando peak looks
+// like the image didn't zoom to fill the box-mark (it should)." `meet` inside a
+// framed box is a letterbox — the picture floats in the middle with the frame's
+// amber around empty ground — and that reads as a picture that failed to load,
+// which is exactly how it was reported. A boxed picture fills its box, the way
+// a ringed one fills its ring.
+//
+// So both paths now fill. `fit` survives as the parameter that chooses the BOX
+// SHAPE — "meet" means the mark's true extent, "slice" the legacy square — and
+// no longer chooses whether the picture crops, because it always does.
 export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art", fit = "slice", clickable = false, ring = null } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   const url = safeAvatarUrl(href);
@@ -2899,13 +2908,14 @@ export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "
   const meet = fit === "meet";
   const w = meet ? Math.max(wRaw, floor) : Math.max(Math.max(wRaw, hRaw), floor);
   const h = meet ? Math.max(hRaw, floor) : w;
+  // and the picture FILLS whichever box that is — see the note above
   if (!(w > 0 && h > 0)) return "";
   const box = `x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}"`;
   const rx = Math.min(w, h) * 0.02;
   return `<g class="wv-far-art" role="img" aria-label="${esc(String(label ?? ""))}">`
     + `<clipPath id="${clip}"><rect ${box} rx="${rx}"/></clipPath>`
     + `<image href="${url}" ${box}`
-    + ` preserveAspectRatio="xMidYMid ${meet ? "meet" : "slice"}" clip-path="url(#${clip})"/>`
+    + ` preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
     + `<rect ${box} rx="${rx}" class="wv-far-art-frame"/>`
     // THE PICTURE IS A DOOR WHEN THE CALLER SAYS SO (Keemin, 2026-09-13). The
     // whole layer is `pointer-events:none` — a hung picture must never eat the

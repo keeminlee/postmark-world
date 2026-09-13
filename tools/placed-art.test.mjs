@@ -87,7 +87,12 @@ test("a picture hung on a place keeps that place's shape", () => {
   const strip = { at: { x: 0, y: 0 }, extent: { w: 300, h: 2200 }, href: "/media/a.jpg", id: "t" };
   const meet = placedArtSVG({ ...strip, fit: "meet" });
   assert.match(meet, /width="300" height="2200"/, "meet keeps the extent the record wrote");
-  assert.match(meet, /preserveAspectRatio="xMidYMid meet"/, "and shows the whole picture");
+  // REVISED 2026-09-13. This asserted `meet` — "shows the whole picture" — and
+  // Keemin overruled it on seeing the result: "pando peak looks like the image
+  // didn't zoom to fill the box-mark (it should)." A letterboxed photograph
+  // inside an amber frame reads as one that failed to load. `fit` still chooses
+  // the box SHAPE; the picture always fills it.
+  assert.match(meet, /preserveAspectRatio="xMidYMid slice"/, "and it FILLS that extent");
   assert.doesNotMatch(meet, /width="2200" height="2200"/, "it is not squared");
 
   const sliced = placedArtSVG(strip);
@@ -131,7 +136,7 @@ test("the rule reads the whole record and is bounded by the viewport, not the ra
   assert.match(body, /allMarks\(\)/, "a landmark is not field-of-view furniture");
   assert.match(body, /markInDrawnBounds\(m, bounds\)/, "the viewport cull is what bounds the work");
   assert.match(body, /markImagePath\(m\)/, "through the same shelf gate as every other picture");
-  assert.match(body, /fit: "meet"/, "hung over the extent, never cropped to a square");
+  assert.match(body, /fit: "meet"/, "hung over the mark's true extent, never squared");
 });
 
 // ── and now the page, because the above only proves lines were typed ────────
@@ -398,7 +403,7 @@ test("THE PAGE — a large mark with a picture hangs it; a small one does not; n
   assert.ok(Math.abs(bw / bh - 1800 / 1200) < 0.001,
     `over the extent the record wrote, not a square — got ${far.boxes[i]}`);
   assert.notEqual(bw, bh, "explicitly: not squared");
-  assert.equal(far.fits[i], "xMidYMid meet", "and the whole picture is shown");
+  assert.equal(far.fits[i], "xMidYMid slice", "and the picture fills that box, not letterboxed inside it");
   assert.match(far.hrefs[i], /^\/shelf\//, "through the shelf route, like every other picture");
 
   // the 150 m mark is under the dial and is not
