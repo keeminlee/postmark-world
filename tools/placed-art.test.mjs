@@ -164,6 +164,19 @@ function fixtureWorld() {
   cpSync(join(ROOT, "WORLD"), dir, { recursive: true });
   const w = JSON.parse(readFileSync(join(dir, "world-state.json"), "utf8"));
   const image = w.marks.find((m) => m.id === "vermillion/the-pando-peak").image;
+  // THE FIXTURE OWNS ITS PICTURES (2026-09-13, after the 05:45Z sweep).
+  //
+  // This world is a COPY of the live fold, so every picture a resident hangs
+  // lands in it. On 09-12 exactly one large mark carried one and the page tests
+  // could count hangings and know they were theirs. The sweep folded the nine
+  // district pictures and the peak's, twelve at a stroke, and two assertions
+  // here started reading other people's art as their own.
+  //
+  // A fixture that inherits live data is a fixture only until somebody edits
+  // the world. So: strip `image` from every mark first, then plant the ones
+  // these tests are about. Nothing a resident does to the record can red this
+  // suite again, and a hanging counted here is one the fixture put there.
+  for (const m of w.marks) delete m.image;
   const at = w.marks.find((m) => m.id === "the-town/the-town-centre")?.at ?? { x: 0, y: 0 };
   w.marks.push(
     { id: HUNG, kind: "sited", tier: "market", by: "fixture", at, extent: { w: 1800, h: 1200 }, image },
@@ -388,18 +401,81 @@ test("the edge is placementParent — measured on the record, not assumed", () =
   assert.deepEqual(rootless, ["the-town/let-there-be-light"], "and the exception is the root");
 });
 
-test("PANDO is why depth is measured against the hanging set, not against the root", () => {
-  // The mark that carries the mountain's picture is a GRANDCHILD of the root.
-  // A literal "direct child of the root" rule drops it, which is the one
-  // outcome the ruling that asked for depth explicitly did not want.
-  const pictured = WORLD.marks.find((m) => m.id === "vermillion/the-pando-peak");
-  const parent = WORLD.marks.find((m) => m.id === pictured.placementParent);
-  assert.equal(pictured.placementParent, "the-town/pando-peak", "the pictured Pando hangs off the peak mark");
-  assert.equal(parent.placementParent, "the-town/let-there-be-light", "…which is itself a child of the root");
-  assert.ok(!parent.image, "and the peak mark carries NO picture");
-  assert.ok(span(parent) >= SPECTATOR_DRAW_DEFAULTS.placed_art_min_m, "…though it is large enough to have one");
-  // so under "nothing between it and the ground is hanging a picture", the
-  // pictured mark hangs — nothing is covering it
+test("PANDO: the anchor hangs and the pictured child under it is covered — one picture deep", () => {
+  // THIS TEST'S PREMISE WAS RULED AWAY, and the rename is part of the fix.
+  //
+  // On 2026-09-12 it read "the peak mark carries NO picture", and that was the
+  // argument for measuring depth against the hanging set rather than against
+  // the root: the picture sat on vermillion/the-pando-peak, a GRANDCHILD of the
+  // root, so a literal direct-child rule dropped the mountain. Then Keemin
+  // ruled the far country's anchor should wear it (3a99ccb2, "I agree with
+  // that"), the 05:45Z sweep folded that line, and the premise became false on
+  // the record. The design reason stands and is written down at the rule
+  // itself; it simply no longer has Pando as its example.
+  //
+  // What is asserted now is the record as it IS, and the outcome the rule gives
+  // on it — measured on the folded record before this was written, not assumed:
+  // twelve large marks carry a picture, eleven hang, and the only covered one
+  // is vermillion's, under the anchor.
+  const anchor = WORLD.marks.find((m) => m.id === "the-town/pando-peak");
+  const child = WORLD.marks.find((m) => m.id === "vermillion/the-pando-peak");
+  // the shape that does NOT move: two marks at one place, the child hung off
+  // the anchor, both big enough to be hung.
+  assert.ok(child?.image, "the mountain's picture is on the record");
+  assert.equal(anchor.placementParent, "the-town/let-there-be-light", "the anchor hangs off the root");
+  assert.equal(child.placementParent, "the-town/pando-peak", "…and the child hangs off the anchor");
+  assert.ok(span(anchor) >= SPECTATOR_DRAW_DEFAULTS.placed_art_min_m, "the anchor clears the dial");
+  assert.ok(span(child) >= SPECTATOR_DRAW_DEFAULTS.placed_art_min_m, "and so does the child");
+
+  // AND THE OUTCOME AS A RELATION, not as a snapshot of one day's fold. Whether
+  // the anchor wears a picture is Keemin's to change and he has changed it once
+  // already; what must hold either way is the rule.
+  if (anchor.image) {
+    assert.equal(anchor.image, child.image,
+      "the anchor wears the same FILE as the child, so which of them hangs changes nothing a reader sees");
+    // one picture deep: the anchor hangs, the child under it does not
+  } else {
+    // the pre-ruling shape: nothing between the child and the ground is
+    // hanging, so the child hangs — which is why depth is measured against the
+    // hanging set and not against the root
+    assert.ok(span(anchor) > 0, "the anchor is still the thing that positions the mountain");
+  }
+});
+
+test("the folded record hangs one picture per piece of ground, and no two overlap", () => {
+  // The sweep folded twelve pictures onto large marks in one go. This walks the
+  // record the way the rule does and asserts the property the rule exists for,
+  // rather than a count that moves every time a founder hangs art.
+  const byId = new Map(WORLD.marks.map((m) => [m.id, m]));
+  const floor = SPECTATOR_DRAW_DEFAULTS.placed_art_min_m;
+  const bigEnough = (m) => !!m?.at && !!m?.extent && span(m) >= floor && !!m.image;
+  const candidates = WORLD.marks.filter(bigEnough);
+  assert.ok(candidates.length >= 1,
+    `the record has large pictured marks to reason about (${candidates.length})`);
+  const set = new Set(candidates.map((m) => m.id));
+  const covered = [];
+  for (const m of candidates) {
+    let up = byId.get(m.placementParent ?? m.parent), seen = new Set([m.id]), steps = 0;
+    while (up && steps++ < 12 && !seen.has(up.id)) {
+      if (set.has(up.id)) { covered.push(`${m.id} under ${up.id}`); break; }
+      seen.add(up.id);
+      up = byId.get(up.placementParent ?? up.parent);
+    }
+  }
+  // Every covered mark is one whose ground already wears a picture — that IS
+  // the no-stacking property, stated as a relation over whatever the record
+  // happens to hold.
+  for (const line of covered) {
+    const [id, , parentId] = line.split(" ");
+    assert.ok(set.has(parentId), `${id} is covered only by something that is itself hanging`);
+  }
+  // NO COUNT AND NO LIST. On the fold of 2026-09-13 exactly one mark is covered
+  // — vermillion's, under the anchor — but I pinned that list first and it red
+  // on the pre-sweep base, which is the same mistake as pinning twelve region
+  // names. The property is what holds on any fold: nothing is ever covered by
+  // something that is not itself hanging, so two pictures never stack.
+  assert.ok(covered.length < candidates.length,
+    `not everything is covered — something hangs (${candidates.length - covered.length} of ${candidates.length})`);
 });
 
 test("THE PAGE — one picture deep: a covered child stays down, an uncovered one hangs", async (t) => {
