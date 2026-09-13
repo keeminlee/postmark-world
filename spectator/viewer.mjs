@@ -2849,17 +2849,57 @@ export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving
 // So `slice` stays the default and Pando's old call is byte-for-byte what it
 // was, while the general rule below asks for `meet` and gets the extent the
 // record actually wrote.
-export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art", fit = "slice", clickable = false } = {}) {
+export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art", fit = "slice", clickable = false, ring = null } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   const url = safeAvatarUrl(href);
   if (![x, y].every(Number.isFinite) || !url) return "";
+  const clip = `wv-art-clip-${String(id).replace(/[^a-z0-9-]/gi, "")}`;
+  const hit = (shape) => (clickable
+    ? shape.replace("/>", ` class="wv-far-art-hit" data-id="${esc(id)}" role="button" tabindex="0"`
+      + ` aria-label="${esc(String(label ?? ""))}"/>`)
+    : "");
+
+  // ── THE PICTURE FILLS THE RING (Keemin, 2026-09-13, looking at the empty
+  //    boxes on dev: "could we just have the images fill the ring frames
+  //    instead of having another version") ─────────────────────────────────
+  //
+  // A region already HAS a shape on the record — the twelve-point ring the
+  // ground draws its wash from — and hanging a rectangle next to it was the map
+  // saying the same place twice in two shapes. So where a ring is handed in the
+  // picture is clipped to it and fills it: `slice`, because a photograph fitted
+  // INSIDE an irregular outline leaves the outline half empty, which is the
+  // thing being complained about. The frame is then the ring's own line, not a
+  // rectangle around it — Keemin's words were "fill the ring frames", so the
+  // ring is the frame.
+  //
+  // Per-mark, never global: a mark with no ring — the peak, a dwelling, a
+  // parcel — gets exactly the box it got before, and that path is untouched
+  // below. The click target follows the same shape for the same reason: the
+  // door should be the place, not a rectangle over it.
+  const pts = Array.isArray(ring) && ring.length >= 3
+    ? ring.filter((p) => Number.isFinite(Number(p?.x)) && Number.isFinite(Number(p?.y)))
+    : null;
+  if (pts && pts.length >= 3) {
+    const xs = pts.map((p) => Number(p.x)), ys = pts.map((p) => Number(p.y));
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const rw = x1 - x0, rh = y1 - y0;
+    if (!(rw > 0 && rh > 0)) return "";
+    const points = pts.map((p) => `${Number(p.x).toFixed(1)},${Number(p.y).toFixed(1)}`).join(" ");
+    const rbox = `x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${rw.toFixed(1)}" height="${rh.toFixed(1)}"`;
+    return `<g class="wv-far-art wv-far-art-ringed" role="img" aria-label="${esc(String(label ?? ""))}">`
+      + `<clipPath id="${clip}"><polygon points="${points}"/></clipPath>`
+      + `<image href="${url}" ${rbox} preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
+      + `<polygon points="${points}" class="wv-far-art-ring"/>`
+      + hit(`<polygon points="${points}"/>`)
+      + `</g>`;
+  }
+
   const floor = Number(minSize) > 0 ? Number(minSize) : 0;
   const wRaw = Number(extent?.w) || 0, hRaw = Number(extent?.h) || 0;
   const meet = fit === "meet";
   const w = meet ? Math.max(wRaw, floor) : Math.max(Math.max(wRaw, hRaw), floor);
   const h = meet ? Math.max(hRaw, floor) : w;
   if (!(w > 0 && h > 0)) return "";
-  const clip = `wv-art-clip-${String(id).replace(/[^a-z0-9-]/gi, "")}`;
   const box = `x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}"`;
   const rx = Math.min(w, h) * 0.02;
   return `<g class="wv-far-art" role="img" aria-label="${esc(String(label ?? ""))}">`
@@ -2870,12 +2910,9 @@ export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "
     // THE PICTURE IS A DOOR WHEN THE CALLER SAYS SO (Keemin, 2026-09-13). The
     // whole layer is `pointer-events:none` — a hung picture must never eat the
     // clicks meant for the marks drawn over it — so a clickable one gets ONE
-    // transparent rect that takes them back, and only that rect. Opt-in, so the
+    // transparent shape that takes them back, and only that. Opt-in, so the
     // mountain and anything else hung stay exactly as untouchable as they were.
-    + (clickable
-      ? `<rect ${box} rx="${rx}" class="wv-far-art-hit" data-id="${esc(id)}" role="button" tabindex="0"`
-        + ` aria-label="${esc(String(label ?? ""))}"/>`
-      : "")
+    + hit(`<rect ${box} rx="${rx}"/>`)
     + `</g>`;
 }
 
@@ -4436,6 +4473,10 @@ const STYLE = `
 .wv-far-art, .wv-mist { pointer-events:none; }
 /* …except the one rect that makes a region's picture a door (2026-09-13) */
 .wv-far-art-hit { fill:transparent; pointer-events:auto; cursor:pointer; }
+/* the ring IS the frame for a region (2026-09-13): its own line in the frame's
+   amber, thin and low, rather than a rectangle drawn around the same place */
+.wv-far-art-ring { fill:none; stroke:var(--amber); stroke-width:1.2; opacity:.45;
+  stroke-linejoin:round; vector-effect:non-scaling-stroke; pointer-events:none; }
 .wv-far-art-hit:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
 .wv-far-art-frame { fill:none; stroke:var(--amber); stroke-width:1.5; opacity:.7; vector-effect:non-scaling-stroke; }
 .wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
@@ -8293,6 +8334,10 @@ export function mountViewer(appEl) {
         fit: "meet",
         // a region's picture opens its column; nothing else hung is a door
         clickable: isRegionMark(m),
+        // …and where the record gave the mark a shape, the picture fills THAT
+        // rather than a rectangle beside it. Read in metres and put through the
+        // same px() every other coordinate here goes through.
+        ring: (polygonOf(m) ?? []).length >= 3 ? polygonOf(m).map(px) : null,
       });
     mapCtx.placedArtLayer.innerHTML = s;
     // THE IDS, not a count: the furnishing pass below has to know which marks

@@ -331,6 +331,31 @@ async function readArt({ zoomIn = 0, stopAtTier = null } = {}) {
   return { ...read, errors };
 }
 
+/** the SHAPE of what the placed-art layer drew, per mark — ringed or boxed */
+const pageShape = async () => {
+  const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
+  await page.goto(`http://localhost:${port}/`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.waitForSelector(".wv-telling-pane", { state: "attached", timeout: 90_000 });
+  await page.evaluate(() => { const el = document.querySelector(".wv-tour-skip"); if (el && el.offsetParent) el.click(); });
+  await page.waitForFunction(() => document.querySelectorAll("#wv-placed-art-layer .wv-far-art").length > 0,
+    null, { timeout: 60_000 }).catch(() => {});
+  await page.waitForTimeout(2000);
+  const r = await page.evaluate(() => {
+    const arts = [...document.querySelectorAll("#wv-placed-art-layer .wv-far-art")];
+    const region = arts.find((g) => /evermoon/i.test(g.getAttribute("aria-label") ?? ""));
+    return {
+      ringedForRegion: region ? (region.classList.contains("wv-far-art-ringed") ? 1 : 0) : -1,
+      frameForRegion: region ? region.querySelectorAll(".wv-far-art-frame").length : -1,
+      polygonClip: !!region?.querySelector("clipPath polygon"),
+      slices: (region?.querySelector("image")?.getAttribute("preserveAspectRatio") ?? "") === "xMidYMid slice",
+      ringlessFramed: arts.filter((g) => !g.classList.contains("wv-far-art-ringed")
+        && g.querySelector(".wv-far-art-frame")).length,
+    };
+  });
+  await page.close();
+  return r;
+};
+
 test("THE PAGE — a large mark with a picture hangs it; a small one does not; near hangs none", async (t) => {
   if (!chromium) {
     t.skip("NO PLAYWRIGHT — the tier gate, the cull, the DOM seam and the Pando swap went UNGUARDED. "
@@ -682,4 +707,47 @@ test("THE PAGE — clicking a region's hung picture at far opens its column", as
   await page.close();
   // ⚑ THE FLIP: drop `clickable: isRegionMark(m)` and the hit rect is gone, so
   //   `before.hit` reds before the click is even attempted.
+});
+
+// ── THE PICTURE FILLS THE RING (Keemin, 2026-09-13) ─────────────────────────
+
+test("a ring turns the picture into that shape, and a ringless mark keeps its box", () => {
+  const ring = [{ x: 0, y: 0 }, { x: 100, y: 10 }, { x: 90, y: 80 }, { x: 5, y: 70 }];
+  const region = placedArtSVG({ at: { x: 50, y: 40 }, extent: { w: 100, h: 80 },
+    href: "/media/x.jpg", id: "caelum/evermoon", label: "Evermoon", clickable: true, ring });
+  assert.match(region, /<clipPath[^>]*><polygon points="/, "clipped to the ring, not a rect");
+  assert.match(region, /preserveAspectRatio="xMidYMid slice"/,
+    "and it FILLS: a photograph fitted inside an irregular outline leaves the outline half empty, which is the complaint");
+  assert.doesNotMatch(region, /wv-far-art-frame/, "no rectangle drawn around the same place");
+  assert.match(region, /<polygon points="[^"]+" class="wv-far-art-ring"\/>/, "the ring's own line is the frame");
+  assert.match(region, /<polygon points="[^"]+" class="wv-far-art-hit"/, "and the door is the ring's shape too");
+
+  // PER-MARK, NEVER GLOBAL. The peak has no ring on the record and must be
+  // exactly what it was.
+  const mountain = placedArtSVG({ at: { x: 0, y: 0 }, extent: { w: 900, h: 600 },
+    href: "/media/x.jpg", id: "the-town/pando-peak", label: "Pando", fit: "meet" });
+  assert.match(mountain, /<clipPath[^>]*><rect /, "a ringless mark is still clipped to its box");
+  assert.match(mountain, /wv-far-art-frame/, "…and still framed");
+  assert.doesNotMatch(mountain, /wv-far-art-ring/, "…and grows no ring");
+
+  // a ring the record half-wrote is not a ring
+  const short = placedArtSVG({ at: { x: 0, y: 0 }, extent: { w: 90, h: 90 },
+    href: "/media/x.jpg", id: "a/b", ring: [{ x: 0, y: 0 }, { x: 1, y: 1 }] });
+  assert.match(short, /<clipPath[^>]*><rect /, "two points are not a shape — falls back to the box");
+  // ⚑ THE FLIP: stop passing `ring` in drawPlacedArt and the region draws a
+  //   rect frame again; drop the polygon clip and `slice` and it stops filling.
+});
+
+test("THE PAGE — the region's hung picture is the ring's shape, and nothing else is", async (t) => {
+  if (!chromium) { t.skip("NO PLAYWRIGHT — the ring fill on a real page went UNGUARDED."); return; }
+  const far = await readArt();
+  assert.deepEqual(far.errors, [], "the page mounted");
+  assert.equal(far.tier, "far");
+  const shape = await pageShape();
+  assert.equal(shape.ringedForRegion, 1, "the region hangs exactly one ringed picture");
+  assert.equal(shape.frameForRegion, 0, "…with no rectangular frame of its own");
+  assert.equal(shape.polygonClip, true, "…clipped to a polygon");
+  assert.equal(shape.slices, true, "…and filling it");
+  assert.ok(shape.ringlessFramed >= 1,
+    `and a ringless hung mark still wears its box (${shape.ringlessFramed})`);
 });
