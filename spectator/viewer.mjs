@@ -2059,6 +2059,53 @@ export function fillFromTown(byId, townHouses = []) {
  *  (just the marks)"). Every parcel, plus the dwelling sited on each — and
  *  nothing else: the furniture, the people and the rest of the fold stay the
  *  read's. Order is the record's; a parcel with no dwelling rides alone. Pure. */
+/**
+ * What the reader meant, out of what the page already holds.
+ *
+ * PURE, AND THE WHOLE OF THE RANKING. The caller hands in two flat lists it has
+ * already built from its own state; nothing here fetches, reads `state`, or
+ * knows what a viewer is, so the ordering can be asked directly instead of
+ * inferred from a rendered list.
+ *
+ * ⚑ THERE IS NO `name` FIELD ON A MARK. Measured on the record this ships with:
+ * ZERO of 1,218 marks carry one, so the "name" every row matches on is the
+ * DERIVED name the page already shows, handed in by the caller. Anyone indexing
+ * `m.name` here would build a search that matches nothing and looks correct.
+ *
+ * The order is the reader's own likely intent, strongest first: the thing they
+ * typed the id of, then the thing whose name they typed, then a name they began,
+ * then an id they began, then anything containing it. Ties break alphabetically
+ * so the list does not reshuffle under the cursor between keystrokes.
+ */
+export function searchTheTown({ query, marks = [], people = [], limit = 8 } = {}) {
+  const q = String(query ?? "").trim().toLowerCase();
+  if (!q) return [];
+  const rank = (id, name) => {
+    const i = String(id ?? "").toLowerCase(), n = String(name ?? "").toLowerCase();
+    if (i === q) return 0;
+    if (n === q) return 1;
+    if (n.startsWith(q)) return 2;
+    if (i.startsWith(q)) return 3;
+    if (n.includes(q)) return 4;
+    if (i.includes(q)) return 5;
+    return -1;
+  };
+  const rows = [];
+  for (const m of marks) {
+    const r = rank(m?.id, m?.name);
+    if (r < 0) continue;
+    rows.push({ kind: "mark", id: m.id, label: m.name || m.id, sub: m.id, placed: !!m.placed, rank: r });
+  }
+  for (const p of people) {
+    const r = rank(p?.handle, p?.name);
+    if (r < 0) continue;
+    rows.push({ kind: "person", handle: p.handle, label: p.name || p.handle, sub: p.handle,
+      at: p.at ?? null, rank: r });
+  }
+  rows.sort((a, b) => a.rank - b.rank || String(a.label).localeCompare(String(b.label)));
+  return rows.slice(0, Math.max(0, limit));
+}
+
 export function townHouseMarks(marks = []) {
   const out = [];
   for (const m of marks ?? []) {
@@ -4612,6 +4659,31 @@ const STYLE = `
   background:rgba(232,197,106,.16); }
 .wv-mapctl .ctl.on { color:var(--night); border-color:var(--amber);
   background:linear-gradient(180deg,#f0d68f,var(--amber)); }
+/* THE SEARCH PILL. Collapsed it is one of the circles; open it is a pill that
+   grows leftward, which is free because the row is right-anchored. The width is
+   the only thing that animates, so nothing reflows around it. */
+.wv-search { position:relative; display:flex; align-items:center; }
+.wv-search-input { width:0; opacity:0; padding:0; border:0; margin:0;
+  height:2.15rem; box-sizing:border-box; font-family:var(--mono); font-size:.82rem;
+  color:var(--amber); background:rgba(13,15,19,.92);
+  border:1px solid rgba(232,197,106,.34); border-radius:999px;
+  transition:width .16s ease, opacity .12s ease, padding .16s ease; }
+.wv-search.is-open .wv-search-input { width:min(14rem, 42vw); opacity:1; padding:0 .7rem; margin-right:6px; }
+.wv-search-input::placeholder { color:rgba(232,197,106,.5); }
+.wv-search-input:focus { outline:none; border-color:rgba(232,197,106,.7); }
+.wv-search-results { position:absolute; top:calc(2.15rem + 6px); right:0; z-index:7;
+  width:min(20rem, 66vw); max-height:min(22rem, 52vh); overflow-y:auto;
+  margin:0; padding:4px; list-style:none;
+  background:rgba(13,15,19,.975); border:1px solid rgba(232,197,106,.34);
+  border-radius:10px; box-shadow:0 8px 26px rgba(0,0,0,.5); }
+.wv-search-results[hidden] { display:none; }
+.wv-search-hit { display:block; width:100%; text-align:left; cursor:pointer;
+  padding:5px 8px; border:0; border-radius:7px; background:transparent;
+  color:var(--paper); font-family:inherit; font-size:.82rem; line-height:1.3; }
+.wv-search-hit:hover, .wv-search-hit:focus { background:rgba(232,197,106,.16); outline:none; }
+.wv-search-hit .sub { display:block; color:var(--dim); font-family:var(--mono); font-size:.7rem; }
+.wv-search-none { padding:6px 8px; color:var(--dim); font-size:.78rem; line-height:1.35; }
+
 /* hard against the right edge, so the help opens back across the painting */
 
 .wv-minimap.pannable { cursor:grab; }
@@ -5049,6 +5121,21 @@ const MARKUP = `
           <button type="button" class="wv-root-mark" data-root-mark
             aria-label="Let There Be Light"></button>
         </div><div class="wv-mapctl">
+          <!-- THE SEARCH IS FIRST, WHICH IS LEFTMOST (Keemin, 2026-09-13: "a
+               search bar as the leftmost top-right button, expanding
+               horizontally"). The cluster is right-aligned (justify-content is
+               flex-end), so the first child sits furthest left and growing
+               costs its siblings
+               nothing: the row is anchored to the right edge and the pill opens
+               back across the painting, which is empty there. -->
+          <div class="wv-search" role="search">
+            <button type="button" class="ctl wv-search-open" aria-label="search"
+              title="find a house, a mark or a resident">&#8981;</button>
+            <input class="wv-search-input" type="search" autocomplete="off" spellcheck="false"
+              aria-label="find a house, a mark or a resident"
+              placeholder="find a house or a resident" hidden>
+            <ul class="wv-search-results" hidden></ul>
+          </div>
           <!-- GLYPH ONLY (Keemin, 2026-08-04). These hang over a painting, and the
                words were four pills' worth of chrome across the top of it. The name
                keeps its seat in title and aria-label — dropping the word from
@@ -10417,6 +10504,16 @@ export function mountViewer(appEl) {
     // and a click that fell through to the painting underneath would select a
     // mark the reader cannot see
     if (e.target.closest(".wv-tour-open")) { openTour(0); return; }
+    if (e.target.closest(".wv-search-open")) {
+      openSearch(!$(root, ".wv-search")?.classList.contains("is-open"));
+      return;
+    }
+    const hit = e.target.closest(".wv-search-hit");
+    if (hit) {
+      actOnSearchHit(hit.dataset.kind, hit.dataset.hit);
+      openSearch(false);
+      return;
+    }
     const dot = e.target.closest("[data-tour-to]");
     if (dot) { stepTour(Number(dot.dataset.tourTo)); return; }
     if (e.target.closest(".wv-tour-next")) { stepTour("next"); return; }
@@ -10620,6 +10717,115 @@ export function mountViewer(appEl) {
       if (b._stack?.length) { b._stack = []; renderExpansion(b); } else { b._stack = [b.dataset.id]; renderExpansion(b); }
     }
   });
+  // ── THE SEARCH, OVER WHAT THE PAGE ALREADY HOLDS ────────────────────────
+  //
+  // No fetch and no office door: the marks are `allMarks()` and the people are
+  // the site's roster with the office's live walker list laid over it.
+  //
+  // ⚑ THE WALKERS ARE NOT A GARNISH, THEY ARE THE FALLBACK (reviewer's ruling,
+  // 2026-09-13). `residents-meta.json` is SITE-BUILT, and it is the artifact
+  // that sat frozen on an 08-27 snapshot until site #74 — a stale copy makes
+  // every resident who joined since silently unfindable, with no error to see.
+  // `/world/walkers` comes from the office and is live, so anyone out today is
+  // findable whatever the roster says. The live entry wins on purpose: it also
+  // carries a position, which is what a hit needs.
+  const searchMarkIndex = () => allMarks().map((m) => ({
+    id: m?.id,
+    name: markName(m).name || deslugMarkId(m?.id ?? ""),
+    placed: !!(m?.at && Number.isFinite(m.at.x)),
+  })).filter((m) => m.id);
+  const searchPeopleIndex = () => {
+    const out = new Map();
+    for (const handle of residentsMeta.keys()) out.set(handle, { handle, name: faceOf(handle).name, at: null });
+    for (const w of walkState.walkers ?? []) {
+      if (!w?.handle || !Number.isFinite(w.x) || !Number.isFinite(w.y)) continue;
+      out.set(w.handle, { handle: w.handle, name: faceOf(w.handle).name, at: { x: w.x, y: w.y } });
+    }
+    return [...out.values()];
+  };
+  // WHAT COULD NOT BE SEARCHED, SAID PLAINLY (reviewer, 2026-09-13). A resident's
+  // index is their read plus their own marks plus the town's houses, which
+  // `loadTownHouses` already put there — so houses and parcels ARE findable
+  // signed in, and other placed marks are not. An empty result that does not say
+  // which of those it is reads as a broken search.
+  const searchEmptyNote = () => (onResidentPath()
+    ? "Nothing by that name. Houses and parcels are searched; other marks are outside what you can see from where you stand."
+    : "Nothing by that name.");
+  let searchFrame = 0;
+  function searchRows() {
+    const input = $(root, ".wv-search-input");
+    return searchTheTown({
+      query: input?.value ?? "",
+      marks: searchMarkIndex(),
+      people: searchPeopleIndex(),
+      limit: 8,
+    });
+  }
+  function renderSearchResults() {
+    const box = $(root, ".wv-search-results");
+    const input = $(root, ".wv-search-input");
+    if (!box || !input) return;
+    const q = String(input.value ?? "").trim();
+    if (!q) { box.hidden = true; box.innerHTML = ""; return; }
+    const rows = searchRows();
+    box.hidden = false;
+    box.innerHTML = rows.length
+      ? rows.map((r) => `<li><button type="button" class="wv-search-hit"`
+          + ` data-kind="${esc(r.kind)}" data-hit="${esc(r.kind === "person" ? r.handle : r.id)}">`
+          + `${esc(r.label)}<span class="sub">${esc(r.kind === "person" ? `resident · ${r.sub}` : r.sub)}</span>`
+          + `</button></li>`).join("")
+      : `<li class="wv-search-none">${esc(searchEmptyNote())}</li>`;
+  }
+  function openSearch(open) {
+    const wrap = $(root, ".wv-search");
+    const input = $(root, ".wv-search-input");
+    if (!wrap || !input) return;
+    wrap.classList.toggle("is-open", !!open);
+    input.hidden = !open;
+    if (open) input.focus();
+    else { input.value = ""; renderSearchResults(); input.blur(); }
+  }
+  // A HIT DOES WHAT A CLICK DOES, and calls the same verb to do it — no second
+  // selection path, so the column, the chooser and the trail behave as they
+  // already do. A region is a placed mark like any other here, so a region hit
+  // opens the region column exactly as clicking its ring does.
+  function actOnSearchHit(kind, key) {
+    if (kind === "person") {
+      const person = searchPeopleIndex().find((p) => p.handle === key);
+      if (person?.at) {
+        // THE MAP'S OWN CAMERA VERB, and it has to be asked. Setting `state.cam`
+        // alone moves the READING — the radial, the coordinate chip, what the
+        // pane thinks you are near — and leaves the picture exactly where it
+        // was; measured, the viewBox did not shift by a pixel. `frameOn` is what
+        // moves the picture, and `keepZoom` means going to somebody does not
+        // also decide how close you wanted to stand.
+        walkState.actorBound = false;
+        state.cam = { x: person.at.x, y: person.at.y };
+        // ⛑ `frameOn` COMPUTES a rectangle, it does not move to it — `lockOn`
+        // is the only caller that tweens, and reading its name as a verb is why
+        // the first attempt changed nothing at all. `setView` is the move.
+        if (mapCtx?.setView && mapCtx.frameOn) mapCtx.setView(mapCtx.frameOn(state.cam, { keepZoom: true }), true);
+        renderCurrent();
+        return;
+      }
+      // nobody out today: their ground is the next best answer the page holds
+      const parcel = allMarks().find((m) => m?.kind === "parcel"
+        && String(m.household ?? m.by ?? "") === key);
+      if (parcel) selectMark(parcel.id);
+      return;
+    }
+    const mark = byId.get(key) ?? allMarks().find((m) => m?.id === key);
+    const placed = !!(mark?.at && Number.isFinite(mark.at.x));
+    // a mark with nowhere to go still has words: scroll its cell up instead
+    selectMark(key, { scrollCell: !placed });
+  }
+  root.addEventListener("input", (e) => {
+    if (!e.target.closest(".wv-search-input")) return;
+    // off the render spine: a keystroke must not queue a full re-render
+    cancelAnimationFrame(searchFrame);
+    searchFrame = requestAnimationFrame(renderSearchResults);
+  });
+
   const onViewerKeydown = (event) => {
     // a slide deck is read with the arrow keys, and Escape leaves it
     if (tourAt >= 0) {
@@ -10639,7 +10845,22 @@ export function mountViewer(appEl) {
       }
       return;
     }
+    // ── "/" OPENS THE SEARCH, BUT NEVER OUT OF SOMEBODY'S SENTENCE ────────
+    //
+    // (reviewer, 2026-09-13). A resident typing a letter in the say box must not
+    // have the cursor yanked out from under them by a punctuation mark, so the
+    // shortcut yields to any field that already has focus — inputs, textareas,
+    // selects and anything contenteditable.
+    if (event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      const el = document.activeElement;
+      const busy = !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA"
+        || el.tagName === "SELECT" || el.isContentEditable);
+      if (!busy && $(root, ".wv-search-input")) { event.preventDefault(); openSearch(true); return; }
+    }
     if (event.key !== "Escape") return;
+    // Escape closes the search before it clears a selection: it is the thing the
+    // reader most recently opened, and one press should undo one thing.
+    if ($(root, ".wv-search")?.classList.contains("is-open")) { openSearch(false); return; }
     if (!markInteraction.getState().selectedId && !walkState.destination) return;
     clearSelectionAndDestination();
   };
