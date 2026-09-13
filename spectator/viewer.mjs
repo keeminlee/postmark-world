@@ -9423,6 +9423,50 @@ export function mountViewer(appEl) {
   // No enter button: the model only offers one for a parcelId, and a region is
   // not a parcel. Residents CAN cross into a region, but that is a door nobody
   // asked for here and it is not this piece's to add.
+  // ── THE REGION'S OWN PAGE, FROM THE OFFICE (2026-09-13) ────────────────
+  //
+  // #52 left this painting the MARK'S body and saying so, because at
+  // release/2026-w38 no door served REGION.md whole. That door now exists:
+  // office release/2026-w38.1 serves `GET /regions/{slug}` with the description
+  // uncapped. Measured on prod before this was written:
+  //
+  //   /regions/the-threshold-district  200, description 3,650 chars, name "the
+  //                                    Threshold District", founder "limen"
+  //   /regions/the-headland            200, description "" (nobody wrote one)
+  //   /regions/no-such-region          404
+  //
+  // The mark's own body is 136 characters, so the door is the whole page and
+  // the mark was always the stopgap. Both other answers fall back to it.
+  //
+  // ONE READ PER SLUG FOR THE LIFE OF THE PAGE. `regionColumnView` is called on
+  // every render of the bubbles, which is many times a second while a pointer
+  // moves, so the fetch is fired once and remembered — including its failure,
+  // because a door that 404s will 404 again and a retry loop under the cursor
+  // is the same bug the column's own `shown` guard exists to prevent.
+  const regionDoors = new Map();    // slug -> { description, name, founder } | { failed: true }
+  const regionDoorsPending = new Set();
+  function readRegionDoor(slug) {
+    if (regionDoors.has(slug) || regionDoorsPending.has(slug)) return;
+    regionDoorsPending.add(slug);
+    fetch(officeUrl(`/regions/${encodeURIComponent(slug)}`), { credentials: "same-origin" })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        const j = await r.json();
+        if (j?.error) throw new Error(j.defect ?? j.error);
+        regionDoors.set(slug, {
+          description: typeof j.description === "string" ? j.description : "",
+          name: typeof j.name === "string" ? j.name : "",
+          founder: typeof j.founder === "string" ? j.founder : "",
+        });
+      })
+      .catch(() => { regionDoors.set(slug, { failed: true }); })
+      // THE COLUMN IS ALREADY OPEN ON THE MARK'S WORDS while this is in flight,
+      // and `open` is a no-op for the key it is already showing. The view's key
+      // carries which source it was built from, so when the door lands the key
+      // changes and this repaint swaps the prose. Nothing else needs to know.
+      .finally(() => { regionDoorsPending.delete(slug); syncMarkInteractionViews(); });
+  }
+
   function regionColumnView(id) {
     // the read's index first, the record behind it second — same reason as the
     // gate in selectMark: the layer that drew this region read the wider set
@@ -9430,30 +9474,40 @@ export function mountViewer(appEl) {
     if (!mark || !isRegionMark(mark)) return null;
     const handle = String(mark.by ?? mark.household ?? "").trim();
     if (!handle) return null;
+    const slug = String(mark.id ?? "").split("/")[1] ?? "";
     const body = typeof mark.body === "string" ? mark.body.trim() : "";
+    const got = regionDoors.get(slug);
+    if (got === undefined) readRegionDoor(slug);
+    const page = got && !got.failed && String(got.description ?? "").trim() ? got : null;
+    const founder = String(page?.founder || handle).trim();
+    // THE DOOR'S `name` IS SOMETIMES THE BARE SLUG. Measured: the Threshold
+    // District answers "the Threshold District", the Headland answers
+    // "the-headland" — the office falls back to the slug when REGION.md carried
+    // no heading. The map's own name for the mark is better than a slug, so the
+    // door's name wins only when it is actually a name.
+    const doorName = String(page?.name ?? "").trim();
     return {
-      key: mark.id,
+      // THE KEY NAMES ITS SOURCE, which is what makes the swap happen: the
+      // column rebuilds only when the key changes, so "mark" -> "door" repaints
+      // and every other render of the same view stays the no-op it should be.
+      key: `${mark.id}:${page ? "door" : "mark"}`,
       handle,
       kicker: "Region",
-      title: markIdentity(mark),
-      region: `held by ${handle}`,
+      title: doorName && doorName !== slug ? doorName : markIdentity(mark),
+      region: `held by ${founder}`,
       leadImage: markImagePath(mark),
-      // the record's own words, handed over as the door so the column paints
-      // them without asking the office for somebody's house
-      door: { description: body },
-      // …AND THE COLUMN SAYS THAT IS WHERE THEY CAME FROM (Keemin, 2026-09-13:
-      // "the region column pulls text from the mark body instead of REGION.md
-      // in the town repo"). He is right, and at release/2026-w38 there is no
-      // door that would fix it: measured on prod, /homes/{handle} answers the
-      // resident's HOUSE and gives the region only as a slug, and /regions caps
-      // its description at 200 characters — six of the thirteen sit exactly
-      // there, cut mid-word, and two are empty or bare frontmatter. A fragment
-      // like that would be a downgrade on a whole sentence.
-      //
-      // So the words stay the mark's and the byline stops pretending otherwise.
-      // When an office door serves REGION.md whole this becomes its fallback,
-      // labelled the same way.
-      byline: `from the mark, in ${handle}'s own words`,
+      // Whole, uncapped, straight from REGION.md. `homeColumnModel` runs it
+      // through the same markdown parser the parcel column uses, so the file's
+      // own heading renders as a heading rather than a literal hash.
+      door: { description: page ? page.description : body },
+      // …AND THE BYLINE STILL SAYS WHERE THE WORDS CAME FROM (Keemin,
+      // 2026-09-13: "the region column pulls text from the mark body instead of
+      // REGION.md in the town repo"). When the door answers, they ARE the
+      // region's own page and the "from the mark" hedge would now be the lie.
+      // When it does not — no page written, or the office unreachable — the
+      // mark's words stand and are labelled as the mark's, exactly as #52 left
+      // them. A failure paints no error: the reader gets prose either way.
+      byline: page ? `in ${founder}'s own words` : `from the mark, in ${handle}'s own words`,
     };
   }
 
