@@ -130,9 +130,16 @@ async function readGround(port) {
       backdropTextSample: [...svg.querySelectorAll("text")].filter((t) => !t.closest(VIEWER_LAYERS))
         .map((t) => (t.getAttribute("class") ?? "(no class)") + ": " + (t.textContent ?? "").slice(0, 40)).slice(0, 6),
       viewerTexts: [...svg.querySelectorAll("text")].filter((t) => t.closest(VIEWER_LAYERS)).length,
-      images: svg.querySelectorAll("image").length,
+      // PICTURES ON THE BACKDROP, not pictures on the page — the same exclusion
+      // the text count already makes, and I did not apply it here. Since the
+      // 05:45Z sweep folded the nine district pictures, the viewer's own
+      // placed-art layer hangs them into this same svg, and a bare
+      // querySelectorAll("image") counted 8 where the fixture planted 2.
+      images: [...svg.querySelectorAll("image")].filter((im) => !im.closest(VIEWER_LAYERS)).length,
+      viewerImages: [...svg.querySelectorAll("image")].filter((im) => im.closest(VIEWER_LAYERS)).length,
       scripts: svg.querySelectorAll("script").length,
-      hrefs: [...svg.querySelectorAll("image")].map((im) => im.getAttribute("href")),
+      hrefs: [...svg.querySelectorAll("image")].filter((im) => !im.closest(VIEWER_LAYERS))
+        .map((im) => im.getAttribute("href")),
       atlasScriptRan: !!window.__atlasRan,
       generatedRegionLabels: svg.querySelectorAll(".wv-tg-region-label").length,
     };
@@ -159,7 +166,7 @@ test("THE BACKDROP CARRIES NO WORDS — and everything else on the picture survi
 
   // …and the strip took nothing with it. Each of these was true before the line
   // was added, and is asserted so the line cannot have moved it.
-  assert.equal(g.images, 2, "both pictures survive");
+  assert.equal(g.images, 2, `both of the backdrop's pictures survive (viewer's own: ${g.viewerImages})`);
   assert.equal(g.scripts, 0, "the script strip is unchanged");
   assert.equal(g.atlasScriptRan, false, "…and the stripped script never ran");
   assert.deepEqual(g.hrefs, ["/atlas/assets/one.jpg", "/atlas/assets/two.jpg"],
