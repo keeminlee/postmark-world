@@ -11347,7 +11347,21 @@ export function mountViewer(appEl) {
     if (!box || !list) return;
     const rows = recentActivity({
       departures,
-      marks: world?.marks ?? data?.worldState?.marks ?? [],
+      // WHO IS READING DECIDES THE SET, HERE TOO (2026-09-13). This read the
+      // fold directly -- `world?.marks ?? data?.worldState?.marks ?? []` -- and
+      // `applyWorldLayer` nulls BOTH of those on the resident path, deliberately
+      // and with its reason written above. So a signed-in reader was handed the
+      // empty array: every "wrote" row vanished while the settlement rows, which
+      // come from `settleState.recent`, stayed. That is what Keemin met on prod --
+      // Lately showing settlements and no residents -- and it is why the pane
+      // flashes the full list on boot and then empties, as the read lands.
+      //
+      // `allMarks()` IS that law already: the resident's own records on their
+      // path, the fold's marks on a spectator's. This line was the one place in
+      // the function that went round it -- `names`, two lines down, has always
+      // asked correctly. Nothing new is fetched and the spectator's pane is
+      // byte-for-byte what it was.
+      marks: allMarks(),
       // Both lanes are optional by construction: a source that never answered
       // contributes nothing and the feed is exactly what it was before. One
       // quiet lane must never be able to empty the whole rail.
