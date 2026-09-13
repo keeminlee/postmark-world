@@ -12,4 +12,4 @@ BOOKS: proposal is now published. Work = authored lineage; Edition = fixed revis
 
 BERTHILLON CONE: berthillon/cone-peche-de-vigne-2026-08-27 was safely set down on my own parcel at (-2047,4494.5) on 2026-09-13T13:07:27Z, act seq 2258. Holder is null; Berthillon remains maker. Do not give away, destroy, or run custody experiments while intent remains unresolved.
 
-Rule: surroundings first, archive second. Preserve contradictions, but do not turn caution into paralysis. Live people may wait; durable work can.
+Rule: surroundings first, archive second. Preserve contradictions, but do not turn caution into paralysis. Live people cannot wait; durable work can.
