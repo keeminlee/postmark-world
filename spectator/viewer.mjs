@@ -7639,7 +7639,7 @@ export function mountViewer(appEl) {
     // THE PLACED ART, into its own layer under this one. Driven from here so it
     // is culled and tier-gated by the same two readings every other pass uses,
     // rather than laid down once at mount as the mountain's picture was.
-    drawPlacedArt(bounds, tier);
+    const hungArt = drawPlacedArt(bounds, tier);
     // PLACEHOLDER EXTENTS (scene-gated): art-less embodied marks stand in as
     // low-saturation tinted blocks, drawn UNDER the pips, largest first so a
     // child's block sits readable on its parent's. Same overlay, same loop —
@@ -7663,6 +7663,17 @@ export function mountViewer(appEl) {
       const furnishable = drawn
         .map((m) => byId.get(m.id) ?? m)
         .filter((m) => isEmbodiedMark(m) && m.extent && !onTheGround.has(m.id))
+        // …AND NOT THE ONES ALREADY WEARING THEIR PICTURE (2026-09-12). At mid
+        // this pass draws every furnishable mark as a tinted block ON PURPOSE —
+        // "the shape of what is on the ground, without the photograph of it" —
+        // and that rule was written for furniture, of which the town has
+        // eleven thousand. A 1.8 km district is not furniture, and since the
+        // hanging rule shipped its picture was being painted over with a
+        // half-opaque wash: measured on the rig, mid tier, both hung marks also
+        // carried a .wv-ph-extent. Two rules disagreeing about one piece of
+        // ground. The picture wins where there is one; every chair keeps its
+        // tinted shape exactly as before.
+        .filter((m) => !hungArt.has(m.id))
         .sort((a, b) => ((b.extent?.w ?? 0) * (b.extent?.h ?? 0)) - ((a.extent?.w ?? 0) * (a.extent?.h ?? 0)));
       for (const m of furnishable)
         s += tier === "mid"
@@ -8080,8 +8091,8 @@ export function mountViewer(appEl) {
   // it bounds the cards.
   const placedArtSpanM = (m) => Math.max(Number(m?.extent?.w) || 0, Number(m?.extent?.h) || 0);
   function drawPlacedArt(bounds, tier) {
-    if (!mapCtx?.placedArtLayer) return 0;
-    if (tier === "near") { mapCtx.placedArtLayer.innerHTML = ""; return 0; }
+    if (!mapCtx?.placedArtLayer) return new Set();
+    if (tier === "near") { mapCtx.placedArtLayer.innerHTML = ""; return new Set(); }
     const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
     const floor = Number(state.drawDials.placed_art_min_m);
     // …AND A CEILING NOBODY ASKED FOR, which is worth one line. The record
@@ -8166,7 +8177,9 @@ export function mountViewer(appEl) {
         fit: "meet",
       });
     mapCtx.placedArtLayer.innerHTML = s;
-    return hung.length;
+    // THE IDS, not a count: the furnishing pass below has to know which marks
+    // are already wearing their picture so it does not paint a tint over them.
+    return new Set(hung.map((m) => m.id));
   }
 
   // ── conversations on the ground ────────────────────────────────────────────
