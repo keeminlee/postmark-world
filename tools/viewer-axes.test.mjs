@@ -74,6 +74,7 @@ import {
   TOUR_SEEN_KEY,
   TOUR_KIND_MARKS,
   TOUR_WALK_LEG,
+  PRESETS,
   recentActivity,
   actSubjectGone,
   activityDayLabel,
@@ -2030,10 +2031,10 @@ test("a resident's read is observed BY THE RESIDENT; only a spectator is a spect
   // everything downstream of radial.observer take that observer's name. A
   // resident's own read said "a spectator" regardless of who was acting.
   assert.equal(observerNameFor("alden", { x: -561, y: -1955 }), "alden");
-  assert.equal(observerNameFor("alden", { x: 0, y: 0 }), "alden", "standing on the quay does not make a resident a spectator");
-  assert.equal(observerNameFor(SPECTATOR_ACTOR, { x: 0, y: 0 }), "a spectator on the Town Centre quay");
+  assert.equal(observerNameFor("alden", { x: 0, y: 0 }), "alden", "standing at the Origin does not make a resident a spectator");
+  assert.equal(observerNameFor(SPECTATOR_ACTOR, { x: 0, y: 0 }), "a spectator at the Origin");
   assert.equal(observerNameFor(SPECTATOR_ACTOR, { x: 400, y: 12 }), "a spectator");
-  assert.equal(observerNameFor("", { x: 0, y: 0 }), "a spectator on the Town Centre quay");
+  assert.equal(observerNameFor("", { x: 0, y: 0 }), "a spectator at the Origin");
   // and the section over the containment ladder says whose footing it describes
   assert.equal(standpointSectionLabel("alden"), "where alden stands");
   assert.equal(standpointSectionLabel(SPECTATOR_ACTOR), "where you stand");
@@ -2109,6 +2110,29 @@ test("a walker id survives the chooser's packing and comes back out as a handle"
   ]);
   assert.deepEqual(orderInnermostFirst(["a/big", "a/small"], byId), ["a/small", "a/big"]);
 });
+test("FALSIFIER — the stand-at presets name {0,0} THE ORIGIN", () => {
+  // Keemin, 2026-09-13: "can we just… call 0,0 the Origin?" (#2752). The world
+  // tools were renamed on that issue; this is the viewer's own label, which a
+  // reader meets as a button on the rail and which disagreed with the door until
+  // now. The twin guard lives in tools/origin-name.test.mjs for the charter.
+  const origin = PRESETS.find((p) => p.x === 0 && p.y === 0);
+  assert.ok(origin, "the presets no longer offer the origin at all");
+  assert.equal(origin.label, "The Origin");
+
+  // THE SCOPE GUARD, the same one #2752 wrote for the charter: the ferry's
+  // crossings are EVENTS and the quay marks are PLACES. Neither is the origin's
+  // name, and a rename that swept them out of the presets would be a different,
+  // wrong change.
+  for (const p of PRESETS) {
+    assert.doesNotMatch(p.label, /Ferry's crossing/,
+      `a preset still wears the crossing's name: ${p.label}`);
+  }
+  // and the other two presets are untouched by any of it
+  assert.equal(PRESETS.length, 3);
+  assert.ok(PRESETS.some((p) => /Trueing Terrace/.test(p.label)));
+  assert.ok(PRESETS.some((p) => /Caelina/.test(p.label)));
+});
+
 
 test("a thing is not ground — a carried object never answers the walk desk's From (Keemin, 2026-08-22)", () => {
   // The live case: wright's spinning top for little-m, a class:thing at his own

@@ -738,10 +738,10 @@ export function viewerCanAct({ identityResolved = false, actAs = SPECTATOR_ACTOR
 //
 // WHOSE READ IS THIS. The engine ranks a field of view for an OBSERVER, and the
 // observer of a resident's read is that resident — not "a spectator" (O13). The
-// spectator keeps the spectator words, and keeps the quay's when standing on it.
+// spectator keeps the spectator words, and names the Origin when standing on it.
 export function observerNameFor(key, standpoint = { x: 0, y: 0 }) {
   if (key && key !== SPECTATOR_ACTOR) return key;
-  return standpoint?.x === 0 && standpoint?.y === 0 ? "a spectator on the Town Centre quay" : "a spectator";
+  return standpoint?.x === 0 && standpoint?.y === 0 ? "a spectator at the Origin" : "a spectator";
 }
 export function standpointSectionLabel(key) {
   return key && key !== SPECTATOR_ACTOR ? `where ${key} stands` : "where you stand";
@@ -3842,8 +3842,16 @@ function markShapeSVG(m, px, cls, { attrs = "", inner = "" } = {}) {
 }
 
 // the stand-at presets (the same three the local build and the astro page carried)
-const PRESETS = [
-  { x: 0, y: 0, label: "The quay — Ferry's crossing" },
+//
+// ⛑ {0,0} IS THE ORIGIN (Keemin, 2026-09-13: "can we just… call 0,0 the Origin?",
+// #2752). It was labelled "The quay — Ferry's crossing" here, which disagreed with
+// the door twice over: the only mark named the-town/the-quay stands in the Long
+// Run 5.6 km away, and the ferry's CROSSINGS are the twice-daily clock rather than
+// a place. Exported so the label can be asked directly rather than grepped — and
+// note that renderPresets swaps this whole list for the reader's own homes once
+// they are signed in with a manifest, so these three are the keyless view.
+export const PRESETS = [
+  { x: 0, y: 0, label: "The Origin" },
   { x: 575, y: -2600, label: "Trueing Terrace — above the fog" },
   { x: -1900, y: 2150, label: "Caelina's ground — the dark pole" },
 ];
@@ -5431,7 +5439,7 @@ export function residentById(read = {}, mine = new Map()) {
  * map. This is the one place the two meet.
  *
  * A row with no position is DROPPED rather than drawn at the origin — a person
- * placed at (0,0) is a person standing on Ferry's crossing, which is a lie the
+ * placed at (0,0) is a person standing at the Origin, which is a lie the
  * map would tell convincingly.
  */
 export function walkersFromPresent(present = {}, { self = null } = {}) {
@@ -8547,8 +8555,8 @@ export function mountViewer(appEl) {
     const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
     const peak = (allMarks()).find((m) => m.far && m.feature === "pando-peak" && m.at);
     if (!peak) return;                      // no far feature on the record, no far country
-    // the corridor runs from Ferry's crossing — grid origin, the town's own
-    // registration point — out to the peak; the mist is the water between
+    // the corridor runs from the Origin — {0,0}, the town's own registration
+    // point — out to the peak; the mist is the water between
     mapCtx.mistLayer.innerHTML = mistBandSVG({ from: px({ x: 0, y: 0 }), to: px(peak.at) });
   }
 
