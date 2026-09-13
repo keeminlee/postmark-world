@@ -6777,10 +6777,6 @@ export function mountViewer(appEl) {
     const mistLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
     mistLayer.setAttribute("id", "wv-mist-layer");
     mistLayer.style.pointerEvents = "none";
-    const farArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    farArtLayer.setAttribute("id", "wv-far-art-layer");
-    farArtLayer.style.pointerEvents = "none";
-    svg.insertBefore(farArtLayer, svg.firstChild);
     svg.insertBefore(mistLayer, svg.firstChild);
     // the survey grid — the FIRST derived layer: drawn from the registration
     // (origin + scale), never traced from the paint. Sits under the overlay.
@@ -6788,6 +6784,29 @@ export function mountViewer(appEl) {
     gridLayer.setAttribute("id", "wv-grid-layer");
     gridLayer.style.display = "none"; // NOT the hidden attribute — SVG <g> ignores it
     svg.appendChild(gridLayer);
+    // THE PLACED ART: above the ground, below everything derived from the record.
+    //
+    // It used to be `wv-far-art-layer`, inserted at the very front of the svg,
+    // and that was right for the one thing it drew: a mountain 135 km out, on
+    // open country, where there is no ground to be under. It is wrong for
+    // ground. The generated town ground appends its own `wv-tg-*` rects and
+    // polygons as siblings LATER in the svg — paper, rule, daylight, night,
+    // then twenty region washes — so a picture hung on a district inside the
+    // town was painted and then buried under the paper. Caught in the
+    // screenshots for this piece, which is what they were taken for: the DOM
+    // said two pictures, the census said two pictures, and the map showed none.
+    //
+    // (The atlas ground takes the other road — `base`, inserted before the mist
+    // — so the same picture would have shown in production and not on the rig.
+    // A seam that depends on which ground loaded is not a seam.)
+    //
+    // Here it is after the ground on both roads and before the grid, the
+    // footprints, the conversations and the overlay, which is the one position
+    // that means "on the ground, under everything the record draws on it".
+    const placedArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    placedArtLayer.setAttribute("id", "wv-placed-art-layer");
+    placedArtLayer.style.pointerEvents = "none";
+    svg.appendChild(placedArtLayer);
     // footprints — the second derived layer: every mark's true extent, from the
     // record. Sits above the grid, under the pips; pointer-events none so the
     // stand-click and drag pass straight through it.
@@ -6904,7 +6923,7 @@ export function mountViewer(appEl) {
       svg.insertBefore(base, mistLayer);
     }
     const view = { ...full };
-    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents, groundMarkIds };
+    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, placedArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents, groundMarkIds };
     drawFarCountry();
     let tween = null;
     // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
@@ -8002,12 +8021,14 @@ export function mountViewer(appEl) {
   // to be a PLACE rather than a thing in one, that carries a picture, wears it
   // over the ground it actually covers.
   //
-  // WHERE IT DRAWS, and why it is this layer. `farArtLayer` already sits in
-  // exactly the right seam — above the ground and the mist, below the grid and
-  // below the overlay's glyphs and cards — because the mountain needed that
-  // seam first. Nothing about the stack moves; what changes is that the layer
-  // is now filled from the draw cycle instead of once at mount, so it can be
-  // culled and tier-gated like everything else the camera governs.
+  // WHERE IT DRAWS. `wv-placed-art-layer`, which is new, and the reason it is
+  // new is written where it is created: the mountain's old layer sat at the
+  // FRONT of the svg, which is under the town's generated ground, so a picture
+  // hung on a district was painted and then buried. On open country, where the
+  // mountain lives, there was no ground to be under and nobody noticed. The new
+  // layer sits after the ground and before the grid, and it is filled from the
+  // draw cycle rather than once at mount, so it is culled and tier-gated like
+  // everything else the camera governs.
   //
   // THE TIERS. `far` and `mid` only. `near` is the card-and-room world, where a
   // reader is close enough that the house cards and the furnishing pass are
@@ -8022,8 +8043,8 @@ export function mountViewer(appEl) {
   // it bounds the cards.
   const placedArtSpanM = (m) => Math.max(Number(m?.extent?.w) || 0, Number(m?.extent?.h) || 0);
   function drawPlacedArt(bounds, tier) {
-    if (!mapCtx?.farArtLayer) return 0;
-    if (tier === "near") { mapCtx.farArtLayer.innerHTML = ""; return 0; }
+    if (!mapCtx?.placedArtLayer) return 0;
+    if (tier === "near") { mapCtx.placedArtLayer.innerHTML = ""; return 0; }
     const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
     const floor = Number(state.drawDials.placed_art_min_m);
     // …AND A CEILING NOBODY ASKED FOR, which is worth one line. The record
@@ -8054,7 +8075,7 @@ export function mountViewer(appEl) {
         id: m.id,
         fit: "meet",
       });
-    mapCtx.farArtLayer.innerHTML = s;
+    mapCtx.placedArtLayer.innerHTML = s;
     return hung.length;
   }
 

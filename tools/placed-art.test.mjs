@@ -121,7 +121,7 @@ test("the mist stayed behind — it is the corridor's weather, not a mark's pict
   const far = SOURCE.slice(SOURCE.indexOf("function drawFarCountry()"));
   const body = far.slice(0, far.indexOf("\n  }"));
   assert.match(body, /mistLayer\.innerHTML = mistBandSVG\(/, "drawFarCountry still lays the mist");
-  assert.doesNotMatch(body, /farArtLayer/, "and no longer touches the art layer");
+  assert.doesNotMatch(body, /ArtLayer/, "and no longer touches any art layer");
 });
 
 test("the rule reads the whole record and is bounded by the viewport, not the radial", () => {
@@ -204,7 +204,7 @@ async function readArt({ zoomIn = 0 } = {}) {
     null, { timeout: 60_000 }).catch(() => {});
   const state = () => page.evaluate(() => [
     document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? "-",
-    document.querySelectorAll("#wv-far-art-layer .wv-far-art").length,
+    document.querySelectorAll("#wv-placed-art-layer .wv-far-art").length,
     document.querySelectorAll("#wv-overlay [data-id]").length,
   ].join("/"));
   const settle = async () => {
@@ -233,7 +233,7 @@ async function readArt({ zoomIn = 0 } = {}) {
     await settle();
   }
   const read = await page.evaluate((hungId) => {
-    const layer = document.getElementById("wv-far-art-layer");
+    const layer = document.getElementById("wv-placed-art-layer");
     const overlay = document.getElementById("wv-overlay");
     const arts = [...(layer?.querySelectorAll(".wv-far-art") ?? [])];
     return {
@@ -251,6 +251,18 @@ async function readArt({ zoomIn = 0 } = {}) {
       // the layer must paint BEFORE the overlay, so the picture is under the glyphs
       artBeforeOverlay: !!(layer && overlay
         && (layer.compareDocumentPosition(overlay) & Node.DOCUMENT_POSITION_FOLLOWING)),
+      // …and AFTER the ground, so it is not buried under it. This is the half
+      // that was wrong and shipped green: the old layer sat at the front of the
+      // svg, the generated ground appends its paper and washes later, and the
+      // picture was painted and then covered. Both grounds are checked, since
+      // the atlas takes one road (`base`) and the generated town another
+      // (`.wv-tg-paper`), and a seam that only holds on one of them is not one.
+      artAfterGround: (() => {
+        const ground = document.querySelector(".wv-tg-paper") ?? document.querySelector("#wv-ground-base, .wv-ground-base");
+        if (!layer || !ground) return null;              // no ground drawn: not an answer
+        return !!(ground.compareDocumentPosition(layer) & Node.DOCUMENT_POSITION_FOLLOWING);
+      })(),
+      groundDrawn: !!document.querySelector(".wv-tg-paper, #wv-ground-base, .wv-ground-base"),
       mist: document.querySelectorAll("#wv-mist-layer *").length,
       overlayMarks: overlay?.querySelectorAll("[data-id]").length ?? 0,
     };
@@ -297,6 +309,12 @@ test("THE PAGE — a large mark with a picture hangs it; a small one does not; n
 
   // THE SEAM: under the glyphs, over the ground
   assert.equal(far.artBeforeOverlay, true, "the art layer paints before the overlay");
+  assert.equal(far.groundDrawn, true, "a ground is actually drawn, so the next line is answerable");
+  assert.equal(far.artAfterGround, true,
+    "the art layer paints AFTER the ground — a picture on a district is on it, not under it");
+  // ⚑ THE FLIP: put the layer back at svg.firstChild, where the mountain's was,
+  //   and this reds while every other assertion here stays green — which is
+  //   exactly how the bug got as far as a screenshot.
   assert.ok(far.mist > 0, "and the mist is still laid along the corridor");
 
   // …and the mountain's own picture now comes off its mark
