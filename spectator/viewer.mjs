@@ -6684,6 +6684,25 @@ export function mountViewer(appEl) {
       disciplineAtlasImages(doc);
       svg.removeAttribute("width"); svg.removeAttribute("height");
       svg.querySelectorAll("script").forEach((el) => el.remove());
+      // THE BACKDROP LOSES ITS WORDS (Keemin, 2026-09-12, looking at dev: "the
+      // text for the regions is quite hard to read. there are a couple of other
+      // random phrases like 'tended, never owned' and stuff on the map, which
+      // don't need to be there… for now I think we can just remove those names
+      // from the backdrop").
+      //
+      // 31 <text> elements on the shipped picture, counted on train/2026-w38:
+      // 12 region-label, 13 region-founder (one of them IS "tended, never owned
+      // — illuminator"), 6 open-ground-label captions. They are baked into the
+      // atlas at render time, so the only place a reader of the World page can
+      // be rid of them is here, as the picture is imported.
+      //
+      // ONLY THE BACKDROP. /atlas/ground.html opened directly is a MAP and keeps
+      // every word — nothing about the site's file, the town's renderer or that
+      // page changes. And the generated fallback's own twelve region names are
+      // deliberately untouched: they are never on screen while the picture
+      // loads, and whether a region should say its name at far is a separate
+      // conversation Keemin and Wright have not had.
+      svg.querySelectorAll("text").forEach((el) => el.remove());
       const base = new URL(ATLAS_GROUND_URL, location.origin);
       svg.querySelectorAll("image").forEach((im) => {
         const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
