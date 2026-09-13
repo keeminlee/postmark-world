@@ -137,6 +137,9 @@ async function readGround(port) {
       // querySelectorAll("image") counted 8 where the fixture planted 2.
       images: [...svg.querySelectorAll("image")].filter((im) => !im.closest(VIEWER_LAYERS)).length,
       viewerImages: [...svg.querySelectorAll("image")].filter((im) => im.closest(VIEWER_LAYERS)).length,
+      tier: document.getElementById("wv-overlay")?.getAttribute("data-tier") ?? "-",
+      hungArt: document.querySelectorAll("#wv-placed-art-layer .wv-far-art").length,
+      overlayMarks: document.querySelectorAll("#wv-overlay [data-id]").length,
       scripts: svg.querySelectorAll("script").length,
       hrefs: [...svg.querySelectorAll("image")].filter((im) => !im.closest(VIEWER_LAYERS))
         .map((im) => im.getAttribute("href")),
@@ -166,11 +169,24 @@ test("THE BACKDROP CARRIES NO WORDS — and everything else on the picture survi
 
   // …and the strip took nothing with it. Each of these was true before the line
   // was added, and is asserted so the line cannot have moved it.
-  assert.equal(g.images, 2, `both of the backdrop's pictures survive (viewer's own: ${g.viewerImages})`);
+  // FLIPPED 2026-09-13 (Keemin: "still see the art as squares baked into the
+  // html"). This asserted that the backdrop's two pictures SURVIVED, and that
+  // was right while the backdrop was the only place a region had art. The
+  // viewer now hangs the record's own picture in the region's ring, so a baked
+  // square is the same place said twice.
+  assert.equal(g.images, 0,
+    `no pictures left on the backdrop (viewer's own, still hung: ${g.viewerImages})`);
+  // THE GUARD THAT A ZERO MEANS THE STRIP AND NOT AN EMPTY MAP. It cannot be
+  // "the viewer's own hung pictures are still there": this rig opens at MID,
+  // and since regions stand down at mid there is nothing hung to count — my own
+  // rule, two commits earlier, would have made this read as a pass on a blank
+  // page. What holds at any tier is that the map is drawn at all.
+  assert.ok(g.overlayMarks > 0,
+    `the map is populated (${g.overlayMarks} marks, ${g.viewerTexts} of the viewer's own labels), so a zero above is the strip`);
   assert.equal(g.scripts, 0, "the script strip is unchanged");
   assert.equal(g.atlasScriptRan, false, "…and the stripped script never ran");
-  assert.deepEqual(g.hrefs, ["/atlas/assets/one.jpg", "/atlas/assets/two.jpg"],
-    "relative hrefs are still rebased under /atlas/");
+  assert.deepEqual(g.hrefs, [],
+    "…and no hrefs to rebase, because no pictures are left to carry one");
   // ⚑ THE FLIP: drop the `svg.querySelectorAll("text")` line and `texts` reads 4
   //   while every other assertion here stays green.
 });
