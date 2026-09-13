@@ -7678,6 +7678,23 @@ export function mountViewer(appEl) {
       const furnishable = drawn
         .map((m) => byId.get(m.id) ?? m)
         .filter((m) => isEmbodiedMark(m) && m.extent && !onTheGround.has(m.id))
+        // A PARCEL IS NOT FURNITURE (Keemin's dev screenshot, 2026-09-12: his own
+        // house drawn twice from outside, an unframed square picture sitting on
+        // top of the card). A parcel's drawing IS its card — the picture, the
+        // name, the frame, the household's disc — and this pass hanging
+        // `sceneArtSVG` over the same ground puts a second, differently-sized
+        // copy of the same photograph on it.
+        //
+        // WHY ONLY A SIGNED-IN READER SAW IT, measured on dev: sceneArtSVG needs
+        // markImagePath() on the PARCEL, and the fold gives a parcel no image,
+        // so a spectator's page draws nothing here. A resident's own row does
+        // carry one — that is the 09-11 fill that lets a resident's house wear
+        // its picture — so the branch was reachable only while signed in, which
+        // is why it survived every spectator run including my own.
+        //
+        // Same class as the tint-over-picture in #42, one layer down: two passes
+        // drawing the same piece of ground, each correct about its own job.
+        .filter((m) => m.kind !== "parcel")
         // …AND NOT THE ONES ALREADY WEARING THEIR PICTURE (2026-09-12). At mid
         // this pass draws every furnishable mark as a tinted block ON PURPOSE —
         // "the shape of what is on the ground, without the photograph of it" —
