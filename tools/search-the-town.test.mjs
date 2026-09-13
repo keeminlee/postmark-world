@@ -398,6 +398,38 @@ test("THE PLACEHOLDER IS THE RULED WORDS, AND THE PILL IS BIG ENOUGH FOR THEM", 
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });
 
+test("A WIDER FACE DOES NOT CLIP IT — the width is measured, not counted in ch", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  const { page, errors } = await openPage();
+  const before = await readState(page);
+  assert.ok(before.placeholder.fits, "the baseline is already clipped; nothing below would mean anything");
+
+  // ⚑ THE REAL BUG, REPRODUCED HONESTLY. Keemin's screen resolves the mono stack
+  // to a face whose letters are wider than its "0", so `ch` — which is the
+  // advance of that zero and nothing else — under-measured the sentence and the
+  // last letter went over the edge. Letter-spacing is the same failure in a form
+  // a rig can force: ch does not account for it at all, so a ch-sized box clips
+  // the moment it is applied, exactly as his did.
+  const widened = await page.evaluate(() => {
+    const i = document.querySelector(".wv-search-input");
+    i.style.letterSpacing = "2px";
+    window.dispatchEvent(new Event("resize"));   // the viewer re-measures on resize
+    return true;
+  });
+  assert.ok(widened);
+  await page.waitForTimeout(900);
+  const after = await readState(page);
+
+  assert.ok(after.inputWidth > before.inputWidth,
+    `the field did not respond to a wider face at all (${before.inputWidth} px -> ${after.inputWidth} px),`
+    + " so it is still counting characters rather than measuring the sentence");
+  assert.ok(after.placeholder.fits,
+    `the placeholder is clipped under a wider face: it renders ${after.placeholder.textW} px`
+    + ` inside a ${after.placeholder.inner} px box`);
+  await page.close();
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
+
 test("A HIT DOES WHAT A CLICK DOES — a house opens its column, a region opens the region column", async (t) => {
   if (!chromium) return t.skip(skipReason);
   const { page, errors } = await openPage();
