@@ -32,15 +32,26 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
  *  pictures hung on it by RELATIVE href, and a script the import already
  *  strips. Four <text>, deliberately including the two classes Keemin named. */
 const FIXTURE_GROUND = `<!doctype html><html><body>
-<svg id="map-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
-  <rect x="0" y="0" width="1000" height="1000" fill="#dfe3ea"/>
-  <polygon class="region" points="10,10 400,10 400,400 10,400" fill="#cfe0cf"/>
-  <text class="region-label" x="100" y="100">Evermoon</text>
-  <text class="region-founder" x="100" y="120">tended, never owned — illuminator</text>
-  <text class="open-ground-label" x="600" y="600">upstream — open ground</text>
-  <text x="600" y="640">the far bank —</text>
-  <image href="assets/one.jpg" x="20" y="500" width="60" height="60"/>
-  <image href="assets/two.jpg" x="120" y="500" width="60" height="60"/>
+<svg id="map-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 2400" width="1500" height="2400">
+  <rect x="0" y="0" width="1500" height="2400" fill="#dfe3ea"/>
+  <path class="terrain" d="M 20 20 L 300 20 L 300 300 Z" fill="#cfd8c8"/>
+  <g class="clickable region" data-id="evermoon" tabindex="0" role="button" aria-label="Evermoon">
+    <rect x="40" y="900" width="200" height="300" fill="transparent" pointer-events="all"/>
+    <path d="M 60 950 Q 140 920 220 980 Q 200 1120 90 1140 Z" fill="#cfe0cf"/>
+    <path d="M 80 1000 Q 130 990 170 1030 Z" fill="#c6dcc6"/>
+    <text class="region-label" x="140" y="1050">Evermoon</text>
+    <text class="region-founder" x="140" y="1070">tended, never owned — illuminator</text>
+    <svg x="150" y="930" width="60" height="60"><image href="assets/evermoon.jpg" width="60" height="60"/></svg>
+    <rect x="150" y="930" width="60" height="60" fill="none" stroke="#f5c26b" stroke-width="1.2"/>
+  </g>
+  <g class="clickable region" data-id="the-reach" tabindex="0" role="button" aria-label="The Reach">
+    <rect x="600" y="1500" width="220" height="260" fill="transparent" pointer-events="all"/>
+    <ellipse cx="710" cy="1630" rx="100" ry="120" fill="#cdd9e4"/>
+    <text class="region-label" x="710" y="1630">The Reach</text>
+    <svg x="760" y="1530" width="60" height="60"><image href="assets/the-reach.jpg" width="60" height="60"/></svg>
+    <rect x="760" y="1530" width="60" height="60" fill="none" stroke="#f5c26b" stroke-width="1.2"/>
+  </g>
+  <path class="water" d="M 900 100 L 1200 400 L 900 700 Z" fill="#8fa9c2"/>
   <script>window.__atlasRan = true;</script>
 </svg>
 </body></html>`;
@@ -145,6 +156,14 @@ async function readGround(port) {
         .map((im) => im.getAttribute("href")),
       atlasScriptRan: !!window.__atlasRan,
       generatedRegionLabels: svg.querySelectorAll(".wv-tg-region-label").length,
+      // inside the region groups, after the strips
+      regionGroups: svg.querySelectorAll("g.region").length,
+      inRegionFrames: svg.querySelectorAll('g.region rect[fill="none"]').length,
+      inRegionInnerSvgs: svg.querySelectorAll("g.region svg").length,
+      inRegionHitRects: svg.querySelectorAll('g.region rect[fill="transparent"]').length,
+      inRegionWashes: svg.querySelectorAll("g.region path, g.region ellipse").length,
+      // …and what lives OUTSIDE them, which is the picture's actual job
+      terrainOutside: [...svg.querySelectorAll("path.terrain, path.water")].filter((e) => !e.closest("g.region")).length,
     };
   });
   await page.close();
@@ -164,8 +183,15 @@ test("THE BACKDROP CARRIES NO WORDS — and everything else on the picture survi
 
   assert.equal(g.texts, 0,
     `no words on the backdrop: the fixture's four <text> are gone (left: ${g.backdropTextSample.join(" | ")})`);
-  assert.ok(g.viewerTexts > 0,
-    `…and the viewer's OWN labels are untouched and still there (${g.viewerTexts}), so a zero above is the strip and not an empty page`);
+  // THE GUARD THAT A ZERO MEANS THE STRIP AND NOT AN EMPTY PAGE. It was "the
+  // viewer's own labels are still there", and that stopped holding the moment
+  // the fixture became the picture's real 1500x2400 sheet: at that scale the
+  // viewer draws no labels, so the guard read zero and red. The third time one
+  // of my own changes has quietly invalidated one of my own guards, and the
+  // same fix each time — assert what holds at any scale, which is that the map
+  // is drawn at all.
+  assert.ok(g.overlayMarks > 0,
+    `the map is populated (${g.overlayMarks} marks, ${g.viewerTexts} of the viewer's own labels), so a zero above is the strip`);
 
   // …and the strip took nothing with it. Each of these was true before the line
   // was added, and is asserted so the line cannot have moved it.
@@ -207,4 +233,25 @@ test("the generated fallback keeps its region names — the strip is on the pict
     `the generated ground still names its regions (${g.generatedRegionLabels})`);
   assert.equal(g.texts, g.generatedRegionLabels,
     "and every one of its words is a region name — the strip never reached this path");
+});
+
+test("THE REGION GROUPS LOSE THEIR FRAMES — and the picture's own art is untouched", async (t) => {
+  if (!chromium) { t.skip("NO PLAYWRIGHT — the frame strip went UNGUARDED."); return; }
+  // Keemin, 2026-09-13: "we still have the region image borders baked into the
+  // background map." The words went yesterday, the thumbnails this morning, and
+  // what was left was an amber rectangle framing a photograph that is not there.
+  const g = await readGround(withAtlas);
+  assert.equal(g.mounted, true);
+  assert.equal(g.ground, "atlas", "it is the picture — the strip only lives on this path");
+  assert.equal(g.regionGroups, 2, "the fixture's two region groups are still there");
+
+  assert.equal(g.inRegionFrames, 0, "no amber frame rects left inside a region group");
+  assert.equal(g.inRegionInnerSvgs, 0, "no empty inner <svg> wrappers either");
+  assert.equal(g.inRegionHitRects, 0,
+    "and no transparent hit rect: the backdrop owns no clicks, the overlay does");
+
+  // THE GUARD THAT THIS IS A STRIP AND NOT A WIPE. The water and terrain live
+  // outside the region groups and are the picture's actual job.
+  assert.equal(g.terrainOutside, 2, "the terrain and the water outside the groups survive");
+  // ⚑ THE FLIP: drop the g.region loop and the three counts above read 2, 2, 2.
 });
