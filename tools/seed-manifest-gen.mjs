@@ -46,7 +46,7 @@ function extractObjInline(name) {
   return new Function("return " + m[1])();
 }
 const HOME_XY = extractObjMultiline("HOME_XY");
-const ORIGIN = extractObjInline("CENTRE_XY"); // Ferry's crossing — the grid origin
+const ORIGIN = extractObjInline("CENTRE_XY"); // the Origin — the grid origin
 console.log(`extracted: ${Object.keys(HOME_XY).length} home anchors, origin (${ORIGIN.x},${ORIGIN.y})`);
 
 const town = JSON.parse(readFileSync(join(ATLAS, "town.json"), "utf8"));
@@ -117,7 +117,7 @@ const unmatched = Object.keys(HOME_XY).filter((id) => !homes.some((h) => h.id ==
 if (unmatched.length) console.log("anchors with no placed home (info, expected for insets):", unmatched.join(", "));
 
 const manifest = {
-  _note: "Seeding-fleet input: placed homes only (the unplaced join when the Illuminator confirms them — Keemin, 2026-07-22). Grid meters derived by extraction from render-town.mjs HOME_XY at 5 m/px, origin = Ferry's crossing (CENTRE_XY). Build intermediate, not world canon — the membrane keeps WORLD/ to backed content only.",
+  _note: "Seeding-fleet input: placed homes only (the unplaced join when the Illuminator confirms them — Keemin, 2026-07-22). Grid meters derived by extraction from render-town.mjs HOME_XY at 5 m/px, origin = the Origin (CENTRE_XY). Build intermediate, not world canon — the membrane keeps WORLD/ to backed content only.",
   _derived: {
     atlas_source: ATLAS.replaceAll("\\", "/"),
     origin_atlas_px: ORIGIN,

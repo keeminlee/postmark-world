@@ -21,7 +21,7 @@
 //   add --json for machine-readable output
 //
 // sited/parcel: geometry decides — give --at x,y (grid meters east,south of
-//   Ferry's crossing) and, for sited, --extent w,h. A parcel's extent is the
+//   the Origin) and, for sited, --extent w,h. A parcel's extent is the
 //   town's own dial (25×25) and is filled in for you; passing one is refused,
 //   same as at the door.
 // predicated/naming: they nest under the mark they describe — give --parent.
@@ -64,7 +64,7 @@ let parentId, parentDir;
 if (kind === "sited" || kind === "parcel") {
   const at = (opt("--at") ?? "").split(",").map(Number);
   if (at.length !== 2 || !at.every(Number.isFinite))
-    die("sited/parcel placement needs --at x,y", "grid meters east,south of Ferry's crossing — where does this mark stand?");
+    die("sited/parcel placement needs --at x,y", "grid meters east,south of the Origin — where does this mark stand?");
   let extent;
   if (kind === "parcel") {
     if (opt("--extent")) die("a parcel carries no extent — every parcel is the town's 25×25, centred on your at", "drop --extent; the dial is the town's (same refusal the office door gives)");

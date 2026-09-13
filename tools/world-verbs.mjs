@@ -552,7 +552,7 @@ export const CHARTER = {
   light: "Postmark's light comes from the northeast and dies in the southwest (the atlas's settled day-axis).",
   extent: "The whole world is this mark's extent. Everything below is a child of the light.",
   clock: "Effects tick at ferry crossings, twice a day. Fog is the crossing's own weather.",
-  origin: "The grid measures from Ferry's crossing — the centre of the Town Centre. x east, y south, z metres above the sea.",
+  origin: "The grid measures from the Origin ({0,0}, where the ferry lands) — the centre of the Town Centre. x east, y south, z metres above the sea.",
 };
 
 // ───────────────────────── helpers ─────────────────────────────────────────
