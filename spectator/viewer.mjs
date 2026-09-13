@@ -8092,12 +8092,65 @@ export function mountViewer(appEl) {
     // day somebody gave it art. A mark wider than the whole painting is not a
     // place; it is the edge of the map.
     const ceiling = paintingWidthM();
-    const hung = allMarks().filter((m) => {
+    // ── ONE PICTURE DEEP (Keemin, 2026-09-12: the mark must be a direct child
+    //    of the mark you are viewing from, "so nested large marks do not
+    //    clutter") ────────────────────────────────────────────────────────────
+    //
+    // THE EDGE IS `placementParent`, measured rather than assumed: of the 53
+    // marks at or above the dial, 52 carry `placementParent` and ZERO carry
+    // `parent`. The one that carries neither is `the-town/let-there-be-light`,
+    // the root everything else hangs off. `parent` is read as a fallback only
+    // because the enclosing rule next door reads both and a record that starts
+    // using it should not silently escape this.
+    //
+    // WHAT IS ASKED IS DEPTH, AND THE HONEST MEASURE OF DEPTH IS THE HANGING
+    // SET, NOT THE ROOT. A literal "direct child of the root" reads well and
+    // deletes the mountain: the mark that carries Pando's picture is
+    // `vermillion/the-pando-peak`, whose placementParent is
+    // `the-town/pando-peak` — so the pictured mark is a GRANDCHILD of the root
+    // and would stop hanging, which is the one outcome the ruling explicitly
+    // did not want. What the ruling is actually protecting against is two
+    // pictures stacked on the same ground. So: a mark hangs unless some mark
+    // BETWEEN it and where you stand is hanging one too.
+    //
+    // That satisfies every case the ruling named. A district hangs and its
+    // nested large child does not, whenever the district itself has a picture.
+    // A nested child of a picture-less district DOES hang, which is right —
+    // nothing is covering it. Pando hangs, because `the-town/pando-peak` has no
+    // image and so is not hanging anything for it to hide under. And it needs
+    // no new state: when a district becomes somewhere you can stand, the walk
+    // already stops at `sceneRoomId` and the rule extends unchanged.
+    //
+    // THE GROUND YOU STAND ON IS NOT A HANGING. Inside a mark's own scene its
+    // picture is the floor, drawn by the room's ground, and hanging it again
+    // over itself would be a picture of the room inside the room.
+    const from = sceneRoomId;
+    const byMarkId = new Map(allMarks().map((m) => [m.id, m]));
+    const stepUp = (m) => byMarkId.get(m?.placementParent ?? m?.parent ?? "");
+    const bigEnough = (m) => {
       if (!m?.at || !m.extent) return false;
       const span = placedArtSpanM(m);
       if (!(span >= floor)) return false;
       if (Number.isFinite(ceiling) && span > ceiling) return false;
-      if (!markImagePath(m)) return false;
+      return !!markImagePath(m);
+    };
+    /** is some mark between this one and where the reader stands hanging a
+     *  picture of its own? Cycle-safe and depth-capped: the record's chains run
+     *  three or four deep and a cycle in it must not take the painting down. */
+    const underAnotherPicture = (m) => {
+      const seen = new Set([m.id]);
+      for (let up = stepUp(m), steps = 0; up && steps < 12; up = stepUp(up), steps++) {
+        if (seen.has(up.id)) break;          // the record disagrees with itself; draw rather than hang
+        if (from && up.id === from) return false;  // reached the ground underfoot
+        if (bigEnough(up)) return true;
+        seen.add(up.id);
+      }
+      return false;
+    };
+    const hung = allMarks().filter((m) => {
+      if (!bigEnough(m)) return false;
+      if (from && m.id === from) return false;   // your own ground is not a hanging
+      if (underAnotherPicture(m)) return false;
       return markInDrawnBounds(m, bounds);
     // largest first, so a district's picture lies under the smaller ground
     // inside it rather than blotting it out — the placeholder pass's own rule
