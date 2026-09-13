@@ -41,7 +41,19 @@ import { searchTheTown, townRegionMarks } from "../spectator/viewer.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SERVED = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
-const markOf = (id) => SERVED.marks.find((m) => m?.id === id);
+
+// ── the fixture, derived and checked before anything leans on it ───────────
+
+test("THE SUBJECTS COME FROM THE RECORD, AND THE RECORD STILL CARRIES THEM", () => {
+  assert.ok(HOUSE, NO_HOUSE);
+  assert.ok(REGION, NO_REGION);
+  assert.ok(PLACELESS, NO_PLACELESS);
+  // and each is the kind of thing the test below believes it is
+  assert.equal(HOUSE.kind, "parcel");
+  assert.ok(Number.isFinite(HOUSE.at?.x), "the house must have somewhere to be");
+  assert.ok(!PLACELESS.at, "the placeless subject must actually be placeless");
+  assert.ok(HOUSE_Q && REGION_Q, "a subject with no slug cannot be searched for by name");
+});
 
 // ── the pure part ──────────────────────────────────────────────────────────
 
@@ -99,20 +111,52 @@ const freePort = () => new Promise((resolve, reject) => {
 const CLEANUP = [];
 after(() => { for (const stop of CLEANUP.reverse()) { try { stop(); } catch { /* already gone */ } } });
 
-// real ids from the record this rig serves
-const HOUSE_Q = "chez-antoine";                       // berthillon/chez-antoine, a parcel
-const HOUSE_ID = "berthillon/chez-antoine";
-const REGION_ID = "limen/the-threshold-district";
-const REGION_Q = "the-threshold-district";
-const PLACELESS_ID = "the-town/resident";             // kind class, at null
+// ── THE FIXTURE OWNS NOTHING; THE RECORD DOES ──────────────────────────────
+//
+// These ids were pinned by hand in the first revision — "berthillon/chez-antoine",
+// "limen/the-threshold-district", "the-town/resident". `WORLD/world-state.json`
+// is rewritten by every crossing, so a mark that moves, is renamed or is
+// withdrawn would red this suite in a week and cost somebody an hour diagnosing
+// a DECAY as a defect. A test over the live record asserts relations and derives
+// its subjects; only a test that owns its own data may name them.
+//
+// UNAMBIGUOUS, NOT MERELY FIRST. The query is the slug after the slash, and the
+// list is capped at eight — so a slug that other ids also contain (the record
+// has "chez-antoine" alongside "chez-antoine-bedroom" and
+// "chez-antoine-tall-windows") could push its own subject past the cap and red
+// for a reason that has nothing to do with search. Each subject is therefore the
+// first whose slug no other mark id contains, which is still entirely derived.
+const slugOf = (id) => String(id ?? "").split("/")[1] ?? "";
+const namesOneThing = (mark) => {
+  const s = slugOf(mark?.id);
+  return !!s && SERVED.marks.filter((m) => String(m?.id ?? "").includes(s)).length === 1;
+};
+const PLACED_PARCELS = SERVED.marks.filter((m) => m?.kind === "parcel" && m.at && Number.isFinite(m.at.x));
+const REGION_MARKS = townRegionMarks(SERVED.marks);
+const PLACELESS_MARKS = SERVED.marks.filter((m) => m?.id && !m.at);
+
+const HOUSE = PLACED_PARCELS.find(namesOneThing) ?? null;
+const REGION = REGION_MARKS.find(namesOneThing) ?? null;
+const PLACELESS = PLACELESS_MARKS[0] ?? null;
+
+const HOUSE_ID = HOUSE?.id ?? "", HOUSE_Q = slugOf(HOUSE?.id);
+const REGION_ID = REGION?.id ?? "", REGION_Q = slugOf(REGION?.id);
+const PLACELESS_ID = PLACELESS?.id ?? "";
+// what to say when the record stopped carrying one, so the red names the record
+// and not the search
+const NO_HOUSE = `the record carries no unambiguously-named placed parcel (${PLACED_PARCELS.length} placed parcels in ${SERVED.marks.length} marks)`;
+const NO_REGION = `the record carries no unambiguously-named region mark (${REGION_MARKS.length} region marks)`;
+const NO_PLACELESS = `the record carries no placeless mark (${SERVED.marks.length} marks, all with a place?)`;
+
 const PERSON = { handle: "rig-person", x: 1200, y: -800 };
 // the skeleton's own registration, the same numbers the viewer parses
 const ORIGIN_PX = { x: 485, y: 760 }, M_PER_PX = 5;
 const PERSON_PX = { x: ORIGIN_PX.x + PERSON.x / M_PER_PX, y: ORIGIN_PX.y + PERSON.y / M_PER_PX };
 
-const STANDPOINT = { x: 221, y: 95.5 };
+// the reader stands on the house the record chose, so the standpoint moves with it
+const STANDPOINT = { x: HOUSE?.at?.x ?? 0, y: HOUSE?.at?.y ?? 0 };
 const READ = {
-  handle: "berthillon",
+  handle: String(HOUSE?.household ?? HOUSE?.by ?? "rig-resident"),
   standpoint: { ...STANDPOINT, name: "the rig's standpoint" },
   within: [],
   nearby: [],
@@ -132,7 +176,7 @@ async function bootStubOffice() {
     res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
     if (req.method === "OPTIONS") { res.writeHead(204); return res.end(); }
     const send = (b) => { res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify(b)); };
-    if (url.pathname === "/ops/whoami") return send({ principal: "rig", handles: ["berthillon"] });
+    if (url.pathname === "/ops/whoami") return send({ principal: "rig", handles: [READ.handle] });
     if (url.pathname === "/world/my-marks") {
       return send({ drafts: [], docket: [], published: [], backed: [],
         counts: { drafts: 0, docket: 0, published: 0, backed: 0 }, complete: true });
@@ -200,7 +244,7 @@ async function openPage({ signedIn = false } = {}) {
     "http://127.0.0.1:" + office.port);
   if (signedIn) {
     await page.addInitScript(() => { try { localStorage.setItem("pm_key", "rig-key-not-a-secret"); } catch {} });
-    await page.addInitScript(() => { try { localStorage.setItem("pm.world.act_as", "berthillon"); } catch {} });
+    await page.addInitScript((h) => { try { localStorage.setItem("pm.world.act_as", h); } catch {} }, READ.handle);
   }
   await page.goto("http://localhost:" + rig.port + "/", { waitUntil: "domcontentloaded", timeout: 90_000 });
   await page.waitForSelector(".wv-telling-pane", { state: "attached", timeout: 90_000 });
@@ -250,6 +294,7 @@ test("A HIT DOES WHAT A CLICK DOES — a house opens its column, a region opens 
   if (!chromium) return t.skip(skipReason);
   const { page, errors } = await openPage();
 
+  assert.ok(HOUSE, NO_HOUSE);
   const house = await search(page, HOUSE_Q);
   assert.ok(house.hits.some((h) => h.key === HOUSE_ID),
     "the house was not found by name: " + JSON.stringify(house.hits) + " / " + house.none);
@@ -265,6 +310,7 @@ test("A HIT DOES WHAT A CLICK DOES — a house opens its column, a region opens 
 
   // A REGION IS A PLACED MARK LIKE ANY OTHER, so the same verb opens the region
   // column — the reviewer asked for this to be said out loud.
+  assert.ok(REGION, NO_REGION);
   const region = await search(page, REGION_Q);
   assert.ok(region.hits.some((h) => h.key === REGION_ID),
     "the region was not found: " + JSON.stringify(region.hits));
@@ -281,6 +327,7 @@ test("A MARK WITH NOWHERE TO GO IS STILL FOUND, AND STILL SELECTABLE", async (t)
   if (!chromium) return t.skip(skipReason);
   const { page, errors } = await openPage();
   const before = await readState(page);
+  assert.ok(PLACELESS, NO_PLACELESS);
   const found = await search(page, PLACELESS_ID);
   assert.ok(found.hits.some((h) => h.key === PLACELESS_ID),
     "641 of this record's marks have no place; a search that drops them looks complete and is not: "
@@ -316,6 +363,7 @@ test("A RESIDENT HIT MOVES THE CAMERA TO THEIR BODY", async (t) => {
 test("THE SAME HOUSE IS FOUND SIGNED IN — the read is 29 records, the houses are all there", async (t) => {
   if (!chromium) return t.skip(skipReason);
   const { page, errors } = await openPage({ signedIn: true });
+  assert.ok(HOUSE, NO_HOUSE);
   const found = await search(page, HOUSE_Q);
   assert.ok(found.hits.some((h) => h.key === HOUSE_ID),
     "a signed-in reader could not find a house the town has: this is the townHouses claim failing, "
