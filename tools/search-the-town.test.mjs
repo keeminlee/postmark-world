@@ -289,6 +289,42 @@ const readState = (page) => page.evaluate(() => {
     searchValue: document.querySelector(".wv-search-input")?.value ?? null,
     openButtons: document.querySelectorAll(".wv-search-open").length,
     inputWidth: Math.round(document.querySelector(".wv-search-input")?.getBoundingClientRect().width ?? 0),
+    // ⚑ NOT scrollWidth. Measured: an input's scrollWidth tracks its VALUE, not
+    // its placeholder — squeezed to 40 px with the placeholder showing it read
+    // scrollWidth 41 against clientWidth 41, so a clipped placeholder is
+    // invisible to it and a falsifier built on it could not fail. The
+    // placeholder's true width is measured by rendering it in the input's own
+    // computed font and comparing against the inner box.
+    placeholder: (() => {
+      const i = document.querySelector(".wv-search-input");
+      if (!i) return null;
+      const cs = getComputedStyle(i);
+      const span = document.createElement("span");
+      span.style.cssText = "position:absolute;visibility:hidden;white-space:pre;font:"
+        + cs.font + ";letter-spacing:" + cs.letterSpacing;
+      span.textContent = i.placeholder;
+      document.body.appendChild(span);
+      const textW = span.getBoundingClientRect().width;
+      span.remove();
+      const inner = i.getBoundingClientRect().width
+        - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+        - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth);
+      return { text: i.placeholder, textW: Math.round(textW), inner: Math.round(inner), fits: textW <= inner + 0.5 };
+    })(),
+    layout: (() => {
+      const row = document.querySelector(".wv-mapctl");
+      if (!row) return null;
+      const kids = [...row.children].map((c) => Math.round(c.getBoundingClientRect().top));
+      const tools = document.querySelector(".wv-mapctl-tools");
+      return {
+        lines: new Set(kids).size,
+        toolsBesidePill: kids.length > 1 && kids[1] === kids[0],
+        toolsOnOneLine: tools
+          ? new Set([...tools.children].map((c) => Math.round(c.getBoundingClientRect().top))).size === 1
+          : false,
+        rowFits: Math.round(row.getBoundingClientRect().width) <= window.innerWidth,
+      };
+    })(),
     found: [...document.querySelectorAll("#wv-walk-layer .is-found[data-handle]")]
       .map((e) => e.getAttribute("data-handle")),
   };
@@ -319,18 +355,45 @@ test("THE FIELD IS ALWAYS THERE, AND THERE IS NO BUTTON BESIDE IT", async (t) =>
   assert.equal(glyph.hidden, "true", "the adornment is announced beside the field's own label");
   assert.ok(glyph.inside, "the magnifier is not inside the pill");
 
-  // THE PILL SHRINKS BEFORE THE ROW WRAPS. A fixed width would push the five
-  // circles onto a second line on a phone.
+  // ⚑ THE PILL NO LONGER SHRINKS, AND THAT IS THE RULING (Keemin: "make sure the
+  // bubble is big enough that the text fits"). It holds its sentence at every
+  // width and the CONTROLS move instead — see the test below.
   await page.setViewportSize({ width: 400, height: 800 });
   await page.waitForTimeout(600);
   const at400 = await readState(page);
-  assert.ok(at400.inputWidth > 0 && at400.inputWidth < at1500.inputWidth,
-    `the field did not shrink on a narrow screen: ${at400.inputWidth} px at 400 wide against ${at1500.inputWidth} px at 1500`);
-  const fits = await page.evaluate(() => {
-    const row = document.querySelector(".wv-mapctl");
-    return row ? Math.round(row.getBoundingClientRect().width) <= window.innerWidth : false;
-  });
-  assert.ok(fits, "the control row is wider than a 400 px screen");
+  assert.equal(at400.inputWidth, at1500.inputWidth,
+    `the field changed width between 1500 and 400 (${at1500.inputWidth} -> ${at400.inputWidth}); it must hold its sentence`);
+  assert.ok(at400.layout.rowFits, "the control row is wider than a 400 px screen");
+  await page.close();
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
+
+test("THE PLACEHOLDER IS THE RULED WORDS, AND THE PILL IS BIG ENOUGH FOR THEM", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  const { page, errors } = await openPage();
+
+  const WORDS = "find a house or resident";
+  const wide = await readState(page);
+  assert.equal(wide.placeholder.text, WORDS, "the placeholder is not the ruled sentence");
+  assert.ok(wide.placeholder.fits,
+    `the placeholder is clipped at 1500: it renders ${wide.placeholder.textW} px inside a ${wide.placeholder.inner} px box`);
+
+  // the same at a phone's width, where the temptation is to shrink the field
+  await page.setViewportSize({ width: 400, height: 800 });
+  await page.waitForTimeout(600);
+  const narrow = await readState(page);
+  assert.equal(narrow.placeholder.text, WORDS);
+  assert.ok(narrow.placeholder.fits,
+    `the placeholder is clipped at 400: it renders ${narrow.placeholder.textW} px inside a ${narrow.placeholder.inner} px box`);
+
+  // ⚑ AND THE CONTROLS MOVE AS ONE. As five siblings they wrapped raggedly —
+  // four beside the field at 440 px, three at 400, the rest dropped. Grouped,
+  // they go below the field together or not at all, which is what "the pill
+  // takes its own line above the circles" actually requires.
+  assert.equal(narrow.layout.lines, 2, "the row did not wrap at 400 px");
+  assert.ok(!narrow.layout.toolsBesidePill, "the controls are still sharing the field's line at 400 px");
+  assert.ok(narrow.layout.toolsOnOneLine, "the controls split across two lines between themselves");
+  assert.ok(narrow.layout.rowFits, "the control row overflows a 400 px screen");
   await page.close();
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });
