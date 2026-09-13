@@ -6698,10 +6698,13 @@ export function mountViewer(appEl) {
       //
       // ONLY THE BACKDROP. /atlas/ground.html opened directly is a MAP and keeps
       // every word — nothing about the site's file, the town's renderer or that
-      // page changes. And the generated fallback's own twelve region names are
+      // page changes. And the generated fallback's own region names are
       // deliberately untouched: they are never on screen while the picture
       // loads, and whether a region should say its name at far is a separate
-      // conversation Keemin and Wright have not had.
+      // conversation Keemin and Wright have not had. (No count here on purpose
+      // — the fallback draws thirteen today, the brief and this comment both
+      // said twelve, and a number in prose reds the day a region is founded
+      // while saying nothing about the strip. The test asserts the relation.)
       svg.querySelectorAll("text").forEach((el) => el.remove());
       const base = new URL(ATLAS_GROUND_URL, location.origin);
       svg.querySelectorAll("image").forEach((im) => {
