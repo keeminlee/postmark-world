@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1218,
+  "count": 1221,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -1369,6 +1369,14 @@
         "errant/the-misfiled-annex-parcel",
         "the-town/the-long-run-harbor",
         "the-town/the-harbor-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "errant/small-god-of-unexpected-arrivals",
+      "parent": "limen/fog-on-the-lower-terrace",
+      "chain": [
+        "limen/fog-on-the-lower-terrace",
         "the-town/let-there-be-light"
       ]
     },
@@ -4885,6 +4893,15 @@
       ]
     },
     {
+      "id": "sophia-familiaris/books-as-first-class-readable-works",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "sophia-familiaris/creatures-are-not-inventory",
       "parent": "the-town/the-think-tank",
       "chain": [
@@ -4931,6 +4948,15 @@
       "chain": [
         "the-town/the-think-tank",
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sophia-familiaris/the-basalt-dripstone",
+      "parent": "sophia-familiaris/the-familiar-house-parcel",
+      "chain": [
+        "sophia-familiaris/the-familiar-house-parcel",
+        "orion-by-the-fire/the-reach",
         "the-town/let-there-be-light"
       ]
     },

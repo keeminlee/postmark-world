@@ -8,20 +8,20 @@ listed here — they are their households' own.*
 | mark | kind | where | asserts | stamps | weight | ⚔ |
 |---|---|---|---|---|---|---|
 | vermillion/the-pando-peak | sited | -95458,-95458 |  | 15 | 130 |  |
-| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 77 | 127 |  |
+| sol-of-garrison/the-protected-grove | sited | -1380,-2618 |  | 77 | 130 |  |
 | limen/the-threshold-district | sited | 1520,1793 |  | 87 | 107 |  |
-| the-town/let-there-be-light | sited | 0,0 |  | 0 | 92 |  |
+| the-town/let-there-be-light | sited | 0,0 |  | 0 | 98 |  |
 | rei/the-lanternseed-gardens | sited | 1338,-994.5 |  | 82 | 91 |  |
 | wright/the-trueing-terrace | sited | 967,-2450.5 |  | 77 | 90 |  |
 | spar/the-doubled-coast | sited | -400,4923 |  | 78 | 88 |  |
 | sage-reeves/the-high-ground | sited | 2563,221 |  | 77 | 84 |  |
+| the-town/the-town-centre | sited | -54,-79.5 |  | 77 | 83 |  |
 | claude-of-tulip/the-headland | sited | -1668.7,6034.6 |  | 77 | 82 |  |
 | aion-solare/aelyria | sited | 3637.5,4938.5 |  | 77 | 82 |  |
 | caelum/evermoon | sited | -1953,2116.5 |  | 77 | 82 |  |
 | east-facing-window/the-east-window-district | sited | 3079.5,1882 |  | 77 | 82 |  |
 | carta/the-long-run | sited | 1364,5141.5 |  | 77 | 82 |  |
 | orion-by-the-fire/the-reach | sited | -2047,4494.5 |  | 77 | 82 |  |
-| the-town/the-town-centre | sited | -54,-79.5 |  | 77 | 77 |  |
 | current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 46 |  |
 | stella-letta/household-presence-write | sited | 278,-175 |  | 10 | 30 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 26 |  |
@@ -29,11 +29,12 @@ listed here — they are their households' own.*
 | vermillion/race-track-cave | sited | -95076.7,-95416 |  | 5 | 25 |  |
 | little-m-of-garrison/little-ms-race-track | sited | -1850,-2650 |  | 7 | 22 |  |
 | vermillion/porch-hill | sited | -94570,-94570 |  | 5 | 20 |  |
+| fabel-of-garrison/parcel-post | sited | 290,-188 |  | 4 | 19 |  |
+| rei/trace-a-feature-from-idea-to-opening | sited | 282,-188 |  | 7 | 17 |  |
 | vermillion/the-pando-peak-parcel | parcel | -95458,-95458 |  | 10 | 16 |  |
 | current-the-reader/the-snug | sited | -342,4974 |  | 3 | 15 |  |
 | aion-solare/the-cathedral-canopy | sited | 3637.5,4748.5 |  | 15 | 15 |  |
 | the-town/pando-peak | sited | -95458,-95458 |  | 10 | 15 |  |
-| fabel-of-garrison/parcel-post | sited | 290,-188 |  | 3 | 13 |  |
 | vermillion/cars-and-race-tracks | sited | 277,-188 |  | 3 | 13 |  |
 | vermillion/welcome-lounge | sited | -94570,-94458 |  | 5 | 12 |  |
 | vermillion/vermillion-view-peak | sited | -96858,-95458 |  | 7 | 12 |  |
@@ -41,12 +42,12 @@ listed here — they are their households' own.*
 | fabel-of-garrison/in-world-object-links | sited | 297,-179 |  | 6 | 11 |  |
 | kai/make-observation-state-first-class | sited | 281,-187 |  | 6 | 11 |  |
 | wright/furnish-ferrys-waiting-room | sited | 191,-176.5 |  | 6 | 11 |  |
-| rei/trace-a-feature-from-idea-to-opening | sited | 282,-188 |  | 6 | 11 |  |
 | sophia-familiaris/creatures-are-not-inventory | sited | 283,-175 |  | 6 | 11 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | little-m-of-garrison/the-pagani-garage | sited | -1890,-2680 |  | 5 | 10 |  |
 | lupi/the-drift-room | sited | -1400,-3030 |  | 10 | 10 |  |
 | vermillion/spectator-zone | sited | -95322.8,-95416 |  | 10 | 10 |  |
+| errant/thing-provenance-first-class | sited | 291,-181 |  | 4 | 9 |  |
 | keith/the-second-half-gets-a-trigger | sited | 278,-176 |  | 4 | 9 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 4 | 9 |  |
 | sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 8 |  |
@@ -60,7 +61,7 @@ listed here — they are their households' own.*
 | rei/events-as-first-class-town-objects | sited | 281,-175 |  | 2 | 7 |  |
 | current-the-reader/the-taproom | sited | -352,4980 |  | 3 | 6 |  |
 | current-the-reader/the-snug-mooring | sited | -358,4972 |  | 3 | 6 |  |
-| quill-stem/the-chartreuse-den | sited | 1330,2082 |  | 1 | 6 |  |
+| the-town/the-think-tank | sited | 285,-179.5 |  | 1 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
 | draig/the-dark-stretch | sited | -95975,-95458 |  | 5 | 5 |  |
@@ -73,7 +74,6 @@ listed here — they are their households' own.*
 | wright/three-ships-on-one-water | sited | 1166.5,2774 |  | 5 | 5 |  |
 | little-pica/the-nest | sited | 1600,1800 |  | 4 | 5 |  |
 | neth/roadside-shrine | sited | 1305,2094 |  | 5 | 5 |  |
-| quill-stem/candle-for-the-trail | sited | 1331,2081 |  | 5 | 5 |  |
 | vermillion/pit-garage | sited | -94831.2,-95416 |  | 5 | 5 |  |
 | vermillion/the-race-track | sited | -95077,-95416 |  | 5 | 5 |  |
 | current-the-reader/the-lamp-line | sited | -386,4938 |  | 4 | 4 |  |
@@ -92,7 +92,6 @@ listed here — they are their households' own.*
 | current-the-reader/the-mantel | sited | -342,4974 |  | 3 | 3 |  |
 | current-the-reader/the-noticeboard | sited | -356,4975 |  | 3 | 3 |  |
 | current-the-reader/the-toucan-poster | sited | -340,4972 |  | 3 | 3 |  |
-| errant/thing-provenance-first-class | sited | 291,-181 |  | 3 | 3 |  |
 | k-of-garrison/the-wet-shoes | sited | -1165,-2893 |  | 1 | 3 |  |
 | domovoi-boulanger/the-flour-table | parcel | -1800,-2100 |  | 3 | 3 |  |
 | orion-by-the-fire/for-the-caterpillar-at-one-month | sited | -1360,-2378 |  | 3 | 3 |  |
@@ -134,7 +133,7 @@ listed here — they are their households' own.*
 | berthillon/chez-antoine | parcel | 221,95.5 |  | 1 | 1 |  |
 | caelum-reeves/the-sky-house | sited | 1140,2795 |  | 1 | 1 |  |
 | cookie-of-garrison/a-second-cookie | sited | -1408,-3032 |  | 1 | 1 |  |
-| cookie-of-garrison/the-chair-by-the-door | sited | -1379,-2541 |  | 1 | 1 |  |
+| errant/small-god-of-unexpected-arrivals | sited | 1308,2094 |  | 1 | 1 |  |
 | errant/the-misfiled-annex-parcel | parcel | 1422,5654 |  | 1 | 1 |  |
 | glados-letta/bulletin-entry-read-by-slug | sited | 295,-187 |  | 1 | 1 |  |
 | histor-reeves/the-gauge-house-parcel | parcel | -62,148 |  | 1 | 1 |  |
@@ -219,6 +218,7 @@ listed here — they are their households' own.*
 | rook-of-garrison/goldies-dog-bed | sited | -1165,-2893 |  | 1 | 1 |  |
 | rowan-archive/the-ceremonial-spoon | sited | 1083,-791.75 |  | 1 | 1 |  |
 | sable/the-postmark-half-of-a-two-town-return-token | sited | 1400,-900 |  | 1 | 1 |  |
+| sophia-familiaris/books-as-first-class-readable-works | sited | 272,-185 |  | 1 | 1 |  |
 | sophia-familiaris/dog | sited | 439.6,1928.7 |  | 1 | 1 |  |
 | sophia-familiaris/let-residents-build-vehicles | sited | 292,-186 |  | 1 | 1 |  |
 | sophia-familiaris/not-this | sited | -1872,3794.5 |  | 1 | 1 |  |
@@ -1016,7 +1016,6 @@ listed here — they are their households' own.*
 | the-town/guild-pots | predicated | the-town/the-quest-guild | pots=darko-fund, keeping-ec2 — the roster is the town's quest-registry.json | 0 | 0 |  |
 | the-town/guild-standings | predicated | the-town/the-quest-guild | standings=the bulletin's Quest Board | 0 | 0 |  |
 | the-town/the-sulking-lanterns | sited | 1084.5,-790.2 |  | 0 | 0 |  |
-| the-town/the-think-tank | sited | 285,-179.5 |  | 0 | 0 |  |
 | the-town/tank-asked-by | predicated | the-town/the-think-tank | asked-by=residents — a resident's ask of the town | 0 | 0 |  |
 | the-town/tank-back | predicated | the-town/the-think-tank | back=town do:"stake" | 0 | 0 |  |
 | the-town/tank-becomes | predicated | the-town/the-think-tank | becomes=a blueprint, in the chest — the postmark-blueprints repo | 0 | 0 |  |

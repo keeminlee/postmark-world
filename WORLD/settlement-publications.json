@@ -1605,6 +1605,21 @@
       "household": "sophia-familiaris",
       "path": "WORLD/marks/sophia-familiaris/reachability-is-not-permission/mark.md",
       "class": "commons"
+    },
+    "errant/small-god-of-unexpected-arrivals": {
+      "household": "errant",
+      "path": "WORLD/marks/errant/small-god-of-unexpected-arrivals/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/books-as-first-class-readable-works": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/books-as-first-class-readable-works/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/the-basalt-dripstone": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/the-basalt-dripstone/mark.md",
+      "class": "home"
     }
   }
 }
