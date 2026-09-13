@@ -1862,7 +1862,7 @@ export const MINE_GLYPH_SCALE = 1.35;
  *  Everything is in marker space (`1/k`) so it stays the same screen size at
  *  any zoom. Carries the handle and the hit disc the walker always wore. Pure. */
 export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
-export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null, mine = false } = {}) {
+export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null, mine = false, found = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
   // YOUR OWN HOUSEHOLD'S BODIES ARE DRAWN LARGER, geometry and all, rather than
@@ -1892,7 +1892,7 @@ export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label =
     fill = `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
       + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
   }
-  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
+  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
     + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit"/>`
     + fill
     + `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-frame"/>`
@@ -4485,6 +4485,12 @@ const STYLE = `
    reader's own body elsewhere */
 .wv-walker-far.is-mine > .wv-walker-frame,
 .wv-walker-near.is-mine > .wv-walker-frame { stroke-width:3; }
+/* THE BODY THE SEARCH JUST FOUND. The same emphasis your own people wear, in the
+   rail's amber rather than the walkers' green, so "this is the one you asked
+   for" reads differently from "this one is yours". It lasts until the reader
+   chooses something else. */
+.wv-walker-far.is-found > .wv-walker-frame,
+.wv-walker-near.is-found > .wv-walker-frame { stroke:var(--amber); stroke-width:3.5; }
 /* the rest of your own household's journey: thin, the walker's own colour, and
    never in the way of a click — the route is a reading, not a target */
 .wv-walk-path { stroke-width:1.5; stroke-opacity:.75; stroke-dasharray:5 4;
@@ -8340,6 +8346,12 @@ export function mountViewer(appEl) {
     destination: null,
     actorBound: true,
     changingCourse: false,
+    // WHO THE SEARCH JUST FOUND, and it is STATE rather than a class written
+    // onto a node. `drawWalkers` rebuilds the whole layer's innerHTML on every
+    // draw — a poll, a zoom, a pan — so a class set on the element would be
+    // gone within fifteen seconds and look like a flake. Held here, the glyph
+    // is re-marked every time it is redrawn, for as long as the finding stands.
+    foundHandle: null,
   };
 
   // Who the walkers ARE — name, avatar, colour, household — keyed by handle.
@@ -8796,7 +8808,7 @@ export function mountViewer(appEl) {
     if (tier === "far") {
       for (const w of drawnWalkers) {
         s += walkerFrameSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
-          mine: isOwnHandle(w.handle) });
+          mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle });
       }
       mapCtx.walkLayer.innerHTML = paths + s;
       walkReadout(drawnWalkers);
@@ -8872,6 +8884,7 @@ export function mountViewer(appEl) {
       // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
       s += walkerFrameSVG({ at: now, k, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
+        found: w.handle === walkState.foundHandle,
         art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
     mapCtx.walkLayer.innerHTML = paths + hulls + s;
@@ -9243,6 +9256,9 @@ export function mountViewer(appEl) {
   }
 
   function selectMark(id, { scrollCell = false, trail = null } = {}) {
+    // choosing anything else ends the finding — two things cannot both be the
+    // one the reader just asked for
+    clearFoundWalker();
     // THE CHOOSER, like the walker card, takes none of the mark machinery
     // below: it names no single mark yet, so there is no trail step to record
     // and no destination to preview. Choosing a row is what selects a mark.
@@ -9298,6 +9314,7 @@ export function mountViewer(appEl) {
 
   function clearSelectionAndDestination() {
     bubbleTrail = [];
+    clearFoundWalker();
     markInteraction.select(null);
     walkState.destination = null;
     walkState.changingCourse = false;
@@ -10789,35 +10806,61 @@ export function mountViewer(appEl) {
   // selection path, so the column, the chooser and the trail behave as they
   // already do. A region is a placed mark like any other here, so a region hit
   // opens the region column exactly as clicking its ring does.
+  // ── GOING SOMEWHERE IS ONE VERB (Keemin, 2026-09-13, on dev: "selecting a
+  // result would pin/select that item on the world map") ───────────────────
+  //
+  // Measured on main 4847962a before changing anything: `selectMark` selects and
+  // opens the column and NEVER touches the camera — zero references to setView,
+  // frameOn, tweenTo or state.cam in the whole function — so a house off-screen
+  // or at town width was chosen and not seen. The person branch moved the camera
+  // and selected nothing. He wants both halves on every hit, so both halves are
+  // one function and every branch calls it.
+  //
+  // `keepZoom` on purpose: going TO something must not also decide how close the
+  // reader wanted to stand. A zoom rule is a separate ask if he wants one.
+  function goTo(at) {
+    if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return false;
+    walkState.actorBound = false;
+    state.cam = { x: at.x, y: at.y };
+    // `frameOn` COMPUTES a rectangle; `setView` is the move. (Learned in the
+    // search bar itself, where reading the name as a verb moved nothing at all.)
+    if (mapCtx?.setView && mapCtx.frameOn) mapCtx.setView(mapCtx.frameOn(state.cam, { keepZoom: true }), true);
+    renderCurrent();
+    return true;
+  }
+  // the finding is over the moment the reader chooses something else
+  function clearFoundWalker() {
+    if (!walkState.foundHandle) return;
+    walkState.foundHandle = null;
+    drawWalkers();
+  }
+
   function actOnSearchHit(kind, key) {
     if (kind === "person") {
       const person = searchPeopleIndex().find((p) => p.handle === key);
       if (person?.at) {
-        // THE MAP'S OWN CAMERA VERB, and it has to be asked. Setting `state.cam`
-        // alone moves the READING — the radial, the coordinate chip, what the
-        // pane thinks you are near — and leaves the picture exactly where it
-        // was; measured, the viewBox did not shift by a pixel. `frameOn` is what
-        // moves the picture, and `keepZoom` means going to somebody does not
-        // also decide how close you wanted to stand.
-        walkState.actorBound = false;
-        state.cam = { x: person.at.x, y: person.at.y };
-        // ⛑ `frameOn` COMPUTES a rectangle, it does not move to it — `lockOn`
-        // is the only caller that tweens, and reading its name as a verb is why
-        // the first attempt changed nothing at all. `setView` is the move.
-        if (mapCtx?.setView && mapCtx.frameOn) mapCtx.setView(mapCtx.frameOn(state.cam, { keepZoom: true }), true);
-        renderCurrent();
+        // MARKED BEFORE THE MOVE, so the redraw the move causes already carries
+        // it. A body among fifty is not found by centring on it alone.
+        walkState.foundHandle = key;
+        goTo(person.at);
+        drawWalkers();
         return;
       }
-      // nobody out today: their ground is the next best answer the page holds
+      // nobody out today: their ground is the next best answer the page holds,
+      // and it is worth going to for the same reason a house is
       const parcel = allMarks().find((m) => m?.kind === "parcel"
         && String(m.household ?? m.by ?? "") === key);
-      if (parcel) selectMark(parcel.id);
+      if (parcel) { selectMark(parcel.id); goTo(parcel.at); }
       return;
     }
     const mark = byId.get(key) ?? allMarks().find((m) => m?.id === key);
     const placed = !!(mark?.at && Number.isFinite(mark.at.x));
     // a mark with nowhere to go still has words: scroll its cell up instead
     selectMark(key, { scrollCell: !placed });
+    // …and one that HAS somewhere gets shown it. Selecting a house the reader
+    // cannot see is the whole of what he reported: the card pins and the column
+    // opens on a parcel that is off-screen or a bead at town width.
+    if (placed) goTo(mark.at);
   }
   root.addEventListener("input", (e) => {
     if (!e.target.closest(".wv-search-input")) return;
@@ -10861,7 +10904,11 @@ export function mountViewer(appEl) {
     // Escape closes the search before it clears a selection: it is the thing the
     // reader most recently opened, and one press should undo one thing.
     if ($(root, ".wv-search")?.classList.contains("is-open")) { openSearch(false); return; }
-    if (!markInteraction.getState().selectedId && !walkState.destination) return;
+    // A FOUND BODY IS A THING TO LET GO OF TOO. Without it in this condition
+    // Escape returns early whenever the only standing state is the search's own
+    // highlight — nothing is selected, nothing is armed — and the marked walker
+    // outlives every press. Measured: the falsifier reds on exactly that.
+    if (!markInteraction.getState().selectedId && !walkState.destination && !walkState.foundHandle) return;
     clearSelectionAndDestination();
   };
   document.addEventListener("keydown", onViewerKeydown);

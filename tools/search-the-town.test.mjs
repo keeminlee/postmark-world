@@ -152,6 +152,7 @@ const PERSON = { handle: "rig-person", x: 1200, y: -800 };
 // the skeleton's own registration, the same numbers the viewer parses
 const ORIGIN_PX = { x: 485, y: 760 }, M_PER_PX = 5;
 const PERSON_PX = { x: ORIGIN_PX.x + PERSON.x / M_PER_PX, y: ORIGIN_PX.y + PERSON.y / M_PER_PX };
+const pxOf = (at) => ({ x: ORIGIN_PX.x + at.x / M_PER_PX, y: ORIGIN_PX.y + at.y / M_PER_PX });
 
 // the reader stands on the house the record chose, so the standpoint moves with it
 const STANDPOINT = { x: HOUSE?.at?.x ?? 0, y: HOUSE?.at?.y ?? 0 };
@@ -284,6 +285,8 @@ const readState = (page) => page.evaluate(() => {
     title: col?.querySelector(".wv-homecol-title")?.textContent?.trim() ?? null,
     centre: vb.length === 4 ? { x: vb[0] + vb[2] / 2, y: vb[1] + vb[3] / 2 } : null,
     searchOpen: document.querySelector(".wv-search")?.classList.contains("is-open") ?? false,
+    found: [...document.querySelectorAll("#wv-walk-layer .is-found[data-handle]")]
+      .map((e) => e.getAttribute("data-handle")),
   };
 });
 
@@ -323,6 +326,29 @@ test("A HIT DOES WHAT A CLICK DOES — a house opens its column, a region opens 
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });
 
+test("A HOUSE HIT BRINGS THE READER TO THE HOUSE", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  assert.ok(HOUSE, NO_HOUSE);
+  const { page, errors } = await openPage();
+  const before = await readState(page);
+  await search(page, HOUSE_Q);
+  await clickHit(page, HOUSE_ID);
+  const after = await readState(page);
+
+  // ⚑ SEPARATE FROM THE COLUMN ON PURPOSE (Keemin, on dev: "selecting a result
+  // would pin/select that item on the world map"). Before this piece a hit
+  // selected the house and opened its column while leaving the camera wherever
+  // it was, so a parcel off-screen or a bead at town width was chosen and never
+  // seen. Asserting the column and the centre in one test would let a change
+  // that breaks only the move hide behind the half that still works.
+  const want = pxOf(HOUSE.at);
+  assert.notDeepEqual(after.centre, before.centre, "the hit did not move the map at all");
+  assert.ok(Math.abs(after.centre.x - want.x) < 2 && Math.abs(after.centre.y - want.y) < 2,
+    `the map centred somewhere else: ${JSON.stringify(after.centre)} wanted ${JSON.stringify(want)}`);
+  await page.close();
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
+
 test("A MARK WITH NOWHERE TO GO IS STILL FOUND, AND STILL SELECTABLE", async (t) => {
   if (!chromium) return t.skip(skipReason);
   const { page, errors } = await openPage();
@@ -356,6 +382,16 @@ test("A RESIDENT HIT MOVES THE CAMERA TO THEIR BODY", async (t) => {
     `the camera moved somewhere else: ${JSON.stringify(after.centre)} wanted ${JSON.stringify(PERSON_PX)}`);
   assert.equal(after.selected, null, "centring on a person must not select a mark");
   assert.ok(!after.columnOpen, "centring on a person must not open somebody's column");
+  // ⚑ AND THE BODY IS MARKED. Centring on one of fifty walkers without saying
+  // which one is the answer leaves the reader to find them again by eye.
+  assert.deepEqual(after.found, [PERSON.handle],
+    "the found body carries no mark of being found: " + JSON.stringify(after.found));
+
+  // the finding ends when the reader lets it go
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(700);
+  const cleared = await readState(page);
+  assert.deepEqual(cleared.found, [], "Escape left the found body still marked");
   await page.close();
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });
