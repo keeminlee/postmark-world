@@ -1721,20 +1721,42 @@ export function homeCardPath({ w, h, roof } = HOME_CARD) {
   const x0 = -w / 2, top = -(h + roof) / 2, eave = top + roof, base = eave + h;
   return `M ${x0 - 2} ${eave} L 0 ${top} L ${w / 2 + 2} ${eave} L ${w / 2} ${eave} L ${w / 2} ${base} L ${x0} ${base} L ${x0} ${eave} Z`;
 }
-/** THE DEFAULT HOUSE FACE (founder, 2026-09-11: "draw a simple, cute default
- *  icon for houses without art in them (like a door and windows, sitting in
- *  the frame) and make it the static instead of the blank cream houses"). A
- *  door on the ground line and two windows under the eaves, in the card's own
- *  units, so it sits inside `homeCardPath` at any scale: the art-less card
- *  wears it behind the frame, and the far glyph wears it at HOME_GLYPH_SCALE.
- *  Three rects, no picture. Pure. */
+/** THE DEFAULT HOUSE FACE IS THE TOWN'S OWN SEAL (Keemin, 2026-09-12: "the
+ *  static house icons could be styled more like Postmark — dark blue default,
+ *  with the little envelope icon in the middle"). The body goes Postmark navy
+ *  and wears a gold envelope, which is not a new drawing: it is the town's
+ *  seal, the same envelope the site's favicon carries, in the same two colours
+ *  — `#0d1426` under `#e8c48b`.
+ *
+ *  IT REPLACES THE DOOR AND THE TWO WINDOWS rather than sitting over them. The
+ *  face's whole job at `far` is 24 px across (52 units at HOME_GLYPH_SCALE
+ *  0.46), and an envelope needs the body's full width to read as an envelope
+ *  at all; a door and two windows behind it turned that into three motifs
+ *  fighting over the same handful of pixels. The envelope also says what the
+ *  windows were saying — somebody lives here, this is Postmark — in one mark
+ *  instead of three, which is the whole reason the seal exists.
+ *
+ *  THE LIT STATE SURVIVES THE SWAP, and it had to: a lit house is one whose
+ *  resident is home (the two derived lights, ruled 2026-09-10), and it read as
+ *  lit because its WINDOWS warmed. With no windows the envelope inherits that
+ *  job — it fills amber and brightens, beside the frame's own glow — so the
+ *  state change is at least as visible as it was. See `.ov-home.lit` below.
+ *
+ *  Drawn upright, where the favicon's seal is tilted −8°: a jaunty tilt reads
+ *  as charm at 64 px and as a mistake at 12. Two elements, no picture, in the
+ *  card's own units so it sits inside `homeCardPath` at any scale. Pure. */
 export function homeFaceSVG({ w, h, roof } = HOME_CARD) {
-  const top = -(h + roof) / 2, eave = top + roof, base = eave + h;
-  const doorW = Math.round(w * 0.2), doorH = Math.round(h * 0.38);
-  const winW = Math.round(w * 0.16), winH = Math.round(h * 0.17), winY = eave + Math.round(h * 0.2);
-  return `<rect x="${-doorW / 2}" y="${base - doorH}" width="${doorW}" height="${doorH}" rx="1" class="ov-home-door"/>`
-    + `<rect x="${-w / 2 + Math.round(w * 0.14)}" y="${winY}" width="${winW}" height="${winH}" class="ov-home-window"/>`
-    + `<rect x="${w / 2 - Math.round(w * 0.14) - winW}" y="${winY}" width="${winW}" height="${winH}" class="ov-home-window"/>`;
+  const top = -(h + roof) / 2, eave = top + roof;
+  // centred on the BODY, not on the card: the roof is not somewhere a letter goes
+  const midY = eave + h / 2;
+  const envW = Math.round(w * 0.52), envH = Math.round(h * 0.41);
+  const x0 = -envW / 2, y0 = midY - envH / 2;
+  // the flap's proportions are the seal's own (favicon.svg): its corners inset
+  // from the rect by 2.5/42 and 3.5/29 of it, its V reaching 18/29 of the way down
+  const inx = envW * (2.5 / 42), iny = envH * (3.5 / 29), deep = envH * (18 / 29);
+  const r = (n) => Math.round(n * 100) / 100;
+  return `<rect x="${r(x0)}" y="${r(y0)}" width="${envW}" height="${envH}" rx="2" class="ov-home-envelope"/>`
+    + `<path d="M ${r(x0 + inx)} ${r(y0 + iny)} L 0 ${r(y0 + deep)} L ${r(x0 + envW - inx)} ${r(y0 + iny)}" class="ov-home-flap"/>`;
 }
 export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = false, fan = null, title = null, classes = "" } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
@@ -4260,19 +4282,34 @@ const STYLE = `
 .ov-pip.ov-pip-home { opacity:0; }
 .ov-home { pointer-events:none; }
 .ov-home-frame { fill:none; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; }
-.ov-home-blank { fill:#f4e6c8; }
+/* THE ART-LESS HOUSE IS POSTMARK NAVY (Keemin, 2026-09-12: "dark blue default,
+   with the little envelope icon in the middle"). #0d1426 is the town's own
+   navy, not a colour picked for this — it is the ground of the site's favicon
+   seal and the plate behind seventy other surfaces, the world page's own
+   time-travel pill among them. A house with a picture is untouched; this is
+   only what a house wears when it has nothing to show. */
+.ov-home-blank { fill:#0d1426; }
 .ov-home.lit .ov-home-frame { stroke:#ffcf5c; stroke-width:2.2; filter:drop-shadow(0 0 3px #ffb84a); }
 .ov-home-label { font:600 9px Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif; fill:#241c10;
   paint-order:stroke; stroke:#ece0c4; stroke-width:2.5px; stroke-linejoin:round; }
 /* the far tier's house: the card's own roofline, filled, at half size. It reads
    as the same house as the card because it IS the same path — one outline, two
-   sizes, so the town does not appear to change species when a reader zooms. */
-.ov-glyph { fill:#f4e6c8; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; pointer-events:none; }
-/* the default face — a door and two windows — on the art-less card and on the
-   far glyph alike; the lit house's windows glow with its frame */
-.ov-home-door { fill:#a8763e; stroke:#3a3428; stroke-width:1; pointer-events:none; }
-.ov-home-window { fill:#fff3c4; stroke:#3a3428; stroke-width:1; pointer-events:none; }
-.ov-home.lit .ov-home-window { fill:#ffcf5c; }
+   sizes, so the town does not appear to change species when a reader zooms. The
+   dark edge stays: the body is dark now, but the stroke is what holds the
+   roofline against pale ground. */
+.ov-glyph { fill:#0d1426; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; pointer-events:none; }
+/* THE SEAL ON THE HOUSE — the same envelope the favicon carries, in the same
+   gold, on the art-less card and on the far glyph alike. It replaced a door and
+   two windows, which at 24 px across were three motifs in the space of one. */
+.ov-home-envelope { fill:none; stroke:#e8c48b; stroke-width:2.4; stroke-linejoin:round; pointer-events:none; }
+.ov-home-flap { fill:none; stroke:#e8c48b; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+/* LIT IS STILL LIT. The windows used to warm from #fff3c4 to #ffcf5c when the
+   resident was home; with no windows the envelope carries that, and carries it
+   harder — an outline on navy becomes a filled amber pane, beside the frame's
+   own glow. Only the card is ever lit; the far glyph has no .ov-home wrapper
+   and never had this state. */
+.ov-home.lit .ov-home-envelope { fill:#ffcf5c; fill-opacity:.34; stroke:#ffcf5c; }
+.ov-home.lit .ov-home-flap { stroke:#ffcf5c; }
 /* a household seen from across the town: one dot for its people, not nine */
 /* the walker frame: empty at town width, filled with the face nearer in */
 .wv-walker-frame { fill:none; stroke:var(--green); stroke-width:2; stroke-linejoin:round; vector-effect:non-scaling-stroke; }

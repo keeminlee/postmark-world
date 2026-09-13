@@ -42,14 +42,41 @@ test("no picture: the empty frame, as the atlas gave it", () => {
   assert.match(svg, /class="ov-home no-art"/);
   assert.match(svg, /class="ov-home-blank"/);
   assert.doesNotMatch(svg, /<image/);
-  // …and the default face sits in the frame (founder, 2026-09-11): the same three rects the far glyph wears
-  assert.equal((svg.match(/class="ov-home-door"/g) ?? []).length, 1, "a door");
-  assert.equal((svg.match(/class="ov-home-window"/g) ?? []).length, 2, "two windows");
-  assert.doesNotMatch(overlayHomeCardSVG({ at: { x: 0, y: 0 }, id: "a/b", label: "a", image: "/shelf/a/x.jpg" }), /ov-home-door/, "a pictured house wears its picture, not the default face");
+  // …and the default face sits in the frame. It was a door and two windows
+  // (founder, 2026-09-11); since 2026-09-12 it is the town's own seal — the
+  // favicon's envelope, on Postmark navy (Keemin: "dark blue default, with the
+  // little envelope icon in the middle"). The counts move from 1+2 to 1+1
+  // because the drawing is one mark now, not three.
+  assert.equal((svg.match(/class="ov-home-envelope"/g) ?? []).length, 1, "an envelope");
+  assert.equal((svg.match(/class="ov-home-flap"/g) ?? []).length, 1, "and its flap");
+  assert.doesNotMatch(svg, /ov-home-door|ov-home-window/, "the door and windows are gone, not merely hidden");
+  assert.doesNotMatch(overlayHomeCardSVG({ at: { x: 0, y: 0 }, id: "a/b", label: "a", image: "/shelf/a/x.jpg" }), /ov-home-envelope/, "a pictured house wears its picture, not the default face");
   const face = homeFaceSVG();
-  const bottoms = [...face.matchAll(/y="(-?[\d.]+)" width="\d+" height="(\d+)"/g)].map((m) => Number(m[1]) + Number(m[2]));
-  assert.equal(bottoms[0], (HOME_CARD.h + HOME_CARD.roof) / 2, "the door stands on the ground line");
-  // ⚑ THE FLIP: drop homeFaceSVG() from the blank card → the door count reds.
+  // The door used to stand ON the ground line; a letter does not, so what is
+  // pinned instead is that the envelope is centred on the BODY — the roof is
+  // not somewhere a letter goes, and an envelope drifting into it is the way
+  // this drawing would go wrong.
+  const [, y0, envH] = face.match(/y="(-?[\d.]+)" width="\d+" height="(\d+)"/).map(Number);
+  const eave = -(HOME_CARD.h + HOME_CARD.roof) / 2 + HOME_CARD.roof;
+  assert.equal(y0 + envH / 2, eave + HOME_CARD.h / 2, "the envelope is centred on the body");
+  assert.ok(y0 > eave, "and sits below the eaves, never in the roof");
+  // ⚑ THE FLIP: drop homeFaceSVG() from the blank card → the envelope count reds.
+});
+
+test("the seal is the town's, in the town's two colours", () => {
+  // NOT A RESTATEMENT OF THE CSS — the point is that these two values are the
+  // site's own, so a later theme change moves them together. #0d1426 is the
+  // navy behind seventy site surfaces and the ground of public/atelier/postmark/
+  // favicon.svg; #e8c48b is the gold of that same favicon's envelope.
+  assert.match(SOURCE, /\.ov-home-blank \{ fill:#0d1426; \}/, "the art-less card is Postmark navy");
+  assert.match(SOURCE, /\.ov-glyph \{ fill:#0d1426;/, "and so is the far glyph");
+  assert.doesNotMatch(SOURCE, /fill:#f4e6c8/, "no cream house is left anywhere");
+  assert.match(SOURCE, /\.ov-home-envelope \{ fill:none; stroke:#e8c48b;/, "the envelope is the favicon's gold");
+  // LIT MUST STILL READ AS LIT. The windows carried that and are gone, so the
+  // envelope has to carry it — this is the assertion that the swap did not
+  // quietly cost the map one of its two derived lights.
+  assert.match(SOURCE, /\.ov-home\.lit \.ov-home-envelope \{ fill:#ffcf5c;/, "a lit house fills its envelope");
+  assert.match(SOURCE, /\.ov-home\.lit \.ov-home-frame \{ stroke:#ffcf5c;/, "and still glows its frame");
 });
 
 test("identical inputs give identical markup at any camera", () => {
