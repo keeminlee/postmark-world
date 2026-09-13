@@ -214,10 +214,18 @@ test("THE FRAME FILLS IN nearer in — the picture clipped to the frame, or the 
 test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, and the pip stays", () => {
   const glyph = overlayHouseGlyphSVG({ at: { x: 10, y: 20 }, id: "jack/the-lantern-parcel", classes: "t-home" });
   assert.match(glyph, /class="ov-glyph"/, "the house is drawn");
-  // THE DEFAULT FACE (founder, 2026-09-11): a door and two windows sit in the frame, at the glyph's own scale
-  assert.equal((glyph.match(/class="ov-home-door"/g) ?? []).length, 1, "one door");
-  assert.equal((glyph.match(/class="ov-home-window"/g) ?? []).length, 2, "two windows");
+  // THE DEFAULT FACE, at the glyph's own scale. It was a door and two windows
+  // (founder, 2026-09-11); since 2026-09-12 it is the town's seal, the
+  // favicon's envelope on Postmark navy (Keemin: "dark blue default, with the
+  // little envelope icon in the middle"). This tier is exactly why it is one
+  // mark and not three — the whole house is 24 px across here.
+  assert.equal((glyph.match(/class="ov-home-envelope"/g) ?? []).length, 1, "one envelope");
+  assert.equal((glyph.match(/class="ov-home-flap"/g) ?? []).length, 1, "and its flap");
+  assert.doesNotMatch(glyph, /ov-home-door|ov-home-window/, "the door and windows are gone");
   assert.match(glyph, /<g transform="scale\(0\.46\)"><path d="M [^"]+" class="ov-glyph" data-id="jack\/the-lantern-parcel"\/><rect /, "roof, then the face, in one scaled group");
+  // …and the far glyph is still the tier with NO light: it has no .ov-home
+  // wrapper, so it never wore `lit` and does not start now.
+  assert.doesNotMatch(glyph, /class="ov-home[ "]/, "no lit state at town width");
   assert.doesNotMatch(glyph, /<image/, "no picture at town width");
   assert.doesNotMatch(glyph, /<clipPath/, "and therefore no clip path either");
   assert.doesNotMatch(glyph, /<text/, "no name");
