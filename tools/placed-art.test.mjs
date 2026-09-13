@@ -187,13 +187,6 @@ function fixtureWorld() {
       at: { x: at.x + 2600, y: at.y }, extent: { w: 900, h: 700 },
       image, placementParent: BARE_PARENT },
   );
-  // A PARCEL CARRYING A PICTURE, which the fold never gives one. On dev a
-  // resident's own row does, and that is the only condition under which the
-  // furnishing pass hangs sceneArtSVG over a parcel's card — the double-draw in
-  // Keemin's screenshot. Four spectator runs were green on it because the
-  // branch is unreachable without an image here.
-  const reiParcel = w.marks.find((m) => m.id === "rei/the-lanternstep-house-parcel");
-  if (reiParcel) reiParcel.image = image;
   writeFileSync(join(dir, "world-state.json"), JSON.stringify(w));
   return dir;
 }
@@ -222,7 +215,7 @@ before(async () => {
 });
 
 /** open the page, settle the drawing, and read the art layer */
-async function readArt({ zoomIn = 0, stopAtTier = null, zoomTo = null } = {}) {
+async function readArt({ zoomIn = 0, stopAtTier = null } = {}) {
   const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
@@ -249,14 +242,11 @@ async function readArt({ zoomIn = 0, stopAtTier = null, zoomTo = null } = {}) {
     // ZOOM ONTO THE FIXTURE MARK ITSELF, never the middle of the pane. Wheeling
     // at the centre walks the camera off the mark, and then "no art at near" is
     // the cull answering, not the gate.
-    // …and onto the mark the CALLER names, which is not always the hung one. A
-    // test about rei's parcel that zooms at the broad common asks its question
-    // of a camera pointed somewhere else, and reads the cull as its answer.
-    const at = await page.evaluate((wanted) => {
-      const el = document.querySelector(`#wv-overlay [data-id="${wanted}"]`);
+    const at = await page.evaluate((hungId) => {
+      const el = document.querySelector(`#wv-overlay [data-id="${hungId}"]`);
       const b = (el ?? document.querySelector("#wv-map"))?.getBoundingClientRect();
       return b ? { x: b.x + b.width / 2, y: b.y + b.height / 2 } : { x: 700, y: 450 };
-    }, zoomTo ?? HUNG);
+    }, HUNG);
     // STOP AT THE TIER, NOT AFTER N TURNS OF THE WHEEL. A step count is a guess
     // about how far a wheel notch travels, and mine overshot mid and landed in
     // near — where the pass under test is switched off, so the probe would have
@@ -303,10 +293,6 @@ async function readArt({ zoomIn = 0, stopAtTier = null, zoomTo = null } = {}) {
         return !!(ground.compareDocumentPosition(layer) & Node.DOCUMENT_POSITION_FOLLOWING);
       })(),
       groundDrawn: !!document.querySelector(".wv-tg-paper, #wv-ground-base, .wv-ground-base"),
-      // rei's parcel, which the fixture gives a picture: card yes, square no
-      reiCard: !!document.querySelector('#wv-overlay .ov-home[data-id="rei/the-lanternstep-house-parcel"]'),
-      reiSquare: !!document.querySelector('#wv-overlay .wv-scene-mark-art[data-id="rei/the-lanternstep-house-parcel"]'),
-      squareIds: [...document.querySelectorAll("#wv-overlay .wv-scene-mark-art[data-id]")].map((e) => e.dataset.id).slice(0, 8),
       // THE OTHER PASS ON THE SAME GROUND. The furnishing pass paints every
       // furnishable mark as a half-opaque tinted block at mid, deliberately —
       // "the shape of what is on the ground, without the photograph of it".
