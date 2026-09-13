@@ -1174,6 +1174,17 @@ function tgRing(mark) {
   return ring.some((p) => Math.abs(p.x) > TG_SENTINEL_M || Math.abs(p.y) > TG_SENTINEL_M) ? null : ring;
 }
 
+/** IS THIS MARK ONE OF THE TOWN'S REGIONS? (Keemin, 2026-09-13: "the region
+ *  marks should disappear when at mid zoom"). Matched on the slug alone, NOT
+ *  through townRegionMarks, and the difference matters: that function also
+ *  requires a drawn ring, so a region whose outline has not been generated yet
+ *  would fail it — and then reappear at mid, which is the one thing the ruling
+ *  asks against. A region is a region whether or not its outline exists. Pure. */
+export function isRegionMark(mark, slugs = REGION_SLUGS) {
+  const slug = String(mark?.id ?? "").split("/")[1];
+  return !!slug && slugs.includes(slug);
+}
+
 /** the town's region marks, in the record's own roster order */
 export function townRegionMarks(marks, slugs = REGION_SLUGS) {
   const out = [];
@@ -7717,6 +7728,11 @@ export function mountViewer(appEl) {
         // Same class as the tint-over-picture in #42, one layer down: two passes
         // drawing the same piece of ground, each correct about its own job.
         .filter((m) => m.kind !== "parcel")
+        // …NOR A REGION'S TINTED SHAPE AT MID, the other half of the same
+        // ruling: standing a region down as a picture and leaving its
+        // half-opaque block behind would be the same quarter of the map still
+        // lying over everything, in a flatter colour.
+        .filter((m) => !(tier === "mid" && isRegionMark(m)))
         // …AND NOT THE ONES ALREADY WEARING THEIR PICTURE (2026-09-12). At mid
         // this pass draws every furnishable mark as a tinted block ON PURPOSE —
         // "the shape of what is on the ground, without the photograph of it" —
@@ -8215,6 +8231,13 @@ export function mountViewer(appEl) {
     const hung = allMarks().filter((m) => {
       if (!bigEnough(m)) return false;
       if (from && m.id === from) return false;   // your own ground is not a hanging
+      // A REGION IS A FAR THING (Keemin, 2026-09-13: "the region marks should
+      // disappear when at mid zoom"). At far a region's picture is how the town
+      // says what that quarter looks like; at mid the reader is close enough
+      // that it is a photograph lying across the ground they are trying to
+      // read, under everything else drawn on it. The ground's own region wash
+      // stays either way — that is the floor, not the mark.
+      if (tier === "mid" && isRegionMark(m)) return false;
       if (underAnotherPicture(m)) return false;
       return markInDrawnBounds(m, bounds);
     // largest first, so a district's picture lies under the smaller ground

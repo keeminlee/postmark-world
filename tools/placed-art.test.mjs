@@ -33,7 +33,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { placedArtSVG, SPECTATOR_DRAW_DEFAULTS } from "../spectator/viewer.mjs";
+import { placedArtSVG, SPECTATOR_DRAW_DEFAULTS, isRegionMark } from "../spectator/viewer.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = readFileSync(join(ROOT, "spectator/viewer.mjs"), "utf8");
@@ -159,6 +159,7 @@ const COVERING = "fixture/the-covering-district";
 const COVERED_CHILD = "fixture/the-covered-child";
 const BARE_PARENT = "fixture/the-bare-parent";
 const BARE_CHILD = "fixture/the-bare-child";
+const REGION_ID = "caelum/evermoon";   // one of REGION_SLUGS, and a real ring on the record
 function fixtureWorld() {
   const dir = mkdtempSync(join(tmpdir(), "placed-art-"));
   cpSync(join(ROOT, "WORLD"), dir, { recursive: true });
@@ -200,6 +201,11 @@ function fixtureWorld() {
       at: { x: at.x + 2600, y: at.y }, extent: { w: 900, h: 700 },
       image, placementParent: BARE_PARENT },
   );
+  // A PICTURED REGION, so the far/mid rule has one to be about. The fixture
+  // strips every live image above, so this is the only region carrying one and
+  // a count of region art is a count of this.
+  const region = w.marks.find((m) => m.id === REGION_ID);
+  if (region) region.image = image;
   writeFileSync(join(dir, "world-state.json"), JSON.stringify(w));
   return dir;
 }
@@ -312,6 +318,10 @@ async function readArt({ zoomIn = 0, stopAtTier = null } = {}) {
       // For a chair that is right. For a place that is wearing its picture it
       // is a wash over the picture, which is what it was doing.
       tinted: [...document.querySelectorAll("#wv-overlay .wv-ph-extent[data-id]")].map((e) => e.dataset.id),
+      // the region rule: what carries a region's id, on either layer
+      regionHung: [...(layer?.querySelectorAll(".wv-far-art") ?? [])]
+        .filter((g) => (g.getAttribute("aria-label") ?? "").toLowerCase().includes("evermoon")).length,
+
       hungIds: [...(layer?.querySelectorAll(".wv-far-art") ?? [])].map((a) => a.getAttribute("aria-label")),
       mist: document.querySelectorAll("#wv-mist-layer *").length,
       overlayMarks: overlay?.querySelectorAll("[data-id]").length ?? 0,
@@ -536,3 +546,55 @@ test("THE PAGE — a hung picture is not then painted over by the furnishing pas
 // the behaviour evidence is the dev dump in the report — two elements at
 // 152x152 and 139x89, both carrying the parcel's id, signed in as rei. A dev
 // re-read after this merges is what closes it, and the report says so.
+
+// ── A REGION IS A FAR THING (Keemin, 2026-09-13) ────────────────────────────
+
+test("isRegionMark reads the roster, not a drawn ring", () => {
+  // Matched on the slug alone. townRegionMarks also demands a ring, and a
+  // region whose outline has not generated would slip that test and reappear at
+  // mid — the one thing the ruling asks against.
+  assert.equal(isRegionMark({ id: "caelum/evermoon" }), true);
+  assert.equal(isRegionMark({ id: "rei/the-lanternseed-gardens" }), true);
+  assert.equal(isRegionMark({ id: "rei/the-lanternstep-house-parcel" }), false, "a parcel is not a region");
+  assert.equal(isRegionMark({ id: "the-town/pando-peak" }), false, "and neither is the mountain");
+  assert.equal(isRegionMark({ id: "" }), false);
+  assert.equal(isRegionMark(null), false);
+});
+
+test("THE PAGE — a region's picture hangs at far and is gone at mid, tint and all", async (t) => {
+  if (!chromium) { t.skip("NO PLAYWRIGHT — the region tier rule went UNGUARDED."); return; }
+  const far = await readArt();
+  assert.deepEqual(far.errors, [], "the page mounted");
+  assert.equal(far.tier, "far", `the opening view is far (got ${far.tier})`);
+  assert.ok(far.regionHung >= 1, `the pictured region hangs at far (hung: ${far.labels.join(", ")})`);
+
+  const mid = await readArt({ zoomIn: 60, stopAtTier: "mid" });
+  assert.deepEqual(mid.errors, [], "…and survived the zoom");
+  assert.equal(mid.tier, "mid", `the camera reached mid (got ${mid.tier})`);
+  assert.ok(mid.count > 0,
+    "…and something else is still hung at mid, so a zero for the region is the rule and not an empty layer");
+  assert.equal(mid.regionHung, 0, "the region's picture is gone at mid");
+  // ⚑ THE FLIP: drop the region filter in drawPlacedArt and this reds while the
+  //   far assertion stays green.
+  //
+  // AND WHAT IS *NOT* ASSERTED HERE, because I tried and it could not fail. The
+  // other half of the ruling — no furnishing TINT for a region at mid — has no
+  // page falsifier in this file. Flipping that filter out left every test green:
+  // the furnishing pass is built from `drawn`, `drawn` comes from the reader's
+  // field of view, the office supplies that, and this rig has no office, so a
+  // region is never a candidate here whatever the fixture does. Same wall as the
+  // parcel/furnishing collision two tests up. The tint filter is guarded by the
+  // source pin below and read on dev; it is not covered by this page test, and
+  // saying so is the point.
+});
+
+test("the tint filter exists and is scoped to mid — a source pin, and it says so", () => {
+  // The page cannot drive this on a rig with no office (see the note above), so
+  // what is left is a pin that proves the line was typed. It is labelled as
+  // exactly that rather than dressed up as coverage.
+  const src = readFileSync(new URL("../spectator/viewer.mjs", import.meta.url), "utf8");
+  assert.match(src, /\.filter\(\(m\) => !\(tier === "mid" && isRegionMark\(m\)\)\)/,
+    "the furnishing pass stands regions down at mid");
+  assert.match(src, /if \(tier === "mid" && isRegionMark\(m\)\) return false;/,
+    "and so does the hanging pass");
+});
