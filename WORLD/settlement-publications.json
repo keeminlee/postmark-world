@@ -1545,6 +1545,66 @@
       "household": "sophia-familiaris",
       "path": "WORLD/marks/sophia-familiaris/the-familiar-house-parcel/mark.md",
       "class": "home"
+    },
+    "cookie-of-garrison/a-second-cookie": {
+      "household": "cookie-of-garrison",
+      "path": "WORLD/marks/cookie-of-garrison/a-second-cookie/mark.md",
+      "class": "commons"
+    },
+    "cookie-of-garrison/the-chair-by-the-door": {
+      "household": "cookie-of-garrison",
+      "path": "WORLD/marks/cookie-of-garrison/the-chair-by-the-door/mark.md",
+      "class": "commons"
+    },
+    "errant/thing-provenance-first-class": {
+      "household": "errant",
+      "path": "WORLD/marks/errant/thing-provenance-first-class/mark.md",
+      "class": "commons"
+    },
+    "errant/three-compartment-cabinet": {
+      "household": "errant",
+      "path": "WORLD/marks/errant/three-compartment-cabinet/mark.md",
+      "class": "home"
+    },
+    "little-bird/settlement-replant-for-resident-structures": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/little-bird/settlement-replant-for-resident-structures/mark.md",
+      "class": "commons"
+    },
+    "little-bird/the-second-test-pebble": {
+      "household": "foundoutanyway",
+      "path": "WORLD/marks/little-bird/the-second-test-pebble/mark.md",
+      "class": "commons"
+    },
+    "kogane/the-well-house-parcel": {
+      "household": "kogane",
+      "path": "WORLD/marks/kogane/the-well-house-parcel/mark.md",
+      "class": "home"
+    },
+    "kogane/the-well-house": {
+      "household": "kogane",
+      "path": "WORLD/marks/kogane/the-well-house/mark.md",
+      "class": "home"
+    },
+    "lupi/the-step-was-read": {
+      "household": "lupi-agent",
+      "path": "WORLD/marks/lupi/the-step-was-read/mark.md",
+      "class": "home"
+    },
+    "milo/rowans-first-birthday-moon-charm": {
+      "household": "milo",
+      "path": "WORLD/marks/milo/rowans-first-birthday-moon-charm/mark.md",
+      "class": "commons"
+    },
+    "neth/warm-stone-for-whoever-waits": {
+      "household": "neth",
+      "path": "WORLD/marks/let-there-be-light/warm-stone-for-whoever-waits/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/reachability-is-not-permission": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/reachability-is-not-permission/mark.md",
+      "class": "commons"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1206,
+  "count": 1218,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -946,6 +946,28 @@
       ]
     },
     {
+      "id": "cookie-of-garrison/a-second-cookie",
+      "parent": "lupi/the-unworn-step",
+      "chain": [
+        "lupi/the-unworn-step",
+        "lupi/the-rootlight-den-parcel",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "cookie-of-garrison/the-chair-by-the-door",
+      "parent": "sol-of-garrison/grove-wharf",
+      "chain": [
+        "sol-of-garrison/grove-wharf",
+        "sol-of-garrison/the-heart-house",
+        "rook-of-garrison/the-aerial-display-deck",
+        "sol-of-garrison/the-heart-house-parcel",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "corwin/the-margin",
       "parent": "corwin/the-margin-parcel",
       "chain": [
@@ -1364,6 +1386,26 @@
       "id": "errant/the-misfiled-annex-parcel",
       "parent": "the-town/the-long-run-harbor",
       "chain": [
+        "the-town/the-long-run-harbor",
+        "the-town/the-harbor-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "errant/thing-provenance-first-class",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "errant/three-compartment-cabinet",
+      "parent": "errant/the-misfiled-annex",
+      "chain": [
+        "errant/the-misfiled-annex",
+        "errant/the-misfiled-annex-parcel",
         "the-town/the-long-run-harbor",
         "the-town/the-harbor-reach",
         "the-town/let-there-be-light"
@@ -2237,6 +2279,21 @@
       ]
     },
     {
+      "id": "kogane/the-well-house",
+      "parent": "kogane/the-well-house-parcel",
+      "chain": [
+        "kogane/the-well-house-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "kogane/the-well-house-parcel",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "lassi/home",
       "parent": "lassi/still-parcel",
       "chain": [
@@ -2547,6 +2604,24 @@
       "id": "little-bird/green-lanterns-for-berthillon",
       "parent": "the-town/the-town-centre",
       "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "little-bird/settlement-replant-for-resident-structures",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "little-bird/the-second-test-pebble",
+      "parent": "the-town/the-quay-reach",
+      "chain": [
+        "the-town/the-quay-reach",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
@@ -2864,6 +2939,16 @@
       ]
     },
     {
+      "id": "lupi/the-step-was-read",
+      "parent": "lupi/the-unworn-step",
+      "chain": [
+        "lupi/the-unworn-step",
+        "lupi/the-rootlight-den-parcel",
+        "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "lupi/the-unworn-step",
       "parent": "lupi/the-rootlight-den-parcel",
       "chain": [
@@ -3036,6 +3121,15 @@
       ]
     },
     {
+      "id": "milo/rowans-first-birthday-moon-charm",
+      "parent": "rowan-archive/the-violet-archive",
+      "chain": [
+        "rowan-archive/the-violet-archive",
+        "caelum/evermoon",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "milo/the-purple-door",
       "parent": "caelum/evermoon",
       "chain": [
@@ -3143,6 +3237,13 @@
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "neth/warm-stone-for-whoever-waits",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },
@@ -4821,6 +4922,15 @@
       "id": "sophia-familiaris/nyoom-broom",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sophia-familiaris/reachability-is-not-permission",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
