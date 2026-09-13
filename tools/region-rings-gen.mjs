@@ -28,8 +28,9 @@
 // coarse rects this replaces; extraction failures REFUSE rather than guess.
 //
 // The transform is the one the grid already declares (WORLD/skeleton.json
-// `_grid.origin`): "Ferry's crossing — center of the Town Centre, atlas
-// (485,760); x east, y south" at 5 m per atlas px (RULED 2026-07-17). Both
+// `_grid.origin`): "the Origin — {0,0}, where the ferry lands; center of
+// the Town Centre, atlas (485,760); x east, y south" at 5 m per atlas px
+// (RULED 2026-07-17). Both
 // anchors are read out of the atlas and the skeleton rather than typed here.
 //
 // THE INCLUDE-RESIDENTS RULE (Keemin, 2026-08-22: "feel free to tweak the

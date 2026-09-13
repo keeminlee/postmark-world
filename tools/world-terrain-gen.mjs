@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // world-terrain-gen.mjs — generate WORLD/skeleton.json from the LIVE
-// atlas at the ruled scale: 5 m/px, origin = Ferry's crossing (extracted, not
+// atlas at the ruled scale: 5 m/px, origin = the Origin (extracted, not
 // assumed). One-shot bootstrap tool; the skeleton is thereafter
 // constitution-tier data.
 //
@@ -44,7 +44,7 @@ function extractObj(name) {
 const WATER = extract("WATER_WAYPOINTS");
 const STILL_REACH = extract("STILL_REACH");
 const LOCKS = extract("LOCKS");
-const ORIGIN = extractObj("CENTRE_XY"); // Ferry's crossing — the grid origin
+const ORIGIN = extractObj("CENTRE_XY"); // the Origin, in atlas pixels — the grid origin
 const COASTLINE = extract("COASTLINE");
 // The map's own frame, because the sea is the area BETWEEN the drawn coast and the
 // edge — renderSea() closes the coast path with L(MAP_W+5,MAP_H) L(-5,MAP_H) Z, and
@@ -64,7 +64,7 @@ const mPt = (p) => ({ ...m(p.x, p.y), ...(p.w !== undefined ? { w_m: Math.round(
 
 const skeleton = {
   _law: "WORLD/skeleton.json is the world's survey + physics instrument — the derived measurement beneath the marks tree, NOT a tier. Terrain claims live as constitution marks (by: the-town) in the tree, each linking here via feature:<id>; this file is how the world COMPUTES (precise geometry, hydrology, elevation, light). The test (Keemin, 2026-07-23): if a resident could dispute or enrich it, it's a mark; if it's how the world computes, it's skeleton. Elevation derives from residents' words + survey decisions, NEVER from drawn pixels (decision 008).",
-  _grid: { cell_m: 1, scale: "5 m per atlas px (RULED 2026-07-17)", origin: `Ferry's crossing — center of the Town Centre, atlas (${ORIGIN.x},${ORIGIN.y}); x east, y south, z in meters above sea (decision 008)` },
+  _grid: { cell_m: 1, scale: "5 m per atlas px (RULED 2026-07-17)", origin: `the Origin — {0,0}, where the ferry lands; center of the Town Centre, atlas (${ORIGIN.x},${ORIGIN.y}); x east, y south, z in meters above sea (decision 008)` },
   _derived: "re-derived 2026-07-22 from the LIVE atlas (post atlas-v2 + the Evermoon move, town commit bdb5c93) by extraction from render-town.mjs + terrain-candidate-A.json — see this tool's header",
   physics_registry: {
     hydrology: { honored: true, receipt: "the residents' own invented river system (survey decision 003); locks only mean anything because flow does" },
@@ -80,6 +80,7 @@ const skeleton = {
     pace: { honored: true, receipt: "decision 008 — 15 km per crossing; walk() spends crossings at this dial" },
     wear: { honored: true, receipt: "the walk-ledger — anonymous per-cell wear; where you wander is more intimate than who you wrote (ENGINE.md)" },
     signal: { honored: true, receipt: "Orion's announce-yourself law made mechanics (decision 008); a light declared on the record cuts fog for the whole town" },
+    timetable: { honored: true, receipt: "the Post Office as a scheduled service (Keemin, 2026-08-07): a mark carrying a timetable — stops by mark id, departure times, its own pace — becomes a body that moves on a clock. Boarding is presence, not a verb (ENGINE.md § the timetable mechanic)" },
   },
   elevation: {
     _ruling: "survey decision 008 (Keemin, 2026-07-22) — all values are dials, movable by ruling, never silently",
@@ -163,4 +164,4 @@ const skeleton = {
 
 mkdirSync(join(ROOT, "WORLD"), { recursive: true });
 writeFileSync(join(ROOT, "WORLD/skeleton.json"), JSON.stringify(skeleton, null, 2) + "\n");
-console.log(`WORLD/skeleton.json written: ${skeleton.features.length} features, ${skeleton.elevation.regions.length} elevation rows, ${skeleton.far_features.length} far feature(s), origin Ferry's crossing @ ${K} m/px`);
+console.log(`WORLD/skeleton.json written: ${skeleton.features.length} features, ${skeleton.elevation.regions.length} elevation rows, ${skeleton.far_features.length} far feature(s), origin the Origin @ ${K} m/px`);
