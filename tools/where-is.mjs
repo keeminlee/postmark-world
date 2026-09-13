@@ -31,7 +31,7 @@ import { currentDeparture, positionAt, fractionalCrossing } from "./walk.mjs";
 
 // The honest nowhere. A resident the record cannot place is NOT PLACED, and
 // every caller must be able to tell that from a coordinate. The grid origin is
-// Ferry's crossing, a real place; returning it for "unknown" is how a viewer
+// the Origin, a real place; returning it for "unknown" is how a viewer
 // ends up telling a dragon he is standing in the Town Centre.
 export const NOWHERE = Object.freeze({
   x: null, y: null, placed: false, source: null, mark_id: null,

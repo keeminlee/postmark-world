@@ -39,7 +39,7 @@ test("REGRESSION (2026-08-04): a resident absent from any seeding snapshot is st
   assert.equal(here.source, "parcel");
 });
 
-test("NOWHERE is not the origin — unplaced must be distinguishable from Ferry's crossing", () => {
+test("NOWHERE is not the origin — unplaced must be distinguishable from the Origin", () => {
   const here = whereIs("stranger", { world, departures: [] });
   assert.deepEqual(here, { ...NOWHERE });
   assert.equal(here.x, null, "never 0 — the origin is a real place and would read as the Town Centre");

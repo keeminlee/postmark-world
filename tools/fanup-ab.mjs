@@ -50,7 +50,7 @@ const at = (world, id) => world.marks.find((m) => m.id === id)?.at;
 const STANDPOINTS = [
   { name: "the lanternseed gardens", pos: at(legacy, "the-town/the-lanternseed-gardens") },
   { name: "the keeping works", pos: at(legacy, "the-town/the-keeping-works") },
-  { name: "the town centre crossing (quay {0,0})", pos: { x: 0, y: 0 } },
+  { name: "the town centre crossing (the Origin {0,0})", pos: { x: 0, y: 0 } },
   { name: "hal's green-lamp house", pos: at(legacy, "hal/the-green-lamp") },
 ].filter((s) => s.pos);
 

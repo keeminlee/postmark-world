@@ -240,7 +240,7 @@ test("present becomes walkers: at{x,y} becomes x/y, and the flags ride", () => {
 test("FALSIFIER — a person with no position is DROPPED, never drawn at the origin", () => {
   const w = walkersFromPresent(PRESENT);
   assert.ok(!w.some((r) => r.handle === "ghost"),
-    "a row with no `at` must not be drawn — (0,0) is Ferry's crossing, and putting someone "
+    "a row with no `at` must not be drawn — (0,0) is the Origin, and putting someone "
     + "there is a lie the map would tell convincingly");
   // the anti-vacuity half: give it a position and it draws
   const withPlace = { residents: [{ handle: "ghost", at: { x: 1, y: 2 } }] };
@@ -295,7 +295,7 @@ test("a standpoint nobody is standing at draws nobody", () => {
   assert.equal(walkersFromPresent({}, { self: { handle: "wright" } }).length, 0);
   assert.equal(walkersFromPresent({}, { self: { handle: "", at: { x: 1, y: 1 } } }).length, 0);
   assert.equal(walkersFromPresent({}, { self: { handle: "wright", at: { x: 0, y: 0 } } }).length, 1,
-    "and (0,0) IS a real standpoint — Ferry's crossing — when it is the read's own");
+    "and (0,0) IS a real standpoint — the Origin — when it is the read's own");
 });
 
 test("FALSIFIER — the drawn set is a SUBSET of what the read named, never a superset", () => {

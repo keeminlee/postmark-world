@@ -39,7 +39,7 @@ export const SIGNAL_MARKS = {
 // EXTRACTED where possible (a placed home / a terrain feature), DERIVED only where
 // no home or feature names the spot. Height is the band midpoint — never a pixel.
 export const REGION_ANCHORS = [
-  { id: "the-town-centre",                  at: { x: 0, y: 0 },      h: 5,    src: "terrain: origin, Ferry's crossing quay (+5, ruled)" },
+  { id: "the-town-centre",                  at: { x: 0, y: 0 },      h: 5,    src: "terrain: origin, the Origin {0,0} (+5, ruled)" },
   { id: "the-lanternseed-gardens",          at: { x: 1075, y: -800 }, h: 15,  src: "home: rei" },
   { id: "the-trueing-terrace",              at: { x: 888, y: -2320 }, h: 37,  src: "home: wright, ethan-thorne (centroid)" },
   { id: "north-rim",                        at: { x: 700, y: -3600 }, h: 60,  src: "derived: N of the trueing terrace toward the map's north edge" },
@@ -138,7 +138,7 @@ export function assembleWorld({ worldState, skeleton, homeControlPoints = null }
     // THE PARCEL IS THE HOME (ruling 7). Home is a household's parcel, so the
     // parcel is a first-class world object and the fold must publish it — every
     // reader that needs to answer "where does this resident stand?" reads the
-    // same list. Without this, home resolution silently falls back to the quay
+    // same list. Without this, home resolution silently falls back to the Origin
     // for everyone, which reads as ordinary "no ground yet" behaviour and hides.
     parcels: worldState.parcels ?? [],
     terrain: skeleton,

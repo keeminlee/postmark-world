@@ -5,8 +5,8 @@
 //
 // Why this file exists: nothing tested assembleWorld's output shape, and the
 // walk draft's home resolution read `world.parcels` off the fold — which the
-// fold did not publish. Every walker silently started at the quay instead of on
-// their own ground. It hid because "no parcel → the quay" is also LEGITIMATE
+// fold did not publish. Every walker silently started at the Origin instead of on
+// their own ground. It hid because "no parcel → the Origin" is also LEGITIMATE
 // behaviour for an unplaced resident, so total failure looked ordinary.
 //
 // The lesson these tests encode: when a fallback is indistinguishable from
@@ -57,22 +57,22 @@ test("one parcel per household — home resolution can take the first match", ()
   }
 });
 
-test("a placed household resolves to ground, NOT the quay — the bug this file was written for", () => {
+test("a placed household resolves to ground, NOT the Origin — the bug this file was written for", () => {
   // The end-to-end shape of the defect: resolve a known placed resident the way
   // the office does and assert the answer is their own ground. Before the fold
-  // published parcels this returned the quay (0,0) for every resident alive.
+  // published parcels this returned the Origin (0,0) for every resident alive.
   const w = assembleWorld(live());
-  const QUAY = { x: 0, y: 0 };
+  const ORIGIN = { x: 0, y: 0 };
   const householdOf = (handle) => (w.marks ?? []).find((m) => m.by === handle && m.household)?.household ?? handle;
   const parcelOf = (handle) => (w.parcels ?? []).find((p) => p.household === householdOf(handle)) ?? null;
 
   const parcel = parcelOf("wright");
   assert.ok(parcel, "wright has ground on the map, so a parcel must resolve");
-  assert.notDeepEqual({ x: parcel.at.x, y: parcel.at.y }, QUAY,
-    "a placed resident must not fall back to the quay");
+  assert.notDeepEqual({ x: parcel.at.x, y: parcel.at.y }, ORIGIN,
+    "a placed resident must not fall back to the Origin");
 
   // and the negative: an unplaced handle still legitimately has no ground
-  assert.equal(parcelOf("nobody-lives-here-xyz"), null, "an unplaced handle has no parcel — the quay default is correct for them");
+  assert.equal(parcelOf("nobody-lives-here-xyz"), null, "an unplaced handle has no parcel — the Origin default is correct for them");
 });
 
 test("assembleWorld's older keys survive the addition", () => {
