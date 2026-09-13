@@ -4668,14 +4668,30 @@ const STYLE = `
 /* THE SEARCH PILL. Collapsed it is one of the circles; open it is a pill that
    grows leftward, which is free because the row is right-anchored. The width is
    the only thing that animates, so nothing reflows around it. */
-.wv-search { position:relative; display:flex; align-items:center; margin-right:6px; }
+.wv-search { position:relative; display:flex; align-items:center; }
+/* one flex item, so the controls never split across two lines between themselves */
+.wv-mapctl-tools { display:flex; gap:6px; align-items:center; }
 /* THE PILL SHRINKS BEFORE THE ROW WRAPS. The control row is a right-anchored
    flex row that wraps, so a fixed width would push the five circles onto a
    second line on a phone. The clamp gives the field the whole 14rem where there
    is room and 24vw where there is not, with a floor that still shows a few
    words. (No backticks in this comment: it lives inside a template literal, and
    one here has ended the STYLE string three times now.) */
-.wv-search-input { width:clamp(9rem, 24vw, 14rem); margin:0;
+/* THE PILL IS SIZED BY WHAT IT SAYS (Keemin, 2026-09-13, on dev: "make the text
+   in the bubble 'find a house or resident' and make sure the bubble is big
+   enough that the text fits"). The field is monospace, so the ch unit is exact
+   rather than an estimate: the placeholder is 24 characters and the 2.55rem is
+   the 1.85rem of left padding that clears the glyph plus the 0.7rem on the right.
+   min-width repeats the value so nothing downstream can squeeze it below its own
+   sentence — clipping the placeholder is the one outcome not allowed.
+
+   ⛑ 25ch, NOT 24, AND THE EXTRA ONE IS MEASURED. The ch unit is the advance of
+   the "0" glyph, and this face is not strictly monospace across the letters the
+   sentence actually uses: at 24ch the inner box came to 171 px against a
+   placeholder that renders 173. Two pixels of clipping is still clipping. One
+   more character is 7 px of headroom and stays in the unit the sentence is
+   written in. */
+.wv-search-input { width:calc(25ch + 2.55rem); min-width:calc(25ch + 2.55rem); margin:0;
   height:2.15rem; box-sizing:border-box; font-family:var(--mono); font-size:.82rem;
   color:var(--amber); background:rgba(13,15,19,.92);
   /* room for the glyph sitting inside the left of the pill */
@@ -5155,10 +5171,19 @@ const MARKUP = `
                  label. There is one thing here now, and it is the field. -->
             <span class="wv-search-glyph" aria-hidden="true">&#8981;</span>
             <input class="wv-search-input" type="search" autocomplete="off" spellcheck="false"
-              aria-label="find a house, a mark or a resident"
-              placeholder="find a house or a resident">
+              aria-label="find a house or resident" title="find a house or resident"
+              placeholder="find a house or resident">
             <ul class="wv-search-results" hidden></ul>
           </div>
+          <!-- THE FIVE CIRCLES WRAP AS ONE THING (2026-09-13). Grouped rather
+               than gated behind a media query: as five siblings they wrapped
+               RAGGEDLY on a narrow screen — measured, four beside the pill at
+               440 px and three at 400, with the rest dropped below. A breakpoint
+               would fix today's numbers and decay the moment the font, the
+               placeholder or the number of controls changes. One flex item
+               cannot split, so the group moves below the field whole, at
+               whatever width it stops fitting, for ever. -->
+          <div class="wv-mapctl-tools">
           <!-- GLYPH ONLY (Keemin, 2026-08-04). These hang over a painting, and the
                words were four pills' worth of chrome across the top of it. The name
                keeps its seat in title and aria-label — dropping the word from
@@ -5174,6 +5199,7 @@ const MARKUP = `
           <button class="ctl wv-map-convo" aria-label="conversations" title="where the town is talking — live threads and the last day's, drawn as the ground they covered; labels link to the record">💬</button>
           <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
             title="a short tour of the world">?</button>
+          </div>
         </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
        THE PARCEL'S COLUMN hangs here, over the painting's right — the atlas's
        own place for it. One node, built by home-column.mjs and by nothing else;
