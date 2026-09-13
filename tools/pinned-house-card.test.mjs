@@ -55,9 +55,13 @@ test("opening or closing a column redraws the map — and nothing else does", ()
     "it redraws only when the PINNED HOUSE changes, not on every hover or selection");
   assert.match(block, /pinnedColumnParcelId = pinnedNow;[\s\S]{0,80}drawOverlay/,
     "the id is assigned BEFORE the draw, so a re-entrant call finds nothing changed");
-  // ⚑ THE FLIP: drop the trigger and the page test below reds while the two
-  //   source pins above stay green — the exact shape of "correct code that
-  //   never runs".
+  // ⚑ THE FLIP, and the correction the flip made to this comment. I wrote that
+  //   dropping the trigger would red only the page test. It reds THIS pin too,
+  //   which is obvious in hindsight — the pin names the thing I removed. What
+  //   the flip does prove is the half that matters: with the id still assigned
+  //   and only the redraw gone, BOTH page tests red, so the "correct code that
+  //   never runs" shape is caught by something that watches the screen and not
+  //   only by a regex that watches the source.
 });
 
 test("the pin is not a second draw path — it rides homeCard and the same cull", () => {
