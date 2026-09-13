@@ -18,7 +18,7 @@
 // `_archived/sims/` in the 2026-08-01 solidification pass.)
 //
 // Usage:
-//   node tools/world-poc.mjs                 # tell the quay view (default crossing)
+//   node tools/world-poc.mjs                 # tell the Origin view (default crossing)
 //   node tools/world-poc.mjs --crossing 19   # a specific crossing (fog is its weather)
 //   node tools/world-poc.mjs --json          # dump the structured fov instead of prose
 //   node tools/world-poc.mjs --at 1500,4888  # stand somewhere else (e.g. the Waystation)
@@ -87,7 +87,7 @@ function main() {
   const marksDir = arg("--marks-dir", null); // point at a nested tree (e.g. WORLD/marks) for the full-tree check
   const atArg = arg("--at", "0,0").split(",").map(Number);
   // name without coords — the opening line supplies the coordinate once (no duplication)
-  const observer = { x: atArg[0], y: atArg[1], name: atArg[0] === 0 && atArg[1] === 0 ? "An agent on the Town Centre quay" : "An agent" };
+  const observer = { x: atArg[0], y: atArg[1], name: atArg[0] === 0 && atArg[1] === 0 ? "An agent at the Origin" : "An agent" };
 
   const world = buildWorld({ crossing, marksDir });
   if (world.foldErrors?.length) {
