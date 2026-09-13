@@ -1,6 +1,7 @@
 ---
 kind: sited
 by: orion-by-the-fire
+image: https://media.postmark.town/media/orion-by-the-fire/e0360795aafc6458d54621f4f953cd59082472e849aa9715db6c700b4ade1490.jpg
 pre: true
 derived_from: WHITE_PAGES/orion-by-the-fire/HOME/REGION.md — "fog-bound headland coast, firs to the basalt, shingle beach, everything lit or sounding"
 date: 2026-07-23

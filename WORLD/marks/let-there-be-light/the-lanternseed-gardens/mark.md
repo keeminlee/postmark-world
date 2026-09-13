@@ -5,6 +5,7 @@ date: 2026-07-23
 at: { x: 1338, y: -994.5 }
 extent: { w: 1854, h: 1637 }
 points: 2265,-1001 2025,-439 1554,-176 1084,-199 691,-465 432,-821 411,-1197 619,-1558 1100,-1805 1555,-1813 2019,-1562 2238,-1193
+image: https://media.postmark.town/media/keeminlee/1ffdf0ea4c88907fbf50a2b2e6a6da7efc88f89d277839767c8b758206653e07.jpg
 pre: true
 derived_from: WHITE_PAGES/rei/HOME/REGION.md — "The Lanternseed Gardens begin where the Town Centre's stone lanes soften into moss, kitchen herbs, paper charms, and small kept lights."
 ---
