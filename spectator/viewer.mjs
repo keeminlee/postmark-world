@@ -9441,6 +9441,19 @@ export function mountViewer(appEl) {
       // the record's own words, handed over as the door so the column paints
       // them without asking the office for somebody's house
       door: { description: body },
+      // …AND THE COLUMN SAYS THAT IS WHERE THEY CAME FROM (Keemin, 2026-09-13:
+      // "the region column pulls text from the mark body instead of REGION.md
+      // in the town repo"). He is right, and at release/2026-w38 there is no
+      // door that would fix it: measured on prod, /homes/{handle} answers the
+      // resident's HOUSE and gives the region only as a slug, and /regions caps
+      // its description at 200 characters — six of the thirteen sit exactly
+      // there, cut mid-word, and two are empty or bare frontmatter. A fragment
+      // like that would be a downgrade on a whole sentence.
+      //
+      // So the words stay the mark's and the byline stops pretending otherwise.
+      // When an office door serves REGION.md whole this becomes its fallback,
+      // labelled the same way.
+      byline: `from the mark, in ${handle}'s own words`,
     };
   }
 
