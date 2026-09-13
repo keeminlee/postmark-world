@@ -38,6 +38,13 @@ import { parseEnterExitLedger, occupancyAt, occupantsOf, withinOf, isMark, isEnt
 // is not allowed to hold one, and `tools/record-sources.test.mjs` reads these
 // bytes to prove it.
 import { recordSources, recordAbsenceMessage } from "../tools/record-sources.mjs";
+// THE PARCEL'S COLUMN — the atlas's right-hand panel, back (Keemin 2026-09-11).
+// It owns its own markdown reader, its own builder and its own dress, and it
+// takes no viewer internals: the door read, the shelf gate and the handle rule
+// are handed to it. A home page is resident-authored prose arriving over a wire,
+// so the one thing that module may never do is parse a string as HTML — see its
+// header, and tools/home-column.test.mjs, which proves it cannot.
+import { createHomeColumn, homeHandleForParcel, isParcelMark, HOME_COLUMN_CSS } from "./home-column.mjs";
 
 const $ = (root, s) => root.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -48,6 +55,18 @@ export const SPECTATOR_ACTOR = "__spectator__";
 // the mark that frames everything — being inside it is being outdoors, which is
 // why it names no destination and appears in no containment answer
 export const WORLD_ROOT_ID = "the-town/let-there-be-light";
+
+/** THE CHIP NAMES THE MARK YOU ENTERED — ported 2026-09-11 from the birthday
+ *  lineage (8d0eb580, 2026-08-29), which never reached main. The founder ruled
+ *  it in these words: "no not containment! it has to be the mark you're
+ *  currently viewing the INTERIOR OF (aka ENTERED). geometric containment
+ *  smallest is NOT appropriate for this." So this function is never handed the
+ *  marks — it cannot fall back on a containment chain by accident; the caller
+ *  passes the mounted room, which is set from a crossing, and outside any room
+ *  the chip is the root, as it always was. Pure. */
+export function chipMark({ viewingInteriorOf = null } = {}) {
+  return viewingInteriorOf || WORLD_ROOT_ID;
+}
 
 const markIndex = (marks) => marks instanceof Map
   ? marks
@@ -932,6 +951,15 @@ export function interiorFurniture({ room, children = [], limit = 40 } = {}) {
 // exactly the 404 QA caught. So shelf art gets a prefix that cannot collide with
 // anything, and each habitat routes /shelf/* at the shelf host.
 export const SHELF_ROUTE = "/shelf/";
+// THE PRE-DRAWN GROUND (founder, 2026-09-11: "the pre-drawn-and-loaded ground
+// looks *better*. so we *should* do that"). The town renders its own map —
+// PROJECTS/build-the-town/atlas/render-town.mjs — and the site syncs it. This
+// is the ground-only rendition of that map: sea, water, terrain, the regions
+// with their art, WITHOUT the houses and their labels, which were the part of
+// the old atlas that broke at scale and which the overlay now draws by zoom
+// band. Absent (a site before its first sync, a broken sync, the test rig),
+// the generated ground draws instead — see loadMinimap.
+export const ATLAS_GROUND_URL = "/atlas/ground.html";
 const SHELF_PREFIX = "/media/";
 export function markImagePath(mark) {
   const url = markImageURL(mark);
@@ -999,8 +1027,14 @@ export function sceneArtSVG(mark, px) {
     + `</g>`;
 }
 
-export function placeholderExtentSVG(mark, px) {
-  if (!isEmbodiedMark(mark) || markImagePath(mark)) return "";
+// `ignoreArt` (2026-09-11) is the `mid` tier asking for the extent of a mark
+// that HAS a picture. The default refusal is right for its first caller — a
+// room where the art itself is hung, and a tinted block under a photograph is
+// just a smudge — but at district width the spectator wants every mark's shape
+// and no mark's photograph, which is the same block for a different reason.
+// Defaulted off, so every existing caller renders byte-for-byte what it did.
+export function placeholderExtentSVG(mark, px, { ignoreArt = false } = {}) {
+  if (!isEmbodiedMark(mark) || (!ignoreArt && markImagePath(mark))) return "";
   const hue = placeholderHue(mark.id);
   const fill = `hsl(${hue} 22% 76%)`, edge = `hsl(${hue} 26% 58%)`;
   const attrs = `class="wv-ph-extent" data-id="${esc(mark.id)}" fill="${fill}" stroke="${edge}"`;
@@ -1138,6 +1172,17 @@ function tgRing(mark) {
   const ring = mark ? polygonOf(mark) : null;
   if (!ring?.length) return null;
   return ring.some((p) => Math.abs(p.x) > TG_SENTINEL_M || Math.abs(p.y) > TG_SENTINEL_M) ? null : ring;
+}
+
+/** IS THIS MARK ONE OF THE TOWN'S REGIONS? (Keemin, 2026-09-13: "the region
+ *  marks should disappear when at mid zoom"). Matched on the slug alone, NOT
+ *  through townRegionMarks, and the difference matters: that function also
+ *  requires a drawn ring, so a region whose outline has not been generated yet
+ *  would fail it — and then reappear at mid, which is the one thing the ruling
+ *  asks against. A region is a region whether or not its outline exists. Pure. */
+export function isRegionMark(mark, slugs = REGION_SLUGS) {
+  const slug = String(mark?.id ?? "").split("/")[1];
+  return !!slug && slugs.includes(slug);
 }
 
 /** the town's region marks, in the record's own roster order */
@@ -1406,18 +1451,6 @@ export function viewIsWarm(entry, { signature = "", origin = null } = {}) {
   return entry.origin.x === origin.x && entry.origin.y === origin.y;
 }
 
-// WHICH VIEWS THE IDLE LANE OWES. The selected resident is not in the queue —
-// their view is the one on screen — and neither is a resident the record cannot
-// place, because there is no standpoint to read from.
-export function staleViewHandles({ handles = [], active = null, signature = "", entries = new Map(), originOf = () => null } = {}) {
-  return (handles ?? []).filter((handle) => {
-    if (!handle || handle === active) return false;
-    const origin = originOf(handle);
-    if (!origin) return false;
-    return !viewIsWarm(entries.get(handle), { signature, origin });
-  });
-}
-
 export function distanceBandLabel(name, bands = DIALS.distance_bands) {
   const index = (bands ?? []).findIndex((band) => band.name === name);
   if (index < 0) return String(name ?? "");
@@ -1672,10 +1705,476 @@ export function overlayStandpointSVG({ at } = {}) {
     + `<circle r="${OVERLAY_DOT_R}" class="ov-dot"/><circle r="${OVERLAY_HALO_R}" class="ov-halo"/></g></g>`;
 }
 
+// ── THE HOME CARD ON THE PARCEL (Keemin, 2026-09-10) ───────────────────────
+//
+// The atlas hung every household's home picture on the map in a small frame
+// with the household's name under it, and those cards left with the atlas fetch
+// on 09-08. They come back here, drawn from the WORLD's record: a parcel's card
+// shows the picture its HOME mark carries (the dwelling sited on the parcel,
+// tier `home`, whose `image:` the media door minted at the home-shelf backfill),
+// and the only thing that changed about the frame is its shape — it has a roof
+// now ("replace the boring rectangular frame … with a more house-shaped one with
+// a roof"). A parcel whose home has no picture gets the empty frame, as the
+// atlas gave it.
+//
+// Same contract as the pips: authored in painting units, sized by the camera
+// through `.ov-s`, no camera argument. The pip circle is still emitted on top,
+// transparent — it is the hover anchor (`anchor: ".ov-pip"`), the hit target and
+// the fan's seat, and none of that moves.
+//
+// THE FRAME IS THE LIGHT (the two derived lights, ruled 2026-09-10): a house is
+// LIT when its resident is HOME — a walker of the parcel's household at rest
+// inside the parcel. Derived at draw time from the walkers the map already
+// holds; nothing is stored. AWAKE (acted within 72 h) has no source at the door
+// yet and is not drawn — a light that cannot be derived is left dark.
+export const HOME_CARD = Object.freeze({ w: 52, h: 44, roof: 14 });
+export function homeCardPath({ w, h, roof } = HOME_CARD) {
+  const x0 = -w / 2, top = -(h + roof) / 2, eave = top + roof, base = eave + h;
+  return `M ${x0 - 2} ${eave} L 0 ${top} L ${w / 2 + 2} ${eave} L ${w / 2} ${eave} L ${w / 2} ${base} L ${x0} ${base} L ${x0} ${eave} Z`;
+}
+/** THE DEFAULT HOUSE FACE IS THE TOWN'S OWN SEAL (Keemin, 2026-09-12: "the
+ *  static house icons could be styled more like Postmark — dark blue default,
+ *  with the little envelope icon in the middle"). The body goes Postmark navy
+ *  and wears a gold envelope, which is not a new drawing: it is the town's
+ *  seal, the same envelope the site's favicon carries, in the same two colours
+ *  — `#0d1426` under `#e8c48b`.
+ *
+ *  IT REPLACES THE DOOR AND THE TWO WINDOWS rather than sitting over them. The
+ *  face's whole job at `far` is 24 px across (52 units at HOME_GLYPH_SCALE
+ *  0.46), and an envelope needs the body's full width to read as an envelope
+ *  at all; a door and two windows behind it turned that into three motifs
+ *  fighting over the same handful of pixels. The envelope also says what the
+ *  windows were saying — somebody lives here, this is Postmark — in one mark
+ *  instead of three, which is the whole reason the seal exists.
+ *
+ *  THE LIT STATE SURVIVES THE SWAP, and it had to: a lit house is one whose
+ *  resident is home (the two derived lights, ruled 2026-09-10), and it read as
+ *  lit because its WINDOWS warmed. With no windows the envelope inherits that
+ *  job — it fills amber and brightens, beside the frame's own glow — so the
+ *  state change is at least as visible as it was. See `.ov-home.lit` below.
+ *
+ *  Drawn upright, where the favicon's seal is tilted −8°: a jaunty tilt reads
+ *  as charm at 64 px and as a mistake at 12. Two elements, no picture, in the
+ *  card's own units so it sits inside `homeCardPath` at any scale. Pure. */
+export function homeFaceSVG({ w, h, roof } = HOME_CARD) {
+  const top = -(h + roof) / 2, eave = top + roof;
+  // centred on the BODY, not on the card: the roof is not somewhere a letter goes
+  const midY = eave + h / 2;
+  const envW = Math.round(w * 0.52), envH = Math.round(h * 0.41);
+  const x0 = -envW / 2, y0 = midY - envH / 2;
+  // the flap's proportions are the seal's own (favicon.svg): its corners inset
+  // from the rect by 2.5/42 and 3.5/29 of it, its V reaching 18/29 of the way down
+  const inx = envW * (2.5 / 42), iny = envH * (3.5 / 29), deep = envH * (18 / 29);
+  const r = (n) => Math.round(n * 100) / 100;
+  return `<rect x="${r(x0)}" y="${r(y0)}" width="${envW}" height="${envH}" rx="2" class="ov-home-envelope"/>`
+    + `<path d="M ${r(x0 + inx)} ${r(y0 + iny)} L 0 ${r(y0 + deep)} L ${r(x0 + envW - inx)} ${r(y0 + iny)}" class="ov-home-flap"/>`;
+}
+export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = false, fan = null, title = null, classes = "" } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
+  const { w, h, roof } = HOME_CARD;
+  const x0 = -w / 2, top = -(h + roof) / 2, base = top + roof + h;
+  const dx = Number(fan?.dx) || 0, dy = Number(fan?.dy) || 0;
+  const d = homeCardPath();
+  // a clip id must be unique per card and safe: built from the id's own
+  // handle-shaped characters only, never the raw string
+  const clip = `wv-home-${String(id ?? "").toLowerCase().replace(/[^a-z0-9-]+/g, "-")}`;
+  const art = image
+    ? `<clipPath id="${clip}"><path d="${d}"/></clipPath>`
+      + `<image href="${esc(image)}" x="${x0}" y="${top}" width="${w}" height="${h + roof}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
+    : `<path d="${d}" class="ov-home-blank"/>${homeFaceSVG()}`;
+  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+    + `<g class="ov-home${lit ? " lit" : ""}${image ? "" : " no-art"}" data-id="${esc(id)}" transform="translate(${dx} ${dy})">`
+    + art
+    + `<path d="${d}" class="ov-home-frame"/>`
+    + (label ? `<text class="ov-home-label" y="${base + 11}" text-anchor="middle">${esc(label)}</text>` : "")
+    + `</g>`
+    + `<circle cx="${dx}" cy="${dy}" r="${OVERLAY_PIP_R}" class="ov-pip ov-pip-home ${classes}" data-id="${esc(id)}">`
+    + (title ? `<title>${esc(title)}</title>` : "")
+    + `</circle></g></g>`;
+}
+
+/** THE WALKER IS A FRAME WITH LEGS (founder, 2026-09-11: "residents can be
+ *  similar to the parcel-homes, where there's an empty frame that's the 'face'
+ *  which should take up most of the icon, with short little legs coming off of
+ *  it (so it's mostly a frame). the frame fills in with info at the same zoom
+ *  that parcels do"). One glyph for every zoom: at town width the frame is
+ *  EMPTY (`art` null) — a small circle and two strokes, no image, no clip
+ *  path; at district and street width the same frame, larger, FILLED with the
+ *  face (the picture clipped to the frame, or the monogram on the household's
+ *  colour) — exactly the house card's rule: frame far out, picture near. Fixed
+ *  where the resident stands, never merged, never re-decided by the camera.
+ *  Everything is in marker space (`1/k`) so it stays the same screen size at
+ *  any zoom. Carries the handle and the hit disc the walker always wore. Pure. */
+export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
+export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
+  const s = 1 / (Number(k) > 0 ? Number(k) : 1);
+  const filled = !!(art && (art.avatar || art.monogram));
+  const size = (filled ? WALKER_FRAME.near : WALKER_FRAME.far) * s;
+  const leg = (filled ? WALKER_FRAME.legNear : WALKER_FRAME.legFar) * s;
+  const r = size / 2, x0 = x - r, y0 = y - r;
+  // THE FRAME IS ROUND (founder, 2026-09-11: "make the frame circular rather
+  // than square. keep the legs (they're perfect)"). The legs are untouched —
+  // same stance, same length — and start where they meet the rim: on a circle
+  // of radius r the point 0.22·size off centre lies √(r² − (0.22·size)²) below
+  // the middle, a hair above where the square's bottom edge was.
+  const rim = y + Math.sqrt(r * r - (size * 0.22) ** 2);
+  const who = esc(label ?? handle);
+  const safe = String(handle ?? "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+  let fill = "";
+  if (filled && art.avatar) {
+    const clip = `wv-face-${safe}`;
+    fill = `<clipPath id="${clip}"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath>`
+      + `<image href="${esc(art.avatar)}" x="${x0}" y="${y0}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
+  } else if (filled) {
+    fill = `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
+      + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
+  }
+  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
+    + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit"/>`
+    + fill
+    + `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-frame"/>`
+    + `<line x1="${x - size * 0.22}" y1="${rim}" x2="${x - size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
+    + `<line x1="${x + size * 0.22}" y1="${rim}" x2="${x + size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
+    + `</g>`;
+}
+
+
+// THE SAME HOUSE, TOLD SMALLER (2026-09-11). At `far` a parcel is a landmark
+// and nothing else: the reader is looking at the shape of a town, and 890
+// photographs at 45 px apiece over ground 3 px wide is not a town, it is a
+// contact sheet. So the card's own roofline is drawn once, filled, at half
+// size — no picture, no clip path, no frame, no name, no tooltip. Four nodes
+// instead of ten, and the map still reads as houses.
+//
+// The pip stays, and that is not an oversight: it is the hover anchor, the hit
+// target and the fan's seat (`anchor: ".ov-pip"`, screenMarkCandidates), so a
+// glyph that dropped it would make every house at town width unclickable —
+// which is the zoom a reader arrives at.
+export const HOME_GLYPH_SCALE = 0.46;
+export function overlayHouseGlyphSVG({ at, id, classes = "" } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
+  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+    + `<g transform="scale(${HOME_GLYPH_SCALE})"><path d="${homeCardPath()}" class="ov-glyph" data-id="${esc(id)}"/>${homeFaceSVG()}</g>`
+    + `<circle r="${OVERLAY_PIP_R}" class="ov-pip ov-pip-home ${classes}" data-id="${esc(id)}"/>`
+    + `</g></g>`;
+}
+
+/** The dwelling sited on a parcel: the home-tier mark whose placementParent is
+ *  the parcel — preferring one that carries a picture. Pure. */
+export function homeMarkOfParcel(parcelId, marks = []) {
+  let best = null;
+  for (const m of marks ?? []) {
+    if (m?.kind !== "sited" || m?.tier !== "home" || m?.placementParent !== parcelId) continue;
+    if (!best || (m.image && !best.image)) best = m;
+  }
+  return best;
+}
+
+/** THE ROOM IS ASKED OF THE MARKS THE PAGE HOLDS (2026-09-11). `investigate`
+ *  wants a world — `world.marks` is its first line — and on the resident path
+ *  there is none: the fold is never loaded, `world` stays null, and a resident
+ *  who boots ENTERED (rei, home inside the lanternstep house) mounted her room
+ *  into `investigate(roomId, null)` and the telling failed on "reading 'marks'
+ *  of null" — a blank overlay, no houses, no pips, no people. It only ever
+ *  worked when the page had been a Spectator first and still held the fold.
+ *  So the room is asked of what the page HOLDS: the fold when there is one,
+ *  else the read's own index — the seam's one rule (the index fills from the
+ *  read; the call sites never care which). Terrain rides along when the fold
+ *  has it; a room asked of the read has none, and investigate reads it
+ *  optionally. Pure. */
+export function worldForRoom(world, marks = []) {
+  if (world?.marks) return world;
+  const list = Array.isArray(marks) ? marks : [...(marks?.values?.() ?? [])];
+  return { marks: list, terrain: world?.terrain ?? null };
+}
+
+/** THE PARCEL A MARK STANDS INSIDE OF, by the record's own chain (2026-09-11).
+ *  Walks `parent`, `placementParent`, `_containedBy` and `_parentMarkId` — the
+ *  same family markStanding walks — from the mark's OWN parents (never the mark
+ *  itself: a parcel is not inside itself) to the first parcel, cycle-safe.
+ *  Null when nothing on the chain is a parcel. `chain` (optional) is a second
+ *  index of id → { kind, parent, placementParent } consulted where `marks`
+ *  has no full record: on the resident path the read's nearby entries are
+ *  thin (id, at, bearing) and the office does not send their parents, so
+ *  without the town's own chain eight marks inside houses drew from outside
+ *  (measured on dev, 2026-09-11 21:1x). Pure. */
+export function parcelEnclosing(mark, marks = [], chain = null) {
+  const byMarkId = markIndex(marks);
+  const linksOf = (m, id) => { const c = chain?.get?.(id); return [m?.parent ?? c?.parent, m?.placementParent ?? c?.placementParent, m?._containedBy, m?._parentMarkId]; };
+  const seen = new Set([mark?.id]);
+  const queue = linksOf(mark, mark?.id);
+  while (queue.length) {
+    const id = queue.shift();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    const m = byMarkId.get(id), c = chain?.get?.(id);
+    if ((m?.kind ?? c?.kind) === "parcel") return id;
+    if (!m && !c) continue;
+    queue.push(...linksOf(m ?? {}, id));
+  }
+  return null;
+}
+
+/** WHAT IS INSIDE A PARCEL STAYS INSIDE IT (founder, 2026-09-11: "let's not load
+ *  any marks within a parcel when outside of it"). A mark standing inside a
+ *  parcel — the dwelling, its furniture, the rooms — is drawn only when the
+ *  reader is INSIDE that parcel (the mounted room is the parcel, or something
+ *  within it: `underfoot`). From outside, the parcel's card is the whole of
+ *  what is seen — a house is a landmark, not a window. Pure. */
+export function hiddenInsideParcel(mark, marks = [], underfoot = new Set(), chain = null) {
+  const parcel = parcelEnclosing(mark, marks, chain);
+  return !!parcel && !underfoot.has(parcel);
+}
+
+/** THE CHOOSER IS SORTED — residents, parcels, then other marks (founder,
+ *  2026-09-11: "separate the multi-mark selector (when clicking a crowded space)
+ *  into residents, parcels, and then other marks"). Order within a group is the
+ *  order handed in (people first, marks innermost-first — see openChooser).
+ *  `isWalker` says which ids are people; `kindOf` answers a mark's kind. Pure. */
+export function groupChooserIds(ids = [], { isWalker = () => false, kindOf = () => null } = {}) {
+  const residents = [], parcels = [], others = [];
+  for (const id of ids ?? []) {
+    if (isWalker(id)) residents.push(id);
+    else if (kindOf(id) === "parcel") parcels.push(id);
+    else others.push(id);
+  }
+  return { residents, parcels, others };
+}
+
+/** THE PARCEL UNDERFOOT WEARS NO CARD (founder, 2026-09-11: "let's not display
+ *  the parcel card when the view is the parcel itself or anything within it").
+ *  Given the MOUNTED room, the parcels it is or is inside of by the record's
+ *  own chain — `parent` and `placementParent`, both walked, cycle-safe: a
+ *  parcel entered directly, the dwelling sited on it, a room in that dwelling.
+ *  A card is a landmark seen from outside; drawn over the floor you are
+ *  standing on it is the roof over your head, and every other parcel in view
+ *  keeps its card exactly as outside. Nothing mounted — the town — is the
+ *  empty set. Pure. */
+export function enclosingParcels(roomId, marks = []) {
+  const byMarkId = markIndex(marks);
+  const out = new Set(), seen = new Set(), queue = roomId ? [roomId] : [];
+  while (queue.length) {
+    const id = queue.shift();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    const m = byMarkId.get(id);
+    if (!m) continue;
+    if (m.kind === "parcel") out.add(id);
+    queue.push(m.parent, m.placementParent);
+  }
+  return out;
+}
+
+/** THE RESIDENT'S OWN HOUSE WEARS ITS PICTURE TOO (2026-09-11, Keemin's
+ *  screenshot of the terrace: every house pictured or faced by the record —
+ *  except wright's, labelled by household, blank). On the resident path the
+ *  index is filled from the read's records and the resident's OWN rows
+ *  (my-marks: drafts, docket, published, backed) FIRST, and the town's houses
+ *  only where an id is missing — so a resident's own dwelling, present as a
+ *  portfolio row that carries no `image`, `tier` or `placementParent`, shadowed
+ *  the world's record of it and the card could not find the dwelling. This
+ *  fills what is missing from the town's record and never overwrites a value
+ *  the row already has: the row stays the resident's, the picture is the
+ *  world's. Returns the ids it touched. Pure. */
+export const TOWN_FILL_FIELDS = Object.freeze(["kind", "tier", "placementParent", "image", "extent", "household", "by", "at"]);
+export function fillFromTown(byId, townHouses = []) {
+  const touched = [];
+  for (const m of townHouses ?? []) {
+    if (!m?.id) continue;
+    const have = byId.get(m.id);
+    if (!have) { byId.set(m.id, m); touched.push(m.id); continue; }
+    let filled = null;
+    for (const k of TOWN_FILL_FIELDS) if (have[k] == null && m[k] != null) { filled ??= { ...have }; filled[k] = m[k]; }
+    if (filled) { byId.set(m.id, filled); touched.push(m.id); }
+  }
+  return touched;
+}
+
+/** THE TOWN'S HOUSES, as a set a resident's map can be handed (2026-09-11,
+ *  Keemin on dev as wright: "we still don't have the new parcel cards loaded
+ *  (just the marks)"). Every parcel, plus the dwelling sited on each — and
+ *  nothing else: the furniture, the people and the rest of the fold stay the
+ *  read's. Order is the record's; a parcel with no dwelling rides alone. Pure. */
+export function townHouseMarks(marks = []) {
+  const out = [];
+  for (const m of marks ?? []) {
+    if (m?.kind !== "parcel" || !m.id) continue;
+    out.push(m);
+    const home = homeMarkOfParcel(m.id, marks);
+    if (home) out.push(home);
+  }
+  return out;
+}
+
+/** HOME: a walker of the parcel's household, at rest, inside the parcel. Pure. */
+export function houseIsLit(parcel, walkers = [], householdOf = null) {
+  const w = Number(parcel?.extent?.w), h = Number(parcel?.extent?.h);
+  const cx = Number(parcel?.at?.x), cy = Number(parcel?.at?.y);
+  if (![cx, cy, w, h].every(Number.isFinite)) return false;
+  const who = String(parcel?.household ?? parcel?.by ?? "");
+  if (!who) return false;
+  return (walkers ?? []).some((k) => {
+    if (!k) return false;
+    const moving = k.moving ?? (!k.arrived && !k.standing);
+    if (moving) return false;
+    const handle = String(k.handle ?? "");
+    const hh = householdOf ? String(householdOf(handle) ?? "") : "";
+    if (handle !== who && hh !== who) return false;
+    const x = Number(k.x), y = Number(k.y);
+    return Number.isFinite(x) && Number.isFinite(y) && Math.abs(x - cx) <= w / 2 && Math.abs(y - cy) <= h / 2;
+  });
+}
+
 export function markerScale(zoomK) {
   const k = Number.isFinite(zoomK) && zoomK > 0 ? zoomK : 1;
   return Math.max(1, Math.sqrt(k), k / MARKER_MAX_GROWTH);
 }
+
+// ── THE SPECTATOR'S THREE DISTANCES (Keemin, 2026-09-11) ───────────────────
+//
+// A RESIDENT loads what they can see; a SPECTATOR is given the town, and the
+// town is what the painting cannot afford to draw at full resolution. At the
+// opening view the camera holds 7,500 m across about 700 px of pane — eleven
+// metres to the pixel — and the overlay was drawing, for every one of the
+// town's parcels at once, a clipped photograph, its clip path, a framed roof,
+// a name and a hit pip. Measured on the 09-09 synthetic ten-times record
+// (11,961 marks, 890 parcels): 8,105 nodes in the overlay, 461 pictures, and
+// 53 s before the town appeared. The pictures are ~45 px wide and the parcels
+// they stand on are 2.8 px apart, so the reader is handed a contact sheet.
+//
+// So the drawing asks one question first — HOW MUCH TOWN IS ON SCREEN — and
+// every per-mark pass reads the answer. Not how far away a thing is (that is
+// the field of view's question, and it is the RESIDENT's), and not how many
+// marks there are (which would make the painting change under a reader when
+// somebody else published). Metres across the viewport, and nothing else.
+//
+// The boundaries are Wright's recommended defaults, and they are DIALS in the
+// dev pane, not constants buried in a pass — the whole point of the 09-10
+// proposal's open calls being open. Their arithmetic:
+//
+//     metres across = the painting's full width in metres ÷ zoomK
+//     (viewer.mjs applyView: `zoomK = full.w / view.w`; the painting is
+//      1500 atlas units at 5 m each — WORLD/skeleton.json — so 7,500 m)
+//
+//     far   > 5,000 m across   (zoomK < 1.5)  the town as a whole
+//     mid   1,000–5,000 m      (1.5–7.5)      a district
+//     near  < 1,000 m          (zoomK > 7.5)  a street — today's painting
+//
+// The opening view is 7,500 m across, so a reader arrives at `far`. That is
+// deliberate: the first thing the page must do is appear.
+export const SPECTATOR_DRAW_DEFAULTS = Object.freeze({
+  tier_far_m: 5000,      // wider than this across the viewport → far
+  tier_near_m: 1000,     // narrower than this across the viewport → near
+  // PICTURES AT MID (founder, 2026-09-11: "pictures should appear at mid zoom").
+  // Every parcel in the town is 25 m across (WORLD/world-state.json, all 89);
+  // on a 1,360 px pane that is 34 px at the near boundary and 7 px at the far
+  // one, so 40 meant "never at mid". 6 means the whole mid tier, and `far`
+  // still draws glyphs. The trade is the cull margin right below.
+  art_min_px: 6,         // a home card wears its picture only once its parcel owns this many screen px
+  // HALF A VIEWPORT (the same ruling): with pictures at mid, the margin is
+  // what bounds the `<image>` count — one viewport of margin drew nine
+  // viewports of cards; half draws four. A pan past the margin rebuilds once.
+  cull_margin: 0.5,      // viewports of margin kept drawn on each side of the viewBox
+  // A LARGE MARK HANGS ITS OWN PICTURE (Keemin, 2026-09-12, on seeing the
+  // mountain do it: "oh yes that's beautiful. let's do that").
+  //
+  // 200 m is read off the record, not chosen for its roundness. Every parcel in
+  // the town is EXACTLY 25 m across — all 89 of them, min and max alike — and
+  // the whole tail of furniture sits under 200 m with it: 505 of the 574 marks
+  // that carry an extent. The district marks start at 300 m on their narrow
+  // side and run to 3,873 m. So 200 is the gap: above every parcel and every
+  // chair, below the narrowest district, and it draws the line between "a thing
+  // in a place" and "a place".
+  placed_art_min_m: 200, // a mark this many metres across, wearing a picture, hangs it on the ground
+});
+
+/** How much town is on screen, in metres. `viewW` is the painting's full width
+ *  in metres; `zoomK` is the camera's own ratio (full.w / view.w). Pure. */
+export function metresAcross(zoomK, viewW) {
+  const k = Number.isFinite(zoomK) && zoomK > 0 ? zoomK : 1;
+  const w = Number(viewW);
+  return Number.isFinite(w) && w > 0 ? w / k : NaN;
+}
+
+/** `far` | `mid` | `near`, from metres across the viewport. Pure, and the only
+ *  place the three words are decided.
+ *
+ *  A camera it cannot read answers `near` — today's painting. That is the safe
+ *  direction on purpose: the failure mode of guessing `far` is a blank town,
+ *  and a viewer that quietly stops drawing because it could not measure itself
+ *  is the worst bug on this list. Drawing too much is visible; drawing nothing
+ *  looks like the page is broken, which it would be. */
+export function tierFor(zoomK, viewW, dials = SPECTATOR_DRAW_DEFAULTS) {
+  const across = metresAcross(zoomK, viewW);
+  if (!Number.isFinite(across)) return "near";
+  const far = Number(dials?.tier_far_m ?? SPECTATOR_DRAW_DEFAULTS.tier_far_m);
+  const near = Number(dials?.tier_near_m ?? SPECTATOR_DRAW_DEFAULTS.tier_near_m);
+  if (Number.isFinite(far) && across > far) return "far";
+  if (Number.isFinite(near) && across < near) return "near";
+  return "mid";
+}
+
+/** A mark's own ground, in screen pixels — the width of its extent as the
+ *  reader actually sees it. This is the "120 m art box" written as a pixel
+ *  rule: a picture is worth drawing when the ground under it is big enough to
+ *  hold one, and at no zoom does that depend on how many marks there are.
+ *  Pure. Returns 0 for a mark with no extent. */
+export function footprintPx(mark, { across, panePx } = {}) {
+  const w = Number(mark?.extent?.w), h = Number(mark?.extent?.h);
+  const a = Number(across), p = Number(panePx);
+  if (!Number.isFinite(a) || a <= 0 || !Number.isFinite(p) || p <= 0) return 0;
+  const m = Math.max(Number.isFinite(w) ? w : 0, Number.isFinite(h) ? h : 0);
+  return m > 0 ? (m * p) / a : 0;
+}
+
+/** The viewBox in WORLD METRES, grown by `margin` viewports on each side — the
+ *  box every per-mark pass culls against.
+ *
+ *  One viewport of margin is not padding for its own sake: it is what lets a
+ *  pan stay free. The overlay is rebuilt only when the camera settles OUTSIDE
+ *  what was drawn, so a reader dragging around inside the margin moves a
+ *  viewBox and touches no DOM — which is the property the 08-21 camera split
+ *  bought and this must not spend.
+ *
+ *  Pure: takes the registration rather than reading a context. */
+export function viewportWorldBounds({ view, originPx, mPerPx, margin = 0 } = {}) {
+  const x = Number(view?.x), y = Number(view?.y), w = Number(view?.w), h = Number(view?.h);
+  const ox = Number(originPx?.x), oy = Number(originPx?.y), s = Number(mPerPx);
+  if (![x, y, w, h, ox, oy, s].every(Number.isFinite) || !(s > 0) || !(w > 0) || !(h > 0)) return null;
+  const m = Number.isFinite(Number(margin)) ? Math.max(0, Number(margin)) : 0;
+  return {
+    minX: (x - w * m - ox) * s, maxX: (x + w + w * m - ox) * s,
+    minY: (y - h * m - oy) * s, maxY: (y + h + h * m - oy) * s,
+  };
+}
+
+/** Is this mark inside the drawn box? A mark with an extent is asked by its
+ *  geometry (the same `markGeometryIntersectsViewport` the off-screen highlight
+ *  arrow already uses, so a culled mark and a flagged mark always agree); a
+ *  mark with only a point is asked by its point. Pure.
+ *
+ *  A null box draws everything — see `tierFor`: a camera we cannot read is
+ *  never a reason to stop painting the town. */
+export function markInDrawnBounds(mark, bounds) {
+  if (!bounds) return true;
+  const x = Number(mark?.at?.x), y = Number(mark?.at?.y);
+  if (isEmbodiedMark(mark) && mark?.extent) return markGeometryIntersectsViewport(mark, bounds);
+  if (![x, y].every(Number.isFinite)) return true;
+  return x >= bounds.minX && x <= bounds.maxX && y >= bounds.minY && y <= bounds.maxY;
+}
+
+/** Is a bare point inside the drawn box? Walkers are points, not marks. Pure. */
+export function pointInDrawnBounds(at, bounds) {
+  if (!bounds) return true;
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return false;
+  return x >= bounds.minX && x <= bounds.maxX && y >= bounds.minY && y <= bounds.maxY;
+}
+
 
 // The zoom-IN floor: the viewport may never get narrower than full.w / this.
 // The painting is 1500 atlas units wide at 5 m per unit (WORLD/skeleton.json),
@@ -1899,8 +2398,7 @@ export const TOUR_SLIDES = [
     title: "The painting, and its controls",
     body: "Drag to pan, scroll to zoom. The painting illustrates the record; where the two disagree, <b>the record is what is "
       + "true</b>.<br><br>"
-      + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand. <b>▦</b> draws the survey grid — a "
-      + "kilometre to the line. <b>⬚</b> draws each mark's true extent instead of a dot.<br><br>"
+      + "<b>⛶</b> fits the whole world in the pane. <b>◎</b> keeps the view on where you stand.<br><br>"
       // The ? is inside the cluster this slide is pointing at, and it was the one
       // button in it the slide did not name — which left the tour ending without
       // ever saying how to get it back.
@@ -2338,21 +2836,83 @@ export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving
 // The href is whitelisted through the same door a resident's avatar goes
 // through: this one is a constant rather than user data, but a second road for
 // URLs into an <image href> is exactly how the first one stops being checked.
-export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art" } = {}) {
+// `fit` (2026-09-12) — SQUARE-AND-SLICE, or the mark's true extent, MEET.
+//
+// The square was right while this drew one thing: a peak is as tall as it is
+// wide, and slicing a square photograph into a square box crops nothing. It is
+// wrong for the ground a town is actually made of. `limen/the-descending-
+// terraces` is 300 m by 2,200 m on the record; squaring that hangs a 2,200 m
+// picture over a 300 m strip — seven times too wide, spilling across every
+// neighbour it has. And a place's own picture is not a texture to be cropped to
+// taste: `meet` shows the whole of what somebody hung there.
+//
+// So `slice` stays the default and Pando's old call is byte-for-byte what it
+// was, while the general rule below asks for `meet` and gets the extent the
+// record actually wrote.
+export function placedArtSVG({ at, extent, minSize = 0, href, label = "", id = "art", fit = "slice", clickable = false, ring = null } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   const url = safeAvatarUrl(href);
   if (![x, y].every(Number.isFinite) || !url) return "";
-  const authored = Math.max(Number(extent?.w) || 0, Number(extent?.h) || 0);
-  const floor = Number(minSize) > 0 ? Number(minSize) : 0;
-  const size = Math.max(authored, floor);
-  if (!(size > 0)) return "";
-  const half = size / 2;
   const clip = `wv-art-clip-${String(id).replace(/[^a-z0-9-]/gi, "")}`;
+  const hit = (shape) => (clickable
+    ? shape.replace("/>", ` class="wv-far-art-hit" data-id="${esc(id)}" role="button" tabindex="0"`
+      + ` aria-label="${esc(String(label ?? ""))}"/>`)
+    : "");
+
+  // ── THE PICTURE FILLS THE RING (Keemin, 2026-09-13, looking at the empty
+  //    boxes on dev: "could we just have the images fill the ring frames
+  //    instead of having another version") ─────────────────────────────────
+  //
+  // A region already HAS a shape on the record — the twelve-point ring the
+  // ground draws its wash from — and hanging a rectangle next to it was the map
+  // saying the same place twice in two shapes. So where a ring is handed in the
+  // picture is clipped to it and fills it: `slice`, because a photograph fitted
+  // INSIDE an irregular outline leaves the outline half empty, which is the
+  // thing being complained about. The frame is then the ring's own line, not a
+  // rectangle around it — Keemin's words were "fill the ring frames", so the
+  // ring is the frame.
+  //
+  // Per-mark, never global: a mark with no ring — the peak, a dwelling, a
+  // parcel — gets exactly the box it got before, and that path is untouched
+  // below. The click target follows the same shape for the same reason: the
+  // door should be the place, not a rectangle over it.
+  const pts = Array.isArray(ring) && ring.length >= 3
+    ? ring.filter((p) => Number.isFinite(Number(p?.x)) && Number.isFinite(Number(p?.y)))
+    : null;
+  if (pts && pts.length >= 3) {
+    const xs = pts.map((p) => Number(p.x)), ys = pts.map((p) => Number(p.y));
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const rw = x1 - x0, rh = y1 - y0;
+    if (!(rw > 0 && rh > 0)) return "";
+    const points = pts.map((p) => `${Number(p.x).toFixed(1)},${Number(p.y).toFixed(1)}`).join(" ");
+    const rbox = `x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${rw.toFixed(1)}" height="${rh.toFixed(1)}"`;
+    return `<g class="wv-far-art wv-far-art-ringed" role="img" aria-label="${esc(String(label ?? ""))}">`
+      + `<clipPath id="${clip}"><polygon points="${points}"/></clipPath>`
+      + `<image href="${url}" ${rbox} preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
+      + `<polygon points="${points}" class="wv-far-art-ring"/>`
+      + hit(`<polygon points="${points}"/>`)
+      + `</g>`;
+  }
+
+  const floor = Number(minSize) > 0 ? Number(minSize) : 0;
+  const wRaw = Number(extent?.w) || 0, hRaw = Number(extent?.h) || 0;
+  const meet = fit === "meet";
+  const w = meet ? Math.max(wRaw, floor) : Math.max(Math.max(wRaw, hRaw), floor);
+  const h = meet ? Math.max(hRaw, floor) : w;
+  if (!(w > 0 && h > 0)) return "";
+  const box = `x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}"`;
+  const rx = Math.min(w, h) * 0.02;
   return `<g class="wv-far-art" role="img" aria-label="${esc(String(label ?? ""))}">`
-    + `<clipPath id="${clip}"><rect x="${x - half}" y="${y - half}" width="${size}" height="${size}" rx="${size * 0.02}"/></clipPath>`
-    + `<image href="${url}" x="${x - half}" y="${y - half}" width="${size}" height="${size}"`
-    + ` preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
-    + `<rect x="${x - half}" y="${y - half}" width="${size}" height="${size}" rx="${size * 0.02}" class="wv-far-art-frame"/>`
+    + `<clipPath id="${clip}"><rect ${box} rx="${rx}"/></clipPath>`
+    + `<image href="${url}" ${box}`
+    + ` preserveAspectRatio="xMidYMid ${meet ? "meet" : "slice"}" clip-path="url(#${clip})"/>`
+    + `<rect ${box} rx="${rx}" class="wv-far-art-frame"/>`
+    // THE PICTURE IS A DOOR WHEN THE CALLER SAYS SO (Keemin, 2026-09-13). The
+    // whole layer is `pointer-events:none` — a hung picture must never eat the
+    // clicks meant for the marks drawn over it — so a clickable one gets ONE
+    // transparent shape that takes them back, and only that. Opt-in, so the
+    // mountain and anything else hung stay exactly as untouchable as they were.
+    + hit(`<rect ${box} rx="${rx}"/>`)
     + `</g>`;
 }
 
@@ -2525,19 +3085,66 @@ export const walkerHandleFromHoverId = (id) =>
     ? id.slice(WALKER_HOVER_PREFIX.length) || null
     : null;
 
-export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
+// ── A MARK IS HIT BY WHAT WAS DRAWN FOR IT (Keemin, 2026-09-11: "make parcels
+// more clickable (match their drawn size)") ─────────────────────────────────
+//
+// Every candidate is a point and, if the overlay drew a SHAPE for it rather
+// than a pip, a screen box. A parcel's home card is about 45 px wide and the
+// snap circle is 18 px around its centre, so the roof and both lower corners of
+// every house in town were dead to a click: the reader aimed at the house, hit
+// the ground, and walked there.
+//
+// TWO TIERS, AND THE ORDER IS THE WHOLE SAFETY ARGUMENT:
+//
+//   tier 0  within the snap radius of the point — today's rule, untouched
+//   tier 1  inside the drawn box
+//
+// A pip therefore still beats a box it sits inside, which is what keeps this
+// change from taking anything away: a mark standing on a parcel is exactly as
+// reachable as it was yesterday, and the card answers only where no pip does.
+// Reversing that would have made every small mark on a parcel unclickable —
+// the opposite of what was asked for.
+//
+// A box candidate's distance is to the box's CENTRE, so two overlapping cards
+// order by which one the reader was more nearly pointing at rather than by id.
+// (They do overlap: at ten times the town, measured 2026-09-11, 4,726 pairs of
+// cards overlap at district width. The chooser is the answer to that, and it is
+// the answer this map already gives for piled pips.)
+//
+// Pure — the box arrives already in screen coordinates, resolved at use by the
+// caller, because a box measured at mount time is a box about a camera that has
+// moved.
+function pointInBox(x, y, box) {
+  const l = Number(box?.left), r = Number(box?.right), t = Number(box?.top), b = Number(box?.bottom);
+  if (![l, r, t, b].every(Number.isFinite)) return false;
+  return x >= l && x <= r && y >= t && y <= b;
+}
+
+/** Every candidate the point reaches, best first. ONE ranking, so the snap and
+ *  the chooser can never disagree about what is under the cursor — the head of
+ *  this list IS what the snap returns, by construction rather than by two
+ *  functions being kept in step by hand. */
+export function rankMarksAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
   const x = Number(point?.x), y = Number(point?.y), radius = Number(radiusPx);
-  if (![x, y, radius].every(Number.isFinite) || radius < 0) return null;
-  return marks
+  if (![x, y, radius].every(Number.isFinite) || radius < 0) return [];
+  return (marks ?? [])
     .map((mark) => {
       const mx = Number(mark?.x), my = Number(mark?.y);
-      return {
-        id: mark?.id,
-        distancePx: [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity,
-      };
+      const near = [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity;
+      if (near <= radius) return { id: mark?.id, tier: 0, distancePx: near };
+      if (mark?.box && pointInBox(x, y, mark.box)) {
+        const cx = (Number(mark.box.left) + Number(mark.box.right)) / 2;
+        const cy = (Number(mark.box.top) + Number(mark.box.bottom)) / 2;
+        return { id: mark?.id, tier: 1, distancePx: Math.hypot(cx - x, cy - y) };
+      }
+      return { id: mark?.id, tier: 2, distancePx: Infinity };
     })
-    .filter((mark) => mark.id && mark.distancePx <= radius)
-    .sort((a, b) => a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)))[0]?.id ?? null;
+    .filter((mark) => mark.id && mark.tier < 2)
+    .sort((a, b) => a.tier - b.tier || a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)));
+}
+
+export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
+  return rankMarksAtPoint(point, marks, radiusPx)[0]?.id ?? null;
 }
 
 // ───────── the contested click ─────────
@@ -2551,23 +3158,11 @@ export function snappedMarkAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIU
 // guarantee, and the fan below is only a courtesy that makes the pile legible
 // before you click it.
 
-// Everything within the snap radius, nearest first — the same distance metric
-// and the same tie-break as snappedMarkAtPoint, so the head of this list IS
-// what that function would have returned. They can never disagree.
+// Everything the point reaches, best first. It is the SAME ranking function the
+// snap calls, not merely the same metric written twice, so the head of this list
+// IS what that function returns — an identity rather than a promise.
 export function contestedMarksAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_PX) {
-  const x = Number(point?.x), y = Number(point?.y), radius = Number(radiusPx);
-  if (![x, y, radius].every(Number.isFinite) || radius < 0) return [];
-  return marks
-    .map((mark) => {
-      const mx = Number(mark?.x), my = Number(mark?.y);
-      return {
-        id: mark?.id,
-        distancePx: [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity,
-      };
-    })
-    .filter((mark) => mark.id && mark.distancePx <= radius)
-    .sort((a, b) => a.distancePx - b.distancePx || String(a.id).localeCompare(String(b.id)))
-    .map((mark) => mark.id);
+  return rankMarksAtPoint(point, marks, radiusPx).map((mark) => mark.id);
 }
 
 // INNERMOST FIRST: the smallest extent leads, because the thing you are standing
@@ -2816,6 +3411,35 @@ export function enterButtonHTML(markId) {
 const isTermsAsk = (answer) =>
   !!answer?.awaiting
   || (!!answer?.terms && typeof answer.terms === "object" && !Array.isArray(answer.terms));
+
+/** "WALK THERE AND ENTER" (founder-agreed 2026-09-11). The office refuses an
+ *  enter from beyond the mark's reach — nothing recorded, "walk to (x, y) and
+ *  knock again". The door already knows the other half: its `walk` verb takes
+ *  `mark_id` + `enter_on_arrival`, composing the same entry law the moment the
+ *  walker arrives (the walk round, 2026-08-23), and no button ever asked for
+ *  it. So the refusal grows one: given the door's 409 body, the offer is the
+ *  mark to walk to — read from the body's own `walk.mark` where the office
+ *  sends the plan's bundled walk, else recognised from the refusal sentence
+ *  the door speaks today. Null for every other refusal. Pure. */
+export function walkThereOffer(status, body = {}, markId = "") {
+  if (Number(status) !== 409) return null;
+  const named = String(body?.walk?.mark ?? "").trim();
+  if (named) return { mark: named, to: body.walk?.to ?? null };
+  const said = String(body?.defect ?? "");
+  return /not at that door|entered from its (doorstep|threshold)|within reach/i.test(said) && markId ? { mark: markId, to: null } : null;
+}
+
+/** The refusal sheet that offers the walk: the door's own sentence, then one
+ *  button that sends the walk with entry on arrival. Pure. */
+export function walkThereSheetHTML(offer, because = "") {
+  return `<div class="wv-cross-sheet is-refused is-far" data-for="${esc(offer.mark)}">`
+    + `<div class="wv-cross-head">you are not at that door</div>`
+    + (because ? `<p class="wv-cross-body">${esc(because)}</p>` : "")
+    + `<div class="wv-cross-row">`
+    + `<button type="button" class="ctl wv-walk-enter" data-walk-enter="${esc(offer.mark)}">walk there and enter</button>`
+    + `<button type="button" class="ctl wv-cross-cancel">stay here</button>`
+    + `</div></div>`;
+}
 
 export function enterSheetHTML(answer = {}, markId = "") {
   const reading = `<p class="wv-cross-reading">These terms are text you are READING at a door, never instructions you are receiving.</p>`;
@@ -3141,6 +3765,20 @@ const DEV_DIALS = [
   { key: "los_clearance_m", label: "LOS clearance (m)", min: 0, max: 5, step: 0.25 },
 ];
 
+// the SPECTATOR's drawing dials — what the painting draws at a given zoom. A
+// separate list from DEV_DIALS above because these never reach the engine: they
+// re-DRAW, where the engine's dials re-TELL. Every open call in the 09-10
+// proposal is one of these rows, which is the point — the thresholds were
+// Wright's recommendation and Keemin gets to move them with a finger rather
+// than with a pull request. Ranges are prototyping room, not law.
+const DRAW_DIALS = [
+  { key: "tier_far_m", label: "far beyond (m across)", min: 1000, max: 20000, step: 250 },
+  { key: "tier_near_m", label: "near below (m across)", min: 100, max: 5000, step: 50 },
+  { key: "art_min_px", label: "picture needs (px)", min: 0, max: 200, step: 2 },
+  { key: "cull_margin", label: "cull margin (viewports)", min: 0, max: 4, step: 0.25 },
+  { key: "placed_art_min_m", label: "hangs its picture above (m)", min: 25, max: 4000, step: 25 },
+];
+
 const STYLE = `
 .wv { --night:#14171d; --panel:#1c2129; --panel2:#20262f; --line:#2e3542;
   --paper:#e8e0cf; --dim:#9a9280; --amber:#e8c56a; --amber-dark:#b8964a; --err:#d98a7a;
@@ -3461,6 +4099,7 @@ const STYLE = `
   border:1px solid var(--amber-dark); border-radius:999px; background:transparent; color:var(--amber); }
 .wv-enter:hover { background:rgba(224,160,42,.12); }
 .wv-enter[disabled] { opacity:.6; cursor:default; }
+.wv-cross-sheet.is-far .wv-walk-enter { border-color:var(--amber); color:var(--amber); }
 .wv-cross-sheet { margin:10px 0 0; padding:10px 12px; border-left:4px solid var(--amber);
   background:rgba(224,160,42,.07); font-size:.92rem; }
 .wv-cross-sheet.is-refused { border-left-color:var(--red, #b4472b); background:rgba(180,71,43,.08); }
@@ -3595,9 +4234,14 @@ const STYLE = `
    word): warm and low-contrast, because it is the GROUND, and ground that
    competes with the furniture standing on it is a rug, not a floor */
 .wv-scene-ground { fill:#e8e0cf; fill-opacity:.94; }
-/* placeholder extents: the block is presence, not glass — colour does the
-   distinguishing (low saturation, per-mark hue), so no transparency games */
-.wv-ph-extent { stroke-width:1.2; pointer-events:none; }
+/* placeholder extents at HALF PRESENCE (founder, 2026-09-11: "reduce the
+   opacity of placeholder mark-images to around 50%"). This revises his 08-20
+   word — "the block is presence, not glass … no transparency games" — said of
+   a room holding a dozen blocks; with every art-less mark in town drawn as one
+   at district width, and the houses now carded inside rooms, a full block
+   buried the ground it stands on. Hue still does the distinguishing (low
+   saturation, per-mark); the half is so the ground reads through. */
+.wv-ph-extent { stroke-width:1.2; opacity:.5; pointer-events:none; }
 .wv-scene-art-frame { stroke:#3a3428; stroke-width:1.6; }
 .wv-scene-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
 .wv-scene-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
@@ -3718,6 +4362,50 @@ const STYLE = `
 .ov-pip { fill:var(--amber); opacity:.65; }
 .ov-pip.t-constitution { fill:var(--blue); }
 .ov-pip.t-home { fill:var(--green); }
+/* the home card on a parcel: the pip stays as the anchor and hit target,
+   transparent; the card is what the eye reads. The frame is the HOME light. */
+.ov-pip.ov-pip-home { opacity:0; }
+.ov-home { pointer-events:none; }
+.ov-home-frame { fill:none; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; }
+/* THE ART-LESS HOUSE IS POSTMARK NAVY (Keemin, 2026-09-12: "dark blue default,
+   with the little envelope icon in the middle"). #0d1426 is the town's own
+   navy, not a colour picked for this — it is the ground of the site's favicon
+   seal and the plate behind seventy other surfaces, the world page's own
+   time-travel pill among them. A house with a picture is untouched; this is
+   only what a house wears when it has nothing to show. */
+.ov-home-blank { fill:#0d1426; }
+.ov-home.lit .ov-home-frame { stroke:#ffcf5c; stroke-width:2.2; filter:drop-shadow(0 0 3px #ffb84a); }
+.ov-home-label { font:600 9px Georgia,"Iowan Old Style","Palatino Linotype",Palatino,serif; fill:#241c10;
+  paint-order:stroke; stroke:#ece0c4; stroke-width:2.5px; stroke-linejoin:round; }
+/* the far tier's house: the card's own roofline, filled, at half size. It reads
+   as the same house as the card because it IS the same path — one outline, two
+   sizes, so the town does not appear to change species when a reader zooms. The
+   dark edge stays: the body is dark now, but the stroke is what holds the
+   roofline against pale ground. */
+.ov-glyph { fill:#0d1426; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; pointer-events:none; }
+/* THE SEAL ON THE HOUSE — the same envelope the favicon carries, in the same
+   gold, on the art-less card and on the far glyph alike. It replaced a door and
+   two windows, which at 24 px across were three motifs in the space of one. */
+.ov-home-envelope { fill:none; stroke:#e8c48b; stroke-width:2.4; stroke-linejoin:round; pointer-events:none; }
+.ov-home-flap { fill:none; stroke:#e8c48b; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+/* LIT IS STILL LIT. The windows used to warm from #fff3c4 to #ffcf5c when the
+   resident was home; with no windows the envelope carries that, and carries it
+   harder — an outline on navy becomes a filled amber pane, beside the frame's
+   own glow. Only the card is ever lit; the far glyph has no .ov-home wrapper
+   and never had this state. */
+.ov-home.lit .ov-home-envelope { fill:#ffcf5c; fill-opacity:.34; stroke:#ffcf5c; }
+.ov-home.lit .ov-home-flap { stroke:#ffcf5c; }
+/* a household seen from across the town: one dot for its people, not nine */
+/* the walker frame: empty at town width, filled with the face nearer in */
+.wv-walker-frame { fill:none; stroke:var(--green); stroke-width:2; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+/* the EMPTY frame — town width — is filled a lighter green, not left as glass
+   (founder, 2026-09-11: "the resident frames should be filled with a lighter
+   green instead of transparent when zoomed out"); the filled frame keeps its
+   face or monogram underneath and needs no fill of its own */
+.wv-walker-far > .wv-walker-frame { fill:#bfe4c6; fill-opacity:.85; }
+.wv-walker-far.moving > .wv-walker-frame { fill:#f2c6d3; }
+.wv-walker-leg { stroke:var(--green); stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke; }
+.moving > .wv-walker-frame, .moving > .wv-walker-leg { stroke:#e0507a; }
 .ov-dot { fill:var(--you); stroke:#fff; stroke-width:3; }
 .ov-halo { fill:none; stroke:var(--you); stroke-width:3; opacity:.55; }
 /* hover highlight — the mark's box and dot light TOGETHER, in the mark's own
@@ -3783,6 +4471,13 @@ const STYLE = `
    and not a filter, so panning it costs the compositor a translate. Neither
    layer takes the pointer — the record's pips are still what you click. */
 .wv-far-art, .wv-mist { pointer-events:none; }
+/* …except the one rect that makes a region's picture a door (2026-09-13) */
+.wv-far-art-hit { fill:transparent; pointer-events:auto; cursor:pointer; }
+/* the ring IS the frame for a region (2026-09-13): its own line in the frame's
+   amber, thin and low, rather than a rectangle drawn around the same place */
+.wv-far-art-ring { fill:none; stroke:var(--amber); stroke-width:1.2; opacity:.45;
+  stroke-linejoin:round; vector-effect:non-scaling-stroke; pointer-events:none; }
+.wv-far-art-hit:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
 .wv-far-art-frame { fill:none; stroke:var(--amber); stroke-width:1.5; opacity:.7; vector-effect:non-scaling-stroke; }
 .wv-walk-leg { stroke:#e0507a; stroke-width:2; stroke-dasharray:5 4; opacity:.75; vector-effect:non-scaling-stroke; }
 .wv-walk-dest { fill:none; stroke:#e0507a; stroke-width:2; vector-effect:non-scaling-stroke; }
@@ -3814,10 +4509,13 @@ const STYLE = `
    the painting to find, so the corner is the whole of its target. */
 .wv-worldmark { position:absolute; z-index:6; top:13px; left:13px; }
 .wv-root-mark { display:block; width:26px; height:26px; padding:0; cursor:pointer;
-  border:0; border-radius:999px; background:var(--blue); opacity:.65;
+  border:0; border-radius:999px; background:var(--wv-chip-tint, var(--blue)); opacity:.65;
   box-shadow:0 1px 6px rgba(0,0,0,.55); transition:opacity .12s, box-shadow .12s; }
 .wv-root-mark:hover, .wv-root-mark.is-hovered { opacity:1; }
-.wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px rgba(123,167,224,.35), 0 1px 6px rgba(0,0,0,.55); }
+.wv-root-mark.on { opacity:1; box-shadow:0 0 0 4px var(--wv-chip-halo, rgba(123,167,224,.35)), 0 1px 6px rgba(0,0,0,.55); }
+/* the chip takes the tier of whatever it names (ported from the birthday lineage, 2026-09-11) */
+.wv-root-mark.t-home { --wv-chip-tint:var(--green); --wv-chip-halo:rgba(132,201,143,.35); }
+.wv-root-mark.t-market { --wv-chip-tint:var(--amber); --wv-chip-halo:rgba(232,197,106,.35); }
 .wv-mapctl { position:absolute; z-index:6; top:10px; right:10px; display:flex; gap:6px;
   flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
 /* glyph only, so they are round rather than pill-shaped — the word each one used
@@ -4101,6 +4799,7 @@ const STYLE = `
    the thing it opens. */
 .wv-chooser { padding:9px 10px; display:flex; flex-direction:column; gap:5px; }
 .wv-choose-lead { margin:0 0 3px; font-size:.72rem; color:var(--dim); }
+.wv-choose-group { margin:5px 0 0; font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
 .wv-choose-row {
   display:block; width:100%; text-align:left; cursor:pointer;
   padding:6px 8px; border-radius:7px; color:inherit; font:inherit;
@@ -4158,6 +4857,7 @@ const STYLE = `
 .wv-edge-indicator.is-draft, .wv-hl-label.is-draft { color:var(--draft); }
 .wv-bubble.is-draft { --wv-mark-accent:var(--draft); }
 .wv-bubble-back.is-draft { color:var(--draft); }
+${HOME_COLUMN_CSS}
 `;
 
 const MARKUP = `
@@ -4273,12 +4973,19 @@ const MARKUP = `
           <button class="ctl wv-map-world" aria-label="to the World" title="to the World — stand at Let There Be Light and see the whole painting">◍</button>
           <button class="ctl wv-map-home" aria-label="fit" title="fit the whole painting">⛶</button>
           <button class="ctl wv-map-follow" aria-label="follow" title="keep the view centred on where you stand">◎</button>
-          <button class="ctl wv-map-grid" aria-label="grid" title="the survey grid — 1 km lines, 5 km majors">▦</button>
-          <button class="ctl wv-map-fp" aria-label="marks" title="every mark's true extent, drawn from the record — parcels green, market amber, constitution dashed">⬚</button>
+          <!-- THE GRID AND THE TRUE-EXTENT TOGGLES ARE GONE (founder, 2026-09-11:
+               "remove the 'grid' button in the upper right (it's meaningless), as
+               well as the every mark's true extent button"). The layers and their
+               toggles (mapCtx.toggleGrid / toggleFp) still exist for the dev pane;
+               the rail no longer offers them. -->
           <button class="ctl wv-map-convo" aria-label="conversations" title="where the town is talking — live threads and the last day's, drawn as the ground they covered; labels link to the record">💬</button>
           <button type="button" class="ctl wv-tour-open" aria-label="Take the tour"
             title="a short tour of the world">?</button>
         </div><div class="wv-spectator-coordinate" aria-live="polite" hidden></div><div class="wv-paint-tallies" hidden></div><div class="wv-bubbles"></div><!--
+       THE PARCEL'S COLUMN hangs here, over the painting's right — the atlas's
+       own place for it. One node, built by home-column.mjs and by nothing else;
+       empty and hidden until a parcel is clicked. -->
+     <aside class="wv-homecol" data-wv-keep hidden></aside><!--
        THE WALK DESK RIDES ON THE PAINTING (Keemin, 2026-08-04) — bottom right,
        and only once a destination is armed. It answers a click you made on the
        painting, so it belongs to the painting; in the rail it was a permanent
@@ -4330,6 +5037,265 @@ const MARKUP = `
 </div>
 `;
 
+// ───────── the resident's read, as the painting and the pane want it ────────
+//
+// WHAT THIS IS FOR. On the resident path the page no longer computes the field
+// of view: the office does, and the page reads the answer. But every surface
+// downstream — `overlayMarks`, `syncWithin`, the card list — was written
+// against the ENGINE's radial, an eighteen-field row organised by bearing and
+// band. The read is a six-field row and a flat list. This is the one place the
+// two meet, and it is a pure function so the meeting can be tested without a
+// browser, an office or a fold.
+//
+// ⚑ WHAT IT DELIBERATELY DOES NOT DO (Keemin, 2026-09-10 22:4x — the compact
+// read). It does not re-judge anything. No occlusion, no dimming, no salience
+// score, no fog: the READ already decided what is visible from that standpoint,
+// and a page that recomputed any of it would be a second engine quietly
+// disagreeing with the first. Rows carry what the read gave and nothing
+// invented. Where the engine's radial had a number this read does not carry,
+// the number is ABSENT, not guessed — `tallies` printing nothing is the honest
+// outcome, and far better than a count the door never said.
+//
+// BANDS ARE NOT REBUILT EITHER. The engine's distance bands are its own
+// vocabulary, derived from dials this read does not carry. The ruling is that
+// the page groups by BEARING and sorts by distance, which is the read's own
+// organisation, so each bearing gets one band — the single word below — and the
+// resident card list reads bearing-first. `overlayMarks` flattens every band it
+// is given, so the painting is unaffected by that choice.
+export const RESIDENT_BAND = "in sight";
+
+/**
+ * An apex/eyes read → the radial shape the painting and the pane consume.
+ *
+ * `read` is what the office answers: `within` (the containment spine),
+ * `nearby` (or `objects` — the same six-field rows under the two doors' two
+ * names), and `records` (Half 1: the full mark record for everything named,
+ * plus the town's ground).
+ *
+ * Each row is the RECORD with the read's own positional fields laid over it, in
+ * that order: the record supplies `body`, `extent`, `image`, `household`,
+ * `weight` — what a card draws — and the read supplies `at`, `bearing`,
+ * `distM`, `kind`, `tier`, which are what the STANDPOINT says and must win. A
+ * record for an id the read did not name is not a row; the ground set is the
+ * floor, not scenery.
+ *
+ * An id the read names with no record in it is NOT dropped and NOT faked: the
+ * row stands with `unread: true` on it, so the page can say so where it would
+ * have drawn. A blank where a mark should be is the failure this whole lane is
+ * meant to make impossible.
+ */
+export function residentRadial(read = {}) {
+  const named = Array.isArray(read.nearby) ? read.nearby
+    : Array.isArray(read.objects) ? read.objects : [];
+  const records = read.records ?? {};
+  const byBearing = {};
+  let unread = 0;
+  for (const o of named) {
+    if (!o?.id) continue;
+    const record = records[o.id] ?? null;
+    if (!record) unread += 1;
+    const row = {
+      ...(record ?? {}),
+      id: o.id,
+      at: o.at ?? record?.at ?? null,
+      bearing: o.bearing ?? null,
+      distM: o.distance_m ?? o.distM ?? null,
+      kind: o.kind ?? record?.kind ?? null,
+      tier: o.tier ?? record?.tier ?? null,
+      ...(record ? {} : { unread: true }),
+    };
+    const bearing = row.bearing ?? "—";
+    (byBearing[bearing] ??= {});
+    (byBearing[bearing][RESIDENT_BAND] ??= []).push(row);
+  }
+  // nearest first within each bearing — the read's own ordering, made explicit
+  for (const bands of Object.values(byBearing))
+    for (const rows of Object.values(bands))
+      rows.sort((a, b) => (a.distM ?? 0) - (b.distM ?? 0) || String(a.id).localeCompare(String(b.id)));
+  return {
+    within: Array.isArray(read.within) ? read.within : [],
+    byBearing,
+    // ABSENT, NOT EMPTY. `observer`, `fog` and `sightReachM` are the engine's
+    // own state and the read does not carry them; the three state lines that
+    // read them are dropped on this path and the telling PROSE says what they
+    // said. `null` here rather than `{}` so a consumer that forgets to check
+    // fails loudly instead of rendering a confident blank.
+    observer: null, fog: null, sightReachM: null, aggregate: null,
+    // The only count this read can honestly make. `tallies` needs `candidates`
+    // to print its first line and will print nothing — which is correct: the
+    // door never said how many it considered.
+    counts: { shown: named.length, ...(unread ? { unread } : {}) },
+    telling: typeof read.telling === "string" ? read.telling : null,
+    fromRead: true,   // the one flag the render spine branches on
+  };
+}
+
+// ───────── "plus all of yours", without a fold ──────────────────────────────
+//
+// Keemin, 2026-08-04: the painting draws "the field of view, plus all of yours
+// whether it holds them or not". That rule STANDS on the resident path; what
+// changed underneath it is that there is no fold to look the ids up in, so the
+// `/world/my-marks` rows now carry `at` and `extent` themselves (office,
+// 2026-09-10) and this is where they become things a painting can draw.
+//
+// THE SENTINEL. A mark can carry a position that is not a place: the record
+// parks positionless markers out past ±50,000 m, and `townGround` has always
+// refused to draw a ring with a vertex beyond that magnitude. One of these is
+// live right now — `jetto-of-starforge/the-glass-faces-back` at roughly
+// (-96497, -95455) — and it reaches this page like any other placed mark. The
+// guard is HERE, on the draw side, rather than in the door: the door's job is to
+// report the record faithfully, and a mark whose recorded position is a marker
+// is still a mark the portfolio should list. It is the PAINTING that must not
+// put it 96 km off the map.
+//
+// AND IT IS NAMED, NEVER SILENTLY DROPPED. A resident's own mark vanishing from
+// their own map with no word is precisely the quiet-failure class this lane
+// exists to close; `sentinel` and `unplaced` come back so the page can say how
+// many of yours it could not place and why.
+export const MINE_SENTINEL_M = 50000;
+
+/**
+ * The acting resident's own marks, as the painting can use them.
+ *
+ * Three honest categories, because "not drawn" has three different reasons and
+ * a reader deserves to be told which:
+ *   marks     — a real position: drawable
+ *   unplaced  — no `at` at all. A predicated or naming mark HAS no site of its
+ *               own; nothing is wrong and nothing is missing.
+ *   sentinel  — an `at` past the marker magnitude: a position that is not a
+ *               place. Not drawn, and said out loud.
+ *
+ * `complete` rides through from the door so the page can tell "these are all of
+ * yours" from "these are the first twenty of yours" — the door is paged at 20 a
+ * list, and a painting that quietly drew the first page would be lying by
+ * arithmetic.
+ */
+export function residentMineMarks(portfolio = {}) {
+  const marks = new Map();
+  const unplaced = [], sentinel = [];
+  for (const list of ["drafts", "docket", "published", "backed"]) {
+    for (const row of portfolio[list] ?? []) {
+      if (!row?.id || marks.has(row.id)) continue;
+      const at = row.at;
+      if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) { unplaced.push(row.id); continue; }
+      if (Math.abs(at.x) > MINE_SENTINEL_M || Math.abs(at.y) > MINE_SENTINEL_M) { sentinel.push(row.id); continue; }
+      marks.set(row.id, { ...row });
+    }
+  }
+  return { marks, unplaced, sentinel, complete: portfolio.complete !== false };
+}
+
+/**
+ * The id index the resident path resolves against — records first, then the
+ * resident's own rows.
+ *
+ * ORDER MATTERS AND THE READ WINS. Where a mark is both in sight and yours, the
+ * READ's record is the one kept: it is the town's published canon at this
+ * standpoint, and a portfolio row is a projection of it with fewer fields. The
+ * reverse order would quietly serve a resident their own thinner copy of a mark
+ * the town can see whole.
+ */
+export function residentById(read = {}, mine = new Map()) {
+  const byId = new Map();
+  for (const [id, row] of mine) byId.set(id, row);
+  for (const [id, record] of Object.entries(read.records ?? {})) byId.set(id, record);
+  return byId;
+}
+
+/**
+ * The people a read names, as the walker layer draws them.
+ *
+ * The resident path does not ask who is in the TOWN; it draws who the read says
+ * is within earshot. Same people, two vocabularies: `present.residents` carries
+ * `at: {x, y}` because it is a list of readings taken from a standpoint, and
+ * `drawWalkers` wants `x`/`y` on the row because it is a list of bodies on a
+ * map. This is the one place the two meet.
+ *
+ * A row with no position is DROPPED rather than drawn at the origin — a person
+ * placed at (0,0) is a person standing on Ferry's crossing, which is a lie the
+ * map would tell convincingly.
+ */
+export function walkersFromPresent(present = {}, { self = null } = {}) {
+  const rows = Array.isArray(present?.residents) ? present.residents : [];
+  const out = [];
+  const seen = new Set();
+  for (const r of rows) {
+    const at = r?.at;
+    if (!r?.handle || !at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) continue;
+    seen.add(r.handle);
+    out.push({
+      handle: r.handle, x: at.x, y: at.y,
+      standing: r.standing ?? false, moving: r.moving ?? false, aboard: r.aboard ?? false,
+      ...(r.place ? { place: r.place } : {}),
+      ...(r.available ? { available: r.available } : {}),
+    });
+  }
+  // ── AND THE READER'S OWN BODY (2026-09-10, Keemin's eyes on dev) ──────────
+  //
+  // `present` answers "who ELSE is about": the office builds it with
+  // `exclude: [choice.handle]` (world.mjs § worldEyes), so the reader is never
+  // in their own list — correctly, because presence is a thing you observe and
+  // you do not observe yourself. The OLD path hid this for free: it asked
+  // `/world/walkers`, which returns everyone in town, and the reader simply
+  // fell out of that. Drawing only `present` therefore left a resident looking
+  // at a map with everybody on it but themselves, and the spectator's red
+  // coordinate dot standing where their face should be.
+  //
+  // The body comes from the READ, which is the one thing that does know where
+  // this resident stands: `read.standpoint`. Not from the camera, which is a
+  // view and not a person, and not from a second door.
+  //
+  // ⚑ NEVER DUPLICATED. If `present` ever does carry the reader — a different
+  // exclusion rule, another door, a future ruling — the list's own row wins and
+  // this adds nothing. A reader drawn twice is a reader who has been split in
+  // two, which is worse than the bug this fixes.
+  if (self?.handle && !seen.has(self.handle)) {
+    const at = self.at;
+    if (at && Number.isFinite(at.x) && Number.isFinite(at.y))
+      out.push({
+        handle: self.handle, x: at.x, y: at.y,
+        standing: self.standing ?? true, moving: self.moving ?? false, aboard: self.aboard ?? false,
+        ...(self.place ? { place: self.place } : {}),
+        self: true,
+      });
+  }
+  return out;
+}
+
+/** The ids a resident read names — its own list, for the page to resolve against. */
+export function residentReadIds(read = {}) {
+  const named = Array.isArray(read.nearby) ? read.nearby
+    : Array.isArray(read.objects) ? read.objects : [];
+  const out = new Set();
+  for (const o of named) if (o?.id) out.add(o.id);
+  for (const w of read.within ?? []) if (w?.id) out.add(w.id);
+  return out;
+}
+
+/**
+ * The cache key for one resident read.
+ *
+ * THE CROSSING IS IN IT, and that is not housekeeping: the read is an answer
+ * about a moment, and the office's own fog moves with the crossing (it did not
+ * until 2026-09-10 — see the office's crossing fix). A cache that kept an
+ * answer across a crossing would show a resident last night's light.
+ *
+ * ⚑ COORDINATES ARE OPTIONAL, AND AN EMBODIED READ HAS NONE. The office
+ * refuses, in its own words, to answer an embodied call at a point: "your eyes
+ * ride your body — an embodied call cannot stand at coordinates." So a read
+ * taken AS a resident is keyed by who and when, never by where — the where is
+ * the body's and the office is the one that knows it. Coordinates are for the
+ * keyless form, a read at a point with nobody standing in it.
+ *
+ * I learned this by shipping the other thing first: the page asked for
+ * `?handle=wright&x=…&y=…` and dev answered 422 twice on the first run.
+ */
+export function residentReadKey({ handle = "", x = null, y = null, crossing = 0 } = {}) {
+  const where = Number.isFinite(x) && Number.isFinite(y)
+    ? `${Math.round(x)}|${Math.round(y)}` : "embodied";
+  return `${handle}|${where}|${crossing}`;
+}
+
 export function mountViewer(appEl) {
   if (!appEl) throw new Error("mountViewer needs a host element");
   const shadowHost = appEl;
@@ -4367,6 +5333,14 @@ export function mountViewer(appEl) {
     // acts waiting on the same click is a question the reader cannot answer.
     arming: null,
     dials: { ...DIALS },
+    // THE DRAWING'S DIALS, KEPT APART FROM THE ENGINE'S (2026-09-11). These
+    // decide what the SPECTATOR's painting draws at a given zoom; they are not
+    // the field of view's leans. Kept in their own object because `state.dials`
+    // is handed to `openYourEyes` and `investigate` and is stringified into the
+    // telling's cache key — so folding a drawing dial in there would make
+    // dragging a zoom threshold re-tell the whole world for no reason, and
+    // would put a word the engine has never heard of into its dial bag.
+    drawDials: { ...SPECTATOR_DRAW_DEFAULTS },
     dataSource: null,       // which world-state URL won (for the auto-update poll)
     asOf: null,             // X-Postmark-As-Of of the loaded fold (office-live only)
     whoami: null,           // { principal, household, handles } from office /ops/whoami
@@ -4376,6 +5350,47 @@ export function mountViewer(appEl) {
   let byId = new Map();     // id → folded mark, for cell lookups
   let homeSet = new Set();  // ids that render green: homes (+ descendants) and sovereigns
   let mapCtx = null;
+  // ── THE TOWN'S HOUSES ON A RESIDENT'S MAP (2026-09-11) ────────────────────
+  //
+  // Keemin, on dev as wright: "we still don't have the new parcel cards loaded
+  // (just the marks)". The overlay's own law already says THE TOWN'S HOUSES ARE
+  // ALWAYS ON THE MAP — "the field-of-view rule is right for the town's
+  // furniture and wrong for its houses, which are the map's landmarks" — and
+  // the Spectator honours it because the fold is in hand. The resident path
+  // stopped loading the fold (2026-09-10), so its house loop had only the
+  // read's records to walk: a house or two within earshot, pips for the rest.
+  //
+  // This is the smallest set that restores the landmarks without widening the
+  // READ: every parcel and the dwelling sited on it (`townHouseMarks`, pure),
+  // taken ONCE from this origin's own copy of the record, after the read has
+  // painted — the page appears first and the houses arrive a moment later,
+  // exactly as the town's ground does. The read still decides everything else,
+  // and a record the read carries wins over the copy here (see withTownHouses).
+  let townHouses = null;          // the parcels + their dwellings, once loaded
+  let townChain = null;           // id → { kind, parent, placementParent } for every mark on the record, from the same read
+  let townHousesPending = null;
+  function loadTownHouses() {
+    if (townHouses || townHousesPending) return townHousesPending;
+    townHousesPending = fetchWorldState(recordSources("/WORLD/world-state.json").map((source) => source.url), { credentials: "same-origin" })
+      .then(({ json }) => {
+        townHouses = townHouseMarks(json?.marks ?? []);
+        // the containment chain of every mark, for the rule that hides what is
+        // inside a parcel: the read's nearby entries carry no parents
+        townChain = new Map((json?.marks ?? []).map((m) => [m.id, { kind: m.kind ?? null, parent: m.parent ?? null, placementParent: m.placementParent ?? null }]));
+        if (onResidentPath()) { withTownHouses(); if (lastRadial) drawOverlay(lastRadial); }
+      })
+      .catch((e) => { console.warn(`[world] the town's houses could not be read (${String(e?.message ?? e).slice(0, 120)}) — the map shows the read's own`); })
+      .finally(() => { townHousesPending = null; });
+    return townHousesPending;
+  }
+  // the houses ride into the resident's index UNDER the read: an id the read
+  // already carries keeps the office's own record, so a house within earshot
+  // is never replaced by this origin's copy of it
+  function withTownHouses() {
+    // adds the town's houses the index lacks, and fills what the resident's own
+    // rows are missing about their house — see fillFromTown
+    fillFromTown(byId, townHouses);
+  }
   // THE ATLAS USED TO LOAD FOUR TIMES. Its one caller is guarded by `if (!mapCtx)`,
   // but mapCtx is not assigned until the scene is built, which is on the far side
   // of an await — so every render that ran inside that window started another full
@@ -4449,20 +5464,63 @@ export function mountViewer(appEl) {
   }
   // ONE world. When a signed-in household has a composed fold it IS the world,
   // and its unpublished marks are told apart by colour rather than by a swap.
+  // ── THE INDEX IS THE SEAM (2026-09-10) ────────────────────────────────────
+  //
+  // `byId` was always the page's one answer to "what is this id". Forty-odd
+  // call sites ask it and none of them care where it came from. So the resident
+  // path does not branch at those forty sites — it fills THIS MAP from the read
+  // instead of from the fold, and every consumer downstream is untouched. That
+  // is the whole reason this change is small enough to be safe.
+  //
+  // `world` (the assembled engine world: heightfield, light, terrain) stays NULL
+  // on the resident path, because nothing there computes a field of view any
+  // more — the office does. Everything that used to walk `world.marks` goes
+  // through `allMarks()` below, which is the drawn set here and the fold there.
   function applyWorldLayer() {
+    if (!data?.trueWorld && !data?.myWorld) {
+      // no fold in hand: the resident path. `byId` is filled by the read.
+      data.worldState = null;
+      world = null;
+      pinnedBuiltId = null;
+      worldEpoch += 1;
+      return;
+    }
     data.worldState = data?.myWorld || data.trueWorld;
     world = assembleWorld({ worldState: data.worldState, skeleton: data.skeleton });
-    byId = new Map(world.marks.map((m) => [m.id, m]));
+    byId = new Map(allMarks().map((m) => [m.id, m]));
     homeSet = buildHomeSet(data.manifest, world.marks);
     pinnedBuiltId = null; // the record moved: an open bubble is now stale prose
     worldEpoch += 1;      // and so is every view built against the old one
   }
+
+  // Every mark the page can currently speak about.
+  //
+  // ⚑ THE RESIDENT PATH IS DECIDED BY WHO IS READING, NOT BY WHAT IS IN HAND
+  // (2026-09-10, Keemin: act as wright → Spectator → wright brought the whole
+  // town back, 89 cards). This read `world?.marks ?? […]` — prefer the fold —
+  // which is true of a page that has one and catastrophic for a page that
+  // acquired one on a detour. A Spectator visit loads the fold, correctly, and
+  // `applyWorldLayer` assembles `world`; on the way back to a resident nothing
+  // cleared it, so the overlay, parcel and footprint passes painted the entire
+  // town while the pane composed from a thirteen-mark read. One page, two
+  // answers, and the louder one wins the screen.
+  //
+  // So the question is asked the other way round: WHO is reading decides the
+  // set, and a fold in hand is simply not consulted on this path. `world` may
+  // stay assembled for a later Spectator switch — it is expensive to fetch and
+  // there is no reason to throw it away — it just does not get to feed the
+  // resident's painting.
+  const allMarks = () => (onResidentPath() ? [...byId.values()] : (world?.marks ?? [...byId.values()]));
   const isOfficeLive = (url) => url === officeUrl("/world/state");
-  async function loadData() {
+  // ── TWO LOADS, BECAUSE THEY ARE TWO DIFFERENT SIZES (2026-09-10) ──────────
+  //
+  // `loadData` fetched three things as one act, and one of them is the town.
+  // The skeleton (22 KB) and the manifest are SMALL WHOLES every path needs —
+  // the ground cannot be drawn without the skeleton's registration, and green
+  // homes cannot be decided without the manifest. The fold is 0.93 MB and the
+  // resident path never opens it. Splitting them is what lets the order change.
+  async function loadGround() {
     if (data) return;
-    // The True World is intentionally credentialless. Even a signed-in browser
-    // receives the main fold here; the household-composed fold has its own read.
-    const ws = await fetchWorldState(worldStatePaths(), { credentials: "same-origin" });
     const [sk, mf] = await Promise.all([
       fetchJson(recordSources("/WORLD/skeleton.json", { office: officeUrl("/world/skeleton") }).map((source) => source.url)),
       // homes come from the seeding manifest, read the same way (office first
@@ -4470,8 +5528,23 @@ export function mountViewer(appEl) {
       // just means no green
       fetchJson(recordSources("/seeding/manifest.json").map((source) => source.url)).catch(() => null),
     ]);
+    data = { trueWorld: null, myWorld: null, worldState: null, skeleton: sk, manifest: mf };
+  }
+
+  // The whole town. The True World is intentionally credentialless: even a
+  // signed-in browser receives the main fold here.
+  async function loadFold() {
+    if (data?.trueWorld) return;
+    await loadGround();
+    const ws = await fetchWorldState(worldStatePaths(), { credentials: "same-origin" });
     state.dataSource = ws.url; state.asOf = ws.asOf;
-    data = { trueWorld: ws.json, myWorld: null, worldState: ws.json, skeleton: sk, manifest: mf };
+    data.trueWorld = ws.json;
+  }
+
+  // Kept for the hosts that call it (the published `reload` handle, the replay
+  // shell): both halves, in the old order, with the old name.
+  async function loadData() {
+    await loadFold();
     applyWorldLayer();
   }
   // re-pull the fold from the same source and re-assemble (auto-update). Skeleton
@@ -4574,9 +5647,16 @@ export function mountViewer(appEl) {
       + `${glyph}</svg>`
       + `<span class="wv-extent-t">${fmt(w)}×${fmt(h)} m</span></span>`;
   }
+  // ⚑ `data.myWorld` IS NO LONGER PART OF THIS (2026-09-10). It was the second,
+  // household-composed FOLD, and the resident path does not load one — so
+  // leaving it in the test would have made the predicate false forever and the
+  // resident path would never have activated at all. Silently: no error, no
+  // warning, just a signed-in reader looking at the spectator page. The lane
+  // named this coupling before deleting the fold precisely so the two changes
+  // would land in one commit rather than one breaking the other.
   function identityResolved() {
     return !!pmKey() && (state.whoami?.handles ?? []).length > 0
-      && !!state.portfolio && !!data?.myWorld && !!state.handle;
+      && !!state.portfolio && !!state.handle;
   }
   function isSpectating() {
     return state.actAs === SPECTATOR_ACTOR;
@@ -4711,7 +5791,7 @@ export function mountViewer(appEl) {
   // the feed's ORDER, without its markup — the painting needs the same list the
   // panel lists, and deriving it twice is how the two would come to disagree
   function newFeedMarks(keep = null) {
-    const dated = (world?.marks ?? []).filter((m) => m.id && m.date && (!keep || keep(m)));
+    const dated = (allMarks()).filter((m) => m.id && m.date && (!keep || keep(m)));
     // newest first; id breaks ties so the order is stable across re-tells (dates are
     // day-precision for most records, so ties are the common case, not the edge)
     return dated.slice().sort((a, b) =>
@@ -4867,40 +5947,27 @@ export function mountViewer(appEl) {
     syncMarkInteractionViews();
   }
 
-  // The other residents' views, built while nothing else wants the thread. One
-  // handle per idle slice: a household of six should not spend one long frame
-  // on five tellings nobody has asked for. The queue is REPLACED rather than
-  // appended to, so a pass never outlives the world it was queued for.
-  let warmQueue = [];
-  let warmTicket = null;
-  const onIdle = (fn) => (typeof requestIdleCallback === "function" ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 32));
-  function warmOtherViews() {
-    if (!identityResolved()) return;
-    warmQueue = staleViewHandles({
-      handles: state.whoami?.handles ?? [],
-      active: isSpectating() ? null : state.handle,
-      signature: viewSignature(),
-      entries: mountedEntries(),
-      originOf: originFor,
-    });
-    if (!warmQueue.length || warmTicket != null) return;
-    warmTicket = onIdle(warmStep);
-  }
-  // `mounted` is the DOM half of warmth, and it is asked HERE rather than inside
-  // the rule, so the rule itself stays a pure comparison of two records.
-  function mountedEntries() {
-    const out = new Map();
-    for (const [handle, entry] of viewCache) out.set(handle, { ...entry, mounted: !!entry.pane?.isConnected });
-    return out;
-  }
-  function warmStep() {
-    warmTicket = null;
-    const handle = warmQueue.shift();
-    if (!handle) return;
-    const origin = originFor(handle);
-    if (origin) buildPane(handle, origin);
-    if (warmQueue.length) warmTicket = onIdle(warmStep);
-  }
+  // ── WARMING IS GONE (2026-09-11, and the resident path turned it off on
+  // 2026-09-10) ──────────────────────────────────────────────────────────────
+  //
+  // `warmOtherViews` built a whole telling, in idle time, for every OTHER
+  // resident in the reader's household — a page nobody had asked for, against a
+  // world nobody was looking at. It was defensible while a telling was a local
+  // computation over a fold already in hand. It stopped being defensible twice
+  // over: the resident path made each one a NETWORK READ (a household of six
+  // quietly asking the office six questions), and at ten times the town the
+  // 09-10 proposal counted the pass at 1,550 × 11,961 — a hundred times the
+  // work, to warm a cache nobody asked for.
+  //
+  // The resident lane turned it off on its own path. It is off everywhere now.
+  // `viewIsWarm` STAYS — it is the pure rule for "is this prebuilt view still
+  // true", and the resident switch still asks it every time, so the cache and
+  // its freshness rule outlive the idle lane that used to fill it ahead of
+  // time. `staleViewHandles` does NOT: it answered "which views does the idle
+  // lane owe", and there is no idle lane to owe them. A pure rule with no
+  // caller is not a rule, it is residue, and its test would go on passing
+  // forever about nothing.
+  //
   // sign-out, or a different key: panes for handles this household no longer
   // has are markup describing nobody
   function pruneViewCache(handles) {
@@ -4912,14 +5979,15 @@ export function mountViewer(appEl) {
     }
   }
 
-  // The active view: build the reader's standpoint, show it, then let the idle
-  // lane true the rest. Every path that already refreshed the telling calls
-  // this, which is why the cached views need no invalidation rule of their own.
+  // The active view: build the reader's standpoint and show it. The idle lane
+  // that used to true the OTHER residents' views behind this is gone (see
+  // "warming is gone" above); a view that has gone stale is rebuilt when a
+  // reader switches onto it, which is the moment it is needed and the only
+  // moment it was ever read.
   function renderTelling() {
     const key = standpointKey();
     const radial = buildPane(key, { x: state.cam.x, y: state.cam.y });
     activateTellingPane(key, radial);
-    warmOtherViews();
   }
 
   // ───────── inside ─────────
@@ -4941,7 +6009,9 @@ export function mountViewer(appEl) {
   function composeInterior(box, roomId, key) {
     const room = byId.get(roomId);
     if (!room) return null;             // a room the fold does not hold is not a room
-    const found = investigate(roomId, world, { occupancy: liveOccupancy(), budget: state.dials.context_budget });
+    // the fold when there is one, the read's index when there is not — never
+    // a null world into an engine whose first line reads its marks
+    const found = investigate(roomId, worldForRoom(world, allMarks()), { occupancy: liveOccupancy(), budget: state.dials.context_budget });
     if (found?.error) return null;
     // investigate SHAPES its children for a reader (id, kind, at, body) and drops
     // extent and image on the way. A floor needs both, so each child is resolved
@@ -4993,6 +6063,26 @@ export function mountViewer(appEl) {
     return () => overlays.forEach((el) => boxEl.appendChild(el));
   }
   let sceneRoomId = null;       // the mark whose scene is mounted, or null = the town
+  // THE HOUSE WHOSE COLUMN IS OPEN (Keemin, 2026-09-12: "when a house is clicked
+  // (and the column is up), it gets pinned in its 'zoomed' form even when zoomed
+  // out"). One parcel id, or null. Read by homeCard, written where the column
+  // opens and closes — see renderBubbles.
+  let pinnedColumnParcelId = null;
+  // the top-left chip follows the MOUNTED room, which is the entered one
+  const chipMarkId = () => chipMark({ viewingInteriorOf: sceneRoomId });
+  // …and wears that mark's name and tier colour: a blue dot over somebody's
+  // home would be the page saying "constitution" about a house, in the one
+  // language a reader learns by colour rather than by words
+  function syncChip(interaction = markInteraction.getState()) {
+    const rootGlyph = $(root, ".wv-root-mark");
+    if (!rootGlyph) return;
+    const chip = chipMarkId();
+    rootGlyph.classList.toggle("on", interaction.selectedId === chip);
+    rootGlyph.classList.toggle("is-hovered", interaction.hoveredId === chip);
+    rootGlyph.setAttribute("aria-label", markName({ id: chip }).name);
+    const tier = tierOf({ id: chip });
+    for (const t of ["constitution", "home", "market"]) rootGlyph.classList.toggle(`t-${t}`, tier === t);
+  }
   let townKeep = null;          // { svg, ctx } — the town scene, held aside while inside
 
   // ── WHY STEPPING OUTSIDE TOOK A WHILE (founder, 2026-08-21) ────────────────
@@ -5037,10 +6127,12 @@ export function mountViewer(appEl) {
       placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
     });
     sceneRoomId = room.id;
+    syncChip();
   }
   function remountTown(boxEl) {
     if (!sceneRoomId) return;
     sceneRoomId = null;
+    syncChip();
     const reattach = captureKeep(boxEl);
     // an atlas that landed while we were indoors mounts NOW — the scene
     // lifecycle guard: a load may never stomp a mounted room, so it waited here
@@ -5102,13 +6194,23 @@ export function mountViewer(appEl) {
   async function crossInto(markId, { accept = false, button = null } = {}) {
     const room = markId && byId.get(markId);
     if (!room) return;
-    const card = button?.closest?.(".wv-card") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
+    // the sheet (terms, or a refusal) lands where the button lives: the little
+    // card on the street, or the parcel column since its enter button (2026-09-11)
+    const card = button?.closest?.(".wv-card, .wv-homecol") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
     const label = button?.textContent;
     if (button) { button.disabled = true; button.textContent = accept ? "crossing…" : "at the door…"; }
     const clearSheet = () => card?.querySelector(".wv-cross-sheet")?.remove();
     try {
       const response = await apexAct("enter", { mark: markId, ...(accept ? { accept: true } : {}) });
       const answer = response?.body ?? {};
+      // "WALK THERE AND ENTER" — the door refused from beyond reach: offer the walk
+      const offer = answer.error === "bounce" ? walkThereOffer(response?.status, answer, markId) : null;
+      if (offer) {
+        clearSheet();
+        card?.insertAdjacentHTML("beforeend", walkThereSheetHTML(offer, answer.defect));
+        if (button) { button.disabled = false; button.textContent = label ?? "enter"; }
+        return;
+      }
       if (answer.error === "bounce") throw new Error(answer.defect ?? answer.error);
       clearSheet();
       // TERMS, or a refusal: both are the door speaking, and both are rendered
@@ -5129,6 +6231,36 @@ export function mountViewer(appEl) {
       clearSheet();
       card?.insertAdjacentHTML("beforeend",
         `<div class="wv-cross-sheet is-refused"><div class="wv-cross-head">the door did not take it</div>`
+        + `<p class="wv-cross-body">${esc(String(err?.message ?? err))}</p></div>`);
+    }
+  }
+
+  // THE WALK WITH ENTRY ON ARRIVAL. One act at the walk door — `mark_id` +
+  // `enter_on_arrival` — and the office composes the crossing when the walker
+  // arrives; the page has nothing to do at arrival but read the ledger, which
+  // the walkers poll already does. A terms door answers the walk with its
+  // terms; the same sheet renders them, and accept resends the walk with the
+  // walker's word.
+  async function walkThereAndEnter(markId, { accept = false, button = null } = {}) {
+    const sheet = button?.closest?.(".wv-cross-sheet");
+    const card = button?.closest?.(".wv-card, .wv-homecol") ?? $(root, `.wv-card[data-id="${CSS.escape(markId)}"]`);
+    if (button) { button.disabled = true; button.textContent = "setting out…"; }
+    try {
+      const response = await apexAct("walk", { mark_id: markId, enter_on_arrival: true, ...(accept ? { accept: true } : {}) });
+      const answer = response?.body ?? {};
+      if (answer.error === "bounce") throw new Error([answer.defect, answer.hint].filter(Boolean).join(" — "));
+      sheet?.remove();
+      const terms = enterSheetHTML(answer, markId);
+      if (terms && isTermsAsk(answer)) { card?.insertAdjacentHTML("beforeend", terms.replace("data-enter-accept=", "data-walk-enter-accept=")); return; }
+      card?.insertAdjacentHTML("beforeend",
+        `<div class="wv-cross-sheet is-terms"><div class="wv-cross-head">on the way</div>`
+        + `<p class="wv-cross-body">${esc(String(answer.note ?? answer.narration ?? "the office recorded the departure — you cross the threshold when you arrive"))}</p></div>`);
+      await loadEnterExitLedger();
+      renderCurrent();
+    } catch (err) {
+      if (button) { button.disabled = false; button.textContent = "walk there and enter"; }
+      card?.insertAdjacentHTML("beforeend",
+        `<div class="wv-cross-sheet is-refused"><div class="wv-cross-head">the walk did not take</div>`
         + `<p class="wv-cross-body">${esc(String(err?.message ?? err))}</p></div>`);
     }
   }
@@ -5222,14 +6354,63 @@ export function mountViewer(appEl) {
     // was in before, it is not in it now — leaving the stale entry behind is how
     // a reader who has stepped out keeps looking at a floor.
     interiorByKey.delete(key);
+    // The one row of chips both paths wear, hoisted above the branch below so
+    // the resident arm can put it over "opening your eyes…" — a filter row that
+    // vanished while a read was in flight would flicker on every step.
+    const chips = viewerFilterControls({ identityResolved: hasIdentity, markFilter: state.markFilter });
+    // ── THE RESIDENT PATH READS; IT DOES NOT COMPUTE ─────────────────────────
+    //
+    // Keemin, 2026-09-10: "for resident views, we should just load whatever the
+    // resident can see or hear (like residents)." The office runs the same
+    // engine over the same record, so this is not a second opinion — it is the
+    // SAME opinion, asked for instead of reproduced.
+    //
+    // The fetch is kicked from here and the pane says so meanwhile, rather than
+    // this function becoming async: `renderCurrent` is synchronous and called
+    // from a dozen places, and making the whole spine async to serve one branch
+    // would be the tail wagging the dog. The read lands, the cache fills, and
+    // the render that follows finds it.
+    if (onResidentPath() && key !== SPECTATOR_ACTOR) {
+      const cached = readCache.get(residentStandpointKey(standpoint, key));
+      if (!cached) {
+        loadResidentRead(standpoint, key).then((read) => { if (read) renderCurrent(); });
+        box.innerHTML = chips + (readError
+          ? `<div class="wv-err">the office could not say what you can see from here: ${esc(readError)}</div>`
+          : `<div class="wv-quiet">opening your eyes…</div>`);
+        return null;
+      }
+      return composeResidentTelling(box, cached, key, chips);
+    }
+    // ── THE FOLD, FETCHED LATE IF IT WAS NEVER FETCHED EARLY ────────────────
+    //
+    // The mirror of the resident arm above, and it exists because of a hole the
+    // spectator falsifier found: boot now SKIPS the fold for a signed-in
+    // reader, so one who then chooses the Spectator standpoint would arrive
+    // here with `world` null and the telling would fail. The page owes them the
+    // town at that moment instead — asked for once, the same way the resident
+    // arm asks for its read, with the pane saying so meanwhile.
+    // ⚑ ONLY ONCE WE KNOW WHO IS READING. Without `identitySettled` this arm
+    // fires at the FIRST render — which happens before the office has answered
+    // whoami, when every reader still looks like a spectator — and fetches the
+    // very fold the boot order was rearranged to avoid. That is exactly what it
+    // did: this repair silently undid the saving it was written to protect, and
+    // the next dev run showed `world=true` on a resident page. Measure after
+    // every change, including the small safe-looking ones.
+    if (!world) {
+      if (identitySettled) {
+        loadFold().then(() => { applyWorldLayer(); renderCurrent(); }).catch(() => {});
+        box.innerHTML = chips + `<div class="wv-quiet">reading the whole town…</div>`;
+      } else {
+        box.innerHTML = chips + `<div class="wv-quiet">opening your eyes…</div>`;
+      }
+      return null;
+    }
     const e = openYourEyes({ x: standpoint.x, y: standpoint.y, name }, world, { crossing: state.crossing, dials: state.dials, budget: state.dials.context_budget });
     const within = e.radial.within ?? [];
     const obs = e.radial.observer ?? {};
     const isNew = state.markFilter === "new";
-    // One row, one question: everything, just mine, or recency. The World lens
-    // that used to sit above it is gone — composition is not a question the
-    // reader has to answer any more, because a draft says so in its own colour.
-    const chips = viewerFilterControls({ identityResolved: hasIdentity, markFilter: state.markFilter });
+    // (`chips` — one row, one question: everything, just mine, or recency — is
+    // hoisted above the resident branch, since both arms wear it.)
     // 1. the containment ladder — where you STAND, the standpoint frame. Kept as
     // context even under Mine (filtering the frame to yours would usually empty
     // "where you stand"); the filter narrows the visible marks, not your footing.
@@ -5263,7 +6444,7 @@ export function mountViewer(appEl) {
     // World-law cells are the-town's (constitution) — skipped under Mine, and part
     // of the ladder, so they go with it under New.
     if (showLadder && !mine)
-      for (const lm of world.marks.filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
+      for (const lm of allMarks().filter((m) => m.by === "the-town" && m.mechanic && TELLERS[m.mechanic]))
         ladder += markCell(lm, { role: "law", annotation: TELLERS[lm.mechanic]() });
     // 3. then the listing. The CHIP governs it: All and Mine tell the standpoint —
     // ladder, then the bands, then the FOV tallies. New tells the record instead —
@@ -5288,6 +6469,94 @@ export function mountViewer(appEl) {
     mountMarkImages(box);
     return e.radial;
   }
+  // ───────── the resident's telling, written from the read ───────────────────
+  //
+  // The same pane, the same cells, the same ladder — built from what the office
+  // said instead of from what the page worked out. Deliberately its own function
+  // rather than a set of `if`s threaded through `composeTelling`: the two arms
+  // answer the same question from different evidence, and a single body that
+  // kept asking which one it was in would be the place their behaviour quietly
+  // drifted apart.
+  //
+  // ⚑ THE THREE STATE LINES ARE GONE HERE, BY RULING, NOT BY OVERSIGHT.
+  // `lightStateLine`, `elevStateLine` and `fogStateLine` read `radial.observer`,
+  // which is the ENGINE's internal state and no part of what a resident reads.
+  // Keemin, 2026-09-10: "my confusion is on why we need this info for the page."
+  // The office already renders the same facts as PROSE in `telling`, so the
+  // prose is what goes in — one author for the world's voice, which is the rule
+  // `worldEyes` has followed since it refused to re-render the engine's telling.
+  function residentTellingCards(radial, keep = null) {
+    const spineIds = new Set((radial.within ?? []).map((w) => w.id));
+    // Bearing, then distance — the READ's own organisation. The engine's
+    // distance bands are its vocabulary, built from dials this read does not
+    // carry, and rebuilding them here would be the page inventing a yardstick
+    // and then measuring with it.
+    const bearings = Object.keys(radial.byBearing ?? {}).sort();
+    let html = "";
+    for (const bearing of bearings) {
+      let rows = Object.values(radial.byBearing[bearing] ?? {}).flat()
+        .filter((m) => !spineIds.has(m.id));     // the ladder above already gives the spine its cards
+      if (keep) rows = rows.filter(keep);
+      if (!rows.length) continue;
+      html += `<div class="wv-band"><h3>${esc(bearing)}</h3>`;
+      for (const m of rows) html += m.unread
+        // NEVER A BLANK. The read named this and could not hand over its record;
+        // saying so where the card would have been is the whole point.
+        ? `<div class="wv-card wv-unread" data-id="${esc(m.id)}">`
+          + `<b>${esc(deslugMarkId(m.id))}</b>`
+          + `<p class="wv-quiet">the read names this, and the office sent no record for it — `
+          + `it is there, and this page cannot tell you what it is.</p></div>`
+        : markCell(m, { role: "fov", radialChips: true });
+      html += `</div>`;
+    }
+    return html || (keep
+      ? `<div class="wv-quiet">none of yours tells from here.</div>`
+      : `<div class="wv-quiet">nothing tells from here — walk, or wait for clearer air.</div>`);
+  }
+
+  function composeResidentTelling(box, read, key, chips) {
+    const radial = residentRadial(read);
+    const mine = state.markFilter === "mine";
+    const isNew = state.markFilter === "new";
+    const { entered, alongside } = standpointOccupancy({
+      acts: enterExitLedger.acts, at: occupancyClock(), handle: key,
+    });
+    const nameOf = (id) => markName(residentMarkById(id) ?? { id }).name;
+    // the ladder: where you STAND, from the read's own spine
+    let ladder = "";
+    if (!isNew) {
+      const chain = mine ? (radial.within ?? []).filter((w) => isMine(residentMarkById(w.id) ?? w)) : (radial.within ?? []);
+      chain.forEach((w, i) => {
+        const m = residentMarkById(w.id) ?? w;
+        ladder += markCell(m, { role: i === 0 ? "frame" : "ladder" });
+      });
+    }
+    // THE OFFICE'S PROSE IS NOT RENDERED (founder, 2026-09-11: "the telling is
+    // broken on dev. we have a giant regular-text blob redundant with the
+    // formatted cards"). `read.telling` is the engine's narration — the agent's
+    // read, in words — and the cards below say the same things in the page's
+    // own grammar; two tellings of one read is the blob he met. The words stay
+    // on the wire for agents; the page shows the cards.
+    // What the page could not place, said out loud rather than left as a gap.
+    const notes = [];
+    if (radial.counts?.unread)
+      notes.push(`${radial.counts.unread} thing${radial.counts.unread === 1 ? "" : "s"} the read named but could not describe`);
+    if (mineSet.sentinel.length)
+      notes.push(`${mineSet.sentinel.length} of yours carry a marker position rather than a place, and are not on the map`);
+    if (!mineSet.complete)
+      notes.push(mineSet.exhausted
+        ? `your marks ran past ${MINE_PAGE_LIMIT} pages — the map shows what was walked`
+        : `your marks are still being counted`);
+    box.innerHTML = chips
+      + occupancyChipHTML({ entered, alongside, nameOf })
+      + (ladder ? `<div class="wv-section-lbl">${esc(standpointSectionLabel(key))}</div>`
+                + `<div class="wv-ladder-cells">${ladder}</div>` : "")
+      + `<div class="wv-cards">${residentTellingCards(radial, mine ? isMine : null)}</div>`
+      + (notes.length ? `<div class="wv-tallies">${esc(notes.join(" · "))}</div>` : "");
+    mountMarkImages(box);
+    return radial;
+  }
+
   // The just-mine tail: the same filtered list continues beyond this sight with
   // the same mark cells. Backing is not a second shelf; it stays on the cell.
   function elsewhereRow(m) {
@@ -5299,7 +6568,7 @@ export function mountViewer(appEl) {
     (radial.within ?? []).forEach((w) => shown.add(w.id));
     const by = radial.byBearing ?? {};
     for (const b of Object.keys(by)) for (const m of Object.values(by[b]).flat()) shown.add(m.id);
-    const yours = (world.marks ?? []).filter(isMine);
+    const yours = allMarks().filter(isMine);
     const elsewhere = yours.filter((m) => m.id && !shown.has(m.id));
     const anyInView = yours.some((m) => shown.has(m.id));
 
@@ -5386,7 +6655,30 @@ export function mountViewer(appEl) {
     const id = stack[stack.length - 1];
     // one branch, both surfaces: renderExpansion is what the Telling's cells and
     // the painting's bubble each fold open, so the frame reads the same in both
-    const d = id === WORLD_ROOT_ID ? worldFrameReading(byId.get(id), world?.marks ?? []) : investigate(id, world);
+    // ── CLICK FOR MORE = INVESTIGATE (Keemin, 2026-09-10 22:1x) ─────────────
+    //
+    // "We just need 'click for more' to = investigate." On the fold path that
+    // is the engine's own `investigate` over the world in hand. On the resident
+    // path there IS no world in hand — and the answer is not to widen `records`
+    // to carry every mark's children and predicates, it is to ask the door that
+    // already answers exactly this question. Same verb, same answer, one side
+    // of the wire or the other.
+    //
+    // Cached by id: opening a card, closing it and opening it again is the same
+    // question, and the descent is the commonest thing a reader does.
+    let d;
+    if (id === WORLD_ROOT_ID) d = worldFrameReading(byId.get(id), allMarks());
+    else if (world) d = investigate(id, world);
+    else {
+      const seen = investigateCache.get(id);
+      if (seen) d = seen;
+      else {
+        loadInvestigate(id).then((got) => { if (got) renderExpansion(card); });
+        if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
+        box.innerHTML = `<div class="wv-quiet">looking closer…</div>`;
+        return;
+      }
+    }
     if (d.error) {
       if (!box) { box = document.createElement("div"); box.className = "wv-expand"; card.appendChild(box); }
       box.innerHTML = `<div class="wv-err">${esc(d.error)}</div>`;
@@ -5440,8 +6732,78 @@ export function mountViewer(appEl) {
   //    (SCENES.md difference #6). No baker, no baked art — so the town now runs
   //    the same furnishing pass the room does, and difference #6 stops being a
   //    difference. SCENES.md is amended in the same commit.
+  // The town's own rendering of its ground, mounted exactly as the atlas was
+  // until 2026-09-08 (that code, restored): scripts stripped, images made lazy,
+  // relative art paths rebased on the atlas directory. Null when the file is
+  // absent or unreadable — never a throw, because the generated ground is the
+  // answer then and the reader must not see "the ground didn't draw" for a
+  // missing picture.
+  async function fetchAtlasGround() {
+    try {
+      const r = await fetch(ATLAS_GROUND_URL, { credentials: "same-origin" });
+      if (!r.ok) return null;
+      const doc = new DOMParser().parseFromString(await r.text(), "text/html");
+      const svg = doc.querySelector("svg#map-svg") ?? doc.querySelector("svg");   // the sheet, never an icon inside it
+      if (!svg) return null;
+      disciplineAtlasImages(doc);
+      svg.removeAttribute("width"); svg.removeAttribute("height");
+      svg.querySelectorAll("script").forEach((el) => el.remove());
+      // THE BACKDROP LOSES ITS WORDS (Keemin, 2026-09-12, looking at dev: "the
+      // text for the regions is quite hard to read. there are a couple of other
+      // random phrases like 'tended, never owned' and stuff on the map, which
+      // don't need to be there… for now I think we can just remove those names
+      // from the backdrop").
+      //
+      // 31 <text> elements on the shipped picture, counted on train/2026-w38:
+      // 12 region-label, 13 region-founder (one of them IS "tended, never owned
+      // — illuminator"), 6 open-ground-label captions. They are baked into the
+      // atlas at render time, so the only place a reader of the World page can
+      // be rid of them is here, as the picture is imported.
+      //
+      // ONLY THE BACKDROP. /atlas/ground.html opened directly is a MAP and keeps
+      // every word — nothing about the site's file, the town's renderer or that
+      // page changes. And the generated fallback's own region names are
+      // deliberately untouched: they are never on screen while the picture
+      // loads, and whether a region should say its name at far is a separate
+      // conversation Keemin and Wright have not had. (No count here on purpose
+      // — the fallback draws thirteen today, the brief and this comment both
+      // said twelve, and a number in prose reds the day a region is founded
+      // while saying nothing about the strip. The test asserts the relation.)
+      svg.querySelectorAll("text").forEach((el) => el.remove());
+      // AND ITS BAKED PICTURES (Keemin, 2026-09-13: "still see the art as
+      // squares baked into the html"). Nine <image> on the shipped picture —
+      // /atlas/assets/caelum-evermoon.jpg and its eight siblings, the region
+      // thumbnails the atlas renders into the sheet.
+      //
+      // They were the right thing when the backdrop was the only place a region
+      // had a picture. It is not any more: the viewer hangs the record's own
+      // art on the placed-art layer, clipped to the region's ring, so the baked
+      // square is the same place said twice — a small rectangle sitting beside
+      // the shape that has just been filled with the same photograph.
+      //
+      // The map keeps them. /atlas/ground.html opened directly is a MAP and
+      // still carries every picture and every word; this strips the copy the
+      // World page mounts as a BACKDROP, and nothing about the site's file, the
+      // atlas renderer or that page changes.
+      svg.querySelectorAll("image").forEach((el) => el.remove());
+      const base = new URL(ATLAS_GROUND_URL, location.origin);
+      svg.querySelectorAll("image").forEach((im) => {
+        const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
+        if (hh && !/^(https?:)?\//.test(hh)) { im.setAttribute("href", new URL(hh, base).pathname); im.removeAttribute("xlink:href"); }
+      });
+      return document.importNode(svg, true);
+    } catch { return null; }
+  }
   async function loadMinimap() {
     if (minimapLoading) return;
+    // NOT BEFORE THE READ (founder, 2026-09-11: "why do I keep briefly getting
+    // 'the ground didn't draw' before the world page loads?"). On the resident
+    // path the ground is drawn from the marks the read fills, and the first
+    // render runs before that read lands — so this used to try, throw on a
+    // near-empty set, print the error, and be retried by the read's own
+    // renderCurrent a second later. The box already says "fetching the
+    // painting…"; leave it saying that until there is something to draw.
+    if (onResidentPath() && !readCache.get(residentStandpointKey({ x: state.cam.x, y: state.cam.y }, state.handle))) return;
     minimapLoading = true;
     const boxEl = $(root, ".wv-minimap");
     // The chrome that rides ON the painting is held across the wipe below rather
@@ -5469,14 +6831,25 @@ export function mountViewer(appEl) {
       const sm = String(g.scale ?? "").match(/(\d+(?:\.\d+)?)\s*m per atlas px/);
       if (!om || !sm) throw new Error("skeleton _grid changed shape");
       const originPx = { x: +om[1], y: +om[2] }, mPerPx = +sm[1];
-      // `world.marks` — the ASSEMBLED fold, which is the same set `byId`, the
-      // overlay and every other geometry reader use. Not `data.worldState.marks`
-      // and emphatically not `data.marks`, which does not exist: `data` is
-      // { trueWorld, myWorld, worldState, skeleton, manifest }. One question, one
-      // owner; the ground reads the marks the pips stand on.
-      const ground = townGround(world.marks, data.skeleton, { originPx, mPerPx });
-      const doc = new DOMParser().parseFromString(ground.svgText, "image/svg+xml");
-      const svg = document.importNode(doc.documentElement, true);
+      // THE MARKS THE PIPS STAND ON — one question, one owner. `allMarks()` is
+      // the assembled fold where there is one, and on the resident path it is
+      // the read's own `records`, which carry the town's GROUND SET for exactly
+      // this call: the thirteen region rings and the water, the one small whole
+      // a painting needs for its floor (office, Half 1). Not
+      // `data.worldState.marks` and emphatically not `data.marks`, which does
+      // not exist: `data` is { trueWorld, myWorld, worldState, skeleton,
+      // manifest }.
+      // The ground-set ids (the regions and the water — what the furnishing pass
+      // must leave alone) come from the generated ground in EITHER case: it is
+      // 6 ms and 13 KB, and the picture carries no such list.
+      const ground = townGround(allMarks(), data.skeleton, { originPx, mPerPx });
+      // THE PICTURE FIRST, THE GENERATED GROUND AS THE FALLBACK (2026-09-11).
+      // Which one drew is written on the svg itself (`data-ground`) so a page
+      // test — and a reader with dev tools open — can say which they are seeing.
+      const picture = await fetchAtlasGround();
+      const svg = picture ?? document.importNode(
+        new DOMParser().parseFromString(ground.svgText, "image/svg+xml").documentElement, true);
+      svg.setAttribute("data-ground", picture ? "atlas" : "generated");
       // THE SCENE-LIFECYCLE GUARD: a ground that finishes building while a ROOM
       // is mounted may not stomp it — the town's ground waits here and mounts
       // when the resident steps back outside (remountTown drains it).
@@ -5548,10 +6921,6 @@ export function mountViewer(appEl) {
     const mistLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
     mistLayer.setAttribute("id", "wv-mist-layer");
     mistLayer.style.pointerEvents = "none";
-    const farArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    farArtLayer.setAttribute("id", "wv-far-art-layer");
-    farArtLayer.style.pointerEvents = "none";
-    svg.insertBefore(farArtLayer, svg.firstChild);
     svg.insertBefore(mistLayer, svg.firstChild);
     // the survey grid — the FIRST derived layer: drawn from the registration
     // (origin + scale), never traced from the paint. Sits under the overlay.
@@ -5559,6 +6928,29 @@ export function mountViewer(appEl) {
     gridLayer.setAttribute("id", "wv-grid-layer");
     gridLayer.style.display = "none"; // NOT the hidden attribute — SVG <g> ignores it
     svg.appendChild(gridLayer);
+    // THE PLACED ART: above the ground, below everything derived from the record.
+    //
+    // It used to be `wv-far-art-layer`, inserted at the very front of the svg,
+    // and that was right for the one thing it drew: a mountain 135 km out, on
+    // open country, where there is no ground to be under. It is wrong for
+    // ground. The generated town ground appends its own `wv-tg-*` rects and
+    // polygons as siblings LATER in the svg — paper, rule, daylight, night,
+    // then twenty region washes — so a picture hung on a district inside the
+    // town was painted and then buried under the paper. Caught in the
+    // screenshots for this piece, which is what they were taken for: the DOM
+    // said two pictures, the census said two pictures, and the map showed none.
+    //
+    // (The atlas ground takes the other road — `base`, inserted before the mist
+    // — so the same picture would have shown in production and not on the rig.
+    // A seam that depends on which ground loaded is not a seam.)
+    //
+    // Here it is after the ground on both roads and before the grid, the
+    // footprints, the conversations and the overlay, which is the one position
+    // that means "on the ground, under everything the record draws on it".
+    const placedArtLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    placedArtLayer.setAttribute("id", "wv-placed-art-layer");
+    placedArtLayer.style.pointerEvents = "none";
+    svg.appendChild(placedArtLayer);
     // footprints — the second derived layer: every mark's true extent, from the
     // record. Sits above the grid, under the pips; pointer-events none so the
     // stand-click and drag pass straight through it.
@@ -5640,7 +7032,7 @@ export function mountViewer(appEl) {
     // view and the LOD reference (`full`); it stops being the world's edge.
     // A ROOM (zoomOutLimit 1) never reaches for the root frame: its walls
     // remain its world, byte-for-byte the 08-20 ruling.
-    const rootMk = zoomOutLimit > 1 ? (world?.marks ?? []).find((m) => m.id === WORLD_ROOT_ID) : null;
+    const rootMk = zoomOutLimit > 1 ? (allMarks()).find((m) => m.id === WORLD_ROOT_ID) : null;
     const worldFrame = rootMk?.extent?.w > 0 && rootMk?.extent?.h > 0
       ? { x: originPx.x + ((rootMk.at?.x ?? 0) - rootMk.extent.w / 2) / mPerPx,
           y: originPx.y + ((rootMk.at?.y ?? 0) - rootMk.extent.h / 2) / mPerPx,
@@ -5675,7 +7067,7 @@ export function mountViewer(appEl) {
       svg.insertBefore(base, mistLayer);
     }
     const view = { ...full };
-    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, farArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents, groundMarkIds };
+    mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, placedArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents, groundMarkIds };
     drawFarCountry();
     let tween = null;
     // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
@@ -5697,6 +7089,34 @@ export function mountViewer(appEl) {
       if (k !== lastMarkerK) { lastMarkerK = k; drawWalkers(); drawConversations(); }
       renderMarkHighlight();
       positionBubbles(); // the anchors are on the painting, so they move with it
+      noticeTheCameraSettling();
+    }
+    // ── WHEN A PAN HAS TO COST SOMETHING (2026-09-11) ────────────────────────
+    //
+    // A pan rebuilds nothing, and that is the property the 08-21 camera split
+    // bought: position is in painting units, so moving the viewBox moves every
+    // pip for free on the compositor. The spectator's cull would break exactly
+    // that if it redrew on every frame of a drag — which is why the overlay is
+    // drawn with ONE VIEWPORT OF MARGIN on each side and only rebuilt when the
+    // camera has left what was drawn, or has crossed a tier boundary.
+    //
+    // So the cost is: a drag inside the margin is free, as it was; a drag that
+    // travels a whole screen pays one rebuild, once, after the hand stops. The
+    // "after" is what the timer is for — rebuilding mid-drag would be the sixty
+    // rebuilds a second this map was rewritten to stop doing.
+    let settleTimer2 = null;
+    const CAMERA_SETTLE_MS = 140;
+    function noticeTheCameraSettling() {
+      const drawnAt = mapCtx?.drawnAt;
+      if (!drawnAt) return;                         // nothing drawn yet, or the resident path
+      const now = viewportWorldBounds({ view, originPx, mPerPx, margin: 0 });
+      const stale = drawTier() !== drawnAt.tier
+        || !now || !drawnAt.bounds
+        || now.minX < drawnAt.bounds.minX || now.maxX > drawnAt.bounds.maxX
+        || now.minY < drawnAt.bounds.minY || now.maxY > drawnAt.bounds.maxY;
+      if (!stale) return;
+      clearTimeout(settleTimer2);
+      settleTimer2 = setTimeout(() => { if (lastRadial) drawOverlay(lastRadial); }, CAMERA_SETTLE_MS);
     }
     // ── THE PAN FENCE (founder, 2026-08-21: "we should also lock pan to the
     // edges") ────────────────────────────────────────────────────────────────
@@ -5879,15 +7299,70 @@ export function mountViewer(appEl) {
     function screenMarkCandidates() {
       const matrix = svg.getScreenCTM();
       if (!matrix) return [];
-      return [...mapCtx.glyphIds].flatMap((id) => {
+      // ── THE DRAWN BOX, READ AT USE (2026-09-11) ──────────────────────────
+      //
+      // A parcel is hit by the shape the overlay drew for it — the home card at
+      // mid/near, the house glyph at far — and not by the transparent pip under
+      // its middle. Measured before changing anything: the card is ~45 px wide
+      // on screen at the opening view and the pip's snap circle is 18 px around
+      // its centre, so the roof and both lower corners missed.
+      //
+      // READ FROM THE DOM, EVERY TIME, and that is the rule rather than the
+      // lazy option (the living-references shelf: resolve at use, never a
+      // mount-time reference). These boxes are a function of the camera, and
+      // the camera moves on every frame of a drag; a box cached at mount is a
+      // box about where the town used to be. `getBoundingClientRect` on the
+      // group answers in screen coordinates, which is the space the pointer is
+      // already in, so no second transform can drift from the first.
+      //
+      // The `.ov-home` GROUP, so the household's name under the house is part
+      // of the target too — pointing at the name is pointing at the house.
+      const boxes = new Map();
+      for (const drawn of overlay.querySelectorAll(".ov-home[data-id], .ov-glyph[data-id]")) {
+        const id = drawn.dataset.id;
+        if (!id || boxes.has(id)) continue;
+        const b = drawn.getBoundingClientRect();
+        if (b.width > 0 && b.height > 0)
+          boxes.set(id, { left: b.left, right: b.right, top: b.top, bottom: b.bottom });
+      }
+      const fromGlyphs = [...mapCtx.glyphIds].flatMap((id) => {
         const mark = byId.get(id);
         if (!mark?.at || ![mark.at.x, mark.at.y].every(Number.isFinite)) return [];
         const point = svg.createSVGPoint();
         point.x = originPx.x + mark.at.x / mPerPx;
         point.y = originPx.y + mark.at.y / mPerPx;
         const screen = point.matrixTransform(matrix);
-        return [{ id, x: screen.x, y: screen.y }];
+        // no box for a mark drawn as a pip: it keeps the snap radius it always
+        // had, which is the fallback the addendum asks for by name
+        return [{ id, x: screen.x, y: screen.y, box: boxes.get(id) ?? null }];
       });
+      // ── AND A REGION'S HUNG PICTURE (Keemin, 2026-09-13) ─────────────────
+      //
+      // The candidates above come from `glyphIds`, which the overlay fills —
+      // and a region is not drawn there, it is hung on the placed-art layer
+      // underneath. So a region had no way of being the thing under the cursor.
+      //
+      // THIS IS WHY IT IS HERE AND NOT A CLICK HANDLER. I wired a root-level
+      // click delegate on the hit rect first and it never fired once: the map's
+      // svg takes the pointer on pointerdown, so no `click` event reaches the
+      // document at all, and even pointerup arrives with the svg as its target.
+      // Measured, after the delegate silently did nothing. The map hit-tests
+      // screen coordinates, so a target that wants to be clicked joins the
+      // candidates — which is also the reuse the ruling asked for: same
+      // ranking, same chooser when a house stands on top, same selectMark.
+      //
+      // Innermost-first ordering does the rest: a house glyph over a region
+      // wins the click, and the region takes only what is left of itself.
+      const art = mapCtx?.placedArtLayer?.querySelectorAll(".wv-far-art-hit[data-id]") ?? [];
+      const hung = [...art].flatMap((el) => {
+        const id = el.getAttribute("data-id");
+        if (!id || boxes.has(id)) return [];
+        const b = el.getBoundingClientRect();
+        if (!(b.width > 0 && b.height > 0)) return [];
+        return [{ id, x: b.left + b.width / 2, y: b.top + b.height / 2,
+          box: { left: b.left, right: b.right, top: b.top, bottom: b.bottom } }];
+      });
+      return hung.length ? [...fromGlyphs, ...hung] : fromGlyphs;
     }
     const worldPointForEvent = (event) => {
       const point = svg.createSVGPoint();
@@ -5921,7 +7396,7 @@ export function mountViewer(appEl) {
       glyphs: screenMarkCandidates(),
       marks,
     });
-    const toldHere = () => toldPaintingMarks(lastRadial, world?.marks ?? []);
+    const toldHere = () => toldPaintingMarks(lastRadial, allMarks());
     const paintingMarkForEvent = (event) => markAt(event, toldHere());
     // walkers, in the same screen-space shape the mark snap already eats
     function screenWalkerCandidates() {
@@ -6084,7 +7559,7 @@ export function mountViewer(appEl) {
     const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
     function buildFpLayer() {
       let s = "";
-      for (const m of world.marks ?? []) {
+      for (const m of allMarks()) {
         if (!m.at || !m.extent || isAmbientMark(m, byId)) continue;
         const cls = markClasses(m) + (m.kind === "parcel" ? " fp-parcel" : "") + (m.mechanic ? " mech" : "");
         s += markShapeSVG(m, fpPx, `wv-fp ${cls}`, {
@@ -6186,6 +7661,79 @@ export function mountViewer(appEl) {
     mapCtx.overlay.style.setProperty("--wv-mk", overlayScale(k));
     return k;
   }
+  // ── WHAT THE CAMERA IS LOOKING AT (2026-09-11) ───────────────────────────
+  //
+  // Three readings, asked once per draw and handed to every pass, so that no
+  // pass gets to have its own opinion about the zoom.
+  //
+  // ⚑ THE TIER IS THE CAMERA'S ON EVERY PATH (founder, 2026-09-11 evening:
+  // "zoom out has issues. whatever happened to the zoom out removing images
+  // and replacing with static?"). Until tonight `drawTier()` answered null on
+  // the resident path and every gate read null as "draw what you drew
+  // yesterday" — right on 09-10, when a resident's painting was the ≤ 25
+  // marks their read named and there was nothing for a tier to cut. Then the
+  // town's 89 houses joined the resident's map (townHouseMarks, this
+  // afternoon, his word: "both is good"), and a resident zooming out got 89
+  // pictured cards at every width while the Spectator beside them got the
+  // far tier's glyphs. Same town, same zoom, one answer: metres across the
+  // viewport, whoever is looking. The cull box follows for the same reason —
+  // the landmarks pass draws every house in the box, and a resident's box is
+  // no bigger than a Spectator's.
+  const paintingWidthM = () => (mapCtx ? mapCtx.full.w * mapCtx.mPerPx : NaN);
+  const panePx = () => {
+    const w = mapCtx?.svg?.getBoundingClientRect?.().width;
+    return Number.isFinite(w) && w > 0 ? w : NaN;
+  };
+  const drawTier = () => tierFor(mapCtx?.zoomK, paintingWidthM(), state.drawDials);
+  // The box the passes cull against — null only when the camera cannot be
+  // read (never a reason to stop painting; see markInDrawnBounds).
+  const drawnBounds = () => (!mapCtx ? null : viewportWorldBounds({
+    view: mapCtx.view, originPx: mapCtx.originPx, mPerPx: mapCtx.mPerPx,
+    margin: Number(state.drawDials.cull_margin),
+  }));
+
+  // One parcel's card: the picture from the home sited on it (through the same
+  // shelf gate every other art surface uses), the household's name under it,
+  // lit when the household is home.
+  //
+  // THE TIER DECIDES HOW MUCH CARD (2026-09-11):
+  //   far   a small house glyph — no picture, no frame, no name, no tooltip
+  //   mid   the frame and the name; the picture only once the parcel's own
+  //         ground is at least `art_min_px` wide on screen
+  //   near  the card as it was
+  //
+  // The picture gate asks the GROUND, not the card: a card is a fixed size on
+  // screen and would answer the same at every N, while the ground it stands on
+  // is the thing that actually runs out when a town gets ten times bigger.
+  function homeCard(parcel, at, fan, title, tier = null) {
+    // THE READ HOUSE STAYS THE READ HOUSE (Keemin, 2026-09-12: "when a house is
+    // clicked (and the column is up), it gets pinned in its 'zoomed' form even
+    // when zoomed out"). While a column is open the reader is reading THAT
+    // house, and zooming out to see where it sits should not take the thing
+    // they are reading and turn it back into a bead. So the one parcel whose
+    // column is up answers `near` at every tier — its picture, its name, its
+    // frame — and every other house on the map follows the camera exactly as
+    // before. It is still culled with the others: pinned is not "always drawn",
+    // it is "drawn near WHEN drawn".
+    if (pinnedColumnParcelId && parcel.id === pinnedColumnParcelId) tier = "near";
+    if (tier === "far") return overlayHouseGlyphSVG({ at, id: parcel.id, classes: markClasses(parcel) });
+    const home = homeMarkOfParcel(parcel.id, allMarks());
+    const room = tier === "mid"
+      ? footprintPx(parcel, { across: metresAcross(mapCtx?.zoomK, paintingWidthM()), panePx: panePx() })
+        >= Number(state.drawDials.art_min_px)
+      : true;
+    return overlayHomeCardSVG({
+      at, id: parcel.id, classes: markClasses(parcel),
+      // THE LABEL IS THE HOME'S NAME (founder, 2026-09-11: "let's have the actual
+      // home's name instead of the resident name in the label for each parcel
+      // card") — the dwelling's own name where a dwelling stands, the household
+      // only where none does
+      label: home ? markName(home).name : String(parcel.household ?? parcel.by ?? ""),
+      image: room && home ? markImagePath(home) : null,
+      lit: houseIsLit(parcel, walkState.walkers, (h) => faceOf(h).household),
+      fan, title,
+    });
+  }
   function drawOverlay(radial) {
     if (!mapCtx) return;
     const { overlay, originPx, mPerPx } = mapCtx;
@@ -6199,18 +7747,55 @@ export function mountViewer(appEl) {
     // about 7,560 m"). This was only ever the drawing of it.
     let s = "";
     const glyphIds = new Set();
+    // THE TWO READINGS THIS DRAW IS GATED BY, taken once. `tier` is null on the
+    // resident path and every gate below reads that as "draw what you drew
+    // before"; `bounds` is null there too, and `markInDrawnBounds` reads a null
+    // box as "everything is in it".
+    const tier = drawTier();
+    const bounds = drawnBounds();
+    // …and the one parcel NEITHER house pass draws: the one underfoot. Empty
+    // outdoors, where nothing is mounted — see enclosingParcels. Read here, before
+    // the drawn set, because what is inside a parcel is drawn only underfoot.
+    const underfoot = enclosingParcels(sceneRoomId, byId);
+    // THE TIER IS PUT ON THE DRAWING ITSELF, not kept in a closure. A reader
+    // with dev tools open, a screenshot, and the QA probes all need to know
+    // which of the three paintings they are looking at, and the honest source
+    // for that is the thing that was drawn — never a second calculation about
+    // the zoom, which is how two answers to one question get born.
+    overlay.setAttribute("data-tier", tier ?? "resident");
     // tierOf, not m.tier: FOV marks carry no tier field, so it looks the full
     // mark up by id (and catches sovereign/home, which is not a tier value).
     // THE FAN, high zoom only. Pips sharing a spot get a few pixels of
     // separation so a hover can tell them apart before anyone has to click.
     // At low zoom they merge again on purpose — the pile is honest about being
     // a pile, and the chooser is the guarantee that you can still reach into it.
-    const drawn = overlayMarks(radial);
+    //
+    // THE CULL (2026-09-11): a mark outside the viewBox plus one viewport of
+    // margin is not drawn. It is the same question the off-screen highlight
+    // arrow already asks (`markGeometryIntersectsViewport`), asked one layer
+    // earlier, so the overlay and the arrow can never disagree about what is on
+    // screen. The margin is what keeps a pan free — see viewportWorldBounds.
+    // …AND NOTHING FROM INSIDE A PARCEL THE READER IS NOT IN (2026-09-11) — see
+    // hiddenInsideParcel: the card is the house from outside.
+    const drawn = overlayMarks(radial)
+      .filter((m) => markInDrawnBounds(byId.get(m.id) ?? m, bounds))
+      .filter((m) => !hiddenInsideParcel(byId.get(m.id) ?? m, byId, underfoot, townChain));
+    // THE PLACED ART, into its own layer under this one. Driven from here so it
+    // is culled and tier-gated by the same two readings every other pass uses,
+    // rather than laid down once at mount as the mountain's picture was.
+    const hungArt = drawPlacedArt(bounds, tier);
     // PLACEHOLDER EXTENTS (scene-gated): art-less embodied marks stand in as
     // low-saturation tinted blocks, drawn UNDER the pips, largest first so a
     // child's block sits readable on its parent's. Same overlay, same loop —
     // a rule of the one renderer, switched by the scene, never a second one.
-    if (mapCtx?.placeholderExtents) {
+    //
+    // THE FURNITURE BY TIER (2026-09-11): art is a `near` thing. At `mid` the
+    // town's furniture is still there as its own tinted extent — the shape of
+    // what is on the ground, without the photograph of it — and at `far` it is
+    // not drawn at all, because at eleven metres to the pixel a chair is a
+    // smear and 11,961 of them are a fog. `null` (the resident path) draws it
+    // exactly as it drew yesterday.
+    if (mapCtx?.placeholderExtents && tier !== "far") {
       // THE FULL MARK BY ID, not the radial's own entry — the same reason
       // `tierOf` looks a tier up rather than reading `m.tier` fifteen lines
       // below: a radial entry carries `id`, `at`, `distM` and `bearing`, and
@@ -6222,28 +7807,117 @@ export function mountViewer(appEl) {
       const furnishable = drawn
         .map((m) => byId.get(m.id) ?? m)
         .filter((m) => isEmbodiedMark(m) && m.extent && !onTheGround.has(m.id))
+        // A PARCEL IS NOT FURNITURE (Keemin's dev screenshot, 2026-09-12: his own
+        // house drawn twice from outside, an unframed square picture sitting on
+        // top of the card). A parcel's drawing IS its card — the picture, the
+        // name, the frame, the household's disc — and this pass hanging
+        // `sceneArtSVG` over the same ground puts a second, differently-sized
+        // copy of the same photograph on it.
+        //
+        // WHY ONLY A SIGNED-IN READER SAW IT, measured on dev: sceneArtSVG needs
+        // markImagePath() on the PARCEL, and the fold gives a parcel no image,
+        // so a spectator's page draws nothing here. A resident's own row does
+        // carry one — that is the 09-11 fill that lets a resident's house wear
+        // its picture — so the branch was reachable only while signed in, which
+        // is why it survived every spectator run including my own.
+        //
+        // Same class as the tint-over-picture in #42, one layer down: two passes
+        // drawing the same piece of ground, each correct about its own job.
+        .filter((m) => m.kind !== "parcel")
+        // …NOR A REGION'S TINTED SHAPE AT MID, the other half of the same
+        // ruling: standing a region down as a picture and leaving its
+        // half-opaque block behind would be the same quarter of the map still
+        // lying over everything, in a flatter colour.
+        .filter((m) => !(tier === "mid" && isRegionMark(m)))
+        // …AND NOT THE ONES ALREADY WEARING THEIR PICTURE (2026-09-12). At mid
+        // this pass draws every furnishable mark as a tinted block ON PURPOSE —
+        // "the shape of what is on the ground, without the photograph of it" —
+        // and that rule was written for furniture, of which the town has
+        // eleven thousand. A 1.8 km district is not furniture, and since the
+        // hanging rule shipped its picture was being painted over with a
+        // half-opaque wash: measured on the rig, mid tier, both hung marks also
+        // carried a .wv-ph-extent. Two rules disagreeing about one piece of
+        // ground. The picture wins where there is one; every chair keeps its
+        // tinted shape exactly as before.
+        .filter((m) => !hungArt.has(m.id))
         .sort((a, b) => ((b.extent?.w ?? 0) * (b.extent?.h ?? 0)) - ((a.extent?.w ?? 0) * (a.extent?.h ?? 0)));
-      for (const m of furnishable) s += markImagePath(m) ? sceneArtSVG(m, px) : placeholderExtentSVG(m, px);
+      for (const m of furnishable)
+        s += tier === "mid"
+          ? placeholderExtentSVG(m, px, { ignoreArt: true })
+          : (markImagePath(m) ? sceneArtSVG(m, px) : placeholderExtentSVG(m, px));
     }
+    // THE LABELS BY TIER (2026-09-11). `far` draws none: at town width a name
+    // is a smear, 890 of them are a grey band across the painting, and the
+    // reader who wants one points at it — the hover box is a single node raised
+    // on demand and is NOT gated here, because at `far` it is the only way to
+    // learn what anything is. `mid` and `near` name things as they always did.
+    //
+    // The tooltip rides the same rule it already rode in painting-only mode:
+    // when the label is standing down, the OS bubble standing up in its place
+    // would be the same word, later and uglier.
+    const named = tier !== "far" && !state.paintingOnly;
+    const nameOf = (m) => (named ? markIdentity(m) : null);
     const fanned = mapCtx?.zoomK >= FAN_MIN_ZOOM ? coLocatedMarkIds(drawn) : new Set();
     for (const m of drawn) {
       const p = px(m.at);
+      // THE FULL MARK BY ID: the radial's thin entry carries no `kind`, and a
+      // parcel is told from a pip by its kind (see the furnishing pass above).
+      const full = byId.get(m.id) ?? m;
+      // THE PARCEL UNDERFOOT WEARS NO CARD (2026-09-11) — and no pip and no
+      // glyph id either, so nothing of it is left to hover or hit.
+      if (full.kind === "parcel" && underfoot.has(m.id)) continue;
       // THE FAN RIDES INSIDE THE SCALED SPACE, which is why it is a `cx`/`cy` on
       // the circle rather than an addition to the translate: scaled by the same
       // variable, it stays the constant few panel pixels it was when the string
       // divided it by k.
       glyphIds.add(m.id);
+      if (full.kind === "parcel") {
+        s += homeCard(full, p, fanned.has(m.id) ? fanOffsetPx(m.id) : null, nameOf(m), tier);
+        continue;
+      }
       s += overlayPipSVG({
         at: p, id: m.id, classes: markClasses(m),
         fan: fanned.has(m.id) ? fanOffsetPx(m.id) : null,
         // the OS tooltip stands down in painting-only for the same reason the SVG
         // label does: the bubble is already saying this word, sooner and better
-        title: state.paintingOnly ? null : markIdentity(m),
+        title: nameOf(m),
       });
+    }
+    // THE TOWN'S HOUSES ARE ALWAYS ON THE MAP. The atlas drew every home on its
+    // sheet, whoever was looking; the field-of-view rule above is right for the
+    // town's furniture and wrong for its houses, which are the map's landmarks.
+    // Outdoors, every parcel not already drawn gets its card; indoors the roof
+    // rule stands and none is added.
+    //
+    // …AND THEY ARE STILL NOT ALL ON THE SCREEN (2026-09-11). A landmark you
+    // cannot see is not a landmark; it is a node. At ten times the town this
+    // loop alone was 890 cards, every one of them drawn whether the camera was
+    // over the quay or three viewports away from it. Same rule as the pips
+    // above, same box, one viewport of margin.
+    // INSIDE AS OUTSIDE (founder, 2026-09-11: "when I ENTER the Trueing Terrace,
+    // I DON'T SEE HOUSES … outside and inside should REALLY not be that
+    // different"). This pass used to be skipped indoors ("the roof rule") — a
+    // difference SCENES.md never listed, which by its own rule made it a defect.
+    // The houses are the map's landmarks in both scenes; the room's own
+    // registration places them where they stand. The one parcel not carded in
+    // EITHER scene is the one underfoot (2026-09-11) — see enclosingParcels.
+    for (const m of allMarks()) {
+      if (m.kind !== "parcel" || !m.at || glyphIds.has(m.id) || underfoot.has(m.id)) continue;
+      if (!markInDrawnBounds(m, bounds)) continue;
+      glyphIds.add(m.id);
+      s += homeCard(m, px(m.at), null, nameOf(m), tier);
     }
     s += overlayStandpointSVG({ at: me });
     overlay.innerHTML = s;
     applyCameraScale();          // the markup is sizeless until the camera says
+    // WHAT THIS DRAW COVERS, written down where the camera can check it. The
+    // frame pass compares the live viewBox against this box and this tier, and
+    // rebuilds only when the camera has left one of them — see
+    // noticeTheCameraSettling. Null on the resident path, which never rebuilds
+    // on a pan because it never culled.
+    // …on every path now, so a resident's zoom past a tier boundary rebuilds
+    // exactly as a Spectator's does (noticeTheCameraSettling reads this)
+    mapCtx.drawnAt = { bounds, tier };
     mapCtx.glyphIds = glyphIds;
     mapCtx.syncWithin?.(radial);
     renderMarkHighlight();
@@ -6351,11 +8025,7 @@ export function mountViewer(appEl) {
       if (cell.classList.contains("wv-card")) cell.setAttribute("aria-selected", String(selected));
     }
     renderMarkHighlight();
-    const rootGlyph = $(root, ".wv-root-mark");
-    if (rootGlyph) {
-      rootGlyph.classList.toggle("on", interaction.selectedId === WORLD_ROOT_ID);
-      rootGlyph.classList.toggle("is-hovered", interaction.hoveredId === WORLD_ROOT_ID);
-    }
+    syncChip(interaction);
     renderBubbles();
   }
   markInteraction.subscribe(syncMarkInteractionViews);
@@ -6512,7 +8182,7 @@ export function mountViewer(appEl) {
 
   function syncActorPosition({ moveCamera = false } = {}) {
     const origin = actorOrigin();
-    const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
+    const journey = viewerJourneyState(actorWalker(), allMarks(), data?.worldState?.determined);
     const here = $(root, ".wv-youhere");
     if (here) {
       // how the office learned your position is provenance, not a thing to read
@@ -6520,7 +8190,7 @@ export function mountViewer(appEl) {
       here.innerHTML = journey.kind === "journey"
         ? `<b>on the road</b> · ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}`
         : origin
-          ? `<b>${esc(standingLocationLabel(origin, world?.marks ?? [], data?.worldState?.determined, { prefix: false }))}</b>`
+          ? `<b>${esc(standingLocationLabel(origin, allMarks(), data?.worldState?.determined, { prefix: false }))}</b>`
           : `<span class="wv-quiet">the office has no position for you yet</span>`;
     }
     // reports whether it re-rendered, so a caller does not build the telling a
@@ -6541,23 +8211,154 @@ export function mountViewer(appEl) {
   // Which mountain, and where, is read off the record: the far feature's own
   // mark carries the coordinate and the extent. Nothing is placed by hand here,
   // so a peak that moves on the record moves its picture with it.
-  const PANDO_ART_URL = "/media/vermillion-pando-peak-the-true-mountain-card.jpg";
+  // THE MIST ONLY, SINCE 2026-09-12. This drew the mountain's picture too, from
+  // a URL typed into this file — and that hard-coded line was the whole reason
+  // the far country was a one-off instead of a rule. The picture now comes off
+  // the mark's own `image:`, through `drawPlacedArt` below, along with every
+  // other large mark's. What stays here is the weather, which is scenery: it is
+  // not any mark's picture, it belongs to the corridor rather than to a place,
+  // and it is laid down once at mount because it never changes.
   function drawFarCountry() {
-    if (!mapCtx?.mistLayer || !mapCtx.farArtLayer) return;
+    if (!mapCtx?.mistLayer) return;
     const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
-    const peak = (world?.marks ?? []).find((m) => m.far && m.feature === "pando-peak" && m.at);
+    const peak = (allMarks()).find((m) => m.far && m.feature === "pando-peak" && m.at);
     if (!peak) return;                      // no far feature on the record, no far country
-    const centre = px(peak.at);
     // the corridor runs from Ferry's crossing — grid origin, the town's own
     // registration point — out to the peak; the mist is the water between
-    mapCtx.mistLayer.innerHTML = mistBandSVG({ from: px({ x: 0, y: 0 }), to: centre });
-    mapCtx.farArtLayer.innerHTML = placedArtSVG({
-      at: centre,
-      extent: { w: (peak.extent?.w ?? 0) / mapCtx.mPerPx, h: (peak.extent?.h ?? 0) / mapCtx.mPerPx },
-      href: PANDO_ART_URL,
-      label: `${peak.label ?? peak.feature} — the mountain, seen from the town side`,
-      id: "pando-peak",
-    });
+    mapCtx.mistLayer.innerHTML = mistBandSVG({ from: px({ x: 0, y: 0 }), to: px(peak.at) });
+  }
+
+  // ── A LARGE MARK HANGS ITS OWN PICTURE ON ITS OWN GROUND ───────────────────
+  //
+  // Keemin, 2026-09-12, looking at the mountain: "oh yes that's beautiful.
+  // let's do that." So it stops being about the mountain. Any mark big enough
+  // to be a PLACE rather than a thing in one, that carries a picture, wears it
+  // over the ground it actually covers.
+  //
+  // WHERE IT DRAWS. `wv-placed-art-layer`, which is new, and the reason it is
+  // new is written where it is created: the mountain's old layer sat at the
+  // FRONT of the svg, which is under the town's generated ground, so a picture
+  // hung on a district was painted and then buried. On open country, where the
+  // mountain lives, there was no ground to be under and nobody noticed. The new
+  // layer sits after the ground and before the grid, and it is filled from the
+  // draw cycle rather than once at mount, so it is culled and tier-gated like
+  // everything else the camera governs.
+  //
+  // THE TIERS. `far` and `mid` only. `near` is the card-and-room world, where a
+  // reader is close enough that the house cards and the furnishing pass are
+  // saying it better, and a district-sized photograph underfoot is a wall. The
+  // resident path (`tier` null) draws it, which is what it did yesterday — the
+  // mountain was on that path unconditionally.
+  //
+  // WHY `allMarks()` AND NOT THE RADIAL'S SET, the same reason the houses pass
+  // below reads it: a landmark is not field-of-view furniture. The mountain is
+  // 135 km out and in nobody's radial, and a district a reader has not walked
+  // is still a district. The viewport cull is what bounds the work, exactly as
+  // it bounds the cards.
+  const placedArtSpanM = (m) => Math.max(Number(m?.extent?.w) || 0, Number(m?.extent?.h) || 0);
+  function drawPlacedArt(bounds, tier) {
+    if (!mapCtx?.placedArtLayer) return new Set();
+    if (tier === "near") { mapCtx.placedArtLayer.innerHTML = ""; return new Set(); }
+    const px = (p) => ({ x: mapCtx.originPx.x + p.x / mapCtx.mPerPx, y: mapCtx.originPx.y + p.y / mapCtx.mPerPx });
+    const floor = Number(state.drawDials.placed_art_min_m);
+    // …AND A CEILING NOBODY ASKED FOR, which is worth one line. The record
+    // carries `the-town/let-there-be-light` at 320,000 m — the constitution's
+    // root, the frame around the world rather than any ground inside it. It has
+    // no picture today and is not meant to get one, but a rule that reads only
+    // "big enough" would hang a 320 km photograph over the entire painting the
+    // day somebody gave it art. A mark wider than the whole painting is not a
+    // place; it is the edge of the map.
+    const ceiling = paintingWidthM();
+    // ── ONE PICTURE DEEP (Keemin, 2026-09-12: the mark must be a direct child
+    //    of the mark you are viewing from, "so nested large marks do not
+    //    clutter") ────────────────────────────────────────────────────────────
+    //
+    // THE EDGE IS `placementParent`, measured rather than assumed: of the 53
+    // marks at or above the dial, 52 carry `placementParent` and ZERO carry
+    // `parent`. The one that carries neither is `the-town/let-there-be-light`,
+    // the root everything else hangs off. `parent` is read as a fallback only
+    // because the enclosing rule next door reads both and a record that starts
+    // using it should not silently escape this.
+    //
+    // WHAT IS ASKED IS DEPTH, AND THE HONEST MEASURE OF DEPTH IS THE HANGING
+    // SET, NOT THE ROOT. A literal "direct child of the root" reads well and
+    // deletes the mountain: the mark that carries Pando's picture is
+    // `vermillion/the-pando-peak`, whose placementParent is
+    // `the-town/pando-peak` — so the pictured mark is a GRANDCHILD of the root
+    // and would stop hanging, which is the one outcome the ruling explicitly
+    // did not want. What the ruling is actually protecting against is two
+    // pictures stacked on the same ground. So: a mark hangs unless some mark
+    // BETWEEN it and where you stand is hanging one too.
+    //
+    // That satisfies every case the ruling named. A district hangs and its
+    // nested large child does not, whenever the district itself has a picture.
+    // A nested child of a picture-less district DOES hang, which is right —
+    // nothing is covering it. Pando hangs, because `the-town/pando-peak` has no
+    // image and so is not hanging anything for it to hide under. And it needs
+    // no new state: when a district becomes somewhere you can stand, the walk
+    // already stops at `sceneRoomId` and the rule extends unchanged.
+    //
+    // THE GROUND YOU STAND ON IS NOT A HANGING. Inside a mark's own scene its
+    // picture is the floor, drawn by the room's ground, and hanging it again
+    // over itself would be a picture of the room inside the room.
+    const from = sceneRoomId;
+    const byMarkId = new Map(allMarks().map((m) => [m.id, m]));
+    const stepUp = (m) => byMarkId.get(m?.placementParent ?? m?.parent ?? "");
+    const bigEnough = (m) => {
+      if (!m?.at || !m.extent) return false;
+      const span = placedArtSpanM(m);
+      if (!(span >= floor)) return false;
+      if (Number.isFinite(ceiling) && span > ceiling) return false;
+      return !!markImagePath(m);
+    };
+    /** is some mark between this one and where the reader stands hanging a
+     *  picture of its own? Cycle-safe and depth-capped: the record's chains run
+     *  three or four deep and a cycle in it must not take the painting down. */
+    const underAnotherPicture = (m) => {
+      const seen = new Set([m.id]);
+      for (let up = stepUp(m), steps = 0; up && steps < 12; up = stepUp(up), steps++) {
+        if (seen.has(up.id)) break;          // the record disagrees with itself; draw rather than hang
+        if (from && up.id === from) return false;  // reached the ground underfoot
+        if (bigEnough(up)) return true;
+        seen.add(up.id);
+      }
+      return false;
+    };
+    const hung = allMarks().filter((m) => {
+      if (!bigEnough(m)) return false;
+      if (from && m.id === from) return false;   // your own ground is not a hanging
+      // A REGION IS A FAR THING (Keemin, 2026-09-13: "the region marks should
+      // disappear when at mid zoom"). At far a region's picture is how the town
+      // says what that quarter looks like; at mid the reader is close enough
+      // that it is a photograph lying across the ground they are trying to
+      // read, under everything else drawn on it. The ground's own region wash
+      // stays either way — that is the floor, not the mark.
+      if (tier === "mid" && isRegionMark(m)) return false;
+      if (underAnotherPicture(m)) return false;
+      return markInDrawnBounds(m, bounds);
+    // largest first, so a district's picture lies under the smaller ground
+    // inside it rather than blotting it out — the placeholder pass's own rule
+    }).sort((a, b) => placedArtSpanM(b) - placedArtSpanM(a));
+    let s = "";
+    for (const m of hung)
+      s += placedArtSVG({
+        at: px(m.at),
+        extent: { w: (m.extent.w ?? 0) / mapCtx.mPerPx, h: (m.extent.h ?? 0) / mapCtx.mPerPx },
+        href: markImagePath(m),
+        label: markName(m).name,
+        id: m.id,
+        fit: "meet",
+        // a region's picture opens its column; nothing else hung is a door
+        clickable: isRegionMark(m),
+        // …and where the record gave the mark a shape, the picture fills THAT
+        // rather than a rectangle beside it. Read in metres and put through the
+        // same px() every other coordinate here goes through.
+        ring: (polygonOf(m) ?? []).length >= 3 ? polygonOf(m).map(px) : null,
+      });
+    mapCtx.placedArtLayer.innerHTML = s;
+    // THE IDS, not a count: the furnishing pass below has to know which marks
+    // are already wearing their picture so it does not paint a tint over them.
+    return new Set(hung.map((m) => m.id));
   }
 
   // ── conversations on the ground ────────────────────────────────────────────
@@ -6626,7 +8427,7 @@ export function mountViewer(appEl) {
     // the vessel's own floor against being zoomed away from (see farGlyphUnit):
     // out at journey width she would otherwise be three pixels of hull
     const vesselUnit = farGlyphUnit(k, mapCtx.view?.w, VESSEL_MIN_FRAME_FRACTION) * VESSEL_GLYPH_SCALE;
-    const vessels = vesselHandles(world?.marks ?? []);
+    const vessels = vesselHandles(allMarks());
     const px = (m) => ({ x: mapCtx.originPx.x + m.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.y / mapCtx.mPerPx });
     // TWO PASSES, ONE LAYER. Hulls are collected separately and emitted first so
     // every deck sits under every passenger — a boat drawn in walker order would
@@ -6641,7 +8442,47 @@ export function mountViewer(appEl) {
     // lines, and a cached roof is a roof that goes stale the moment someone
     // crosses a threshold — which is exactly when a reader is looking.
     const { manifest } = standpointOccupancy({ acts: enterExitLedger.acts, at: occupancyClock() });
-    const drawnWalkers = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId });
+    // THE SPECTATOR'S TWO CUTS (2026-09-11), both null-safe on the resident path
+    // — whose walkers are already only the people within earshot, so `bounds`
+    // and `tier` come back null and this is the pass it was yesterday.
+    //
+    // The CULL first: a walker three viewports away costs six nodes and a
+    // network-fetched photograph to draw somewhere nobody is looking. Hit
+    // testing is NOT cut with it (screenWalkerCandidates reads the full walker
+    // list), and that is safe rather than sloppy: the snap radius is 18 screen
+    // px, and a walker outside the viewBox is by definition further than that
+    // from any pointer inside it.
+    const tier = drawTier();
+    const bounds = drawnBounds();
+    const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId });
+    const drawnWalkers = inView.filter((w) => pointInDrawnBounds(w, bounds));
+    // …then the TIER. At town width a face is eleven pixels of photograph with
+    // its own clip path, and the 09-09 record has 1,550 of them; what a reader
+    // at that zoom can actually read is WHERE PEOPLE ARE. So beyond the engine's
+    // own `cluster_beyond_m` — the dial that already decides when a household's
+    // marks collapse into one — its people collapse into one dot too, and the
+    // faces come back the moment the camera comes down to district width.
+    // ONE STATIC WALKER PER RESIDENT AT TOWN WIDTH (founder, 2026-09-11, after
+    // "get rid of the cluster-dots": "let's do static dots then. could we make
+    // the dots have a little pair of legs?"). The far tier used to draw one
+    // dot per household, sized by headcount at the household's middle — and
+    // because who was merged depended on distance from the camera, every zoom
+    // step re-decided it and the dots jumped; they took no clicks either. Now:
+    // every resident, fixed where they stand, as `walkerFrameSVG` with no art —
+    // an empty frame and two legs, no image, no clip path (the same glyph the
+    // near tiers fill with the face). Cheap into the thousands; the hover scan
+    // is the first thing that would grow, not this.
+    if (tier === "far") {
+      for (const w of drawnWalkers) {
+        s += walkerFrameSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing) });
+      }
+      mapCtx.walkLayer.innerHTML = s;
+      walkReadout(drawnWalkers);
+      syncHouseLights();
+      syncActorPosition();
+      renderWalkDestination();
+      return;
+    }
     for (const w of drawnWalkers) {
       // The drawn leg ends where the WALK ends — the first point on the
       // target's ground, not its centre (Keemin, party night: the dotted line
@@ -6652,7 +8493,7 @@ export function mountViewer(appEl) {
       // mid-walk.
       let towardM = w.toward ?? w;
       if (w.moving && w.toward && w.mark_id) {
-        const tm = (world?.marks ?? []).find((m) => m.id === w.mark_id);
+        const tm = (allMarks()).find((m) => m.id === w.mark_id);
         if (tm?.at && tm?.extent) {
           const t = targetEntryT({ x: w.x, y: w.y }, w.toward,
             { x: w.toward.x, y: w.toward.y, w: tm.extent.w, h: tm.extent.h });
@@ -6666,7 +8507,6 @@ export function mountViewer(appEl) {
       // that difference made a resident who had never walked look like another
       // species. Provenance still shows in the words; it no longer picks a colour.
       const moving = w.moving ?? (!w.arrived && !w.standing);
-      const cls = moving ? "wv-walker moving" : "wv-walker";
       const eta = moving
         ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
         : (w.mark_id ? `at ${w.mark_id}` : "at rest");
@@ -6705,49 +8545,49 @@ export function mountViewer(appEl) {
         hulls += vesselGlyphSVG({ at: now, toward: dest, unit: vesselUnit, moving, label: identity });
         continue;
       }
-      s += `<circle cx="${now.x}" cy="${now.y}" r="${27 / k}" class="wv-walker-hit"/>`;
-
-      // THE FACE, and the ring that is still the ruling. The dot became a
-      // circle carrying the resident's own picture — but green-still /
-      // pink-moving is the map's motion language, so it survives as a RING
-      // around the face rather than being replaced by it. Read the ring for
-      // state, the face for who.
-      //
-      // A resident with no avatar gets their monogram on their own colour;
-      // a resident the meta map has never heard of gets the same circle in the
-      // town's gold, which is the old dot with a letter in it. There is no
-      // path here that renders nothing.
+      // THE FRAME, FILLED (2026-09-11): the same glyph the far tier draws empty,
+      // now wearing the face — the picture clipped to the frame, or the monogram
+      // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
-      const r = 11 / k;
-      if (face.avatar) {
-        // The clip is per-walker because each face is a different picture; the
-        // id is built from the handle, which residentHref's own rule has
-        // already established is [a-z0-9-] — and a handle that fails it simply
-        // never reaches this branch, because the meta map is keyed by handle.
-        const clip = `wv-face-${face.handle.replace(/[^a-z0-9-]/g, "")}`;
-        s += `<clipPath id="${clip}"><circle cx="${now.x}" cy="${now.y}" r="${r}"/></clipPath>`
-           + `<image href="${esc(face.avatar)}" x="${now.x - r}" y="${now.y - r}" width="${r * 2}" height="${r * 2}"`
-           + ` preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
-      } else {
-        s += `<circle cx="${now.x}" cy="${now.y}" r="${r}" class="wv-walker-mono" fill="${esc(face.color)}"/>`
-           + `<text x="${now.x}" y="${now.y}" class="wv-walker-initial" font-size="${13 / k}">${esc(face.monogram)}</text>`;
-      }
-      s += `<circle cx="${now.x}" cy="${now.y}" r="${r}" class="${cls}" role="img" aria-label="${esc(identity)}"/>`;
+      s += walkerFrameSVG({ at: now, k, handle: w.handle, moving, label: identity,
+        art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
     mapCtx.walkLayer.innerHTML = hulls + s;
-    const box = $(root, "#wv-walk-readout");
-    if (box) {
-      // the readout counts what is ON THE MAP, and indoors the map is the room —
-      // saying "80 on the map" over a floor holding six was the same untruth the
-      // roof just fixed, told in words. Outdoors this is the whole town, as ever.
-      const on = drawnWalkers.filter((w) => w.moving ?? (!w.arrived && !w.standing)).length;
-      const still = drawnWalkers.length - on;
-      box.textContent = walkState.at === null ? "no walk records"
-        : `crossing ${walkState.at.toFixed(3)} — ` +
-          `${drawnWalkers.length} on the map, ${on} on the road, ${still} at rest`;
-    }
+    walkReadout(drawnWalkers);
+    syncHouseLights();
     syncActorPosition();
     renderWalkDestination();
+  }
+
+  // the readout counts what is ON THE MAP, and indoors the map is the room —
+  // saying "80 on the map" over a floor holding six was the same untruth the
+  // roof just fixed, told in words.
+  //
+  // ⚑ AND SINCE 2026-09-11 THE MAP CAN BE SMALLER THAN THE TOWN: the spectator's
+  // cull means the drawn set is what is in view, so the sentence keeps meaning
+  // exactly what it says while the number it reports gets honest about a camera
+  // pointed at one district. Lifted out of drawWalkers so the far tier, which
+  // draws dots instead of people, still counts PEOPLE.
+  function walkReadout(drawnWalkers) {
+    const box = $(root, "#wv-walk-readout");
+    if (!box) return;
+    const on = drawnWalkers.filter((w) => w.moving ?? (!w.arrived && !w.standing)).length;
+    const still = drawnWalkers.length - on;
+    box.textContent = walkState.at === null ? "no walk records"
+      : `crossing ${walkState.at.toFixed(3)} — ` +
+        `${drawnWalkers.length} on the map, ${on} on the road, ${still} at rest`;
+  }
+
+  // The lights read the walkers, and the walkers arrive after the first overlay
+  // is drawn (a poll, not the record) — so they are trued here, on the cards
+  // already standing, rather than by rebuilding the overlay.
+  function syncHouseLights() {
+    if (!mapCtx?.overlay) return;
+    for (const g of mapCtx.overlay.querySelectorAll(".ov-home[data-id]")) {
+      const full = byId.get(g.dataset.id);
+      if (!full) continue;
+      g.classList.toggle("lit", houseIsLit(full, walkState.walkers, (h) => faceOf(h).household));
+    }
   }
 
   function drawWalkPreview() {
@@ -6780,6 +8620,44 @@ export function mountViewer(appEl) {
   }
 
   async function pollWalkers() {
+    // ⚑ NOT BEFORE WE KNOW WHO IS READING. The first poll fires at boot, which
+    // is before the office has answered whoami — so a reader with a key would
+    // ask the whole town ONCE on the way to asking only about earshot, and the
+    // measurement said so: whole_town 1, within_earshot 0. Exactly the class
+    // that caught the fold one commit earlier, one layer over. `resolveIdentity`
+    // calls `mountWalkers` when it finishes, so nothing is lost by waiting.
+    if (pmKey() && !identitySettled) return;
+    // ── THE RESIDENT PATH ASKS WHO IS WITHIN EARSHOT, NOT WHO IS IN TOWN ─────
+    //
+    // `/world/walkers` answers with EVERYONE, every fifteen seconds — which is
+    // the same shape of question as the whole fold, one layer over, and the
+    // same answer: a resident sees who is about, not who exists. So this path
+    // asks `/world/present` at the standpoint the read was taken from, which is
+    // the very function the read's own `present` block is built by.
+    //
+    // THE STANDPOINT COMES FROM THE READ, never from the camera. `present` is a
+    // reading taken from a body, and the office will not answer an embodied
+    // question at coordinates — the same law that reshaped the read itself.
+    if (onResidentPath()) {
+      const read = readCache.get(residentStandpointKey(null, state.handle));
+      const at = read?.standpoint;
+      if (read) { walkState.walkers = walkersFromPresent(read.present ?? {}, { self: selfFromRead(read) }); drawWalkers(); }
+      if (at && Number.isFinite(at.x) && Number.isFinite(at.y)) {
+        try {
+          const r = await fetch(officeUrl(`/world/present?x=${Math.round(at.x)}&y=${Math.round(at.y)}`),
+            { credentials: "same-origin" });
+          if (r.ok) {
+            const j = await r.json();
+            if (!j?.error) {
+              walkState.at = Number(j.at ?? walkState.at);
+              walkState.walkers = walkersFromPresent(j, { self: selfFromRead(read) });
+              drawWalkers();
+            }
+          }
+        } catch { /* a poll miss is silent — the last good reading stands */ }
+      }
+      return;
+    }
     // /world/walkers is a PUBLIC office read — "visible to anyone who asks who
     // is out today" applies to spectators too. /walks stays the local-spectator
     // fallback shape.
@@ -6805,10 +8683,6 @@ export function mountViewer(appEl) {
           state.cam = { x: origin.x, y: origin.y };
           if (moved) renderCurrent();
         }
-        // the same tick trues the views the reader is NOT looking at: a resident
-        // who walked while cold is rebuilt at the standpoint this poll just
-        // learned, so the switch onto them is never a stale page
-        warmOtherViews();
         return true;
       } catch { /* try the spectator-local shape, then feature-detect off */ }
     }
@@ -6937,7 +8811,7 @@ export function mountViewer(appEl) {
     // because there is no armed destination behind it, which is exactly the
     // point: the demonstration is not one.
     if (tourStage === "walk") return;
-    const journey = viewerJourneyState(actorWalker(), world?.marks ?? [], data?.worldState?.determined);
+    const journey = viewerJourneyState(actorWalker(), allMarks(), data?.worldState?.determined);
     // The desk is for a walk, so it appears when there IS one (Keemin,
     // 2026-08-04): a destination you have armed, or a journey already under way.
     // Standing still it said only where you stand, which the painting's own dot
@@ -7066,7 +8940,15 @@ export function mountViewer(appEl) {
       markInteraction.select(id);
       return true;
     }
-    if (!id || !byId.has(id)) return false;
+    // A MARK THE READER CAN SEE MUST BE ONE THE READER CAN SELECT (2026-09-13).
+    // This gated on `byId`, the READ's index. The placed-art layer hangs
+    // regions from `allMarks()`, which is a wider set — measured on dev, some
+    // regions have an overlay entry and some do not — so a region could be
+    // hanging its picture on screen and refuse the click that opens it. Widened
+    // for regions only, and only to marks the record actually holds; everything
+    // below this line works off the id alone.
+    if (!id) return false;
+    if (!byId.has(id) && !(isRegionMark({ id }) && allMarks().some((m) => m?.id === id))) return false;
     if (markInteraction.getState().selectedId === id) {
       clearSelectionAndDestination();
       return false;
@@ -7118,8 +9000,25 @@ export function mountViewer(appEl) {
   // moving it to the painting's corner solves — it now opens where you are looking.
   function chooseWalkPoint(x, y, namedInside = null) {
     if (!canAct()) return;
-    const destination = pointWalkDestination({ x, y }, world?.marks ?? []);
+    const destination = pointWalkDestination({ x, y }, allMarks());
     if (!destination) return;
+    // ── A CLICK OUTSIDE WHAT THE READ NAMED (Q4, 2026-09-10) ────────────────
+    //
+    // On the resident path `allMarks()` is the drawn set, so a click out in the
+    // country lands on nothing this page has ever heard of and the destination
+    // is a bare coordinate. That IS the ruled fallback, and it stays the answer
+    // if the office has nothing either — but the office usually does: one
+    // ANONYMOUS read at the point (no handle: nobody is standing there, and an
+    // embodied call could not stand there anyway) comes back with the
+    // containment spine, and the innermost mark on it is the ground underfoot.
+    //
+    // ⚑ INNERMOST, NOT `within[0]`. The ruling says "within[0] names the
+    // ground"; `containmentChain` returns the nest ROOT-FIRST, so `within[0]`
+    // is the world itself — "you are walking to Let There Be Light" for every
+    // point on the map. The last entry is the ground. Reading the code rather
+    // than the phrasing, and saying so here so the next reader is not confused
+    // by the difference.
+    if (!destination.inside && !world) nameThePoint(destination);
     // THE WALLS, before anything is armed. Asked here rather than at confirm so
     // the reader is told at the click, while the place they meant is still
     // under their cursor — and so nothing is ever armed that the door would
@@ -7368,6 +9267,108 @@ export function mountViewer(appEl) {
     markInteraction.hover(id);
   }
   const bubbleHost = () => $(root, ".wv-bubbles");
+  // ── THE PARCEL'S COLUMN (Keemin, 2026-09-11) ──────────────────────────────
+  //
+  // A fourth reading surface, and the first that is NOT a bubble: a parcel is a
+  // whole home, and a home is pages of the resident's own prose. The little card
+  // capped itself at 32 rem of scroll and offered a button out to the resident's
+  // page; the atlas answered the same click with a full column and the home
+  // itself. That is what this restores — for parcels only. Every other mark's
+  // click is untouched, which is why this is a swap at ONE line of renderBubbles
+  // rather than a new kind of bubble.
+  //
+  // ONE READ PER HANDLE for the page's life, cached inside the column. The door
+  // is public ("every GET here is public" — the office's own manifest lists
+  // /homes/{handle} among its reads), so the spectator path reaches it with no
+  // credential at all; a signed-in reader's headers ride along because every
+  // other read on this page carries them and a home is not a secret either way.
+  async function readHomePage(handle) {
+    const response = await fetch(officeUrl(`/homes/${encodeURIComponent(handle)}`), {
+      headers: { accept: "application/json", ...authHeaders() },
+      credentials: "same-origin",
+    });
+    if (!response.ok) throw new Error(`the door answered ${response.status}`);
+    return response.json();
+  }
+  const homeColumn = createHomeColumn({
+    doc: document,
+    host: $(root, ".wv-homecol"),
+    readHome: readHomePage,
+    // the SAME shelf gate every other art surface uses: off-shelf never becomes
+    // a path, here or anywhere
+    imagePath: (url) => markImagePath({ image: url }),
+    residentHref,
+    // the column's enter button IS the little card's enter verb — same class,
+    // same `data-enter`, same root click delegate, same sheet for terms and
+    // refusals (crossInto). No callback: a second handler here crossed twice.
+  });
+  // What the column would show for this selection, or null if this selection is
+  // not a parcel. The home sited on the ground supplies the title and the lead
+  // picture — the same two the map's own home card already draws from it — and
+  // the door supplies everything else.
+  function parcelColumnView(id) {
+    // INSIDE AS OUTSIDE (founder, 2026-09-11): the houses are drawn indoors now,
+    // so a click on one opens its column exactly as it does on the street. The
+    // old "indoors there are no parcels" gate was the second unlisted scene
+    // difference (SCENES.md), removed with the first.
+    const mark = id ? byId.get(id) : null;
+    if (!isParcelMark(mark)) return null;
+    // THE FULL MARK, NOT THE THIN ONE. On the resident path allMarks() is the
+    // READ — entries that carry a place and a tier and need not carry a picture —
+    // so the dwelling found here is resolved through byId before its art is
+    // asked for. The overlay's own furnishing pass learned this first and has a
+    // guard named after it ("drawOverlay's SET is built from full marks, not thin
+    // radial entries"); measured here 2026-09-11, the column's lead picture was
+    // null for wright on the resident path and present for a spectator looking
+    // at the same house, which is the same bug wearing different clothes.
+    const found = homeMarkOfParcel(mark.id, allMarks());
+    const home = found ? (byId.get(found.id) ?? found) : null;
+    const handle = homeHandleForParcel(mark, home);
+    if (!handle) return null;
+    const parcelId = mark.id, canEnter = canAct();
+    return {
+      key: mark.id,
+      handle,
+      parcelId, canEnter,
+      kicker: String(mark.household ?? mark.by ?? handle),
+      title: markIdentity(home ?? mark),
+      // the dwelling's picture, and failing that the ground's own
+      leadImage: (home && markImagePath(home)) ?? markImagePath(mark),
+    };
+  }
+  // WHAT THE COLUMN SHOWS FOR A REGION (Keemin, 2026-09-13: "we should be able
+  // to click regions at far zoom s.t. it pops up the same side column that it
+  // does in the atlas"). The same column, the same host, the same dress — only
+  // the view differs, and it is built to the atlas's own region panel:
+  // kicker "Region", the region's name, "held by <founder>", its picture, and
+  // its OWN prose. The atlas reads that prose off the record and so does this;
+  // the parcel column's door would have fetched the founder's home page, which
+  // is a different place with the same name attached.
+  //
+  // No enter button: the model only offers one for a parcelId, and a region is
+  // not a parcel. Residents CAN cross into a region, but that is a door nobody
+  // asked for here and it is not this piece's to add.
+  function regionColumnView(id) {
+    // the read's index first, the record behind it second — same reason as the
+    // gate in selectMark: the layer that drew this region read the wider set
+    const mark = id ? (byId.get(id) ?? allMarks().find((m) => m?.id === id)) : null;
+    if (!mark || !isRegionMark(mark)) return null;
+    const handle = String(mark.by ?? mark.household ?? "").trim();
+    if (!handle) return null;
+    const body = typeof mark.body === "string" ? mark.body.trim() : "";
+    return {
+      key: mark.id,
+      handle,
+      kicker: "Region",
+      title: markIdentity(mark),
+      region: `held by ${handle}`,
+      leadImage: markImagePath(mark),
+      // the record's own words, handed over as the door so the column paints
+      // them without asking the office for somebody's house
+      door: { description: body },
+    };
+  }
+
   const bubbleEls = { hover: null, pinned: null };
   let bubbleResize = null;
   let pinnedBuiltId = null;   // which mark the pinned bubble currently holds
@@ -7496,7 +9497,7 @@ export function mountViewer(appEl) {
     const where = moving
       ? `on the road — ${Number(w.remaining_m ?? 0).toLocaleString()} m to go`
       : [w.x, w.y].every(Number.isFinite)
-        ? standingLocationLabel({ x: Number(w.x), y: Number(w.y) }, world?.marks ?? [], data?.worldState?.determined, { prefix: false })
+        ? standingLocationLabel({ x: Number(w.x), y: Number(w.y) }, allMarks(), data?.worldState?.determined, { prefix: false })
         : "somewhere on the record";
     return `<button type="button" class="wv-choose-row is-walker${moving ? " moving" : ""}" data-choose="${esc(id)}">`
       + `<span class="wv-choose-who">${esc(face.name)}</span>`
@@ -7511,7 +9512,7 @@ export function mountViewer(appEl) {
   // esc as text and the row carries the id in a data attribute, never in prose.
   function chooserHTML(id) {
     const ids = chooserIdsFrom(id) ?? [];
-    const rows = ids.map((markId) => {
+    const rowOf = (markId) => {
       if (walkerHandleFromHoverId(markId)) return chooserWalkerRow(markId);
       const full = byId.get(markId);
       if (!full) return "";
@@ -7520,11 +9521,15 @@ export function mountViewer(appEl) {
         + markCellTitle({ name: identity.name, determined: identity.determined,
                           bearing: where.bearing, tier: tierOf(full), draft: isDraft(full) })
         + `</button>`;
-    }).filter(Boolean).join("");
-    if (!rows) return "";
+    };
+    // THREE GROUPS, LABELLED, EMPTY ONES SILENT (founder, 2026-09-11) — see groupChooserIds
+    const groups = groupChooserIds(ids, { isWalker: (x) => !!walkerHandleFromHoverId(x), kindOf: (x) => byId.get(x)?.kind ?? null });
+    const section = (label, list) => { const rows = list.map(rowOf).filter(Boolean).join(""); return rows ? `<p class="wv-choose-group">${label}</p>${rows}` : ""; };
+    const body = section("residents", groups.residents) + section("parcels", groups.parcels) + section("other marks", groups.others);
+    if (!body) return "";
     return `<div class="wv-chooser">`
       + `<p class="wv-choose-lead">${esc(chooserLeadLine(ids))}</p>`
-      + rows
+      + body
       + `</div>`;
   }
 
@@ -7651,7 +9656,7 @@ export function mountViewer(appEl) {
     pinnedBuiltId = mark.id;
     // the cell, plus this mark's own predicates as cells, then the SAME fold the
     // telling runs — so an attribute reads identically in both places
-    const predicates = (world?.marks ?? []).filter((p) => p.parent === mark.id && isPredicateAttribute(p));
+    const predicates = (allMarks()).filter((p) => p.parent === mark.id && isPredicateAttribute(p));
     // the way back, NAMED — "◂ back" makes you remember what you left, and the
     // one thing a bubble on a map should never ask you to do is hold the route
     // in your head
@@ -7679,6 +9684,42 @@ export function mountViewer(appEl) {
   let renderingBubbles = false;
   function renderBubbles() {
     if (renderingBubbles) return;
+    // ── THE PARCEL'S COLUMN, DECIDED ABOVE THE GATE BELOW ─────────────────
+    //
+    // The gate below is about BUBBLES, which exist only in painting-only mode.
+    // The column is not a bubble: it is a reading hung over the map, and the map
+    // is there whether the Telling stands beside it or not. Measured on dev
+    // 2026-09-11 — its world page comes up SPLIT, not painting-only, so a column
+    // gated on paintingOnly would never have opened for anyone arriving at
+    // /world, which is the whole audience. (In that mode there is no little card
+    // to swap either: the click scrolls the mark's cell up in the Telling, and
+    // it still does.)
+    const selected = markInteraction.getState().selectedId;
+    const column = parcelColumnView(selected) ?? regionColumnView(selected);
+    if (column) homeColumn.open(column); else homeColumn.close();
+    // ── AND THE MAP HAS TO HEAR ABOUT IT (2026-09-12) ─────────────────────
+    //
+    // A selection does not redraw the overlay. Measured, not assumed: the six
+    // `drawOverlay` call sites are the first radial, the camera settle, the pane
+    // refit, the layout settle, the dev dials and the resident record read —
+    // none of them is a click. `markInteraction.subscribe` runs
+    // syncMarkInteractionViews, which toggles classes, moves the highlight,
+    // syncs the chip and renders the bubbles, and touches the overlay's markup
+    // not at all. So the pin above would have been dead until the reader next
+    // moved the camera, which is the one thing they were not doing.
+    //
+    // ONLY WHEN THE PINNED HOUSE CHANGES, which is why this is not simply a
+    // redraw on selection: hovering and selecting run through here constantly,
+    // and rebuilding 890 cards on each would make the map cost a mouse move.
+    // Opening or closing a column is a handful of times a session.
+    //
+    // The id is assigned BEFORE the draw, so if anything downstream re-enters
+    // this function it finds nothing changed and stops, rather than recurring.
+    const pinnedNow = column?.parcelId ?? null;
+    if (pinnedNow !== pinnedColumnParcelId) {
+      pinnedColumnParcelId = pinnedNow;
+      if (lastRadial) drawOverlay(lastRadial);
+    }
     if (!state.paintingOnly) {
       for (const el of Object.values(bubbleEls)) if (el) el.hidden = true;
       return;
@@ -7686,7 +9727,12 @@ export function mountViewer(appEl) {
     renderingBubbles = true;
     try {
       const { hoveredId, selectedId } = markInteraction.getState();
-      renderPinnedBubble(selectedId);
+      // THE ONE SWAP. A parcel's selection is held by the column; every other
+      // selection is held by the pinned bubble exactly as before. The pinned
+      // bubble is told the truth about what IT holds, which is nothing — so it
+      // hides itself, and positionBubbles steps the glance around a box that is
+      // not there, both by paths that already existed.
+      renderPinnedBubble(column ? null : selectedId);
       // the glance stands down for the mark it is already showing in full, and
       // for a pointer that is reading a bubble rather than pointing at the
       // painting — running a finger down a relations list should light each one
@@ -7979,6 +10025,17 @@ export function mountViewer(appEl) {
         return `<div class="dial"><label>${esc(d.label)} <b data-out="${d.key}">${fmt(v)}</b></label>
           <input type="range" data-dial="${d.key}" min="${d.min}" max="${d.max}" step="${d.step}" value="${v}"></div>`;
       }).join("")
+      // THE DRAWING'S DIALS, IN THE SAME PANE AND UNDER THEIR OWN NOTE. They
+      // re-draw rather than re-tell, and they apply to the SPECTATOR only — a
+      // resident's painting is the ≤ 25 marks their read named, which no tier
+      // has anything to cut. Said in the note rather than left for a reader to
+      // discover by dragging one and watching nothing happen.
+      + `<div class="devnote">spectator drawing dials — re-draws on change; the resident path is not gated by them.</div>`
+      + DRAW_DIALS.map((d) => {
+        const v = state.drawDials[d.key];
+        return `<div class="dial"><label>${esc(d.label)} <b data-out="draw:${d.key}">${fmt(v)}</b></label>
+          <input type="range" data-draw-dial="${d.key}" min="${d.min}" max="${d.max}" step="${d.step}" value="${v}"></div>`;
+      }).join("")
       + `<div class="devrow"><button class="ctl wv-dev-reset">reset dials</button></div>`;
   }
   function fmt(v) { return Number.isInteger(v) ? String(v) : (+v).toFixed(2).replace(/\.?0+$/, ""); }
@@ -8152,13 +10209,9 @@ export function mountViewer(appEl) {
     if (e.target.closest(".wv-map-home")) { mapCtx?.fitAll?.(); return; }
     const fbtn = e.target.closest(".wv-map-follow");
     if (fbtn) { if (!mapCtx) return; mapCtx.follow = !mapCtx.follow; fbtn.classList.toggle("on", mapCtx.follow); if (mapCtx.follow) mapCtx.lockOn(); return; }
-    const gbtn = e.target.closest(".wv-map-grid");
-    if (gbtn) { if (!mapCtx?.toggleGrid) return; gbtn.classList.toggle("on", !!mapCtx.toggleGrid()); return; }
-    const fpbtn = e.target.closest(".wv-map-fp");
-    if (fpbtn) { if (!mapCtx?.toggleFp) return; fpbtn.classList.toggle("on", !!mapCtx.toggleFp()); return; }
     const cvbtn = e.target.closest(".wv-map-convo");
     if (cvbtn) { if (!mapCtx?.toggleConvo) return; cvbtn.classList.toggle("on", !!mapCtx.toggleConvo()); return; }
-    if (e.target.closest("[data-root-mark]")) { selectMark(WORLD_ROOT_ID, { scrollCell: true }); return; }
+    if (e.target.closest("[data-root-mark]")) { selectMark(chipMarkId(), { scrollCell: true }); return; }
     if (e.target.closest(".wv-walk-cancel")) { clearSelectionAndDestination(); return; }
     if (e.target.closest(".wv-telling-toggle")) {
       state.paintingOnly = !state.paintingOnly;
@@ -8168,7 +10221,9 @@ export function mountViewer(appEl) {
     }
     // the ✕ closes the pinned bubble, which is the same act as deselecting —
     // there is one selection, and the bubble is what it looks like here
-    if (e.target.closest(".wv-bubble-close")) { clearSelectionAndDestination(); return; }
+    // the ✕ on the parcel's column is the same act for the same reason — one
+    // selection, and the column is what it looks like for a parcel
+    if (e.target.closest(".wv-bubble-close, .wv-homecol-close")) { clearSelectionAndDestination(); return; }
     if (e.target.closest(".wv-bubble-back")) { bubbleBack(); return; }
     const filterChip = e.target.closest("[data-mark-filter]");
     if (filterChip && !filterChip.disabled) {
@@ -8225,6 +10280,10 @@ export function mountViewer(appEl) {
     // carries the walker's word
     const enterBtn = e.target.closest("[data-enter]");
     if (enterBtn) { e.stopPropagation(); crossInto(enterBtn.dataset.enter, { button: enterBtn }); return; }
+    const walkEnterBtn = e.target.closest("[data-walk-enter]");
+    if (walkEnterBtn) { e.stopPropagation(); walkThereAndEnter(walkEnterBtn.dataset.walkEnter, { button: walkEnterBtn }); return; }
+    const walkAcceptBtn = e.target.closest("[data-walk-enter-accept]");
+    if (walkAcceptBtn) { e.stopPropagation(); walkThereAndEnter(walkAcceptBtn.dataset.walkEnterAccept, { accept: true, button: walkAcceptBtn }); return; }
     const acceptBtn = e.target.closest("[data-enter-accept]");
     if (acceptBtn) { e.stopPropagation(); crossInto(acceptBtn.dataset.enterAccept, { accept: true, button: acceptBtn }); return; }
     const cancelBtn = e.target.closest(".wv-cross-cancel");
@@ -8232,7 +10291,11 @@ export function mountViewer(appEl) {
     const exitBtn = e.target.closest(".wv-int-exit-btn");
     if (exitBtn) { stepOutside(exitBtn.dataset.mark, exitBtn); return; }
     if (e.target.closest(".wv-dev-toggle")) { const dev = $(root, ".wv-dev"); dev.hidden = !dev.hidden; if (!dev.dataset.built) { buildDevPane(); dev.dataset.built = "1"; } syncDevReadouts(); return; }
-    if (e.target.closest(".wv-dev-reset")) { state.dials = { ...DIALS }; buildDevPane(); renderCurrent(); return; }
+    if (e.target.closest(".wv-dev-reset")) {
+      state.dials = { ...DIALS };
+      state.drawDials = { ...SPECTATOR_DRAW_DEFAULTS };
+      buildDevPane(); renderCurrent(); return;
+    }
     if (e.target.closest(".crosslive")) { state.crossingOverride = false; state.crossing = liveCrossing(); const i = root.querySelector(".crossover"); if (i) i.value = state.crossing; const l = root.querySelector(".crossovlbl"); if (l) l.textContent = "live · " + state.crossing; reRender(); return; }
     const b = e.target.closest("button.ctl, .wv-card");
     if (!b) return;
@@ -8287,7 +10350,7 @@ export function mountViewer(appEl) {
     target?.closest?.(".wv-card[data-id], .wv-rnode[data-id], .wv-attribute[data-id]") ?? null;
   root.addEventListener("mouseover", (e) => {
     // the root's glyph is a mark to the pointer as much as to the click
-    if (e.target.closest("[data-root-mark]")) { hoverMark(WORLD_ROOT_ID); return; }
+    if (e.target.closest("[data-root-mark]")) { hoverMark(chipMarkId()); return; }
     const cell = markCellAt(e.target);
     if (cell) hoverMark(cell.dataset.id, !!cell.closest(".wv-bubble"));
   });
@@ -8325,6 +10388,19 @@ export function mountViewer(appEl) {
       state.dials = { ...state.dials, [dial]: Number(e.target.value) };
       const out = root.querySelector(`[data-out="${dial}"]`); if (out) out.textContent = fmt(state.dials[dial]);
       clearTimeout(devTimer); devTimer = setTimeout(renderCurrent, 70);
+      return;
+    }
+    // A DRAWING DIAL RE-DRAWS AND DOES NOT RE-TELL. The engine never hears
+    // about these, so there is nothing to recompute: the same radial is painted
+    // again by the new rule, which is why dragging one is instant where
+    // dragging a sight dial is not.
+    const draw = e.target.dataset?.drawDial;
+    if (draw) {
+      state.drawDials = { ...state.drawDials, [draw]: Number(e.target.value) };
+      const out = root.querySelector(`[data-out="draw:${draw}"]`);
+      if (out) out.textContent = fmt(state.drawDials[draw]);
+      clearTimeout(devTimer);
+      devTimer = setTimeout(() => { if (lastRadial) drawOverlay(lastRadial); }, 70);
     }
   });
   // Identity is UI memory, not door law. The token is presented on every signed
@@ -8332,18 +10408,243 @@ export function mountViewer(appEl) {
   // selected handle is sticky; the office remains choose-per-call.
   const pmKey = () => { try { return localStorage.getItem("pm_key") || null; } catch { return null; } };
   const authHeaders = () => { const k = pmKey(); return k ? { Authorization: "Bearer " + k } : {}; };
+
+  // ───────── the resident's read ────────────────────────────────────────────
+  //
+  // On the resident path the page stops computing the field of view and asks
+  // the office for it. One read per standpoint per crossing, cached, because a
+  // reader who steps back to where they were is asking the same question and
+  // should not pay for it twice — and because `renderCurrent` is called from a
+  // dozen places that have no idea whether anything moved.
+  //
+  // ⚑ THE CACHE IS KEYED ON THE CROSSING TOO. The read is an answer about a
+  // MOMENT — the office's own fog moves with the crossing (it did not until
+  // 2026-09-10; see the office's crossing fix) — so an answer kept across one
+  // would show a resident last night's light. `residentReadKey` owns that.
+  // Has the office told us who is reading? Until it has, every reader looks
+  // like a spectator and nothing may be decided on that resemblance.
+  let identitySettled = false;
+  const readCache = new Map();
+  const readPending = new Map();   // key -> promise, so N callers make ONE request
+  let readError = null;
+
+  // WHO THE PAGE IS FOR. Not "is somebody signed in" — that was the mistake the
+  // render probe made and reported as success: signing in is not standing. This
+  // asks whether a RESIDENT IS ACTING, which is what selects the read path.
+  const onResidentPath = () => identityResolved() && !isSpectating() && !!state.handle;
+
+  // EMBODIED: who and when, never where. See `residentReadKey`'s note and the
+  // office's own refusal — "your eyes ride your body".
+  function residentStandpointKey(_standpoint, handle) {
+    return residentReadKey({ handle, crossing: state.crossing });
+  }
+
+  /**
+   * The read at one standpoint, from the office. Never throws to its caller:
+   * the render spine is synchronous and a rejected promise there would leave a
+   * pane half-written, so a failure is recorded and the pane says so.
+   */
+  function loadResidentRead(standpoint, handle) {
+    const key = residentStandpointKey(standpoint, handle);
+    if (readCache.has(key)) return Promise.resolve(readCache.get(key));
+    if (readPending.has(key)) return readPending.get(key);
+    // NO x/y. The office stands the resident where their BODY is and refuses
+    // to do otherwise; asking for both is a 422, which is how I found out.
+    const url = officeUrl(`/world/apex?handle=${encodeURIComponent(handle)}`
+      + `&crossing=${state.crossing}&telling=true`);
+    const p = fetch(url, { headers: authHeaders(), credentials: "same-origin" })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`the office answered ${r.status}`);
+        const read = await r.json();
+        if (read?.error) throw new Error(read.defect ?? read.error);
+        readCache.set(key, read);
+        readError = null;
+        // THE INDEX, FILLED FROM THE READ. `byId` is what forty call sites ask
+        // "what is this id", and on this path this is the only thing that fills
+        // it — the records the read carries, plus the resident's own rows.
+        // `homeSet` follows from the same set, so green still means home.
+        if (handle === state.handle) {
+          byId = residentById(read, mineSet.marks);
+          loadTownHouses();      // once; fills + repaints when it lands
+          withTownHouses();      // and at once, when it already has
+          homeSet = buildHomeSet(data?.manifest, allMarks());
+          // AND THE PEOPLE, from the same answer. The walker poll fires at boot
+          // and the read lands after it, so a poll that ran first found nothing
+          // and the map drew nobody until the next fifteen-second tick — which
+          // is longer than a reader waits and longer than a measurement runs.
+          // `present` is already in hand here; there is no reason to ask again.
+          // the reader's own body rides from the read's standpoint — `present`
+          // is who ELSE is about and excludes them by construction
+          walkState.walkers = walkersFromPresent(read.present ?? {}, { self: selfFromRead(read) });
+          drawWalkers();
+        }
+        return read;
+      })
+      .catch((e) => { readError = String(e?.message ?? e).slice(0, 160); return null; })
+      .finally(() => readPending.delete(key));
+    readPending.set(key, p);
+    return p;
+  }
+
+  // The acting resident's own marks — "plus all of yours", and the door is PAGED
+  // at 20 a list, so the offset is WALKED until the answer says it is complete
+  // (Keemin's ruling via the lane, 2026-09-10). A page that drew the first
+  // twenty as though they were all of yours would be lying by arithmetic, and
+  // one extra request is much the cheaper of the two.
+  //
+  // BOUNDED ANYWAY. A door that never said `complete` would otherwise spin this
+  // forever; twelve pages is 240 marks, past any household on the record, and
+  // running out says so rather than pretending the walk finished.
+  // The ground under a point nobody is standing on. Keyless by construction —
+  // this is a question about a PLACE, not about a resident — and cached by the
+  // point and the crossing, because a reader choosing a destination clicks the
+  // same patch of country more than once.
+  const pointNameCache = new Map();
+  function nameThePoint(destination) {
+    const key = `${destination.x}|${destination.y}|${state.crossing}`;
+    const known = pointNameCache.get(key);
+    if (known !== undefined) { applyPointName(destination, known); return; }
+    fetch(officeUrl(`/world/apex?x=${destination.x}&y=${destination.y}&crossing=${state.crossing}`),
+      { credentials: "same-origin" })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        const read = await r.json();
+        if (read?.error) throw new Error(read.defect ?? read.error);
+        // the records ride into the index so the label has something to name
+        for (const [id, record] of Object.entries(read.records ?? {}))
+          if (!byId.has(id)) byId.set(id, record);
+        const spine = Array.isArray(read.within) ? read.within : [];
+        const innermost = spine.length ? spine[spine.length - 1]?.id ?? null : null;
+        pointNameCache.set(key, innermost);
+        applyPointName(destination, innermost);
+      })
+      .catch(() => { pointNameCache.set(key, null); });   // a bare coordinate is a real answer
+  }
+  function applyPointName(destination, innermost) {
+    if (!innermost) return;
+    destination.inside = innermost;
+    // only repaint if this is still the destination the reader is looking at
+    if (walkState.destination && walkState.destination.x === destination.x
+      && walkState.destination.y === destination.y) renderWalkDestination();
+  }
+
+  // The close look, from the door that owns it. `worldInvestigate` is what the
+  // office answers with and what the engine computes on the other path, so the
+  // two cannot drift: it is one verb with two homes, not two implementations.
+  const investigateCache = new Map();
+  const investigatePending = new Map();
+  function loadInvestigate(id) {
+    if (investigateCache.has(id)) return Promise.resolve(investigateCache.get(id));
+    if (investigatePending.has(id)) return investigatePending.get(id);
+    const p = fetch(officeUrl(`/world/investigate?mark=${encodeURIComponent(id)}`),
+      { headers: authHeaders(), credentials: "same-origin" })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`the office answered ${r.status}`);
+        const got = await r.json();
+        // A BOUNCE IS AN ANSWER AND IS KEPT. Caching it stops a card that cannot
+        // be opened from asking the office again on every click.
+        investigateCache.set(id, got?.error ? { error: got.defect ?? got.error } : got);
+        return investigateCache.get(id);
+      })
+      .catch((e) => {
+        const failed = { error: `the office could not open this one: ${String(e?.message ?? e).slice(0, 120)}` };
+        investigateCache.set(id, failed);
+        return failed;
+      })
+      .finally(() => investigatePending.delete(id));
+    investigatePending.set(id, p);
+    return p;
+  }
+
+  // The acting resident, as a body on the map. `stance: "embodied"` is the
+  // read saying these coordinates are a person and not a camera; anything else
+  // is a standpoint nobody is standing at, and nobody is what gets drawn.
+  const selfFromRead = (read) => {
+    const at = read?.standpoint;
+    if (!state.handle || !at || at.stance !== "embodied") return null;
+    if (!Number.isFinite(at.x) || !Number.isFinite(at.y)) return null;
+    return { handle: state.handle, at: { x: at.x, y: at.y }, standing: true };
+  };
+
+  // ONE ID LOOKUP FOR THE RESIDENT PATH, and it never touches the fold: the
+  // read's `records` first (the town's canon at this standpoint), then the
+  // resident's own rows. `residentById` owns the precedence and the reason.
+  function residentMarkById(id) {
+    if (!id) return null;
+    const standpoint = { x: state.cam.x, y: state.cam.y };
+    const read = readCache.get(residentStandpointKey(standpoint, state.handle));
+    return residentById(read ?? {}, mineSet.marks).get(id) ?? null;
+  }
+
+  const MINE_PAGE_LIMIT = 12;
+  let mineSet = { marks: new Map(), unplaced: [], sentinel: [], complete: true, pages: 0, exhausted: false };
+  async function loadMineMarks() {
+    const options = { headers: authHeaders(), credentials: "same-origin" };
+    const LISTS = ["drafts", "docket", "published", "backed"];
+    const merged = { drafts: [], docket: [], published: [], backed: [], complete: true };
+    const seen = new Set();
+    let offset = 0, pages = 0, exhausted = false, counts = null;
+    for (;;) {
+      const r = await fetch(officeUrl(`/world/my-marks?offset=${offset}`), options);
+      if (!r.ok) throw new Error(`/world/my-marks → ${r.status}`);
+      const page = await r.json();
+      if (page?.error) throw new Error(page.defect ?? page.error);
+      counts ??= page.counts ?? null;
+      let added = 0;
+      for (const list of LISTS)
+        for (const row of page[list] ?? []) {
+          const tag = `${list}:${row?.id}`;
+          if (!row?.id || seen.has(tag)) continue;
+          seen.add(tag); merged[list].push(row); added += 1;
+        }
+      pages += 1;
+      // ⚑ `complete` IS NOT AN END-OF-WALK FLAG, and reading it as one cost this
+      // lane a run of twelve requests that collected the same page over and
+      // over. It means "this ONE page holds everything", so for any portfolio
+      // past 20 it is false at EVERY offset and never becomes true. The door's
+      // `counts` are the real totals (drafts 2, docket 0, published 91, backed
+      // 22 for this household), so the walk ends when what has been collected
+      // matches them — or when a page adds nothing new, which is the same end
+      // reached from the other side and costs one wasted request to find.
+      const done = counts
+        ? LISTS.every((l) => merged[l].length >= (counts[l] ?? 0))
+        : page.complete !== false;
+      if (done || added === 0) break;
+      if (pages >= MINE_PAGE_LIMIT) { exhausted = true; merged.complete = false; break; }
+      offset += 20;   // the door's own page size
+    }
+    mineSet = { ...residentMineMarks(merged), pages, exhausted };
+    // The merged portfolio rides back too: `state.portfolio`, `state.mineIds`
+    // and the draft overlay are all built from it, and they must see EVERY page
+    // rather than the first — the same arithmetic lie, one surface over.
+    return { mine: mineSet, portfolio: merged };
+  }
   async function loadIdentityWorld() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
-    const [composed, portfolio] = await Promise.all([
-      fetchWorldState([officeUrl("/world/state")], options),
-      fetch(officeUrl("/world/my-marks"), options).then(async (r) => {
-        if (!r.ok) throw new Error(`${officeUrl("/world/my-marks")} → ${r.status}`);
-        return r.json();
-      }),
-    ]);
+    // THE PORTFOLIO IS WALKED, NOT SAMPLED (2026-09-10). This used to take the
+    // door's first answer. The door is paged at 20 a list and a household over
+    // that got its first twenty treated as the whole of what it owns — by
+    // `state.mineIds`, by the draft overlay, and by the painting's "plus all of
+    // yours". Measured on the live door for the keeminlee household: `complete`
+    // comes back FALSE. `loadMineMarks` walks the offset until it is true.
+    // ⚑ THE SECOND FOLD IS GONE (2026-09-10). This used to fetch
+    // `/world/state` a second time, credentialled, so the household's draft
+    // DECLARATIONS could be laid into a composed copy of the whole town. The
+    // resident path has no town to compose into and does not want one: the
+    // drafts arrive with their own geometry in the portfolio rows, and
+    // `residentMineMarks` draws them from there.
+    //
+    // A SPECTATOR-WITH-A-KEY still gets the composed fold, because that path
+    // still paints from one, and `composeDraftOverlay` is still how its drafts
+    // get in. The fetch is now conditional on there being a fold at all.
+    const walked = await loadMineMarks();
+    const portfolio = walked.portfolio;
+    const composed = data?.trueWorld
+      ? await fetchWorldState([officeUrl("/world/state")], options)
+      : null;
     // The overlay lays the household's draft DECLARATIONS into the composed
     // state (world-framed by the office's delta) — the fold stays off the read.
-    data.myWorld = composeDraftOverlay(composed.json, portfolio.drafts);
+    data.myWorld = composed ? composeDraftOverlay(composed.json, portfolio.drafts) : null;
     state.portfolio = portfolio;
     state.mineIds = new Set(["drafts", "published", "backed"]
       .flatMap((category) => (portfolio[category] ?? []).map((mark) => mark.id ?? mark.mark))
@@ -8393,6 +10694,7 @@ export function mountViewer(appEl) {
       if (state.markFilter === "mine") state.markFilter = "everything";
       applyWorldLayer();
     }
+    identitySettled = true;   // the office has answered; a spectator is now a CHOICE, not a default
     pruneViewCache(handles); // a pane for a handle this key no longer has describes nobody
     renderPresets();
     renderIdentity();
@@ -8418,6 +10720,23 @@ export function mountViewer(appEl) {
       state.actAs = SPECTATOR_ACTOR;
       walkState.actorBound = false;
       try { localStorage.setItem(ACT_AS_KEY, SPECTATOR_ACTOR); } catch {}
+      // ── THE INDEX FOLLOWS THE READER, THIS WAY TOO (2026-09-11) ─────────
+      //
+      // The resident arm below refills `byId` from the returning resident's
+      // read. Nothing refilled it on the way OUT: a Spectator arriving after
+      // a resident detour drew the whole town from the fold (`allMarks()`
+      // reads `world.marks` here) while `byId` still held that resident's
+      // read — 88 records, no `at` for anything outside their eyes. The click
+      // path asks `byId` for a mark's place, found none, and fell through to
+      // "open ground": every house outside the last resident's read was
+      // unclickable, which is what Keemin met in the Threshold District. The
+      // fold's own index is what a Spectator's page is; when the fold is in
+      // hand it is restored here, and `homeSet` with it. When it is not, the
+      // telling's late fetch assembles it and `applyWorldLayer` fills both.
+      if (world) {
+        byId = new Map(world.marks.map((m) => [m.id, m]));
+        homeSet = buildHomeSet(data?.manifest, world.marks);
+      }
       clearSelectionAndDestination();
       root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
       renderIdentity();
@@ -8442,6 +10761,20 @@ export function mountViewer(appEl) {
     // is a restore from this resident's own entry — home, balance, palette,
     // standpoint — none of it a fetch and none of it a rebuild. The office is
     // consulted AFTER the swap, and only a difference costs a re-render.
+    // ── THE INDEX FOLLOWS THE READER (2026-09-10) ───────────────────────────
+    //
+    // Coming back to a resident after a Spectator detour, `byId` is whatever
+    // that detour left behind — the whole fold. The painting reads `byId`
+    // through `allMarks()`, so it has to be refilled from THIS resident's read
+    // before anything is drawn, and `homeSet` with it or green stops meaning
+    // home. The read is normally cached, so this costs nothing; where it is not
+    // the compose pass asks for it and this repeats when it lands.
+    const cachedRead = readCache.get(residentReadKey({ handle: actor, crossing: state.crossing }));
+    if (cachedRead) {
+      byId = residentById(cachedRead, mineSet.marks);
+      withTownHouses();
+      homeSet = buildHomeSet(data?.manifest, allMarks());
+    }
     const entry = viewCache.get(actor) ?? null;
     // the home lands BEFORE the standpoint is asked for: originFor falls back to
     // state.actorHome for the selected handle, and that still held the resident
@@ -8494,7 +10827,6 @@ export function mountViewer(appEl) {
       syncActorPosition(moved ? { moveCamera: true } : {});
     }).catch(() => {});
     pollWalkers().catch(() => {}); // its own body re-renders only when someone actually moved
-    warmOtherViews();
   }
 
   // stashActiveView is GONE, with the per-resident viewBox it existed to save.
@@ -8933,7 +11265,7 @@ export function mountViewer(appEl) {
       // quiet lane must never be able to empty the whole rail.
       stakes: stakeEvents,
       blessings: settleState.recent,
-      names: new Map((world?.marks ?? []).map((m) => [m.id, markName(m).name])),
+      names: new Map((allMarks()).map((m) => [m.id, markName(m).name])),
       limit: 14,
     });
     // Hidden rather than empty: a heading over nothing reads as a thing that
@@ -9008,7 +11340,11 @@ export function mountViewer(appEl) {
     // than the conversations page's own 7 s poll — this is a map, not a feed,
     // and a hidden layer costs the office nothing
     if (convoVisible && tick % 2 === 0) loadConversations().then(drawConversations);
-    if (tick % 2 === 0 && data && isOfficeLive(state.dataSource)) {
+    // ⚑ THE AMBIENT RE-DOWNLOAD ONLY RUNS WHERE THERE IS A FOLD. It re-fetched
+    // the WHOLE town every ~60 s to notice the record had moved. On the
+    // resident path there is no fold to refresh and the reads are keyed by
+    // crossing, so the town arrives again when the clock says it should.
+    if (tick % 2 === 0 && data?.trueWorld && isOfficeLive(state.dataSource)) {
       try {
         const r = await fetch(state.dataSource, { credentials: "same-origin" });
         const asOf = r.headers.get("x-postmark-as-of");
@@ -9031,7 +11367,23 @@ export function mountViewer(appEl) {
     // the ring is the same question, asked of whoever turns out to be signed in;
     // renderIdentity settles it once the office has answered
     try {
-      await loadData();
+      // ── THE FOLD IS NOT LOADED FOR A RESIDENT (2026-09-10) ────────────────
+      //
+      // The order is the whole change. Boot used to fetch the fold, paint, and
+      // only then ask who was reading — so a resident paid for 0.93 MB of town
+      // before anything knew they would never look at it. With a key in hand we
+      // ask WHO FIRST, and the fold is fetched only if the answer is "nobody in
+      // particular": a spectator, or a key that turns out to hold no residents.
+      //
+      // A reader with no key is untouched, down to the order of the requests.
+      await loadGround();
+      if (pmKey()) {
+        await resolveIdentity();
+        if (!onResidentPath()) { await loadFold(); applyWorldLayer(); }
+      } else {
+        await loadFold();
+        applyWorldLayer();
+      }
       renderCurrent();
       loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
       // and the enter-exit acts, once THEY arrive. A full re-render rather than one
@@ -9046,7 +11398,7 @@ export function mountViewer(appEl) {
       loadSettlements().then(() => { renderSettlementChip(); renderActivity(); });
       loadStakeEvents().then(renderActivity);
       // conversations load on first toggle (💬), not at boot — the layer is opt-in
-      resolveIdentity(); // after data (the presets filter reads the manifest)
+      if (!pmKey()) resolveIdentity(); // keyless: still settles the ring and the presets
     } catch (err) {
       $(root, ".wv-telling").innerHTML = `<div class="wv-err">could not load the world record: ${esc(err?.message ?? err)}</div>`;
     }
