@@ -6786,6 +6786,28 @@ export function mountViewer(appEl) {
       // World page mounts as a BACKDROP, and nothing about the site's file, the
       // atlas renderer or that page changes.
       svg.querySelectorAll("image").forEach((el) => el.remove());
+      // ── AND THE FRAMES THE PICTURES LEFT BEHIND (Keemin, 2026-09-13: "we
+      //    still have the region image borders baked into the background map")
+      //
+      // Each region group in the picture is a hit rect, its wash blobs, its two
+      // words, an inner <svg> wrapping the thumbnail, and a rect with
+      // `fill="none"` and an amber stroke — the border drawn AROUND that
+      // thumbnail. The words went yesterday and the pictures went this morning,
+      // and what was left was nine empty amber rectangles: a frame around a
+      // photograph that is no longer there.
+      //
+      // Three things go, all of them inside `g.region` and nowhere else:
+      //   • the frame rect, which now frames nothing
+      //   • the inner <svg>, an empty wrapper once its <image> left
+      //   • the transparent hit rect, which served the STANDALONE map's clicks;
+      //     the backdrop has none of its own — the viewer's overlay owns them,
+      //     and since this morning a region's own hung picture is the door.
+      //
+      // Scoped to the region groups on purpose: the water, the terrain and the
+      // paper live outside them and are the picture's actual job.
+      for (const g of svg.querySelectorAll("g.region")) {
+        for (const el of g.querySelectorAll('rect[fill="none"], svg, rect[fill="transparent"]')) el.remove();
+      }
       const base = new URL(ATLAS_GROUND_URL, location.origin);
       svg.querySelectorAll("image").forEach((im) => {
         const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
