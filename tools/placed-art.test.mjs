@@ -442,3 +442,21 @@ test("THE PAGE — a hung picture is not then painted over by the furnishing pas
   //   hung ids named, while every other assertion in this file stays green —
   //   which is how it shipped in #40 without anybody seeing it.
 });
+
+// ── WHY THERE IS NO PAGE TEST FOR THE PARCEL/FURNISHING COLLISION ───────────
+//
+// I wrote one, and it passed with the fix REMOVED — a probe that could not
+// fail, caught by flipping it. Recorded rather than deleted quietly, because
+// the reason is the same wall the whole piece ran into.
+//
+// The furnishing pass is built from `drawn`, and `drawn` comes from
+// `overlayMarks(radial)` — the reader's field of view, which the OFFICE
+// supplies. This rig has no office, so a parcel never enters `drawn` at all and
+// the pass never considers it, whatever picture the fixture hangs on it. The
+// branch is unreachable here by construction, exactly as the original defect
+// was: four spectator runs against dev were green on it too.
+//
+// So the in-repo guard is the source pin in tools/overlay-houses.test.mjs, and
+// the behaviour evidence is the dev dump in the report — two elements at
+// 152x152 and 139x89, both carrying the parcel's id, signed in as rei. A dev
+// re-read after this merges is what closes it, and the report says so.
