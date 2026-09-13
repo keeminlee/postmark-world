@@ -4668,13 +4668,23 @@ const STYLE = `
 /* THE SEARCH PILL. Collapsed it is one of the circles; open it is a pill that
    grows leftward, which is free because the row is right-anchored. The width is
    the only thing that animates, so nothing reflows around it. */
-.wv-search { position:relative; display:flex; align-items:center; }
-.wv-search-input { width:0; opacity:0; padding:0; border:0; margin:0;
+.wv-search { position:relative; display:flex; align-items:center; margin-right:6px; }
+/* THE PILL SHRINKS BEFORE THE ROW WRAPS. The control row is a right-anchored
+   flex row that wraps, so a fixed width would push the five circles onto a
+   second line on a phone. The clamp gives the field the whole 14rem where there
+   is room and 24vw where there is not, with a floor that still shows a few
+   words. (No backticks in this comment: it lives inside a template literal, and
+   one here has ended the STYLE string three times now.) */
+.wv-search-input { width:clamp(9rem, 24vw, 14rem); margin:0;
   height:2.15rem; box-sizing:border-box; font-family:var(--mono); font-size:.82rem;
   color:var(--amber); background:rgba(13,15,19,.92);
-  border:1px solid rgba(232,197,106,.34); border-radius:999px;
-  transition:width .16s ease, opacity .12s ease, padding .16s ease; }
-.wv-search.is-open .wv-search-input { width:min(14rem, 42vw); opacity:1; padding:0 .7rem; margin-right:6px; }
+  /* room for the glyph sitting inside the left of the pill */
+  padding:0 .7rem 0 1.85rem;
+  border:1px solid rgba(232,197,106,.34); border-radius:999px; }
+/* an adornment, never a target: the field beneath it takes every click */
+.wv-search-glyph { position:absolute; left:.62rem; top:50%; transform:translateY(-50%);
+  pointer-events:none; font-family:var(--mono); font-size:.95rem; line-height:1;
+  color:rgba(232,197,106,.62); }
 .wv-search-input::placeholder { color:rgba(232,197,106,.5); }
 .wv-search-input:focus { outline:none; border-color:rgba(232,197,106,.7); }
 .wv-search-results { position:absolute; top:calc(2.15rem + 6px); right:0; z-index:7;
@@ -5135,11 +5145,18 @@ const MARKUP = `
                nothing: the row is anchored to the right edge and the pill opens
                back across the painting, which is empty there. -->
           <div class="wv-search" role="search">
-            <button type="button" class="ctl wv-search-open" aria-label="search"
-              title="find a house, a mark or a resident">&#8981;</button>
+            <!-- ALWAYS EXTENDED, AND THE GLYPH IS INSIDE IT (Keemin, 2026-09-13,
+                 on dev: "can we also have the search bar always extended, remove
+                 the icon as a separate button, and put it into the main bubble
+                 itself? that might honestly work better").
+                 The magnifier is an ADORNMENT, not a control: aria-hidden and
+                 pointer-events:none, so it cannot take a click, cannot take a
+                 tab stop, and is not announced twice beside the field's own
+                 label. There is one thing here now, and it is the field. -->
+            <span class="wv-search-glyph" aria-hidden="true">&#8981;</span>
             <input class="wv-search-input" type="search" autocomplete="off" spellcheck="false"
               aria-label="find a house, a mark or a resident"
-              placeholder="find a house or a resident" hidden>
+              placeholder="find a house or a resident">
             <ul class="wv-search-results" hidden></ul>
           </div>
           <!-- GLYPH ONLY (Keemin, 2026-08-04). These hang over a painting, and the
@@ -9257,8 +9274,12 @@ export function mountViewer(appEl) {
 
   function selectMark(id, { scrollCell = false, trail = null } = {}) {
     // choosing anything else ends the finding — two things cannot both be the
-    // one the reader just asked for
+    // one the reader just asked for — and it puts the query down with it, which
+    // is what "a click on the painting clears it" comes to: the map's own
+    // pointerup arrives here, and no `click` event ever reaches the document
+    // from the painting (measured in piece 8), so this is the honest hook.
     clearFoundWalker();
+    clearSearch();
     // THE CHOOSER, like the walker card, takes none of the mark machinery
     // below: it names no single mark yet, so there is no trail step to record
     // and no destination to preview. Choosing a row is what selects a mark.
@@ -9315,6 +9336,7 @@ export function mountViewer(appEl) {
   function clearSelectionAndDestination() {
     bubbleTrail = [];
     clearFoundWalker();
+    clearSearch();
     markInteraction.select(null);
     walkState.destination = null;
     walkState.changingCourse = false;
@@ -10521,14 +10543,10 @@ export function mountViewer(appEl) {
     // and a click that fell through to the painting underneath would select a
     // mark the reader cannot see
     if (e.target.closest(".wv-tour-open")) { openTour(0); return; }
-    if (e.target.closest(".wv-search-open")) {
-      openSearch(!$(root, ".wv-search")?.classList.contains("is-open"));
-      return;
-    }
     const hit = e.target.closest(".wv-search-hit");
     if (hit) {
       actOnSearchHit(hit.dataset.kind, hit.dataset.hit);
-      openSearch(false);
+      clearSearch();
       return;
     }
     const dot = e.target.closest("[data-tour-to]");
@@ -10793,14 +10811,27 @@ export function mountViewer(appEl) {
           + `</button></li>`).join("")
       : `<li class="wv-search-none">${esc(searchEmptyNote())}</li>`;
   }
-  function openSearch(open) {
-    const wrap = $(root, ".wv-search");
+  // ── THERE IS NO OPEN AND CLOSED ANY MORE, ONLY EMPTY AND NOT ────────────
+  //
+  // The field is always there at its full width, so the only state left is
+  // whether it holds a query. The results follow the query and nothing else.
+  //
+  // ⚑ NEVER ON BLUR. Hiding the list when the field loses focus would hide it on
+  // the mousedown that begins a click on a row, and the click would land on
+  // whatever the list used to cover. The list closes when the reader chooses
+  // something, presses Escape, or empties the field.
+  function clearSearch({ blur = false } = {}) {
     const input = $(root, ".wv-search-input");
-    if (!wrap || !input) return;
-    wrap.classList.toggle("is-open", !!open);
-    input.hidden = !open;
-    if (open) input.focus();
-    else { input.value = ""; renderSearchResults(); input.blur(); }
+    if (!input) return;
+    if (input.value) { input.value = ""; renderSearchResults(); }
+    if (blur) input.blur();
+  }
+  function focusSearch() {
+    const input = $(root, ".wv-search-input");
+    if (!input) return false;
+    input.focus();
+    input.select?.();
+    return true;
   }
   // A HIT DOES WHAT A CLICK DOES, and calls the same verb to do it — no second
   // selection path, so the column, the chooser and the trail behave as they
@@ -10898,12 +10929,14 @@ export function mountViewer(appEl) {
       const el = document.activeElement;
       const busy = !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA"
         || el.tagName === "SELECT" || el.isContentEditable);
-      if (!busy && $(root, ".wv-search-input")) { event.preventDefault(); openSearch(true); return; }
+      if (!busy && focusSearch()) { event.preventDefault(); return; }
     }
     if (event.key !== "Escape") return;
-    // Escape closes the search before it clears a selection: it is the thing the
-    // reader most recently opened, and one press should undo one thing.
-    if ($(root, ".wv-search")?.classList.contains("is-open")) { openSearch(false); return; }
+    // Escape puts down the query first, because that is the thing the reader most
+    // recently did: one press, one undo. An EMPTY field is not a thing to put
+    // down, so it falls through to the selection exactly as it did before.
+    const input = $(root, ".wv-search-input");
+    if (input?.value) { clearSearch({ blur: true }); return; }
     // A FOUND BODY IS A THING TO LET GO OF TOO. Without it in this condition
     // Escape returns early whenever the only standing state is the search's own
     // highlight — nothing is selected, nothing is armed — and the marked walker
