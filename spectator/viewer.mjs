@@ -6770,6 +6770,22 @@ export function mountViewer(appEl) {
       // said twelve, and a number in prose reds the day a region is founded
       // while saying nothing about the strip. The test asserts the relation.)
       svg.querySelectorAll("text").forEach((el) => el.remove());
+      // AND ITS BAKED PICTURES (Keemin, 2026-09-13: "still see the art as
+      // squares baked into the html"). Nine <image> on the shipped picture —
+      // /atlas/assets/caelum-evermoon.jpg and its eight siblings, the region
+      // thumbnails the atlas renders into the sheet.
+      //
+      // They were the right thing when the backdrop was the only place a region
+      // had a picture. It is not any more: the viewer hangs the record's own
+      // art on the placed-art layer, clipped to the region's ring, so the baked
+      // square is the same place said twice — a small rectangle sitting beside
+      // the shape that has just been filled with the same photograph.
+      //
+      // The map keeps them. /atlas/ground.html opened directly is a MAP and
+      // still carries every picture and every word; this strips the copy the
+      // World page mounts as a BACKDROP, and nothing about the site's file, the
+      // atlas renderer or that page changes.
+      svg.querySelectorAll("image").forEach((el) => el.remove());
       const base = new URL(ATLAS_GROUND_URL, location.origin);
       svg.querySelectorAll("image").forEach((im) => {
         const hh = im.getAttribute("href") ?? im.getAttribute("xlink:href");
