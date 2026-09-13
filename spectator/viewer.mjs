@@ -10499,24 +10499,41 @@ export function mountViewer(appEl) {
   function sizeSearchField() {
     const input = $(root, ".wv-search-input");
     if (!input || !input.placeholder) return 0;
+    // never reach into a field somebody is using: this borrows the value for one
+    // synchronous measurement, and a reader mid-query would see it flicker
+    if (input.value || document.activeElement === input) return 0;
+
+    // ⛑ MEASURE WITH THE INPUT, NOT BESIDE IT (2026-09-13, second pass). An
+    // offscreen span and a canvas measureText both say this placeholder is 173.1
+    // px wide in the input's exact computed font, and the input renders it 227 —
+    // measured here and independently in the founder's Chrome. Chrome lays text
+    // out inside an <input> with integer-snapped glyph advances, so any outside
+    // measurement under-measures by about half a pixel per glyph, and 24 glyphs
+    // of that is the clipped "t" he reported. The ::placeholder pseudo carries
+    // the identical font; it is the input's own text path that differs.
+    //
+    // ⛑ AND scrollWidth IS FLOORED AT clientWidth, which is why this resets to
+    // the CSS floor first. Reading scrollWidth at the current width and adding
+    // headroom CREEPS: measured, 232 → 235 → 238 → 241 over four passes, because
+    // once the box is wide enough scrollWidth just reports the box. Clearing the
+    // inline width first lets a narrower face shrink back to the floor, and the
+    // grow below then happens exactly once.
+    //
+    // ⛑ AND NOT BY COLLAPSING TO ZERO either. At width 0–40 the content box is
+    // clamped by the padding and scrollWidth reports 214 — the span's own
+    // under-measure, the very number this is here to avoid. The reading is only
+    // the true one while the text genuinely overflows a non-degenerate box, which
+    // it does at every width from 60 up to the floor.
+    input.style.width = "";
+    const keep = input.value;
+    input.value = input.placeholder;
+    const sw = input.scrollWidth, cw = input.clientWidth;
+    input.value = keep;
+    if (!(sw > cw)) return Math.round(input.getBoundingClientRect().width);  // the floor already holds it
+
     const cs = getComputedStyle(input);
-    // `font` is a shorthand and is what a canvas or a span needs; a browser that
-    // leaves it empty gets it rebuilt from the longhands rather than measured
-    // against the document's default, which would be a different face entirely.
-    const font = cs.font && cs.font.trim()
-      ? cs.font
-      : `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize}/${cs.lineHeight} ${cs.fontFamily}`;
-    const span = document.createElement("span");
-    span.style.cssText = "position:absolute;visibility:hidden;white-space:pre;"
-      + `font:${font};letter-spacing:${cs.letterSpacing}`;
-    span.textContent = input.placeholder;
-    document.body.appendChild(span);
-    const textW = span.getBoundingClientRect().width;
-    span.remove();
-    if (!(textW > 0)) return 0;          // nothing measurable: the CSS floor stands
-    const chrome = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)
-      + parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
-    const want = Math.ceil(textW + chrome + SEARCH_WIDTH_HEADROOM_PX);
+    const border = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
+    const want = Math.ceil(sw + border + SEARCH_WIDTH_HEADROOM_PX);
     input.style.width = `${want}px`;
     return want;
   }
