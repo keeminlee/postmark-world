@@ -3,7 +3,7 @@
   "_grid": {
     "cell_m": 1,
     "scale": "5 m per atlas px (RULED 2026-07-17)",
-    "origin": "Ferry's crossing — center of the Town Centre, atlas (485,760); x east, y south, z in meters above sea (decision 008)"
+    "origin": "the Origin — {0,0}, where the ferry lands; center of the Town Centre, atlas (485,760); x east, y south, z in meters above sea (decision 008)"
   },
   "_derived": "re-derived 2026-07-22 from the LIVE atlas (post atlas-v2 + the Evermoon move, town commit bdb5c93) by extraction from render-town.mjs + terrain-candidate-A.json — see this tool's header",
   "physics_registry": {
