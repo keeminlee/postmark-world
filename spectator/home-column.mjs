@@ -485,6 +485,13 @@ export function createHomeColumn({ doc, host, readHome, imagePath = null, reside
     host.hidden = false;
     host.parentElement?.classList.add("has-homecol");
     host.scrollTop = 0;
+    // A VIEW MAY BRING ITS OWN DOOR (2026-09-13). A parcel's column asks the
+    // office for the home behind the handle; a REGION's prose is already on the
+    // mark the reader just clicked, and asking the office for its founder's
+    // home page would answer a different question with somebody's house. When
+    // the caller supplies a door there is nothing to fetch and nothing to
+    // cache — the record already said it.
+    if (view.door) { paint(view, { door: view.door }); return true; }
     const cached = cache.get(view.handle);
     paint(view, cached ?? { loading: true });
     if (cached || !readHome) return true;
