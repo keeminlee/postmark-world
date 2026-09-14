@@ -88,13 +88,15 @@ test('STEP OUTSIDE MUST NOT SHRINK THE VIEW: "locks the min zoom of your camera 
   assert.equal(frameWidthFor({ viewW: 1236.48, fullW: 960, keepZoom: true }) / 1236.48, 1);
 });
 
-test("THE EXIT IS THE ONLY CALLER THAT KEEPS ITS ZOOM — lock-on and follow still take you to the thing", () => {
+test("THE EXIT AND SEARCH GOTO KEEP THEIR ZOOM — lock-on and follow still frame tightly", () => {
   assert.match(SOURCE, /frameOn\(rim, \{ keepZoom: true \}\)/,
     "stepping outside frames the door without changing the zoom");
-  assert.equal((SOURCE.match(/keepZoom: true/g) ?? []).length, 1,
-    "and it is the ONLY caller that keeps its zoom — a second one would need its own reason");
+  assert.match(SOURCE, /function goTo\([\s\S]{0,700}frameOn\(state\.cam, \{ keepZoom: true \}\)/,
+    "search goTo carries its separate reason: finding a thing does not choose the reader distance");
+  assert.equal((SOURCE.match(/keepZoom: true/g) ?? []).length, 2,
+    "only the exit and search goTo preserve zoom — each has its own recorded reason");
   assert.match(SOURCE, /const target = mapCtx\.frameOn\(\);/,
-    "lock-on still asks for the default framing, which takes you to the thing");
+    "lock-on still asks for the default framing, which takes you tightly to the thing");
   // and the warm-the-painting fix rides at the two places the town is parked,
   // not in the exit path — the reader is coming back, so the art is fetched
   // while they are indoors instead of all at once on the way out
