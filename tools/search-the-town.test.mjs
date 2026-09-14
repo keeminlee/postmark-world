@@ -289,27 +289,24 @@ const readState = (page) => page.evaluate(() => {
     searchValue: document.querySelector(".wv-search-input")?.value ?? null,
     openButtons: document.querySelectorAll(".wv-search-open").length,
     inputWidth: Math.round(document.querySelector(".wv-search-input")?.getBoundingClientRect().width ?? 0),
-    // ⚑ NOT scrollWidth. Measured: an input's scrollWidth tracks its VALUE, not
-    // its placeholder — squeezed to 40 px with the placeholder showing it read
-    // scrollWidth 41 against clientWidth 41, so a clipped placeholder is
-    // invisible to it and a falsifier built on it could not fail. The
-    // placeholder's true width is measured by rendering it in the input's own
-    // computed font and comparing against the inner box.
+    // ⚑ THE INPUT'S OWN RENDERING, not a span beside it. A span and a canvas
+    // measureText both say this placeholder is 173.1 px in the input's exact
+    // computed font; the input renders it 227 — Chrome snaps glyph advances to
+    // integers inside an <input>, so any outside measure under-measures by about
+    // half a pixel per glyph. Measuring beside the field is what let the "t"
+    // clip on the founder's screen while every test here stayed green.
+    //
+    // Borrowing the value is the only way to ask the input itself: with the
+    // placeholder AS the value, scrollWidth is what the text actually takes and
+    // clientWidth is what the box gives it.
     placeholder: (() => {
       const i = document.querySelector(".wv-search-input");
       if (!i) return null;
-      const cs = getComputedStyle(i);
-      const span = document.createElement("span");
-      span.style.cssText = "position:absolute;visibility:hidden;white-space:pre;font:"
-        + cs.font + ";letter-spacing:" + cs.letterSpacing;
-      span.textContent = i.placeholder;
-      document.body.appendChild(span);
-      const textW = span.getBoundingClientRect().width;
-      span.remove();
-      const inner = i.getBoundingClientRect().width
-        - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
-        - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth);
-      return { text: i.placeholder, textW: Math.round(textW), inner: Math.round(inner), fits: textW <= inner + 0.5 };
+      const keep = i.value;
+      i.value = i.placeholder;
+      const rendered = i.scrollWidth, box = i.clientWidth;
+      i.value = keep;
+      return { text: i.placeholder, rendered, box, fits: rendered <= box };
     })(),
     layout: (() => {
       const row = document.querySelector(".wv-mapctl");
@@ -376,7 +373,7 @@ test("THE PLACEHOLDER IS THE RULED WORDS, AND THE PILL IS BIG ENOUGH FOR THEM", 
   const wide = await readState(page);
   assert.equal(wide.placeholder.text, WORDS, "the placeholder is not the ruled sentence");
   assert.ok(wide.placeholder.fits,
-    `the placeholder is clipped at 1500: it renders ${wide.placeholder.textW} px inside a ${wide.placeholder.inner} px box`);
+    `the placeholder is clipped at 1500: the input renders it ${wide.placeholder.rendered} px inside a ${wide.placeholder.box} px box`);
 
   // the same at a phone's width, where the temptation is to shrink the field
   await page.setViewportSize({ width: 400, height: 800 });
@@ -384,7 +381,7 @@ test("THE PLACEHOLDER IS THE RULED WORDS, AND THE PILL IS BIG ENOUGH FOR THEM", 
   const narrow = await readState(page);
   assert.equal(narrow.placeholder.text, WORDS);
   assert.ok(narrow.placeholder.fits,
-    `the placeholder is clipped at 400: it renders ${narrow.placeholder.textW} px inside a ${narrow.placeholder.inner} px box`);
+    `the placeholder is clipped at 400: the input renders it ${narrow.placeholder.rendered} px inside a ${narrow.placeholder.box} px box`);
 
   // ⚑ AND THE CONTROLS MOVE AS ONE. As five siblings they wrapped raggedly —
   // four beside the field at 440 px, three at 400, the rest dropped. Grouped,
@@ -424,8 +421,22 @@ test("A WIDER FACE DOES NOT CLIP IT — the width is measured, not counted in ch
     `the field did not respond to a wider face at all (${before.inputWidth} px -> ${after.inputWidth} px),`
     + " so it is still counting characters rather than measuring the sentence");
   assert.ok(after.placeholder.fits,
-    `the placeholder is clipped under a wider face: it renders ${after.placeholder.textW} px`
-    + ` inside a ${after.placeholder.inner} px box`);
+    `the placeholder is clipped under a wider face: the input renders it ${after.placeholder.rendered} px`
+    + ` inside a ${after.placeholder.box} px box`);
+
+  // …and a different FACE, not just wider spacing, with spacing back at zero —
+  // the founder's own case was a font substitution, not a spacing change
+  await page.evaluate(() => {
+    const i = document.querySelector(".wv-search-input");
+    i.style.letterSpacing = "0";
+    i.style.fontFamily = "Georgia, 'Times New Roman', serif";
+    window.dispatchEvent(new Event("resize"));
+  });
+  await page.waitForTimeout(900);
+  const swapped = await readState(page);
+  assert.ok(swapped.placeholder.fits,
+    `the placeholder is clipped under a substituted face: the input renders it ${swapped.placeholder.rendered} px`
+    + ` inside a ${swapped.placeholder.box} px box`);
   await page.close();
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });
