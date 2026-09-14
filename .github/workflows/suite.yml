@@ -43,6 +43,18 @@ jobs:
         with:
           node-version: 22
 
+      # MEASURED on this workflow's first run: 48 suites went red with
+      # "Committer identity unknown". The settlement suites build scratch git
+      # repos and let the REAL sweep code rebase them, and that code commits as
+      # whoever the environment says it is — the keeper, on the box. The
+      # fixtures set an identity per repo where they commit themselves; the
+      # production path under test does not, and a bare runner has none. This is
+      # the runner standing in for the box, not a test fixture.
+      - name: a committer identity, which the sweep's own rebase needs
+        run: |
+          git config --global user.name "postmark suite"
+          git config --global user.email "suite@postmark.invalid"
+
       # No `npm ci`, no `npm install`: package.json declares no dependencies and
       # the suite imports only node builtins and this repo's own modules. A test
       # that wants a browser asks for playwright inside a try/catch and skips
