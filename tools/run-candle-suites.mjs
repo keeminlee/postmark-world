@@ -18,7 +18,7 @@
 // it is about to hand to node, and refuses to gate when that number is zero.
 // It is a gate: it says what it measured, and it can fail.
 
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, realpathSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -78,8 +78,11 @@ function main() {
     process.exit(2);
   }
 
+  // "test titles", not "tests": this counts declared titles, which is what the
+  // marker can be read off. node's own summary counts subtests too and will
+  // report a larger number — a different thing, honestly named.
   console.log(
-    `candle: ${files.length} suites, ${counts.total} tests; ` +
+    `candle: ${files.length} suites, ${counts.total} test titles; ` +
     `${counts.pinned} withheld as source pins (titles matching ${PIN_PATTERN}), ` +
     `${counts.total - counts.pinned} gating the crossing.`
   );
@@ -97,4 +100,23 @@ function main() {
   process.exit(run.status ?? 1);
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
+/**
+ * Is this file the one node was asked to run?
+ *
+ * MEASURED on the fleet's own box, 2026-09-14: under a Windows junction node
+ * hands `process.argv[1]` the junction spelling while `import.meta.url` resolves
+ * through it, so a strict `===` between them is FALSE and `main()` never runs.
+ * The gate would then exit 0 having tested NOTHING — the same quiet pass this
+ * whole file exists to prevent, and the fleet's pooled trees are full of
+ * junctions. Real paths on both sides are equal in both cases.
+ */
+export function sameFile(a, b) {
+  if (!a || !b) return false;
+  try {
+    return realpathSync(a) === realpathSync(b);
+  } catch {
+    return a === b;
+  }
+}
+
+if (sameFile(process.argv[1], fileURLToPath(import.meta.url))) main();

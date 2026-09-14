@@ -13,12 +13,12 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync, rmSync, readFileSync } from "node:fs";
+import { mkdtempSync, writeFileSync, rmSync, readFileSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { PIN_PATTERN, suiteFiles, countPinned, refusal } from "./run-candle-suites.mjs";
+import { PIN_PATTERN, suiteFiles, countPinned, refusal, sameFile } from "./run-candle-suites.mjs";
 import { npmTestGate } from "./settlement-isolate.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -99,6 +99,31 @@ test("FALSIFIER — the spy would catch the old command, so the probe above can 
   spy("npm", ["test", "--silent"]);
   assert.doesNotMatch(calls[0].join(" "), /^npm run test:candle\b/,
     "if npmTestGate still ran `npm test`, the assertion above would not hold");
+});
+
+test("THE RUN GUARD SEES THROUGH A LINK — or the gate would exit 0 having tested nothing", (t) => {
+  // MEASURED 2026-09-14 on the fleet's box: under a Windows junction, argv[1]
+  // keeps the junction spelling while import.meta.url resolves through it. The
+  // old guard compared those with === and would have skipped main() entirely,
+  // passing the crossing green on an empty run. The pooled trees are full of
+  // junctions, so this is the live case, not a hypothetical.
+  const dir = mkdtempSync(join(tmpdir(), "postmark-candle-link-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const real = join(dir, "runner.mjs");
+  const link = join(dir, "through-a-link.mjs");
+  writeFileSync(real, "export const x = 1;\n");
+  try {
+    symlinkSync(real, link, "file");
+  } catch {
+    t.skip("this platform will not make a link without privileges");
+    return;
+  }
+
+  assert.notEqual(real, link, "two spellings, so === would say no");
+  assert.ok(sameFile(real, link), "and one file underneath, which is what the guard must see");
+  assert.ok(!sameFile(real, join(dir, "someone-else.mjs")),
+    "THE CONTROL: a path that is not this file is still not this file");
+  assert.ok(!sameFile(undefined, real), "and a missing argv[1] is not a match");
 });
 
 test("[pin] THE INSTANCE IS MARKED BY NAME — the test that refused S70 carries the prefix", () => {
