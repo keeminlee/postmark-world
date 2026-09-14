@@ -37,7 +37,16 @@ jobs:
     if: github.repository == 'keeminlee/postmark-world'
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0, because the suite reads this repo's OWN history.
+      # MEASURED on run 34867028169: tier-frames' falsifier locates its baseline
+      # as the parent of the commit that introduced `tierRank`, then archives
+      # that ref — on a shallow checkout the sha is simply not there and the
+      # falsifier cannot find its own before-side. The blob filter defers the
+      # bytes, as lane.yml does, so only the trees actually read get fetched.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
 
       - uses: actions/setup-node@v4
         with:
