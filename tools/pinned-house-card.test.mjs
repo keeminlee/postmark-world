@@ -163,6 +163,28 @@ async function clickMark(page, id) {
   if (chose) await page.waitForTimeout(250);
 }
 
+/**
+ * THE HOUSES A READER COULD CLICK, in document order. The far tier draws every
+ * parcel within one viewport of the edge (drawOverlay: "same box, one viewport
+ * of margin"), so the overlay's first glyph is not the first glyph ON SCREEN —
+ * and a mouse click at a place off the screen lands on nothing. Measured
+ * 2026-09-14 on S70's record (ff2c50b8): the first glyph in document order
+ * moved from histor-reeves' parcel at y=123 to amia-semper's at y=−401, and
+ * both page tests below went red on "the column is up" while the pin itself
+ * was sound. The keeper refused S70 on exactly those two reds. So: only a
+ * glyph whose whole shape lies inside the viewport is a house to click.
+ */
+const housesOnScreen = (page) => page.evaluate(() => {
+  const inset = 4;
+  return [...document.querySelectorAll("#wv-overlay .ov-glyph[data-id]")]
+    .filter((g) => {
+      const b = g.getBoundingClientRect();
+      return b.left >= inset && b.top >= inset
+        && b.right <= innerWidth - inset && b.bottom <= innerHeight - inset;
+    })
+    .map((g) => g.dataset.id);
+});
+
 /** how one parcel is drawn right now: a far glyph, or a full card */
 const formOf = (page, id) => page.evaluate((pid) => {
   const ov = document.getElementById("wv-overlay");
@@ -188,12 +210,11 @@ test("THE PAGE — a clicked house keeps its card at far; its neighbour stays a 
   const { page, errors } = await openPage();
   assert.deepEqual(errors, [], "the page mounted without throwing");
 
-  // two houses at the far tier, both beads
-  const pair = await page.evaluate(() => {
-    const g = [...document.querySelectorAll("#wv-overlay .ov-glyph[data-id]")];
-    return g.length >= 2 ? { a: g[0].dataset.id, b: g[1].dataset.id, n: g.length } : null;
-  });
-  assert.ok(pair, "the far tier drew glyphs to click");
+  // two houses at the far tier, both beads — and both ON THE SCREEN, or the
+  // click below asks nothing (see housesOnScreen)
+  const onScreen = await housesOnScreen(page);
+  assert.ok(onScreen.length >= 2, `the far tier drew two houses inside the viewport to click (${onScreen.length})`);
+  const pair = { a: onScreen[0], b: onScreen[1] };
   const before = await formOf(page, pair.a);
   assert.equal(before.tier, "far", "we are at the far tier");
   assert.equal(before.glyph, true, "…and the house is a glyph before the click");
@@ -235,8 +256,8 @@ test("THE PAGE — closing the column gives the house back to the camera", async
   if (!chromium) { t.skip("NO PLAYWRIGHT — the unpin went UNGUARDED."); return; }
   const { page, errors } = await openPage();
   assert.deepEqual(errors, [], "the page mounted without throwing");
-  const id = await page.evaluate(() => document.querySelector("#wv-overlay .ov-glyph[data-id]")?.dataset.id);
-  assert.ok(id, "a house to click");
+  const [id] = await housesOnScreen(page);
+  assert.ok(id, "a house on the screen to click");
 
   await clickMark(page, id);
   await page.settle();
