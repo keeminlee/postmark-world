@@ -30,7 +30,7 @@ test("THE DEFAULT IS OFF, and the switch turns it back on — both directions", 
   assert.equal(markArtOnMap(null), false, "and nothing at all is still off");
 });
 
-test("THE GATE IS IN THE MARKUP: no figure is emitted, so no picture is ever asked for", () => {
+test("[pin] THE GATE IS IN THE MARKUP: no figure is emitted, so no picture is ever asked for", () => {
   // hydrateMarkImages mounts from `.wv-mark-image[data-image-for]` figures. A
   // gate in the hydrate would still have emitted the figure and left the next
   // caller free to mount it; gating the cell means the URL never reaches the
@@ -41,7 +41,7 @@ test("THE GATE IS IN THE MARKUP: no figure is emitted, so no picture is ever ask
     "and the gate is read per cell, from the one place that answers the question");
 });
 
-test("INTERIORS STILL PAINT THEIR ART — the room's ground and the things standing in it are untouched", () => {
+test("[pin] INTERIORS STILL PAINT THEIR ART — the room's ground and the things standing in it are untouched", () => {
   const SHELF = "https://media.postmark.town/media/keeminlee/70c2f03d0bcdd54ca117e8fa3c9d9dcf7ee7bc176f58cec0116b281b4f188de6.jpg";
   const room = { id: "wright/the-trueing-house", kind: "sited", by: "wright", at: { x: 0, y: 0 }, extent: { w: 12, h: 12 }, image: SHELF };
 

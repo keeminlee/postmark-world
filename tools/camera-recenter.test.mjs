@@ -24,7 +24,7 @@ import { viewIsWarm } from "../spectator/viewer.mjs";
 const SOURCE = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), "..", "spectator", "viewer.mjs"), "utf8");
 
-test("FALSIFIER: no per-resident viewBox is saved anywhere", () => {
+test("[pin] FALSIFIER: no per-resident viewBox is saved anywhere", () => {
   assert.doesNotMatch(SOURCE, /function stashActiveView/,
     "the function that stashed a resident's painting is gone");
   assert.doesNotMatch(SOURCE, /\bstashActiveView\(\)/,
@@ -33,7 +33,7 @@ test("FALSIFIER: no per-resident viewBox is saved anywhere", () => {
     "no cache entry is given a viewBox to come back to");
 });
 
-test("FALSIFIER: the act-as switch recenters rather than restoring", () => {
+test("[pin] FALSIFIER: the act-as switch recenters rather than restoring", () => {
   // the restore was `if (entry?.view && mapCtx?.setView) mapCtx.setView(entry.view, false)`
   assert.doesNotMatch(SOURCE, /setView\(entry\.view/,
     "a saved frame is never re-applied on a switch");
@@ -41,7 +41,7 @@ test("FALSIFIER: the act-as switch recenters rather than restoring", () => {
     "the ruling is written where the switch happens");
 });
 
-test("the cache entry no longer carries a view slot at all", () => {
+test("[pin] the cache entry no longer carries a view slot at all", () => {
   // belt and braces: the shape itself cannot hold one, so a future `entry.view`
   // would be a new field somebody had to add on purpose
   const shape = SOURCE.match(/entry = \{ pane: null[^}]*\}/)?.[0] ?? "";

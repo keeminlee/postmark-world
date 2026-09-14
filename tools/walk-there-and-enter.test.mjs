@@ -23,7 +23,7 @@ test("A REFUSAL FROM AFAR IS AN OFFER — from the body's own walk first, from t
   // ⚑ THE FLIP: make walkThereOffer ignore `body.walk` → the first line reds.
 });
 
-test("THE PAGE WIRES IT — crossInto offers on the refusal, the delegate sends the walk with entry on arrival, and nothing else about entering changed", () => {
+test("[pin] THE PAGE WIRES IT — crossInto offers on the refusal, the delegate sends the walk with entry on arrival, and nothing else about entering changed", () => {
   assert.match(SOURCE, /const offer = answer\.error === "bounce" \? walkThereOffer\(response\?\.status, answer, markId\) : null;/, "crossInto asks the pure rule");
   assert.match(SOURCE, /apexAct\("walk", \{ mark_id: markId, enter_on_arrival: true, \.\.\.\(accept \? \{ accept: true \} : \{\}\) \}\)/, "one act: the walk door, entry on arrival, the walker's word only when asked");
   assert.match(SOURCE, /closest\("\[data-walk-enter\]"\)/, "the root delegate reads the button");

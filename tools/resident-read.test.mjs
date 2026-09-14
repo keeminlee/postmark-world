@@ -313,7 +313,7 @@ test("FALSIFIER — the drawn set is a SUBSET of what the read named, never a su
   assert.deepEqual(walkersFromPresent({ residents: [] }), []);
 });
 
-test("FALSIFIER — the resident path does not ask /world/walkers", async () => {
+test("[pin] FALSIFIER — the resident path does not ask /world/walkers", async () => {
   // A SOURCE GUARD, and it is the one the reviewer asked for: the whole-town
   // poll must not be reachable from the resident branch. Read from the bytes,
   // because the behaviour lives in a browser this test does not have.
@@ -342,7 +342,7 @@ test("FALSIFIER — the resident path does not ask /world/walkers", async () => 
 
 // ───────── a fold in hand must not feed a resident's painting ──────────────
 
-test("FALSIFIER — the drawn set is decided by WHO is reading, not by what is in hand", async () => {
+test("[pin] FALSIFIER — the drawn set is decided by WHO is reading, not by what is in hand", async () => {
   // Keemin, 2026-09-10: act as wright, switch to Spectator, switch back — and
   // the whole town came back, 89 cards. The Spectator visit loads the fold
   // (correctly) and assembles `world`; nothing cleared it on the way back, and
@@ -372,7 +372,7 @@ test("FALSIFIER — the drawn set is decided by WHO is reading, not by what is i
     "and homeSet with it, or green stops meaning home");
 });
 
-test("the Spectator arm refills the index from the fold — a house outside the last resident's read is clickable again (2026-09-11)", async () => {
+test("[pin] the Spectator arm refills the index from the fold — a house outside the last resident's read is clickable again (2026-09-11)", async () => {
   // Keemin, 2026-09-11: act as wright, switch to Spectator, walk to the
   // Threshold District — "I cannot click any of the parcels in there".
   // Measured in his tab with the index exposed: after the detour `byId` held

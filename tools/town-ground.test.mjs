@@ -389,7 +389,7 @@ test("THE REGISTRATION DID NOT MOVE — the ground still stands on the skeleton'
     "dawn (5075,450) and dark (-1900,2150) project to the atlas's own (1500,850) → (105,1190)");
 });
 
-test("THE CALL SITE PASSES A SET THAT EXISTS — a CHEAP SECOND GUARD, not the real one", () => {
+test("[pin] THE CALL SITE PASSES A SET THAT EXISTS — a CHEAP SECOND GUARD, not the real one", () => {
   // ⚠ READ THIS BEFORE TRUSTING THIS TEST. It is a source-text regex, and a
   // regex proves a line was TYPED — never that its value reaches the screen.
   // The fresh reviewer kept this exact call site, discarded its answer, mounted
@@ -461,7 +461,7 @@ test("A GROUNDLESS RECORD REFUSES rather than drawing a plausible lie", () => {
   assert.ok(townGround(world.marks, skeleton, { originPx, mPerPx }).svgText.length > 1000);
 });
 
-test("THE ATLAS IS NOT FETCHED — the last read of a surface the world does not own is gone", () => {
+test("[pin] THE ATLAS IS NOT FETCHED — the last read of a surface the world does not own is gone", () => {
   assert.doesNotMatch(VIEWER, /fetch\(\s*["'`]\/atlas\//,
     "the viewer no longer fetches the atlas anywhere");
   // the town now runs the room's furnishing pass, because the baker is gone
@@ -469,7 +469,7 @@ test("THE ATLAS IS NOT FETCHED — the last read of a surface the world does not
     "the town hangs its own art (SCENES.md #6, retired the same day)");
 });
 
-test("A MARK IS DRAWN ONCE — the ground names what it drew, and the furnishing pass skips it", () => {
+test("[pin] A MARK IS DRAWN ONCE — the ground names what it drew, and the furnishing pass skips it", () => {
   // The defect this answers was visible from across the room: the main channel
   // came out dark and correct as water, and was then repainted on top as a pale
   // placeholder block in its own hue — a river running sage-green down the

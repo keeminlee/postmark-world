@@ -169,7 +169,7 @@ test("A MARK IS CULLED BY ITS GEOMETRY, NOT BY ITS CENTRE — a district straddl
   // and the arrow can never disagree about what is on screen
 });
 
-test("THE WALKER IS A FRAME WITH LEGS — empty at town width, no picture, no clip path, fixed where they stand", () => {
+test("[pin] THE WALKER IS A FRAME WITH LEGS — empty at town width, no picture, no clip path, fixed where they stand", () => {
   const svg = walkerFrameSVG({ at: { x: 100, y: 200 }, k: 2, handle: "rei" });
   assert.match(svg, /^<g class="wv-walker-far" data-handle="rei"/, "one group, named by the handle");
   assert.equal((svg.match(/wv-walker-frame/g) ?? []).length, 1, "one frame");
@@ -249,7 +249,7 @@ test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, a
   assert.equal(overlayHouseGlyphSVG({ at: { x: NaN, y: 0 }, id: "x" }), "", "a mark with no place draws nothing");
 });
 
-test("THE TIER IS THE CAMERA'S ON EVERY PATH — no resident-path null, no resident-path skip of the cull box (founder, 2026-09-11: 'whatever happened to the zoom out removing images and replacing with static?')", () => {
+test("[pin] THE TIER IS THE CAMERA'S ON EVERY PATH — no resident-path null, no resident-path skip of the cull box (founder, 2026-09-11: 'whatever happened to the zoom out removing images and replacing with static?')", () => {
   assert.match(SOURCE, /const drawTier = \(\) => tierFor\(mapCtx\?\.zoomK, paintingWidthM\(\), state\.drawDials\);/, "one tier reader, no path branch");
   assert.match(SOURCE, /const drawnBounds = \(\) => \(!mapCtx \? null : viewportWorldBounds\(\{/, "one cull box, no path branch");
   assert.match(SOURCE, /mapCtx\.drawnAt = \{ bounds, tier \};/, "and the settle pass can see what every path drew");
@@ -257,7 +257,7 @@ test("THE TIER IS THE CAMERA'S ON EVERY PATH — no resident-path null, no resid
   // ⚑ THE FLIP: restore `onResidentPath() ? null :` in drawTier → the first and last lines red.
 });
 
-test("THE PLACEHOLDER BLOCK IS HALF PRESENT — the ground reads through it (founder, 2026-09-11, revising 08-20's 'no transparency games')", () => {
+test("[pin] THE PLACEHOLDER BLOCK IS HALF PRESENT — the ground reads through it (founder, 2026-09-11, revising 08-20's 'no transparency games')", () => {
   assert.match(SOURCE, /\.wv-ph-extent \{ [^}]*opacity:\.5;/, "50%, on the element, so the edge fades with the fill");
   const svg = placeholderExtentSVG({ id: "a/b", kind: "sited", at: { x: 0, y: 0 }, extent: { w: 4, h: 4 } }, (p) => p);
   assert.match(svg, /class="wv-ph-extent"/, "the block is still the block");

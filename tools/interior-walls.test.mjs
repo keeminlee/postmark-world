@@ -57,7 +57,7 @@ test("a ringed room is fenced by its RING, not by its bounding box", () => {
     "the notch is outside the floor even though it is inside the bounding box");
 });
 
-test("THE DESK ASKS BEFORE IT ARMS — the guard is wired at the click, not at confirm", () => {
+test("[pin] THE DESK ASKS BEFORE IT ARMS — the guard is wired at the click, not at confirm", () => {
   // Asked at confirm, the reader would arm a destination, see it drawn on the
   // painting, and only then be told they cannot go — and the walk desk would
   // have shown a leg it was never going to walk.

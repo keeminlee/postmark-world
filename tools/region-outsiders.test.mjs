@@ -148,7 +148,7 @@ test("A HAND-EDITED LIST IS OVERWRITTEN — the file is a view, not a record", (
 });
 
 // ── (e) the generator no longer writes it ───────────────────────────────────
-test("ONE WRITER: the ring generator traces rings and does not emit the list", () => {
+test("[pin] ONE WRITER: the ring generator traces rings and does not emit the list", () => {
   const src = readFileSync(join(ROOT, "tools/region-rings-gen.mjs"), "utf8");
   assert.equal(/region-outsiders\.json/.test(src), false,
     "the hand-run tool must not write the list — two writers is how it went stale");

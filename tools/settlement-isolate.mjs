@@ -135,14 +135,21 @@ function rewind(repo, before, mainBranch) {
 /**
  * The gate, run the way settlement-auto.sh runs it — same command, same silence.
  *
+ * RULED 2026-09-14 (#2790): the crossing gates on BEHAVIOUR, not on source text.
+ * `test:candle` runs every suite with the source-pin tests — those whose titles
+ * carry "[pin] " — skipped, and refuses to run at all if that marker matches
+ * nothing. `npm test` still runs all of them; the pull-request workflow is where
+ * the pins gate. The instance: 05:45Z that day a source pin on viewer.mjs's
+ * shape, lawfully broken by the search bar, held 29 marks back for twelve hours.
+ *
  * Injectable (`isolate({ gate })`) for one reason: the real gate is the world's
  * whole 686-test grammar suite against the whole record, and a fixture repo
  * holding four marks cannot run it. A falsifier that cannot make the gate go red
  * on demand cannot test the search at all — it could only assert that a function
  * was called. Nothing in production passes it.
  */
-export function npmTestGate(repo) {
-  const run = spawnSync("npm", ["test", "--silent"], { cwd: repo, encoding: "utf8", shell: process.platform === "win32", maxBuffer: 128 * 1024 * 1024 });
+export function npmTestGate(repo, spawn = spawnSync) {
+  const run = spawn("npm", ["run", "test:candle", "--silent"], { cwd: repo, encoding: "utf8", shell: process.platform === "win32", maxBuffer: 128 * 1024 * 1024 });
   return { green: run.status === 0, log: `${run.stdout ?? ""}${run.stderr ?? ""}` };
 }
 

@@ -43,7 +43,7 @@ test('THE VOID IS DARK: the ground rect fills with the page\'s own night, not a 
     'the cream (#e3d5b3) is back in the open-country block — founder-ruled out 2026-08-26');
 });
 
-test("AND --night IS ACTUALLY DARK — naming a token is not the same as being dark", () => {
+test("[pin] AND --night IS ACTUALLY DARK — naming a token is not the same as being dark", () => {
   // Without this, the test above passes for a --night redefined to cream: the
   // rect would still say var(--night) and the void would still be jarring.
   // The ruling is about what the reader SEES, so the assertion follows the
@@ -60,7 +60,7 @@ test("AND --night IS ACTUALLY DARK — naming a token is not the same as being d
   assert.ok(luma < 64, `--night resolves to #${m[1]} (luma ${luma.toFixed(1)}) — that is not a dark void`);
 });
 
-test("EVERYTHING ELSE STAYS: the rect still exists, still spans the root frame, and the camera is untouched (2026-08-24 ruling)", () => {
+test("[pin] EVERYTHING ELSE STAYS: the rect still exists, still spans the root frame, and the camera is untouched (2026-08-24 ruling)", () => {
   const block = openCountryBlock();
 
   // still drawn, still the root frame's size, still under the mist
@@ -81,7 +81,7 @@ test("EVERYTHING ELSE STAYS: the rect still exists, still spans the root frame, 
     "the wheel cap is no longer keyed to the world frame");
 });
 
-test("A ROOM NEVER GETS OPEN COUNTRY — interiors are byte-identical either way", () => {
+test("[pin] A ROOM NEVER GETS OPEN COUNTRY — interiors are byte-identical either way", () => {
   // zoomOutLimit === 1 is a room; rootMk is only looked up above 1, so
   // worldFrame is null indoors and the whole block is skipped. This is the
   // 08-20 ruling the 08-24 one promised not to disturb, and the tone change

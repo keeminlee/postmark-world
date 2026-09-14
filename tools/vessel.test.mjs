@@ -763,7 +763,7 @@ test("a malformed timetable is LOUD — the fold never degrades into a service t
   assert.equal(errors[0].mark, WHEELHOUSE);
 });
 
-test("the derivation path touches no filesystem — position is arithmetic, not a read", () => {
+test("[pin] the derivation path touches no filesystem — position is arithmetic, not a read", () => {
   // walk.mjs's design law, extended: the office pen owns writing, this owns
   // arithmetic. A fs import here would mean a reader's answer could depend on
   // which clone they hold.

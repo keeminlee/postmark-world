@@ -1,0 +1,51 @@
+# suite.yml — where the source pins gate.
+#
+# RULED 2026-09-14 (Keemin; issue #2790): behaviour gates the candle, text gates
+# the pull request. The settlement crossing runs `npm run test:candle`, which
+# withholds every test whose title carries "[pin] " — the ones that read a source
+# file as text and assert over its shape. Those tests are not retired; they run
+# here, on every pull request into main, which is the place a change of shape is
+# actually being proposed and a human is already reading.
+#
+# The instance this closes: 2026-09-14 05:45Z, the S70 crossing. A pin on
+# viewer.mjs's shape counted one keepZoom caller; the search bar had lawfully
+# made a second. The suite went red, the isolate held all 29 marks back, and the
+# crossing published nothing. The fix merged within the hour and could not
+# publish until the next window closed — a correct town sat unpublished for
+# twelve hours behind a test that had never watched a camera move. Before this
+# file, the candle was the ONLY thing that ran those pins, which is backwards.
+#
+# SECURITY. `pull_request`, not `pull_request_target`: this runs the PR's own
+# code, so it gets no secrets and read-only contents. It needs none — the world
+# declares no dependencies, so there is no install step and nothing is fetched
+# from a registry. Node and the checkout, and nothing else.
+
+name: suite
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: suite-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  suite:
+    if: github.repository == 'keeminlee/postmark-world'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # No `npm ci`, no `npm install`: package.json declares no dependencies and
+      # the suite imports only node builtins and this repo's own modules. A test
+      # that wants a browser asks for playwright inside a try/catch and skips
+      # itself when it is absent, which is what happens here.
+      - name: the whole suite — behaviour AND the source pins
+        run: npm test

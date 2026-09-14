@@ -73,7 +73,7 @@ test("the dial sits in the gap the record actually has, between a parcel and a d
   //   4000 and the district one does.
 });
 
-test("the dial is a dial — Keemin can move it with a finger, not a pull request", () => {
+test("[pin] the dial is a dial — Keemin can move it with a finger, not a pull request", () => {
   assert.match(SOURCE, /\{ key: "placed_art_min_m", label: "[^"]+", min: \d+, max: \d+, step: \d+ \}/,
     "it has a row in DRAW_DIALS beside art_min_px");
 });
@@ -110,7 +110,7 @@ test("the whitelist is still the only road for a placed URL", () => {
 
 // ── the one-off is gone ─────────────────────────────────────────────────────
 
-test("the mountain's picture is no longer typed into the viewer", () => {
+test("[pin] the mountain's picture is no longer typed into the viewer", () => {
   assert.doesNotMatch(SOURCE, /PANDO_ART_URL/, "the constant is gone");
   assert.doesNotMatch(SOURCE, /vermillion-pando-peak-the-true-mountain-card/,
     "and so is the file name it held");
@@ -122,14 +122,14 @@ test("the mountain's picture is no longer typed into the viewer", () => {
     "and it clears the dial by being large, not by being the mountain");
 });
 
-test("the mist stayed behind — it is the corridor's weather, not a mark's picture", () => {
+test("[pin] the mist stayed behind — it is the corridor's weather, not a mark's picture", () => {
   const far = SOURCE.slice(SOURCE.indexOf("function drawFarCountry()"));
   const body = far.slice(0, far.indexOf("\n  }"));
   assert.match(body, /mistLayer\.innerHTML = mistBandSVG\(/, "drawFarCountry still lays the mist");
   assert.doesNotMatch(body, /ArtLayer/, "and no longer touches any art layer");
 });
 
-test("the rule reads the whole record and is bounded by the viewport, not the radial", () => {
+test("[pin] the rule reads the whole record and is bounded by the viewport, not the radial", () => {
   const fn = SOURCE.slice(SOURCE.indexOf("function drawPlacedArt("));
   const body = fn.slice(0, fn.indexOf("\n  }"));
   assert.match(body, /tier === "near"/, "near draws none of it");
@@ -638,7 +638,7 @@ test("THE PAGE — a region's picture hangs at far and is gone at mid, tint and 
   // saying so is the point.
 });
 
-test("the tint filter exists and is scoped to mid — a source pin, and it says so", () => {
+test("[pin] the tint filter exists and is scoped to mid — a source pin, and it says so", () => {
   // The page cannot drive this on a rig with no office (see the note above), so
   // what is left is a pin that proves the line was typed. It is labelled as
   // exactly that rather than dressed up as coverage.
@@ -651,7 +651,7 @@ test("the tint filter exists and is scoped to mid — a source pin, and it says 
 
 // ── A REGION'S PICTURE IS A DOOR (Keemin, 2026-09-13) ───────────────────────
 
-test("the hit rect is opt-in, carries the id, and nothing else hung gets one", () => {
+test("[pin] the hit rect is opt-in, carries the id, and nothing else hung gets one", () => {
   const base = { at: { x: 0, y: 0 }, extent: { w: 900, h: 600 }, href: "/media/x.jpg", fit: "meet" };
   const region = placedArtSVG({ ...base, id: "caelum/evermoon", label: "Evermoon", clickable: true });
   const mountain = placedArtSVG({ ...base, id: "the-town/pando-peak", label: "Pando" });

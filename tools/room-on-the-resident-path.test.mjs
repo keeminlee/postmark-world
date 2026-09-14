@@ -48,7 +48,7 @@ test("with the fold in hand, the fold is what is asked — untouched, terrain an
   assert.equal(w.terrain, null, "no fold, no terrain — investigate reads it optionally");
 });
 
-test("composeInterior asks investigate through worldForRoom, never with the bare closure world", () => {
+test("[pin] composeInterior asks investigate through worldForRoom, never with the bare closure world", () => {
   assert.match(SOURCE, /investigate\(roomId, worldForRoom\(world, allMarks\(\)\), \{ occupancy: liveOccupancy\(\)/, "the room mount");
   assert.doesNotMatch(SOURCE, /investigate\(roomId, world,/, "no call hands the engine a world that may be null");
 });

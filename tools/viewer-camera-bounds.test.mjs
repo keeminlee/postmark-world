@@ -48,7 +48,7 @@ test("a view larger than the painting is CENTRED in it, not refused — the lett
   assert.deepEqual(clampViewToBounds({ x: -400, y: 2000, w: 240, h: 240 }, room), { x: 0, y: 720 });
 });
 
-test("THE FENCE HAS ONE OWNER: every camera write goes through applyView, and applyView clamps", () => {
+test("[pin] THE FENCE HAS ONE OWNER: every camera write goes through applyView, and applyView clamps", () => {
   // wheel, drag, tween, setView and refit all end in applyView — so clamping
   // there is what makes the fence unroutable-around. A regression that clamps
   // in the drag handler instead would pass the arithmetic tests above and let
@@ -88,7 +88,7 @@ test('STEP OUTSIDE MUST NOT SHRINK THE VIEW: "locks the min zoom of your camera 
   assert.equal(frameWidthFor({ viewW: 1236.48, fullW: 960, keepZoom: true }) / 1236.48, 1);
 });
 
-test("THE EXIT AND THE SEARCH'S ARRIVAL ARE THE ONLY CALLERS THAT KEEP THEIR ZOOM — lock-on and follow still take you to the thing", () => {
+test("[pin] THE EXIT AND THE SEARCH'S ARRIVAL ARE THE ONLY CALLERS THAT KEEP THEIR ZOOM — lock-on and follow still take you to the thing", () => {
   assert.match(SOURCE, /frameOn\(rim, \{ keepZoom: true \}\)/,
     "stepping outside frames the door without changing the zoom");
   // THE SECOND CALLER, WITH ITS OWN REASON (2026-09-13, the search bar, world
@@ -146,7 +146,7 @@ test('LABELS DO NOT SHRINK ON A RESIDENT SWITCH: a framed view takes its height 
   assert.ok(painted / paned > 1.2, `the stale height was ${(painted / paned).toFixed(2)}x too tall, which is the shrink`);
 });
 
-test("ONE ROOT, ONE OWNER: frameOn asks the pane for its height and the shared rule for its width", () => {
+test("[pin] ONE ROOT, ONE OWNER: frameOn asks the pane for its height and the shared rule for its width", () => {
   assert.match(SOURCE, /const h = frameHeightFor\(\{ w, fullW: full\.w, fullH: full\.h, paneW: paneBox\.width, paneH: paneBox\.height \}\)/,
     "frameOn derives its height through the shared rule, from the measured pane");
   assert.doesNotMatch(SOURCE, /h = w \* \(full\.h \/ full\.w\)/,
