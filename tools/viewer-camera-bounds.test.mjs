@@ -88,11 +88,21 @@ test('STEP OUTSIDE MUST NOT SHRINK THE VIEW: "locks the min zoom of your camera 
   assert.equal(frameWidthFor({ viewW: 1236.48, fullW: 960, keepZoom: true }) / 1236.48, 1);
 });
 
-test("THE EXIT IS THE ONLY CALLER THAT KEEPS ITS ZOOM — lock-on and follow still take you to the thing", () => {
+test("THE EXIT AND THE SEARCH'S ARRIVAL ARE THE ONLY CALLERS THAT KEEP THEIR ZOOM — lock-on and follow still take you to the thing", () => {
   assert.match(SOURCE, /frameOn\(rim, \{ keepZoom: true \}\)/,
     "stepping outside frames the door without changing the zoom");
-  assert.equal((SOURCE.match(/keepZoom: true/g) ?? []).length, 1,
-    "and it is the ONLY caller that keeps its zoom — a second one would need its own reason");
+  // THE SECOND CALLER, WITH ITS OWN REASON (2026-09-13, the search bar, world
+  // PR #56): a search hit brings the reader TO what they found, and going to
+  // something must not also decide how close they wanted to stand — a zoom rule
+  // is a separate ask if the founder wants one (viewer.mjs § goTo). So two
+  // callers keep their zoom, each named here by its own line, and a third would
+  // still need its own reason. This assertion held the town's 2026-09-14 05:45Z
+  // crossing red for a day (settlement refused, unattributable to any mark)
+  // because the law said ONE while the search had lawfully made it two.
+  assert.match(SOURCE, /mapCtx\.frameOn\(state\.cam, \{ keepZoom: true \}\)/,
+    "a search hit goes to the thing without changing how close the reader stands");
+  assert.equal((SOURCE.match(/keepZoom: true/g) ?? []).length, 2,
+    "and those are the ONLY two callers that keep their zoom — the exit and the search's arrival; a third would need its own reason");
   assert.match(SOURCE, /const target = mapCtx\.frameOn\(\);/,
     "lock-on still asks for the default framing, which takes you to the thing");
   // and the warm-the-painting fix rides at the two places the town is parked,
