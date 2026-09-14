@@ -61,7 +61,7 @@ const RECORDS = [
 // GUARDRAIL — "tags only, never main tip"
 // ---------------------------------------------------------------------------
 
-test('tags only, never main tip: no source chain the viewer builds names the world repo main tip', () => {
+test('[pin] tags only, never main tip: no source chain the viewer builds names the world repo main tip', () => {
   for (const { record, office } of RECORDS) {
     for (const source of recordSources(record, { office })) {
       assert.equal(readsMainTip(source.url), false,
@@ -70,7 +70,7 @@ test('tags only, never main tip: no source chain the viewer builds names the wor
   }
 });
 
-test('tags only, never main tip: the detector recognises the forbidden URL, so the assertion above can fail', () => {
+test('[pin] tags only, never main tip: the detector recognises the forbidden URL, so the assertion above can fail', () => {
   // THE CAN-FAIL FLIP. This is the exact chain the viewer built before
   // 2026-08-26 — the third leg is the one that was removed. Fed to the same
   // detector the test above uses, it must come back forbidden.
@@ -84,7 +84,7 @@ test('tags only, never main tip: the detector recognises the forbidden URL, so t
   assert.equal(forbidden[0].url, `${WORLD_MAIN_TIP}/WORLD/world-state.json`);
 });
 
-test('tags only, never main tip: the viewer source itself carries no main-tip URL', () => {
+test('[pin] tags only, never main tip: the viewer source itself carries no main-tip URL', () => {
   // THE BYTES, not the decision. The leg this cut removed was an inline literal
   // inside a fetch loop; a module boundary would not have stopped it being
   // written and would not stop it coming back.
@@ -93,14 +93,14 @@ test('tags only, never main tip: the viewer source itself carries no main-tip UR
     `spectator/viewer.mjs must not name ${WORLD_MAIN_TIP}`);
 });
 
-test('tags only, never main tip: the source-text probe can fail, shown against the pre-cut line', () => {
+test('[pin] tags only, never main tip: the source-text probe can fail, shown against the pre-cut line', () => {
   // THE CAN-FAIL FLIP for the probe above, against the exact line that used to
   // sit at spectator/viewer.mjs:28.
   const preCutLine = `const RAW = "${WORLD_MAIN_TIP}";`;
   assert.equal(preCutLine.includes(WORLD_MAIN_TIP), true);
 });
 
-test('the local spectator server answers for every record the viewer reads same-origin', () => {
+test('[pin] the local spectator server answers for every record the viewer reads same-origin', () => {
   // The fallback was removable only because nothing real needed it. That claim
   // is checked here rather than asserted: the local habitat must serve, off its
   // own disk, every path the viewer asks this origin for. `/WORLD/walk-ledger.md`

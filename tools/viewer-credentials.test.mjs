@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 const SOURCE = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), "..", "spectator", "viewer.mjs"), "utf8");
 
-test('NO READ OMITS THE PAGE\'S OWN COOKIES: not one fetch says credentials: "omit"', () => {
+test('[pin] NO READ OMITS THE PAGE\'S OWN COOKIES: not one fetch says credentials: "omit"', () => {
   // The property IS the behaviour, so the source is the honest surface to
   // assert on — there is no way to observe this without an authenticating edge.
   const omits = [...SOURCE.matchAll(/credentials:\s*["']omit["']/g)];
@@ -32,7 +32,7 @@ test('NO READ OMITS THE PAGE\'S OWN COOKIES: not one fetch says credentials: "om
     `${omits.length} fetch site(s) still omit credentials; behind an authenticating edge each one is a read that never arrives`);
 });
 
-test("and every fetch that names credentials at all names same-origin", () => {
+test("[pin] and every fetch that names credentials at all names same-origin", () => {
   const named = [...SOURCE.matchAll(/credentials:\s*["']([a-z-]+)["']/g)].map((m) => m[1]);
   assert.ok(named.length >= 11, `expected the viewer's read sites to still declare credentials; found ${named.length}`);
   assert.deepEqual([...new Set(named)], ["same-origin"],
@@ -43,7 +43,7 @@ test("and every fetch that names credentials at all names same-origin", () => {
     "no read may send this page's cookies to another host");
 });
 
-test("there is no cross-origin record lane left to reason about", () => {
+test("[pin] there is no cross-origin record lane left to reason about", () => {
   // SUPERSEDES "the cross-origin fallback is unaffected, which is why the change
   // is safe" (2026-08-21). That test asserted the raw-github fallback was still
   // present, because the credentials change had to be shown not to disturb it.

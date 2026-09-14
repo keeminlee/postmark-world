@@ -88,7 +88,7 @@ test("the door's other three answers are untouched", () => {
     /you are already inside/);
 });
 
-test("THE DISPATCH: accept is sent as the door's own field, and the handler reads the attribute the markup writes", () => {
+test("[pin] THE DISPATCH: accept is sent as the door's own field, and the handler reads the attribute the markup writes", () => {
   // asserted on the wiring rather than on pixels, per the brief
   assert.match(SOURCE, /crossInto\(acceptBtn\.dataset\.enterAccept, \{ accept: true, button: acceptBtn \}\)/,
     "the accept button dispatches the enter act with the walker's word");

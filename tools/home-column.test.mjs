@@ -369,7 +369,7 @@ test("the model carries an enter door only for a parcel a reader who can act is 
     { parcelId: "nyx/the-night-room-parcel" });
 });
 
-test("the column renders the enter button BESIDE ITS NAME, naming the parcel it enters — and not otherwise", () => {
+test("[pin] the column renders the enter button BESIDE ITS NAME, naming the parcel it enters — and not otherwise", () => {
   const withDoor = render(homeColumnModel({ handle: "nyx", parcelId: "nyx/the-night-room-parcel", canEnter: true }));
   const isDoor = (b) => b.className.split(" ").includes("wv-homecol-enter");
   const buttons = find(withDoor, "button").filter(isDoor);

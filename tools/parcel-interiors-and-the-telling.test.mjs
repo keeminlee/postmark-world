@@ -15,7 +15,7 @@ const GARDENS = { id: "rei/the-lanternseed-gardens", kind: "sited", tier: "marke
 const LAMP = { id: "rei/a-lamp-in-the-gardens", kind: "sited", placementParent: GARDENS.id, at: { x: 1300, y: -900 }, extent: { w: 1, h: 1 } };
 const MARKS = [PARCEL, HOUSE, CHAIR, GARDENS, LAMP];
 
-test("WHAT IS INSIDE A PARCEL STAYS INSIDE IT — the dwelling and its furniture are hidden from outside, drawn from within; a region's furniture is never a parcel's", () => {
+test("[pin] WHAT IS INSIDE A PARCEL STAYS INSIDE IT — the dwelling and its furniture are hidden from outside, drawn from within; a region's furniture is never a parcel's", () => {
   assert.equal(parcelEnclosing(HOUSE, MARKS), PARCEL.id, "the dwelling stands inside the parcel (placementParent)");
   assert.equal(parcelEnclosing(CHAIR, MARKS), PARCEL.id, "and so does the chair in the dwelling (parent, then placementParent)");
   assert.equal(parcelEnclosing(PARCEL, MARKS), null, "a parcel is not inside itself");
@@ -44,18 +44,18 @@ test("WHAT IS INSIDE A PARCEL STAYS INSIDE IT — the dwelling and its furniture
   // ⚑ THE FLIP: make hiddenInsideParcel return false unconditionally → four lines red.
 });
 
-test("THE TELLING IS THE CARDS — the office's prose twin is not rendered (founder: 'a giant regular-text blob redundant with the formatted cards')", () => {
+test("[pin] THE TELLING IS THE CARDS — the office's prose twin is not rendered (founder: 'a giant regular-text blob redundant with the formatted cards')", () => {
   assert.doesNotMatch(SOURCE, /wv-telling-prose/, "no prose block in the resident telling");
   assert.match(SOURCE, /residentTellingCards\(radial, mine \? isMine : null\)/, "the cards are what is rendered");
   // ⚑ THE FLIP: restore the `read.telling` paragraph render → the first line reds.
 });
 
-test("NO GROUND BEFORE THE READ — the resident path does not attempt the ground until its read is in hand", () => {
+test("[pin] NO GROUND BEFORE THE READ — the resident path does not attempt the ground until its read is in hand", () => {
   assert.match(SOURCE, /if \(onResidentPath\(\) && !readCache\.get\(residentStandpointKey\(\{ x: state\.cam\.x, y: state\.cam\.y \}, state\.handle\)\)\) return;\n\s*minimapLoading = true;/, "the gate sits before the loading flag, so the read's own render retries");
   // ⚑ THE FLIP: delete the gate → the flash returns ("the ground didn't draw (townGround: …)").
 });
 
-test("THE CHOOSER IS SORTED — residents, parcels, then other marks, each group labelled and empty groups silent", () => {
+test("[pin] THE CHOOSER IS SORTED — residents, parcels, then other marks, each group labelled and empty groups silent", () => {
   const kinds = { "a/p": "parcel", "b/p": "parcel", "a/house": "sited", "the-town/x": "sited" };
   const g = groupChooserIds(["walker:rei", "a/house", "a/p", "walker:nyx", "the-town/x", "b/p"], { isWalker: (id) => id.startsWith("walker:"), kindOf: (id) => kinds[id] ?? null });
   assert.deepEqual(g, { residents: ["walker:rei", "walker:nyx"], parcels: ["a/p", "b/p"], others: ["a/house", "the-town/x"] }, "three groups, order within each as handed in");

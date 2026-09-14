@@ -36,7 +36,7 @@ const SOURCE = readFileSync(join(ROOT, "spectator/viewer.mjs"), "utf8");
 
 // ── source pins: the rule, and the trigger that makes it reach the screen ───
 
-test("the pinned parcel answers `near` inside homeCard, before the tier is read", () => {
+test("[pin] the pinned parcel answers `near` inside homeCard, before the tier is read", () => {
   const fn = SOURCE.slice(SOURCE.indexOf("function homeCard(parcel, at, fan, title, tier = null)"));
   const body = fn.slice(0, fn.indexOf("\n  function "));
   const pin = body.indexOf("pinnedColumnParcelId && parcel.id === pinnedColumnParcelId");
@@ -46,7 +46,7 @@ test("the pinned parcel answers `near` inside homeCard, before the tier is read"
   assert.match(body, /tier = "near"/, "the pinned parcel is treated as near");
 });
 
-test("opening or closing a column redraws the map — and nothing else does", () => {
+test("[pin] opening or closing a column redraws the map — and nothing else does", () => {
   // The trigger, where the column is decided.
   const at = SOURCE.indexOf("const pinnedNow = column?.parcelId ?? null;");
   assert.ok(at > 0, "the pinned id is taken from the column view");
@@ -64,7 +64,7 @@ test("opening or closing a column redraws the map — and nothing else does", ()
   //   only by a regex that watches the source.
 });
 
-test("the pin is not a second draw path — it rides homeCard and the same cull", () => {
+test("[pin] the pin is not a second draw path — it rides homeCard and the same cull", () => {
   // A pinned house must still be culled with the others. The guard is that the
   // pin lives inside homeCard, which is only ever called from inside the drawn
   // loop; there is no second call site that could draw an off-screen house.

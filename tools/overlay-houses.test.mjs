@@ -64,7 +64,7 @@ test("no picture: the empty frame, as the atlas gave it", () => {
   // ⚑ THE FLIP: drop homeFaceSVG() from the blank card → the envelope count reds.
 });
 
-test("the seal is the town's, in the town's two colours", () => {
+test("[pin] the seal is the town's, in the town's two colours", () => {
   // NOT A RESTATEMENT OF THE CSS — the point is that these two values are the
   // site's own, so a later theme change moves them together. #0d1426 is the
   // navy behind seventy site surfaces and the ground of public/atelier/postmark/
@@ -111,7 +111,7 @@ test("HOME: the household's walker at rest inside the parcel lights the frame", 
   assert.equal(houseIsLit({ ...PARCEL, at: null }, [home]), false);
 });
 
-test("THE PARCEL UNDERFOOT — entered directly, through the dwelling on it, or a room in that dwelling — is the one parcel whose card is not drawn", () => {
+test("[pin] THE PARCEL UNDERFOOT — entered directly, through the dwelling on it, or a room in that dwelling — is the one parcel whose card is not drawn", () => {
   const ROOM = { id: "jack/the-lantern/kitchen", kind: "sited", parent: HOME.id, at: { x: 102, y: 201 }, extent: { w: 3, h: 3 } };
   const OTHER = { id: "rei/the-attic-parcel", kind: "parcel", household: "rei", at: { x: 300, y: 300 }, extent: { w: 25, h: 25 } };
   const marks = [PARCEL, HOME, ROOM, OTHER];
@@ -130,7 +130,7 @@ test("THE PARCEL UNDERFOOT — entered directly, through the dwelling on it, or 
   // ⚑ THE FLIP: drop `m.placementParent` from the queue push → the dwelling line reds.
 });
 
-test("THE CARD'S LABEL IS THE HOME'S NAME — the dwelling where one stands, the household only where none does (founder, 2026-09-11)", () => {
+test("[pin] THE CARD'S LABEL IS THE HOME'S NAME — the dwelling where one stands, the household only where none does (founder, 2026-09-11)", () => {
   assert.match(SOURCE, /label: home \? markName\(home\)\.name : String\(parcel\.household \?\? parcel\.by \?\? ""\),/, "the viewer's card asks the home first");
   // ⚑ THE FLIP: put the household back first → reds.
 });
@@ -155,7 +155,7 @@ test("THE RESIDENT'S OWN HOUSE WEARS ITS PICTURE TOO — a portfolio row that sh
   // ⚑ THE FLIP: return to `if (!byId.has(m.id)) byId.set(m.id, m)` → the picture line reds.
 });
 
-test("A PARCEL IS NOT FURNITURE — its card is its whole drawing", () => {
+test("[pin] A PARCEL IS NOT FURNITURE — its card is its whole drawing", () => {
   // Keemin's dev screenshot, 2026-09-12: his own house drawn twice from outside
   // the parcel — the card, and an unframed square photograph sitting on top of
   // it. Both carried the PARCEL's id, measured on dev at 152 px:

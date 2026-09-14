@@ -24,7 +24,7 @@ test("the chip cannot fall back on containment, because it is never handed the m
   assert.doesNotMatch(String(chipMark), /marks/, "no marks parameter, no containment chain to reach for");
 });
 
-test("the viewer feeds the chip the MOUNTED room, and every chip site reads it — none reads the root by hand", () => {
+test("[pin] the viewer feeds the chip the MOUNTED room, and every chip site reads it — none reads the root by hand", () => {
   assert.match(SOURCE, /const chipMarkId = \(\) => chipMark\(\{ viewingInteriorOf: sceneRoomId \}\);/, "the feed is the mounted room, which is set from a crossing");
   assert.match(SOURCE, /selectMark\(chipMarkId\(\), \{ scrollCell: true \}\)/, "the click");
   assert.match(SOURCE, /hoverMark\(chipMarkId\(\)\)/, "the hover");

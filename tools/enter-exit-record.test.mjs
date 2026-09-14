@@ -64,7 +64,7 @@ const actLines = (text) => text.replace(/\r\n/g, "\n").split("\n").filter((l) =>
 
 // ── THE THREE FILES ─────────────────────────────────────────────────────────
 
-test("both files are in the tree — a record the package does not carry is a 404 in prod", () => {
+test("[pin] both files are in the tree — a record the package does not carry is a 404 in prod", () => {
   // The site stages a record file because a reader asks this origin for it, and
   // the build FAILS if the pinned package does not carry it. So a viewer that
   // asks for a name this repo does not ship does not degrade — it stops the
@@ -178,7 +178,7 @@ test("THE FERRY FIELD — the word `crossing` is reserved for the ferry's clock 
 
 // ── EVERY READER IN THIS PACKAGE ────────────────────────────────────────────
 
-test("the viewer asks for a record name this package carries", () => {
+test("[pin] the viewer asks for a record name this package carries", () => {
   // The site derives its staging list from the paths the pinned viewer asks
   // this origin for, and FAILS the build when the package does not carry one.
   // So a viewer literal with no file behind it does not degrade — it stops the
@@ -190,14 +190,14 @@ test("the viewer asks for a record name this package carries", () => {
     assert.ok(existsSync(join(ROOT, path.slice(1))), `the viewer asks this origin for ${path} and the package has no such file`);
 });
 
-test("the local spectator serves the record off its own disk", () => {
+test("[pin] the local spectator serves the record off its own disk", () => {
   // A page served from a bare clone with no office must still derive occupancy.
   const server = readFileSync(join(ROOT, "spectator", "server.mjs"), "utf8");
   assert.ok(server.includes(`p === "/WORLD/enter-exit-ledger.md"`),
     "spectator/server.mjs has no route for /WORLD/enter-exit-ledger.md");
 });
 
-test("RESURRECTION GUARD — no CODE in this package names the retired file", () => {
+test("[pin] RESURRECTION GUARD — no CODE in this package names the retired file", () => {
   // The deletion is only real if nothing still reaches for it. A route or a
   // fetch literal pointed at a file the package does not carry does not fail
   // loudly; it serves a 404 into a reader that then shows an empty town.
@@ -231,7 +231,7 @@ test("the resurrection guards can fail — both detectors recognise what they ar
     "the source probe cannot recognise the exact line it was written to catch");
 });
 
-test("nothing in this package still imports the retired grammar module", () => {
+test("[pin] nothing in this package still imports the retired grammar module", () => {
   // `tools/thresholds.mjs` is gone. A stale import would not be a soft failure:
   // it is a module that does not resolve, which takes the whole viewer down.
   const viewer = readFileSync(join(ROOT, "spectator", "viewer.mjs"), "utf8");
@@ -240,7 +240,7 @@ test("nothing in this package still imports the retired grammar module", () => {
   assert.ok(existsSync(join(ROOT, "tools", "enter-exit.mjs")));
 });
 
-test("the probes above can fail — a name this package does not carry is caught", () => {
+test("[pin] the probes above can fail — a name this package does not carry is caught", () => {
   // THE CAN-FAIL FLIP for the reader probes. An assertion that every asked-for
   // path exists is worth nothing if the check cannot notice one that does not.
   assert.equal(existsSync(join(ROOT, "WORLD/enter-exit-ledger-that-does-not-exist.md")), false);
