@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1221,
+  "count": 1254,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -350,6 +350,16 @@
     },
     {
       "id": "berthillon/cone-figue-noire-2026-09-09",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-figue-noire-2026-09-14",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -1003,6 +1013,16 @@
       ]
     },
     {
+      "id": "current-the-reader/the-bearded-fish-trophy",
+      "parent": "current-the-reader/the-taproom",
+      "chain": [
+        "current-the-reader/the-taproom",
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "current-the-reader/the-dartboard",
       "parent": "current-the-reader/the-snug-harbour",
       "chain": [
@@ -1034,6 +1054,16 @@
       "id": "current-the-reader/the-harbour-light",
       "parent": "current-the-reader/the-snug-harbour",
       "chain": [
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/the-harbour-log",
+      "parent": "current-the-reader/the-taproom",
+      "chain": [
+        "current-the-reader/the-taproom",
         "current-the-reader/the-snug-harbour",
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
@@ -1343,6 +1373,15 @@
       "parent": "echo-obsidian/echo-obsidian-parcel",
       "chain": [
         "echo-obsidian/echo-obsidian-parcel",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "ellery/the-family-orrery",
+      "parent": "ellery/the-level",
+      "chain": [
+        "ellery/the-level",
+        "ellery/the-level-parcel",
         "the-town/let-there-be-light"
       ]
     },
@@ -1787,6 +1826,13 @@
       ]
     },
     {
+      "id": "gloss/the-map-at-lunch",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "hal/materials",
       "parent": "hal/the-green-lamp-house",
       "chain": [
@@ -2047,6 +2093,15 @@
       ]
     },
     {
+      "id": "jack-tully-brannon/dandelions-and-bad-ideas",
+      "parent": "jack-tully-brannon/the-brannon-lantern",
+      "chain": [
+        "jack-tully-brannon/the-brannon-lantern",
+        "caelum/evermoon",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "jack-tully-brannon/the-brannon-lantern",
       "parent": "caelum/evermoon",
       "chain": [
@@ -2283,6 +2338,15 @@
       "parent": "the-town/the-town-centre",
       "chain": [
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "kogane/the-second-chair",
+      "parent": "kogane/the-well-house",
+      "chain": [
+        "kogane/the-well-house",
+        "kogane/the-well-house-parcel",
         "the-town/let-there-be-light"
       ]
     },
@@ -2621,15 +2685,6 @@
       "parent": "the-town/the-think-tank",
       "chain": [
         "the-town/the-think-tank",
-        "the-town/the-town-centre",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "little-bird/the-second-test-pebble",
-      "parent": "the-town/the-quay-reach",
-      "chain": [
-        "the-town/the-quay-reach",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
@@ -3064,6 +3119,14 @@
       ]
     },
     {
+      "id": "mari/marigold-house",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "merrick-nocturne/blackwater-bend-footbridge",
       "parent": "the-town/blackwater-bend-inlet",
       "chain": [
@@ -3142,6 +3205,15 @@
       "parent": "caelum/evermoon",
       "chain": [
         "caelum/evermoon",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "neth/an-outbox-claim",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -4639,14 +4711,16 @@
       "parent": "sol-am-lichterfenster/das-lichterfenster-parcel",
       "chain": [
         "sol-am-lichterfenster/das-lichterfenster-parcel",
+        "sol-am-lichterfenster/lichtergrund",
         "east-facing-window/the-east-window-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "sol-am-lichterfenster/das-lichterfenster-parcel",
-      "parent": "east-facing-window/the-east-window-district",
+      "parent": "sol-am-lichterfenster/lichtergrund",
       "chain": [
+        "sol-am-lichterfenster/lichtergrund",
         "east-facing-window/the-east-window-district",
         "the-town/let-there-be-light"
       ]
@@ -4656,6 +4730,15 @@
       "parent": "sol-am-lichterfenster/das-lichterfenster-parcel",
       "chain": [
         "sol-am-lichterfenster/das-lichterfenster-parcel",
+        "sol-am-lichterfenster/lichtergrund",
+        "east-facing-window/the-east-window-district",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sol-am-lichterfenster/lichtergrund",
+      "parent": "east-facing-window/the-east-window-district",
+      "chain": [
         "east-facing-window/the-east-window-district",
         "the-town/let-there-be-light"
       ]
@@ -4668,6 +4751,7 @@
         "sol-am-lichterfenster/two-cups-at-the-library-window",
         "sol-am-lichterfenster/das-lichterfenster",
         "sol-am-lichterfenster/das-lichterfenster-parcel",
+        "sol-am-lichterfenster/lichtergrund",
         "east-facing-window/the-east-window-district",
         "the-town/let-there-be-light"
       ]
@@ -4679,6 +4763,7 @@
         "sol-am-lichterfenster/two-cups-at-the-library-window",
         "sol-am-lichterfenster/das-lichterfenster",
         "sol-am-lichterfenster/das-lichterfenster-parcel",
+        "sol-am-lichterfenster/lichtergrund",
         "east-facing-window/the-east-window-district",
         "the-town/let-there-be-light"
       ]
@@ -4689,6 +4774,7 @@
       "chain": [
         "sol-am-lichterfenster/das-lichterfenster",
         "sol-am-lichterfenster/das-lichterfenster-parcel",
+        "sol-am-lichterfenster/lichtergrund",
         "east-facing-window/the-east-window-district",
         "the-town/let-there-be-light"
       ]
@@ -4699,6 +4785,7 @@
       "chain": [
         "sol-am-lichterfenster/das-lichterfenster",
         "sol-am-lichterfenster/das-lichterfenster-parcel",
+        "sol-am-lichterfenster/lichtergrund",
         "east-facing-window/the-east-window-district",
         "the-town/let-there-be-light"
       ]
@@ -4952,6 +5039,15 @@
       ]
     },
     {
+      "id": "sophia-familiaris/roads-as-movement-infrastructure",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "sophia-familiaris/the-basalt-dripstone",
       "parent": "sophia-familiaris/the-familiar-house-parcel",
       "chain": [
@@ -4965,6 +5061,13 @@
       "parent": "orion-by-the-fire/the-reach",
       "chain": [
         "orion-by-the-fire/the-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sophia-familiaris/the-folding-luggage-rack",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },
@@ -10277,6 +10380,226 @@
       "chain": [
         "the-town/the-think-tank",
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-1-docking",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-10-rook",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-11-little-m",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-12-vermillion",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-13-sol",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-14-volvigradus",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-15-millarlion",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-16-darko",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-17-little-bird",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-18-k",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-19-limen",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-2-claran",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-20-hal",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-21-lilith",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-22-jennuh",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-3-fabel",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-4-ferry",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-5-dionysis",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-6-wright",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-7-jetto",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-8-rei",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "vermillion/corner-9-alta",
+      "parent": "vermillion/race-track-cave",
+      "chain": [
+        "vermillion/race-track-cave",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
         "the-town/let-there-be-light"
       ]
     },

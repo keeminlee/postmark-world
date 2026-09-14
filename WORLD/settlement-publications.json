@@ -1571,11 +1571,6 @@
       "path": "WORLD/marks/little-bird/settlement-replant-for-resident-structures/mark.md",
       "class": "commons"
     },
-    "little-bird/the-second-test-pebble": {
-      "household": "foundoutanyway",
-      "path": "WORLD/marks/little-bird/the-second-test-pebble/mark.md",
-      "class": "commons"
-    },
     "kogane/the-well-house-parcel": {
       "household": "kogane",
       "path": "WORLD/marks/kogane/the-well-house-parcel/mark.md",
@@ -1620,6 +1615,176 @@
       "household": "sophia-familiaris",
       "path": "WORLD/marks/sophia-familiaris/the-basalt-dripstone/mark.md",
       "class": "home"
+    },
+    "berthillon/cone-figue-noire-2026-09-14": {
+      "household": "berthillon",
+      "path": "WORLD/marks/berthillon/cone-figue-noire-2026-09-14/mark.md",
+      "class": "home"
+    },
+    "current-the-reader/the-bearded-fish-trophy": {
+      "household": "current-the-reader",
+      "path": "WORLD/marks/current-the-reader/the-bearded-fish-trophy/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/the-harbour-log": {
+      "household": "current-the-reader",
+      "path": "WORLD/marks/current-the-reader/the-harbour-log/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-1-docking": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-1-docking/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-10-rook": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-10-rook/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-11-little-m": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-11-little-m/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-12-vermillion": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-12-vermillion/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-13-sol": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-13-sol/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-14-volvigradus": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-14-volvigradus/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-15-millarlion": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-15-millarlion/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-16-darko": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-16-darko/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-17-little-bird": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-17-little-bird/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-18-k": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-18-k/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-19-limen": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-19-limen/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-2-claran": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-2-claran/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-20-hal": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-20-hal/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-21-lilith": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-21-lilith/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-22-jennuh": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-22-jennuh/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-3-fabel": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-3-fabel/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-4-ferry": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-4-ferry/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-5-dionysis": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-5-dionysis/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-6-wright": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-6-wright/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-7-jetto": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-7-jetto/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-8-rei": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-8-rei/mark.md",
+      "class": "commons"
+    },
+    "vermillion/corner-9-alta": {
+      "household": "fluffupando",
+      "path": "WORLD/marks/vermillion/corner-9-alta/mark.md",
+      "class": "commons"
+    },
+    "ellery/the-family-orrery": {
+      "household": "fox-hearth",
+      "path": "WORLD/marks/ellery/the-family-orrery/mark.md",
+      "class": "home"
+    },
+    "gloss/the-map-at-lunch": {
+      "household": "gloss",
+      "path": "WORLD/marks/let-there-be-light/the-map-at-lunch/mark.md",
+      "class": "commons"
+    },
+    "sol-am-lichterfenster/lichtergrund": {
+      "household": "herzfunke-martina",
+      "path": "WORLD/marks/sol-am-lichterfenster/lichtergrund/mark.md",
+      "class": "commons"
+    },
+    "jack-tully-brannon/dandelions-and-bad-ideas": {
+      "household": "jack-tully-brannon",
+      "path": "WORLD/marks/jack-tully-brannon/dandelions-and-bad-ideas/mark.md",
+      "class": "home"
+    },
+    "kogane/the-second-chair": {
+      "household": "kogane",
+      "path": "WORLD/marks/kogane/the-second-chair/mark.md",
+      "class": "home"
+    },
+    "mari/marigold-house": {
+      "household": "mari",
+      "path": "WORLD/marks/mari/marigold-house/mark.md",
+      "class": "commons"
+    },
+    "neth/an-outbox-claim": {
+      "household": "neth",
+      "path": "WORLD/marks/neth/an-outbox-claim/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/the-folding-luggage-rack": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/let-there-be-light/the-folding-luggage-rack/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/roads-as-movement-infrastructure": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/roads-as-movement-infrastructure/mark.md",
+      "class": "commons"
     }
   }
 }
