@@ -1,6 +1,6 @@
 {
-  "crossing": 188,
-  "evaluated_at": "2026-09-14T00:00:00.000Z",
+  "crossing": 189,
+  "evaluated_at": "2026-09-14T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "f589ff63a0b634d990296f5199316d78d724c35f",
   "omits": [
@@ -1036,8 +1036,8 @@
     },
     {
       "handle": "jack-tully-brannon",
-      "x": -1453,
-      "y": 2566.5,
+      "x": -1375,
+      "y": 2635,
       "arrived": true,
       "standing": false,
       "leg_m": 104,
@@ -1045,17 +1045,17 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-13T00:33:16.387Z",
+        "iso": "2026-09-14T00:31:49.427Z",
         "handle": "jack-tully-brannon",
         "from": {
-          "x": -1375,
-          "y": 2635
-        },
-        "toward": {
           "x": -1453,
           "y": 2566.5
         },
-        "at": 186.0461982175926,
+        "toward": {
+          "x": -1375,
+          "y": 2635
+        },
+        "at": 188.04418314814814,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1630,26 +1630,26 @@
     },
     {
       "handle": "milo",
-      "x": -1453,
-      "y": 2567,
+      "x": -1450,
+      "y": 2635,
       "arrived": true,
       "standing": false,
-      "leg_m": 1,
-      "travelled_m": 1,
+      "leg_m": 68,
+      "travelled_m": 68,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-13T01:58:28.140Z",
+        "iso": "2026-09-14T01:45:55.763Z",
         "handle": "milo",
         "from": {
           "x": -1453,
-          "y": 2566.5
-        },
-        "toward": {
-          "x": -1453,
           "y": 2567
         },
-        "at": 186.1645245138889,
+        "toward": {
+          "x": -1450,
+          "y": 2635
+        },
+        "at": 188.14710847222221,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1658,26 +1658,26 @@
     },
     {
       "handle": "neth",
-      "x": 1327,
-      "y": 2083.9,
+      "x": 1330.4,
+      "y": 2081,
       "arrived": true,
       "standing": false,
-      "leg_m": 24,
-      "travelled_m": 24,
+      "leg_m": 982,
+      "travelled_m": 982,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-13T00:22:01.199Z",
+        "iso": "2026-09-14T03:57:20.139Z",
         "handle": "neth",
         "from": {
-          "x": 1305,
-          "y": 2094
+          "x": 1902.4,
+          "y": 1283
         },
         "toward": {
           "x": 1329,
           "y": 2083
         },
-        "at": 186.03057592592592,
+        "at": 188.32961939814814,
         "within": {
           "w": 4,
           "h": 4
@@ -2227,28 +2227,28 @@
     },
     {
       "handle": "sophia-familiaris",
-      "x": 2854.5,
-      "y": 1272,
+      "x": -2047,
+      "y": 5194.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 678,
-      "travelled_m": 678,
+      "leg_m": 494,
+      "travelled_m": 494,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-13T18:57:11.271Z",
+        "iso": "2026-09-14T11:49:13.329Z",
         "handle": "sophia-familiaris",
         "from": {
-          "x": 2313,
-          "y": 1680.4
+          "x": -1699,
+          "y": 4844.5
         },
         "toward": {
-          "x": 2854.5,
-          "y": 1272
+          "x": -2047,
+          "y": 5194.5
         },
-        "at": 187.57941643518518,
+        "at": 188.98501497685186,
         "within": null,
-        "to": "sol-am-lichterfenster/das-lichterfenster",
+        "to": "orion-by-the-fire/the-shingle-beach",
         "pace": 60,
         "line_no": null
       }
