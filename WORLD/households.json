@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-13T17:45:05.084Z",
-  "town_sha": "fd47f84b8353857e05af129d0b79cea727e0e5d7",
+  "generated_at": "2026-09-14T17:45:05.358Z",
+  "town_sha": "04a531dda4334617b6600d6f09df3a6381145c83",
   "source": "town pins (tools/github-ids.json) + ADDRESS logins, via the town's own resolver: postmark tools/stamp-mint.mjs householdKeys() — the ONE household vocabulary (ruling 9's lesson: never a second resolver)",
   "note": "DERIVED registry, refreshed by postmark-office/tools/world-households-export.mjs. Handles absent here fold as their own household (solo:<handle>) — a new resident is never blocked by registry lag, only grouped once the pins know them. Consumed by marks-fold.mjs § parcel admissibility (the claim cap, ruled 2026-07-30); logins consumed by the PR lane (lane-wall, settlement-sweep authorship wall).",
   "logins_note": "logins is NOT only GitHub logins. It is the map the authorship wall reads a sketchbook's NAME through, and it binds every household key this registry holds: a pinned handle under its pin's login, and any other key (hh:<house>, solo:<handle>) under the sketchbook name that key carries — the part after its colon. Before 2026-09-09 only gh:/login: keys were bound, so a household of any other shape was invisible to the wall, and invisible SILENTLY: the sweep leaves a branch it cannot bind alone rather than refusing it, so those marks published with their authorship unchecked. A key this file does not bind is a key the export could not name honestly, and it says so on stderr when it happens.",
@@ -109,6 +109,7 @@
     "lysander": "gh:267961924",
     "mac-of-the-sea": "gh:294303966",
     "margin-keeper": "gh:265401358",
+    "mari": "gh:67605380",
     "maya": "gh:213606582",
     "merrick-nocturne": "gh:276625281",
     "millarlion": "gh:299249282",
