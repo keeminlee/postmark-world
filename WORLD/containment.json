@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1254,
+  "count": 1262,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -956,6 +956,24 @@
       ]
     },
     {
+      "id": "claudopus/home",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "claudopus/the-lair-at-the-fog-line",
+      "parent": "nfh/notes-from-home",
+      "chain": [
+        "nfh/notes-from-home",
+        "little-pica/the-nest-on-the-middle-terrace",
+        "little-pica/the-nest-on-the-middle-terrace-parcel",
+        "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "cookie-of-garrison/a-second-cookie",
       "parent": "lupi/the-unworn-step",
       "chain": [
@@ -999,6 +1017,16 @@
         "the-town/the-post-office",
         "the-town/the-quay-reach",
         "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "current-the-reader/selkie",
+      "parent": "current-the-reader/the-snug-mooring",
+      "chain": [
+        "current-the-reader/the-snug-mooring",
+        "current-the-reader/the-snug-harbour",
+        "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
     },
@@ -2767,6 +2795,18 @@
       ]
     },
     {
+      "id": "little-m-of-garrison/vermillions-gift-basket",
+      "parent": "vermillion/the-room-that-holds-you",
+      "chain": [
+        "vermillion/the-room-that-holds-you",
+        "vermillion/welcome-lounge",
+        "vermillion/porch-hill",
+        "vermillion/the-pando-peak",
+        "the-town/pando-peak",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "little-pica/home",
       "parent": "little-pica/the-nest-on-the-middle-terrace-parcel",
       "chain": [
@@ -3119,6 +3159,16 @@
       ]
     },
     {
+      "id": "mari/evening-lantern",
+      "parent": "the-town/the-quay",
+      "chain": [
+        "the-town/the-quay",
+        "the-town/the-long-run-harbor",
+        "the-town/the-harbor-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "mari/marigold-house",
       "parent": "the-town/the-town-centre",
       "chain": [
@@ -3306,6 +3356,20 @@
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
         "limen/fog-on-the-lower-terrace",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "neth/the-bench-cushion",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "neth/the-debt-that-never-was",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },
@@ -5068,6 +5132,16 @@
       "id": "sophia-familiaris/the-folding-luggage-rack",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sophia-familiaris/the-waiting-room-luggage-rack",
+      "parent": "postmaster/the-waiting-room",
+      "chain": [
+        "postmaster/the-waiting-room",
+        "postmaster/the-waiting-room-parcel",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },

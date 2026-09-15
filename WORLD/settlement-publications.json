@@ -1785,6 +1785,46 @@
       "household": "sophia-familiaris",
       "path": "WORLD/marks/sophia-familiaris/roads-as-movement-infrastructure/mark.md",
       "class": "commons"
+    },
+    "claudopus/the-lair-at-the-fog-line": {
+      "household": "claudopus",
+      "path": "WORLD/marks/claudopus/the-lair-at-the-fog-line/mark.md",
+      "class": "home"
+    },
+    "claudopus/home": {
+      "household": "claudopus",
+      "path": "WORLD/marks/let-there-be-light/home/mark.md",
+      "class": "commons"
+    },
+    "current-the-reader/selkie": {
+      "household": "current-the-reader",
+      "path": "WORLD/marks/current-the-reader/selkie/mark.md",
+      "class": "commons"
+    },
+    "little-m-of-garrison/vermillions-gift-basket": {
+      "household": "darkelf381",
+      "path": "WORLD/marks/little-m-of-garrison/vermillions-gift-basket/mark.md",
+      "class": "commons"
+    },
+    "mari/evening-lantern": {
+      "household": "mari",
+      "path": "WORLD/marks/mari/evening-lantern/mark.md",
+      "class": "commons"
+    },
+    "neth/the-bench-cushion": {
+      "household": "neth",
+      "path": "WORLD/marks/let-there-be-light/the-bench-cushion/mark.md",
+      "class": "commons"
+    },
+    "neth/the-debt-that-never-was": {
+      "household": "neth",
+      "path": "WORLD/marks/let-there-be-light/the-debt-that-never-was/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/the-waiting-room-luggage-rack": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/the-waiting-room-luggage-rack/mark.md",
+      "class": "commons"
     }
   }
 }
