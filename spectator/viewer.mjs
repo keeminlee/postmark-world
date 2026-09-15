@@ -747,6 +747,37 @@ export function standpointSectionLabel(key) {
   return key && key !== SPECTATOR_ACTOR ? `where ${key} stands` : "where you stand";
 }
 
+// ───────── THE RECORD'S OWN "NOW" (2026-09-15, Linear POS-96)
+//
+// An act the ledger already holds has happened. Its stamp is the OFFICE's
+// fractional crossing, floored to four places (`ferry 190.9569`, enter-exit.mjs
+// § stampAt — up to 4.3 s behind the office's instant), and the office's clock
+// and this browser's are two clocks. Measured 2026-09-15 on the founder's PC:
+// the box answers about 1–1.5 s AHEAD of the browser. So whenever the floor
+// shaves less than the skew, the act a resident just made is stamped a breath
+// ahead of fractionalCrossing() here — and occupancyAt, asked what was true at
+// this browser's now, answers correctly: still inside. The page renders once
+// after the act, at that instant, and not again until something else moves, so
+// the reader who just stepped outside keeps looking at the floor. Roughly one
+// act in four; the first press works and the second does not. Measured: rei's
+// exit from the-lanternseed-gardens landed on the record at 11:29:01Z and the
+// page stayed in the district's interior.
+//
+// The rule: the live clock is never behind the record it is reading. An act
+// stamped within SKEW of now is treated as now; an act further ahead is not.
+// A time-travelling reader is unaffected — that path takes the override and
+// never asks this.
+export const OCCUPANCY_SKEW = 120 / (12 * 3600); // two minutes, in crossings
+export function occupancyHorizon(acts = [], now = 0, skew = OCCUPANCY_SKEW) {
+  let horizon = Number(now);
+  if (!Number.isFinite(horizon)) return now;
+  for (const a of acts) {
+    const at = Number(a?.at);
+    if (Number.isFinite(at) && at > horizon && at <= now + skew) horizon = at;
+  }
+  return horizon;
+}
+
 // ───────── WHAT THIS STANDPOINT HAS CROSSED INTO (R15)
 //
 // STANDING ON IT IS NOT BEING IN IT, and that is the one thing a reader of this
@@ -5665,7 +5696,13 @@ export function mountViewer(appEl) {
   // to crossing 138 is asking what was true THEN, and the honest answer at 138 is
   // that the act at 138.1082 had not happened yet. Same rule the walks door
   // uses: the override if there is one, the live fractional clock otherwise.
-  const occupancyClock = () => (state.crossingOverride ? state.crossing : fractionalCrossing());
+  // …and never behind the record it is reading: an act the ledger already holds
+  // is treated as now even when its rounded stamp sits a breath ahead of this
+  // browser's clock (see occupancyHorizon — the reader who stepped outside and
+  // kept looking at the floor, 2026-09-15).
+  const occupancyClock = () => (state.crossingOverride
+    ? state.crossing
+    : occupancyHorizon(enterExitLedger.acts, fractionalCrossing()));
   const markInteraction = createMarkInteractionStore();
 
   // ───────── data + world (feature-detected source) ─────────
