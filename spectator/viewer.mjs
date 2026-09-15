@@ -3424,9 +3424,29 @@ export function coLocatedMarkIds(marks, withinM = FAN_SAME_SPOT_M) {
   return stacked;
 }
 
-export function smallestContainingMark(point, marks = []) {
+export function smallestContainingMark(point, marks = [], { insideRoomId = null } = {}) {
   const x = Number(point?.x), y = Number(point?.y);
   if (![x, y].every(Number.isFinite)) return null;
+  // THE ROOM STOPS ANSWERING EVERY PIXEL OF ITS OWN FLOOR (founder, 2026-08-29:
+  // "right now EVERYWHERE you put your mouse, the candle vault's mark-card
+  // noisily fills the center of the screen"; built on the party lineage as
+  // 8d0eb580 and lost in the rollback; ported 2026-09-15, Linear POS-91 box 1,
+  // Keemin: "the mark you have ENTERED still showing in the center wherever you
+  // hover (which is bad)"). A mounted room's extent is the whole floor of its own
+  // interior, so containment answered with the room at every pixel — its card
+  // was not something a reader summoned by pointing at it, it was what
+  // pointing at nothing meant in here. Out goes the room AND everything
+  // enclosing it: the first try dropped only the room and the ladder fell
+  // through to the next rung, so the vault's card was replaced by the cellar
+  // door's at every pixel of the same floor. The chip in the painting's corner
+  // still names the room and opens its card; nothing becomes unreachable.
+  // ENCLOSING means holding the WHOLE room, not merely its centre. The lost
+  // commit asked whether a mark contained the room's centre point, which also
+  // said yes for a child sitting at the centre of the room (the house at the
+  // middle of its parcel), and silenced it — found by this port's own test.
+  const room = insideRoomId ? (marks ?? []).find((mark) => mark?.id === insideRoomId) : null;
+  const encloses = (mark) => !!insideRoomId
+    && (mark?.id === insideRoomId || (room && mark?.at && mark?.extent ? marksContain(mark, room) : false));
   // A THING IS NOT GROUND (Keemin, 2026-08-22: carried things were winning the
   // walk desk's "From"). A class:thing object rides at its holder's own feet —
   // a 1×1 rect containing your point, so smallest-area crowned it your
@@ -3435,20 +3455,30 @@ export function smallestContainingMark(point, marks = []) {
   // (Deliberately class-keyed, not size-keyed — a tiny sited mark like a bench
   // is still ground; a giant sculpture is still a thing.)
   return (marks ?? [])
-    .filter((mark) => mark?.class !== "thing" && !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
+    .filter((mark) => mark?.class !== "thing" && !encloses(mark)
+      && !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
     .map((mark) => ({ mark, area: Number(mark.extent.w) * Number(mark.extent.h) }))
     .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)))[0]?.mark?.id ?? null;
 }
 
+/**
+ * `insideRoomId` IS THE ROOM WHOSE INTERIOR IS ON SCREEN, and only the
+ * CONTAINMENT half honours it. A room's extent is the whole floor of its own
+ * interior, so containment answers with the room at every pixel; the PIP half
+ * is left alone on purpose — a pip is a target the size of the thing it names,
+ * so hovering one is an aimed act rather than a side effect of moving the
+ * mouse. (8d0eb580, ported 2026-09-15 — Linear POS-91 box 1.)
+ */
 export function paintingMarkAtPoint({
   screenPoint,
   worldPoint,
   glyphs = [],
   marks = [],
   radiusPx = MARK_SNAP_RADIUS_PX,
+  insideRoomId = null,
 } = {}) {
   return snappedMarkAtPoint(screenPoint, glyphs, radiusPx)
-    ?? smallestContainingMark(worldPoint, marks);
+    ?? smallestContainingMark(worldPoint, marks, { insideRoomId });
 }
 
 export function toldPaintingMarks(radial, marks = []) {
@@ -7811,6 +7841,8 @@ export function mountViewer(appEl) {
       worldPoint: worldPointForEvent(event),
       glyphs: screenMarkCandidates(),
       marks,
+      // the mounted room never answers a hover on its own floor (POS-91 box 1)
+      insideRoomId: sceneRoomId,
     });
     const toldHere = () => toldPaintingMarks(lastRadial, allMarks());
     const paintingMarkForEvent = (event) => markAt(event, toldHere());
