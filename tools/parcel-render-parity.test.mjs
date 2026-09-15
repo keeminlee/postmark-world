@@ -185,12 +185,15 @@ test('ENTERING A HOME PAINTS ITS OWN ART AS THE GROUND: "A household\'s HOME art
   assert.deepEqual(img.slice(1), wall.slice(1), "the art is registered exactly on the room's own boundary");
 });
 
-test("a home mark with no image keeps the paper floor — the picture is the only thing that changed", () => {
+test("a home mark with no image keeps the bare floor — the picture is the only thing that changed", () => {
   const bare = house();
   assert.equal(markImagePath(bare), null);
   const ground = roomGround(bare, { image: markImagePath(bare) });
-  assert.ok(!ground.svgText.includes("<image"), "no empty frame, no broken art — the drafting sheet, as before");
-  assert.ok(ground.svgText.includes("wv-scene-ground") && ground.svgText.includes("wv-scene-rule-pat"), "the paper and its rule are still drawn");
+  assert.ok(!ground.svgText.includes("<image"), "no empty frame, no broken art — the bare floor, as before");
+  // the floor is the world's night and the ruled grid is gone (Keemin,
+  // 2026-09-15, POS-89) — one ground rect, no paper pattern over it
+  assert.ok(ground.svgText.includes("wv-scene-ground"), "the floor is drawn");
+  assert.ok(!ground.svgText.includes("wv-scene-rule-pat"), "the ruled-paper grid is not drawn");
 });
 
 test("THE URL NEVER BECOMES MARKUP AND NEVER LEAVES THE SHELF — the room ground builds an href by concatenation, so the gate is upstream of it", () => {

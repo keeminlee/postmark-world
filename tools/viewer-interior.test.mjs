@@ -78,10 +78,12 @@ test("the plaque speaks in the ROOM's own words, not about it", () => {
 });
 
 // ── the ground (the ONE scene-unique element) ───────────────────────────────
-test("the ground is the paper floor for an art-less room, with the art slot ready", () => {
+test("the ground is the bare slate floor for an art-less room, with the art slot ready", () => {
   const g = roomGround({ id: "r", at: { x: 100, y: -50 }, extent: { w: 12, h: 12 } });
   assert.match(g.svgText, /wv-scene-ground/, "the full-bleed base rect exists");
-  assert.match(g.svgText, /wv-scene-rule-pat/, "squared paper — the drafting sheet's rule (founder's revision of his own white)");
+  // the ruled-paper grid is gone (Keemin, 2026-09-15, POS-89: "very unclear
+  // what the grid lines are for/their scale. let's just remove them for now")
+  assert.doesNotMatch(g.svgText, /wv-scene-rule-pat/, "no squared paper over the floor");
   assert.match(g.svgText, /wv-scene-wall/, "the room's own boundary is drawn as the wall");
   assert.doesNotMatch(g.svgText, /<image/, "no image invented for a mark that has none");
   assert.match(g.svgText, /wv-scene-art/, "the svg overlay slot exists either way — the atlas's own structure");
