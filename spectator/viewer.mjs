@@ -832,10 +832,25 @@ export function standpointOccupancy({ acts = [], at = Infinity, handle = null } 
 // plaque's to carry, not the floor's. SCENES.md's walker clause says both of
 // those things and both survive this unamended; what it never said is who was
 // eligible, and that gap is what the floor fell through.
-export function sceneWalkerSet({ walkers = [], manifest = new Map(), roomId = null } = {}) {
+export function sceneWalkerSet({ walkers = [], manifest = new Map(), roomId = null, marks = [] } = {}) {
   if (!roomId) return walkers;
   const inside = new Set(manifest.get(roomId) ?? []);
-  return walkers.filter((w) => inside.has(w?.handle));
+  // INSIDE BY COORDINATES, TOO (POS-92). A body the passage record puts in the
+  // room is drawn in full. A body whose position falls inside the room's
+  // footprint without a crossing on the record is drawn as well — at the
+  // threshold, dimmed — because a reader in a room expects to see who is
+  // physically on its ground, and the record's silence about a crossing is a
+  // fact about the record, not about the body. A body outside the footprint is
+  // still not drawn (the roof rule, 2026-08-29: "resident activity OUTSIDE the
+  // interior is visible" was the complaint). Same containment question as
+  // bodyPlace, on the same shape.
+  const room = (marks ?? []).find((m) => m?.id === roomId) ?? null;
+  return walkers.flatMap((w) => {
+    if (inside.has(w?.handle)) return [w];
+    const x = Number(w?.x), y = Number(w?.y);
+    if (room && Number.isFinite(x) && Number.isFinite(y) && pointInsideMark({ x, y }, room)) return [{ ...w, threshold: true }];
+    return [];
+  });
 }
 
 // WHERE ONE PRESS OF "step outside" ACTUALLY PUTS YOU (Wright, 2026-08-21).
@@ -1595,6 +1610,68 @@ export function viewerJourneyState(walker, marks = [], determined = {}) {
   };
 }
 
+// ───────── ONE OWNER FOR WHERE A BODY IS (2026-09-15, Linear POS-92)
+//
+// The town cured "where is this resident" once, on 08-04, with where-is.mjs:
+// four independent implementations, and every position bug it had ever had was
+// two of them out of step. The viewer grew its readers back. By 09-15 four
+// places answered where a body is: the walker draw (the read's standpoint or
+// the present row, whichever draw ran last), the hover and the bubble (the
+// walk's named target, printed as "at X"), the room roster (passage only), and
+// the you-marker (the camera). Sollerino was those readers disagreeing across
+// a body — his walk named Rei's house and stopped 0.5 m outside her parcel, so
+// the hover said "at rei/the-lanternstep-house", the room showed nobody, and
+// the office's place string named a 0.2 m lantern 13 m away. The flicker was
+// two of them disagreeing across time about the reader's own body, once per
+// poll. Keemin, 09-15: "Multiple SoTs on location?" Yes.
+//
+// So: ONE function answers, and every sentence about a body's place is printed
+// from its answer. Position is the walker row (the present door's row when it
+// carries the body, the read's standpoint only until it does — never the
+// camera). Containment is the coordinates against the polygon or rect, things
+// excluded, the same question the walk desk's From row asks. Passage is the
+// ledger at the clock. The walk's named target is `boundFor`: where the walk
+// was going, never where the body is.
+//
+// The consolidation deletes readers (the shelf's rule: a consolidation that
+// adds one is the same disease): the three "at ${mark_id}" sentences, the
+// poll's first draw from the cached read, and the roof rule's passage-only
+// roster all import this now. tools/body-place.test.mjs carries the reader
+// census that reds when a new reader is born.
+export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {}) {
+  if (!walker?.handle) return null;
+  const x = Number(walker.x), y = Number(walker.y);
+  const position = Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
+  // a body is moving when the row says so; a row that says nothing is moving
+  // only if it carries a leg (`toward`) it has neither arrived at nor stood at
+  const moving = typeof walker.moving === "boolean"
+    ? walker.moving
+    : (walker.toward != null && !walker.arrived && !walker.standing);
+  const inside = position ? smallestContainingMark(position, marks) : null;
+  const entered = standpointOccupancy({ acts, at, handle: walker.handle }).insideOf ?? null;
+  const boundFor = walker.mark_id ? String(walker.mark_id) : null;
+  return {
+    handle: walker.handle, position, moving, inside, entered, boundFor,
+    remainingM: Math.max(0, Math.round(Number(walker.remaining_m) || 0)),
+    etaCrossings: Math.max(0, Number(walker.eta_crossings) || 0),
+  };
+}
+
+/** The one sentence about where a body is, from bodyPlace's answer. */
+export function placeLabel(place, marks = [], determined = {}) {
+  if (!place) return "";
+  const byMarkId = markIndex(marks);
+  const name = (id) => { const m = id && byMarkId.get(id); return m ? resolveMarkName(m, determined).name : null; };
+  if (place.moving) return `${place.remainingM.toLocaleString()} m to go, ETA ${formatEtaCrossings(place.etaCrossings)}`;
+  const entered = name(place.entered);
+  const inside = name(place.inside);
+  const ground = entered ? `in ${entered}` : inside ? `on ${inside}'s ground` : "on open ground";
+  // bound for somewhere the body is not: the walk stopped at its rim (#2781)
+  const bound = place.boundFor && place.boundFor !== place.entered && place.boundFor !== place.inside
+    ? name(place.boundFor) : null;
+  return bound ? `${ground}, at the door of ${bound}` : ground;
+}
+
 export function disciplineAtlasImages(root) {
   const images = [...root.querySelectorAll("img, image")];
   for (const image of images) {
@@ -1918,7 +1995,7 @@ export const MINE_GLYPH_SCALE = 1.35;
  *  Everything is in marker space (`1/k`) so it stays the same screen size at
  *  any zoom. Carries the handle and the hit disc the walker always wore. Pure. */
 export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
-export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null, mine = false, found = false } = {}) {
+export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
   // YOUR OWN HOUSEHOLD'S BODIES ARE DRAWN LARGER, geometry and all, rather than
@@ -1948,7 +2025,7 @@ export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label =
     fill = `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
       + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
   }
-  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
+  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}${threshold ? " at-threshold" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
     + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit"/>`
     + fill
     + `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-frame"/>`
@@ -4694,6 +4771,9 @@ const STYLE = `
 /* the hit halo — invisible, but hoverable. fill:transparent (NOT fill:none) is
    the load-bearing part: none lets the pointer fall straight through. */
 .wv-walker-hit { fill:transparent; stroke:none; pointer-events:all; cursor:help; }
+/* a body inside a room by coordinates but not by a crossing on the record —
+   drawn at the threshold, dimmed (POS-92; sceneWalkerSet's second clause) */
+.wv-walker-near.at-threshold, .wv-walker-far.at-threshold { opacity:.55; }
 /* THE VESSEL. A walker the fold calls a boat gets a hull instead of a face.
    Line art in the painting's own ink — the town's gold, which is what the atlas
    draws its own furniture in — and non-scaling strokes, so she stays a drawing
@@ -8469,7 +8549,7 @@ export function mountViewer(appEl) {
     const moving = w.moving ?? (!w.arrived && !w.standing);
     const where = moving
       ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
-      : (w.mark_id ? `at ${w.mark_id}` : "at rest");
+      : walkerPlace(w);
     return `<circle cx="${p.x}" cy="${p.y}" r="${14 / k}" class="wv-hl-dot wv-hl-walker${moving ? " moving" : ""}"/>`
       + (state.paintingOnly ? "" : hoverLabelSVG({
         text: `${w.handle} — ${where}`, at: p, unit, view: mapCtx.view,
@@ -8624,6 +8704,12 @@ export function mountViewer(appEl) {
   // Where a handle stands — the walk ledger first, their home second. One
   // function for every resident in the household, because a view built ahead
   // needs the same answer the selected one gets.
+  // ONE OWNER FOR WHERE A BODY IS (POS-92): every sentence about a walker's
+  // place — the hover, the highlight title, the bubble — is printed from
+  // bodyPlace's answer, never from the walk's named target.
+  const walkerPlace = (w) => placeLabel(
+    bodyPlace(w, { marks: allMarks(), acts: enterExitLedger.acts, at: occupancyClock() }),
+    allMarks(), data?.worldState?.determined ?? {});
   function originFor(handle) {
     const walker = handle ? walkState.walkers.find((w) => w.handle === handle) : null;
     if (walker && Number.isFinite(walker.x) && Number.isFinite(walker.y))
@@ -8971,7 +9057,7 @@ export function mountViewer(appEl) {
     // from any pointer inside it.
     const tier = drawTier();
     const bounds = drawnBounds();
-    const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId });
+    const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId, marks: allMarks() });
     const drawnWalkers = inView.filter((w) => pointInDrawnBounds(w, bounds));
     // ONE BODY, ONE MARKER (POS-93): the overlay may have drawn the standpoint
     // dot before this reader's body arrived; once the body is here, the dot goes.
@@ -8998,7 +9084,7 @@ export function mountViewer(appEl) {
     if (tier === "far") {
       for (const w of drawnWalkers) {
         s += walkerFrameSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
-          mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle });
+          mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle, threshold: !!w.threshold });
       }
       mapCtx.walkLayer.innerHTML = paths + s;
       walkReadout(drawnWalkers);
@@ -9033,7 +9119,7 @@ export function mountViewer(appEl) {
       const moving = w.moving ?? (!w.arrived && !w.standing);
       const eta = moving
         ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
-        : (w.mark_id ? `at ${w.mark_id}` : "at rest");
+        : walkerPlace(w);
       // the remaining leg, then the walker on top of it — movers only
       if (moving)
         s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
@@ -9074,7 +9160,7 @@ export function mountViewer(appEl) {
       // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
       s += walkerFrameSVG({ at: now, k, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
-        found: w.handle === walkState.foundHandle,
+        found: w.handle === walkState.foundHandle, threshold: !!w.threshold,
         art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
     mapCtx.walkLayer.innerHTML = paths + hulls + s;
@@ -9166,7 +9252,14 @@ export function mountViewer(appEl) {
     if (onResidentPath()) {
       const read = readCache.get(residentStandpointKey(null, state.handle));
       const at = read?.standpoint;
-      if (read) { walkState.walkers = walkersFromPresent(read.present ?? {}, { self: selfFromRead(read) }); drawWalkers(); }
+      // ONE DRAW PER POLL (POS-92). This used to draw first from the cached
+      // read — everyone else from `read.present`, the reader from the read's
+      // standpoint — and then again from the fresh present below, whose rows
+      // win the merge. When the read's standpoint and the present row for the
+      // reader differ (an entered resident's read stands at the room's anchor),
+      // the reader's body jumped between them every poll. The last good list
+      // stands until the present answers; the read's standpoint is only ever
+      // the body's stand-in before the first present (loadResidentRead).
       if (at && Number.isFinite(at.x) && Number.isFinite(at.y)) {
         try {
           const r = await fetch(officeUrl(`/world/present?x=${Math.round(at.x)}&y=${Math.round(at.y)}`),
@@ -10166,7 +10259,7 @@ export function mountViewer(appEl) {
     const moving = w.moving ?? (!w.arrived && !w.standing);
     const where = moving
       ? `${Number(w.remaining_m ?? 0).toLocaleString()} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
-      : (w.mark_id ? `at ${w.mark_id}` : "at rest");
+      : walkerPlace(w);
     const face = faceOf(w.handle);
     const href = residentHref(w.handle);
     const portrait = face.avatar
@@ -11314,8 +11407,14 @@ export function mountViewer(appEl) {
           // `present` is already in hand here; there is no reason to ask again.
           // the reader's own body rides from the read's standpoint — `present`
           // is who ELSE is about and excludes them by construction
-          walkState.walkers = walkersFromPresent(read.present ?? {}, { self: selfFromRead(read) });
-          drawWalkers();
+          // ONE OWNER (POS-92): the read's standpoint stands in for the reader's
+          // body only until /world/present has answered with the reader's own
+          // row (a present row carries no `self` flag); after that the poll's
+          // merge owns the list and a fresh read never overwrites it.
+          if (!walkState.walkers.some((w) => w?.handle === state.handle && !w?.self)) {
+            walkState.walkers = walkersFromPresent(read.present ?? {}, { self: selfFromRead(read) });
+            drawWalkers();
+          }
         }
         return read;
       })
