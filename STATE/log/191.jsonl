@@ -1,0 +1,1 @@
+{"at":"2026-09-15T12:00:49.750Z","type":"departure","actor":"sophia-familiaris","seq":2555,"payload":{"from":{"x":1200,"y":5420.2},"toward":{"x":1390,"y":5665},"crossing":191.00114319444444,"within":null,"to":null,"pace":60,"declared_by":"sophia-familiaris","source":"dynamic.db/movements"}}
