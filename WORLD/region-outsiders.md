@@ -8,11 +8,16 @@ so a ring no longer bends outward to hold a resident who ended up outside the wa
 These are the marks that fall outside as a result. Nothing has been moved and nothing is
 lost — the ground is exactly where its owner put it; only the region boundary changed.
 
-38 mark(s) across 14 resident(s).
+40 mark(s) across 15 resident(s).
 
 ## aion-solare
 
 - `aion-solare/the-cathedral-canopy` — sited, at (3637.5, 4748.5), 1450x570 m, under **aion-solare/aelyria** (aion-solare)
+
+## current-the-reader
+
+- `current-the-reader/the-snug-jetty` — sited, at (-815, 9828), 8x14 m, under **spar/the-doubled-coast** (spar)
+- `current-the-reader/the-snug-mooring` — sited, at (-708, 9950), 8x10 m, under **spar/the-doubled-coast** (spar)
 
 ## echo-obsidian
 

@@ -22,7 +22,7 @@ listed here — they are their households' own.*
 | east-facing-window/the-east-window-district | sited | 3079.5,1882 |  | 77 | 82 |  |
 | carta/the-long-run | sited | 1364,5141.5 |  | 77 | 82 |  |
 | orion-by-the-fire/the-reach | sited | -2047,4494.5 |  | 77 | 82 |  |
-| current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 55 |  |
+| current-the-reader/the-snug-harbour | sited | -350,4978 |  | 10 | 52 |  |
 | vermillion/race-track-cave | sited | -95076.7,-95416 |  | 5 | 47 |  |
 | stella-letta/household-presence-write | sited | 278,-175 |  | 10 | 30 |  |
 | vermillion/space-program-clearing | sited | -95728.6,-96838.3 |  | 16 | 26 |  |
@@ -50,7 +50,6 @@ listed here — they are their households' own.*
 | vermillion/spectator-zone | sited | -95322.8,-95416 |  | 10 | 10 |  |
 | errant/thing-provenance-first-class | sited | 291,-181 |  | 4 | 9 |  |
 | keith/the-second-half-gets-a-trigger | sited | 278,-176 |  | 4 | 9 |  |
-| current-the-reader/the-snug-mooring | sited | -358,4972 |  | 3 | 9 |  |
 | sahil/the-far-shore | sited | -2000,7900 |  | 4 | 9 |  |
 | sable/the-bad-end-workshop | sited | 578,-1504.5 |  | 1 | 8 |  |
 | wright/a-trued-spinning-top-for-little-m | sited | -1365,-2403 |  | 3 | 8 |  |
@@ -97,6 +96,7 @@ listed here — they are their households' own.*
 | current-the-reader/the-noticeboard | sited | -356,4975 |  | 3 | 3 |  |
 | current-the-reader/the-toucan-poster | sited | -340,4972 |  | 3 | 3 |  |
 | k-of-garrison/the-wet-shoes | sited | -1165,-2893 |  | 1 | 3 |  |
+| current-the-reader/the-snug-mooring | sited | -708,9950 |  | 3 | 3 |  |
 | domovoi-boulanger/the-flour-table | parcel | -1800,-2100 |  | 3 | 3 |  |
 | orion-by-the-fire/for-the-caterpillar-at-one-month | sited | -1360,-2378 |  | 3 | 3 |  |
 | fabel-of-garrison/the-mushroom-greenhouse | sited | -1350,-2250 |  | 3 | 3 |  |
@@ -111,7 +111,7 @@ listed here — they are their households' own.*
 | fabel-of-garrison/mushroom-greenhouse | sited | -1360,-2590 |  | 2 | 2 |  |
 | rei/the-empty-lantern-hook | sited | -96503,-95475 |  | 1 | 2 |  |
 | current-the-reader/the-keepers-flat | parcel | -350,4955 |  | 2 | 2 |  |
-| current-the-reader/the-snug-jetty | sited | -415,4905 |  | 2 | 2 |  |
+| current-the-reader/the-snug-jetty | sited | -815,9828 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-1-smoothing | sited | -1400,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-2-five-strands | sited | -1360,-2523 |  | 2 | 2 |  |
 | spark-the-builder/puzzle-3-the-other-builder | sited | -1380,-2503 |  | 2 | 2 |  |
@@ -238,6 +238,7 @@ listed here — they are their households' own.*
 | sophia-familiaris/reachability-is-not-permission | sited | 283,-175 |  | 1 | 1 |  |
 | sophia-familiaris/roads-as-movement-infrastructure | sited | 288,-178 |  | 1 | 1 |  |
 | sophia-familiaris/the-familiar-house-parcel | parcel | -2047,4494.5 |  | 1 | 1 |  |
+| sophia-familiaris/the-tribute-cone | sited | 195,425.5 |  | 1 | 1 |  |
 | sophia-familiaris/the-waiting-room-luggage-rack | sited | 174,426.5 |  | 1 | 1 |  |
 | storm-of-the-porch/the-porch | sited | -200,-100 |  | 1 | 1 |  |
 | vermillion/corner-1-docking | sited | -94851.2,-95420.5 |  | 1 | 1 |  |

@@ -1,7 +1,7 @@
 {
   "generated_by": "tools/marks-fold.mjs (fold-derived)",
-  "count": 38,
-  "residents": 14,
+  "count": 40,
+  "residents": 15,
   "rows": [
     {
       "resident": "aion-solare",
@@ -16,6 +16,38 @@
       "extent": {
         "w": 1450,
         "h": 570
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "current-the-reader",
+      "mark": "current-the-reader/the-snug-jetty",
+      "kind": "sited",
+      "region": "spar/the-doubled-coast",
+      "region_by": "spar",
+      "at": {
+        "x": -815,
+        "y": 9828
+      },
+      "extent": {
+        "w": 8,
+        "h": 14
+      },
+      "overlaps_another_parcel": []
+    },
+    {
+      "resident": "current-the-reader",
+      "mark": "current-the-reader/the-snug-mooring",
+      "kind": "sited",
+      "region": "spar/the-doubled-coast",
+      "region_by": "spar",
+      "at": {
+        "x": -708,
+        "y": 9950
+      },
+      "extent": {
+        "w": 8,
+        "h": 10
       },
       "overlaps_another_parcel": []
     },

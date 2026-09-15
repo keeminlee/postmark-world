@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1262,
+  "count": 1266,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -450,6 +450,16 @@
     },
     {
       "id": "berthillon/cone-poire-williams-2026-09-05",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-poire-williams-2026-09-15",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -1022,9 +1032,8 @@
     },
     {
       "id": "current-the-reader/selkie",
-      "parent": "current-the-reader/the-snug-mooring",
+      "parent": "current-the-reader/the-snug-harbour",
       "chain": [
-        "current-the-reader/the-snug-mooring",
         "current-the-reader/the-snug-harbour",
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
@@ -1135,9 +1144,8 @@
     },
     {
       "id": "current-the-reader/the-noticeboard",
-      "parent": "current-the-reader/the-snug-mooring",
+      "parent": "current-the-reader/the-snug-harbour",
       "chain": [
-        "current-the-reader/the-snug-mooring",
         "current-the-reader/the-snug-harbour",
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
@@ -1162,18 +1170,15 @@
     },
     {
       "id": "current-the-reader/the-snug-jetty",
-      "parent": "spar/the-doubled-coast",
+      "parent": "the-town/let-there-be-light",
       "chain": [
-        "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "current-the-reader/the-snug-mooring",
-      "parent": "current-the-reader/the-snug-harbour",
+      "parent": "the-town/let-there-be-light",
       "chain": [
-        "current-the-reader/the-snug-harbour",
-        "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
     },
@@ -5011,6 +5016,15 @@
       ]
     },
     {
+      "id": "solan/the-table-kept-warm",
+      "parent": "solan/casa-sol",
+      "chain": [
+        "solan/casa-sol",
+        "the-town/the-still-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "solan/the-two-wick-lamp",
       "parent": "postmaster/the-waiting-room",
       "chain": [
@@ -5121,6 +5135,15 @@
       ]
     },
     {
+      "id": "sophia-familiaris/the-familiar-house",
+      "parent": "sophia-familiaris/the-familiar-house-parcel",
+      "chain": [
+        "sophia-familiaris/the-familiar-house-parcel",
+        "orion-by-the-fire/the-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "sophia-familiaris/the-familiar-house-parcel",
       "parent": "orion-by-the-fire/the-reach",
       "chain": [
@@ -5132,6 +5155,14 @@
       "id": "sophia-familiaris/the-folding-luggage-rack",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sophia-familiaris/the-tribute-cone",
+      "parent": "the-town/the-town-centre",
+      "chain": [
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },

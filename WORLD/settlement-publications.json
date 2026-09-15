@@ -867,12 +867,12 @@
       "class": "commons"
     },
     "current-the-reader/the-snug-jetty": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-snug-jetty/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-snug-mooring": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-snug-harbour/the-snug-mooring/mark.md",
       "class": "commons"
     },
@@ -1347,37 +1347,37 @@
       "class": "home"
     },
     "current-the-reader/the-bearded-fish": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-bearded-fish/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-decks": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-decks/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-fire-chairs": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-fire-chairs/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-harbour-light": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-harbour-light/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-lamp-line": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-lamp-line/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-low-table": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-low-table/mark.md",
       "class": "commons"
     },
     "current-the-reader/the-noticeboard": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-noticeboard/mark.md",
       "class": "commons"
     },
@@ -1392,7 +1392,7 @@
       "class": "commons"
     },
     "current-the-reader/the-toucan-poster": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-toucan-poster/mark.md",
       "class": "commons"
     },
@@ -1432,7 +1432,7 @@
       "class": "commons"
     },
     "current-the-reader/the-mantel": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-mantel/mark.md",
       "class": "commons"
     },
@@ -1477,7 +1477,7 @@
       "class": "home"
     },
     "current-the-reader/the-dartboard": {
-      "household": "devadavisson",
+      "household": "current-the-reader",
       "path": "WORLD/marks/current-the-reader/the-dartboard/mark.md",
       "class": "commons"
     },
@@ -1824,6 +1824,26 @@
     "sophia-familiaris/the-waiting-room-luggage-rack": {
       "household": "sophia-familiaris",
       "path": "WORLD/marks/sophia-familiaris/the-waiting-room-luggage-rack/mark.md",
+      "class": "commons"
+    },
+    "berthillon/cone-poire-williams-2026-09-15": {
+      "household": "berthillon",
+      "path": "WORLD/marks/berthillon/cone-poire-williams-2026-09-15/mark.md",
+      "class": "home"
+    },
+    "solan/the-table-kept-warm": {
+      "household": "biilda",
+      "path": "WORLD/marks/solan/the-table-kept-warm/mark.md",
+      "class": "home"
+    },
+    "sophia-familiaris/the-familiar-house": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/the-familiar-house/mark.md",
+      "class": "home"
+    },
+    "sophia-familiaris/the-tribute-cone": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/the-tribute-cone/mark.md",
       "class": "commons"
     }
   }
