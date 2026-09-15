@@ -1101,13 +1101,16 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
     x: originPx.x + (r.x - r.w / 2) / mPerPx, y: originPx.y + (r.y - r.h / 2) / mPerPx,
     w: r.w / mPerPx, h: r.h / mPerPx,
   };
-  // THE PAPER FLOOR (founder, 2026-08-20, revising his own white): the
-  // placeholder ground is the drafting sheet — warm paper, squared with a
-  // ruled grid at a round number of metres, the room's own boundary drawn as
-  // the wall. Still the atlas's base-raster-svg structure; still replaced by
-  // the mark's image where it has one; the paper is what "no art yet" looks
-  // like, not a rug competing with the furniture standing on it.
-  const rule = (sceneRuleM(mPerPx) / mPerPx).toFixed(3);
+  // THE FLOOR, TWICE REVISED BY THE FOUNDER. 2026-08-20, revising his own
+  // white: the placeholder ground became the drafting sheet — warm paper,
+  // squared with a ruled grid at a round number of metres. 2026-09-15 (Linear
+  // POS-89), revising the sheet: "the white grid is jarring … a similar dark
+  // background to the outside world (a muted blue-gray)… very unclear to me
+  // what the grid lines are for/their scale. let's just remove them for now."
+  // So: one slate rect (.wv-scene-ground), no rule over it, the room's own
+  // boundary drawn as the wall. Still the atlas's base-raster-svg structure;
+  // still replaced by the mark's image where it has one; the slate is what "no
+  // art yet" looks like, not a rug competing with the furniture standing on it.
   const rm = (n) => n.toFixed(1);
   // THE WALL IS THE ROOM'S OWN SHAPE (founder, 2026-08-29: "polygon regions
   // render as squares in interior view").
@@ -1133,11 +1136,15 @@ export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image 
   // different hat. Falsified synthetically beside the wall's own test.
   const clipId = "wv-scene-wall-clip";
   const svgText = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${rm(w)} ${rm(h)}">`
-    + `<defs><pattern id="wv-scene-rule-pat" width="${rule}" height="${rule}" patternUnits="userSpaceOnUse">`
-    + `<path d="M ${rule} 0 L 0 0 0 ${rule}" class="wv-scene-rule"/></pattern></defs>`
     + (ringPts && image ? `<defs><clipPath id="${clipId}"><polygon points="${ringPts}"/></clipPath></defs>` : "")
+    // THE FLOOR IS THE WORLD'S NIGHT, AND THE GRID IS GONE (Keemin, 2026-09-15,
+    // Linear POS-89: "the white grid is jarring. let's use a similar dark
+    // background to the outside world (a muted blue-gray). It's also very
+    // unclear to me what the grid lines are for/their scale. let's just remove
+    // them for now."). One rect, styled by .wv-scene-ground; the ruled-paper
+    // pattern that used to lie over it is not drawn. sceneRuleM still rules the
+    // town ground's survey grid outside, which is a different pattern.
     + `<rect class="wv-scene-ground" x="0" y="0" width="${rm(w)}" height="${rm(h)}"/>`
-    + `<rect x="0" y="0" width="${rm(w)}" height="${rm(h)}" fill="url(#wv-scene-rule-pat)"/>`
     + (image
       ? `<image href="${esc(image)}" x="${rm(roomPx.x)}" y="${rm(roomPx.y)}"`
         // slice, not meet (Keemin, 2026-08-21: "the background represented by the
@@ -4417,7 +4424,12 @@ const STYLE = `
 /* the paper floor — the placeholder ground is the drafting sheet (founder's
    word): warm and low-contrast, because it is the GROUND, and ground that
    competes with the furniture standing on it is a rug, not a floor */
-.wv-scene-ground { fill:#e8e0cf; fill-opacity:.94; }
+.wv-scene-ground { fill:#1c2330; fill-opacity:1; }
+/* THE FLOOR IS THE WORLD'S NIGHT (Keemin, 2026-09-15, Linear POS-89): a muted
+   blue-gray one step lighter than the page (#14171d), so a room still reads as
+   a room inside the world's dark rather than as a sheet of paper laid on it.
+   The wall, the art frame and the house cards below were tuned for paper and
+   are re-read against slate: paper-toned strokes, never dark-on-dark. */
 /* placeholder extents at HALF PRESENCE (founder, 2026-09-11: "reduce the
    opacity of placeholder mark-images to around 50%"). This revises his 08-20
    word — "the block is presence, not glass … no transparency games" — said of
@@ -4426,9 +4438,12 @@ const STYLE = `
    buried the ground it stands on. Hue still does the distinguishing (low
    saturation, per-mark); the half is so the ground reads through. */
 .wv-ph-extent { stroke-width:1.2; opacity:.5; pointer-events:none; }
-.wv-scene-art-frame { stroke:#3a3428; stroke-width:1.6; }
+.wv-scene-art-frame { stroke:#c9c0ab; stroke-opacity:.7; stroke-width:1.6; }
 .wv-scene-rule { fill:none; stroke:#8c8470; stroke-opacity:.28; stroke-width:1; }
-.wv-scene-wall { fill:none; stroke:#3a3428; stroke-width:2.5; }
+.wv-scene-wall { fill:none; stroke:#c9c0ab; stroke-opacity:.85; stroke-width:2.5; }
+/* the house cards carded inside a room (2026-09-11) wear a paper-toned edge on
+   the slate floor; outside, on the atlas's paper, they keep their dark one */
+.wv-minimap.is-scene-mark .ov-glyph { stroke:#c9c0ab; }
 /* THE TOWN'S GROUND — the atlas's own craft, on the world's own geometry. The
    paper, the survey lines and the water are the atlas's palette to the byte
    (--paper #ece0c4, the waterGrad stops); the region washes are the world's own
