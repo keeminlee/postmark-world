@@ -1732,8 +1732,26 @@ export function overlayPipSVG({ at, id, classes = "", fan = null, title = null }
 export function overlayStandpointSVG({ at } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
-  return `<g transform="translate(${x} ${y})"><g class="ov-s">`
+  return `<g class="ov-standpoint" transform="translate(${x} ${y})"><g class="ov-s">`
     + `<circle r="${OVERLAY_DOT_R}" class="ov-dot"/><circle r="${OVERLAY_HALO_R}" class="ov-halo"/></g></g>`;
+}
+
+// ── ONE BODY, ONE MARKER (2026-09-15, Linear POS-93) ────────────────────────
+//
+// The standpoint dot is the SPECTATOR's marker: a camera has no body, so the
+// dot says where it looks from. A resident HAS a body — the walker
+// `walkersFromPresent` adds from the read's standpoint — and drawing the dot as
+// well put two markers on one person: the dot at the camera (the room's centre
+// after a mount) and the face at the walk position. The founder read it as
+// "the present location marked like a Spectator even though I'm acting as
+// Rei". Measured 2026-09-15 on prod: 108 px apart in one run, coincident in
+// the next, present the whole run either way.
+//
+// So the dot stands in for the reader only until their body is drawn: a
+// spectator always, a resident whose walker has not arrived yet, nobody else.
+export function standpointDotShown({ spectating = true, handle = null, walkers = [] } = {}) {
+  if (spectating || !handle) return true;
+  return !(walkers ?? []).some((w) => w?.handle === handle);
 }
 
 // ── THE HOME CARD ON THE PARCEL (Keemin, 2026-09-10) ───────────────────────
@@ -8276,7 +8294,9 @@ export function mountViewer(appEl) {
       glyphIds.add(m.id);
       s += homeCard(m, px(m.at), null, nameOf(m), tier);
     }
-    s += overlayStandpointSVG({ at: me });
+    // one body, one marker: the dot only where there is no body to draw (POS-93)
+    if (standpointDotShown({ spectating: isSpectating(), handle: state.handle, walkers: walkState.walkers }))
+      s += overlayStandpointSVG({ at: me });
     overlay.innerHTML = s;
     applyCameraScale();          // the markup is sizeless until the camera says
     // WHAT THIS DRAW COVERS, written down where the camera can check it. The
@@ -8881,6 +8901,10 @@ export function mountViewer(appEl) {
     const bounds = drawnBounds();
     const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId });
     const drawnWalkers = inView.filter((w) => pointInDrawnBounds(w, bounds));
+    // ONE BODY, ONE MARKER (POS-93): the overlay may have drawn the standpoint
+    // dot before this reader's body arrived; once the body is here, the dot goes.
+    if (!standpointDotShown({ spectating: isSpectating(), handle: state.handle, walkers: walkState.walkers }))
+      mapCtx.overlay?.querySelector?.(".ov-standpoint")?.remove();
     // under every body, at both tiers: a route is ground, not a person
     const paths = walkPathsSVG(k);
     // …then the TIER. At town width a face is eleven pixels of photograph with
