@@ -3298,7 +3298,17 @@ export function rankMarksAtPoint(point, marks = [], radiusPx = MARK_SNAP_RADIUS_
       const mx = Number(mark?.x), my = Number(mark?.y);
       const near = [mx, my].every(Number.isFinite) ? Math.hypot(mx - x, my - y) : Infinity;
       if (near <= radius) return { id: mark?.id, tier: 0, distancePx: near };
-      if (mark?.box && pointInBox(x, y, mark.box)) {
+      // THE SHAPE, NOT ITS BOX (2026-09-15, Linear POS-86; Keemin: "the threshold
+      // district is selectable from beyond its ring (suspect the bbox is a
+      // rect)"). A hung picture clipped to the record's ring carries `contains`,
+      // the ring's own containment in screen space; a rectangular card keeps
+      // its box. The Threshold District's bounding rect is 1652 × 2418 m, of
+      // which its twenty-point ring covers well under half — every click in
+      // the corners of that rect opened the district.
+      const inside = typeof mark?.contains === "function"
+        ? !!mark.contains(x, y)
+        : !!(mark?.box && pointInBox(x, y, mark.box));
+      if (inside && mark?.box) {
         const cx = (Number(mark.box.left) + Number(mark.box.right)) / 2;
         const cy = (Number(mark.box.top) + Number(mark.box.bottom)) / 2;
         return { id: mark?.id, tier: 1, distancePx: Math.hypot(cx - x, cy - y) };
@@ -7735,8 +7745,23 @@ export function mountViewer(appEl) {
         if (!id || boxes.has(id)) return [];
         const b = el.getBoundingClientRect();
         if (!(b.width > 0 && b.height > 0)) return [];
-        return [{ id, x: b.left + b.width / 2, y: b.top + b.height / 2,
-          box: { left: b.left, right: b.right, top: b.top, bottom: b.bottom } }];
+        const box = { left: b.left, right: b.right, top: b.top, bottom: b.bottom };
+        // THE RING IS THE DOOR, NOT ITS BOX (POS-86). The hit element IS the
+        // record's ring (placedArtSVG hangs a <polygon> for a ringed mark), so
+        // the candidate carries the ring's own containment: the pointer mapped
+        // into the element's user space and asked of the shape itself. A box
+        // stays for ranking (distance to its centre) and as the fallback for a
+        // rectangular card or a browser without isPointInFill.
+        const ringed = el.tagName?.toLowerCase() === "polygon" && typeof el.isPointInFill === "function";
+        const contains = (sx, sy) => {
+          try {
+            const ctm = el.getScreenCTM();
+            if (!ctm) return pointInBox(sx, sy, box);
+            const pt = svg.createSVGPoint(); pt.x = sx; pt.y = sy;
+            return el.isPointInFill(pt.matrixTransform(ctm.inverse()));
+          } catch { return pointInBox(sx, sy, box); }
+        };
+        return [{ id, x: b.left + b.width / 2, y: b.top + b.height / 2, box, ...(ringed ? { contains } : {}) }];
       });
       return hung.length ? [...fromGlyphs, ...hung] : fromGlyphs;
     }
