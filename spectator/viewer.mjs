@@ -1619,11 +1619,15 @@ export function viewerJourneyState(walker, marks = [], determined = {}) {
 // the present row, whichever draw ran last), the hover and the bubble (the
 // walk's named target, printed as "at X"), the room roster (passage only), and
 // the you-marker (the camera). Sollerino was those readers disagreeing across
-// a body — his walk named Rei's house and stopped 0.5 m outside her parcel, so
-// the hover said "at rei/the-lanternstep-house", the room showed nobody, and
-// the office's place string named a 0.2 m lantern 13 m away. The flicker was
-// two of them disagreeing across time about the reader's own body, once per
-// poll. Keemin, 09-15: "Multiple SoTs on location?" Yes.
+// a body — his walk ended at (1088, -794.5), the exact centre of Rei's house,
+// with no crossing on the ledger: the room drew nobody (passage only), the
+// outside hover said "at rei/the-lanternstep-house" (the walk's target, right
+// by accident), and the office's place string named the 0.2 m lantern that
+// sits at that same centre. (The first cut of this comment said he stood 0.5 m
+// OUTSIDE her parcel; 0.5 m was his distance to its CENTRE — corrected the
+// same morning against WORLD/world-state.json.) The flicker was two of them
+// disagreeing across time about the reader's own body, once per poll.
+// Keemin, 09-15: "Multiple SoTs on location?" Yes.
 //
 // So: ONE function answers, and every sentence about a body's place is printed
 // from its answer. Position is the walker row (the present door's row when it
@@ -1650,8 +1654,15 @@ export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {})
   const inside = position ? smallestContainingMark(position, marks) : null;
   const entered = standpointOccupancy({ acts, at, handle: walker.handle }).insideOf ?? null;
   const boundFor = walker.mark_id ? String(walker.mark_id) : null;
+  // ARRIVED: the body's coordinates lie inside the walk's target. A walk may
+  // end at its target's rim (#2781) or at its centre; only the rim earns the
+  // door clause. Asked of the target's own shape, not of `inside` — a body
+  // whose smallest ground is a room NESTED in the target (the parlor in Rei's
+  // house) has still arrived.
+  const target = boundFor ? (marks ?? []).find((m) => m?.id === boundFor) : null;
+  const arrived = !!(position && target && pointInsideMark(position, target));
   return {
-    handle: walker.handle, position, moving, inside, entered, boundFor,
+    handle: walker.handle, position, moving, inside, entered, boundFor, arrived,
     remainingM: Math.max(0, Math.round(Number(walker.remaining_m) || 0)),
     etaCrossings: Math.max(0, Number(walker.eta_crossings) || 0),
   };
@@ -1666,8 +1677,10 @@ export function placeLabel(place, marks = [], determined = {}) {
   const entered = name(place.entered);
   const inside = name(place.inside);
   const ground = entered ? `in ${entered}` : inside ? `on ${inside}'s ground` : "on open ground";
-  // bound for somewhere the body is not: the walk stopped at its rim (#2781)
-  const bound = place.boundFor && place.boundFor !== place.entered && place.boundFor !== place.inside
+  // bound for somewhere the body is not: the walk stopped at its rim (#2781).
+  // Not when the body has arrived inside the target's own shape, whatever its
+  // smallest ground is called.
+  const bound = place.boundFor && !place.arrived && place.boundFor !== place.entered && place.boundFor !== place.inside
     ? name(place.boundFor) : null;
   return bound ? `${ground}, at the door of ${bound}` : ground;
 }
