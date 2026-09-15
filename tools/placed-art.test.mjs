@@ -277,8 +277,11 @@ async function readArt({ zoomIn = 0, stopAtTier = null } = {}) {
     // been asking its question of the one tier that cannot answer it.
     for (let i = 0; i < zoomIn; i++) {
       await page.mouse.move(at.x, at.y);
-      await page.mouse.wheel(0, -240);
-      await page.waitForTimeout(140);
+      // Small notches make the intermediate band observable even when a heavier viewer
+      // coalesces redraws; a large notch can leap from far to near between reads.
+      await page.mouse.wheel(0, -80);
+      if (stopAtTier) await settle();
+      else await page.waitForTimeout(140);
       if (stopAtTier) {
         const t = await page.evaluate(() => document.getElementById("wv-overlay")?.getAttribute("data-tier"));
         if (t === stopAtTier) break;
