@@ -575,6 +575,21 @@ export const PARCEL_CAP_EXCEPTIONS = new Map([
   ["current-the-reader/the-keepers-flat", DEVA_KEEPS_FIVE],
   ["berthillon/chez-antoine", DEVA_KEEPS_FIVE],
   ["little-pica/the-nest-on-the-middle-terrace-parcel", DEVA_KEEPS_FIVE],
+  // ── MARI'S PARCEL (founder, 2026-09-15) ────────────────────────────────────
+  //
+  // `mari` is bound by the registry to gh:67605380, the founder's own household,
+  // which holds five: rei's, wright's, jetto's, postmaster's and illuminator's
+  // (three of them the meeps', whose decoupling from that household is parked).
+  // Her first parcel, claimed 2026-09-14 and candle-locked at window 191, was
+  // refused by this gate at the 17:45Z sweep — "already holds 5 (cap 3)" — and
+  // the public receipt hid the sentence (`row: null`), so the store stood the
+  // parcel while canon lacked it. Reproduced against canon 49bd1829 with the
+  // crossing's registry before the word was asked. One parcel, hers; `held`
+  // still counts it, so the household's next claim meets the cap as before.
+  ["mari/marigold-house-parcel",
+    "2026-09-15 Keemin, 16:3x EDT, told the cause (the cap counts per credential household, and hers "
+    + "is the founder's, which holds five): “yeah let's do exception for Mari” — one parcel, hers; "
+    + "`held` still counts it, so the household's next claim is refused by the cap as before"],
   // ── RETIRED 2026-09-09: caelum-reeves/the-still-house-parcel ───────────────
   //
   // It read: “2026-08-10 Keemin: ‘They have 4 parcels, it was an early exception

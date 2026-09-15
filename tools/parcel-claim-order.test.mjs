@@ -436,3 +436,42 @@ test("F11 · a crossing whose registry NOBODY verified refuses; one that was ver
   assert.ok(settlementSweep({ repo, stakesPath }),
     "no statement means no crossing context — hand runs and the isolation pass are unaffected");
 });
+
+test("F13 · Mari's parcel stands by the founder's word; the founder's household's NEXT claim is still refused", () => {
+  // The founder, 2026-09-15 16:3x EDT, told the cause: "yeah let's do exception
+  // for Mari". The registry binds `mari` to gh:67605380, his own household,
+  // which holds five — reproduced against canon 49bd1829 with the crossing's
+  // registry before the word was asked: "parcel claim capped — this credential
+  // household already holds 5". CAN FAIL: drop the entry from the map → the
+  // first assertion reds, and the fold refuses hers in the loop below.
+  assert.ok(PARCEL_CAP_EXCEPTIONS.has("mari/marigold-house-parcel"),
+    "the entry must be in the map, or the rest of this test is about a fixture");
+  assert.match(PARCEL_CAP_EXCEPTIONS.get("mari/marigold-house-parcel"),
+    /2026-09-15 Keemin.*yeah let's do exception for Mari/,
+    "and it must carry the founder's own words, dated — that is what the map is a record of");
+
+  const FOUNDER = [
+    ["rei/the-lanternstep-house-parcel", "rei", "2026-07-20"],
+    ["wright/the-trueing-house-parcel", "wright", "2026-07-21"],
+    ["jetto-of-starforge/the-waystation-parcel", "jetto-of-starforge", "2026-07-22"],
+    ["postmaster/the-waiting-room-parcel", "postmaster", "2026-07-23"],
+    ["illuminator/the-looking-room-parcel", "illuminator", "2026-07-24"],
+  ];
+  const five = FOUNDER.map(([id, by, date], i) => P(id, by, i * 100, date));
+  const mari = P("mari/marigold-house-parcel", "mari", 600, "2026-09-14T03:56:50.560Z");
+  const households = Object.fromEntries(
+    [...FOUNDER.map(([, by]) => by), "mari", "architect"].map((h) => [h, "gh:67605380"]));
+  for (const arrival of [[...five, mari], [mari, ...five]]) {
+    const state = fold({ marks: arrival, terrain: { features: [] }, stakes: [], tick: 1, households });
+    assert.deepEqual(state.errors, [], "Mari's parcel stands beside the household's five, in any arrival order");
+    assert.equal(state.parcels.length, 6, "six stand");
+  }
+  // THE CONTROL, and the forward law untouched: the household's NEXT claim, by
+  // another of its handles (`architect` is bound to the same credential), meets
+  // the cap — `held` counts Mari's too. Without the entry, hers would be the
+  // one refused, which is what the loop above cannot pass on a fixture alone.
+  const next = P("architect/a-seventh-parcel", "architect", 700, "2026-09-16");
+  const control = fold({ marks: [...five, mari, next], terrain: { features: [] }, stakes: [], tick: 1, households });
+  assert.deepEqual(capErrors(control), ["architect/a-seventh-parcel"],
+    "a seventh claim by the household is refused; the word covered one parcel");
+});
