@@ -6739,6 +6739,46 @@ export function mountViewer(appEl) {
     mapCtx.refit();          // the pane may have changed shape while we were inside
     mapCtx.settleFrame?.();
   }
+  /**
+   * THE CAMERA STEPS OUTSIDE WHEN THE EXIT DOES.
+   *
+   * ⚑ FOUNDER, 2026-08-29: he exited as rei, the door took it, and he was still
+   * looking at the inside of the vault. The scene is mounted off the enter-exit
+   * ledger — re-read on a clock — so between the act landing and the next read
+   * the page went on drawing a room its reader had left.
+   *
+   * SO THE ACT'S OWN ANSWER DRIVES IT, not a later poll — his words. The site's
+   * cockpit knows the moment the door takes an exit and says so on
+   * `pm:stood-out` (world-cockpit-mount.mjs); this drops the built interior for
+   * that standpoint, puts the town back, and asks the record to catch up behind
+   * it. The ledger read still happens; it is simply no longer what the reader
+   * is waiting on.
+   *
+   * IT IS NOT A SECOND SOURCE OF TRUTH. Nothing here decides that somebody left —
+   * the door decided, the cockpit relayed, and this is the redraw. A page with
+   * no cockpit on it is unaffected and keeps the clock it always had. (Built
+   * 2026-08-29 on the party lineage, lost in the rollback, ported 2026-09-16 —
+   * POS-91 / postmark#2847; the room's music did not come with it, the music
+   * stayed with the dungeon.)
+   */
+  function standOutOfRoom(leftId = null) {
+    const key = standpointKey();
+    const built = interiorByKey.get(key) ?? null;
+    // Only the room actually left. An event naming a room this standpoint is not
+    // in is not this standpoint's business — two residents on one key, one of
+    // them stepping out, must not take the other's scene down with them.
+    if (leftId && built?.room?.id && built.room.id !== leftId) return;
+    interiorByKey.delete(key);
+    const boxEl = $(root, ".wv-minimap");
+    if (boxEl) {
+      boxEl.classList.remove("is-scene-mark");
+      syncSceneExit(boxEl, null, key);
+      remountTown(boxEl);
+    }
+    // the record catches up behind the redraw, and renderCurrent then agrees
+    // with what is already on screen rather than undoing it
+    loadEnterExitLedger().then(() => renderCurrent()).catch(() => { /* the clock will */ });
+  }
   // Which scene should be showing, decided where which standpoint is showing is
   // decided — including the warm switch, which reuses a built pane and never
   // re-renders (the kilean regression: the previous resident's room stayed on
@@ -10933,6 +10973,12 @@ export function mountViewer(appEl) {
   // a window resize is the same event as a toggle, only slower
   const onViewerResize = () => { mapCtx?.refit?.(); positionBubbles(); placeTour(); sizeSearchField(); };
   window.addEventListener("resize", onViewerResize);
+  // THE COCKPIT'S ONE WORD TO THIS PANE — see standOutOfRoom for why the redraw
+  // cannot wait for the ledger's clock. Guarded like the dock and feed seams
+  // beside it: a page with no cockpit never fires it, and a detail that names
+  // nothing is still a valid "you are outdoors now".
+  const onStoodOut = (ev) => { try { standOutOfRoom(ev?.detail?.left ?? null); } catch { /* a redraw is never worth a throw */ } };
+  window.addEventListener("pm:stood-out", onStoodOut);
   sizeSearchField();
   // the first measurement can land on a fallback face; the real one arrives later
   try { document.fonts?.ready?.then(() => sizeSearchField()); } catch { /* no font loading API */ }
@@ -12554,6 +12600,7 @@ export function mountViewer(appEl) {
       clearInterval(walkState.timer);
       document.removeEventListener("keydown", onViewerKeydown);
       window.removeEventListener("resize", onViewerResize);
+      window.removeEventListener("pm:stood-out", onStoodOut);
       bubbleResize?.disconnect();
     },
   };
