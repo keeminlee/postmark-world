@@ -7083,7 +7083,15 @@ export function mountViewer(appEl) {
     if (onResidentPath() && key !== SPECTATOR_ACTOR) {
       const cached = readCache.get(residentStandpointKey(standpoint, key));
       if (!cached) {
-        loadResidentRead(standpoint, key).then((read) => { if (read) renderCurrent(); });
+        // LATELY IS DOWNSTREAM OF THIS READ TOO (POS-84, 2026-09-16). On the
+        // resident path the "wrote" rows come from `allMarks()`, which is the
+        // read's records — so until this lands there are none, and
+        // `renderCurrent` never touches the rail. The rows appeared anyway, but
+        // only because the settlement lane happened to redraw afterwards: a
+        // reader whose settlements landed first saw a Lately with no marks in
+        // it until something unrelated moved. The one lane that actually
+        // carries them now says so itself.
+        loadResidentRead(standpoint, key).then((read) => { if (read) { renderCurrent(); renderActivity(); } });
         box.innerHTML = chips + (readError
           ? `<div class="wv-err">the office could not say what you can see from here: ${esc(readError)}</div>`
           : `<div class="wv-quiet">opening your eyes…</div>`);
@@ -12491,19 +12499,89 @@ export function mountViewer(appEl) {
   // the town's departures were told from the world's unblessed main tip while
   // the release lane's guardrail said "tags only, never main tip". A fallback
   // that fires on every load is not a fallback; it is the mechanism.
+  // ── THE OFFICE GOES FIRST, BECAUSE THE FILE STOPPED (POS-84, 2026-09-16) ──
+  //
+  // `WORLD/walk-ledger.md` FROZE on 2026-08-10T20:25Z by its own seam line —
+  // "the walk ledger freezes with honor" — and every departure since lives in
+  // the store. This loader had no office leg, so the only source it could reach
+  // was that frozen file, and Lately showed nothing the town had done in five
+  // weeks. Measured on prod 2026-09-16: `/api/world2/walks` held 2,498
+  // departures, 348 of them in the last four days, and this pane could show
+  // none of them. The map's walkers were never affected — they read
+  // `/world/walkers`, which is live.
+  //
+  // So this is the enter-exit ledger's shape, and for its reason, said there:
+  // "an office reads the clone it actually has while a staged file is a
+  // photograph". The frozen file stays as the FALLBACK, which is what a page
+  // served from somewhere with no office still has to read.
+  //
+  // WHY THE WINDOW IS ALSO CUT HERE. The door takes `?since=` as of the w39
+  // train (office PR #71); prod's does not yet, and answers the whole record —
+  // 1.17 MB, 2,498 rows — to any query at all. This pane shows fourteen rows.
+  // So the office's answer is cut to the same fortnight it asked for, and the
+  // day the door ships the window the cut becomes a no-op rather than a second
+  // opinion.
+  //
+  // THE CUT IS NOT APPLIED TO THE FILE, and that is deliberate. Every row in
+  // the frozen ledger predates any window this page would ask for, so cutting
+  // it to a fortnight would not trim a fallback — it would delete one, and
+  // leave a page with no office reporting a town where nobody ever went
+  // anywhere. The 304 frozen rows stay the era's fallback, exactly as they are
+  // today. The cut is a guard against a door that ignores the window, and it
+  // belongs on that door's leg.
+  const WALK_WINDOW_DAYS = 14;
+  const walkWindowSince = () => new Date(Date.now() - WALK_WINDOW_DAYS * 86_400_000).toISOString();
+  /**
+   * The office's `walks[]` onto the ledger's own departure grammar.
+   *
+   * `parseWalkLedger` defines that grammar and this is the same record in
+   * another wrapper: `within` and `to` are the STORE's column names for what
+   * walk.mjs reads as `targetExtent` and `targetMarkId` — the office's own
+   * `/world2/walks` says so where it renders them. Every other field is
+   * name-for-name. Unrecognized rows are COLLECTED, not silently dropped, which
+   * is the parser's own stance; one unreadable row must not discard the nine
+   * hundred good ones beside it.
+   */
+  function walksFromOffice(body) {
+    const departures = [], unrecognized = [];
+    for (const w of Array.isArray(body?.walks) ? body.walks : []) {
+      if (!w?.iso || !w?.handle || !w?.from || !w?.toward) { unrecognized.push(w); continue; }
+      departures.push({
+        iso: String(w.iso), handle: String(w.handle),
+        from: w.from, toward: w.toward, at: w.at,
+        targetExtent: w.within ?? null,
+        targetMarkId: w.to ?? null,
+        pace: w.pace ?? null,
+        line: w.line ?? null,
+      });
+    }
+    return { departures, unrecognized };
+  }
   let departures = [];
+  // ONE INSTANT PER LOAD, threaded through: the chain, the cut and the absence
+  // sentence must all name the same fortnight, or the sentence a reader is
+  // shown quotes a URL nothing asked for.
+  const walkLedgerSources = (since) => recordSources("/WORLD/walk-ledger.md", {
+    office: officeUrl(`/world2/walks?since=${encodeURIComponent(since)}`),
+  });
   async function loadWalkLedger() {
-    for (const { url } of recordSources("/WORLD/walk-ledger.md")) {
+    const since = walkWindowSince();
+    for (const { url, json } of walkLedgerSources(since)) {
       try {
         const r = await fetch(url, { credentials: "same-origin" });
         if (!r.ok) continue;
-        const parsed = parseWalkLedger(await r.text());
+        // ISO-8601 with a fixed Z offset is lexicographically ordered, which is
+        // why these compare as strings and not as parsed instants: the record's
+        // own `iso` is the office's own `iso`, spelled identically.
+        const parsed = json
+          ? { departures: walksFromOffice(await r.json()).departures.filter((d) => d.iso >= since) }
+          : parseWalkLedger(await r.text());
         if (parsed.departures.length) { departures = parsed.departures; noteRecordRead("/WORLD/walk-ledger.md"); return; }
       } catch { /* try the next one */ }
     }
     // NOT SILENT. An empty rail and an unread rail look identical, and the
     // difference is the whole bug this cut closed.
-    noteRecordAbsence("/WORLD/walk-ledger.md");
+    noteRecordAbsence("/WORLD/walk-ledger.md", { office: officeUrl(`/world2/walks?since=${encodeURIComponent(since)}`) });
   }
   // ───────── the enter-exit acts ─────────
   // The enter-exit ledger, fetched exactly as the walk ledger is, and for the same
@@ -12591,10 +12669,36 @@ export function mountViewer(appEl) {
     host.hidden = !enterExitLedger.acts.length;
     host.innerHTML = occupancyDevLine({ manifest, acts: enterExitLedger.acts.length, unrecognized: enterExitLedger.unrecognized, at });
   }
+  // ── THE PANE OPENS ONCE, WHEN THE LANES HAVE SETTLED (POS-84, 2026-09-16) ──
+  //
+  // Lately is fed by four independent arrivals — the walk ledger, the
+  // settlements, the stake events, and (on the resident path) the resident's
+  // own read — and every one of them used to paint the moment it landed. The
+  // walk ledger is 43 KB and always landed first, so the FIRST list a reader
+  // saw was departures alone, and it could not survive the sort once anything
+  // else was in hand. Measured on prod 2026-09-15, signed in: 14 rows at 13.0 s,
+  // every one a "set out"; at 17.5 s all 14 replaced. That first list was drawn
+  // to be thrown away.
+  //
+  // So `renderActivity` is a no-op until boot says the lanes have settled. It
+  // is not "render less"; it is "do not publish a list you already know is
+  // provisional". A named record ABSENCE still shows through — that heading is
+  // the only place the page says a record went unread, and a reader is owed it
+  // whether or not the rail is ready.
+  //
+  // After the gate opens, every later arrival renders normally and ADDS rows.
+  // Adding is not the bug; replacing wholesale was.
+  let activityLanesSettled = false;
   function renderActivity() {
     const box = $(root, ".wv-activity");
     const list = $(root, ".wv-acts");
     if (!box || !list) return;
+    if (!activityLanesSettled) {
+      box.hidden = !recordAbsences.size;
+      renderRecordAbsences();
+      list.innerHTML = "";
+      return;
+    }
     const rows = recentActivity({
       departures,
       // WHO IS READING DECIDES THE SET, HERE TOO (2026-09-13). This read the
@@ -12737,7 +12841,20 @@ export function mountViewer(appEl) {
         applyWorldLayer();
       }
       renderCurrent();
-      loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
+      // ── ONE RENDER WHEN THE LANES SETTLE (POS-84) ─────────────────────────
+      //
+      // These three feed Lately and used to paint independently, so the pane
+      // showed the first one home and then replaced it. They are started
+      // together, exactly as they were, and the pane opens once — when all
+      // three have answered or failed. `allSettled` rather than `all` because
+      // a quiet lane must not be able to keep the pane shut: each of these
+      // already swallows its own failure, and this says so at the join too.
+      const settlements = loadSettlements();
+      // the settlement number and its chip are NOT downstream of the other two
+      // and do not wait on them — only the rail does
+      settlements.then(renderSettlementChip);
+      Promise.allSettled([loadWalkLedger(), settlements, loadStakeEvents()])
+        .then(() => { activityLanesSettled = true; renderActivity(); });
       // and the enter-exit acts, once THEY arrive. A full re-render rather than one
       // panel: the telling's own chip is downstream of this too, and the ledger
       // landing is exactly the "record moved" that the view cache invalidates on.
@@ -12746,9 +12863,6 @@ export function mountViewer(appEl) {
       // already painted as monograms by then, and this is what puts the pictures
       // on them. Never awaited: the map is not allowed to wait on a nicety.
       loadResidentsMeta().then(() => drawWalkers());
-      // the settlement number, and the chip it lives in
-      loadSettlements().then(() => { renderSettlementChip(); renderActivity(); });
-      loadStakeEvents().then(renderActivity);
       // conversations load on first toggle (💬), not at boot — the layer is opt-in
       if (!pmKey()) resolveIdentity(); // keyless: still settles the ring and the presets
     } catch (err) {
