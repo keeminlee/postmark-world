@@ -957,7 +957,26 @@ export function occupancyDevLine({ manifest = new Map(), acts = 0, unrecognized 
  *
  *  Nearest-to-centre first, so a budget cut drops the far corner of the room
  *  rather than whichever child the fold happened to list last. */
-export function interiorFurniture({ room, children = [], limit = 40 } = {}) {
+/** THE INTERIOR BUDGET, and it is not the telling's.
+ *
+ *  `DIALS.context_budget` (12) exists because a horizon has no natural end: a
+ *  look across a landscape must be cut somewhere or it carries the world. A
+ *  ROOM has a natural end — its walls — and everything standing inside them is
+ *  simply what is in it. There is no editorial judgement left to make.
+ *
+ *  composeInterior read the telling's dial anyway, so an interior silently
+ *  dropped its thirteenth thing (the Lanternstep parcel stood at exactly 12/12
+ *  when this was first diagnosed, 2026-08-27): furniture that is in the room, in
+ *  the record, and not on the floor, with no cut anywhere for a reader to see.
+ *
+ *  The number was already written down and already unused: this function has
+ *  carried `limit = 40` since it was built, dead code because its caller was
+ *  starved upstream. One number now, read by both, so the floor and the engine
+ *  cannot hold two opinions about how much of a room a room has.
+ *  (Lost with the party lineage 08-29; ported 2026-09-16, POS-91 / postmark#2847.) */
+export const INTERIOR_BUDGET = 40;
+
+export function interiorFurniture({ room, children = [], limit = INTERIOR_BUDGET } = {}) {
   const at = { x: Number(room?.at?.x) || 0, y: Number(room?.at?.y) || 0 };
   const things = children
     .filter((c) => isMark(c) && c && c.at && Number.isFinite(Number(c.at.x)) && Number.isFinite(Number(c.at.y)))
@@ -6470,7 +6489,10 @@ export function mountViewer(appEl) {
     if (!room) return null;             // a room the fold does not hold is not a room
     // the fold when there is one, the read's index when there is not — never
     // a null world into an engine whose first line reads its marks
-    const found = investigate(roomId, worldForRoom(world, allMarks()), { occupancy: liveOccupancy(), budget: state.dials.context_budget });
+    // INTERIOR_BUDGET, not the telling's dial — a room's walls are its own cut
+    // (see the note on INTERIOR_BUDGET). `state.dials.context_budget` here made
+    // the thirteenth thing in a room go missing from the floor, silently.
+    const found = investigate(roomId, worldForRoom(world, allMarks()), { occupancy: liveOccupancy(), budget: INTERIOR_BUDGET });
     if (found?.error) return null;
     // investigate SHAPES its children for a reader (id, kind, at, body) and drops
     // extent and image on the way. A floor needs both, so each child is resolved
