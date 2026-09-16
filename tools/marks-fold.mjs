@@ -271,9 +271,14 @@ function frameMarks(out) {
     while (p && !walked.has(p)) {
       walked.add(p);
       const c = worldCentreOf(p);
-      if (c && (continued || standingRank(p, byId) >= rank)) return { x: c.x, y: c.y };
+      // `_frameId` — WHICH mark framed it, beside `_origin` (where). The reparent
+      // verb (tools/reparent-keep-world.mjs, 2026-09-16) keys on the mark, not the
+      // centre: a frame that left is a different frame; a frame that moved is the
+      // same frame carrying its children, which is this law working as written.
+      if (c && (continued || standingRank(p, byId) >= rank)) { rec._frameId = p.id; return { x: c.x, y: c.y }; }
       p = p._parentMarkId ? byId.get(p._parentMarkId) : null;
     }
+    rec._frameId = null;   // nothing in the chain binds it: framed on the world's centre
     return { x: rootCentre.x, y: rootCentre.y };
   };
 

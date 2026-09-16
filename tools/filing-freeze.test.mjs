@@ -28,6 +28,17 @@ import { fileURLToPath } from "node:url";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
 const LINT = join(HERE, "mark-lint.mjs");
+
+/** Does a mark.md stand anywhere at or beneath `dir`? — the husk clause's question (2026-09-16) */
+function holdsAMark(dir) {
+  for (const name of readdirSync(dir)) {
+    const p = join(dir, name);
+    let s; try { s = statSync(p); } catch { continue; }
+    if (s.isFile() && name === "mark.md") return true;
+    if (s.isDirectory() && holdsAMark(p)) return true;
+  }
+  return false;
+}
 const FREEZE = join(ROOT, "WORLD/filing-freeze.json");
 
 // ── fixtures ─────────────────────────────────────────────────────────────────
@@ -205,7 +216,13 @@ test("the fossil's boundary is present, covers the tree as it stood, and every r
     if (!/^WORLD\/marks\//.test(path)) { wrong.push(`${id}: ${path} is not under WORLD/marks/`); continue; }
     const dir = join(ROOT, path);
     if (!existsSync(dir)) continue;                       // withdrawn since the freeze — lawful
-    if (!existsSync(join(dir, "mark.md"))) wrong.push(`${id}: ${path} holds no mark.md`);
+    // THE HUSK CLAUSE (the reparent verb, 2026-09-16 — POS-102 · postmark#2865):
+    // a seat with no record of its own but standing marks beneath it is lawful.
+    // A frame's record can leave canon on the return while what stands on it
+    // stays, and the directory IS those marks' filing — the very thing the
+    // freeze says never moves. A directory with no mark anywhere beneath it is
+    // still what it always was here: a broken filing.
+    if (!existsSync(join(dir, "mark.md")) && !holdsAMark(dir)) wrong.push(`${id}: ${path} holds no mark.md, and nothing stands beneath it`);
   }
   assert.deepEqual(wrong, [], "every standing row names a real filing");
 
@@ -213,6 +230,17 @@ test("the fossil's boundary is present, covers the tree as it stood, and every r
   // "the path IS the id" true of the fossil too, wherever it happens to sit.
   const mismatched = rows.filter(([id, path]) => path.split("/").pop() !== id.split("/").pop());
   assert.deepEqual(mismatched, [], "a row's leaf directory is the mark's slug — the leaf is the identity, wherever the filing is");
+});
+
+test("THE HUSK CLAUSE: a frozen row whose seat has lost its record but still files marks beneath it is a lawful filing; an empty seat is not", () => {
+  const scratch = mkdtempSync(join(tmpdir(), "pm-freeze-husk-"));
+  try {
+    mkdirSync(join(scratch, "a-frame", "a-child"), { recursive: true });
+    writeFileSync(join(scratch, "a-frame", "a-child", "mark.md"), "---\nkind: sited\nby: x\n---\n");
+    mkdirSync(join(scratch, "an-empty-seat", "nothing-here"), { recursive: true });
+    assert.equal(holdsAMark(join(scratch, "a-frame")), true, "the frame's record is gone; its child's filing stands — lawful");
+    assert.equal(holdsAMark(join(scratch, "an-empty-seat")), false, "a directory with nothing beneath it is a broken filing, as before");
+  } finally { rmSync(scratch, { recursive: true, force: true }); }
 });
 
 test("NEVER REGENERATED: no tool in the repo writes the fossil's boundary", () => {
