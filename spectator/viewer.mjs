@@ -2144,7 +2144,14 @@ export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label =
       + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
   }
   return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}${threshold ? " at-threshold" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
-    + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit"/>`
+    // WHOSE TOKEN THIS IS, on the hit target itself. It carried no identity
+    // because nothing clicked it — the circle existed to take a hover and a
+    // title, and `pointer-events: all` meant it also SWALLOWED every click that
+    // landed on it. So clicking your own face on the map did nothing AND stopped
+    // the ground underneath from hearing it — the founder's "I can't even click
+    // my own token to walk" (2026-08-29): not an act that failed, an act with
+    // nothing behind it and a hole where the fallback was.
+    + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit" data-walker="${esc(handle)}"/>`
     + fill
     + `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-frame"/>`
     + `<line x1="${x - size * 0.22}" y1="${rim}" x2="${x - size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
@@ -5613,7 +5620,7 @@ const MARKUP = `
             <!-- WHOSE FEET (Keemin, 2026-08-05). From and To said where; nothing said
                  who, and on a page where you can act as any of your household's
                  residents that is the one thing worth being certain of. -->
-            <div class="wv-walk-row"><span class="wv-walk-key">Who</span><span class="wv-walk-val wv-walk-who"></span></div>
+            <div class="wv-walk-row wv-walk-row-who"><span class="wv-walk-key">Who</span><span class="wv-walk-val wv-walk-who"></span></div>
             <div class="wv-walk-row"><span class="wv-walk-key">From</span><span class="wv-walk-val wv-youhere">…</span></div>
             <div class="wv-walk-row"><span class="wv-walk-key">To</span><span class="wv-walk-val wv-walk-destination"></span></div>
             <div class="wv-walk-acts">
@@ -9731,9 +9738,25 @@ export function mountViewer(appEl) {
     const confirm = $(desk, ".wv-walk-confirm");
     const destination = walkState.destination;
     const preview = selectedWalkPreview();
+    // ── ROOM SCALE (founder, live-testing 2026-08-29) ──
+    //
+    // "the walk button in the UI is still FILLED with irrelevant information I
+    // don't care about." Inside a room a few metres across, most of what this
+    // desk says is true and useless: an ETA priced in ferry crossings, a note
+    // about which stride the pace was guessed with, a compass arrow for a step
+    // you could take by leaning, and a Who row answering a question the cockpit
+    // dock is already answering two inches away.
+    //
+    // ⚑ SCOPED TO THE STRIDE RATHER THAN TO ANY ROOM BY NAME, deliberately. A
+    // ground that declares a walk lattice is telling you it is room-scale — that
+    // is what the dial MEANS — so the same fact that makes a quarter-metre step
+    // meaningful is the fact that makes a crossings ETA absurd. Out in the open
+    // world nothing declares one, and the desk there is untouched.
+    const roomScale = walkStrideM != null;
+    desk.classList.toggle("is-roomscale", roomScale);
     if (status) {
       // "arrived at X" said again what From has just said
-      status.hidden = journey.kind !== "journey";
+      status.hidden = journey.kind !== "journey" || roomScale;
       status.className = `wv-walk-status${journey.kind === "journey" ? " journey" : journey.kind === "arrived" ? " arrived" : ""}`;
       status.innerHTML = journey.kind === "journey"
         ? `<b>on the road — toward ${esc(journey.destinationName)}</b> · ${journey.remainingM.toLocaleString()} m left · arrives ${formatEtaCrossings(journey.etaCrossings)}`
@@ -9744,12 +9767,17 @@ export function mountViewer(appEl) {
     }
     if (planner) planner.hidden = journey.kind === "journey"
       && !walkState.changingCourse && !destination;
-    if (box) box.innerHTML = destination ? walkToRow(destination, preview)
+    if (box) box.innerHTML = destination ? walkToRow(destination, preview, roomScale)
       : `<span class="wv-quiet">click the painting, or select a mark</span>`;
     if (confirm) {
       confirm.textContent = journey.kind === "journey" ? "change course" : "confirm";
       confirm.disabled = !preview;
     }
+    // WHO is the cockpit dock's question inside a room — it is on screen, two
+    // inches away, with a face on it. Kept everywhere else, where the dock is
+    // not mounted and this is the only thing that says whose feet these are.
+    const whoRow = $(desk, ".wv-walk-row-who");
+    if (whoRow) whoRow.hidden = roomScale;
     const who = $(desk, ".wv-walk-who");
     if (who) who.innerHTML = `<b>${esc(state.handle || "—")}</b>`;
     const cancel = $(desk, ".wv-walk-cancel");
@@ -9759,7 +9787,7 @@ export function mountViewer(appEl) {
 
   // the To line: the name, how far, WHICH WAY as an arrow rather than a compass
   // word, and when you would arrive.
-  function walkToRow(destination, preview) {
+  function walkToRow(destination, preview, roomScale = false) {
     const from = actorOrigin();
     const name = walkDestinationLabel(destination, byId, data?.worldState?.determined, null);
     const parts = preview && walkLegParts(preview.leg);
@@ -9770,13 +9798,22 @@ export function mountViewer(appEl) {
         state.dials.bearing_points);
       if (bearing) arrow = `<span class="wv-walk-dir" title="${esc(BEARING_LONG[bearing] ?? bearing)}">${bearingArrow(bearing)}</span>`;
     }
-    const leg = [
-      parts ? `<span class="wv-walk-meta">${esc(parts.distance)}</span>` : "",
-      arrow,
-      parts?.eta ? `<span class="wv-walk-meta">${esc(parts.eta)}</span>` : "",
-      // an ETA the record could not price says which stride it guessed with
-      parts?.paceNote ? `<span class="wv-walk-meta is-guess" title="${esc(parts.paceNote)}">?</span>` : "",
-    ].filter(Boolean);
+    // INSIDE A ROOM, THE DISTANCE AND NOTHING ELSE. An ETA priced in ferry
+    // crossings, and a note about which stride that ETA was guessed with, are
+    // answers to a question nobody standing two metres from a cake is asking —
+    // the founder's "irrelevant information I don't care about", named. The
+    // arrow goes too: a compass bearing for a step you could take by leaning is
+    // precision about nothing. All three are unchanged out in the world, where
+    // a journey genuinely is priced in crossings.
+    const leg = roomScale
+      ? [parts ? `<span class="wv-walk-meta">${esc(parts.distance)}</span>` : ""].filter(Boolean)
+      : [
+        parts ? `<span class="wv-walk-meta">${esc(parts.distance)}</span>` : "",
+        arrow,
+        parts?.eta ? `<span class="wv-walk-meta">${esc(parts.eta)}</span>` : "",
+        // an ETA the record could not price says which stride it guessed with
+        parts?.paceNote ? `<span class="wv-walk-meta is-guess" title="${esc(parts.paceNote)}">?</span>` : "",
+      ].filter(Boolean);
     return `<b>${esc(name)}</b>`
       + (leg.length ? `<div class="wv-walk-legline">${leg.join("")}</div>` : "");
   }
@@ -9906,8 +9943,41 @@ export function mountViewer(appEl) {
   // `scrollDesk` is gone with the rail (Keemin, 2026-08-04): the desk was down a
   // scrolling column and had to be scrolled to, which is precisely the problem
   // moving it to the painting's corner solves — it now opens where you are looking.
-  function chooseWalkPoint(x, y, namedInside = null) {
+  /**
+   * THE GROUND'S STRIDE, and the one place it is kept.
+   *
+   * `null` is the answer for every ground that has not declared one, and it
+   * means the walk is not snapped at all — see the note where it is read. A
+   * value arrives only inside a ground whose own mark carries the dial, and
+   * there it governs BOTH halves of what the founder was complaining about on
+   * 2026-08-29: where a click lands, and how much the desk says about it. One
+   * dial, because a ground fine enough to need a quarter metre is a ground where
+   * a journey ETA in ferry crossings is noise. (Built on the party lineage, lost
+   * in the 08-29 rollback, ported 2026-09-16 — POS-91 / postmark#2847. No ground
+   * on today's record declares a stride, so the snap and the room-scale desk
+   * ship dormant; the token-as-walk-button and the no-op reselect ship live.)
+   */
+  let walkStrideM = null;
+  function setWalkStride(v) {
+    const n = Number(v);
+    const next = Number.isFinite(n) && n > 0 ? n : null;
+    if (next === walkStrideM) return;
+    walkStrideM = next;
+    renderWalkDestination();
+  }
+  /** A coordinate on the ground's lattice: round(v/step)*step, anchored at the
+   *  world origin — the office's own arithmetic, so a point snapped here and a
+   *  point the office snaps land on the same square. Unsnapped where the ground
+   *  declared nothing, which is the ordinary case. */
+  const snapToStride = (v) => (walkStrideM ? Math.round(v / walkStrideM) * walkStrideM : v);
+
+  function chooseWalkPoint(rawX, rawY, namedInside = null) {
     if (!canAct()) return;
+    // SNAPPED BEFORE ANYTHING IS ASKED OF IT, so the walls check, the
+    // zero-length refusal, the preview and the confirmed destination are all
+    // about the SAME point. Snapping later would have armed one place and
+    // walked to another.
+    const x = snapToStride(rawX), y = snapToStride(rawY);
     const destination = pointWalkDestination({ x, y }, allMarks());
     if (!destination) return;
     // ── A CLICK OUTSIDE WHAT THE READ NAMED (Q4, 2026-09-10) ────────────────
@@ -11183,6 +11253,24 @@ export function mountViewer(appEl) {
     if (chosen) { selectMark(chosen.dataset.choose, { scrollCell: true }); return; }
     const actor = e.target.closest("[data-act-as]");
     if (actor) { selectActor(actor.dataset.actAs); return; }
+    // ── YOUR OWN FACE ON THE MAP IS A WALK BUTTON (founder-ruled 2026-08-29) ──
+    //
+    // "make the obvious gesture do the obvious thing." Clicking the token that
+    // IS you arms a walk and opens the desk in its choose-a-destination state —
+    // the same door the Walk verb opens, reached the way a hand actually
+    // reaches for it. Clicking SOMEBODY ELSE'S token is left alone: it is their
+    // face, not a control of yours, and the hover it already had still tells
+    // you who they are.
+    const token = e.target.closest("[data-walker]");
+    if (token) {
+      const mine = token.dataset.walker;
+      const ours = (state.whoami?.handles ?? []).includes(mine);
+      if (ours && !isSpectating()) {
+        if (mine !== state.actAs) { selectActor(mine); return; }
+        if (canAct()) ACTION_DOORS.walk.begin();
+      }
+      return;
+    }
     // The rail's one job: BEGIN this verb from wherever the reader is standing
     // — straight through when the act has what it needs, armed when it does
     // not. `begin` may set state.arming, so the rail is re-read after it runs
@@ -11946,6 +12034,15 @@ export function mountViewer(appEl) {
   }
 
   async function selectActor(actor) {
+    // ⚑ PRESSING THE FACE YOU ARE ALREADY WEARING DOES NOTHING (founder,
+    // live-testing 2026-08-29: "RECLICKING Illuminator takes me back out to
+    // where she actually is? makes absolutely zero sense"). It looked like a
+    // reload special-case; there is none in this file. The jump came from the
+    // recentre on `actorOrigin()` further down — where a resident LIVES, not
+    // where they are STANDING after a crossing. A no-op is the whole fix for the
+    // gesture: selecting the selected thing is not a request for anything. The
+    // recentre on a REAL switch is left exactly as it was.
+    if (actor === state.actAs) return;
     if (actor === SPECTATOR_ACTOR) {
       state.actAs = SPECTATOR_ACTOR;
       walkState.actorBound = false;
@@ -12192,6 +12289,17 @@ export function mountViewer(appEl) {
       next = response.ok && Array.isArray(body?.actions)
         ? { for: handle, entries: body.actions, status: "ready", detail: "" }
         : { for: handle, entries: [], status: "unavailable", detail: body?.defect || `the apex answered ${response.status}` };
+      // ── THE GROUND'S OWN STRIDE, off the read we were already making ──
+      //
+      // The founder, 2026-08-29: "I still can't walk less than 1 meter by
+      // clicking." The site's cockpit had learned the dial and snapped ITS
+      // click-to-walk, but the walking a reader actually does rides THIS desk,
+      // which had never heard of it. `standpoint.portal.walk_min_step` is
+      // metres, and it is ABSENT — not null, not zero — on every ground that has
+      // not declared one, which today is every ground in the town. Absent means
+      // NO SNAPPING AT ALL. Taken from the SAME response the palette comes out
+      // of rather than a second fetch.
+      setWalkStride(body?.standpoint?.portal?.walk_min_step);
     } catch (error) {
       next = { for: handle, entries: [], status: "unavailable", detail: String(error?.message ?? error) };
     }
