@@ -200,6 +200,20 @@ function inertAcross(repo, path, mainBranch, branch) {
 }
 
 /** Does any mark.md stand anywhere beneath `dir`? (the seat-keeping test for an unpublish) */
+// Every mark.md filed strictly BENEATH a seat, as repo-relative forward-slash
+// paths — the no-stranded-children gate's census for the return (2026-09-16).
+function standingMarksBeneath(dir, repo) {
+  const out = [];
+  if (!existsSync(dir)) return out;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const sub = join(dir, entry.name);
+    if (existsSync(join(sub, "mark.md"))) out.push(relative(repo, join(sub, "mark.md")).replace(/\\/g, "/"));
+    out.push(...standingMarksBeneath(sub, repo));
+  }
+  return out;
+}
+
 function holdsAStandingMark(dir) {
   if (!existsSync(dir)) return false;
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -1303,6 +1317,34 @@ export function settlementSweep({
     });
   }
 
+  // § THE NO-STRANDED-CHILDREN GATE, FOR THE RETURN (2026-09-16, the 09-16
+  // return's first crossing). The withdrawal path has refused a parent whose
+  // children still stand since 2026-08-19 ("N mark(s) still stand inside it on
+  // main"; S56, postmark#2465): a mark's frame is the ground its children are
+  // filed in, and a child's coordinates compose against it. The escrow-0
+  // unpublish never asked — so the 05:45Z crossing would have taken limen's
+  // four Threshold terraces and rei's experiment garden out from under twelve
+  // standing marks (hal's whole house, ryuu-kurogane's and noe's houses, rei's
+  // thyme gift at hal's), and the tier falsifier caught them moving by up to a
+  // kilometre. The same law, applied: a zero-stake commons mark whose seat still
+  // holds a standing mark that is not itself leaving this crossing is KEPT, by
+  // name, on the left_drafted channel (the receipt's KEEP line). It comes back
+  // into the return the crossing after its children move, or the moment it is
+  // staked. Children leaving in the same crossing (unpublished or withdrawn) do
+  // not anchor: the family crosses together, the S56 rule.
+  {
+    const leavingPaths = new Set([...unpublished.map((u) => u.path), ...withdrawn.map((w) => w.path)].map((p) => p.replace(/\\/g, "/")));
+    for (let i = unpublished.length - 1; i >= 0; i--) {
+      const item = unpublished[i];
+      const standing = standingMarksBeneath(join(repo, dirname(item.path)), repo).filter((p) => !leavingPaths.has(p));
+      if (!standing.length) continue;
+      unpublished.splice(i, 1);
+      const named = standing.slice(0, 3).map((p) => p.slice(MARKS_PREFIX.length).replace(/\/mark\.md$/, "")).join(", ");
+      leftDrafted.push({ household: item.household, id: item.id, path: item.path, class: item.class, escrow: item.escrow,
+        reason: `kept: ${standing.length} mark(s) still stand inside it (${named}${standing.length > 3 ? ", …" : ""}) — a frame leaves after its children, or the moment it is staked` });
+    }
+  }
+
   // § the ground-closure hold (2026-08-21, the goodie-bag crossing): a mark
   // publishes only onto ground that is already canon or crossing WITH it. The
   // eligible set was not ancestor-closed, so one staked child under a drafted
@@ -1382,6 +1424,7 @@ export function settlementSweep({
         class: item.class,
       };
     }
+    const seats = [];
     for (const item of unpublished) {
       rmSync(join(repo, item.path), { force: true });
       // § the husk (2026-09-07, S61 — #2430's second half). An unpublished
@@ -1394,10 +1437,24 @@ export function settlementSweep({
       // vermillion's launching pad refused four runs on 09-03. A seat that
       // still holds a standing child keeps standing: the child's filing is
       // its own.
-      const seat = join(repo, dirname(item.path));
-      if (!holdsAStandingMark(seat)) rmSync(seat, { recursive: true, force: true });
+      seats.push(join(repo, dirname(item.path)));
       touched.push(item.path);
       delete registry.published[item.id];
+    }
+    // THE SECOND PASS (2026-09-16, the 09-16 return's first crossing): the seat
+    // check used to run inside the loop, so a parent unpublished BEFORE its child
+    // still saw the child standing and kept its seat — and when the child left a
+    // moment later the parent's directory stayed behind empty: exactly the husk
+    // the S61 fix removes, made again by ordering (caelum/the-still-lake, whose
+    // the-swing left in the same crossing). Ask the question once more after
+    // every removal, and walk up: a seat emptied here can empty its parent's
+    // seat in turn, up to the first directory that still files a mark.
+    const marksRoot = join(repo, "WORLD", "marks");
+    for (let seat of seats) {
+      while (seat !== marksRoot && seat.startsWith(marksRoot) && existsSync(seat) && !holdsAStandingMark(seat)) {
+        rmSync(seat, { recursive: true, force: true });
+        seat = dirname(seat);
+      }
     }
     for (const item of withdrawn) {
       // the child guard held, so mark.md is the directory's only record —

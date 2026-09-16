@@ -653,10 +653,27 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // settlement sweep (the canon half of world_withdraw_mark) or a founder-hand
     // withdraw. First lawful customer: nyx/the-night-room, whose withdrawal
     // refused the 2026-08-21 crossing while this was still a hand list.
+    // THE CROSSING IN PROGRESS IS A DECLARING ACT (2026-09-16, the 09-16
+    // return's first crossing). The sweep runs this suite over its WORKING TREE
+    // before it commits, so a mark it unpublished this crossing has no deleting
+    // commit yet — the `git log` clause below cannot see it, and 52 lawful
+    // returns read as losses (S71's morning crossing refused on exactly this).
+    // What the working tree DOES carry is the sweep's own ledger: a row present
+    // in WORLD/settlement-publications.json at HEAD and absent in the tree is a
+    // mark this crossing unpublished through its own channel — the return rule
+    // (PSA 2026-09-09: "every commons mark with no stake behind it returns to
+    // its household's drafts"). On a clean tree the two sets agree and this
+    // clause names nothing.
+    const registryIds = (text) => { try { return Object.keys(JSON.parse(text).published ?? {}); } catch { return []; } };
+    const registryAtHead = new Set(registryIds((() => { try { return git("show", "HEAD:WORLD/settlement-publications.json"); } catch { return "{}"; } })()));
+    const registryPath = join(ROOT, "WORLD/settlement-publications.json");
+    const registryInTree = new Set(registryIds(existsSync(registryPath) ? readFileSync(registryPath, "utf8") : "{}"));
+    const unpublishedThisCrossing = new Set([...registryAtHead].filter((id) => !registryInTree.has(id)));
     const lostIds = [...idsA].filter((i) => !idsB.has(i) && !WITHDRAWN_BY_DECLARED_ACT.has(i));
     const marksRootA = join(scratch, "WORLD", "marks").replace(/\\/g, "/");
     const lawfullyWithdrawn = new Set();
     for (const id of lostIds) {
+      if (unpublishedThisCrossing.has(id)) { lawfullyWithdrawn.add(id); continue; }
       const dirA = String(A.find((m) => m.id === id)?._dir ?? "").replace(/\\/g, "/");
       if (!dirA.startsWith(marksRootA)) continue;
       const rel = `WORLD/marks${dirA.slice(marksRootA.length)}/mark.md`;

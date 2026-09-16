@@ -1601,7 +1601,7 @@ test("THE S58 CLASS: a sketchbook that MODIFIED a mark this crossing unpublishes
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
 
-test("THE HUSK (S61 class, 2026-09-07): an unpublished mark leaves no directory behind — and a seat with a standing child keeps standing", (t) => {
+test("THE HUSK (S61 class, 2026-09-07): an unpublished mark leaves no directory behind — and a mark with a standing child is KEPT, not unpublished (the return learns the withdrawal law, 2026-09-16)", (t) => {
   // Git never sees an empty directory, but the freeze test reads the WORKING
   // TREE: a directory without a mark.md is "a broken filing" there. rmSync on
   // mark.md alone left berthillon's unstaked cone as a husk and S61 refused,
@@ -1626,11 +1626,24 @@ test("THE HUSK (S61 class, 2026-09-07): an unpublished mark leaves no directory 
   put(stall, record({ by: "berthillon", at: { x: 230, y: 95 }, extent: { w: 4, h: 4 }, body: "a sorbet stall" }));
   const sign = "WORLD/marks/let-there-be-light/the-town-centre/the-stall/the-sign/mark.md";
   put(sign, record({ by: "the-town", tier: "constitution", at: { x: 231, y: 96 }, extent: { w: 1, h: 1 }, body: "the stall's sign, the town's own" }));
+  // THE ORDER (2026-09-16, the 09-16 return's first crossing): a parent and its
+  // child BOTH leave this crossing, the parent first. At the parent's turn the
+  // child still stands, so the seat is kept; at the child's turn the child's own
+  // seat goes; the parent's directory is left empty behind them — the S61 husk,
+  // made again by ordering (caelum/the-still-lake and its the-swing, 05:45Z).
+  // The registry lists the lake BEFORE the swing so the loop meets them in that
+  // order; the second pass is what empties the lake's seat.
+  const lake = "WORLD/marks/let-there-be-light/the-town-centre/the-lake/mark.md";
+  put(lake, record({ by: "berthillon", at: { x: 240, y: 95 }, extent: { w: 6, h: 6 }, body: "a still lake" }));
+  const swing = "WORLD/marks/let-there-be-light/the-town-centre/the-lake/the-swing/mark.md";
+  put(swing, record({ by: "berthillon", at: { x: 241, y: 96 }, extent: { w: 1, h: 1 }, body: "a swing over the water" }));
   put("WORLD/settlement-publications.json", JSON.stringify({
     version: 1,
     published: {
       "berthillon/pistache-cone": { household: "house-b", path: cone, class: "commons" },
       "berthillon/the-stall": { household: "house-b", path: stall, class: "commons" },
+      "berthillon/the-lake": { household: "house-b", path: lake, class: "commons" },
+      "berthillon/the-swing": { household: "house-b", path: swing, class: "commons" },
     },
   }, null, 2) + "\n");
   git("init", "-q", "-b", "main");
@@ -1648,12 +1661,20 @@ test("THE HUSK (S61 class, 2026-09-07): an unpublished mark leaves no directory 
   writeFileSync(stakesPath, JSON.stringify([]));
 
   const report = settlementSweep({ repo, stakesPath });
-  assert.deepEqual(report.unpublished.map((row) => row.id).sort(), ["berthillon/pistache-cone", "berthillon/the-stall"], "both leave canon for want of escrow");
+  assert.deepEqual(report.unpublished.map((row) => row.id).sort(),
+    ["berthillon/pistache-cone", "berthillon/the-lake", "berthillon/the-swing"], "three leave canon for want of escrow; the stall is kept");
   assert.equal(existsSync(join(repo, cone)), false, "the cone's mark.md is gone");
   assert.equal(existsSync(join(repo, dirname(cone))), false, "THE HUSK: the cone's seat is gone with it — no directory without a mark.md is left in the working tree");
-  assert.equal(existsSync(join(repo, stall)), false, "the stall's mark.md is gone");
-  assert.equal(existsSync(join(repo, dirname(stall))), true, "but the stall's seat STANDS: a founding-estate child still files beneath it");
+  assert.equal(existsSync(join(repo, stall)), true,
+    "THE FRAME STAYS: the stall's mark.md is kept — a standing mark files beneath it (the withdrawal law's no-stranded-children gate, applied to the return 2026-09-16)");
+  assert.ok(report.left_drafted.some((r) => r.id === "berthillon/the-stall" && /^kept: 1 mark\(s\) still stand inside it \([^)]*the-stall\/the-sign\)/.test(r.reason)),
+    `and the receipt says so by name on the KEEP line: ${JSON.stringify(report.left_drafted.map((r) => [r.id, r.reason]))}`);
+  assert.equal(existsSync(join(repo, dirname(stall))), true, "its seat stands, with the child beneath it");
   assert.equal(existsSync(join(repo, sign)), true, "and the child's own filing is untouched");
+  assert.equal(existsSync(join(repo, swing)), false, "the swing's mark.md is gone");
+  assert.equal(existsSync(join(repo, dirname(swing))), false, "and the swing's seat with it");
+  assert.equal(existsSync(join(repo, dirname(lake))), false,
+    "THE ORDER: the lake's seat is gone too — emptied by its child's leaving, and asked again after the loop");
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
 
