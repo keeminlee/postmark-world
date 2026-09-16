@@ -86,9 +86,13 @@ test("the channel is no longer the tree parent of the town's dry land", () => {
   // Requiring ONE of each pair keeps the guard across the window AND lets it
   // fail — if a subject leaves the world under every name it has, this reds.
   const ch = mark("the-town/the-main-channel");
+  // Blackwater's grove and stone path LEFT this list on 2026-09-16: merrick-
+  // nocturne's since the 09-10 transfer, unstaked, returned to his drafts by the
+  // crossing under the return rule (PSA 2026-09-09). A lawful leaving is not the
+  // silent drop the `continue` guarded against — it is declared by the sweep's
+  // own channel — and the channel's non-parenthood is still guarded by the five
+  // subjects that stand. If either comes back staked, it may rejoin this list.
   for (const names of [["the-town/the-town-centre"], ["caelum/evermoon"], ["spar/the-doubled-coast"],
-    ["merrick-nocturne/blackwater-bend-grove", "the-town/blackwater-bend-grove"],
-    ["merrick-nocturne/blackwater-bend-stone-path", "the-town/blackwater-bend-stone-path"],
     ["the-town/the-harbor-reach"], ["sol-of-garrison/the-protected-grove"]]) {
     const found = names.map(mark).filter(Boolean);
     assert.ok(found.length > 0, `${names.join(" / ")} is in the world under at least one of its names`);

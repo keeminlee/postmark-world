@@ -66,9 +66,18 @@ test("the dial sits in the gap the record actually has, between a parcel and a d
   // this rule, on their length, and that is the intended answer: a path IS a
   // place. Written down because "300 m on the narrow side" is the figure the
   // dial was proposed from, and it is not the figure the rule reads.
-  const narrowest = Math.min(...districts.map((m) => Math.min(m.extent.w, m.extent.h)));
-  assert.ok(narrowest < floor,
-    `the record does hold long thin places (narrowest side ${narrowest} m), and they qualify on span`);
+  // THE RULE READS SPAN, NOT THE NARROW SIDE — asserted on the rule. Until
+  // 2026-09-16 this clause pinned the record instead ("the record does hold long
+  // thin places, narrowest side 30 m"): the 09-16 return took the worn path and
+  // limen's terraces to their households' drafts (unstaked commons marks, PSA
+  // 2026-09-09) and the narrowest side left standing was 570 m. A record that
+  // stops holding a thin place is not a broken dial. What the dial must still
+  // do: qualify a 30 x 1,700 strip — the worn path's own shape — on its
+  // length, which is the figure the rule reads, while its 30 m side sits under
+  // the dial.
+  const strip = { extent: { w: 30, h: 1700 } };
+  assert.ok(span(strip) >= floor && Math.min(strip.extent.w, strip.extent.h) < floor,
+    `a 30 x 1,700 strip — the worn path's own shape — qualifies on its span (${span(strip)} m) though its narrow side (30 m) is under the dial (${floor} m)`);
   // ⚑ THE FLIP: move placed_art_min_m to 10 and the parcel assertion reds; to
   //   4000 and the district one does.
 });
