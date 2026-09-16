@@ -8149,6 +8149,18 @@ export function mountViewer(appEl) {
     // Pando has an extent, at real coordinates, exactly as real as any parcel;
     // vermillion's own 3,600 m mountain at the same centre has always drawn.
     const fpPx = (x, y) => ({ x: originPx.x + x / mPerPx, y: originPx.y + y / mPerPx });
+    // THE EPOCH CONTRACT. The footprints are baked ONCE into one innerHTML —
+    // that is the whole reason the layer is fast — so the SVG in this node is a
+    // photograph of the world as it stood when it was taken. applyWorldLayer
+    // re-assembles the world and bumps `worldEpoch` for exactly this reason,
+    // and this layer was the one prebuilt view that never read it: the old
+    // guard was `if (!fpLayer.childNodes.length)`, which asks "has this ever
+    // been built" and not "is what it holds still true". An in-app world reload
+    // therefore kept the old footprints forever. `fpEpoch` is the epoch the
+    // current bake was taken at; -1 is never-baked, a value no real epoch can
+    // collide with. (Built 2026-08-27, lost in the 08-29 rollback, ported
+    // 2026-09-16 — POS-91 / postmark#2847.)
+    let fpEpoch = -1;
     function buildFpLayer() {
       let s = "";
       for (const m of allMarks()) {
@@ -8159,8 +8171,17 @@ export function mountViewer(appEl) {
         });
       }
       fpLayer.innerHTML = s;
+      fpEpoch = worldEpoch;   // this bake is a photograph of THAT world
       if (lastRadial) mapCtx.syncWithin(lastRadial);
     }
+    // Stale exactly when the world has moved under the bake. Asked in the two
+    // places staleness can become visible: opening the layer, and any repaint
+    // while it is already open (a reload with the footprints ON must correct
+    // itself on screen, not wait to be toggled off and back).
+    const fpStale = () => fpEpoch !== worldEpoch;
+    mapCtx.refreshFp = () => {
+      if (fpLayer.childNodes.length && fpStale()) buildFpLayer();
+    };
     // the standpoint's containment chain reads heavier on the map — kept in sync
     // with every telling (the boxes are the same boxes, only the weight moves)
     mapCtx.syncWithin = (radial) => {
@@ -8172,7 +8193,7 @@ export function mountViewer(appEl) {
         r.classList.toggle("fp-within", ids.has(r.dataset.id));
     };
     mapCtx.toggleFp = () => {
-      if (!fpLayer.childNodes.length) buildFpLayer();
+      if (!fpLayer.childNodes.length || fpStale()) buildFpLayer();
       const on = fpLayer.style.display === "none";
       fpLayer.style.display = on ? "" : "none";
       return on;
@@ -8339,6 +8360,9 @@ export function mountViewer(appEl) {
   }
   function drawOverlay(radial) {
     if (!mapCtx) return;
+    // the footprints are baked, not drawn per frame, so this is where an open
+    // layer notices the world moved under it (the epoch contract, above)
+    mapCtx.refreshFp?.();
     const { overlay, originPx, mPerPx } = mapCtx;
     const px = (m) => ({ x: originPx.x + m.x / mPerPx, y: originPx.y + m.y / mPerPx });
     const me = px(state.cam);
