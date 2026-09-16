@@ -245,11 +245,22 @@ before(async () => {
  * the one thing that looks fine either way. So an observer is installed before
  * any page script runs and every change to `.wv-acts` is kept, in order.
  */
-async function openAndWatch({ signedIn, officeAt = office }) {
+async function openAndWatch({ signedIn, officeAt = office, noFold = false }) {
   const askedBefore = officeAt.asked.length;
   const page = await browser.newPage({ viewport: { width: 1500, height: 950 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
+  // THE FOLD IS NOT THESE TESTS' QUESTION (2026-09-16, the flake: 4 red in 10
+  // on world main). On the signed-in path the viewer still fetches the fold
+  // after paint (`loadTownHouses`, world 2026-09-11) — from the stub office
+  // first, which 404s, and then from this rig's own copy of the real record.
+  // When that lands before the pane is read, its recent marks fill the fourteen
+  // slots and push every August departure off the end, and the signed-in
+  // assertions below go red without a byte of the viewer being wrong: the cap
+  // and the recency order are the pane's law. The comments on those tests
+  // already assumed no fold on this path; the rig now makes it so, and the
+  // fallback file — the question — has room to show.
+  if (noFold) await page.route(/\/(WORLD\/world-state\.json|api\/world\/state)(\?|$)/, (route) => route.abort());
   await page.addInitScript(() => {
     window.__pos84 = [];
     const signature = () => [...document.querySelectorAll(".wv-acts .wv-act-line")]
@@ -352,7 +363,7 @@ test("THE WALK LANE READS THE STORE — a departure from today reaches the pane"
 // Aug.
 test("THE FROZEN FILE IS STILL THE FALLBACK — an office with no walk door leaves the era readable", async (t) => {
   if (!chromium) return t.skip(skipReason);
-  const seen = await openAndWatch({ signedIn: true, officeAt: blindOffice });
+  const seen = await openAndWatch({ signedIn: true, officeAt: blindOffice, noFold: true });
 
   assert.equal(seen.askedDuring.some((p) => p.startsWith("/world2/walks")), true,
     "the office leg was never tried, so this proves nothing about falling back from it");
@@ -397,7 +408,7 @@ test("THE FIRST LIST IS THE LIST — a spectator's pane is never redrawn from sc
 
 test("A SIGNED-IN READER'S FIRST LIST ALREADY CARRIES EVERY LANE", async (t) => {
   if (!chromium) return t.skip(skipReason);
-  const seen = await openAndWatch({ signedIn: true });
+  const seen = await openAndWatch({ signedIn: true, noFold: true });
 
   assert.equal(seen.askedDuring.some((p) => p.startsWith("/world/apex")), true,
     "the page never asked for a resident read, so it was not signed in: " + JSON.stringify(seen.askedDuring));
