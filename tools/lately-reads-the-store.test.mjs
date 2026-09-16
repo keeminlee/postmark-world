@@ -55,12 +55,33 @@
 // G:/Starstory/docs/2026-09-16/pos84-world-flips.md.
 //
 //   1. Restore the ledger-only source — `recordSources("/WORLD/walk-ledger.md")`
-//      with no `office:` — and "THE WALK LANE READS THE STORE" reds on
-//      "the pane named no walk from the store".
+//      with no `office:`. 3 of 5 red; the first is the precondition, which is
+//      the honest place for it to fail, because with no office leg the door is
+//      never asked at all:
+//
+//        not ok 1 - THE WALK LANE READS THE STORE — a departure from today reaches the pane
+//          error: |-
+//            the page never asked the office for walks at all: ["/world/skeleton",
+//            "/world/state","/world/settlements","/repo/log?limit=120",
+//            "/world/enter-exit-ledger","/world/walkers","/walks"]
+//
 //   2. Restore the three independent renders — `loadWalkLedger().then(renderActivity)`,
 //      `loadSettlements().then(() => { renderSettlementChip(); renderActivity(); })`,
-//      `loadStakeEvents().then(renderActivity)` — and drop the
-//      `activityLanesSettled` gate, and "THE FIRST LIST IS THE LIST" reds.
+//      `loadStakeEvents().then(renderActivity)` — and open the
+//      `activityLanesSettled` gate from the start. 2 of 5 red, and they are the
+//      two Cause A tests:
+//
+//        not ok 3 - THE FIRST LIST IS THE LIST
+//          the spectator's first list was replaced rather than added to — it was
+//          drawn to be thrown away. first [14 mark rows] final [S70 blessed, the
+//          store's walk, 12 mark rows]
+//        not ok 4 - A SIGNED-IN READER'S FIRST LIST ALREADY CARRIES EVERY LANE
+//          the first list a signed-in reader saw came from one lane — ["mark"]
+//
+//      "THE PANE STAYS SHUT" stays GREEN under flip 2 and that is not a gap in
+//      it: with the gate open the first render IS the first non-empty one, so
+//      nothing precedes it. That test guards a flicker-then-empty, which is a
+//      different failure; tests 3 and 4 are what catch the swap.
 
 import { test, after, before } from "node:test";
 import assert from "node:assert/strict";
