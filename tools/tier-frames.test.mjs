@@ -665,18 +665,39 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
     // its household's drafts"). On a clean tree the two sets agree and this
     // clause names nothing.
     const registryIds = (text) => { try { return Object.keys(JSON.parse(text).published ?? {}); } catch { return []; } };
-    const registryAtHead = new Set(registryIds((() => { try { return git("show", "HEAD:WORLD/settlement-publications.json"); } catch { return "{}"; } })()));
+    const registryAt = (ref) => registryIds((() => { try { return git("show", `${ref}:WORLD/settlement-publications.json`); } catch { return "{}"; } })());
+    // …AND THE CROSSING JUST COMMITTED IS ONE TOO (2026-09-16, the 17:45Z
+    // crossing). On the box this suite runs AFTER the sweep commits and before
+    // it pushes, so HEAD is the settlement commit itself: its registry already
+    // lacks the rows the crossing removed, and the clause above names nothing.
+    // The rows a crossing removed are its parent's minus its own — so HEAD~1 is
+    // read too. Before the commit the parent's registry is simply an older
+    // superset; on a clean tree the sets agree and nothing is named.
+    const registryAtHead = new Set([...registryAt("HEAD"), ...registryAt("HEAD~1")]);
     const registryPath = join(ROOT, "WORLD/settlement-publications.json");
     const registryInTree = new Set(registryIds(existsSync(registryPath) ? readFileSync(registryPath, "utf8") : "{}"));
     const unpublishedThisCrossing = new Set([...registryAtHead].filter((id) => !registryInTree.has(id)));
     const lostIds = [...idsA].filter((i) => !idsB.has(i) && !WITHDRAWN_BY_DECLARED_ACT.has(i));
     const marksRootA = join(scratch, "WORLD", "marks").replace(/\\/g, "/");
+    // THE DELETING COMMIT IS FOUND BY THE MARK'S FILING, NOT BY ITS REF-ERA PATH
+    // (2026-09-16, the 17:45Z crossing). lysander/the-jetty was re-filed under
+    // the lochan after the ref (fdf9a60f, the region re-shape); asked by its
+    // 08-11 path, the log answered with that re-filing, and the settlement that
+    // lawfully returned it read as a loss with no act — the one rehomed mark
+    // among fifty. The freeze manifest IS the filing ("A mark's directory is its
+    // historical filing… it never moves again"), so a frozen id is asked by its
+    // frozen seat; a mark the fossil never held keeps the ref-era path, which is
+    // the only filing it ever had.
+    const frozenFiling = new Map(Object.entries((() => {
+      try { return JSON.parse(readFileSync(join(ROOT, "WORLD/filing-freeze.json"), "utf8")).marks ?? {}; } catch { return {}; }
+    })()));
     const lawfullyWithdrawn = new Set();
     for (const id of lostIds) {
       if (unpublishedThisCrossing.has(id)) { lawfullyWithdrawn.add(id); continue; }
+      const frozenSeat = frozenFiling.get(id);
       const dirA = String(A.find((m) => m.id === id)?._dir ?? "").replace(/\\/g, "/");
-      if (!dirA.startsWith(marksRootA)) continue;
-      const rel = `WORLD/marks${dirA.slice(marksRootA.length)}/mark.md`;
+      if (!frozenSeat && !dirA.startsWith(marksRootA)) continue;
+      const rel = frozenSeat ? `${frozenSeat}/mark.md` : `WORLD/marks${dirA.slice(marksRootA.length)}/mark.md`;
       let subject = "";
       try { subject = git("log", "-1", "--format=%s", "--diff-filter=D", "HEAD", "--", rel).trim(); } catch { /* no deleting commit — stays a loss */ }
       // Three deleting subjects are declared acts: the settlement sweep (the
