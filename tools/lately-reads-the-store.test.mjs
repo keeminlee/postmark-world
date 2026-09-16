@@ -51,8 +51,8 @@
 //
 // ── THE CAN-FAIL FLIPS ─────────────────────────────────────────────────────
 //
-// Both were run on the committed tree, 2026-09-16. Receipts in
-// G:/Starstory/docs/2026-09-16/pos84-world-flips.md.
+// Both were run on the committed tree, 2026-09-16, and both reds are quoted
+// below verbatim — the receipt is here, not behind a pointer.
 //
 //   1. Restore the ledger-only source — `recordSources("/WORLD/walk-ledger.md")`
 //      with no `office:`. 3 of 5 red; the first is the precondition, which is
