@@ -77,8 +77,17 @@ test("[pin] EVERYTHING ELSE STAYS: the rect still exists, still spans the root f
   // the camera fence and the wheel cap, both keyed to that frame
   assert.match(SOURCE, /const fence = zoomOutLimit > 1\s*\n?\s*\? \(worldFrame \?\?/,
     "the camera fence is no longer the world frame");
-  assert.match(SOURCE, /zoomOutLimit > 1 && worldFrame \? worldFrame\.w : full\.w \* zoomOutLimit/,
+  // ⚑ THE CAP MOVED, THE KEY DID NOT (POS-95, 2026-09-16). The wheel's floor
+  // used to be this expression inline; it is now the OUTDOOR ARM of
+  // `outerViewWidth()`, because a ROOM's floor had to stop being a multiple of
+  // `full` and start being a multiple of its contain-fit. Outdoors is byte-for-
+  // byte what the 08-24 ruling set, so this pin follows it to its new line
+  // rather than being deleted — what it guards is that the town's cap is the
+  // world frame, not where the characters sit.
+  assert.match(SOURCE, /if \(zoomOutLimit > 1\) return worldFrame \? worldFrame\.w : full\.w \* zoomOutLimit;/,
     "the wheel cap is no longer keyed to the world frame");
+  assert.match(SOURCE, /const w = Math\.min\(outerViewWidth\(\)/,
+    "…and the wheel is no longer asking outerViewWidth for it");
 });
 
 test("[pin] A ROOM NEVER GETS OPEN COUNTRY — interiors are byte-identical either way", () => {

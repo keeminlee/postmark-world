@@ -1078,6 +1078,24 @@ export function markImagePath(mark) {
 // (zoomK ≈ 1, marker scale ≈ 1) instead of the deep-zoom regime past
 // MAX_ZOOM_IN that the one-svg approach forced. Same arithmetic, sane numbers.
 export const ROOM_GROUND_UNITS = 960;
+// THE GROUND PAD — how much floor is drawn BEYOND the room's own walls, as a
+// fraction of its longer side. Raised from 0.12 for POS-95 (founder,
+// 2026-09-15: "zoom out is also *too* heavily constrained in interiors… just
+// add some padding to it so it's not claustrophobic"). Drawn INTO the svg, so
+// it rides every projection on this ground — the camera air that keeps the wall
+// off the pane's edge is the separate ROOM_ZOOM_OUT_SLACK, and neither
+// substitutes for the other.
+//
+// ⚑ A FRACTION, WITH NO FLOOR IN METRES, AND THE REASON IS THE NUMERIC REGIME.
+// The issue offered "or a floor of a few metres for tiny rooms" and it was
+// tried: it breaks `viewer-interior`'s numeric-regime test, correctly. A pure
+// fraction makes every room span the SAME share of its own ground whatever its
+// size — `units / (1 + 2 * pad)` — which is what keeps the engine at zoomK ≈ 1
+// indoors, the regime the town tuned it for. A metre floor makes that share a
+// function of the room's size: a 0.5 m shelf would have spanned a fifth of its
+// ground, five times further out than a parcel, for the sake of a case the
+// camera slack already answers. Scale-free beats generous here.
+export const ROOM_GROUND_PAD = 0.25;
 
 // ── the placeholder extent (art-less marks stand in as tinted blocks) ───────
 //
@@ -1196,8 +1214,11 @@ export function sceneRuleM(mPerPx) {
   return SCENE_RULE_M.reduce((best, m) => (Math.abs(m - want) < Math.abs(best - want) ? m : best), SCENE_RULE_M[0]);
 }
 
-export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image = null } = {}) {
+export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = ROOM_GROUND_PAD, image = null } = {}) {
   const r = rect(room);                                    // centre + extent, metres
+  // BREATHING ROOM (POS-95, founder 2026-09-15: "add some padding to it so
+  // it's not claustrophobic"). A fraction of the longer side and nothing else —
+  // see ROOM_GROUND_PAD on why there is no metre floor here.
   const padM = Math.max(r.w, r.h) * pad;
   const spanW = r.w + 2 * padM, spanH = r.h + 2 * padM;
   const mPerPx = Math.max(spanW, spanH) / units;
@@ -2611,6 +2632,41 @@ export function clampViewToBounds(view, bounds) {
     y: axis(view.y, view.h, bounds.y, bounds.h),
   };
 }
+
+// ── THE CONTAIN-FIT: the whole ground shown in a pane, letterboxed ──────────
+//
+// The view that holds all of `full` inside a pane of that shape. A pane wider
+// than the ground keeps the ground's HEIGHT and widens the view; a pane taller
+// keeps its WIDTH and heightens it. Either way nothing is cropped and the
+// surplus is air, split evenly — which is what "shown whole" means.
+//
+// ⚑ IT IS NOT `full`, AND THAT IS THE WHOLE OF POS-95. `full` is the ground's
+// own box; the contain-fit is that box seen through THIS pane. The two differ
+// by exactly the pane's letterbox, and whenever they differ the contain-fit is
+// the LARGER one. `refit` had this arithmetic inline and correct, so a room at
+// rest was shown whole — but the wheel's floor was `full.w * zoomOutLimit`,
+// i.e. `full.w` for a room, which in a wide pane is NARROWER than the resting
+// view. So the first notch of zoom-OUT zoomed in, cropped the room's sides,
+// and the cap forbade widening back: the founder's "you can't even zoom out
+// enough to see the whole mark's interior". One question — how wide is the
+// whole room here — now has one owner, and both readers ask it.
+export function containFit(full, pane) {
+  const pw = Number(pane?.w), ph = Number(pane?.h);
+  if (!(pw > 0) || !(ph > 0)) return { ...full };
+  const pa = pw / ph, ga = full.w / full.h;
+  const w = pa >= ga ? full.h * pa : full.w;
+  const h = pa >= ga ? full.h : full.w / pa;
+  return { x: full.x + (full.w - w) / 2, y: full.y + (full.h - h) / 2, w, h };
+}
+
+// A ROOM MAY BE BACKED OFF ONE NOTCH PAST WHOLE (POS-95, founder: "add some
+// padding to it so it's not claustrophobic"). The contain-fit puts the walls
+// exactly on the pane's edge; this is the breath between the wall and the
+// frame. It is a camera slack, distinct from `roomGround`'s ground pad — that
+// one is drawn INTO the svg and rides every projection, this one is not drawn
+// at all. Both were needed: pad alone still pressed against the pane at the
+// cap, and slack alone would have shown the wall with no floor beyond it.
+export const ROOM_ZOOM_OUT_SLACK = 1.25;
 
 // HOW WIDE A FRAMED VIEW IS. Lock-on tightens to at most a quarter of the
 // painting, because being shown a thing means being taken to it. Coming back
@@ -6775,7 +6831,9 @@ export function mountViewer(appEl) {
       boxEl, svg, originPx: ground.originPx, mPerPx: ground.mPerPx,
       reattachOverlays: captureKeep(boxEl),
       groundMarkIds: ground.groundMarkIds, // the wall is already this mark's shape
-      zoomOutLimit: 1,          // the room is the outermost state; zoom-in only (revised ruling)
+      zoomOutLimit: 1,          // the room is the outermost state (revised ruling) — 1 × the
+                                // CONTAIN-FIT since POS-95, so "the whole room in this pane"
+                                // rather than "the ground's own box", plus ROOM_ZOOM_OUT_SLACK
       includeMine: false,       // the roof: your marks elsewhere don't follow you in
       placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
     });
@@ -7669,11 +7727,21 @@ export function mountViewer(appEl) {
   // and `includeMine` gates the portfolio union in the draw-set (a room shows
   // what is IN it; your marks elsewhere in town do not follow you through a
   // door — the roof, refused at the source per the 08-20 spike receipt).
-  // `zoomOutLimit` caps how far OUT the wheel may go, as a multiple of the
-  // full view. The town keeps MAX_ZOOM_OUT; a room passes 1 — the founder's
-  // revised camera ruling (2026-08-20 evening): a room has a camera now, the
-  // whole rail with it, but its outermost state IS the whole room — you can
-  // dive into a corner and come back, never drift into the void past the walls.
+  // `zoomOutLimit` caps how far OUT the wheel may go. OUTDOORS it is a multiple
+  // of the full view (the town keeps MAX_ZOOM_OUT, and the world frame has
+  // superseded it as the actual bound). IN A ROOM it is a multiple of the
+  // CONTAIN-FIT — the whole room as this pane shows it — and a room passes 1,
+  // which with ROOM_ZOOM_OUT_SLACK is "the whole room, plus a breath".
+  //
+  // ⚑ THE REFERENCE CHANGED, THE RULING DID NOT (POS-95). It used to be a
+  // multiple of `full` on both roads, and `full` is the ground's own box: in a
+  // pane wider than the room that box is NARROWER than the view the room rests
+  // at, so the cap sat inside the resting view and cropped the walls the moment
+  // the wheel moved. The founder's revised camera ruling (2026-08-20 evening)
+  // is untouched by the repair: a room has a camera, the whole rail with it,
+  // but its outermost state IS the whole room — you can dive into a corner and
+  // come back, never drift into the void past the walls. What changed is that
+  // "the whole room" is now measured against the pane it is being shown in.
   // `placeholderExtents` gives every art-less embodied mark a programmatic
   // stand-in (founder, 2026-08-20, revising his own always-on footprints): its
   // extent filled with a deterministic per-mark colour at LOW SATURATION — full
@@ -7924,6 +7992,24 @@ export function mountViewer(appEl) {
           y: full.y + (full.h - full.h * zoomOutLimit) / 2,
           w: full.w * zoomOutLimit, h: full.h * zoomOutLimit })
       : full;
+    // ── HOW FAR OUT THE WHEEL MAY GO (POS-95) ─────────────────────────────
+    //
+    // Outdoors: unchanged — the world frame, or the old 60×-the-painting
+    // fallback for a record with no root mark.
+    //
+    // In a ROOM: the floor of the wheel is the whole room CONTAINED IN THIS
+    // PANE, plus one notch of air — not `full.w`, which is the ground's own
+    // box and in a wide pane is narrower than the view the room already rests
+    // at. Measured against the live pane on every notch, because a pane that
+    // has been reshaped since mount has moved this answer; `refit` reads the
+    // same rectangle for the same reason. The ruling that a room is the
+    // outermost STATE is untouched: this is still the room's own ground, and
+    // there is still no notch that reaches the town.
+    const outerViewWidth = () => {
+      if (zoomOutLimit > 1) return worldFrame ? worldFrame.w : full.w * zoomOutLimit;
+      const pane = boxEl.getBoundingClientRect();
+      return containFit(full, { w: pane.width, h: pane.height }).w * zoomOutLimit * ROOM_ZOOM_OUT_SLACK;
+    };
     const clampView = () => Object.assign(view, clampViewToBounds(view, fence));
     function applyView() {
       // every camera write in this scene funnels through here — wheel, drag,
@@ -8040,10 +8126,7 @@ export function mountViewer(appEl) {
       // reader has zoomed in, the hand can fetch what a reshape crops, so the
       // town's own keep-width refit takes over until fit brings the room back.
       if (zoomOutLimit <= 1 && mapCtx.zoomK <= 1.02) {
-        const pa = pane.width / pane.height, ga = full.w / full.h;
-        const w = pa >= ga ? full.h * pa : full.w;
-        const h = pa >= ga ? full.h : full.w / pa;
-        Object.assign(view, { x: full.x + (full.w - w) / 2, y: full.y + (full.h - h) / 2, w, h });
+        Object.assign(view, containFit(full, { w: pane.width, h: pane.height }));
         applyView();
         return;
       }
@@ -8058,7 +8141,7 @@ export function mountViewer(appEl) {
     svg.addEventListener("wheel", (e) => {
       e.preventDefault(); stopTween(); breakFollow();
       const k = Math.pow(1.0015, e.deltaY);
-      const w = Math.min(zoomOutLimit > 1 && worldFrame ? worldFrame.w : full.w * zoomOutLimit, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
+      const w = Math.min(outerViewWidth(), Math.max(full.w / MAX_ZOOM_IN, view.w * k));
       const scale = w / view.w;
       const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
       const p = pt.matrixTransform(svg.getScreenCTM().inverse());
