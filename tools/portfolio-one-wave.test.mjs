@@ -181,15 +181,23 @@ test("ONE WAVE: every page after the first is asked for before page two answers"
   const second = log.find((e) => e.offset === 20);
   const wave = log.filter((e) => e.offset >= 20);
 
-  // THE CLAIM. A serial walk cannot do this at any speed: page three's request
-  // does not exist until page two has resolved.
+  // THE CLAIM, AND THE MARGIN GOES FIRST. Every page of the wave is asked for
+  // in the same breath; a walk that awaits each one spends a whole `DELAY`
+  // between them, so four gaps put the first and last requests most of half a
+  // second apart. This assertion is first because it is the one a reviewer can
+  // trust on a machine that is not this one.
+  const spread = Math.max(...wave.map((e) => e.asked)) - Math.min(...wave.map((e) => e.asked));
+  assert.ok(spread < DELAY / 2,
+    `the wave's requests are ${spread} ms apart, about ${(spread / DELAY).toFixed(1)} page-waits — that is not one tick`);
+
+  // and the same claim from the other side: a serial walk cannot ask for page
+  // three before page two answers at all, because the request does not exist
+  // yet. Kept as well, not instead — but it has no margin by construction, since
+  // a lazy walk issues its next request the instant the last answer lands, so it
+  // is the weaker of the two and stands second.
   for (const entry of wave)
     assert.ok(entry.asked <= second.answered,
       `the page at offset ${entry.offset} was asked for ${entry.asked - second.answered} ms AFTER page two answered — the walk is still serial`);
-
-  // and the brief's own shape: the wave's requests fall within one tick
-  const spread = Math.max(...wave.map((e) => e.asked)) - Math.min(...wave.map((e) => e.asked));
-  assert.ok(spread < DELAY / 2, `the wave's requests are ${spread} ms apart, which is not one tick`);
 
   // the first page is NOT in the wave — the counts it carries are what sizes it
   assert.ok(second.asked >= first.answered,
