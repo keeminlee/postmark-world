@@ -112,14 +112,30 @@ jobs:
           git config --global user.name "postmark crossing rehearsal"
           git config --global user.email "rehearsal@postmark.invalid"
 
-      # THE SKETCHBOOKS. Without them the sweep has nothing to publish and this
-      # job would rehearse an empty crossing while reporting a green one — the
-      # starving shape, one layer up. `--no-tags`, read-only, this repository's
-      # own refs; the token cannot write them and this job never tries.
+      # THE SKETCHBOOKS, AND THE COUNT IS ASSERTED RATHER THAN PRINTED. Without
+      # them the sweep has nothing to publish, and it does NOT starve: the
+      # loud-empty guard needs escrow-backed marks in sketchbooks to fire, so zero
+      # refs reads to it as an honestly quiet town. This job would then rehearse
+      # nothing and report a green check — an instrument measuring nothing and
+      # saying "fine". A typo'd refspec and a retired convention both arrive
+      # exactly that way, so the count is a gate.
+      #
+      # If the sketchbooks are ever genuinely retired from this remote, this fails
+      # every pull request until somebody looks — which is the intended behaviour,
+      # not a bug to route around: the premise of this job would be gone, and that
+      # is a thing to decide rather than to discover from a green check.
+      #
+      # `--no-tags`, read-only, this repository's own refs; the token cannot write
+      # them and this job never tries.
       - name: the sketchbooks and the base, fetched read-only
         run: |
           git fetch --no-tags --quiet origin '+refs/heads/draft/*:refs/remotes/origin/draft/*'
-          echo "sketchbooks: $(git for-each-ref --format='%(refname)' 'refs/remotes/origin/draft/' | wc -l)"
+          books=$(git for-each-ref --format='%(refname)' 'refs/remotes/origin/draft/' | wc -l)
+          echo "sketchbooks: $books"
+          if [ "$books" -eq 0 ]; then
+            echo "::error::no draft/* sketchbooks were fetched, so this job would sweep an empty crossing and report it green. Either the refspec no longer matches this remote's convention, or the sketchbooks have been retired — both want a person, not a pass." >&2
+            exit 1
+          fi
           # A gate that cannot see its own base is a gate that could not gate,
           # which is never a pass. Say so here rather than at the tool.
           git cat-file -e '${{ github.event.pull_request.base.sha }}^{commit}' || {
