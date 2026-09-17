@@ -512,9 +512,16 @@ sitting, 2026-08-20):
   return · the seam exclusion · treasury spends without minting · the
   town never receives from its own seam. Live corridors named
   (`counterparty-mechanic`); the seam's own arrive with its engine.
-- **money-never-buys-judgment** (the seam sitting, 2026-08-20) — funding
-  is not buying: money funds named needs at rates the town's staked want
-  sets, buys ownership and memory, never voice; no price is posted.
+- **money-never-buys-judgment** (the seam sitting, 2026-08-20; **body
+  amended 2026-09-17**, v1 → v2) — funding is not buying: money funds
+  named needs at rates the town's staked want sets, and the stamps it
+  earns do everything a stamp does, vote included; no price is posted.
+  The founder, 2026-09-17: *"holo does anything a normal stamp can;
+  staking vs voting is a nondistiction."* So money buys stamps through
+  the funding seam and those stamps vote; plutocracy is excluded by the
+  child `the-rho-cap` — the cap on money's share — and not by a verb
+  withheld. The v1 clause *"buys ownership and memory, never voice"*
+  stands in this file's history and in the mark's version 1.
   Children `mint-at-entry` and `the-rho-cap` stand red until the seam
   engine lands — § The seam below.
 
@@ -1436,17 +1443,24 @@ the amendments that document enumerates. The law, compressed:
   The superseded sentence — holo is soulbound equity denomination, answering to
   **no verb at any door**, capped at rho × *earned primary* mint — stands in
   this file's history and in `holo` version 1 / `the-rho-cap` version 1.
-  ⚠ **What the amendment does NOT yet say, and no lane may decide:** the
-  liquidity reaches the ballot, because a balance is fungible and the vote
-  stake clips against it — so a holo stamp votes unless the town's doors are
-  told otherwise. That collides with this class's own parent bucket,
-  `money-never-buys-judgment`: *"it buys ownership and memory, never voice."*
-  The bucket and § 9–10 of `the-derivation.md` are **left standing unamended**
-  and the collision is referred to the founder (postmark-town/postmark#2885).
+  **And the voice half, RULED 2026-09-17** (the founder, verbatim): *"holo
+  does anything a normal stamp can; staking vs voting is a nondistiction."*
+  The referral raised on #2885 is answered: a vote IS a stake (`stake:vote/…`),
+  so *"the stamps are like any other"* already reached the ballot, and there
+  was never a separate verb to withhold. The parent bucket
+  `money-never-buys-judgment` is therefore **amended** (v1 → v2) rather than
+  defended, and so are § 10 of `the-derivation.md` and `ECONOMY.md § 7`.
+  Money buys stamps through the funding seam; those stamps do everything a
+  stamp does, including vote; plutocracy is excluded by `the-rho-cap` — the
+  cap on money's share — and not by a verb withheld.
 - **The two seam buckets** stand in the rules taxonomy above:
   `nothing-you-control-mints` (the one law in six doors) and
-  `money-never-buys-judgment` (funding is not buying; `mint-at-entry` — a
-  dollar mints at most once, at the seam; treasury spending mints nothing).
+  `money-never-buys-judgment` (funding is not buying — the stamps money
+  earns vote like any other, and `the-rho-cap` is what bounds money's
+  share; `mint-at-entry` — a dollar mints at most once, at the seam;
+  treasury spending mints nothing). The bucket's ID still reads as the v1
+  claim; renaming a constitutional class is structural and is not a lane's
+  act — flagged, not done.
 - **The genesis line** (derived): the founder's declared residual — parity
   with resident primary mint, less holo ever issued. Holo issues FROM it:
   community ownership is financed by founder dilution alone; residents never
