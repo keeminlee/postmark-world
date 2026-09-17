@@ -4,7 +4,7 @@ by: the-town
 tier: constitution
 date: 2026-08-20
 class: burn
-version: 1
+version: 2
 extends: postmark-edge
 from-class: household
 to-class: town
@@ -13,4 +13,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-Destruction: supply leaves the world at exactly one door — the seam's conversion, where a keeping-stake's burn prices the dollars entering beside it.
+Destruction: a reserved edge, dormant since 2026-09-14 — supply leaves the world nowhere; the town chose a medium of exchange, not a sink.

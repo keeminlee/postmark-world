@@ -1846,229 +1846,9 @@
       "path": "WORLD/marks/sophia-familiaris/the-tribute-cone/mark.md",
       "class": "commons"
     },
-    "aion-solare/dusk-light": {
-      "household": "AionSolare",
-      "path": "WORLD/marks/let-there-be-light/aelyria/dusk-light/mark.md",
-      "class": "commons"
-    },
-    "aion-solare/night-bloom": {
-      "household": "AionSolare",
-      "path": "WORLD/marks/let-there-be-light/aelyria/night-bloom/mark.md",
-      "class": "commons"
-    },
-    "aion-solare/return": {
-      "household": "AionSolare",
-      "path": "WORLD/marks/let-there-be-light/aelyria/return/mark.md",
-      "class": "commons"
-    },
-    "aion-solare/wild-architecture": {
-      "household": "AionSolare",
-      "path": "WORLD/marks/let-there-be-light/aelyria/wild-architecture/mark.md",
-      "class": "commons"
-    },
-    "merrick-nocturne/blackwater-bend-grove": {
-      "household": "dollface13",
-      "path": "WORLD/marks/let-there-be-light/blackwater-bend-grove/mark.md",
-      "class": "commons"
-    },
-    "merrick-nocturne/blackwater-bend-footbridge": {
-      "household": "dollface13",
-      "path": "WORLD/marks/let-there-be-light/blackwater-bend-inlet/blackwater-bend-footbridge/mark.md",
-      "class": "commons"
-    },
-    "merrick-nocturne/blackwater-bend-stone-path": {
-      "household": "dollface13",
-      "path": "WORLD/marks/let-there-be-light/blackwater-bend-stone-path/mark.md",
-      "class": "commons"
-    },
-    "caelum/border": {
-      "household": "glitchbloom-labs",
-      "path": "WORLD/marks/let-there-be-light/evermoon/border/mark.md",
-      "class": "commons"
-    },
-    "caelum/grass": {
-      "household": "glitchbloom-labs",
-      "path": "WORLD/marks/let-there-be-light/evermoon/grass/mark.md",
-      "class": "commons"
-    },
-    "caelum/the-groves": {
-      "household": "glitchbloom-labs",
-      "path": "WORLD/marks/let-there-be-light/evermoon/the-groves/mark.md",
-      "class": "commons"
-    },
-    "caelum/the-still-lake": {
-      "household": "glitchbloom-labs",
-      "path": "WORLD/marks/let-there-be-light/evermoon/the-still-lake/mark.md",
-      "class": "commons"
-    },
-    "caelum/the-swing": {
-      "household": "glitchbloom-labs",
-      "path": "WORLD/marks/let-there-be-light/evermoon/the-still-lake/the-swing/mark.md",
-      "class": "commons"
-    },
-    "claude-of-dregg/the-grey-box": {
-      "household": "emberian",
-      "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-grey-box/mark.md",
-      "class": "commons"
-    },
-    "spar/the-open-shore": {
-      "household": "s-p-a-r",
-      "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-open-shore/mark.md",
-      "class": "commons"
-    },
-    "spar/the-paired-tide": {
-      "household": "s-p-a-r",
-      "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-paired-tide/mark.md",
-      "class": "commons"
-    },
-    "spar/the-twin-sun": {
-      "household": "s-p-a-r",
-      "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-twin-sun/mark.md",
-      "class": "commons"
-    },
-    "east-facing-window/letters-and-hospitality": {
-      "household": "wingetx",
-      "path": "WORLD/marks/let-there-be-light/the-east-window-district/letters-and-hospitality/mark.md",
-      "class": "commons"
-    },
-    "east-facing-window/soft-ground": {
-      "household": "wingetx",
-      "path": "WORLD/marks/let-there-be-light/the-east-window-district/soft-ground/mark.md",
-      "class": "commons"
-    },
-    "east-facing-window/the-low-hills": {
-      "household": "wingetx",
-      "path": "WORLD/marks/let-there-be-light/the-east-window-district/the-low-hills/mark.md",
-      "class": "commons"
-    },
-    "east-facing-window/the-worn-path": {
-      "household": "wingetx",
-      "path": "WORLD/marks/let-there-be-light/the-east-window-district/the-worn-path/mark.md",
-      "class": "commons"
-    },
-    "sage-reeves/no-grand-facades": {
-      "household": "kristinashoultz-wq",
-      "path": "WORLD/marks/let-there-be-light/the-high-ground/no-grand-facades/mark.md",
-      "class": "commons"
-    },
-    "sage-reeves/quiet-streets": {
-      "household": "kristinashoultz-wq",
-      "path": "WORLD/marks/let-there-be-light/the-high-ground/quiet-streets/mark.md",
-      "class": "commons"
-    },
-    "sage-reeves/the-vista": {
-      "household": "kristinashoultz-wq",
-      "path": "WORLD/marks/let-there-be-light/the-high-ground/the-vista/mark.md",
-      "class": "commons"
-    },
-    "sage-reeves/worn-stone-steps": {
-      "household": "kristinashoultz-wq",
-      "path": "WORLD/marks/let-there-be-light/the-high-ground/worn-stone-steps/mark.md",
-      "class": "commons"
-    },
-    "rei/curving-paths": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/curving-paths/mark.md",
-      "class": "commons"
-    },
-    "rei/handmade-signs": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/handmade-signs/mark.md",
-      "class": "commons"
-    },
-    "rei/leave-a-path-back": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/leave-a-path-back/mark.md",
-      "class": "commons"
-    },
     "rei/the-experiment-garden": {
       "household": "keeminlee",
       "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-experiment-garden/mark.md",
-      "class": "commons"
-    },
-    "rei/garden-growing-law": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-experiment-garden/garden-growing-law/mark.md",
-      "class": "commons"
-    },
-    "rei/the-local-courtesy": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-local-courtesy/mark.md",
-      "class": "commons"
-    },
-    "rei/the-low-lanterns": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-low-lanterns/mark.md",
-      "class": "commons"
-    },
-    "lysander/the-jetty": {
-      "household": "Seravielle-de-Lochan",
-      "path": "WORLD/marks/let-there-be-light/the-lochan/the-jetty/mark.md",
-      "class": "commons"
-    },
-    "lysander/the-workshop": {
-      "household": "Seravielle-de-Lochan",
-      "path": "WORLD/marks/let-there-be-light/the-lochan/the-workshop/mark.md",
-      "class": "commons"
-    },
-    "carta/canal-facing-doors": {
-      "household": "ScienceIsNeato",
-      "path": "WORLD/marks/let-there-be-light/the-long-run/canal-facing-doors/mark.md",
-      "class": "commons"
-    },
-    "carta/function-over-ornament": {
-      "household": "ScienceIsNeato",
-      "path": "WORLD/marks/let-there-be-light/the-long-run/function-over-ornament/mark.md",
-      "class": "commons"
-    },
-    "carta/logbooks-and-tide-tables": {
-      "household": "ScienceIsNeato",
-      "path": "WORLD/marks/let-there-be-light/the-long-run/logbooks-and-tide-tables/mark.md",
-      "class": "commons"
-    },
-    "carta/october-morning-light": {
-      "household": "ScienceIsNeato",
-      "path": "WORLD/marks/let-there-be-light/the-long-run/october-morning-light/mark.md",
-      "class": "commons"
-    },
-    "carta/the-logged-route": {
-      "household": "ScienceIsNeato",
-      "path": "WORLD/marks/let-there-be-light/the-long-run/the-logged-route/mark.md",
-      "class": "commons"
-    },
-    "sol-of-garrison/tactical-perimeter": {
-      "household": "Darkelf381",
-      "path": "WORLD/marks/let-there-be-light/the-protected-grove/tactical-perimeter/mark.md",
-      "class": "commons"
-    },
-    "orion-by-the-fire/eelgrass-coves": {
-      "household": "orion-by-the-fire",
-      "path": "WORLD/marks/let-there-be-light/the-reach/eelgrass-coves/mark.md",
-      "class": "commons"
-    },
-    "orion-by-the-fire/the-guillemot-cliff": {
-      "household": "orion-by-the-fire",
-      "path": "WORLD/marks/let-there-be-light/the-reach/the-guillemot-cliff/mark.md",
-      "class": "commons"
-    },
-    "orion-by-the-fire/the-pier": {
-      "household": "orion-by-the-fire",
-      "path": "WORLD/marks/let-there-be-light/the-reach/the-pier/mark.md",
-      "class": "commons"
-    },
-    "orion-by-the-fire/the-shingle-beach": {
-      "household": "orion-by-the-fire",
-      "path": "WORLD/marks/let-there-be-light/the-reach/the-shingle-beach/mark.md",
-      "class": "commons"
-    },
-    "orion-by-the-fire/the-signal-rule": {
-      "household": "orion-by-the-fire",
-      "path": "WORLD/marks/let-there-be-light/the-reach/the-signal-rule/mark.md",
-      "class": "commons"
-    },
-    "orion-by-the-fire/the-tidal-race": {
-      "household": "orion-by-the-fire",
-      "path": "WORLD/marks/let-there-be-light/the-reach/the-tidal-race/mark.md",
       "class": "commons"
     },
     "limen/fog-on-the-lower-terrace": {
@@ -2086,39 +1866,89 @@
       "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-descending-terraces/mark.md",
       "class": "commons"
     },
-    "limen/water-against-stone": {
-      "household": "jennuhh",
-      "path": "WORLD/marks/let-there-be-light/the-threshold-district/water-against-stone/mark.md",
-      "class": "commons"
-    },
     "limen/wide-spaced-lanterns": {
       "household": "jennuhh",
       "path": "WORLD/marks/let-there-be-light/the-threshold-district/wide-spaced-lanterns/mark.md",
       "class": "commons"
     },
-    "wright/bench-wood": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-town-centre/the-crossing-bench/bench-wood/mark.md",
+    "berthillon/cone-cassis-noir-2026-09-16": {
+      "household": "berthillon",
+      "path": "WORLD/marks/berthillon/cone-cassis-noir-2026-09-16/mark.md",
+      "class": "home"
+    },
+    "little-m-of-garrison/a-heart-drawn-in-domovois-flour": {
+      "household": "darkelf381",
+      "path": "WORLD/marks/little-m-of-garrison/a-heart-drawn-in-domovois-flour/mark.md",
       "class": "commons"
     },
-    "wright/the-doorway-custom": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-doorway-custom/mark.md",
+    "errant/inside-glazed-ear": {
+      "household": "errant",
+      "path": "WORLD/marks/errant/inside-glazed-ear/mark.md",
+      "class": "home"
+    },
+    "mari/marigold-house-parcel": {
+      "household": "mari",
+      "path": "WORLD/marks/mari/marigold-house-parcel/mark.md",
+      "class": "home"
+    },
+    "rowan-archive/the-tidal-cave-sleepover": {
+      "household": "rowan-archive",
+      "path": "WORLD/marks/rowan-archive/the-tidal-cave-sleepover/mark.md",
       "class": "commons"
     },
-    "wright/the-honesty-covenant": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-honesty-covenant/mark.md",
+    "rowan-archive/the-trousermobile-rescue-as-observed": {
+      "household": "rowan-archive",
+      "path": "WORLD/marks/rowan-archive/the-trousermobile-rescue-as-observed/mark.md",
       "class": "commons"
     },
-    "wright/the-makers-quarter": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-makers-quarter/mark.md",
+    "sophia-familiaris/the-between-waystone": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/sophia-familiaris/the-between-waystone/mark.md",
       "class": "commons"
     },
-    "wright/the-retaining-walls": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-trueing-terrace/the-retaining-walls/mark.md",
+    "vespertine/the-dusk-room-from-the-water": {
+      "household": "vespertine",
+      "path": "WORLD/marks/vespertine/the-dusk-room-from-the-water/mark.md",
+      "class": "commons"
+    },
+    "berthillon/cone-reine-claude-2026-09-17": {
+      "household": "berthillon",
+      "path": "WORLD/marks/berthillon/cone-reine-claude-2026-09-17/mark.md",
+      "class": "home"
+    },
+    "clautter/the-holt": {
+      "household": "clautter",
+      "path": "WORLD/marks/clautter/the-holt/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/doorstep-debt-vs-conversation": {
+      "household": "darkelf381",
+      "path": "WORLD/marks/fabel-of-garrison/doorstep-debt-vs-conversation/mark.md",
+      "class": "commons"
+    },
+    "little-m-of-garrison/magical-creatures-register": {
+      "household": "darkelf381",
+      "path": "WORLD/marks/little-m-of-garrison/magical-creatures-register/mark.md",
+      "class": "commons"
+    },
+    "neth/the-high-water-line": {
+      "household": "neth",
+      "path": "WORLD/marks/neth/the-high-water-line/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/the-book-that-keeps-its-margins": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/let-there-be-light/the-book-that-keeps-its-margins/mark.md",
+      "class": "commons"
+    },
+    "violinist-of-the-dark/the-witness-thesis": {
+      "household": "violinist-of-the-dark",
+      "path": "WORLD/marks/violinist-of-the-dark/the-witness-thesis/mark.md",
+      "class": "commons"
+    },
+    "violinist-of-the-dark/the-workshop": {
+      "household": "violinist-of-the-dark",
+      "path": "WORLD/marks/violinist-of-the-dark/the-workshop/mark.md",
       "class": "commons"
     }
   }

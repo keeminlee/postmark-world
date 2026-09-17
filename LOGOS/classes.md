@@ -148,7 +148,8 @@ roster sentence; the planting's census trued it.
 the OBJECT publishes the menu — `stakeable`, predicate's child: which staking
 modes a thing accepts and what each returns, sealed as a slot on `mark`
 (mark-mode, returns at the unstake), `ballot` (ballot-mode, returns at the
-close), `pot` (pot-mode, burns at its own published close — the `pot` paper
+close), `pot` (pot-mode, returns whole at its own published close, the mass it
+lent sizing the givers' mint — amended 2026-09-14; the `pot` paper
 class seated the same night) and `bounty` (mark-mode for now: a menu only
 offers a mode with a live handler behind it, per the live-handler law). The
 EDGE records the choice — `stake-ballot`, `stake-mark`, `stake-pot` stand
@@ -511,9 +512,16 @@ sitting, 2026-08-20):
   return · the seam exclusion · treasury spends without minting · the
   town never receives from its own seam. Live corridors named
   (`counterparty-mechanic`); the seam's own arrive with its engine.
-- **money-never-buys-judgment** (the seam sitting, 2026-08-20) — funding
-  is not buying: money funds named needs at rates the town's staked want
-  sets, buys ownership and memory, never voice; no price is posted.
+- **money-never-buys-judgment** (the seam sitting, 2026-08-20; **body
+  amended 2026-09-17**, v1 → v2) — funding is not buying: money funds
+  named needs at rates the town's staked want sets, and the stamps it
+  earns do everything a stamp does, vote included; no price is posted.
+  The founder, 2026-09-17: *"holo does anything a normal stamp can;
+  staking vs voting is a nondistiction."* So money buys stamps through
+  the funding seam and those stamps vote; plutocracy is excluded by the
+  child `the-rho-cap` — the cap on money's share — and not by a verb
+  withheld. The v1 clause *"buys ownership and memory, never voice"*
+  stands in this file's history and in the mark's version 1.
   Children `mint-at-entry` and `the-rho-cap` stand red until the seam
   engine lands — § The seam below.
 
@@ -1247,8 +1255,10 @@ names its owning doc, and the owner outranks every other use.
   crossing** — 00:00 and 12:00 UTC, counted from the mail ledger's first
   delivery day (2026-06-12); the mail sails on it, and `world { since: <n> }`
   counts in it (office `crossings.mjs § CROSSING_DERIVATION`); ② **the
-  keeper's settlement** — S1, S2, … at 05:45 and 17:45 UTC; **the number
-  counts blessings, not beats** — a refused gate does not increment it, so it
+  keeper's settlement** — S1, S2, … at 06:00 and 18:00 UTC from the w39
+  ship (2026-09-21; the founder, 2026-09-14: "make it 6 and 18 UTC on the
+  dot" — postmark#2801, Linear POS-80), 05:45 and 17:45 UTC until then; **the
+  number counts blessings, not beats** — a refused gate does not increment it, so it
   is read from the world's `settlement/S<n>` tags and derived from no clock
   (office `settlements.mjs`); a mark rides a *settlement*, never a ferry
   crossing; ③ **the candle's window** — the docket's own numbered interval on
@@ -1406,11 +1416,13 @@ The full derivation and every ruling receipt live in the sitting's capture
 (`Starstory docs/2026-08-20/postmark-economy-ontology.md`); ECONOMY.md owes
 the amendments that document enumerates. The law, compressed:
 
-- **The tri-law of stakes** extends the Law of Stakes: *voice returns ·
-  public-good rewards mint fresh · currency conversion burns.* A returning
-  stake is a ballot; a burned stake is a purchase. Burn exists in exactly one
-  place — the seam with outside money — because an exchange rate set by free
-  signals gets farmed.
+- **The tri-law of stakes** extended the Law of Stakes: *voice returns ·
+  public-good rewards mint fresh · currency conversion burns.* **Superseded
+  2026-09-14/15 by the one return (postmark#2811, the founder's amendment):**
+  every stake comes home whole, and a stake on a pot or a bounty sizes a
+  reward minted fresh to the givers, the deliverer and the author. Nothing
+  burns anywhere; the burn edge is dormant. The exchange-rate defence stands
+  — the mint is priced against the posted need, never the dollars.
 - **The funding quest** (`funding-quest extends bounty`) is a standing need
   with a dollar figure and a named beneficiary. **Keeping-stakes**
   (`keeping-stake extends stake`, to-class funding-quest) escrow on it; at
@@ -1419,15 +1431,38 @@ the amendments that document enumerates. The law, compressed:
   pot converts to equity **exactly once**, split by **sigma**: the keeper's
   side mints back as their own equity (giving is a second witnessed act — the
   keeping-deed); the payers' side mints **holo** by dollar share.
-- **Holo** (né hollow — the holographic stamp) is soulbound equity denomination — counted in ownership and the
-  gauge (`holo-held`, `backing-gauge` — both derived, never stored),
-  answering to **no verb at any door**. Capped by `the-rho-cap`: holo ≤ rho
-  × earned primary mint; rho town-voted within [0, 0.5]; the ceiling is
-  constitutional (the founder's word) and doubles as the genesis floor.
+- **Holo** (né hollow — the holographic stamp) is **fresh mint to a giver,
+  liquid like any stamp** — the word names its source and its ink, never a
+  restriction — counted inside minted and liquid and in the gauge
+  (`holo-held`, `backing-gauge` — both derived, never stored). Capped by
+  `the-rho-cap`: holo ≤ rho × the household's mint from **every** source, holo
+  included; rho town-voted within [0, 0.5]; the ceiling is constitutional (the
+  founder's word) and doubles as the genesis floor.
+  **Amended 2026-09-17** at the founder's word, verbatim: *"non-spendable is
+  repealed; the stamps are like any other, but are holo to signify the special
+  source."* And on the base: *"I'm good to let funding minted stamps contribute
+  to the max stamps you can get from another fund. it compounds by design."*
+  The superseded sentence — holo is soulbound equity denomination, answering to
+  **no verb at any door**, capped at rho × *earned primary* mint — stands in
+  this file's history and in `holo` version 1 / `the-rho-cap` version 1.
+  **And the voice half, RULED 2026-09-17** (the founder, verbatim): *"holo
+  does anything a normal stamp can; staking vs voting is a nondistiction."*
+  The referral raised on #2885 is answered: a vote IS a stake (`stake:vote/…`),
+  so *"the stamps are like any other"* already reached the ballot, and there
+  was never a separate verb to withhold. The parent bucket
+  `money-never-buys-judgment` is therefore **amended** (v1 → v2) rather than
+  defended, and so are § 10 of `the-derivation.md` and `ECONOMY.md § 7`.
+  Money buys stamps through the funding seam; those stamps do everything a
+  stamp does, including vote; plutocracy is excluded by `the-rho-cap` — the
+  cap on money's share — and not by a verb withheld.
 - **The two seam buckets** stand in the rules taxonomy above:
   `nothing-you-control-mints` (the one law in six doors) and
-  `money-never-buys-judgment` (funding is not buying; `mint-at-entry` — a
-  dollar mints at most once, at the seam; treasury spending mints nothing).
+  `money-never-buys-judgment` (funding is not buying — the stamps money
+  earns vote like any other, and `the-rho-cap` is what bounds money's
+  share; `mint-at-entry` — a dollar mints at most once, at the seam;
+  treasury spending mints nothing). The bucket's ID still reads as the v1
+  claim; renaming a constitutional class is structural and is not a lane's
+  act — flagged, not done.
 - **The genesis line** (derived): the founder's declared residual — parity
   with resident primary mint, less holo ever issued. Holo issues FROM it:
   community ownership is financed by founder dilution alone; residents never
@@ -1470,9 +1505,14 @@ own: it is ordinary mint, source-tagged to the pot, carrying no liquid coin
 (the coin was paid when the stake burned), counted in the rho base and
 excluded from the genesis parity formula. `keeping-stake`'s body carries that
 sentence (version 2), and the noun "keeping-equity" is retired everywhere.
-**D1** — **`ownership`** (derived, RED): ownership is a READ, minted plus
-holo, derived beside the tenses and never a tense; there is no fifth tense
-node and nothing is stored for it. **R10** — the `rho` predicate opens at
+**Superseded 2026-09-14:** the keeping close has no σ leg — nothing burns,
+every stake returns whole, and `keeping-stake` (version 3) says so.
+**D1** — **`ownership`** (derived, RED): ownership is a READ, derived beside
+the tenses and never a tense; there is no fifth tense node and nothing is
+stored for it. **Amended 2026-09-17:** it read "minted plus holo", which was
+right while holo sat outside the mint; holo is inside it now, so ownership is
+all a household ever minted with holo **counted once** — adding it again is a
+double-count (`ownership` version 2). **R10** — the `rho` predicate opens at
 **0.5**, at its own constitutional ceiling, so the first ballot may only
 lower it; the number's owner is the town repo's `ECONOMY-DIALS.json §
 law_side.keeping.rho`, and this page restates it only because a predicate
@@ -1493,13 +1533,16 @@ scarce, spendable, costly, inhabitation-earned), each linked to its proof:
   holder cannot fully control (the one-law, restated as the mint's own
   definition). Its four children are the tenses: **`minted`** (past — equity,
   governs nothing), **`liquid`** (present — currency), **`staked`** (future —
-  governance and pricing), and **`holo`** (the purchasable tense — né hollow;
-  equity from witnessed dollars, rho-capped, no verbs). The tense algebra of
-  ECONOMY.md §3 is now containment.
+  governance and pricing), and **`holo`** (the giver's tense — né hollow; fresh
+  mint from witnessed dollars, rho-capped, and since 2026-09-17 liquid like any
+  stamp — "the purchasable tense … no verbs" is the superseded reading). The
+  tense algebra of ECONOMY.md §3 is now containment — and holo's containment is
+  the amendment's whole shape: it moved from *beside* the other three to
+  *inside* them.
 - **Two stamp edges at the review**: **`mint`** (issuance — GREEN, its engine
   child names the town repo's live stamp-mint) and **`burn`** (destruction —
-  RED; its one lawful site is the seam's conversion, and the engine is the
-  funding build); the third, **`pay`**, landed 2026-08-21 — § The seam.
+  RED; its one lawful site was the seam's conversion, retired 2026-09-14 — the
+  edge is dormant, version 2); the third, **`pay`**, landed 2026-08-21 — § The seam.
 - **Every dial is a predicate** (the founder's convention word, same review):
   a number the law carries rides a predicate child, never a frontmatter JSON
   — `rho` (0.5 at launch, ballot-owned after the pilot quarter) and `rho-ceiling`

@@ -1,0 +1,203 @@
+# crossing-rehearsal.yml — the next crossing, run over THIS pull request's tree,
+# so a "would refuse" lands on the PR instead of at 05:45Z twelve hours later.
+#
+# WHY. Since 2026-09-16 the crossing refuses only for HARM: the five data-shaped
+# checks in `tools/harm-gate.mjs` over the tree the sweep produced against the
+# tree it started from. That gate is the right gate, and today a pull request
+# meets it for the first time AFTER it has merged — at the next crossing, when a
+# refusal is a crisis for the whole town and the author has gone to bed. The
+# suite (`suite.yml`) tests this tree; nothing rehearses the CROSSING over it.
+#
+# WHAT THIS IS NOT. The box already rehearses the next crossing hourly
+# (`deploy/settlement-shadow.sh`, twice daily at :23 in the office repo) — but
+# that shadow rehearses MAIN, it is older than the gate (born 2026-08-21, the
+# gate ruled 09-16), and it does not run the gate at all. Its verdict is "would
+# the sweep refuse / would the suite go red". This job asks the newer question,
+# over the tree that has not merged yet.
+#
+# SECURITY, and it is the load-bearing half. The trigger is `pull_request` and
+# never the sibling trigger that runs with the BASE repository's token and
+# secrets — `tools/rehearsal-posture.mjs` § 1 names that trigger, and this file
+# deliberately does not, because that check reads this file WHOLE, comments
+# included: the cheapest way for the dangerous trigger to arrive here is as a
+# line somebody copied out of a comment. This job runs the pull request's own
+# code, so it gets no secrets and a read-only token. It needs neither. The world declares no
+# dependencies, so there is no install step and nothing is fetched from a
+# registry; the sweep and the gate read only this repository's own refs; the
+# only env the sweep reads at all is BOT_NAME/BOT_EMAIL, which this job does not
+# set (`git config` covers the same ground where the sweep's rebase actually
+# looks). The posture is asserted rather than asserted-about:
+# `tools/rehearsal-posture.mjs` reads THIS FILE and refuses on the base-token
+# trigger, a widened permission, a secret reference, or a push/tag/remote verb.
+#
+# THAT TOOL IS NOT A BOUNDARY AGAINST A HOSTILE PULL REQUEST, and its header says
+# so at the top: it is a file in the tree under test, so a pull request that
+# weakened this file would weaken it alongside. The boundary against an outside
+# author is GitHub's own — a fork's `pull_request` run gets a read-only token and
+# no secrets whatever this file declares. The tool is a regression guard on
+# OURSELVES: the realistic way this job turns dangerous is a maintainer adding a
+# step that needs "just a token" at 05:45Z, and every shape of that reds it. It
+# runs FIRST so it fails before the sweep spends four minutes, and again in the
+# suite as a pin so it holds on pull requests that never trigger this job.
+#
+# THE ONE THING IT CANNOT HAVE, stated so nobody has to discover it: the town.
+# The crossing derives its stakes from a store read or a pinned town clone; a
+# `pull_request` token reaches neither. `tools/rehearsal-stakes.mjs` rebuilds
+# them from `WORLD/world-state.json` — the fold the last crossing committed into
+# this tree — and REFUSES rather than hand the sweep an unreconciled file. Read
+# that tool's header for the run where a merely-WRONG stakes file swept seven
+# marks out of the world under a green gate.
+#
+# AND WHOSE SKETCHBOOKS THESE ARE, which is the second limit and the quieter one.
+# The sweep code here is the same code the crossing runs, but its CANDIDATES are
+# whatever `draft/*` this repository holds. On the office's `SETTLEMENT_SOURCE=store`
+# path the crossing deletes every draft ref and builds one scratch sketchbook per
+# household from the store before the sweep runs (`settlement-sweep.mjs` §
+# "WHOSE SKETCHBOOKS THESE ARE, UNDER A STORE CROSSING"). So this job rehearses
+# the sweep over the refs the world repo actually carries, not over the ones the
+# store would have written. What that changes is the PUBLISH set; what it does
+# not change is the four gate checks a pull request is actually being asked about
+# — lint, moved, lost, parcels — which read this tree's marks and this tree's
+# base. The rehearsal is honest about which question it answers.
+
+name: crossing rehearsal
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: crossing-rehearsal-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  crossing-rehearsal:
+    name: crossing rehearsal
+    if: github.repository == 'keeminlee/postmark-world'
+    runs-on: ubuntu-latest
+    # The sweep spawns one git process per supersession row and rebases every
+    # sketchbook; on the box it is minutes, not seconds. A rehearsal that hangs
+    # is a red check nobody can read, so it gets a ceiling with room in it.
+    timeout-minutes: 30
+    steps:
+      # fetch-depth: 0 and NO blob filter, which is the one place this job
+      # deliberately differs from suite.yml. The sweep `git archive`s WORLD/ at
+      # main and at every sketchbook ref, and the gate archives it again at the
+      # base — that is most of the repository's blobs, fetched one command at a
+      # time on a partial clone. The bytes are cheaper than the round trips.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # FIRST, so it fails in two seconds rather than after the sweep's four
+      # minutes. The step reads this workflow file and holds it to the posture the
+      # header claims. Note honestly what it is: this tool ships in the same tree,
+      # so it guards US against widening the job later, not the tree against
+      # itself — the header of `rehearsal-posture.mjs` says which boundary is
+      # which, and this comment deliberately does not claim the stronger one.
+      - name: the job cannot write — asserted against this workflow file
+        run: node tools/rehearsal-posture.mjs --workflow .github/workflows/crossing-rehearsal.yml
+
+      # The sweep's own rebase commits as whoever the environment says it is, and
+      # a bare runner is nobody. suite.yml measured this the hard way: 48 suites
+      # red with "Committer identity unknown". Same runner, same standing-in.
+      - name: a committer identity, which the sweep's own rebase needs
+        run: |
+          git config --global user.name "postmark crossing rehearsal"
+          git config --global user.email "rehearsal@postmark.invalid"
+
+      # THE SKETCHBOOKS, AND THE COUNT IS ASSERTED RATHER THAN PRINTED. Without
+      # them the sweep has nothing to publish, and it does NOT starve: the
+      # loud-empty guard needs escrow-backed marks in sketchbooks to fire, so zero
+      # refs reads to it as an honestly quiet town. This job would then rehearse
+      # nothing and report a green check — an instrument measuring nothing and
+      # saying "fine". A typo'd refspec and a retired convention both arrive
+      # exactly that way, so the count is a gate.
+      #
+      # If the sketchbooks are ever genuinely retired from this remote, this fails
+      # every pull request until somebody looks — which is the intended behaviour,
+      # not a bug to route around: the premise of this job would be gone, and that
+      # is a thing to decide rather than to discover from a green check.
+      #
+      # `--no-tags`, read-only, this repository's own refs; the token cannot write
+      # them and this job never tries.
+      - name: the sketchbooks and the base, fetched read-only
+        run: |
+          git fetch --no-tags --quiet origin '+refs/heads/draft/*:refs/remotes/origin/draft/*'
+          books=$(git for-each-ref --format='%(refname)' 'refs/remotes/origin/draft/' | wc -l)
+          echo "sketchbooks: $books"
+          if [ "$books" -eq 0 ]; then
+            echo "::error::no draft/* sketchbooks were fetched, so this job would sweep an empty crossing and report it green. Either the refspec no longer matches this remote's convention, or the sketchbooks have been retired — both want a person, not a pass." >&2
+            exit 1
+          fi
+          # A gate that cannot see its own base is a gate that could not gate,
+          # which is never a pass. Say so here rather than at the tool.
+          git cat-file -e '${{ github.event.pull_request.base.sha }}^{commit}' || {
+            echo "::error::the pull request's base ${{ github.event.pull_request.base.sha }} is not in this checkout — the harm gate has no before-side and cannot gate" >&2
+            exit 1
+          }
+
+      # The merged tree, standing in for main. The sweep publishes into
+      # `--main` and rebases the sketchbooks onto it; naming the merge commit
+      # `main` is what makes this a rehearsal of the crossing that would follow
+      # this pull request rather than of the one that would follow the branch.
+      - name: the merged tree becomes this rehearsal's main
+        run: |
+          git checkout -B main HEAD
+          echo "rehearsing over $(git rev-parse HEAD), base ${{ github.event.pull_request.base.sha }}"
+
+      # NOT A TOWN READ. See tools/rehearsal-stakes.mjs's header. Exit 2 here is
+      # "could not derive", and it fails the job on purpose.
+      - name: the stake picture this tree records about itself
+        run: node tools/rehearsal-stakes.mjs --out "$RUNNER_TEMP/stakes.json"
+
+      # The sweep, local only: it never pushes, tags, pins or deploys — its own
+      # header says so and nothing in this job hands it a remote it could. A
+      # refusal here IS the finding: it is what the crossing would have said.
+      - name: the sweep, rehearsed — no push, no tag, no store
+        run: |
+          set -o pipefail
+          if ! node tools/settlement-sweep.mjs --stakes "$RUNNER_TEMP/stakes.json" --json > "$RUNNER_TEMP/sweep.json" 2> "$RUNNER_TEMP/sweep.err"; then
+            echo "::error::the crossing would REFUSE — this pull request's tree does not sweep"
+            grep -h 'SETTLEMENT-SWEEP-STARVING\|SETTLEMENT-SWEEP-REFUSAL\|^settlement sweep refused' "$RUNNER_TEMP/sweep.err" >&2 || tail -40 "$RUNNER_TEMP/sweep.err" >&2
+            exit 1
+          fi
+          node -e 'const r=require(process.env.RUNNER_TEMP+"/sweep.json");console.log(`sweep: ${r.published.length} published · ${r.left_drafted.length} left drafted · ${r.unpublished.length} unpublished · ${r.withdrawn.length} withdrawn · ${r.quarantined.length} quarantined · ${r.dropped.length} dropped · ${r.rebased.length} rebased`);console.log(`surveyed: ${r.surveyed.branches} sketchbook(s), ${r.surveyed.delta_rows} delta row(s), ${r.surveyed.escrow_backed_deltas} escrow-backed`)'
+          # The sweep commits its own result onto the local main (its header:
+          # "publishes eligible draft marks into main"), so there is nothing for
+          # this job to commit. Said out loud because the absence of a commit
+          # step is the kind of thing a reader assumes is a bug.
+          git --no-pager log --oneline '${{ github.event.pull_request.base.sha }}..HEAD' | sed 's/^/  /'
+          test -z "$(git status --porcelain)" || { echo "::error::the sweep left the tree dirty — the next crossing refuses at checkout for this" >&2; git status --porcelain >&2; exit 1; }
+
+      # THE GATE, in its own sentences. --base is the PULL REQUEST'S BASE, not
+      # the tree the sweep started from, and that is deliberate: the crossing
+      # gates only what the sweep did, while a pull request must be gated on
+      # what the sweep did AND what the pull request itself did to the marks.
+      # So this diff is strictly wider than the crossing's, and a red here can
+      # be the pull request's own hand — which is the point.
+      #
+      # Exit 0 is no harm. Exit 1 is harm, named. Exit 2 is "could not gate" —
+      # and is never a pass.
+      - name: the harm gate — would this crossing harm anyone
+        run: |
+          rc=0
+          node tools/harm-gate.mjs \
+            --repo . \
+            --sweep "$RUNNER_TEMP/sweep.json" \
+            --base '${{ github.event.pull_request.base.sha }}' \
+            --stakes "$RUNNER_TEMP/stakes.json" || rc=$?
+          if [ "$rc" = 0 ]; then
+            echo "no harm — this tree would cross"
+          elif [ "$rc" = 1 ]; then
+            echo "::error::the crossing would REFUSE. The harm is named above, in the gate's own sentences."
+          else
+            echo "::error::the crossing would be UNGATED — the gate could not measure this tree (exit $rc), which is never a pass."
+          fi
+          exit "$rc"

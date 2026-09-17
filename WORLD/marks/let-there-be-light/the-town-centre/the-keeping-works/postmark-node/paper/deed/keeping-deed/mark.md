@@ -4,11 +4,11 @@ by: the-town
 tier: constitution
 date: 2026-08-20
 class: keeping-deed
-version: 1
+version: 2
 extends: deed
 dials: {}
 implements: []
 source: LOGOS/classes.md
 ---
 
-The deed of stamps given: a keeper's burn at a funded need, remembered forever — everything you have ever given stands beside what you earned.
+Retired 2026-09-14 with the burn: no stake is given up at a close, so no keeping deed is written; the patron's deed stands.

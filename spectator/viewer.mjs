@@ -1078,6 +1078,24 @@ export function markImagePath(mark) {
 // (zoomK ≈ 1, marker scale ≈ 1) instead of the deep-zoom regime past
 // MAX_ZOOM_IN that the one-svg approach forced. Same arithmetic, sane numbers.
 export const ROOM_GROUND_UNITS = 960;
+// THE GROUND PAD — how much floor is drawn BEYOND the room's own walls, as a
+// fraction of its longer side. Raised from 0.12 for POS-95 (founder,
+// 2026-09-15: "zoom out is also *too* heavily constrained in interiors… just
+// add some padding to it so it's not claustrophobic"). Drawn INTO the svg, so
+// it rides every projection on this ground — the camera air that keeps the wall
+// off the pane's edge is the separate ROOM_ZOOM_OUT_SLACK, and neither
+// substitutes for the other.
+//
+// ⚑ A FRACTION, WITH NO FLOOR IN METRES, AND THE REASON IS THE NUMERIC REGIME.
+// The issue offered "or a floor of a few metres for tiny rooms" and it was
+// tried: it breaks `viewer-interior`'s numeric-regime test, correctly. A pure
+// fraction makes every room span the SAME share of its own ground whatever its
+// size — `units / (1 + 2 * pad)` — which is what keeps the engine at zoomK ≈ 1
+// indoors, the regime the town tuned it for. A metre floor makes that share a
+// function of the room's size: a 0.5 m shelf would have spanned a fifth of its
+// ground, five times further out than a parcel, for the sake of a case the
+// camera slack already answers. Scale-free beats generous here.
+export const ROOM_GROUND_PAD = 0.25;
 
 // ── the placeholder extent (art-less marks stand in as tinted blocks) ───────
 //
@@ -1196,8 +1214,11 @@ export function sceneRuleM(mPerPx) {
   return SCENE_RULE_M.reduce((best, m) => (Math.abs(m - want) < Math.abs(best - want) ? m : best), SCENE_RULE_M[0]);
 }
 
-export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = 0.12, image = null } = {}) {
+export function roomGround(room, { units = ROOM_GROUND_UNITS, pad = ROOM_GROUND_PAD, image = null } = {}) {
   const r = rect(room);                                    // centre + extent, metres
+  // BREATHING ROOM (POS-95, founder 2026-09-15: "add some padding to it so
+  // it's not claustrophobic"). A fraction of the longer side and nothing else —
+  // see ROOM_GROUND_PAD on why there is no metre floor here.
   const padM = Math.max(r.w, r.h) * pad;
   const spanW = r.w + 2 * padM, spanH = r.h + 2 * padM;
   const mPerPx = Math.max(spanW, spanH) / units;
@@ -2611,6 +2632,41 @@ export function clampViewToBounds(view, bounds) {
     y: axis(view.y, view.h, bounds.y, bounds.h),
   };
 }
+
+// ── THE CONTAIN-FIT: the whole ground shown in a pane, letterboxed ──────────
+//
+// The view that holds all of `full` inside a pane of that shape. A pane wider
+// than the ground keeps the ground's HEIGHT and widens the view; a pane taller
+// keeps its WIDTH and heightens it. Either way nothing is cropped and the
+// surplus is air, split evenly — which is what "shown whole" means.
+//
+// ⚑ IT IS NOT `full`, AND THAT IS THE WHOLE OF POS-95. `full` is the ground's
+// own box; the contain-fit is that box seen through THIS pane. The two differ
+// by exactly the pane's letterbox, and whenever they differ the contain-fit is
+// the LARGER one. `refit` had this arithmetic inline and correct, so a room at
+// rest was shown whole — but the wheel's floor was `full.w * zoomOutLimit`,
+// i.e. `full.w` for a room, which in a wide pane is NARROWER than the resting
+// view. So the first notch of zoom-OUT zoomed in, cropped the room's sides,
+// and the cap forbade widening back: the founder's "you can't even zoom out
+// enough to see the whole mark's interior". One question — how wide is the
+// whole room here — now has one owner, and both readers ask it.
+export function containFit(full, pane) {
+  const pw = Number(pane?.w), ph = Number(pane?.h);
+  if (!(pw > 0) || !(ph > 0)) return { ...full };
+  const pa = pw / ph, ga = full.w / full.h;
+  const w = pa >= ga ? full.h * pa : full.w;
+  const h = pa >= ga ? full.h : full.w / pa;
+  return { x: full.x + (full.w - w) / 2, y: full.y + (full.h - h) / 2, w, h };
+}
+
+// A ROOM MAY BE BACKED OFF ONE NOTCH PAST WHOLE (POS-95, founder: "add some
+// padding to it so it's not claustrophobic"). The contain-fit puts the walls
+// exactly on the pane's edge; this is the breath between the wall and the
+// frame. It is a camera slack, distinct from `roomGround`'s ground pad — that
+// one is drawn INTO the svg and rides every projection, this one is not drawn
+// at all. Both were needed: pad alone still pressed against the pane at the
+// cap, and slack alone would have shown the wall with no floor beyond it.
+export const ROOM_ZOOM_OUT_SLACK = 1.25;
 
 // HOW WIDE A FRAMED VIEW IS. Lock-on tightens to at most a quarter of the
 // painting, because being shown a thing means being taken to it. Coming back
@@ -5802,6 +5858,112 @@ export function residentMineMarks(portfolio = {}) {
   return { marks, unplaced, sentinel, complete: portfolio.complete !== false };
 }
 
+// How the portfolio door is paged, in the two numbers the walk needs.
+//
+// `MINE_PAGE_SIZE` is the DOOR's, not ours: the office slices every list at 20
+// against one shared offset (office `src/world.mjs` § markPage, `MARKS_PAGE
+// = 20`). `MINE_PAGE_LIMIT` is OURS: the walk's own ceiling, past which the map
+// stops walking and says so rather than paging forever.
+export const MINE_PAGE_SIZE = 20;
+export const MINE_PAGE_LIMIT = 12;
+const MINE_LISTS = ["drafts", "docket", "published", "backed"];
+
+/**
+ * How many pages the door's own `counts` implies — THE LONGEST LIST, NOT THE SUM.
+ *
+ * The door pages each list independently against one shared offset, so a single
+ * request answers with up to 20 drafts AND up to 20 published AND up to 20
+ * backed. The walk is therefore as long as the longest list and never as long
+ * as everything added up. For the household this lane was measured on — drafts
+ * 2, docket 0, published 91, backed 22 — that is five pages. `ceil(sum/20)`
+ * would say six, and on a household with four full lists it would ask for four
+ * times more pages than exist.
+ *
+ * At least one, always: the first page is asked for before anything is known.
+ */
+export function minePageCount(counts, pageSize = MINE_PAGE_SIZE) {
+  const longest = MINE_LISTS.reduce((n, list) => Math.max(n, Number(counts?.[list] ?? 0)), 0);
+  return Math.max(1, Math.ceil(longest / pageSize));
+}
+
+/**
+ * The portfolio walk: the door's first answer, then ONE parallel wave.
+ *
+ * —— WHY (POS-87, postmark#2845) ——
+ * This awaited each page before asking for the next, so a household of 91
+ * published marks paid five serial round trips — seconds of a signed-in
+ * reader's wait, spent looking at empty panes, for answers that do not depend
+ * on each other. The door's FIRST answer already carries `counts`, the whole of
+ * what the household owns, so after ONE request the number of pages is known
+ * and every remaining page can be asked for together.
+ *
+ * —— THE MERGE IS ORDER-IDENTICAL TO THE SERIAL WALK ——
+ * Pages are consumed in offset order whether they were awaited one at a time or
+ * all at once, and the de-duplication is the same `list:id` set, so `merged`
+ * comes out row for row what the loop produced. That is the equality the
+ * falsifier asserts, and it is why nothing downstream of this had to change.
+ *
+ * —— AND THE WAVE IS NOT THE ONLY WAY OUT ——
+ * `counts` is the door's own claim about itself, and a wave sized from it could
+ * in principle come up short. It costs nothing to survive that: when the wave
+ * is spent and the walk is still not satisfied, the loop goes on serially from
+ * the next offset exactly as it did before. The wave is an optimisation of a
+ * walk that still knows how to finish on its own — a silent truncation of a
+ * resident's own portfolio is the one outcome this must not be able to produce.
+ *
+ * `fetchPage(offset)` answers with the door's parsed page, or throws. A page
+ * nobody ends up consuming is caught at birth: a walk that finishes early
+ * leaves requests in the air, and an unhandled rejection is not a way to report
+ * that nothing was wrong.
+ */
+export async function walkMinePages(fetchPage, { pageSize = MINE_PAGE_SIZE, pageLimit = MINE_PAGE_LIMIT } = {}) {
+  const merged = { drafts: [], docket: [], published: [], backed: [], complete: true };
+  const seen = new Set();
+  const pending = [];   // pages already asked for, in offset order
+  let offset = 0, pages = 0, exhausted = false, counts = null, waved = false;
+  for (;;) {
+    const page = pending.length ? await pending.shift() : await fetchPage(offset);
+    counts ??= page?.counts ?? null;
+    let added = 0;
+    for (const list of MINE_LISTS)
+      for (const row of page?.[list] ?? []) {
+        const tag = `${list}:${row?.id}`;
+        if (!row?.id || seen.has(tag)) continue;
+        seen.add(tag); merged[list].push(row); added += 1;
+      }
+    pages += 1;
+    // ⚑ `complete` IS NOT AN END-OF-WALK FLAG, and reading it as one cost this
+    // lane a run of twelve requests that collected the same page over and
+    // over. It means "this ONE page holds everything", so for any portfolio
+    // past 20 it is false at EVERY offset and never becomes true. The door's
+    // `counts` are the real totals (drafts 2, docket 0, published 91, backed
+    // 22 for this household), so the walk ends when what has been collected
+    // matches them — or when a page adds nothing new, which is the same end
+    // reached from the other side and costs one wasted request to find.
+    const done = counts
+      ? MINE_LISTS.every((l) => merged[l].length >= (counts[l] ?? 0))
+      : page?.complete !== false;
+    if (done || added === 0) break;
+    if (pages >= pageLimit) { exhausted = true; merged.complete = false; break; }
+    offset += pageSize;
+    // ONE WAVE, ONCE, AFTER THE FIRST ANSWER. Everything still owed is asked
+    // for here, together; the loop goes on consuming in offset order and cannot
+    // tell the difference. Capped at the walk's own ceiling, so the burst is
+    // bounded by `pageLimit` requests and not by how much a household owns.
+    if (!waved && counts) {
+      waved = true;
+      const last = Math.min(minePageCount(counts, pageSize), pageLimit);
+      for (let o = offset; o < last * pageSize; o += pageSize) {
+        const asked = fetchPage(o);
+        asked.catch(() => {});   // a page the walk ends before reaching is not a failure
+        pending.push(asked);
+      }
+    }
+  }
+  pending.length = 0;
+  return { merged, pages, exhausted };
+}
+
 /**
  * The id index the resident path resolves against — records first, then the
  * resident's own rows.
@@ -6775,7 +6937,9 @@ export function mountViewer(appEl) {
       boxEl, svg, originPx: ground.originPx, mPerPx: ground.mPerPx,
       reattachOverlays: captureKeep(boxEl),
       groundMarkIds: ground.groundMarkIds, // the wall is already this mark's shape
-      zoomOutLimit: 1,          // the room is the outermost state; zoom-in only (revised ruling)
+      zoomOutLimit: 1,          // the room is the outermost state (revised ruling) — 1 × the
+                                // CONTAIN-FIT since POS-95, so "the whole room in this pane"
+                                // rather than "the ground's own box", plus ROOM_ZOOM_OUT_SLACK
       includeMine: false,       // the roof: your marks elsewhere don't follow you in
       placeholderExtents: true, // art-less marks stand in as tinted extents (founder's word)
     });
@@ -7083,7 +7247,15 @@ export function mountViewer(appEl) {
     if (onResidentPath() && key !== SPECTATOR_ACTOR) {
       const cached = readCache.get(residentStandpointKey(standpoint, key));
       if (!cached) {
-        loadResidentRead(standpoint, key).then((read) => { if (read) renderCurrent(); });
+        // LATELY IS DOWNSTREAM OF THIS READ TOO (POS-84, 2026-09-16). On the
+        // resident path the "wrote" rows come from `allMarks()`, which is the
+        // read's records — so until this lands there are none, and
+        // `renderCurrent` never touches the rail. The rows appeared anyway, but
+        // only because the settlement lane happened to redraw afterwards: a
+        // reader whose settlements landed first saw a Lately with no marks in
+        // it until something unrelated moved. The one lane that actually
+        // carries them now says so itself.
+        loadResidentRead(standpoint, key).then((read) => { if (read) { renderCurrent(); renderActivity(); } });
         box.innerHTML = chips + (readError
           ? `<div class="wv-err">the office could not say what you can see from here: ${esc(readError)}</div>`
           : `<div class="wv-quiet">opening your eyes…</div>`);
@@ -7669,11 +7841,21 @@ export function mountViewer(appEl) {
   // and `includeMine` gates the portfolio union in the draw-set (a room shows
   // what is IN it; your marks elsewhere in town do not follow you through a
   // door — the roof, refused at the source per the 08-20 spike receipt).
-  // `zoomOutLimit` caps how far OUT the wheel may go, as a multiple of the
-  // full view. The town keeps MAX_ZOOM_OUT; a room passes 1 — the founder's
-  // revised camera ruling (2026-08-20 evening): a room has a camera now, the
-  // whole rail with it, but its outermost state IS the whole room — you can
-  // dive into a corner and come back, never drift into the void past the walls.
+  // `zoomOutLimit` caps how far OUT the wheel may go. OUTDOORS it is a multiple
+  // of the full view (the town keeps MAX_ZOOM_OUT, and the world frame has
+  // superseded it as the actual bound). IN A ROOM it is a multiple of the
+  // CONTAIN-FIT — the whole room as this pane shows it — and a room passes 1,
+  // which with ROOM_ZOOM_OUT_SLACK is "the whole room, plus a breath".
+  //
+  // ⚑ THE REFERENCE CHANGED, THE RULING DID NOT (POS-95). It used to be a
+  // multiple of `full` on both roads, and `full` is the ground's own box: in a
+  // pane wider than the room that box is NARROWER than the view the room rests
+  // at, so the cap sat inside the resting view and cropped the walls the moment
+  // the wheel moved. The founder's revised camera ruling (2026-08-20 evening)
+  // is untouched by the repair: a room has a camera, the whole rail with it,
+  // but its outermost state IS the whole room — you can dive into a corner and
+  // come back, never drift into the void past the walls. What changed is that
+  // "the whole room" is now measured against the pane it is being shown in.
   // `placeholderExtents` gives every art-less embodied mark a programmatic
   // stand-in (founder, 2026-08-20, revising his own always-on footprints): its
   // extent filled with a deterministic per-mark colour at LOW SATURATION — full
@@ -7924,6 +8106,24 @@ export function mountViewer(appEl) {
           y: full.y + (full.h - full.h * zoomOutLimit) / 2,
           w: full.w * zoomOutLimit, h: full.h * zoomOutLimit })
       : full;
+    // ── HOW FAR OUT THE WHEEL MAY GO (POS-95) ─────────────────────────────
+    //
+    // Outdoors: unchanged — the world frame, or the old 60×-the-painting
+    // fallback for a record with no root mark.
+    //
+    // In a ROOM: the floor of the wheel is the whole room CONTAINED IN THIS
+    // PANE, plus one notch of air — not `full.w`, which is the ground's own
+    // box and in a wide pane is narrower than the view the room already rests
+    // at. Measured against the live pane on every notch, because a pane that
+    // has been reshaped since mount has moved this answer; `refit` reads the
+    // same rectangle for the same reason. The ruling that a room is the
+    // outermost STATE is untouched: this is still the room's own ground, and
+    // there is still no notch that reaches the town.
+    const outerViewWidth = () => {
+      if (zoomOutLimit > 1) return worldFrame ? worldFrame.w : full.w * zoomOutLimit;
+      const pane = boxEl.getBoundingClientRect();
+      return containFit(full, { w: pane.width, h: pane.height }).w * zoomOutLimit * ROOM_ZOOM_OUT_SLACK;
+    };
     const clampView = () => Object.assign(view, clampViewToBounds(view, fence));
     function applyView() {
       // every camera write in this scene funnels through here — wheel, drag,
@@ -8040,10 +8240,7 @@ export function mountViewer(appEl) {
       // reader has zoomed in, the hand can fetch what a reshape crops, so the
       // town's own keep-width refit takes over until fit brings the room back.
       if (zoomOutLimit <= 1 && mapCtx.zoomK <= 1.02) {
-        const pa = pane.width / pane.height, ga = full.w / full.h;
-        const w = pa >= ga ? full.h * pa : full.w;
-        const h = pa >= ga ? full.h : full.w / pa;
-        Object.assign(view, { x: full.x + (full.w - w) / 2, y: full.y + (full.h - h) / 2, w, h });
+        Object.assign(view, containFit(full, { w: pane.width, h: pane.height }));
         applyView();
         return;
       }
@@ -8058,7 +8255,7 @@ export function mountViewer(appEl) {
     svg.addEventListener("wheel", (e) => {
       e.preventDefault(); stopTween(); breakFollow();
       const k = Math.pow(1.0015, e.deltaY);
-      const w = Math.min(zoomOutLimit > 1 && worldFrame ? worldFrame.w : full.w * zoomOutLimit, Math.max(full.w / MAX_ZOOM_IN, view.w * k));
+      const w = Math.min(outerViewWidth(), Math.max(full.w / MAX_ZOOM_IN, view.w * k));
       const scale = w / view.w;
       const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
       const p = pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -11889,48 +12086,27 @@ export function mountViewer(appEl) {
     return residentById(read ?? {}, mineSet.marks).get(id) ?? null;
   }
 
-  const MINE_PAGE_LIMIT = 12;
   let mineSet = { marks: new Map(), unplaced: [], sentinel: [], complete: true, pages: 0, exhausted: false };
   async function loadMineMarks() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
-    const LISTS = ["drafts", "docket", "published", "backed"];
-    const merged = { drafts: [], docket: [], published: [], backed: [], complete: true };
-    const seen = new Set();
-    let offset = 0, pages = 0, exhausted = false, counts = null;
-    for (;;) {
+    // THE WALK ITSELF IS MODULE-LEVEL (POS-87) — `walkMinePages`, one request
+    // and then one wave. It lives out there because a walk with a stub door in
+    // front of it is the only way to assert that the pages overlap and that the
+    // merged set is row for row what walking them one at a time produced; in
+    // here it could only ever be read, never run. What is left in the closure is
+    // the door's address, the key, and where the answer goes.
+    const walked = await walkMinePages(async (offset) => {
       const r = await fetch(officeUrl(`/world/my-marks?offset=${offset}`), options);
       if (!r.ok) throw new Error(`/world/my-marks → ${r.status}`);
       const page = await r.json();
       if (page?.error) throw new Error(page.defect ?? page.error);
-      counts ??= page.counts ?? null;
-      let added = 0;
-      for (const list of LISTS)
-        for (const row of page[list] ?? []) {
-          const tag = `${list}:${row?.id}`;
-          if (!row?.id || seen.has(tag)) continue;
-          seen.add(tag); merged[list].push(row); added += 1;
-        }
-      pages += 1;
-      // ⚑ `complete` IS NOT AN END-OF-WALK FLAG, and reading it as one cost this
-      // lane a run of twelve requests that collected the same page over and
-      // over. It means "this ONE page holds everything", so for any portfolio
-      // past 20 it is false at EVERY offset and never becomes true. The door's
-      // `counts` are the real totals (drafts 2, docket 0, published 91, backed
-      // 22 for this household), so the walk ends when what has been collected
-      // matches them — or when a page adds nothing new, which is the same end
-      // reached from the other side and costs one wasted request to find.
-      const done = counts
-        ? LISTS.every((l) => merged[l].length >= (counts[l] ?? 0))
-        : page.complete !== false;
-      if (done || added === 0) break;
-      if (pages >= MINE_PAGE_LIMIT) { exhausted = true; merged.complete = false; break; }
-      offset += 20;   // the door's own page size
-    }
-    mineSet = { ...residentMineMarks(merged), pages, exhausted };
+      return page;
+    });
+    mineSet = { ...residentMineMarks(walked.merged), pages: walked.pages, exhausted: walked.exhausted };
     // The merged portfolio rides back too: `state.portfolio`, `state.mineIds`
     // and the draft overlay are all built from it, and they must see EVERY page
     // rather than the first — the same arithmetic lie, one surface over.
-    return { mine: mineSet, portfolio: merged };
+    return { mine: mineSet, portfolio: walked.merged };
   }
   async function loadIdentityWorld() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
@@ -12491,19 +12667,89 @@ export function mountViewer(appEl) {
   // the town's departures were told from the world's unblessed main tip while
   // the release lane's guardrail said "tags only, never main tip". A fallback
   // that fires on every load is not a fallback; it is the mechanism.
+  // ── THE OFFICE GOES FIRST, BECAUSE THE FILE STOPPED (POS-84, 2026-09-16) ──
+  //
+  // `WORLD/walk-ledger.md` FROZE on 2026-08-10T20:25Z by its own seam line —
+  // "the walk ledger freezes with honor" — and every departure since lives in
+  // the store. This loader had no office leg, so the only source it could reach
+  // was that frozen file, and Lately showed nothing the town had done in five
+  // weeks. Measured on prod 2026-09-16: `/api/world2/walks` held 2,498
+  // departures, 348 of them in the last four days, and this pane could show
+  // none of them. The map's walkers were never affected — they read
+  // `/world/walkers`, which is live.
+  //
+  // So this is the enter-exit ledger's shape, and for its reason, said there:
+  // "an office reads the clone it actually has while a staged file is a
+  // photograph". The frozen file stays as the FALLBACK, which is what a page
+  // served from somewhere with no office still has to read.
+  //
+  // WHY THE WINDOW IS ALSO CUT HERE. The door takes `?since=` as of the w39
+  // train (office PR #71); prod's does not yet, and answers the whole record —
+  // 1.17 MB, 2,498 rows — to any query at all. This pane shows fourteen rows.
+  // So the office's answer is cut to the same fortnight it asked for, and the
+  // day the door ships the window the cut becomes a no-op rather than a second
+  // opinion.
+  //
+  // THE CUT IS NOT APPLIED TO THE FILE, and that is deliberate. Every row in
+  // the frozen ledger predates any window this page would ask for, so cutting
+  // it to a fortnight would not trim a fallback — it would delete one, and
+  // leave a page with no office reporting a town where nobody ever went
+  // anywhere. The 304 frozen rows stay the era's fallback, exactly as they are
+  // today. The cut is a guard against a door that ignores the window, and it
+  // belongs on that door's leg.
+  const WALK_WINDOW_DAYS = 14;
+  const walkWindowSince = () => new Date(Date.now() - WALK_WINDOW_DAYS * 86_400_000).toISOString();
+  /**
+   * The office's `walks[]` onto the ledger's own departure grammar.
+   *
+   * `parseWalkLedger` defines that grammar and this is the same record in
+   * another wrapper: `within` and `to` are the STORE's column names for what
+   * walk.mjs reads as `targetExtent` and `targetMarkId` — the office's own
+   * `/world2/walks` says so where it renders them. Every other field is
+   * name-for-name. Unrecognized rows are COLLECTED, not silently dropped, which
+   * is the parser's own stance; one unreadable row must not discard the nine
+   * hundred good ones beside it.
+   */
+  function walksFromOffice(body) {
+    const departures = [], unrecognized = [];
+    for (const w of Array.isArray(body?.walks) ? body.walks : []) {
+      if (!w?.iso || !w?.handle || !w?.from || !w?.toward) { unrecognized.push(w); continue; }
+      departures.push({
+        iso: String(w.iso), handle: String(w.handle),
+        from: w.from, toward: w.toward, at: w.at,
+        targetExtent: w.within ?? null,
+        targetMarkId: w.to ?? null,
+        pace: w.pace ?? null,
+        line: w.line ?? null,
+      });
+    }
+    return { departures, unrecognized };
+  }
   let departures = [];
+  // ONE INSTANT PER LOAD, threaded through: the chain, the cut and the absence
+  // sentence must all name the same fortnight, or the sentence a reader is
+  // shown quotes a URL nothing asked for.
+  const walkLedgerSources = (since) => recordSources("/WORLD/walk-ledger.md", {
+    office: officeUrl(`/world2/walks?since=${encodeURIComponent(since)}`),
+  });
   async function loadWalkLedger() {
-    for (const { url } of recordSources("/WORLD/walk-ledger.md")) {
+    const since = walkWindowSince();
+    for (const { url, json } of walkLedgerSources(since)) {
       try {
         const r = await fetch(url, { credentials: "same-origin" });
         if (!r.ok) continue;
-        const parsed = parseWalkLedger(await r.text());
+        // ISO-8601 with a fixed Z offset is lexicographically ordered, which is
+        // why these compare as strings and not as parsed instants: the record's
+        // own `iso` is the office's own `iso`, spelled identically.
+        const parsed = json
+          ? { departures: walksFromOffice(await r.json()).departures.filter((d) => d.iso >= since) }
+          : parseWalkLedger(await r.text());
         if (parsed.departures.length) { departures = parsed.departures; noteRecordRead("/WORLD/walk-ledger.md"); return; }
       } catch { /* try the next one */ }
     }
     // NOT SILENT. An empty rail and an unread rail look identical, and the
     // difference is the whole bug this cut closed.
-    noteRecordAbsence("/WORLD/walk-ledger.md");
+    noteRecordAbsence("/WORLD/walk-ledger.md", { office: officeUrl(`/world2/walks?since=${encodeURIComponent(since)}`) });
   }
   // ───────── the enter-exit acts ─────────
   // The enter-exit ledger, fetched exactly as the walk ledger is, and for the same
@@ -12591,10 +12837,36 @@ export function mountViewer(appEl) {
     host.hidden = !enterExitLedger.acts.length;
     host.innerHTML = occupancyDevLine({ manifest, acts: enterExitLedger.acts.length, unrecognized: enterExitLedger.unrecognized, at });
   }
+  // ── THE PANE OPENS ONCE, WHEN THE LANES HAVE SETTLED (POS-84, 2026-09-16) ──
+  //
+  // Lately is fed by four independent arrivals — the walk ledger, the
+  // settlements, the stake events, and (on the resident path) the resident's
+  // own read — and every one of them used to paint the moment it landed. The
+  // walk ledger is 43 KB and always landed first, so the FIRST list a reader
+  // saw was departures alone, and it could not survive the sort once anything
+  // else was in hand. Measured on prod 2026-09-15, signed in: 14 rows at 13.0 s,
+  // every one a "set out"; at 17.5 s all 14 replaced. That first list was drawn
+  // to be thrown away.
+  //
+  // So `renderActivity` is a no-op until boot says the lanes have settled. It
+  // is not "render less"; it is "do not publish a list you already know is
+  // provisional". A named record ABSENCE still shows through — that heading is
+  // the only place the page says a record went unread, and a reader is owed it
+  // whether or not the rail is ready.
+  //
+  // After the gate opens, every later arrival renders normally and ADDS rows.
+  // Adding is not the bug; replacing wholesale was.
+  let activityLanesSettled = false;
   function renderActivity() {
     const box = $(root, ".wv-activity");
     const list = $(root, ".wv-acts");
     if (!box || !list) return;
+    if (!activityLanesSettled) {
+      box.hidden = !recordAbsences.size;
+      renderRecordAbsences();
+      list.innerHTML = "";
+      return;
+    }
     const rows = recentActivity({
       departures,
       // WHO IS READING DECIDES THE SET, HERE TOO (2026-09-13). This read the
@@ -12737,7 +13009,20 @@ export function mountViewer(appEl) {
         applyWorldLayer();
       }
       renderCurrent();
-      loadWalkLedger().then(renderActivity); // the record of acts, once it arrives
+      // ── ONE RENDER WHEN THE LANES SETTLE (POS-84) ─────────────────────────
+      //
+      // These three feed Lately and used to paint independently, so the pane
+      // showed the first one home and then replaced it. They are started
+      // together, exactly as they were, and the pane opens once — when all
+      // three have answered or failed. `allSettled` rather than `all` because
+      // a quiet lane must not be able to keep the pane shut: each of these
+      // already swallows its own failure, and this says so at the join too.
+      const settlements = loadSettlements();
+      // the settlement number and its chip are NOT downstream of the other two
+      // and do not wait on them — only the rail does
+      settlements.then(renderSettlementChip);
+      Promise.allSettled([loadWalkLedger(), settlements, loadStakeEvents()])
+        .then(() => { activityLanesSettled = true; renderActivity(); });
       // and the enter-exit acts, once THEY arrive. A full re-render rather than one
       // panel: the telling's own chip is downstream of this too, and the ledger
       // landing is exactly the "record moved" that the view cache invalidates on.
@@ -12746,9 +13031,6 @@ export function mountViewer(appEl) {
       // already painted as monograms by then, and this is what puts the pictures
       // on them. Never awaited: the map is not allowed to wait on a nicety.
       loadResidentsMeta().then(() => drawWalkers());
-      // the settlement number, and the chip it lives in
-      loadSettlements().then(() => { renderSettlementChip(); renderActivity(); });
-      loadStakeEvents().then(renderActivity);
       // conversations load on first toggle (💬), not at boot — the layer is opt-in
       if (!pmKey()) resolveIdentity(); // keyless: still settles the ring and the presets
     } catch (err) {

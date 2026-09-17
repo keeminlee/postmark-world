@@ -16,7 +16,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  ROOM_GROUND_UNITS, SPECTATOR_ACTOR,
+  ROOM_GROUND_PAD, ROOM_GROUND_UNITS, SPECTATOR_ACTOR,
   interiorFurniture, interiorPlaqueHTML, markImagePath,
   placeholderExtentSVG, placeholderHue, rimPointOf, sceneArtSVG, roomGround, sceneRuleM, sceneWalkerSet, standpointOccupancy,
 } from "../spectator/viewer.mjs";
@@ -173,12 +173,27 @@ test("THE NUMERIC REGIME: a room spans ~ROOM_GROUND_UNITS of its own ground, not
   // the whole reason a scene carries its own registration: the engine runs at
   // zoomK ≈ 1 indoors, exactly the regime the town tuned it for — never the
   // 400–600× deep zoom past MAX_ZOOM_IN that a shared svg forced
+  // ⚑ THE BOUND IS DERIVED FROM THE PAD, NOT PINNED BESIDE IT (POS-95). It was
+  // `> units * 0.7`, a number true of pad 0.12 (0.806) and of nothing else; the
+  // founder's padding change moved the share to 0.667 and reddened this test,
+  // which is the test working. A share is what the regime actually cares about,
+  // so it is now asserted EXACTLY and follows ROOM_GROUND_PAD wherever it goes.
+  // What must stay true whatever the pad is: the share is the SAME for every
+  // room size — that size-independence is the regime, and it is what a pad with
+  // a metre floor would have broken (a 0.5 m shelf at a fifth of its ground).
+  const share = 1 / (1 + 2 * ROOM_GROUND_PAD);
+  const spans = [];
   for (const extent of [{ w: 12, h: 12 }, { w: 0.5, h: 0.5 }, { w: 300, h: 120 }]) {
     const g = roomGround({ id: "r", at: { x: 0, y: 0 }, extent });
     const span = Math.max(extent.w, extent.h) / g.mPerPx;
-    assert.ok(span > ROOM_GROUND_UNITS * 0.7 && span <= ROOM_GROUND_UNITS,
-      `a ${extent.w}×${extent.h} room spans ${span.toFixed(0)} ground units`);
+    spans.push(span);
+    assert.ok(Math.abs(span - ROOM_GROUND_UNITS * share) < 1e-6,
+      `a ${extent.w}×${extent.h} room spans ${span.toFixed(1)} ground units, not ${(ROOM_GROUND_UNITS * share).toFixed(1)}`);
+    assert.ok(span > ROOM_GROUND_UNITS * 0.5 && span <= ROOM_GROUND_UNITS,
+      `…and stays in the zoomK ≈ 1 regime (${span.toFixed(0)} of ${ROOM_GROUND_UNITS})`);
   }
+  assert.equal(new Set(spans.map((s) => s.toFixed(6))).size, 1,
+    `every room size spans the same share of its own ground: ${spans.map((s) => s.toFixed(1)).join(", ")}`);
 });
 
 test("PLACEHOLDERS: deterministic per-mark hue, low saturation, art-less only", () => {

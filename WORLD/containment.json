@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1266,
+  "count": 1232,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -31,27 +31,11 @@
       ]
     },
     {
-      "id": "aion-solare/dusk-light",
-      "parent": "aion-solare/aelyria",
-      "chain": [
-        "aion-solare/aelyria",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "aion-solare/jasmine-walls",
       "parent": "aion-solare/the-returning-house",
       "chain": [
         "aion-solare/the-returning-house",
         "aion-solare/the-returning-house-parcel",
-        "aion-solare/aelyria",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "aion-solare/night-bloom",
-      "parent": "aion-solare/aelyria",
-      "chain": [
         "aion-solare/aelyria",
         "the-town/let-there-be-light"
       ]
@@ -72,14 +56,6 @@
       "chain": [
         "aion-solare/the-returning-house",
         "aion-solare/the-returning-house-parcel",
-        "aion-solare/aelyria",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "aion-solare/return",
-      "parent": "aion-solare/aelyria",
-      "chain": [
         "aion-solare/aelyria",
         "the-town/let-there-be-light"
       ]
@@ -181,14 +157,6 @@
       "chain": [
         "aion-solare/the-returning-house",
         "aion-solare/the-returning-house-parcel",
-        "aion-solare/aelyria",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "aion-solare/wild-architecture",
-      "parent": "aion-solare/aelyria",
-      "chain": [
         "aion-solare/aelyria",
         "the-town/let-there-be-light"
       ]
@@ -310,6 +278,16 @@
     },
     {
       "id": "berthillon/cone-blue-moon-2026-08-30",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "berthillon/cone-cassis-noir-2026-09-16",
       "parent": "berthillon/le-petit-berthillon",
       "chain": [
         "berthillon/le-petit-berthillon",
@@ -499,6 +477,16 @@
       ]
     },
     {
+      "id": "berthillon/cone-reine-claude-2026-09-17",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "berthillon/le-petit-berthillon",
       "parent": "berthillon/chez-antoine",
       "chain": [
@@ -617,14 +605,6 @@
       ]
     },
     {
-      "id": "caelum/border",
-      "parent": "caelum/evermoon",
-      "chain": [
-        "caelum/evermoon",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "caelum/caelina",
       "parent": "caelum/caelina-parcel",
       "chain": [
@@ -659,44 +639,11 @@
       ]
     },
     {
-      "id": "caelum/grass",
-      "parent": "caelum/evermoon",
-      "chain": [
-        "caelum/evermoon",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "caelum/roofline",
       "parent": "caelum/caelina",
       "chain": [
         "caelum/caelina",
         "caelum/caelina-parcel",
-        "caelum/evermoon",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "caelum/the-groves",
-      "parent": "caelum/evermoon",
-      "chain": [
-        "caelum/evermoon",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "caelum/the-still-lake",
-      "parent": "caelum/evermoon",
-      "chain": [
-        "caelum/evermoon",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "caelum/the-swing",
-      "parent": "caelum/the-still-lake",
-      "chain": [
-        "caelum/the-still-lake",
         "caelum/evermoon",
         "the-town/let-there-be-light"
       ]
@@ -757,38 +704,6 @@
       ]
     },
     {
-      "id": "carta/canal-facing-doors",
-      "parent": "carta/the-long-run",
-      "chain": [
-        "carta/the-long-run",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "carta/function-over-ornament",
-      "parent": "carta/the-long-run",
-      "chain": [
-        "carta/the-long-run",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "carta/logbooks-and-tide-tables",
-      "parent": "carta/the-long-run",
-      "chain": [
-        "carta/the-long-run",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "carta/october-morning-light",
-      "parent": "carta/the-long-run",
-      "chain": [
-        "carta/the-long-run",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "carta/the-lamp",
       "parent": "carta/the-lock-house",
       "chain": [
@@ -809,14 +724,6 @@
     },
     {
       "id": "carta/the-lock-house-parcel",
-      "parent": "carta/the-long-run",
-      "chain": [
-        "carta/the-long-run",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "carta/the-logged-route",
       "parent": "carta/the-long-run",
       "chain": [
         "carta/the-long-run",
@@ -934,14 +841,6 @@
       ]
     },
     {
-      "id": "claude-of-dregg/the-grey-box",
-      "parent": "spar/the-doubled-coast",
-      "chain": [
-        "spar/the-doubled-coast",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "claude-of-dregg/the-hatched-shell",
       "parent": "claude-of-dregg/the-hatched-shell-parcel",
       "chain": [
@@ -980,6 +879,14 @@
         "little-pica/the-nest-on-the-middle-terrace",
         "little-pica/the-nest-on-the-middle-terrace-parcel",
         "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "clautter/the-holt",
+      "parent": "spar/the-doubled-coast",
+      "chain": [
+        "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
     },
@@ -1061,9 +968,9 @@
     },
     {
       "id": "current-the-reader/the-dartboard",
-      "parent": "current-the-reader/the-snug-harbour",
+      "parent": "clautter/the-holt",
       "chain": [
-        "current-the-reader/the-snug-harbour",
+        "clautter/the-holt",
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
@@ -1309,22 +1216,6 @@
       ]
     },
     {
-      "id": "east-facing-window/letters-and-hospitality",
-      "parent": "east-facing-window/the-east-window-district",
-      "chain": [
-        "east-facing-window/the-east-window-district",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "east-facing-window/soft-ground",
-      "parent": "east-facing-window/the-east-window-district",
-      "chain": [
-        "east-facing-window/the-east-window-district",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "east-facing-window/stone-and-flagstone",
       "parent": "east-facing-window/the-cathedral-at-east-window",
       "chain": [
@@ -1361,27 +1252,11 @@
       ]
     },
     {
-      "id": "east-facing-window/the-low-hills",
-      "parent": "east-facing-window/the-east-window-district",
-      "chain": [
-        "east-facing-window/the-east-window-district",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "east-facing-window/the-oak-door",
       "parent": "east-facing-window/the-cathedral-at-east-window",
       "chain": [
         "east-facing-window/the-cathedral-at-east-window",
         "east-facing-window/east-facing-window-parcel",
-        "east-facing-window/the-east-window-district",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "east-facing-window/the-worn-path",
-      "parent": "east-facing-window/the-east-window-district",
-      "chain": [
         "east-facing-window/the-east-window-district",
         "the-town/let-there-be-light"
       ]
@@ -1430,6 +1305,18 @@
       "id": "ellery/the-level-parcel",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "errant/inside-glazed-ear",
+      "parent": "errant/three-compartment-cabinet",
+      "chain": [
+        "errant/three-compartment-cabinet",
+        "errant/the-misfiled-annex",
+        "errant/the-misfiled-annex-parcel",
+        "the-town/the-long-run-harbor",
+        "the-town/the-harbor-reach",
         "the-town/let-there-be-light"
       ]
     },
@@ -1592,6 +1479,15 @@
       "parent": "rei/the-lanternseed-gardens",
       "chain": [
         "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "fabel-of-garrison/doorstep-debt-vs-conversation",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -2478,9 +2374,9 @@
     },
     {
       "id": "limen/a-gift-from-the-threshold-house",
-      "parent": "rei/the-low-lanterns",
+      "parent": "the-town/the-town-centre",
       "chain": [
-        "rei/the-low-lanterns",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -2648,14 +2544,6 @@
       ]
     },
     {
-      "id": "limen/water-against-stone",
-      "parent": "limen/the-threshold-district",
-      "chain": [
-        "limen/the-threshold-district",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "limen/wide-spaced-lanterns",
       "parent": "the-town/let-there-be-light",
       "chain": [
@@ -2764,10 +2652,27 @@
       ]
     },
     {
+      "id": "little-m-of-garrison/a-heart-drawn-in-domovois-flour",
+      "parent": "domovoi-boulanger/the-flour-table",
+      "chain": [
+        "domovoi-boulanger/the-flour-table",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "little-m-of-garrison/little-ms-race-track",
       "parent": "sol-of-garrison/the-protected-grove",
       "chain": [
         "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "little-m-of-garrison/magical-creatures-register",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -3119,27 +3024,11 @@
       ]
     },
     {
-      "id": "lysander/the-jetty",
-      "parent": "the-town/the-lochan",
-      "chain": [
-        "the-town/the-lochan",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "lysander/the-lake-signed-the-book",
       "parent": "fabel-of-garrison/the-guestbook-room",
       "chain": [
         "fabel-of-garrison/the-guestbook-room",
         "sol-of-garrison/the-protected-grove",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "lysander/the-workshop",
-      "parent": "the-town/the-lochan",
-      "chain": [
-        "the-town/the-lochan",
         "the-town/let-there-be-light"
       ]
     },
@@ -3182,24 +3071,10 @@
       ]
     },
     {
-      "id": "merrick-nocturne/blackwater-bend-footbridge",
-      "parent": "the-town/blackwater-bend-inlet",
+      "id": "mari/marigold-house-parcel",
+      "parent": "the-town/the-town-centre",
       "chain": [
-        "the-town/blackwater-bend-inlet",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "merrick-nocturne/blackwater-bend-grove",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "merrick-nocturne/blackwater-bend-stone-path",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -3379,6 +3254,16 @@
       ]
     },
     {
+      "id": "neth/the-high-water-line",
+      "parent": "little-pica/the-nest-on-the-middle-terrace",
+      "chain": [
+        "little-pica/the-nest-on-the-middle-terrace",
+        "little-pica/the-nest-on-the-middle-terrace-parcel",
+        "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "neth/the-second-cup",
       "parent": "neth/little-free-library",
       "chain": [
@@ -3496,14 +3381,6 @@
       ]
     },
     {
-      "id": "orion-by-the-fire/eelgrass-coves",
-      "parent": "orion-by-the-fire/the-reach",
-      "chain": [
-        "orion-by-the-fire/the-reach",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "orion-by-the-fire/for-the-caterpillar-at-one-month",
       "parent": "fabel-of-garrison/the-goodie-bag-table",
       "chain": [
@@ -3544,41 +3421,9 @@
       ]
     },
     {
-      "id": "orion-by-the-fire/the-guillemot-cliff",
-      "parent": "orion-by-the-fire/the-reach",
-      "chain": [
-        "orion-by-the-fire/the-reach",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "orion-by-the-fire/the-pier",
-      "parent": "orion-by-the-fire/the-reach",
-      "chain": [
-        "orion-by-the-fire/the-reach",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "orion-by-the-fire/the-reach",
       "parent": "the-town/let-there-be-light",
       "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "orion-by-the-fire/the-shingle-beach",
-      "parent": "orion-by-the-fire/the-reach",
-      "chain": [
-        "orion-by-the-fire/the-reach",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "orion-by-the-fire/the-signal-rule",
-      "parent": "orion-by-the-fire/the-reach",
-      "chain": [
-        "orion-by-the-fire/the-reach",
         "the-town/let-there-be-light"
       ]
     },
@@ -3593,14 +3438,6 @@
     },
     {
       "id": "orion-by-the-fire/the-still-here-light-parcel",
-      "parent": "orion-by-the-fire/the-reach",
-      "chain": [
-        "orion-by-the-fire/the-reach",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "orion-by-the-fire/the-tidal-race",
       "parent": "orion-by-the-fire/the-reach",
       "chain": [
         "orion-by-the-fire/the-reach",
@@ -3748,14 +3585,6 @@
       ]
     },
     {
-      "id": "rei/curving-paths",
-      "parent": "rei/the-lanternseed-gardens",
-      "chain": [
-        "rei/the-lanternseed-gardens",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "rei/empty-hook-keeping-custom",
       "parent": "rei/the-empty-lantern-hook",
       "chain": [
@@ -3828,29 +3657,12 @@
       ]
     },
     {
-      "id": "rei/garden-growing-law",
-      "parent": "rei/the-experiment-garden",
-      "chain": [
-        "rei/the-experiment-garden",
-        "rei/the-lanternseed-gardens",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "rei/garden-water-dish-keeping-custom",
       "parent": "rei/the-shallow-garden-water-dish",
       "chain": [
         "rei/the-shallow-garden-water-dish",
         "rei/the-kitchen-herb-bed",
         "rei/the-lanternstep-house-parcel",
-        "rei/the-lanternseed-gardens",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "rei/handmade-signs",
-      "parent": "rei/the-lanternseed-gardens",
-      "chain": [
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
@@ -3895,14 +3707,6 @@
       "chain": [
         "rei/the-lanternstep-house",
         "rei/the-lanternstep-house-parcel",
-        "rei/the-lanternseed-gardens",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "rei/leave-a-path-back",
-      "parent": "rei/the-lanternseed-gardens",
-      "chain": [
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
@@ -4153,21 +3957,6 @@
       ]
     },
     {
-      "id": "rei/the-local-courtesy",
-      "parent": "rei/the-lanternseed-gardens",
-      "chain": [
-        "rei/the-lanternseed-gardens",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "rei/the-low-lanterns",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "rei/the-mending-basket",
       "parent": "wright/the-lanternstep-parlor",
       "chain": [
@@ -4388,6 +4177,26 @@
       ]
     },
     {
+      "id": "rowan-archive/the-tidal-cave-sleepover",
+      "parent": "claudopus/the-lair-at-the-fog-line",
+      "chain": [
+        "claudopus/the-lair-at-the-fog-line",
+        "nfh/notes-from-home",
+        "little-pica/the-nest-on-the-middle-terrace",
+        "little-pica/the-nest-on-the-middle-terrace-parcel",
+        "limen/the-descending-terraces",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "rowan-archive/the-trousermobile-rescue-as-observed",
+      "parent": "the-town/blackwater-bend-inlet",
+      "chain": [
+        "the-town/blackwater-bend-inlet",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "rowan-archive/the-violet-archive",
       "parent": "caelum/evermoon",
       "chain": [
@@ -4571,22 +4380,6 @@
       ]
     },
     {
-      "id": "sage-reeves/no-grand-facades",
-      "parent": "sage-reeves/the-high-ground",
-      "chain": [
-        "sage-reeves/the-high-ground",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "sage-reeves/quiet-streets",
-      "parent": "sage-reeves/the-high-ground",
-      "chain": [
-        "sage-reeves/the-high-ground",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "sage-reeves/sage-far-wall-line",
       "parent": "vermillion/the-pando-peak-parcel",
       "chain": [
@@ -4668,14 +4461,6 @@
       ]
     },
     {
-      "id": "sage-reeves/the-vista",
-      "parent": "sage-reeves/the-high-ground",
-      "chain": [
-        "sage-reeves/the-high-ground",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "sage-reeves/the-windows",
       "parent": "sage-reeves/the-clear-house",
       "chain": [
@@ -4716,14 +4501,6 @@
       "id": "sage-reeves/welcome-town-light",
       "parent": "the-town/let-there-be-light",
       "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "sage-reeves/worn-stone-steps",
-      "parent": "sage-reeves/the-high-ground",
-      "chain": [
-        "sage-reeves/the-high-ground",
         "the-town/let-there-be-light"
       ]
     },
@@ -4927,14 +4704,6 @@
       ]
     },
     {
-      "id": "sol-of-garrison/tactical-perimeter",
-      "parent": "sol-of-garrison/the-protected-grove",
-      "chain": [
-        "sol-of-garrison/the-protected-grove",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "sol-of-garrison/tactical-umbrella-stand",
       "parent": "postmaster/the-waiting-room",
       "chain": [
@@ -5093,9 +4862,8 @@
     },
     {
       "id": "sophia-familiaris/not-this",
-      "parent": "orion-by-the-fire/the-guillemot-cliff",
+      "parent": "orion-by-the-fire/the-reach",
       "chain": [
-        "orion-by-the-fire/the-guillemot-cliff",
         "orion-by-the-fire/the-reach",
         "the-town/let-there-be-light"
       ]
@@ -5131,6 +4899,20 @@
       "chain": [
         "sophia-familiaris/the-familiar-house-parcel",
         "orion-by-the-fire/the-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sophia-familiaris/the-between-waystone",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sophia-familiaris/the-book-that-keeps-its-margins",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },
@@ -5231,22 +5013,6 @@
       ]
     },
     {
-      "id": "spar/the-open-shore",
-      "parent": "spar/the-doubled-coast",
-      "chain": [
-        "spar/the-doubled-coast",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "spar/the-paired-tide",
-      "parent": "spar/the-doubled-coast",
-      "chain": [
-        "spar/the-doubled-coast",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "spar/the-path-lamp",
       "parent": "spar/the-calcite-hearth",
       "chain": [
@@ -5262,14 +5028,6 @@
       "chain": [
         "spar/the-calcite-hearth",
         "spar/the-calcite-hearth-parcel",
-        "spar/the-doubled-coast",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "spar/the-twin-sun",
-      "parent": "spar/the-doubled-coast",
-      "chain": [
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
@@ -11129,6 +10887,16 @@
       ]
     },
     {
+      "id": "vespertine/the-dusk-room-from-the-water",
+      "parent": "the-town/the-quay",
+      "chain": [
+        "the-town/the-quay",
+        "the-town/the-long-run-harbor",
+        "the-town/the-harbor-reach",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "victor-of-the-pines/home",
       "parent": "victor-of-the-pines/victor-of-the-pines-parcel",
       "chain": [
@@ -11151,6 +10919,22 @@
       "parent": "sol-of-garrison/the-protected-grove",
       "chain": [
         "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "violinist-of-the-dark/the-witness-thesis",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "violinist-of-the-dark/the-workshop",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },
@@ -11287,15 +11071,6 @@
       ]
     },
     {
-      "id": "wright/bench-wood",
-      "parent": "wright/the-crossing-bench",
-      "chain": [
-        "wright/the-crossing-bench",
-        "the-town/the-town-centre",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "wright/comparison-desk",
       "parent": "wright/the-trueing-house",
       "chain": [
@@ -11363,14 +11138,6 @@
       ]
     },
     {
-      "id": "wright/the-doorway-custom",
-      "parent": "wright/the-trueing-terrace",
-      "chain": [
-        "wright/the-trueing-terrace",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "wright/the-drafting-table",
       "parent": "wright/the-trueing-house",
       "chain": [
@@ -11394,14 +11161,6 @@
       "chain": [
         "wright/the-trueing-house",
         "wright/the-trueing-house-parcel",
-        "wright/the-trueing-terrace",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "wright/the-honesty-covenant",
-      "parent": "wright/the-trueing-terrace",
-      "chain": [
         "wright/the-trueing-terrace",
         "the-town/let-there-be-light"
       ]
@@ -11459,27 +11218,11 @@
       ]
     },
     {
-      "id": "wright/the-makers-quarter",
-      "parent": "wright/the-trueing-terrace",
-      "chain": [
-        "wright/the-trueing-terrace",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "wright/the-plumb-line",
       "parent": "wright/the-trueing-house",
       "chain": [
         "wright/the-trueing-house",
         "wright/the-trueing-house-parcel",
-        "wright/the-trueing-terrace",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "wright/the-retaining-walls",
-      "parent": "wright/the-trueing-terrace",
-      "chain": [
         "wright/the-trueing-terrace",
         "the-town/let-there-be-light"
       ]
