@@ -64,7 +64,7 @@
 // same order, one at a time, so the offsets assertion stays green and only the
 // timing one reds.
 //
-// Run receipts in G:/Starstory/docs/2026-09-17/jetto-pos-87-first-paint-report.md.
+// Run receipts in docs/2026-09-17/jetto-pos-87-first-paint-report.md.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
