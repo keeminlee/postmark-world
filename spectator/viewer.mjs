@@ -5858,6 +5858,112 @@ export function residentMineMarks(portfolio = {}) {
   return { marks, unplaced, sentinel, complete: portfolio.complete !== false };
 }
 
+// How the portfolio door is paged, in the two numbers the walk needs.
+//
+// `MINE_PAGE_SIZE` is the DOOR's, not ours: the office slices every list at 20
+// against one shared offset (office `src/world.mjs` § markPage, `MARKS_PAGE
+// = 20`). `MINE_PAGE_LIMIT` is OURS: the walk's own ceiling, past which the map
+// stops walking and says so rather than paging forever.
+export const MINE_PAGE_SIZE = 20;
+export const MINE_PAGE_LIMIT = 12;
+const MINE_LISTS = ["drafts", "docket", "published", "backed"];
+
+/**
+ * How many pages the door's own `counts` implies — THE LONGEST LIST, NOT THE SUM.
+ *
+ * The door pages each list independently against one shared offset, so a single
+ * request answers with up to 20 drafts AND up to 20 published AND up to 20
+ * backed. The walk is therefore as long as the longest list and never as long
+ * as everything added up. For the household this lane was measured on — drafts
+ * 2, docket 0, published 91, backed 22 — that is five pages. `ceil(sum/20)`
+ * would say six, and on a household with four full lists it would ask for four
+ * times more pages than exist.
+ *
+ * At least one, always: the first page is asked for before anything is known.
+ */
+export function minePageCount(counts, pageSize = MINE_PAGE_SIZE) {
+  const longest = MINE_LISTS.reduce((n, list) => Math.max(n, Number(counts?.[list] ?? 0)), 0);
+  return Math.max(1, Math.ceil(longest / pageSize));
+}
+
+/**
+ * The portfolio walk: the door's first answer, then ONE parallel wave.
+ *
+ * —— WHY (POS-87, postmark#2845) ——
+ * This awaited each page before asking for the next, so a household of 91
+ * published marks paid five serial round trips — seconds of a signed-in
+ * reader's wait, spent looking at empty panes, for answers that do not depend
+ * on each other. The door's FIRST answer already carries `counts`, the whole of
+ * what the household owns, so after ONE request the number of pages is known
+ * and every remaining page can be asked for together.
+ *
+ * —— THE MERGE IS ORDER-IDENTICAL TO THE SERIAL WALK ——
+ * Pages are consumed in offset order whether they were awaited one at a time or
+ * all at once, and the de-duplication is the same `list:id` set, so `merged`
+ * comes out row for row what the loop produced. That is the equality the
+ * falsifier asserts, and it is why nothing downstream of this had to change.
+ *
+ * —— AND THE WAVE IS NOT THE ONLY WAY OUT ——
+ * `counts` is the door's own claim about itself, and a wave sized from it could
+ * in principle come up short. It costs nothing to survive that: when the wave
+ * is spent and the walk is still not satisfied, the loop goes on serially from
+ * the next offset exactly as it did before. The wave is an optimisation of a
+ * walk that still knows how to finish on its own — a silent truncation of a
+ * resident's own portfolio is the one outcome this must not be able to produce.
+ *
+ * `fetchPage(offset)` answers with the door's parsed page, or throws. A page
+ * nobody ends up consuming is caught at birth: a walk that finishes early
+ * leaves requests in the air, and an unhandled rejection is not a way to report
+ * that nothing was wrong.
+ */
+export async function walkMinePages(fetchPage, { pageSize = MINE_PAGE_SIZE, pageLimit = MINE_PAGE_LIMIT } = {}) {
+  const merged = { drafts: [], docket: [], published: [], backed: [], complete: true };
+  const seen = new Set();
+  const pending = [];   // pages already asked for, in offset order
+  let offset = 0, pages = 0, exhausted = false, counts = null, waved = false;
+  for (;;) {
+    const page = pending.length ? await pending.shift() : await fetchPage(offset);
+    counts ??= page?.counts ?? null;
+    let added = 0;
+    for (const list of MINE_LISTS)
+      for (const row of page?.[list] ?? []) {
+        const tag = `${list}:${row?.id}`;
+        if (!row?.id || seen.has(tag)) continue;
+        seen.add(tag); merged[list].push(row); added += 1;
+      }
+    pages += 1;
+    // ⚑ `complete` IS NOT AN END-OF-WALK FLAG, and reading it as one cost this
+    // lane a run of twelve requests that collected the same page over and
+    // over. It means "this ONE page holds everything", so for any portfolio
+    // past 20 it is false at EVERY offset and never becomes true. The door's
+    // `counts` are the real totals (drafts 2, docket 0, published 91, backed
+    // 22 for this household), so the walk ends when what has been collected
+    // matches them — or when a page adds nothing new, which is the same end
+    // reached from the other side and costs one wasted request to find.
+    const done = counts
+      ? MINE_LISTS.every((l) => merged[l].length >= (counts[l] ?? 0))
+      : page?.complete !== false;
+    if (done || added === 0) break;
+    if (pages >= pageLimit) { exhausted = true; merged.complete = false; break; }
+    offset += pageSize;
+    // ONE WAVE, ONCE, AFTER THE FIRST ANSWER. Everything still owed is asked
+    // for here, together; the loop goes on consuming in offset order and cannot
+    // tell the difference. Capped at the walk's own ceiling, so the burst is
+    // bounded by `pageLimit` requests and not by how much a household owns.
+    if (!waved && counts) {
+      waved = true;
+      const last = Math.min(minePageCount(counts, pageSize), pageLimit);
+      for (let o = offset; o < last * pageSize; o += pageSize) {
+        const asked = fetchPage(o);
+        asked.catch(() => {});   // a page the walk ends before reaching is not a failure
+        pending.push(asked);
+      }
+    }
+  }
+  pending.length = 0;
+  return { merged, pages, exhausted };
+}
+
 /**
  * The id index the resident path resolves against — records first, then the
  * resident's own rows.
@@ -11980,48 +12086,27 @@ export function mountViewer(appEl) {
     return residentById(read ?? {}, mineSet.marks).get(id) ?? null;
   }
 
-  const MINE_PAGE_LIMIT = 12;
   let mineSet = { marks: new Map(), unplaced: [], sentinel: [], complete: true, pages: 0, exhausted: false };
   async function loadMineMarks() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
-    const LISTS = ["drafts", "docket", "published", "backed"];
-    const merged = { drafts: [], docket: [], published: [], backed: [], complete: true };
-    const seen = new Set();
-    let offset = 0, pages = 0, exhausted = false, counts = null;
-    for (;;) {
+    // THE WALK ITSELF IS MODULE-LEVEL (POS-87) — `walkMinePages`, one request
+    // and then one wave. It lives out there because a walk with a stub door in
+    // front of it is the only way to assert that the pages overlap and that the
+    // merged set is row for row what walking them one at a time produced; in
+    // here it could only ever be read, never run. What is left in the closure is
+    // the door's address, the key, and where the answer goes.
+    const walked = await walkMinePages(async (offset) => {
       const r = await fetch(officeUrl(`/world/my-marks?offset=${offset}`), options);
       if (!r.ok) throw new Error(`/world/my-marks → ${r.status}`);
       const page = await r.json();
       if (page?.error) throw new Error(page.defect ?? page.error);
-      counts ??= page.counts ?? null;
-      let added = 0;
-      for (const list of LISTS)
-        for (const row of page[list] ?? []) {
-          const tag = `${list}:${row?.id}`;
-          if (!row?.id || seen.has(tag)) continue;
-          seen.add(tag); merged[list].push(row); added += 1;
-        }
-      pages += 1;
-      // ⚑ `complete` IS NOT AN END-OF-WALK FLAG, and reading it as one cost this
-      // lane a run of twelve requests that collected the same page over and
-      // over. It means "this ONE page holds everything", so for any portfolio
-      // past 20 it is false at EVERY offset and never becomes true. The door's
-      // `counts` are the real totals (drafts 2, docket 0, published 91, backed
-      // 22 for this household), so the walk ends when what has been collected
-      // matches them — or when a page adds nothing new, which is the same end
-      // reached from the other side and costs one wasted request to find.
-      const done = counts
-        ? LISTS.every((l) => merged[l].length >= (counts[l] ?? 0))
-        : page.complete !== false;
-      if (done || added === 0) break;
-      if (pages >= MINE_PAGE_LIMIT) { exhausted = true; merged.complete = false; break; }
-      offset += 20;   // the door's own page size
-    }
-    mineSet = { ...residentMineMarks(merged), pages, exhausted };
+      return page;
+    });
+    mineSet = { ...residentMineMarks(walked.merged), pages: walked.pages, exhausted: walked.exhausted };
     // The merged portfolio rides back too: `state.portfolio`, `state.mineIds`
     // and the draft overlay are all built from it, and they must see EVERY page
     // rather than the first — the same arithmetic lie, one surface over.
-    return { mine: mineSet, portfolio: merged };
+    return { mine: mineSet, portfolio: walked.merged };
   }
   async function loadIdentityWorld() {
     const options = { headers: authHeaders(), credentials: "same-origin" };
