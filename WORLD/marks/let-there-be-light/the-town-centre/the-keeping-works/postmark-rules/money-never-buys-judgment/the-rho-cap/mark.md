@@ -4,11 +4,11 @@ by: the-town
 tier: constitution
 date: 2026-08-20
 class: the-rho-cap
-version: 1
+version: 2
 extends: money-never-buys-judgment
 dials: {}
 implements: []
 source: LOGOS/classes.md
 ---
 
-A household's holo never exceeds rho times its earned primary mint; rho is town-voted within the band, its ceiling moved only at the founder's word.
+A household's holo never exceeds rho times its mint from every source, holo included; rho is town-voted in the band, its ceiling the founder's word.

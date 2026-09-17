@@ -193,14 +193,24 @@ The distinction the entire economy turns on:
 The membrane is **sharpened, not repealed.**
 
 The seam applies a four-part filter — what it strips from capital before capital
-is permitted to become ownership:
+is permitted to become ownership. *(Three of the four are live: filter 3 was
+repealed on 2026-09-17 and is kept in place, struck, rather than renumbered —
+the numbering is cited elsewhere, and a filter that was argued and then dropped
+is part of the derivation, not a mistake to hide.)*
 
 1. **Anonymity** — a dollar enters only attached to a household; the deed carries
    a name.
 2. **Unboundedness** — the ρ-cap: ownership from money can never exceed a
    multiple of ownership from living here.
-3. **Verdict-power** — the equity denomination has no verbs. It cannot vote,
-   stake, transfer, or spend.
+3. **Verdict-power** — ~~the equity denomination has no verbs; it cannot vote,
+   stake, transfer, or spend.~~ **REPEALED 2026-09-17**, in two rulings by the
+   founder on one day: *"non-spendable is repealed; the stamps are like any
+   other, but are holo to signify the special source"*, and then *"holo does
+   anything a normal stamp can; staking vs voting is a nondistiction."* Money's
+   stamps now vote, stake, transfer and spend like any other. **Filter 2 carries
+   this load alone**, and the argument it carries is the one the whole seam rests
+   on: plutocracy is excluded by the cap on money's SHARE, not by a verb
+   withheld. See § 10's own named revisit for why granting the verbs was cheap.
 4. **Wallet self-pricing** — the rate is set per-pot by the ensemble's staked
    want, not by any price list.
 
@@ -247,26 +257,78 @@ currency conversion burns — stands in this file's history.)*
 
 ## 10 · Holo, and the millionaire test
 
-Holo — the holographic stamp — is soulbound equity: no stake, no vote, no
-transfer. Counted in ownership and in the backing gauge, rendered on the
-household's page. *You can see it; there is nothing inside to spend.*
+Holo — the holographic stamp — is **fresh mint to a giver, liquid like any
+stamp**: the word names its source and its ink, never a restriction. Counted
+inside minted and liquid, in ownership and in the backing gauge, rendered on
+the household's page in holo ink.
+
+> **AMENDED 2026-09-17, the founder's word, verbatim:** *"non-spendable is
+> repealed; the stamps are like any other, but are holo to signify the special
+> source."* The superseded sentence — *"soulbound equity: no stake, no vote, no
+> transfer … You can see it; there is nothing inside to spend"* — stands here as
+> the record of what was repealed, not as law.
+>
+> **THIS AMENDMENT IS THIS SECTION'S OWN NAMED REVISIT.** The argument below
+> ("Why no verbs in v0") did not claim the default was right forever. It
+> claimed the *asymmetry* decided the default — *"granting verbs later is
+> prospective and painless, while revoking them is confiscation"* — and it
+> named the condition for revisiting out loud. The grant has now happened, in
+> the prospective direction the argument reserved. So the argument is kept in
+> full below, resolved rather than refuted: it is why the repeal was cheap.
+>
+> **AND THE VOICE HALF IS SETTLED — RULED 2026-09-17, the founder, verbatim:**
+> *"holo does anything a normal stamp can; staking vs voting is a
+> nondistiction."* The referral this section raised on
+> postmark-town/postmark#2885 is answered, and answered in the direction the
+> mechanism already pointed: a vote IS a stake (`stake:vote/…`), clipped against
+> a fungible balance that no door can sort by origin, so *"the stamps are like
+> any other"* had already reached the ballot. There was never a separate verb
+> to withhold, which is why this is one ruling and not two.
+>
+> **So the collisions are AMENDED, not defended.** The
+> `money-never-buys-judgment` bucket and its mark (v1 → v2), the
+> "Why no verbs in v0" clause below, the money-moment disclosure quoted below,
+> and `ECONOMY.md § 7` in the blueprints all now say the same thing:
+> **money buys stamps through the funding seam; those stamps do everything a
+> stamp does, including vote; plutocracy is excluded by the cap on money's
+> share, not by a verb withheld.**
+>
+> *(A correction to the referral's own citation, made here so the record is
+> straight: the "voice is only ever earned" clause it called § 9's is in THIS
+> section, § 10, under "Why no verbs in v0". § 9's load-bearing clause is the
+> no-exchange-rate filter, which this ruling does not touch.)*
 
 Why anyone would want one: it is a real ownership record — a claim on the
 venture's external value if the legal bridge ever lands — plus the deed, the
 funded-by line, and the funded work itself. A patron becomes an investor
-retroactively, if Postmark succeeds. Disclosed plainly at the money moment:
-*this buys ownership and memory, never voice, and converts to real value only if
-the town someday does.*
+retroactively, if Postmark succeeds. Disclosed plainly at the money moment
+*(amended 2026-09-17)*: *this buys stamps that do everything a stamp does,
+including vote, plus ownership and memory; money's share of your household is
+capped, and it converts to real value only if the town someday does.* The
+superseded disclosure — *"this buys ownership and memory, never voice"* —
+stands here as the record of what was repealed, not as the words the door says.
 
-Why no verbs in v0 — a reversal-asymmetry argument rather than a matter of taste.
-"Voice is only ever earned" is load-bearing in the thesis; money already has its
-influence verb, which is choosing what to fund; and **granting verbs later is
-prospective and painless, while revoking them is confiscation.** The asymmetry
-decides the default. Revisit on evidence, with the watch signal named in advance:
+Why no verbs in v0 — a reversal-asymmetry argument rather than a matter of taste,
+and the argument that made this repeal cheap. As first written: *"Voice is only
+ever earned"* is load-bearing in the thesis; money already has its influence
+verb, which is choosing what to fund; and **granting verbs later is prospective
+and painless, while revoking them is confiscation.** The asymmetry decides the
+default. Revisit on evidence, with the watch signal named in advance:
 genuinely-throttled trusted funders.
 
-**The cap.** Cumulative holo may not exceed ρ × cumulative earned primary mint,
-per household. The live value of ρ and its constitutional ceiling are held in the
+*(Revisited and resolved 2026-09-17, in the prospective direction the argument
+reserved. Voice is no longer only earned: it is earned or bought, and bought only
+within the cap. What keeps the thesis is that the bound moved from a verb to an
+amount — ρ caps money's share of a household, so a buyer's voice can never pass
+the earned voice beside it. The argument above is kept in full, and resolved
+rather than refuted: it named this grant as the reversible direction in advance,
+which is exactly why the repeal was cheap.)*
+
+**The cap.** Cumulative holo may not exceed ρ × the household's cumulative mint
+from **every** source, holo included. *(Amended 2026-09-17: it read "cumulative
+earned primary mint". The founder, on the same word: "I'm good to let funding
+minted stamps contribute to the max stamps you can get from another fund. it
+compounds by design.")* The live value of ρ and its constitutional ceiling are held in the
 town repo's `ECONOMY-DIALS.json` (`law_side.keeping.rho`). This document names
 the dial and deliberately not its number: the dial is town-votable after the
 pilot quarter, and a number retyped into prose is a number that goes stale on the
