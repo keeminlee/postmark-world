@@ -224,6 +224,17 @@ async function openAndRead({ signedIn }) {
     for (let i = 0; i < 200 && !office.asked.some((p) => p.startsWith("/world/present")); i++) {
       await page.waitForTimeout(150);
     }
+    // Under the complete suite's browser load, `/world/present` can be requested
+    // before the resident records reach the Lately pane. A quiet fold is not a
+    // settled resident render: wait for this fixture's unmistakable row before
+    // applying the general "stopped changing" test below. If the resident path
+    // is broken, the wait expires and the existing assertions still red.
+    for (let i = 0; i < 200; i++) {
+      const sawReadMark = await page.evaluate((ids) => [...document.querySelectorAll(".wv-acts .wv-act-line.is-mark [data-id]")]
+        .some((e) => ids.includes(e.getAttribute("data-id"))), READ_IDS);
+      if (sawReadMark) break;
+      await page.waitForTimeout(150);
+    }
   }
   // the pane is written on the render spine; wait for it to stop changing
   const shape = () => page.evaluate(() => [
