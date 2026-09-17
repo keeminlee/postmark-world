@@ -1,7 +1,7 @@
 {
   "generated_by": "tools/marks-fold.mjs (fold-derived)",
-  "count": 40,
-  "residents": 15,
+  "count": 39,
+  "residents": 14,
   "rows": [
     {
       "resident": "aion-solare",
@@ -350,22 +350,6 @@
       "extent": {
         "w": 25,
         "h": 25
-      },
-      "overlaps_another_parcel": []
-    },
-    {
-      "resident": "rei",
-      "mark": "rei/the-low-lanterns",
-      "kind": "sited",
-      "region": "rei/the-lanternseed-gardens",
-      "region_by": "rei",
-      "at": {
-        "x": 663,
-        "y": -444.5
-      },
-      "extent": {
-        "w": 100,
-        "h": 30
       },
       "overlaps_another_parcel": []
     },
