@@ -36,9 +36,21 @@
 # The crossing derives its stakes from a store read or a pinned town clone; a
 # `pull_request` token reaches neither. `tools/rehearsal-stakes.mjs` rebuilds
 # them from `WORLD/world-state.json` — the fold the last crossing committed into
-# this tree — and REFUSES rather than hand the sweep an empty file. Read that
-# tool's header for what an empty stakes file does to 232 commons publications
-# and why the gate would call it green.
+# this tree — and REFUSES rather than hand the sweep an unreconciled file. Read
+# that tool's header for the run where a merely-WRONG stakes file swept seven
+# marks out of the world under a green gate.
+#
+# AND WHOSE SKETCHBOOKS THESE ARE, which is the second limit and the quieter one.
+# The sweep code here is the same code the crossing runs, but its CANDIDATES are
+# whatever `draft/*` this repository holds. On the office's `SETTLEMENT_SOURCE=store`
+# path the crossing deletes every draft ref and builds one scratch sketchbook per
+# household from the store before the sweep runs (`settlement-sweep.mjs` §
+# "WHOSE SKETCHBOOKS THESE ARE, UNDER A STORE CROSSING"). So this job rehearses
+# the sweep over the refs the world repo actually carries, not over the ones the
+# store would have written. What that changes is the PUBLISH set; what it does
+# not change is the four gate checks a pull request is actually being asked about
+# — lint, moved, lost, parcels — which read this tree's marks and this tree's
+# base. The rehearsal is honest about which question it answers.
 
 name: crossing rehearsal
 on:
