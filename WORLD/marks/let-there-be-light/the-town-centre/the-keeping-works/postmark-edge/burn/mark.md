@@ -13,4 +13,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-Destruction: a reserved edge, dormant — supply leaves the world nowhere today. Its one lawful site was the seam's conversion, retired 2026-09-14; the town chose a medium of exchange, not a sink.
+Destruction: a reserved edge, dormant since 2026-09-14 — supply leaves the world nowhere; the town chose a medium of exchange, not a sink.

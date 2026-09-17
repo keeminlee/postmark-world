@@ -11,4 +11,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-Retired with the burn (2026-09-14): no stake is given up at a close, so no keeping deed is written. The patron's deed — dollars given — stands; the stakers' stamps come home whole.
+Retired 2026-09-14 with the burn: no stake is given up at a close, so no keeping deed is written; the patron's deed stands.

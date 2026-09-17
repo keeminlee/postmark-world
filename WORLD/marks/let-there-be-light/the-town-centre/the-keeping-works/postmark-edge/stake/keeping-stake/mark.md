@@ -13,4 +13,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-Escrowed on a funded need: it comes home whole at the close, and the share of it the dollars funded sizes the givers' fresh mint — own household excluded, rho-capped. Nothing burns.
+Escrowed on a funded need: it comes home whole at the close; the share the dollars funded sizes the givers' fresh mint. Nothing burns.
