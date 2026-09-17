@@ -4,12 +4,28 @@
 //
 //   node tools/rehearsal-posture.mjs [--workflow <path>] [--env] [--json]
 //
-// The crossing rehearsal runs a settlement over a pull request's own tree. That
-// is the whole value and the whole danger: a job that runs an untrusted tree's
-// code must not be able to reach anything the tree could ask it to reach. Every
+// The crossing rehearsal runs a settlement over a pull request's own tree. Every
 // claim in `crossing-rehearsal.yml`'s SECURITY paragraph is a sentence in a
 // comment, and a sentence in a comment is worth nothing — three copies of a
 // promise are one promise, copied. So the promise is READ OFF THE FILE.
+//
+// WHAT THIS IS NOT, BEFORE ANYTHING ELSE, BECAUSE THE FIRST DRAFT OF THIS HEADER
+// OVERCLAIMED IT. This is NOT a boundary against a hostile pull request. It
+// cannot be: this tool is itself a file in the tree under test, so a pull request
+// that wanted to weaken the workflow would weaken this beside it, and the run
+// would go green. The actual boundary against an outside author is GitHub's own:
+// a `pull_request` run from a fork gets a read-only token and no secrets no
+// matter what the workflow file declares. That is enforcement we do not write
+// and cannot lose.
+//
+// WHAT THIS IS: a regression guard on OURSELVES. The way this job realistically
+// becomes dangerous is not an attacker — it is a maintainer, months from now,
+// adding a step that needs "just a token", or switching the trigger to reach a
+// base secret, or handing the sweep an env key because something broke at 05:45Z.
+// Every one of those is a same-repo change by somebody with write access, and
+// every one of them reds this. It runs as the job's FIRST step so it fails before
+// the sweep spends four minutes, and again in the suite as a pin so it holds even
+// on a pull request that never triggers the job.
 //
 // SEVEN CHECKS, all over the one file that decides what the job can do, plus
 // the two files that decide what the job's tools consume:

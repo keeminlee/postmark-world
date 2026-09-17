@@ -28,9 +28,17 @@
 # set (`git config` covers the same ground where the sweep's rebase actually
 # looks). The posture is asserted rather than asserted-about:
 # `tools/rehearsal-posture.mjs` reads THIS FILE and refuses on the base-token
-# trigger, a widened permission, a secret reference, or a
-# push/tag/remote verb — and it runs as the job's FIRST step, before any of the
-# pull request's code executes, and again in the suite as a pin.
+# trigger, a widened permission, a secret reference, or a push/tag/remote verb.
+#
+# THAT TOOL IS NOT A BOUNDARY AGAINST A HOSTILE PULL REQUEST, and its header says
+# so at the top: it is a file in the tree under test, so a pull request that
+# weakened this file would weaken it alongside. The boundary against an outside
+# author is GitHub's own — a fork's `pull_request` run gets a read-only token and
+# no secrets whatever this file declares. The tool is a regression guard on
+# OURSELVES: the realistic way this job turns dangerous is a maintainer adding a
+# step that needs "just a token" at 05:45Z, and every shape of that reds it. It
+# runs FIRST so it fails before the sweep spends four minutes, and again in the
+# suite as a pin so it holds on pull requests that never trigger this job.
 #
 # THE ONE THING IT CANNOT HAVE, stated so nobody has to discover it: the town.
 # The crossing derives its stakes from a store read or a pinned town clone; a
@@ -87,11 +95,12 @@ jobs:
         with:
           node-version: 22
 
-      # FIRST, BEFORE THIS PULL REQUEST'S CODE RUNS AT ALL. The step reads this
-      # workflow file and holds it to the posture the header claims. It is a
-      # `node --check`-shaped read of a checked-in file, not an execution of the
-      # PR's logic, and it is here rather than at the end because a posture
-      # asserted after the fact is a receipt for something that already happened.
+      # FIRST, so it fails in two seconds rather than after the sweep's four
+      # minutes. The step reads this workflow file and holds it to the posture the
+      # header claims. Note honestly what it is: this tool ships in the same tree,
+      # so it guards US against widening the job later, not the tree against
+      # itself — the header of `rehearsal-posture.mjs` says which boundary is
+      # which, and this comment deliberately does not claim the stronger one.
       - name: the job cannot write — asserted against this workflow file
         run: node tools/rehearsal-posture.mjs --workflow .github/workflows/crossing-rehearsal.yml
 
