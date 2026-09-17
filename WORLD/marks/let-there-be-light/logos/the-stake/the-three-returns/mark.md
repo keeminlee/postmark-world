@@ -7,4 +7,4 @@ slot: three-returns
 value: every stake is escrow; only the return differs
 ---
 
-One escrow, three returns: a vote stake returns at its close, a mark stake at its unstake, a pot stake burns what the epoch's dollars funded.
+One escrow, three returns: a vote stake at its close, a mark stake at its unstake, a pot stake at the pot's close — whole, all three; nothing burns.

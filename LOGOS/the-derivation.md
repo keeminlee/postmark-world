@@ -210,12 +210,15 @@ is permitted to become ownership:
 shape.)*
 
 The town posts a need. Households stake stamps on it — simultaneously the
-want-signal and the pricing mass. Patrons pay witnessed dollars. At close, the
-funded fraction of the posted target decides what fraction of staked stamps
-convert; unmatched stakes return whole. The converted mass splits at σ: one leg
-back to **the stakers** as permanent verb-less equity, the other to **the payers**
-as holo. Total new equity equals the burn, exactly. The beneficiary receives
-dollars, never stamps.
+want-signal and the pricing mass. Patrons pay witnessed dollars. At close, every
+stake comes home whole, and the funded fraction of the posted target decides how
+much of the staked mass sizes the reward: that much is minted fresh to **the
+payers** by dollar share, a payer's own household's stakes left out, floored,
+ρ-capped, the remainder un-minted. Nothing burns. The beneficiary receives
+dollars, never stamps. *(Amended 2026-09-14 at the founder's word, postmark#2811;
+as first derived, the funded fraction of each stake burned and split at σ between
+the stakers and the payers as holo — the mechanism ECONOMY-DIALS.json
+§ law_side.keeping now records as history. No close ever ran under it.)*
 
 **Filter 4 is the load-bearing one, and it is the design's sharpest idea: there
 is no exchange rate anywhere in this system.** Nobody can look up what a dollar
@@ -232,10 +235,15 @@ Three consequences fall out of that one property:
 - **Money-in can never exceed the town's demonstrated wants.** That is the
   alignment guarantee and the growth model in a single sentence.
 
-The tri-law keeps the burn contained: **voice returns · public-good rewards mint
-fresh · currency conversion burns.** Burn lives in exactly one place — the seam
-with outside money — because an exchange rate set by free signals gets farmed. A
-returning stake is a ballot; a burned stake is a purchase.
+The one return (amended 2026-09-14/15, superseding the tri-law): **every stake
+comes home whole; what differs is the work it does while it is out.** A stake on
+a decision is a ballot; on a mark, a voice; on a pot or a bounty it sizes a reward
+minted fresh to someone else — the givers, the deliverer, the author. Nothing
+burns anywhere. The exchange-rate defence survives the amendment intact: the mint
+is sized by the town's stakes and priced against the posted need, never against
+the dollars, so an exchange rate set by free signals still cannot be farmed.
+*(The tri-law as first written — voice returns · public-good rewards mint fresh ·
+currency conversion burns — stands in this file's history.)*
 
 ## 10 · Holo, and the millionaire test
 
