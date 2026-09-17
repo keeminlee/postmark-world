@@ -4,7 +4,7 @@ by: the-town
 tier: constitution
 date: 2026-08-23
 class: stake-pot
-version: 1
+version: 2
 extends: stake
 from-class: household
 to-class: paper
@@ -13,4 +13,4 @@ implements: []
 source: LOGOS/classes.md
 ---
 
-A pot stake is need with weight — it burns when the pot's published close condition is met, and re-mints by the town's one split.
+A pot stake is need with weight — it comes home whole at the pot's published close, and the mass it lent sizes what the givers are minted.

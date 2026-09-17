@@ -148,7 +148,8 @@ roster sentence; the planting's census trued it.
 the OBJECT publishes the menu — `stakeable`, predicate's child: which staking
 modes a thing accepts and what each returns, sealed as a slot on `mark`
 (mark-mode, returns at the unstake), `ballot` (ballot-mode, returns at the
-close), `pot` (pot-mode, burns at its own published close — the `pot` paper
+close), `pot` (pot-mode, returns whole at its own published close, the mass it
+lent sizing the givers' mint — amended 2026-09-14; the `pot` paper
 class seated the same night) and `bounty` (mark-mode for now: a menu only
 offers a mode with a live handler behind it, per the live-handler law). The
 EDGE records the choice — `stake-ballot`, `stake-mark`, `stake-pot` stand
@@ -1406,11 +1407,13 @@ The full derivation and every ruling receipt live in the sitting's capture
 (`Starstory docs/2026-08-20/postmark-economy-ontology.md`); ECONOMY.md owes
 the amendments that document enumerates. The law, compressed:
 
-- **The tri-law of stakes** extends the Law of Stakes: *voice returns ·
-  public-good rewards mint fresh · currency conversion burns.* A returning
-  stake is a ballot; a burned stake is a purchase. Burn exists in exactly one
-  place — the seam with outside money — because an exchange rate set by free
-  signals gets farmed.
+- **The tri-law of stakes** extended the Law of Stakes: *voice returns ·
+  public-good rewards mint fresh · currency conversion burns.* **Superseded
+  2026-09-14/15 by the one return (postmark#2811, the founder's amendment):**
+  every stake comes home whole, and a stake on a pot or a bounty sizes a
+  reward minted fresh to the givers, the deliverer and the author. Nothing
+  burns anywhere; the burn edge is dormant. The exchange-rate defence stands
+  — the mint is priced against the posted need, never the dollars.
 - **The funding quest** (`funding-quest extends bounty`) is a standing need
   with a dollar figure and a named beneficiary. **Keeping-stakes**
   (`keeping-stake extends stake`, to-class funding-quest) escrow on it; at
@@ -1470,6 +1473,8 @@ own: it is ordinary mint, source-tagged to the pot, carrying no liquid coin
 (the coin was paid when the stake burned), counted in the rho base and
 excluded from the genesis parity formula. `keeping-stake`'s body carries that
 sentence (version 2), and the noun "keeping-equity" is retired everywhere.
+**Superseded 2026-09-14:** the keeping close has no σ leg — nothing burns,
+every stake returns whole, and `keeping-stake` (version 3) says so.
 **D1** — **`ownership`** (derived, RED): ownership is a READ, minted plus
 holo, derived beside the tenses and never a tense; there is no fifth tense
 node and nothing is stored for it. **R10** — the `rho` predicate opens at
@@ -1498,8 +1503,8 @@ scarce, spendable, costly, inhabitation-earned), each linked to its proof:
   ECONOMY.md §3 is now containment.
 - **Two stamp edges at the review**: **`mint`** (issuance — GREEN, its engine
   child names the town repo's live stamp-mint) and **`burn`** (destruction —
-  RED; its one lawful site is the seam's conversion, and the engine is the
-  funding build); the third, **`pay`**, landed 2026-08-21 — § The seam.
+  RED; its one lawful site was the seam's conversion, retired 2026-09-14 — the
+  edge is dormant, version 2); the third, **`pay`**, landed 2026-08-21 — § The seam.
 - **Every dial is a predicate** (the founder's convention word, same review):
   a number the law carries rides a predicate child, never a frontmatter JSON
   — `rho` (0.5 at launch, ballot-owned after the pilot quarter) and `rho-ceiling`
