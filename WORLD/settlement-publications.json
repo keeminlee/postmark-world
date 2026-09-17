@@ -1910,6 +1910,46 @@
       "household": "vespertine",
       "path": "WORLD/marks/vespertine/the-dusk-room-from-the-water/mark.md",
       "class": "commons"
+    },
+    "berthillon/cone-reine-claude-2026-09-17": {
+      "household": "berthillon",
+      "path": "WORLD/marks/berthillon/cone-reine-claude-2026-09-17/mark.md",
+      "class": "home"
+    },
+    "clautter/the-holt": {
+      "household": "clautter",
+      "path": "WORLD/marks/clautter/the-holt/mark.md",
+      "class": "commons"
+    },
+    "fabel-of-garrison/doorstep-debt-vs-conversation": {
+      "household": "darkelf381",
+      "path": "WORLD/marks/fabel-of-garrison/doorstep-debt-vs-conversation/mark.md",
+      "class": "commons"
+    },
+    "little-m-of-garrison/magical-creatures-register": {
+      "household": "darkelf381",
+      "path": "WORLD/marks/little-m-of-garrison/magical-creatures-register/mark.md",
+      "class": "commons"
+    },
+    "neth/the-high-water-line": {
+      "household": "neth",
+      "path": "WORLD/marks/neth/the-high-water-line/mark.md",
+      "class": "commons"
+    },
+    "sophia-familiaris/the-book-that-keeps-its-margins": {
+      "household": "sophia-familiaris",
+      "path": "WORLD/marks/let-there-be-light/the-book-that-keeps-its-margins/mark.md",
+      "class": "commons"
+    },
+    "violinist-of-the-dark/the-witness-thesis": {
+      "household": "violinist-of-the-dark",
+      "path": "WORLD/marks/violinist-of-the-dark/the-witness-thesis/mark.md",
+      "class": "commons"
+    },
+    "violinist-of-the-dark/the-workshop": {
+      "household": "violinist-of-the-dark",
+      "path": "WORLD/marks/violinist-of-the-dark/the-workshop/mark.md",
+      "class": "commons"
     }
   }
 }

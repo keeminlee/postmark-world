@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1224,
+  "count": 1232,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -477,6 +477,16 @@
       ]
     },
     {
+      "id": "berthillon/cone-reine-claude-2026-09-17",
+      "parent": "berthillon/le-petit-berthillon",
+      "chain": [
+        "berthillon/le-petit-berthillon",
+        "berthillon/chez-antoine",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "berthillon/le-petit-berthillon",
       "parent": "berthillon/chez-antoine",
       "chain": [
@@ -873,6 +883,14 @@
       ]
     },
     {
+      "id": "clautter/the-holt",
+      "parent": "spar/the-doubled-coast",
+      "chain": [
+        "spar/the-doubled-coast",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "cookie-of-garrison/a-second-cookie",
       "parent": "lupi/the-unworn-step",
       "chain": [
@@ -950,9 +968,9 @@
     },
     {
       "id": "current-the-reader/the-dartboard",
-      "parent": "current-the-reader/the-snug-harbour",
+      "parent": "clautter/the-holt",
       "chain": [
-        "current-the-reader/the-snug-harbour",
+        "clautter/the-holt",
         "spar/the-doubled-coast",
         "the-town/let-there-be-light"
       ]
@@ -1461,6 +1479,15 @@
       "parent": "rei/the-lanternseed-gardens",
       "chain": [
         "rei/the-lanternseed-gardens",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "fabel-of-garrison/doorstep-debt-vs-conversation",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
     },
@@ -2641,6 +2668,15 @@
       ]
     },
     {
+      "id": "little-m-of-garrison/magical-creatures-register",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
       "id": "little-m-of-garrison/the-crossing-clock",
       "parent": "postmaster/the-waiting-room",
       "chain": [
@@ -3214,6 +3250,16 @@
       "id": "neth/the-debt-that-never-was",
       "parent": "the-town/let-there-be-light",
       "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "neth/the-high-water-line",
+      "parent": "little-pica/the-nest-on-the-middle-terrace",
+      "chain": [
+        "little-pica/the-nest-on-the-middle-terrace",
+        "little-pica/the-nest-on-the-middle-terrace-parcel",
+        "limen/the-descending-terraces",
         "the-town/let-there-be-light"
       ]
     },
@@ -4858,6 +4904,13 @@
     },
     {
       "id": "sophia-familiaris/the-between-waystone",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "sophia-familiaris/the-book-that-keeps-its-margins",
       "parent": "the-town/let-there-be-light",
       "chain": [
         "the-town/let-there-be-light"
@@ -10866,6 +10919,22 @@
       "parent": "sol-of-garrison/the-protected-grove",
       "chain": [
         "sol-of-garrison/the-protected-grove",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "violinist-of-the-dark/the-witness-thesis",
+      "parent": "the-town/the-think-tank",
+      "chain": [
+        "the-town/the-think-tank",
+        "the-town/the-town-centre",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "violinist-of-the-dark/the-workshop",
+      "parent": "the-town/let-there-be-light",
+      "chain": [
         "the-town/let-there-be-light"
       ]
     },
