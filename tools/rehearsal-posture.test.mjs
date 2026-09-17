@@ -20,7 +20,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { rehearsalPosture, envReads, ALLOWED_TOOL_ENV, WORKFLOW_REL } from "./rehearsal-posture.mjs";
-import { stakesFromState, deriveRehearsalStakes } from "./rehearsal-stakes.mjs";
+import { stakesFromState, deriveRehearsalStakes, UNATTRIBUTED_HOLDER } from "./rehearsal-stakes.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -162,13 +162,34 @@ test("the stakes are the tree's own arithmetic, read the other way", () => {
   for (const r of out.rows) assert.equal(r.weight, r.n);
 });
 
-test("FALSIFIER: a state that disagrees with itself refuses rather than guess which reading is the town", () => {
+test("FALSIFIER: a DEFICIT refuses rather than guess which reading is the town", () => {
   const drifted = structuredClone(STATE);
-  drifted.marks[0].stamps = 9;
-  assert.throws(() => stakesFromState(drifted), /disagrees with itself on 1 mark/);
+  drifted.marks[0].stamps = 9;              // portfolios sum 3, stamps 9 — dropping rows cannot produce this
+  assert.throws(() => stakesFromState(drifted), /a DEFICIT, which dropping non-positive holder rows cannot produce/);
   const orphan = structuredClone(STATE);
   orphan.marks = orphan.marks.filter((m) => m.id !== "b/two");
   assert.throws(() => stakesFromState(orphan), /no mark in the fold carries that id/);
+});
+
+test("an EXCESS is a holder the portfolio book dropped, and it is restored rather than refused", () => {
+  // alex +2 and bo +1 on a/one, and a third holder who unstaked to -1: the book
+  // keeps only the positive holders, the mark keeps the net. Reachable law, not drift.
+  const unstaked = structuredClone(STATE);
+  unstaked.marks[0].stamps = 2;             // 3 in the book, 2 on the mark
+  const out = stakesFromState(unstaked);
+  assert.equal(out.balanced.length, 1);
+  assert.match(out.balanced[0], /^a\/one: 1 of net unstake dropped from the book, restored$/);
+  const byMark = new Map();
+  for (const r of out.rows) byMark.set(r.mark, (byMark.get(r.mark) ?? 0) + r.n);
+  assert.equal(byMark.get("a/one"), 2, "the escrow the sweep and the gate read comes out EXACT");
+  const row = out.rows.find((r) => r.holder === UNATTRIBUTED_HOLDER);
+  assert.equal(row.n, -1);
+  assert.equal(row.weight, -1);
+  assert.doesNotMatch(row.holder, /^[a-z0-9-]+$/, "it must not be readable as a resident handle");
+});
+
+test("a clean state balances nothing — the restoration is not a silent default", () => {
+  assert.deepEqual(stakesFromState(structuredClone(STATE)).balanced, []);
 });
 
 test("FALSIFIER: an empty stake picture refuses — it is not a quiet town, it is an emptied commons", () => {
@@ -184,13 +205,20 @@ test("[pin] the crossing rehearsal workflow holds every posture check", () => {
   assert.equal(out.ok, true, out.failures.map((f) => `${f.name}: ${f.detail}`).join("\n"));
 });
 
-test("[pin] the rehearsal's stakes reconcile against every mark in this tree's fold", () => {
+test("[pin] the rehearsal's stakes derive from this tree's own fold", () => {
+  // DELIBERATELY NOT a strict-reconciliation assertion over the LIVE tree. This
+  // suite runs after the crossing's own push as a checker, and a control that can
+  // red a settlement over a town doing nothing wrong outranks its own purpose.
+  // The strict reconciliation is held where a red is cheap and actionable: the
+  // fixture tests above, and the rehearsal job itself, where a refusal is one
+  // pull request's red check rather than the town's.
   const out = deriveRehearsalStakes(ROOT);
-  assert.ok(out.rows.length > 0);
+  assert.ok(out.rows.length > 0, "this tree records escrow");
   assert.ok(out.totalN > 0);
   const state = JSON.parse(readFileSync(join(ROOT, "WORLD", "world-state.json"), "utf8"));
-  assert.equal(out.checked, state.marks.length);
-  assert.equal(out.totalN, state.marks.reduce((a, m) => a + (Number(m.stamps) || 0), 0));
+  assert.equal(out.checked, state.marks.length, "every mark in the fold was looked at");
+  assert.equal(out.totalN, state.marks.reduce((a, m) => a + (Number(m.stamps) || 0), 0),
+    "the escrow the sweep would read equals the escrow this tree records");
 });
 
 test("[pin] the workflow the posture guards is the one the repository actually has", () => {

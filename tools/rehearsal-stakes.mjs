@@ -109,6 +109,9 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 /** The named door a refusal leaves by, so a caller never has to parse prose. */
 export const DERIVE_REFUSAL_SENTINEL = "REHEARSAL-STAKES-REFUSAL";
 
+/** The holder a restored balancing row is filed under. Not a handle, and shaped so it can never be read as one. */
+export const UNATTRIBUTED_HOLDER = "(dropped-from-the-portfolio-book)";
+
 class DeriveRefusal extends Error {}
 const refuse = (message) => { throw new DeriveRefusal(message); };
 
@@ -149,15 +152,49 @@ export function stakesFromState(state, where = "WORLD/world-state.json") {
   // mark the fold scored above 0 with no portfolio behind it, is a state file
   // that disagrees with itself, and stakes taken from it would be neither the
   // town's nor this tree's.
+  //
+  // ── THE ONE DISAGREEMENT THAT IS NOT A DEFECT (found by reading the fold,
+  // not by hitting it: zero marks on world main e3cf2b37 carry this shape) ───
+  //
+  // `portfolios` is written with `.filter(([, n]) => n > 0)` (marks-fold.mjs
+  // :1439) — a HOLDER whose net on a mark is zero or negative is dropped from
+  // the book entirely. `marks[].stamps` keeps that holder's net, because it is
+  // `stakeByMark`, the sum over every row. So one holder unstaking below zero on
+  // a mark another holder still backs makes the portfolios sum EXCEED the mark's
+  // stamps, honestly, in a town doing nothing wrong. An unstake is a negative
+  // row — the suite has a test by that name — so this is reachable law, not a
+  // corruption.
+  //
+  // The excess is exactly the dropped holders' net, and it is recoverable as one
+  // balancing row, because NOTHING downstream reads a stake row's holder: the
+  // sweep indexes escrow by mark (`escrowIndex`), `admissionBase` nets
+  // `netByMark`, and the fold sums `stakeByMark`/`weightByMark` by mark. So the
+  // escrow the sweep and the gate read comes out EXACT, and the only thing lost
+  // is an attribution nothing asks for. It is emitted under a name that cannot
+  // be mistaken for a resident.
+  //
+  // A DEFICIT is the other direction and stays a refusal: dropping rows can only
+  // ever remove non-positive amounts, so portfolios can never sum to LESS than
+  // the mark's stamps. If it does, the file disagrees with itself and neither
+  // reading can be trusted.
   const derived = new Map();
   for (const row of rows) derived.set(row.mark, (derived.get(row.mark) ?? 0) + row.n);
   const disagreements = [];
+  const balanced = [];
   const seen = new Set();
   for (const mark of marks) {
     const recorded = Number(mark?.stamps) || 0;
     const reconstructed = derived.get(mark.id) ?? 0;
     seen.add(mark.id);
-    if (recorded !== reconstructed) disagreements.push(`${mark.id}: marks[].stamps ${recorded}, portfolios sum ${reconstructed}`);
+    if (recorded === reconstructed) continue;
+    if (reconstructed > recorded) {
+      // a holder the book dropped, restored as one unattributable negative row
+      rows.push({ holder: UNATTRIBUTED_HOLDER, mark: mark.id, n: recorded - reconstructed, weight: recorded - reconstructed, tick: 0 });
+      derived.set(mark.id, recorded);
+      balanced.push(`${mark.id}: ${reconstructed - recorded} of net unstake dropped from the book, restored`);
+      continue;
+    }
+    disagreements.push(`${mark.id}: marks[].stamps ${recorded}, portfolios sum ${reconstructed} — a DEFICIT, which dropping non-positive holder rows cannot produce`);
   }
   for (const [mark, n] of derived) if (!seen.has(mark)) disagreements.push(`${mark}: portfolios sum ${n}, and no mark in the fold carries that id`);
   if (disagreements.length) {
@@ -174,7 +211,7 @@ export function stakesFromState(state, where = "WORLD/world-state.json") {
       + `than rehearsing a crossing that empties the commons.`);
   }
 
-  return { rows, checked: marks.length, marksWithEscrow: derived.size, totalN };
+  return { rows, checked: marks.length, marksWithEscrow: derived.size, totalN, balanced };
 }
 
 export function deriveRehearsalStakes(repo) {
