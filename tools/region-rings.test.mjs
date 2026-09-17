@@ -281,21 +281,30 @@ test("SMOOTHED: no ring carries a lone spike, and the Threshold's sawtooth is go
 // the one thing the list must not do is send them onto ground another household
 // has already claimed. The field is computed per row; this holds it honest in
 // both directions against the record's own parcels.
-test("THE CAUTION: every row's overlap flag matches the record's parcels, both ways", () => {
+test("THE CAUTION: every row's overlap flag matches the record's parcels, both ways", (t) => {
   const parcels = marks.filter((m) => m.kind === "parcel" && m.at && !m.far);
   const wrong = [];
+  let exercised = false;
   for (const row of OUTSIDERS.rows) {
     const m = byId.get(row.mark);
     if (!m) continue;
     const truth = parcels
       .filter((p) => p.id !== m.id && String(p.by) !== String(m.by) && overlapArea(rect(p), rect(m)) > 0)
       .map((p) => p.id).sort();
+    if (truth.length) exercised = true;
     const said = [...row.overlaps_another_parcel].sort();
     if (JSON.stringify(truth) !== JSON.stringify(said)) wrong.push(`${row.mark}: says [${said}], record says [${truth}]`);
   }
   assert.deepEqual(wrong, [], "the don't-build-here caution must be exactly what the record says, or it is worse than no caution");
-  assert.ok(OUTSIDERS.rows.some((r) => r.overlaps_another_parcel.length > 0),
-    "…and at least one row actually carries the flag, or this assertion has never been exercised");
+  // Was the both-ways check exercised? Read off the record, not assumed of the
+  // live world. This used to assert that a flagged row EXISTS — pinning whichever
+  // parcels happened to overlap on 2026-08-24, so a lawful return that took them
+  // away (limen's terraces, the 09-16 list) would have read as the caution
+  // breaking. A record with an overlap must show it on a row; a record without
+  // one says so and the assertion above ran over an empty set (the reparent
+  // verb, 2026-09-16).
+  if (exercised) assert.ok(OUTSIDERS.rows.some((r) => r.overlaps_another_parcel.length > 0), "the record holds an overlap, so a row carries the flag");
+  else t.diagnostic("no outsider row on today's record overlaps another household's parcel — the both-ways check ran over an empty set");
 });
 
 

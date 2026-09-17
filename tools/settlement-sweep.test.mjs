@@ -1601,7 +1601,7 @@ test("THE S58 CLASS: a sketchbook that MODIFIED a mark this crossing unpublishes
   assert.equal(git("status", "--porcelain").trim(), "", "main checkout closes clean");
 });
 
-test("THE HUSK (S61 class, 2026-09-07): an unpublished mark leaves no directory behind — and a mark with a standing child is KEPT, not unpublished (the return learns the withdrawal law, 2026-09-16)", (t) => {
+test("THE HUSK (S61 class, 2026-09-07): an unpublished mark leaves no directory behind — and a mark with a standing child LEAVES, its seat standing as the child's filing (the reparent verb retires PR #79's KEEP gate, 2026-09-16)", (t) => {
   // Git never sees an empty directory, but the freeze test reads the WORKING
   // TREE: a directory without a mark.md is "a broken filing" there. rmSync on
   // mark.md alone left berthillon's unstaked cone as a husk and S61 refused,
@@ -1662,15 +1662,20 @@ test("THE HUSK (S61 class, 2026-09-07): an unpublished mark leaves no directory 
 
   const report = settlementSweep({ repo, stakesPath });
   assert.deepEqual(report.unpublished.map((row) => row.id).sort(),
-    ["berthillon/pistache-cone", "berthillon/the-lake", "berthillon/the-swing"], "three leave canon for want of escrow; the stall is kept");
+    ["berthillon/pistache-cone", "berthillon/the-lake", "berthillon/the-stall", "berthillon/the-swing"],
+    "all four leave canon for want of escrow — the stall too, now that a frame can leave without moving what stands on it");
   assert.equal(existsSync(join(repo, cone)), false, "the cone's mark.md is gone");
   assert.equal(existsSync(join(repo, dirname(cone))), false, "THE HUSK: the cone's seat is gone with it — no directory without a mark.md is left in the working tree");
-  assert.equal(existsSync(join(repo, stall)), true,
-    "THE FRAME STAYS: the stall's mark.md is kept — a standing mark files beneath it (the withdrawal law's no-stranded-children gate, applied to the return 2026-09-16)");
-  assert.ok(report.left_drafted.some((r) => r.id === "berthillon/the-stall" && /^kept: 1 mark\(s\) still stand inside it \([^)]*the-stall\/the-sign\)/.test(r.reason)),
-    `and the receipt says so by name on the KEEP line: ${JSON.stringify(report.left_drafted.map((r) => [r.id, r.reason]))}`);
-  assert.equal(existsSync(join(repo, dirname(stall))), true, "its seat stands, with the child beneath it");
+  assert.equal(existsSync(join(repo, stall)), false,
+    "THE FRAME LEAVES: the stall's mark.md is gone — PR #79's KEEP gate is retired by the reparent verb (2026-09-16)");
+  assert.equal(report.left_drafted.some((r) => r.id === "berthillon/the-stall"), false, "and no KEEP line names it");
+  assert.equal(existsSync(join(repo, dirname(stall))), true,
+    "its seat stands as the sign's filing — a directory with a mark beneath it and no record of its own is lawful (the husk clause)");
   assert.equal(existsSync(join(repo, sign)), true, "and the child's own filing is untouched");
+  assert.deepEqual(report.reframed, [], "the sign outranks the stall, so the stall never framed it — nothing to re-express, and the receipt says so");
+  assert.equal(readFileSync(join(repo, sign), "utf8"),
+    record({ by: "the-town", tier: "constitution", at: { x: 231, y: 96 }, extent: { w: 1, h: 1 }, body: "the stall's sign, the town's own" }),
+    "the sign's file is byte-identical");
   assert.equal(existsSync(join(repo, swing)), false, "the swing's mark.md is gone");
   assert.equal(existsSync(join(repo, dirname(swing))), false, "and the swing's seat with it");
   assert.equal(existsSync(join(repo, dirname(lake))), false,

@@ -30,6 +30,9 @@ import {
   admissionBase, admitDelta,   // §4: the delta admission, in place of a fold per sketchbook
   refuseStaleHouseholds,       // the registry-freshness construction (2026-09-09)
 } from "./marks-fold.mjs";
+// THE REPARENT VERB (POS-102 · postmark#2865, 2026-09-16): a structural edit —
+// a frame's record leaving canon or returning — never moves what stands on it.
+import { snapshotWorld, keepWorldAcross, ReframeRefusal } from "./reparent-keep-world.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..");
@@ -200,20 +203,6 @@ function inertAcross(repo, path, mainBranch, branch) {
 }
 
 /** Does any mark.md stand anywhere beneath `dir`? (the seat-keeping test for an unpublish) */
-// Every mark.md filed strictly BENEATH a seat, as repo-relative forward-slash
-// paths — the no-stranded-children gate's census for the return (2026-09-16).
-function standingMarksBeneath(dir, repo) {
-  const out = [];
-  if (!existsSync(dir)) return out;
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-    const sub = join(dir, entry.name);
-    if (existsSync(join(sub, "mark.md"))) out.push(relative(repo, join(sub, "mark.md")).replace(/\\/g, "/"));
-    out.push(...standingMarksBeneath(sub, repo));
-  }
-  return out;
-}
-
 function holdsAStandingMark(dir) {
   if (!existsSync(dir)) return false;
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -221,6 +210,16 @@ function holdsAStandingMark(dir) {
     if (entry.isDirectory() && holdsAStandingMark(join(dir, entry.name))) return true;
   }
   return false;
+}
+
+// Does main hold ANYTHING beneath this seat? A frame whose record left while
+// marks stood inside it leaves its directory standing as their filing (the
+// reparent verb, 2026-09-16) — no mark.md of its own, marks beneath. Such a seat
+// is history, not drafted ground: the ground under a mark filed there is the next
+// frame up, and main already holds it.
+function seatStandsOnMain(repo, ref, dir) {
+  try { return git(repo, ["ls-tree", "-r", "--name-only", ref, "--", dir.replace(/\\/g, "/")]).trim().length > 0; }
+  catch { return false; }
 }
 
 function readAt(repo, ref, path) {
@@ -1317,33 +1316,16 @@ export function settlementSweep({
     });
   }
 
-  // § THE NO-STRANDED-CHILDREN GATE, FOR THE RETURN (2026-09-16, the 09-16
-  // return's first crossing). The withdrawal path has refused a parent whose
-  // children still stand since 2026-08-19 ("N mark(s) still stand inside it on
-  // main"; S56, postmark#2465): a mark's frame is the ground its children are
-  // filed in, and a child's coordinates compose against it. The escrow-0
-  // unpublish never asked — so the 05:45Z crossing would have taken limen's
-  // four Threshold terraces and rei's experiment garden out from under twelve
-  // standing marks (hal's whole house, ryuu-kurogane's and noe's houses, rei's
-  // thyme gift at hal's), and the tier falsifier caught them moving by up to a
-  // kilometre. The same law, applied: a zero-stake commons mark whose seat still
-  // holds a standing mark that is not itself leaving this crossing is KEPT, by
-  // name, on the left_drafted channel (the receipt's KEEP line). It comes back
-  // into the return the crossing after its children move, or the moment it is
-  // staked. Children leaving in the same crossing (unpublished or withdrawn) do
-  // not anchor: the family crosses together, the S56 rule.
-  {
-    const leavingPaths = new Set([...unpublished.map((u) => u.path), ...withdrawn.map((w) => w.path)].map((p) => p.replace(/\\/g, "/")));
-    for (let i = unpublished.length - 1; i >= 0; i--) {
-      const item = unpublished[i];
-      const standing = standingMarksBeneath(join(repo, dirname(item.path)), repo).filter((p) => !leavingPaths.has(p));
-      if (!standing.length) continue;
-      unpublished.splice(i, 1);
-      const named = standing.slice(0, 3).map((p) => p.slice(MARKS_PREFIX.length).replace(/\/mark\.md$/, "")).join(", ");
-      leftDrafted.push({ household: item.household, id: item.id, path: item.path, class: item.class, escrow: item.escrow,
-        reason: `kept: ${standing.length} mark(s) still stand inside it (${named}${standing.length > 3 ? ", …" : ""}) — a frame leaves after its children, or the moment it is staked` });
-    }
-  }
+  // § THE REPARENT VERB TAKES THE RETURN (2026-09-16, POS-102 · postmark#2865).
+  // A zero-stake frame with standing marks filed under it used to be KEPT here
+  // (world PR #79's no-stranded-children gate, the morning the 05:45Z crossing
+  // caught twelve marks moving by up to a kilometre when limen's terraces left).
+  // The gate is retired: the frame leaves, and `keepWorldAcross` — after every
+  // structural edit of this crossing has been made, below — re-expresses each
+  // mark it framed against the next frame up so that nothing moves. The seat
+  // stands as their filing. What survives of the gate is its DOOR: a mark that
+  // cannot keep its place exactly (a rounding in doubles) keeps its frame
+  // standing, by name, on the left_drafted channel.
 
   // § the ground-closure hold (2026-08-21, the goodie-bag crossing): a mark
   // publishes only onto ground that is already canon or crossing WITH it. The
@@ -1374,6 +1356,7 @@ export function settlementSweep({
         if (!ancestor.startsWith(MARKS_PREFIX)) break;
         if (crossing.has(ancestor)) continue;                       // crossing together
         if (hasObject(repo, `${mainBranch}:${ancestor}`)) continue; // already canon
+        if (seatStandsOnMain(repo, mainBranch, ancestorDir)) continue; // a husk: the frame left, its filing stands — the ground is the next frame up, and it is canon (the reparent verb, 2026-09-16)
         published.splice(i, 1);
         leftDrafted.push({ household: item.household, id: item.id, path: item.path, class: item.class, escrow: item.escrow,
           reason: `held: its ground ${ancestorDir.slice(MARKS_PREFIX.length)} is still drafted — the family crosses together (stake the ground, or the child waits)` });
@@ -1414,6 +1397,11 @@ export function settlementSweep({
     throw e;
   }
 
+  // THE WORLD AS IT STOOD, before a byte of this crossing's structural edits: the
+  // reparent verb's before-side — every standing mark's world position and the
+  // mark that framed it. Taken once, here, so publish and unpublish are one edit.
+  const worldBefore = snapshotWorld(join(repo, "WORLD", "marks"));
+  let reframed = [];
   try {
     for (const item of published) {
       writeRepoFile(repo, item.path, item.content);
@@ -1464,6 +1452,60 @@ export function settlementSweep({
       touched.push(item.path);
       delete registry.published[item.id];
     }
+
+    // § THE REPARENT VERB, both directions at once (2026-09-16, POS-102 ·
+    // postmark#2865). Every structural edit of this crossing has now been made:
+    // frames published (returned), frames unpublished or withdrawn (left). A
+    // standing mark whose FRAME is a different mark than it was composes
+    // somewhere else on paper; `keepWorldAcross` rewrites its numbers against
+    // the frame it has now so that it composes to exactly the position it held,
+    // then reloads the tree and proves it. A frame that left hands its children
+    // to the next frame up; a frame that returned takes them back. The records
+    // this crossing itself wrote keep their authors' numbers (`skip`).
+    //
+    // THE DOOR: a mark whose position does not survive re-framing in doubles is
+    // refused by the verb, never moved by rounding. The frame nearest above it
+    // that LEFT this crossing is put back and KEPT by name (the receipt's KEEP
+    // line); one that RETURNED this crossing is held back in its sketchbook
+    // instead. Then the pass runs again without it. Anything else refuses the
+    // crossing with the mark named.
+    for (;;) {
+      try {
+        reframed = keepWorldAcross(join(repo, "WORLD", "marks"), worldBefore, {
+          skip: new Set(published.map((item) => join(repo, item.path))),
+        });
+        break;
+      } catch (e) {
+        if (!(e instanceof ReframeRefusal) || !e.refused?.length || !e.refused[0].file) throw e;
+        const stuck = e.refused[0];
+        const stuckPath = relative(repo, stuck.file).replace(/\\/g, "/");
+        const nearestAbove = (rows) => rows
+          .filter((row) => stuckPath.startsWith(`${dirname(row.path).replace(/\\/g, "/")}/`))
+          .sort((a, b) => b.path.length - a.path.length)[0];
+        const left = nearestAbove(unpublished);
+        if (left) {
+          writeRepoFile(repo, left.path, left.content);
+          unpublished.splice(unpublished.indexOf(left), 1);
+          registry.published[left.id] = { household: left.household, path: left.path, class: left.class };
+          leftDrafted.push({ household: left.household, id: left.id, path: left.path, class: left.class, escrow: left.escrow,
+            reason: `kept: ${stuck.id} stands inside it and cannot keep its place exactly if it leaves (${stuck.reason}) — the frame stays until it is staked, or the mark is re-expressed by hand` });
+          continue;
+        }
+        const back = nearestAbove(published);
+        if (back) {
+          rmSync(join(repo, back.path), { force: true });
+          published.splice(published.indexOf(back), 1);
+          if (touched.includes(back.path)) touched.splice(touched.indexOf(back.path), 1);
+          delete registry.published[back.id];
+          leftDrafted.push({ household: back.household, id: back.id, path: back.path, class: back.class, escrow: back.escrow,
+            reason: `held: ${stuck.id} stands inside it and cannot keep its place exactly if it returns (${stuck.reason}) — the frame waits in its sketchbook until the mark is re-expressed by hand` });
+          continue;
+        }
+        throw e;
+      }
+    }
+    for (const row of reframed) touched.push(relative(repo, row.file).replace(/\\/g, "/"));
+
     writeRepoFile(repo, REGISTRY_REL, `${JSON.stringify(registry, null, 2)}\n`);
     touched.push(REGISTRY_REL);
 
@@ -1565,6 +1607,7 @@ export function settlementSweep({
     `${withdrawn.length} withdrawn`,
     `${quarantined.length} quarantined`,
     `${dropped.length} dropped`,
+    `${reframed.length} re-framed`,
   ].join(", ")}${suiteQuarantined.length
     // Named only when it happened, and then in full: this is the sentence a
     // household reads to learn its mark was the one that reddened the town, and
@@ -1598,6 +1641,13 @@ export function settlementSweep({
     unpublished: unpublished.map(({ content, ...item }) => item),
     withdrawn,
     dropped,
+    // the reparent verb's receipt: every standing mark whose numbers this
+    // crossing re-expressed so that it stayed exactly where it was, with the
+    // frame it left and the frame it has now (2026-09-16, POS-102)
+    reframed: reframed.map((row) => ({
+      id: row.id, path: relative(repo, row.file).replace(/\\/g, "/"),
+      frame_from: row.frame_from, frame_to: row.frame_to, at_from: row.at_from, at_to: row.at_to, ring: row.ring,
+    })),
     rebased,
     // WHAT THE CROSSING LOOKED AT, from the survey that has no vote on the
     // outcome. Carried on every report, not only the refusing one: a quiet pass

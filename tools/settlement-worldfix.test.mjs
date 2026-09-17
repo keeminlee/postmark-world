@@ -192,7 +192,7 @@ test("THE COMMIT NAMES EVERY CHANNEL (defect 2), including the empty ones — a 
   const subject = c.subject("main");
   // The exact sentence the founder called a lie by omission was
   // "settlement: sweep 0 published, 0 unpublished". Every channel, by name.
-  for (const phrase of ["published", "unpublished", "left drafted", "withdrawn", "quarantined", "dropped"]) {
+  for (const phrase of ["published", "unpublished", "left drafted", "withdrawn", "quarantined", "dropped", "re-framed"]) {
     assert.match(subject, new RegExp(`\\d+ ${phrase}`),
       `the settlement commit must name the ${phrase} channel with its count — this is the whole of defect 2`);
   }

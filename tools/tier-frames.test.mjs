@@ -965,6 +965,19 @@ test("THE FALSIFIER: every mark in the real world composes to EXACTLY the positi
       if (before === null) continue;
       const rehome = REHOMED_BY_DECLARED_ACT.get(m.id);
       if (rehome && rehome.from === before && rehome.to === after) continue;
+      // ── THE GROUND LEFT BY A DECLARING ACT (the reparent verb, 2026-09-16 —
+      // POS-102 · postmark#2865). `placementParent` answers "whose ground is
+      // this standing on". When that ground's own record leaves canon by a
+      // declaring act — the return, a withdrawal — the mark stands on the next
+      // ground up BY CONSTRUCTION and did not move to get there: the loss check
+      // above owns the leaving, and the geometry loop above has already held this
+      // mark's world position to the metre (the verb re-expressed its numbers so
+      // that it would). A parent that left lawfully is not a parent that moved.
+      // A parent that is still standing, or that vanished with no declaring act,
+      // fails here exactly as before. First customer: the 09-16 return's five
+      // frames (limen's terraces, rei's experiment garden) and the eleven marks
+      // filed on them.
+      if (lawfullyWithdrawn.has(before) || WITHDRAWN_BY_DECLARED_ACT.has(before)) continue;
       assert.equal(after, before, `placementParent moved for ${m.id}`);
     }
   } finally {
