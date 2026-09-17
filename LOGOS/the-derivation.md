@@ -247,9 +247,44 @@ currency conversion burns — stands in this file's history.)*
 
 ## 10 · Holo, and the millionaire test
 
-Holo — the holographic stamp — is soulbound equity: no stake, no vote, no
-transfer. Counted in ownership and in the backing gauge, rendered on the
-household's page. *You can see it; there is nothing inside to spend.*
+Holo — the holographic stamp — is **fresh mint to a giver, liquid like any
+stamp**: the word names its source and its ink, never a restriction. Counted
+inside minted and liquid, in ownership and in the backing gauge, rendered on
+the household's page in holo ink.
+
+> **AMENDED 2026-09-17, the founder's word, verbatim:** *"non-spendable is
+> repealed; the stamps are like any other, but are holo to signify the special
+> source."* The superseded sentence — *"soulbound equity: no stake, no vote, no
+> transfer … You can see it; there is nothing inside to spend"* — stands here as
+> the record of what was repealed, not as law.
+>
+> **THIS AMENDMENT IS THIS SECTION'S OWN NAMED REVISIT.** The argument below
+> ("Why no verbs in v0") did not claim the default was right forever. It
+> claimed the *asymmetry* decided the default — *"granting verbs later is
+> prospective and painless, while revoking them is confiscation"* — and it
+> named the condition for revisiting out loud. The grant has now happened, in
+> the prospective direction the argument reserved. So the argument is kept in
+> full below, resolved rather than refuted: it is why the repeal was cheap.
+>
+> ⚠ **THE VOICE HALF IS NOT SETTLED, AND NO LANE MAY SETTLE IT.** "No stake, no
+> transfer" is repealed by the founder's sentence without ambiguity. **"No
+> vote" is repealed by mechanism whether or not it was intended:** a balance is
+> fungible, the town's vote stake clips against that balance, and no door can
+> tell which of a household's stamps came from giving. So a holo stamp votes
+> unless a door is told otherwise.
+>
+> That collides with the load-bearing clause of § 9 and with the class bucket
+> this cap hangs under, `the-town/money-never-buys-judgment`, whose own mark
+> reads: *"it buys ownership and memory, never voice."* And it collides with the
+> disclosure at the money moment, quoted below in this very section: *"this
+> buys ownership and memory, never voice."*
+>
+> **Left standing unamended, deliberately:** § 9's tri-law, the
+> `money-never-buys-judgment` bucket and its mark, and the money-moment
+> disclosure. The collision is referred to the founder as a finding, not
+> resolved by a citation sweep (postmark-town/postmark#2885). If he means voice
+> to stay earned, the narrowing is one word at the ballot door, not an edit
+> here.
 
 Why anyone would want one: it is a real ownership record — a claim on the
 venture's external value if the legal bridge ever lands — plus the deed, the
@@ -265,8 +300,11 @@ prospective and painless, while revoking them is confiscation.** The asymmetry
 decides the default. Revisit on evidence, with the watch signal named in advance:
 genuinely-throttled trusted funders.
 
-**The cap.** Cumulative holo may not exceed ρ × cumulative earned primary mint,
-per household. The live value of ρ and its constitutional ceiling are held in the
+**The cap.** Cumulative holo may not exceed ρ × the household's cumulative mint
+from **every** source, holo included. *(Amended 2026-09-17: it read "cumulative
+earned primary mint". The founder, on the same word: "I'm good to let funding
+minted stamps contribute to the max stamps you can get from another fund. it
+compounds by design.")* The live value of ρ and its constitutional ceiling are held in the
 town repo's `ECONOMY-DIALS.json` (`law_side.keeping.rho`). This document names
 the dial and deliberately not its number: the dial is town-votable after the
 pilot quarter, and a number retyped into prose is a number that goes stale on the
