@@ -20,22 +20,61 @@
 // (`stamps: stakeByMark.get(mk.id)`), so the two are the same numbers read two
 // ways and the reconstruction can be CHECKED rather than trusted. It is.
 //
-// WHY A FAKED FILE IS WORSE THAN NO REHEARSAL. The obvious shortcut — hand the
-// sweep `[]` — is the trap this tool exists to close. Escrow is what holds a
-// settlement-published commons mark in the world: `settlement-sweep.mjs`
-// unpublishes every registry entry of class `commons` sitting at zero
-// (`(escrow.get(id) ?? 0) > 0` → continue). MEASURED on world main e3cf2b37:
-// the registry holds 232 commons publications, of which 5 stand at zero under
-// the real stakes and 232 stand at zero under an empty file. And the harm gate
-// would call that GREEN: the sweep DECLARES those unpublishes, so check 3
-// (`lost`) is satisfied by its own word, and check 4 (`escrow`) skips its
-// stampless arm because zero stake rows name a standing mark. A rehearsal that
-// fakes the stakes does not merely mis-measure; it reports no harm while
-// modelling the removal of 227 marks that no one asked to remove.
+// WHY A WRONG FILE IS WORSE THAN NO REHEARSAL — AND THE CORRECTION THAT FOUND
+// THE REAL SHAPE OF IT.
 //
-// So this tool REFUSES rather than emit an empty or unverifiable file. Exit 2
-// is "could not derive", which is never a pass — the same grammar the harm
-// gate uses, for the same reason.
+// This header's first draft said that handing the sweep `[]` would sweep clean
+// and the harm gate would call it GREEN. THAT WAS WRONG, and the counterfactual
+// run — a throwaway clone of e3cf2b37 with all 41 sketchbooks and `--stakes []`
+// — disproved it. The wrong sentence is left named here rather than quietly
+// swapped, because its shape is the tempting one: the reasoning ran forward
+// from `(escrow.get(id) ?? 0) > 0` to the unpublish set to the gate's check 3,
+// and never asked whether the fold would write at all.
+//
+//   SWEEP_EXIT=1
+//   REFUSING TO WRITE WORLD/world-state.json — it would strip every stamp the
+//   world holds.
+//     on disk:    325 mark(s) carrying 1778 stamp(s), across 61 portfolio(s)
+//     this fold:  no stakes were loaded, so every mark folds at zero escrow
+//
+// `marks-fold.mjs` carries a STAMPLESS GUARD, and the sweep dies at its fold
+// step long before the gate. The all-empty case was never open.
+//
+// WHAT IS ACTUALLY TRUE IS NARROWER AND SHARPER, AND IT WAS RUN. That guard is
+// a TOTAL, not a per-mark check: a stakes file that is merely WRONG rather than
+// EMPTY walks straight past it. Escrow is what holds a settlement-published
+// commons mark in the world — `settlement-sweep.mjs` unpublishes every registry
+// entry of class `commons` sitting at zero. On e3cf2b37 the registry holds 232
+// commons publications and 227 stand above zero, each held there by nothing but
+// its stake rows.
+//
+// So a fifth clone was swept with 385 rows instead of 397 — ten staked commons
+// marks' rows dropped, total stamps 1728, comfortably past the stampless guard:
+//
+//   sweep:     exit 0 · 1 published · 7 UNPUBLISHED
+//              rei/the-white-flower-at-wrights-door, rei/the-thyme-thank-you,
+//              vermillion/lake-caves, vermillion/mouth-one-seventy,
+//              vermillion/party-hall, little-bird/a-bowl-at-the-foot-of-the-steps,
+//              little-bird/a-pot-on-the-quay-stones
+//              (3 of the 10 were held back by the no-stranded-children gate)
+//   harm gate: exit 0 · NO HARM · lint ok · moved ok · lost ok · escrow ok
+//              (fold stamps 1728, stake rows on standing marks 385) · parcels ok
+//              — base e3cf2b373, 1224 mark(s) before, 1218 AFTER
+//
+// Six marks left the world and every check was green, because the sweep declared
+// each removal and check 3 takes the sweep at its word. That is the failure this
+// tool exists to make impossible, and it is a run rather than an argument.
+//
+// So the load-bearing guard below is NOT the non-empty check. It is the
+// PER-MARK RECONCILIATION against `marks[].stamps`, in both directions, which
+// catches a dropped row, an added one, and a state file that disagrees with
+// itself. The non-empty refusal is kept anyway: the fold's own refusal reaches
+// a reader as `Command failed` with `phase: "unknown"`, and a named cause on a
+// red check is worth more than a second copy of a guard.
+//
+// This tool REFUSES rather than emit an empty or unreconciled file. Exit 2 is
+// "could not derive", which is never a pass — the same grammar the harm gate
+// uses, for the same reason.
 //
 // WHAT IT REPRODUCES, EXACTLY: `n` — the escrow behind each mark, per holder.
 // That is every number the sweep branches on (its only other use of a stake row
