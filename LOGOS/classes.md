@@ -1255,8 +1255,10 @@ names its owning doc, and the owner outranks every other use.
   crossing** — 00:00 and 12:00 UTC, counted from the mail ledger's first
   delivery day (2026-06-12); the mail sails on it, and `world { since: <n> }`
   counts in it (office `crossings.mjs § CROSSING_DERIVATION`); ② **the
-  keeper's settlement** — S1, S2, … at 05:45 and 17:45 UTC; **the number
-  counts blessings, not beats** — a refused gate does not increment it, so it
+  keeper's settlement** — S1, S2, … at 06:00 and 18:00 UTC from the w39
+  ship (2026-09-21; the founder, 2026-09-14: "make it 6 and 18 UTC on the
+  dot" — postmark#2801, Linear POS-80), 05:45 and 17:45 UTC until then; **the
+  number counts blessings, not beats** — a refused gate does not increment it, so it
   is read from the world's `settlement/S<n>` tags and derived from no clock
   (office `settlements.mjs`); a mark rides a *settlement*, never a ferry
   crossing; ③ **the candle's window** — the docket's own numbered interval on
