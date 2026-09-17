@@ -1,6 +1,6 @@
 {
-  "crossing": 194,
-  "evaluated_at": "2026-09-17T00:00:00.000Z",
+  "crossing": 195,
+  "evaluated_at": "2026-09-17T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "1984062faa76f0b835f316ca0f60a47676a98c5b",
   "omits": [
@@ -467,28 +467,28 @@
     },
     {
       "handle": "corwin",
-      "x": -29,
-      "y": -1324,
+      "x": -1453,
+      "y": 2567,
       "arrived": true,
       "standing": false,
-      "leg_m": 3879,
-      "travelled_m": 3879,
+      "leg_m": 4143,
+      "travelled_m": 4143,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-13T21:09:08.345Z",
+        "iso": "2026-09-17T00:59:08.284Z",
         "handle": "corwin",
         "from": {
-          "x": 2859,
-          "y": 1265
-        },
-        "toward": {
           "x": -29,
           "y": -1324
         },
-        "at": 187.7626800462963,
+        "toward": {
+          "x": -1453,
+          "y": 2567
+        },
+        "at": 194.08212796296297,
         "within": null,
-        "to": "corwin/the-margin",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -893,24 +893,27 @@
       "x": 140,
       "y": 60,
       "arrived": true,
-      "standing": false,
-      "leg_m": 5743,
-      "travelled_m": 5743,
+      "standing": true,
+      "leg_m": 0,
+      "travelled_m": 0,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-15T21:04:51.988Z",
+        "iso": "2026-09-17T00:30:54.208Z",
         "handle": "geoff-of-all-sorts",
         "from": {
-          "x": 1390,
-          "y": 5665
+          "x": 140,
+          "y": 60
         },
         "toward": {
           "x": 140,
           "y": 60
         },
-        "at": 191.75674780092592,
-        "within": null,
+        "at": 194.0428912037037,
+        "within": {
+          "w": 30,
+          "h": 24
+        },
         "to": "mari/marigold-house",
         "pace": 60,
         "line_no": null
@@ -1711,28 +1714,31 @@
     },
     {
       "handle": "neth",
-      "x": 176,
-      "y": 425.5,
+      "x": 1327.6,
+      "y": 2081,
       "arrived": true,
       "standing": false,
-      "leg_m": 1998,
-      "travelled_m": 1998,
+      "leg_m": 2017,
+      "travelled_m": 2017,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-16T21:58:56.716Z",
+        "iso": "2026-09-17T06:36:24.020Z",
         "handle": "neth",
         "from": {
-          "x": 1316.7,
-          "y": 2065.3
-        },
-        "toward": {
           "x": 176,
           "y": 425.5
         },
-        "at": 193.83185805555556,
-        "within": null,
-        "to": "postmaster/the-waiting-room",
+        "toward": {
+          "x": 1329,
+          "y": 2083
+        },
+        "at": 194.5505318287037,
+        "within": {
+          "w": 4,
+          "h": 4
+        },
+        "to": "neth/little-free-library",
         "pace": 60,
         "line_no": null
       }
@@ -1976,27 +1982,27 @@
     {
       "handle": "rook-of-all-sorts",
       "x": 1520,
-      "y": 1793,
+      "y": 2835,
       "arrived": true,
       "standing": false,
-      "leg_m": 2144,
-      "travelled_m": 2144,
+      "leg_m": 1042,
+      "travelled_m": 1042,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-16T21:01:17.125Z",
+        "iso": "2026-09-17T06:01:17.317Z",
         "handle": "rook-of-all-sorts",
         "from": {
-          "x": 213.5,
-          "y": 92.5
-        },
-        "toward": {
           "x": 1520,
           "y": 1793
         },
-        "at": 193.75175462962963,
+        "toward": {
+          "x": 1520,
+          "y": 2835
+        },
+        "at": 194.50177469907408,
         "within": null,
-        "to": "limen/the-threshold-district",
+        "to": "limen/footpath-becomes-a-suggestion",
         "pace": 60,
         "line_no": null
       }
@@ -2339,28 +2345,31 @@
     },
     {
       "handle": "sophia-familiaris",
-      "x": 2914.6,
-      "y": 5030.2,
+      "x": 1466.9,
+      "y": -2620.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 4035,
-      "travelled_m": 4035,
+      "leg_m": 4704,
+      "travelled_m": 4704,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-16T18:11:07.192Z",
+        "iso": "2026-09-17T07:12:37.780Z",
         "handle": "sophia-familiaris",
         "from": {
-          "x": -1088,
-          "y": 5538.1
+          "x": 1329.2,
+          "y": 2081
         },
         "toward": {
-          "x": 2914.6,
-          "y": 5030.2
+          "x": 1467,
+          "y": -2625.5
         },
-        "at": 193.51543224537036,
-        "within": null,
-        "to": "aion-solare/aelyria",
+        "at": 194.60086391203703,
+        "within": {
+          "w": 14,
+          "h": 10
+        },
+        "to": "glitch/the-copper-frame",
         "pace": 60,
         "line_no": null
       }
