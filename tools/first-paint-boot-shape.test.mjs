@@ -33,6 +33,17 @@
 //     `pending.shift()` arm            → "ONE WAVE, THROUGH THE VIEWER" reds
 //   viewer.mjs § resolveIdentity — a second `loadActionPalette().catch(…)`
 //     beside the first                 → "THE PALETTE IS ASKED FOR ONCE" reds
+//   viewer.mjs § walkMinePages — the wave pushed as thunks and called at the
+//     shift (`pending.push(() => fetchPage(o))`, `await (pending.shift())()`)
+//                                      → "ONE WAVE, THROUGH THE VIEWER" reds
+//
+// THE THIRD FLIP IS THERE BECAUSE THE FIRST ONE IS NOT ENOUGH. Restoring the
+// serial await leaves the wave launched as well, so the request COUNT goes
+// wrong and the offsets assertion fires before the timing assertion is ever
+// reached — which would leave the timing claim, the one this file exists for,
+// a probe nobody had seen fail. The lazy flip asks for the same six offsets in
+// the same order, one at a time, so the offsets assertion stays green and only
+// the timing one reds.
 //
 // Run receipts in G:/Starstory/docs/2026-09-17/jetto-pos-87-first-paint-report.md.
 
@@ -205,12 +216,24 @@ test("ONE WAVE, THROUGH THE VIEWER: the portfolio's pages overlap in a real boot
   assert.deepEqual(pages.map((p) => p.offset), [0, 20, 40, 60, 80, 100],
     "the boot did not ask for exactly the six pages 110 published marks imply");
 
+  // THE CLAIM, WITH THE MARGIN THE RIG WAS BUILT TO GIVE IT. Every page of the
+  // wave is asked for in the same breath; a walk that awaits each one spends a
+  // whole `MY_MARKS_DELAY` between them, so four gaps put the first and last
+  // requests most of half a second apart. Measured on the boot that proves this:
+  // a handful of milliseconds against a 120 ms page.
+  const wave = pages.filter((p) => p.offset >= 20).map((p) => p.at);
+  const spread = Math.max(...wave) - Math.min(...wave);
+  assert.ok(spread < MY_MARKS_DELAY,
+    `pages 2..6 were asked for over ${spread} ms, about ${(spread / MY_MARKS_DELAY).toFixed(1)} page-waits apart — the boot is still walking serially`);
+
+  // and the same claim from the other side: a serial walk cannot ask for page
+  // three before page two answers at all, because the request does not exist
+  // yet. Kept as well as the spread, not instead of it — this one has no margin
+  // by construction, since a lazy walk issues the next request the instant the
+  // last answer lands.
   const secondAnswered = answered.filter((r) => r.url.includes("/world/my-marks") && offsetOf(r.url) === 20)
     .map((r) => r.at).sort((a, b) => a - b)[0];
   assert.ok(Number.isFinite(secondAnswered), "the rig never answered page two, so there is nothing to measure against");
-
-  // THE CLAIM: a serial walk cannot ask for page three before page two answers,
-  // at any speed, because the request does not exist yet.
   for (const p of pages.filter((p) => p.offset >= 20))
     assert.ok(p.at <= secondAnswered,
       `the page at offset ${p.offset} was asked for ${p.at - secondAnswered} ms after page two answered — the boot is still walking serially`);

@@ -52,6 +52,17 @@
 //   viewer.mjs § walkMinePages — the `pages >= pageLimit` arm deleted
 //        → "THE WALK'S OWN CEILING" reds: an incomplete portfolio comes back
 //          marked complete
+//   viewer.mjs § walkMinePages — the wave pushed as thunks and called at the
+//     shift (`pending.push(() => fetchPage(o))`, `await (pending.shift())()`)
+//        → "ONE WAVE" reds on the TIMING assertion alone
+//
+// THE LAST FLIP IS THERE BECAUSE THE FIRST ONE IS NOT ENOUGH. Restoring the
+// serial await leaves the wave launched as well, so the request COUNT goes
+// wrong and the offsets assertion fires before the timing assertion is ever
+// reached — which would leave the timing claim, the one this file exists for, a
+// probe nobody had seen fail. The lazy flip asks for the same six offsets in the
+// same order, one at a time, so the offsets assertion stays green and only the
+// timing one reds.
 //
 // Run receipts in G:/Starstory/docs/2026-09-17/jetto-pos-87-first-paint-report.md.
 
