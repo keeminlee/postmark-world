@@ -32,6 +32,12 @@
 //     → `return !byId.has(subject);`          the first test below reds
 //   call site: `actSubjectGone(row.subject, byId, town)`
 //     → `actSubjectGone(row.subject, byId)`   the [pin] reds
+//   or drop the argument at the one call that hands it in:
+//     `activityLineHTML(row, town)` → `activityLineHTML(row)`   the [pin] reds,
+//     because `town` then defaults to `byId` and the read stands in for the
+//     town again without a single line saying so (POS-90 moved the
+//     derivation into `activityTown()` and the call into `activityLineHTML`;
+//     the rule above did not move).
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
@@ -92,9 +98,20 @@ test("the Spectator's verdicts are unchanged: the fold handed as both", () => {
 });
 
 test("[pin] the rail hands the strike a whole-town set on the resident path only when the fold is loaded", () => {
+  // The derivation. It lives in `activityTown()` since POS-90, because the full
+  // render and the appended page both need it and two spellings of it would be
+  // two answers to "what is the town".
   assert.match(SOURCE,
-    /const town = onResidentPath\(\) \? \(world\?\.marks \? new Set\(world\.marks\.map\(\(m\) => m\.id\)\) : null\) : byId;[\s\S]{0,200}?actSubjectGone\(row\.subject, byId, town\)/,
-    "renderActivity must derive `town` from the fold on the resident path and hand it to actSubjectGone");
+    /const activityTown = \(\) =>\s*\(onResidentPath\(\) \? \(world\?\.marks \? new Set\(world\.marks\.map\(\(m\) => m\.id\)\) : null\) : byId\);/,
+    "the rail must derive `town` from the fold on the resident path, and nowhere else");
+  // and it reaches the strike
+  assert.match(SOURCE, /actSubjectGone\(row\.subject, byId, town\)/,
+    "the rail must hand that town to actSubjectGone");
+  // EVERY caller hands it in. `actSubjectGone`'s third argument defaults to the
+  // read, so a one-argument `activityLineHTML(row)` restores the bug in full
+  // and changes no line that mentions the town.
+  assert.doesNotMatch(SOURCE, /activityLineHTML\(row\)/,
+    "a row rendered without a town falls back to the read, which is the bug this file exists for");
   assert.doesNotMatch(SOURCE, /actSubjectGone\(row\.subject, byId\)/,
     "the two-argument call at the rail is the bug: the read stood in for the town");
   // the same-origin copy of the record is loaded for the houses and is NOT the
