@@ -1755,7 +1755,11 @@ export function viewerJourneyState(walker, marks = [], determined = {}) {
 // poll's first draw from the cached read, and the roof rule's passage-only
 // roster all import this now. tools/body-place.test.mjs carries the reader
 // census that reds when a new reader is born.
-export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {}) {
+// `index` is the draw's containment index (`containmentIndex(marks)`), handed
+// down by a caller placing many bodies over one record so the index is built
+// ONCE PER DRAW rather than once per body (#2912, 2026-09-18); a caller placing
+// one body may omit it and the index is built here, as before.
+export function bodyPlace(walker, { marks = [], acts = [], at = Infinity, index = null } = {}) {
   if (!walker?.handle) return null;
   const x = Number(walker.x), y = Number(walker.y);
   const position = Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
@@ -1764,7 +1768,7 @@ export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {})
   const moving = typeof walker.moving === "boolean"
     ? walker.moving
     : (walker.toward != null && !walker.arrived && !walker.standing);
-  const inside = position ? smallestContainingMark(position, marks) : null;
+  const inside = position ? smallestContainingMark(position, marks, { index }) : null;
   const entered = standpointOccupancy({ acts, at, handle: walker.handle }).insideOf ?? null;
   const boundFor = walker.mark_id ? String(walker.mark_id) : null;
   // ARRIVED: the body's coordinates lie inside the walk's target. A walk may
@@ -1772,7 +1776,7 @@ export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {})
   // door clause. Asked of the target's own shape, not of `inside` — a body
   // whose smallest ground is a room NESTED in the target (the parlor in Rei's
   // house) has still arrived.
-  const target = boundFor ? (marks ?? []).find((m) => m?.id === boundFor) : null;
+  const target = boundFor ? (index?.byMarkId?.get(boundFor) ?? (marks ?? []).find((m) => m?.id === boundFor) ?? null) : null;
   const arrived = !!(position && target && pointInsideMark(position, target));
   return {
     handle: walker.handle, position, moving, inside, entered, boundFor, arrived,
@@ -1782,9 +1786,9 @@ export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {})
 }
 
 /** The one sentence about where a body is, from bodyPlace's answer. */
-export function placeLabel(place, marks = [], determined = {}) {
+export function placeLabel(place, marks = [], determined = {}, { index = null } = {}) {
   if (!place) return "";
-  const byMarkId = markIndex(marks);
+  const byMarkId = index?.byMarkId ?? markIndex(marks);
   const name = (id) => { const m = id && byMarkId.get(id); return m ? resolveMarkName(m, determined).name : null; };
   if (place.moving) return `${place.remainingM.toLocaleString()} m to go, ETA ${formatEtaCrossings(place.etaCrossings)}`;
   const entered = name(place.entered);
@@ -3694,7 +3698,7 @@ export function coLocatedMarkIds(marks, withinM = FAN_SAME_SPOT_M) {
   return stacked;
 }
 
-export function smallestContainingMark(point, marks = [], { insideRoomId = null } = {}) {
+export function smallestContainingMark(point, marks = [], { insideRoomId = null, index = null } = {}) {
   const x = Number(point?.x), y = Number(point?.y);
   if (![x, y].every(Number.isFinite)) return null;
   // THE ROOM STOPS ANSWERING EVERY PIXEL OF ITS OWN FLOOR (founder, 2026-08-29:
@@ -3714,9 +3718,6 @@ export function smallestContainingMark(point, marks = [], { insideRoomId = null 
   // commit asked whether a mark contained the room's centre point, which also
   // said yes for a child sitting at the centre of the room (the house at the
   // middle of its parcel), and silenced it — found by this port's own test.
-  const room = insideRoomId ? (marks ?? []).find((mark) => mark?.id === insideRoomId) : null;
-  const encloses = (mark) => !!insideRoomId
-    && (mark?.id === insideRoomId || (room && mark?.at && mark?.extent ? marksContain(mark, room) : false));
   // A THING IS NOT GROUND (Keemin, 2026-08-22: carried things were winning the
   // walk desk's "From"). A class:thing object rides at its holder's own feet —
   // a 1×1 rect containing your point, so smallest-area crowned it your
@@ -3736,12 +3737,40 @@ export function smallestContainingMark(point, marks = [], { insideRoomId = null 
   // (paintingMarkAtPoint asks the same question). The bitmaps the issue named
   // were swapped for a 96 px raster first and the stall did not move. With the
   // index hoisted: 83–167 ms at the crossing, 17–97 ms a tick, on a 42-body pane.
+  //
+  // THE INDEX IS BUILT ONCE PER DRAW, NOT ONCE PER CALL (#2912, 2026-09-18).
+  // The hoist above left one index per BODY per draw: drawWalkers asks this of
+  // every drawn body, and at a 6× CPU throttle that was 351 ms of `markIndex`
+  // in one district crossing, plus the ambient walk over 460 predicated marks
+  // repeated for each of 72 bodies. Everything in the filter that does not
+  // depend on the POINT — the class, the room's enclosure, the ambient chain,
+  // whether the mark has a body at all, the area order — is decided once per
+  // record in `containmentIndex` and handed down by the caller placing many
+  // bodies; what is left per body is the point test over the ground, smallest
+  // first. The answer is the same by construction: the first containing mark
+  // in (area, id) order is the one the sort put first. A caller with no index
+  // in hand builds one here and pays what it paid before, no more.
+  const own = index?.insideRoomId === (insideRoomId ?? null) ? index : containmentIndex(marks, { insideRoomId });
+  for (const g of own.ground) if (pointInsideMark({ x, y }, g.mark)) return g.mark.id;
+  return null;
+}
+
+/** The point-independent half of `smallestContainingMark`, computed once per
+ *  record: the id index, and the ground that can answer a containment question
+ *  — every mark that is not a thing, not ambient, not the mounted room or one
+ *  enclosing it, and has a body — in the (area, id) order the answer is chosen
+ *  by. Built once per draw by drawWalkers and handed through walkerPlace →
+ *  bodyPlace → smallestContainingMark / placeLabel (#2912). Pure. */
+export function containmentIndex(marks = [], { insideRoomId = null } = {}) {
   const byMarkId = markIndex(marks);
-  return (marks ?? [])
-    .filter((mark) => mark?.class !== "thing" && !encloses(mark)
-      && !isAmbientMark(mark, byMarkId) && pointInsideMark({ x, y }, mark))
+  const room = insideRoomId ? (marks ?? []).find((mark) => mark?.id === insideRoomId) : null;
+  const encloses = (mark) => !!insideRoomId
+    && (mark?.id === insideRoomId || (room && mark?.at && mark?.extent ? marksContain(mark, room) : false));
+  const ground = (marks ?? [])
+    .filter((mark) => mark?.class !== "thing" && !encloses(mark) && isEmbodiedMark(mark) && !isAmbientMark(mark, byMarkId))
     .map((mark) => ({ mark, area: Number(mark.extent.w) * Number(mark.extent.h) }))
-    .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)))[0]?.mark?.id ?? null;
+    .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)));
+  return { byMarkId, ground, insideRoomId: insideRoomId ?? null };
 }
 
 /**
@@ -9219,9 +9248,16 @@ export function mountViewer(appEl) {
   // ONE OWNER FOR WHERE A BODY IS (POS-92): every sentence about a walker's
   // place — the hover, the highlight title, the bubble — is printed from
   // bodyPlace's answer, never from the walk's named target.
-  const walkerPlace = (w) => placeLabel(
-    bodyPlace(w, { marks: allMarks(), acts: enterExitLedger.acts, at: occupancyClock() }),
-    allMarks(), data?.worldState?.determined ?? {});
+  // `draw` is the walker pass's per-draw context — the marks it is placing
+  // bodies over and the containment index built ONCE over them (#2912);
+  // a single-body caller (the hover, the bubble) omits it and pays one index.
+  const walkerPlace = (w, draw = null) => {
+    const marks = draw?.marks ?? allMarks();
+    const index = draw?.index ?? containmentIndex(marks);
+    return placeLabel(
+      bodyPlace(w, { marks, acts: enterExitLedger.acts, at: occupancyClock(), index }),
+      marks, data?.worldState?.determined ?? {}, { index });
+  };
   function originFor(handle) {
     const walker = handle ? walkState.walkers.find((w) => w.handle === handle) : null;
     if (walker && Number.isFinite(walker.x) && Number.isFinite(walker.y))
@@ -9542,7 +9578,13 @@ export function mountViewer(appEl) {
     // the vessel's own floor against being zoomed away from (see farGlyphUnit):
     // out at journey width she would otherwise be three pixels of hull
     const vesselUnit = farGlyphUnit(k, mapCtx.view?.w, VESSEL_MIN_FRAME_FRACTION) * VESSEL_GLYPH_SCALE;
-    const vessels = vesselHandles(allMarks());
+    // THE RECORD, READ ONCE PER DRAW (#2912, 2026-09-18). One `allMarks()` for
+    // the whole pass, and the containment index built once over it and handed
+    // to every body's placement — the #2910 hoist made it once per CALL, which
+    // at 72 drawn bodies was still 72 indexes a draw, 351 ms of a 6× crossing.
+    const marks = allMarks();
+    const draw = { marks, index: containmentIndex(marks) };
+    const vessels = vesselHandles(marks);
     const px = (m) => ({ x: mapCtx.originPx.x + m.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.y / mapCtx.mPerPx });
     // TWO PASSES, ONE LAYER. Hulls are collected separately and emitted first so
     // every deck sits under every passenger — a boat drawn in walker order would
@@ -9569,7 +9611,7 @@ export function mountViewer(appEl) {
     // from any pointer inside it.
     const tier = drawTier();
     const bounds = drawnBounds();
-    const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId, marks: allMarks() });
+    const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId, marks: draw.marks });
     const drawnWalkers = inView.filter((w) => pointInDrawnBounds(w, bounds));
     // ONE BODY, ONE MARKER (POS-93), ASKED OF THE BODIES DRAWN (#2848 (a),
     // 2026-09-17). This asked the walker LIST: jetto-of-starforge was in it, so
@@ -9618,7 +9660,7 @@ export function mountViewer(appEl) {
       // mid-walk.
       let towardM = w.toward ?? w;
       if (w.moving && w.toward && w.mark_id) {
-        const tm = (allMarks()).find((m) => m.id === w.mark_id);
+        const tm = marks.find((m) => m.id === w.mark_id);
         if (tm?.at && tm?.extent) {
           const t = targetEntryT({ x: w.x, y: w.y }, w.toward,
             { x: w.toward.x, y: w.toward.y, w: tm.extent.w, h: tm.extent.h });
@@ -9634,7 +9676,7 @@ export function mountViewer(appEl) {
       const moving = w.moving ?? (!w.arrived && !w.standing);
       const eta = moving
         ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
-        : walkerPlace(w);
+        : walkerPlace(w, draw);
       // the remaining leg, then the walker on top of it — movers only
       if (moving)
         s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
