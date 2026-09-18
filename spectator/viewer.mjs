@@ -5154,6 +5154,10 @@ const STYLE = `
 /* the home card on a parcel: the pip stays as the anchor and hit target,
    transparent; the card is what the eye reads. The frame is the HOME light. */
 .ov-pip.ov-pip-home { opacity:0; }
+/* a mark wearing its picture on the painting (Keemin, 2026-09-18): the same
+   contract — the pip stays as the anchor, hit target and fan seat, transparent;
+   the picture is what the eye reads, and the dot was sitting on its face */
+.ov-pip.ov-pip-pictured { opacity:0; }
 .ov-home { pointer-events:none; }
 .ov-home-frame { fill:none; stroke:#3a3428; stroke-width:1.6; stroke-linejoin:round; }
 /* THE ART-LESS HOUSE IS POSTMARK NAVY (Keemin, 2026-09-12: "dark blue default,
@@ -9061,6 +9065,16 @@ export function mountViewer(appEl) {
     // is culled and tier-gated by the same two readings every other pass uses,
     // rather than laid down once at mount as the mountain's picture was.
     const hungArt = drawPlacedArt(bounds, tier);
+    // A MARK WEARING ITS PICTURE NEEDS NO DOT (Keemin, 2026-09-18: "remove the
+    // center dot on marks with images? it often blocks them and makes them look
+    // bad. and the image makes it obvious there's a mark there anyway"). The
+    // set of marks whose picture is ON THE PAINTING in this draw — hung at
+    // far/mid, or drawn over its extent at near — and their pip goes
+    // transparent the way a parcel's already does under its card: the circle
+    // stays as the hover anchor, the hit target and the fan's seat, and only
+    // the paint is withdrawn. A mark at mid, where the furnishing pass draws
+    // tinted extents and no pictures, keeps its dot: nothing else marks it.
+    const pictured = new Set(hungArt);
     // PLACEHOLDER EXTENTS (scene-gated): art-less embodied marks stand in as
     // low-saturation tinted blocks, drawn UNDER the pips, largest first so a
     // child's block sits readable on its parent's. Same overlay, same loop —
@@ -9118,10 +9132,12 @@ export function mountViewer(appEl) {
         // tinted shape exactly as before.
         .filter((m) => !hungArt.has(m.id))
         .sort((a, b) => ((b.extent?.w ?? 0) * (b.extent?.h ?? 0)) - ((a.extent?.w ?? 0) * (a.extent?.h ?? 0)));
-      for (const m of furnishable)
-        s += tier === "mid"
-          ? placeholderExtentSVG(m, px, { ignoreArt: true })
-          : (markImagePath(m) ? sceneArtSVG(m, px) : placeholderExtentSVG(m, px));
+      for (const m of furnishable) {
+        if (tier === "mid") { s += placeholderExtentSVG(m, px, { ignoreArt: true }); continue; }
+        const art = markImagePath(m) ? sceneArtSVG(m, px) : "";
+        if (art) { s += art; pictured.add(m.id); }
+        else s += placeholderExtentSVG(m, px);
+      }
     }
     // THE LABELS BY TIER (2026-09-11). `far` draws none: at town width a name
     // is a smear, 890 of them are a grey band across the painting, and the
@@ -9153,7 +9169,7 @@ export function mountViewer(appEl) {
         continue;
       }
       s += overlayPipSVG({
-        at: p, id: m.id, classes: markClasses(m),
+        at: p, id: m.id, classes: markClasses(m) + (pictured.has(m.id) ? " ov-pip-pictured" : ""),
         fan: fanned.has(m.id) ? fanOffsetPx(m.id) : null,
         // the OS tooltip stands down in painting-only for the same reason the SVG
         // label does: the bubble is already saying this word, sooner and better
