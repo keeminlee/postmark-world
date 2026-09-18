@@ -31,6 +31,10 @@
 //   (4) one draw per crossing: a poll that answers the same rows writes
 //       nothing, and a district crossing writes the layer once — on the settle
 //       — with the poll after it writing nothing more.
+//   (5) the act-as body (Keemin, 2026-09-18): its face at every tier, the far
+//       tier included, one class of its own (`is-actor`), the ring the rail's
+//       amber at a heavier stroke with a halo; a household sibling keeps
+//       `is-mine` and the empty frame; the dot yields to the drawn body.
 //
 // `markIndex` is not exported, so the count is taken where it is visible: a
 // plain array becomes an index only through `marks.filter(...)`, and a Proxy
@@ -47,7 +51,7 @@ import assert from "node:assert/strict";
 
 import {
   bodyPlace, placeLabel, containmentIndex, smallestContainingMark, WORLD_ROOT_ID,
-  standpointOccupancy, vesselHandles, sameWalkers,
+  standpointOccupancy, vesselHandles, sameWalkers, walkerFrameSVG, townRegionMarks,
 } from "../spectator/viewer.mjs";
 
 // a record shaped like the town's: a root, a parcel, a house on it, a room in
@@ -235,6 +239,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const SOURCE = readFileSync(join(ROOT, "spectator", "viewer.mjs"), "utf8");
 const PLAYWRIGHT_PATHS = ["playwright", "file:///G:/Wright-HQ/node_modules/playwright/index.mjs"];
 async function loadChromium() {
   for (const spec of PLAYWRIGHT_PATHS) {
@@ -453,5 +458,142 @@ test("(4) ON THE PAGE: a district crossing writes the layer ONCE — on the sett
   await page.close();
   t.diagnostic(`before ${JSON.stringify(before)} · crossed ${JSON.stringify(crossed)} · later ${JSON.stringify(later)} · faces ${near0} → ${near1}`);
   assert.equal(later.writes, crossed.writes, "the poll after the crossing wrote the layer again");
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
+
+// ── (5) the body you are acting as: its face at every tier, a gold ring, one class ──
+//
+// Keemin, 2026-09-18: "highlight your Act As resident (pinning it with full
+// profile dot even at far) and make the border gold instead of green and a bit
+// more prominent, to make it super apparent where you're at."
+//
+// Flip (5): in drawWalkers' far branch, `actor` → `false` (or drop `is-actor`
+// from walkerFrameSVG) → the page test reds: the actor's body is the empty
+// frame again and carries no class of its own.
+
+test("(5) walkerFrameSVG: the actor carries is-actor and a halo behind the face; nobody else does; the ring is the stylesheet's one rule, amber, heavier, after is-found", () => {
+  const actor = walkerFrameSVG({ at: { x: 10, y: 20 }, handle: "rei", mine: true, actor: true, art: { monogram: "R", color: "#123456" } });
+  assert.match(actor, /<g class="wv-walker-near is-mine is-actor" data-handle="rei"/, "the actor is filled, yours, and marked as the actor");
+  assert.match(actor, /<circle cx="0" cy="0" r="16" class="wv-walker-halo"\/>/, "a halo disc five units beyond the near frame's rim (11 + 5)");
+  assert.ok(actor.indexOf("wv-walker-halo") < actor.indexOf("wv-walker-mono"), "the halo is drawn BEHIND the face");
+  assert.ok(actor.indexOf("wv-walker-hit") < actor.indexOf("wv-walker-halo"), "…and inside the hit disc, which stays first");
+  const sibling = walkerFrameSVG({ at: { x: 10, y: 20 }, handle: "wright", mine: true, art: { monogram: "W", color: "#123456" } });
+  assert.ok(!/is-actor|wv-walker-halo/.test(sibling), "another household handle is yours, not the actor: no class, no halo");
+  const stranger = walkerFrameSVG({ at: { x: 10, y: 20 }, handle: "nyx" });
+  assert.ok(!/is-actor|wv-walker-halo|is-mine/.test(stranger));
+  // the ring: one rule, the rail's amber token (not a new colour), heavier than the found body's 3.5
+  const rule = SOURCE.match(/\.wv-walker-far\.is-actor > \.wv-walker-frame,\n\.wv-walker-near\.is-actor > \.wv-walker-frame \{ stroke:var\(--amber\); stroke-width:([\d.]+); \}/);
+  assert.ok(rule, "the actor's ring is one stylesheet rule on var(--amber)");
+  assert.ok(Number(rule[1]) >= 4 && Number(rule[1]) <= 5, "at a heavier stroke, 4–5: " + rule[1]);
+  assert.ok(SOURCE.indexOf(".wv-walker-near.is-found > .wv-walker-frame {") < SOURCE.indexOf(".wv-walker-near.is-actor > .wv-walker-frame {"),
+    "stated after .is-found, so a found actor keeps the actor's ring");
+  assert.match(SOURCE, /\.wv-walker-halo \{ fill:var\(--amber\); fill-opacity:\.\d+; stroke:none; pointer-events:none; \}/, "the halo is a soft disc of the same amber, never a target");
+  // the motion language stays where it was: the legs (and the walk leg) go pink when moving; the actor's ring does not
+  assert.match(SOURCE, /\.moving > \.wv-walker-frame, \.moving > \.wv-walker-leg \{ stroke:#e0507a; \}/, "the ruling's pink on a moving body is untouched");
+  assert.ok(!/\.is-actor[^\n{]*\.moving|\.moving[^\n{]*\.is-actor/.test(SOURCE), "no stylesheet rule ties the actor's ring to motion — the legs carry it");
+});
+
+// the resident path: a stub office whose reader is acting as `near-reader` and
+// whose present door puts a household sibling and a stranger beside them
+const HOUSEHOLD = ["near-reader", "far-reader"];
+async function bootStubOffice() {
+  const port = await freePort();
+  const at = { x: 221, y: 95.5 };
+  const read = {
+    handle: "near-reader",
+    standpoint: { ...at, stance: "embodied", name: "the rig's standpoint" },
+    within: [], nearby: [],
+    records: Object.fromEntries([...townRegionMarks(SERVED.marks)].map((m) => [m.id, m])),
+    telling: "The rig's air is clear.",
+    present: { residents: [] },
+  };
+  const present = { at: 200, residents: [
+    { handle: "far-reader", at: { x: 300, y: 160 }, standing: true, moving: false, aboard: false },
+    { handle: "stranger", at: { x: 380, y: 220 }, standing: true, moving: false, aboard: false },
+  ] };
+  const srv = createHttp((req, res) => {
+    const url = new URL(req.url, "http://127.0.0.1:" + port);
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
+    if (req.method === "OPTIONS") { res.writeHead(204); return res.end(); }
+    const send = (b) => { res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify(b)); };
+    if (url.pathname === "/ops/whoami") return send({ principal: "rig", handles: HOUSEHOLD });
+    if (url.pathname === "/world/my-marks")
+      return send({ drafts: [], docket: [], published: [], backed: [], counts: { drafts: 0, docket: 0, published: 0, backed: 0 }, complete: true });
+    if (url.pathname === "/world/apex") return send(read);
+    if (url.pathname.startsWith("/homes/")) return send({ world: { sited: true, x: at.x, y: at.y, mark_id: null } });
+    if (url.pathname === "/world/present") return send(present);
+    res.writeHead(404, { "content-type": "application/json" });
+    res.end(JSON.stringify({ error: "bounce", defect: "no such door in the rig" }));
+  });
+  await new Promise((resolve) => srv.listen(port, "127.0.0.1", resolve));
+  CLEANUP.push(() => srv.close());
+  return { port };
+}
+async function openActingAs(handle) {
+  const office = await bootStubOffice();
+  const page = await browser.newPage({ viewport: { width: 1500, height: 950 } });
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
+  await page.route("**/WORLD/walk-ledger.md", (route) => route.fulfill({ status: 200, contentType: "text/markdown", body: "# empty\n" }));
+  await page.addInitScript(([base, h]) => {
+    try {
+      localStorage.setItem("pm.office.base", base);
+      localStorage.setItem("pm_key", "rig-key-not-a-secret");
+      localStorage.setItem("pm.world.act_as", h);
+    } catch {}
+  }, ["http://127.0.0.1:" + office.port, handle]);
+  await page.goto("http://localhost:" + rig.port + "/", { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.waitForSelector(".wv-telling-pane", { state: "attached", timeout: 90_000 });
+  await page.evaluate(() => { const el = document.querySelector(".wv-tour-skip"); if (el && el.offsetParent) el.click(); });
+  await page.waitForFunction(() => document.querySelectorAll("#wv-walk-layer [data-handle]").length >= 3, null, { timeout: 60_000 }).catch(() => {});
+  await page.waitForTimeout(4000);
+  return { page, errors };
+}
+const readBodies = (page) => page.evaluate(() => {
+  const body = (h) => {
+    const g = document.querySelector(`#wv-walk-layer [data-handle="${CSS.escape(h)}"]`);
+    if (!g) return null;
+    return {
+      classes: g.getAttribute("class"),
+      face: !!g.querySelector("image.wv-walker-face, .wv-walker-mono"),
+      halo: !!g.querySelector(".wv-walker-halo"),
+      stroke: getComputedStyle(g.querySelector(".wv-walker-frame")).strokeWidth,
+      colour: getComputedStyle(g.querySelector(".wv-walker-frame")).stroke,
+    };
+  };
+  const vb = (document.querySelector("#map-svg")?.getAttribute("viewBox") ?? "").split(/\s+/).map(Number);
+  return {
+    viewW: vb[2],
+    far: document.querySelectorAll("#wv-walk-layer .wv-walker-far").length,
+    near: document.querySelectorAll("#wv-walk-layer .wv-walker-near").length,
+    dots: document.querySelectorAll("#wv-overlay .ov-standpoint").length,
+    actor: body("near-reader"), sibling: body("far-reader"), stranger: body("stranger"),
+  };
+});
+
+test("(5) ON THE PAGE, at the far tier: the act-as body wears its face, is-actor and the amber ring; a household sibling wears is-mine and the empty frame; the dot yields to the drawn body", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  const { page, errors } = await openActingAs("near-reader");
+  const seen = await readBodies(page);
+  await page.close();
+  t.diagnostic(JSON.stringify(seen));
+  assert.ok(seen.viewW > 1047, "the page must open at the far tier for this to mean anything: viewBox width " + seen.viewW);
+  assert.ok(seen.actor && seen.sibling && seen.stranger, "all three bodies must be drawn: " + JSON.stringify(seen));
+  assert.match(seen.actor.classes, /\bis-actor\b/, "the act-as body carries is-actor");
+  assert.match(seen.actor.classes, /\bwv-walker-near\b/, "…and is FILLED at the far tier");
+  assert.equal(seen.actor.face, true, "…with its face (a monogram here — the local rig serves no faces)");
+  assert.equal(seen.actor.halo, true, "…and the halo");
+  assert.equal(seen.actor.stroke, "4.5px", "the ring is the heavier stroke");
+  assert.equal(seen.actor.colour, "rgb(232, 197, 106)", "…in the rail's amber (#e8c56a)");
+  assert.match(seen.sibling.classes, /\bis-mine\b/, "the household sibling is yours");
+  assert.doesNotMatch(seen.sibling.classes, /\bis-actor\b/, "…but not the actor");
+  assert.match(seen.sibling.classes, /\bwv-walker-far\b/, "…and keeps the far tier's empty frame");
+  assert.equal(seen.sibling.face, false);
+  assert.equal(seen.sibling.stroke, "3px", "is-mine's stroke stays as it was");
+  assert.doesNotMatch(seen.stranger.classes, /\bis-mine\b|\bis-actor\b/);
+  assert.equal(seen.stranger.stroke, "2px");
+  assert.equal(seen.dots, 0, "one body, one marker: the drawn actor takes the dot's place (POS-93)");
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });
