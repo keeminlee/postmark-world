@@ -2998,7 +2998,11 @@ export function activityDayKey(when) {
   const iso = String(when ?? "");
   return iso.length >= 10 ? iso.slice(0, 10) : "";
 }
-export function recentActivity({ departures = [], marks = [], stakes = [], blessings = [], names = null, limit = 12, now = null } = {}) {
+// THE FOUR KINDS, NAMED ONCE (POS-90, 2026-09-18). The chip row, the filter and
+// the row's own `data-kind` all have to agree about what a kind IS, and three
+// copies of a list of four strings is three chances to disagree.
+export const ACTIVITY_KINDS = ["walk", "mark", "stake", "settlement"];
+export function activityFeed({ departures = [], marks = [], stakes = [], blessings = [], names = null, limit = 12, offset = 0, kinds = null, now = null } = {}) {
   const rows = [];
   // ONE WALK PER RESIDENT PER DAY, the latest. That is not a display trick, it is
   // the ledger's own rule: superseding a walk is a new departure from the derived
@@ -3045,12 +3049,45 @@ export function recentActivity({ departures = [], marks = [], stakes = [], bless
     b.day.localeCompare(a.day)
     || b.time.localeCompare(a.time)
     || String(a.subject ?? "").localeCompare(String(b.subject ?? "")));
+  // ── THE FILTER IS BEFORE THE CUT (POS-90) ─────────────────────────────────
+  //
+  // A reader who asks for stakes wants a page of fourteen STAKES, not whatever
+  // survives a fortnight's worth of everything. Filtering after the slice would
+  // hand them the two stakes that happened to be in the newest fourteen rows and
+  // call it a page — a control that silently answers a different question.
+  //
+  // `kinds` null (or empty) is ALL, and is the first page's shape: the default
+  // path below composes, sorts and cuts exactly what it did before this line
+  // existed.
+  const wanted = kinds == null ? null : new Set(Array.isArray(kinds) ? kinds : [kinds]);
+  const kept = wanted?.size ? rows.filter((row) => wanted.has(row.kind)) : rows;
   const today = activityDayKey(now ?? new Date().toISOString());
-  return rows.slice(0, Math.max(0, limit)).map((row) => ({
+  // PAGING, NOT A WIDER CUT. `offset` walks a window of `limit` down the list;
+  // raising `limit` alone would re-publish every row the reader has already read
+  // and could never reach past one page's worth at the far end. The two are
+  // different reads and `tools/lately-pages-and-filters.test.mjs [falsifier]`
+  // is red for any build where they are the same.
+  const from = Math.max(0, offset);
+  const take = Math.max(0, limit);
+  const page = kept.slice(from, from + take).map((row) => ({
     ...row,
     name: row.subject && names?.get ? (names.get(row.subject) ?? null) : null,
     dayLabel: activityDayLabel(row.day, today),
   }));
+  // `total` is the count AFTER the filter and BEFORE the cut — the denominator
+  // the "more" control needs, and the only number that can say whether a next
+  // page exists without composing one.
+  return { rows: page, total: kept.length, offset: from, more: from + page.length < kept.length };
+}
+// The rail's own read, unchanged in shape for every caller that had one: an
+// array of decorated rows. `activityFeed` above is the same computation with its
+// denominator still attached.
+export function recentActivity(opts = {}) { return activityFeed(opts).rows; }
+// WHEN A PAGE RUNS PAST WHAT IS COMPOSED, a source's own bound is what stopped
+// it — not the record. Pure, so the page's widen decision is testable without a
+// browser: the requested page's far edge against the rows actually in hand.
+export function activityWantsWider({ offset = 0, limit = 0, total = 0 } = {}) {
+  return Math.max(0, offset) + Math.max(0, limit) > Math.max(0, total);
 }
 // A row is GONE when it names a mark the record no longer carries: struck
 // through, because the act happened and its subject did not survive it. Two
