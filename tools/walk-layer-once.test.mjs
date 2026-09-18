@@ -25,6 +25,12 @@
 //       passes an act, or the ledger is not chronological), the vessel set once
 //       per marks array — a second ask iterates neither — and both answer what
 //       a fresh fold answers.
+//   (3) on the page, a wheel tick with no data change touches no walker DOM
+//       (the nodes are the same objects; the layer's camera variable moved),
+//       and a walkers answer that moved a body writes the layer exactly once.
+//   (4) one draw per crossing: a poll that answers the same rows writes
+//       nothing, and a district crossing writes the layer once — on the settle
+//       — with the poll after it writing nothing more.
 //
 // `markIndex` is not exported, so the count is taken where it is visible: a
 // plain array becomes an index only through `marks.filter(...)`, and a Proxy
@@ -41,7 +47,7 @@ import assert from "node:assert/strict";
 
 import {
   bodyPlace, placeLabel, containmentIndex, smallestContainingMark, WORLD_ROOT_ID,
-  standpointOccupancy, vesselHandles,
+  standpointOccupancy, vesselHandles, sameWalkers,
 } from "../spectator/viewer.mjs";
 
 // a record shaped like the town's: a root, a parcel, a house on it, a room in
@@ -381,5 +387,71 @@ test("(3) ON THE PAGE: a walkers answer that moved a body writes the layer ONCE,
   assert.equal(after.identical, false, "a written layer is new nodes");
   assert.notEqual(after.walkerAt, before.walkerAt, "the moved body is drawn where the answer put it");
   assert.equal(after.bodies, before.bodies);
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
+
+// ── (4) one draw per crossing: neither the poll nor the settle rewrites an unchanged layer ──
+//
+// Flip (4a): in takeWalkers, `if (sameWalkers(rows, walkState.walkers))` →
+// `if (false)` — every poll writes the layer. Flip (4b): in writeWalkLayer,
+// `if (markup !== walkState.lastMarkup)` → `if (true)` — the settle after a
+// crossing and the poll after it each write it again.
+
+test("(4) sameWalkers: the same rows in the same order are the same answer; a moved body, a new row, a lost row are not", () => {
+  const a = [{ handle: "rei", x: 1, y: 2, moving: false }, { handle: "wright", x: 3, y: 4, moving: true, toward: { x: 9, y: 9 } }];
+  const b = a.map((r) => ({ ...r, toward: r.toward ? { ...r.toward } : r.toward }));
+  assert.equal(sameWalkers(a, a), true);
+  assert.equal(sameWalkers(a, b), true, "fresh objects with the same fields are the same answer");
+  assert.equal(sameWalkers(a, [b[0], { ...b[1], x: 3.5 }]), false, "a moved body");
+  assert.equal(sameWalkers(a, [b[0], { ...b[1], toward: { x: 10, y: 9 } }]), false, "a changed leg");
+  assert.equal(sameWalkers(a, [b[0]]), false, "a lost row");
+  assert.equal(sameWalkers(a, [...b, { handle: "jetto", x: 0, y: 0 }]), false, "a new row");
+  assert.equal(sameWalkers(a, [b[1], b[0]]), false, "reordered rows are a different answer (a redraw, never a stale layer)");
+  assert.equal(sameWalkers([], []), true);
+  assert.equal(sameWalkers(null, []), false);
+});
+
+test("(4) ON THE PAGE: a poll that answers the same rows writes nothing — the nodes are the same objects a poll later", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  const { page, errors } = await openSpectator();
+  await page.waitForTimeout(3000);           // let the boot's late arrivals (the ledger, the faces) land first
+  const before = await snapshot(page);
+  const polls0 = await page.evaluate(() => window.__pmViewer.walkDraws().pollsUnchanged);
+  await page.waitForFunction((n) => window.__pmViewer.walkDraws().pollsUnchanged > n, polls0, { timeout: 20_000 });
+  await page.waitForTimeout(1000);
+  const after = await compare(page);
+  await page.close();
+  t.diagnostic(`before ${JSON.stringify(before)} · after ${JSON.stringify(after)}`);
+  assert.equal(after.writes, before.writes, "an unchanged answer wrote the layer " + (after.writes - before.writes) + " times");
+  assert.equal(after.identical, true, "the nodes must be the same objects after an unchanged poll");
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
+
+test("(4) ON THE PAGE: a district crossing writes the layer ONCE — on the settle — and the poll that lands after it does not write again", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  const { page, errors } = await openSpectator();
+  await page.waitForTimeout(3000);
+  const before = await snapshot(page);
+  const near0 = await page.evaluate(() => document.querySelectorAll("#wv-walk-layer .wv-walker-near").length);
+  assert.equal(near0, 0, "the page must open at the far tier (empty frames) for a crossing to mean anything");
+  // one wheel from the opening width to 874 — inside the district tier
+  const dy = await page.evaluate(() => {
+    const vb = document.querySelector("#map-svg").getAttribute("viewBox").split(/\s+/).map(Number);
+    return Math.log(874 / vb[2]) / Math.log(1.0015);
+  });
+  await wheelNotch(page, dy);
+  await page.waitForTimeout(1500);           // the settle is 140 ms; the faces are drawn on it
+  const crossed = await compare(page);
+  const near1 = await page.evaluate(() => document.querySelectorAll("#wv-walk-layer .wv-walker-near").length);
+  assert.ok(near1 > 0, "the crossing must have drawn faces: " + near1);
+  assert.equal(crossed.writes, before.writes + 1, "the crossing wrote the layer " + (crossed.writes - before.writes) + " times — once, on the settle");
+  // …and through the next poll
+  const polls0 = await page.evaluate(() => window.__pmViewer.walkDraws().pollsUnchanged);
+  await page.waitForFunction((n) => window.__pmViewer.walkDraws().pollsUnchanged > n, polls0, { timeout: 20_000 });
+  await page.waitForTimeout(1000);
+  const later = await compare(page);
+  await page.close();
+  t.diagnostic(`before ${JSON.stringify(before)} · crossed ${JSON.stringify(crossed)} · later ${JSON.stringify(later)} · faces ${near0} → ${near1}`);
+  assert.equal(later.writes, crossed.writes, "the poll after the crossing wrote the layer again");
   assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
 });

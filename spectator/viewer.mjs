@@ -910,6 +910,23 @@ export function sceneWalkerSet({ walkers = [], manifest = new Map(), roomId = nu
   });
 }
 
+/** THE SAME ANSWER IS NOT A NEW ANSWER (#2912 (4), 2026-09-18). The walkers
+ *  door is polled every fifteen seconds and answers the whole town whether or
+ *  not anyone moved — on prod, two answers three seconds apart differ in no
+ *  row at all — and the page drew the whole layer on every one. Two answers
+ *  are the same when they carry the same rows in the same order, field for
+ *  field: any field the door changes is a change, so a row the draw reads
+ *  differently can never be mistaken for the same. Pure. */
+export function sameWalkers(a = [], b = []) {
+  if (a === b) return true;
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] === b[i]) continue;
+    if (JSON.stringify(a[i]) !== JSON.stringify(b[i])) return false;
+  }
+  return true;
+}
+
 // WHERE ONE PRESS OF "step outside" ACTUALLY PUTS YOU (Wright, 2026-08-21).
 //
 // Occupancy is a STACK, not a flag — wright entered the-trueing-terrace and
@@ -6314,7 +6331,7 @@ export function mountViewer(appEl) {
   // HOW OFTEN THE WALK LAYER'S WORK IS DONE (#2912). Counters, not behaviour:
   // the page tests read them through the dev handle to prove a wheel tick with
   // no data change does none of this work, and a walkers answer does it once.
-  const walkDraws = { layerWrites: 0, actorReads: 0 };
+  const walkDraws = { layerWrites: 0, layerSkips: 0, pollsUnchanged: 0, actorReads: 0 };
   // WHICH CLOCK THE FOLD IS ASKED AT, and it is not `state.crossing`.
   //
   // The dial is a FLOORED crossing number; the ledger stamps a FRACTIONAL one
@@ -9237,11 +9254,17 @@ export function mountViewer(appEl) {
     actorBound: true,
     changingCourse: false,
     // WHO THE SEARCH JUST FOUND, and it is STATE rather than a class written
-    // onto a node. `drawWalkers` rebuilds the whole layer's innerHTML on every
-    // draw — a poll, a zoom, a pan — so a class set on the element would be
-    // gone within fifteen seconds and look like a flake. Held here, the glyph
-    // is re-marked every time it is redrawn, for as long as the finding stands.
+    // onto a node. `drawWalkers` rebuilds the whole layer's innerHTML when its
+    // data changes — a poll that moved somebody, a tier, a found body — so a
+    // class set on the element would be gone at the next answer and look like
+    // a flake. Held here, the glyph is re-marked every time it is redrawn, for
+    // as long as the finding stands.
     foundHandle: null,
+    // what the layer last showed (#2912 (4)): the markup it was written with,
+    // and the drawn set behind it — the readout's list when a poll brings
+    // nothing new
+    lastMarkup: null,
+    lastDrawn: null,
   };
 
   // Who the walkers ARE — name, avatar, colour, household — keyed by handle.
@@ -9766,12 +9789,7 @@ export function mountViewer(appEl) {
         s += walkerFrameSVG({ at: px(w), handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
           mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle, threshold: !!w.threshold });
       }
-      mapCtx.walkLayer.innerHTML = paths + s;
-      walkDraws.layerWrites += 1;
-      walkReadout(drawnWalkers);
-      syncHouseLights();
-      syncActorPosition();
-      renderWalkDestination();
+      writeWalkLayer(paths + s, drawnWalkers);
       return;
     }
     for (const w of drawnWalkers) {
@@ -9846,8 +9864,28 @@ export function mountViewer(appEl) {
         found: w.handle === walkState.foundHandle, threshold: !!w.threshold,
         art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
-    mapCtx.walkLayer.innerHTML = paths + hulls + s;
-    walkDraws.layerWrites += 1;
+    writeWalkLayer(paths + hulls + s, drawnWalkers);
+  }
+  // THE LAYER IS WRITTEN WHEN ITS MARKUP CHANGED, AND NOT OTHERWISE (#2912
+  // (4)). The settle pass rebuilds the overlay whenever the camera crosses a
+  // tier or leaves the drawn box and ends in this pass; a poll that moved
+  // somebody, a ledger, the faces, a found body all end here too. Which of
+  // them changed what the layer SHOWS is answered by the markup itself — the
+  // same bodies at the same places in the same state print the same string,
+  // and a string that has not changed is not written, so the nodes on the
+  // page stay the same objects. No list of the layer's inputs to keep true:
+  // whatever the draw reads, the draw prints. The tail runs either way — the
+  // overlay may have been rebuilt under it (the lights and the dot stand on
+  // the cards), and the readout carries the clock.
+  function writeWalkLayer(markup, drawnWalkers) {
+    if (markup !== walkState.lastMarkup) {
+      mapCtx.walkLayer.innerHTML = markup;
+      walkState.lastMarkup = markup;
+      walkDraws.layerWrites += 1;
+    } else {
+      walkDraws.layerSkips += 1;
+    }
+    walkState.lastDrawn = drawnWalkers;
     walkReadout(drawnWalkers);
     syncHouseLights();
     syncActorPosition();
@@ -9932,6 +9970,21 @@ export function mountViewer(appEl) {
       + `<text x="${labelX + 7 * unit}" y="${labelY + 16 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
   }
 
+  // ONE DRAW PER ANSWER THAT MOVED SOMEBODY (#2912 (4)). An answer that
+  // carries the rows the page already holds is not taken: the list keeps its
+  // identity (so everything memoised on it holds — the actor's reading, the
+  // vessel set) and the layer is not written. The readout still gets the
+  // clock the answer carried, because it prints it.
+  function takeWalkers(rows) {
+    if (sameWalkers(rows, walkState.walkers)) {
+      walkDraws.pollsUnchanged += 1;
+      walkReadout(walkState.lastDrawn ?? []);
+      return false;
+    }
+    walkState.walkers = rows;
+    drawWalkers();
+    return true;
+  }
   async function pollWalkers() {
     // ⚑ NOT BEFORE WE KNOW WHO IS READING. The first poll fires at boot, which
     // is before the office has answered whoami — so a reader with a key would
@@ -9970,8 +10023,7 @@ export function mountViewer(appEl) {
             const j = await r.json();
             if (!j?.error) {
               walkState.at = Number(j.at ?? walkState.at);
-              walkState.walkers = walkersFromPresent(j, { self: selfFromRead(read) });
-              drawWalkers();
+              takeWalkers(walkersFromPresent(j, { self: selfFromRead(read) }));
             }
           }
         } catch { /* a poll miss is silent — the last good reading stands */ }
@@ -9995,8 +10047,7 @@ export function mountViewer(appEl) {
         // are people; they are drawn together and told apart by `standing`,
         // which this renderer already understood. The office publishes them
         // under separate keys so `walkers` keeps meaning what it always meant.
-        walkState.walkers = [...(j.walkers ?? []), ...(j.standing ?? [])];
-        drawWalkers();
+        takeWalkers([...(j.walkers ?? []), ...(j.standing ?? [])]);
         const origin = actorOrigin();
         if (canAct() && origin && walkState.actorBound) {
           const moved = state.cam.x !== origin.x || state.cam.y !== origin.y;
