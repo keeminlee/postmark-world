@@ -3712,9 +3712,22 @@ export function smallestContainingMark(point, marks = [], { insideRoomId = null 
   // things: an object never answers "where am I", however small or large.
   // (Deliberately class-keyed, not size-keyed — a tiny sited mark like a bench
   // is still ground; a giant sculpture is still a thing.)
+  //
+  // THE INDEX IS BUILT ONCE PER CALL, NOT ONCE PER MARK (#2910, 2026-09-17).
+  // `isAmbientMark` builds `markIndex(marks)` — a Map over the whole record —
+  // unless it is handed one, and this filter asked it of every mark in turn:
+  // 460 predicated/naming marks × a 1,232-entry Map per call, and drawWalkers
+  // makes this call once per drawn body per zoom frame. Measured in the
+  // founder's own scenario on prod's viewer (world 35f56a92): 3,856 ms of a
+  // 4,065 ms zoom tick was this closure — the "~1 s tick" of #2910, and the
+  // 2.7 s crossing into the district tier, and every mousemove's containment
+  // (paintingMarkAtPoint asks the same question). The bitmaps the issue named
+  // were swapped for a 96 px raster first and the stall did not move. With the
+  // index hoisted: 83–167 ms at the crossing, 17–97 ms a tick, on a 42-body pane.
+  const byMarkId = markIndex(marks);
   return (marks ?? [])
     .filter((mark) => mark?.class !== "thing" && !encloses(mark)
-      && !isAmbientMark(mark, marks) && pointInsideMark({ x, y }, mark))
+      && !isAmbientMark(mark, byMarkId) && pointInsideMark({ x, y }, mark))
     .map((mark) => ({ mark, area: Number(mark.extent.w) * Number(mark.extent.h) }))
     .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)))[0]?.mark?.id ?? null;
 }
