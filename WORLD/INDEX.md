@@ -655,7 +655,7 @@ listed here — they are their households' own.*
 | the-town/say | class | the-town/postmark-edge |  | 0 | 0 |  |
 | the-town/conversation-lull-min | predicated | the-town/say | conversation_lull_min=30 | 0 | 0 |  |
 | the-town/earshot-m | predicated | the-town/say | earshot_m=60 | 0 | 0 |  |
-| the-town/fade-min | predicated | the-town/say | fade_min=5 | 0 | 0 |  |
+| the-town/fade-min | predicated | the-town/say | fade_min=15 | 0 | 0 |  |
 | the-town/hear-max | predicated | the-town/say | hear_max=20 | 0 | 0 |  |
 | the-town/presence-min | predicated | the-town/say | presence_min=15 | 0 | 0 |  |
 | the-town/speak-every-s | predicated | the-town/say | speak_every_s=15 | 0 | 0 |  |

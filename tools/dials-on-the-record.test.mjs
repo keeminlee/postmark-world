@@ -28,9 +28,12 @@ const byId = new Map(marks.map((m) => [m.id, m]));
 // "let's update those dials for 'say'... make everything pull the actual
 // numbers from there too. I think the predicates should be under the say edge
 // rather than the residue, as we may rule future sounds differently."
+//
+// AMENDED 2026-09-17 (Keemin, postmark#2917): "let's up fade_min to 15 and see
+// if that is enough" — hearing widens 5 → 15; the record's lull stays 30.
 const SAY_DIALS = {
   earshot_m: 60,
-  fade_min: 5,
+  fade_min: 15,
   conversation_lull_min: 30,
   speak_every_s: 15,
   text_max: 500,
