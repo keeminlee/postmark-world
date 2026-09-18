@@ -34,7 +34,7 @@ permissions:
 
 jobs:
   suite:
-    if: github.repository == 'keeminlee/postmark-world'
+    if: github.repository == 'postmark-town/postmark-world'
     runs-on: ubuntu-latest
     steps:
       # fetch-depth: 0, because the suite reads this repo's OWN history.

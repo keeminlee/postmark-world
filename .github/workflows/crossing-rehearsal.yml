@@ -75,7 +75,7 @@ permissions:
 jobs:
   crossing-rehearsal:
     name: crossing rehearsal
-    if: github.repository == 'keeminlee/postmark-world'
+    if: github.repository == 'postmark-town/postmark-world'
     runs-on: ubuntu-latest
     # The sweep spawns one git process per supersession row and rebases every
     # sketchbook; on the box it is minutes, not seconds. A rehearsal that hangs
