@@ -1745,31 +1745,35 @@ test("a boat is whatever the FOLD calls a vessel, not a handle typed in here", (
 
 test("the vessel is drawn, mirrored toward her destination, and never rotated", () => {
   const west = vesselGlyphSVG({
-    at: { x: 100, y: 50 }, toward: { x: -900, y: -900 }, unit: 2, moving: true,
+    at: { x: 100, y: 50 }, toward: { x: -900, y: -900 }, moving: true,
     label: "the-post-office — 109142 m to go",
   });
   assert.match(west, /^<g class="wv-vessel moving"/);
-  assert.match(west, /translate\(100,50\) scale\(2\)/);
+  // her position is a translate written once; her SIZE is the camera's
+  // `--wv-vu` on the `.wv-vessel-s` group, set per frame, never in the markup
+  // (#2912 (3)) — before this the unit was baked in as `scale(u)`
+  assert.match(west, /transform="translate\(100,50\)"/);
+  assert.match(west, /<g class="wv-vessel-s">/, "the camera's scale group");
+  assert.equal(/scale\(\d/.test(west), false, "no camera unit in the markup");
   assert.equal(/scale\(-1,1\)/.test(west), false, "sailing west, the bow already faces left");
   assert.equal(/rotate\(/.test(west), false, "a profile boat is never rotated — she would sail uphill");
   for (const part of ["wv-vessel-hull", "wv-vessel-mast", "wv-vessel-sail", "wv-vessel-flap", "wv-vessel-water"])
     assert.ok(west.includes(part), "the glyph carries its " + part);
   assert.ok(west.includes('aria-label="the-post-office — 109142 m to go"'), "she is named to a screen reader");
 
-  const east = vesselGlyphSVG({ at: { x: 0, y: 0 }, toward: { x: 500, y: 0 }, unit: 1, moving: true });
+  const east = vesselGlyphSVG({ at: { x: 0, y: 0 }, toward: { x: 500, y: 0 }, moving: true });
   assert.match(east, /scale\(-1,1\)/, "sailing east she is mirrored to face her destination");
 
-  const moored = vesselGlyphSVG({ at: { x: 0, y: 0 }, toward: { x: 500, y: 0 }, unit: 1, moving: false });
+  const moored = vesselGlyphSVG({ at: { x: 0, y: 0 }, toward: { x: 500, y: 0 }, moving: false });
   assert.equal(/scale\(-1,1\)/.test(moored), false, "at rest she keeps her bow left rather than aiming at nothing");
   assert.ok(moored.includes('class="wv-vessel"'), "and drops the moving class with it");
 
   // nothing here may throw or emit half a glyph on bad input
   assert.equal(vesselGlyphSVG(), "");
-  assert.equal(vesselGlyphSVG({ at: { x: NaN, y: 0 }, unit: 1 }), "");
-  assert.equal(vesselGlyphSVG({ at: { x: 0, y: 0 }, unit: 0 }), "");
+  assert.equal(vesselGlyphSVG({ at: { x: NaN, y: 0 } }), "");
   assert.equal(
-    vesselGlyphSVG({ at: { x: 0, y: 0 }, unit: 1, toward: null, moving: true }),
-    vesselGlyphSVG({ at: { x: 0, y: 0 }, unit: 1, moving: true }),
+    vesselGlyphSVG({ at: { x: 0, y: 0 }, toward: null, moving: true }),
+    vesselGlyphSVG({ at: { x: 0, y: 0 }, moving: true }),
     "a mover with no destination still draws");
 });
 

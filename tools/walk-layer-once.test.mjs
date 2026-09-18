@@ -210,3 +210,176 @@ test("(2) the vessel set is scanned once per marks array, and a fresh array is s
   assert.deepEqual([...vesselHandles(again.proxy)].sort(), [...first].sort());
   assert.equal(again.walks(), 1, "a fresh array is a fresh scan");
 });
+
+// ── (3) ON THE PAGE: a wheel tick touches no walker DOM; a walkers answer writes it once ──
+//
+// The page rig standpoint-dot-culled.test.mjs keeps: the repo's own spectator
+// server serving this tree, a stub atlas sheet, the Spectator path (no key), the
+// walkers from `/api/walks` — routed here so the answer can be CHANGED under the
+// page. Skips loudly without Playwright.
+//
+// Flip (3): in frameWork, put `drawWalkers();` back beside drawConversations()
+// → the tick writes the layer and every node is new.
+import { after, before } from "node:test";
+import { spawn } from "node:child_process";
+import { createServer } from "node:net";
+import { createServer as createHttp } from "node:http";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const PLAYWRIGHT_PATHS = ["playwright", "file:///G:/Wright-HQ/node_modules/playwright/index.mjs"];
+async function loadChromium() {
+  for (const spec of PLAYWRIGHT_PATHS) {
+    try { return (await import(spec)).chromium; } catch { /* try the next */ }
+  }
+  return null;
+}
+const freePort = () => new Promise((resolve, reject) => {
+  const probe = createServer();
+  probe.on("error", reject);
+  probe.listen(0, "127.0.0.1", () => { const { port } = probe.address(); probe.close(() => resolve(port)); });
+});
+const CLEANUP = [];
+after(() => { for (const stop of CLEANUP.reverse()) { try { stop(); } catch { /* already gone */ } } });
+
+async function bootStubAtlas() {
+  const port = await freePort();
+  const SHEET = '<!doctype html><html><body>'
+    + '<svg id="map-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 2400">'
+    + '<rect x="0" y="0" width="1500" height="2400" fill="#101418"/>'
+    + '</svg></body></html>';
+  const srv = createHttp((req, res) => {
+    if (req.url.startsWith("/atlas/")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(SHEET); }
+    res.writeHead(404); res.end("");
+  });
+  await new Promise((resolve) => srv.listen(port, "127.0.0.1", resolve));
+  CLEANUP.push(() => srv.close());
+  return { port };
+}
+async function bootRig(atlasPort) {
+  const port = await freePort();
+  const proc = spawn(process.execPath, [join(ROOT, "spectator", "server.mjs")], {
+    cwd: ROOT, env: { ...process.env, PORT: String(port), ATLAS_ORIGIN: "http://127.0.0.1:" + atlasPort },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  CLEANUP.push(() => proc.kill());
+  await new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("the rig did not announce itself in 30s")), 30_000);
+    proc.stdout.on("data", (b) => { if (String(b).includes("localhost:" + port)) { clearTimeout(timer); resolve(); } });
+    proc.on("exit", (code) => { clearTimeout(timer); reject(new Error("the rig exited " + code + " before serving")); });
+  });
+  return { port };
+}
+
+// the walkers the page is served: a dozen standing residents on real parcels
+// (so their places name real ground) and one on the road
+const SERVED = JSON.parse(readFileSync(join(ROOT, "WORLD/world-state.json"), "utf8"));
+const parcels = (SERVED.marks ?? []).filter((m) => m?.kind === "parcel" && m?.at && m?.household).slice(0, 12);
+const walkersAnswer = (moved = 0) => ({
+  at: 200.5, now: 200.5,
+  walkers: [{ handle: "the-walker", x: 300 + moved, y: 300, moving: true, toward: { x: 900, y: 900 }, remaining_m: 800 - moved, eta_crossings: 0.05, mark_id: null, source: "walk" }],
+  standing: parcels.map((p) => ({ handle: p.household, x: p.at.x, y: p.at.y, moving: false, standing: true, source: "parcel" })),
+  departures: 1, unrecognized: 0,
+});
+
+let chromium = null, rig = null, browser = null;
+before(async () => {
+  chromium = await loadChromium();
+  if (!chromium) return;
+  const atlas = await bootStubAtlas();
+  rig = await bootRig(atlas.port);
+  browser = await chromium.launch({ args: ["--disable-background-timer-throttling", "--disable-renderer-backgrounding"] });
+  CLEANUP.push(() => browser.close());
+});
+
+async function openSpectator() {
+  const page = await browser.newPage({ viewport: { width: 1500, height: 950 } });
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message.slice(0, 200)));
+  const answer = { moved: 0 };
+  await page.route("**/api/walks*", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(walkersAnswer(answer.moved)) }));
+  await page.goto("http://localhost:" + rig.port + "/", { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.waitForSelector(".wv-minimap svg", { state: "attached", timeout: 90_000 });
+  await page.evaluate(() => { const el = document.querySelector(".wv-tour-skip"); if (el && el.offsetParent) el.click(); });
+  await page.waitForFunction(() => (document.querySelector("#wv-walk-layer")?.children.length ?? 0) > 0, null, { timeout: 60_000 });
+  await page.waitForTimeout(2500);
+  return { page, errors, answer };
+}
+// the layer as it stands: how many writes so far, its nodes (held by reference
+// on the page), the camera's scale variable, and where one body is drawn
+const snapshot = (page) => page.evaluate(() => {
+  const layer = document.querySelector("#wv-walk-layer");
+  window.__held = [...layer.children];
+  return {
+    writes: window.__pmViewer.walkDraws().layerWrites,
+    nodes: layer.children.length,
+    mk: layer.style.getPropertyValue("--wv-mk"),
+    bodies: document.querySelectorAll("#wv-walk-layer [data-handle]").length,
+    walkerAt: document.querySelector('#wv-walk-layer [data-handle="the-walker"]')?.parentElement?.parentElement?.getAttribute("transform") ?? null,
+  };
+});
+const compare = (page) => page.evaluate(() => {
+  const layer = document.querySelector("#wv-walk-layer");
+  const now = [...layer.children];
+  const same = now.length === window.__held.length && now.every((n, i) => n === window.__held[i]);
+  return {
+    writes: window.__pmViewer.walkDraws().layerWrites,
+    nodes: now.length,
+    identical: same,
+    mk: layer.style.getPropertyValue("--wv-mk"),
+    bodies: document.querySelectorAll("#wv-walk-layer [data-handle]").length,
+    walkerAt: document.querySelector('#wv-walk-layer [data-handle="the-walker"]')?.parentElement?.parentElement?.getAttribute("transform") ?? null,
+  };
+});
+// one notch of the wheel at the pane's centre, INTO the painting: the tier is
+// unchanged and the view stays inside the drawn box, so nothing about the
+// walkers' data has moved — only the camera
+const wheelNotch = (page, deltaY) => page.evaluate((dy) => {
+  const svg = document.querySelector("#map-svg");
+  const b = svg.getBoundingClientRect();
+  svg.dispatchEvent(new WheelEvent("wheel", { deltaY: dy, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, bubbles: true, cancelable: true }));
+  return svg.getAttribute("viewBox");
+}, deltaY);
+
+const skipReason = "playwright is absent, so the page half of 'the walk layer is written once per data change' goes unguarded: only the unit halves above are running.";
+
+test("(3) ON THE PAGE: a wheel tick with no data change touches no walker DOM — the nodes are the same objects, the camera variable moved", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  const { page, errors } = await openSpectator();
+  const before = await snapshot(page);
+  assert.ok(before.bodies >= 10, "the fixture must draw bodies for this to mean anything: " + JSON.stringify(before));
+  const vb0 = await wheelNotch(page, -120);
+  await page.waitForTimeout(600);           // past the 140 ms settle, with room
+  const vb1 = await wheelNotch(page, -120);
+  await page.waitForTimeout(600);
+  const after = await compare(page);
+  await page.close();
+  t.diagnostic(`before ${JSON.stringify(before)} · after ${JSON.stringify(after)} · viewBox ${vb0} → ${vb1}`);
+  assert.notEqual(vb0, vb1, "the wheel must have moved the camera");
+  assert.equal(after.writes, before.writes, "two wheel ticks wrote the walk layer " + (after.writes - before.writes) + " times — a tick with no data change must write nothing");
+  assert.equal(after.identical, true, "the walk layer's nodes must be the SAME objects after a tick: it was rebuilt");
+  assert.notEqual(after.mk, before.mk, "the camera's scale variable on the layer must have moved — that is how the bodies are sized now");
+  assert.equal(after.bodies, before.bodies);
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});
+
+test("(3) ON THE PAGE: a walkers answer that moved a body writes the layer ONCE, and the body moved with it", async (t) => {
+  if (!chromium) return t.skip(skipReason);
+  const { page, errors, answer } = await openSpectator();
+  const before = await snapshot(page);
+  answer.moved = 40;                        // the next poll answers a body 40 m along
+  // the poll is on a 15 s interval; wait for one to land
+  await page.waitForFunction((w) => window.__pmViewer.walkDraws().layerWrites > w, before.writes, { timeout: 20_000 });
+  await page.waitForTimeout(1500);          // and let anything that follows it settle
+  const after = await compare(page);
+  await page.close();
+  t.diagnostic(`before ${JSON.stringify(before)} · after ${JSON.stringify(after)}`);
+  assert.equal(after.writes, before.writes + 1, "one walkers answer must write the layer exactly once: " + (after.writes - before.writes));
+  assert.equal(after.identical, false, "a written layer is new nodes");
+  assert.notEqual(after.walkerAt, before.walkerAt, "the moved body is drawn where the answer put it");
+  assert.equal(after.bodies, before.bodies);
+  assert.deepEqual(errors, [], "the page threw: " + errors.join(" | "));
+});

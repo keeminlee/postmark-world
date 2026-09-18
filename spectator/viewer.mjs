@@ -2167,40 +2167,47 @@ export const MINE_GLYPH_SCALE = 1.35;
  *  face (the picture clipped to the frame, or the monogram on the household's
  *  colour) — exactly the house card's rule: frame far out, picture near. Fixed
  *  where the resident stands, never merged, never re-decided by the camera.
- *  Everything is in marker space (`1/k`) so it stays the same screen size at
- *  any zoom. Carries the handle and the hit disc the walker always wore. Pure. */
+ *  Carries the handle and the hit disc the walker always wore. Pure.
+ *
+ *  AUTHORED IN PAINTING UNITS, SIZED BY THE CAMERA THROUGH `.ov-s` (#2912 (3),
+ *  2026-09-18) — the pips' contract since 08-19 and the house cards' since
+ *  09-10, now the walker's. The glyph is drawn at its k=1 size about (0,0)
+ *  inside a `translate` group (the position, written once with the data) and
+ *  a `.ov-s` group (the scale, one CSS variable the camera sets per frame), so
+ *  a wheel tick changes nothing in this markup: the layer is written when the
+ *  walkers, the ledger, the tier or the drawn box change, and never per frame.
+ *  Before this it took `k` and baked `1/k` into every coordinate, which is why
+ *  the whole layer had to be rebuilt as new DOM on every zoom frame. Your own
+ *  household's bodies are larger through the same `.ov-mine` factor the cards
+ *  use, and the hit disc grows with the frame so the bigger target is bigger
+ *  to the pointer too. */
 export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
-export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false } = {}) {
+export function walkerFrameSVG({ at, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
-  // YOUR OWN HOUSEHOLD'S BODIES ARE DRAWN LARGER, geometry and all, rather than
-  // scaled by CSS: every measurement below is derived from `s`, and a transform
-  // on the group would need an origin that moves with the walker. One factor,
-  // one place, and the hit circle grows with the frame so the bigger target is
-  // actually bigger to the pointer too.
-  const s = (1 / (Number(k) > 0 ? Number(k) : 1)) * (mine ? MINE_GLYPH_SCALE : 1);
   const filled = !!(art && (art.avatar || art.monogram));
-  const size = (filled ? WALKER_FRAME.near : WALKER_FRAME.far) * s;
-  const leg = (filled ? WALKER_FRAME.legNear : WALKER_FRAME.legFar) * s;
-  const r = size / 2, x0 = x - r, y0 = y - r;
+  const size = filled ? WALKER_FRAME.near : WALKER_FRAME.far;
+  const leg = filled ? WALKER_FRAME.legNear : WALKER_FRAME.legFar;
+  const r = size / 2;
   // THE FRAME IS ROUND (founder, 2026-09-11: "make the frame circular rather
   // than square. keep the legs (they're perfect)"). The legs are untouched —
   // same stance, same length — and start where they meet the rim: on a circle
   // of radius r the point 0.22·size off centre lies √(r² − (0.22·size)²) below
   // the middle, a hair above where the square's bottom edge was.
-  const rim = y + Math.sqrt(r * r - (size * 0.22) ** 2);
+  const rim = Math.sqrt(r * r - (size * 0.22) ** 2);
   const who = esc(label ?? handle);
   const safe = String(handle ?? "").toLowerCase().replace(/[^a-z0-9-]/g, "");
   let fill = "";
   if (filled && art.avatar) {
     const clip = `wv-face-${safe}`;
-    fill = `<clipPath id="${clip}"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath>`
-      + `<image href="${esc(art.avatar)}" x="${x0}" y="${y0}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
+    fill = `<clipPath id="${clip}"><circle cx="0" cy="0" r="${r}"/></clipPath>`
+      + `<image href="${esc(art.avatar)}" x="${-r}" y="${-r}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
   } else if (filled) {
-    fill = `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
-      + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
+    fill = `<circle cx="0" cy="0" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
+      + `<text x="0" y="0" class="wv-walker-initial" font-size="13">${esc(art.monogram)}</text>`;
   }
-  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}${threshold ? " at-threshold" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
+  return `<g transform="translate(${x} ${y})"><g class="ov-s${mine ? " ov-mine" : ""}">`
+    + `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}${threshold ? " at-threshold" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
     // WHOSE TOKEN THIS IS, on the hit target itself. It carried no identity
     // because nothing clicked it — the circle existed to take a hover and a
     // title, and `pointer-events: all` meant it also SWALLOWED every click that
@@ -2208,12 +2215,12 @@ export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label =
     // the ground underneath from hearing it — the founder's "I can't even click
     // my own token to walk" (2026-08-29): not an act that failed, an act with
     // nothing behind it and a hole where the fallback was.
-    + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit" data-walker="${esc(handle)}"/>`
+    + `<circle cx="0" cy="0" r="${filled ? 27 : 12}" class="wv-walker-hit" data-walker="${esc(handle)}"/>`
     + fill
-    + `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-frame"/>`
-    + `<line x1="${x - size * 0.22}" y1="${rim}" x2="${x - size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
-    + `<line x1="${x + size * 0.22}" y1="${rim}" x2="${x + size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
-    + `</g>`;
+    + `<circle cx="0" cy="0" r="${r}" class="wv-walker-frame"/>`
+    + `<line x1="${-size * 0.22}" y1="${rim}" x2="${-size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
+    + `<line x1="${size * 0.22}" y1="${rim}" x2="${size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
+    + `</g></g></g>`;
 }
 
 
@@ -3279,14 +3286,21 @@ export const VESSEL_GLYPH_SCALE = 1.6;
 // to one point amidships and stack into a single crowd of faces; a deck beneath
 // that crowd is the true picture of the pile, and it costs the passenger layer
 // nothing — its circles are untouched.
-export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving = false } = {}) {
-  const x = Number(at?.x), y = Number(at?.y), u = Number(unit);
-  if (![x, y].every(Number.isFinite) || !Number.isFinite(u) || u <= 0) return "";
+//
+// SIZED BY THE CAMERA THROUGH `--wv-vu` (#2912 (3)): her `unit` — the marker
+// scale floored at a fraction of the frame, `farGlyphUnit` — moves with every
+// wheel tick, so it is no longer baked into the markup. The hull is authored at
+// her own 60-unit size about (0,0) inside a `translate` group and a
+// `.wv-vessel-s` group whose scale is one CSS variable the camera sets per
+// frame (`applyCameraScale`), the walkers' `.ov-s` contract with her own floor.
+// The mirror rides inside, so the path data stays plain numbers anybody can
+// read off as a drawing.
+export function vesselGlyphSVG({ at, toward = null, label = "", moving = false } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
   const dx = Number(toward?.x) - x;
   const bowLeft = !(moving && Number.isFinite(dx) && dx > 0);
-  // one transform carries both the camera compensation and the mirror, so the
-  // path data below stays plain numbers anybody can read off as a drawing
-  const flip = bowLeft ? "" : " scale(-1,1)";
+  const flip = bowLeft ? "" : ` transform="scale(-1,1)"`;
   const g = [
     `<path d="M -26 12 L 24 12 L 16 24 L -16 24 Z" class="wv-vessel-hull"/>`,
     `<path d="M -26 12 L -20 3" class="wv-vessel-stem"/>`,
@@ -3296,8 +3310,8 @@ export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving
     `<path d="M -32 29 L -12 29 M -4 29 L 20 29 M -24 34 L -6 34 M 4 34 L 26 34" class="wv-vessel-water"/>`,
   ].join("");
   const name = String(label ?? "");
-  return `<g class="wv-vessel${moving ? " moving" : ""}" transform="translate(${x},${y}) scale(${u})${flip}"`
-    + ` role="img" aria-label="${esc(name)}">${g}</g>`;
+  return `<g class="wv-vessel${moving ? " moving" : ""}" transform="translate(${x},${y})"`
+    + ` role="img" aria-label="${esc(name)}"><g class="wv-vessel-s"><g${flip}>${g}</g></g></g>`;
 }
 
 // A PICTURE HUNG ON A PLACE. The mark's own `at` and `extent` decide where the
@@ -5017,6 +5031,10 @@ const STYLE = `
    top of the real change, which is that your parcels draw their card at every
    tier instead of a bead. */
 .ov-s.ov-mine { transform:scale(calc(var(--wv-mk,1) * var(--wv-mine-k, 1.35))); }
+/* THE VESSEL'S OWN SIZE IS A CAMERA FACT TOO (#2912): the marker scale floored
+   at a fraction of the frame (farGlyphUnit), set by the camera on the walk
+   layer once per frame, never rebuilt into her markup. */
+.wv-vessel-s { transform:scale(var(--wv-vu,1)); transform-origin:0 0; }
 /* and your own people, named in the same gold the frame already uses for a
    reader's own body elsewhere */
 .wv-walker-far.is-mine > .wv-walker-frame,
@@ -8138,11 +8156,23 @@ export function mountViewer(appEl) {
     function frameWork() {
       framePending = false;
       const k = applyCameraScale();
-      // The layers whose glyphs are SIZED off k — walkers, conversations — are
-      // redrawn only when k has actually moved, which a pan never does. This is
-      // the whole reason a drag can be free: nothing about it changes their size
-      // or their ground, so nothing about it needs to touch them.
-      if (k !== lastMarkerK) { lastMarkerK = k; drawWalkers(); drawConversations(); }
+      // The layers whose glyphs are SIZED off k — conversations, the armed
+      // walk's preview — are redrawn only when k has actually moved, which a
+      // pan never does. This is the whole reason a drag can be free: nothing
+      // about it changes their size or their ground, so nothing about it needs
+      // to touch them.
+      //
+      // THE WALKERS ARE NOT AMONG THEM ANY MORE (#2912 (3), 2026-09-18). Their
+      // glyphs are authored in painting units and sized through the `.ov-s`
+      // variable applyCameraScale just set, exactly as the pips and the house
+      // cards are — so a wheel tick touches no walker DOM. The layer is written
+      // when its DATA changes: a walkers or present answer, a ledger fetch, the
+      // faces arriving, a found body, an act-as switch, and the settle pass
+      // (drawOverlay) when the camera has crossed a tier or left the drawn box
+      // — the same moment the cards appear. Measured at a 6× CPU throttle
+      // before this: the frame pass's drawWalkers was 605 ms of a district
+      // crossing and the whole of every 150–620 ms tick inside the tier.
+      if (k !== lastMarkerK) { lastMarkerK = k; drawConversations(); drawWalkPreview(); }
       renderMarkHighlight();
       positionBubbles(); // the anchors are on the painting, so they move with it
       noticeTheCameraSettling();
@@ -8768,6 +8798,14 @@ export function mountViewer(appEl) {
     if (!mapCtx?.overlay) return markerScale(mapCtx?.zoomK ?? 1);
     const k = markerScale(mapCtx.zoomK);
     mapCtx.overlay.style.setProperty("--wv-mk", overlayScale(k));
+    // THE WALK LAYER IS SIZED THE SAME WAY (#2912 (3)): the bodies through
+    // `.ov-s`, the vessel through her own floor (see vesselGlyphSVG). Two
+    // properties on one element per frame; no walker markup is touched.
+    if (mapCtx.walkLayer) {
+      mapCtx.walkLayer.style.setProperty("--wv-mk", overlayScale(k));
+      mapCtx.walkLayer.style.setProperty("--wv-vu",
+        String(farGlyphUnit(k, mapCtx.view?.w, VESSEL_MIN_FRAME_FRACTION) * VESSEL_GLYPH_SCALE));
+    }
     return k;
   }
   // ── WHAT THE CAMERA IS LOOKING AT (2026-09-11) ───────────────────────────
@@ -9626,7 +9664,7 @@ export function mountViewer(appEl) {
   // The line runs from where the walker IS to where they are going, not from
   // where they set out: a reader wants the rest of the journey, and the part
   // already walked is behind them.
-  function walkPathsSVG(k) {
+  function walkPathsSVG() {
     if (!mapCtx || !departures.length) return "";
     const handles = state.whoami?.handles ?? [];
     if (!handles.length) return "";
@@ -9657,10 +9695,12 @@ export function mountViewer(appEl) {
 
   function drawWalkers() {
     if (!mapCtx?.walkLayer) return;
-    const k = markerScale(mapCtx.zoomK);
-    // the vessel's own floor against being zoomed away from (see farGlyphUnit):
-    // out at journey width she would otherwise be three pixels of hull
-    const vesselUnit = farGlyphUnit(k, mapCtx.view?.w, VESSEL_MIN_FRAME_FRACTION) * VESSEL_GLYPH_SCALE;
+    // NO CAMERA IN THIS PASS (#2912 (3)). The bodies, the destination rings and
+    // the vessel are authored in painting units and sized through the CSS
+    // variables applyCameraScale sets on the layer per frame — the vessel's own
+    // floor against being zoomed away from (farGlyphUnit) included. What this
+    // pass writes depends on the walkers, the ledger, the record, the tier and
+    // the drawn box, and on nothing the wheel moves.
     // THE RECORD, READ ONCE PER DRAW (#2912, 2026-09-18). One `allMarks()` for
     // the whole pass, and the containment index built once over it and handed
     // to every body's placement — the #2910 hoist made it once per CALL, which
@@ -9704,7 +9744,7 @@ export function mountViewer(appEl) {
     // stands in until one is.
     syncStandpointDot(drawnWalkers, px);
     // under every body, at both tiers: a route is ground, not a person
-    const paths = walkPathsSVG(k);
+    const paths = walkPathsSVG();
     // …then the TIER. At town width a face is eleven pixels of photograph with
     // its own clip path, and the 09-09 record has 1,550 of them; what a reader
     // at that zoom can actually read is WHERE PEOPLE ARE. So beyond the engine's
@@ -9723,7 +9763,7 @@ export function mountViewer(appEl) {
     // is the first thing that would grow, not this.
     if (tier === "far") {
       for (const w of drawnWalkers) {
-        s += walkerFrameSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
+        s += walkerFrameSVG({ at: px(w), handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
           mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle, threshold: !!w.threshold });
       }
       mapCtx.walkLayer.innerHTML = paths + s;
@@ -9762,9 +9802,11 @@ export function mountViewer(appEl) {
         ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
         : walkerPlace(w, draw);
       // the remaining leg, then the walker on top of it — movers only
+      // the leg is a distance and stays true to the ground; the ring at its end
+      // is a marker and rides `.ov-s` like the body (#2912 (3))
       if (moving)
         s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
-             `<circle cx="${dest.x}" cy="${dest.y}" r="${5 / k}" class="wv-walk-dest"/>`;
+             `<g transform="translate(${dest.x} ${dest.y})"><g class="ov-s"><circle cx="0" cy="0" r="5" class="wv-walk-dest"/></g></g>`;
       // A HIT HALO, invisible, three times the dot. The visible walker renders
       // at about 7 CSS pixels — a ~3px radius target, and standing residents now
       // crowd close enough that one dot's centre can sit under its neighbour. So
@@ -9793,14 +9835,14 @@ export function mountViewer(appEl) {
       // Pre-existing, and not a thing to invent a precedence rule for on sailing
       // night — but worth its own pass.
       if (vessels.has(w.handle)) {
-        hulls += vesselGlyphSVG({ at: now, toward: dest, unit: vesselUnit, moving, label: identity });
+        hulls += vesselGlyphSVG({ at: now, toward: dest, moving, label: identity });
         continue;
       }
       // THE FRAME, FILLED (2026-09-11): the same glyph the far tier draws empty,
       // now wearing the face — the picture clipped to the frame, or the monogram
       // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
-      s += walkerFrameSVG({ at: now, k, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
+      s += walkerFrameSVG({ at: now, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
         found: w.handle === walkState.foundHandle, threshold: !!w.threshold,
         art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
