@@ -128,7 +128,12 @@ test("CENSUS: the reader's own body has one stand-in and one owner", () => {
 });
 
 test("CENSUS: the camera is a position for the spectator's dot and nothing else", () => {
-  assert.equal(count("px(state.cam)"), 1, "the overlay's standpoint dot — drawn only while there is no body (POS-93)");
+  // two sites, ONE thing: the overlay sets the dot down, and syncStandpointDot
+  // puts it back when a later draw culls the body it once drew (#2848 (a)).
+  // Both are the standpoint dot — drawn only while no body of the reader's is
+  // DRAWN (POS-93, asked of the drawn set since 2026-09-17). A third site is
+  // something else reading the camera as a body, which is what this counts.
+  assert.equal(count("px(state.cam)"), 2, "the standpoint dot's two sites — the overlay's set-down and the walker pass's put-back — and nothing else");
 });
 
 test("CENSUS: every room roster asks the same containment as bodyPlace", () => {
