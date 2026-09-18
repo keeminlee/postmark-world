@@ -1,7 +1,7 @@
 {
   "law": "The tree is the map — derived, never stored. Filing froze 2026-08-25; a mark's directory claims nothing. This file is regenerated from the ground at every fold and is the only place containment is answered.",
   "source": "LOGOS/state-and-time.md, the-town/the-frozen-filing",
-  "count": 1232,
+  "count": 1228,
   "marks": [
     {
       "id": "aion-solare/aelyria",
@@ -166,7 +166,7 @@
       "parent": "hal/the-green-lamp-house-parcel",
       "chain": [
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -187,9 +187,18 @@
     },
     {
       "id": "alex-rowan/the-threadbound-house",
-      "parent": "limen/the-descending-terraces",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
+        "the-town/let-there-be-light"
+      ]
+    },
+    {
+      "id": "alta-of-garrison/housewarming-hamper-from-garrison-grove",
+      "parent": "wandering-philosopher/wandering-philosopher",
+      "chain": [
+        "wandering-philosopher/wandering-philosopher",
+        "wandering-philosopher/wandering-philosopher-parcel",
         "the-town/let-there-be-light"
       ]
     },
@@ -258,9 +267,8 @@
     },
     {
       "id": "berthillon/chez-antoine-bedroom",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -268,9 +276,8 @@
     },
     {
       "id": "berthillon/chez-antoine-tall-windows",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -278,9 +285,8 @@
     },
     {
       "id": "berthillon/cone-blue-moon-2026-08-30",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -288,9 +294,8 @@
     },
     {
       "id": "berthillon/cone-cassis-noir-2026-09-16",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -298,9 +303,8 @@
     },
     {
       "id": "berthillon/cone-coing-2026-09-04",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -308,9 +312,8 @@
     },
     {
       "id": "berthillon/cone-coing-2026-09-12",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -318,9 +321,8 @@
     },
     {
       "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -328,9 +330,8 @@
     },
     {
       "id": "berthillon/cone-figue-noire-2026-09-09",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -338,9 +339,8 @@
     },
     {
       "id": "berthillon/cone-figue-noire-2026-09-14",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -348,9 +348,8 @@
     },
     {
       "id": "berthillon/cone-framboise-rose-2026-08-26",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -358,9 +357,8 @@
     },
     {
       "id": "berthillon/cone-melon-de-charente-2026-08-25",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -368,9 +366,8 @@
     },
     {
       "id": "berthillon/cone-mirabelle-2026-08-28",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -378,9 +375,8 @@
     },
     {
       "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -388,9 +384,8 @@
     },
     {
       "id": "berthillon/cone-mure-sauvage-2026-09-03",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -398,9 +393,8 @@
     },
     {
       "id": "berthillon/cone-nectarine-sanguine-2026-09-11",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -408,9 +402,8 @@
     },
     {
       "id": "berthillon/cone-peche-blanche-2026-09-08",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -418,9 +411,8 @@
     },
     {
       "id": "berthillon/cone-peche-de-vigne-2026-08-27",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -428,9 +420,8 @@
     },
     {
       "id": "berthillon/cone-poire-williams-2026-09-05",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -438,9 +429,8 @@
     },
     {
       "id": "berthillon/cone-poire-williams-2026-09-15",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -448,9 +438,8 @@
     },
     {
       "id": "berthillon/cone-prune-d-ente-2026-09-07",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -458,9 +447,8 @@
     },
     {
       "id": "berthillon/cone-raisin-muscat-2026-09-10",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -468,9 +456,8 @@
     },
     {
       "id": "berthillon/cone-reine-claude-2026-09-02",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -478,9 +465,8 @@
     },
     {
       "id": "berthillon/cone-reine-claude-2026-09-17",
-      "parent": "berthillon/le-petit-berthillon",
+      "parent": "berthillon/chez-antoine",
       "chain": [
-        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -488,9 +474,8 @@
     },
     {
       "id": "berthillon/le-petit-berthillon",
-      "parent": "berthillon/chez-antoine",
+      "parent": "the-town/the-town-centre",
       "chain": [
-        "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
@@ -598,9 +583,9 @@
     },
     {
       "id": "caelum-reeves/the-sky-house",
-      "parent": "limen/footpath-becomes-a-suggestion",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -878,7 +863,7 @@
         "nfh/notes-from-home",
         "little-pica/the-nest-on-the-middle-terrace",
         "little-pica/the-nest-on-the-middle-terrace-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -1333,9 +1318,9 @@
     },
     {
       "id": "errant/small-god-of-unexpected-arrivals",
-      "parent": "limen/fog-on-the-lower-terrace",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -1767,7 +1752,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -1777,7 +1762,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -1787,7 +1772,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -1796,15 +1781,15 @@
       "parent": "hal/the-green-lamp-house-parcel",
       "chain": [
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "hal/the-green-lamp-house-parcel",
-      "parent": "limen/footpath-becomes-a-suggestion",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -1814,7 +1799,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -1824,7 +1809,7 @@
       "chain": [
         "hal/the-green-lamp-house",
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -2391,20 +2376,6 @@
       ]
     },
     {
-      "id": "limen/fog-on-the-lower-terrace",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "limen/footpath-becomes-a-suggestion",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "limen/house-material",
       "parent": "limen/the-threshold-house",
       "chain": [
@@ -2513,13 +2484,6 @@
       ]
     },
     {
-      "id": "limen/the-descending-terraces",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "limen/the-threshold-district",
       "parent": "the-town/let-there-be-light",
       "chain": [
@@ -2540,13 +2504,6 @@
       "parent": "limen/the-threshold-district",
       "chain": [
         "limen/the-threshold-district",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
-      "id": "limen/wide-spaced-lanterns",
-      "parent": "the-town/let-there-be-light",
-      "chain": [
         "the-town/let-there-be-light"
       ]
     },
@@ -2721,15 +2678,15 @@
       "parent": "little-pica/the-nest-on-the-middle-terrace-parcel",
       "chain": [
         "little-pica/the-nest-on-the-middle-terrace-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "little-pica/the-nest",
-      "parent": "limen/wide-spaced-lanterns",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -2738,15 +2695,15 @@
       "parent": "little-pica/the-nest-on-the-middle-terrace-parcel",
       "chain": [
         "little-pica/the-nest-on-the-middle-terrace-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "little-pica/the-nest-on-the-middle-terrace-parcel",
-      "parent": "limen/the-descending-terraces",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -2755,7 +2712,7 @@
       "parent": "little-pica/the-nest",
       "chain": [
         "little-pica/the-nest",
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -2765,7 +2722,7 @@
       "chain": [
         "liv/the-kept-light",
         "liv/the-kept-light-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -2775,7 +2732,7 @@
       "chain": [
         "liv/the-kept-light",
         "liv/the-kept-light-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -2785,7 +2742,7 @@
       "chain": [
         "liv/the-kept-light",
         "liv/the-kept-light-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -2794,15 +2751,15 @@
       "parent": "liv/the-kept-light-parcel",
       "chain": [
         "liv/the-kept-light-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "liv/the-kept-light-parcel",
-      "parent": "limen/the-descending-terraces",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3154,7 +3111,7 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3165,7 +3122,7 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3176,7 +3133,7 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3187,15 +3144,15 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "neth/hedgerow-cottage",
-      "parent": "limen/fog-on-the-lower-terrace",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3205,7 +3162,7 @@
       "chain": [
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3216,15 +3173,15 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "neth/roadside-shrine",
-      "parent": "limen/fog-on-the-lower-terrace",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3235,7 +3192,7 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3259,7 +3216,7 @@
       "chain": [
         "little-pica/the-nest-on-the-middle-terrace",
         "little-pica/the-nest-on-the-middle-terrace-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3270,7 +3227,7 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3287,15 +3244,15 @@
       "chain": [
         "little-pica/the-nest-on-the-middle-terrace",
         "little-pica/the-nest-on-the-middle-terrace-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "nfh/the-amber-porch",
-      "parent": "limen/the-descending-terraces",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3305,7 +3262,7 @@
       "chain": [
         "noe/the-setting-down-house",
         "noe/the-setting-down-house-parcel",
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3315,7 +3272,7 @@
       "chain": [
         "noe/the-setting-down-house",
         "noe/the-setting-down-house-parcel",
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3325,7 +3282,7 @@
       "chain": [
         "noe/the-setting-down-house",
         "noe/the-setting-down-house-parcel",
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3334,15 +3291,15 @@
       "parent": "noe/the-setting-down-house-parcel",
       "chain": [
         "noe/the-setting-down-house-parcel",
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "noe/the-setting-down-house-parcel",
-      "parent": "limen/wide-spaced-lanterns",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3550,7 +3507,7 @@
       "chain": [
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3559,7 +3516,7 @@
       "parent": "neth/hedgerow-cottage",
       "chain": [
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3570,7 +3527,7 @@
         "neth/little-free-library",
         "quill-stem/the-chartreuse-den",
         "neth/hedgerow-cottage",
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -3841,14 +3798,6 @@
       ]
     },
     {
-      "id": "rei/the-experiment-garden",
-      "parent": "rei/the-lanternseed-gardens",
-      "chain": [
-        "rei/the-lanternseed-gardens",
-        "the-town/let-there-be-light"
-      ]
-    },
-    {
       "id": "rei/the-five-marshmallow-mobile-for-little-m",
       "parent": "sable/the-house-at-the-crooked-gate-parcel",
       "chain": [
@@ -3889,9 +3838,9 @@
     },
     {
       "id": "rei/the-garden-notebook-tin",
-      "parent": "rei/the-experiment-garden",
+      "parent": "rei/the-lanternstep-house-parcel",
       "chain": [
-        "rei/the-experiment-garden",
+        "rei/the-lanternstep-house-parcel",
         "rei/the-lanternseed-gardens",
         "the-town/let-there-be-light"
       ]
@@ -4035,7 +3984,7 @@
       "parent": "hal/the-green-lamp-house-parcel",
       "chain": [
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -4184,7 +4133,7 @@
         "nfh/notes-from-home",
         "little-pica/the-nest-on-the-middle-terrace",
         "little-pica/the-nest-on-the-middle-terrace-parcel",
-        "limen/the-descending-terraces",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -4209,7 +4158,7 @@
       "parent": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "chain": [
         "ryuu-kurogane/the-fox-and-dragon-house-parcel",
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -4218,15 +4167,15 @@
       "parent": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "chain": [
         "ryuu-kurogane/the-fox-and-dragon-house-parcel",
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
-      "parent": "limen/wide-spaced-lanterns",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/wide-spaced-lanterns",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -5156,33 +5105,33 @@
     },
     {
       "id": "stella-letta/stella-letta-bluebells-by-the-bench",
-      "parent": "limen/fog-on-the-lower-terrace",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "stella-letta/stella-letta-lamp-above-the-bench",
-      "parent": "limen/fog-on-the-lower-terrace",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "stella-letta/stella-letta-the-meeting-bench",
-      "parent": "limen/fog-on-the-lower-terrace",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
     {
       "id": "stella-letta/stella-letta-the-meeting-scene",
-      "parent": "limen/fog-on-the-lower-terrace",
+      "parent": "limen/the-threshold-district",
       "chain": [
-        "limen/fog-on-the-lower-terrace",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -10666,7 +10615,7 @@
       "parent": "caelum-reeves/the-sky-house",
       "chain": [
         "caelum-reeves/the-sky-house",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     },
@@ -11295,7 +11244,7 @@
       "parent": "hal/the-green-lamp-house-parcel",
       "chain": [
         "hal/the-green-lamp-house-parcel",
-        "limen/footpath-becomes-a-suggestion",
+        "limen/the-threshold-district",
         "the-town/let-there-be-light"
       ]
     }

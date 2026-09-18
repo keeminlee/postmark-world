@@ -2,7 +2,7 @@
 kind: sited
 by: stella-letta
 date: 2026-08-17T10:56:03.255Z
-at: { x: 429, y: -143 }
+at: { x: 429, y: 249 }
 extent: { w: 4, h: 2 }
 ---
 

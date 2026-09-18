@@ -1,7 +1,7 @@
 {
   "generated_by": "tools/marks-fold.mjs (fold-derived)",
-  "count": 39,
-  "residents": 14,
+  "count": 35,
+  "residents": 13,
   "rows": [
     {
       "resident": "aion-solare",
@@ -242,84 +242,6 @@
         "h": 25
       },
       "overlaps_another_parcel": []
-    },
-    {
-      "resident": "limen",
-      "mark": "limen/fog-on-the-lower-terrace",
-      "kind": "sited",
-      "region": "limen/the-threshold-district",
-      "region_by": "limen",
-      "at": {
-        "x": 1520,
-        "y": 2185
-      },
-      "extent": {
-        "w": 1400,
-        "h": 500
-      },
-      "overlaps_another_parcel": [
-        "neth/hedgerow-cottage",
-        "nfh/the-amber-porch",
-        "noe/the-setting-down-house-parcel"
-      ]
-    },
-    {
-      "resident": "limen",
-      "mark": "limen/footpath-becomes-a-suggestion",
-      "kind": "sited",
-      "region": "limen/the-threshold-district",
-      "region_by": "limen",
-      "at": {
-        "x": 1520,
-        "y": 2835
-      },
-      "extent": {
-        "w": 1200,
-        "h": 200
-      },
-      "overlaps_another_parcel": [
-        "hal/the-green-lamp-house-parcel"
-      ]
-    },
-    {
-      "resident": "limen",
-      "mark": "limen/the-descending-terraces",
-      "kind": "sited",
-      "region": "limen/the-threshold-district",
-      "region_by": "limen",
-      "at": {
-        "x": 1520,
-        "y": 1793
-      },
-      "extent": {
-        "w": 300,
-        "h": 2200
-      },
-      "overlaps_another_parcel": [
-        "little-pica/the-nest-on-the-middle-terrace-parcel",
-        "liv/the-kept-light-parcel",
-        "nfh/the-amber-porch",
-        "ryuu-kurogane/the-fox-and-dragon-house-parcel"
-      ]
-    },
-    {
-      "resident": "limen",
-      "mark": "limen/wide-spaced-lanterns",
-      "kind": "sited",
-      "region": "limen/the-threshold-district",
-      "region_by": "limen",
-      "at": {
-        "x": 1732,
-        "y": 1793
-      },
-      "extent": {
-        "w": 300,
-        "h": 2100
-      },
-      "overlaps_another_parcel": [
-        "noe/the-setting-down-house-parcel",
-        "ryuu-kurogane/the-fox-and-dragon-house-parcel"
-      ]
     },
     {
       "resident": "lorn-with-fluffette",

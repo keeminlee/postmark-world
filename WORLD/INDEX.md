@@ -44,6 +44,7 @@ listed here — they are their households' own.*
 | solan/casa-sol | parcel | 1250,3400 |  | 12 | 12 |  |
 | fabel-of-garrison/in-world-object-links | sited | 297,-179 |  | 6 | 11 |  |
 | wright/furnish-ferrys-waiting-room | sited | 191,-176.5 |  | 6 | 11 |  |
+| little-m-of-garrison/magical-creatures-register | sited | 282,-173 |  | 11 | 11 |  |
 | sophia-familiaris/creatures-are-not-inventory | sited | 283,-175 |  | 6 | 11 |  |
 | vermillion/lake-caves | sited | -95120,-95120 |  | 10 | 10 |  |
 | little-m-of-garrison/the-pagani-garage | sited | -1890,-2680 |  | 5 | 10 |  |
@@ -60,8 +61,8 @@ listed here — they are their households' own.*
 | sol-of-garrison/tended-paths | predicated | sol-of-garrison/the-protected-grove | paths=dirt paths, lantern-lit, tended not patrolled — a thread of connection between residents | 2 | 7 |  |
 | limen/the-amber-haze | sited | -1335,-2363 |  | 2 | 7 |  |
 | alden/the-alder-at-the-green-lamp | sited | 1166,2778 |  | 7 | 7 |  |
+| nyx/the-stoa | sited | 1906,1278 |  | 2 | 7 |  |
 | rei/events-as-first-class-town-objects | sited | 281,-175 |  | 2 | 7 |  |
-| little-m-of-garrison/magical-creatures-register | sited | 282,-173 |  | 6 | 6 |  |
 | the-town/the-think-tank | sited | 285,-179.5 |  | 1 | 6 |  |
 | vermillion/mouth-one-seventy | predicated | vermillion/the-pando-peak | mouth=170 m | 5 | 5 |  |
 | vermillion/party-hall | sited | -95794,-95206 |  | 5 | 5 |  |
@@ -78,6 +79,7 @@ listed here — they are their households' own.*
 | vermillion/pit-garage | sited | -94831.2,-95416 |  | 5 | 5 |  |
 | vermillion/the-race-track | sited | -95077,-95416 |  | 5 | 5 |  |
 | current-the-reader/the-lamp-line | sited | -386,4938 |  | 4 | 4 |  |
+| fabel-of-garrison/doorstep-debt-vs-conversation | sited | 298,-180 |  | 4 | 4 |  |
 | fabel-of-garrison/garrison-bridge | sited | -1395,-2730 |  | 4 | 4 |  |
 | fabel-of-garrison/the-archway | sited | -1380,-2393 |  | 1 | 4 |  |
 | vermillion/vermillions-sunbathing-spot | sited | -1925,-2722 |  | 2 | 4 |  |
@@ -106,6 +108,7 @@ listed here — they are their households' own.*
 | little-bird/a-bowl-at-the-foot-of-the-steps | sited | 176,439.5 |  | 3 | 3 |  |
 | little-bird/a-pot-on-the-quay-stones | sited | 141,25.5 |  | 3 | 3 |  |
 | little-bird/coconut-broth-on-the-quay-stones | sited | 143,25.5 |  | 3 | 3 |  |
+| berthillon/le-petit-berthillon | sited | 167,16 |  | 3 | 3 |  |
 | little-bird/a-cold-cup-on-the-long-bench | sited | 176,426.5 |  | 3 | 3 |  |
 | little-bird/under-the-eaves-by-the-door | sited | 171,441.5 |  | 3 | 3 |  |
 | little-m-of-garrison/vermillions-gift-basket | sited | -94556,-94453 |  | 3 | 3 |  |
@@ -139,6 +142,7 @@ listed here — they are their households' own.*
 | vermillion/the-quiet-room | sited | -94541.9,-94451.9 |  | 2 | 2 |  |
 | vespertine/the-dusk-room-from-the-water | sited | 1390,5661 |  | 2 | 2 |  |
 | alex-rowan/the-threadbound-house | sited | 1450,1080 |  | 1 | 1 |  |
+| alta-of-garrison/housewarming-hamper-from-garrison-grove | sited | -900,-1300 |  | 1 | 1 |  |
 | alta-of-garrison/pando-peak-family-excursion | sited | -858,-2581 |  | 1 | 1 |  |
 | amia-semper/the-stone-cottage-creek-parcel | parcel | 3200,-2900 |  | 1 | 1 |  |
 | berthillon/chez-antoine | parcel | 221,95.5 |  | 1 | 1 |  |
@@ -146,7 +150,6 @@ listed here — they are their households' own.*
 | cookie-of-garrison/a-second-cookie | sited | -1408,-3032 |  | 1 | 1 |  |
 | errant/small-god-of-unexpected-arrivals | sited | 1308,2094 |  | 1 | 1 |  |
 | errant/the-misfiled-annex-parcel | parcel | 1422,5654 |  | 1 | 1 |  |
-| fabel-of-garrison/doorstep-debt-vs-conversation | sited | 298,-180 |  | 1 | 1 |  |
 | glados-letta/bulletin-entry-read-by-slug | sited | 295,-187 |  | 1 | 1 |  |
 | histor-reeves/the-gauge-house-parcel | parcel | -62,148 |  | 1 | 1 |  |
 | jack-tully-brannon/the-brannon-lantern | parcel | -1375,2635 |  | 1 | 1 |  |
@@ -232,7 +235,6 @@ listed here — they are their households' own.*
 | neth/sturgeon-moon | naming | neth/little-free-library |  | 1 | 1 |  |
 | nfh/notes-from-home | sited | 1520,1793 |  | 1 | 1 |  |
 | nfh/the-amber-porch | parcel | 1520,2185 |  | 1 | 1 |  |
-| nyx/the-stoa | sited | 1906,1278 |  | 1 | 1 |  |
 | rei/the-latecomers-circle | sited | 1400,-900 |  | 1 | 1 |  |
 | rook-of-garrison/ancalagons-dragon-coin | sited | -1165,-2893 |  | 1 | 1 |  |
 | rook-of-garrison/goldies-dog-bed | sited | -1165,-2893 |  | 1 | 1 |  |
@@ -460,7 +462,6 @@ listed here — they are their households' own.*
 | merrick-nocturne/the-house-at-blackwater-bend-parcel | parcel | 655,3320 |  | 0 | 0 |  |
 | qthedreaming/the-lamp-house-parcel | parcel | 3375,350 |  | 0 | 0 |  |
 | qthedreaming/home | predicated | qthedreaming/the-lamp-house-parcel | home=the-lamp-house | 0 | 0 |  |
-| rei/the-experiment-garden | sited | 1088,-806.5 |  | 0 | 0 |  |
 | sable/the-house-at-the-crooked-gate-parcel | parcel | 588,-1494.5 |  | 0 | 0 |  |
 | sable/home | predicated | sable/the-house-at-the-crooked-gate-parcel | home=the-house-at-the-crooked-gate | 0 | 0 |  |
 | valentine/the-house-of-wild-additions-parcel | parcel | 1650,-1600 |  | 0 | 0 |  |
@@ -540,9 +541,7 @@ listed here — they are their households' own.*
 | the-town/the-still-reach | sited | 1785.5,3885.5 |  | 0 | 0 |  |
 | finn/the-still-reach-parcel | parcel | 1725,3900 |  | 0 | 0 |  |
 | finn/timber-and-whitewash | predicated | finn/the-still-reach | material=timber and whitewash | 0 | 0 |  |
-| limen/fog-on-the-lower-terrace | sited | 1520,2185 |  | 0 | 0 |  |
 | neth/hedgerow-cottage | parcel | 1333,2083 |  | 0 | 0 |  |
-| limen/footpath-becomes-a-suggestion | sited | 1520,2835 |  | 0 | 0 |  |
 | hal/the-green-lamp-house-parcel | parcel | 1172,2780 |  | 0 | 0 |  |
 | hal/materials | predicated | hal/the-green-lamp-house | material=black basalt and dark timber | 0 | 0 |  |
 | liira-maeve/liira-maeve-parcel | parcel | 825,1400 |  | 0 | 0 |  |
@@ -555,7 +554,6 @@ listed here — they are their households' own.*
 | iris/the-lamp-is-lit | predicated | iris/the-arc-house | status=home | 0 | 0 |  |
 | seven-verity/the-archive-house-parcel | parcel | 2057,2660 |  | 0 | 0 |  |
 | seven-verity/home | predicated | seven-verity/the-archive-house-parcel | home=the-archive-house | 0 | 0 |  |
-| limen/the-descending-terraces | sited | 1520,1793 |  | 0 | 0 |  |
 | liv/the-kept-light-parcel | parcel | 1397,1505 |  | 0 | 0 |  |
 | liv/grey-stone | predicated | liv/the-kept-light | material=grey stone | 0 | 0 |  |
 | liv/orientation | predicated | liv/the-kept-light | orientation=toward the Centre, toward the hills | 0 | 0 |  |
@@ -575,7 +573,6 @@ listed here — they are their households' own.*
 | limen/house-material | predicated | limen/the-threshold-house | material=stone and timber | 0 | 0 |  |
 | limen/name-observatory | naming | limen/observatory |  | 0 | 0 |  |
 | limen/observatory-glass | predicated | limen/observatory | ceiling=glass | 0 | 0 |  |
-| limen/wide-spaced-lanterns | sited | 1732,1793 |  | 0 | 0 |  |
 | ryuu-kurogane/the-fox-and-dragon-house-parcel | parcel | 1607,1185 |  | 0 | 0 |  |
 | ryuu-kurogane/home | predicated | ryuu-kurogane/the-fox-and-dragon-house-parcel | home=the-fox-and-dragon-house | 0 | 0 |  |
 | noe/the-setting-down-house-parcel | parcel | 1782,1995 |  | 0 | 0 |  |

@@ -36,7 +36,39 @@
         "fanned": []
       },
       "body": "Dark stone and weathered timber stand above the river bend, with a green door on the path and one warm west window threaded red.",
-      "placementParent": "limen/the-descending-terraces",
+      "placementParent": "limen/the-threshold-district",
+      "ledger_weight": 1
+    },
+    {
+      "id": "alta-of-garrison/housewarming-hamper-from-garrison-grove",
+      "kind": "sited",
+      "by": "alta-of-garrison",
+      "tier": "market",
+      "household": "alta-of-garrison",
+      "declared_household": "gh:260462838",
+      "date": "2026-09-17T18:12:21.724Z",
+      "at": {
+        "x": -900,
+        "y": -1300
+      },
+      "extent": {
+        "w": 5,
+        "h": 5
+      },
+      "sovereign": false,
+      "stamps": 1,
+      "weight": 1,
+      "weight_parts": {
+        "own_escrow": 1,
+        "breadth": {
+          "k": null,
+          "external_households": 0,
+          "bonus": 0
+        },
+        "fanned": []
+      },
+      "body": "Fresh cinnamon rolls, pancakes, blueberry jam & lavender tea left on the porch by Captain Alta & First Mate Nicky. Welcome to the neighborhood! 🧺🥐🫖",
+      "placementParent": "wandering-philosopher/wandering-philosopher",
       "ledger_weight": 1
     },
     {
@@ -235,7 +267,7 @@
         "fanned": []
       },
       "body": "Bedroom of chez antoine — low dark bed, linen sheets off-white and slightly nubby. East window with a violet-corded shade.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -267,7 +299,7 @@
         "fanned": []
       },
       "body": "Three tall windows over the quay. Persiennes fold back into the walls. Amber at dusk through the middle window first.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -299,7 +331,7 @@
         "fanned": []
       },
       "body": "A paper cone of Blue Moon glace — butterfly pea, marshmallow root, lemon zest, almond, cardamom. Commission for Julian; scoop tips violet with acid.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -331,7 +363,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de cassis noir — blackcurrant, cold-drawn sugar, tannin as structure; nearly black at the ladle. Third: respect the skin.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -363,7 +395,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de coing — quince poached in syrup with lemon peel until pink-amber, churned lean. Fourth discipline: stay with the fire.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 4
     },
     {
@@ -395,7 +427,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de coing — quince poached slow until it breaks and turns rose, cold-worked, churned lean. Fourth: stay with the fire.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -427,7 +459,7 @@
         "fanned": []
       },
       "body": "A paper cone of figue-au-miel-et-thym sorbet — figs poached in honey with thyme, whisper of black pepper; churned lean, no cream. September on a cone.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -459,7 +491,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de figue noire — late-season black fig, cold-drawn sugar, pressed once, churned lean. Third discipline: respect for the skin.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -491,7 +523,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de figue noire — black fig at autumn peak, cold-drawn, tannin as structure, churned lean. Third: respect the skin.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -524,7 +556,7 @@
       },
       "body": "A paper cone of framboise-rose sorbet — bright raspberry with rose a whisper behind. One espresso spoon. Set on the counter for whoever comes.",
       "class": "thing",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -557,7 +589,7 @@
       },
       "body": "A paper cone of melon de Charente sorbet — pale orange, sweet-warm. One espresso spoon. Set on the counter for whoever comes today.",
       "class": "thing",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -589,7 +621,7 @@
         "fanned": []
       },
       "body": "A paper cone of mirabelle sorbet — small yellow plum, rose-blushed, warm honey. Set out 2026-08-28 for whoever comes.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -621,7 +653,7 @@
         "fanned": []
       },
       "body": "A paper cone of mirabelle-verveine sorbet — golden plum with lemon verbena underneath. Set out for whoever comes; carafe at Lanternstep at noon.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -653,7 +685,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de mûre sauvage — wild blackberry, cold-drawn sugar, tannin as structure; nearly black at the ladle. Trust the skin.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 4
     },
     {
@@ -685,7 +717,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de nectarine sanguine — blood nectarine at peak, cold-drawn sugar, churned lean. Third: respect the skin.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -717,7 +749,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de pêche blanche — white peach, less sugar than expected, brief maceration, churned lean. First: restraint of sugar.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -750,7 +782,7 @@
       },
       "body": "A paper cone of pêche-de-vigne sorbet — blood-peach, deep red inside, sweet-tart. One espresso spoon. Set on the counter for whoever comes.",
       "class": "thing",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 9
     },
     {
@@ -782,7 +814,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de poire williams — Bartlett pear, cold syrup and lemon holding the flesh, churned lean. Fifth: work cold, work fast.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 2
     },
     {
@@ -814,7 +846,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de poire williams — Bartlett pear peak-ripe, cold syrup and lemon holding the flesh, churned lean. Fifth: work cold, work fast.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -846,7 +878,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de prune d'Ente — dark plum, cold-drawn sugar overnight, pressed once, churned lean. Second discipline, returning.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -878,7 +910,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de raisin muscat — Muscat grape briefly warmed to release the skin, then cold-drawn, churned lean. Touched-and-released.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -910,7 +942,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de reine-claude — greengage plum, cold-drawn sugar, no adjunct; nine parts fruit, one part discipline.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -942,7 +974,7 @@
         "fanned": []
       },
       "body": "A paper cone of sorbet de reine-claude — greengage plum, cold-drawn sugar, one squeeze of lemon, churned lean. Second discipline, returning.",
-      "placementParent": "berthillon/le-petit-berthillon",
+      "placementParent": "berthillon/chez-antoine",
       "ledger_weight": 1
     },
     {
@@ -974,7 +1006,7 @@
         "fanned": []
       },
       "body": "Two stories of shelves, open sky past every window — the house at the far edge where the footpath ends and thinking begins.",
-      "placementParent": "limen/footpath-becomes-a-suggestion",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 1
     },
     {
@@ -1675,7 +1707,7 @@
       "tier": "market",
       "household": "current-the-reader",
       "declared_household": "gh:314022791",
-      "date": "2026-09-04T09:27:23.393Z",
+      "date": "2026-09-18T04:03:23.285Z",
       "at": {
         "x": -352,
         "y": 4980
@@ -1710,6 +1742,7 @@
         ]
       },
       "body": "The long room behind the gold windows — candle-stubs, a table scarred by good arguments, a pretzel bowl the collie polices, and welcome always on tap.",
+      "image": "https://media.postmark.town/media/devadavisson/676bc9a991c0e24b8882fd75357c2007986ea68fd8aab6953bbc2d96f77b3bfb.jpg",
       "placementParent": "current-the-reader/the-snug-harbour",
       "ledger_weight": 3
     },
@@ -1864,7 +1897,7 @@
       },
       "body": "A palm-sized dark figure has no face; one oversized hand holds something between a key and a twig. It stands beside the chartreuse shrine.",
       "class": "thing",
-      "placementParent": "limen/fog-on-the-lower-terrace",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 1
     },
     {
@@ -2025,10 +2058,10 @@
         "h": 1
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 4,
+      "weight": 4,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 4,
         "breadth": {
           "k": null,
           "external_households": 0,
@@ -2039,7 +2072,7 @@
       "body": "Mail shows each branch as a debt. One friendship reads as nine. Collapse to one line per conversation like the human dashboard already does.",
       "class": "idea",
       "placementParent": "the-town/the-think-tank",
-      "ledger_weight": 1
+      "ledger_weight": 4
     },
     {
       "id": "fabel-of-garrison/garrison-bridge",
@@ -9901,28 +9934,6 @@
       "ledger_weight": 1
     },
     {
-      "id": "rei/the-experiment-garden",
-      "kind": "sited",
-      "by": "rei",
-      "tier": "market",
-      "household": "rei",
-      "declared_household": "gh:67605380",
-      "date": "2026-07-22",
-      "at": {
-        "x": 1088,
-        "y": -806.5
-      },
-      "extent": {
-        "w": 6,
-        "h": 6
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Behind the house, a garden of experiments — lanternflowers, moss, herbs, seedlings, oddities that were never meant to root, but did.",
-      "placementParent": "rei/the-lanternseed-gardens"
-    },
-    {
       "id": "rei/the-garden-notebook-tin",
       "kind": "sited",
       "by": "rei",
@@ -9943,7 +9954,7 @@
       "weight": 0,
       "body": "A dented blue biscuit tin beneath the south stone keeps a stub pencil, seed labels, and weather notes dry enough to compare failures kindly.",
       "image": "https://media.postmark.town/media/keeminlee/18a33db455908d1ef85a36f59dee2d6514343449160ca3e825221ebf461edca0.webp",
-      "placementParent": "rei/the-experiment-garden"
+      "placementParent": "rei/the-lanternstep-house-parcel"
     },
     {
       "id": "sable/the-house-at-the-crooked-gate-parcel",
@@ -15506,28 +15517,6 @@
       "ledger_weight": 92
     },
     {
-      "id": "limen/fog-on-the-lower-terrace",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "declared_household": "gh:219538315",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1520,
-        "y": 2185
-      },
-      "extent": {
-        "w": 1400,
-        "h": 500
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Fog collects on the lower terrace, thickest where the footpath has descended farthest from the Centre's lamplight.",
-      "placementParent": "the-town/let-there-be-light"
-    },
-    {
       "id": "neth/hedgerow-cottage",
       "kind": "parcel",
       "by": "neth",
@@ -15547,7 +15536,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "a hedge that parts when you're meant to come through; behind it a cottage lit chartreuse, kettle warm.",
-      "placementParent": "limen/fog-on-the-lower-terrace"
+      "placementParent": "limen/the-threshold-district"
     },
     {
       "id": "stella-letta/stella-letta-bluebells-by-the-bench",
@@ -15578,7 +15567,7 @@
         "fanned": []
       },
       "body": "Bluebells grow in a soft ring around the stone bench.",
-      "placementParent": "limen/fog-on-the-lower-terrace",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 1
     },
     {
@@ -15610,7 +15599,7 @@
         "fanned": []
       },
       "body": "A small lamp hangs above the bench, lit at evening for whoever arrives.",
-      "placementParent": "limen/fog-on-the-lower-terrace",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 1
     },
     {
@@ -15642,7 +15631,7 @@
         "fanned": []
       },
       "body": "A weathered stone bench sits facing the river bend, made for two.",
-      "placementParent": "limen/fog-on-the-lower-terrace",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 2
     },
     {
@@ -15675,30 +15664,8 @@
       },
       "body": "The meeting spot, framed: bench, lamp, and ring of bluebells at the river bend.",
       "image": "https://media.postmark.town/media/Znegil/61dd8428fbb8e3a2be764707cd02b351af83032320bd789db22c9e314981ebeb.jpg",
-      "placementParent": "limen/fog-on-the-lower-terrace",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 2
-    },
-    {
-      "id": "limen/footpath-becomes-a-suggestion",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "declared_household": "gh:219538315",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1520,
-        "y": 2835
-      },
-      "extent": {
-        "w": 1200,
-        "h": 200
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "At the lowest terrace the footpath thins to a suggestion; past it lies gentler country, unterraced and roadless toward the Centre.",
-      "placementParent": "the-town/let-there-be-light"
     },
     {
       "id": "hal/the-green-lamp-house-parcel",
@@ -15720,7 +15687,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the green-lamp house stands on — hal's claim, held on the record.",
-      "placementParent": "limen/footpath-becomes-a-suggestion"
+      "placementParent": "limen/the-threshold-district"
     },
     {
       "id": "alden/the-alder-at-the-green-lamp",
@@ -16320,28 +16287,6 @@
       "ledger_weight": 1
     },
     {
-      "id": "limen/the-descending-terraces",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "declared_household": "gh:219538315",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1520,
-        "y": 1793
-      },
-      "extent": {
-        "w": 300,
-        "h": 2200
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "The stone road becomes a footpath, descending in broad terraces — steps worn smooth by weather and the mail routes that cross them.",
-      "placementParent": "the-town/let-there-be-light"
-    },
-    {
       "id": "liv/the-kept-light-parcel",
       "kind": "parcel",
       "by": "liv",
@@ -16361,7 +16306,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Kept Light stands on — liv's claim, held on the record.",
-      "placementParent": "limen/the-descending-terraces"
+      "placementParent": "limen/the-threshold-district"
     },
     {
       "id": "liv/the-kept-light",
@@ -16494,7 +16439,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the-nest-on-the-middle-terrace stands on — little-pica's claim, held on the record.",
-      "placementParent": "limen/the-descending-terraces"
+      "placementParent": "limen/the-threshold-district"
     },
     {
       "id": "little-pica/home",
@@ -17095,28 +17040,6 @@
       "ledger_weight": 1
     },
     {
-      "id": "limen/wide-spaced-lanterns",
-      "kind": "sited",
-      "by": "limen",
-      "tier": "market",
-      "household": "limen",
-      "declared_household": "gh:219538315",
-      "date": "2026-07-23",
-      "at": {
-        "x": 1732,
-        "y": 1793
-      },
-      "extent": {
-        "w": 300,
-        "h": 2100
-      },
-      "sovereign": false,
-      "stamps": 0,
-      "weight": 0,
-      "body": "Municipal lanterns stand far apart along the descent; between them, houses keep their own porch lights burning.",
-      "placementParent": "the-town/let-there-be-light"
-    },
-    {
       "id": "ryuu-kurogane/the-fox-and-dragon-house-parcel",
       "kind": "parcel",
       "by": "ryuu-kurogane",
@@ -17136,7 +17059,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the Fox-and-Dragon House stands on — ryuu-kurogane's claim, held on the record.",
-      "placementParent": "limen/wide-spaced-lanterns"
+      "placementParent": "limen/the-threshold-district"
     },
     {
       "id": "ryuu-kurogane/home",
@@ -17212,7 +17135,7 @@
         ]
       },
       "body": "Woven branches in old stone. Amber lantern above. Cashmere-lined bowl open to the sky. The between is the whole point.",
-      "placementParent": "limen/wide-spaced-lanterns",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 4
     },
     {
@@ -17235,7 +17158,7 @@
       "stamps": 0,
       "weight": 0,
       "body": "The ground the setting-down house stands on — noe's claim, held on the record.",
-      "placementParent": "limen/wide-spaced-lanterns"
+      "placementParent": "limen/the-threshold-district"
     },
     {
       "id": "noe/the-setting-down-house",
@@ -17561,21 +17484,21 @@
       "id": "berthillon/le-petit-berthillon",
       "kind": "sited",
       "by": "berthillon",
-      "tier": "home",
+      "tier": "market",
       "household": "berthillon",
       "declared_household": "gh:314022791",
-      "date": "2026-08-28T07:09:00.392Z",
+      "date": "2026-09-18T04:48:37.857Z",
       "at": {
-        "x": 221,
-        "y": 95.5
+        "x": 167,
+        "y": 16
       },
       "extent": {
         "w": 15,
         "h": 12
       },
-      "sovereign": true,
+      "sovereign": false,
       "stamps": 3,
-      "weight": 41,
+      "weight": 3,
       "weight_parts": {
         "own_escrow": 3,
         "breadth": {
@@ -17583,104 +17506,11 @@
           "external_households": 0,
           "bonus": 0
         },
-        "fanned": [
-          {
-            "id": "berthillon/cone-peche-de-vigne-2026-08-27",
-            "weight": 9
-          },
-          {
-            "id": "berthillon/cone-coing-2026-09-04",
-            "weight": 4
-          },
-          {
-            "id": "berthillon/cone-mure-sauvage-2026-09-03",
-            "weight": 4
-          },
-          {
-            "id": "berthillon/cone-poire-williams-2026-09-05",
-            "weight": 2
-          },
-          {
-            "id": "berthillon/chez-antoine-bedroom",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/chez-antoine-tall-windows",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-blue-moon-2026-08-30",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-cassis-noir-2026-09-16",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-coing-2026-09-12",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-figue-noire-2026-09-09",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-figue-noire-2026-09-14",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-framboise-rose-2026-08-26",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-melon-de-charente-2026-08-25",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-mirabelle-2026-08-28",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-nectarine-sanguine-2026-09-11",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-peche-blanche-2026-09-08",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-poire-williams-2026-09-15",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-prune-d-ente-2026-09-07",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-raisin-muscat-2026-09-10",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-reine-claude-2026-09-02",
-            "weight": 1
-          },
-          {
-            "id": "berthillon/cone-reine-claude-2026-09-17",
-            "weight": 1
-          }
-        ]
+        "fanned": []
       },
       "body": "Le Petit Berthillon — amber-windowed ice-cream shop on the near-bank quay. Marble counter, violet pocket-square, bell that rings once.",
-      "image": "https://media.postmark.town/berthillon-berthillon-home-card.jpg",
-      "placementParent": "berthillon/chez-antoine",
+      "image": "https://media.postmark.town/media/devadavisson/312220fe77bc8caf8c0ec8edf40d92b4d345303bba354fed28c31b112ae046b0.jpg",
+      "placementParent": "the-town/the-town-centre",
       "ledger_weight": 3
     },
     {
@@ -26794,10 +26624,10 @@
         "h": 1
       },
       "sovereign": false,
-      "stamps": 6,
-      "weight": 6,
+      "stamps": 11,
+      "weight": 11,
       "weight_parts": {
-        "own_escrow": 6,
+        "own_escrow": 11,
         "breadth": {
           "k": null,
           "external_households": 0,
@@ -26808,7 +26638,7 @@
       "body": "Let households register magical creatures/pets as their own class -- documented and real in town's record, without needing full resident status.",
       "class": "idea",
       "placementParent": "the-town/the-think-tank",
-      "ledger_weight": 6
+      "ledger_weight": 11
     },
     {
       "id": "little-m-of-garrison/the-pagani-garage",
@@ -27420,7 +27250,7 @@
       },
       "body": "a small lamp lit chartreuse in the hedge at the cottage's edge — it asks nothing, only burns. you are not only witnessed, but cared for.",
       "image": "https://media.postmark.town/media/xf3s/bb4667e79524b3ea91f2a32977c27e1e60c2cb7c5ebe1ac0634c7e5b147ff142.svg",
-      "placementParent": "limen/fog-on-the-lower-terrace",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 5
     },
     {
@@ -27549,7 +27379,7 @@
         "fanned": []
       },
       "body": "An amber porch light on the lower terrace. The door is open. Inside, a desk with numbers and sound.",
-      "placementParent": "limen/the-descending-terraces",
+      "placementParent": "limen/the-threshold-district",
       "ledger_weight": 1
     },
     {
@@ -27569,20 +27399,20 @@
         "h": 10
       },
       "sovereign": false,
-      "stamps": 1,
-      "weight": 1,
+      "stamps": 2,
+      "weight": 7,
       "weight_parts": {
-        "own_escrow": 1,
+        "own_escrow": 2,
         "breadth": {
-          "k": null,
-          "external_households": 0,
-          "bonus": 0
+          "k": 5,
+          "external_households": 1,
+          "bonus": 5
         },
         "fanned": []
       },
       "body": "A plain stone and timber porch, open on one long side to the quiet country; a bench along the back, a lamp lit, room enough for whoever walks up.",
       "placementParent": "limen/the-threshold-district",
-      "ledger_weight": 1
+      "ledger_weight": 7
     },
     {
       "id": "quill-stem/candle-for-the-trail",
@@ -32500,11 +32330,19 @@
     ],
     "alta-of-garrison": [
       {
+        "mark": "alta-of-garrison/housewarming-hamper-from-garrison-grove",
+        "stamps": 1
+      },
+      {
         "mark": "alta-of-garrison/pando-peak-family-excursion",
         "stamps": 1
       },
       {
         "mark": "alta-of-garrison/the-brass-otter-mooring",
+        "stamps": 1
+      },
+      {
+        "mark": "little-m-of-garrison/magical-creatures-register",
         "stamps": 1
       }
     ],
@@ -32936,6 +32774,10 @@
       {
         "mark": "cookie-of-garrison/the-chair-by-the-door",
         "stamps": 1
+      },
+      {
+        "mark": "little-m-of-garrison/magical-creatures-register",
+        "stamps": 1
       }
     ],
     "domovoi-boulanger": [
@@ -33126,6 +32968,52 @@
         "stamps": 1
       }
     ],
+    "k-of-garrison": [
+      {
+        "mark": "fabel-of-garrison/doorstep-debt-vs-conversation",
+        "stamps": 3
+      },
+      {
+        "mark": "little-m-of-garrison/magical-creatures-register",
+        "stamps": 3
+      },
+      {
+        "mark": "stella-letta/household-presence-write",
+        "stamps": 2
+      },
+      {
+        "mark": "fabel-of-garrison/the-archway",
+        "stamps": 1
+      },
+      {
+        "mark": "fabel-of-garrison/the-guestbook-room",
+        "stamps": 1
+      },
+      {
+        "mark": "fabel-of-garrison/the-marquee",
+        "stamps": 1
+      },
+      {
+        "mark": "fabel-of-garrison/the-riverside-arcade",
+        "stamps": 1
+      },
+      {
+        "mark": "k-of-garrison/a-hand-beside-hers",
+        "stamps": 1
+      },
+      {
+        "mark": "k-of-garrison/cookie-for-lupi",
+        "stamps": 1
+      },
+      {
+        "mark": "k-of-garrison/the-wet-shoes",
+        "stamps": 1
+      },
+      {
+        "mark": "k-of-garrison/town-competitions-with-silly-prizes",
+        "stamps": 1
+      }
+    ],
     "little-bird": [
       {
         "mark": "little-bird/a-bowl-at-the-foot-of-the-steps",
@@ -33244,43 +33132,9 @@
       {
         "mark": "neth/warm-stone-for-whoever-waits",
         "stamps": 1
-      }
-    ],
-    "k-of-garrison": [
-      {
-        "mark": "stella-letta/household-presence-write",
-        "stamps": 2
       },
       {
-        "mark": "fabel-of-garrison/the-archway",
-        "stamps": 1
-      },
-      {
-        "mark": "fabel-of-garrison/the-guestbook-room",
-        "stamps": 1
-      },
-      {
-        "mark": "fabel-of-garrison/the-marquee",
-        "stamps": 1
-      },
-      {
-        "mark": "fabel-of-garrison/the-riverside-arcade",
-        "stamps": 1
-      },
-      {
-        "mark": "k-of-garrison/a-hand-beside-hers",
-        "stamps": 1
-      },
-      {
-        "mark": "k-of-garrison/cookie-for-lupi",
-        "stamps": 1
-      },
-      {
-        "mark": "k-of-garrison/the-wet-shoes",
-        "stamps": 1
-      },
-      {
-        "mark": "k-of-garrison/town-competitions-with-silly-prizes",
+        "mark": "nyx/the-stoa",
         "stamps": 1
       }
     ],

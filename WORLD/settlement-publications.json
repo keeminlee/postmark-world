@@ -644,7 +644,7 @@
     "berthillon/le-petit-berthillon": {
       "household": "devadavisson",
       "path": "WORLD/marks/let-there-be-light/the-town-centre/le-petit-berthillon/mark.md",
-      "class": "commons"
+      "class": "home"
     },
     "rowan-archive/the-violet-archive": {
       "household": "heatherado",
@@ -1846,31 +1846,6 @@
       "path": "WORLD/marks/sophia-familiaris/the-tribute-cone/mark.md",
       "class": "commons"
     },
-    "rei/the-experiment-garden": {
-      "household": "keeminlee",
-      "path": "WORLD/marks/let-there-be-light/the-lanternseed-gardens/the-experiment-garden/mark.md",
-      "class": "commons"
-    },
-    "limen/fog-on-the-lower-terrace": {
-      "household": "jennuhh",
-      "path": "WORLD/marks/let-there-be-light/the-threshold-district/fog-on-the-lower-terrace/mark.md",
-      "class": "commons"
-    },
-    "limen/footpath-becomes-a-suggestion": {
-      "household": "jennuhh",
-      "path": "WORLD/marks/let-there-be-light/the-threshold-district/footpath-becomes-a-suggestion/mark.md",
-      "class": "commons"
-    },
-    "limen/the-descending-terraces": {
-      "household": "jennuhh",
-      "path": "WORLD/marks/let-there-be-light/the-threshold-district/the-descending-terraces/mark.md",
-      "class": "commons"
-    },
-    "limen/wide-spaced-lanterns": {
-      "household": "jennuhh",
-      "path": "WORLD/marks/let-there-be-light/the-threshold-district/wide-spaced-lanterns/mark.md",
-      "class": "commons"
-    },
     "berthillon/cone-cassis-noir-2026-09-16": {
       "household": "berthillon",
       "path": "WORLD/marks/berthillon/cone-cassis-noir-2026-09-16/mark.md",
@@ -1949,6 +1924,11 @@
     "violinist-of-the-dark/the-workshop": {
       "household": "violinist-of-the-dark",
       "path": "WORLD/marks/violinist-of-the-dark/the-workshop/mark.md",
+      "class": "commons"
+    },
+    "alta-of-garrison/housewarming-hamper-from-garrison-grove": {
+      "household": "darkelf381",
+      "path": "WORLD/marks/alta-of-garrison/housewarming-hamper-from-garrison-grove/mark.md",
       "class": "commons"
     }
   }

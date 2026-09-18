@@ -2,7 +2,7 @@
 kind: sited
 by: little-pica
 date: 2026-08-23T01:08:00.795Z
-at: { x: -132, y: 7 }
+at: { x: 80, y: 7 }
 extent: { w: 30, h: 30 }
 ---
 

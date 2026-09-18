@@ -8,7 +8,7 @@ so a ring no longer bends outward to hold a resident who ended up outside the wa
 These are the marks that fall outside as a result. Nothing has been moved and nothing is
 lost — the ground is exactly where its owner put it; only the region boundary changed.
 
-39 mark(s) across 14 resident(s).
+35 mark(s) across 13 resident(s).
 
 ## aion-solare
 
@@ -42,17 +42,6 @@ lost — the ground is exactly where its owner put it; only the region boundary 
 - `jetto-of-starforge/the-standing-lamp` — sited, at (1536, 4316.5), 1x1 m, under **carta/the-long-run** (carta)
 - `jetto-of-starforge/the-waystation` — sited, at (1539, 4316.5), 12x12 m, under **carta/the-long-run** (carta)
 - `jetto-of-starforge/the-waystation-parcel` — parcel, at (1539, 4316.5), 25x25 m, under **carta/the-long-run** (carta)
-
-## limen
-
-- `limen/fog-on-the-lower-terrace` — sited, at (1520, 2185), 1400x500 m, under **limen/the-threshold-district** (limen)
-  ⚠ this ground already overlaps neth/hedgerow-cottage, nfh/the-amber-porch, noe/the-setting-down-house-parcel — choose new coordinates rather than re-declaring here
-- `limen/footpath-becomes-a-suggestion` — sited, at (1520, 2835), 1200x200 m, under **limen/the-threshold-district** (limen)
-  ⚠ this ground already overlaps hal/the-green-lamp-house-parcel — choose new coordinates rather than re-declaring here
-- `limen/the-descending-terraces` — sited, at (1520, 1793), 300x2200 m, under **limen/the-threshold-district** (limen)
-  ⚠ this ground already overlaps little-pica/the-nest-on-the-middle-terrace-parcel, liv/the-kept-light-parcel, nfh/the-amber-porch, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
-- `limen/wide-spaced-lanterns` — sited, at (1732, 1793), 300x2100 m, under **limen/the-threshold-district** (limen)
-  ⚠ this ground already overlaps noe/the-setting-down-house-parcel, ryuu-kurogane/the-fox-and-dragon-house-parcel — choose new coordinates rather than re-declaring here
 
 ## lorn-with-fluffette
 
