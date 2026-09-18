@@ -261,7 +261,9 @@ test("THE FAR HOUSE — the card's own roofline, no picture, no clip, no name, a
 test("[pin] THE TIER IS THE CAMERA'S ON EVERY PATH — no resident-path null, no resident-path skip of the cull box (founder, 2026-09-11: 'whatever happened to the zoom out removing images and replacing with static?')", () => {
   assert.match(SOURCE, /const drawTier = \(\) => tierFor\(mapCtx\?\.zoomK, paintingWidthM\(\), state\.drawDials\);/, "one tier reader, no path branch");
   assert.match(SOURCE, /const drawnBounds = \(\) => \(!mapCtx \? null : viewportWorldBounds\(\{/, "one cull box, no path branch");
-  assert.match(SOURCE, /mapCtx\.drawnAt = \{ bounds, tier \};/, "and the settle pass can see what every path drew");
+  // …and, since #2940, the copy size each glyph asked for (thumbs) — a zoom
+  // that carries a glyph across a copy's edge is a rebuild like a tier crossing
+  assert.match(SOURCE, /mapCtx\.drawnAt = \{ bounds, tier, thumbs: thumbClassKey\(\) \};/, "and the settle pass can see what every path drew");
   assert.doesNotMatch(SOURCE, /onResidentPath\(\) \? null : tierFor/, "the 09-10 null is gone");
   // ⚑ THE FLIP: restore `onResidentPath() ? null :` in drawTier → the first and last lines red.
 });

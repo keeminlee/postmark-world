@@ -2094,7 +2094,7 @@ export function homeFaceSVG({ w, h, roof } = HOME_CARD) {
   return `<rect x="${r(x0)}" y="${r(y0)}" width="${envW}" height="${envH}" rx="2" class="ov-home-envelope"/>`
     + `<path d="M ${r(x0 + inx)} ${r(y0 + iny)} L 0 ${r(y0 + deep)} L ${r(x0 + envW - inx)} ${r(y0 + iny)}" class="ov-home-flap"/>`;
 }
-export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = false, fan = null, title = null, classes = "", mine = false } = {}) {
+export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = false, fan = null, title = null, classes = "", mine = false, thumb = null } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
   const { w, h, roof } = HOME_CARD;
@@ -2104,9 +2104,12 @@ export function overlayHomeCardSVG({ at, id, label = "", image = null, lit = fal
   // a clip id must be unique per card and safe: built from the id's own
   // handle-shaped characters only, never the raw string
   const clip = `wv-home-${String(id ?? "").toLowerCase().replace(/[^a-z0-9-]+/g, "-")}`;
+  // the picture at the size it is drawn (#2940): `thumb` is the copy the
+  // caller measured for — 256 for most cards, 96 for a small one, null for the
+  // original — see thumbHref
   const art = image
     ? `<clipPath id="${clip}"><path d="${d}"/></clipPath>`
-      + `<image href="${esc(image)}" x="${x0}" y="${top}" width="${w}" height="${h + roof}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
+      + `<image ${thumbImageAttrs(image, thumb)} x="${x0}" y="${top}" width="${w}" height="${h + roof}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})"/>`
     : `<path d="${d}" class="ov-home-blank"/>${homeFaceSVG()}`;
   return `<g transform="translate(${x} ${y})"><g class="ov-s${mine ? " ov-mine" : ""}">`
     + `<g class="ov-home${lit ? " lit" : ""}${image ? "" : " no-art"}" data-id="${esc(id)}" transform="translate(${dx} ${dy})">`
@@ -2199,7 +2202,7 @@ export const MINE_GLYPH_SCALE = 1.35;
  *  use, and the hit disc grows with the frame so the bigger target is bigger
  *  to the pointer too. */
 export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
-export function walkerFrameSVG({ at, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false } = {}) {
+export function walkerFrameSVG({ at, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false, thumb = null } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
   const filled = !!(art && (art.avatar || art.monogram));
@@ -2217,8 +2220,10 @@ export function walkerFrameSVG({ at, handle = "", moving = false, label = null, 
   let fill = "";
   if (filled && art.avatar) {
     const clip = `wv-face-${safe}`;
+    // the face at the size it is drawn (#2940): `thumb` is the copy the caller
+    // measured for — 96, 256 or null for the original — see thumbHref
     fill = `<clipPath id="${clip}"><circle cx="0" cy="0" r="${r}"/></clipPath>`
-      + `<image href="${esc(art.avatar)}" x="${-r}" y="${-r}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
+      + `<image ${thumbImageAttrs(art.avatar, thumb)} x="${-r}" y="${-r}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
   } else if (filled) {
     fill = `<circle cx="0" cy="0" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
       + `<text x="0" y="0" class="wv-walker-initial" font-size="13">${esc(art.monogram)}</text>`;
@@ -3173,6 +3178,119 @@ export function safeAvatarUrl(url) {
   if (!AVATAR_PATH.test(s)) return null;   // covers //host, http:, javascript:, data:, ?query, #frag
   if (s.includes("..")) return null;       // no climbing out of /media
   return s;
+}
+
+// ── THE VIEWER ASKS FOR THE SIZE IT DRAWS (postmark#2940, Keemin 2026-09-18) ──
+//
+// "Isn't the rasterization just generally a good practice from a common sense
+// standpoint considering images are rendered really small the majority of the
+// time?" The map drew every home card (~120 px on screen) and every face
+// (~50 px) from the resident's ORIGINAL upload — median 1.1 megapixels, 363 MB
+// decoded for the town's 83 raster home pictures if every one is in view. The
+// media door now puts two small copies beside each raster original it holds
+// (postmark-office src/media.mjs § the small copies), at names this file can
+// DERIVE from the original's url:
+//
+//   …/<sha>-96.<ext>    96×96, the square this file's circle clips a face to
+//   …/<sha>-256.<ext>   256×286, the home card's own shape (HOME_CARD 52:58)
+//
+// and this file asks for the one that COVERS what it is about to draw. THE
+// SIZE FOLLOWS THE DRAWN SIZE, never a fixed pick (Keemin, 10:2x: would it
+// look pixelated when a reader zooms in? — yes, unless the copy follows the
+// size; so it follows the size): the glyph's authored units × the pane's
+// pixels per painting unit ÷ the marker counter-scale × the device's pixel
+// ratio is the box the picture will occupy in DEVICE pixels, and the smallest
+// copy that covers that box is the one asked for — none, when the box is
+// bigger than both, and the original is drawn as before. A copy is asked for
+// ONLY on the door's own grammar (a sha-named object on the media route); the
+// site's own /media/<handle>-avatar-card.jpg faces and every other href pass
+// through untouched, so nothing is ever asked for that nobody minted.
+//
+// THE FALLBACK IS AN ERROR EVENT, NOT A MANIFEST. When a copy is not there —
+// an original older than the backfill, a copy the box could not cut — the
+// <image> fires `error`, and armThumbFallback (a capturing listener on the
+// layer, since `error` does not bubble) swaps the href for the original the
+// element carries in `data-orig` and remembers the miss, so the next draw
+// writes the original directly. Measured against the alternative: a manifest
+// of which hashes have copies would cost one fetch on EVERY load and a new
+// door (which #2940 forbids); the error swap costs nothing on the happy path
+// (one request, the copy) and one extra round trip on a miss (the 404, then
+// the original) — and a miss is remembered, so it is paid once per session.
+//
+// The resident's page and the atlas card keep the original: this is the map's
+// rule, for the map's frames.
+export const THUMB_VARIANTS = Object.freeze({
+  96: Object.freeze({ w: 96, h: 96 }),
+  256: Object.freeze({ w: 256, h: 286 }),
+});
+export const THUMB_SIZES = Object.freeze(Object.keys(THUMB_VARIANTS).map(Number));
+// the door's grammar, on either of the two roads its objects travel here: the
+// same-origin /shelf/ route or the media host's absolute url. Rasters only —
+// an SVG mints no copy and is already every size.
+const THUMB_SOURCE = /^((?:https:\/\/media\.postmark\.town\/media\/|\/shelf\/)[A-Za-z0-9][A-Za-z0-9._-]*\/[0-9a-f]{64})\.(jpg|png|webp)$/;
+const missingThumbs = new Set();
+/** The copy's href for an original's, or the href unchanged when it is not a
+ *  shelf raster, when `size` is null (the original), or when this session has
+ *  already found that copy missing. Pure but for the miss memory. */
+export function thumbHref(href, size) {
+  const s = String(href ?? "");
+  if (!size || !THUMB_VARIANTS[size]) return s;
+  const m = THUMB_SOURCE.exec(s);
+  if (!m) return s;
+  const copy = `${m[1]}-${size}.${m[2]}`;
+  return missingThumbs.has(copy) ? s : copy;
+}
+/** The smallest copy that covers a box of `w`×`h` device pixels, or null for
+ *  the original — the honest answer for a box bigger than both copies AND for
+ *  a box that cannot be measured (the original never pixelates). Pure. */
+export function thumbSizeFor(box) {
+  const bw = Number(box?.w), bh = Number(box?.h);
+  if (!Number.isFinite(bw) || !Number.isFinite(bh) || bw <= 0 || bh <= 0) return null;
+  for (const size of THUMB_SIZES) {
+    const v = THUMB_VARIANTS[size];
+    if (bw <= v.w && bh <= v.h) return size;
+  }
+  return null;
+}
+/** The device pixels a glyph authored `units` wide will occupy on screen: the
+ *  pane's pixels per painting unit, counter-scaled the way `.ov-s` scales the
+ *  markup (markerScale), your own household's accent (MINE_GLYPH_SCALE) when
+ *  `mine`, times the device's pixel ratio. NaN when the camera cannot be
+ *  read. Pure. */
+export function glyphScreenPx(units, { zoomK, viewW, panePx, dpr = 1, mine = false } = {}) {
+  const u = Number(units), w = Number(viewW), p = Number(panePx);
+  if (!Number.isFinite(u) || !Number.isFinite(w) || w <= 0 || !Number.isFinite(p) || p <= 0) return NaN;
+  const d = Number.isFinite(Number(dpr)) && Number(dpr) > 0 ? Number(dpr) : 1;
+  return (u * (p / w) / markerScale(zoomK)) * (mine ? MINE_GLYPH_SCALE : 1) * d;
+}
+/** Remember a copy the host did not have, so thumbHref stops asking for it. */
+export function noteThumbMissing(href) { if (href) missingThumbs.add(String(href)); }
+export function forgetThumbMisses() { missingThumbs.clear(); }
+/** Arm a layer: an <image> whose copy did not load falls back to the original
+ *  it carries in `data-orig`, once — the attribute is cleared with the swap so
+ *  an original that also fails cannot loop. Capturing, because `error` does
+ *  not bubble. No new url enters an href here: `data-orig` is the href the
+ *  draw had already vetted (safeAvatarUrl / markImagePath) before it asked
+ *  for the copy. Returns the handler for a test to call. */
+export function armThumbFallback(layer) {
+  const onError = (e) => {
+    const el = e?.target;
+    if (!el?.getAttribute) return;
+    const orig = el.getAttribute("data-orig");
+    if (!orig) return;
+    const asked = el.getAttribute("href");
+    el.removeAttribute("data-orig");
+    if (asked && asked !== orig) noteThumbMissing(asked);
+    el.setAttribute("href", orig);
+  };
+  layer?.addEventListener?.("error", onError, true);
+  return onError;
+}
+/** The <image href> attributes for a picture: the copy asked for at `thumb`,
+ *  and the original beside it in `data-orig` when they differ. Escaped. */
+function thumbImageAttrs(href, thumb) {
+  const asked = thumbHref(href, thumb);
+  return `href="${esc(asked)}"${asked !== String(href ?? "") ? ` data-orig="${esc(href)}"` : ""}`;
 }
 
 // A colour reaches the map as a fill. Only #rgb / #rrggbb is honoured; anything
@@ -8159,6 +8277,11 @@ export function mountViewer(appEl) {
     }
     const view = { ...full };
     mapCtx = { svg, overlay, hlLayer, walkPreviewLayer, walkLayer, gridLayer, mistLayer, placedArtLayer, convoLayer, convoHoverLayer, originPx, mPerPx, full, view, zoomK: 1, follow: false, glyphIds: new Set(), _tweening: false, zoomOutLimit, includeMine, placeholderExtents, groundMarkIds };
+    // a face or a card whose small copy is not there falls back to the
+    // original it carries, once (#2940) — the cards live on the overlay, the
+    // faces on the walk layer
+    armThumbFallback(overlay);
+    armThumbFallback(walkLayer);
     drawFarCountry();
     let tween = null;
     // ONE WRITE PASS PER FRAME, and the viewBox is the only thing that cannot
@@ -8214,6 +8337,7 @@ export function mountViewer(appEl) {
       if (!drawnAt) return;                         // nothing drawn yet, or the resident path
       const now = viewportWorldBounds({ view, originPx, mPerPx, margin: 0 });
       const stale = drawTier() !== drawnAt.tier
+        || thumbClassKey() !== drawnAt.thumbs   // a glyph crossed a copy's edge (#2940)
         || !now || !drawnAt.bounds
         || now.minX < drawnAt.bounds.minX || now.maxX > drawnAt.bounds.maxX
         || now.minY < drawnAt.bounds.minY || now.maxY > drawnAt.bounds.maxY;
@@ -8849,6 +8973,22 @@ export function mountViewer(appEl) {
     return Number.isFinite(w) && w > 0 ? w : NaN;
   };
   const drawTier = () => tierFor(mapCtx?.zoomK, paintingWidthM(), state.drawDials);
+  // ── THE COPY EACH GLYPH ASKS FOR (#2940) ────────────────────────────────
+  // The box a face or a card will occupy in device pixels, read off the camera
+  // at draw time, and the smallest copy that covers it (thumbSizeFor). Four
+  // answers — a face, a card, and each again at your own household's accent —
+  // and their joined key is what the settle pass compares against the draw:
+  // a zoom that moves a glyph across a copy's edge is a rebuild, exactly as a
+  // tier crossing is, and a zoom that does not is not.
+  const dpr = () => (typeof devicePixelRatio === "number" ? devicePixelRatio : 1);
+  const thumbFor = (units, mine = false) => {
+    const cam = { zoomK: mapCtx?.zoomK, viewW: mapCtx?.view?.w, panePx: panePx(), dpr: dpr(), mine };
+    const w = glyphScreenPx(units.w, cam), h = glyphScreenPx(units.h, cam);
+    return thumbSizeFor({ w, h });
+  };
+  const FACE_UNITS = { w: WALKER_FRAME.near, h: WALKER_FRAME.near };
+  const CARD_UNITS = { w: HOME_CARD.w, h: HOME_CARD.h + HOME_CARD.roof };
+  const thumbClassKey = () => [thumbFor(FACE_UNITS), thumbFor(FACE_UNITS, true), thumbFor(CARD_UNITS), thumbFor(CARD_UNITS, true)].join("/");
   // The box the passes cull against — null only when the camera cannot be
   // read (never a reason to stop painting; see markInDrawnBounds).
   const drawnBounds = () => (!mapCtx ? null : viewportWorldBounds({
@@ -8905,6 +9045,7 @@ export function mountViewer(appEl) {
       // only where none does
       label: home ? markName(home).name : String(parcel.household ?? parcel.by ?? ""),
       image: room && home ? markImagePath(home) : null,
+      thumb: thumbFor(CARD_UNITS, mine),
       lit: houseIsLit(parcel, walkState.walkers, (h) => faceOf(h).household),
       fan, title,
     });
@@ -9099,7 +9240,7 @@ export function mountViewer(appEl) {
     // on a pan because it never culled.
     // …on every path now, so a resident's zoom past a tier boundary rebuilds
     // exactly as a Spectator's does (noticeTheCameraSettling reads this)
-    mapCtx.drawnAt = { bounds, tier };
+    mapCtx.drawnAt = { bounds, tier, thumbs: thumbClassKey() };
     mapCtx.glyphIds = glyphIds;
     mapCtx.syncWithin?.(radial);
     renderMarkHighlight();
@@ -9860,9 +10001,11 @@ export function mountViewer(appEl) {
       // now wearing the face — the picture clipped to the frame, or the monogram
       // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
-      s += walkerFrameSVG({ at: now, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
+      const mine = isOwnHandle(w.handle);
+      s += walkerFrameSVG({ at: now, handle: w.handle, moving, label: identity, mine,
         found: w.handle === walkState.foundHandle, threshold: !!w.threshold,
-        art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
+        art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color },
+        thumb: face.avatar ? thumbFor(FACE_UNITS, mine) : null });
     }
     writeWalkLayer(paths + hulls + s, drawnWalkers);
   }
