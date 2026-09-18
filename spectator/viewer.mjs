@@ -2992,11 +2992,23 @@ export function recentActivity({ departures = [], marks = [], stakes = [], bless
 //     so on a slow record every destination it drew came out struck through and
 //     silently un-struck itself at the re-fold.
 //
+//   • (2026-09-18, #2913) a rail read by a RESIDENT knows only what their own
+//     read carries — their marks, the records within and nearby, the town's
+//     houses — because since 2026-09-10 `byId` on the resident path IS that
+//     read, not the town. Keemin, acting as jetto on prod: `rowan-archive set
+//     out for ~~Rowans First Birthday Moon Charm~~`, with the mark standing on
+//     world main. Absence from a partial read is not death.
+//
 // Nothing is missing when nothing is known yet, and a walk to a coordinate is
-// not a walk to a mark that died.
-export function actSubjectGone(subject, byId) {
-  if (!subject || !byId?.size) return false;
-  return !byId.has(subject);
+// not a walk to a mark that died. So the question is put to the TOWN, not to
+// the reader's read: `town` is a whole-town index when one is in hand — the
+// fold's, on the Spectator's page or after a detour loaded it — and a subject
+// is gone only when neither the town nor the read carries it. With no
+// whole-town set in hand nothing is struck. The Spectator's `byId` IS the fold's
+// index, so it hands the same map as both and its verdicts are unchanged.
+export function actSubjectGone(subject, byId, town = byId) {
+  if (!subject || !town?.size) return false;
+  return !town.has(subject) && !byId?.has(subject);
 }
 
 // "today" / "yesterday" / "2 Aug" — a reader wants to know how fresh, not which
@@ -12937,8 +12949,16 @@ export function mountViewer(appEl) {
     box.hidden = !rows.length && !recordAbsences.size;
     renderRecordAbsences();
     if (!rows.length) { list.innerHTML = ""; return; }
+    // THE STRIKE ASKS THE TOWN (#2913). A Spectator's `byId` is the fold's
+    // index; a resident's is their own read, so a whole-town set is in hand
+    // only when a detour loaded the fold, and without one no row is struck —
+    // absence from a partial read is not death. The same-origin copy of the
+    // record (`townChain`, loaded for the houses) is NOT consulted: it is the
+    // export that lags the door by a settlement, and a mark written since the
+    // pin would be struck for its first hours, when it is most walked to.
+    const town = onResidentPath() ? (world?.marks ? new Set(world.marks.map((m) => m.id)) : null) : byId;
     list.innerHTML = rows.map((row) => {
-      const gone = actSubjectGone(row.subject, byId);
+      const gone = actSubjectGone(row.subject, byId, town);
       const subject = row.name ?? (row.subject ? deslugMarkId(row.subject) : "");
       const what = row.kind === "walk"
         ? (subject ? `set out for <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`
