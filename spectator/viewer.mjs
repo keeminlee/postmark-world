@@ -2199,7 +2199,20 @@ export const MINE_GLYPH_SCALE = 1.35;
  *  use, and the hit disc grows with the frame so the bigger target is bigger
  *  to the pointer too. */
 export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
-export function walkerFrameSVG({ at, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false } = {}) {
+// THE BODY YOU ARE ACTING AS (Keemin, 2026-09-18, #2912's fifth commit:
+// "highlight your Act As resident (pinning it with full profile dot even at
+// far) and make the border gold instead of green and a bit more prominent, to
+// make it super apparent where you're at"). `actor` marks the ONE handle the
+// reader is acting as — not the household (`mine` still covers the rest at
+// stroke 3 / 1.35×): its group carries `is-actor`, and a soft halo disc is
+// drawn behind the face so the ring reads at a glance. The ring's colour and
+// weight are the stylesheet's one `.is-actor` rule; the motion language
+// (green at rest, pink moving — a ruling) stays on the legs and on the walk
+// leg, so a moving actor still reads as moving. drawWalkers draws the actor
+// FILLED at every tier, the far tier included — never the far tier's empty
+// frame.
+export const ACTOR_HALO = 5;   // glyph units beyond the frame's rim
+export function walkerFrameSVG({ at, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false, actor = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
   const filled = !!(art && (art.avatar || art.monogram));
@@ -2224,7 +2237,7 @@ export function walkerFrameSVG({ at, handle = "", moving = false, label = null, 
       + `<text x="0" y="0" class="wv-walker-initial" font-size="13">${esc(art.monogram)}</text>`;
   }
   return `<g transform="translate(${x} ${y})"><g class="ov-s${mine ? " ov-mine" : ""}">`
-    + `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}${threshold ? " at-threshold" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
+    + `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}${threshold ? " at-threshold" : ""}${actor ? " is-actor" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
     // WHOSE TOKEN THIS IS, on the hit target itself. It carried no identity
     // because nothing clicked it — the circle existed to take a hover and a
     // title, and `pointer-events: all` meant it also SWALLOWED every click that
@@ -2233,6 +2246,8 @@ export function walkerFrameSVG({ at, handle = "", moving = false, label = null, 
     // my own token to walk" (2026-08-29): not an act that failed, an act with
     // nothing behind it and a hole where the fallback was.
     + `<circle cx="0" cy="0" r="${filled ? 27 : 12}" class="wv-walker-hit" data-walker="${esc(handle)}"/>`
+    // the halo sits behind the face and inside the hit disc: a reading, not a target
+    + (actor ? `<circle cx="0" cy="0" r="${r + ACTOR_HALO}" class="wv-walker-halo"/>` : "")
     + fill
     + `<circle cx="0" cy="0" r="${r}" class="wv-walker-frame"/>`
     + `<line x1="${-size * 0.22}" y1="${rim}" x2="${-size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
@@ -5062,6 +5077,17 @@ const STYLE = `
    chooses something else. */
 .wv-walker-far.is-found > .wv-walker-frame,
 .wv-walker-near.is-found > .wv-walker-frame { stroke:var(--amber); stroke-width:3.5; }
+/* THE BODY YOU ARE ACTING AS (Keemin, 2026-09-18): the ring goes the rail's
+   amber — the same token the found body wears, so the two coincide in hue and
+   differ in weight and in the halo — at a heavier stroke, with a soft disc of
+   the same amber behind the face. Stated after .is-found so a found actor
+   keeps the actor's ring. The legs keep the motion language (green at rest,
+   pink moving), heavier so it reads. */
+.wv-walker-far.is-actor > .wv-walker-frame,
+.wv-walker-near.is-actor > .wv-walker-frame { stroke:var(--amber); stroke-width:4.5; }
+.wv-walker-far.is-actor > .wv-walker-leg,
+.wv-walker-near.is-actor > .wv-walker-leg { stroke-width:3; }
+.wv-walker-halo { fill:var(--amber); fill-opacity:.28; stroke:none; pointer-events:none; }
 /* the rest of your own household's journey: thin, the walker's own colour, and
    never in the way of a click — the route is a reading, not a target */
 .wv-walk-path { stroke-width:1.5; stroke-opacity:.75; stroke-dasharray:5 4;
@@ -9784,10 +9810,18 @@ export function mountViewer(appEl) {
     // an empty frame and two legs, no image, no clip path (the same glyph the
     // near tiers fill with the face). Cheap into the thousands; the hover scan
     // is the first thing that would grow, not this.
+    // THE BODY YOU ARE ACTING AS is drawn with its face at every tier, this one
+    // included (Keemin, 2026-09-18) — never the empty frame — so a reader can
+    // find themself at town width. One handle: the act-as, not the household.
+    const actorHandle = standpointKey();
+    const isActor = (h) => !!h && h !== SPECTATOR_ACTOR && h === actorHandle;
     if (tier === "far") {
       for (const w of drawnWalkers) {
+        const actor = isActor(w.handle);
+        const face = actor ? faceOf(w.handle) : null;
         s += walkerFrameSVG({ at: px(w), handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
-          mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle, threshold: !!w.threshold });
+          mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle, threshold: !!w.threshold, actor,
+          art: actor ? (face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color }) : null });
       }
       writeWalkLayer(paths + s, drawnWalkers);
       return;
@@ -9861,7 +9895,7 @@ export function mountViewer(appEl) {
       // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
       s += walkerFrameSVG({ at: now, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
-        found: w.handle === walkState.foundHandle, threshold: !!w.threshold,
+        found: w.handle === walkState.foundHandle, threshold: !!w.threshold, actor: isActor(w.handle),
         art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
     writeWalkLayer(paths + hulls + s, drawnWalkers);
