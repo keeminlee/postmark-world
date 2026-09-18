@@ -20,6 +20,11 @@
 //       walkerPlace → bodyPlace → smallestContainingMark / placeLabel: placing
 //       N bodies with one index reads the record a constant number of times,
 //       and answers exactly what the per-body build answered.
+//   (2) the per-tick helpers are memoised on their DATA, not the frame: the
+//       occupancy fold is taken once per ledger (and again only when the clock
+//       passes an act, or the ledger is not chronological), the vessel set once
+//       per marks array — a second ask iterates neither — and both answer what
+//       a fresh fold answers.
 //
 // `markIndex` is not exported, so the count is taken where it is visible: a
 // plain array becomes an index only through `marks.filter(...)`, and a Proxy
@@ -28,12 +33,15 @@
 //
 // Flips: (1) in smallestContainingMark, `const own = ... ? index : ...` →
 // `const own = containmentIndex(marks, { insideRoomId })` — the handed index
-// is ignored and the reads climb with the bodies.
+// is ignored and the reads climb with the bodies. (2) in foldedOccupancy,
+// `if (fold && fold.n === n) return fold;` removed — every ask folds again;
+// in vesselHandles, `if (known) return known;` removed — every ask scans.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
   bodyPlace, placeLabel, containmentIndex, smallestContainingMark, WORLD_ROOT_ID,
+  standpointOccupancy, vesselHandles,
 } from "../spectator/viewer.mjs";
 
 // a record shaped like the town's: a root, a parcel, a house on it, a room in
@@ -123,4 +131,82 @@ test("(1) an index built for another room is not used — the answer is still th
   assert.equal(smallestContainingMark({ x: 104, y: 104 }, marks, { insideRoomId: "town/the-house", index: indoors }), null);
   assert.equal(smallestContainingMark({ x: 100, y: 100 }, marks, { insideRoomId: "town/the-house", index: indoors }), "town/the-bench");
   assert.equal(smallestContainingMark({ x: 104, y: 104 }, marks, { index: outdoors }), "town/the-house", "…and outdoors the same point is the house");
+});
+
+// ── (2) the helpers memoised on their data ──────────────────────────────────
+
+// an instrument over ITERATION: the fold walks the acts with for..of and the
+// vessel scan walks the marks the same way, so counting Symbol.iterator reads
+// counts the folds and the scans, not the calls
+const countingIteration = (list) => {
+  let walks = 0;
+  const proxy = new Proxy(list, { get(t, k, r) { if (k === Symbol.iterator) walks += 1; return Reflect.get(t, k, r); } });
+  return { proxy, walks: () => walks };
+};
+const ledger = [
+  { handle: "rei", act: "enters", mark: "town/the-parcel", at: 190.9, word: "neutral" },
+  { handle: "rei", act: "enters", mark: "town/the-house", at: 190.92, word: "neutral" },
+  { handle: "wright", act: "enters", mark: "town/the-parcel", at: 191.1, word: "neutral" },
+  { handle: "rei", act: "exits", mark: "town/the-house", at: 191.3, word: "neutral" },
+];
+
+test("(2) the occupancy fold is taken once per ledger: seventy bodies asked at one clock walk the acts once", () => {
+  const { proxy, walks } = countingIteration(ledger);
+  const first = standpointOccupancy({ acts: proxy, at: 190.95, handle: "rei" });
+  assert.deepEqual(first.entered, ["town/the-parcel", "town/the-house"]);
+  assert.equal(first.insideOf, "town/the-house");
+  const afterOne = walks();
+  assert.ok(afterOne >= 1, "the first ask folds");
+  for (let i = 0; i < 70; i++) standpointOccupancy({ acts: proxy, at: 190.95 + i * 1e-6, handle: i % 2 ? "rei" : "wright" });
+  assert.equal(walks(), afterOne, "seventy more asks inside the same act window must not fold again — the acts were walked " + (walks() - afterOne) + " more times");
+  // the same clock, a different handle: the fold is shared, the handle's view is not
+  const wright = standpointOccupancy({ acts: proxy, at: 190.95, handle: "wright" });
+  assert.deepEqual(wright.entered, [], "wright has not entered yet at 190.95");
+  assert.deepEqual(wright.manifest.get("town/the-parcel"), ["rei"]);
+});
+
+test("(2) …and folds again exactly when the clock passes an act, forwards or back, answering what a fresh fold answers", () => {
+  const { proxy, walks } = countingIteration(ledger);
+  const fresh = (at, handle) => standpointOccupancy({ acts: [...ledger], at, handle });
+  const clocks = [190.95, 191.0, 191.2, 191.35, 191.0, 190.0, 195];
+  let folds = 0;
+  for (const at of clocks) {
+    const before = walks();
+    const memo = standpointOccupancy({ acts: proxy, at, handle: "rei" });
+    if (walks() > before) folds += 1;
+    const plain = fresh(at, "rei");
+    assert.deepEqual(memo.entered, plain.entered, `at ${at}: entered`);
+    assert.equal(memo.insideOf, plain.insideOf, `at ${at}: insideOf`);
+    assert.deepEqual([...memo.manifest], [...plain.manifest], `at ${at}: the manifest`);
+  }
+  // 190.95 (2 acts) · 191.0 (same) · 191.2 (3) · 191.35 (4) · 191.0 (3) · 190.0 (0) · 195 (4)
+  assert.equal(folds, 6, "one fold per distinct admitted prefix, none for a clock inside the same window: folded " + folds);
+});
+
+test("(2) a ledger that is not chronological is folded on every ask — the prefix rule is checked, never assumed", () => {
+  const shuffled = [ledger[2], ledger[0], ledger[3], ledger[1]];
+  const { proxy, walks } = countingIteration(shuffled);
+  const a = standpointOccupancy({ acts: proxy, at: 190.95, handle: "rei" });
+  const n1 = walks();
+  const b = standpointOccupancy({ acts: proxy, at: 190.95, handle: "rei" });
+  assert.ok(walks() > n1, "an unordered ledger must not be trusted to a prefix: it was not walked again");
+  assert.deepEqual(a.entered, b.entered);
+  assert.deepEqual(a.entered, standpointOccupancy({ acts: [...shuffled], at: 190.95, handle: "rei" }).entered, "the answer is the plain fold's — the parcel is admitted, the house's entry at 190.92 too");
+});
+
+test("(2) the vessel set is scanned once per marks array, and a fresh array is scanned afresh", () => {
+  const marks = [
+    ...fixture(10),
+    { id: "harbour/the-evening-line", kind: "predicated", mechanic: "timetable", timetable: { vessel: "harbour/the-evening-lantern" } },
+    { id: "harbour/the-tide-line", kind: "predicated", mechanic: "timetable", timetable: { vessel: "bare-handle" } },
+  ];
+  const { proxy, walks } = countingIteration(marks);
+  const first = vesselHandles(proxy);
+  assert.deepEqual([...first].sort(), ["bare-handle", "the-evening-lantern"]);
+  assert.equal(walks(), 1);
+  for (let i = 0; i < 20; i++) assert.equal(vesselHandles(proxy), first, "the same array answers the same Set");
+  assert.equal(walks(), 1, "twenty more asks of one array must not scan it again — scanned " + walks() + " times");
+  const again = countingIteration([...marks]);
+  assert.deepEqual([...vesselHandles(again.proxy)].sort(), [...first].sort());
+  assert.equal(again.walks(), 1, "a fresh array is a fresh scan");
 });

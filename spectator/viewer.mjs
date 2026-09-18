@@ -816,10 +816,42 @@ export function occupancyHorizon(acts = [], now = 0, skew = OCCUPANCY_SKEW) {
 // Derived, never stored — the walk ledger's own shape. The threshold ledger's
 // ACTS are the record; occupancy is a pure function of them and the clock, so
 // this page replays what any clone replays and cannot drift from it.
+//
+// THE FOLD IS MEMOISED ON THE LEDGER, NOT ON THE CALL (#2912 (2), 2026-09-18).
+// drawWalkers asked this once for the manifest and then bodyPlace asked it
+// again for every drawn body — the acts folded 73 times per draw, on every
+// wheel tick. The acts are a RECORD: they change when the ledger is fetched
+// (a new array) and the fold at a clock changes only when the clock passes an
+// act. So the fold is kept per acts array, tagged with how many leading acts
+// the clock admits — the ledger is chronological (each act stamps the crossing
+// it was written at), so the admitted acts are a prefix and the prefix's
+// length names the fold. A ledger that is NOT chronological is folded on every
+// call, as before: the assumption is checked once per array, never trusted.
+// Same answer as folding afresh, by construction; a fresh array (every test,
+// every fetch) folds afresh.
+const occupancyFolds = new WeakMap();   // acts → { chronological, n, occupancy, manifest }
+const chronological = (acts) => { for (let i = 1; i < acts.length; i++) if (acts[i]?.at < acts[i - 1]?.at) return false; return true; };
+function foldedOccupancy(acts, at) {
+  const list = Array.isArray(acts) ? acts : [...(acts ?? [])];
+  let fold = occupancyFolds.get(list);
+  const inOrder = fold ? fold.chronological : chronological(list);
+  if (inOrder) {
+    let n = fold ? fold.n : 0;
+    while (n < list.length && list[n]?.at <= at) n += 1;
+    while (n > 0 && !(list[n - 1]?.at <= at)) n -= 1;
+    if (fold && fold.n === n) return fold;
+    const occupancy = occupancyAt(list, at);
+    fold = { chronological: true, n, occupancy, manifest: occupantsOf(occupancy) };
+    occupancyFolds.set(list, fold);
+    return fold;
+  }
+  if (!fold) occupancyFolds.set(list, { chronological: false });
+  const occupancy = occupancyAt(list, at);
+  return { occupancy, manifest: occupantsOf(occupancy) };
+}
 export function standpointOccupancy({ acts = [], at = Infinity, handle = null } = {}) {
   const who = handle && handle !== SPECTATOR_ACTOR ? handle : null;
-  const occupancy = occupancyAt(acts, at);
-  const manifest = occupantsOf(occupancy);
+  const { occupancy, manifest } = foldedOccupancy(acts, at);
   const entered = who ? [...(occupancy.get(who) ?? [])] : [];
   const insideOf = who ? withinOf(occupancy, who) : null;
   // who else is in the innermost room you are in — the manifest, minus yourself
@@ -3176,7 +3208,15 @@ export function residentHref(handle) {
 // publishes that vessel under its bare handle. So the set of things that draw as
 // hulls is derived, and the second scheduled line somebody proposes by leaving a
 // mark will draw as a boat without anyone editing this module.
+// ONCE PER MARKS SET (#2912 (2)): the fold's `marks` is one array until the
+// record moves, and drawWalkers asked this of it on every draw. Kept per
+// array; a caller must not add to the Set it is handed (none does — every
+// reader asks `.has`). A fresh array is scanned afresh.
+const vesselSets = new WeakMap();
 export function vesselHandles(marks = []) {
+  const list = Array.isArray(marks) ? marks : null;
+  const known = list && vesselSets.get(list);
+  if (known) return known;
   const out = new Set();
   for (const m of marks ?? []) {
     if (m?.mechanic !== "timetable") continue;
@@ -3186,6 +3226,7 @@ export function vesselHandles(marks = []) {
     const handle = slash === -1 ? id : id.slice(slash + 1);
     if (handle) out.add(handle);
   }
+  if (list) vesselSets.set(list, out);
   return out;
 }
 
@@ -6252,6 +6293,10 @@ export function mountViewer(appEl) {
   // the RECORD; the rooms are recomputed at whatever clock is asked for.
   let enterExitLedger = { acts: [], unrecognized: 0 };
   let enterExitEpoch = 0;    // bumped when the ledger lands; a pane built before it is stale
+  // HOW OFTEN THE WALK LAYER'S WORK IS DONE (#2912). Counters, not behaviour:
+  // the page tests read them through the dev handle to prove a wheel tick with
+  // no data change does none of this work, and a walkers answer does it once.
+  const walkDraws = { layerWrites: 0, actorReads: 0 };
   // WHICH CLOCK THE FOLD IS ASKED AT, and it is not `state.crossing`.
   //
   // The dial is a FLOORED crossing number; the ledger stamps a FRACTIONAL one
@@ -9281,9 +9326,47 @@ export function mountViewer(appEl) {
     });
   }
 
-  function syncActorPosition({ moveCamera = false } = {}) {
+  // WHICH RECORD A READING WAS TAKEN AGAINST (#2912 (2)). The marks the page
+  // can speak about move when the fold is re-applied (`worldEpoch`), when the
+  // resident's read replaces the index (`byId`), or when a record rides into
+  // it (`byId.size`) — a revision number over those, so a reading memoised on
+  // the marks does not have to hold the array (the resident path spreads a
+  // fresh one on every `allMarks()`).
+  let marksRev = 0;
+  let marksSeen = null;
+  const marksRevision = () => {
+    const now = { byId, world, epoch: worldEpoch, size: byId.size, resident: onResidentPath() };
+    if (!marksSeen || now.byId !== marksSeen.byId || now.world !== marksSeen.world || now.epoch !== marksSeen.epoch
+      || now.size !== marksSeen.size || now.resident !== marksSeen.resident) { marksRev += 1; marksSeen = now; }
+    return marksRev;
+  };
+  // THE ACTOR'S JOURNEY AND STANDING, ONCE PER WALKERS ANSWER OR ACTOR CHANGE
+  // (#2912 (2)). Both sentences were derived on every draw — a containment
+  // question over the whole record for the standing, the destination's
+  // containment for the journey — by syncActorPosition and again by
+  // renderWalkDestination, and drawWalkers called both on every wheel tick.
+  // They are a function of the walkers answer (the actor's row), the actor,
+  // their home, the record and its names: kept until one of those moves.
+  let actorView = null;
+  function actorReading() {
+    const walkers = walkState.walkers, handle = state.handle, home = state.actorHome;
+    const determined = data?.worldState?.determined ?? null;
+    const rev = marksRevision();
+    if (actorView && actorView.walkers === walkers && actorView.handle === handle && actorView.home === home
+      && actorView.determined === determined && actorView.rev === rev) return actorView;
+    const marks = allMarks();
     const origin = actorOrigin();
-    const journey = viewerJourneyState(actorWalker(), allMarks(), data?.worldState?.determined);
+    walkDraws.actorReads += 1;
+    actorView = {
+      walkers, handle, home, determined, rev, origin,
+      journey: viewerJourneyState(actorWalker(), marks, determined ?? {}),
+      standing: origin ? standingLocationLabel(origin, marks, determined ?? {}, { prefix: false }) : null,
+    };
+    return actorView;
+  }
+
+  function syncActorPosition({ moveCamera = false } = {}) {
+    const { origin, journey, standing } = actorReading();
     const here = $(root, ".wv-youhere");
     if (here) {
       // how the office learned your position is provenance, not a thing to read
@@ -9291,7 +9374,7 @@ export function mountViewer(appEl) {
       here.innerHTML = journey.kind === "journey"
         ? `<b>on the road</b> · ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}`
         : origin
-          ? `<b>${esc(standingLocationLabel(origin, allMarks(), data?.worldState?.determined, { prefix: false }))}</b>`
+          ? `<b>${esc(standing)}</b>`
           : `<span class="wv-quiet">the office has no position for you yet</span>`;
     }
     // reports whether it re-rendered, so a caller does not build the telling a
@@ -9644,6 +9727,7 @@ export function mountViewer(appEl) {
           mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle, threshold: !!w.threshold });
       }
       mapCtx.walkLayer.innerHTML = paths + s;
+      walkDraws.layerWrites += 1;
       walkReadout(drawnWalkers);
       syncHouseLights();
       syncActorPosition();
@@ -9721,6 +9805,7 @@ export function mountViewer(appEl) {
         art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
     mapCtx.walkLayer.innerHTML = paths + hulls + s;
+    walkDraws.layerWrites += 1;
     walkReadout(drawnWalkers);
     syncHouseLights();
     syncActorPosition();
@@ -10004,7 +10089,7 @@ export function mountViewer(appEl) {
     // because there is no armed destination behind it, which is exactly the
     // point: the demonstration is not one.
     if (tourStage === "walk") return;
-    const journey = viewerJourneyState(actorWalker(), allMarks(), data?.worldState?.determined);
+    const { journey } = actorReading();
     // The desk is for a walk, so it appears when there IS one (Keemin,
     // 2026-08-04): a destination you have armed, or a journey already under way.
     // Standing still it said only where you stand, which the painting's own dot
@@ -13158,6 +13243,9 @@ export function mountViewer(appEl) {
     // changed", "who is standing in it changed" and "who is INSIDE it changed"
     // are one event to every caller that would ask.
     reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); await loadEnterExitLedger(); renderCurrent(); return true; },
+    // how many times the walk layer has been written and the actor's reading
+    // taken — the instrument behind tools/walk-layer-once.test.mjs (#2912)
+    walkDraws: () => ({ ...walkDraws }),
     stop: () => {
       clearInterval(clock);
       clearInterval(walkState.timer);
