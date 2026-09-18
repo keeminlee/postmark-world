@@ -3002,6 +3002,10 @@ export function activityDayKey(when) {
 // the row's own `data-kind` all have to agree about what a kind IS, and three
 // copies of a list of four strings is three chances to disagree.
 export const ACTIVITY_KINDS = ["walk", "mark", "stake", "settlement"];
+// The chips say what a reader would call them — plural, lower case, the rail's
+// own register. A kind with no label here would still work, wearing its own
+// name; nothing is allowed to go missing because a label went missing.
+export const ACTIVITY_KIND_LABELS = { walk: "walks", mark: "marks", stake: "stakes", settlement: "settlements" };
 export function activityFeed({ departures = [], marks = [], stakes = [], blessings = [], names = null, limit = 12, offset = 0, kinds = null, now = null } = {}) {
   const rows = [];
   // ONE WALK PER RESIDENT PER DAY, the latest. That is not a display trick, it is
@@ -5542,6 +5546,16 @@ const STYLE = `
 .wv-act-line.is-gone .what { color:var(--dim); cursor:default; text-decoration:line-through; }
 .wv-act-line.is-gone .what:hover { text-decoration:line-through; }
 .wv-acts .wv-quiet { font-size:.76rem; }
+/* WHICH ACTS (POS-90) — the rail's own pill language, a size down from the verbs
+   above it so the row reads as a filter on the reading rather than as another
+   row of things to press. */
+.wv-act-kinds { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; }
+.wv-act-kinds .wv-kind { background:transparent; border:1px solid var(--line); color:var(--dim);
+  border-radius:999px; padding:2px 9px; font:inherit; font-size:.68rem; cursor:pointer; }
+.wv-act-kinds .wv-kind:hover { color:var(--paper); border-color:var(--green-dark); }
+.wv-act-kinds .wv-kind.is-on { background:var(--green); border-color:var(--green); color:var(--night); font-weight:700; }
+.wv-act-more { margin-top:12px; font-size:.7rem; }
+.wv-act-more[disabled] { opacity:.4; cursor:progress; }
 .wv-nav .crossnow { font-size:.78rem; color:var(--dim); }
 .wv-nav .crossnow b { color:var(--amber); font-variant-numeric:tabular-nums; }
 .wv-nav .crosslive-tag { color:var(--green); font-size:.78rem; }
@@ -5736,12 +5750,23 @@ const MARKUP = `
          read rather than press. -->
     <section class="wv-activity" hidden>
       <h2>Lately</h2>
+      <!-- WHICH ACTS (POS-90, 2026-09-18) — a chip row, filled by
+           renderActivityKinds from ACTIVITY_KINDS so the chips, the filter and
+           each row's own data-kind cannot disagree about what a kind is. The
+           choice lives in this section's state, never in the URL: a filter on a
+           rail is not a place, and a link to this page should not carry one
+           reader's pane settings to another.
+           (No backticks in this comment: the markup is a template literal and
+           one would end the string two thousand lines from here.) -->
+      <div class="wv-act-kinds" role="group" aria-label="which acts" hidden></div>
       <!-- A RECORD THIS PAGE COULD NOT READ IS NAMED HERE, never guessed at from
            somewhere else. Empty because nothing happened and empty because the
            file did not answer are different sentences, and only one of them is
            the reader's problem. -->
       <ul class="wv-absences wv-err" hidden></ul>
       <ol class="wv-acts"></ol>
+      <!-- MORE — under the list, because that is where the list runs out. -->
+      <button class="ctl wv-act-more" hidden>more</button>
     </section>
     <button class="ctl wv-dev-toggle" hidden>⚙ dev dials</button>
     <div class="wv-dev" hidden>
@@ -9345,13 +9370,28 @@ export function mountViewer(appEl) {
   // stakes, from the town's own commit log through the office door. Capped and
   // best-effort: this lane is a garnish on the rail, never a dependency.
   let stakeEvents = [];
+  // ── THE STAKE LANE'S TWO BOUNDS, NOW NAMED (POS-90, 2026-09-18) ────────────
+  //
+  // A fetch of 120 commits and a keep of 40 stakes: both were literals in the
+  // line below, and both are what a reader runs into when they ask Lately for
+  // more. They are variables so the pane can lift them ONCE, to the door's own
+  // cap — `repoLog` clamps `limit` at 200 (office `src/queries.mjs`) — when a
+  // page runs past what they hold. Past that cap the tail needs `offset` on the
+  // office's `/repo/log` route, which it does not pass (#2846, "not this").
+  //
+  // The KEEP is lifted with the fetch on purpose. A second, smaller cap under a
+  // fetch that is already at the door's ceiling does not protect anything; it
+  // just hides rows the reader has explicitly asked for.
+  const STAKE_DOOR_CAP = 200;
+  let stakeFetchLimit = 120;
+  let stakeKeep = 40;
   async function loadStakeEvents() {
     try {
-      const r = await fetch(officeUrl("/repo/log?limit=120"), { credentials: "same-origin" });
+      const r = await fetch(officeUrl(`/repo/log?limit=${stakeFetchLimit}`), { credentials: "same-origin" });
       if (!r.ok) return;
       const body = await r.json();
       const commits = Array.isArray(body) ? body : (body?.commits ?? body?.log ?? []);
-      stakeEvents = parseStakeCommits(commits).slice(0, 40);
+      stakeEvents = parseStakeCommits(commits).slice(0, stakeKeep);
     } catch { /* a quiet lane contributes nothing, and the rail is unchanged */ }
   }
   async function loadSettlements() {
@@ -11783,6 +11823,14 @@ export function mountViewer(appEl) {
       if (byId.has(act.dataset.id)) selectMark(act.dataset.id, { scrollCell: true });
       return;
     }
+    // ── LATELY'S TWO CONTROLS (POS-90) ───────────────────────────────────────
+    // A chip re-reads the rail under one kind; "more" adds the next page and
+    // may first widen a source whose own bound is what ran out. The press is
+    // async — it can wait on a door — so the handler starts it and returns.
+    const chip = e.target.closest(".wv-act-kinds [data-act-kind]");
+    if (chip) { chooseActivityKind(chip.dataset.actKind); return; }
+    const moreActs = e.target.closest(".wv-act-more");
+    if (moreActs) { moreActivity(moreActs); return; }
     // picking one out of the stack: from here it is an ordinary selection, and
     // the mark opens in exactly the bubble it would have opened in alone
     const chosen = e.target.closest("[data-choose]");
@@ -13037,7 +13085,12 @@ export function mountViewer(appEl) {
   // today. The cut is a guard against a door that ignores the window, and it
   // belongs on that door's leg.
   const WALK_WINDOW_DAYS = 14;
-  const walkWindowSince = () => new Date(Date.now() - WALK_WINDOW_DAYS * 86_400_000).toISOString();
+  // THE WINDOW WIDENS BY A FORTNIGHT AT A TIME (POS-90, 2026-09-18), and starts
+  // at exactly the fortnight above — the first load is the load it always was,
+  // down to the `since` in the URL. Only a reader who presses "more" past the
+  // end of what a fortnight holds ever asks for an older one.
+  let walkWindowDays = WALK_WINDOW_DAYS;
+  const walkWindowSince = () => new Date(Date.now() - walkWindowDays * 86_400_000).toISOString();
   /**
    * The office's `walks[]` onto the ledger's own departure grammar.
    *
@@ -13196,17 +13249,41 @@ export function mountViewer(appEl) {
   // After the gate opens, every later arrival renders normally and ADDS rows.
   // Adding is not the bug; replacing wholesale was.
   let activityLanesSettled = false;
-  function renderActivity() {
-    const box = $(root, ".wv-activity");
-    const list = $(root, ".wv-acts");
-    if (!box || !list) return;
-    if (!activityLanesSettled) {
-      box.hidden = !recordAbsences.size;
-      renderRecordAbsences();
-      list.innerHTML = "";
-      return;
-    }
-    const rows = recentActivity({
+  // ── MORE, AND WHICH ACTS (POS-90, 2026-09-18, #2846) ───────────────────────
+  //
+  // The rail showed the newest fourteen acts of the town and nothing else,
+  // ever. Two controls open it: a "more" under the list and a chip row at the
+  // head. Both live in this section's own state and nowhere else — a filter on
+  // a rail is not a place, and a link to this page should not carry one
+  // reader's pane settings to another.
+  //
+  //   `activityPages`  how many pages of fourteen the reader has asked for
+  //   `activityKind`   which kind they chose; null is all
+  //   `activityTotal`  what the last compose had in hand, AFTER the filter —
+  //                    the denominator the "more" control reads
+  //
+  // The pane re-renders on every arrival (the gate above says why), so a full
+  // render has to reproduce every page the reader has opened. It composes them
+  // one page at a time, each at its own `offset`. That is the same list a
+  // single wider cut would give and it is not the same read: paging walks past
+  // a source's bound, a wider cut cannot. `tools/lately-pages-and-filters.test.mjs
+  // [falsifier]` is red for any build where the two are the same thing.
+  const ACTIVITY_PAGE = 14;
+  let activityKind = null;
+  let activityPages = 1;
+  let activityTotal = 0;
+  // THE STRIKE ASKS THE TOWN (#2913). A Spectator's `byId` is the fold's
+  // index; a resident's is their own read, so a whole-town set is in hand
+  // only when a detour loaded the fold, and without one no row is struck —
+  // absence from a partial read is not death. The same-origin copy of the
+  // record (`townChain`, loaded for the houses) is NOT consulted: it is the
+  // export that lags the door by a settlement, and a mark written since the
+  // pin would be struck for its first hours, when it is most walked to.
+  const activityTown = () =>
+    (onResidentPath() ? (world?.marks ? new Set(world.marks.map((m) => m.id)) : null) : byId);
+  // ONE PAGE OF THE RAIL, at its own offset and under the reader's filter.
+  function composeActivity(page) {
+    return activityFeed({
       departures,
       // WHO IS READING DECIDES THE SET, HERE TOO (2026-09-13). This read the
       // fold directly -- `world?.marks ?? data?.worldState?.marks ?? []` -- and
@@ -13229,52 +13306,163 @@ export function mountViewer(appEl) {
       stakes: stakeEvents,
       blessings: settleState.recent,
       names: new Map((allMarks()).map((m) => [m.id, markName(m).name])),
-      limit: 14,
+      kinds: activityKind ? [activityKind] : null,
+      limit: ACTIVITY_PAGE,
+      offset: page * ACTIVITY_PAGE,
     });
+  }
+  // ONE ROW, ONE SPELLING. A full render and an appended page both come through
+  // here, so a change to a line cannot reach the reader in two shapes.
+  //
+  // `data-kind` (POS-90) is the one thing added to the markup: the kind was
+  // already carried as a class and a class is a style hook, so a reader asking
+  // "is every row on this rail a stake?" had to know which of four class names
+  // to ask for. Additive — every class, span and word below is untouched.
+  function activityLineHTML(row, town) {
+    const gone = actSubjectGone(row.subject, byId, town);
+    const subject = row.name ?? (row.subject ? deslugMarkId(row.subject) : "");
+    const what = row.kind === "walk"
+      ? (subject ? `set out for <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`
+        // "set out for at TC" is what "for" plus a position-phrase gets you; the
+      // formatter's job is to say where a point IS, and toward reads correctly
+      // against every answer it gives, including the one at the origin.
+      : `set out toward ${esc((formatCardinalPosition(row.toward) || "open ground").replace(/^at /, ""))}`)
+      : row.kind === "stake"
+      ? (subject
+        ? `backed <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`
+          + (row.amount ? ` <span class="wv-act-n">✦${row.amount}</span>` : "")
+        : `backed a mark${row.amount ? ` <span class="wv-act-n">✦${row.amount}</span>` : ""}`)
+      : row.kind === "settlement"
+      // no author: the keeper's gate is not a resident, so the line is about
+      // what landed rather than who did it
+      ? `<span class="wv-act-bless">S${esc(row.n)} blessed</span>`
+      : `wrote <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`;
+    const cls = row.kind === "walk" ? "is-walk"
+      : row.kind === "stake" ? "is-stake"
+      : row.kind === "settlement" ? "is-settlement"
+      : "is-mark";
+    return `<li class="wv-act-line ${cls}${gone ? " is-gone" : ""}" data-kind="${esc(row.kind)}">`
+      + (row.who ? `<span class="who">${esc(row.who)}</span> ` : "") + what
+      + `<span class="when">${esc(row.dayLabel)}</span></li>`;
+  }
+  // The chips, from `ACTIVITY_KINDS` so the row can never offer a kind the
+  // filter does not know. Hidden when there is nothing to show AND no choice to
+  // undo — a filter over an empty rail the reader did not ask to empty is
+  // furniture; over one they DID, it is the way back.
+  function renderActivityKinds(shown) {
+    const box = $(root, ".wv-act-kinds");
+    if (!box) return;
+    box.hidden = !shown && !activityKind;
+    box.innerHTML = [["", "all"], ...ACTIVITY_KINDS.map((k) => [k, ACTIVITY_KIND_LABELS[k] ?? k])]
+      .map(([kind, label]) => {
+        const on = (activityKind ?? "") === kind;
+        return `<button type="button" class="wv-kind${on ? " is-on" : ""}"`
+          + ` data-act-kind="${esc(kind)}" aria-pressed="${on}">${esc(label)}</button>`;
+      }).join("");
+  }
+  // THE CONTROL IS OFFERED WHEN THERE IS MORE, OR WHEN A BOUND OF OURS IS WHAT
+  // STOPPED IT. Hiding it in the second case would report the end of the town's
+  // record on the strength of a fortnight's window and a fetch of 120 commits.
+  function renderActivityMore(feed) {
+    const btn = $(root, ".wv-act-more");
+    if (!btn) return;
+    const behind = feed?.more === true;
+    const stoppedByABound = activityCanWiden() && activityWantsWider({
+      offset: activityPages * ACTIVITY_PAGE, limit: ACTIVITY_PAGE, total: activityTotal,
+    });
+    btn.hidden = !(behind || stoppedByABound);
+  }
+  function renderActivity() {
+    const box = $(root, ".wv-activity");
+    const list = $(root, ".wv-acts");
+    if (!box || !list) return;
+    if (!activityLanesSettled) {
+      box.hidden = !recordAbsences.size;
+      renderRecordAbsences();
+      list.innerHTML = "";
+      return;
+    }
+    const town = activityTown();
+    let html = "", shown = 0, feed = null;
+    for (let page = 0; page < activityPages; page++) {
+      feed = composeActivity(page);
+      html += feed.rows.map((row) => activityLineHTML(row, town)).join("");
+      shown += feed.rows.length;
+      if (!feed.more) break; // the record ran out inside this page
+    }
+    activityTotal = feed?.total ?? 0;
     // Hidden rather than empty: a heading over nothing reads as a thing that
     // broke. A page served without the ledger and before the fold simply has no
     // record to show yet, which is not the same as an empty one.
     //
     // UNLESS A RECORD WENT UNREAD, in which case a thing DID break and hiding
     // the heading hides the only place we say so.
-    box.hidden = !rows.length && !recordAbsences.size;
+    //
+    // A CHOSEN KIND WITH NOTHING UNDER IT IS ALSO NOT NOTHING (POS-90): the
+    // reader asked a question and the answer is none, so the pane stays up with
+    // its chips and says so with an empty list rather than vanishing under them.
+    box.hidden = !shown && !recordAbsences.size && !activityKind;
     renderRecordAbsences();
-    if (!rows.length) { list.innerHTML = ""; return; }
-    // THE STRIKE ASKS THE TOWN (#2913). A Spectator's `byId` is the fold's
-    // index; a resident's is their own read, so a whole-town set is in hand
-    // only when a detour loaded the fold, and without one no row is struck —
-    // absence from a partial read is not death. The same-origin copy of the
-    // record (`townChain`, loaded for the houses) is NOT consulted: it is the
-    // export that lags the door by a settlement, and a mark written since the
-    // pin would be struck for its first hours, when it is most walked to.
-    const town = onResidentPath() ? (world?.marks ? new Set(world.marks.map((m) => m.id)) : null) : byId;
-    list.innerHTML = rows.map((row) => {
-      const gone = actSubjectGone(row.subject, byId, town);
-      const subject = row.name ?? (row.subject ? deslugMarkId(row.subject) : "");
-      const what = row.kind === "walk"
-        ? (subject ? `set out for <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`
-          // "set out for at TC" is what "for" plus a position-phrase gets you; the
-        // formatter's job is to say where a point IS, and toward reads correctly
-        // against every answer it gives, including the one at the origin.
-        : `set out toward ${esc((formatCardinalPosition(row.toward) || "open ground").replace(/^at /, ""))}`)
-        : row.kind === "stake"
-        ? (subject
-          ? `backed <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`
-            + (row.amount ? ` <span class="wv-act-n">✦${row.amount}</span>` : "")
-          : `backed a mark${row.amount ? ` <span class="wv-act-n">✦${row.amount}</span>` : ""}`)
-        : row.kind === "settlement"
-        // no author: the keeper's gate is not a resident, so the line is about
-        // what landed rather than who did it
-        ? `<span class="wv-act-bless">S${esc(row.n)} blessed</span>`
-        : `wrote <span class="what" data-id="${esc(row.subject)}">${esc(subject)}</span>`;
-      const cls = row.kind === "walk" ? "is-walk"
-        : row.kind === "stake" ? "is-stake"
-        : row.kind === "settlement" ? "is-settlement"
-        : "is-mark";
-      return `<li class="wv-act-line ${cls}${gone ? " is-gone" : ""}">`
-        + (row.who ? `<span class="who">${esc(row.who)}</span> ` : "") + what
-        + `<span class="when">${esc(row.dayLabel)}</span></li>`;
-    }).join("");
+    renderActivityKinds(shown);
+    list.innerHTML = html;
+    renderActivityMore(feed);
+  }
+  // ── WIDENING A SOURCE, ONCE ITS OWN BOUND IS WHAT STOPPED THE READER ───────
+  //
+  // Two of the four sources are bounded HERE and nowhere else: the walk ledger
+  // by a fortnight and the stakes by the fetch this page asks for. Marks are
+  // the reader's own whole set and the blessings are whatever
+  // `/world/settlements` answered — neither carries a bound of ours to lift.
+  //
+  // The window widens a fortnight at a time and is SPENT when a wider one
+  // brings back no more departures: the record is finite, and a control that
+  // can always be pressed again is a control that lies about there being more.
+  // The stake fetch widens once, to the door's cap; past that the tail needs
+  // `offset` on the office's `/repo/log` route, which it does not pass.
+  let walkWindowSpent = false;
+  let stakeFetchSpent = false;
+  const activityCanWiden = () => !walkWindowSpent || !stakeFetchSpent;
+  async function widenActivitySources() {
+    if (!walkWindowSpent) {
+      const had = departures.length;
+      walkWindowDays += WALK_WINDOW_DAYS;
+      await loadWalkLedger();
+      if (departures.length <= had) walkWindowSpent = true;
+    }
+    if (!stakeFetchSpent) {
+      stakeFetchLimit = STAKE_DOOR_CAP;
+      stakeKeep = STAKE_DOOR_CAP;
+      await loadStakeEvents();
+      stakeFetchSpent = true;
+    }
+  }
+  // MORE APPENDS. Every other path through this pane is a full render; this one
+  // adds the page the reader asked for and leaves the rows they are looking at
+  // where they are, nodes and all.
+  async function moreActivity(btn) {
+    if (activityCanWiden() && activityWantsWider({
+      offset: activityPages * ACTIVITY_PAGE, limit: ACTIVITY_PAGE, total: activityTotal,
+    })) {
+      if (btn) { btn.disabled = true; btn.textContent = "…"; }
+      try { await widenActivitySources(); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = "more"; } }
+    }
+    const next = composeActivity(activityPages);
+    activityTotal = next.total;
+    if (!next.rows.length) { renderActivityMore(next); return; }
+    activityPages += 1;
+    const list = $(root, ".wv-acts");
+    if (list) list.insertAdjacentHTML("beforeend", next.rows.map((row) => activityLineHTML(row, activityTown())).join(""));
+    renderActivityMore(next);
+  }
+  // A NEW FILTER IS A NEW READING. Keeping the reader's four pages across a
+  // change of kind would open them on page four of a list they have never seen.
+  function chooseActivityKind(kind) {
+    const next = kind || null;
+    if (next === activityKind) return;
+    activityKind = next;
+    activityPages = 1;
+    renderActivity();
   }
 
   function renderPresets() {
