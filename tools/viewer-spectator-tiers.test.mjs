@@ -170,35 +170,44 @@ test("A MARK IS CULLED BY ITS GEOMETRY, NOT BY ITS CENTRE — a district straddl
 });
 
 test("[pin] THE WALKER IS A FRAME WITH LEGS — empty at town width, no picture, no clip path, fixed where they stand", () => {
-  const svg = walkerFrameSVG({ at: { x: 100, y: 200 }, k: 2, handle: "rei" });
-  assert.match(svg, /^<g class="wv-walker-far" data-handle="rei"/, "one group, named by the handle");
+  const svg = walkerFrameSVG({ at: { x: 100, y: 200 }, handle: "rei" });
+  // IN PAINTING UNITS, SIZED BY THE CAMERA THROUGH `.ov-s` (#2912 (3)): the
+  // position is a translate written once with the data, the scale is the
+  // overlay's own variable, and the glyph inside is drawn about (0,0) at its
+  // k=1 size — the pips' and the house cards' contract, so a wheel tick
+  // rebuilds nothing here. Before this the glyph took `k` and baked 1/k into
+  // every coordinate.
+  assert.match(svg, /^<g transform="translate\(100 200\)"><g class="ov-s"><g class="wv-walker-far" data-handle="rei"/, "translate, then the camera's scale group, then one group named by the handle");
   assert.equal((svg.match(/wv-walker-frame/g) ?? []).length, 1, "one frame");
   assert.equal((svg.match(/<line /g) ?? []).length, 2, "a little pair of legs");
   assert.ok(!/<image|clip-path|wv-walker-mono/.test(svg), "empty: no picture, no clip path, no monogram — the frame is the whole icon");
   assert.match(svg, /wv-walker-hit/, "and a hit disc");
   // THE FRAME IS ROUND (founder, 2026-09-11): one circle, no square anywhere in it
-  const r = Number(svg.match(/<circle cx="100" cy="200" r="([\d.]+)" class="wv-walker-frame"\/>/)[1]);
-  assert.equal(r * 2, WALKER_FRAME.far / 2, "marker space: at k=2 the frame is half its k=1 size");
+  const r = Number(svg.match(/<circle cx="0" cy="0" r="([\d.]+)" class="wv-walker-frame"\/>/)[1]);
+  assert.equal(r * 2, WALKER_FRAME.far, "authored at the k=1 size; the camera scales it");
   assert.ok(!/<rect/.test(svg), "no square anywhere in it");
   // …and at town width the empty frame is filled a lighter green, not glass (founder, 2026-09-11)
   assert.match(SOURCE, /\.wv-walker-far > \.wv-walker-frame \{ fill:#bfe4c6;/, "the far frame's fill is the stylesheet's");
   // …and the legs, untouched in stance and length, start where they meet the rim
-  const size = WALKER_FRAME.far / 2, legTop = 200 + Math.sqrt((size / 2) ** 2 - (size * 0.22) ** 2);
-  const legs = [...svg.matchAll(/<line x1="([\d.]+)" y1="([\d.]+)" x2="([\d.]+)" y2="([\d.]+)"/g)].map((m) => m.slice(1).map(Number));
+  const size = WALKER_FRAME.far, legTop = Math.sqrt((size / 2) ** 2 - (size * 0.22) ** 2);
+  const legs = [...svg.matchAll(/<line x1="(-?[\d.]+)" y1="(-?[\d.]+)" x2="(-?[\d.]+)" y2="(-?[\d.]+)"/g)].map((m) => m.slice(1).map(Number));
+  assert.equal(legs.length, 2);
   for (const [x1, y1, , y2] of legs) {
     assert.ok(Math.abs(y1 - legTop) < 1e-9, `a leg starts on the rim: ${y1} vs ${legTop}`);
-    assert.ok(Math.abs(Math.abs(x1 - 100) - size * 0.22) < 1e-9, "the same stance as before");
-    assert.ok(Math.abs((y2 - y1) - WALKER_FRAME.legFar / 2) < 1e-9, "the same length as before");
+    assert.ok(Math.abs(Math.abs(x1) - size * 0.22) < 1e-9, "the same stance as before");
+    assert.ok(Math.abs((y2 - y1) - WALKER_FRAME.legFar) < 1e-9, "the same length as before");
   }
   assert.match(walkerFrameSVG({ at: { x: 0, y: 0 }, moving: true }), /class="wv-walker-far moving"/);
+  assert.match(walkerFrameSVG({ at: { x: 0, y: 0 }, mine: true }), /<g class="ov-s ov-mine"><g class="wv-walker-far is-mine"/, "yours is larger through the cards' own factor, not its own geometry");
   assert.equal(walkerFrameSVG({ at: { x: NaN, y: 1 } }), "", "an unplaced walker draws nothing");
+  assert.ok(!/\bk\b|1 \/ k/.test(svg), "no camera in the markup");
   // ⚑ THE FLIP: drop one <line> from walkerFrameSVG and the legs count reds.
 });
 
 test("THE FRAME FILLS IN nearer in — the picture clipped to the frame, or the monogram on the household's colour — at the house card's own size step", () => {
-  const pic = walkerFrameSVG({ at: { x: 10, y: 20 }, k: 1, handle: "rei", art: { avatar: "/shelf/rei.jpg" } });
-  assert.match(pic, /^<g class="wv-walker-near" data-handle="rei"/, "the filled frame is the walker proper");
-  assert.match(pic, /<clipPath id="wv-face-rei"><circle cx="10" cy="20" r="11"\/>/, "the picture is clipped to the FRAME — which is round (founder, 2026-09-11)");
+  const pic = walkerFrameSVG({ at: { x: 10, y: 20 }, handle: "rei", art: { avatar: "/shelf/rei.jpg" } });
+  assert.match(pic, /^<g transform="translate\(10 20\)"><g class="ov-s"><g class="wv-walker-near" data-handle="rei"/, "the filled frame is the walker proper");
+  assert.match(pic, /<clipPath id="wv-face-rei"><circle cx="0" cy="0" r="11"\/>/, "the picture is clipped to the FRAME — which is round (founder, 2026-09-11) — about the glyph's own origin");
   assert.match(pic, /<image href="\/shelf\/rei.jpg"[^>]*class="wv-walker-face"/);
   assert.equal((pic.match(/<line /g) ?? []).length, 2, "legs stay");
   const r = Number(pic.match(/r="([\d.]+)" class="wv-walker-frame"/)[1]);

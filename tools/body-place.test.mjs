@@ -119,7 +119,9 @@ const count = (needle) => VIEWER.split(needle).length - 1;
 
 test("CENSUS: no sentence in the viewer prints the walk's target as a place", () => {
   assert.equal(count("`at ${w.mark_id}`"), 0, "print the place from bodyPlace — walkerPlace(w) — never from mark_id");
-  assert.equal(count("walkerPlace(w)"), 3, "the highlight title, the walker identity and the bubble, and only those");
+  // the walker pass hands its per-draw index as a second argument (#2912), so
+  // the needle admits `walkerPlace(w)` and `walkerPlace(w, draw)` alike
+  assert.equal((VIEWER.match(/walkerPlace\(w[,)]/g) ?? []).length, 3, "the highlight title, the walker identity and the bubble, and only those");
 });
 
 test("CENSUS: the reader's own body has one stand-in and one owner", () => {

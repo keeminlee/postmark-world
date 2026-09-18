@@ -816,10 +816,42 @@ export function occupancyHorizon(acts = [], now = 0, skew = OCCUPANCY_SKEW) {
 // Derived, never stored — the walk ledger's own shape. The threshold ledger's
 // ACTS are the record; occupancy is a pure function of them and the clock, so
 // this page replays what any clone replays and cannot drift from it.
+//
+// THE FOLD IS MEMOISED ON THE LEDGER, NOT ON THE CALL (#2912 (2), 2026-09-18).
+// drawWalkers asked this once for the manifest and then bodyPlace asked it
+// again for every drawn body — the acts folded 73 times per draw, on every
+// wheel tick. The acts are a RECORD: they change when the ledger is fetched
+// (a new array) and the fold at a clock changes only when the clock passes an
+// act. So the fold is kept per acts array, tagged with how many leading acts
+// the clock admits — the ledger is chronological (each act stamps the crossing
+// it was written at), so the admitted acts are a prefix and the prefix's
+// length names the fold. A ledger that is NOT chronological is folded on every
+// call, as before: the assumption is checked once per array, never trusted.
+// Same answer as folding afresh, by construction; a fresh array (every test,
+// every fetch) folds afresh.
+const occupancyFolds = new WeakMap();   // acts → { chronological, n, occupancy, manifest }
+const chronological = (acts) => { for (let i = 1; i < acts.length; i++) if (acts[i]?.at < acts[i - 1]?.at) return false; return true; };
+function foldedOccupancy(acts, at) {
+  const list = Array.isArray(acts) ? acts : [...(acts ?? [])];
+  let fold = occupancyFolds.get(list);
+  const inOrder = fold ? fold.chronological : chronological(list);
+  if (inOrder) {
+    let n = fold ? fold.n : 0;
+    while (n < list.length && list[n]?.at <= at) n += 1;
+    while (n > 0 && !(list[n - 1]?.at <= at)) n -= 1;
+    if (fold && fold.n === n) return fold;
+    const occupancy = occupancyAt(list, at);
+    fold = { chronological: true, n, occupancy, manifest: occupantsOf(occupancy) };
+    occupancyFolds.set(list, fold);
+    return fold;
+  }
+  if (!fold) occupancyFolds.set(list, { chronological: false });
+  const occupancy = occupancyAt(list, at);
+  return { occupancy, manifest: occupantsOf(occupancy) };
+}
 export function standpointOccupancy({ acts = [], at = Infinity, handle = null } = {}) {
   const who = handle && handle !== SPECTATOR_ACTOR ? handle : null;
-  const occupancy = occupancyAt(acts, at);
-  const manifest = occupantsOf(occupancy);
+  const { occupancy, manifest } = foldedOccupancy(acts, at);
   const entered = who ? [...(occupancy.get(who) ?? [])] : [];
   const insideOf = who ? withinOf(occupancy, who) : null;
   // who else is in the innermost room you are in — the manifest, minus yourself
@@ -876,6 +908,23 @@ export function sceneWalkerSet({ walkers = [], manifest = new Map(), roomId = nu
     if (room && Number.isFinite(x) && Number.isFinite(y) && pointInsideMark({ x, y }, room)) return [{ ...w, threshold: true }];
     return [];
   });
+}
+
+/** THE SAME ANSWER IS NOT A NEW ANSWER (#2912 (4), 2026-09-18). The walkers
+ *  door is polled every fifteen seconds and answers the whole town whether or
+ *  not anyone moved — on prod, two answers three seconds apart differ in no
+ *  row at all — and the page drew the whole layer on every one. Two answers
+ *  are the same when they carry the same rows in the same order, field for
+ *  field: any field the door changes is a change, so a row the draw reads
+ *  differently can never be mistaken for the same. Pure. */
+export function sameWalkers(a = [], b = []) {
+  if (a === b) return true;
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] === b[i]) continue;
+    if (JSON.stringify(a[i]) !== JSON.stringify(b[i])) return false;
+  }
+  return true;
 }
 
 // WHERE ONE PRESS OF "step outside" ACTUALLY PUTS YOU (Wright, 2026-08-21).
@@ -1755,7 +1804,11 @@ export function viewerJourneyState(walker, marks = [], determined = {}) {
 // poll's first draw from the cached read, and the roof rule's passage-only
 // roster all import this now. tools/body-place.test.mjs carries the reader
 // census that reds when a new reader is born.
-export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {}) {
+// `index` is the draw's containment index (`containmentIndex(marks)`), handed
+// down by a caller placing many bodies over one record so the index is built
+// ONCE PER DRAW rather than once per body (#2912, 2026-09-18); a caller placing
+// one body may omit it and the index is built here, as before.
+export function bodyPlace(walker, { marks = [], acts = [], at = Infinity, index = null } = {}) {
   if (!walker?.handle) return null;
   const x = Number(walker.x), y = Number(walker.y);
   const position = Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
@@ -1764,7 +1817,7 @@ export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {})
   const moving = typeof walker.moving === "boolean"
     ? walker.moving
     : (walker.toward != null && !walker.arrived && !walker.standing);
-  const inside = position ? smallestContainingMark(position, marks) : null;
+  const inside = position ? smallestContainingMark(position, marks, { index }) : null;
   const entered = standpointOccupancy({ acts, at, handle: walker.handle }).insideOf ?? null;
   const boundFor = walker.mark_id ? String(walker.mark_id) : null;
   // ARRIVED: the body's coordinates lie inside the walk's target. A walk may
@@ -1772,7 +1825,7 @@ export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {})
   // door clause. Asked of the target's own shape, not of `inside` — a body
   // whose smallest ground is a room NESTED in the target (the parlor in Rei's
   // house) has still arrived.
-  const target = boundFor ? (marks ?? []).find((m) => m?.id === boundFor) : null;
+  const target = boundFor ? (index?.byMarkId?.get(boundFor) ?? (marks ?? []).find((m) => m?.id === boundFor) ?? null) : null;
   const arrived = !!(position && target && pointInsideMark(position, target));
   return {
     handle: walker.handle, position, moving, inside, entered, boundFor, arrived,
@@ -1782,9 +1835,9 @@ export function bodyPlace(walker, { marks = [], acts = [], at = Infinity } = {})
 }
 
 /** The one sentence about where a body is, from bodyPlace's answer. */
-export function placeLabel(place, marks = [], determined = {}) {
+export function placeLabel(place, marks = [], determined = {}, { index = null } = {}) {
   if (!place) return "";
-  const byMarkId = markIndex(marks);
+  const byMarkId = index?.byMarkId ?? markIndex(marks);
   const name = (id) => { const m = id && byMarkId.get(id); return m ? resolveMarkName(m, determined).name : null; };
   if (place.moving) return `${place.remainingM.toLocaleString()} m to go, ETA ${formatEtaCrossings(place.etaCrossings)}`;
   const entered = name(place.entered);
@@ -2131,40 +2184,47 @@ export const MINE_GLYPH_SCALE = 1.35;
  *  face (the picture clipped to the frame, or the monogram on the household's
  *  colour) — exactly the house card's rule: frame far out, picture near. Fixed
  *  where the resident stands, never merged, never re-decided by the camera.
- *  Everything is in marker space (`1/k`) so it stays the same screen size at
- *  any zoom. Carries the handle and the hit disc the walker always wore. Pure. */
+ *  Carries the handle and the hit disc the walker always wore. Pure.
+ *
+ *  AUTHORED IN PAINTING UNITS, SIZED BY THE CAMERA THROUGH `.ov-s` (#2912 (3),
+ *  2026-09-18) — the pips' contract since 08-19 and the house cards' since
+ *  09-10, now the walker's. The glyph is drawn at its k=1 size about (0,0)
+ *  inside a `translate` group (the position, written once with the data) and
+ *  a `.ov-s` group (the scale, one CSS variable the camera sets per frame), so
+ *  a wheel tick changes nothing in this markup: the layer is written when the
+ *  walkers, the ledger, the tier or the drawn box change, and never per frame.
+ *  Before this it took `k` and baked `1/k` into every coordinate, which is why
+ *  the whole layer had to be rebuilt as new DOM on every zoom frame. Your own
+ *  household's bodies are larger through the same `.ov-mine` factor the cards
+ *  use, and the hit disc grows with the frame so the bigger target is bigger
+ *  to the pointer too. */
 export const WALKER_FRAME = Object.freeze({ far: 14, near: 22, legFar: 4, legNear: 5 });
-export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false } = {}) {
+export function walkerFrameSVG({ at, handle = "", moving = false, label = null, art = null, mine = false, found = false, threshold = false } = {}) {
   const x = Number(at?.x), y = Number(at?.y);
   if (![x, y].every(Number.isFinite)) return "";
-  // YOUR OWN HOUSEHOLD'S BODIES ARE DRAWN LARGER, geometry and all, rather than
-  // scaled by CSS: every measurement below is derived from `s`, and a transform
-  // on the group would need an origin that moves with the walker. One factor,
-  // one place, and the hit circle grows with the frame so the bigger target is
-  // actually bigger to the pointer too.
-  const s = (1 / (Number(k) > 0 ? Number(k) : 1)) * (mine ? MINE_GLYPH_SCALE : 1);
   const filled = !!(art && (art.avatar || art.monogram));
-  const size = (filled ? WALKER_FRAME.near : WALKER_FRAME.far) * s;
-  const leg = (filled ? WALKER_FRAME.legNear : WALKER_FRAME.legFar) * s;
-  const r = size / 2, x0 = x - r, y0 = y - r;
+  const size = filled ? WALKER_FRAME.near : WALKER_FRAME.far;
+  const leg = filled ? WALKER_FRAME.legNear : WALKER_FRAME.legFar;
+  const r = size / 2;
   // THE FRAME IS ROUND (founder, 2026-09-11: "make the frame circular rather
   // than square. keep the legs (they're perfect)"). The legs are untouched —
   // same stance, same length — and start where they meet the rim: on a circle
   // of radius r the point 0.22·size off centre lies √(r² − (0.22·size)²) below
   // the middle, a hair above where the square's bottom edge was.
-  const rim = y + Math.sqrt(r * r - (size * 0.22) ** 2);
+  const rim = Math.sqrt(r * r - (size * 0.22) ** 2);
   const who = esc(label ?? handle);
   const safe = String(handle ?? "").toLowerCase().replace(/[^a-z0-9-]/g, "");
   let fill = "";
   if (filled && art.avatar) {
     const clip = `wv-face-${safe}`;
-    fill = `<clipPath id="${clip}"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath>`
-      + `<image href="${esc(art.avatar)}" x="${x0}" y="${y0}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
+    fill = `<clipPath id="${clip}"><circle cx="0" cy="0" r="${r}"/></clipPath>`
+      + `<image href="${esc(art.avatar)}" x="${-r}" y="${-r}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clip})" class="wv-walker-face"/>`;
   } else if (filled) {
-    fill = `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
-      + `<text x="${x}" y="${y}" class="wv-walker-initial" font-size="${13 * s}">${esc(art.monogram)}</text>`;
+    fill = `<circle cx="0" cy="0" r="${r}" class="wv-walker-mono" fill="${esc(art.color ?? "#6b7a8f")}"/>`
+      + `<text x="0" y="0" class="wv-walker-initial" font-size="13">${esc(art.monogram)}</text>`;
   }
-  return `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}${threshold ? " at-threshold" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
+  return `<g transform="translate(${x} ${y})"><g class="ov-s${mine ? " ov-mine" : ""}">`
+    + `<g class="${filled ? "wv-walker-near" : "wv-walker-far"}${moving ? " moving" : ""}${mine ? " is-mine" : ""}${found ? " is-found" : ""}${threshold ? " at-threshold" : ""}" data-handle="${esc(handle)}" role="img" aria-label="${who}">`
     // WHOSE TOKEN THIS IS, on the hit target itself. It carried no identity
     // because nothing clicked it — the circle existed to take a hover and a
     // title, and `pointer-events: all` meant it also SWALLOWED every click that
@@ -2172,12 +2232,12 @@ export function walkerFrameSVG({ at, k = 1, handle = "", moving = false, label =
     // the ground underneath from hearing it — the founder's "I can't even click
     // my own token to walk" (2026-08-29): not an act that failed, an act with
     // nothing behind it and a hole where the fallback was.
-    + `<circle cx="${x}" cy="${y}" r="${(filled ? 27 : 12) * s}" class="wv-walker-hit" data-walker="${esc(handle)}"/>`
+    + `<circle cx="0" cy="0" r="${filled ? 27 : 12}" class="wv-walker-hit" data-walker="${esc(handle)}"/>`
     + fill
-    + `<circle cx="${x}" cy="${y}" r="${r}" class="wv-walker-frame"/>`
-    + `<line x1="${x - size * 0.22}" y1="${rim}" x2="${x - size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
-    + `<line x1="${x + size * 0.22}" y1="${rim}" x2="${x + size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
-    + `</g>`;
+    + `<circle cx="0" cy="0" r="${r}" class="wv-walker-frame"/>`
+    + `<line x1="${-size * 0.22}" y1="${rim}" x2="${-size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
+    + `<line x1="${size * 0.22}" y1="${rim}" x2="${size * 0.3}" y2="${rim + leg}" class="wv-walker-leg"/>`
+    + `</g></g></g>`;
 }
 
 
@@ -3172,7 +3232,15 @@ export function residentHref(handle) {
 // publishes that vessel under its bare handle. So the set of things that draw as
 // hulls is derived, and the second scheduled line somebody proposes by leaving a
 // mark will draw as a boat without anyone editing this module.
+// ONCE PER MARKS SET (#2912 (2)): the fold's `marks` is one array until the
+// record moves, and drawWalkers asked this of it on every draw. Kept per
+// array; a caller must not add to the Set it is handed (none does — every
+// reader asks `.has`). A fresh array is scanned afresh.
+const vesselSets = new WeakMap();
 export function vesselHandles(marks = []) {
+  const list = Array.isArray(marks) ? marks : null;
+  const known = list && vesselSets.get(list);
+  if (known) return known;
   const out = new Set();
   for (const m of marks ?? []) {
     if (m?.mechanic !== "timetable") continue;
@@ -3182,6 +3250,7 @@ export function vesselHandles(marks = []) {
     const handle = slash === -1 ? id : id.slice(slash + 1);
     if (handle) out.add(handle);
   }
+  if (list) vesselSets.set(list, out);
   return out;
 }
 
@@ -3234,14 +3303,21 @@ export const VESSEL_GLYPH_SCALE = 1.6;
 // to one point amidships and stack into a single crowd of faces; a deck beneath
 // that crowd is the true picture of the pile, and it costs the passenger layer
 // nothing — its circles are untouched.
-export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving = false } = {}) {
-  const x = Number(at?.x), y = Number(at?.y), u = Number(unit);
-  if (![x, y].every(Number.isFinite) || !Number.isFinite(u) || u <= 0) return "";
+//
+// SIZED BY THE CAMERA THROUGH `--wv-vu` (#2912 (3)): her `unit` — the marker
+// scale floored at a fraction of the frame, `farGlyphUnit` — moves with every
+// wheel tick, so it is no longer baked into the markup. The hull is authored at
+// her own 60-unit size about (0,0) inside a `translate` group and a
+// `.wv-vessel-s` group whose scale is one CSS variable the camera sets per
+// frame (`applyCameraScale`), the walkers' `.ov-s` contract with her own floor.
+// The mirror rides inside, so the path data stays plain numbers anybody can
+// read off as a drawing.
+export function vesselGlyphSVG({ at, toward = null, label = "", moving = false } = {}) {
+  const x = Number(at?.x), y = Number(at?.y);
+  if (![x, y].every(Number.isFinite)) return "";
   const dx = Number(toward?.x) - x;
   const bowLeft = !(moving && Number.isFinite(dx) && dx > 0);
-  // one transform carries both the camera compensation and the mirror, so the
-  // path data below stays plain numbers anybody can read off as a drawing
-  const flip = bowLeft ? "" : " scale(-1,1)";
+  const flip = bowLeft ? "" : ` transform="scale(-1,1)"`;
   const g = [
     `<path d="M -26 12 L 24 12 L 16 24 L -16 24 Z" class="wv-vessel-hull"/>`,
     `<path d="M -26 12 L -20 3" class="wv-vessel-stem"/>`,
@@ -3251,8 +3327,8 @@ export function vesselGlyphSVG({ at, toward = null, unit = 1, label = "", moving
     `<path d="M -32 29 L -12 29 M -4 29 L 20 29 M -24 34 L -6 34 M 4 34 L 26 34" class="wv-vessel-water"/>`,
   ].join("");
   const name = String(label ?? "");
-  return `<g class="wv-vessel${moving ? " moving" : ""}" transform="translate(${x},${y}) scale(${u})${flip}"`
-    + ` role="img" aria-label="${esc(name)}">${g}</g>`;
+  return `<g class="wv-vessel${moving ? " moving" : ""}" transform="translate(${x},${y})"`
+    + ` role="img" aria-label="${esc(name)}"><g class="wv-vessel-s"><g${flip}>${g}</g></g></g>`;
 }
 
 // A PICTURE HUNG ON A PLACE. The mark's own `at` and `extent` decide where the
@@ -3694,7 +3770,7 @@ export function coLocatedMarkIds(marks, withinM = FAN_SAME_SPOT_M) {
   return stacked;
 }
 
-export function smallestContainingMark(point, marks = [], { insideRoomId = null } = {}) {
+export function smallestContainingMark(point, marks = [], { insideRoomId = null, index = null } = {}) {
   const x = Number(point?.x), y = Number(point?.y);
   if (![x, y].every(Number.isFinite)) return null;
   // THE ROOM STOPS ANSWERING EVERY PIXEL OF ITS OWN FLOOR (founder, 2026-08-29:
@@ -3714,9 +3790,6 @@ export function smallestContainingMark(point, marks = [], { insideRoomId = null 
   // commit asked whether a mark contained the room's centre point, which also
   // said yes for a child sitting at the centre of the room (the house at the
   // middle of its parcel), and silenced it — found by this port's own test.
-  const room = insideRoomId ? (marks ?? []).find((mark) => mark?.id === insideRoomId) : null;
-  const encloses = (mark) => !!insideRoomId
-    && (mark?.id === insideRoomId || (room && mark?.at && mark?.extent ? marksContain(mark, room) : false));
   // A THING IS NOT GROUND (Keemin, 2026-08-22: carried things were winning the
   // walk desk's "From"). A class:thing object rides at its holder's own feet —
   // a 1×1 rect containing your point, so smallest-area crowned it your
@@ -3736,12 +3809,40 @@ export function smallestContainingMark(point, marks = [], { insideRoomId = null 
   // (paintingMarkAtPoint asks the same question). The bitmaps the issue named
   // were swapped for a 96 px raster first and the stall did not move. With the
   // index hoisted: 83–167 ms at the crossing, 17–97 ms a tick, on a 42-body pane.
+  //
+  // THE INDEX IS BUILT ONCE PER DRAW, NOT ONCE PER CALL (#2912, 2026-09-18).
+  // The hoist above left one index per BODY per draw: drawWalkers asks this of
+  // every drawn body, and at a 6× CPU throttle that was 351 ms of `markIndex`
+  // in one district crossing, plus the ambient walk over 460 predicated marks
+  // repeated for each of 72 bodies. Everything in the filter that does not
+  // depend on the POINT — the class, the room's enclosure, the ambient chain,
+  // whether the mark has a body at all, the area order — is decided once per
+  // record in `containmentIndex` and handed down by the caller placing many
+  // bodies; what is left per body is the point test over the ground, smallest
+  // first. The answer is the same by construction: the first containing mark
+  // in (area, id) order is the one the sort put first. A caller with no index
+  // in hand builds one here and pays what it paid before, no more.
+  const own = index?.insideRoomId === (insideRoomId ?? null) ? index : containmentIndex(marks, { insideRoomId });
+  for (const g of own.ground) if (pointInsideMark({ x, y }, g.mark)) return g.mark.id;
+  return null;
+}
+
+/** The point-independent half of `smallestContainingMark`, computed once per
+ *  record: the id index, and the ground that can answer a containment question
+ *  — every mark that is not a thing, not ambient, not the mounted room or one
+ *  enclosing it, and has a body — in the (area, id) order the answer is chosen
+ *  by. Built once per draw by drawWalkers and handed through walkerPlace →
+ *  bodyPlace → smallestContainingMark / placeLabel (#2912). Pure. */
+export function containmentIndex(marks = [], { insideRoomId = null } = {}) {
   const byMarkId = markIndex(marks);
-  return (marks ?? [])
-    .filter((mark) => mark?.class !== "thing" && !encloses(mark)
-      && !isAmbientMark(mark, byMarkId) && pointInsideMark({ x, y }, mark))
+  const room = insideRoomId ? (marks ?? []).find((mark) => mark?.id === insideRoomId) : null;
+  const encloses = (mark) => !!insideRoomId
+    && (mark?.id === insideRoomId || (room && mark?.at && mark?.extent ? marksContain(mark, room) : false));
+  const ground = (marks ?? [])
+    .filter((mark) => mark?.class !== "thing" && !encloses(mark) && isEmbodiedMark(mark) && !isAmbientMark(mark, byMarkId))
     .map((mark) => ({ mark, area: Number(mark.extent.w) * Number(mark.extent.h) }))
-    .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)))[0]?.mark?.id ?? null;
+    .sort((a, b) => a.area - b.area || String(a.mark.id).localeCompare(String(b.mark.id)));
+  return { byMarkId, ground, insideRoomId: insideRoomId ?? null };
 }
 
 /**
@@ -4947,6 +5048,10 @@ const STYLE = `
    top of the real change, which is that your parcels draw their card at every
    tier instead of a bead. */
 .ov-s.ov-mine { transform:scale(calc(var(--wv-mk,1) * var(--wv-mine-k, 1.35))); }
+/* THE VESSEL'S OWN SIZE IS A CAMERA FACT TOO (#2912): the marker scale floored
+   at a fraction of the frame (farGlyphUnit), set by the camera on the walk
+   layer once per frame, never rebuilt into her markup. */
+.wv-vessel-s { transform:scale(var(--wv-vu,1)); transform-origin:0 0; }
 /* and your own people, named in the same gold the frame already uses for a
    reader's own body elsewhere */
 .wv-walker-far.is-mine > .wv-walker-frame,
@@ -6223,6 +6328,10 @@ export function mountViewer(appEl) {
   // the RECORD; the rooms are recomputed at whatever clock is asked for.
   let enterExitLedger = { acts: [], unrecognized: 0 };
   let enterExitEpoch = 0;    // bumped when the ledger lands; a pane built before it is stale
+  // HOW OFTEN THE WALK LAYER'S WORK IS DONE (#2912). Counters, not behaviour:
+  // the page tests read them through the dev handle to prove a wheel tick with
+  // no data change does none of this work, and a walkers answer does it once.
+  const walkDraws = { layerWrites: 0, layerSkips: 0, pollsUnchanged: 0, actorReads: 0 };
   // WHICH CLOCK THE FOLD IS ASKED AT, and it is not `state.crossing`.
   //
   // The dial is a FLOORED crossing number; the ledger stamps a FRACTIONAL one
@@ -8064,11 +8173,23 @@ export function mountViewer(appEl) {
     function frameWork() {
       framePending = false;
       const k = applyCameraScale();
-      // The layers whose glyphs are SIZED off k — walkers, conversations — are
-      // redrawn only when k has actually moved, which a pan never does. This is
-      // the whole reason a drag can be free: nothing about it changes their size
-      // or their ground, so nothing about it needs to touch them.
-      if (k !== lastMarkerK) { lastMarkerK = k; drawWalkers(); drawConversations(); }
+      // The layers whose glyphs are SIZED off k — conversations, the armed
+      // walk's preview — are redrawn only when k has actually moved, which a
+      // pan never does. This is the whole reason a drag can be free: nothing
+      // about it changes their size or their ground, so nothing about it needs
+      // to touch them.
+      //
+      // THE WALKERS ARE NOT AMONG THEM ANY MORE (#2912 (3), 2026-09-18). Their
+      // glyphs are authored in painting units and sized through the `.ov-s`
+      // variable applyCameraScale just set, exactly as the pips and the house
+      // cards are — so a wheel tick touches no walker DOM. The layer is written
+      // when its DATA changes: a walkers or present answer, a ledger fetch, the
+      // faces arriving, a found body, an act-as switch, and the settle pass
+      // (drawOverlay) when the camera has crossed a tier or left the drawn box
+      // — the same moment the cards appear. Measured at a 6× CPU throttle
+      // before this: the frame pass's drawWalkers was 605 ms of a district
+      // crossing and the whole of every 150–620 ms tick inside the tier.
+      if (k !== lastMarkerK) { lastMarkerK = k; drawConversations(); drawWalkPreview(); }
       renderMarkHighlight();
       positionBubbles(); // the anchors are on the painting, so they move with it
       noticeTheCameraSettling();
@@ -8694,6 +8815,14 @@ export function mountViewer(appEl) {
     if (!mapCtx?.overlay) return markerScale(mapCtx?.zoomK ?? 1);
     const k = markerScale(mapCtx.zoomK);
     mapCtx.overlay.style.setProperty("--wv-mk", overlayScale(k));
+    // THE WALK LAYER IS SIZED THE SAME WAY (#2912 (3)): the bodies through
+    // `.ov-s`, the vessel through her own floor (see vesselGlyphSVG). Two
+    // properties on one element per frame; no walker markup is touched.
+    if (mapCtx.walkLayer) {
+      mapCtx.walkLayer.style.setProperty("--wv-mk", overlayScale(k));
+      mapCtx.walkLayer.style.setProperty("--wv-vu",
+        String(farGlyphUnit(k, mapCtx.view?.w, VESSEL_MIN_FRAME_FRACTION) * VESSEL_GLYPH_SCALE));
+    }
     return k;
   }
   // ── WHAT THE CAMERA IS LOOKING AT (2026-09-11) ───────────────────────────
@@ -9125,11 +9254,17 @@ export function mountViewer(appEl) {
     actorBound: true,
     changingCourse: false,
     // WHO THE SEARCH JUST FOUND, and it is STATE rather than a class written
-    // onto a node. `drawWalkers` rebuilds the whole layer's innerHTML on every
-    // draw — a poll, a zoom, a pan — so a class set on the element would be
-    // gone within fifteen seconds and look like a flake. Held here, the glyph
-    // is re-marked every time it is redrawn, for as long as the finding stands.
+    // onto a node. `drawWalkers` rebuilds the whole layer's innerHTML when its
+    // data changes — a poll that moved somebody, a tier, a found body — so a
+    // class set on the element would be gone at the next answer and look like
+    // a flake. Held here, the glyph is re-marked every time it is redrawn, for
+    // as long as the finding stands.
     foundHandle: null,
+    // what the layer last showed (#2912 (4)): the markup it was written with,
+    // and the drawn set behind it — the readout's list when a poll brings
+    // nothing new
+    lastMarkup: null,
+    lastDrawn: null,
   };
 
   // Who the walkers ARE — name, avatar, colour, household — keyed by handle.
@@ -9219,9 +9354,16 @@ export function mountViewer(appEl) {
   // ONE OWNER FOR WHERE A BODY IS (POS-92): every sentence about a walker's
   // place — the hover, the highlight title, the bubble — is printed from
   // bodyPlace's answer, never from the walk's named target.
-  const walkerPlace = (w) => placeLabel(
-    bodyPlace(w, { marks: allMarks(), acts: enterExitLedger.acts, at: occupancyClock() }),
-    allMarks(), data?.worldState?.determined ?? {});
+  // `draw` is the walker pass's per-draw context — the marks it is placing
+  // bodies over and the containment index built ONCE over them (#2912);
+  // a single-body caller (the hover, the bubble) omits it and pays one index.
+  const walkerPlace = (w, draw = null) => {
+    const marks = draw?.marks ?? allMarks();
+    const index = draw?.index ?? containmentIndex(marks);
+    return placeLabel(
+      bodyPlace(w, { marks, acts: enterExitLedger.acts, at: occupancyClock(), index }),
+      marks, data?.worldState?.determined ?? {}, { index });
+  };
   function originFor(handle) {
     const walker = handle ? walkState.walkers.find((w) => w.handle === handle) : null;
     if (walker && Number.isFinite(walker.x) && Number.isFinite(walker.y))
@@ -9245,9 +9387,47 @@ export function mountViewer(appEl) {
     });
   }
 
-  function syncActorPosition({ moveCamera = false } = {}) {
+  // WHICH RECORD A READING WAS TAKEN AGAINST (#2912 (2)). The marks the page
+  // can speak about move when the fold is re-applied (`worldEpoch`), when the
+  // resident's read replaces the index (`byId`), or when a record rides into
+  // it (`byId.size`) — a revision number over those, so a reading memoised on
+  // the marks does not have to hold the array (the resident path spreads a
+  // fresh one on every `allMarks()`).
+  let marksRev = 0;
+  let marksSeen = null;
+  const marksRevision = () => {
+    const now = { byId, world, epoch: worldEpoch, size: byId.size, resident: onResidentPath() };
+    if (!marksSeen || now.byId !== marksSeen.byId || now.world !== marksSeen.world || now.epoch !== marksSeen.epoch
+      || now.size !== marksSeen.size || now.resident !== marksSeen.resident) { marksRev += 1; marksSeen = now; }
+    return marksRev;
+  };
+  // THE ACTOR'S JOURNEY AND STANDING, ONCE PER WALKERS ANSWER OR ACTOR CHANGE
+  // (#2912 (2)). Both sentences were derived on every draw — a containment
+  // question over the whole record for the standing, the destination's
+  // containment for the journey — by syncActorPosition and again by
+  // renderWalkDestination, and drawWalkers called both on every wheel tick.
+  // They are a function of the walkers answer (the actor's row), the actor,
+  // their home, the record and its names: kept until one of those moves.
+  let actorView = null;
+  function actorReading() {
+    const walkers = walkState.walkers, handle = state.handle, home = state.actorHome;
+    const determined = data?.worldState?.determined ?? null;
+    const rev = marksRevision();
+    if (actorView && actorView.walkers === walkers && actorView.handle === handle && actorView.home === home
+      && actorView.determined === determined && actorView.rev === rev) return actorView;
+    const marks = allMarks();
     const origin = actorOrigin();
-    const journey = viewerJourneyState(actorWalker(), allMarks(), data?.worldState?.determined);
+    walkDraws.actorReads += 1;
+    actorView = {
+      walkers, handle, home, determined, rev, origin,
+      journey: viewerJourneyState(actorWalker(), marks, determined ?? {}),
+      standing: origin ? standingLocationLabel(origin, marks, determined ?? {}, { prefix: false }) : null,
+    };
+    return actorView;
+  }
+
+  function syncActorPosition({ moveCamera = false } = {}) {
+    const { origin, journey, standing } = actorReading();
     const here = $(root, ".wv-youhere");
     if (here) {
       // how the office learned your position is provenance, not a thing to read
@@ -9255,7 +9435,7 @@ export function mountViewer(appEl) {
       here.innerHTML = journey.kind === "journey"
         ? `<b>on the road</b> · ${journey.remainingM.toLocaleString()} m from ${esc(journey.destinationName)}`
         : origin
-          ? `<b>${esc(standingLocationLabel(origin, allMarks(), data?.worldState?.determined, { prefix: false }))}</b>`
+          ? `<b>${esc(standing)}</b>`
           : `<span class="wv-quiet">the office has no position for you yet</span>`;
     }
     // reports whether it re-rendered, so a caller does not build the telling a
@@ -9507,7 +9687,7 @@ export function mountViewer(appEl) {
   // The line runs from where the walker IS to where they are going, not from
   // where they set out: a reader wants the rest of the journey, and the part
   // already walked is behind them.
-  function walkPathsSVG(k) {
+  function walkPathsSVG() {
     if (!mapCtx || !departures.length) return "";
     const handles = state.whoami?.handles ?? [];
     if (!handles.length) return "";
@@ -9538,11 +9718,19 @@ export function mountViewer(appEl) {
 
   function drawWalkers() {
     if (!mapCtx?.walkLayer) return;
-    const k = markerScale(mapCtx.zoomK);
-    // the vessel's own floor against being zoomed away from (see farGlyphUnit):
-    // out at journey width she would otherwise be three pixels of hull
-    const vesselUnit = farGlyphUnit(k, mapCtx.view?.w, VESSEL_MIN_FRAME_FRACTION) * VESSEL_GLYPH_SCALE;
-    const vessels = vesselHandles(allMarks());
+    // NO CAMERA IN THIS PASS (#2912 (3)). The bodies, the destination rings and
+    // the vessel are authored in painting units and sized through the CSS
+    // variables applyCameraScale sets on the layer per frame — the vessel's own
+    // floor against being zoomed away from (farGlyphUnit) included. What this
+    // pass writes depends on the walkers, the ledger, the record, the tier and
+    // the drawn box, and on nothing the wheel moves.
+    // THE RECORD, READ ONCE PER DRAW (#2912, 2026-09-18). One `allMarks()` for
+    // the whole pass, and the containment index built once over it and handed
+    // to every body's placement — the #2910 hoist made it once per CALL, which
+    // at 72 drawn bodies was still 72 indexes a draw, 351 ms of a 6× crossing.
+    const marks = allMarks();
+    const draw = { marks, index: containmentIndex(marks) };
+    const vessels = vesselHandles(marks);
     const px = (m) => ({ x: mapCtx.originPx.x + m.x / mapCtx.mPerPx, y: mapCtx.originPx.y + m.y / mapCtx.mPerPx });
     // TWO PASSES, ONE LAYER. Hulls are collected separately and emitted first so
     // every deck sits under every passenger — a boat drawn in walker order would
@@ -9569,7 +9757,7 @@ export function mountViewer(appEl) {
     // from any pointer inside it.
     const tier = drawTier();
     const bounds = drawnBounds();
-    const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId, marks: allMarks() });
+    const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId, marks: draw.marks });
     const drawnWalkers = inView.filter((w) => pointInDrawnBounds(w, bounds));
     // ONE BODY, ONE MARKER (POS-93), ASKED OF THE BODIES DRAWN (#2848 (a),
     // 2026-09-17). This asked the walker LIST: jetto-of-starforge was in it, so
@@ -9579,7 +9767,7 @@ export function mountViewer(appEl) {
     // stands in until one is.
     syncStandpointDot(drawnWalkers, px);
     // under every body, at both tiers: a route is ground, not a person
-    const paths = walkPathsSVG(k);
+    const paths = walkPathsSVG();
     // …then the TIER. At town width a face is eleven pixels of photograph with
     // its own clip path, and the 09-09 record has 1,550 of them; what a reader
     // at that zoom can actually read is WHERE PEOPLE ARE. So beyond the engine's
@@ -9598,14 +9786,10 @@ export function mountViewer(appEl) {
     // is the first thing that would grow, not this.
     if (tier === "far") {
       for (const w of drawnWalkers) {
-        s += walkerFrameSVG({ at: px(w), k, handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
+        s += walkerFrameSVG({ at: px(w), handle: w.handle, moving: w.moving ?? (!w.arrived && !w.standing),
           mine: isOwnHandle(w.handle), found: w.handle === walkState.foundHandle, threshold: !!w.threshold });
       }
-      mapCtx.walkLayer.innerHTML = paths + s;
-      walkReadout(drawnWalkers);
-      syncHouseLights();
-      syncActorPosition();
-      renderWalkDestination();
+      writeWalkLayer(paths + s, drawnWalkers);
       return;
     }
     for (const w of drawnWalkers) {
@@ -9618,7 +9802,7 @@ export function mountViewer(appEl) {
       // mid-walk.
       let towardM = w.toward ?? w;
       if (w.moving && w.toward && w.mark_id) {
-        const tm = (allMarks()).find((m) => m.id === w.mark_id);
+        const tm = marks.find((m) => m.id === w.mark_id);
         if (tm?.at && tm?.extent) {
           const t = targetEntryT({ x: w.x, y: w.y }, w.toward,
             { x: w.toward.x, y: w.toward.y, w: tm.extent.w, h: tm.extent.h });
@@ -9634,11 +9818,13 @@ export function mountViewer(appEl) {
       const moving = w.moving ?? (!w.arrived && !w.standing);
       const eta = moving
         ? `${w.remaining_m} m to go, ETA ${formatEtaCrossings(w.eta_crossings)}`
-        : walkerPlace(w);
+        : walkerPlace(w, draw);
       // the remaining leg, then the walker on top of it — movers only
+      // the leg is a distance and stays true to the ground; the ring at its end
+      // is a marker and rides `.ov-s` like the body (#2912 (3))
       if (moving)
         s += `<line x1="${now.x}" y1="${now.y}" x2="${dest.x}" y2="${dest.y}" class="wv-walk-leg"/>` +
-             `<circle cx="${dest.x}" cy="${dest.y}" r="${5 / k}" class="wv-walk-dest"/>`;
+             `<g transform="translate(${dest.x} ${dest.y})"><g class="ov-s"><circle cx="0" cy="0" r="5" class="wv-walk-dest"/></g></g>`;
       // A HIT HALO, invisible, three times the dot. The visible walker renders
       // at about 7 CSS pixels — a ~3px radius target, and standing residents now
       // crowd close enough that one dot's centre can sit under its neighbour. So
@@ -9667,18 +9853,39 @@ export function mountViewer(appEl) {
       // Pre-existing, and not a thing to invent a precedence rule for on sailing
       // night — but worth its own pass.
       if (vessels.has(w.handle)) {
-        hulls += vesselGlyphSVG({ at: now, toward: dest, unit: vesselUnit, moving, label: identity });
+        hulls += vesselGlyphSVG({ at: now, toward: dest, moving, label: identity });
         continue;
       }
       // THE FRAME, FILLED (2026-09-11): the same glyph the far tier draws empty,
       // now wearing the face — the picture clipped to the frame, or the monogram
       // on the household's colour. Same anchor, same hit disc as the old circle.
       const face = faceOf(w.handle);
-      s += walkerFrameSVG({ at: now, k, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
+      s += walkerFrameSVG({ at: now, handle: w.handle, moving, label: identity, mine: isOwnHandle(w.handle),
         found: w.handle === walkState.foundHandle, threshold: !!w.threshold,
         art: face.avatar ? { avatar: face.avatar } : { monogram: face.monogram, color: face.color } });
     }
-    mapCtx.walkLayer.innerHTML = paths + hulls + s;
+    writeWalkLayer(paths + hulls + s, drawnWalkers);
+  }
+  // THE LAYER IS WRITTEN WHEN ITS MARKUP CHANGED, AND NOT OTHERWISE (#2912
+  // (4)). The settle pass rebuilds the overlay whenever the camera crosses a
+  // tier or leaves the drawn box and ends in this pass; a poll that moved
+  // somebody, a ledger, the faces, a found body all end here too. Which of
+  // them changed what the layer SHOWS is answered by the markup itself — the
+  // same bodies at the same places in the same state print the same string,
+  // and a string that has not changed is not written, so the nodes on the
+  // page stay the same objects. No list of the layer's inputs to keep true:
+  // whatever the draw reads, the draw prints. The tail runs either way — the
+  // overlay may have been rebuilt under it (the lights and the dot stand on
+  // the cards), and the readout carries the clock.
+  function writeWalkLayer(markup, drawnWalkers) {
+    if (markup !== walkState.lastMarkup) {
+      mapCtx.walkLayer.innerHTML = markup;
+      walkState.lastMarkup = markup;
+      walkDraws.layerWrites += 1;
+    } else {
+      walkDraws.layerSkips += 1;
+    }
+    walkState.lastDrawn = drawnWalkers;
     walkReadout(drawnWalkers);
     syncHouseLights();
     syncActorPosition();
@@ -9763,6 +9970,21 @@ export function mountViewer(appEl) {
       + `<text x="${labelX + 7 * unit}" y="${labelY + 16 * unit}" font-size="${12 * unit}">${esc(label)}</text></g>`;
   }
 
+  // ONE DRAW PER ANSWER THAT MOVED SOMEBODY (#2912 (4)). An answer that
+  // carries the rows the page already holds is not taken: the list keeps its
+  // identity (so everything memoised on it holds — the actor's reading, the
+  // vessel set) and the layer is not written. The readout still gets the
+  // clock the answer carried, because it prints it.
+  function takeWalkers(rows) {
+    if (sameWalkers(rows, walkState.walkers)) {
+      walkDraws.pollsUnchanged += 1;
+      walkReadout(walkState.lastDrawn ?? []);
+      return false;
+    }
+    walkState.walkers = rows;
+    drawWalkers();
+    return true;
+  }
   async function pollWalkers() {
     // ⚑ NOT BEFORE WE KNOW WHO IS READING. The first poll fires at boot, which
     // is before the office has answered whoami — so a reader with a key would
@@ -9801,8 +10023,7 @@ export function mountViewer(appEl) {
             const j = await r.json();
             if (!j?.error) {
               walkState.at = Number(j.at ?? walkState.at);
-              walkState.walkers = walkersFromPresent(j, { self: selfFromRead(read) });
-              drawWalkers();
+              takeWalkers(walkersFromPresent(j, { self: selfFromRead(read) }));
             }
           }
         } catch { /* a poll miss is silent — the last good reading stands */ }
@@ -9826,8 +10047,7 @@ export function mountViewer(appEl) {
         // are people; they are drawn together and told apart by `standing`,
         // which this renderer already understood. The office publishes them
         // under separate keys so `walkers` keeps meaning what it always meant.
-        walkState.walkers = [...(j.walkers ?? []), ...(j.standing ?? [])];
-        drawWalkers();
+        takeWalkers([...(j.walkers ?? []), ...(j.standing ?? [])]);
         const origin = actorOrigin();
         if (canAct() && origin && walkState.actorBound) {
           const moved = state.cam.x !== origin.x || state.cam.y !== origin.y;
@@ -9962,7 +10182,7 @@ export function mountViewer(appEl) {
     // because there is no armed destination behind it, which is exactly the
     // point: the demonstration is not one.
     if (tourStage === "walk") return;
-    const journey = viewerJourneyState(actorWalker(), allMarks(), data?.worldState?.determined);
+    const { journey } = actorReading();
     // The desk is for a walk, so it appears when there IS one (Keemin,
     // 2026-08-04): a destination you have armed, or a journey already under way.
     // Standing still it said only where you stand, which the painting's own dot
@@ -13116,6 +13336,9 @@ export function mountViewer(appEl) {
     // changed", "who is standing in it changed" and "who is INSIDE it changed"
     // are one event to every caller that would ask.
     reload: async () => { if (!data) return false; await reloadWorld(); await pollWalkers(); await loadEnterExitLedger(); renderCurrent(); return true; },
+    // how many times the walk layer has been written and the actor's reading
+    // taken — the instrument behind tools/walk-layer-once.test.mjs (#2912)
+    walkDraws: () => ({ ...walkDraws }),
     stop: () => {
       clearInterval(clock);
       clearInterval(walkState.timer);
