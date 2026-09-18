@@ -8944,9 +8944,11 @@ export function mountViewer(appEl) {
       glyphIds.add(m.id);
       s += homeCard(m, px(m.at), null, nameOf(m), tier);
     }
-    // one body, one marker: the dot only where there is no body to draw (POS-93)
-    if (standpointDotShown({ spectating: isSpectating(), handle: state.handle, walkers: walkState.walkers }))
-      s += overlayStandpointSVG({ at: me });
+    // one body, one marker (POS-93): the dot is set down on every draw and the
+    // walker pass this draw ends in keeps or removes it, judged on the bodies it
+    // actually DREW — see syncStandpointDot (#2848 (a)). Deciding it here, off
+    // the walker LIST, is what left a reader with no marker at all.
+    s += overlayStandpointSVG({ at: me });
     overlay.innerHTML = s;
     applyCameraScale();          // the markup is sizeless until the camera says
     // WHAT THIS DRAW COVERS, written down where the camera can check it. The
@@ -9557,10 +9559,13 @@ export function mountViewer(appEl) {
     const bounds = drawnBounds();
     const inView = sceneWalkerSet({ walkers: walkState.walkers, manifest, roomId: sceneRoomId, marks: allMarks() });
     const drawnWalkers = inView.filter((w) => pointInDrawnBounds(w, bounds));
-    // ONE BODY, ONE MARKER (POS-93): the overlay may have drawn the standpoint
-    // dot before this reader's body arrived; once the body is here, the dot goes.
-    if (!standpointDotShown({ spectating: isSpectating(), handle: state.handle, walkers: walkState.walkers }))
-      mapCtx.overlay?.querySelector?.(".ov-standpoint")?.remove();
+    // ONE BODY, ONE MARKER (POS-93), ASKED OF THE BODIES DRAWN (#2848 (a),
+    // 2026-09-17). This asked the walker LIST: jetto-of-starforge was in it, so
+    // the dot went — and his body stood at (−95,120, −95,120), 139 km off the
+    // canvas, culled by the box above, so the founder acting as him saw no
+    // marker of any kind. A body that was not drawn is not a marker; the dot
+    // stands in until one is.
+    syncStandpointDot(drawnWalkers, px);
     // under every body, at both tiers: a route is ground, not a person
     const paths = walkPathsSVG(k);
     // …then the TIER. At town width a face is eleven pixels of photograph with
@@ -9666,6 +9671,24 @@ export function mountViewer(appEl) {
     syncHouseLights();
     syncActorPosition();
     renderWalkDestination();
+  }
+
+  // The standpoint dot has ONE owner and ONE list. The overlay sets the dot down
+  // on every draw (it draws before the bodies, and knows nothing of the cull);
+  // this pass, which knows exactly which bodies it drew, keeps the dot or takes
+  // it away — and puts it back when a later draw culls the body it once drew
+  // (a zoom-in rebuilds no overlay, so nobody else would). `drawnWalkers` is
+  // the list after the scene roof and the drawn-bounds cull, never
+  // `walkState.walkers`: a body the map holds but does not draw is no marker.
+  function syncStandpointDot(drawnWalkers, px) {
+    const overlay = mapCtx?.overlay;
+    if (!overlay?.querySelector) return;
+    const standing = overlay.querySelector(".ov-standpoint");
+    if (!standpointDotShown({ spectating: isSpectating(), handle: state.handle, walkers: drawnWalkers })) {
+      standing?.remove();
+      return;
+    }
+    if (!standing) overlay.insertAdjacentHTML("beforeend", overlayStandpointSVG({ at: px(state.cam) }));
   }
 
   // the readout counts what is ON THE MAP, and indoors the map is the room —
