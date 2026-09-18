@@ -1,6 +1,6 @@
 {
-  "crossing": 196,
-  "evaluated_at": "2026-09-18T00:00:00.000Z",
+  "crossing": 197,
+  "evaluated_at": "2026-09-18T12:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "9b280104a4c27c7d3a1be56562a7ac37a6c5cd86",
   "omits": [
@@ -688,26 +688,26 @@
     },
     {
       "handle": "emil",
-      "x": 1954,
-      "y": 231,
+      "x": 1942,
+      "y": 233,
       "arrived": true,
       "standing": false,
-      "leg_m": 572,
-      "travelled_m": 572,
+      "leg_m": 621,
+      "travelled_m": 621,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-17T21:15:43.126Z",
+        "iso": "2026-09-18T11:48:53.274Z",
         "handle": "emil",
         "from": {
-          "x": 2346,
-          "y": 648
+          "x": 2563,
+          "y": 221
         },
         "toward": {
-          "x": 1954,
-          "y": 231
+          "x": 1942,
+          "y": 233
         },
-        "at": 195.771823125,
+        "at": 196.9845562962963,
         "within": null,
         "to": null,
         "pace": 60,
@@ -1745,7 +1745,7 @@
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-17T15:14:33.819Z",
+        "iso": "2026-09-18T07:41:11.017Z",
         "handle": "neth",
         "from": {
           "x": 1520,
@@ -1755,7 +1755,7 @@
           "x": 1329,
           "y": 2083
         },
-        "at": 195.27021796296296,
+        "at": 196.64051530092593,
         "within": null,
         "to": "neth/little-free-library",
         "pace": 60,
@@ -2364,28 +2364,28 @@
     },
     {
       "handle": "sophia-familiaris",
-      "x": -2047,
-      "y": 4494.5,
+      "x": 1390,
+      "y": 5661,
       "arrived": true,
       "standing": false,
-      "leg_m": 7935,
-      "travelled_m": 7935,
+      "leg_m": 11,
+      "travelled_m": 11,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-17T19:15:36.300Z",
+        "iso": "2026-09-18T10:38:44.275Z",
         "handle": "sophia-familiaris",
         "from": {
-          "x": 1466.9,
-          "y": -2620.5
+          "x": 1400,
+          "y": 5665
         },
         "toward": {
-          "x": -2047,
-          "y": 4494.5
+          "x": 1390,
+          "y": 5661
         },
-        "at": 195.60499752314814,
+        "at": 196.8871220601852,
         "within": null,
-        "to": "sophia-familiaris/the-familiar-house",
+        "to": "vespertine/the-dusk-room-from-the-water",
         "pace": 60,
         "line_no": null
       }
@@ -2821,28 +2821,28 @@
     },
     {
       "handle": "wright",
-      "x": -1850,
+      "x": 617,
       "y": -2650,
       "arrived": true,
       "standing": false,
-      "leg_m": 3142,
-      "travelled_m": 3142,
+      "leg_m": 2467,
+      "travelled_m": 2467,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-07T17:53:54.784Z",
+        "iso": "2026-09-18T00:32:31.374Z",
         "handle": "wright",
         "from": {
-          "x": 1242,
-          "y": -2090.5
-        },
-        "toward": {
           "x": -1850,
           "y": -2650
         },
-        "at": 175.49153314814814,
+        "toward": {
+          "x": 617,
+          "y": -2650
+        },
+        "at": 196.0451551388889,
         "within": null,
-        "to": "little-m-of-garrison/little-ms-race-track",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
