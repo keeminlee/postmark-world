@@ -2613,6 +2613,17 @@ export function viewportWorldBounds({ view, originPx, mPerPx, margin = 0 } = {})
   };
 }
 
+/** Where a camera with no body stands: the centre of the viewBox in WORLD
+ *  METRES, through the same registration `viewportWorldBounds` reads (POS-94
+ *  (c), 2026-09-18). The view is already held inside the fence by `clampView`
+ *  — a view larger than the fence is centred in it — so its centre needs no
+ *  second clamp. Pure; null when the camera cannot be read (a page before its
+ *  scene mounts keeps whatever standpoint it had, rather than inventing one). */
+export function viewCentreM(ctx) {
+  const b = viewportWorldBounds({ view: ctx?.view, originPx: ctx?.originPx, mPerPx: ctx?.mPerPx, margin: 0 });
+  return b ? { x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2 } : null;
+}
+
 /** Is this mark inside the drawn box? A mark with an extent is asked by its
  *  geometry (the same `markGeometryIntersectsViewport` the off-screen highlight
  *  arrow already uses, so a culled mark and a flagged mark always agree); a
@@ -12542,6 +12553,21 @@ export function mountViewer(appEl) {
         byId = new Map(world.marks.map((m) => [m.id, m]));
         homeSet = buildHomeSet(data?.manifest, world.marks);
       }
+      // ── THE SPECTATOR STANDS WHERE THE CAMERA LOOKS (POS-94 (c); Keemin,
+      //    2026-09-18 11:3x: "the Spectator is always in the exterior view —
+      //    the camera stays put; its coordinate = the camera's centre") ─────
+      //
+      // `state.cam` is the standpoint every readout, the elevation and the dot
+      // draw from. The resident arm below sets it from the actor's origin;
+      // nothing set it on THIS arm, so a Spectator arriving after jetto (Lake
+      // Caves, Pando Peak, 139 km NW) inherited jetto's coordinate while the
+      // painting showed the town — the chip, the dot and the elevation all
+      // spoke for a place the reader was not looking at (his 09-17 re-test,
+      // postmark#2848). The camera does not move — his word — the standpoint
+      // moves to it; and a page whose scene has not mounted keeps the
+      // standpoint it had rather than inventing one.
+      const centre = viewCentreM(mapCtx);
+      if (centre) state.cam = centre;
       clearSelectionAndDestination();
       root.querySelectorAll(".wv-act-sheet").forEach((sheet) => sheet.remove());
       renderIdentity();
