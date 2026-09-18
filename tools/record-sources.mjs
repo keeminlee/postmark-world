@@ -16,7 +16,7 @@
 // from this repo's main branch. But a build-time guardrail is only as strong as
 // what the page does at READ time — and until 2026-08-26 the viewer answered
 // every record it could not find same-origin by fetching
-// `raw.githubusercontent.com/keeminlee/postmark-world/main`, which is the world's
+// `raw.githubusercontent.com/postmark-town/postmark-world/main`, which is the world's
 // main tip: precisely the bytes the guardrail exists to keep out of prod.
 //
 // It was not hypothetical. `WORLD/walk-ledger.md` was missing from the site's
@@ -43,7 +43,7 @@
 // be tested without a network is a decision nobody tests.
 
 /** The world repo's main tip. Named ONLY so a falsifier can assert its absence. */
-export const WORLD_MAIN_TIP = "https://raw.githubusercontent.com/keeminlee/postmark-world/main";
+export const WORLD_MAIN_TIP = "https://raw.githubusercontent.com/postmark-town/postmark-world/main";
 
 /**
  * True when `url` would read the world repo's unblessed main branch.
