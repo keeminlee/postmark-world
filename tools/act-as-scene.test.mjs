@@ -41,7 +41,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { SPECTATOR_ACTOR, standpointOccupancy } from "../spectator/viewer.mjs";
+import { SPECTATOR_ACTOR, standpointOccupancy, viewCentreM } from "../spectator/viewer.mjs";
 import { parseEnterExitLedger } from "./enter-exit.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -113,4 +113,34 @@ test("[pin] syncScene mounts the new key's room, or remounts the town when it ha
 test("[pin] the way out is hung off the room, so it leaves with the room", () => {
   assert.match(SOURCE, /if \(!room\) \{ chrome\?\.remove\(\); return; \}/,
     "no room, no pill — the spectator cannot be left holding an exit it cannot use");
+});
+
+// ── POS-94 (c): the Spectator stands where the camera looks (2026-09-18) ────
+//
+// Keemin's ruling, 09-18 11:3x: "the Spectator is always in the exterior view —
+// the camera stays put; its coordinate = the camera's centre, clamped to the
+// fence." Before this, nothing set `state.cam` on the Spectator arm, so a
+// Spectator arriving after jetto (Lake Caves, Pando Peak, 139 km NW) inherited
+// jetto's coordinate: the chip, the dot and the elevation spoke for a place the
+// painting was not showing (the founder's 09-17 re-test, postmark#2848).
+test("viewCentreM: the view's centre in world metres through the registration; null when the camera cannot be read", () => {
+  const reg = { originPx: { x: 485, y: 760 }, mPerPx: 5 };
+  // a 100×50 viewBox at (10,20): centre (60,45) px → ((60−485)·5, (45−760)·5)
+  assert.deepEqual(viewCentreM({ view: { x: 10, y: 20, w: 100, h: 50 }, ...reg }), { x: -2125, y: -3575 });
+  // a view centred on the registration's origin stands at the Origin
+  assert.deepEqual(viewCentreM({ view: { x: 385, y: 660, w: 200, h: 200 }, ...reg }), { x: 0, y: 0 });
+  assert.equal(viewCentreM(null), null, "no scene mounted, no answer — the standpoint is kept, not invented");
+  assert.equal(viewCentreM({ view: { x: 0, y: 0, w: 0, h: 10 }, ...reg }), null, "a degenerate view is not a place");
+  assert.equal(viewCentreM({ view: { x: 0, y: 0, w: 10, h: 10 }, originPx: { x: 1, y: 1 } }), null, "no scale, no answer");
+});
+
+test("[pin] the Spectator arm takes its standpoint from the camera's centre before any readout, and never moves the camera", () => {
+  const arm = SOURCE.slice(
+    SOURCE.indexOf("if (actor === SPECTATOR_ACTOR) {"),
+    SOURCE.indexOf("if (!(state.whoami?.handles ?? []).includes(actor)) return;"));
+  assert.ok(arm.length > 0 && arm.length < 4000, "the Spectator arm of selectActor is where it was");
+  assert.match(arm, /const centre = viewCentreM\(mapCtx\);\n\s+if \(centre\) state\.cam = centre;[\s\S]*?renderSpectatorCoordinate\(\);/,
+    "the standpoint is taken from the view BEFORE the coordinate chip and the dot read it");
+  assert.doesNotMatch(arm, /setView\(|tweenTo\(|frameOn\(/, "the camera stays put — his word");
+  assert.doesNotMatch(arm, /actorOrigin\(\)|originFor\(/, "a spectator has no body, so no origin is asked for");
 });
