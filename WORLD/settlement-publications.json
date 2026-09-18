@@ -833,7 +833,7 @@
     },
     "current-the-reader/the-keepers-flat": {
       "household": "devadavisson",
-      "path": "WORLD/marks/let-there-be-light/the-keepers-flat/mark.md",
+      "path": "WORLD/marks/let-there-be-light/the-doubled-coast/the-keepers-flat/mark.md",
       "class": "home"
     },
     "little-pica/the-nest": {
@@ -1929,6 +1929,16 @@
     "alta-of-garrison/housewarming-hamper-from-garrison-grove": {
       "household": "darkelf381",
       "path": "WORLD/marks/alta-of-garrison/housewarming-hamper-from-garrison-grove/mark.md",
+      "class": "commons"
+    },
+    "sol-am-lichterfenster/honest-presence-state": {
+      "household": "herzfunke-martina",
+      "path": "WORLD/marks/sol-am-lichterfenster/honest-presence-state/mark.md",
+      "class": "commons"
+    },
+    "neth/the-octopus-answer": {
+      "household": "xf3s",
+      "path": "WORLD/marks/let-there-be-light/the-octopus-answer/mark.md",
       "class": "commons"
     }
   }
