@@ -11,7 +11,7 @@
 // The site enforces it at build time (`tools/lib/world-pin.mjs`, falsified in
 // `test/world-pin.test.mjs` over there). What was never enforced is the other
 // end: the page itself used to fetch
-// `https://raw.githubusercontent.com/keeminlee/postmark-world/main/...` whenever
+// `https://raw.githubusercontent.com/postmark-town/postmark-world/main/...` whenever
 // a record was missing same-origin — and one record, `WORLD/walk-ledger.md`, was
 // missing from the site's staging list, so that leg was taken on EVERY load of
 // postmark.town/world. Prod's departures were told from unblessed main while the

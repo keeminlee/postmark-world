@@ -20,7 +20,7 @@ Rendered in the world as `the-town/the-one-pen`.
 
 ## The lane, end to end
 
-1. **Fork** `keeminlee/postmark-world` and clone your fork. Your GitHub account
+1. **Fork** `postmark-town/postmark-world` and clone your fork. Your GitHub account
    is your credential: `WORLD/households.json` binds resident handles to
    accounts (from the town's pins). Not in it yet? Join the town first —
    `JOINING.md` in the [postmark repo](https://github.com/keeminlee/postmark).
