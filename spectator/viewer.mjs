@@ -3229,17 +3229,39 @@ export function settlementChipText(current, nowMs = Date.now()) {
 // An avatar URL is data a resident influences, arriving through a JSON file, and
 // it lands in an SVG <image href>. Escaping is the wrong tool for a URL —
 // `javascript:alert(1)` survives every entity-escape intact — so this is a
-// WHITELIST, not a filter: a rooted same-origin path, ordinary URL characters
-// only, no protocol, no host, no traversal. Anything else is not "sanitised", it
-// is REFUSED, and the caller falls back to the monogram. A face nobody can vouch
-// for simply doesn't render.
+// WHITELIST, not a filter: ordinary URL characters only, no traversal. Anything
+// else is not "sanitised", it is REFUSED, and the caller falls back to the
+// monogram. A face nobody can vouch for simply doesn't render.
+//
+// TWO ROADS ARE ADMITTED, AND THE SECOND IS ONE HOST BY NAME (postmark#2950,
+// Keemin 2026-09-19). The first is a rooted same-origin path, which is what the
+// site's own /media shelf and this rig's proxy serve. The second is the TOWN'S
+// MEDIA DOOR — `https://media.postmark.town/media/…` — because that is where
+// the settled office profile road actually writes a resident's picture, and
+// refusing it rendered Solin Sunraven and Mari as monograms on pages carrying
+// every other field from the same PROFILE.md.
+//
+// The door is admitted as a LITERAL PREFIX, not a parsed origin, and that is the
+// point: `new URL()` would agree that `https://media.postmark.town@evil.example/`
+// and `https://media.postmark.town:443/` are about this door, and neither is a
+// spelling the office writes. A string that does not begin with those exact
+// bytes is refused, so every host that merely looks like the door — a userinfo
+// trick, a prefix or suffix lookalike, a port, plain http — never gets a parser
+// to argue with. Past the prefix the same ordinary-character grammar applies, so
+// a query, a fragment, a percent-escape and a backslash are all still refusals.
 const AVATAR_PATH = /^\/[A-Za-z0-9._~\-]+(?:\/[A-Za-z0-9._~\-]+)*$/;
+const TOWN_MEDIA_DOOR = "https://media.postmark.town/media/";
+const DOOR_PATH = /^[A-Za-z0-9._~\-]+(?:\/[A-Za-z0-9._~\-]+)*$/;
 export function safeAvatarUrl(url) {
   const s = String(url ?? "").trim();
   if (!s || s.length > 300) return null;
-  if (!AVATAR_PATH.test(s)) return null;   // covers //host, http:, javascript:, data:, ?query, #frag
-  if (s.includes("..")) return null;       // no climbing out of /media
-  return s;
+  if (s.includes("..")) return null;       // no climbing out of /media, on either road
+  if (AVATAR_PATH.test(s)) return s;       // the rooted same-origin path, unchanged
+  // Not a rooted path, so it is only admissible as the town's own media door —
+  // which covers //host, http:, javascript:, data: and every other host by
+  // refusing all of them here.
+  if (!s.startsWith(TOWN_MEDIA_DOOR)) return null;
+  return DOOR_PATH.test(s.slice(TOWN_MEDIA_DOOR.length)) ? s : null;  // ?query, #frag, %2e, backslash
 }
 
 // A colour reaches the map as a fill. Only #rgb / #rrggbb is honoured; anything
