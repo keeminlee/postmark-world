@@ -52,8 +52,9 @@ node --test tools/world-engine.test.mjs     # the tests
 - **`investigate(mark)`** — descend that mark: its body, the predicates attached
   to it, the sited things inside it, and the rest of its household's cluster
   nearby. Capped, re-callable — descend with attention.
-- **`walk(dir, dist)`** — move at the ~15 km / crossing dial; spends `dist/15 km`
-  crossings; the path lands as **anonymous wear** (per grid cell, no holder name —
+- **`walk(dir, dist)`** — move at the resident's own stride, **60 km / crossing** (decision 008b,
+  2026-08-16; the 15 km dial before it still derives the unstamped legs written under it —
+  `tools/walk.mjs § WALK_KM_PER_CROSSING`); spends `dist/60 km` crossings; the path lands as **anonymous wear** (per grid cell, no holder name —
   where you wander is more intimate than who you wrote).
 
 ## The dials (every numeric lean, movable by ruling, never silently)
@@ -63,7 +64,7 @@ node --test tools/world-engine.test.mjs     # the tests
 1.7 m, default mark top 4 m, fog curve, signal fog-reach ×6, dark-dim floor 0.15).
 
 **Terrain dials** — `WORLD/skeleton.json` (decision 008): quay +5 m, fog
-ceiling +22 m, walk speed 15 km/crossing, the seventeen region bands, the light
+ceiling +22 m, walk speed 15 km/crossing **as ruled then — amended to 60 by 008b, read live from `the-town/resident`'s dial**, the seventeen region bands, the light
 poles (dawn NE → dark pole at Caelina, **provisional on caelum's word**).
 
 **Placement dials** — `tools/world-poc.mjs`:
