@@ -1430,6 +1430,53 @@ test("an avatar URL is whitelisted, not sanitised — anything not a rooted loca
   ]) assert.equal(safeAvatarUrl(hostile), null, `refused: ${String(hostile).slice(0, 40)}`);
 });
 
+// ───────── the one host beside the path (postmark#2950) ─────────
+//
+// The settled office profile road writes `avatar_url`, a complete town-media
+// URL, and this whitelist refused every absolute URL — so Solin Sunraven and
+// Mari rendered monograms on pages carrying every other field from the same
+// PROFILE.md. The rule now admits ONE host by name and nothing else.
+//
+// Which of these discriminate: the first only. It is red at the base and green
+// on the branch, and it is the one the flip reds. The refusals below are all
+// green at the base too — they are the non-regression half, there so the widen
+// cannot be read as "absolute URLs are fine now".
+
+const SOLIN_AVATAR_URL =
+  "https://media.postmark.town/media/sozlin/7037bcfb63718579a618e7bfc31eef790dd067d7f17d66b00fa07e726ca1fe21.webp";
+
+test("the town's own media door is admitted, and it is the only host that is", () => {
+  // (1) the whole point: the exact URL the office settled for Solin survives.
+  assert.equal(safeAvatarUrl(SOLIN_AVATAR_URL), SOLIN_AVATAR_URL,
+    "the office writes this URL; the map has to be able to render it");
+
+  // (4) and the road that already worked is untouched.
+  assert.equal(safeAvatarUrl("/media/kai-avatar-card.jpg"), "/media/kai-avatar-card.jpg",
+    "the rooted same-origin path is unchanged by the widen");
+
+  // (2) (3) (5) and everything else is still refused. A door admitted by NAME
+  // has exactly one spelling: these are the ways a URL can be about this host
+  // without being served by it, and a parser would have agreed with several.
+  for (const [why, hostile] of [
+    ["another host entirely", "https://evil.example/x.jpg"],
+    ["the door without a protocol", "//media.postmark.town/media/sozlin/a.webp"],
+    ["traversal off the door", "https://media.postmark.town/media/../../etc/passwd"],
+    ["traversal, percent-escaped", "https://media.postmark.town/media/%2e%2e/%2e%2e/etc/passwd"],
+    ["traversal, backslashed", "https://media.postmark.town/media/..\\..\\etc/passwd"],
+    ["the door as userinfo on another host", "https://media.postmark.town@evil.example/x.jpg"],
+    ["a host the door's name is a prefix of", "https://media.postmark.town.evil.example/media/x.webp"],
+    ["a host the door's name is a suffix of", "https://evilmedia.postmark.town/media/x.webp"],
+    ["the door with a port", "https://media.postmark.town:8443/media/x.webp"],
+    ["the door over plain http", "http://media.postmark.town/media/x.webp"],
+    ["the door, but not its /media/ shelf", "https://media.postmark.town/etc/x.webp"],
+    ["the site's own host", "https://postmark.town/media/x.webp"],
+    ["a query on the door", "https://media.postmark.town/media/x.webp?onerror=alert(1)"],
+    ["a fragment on the door", "https://media.postmark.town/media/x.webp#\" onload=\"alert(1)"],
+    ["the door and nothing behind it", "https://media.postmark.town/media/"],
+    ["the door, past the length cap", "https://media.postmark.town/media/" + "a".repeat(400)],
+  ]) assert.equal(safeAvatarUrl(hostile), null, `refused (${why}): ${String(hostile).slice(0, 48)}`);
+});
+
 test("a colour is a hex literal or it is the town's gold — never whatever arrived", () => {
   assert.equal(safeHexColor("#b08d57"), "#b08d57");
   assert.equal(safeHexColor("#ABC"), "#ABC");
