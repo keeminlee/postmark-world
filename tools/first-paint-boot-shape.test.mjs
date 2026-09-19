@@ -39,11 +39,23 @@
 //
 // THE THIRD FLIP IS THERE BECAUSE THE FIRST ONE IS NOT ENOUGH. Restoring the
 // serial await leaves the wave launched as well, so the request COUNT goes
-// wrong and the offsets assertion fires before the timing assertion is ever
-// reached — which would leave the timing claim, the one this file exists for,
+// wrong and the offsets assertion fires before the ordering assertion is ever
+// reached — which would leave the ordering claim, the one this file exists for,
 // a probe nobody had seen fail. The lazy flip asks for the same six offsets in
 // the same order, one at a time, so the offsets assertion stays green and only
-// the timing one reds.
+// the ordering one reds.
+//
+// ── NO WALL CLOCK IN THE WAVE'S ARM (postmark#2977) ───────────────────────
+//
+// This file's wave claim was a margin — the six requests within
+// `MY_MARKS_DELAY` of each other, read off request events delivered to node
+// over CDP. Its sibling on the unit side carried the same shape and cost the
+// keeper an hour's hold on a settlement's bless when a 30 ms bar read 40 ms
+// under an operator's 82 GB delete on the same drive. Both arms are now an
+// ORDER the rig's own office witnesses: every page of the wave reached the
+// office while the office had answered exactly once. The office is used rather
+// than the browser's events because a CDP event is timed when node receives
+// it, which would leave the harness's scheduling inside the instrument.
 //
 // Run receipts in docs/2026-09-17/jetto-pos-87-first-paint-report.md.
 
@@ -111,8 +123,20 @@ const READ = {
   actions: [{ action: "walk", label: "Walk" }],
 };
 
+/**
+ * The rig's office, which keeps its own book of the portfolio door.
+ *
+ * `portfolio` records, per `/world/my-marks` request THE OFFICE RECEIVED, how
+ * many such requests it had already ANSWERED at that moment. It is the same
+ * instrument `tools/portfolio-one-wave.test.mjs` uses on the unit side and it
+ * is here for the same reason (postmark#2977): the claim is an order of events,
+ * and the office is the one place in this rig that witnesses both halves of it
+ * directly. Reading the order off request/response events delivered to node
+ * over CDP instead would put the harness's own scheduling in the instrument.
+ */
 async function bootStubOffice() {
   const port = await freePort();
+  const portfolio = { asks: [], answered: 0 };
   const srv = createHttp((req, res) => {
     const url = new URL(req.url, "http://127.0.0.1:" + port);
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -124,11 +148,15 @@ async function bootStubOffice() {
     if (url.pathname === "/world/my-marks") {
       const offset = Number(url.searchParams.get("offset")) || 0;
       const p = markPage(MINE, offset);
+      portfolio.asks.push({ offset, answeredWhenAsked: portfolio.answered });
       // held open, so a serial walk and a wave cannot look alike
-      return setTimeout(() => send({
-        drafts: [], docket: [], published: p.page, backed: [],
-        counts: COUNTS, complete: p.rest.length === 0,
-      }), MY_MARKS_DELAY);
+      return setTimeout(() => {
+        portfolio.answered += 1;
+        send({
+          drafts: [], docket: [], published: p.page, backed: [],
+          counts: COUNTS, complete: p.rest.length === 0,
+        });
+      }, MY_MARKS_DELAY);
     }
     if (url.pathname === "/world/apex") return send(READ);
     if (url.pathname === "/world/present" || url.pathname === "/world/walkers") return send({ residents: [] });
@@ -137,7 +165,9 @@ async function bootStubOffice() {
   });
   await new Promise((resolve) => srv.listen(port, "127.0.0.1", resolve));
   CLEANUP.push(() => srv.close());
-  return { port };
+  // the book is per boot, and this office serves several
+  const forget = () => { portfolio.asks.length = 0; portfolio.answered = 0; };
+  return { port, portfolio, forget };
 }
 
 async function bootStubAtlas() {
@@ -183,11 +213,10 @@ before(async () => {
 
 /** One signed-in boot, with every office request timed. */
 async function bootAndWatch() {
+  office.forget();   // this office serves every boot; the portfolio book is this one's
   const page = await browser.newPage({ viewport: { width: 1500, height: 950 } });
-  const asked = [];      // { url, at }
-  const answered = [];   // { url, at }
+  const asked = [];      // { url, at } — WHAT the boot asked for; the office keeps the ORDER
   page.on("request", (r) => asked.push({ url: r.url(), at: Date.now() }));
-  page.on("response", (r) => answered.push({ url: r.url(), at: Date.now() }));
   await page.addInitScript((base) => { try { localStorage.setItem("pm.office.base", base); } catch {} },
     "http://127.0.0.1:" + office.port);
   await page.addInitScript(() => { try { localStorage.setItem("pm_key", "rig-key-not-a-secret"); } catch {} });
@@ -196,7 +225,7 @@ async function bootAndWatch() {
   await page.waitForSelector(".wv-telling-pane", { state: "attached", timeout: 90_000 });
   await page.waitForTimeout(6000);   // past the walk and everything the boot trails
   await page.close();
-  return { asked, answered };
+  return { asked };
 }
 
 const offsetOf = (url) => Number(new URL(url).searchParams.get("offset")) || 0;
@@ -207,7 +236,7 @@ const skipReason = "playwright is absent, so the boot's request shape goes unmea
 
 test("ONE WAVE, THROUGH THE VIEWER: the portfolio's pages overlap in a real boot", async (t) => {
   if (!chromium) return t.skip(skipReason);
-  const { asked, answered } = await bootAndWatch();
+  const { asked } = await bootAndWatch();
 
   const pages = asked.filter((r) => r.url.includes("/world/my-marks"))
     .map((r) => ({ offset: offsetOf(r.url), at: r.at }))
@@ -216,27 +245,33 @@ test("ONE WAVE, THROUGH THE VIEWER: the portfolio's pages overlap in a real boot
   assert.deepEqual(pages.map((p) => p.offset), [0, 20, 40, 60, 80, 100],
     "the boot did not ask for exactly the six pages 110 published marks imply");
 
-  // THE CLAIM, WITH THE MARGIN THE RIG WAS BUILT TO GIVE IT. Every page of the
-  // wave is asked for in the same breath; a walk that awaits each one spends a
-  // whole `MY_MARKS_DELAY` between them, so four gaps put the first and last
-  // requests most of half a second apart. Measured on the boot that proves this:
-  // a handful of milliseconds against a 120 ms page.
-  const wave = pages.filter((p) => p.offset >= 20).map((p) => p.at);
-  const spread = Math.max(...wave) - Math.min(...wave);
-  assert.ok(spread < MY_MARKS_DELAY,
-    `pages 2..6 were asked for over ${spread} ms, about ${(spread / MY_MARKS_DELAY).toFixed(1)} page-waits apart — the boot is still walking serially`);
+  // THE CLAIM, AS AN ORDER RATHER THAN A CLOCK (postmark#2977). This block used
+  // to assert that the wave's six requests fell within `MY_MARKS_DELAY` of wall
+  // clock. That is true of the viewer and also true of the box: the same margin
+  // on the unit side read 40 ms under a 30 ms bar and held a settlement's bless
+  // for an hour while an operator deleted 82 GB on the keeper's drive. So the
+  // rig's office keeps the count instead, and the assertion is an equality with
+  // no threshold in it: every page of the wave reached the office while the
+  // office had answered EXACTLY ONCE — page one, whose `counts` sized the wave.
+  //
+  //   more than 1  the pages are waiting on each other; the boot is serial
+  //   less than 1  the wave went out before the counts came back, so it was not
+  //                sized from them
+  //
+  // Read at the office and not off the browser's request events, because those
+  // reach this process over CDP and arrive on node's event loop — which would
+  // put the harness's own scheduling inside the instrument, the exact fault
+  // being removed.
+  const book = office.portfolio.asks;
+  assert.deepEqual(book.map((a) => a.offset).sort((a, b) => a - b), [0, 20, 40, 60, 80, 100],
+    "the office did not receive exactly the six pages the browser was seen to ask for");
 
-  // and the same claim from the other side: a serial walk cannot ask for page
-  // three before page two answers at all, because the request does not exist
-  // yet. Kept as well as the spread, not instead of it — this one has no margin
-  // by construction, since a lazy walk issues the next request the instant the
-  // last answer lands.
-  const secondAnswered = answered.filter((r) => r.url.includes("/world/my-marks") && offsetOf(r.url) === 20)
-    .map((r) => r.at).sort((a, b) => a - b)[0];
-  assert.ok(Number.isFinite(secondAnswered), "the rig never answered page two, so there is nothing to measure against");
-  for (const p of pages.filter((p) => p.offset >= 20))
-    assert.ok(p.at <= secondAnswered,
-      `the page at offset ${p.offset} was asked for ${p.at - secondAnswered} ms after page two answered — the boot is still walking serially`);
+  for (const ask of book.filter((a) => a.offset >= 20))
+    assert.equal(ask.answeredWhenAsked, 1,
+      `the page at offset ${ask.offset} reached the office after it had answered ${ask.answeredWhenAsked} times, not once: `
+      + (ask.answeredWhenAsked > 1
+        ? "the boot is still walking the portfolio serially"
+        : "the wave went out before the door's counts arrived, so it was not sized from them"));
 });
 
 test("THE PALETTE IS ASKED FOR ONCE IN A BOOT", async (t) => {
