@@ -62,7 +62,7 @@ is the id's leaf. Paths are relative to `WORLD/marks/let-there-be-light/`.
 | `let-there-be-light` (root) | **QUESTIONABLE** | Q4 — the root carries `mechanic: light`, and `classes.md` maps `mechanic: light` onto an *emission* class that fades under a TTL and rides a source. See § 5. |
 | `the-fall-of-the-land` | ALIGNED | `classes.md` § Migrations lists elevation among the seven mechanics that "migrate by the same move when touched. No speculative authoring." Untouched by design. |
 | `the-fog` | ALIGNED | `classes.md` § fog defers to it explicitly: "The +22 m ceiling stands as its own charter article and is not restated here." |
-| `the-walking-pace` | ALIGNED | `classes.md` § walk carries the same number as a shipped receipt: "default pace 15,000 m per crossing ⚙". |
+| `the-walking-pace` | **STALE RESTATEMENT** (2026-09-19) | The mark still reads "15 km per crossing" (generated from `skeleton.json § walk_speed_m_per_crossing` by `world-root-gen.mjs`), but the stride was ruled 15 → 60 by 008b (2026-08-16) and `classes.md` § pace (08-30) rules that the pace dial POINTS at `the-town/resident` and never restates. Nothing reads this mark for a number (`departurePace` asks the resident class by name); a resident reading it at the door is told a superseded figure. Open: amend the generator so the mark points instead of restating. |
 | `the-wear` | ALIGNED | Named in `classes.md`'s migrate-when-touched list; no dial, body, or mechanic changes. |
 
 ### `the-record` and its clauses
