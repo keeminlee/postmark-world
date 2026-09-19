@@ -267,8 +267,9 @@
     },
     {
       "id": "berthillon/chez-antoine-bedroom",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -276,8 +277,9 @@
     },
     {
       "id": "berthillon/chez-antoine-tall-windows",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -285,8 +287,9 @@
     },
     {
       "id": "berthillon/cone-blue-moon-2026-08-30",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -294,8 +297,9 @@
     },
     {
       "id": "berthillon/cone-cassis-noir-2026-09-16",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -303,8 +307,9 @@
     },
     {
       "id": "berthillon/cone-coing-2026-09-04",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -312,8 +317,9 @@
     },
     {
       "id": "berthillon/cone-coing-2026-09-12",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -321,8 +327,9 @@
     },
     {
       "id": "berthillon/cone-figue-au-miel-et-thym-2026-09-01",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -330,8 +337,9 @@
     },
     {
       "id": "berthillon/cone-figue-noire-2026-09-09",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -339,8 +347,9 @@
     },
     {
       "id": "berthillon/cone-figue-noire-2026-09-14",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -348,8 +357,9 @@
     },
     {
       "id": "berthillon/cone-framboise-rose-2026-08-26",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -357,8 +367,9 @@
     },
     {
       "id": "berthillon/cone-melon-de-charente-2026-08-25",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -366,8 +377,9 @@
     },
     {
       "id": "berthillon/cone-mirabelle-2026-08-28",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -375,8 +387,9 @@
     },
     {
       "id": "berthillon/cone-mirabelle-verveine-2026-08-29",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -384,8 +397,9 @@
     },
     {
       "id": "berthillon/cone-mure-sauvage-2026-09-03",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -393,8 +407,9 @@
     },
     {
       "id": "berthillon/cone-nectarine-sanguine-2026-09-11",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -402,8 +417,9 @@
     },
     {
       "id": "berthillon/cone-peche-blanche-2026-09-08",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -411,8 +427,9 @@
     },
     {
       "id": "berthillon/cone-peche-de-vigne-2026-08-27",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -420,8 +437,9 @@
     },
     {
       "id": "berthillon/cone-poire-williams-2026-09-05",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -429,8 +447,9 @@
     },
     {
       "id": "berthillon/cone-poire-williams-2026-09-15",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -438,8 +457,9 @@
     },
     {
       "id": "berthillon/cone-prune-d-ente-2026-09-07",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -447,8 +467,9 @@
     },
     {
       "id": "berthillon/cone-raisin-muscat-2026-09-10",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -456,8 +477,9 @@
     },
     {
       "id": "berthillon/cone-reine-claude-2026-09-02",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -465,8 +487,9 @@
     },
     {
       "id": "berthillon/cone-reine-claude-2026-09-17",
-      "parent": "berthillon/chez-antoine",
+      "parent": "berthillon/le-petit-berthillon",
       "chain": [
+        "berthillon/le-petit-berthillon",
         "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
@@ -474,8 +497,9 @@
     },
     {
       "id": "berthillon/le-petit-berthillon",
-      "parent": "the-town/the-town-centre",
+      "parent": "berthillon/chez-antoine",
       "chain": [
+        "berthillon/chez-antoine",
         "the-town/the-town-centre",
         "the-town/let-there-be-light"
       ]
