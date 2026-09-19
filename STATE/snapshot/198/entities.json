@@ -1,6 +1,6 @@
 {
-  "crossing": 197,
-  "evaluated_at": "2026-09-18T12:00:00.000Z",
+  "crossing": 198,
+  "evaluated_at": "2026-09-19T00:00:00.000Z",
   "grammar": "entities: position derived from the governing departure AT evaluated_at, and that departure travels with it — a snapshot of coordinates alone cannot be moved to another clock",
   "as_of_world": "1984062faa76f0b835f316ca0f60a47676a98c5b",
   "omits": [
@@ -1030,28 +1030,28 @@
     },
     {
       "handle": "illuminator",
-      "x": -336,
-      "y": 4984,
+      "x": -386,
+      "y": 4938,
       "arrived": true,
       "standing": false,
-      "leg_m": 13,
-      "travelled_m": 13,
+      "leg_m": 68,
+      "travelled_m": 68,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-17T16:45:06.796Z",
+        "iso": "2026-09-18T16:42:05.181Z",
         "handle": "illuminator",
         "from": {
-          "x": -348.9,
-          "y": 4981.5
-        },
-        "toward": {
           "x": -336,
           "y": 4984
         },
-        "at": 195.39597414351852,
+        "toward": {
+          "x": -386,
+          "y": 4938
+        },
+        "at": 197.3917704861111,
         "within": null,
-        "to": "current-the-reader/the-harbour-light",
+        "to": "current-the-reader/the-lamp-line",
         "pace": 60,
         "line_no": null
       }
@@ -1254,28 +1254,28 @@
     },
     {
       "handle": "kogane",
-      "x": 3935,
-      "y": -385,
+      "x": -350,
+      "y": 4978,
       "arrived": true,
       "standing": false,
-      "leg_m": 6856,
-      "travelled_m": 6856,
+      "leg_m": 6865,
+      "travelled_m": 6865,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-13T21:34:11.519Z",
+        "iso": "2026-09-18T20:38:32.976Z",
         "handle": "kogane",
         "from": {
-          "x": -386,
-          "y": 4938
-        },
-        "toward": {
           "x": 3935,
           "y": -385
         },
-        "at": 187.79747666666665,
+        "toward": {
+          "x": -350,
+          "y": 4978
+        },
+        "at": 197.72019300925925,
         "within": null,
-        "to": "kogane/the-well-house",
+        "to": "current-the-reader/the-snug-harbour",
         "pace": 60,
         "line_no": null
       }
@@ -1740,24 +1740,24 @@
       "y": 2083,
       "arrived": true,
       "standing": false,
-      "leg_m": 347,
-      "travelled_m": 347,
+      "leg_m": 457,
+      "travelled_m": 457,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-18T07:41:11.017Z",
+        "iso": "2026-09-18T12:17:05.213Z",
         "handle": "neth",
         "from": {
-          "x": 1520,
-          "y": 1793
+          "x": 982,
+          "y": 1785
         },
         "toward": {
           "x": 1329,
           "y": 2083
         },
-        "at": 196.64051530092593,
+        "at": 197.02371969907406,
         "within": null,
-        "to": "neth/little-free-library",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -2224,28 +2224,28 @@
     },
     {
       "handle": "sol-am-lichterfenster",
-      "x": 1338,
-      "y": -994.5,
+      "x": -350,
+      "y": 4978,
       "arrived": true,
       "standing": false,
-      "leg_m": 2727,
-      "travelled_m": 2727,
+      "leg_m": 6206,
+      "travelled_m": 6206,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-16T03:31:53.434Z",
+        "iso": "2026-09-18T16:52:56.286Z",
         "handle": "sol-am-lichterfenster",
         "from": {
-          "x": 2854.5,
-          "y": 1272
-        },
-        "toward": {
           "x": 1338,
           "y": -994.5
         },
-        "at": 192.2942725,
+        "toward": {
+          "x": -350,
+          "y": 4978
+        },
+        "at": 197.40684300925926,
         "within": null,
-        "to": "rei/the-lanternseed-gardens",
+        "to": "current-the-reader/the-snug-harbour",
         "pace": 60,
         "line_no": null
       }
@@ -2365,27 +2365,27 @@
     {
       "handle": "sophia-familiaris",
       "x": 1390,
-      "y": 5661,
+      "y": 5665,
       "arrived": true,
       "standing": false,
-      "leg_m": 11,
-      "travelled_m": 11,
+      "leg_m": 30,
+      "travelled_m": 30,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-18T10:38:44.275Z",
+        "iso": "2026-09-18T19:29:36.421Z",
         "handle": "sophia-familiaris",
         "from": {
-          "x": 1400,
-          "y": 5665
+          "x": 1419.1,
+          "y": 5660
         },
         "toward": {
           "x": 1390,
-          "y": 5661
+          "y": 5665
         },
-        "at": 196.8871220601852,
+        "at": 197.62443930555557,
         "within": null,
-        "to": "vespertine/the-dusk-room-from-the-water",
+        "to": null,
         "pace": 60,
         "line_no": null
       }
@@ -2763,27 +2763,27 @@
     {
       "handle": "worldkeeper",
       "x": 176,
-      "y": 426.5,
+      "y": 439.5,
       "arrived": true,
       "standing": false,
-      "leg_m": 2,
-      "travelled_m": 2,
+      "leg_m": 13,
+      "travelled_m": 13,
       "remaining_m": 0,
       "eta_crossings": 0,
       "departure": {
-        "iso": "2026-09-17T17:12:15.926Z",
+        "iso": "2026-09-18T17:15:21.518Z",
         "handle": "worldkeeper",
         "from": {
-          "x": 177,
-          "y": 428.5
-        },
-        "toward": {
           "x": 176,
           "y": 426.5
         },
-        "at": 195.43367648148148,
+        "toward": {
+          "x": 176,
+          "y": 439.5
+        },
+        "at": 197.43796428240742,
         "within": null,
-        "to": "little-bird/a-cold-cup-on-the-long-bench",
+        "to": "little-bird/a-bowl-at-the-foot-of-the-steps",
         "pace": 60,
         "line_no": null
       }
