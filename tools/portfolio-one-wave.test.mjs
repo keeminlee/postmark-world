@@ -18,8 +18,19 @@
 // alone would pass on the unfixed code on a fast enough machine. So the stub
 // holds every answer open for `DELAY` ms and the assertion that carries the
 // claim is not a threshold at all: EVERY page after the first must have been
-// ASKED FOR BEFORE PAGE TWO ANSWERED. A serial walk cannot satisfy that at any
-// speed, because page three's request does not exist until page two resolves.
+// ASKED FOR WHEN THE DOOR HAD ANSWERED EXACTLY ONCE. A serial walk cannot
+// satisfy that at any speed, because page three's request does not exist until
+// page two resolves — by then the door has answered twice.
+//
+// THE COUNT IS THE INSTRUMENT, AND IT REPLACED A MARGIN (postmark#2977). This
+// file used to assert the same thing with a stopwatch: the wave's requests fall
+// within `DELAY / 2` = 30 ms of each other. That is true of the viewer and also
+// true of the machine — the keeper's bless gate read 40 ms and held a
+// settlement for an hour because an operator was deleting 82 GB on the same
+// drive at the time. The stub now records a COUNT of answers rather than a
+// clock, and the count cannot be stretched: `walkMinePages` issues the whole
+// wave inside one synchronous loop, and no promise settles while that loop
+// runs. A test of a gate must be able to fail only for the reason it names.
 //
 // EASY TO GET WRONG: how many pages there are. The door pages each list
 // independently at 20 against one shared offset (office `src/world.mjs` §
@@ -54,15 +65,15 @@
 //          marked complete
 //   viewer.mjs § walkMinePages — the wave pushed as thunks and called at the
 //     shift (`pending.push(() => fetchPage(o))`, `await (pending.shift())()`)
-//        → "ONE WAVE" reds on the TIMING assertion alone
+//        → "ONE WAVE" reds on the ORDERING assertion alone
 //
 // THE LAST FLIP IS THERE BECAUSE THE FIRST ONE IS NOT ENOUGH. Restoring the
 // serial await leaves the wave launched as well, so the request COUNT goes
-// wrong and the offsets assertion fires before the timing assertion is ever
-// reached — which would leave the timing claim, the one this file exists for, a
-// probe nobody had seen fail. The lazy flip asks for the same six offsets in the
-// same order, one at a time, so the offsets assertion stays green and only the
-// timing one reds.
+// wrong and the offsets assertion fires before the ordering assertion is ever
+// reached — which would leave the ordering claim, the one this file exists for,
+// a probe nobody had seen fail. The lazy flip asks for the same six offsets in
+// the same order, one at a time, so the offsets assertion stays green and only
+// the ordering one reds.
 //
 // Run receipts in docs/2026-09-17/jetto-pos-87-first-paint-report.md.
 
@@ -104,7 +115,15 @@ const DOOR = { ...emptyDoor(), drafts: rowsFor("drafts", 2), published: rowsFor(
 const DELAY = 60;   // every answer is held open this long — see the header
 
 /**
- * A stub door that records, per request, when it was asked and when it answered.
+ * A stub door that records, per request, HOW MANY ANSWERS IT HAD ALREADY GIVEN
+ * when that request was made. Not when — how many. The door keeps no clock.
+ *
+ * `answersWhenAsked` is the whole instrument. It is a count of events this door
+ * caused, read at the moment of another event it caused, so it cannot drift,
+ * cannot be stretched by a busy machine, and has no threshold anywhere in it.
+ * A wall-clock field would be a standing invitation to write a margin against
+ * it, which is the arm postmark#2977 removed, so there is no such field to
+ * reach for.
  *
  * `counts` defaults to the truth about `door`; `doorPageSize` is the door's own
  * page, which is 20 in the office today and is a parameter here only so the
@@ -113,8 +132,9 @@ const DELAY = 60;   // every answer is held open this long — see the header
 function stubDoor({ door = DOOR, counts = null, delay = DELAY, doorPageSize = MINE_PAGE_SIZE } = {}) {
   const said = counts ?? countsOf(door);
   const log = [];
+  let answers = 0;   // answers this door has RESOLVED, counted as each one resolves
   const fetchPage = (offset) => {
-    const entry = { offset, asked: Date.now(), answered: null };
+    const entry = { offset, answersWhenAsked: answers };
     log.push(entry);
     const paged = Object.fromEntries(LISTS.map((l) => [l, markPage(door[l], offset, doorPageSize)]));
     const withheld = LISTS.reduce((n, l) => n + paged[l].rest.length, 0);
@@ -123,7 +143,7 @@ function stubDoor({ door = DOOR, counts = null, delay = DELAY, doorPageSize = MI
       counts: said,
       complete: withheld === 0,
     };
-    return new Promise((resolve) => setTimeout(() => { entry.answered = Date.now(); resolve(answer); }, delay));
+    return new Promise((resolve) => setTimeout(() => { answers += 1; resolve(answer); }, delay));
   };
   return { fetchPage, log };
 }
@@ -177,31 +197,35 @@ test("ONE WAVE: every page after the first is asked for before page two answers"
     "the door was not asked for exactly the six pages its counts imply");
   assert.equal(walked.pages, 6);
 
-  const first = log.find((e) => e.offset === 0);
-  const second = log.find((e) => e.offset === 20);
   const wave = log.filter((e) => e.offset >= 20);
 
-  // THE CLAIM, AND THE MARGIN GOES FIRST. Every page of the wave is asked for
-  // in the same breath; a walk that awaits each one spends a whole `DELAY`
-  // between them, so four gaps put the first and last requests most of half a
-  // second apart. This assertion is first because it is the one a reviewer can
-  // trust on a machine that is not this one.
-  const spread = Math.max(...wave.map((e) => e.asked)) - Math.min(...wave.map((e) => e.asked));
-  assert.ok(spread < DELAY / 2,
-    `the wave's requests are ${spread} ms apart, about ${(spread / DELAY).toFixed(1)} page-waits — that is not one tick`);
-
-  // and the same claim from the other side: a serial walk cannot ask for page
-  // three before page two answers at all, because the request does not exist
-  // yet. Kept as well, not instead — but it has no margin by construction, since
-  // a lazy walk issues its next request the instant the last answer lands, so it
-  // is the weaker of the two and stands second.
+  // THE CLAIM, AS AN ORDER RATHER THAN A CLOCK (postmark#2977). Every page of
+  // the wave was asked for when this door had answered EXACTLY ONCE — page one,
+  // whose `counts` sized the wave — and not one answer more.
+  //
+  // The one equality is two-sided, which is why it replaced three comparisons:
+  //
+  //   more than 1  the walk is still serial. Page three's request did not exist
+  //                until page two resolved, so the door had answered twice
+  //                before it arrived.
+  //   less than 1  the wave was launched before the door said what the household
+  //                owns, so it was not sized from `counts` at all.
+  //
+  // AND IT CANNOT BE BROKEN BY A BUSY MACHINE. `walkMinePages` issues the whole
+  // wave inside one synchronous loop; no timer can fire and no promise can
+  // settle while that loop runs, so the count this reads is fixed by the
+  // language, not by how fast the box was. The arm this replaced asserted that
+  // the wave's requests fell within `DELAY / 2` of wall clock — true of the
+  // viewer, but also an instrument of the disk: it read 40 ms and held a
+  // settlement's bless for an hour while an operator deleted a folder on the
+  // same drive. A margin that reds on someone else's I/O is not measuring this
+  // walk.
   for (const entry of wave)
-    assert.ok(entry.asked <= second.answered,
-      `the page at offset ${entry.offset} was asked for ${entry.asked - second.answered} ms AFTER page two answered — the walk is still serial`);
-
-  // the first page is NOT in the wave — the counts it carries are what sizes it
-  assert.ok(second.asked >= first.answered,
-    "page two was asked for before page one answered, so the wave was not sized from the door's counts");
+    assert.equal(entry.answersWhenAsked, 1,
+      `the page at offset ${entry.offset} was asked for after this door had answered ${entry.answersWhenAsked} times, not once: `
+      + (entry.answersWhenAsked > 1
+        ? "pages of the wave are waiting on each other, so the walk is still serial"
+        : "the wave was launched before the door's counts arrived, so it was not sized from them"));
 });
 
 test("THE MERGED SET IS WHAT SERIAL WALKING PRODUCED, ROW FOR ROW", async () => {
